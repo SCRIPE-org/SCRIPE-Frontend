@@ -11,6 +11,18 @@ import { RouteGuard } from "@core/providers/route-guard";
 import { EnhancedToaster } from "@core/ui/enhanced-toaster";
 import { ErrorBoundary } from "@core/ui/error-boundary";
 
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+// Create a client
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: 1,
+    },
+  },
+});
+
 /**
  * Combined App Provider - Optimized provider composition
  * 
@@ -18,36 +30,39 @@ import { ErrorBoundary } from "@core/ui/error-boundary";
  * to reduce nesting complexity and improve performance.
  * 
  * Provider order is important:
- * 1. ThemeProvider - Must be outermost for theme context
-   * 2. ServiceProvider - Provides API services
- * 3. SettingsProvider - User preferences and settings
- * 4. I18nProvider - Internationalization (depends on settings)
- * 5. ErrorBoundary - Catches all errors (must be inside I18nProvider for localization)
- * 6. AuthProvider - Authentication state
- * 7. NavigationProvider - Navigation and permissions (depends on auth)
- * 8. RouteGuard - Route protection (depends on auth and navigation)
+ * 1. QueryClientProvider - Server State (Must be outer layer)
+ * 2. ThemeProvider - Must be outermost for theme context
+   * 3. ServiceProvider - Provides API services
+ * 4. SettingsProvider - User preferences and settings
+ * 5. I18nProvider - Internationalization (depends on settings)
+ * 6. ErrorBoundary - Catches all errors (must be inside I18nProvider for localization)
+ * 7. AuthProvider - Authentication state
+ * 8. NavigationProvider - Navigation and permissions (depends on auth)
+ * 9. RouteGuard - Route protection (depends on auth and navigation)
  * 
  * @param children - The app content to be wrapped
  */
 export function AppProvider({ children }: { children: React.ReactNode }) {
   return (
-    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} disableTransitionOnChange={false}>
-      <ServiceProvider>
-        <SettingsProvider>
-          <I18nProvider>
-            <ErrorBoundary>
-              <AuthProvider>
-                <NavigationProvider>
-                  <RouteGuard>
-                    {children}
-                  </RouteGuard>
-                </NavigationProvider>
-              </AuthProvider>
-            </ErrorBoundary>
-            <EnhancedToaster />
-          </I18nProvider>
-        </SettingsProvider>
-      </ServiceProvider>
-    </ThemeProvider>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} disableTransitionOnChange={false}>
+        <ServiceProvider>
+          <SettingsProvider>
+            <I18nProvider>
+              <ErrorBoundary>
+                <AuthProvider>
+                  <NavigationProvider>
+                    <RouteGuard>
+                      {children}
+                    </RouteGuard>
+                  </NavigationProvider>
+                </AuthProvider>
+              </ErrorBoundary>
+              <EnhancedToaster />
+            </I18nProvider>
+          </SettingsProvider>
+        </ServiceProvider>
+      </ThemeProvider>
+    </QueryClientProvider>
   );
 }
