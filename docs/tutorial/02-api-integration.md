@@ -10,10 +10,21 @@ We use a central `ApiService` singleton providing `get`, `post`, `put`, `delete`
 **Location**: `src/core/services/implementation/api.service.ts`
 
 ### Features
+
 - **Auto-Base URL**: Uses `NEXT_PUBLIC_API_URL` from `.env`.
 - **JWT Injection**: Automatically adds `Authorization: Bearer <token>` header.
 - **Refresh Token**: Intercepts 401 errors, refreshes token, and retries request.
+- **Auto-Retry**: Automatically retries 5xx errors with exponential backoff.
 - **Response Unwrapping**: Returns `response.data` deeply.
+- **Sanitization**: Inputs are sanitized before sending.
+
+### 🛡️ Resilience (New!)
+
+The service now includes **Exponential Backoff** for 5xx errors.
+
+- **Method**: `getWithRetry`, `postWithRetry`.
+- **Logic**: Retries 3 times (1s, 2s, 4s delay).
+- **Usage**: Use `this.api.getWithRetry(...)` for critical data fetching.
 
 ---
 
@@ -26,16 +37,15 @@ import { BaseRepository } from "@core/common/base-repository";
 import { Product } from "../../domain/entities/Product";
 
 export class ProductRepository extends BaseRepository {
-  
   // GET /products?page=1
   async getProducts(params: any) {
     // The BaseRepository gives you access to 'this.api'
-    return this.api.get<Product[]>('/products', { params });
+    return this.api.get<Product[]>("/products", { params });
   }
 
   // POST /products
   async createProduct(data: any) {
-    return this.api.post<Product>('/products', data);
+    return this.api.post<Product>("/products", data);
   }
 }
 ```
@@ -51,9 +61,9 @@ Never call the repository directly from a View. Use the ViewModel.
 
 export function useProductViewModel() {
   const { create } = useGenericMutations(
-    ['products'], // Query Key to invalidate
+    ["products"], // Query Key to invalidate
     {
-      create: (data) => productContainer.productRepository.createProduct(data)
+      create: (data) => productContainer.productRepository.createProduct(data),
     }
   );
 
