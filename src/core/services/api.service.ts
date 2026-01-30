@@ -1,17 +1,17 @@
-'use client';
+"use client";
 
 import axios, {
   AxiosInstance,
   AxiosError,
   AxiosRequestConfig,
-  InternalAxiosRequestConfig
-} from 'axios';
-import type { IApiService } from '../interfaces/api.interface';
-import { appLogger } from '@core/common/logger';
+  InternalAxiosRequestConfig,
+} from "axios";
+import type { IApiService } from "../interfaces/api.interface";
+import { appLogger } from "@core/common/logger";
 
 /**
  * API Service Implementation using Axios
- * 
+ *
  * Enterprise-grade HTTP client with:
  * - Automatic token refresh on 401
  * - Request/Response interceptors
@@ -21,8 +21,8 @@ import { appLogger } from '@core/common/logger';
 export class ApiService implements IApiService {
   private axiosInstance: AxiosInstance;
   private axiosPublic: AxiosInstance;
-  private tokenKey = 'auth-token';
-  private refreshTokenKey = 'refresh-token';
+  private tokenKey = "auth-token";
+  private refreshTokenKey = "refresh-token";
   private refreshHandler: (() => Promise<string | null>) | null = null;
   private isRefreshing = false;
   private refreshPromise: Promise<string | null> | null = null;
@@ -31,18 +31,21 @@ export class ApiService implements IApiService {
     reject: (error: Error) => void;
   }> = [];
 
-  constructor(baseUrl: string = process.env.NEXT_PUBLIC_API_URL || '/api') {
-    const normalizedBaseUrl = baseUrl.startsWith('http')
-      ? baseUrl
-      : `https://${baseUrl}`;
+  // Retry configuration
+  private readonly maxRetries = 3;
+  private readonly retryDelayMs = 1000; // Base delay for exponential backoff
+  private readonly retryableStatusCodes = [500, 502, 503, 504];
+
+  constructor(baseUrl: string = process.env.NEXT_PUBLIC_API_URL || "/api") {
+    const normalizedBaseUrl = baseUrl.startsWith("http") ? baseUrl : `https://${baseUrl}`;
 
     // Authenticated instance
     this.axiosInstance = axios.create({
       baseURL: normalizedBaseUrl,
       headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'ngrok-skip-browser-warning': 'true',
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        "ngrok-skip-browser-warning": "true",
       },
       withCredentials: true, // equivalent to credentials: 'include'
     });
@@ -51,9 +54,9 @@ export class ApiService implements IApiService {
     this.axiosPublic = axios.create({
       baseURL: normalizedBaseUrl,
       headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'ngrok-skip-browser-warning': 'true',
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        "ngrok-skip-browser-warning": "true",
       },
       withCredentials: true,
     });
@@ -71,7 +74,7 @@ export class ApiService implements IApiService {
         const token = this.getAuthToken();
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
-          appLogger.auth('Token added to request');
+          appLogger.auth("Token added to request");
         }
         appLogger.api(`${config.method?.toUpperCase()} ${config.url}`);
         return config;
@@ -91,7 +94,7 @@ export class ApiService implements IApiService {
         // Handle 401 - attempt token refresh
         if (error.response?.status === 401 && !originalRequest._retry) {
           if (!this.refreshHandler) {
-            appLogger.auth('No refresh handler set, redirecting to login');
+            appLogger.auth("No refresh handler set, redirecting to login");
             this.handleUnauthorized();
             return Promise.reject(error);
           }
@@ -116,7 +119,7 @@ export class ApiService implements IApiService {
             const newToken = await this.refreshPromise;
 
             if (newToken) {
-              appLogger.auth('Token refreshed successfully');
+              appLogger.auth("Token refreshed successfully");
               // Retry queued requests
               this.failedQueue.forEach(({ resolve }) => resolve(newToken));
               this.failedQueue = [];
@@ -128,12 +131,12 @@ export class ApiService implements IApiService {
             }
 
             // Refresh failed
-            this.failedQueue.forEach(({ reject }) => reject(new Error('Token refresh failed')));
+            this.failedQueue.forEach(({ reject }) => reject(new Error("Token refresh failed")));
             this.failedQueue = [];
             this.handleUnauthorized();
             return Promise.reject(error);
           } catch (refreshError) {
-            appLogger.auth('Token refresh failed:', refreshError);
+            appLogger.auth("Token refresh failed:", refreshError);
             this.failedQueue.forEach(({ reject }) => reject(refreshError as Error));
             this.failedQueue = [];
             this.handleUnauthorized();
@@ -152,12 +155,10 @@ export class ApiService implements IApiService {
     );
 
     // Public instance - just log requests
-    this.axiosPublic.interceptors.request.use(
-      (config: InternalAxiosRequestConfig) => {
-        appLogger.api(`${config.method?.toUpperCase()} ${config.url} (public)`);
-        return config;
-      }
-    );
+    this.axiosPublic.interceptors.request.use((config: InternalAxiosRequestConfig) => {
+      appLogger.api(`${config.method?.toUpperCase()} ${config.url} (public)`);
+      return config;
+    });
 
     this.axiosPublic.interceptors.response.use(
       (response) => {
@@ -180,23 +181,90 @@ export class ApiService implements IApiService {
       const data = error.response.data as { message?: string; error?: string };
       return data.message || data.error || `HTTP ${error.response.status}`;
     }
-    if (error.code === 'ECONNABORTED') {
-      return 'Request timeout';
+    if (error.code === "ECONNABORTED") {
+      return "Request timeout";
     }
-    if (error.code === 'ERR_NETWORK') {
-      return 'Network error - please check your connection';
+    if (error.code === "ERR_NETWORK") {
+      return "Network error - please check your connection";
     }
-    return error.message || 'Unknown error';
+    return error.message || "Unknown error";
+  }
+
+  /**
+   * Calculate delay for exponential backoff
+   * @param attempt - Current retry attempt (0-indexed)
+   * @returns Delay in milliseconds with jitter
+   */
+  private getRetryDelay(attempt: number): number {
+    // Exponential backoff: 1s, 2s, 4s... with random jitter
+    const exponentialDelay = this.retryDelayMs * Math.pow(2, attempt);
+    const jitter = Math.random() * 500; // Add 0-500ms jitter
+    return exponentialDelay + jitter;
+  }
+
+  /**
+   * Check if error is retryable
+   */
+  private isRetryableError(error: AxiosError): boolean {
+    if (error.code === "ERR_NETWORK" || error.code === "ECONNABORTED") {
+      return true; // Network errors are retryable
+    }
+    if (error.response?.status && this.retryableStatusCodes.includes(error.response.status)) {
+      return true; // 5xx errors are retryable
+    }
+    return false;
+  }
+
+  /**
+   * Sleep helper for retry delay
+   */
+  private sleep(ms: number): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  /**
+   * Execute request with automatic retry on 5xx errors
+   * Uses exponential backoff with jitter
+   */
+  private async withRetry<T>(
+    requestFn: () => Promise<T>,
+    retries: number = this.maxRetries
+  ): Promise<T> {
+    let lastError: Error | null = null;
+
+    for (let attempt = 0; attempt <= retries; attempt++) {
+      try {
+        return await requestFn();
+      } catch (error) {
+        lastError = error as Error;
+
+        if (error instanceof AxiosError && this.isRetryableError(error)) {
+          if (attempt < retries) {
+            const delay = this.getRetryDelay(attempt);
+            appLogger.warn(
+              `Request failed, retrying in ${Math.round(delay)}ms (attempt ${attempt + 1}/${retries})`
+            );
+            await this.sleep(delay);
+            continue;
+          }
+        }
+
+        // Non-retryable error or max retries reached
+        throw error;
+      }
+    }
+
+    throw lastError || new Error("Request failed after retries");
   }
 
   /**
    * Unwrap response data (handles { data: T } wrapper)
    */
   private unwrap<T>(data: unknown): T {
-    if (data && typeof data === 'object' && 'data' in data) {
+    if (data && typeof data === "object" && "data" in data) {
       const response = data as { data: T; pagination?: unknown; meta?: unknown };
       // Preserve full structure if it has pagination or meta
-      if ('pagination' in response || 'meta' in response) {
+      if ("pagination" in response || "meta" in response) {
         return data as T;
       }
       return response.data;
@@ -208,10 +276,10 @@ export class ApiService implements IApiService {
    * Handle unauthorized - clear tokens and redirect
    */
   private handleUnauthorized(): void {
-    if (typeof window !== 'undefined' && window.location.pathname !== '/login') {
-      appLogger.warn('Unauthorized - clearing tokens and redirecting');
+    if (typeof window !== "undefined" && window.location.pathname !== "/login") {
+      appLogger.warn("Unauthorized - clearing tokens and redirecting");
       this.clearTokens();
-      window.location.href = '/login';
+      window.location.href = "/login";
     }
   }
 
@@ -233,7 +301,11 @@ export class ApiService implements IApiService {
   // Authenticated Methods
   // ============================================
 
-  async get<T>(endpoint: string, params?: Record<string, unknown>, signal?: AbortSignal): Promise<T> {
+  async get<T>(
+    endpoint: string,
+    params?: Record<string, unknown>,
+    signal?: AbortSignal
+  ): Promise<T> {
     const response = await this.axiosInstance.get(endpoint, this.buildConfig(signal, params));
     return this.unwrap<T>(response.data);
   }
@@ -262,7 +334,11 @@ export class ApiService implements IApiService {
   // Public Methods (No Auth)
   // ============================================
 
-  async getPublic<T>(endpoint: string, params?: Record<string, unknown>, signal?: AbortSignal): Promise<T> {
+  async getPublic<T>(
+    endpoint: string,
+    params?: Record<string, unknown>,
+    signal?: AbortSignal
+  ): Promise<T> {
     const response = await this.axiosPublic.get(endpoint, this.buildConfig(signal, params));
     return this.unwrap<T>(response.data);
   }
@@ -270,6 +346,36 @@ export class ApiService implements IApiService {
   async postPublic<T>(endpoint: string, data?: unknown, signal?: AbortSignal): Promise<T> {
     const response = await this.axiosPublic.post(endpoint, data, this.buildConfig(signal));
     return this.unwrap<T>(response.data);
+  }
+
+  // ============================================
+  // Retry-Enabled Methods (Auto-retry on 5xx)
+  // ============================================
+
+  /**
+   * GET request with automatic retry on 5xx errors
+   * Uses exponential backoff: 1s, 2s, 4s with jitter
+   */
+  async getWithRetry<T>(
+    endpoint: string,
+    params?: Record<string, unknown>,
+    signal?: AbortSignal
+  ): Promise<T> {
+    return this.withRetry(() => this.get<T>(endpoint, params, signal));
+  }
+
+  /**
+   * POST request with automatic retry on 5xx errors
+   */
+  async postWithRetry<T>(endpoint: string, data?: unknown, signal?: AbortSignal): Promise<T> {
+    return this.withRetry(() => this.post<T>(endpoint, data, signal));
+  }
+
+  /**
+   * PUT request with automatic retry on 5xx errors
+   */
+  async putWithRetry<T>(endpoint: string, data?: unknown, signal?: AbortSignal): Promise<T> {
+    return this.withRetry(() => this.put<T>(endpoint, data, signal));
   }
 
   // ============================================
@@ -286,7 +392,7 @@ export class ApiService implements IApiService {
 
     // If 204 No Content, fetch updated data
     if (response === null) {
-      appLogger.api('204 response, fetching updated data...');
+      appLogger.api("204 response, fetching updated data...");
       const refreshUrl = refreshEndpoint || endpoint;
       return this.get<T>(refreshUrl, undefined, signal);
     }
@@ -299,29 +405,29 @@ export class ApiService implements IApiService {
   // ============================================
 
   setAuthToken(token: string | null): void {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       if (token) {
         localStorage.setItem(this.tokenKey, token);
-        appLogger.auth('Token saved');
+        appLogger.auth("Token saved");
       } else {
         localStorage.removeItem(this.tokenKey);
-        appLogger.auth('Token cleared');
+        appLogger.auth("Token cleared");
       }
     }
   }
 
   getAuthToken(): string | null {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       return localStorage.getItem(this.tokenKey);
     }
     return null;
   }
 
   clearTokens(): void {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       localStorage.removeItem(this.tokenKey);
       localStorage.removeItem(this.refreshTokenKey);
-      appLogger.auth('All tokens cleared');
+      appLogger.auth("All tokens cleared");
     }
   }
 
@@ -330,6 +436,6 @@ export class ApiService implements IApiService {
    */
   setRefreshHandler(handler: () => Promise<string | null>): void {
     this.refreshHandler = handler;
-    appLogger.auth('Refresh handler set');
+    appLogger.auth("Refresh handler set");
   }
 }
