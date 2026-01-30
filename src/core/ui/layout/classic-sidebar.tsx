@@ -7,7 +7,7 @@ import { X, ChevronDown } from "lucide-react";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { useI18n } from "@core/providers/i18n-provider";
-import { useAuth } from "@core/providers/auth-provider";
+import { useAppStore } from "@core/store/useAppStore";
 import { useSettings } from "@core/providers/settings-provider";
 import { useLayoutStyles } from "./use-layout-styles";
 import { cn } from "@core/common/utils";
@@ -37,7 +37,7 @@ export function ClassicSidebar({
 }: ClassicSidebarProps) {
   const pathname = usePathname();
   const { t, direction } = useI18n();
-  const { user } = useAuth();
+  const user = useAppStore((state) => state.user);
   const { colorTheme } = useSettings();
 
   const {
@@ -94,26 +94,26 @@ export function ClassicSidebar({
                 item.disabled && "opacity-50 cursor-not-allowed",
                 isActive
                   ? cn(
-                      "text-primary-foreground shadow-lg",
-                      colorTheme === "blue" &&
-                        "bg-gradient-to-r from-blue-500 to-blue-600",
-                      colorTheme === "purple" &&
-                        "bg-gradient-to-r from-purple-500 to-purple-600",
-                      colorTheme === "green" &&
-                        "bg-gradient-to-r from-green-500 to-green-600",
-                      colorTheme === "orange" &&
-                        "bg-gradient-to-r from-orange-500 to-orange-600",
-                      colorTheme === "red" &&
-                        "bg-gradient-to-r from-red-500 to-red-600",
-                      colorTheme === "teal" &&
-                        "bg-gradient-to-r from-teal-500 to-teal-600",
-                      colorTheme === "pink" &&
-                        "bg-gradient-to-r from-pink-500 to-pink-600",
-                      colorTheme === "indigo" &&
-                        "bg-gradient-to-r from-indigo-500 to-indigo-600",
-                      colorTheme === "cyan" &&
-                        "bg-gradient-to-r from-cyan-500 to-cyan-600"
-                    )
+                    "text-primary-foreground shadow-lg",
+                    colorTheme === "blue" &&
+                    "bg-gradient-to-r from-blue-500 to-blue-600",
+                    colorTheme === "purple" &&
+                    "bg-gradient-to-r from-purple-500 to-purple-600",
+                    colorTheme === "green" &&
+                    "bg-gradient-to-r from-green-500 to-green-600",
+                    colorTheme === "orange" &&
+                    "bg-gradient-to-r from-orange-500 to-orange-600",
+                    colorTheme === "red" &&
+                    "bg-gradient-to-r from-red-500 to-red-600",
+                    colorTheme === "teal" &&
+                    "bg-gradient-to-r from-teal-500 to-teal-600",
+                    colorTheme === "pink" &&
+                    "bg-gradient-to-r from-pink-500 to-pink-600",
+                    colorTheme === "indigo" &&
+                    "bg-gradient-to-r from-indigo-500 to-indigo-600",
+                    colorTheme === "cyan" &&
+                    "bg-gradient-to-r from-cyan-500 to-cyan-600"
+                  )
                   : "text-sidebar-foreground/70 hover:bg-gradient-to-r hover:from-primary/10 hover:to-primary/5 hover:text-primary hover:shadow-md"
               )}
               style={{ paddingLeft: `${24 + indent}px` }}
@@ -189,26 +189,26 @@ export function ClassicSidebar({
           item.disabled && "opacity-50 cursor-not-allowed pointer-events-none",
           isActive
             ? cn(
-                "text-primary-foreground shadow-lg",
-                colorTheme === "blue" &&
-                  "bg-gradient-to-r from-blue-500 to-blue-600",
-                colorTheme === "purple" &&
-                  "bg-gradient-to-r from-purple-500 to-purple-600",
-                colorTheme === "green" &&
-                  "bg-gradient-to-r from-green-500 to-green-600",
-                colorTheme === "orange" &&
-                  "bg-gradient-to-r from-orange-500 to-orange-600",
-                colorTheme === "red" &&
-                  "bg-gradient-to-r from-red-500 to-red-600",
-                colorTheme === "teal" &&
-                  "bg-gradient-to-r from-teal-500 to-teal-600",
-                colorTheme === "pink" &&
-                  "bg-gradient-to-r from-pink-500 to-pink-600",
-                colorTheme === "indigo" &&
-                  "bg-gradient-to-r from-indigo-500 to-indigo-600",
-                colorTheme === "cyan" &&
-                  "bg-gradient-to-r from-cyan-500 to-cyan-600"
-              )
+              "text-primary-foreground shadow-lg",
+              colorTheme === "blue" &&
+              "bg-gradient-to-r from-blue-500 to-blue-600",
+              colorTheme === "purple" &&
+              "bg-gradient-to-r from-purple-500 to-purple-600",
+              colorTheme === "green" &&
+              "bg-gradient-to-r from-green-500 to-green-600",
+              colorTheme === "orange" &&
+              "bg-gradient-to-r from-orange-500 to-orange-600",
+              colorTheme === "red" &&
+              "bg-gradient-to-r from-red-500 to-red-600",
+              colorTheme === "teal" &&
+              "bg-gradient-to-r from-teal-500 to-teal-600",
+              colorTheme === "pink" &&
+              "bg-gradient-to-r from-pink-500 to-pink-600",
+              colorTheme === "indigo" &&
+              "bg-gradient-to-r from-indigo-500 to-indigo-600",
+              colorTheme === "cyan" &&
+              "bg-gradient-to-r from-cyan-500 to-cyan-600"
+            )
             : "text-sidebar-foreground/70 hover:bg-gradient-to-r hover:from-primary/10 hover:to-primary/5 hover:text-primary hover:shadow-md"
         )}
         style={{ paddingLeft: `${24 + indent}px` }}
@@ -270,8 +270,8 @@ export function ClassicSidebar({
           open
             ? "translate-x-0"
             : direction === "rtl"
-            ? "translate-x-full"
-            : "-translate-x-full"
+              ? "translate-x-full"
+              : "-translate-x-full"
         )}
       >
         <div className="flex flex-col h-full">
@@ -341,23 +341,23 @@ export function ClassicSidebar({
                       className={cn(
                         "text-primary font-semibold text-xl",
                         colorTheme === "blue" &&
-                          "bg-gradient-to-br from-blue-500/20 to-blue-600/10",
+                        "bg-gradient-to-br from-blue-500/20 to-blue-600/10",
                         colorTheme === "purple" &&
-                          "bg-gradient-to-br from-purple-500/20 to-purple-600/10",
+                        "bg-gradient-to-br from-purple-500/20 to-purple-600/10",
                         colorTheme === "green" &&
-                          "bg-gradient-to-br from-green-500/20 to-green-600/10",
+                        "bg-gradient-to-br from-green-500/20 to-green-600/10",
                         colorTheme === "orange" &&
-                          "bg-gradient-to-br from-orange-500/20 to-orange-600/10",
+                        "bg-gradient-to-br from-orange-500/20 to-orange-600/10",
                         colorTheme === "red" &&
-                          "bg-gradient-to-br from-red-500/20 to-red-600/10",
+                        "bg-gradient-to-br from-red-500/20 to-red-600/10",
                         colorTheme === "teal" &&
-                          "bg-gradient-to-br from-teal-500/20 to-teal-600/10",
+                        "bg-gradient-to-br from-teal-500/20 to-teal-600/10",
                         colorTheme === "pink" &&
-                          "bg-gradient-to-br from-pink-500/20 to-pink-600/10",
+                        "bg-gradient-to-br from-pink-500/20 to-pink-600/10",
                         colorTheme === "indigo" &&
-                          "bg-gradient-to-br from-indigo-500/20 to-indigo-600/10",
+                        "bg-gradient-to-br from-indigo-500/20 to-indigo-600/10",
                         colorTheme === "cyan" &&
-                          "bg-gradient-to-br from-cyan-500/20 to-cyan-600/10"
+                        "bg-gradient-to-br from-cyan-500/20 to-cyan-600/10"
                       )}
                     >
                       {/*{ user.firstName.charAt(0) ?? user.username}

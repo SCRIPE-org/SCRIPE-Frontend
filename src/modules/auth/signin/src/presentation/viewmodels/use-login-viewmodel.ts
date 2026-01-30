@@ -2,11 +2,9 @@
 
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@core/providers/auth-provider";
+import { useAuthLogin } from "../../../../hooks/useAuthLogin";
+import { useAppStore } from "@core/store/useAppStore";
 import { useI18n } from "@core/providers/i18n-provider";
-import { handleError, getUserFriendlyErrorMessage } from "@core/common/error-handler";
-import { appLogger } from "@core/common/logger";
-import { AuthMapper } from "../../../../core/data/mappers/AuthMapper";
 import { validateForm, VALIDATION_SETS, isFormValid } from "@core/common/validation";
 
 export interface LoginFormData {
@@ -20,17 +18,16 @@ export function useLoginViewModel() {
     password: "",
   });
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const { login, isAuthenticated } = useAuth();
+  const loginMutation = useAuthLogin();
+  const isAuthenticated = useAppStore((state) => state.isAuthenticated);
   const { t } = useI18n();
   const router = useRouter();
 
   // Form field handlers
   const updateField = useCallback((field: keyof LoginFormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    // Clear error when user starts typing
     if (error) setError("");
   }, [error]);
 
@@ -44,38 +41,32 @@ export function useLoginViewModel() {
     const validationResults = validateForm(formData, VALIDATION_SETS.LOGIN_FORM);
 
     if (!isFormValid(validationResults)) {
-      // Get the first validation error
       const firstError = Object.values(validationResults).find(result => !result.isValid);
       setError(firstError?.message || t("auth.validationError"));
       return;
     }
 
-    setIsLoading(true);
     setError("");
 
     try {
-      // Create domain model for login request using mapper
-      const loginRequest = AuthMapper.loginRequestFromJson({
+      await loginMutation.mutateAsync({
         username: formData.username,
         password: formData.password
       });
 
-      await login(formData.username, formData.password);
+      // Redirect handled by onSuccess in useAuthLogin? 
+      // Actually useAuthLogin only sets user. RouteGuard or this ViewModel should redirect.
+      // The original had a small delay then redirect.
 
-      // Small delay to ensure auth state is properly updated
       setTimeout(() => {
         router.replace("/");
       }, 100);
-    } catch (error) {
-      const appError = handleError(error as Error, 'Login');
-      appLogger.error("Login failed:", { error, appError });
-      const errorMessage = getUserFriendlyErrorMessage(appError);
-      setError(errorMessage);
-      // Error is displayed inline above the form fields, no page reload
-    } finally {
-      setIsLoading(false);
+
+    } catch (err: any) {
+      // Error handling is also done in mutation onError, but we set local error state for inline display
+      setError(err?.message || "Login failed");
     }
-  }, [formData.username, formData.password, login, router, t]);
+  }, [formData, loginMutation, router, t]);
 
   // Navigation handler for authenticated users
   const redirectIfAuthenticated = useCallback(() => {
@@ -95,7 +86,7 @@ export function useLoginViewModel() {
     // State
     formData,
     showPassword,
-    isLoading,
+    isLoading: loginMutation.isPending,
     error,
     isAuthenticated,
 

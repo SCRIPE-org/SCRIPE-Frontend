@@ -4,7 +4,7 @@ import type React from "react";
 import { ThemeProvider } from "@core/providers/theme-provider";
 import { I18nProvider } from "@core/providers/i18n-provider";
 import { ServiceProvider } from "@core/providers/service-provider";
-import { AuthProvider } from "@core/providers/auth-provider";
+// import { AuthProvider } from "@core/providers/auth-provider"; // Removed
 import { SettingsProvider } from "@core/providers/settings-provider";
 import { NavigationProvider } from "@core/providers/navigation-provider";
 import { RouteGuard } from "@core/providers/route-guard";
@@ -50,13 +50,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           <SettingsProvider>
             <I18nProvider>
               <ErrorBoundary>
-                <AuthProvider>
-                  <NavigationProvider>
-                    <RouteGuard>
-                      {children}
-                    </RouteGuard>
-                  </NavigationProvider>
-                </AuthProvider>
+                <NavigationProvider>
+                  <RouteGuard>
+                    {children}
+                  </RouteGuard>
+                </NavigationProvider>
               </ErrorBoundary>
               <EnhancedToaster />
             </I18nProvider>

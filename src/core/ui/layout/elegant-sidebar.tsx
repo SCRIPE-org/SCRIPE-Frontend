@@ -8,7 +8,7 @@ import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { Avatar, AvatarFallback } from "@core/ui/avatar";
 import { useI18n } from "@core/providers/i18n-provider";
-import { useAuth } from "@core/providers/auth-provider";
+import { useAppStore } from "@core/store/useAppStore";
 import { useSettings } from "@core/providers/settings-provider";
 import { cn } from "@core/common/utils";
 import {
@@ -36,7 +36,7 @@ export function ElegantSidebar({
 }: ElegantSidebarProps) {
   const pathname = usePathname();
   const { t, direction } = useI18n();
-  const { user } = useAuth();
+  const user = useAppStore((state) => state.user);
   const { sidebarStyle, animationLevel, buttonStyle, spacingSize } =
     useSettings();
 
@@ -162,8 +162,8 @@ export function ElegantSidebar({
                     spacingSize === "compact"
                       ? "w-8 h-8"
                       : spacingSize === "spacious"
-                      ? "w-10 h-10"
-                      : "w-9 h-9",
+                        ? "w-10 h-10"
+                        : "w-9 h-9",
                     isActive
                       ? "bg-white/20 shadow-md"
                       : "bg-gradient-to-br from-primary/10 to-primary/5 group-hover:from-primary/15 group-hover:to-primary/10",
@@ -249,8 +249,8 @@ export function ElegantSidebar({
               spacingSize === "compact"
                 ? "w-8 h-8"
                 : spacingSize === "spacious"
-                ? "w-10 h-10"
-                : "w-9 h-9",
+                  ? "w-10 h-10"
+                  : "w-9 h-9",
               isActive
                 ? "bg-white/20 shadow-md"
                 : "bg-gradient-to-br from-primary/10 to-primary/5 group-hover:from-primary/15 group-hover:to-primary/10",
@@ -320,8 +320,8 @@ export function ElegantSidebar({
           open
             ? "translate-x-0"
             : direction === "rtl"
-            ? "translate-x-full"
-            : "-translate-x-full",
+              ? "translate-x-full"
+              : "-translate-x-full",
           "before:absolute before:inset-0 before:bg-gradient-to-b before:from-primary/5 before:via-primary/2 before:to-primary/5 before:opacity-60"
         )}
       >
@@ -359,8 +359,8 @@ export function ElegantSidebar({
                 spacingSize === "compact"
                   ? "mt-12 p-4"
                   : spacingSize === "spacious"
-                  ? "mt-16 p-6"
-                  : "mt-14 p-5",
+                    ? "mt-16 p-6"
+                    : "mt-14 p-5",
                 "mt-24"
               )}
             >
@@ -375,8 +375,8 @@ export function ElegantSidebar({
                   spacingSize === "compact"
                     ? "space-x-3 rtl:space-x-reverse p-3"
                     : spacingSize === "spacious"
-                    ? "space-x-4 rtl:space-x-reverse p-4"
-                    : "space-x-3 rtl:space-x-reverse p-3"
+                      ? "space-x-4 rtl:space-x-reverse p-4"
+                      : "space-x-3 rtl:space-x-reverse p-3"
                 )}
               >
                 <div className="relative">
@@ -388,8 +388,8 @@ export function ElegantSidebar({
                       spacingSize === "compact"
                         ? "h-10 w-10"
                         : spacingSize === "spacious"
-                        ? "h-14 w-14"
-                        : "h-12 w-12"
+                          ? "h-14 w-14"
+                          : "h-12 w-12"
                     )}
                   >
                     <AvatarFallback
@@ -399,8 +399,8 @@ export function ElegantSidebar({
                         spacingSize === "compact"
                           ? "text-sm"
                           : spacingSize === "spacious"
-                          ? "text-lg"
-                          : "text-base"
+                            ? "text-lg"
+                            : "text-base"
                       )}
                     >
                       {/*{ user.firstName.charAt(0) ?? user.username}
@@ -415,8 +415,8 @@ export function ElegantSidebar({
                       spacingSize === "compact"
                         ? "bottom-0 right-0 w-3 h-3"
                         : spacingSize === "spacious"
-                        ? "bottom-0 right-0 w-4 h-4"
-                        : "bottom-0 right-0 w-3 h-3"
+                          ? "bottom-0 right-0 w-4 h-4"
+                          : "bottom-0 right-0 w-3 h-3"
                     )}
                   >
                     <div className="w-full h-full bg-green-500 rounded-full animate-pulse" />
@@ -429,8 +429,8 @@ export function ElegantSidebar({
                       spacingSize === "compact"
                         ? "text-sm"
                         : spacingSize === "spacious"
-                        ? "text-base"
-                        : "text-sm"
+                          ? "text-base"
+                          : "text-sm"
                     )}
                   >
                     {user.firstName} {user.lastName}
@@ -441,8 +441,8 @@ export function ElegantSidebar({
                       spacingSize === "compact"
                         ? "text-xs"
                         : spacingSize === "spacious"
-                        ? "text-sm"
-                        : "text-xs"
+                          ? "text-sm"
+                          : "text-xs"
                     )}
                   >
                     {user.adminTypeName}
@@ -472,8 +472,8 @@ export function ElegantSidebar({
               spacingSize === "compact"
                 ? "p-3"
                 : spacingSize === "spacious"
-                ? "p-5"
-                : "p-4"
+                  ? "p-5"
+                  : "p-4"
             )}
           >
             <div className="text-xs text-muted-foreground/60 text-center font-medium">

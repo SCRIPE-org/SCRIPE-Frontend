@@ -11,7 +11,8 @@ import {
   Home,
 } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
-import { useAuth } from "@core/providers/auth-provider";
+import { useAppStore } from "@core/store/useAppStore";
+import { useAuthLogout } from "@modules/auth/hooks/useAuthLogout";
 import { useSettings } from "@core/providers/settings-provider";
 import { useLayoutStyles } from "./use-layout-styles";
 import { useDynamicNavigation } from "@core/ui/navigation/dynamic-navigation";
@@ -40,7 +41,8 @@ export function NavigationHeader({
   isMobile,
 }: NavigationHeaderProps) {
   const { language, direction, t } = useI18n();
-  const { user, logout } = useAuth();
+  const user = useAppStore((state) => state.user);
+  const { logout } = useAuthLogout();
   const { colorTheme, cardStyle } = useSettings();
   const { getAnimationClass } = useLayoutStyles();
   const animationClass = getAnimationClass();
@@ -54,10 +56,10 @@ export function NavigationHeader({
         cardStyle === "glass"
           ? "bg-white/5 dark:bg-white/5 backdrop-blur-xl border-white/10 dark:border-white/10 shadow-[0_8px_32px_0_rgba(31,38,135,0.37)] dark:shadow-[0_8px_32px_0_rgba(255,255,255,0.1)]"
           : cardStyle === "solid"
-          ? "bg-card border-border backdrop-blur-sm"
-          : cardStyle === "bordered"
-          ? "bg-card border border-border"
-          : "bg-card"
+            ? "bg-card border-border backdrop-blur-sm"
+            : cardStyle === "bordered"
+              ? "bg-card border border-border"
+              : "bg-card"
       )}
     >
       {/* Header Content Container */}
@@ -68,13 +70,13 @@ export function NavigationHeader({
           // Dynamic margins based on sidebar states
           direction === "rtl"
             ? cn(
-                isMobile ? "mr-0" : "mr-24", // Account for main sidebar on desktop (w-24 = 96px)
-                !isMobile && panelOpen && hasPanel && "mr-[352px]" // Total width when both sidebars open (96px + 256px)
-              )
+              isMobile ? "mr-0" : "mr-24", // Account for main sidebar on desktop (w-24 = 96px)
+              !isMobile && panelOpen && hasPanel && "mr-[352px]" // Total width when both sidebars open (96px + 256px)
+            )
             : cn(
-                isMobile ? "ml-0" : "ml-24", // Account for main sidebar on desktop (w-24 = 96px)
-                !isMobile && panelOpen && hasPanel && "ml-[352px]" // Total width when both sidebars open (96px + 256px)
-              )
+              isMobile ? "ml-0" : "ml-24", // Account for main sidebar on desktop (w-24 = 96px)
+              !isMobile && panelOpen && hasPanel && "ml-[352px]" // Total width when both sidebars open (96px + 256px)
+            )
         )}
       >
         {/* Left Section - Mobile Menu + Panel Toggle + Title */}
@@ -106,24 +108,24 @@ export function NavigationHeader({
               {direction === "rtl" ? (
                 panelOpen ? (
                   <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none">
-                    <path d="M9 18L15 12L9 6" stroke="hsl(var(--primary))" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M9 18L15 12L9 6" stroke="hsl(var(--primary))" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 ) : (
                   <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" style={{ transform: 'scaleX(-1)' }}>
-                    <rect x="3" y="6" width="18" height="2" rx="1" fill="hsl(var(--primary))"/>
-                    <rect x="3" y="11" width="12" height="2" rx="1" fill="hsl(var(--primary))"/>
-                    <rect x="3" y="16" width="15" height="2" rx="1" fill="hsl(var(--primary))"/>
+                    <rect x="3" y="6" width="18" height="2" rx="1" fill="hsl(var(--primary))" />
+                    <rect x="3" y="11" width="12" height="2" rx="1" fill="hsl(var(--primary))" />
+                    <rect x="3" y="16" width="15" height="2" rx="1" fill="hsl(var(--primary))" />
                   </svg>
                 )
               ) : panelOpen ? (
                 <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none">
-                  <path d="M15 18L9 12L15 6" stroke="hsl(var(--primary))" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M15 18L9 12L15 6" stroke="hsl(var(--primary))" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               ) : (
                 <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none">
-                  <rect x="3" y="6" width="18" height="2" rx="1" fill="hsl(var(--primary))"/>
-                  <rect x="3" y="11" width="12" height="2" rx="1" fill="hsl(var(--primary))"/>
-                  <rect x="3" y="16" width="15" height="2" rx="1" fill="hsl(var(--primary))"/>
+                  <rect x="3" y="6" width="18" height="2" rx="1" fill="hsl(var(--primary))" />
+                  <rect x="3" y="11" width="12" height="2" rx="1" fill="hsl(var(--primary))" />
+                  <rect x="3" y="16" width="15" height="2" rx="1" fill="hsl(var(--primary))" />
                 </svg>
               )}
             </div>
@@ -173,7 +175,7 @@ export function NavigationHeader({
             size="icon"
             onClick={() => router.push("/")}
             className="hover:bg-accent hover:text-accent-foreground"
-            // title={t("nav.home") || "Home"}
+          // title={t("nav.home") || "Home"}
           >
             <Home className="w-5 h-5" />
           </Button>

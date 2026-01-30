@@ -1,7 +1,7 @@
 "use client";
 
 import { appLogger } from "@core/common/logger";
-import { useAuth } from "@core/providers/auth-provider";
+import { useAppStore } from "@core/store/useAppStore";
 import { useServices } from "@core/providers/service-provider";
 import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -16,7 +16,10 @@ export interface AuthorizationState {
  * Hook to check if user is authorized to access current page
  */
 export function useAuthorization(): AuthorizationState {
-  const { isAuthenticated, isLoading: authLoading } = useAuth();
+  const isAuthenticated = useAppStore((state) => state.isAuthenticated);
+  const hasHydrated = useAppStore((state) => state._hasHydrated);
+  // const { isLoading: authLoading } = useAuth(); // Removed
+  const authLoading = !hasHydrated;
   const { navigationService } = useServices();
   const pathname = usePathname();
   const router = useRouter();
@@ -44,7 +47,7 @@ export function useAuthorization(): AuthorizationState {
     const checkAuthorization = async () => {
       try {
         const navigationData = navigationService.getNavigationData();
-        
+
         if (!navigationData) {
           // Navigation data not loaded yet, redirect to login to refresh
           router.push("/login");
@@ -52,7 +55,7 @@ export function useAuthorization(): AuthorizationState {
         }
 
         const isAuthorized = navigationService.hasPageAccess(pathname);
-        
+
         setAuthState({
           isAuthorized,
           isLoading: false,
@@ -84,8 +87,8 @@ export function useAuthorization(): AuthorizationState {
  */
 export function usePageAccess(pagePath: string): boolean {
   const { navigationService } = useServices();
-  const { isAuthenticated } = useAuth();
-  
+  const isAuthenticated = useAppStore((state) => state.isAuthenticated);
+
   if (!isAuthenticated) {
     return false;
   }

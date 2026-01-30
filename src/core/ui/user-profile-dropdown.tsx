@@ -12,7 +12,8 @@ import {
   DropdownMenuTrigger,
 } from "@core/ui/dropdown-menu";
 import { ChevronDown, Settings, User, LogOut } from "lucide-react";
-import { useAuth } from "@core/providers/auth-provider";
+import { useAppStore } from "@core/store/useAppStore";
+import { useAuthLogout } from "@modules/auth/hooks/useAuthLogout";
 import { useI18n } from "@core/providers/i18n-provider";
 import { cn } from "@core/common/utils";
 import { useSettings } from "@core/providers/settings-provider";
@@ -20,12 +21,12 @@ import { appLogger } from "@core/common/logger";
 
 interface UserProfileDropdownProps {
   variant?:
-    | "default"
-    | "compact"
-    | "minimal"
-    | "elegant"
-    | "floating"
-    | "navigation";
+  | "default"
+  | "compact"
+  | "minimal"
+  | "elegant"
+  | "floating"
+  | "navigation";
   showName?: boolean;
   className?: string;
 }
@@ -35,7 +36,8 @@ export function UserProfileDropdown({
   showName = true,
   className,
 }: UserProfileDropdownProps) {
-  const { user, logout } = useAuth();
+  const user = useAppStore((state) => state.user);
+  const { logout } = useAuthLogout();
   const { t } = useI18n();
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);

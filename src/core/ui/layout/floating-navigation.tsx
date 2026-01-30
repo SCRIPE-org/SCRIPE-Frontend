@@ -9,7 +9,8 @@ import { Badge } from "@core/ui/badge";
 import { Avatar, AvatarFallback } from "@core/ui/avatar";
 import { Card, CardContent } from "@core/ui/card";
 import { useI18n } from "@core/providers/i18n-provider";
-import { useAuth } from "@core/providers/auth-provider";
+import { useAppStore } from "@core/store/useAppStore";
+import { useAuthLogout } from "@modules/auth/hooks/useAuthLogout";
 import { useSettings } from "@core/providers/settings-provider";
 import { cn } from "@core/common/utils";
 import {
@@ -37,9 +38,18 @@ export function FloatingNavigation({
 }: FloatingNavigationProps) {
   const pathname = usePathname();
   const { t, direction } = useI18n();
-  const { user } = useAuth();
+  const user = useAppStore((state) => state.user);
+  const { logout } = useAuthLogout();
   const { cardStyle, animationLevel, buttonStyle, spacingSize } = useSettings();
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      // appLogger.error("Logout failed:", error);
+    }
+  };
 
   // Get navigation items with translations
   const navigation = useDynamicNavigation();
@@ -303,10 +313,10 @@ export function FloatingNavigation({
                   spacingSize === "compact"
                     ? "space-x-3 rtl:space-x-reverse p-3"
                     : spacingSize === "comfortable"
-                    ? "space-x-5 rtl:space-x-reverse p-5"
-                    : spacingSize === "spacious"
-                    ? "space-x-6 rtl:space-x-reverse p-6"
-                    : "space-x-4 rtl:space-x-reverse p-4"
+                      ? "space-x-5 rtl:space-x-reverse p-5"
+                      : spacingSize === "spacious"
+                        ? "space-x-6 rtl:space-x-reverse p-6"
+                        : "space-x-4 rtl:space-x-reverse p-4"
                 )}
               >
                 <div className="relative">
@@ -317,8 +327,8 @@ export function FloatingNavigation({
                       spacingSize === "compact"
                         ? "h-10 w-10"
                         : spacingSize === "spacious"
-                        ? "h-14 w-14"
-                        : "h-12 w-12"
+                          ? "h-14 w-14"
+                          : "h-12 w-12"
                     )}
                   >
                     <AvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/10 text-primary font-semibold">

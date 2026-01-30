@@ -2,7 +2,7 @@
 
 import type React from "react";
 import { createContext, useContext, useState, useEffect, useCallback } from "react";
-import { useAuth } from "@core/providers/auth-provider";
+import { useAppStore } from "@core/store/useAppStore";
 import { useServices } from "@core/providers/service-provider";
 import { NavigationData } from "@core/domain/entities";
 import { NavigationMapper } from "@core/domain/mappers/NavigationMapper";
@@ -62,7 +62,9 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
 
   const [isLoading, setIsLoading] = useState(false);
   const [hasTriggeredRefresh, setHasTriggeredRefresh] = useState(false);
-  const { isAuthenticated, user, isLoading: authLoading } = useAuth();
+  const isAuthenticated = useAppStore((state) => state.isAuthenticated);
+  const user = useAppStore((state) => state.user);
+  const authLoading = false; // const { isAuthenticated, user, isLoading: authLoading } = useAuth();
   const { navigationService } = useServices();
 
   /**

@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card"
 import { Button } from "@core/ui/button"
 import { Input } from "@core/ui/input"
 import { Label } from "@core/ui/label"
-import { useAuth } from "@core/providers/auth-provider"
+import { useAppStore } from "@core/store/useAppStore"
 import { useI18n } from "@core/providers/i18n-provider"
 import {
   User,
@@ -33,7 +33,7 @@ import { ErrorMessage } from "@core/ui/error-message"
 import { useProfileViewModel } from "../viewmodels/useUserViewModel"
 
 export function ProfileView() {
-  const { user: authUser } = useAuth()
+  const authUser = useAppStore((state) => state.user)
   const { t, language } = useI18n()
   const isRTL = language === 'ar'
 

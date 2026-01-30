@@ -7,7 +7,8 @@ import { LogOut, X, ChevronDown } from "lucide-react";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { useI18n } from "@core/providers/i18n-provider";
-import { useAuth } from "@core/providers/auth-provider";
+import { useAppStore } from "@core/store/useAppStore";
+import { useAuthLogout } from "@modules/auth/hooks/useAuthLogout";
 import { cn } from "@core/common/utils";
 import {
   Collapsible,
@@ -38,7 +39,8 @@ export function ModernSidebar({
 }: ModernSidebarProps) {
   const pathname = usePathname();
   const { t, direction } = useI18n();
-  const { logout, user } = useAuth();
+  const user = useAppStore((state) => state.user);
+  const { logout } = useAuthLogout();
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
   const [isHovered, setIsHovered] = useState(false);
 
@@ -257,8 +259,8 @@ export function ModernSidebar({
           open
             ? "translate-x-0"
             : direction === "rtl"
-            ? "translate-x-full"
-            : "-translate-x-full",
+              ? "translate-x-full"
+              : "-translate-x-full",
           isHovered ? "w-80" : "w-20"
         )}
         onMouseEnter={handleMouseEnter}

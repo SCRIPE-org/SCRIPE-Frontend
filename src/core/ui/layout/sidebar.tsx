@@ -7,7 +7,8 @@ import { LogOut, X, ChevronDown } from "lucide-react";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { useI18n } from "@core/providers/i18n-provider";
-import { useAuth } from "@core/providers/auth-provider";
+import { useAppStore } from "@core/store/useAppStore";
+import { useAuthLogout } from "@modules/auth/hooks/useAuthLogout";
 import { cn } from "@core/common/utils";
 import {
   Collapsible,
@@ -36,7 +37,8 @@ export function Sidebar({
 }: SidebarProps) {
   const pathname = usePathname();
   const { t, direction } = useI18n();
-  const { logout, user } = useAuth();
+  const user = useAppStore((state) => state.user);
+  const { logout } = useAuthLogout();
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
 
   const handleLogout = async () => {
@@ -275,7 +277,7 @@ export function Sidebar({
                   )}
                 >
                   <AvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/10 text-primary text-sm font-semibold">
-                    //{ user.firstName.charAt(0) ?? user.firstName}
+                    //{user.firstName.charAt(0) ?? user.firstName}
                     {user.lastName.charAt(0) ?? ""}
                   </AvatarFallback>
                 </Avatar>

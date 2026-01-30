@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { useAuth } from "@core/providers/auth-provider";
+import { useAppStore } from "@core/store/useAppStore";
 import { useNavigation } from "@core/providers/navigation-provider";
 import { USE_DYNAMIC_NAVIGATION } from "@core/config/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -30,7 +30,9 @@ export function RouteGuard({ children }: RouteGuardProps) {
     return <>{children}</>;
   }
 
-  const { isAuthenticated, isLoading: authLoading } = useAuth();
+  const isAuthenticated = useAppStore((state) => state.isAuthenticated);
+  const hasHydrated = useAppStore((state) => state._hasHydrated);
+  const authLoading = !hasHydrated;
   const { hasPageAccess, isLoading: navLoading } = useNavigation();
   const router = useRouter();
   const pathname = usePathname();
