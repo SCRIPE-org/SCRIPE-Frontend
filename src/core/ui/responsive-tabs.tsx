@@ -4,22 +4,24 @@ import React from "react";
 import { cn } from "@core/common/utils";
 import { Button } from "@core/ui/button";
 
+export interface Tab {
+  id: string;
+  label: string;
+  icon?: React.ReactNode;
+}
+
 interface ResponsiveTabsProps {
-  tabs: Array<{
-    id: string;
-    label: string;
-    icon?: React.ReactNode;
-  }>;
+  tabs: Tab[];
   activeTab: string;
   onTabChange: (tabId: string) => void;
   className?: string;
 }
 
-export function ResponsiveTabs({ 
-  tabs, 
-  activeTab, 
-  onTabChange, 
-  className 
+export function ResponsiveTabs({
+  tabs,
+  activeTab,
+  onTabChange,
+  className
 }: ResponsiveTabsProps) {
   return (
     <div className={cn("w-full", className)}>

@@ -3,8 +3,8 @@
 import type React from "react"
 import { createContext, useContext, useState, useEffect } from "react"
 import { useSettings } from "@core/providers/settings-provider"
-import { ar } from "@/locales/ar"
-import { en } from "@/locales/en"
+import { ar } from "@core/locales/ar"
+import { en } from "@core/locales/en"
 
 export type Language = "ar" | "en"
 type Direction = "rtl" | "ltr"

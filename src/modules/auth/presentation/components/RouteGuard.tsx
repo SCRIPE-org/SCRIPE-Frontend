@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { useAuth } from "@/providers/auth-provider";
-import { useNavigation } from "@/providers/navigation-provider";
-import { USE_DYNAMIC_NAVIGATION } from "@/config/navigation";
-import { useI18n } from "@/providers/i18n-provider";
-import { LoadingSpinner } from "../ui/loading-spinner";
+import { useAuth } from "@core/providers/auth-provider";
+import { useNavigation } from "@core/providers/navigation-provider";
+import { USE_DYNAMIC_NAVIGATION } from "@core/config/navigation";
+import { useI18n } from "@core/providers/i18n-provider";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
 
 interface RouteGuardProps {
   children: React.ReactNode;
@@ -86,7 +86,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
-          <LoadingSpinner /> 
+          <LoadingSpinner />
           <p className="text-muted-foreground">{t("common.loading")}</p>
         </div>
       </div>

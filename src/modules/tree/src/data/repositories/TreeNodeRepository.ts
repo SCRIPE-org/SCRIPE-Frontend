@@ -5,15 +5,14 @@
  * Uses domain models and follows clean architecture principles.
  */
 
-import type { INotificationService } from "./notification.service";
+import type { INotificationService } from "@core/services/notification.service";
 import type { PaginationInfo } from "@core/common/pagination";
-import { 
-  TreeNode, 
-  TreeNodeMapper, 
-  CreateTreeNodeRequest, 
+import {
+  TreeNode,
+  CreateTreeNodeRequest,
   UpdateTreeNodeRequest,
-  type TreeNodesResponse
-} from "../../domain/entities";
+} from "../../domain/entities/TreeNode";
+import { TreeNodeMapper, type TreeNodesResponse } from "../mappers/TreeNodeMapper";
 
 export interface ITreeNodeService {
   getTreeNodes(params?: { page?: number; pageSize?: number; PageSearch?: string }): Promise<TreeNodesResponse>;
@@ -279,18 +278,18 @@ export class TreeNodeService implements ITreeNodeService {
         const searchInTree = (nodes: TreeNode[]): TreeNode[] => {
           return nodes.filter(node => {
             const matches = node.name.toLowerCase().includes(searchTerm) ||
-                           node.type?.toLowerCase().includes(searchTerm) ||
-                           node.description?.toLowerCase().includes(searchTerm);
-            
+              node.type?.toLowerCase().includes(searchTerm) ||
+              node.description?.toLowerCase().includes(searchTerm);
+
             if (matches) return true;
-            
+
             if (node.children) {
               const filteredChildren = searchInTree(node.children);
               if (filteredChildren.length > 0) {
                 return true;
               }
             }
-            
+
             return false;
           }).map(node => {
             if (node.children) {
@@ -300,7 +299,7 @@ export class TreeNodeService implements ITreeNodeService {
             return node;
           });
         };
-        
+
         filteredNodes = searchInTree(this.treeNodes);
       }
 

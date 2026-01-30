@@ -11,7 +11,8 @@ import { useServices } from "@core/providers/service-provider";
 import { useI18n } from "@core/providers/i18n-provider";
 import { handleError, getUserFriendlyErrorMessage } from "@core/common/error-handler";
 import { appLogger } from "@core/common/logger";
-import { User, UserMapper } from "../../domain/entities";
+import { User } from "@core/domain/entities"; // Keep User import
+import { UserMapper } from "../../data/mappers/UserMapper"; // Changed UserMapper import path
 import type { UpdateProfileRequest, ChangePasswordRequest } from "@core/services/user.service";
 import { validateForm, VALIDATION_SETS, passwordConfirmation, isFormValid } from "@core/common/validation";
 
@@ -70,7 +71,7 @@ export function useProfileViewModel() {
 
       const user = await userService.getCurrentUser();
       setProfile(user);
-      
+
       // Update form data with user data
       setProfileFormData({
         firstName: user.firstName || "",
@@ -112,10 +113,10 @@ export function useProfileViewModel() {
       const updatedUser = await userService.updateProfile(updateRequest);
       setProfile(updatedUser);
       setProfileSuccess(true);
-      
+
       // Reset success message after 3 seconds
       setTimeout(() => setProfileSuccess(false), 3000);
-      
+
       appLogger.info("Profile updated successfully", { userId: updatedUser.id });
     } catch (error) {
       const appError = handleError(error as Error, 'ProfileViewModel.updateProfile');
@@ -145,7 +146,7 @@ export function useProfileViewModel() {
       };
 
       const validationResults = validateForm(passwordFormData, passwordValidationSet);
-      
+
       if (!isFormValid(validationResults)) {
         const firstError = Object.values(validationResults).find(result => !result.isValid);
         setPasswordError(firstError?.message || "Invalid password data");
@@ -158,17 +159,17 @@ export function useProfileViewModel() {
       };
 
       await userService.changePassword(passwordRequest);
-      
+
       // Reset form on success
       setPasswordFormData({
         currentPassword: "",
         newPassword: "",
         confirmPassword: "",
       });
-      
+
       setPasswordSuccess(true);
       setTimeout(() => setPasswordSuccess(false), 3000);
-      
+
       appLogger.info("Password changed successfully");
     } catch (error) {
       const appError = handleError(error as Error, 'ProfileViewModel.changePassword');

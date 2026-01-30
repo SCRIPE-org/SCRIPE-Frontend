@@ -6,15 +6,16 @@
  * from domain logic.
  */
 
-import { 
-  Product, 
-  CreateProductRequest, 
+import {
+  Product,
+  CreateProductRequest,
   UpdateProductRequest,
   type ProductData,
   type CreateProductRequestData,
   type UpdateProductRequestData
 } from '../../domain/entities/Product';
-import type { PaginationInfo } from '@core/common/pagination';
+import { type PaginationMetadata } from "@core/common/types/pagination";
+import type { PaginationInfo } from '@core/common/types/pagination';
 
 export interface ProductsResponse {
   data: Product[];
@@ -151,7 +152,7 @@ export class ProductMapper {
    */
   static updateRequestToJson(request: UpdateProductRequest): any {
     const json: any = { id: request.id };
-    
+
     if (request.name !== undefined) json.name = request.name;
     if (request.category !== undefined) json.category = request.category;
     if (request.price !== undefined) json.price = request.price;
@@ -167,7 +168,7 @@ export class ProductMapper {
     if (request.warranty !== undefined) json.warranty = request.warranty;
     if (request.tags !== undefined) json.tags = request.tags;
     if (request.images !== undefined) json.images = request.images;
-    
+
     return json;
   }
 
@@ -191,7 +192,7 @@ export class ProductMapper {
     // Handle paginated response with data property
     if (response && typeof response === 'object' && 'data' in response) {
       return {
-        data: Array.isArray(response.data) 
+        data: Array.isArray(response.data)
           ? response.data.map((item: any) => this.fromJson(item))
           : [],
         pagination: response.pagination || {

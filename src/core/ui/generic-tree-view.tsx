@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { TreeView } from "@core/ui/tree-view";
 import { Button } from "@core/ui/button";
-import { GenericForm } from "@/components/forms/generic-form";
+import { GenericForm } from "@core/ui/forms/generic-form";
 import { GenericModal } from "@core/ui/generic-modal";
 import GenericSelect from "@core/ui/generic-select";
 import {

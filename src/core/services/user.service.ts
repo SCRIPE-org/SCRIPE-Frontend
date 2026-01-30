@@ -7,10 +7,11 @@
  */
 
 import { type IApiService } from "./api.service";
-import { API_ENDPOINTS } from "@/config/api-endpoints";
-import { User, UserMapper, type UserData } from "@/domain";
-import { appLogger } from "@/lib/logger";
-import { passwordStrength, phone, validateForm, VALIDATION_SETS } from "@/lib/validation";
+import { API_ENDPOINTS } from "@core/config/api-endpoints";
+import { User, type UserData } from "@core/domain/entities/User";
+import { UserMapper } from "../../modules/user/src/data/mappers/UserMapper";
+import { appLogger } from "@core/common/logger";
+import { passwordStrength, phone, validateForm, VALIDATION_SETS } from "@core/common/validation";
 
 export interface UpdateProfileRequest {
   firstName: string;
@@ -24,7 +25,7 @@ export interface ChangePasswordRequest {
 }
 
 export class UserService {
-  constructor(private readonly apiService: IApiService) {}
+  constructor(private readonly apiService: IApiService) { }
 
   /**
    * Get current user profile
@@ -33,7 +34,7 @@ export class UserService {
     // ========================================
     // MOCK DATA FOR TESTING (COMMENT OUT FOR REAL API)
     // ========================================
-    
+
     appLogger.info("Using mock user data for testing");
     return UserMapper.fromJson({
       id: "mock-user-id",
@@ -43,7 +44,7 @@ export class UserService {
       phoneNumber: "+1234567890",
       adminTypeName: "Administrator",
     });
-    
+
 
     // ========================================
     // REAL API ENDPOINT
@@ -64,7 +65,7 @@ export class UserService {
     // ========================================
     // MOCK DATA FOR TESTING (COMMENT OUT FOR REAL API)
     // ========================================
-    
+
     appLogger.info("Using mock profile update for testing");
     return UserMapper.fromJson({
       id: "mock-user-id",
@@ -74,7 +75,7 @@ export class UserService {
       phoneNumber: profileData.phoneNumber,
       adminTypeName: "Administrator",
     });
-    
+
 
     // ========================================
     // REAL API ENDPOINT
@@ -98,14 +99,14 @@ export class UserService {
     // ========================================
     // MOCK DATA FOR TESTING (COMMENT OUT FOR REAL API)
     // ========================================
-    
+
     appLogger.info("Using mock password change for testing");
     // Simulate password validation
     if (passwordData.newPassword.length < 6) {
       throw new Error("Password must be at least 6 characters long");
     }
     return Promise.resolve();
-    
+
 
     // ========================================
     // REAL API ENDPOINT
@@ -132,7 +133,7 @@ export class UserService {
       requireNumber: true,
       requireSpecial: false,
     })(password);
-    
+
     return {
       isValid: validation.isValid,
       message: validation.message,
@@ -144,7 +145,7 @@ export class UserService {
    */
   validateProfileData(profileData: UpdateProfileRequest): { isValid: boolean; message?: string } {
     const validationResults = validateForm(profileData, VALIDATION_SETS.PROFILE_FORM);
-    
+
     // Check if any validation failed
     for (const [fieldName, result] of Object.entries(validationResults)) {
       if (!result.isValid) {
@@ -154,7 +155,7 @@ export class UserService {
         };
       }
     }
-    
+
     return { isValid: true };
   }
 }

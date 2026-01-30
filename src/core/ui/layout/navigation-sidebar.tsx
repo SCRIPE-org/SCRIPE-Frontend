@@ -6,11 +6,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronDown, ChevronRight, Settings } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
-import { useDynamicNavigation } from "@/components/navigation/dynamic-navigation";
+import { useDynamicNavigation } from "@core/ui/navigation/dynamic-navigation";
 import {
   isNavigationItemActive,
   type NavigationItem,
-} from "@/config/navigation";
+} from "@core/config/navigation";
 import { cn } from "@core/common/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@core/ui/avatar";
 import { Button } from "@core/ui/button";

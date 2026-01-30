@@ -26,7 +26,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@core/ui/dialog";
-import { GenericForm, FieldConfig } from "@/components/forms/generic-form";
+import { GenericForm, FieldConfig } from "@core/ui/forms/generic-form";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { ErrorMessage } from "@core/ui/error-message";
 import { ConfirmationDialog } from "@core/ui/confirmation-dialog";

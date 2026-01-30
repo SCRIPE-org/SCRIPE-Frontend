@@ -5,10 +5,10 @@ import { Button } from '@core/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@core/ui/card';
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { handleError } from '@/lib/error-handler';
-import { appLogger } from '@/lib/logger';
-import { ar } from '@/locales/ar';
-import { en } from '@/locales/en';
+import { handleError } from '@core/common/error-handler';
+import { appLogger } from '@core/common/logger';
+import { ar } from '@core/locales/ar';
+import { en } from '@core/locales/en';
 
 // Translation function that takes language as parameter
 const getTranslations = (language: 'ar' | 'en') => {

@@ -7,13 +7,13 @@ import { Input } from "@core/ui/input"
 import { Label } from "@core/ui/label"
 import { useAuth } from "@core/providers/auth-provider"
 import { useI18n } from "@core/providers/i18n-provider"
-import { 
-  User, 
-  Lock, 
-  Eye, 
-  EyeOff, 
-  AlertCircle, 
-  CheckCircle, 
+import {
+  User,
+  Lock,
+  Eye,
+  EyeOff,
+  AlertCircle,
+  CheckCircle,
   Loader2,
   Phone,
   Camera,
@@ -30,13 +30,13 @@ import {
 } from "lucide-react"
 import { LoadingSpinner } from "@core/ui/loading-spinner"
 import { ErrorMessage } from "@core/ui/error-message"
-import { useProfileViewModel } from "@core/hooks/use-profile-viewmodel"
+import { useProfileViewModel } from "../viewmodels/use-profile-viewmodel"
 
 export function ProfileView() {
   const { user: authUser } = useAuth()
   const { t, language } = useI18n()
   const isRTL = language === 'ar'
-  
+
   // Use the profile view model
   const vm = useProfileViewModel()
 
@@ -56,12 +56,12 @@ export function ProfileView() {
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-primary/10 to-transparent" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(var(--primary),0.15),transparent_50%)]" />
         <div className="absolute inset-0 bg-[conic-gradient(from_0deg_at_50%_50%,transparent_0deg,rgba(var(--primary),0.05)_60deg,transparent_120deg)]" />
-        
+
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-20">
           {/* Premium Profile Card */}
           <div className="bg-card/95 backdrop-blur-2xl border border-border/50 rounded-3xl p-8 shadow-2xl shadow-primary/10">
             <div className="flex flex-col lg:flex-row items-center lg:items-start gap-8">
-              
+
               {/* Enhanced Avatar Section */}
               <div className="relative group flex-shrink-0">
                 <div className="relative">
@@ -77,12 +77,12 @@ export function ProfileView() {
                       <div className="absolute top-4 right-4 w-8 h-8 bg-white/20 rounded-full blur-sm" />
                     </div>
                   </div>
-                  
+
                   {/* Professional Status Indicator */}
                   <div className="absolute -bottom-2 -right-2 w-10 h-10 bg-green-500 rounded-full border-4 border-background shadow-lg flex items-center justify-center">
                     <div className="w-4 h-4 bg-white rounded-full animate-pulse" />
                   </div>
-                  
+
                   {/* Hover Camera Effect */}
                   <div className="absolute inset-0 bg-black/50 rounded-3xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 cursor-pointer">
                     <div className="text-center text-white">
@@ -160,7 +160,7 @@ export function ProfileView() {
       {/* Profile Management Forms */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          
+
           {/* Profile Information Form */}
           <Card className="glass hover-lift">
             <CardHeader>

@@ -178,7 +178,7 @@ export class TreeNode {
    */
   getPath(): TreeNode[] {
     const path: TreeNode[] = [];
-    let current: TreeNode | undefined = this;
+    const current: TreeNode | undefined = this;
 
     while (current) {
       path.unshift(current);

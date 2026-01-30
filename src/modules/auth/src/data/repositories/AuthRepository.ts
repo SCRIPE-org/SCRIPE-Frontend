@@ -1,18 +1,14 @@
-import { type IApiService } from "./api.service";
-import { API_ENDPOINTS } from "@/config/api-endpoints";
-import { secureTokenService } from "@/lib/secure-token-service";
-import {
-  User,
-  LoginRequest,
-  LoginResponse,
-  RefreshTokenRequest,
-  UserMapper,
-  AuthMapper,
-} from "@/domain";
-import { appLogger } from "@/lib/logger";
+import { IApiService } from "@core/services/api.service";
+import { API_ENDPOINTS } from "@core/config/api-endpoints";
+import { secureTokenService } from "@core/common/secure-token-service";
+import { LoginRequest, LoginResponse, RefreshTokenRequest } from "@core/domain/entities/Auth";
+import { User } from "@core/domain/entities/User";
+import { AuthMapper } from "../mappers/AuthMapper";
+import { UserMapper } from "../../../../user/src/data/mappers/UserMapper";
+import { appLogger } from "@core/common/logger";
 
 export class AuthService {
-  constructor(private readonly apiService: IApiService) {}
+  constructor(private readonly apiService: IApiService) { }
 
   async login(credentials: LoginRequest): Promise<User> {
     // ========================================
@@ -32,7 +28,7 @@ export class AuthService {
     // ========================================
     // MOCK DATA FOR TESTING (COMMENT OUT FOR REAL API)
     // ========================================
-    
+
     // Debug logging
     appLogger.debug("🔍 Mock Login Debug:", {
       username: credentials.username,
@@ -57,7 +53,7 @@ export class AuthService {
         adminTypeName: "Administrator",
       });
     }
-    
+
     appLogger.debug("❌ Mock login failed - missing username or password");
     throw new Error("Username and password are required.");
   }

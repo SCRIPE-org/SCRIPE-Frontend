@@ -1,1 +1,1 @@
-export { TreeView } from './src/presentation/views/TreeView';
+export { TreeNodeView as TreeView } from './src/presentation/views/TreeView';

@@ -5,7 +5,7 @@
  * login requests, responses, and related data structures.
  */
 
-import { validateForm, VALIDATION_SETS } from "@/lib/validation";
+import { validateForm, VALIDATION_SETS } from "@core/common/validation";
 
 export interface LoginRequestData {
   username: string;

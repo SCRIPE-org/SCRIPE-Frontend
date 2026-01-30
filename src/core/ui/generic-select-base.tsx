@@ -8,7 +8,7 @@ import {
   calculateDropdownPosition,
   scrollIntoViewIfNeeded,
   type DropdownPosition,
-} from "@/lib/dropdown-positioning";
+} from "@core/common/dropdown-positioning";
 
 // Re-export for use in other components
 export {

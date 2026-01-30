@@ -7,10 +7,7 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 import { appLogger } from "@core/common/logger";
 
-export interface TreeNode {
-  id: string;
-  children?: TreeNode[];
-}
+import { TreeNode } from "../../domain/entities/TreeNode";
 
 export interface TreeService<T extends TreeNode, TCreate, TUpdate> {
   getWithChildren: (params: {
@@ -228,7 +225,7 @@ export function useTreeViewModel<
         return;
       }
 
-      let finalSelectedValues = [...newSelectedValues];
+      const finalSelectedValues = [...newSelectedValues];
 
       // Auto-select parents if enabled
       if (config.autoSelectParents) {

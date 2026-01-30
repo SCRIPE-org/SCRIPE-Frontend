@@ -5,9 +5,9 @@ import {
   NotificationQueue,
   NotificationType,
   NotificationPosition,
-  NotificationMapper,
   type NotificationData,
-} from "../../domain/entities";
+} from "@core/domain/entities/Notification";
+import { NotificationMapper } from "@core/domain/mappers/NotificationMapper";
 
 export interface INotificationService {
   success(message: string, title?: string, options?: Partial<NotificationData>): void;
@@ -74,7 +74,7 @@ export class NotificationService implements INotificationService {
    */
   add(notification: Notification): void {
     this.queue.add(notification);
-    
+
     // Auto-remove after duration
     if (notification.duration > 0) {
       setTimeout(() => {

@@ -24,7 +24,7 @@ const ToastViewport = React.forwardRef<
 ))
 ToastViewport.displayName = ToastPrimitives.Viewport.displayName
 
-export type ToastStyle = 
+export type ToastStyle =
   | "classic"
   | "neon"
   | "glassmorphism"
@@ -50,31 +50,31 @@ const toastVariants = cva(
       design: {
         // Classic Design - Traditional with subtle borders
         classic: "",
-        
+
         // Neon Design - Glowing cyberpunk style
         neon: "border-0 shadow-2xl backdrop-blur-sm",
-        
+
         // Glassmorphism Design - Transparent glass effect
         glassmorphism: "backdrop-blur-xl border border-white/20 shadow-2xl",
-        
+
         // Neumorphism Design - Soft 3D effect
         neumorphism: "border-0 shadow-inner",
-        
+
         // Aurora Design - Magical gradient animations
         aurora: "border-0 shadow-2xl relative overflow-hidden",
-        
+
         // Cosmic Design - Space theme with particles
         cosmic: "border-0 shadow-2xl relative overflow-hidden",
-        
+
         // Minimal Design - Clean and simple
         minimal: "",
-        
+
         // Modern Design - Contemporary with blur effects
         modern: "backdrop-blur-sm bg-opacity-90",
-        
+
         // Gradient Design - Colorful gradients
         gradient: "bg-gradient-to-r border-0",
-        
+
         // Outlined Design - Border focused
         outlined: "border-2 bg-transparent backdrop-blur-sm",
       },
@@ -106,7 +106,7 @@ const toastVariants = cva(
         design: "classic",
         class: "rounded-lg border-2 border-blue-200 bg-blue-50 p-4 shadow-md dark:border-blue-700 dark:bg-blue-900/20 text-blue-800 dark:text-blue-200",
       },
-      
+
       // Neon Design Variants
       {
         variant: "default",
@@ -133,7 +133,7 @@ const toastVariants = cva(
         design: "neon",
         class: "rounded-xl bg-black/90 p-4 text-cyan-400 shadow-[0_0_30px_rgba(6,182,212,0.8)] ring-2 ring-cyan-400/50",
       },
-      
+
       // Glassmorphism Design Variants
       {
         variant: "default",
@@ -160,7 +160,7 @@ const toastVariants = cva(
         design: "glassmorphism",
         class: "rounded-2xl bg-blue-500/20 p-4 text-blue-900 dark:text-blue-100 border-blue-300/30",
       },
-      
+
       // Neumorphism Design Variants
       {
         variant: "default",
@@ -187,7 +187,7 @@ const toastVariants = cva(
         design: "neumorphism",
         class: "rounded-2xl bg-blue-100 p-4 text-blue-800 shadow-[inset_-2px_-2px_6px_rgba(59,130,246,0.2),inset_2px_2px_6px_rgba(37,99,235,0.3)] dark:bg-blue-900/30 dark:text-blue-200",
       },
-      
+
       // Aurora Design Variants
       {
         variant: "default",
@@ -214,7 +214,7 @@ const toastVariants = cva(
         design: "aurora",
         class: "rounded-2xl bg-gradient-to-br from-blue-400 via-purple-500 to-indigo-600 p-4 text-white animate-gradient-x",
       },
-      
+
       // Cosmic Design Variants
       {
         variant: "default",
@@ -241,7 +241,7 @@ const toastVariants = cva(
         design: "cosmic",
         class: "rounded-2xl bg-gradient-to-br from-blue-900 via-indigo-800 to-purple-900 p-4 text-blue-100",
       },
-      
+
       // Minimal Design Variants
       {
         variant: "default",
@@ -268,7 +268,7 @@ const toastVariants = cva(
         design: "minimal",
         class: "rounded border-blue-200 bg-blue-50 text-blue-900 dark:border-blue-800 dark:bg-blue-900/20 dark:text-blue-100 p-4",
       },
-      
+
       // Modern Design Variants
       {
         variant: "default",
@@ -295,7 +295,7 @@ const toastVariants = cva(
         design: "modern",
         class: "rounded-lg border-blue-300/50 bg-blue-100/90 backdrop-blur-sm text-blue-800 dark:bg-blue-900/30 dark:text-blue-200 p-4 shadow-lg",
       },
-      
+
       // Gradient Design Variants
       {
         variant: "default",
@@ -322,7 +322,7 @@ const toastVariants = cva(
         design: "gradient",
         class: "rounded-lg bg-gradient-to-r from-blue-500 to-cyan-500 text-white p-4 shadow-xl",
       },
-      
+
       // Outlined Design Variants
       {
         variant: "default",
@@ -359,7 +359,7 @@ const toastVariants = cva(
 
 interface ToastProps
   extends React.ComponentPropsWithoutRef<typeof ToastPrimitives.Root>,
-    VariantProps<typeof toastVariants> {
+  VariantProps<typeof toastVariants> {
   design?: ToastStyle;
 }
 
@@ -368,10 +368,10 @@ const Toast = React.forwardRef<
   ToastProps
 >(({ className, variant, design: overrideDesign, ...props }, ref) => {
   const { toastStyle } = useSettings();
-  
+
   // Use override design if provided, otherwise use settings
   const design = overrideDesign || toastStyle;
-  
+
   return (
     <ToastPrimitives.Root
       ref={ref}

@@ -1,9 +1,9 @@
 "use client";
 
-import { DashboardLayout } from "@/components/layout/dashboard-layout";
+import { DashboardLayout } from "@core/ui/layout/dashboard-layout";
 import { Button } from "@core/ui/button";
 import { useRouter } from "next/navigation";
-import { useI18n } from "@/providers/i18n-provider";
+import { useI18n } from "@core/providers/i18n-provider";
 import { Home, ArrowLeft } from "lucide-react";
 
 export default function NotFound() {

@@ -5,7 +5,7 @@ import { useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSettings } from "@core/providers/settings-provider";
-import { useDynamicNavigation } from "@/components/navigation/dynamic-navigation";
+import { useDynamicNavigation } from "@core/ui/navigation/dynamic-navigation";
 import { NavigationHeader } from "./navigation-header";
 import { NavigationMainSidebar } from "./navigation-main-sidebar";
 import { NavigationPanelSidebar } from "./navigation-panel-sidebar";

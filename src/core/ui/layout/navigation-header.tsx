@@ -14,7 +14,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { useAuth } from "@core/providers/auth-provider";
 import { useSettings } from "@core/providers/settings-provider";
 import { useLayoutStyles } from "./use-layout-styles";
-import { useDynamicNavigation } from "@/components/navigation/dynamic-navigation";
+import { useDynamicNavigation } from "@core/ui/navigation/dynamic-navigation";
 import { cn } from "@core/common/utils";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";

@@ -4,7 +4,8 @@ import type React from "react";
 import { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { useAuth } from "@core/providers/auth-provider";
 import { useServices } from "@core/providers/service-provider";
-import { NavigationData, NavigationMapper } from "../../domain/entities";
+import { NavigationData } from "@core/domain/entities";
+import { NavigationMapper } from "@core/domain/mappers/NavigationMapper";
 import { appLogger } from "@core/common/logger";
 
 // LocalStorage key for navigation cache
@@ -29,7 +30,7 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
       try {
         const cachedData = localStorage.getItem(NAVIGATION_CACHE_KEY);
         const cacheExpiry = localStorage.getItem(NAVIGATION_CACHE_EXPIRY_KEY);
-        
+
         if (!cachedData || !cacheExpiry) {
           return null;
         }
@@ -48,7 +49,7 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
           menuItems: parsedData.menuItems,
           allowedPages: parsedData.allowedPages
         });
-        
+
         appLogger.debug('Navigation data loaded from cache on initialization');
         return navData;
       } catch (error) {
@@ -58,7 +59,7 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
     }
     return null;
   });
-  
+
   const [isLoading, setIsLoading] = useState(false);
   const [hasTriggeredRefresh, setHasTriggeredRefresh] = useState(false);
   const { isAuthenticated, user, isLoading: authLoading } = useAuth();
@@ -71,7 +72,7 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
     try {
       const cachedData = localStorage.getItem(NAVIGATION_CACHE_KEY);
       const cacheExpiry = localStorage.getItem(NAVIGATION_CACHE_EXPIRY_KEY);
-      
+
       if (!cachedData || !cacheExpiry) {
         return null;
       }
@@ -93,7 +94,7 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
         menuItems: parsedData.menuItems,
         allowedPages: parsedData.allowedPages
       });
-      
+
       appLogger.debug('Navigation data loaded from cache');
       return navigationData;
     } catch (error) {
@@ -147,7 +148,7 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
 
       localStorage.setItem(NAVIGATION_CACHE_KEY, JSON.stringify(cacheData));
       localStorage.setItem(NAVIGATION_CACHE_EXPIRY_KEY, (Date.now() + CACHE_EXPIRY_TIME).toString());
-      
+
       appLogger.debug('Navigation data saved to cache');
     } catch (error) {
       appLogger.error('Failed to save navigation to cache:', error);
@@ -179,7 +180,7 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
     if (!skipLoading) {
       setIsLoading(true);
     }
-    
+
     try {
       const data = await navigationService.fetchMenuItems();
       setNavigationData(data);
@@ -222,7 +223,7 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
       setIsLoading(false);
       setHasTriggeredRefresh(false); // Allow refresh on next login
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, user, authLoading, hasTriggeredRefresh]);
 
   const hasPageAccess = useCallback((pathname: string): boolean => {
@@ -232,7 +233,7 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
 
     // Remove query parameters and trailing slashes for comparison
     const cleanPath = pathname.split('?')[0].replace(/\/$/, '') || '/';
-    
+
     // Always allow access to system pages for authenticated users
     const systemPages = [
       '/',           // Home page
@@ -247,7 +248,7 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
       '/global-error', // Global error page
       '/error'       // Generic error page
     ];
-    
+
     if (systemPages.includes(cleanPath)) {
       return true;
     }
@@ -271,14 +272,14 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
 
     // Check for hierarchical access - if user has access to parent route, grant access to nested routes
     const pathSegments = cleanPath.split('/').filter(segment => segment !== '');
-    
+
     // Build parent paths and check if user has access to any parent route
     for (let i = pathSegments.length - 1; i > 0; i--) {
       const parentPath = '/' + pathSegments.slice(0, i).join('/');
       if (navigationData.allowedPages.includes(parentPath)) {
         return true;
       }
-      
+
       // Also check case-insensitive for parent paths
       const lowerParentPath = parentPath.toLowerCase();
       if (navigationData.allowedPages.some((page: string) => page.toLowerCase() === lowerParentPath)) {

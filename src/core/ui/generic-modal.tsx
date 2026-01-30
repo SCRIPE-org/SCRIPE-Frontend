@@ -176,7 +176,7 @@ export function GenericModal({
   };
 
   const getModalClasses = () => {
-    let baseClasses = "p-0 overflow-visible flex flex-col";
+    const baseClasses = "p-0 overflow-visible flex flex-col";
     let sizeClasses = "";
     let styleClasses = "";
 

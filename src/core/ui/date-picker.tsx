@@ -16,7 +16,7 @@ import { CustomCalendar } from "./custom-calendar";
 import {
   scrollIntoViewIfNeeded,
   type DropdownPosition,
-} from "@/lib/dropdown-positioning";
+} from "@core/common/dropdown-positioning";
 
 interface DatePickerProps {
   id?: string;

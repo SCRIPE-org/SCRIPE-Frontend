@@ -19,8 +19,8 @@ import {
 import {
   isNavigationItemActive,
   type NavigationItem,
-} from "@/config/navigation";
-import { useDynamicNavigation } from "@/components/navigation/dynamic-navigation";
+} from "@core/config/navigation";
+import { useDynamicNavigation } from "@core/ui/navigation/dynamic-navigation";
 import { Avatar, AvatarFallback } from "@core/ui/avatar";
 import { Logo } from "@core/ui/logo";
 

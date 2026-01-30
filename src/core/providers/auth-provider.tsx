@@ -6,7 +6,8 @@ import { useRouter } from "next/navigation";
 import { handleError } from "@core/common/error-handler";
 import { appLogger } from "@core/common/logger";
 import { useServices } from "@core/providers/service-provider";
-import { User, AuthMapper } from "../../domain/entities";
+import { User } from "@core/domain/entities";
+import { AuthMapper } from "../../modules/auth/src/data/mappers/AuthMapper";
 
 interface AuthContextType {
   user: User | null;
@@ -65,7 +66,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       appLogger.error("Login failed in provider:", { error, appError });
       // Ensure user state is cleared on login failure
       setUser(null);
-      throw error; 
+      throw error;
     }
   };
 

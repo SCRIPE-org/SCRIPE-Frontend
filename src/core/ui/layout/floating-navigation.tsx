@@ -20,8 +20,8 @@ import {
 import {
   isNavigationItemActive,
   type NavigationItem,
-} from "@/config/navigation";
-import { useDynamicNavigation } from "@/components/navigation/dynamic-navigation";
+} from "@core/config/navigation";
+import { useDynamicNavigation } from "@core/ui/navigation/dynamic-navigation";
 import { Logo } from "@core/ui/logo";
 
 interface FloatingNavigationProps {

@@ -1,6 +1,5 @@
 "use client";
 
-import type React from "react";
 import { useEffect } from "react";
 import { Card, CardContent, CardHeader } from "@core/ui/card";
 import { Button } from "@core/ui/button";
@@ -12,7 +11,7 @@ import { Logo } from "@core/ui/logo";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { LanguageSwitcher } from "@core/ui/layout/common/language-switcher";
 import { ThemeSwitcher } from "@core/ui/layout/common/theme-switcher";
-import { useLoginViewModel } from "@core/hooks/use-login-viewmodel";
+import { useLoginViewModel } from "../../src/presentation/viewmodels/use-login-viewmodel";
 
 export function LoginView() {
   const { t, language } = useI18n();
@@ -66,7 +65,7 @@ export function LoginView() {
         </CardHeader>
 
         <CardContent>
-          <form 
+          <form
             onSubmit={(e) => {
               e.preventDefault();
               if (!vm.isLoading && vm.isFormValid) {

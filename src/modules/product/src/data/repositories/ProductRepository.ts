@@ -9,11 +9,10 @@ import type { INotificationService } from "@core/services/notification.service";
 import type { PaginationInfo } from "@core/common/pagination";
 import {
   Product,
-  ProductMapper,
   CreateProductRequest,
   UpdateProductRequest,
-  type ProductsResponse,
 } from "../../domain/entities/Product";
+import { ProductMapper, type ProductsResponse } from "../mappers/ProductMapper";
 
 export interface IProductRepository {
   getProducts(params?: {

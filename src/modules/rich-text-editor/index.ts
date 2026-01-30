@@ -1,1 +1,1 @@
-export { RichTextEditorView } from './src/presentation/views/RichTextEditorView';
+export { default as RichTextEditorView } from './src/presentation/views/RichTextEditorView';
