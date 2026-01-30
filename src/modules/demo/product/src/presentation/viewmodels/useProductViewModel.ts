@@ -8,7 +8,7 @@
 "use client";
 
 import { useState, useCallback, useMemo } from "react";
-import { getProductContainer } from "@/modules/product/di";
+import { getProductContainer } from "@/modules/demo/product/di";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useCrudViewModel } from "@core/crud/hooks/useCrudViewModel";
 import type {

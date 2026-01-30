@@ -7,8 +7,8 @@ import { NotificationService } from "@core/services/notification.service";
 import { NavigationService } from "@core/services/navigation.service";
 import { AuthRepository } from "@modules/auth/core/data/repositories/AuthRepository";
 import { UserService } from "@core/services/user.service";
-import { ProductRepository as ProductService } from "@/modules/product/src/data/repositories/ProductRepository";
-import { TreeNodeService } from "@/modules/tree/src/data/repositories/TreeNodeRepository";
+import { ProductRepository as ProductService } from "@/modules/demo/product/src/data/repositories/ProductRepository";
+import { TreeNodeService } from "@/modules/demo/tree/src/data/repositories/TreeNodeRepository";
 
 interface Services {
   apiService: ApiService;
