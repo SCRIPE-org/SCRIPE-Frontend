@@ -5,7 +5,7 @@ import { createContext, useContext, useMemo } from "react";
 import { ApiService } from "@core/services/api.service";
 import { NotificationService } from "@core/services/notification.service";
 import { NavigationService } from "@core/services/navigation.service";
-import { AuthService } from "@core/services/auth.service";
+import { AuthRepository } from "@modules/auth/core/data/repositories/AuthRepository";
 import { UserService } from "@core/services/user.service";
 import { ProductRepository as ProductService } from "@/modules/product/src/data/repositories/ProductRepository";
 import { TreeNodeService } from "@/modules/tree/src/data/repositories/TreeNodeRepository";
@@ -14,7 +14,7 @@ interface Services {
   apiService: ApiService;
   notificationService: NotificationService;
   navigationService: NavigationService;
-  authService: AuthService;
+  authRepository: AuthRepository;
   userService: UserService;
   productService: ProductService;
   treeNodeService: TreeNodeService;
@@ -26,7 +26,7 @@ export function ServiceProvider({ children }: { children: React.ReactNode }) {
   const services = useMemo(() => {
     const notificationService = new NotificationService();
     const apiService = new ApiService(process.env.NEXT_PUBLIC_API_URL || "");
-    const authService = new AuthService(apiService);
+    const authRepository = new AuthRepository(apiService);
     const userService = new UserService(apiService);
     const navigationService = new NavigationService(apiService);
     const productService = new ProductService(notificationService);
@@ -36,7 +36,7 @@ export function ServiceProvider({ children }: { children: React.ReactNode }) {
       apiService,
       notificationService,
       navigationService,
-      authService,
+      authRepository,
       userService,
       productService,
       treeNodeService

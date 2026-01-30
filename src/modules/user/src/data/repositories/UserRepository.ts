@@ -6,12 +6,12 @@
  * clean architecture principles.
  */
 
-import { IApiService } from "@core/services/api.service";
+import { IApiService } from "@core/interfaces/api.interface";
 import { API_ENDPOINTS } from "@core/config/api-endpoints";
 import {
   UserMapper
 } from "../mappers/UserMapper";
-import { User, type UserData } from "@core/domain/entities/User";
+import { User, type UserData } from "@modules/auth/core/domain/entities/User";
 import { appLogger } from "@core/common/logger";
 import { passwordStrength, phone, validateForm, VALIDATION_SETS } from "@core/common/validation";
 
@@ -26,7 +26,7 @@ export interface ChangePasswordRequest {
   newPassword: string;
 }
 
-export class UserService {
+export class UserRepository {
   constructor(private readonly apiService: IApiService) { }
 
   /**

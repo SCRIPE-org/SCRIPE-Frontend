@@ -6,9 +6,9 @@
  * clean architecture principles.
  */
 
-import { type IApiService } from "./api.service";
+import { type IApiService } from "../interfaces/api.interface";
 import { API_ENDPOINTS } from "@core/config/api-endpoints";
-import { User, type UserData } from "@core/domain/entities/User";
+import { User, type UserData } from "@modules/auth/core/domain/entities/User";
 import { UserMapper } from "../../modules/user/src/data/mappers/UserMapper";
 import { appLogger } from "@core/common/logger";
 import { passwordStrength, phone, validateForm, VALIDATION_SETS } from "@core/common/validation";

@@ -1,2 +1,13 @@
-export { LoginView } from './presentation/views/LoginView';
-export { RouteGuard } from './presentation/components/RouteGuard';
+/**
+ * Auth Module Public Exports
+ */
+
+// Core
+export * from './core/domain/entities';
+export * from './core/domain/interfaces';
+export { AuthRepository } from './core/data/repositories/AuthRepository';
+export { authContainer } from './di';
+
+// Submodules
+export { LoginView } from './signin';
+// export { RouteGuard } from './core/presentation/components/RouteGuard'; // RouteGuard moved to Core

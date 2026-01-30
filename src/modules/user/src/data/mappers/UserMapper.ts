@@ -6,7 +6,7 @@
  * concerns from domain logic.
  */
 
-import { User, type UserData } from '@core/domain/entities/User';
+import { User, type UserData } from "@modules/auth/core/domain/entities/User";
 
 export class UserMapper {
   /**

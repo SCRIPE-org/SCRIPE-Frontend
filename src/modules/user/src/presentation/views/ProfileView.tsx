@@ -30,7 +30,7 @@ import {
 } from "lucide-react"
 import { LoadingSpinner } from "@core/ui/loading-spinner"
 import { ErrorMessage } from "@core/ui/error-message"
-import { useProfileViewModel } from "../viewmodels/use-profile-viewmodel"
+import { useProfileViewModel } from "../viewmodels/useUserViewModel"
 
 export function ProfileView() {
   const { user: authUser } = useAuth()

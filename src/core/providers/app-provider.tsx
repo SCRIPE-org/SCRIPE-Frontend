@@ -7,7 +7,7 @@ import { ServiceProvider } from "@core/providers/service-provider";
 import { AuthProvider } from "@core/providers/auth-provider";
 import { SettingsProvider } from "@core/providers/settings-provider";
 import { NavigationProvider } from "@core/providers/navigation-provider";
-import { RouteGuard } from "@modules/auth";
+import { RouteGuard } from "@core/providers/route-guard";
 import { EnhancedToaster } from "@core/ui/enhanced-toaster";
 import { ErrorBoundary } from "@core/ui/error-boundary";
 

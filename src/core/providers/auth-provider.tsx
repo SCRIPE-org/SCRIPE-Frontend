@@ -6,8 +6,8 @@ import { useRouter } from "next/navigation";
 import { handleError } from "@core/common/error-handler";
 import { appLogger } from "@core/common/logger";
 import { useServices } from "@core/providers/service-provider";
-import { User } from "@core/domain/entities";
-import { AuthMapper } from "../../modules/auth/src/data/mappers/AuthMapper";
+import { User } from "@modules/auth/core/domain/entities/User";
+import { AuthMapper } from "../../modules/auth/core/data/mappers/AuthMapper";
 
 interface AuthContextType {
   user: User | null;
@@ -23,22 +23,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
-  const { authService } = useServices();
+  const { authRepository } = useServices();
 
   const isAuthenticated = !!user;
 
   const checkAuth = useCallback(async () => {
     setIsLoading(true);
-    if (authService.hasToken()) {
+    if (authRepository.isAuthenticated()) {
       try {
-        const currentUser = await authService.getMe();
+        const currentUser = await authRepository.getMe();
         setUser(currentUser);
         appLogger.info("User authenticated successfully", { userId: currentUser.id });
       } catch (error) {
         const appError = handleError(error as Error, 'AuthProvider.checkAuth');
         appLogger.error("Failed to fetch user", { error, appError });
         // Clear tokens if getMe fails
-        authService.logout().catch(() => {
+        authRepository.logout().catch(() => {
           // Ignore logout errors during cleanup
         });
         setUser(null);
@@ -48,7 +48,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(null);
     }
     setIsLoading(false);
-  }, [authService]);
+  }, [authRepository]);
 
   useEffect(() => {
     checkAuth();
@@ -58,7 +58,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       // Create LoginRequest domain model using mapper
       const loginRequest = AuthMapper.loginRequestFromJson({ username, password });
-      const loggedInUser = await authService.login(loginRequest);
+      const loggedInUser = await authRepository.login(loginRequest);
       setUser(loggedInUser);
       appLogger.info("Login successful", { userId: loggedInUser.id, username: loggedInUser.username });
     } catch (error) {
@@ -72,7 +72,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = async () => {
     try {
-      await authService.logout();
+      await authRepository.logout();
       // Only clear user state and redirect if logout was successful
       setUser(null);
       appLogger.info("Logout successful");

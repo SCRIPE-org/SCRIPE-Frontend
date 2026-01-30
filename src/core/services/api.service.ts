@@ -1,200 +1,335 @@
-import { handleError, getUserFriendlyErrorMessage } from "@core/common/error-handler";
-import { appLogger } from "@core/common/logger";
-import { secureTokenService } from "@core/common/secure-token-service";
-import { toast } from "sonner";
+'use client';
 
-export interface IApiService {
-  get<T>(endpoint: string, params?: Record<string, any>, signal?: AbortSignal): Promise<T>;
-  post<T>(endpoint: string, data?: any, signal?: AbortSignal): Promise<T>;
-  put<T>(endpoint: string, data?: any, signal?: AbortSignal): Promise<T>;
-  delete<T>(endpoint: string, signal?: AbortSignal): Promise<T>;
-  putWithRefresh<T>(endpoint: string, data?: any, refreshEndpoint?: string, signal?: AbortSignal): Promise<T>;
-}
+import axios, {
+  AxiosInstance,
+  AxiosError,
+  AxiosRequestConfig,
+  InternalAxiosRequestConfig
+} from 'axios';
+import type { IApiService } from '../interfaces/api.interface';
+import { appLogger } from '@core/common/logger';
 
+/**
+ * API Service Implementation using Axios
+ * 
+ * Enterprise-grade HTTP client with:
+ * - Automatic token refresh on 401
+ * - Request/Response interceptors
+ * - Typed responses
+ * - AbortController support
+ */
 export class ApiService implements IApiService {
-  private baseUrl: string;
-  private defaultHeaders: Record<string, string>;
+  private axiosInstance: AxiosInstance;
+  private axiosPublic: AxiosInstance;
+  private tokenKey = 'auth-token';
+  private refreshTokenKey = 'refresh-token';
+  private refreshHandler: (() => Promise<string | null>) | null = null;
+  private isRefreshing = false;
+  private refreshPromise: Promise<string | null> | null = null;
+  private failedQueue: Array<{
+    resolve: (token: string | null) => void;
+    reject: (error: Error) => void;
+  }> = [];
 
-  constructor(baseUrl: string = process.env.NEXT_PUBLIC_API_URL || "/api") {
-    this.baseUrl = baseUrl;
-    this.defaultHeaders = {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    };
-  }
+  constructor(baseUrl: string = process.env.NEXT_PUBLIC_API_URL || '/api') {
+    const normalizedBaseUrl = baseUrl.startsWith('http')
+      ? baseUrl
+      : `https://${baseUrl}`;
 
-  private buildUrl(endpoint: string) {
-    const baseUrl = this.baseUrl.startsWith("http") ? this.baseUrl : `https://${this.baseUrl}`;
-    return `${baseUrl}${endpoint}`;
-  }
+    // Authenticated instance
+    this.axiosInstance = axios.create({
+      baseURL: normalizedBaseUrl,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'ngrok-skip-browser-warning': 'true',
+      },
+      withCredentials: true, // equivalent to credentials: 'include'
+    });
 
-  private unwrap<T>(json: any): T {
-    if (json && typeof json === "object" && "data" in json) {
-      if ("pagination" in json) {
-        return { data: json.data, pagination: json.pagination } as T;
-      }
-      return json.data as T;
-    }
-    return json as T;
-  }
+    // Public instance (no auth interceptors)
+    this.axiosPublic = axios.create({
+      baseURL: normalizedBaseUrl,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'ngrok-skip-browser-warning': 'true',
+      },
+      withCredentials: true,
+    });
 
-  private async request<T>(endpoint: string, options: RequestInit = {}, signal?: AbortSignal): Promise<T> {
-    const url = this.buildUrl(endpoint);
-
-    // Only log in development
-    appLogger.api("Request:", { method: options.method || "GET", url });
-
-    // Check if request was aborted before making the request
-    if (signal?.aborted) {
-      const error = new Error('Request was aborted');
-      const appError = handleError(error, `API Request: ${url}`);
-      toast.error(getUserFriendlyErrorMessage(appError));
-      throw error;
-    }
-
-    const token = secureTokenService.getAccessToken();
-    const headers: Record<string, string> = {
-      ...this.defaultHeaders,
-      ...(options.headers as Record<string, string>),
-    };
-    if (token) {
-      headers.Authorization = `Bearer ${token}`;
-      // Only log token info in development mode
-      if (process.env.NODE_ENV === 'development') {
-        appLogger.api("Token added to request:", token.substring(0, 20) + "...");
-      } else {
-        appLogger.api("Request authenticated");
-      }
-    } else {
-      appLogger.warn("No access token found");
-    }
-
-    const config: RequestInit = {
-      ...options,
-      headers,
-      mode: "cors",
-      signal, // Add abort signal
-    };
-
-    try {
-      const response = await fetch(url, config);
-
-      // Check if request was aborted after response
-      if (signal?.aborted) {
-        const error = new Error('Request was aborted');
-        const appError = handleError(error, `API Response: ${url}`);
-        toast.error(getUserFriendlyErrorMessage(appError));
-        throw error;
-      }
-
-      appLogger.api("Response:", { status: response.status, statusText: response.statusText });
-
-      if (!response.ok) {
-        if (response.status === 401) {
-          if (window.location.pathname != "/login") {
-            const error = new Error("Unauthorized - please login again");
-            const appError = handleError(error, `API Request: ${url}`);
-            toast.error(getUserFriendlyErrorMessage(appError));
-            secureTokenService.clearTokens();
-            // Use Next.js router instead of direct window manipulation
-            if (typeof window !== 'undefined') {
-              window.location.href = "/login";
-            }
-            throw error;
-          } else {
-            const error = new Error(response.statusText);
-            const appError = handleError(error, `API Request: ${url}`);
-            toast.error(getUserFriendlyErrorMessage(appError));
-            throw error;
-          }
-        }
-        const errorText = await response.text();
-        const error = new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
-        const appError = handleError(error, `API Request: ${url}`);
-        toast.error(getUserFriendlyErrorMessage(appError));
-        throw error;
-      }
-
-      if (response.status === 204) {
-        appLogger.api("Success: 204 No Content");
-        return null as T;
-      }
-
-      const json = await response.json();
-      appLogger.api("Success (raw):", json);
-      const unwrapped = this.unwrap<T>(json);
-      appLogger.api("Success (unwrapped):", unwrapped);
-      return unwrapped;
-    } catch (error) {
-      // Handle abort errors specifically
-      if (error instanceof Error && error.name === 'AbortError') {
-        appLogger.api("Request aborted:", url);
-        const abortError = new Error('Request was aborted');
-        const appError = handleError(abortError, `API Request: ${url}`);
-        toast.error(getUserFriendlyErrorMessage(appError));
-        throw abortError;
-      }
-
-      // Handle network errors
-      if (error instanceof TypeError && error.message.includes("fetch")) {
-        const networkError = new Error("Network error");
-        const appError = handleError(networkError, `API Request: ${url}`);
-        toast.error(getUserFriendlyErrorMessage(appError));
-        throw networkError;
-      }
-
-      // Handle other errors
-      const appError = handleError(error as Error, `API Request: ${url}`);
-      toast.error(getUserFriendlyErrorMessage(appError));
-      throw error;
-    }
-  }
-
-  async get<T>(endpoint: string, params?: Record<string, any>, signal?: AbortSignal): Promise<T> {
-    const queryString = params ? "?" + new URLSearchParams(params).toString() : "";
-    return this.request<T>(`${endpoint}${queryString}`, { method: "GET" }, signal);
-  }
-
-  async post<T>(endpoint: string, data?: any, signal?: AbortSignal): Promise<T> {
-    return this.request<T>(endpoint, {
-      method: "POST",
-      body: data ? JSON.stringify(data) : undefined,
-    }, signal);
-  }
-
-  async put<T>(endpoint: string, data?: any, signal?: AbortSignal): Promise<T> {
-    return this.request<T>(endpoint, {
-      method: "PUT",
-      body: data ? JSON.stringify(data) : undefined,
-    }, signal);
-  }
-
-  async delete<T>(endpoint: string, signal?: AbortSignal): Promise<T> {
-    return this.request<T>(endpoint, { method: "DELETE" }, signal);
+    this.setupInterceptors();
   }
 
   /**
-   * PUT request with automatic refresh for 200 and 204 responses
-   * - 200: Returns the response data directly
-   * - 204: Automatically fetches the updated data
-   * @param endpoint - The PUT endpoint
-   * @param data - The data to send
-   * @param refreshEndpoint - The endpoint to fetch updated data (optional, defaults to GET on same endpoint)
-   * @param signal - Abort signal
-   * @returns The updated data
+   * Setup request and response interceptors
    */
-  async putWithRefresh<T>(endpoint: string, data?: any, refreshEndpoint?: string, signal?: AbortSignal): Promise<T> {
-    const response = await this.put<any>(endpoint, data, signal);
+  private setupInterceptors(): void {
+    // Request interceptor - add auth token
+    this.axiosInstance.interceptors.request.use(
+      (config: InternalAxiosRequestConfig) => {
+        const token = this.getAuthToken();
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`;
+          appLogger.auth('Token added to request');
+        }
+        appLogger.api(`${config.method?.toUpperCase()} ${config.url}`);
+        return config;
+      },
+      (error) => Promise.reject(error)
+    );
 
-    // If response is null (204 No Content), fetch the updated data
+    // Response interceptor - handle 401 and unwrap data
+    this.axiosInstance.interceptors.response.use(
+      (response) => {
+        appLogger.api(`Success: ${response.status}`);
+        return response;
+      },
+      async (error: AxiosError) => {
+        const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
+
+        // Handle 401 - attempt token refresh
+        if (error.response?.status === 401 && !originalRequest._retry) {
+          if (!this.refreshHandler) {
+            appLogger.auth('No refresh handler set, redirecting to login');
+            this.handleUnauthorized();
+            return Promise.reject(error);
+          }
+
+          if (this.isRefreshing) {
+            // Queue this request until refresh completes
+            return new Promise((resolve, reject) => {
+              this.failedQueue.push({ resolve, reject });
+            }).then((token) => {
+              if (token && originalRequest.headers) {
+                originalRequest.headers.Authorization = `Bearer ${token}`;
+              }
+              return this.axiosInstance(originalRequest);
+            });
+          }
+
+          originalRequest._retry = true;
+          this.isRefreshing = true;
+
+          try {
+            this.refreshPromise = this.refreshHandler();
+            const newToken = await this.refreshPromise;
+
+            if (newToken) {
+              appLogger.auth('Token refreshed successfully');
+              // Retry queued requests
+              this.failedQueue.forEach(({ resolve }) => resolve(newToken));
+              this.failedQueue = [];
+
+              if (originalRequest.headers) {
+                originalRequest.headers.Authorization = `Bearer ${newToken}`;
+              }
+              return this.axiosInstance(originalRequest);
+            }
+
+            // Refresh failed
+            this.failedQueue.forEach(({ reject }) => reject(new Error('Token refresh failed')));
+            this.failedQueue = [];
+            this.handleUnauthorized();
+            return Promise.reject(error);
+          } catch (refreshError) {
+            appLogger.auth('Token refresh failed:', refreshError);
+            this.failedQueue.forEach(({ reject }) => reject(refreshError as Error));
+            this.failedQueue = [];
+            this.handleUnauthorized();
+            return Promise.reject(refreshError);
+          } finally {
+            this.isRefreshing = false;
+            this.refreshPromise = null;
+          }
+        }
+
+        // Log other errors
+        const message = this.extractErrorMessage(error);
+        appLogger.error(`API Error: ${message}`);
+        return Promise.reject(new Error(message));
+      }
+    );
+
+    // Public instance - just log requests
+    this.axiosPublic.interceptors.request.use(
+      (config: InternalAxiosRequestConfig) => {
+        appLogger.api(`${config.method?.toUpperCase()} ${config.url} (public)`);
+        return config;
+      }
+    );
+
+    this.axiosPublic.interceptors.response.use(
+      (response) => {
+        appLogger.api(`Success: ${response.status}`);
+        return response;
+      },
+      (error: AxiosError) => {
+        const message = this.extractErrorMessage(error);
+        appLogger.error(`API Error: ${message}`);
+        return Promise.reject(new Error(message));
+      }
+    );
+  }
+
+  /**
+   * Extract error message from Axios error
+   */
+  private extractErrorMessage(error: AxiosError): string {
+    if (error.response?.data) {
+      const data = error.response.data as { message?: string; error?: string };
+      return data.message || data.error || `HTTP ${error.response.status}`;
+    }
+    if (error.code === 'ECONNABORTED') {
+      return 'Request timeout';
+    }
+    if (error.code === 'ERR_NETWORK') {
+      return 'Network error - please check your connection';
+    }
+    return error.message || 'Unknown error';
+  }
+
+  /**
+   * Unwrap response data (handles { data: T } wrapper)
+   */
+  private unwrap<T>(data: unknown): T {
+    if (data && typeof data === 'object' && 'data' in data) {
+      const response = data as { data: T; pagination?: unknown; meta?: unknown };
+      // Preserve full structure if it has pagination or meta
+      if ('pagination' in response || 'meta' in response) {
+        return data as T;
+      }
+      return response.data;
+    }
+    return data as T;
+  }
+
+  /**
+   * Handle unauthorized - clear tokens and redirect
+   */
+  private handleUnauthorized(): void {
+    if (typeof window !== 'undefined' && window.location.pathname !== '/login') {
+      appLogger.warn('Unauthorized - clearing tokens and redirecting');
+      this.clearTokens();
+      window.location.href = '/login';
+    }
+  }
+
+  /**
+   * Build config with AbortSignal
+   */
+  private buildConfig(signal?: AbortSignal, params?: Record<string, unknown>): AxiosRequestConfig {
+    const config: AxiosRequestConfig = {};
+    if (signal) {
+      config.signal = signal;
+    }
+    if (params) {
+      config.params = params;
+    }
+    return config;
+  }
+
+  // ============================================
+  // Authenticated Methods
+  // ============================================
+
+  async get<T>(endpoint: string, params?: Record<string, unknown>, signal?: AbortSignal): Promise<T> {
+    const response = await this.axiosInstance.get(endpoint, this.buildConfig(signal, params));
+    return this.unwrap<T>(response.data);
+  }
+
+  async post<T>(endpoint: string, data?: unknown, signal?: AbortSignal): Promise<T> {
+    const response = await this.axiosInstance.post(endpoint, data, this.buildConfig(signal));
+    return this.unwrap<T>(response.data);
+  }
+
+  async put<T>(endpoint: string, data?: unknown, signal?: AbortSignal): Promise<T> {
+    const response = await this.axiosInstance.put(endpoint, data, this.buildConfig(signal));
+    return this.unwrap<T>(response.data);
+  }
+
+  async patch<T>(endpoint: string, data?: unknown, signal?: AbortSignal): Promise<T> {
+    const response = await this.axiosInstance.patch(endpoint, data, this.buildConfig(signal));
+    return this.unwrap<T>(response.data);
+  }
+
+  async delete<T>(endpoint: string, signal?: AbortSignal): Promise<T> {
+    const response = await this.axiosInstance.delete(endpoint, this.buildConfig(signal));
+    return this.unwrap<T>(response.data);
+  }
+
+  // ============================================
+  // Public Methods (No Auth)
+  // ============================================
+
+  async getPublic<T>(endpoint: string, params?: Record<string, unknown>, signal?: AbortSignal): Promise<T> {
+    const response = await this.axiosPublic.get(endpoint, this.buildConfig(signal, params));
+    return this.unwrap<T>(response.data);
+  }
+
+  async postPublic<T>(endpoint: string, data?: unknown, signal?: AbortSignal): Promise<T> {
+    const response = await this.axiosPublic.post(endpoint, data, this.buildConfig(signal));
+    return this.unwrap<T>(response.data);
+  }
+
+  // ============================================
+  // Special Methods
+  // ============================================
+
+  async putWithRefresh<T>(
+    endpoint: string,
+    data?: unknown,
+    refreshEndpoint?: string,
+    signal?: AbortSignal
+  ): Promise<T> {
+    const response = await this.put<T>(endpoint, data, signal);
+
+    // If 204 No Content, fetch updated data
     if (response === null) {
-      appLogger.api("204 response detected, fetching updated data...");
-      const refreshUrl = refreshEndpoint || endpoint.replace(/\/Put$/, '').replace(/\/Put\/.*$/, '');
+      appLogger.api('204 response, fetching updated data...');
+      const refreshUrl = refreshEndpoint || endpoint;
       return this.get<T>(refreshUrl, undefined, signal);
     }
 
-    // If response has data (200 OK), return it directly
-    appLogger.api("200 response detected, returning response data directly");
     return response;
+  }
+
+  // ============================================
+  // Token Management
+  // ============================================
+
+  setAuthToken(token: string | null): void {
+    if (typeof window !== 'undefined') {
+      if (token) {
+        localStorage.setItem(this.tokenKey, token);
+        appLogger.auth('Token saved');
+      } else {
+        localStorage.removeItem(this.tokenKey);
+        appLogger.auth('Token cleared');
+      }
+    }
+  }
+
+  getAuthToken(): string | null {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem(this.tokenKey);
+    }
+    return null;
+  }
+
+  clearTokens(): void {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem(this.tokenKey);
+      localStorage.removeItem(this.refreshTokenKey);
+      appLogger.auth('All tokens cleared');
+    }
+  }
+
+  /**
+   * Set the refresh handler for automatic token refresh
+   */
+  setRefreshHandler(handler: () => Promise<string | null>): void {
+    this.refreshHandler = handler;
+    appLogger.auth('Refresh handler set');
   }
 }

@@ -11,7 +11,7 @@ import { useServices } from "@core/providers/service-provider";
 import { useI18n } from "@core/providers/i18n-provider";
 import { handleError, getUserFriendlyErrorMessage } from "@core/common/error-handler";
 import { appLogger } from "@core/common/logger";
-import { User } from "@core/domain/entities"; // Keep User import
+import { User } from "@modules/auth/core/domain/entities/User"; // Keep User import
 import { UserMapper } from "../../data/mappers/UserMapper"; // Changed UserMapper import path
 import type { UpdateProfileRequest, ChangePasswordRequest } from "@core/services/user.service";
 import { validateForm, VALIDATION_SETS, passwordConfirmation, isFormValid } from "@core/common/validation";

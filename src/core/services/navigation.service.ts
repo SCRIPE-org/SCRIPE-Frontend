@@ -1,4 +1,4 @@
-import { type IApiService } from "./api.service";
+import { type IApiService } from "../interfaces/api.interface";
 import { API_ENDPOINTS } from "@core/config/api-endpoints";
 import { appLogger } from "@core/common/logger";
 import {
