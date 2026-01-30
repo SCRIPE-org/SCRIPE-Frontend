@@ -13,6 +13,8 @@ export interface UserData {
   lastName: string;
   phoneNumber: string;
   adminTypeName: string;
+  role?: string;
+  permissions?: string[];
 }
 
 export class User {
@@ -22,6 +24,8 @@ export class User {
   public readonly lastName: string;
   public readonly phoneNumber: string;
   public readonly adminTypeName: string;
+  public readonly role?: string;
+  public readonly permissions?: string[];
 
   constructor(data: UserData) {
     this.id = data.id;
@@ -30,6 +34,8 @@ export class User {
     this.lastName = data.lastName;
     this.phoneNumber = data.phoneNumber;
     this.adminTypeName = data.adminTypeName;
+    this.role = data.role;
+    this.permissions = data.permissions;
   }
 
   /**
@@ -64,6 +70,8 @@ export class User {
       lastName: this.lastName,
       phoneNumber: this.phoneNumber,
       adminTypeName: this.adminTypeName,
+      role: this.role,
+      permissions: this.permissions,
       ...updates,
     });
   }

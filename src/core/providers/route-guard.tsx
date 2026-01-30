@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useAppStore } from "@core/store/useAppStore";
 import { useNavigation } from "@core/providers/navigation-provider";
+import { usePermissions } from "@core/hooks/use-permissions";
 import { USE_DYNAMIC_NAVIGATION } from "@core/config/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
@@ -34,6 +35,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
   const hasHydrated = useAppStore((state) => state._hasHydrated);
   const authLoading = !hasHydrated;
   const { hasPageAccess, isLoading: navLoading } = useNavigation();
+  const { canAccessPage } = usePermissions();
   const router = useRouter();
   const pathname = usePathname();
   const [isChecking, setIsChecking] = useState(true);
@@ -58,6 +60,12 @@ export function RouteGuard({ children }: RouteGuardProps) {
         return;
       }
 
+      // Check RBAC permissions first
+      if (!canAccessPage(pathname)) {
+        router.push("/not-authorized");
+        return;
+      }
+
       // If using static navigation, allow all pages for authenticated users
       if (!USE_DYNAMIC_NAVIGATION) {
         setIsChecking(false);
@@ -69,7 +77,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
         return;
       }
 
-      // Check if user has access to current page
+      // Check if user has access to current page (dynamic navigation)
       const hasAccess = hasPageAccess(pathname);
 
       if (!hasAccess) {
@@ -81,7 +89,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
     };
 
     checkAccess();
-  }, [isAuthenticated, authLoading, navLoading, pathname, hasPageAccess, router]);
+  }, [isAuthenticated, authLoading, navLoading, pathname, hasPageAccess, canAccessPage, router]);
 
   // Show loading only when actually checking auth (not navigation loading for public pages)
   if (authLoading || (isChecking && !PUBLIC_PAGES.includes(pathname))) {

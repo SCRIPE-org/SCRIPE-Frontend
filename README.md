@@ -1,36 +1,120 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🏗️ Next Frontend Template - Modular Clean Architecture
 
-## Getting Started
+![Version](https://img.shields.io/badge/version-1.0.0-blue.svg) ![License](https://img.shields.io/badge/license-MIT-green.svg) ![Status](https://img.shields.io/badge/status-production_ready-success)
 
-First, run the development server:
+> **The "Perfect" Foundation.**
+> A Scalable, Type-Safe, and Modular Monolith Architecture for Next.js.
+> Combining the power of an ERP Engine with the soul of a Premium UI.
+
+---
+
+## 🚀 Why This Template?
+
+This is not just another boilerplate. It is a **strict architectural standard** designed for teams building large-scale applications (ERPs, dashboards, SaaS) who refuse to compromise on code quality or user experience.
+
+### ✅ Key Features
+- **Modular Monolith**: Strict domain separation (Core vs Modules).
+- **ERP Engine**: "Generic CRUD" system builds full features in minutes.
+- **State Management**: Zustand (Client) + React Query (Server) + Hydration Guards.
+- **Robust Auth**: RBAC (Role-Based Access Control) + JWT Interceptors.
+- **Type Safety**: End-to-End TypeScript + Zod Validation.
+- **Premium UI**: 65+ Shadcn Components, Motion Animations, Dark Mode.
+- **Production Ready**: Optimized Build, SEO, and Environment Validation.
+
+---
+
+## 📂 Architecture Overview
+
+We follow the **Verified Modular Monolith** pattern:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+src/
+├── app/               # 🔌 Route Connectors (Pages only, no logic)
+├── config/            # ⚙️ Global Config (Env, Constants)
+├── core/              # 🧠 Shared Infrastructure (The Engine)
+│   ├── ui/            # Design System (Shadcn)
+│   ├── crud/          # Generic CRUD Engine
+│   ├── store/         # Global State (Zustand)
+│   └── di.ts          # Dependency Injection Container
+└── modules/           # 📦 Feature Domains (Self-Contained)
+    ├── auth/          # Authentication Domain
+    ├── product/       # Example Domain
+    └── _template/     # Copy-paste this to start!
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🛠️ Getting Started
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 1. Prerequisites
+- Node.js 18+
+- pnpm 8+ (Recommended)
 
-## Learn More
+### 2. Installation
+```bash
+# Install dependencies
+pnpm install
 
-To learn more about Next.js, take a look at the following resources:
+# Setup Environment
+cp .env.example .env
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 3. Run Development
+```bash
+pnpm dev
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 4. Production Build
+```bash
+pnpm build
+pnpm start
+```
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🧩 The Generic CRUD Engine
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Stop writing the same table code 100 times. Use the engine:
+
+```tsx
+export function ProductView() {
+  const settings = useProductViewModel(); // Connects to Repository
+  
+  return (
+    <GenericCrudView 
+       title="Products"
+       columns={columns}
+       crud={settings.crud} // Just pass the controller!
+       schema={ProductSchema}
+    />
+  );
+}
+```
+
+---
+
+## 🔒 Security & Auth
+
+- **RouteGuard**: Automatically protects pages based on Auth state.
+- **RBAC**: `usePermissions()` hook for granular control (`'products:create'`).
+- **Hydration**: Prevents "flash of unauthenticated content".
+- **Interceptors**: Auto-refresh tokens on 401.
+
+---
+
+## 📚 Documentation
+
+Detailed guides can be found in the `/docs` directory:
+- [📖 Architecture Guide](docs/architecture/01-modularity.md)
+- [🏗️ Creating Your First Module](docs/tutorial/01-first-module.md)
+- [🧠 State Management](docs/architecture/02-state-management.md)
+
+---
+
+## 🤝 Contribution
+
+Strict architectural rules apply. Please read the [Checklist](docs/CHECKLIST.md) before submitting PRs.
+
+---
+
+**Built with ❤️ and Precision.**
