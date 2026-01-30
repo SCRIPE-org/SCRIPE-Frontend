@@ -3,6 +3,7 @@
  * 
  * A comprehensive, reusable hook for managing CRUD operations with the following features:
  * - Type-safe CRUD operations (Create, Read, Update, Delete)
+ * - **TanStack Query integration** for caching and deduplication
  * - Advanced pagination with customizable page sizes
  * - Debounced search with focus management
  * - Loading states and error handling
@@ -15,6 +16,7 @@
  * @example
  * ```typescript
  * const vm = useGenericCrudViewModel(adminService, {
+ *   queryKey: ['admins'],
  *   itemTypeName: "Admin",
  *   itemTypeNamePlural: "Admins", 
  *   getItemDisplayName: (admin) => admin.username,
@@ -23,12 +25,13 @@
  * ```
  * 
  * @author Seif
- * @version 2.0.0
+ * @version 3.0.0 - TanStack Query Integration
  * @since 1.0.0
  */
 "use client";
 
 import { useState, useCallback, useMemo, useRef, useEffect } from "react";
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import type { PaginationInfo } from "@core/common/pagination";
 import { useCrudViewModel } from "@core/hooks/use-crud-view-model";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
@@ -50,10 +53,14 @@ export interface GenericCrudService<TItem, TCreate, TUpdate, TResponse> {
 }
 
 export interface GenericCrudConfig<TItem, TCreate, TUpdate> {
+  /** TanStack Query key for caching and invalidation */
+  queryKey: string[];
   itemTypeName: string;
   itemTypeNamePlural: string;
   getItemDisplayName: (item: TItem) => string;
   searchParamName: "search" | "PageSearch"; // Different APIs use different parameter names
+  /** Stale time in milliseconds (default: 30 seconds) */
+  staleTime?: number;
 }
 
 export interface DropdownService<TDropdownItem> {
@@ -90,6 +97,8 @@ export function useGenericCrudViewModel<
   service: GenericCrudService<TItem, TCreate, TUpdate, TResponse>,
   config: GenericCrudConfigWithDropdowns<TItem, TCreate, TUpdate, TDropdownItem>
 ) {
+  const queryClient = useQueryClient();
+
   // Pagination state
   const [pagination, setPagination] = useState<PaginationInfo>({
     itemsCount: 0,
@@ -105,242 +114,200 @@ export function useGenericCrudViewModel<
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Dropdown state
-  const [dropdownOptions, setDropdownOptions] = useState<TDropdownItem[]>([]);
   const [dropdownSearchTerm, setDropdownSearchTerm] = useState("");
 
-  // Data state
-  const [data, setData] = useState<TItem[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  // Refs for stable list()
-  const paginationRef = useRef(pagination);
-  const searchTermRef = useRef(searchTerm);
-  const mountedRef = useRef(true);
-  paginationRef.current = pagination;
-  searchTermRef.current = searchTerm;
-
-  // Keep service fns in refs
-  const getDataRef = useRef(service.getData);
-  const createRef = useRef(service.create);
-  const updateRef = useRef(service.update);
-  const deleteRef = useRef(service.delete);
-
-  useEffect(() => { getDataRef.current = service.getData; }, [service.getData]);
-  useEffect(() => { createRef.current  = service.create;   }, [service.create]);
-  useEffect(() => { updateRef.current  = service.update;   }, [service.update]);
-  useEffect(() => { deleteRef.current  = service.delete;   }, [service.delete]);
-
-  // Keep config bits in refs
-  const searchParamNameRef = useRef(config.searchParamName);
-  const getItemDisplayNameRef = useRef(config.getItemDisplayName);
-  useEffect(() => { searchParamNameRef.current = config.searchParamName; }, [config.searchParamName]);
-  useEffect(() => { getItemDisplayNameRef.current = config.getItemDisplayName; }, [config.getItemDisplayName]);
-
-  // Dropdown service refs
-  const dropdownServiceRef = useRef(config.dropdownService);
-  const dropdownSearchParamNameRef = useRef(config.dropdownSearchParamName);
-  useEffect(() => { dropdownServiceRef.current = config.dropdownService; }, [config.dropdownService]);
-  useEffect(() => { dropdownSearchParamNameRef.current = config.dropdownSearchParamName; }, [config.dropdownSearchParamName]);
-
-  // Core list function — ALWAYS returns TItem[]
-  const list = useCallback(async (): Promise<TItem[]> => {
-    const currentPagination = paginationRef.current;
-    const currentSearchTerm = searchTermRef.current;
-    const wasSearchFocused = searchInputRef.current === document.activeElement;
-    
-    // Create abort controller for this request
-    const abortController = new AbortController();
-    
-    // Maintain focus during the entire API request process
-    const maintainFocus = () => {
-      if (!mountedRef.current) return; // Prevent focus on unmounted components
-      if (wasSearchFocused && searchInputRef.current && document.activeElement !== searchInputRef.current) {
-        try {
-          searchInputRef.current.focus();
-        } catch (error) {
-          // Ignore focus errors (component might be unmounted)
-        }
-      }
+  // Build query parameters
+  const queryParams = useMemo(() => {
+    const params: any = {
+      page: pagination.page,
+      pageSize: pagination.pageSize,
     };
-
-    try {
-      setLoading(true);
-      setError(null);
-
-      const paramName = searchParamNameRef.current;
-      const apiParams =
-        paramName === "search"
-          ? { page: currentPagination.page, pageSize: currentPagination.pageSize, search: currentSearchTerm }
-          : { page: currentPagination.page, pageSize: currentPagination.pageSize, PageSearch: currentSearchTerm };
-
-      const res = await getDataRef.current(apiParams);
-
-      if (!mountedRef.current) {
-        // don't update state after unmount; still return a valid array
-        return [];
-      }
-
-      // Maintain focus immediately after getting response
-      maintainFocus();
-
-      // Update pagination but preserve user-selected page & pageSize
-      setPagination(prev => {
-        const next: PaginationInfo = { ...res.pagination, page: prev.page, pageSize: prev.pageSize };
-        const same =
-          prev.itemsCount === next.itemsCount &&
-          prev.pageSize   === next.pageSize &&
-          prev.page       === next.page &&
-          prev.pagesCount === next.pagesCount;
-        return same ? prev : next;
-      });
-
-      setData(res.data ?? []);
-      
-      // Maintain focus after state updates with proper cleanup
-      const focusTimeout = setTimeout(() => {
-        if (mountedRef.current) {
-          maintainFocus();
-        }
-      }, 10);
-
-      // Always return array
-      return res.data ?? [];
-    } catch (err) {
-      // Check if request was aborted
-      if (err instanceof Error && err.name === 'AbortError') {
-        return [];
-      }
-      
-      setError(err instanceof Error ? err.message : "Failed to load data");
-      return []; // return empty array on error
-    } finally {
-      if (!mountedRef.current) return[];
-      setLoading(false);
-      
-      // Final focus restoration (exactly like tree view)
-      setTimeout(() => maintainFocus(), 50);
-      setTimeout(() => maintainFocus(), 100);
+    if (config.searchParamName === "search") {
+      params.search = searchTerm;
+    } else {
+      params.PageSearch = searchTerm;
     }
-  }, []); // stable
+    return params;
+  }, [pagination.page, pagination.pageSize, searchTerm, config.searchParamName]);
 
-  // Remove the old useEffect since we now handle debouncing in handleSearchChange
+  // ==========================================
+  // TanStack Query - Main Data Fetching
+  // ==========================================
+  const {
+    data: queryData,
+    isLoading,
+    isFetching,
+    error: queryError,
+    refetch,
+  } = useQuery({
+    queryKey: [...config.queryKey, queryParams],
+    queryFn: () => service.getData(queryParams),
+    placeholderData: keepPreviousData,
+    staleTime: config.staleTime ?? 30 * 1000, // 30 seconds default
+  });
 
-  // Debounced dropdown search
+  // Update pagination from query response
   useEffect(() => {
-    const svc = dropdownServiceRef.current;
-    if (!svc) return;
+    if (queryData?.pagination) {
+      setPagination(prev => ({
+        ...queryData.pagination,
+        page: prev.page,
+        pageSize: prev.pageSize,
+      }));
+    }
+  }, [queryData?.pagination]);
 
-    const timer = setTimeout(async () => {
-      try {
-        const paramName = dropdownSearchParamNameRef.current ?? "PageSearch";
-        const params =
-          paramName === "search"
-            ? { page: 1, pageSize: 50, search: dropdownSearchTerm }
-            : { page: 1, pageSize: 50, PageSearch: dropdownSearchTerm };
+  // ==========================================
+  // TanStack Mutations
+  // ==========================================
+  const { operationSuccess, operationError } = useEnhancedToast();
 
-        const res = await svc.getData(params);
-        if (!mountedRef.current) return;
-        setDropdownOptions(res.data);
-      } catch (e) {
-        // eslint-disable-next-line no-appLogger
-        appLogger.error("Error loading dropdown options:", e);
-      }
-    }, 300);
+  const createMutation = useMutation({
+    mutationFn: (data: TCreate) => service.create(data),
+    onSuccess: (newItem) => {
+      queryClient.invalidateQueries({ queryKey: config.queryKey });
+      operationSuccess("Create", config.itemTypeName);
+    },
+    onError: (error: any) => {
+      operationError("Create", config.itemTypeName, error.message || "Failed to create");
+    },
+  });
 
-    return () => clearTimeout(timer);
-  }, [dropdownSearchTerm]);
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: TUpdate }) => service.update(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: config.queryKey });
+      operationSuccess("Update", config.itemTypeName);
+    },
+    onError: (error: any) => {
+      operationError("Update", config.itemTypeName, error.message || "Failed to update");
+    },
+  });
 
-  // CRUD service binding with stable references
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => service.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: config.queryKey });
+      operationSuccess("Delete", config.itemTypeName);
+    },
+    onError: (error: any) => {
+      operationError("Delete", config.itemTypeName, error.message || "Failed to delete");
+    },
+  });
+
+  // ==========================================
+  // Dropdown Query
+  // ==========================================
+  const dropdownParams = useMemo(() => {
+    const params: any = { page: 1, pageSize: 50 };
+    const paramName = config.dropdownSearchParamName ?? "PageSearch";
+    if (paramName === "search") {
+      params.search = dropdownSearchTerm;
+    } else {
+      params.PageSearch = dropdownSearchTerm;
+    }
+    return params;
+  }, [dropdownSearchTerm, config.dropdownSearchParamName]);
+
+  const { data: dropdownData } = useQuery({
+    queryKey: [...config.queryKey, 'dropdown', dropdownParams],
+    queryFn: () => config.dropdownService?.getData(dropdownParams),
+    enabled: !!config.dropdownService,
+    staleTime: 60 * 1000, // 1 minute for dropdowns
+  });
+
+  // ==========================================
+  // CRUD service binding for useCrudViewModel
+  // ==========================================
   const crudService = useMemo(
     () => ({
-      list,
-      create: (d: TCreate) => createRef.current(d),
-      update: (id: string, d: TUpdate) => updateRef.current(id, d),
-      delete: (id: string) => deleteRef.current(id),
+      list: async () => {
+        const result = await refetch();
+        return result.data?.data ?? [];
+      },
+      create: (d: TCreate) => createMutation.mutateAsync(d),
+      update: (id: string, d: TUpdate) => updateMutation.mutateAsync({ id, data: d }),
+      delete: (id: string) => deleteMutation.mutateAsync(id),
     }),
-    [list]
+    [refetch, createMutation, updateMutation, deleteMutation]
   );
-
-  // Enhanced toast notifications
-  const { operationSuccess, operationError } = useEnhancedToast();
 
   // Enhanced CRUD VM (modals + confirmation)
   const crud = useCrudViewModel<TItem, TCreate, TUpdate>(crudService, {
     itemTypeName: config.itemTypeName,
     itemTypeNamePlural: config.itemTypeNamePlural,
-    getItemDisplayName: (item: TItem) => getItemDisplayNameRef.current(item),
+    getItemDisplayName: config.getItemDisplayName,
     notifications: {
       operationSuccess,
       operationError,
     },
   });
 
-  // Handle input change (exactly like tree view)
+  // ==========================================
+  // Search handling with debounce
+  // ==========================================
   const handleSearchChange = useCallback((value: string) => {
     setSearchValue(value); // Update display immediately
-    
+
     // Clear existing timeout
     if (searchTimeoutRef.current) {
       clearTimeout(searchTimeoutRef.current);
     }
-    
+
     // Set new timeout for debounced API call
     searchTimeoutRef.current = setTimeout(() => {
       // Ensure focus is maintained before making the API call
       if (searchInputRef.current && document.activeElement !== searchInputRef.current) {
         searchInputRef.current.focus();
       }
-      
+
       setPagination((prev) => ({ ...prev, page: 1 }));
-      setSearchTerm(value); // This triggers the API call
+      setSearchTerm(value); // This triggers the query via queryKey change
     }, 300); // 300ms debounce
   }, []);
 
-  // Mount / unmount
+  // Cleanup on unmount
   useEffect(() => {
-    mountedRef.current = true;
-    list(); // initial load
     return () => {
-      mountedRef.current = false;
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
     };
-  }, [list]);
+  }, []);
 
-  // Re-run on debounced search term
-  useEffect(() => {
-    list();
-  }, [searchTerm, list]);
-
+  // ==========================================
   // Pagination handlers
+  // ==========================================
   const changePage = useCallback((page: number) => {
     setPagination(prev => ({ ...prev, page }));
-    setTimeout(() => { list(); }, 0);
-  }, [list]);
+  }, []);
 
   const changePageSize = useCallback((pageSize: number) => {
     setPagination(prev => ({ ...prev, pageSize, page: 1 }));
-    setTimeout(() => { list(); }, 0);
-  }, [list]);
+  }, []);
 
   // Legacy compatibility
   const searchItems = useCallback((term: string) => {
     handleSearchChange(term);
   }, [handleSearchChange]);
 
+  // ==========================================
+  // Dropdown options
+  // ==========================================
   const dropdownOptionsMapped = useMemo(() => {
-    const svc = dropdownServiceRef.current;
-    if (!svc) return [];
-    return dropdownOptions.map(item => ({
-      label: svc.getLabel(item),
-      value: svc.getValue(item),
+    if (!config.dropdownService || !dropdownData?.data) return [];
+    return dropdownData.data.map(item => ({
+      label: config.dropdownService!.getLabel(item),
+      value: config.dropdownService!.getValue(item),
     }));
-  }, [dropdownOptions]);
+  }, [dropdownData?.data, config.dropdownService]);
 
+  // ==========================================
   // View modal state
+  // ==========================================
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [viewItem, setViewItem] = useState<TItem | null>(null);
 
-  // View handlers
   const openViewModal = useCallback((item: TItem) => {
     setViewItem(item);
     setViewModalOpen(true);
@@ -351,15 +318,19 @@ export function useGenericCrudViewModel<
     setViewItem(null);
   }, []);
 
+  // ==========================================
+  // Return
+  // ==========================================
   return {
     // Enhanced CRUD functionality (modals, confirmations, etc.)
     ...crud,
 
-    // Managed state
-    data,
-    loading,
-    error,
-    items: data, // legacy alias
+    // Managed state from TanStack Query
+    data: queryData?.data ?? [],
+    loading: isLoading,
+    isFetching,
+    error: queryError?.message ?? null,
+    items: queryData?.data ?? [], // legacy alias
 
     // Pagination
     pagination,
@@ -375,8 +346,8 @@ export function useGenericCrudViewModel<
     changePage,
     changePageSize,
 
-    // Manual refresh
-    refresh: list,
+    // Manual refresh (via TanStack Query)
+    refresh: refetch,
 
     // Dropdowns
     dropdownOptions: dropdownOptionsMapped,
@@ -387,5 +358,10 @@ export function useGenericCrudViewModel<
     viewItem,
     openViewModal,
     closeViewModal,
+
+    // Mutation states
+    isCreating: createMutation.isPending,
+    isUpdating: updateMutation.isPending,
+    isDeleting: deleteMutation.isPending,
   };
 }
