@@ -66,7 +66,7 @@ export class NavigationService implements INavigationService {
    * Get allowed pages list
    */
   getAllowedPages(): string[] {
-    return this.navigationData?.allowedPages || [];
+    return this.navigationData?.routes || [];
   }
 
   /**

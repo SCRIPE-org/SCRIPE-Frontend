@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 export interface AuthorizationState {
   isAuthorized: boolean;
   isLoading: boolean;
-  allowedPages: string[];
+  routes: string[];
 }
 
 /**
@@ -26,7 +26,7 @@ export function useAuthorization(): AuthorizationState {
   const [authState, setAuthState] = useState<AuthorizationState>({
     isAuthorized: false,
     isLoading: true,
-    allowedPages: []
+    routes: []
   });
 
   useEffect(() => {
@@ -38,7 +38,7 @@ export function useAuthorization(): AuthorizationState {
       setAuthState({
         isAuthorized: false,
         isLoading: false,
-        allowedPages: []
+        routes: []
       });
       return;
     }
@@ -59,7 +59,7 @@ export function useAuthorization(): AuthorizationState {
         setAuthState({
           isAuthorized,
           isLoading: false,
-          allowedPages: navigationData.allowedPages
+          routes: navigationData.routes
         });
 
         // Redirect to not authorized page if user doesn't have access
@@ -71,7 +71,7 @@ export function useAuthorization(): AuthorizationState {
         setAuthState({
           isAuthorized: false,
           isLoading: false,
-          allowedPages: []
+          routes: []
         });
       }
     };

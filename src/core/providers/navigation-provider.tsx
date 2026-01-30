@@ -4,13 +4,13 @@ import type React from "react";
 import { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { useAppStore } from "@core/store/useAppStore";
 import { useServices } from "@core/providers/service-provider";
-import { NavigationData } from "@core/domain/entities";
+import { NavigationData, MenuItemActions } from "@core/domain/entities";
 import { NavigationMapper } from "@core/domain/mappers/NavigationMapper";
 import { appLogger } from "@core/common/logger";
 
 // LocalStorage key for navigation cache
-const NAVIGATION_CACHE_KEY = "navigation_data";
-const NAVIGATION_CACHE_EXPIRY_KEY = "navigation_data_expiry";
+const NAVIGATION_CACHE_KEY = "navigation_data_v2"; // Updated version for new structure
+const NAVIGATION_CACHE_EXPIRY_KEY = "navigation_data_expiry_v2";
 const CACHE_EXPIRY_TIME = 1000 * 60 * 30; // 30 minutes
 
 interface NavigationContextType {
@@ -18,7 +18,8 @@ interface NavigationContextType {
   isLoading: boolean;
   refreshNavigation: () => Promise<void>;
   hasPageAccess: (pathname: string) => boolean;
-  getAllowedPages: () => string[];
+  getRoutes: () => string[];
+  getPageActions: (pathname: string) => MenuItemActions | null;
 }
 
 const NavigationContext = createContext<NavigationContextType | undefined>(undefined);
@@ -47,7 +48,7 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
         const parsedData = JSON.parse(cachedData);
         const navData = NavigationMapper.navigationDataFromJson({
           menuItems: parsedData.menuItems,
-          allowedPages: parsedData.allowedPages
+          routes: parsedData.routes
         });
 
         appLogger.debug('Navigation data loaded from cache on initialization');
@@ -64,7 +65,6 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
   const [hasTriggeredRefresh, setHasTriggeredRefresh] = useState(false);
   const isAuthenticated = useAppStore((state) => state.isAuthenticated);
   const user = useAppStore((state) => state.user);
-  const authLoading = false; // const { isAuthenticated, user, isLoading: authLoading } = useAuth();
   const { navigationService } = useServices();
 
   /**
@@ -94,7 +94,7 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
       const parsedData = JSON.parse(cachedData);
       const navigationData = NavigationMapper.navigationDataFromJson({
         menuItems: parsedData.menuItems,
-        allowedPages: parsedData.allowedPages
+        routes: parsedData.routes
       });
 
       appLogger.debug('Navigation data loaded from cache');
@@ -113,44 +113,9 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
    */
   const saveToCache = useCallback((data: NavigationData) => {
     try {
-      const cacheData = {
-        menuItems: data.menuItems.map(item => ({
-          id: item.id,
-          name: item.name,
-          href: item.href,
-          icon: item.icon,
-          order: item.order,
-          parentMenuItem: item.parentMenuItem,
-          children: item.children.map(child => ({
-            id: child.id,
-            name: child.name,
-            href: child.href,
-            icon: child.icon,
-            order: child.order,
-            parentMenuItem: child.parentMenuItem,
-            children: [],
-            requiredPermission: child.requiredPermission,
-            isDeleted: child.isDeleted,
-            isActive: child.isActive,
-            notes: child.notes,
-            createdTimestamp: child.createdTimestamp,
-            updatedTimestamp: child.updatedTimestamp,
-            deletedTimestamp: child.deletedTimestamp,
-          })),
-          requiredPermission: item.requiredPermission,
-          isDeleted: item.isDeleted,
-          isActive: item.isActive,
-          notes: item.notes,
-          createdTimestamp: item.createdTimestamp,
-          updatedTimestamp: item.updatedTimestamp,
-          deletedTimestamp: item.deletedTimestamp,
-        })),
-        allowedPages: data.allowedPages
-      };
-
+      const cacheData = NavigationMapper.navigationDataToPlainObject(data);
       localStorage.setItem(NAVIGATION_CACHE_KEY, JSON.stringify(cacheData));
       localStorage.setItem(NAVIGATION_CACHE_EXPIRY_KEY, (Date.now() + CACHE_EXPIRY_TIME).toString());
-
       appLogger.debug('Navigation data saved to cache');
     } catch (error) {
       appLogger.error('Failed to save navigation to cache:', error);
@@ -204,12 +169,10 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
     }
   }, [isAuthenticated, navigationService, saveToCache, loadFromCache, clearCache]);
 
-  // Check if we need to refresh cache (no effect hook needed - data already loaded on init)
-
   // Fetch navigation data when user logs in (only once per session)
   useEffect(() => {
-    // Don't fetch if auth is still loading or already triggered
-    if (authLoading || hasTriggeredRefresh) {
+    // Don't fetch if already triggered
+    if (hasTriggeredRefresh) {
       return;
     }
 
@@ -226,7 +189,7 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
       setHasTriggeredRefresh(false); // Allow refresh on next login
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAuthenticated, user, authLoading, hasTriggeredRefresh]);
+  }, [isAuthenticated, user, hasTriggeredRefresh]);
 
   const hasPageAccess = useCallback((pathname: string): boolean => {
     if (!isAuthenticated) {
@@ -238,17 +201,17 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
 
     // Always allow access to system pages for authenticated users
     const systemPages = [
-      '/',           // Home page
-      '',            // Root
-      '/dashboard',  // Dashboard
+      '/',
+      '',
+      '/dashboard',
       '/not-authorized',
-      '/profile',    // User profile
-      '/_not-found', // Not found page
-      '/not-found',  // Next.js not-found page
-      '/404',        // 404 page
-      '/500',        // Error page
-      '/global-error', // Global error page
-      '/error'       // Generic error page
+      '/profile',
+      '/_not-found',
+      '/not-found',
+      '/404',
+      '/500',
+      '/global-error',
+      '/error'
     ];
 
     if (systemPages.includes(cleanPath)) {
@@ -256,44 +219,23 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
     }
 
     // If no navigation data yet, allow access temporarily (RouteGuard will re-check)
-    // This prevents false rejections during initial load
     if (!navigationData) {
-      return true; // Temporarily allow, will re-check when data loads
-    }
-
-    // Check for exact match first
-    if (navigationData.allowedPages.includes(cleanPath)) {
       return true;
     }
 
-    // Check for case-insensitive match
-    const lowerCleanPath = cleanPath.toLowerCase();
-    if (navigationData.allowedPages.some((page: string) => page.toLowerCase() === lowerCleanPath)) {
-      return true;
-    }
+    return navigationData.hasPageAccess(cleanPath);
+  }, [navigationData, isAuthenticated]);
 
-    // Check for hierarchical access - if user has access to parent route, grant access to nested routes
-    const pathSegments = cleanPath.split('/').filter(segment => segment !== '');
+  const getRoutes = useCallback((): string[] => {
+    return navigationData?.routes || [];
+  }, [navigationData]);
 
-    // Build parent paths and check if user has access to any parent route
-    for (let i = pathSegments.length - 1; i > 0; i--) {
-      const parentPath = '/' + pathSegments.slice(0, i).join('/');
-      if (navigationData.allowedPages.includes(parentPath)) {
-        return true;
-      }
-
-      // Also check case-insensitive for parent paths
-      const lowerParentPath = parentPath.toLowerCase();
-      if (navigationData.allowedPages.some((page: string) => page.toLowerCase() === lowerParentPath)) {
-        return true;
-      }
-    }
-
-    return false;
-  }, [navigationData, isAuthenticated, isLoading]);
-
-  const getAllowedPages = useCallback((): string[] => {
-    return navigationData?.allowedPages || [];
+  /**
+   * Get page-level actions (canView, canCreate, canUpdate, canDelete)
+   */
+  const getPageActions = useCallback((pathname: string): MenuItemActions | null => {
+    if (!navigationData) return null;
+    return navigationData.getPageActions(pathname);
   }, [navigationData]);
 
   return (
@@ -303,7 +245,8 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
         isLoading,
         refreshNavigation,
         hasPageAccess,
-        getAllowedPages,
+        getRoutes,
+        getPageActions,
       }}
     >
       {children}
