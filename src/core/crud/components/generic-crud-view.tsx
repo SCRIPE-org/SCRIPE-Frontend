@@ -18,8 +18,8 @@
 
 import { Button } from "@core/ui/button";
 import { Card, CardContent } from "@core/ui/card";
-import { GenericTable } from "@core/ui/generic-table";
-import { GenericModal } from "@core/ui/generic-modal";
+import { GenericTable } from "./generic-table";
+import { GenericModal } from "./generic-modal";
 import {
   Dialog,
   DialogContent,
@@ -341,8 +341,7 @@ export function GenericCrudView<T>(props: GenericCrudViewProps<T>) {
           confirmTitle: action.confirmTitle || action.label,
           confirmDescription:
             action.confirmDescription ||
-            `Are you sure you want to ${action.label.toLowerCase()} ${
-              selectedIds.length
+            `Are you sure you want to ${action.label.toLowerCase()} ${selectedIds.length
             } items?`,
         }
       );
@@ -429,12 +428,12 @@ export function GenericCrudView<T>(props: GenericCrudViewProps<T>) {
   const actions = config?.hideActionsColumn
     ? undefined
     : rawActions?.map((action) => ({
-        ...action,
-        onClick:
-          action.onClick === handleDelete
-            ? handleDelete
-            : (item: any) => handleIndividualAction(action, item),
-      }));
+      ...action,
+      onClick:
+        action.onClick === handleDelete
+          ? handleDelete
+          : (item: any) => handleIndividualAction(action, item),
+    }));
 
   const createFields = config ? config.createFields : propCreateFields!;
   const editFields = config
@@ -446,20 +445,20 @@ export function GenericCrudView<T>(props: GenericCrudViewProps<T>) {
     propPagination ||
     (config
       ? {
-          ...viewModel.pagination,
-          onPageChange: viewModel.changePage,
-          onPageSizeChange: viewModel.changePageSize,
-        }
+        ...viewModel.pagination,
+        onPageChange: viewModel.changePage,
+        onPageSizeChange: viewModel.changePageSize,
+      }
       : undefined);
 
   const search =
     propSearch ||
     (config
       ? {
-          value: viewModel.searchValue,
-          onChange: viewModel.handleSearchChange,
-          inputRef: viewModel.searchInputRef,
-        }
+        value: viewModel.searchValue,
+        onChange: viewModel.handleSearchChange,
+        inputRef: viewModel.searchInputRef,
+      }
       : undefined);
   const getSpacingClasses = () => {
     switch (settings.spacingSize) {
@@ -629,9 +628,9 @@ export function GenericCrudView<T>(props: GenericCrudViewProps<T>) {
         pagination={
           pagination
             ? {
-                ...pagination,
-                currentPage: pagination.page, // Map page to currentPage for GenericTable
-              }
+              ...pagination,
+              currentPage: pagination.page, // Map page to currentPage for GenericTable
+            }
             : undefined
         }
         onSearch={search?.onChange}
@@ -685,11 +684,9 @@ export function GenericCrudView<T>(props: GenericCrudViewProps<T>) {
         }}
         title={`${t("common.edit")} ${title}`}
         description={`Edit the ${title.toLowerCase()} details below.`}
-        formKey={`edit-form-${
-          viewModel.editingItem?.id || "new"
-        }-${JSON.stringify(editFields?.map((f) => f.name).sort())}-${
-          config?.formKey || 0
-        }`}
+        formKey={`edit-form-${viewModel.editingItem?.id || "new"
+          }-${JSON.stringify(editFields?.map((f) => f.name).sort())}-${config?.formKey || 0
+          }`}
       >
         <GenericForm
           fields={editFields || createFields}
@@ -728,7 +725,7 @@ export function GenericCrudView<T>(props: GenericCrudViewProps<T>) {
                 ? config.editInitialValues(viewModel.viewItem)
                 : viewModel.viewItem || {}
             }
-            onSubmit={async () => {}} // No-op for read-only
+            onSubmit={async () => { }} // No-op for read-only
             onCancel={viewModel.closeViewModal}
             readOnly={true}
           />

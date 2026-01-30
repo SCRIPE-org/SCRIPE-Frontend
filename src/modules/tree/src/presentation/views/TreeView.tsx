@@ -1,6 +1,6 @@
 "use client";
 
-import { GenericTreeView } from "@core/ui/generic-tree-view";
+import { GenericTreeView } from "@core/crud/components/generic-tree-view";
 import { useTreeViewModel } from "@core/hooks/use-tree-view-model";
 import { TreeNode as TreeNodeEntity } from "../../domain/entities/TreeNode";
 

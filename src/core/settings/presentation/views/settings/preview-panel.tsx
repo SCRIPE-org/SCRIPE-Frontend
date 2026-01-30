@@ -9,32 +9,32 @@ import { Avatar, AvatarFallback } from "@core/ui/avatar";
 import { Separator } from "@core/ui/separator";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@core/ui/tooltip";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
-import { GenericTable } from "@core/ui/generic-table";
+import { GenericTable } from "@core/crud/components/generic-table";
 import { useI18n } from "@core/providers/i18n-provider";
 
 export function PreviewPanel() {
   const { t } = useI18n();
 
-    const sampleTableData = [
-      {
-        id: 1,
-        name: t("settings.sampleTable.data.john"),
-        email: t("settings.sampleTable.emails.john"),
-        status: "active",
-      },
-      {
-        id: 2,
-        name: t("settings.sampleTable.data.jane"),
-        email: t("settings.sampleTable.emails.jane"),
-        status: "inactive",
-      },
-      {
-        id: 3,
-        name: t("settings.sampleTable.data.bob"),
-        email: t("settings.sampleTable.emails.bob"),
-        status: "active",
-      },
-    ];
+  const sampleTableData = [
+    {
+      id: 1,
+      name: t("settings.sampleTable.data.john"),
+      email: t("settings.sampleTable.emails.john"),
+      status: "active",
+    },
+    {
+      id: 2,
+      name: t("settings.sampleTable.data.jane"),
+      email: t("settings.sampleTable.emails.jane"),
+      status: "inactive",
+    },
+    {
+      id: 3,
+      name: t("settings.sampleTable.data.bob"),
+      email: t("settings.sampleTable.emails.bob"),
+      status: "active",
+    },
+  ];
 
   const sampleTableColumns = [
     { key: "name" as const, label: t("settings.sampleTable.name"), sortable: true },

@@ -10,13 +10,13 @@
 import { useState, useCallback, useMemo } from "react";
 import { getProductContainer } from "@/modules/product/di";
 import { useI18n } from "@core/providers/i18n-provider";
-import { useGenericCrudViewModel } from "@core/hooks/use-generic-crud-viewmodel";
+import { useCrudViewModel } from "@core/crud/hooks/useCrudViewModel";
 import type {
   Product,
   CreateProductRequest,
   UpdateProductRequest,
 } from "../../domain/entities/Product";
-import type { CrudConfig } from "@core/ui/generic-crud-view";
+import type { CrudConfig } from "@core/crud/components/generic-crud-view";
 
 // Mock Category interface for demonstration
 interface Category {
@@ -121,24 +121,21 @@ export function useProductViewModel() {
     }));
   }, [vendors]);
 
-  // Use generic CRUD view model
-  const vm = useGenericCrudViewModel<
+  // Use generic CRUD view model (React Query Engine)
+  const vm = useCrudViewModel<
     Product,
     CreateProductRequest,
-    UpdateProductRequest,
-    { data: Product[]; pagination: any }
+    UpdateProductRequest
   >(
+    ["products"], // Query Key for caching
     {
-      getData: productService.getProducts.bind(productService),
+      getAll: async (params) => {
+        const res = await productService.getProducts(params);
+        return { items: res.data || [], pagination: res.pagination };
+      },
       create: productService.createProduct.bind(productService),
       update: productService.updateProduct.bind(productService),
       delete: productService.deleteProduct.bind(productService),
-    },
-    {
-      itemTypeName: t("product.item"),
-      itemTypeNamePlural: t("product.items"),
-      getItemDisplayName: (product: Product) => product.displayName,
-      searchParamName: "PageSearch",
     }
   );
 

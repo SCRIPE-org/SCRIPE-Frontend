@@ -1,8 +1,8 @@
 "use client";
 
-import { GenericCrudView } from "@core/ui/generic-crud-view";
+import { GenericCrudView } from "@core/crud/components/generic-crud-view";
 import { Product } from "../../domain/entities/Product";
-import type { CrudConfig } from "@core/ui/generic-crud-view";
+import type { CrudConfig } from "@core/crud/components/generic-crud-view";
 import { Badge } from "@core/ui/badge";
 import {
   Package,

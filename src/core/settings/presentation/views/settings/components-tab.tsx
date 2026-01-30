@@ -10,13 +10,13 @@ import {
 } from "@core/ui/card";
 import { Button } from "@core/ui/button";
 import { Badge, badgeVariants } from "@core/ui/badge";
-import GenericSelect from "@core/ui/generic-select";
+import GenericSelect from "@core/crud/components/generic-select";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@core/ui/tooltip";
-import { GenericModal } from "@core/ui/generic-modal";
+import { GenericModal } from "@core/crud/components/generic-modal";
 import {
   Check,
   Home,
@@ -33,7 +33,7 @@ import {
   Move,
   Zap,
 } from "lucide-react";
-import { GenericTable } from "@core/ui/generic-table";
+import { GenericTable } from "@core/crud/components/generic-table";
 import { useSettings } from "@core/providers/settings-provider";
 import { useI18n } from "@core/providers/i18n-provider";
 import { cn, getHoverEffectClasses } from "@core/common/utils";
@@ -126,11 +126,11 @@ export function ComponentsTab() {
           className={cn(
             "px-2 py-1 rounded-full text-xs font-medium",
             value === "active" &&
-              "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
+            "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
             value === "pending" &&
-              "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
+            "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
             value === "inactive" &&
-              "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
+            "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
           )}
         >
           {t(`settings.sampleTable.${value}`)}
@@ -297,11 +297,11 @@ export function ComponentsTab() {
                     className={cn(
                       "px-1.5 py-0.5 rounded text-[10px] font-medium",
                       row.status === "active" &&
-                        "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
+                      "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
                       row.status === "pending" &&
-                        "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
+                      "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
                       row.status === "inactive" &&
-                        "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
+                      "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
                     )}
                   >
                     {t(`settings.sampleTable.${row.status}`)}
@@ -1023,17 +1023,17 @@ export function ComponentsTab() {
               className={cn(
                 "px-3 py-1.5 text-xs font-medium rounded transition-colors",
                 style === "modern" &&
-                  "bg-primary text-primary-foreground rounded-xl shadow-md hover:shadow-lg",
+                "bg-primary text-primary-foreground rounded-xl shadow-md hover:shadow-lg",
                 style === "glass" &&
-                  "bg-white/20 text-foreground border border-white/30 rounded-xl backdrop-blur-sm",
+                "bg-white/20 text-foreground border border-white/30 rounded-xl backdrop-blur-sm",
                 style === "minimal" &&
-                  "bg-transparent text-primary border-b-2 border-primary rounded-none",
+                "bg-transparent text-primary border-b-2 border-primary rounded-none",
                 style === "card" &&
-                  "bg-primary text-primary-foreground rounded-lg shadow-sm",
+                "bg-primary text-primary-foreground rounded-lg shadow-sm",
                 style === "compact" &&
-                  "bg-primary text-primary-foreground rounded",
+                "bg-primary text-primary-foreground rounded",
                 style === "spacious" &&
-                  "bg-primary text-primary-foreground rounded-lg px-4 py-2",
+                "bg-primary text-primary-foreground rounded-lg px-4 py-2",
                 ![
                   "modern",
                   "glass",
@@ -1042,7 +1042,7 @@ export function ComponentsTab() {
                   "compact",
                   "spacious",
                 ].includes(style) &&
-                  "bg-primary text-primary-foreground rounded"
+                "bg-primary text-primary-foreground rounded"
               )}
             >
               Submit
@@ -2048,14 +2048,14 @@ export function ComponentsTab() {
                 <div className="space-y-2">
                   <h4 className="font-semibold">{style.name}</h4>
                   <div className="flex justify-center gap-1">
-                    <StylePreviewBadge 
-                      variant="active" 
+                    <StylePreviewBadge
+                      variant="active"
                       badgeStyle={style.value}
                     >
                       Active
                     </StylePreviewBadge>
-                    <StylePreviewBadge 
-                      variant="inactive" 
+                    <StylePreviewBadge
+                      variant="inactive"
                       badgeStyle={style.value}
                     >
                       Inactive
@@ -2369,7 +2369,7 @@ export function ComponentsTab() {
                   onValueChange={(value: string | string[]) =>
                     setMultiSelectDemo(Array.isArray(value) ? value : [value])
                   }
-                  // All text will be localized automatically by the component
+                // All text will be localized automatically by the component
                 />
               </div>
               <p className="text-xs text-muted-foreground">
@@ -2953,7 +2953,7 @@ export function ComponentsTab() {
                   searchType="server"
                   options={[]}
                   value={[]}
-                  onValueChange={(value: string | string[]) => {}}
+                  onValueChange={(value: string | string[]) => { }}
                   onServerSearch={async (query: string) => {
                     // Simulate server search
                     await new Promise((resolve) => setTimeout(resolve, 500));

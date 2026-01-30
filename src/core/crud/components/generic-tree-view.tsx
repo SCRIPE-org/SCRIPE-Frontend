@@ -4,8 +4,8 @@ import { useEffect, useRef } from "react";
 import { TreeView } from "@core/ui/tree-view";
 import { Button } from "@core/ui/button";
 import { GenericForm } from "@core/ui/forms/generic-form";
-import { GenericModal } from "@core/ui/generic-modal";
-import GenericSelect from "@core/ui/generic-select";
+import { GenericModal } from "./generic-modal";
+import GenericSelect from "./generic-select";
 import {
   Pagination as Pager,
   PaginationContent,
@@ -169,23 +169,23 @@ export function GenericTreeView<T extends TreeNode, TCreate, TUpdate>({
           vm.config.selectable
             ? undefined
             : (n) => [
-                {
-                  label: t("common.add_child") ?? "Add child",
-                  onClick: () => vm.openAddChild(n),
-                  disabled: vm.loading, // Disable while loading
-                },
-                {
-                  label: t("common.edit"),
-                  onClick: () => vm.openEdit(n),
-                  disabled: vm.loading, // Disable while loading
-                },
-                {
-                  label: t("common.delete"),
-                  onClick: () => vm.deleteItem(n),
-                  variant: "destructive",
-                  disabled: vm.loading, // Disable while loading
-                },
-              ]
+              {
+                label: t("common.add_child") ?? "Add child",
+                onClick: () => vm.openAddChild(n),
+                disabled: vm.loading, // Disable while loading
+              },
+              {
+                label: t("common.edit"),
+                onClick: () => vm.openEdit(n),
+                disabled: vm.loading, // Disable while loading
+              },
+              {
+                label: t("common.delete"),
+                onClick: () => vm.deleteItem(n),
+                variant: "destructive",
+                disabled: vm.loading, // Disable while loading
+              },
+            ]
         }
         selectable={vm.config.selectable}
         selectedValues={vm.selectedValues}
@@ -225,12 +225,10 @@ export function GenericTreeView<T extends TreeNode, TCreate, TUpdate>({
           }
           description={
             vm.editing
-              ? `Edit the ${
-                  vm.config.itemTypeName?.toLowerCase() ?? "item"
-                } details below.`
-              : `Add a new ${
-                  vm.config.itemTypeName?.toLowerCase() ?? "item"
-                } below.`
+              ? `Edit the ${vm.config.itemTypeName?.toLowerCase() ?? "item"
+              } details below.`
+              : `Add a new ${vm.config.itemTypeName?.toLowerCase() ?? "item"
+              } below.`
           }
         >
           <GenericForm

@@ -59,7 +59,7 @@ import {
   DropdownMenuTrigger,
 } from "@core/ui/dropdown-menu";
 import { MoreHorizontal, ArrowUpDown, Search } from "lucide-react";
-import GenericSelect from "@core/ui/generic-select";
+import GenericSelect from "./generic-select";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSettings } from "@core/providers/settings-provider";
 import { cn, getHoverEffectClasses, getTableHoverEffectClasses } from "@core/common/utils";
@@ -272,10 +272,10 @@ export function GenericTable<T extends Record<string, any>>({
   const filteredData = onSearch
     ? data
     : data.filter((item) =>
-        Object.values(item).some((value) =>
-          String(value).toLowerCase().includes(searchTerm.toLowerCase())
-        )
-      );
+      Object.values(item).some((value) =>
+        String(value).toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    );
 
   const sortedData = [...filteredData].sort((a, b) => {
     if (!sortColumn) return 0;
@@ -494,7 +494,7 @@ export function GenericTable<T extends Record<string, any>>({
         styleClasses = cn(
           "border-b-2 border-border/50 bg-background",
           index % 2 === 0 &&
-            "shadow-[inset_2px_2px_4px_rgba(0,0,0,0.05),inset_-2px_-2px_4px_rgba(255,255,255,0.05)]"
+          "shadow-[inset_2px_2px_4px_rgba(0,0,0,0.05),inset_-2px_-2px_4px_rgba(255,255,255,0.05)]"
         );
         break;
       case "cyberpunk":
@@ -509,7 +509,7 @@ export function GenericTable<T extends Record<string, any>>({
           "border-b border-amber-200/20 bg-gradient-to-r from-amber-50/20 to-transparent",
           "dark:border-amber-400/20 dark:from-amber-900/10",
           index % 2 === 0 &&
-            "from-amber-100/30 to-amber-50/10 dark:from-amber-900/20 dark:to-amber-800/10"
+          "from-amber-100/30 to-amber-50/10 dark:from-amber-900/20 dark:to-amber-800/10"
         );
         break;
       case "matrix":
@@ -526,7 +526,7 @@ export function GenericTable<T extends Record<string, any>>({
           "text-primary",
           "dark:from-primary/10 dark:via-primary/5 dark:to-primary/15 dark:text-primary dark:border-primary/20",
           index % 2 === 0 &&
-            "from-primary/15 via-primary/10 to-primary/20 dark:from-primary/15 dark:via-primary/10 dark:to-primary/20"
+          "from-primary/15 via-primary/10 to-primary/20 dark:from-primary/15 dark:via-primary/10 dark:to-primary/20"
         );
         break;
       default:
@@ -669,7 +669,7 @@ export function GenericTable<T extends Record<string, any>>({
           "dark:bg-black/95",
           "shadow-[0_0_15px_rgba(var(--primary),0.3)]",
           hasHoverEffect &&
-            "hover:border-primary hover:shadow-[0_0_25px_rgba(var(--primary),0.4)]"
+          "hover:border-primary hover:shadow-[0_0_25px_rgba(var(--primary),0.4)]"
         );
       case "gradient":
         return cn(
@@ -678,7 +678,7 @@ export function GenericTable<T extends Record<string, any>>({
           "bg-gradient-to-r from-primary/30 via-primary/20 to-primary/30 border-b border-primary/30",
           "text-foreground font-bold shadow-lg",
           hasHoverEffect &&
-            "hover:from-primary/40 hover:via-primary/30 hover:to-primary/40"
+          "hover:from-primary/40 hover:via-primary/30 hover:to-primary/40"
         );
       case "neumorphism":
         return cn(
@@ -688,7 +688,7 @@ export function GenericTable<T extends Record<string, any>>({
           "shadow-[8px_8px_16px_rgba(0,0,0,0.1),-8px_-8px_16px_rgba(255,255,255,0.1)]",
           "dark:shadow-[8px_8px_16px_rgba(0,0,0,0.2),-8px_-8px_16px_rgba(255,255,255,0.05)]",
           hasHoverEffect &&
-            "hover:shadow-[12px_12px_24px_rgba(0,0,0,0.15),-12px_-12px_24px_rgba(255,255,255,0.15)]"
+          "hover:shadow-[12px_12px_24px_rgba(0,0,0,0.15),-12px_-12px_24px_rgba(255,255,255,0.15)]"
         );
       case "cyberpunk":
         return cn(
@@ -698,7 +698,7 @@ export function GenericTable<T extends Record<string, any>>({
           "dark:bg-black/95",
           "shadow-[0_0_20px_rgba(var(--primary),0.4)]",
           hasHoverEffect &&
-            "hover:border-primary hover:shadow-[0_0_30px_rgba(var(--primary),0.5)]"
+          "hover:border-primary hover:shadow-[0_0_30px_rgba(var(--primary),0.5)]"
         );
       case "luxury":
         return cn(
@@ -708,9 +708,9 @@ export function GenericTable<T extends Record<string, any>>({
           "dark:from-amber-900/30 dark:via-amber-800/20 dark:to-amber-900/30 dark:border-amber-400/30",
           "text-amber-900 dark:text-amber-100 font-bold shadow-lg shadow-amber-200/20",
           hasHoverEffect &&
-            "hover:from-amber-200/60 hover:via-amber-100/40 hover:to-amber-200/60",
+          "hover:from-amber-200/60 hover:via-amber-100/40 hover:to-amber-200/60",
           hasHoverEffect &&
-            "dark:hover:from-amber-800/40 dark:hover:via-amber-700/30 dark:hover:to-amber-800/40"
+          "dark:hover:from-amber-800/40 dark:hover:via-amber-700/30 dark:hover:to-amber-800/40"
         );
       case "matrix":
         return cn(
@@ -769,8 +769,8 @@ export function GenericTable<T extends Record<string, any>>({
           "bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl",
           "dark:bg-black/20 dark:border-white/10",
           settings.hoverEffectType !== "none" &&
-            settings.hoverEffectIntensity !== "none" &&
-            "hover:bg-white/15 dark:hover:bg-black/30 hover:shadow-3xl"
+          settings.hoverEffectIntensity !== "none" &&
+          "hover:bg-white/15 dark:hover:bg-black/30 hover:shadow-3xl"
         );
       case "neon":
         return cn(
@@ -779,8 +779,8 @@ export function GenericTable<T extends Record<string, any>>({
           "bg-background border-2 border-primary/30 shadow-[0_0_20px_rgba(var(--primary),0.3)] rounded-xl",
           "dark:bg-black/95",
           settings.hoverEffectType !== "none" &&
-            settings.hoverEffectIntensity !== "none" &&
-            "hover:border-primary/50 hover:shadow-[0_0_30px_rgba(var(--primary),0.5)] hover:bg-primary/5"
+          settings.hoverEffectIntensity !== "none" &&
+          "hover:border-primary/50 hover:shadow-[0_0_30px_rgba(var(--primary),0.5)] hover:bg-primary/5"
         );
       case "gradient":
         return cn(
@@ -788,8 +788,8 @@ export function GenericTable<T extends Record<string, any>>({
           hoverClasses,
           "bg-gradient-to-br from-primary/20 via-background to-primary/10 border-0 shadow-2xl rounded-2xl",
           settings.hoverEffectType !== "none" &&
-            settings.hoverEffectIntensity !== "none" &&
-            "hover:from-primary/30 hover:via-background hover:to-primary/20 hover:shadow-3xl"
+          settings.hoverEffectIntensity !== "none" &&
+          "hover:from-primary/30 hover:via-background hover:to-primary/20 hover:shadow-3xl"
         );
       case "neumorphism":
         return cn(
@@ -799,8 +799,8 @@ export function GenericTable<T extends Record<string, any>>({
           "shadow-[15px_15px_30px_rgba(0,0,0,0.1),-15px_-15px_30px_rgba(255,255,255,0.1)]",
           "dark:shadow-[15px_15px_30px_rgba(0,0,0,0.3),-15px_-15px_30px_rgba(255,255,255,0.05)]",
           settings.hoverEffectType !== "none" &&
-            settings.hoverEffectIntensity !== "none" &&
-            "hover:shadow-[20px_20px_40px_rgba(0,0,0,0.15),-20px_-20px_40px_rgba(255,255,255,0.15)]"
+          settings.hoverEffectIntensity !== "none" &&
+          "hover:shadow-[20px_20px_40px_rgba(0,0,0,0.15),-20px_-20px_40px_rgba(255,255,255,0.15)]"
         );
       case "cyberpunk":
         return cn(
@@ -811,8 +811,8 @@ export function GenericTable<T extends Record<string, any>>({
           "before:absolute before:top-0 before:left-0 before:h-0.5 before:w-full before:bg-gradient-to-r before:from-transparent before:via-primary before:to-transparent",
           "relative",
           settings.hoverEffectType !== "none" &&
-            settings.hoverEffectIntensity !== "none" &&
-            "hover:bg-primary/10 hover:shadow-[0_0_40px_rgba(var(--primary),0.6)]"
+          settings.hoverEffectIntensity !== "none" &&
+          "hover:bg-primary/10 hover:shadow-[0_0_40px_rgba(var(--primary),0.6)]"
         );
       case "luxury":
         return cn(
@@ -821,8 +821,8 @@ export function GenericTable<T extends Record<string, any>>({
           "bg-gradient-to-br from-amber-50/50 to-amber-100/30 border border-amber-200/30 shadow-2xl rounded-2xl",
           "dark:from-amber-900/20 dark:to-amber-800/10 dark:border-amber-400/20",
           settings.hoverEffectType !== "none" &&
-            settings.hoverEffectIntensity !== "none" &&
-            "hover:from-amber-100/60 hover:to-amber-50/40 hover:shadow-3xl hover:shadow-amber-200/30",
+          settings.hoverEffectIntensity !== "none" &&
+          "hover:from-amber-100/60 hover:to-amber-50/40 hover:shadow-3xl hover:shadow-amber-200/30",
           "dark:hover:from-amber-800/30 dark:hover:to-amber-700/20"
         );
       case "matrix":
@@ -832,8 +832,8 @@ export function GenericTable<T extends Record<string, any>>({
           "bg-background border-2 border-green-400/40 shadow-[0_0_20px_rgba(34,197,94,0.4)] rounded-lg",
           "dark:bg-black/98 dark:border-green-400/50",
           settings.hoverEffectType !== "none" &&
-            settings.hoverEffectIntensity !== "none" &&
-            "hover:border-green-400/60 hover:shadow-[0_0_30px_rgba(34,197,94,0.6)] hover:bg-green-400/5"
+          settings.hoverEffectIntensity !== "none" &&
+          "hover:border-green-400/60 hover:shadow-[0_0_30px_rgba(34,197,94,0.6)] hover:bg-green-400/5"
         );
       case "diamond":
         return cn(
@@ -842,8 +842,8 @@ export function GenericTable<T extends Record<string, any>>({
           "bg-gradient-to-br from-violet-50/40 via-pink-50/30 to-blue-50/40 border-2 border-violet-300/50 shadow-[0_0_25px_rgba(139,92,246,0.4)] rounded-2xl",
           "dark:from-violet-900/30 dark:via-pink-900/20 dark:to-blue-900/30 dark:border-violet-400/40",
           settings.hoverEffectType !== "none" &&
-            settings.hoverEffectIntensity !== "none" &&
-            "hover:from-violet-100/50 hover:via-pink-100/40 hover:to-blue-100/50 hover:shadow-[0_0_35px_rgba(139,92,246,0.6)]"
+          settings.hoverEffectIntensity !== "none" &&
+          "hover:from-violet-100/50 hover:via-pink-100/40 hover:to-blue-100/50 hover:shadow-[0_0_35px_rgba(139,92,246,0.6)]"
         );
       case "striped":
         return cn(
@@ -851,8 +851,8 @@ export function GenericTable<T extends Record<string, any>>({
           hoverClasses,
           "bg-card border",
           settings.hoverEffectType !== "none" &&
-            settings.hoverEffectIntensity !== "none" &&
-            "hover:shadow-lg"
+          settings.hoverEffectIntensity !== "none" &&
+          "hover:shadow-lg"
         );
       case "bordered":
         return cn(
@@ -860,8 +860,8 @@ export function GenericTable<T extends Record<string, any>>({
           hoverClasses,
           "bg-card border-2",
           settings.hoverEffectType !== "none" &&
-            settings.hoverEffectIntensity !== "none" &&
-            "hover:shadow-lg"
+          settings.hoverEffectIntensity !== "none" &&
+          "hover:shadow-lg"
         );
       case "minimal":
         return cn(
@@ -869,8 +869,8 @@ export function GenericTable<T extends Record<string, any>>({
           hoverClasses,
           "bg-transparent border-0",
           settings.hoverEffectType !== "none" &&
-            settings.hoverEffectIntensity !== "none" &&
-            "hover:bg-muted/20"
+          settings.hoverEffectIntensity !== "none" &&
+          "hover:bg-muted/20"
         );
       default:
         return cn(
@@ -878,8 +878,8 @@ export function GenericTable<T extends Record<string, any>>({
           hoverClasses,
           "bg-card",
           settings.hoverEffectType !== "none" &&
-            settings.hoverEffectIntensity !== "none" &&
-            "hover:shadow-lg"
+          settings.hoverEffectIntensity !== "none" &&
+          "hover:shadow-lg"
         );
     }
   };
@@ -954,8 +954,8 @@ export function GenericTable<T extends Record<string, any>>({
                         settings.fontSize === "small"
                           ? "text-xs"
                           : settings.fontSize === "large"
-                          ? "text-base"
-                          : "text-sm"
+                            ? "text-base"
+                            : "text-sm"
                       )}
                     >
                       {column.label}:
@@ -965,8 +965,8 @@ export function GenericTable<T extends Record<string, any>>({
                         settings.fontSize === "small"
                           ? "text-xs"
                           : settings.fontSize === "large"
-                          ? "text-base"
-                          : "text-sm"
+                            ? "text-base"
+                            : "text-sm"
                       )}
                     >
                       {column.render
@@ -1070,104 +1070,104 @@ export function GenericTable<T extends Record<string, any>>({
             <Table>
               <TableHeader>
                 <TableRow className={getHeaderClasses()}>
-                {selectable && (
-                  <TableHead
-                    className={cn("w-12", getCellPadding(), "relative")}
-                  >
-                    <div
-                      className={cn(
-                        "absolute inset-0 flex items-center",
-                        direction === "rtl" ? "right-4" : "left-4"
-                      )}
+                  {selectable && (
+                    <TableHead
+                      className={cn("w-12", getCellPadding(), "relative")}
                     >
-                      <Checkbox
-                        checked={
-                          selectedItems.length === sortedData.length &&
-                          sortedData.length > 0
-                        }
-                        onCheckedChange={(checked) => {
-                          if (onSelectionChange) {
-                            const newSelected = checked
-                              ? sortedData.map((row) => row.id)
-                              : [];
-                            onSelectionChange(newSelected);
+                      <div
+                        className={cn(
+                          "absolute inset-0 flex items-center",
+                          direction === "rtl" ? "right-4" : "left-4"
+                        )}
+                      >
+                        <Checkbox
+                          checked={
+                            selectedItems.length === sortedData.length &&
+                            sortedData.length > 0
                           }
-                        }}
-                      />
-                    </div>
-                  </TableHead>
-                )}
-                {columns.map((column, columnIndex) => (
-                  <TableHead
-                    key={String(column.key)}
-                    className={cn(
-                      "font-semibold text-foreground",
-                      getCellPadding(),
-                      direction === "rtl" ? "text-right" : "text-left",
-                      column.width && `w-${column.width}`,
-                      settings.fontSize === "small"
-                        ? "text-xs"
-                        : settings.fontSize === "large"
-                        ? "text-base"
-                        : "text-sm",
-                      // Add borders to all columns - every column gets a border on the right side
-                      cn(
-                        direction === "rtl" &&
+                          onCheckedChange={(checked) => {
+                            if (onSelectionChange) {
+                              const newSelected = checked
+                                ? sortedData.map((row) => row.id)
+                                : [];
+                              onSelectionChange(newSelected);
+                            }
+                          }}
+                        />
+                      </div>
+                    </TableHead>
+                  )}
+                  {columns.map((column, columnIndex) => (
+                    <TableHead
+                      key={String(column.key)}
+                      className={cn(
+                        "font-semibold text-foreground",
+                        getCellPadding(),
+                        direction === "rtl" ? "text-right" : "text-left",
+                        column.width && `w-${column.width}`,
+                        settings.fontSize === "small"
+                          ? "text-xs"
+                          : settings.fontSize === "large"
+                            ? "text-base"
+                            : "text-sm",
+                        // Add borders to all columns - every column gets a border on the right side
+                        cn(
+                          direction === "rtl" &&
                           cn(
                             columnIndex === 0 &&
-                              "border-l-2 border-l-border/60",
+                            "border-l-2 border-l-border/60",
                             columnIndex > 0 && "border-l-2 border-l-border/60"
                           ),
-                        direction !== "rtl" &&
+                          direction !== "rtl" &&
                           cn(
                             columnIndex === 0 &&
-                              "border-r-2 border-r-border/60",
+                            "border-r-2 border-r-border/60",
                             columnIndex > 0 && "border-r-2 border-r-border/60"
                           )
-                      ),
-                      // Add border to the last column before actions when sticky actions are enabled
-                      stickyActions &&
+                        ),
+                        // Add border to the last column before actions when sticky actions are enabled
+                        stickyActions &&
                         actions &&
                         actions.length > 0 &&
                         columnIndex === columns.length - 1 &&
                         cn(
                           direction === "rtl" &&
-                            "border-l-4 border-l-primary/50",
+                          "border-l-4 border-l-primary/50",
                           direction !== "rtl" &&
-                            "border-r-4 border-r-primary/50"
+                          "border-r-4 border-r-primary/50"
                         )
-                    )}
-                  >
-                    {column.sortable ? (
-                      <Button
-                        variant="ghost"
-                        onClick={() => handleSort(column.key)}
-                        className={cn(
-                          "h-auto p-0 font-semibold hover:bg-transparent",
-                          direction === "rtl" ? "justify-end" : "justify-start"
-                        )}
-                      >
-                        {column.label}
-                        <ArrowUpDown
+                      )}
+                    >
+                      {column.sortable ? (
+                        <Button
+                          variant="ghost"
+                          onClick={() => handleSort(column.key)}
                           className={cn(
-                            "h-4 w-4",
-                            direction === "rtl" ? "mr-2" : "ml-2"
+                            "h-auto p-0 font-semibold hover:bg-transparent",
+                            direction === "rtl" ? "justify-end" : "justify-start"
                           )}
-                        />
-                      </Button>
-                    ) : (
-                      column.label
-                    )}
-                  </TableHead>
-                ))}
-                {((actions && actions.length > 0) || renderActions) && (
-                  <TableHead
-                    ref={actionsColumnRef}
-                    className={cn(
-                      "w-16 transition-all duration-300 ease-in-out",
-                      getCellPadding(),
-                      direction === "rtl" ? "text-right" : "text-left",
-                      stickyActions &&
+                        >
+                          {column.label}
+                          <ArrowUpDown
+                            className={cn(
+                              "h-4 w-4",
+                              direction === "rtl" ? "mr-2" : "ml-2"
+                            )}
+                          />
+                        </Button>
+                      ) : (
+                        column.label
+                      )}
+                    </TableHead>
+                  ))}
+                  {((actions && actions.length > 0) || renderActions) && (
+                    <TableHead
+                      ref={actionsColumnRef}
+                      className={cn(
+                        "w-16 transition-all duration-300 ease-in-out",
+                        getCellPadding(),
+                        direction === "rtl" ? "text-right" : "text-left",
+                        stickyActions &&
                         cn(
                           getStickyActionsClasses(),
                           "z-20 relative overflow-hidden",
@@ -1176,133 +1176,133 @@ export function GenericTable<T extends Record<string, any>>({
                           "before:translate-x-[-100%] hover:before:translate-x-[100%] before:transition-transform before:duration-700",
                           "border-b-4 border-b-primary/70"
                         ),
-                      direction === "rtl" &&
+                        direction === "rtl" &&
                         stickyActions &&
                         "border-r-4 border-r-primary/60 shadow-[-6px_0_12px_rgba(0,0,0,0.2)]",
-                      direction !== "rtl" &&
+                        direction !== "rtl" &&
                         stickyActions &&
                         "border-l-4 border-l-primary/60 shadow-[6px_0_12px_rgba(0,0,0,0.2)]"
-                    )}
-                    style={
-                      stickyActions
-                        ? {
+                      )}
+                      style={
+                        stickyActions
+                          ? {
                             position: "sticky",
                             [direction === "rtl" ? "left" : "right"]: "0px",
                           }
-                        : undefined
-                    }
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="font-semibold text-foreground">
-                        {t("table.actions")}
-                      </span>
-                    </div>
-                  </TableHead>
-                )}
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {sortedData.length === 0 ? (
-                <TableRow>
-                  <TableCell
-                    colSpan={
-                      columns.length +
-                      ((actions && actions.length > 0) || renderActions
-                        ? 1
-                        : 0) +
-                      (selectable ? 1 : 0)
-                    }
-                    className="h-32 text-center text-muted-foreground"
-                  >
-                    {empty}
-                  </TableCell>
-                </TableRow>
-              ) : (
-                sortedData.map((row, index) => {
-                  const isSelected =
-                    selectable && selectedItems.includes(row.id);
-                  return (
-                    <TableRow
-                      key={index}
-                      className={getRowClasses(index, isSelected)}
+                          : undefined
+                      }
                     >
-                      {selectable && (
-                        <TableCell className={cn(getCellPadding(), "relative")}>
-                          <div
-                            className={cn(
-                              "absolute inset-0 flex items-center",
-                              direction === "rtl" ? "right-4" : "left-4"
-                            )}
-                          >
-                            <Checkbox
-                              checked={isSelected}
-                              onCheckedChange={(checked) => {
-                                if (onSelectionChange) {
-                                  const newSelected = checked
-                                    ? [...selectedItems, row.id]
-                                    : selectedItems.filter(
+                      <div className="flex items-center justify-between">
+                        <span className="font-semibold text-foreground">
+                          {t("table.actions")}
+                        </span>
+                      </div>
+                    </TableHead>
+                  )}
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {sortedData.length === 0 ? (
+                  <TableRow>
+                    <TableCell
+                      colSpan={
+                        columns.length +
+                        ((actions && actions.length > 0) || renderActions
+                          ? 1
+                          : 0) +
+                        (selectable ? 1 : 0)
+                      }
+                      className="h-32 text-center text-muted-foreground"
+                    >
+                      {empty}
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  sortedData.map((row, index) => {
+                    const isSelected =
+                      selectable && selectedItems.includes(row.id);
+                    return (
+                      <TableRow
+                        key={index}
+                        className={getRowClasses(index, isSelected)}
+                      >
+                        {selectable && (
+                          <TableCell className={cn(getCellPadding(), "relative")}>
+                            <div
+                              className={cn(
+                                "absolute inset-0 flex items-center",
+                                direction === "rtl" ? "right-4" : "left-4"
+                              )}
+                            >
+                              <Checkbox
+                                checked={isSelected}
+                                onCheckedChange={(checked) => {
+                                  if (onSelectionChange) {
+                                    const newSelected = checked
+                                      ? [...selectedItems, row.id]
+                                      : selectedItems.filter(
                                         (id) => id !== row.id
                                       );
-                                  onSelectionChange(newSelected);
-                                }
-                              }}
-                            />
-                          </div>
-                        </TableCell>
-                      )}
-                      {columns.map((column, columnIndex) => (
-                        <TableCell
-                          key={String(column.key)}
-                          className={cn(
-                            "align-middle",
-                            getCellPadding(),
-                            direction === "rtl" ? "text-right" : "text-left",
-                            settings.fontSize === "small"
-                              ? "text-xs"
-                              : settings.fontSize === "large"
-                              ? "text-base"
-                              : "text-sm",
-                            // Add borders to all columns - every column gets a border on the right side
-                            cn(
-                              direction === "rtl" &&
+                                    onSelectionChange(newSelected);
+                                  }
+                                }}
+                              />
+                            </div>
+                          </TableCell>
+                        )}
+                        {columns.map((column, columnIndex) => (
+                          <TableCell
+                            key={String(column.key)}
+                            className={cn(
+                              "align-middle",
+                              getCellPadding(),
+                              direction === "rtl" ? "text-right" : "text-left",
+                              settings.fontSize === "small"
+                                ? "text-xs"
+                                : settings.fontSize === "large"
+                                  ? "text-base"
+                                  : "text-sm",
+                              // Add borders to all columns - every column gets a border on the right side
+                              cn(
+                                direction === "rtl" &&
                                 cn(
                                   columnIndex === 0 &&
-                                    "border-l-2 border-l-border/60",
+                                  "border-l-2 border-l-border/60",
                                   columnIndex > 0 &&
-                                    "border-l-2 border-l-border/60"
+                                  "border-l-2 border-l-border/60"
                                 ),
-                              direction !== "rtl" &&
+                                direction !== "rtl" &&
                                 cn(
                                   columnIndex === 0 &&
-                                    "border-r-2 border-r-border/60",
+                                  "border-r-2 border-r-border/60",
                                   columnIndex > 0 &&
-                                    "border-r-2 border-r-border/60"
+                                  "border-r-2 border-r-border/60"
                                 )
-                            ),
-                            // Add border to the last column before actions when sticky actions are enabled
-                            stickyActions &&
+                              ),
+                              // Add border to the last column before actions when sticky actions are enabled
+                              stickyActions &&
                               actions &&
                               actions.length > 0 &&
                               columnIndex === columns.length - 1 &&
                               cn(
                                 direction === "rtl" &&
-                                  "border-l-4 border-l-primary/50",
+                                "border-l-4 border-l-primary/50",
                                 direction !== "rtl" &&
-                                  "border-r-4 border-r-primary/50"
+                                "border-r-4 border-r-primary/50"
                               )
-                          )}
-                        >
-                          {column.render
-                            ? column.render(row[column.key], row)
-                            : String(row[column.key])}
-                        </TableCell>
-                      ))}
-                      {((actions && actions.length > 0) || renderActions) && (
-                        <TableCell
-                          className={cn(
-                            getCellPadding(),
-                            "transition-all duration-300 ease-in-out",
-                            stickyActions &&
+                            )}
+                          >
+                            {column.render
+                              ? column.render(row[column.key], row)
+                              : String(row[column.key])}
+                          </TableCell>
+                        ))}
+                        {((actions && actions.length > 0) || renderActions) && (
+                          <TableCell
+                            className={cn(
+                              getCellPadding(),
+                              "transition-all duration-300 ease-in-out",
+                              stickyActions &&
                               cn(
                                 getStickyActionsClasses(),
                                 "z-20 relative overflow-hidden",
@@ -1312,90 +1312,90 @@ export function GenericTable<T extends Record<string, any>>({
                                 "border-b-4 border-b-primary/60",
                                 index === 0 && "border-t-4 border-t-primary/70"
                               ),
-                            direction === "rtl" &&
+                              direction === "rtl" &&
                               stickyActions &&
                               "border-r-4 border-r-primary/60 shadow-[-6px_0_12px_rgba(0,0,0,0.2)]",
-                            direction !== "rtl" &&
+                              direction !== "rtl" &&
                               stickyActions &&
                               "border-l-4 border-l-primary/60 shadow-[6px_0_12px_rgba(0,0,0,0.2)]"
-                          )}
-                          style={
-                            stickyActions
-                              ? {
+                            )}
+                            style={
+                              stickyActions
+                                ? {
                                   position: "sticky",
                                   [direction === "rtl" ? "left" : "right"]:
                                     "0px",
                                 }
-                              : undefined
-                          }
-                          ref={index === 0 ? actionsColumnRef : undefined}
-                        >
-                          {renderActions ? (
-                            renderActions(row)
-                          ) : (
-                            <div className="flex items-center justify-center">
-                              <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                  <Button
-                                    variant="ghost"
-                                    className={cn(
-                                      "h-8 w-8 p-0 transition-all duration-200",
-                                      "hover:bg-primary/10 hover:shadow-md hover:scale-105",
-                                      "active:scale-95 focus:ring-2 focus:ring-primary/20",
-                                      stickyActions &&
+                                : undefined
+                            }
+                            ref={index === 0 ? actionsColumnRef : undefined}
+                          >
+                            {renderActions ? (
+                              renderActions(row)
+                            ) : (
+                              <div className="flex items-center justify-center">
+                                <DropdownMenu>
+                                  <DropdownMenuTrigger asChild>
+                                    <Button
+                                      variant="ghost"
+                                      className={cn(
+                                        "h-8 w-8 p-0 transition-all duration-200",
+                                        "hover:bg-primary/10 hover:shadow-md hover:scale-105",
+                                        "active:scale-95 focus:ring-2 focus:ring-primary/20",
+                                        stickyActions &&
                                         "hover:bg-primary/15 hover:shadow-lg"
+                                      )}
+                                    >
+                                      <MoreHorizontal className="h-4 w-4 transition-colors duration-200" />
+                                    </Button>
+                                  </DropdownMenuTrigger>
+                                  <DropdownMenuContent
+                                    align={direction === "rtl" ? "start" : "end"}
+                                    className={cn(
+                                      "min-w-[160px] shadow-xl border-border/50",
+                                      "bg-background/95 backdrop-blur-md",
+                                      "animate-in slide-in-from-top-2 duration-200"
                                     )}
                                   >
-                                    <MoreHorizontal className="h-4 w-4 transition-colors duration-200" />
-                                  </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent
-                                  align={direction === "rtl" ? "start" : "end"}
-                                  className={cn(
-                                    "min-w-[160px] shadow-xl border-border/50",
-                                    "bg-background/95 backdrop-blur-md",
-                                    "animate-in slide-in-from-top-2 duration-200"
-                                  )}
-                                >
-                                  {actions &&
-                                    actions
-                                      .filter(
-                                        (action) =>
-                                          !action.show || action.show(row)
-                                      )
-                                      .map((action, actionIndex) => (
-                                        <DropdownMenuItem
-                                          key={actionIndex}
-                                          onClick={() => action.onClick(row)}
-                                          className={cn(
-                                            "transition-all duration-200 cursor-pointer",
-                                            "hover:bg-primary/10 hover:shadow-sm",
-                                            action.variant === "destructive"
-                                              ? "text-destructive focus:text-destructive hover:bg-destructive/10"
-                                              : "hover:text-primary",
-                                            action.className
-                                          )}
-                                        >
-                                          {action.icon && (
-                                            <action.icon className="w-4 h-4 mr-2 rtl:mr-0 rtl:ml-2 transition-transform duration-200 group-hover:scale-110" />
-                                          )}
-                                          <span className="font-medium">
-                                            {action.label}
-                                          </span>
-                                        </DropdownMenuItem>
-                                      ))}
-                                </DropdownMenuContent>
-                              </DropdownMenu>
-                            </div>
-                          )}
-                        </TableCell>
-                      )}
-                    </TableRow>
-                  );
-                })
-              )}
-            </TableBody>
-          </Table>
+                                    {actions &&
+                                      actions
+                                        .filter(
+                                          (action) =>
+                                            !action.show || action.show(row)
+                                        )
+                                        .map((action, actionIndex) => (
+                                          <DropdownMenuItem
+                                            key={actionIndex}
+                                            onClick={() => action.onClick(row)}
+                                            className={cn(
+                                              "transition-all duration-200 cursor-pointer",
+                                              "hover:bg-primary/10 hover:shadow-sm",
+                                              action.variant === "destructive"
+                                                ? "text-destructive focus:text-destructive hover:bg-destructive/10"
+                                                : "hover:text-primary",
+                                              action.className
+                                            )}
+                                          >
+                                            {action.icon && (
+                                              <action.icon className="w-4 h-4 mr-2 rtl:mr-0 rtl:ml-2 transition-transform duration-200 group-hover:scale-110" />
+                                            )}
+                                            <span className="font-medium">
+                                              {action.label}
+                                            </span>
+                                          </DropdownMenuItem>
+                                        ))}
+                                  </DropdownMenuContent>
+                                </DropdownMenu>
+                              </div>
+                            )}
+                          </TableCell>
+                        )}
+                      </TableRow>
+                    );
+                  })
+                )}
+              </TableBody>
+            </Table>
           </div>
         </div>
       </div>
@@ -1412,8 +1412,8 @@ export function GenericTable<T extends Record<string, any>>({
                   settings.fontSize === "small"
                     ? "text-xs"
                     : settings.fontSize === "large"
-                    ? "text-base"
-                    : "text-sm"
+                      ? "text-base"
+                      : "text-sm"
                 )}
               >
                 {(() => {
@@ -1575,7 +1575,7 @@ export function GenericTable<T extends Record<string, any>>({
                           className={cn(
                             "h-8 w-8 p-0",
                             isActive &&
-                              "bg-primary text-primary-foreground shadow-sm"
+                            "bg-primary text-primary-foreground shadow-sm"
                           )}
                         >
                           {pageNum}

@@ -43,7 +43,7 @@ import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Textarea } from "@core/ui/textarea";
-import GenericSelect from "@core/ui/generic-select";
+import GenericSelect from "@core/crud/components/generic-select";
 import { Switch } from "@core/ui/switch";
 import { Separator } from "@core/ui/separator";
 import { Slider } from "@core/ui/slider";
