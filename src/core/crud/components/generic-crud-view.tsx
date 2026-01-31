@@ -38,6 +38,8 @@ import type { PaginationInfo } from "@core/common/pagination";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useCallback, useMemo } from "react";
 import { appLogger } from "@core/common/logger";
+import { usePermission } from "@core/hooks/use-permission";
+import type { PermissionCode } from "@core/common/types/permissions";
 
 /* ========================================
  * TYPE DEFINITIONS & INTERFACES
@@ -144,6 +146,23 @@ export interface CustomAction {
 }
 
 /**
+ * Permission configuration for CRUD operations
+ * Supports both boolean flags and permission code strings
+ */
+export interface CrudPermissions {
+  /** Permission to view/list items (if false, entire view is hidden) */
+  canView?: boolean | PermissionCode;
+  /** Permission to create new items */
+  canCreate?: boolean | PermissionCode;
+  /** Permission to update existing items */
+  canUpdate?: boolean | PermissionCode;
+  /** Permission to delete items */
+  canDelete?: boolean | PermissionCode;
+  /** Additional custom permissions */
+  [key: string]: boolean | PermissionCode | undefined;
+}
+
+/**
  * Search configuration for the CRUD view
  */
 export interface SearchConfig {
@@ -243,6 +262,36 @@ export interface CrudConfig<TItem = any> {
   hideActionsColumn?: boolean;
   /** Custom render function for actions column - allows complete customization */
   renderActions?: (item: TItem) => React.ReactNode;
+
+  /* ========================================
+   * PERMISSIONS CONFIGURATION
+   * ======================================== */
+  /**
+   * Permission configuration for this CRUD view.
+   * If provided, controls visibility of Add button, Edit/Delete actions.
+   * Can be boolean (static) or PermissionCode (dynamic check against user permissions).
+   * 
+   * @example
+   * // Static permissions
+   * permissions: { canCreate: false, canDelete: true }
+   * 
+   * @example  
+   * // Dynamic permissions (checks user's effective permissions)
+   * permissions: { canCreate: "admins.create", canDelete: "admins.delete" }
+   */
+  permissions?: CrudPermissions;
+
+  /**
+   * Resource name for auto-generating permission codes.
+   * If set, and permissions is not provided, will auto-check:
+   * - canCreate: `{resource}.create`
+   * - canUpdate: `{resource}.update`  
+   * - canDelete: `{resource}.delete`
+   * 
+   * @example
+   * resource: "admins" // Auto-checks admins.create, admins.update, admins.delete
+   */
+  resource?: string;
 }
 
 interface GenericCrudViewProps<T> {
@@ -460,6 +509,64 @@ export function GenericCrudView<T>(props: GenericCrudViewProps<T>) {
         inputRef: viewModel.searchInputRef,
       }
       : undefined);
+
+  // ========================================
+  // PERMISSION CHECKING LOGIC
+  // ========================================
+  // Helper to resolve a permission value (boolean or PermissionCode)
+  const resolvePermission = useCallback(
+    (value: boolean | PermissionCode | undefined, defaultCode?: PermissionCode): boolean => {
+      // If not provided, check default code or allow
+      if (value === undefined) {
+        return defaultCode ? usePermission(defaultCode) : true;
+      }
+      // If boolean, use directly
+      if (typeof value === "boolean") {
+        return value;
+      }
+      // If string (permission code), check against user permissions
+      return usePermission(value);
+    },
+    []
+  );
+
+  // Compute effective permissions
+  const effectivePermissions = useMemo(() => {
+    const perms = config?.permissions;
+    const resource = config?.resource;
+
+    // If permissions object is provided, use it
+    if (perms) {
+      return {
+        canView: resolvePermission(perms.canView),
+        canCreate: resolvePermission(perms.canCreate),
+        canUpdate: resolvePermission(perms.canUpdate),
+        canDelete: resolvePermission(perms.canDelete),
+      };
+    }
+
+    // If resource is provided, auto-generate permission codes
+    if (resource) {
+      return {
+        canView: usePermission(`${resource}.view`),
+        canCreate: usePermission(`${resource}.create`),
+        canUpdate: usePermission(`${resource}.update`),
+        canDelete: usePermission(`${resource}.delete`),
+      };
+    }
+
+    // Default: all allowed (for backward compatibility)
+    return {
+      canView: true,
+      canCreate: true,
+      canUpdate: true,
+      canDelete: true,
+    };
+  }, [config?.permissions, config?.resource, resolvePermission]);
+
+  // Determine if Add button should be shown
+  const showAddButton = !config?.hideAddButton && effectivePermissions.canCreate;
+
   const getSpacingClasses = () => {
     switch (settings.spacingSize) {
       case "compact":
@@ -598,7 +705,7 @@ export function GenericCrudView<T>(props: GenericCrudViewProps<T>) {
                 >
                   {t("common.refresh")}
                 </Button>
-                {!config?.hideAddButton && (
+                {showAddButton && (
                   <Button
                     onClick={handleCreateClick}
                     className="gradient-primary flex-1 sm:flex-none"

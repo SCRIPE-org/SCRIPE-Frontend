@@ -11,6 +11,7 @@ import { User, type UserData } from "@modules/auth/core/domain/entities/User";
 export class UserMapper {
   /**
    * Convert JSON/API response to User domain model
+   * Maps the AdminResponse from backend including permissions
    */
   static fromJson(json: any): User {
     return new User({
@@ -20,6 +21,9 @@ export class UserMapper {
       lastName: json.lastName || '',
       phoneNumber: json.phoneNumber || '',
       adminTypeName: json.adminTypeName || '',
+      role: json.roles?.[0]?.roleCode || json.roles?.[0]?.roleName || undefined,
+      // Map permissions from backend's flattened list
+      permissions: json.permissions || [],
     });
   }
 

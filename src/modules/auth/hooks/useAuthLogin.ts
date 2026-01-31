@@ -7,7 +7,7 @@ import { useNavigation } from "@core/providers/navigation-provider";
 
 export function useAuthLogin() {
       const { authRepository } = useServices();
-      const setUser = useAppStore((state) => state.setUser);
+      const setAuth = useAppStore((state) => state.setAuth);
       const { operationError, operationSuccess } = useEnhancedToast();
       const { refreshNavigation } = useNavigation();
       const queryClient = useQueryClient();
@@ -18,11 +18,17 @@ export function useAuthLogin() {
                   return authRepository.login(request);
             },
             onSuccess: async (user) => {
-                  // 1. Set user in store (this triggers isAuthenticated = true)
-                  setUser(user);
+                  // 1. Set user in store with permissions and roles
+                  // This triggers isAuthenticated = true and populates permissions
+                  setAuth(
+                        user,
+                        user.permissions || [], // Permission codes from backend
+                        [] // Roles - can be populated if needed
+                  );
 
                   // 2. Show success toast
                   operationSuccess("Login successful!");
+
 
                   // 3. Fetch navigation data immediately after login (force refresh)
                   try {
