@@ -351,7 +351,7 @@ export function useTreeViewModel<
         return;
       }
 
-      let finalSelectedValues = [...newSelectedValues];
+      const finalSelectedValues = [...newSelectedValues];
 
       // Auto-select parents if enabled
       if (config.autoSelectParents) {

@@ -40,7 +40,7 @@
 "use client";
 
 import type React from "react";
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Table,
   TableBody,
@@ -67,7 +67,7 @@ import { cn, getHoverEffectClasses, getTableHoverEffectClasses } from "@core/com
 /**
  * Column configuration for the table
  */
-interface Column<T> {
+export interface Column<T> {
   /** The key of the data property to display */
   key: keyof T;
   /** The display label for the column */
@@ -77,13 +77,14 @@ interface Column<T> {
   /** Custom width for the column */
   width?: string;
   /** Custom render function for the column content */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   render?: (value: any, row: T) => React.ReactNode;
 }
 
 /**
  * Action configuration for table rows
  */
-interface Action<T> {
+export interface Action<T> {
   /** The label for the action */
   label: string;
   /** Optional icon for the action */
@@ -101,7 +102,7 @@ interface Action<T> {
 /**
  * Pagination configuration
  */
-interface Pagination {
+export interface Pagination {
   /** Total number of items */
   itemsCount: number;
   /** Number of items per page */
@@ -164,6 +165,7 @@ interface GenericTableProps<T> {
  * @param props.stickyActions - Enable sticky actions column (default: true)
  * @returns JSX element representing the table
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function GenericTable<T extends Record<string, any>>({
   data,
   columns,
@@ -194,9 +196,10 @@ export function GenericTable<T extends Record<string, any>>({
   const [showLeftShadow, setShowLeftShadow] = useState(false);
   const [showRightShadow, setShowRightShadow] = useState(false);
 
-  useEffect(() => {
-    setSearchTerm(searchValue ?? "");
-  }, [searchValue]);
+  // Sync searchValue prop with local state (derived state pattern)
+  if (searchValue !== undefined && searchValue !== searchTerm) {
+    setSearchTerm(searchValue);
+  }
 
   useEffect(() => {
     if (!onSearch) return;

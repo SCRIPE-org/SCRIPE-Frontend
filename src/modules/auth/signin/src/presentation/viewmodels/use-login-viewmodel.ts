@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthLogin } from "../../../../hooks/useAuthLogin";
 import { useAppStore } from "@core/store/useAppStore";
 import { useI18n } from "@core/providers/i18n-provider";
 import { validateForm, VALIDATION_SETS, isFormValid } from "@core/common/validation";
+import { secureTokenService } from "@core/common/secure-token-service";
 
 export interface LoginFormData {
   username: string;
@@ -19,11 +20,16 @@ export function useLoginViewModel() {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   const loginMutation = useAuthLogin();
   const isAuthenticated = useAppStore((state) => state.isAuthenticated);
+  const hasHydrated = useAppStore((state) => state._hasHydrated);
   const { t } = useI18n();
   const router = useRouter();
+
+  // Track if redirect has been triggered to prevent loops
+  const hasTriggeredRedirect = useRef(false);
 
   // Form field handlers
   const updateField = useCallback((field: keyof LoginFormData, value: string) => {
@@ -34,6 +40,27 @@ export function useLoginViewModel() {
   const togglePasswordVisibility = useCallback(() => {
     setShowPassword(prev => !prev);
   }, []);
+
+  // Check if user should be redirected (stable function - no deps that change)
+  const checkAndRedirect = useCallback(() => {
+    // Only proceed if store has hydrated
+    if (!hasHydrated) return false;
+
+    // Already redirecting or already triggered
+    if (isRedirecting || hasTriggeredRedirect.current) return false;
+
+    // Check BOTH conditions: store says authenticated AND actual token exists
+    const hasToken = secureTokenService.hasToken();
+
+    if (isAuthenticated && hasToken) {
+      hasTriggeredRedirect.current = true;
+      setIsRedirecting(true);
+      router.replace("/");
+      return true;
+    }
+
+    return false;
+  }, [hasHydrated, isAuthenticated, isRedirecting, router]);
 
   // Login submission handler
   const handleLogin = useCallback(async () => {
@@ -54,47 +81,51 @@ export function useLoginViewModel() {
         password: formData.password
       });
 
-      // Redirect handled by onSuccess in useAuthLogin? 
-      // Actually useAuthLogin only sets user. RouteGuard or this ViewModel should redirect.
-      // The original had a small delay then redirect.
+      // After successful login, redirect
+      setIsRedirecting(true);
+      hasTriggeredRedirect.current = true;
 
+      // Small delay to ensure state is updated
       setTimeout(() => {
         router.replace("/");
       }, 100);
 
-    } catch (err: any) {
-      // Error handling is also done in mutation onError, but we set local error state for inline display
-      setError(err?.message || "Login failed");
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "Login failed";
+      setError(errorMessage);
     }
   }, [formData, loginMutation, router, t]);
-
-  // Navigation handler for authenticated users
-  const redirectIfAuthenticated = useCallback(() => {
-    if (isAuthenticated) {
-      router.replace("/");
-    }
-  }, [isAuthenticated, router]);
 
   // Reset form
   const resetForm = useCallback(() => {
     setFormData({ username: "", password: "" });
     setShowPassword(false);
     setError("");
+    setIsRedirecting(false);
+    hasTriggeredRedirect.current = false;
   }, []);
+
+  // Computed: should show loading while redirecting OR during login
+  const isLoading = loginMutation.isPending || isRedirecting;
+
+  // Computed: is truly authenticated (both store and token)
+  const isTrulyAuthenticated = hasHydrated && isAuthenticated && secureTokenService.hasToken();
 
   return {
     // State
     formData,
     showPassword,
-    isLoading: loginMutation.isPending,
+    isLoading,
     error,
-    isAuthenticated,
+    isAuthenticated: isTrulyAuthenticated,
+    hasHydrated,
+    isRedirecting,
 
     // Actions
     updateField,
     togglePasswordVisibility,
     handleLogin,
-    redirectIfAuthenticated,
+    checkAndRedirect,
     resetForm,
 
     // Computed

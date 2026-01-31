@@ -8,6 +8,7 @@ import axios, {
 } from "axios";
 import type { IApiService } from "../interfaces/api.interface";
 import { appLogger } from "@core/common/logger";
+import { secureTokenService } from "@core/common/secure-token-service";
 
 /**
  * API Service Implementation using Axios
@@ -21,8 +22,9 @@ import { appLogger } from "@core/common/logger";
 export class ApiService implements IApiService {
   private axiosInstance: AxiosInstance;
   private axiosPublic: AxiosInstance;
-  private tokenKey = "auth-token";
-  private refreshTokenKey = "refresh-token";
+
+  // private tokenKey = "auth-token"; // DEPRECATED: Use SecureTokenService
+  // private refreshTokenKey = "refresh-token"; // DEPRECATED: Use SecureTokenService
   private refreshHandler: (() => Promise<string | null>) | null = null;
   private isRefreshing = false;
   private refreshPromise: Promise<string | null> | null = null;
@@ -407,26 +409,25 @@ export class ApiService implements IApiService {
   setAuthToken(token: string | null): void {
     if (typeof window !== "undefined") {
       if (token) {
-        localStorage.setItem(this.tokenKey, token);
+        secureTokenService.setAccessToken(token);
         appLogger.auth("Token saved");
       } else {
-        localStorage.removeItem(this.tokenKey);
-        appLogger.auth("Token cleared");
+        secureTokenService.clearTokens();
+        appLogger.auth("Tokens cleared");
       }
     }
   }
 
   getAuthToken(): string | null {
     if (typeof window !== "undefined") {
-      return localStorage.getItem(this.tokenKey);
+      return secureTokenService.getAccessToken();
     }
     return null;
   }
 
   clearTokens(): void {
     if (typeof window !== "undefined") {
-      localStorage.removeItem(this.tokenKey);
-      localStorage.removeItem(this.refreshTokenKey);
+      secureTokenService.clearTokens();
       appLogger.auth("All tokens cleared");
     }
   }

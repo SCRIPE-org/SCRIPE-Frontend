@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader } from "@core/ui/card";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
@@ -16,25 +16,31 @@ import { useLoginViewModel } from "../viewmodels/use-login-viewmodel";
 export function LoginView() {
   const { t, language } = useI18n();
   const vm = useLoginViewModel();
-  const isRTL = language === 'ar'
-  // Handle redirect for authenticated users - only check once on mount
-  useEffect(() => {
-    if (vm.isAuthenticated && !vm.isLoading) {
-      // Add a small delay to prevent race conditions
-      const timer = setTimeout(() => {
-        vm.redirectIfAuthenticated();
-      }, 200);
-      return () => clearTimeout(timer);
-    }
-  }, [vm.isAuthenticated, vm.isLoading, vm.redirectIfAuthenticated]);
+  const isRTL = language === 'ar';
+  const hasCheckedAuth = useRef(false);
 
-  // Don't render login form if already authenticated
-  if (vm.isAuthenticated) {
+  // Check for authenticated user ONCE after hydration
+  useEffect(() => {
+    // Only check once
+    if (hasCheckedAuth.current) return;
+
+    // Wait for hydration
+    if (!vm.hasHydrated) return;
+
+    // Mark as checked
+    hasCheckedAuth.current = true;
+
+    // Redirect if already authenticated
+    vm.checkAndRedirect();
+  }, [vm.hasHydrated, vm.checkAndRedirect]);
+
+  // Show loading spinner while redirecting or not hydrated
+  if (!vm.hasHydrated || vm.isRedirecting || (vm.isAuthenticated && !vm.isLoading)) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/20 via-background to-secondary/20">
         <div className="text-center">
           <LoadingSpinner size="md" showText={false} />
-          <p className="mt-4">{t("auth.redirecting")}</p>
+          <p className="mt-4 text-muted-foreground">{t("auth.redirecting")}</p>
         </div>
       </div>
     );
@@ -151,10 +157,8 @@ export function LoginView() {
                 API URL:{" "}
                 {process.env.NEXT_PUBLIC_API_URL || "Not set - using default"}
               </p>
-              <p>
-                Login URL:{" "}
-                {`${process.env.NEXT_PUBLIC_API_URL}/Authentication/login/admin`}
-              </p>
+              <p>Hydrated: {vm.hasHydrated ? "Yes" : "No"}</p>
+              <p>Authenticated: {vm.isAuthenticated ? "Yes" : "No"}</p>
             </div>
           )}
         </CardContent>

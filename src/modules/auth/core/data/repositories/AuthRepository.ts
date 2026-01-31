@@ -3,12 +3,44 @@ import { API_ENDPOINTS } from "@core/config/api-endpoints";
 import { secureTokenService } from "@core/common/secure-token-service";
 import { LoginRequest, LoginResponse, RefreshTokenRequest } from "../../domain/entities/Auth";
 import { User } from "../../domain/entities/User";
+import { NAVIGATION_CACHE_KEY, NAVIGATION_CACHE_EXPIRY_KEY } from "@core/providers/navigation-provider";
 import { AuthMapper } from "../mappers/AuthMapper";
 import { UserMapper } from "../../../../user/src/data/mappers/UserMapper";
 import { appLogger } from "@core/common/logger";
 
 import { IAuthRepository } from "../../domain/interfaces/IAuthRepository";
 import { Result } from "@core/common/types/result";
+
+
+/**
+ * Storage keys to clear on logout
+ */
+const STORAGE_KEYS_TO_CLEAR = [
+  NAVIGATION_CACHE_KEY,
+  NAVIGATION_CACHE_EXPIRY_KEY,
+  // potentially other legacy keys if they exist
+  "user-data",
+  "permissions",
+  "roles",
+];
+
+/**
+ * Clear all authentication related data from local storage
+ */
+function clearAllLocalStorage(): void {
+  if (typeof window !== "undefined") {
+    // Clear known keys
+    STORAGE_KEYS_TO_CLEAR.forEach(key => {
+      localStorage.removeItem(key);
+    });
+
+    // Clear SecureTokenService tokens
+    secureTokenService.clearTokens();
+
+    sessionStorage.clear();
+    appLogger.auth("Auth data and cache cleared");
+  }
+}
 
 export class AuthRepository implements IAuthRepository {
   constructor(private readonly apiService: IApiService) { }
@@ -17,48 +49,21 @@ export class AuthRepository implements IAuthRepository {
     // ========================================
     // REAL API ENDPOINT
     // ========================================
-    // const response = await this.apiService.post<LoginResponse>(
-    //   API_ENDPOINTS.LOGIN,
-    //   AuthMapper.loginRequestToJson(credentials)
-    // );
-    // if (response && response.accessToken) {
-    //   secureTokenService.setAccessToken(response.accessToken);
-    //   secureTokenService.setRefreshToken(response.refreshToken);
-    //   return this.getMe();
-    // }
-    // throw new Error("Login failed: No access token received.");
+    const response = await this.apiService.postPublic<LoginResponse>(
+      API_ENDPOINTS.LOGIN,
+      AuthMapper.loginRequestToJson(credentials)
+    );
 
-    // ========================================
-    // MOCK DATA FOR TESTING (COMMENT OUT FOR REAL API)
-    // ========================================
+    appLogger.auth("Login response received:", response);
 
-    // Debug logging
-    appLogger.debug("🔍 Mock Login Debug:", {
-      username: credentials.username,
-      password: credentials.password ? "***" : "MISSING",
-      isValid: credentials.isValid
-    });
-
-    // MOCK LOGIN: Accept ANY username/password (bypass validation for testing)
-    if (credentials.username && credentials.password) {
-      appLogger.debug("✅ Mock login successful!");
-      // Store mock tokens securely
-      secureTokenService.setAccessToken("mock-access-token");
-      secureTokenService.setRefreshToken("mock-refresh-token");
-
-      // Return mock user data using mapper
-      return UserMapper.fromJson({
-        id: "mock-user-id",
-        username: credentials.username,
-        firstName: "Demo",
-        lastName: "User",
-        phoneNumber: "+1234567890",
-        adminTypeName: "Administrator",
-      });
+    if (response && response.accessToken) {
+      secureTokenService.setAccessToken(response.accessToken);
+      if (response.refreshToken) {
+        secureTokenService.setRefreshToken(response.refreshToken);
+      }
+      return this.getMe();
     }
-
-    appLogger.debug("❌ Mock login failed - missing username or password");
-    throw new Error("Username and password are required.");
+    throw new Error("Login failed: No access token received.");
   }
 
   async logout(): Promise<void> {
@@ -66,14 +71,13 @@ export class AuthRepository implements IAuthRepository {
       // ========================================
       // REAL API ENDPOINT
       // ========================================
-      // await this.apiService.post(API_ENDPOINTS.LOGOUT);
-
-      // Remove tokens locally
-      secureTokenService.clearTokens();
+      // Send empty object to avoid 415 Unsupported Media Type
+      await this.apiService.post(API_ENDPOINTS.LOGOUT, {});
     } catch (error) {
-      // Even if logout fails on server, clear local tokens
-      secureTokenService.clearTokens();
-      throw error;
+      appLogger.warn("Logout API call failed, clearing tokens locally:", error);
+    } finally {
+      // Always clear local tokens and cache
+      clearAllLocalStorage();
     }
   }
 
@@ -81,29 +85,13 @@ export class AuthRepository implements IAuthRepository {
     // ========================================
     // REAL API ENDPOINT
     // ========================================
-    // try {
-    //   const response = await this.apiService.get<User>(API_ENDPOINTS.GET_ADMIN_ME);
-    //   return UserMapper.fromJson(response);
-    // } catch (error) {
-    //   throw error;
-    // }
-
-    // ========================================
-    // MOCK DATA FOR TESTING (COMMENT OUT FOR REAL API)
-    // ========================================
-
-    // MOCK: Return mock user data if token exists
-    if (this.hasToken()) {
-      return UserMapper.fromJson({
-        id: "mock-user-id",
-        username: "demo-user",
-        firstName: "Demo",
-        lastName: "User",
-        phoneNumber: "+1234567890",
-        adminTypeName: "Administrator",
-      });
+    try {
+      const response = await this.apiService.get<User>(API_ENDPOINTS.GET_ADMIN_ME);
+      return UserMapper.fromJson(response);
+    } catch (error) {
+      appLogger.error("Failed to get current user:", error);
+      throw error;
     }
-    throw new Error("No authentication token found.");
   }
 
   hasToken(): boolean {
@@ -113,7 +101,7 @@ export class AuthRepository implements IAuthRepository {
   async refreshToken(token: string): Promise<Result<LoginResponse, Error>> {
     try {
       const refreshRequest = new RefreshTokenRequest({ refreshToken: token });
-      const response = await this.apiService.post<LoginResponse>(
+      const response = await this.apiService.postPublic<LoginResponse>(
         API_ENDPOINTS.REFRESH,
         AuthMapper.refreshTokenRequestToJson(refreshRequest)
       );
@@ -125,7 +113,7 @@ export class AuthRepository implements IAuthRepository {
       }
       return Result.err(new Error("Refresh failed"));
     } catch (error) {
-      secureTokenService.clearTokens();
+      clearAllLocalStorage();
       return Result.err(error instanceof Error ? error : new Error("Unknown error"));
     }
   }
@@ -139,6 +127,6 @@ export class AuthRepository implements IAuthRepository {
   }
 
   clearTokens(): void {
-    secureTokenService.clearTokens();
+    clearAllLocalStorage();
   }
 }

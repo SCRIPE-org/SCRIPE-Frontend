@@ -22,12 +22,13 @@ export class SecureTokenService {
    * Store access token securely
    */
   static setAccessToken(token: string): boolean {
+    if (typeof window === 'undefined') return false;
     try {
       if (!token || typeof token !== 'string') {
         appLogger.error('Invalid token provided');
         return false;
       }
-      
+
       localStorage.setItem(this.ACCESS_TOKEN_KEY, token);
       return true;
     } catch (error) {
@@ -40,12 +41,13 @@ export class SecureTokenService {
    * Store refresh token securely
    */
   static setRefreshToken(token: string): boolean {
+    if (typeof window === 'undefined') return false;
     try {
       if (!token || typeof token !== 'string') {
         appLogger.error('Invalid refresh token provided');
         return false;
       }
-      
+
       localStorage.setItem(this.REFRESH_TOKEN_KEY, token);
       return true;
     } catch (error) {
@@ -58,12 +60,13 @@ export class SecureTokenService {
    * Store token expiry timestamp
    */
   static setTokenExpiry(expiresAt: number): boolean {
+    if (typeof window === 'undefined') return false;
     try {
       if (!expiresAt || typeof expiresAt !== 'number') {
         appLogger.error('Invalid expiry timestamp provided');
         return false;
       }
-      
+
       localStorage.setItem(this.TOKEN_EXPIRY_KEY, expiresAt.toString());
       return true;
     } catch (error) {
@@ -76,17 +79,18 @@ export class SecureTokenService {
    * Store all token data at once
    */
   static setTokens(tokenData: TokenData): boolean {
+    if (typeof window === 'undefined') return false;
     try {
       const success = this.setAccessToken(tokenData.accessToken);
-      
+
       if (tokenData.refreshToken) {
         this.setRefreshToken(tokenData.refreshToken);
       }
-      
+
       if (tokenData.expiresAt) {
         this.setTokenExpiry(tokenData.expiresAt);
       }
-      
+
       return success;
     } catch (error) {
       appLogger.error('Failed to store tokens:', error);
@@ -98,19 +102,20 @@ export class SecureTokenService {
    * Get access token securely
    */
   static getAccessToken(): string | null {
+    if (typeof window === 'undefined') return null;
     try {
       const token = localStorage.getItem(this.ACCESS_TOKEN_KEY);
-      
+
       if (!token) {
         return null;
       }
-      
+
       // Check if token is expired
       if (this.isTokenExpired()) {
         this.clearTokens();
         return null;
       }
-      
+
       return token;
     } catch (error) {
       appLogger.error('Failed to retrieve access token:', error);
@@ -122,6 +127,7 @@ export class SecureTokenService {
    * Get refresh token securely
    */
   static getRefreshToken(): string | null {
+    if (typeof window === 'undefined') return null;
     try {
       return localStorage.getItem(this.REFRESH_TOKEN_KEY);
     } catch (error) {
@@ -141,15 +147,16 @@ export class SecureTokenService {
    * Check if token is expired
    */
   static isTokenExpired(): boolean {
+    if (typeof window === 'undefined') return false;
     try {
       const expiryStr = localStorage.getItem(this.TOKEN_EXPIRY_KEY);
       if (!expiryStr) {
         return false; // No expiry set, assume valid
       }
-      
+
       const expiry = parseInt(expiryStr, 10);
       const now = Date.now();
-      
+
       return now >= expiry;
     } catch (error) {
       appLogger.error('Failed to check token expiry:', error);
@@ -161,6 +168,7 @@ export class SecureTokenService {
    * Clear all tokens securely
    */
   static clearTokens(): boolean {
+    if (typeof window === 'undefined') return false;
     try {
       localStorage.removeItem(this.ACCESS_TOKEN_KEY);
       localStorage.removeItem(this.REFRESH_TOKEN_KEY);
@@ -179,11 +187,11 @@ export class SecureTokenService {
     if (process.env.NODE_ENV !== 'development') {
       return { hasToken: false, isExpired: true };
     }
-    
+
     try {
       const expiryStr = localStorage.getItem(this.TOKEN_EXPIRY_KEY);
       const expiresAt = expiryStr ? parseInt(expiryStr, 10) : undefined;
-      
+
       return {
         hasToken: this.hasToken(),
         isExpired: this.isTokenExpired(),
@@ -202,13 +210,13 @@ export class SecureTokenService {
     if (!token || typeof token !== 'string') {
       return false;
     }
-    
+
     // Basic JWT format validation (3 parts separated by dots)
     const parts = token.split('.');
     if (parts.length !== 3) {
       return false;
     }
-    
+
     // Check if each part is base64-like
     return parts.every(part => /^[A-Za-z0-9_-]+$/.test(part));
   }

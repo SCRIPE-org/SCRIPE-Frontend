@@ -9,14 +9,14 @@ import { NavigationMapper } from "@core/domain/mappers/NavigationMapper";
 import { appLogger } from "@core/common/logger";
 
 // LocalStorage key for navigation cache
-const NAVIGATION_CACHE_KEY = "navigation_data_v2"; // Updated version for new structure
-const NAVIGATION_CACHE_EXPIRY_KEY = "navigation_data_expiry_v2";
+export const NAVIGATION_CACHE_KEY = "navigation_data_v2"; // Updated version for new structure
+export const NAVIGATION_CACHE_EXPIRY_KEY = "navigation_data_expiry_v2";
 const CACHE_EXPIRY_TIME = 1000 * 60 * 30; // 30 minutes
 
 interface NavigationContextType {
   navigationData: NavigationData | null;
   isLoading: boolean;
-  refreshNavigation: () => Promise<void>;
+  refreshNavigation: (skipLoading?: boolean, forceRefresh?: boolean) => Promise<void>;
   hasPageAccess: (pathname: string) => boolean;
   getRoutes: () => string[];
   getPageActions: (pathname: string) => MenuItemActions | null;
@@ -135,12 +135,17 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
     }
   }, []);
 
-  const refreshNavigation = useCallback(async (skipLoading = false) => {
+  const refreshNavigation = useCallback(async (skipLoading = false, forceRefresh = false) => {
     if (!isAuthenticated) {
       setNavigationData(null);
       navigationService.clearNavigationData();
       clearCache();
       return;
+    }
+
+    // Allow force refresh from login hook
+    if (forceRefresh) {
+      setHasTriggeredRefresh(false);
     }
 
     // Don't set loading state if we're refreshing in background with existing data
@@ -152,6 +157,7 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
       const data = await navigationService.fetchMenuItems();
       setNavigationData(data);
       saveToCache(data); // Save to cache after successful fetch
+      setHasTriggeredRefresh(true);
     } catch (error) {
       appLogger.error("Failed to fetch navigation data:", error);
       // Try to load from cache as fallback
@@ -169,19 +175,11 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
     }
   }, [isAuthenticated, navigationService, saveToCache, loadFromCache, clearCache]);
 
-  // Fetch navigation data when user logs in (only once per session)
+  // Handle logout - clear navigation data when user logs out
+  // Navigation fetch is now handled explicitly by useAuthLogin.onSuccess
   useEffect(() => {
-    // Don't fetch if already triggered
-    if (hasTriggeredRefresh) {
-      return;
-    }
-
-    if (isAuthenticated && user) {
-      // If we have cached data, refresh in background without blocking
-      const hasCachedData = !!navigationData;
-      setHasTriggeredRefresh(true);
-      refreshNavigation(hasCachedData); // Skip loading state if we have cached data
-    } else if (!isAuthenticated) {
+    if (!isAuthenticated) {
+      // Clear everything on logout
       setNavigationData(null);
       navigationService.clearNavigationData();
       clearCache();
@@ -189,7 +187,7 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
       setHasTriggeredRefresh(false); // Allow refresh on next login
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAuthenticated, user, hasTriggeredRefresh]);
+  }, [isAuthenticated]);
 
   const hasPageAccess = useCallback((pathname: string): boolean => {
     if (!isAuthenticated) {

@@ -5,20 +5,23 @@
  * Handles validation state, error messages, and form submission validation.
  */
 
-import { useState, useCallback, useMemo } from "react";
-import { validateForm, ValidationRule, ValidationResult, isFormValid, getFormErrors } from "@core/common/validation";
+import { useState, useCallback, useMemo, useEffect } from "react";
+import { validateForm, ValidationRule, isFormValid, getFormErrors } from "@core/common/validation";
 
 export interface UseValidationOptions {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   initialValues?: Record<string, any>;
   validationRules?: Record<string, ValidationRule[]>;
   validateOnChange?: boolean;
   validateOnBlur?: boolean;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface UseValidationReturn<T extends Record<string, any>> {
   values: T;
   errors: Record<string, string>;
   isValid: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setValue: (field: keyof T, value: any) => void;
   setValues: (values: Partial<T>) => void;
   setError: (field: keyof T, error: string) => void;
@@ -34,6 +37,7 @@ export interface UseValidationReturn<T extends Record<string, any>> {
 /**
  * Hook for form validation
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function useValidation<T extends Record<string, any>>(
   options: UseValidationOptions = {}
 ): UseValidationReturn<T> {
@@ -41,7 +45,7 @@ export function useValidation<T extends Record<string, any>>(
     initialValues = {} as T,
     validationRules = {},
     validateOnChange = false,
-    validateOnBlur = true,
+    // validateOnBlur = true,
   } = options;
 
   const [values, setValuesState] = useState<T>(initialValues as T);
@@ -80,15 +84,16 @@ export function useValidation<T extends Record<string, any>>(
 
     const validationResults = validateForm(values, validationRules);
     const formErrors = getFormErrors(validationResults);
-    
+
     setErrors(formErrors);
     return isFormValid(validationResults);
   }, [values, validationRules]);
 
   // Set a single field value
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const setValue = useCallback((field: keyof T, value: any) => {
     setValuesState(prev => ({ ...prev, [field]: value }));
-    
+
     // Clear error when user starts typing
     if (errors[field as string]) {
       setErrors(prev => {
@@ -107,7 +112,7 @@ export function useValidation<T extends Record<string, any>>(
   // Set multiple field values
   const setValues = useCallback((newValues: Partial<T>) => {
     setValuesState(prev => ({ ...prev, ...newValues }));
-    
+
     // Clear errors for changed fields
     const fieldsToClear = Object.keys(newValues);
     setErrors(prev => {
@@ -208,7 +213,7 @@ export function useFieldValidation<T>(
   options: { validateOnChange?: boolean; validateOnBlur?: boolean } = {}
 ) {
   const { validateOnChange = false, validateOnBlur = true } = options;
-  
+
   const [value, setValue] = useState<T>(initialValue);
   const [error, setError] = useState<string>("");
   const [touched, setTouched] = useState(false);
@@ -220,7 +225,7 @@ export function useFieldValidation<T>(
 
     const validationResults = validateForm({ value }, { value: rules });
     const result = validationResults.value;
-    
+
     if (!result.isValid) {
       setError(result.message || "");
       return false;
@@ -233,7 +238,7 @@ export function useFieldValidation<T>(
   const handleChange = useCallback((newValue: T) => {
     setValue(newValue);
     setTouched(true);
-    
+
     // Clear error when user starts typing
     if (error) {
       setError("");
@@ -247,7 +252,7 @@ export function useFieldValidation<T>(
 
   const handleBlur = useCallback(() => {
     setTouched(true);
-    
+
     // Validate on blur if enabled
     if (validateOnBlur) {
       validate();
@@ -277,4 +282,23 @@ export function useFieldValidation<T>(
       setTouched(false);
     },
   };
+}
+
+/**
+ * Hook for debouncing a value
+ */
+export function useDebounce<T>(value: T, delay: number = 300): T {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
 }

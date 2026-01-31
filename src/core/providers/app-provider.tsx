@@ -8,6 +8,7 @@ import { ServiceProvider } from "@core/providers/service-provider";
 import { SettingsProvider } from "@core/providers/settings-provider";
 import { NavigationProvider } from "@core/providers/navigation-provider";
 import { RouteGuard } from "@core/providers/route-guard";
+import { PermissionProvider } from "@core/providers/permission-provider";
 import { EnhancedToaster } from "@core/ui/enhanced-toaster";
 import { ErrorBoundary } from "@core/ui/error-boundary";
 
@@ -50,11 +51,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           <SettingsProvider>
             <I18nProvider>
               <ErrorBoundary>
-                <NavigationProvider>
-                  <RouteGuard>
-                    {children}
-                  </RouteGuard>
-                </NavigationProvider>
+                <PermissionProvider>
+                  <NavigationProvider>
+                    <RouteGuard>
+                      {children}
+                    </RouteGuard>
+                  </NavigationProvider>
+                </PermissionProvider>
               </ErrorBoundary>
               <EnhancedToaster />
             </I18nProvider>

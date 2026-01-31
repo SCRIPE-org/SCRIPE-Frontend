@@ -109,7 +109,7 @@ export const iconMap: Record<string, any> = {
  * - false = Static navigation (hardcoded, no backend calls, no route protection)
  * - true = Dynamic navigation (from backend, with route protection)
  */
-export const USE_DYNAMIC_NAVIGATION = false;
+export const USE_DYNAMIC_NAVIGATION = true;
 
 // STATIC NAVIGATION - Used when USE_DYNAMIC_NAVIGATION is false
 export const navigation: NavigationItem[] = [
@@ -274,18 +274,17 @@ export const convertMenuItemsToNavigation = (
 
   const convertMenuItem = (item: any): NavigationItem => {
     return {
-      name: item.name,
-      href: item.href,
+      name: item.name || item.displayName || 'Unnamed',
+      href: item.href || undefined,
       icon: iconMap[item.icon] || iconMap["Package"], // Default fallback icon
       children: item.children?.map(convertMenuItem) || [],
-      disabled: !item.isActive, // Now using isActive since we mapped active to isActive
+      disabled: false, // Items returned from backend are assumed active
     };
   };
 
-  // Filter only active items and sort by order
-  const activeMenuItems = menuItems
-    .filter((item) => item.isActive && !item.isDeleted)
-    .sort((a, b) => (a.order || 0) - (b.order || 0));
+  // Backend already returns only active, non-deleted items
+  // Just sort by order and convert
+  const sortedMenuItems = [...menuItems].sort((a, b) => (a.order || 0) - (b.order || 0));
 
-  return activeMenuItems.map(convertMenuItem);
+  return sortedMenuItems.map(convertMenuItem);
 };
