@@ -90,12 +90,13 @@ export function useMenusViewModel() {
       // Calculate total items
       const totalItems = useMemo(() => {
             const countNodes = (nodes: MenuTreeNode[]): number => {
+                  if (!Array.isArray(nodes)) return 0;
                   return nodes.reduce(
                         (sum, node) => sum + 1 + countNodes(node.children || []),
                         0
                   );
             };
-            return menuTree ? countNodes(menuTree) : 0;
+            return Array.isArray(menuTree) ? countNodes(menuTree) : 0;
       }, [menuTree]);
 
       // Handlers
