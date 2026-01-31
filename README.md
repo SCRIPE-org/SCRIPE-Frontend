@@ -112,13 +112,37 @@ export function ProductView() {
 
 ---
 
-## 🔒 Security & Resilience
+## 🔒 Security & Permissions
 
-- **Sanitization**: All inputs are sanitized using `@core/common/sanitize.ts`.
-- **API Retry**: 5xx errors are automatically retried with exponential backoff.
-- **RouteGuard**: Automatically protects pages based on Auth state.
-- **RBAC**: `usePermissions()` hook for granular control (`'products:create'`).
-- **Hydration**: Prevents "flash of unauthenticated content".
+### Global Permissions System
+
+A robust, enterprise-grade permission system that works for **any** action or page:
+
+```tsx
+// Hook - check single permission
+const canCreate = usePermission("admins.create");
+
+// Component - declarative UI gating
+<PermissionGate permission="reports.export">
+  <ExportButton />
+</PermissionGate>
+
+// GenericCrudView - automatic permission checking
+<GenericCrudView config={{ resource: "admins", ... }} />
+```
+
+### Security Layers
+
+| Layer | Protection |
+|-------|------------|
+| **Backend** | `[PermissionRequired]` attributes on all endpoints |
+| **Frontend** | UX-only permission hiding (not security) |
+| **Sanitization** | All inputs sanitized via `@core/common/sanitize.ts` |
+| **API Retry** | 5xx errors auto-retried with exponential backoff |
+| **Route Guard** | Automatic page protection based on auth state |
+| **Hydration** | Prevents "flash of unauthenticated content" |
+
+> ⚠️ **Security Principle**: Frontend checks are UX-only. Backend is the gatekeeper.
 
 ---
 
@@ -131,6 +155,7 @@ Detailed guides can be found in the `/docs` directory:
 | **Architecture**    | [📖 Architecture Guide](docs/architecture/01-modularity.md)       |
 | **Modules**         | [🏗️ Creating Your First Module](docs/tutorial/01-first-module.md) |
 | **API Integration** | [🔌 Connecting to API](docs/tutorial/02-api-integration.md)       |
+| **Permissions**     | [🛡️ Global Permissions System](docs/tutorial/03-permissions.md)  |
 | **Testing**         | [🧪 Vitest Guide](docs/tutorial/04-testing-guide.md)              |
 | **Security**        | [🔒 Security & Sanitization](docs/tutorial/05-security-guide.md)  |
 | **Code Quality**    | [✨ Husky & Prettier](docs/tutorial/06-code-quality.md)           |
