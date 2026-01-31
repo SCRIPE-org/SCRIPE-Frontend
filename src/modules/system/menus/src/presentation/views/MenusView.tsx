@@ -272,7 +272,7 @@ export function MenusView() {
                               </CardHeader>
                               <CardContent>
                                     <div className="space-y-1">
-                                          {menuTree
+                                          {Array.isArray(menuTree) && menuTree
                                                 .sort((a, b) => a.order - b.order)
                                                 .map((node) => (
                                                       <MenuTreeItem
