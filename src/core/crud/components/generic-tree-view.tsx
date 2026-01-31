@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useMemo, useCallback } from "react";
 import { TreeView } from "@core/ui/tree-view";
 import { Button } from "@core/ui/button";
 import { GenericForm } from "@core/ui/forms/generic-form";
@@ -20,6 +20,18 @@ import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { TreeViewModel, TreeNode } from "@core/hooks/use-tree-view-model";
 import { appLogger } from "@core/common/logger";
+import { usePermission } from "@core/hooks/use-permission";
+import type { PermissionCode } from "@core/common/types/permissions";
+
+/**
+ * Permission configuration for Tree CRUD operations
+ */
+export interface TreePermissions {
+  canView?: boolean | PermissionCode;
+  canCreate?: boolean | PermissionCode;
+  canUpdate?: boolean | PermissionCode;
+  canDelete?: boolean | PermissionCode;
+}
 
 export interface GenericTreeViewProps<T extends TreeNode, TCreate, TUpdate> {
   viewModel: TreeViewModel<T, TCreate, TUpdate>;
@@ -37,6 +49,22 @@ export interface GenericTreeViewProps<T extends TreeNode, TCreate, TUpdate> {
   className?: string;
   showAddRoot?: boolean;
   expandOnCardClick?: boolean; // Enable/disable card click expansion
+
+  /* ========================================
+   * PERMISSIONS CONFIGURATION
+   * ======================================== */
+  /**
+   * Permission configuration for this tree view.
+   * If provided, controls visibility of Add/Edit/Delete buttons.
+   */
+  permissions?: TreePermissions;
+
+  /**
+   * Resource name for auto-generating permission codes.
+   * If set, auto-checks: {resource}.create, {resource}.update, {resource}.delete
+   * @example resource: "tenants" // Auto-checks tenants.create, tenants.update, tenants.delete
+   */
+  resource?: string;
 }
 
 export function GenericTreeView<T extends TreeNode, TCreate, TUpdate>({
@@ -50,6 +78,8 @@ export function GenericTreeView<T extends TreeNode, TCreate, TUpdate>({
   className,
   showAddRoot = true,
   expandOnCardClick = false,
+  permissions,
+  resource,
 }: GenericTreeViewProps<T, TCreate, TUpdate>) {
   const { t } = useI18n();
 
@@ -62,11 +92,48 @@ export function GenericTreeView<T extends TreeNode, TCreate, TUpdate>({
     vm.listTree();
   }, [vm.listTree]);
 
+  // ========================================
+  // PERMISSION CHECKING LOGIC
+  // ========================================
+  const resolvePermission = useCallback(
+    (value: boolean | PermissionCode | undefined, defaultCode?: PermissionCode): boolean => {
+      if (value === undefined) {
+        return defaultCode ? usePermission(defaultCode) : true;
+      }
+      if (typeof value === "boolean") {
+        return value;
+      }
+      return usePermission(value);
+    },
+    []
+  );
+
+  const effectivePermissions = useMemo(() => {
+    if (permissions) {
+      return {
+        canCreate: resolvePermission(permissions.canCreate),
+        canUpdate: resolvePermission(permissions.canUpdate),
+        canDelete: resolvePermission(permissions.canDelete),
+      };
+    }
+    if (resource) {
+      return {
+        canCreate: usePermission(`${resource}.create`),
+        canUpdate: usePermission(`${resource}.update`),
+        canDelete: usePermission(`${resource}.delete`),
+      };
+    }
+    return { canCreate: true, canUpdate: true, canDelete: true };
+  }, [permissions, resource, resolvePermission]);
+
+  // Determine button visibility
+  const showAddButton = showAddRoot && effectivePermissions.canCreate;
+
   // Remove interfering focus management - let natural input behavior work
 
   const toolbar = !vm.config.selectable ? (
     <div className="flex items-center gap-2">
-      {showAddRoot && (
+      {showAddButton && (
         <Button size="sm" onClick={() => vm.openAddChild(null)}>
           <Plus className="h-4 w-4 mr-2 rtl:mr-0 rtl:ml-2" />
           {t("common.add")}
@@ -168,24 +235,35 @@ export function GenericTreeView<T extends TreeNode, TCreate, TUpdate>({
         actions={
           vm.config.selectable
             ? undefined
-            : (n) => [
-              {
-                label: t("common.add_child") ?? "Add child",
-                onClick: () => vm.openAddChild(n),
-                disabled: vm.loading, // Disable while loading
-              },
-              {
-                label: t("common.edit"),
-                onClick: () => vm.openEdit(n),
-                disabled: vm.loading, // Disable while loading
-              },
-              {
-                label: t("common.delete"),
-                onClick: () => vm.deleteItem(n),
-                variant: "destructive",
-                disabled: vm.loading, // Disable while loading
-              },
-            ]
+            : (n) => {
+              const actions = [];
+              // Add Child - requires create permission
+              if (effectivePermissions.canCreate) {
+                actions.push({
+                  label: t("common.add_child") ?? "Add child",
+                  onClick: () => vm.openAddChild(n),
+                  disabled: vm.loading,
+                });
+              }
+              // Edit - requires update permission
+              if (effectivePermissions.canUpdate) {
+                actions.push({
+                  label: t("common.edit"),
+                  onClick: () => vm.openEdit(n),
+                  disabled: vm.loading,
+                });
+              }
+              // Delete - requires delete permission
+              if (effectivePermissions.canDelete) {
+                actions.push({
+                  label: t("common.delete"),
+                  onClick: () => vm.deleteItem(n),
+                  variant: "destructive" as const,
+                  disabled: vm.loading,
+                });
+              }
+              return actions;
+            }
         }
         selectable={vm.config.selectable}
         selectedValues={vm.selectedValues}
