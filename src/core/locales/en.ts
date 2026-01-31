@@ -49,6 +49,14 @@ export const en = {
     state: "States",
     ticketFare: "Ticket Fare",
     role: "Roles",
+    // New navigation keys
+    system: "System",
+    admins: "Admins",
+    roles: "Roles",
+    users: "Users",
+    tenants: "Tenants",
+    permissions: "Permissions",
+    menus: "Menu Management",
   },
 
   // Product
@@ -2284,7 +2292,7 @@ export const en = {
   },
   // Common
   common: {
-    more:"More",
+    more: "More",
     close: "Close",
     status: "Status",
     createdAt: "Date of creation",

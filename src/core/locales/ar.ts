@@ -48,6 +48,14 @@ export const ar = {
     state: "الولايات",
     ticketFare: "أسعار التذاكر",
     role: "الأدوار",
+    // New navigation keys
+    system: "النظام",
+    admins: "المشرفون",
+    roles: "الأدوار",
+    users: "المستخدمون",
+    tenants: "المستأجرون",
+    permissions: "الصلاحيات",
+    menus: "إدارة القوائم",
   },
 
   // Product
@@ -721,7 +729,7 @@ export const ar = {
 
     // Common chart terms
     common: {
-      more:"المزيد",
+      more: "المزيد",
       sales: "المبيعات",
       revenue: "الإيرادات",
       users: "المستخدمون",
@@ -925,7 +933,7 @@ export const ar = {
       scalability: "قابلية التوسع",
     },
 
-    
+
 
     conversionFunnel: {
       websiteVisitors: {
@@ -981,7 +989,7 @@ export const ar = {
       },
     },
 
-   
+
   },
 
   // Months

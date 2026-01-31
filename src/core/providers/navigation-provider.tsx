@@ -136,7 +136,9 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
   }, []);
 
   const refreshNavigation = useCallback(async (skipLoading = false, forceRefresh = false) => {
-    if (!isAuthenticated) {
+    // When force refreshing (e.g., after login), skip the isAuthenticated check
+    // because the store may not have updated yet
+    if (!forceRefresh && !isAuthenticated) {
       setNavigationData(null);
       navigationService.clearNavigationData();
       clearCache();

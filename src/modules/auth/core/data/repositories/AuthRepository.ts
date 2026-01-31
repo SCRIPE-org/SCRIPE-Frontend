@@ -71,8 +71,11 @@ export class AuthRepository implements IAuthRepository {
       // ========================================
       // REAL API ENDPOINT
       // ========================================
-      // Send empty object to avoid 415 Unsupported Media Type
-      await this.apiService.post(API_ENDPOINTS.LOGOUT, {});
+      // Backend requires refreshToken in the request body
+      const refreshToken = secureTokenService.getRefreshToken();
+      await this.apiService.post(API_ENDPOINTS.LOGOUT, {
+        refreshToken: refreshToken || ""
+      });
     } catch (error) {
       appLogger.warn("Logout API call failed, clearing tokens locally:", error);
     } finally {
