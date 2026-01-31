@@ -9,6 +9,8 @@ import { useState, useCallback } from "react";
 import { useRolesViewModel } from "../viewmodels/useRolesViewModel";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
+import { Label } from "@core/ui/label";
+import { Textarea } from "@core/ui/textarea";
 import { Badge } from "@core/ui/badge";
 import {
       Dialog,
@@ -16,6 +18,7 @@ import {
       DialogHeader,
       DialogTitle,
       DialogDescription,
+      DialogFooter,
 } from "@core/ui/dialog";
 import {
       DropdownMenu,
@@ -28,6 +31,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core
 import { PermissionGate } from "@core/providers/permission-provider";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import type { Role } from "../../domain/entities/Role";
+import type { CreateRoleRequest, UpdateRoleRequest } from "../../domain/entities/RoleRequests";
 import {
       Plus,
       MoreHorizontal,
@@ -36,10 +40,37 @@ import {
       Shield,
       Search,
       RefreshCw,
-      Users,
+      Loader2,
 } from "lucide-react";
 import { useDebounce } from "@core/hooks/use-validation";
 import { format } from "date-fns";
+
+// Form state interfaces
+interface CreateFormState {
+      name: string;
+      code: string;
+      description: string;
+      priority: number;
+}
+
+interface EditFormState {
+      name: string;
+      description: string;
+      priority: number;
+}
+
+const initialCreateForm: CreateFormState = {
+      name: "",
+      code: "",
+      description: "",
+      priority: 100,
+};
+
+const initialEditForm: EditFormState = {
+      name: "",
+      description: "",
+      priority: 100,
+};
 
 export function RolesView() {
       // State
@@ -53,6 +84,10 @@ export function RolesView() {
       const [permissionsDialogOpen, setPermissionsDialogOpen] = useState(false);
       const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
       const [selectedRole, setSelectedRole] = useState<Role | null>(null);
+
+      // Form states
+      const [createForm, setCreateForm] = useState<CreateFormState>(initialCreateForm);
+      const [editForm, setEditForm] = useState<EditFormState>(initialEditForm);
 
       // Debounced search
       const debouncedSearch = useDebounce(searchInput, 300);
@@ -76,8 +111,18 @@ export function RolesView() {
       });
 
       // Handlers
+      const handleOpenCreate = useCallback(() => {
+            setCreateForm(initialCreateForm);
+            setCreateDialogOpen(true);
+      }, []);
+
       const handleOpenEdit = useCallback((role: Role) => {
             setSelectedRole(role);
+            setEditForm({
+                  name: role.name,
+                  description: role.description || "",
+                  priority: role.priority,
+            });
             setEditDialogOpen(true);
       }, []);
 
@@ -90,6 +135,35 @@ export function RolesView() {
             setSelectedRole(role);
             setDeleteDialogOpen(true);
       }, []);
+
+      const onCreateSubmit = useCallback(async () => {
+            if (!createForm.name || !createForm.code) return;
+
+            const request: CreateRoleRequest = {
+                  name: createForm.name,
+                  code: createForm.code,
+                  description: createForm.description || undefined,
+                  priority: createForm.priority,
+            };
+
+            await handleCreate(request);
+            setCreateDialogOpen(false);
+            setCreateForm(initialCreateForm);
+      }, [createForm, handleCreate]);
+
+      const onEditSubmit = useCallback(async () => {
+            if (!selectedRole || !editForm.name) return;
+
+            const request: UpdateRoleRequest = {
+                  name: editForm.name,
+                  description: editForm.description || undefined,
+                  priority: editForm.priority,
+            };
+
+            await handleUpdate(selectedRole.id, request);
+            setEditDialogOpen(false);
+            setSelectedRole(null);
+      }, [selectedRole, editForm, handleUpdate]);
 
       const onDeleteConfirm = useCallback(async () => {
             if (!selectedRole) return;
@@ -113,7 +187,7 @@ export function RolesView() {
                                     <RefreshCw className="h-4 w-4" />
                               </Button>
                               <PermissionGate permission={SYSTEM_PERMISSIONS.ROLES_CREATE}>
-                                    <Button onClick={() => setCreateDialogOpen(true)}>
+                                    <Button onClick={handleOpenCreate}>
                                           <Plus className="mr-2 h-4 w-4" />
                                           Create Role
                                     </Button>
@@ -162,7 +236,7 @@ export function RolesView() {
                                                 : "Create your first role to get started."}
                                     </p>
                                     <PermissionGate permission={SYSTEM_PERMISSIONS.ROLES_CREATE}>
-                                          <Button onClick={() => setCreateDialogOpen(true)}>
+                                          <Button onClick={handleOpenCreate}>
                                                 <Plus className="mr-2 h-4 w-4" />
                                                 Create Role
                                           </Button>
@@ -260,14 +334,174 @@ export function RolesView() {
                               <DialogHeader>
                                     <DialogTitle>Create Role</DialogTitle>
                                     <DialogDescription>
-                                          Add a new role to the system.
+                                          Add a new role to the system. You can assign permissions after creating.
                                     </DialogDescription>
                               </DialogHeader>
                               <div className="space-y-4 py-4">
-                                    <p className="text-sm text-muted-foreground">
-                                          Role creation form coming soon...
-                                    </p>
+                                    <div className="space-y-2">
+                                          <Label htmlFor="create-name">Name *</Label>
+                                          <Input
+                                                id="create-name"
+                                                placeholder="e.g., Content Manager"
+                                                value={createForm.name}
+                                                onChange={(e) =>
+                                                      setCreateForm((prev) => ({ ...prev, name: e.target.value }))
+                                                }
+                                          />
+                                    </div>
+                                    <div className="space-y-2">
+                                          <Label htmlFor="create-code">Code *</Label>
+                                          <Input
+                                                id="create-code"
+                                                placeholder="e.g., content-manager"
+                                                value={createForm.code}
+                                                onChange={(e) =>
+                                                      setCreateForm((prev) => ({
+                                                            ...prev,
+                                                            code: e.target.value.toLowerCase().replace(/\s+/g, "-"),
+                                                      }))
+                                                }
+                                          />
+                                          <p className="text-xs text-muted-foreground">
+                                                Unique identifier for this role. Cannot be changed later.
+                                          </p>
+                                    </div>
+                                    <div className="space-y-2">
+                                          <Label htmlFor="create-description">Description</Label>
+                                          <Textarea
+                                                id="create-description"
+                                                placeholder="Optional description of this role..."
+                                                value={createForm.description}
+                                                onChange={(e) =>
+                                                      setCreateForm((prev) => ({
+                                                            ...prev,
+                                                            description: e.target.value,
+                                                      }))
+                                                }
+                                                rows={3}
+                                          />
+                                    </div>
+                                    <div className="space-y-2">
+                                          <Label htmlFor="create-priority">Priority</Label>
+                                          <Input
+                                                id="create-priority"
+                                                type="number"
+                                                min={1}
+                                                max={1000}
+                                                placeholder="100"
+                                                value={createForm.priority}
+                                                onChange={(e) =>
+                                                      setCreateForm((prev) => ({
+                                                            ...prev,
+                                                            priority: parseInt(e.target.value) || 100,
+                                                      }))
+                                                }
+                                          />
+                                          <p className="text-xs text-muted-foreground">
+                                                Higher priority roles take precedence in permission conflicts.
+                                          </p>
+                                    </div>
                               </div>
+                              <DialogFooter>
+                                    <Button
+                                          variant="outline"
+                                          onClick={() => setCreateDialogOpen(false)}
+                                          disabled={isCreating}
+                                    >
+                                          Cancel
+                                    </Button>
+                                    <Button
+                                          onClick={onCreateSubmit}
+                                          disabled={!createForm.name || !createForm.code || isCreating}
+                                    >
+                                          {isCreating ? (
+                                                <>
+                                                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                                      Creating...
+                                                </>
+                                          ) : (
+                                                "Create Role"
+                                          )}
+                                    </Button>
+                              </DialogFooter>
+                        </DialogContent>
+                  </Dialog>
+
+                  {/* Edit Role Dialog */}
+                  <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+                        <DialogContent className="max-w-md">
+                              <DialogHeader>
+                                    <DialogTitle>Edit Role</DialogTitle>
+                                    <DialogDescription>
+                                          Update role details for &quot;{selectedRole?.name}&quot;.
+                                    </DialogDescription>
+                              </DialogHeader>
+                              <div className="space-y-4 py-4">
+                                    <div className="space-y-2">
+                                          <Label htmlFor="edit-name">Name *</Label>
+                                          <Input
+                                                id="edit-name"
+                                                placeholder="Role name"
+                                                value={editForm.name}
+                                                onChange={(e) =>
+                                                      setEditForm((prev) => ({ ...prev, name: e.target.value }))
+                                                }
+                                          />
+                                    </div>
+                                    <div className="space-y-2">
+                                          <Label htmlFor="edit-description">Description</Label>
+                                          <Textarea
+                                                id="edit-description"
+                                                placeholder="Optional description..."
+                                                value={editForm.description}
+                                                onChange={(e) =>
+                                                      setEditForm((prev) => ({
+                                                            ...prev,
+                                                            description: e.target.value,
+                                                      }))
+                                                }
+                                                rows={3}
+                                          />
+                                    </div>
+                                    <div className="space-y-2">
+                                          <Label htmlFor="edit-priority">Priority</Label>
+                                          <Input
+                                                id="edit-priority"
+                                                type="number"
+                                                min={1}
+                                                max={1000}
+                                                value={editForm.priority}
+                                                onChange={(e) =>
+                                                      setEditForm((prev) => ({
+                                                            ...prev,
+                                                            priority: parseInt(e.target.value) || 100,
+                                                      }))
+                                                }
+                                          />
+                                    </div>
+                              </div>
+                              <DialogFooter>
+                                    <Button
+                                          variant="outline"
+                                          onClick={() => setEditDialogOpen(false)}
+                                          disabled={isUpdating}
+                                    >
+                                          Cancel
+                                    </Button>
+                                    <Button
+                                          onClick={onEditSubmit}
+                                          disabled={!editForm.name || isUpdating}
+                                    >
+                                          {isUpdating ? (
+                                                <>
+                                                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                                      Saving...
+                                                </>
+                                          ) : (
+                                                "Save Changes"
+                                          )}
+                                    </Button>
+                              </DialogFooter>
                         </DialogContent>
                   </Dialog>
 
@@ -277,21 +511,37 @@ export function RolesView() {
                               <DialogHeader>
                                     <DialogTitle>Manage Permissions</DialogTitle>
                                     <DialogDescription>
-                                          Configure permissions for {selectedRole?.name}.
+                                          Configure permissions for &quot;{selectedRole?.name}&quot;.
                                     </DialogDescription>
                               </DialogHeader>
                               <div className="space-y-4 py-4">
                                     <p className="text-sm text-muted-foreground">
-                                          Permission assignment UI coming soon...
+                                          Current permissions assigned to this role:
                                     </p>
-                                    <div className="flex flex-wrap gap-2">
-                                          {selectedRole?.permissions.map((p) => (
-                                                <Badge key={p.permissionId} variant="outline">
-                                                      {p.permissionCode}
-                                                </Badge>
-                                          ))}
+                                    {selectedRole?.permissions && selectedRole.permissions.length > 0 ? (
+                                          <div className="flex flex-wrap gap-2">
+                                                {selectedRole.permissions.map((p) => (
+                                                      <Badge key={p.permissionId} variant="outline">
+                                                            {p.permissionCode}
+                                                      </Badge>
+                                                ))}
+                                          </div>
+                                    ) : (
+                                          <p className="text-sm text-muted-foreground italic">
+                                                No permissions assigned yet.
+                                          </p>
+                                    )}
+                                    <div className="pt-4 border-t">
+                                          <p className="text-sm text-muted-foreground">
+                                                Full permission management UI will be available in Phase B.
+                                          </p>
                                     </div>
                               </div>
+                              <DialogFooter>
+                                    <Button variant="outline" onClick={() => setPermissionsDialogOpen(false)}>
+                                          Close
+                                    </Button>
+                              </DialogFooter>
                         </DialogContent>
                   </Dialog>
 
@@ -301,11 +551,11 @@ export function RolesView() {
                               <DialogHeader>
                                     <DialogTitle>Delete Role</DialogTitle>
                                     <DialogDescription>
-                                          Are you sure you want to delete {selectedRole?.name}? This action
-                                          cannot be undone.
+                                          Are you sure you want to delete &quot;{selectedRole?.name}&quot;? This will
+                                          remove this role from all admins who have it. This action cannot be undone.
                                     </DialogDescription>
                               </DialogHeader>
-                              <div className="flex justify-end gap-2 pt-4">
+                              <DialogFooter>
                                     <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
                                           Cancel
                                     </Button>
@@ -314,9 +564,16 @@ export function RolesView() {
                                           onClick={onDeleteConfirm}
                                           disabled={isDeleting}
                                     >
-                                          {isDeleting ? "Deleting..." : "Delete"}
+                                          {isDeleting ? (
+                                                <>
+                                                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                                      Deleting...
+                                                </>
+                                          ) : (
+                                                "Delete"
+                                          )}
                                     </Button>
-                              </div>
+                              </DialogFooter>
                         </DialogContent>
                   </Dialog>
             </div>

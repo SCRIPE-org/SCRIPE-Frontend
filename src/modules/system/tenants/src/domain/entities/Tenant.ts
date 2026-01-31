@@ -99,6 +99,7 @@ export interface TenantTreeNode {
       code: string;
       level: number;
       isActive: boolean;
+      description?: string;
       parentId?: string;
       children: TenantTreeNode[];
 }

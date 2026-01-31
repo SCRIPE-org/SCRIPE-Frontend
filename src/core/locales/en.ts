@@ -59,6 +59,58 @@ export const en = {
     menus: "Menu Management",
   },
 
+  // Tenants
+  tenant: {
+    title: "Tenants",
+    description: "Manage organizational hierarchy and tenants.",
+    hierarchy: "Tenant Hierarchy",
+    allTenants: "All Tenants",
+    totalTenants: "Total Tenants",
+    addTenant: "Add Tenant",
+    createTenant: "Create Tenant",
+    createChild: "Create Child Tenant",
+    editTenant: "Edit Tenant",
+    deleteTenant: "Delete Tenant",
+    searchPlaceholder: "Search tenants...",
+    noTenantsFound: "No tenants found",
+    noTenantsDescription: "Create your first tenant to get started.",
+    // Form fields
+    name: "Name",
+    namePlaceholder: "Enter tenant name",
+    code: "Code",
+    codePlaceholder: "e.g., ACME, ORG-001",
+    codeHelp: "Unique identifier for this tenant.",
+    descriptionLabel: "Description",
+    descriptionPlaceholder: "Optional description...",
+    activeStatus: "Active Status",
+    activeHelp: "Inactive tenants are hidden from users.",
+    parent: "Parent",
+    level: "Level",
+    // Status
+    active: "Active",
+    inactive: "Inactive",
+    // Actions
+    edit: "Edit",
+    addChild: "Add Child",
+    delete: "Delete",
+    cancel: "Cancel",
+    save: "Save Changes",
+    create: "Create Tenant",
+    // Messages
+    createSuccess: "Tenant created successfully",
+    updateSuccess: "Tenant updated successfully",
+    deleteSuccess: "Tenant deleted successfully",
+    deleteConfirm: "Are you sure you want to delete",
+    deleteWarning: "This will also delete all child tenants. This action cannot be undone.",
+    creating: "Creating...",
+    saving: "Saving...",
+    deleting: "Deleting...",
+    // Dialog descriptions
+    createDescription: "Add a new root tenant to the system.",
+    createChildDescription: "Add a new child tenant under",
+    editDescription: "Update tenant details for",
+  },
+
   // Product
   product: {
     title: "Products Management",

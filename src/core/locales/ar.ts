@@ -58,6 +58,58 @@ export const ar = {
     menus: "إدارة القوائم",
   },
 
+  // Tenants - المستأجرون
+  tenant: {
+    title: "المستأجرون",
+    description: "إدارة التسلسل الهرمي والمستأجرين.",
+    hierarchy: "هرمية المستأجرين",
+    allTenants: "جميع المستأجرين",
+    totalTenants: "إجمالي المستأجرين",
+    addTenant: "إضافة مستأجر",
+    createTenant: "إنشاء مستأجر",
+    createChild: "إنشاء مستأجر فرعي",
+    editTenant: "تعديل المستأجر",
+    deleteTenant: "حذف المستأجر",
+    searchPlaceholder: "البحث عن مستأجرين...",
+    noTenantsFound: "لم يتم العثور على مستأجرين",
+    noTenantsDescription: "أنشئ أول مستأجر للبدء.",
+    // حقول النموذج
+    name: "الاسم",
+    namePlaceholder: "أدخل اسم المستأجر",
+    code: "الرمز",
+    codePlaceholder: "مثال: ACME، ORG-001",
+    codeHelp: "معرف فريد لهذا المستأجر.",
+    descriptionLabel: "الوصف",
+    descriptionPlaceholder: "وصف اختياري...",
+    activeStatus: "حالة التفعيل",
+    activeHelp: "المستأجرون غير النشطين مخفيون عن المستخدمين.",
+    parent: "الأصل",
+    level: "المستوى",
+    // الحالة
+    active: "نشط",
+    inactive: "غير نشط",
+    // الإجراءات
+    edit: "تعديل",
+    addChild: "إضافة فرعي",
+    delete: "حذف",
+    cancel: "إلغاء",
+    save: "حفظ التغييرات",
+    create: "إنشاء المستأجر",
+    // الرسائل
+    createSuccess: "تم إنشاء المستأجر بنجاح",
+    updateSuccess: "تم تحديث المستأجر بنجاح",
+    deleteSuccess: "تم حذف المستأجر بنجاح",
+    deleteConfirm: "هل أنت متأكد أنك تريد حذف",
+    deleteWarning: "سيؤدي هذا أيضًا إلى حذف جميع المستأجرين الفرعيين. لا يمكن التراجع عن هذا الإجراء.",
+    creating: "جاري الإنشاء...",
+    saving: "جاري الحفظ...",
+    deleting: "جاري الحذف...",
+    // أوصاف الحوار
+    createDescription: "إضافة مستأجر جذري جديد للنظام.",
+    createChildDescription: "إضافة مستأجر فرعي جديد تحت",
+    editDescription: "تحديث تفاصيل المستأجر لـ",
+  },
+
   // Product
   product: {
     title: "إدارة المنتجات",
