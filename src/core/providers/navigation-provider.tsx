@@ -191,6 +191,63 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated]);
 
+  // ========================================
+  // AUTO-REFRESH ON EXPIRY / MISSING DATA
+  // ========================================
+  // When user is authenticated but navigation data is null (expired or missing),
+  // automatically trigger a refresh instead of leaving the user stuck.
+  useEffect(() => {
+    if (isAuthenticated && !navigationData && !isLoading && !hasTriggeredRefresh) {
+      appLogger.debug('Navigation data missing for authenticated user, auto-refreshing...');
+      refreshNavigation(false, true); // forceRefresh = true
+    }
+  }, [isAuthenticated, navigationData, isLoading, hasTriggeredRefresh, refreshNavigation]);
+
+  // ========================================
+  // PERIODIC REFRESH CHECK (every 5 minutes)
+  // ========================================
+  // Periodically check if cache is about to expire and refresh proactively
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    const REFRESH_CHECK_INTERVAL = 1000 * 60 * 5; // Check every 5 minutes
+
+    const checkAndRefresh = () => {
+      try {
+        const cacheExpiry = localStorage.getItem(NAVIGATION_CACHE_EXPIRY_KEY);
+        if (!cacheExpiry) {
+          // No expiry means no cache, trigger refresh
+          appLogger.debug('Periodic check: No navigation cache, refreshing...');
+          refreshNavigation(true, true); // skipLoading=true, forceRefresh=true
+          return;
+        }
+
+        const expiryTime = parseInt(cacheExpiry, 10);
+        const now = Date.now();
+        const timeUntilExpiry = expiryTime - now;
+
+        // If cache expires in less than 5 minutes, proactively refresh
+        if (timeUntilExpiry < 1000 * 60 * 5) {
+          appLogger.debug('Periodic check: Navigation cache expiring soon, refreshing...');
+          refreshNavigation(true, true); // Background refresh
+        }
+      } catch (error) {
+        appLogger.error('Periodic refresh check failed:', error);
+      }
+    };
+
+    // Initial check after mount
+    const initialCheckTimeout = setTimeout(checkAndRefresh, 1000);
+
+    // Periodic checks
+    const intervalId = setInterval(checkAndRefresh, REFRESH_CHECK_INTERVAL);
+
+    return () => {
+      clearTimeout(initialCheckTimeout);
+      clearInterval(intervalId);
+    };
+  }, [isAuthenticated, refreshNavigation]);
+
   const hasPageAccess = useCallback((pathname: string): boolean => {
     if (!isAuthenticated) {
       return false;

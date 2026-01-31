@@ -9,6 +9,7 @@ import { SettingsProvider } from "@core/providers/settings-provider";
 import { NavigationProvider } from "@core/providers/navigation-provider";
 import { RouteGuard } from "@core/providers/route-guard";
 import { PermissionProvider } from "@core/providers/permission-provider";
+import { AuthRefreshProvider } from "@core/providers/auth-refresh-provider";
 import { EnhancedToaster } from "@core/ui/enhanced-toaster";
 import { ErrorBoundary } from "@core/ui/error-boundary";
 
@@ -39,7 +40,8 @@ const queryClient = new QueryClient({
  * 6. ErrorBoundary - Catches all errors (must be inside I18nProvider for localization)
  * 7. AuthProvider - Authentication state
  * 8. NavigationProvider - Navigation and permissions (depends on auth)
- * 9. RouteGuard - Route protection (depends on auth and navigation)
+ * 9. AuthRefreshProvider - Periodic refresh of permissions (depends on auth)
+ * 10. RouteGuard - Route protection (depends on auth and navigation)
  * 
  * @param children - The app content to be wrapped
  */
@@ -53,9 +55,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
               <ErrorBoundary>
                 <PermissionProvider>
                   <NavigationProvider>
-                    <RouteGuard>
-                      {children}
-                    </RouteGuard>
+                    <AuthRefreshProvider intervalMs={1000 * 60 * 5}>
+                      <RouteGuard>
+                        {children}
+                      </RouteGuard>
+                    </AuthRefreshProvider>
                   </NavigationProvider>
                 </PermissionProvider>
               </ErrorBoundary>
@@ -67,3 +71,4 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     </QueryClientProvider>
   );
 }
+
