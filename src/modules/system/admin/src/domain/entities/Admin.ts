@@ -80,15 +80,15 @@ export class Admin {
       }
 
       get roles(): AdminRoleData[] {
-            return this.data.roles;
+            return this.data.roles ?? [];
       }
 
       get roleNames(): string {
-            return this.data.roles.map((r) => r.roleName).join(", ") || "No roles";
+            return (this.data.roles ?? []).map((r) => r.roleName).join(", ") || "No roles";
       }
 
       get hasRoles(): boolean {
-            return this.data.roles.length > 0;
+            return (this.data.roles ?? []).length > 0;
       }
 
       /**

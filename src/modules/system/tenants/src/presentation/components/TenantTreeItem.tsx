@@ -27,6 +27,7 @@ import {
       Building2,
       ChevronRight,
       ChevronDown,
+      LogIn,
 } from "lucide-react";
 import { cn } from "@core/common/utils";
 
@@ -36,6 +37,7 @@ interface TenantTreeItemProps {
       onEdit: (node: TenantTreeNode) => void;
       onDelete: (node: TenantTreeNode) => void;
       onAddChild: (node: TenantTreeNode) => void;
+      onEnter?: (node: TenantTreeNode) => void;
 }
 
 export function TenantTreeItem({
@@ -44,6 +46,7 @@ export function TenantTreeItem({
       onEdit,
       onDelete,
       onAddChild,
+      onEnter,
 }: TenantTreeItemProps) {
       const [isExpanded, setIsExpanded] = useState(true);
       const { t } = useI18n();
@@ -106,6 +109,12 @@ export function TenantTreeItem({
                                                 {t("tenant.addChild")}
                                           </DropdownMenuItem>
                                     </PermissionGate>
+                                    {onEnter && (
+                                          <DropdownMenuItem onClick={() => onEnter(node)}>
+                                                <LogIn className="mr-2 h-4 w-4" />
+                                                {t("tenant.enterTenantWorld")}
+                                          </DropdownMenuItem>
+                                    )}
                                     <PermissionGate permission={SYSTEM_PERMISSIONS.TENANTS_DELETE}>
                                           <DropdownMenuSeparator />
                                           <DropdownMenuItem
@@ -130,6 +139,7 @@ export function TenantTreeItem({
                                           onEdit={onEdit}
                                           onDelete={onDelete}
                                           onAddChild={onAddChild}
+                                          onEnter={onEnter}
                                     />
                               ))}
                         </div>

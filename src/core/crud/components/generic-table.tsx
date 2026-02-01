@@ -88,7 +88,7 @@ export interface Action<T> {
   /** The label for the action */
   label: string;
   /** Optional icon for the action */
-  icon?: React.ComponentType<{ className?: string }>;
+  icon?: React.ReactNode;
   /** Callback when the action is clicked */
   onClick: (row: T) => void;
   /** Visual variant of the action */
@@ -1024,7 +1024,9 @@ export function GenericTable<T extends Record<string, any>>({
                                   )}
                                 >
                                   {action.icon && (
-                                    <action.icon className="w-4 h-4 mr-2 rtl:mr-0 rtl:ml-2 transition-transform duration-200 group-hover:scale-110" />
+                                    <span className="mr-2 rtl:mr-0 rtl:ml-2 transition-transform duration-200 group-hover:scale-110">
+                                      {action.icon}
+                                    </span>
                                   )}
                                   <span className="font-medium">
                                     {action.label}
@@ -1380,7 +1382,9 @@ export function GenericTable<T extends Record<string, any>>({
                                             )}
                                           >
                                             {action.icon && (
-                                              <action.icon className="w-4 h-4 mr-2 rtl:mr-0 rtl:ml-2 transition-transform duration-200 group-hover:scale-110" />
+                                              <span className="mr-2 rtl:mr-0 rtl:ml-2 transition-transform duration-200 group-hover:scale-110">
+                                                {action.icon}
+                                              </span>
                                             )}
                                             <span className="font-medium">
                                               {action.label}

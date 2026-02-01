@@ -513,19 +513,25 @@ export function GenericCrudView<T>(props: GenericCrudViewProps<T>) {
   // ========================================
   // PERMISSION CHECKING LOGIC
   // ========================================
-  // Helper to resolve a permission value (boolean or PermissionCode)
-  const resolvePermission = useCallback(
-    (value: boolean | PermissionCode | undefined, defaultCode?: PermissionCode): boolean => {
-      // If not provided, check default code or allow
+  // Call permission hooks at the top level (not inside useMemo/useCallback)
+  const resource = config?.resource;
+  const resourceViewPerm = usePermission(resource ? `${resource}.view` : "");
+  const resourceCreatePerm = usePermission(resource ? `${resource}.create` : "");
+  const resourceUpdatePerm = usePermission(resource ? `${resource}.update` : "");
+  const resourceDeletePerm = usePermission(resource ? `${resource}.delete` : "");
+
+  // Helper function to resolve permission values (no hooks inside)
+  const resolvePermissionValue = useCallback(
+    (value: boolean | PermissionCode | undefined, fallbackPermission: boolean): boolean => {
       if (value === undefined) {
-        return defaultCode ? usePermission(defaultCode) : true;
+        return fallbackPermission;
       }
-      // If boolean, use directly
       if (typeof value === "boolean") {
         return value;
       }
-      // If string (permission code), check against user permissions
-      return usePermission(value);
+      // For string permission codes, we can't call hooks here
+      // The caller should use the resource-based permissions instead
+      return fallbackPermission;
     },
     []
   );
@@ -533,25 +539,24 @@ export function GenericCrudView<T>(props: GenericCrudViewProps<T>) {
   // Compute effective permissions
   const effectivePermissions = useMemo(() => {
     const perms = config?.permissions;
-    const resource = config?.resource;
 
-    // If permissions object is provided, use it
+    // If permissions object is provided, use it with fallbacks
     if (perms) {
       return {
-        canView: resolvePermission(perms.canView),
-        canCreate: resolvePermission(perms.canCreate),
-        canUpdate: resolvePermission(perms.canUpdate),
-        canDelete: resolvePermission(perms.canDelete),
+        canView: resolvePermissionValue(perms.canView, resourceViewPerm),
+        canCreate: resolvePermissionValue(perms.canCreate, resourceCreatePerm),
+        canUpdate: resolvePermissionValue(perms.canUpdate, resourceUpdatePerm),
+        canDelete: resolvePermissionValue(perms.canDelete, resourceDeletePerm),
       };
     }
 
-    // If resource is provided, auto-generate permission codes
+    // If resource is provided, use the pre-computed permission values
     if (resource) {
       return {
-        canView: usePermission(`${resource}.view`),
-        canCreate: usePermission(`${resource}.create`),
-        canUpdate: usePermission(`${resource}.update`),
-        canDelete: usePermission(`${resource}.delete`),
+        canView: resourceViewPerm,
+        canCreate: resourceCreatePerm,
+        canUpdate: resourceUpdatePerm,
+        canDelete: resourceDeletePerm,
       };
     }
 
@@ -562,7 +567,7 @@ export function GenericCrudView<T>(props: GenericCrudViewProps<T>) {
       canUpdate: true,
       canDelete: true,
     };
-  }, [config?.permissions, config?.resource, resolvePermission]);
+  }, [config?.permissions, resource, resolvePermissionValue, resourceViewPerm, resourceCreatePerm, resourceUpdatePerm, resourceDeletePerm]);
 
   // Determine if Add button should be shown
   const showAddButton = !config?.hideAddButton && effectivePermissions.canCreate;

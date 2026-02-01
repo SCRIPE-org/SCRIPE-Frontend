@@ -38,7 +38,7 @@ export interface GenericTreeViewProps<T extends TreeNode, TCreate, TUpdate> {
   title: string;
   subtitle: string;
   getId: (node: T) => string;
-  getLabel: (node: T) => string;
+  getLabel: (node: T) => React.ReactNode;
   getChildren: (node: T) => T[] | undefined;
   renderFormFields?: (
     formValues: any,
@@ -49,6 +49,22 @@ export interface GenericTreeViewProps<T extends TreeNode, TCreate, TUpdate> {
   className?: string;
   showAddRoot?: boolean;
   expandOnCardClick?: boolean; // Enable/disable card click expansion
+
+  /* ========================================
+   * CUSTOM ACTIONS
+   * ======================================== */
+  /**
+   * Custom actions to add to each tree node's menu.
+   * These are added after the standard Add Child/Edit/Delete actions.
+   * @example customActions={(node) => [{ label: "Enter", onClick: () => enterTenant(node) }]}
+   */
+  customActions?: (node: T) => Array<{
+    label: string;
+    onClick: () => void;
+    icon?: React.ReactNode;
+    variant?: "default" | "destructive";
+    disabled?: boolean;
+  }>;
 
   /* ========================================
    * PERMISSIONS CONFIGURATION
@@ -78,6 +94,7 @@ export function GenericTreeView<T extends TreeNode, TCreate, TUpdate>({
   className,
   showAddRoot = true,
   expandOnCardClick = false,
+  customActions,
   permissions,
   resource,
 }: GenericTreeViewProps<T, TCreate, TUpdate>) {
@@ -95,15 +112,23 @@ export function GenericTreeView<T extends TreeNode, TCreate, TUpdate>({
   // ========================================
   // PERMISSION CHECKING LOGIC
   // ========================================
-  const resolvePermission = useCallback(
-    (value: boolean | PermissionCode | undefined, defaultCode?: PermissionCode): boolean => {
+  // Call permission hooks at the top level (not inside useMemo/useCallback)
+  const resourceCreatePerm = usePermission(resource ? `${resource}.create` : "");
+  const resourceUpdatePerm = usePermission(resource ? `${resource}.update` : "");
+  const resourceDeletePerm = usePermission(resource ? `${resource}.delete` : "");
+
+  // Helper function to resolve permission values (no hooks inside)
+  const resolvePermissionValue = useCallback(
+    (value: boolean | PermissionCode | undefined, fallbackPermission: boolean): boolean => {
       if (value === undefined) {
-        return defaultCode ? usePermission(defaultCode) : true;
+        return fallbackPermission;
       }
       if (typeof value === "boolean") {
         return value;
       }
-      return usePermission(value);
+      // For string permission codes, we can't call hooks here
+      // The caller should use the resource-based permissions instead
+      return fallbackPermission;
     },
     []
   );
@@ -111,20 +136,20 @@ export function GenericTreeView<T extends TreeNode, TCreate, TUpdate>({
   const effectivePermissions = useMemo(() => {
     if (permissions) {
       return {
-        canCreate: resolvePermission(permissions.canCreate),
-        canUpdate: resolvePermission(permissions.canUpdate),
-        canDelete: resolvePermission(permissions.canDelete),
+        canCreate: resolvePermissionValue(permissions.canCreate, resourceCreatePerm),
+        canUpdate: resolvePermissionValue(permissions.canUpdate, resourceUpdatePerm),
+        canDelete: resolvePermissionValue(permissions.canDelete, resourceDeletePerm),
       };
     }
     if (resource) {
       return {
-        canCreate: usePermission(`${resource}.create`),
-        canUpdate: usePermission(`${resource}.update`),
-        canDelete: usePermission(`${resource}.delete`),
+        canCreate: resourceCreatePerm,
+        canUpdate: resourceUpdatePerm,
+        canDelete: resourceDeletePerm,
       };
     }
     return { canCreate: true, canUpdate: true, canDelete: true };
-  }, [permissions, resource, resolvePermission]);
+  }, [permissions, resource, resolvePermissionValue, resourceCreatePerm, resourceUpdatePerm, resourceDeletePerm]);
 
   // Determine button visibility
   const showAddButton = showAddRoot && effectivePermissions.canCreate;
@@ -253,7 +278,20 @@ export function GenericTreeView<T extends TreeNode, TCreate, TUpdate>({
                   disabled: vm.loading,
                 });
               }
-              // Delete - requires delete permission
+              // Custom actions (added before Delete)
+              if (customActions) {
+                const custom = customActions(n);
+                custom.forEach((action) => {
+                  actions.push({
+                    label: action.label,
+                    onClick: action.onClick,
+                    variant: action.variant,
+                    icon: action.icon,
+                    disabled: action.disabled || vm.loading,
+                  });
+                });
+              }
+              // Delete - requires delete permission (stays at bottom)
               if (effectivePermissions.canDelete) {
                 actions.push({
                   label: t("common.delete"),

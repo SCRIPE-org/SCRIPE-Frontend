@@ -109,6 +109,21 @@ export const en = {
     createDescription: "Add a new root tenant to the system.",
     createChildDescription: "Add a new child tenant under",
     editDescription: "Update tenant details for",
+    // Tenant World / Context
+    enterTenantWorld: "Enter Tenant",
+    exitTenantWorld: "Exit Tenant World",
+    tenantWorld: "Tenant World",
+    currentContext: "Current Context",
+    systemLevel: "System Level",
+    managingTenant: "Managing",
+    enterToManage: "Enter to manage this tenant's resources",
+    breadcrumbSystem: "System",
+    viewingAs: "Viewing as",
+    exitContext: "Exit to system level",
+    tenantResources: "Tenant Resources",
+    manageAdmins: "Manage Admins",
+    manageRoles: "Manage Roles",
+    manageSubTenants: "Manage Sub-Tenants",
   },
 
   // Admin

@@ -108,6 +108,21 @@ export const ar = {
     createDescription: "إضافة مستأجر جذري جديد للنظام.",
     createChildDescription: "إضافة مستأجر فرعي جديد تحت",
     editDescription: "تحديث تفاصيل المستأجر لـ",
+    // عالم المستأجر / السياق
+    enterTenantWorld: "دخول المستأجر",
+    exitTenantWorld: "الخروج من عالم المستأجر",
+    tenantWorld: "عالم المستأجر",
+    currentContext: "السياق الحالي",
+    systemLevel: "مستوى النظام",
+    managingTenant: "إدارة",
+    enterToManage: "ادخل لإدارة موارد هذا المستأجر",
+    breadcrumbSystem: "النظام",
+    viewingAs: "العرض كـ",
+    exitContext: "الخروج إلى مستوى النظام",
+    tenantResources: "موارد المستأجر",
+    manageAdmins: "إدارة المشرفين",
+    manageRoles: "إدارة الأدوار",
+    manageSubTenants: "إدارة المستأجرين الفرعيين",
   },
 
   // Admin - المشرفون

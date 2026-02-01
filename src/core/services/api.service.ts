@@ -38,6 +38,9 @@ export class ApiService implements IApiService {
   private readonly retryDelayMs = 1000; // Base delay for exponential backoff
   private readonly retryableStatusCodes = [500, 502, 503, 504];
 
+  // Tenant context for X-Tenant-Context header
+  private tenantContextId: string | null = null;
+
   constructor(baseUrl: string = process.env.NEXT_PUBLIC_API_URL || "/api") {
     const normalizedBaseUrl = baseUrl.startsWith("http") ? baseUrl : `https://${baseUrl}`;
 
@@ -70,7 +73,7 @@ export class ApiService implements IApiService {
    * Setup request and response interceptors
    */
   private setupInterceptors(): void {
-    // Request interceptor - add auth token
+    // Request interceptor - add auth token and tenant context
     this.axiosInstance.interceptors.request.use(
       (config: InternalAxiosRequestConfig) => {
         const token = this.getAuthToken();
@@ -78,6 +81,13 @@ export class ApiService implements IApiService {
           config.headers.Authorization = `Bearer ${token}`;
           appLogger.auth("Token added to request");
         }
+
+        // Add tenant context header if set
+        if (this.tenantContextId) {
+          config.headers["X-Tenant-Context"] = this.tenantContextId;
+          appLogger.api(`Tenant context: ${this.tenantContextId}`);
+        }
+
         appLogger.api(`${config.method?.toUpperCase()} ${config.url}`);
         return config;
       },
@@ -438,5 +448,29 @@ export class ApiService implements IApiService {
   setRefreshHandler(handler: () => Promise<string | null>): void {
     this.refreshHandler = handler;
     appLogger.auth("Refresh handler set");
+  }
+
+  // ============================================
+  // Tenant Context Management
+  // ============================================
+
+  /**
+   * Set the current tenant context for X-Tenant-Context header
+   * @param tenantId - The tenant ID to scope requests to, or null to clear
+   */
+  setTenantContext(tenantId: string | null): void {
+    this.tenantContextId = tenantId;
+    if (tenantId) {
+      appLogger.api(`Tenant context set: ${tenantId}`);
+    } else {
+      appLogger.api("Tenant context cleared");
+    }
+  }
+
+  /**
+   * Get the current tenant context ID
+   */
+  getTenantContext(): string | null {
+    return this.tenantContextId;
   }
 }

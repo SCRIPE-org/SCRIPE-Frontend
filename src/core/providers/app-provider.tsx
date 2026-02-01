@@ -9,6 +9,7 @@ import { SettingsProvider } from "@core/providers/settings-provider";
 import { NavigationProvider } from "@core/providers/navigation-provider";
 import { RouteGuard } from "@core/providers/route-guard";
 import { PermissionProvider } from "@core/providers/permission-provider";
+import { TenantContextProvider } from "@core/providers/tenant-context-provider";
 import { AuthRefreshProvider } from "@core/providers/auth-refresh-provider";
 import { EnhancedToaster } from "@core/ui/enhanced-toaster";
 import { ErrorBoundary } from "@core/ui/error-boundary";
@@ -54,13 +55,15 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
             <I18nProvider>
               <ErrorBoundary>
                 <PermissionProvider>
-                  <NavigationProvider>
-                    <AuthRefreshProvider intervalMs={1000 * 60 * 5}>
-                      <RouteGuard>
-                        {children}
-                      </RouteGuard>
-                    </AuthRefreshProvider>
-                  </NavigationProvider>
+                  <TenantContextProvider>
+                    <NavigationProvider>
+                      <AuthRefreshProvider intervalMs={1000 * 60 * 5}>
+                        <RouteGuard>
+                          {children}
+                        </RouteGuard>
+                      </AuthRefreshProvider>
+                    </NavigationProvider>
+                  </TenantContextProvider>
                 </PermissionProvider>
               </ErrorBoundary>
               <EnhancedToaster />
