@@ -1,521 +1,176 @@
 /**
  * Admins View
  *
- * Main view component for admin management.
+ * Main view component for admin management using GenericCrudView.
+ * Clean implementation following the ProductView pattern.
  */
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
+import { GenericCrudView } from "@core/crud/components/generic-crud-view";
+import type { CrudConfig, CrudAction } from "@core/crud/components/generic-crud-view";
+import { Admin } from "../../domain/entities/Admin";
+import type { AssignRoleRequest } from "../../domain/entities/AdminRequests";
 import { useAdminsViewModel } from "../viewmodels/useAdminsViewModel";
-import { GenericTable, Column } from "@core/crud/components/generic-table";
-import { Button } from "@core/ui/button";
-import { Input } from "@core/ui/input";
-import {
-      Dialog,
-      DialogContent,
-      DialogHeader,
-      DialogTitle,
-      DialogDescription,
-} from "@core/ui/dialog";
-import {
-      DropdownMenu,
-      DropdownMenuContent,
-      DropdownMenuItem,
-      DropdownMenuTrigger,
-      DropdownMenuSeparator,
-} from "@core/ui/dropdown-menu";
-import { Card, CardContent } from "@core/ui/card";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
-      Form,
-      FormControl,
-      FormField,
-      FormItem,
-      FormLabel,
-      FormMessage,
-} from "@core/ui/form";
-import { PermissionGate } from "@core/providers/permission-provider";
-import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
-import { Admin, AdminData } from "../../domain/entities/Admin";
-import type { CreateAdminFormData, UpdateAdminFormData } from "../schemas/AdminSchema";
-import { createAdminSchema, updateAdminSchema } from "../schemas/AdminSchema";
-import {
-      Plus,
-      MoreHorizontal,
-      Pencil,
-      Trash2,
-      UserCheck,
-      UserX,
-      RefreshCw,
-} from "lucide-react";
-import { useDebounce } from "@core/hooks/use-validation";
+import { useI18n } from "@core/providers/i18n-provider";
 import { Badge } from "@core/ui/badge";
+import { UserCheck, Shield, Trash2, Pencil, Eye } from "lucide-react";
 import { format } from "date-fns";
+import { AssignRoleDialog, ViewRolesDialog } from "../components/AdminRoleDialogs";
 
 export function AdminsView() {
-      // State
-      const [page, setPage] = useState(1);
-      const [pageSize, setPageSize] = useState(20);
-      const [searchInput, setSearchInput] = useState("");
-      // const [statusFilter, setStatusFilter] = useState<boolean | undefined>(undefined);
-      const [selectedIds, setSelectedIds] = useState<string[]>([]);
-
-      // Dialogs
-      const [createDialogOpen, setCreateDialogOpen] = useState(false);
-      const [editDialogOpen, setEditDialogOpen] = useState(false);
-      const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-      const [selectedAdmin, setSelectedAdmin] = useState<Admin | null>(null);
-
-      // Debounced search
-      const debouncedSearch = useDebounce(searchInput, 300);
-
-      // ViewModel
+      const { t } = useI18n();
       const {
-            admins,
-            totalCount,
-            totalPages,
-            isLoading,
-            handleCreate,
-            handleUpdate,
+            vm,
+            getConfigBase,
             handleDelete,
             handleToggleActive,
-            // handleBulkActivate,
-            // handleBulkDeactivate,
-            // handleBulkDelete,
-            refetch,
-            isCreating,
-            isUpdating,
-            isDeleting,
-      } = useAdminsViewModel({
-            page,
-            pageSize,
-            search: debouncedSearch || undefined,
-            // isActive: statusFilter,
-      });
+            handleAssignRole,
+            handleRemoveRole,
+            isAssigningRole,
+            isRemovingRole,
+      } = useAdminsViewModel();
 
-      // Create form
-      const createForm = useForm<CreateAdminFormData>({
-            resolver: zodResolver(createAdminSchema),
-            defaultValues: {
-                  username: "",
-                  password: "",
-                  firstName: "",
-                  lastName: "",
-                  phoneNumber: "",
-                  notes: "",
-            },
-      });
+      const configBase = getConfigBase();
 
-      // Edit form
-      const editForm = useForm<UpdateAdminFormData>({
-            resolver: zodResolver(updateAdminSchema),
-            defaultValues: {
-                  firstName: "",
-                  lastName: "",
-                  phoneNumber: "",
-                  notes: "",
-                  isActive: true,
-            },
-      });
+      // Role dialog state
+      const [selectedAdminForRole, setSelectedAdminForRole] = useState<Admin | null>(null);
+      const [assignRoleDialogOpen, setAssignRoleDialogOpen] = useState(false);
+      const [viewRolesDialogOpen, setViewRolesDialogOpen] = useState(false);
 
-      // Handlers
-      const handleOpenCreate = useCallback(() => {
-            createForm.reset();
-            setCreateDialogOpen(true);
-      }, [createForm]);
-
-      const handleOpenEdit = useCallback(
-            (admin: Admin) => {
-                  setSelectedAdmin(admin);
-                  editForm.reset({
-                        firstName: admin.firstName || "",
-                        lastName: admin.lastName || "",
-                        phoneNumber: admin.phoneNumber || "",
-                        notes: admin.notes || "",
-                        isActive: admin.isActive,
-                  });
-                  setEditDialogOpen(true);
-            },
-            [editForm]
-      );
-
-      const handleOpenDelete = useCallback((admin: Admin) => {
-            setSelectedAdmin(admin);
-            setDeleteDialogOpen(true);
+      // Role dialog handlers
+      const handleOpenAssignRole = useCallback((admin: Admin) => {
+            setSelectedAdminForRole(admin);
+            setAssignRoleDialogOpen(true);
       }, []);
 
-      const onCreateSubmit = useCallback(
-            async (data: CreateAdminFormData) => {
-                  await handleCreate(data);
-                  setCreateDialogOpen(false);
-                  createForm.reset();
-            },
-            [handleCreate, createForm]
-      );
+      const handleOpenViewRoles = useCallback((admin: Admin) => {
+            setSelectedAdminForRole(admin);
+            setViewRolesDialogOpen(true);
+      }, []);
 
-      const onEditSubmit = useCallback(
-            async (data: UpdateAdminFormData) => {
-                  if (!selectedAdmin) return;
-                  await handleUpdate(selectedAdmin.id, data);
-                  setEditDialogOpen(false);
-            },
-            [handleUpdate, selectedAdmin]
-      );
+      const onAssignRoleSubmit = useCallback(async (request: AssignRoleRequest) => {
+            if (!selectedAdminForRole) return;
+            await handleAssignRole(selectedAdminForRole.id, request);
+            setAssignRoleDialogOpen(false);
+      }, [handleAssignRole, selectedAdminForRole]);
 
-      const onDeleteConfirm = useCallback(async () => {
-            if (!selectedAdmin) return;
-            await handleDelete(selectedAdmin.id);
-            setDeleteDialogOpen(false);
-            setSelectedAdmin(null);
-      }, [handleDelete, selectedAdmin]);
+      const onRemoveRole = useCallback(async (roleId: string, tenantId?: string) => {
+            if (!selectedAdminForRole) return;
+            await handleRemoveRole(selectedAdminForRole.id, roleId, tenantId);
+      }, [handleRemoveRole, selectedAdminForRole]);
 
-      // Table columns
-      const columns: Column<AdminData>[] = [
-            {
-                  key: "username",
-                  label: "Username",
-                  sortable: true,
-            },
-            {
-                  key: "firstName",
-                  label: "First Name",
-                  sortable: true,
-            },
-            {
-                  key: "lastName",
-                  label: "Last Name",
-                  sortable: true,
-            },
-            {
-                  key: "isActive",
-                  label: "Status",
-                  render: (value: boolean) => (
-                        <Badge variant={value ? "default" : "secondary"}>
-                              {value ? "Active" : "Inactive"}
-                        </Badge>
-                  ),
-            },
-            {
-                  key: "createdAt",
-                  label: "Created",
-                  render: (value: string) => value ? format(new Date(value), "MMM d, yyyy") : "-",
-            },
-      ];
-
-      // Custom action renderer
-      const renderActions = (row: AdminData) => {
-            const admin = new Admin(row);
-            return (
-                  <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" className="h-8 w-8 p-0">
-                                    <MoreHorizontal className="h-4 w-4" />
-                              </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                              <PermissionGate permission={SYSTEM_PERMISSIONS.ADMINS_UPDATE}>
-                                    <DropdownMenuItem onClick={() => handleOpenEdit(admin)}>
-                                          <Pencil className="mr-2 h-4 w-4" />
-                                          Edit
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem
-                                          onClick={() => handleToggleActive(admin.id, !admin.isActive)}
-                                    >
-                                          {admin.isActive ? (
-                                                <>
-                                                      <UserX className="mr-2 h-4 w-4" />
-                                                      Deactivate
-                                                </>
-                                          ) : (
-                                                <>
-                                                      <UserCheck className="mr-2 h-4 w-4" />
-                                                      Activate
-                                                </>
-                                          )}
-                                    </DropdownMenuItem>
-                              </PermissionGate>
-                              <DropdownMenuSeparator />
-                              <PermissionGate permission={SYSTEM_PERMISSIONS.ADMINS_DELETE}>
-                                    <DropdownMenuItem
-                                          className="text-destructive"
-                                          onClick={() => handleOpenDelete(admin)}
-                                    >
-                                          <Trash2 className="mr-2 h-4 w-4" />
-                                          Delete
-                                    </DropdownMenuItem>
-                              </PermissionGate>
-                        </DropdownMenuContent>
-                  </DropdownMenu>
-            );
-      };
+      // Configuration for the generic view
+      const config: CrudConfig<Admin> = useMemo(() => ({
+            titleKey: "admin.title",
+            subtitleKey: "admin.description",
+            columns: [
+                  {
+                        key: "username",
+                        label: t("admin.username") || "Username",
+                        sortable: true,
+                  },
+                  {
+                        key: "name",
+                        label: t("admin.name") || "Name",
+                        render: (_val: unknown, admin: Admin) => (
+                              <span>{admin.displayName}</span>
+                        ),
+                  },
+                  {
+                        key: "roles",
+                        label: t("admin.roles") || "Roles",
+                        render: (_val: unknown, admin: Admin) => (
+                              <span className="text-sm text-muted-foreground">
+                                    {admin.roleNames || t("admin.noRoles") || "No roles"}
+                              </span>
+                        ),
+                  },
+                  {
+                        key: "isActive",
+                        label: t("admin.status") || "Status",
+                        render: (value: boolean) => (
+                              <Badge variant={value ? "active" : "inactive"}>
+                                    {value ? t("common.active") || "Active" : t("common.inactive") || "Inactive"}
+                              </Badge>
+                        ),
+                  },
+                  {
+                        key: "createdAt",
+                        label: t("admin.createdAt") || "Created",
+                        render: (value: string) =>
+                              value ? format(new Date(value), "MMM d, yyyy") : "-",
+                  },
+            ],
+            // Spread configBase with defaults to satisfy required fields
+            createFields: configBase.createFields || [],
+            editFields: configBase.editFields || [],
+            createInitialValues: configBase.createInitialValues,
+            editInitialValues: configBase.editInitialValues,
+            getItemDisplayName: configBase.getItemDisplayName,
+            enableBulkActions: configBase.enableBulkActions,
+            permissions: configBase.permissions,
+            getActions: (vmInstance: any, tFn: any, handleDeleteFn: any): CrudAction<Admin>[] => [
+                  {
+                        label: tFn("common.view") || "View",
+                        onClick: (item: Admin) => vmInstance.openViewModal(item),
+                        variant: "ghost" as const,
+                        icon: <Eye className="h-4 w-4" />,
+                  },
+                  {
+                        label: tFn("common.edit") || "Edit",
+                        onClick: (item: Admin) => vmInstance.openEditModal(item),
+                        variant: "ghost" as const,
+                        icon: <Pencil className="h-4 w-4" />,
+                  },
+                  {
+                        label: tFn("admin.toggleStatus") || "Toggle Status",
+                        onClick: (item: Admin) => handleToggleActive(item.id, !item.isActive),
+                        variant: "ghost" as const,
+                        icon: <UserCheck className="h-4 w-4" />,
+                  },
+                  {
+                        label: tFn("admin.role.viewTitle") || "View Roles",
+                        onClick: (item: Admin) => handleOpenViewRoles(item),
+                        variant: "ghost" as const,
+                        icon: <Shield className="h-4 w-4" />,
+                  },
+                  {
+                        label: tFn("admin.role.assign") || "Assign Role",
+                        onClick: (item: Admin) => handleOpenAssignRole(item),
+                        variant: "ghost" as const,
+                        icon: <Shield className="h-4 w-4" />,
+                  },
+                  {
+                        label: tFn("common.delete") || "Delete",
+                        onClick: (item: Admin) => handleDeleteFn?.(item),
+                        variant: "ghost" as const,
+                        className: "text-red-600 hover:text-red-700",
+                        icon: <Trash2 className="h-4 w-4" />,
+                  },
+            ],
+      }), [t, vm, handleDelete, configBase, handleToggleActive, handleOpenViewRoles, handleOpenAssignRole]);
 
       return (
-            <div className="space-y-6">
-                  {/* Header */}
-                  <div className="flex items-center justify-between">
-                        <div>
-                              <h1 className="text-3xl font-bold tracking-tight">Administrators</h1>
-                              <p className="text-muted-foreground">
-                                    Manage system administrators and their access.
-                              </p>
-                        </div>
-                        <div className="flex items-center gap-2">
-                              <Button variant="outline" size="icon" onClick={() => refetch()}>
-                                    <RefreshCw className="h-4 w-4" />
-                              </Button>
-                              <PermissionGate permission={SYSTEM_PERMISSIONS.ADMINS_CREATE}>
-                                    <Button onClick={handleOpenCreate}>
-                                          <Plus className="mr-2 h-4 w-4" />
-                                          Create Admin
-                                    </Button>
-                              </PermissionGate>
-                        </div>
-                  </div>
+            <>
+                  <GenericCrudView viewModel={vm} config={config} />
 
-                  {/* Table */}
-                  <Card>
-                        <CardContent className="pt-6">
-                              <GenericTable
-                                    data={admins.map(admin => admin.data)}
-                                    columns={columns}
-                                    loading={isLoading}
-                                    selectable={true}
-                                    selectedItems={selectedIds}
-                                    onSelectionChange={setSelectedIds}
-                                    searchValue={searchInput}
-                                    onSearch={setSearchInput}
-                                    searchPlaceholder="Search administrators..."
-                                    emptyMessage="No administrators found."
-                                    renderActions={renderActions}
-                                    pagination={{
-                                          itemsCount: totalCount,
-                                          pageSize,
-                                          currentPage: page,
-                                          pagesCount: totalPages,
-                                          onPageChange: setPage,
-                                          onPageSizeChange: setPageSize,
-                                    }}
-                              />
-                        </CardContent>
-                  </Card>
+                  {/* Role Management Dialogs */}
+                  <AssignRoleDialog
+                        open={assignRoleDialogOpen}
+                        onOpenChange={setAssignRoleDialogOpen}
+                        admin={selectedAdminForRole}
+                        onAssign={onAssignRoleSubmit}
+                        isLoading={isAssigningRole}
+                  />
 
-                  {/* Create Dialog */}
-                  <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
-                        <DialogContent className="max-w-md">
-                              <DialogHeader>
-                                    <DialogTitle>Create Administrator</DialogTitle>
-                                    <DialogDescription>
-                                          Add a new administrator to the system.
-                                    </DialogDescription>
-                              </DialogHeader>
-                              <Form {...createForm}>
-                                    <form onSubmit={createForm.handleSubmit(onCreateSubmit)} className="space-y-4">
-                                          <FormField
-                                                control={createForm.control}
-                                                name="username"
-                                                render={({ field }) => (
-                                                      <FormItem>
-                                                            <FormLabel>Username *</FormLabel>
-                                                            <FormControl>
-                                                                  <Input placeholder="Enter username" {...field} />
-                                                            </FormControl>
-                                                            <FormMessage />
-                                                      </FormItem>
-                                                )}
-                                          />
-                                          <FormField
-                                                control={createForm.control}
-                                                name="password"
-                                                render={({ field }) => (
-                                                      <FormItem>
-                                                            <FormLabel>Password *</FormLabel>
-                                                            <FormControl>
-                                                                  <Input type="password" placeholder="Enter password" {...field} />
-                                                            </FormControl>
-                                                            <FormMessage />
-                                                      </FormItem>
-                                                )}
-                                          />
-                                          <div className="grid grid-cols-2 gap-4">
-                                                <FormField
-                                                      control={createForm.control}
-                                                      name="firstName"
-                                                      render={({ field }) => (
-                                                            <FormItem>
-                                                                  <FormLabel>First Name</FormLabel>
-                                                                  <FormControl>
-                                                                        <Input placeholder="First name" {...field} />
-                                                                  </FormControl>
-                                                                  <FormMessage />
-                                                            </FormItem>
-                                                      )}
-                                                />
-                                                <FormField
-                                                      control={createForm.control}
-                                                      name="lastName"
-                                                      render={({ field }) => (
-                                                            <FormItem>
-                                                                  <FormLabel>Last Name</FormLabel>
-                                                                  <FormControl>
-                                                                        <Input placeholder="Last name" {...field} />
-                                                                  </FormControl>
-                                                                  <FormMessage />
-                                                            </FormItem>
-                                                      )}
-                                                />
-                                          </div>
-                                          <FormField
-                                                control={createForm.control}
-                                                name="phoneNumber"
-                                                render={({ field }) => (
-                                                      <FormItem>
-                                                            <FormLabel>Phone Number</FormLabel>
-                                                            <FormControl>
-                                                                  <Input placeholder="+1 234 567 8900" {...field} />
-                                                            </FormControl>
-                                                            <FormMessage />
-                                                      </FormItem>
-                                                )}
-                                          />
-                                          <FormField
-                                                control={createForm.control}
-                                                name="notes"
-                                                render={({ field }) => (
-                                                      <FormItem>
-                                                            <FormLabel>Notes</FormLabel>
-                                                            <FormControl>
-                                                                  <Input placeholder="Optional notes..." {...field} />
-                                                            </FormControl>
-                                                            <FormMessage />
-                                                      </FormItem>
-                                                )}
-                                          />
-                                          <div className="flex justify-end gap-2 pt-4">
-                                                <Button
-                                                      type="button"
-                                                      variant="outline"
-                                                      onClick={() => setCreateDialogOpen(false)}
-                                                >
-                                                      Cancel
-                                                </Button>
-                                                <Button type="submit" disabled={isCreating}>
-                                                      {isCreating ? "Creating..." : "Create"}
-                                                </Button>
-                                          </div>
-                                    </form>
-                              </Form>
-                        </DialogContent>
-                  </Dialog>
-
-                  {/* Edit Dialog */}
-                  <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
-                        <DialogContent className="max-w-md">
-                              <DialogHeader>
-                                    <DialogTitle>Edit Administrator</DialogTitle>
-                                    <DialogDescription>
-                                          Update administrator details for {selectedAdmin?.username}.
-                                    </DialogDescription>
-                              </DialogHeader>
-                              <Form {...editForm}>
-                                    <form onSubmit={editForm.handleSubmit(onEditSubmit)} className="space-y-4">
-                                          <div className="grid grid-cols-2 gap-4">
-                                                <FormField
-                                                      control={editForm.control}
-                                                      name="firstName"
-                                                      render={({ field }) => (
-                                                            <FormItem>
-                                                                  <FormLabel>First Name</FormLabel>
-                                                                  <FormControl>
-                                                                        <Input placeholder="First name" {...field} />
-                                                                  </FormControl>
-                                                                  <FormMessage />
-                                                            </FormItem>
-                                                      )}
-                                                />
-                                                <FormField
-                                                      control={editForm.control}
-                                                      name="lastName"
-                                                      render={({ field }) => (
-                                                            <FormItem>
-                                                                  <FormLabel>Last Name</FormLabel>
-                                                                  <FormControl>
-                                                                        <Input placeholder="Last name" {...field} />
-                                                                  </FormControl>
-                                                                  <FormMessage />
-                                                            </FormItem>
-                                                      )}
-                                                />
-                                          </div>
-                                          <FormField
-                                                control={editForm.control}
-                                                name="phoneNumber"
-                                                render={({ field }) => (
-                                                      <FormItem>
-                                                            <FormLabel>Phone Number</FormLabel>
-                                                            <FormControl>
-                                                                  <Input placeholder="+1 234 567 8900" {...field} />
-                                                            </FormControl>
-                                                            <FormMessage />
-                                                      </FormItem>
-                                                )}
-                                          />
-                                          <FormField
-                                                control={editForm.control}
-                                                name="notes"
-                                                render={({ field }) => (
-                                                      <FormItem>
-                                                            <FormLabel>Notes</FormLabel>
-                                                            <FormControl>
-                                                                  <Input placeholder="Optional notes..." {...field} />
-                                                            </FormControl>
-                                                            <FormMessage />
-                                                      </FormItem>
-                                                )}
-                                          />
-                                          <div className="flex justify-end gap-2 pt-4">
-                                                <Button
-                                                      type="button"
-                                                      variant="outline"
-                                                      onClick={() => setEditDialogOpen(false)}
-                                                >
-                                                      Cancel
-                                                </Button>
-                                                <Button type="submit" disabled={isUpdating}>
-                                                      {isUpdating ? "Saving..." : "Save Changes"}
-                                                </Button>
-                                          </div>
-                                    </form>
-                              </Form>
-                        </DialogContent>
-                  </Dialog>
-
-                  {/* Delete Confirmation Dialog */}
-                  <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-                        <DialogContent className="max-w-sm">
-                              <DialogHeader>
-                                    <DialogTitle>Delete Administrator</DialogTitle>
-                                    <DialogDescription>
-                                          Are you sure you want to delete {selectedAdmin?.username}? This action cannot be undone.
-                                    </DialogDescription>
-                              </DialogHeader>
-                              <div className="flex justify-end gap-2 pt-4">
-                                    <Button
-                                          variant="outline"
-                                          onClick={() => setDeleteDialogOpen(false)}
-                                    >
-                                          Cancel
-                                    </Button>
-                                    <Button
-                                          variant="destructive"
-                                          onClick={onDeleteConfirm}
-                                          disabled={isDeleting}
-                                    >
-                                          {isDeleting ? "Deleting..." : "Delete"}
-                                    </Button>
-                              </div>
-                        </DialogContent>
-                  </Dialog>
-            </div>
+                  <ViewRolesDialog
+                        open={viewRolesDialogOpen}
+                        onOpenChange={setViewRolesDialogOpen}
+                        admin={selectedAdminForRole}
+                        onRemoveRole={onRemoveRole}
+                        isRemoving={isRemovingRole}
+                  />
+            </>
       );
 }

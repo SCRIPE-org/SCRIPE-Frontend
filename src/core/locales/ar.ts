@@ -110,6 +110,30 @@ export const ar = {
     editDescription: "تحديث تفاصيل المستأجر لـ",
   },
 
+  // Admin - المشرفون
+  admin: {
+    title: "المشرفون",
+    description: "إدارة مشرفي النظام وصلاحياتهم.",
+    role: {
+      assignTitle: "تعيين دور",
+      assignDescription: "تعيين دور لـ",
+      selectRole: "الدور",
+      selectRolePlaceholder: "اختر دوراً...",
+      tenantScope: "نطاق المستأجر",
+      selectTenantPlaceholder: "عام (ينطبق على الجميع)",
+      tenantScopeHelp: "اتركه فارغاً للوصول العام، أو اختر مستأجراً لتحديد النطاق.",
+      inheritToChildren: "التوريث للمستأجرين الفرعيين",
+      inheritHelp: "الدور ينطبق على جميع المستأجرين الفرعيين أيضاً.",
+      assign: "تعيين الدور",
+      globalScope: "عام (جميع المستأجرين)",
+      viewTitle: "الأدوار المعينة",
+      viewDescription: "الأدوار المعينة لـ",
+      noRoles: "لم يتم تعيين أدوار بعد.",
+      global: "عام",
+      manageRoles: "إدارة الأدوار",
+    },
+  },
+
   // Product
   product: {
     title: "إدارة المنتجات",

@@ -111,6 +111,30 @@ export const en = {
     editDescription: "Update tenant details for",
   },
 
+  // Admin
+  admin: {
+    title: "Administrators",
+    description: "Manage system administrators and their access.",
+    role: {
+      assignTitle: "Assign Role",
+      assignDescription: "Assign a role to",
+      selectRole: "Role",
+      selectRolePlaceholder: "Select a role...",
+      tenantScope: "Tenant Scope",
+      selectTenantPlaceholder: "Global (applies to all)",
+      tenantScopeHelp: "Leave empty for global access, or select a tenant to limit scope.",
+      inheritToChildren: "Inherit to Sub-tenants",
+      inheritHelp: "Role applies to all child tenants as well.",
+      assign: "Assign Role",
+      globalScope: "Global (All Tenants)",
+      viewTitle: "Assigned Roles",
+      viewDescription: "Roles assigned to",
+      noRoles: "No roles assigned yet.",
+      global: "Global",
+      manageRoles: "Manage Roles",
+    },
+  },
+
   // Product
   product: {
     title: "Products Management",
