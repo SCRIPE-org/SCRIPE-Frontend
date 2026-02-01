@@ -30,6 +30,11 @@ export interface AdminData extends BaseEntity {
       lastLoginAt?: string;
       notes?: string;
       roles: AdminRoleData[];
+      /** The tenant this admin belongs to (null for system admins) */
+      tenantId?: string;
+      tenantName?: string;
+      /** Whether this admin is a super/system admin */
+      isSuperAdmin?: boolean;
 }
 
 /**
@@ -89,6 +94,25 @@ export class Admin {
 
       get hasRoles(): boolean {
             return (this.data.roles ?? []).length > 0;
+      }
+
+      /** The tenant this admin belongs to (null for system admins) */
+      get tenantId(): string | undefined {
+            return this.data.tenantId;
+      }
+
+      get tenantName(): string | undefined {
+            return this.data.tenantName;
+      }
+
+      /** Whether this admin is a super/system admin */
+      get isSuperAdmin(): boolean {
+            return this.data.isSuperAdmin ?? false;
+      }
+
+      /** Whether this admin is a system-level admin (no tenant or super admin) */
+      get isSystemAdmin(): boolean {
+            return this.isSuperAdmin || !this.tenantId;
       }
 
       /**
