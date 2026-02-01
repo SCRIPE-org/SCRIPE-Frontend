@@ -5,6 +5,7 @@ import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
 
 import { cn } from "@core/common/utils";
+import { useI18n } from "@core/providers/i18n-provider";
 import {
   MODAL_Z_INDEX,
   OVERLAY_Z_INDEX,
@@ -43,7 +44,10 @@ DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
 const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
->(({ className, children, ...props }, ref) => {
+>(({ className, children, dir, ...props }, ref) => {
+  const { direction } = useI18n();
+  const isRtl = (dir || direction) === "rtl";
+
   // Check if this is a drawer style modal
   const isDrawer =
     className?.includes("right-0") && className?.includes("!translate-x-0");
@@ -60,6 +64,7 @@ const DialogContent = React.forwardRef<
       <DialogOverlay className="!z-[999]" />
       <DialogPrimitive.Content
         ref={ref}
+        dir={dir ?? direction}
         className={cn(getPositionClasses(), "!z-[1000]", className)}
         onOpenAutoFocus={(e) => {
           // Prevent auto focus to allow dropdown inputs to work
@@ -112,7 +117,12 @@ const DialogContent = React.forwardRef<
         {...props}
       >
         {children}
-        <DialogPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
+        <DialogPrimitive.Close
+          className={cn(
+            "absolute top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground",
+            isRtl ? "left-4" : "right-4"
+          )}
+        >
           <X className="h-4 w-4" />
           <span className="sr-only">Close</span>
         </DialogPrimitive.Close>
@@ -125,29 +135,41 @@ DialogContent.displayName = DialogPrimitive.Content.displayName;
 const DialogHeader = ({
   className,
   ...props
-}: React.HTMLAttributes<HTMLDivElement>) => (
-  <div
-    className={cn(
-      "flex flex-col space-y-1.5 text-center sm:text-left",
-      className
-    )}
-    {...props}
-  />
-);
+}: React.HTMLAttributes<HTMLDivElement>) => {
+  const { direction } = useI18n();
+  const isRtl = direction === "rtl";
+
+  return (
+    <div
+      className={cn(
+        "flex flex-col space-y-1.5 text-center",
+        isRtl ? "sm:text-right" : "sm:text-left",
+        className
+      )}
+      {...props}
+    />
+  );
+};
 DialogHeader.displayName = "DialogHeader";
 
 const DialogFooter = ({
   className,
   ...props
-}: React.HTMLAttributes<HTMLDivElement>) => (
-  <div
-    className={cn(
-      "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2",
-      className
-    )}
-    {...props}
-  />
-);
+}: React.HTMLAttributes<HTMLDivElement>) => {
+  const { direction } = useI18n();
+  const isRtl = direction === "rtl";
+
+  return (
+    <div
+      className={cn(
+        "flex flex-col-reverse sm:flex-row sm:justify-end",
+        isRtl ? "sm:space-x-reverse sm:space-x-2" : "sm:space-x-2",
+        className
+      )}
+      {...props}
+    />
+  );
+};
 DialogFooter.displayName = "DialogFooter";
 
 const DialogTitle = React.forwardRef<

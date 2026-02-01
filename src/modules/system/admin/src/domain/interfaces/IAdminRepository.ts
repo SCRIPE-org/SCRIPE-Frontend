@@ -21,6 +21,8 @@ export interface AdminListParams {
       pageSize: number;
       search?: string;
       isActive?: boolean;
+      /** Optional tenant ID to filter admins for a specific tenant */
+      tenantId?: string;
 }
 
 /**

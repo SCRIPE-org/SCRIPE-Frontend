@@ -124,6 +124,33 @@ export const en = {
     manageAdmins: "Manage Admins",
     manageRoles: "Manage Roles",
     manageSubTenants: "Manage Sub-Tenants",
+    // Detail Page
+    backToList: "Back to Tenants",
+    notFound: "Tenant not found",
+    errorLoadingDetails: "Unable to load tenant details. Please try again.",
+    editDialogDescription: "Update the tenant's name, description, and status.",
+    deleteConfirmation: "Are you sure you want to delete {name}? This action cannot be undone.",
+    // Stats
+    statsAdmins: "Admins",
+    statsRoles: "Roles",
+    statsSubTenants: "Sub-Tenants",
+    statsPermissions: "Permissions",
+    // Tabs
+    tabAdmins: "Admins",
+    tabRoles: "Roles",
+    tabSubTenants: "Sub-Tenants",
+    tabSettings: "Settings",
+    adminsDescription: "Manage administrators for this tenant",
+    rolesDescription: "Manage roles for this tenant",
+    subTenantsDescription: "Child tenants under this organization",
+    // Settings
+    settings: "Settings",
+    settingsDescription: "Configuration options for this tenant",
+    settingsGeneral: "General Settings",
+    settingsGeneralDesc: "Basic tenant configuration options",
+    settingsBranding: "Branding",
+    settingsBrandingDesc: "Customize tenant appearance and branding",
+    settingsComingSoon: "Settings coming soon...",
   },
 
   // Admin
@@ -2486,6 +2513,10 @@ export const en = {
     patent: "Patent",
     intellectual_property: "Intellectual Property",
     all_rights_reserved: "All Rights Reserved",
+    active: "Active",
+    inactive: "Inactive",
+    activate: "Activate",
+    deactivate: "Deactivate",
   },
 
   // Toast Messages

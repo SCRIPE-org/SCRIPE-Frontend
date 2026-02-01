@@ -40,6 +40,7 @@ export class AdminRepository implements IAdminRepository {
                   pageSize: params.pageSize,
                   search: params.search,
                   isActive: params.isActive,
+                  tenantId: params.tenantId,
             });
 
             const response = await this.api.get<AdminListApiResponse>(url);

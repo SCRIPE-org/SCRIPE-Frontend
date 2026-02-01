@@ -2,22 +2,22 @@
  * Tenants View (Refactored)
  *
  * Uses GenericTreeView for tenant hierarchy management.
- * Significantly reduced code by leveraging the generic tree infrastructure.
+ * Clicking "Enter Tenant" navigates to the full detail page.
  *
  * @module tenants
  */
 "use client";
 
-import { useMemo, useState, useCallback } from "react";
+import { useMemo, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { GenericTreeView } from "@core/crud/components/generic-tree-view";
 import { useTreeViewModel } from "@core/hooks/use-tree-view-model";
 import { useI18n } from "@core/providers/i18n-provider";
-import { useTenantContext, TenantInfo } from "@core/providers/tenant-context-provider";
+import { useTenantContext } from "@core/providers/tenant-context-provider";
 import { systemContainer } from "@modules/system/di";
 import { createTenantTreeService } from "../../data/services/TenantTreeService";
 import type { TenantTreeNode } from "../../domain/entities/Tenant";
 import type { CreateTenantRequest, UpdateTenantRequest } from "../../domain/entities/TenantRequests";
-import { TenantWorldPanel } from "../components/TenantWorldPanel";
 import { Badge } from "@core/ui/badge";
 import { LogIn } from "lucide-react";
 
@@ -92,12 +92,9 @@ const getTenantFormFields = (
 // ============================================
 
 export function TenantsView() {
+      const router = useRouter();
       const { t } = useI18n();
       const { canEnterTenantWorld } = useTenantContext();
-
-      // Tenant World state
-      const [tenantWorldOpen, setTenantWorldOpen] = useState(false);
-      const [enteringTenant, setEnteringTenant] = useState<TenantInfo | null>(null);
 
       // Create tree service from repository
       const treeService = useMemo(
@@ -119,33 +116,28 @@ export function TenantsView() {
                   isActive: item?.isActive ?? true,
                   parentId: parent?.id || item?.parentId,
             }),
-            createFormData: (values) => ({
+            createFormData: (values) =>
+            ({
                   name: values.name,
                   code: values.code,
                   description: values.description || undefined,
                   parentId: values.parentId,
             } as CreateTenantRequest),
-            updateFormData: (values) => ({
+            updateFormData: (values) =>
+            ({
                   name: values.name,
                   description: values.description || undefined,
                   isActive: values.isActive,
             } as UpdateTenantRequest),
       });
 
-      // Handler for entering tenant world
-      const handleEnterTenantWorld = useCallback((node: TenantTreeNode) => {
-            setEnteringTenant({
-                  id: node.id,
-                  name: node.name,
-                  parentId: node.parentId,
-            });
-            setTenantWorldOpen(true);
-      }, []);
-
-      const handleCloseTenantWorld = useCallback(() => {
-            setTenantWorldOpen(false);
-            setEnteringTenant(null);
-      }, []);
+      // Handler for entering tenant world - now navigates to detail page
+      const handleEnterTenantWorld = useCallback(
+            (node: TenantTreeNode) => {
+                  router.push(`/tenants/${node.id}`);
+            },
+            [router]
+      );
 
       // Custom actions for tenant nodes
       const customActions = useMemo(() => {
@@ -161,40 +153,31 @@ export function TenantsView() {
       }, [canEnterTenantWorld, t, handleEnterTenantWorld]);
 
       return (
-            <>
-                  <GenericTreeView
-                        viewModel={viewModel}
-                        title={t("tenant.title")}
-                        subtitle={t("tenant.description")}
-                        getId={(node) => node.id}
-                        getLabel={(node) => (
-                              <>
-                                    {node.name}
-                                    <span className="text-muted-foreground text-xs ms-2">({node.code})</span>
-                                    <Badge
-                                          variant={node.isActive ? "success" : "secondary"}
-                                          className="ms-2"
-                                    >
-                                          {node.isActive ? t("tenant.active") : t("tenant.inactive")}
-                                    </Badge>
-                              </>
-                        )}
-                        getChildren={(node) => node.children}
-                        renderFormFields={(formValues, setFormValues, editing, parentForNew) =>
-                              getTenantFormFields(t, formValues, setFormValues, editing, parentForNew)
-                        }
-                        resource="tenants"
-                        customActions={customActions}
-                  />
-
-                  {/* Tenant World Panel */}
-                  {canEnterTenantWorld && (
-                        <TenantWorldPanel
-                              open={tenantWorldOpen}
-                              onClose={handleCloseTenantWorld}
-                              tenant={enteringTenant || undefined}
-                        />
+            <GenericTreeView
+                  viewModel={viewModel}
+                  title={t("tenant.title")}
+                  subtitle={t("tenant.description")}
+                  getId={(node) => node.id}
+                  getLabel={(node) => (
+                        <>
+                              {node.name}
+                              <span className="text-muted-foreground text-xs ms-2">
+                                    ({node.code})
+                              </span>
+                              <Badge
+                                    variant={node.isActive ? "success" : "secondary"}
+                                    className="ms-2"
+                              >
+                                    {node.isActive ? t("tenant.active") : t("tenant.inactive")}
+                              </Badge>
+                        </>
                   )}
-            </>
+                  getChildren={(node) => node.children}
+                  renderFormFields={(formValues, setFormValues, editing, parentForNew) =>
+                        getTenantFormFields(t, formValues, setFormValues, editing, parentForNew)
+                  }
+                  resource="tenants"
+                  customActions={customActions}
+            />
       );
 }

@@ -4,8 +4,26 @@ import * as React from "react"
 import * as TabsPrimitive from "@radix-ui/react-tabs"
 
 import { cn } from "@core/common/utils"
+import { useI18n } from "@core/providers/i18n-provider"
 
-const Tabs = TabsPrimitive.Root
+/**
+ * Tabs Root Component with automatic RTL/LTR support
+ */
+const Tabs = React.forwardRef<
+  React.ElementRef<typeof TabsPrimitive.Root>,
+  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Root>
+>(({ dir, ...props }, ref) => {
+  const { direction } = useI18n()
+
+  return (
+    <TabsPrimitive.Root
+      ref={ref}
+      dir={dir || direction}
+      {...props}
+    />
+  )
+})
+Tabs.displayName = "Tabs"
 
 const TabsList = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.List>,

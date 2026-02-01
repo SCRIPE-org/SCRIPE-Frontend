@@ -1,20 +1,30 @@
+"use client"
+
 import * as React from "react"
 
 import { cn } from "@core/common/utils"
 import { useSettings } from "@core/providers/settings-provider"
+import { useI18n } from "@core/providers/i18n-provider"
 
+/**
+ * Table component with automatic RTL/LTR support
+ */
 const Table = React.forwardRef<
   HTMLTableElement,
   React.HTMLAttributes<HTMLTableElement>
->(({ className, ...props }, ref) => (
-  <div className="relative w-full overflow-auto">
-    <table
-      ref={ref}
-      className={cn("w-full caption-bottom text-sm", className)}
-      {...props}
-    />
-  </div>
-))
+>(({ className, dir, ...props }, ref) => {
+  const { direction } = useI18n()
+
+  return (
+    <div className="relative w-full overflow-auto" dir={dir ?? direction}>
+      <table
+        ref={ref}
+        className={cn("w-full caption-bottom text-sm", className)}
+        {...props}
+      />
+    </div>
+  )
+})
 Table.displayName = "Table"
 
 const TableHeader = React.forwardRef<
@@ -58,15 +68,15 @@ const TableRow = React.forwardRef<
 >(({ className, ...props }, ref) => {
   const settings = useSettings()
   const hasHoverEffect = settings.hoverEffectType !== "none" && settings.hoverEffectIntensity !== "none"
-  
+
   // If className is provided, it will override defaults - don't add base hover effects
   // This allows GenericTable to fully control the hover behavior
-  const baseClasses = className 
+  const baseClasses = className
     ? "border-b data-[state=selected]:bg-muted" // Minimal base classes when custom className provided
-    : hasHoverEffect 
+    : hasHoverEffect
       ? "border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted" // Default hover when enabled
       : "border-b transition-none hover:bg-transparent data-[state=selected]:bg-muted"; // No hover when disabled
-  
+
   return (
     <tr
       ref={ref}
@@ -84,7 +94,8 @@ const TableHead = React.forwardRef<
   <th
     ref={ref}
     className={cn(
-      "h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0",
+      // Using text-start instead of text-left for RTL support
+      "h-12 px-4 text-start align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pe-0",
       className
     )}
     {...props}
@@ -98,7 +109,11 @@ const TableCell = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <td
     ref={ref}
-    className={cn("p-4 align-middle [&:has([role=checkbox])]:pr-0 [&:has([role=checkbox])]:pl-4", className)}
+    className={cn(
+      // Using ps/pe (padding-start/end) instead of pl/pr for RTL support
+      "p-4 align-middle text-start [&:has([role=checkbox])]:pe-0 [&:has([role=checkbox])]:ps-4",
+      className
+    )}
     {...props}
   />
 ))

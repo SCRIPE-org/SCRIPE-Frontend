@@ -21,22 +21,35 @@ import type { FieldConfig } from "@core/ui/forms/generic-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 
-export function useAdminsViewModel() {
+/**
+ * useAdminsViewModel hook options
+ */
+interface AdminsViewModelOptions {
+      /** Optional tenant ID to filter admins for a specific tenant */
+      tenantId?: string;
+}
+
+export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
+      const { tenantId } = options;
       const { adminRepository } = systemContainer;
       const { t } = useI18n();
       const queryClient = useQueryClient();
       const { success, error: toastError } = useEnhancedToast();
 
+      // Build query key including tenantId if provided
+      const queryKey = tenantId ? ["admins", "tenant", tenantId] : ["admins"];
+
       // ============ Core CRUD ViewModel (React Query Engine) ============
       // Using 'any' for Create/Update types as repository returns string/void but useCrudViewModel expects entities
       const vm = useCrudViewModel<Admin, CreateAdminRequest, UpdateAdminRequest>(
-            ["admins"],
+            queryKey,
             {
                   getAll: async (params) => {
                         const res = await adminRepository.getAll({
                               page: params.page,
                               pageSize: params.pageSize,
                               search: params.search,
+                              tenantId,
                         });
                         return {
                               items: res.items || [],

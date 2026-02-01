@@ -6,6 +6,7 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { X } from "lucide-react"
 
 import { cn } from "@core/common/utils"
+import { useI18n } from "@core/providers/i18n-provider"
 
 const Sheet = SheetPrimitive.Root
 
@@ -51,55 +52,78 @@ const sheetVariants = cva(
 
 interface SheetContentProps
   extends React.ComponentPropsWithoutRef<typeof SheetPrimitive.Content>,
-    VariantProps<typeof sheetVariants> {}
+  VariantProps<typeof sheetVariants> { }
 
 const SheetContent = React.forwardRef<
   React.ElementRef<typeof SheetPrimitive.Content>,
   SheetContentProps
->(({ side = "right", className, children, ...props }, ref) => (
-  <SheetPortal>
-    <SheetOverlay />
-    <SheetPrimitive.Content
-      ref={ref}
-      className={cn(sheetVariants({ side }), className)}
-      {...props}
-    >
-      {children}
-      <SheetPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary">
-        <X className="h-4 w-4" />
-        <span className="sr-only">Close</span>
-      </SheetPrimitive.Close>
-    </SheetPrimitive.Content>
-  </SheetPortal>
-))
+>(({ side = "right", className, children, dir, ...props }, ref) => {
+  const { direction } = useI18n()
+  const isRtl = (dir || direction) === "rtl"
+
+  return (
+    <SheetPortal>
+      <SheetOverlay />
+      <SheetPrimitive.Content
+        ref={ref}
+        dir={dir ?? direction}
+        className={cn(sheetVariants({ side }), className)}
+        {...props}
+      >
+        {children}
+        <SheetPrimitive.Close
+          className={cn(
+            "absolute top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary",
+            isRtl ? "left-4" : "right-4"
+          )}
+        >
+          <X className="h-4 w-4" />
+          <span className="sr-only">Close</span>
+        </SheetPrimitive.Close>
+      </SheetPrimitive.Content>
+    </SheetPortal>
+  )
+})
 SheetContent.displayName = SheetPrimitive.Content.displayName
 
 const SheetHeader = ({
   className,
   ...props
-}: React.HTMLAttributes<HTMLDivElement>) => (
-  <div
-    className={cn(
-      "flex flex-col space-y-2 text-center sm:text-left",
-      className
-    )}
-    {...props}
-  />
-)
+}: React.HTMLAttributes<HTMLDivElement>) => {
+  const { direction } = useI18n()
+  const isRtl = direction === "rtl"
+
+  return (
+    <div
+      className={cn(
+        "flex flex-col space-y-2 text-center",
+        isRtl ? "sm:text-right" : "sm:text-left",
+        className
+      )}
+      {...props}
+    />
+  )
+}
 SheetHeader.displayName = "SheetHeader"
 
 const SheetFooter = ({
   className,
   ...props
-}: React.HTMLAttributes<HTMLDivElement>) => (
-  <div
-    className={cn(
-      "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2",
-      className
-    )}
-    {...props}
-  />
-)
+}: React.HTMLAttributes<HTMLDivElement>) => {
+  const { direction } = useI18n()
+  const isRtl = direction === "rtl"
+
+  return (
+    <div
+      className={cn(
+        "flex flex-col-reverse sm:flex-row sm:justify-end",
+        isRtl ? "sm:space-x-reverse sm:space-x-2" : "sm:space-x-2",
+        className
+      )}
+      {...props}
+    />
+  )
+}
 SheetFooter.displayName = "SheetFooter"
 
 const SheetTitle = React.forwardRef<

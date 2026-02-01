@@ -123,6 +123,32 @@ export const ar = {
     manageAdmins: "إدارة المشرفين",
     manageRoles: "إدارة الأدوار",
     manageSubTenants: "إدارة المستأجرين الفرعيين",
+    // صفحة التفاصيل
+    backToList: "العودة للمستأجرين",
+    notFound: "المستأجر غير موجود",
+    errorLoadingDetails: "تعذر تحميل تفاصيل المستأجر. يرجى المحاولة مرة أخرى.",
+    deleteConfirmation: "هل أنت متأكد أنك تريد حذف {name}؟ لا يمكن التراجع عن هذا الإجراء.",
+    // الإحصائيات
+    statsAdmins: "المشرفون",
+    statsRoles: "الأدوار",
+    statsSubTenants: "المستأجرون الفرعيون",
+    statsPermissions: "الصلاحيات",
+    // التبويبات
+    tabAdmins: "المشرفون",
+    tabRoles: "الأدوار",
+    tabSubTenants: "المستأجرون الفرعيون",
+    tabSettings: "الإعدادات",
+    adminsDescription: "إدارة مشرفي هذا المستأجر",
+    rolesDescription: "إدارة أدوار هذا المستأجر",
+    subTenantsDescription: "المستأجرون الفرعيون تحت هذه المنظمة",
+    // الإعدادات
+    settings: "الإعدادات",
+    settingsDescription: "خيارات التكوين لهذا المستأجر",
+    settingsGeneral: "الإعدادات العامة",
+    settingsGeneralDesc: "خيارات التكوين الأساسية للمستأجر",
+    settingsBranding: "العلامة التجارية",
+    settingsBrandingDesc: "تخصيص مظهر وعلامة المستأجر",
+    settingsComingSoon: "الإعدادات قريباً...",
   },
 
   // Admin - المشرفون
@@ -2392,6 +2418,7 @@ export const ar = {
 
   // Common
   common: {
+    errorLoading: "حدث خطأ أثناء تحميل البيانات",
     confirm: "تأكيد",
     close: "إغلاق",
     status: "الحالة",
@@ -2400,7 +2427,9 @@ export const ar = {
     yes: "نعم",
     no: "لا",
     active: "نشط",
-    inActive: "غير نشط",
+    inactive: "غير نشط",
+    activate: "تفعيل",
+    deactivate: "إلغاء التفعيل",
     collapseAll: "طي الكل",
     expandAll: "إظهار الكل",
     selectDate: "اختر التاريخ",
