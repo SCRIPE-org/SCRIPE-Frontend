@@ -25,19 +25,25 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
  * useAdminsViewModel hook options
  */
 interface AdminsViewModelOptions {
-      /** Optional tenant ID to filter admins for a specific tenant */
+      /** Optional tenant ID to filter admins for a specific tenant (uses /byTenantId endpoint) */
       tenantId?: string;
+      /** If true, uses /myTenantAdmins endpoint (for admins page) */
+      useMyTenant?: boolean;
 }
 
 export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
-      const { tenantId } = options;
+      const { tenantId, useMyTenant } = options;
       const { adminRepository } = systemContainer;
       const { t } = useI18n();
       const queryClient = useQueryClient();
       const { success, error: toastError } = useEnhancedToast();
 
-      // Build query key including tenantId if provided
-      const queryKey = tenantId ? ["admins", "tenant", tenantId] : ["admins"];
+      // Build query key based on mode
+      const queryKey = tenantId
+            ? ["admins", "tenant", tenantId]
+            : useMyTenant
+                  ? ["admins", "myTenant"]
+                  : ["admins"];
 
       // ============ Core CRUD ViewModel (React Query Engine) ============
       // Using 'any' for Create/Update types as repository returns string/void but useCrudViewModel expects entities
@@ -45,12 +51,30 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
             queryKey,
             {
                   getAll: async (params) => {
-                        const res = await adminRepository.getAll({
-                              page: params.page,
-                              pageSize: params.pageSize,
-                              search: params.search,
-                              tenantId,
-                        });
+                        // Choose appropriate endpoint based on options
+                        let res;
+                        if (tenantId) {
+                              // Specific tenant - use /byTenantId/{tenantId}
+                              res = await adminRepository.getByTenantId(tenantId, {
+                                    page: params.page,
+                                    pageSize: params.pageSize,
+                                    search: params.search,
+                              });
+                        } else if (useMyTenant) {
+                              // Current user's tenant - use /myTenantAdmins
+                              res = await adminRepository.getMyTenantAdmins({
+                                    page: params.page,
+                                    pageSize: params.pageSize,
+                                    search: params.search,
+                              });
+                        } else {
+                              // Default - use main /Admins endpoint (data scope)
+                              res = await adminRepository.getAll({
+                                    page: params.page,
+                                    pageSize: params.pageSize,
+                                    search: params.search,
+                              });
+                        }
                         return {
                               items: res.items || [],
                               pagination: {

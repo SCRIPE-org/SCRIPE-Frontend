@@ -40,7 +40,48 @@ export class AdminRepository implements IAdminRepository {
                   pageSize: params.pageSize,
                   search: params.search,
                   isActive: params.isActive,
-                  tenantId: params.tenantId,
+            });
+
+            const response = await this.api.get<AdminListApiResponse>(url);
+
+            return {
+                  items: response.items.map((data) => new Admin(data)),
+                  totalCount: response.totalCount,
+                  page: response.page,
+                  pageSize: response.pageSize,
+                  totalPages: response.totalPages,
+                  hasNextPage: response.hasNextPage,
+                  hasPreviousPage: response.hasPreviousPage,
+            };
+      }
+
+      async getByTenantId(tenantId: string, params: AdminListParams): Promise<PagedResult<Admin>> {
+            const url = buildUrl(API_ENDPOINTS.ADMINS.BY_TENANT_ID(tenantId), {
+                  page: params.page,
+                  pageSize: params.pageSize,
+                  search: params.search,
+                  isActive: params.isActive,
+            });
+
+            const response = await this.api.get<AdminListApiResponse>(url);
+
+            return {
+                  items: response.items.map((data) => new Admin(data)),
+                  totalCount: response.totalCount,
+                  page: response.page,
+                  pageSize: response.pageSize,
+                  totalPages: response.totalPages,
+                  hasNextPage: response.hasNextPage,
+                  hasPreviousPage: response.hasPreviousPage,
+            };
+      }
+
+      async getMyTenantAdmins(params: AdminListParams): Promise<PagedResult<Admin>> {
+            const url = buildUrl(API_ENDPOINTS.ADMINS.MY_TENANT_ADMINS, {
+                  page: params.page,
+                  pageSize: params.pageSize,
+                  search: params.search,
+                  isActive: params.isActive,
             });
 
             const response = await this.api.get<AdminListApiResponse>(url);

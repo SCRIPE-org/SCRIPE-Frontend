@@ -33,6 +33,8 @@ export const API_ENDPOINTS = {
   ADMINS: {
     LIST: "/Admins",
     BY_ID: (id: string) => `/Admins/${id}`,
+    BY_TENANT_ID: (tenantId: string) => `/Admins/byTenantId/${tenantId}`,
+    MY_TENANT_ADMINS: "/Admins/myTenantAdmins",
     CREATE: "/Admins",
     UPDATE: (id: string) => `/Admins/${id}`,
     DELETE: (id: string) => `/Admins/${id}`,

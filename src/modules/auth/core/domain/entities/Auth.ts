@@ -10,6 +10,7 @@ import { validateForm, VALIDATION_SETS } from "@core/common/validation";
 export interface LoginRequestData {
   username: string;
   password: string;
+  deviceInfo?: string;
 }
 
 export interface LoginResponseData {
@@ -22,13 +23,34 @@ export interface RefreshTokenRequestData {
   refreshToken: string;
 }
 
+/**
+ * Get device info string from browser environment
+ */
+function getDeviceInfo(): string {
+  if (typeof window === "undefined") return "Server";
+
+  const { userAgent, platform, language } = navigator;
+  const screenInfo = `${window.screen.width}x${window.screen.height}`;
+
+  return JSON.stringify({
+    userAgent,
+    platform,
+    language,
+    screen: screenInfo,
+    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+  });
+}
+
 export class LoginRequest {
   public readonly username: string;
   public readonly password: string;
+  public readonly deviceInfo: string;
 
   constructor(data: LoginRequestData) {
     this.username = data.username;
     this.password = data.password;
+    // Auto-populate device info if not provided
+    this.deviceInfo = data.deviceInfo || getDeviceInfo();
   }
 
   /**

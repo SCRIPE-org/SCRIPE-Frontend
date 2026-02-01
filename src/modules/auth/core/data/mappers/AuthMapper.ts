@@ -23,6 +23,7 @@ export class AuthMapper {
     return new LoginRequest({
       username: json.username || '',
       password: json.password || '',
+      deviceInfo: json.deviceInfo,
     });
   }
 
@@ -33,6 +34,7 @@ export class AuthMapper {
     return {
       username: request.username,
       password: request.password,
+      deviceInfo: request.deviceInfo,
     };
   }
 

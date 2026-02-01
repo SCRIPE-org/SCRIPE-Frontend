@@ -338,7 +338,8 @@ function TenantRolesTab({
       tenantName: string;
 }) {
       const { t } = useI18n();
-      const vm = useRolesViewModel();
+      // Pass tenantId to filter roles for this specific tenant
+      const vm = useRolesViewModel({ tenantId });
 
       // Configuration for the generic view
       const config: CrudConfig<Role> = useMemo(

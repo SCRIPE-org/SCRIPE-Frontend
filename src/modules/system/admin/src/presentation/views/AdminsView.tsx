@@ -20,6 +20,7 @@ import { AssignRoleDialog, ViewRolesDialog } from "../components/AdminRoleDialog
 
 export function AdminsView() {
       const { t } = useI18n();
+      // Use myTenantAdmins endpoint for the main admins page
       const {
             vm,
             getConfigBase,
@@ -29,7 +30,7 @@ export function AdminsView() {
             handleRemoveRole,
             isAssigningRole,
             isRemovingRole,
-      } = useAdminsViewModel();
+      } = useAdminsViewModel({ useMyTenant: true });
 
       const configBase = getConfigBase();
 

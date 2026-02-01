@@ -21,8 +21,6 @@ export interface AdminListParams {
       pageSize: number;
       search?: string;
       isActive?: boolean;
-      /** Optional tenant ID to filter admins for a specific tenant */
-      tenantId?: string;
 }
 
 /**
@@ -30,9 +28,19 @@ export interface AdminListParams {
  */
 export interface IAdminRepository {
       /**
-       * Get paginated list of admins
+       * Get paginated list of admins based on user's data scope
        */
       getAll(params: AdminListParams): Promise<PagedResult<Admin>>;
+
+      /**
+       * Get admins for a specific tenant by tenant ID
+       */
+      getByTenantId(tenantId: string, params: AdminListParams): Promise<PagedResult<Admin>>;
+
+      /**
+       * Get admins belonging to current user's tenant
+       */
+      getMyTenantAdmins(params: AdminListParams): Promise<PagedResult<Admin>>;
 
       /**
        * Get admin by ID
