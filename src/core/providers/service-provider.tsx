@@ -7,8 +7,6 @@ import { NotificationService } from "@core/services/notification.service";
 import { NavigationService } from "@core/services/navigation.service";
 import { AuthRepository } from "@modules/auth/core/data/repositories/AuthRepository";
 import { UserService } from "@core/services/user.service";
-import { ProductRepository as ProductService } from "@/modules/demo/product/src/data/repositories/ProductRepository";
-import { TreeNodeService } from "@/modules/demo/tree/src/data/repositories/TreeNodeRepository";
 
 interface Services {
   apiService: ApiService;
@@ -16,8 +14,7 @@ interface Services {
   navigationService: NavigationService;
   authRepository: AuthRepository;
   userService: UserService;
-  productService: ProductService;
-  treeNodeService: TreeNodeService;
+
 }
 
 const ServiceContext = createContext<Services | null>(null);
@@ -29,8 +26,7 @@ export function ServiceProvider({ children }: { children: React.ReactNode }) {
     const authRepository = new AuthRepository(apiService);
     const userService = new UserService(apiService);
     const navigationService = new NavigationService(apiService);
-    const productService = new ProductService(notificationService);
-    const treeNodeService = new TreeNodeService(notificationService);
+
 
     return {
       apiService,
@@ -38,8 +34,7 @@ export function ServiceProvider({ children }: { children: React.ReactNode }) {
       navigationService,
       authRepository,
       userService,
-      productService,
-      treeNodeService
+
     };
   }, []);
 
