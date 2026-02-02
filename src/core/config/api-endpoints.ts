@@ -73,6 +73,7 @@ export const API_ENDPOINTS = {
   // ===== PERMISSIONS =====
   PERMISSIONS: {
     LIST: "/Permissions",
+    MY: "/Permissions/my",
     BY_ID: (id: string) => `/Permissions/${id}`,
     CREATE: "/Permissions",
     UPDATE: (id: string) => `/Permissions/${id}`,

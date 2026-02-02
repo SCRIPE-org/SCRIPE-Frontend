@@ -2,47 +2,34 @@
  * Role Detail View
  *
  * Displays role details with permissions tree for assignment.
+ * Refactored to use extracted components and localization.
  */
 "use client";
 
 import { useState, useCallback, useMemo, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useTranslation } from "react-i18next";
+import { useI18n } from "@core/providers/i18n-provider";
 
-import { Button } from "@core/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
-import { Badge } from "@core/ui/badge";
-import { Checkbox } from "@core/ui/checkbox";
 import { Input } from "@core/ui/input";
-import { Skeleton } from "@core/ui/skeleton";
+import { Button } from "@core/ui/button";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 
-import {
-      ArrowLeft,
-      Shield,
-      Search,
-      Save,
-      ChevronRight,
-      ChevronDown,
-      Lock,
-      Users,
-      Settings,
-      Layout,
-      CheckCircle2
-} from "lucide-react";
+import { Search, Lock, Shield, Users, Settings, Layout } from "lucide-react";
 
 import { systemContainer } from "@modules/system/di";
 import type { Permission } from "@modules/system/permissions/src/domain/entities/Permission";
 import type { Role } from "../../domain/entities/Role";
 
-interface PermissionCategory {
-      category: string;
-      permissions: Permission[];
-      isExpanded: boolean;
-}
+import {
+      RoleInfoCard,
+      RoleDetailHeader,
+      PermissionCategoryRow,
+      PermissionTreeSkeleton,
+} from "../components";
 
-// Category Icons
+// Category Icons mapping
 const CATEGORY_ICONS: Record<string, React.ReactNode> = {
       "Admin Management": <Users className="w-4 h-4" />,
       "Role Management": <Shield className="w-4 h-4" />,
@@ -53,8 +40,7 @@ const CATEGORY_ICONS: Record<string, React.ReactNode> = {
 };
 
 export default function RoleDetailView() {
-      const { t, i18n } = useTranslation();
-      const language = i18n.language || 'en';
+      const { t, language } = useI18n();
       const router = useRouter();
       const params = useParams();
       const roleId = params.id as string;
@@ -75,23 +61,17 @@ export default function RoleDetailView() {
             enabled: !!roleId,
       });
 
-      // Fetch role's current permissions
+      // Fetch role's current permissions using repository
       const { data: rolePermissions, isLoading: rolePermissionsLoading } = useQuery<any[]>({
             queryKey: ["rolePermissions", roleId],
-            queryFn: async () => {
-                  const response = await fetch(`/api/Roles/${roleId}/permissions`, {
-                        headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` },
-                  });
-                  if (!response.ok) throw new Error("Failed to fetch role permissions");
-                  return response.json();
-            },
+            queryFn: () => roleRepository.getRolePermissions(roleId),
             enabled: !!roleId,
       });
 
-      // Fetch all permissions
+      // Fetch available permissions (filtered to user's permissions only)
       const { data: allPermissions, isLoading: permissionsLoading } = useQuery<Permission[]>({
-            queryKey: ["permissions"],
-            queryFn: () => permissionRepository.getAll(),
+            queryKey: ["myPermissions"],
+            queryFn: () => permissionRepository.getMyPermissions(),
       });
 
       // Initialize selected permissions when data loads
@@ -116,7 +96,7 @@ export default function RoleDetailView() {
                   queryClient.invalidateQueries({ queryKey: ["rolePermissions", roleId] });
                   success({
                         title: t("common.success"),
-                        description: t("roles.permissionsUpdated"),
+                        description: t("roleDetail.permissionsSaved"),
                   });
             },
             onError: (err: Error) => {
@@ -128,7 +108,7 @@ export default function RoleDetailView() {
       });
 
       // Group permissions by category
-      const categories: PermissionCategory[] = useMemo(() => {
+      const categories = useMemo(() => {
             if (!allPermissions) return [];
 
             const filtered = searchQuery
@@ -141,10 +121,8 @@ export default function RoleDetailView() {
                   : allPermissions;
 
             const grouped = filtered.reduce((acc, permission) => {
-                  const category = permission.category || "Other";
-                  if (!acc[category]) {
-                        acc[category] = [];
-                  }
+                  const category = permission.category || t("roleDetail.otherCategory");
+                  if (!acc[category]) acc[category] = [];
                   acc[category].push(permission);
                   return acc;
             }, {} as Record<string, Permission[]>);
@@ -153,20 +131,15 @@ export default function RoleDetailView() {
                   .map(([category, permissions]) => ({
                         category,
                         permissions: permissions.sort((a, b) => a.displayOrder - b.displayOrder),
-                        isExpanded: expandedCategories.has(category),
                   }))
                   .sort((a, b) => a.category.localeCompare(b.category));
-      }, [allPermissions, searchQuery, expandedCategories, language]);
+      }, [allPermissions, searchQuery, language, t]);
 
       // Toggle category expansion
       const toggleCategory = useCallback((category: string) => {
             setExpandedCategories((prev) => {
                   const next = new Set(prev);
-                  if (next.has(category)) {
-                        next.delete(category);
-                  } else {
-                        next.add(category);
-                  }
+                  next.has(category) ? next.delete(category) : next.add(category);
                   return next;
             });
       }, []);
@@ -175,140 +148,71 @@ export default function RoleDetailView() {
       const togglePermission = useCallback((permissionId: string) => {
             setSelectedPermissions((prev) => {
                   const next = new Set(prev);
-                  if (next.has(permissionId)) {
-                        next.delete(permissionId);
-                  } else {
-                        next.add(permissionId);
-                  }
+                  next.has(permissionId) ? next.delete(permissionId) : next.add(permissionId);
                   return next;
             });
       }, []);
 
       // Toggle all permissions in a category
       const toggleCategoryPermissions = useCallback(
-            (category: PermissionCategory) => {
-                  const categoryIds = category.permissions.map((p) => p.id);
+            (permissions: Permission[]) => {
+                  const categoryIds = permissions.map((p) => p.id);
                   const allSelected = categoryIds.every((id) => selectedPermissions.has(id));
 
                   setSelectedPermissions((prev) => {
                         const next = new Set(prev);
-                        if (allSelected) {
-                              categoryIds.forEach((id) => next.delete(id));
-                        } else {
-                              categoryIds.forEach((id) => next.add(id));
-                        }
+                        categoryIds.forEach((id) => (allSelected ? next.delete(id) : next.add(id)));
                         return next;
                   });
             },
             [selectedPermissions]
       );
 
-      // Expand all categories
+      // Expand/collapse all
       const expandAll = useCallback(() => {
             setExpandedCategories(new Set(categories.map((c) => c.category)));
       }, [categories]);
 
-      // Collapse all categories
       const collapseAll = useCallback(() => {
             setExpandedCategories(new Set());
       }, []);
 
-      // Save permissions
+      // Save handler
       const handleSave = useCallback(() => {
             saveMutation.mutate(Array.from(selectedPermissions));
       }, [selectedPermissions, saveMutation]);
-
-      // Check if category has some/all selected
-      const getCategoryStatus = useCallback(
-            (category: PermissionCategory) => {
-                  const total = category.permissions.length;
-                  const selected = category.permissions.filter((p) => selectedPermissions.has(p.id)).length;
-                  if (selected === 0) return "none";
-                  if (selected === total) return "all";
-                  return "partial";
-            },
-            [selectedPermissions]
-      );
 
       const isLoading = roleLoading || permissionsLoading || rolePermissionsLoading;
 
       return (
             <div className="container mx-auto py-6 space-y-6">
                   {/* Header */}
-                  <div className="flex items-center gap-4">
-                        <Button variant="ghost" size="icon" onClick={() => router.back()}>
-                              <ArrowLeft className="h-5 w-5" />
-                        </Button>
-                        <div className="flex-1">
-                              <h1 className="text-3xl font-bold">
-                                    {roleLoading ? <Skeleton className="h-9 w-48" /> : role?.name}
-                              </h1>
-                              <p className="text-muted-foreground">
-                                    {roleLoading ? <Skeleton className="h-5 w-32 mt-1" /> : role?.code}
-                              </p>
-                        </div>
-                        <Button onClick={handleSave} disabled={saveMutation.isPending}>
-                              <Save className="mr-2 h-4 w-4" />
-                              {saveMutation.isPending ? t("common.saving") : t("common.saveChanges")}
-                        </Button>
-                  </div>
+                  <RoleDetailHeader
+                        role={role}
+                        isLoading={roleLoading}
+                        isSaving={saveMutation.isPending}
+                        onBack={() => router.back()}
+                        onSave={handleSave}
+                        t={t}
+                  />
 
                   <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                        {/* Role Info Card */}
-                        <Card>
-                              <CardHeader>
-                                    <CardTitle className="flex items-center gap-2">
-                                          <Shield className="h-5 w-5" />
-                                          {t("roles.roleDetails")}
-                                    </CardTitle>
-                              </CardHeader>
-                              <CardContent className="space-y-4">
-                                    {roleLoading ? (
-                                          <>
-                                                <Skeleton className="h-4 w-full" />
-                                                <Skeleton className="h-4 w-3/4" />
-                                          </>
-                                    ) : (
-                                          <>
-                                                <div>
-                                                      <label className="text-sm text-muted-foreground">{t("roles.name")}</label>
-                                                      <p className="font-medium">{role?.name}</p>
-                                                </div>
-                                                <div>
-                                                      <label className="text-sm text-muted-foreground">{t("roles.code")}</label>
-                                                      <p className="font-mono text-sm">{role?.code}</p>
-                                                </div>
-                                                <div>
-                                                      <label className="text-sm text-muted-foreground">{t("roles.description")}</label>
-                                                      <p className="text-sm">{role?.description || "-"}</p>
-                                                </div>
-                                                <div>
-                                                      <label className="text-sm text-muted-foreground">{t("roles.priority")}</label>
-                                                      <Badge variant="outline">{role?.priority}</Badge>
-                                                </div>
-                                                <div className="pt-2 border-t">
-                                                      <p className="text-sm text-muted-foreground">
-                                                            {t("roles.selectedPermissions")}
-                                                      </p>
-                                                      <p className="text-2xl font-bold">
-                                                            {selectedPermissions.size}{" "}
-                                                            <span className="text-sm text-muted-foreground font-normal">
-                                                                  / {allPermissions?.length || 0}
-                                                            </span>
-                                                      </p>
-                                                </div>
-                                          </>
-                                    )}
-                              </CardContent>
-                        </Card>
+                        {/* Role Info Sidebar */}
+                        <RoleInfoCard
+                              role={role}
+                              isLoading={roleLoading}
+                              selectedCount={selectedPermissions.size}
+                              totalCount={allPermissions?.length || 0}
+                              t={t}
+                        />
 
-                        {/* Permissions Tree Card */}
+                        {/* Permissions Tree */}
                         <Card className="lg:col-span-3">
                               <CardHeader className="pb-3">
                                     <div className="flex items-center justify-between">
                                           <CardTitle className="flex items-center gap-2">
                                                 <Lock className="h-5 w-5" />
-                                                {t("roles.permissions")}
+                                                {t("roleDetail.permissions")}
                                           </CardTitle>
                                           <div className="flex items-center gap-2">
                                                 <Button variant="ghost" size="sm" onClick={expandAll}>
@@ -322,7 +226,7 @@ export default function RoleDetailView() {
                                     <div className="relative mt-3">
                                           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                                           <Input
-                                                placeholder={t("roles.searchPermissions")}
+                                                placeholder={t("roleDetail.searchPlaceholder")}
                                                 value={searchQuery}
                                                 onChange={(e) => setSearchQuery(e.target.value)}
                                                 className="pl-9"
@@ -331,74 +235,23 @@ export default function RoleDetailView() {
                               </CardHeader>
                               <CardContent>
                                     {isLoading ? (
-                                          <div className="space-y-3">
-                                                {[1, 2, 3, 4].map((i) => (
-                                                      <Skeleton key={i} className="h-12 w-full" />
-                                                ))}
-                                          </div>
+                                          <PermissionTreeSkeleton />
                                     ) : (
                                           <div className="space-y-2">
-                                                {categories.map((category) => {
-                                                      const status = getCategoryStatus(category);
-                                                      return (
-                                                            <div
-                                                                  key={category.category}
-                                                                  className="border rounded-lg overflow-hidden"
-                                                            >
-                                                                  {/* Category Header */}
-                                                                  <div
-                                                                        className="flex items-center gap-3 px-4 py-3 bg-muted/50 cursor-pointer hover:bg-muted/70 transition-colors"
-                                                                        onClick={() => toggleCategory(category.category)}
-                                                                  >
-                                                                        <Checkbox
-                                                                              checked={status === "all"}
-                                                                              onCheckedChange={() => toggleCategoryPermissions(category)}
-                                                                              onClick={(e) => e.stopPropagation()}
-                                                                              className={status === "partial" ? "data-[state=checked]:bg-primary/50" : ""}
-                                                                        />
-                                                                        {category.isExpanded ? (
-                                                                              <ChevronDown className="h-4 w-4" />
-                                                                        ) : (
-                                                                              <ChevronRight className="h-4 w-4" />
-                                                                        )}
-                                                                        {CATEGORY_ICONS[category.category] || <Settings className="h-4 w-4" />}
-                                                                        <span className="font-medium flex-1">{category.category}</span>
-                                                                        <Badge variant={status === "all" ? "default" : "secondary"}>
-                                                                              {category.permissions.filter((p) => selectedPermissions.has(p.id)).length}
-                                                                              /{category.permissions.length}
-                                                                        </Badge>
-                                                                  </div>
-
-                                                                  {/* Permissions List */}
-                                                                  {category.isExpanded && (
-                                                                        <div className="divide-y">
-                                                                              {category.permissions.map((permission) => (
-                                                                                    <label
-                                                                                          key={permission.id}
-                                                                                          className="flex items-center gap-3 px-4 py-2 pl-14 hover:bg-muted/30 cursor-pointer transition-colors"
-                                                                                    >
-                                                                                          <Checkbox
-                                                                                                checked={selectedPermissions.has(permission.id)}
-                                                                                                onCheckedChange={() => togglePermission(permission.id)}
-                                                                                          />
-                                                                                          <div className="flex-1">
-                                                                                                <p className="font-medium text-sm flex items-center gap-2">
-                                                                                                      {permission.getLocalizedName(language)}
-                                                                                                      {selectedPermissions.has(permission.id) && (
-                                                                                                            <CheckCircle2 className="h-3 w-3 text-green-500" />
-                                                                                                      )}
-                                                                                                </p>
-                                                                                                <p className="text-xs text-muted-foreground font-mono">
-                                                                                                      {permission.code}
-                                                                                                </p>
-                                                                                          </div>
-                                                                                    </label>
-                                                                              ))}
-                                                                        </div>
-                                                                  )}
-                                                            </div>
-                                                      );
-                                                })}
+                                                {categories.map((cat) => (
+                                                      <PermissionCategoryRow
+                                                            key={cat.category}
+                                                            category={cat.category}
+                                                            permissions={cat.permissions}
+                                                            isExpanded={expandedCategories.has(cat.category)}
+                                                            selectedPermissions={selectedPermissions}
+                                                            categoryIcon={CATEGORY_ICONS[cat.category]}
+                                                            language={language}
+                                                            onToggleCategory={() => toggleCategory(cat.category)}
+                                                            onToggleAllInCategory={() => toggleCategoryPermissions(cat.permissions)}
+                                                            onTogglePermission={togglePermission}
+                                                      />
+                                                ))}
                                           </div>
                                     )}
                               </CardContent>

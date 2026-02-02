@@ -197,6 +197,49 @@ export const en = {
     totalCount: "{{count}} permissions",
   },
 
+  // Roles
+  roles: {
+    title: "Roles",
+    description: "Manage roles and their permissions.",
+    name: "Name",
+    code: "Code",
+    descriptionField: "Description",
+    priority: "Priority",
+    roleDetails: "Role Details",
+    selectedPermissions: "Selected Permissions",
+    permissions: "permissions",
+    permissionsUpdated: "Permissions updated successfully",
+    searchPermissions: "Search permissions...",
+    searchRoles: "Search roles...",
+    createRole: "Create Role",
+    createRoleDescription: "Add a new role to the system. You can assign permissions after creating.",
+    editRole: "Edit Role",
+    editRoleDescription: "Update role details for",
+    deleteRole: "Delete Role",
+    deleteConfirmation: "Are you sure you want to delete role",
+    cloneRole: "Clone",
+    managePermissions: "Manage Permissions",
+    noRolesFound: "No roles found",
+    adjustSearch: "Try adjusting your search terms.",
+    createFirst: "Create a role to get started.",
+    system: "System",
+    namePlaceholder: "e.g., Content Manager",
+    codePlaceholder: "e.g., content-manager",
+    codeHint: "Unique identifier for this role. Cannot be changed later.",
+    descriptionPlaceholder: "Optional description of this role...",
+    priorityHint: "Lower numbers mean higher priority. Use 0 for the most powerful roles.",
+    totalRoles: "{{count}} roles",
+  },
+
+  // Role Detail View
+  roleDetail: {
+    permissions: "Permissions",
+    searchPlaceholder: "Search permissions...",
+    permissionsSaved: "Permissions saved successfully",
+    fetchError: "Failed to fetch role permissions",
+    otherCategory: "Other",
+  },
+
   // Product
   product: {
     title: "Products Management",
@@ -2440,6 +2483,8 @@ export const en = {
     collapseAll: "Collapse All",
     expandAll: "Expand All",
     save: "Save",
+    saveChanges: "Save Changes",
+    saving: "Saving...",
     selectDate: "Select Date",
     search: "Search...",
     filter: "Filter",

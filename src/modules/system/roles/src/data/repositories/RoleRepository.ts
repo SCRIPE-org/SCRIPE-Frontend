@@ -87,4 +87,8 @@ export class RoleRepository implements IRoleRepository {
                   API_ENDPOINTS.ROLES.REMOVE_PERMISSION(roleId, permissionId)
             );
       }
+
+      async getRolePermissions(roleId: string): Promise<any[]> {
+            return await this.api.get<any[]>(API_ENDPOINTS.ROLES.PERMISSIONS(roleId));
+      }
 }

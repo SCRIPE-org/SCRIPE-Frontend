@@ -29,6 +29,17 @@ export class PermissionRepository implements IPermissionRepository {
             return response.map((data) => new Permission(data));
       }
 
+      async getMyPermissions(params?: PermissionListParams): Promise<Permission[]> {
+            const url = buildUrl(API_ENDPOINTS.PERMISSIONS.MY, {
+                  category: params?.category,
+                  search: params?.search,
+            });
+
+            const response = await this.api.get<PermissionData[]>(url);
+
+            return response.map((data) => new Permission(data));
+      }
+
       async getById(id: string): Promise<Permission> {
             const data = await this.api.get<PermissionData>(
                   API_ENDPOINTS.PERMISSIONS.BY_ID(id)

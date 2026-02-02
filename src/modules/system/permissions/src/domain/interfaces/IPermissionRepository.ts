@@ -27,6 +27,11 @@ export interface IPermissionRepository {
       getAll(params?: PermissionListParams): Promise<Permission[]>;
 
       /**
+       * Get only current user's assigned permissions
+       */
+      getMyPermissions(params?: PermissionListParams): Promise<Permission[]>;
+
+      /**
        * Get permission by ID
        */
       getById(id: string): Promise<Permission>;

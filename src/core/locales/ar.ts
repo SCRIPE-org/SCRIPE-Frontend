@@ -195,6 +195,49 @@ export const ar = {
     totalCount: "{{count}} صلاحية",
   },
 
+  // Roles
+  roles: {
+    title: "الأدوار",
+    description: "إدارة الأدوار وصلاحياتها.",
+    name: "الاسم",
+    code: "الرمز",
+    descriptionField: "الوصف",
+    priority: "الأولوية",
+    roleDetails: "تفاصيل الدور",
+    selectedPermissions: "الصلاحيات المحددة",
+    permissions: "صلاحية",
+    permissionsUpdated: "تم تحديث الصلاحيات بنجاح",
+    searchPermissions: "البحث في الصلاحيات...",
+    searchRoles: "البحث في الأدوار...",
+    createRole: "إنشاء دور",
+    createRoleDescription: "أضف دوراً جديداً للنظام. يمكنك تعيين الصلاحيات بعد الإنشاء.",
+    editRole: "تعديل الدور",
+    editRoleDescription: "تحديث تفاصيل الدور",
+    deleteRole: "حذف الدور",
+    deleteConfirmation: "هل أنت متأكد من حذف الدور",
+    cloneRole: "استنساخ",
+    managePermissions: "إدارة الصلاحيات",
+    noRolesFound: "لم يتم العثور على أدوار",
+    adjustSearch: "حاول تعديل كلمات البحث.",
+    createFirst: "أنشئ دوراً للبدء.",
+    system: "نظام",
+    namePlaceholder: "مثال: مدير المحتوى",
+    codePlaceholder: "مثال: content-manager",
+    codeHint: "معرّف فريد لهذا الدور. لا يمكن تغييره لاحقاً.",
+    descriptionPlaceholder: "وصف اختياري لهذا الدور...",
+    priorityHint: "الأرقام الأقل تعني أولوية أعلى. استخدم 0 للأدوار الأكثر قوة.",
+    totalRoles: "{{count}} دور",
+  },
+
+  // Role Detail View
+  roleDetail: {
+    permissions: "الصلاحيات",
+    searchPlaceholder: "البحث في الصلاحيات...",
+    permissionsSaved: "تم حفظ الصلاحيات بنجاح",
+    fetchError: "فشل في جلب صلاحيات الدور",
+    otherCategory: "أخرى",
+  },
+
   // Product
   product: {
     title: "إدارة المنتجات",
@@ -2459,6 +2502,8 @@ export const ar = {
     export: "تصدير",
     import: "استيراد",
     save: "حفظ",
+    saveChanges: "حفظ التغييرات",
+    saving: "جاري الحفظ...",
     cancel: "إلغاء",
     delete: "حذف",
     edit: "تعديل",

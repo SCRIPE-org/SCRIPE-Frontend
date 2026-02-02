@@ -139,6 +139,7 @@ export const SYSTEM_PERMISSIONS = {
       ROLES_UPDATE: "roles.update",
       ROLES_DELETE: "roles.delete",
       ROLES_MANAGE_PERMISSIONS: "roles.manage_permissions",
+      ROLES_CLONE: "roles.clone",
 
       // Permissions
       PERMISSIONS_VIEW: "permissions.view",

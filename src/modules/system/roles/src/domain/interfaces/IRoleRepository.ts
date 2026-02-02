@@ -59,4 +59,9 @@ export interface IRoleRepository {
        * Remove a single permission from a role
        */
       removePermission(roleId: string, permissionId: string): Promise<void>;
+
+      /**
+       * Get permissions assigned to a role
+       */
+      getRolePermissions(roleId: string): Promise<any[]>;
 }
