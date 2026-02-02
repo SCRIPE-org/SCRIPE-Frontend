@@ -5,3 +5,4 @@
  */
 export { PermissionCategoryAccordion } from "./PermissionCategoryAccordion";
 export { PermissionFilterBar } from "./PermissionFilterBar";
+export { PermissionTableSkeleton } from "./PermissionTableSkeleton";

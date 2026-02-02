@@ -14,7 +14,7 @@ import { Button } from "@core/ui/button";
 import { Card, CardContent } from "@core/ui/card";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@core/ui/tooltip";
 import { Key, RefreshCw, Info } from "lucide-react";
-import { PermissionFilterBar, PermissionCategoryAccordion } from "../components";
+import { PermissionFilterBar, PermissionCategoryAccordion, PermissionTableSkeleton } from "../components";
 
 export function PermissionsView() {
       const { t } = useI18n();
@@ -68,9 +68,7 @@ export function PermissionsView() {
                   <Card>
                         <CardContent className="pt-6">
                               {isLoading ? (
-                                    <div className="flex items-center justify-center py-8">
-                                          <RefreshCw className="h-6 w-6 animate-spin text-muted-foreground" />
-                                    </div>
+                                    <PermissionTableSkeleton groupCount={3} rowsPerGroup={4} />
                               ) : groupedPermissions.length === 0 ? (
                                     <div className="flex flex-col items-center justify-center py-12">
                                           <Key className="h-12 w-12 text-muted-foreground mb-4" />
