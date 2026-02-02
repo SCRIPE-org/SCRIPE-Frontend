@@ -36,6 +36,7 @@ export const API_ENDPOINTS = {
     BY_TENANT_ID: (tenantId: string) => `/Admins/byTenantId/${tenantId}`,
     MY_TENANT_ADMINS: "/Admins/myTenantAdmins",
     CREATE: "/Admins",
+    CREATE_FOR_MY_TENANT: "/Admins/createForMyTenant",
     UPDATE: (id: string) => `/Admins/${id}`,
     DELETE: (id: string) => `/Admins/${id}`,
     SET_ACTIVE: (id: string) => `/Admins/${id}/active`,
@@ -59,6 +60,8 @@ export const API_ENDPOINTS = {
   ROLES: {
     LIST: "/Roles",
     BY_ID: (id: string) => `/Roles/${id}`,
+    BY_TENANT_ID: (tenantId: string) => `/Roles/byTenantId/${tenantId}`,
+    MY_TENANT_ROLES: "/Roles/myTenantRoles",
     CREATE: "/Roles",
     UPDATE: (id: string) => `/Roles/${id}`,
     DELETE: (id: string) => `/Roles/${id}`,

@@ -14,6 +14,8 @@ export interface PermissionData {
       code: string;
       defaultScope: string;
       description?: string;
+      nameEn?: string;
+      nameAr?: string;
       category?: string;
       displayOrder: number;
 }
@@ -48,12 +50,35 @@ export class Permission {
             return this.data.description;
       }
 
+      get nameEn(): string | undefined {
+            return this.data.nameEn;
+      }
+
+      get nameAr(): string | undefined {
+            return this.data.nameAr;
+      }
+
       get category(): string | undefined {
             return this.data.category;
       }
 
       get displayOrder(): number {
             return this.data.displayOrder;
+      }
+
+      /**
+       * Get localized name based on language
+       * @param lang - 'ar' for Arabic, otherwise English
+       */
+      getLocalizedName(lang: string = 'en'): string {
+            if (lang === 'ar' && this.data.nameAr) {
+                  return this.data.nameAr;
+            }
+            if (this.data.nameEn) {
+                  return this.data.nameEn;
+            }
+            // Fallback to formatted code
+            return this.displayName;
       }
 
       /**

@@ -273,8 +273,8 @@ export function GenericTable<T extends Record<string, any>>({
   };
 
   const filteredData = onSearch
-    ? data
-    : data.filter((item) =>
+    ? (data || [])
+    : (data || []).filter((item) =>
       Object.values(item).some((value) =>
         String(value).toLowerCase().includes(searchTerm.toLowerCase())
       )

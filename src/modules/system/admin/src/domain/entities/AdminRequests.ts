@@ -6,6 +6,7 @@
 
 /**
  * Create admin request
+ * roleId is required - every admin must be assigned to a role at creation
  */
 export interface CreateAdminRequest {
       username: string;
@@ -14,6 +15,8 @@ export interface CreateAdminRequest {
       lastName?: string;
       phoneNumber?: string;
       notes?: string;
+      roleId: string; // Required - every admin must have a role
+      tenantId?: string;
 }
 
 /**

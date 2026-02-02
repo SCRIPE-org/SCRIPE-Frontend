@@ -110,6 +110,14 @@ export class AdminRepository implements IAdminRepository {
             return response.id;
       }
 
+      async createForMyTenant(request: Omit<CreateAdminRequest, 'tenantId'>): Promise<string> {
+            const response = await this.api.post<{ id: string }>(
+                  API_ENDPOINTS.ADMINS.CREATE_FOR_MY_TENANT,
+                  request
+            );
+            return response.id;
+      }
+
       async update(id: string, request: UpdateAdminRequest): Promise<void> {
             await this.api.put(API_ENDPOINTS.ADMINS.UPDATE(id), request);
       }

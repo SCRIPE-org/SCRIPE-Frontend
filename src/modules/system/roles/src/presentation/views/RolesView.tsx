@@ -6,6 +6,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { useRolesViewModel } from "../viewmodels/useRolesViewModel";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
@@ -73,6 +74,9 @@ const initialEditForm: EditFormState = {
 };
 
 export function RolesView() {
+      // Navigation
+      const router = useRouter();
+
       // State
       const [page, setPage] = useState(1);
       const [pageSize, setPageSize] = useState(20);
@@ -94,13 +98,13 @@ export function RolesView() {
 
       // ViewModel
       const {
-            roles,
-            totalCount,
-            isLoading,
-            handleCreate,
-            handleUpdate,
-            handleDelete,
-            refetch,
+            items: roles,
+            pagination,
+            loading: isLoading,
+            createItem,
+            updateItem,
+            deleteItem,
+            refreshItems: refetch,
             isCreating,
             isUpdating,
             isDeleting,
@@ -127,9 +131,9 @@ export function RolesView() {
       }, []);
 
       const handleOpenPermissions = useCallback((role: Role) => {
-            setSelectedRole(role);
-            setPermissionsDialogOpen(true);
-      }, []);
+            // Navigate to role detail page for permission management
+            router.push(`/roles/${role.id}`);
+      }, [router]);
 
       const handleOpenDelete = useCallback((role: Role) => {
             setSelectedRole(role);
@@ -146,10 +150,10 @@ export function RolesView() {
                   priority: createForm.priority,
             };
 
-            await handleCreate(request);
+            await createItem(request);
             setCreateDialogOpen(false);
             setCreateForm(initialCreateForm);
-      }, [createForm, handleCreate]);
+      }, [createForm, createItem]);
 
       const onEditSubmit = useCallback(async () => {
             if (!selectedRole || !editForm.name) return;
@@ -160,17 +164,17 @@ export function RolesView() {
                   priority: editForm.priority,
             };
 
-            await handleUpdate(selectedRole.id, request);
+            await updateItem(selectedRole.id, request);
             setEditDialogOpen(false);
             setSelectedRole(null);
-      }, [selectedRole, editForm, handleUpdate]);
+      }, [selectedRole, editForm, updateItem]);
 
       const onDeleteConfirm = useCallback(async () => {
             if (!selectedRole) return;
-            await handleDelete(selectedRole.id);
+            await deleteItem(selectedRole.id);
             setDeleteDialogOpen(false);
             setSelectedRole(null);
-      }, [handleDelete, selectedRole]);
+      }, [deleteItem, selectedRole]);
 
       return (
             <div className="space-y-6">
@@ -206,7 +210,7 @@ export function RolesView() {
                                     className="pl-9"
                               />
                         </div>
-                        <Badge variant="secondary">{totalCount} roles</Badge>
+                        <Badge variant="secondary">{pagination.itemsCount} roles</Badge>
                   </div>
 
                   {/* Roles Grid */}

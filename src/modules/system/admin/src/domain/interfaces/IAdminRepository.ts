@@ -48,9 +48,14 @@ export interface IAdminRepository {
       getById(id: string): Promise<Admin>;
 
       /**
-       * Create a new admin
+       * Create a new admin (with explicit tenantId)
        */
       create(request: CreateAdminRequest): Promise<string>;
+
+      /**
+       * Create admin for current user's tenant (tenantId from token)
+       */
+      createForMyTenant(request: Omit<CreateAdminRequest, 'tenantId'>): Promise<string>;
 
       /**
        * Update an existing admin

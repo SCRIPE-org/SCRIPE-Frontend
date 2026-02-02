@@ -86,7 +86,17 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
                         };
                   },
                   create: async (data) => {
-                        await adminRepository.create(data);
+                        // Choose endpoint based on context:
+                        // - useMyTenant: createForMyTenant (tenantId from token)
+                        // - explicit tenantId: create with tenantId in body
+                        // - neither: create regular system admin
+                        if (useMyTenant) {
+                              await adminRepository.createForMyTenant(data);
+                        } else if (tenantId) {
+                              await adminRepository.create({ ...data, tenantId });
+                        } else {
+                              await adminRepository.create(data);
+                        }
                         success({ title: t("admin.created") || "Admin Created", description: t("admin.createdDesc") || "Administrator created successfully." });
                         // Return empty admin to satisfy type - will refresh from server
                         return {} as Admin;
@@ -250,6 +260,7 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
                   lastName: "",
                   phoneNumber: "",
                   notes: "",
+                  // tenantId is added at create time from options
             },
             editInitialValues: (admin: Admin) => ({
                   id: admin.id,

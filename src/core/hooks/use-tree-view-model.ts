@@ -509,7 +509,9 @@ export function useTreeViewModel<
 
   const openAddChild = useCallback(
     (parent: T | null) => {
-      if (!tree || tree.length === 0) {
+      // Only block if trying to add a child under a parent when tree is empty
+      // Allow adding root items (parent === null) even when tree is empty
+      if (parent !== null && (!tree || tree.length === 0)) {
         return;
       }
 
@@ -540,27 +542,32 @@ export function useTreeViewModel<
     [config, findImmediateParent, tree]
   );
 
-  const onSubmit = useCallback(async () => {
-    if (config.disableOperations) {
-      return;
-    }
-
-    try {
-      if (editing) {
-        const updateData =
-          config.updateFormData?.(formValues, editing) || formValues;
-        await updateItem(editing.id, updateData);
-      } else {
-        const createData = config.createFormData?.(formValues) || formValues;
-        await createItem(createData);
+  const onSubmit = useCallback(
+    async (data?: any) => {
+      if (config.disableOperations) {
+        return;
       }
+      // Use passed data or fallback to state (though GenericForm always passes data)
+      const dataToSubmit = data || formValues;
 
-      setModalOpen(false);
-      resetForm();
-    } catch (error) {
-      // Error handling is already done in mutations
-    }
-  }, [editing, formValues, createItem, updateItem, config, resetForm]);
+      try {
+        if (editing) {
+          const updateData =
+            config.updateFormData?.(dataToSubmit, editing) || dataToSubmit;
+          await updateItem(editing.id, updateData);
+        } else {
+          const createData = config.createFormData?.(dataToSubmit) || dataToSubmit;
+          await createItem(createData);
+        }
+
+        setModalOpen(false);
+        resetForm();
+      } catch (error) {
+        // Error handling is already done in mutations
+      }
+    },
+    [editing, formValues, createItem, updateItem, config, resetForm]
+  );
 
   // Parent options for forms (flatten current tree)
   const parentOptions = useMemo(() => {
