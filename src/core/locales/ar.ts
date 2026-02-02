@@ -175,6 +175,26 @@ export const ar = {
     },
   },
 
+  // Permissions (Read-Only)
+  permission: {
+    title: "الصلاحيات",
+    description: "عرض صلاحيات النظام. الصلاحيات مُعدة مسبقاً وللقراءة فقط.",
+    infoTooltip: "الصلاحيات مُعدة من قبل النظام ولا يمكن تعديلها. تواصل مع مدير النظام لتغيير الصلاحيات.",
+    searchPlaceholder: "البحث في الصلاحيات...",
+    allCategories: "جميع الفئات",
+    noPermissionsFound: "لم يتم العثور على صلاحيات",
+    noPermissionsDescription: "لم يتم تكوين أي صلاحيات بعد.",
+    adjustFilters: "حاول تعديل عوامل التصفية.",
+    // Table columns
+    code: "الرمز",
+    resource: "المورد",
+    action: "الإجراء",
+    descriptionCol: "الوصف",
+    scope: "النطاق",
+    // Stats
+    totalCount: "{{count}} صلاحية",
+  },
+
   // Product
   product: {
     title: "إدارة المنتجات",
