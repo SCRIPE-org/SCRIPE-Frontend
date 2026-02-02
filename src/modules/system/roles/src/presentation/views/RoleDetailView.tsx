@@ -191,9 +191,7 @@ export default function RoleDetailView() {
                         role={role}
                         isLoading={roleLoading}
                         isSaving={saveMutation.isPending}
-                        onBack={() => router.back()}
                         onSave={handleSave}
-                        t={t}
                   />
 
                   <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">

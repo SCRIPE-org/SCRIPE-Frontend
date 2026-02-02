@@ -76,7 +76,7 @@ export function getBackArrowIcon(direction: "rtl" | "ltr") {
  */
 export function PageBreadcrumbs({
   segments,
-  showHome = true,
+  showHome = false,
   homeLabel,
   showBackButton = false,
   onBack,
