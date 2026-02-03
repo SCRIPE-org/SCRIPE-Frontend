@@ -163,6 +163,15 @@ export const ar = {
   admin: {
     title: "المشرفون",
     description: "إدارة مشرفي النظام وصلاحياتهم.",
+    // Table columns and fields
+    username: "اسم المستخدم",
+    name: "الاسم",
+    roles: "الأدوار",
+    status: "الحالة",
+    createdAt: "تاريخ الإنشاء",
+    noRoles: "لا توجد أدوار",
+    toggleStatus: "تبديل الحالة",
+    // Role assignment
     role: {
       assignTitle: "تعيين دور",
       assignDescription: "تعيين دور لـ",
@@ -235,6 +244,19 @@ export const ar = {
     descriptionPlaceholder: "وصف اختياري لهذا الدور...",
     priorityHint: "الأرقام الأقل تعني أولوية أعلى. استخدم 0 للأدوار الأكثر قوة.",
     totalRoles: "{{count}} دور",
+  },
+
+  // Role - For table columns (singular context)
+  role: {
+    name: "الاسم",
+    code: "الرمز",
+    description: "الوصف",
+    priority: "الأولوية",
+    createdAt: "تاريخ الإنشاء",
+    namePlaceholder: "أدخل اسم الدور",
+    codePlaceholder: "مثال: CONTENT_MANAGER",
+    descriptionPlaceholder: "وصف اختياري...",
+    priorityPlaceholder: "مثال: 10",
   },
 
   // Role Detail View

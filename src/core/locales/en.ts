@@ -165,6 +165,14 @@ export const en = {
   admin: {
     title: "Administrators",
     description: "Manage system administrators and their access.",
+    // Table columns and fields
+    username: "Username",
+    name: "Name",
+    roles: "Roles",
+    status: "Status",
+    createdAt: "Created At",
+    noRoles: "No roles",
+    // Role assignment
     role: {
       assignTitle: "Assign Role",
       assignDescription: "Assign a role to",
@@ -237,6 +245,19 @@ export const en = {
     descriptionPlaceholder: "Optional description of this role...",
     priorityHint: "Lower numbers mean higher priority. Use 0 for the most powerful roles.",
     totalRoles: "{{count}} roles",
+  },
+
+  // Role - For table columns (singular context)
+  role: {
+    name: "Name",
+    code: "Code",
+    description: "Description",
+    priority: "Priority",
+    createdAt: "Created At",
+    namePlaceholder: "Enter role name",
+    codePlaceholder: "e.g., CONTENT_MANAGER",
+    descriptionPlaceholder: "Optional description...",
+    priorityPlaceholder: "e.g., 10",
   },
 
   // Role Detail View
