@@ -17,7 +17,7 @@ import type {
       AssignRoleRequest,
 } from "../../domain/entities/AdminRequests";
 import type { CrudConfig } from "@core/crud/components/generic-crud-view";
-import type { FieldConfig } from "@core/ui/forms/generic-form";
+import type { FieldConfig, FieldOption } from "@core/ui/forms/generic-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 
@@ -33,7 +33,7 @@ interface AdminsViewModelOptions {
 
 export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
       const { tenantId, useMyTenant } = options;
-      const { adminRepository } = systemContainer;
+      const { adminRepository, roleRepository } = systemContainer;
       const { t } = useI18n();
       const queryClient = useQueryClient();
       const { success, error: toastError } = useEnhancedToast();
@@ -158,6 +158,22 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
             },
       });
 
+      // Reset password mutation
+      const resetPasswordMutation = useMutation({
+            mutationFn: ({ adminId, newPassword }: { adminId: string; newPassword: string }) =>
+                  adminRepository.resetPassword(adminId, newPassword),
+            onSuccess: () => {
+                  queryClient.invalidateQueries({ queryKey: ["admins"] });
+                  success({
+                        title: t("admin.passwordReset") || "Password Reset",
+                        description: t("admin.passwordResetDesc") || "Password has been reset successfully."
+                  });
+            },
+            onError: (err: Error) => {
+                  toastError({ title: t("common.error") || "Error", description: err.message });
+            },
+      });
+
       // ============ Handler Functions ============
       const handleDelete = useCallback(async (admin: Admin) => {
             await adminRepository.delete(admin.id);
@@ -179,9 +195,45 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
             [removeRoleMutation]
       );
 
+      const handleResetPassword = useCallback((adminId: string, newPassword: string) =>
+            resetPasswordMutation.mutateAsync({ adminId, newPassword }),
+            [resetPasswordMutation]
+      );
+
+      // ============ Role Search for Create Form ============
+      const handleRoleSearch = useCallback(async (query: string): Promise<FieldOption[]> => {
+            try {
+                  // Search roles - pass tenantId as a param if available
+                  const result = await roleRepository.getAll({
+                        search: query,
+                        page: 1,
+                        pageSize: 20,
+                        tenantId: tenantId, // Will be undefined if not provided
+                  });
+
+                  return (result.items || []).map((role: { id: string; name: string }) => ({
+                        value: role.id,
+                        label: role.name,
+                  }));
+            } catch {
+                  return [];
+            }
+      }, [roleRepository, tenantId]);
+
       // ============ Config Base (Fields, Actions, Initial Values) ============
       const getConfigBase = useCallback((): Partial<CrudConfig<Admin>> => ({
             createFields: [
+                  {
+                        name: "roleId",
+                        label: t("admin.role.selectRole") || "Role",
+                        type: "searchable-select" as const,
+                        placeholder: t("admin.role.selectRolePlaceholder") || "Select a role...",
+                        searchPlaceholder: t("admin.role.searchRoles") || "Search roles...",
+                        required: true,
+                        onServerSearch: handleRoleSearch,
+                        searchType: "server",
+                        noResultsText: t("roles.noRolesFound") || "No roles found",
+                  },
                   {
                         name: "username",
                         label: t("admin.username") || "Username",
@@ -254,6 +306,7 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
                   { name: "id", type: "hidden" as const, required: true },
             ],
             createInitialValues: {
+                  roleId: "", // Required - must select a role
                   username: "",
                   password: "",
                   firstName: "",
@@ -286,9 +339,11 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
             handleToggleActive,
             handleAssignRole,
             handleRemoveRole,
+            handleResetPassword,
             isTogglingActive: toggleActiveMutation.isPending,
             isAssigningRole: assignRoleMutation.isPending,
             isRemovingRole: removeRoleMutation.isPending,
+            isResettingPassword: resetPasswordMutation.isPending,
             t,
       };
 }
