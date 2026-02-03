@@ -2,14 +2,12 @@
  * Permissions View
  *
  * Read-only view for system permissions grouped by category.
- * Permissions are seeded and cannot be created, edited, or deleted.
+ * SOLID: Pure UI - no useState, all state from ViewModel.
  */
 "use client";
 
-import { useState } from "react";
 import { usePermissionsViewModel } from "../viewmodels/usePermissionsViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
-import { useDebounce } from "@core/hooks/use-validation";
 import { Button } from "@core/ui/button";
 import { Card, CardContent } from "@core/ui/card";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@core/ui/tooltip";
@@ -18,14 +16,10 @@ import { PermissionFilterBar, PermissionCategoryAccordion, PermissionTableSkelet
 
 export function PermissionsView() {
       const { t } = useI18n();
-      const [searchInput, setSearchInput] = useState("");
-      const [categoryFilter, setCategoryFilter] = useState<string | undefined>();
-      const debouncedSearch = useDebounce(searchInput, 300);
+      const { groupedPermissions, categories, totalCount, isLoading, refetch, filter } =
+            usePermissionsViewModel();
 
-      const { groupedPermissions, categories, totalCount, isLoading, refetch } =
-            usePermissionsViewModel({ search: debouncedSearch, category: categoryFilter });
-
-      const hasFilters = !!searchInput || !!categoryFilter;
+      const hasFilters = !!filter.searchValue || !!filter.categoryFilter;
 
       return (
             <div className="space-y-6">
@@ -54,12 +48,12 @@ export function PermissionsView() {
                         </div>
                   </div>
 
-                  {/* Filters */}
+                  {/* Filters - props from ViewModel */}
                   <PermissionFilterBar
-                        searchValue={searchInput}
-                        onSearchChange={setSearchInput}
-                        categoryFilter={categoryFilter}
-                        onCategoryChange={setCategoryFilter}
+                        searchValue={filter.searchValue}
+                        onSearchChange={filter.onSearchChange}
+                        categoryFilter={filter.categoryFilter}
+                        onCategoryChange={filter.onCategoryChange}
                         categories={categories}
                         totalCount={totalCount}
                   />
@@ -85,3 +79,4 @@ export function PermissionsView() {
             </div>
       );
 }
+

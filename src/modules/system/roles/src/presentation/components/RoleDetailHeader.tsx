@@ -33,10 +33,7 @@ export function RoleDetailHeader({
       return (
             <div className="space-y-4">
                   {/* Breadcrumbs */}
-                  <PageBreadcrumbs
-                        showHome={true}
-                        segments={breadcrumbSegments}
-                  />
+                  <PageBreadcrumbs segments={breadcrumbSegments} />
 
                   {/* Title and Save Button */}
                   <div className="flex items-center justify-between">

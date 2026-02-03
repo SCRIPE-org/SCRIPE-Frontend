@@ -2,12 +2,14 @@
  * Permissions ViewModel
  *
  * Provides data and operations for the permissions management view.
+ * SOLID: All state logic lives here, View is pure UI.
  */
 "use client";
 
-import { useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { systemContainer } from "@modules/system/di";
+import { useDebounce } from "@core/hooks/use-validation";
 import type { Permission, PermissionCategoryGroup } from "../../domain/entities/Permission";
 import type {
       CreatePermissionRequest,
@@ -15,16 +17,19 @@ import type {
 } from "../../domain/entities/PermissionRequests";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 
-interface UsePermissionsViewModelParams {
-      category?: string;
-      search?: string;
-}
-
-export function usePermissionsViewModel(params: UsePermissionsViewModelParams = {}) {
-      const { category, search } = params;
+export function usePermissionsViewModel() {
       const queryClient = useQueryClient();
       const { success, error: toastError } = useEnhancedToast();
       const { permissionRepository } = systemContainer;
+
+      // === FILTER STATE (owned by ViewModel, not View) ===
+      const [searchInput, setSearchInput] = useState("");
+      const [categoryFilter, setCategoryFilter] = useState<string | undefined>();
+      const debouncedSearch = useDebounce(searchInput, 300);
+
+      // Derived filter state for queries
+      const category = categoryFilter;
+      const search = debouncedSearch;
 
       // Query key
       const queryKey = useMemo(
@@ -154,6 +159,14 @@ export function usePermissionsViewModel(params: UsePermissionsViewModelParams = 
             groupedPermissions,
             categories: categories ?? [],
             totalCount: permissions?.length ?? 0,
+
+            // Filter state (View binds to these, no useState in View)
+            filter: {
+                  searchValue: searchInput,
+                  onSearchChange: setSearchInput,
+                  categoryFilter,
+                  onCategoryChange: setCategoryFilter,
+            },
 
             // State
             isLoading,
