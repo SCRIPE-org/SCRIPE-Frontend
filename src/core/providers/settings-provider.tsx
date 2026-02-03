@@ -398,7 +398,7 @@ const defaultSettings: Settings = {
   showToastIcons: true,
   toastDuration: 1000,
   hoverEffectType: "elevate",
-  hoverEffectIntensity: "medium",
+  hoverEffectIntensity: "none",
 };
 
 /**
