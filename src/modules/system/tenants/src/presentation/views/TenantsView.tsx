@@ -53,12 +53,13 @@ export function TenantsView() {
                         });
 
                         return permissions.map((p) => {
-                              // Use permission code as value (stable identifier)
-                              // The ID changes between requests due to encryption/rotation
+                              // Use stable code for deduplication (uniqueKey)
+                              // because ID changes between requests due to encryption/rotation
                               const stableCode = p.code || `${p.resource}.${p.action}`;
                               return {
-                                    value: stableCode,
+                                    value: p.id,          // ID is sent to backend (for decryption)
                                     label: `${p.getLocalizedName(language)} (${stableCode})`,
+                                    uniqueKey: stableCode, // Code is used for deduplication
                               };
                         });
                   } catch {

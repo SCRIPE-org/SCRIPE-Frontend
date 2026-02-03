@@ -29,6 +29,12 @@ export interface GenericSelectOption {
   children?: GenericSelectOption[];
   level?: number;
   parentId?: string | null;
+  /**
+   * Unique key for deduplication when value may change between API calls.
+   * If provided, selection comparison uses this instead of value.
+   * Example: permission code "admins.assign_roles" stays stable while ID rotates.
+   */
+  uniqueKey?: string;
 }
 
 export interface GenericSelectProps {
@@ -665,8 +671,10 @@ export const GenericSelect = React.forwardRef<
     const handleSelect = (optionValue: string) => {
       if (!onValueChange) return;
 
-      // Cache the selected option to preserve its label
+      // Get the selected option for caching and uniqueKey lookup
       const selectedOption = allOptionsMap.get(optionValue);
+
+      // Cache the selected option to preserve its label
       if (selectedOption && !selectedOptionsCache.has(optionValue)) {
         setSelectedOptionsCache(prev => {
           const newCache = new Map(prev);
@@ -676,10 +684,27 @@ export const GenericSelect = React.forwardRef<
       }
 
       if (isMultiSelect) {
+        // For deduplication: use uniqueKey if available, otherwise use value
+        const optionUniqueKey = selectedOption?.uniqueKey;
+
+        // Check if already selected (by uniqueKey or value)
+        let alreadySelectedValue: string | undefined;
+        if (optionUniqueKey) {
+          // Find existing selection with same uniqueKey
+          alreadySelectedValue = currentValues.find(v => {
+            const cachedOpt = allOptionsMap.get(v) || selectedOptionsCache.get(v);
+            return cachedOpt?.uniqueKey === optionUniqueKey;
+          });
+        } else {
+          // Fallback to value comparison
+          alreadySelectedValue = currentValues.includes(optionValue) ? optionValue : undefined;
+        }
+
+        const isAlreadySelected = !!alreadySelectedValue;
+
         // Toggle: if already selected, remove it; otherwise add it
-        const alreadySelected = currentValues.includes(optionValue);
-        const newValues = alreadySelected
-          ? currentValues.filter((v) => v !== optionValue)
+        const newValues = isAlreadySelected
+          ? currentValues.filter((v) => v !== alreadySelectedValue)
           : [...currentValues, optionValue];
         onValueChange(newValues);
       } else {
@@ -1185,7 +1210,13 @@ export const GenericSelect = React.forwardRef<
                   </div>
                 ) : (
                   displayOptions.map((option) => {
-                    const isSelected = currentValues.includes(option.value);
+                    // Check if selected - use uniqueKey if available for deduplication
+                    const isSelected = option.uniqueKey
+                      ? currentValues.some(v => {
+                        const cachedOpt = allOptionsMap.get(v) || selectedOptionsCache.get(v);
+                        return cachedOpt?.uniqueKey === option.uniqueKey;
+                      })
+                      : currentValues.includes(option.value);
                     const hasChildren =
                       option.children && option.children.length > 0;
                     const isExpanded = internalExpandedKeys.includes(

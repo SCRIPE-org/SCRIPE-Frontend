@@ -60,12 +60,14 @@ import { ImageUploader } from "@core/ui/image-uploader";
  * Field option for select, radio, and other choice-based inputs
  */
 export interface FieldOption {
-  /** The value of the option */
+  /** The value of the option (submitted to backend) */
   value: string;
   /** The display label for the option */
   label: string;
   /** Nested options for hierarchical structures (e.g., tree selects) */
   children?: FieldOption[];
+  /** Unique key for deduplication when value may change between API calls */
+  uniqueKey?: string;
 }
 
 /**
@@ -584,6 +586,7 @@ export function GenericForm({
                       field.options?.map((opt) => ({
                         value: opt.value,
                         label: opt.label,
+                        uniqueKey: opt.uniqueKey,
                       })) || []
                     }
                     value={formData[field.name] || []}
@@ -600,6 +603,7 @@ export function GenericForm({
                           return results.map((r) => ({
                             value: r.value,
                             label: r.label,
+                            uniqueKey: r.uniqueKey,
                           }));
                         }
                         : undefined
