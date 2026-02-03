@@ -11,7 +11,7 @@ export { usePermissionsViewModel } from "./src/presentation/viewmodels/usePermis
 // Entities
 export { Permission } from "./src/domain/entities/Permission";
 export type {
-      PermissionData,
+      PermissionProps,
       PermissionCategoryGroup,
 } from "./src/domain/entities/Permission";
 export type {
@@ -24,3 +24,7 @@ export type {
       IPermissionRepository,
       PermissionListParams,
 } from "./src/domain/interfaces/IPermissionRepository";
+
+// Services (for DI)
+export { PermissionService } from "./src/data/services/PermissionService";
+export type { IPermissionService } from "./src/data/services/PermissionService";

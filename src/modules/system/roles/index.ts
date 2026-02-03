@@ -10,7 +10,13 @@ export { useRolesViewModel } from "./src/presentation/viewmodels/useRolesViewMod
 
 // Entities
 export { Role } from "./src/domain/entities/Role";
-export type { RoleData, RolePermissionData } from "./src/domain/entities/Role";
+export type {
+      RoleProps,
+      RolePermission,
+      // Keep backward compatibility aliases
+      RoleData,
+      RolePermissionData,
+} from "./src/domain/entities/Role";
 export type {
       CreateRoleRequest,
       UpdateRoleRequest,
@@ -19,3 +25,7 @@ export type {
 
 // Interfaces
 export type { IRoleRepository, RoleListParams } from "./src/domain/interfaces/IRoleRepository";
+
+// Services (for DI)
+export { RoleService } from "./src/data/services/RoleService";
+export type { IRoleService } from "./src/data/services/RoleService";

@@ -1,80 +1,63 @@
 /**
  * Tenant Repository Implementation
  *
- * Implements ITenantRepository using the API service.
+ * Implements ITenantRepository using TenantService.
+ * Uses TenantMapper to convert Models → Entities.
+ *
+ * @module tenants/data
  */
-import type { IApiService } from "@core/interfaces/api.interface";
-import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
 import type {
       ITenantRepository,
       TenantListParams,
 } from "../../domain/interfaces/ITenantRepository";
-import { Tenant, TenantData, TenantTreeNode } from "../../domain/entities/Tenant";
+import { Tenant, type TenantTreeNode } from "../../domain/entities/Tenant";
 import type {
       CreateTenantRequest,
       UpdateTenantRequest,
 } from "../../domain/entities/TenantRequests";
 import type { PagedResult } from "@modules/system/core/domain/types";
-
-/**
- * API response shape for paginated tenants
- */
-interface TenantListApiResponse {
-      items: TenantData[];
-      totalCount: number;
-      page: number;
-      pageSize: number;
-      totalPages: number;
-      hasNextPage: boolean;
-      hasPreviousPage: boolean;
-}
+import type { ITenantService } from "../services/TenantService";
+import { TenantMapper } from "../mappers/TenantMapper";
 
 export class TenantRepository implements ITenantRepository {
-      constructor(private readonly api: IApiService) { }
+      constructor(private readonly service: ITenantService) { }
 
       async getAll(params: TenantListParams): Promise<PagedResult<Tenant>> {
-            const url = buildUrl(API_ENDPOINTS.TENANTS.LIST, {
-                  page: params.page,
-                  pageSize: params.pageSize,
-                  search: params.search,
-                  parentId: params.parentId,
-            });
-
-            const response = await this.api.get<TenantListApiResponse>(url);
+            const result = await this.service.getAll(params);
 
             return {
-                  items: response.items.map((data) => new Tenant(data)),
-                  totalCount: response.totalCount,
-                  page: response.page,
-                  pageSize: response.pageSize,
-                  totalPages: response.totalPages,
-                  hasNextPage: response.hasNextPage,
-                  hasPreviousPage: response.hasPreviousPage,
+                  items: TenantMapper.toEntityList(result.items),
+                  totalCount: result.totalCount,
+                  page: result.page,
+                  pageSize: result.pageSize,
+                  totalPages: result.totalPages,
+                  hasNextPage: result.hasNextPage,
+                  hasPreviousPage: result.hasPreviousPage,
             };
       }
 
       async getTree(): Promise<TenantTreeNode[]> {
-            return await this.api.get<TenantTreeNode[]>(API_ENDPOINTS.TENANTS.TREE);
+            const models = await this.service.getTree();
+            return TenantMapper.toTreeNodeList(models);
       }
 
       async getById(id: string): Promise<Tenant> {
-            const data = await this.api.get<TenantData>(API_ENDPOINTS.TENANTS.BY_ID(id));
-            return new Tenant(data);
+            const model = await this.service.getById(id);
+            return TenantMapper.toEntity(model);
       }
 
       async create(request: CreateTenantRequest): Promise<string> {
-            const response = await this.api.post<{ id: string }>(
-                  API_ENDPOINTS.TENANTS.CREATE,
-                  request
-            );
+            const model = TenantMapper.toCreateModel(request);
+            const response = await this.service.create(model.toJson());
             return response.id;
       }
 
       async update(id: string, request: UpdateTenantRequest): Promise<void> {
-            await this.api.put(API_ENDPOINTS.TENANTS.UPDATE(id), request);
+            const model = TenantMapper.toUpdateModel(request);
+            await this.service.update(id, model.toJson());
       }
 
       async delete(id: string): Promise<void> {
-            await this.api.delete(API_ENDPOINTS.TENANTS.DELETE(id));
+            await this.service.delete(id);
       }
 }

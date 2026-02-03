@@ -149,6 +149,14 @@ export const ar = {
     settingsBranding: "العلامة التجارية",
     settingsBrandingDesc: "تخصيص مظهر وعلامة المستأجر",
     settingsComingSoon: "الإعدادات قريباً...",
+    // Permissions Picker
+    selectPermissions: "اختر الصلاحيات",
+    selectPermissionsDesc: "اختر الصلاحيات التي يمكن لهذا المستأجر استخدامها",
+    noPermissionsAvailable: "لا توجد صلاحيات متاحة",
+    noPermissionsSelected: "لم يتم اختيار صلاحيات",
+    permissionsSelected: "{{count}} صلاحية مختارة",
+    address: "العنوان",
+    addressPlaceholder: "أدخل عنوان المستأجر",
   },
 
   // Admin - المشرفون

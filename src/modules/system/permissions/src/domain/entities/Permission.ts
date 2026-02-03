@@ -1,83 +1,89 @@
 /**
  * Permission Entity
  *
- * Represents a permission in the RBAC system.
+ * Domain entity representing a permission in the RBAC system.
+ * Pure business logic - no API/JSON concerns.
+ *
+ * @module permissions/domain
  */
 
-/**
- * Permission data from API
- */
-export interface PermissionData {
+export interface PermissionProps {
       id: string;
       resource: string;
       action: string;
       code: string;
       defaultScope: string;
+      category: string;
+      displayOrder: number;
       description?: string;
       nameEn?: string;
       nameAr?: string;
-      category?: string;
-      displayOrder: number;
 }
 
 /**
- * Permission entity class
+ * Permission domain entity
  */
 export class Permission {
-      constructor(public readonly data: PermissionData) { }
+      private readonly props: PermissionProps;
+
+      constructor(props: PermissionProps) {
+            this.props = props;
+      }
+
+      // ===== Getters =====
 
       get id(): string {
-            return this.data.id;
+            return this.props.id;
       }
 
       get resource(): string {
-            return this.data.resource;
+            return this.props.resource;
       }
 
       get action(): string {
-            return this.data.action;
+            return this.props.action;
       }
 
       get code(): string {
-            return this.data.code;
+            return this.props.code;
       }
 
       get defaultScope(): string {
-            return this.data.defaultScope;
+            return this.props.defaultScope;
       }
 
-      get description(): string | undefined {
-            return this.data.description;
-      }
-
-      get nameEn(): string | undefined {
-            return this.data.nameEn;
-      }
-
-      get nameAr(): string | undefined {
-            return this.data.nameAr;
-      }
-
-      get category(): string | undefined {
-            return this.data.category;
+      get category(): string {
+            return this.props.category;
       }
 
       get displayOrder(): number {
-            return this.data.displayOrder;
+            return this.props.displayOrder;
       }
+
+      get description(): string | undefined {
+            return this.props.description;
+      }
+
+      get nameEn(): string | undefined {
+            return this.props.nameEn;
+      }
+
+      get nameAr(): string | undefined {
+            return this.props.nameAr;
+      }
+
+      // ===== Business Logic =====
 
       /**
        * Get localized name based on language
-       * @param lang - 'ar' for Arabic, otherwise English
        */
-      getLocalizedName(lang: string = 'en'): string {
-            if (lang === 'ar' && this.data.nameAr) {
-                  return this.data.nameAr;
+      getLocalizedName(lang: string = "en"): string {
+            if (lang === "ar" && this.props.nameAr) {
+                  return this.props.nameAr;
             }
-            if (this.data.nameEn) {
-                  return this.data.nameEn;
+            if (this.props.nameEn) {
+                  return this.props.nameEn;
             }
-            // Fallback to formatted code
             return this.displayName;
       }
 
@@ -85,9 +91,18 @@ export class Permission {
        * Get display name (formatted from resource.action)
        */
       get displayName(): string {
-            const resource = this.data.resource.charAt(0).toUpperCase() + this.data.resource.slice(1);
-            const action = this.data.action.charAt(0).toUpperCase() + this.data.action.slice(1);
+            const resource =
+                  this.props.resource.charAt(0).toUpperCase() + this.props.resource.slice(1);
+            const action =
+                  this.props.action.charAt(0).toUpperCase() + this.props.action.slice(1);
             return `${resource} - ${action}`;
+      }
+
+      /**
+       * Get raw props (for serialization via mapper)
+       */
+      toProps(): PermissionProps {
+            return { ...this.props };
       }
 }
 

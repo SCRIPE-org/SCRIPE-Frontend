@@ -151,6 +151,14 @@ export const en = {
     settingsBranding: "Branding",
     settingsBrandingDesc: "Customize tenant appearance and branding",
     settingsComingSoon: "Settings coming soon...",
+    // Permissions Picker
+    selectPermissions: "Select Permissions",
+    selectPermissionsDesc: "Choose which permissions this tenant can use",
+    noPermissionsAvailable: "No permissions available",
+    noPermissionsSelected: "No permissions selected",
+    permissionsSelected: "{{count}} permissions selected",
+    address: "Address",
+    addressPlaceholder: "Enter tenant address",
   },
 
   // Admin
@@ -2505,6 +2513,8 @@ export const en = {
     retry: "Try Again",
     unknown: "Unknown",
     user: "User",
+    selectAll: "Select All",
+    deselectAll: "Clear",
     // Confirmation Dialogs
     confirmDelete: "Confirm Delete",
     deleteConfirmation: "Are you sure you want to delete {name}?",

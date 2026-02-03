@@ -1,100 +1,118 @@
 /**
  * Role Entity
  *
- * Represents a role in the RBAC system.
+ * Domain entity representing a role in the RBAC system.
+ * Pure business logic - no API/JSON concerns.
+ *
+ * @module roles/domain
  */
-import type { BaseEntity } from "@modules/system/core/domain/types";
 
-/**
- * Role permission assignment data
- */
-export interface RolePermissionData {
+export interface RolePermission {
       permissionId: string;
       permissionCode: string;
       scope?: string;
 }
 
-/**
- * Role data from API
- */
-export interface RoleData extends BaseEntity {
+export interface RoleProps {
+      id: string;
       name: string;
       code: string;
-      description?: string;
-      tenantId?: string;
-      tenantName?: string;
       isSystem: boolean;
       priority: number;
       isActive: boolean;
-      permissions: RolePermissionData[];
+      permissions: RolePermission[];
+      createdAt: string;
+      description?: string;
+      tenantId?: string;
+      tenantName?: string;
+      modifiedAt?: string;
 }
 
 /**
- * Role entity class
+ * Role domain entity
  */
 export class Role {
-      constructor(public readonly data: RoleData) { }
+      private readonly props: RoleProps;
+
+      constructor(props: RoleProps) {
+            this.props = props;
+      }
+
+      // ===== Getters =====
 
       get id(): string {
-            return this.data.id;
+            return this.props.id;
       }
 
       get name(): string {
-            return this.data.name;
+            return this.props.name;
       }
 
       get code(): string {
-            return this.data.code;
+            return this.props.code;
       }
 
       get description(): string | undefined {
-            return this.data.description;
+            return this.props.description;
       }
 
       get tenantId(): string | undefined {
-            return this.data.tenantId;
+            return this.props.tenantId;
       }
 
       get tenantName(): string | undefined {
-            return this.data.tenantName;
+            return this.props.tenantName;
       }
 
       get isSystem(): boolean {
-            return this.data.isSystem;
+            return this.props.isSystem;
       }
 
       get priority(): number {
-            return this.data.priority;
+            return this.props.priority;
       }
 
       get isActive(): boolean {
-            return this.data.isActive;
+            return this.props.isActive;
       }
 
-      get permissions(): RolePermissionData[] {
-            return this.data.permissions;
+      get permissions(): RolePermission[] {
+            return this.props.permissions;
       }
 
       get createdAt(): string {
-            return this.data.createdAt;
+            return this.props.createdAt;
       }
 
       get modifiedAt(): string | undefined {
-            return this.data.modifiedAt;
+            return this.props.modifiedAt;
       }
 
+      // ===== Business Logic =====
+
       get permissionCount(): number {
-            return this.data.permissions.length;
+            return this.props.permissions.length;
       }
 
       get permissionCodes(): string[] {
-            return this.data.permissions.map((p) => p.permissionCode);
+            return this.props.permissions.map((p) => p.permissionCode);
       }
 
       /**
        * Check if role has a specific permission
        */
       hasPermission(permissionCode: string): boolean {
-            return this.data.permissions.some((p) => p.permissionCode === permissionCode);
+            return this.props.permissions.some((p) => p.permissionCode === permissionCode);
+      }
+
+      /**
+       * Get raw props (for serialization via mapper)
+       */
+      toProps(): RoleProps {
+            return { ...this.props };
       }
 }
+
+// Keep backward compatibility alias
+export type RoleData = RoleProps;
+export type RolePermissionData = RolePermission;

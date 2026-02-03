@@ -1,69 +1,62 @@
 /**
  * Permission Repository Implementation
  *
- * Implements IPermissionRepository using the API service.
+ * Implements IPermissionRepository using PermissionService.
+ * Uses PermissionMapper to convert Models → Entities.
+ *
+ * Clean Architecture:
+ * View → ViewModel → Repository → Service → IApiService
+ *                        ↓
+ *                    Mapper (Model ↔ Entity)
+ *
+ * @module permissions/data
  */
-import type { IApiService } from "@core/interfaces/api.interface";
-import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
 import type {
       IPermissionRepository,
       PermissionListParams,
 } from "../../domain/interfaces/IPermissionRepository";
-import { Permission, PermissionData } from "../../domain/entities/Permission";
+import { Permission } from "../../domain/entities/Permission";
 import type {
       CreatePermissionRequest,
       UpdatePermissionRequest,
 } from "../../domain/entities/PermissionRequests";
+import type { IPermissionService } from "../services/PermissionService";
+import { PermissionMapper } from "../mappers/PermissionMapper";
 
 export class PermissionRepository implements IPermissionRepository {
-      constructor(private readonly api: IApiService) { }
+      constructor(private readonly service: IPermissionService) { }
 
       async getAll(params?: PermissionListParams): Promise<Permission[]> {
-            const url = buildUrl(API_ENDPOINTS.PERMISSIONS.LIST, {
-                  category: params?.category,
-                  search: params?.search,
-            });
-
-            const response = await this.api.get<PermissionData[]>(url);
-
-            return response.map((data) => new Permission(data));
+            const models = await this.service.getAll(params);
+            return PermissionMapper.toEntityList(models);
       }
 
       async getMyPermissions(params?: PermissionListParams): Promise<Permission[]> {
-            const url = buildUrl(API_ENDPOINTS.PERMISSIONS.MY, {
-                  category: params?.category,
-                  search: params?.search,
-            });
-
-            const response = await this.api.get<PermissionData[]>(url);
-
-            return response.map((data) => new Permission(data));
+            const models = await this.service.getMyPermissions(params);
+            return PermissionMapper.toEntityList(models);
       }
 
       async getById(id: string): Promise<Permission> {
-            const data = await this.api.get<PermissionData>(
-                  API_ENDPOINTS.PERMISSIONS.BY_ID(id)
-            );
-            return new Permission(data);
+            const model = await this.service.getById(id);
+            return PermissionMapper.toEntity(model);
       }
 
       async getCategories(): Promise<string[]> {
-            return await this.api.get<string[]>(API_ENDPOINTS.PERMISSIONS.CATEGORIES);
+            return this.service.getCategories();
       }
 
       async create(request: CreatePermissionRequest): Promise<string> {
-            const response = await this.api.post<{ id: string }>(
-                  API_ENDPOINTS.PERMISSIONS.CREATE,
-                  request
-            );
+            const model = PermissionMapper.toCreateModel(request);
+            const response = await this.service.create(model.toJson());
             return response.id;
       }
 
       async update(id: string, request: UpdatePermissionRequest): Promise<void> {
-            await this.api.put(API_ENDPOINTS.PERMISSIONS.UPDATE(id), request);
+            const model = PermissionMapper.toUpdateModel(request);
+            await this.service.update(id, model.toJson());
       }
 
       async delete(id: string): Promise<void> {
-            await this.api.delete(API_ENDPOINTS.PERMISSIONS.DELETE(id));
+            await this.service.delete(id);
       }
 }

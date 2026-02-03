@@ -11,8 +11,11 @@ export { useTenantsViewModel } from "./src/presentation/viewmodels/useTenantsVie
 // Entities
 export { Tenant } from "./src/domain/entities/Tenant";
 export type {
-      TenantData,
+      TenantProps,
       TenantTreeNode,
+      TenantTreeNodeProps,
+      // Keep backward compatibility
+      TenantData,
 } from "./src/domain/entities/Tenant";
 export type {
       CreateTenantRequest,
@@ -24,3 +27,7 @@ export type {
       ITenantRepository,
       TenantListParams,
 } from "./src/domain/interfaces/ITenantRepository";
+
+// Services (for DI)
+export { TenantService } from "./src/data/services/TenantService";
+export type { ITenantService } from "./src/data/services/TenantService";

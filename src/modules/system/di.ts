@@ -2,20 +2,42 @@
  * System Module DI Container
  *
  * Provides dependency injection for all system submodules.
+ * 
+ * Clean Architecture Pattern:
+ * - Services wrap IApiService (API calls only)
+ * - Repositories use Services and map Models → Entities
+ * - ViewModels use Repositories
  */
 import { getCoreContainer } from "@/core/di";
+
+// Services
+import { PermissionService } from "./permissions/src/data/services/PermissionService";
+import { RoleService } from "./roles/src/data/services/RoleService";
+import { TenantService } from "./tenants/src/data/services/TenantService";
+
+// Repositories
 import { AdminRepository } from "./admin/src/data/repositories/AdminRepository";
 import { RoleRepository } from "./roles/src/data/repositories/RoleRepository";
 import { PermissionRepository } from "./permissions/src/data/repositories/PermissionRepository";
 import { TenantRepository } from "./tenants/src/data/repositories/TenantRepository";
 import { MenuRepository } from "./menus/src/data/repositories/MenuRepository";
+
+// Interfaces
 import type { IAdminRepository } from "./admin/src/domain/interfaces/IAdminRepository";
 import type { IRoleRepository } from "./roles/src/domain/interfaces/IRoleRepository";
 import type { IPermissionRepository } from "./permissions/src/domain/interfaces/IPermissionRepository";
 import type { ITenantRepository } from "./tenants/src/domain/interfaces/ITenantRepository";
 import type { IMenuRepository } from "./menus/src/domain/interfaces/IMenuRepository";
+import type { IPermissionService } from "./permissions/src/data/services/PermissionService";
+import type { IRoleService } from "./roles/src/data/services/RoleService";
+import type { ITenantService } from "./tenants/src/data/services/TenantService";
 
 export interface SystemContainer {
+      // Services
+      permissionService: IPermissionService;
+      roleService: IRoleService;
+      tenantService: ITenantService;
+      // Repositories
       adminRepository: IAdminRepository;
       roleRepository: IRoleRepository;
       permissionRepository: IPermissionRepository;
@@ -32,12 +54,23 @@ export function getSystemContainer(): SystemContainer {
       if (!_container) {
             const { apiService } = getCoreContainer();
 
+            // Create Services (wrap IApiService)
+            const permissionService = new PermissionService(apiService);
+            const roleService = new RoleService(apiService);
+            const tenantService = new TenantService(apiService);
+
+            // Create Repositories (use Services)
             _container = {
-                  adminRepository: new AdminRepository(apiService),
-                  roleRepository: new RoleRepository(apiService),
-                  permissionRepository: new PermissionRepository(apiService),
-                  tenantRepository: new TenantRepository(apiService),
-                  menuRepository: new MenuRepository(apiService),
+                  // Services
+                  permissionService,
+                  roleService,
+                  tenantService,
+                  // Repositories
+                  adminRepository: new AdminRepository(apiService), // TODO: Add AdminService
+                  roleRepository: new RoleRepository(roleService),
+                  permissionRepository: new PermissionRepository(permissionService),
+                  tenantRepository: new TenantRepository(tenantService),
+                  menuRepository: new MenuRepository(apiService), // TODO: Add MenuService
             };
       }
 
@@ -48,6 +81,17 @@ export function getSystemContainer(): SystemContainer {
  * System container accessor (for use in components)
  */
 export const systemContainer = {
+      // Services
+      get permissionService() {
+            return getSystemContainer().permissionService;
+      },
+      get roleService() {
+            return getSystemContainer().roleService;
+      },
+      get tenantService() {
+            return getSystemContainer().tenantService;
+      },
+      // Repositories
       get adminRepository() {
             return getSystemContainer().adminRepository;
       },

@@ -1,99 +1,29 @@
 /**
  * Tenant Entity
  *
- * Represents a tenant in the hierarchical multi-tenancy system.
+ * Domain entity representing a tenant in the hierarchical multi-tenancy system.
+ * Pure business logic - no API/JSON concerns.
+ *
+ * @module tenants/domain
  */
-import type { BaseEntity } from "@modules/system/core/domain/types";
 
-/**
- * Tenant data from API
- */
-export interface TenantData extends BaseEntity {
+export interface TenantProps {
+      id: string;
       name: string;
       code: string;
-      parentId?: string;
-      parentName?: string;
       level: number;
       path: string;
       isActive: boolean;
+      createdAt: string;
+      parentId?: string;
+      parentName?: string;
       description?: string;
       settings?: Record<string, unknown>;
-      children?: TenantData[];
+      modifiedAt?: string;
+      children?: TenantProps[];
 }
 
-/**
- * Tenant entity class
- */
-export class Tenant {
-      constructor(public readonly data: TenantData) { }
-
-      get id(): string {
-            return this.data.id;
-      }
-
-      get name(): string {
-            return this.data.name;
-      }
-
-      get code(): string {
-            return this.data.code;
-      }
-
-      get parentId(): string | undefined {
-            return this.data.parentId;
-      }
-
-      get parentName(): string | undefined {
-            return this.data.parentName;
-      }
-
-      get level(): number {
-            return this.data.level;
-      }
-
-      get path(): string {
-            return this.data.path;
-      }
-
-      get isActive(): boolean {
-            return this.data.isActive;
-      }
-
-      get description(): string | undefined {
-            return this.data.description;
-      }
-
-      get settings(): Record<string, unknown> | undefined {
-            return this.data.settings;
-      }
-
-      get hasChildren(): boolean {
-            return (this.data.children?.length ?? 0) > 0;
-      }
-
-      get children(): Tenant[] {
-            return (this.data.children ?? []).map((c) => new Tenant(c));
-      }
-
-      /**
-       * Get hierarchy path as array
-       */
-      get pathSegments(): string[] {
-            return this.data.path.split("/").filter(Boolean);
-      }
-
-      /**
-       * Check if this tenant is a root tenant
-       */
-      get isRoot(): boolean {
-            return !this.data.parentId;
-      }
-}
-
-/**
- * Tenant tree node for hierarchical display
- */
-export interface TenantTreeNode {
+export interface TenantTreeNodeProps {
       id: string;
       name: string;
       code: string;
@@ -101,5 +31,99 @@ export interface TenantTreeNode {
       isActive: boolean;
       description?: string;
       parentId?: string;
-      children: TenantTreeNode[];
+      children: TenantTreeNodeProps[];
 }
+
+/**
+ * Tenant domain entity
+ */
+export class Tenant {
+      private readonly props: TenantProps;
+
+      constructor(props: TenantProps) {
+            this.props = props;
+      }
+
+      // ===== Getters =====
+
+      get id(): string {
+            return this.props.id;
+      }
+
+      get name(): string {
+            return this.props.name;
+      }
+
+      get code(): string {
+            return this.props.code;
+      }
+
+      get parentId(): string | undefined {
+            return this.props.parentId;
+      }
+
+      get parentName(): string | undefined {
+            return this.props.parentName;
+      }
+
+      get level(): number {
+            return this.props.level;
+      }
+
+      get path(): string {
+            return this.props.path;
+      }
+
+      get isActive(): boolean {
+            return this.props.isActive;
+      }
+
+      get description(): string | undefined {
+            return this.props.description;
+      }
+
+      get settings(): Record<string, unknown> | undefined {
+            return this.props.settings;
+      }
+
+      get createdAt(): string {
+            return this.props.createdAt;
+      }
+
+      get modifiedAt(): string | undefined {
+            return this.props.modifiedAt;
+      }
+
+      // ===== Business Logic =====
+
+      get hasChildren(): boolean {
+            return (this.props.children?.length ?? 0) > 0;
+      }
+
+      get children(): Tenant[] {
+            return (this.props.children ?? []).map((c) => new Tenant(c));
+      }
+
+      get pathSegments(): string[] {
+            return this.props.path.split("/").filter(Boolean);
+      }
+
+      get isRoot(): boolean {
+            return !this.props.parentId;
+      }
+
+      /**
+       * Get raw props (for serialization via mapper)
+       */
+      toProps(): TenantProps {
+            return { ...this.props };
+      }
+}
+
+/**
+ * Tenant tree node for hierarchical display
+ */
+export interface TenantTreeNode extends TenantTreeNodeProps { }
+
+// Keep backward compatibility alias
+export type TenantData = TenantProps;
