@@ -21,6 +21,16 @@ export interface TenantListParams {
 }
 
 /**
+ * Tenant statistics data
+ */
+export interface TenantStats {
+      adminsCount: number;
+      rolesCount: number;
+      subTenantsCount: number;
+      permissionsCount: number;
+}
+
+/**
  * Tenant repository interface
  */
 export interface ITenantRepository {
@@ -40,6 +50,11 @@ export interface ITenantRepository {
       getById(id: string): Promise<Tenant>;
 
       /**
+       * Get statistics for a tenant (for dashboard)
+       */
+      getStats(id: string): Promise<TenantStats>;
+
+      /**
        * Create a new tenant
        */
       create(request: CreateTenantRequest): Promise<string>;
@@ -54,3 +69,4 @@ export interface ITenantRepository {
        */
       delete(id: string): Promise<void>;
 }
+

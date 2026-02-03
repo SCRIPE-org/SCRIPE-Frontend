@@ -9,6 +9,7 @@
 import type {
       ITenantRepository,
       TenantListParams,
+      TenantStats,
 } from "../../domain/interfaces/ITenantRepository";
 import { Tenant, type TenantTreeNode } from "../../domain/entities/Tenant";
 import type {
@@ -44,6 +45,10 @@ export class TenantRepository implements ITenantRepository {
       async getById(id: string): Promise<Tenant> {
             const model = await this.service.getById(id);
             return TenantMapper.toEntity(model);
+      }
+
+      async getStats(id: string): Promise<TenantStats> {
+            return this.service.getStats(id);
       }
 
       async create(request: CreateTenantRequest): Promise<string> {

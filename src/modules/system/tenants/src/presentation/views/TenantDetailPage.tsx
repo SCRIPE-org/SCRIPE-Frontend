@@ -128,10 +128,6 @@ export function TenantDetailPage({ tenantId }: TenantDetailPageProps) {
                   {/* Breadcrumbs with Back Button */}
                   <PageBreadcrumbs
                         segments={breadcrumbSegments}
-                        showHome={true}
-                        homeLabel={t("nav.system") || "System"}
-                        showBackButton={true}
-                        onBack={handleBack}
                   />
 
                   {/* Header with Tenant Info */}

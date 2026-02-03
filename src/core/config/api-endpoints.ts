@@ -86,6 +86,7 @@ export const API_ENDPOINTS = {
     LIST: "/Tenants",
     TREE: "/Tenants/tree",
     BY_ID: (id: string) => `/Tenants/${id}`,
+    STATS: (id: string) => `/Tenants/${id}/stats`,
     CREATE: "/Tenants",
     UPDATE: (id: string) => `/Tenants/${id}`,
     DELETE: (id: string) => `/Tenants/${id}`,

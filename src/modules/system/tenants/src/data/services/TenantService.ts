@@ -35,10 +35,21 @@ export interface TenantListResult {
       hasPreviousPage: boolean;
 }
 
+/**
+ * Tenant statistics response
+ */
+export interface TenantStats {
+      adminsCount: number;
+      rolesCount: number;
+      subTenantsCount: number;
+      permissionsCount: number;
+}
+
 export interface ITenantService {
       getAll(params: TenantListParams): Promise<TenantListResult>;
       getTree(): Promise<TenantTreeNodeModel[]>;
       getById(id: string): Promise<TenantModel>;
+      getStats(id: string): Promise<TenantStats>;
       create(json: CreateTenantJson): Promise<{ id: string }>;
       update(id: string, json: UpdateTenantJson): Promise<void>;
       delete(id: string): Promise<void>;
@@ -92,5 +103,9 @@ export class TenantService implements ITenantService {
 
       async delete(id: string): Promise<void> {
             await this.api.delete(API_ENDPOINTS.TENANTS.DELETE(id));
+      }
+
+      async getStats(id: string): Promise<TenantStats> {
+            return this.api.get<TenantStats>(API_ENDPOINTS.TENANTS.STATS(id));
       }
 }

@@ -13,6 +13,8 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { Card, CardContent } from "@core/ui/card";
 import { Users, Shield, Building2, Key, Loader2 } from "lucide-react";
 import { cn } from "@core/common/utils";
+import { systemContainer } from "@modules/system/di";
+import type { TenantStats as TenantStatsType } from "../../domain/interfaces/ITenantRepository";
 
 interface TenantStatsProps {
       tenantId: string;
@@ -32,19 +34,18 @@ export function TenantStats({ tenantId, onTabChange }: TenantStatsProps) {
       const [stats, setStats] = useState<Stats | null>(null);
       const [loading, setLoading] = useState(true);
 
-      // Fetch stats on mount
+      // Fetch stats from API on mount
       useEffect(() => {
             async function fetchStats() {
                   try {
                         setLoading(true);
-                        // TODO: Replace with actual API call when endpoint is available
-                        // For now, use mock data
-                        await new Promise((resolve) => setTimeout(resolve, 500));
+                        // Call real API via repository
+                        const data = await systemContainer.tenantRepository.getStats(tenantId);
                         setStats({
-                              adminsCount: 12,
-                              rolesCount: 5,
-                              subTenantsCount: 3,
-                              permissionsCount: 47,
+                              adminsCount: data.adminsCount,
+                              rolesCount: data.rolesCount,
+                              subTenantsCount: data.subTenantsCount,
+                              permissionsCount: data.permissionsCount,
                         });
                   } catch (error) {
                         console.error("Failed to fetch tenant stats:", error);
