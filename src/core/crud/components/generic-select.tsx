@@ -519,9 +519,18 @@ export const GenericSelect = React.forwardRef<
       calculateDropdownPosition,
     ]);
 
+    // Refs for callback functions to prevent unnecessary re-renders
+    // Must be defined before useEffects that use them
+    const onServerSearchRef = React.useRef(onServerSearch);
+    onServerSearchRef.current = onServerSearch;
+    const hasLoadedInitialServerOptions = React.useRef(false);
+
     // Server-side search with debouncing
     React.useEffect(() => {
-      if (searchType === "server" && searchQuery.trim()) {
+      // Only trigger on actual search query changes, not on every render
+      if (searchType !== "server") return;
+
+      if (searchQuery.trim()) {
         if (debounceRef.current) {
           clearTimeout(debounceRef.current);
         }
@@ -529,8 +538,9 @@ export const GenericSelect = React.forwardRef<
         debounceRef.current = setTimeout(async () => {
           setIsSearching(true);
           try {
-            if (onServerSearch) {
-              const results = await onServerSearch(searchQuery);
+            // Use ref to get latest callback without re-triggering effect
+            if (onServerSearchRef?.current) {
+              const results = await onServerSearchRef.current(searchQuery);
               setServerOptions(results);
             } else if (searchEndpoint) {
               const response = await fetch(
@@ -546,28 +556,36 @@ export const GenericSelect = React.forwardRef<
             setIsSearching(false);
           }
         }, debounceMs);
-      } else if (searchType === "server" && !searchQuery.trim()) {
-        // Don't reset to initial options when search is cleared
-        // Keep the previously loaded server options
+      } else {
+        // Clear search - reload initial data
+        if (debounceRef.current) {
+          clearTimeout(debounceRef.current);
+        }
         setIsSearching(false);
       }
-    }, [
-      searchQuery,
-      searchType,
-      onServerSearch,
-      searchEndpoint,
-      debounceMs,
-      options,
-    ]);
+
+      // Cleanup on unmount
+      return () => {
+        if (debounceRef.current) {
+          clearTimeout(debounceRef.current);
+        }
+      };
+    }, [searchQuery, searchType, searchEndpoint, debounceMs]); // Removed onServerSearch and options
 
     // Initialize server options and load initial data
+
     React.useEffect(() => {
       if (searchType === "server") {
-        setServerOptions(options);
-        // Load initial data when component mounts if onServerSearch is available
-        if (onServerSearch && options.length === 0) {
+        // Only set from props if options has items (static options provided)
+        // Don't overwrite serverOptions with empty array when using onServerSearch
+        if (options.length > 0) {
+          setServerOptions(options);
+        }
+        // Load initial data only once when component mounts (if onServerSearch is available)
+        if (onServerSearchRef.current && !hasLoadedInitialServerOptions.current) {
+          hasLoadedInitialServerOptions.current = true;
           setIsSearching(true);
-          onServerSearch("")
+          onServerSearchRef.current("")
             .then((results: GenericSelectOption[]) => {
               setServerOptions(results);
               setIsSearching(false);
@@ -579,7 +597,7 @@ export const GenericSelect = React.forwardRef<
             });
         }
       }
-    }, [options, searchType, onServerSearch]);
+    }, [options, searchType]); // Removed onServerSearch from deps - using ref instead
 
     // Recalculate position when server options change
     React.useEffect(() => {
