@@ -404,3 +404,76 @@ The `Language()` hook provides fallback values during SSR:
 | `next-intl` or `next-i18next` | Custom `LanguageProvider` with `t()` |
 | URL-based language (`/en/`, `/ar/`) | Cookie/localStorage-based detection |
 
+---
+
+## Storage Keys (Centralized Constants)
+
+**Use for**: All localStorage/sessionStorage keys to prevent typos and enable easy management.
+
+### Location
+
+`@core/config/storage-keys.ts`
+
+### Available Keys
+
+```typescript
+import { STORAGE_KEYS, AUTH_STORAGE_KEYS_TO_CLEAR, CACHE_EXPIRY } from "@core/config/storage-keys";
+
+STORAGE_KEYS = {
+  // Auth tokens (managed by SecureTokenService)
+  ACCESS_TOKEN: "verified_access_token",
+  REFRESH_TOKEN: "verified_refresh_token",
+
+  // User data
+  USER_DATA: "user-data",
+  PERMISSIONS: "permissions",
+  ROLES: "roles",
+
+  // Navigation cache
+  NAVIGATION_CACHE: "navigation_data_v2",
+  NAVIGATION_CACHE_EXPIRY: "navigation_data_expiry_v2",
+
+  // Language & i18n
+  LANGUAGE: "language",
+
+  // Dashboard & Settings
+  DASHBOARD_SETTINGS: "dashboard-settings",
+};
+
+// Pre-defined list of keys to clear on logout
+AUTH_STORAGE_KEYS_TO_CLEAR: StorageKey[]
+
+// Cache expiry times in milliseconds
+CACHE_EXPIRY = {
+  NAVIGATION: 1000 * 60 * 30,      // 30 minutes
+  NAVIGATION_REFRESH_CHECK: 1000 * 60 * 5, // 5 minutes
+};
+```
+
+### Usage Example
+
+```typescript
+// ✅ CORRECT: Use centralized constants
+import { STORAGE_KEYS } from "@core/config/storage-keys";
+
+localStorage.setItem(STORAGE_KEYS.LANGUAGE, "en");
+localStorage.getItem(STORAGE_KEYS.DASHBOARD_SETTINGS);
+localStorage.removeItem(STORAGE_KEYS.NAVIGATION_CACHE);
+
+// ❌ WRONG: Hardcoded strings
+localStorage.setItem("language", "en");
+localStorage.getItem("dashboard-settings");
+```
+
+### STRICT RULES
+
+> [!IMPORTANT]
+> **All localStorage keys MUST be defined in `storage-keys.ts`!** No hardcoded strings.
+
+| ❌ DON'T | ✅ DO |
+|----------|-------|
+| `localStorage.getItem("language")` | `localStorage.getItem(STORAGE_KEYS.LANGUAGE)` |
+| `"navigation-cache"` literal | `STORAGE_KEYS.NAVIGATION_CACHE` |
+| Duplicate key strings | Import from `@core/config/storage-keys` |
+
+

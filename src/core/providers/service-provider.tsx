@@ -2,9 +2,10 @@
 
 import type React from "react";
 import { createContext, useContext, useMemo } from "react";
-import { ApiService } from "@core/services/api.service";
-import { NotificationService } from "@core/services/notification.service";
-import { NavigationService } from "@core/services/navigation.service";
+
+// Core services - using barrel import for hot reload stability
+import { ApiService, NotificationService, NavigationService } from "@core/services";
+
 import { AuthService, type IAuthService } from "@modules/auth/core/data/services/AuthService";
 import { AuthRepository } from "@modules/auth/core/data/repositories/AuthRepository";
 import { UserProfileService, type IUserProfileService } from "@modules/user/src/data/services/UserProfileService";
