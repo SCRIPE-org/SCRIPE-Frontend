@@ -2,36 +2,41 @@
  * Permission Category Row Component
  *
  * Displays a single category of permissions with expand/collapse and selection.
+ * Uses permission CODES for selection matching (not IDs) since backend returns
+ * different encrypted IDs for different endpoints.
  */
 import { ChevronRight, ChevronDown, Settings, CheckCircle2 } from "lucide-react";
 import { Badge } from "@core/ui/badge";
 import { Checkbox } from "@core/ui/checkbox";
+import { useI18n } from "@core/providers/i18n-provider";
 import type { Permission } from "@modules/system/permissions/src/domain/entities/Permission";
 
 export interface PermissionCategoryRowProps {
       category: string;
       permissions: Permission[];
       isExpanded: boolean;
-      selectedPermissions: Set<string>;
+      selectedPermissionCodes: Set<string>;
       categoryIcon?: React.ReactNode;
-      language: string;
       onToggleCategory: () => void;
       onToggleAllInCategory: () => void;
-      onTogglePermission: (id: string) => void;
+      onTogglePermission: (code: string) => void;
 }
 
 export function PermissionCategoryRow({
       category,
       permissions,
       isExpanded,
-      selectedPermissions,
+      selectedPermissionCodes,
       categoryIcon,
-      language,
       onToggleCategory,
       onToggleAllInCategory,
       onTogglePermission,
 }: PermissionCategoryRowProps) {
-      const selectedCount = permissions.filter((p) => selectedPermissions.has(p.id)).length;
+      // Used only for re-rendering on language change if needed, but PermissionRow handles it
+      useI18n();
+
+      // Match by CODE instead of ID
+      const selectedCount = permissions.filter((p) => selectedPermissionCodes.has(p.code)).length;
       const allSelected = selectedCount === permissions.length;
       const someSelected = selectedCount > 0 && selectedCount < permissions.length;
 
@@ -67,9 +72,8 @@ export function PermissionCategoryRow({
                                     <PermissionRow
                                           key={permission.id}
                                           permission={permission}
-                                          isSelected={selectedPermissions.has(permission.id)}
-                                          language={language}
-                                          onToggle={() => onTogglePermission(permission.id)}
+                                          isSelected={selectedPermissionCodes.has(permission.code)}
+                                          onToggle={() => onTogglePermission(permission.code)}
                                     />
                               ))}
                         </div>
@@ -81,11 +85,12 @@ export function PermissionCategoryRow({
 interface PermissionRowProps {
       permission: Permission;
       isSelected: boolean;
-      language: string;
       onToggle: () => void;
 }
 
-function PermissionRow({ permission, isSelected, language, onToggle }: PermissionRowProps) {
+function PermissionRow({ permission, isSelected, onToggle }: PermissionRowProps) {
+      const { language } = useI18n();
+
       return (
             <label className="flex items-center gap-3 px-4 py-2 pl-14 hover:bg-muted/30 cursor-pointer transition-colors">
                   <Checkbox checked={isSelected} onCheckedChange={onToggle} />

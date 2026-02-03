@@ -7,6 +7,7 @@ import { Shield } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
 import { Skeleton } from "@core/ui/skeleton";
+import { useI18n } from "@core/providers/i18n-provider";
 import type { Role } from "../../domain/entities/Role";
 
 export interface RoleInfoCardProps {
@@ -14,7 +15,6 @@ export interface RoleInfoCardProps {
       isLoading: boolean;
       selectedCount: number;
       totalCount: number;
-      t: (key: string) => string;
 }
 
 export function RoleInfoCard({
@@ -22,8 +22,9 @@ export function RoleInfoCard({
       isLoading,
       selectedCount,
       totalCount,
-      t,
 }: RoleInfoCardProps) {
+      const { t } = useI18n();
+
       return (
             <Card>
                   <CardHeader>

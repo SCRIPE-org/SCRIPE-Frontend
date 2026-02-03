@@ -3,12 +3,16 @@
  *
  * Displays role details with permissions tree for assignment.
  * Refactored to use extracted components and localization.
+ * 
+ * NOTE: Permission matching uses `code` instead of `id` because
+ * the backend returns different encrypted IDs for rolePermissions vs allPermissions.
  */
 "use client";
 
 import { useState, useCallback, useMemo, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { appLogger } from "@core/common/logger";
 import { useI18n } from "@core/providers/i18n-provider";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
@@ -49,8 +53,8 @@ export default function RoleDetailView() {
 
       const { roleRepository, permissionRepository } = systemContainer;
 
-      // State
-      const [selectedPermissions, setSelectedPermissions] = useState<Set<string>>(new Set());
+      // State - Now stores permission CODES instead of IDs for matching
+      const [selectedPermissionCodes, setSelectedPermissionCodes] = useState<Set<string>>(new Set());
       const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
       const [searchQuery, setSearchQuery] = useState("");
 
@@ -74,17 +78,48 @@ export default function RoleDetailView() {
             queryFn: () => permissionRepository.getMyPermissions(),
       });
 
-      // Initialize selected permissions when data loads
+      // Initialize selected permissions when data loads - USE CODES for matching
       useEffect(() => {
-            if (rolePermissions) {
-                  const permIds = new Set(rolePermissions.map((rp: any) => rp.permissionId || rp.id));
-                  setSelectedPermissions(permIds);
+            if (rolePermissions && rolePermissions.length > 0) {
+                  appLogger.debug("rolePermissions raw:", rolePermissions);
+                  appLogger.debug("rolePermissions sample:", rolePermissions[0]);
+
+                  // Extract permission CODES (not IDs) for matching
+                  const permCodes = new Set(
+                        rolePermissions.map((rp: any) =>
+                              rp.permissionCode || rp.PermissionCode || rp.code || rp.Code
+                        ).filter(Boolean)
+                  );
+
+                  appLogger.debug("Extracted permission CODES:", Array.from(permCodes));
+                  setSelectedPermissionCodes(permCodes as Set<string>);
             }
       }, [rolePermissions]);
 
-      // Save permissions mutation
+      // Debug: Log allPermissions IDs when they load
+      useEffect(() => {
+            if (allPermissions && allPermissions.length > 0) {
+                  appLogger.debug("allPermissions sample ID:", allPermissions[0].id);
+                  appLogger.debug("allPermissions sample code:", allPermissions[0].code);
+            }
+      }, [allPermissions]);
+
+      // Save permissions mutation - Need to convert codes back to IDs for API
       const saveMutation = useMutation({
-            mutationFn: async (permissionIds: string[]) => {
+            mutationFn: async (permissionCodes: string[]) => {
+                  // Map codes to IDs using allPermissions
+                  const codeToIdMap = new Map<string, string>();
+                  allPermissions?.forEach(p => {
+                        codeToIdMap.set(p.code, p.id);
+                  });
+
+                  const permissionIds = permissionCodes
+                        .map(code => codeToIdMap.get(code))
+                        .filter(Boolean) as string[];
+
+                  appLogger.debug("Saving permissions - codes:", permissionCodes);
+                  appLogger.debug("Saving permissions - ids:", permissionIds);
+
                   await roleRepository.assignPermissions(roleId, {
                         permissions: permissionIds.map((id) => ({
                               permissionId: id,
@@ -144,28 +179,28 @@ export default function RoleDetailView() {
             });
       }, []);
 
-      // Toggle permission selection
-      const togglePermission = useCallback((permissionId: string) => {
-            setSelectedPermissions((prev) => {
+      // Toggle permission selection - now uses CODE
+      const togglePermission = useCallback((permissionCode: string) => {
+            setSelectedPermissionCodes((prev) => {
                   const next = new Set(prev);
-                  next.has(permissionId) ? next.delete(permissionId) : next.add(permissionId);
+                  next.has(permissionCode) ? next.delete(permissionCode) : next.add(permissionCode);
                   return next;
             });
       }, []);
 
-      // Toggle all permissions in a category
+      // Toggle all permissions in a category - now uses CODES
       const toggleCategoryPermissions = useCallback(
             (permissions: Permission[]) => {
-                  const categoryIds = permissions.map((p) => p.id);
-                  const allSelected = categoryIds.every((id) => selectedPermissions.has(id));
+                  const categoryCodes = permissions.map((p) => p.code);
+                  const allSelected = categoryCodes.every((code) => selectedPermissionCodes.has(code));
 
-                  setSelectedPermissions((prev) => {
+                  setSelectedPermissionCodes((prev) => {
                         const next = new Set(prev);
-                        categoryIds.forEach((id) => (allSelected ? next.delete(id) : next.add(id)));
+                        categoryCodes.forEach((code) => (allSelected ? next.delete(code) : next.add(code)));
                         return next;
                   });
             },
-            [selectedPermissions]
+            [selectedPermissionCodes]
       );
 
       // Expand/collapse all
@@ -179,14 +214,14 @@ export default function RoleDetailView() {
 
       // Save handler
       const handleSave = useCallback(() => {
-            saveMutation.mutate(Array.from(selectedPermissions));
-      }, [selectedPermissions, saveMutation]);
+            saveMutation.mutate(Array.from(selectedPermissionCodes));
+      }, [selectedPermissionCodes, saveMutation]);
 
       const isLoading = roleLoading || permissionsLoading || rolePermissionsLoading;
 
       return (
             <div className="container mx-auto py-6 space-y-6">
-                  {/* Header */}
+                  {/* Header -> Using Breadcrumbs inside */}
                   <RoleDetailHeader
                         role={role}
                         isLoading={roleLoading}
@@ -199,9 +234,8 @@ export default function RoleDetailView() {
                         <RoleInfoCard
                               role={role}
                               isLoading={roleLoading}
-                              selectedCount={selectedPermissions.size}
+                              selectedCount={selectedPermissionCodes.size}
                               totalCount={allPermissions?.length || 0}
-                              t={t}
                         />
 
                         {/* Permissions Tree */}
@@ -242,9 +276,8 @@ export default function RoleDetailView() {
                                                             category={cat.category}
                                                             permissions={cat.permissions}
                                                             isExpanded={expandedCategories.has(cat.category)}
-                                                            selectedPermissions={selectedPermissions}
+                                                            selectedPermissionCodes={selectedPermissionCodes}
                                                             categoryIcon={CATEGORY_ICONS[cat.category]}
-                                                            language={language}
                                                             onToggleCategory={() => toggleCategory(cat.category)}
                                                             onToggleAllInCategory={() => toggleCategoryPermissions(cat.permissions)}
                                                             onTogglePermission={togglePermission}

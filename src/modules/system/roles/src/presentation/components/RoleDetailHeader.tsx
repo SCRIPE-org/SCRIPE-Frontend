@@ -34,18 +34,24 @@ export function RoleDetailHeader({
             <div className="space-y-4">
                   {/* Breadcrumbs */}
                   <PageBreadcrumbs
+                        showHome={true}
                         segments={breadcrumbSegments}
                   />
 
                   {/* Title and Save Button */}
                   <div className="flex items-center justify-between">
                         <div>
-                              <h1 className="text-3xl font-bold">
-                                    {isLoading ? <Skeleton className="h-9 w-48" /> : role?.name}
-                              </h1>
-                              <p className="text-muted-foreground">
-                                    {isLoading ? <Skeleton className="h-5 w-32 mt-1" /> : role?.code}
-                              </p>
+                              {isLoading ? (
+                                    <>
+                                          <Skeleton className="h-9 w-48" />
+                                          <Skeleton className="h-5 w-32 mt-1" />
+                                    </>
+                              ) : (
+                                    <>
+                                          <h1 className="text-3xl font-bold">{role?.name}</h1>
+                                          <span className="text-muted-foreground">{role?.code}</span>
+                                    </>
+                              )}
                         </div>
                         <Button onClick={onSave} disabled={isSaving}>
                               <Save className="mr-2 h-4 w-4" />
