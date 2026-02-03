@@ -1,1 +1,5 @@
-import { ProfileView } from "@modules/user"; export default function ProfilePage() { return <ProfileView />; }
+import { ProfileView } from "@modules/user/src/presentation/views/ProfileView";
+
+export default function ProfilePage() {
+      return <ProfileView />;
+}

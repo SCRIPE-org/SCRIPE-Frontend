@@ -1,9 +1,13 @@
 /**
  * Profile View Model
- * 
+ *
  * Handles profile management business logic including fetching,
- * updating profile data, and password changes. Uses domain models
- * and services for clean separation of concerns.
+ * updating profile data, and password changes.
+ *
+ * Clean Architecture:
+ * View → ViewModel → Repository → Service → IApiService
+ *
+ * SOLID: All state lives here, View is pure UI.
  */
 
 import { useState, useCallback, useEffect } from "react";
@@ -11,10 +15,13 @@ import { useServices } from "@core/providers/service-provider";
 import { useI18n } from "@core/providers/i18n-provider";
 import { handleError, getUserFriendlyErrorMessage } from "@core/common/error-handler";
 import { appLogger } from "@core/common/logger";
-import { User } from "@modules/auth/core/domain/entities/User"; // Keep User import
-import { UserMapper } from "../../data/mappers/UserMapper"; // Changed UserMapper import path
-import type { UpdateProfileRequest, ChangePasswordRequest } from "@core/services/user.service";
-import { validateForm, VALIDATION_SETS, passwordConfirmation, isFormValid } from "@core/common/validation";
+import type { User } from "@modules/auth/core/domain/entities/User";
+import {
+  validateForm,
+  VALIDATION_SETS,
+  passwordConfirmation,
+  isFormValid,
+} from "@core/common/validation";
 
 export interface ProfileFormData {
   firstName: string;
@@ -59,8 +66,8 @@ export function useProfileViewModel() {
     confirm: false,
   });
 
-  // Services
-  const { userService } = useServices();
+  // Repository from ServiceProvider (SOLID compliant)
+  const { userProfileRepository } = useServices();
   const { t } = useI18n();
 
   // Fetch profile data
@@ -69,7 +76,7 @@ export function useProfileViewModel() {
       setProfileLoading(true);
       setProfileError("");
 
-      const user = await userService.getCurrentUser();
+      const user = await userProfileRepository.getCurrentUser();
       setProfile(user);
 
       // Update form data with user data
@@ -81,14 +88,17 @@ export function useProfileViewModel() {
 
       appLogger.info("Profile fetched successfully", { userId: user.id });
     } catch (error) {
-      const appError = handleError(error as Error, 'ProfileViewModel.fetchProfile');
+      const appError = handleError(
+        error as Error,
+        "ProfileViewModel.fetchProfile"
+      );
       appLogger.error("Failed to fetch profile:", { error, appError });
       const errorMessage = getUserFriendlyErrorMessage(appError);
       setProfileError(errorMessage);
     } finally {
       setProfileLoading(false);
     }
-  }, [userService]);
+  }, [userProfileRepository]);
 
   // Update profile
   const updateProfile = useCallback(async () => {
@@ -97,20 +107,19 @@ export function useProfileViewModel() {
       setProfileUpdateError("");
       setProfileSuccess(false);
 
-      // Validate profile data
-      const validation = userService.validateProfileData(profileFormData);
+      // Validate profile data using repository method
+      const validation = userProfileRepository.validateProfileData(profileFormData);
       if (!validation.isValid) {
         setProfileUpdateError(validation.message || "Invalid profile data");
         return;
       }
 
-      const updateRequest: UpdateProfileRequest = {
+      const updatedUser = await userProfileRepository.updateProfile({
         firstName: profileFormData.firstName.trim(),
         lastName: profileFormData.lastName.trim(),
         phoneNumber: profileFormData.phoneNumber.trim(),
-      };
+      });
 
-      const updatedUser = await userService.updateProfile(updateRequest);
       setProfile(updatedUser);
       setProfileSuccess(true);
 
@@ -119,14 +128,17 @@ export function useProfileViewModel() {
 
       appLogger.info("Profile updated successfully", { userId: updatedUser.id });
     } catch (error) {
-      const appError = handleError(error as Error, 'ProfileViewModel.updateProfile');
+      const appError = handleError(
+        error as Error,
+        "ProfileViewModel.updateProfile"
+      );
       appLogger.error("Failed to update profile:", { error, appError });
       const errorMessage = getUserFriendlyErrorMessage(appError);
       setProfileUpdateError(errorMessage);
     } finally {
       setProfileUpdateLoading(false);
     }
-  }, [profileFormData, userService]);
+  }, [profileFormData, userProfileRepository]);
 
   // Change password
   const changePassword = useCallback(async () => {
@@ -137,28 +149,36 @@ export function useProfileViewModel() {
 
       // Validate password form with confirmation
       const passwordValidationSet = {
-        currentPassword: [...VALIDATION_SETS.PASSWORD_CHANGE_FORM.currentPassword],
+        currentPassword: [
+          ...VALIDATION_SETS.PASSWORD_CHANGE_FORM.currentPassword,
+        ],
         newPassword: [...VALIDATION_SETS.PASSWORD_CHANGE_FORM.newPassword],
         confirmPassword: [
           ...VALIDATION_SETS.PASSWORD_CHANGE_FORM.confirmPassword,
-          passwordConfirmation(passwordFormData.newPassword, "Passwords do not match")
-        ]
+          passwordConfirmation(
+            passwordFormData.newPassword,
+            "Passwords do not match"
+          ),
+        ],
       };
 
-      const validationResults = validateForm(passwordFormData, passwordValidationSet);
+      const validationResults = validateForm(
+        passwordFormData,
+        passwordValidationSet
+      );
 
       if (!isFormValid(validationResults)) {
-        const firstError = Object.values(validationResults).find(result => !result.isValid);
+        const firstError = Object.values(validationResults).find(
+          (result) => !result.isValid
+        );
         setPasswordError(firstError?.message || "Invalid password data");
         return;
       }
 
-      const passwordRequest: ChangePasswordRequest = {
+      await userProfileRepository.changePassword({
         currentPassword: passwordFormData.currentPassword,
         newPassword: passwordFormData.newPassword,
-      };
-
-      await userService.changePassword(passwordRequest);
+      });
 
       // Reset form on success
       setPasswordFormData({
@@ -172,31 +192,41 @@ export function useProfileViewModel() {
 
       appLogger.info("Password changed successfully");
     } catch (error) {
-      const appError = handleError(error as Error, 'ProfileViewModel.changePassword');
+      const appError = handleError(
+        error as Error,
+        "ProfileViewModel.changePassword"
+      );
       appLogger.error("Failed to change password:", { error, appError });
       const errorMessage = getUserFriendlyErrorMessage(appError);
       setPasswordError(errorMessage);
     } finally {
       setPasswordUpdateLoading(false);
     }
-  }, [passwordFormData, userService]);
+  }, [passwordFormData, userProfileRepository]);
 
   // Form field handlers
-  const updateProfileField = useCallback((field: keyof ProfileFormData, value: string) => {
-    setProfileFormData(prev => ({ ...prev, [field]: value }));
-    // Clear errors when user starts typing
-    if (profileUpdateError) setProfileUpdateError("");
-  }, [profileUpdateError]);
+  const updateProfileField = useCallback(
+    (field: keyof ProfileFormData, value: string) => {
+      setProfileFormData((prev) => ({ ...prev, [field]: value }));
+      if (profileUpdateError) setProfileUpdateError("");
+    },
+    [profileUpdateError]
+  );
 
-  const updatePasswordField = useCallback((field: keyof PasswordFormData, value: string) => {
-    setPasswordFormData(prev => ({ ...prev, [field]: value }));
-    // Clear errors when user starts typing
-    if (passwordError) setPasswordError("");
-  }, [passwordError]);
+  const updatePasswordField = useCallback(
+    (field: keyof PasswordFormData, value: string) => {
+      setPasswordFormData((prev) => ({ ...prev, [field]: value }));
+      if (passwordError) setPasswordError("");
+    },
+    [passwordError]
+  );
 
-  const togglePasswordVisibility = useCallback((field: keyof typeof showPasswords) => {
-    setShowPasswords(prev => ({ ...prev, [field]: !prev[field] }));
-  }, []);
+  const togglePasswordVisibility = useCallback(
+    (field: keyof typeof showPasswords) => {
+      setShowPasswords((prev) => ({ ...prev, [field]: !prev[field] }));
+    },
+    []
+  );
 
   // Load profile on mount
   useEffect(() => {
@@ -231,7 +261,11 @@ export function useProfileViewModel() {
     togglePasswordVisibility,
 
     // Computed
-    isProfileFormValid: isFormValid(validateForm(profileFormData, VALIDATION_SETS.PROFILE_FORM)),
-    isPasswordFormValid: isFormValid(validateForm(passwordFormData, VALIDATION_SETS.PASSWORD_CHANGE_FORM)),
+    isProfileFormValid: isFormValid(
+      validateForm(profileFormData, VALIDATION_SETS.PROFILE_FORM)
+    ),
+    isPasswordFormValid: isFormValid(
+      validateForm(passwordFormData, VALIDATION_SETS.PASSWORD_CHANGE_FORM)
+    ),
   };
 }

@@ -1,10 +1,11 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { createContext, useContext, useState, useEffect } from "react"
-import { useSettings } from "@core/providers/settings-provider"
-import { ar } from "@core/locales/ar"
-import { en } from "@core/locales/en"
+import type React from "react";
+import { createContext, useContext, useState, useEffect } from "react";
+import { useSettings } from "@core/providers/settings-provider";
+import { ar } from "@core/locales/ar";
+import { en } from "@core/locales/en";
+import { STORAGE_KEYS } from "@core/config/storage-keys";
 
 export type Language = "ar" | "en"
 type Direction = "rtl" | "ltr"
@@ -32,7 +33,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
   const t = (key: string, params?: Record<string, any>): string => {
     const keys = key.split('.')
     let value: any = translations[language]
-    
+
     for (const k of keys) {
       if (value && typeof value === 'object' && k in value) {
         value = value[k]
@@ -40,7 +41,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
         return key // Return the key if path not found
       }
     }
-    
+
     if (typeof value === 'string') {
       // Simple interpolation: replace {{param}} with actual values
       if (params) {
@@ -50,15 +51,15 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
       }
       return value
     }
-    
+
     return key
   }
 
   const handleSetLanguage = (lang: Language) => {
-    setLanguage(lang)
-    localStorage.setItem("language", lang)
-    document.documentElement.setAttribute("dir", lang === "ar" ? "rtl" : "ltr")
-    document.documentElement.setAttribute("lang", lang)
+    setLanguage(lang);
+    localStorage.setItem(STORAGE_KEYS.LANGUAGE, lang);
+    document.documentElement.setAttribute("dir", lang === "ar" ? "rtl" : "ltr");
+    document.documentElement.setAttribute("lang", lang);
 
     // Update body class for font
     if (lang === "ar") {
@@ -71,15 +72,15 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
   }
 
   useEffect(() => {
-    setIsHydrated(true)
-    const savedLanguage = localStorage.getItem("language") as Language
+    setIsHydrated(true);
+    const savedLanguage = localStorage.getItem(STORAGE_KEYS.LANGUAGE) as Language;
     if (savedLanguage && (savedLanguage === "en" || savedLanguage === "ar")) {
-      handleSetLanguage(savedLanguage)
+      handleSetLanguage(savedLanguage);
     } else {
       // Set Arabic as default
-      handleSetLanguage("ar")
+      handleSetLanguage("ar");
     }
-  }, [])
+  }, []);
 
   return (
     <I18nContext.Provider
@@ -103,7 +104,7 @@ export function useI18n() {
       return {
         language: 'ar' as const,
         direction: 'rtl' as const,
-        setLanguage: () => {},
+        setLanguage: () => { },
         t: (key: string, params?: Record<string, any>) => key, // Return key as fallback during SSR
       };
     }
@@ -111,7 +112,7 @@ export function useI18n() {
     return {
       language: 'ar' as const,
       direction: 'rtl' as const,
-      setLanguage: () => {},
+      setLanguage: () => { },
       t: (key: string, params?: Record<string, any>) => key,
     };
   }

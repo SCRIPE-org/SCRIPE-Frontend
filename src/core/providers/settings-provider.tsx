@@ -3,6 +3,7 @@
 import type React from "react";
 import { createContext, useContext, useEffect, useState } from "react";
 import { appLogger } from "@core/common/logger";
+import { STORAGE_KEYS } from "@core/config/storage-keys";
 
 // Define all possible setting types
 export type ColorTheme =
@@ -104,7 +105,7 @@ export type ToastDesign = "minimal" | "modern" | "gradient" | "outlined" | "fill
 export type DatePickerStyle = "default" | "modern" | "glass" | "outlined" | "filled" | "minimal" | "elegant";
 export type CalendarStyle = "default" | "modern" | "glass" | "elegant" | "minimal" | "dark";
 
-export type SelectStyle = 
+export type SelectStyle =
   | "default"
   | "modern"
   | "glass"
@@ -135,7 +136,7 @@ export type SelectStyle =
 
 export type SwitchStyle = "default" | "modern" | "ios" | "android" | "toggle" | "slider" | "neon" | "neumorphism" | "liquid" | "cyberpunk" | "glassmorphism" | "aurora" | "matrix" | "cosmic" | "retro";
 
-export type CheckboxStyle = 
+export type CheckboxStyle =
   | "default"
   | "modern"
   | "glass"
@@ -161,7 +162,7 @@ export type CheckboxStyle =
   | "vortex"
   | "phoenix";
 
-export type RadioStyle = 
+export type RadioStyle =
   | "default"
   | "modern"
   | "glass"
@@ -187,7 +188,7 @@ export type RadioStyle =
   | "vortex"
   | "phoenix";
 
-export type ToastStyle = 
+export type ToastStyle =
   | "classic"
   | "neon"
   | "glassmorphism"
@@ -199,7 +200,7 @@ export type ToastStyle =
   | "gradient"
   | "outlined";
 
-export type HoverEffectType = 
+export type HoverEffectType =
   | "none"
   | "elevate"
   | "scale"
@@ -407,98 +408,98 @@ function createFallbackSettings(): Partial<SettingsContextType> {
   return {
     // Color theme
     colorTheme: 'purple' as ColorTheme,
-    setColorTheme: () => {},
-    
+    setColorTheme: () => { },
+
     // Background themes
     lightBackgroundTheme: 'default' as LightBackgroundTheme,
-    setLightBackgroundTheme: () => {},
+    setLightBackgroundTheme: () => { },
     darkBackgroundTheme: 'default' as DarkBackgroundTheme,
-    setDarkBackgroundTheme: () => {},
-    
+    setDarkBackgroundTheme: () => { },
+
     // Shadow intensity
     shadowIntensity: 'moderate' as ShadowIntensity,
-    setShadowIntensity: () => {},
-    
+    setShadowIntensity: () => { },
+
     // Layout template
     layoutTemplate: 'modern' as LayoutTemplate,
-    setLayoutTemplate: () => {},
-    
+    setLayoutTemplate: () => { },
+
     // Font size
     fontSize: 'default' as FontSize,
-    setFontSize: () => {},
-    
+    setFontSize: () => { },
+
     // Border radius
     borderRadius: 'default' as BorderRadius,
-    setBorderRadius: () => {},
-    
+    setBorderRadius: () => { },
+
     // Sidebar position
     sidebarPosition: 'right' as SidebarPosition,
-    setSidebarPosition: () => {},
-    
+    setSidebarPosition: () => { },
+
     // Component styles
     cardStyle: 'default' as CardStyle,
-    setCardStyle: () => {},
+    setCardStyle: () => { },
     badgeStyle: 'default' as BadgeStyle,
-    setBadgeStyle: () => {},
+    setBadgeStyle: () => { },
     buttonStyle: 'default' as ButtonStyle,
-    setButtonStyle: () => {},
+    setButtonStyle: () => { },
     inputStyle: 'default' as InputStyle,
-    setInputStyle: () => {},
+    setInputStyle: () => { },
     selectStyle: 'default' as SelectStyle,
-    setSelectStyle: () => {},
+    setSelectStyle: () => { },
     switchStyle: 'default' as SwitchStyle,
-    setSwitchStyle: () => {},
+    setSwitchStyle: () => { },
     datePickerStyle: 'default' as DatePickerStyle,
-    setDatePickerStyle: () => {},
+    setDatePickerStyle: () => { },
     calendarStyle: 'default' as CalendarStyle,
-    setCalendarStyle: () => {},
+    setCalendarStyle: () => { },
     toastStyle: 'default' as ToastStyle,
-    setToastStyle: () => {},
-    
+    setToastStyle: () => { },
+
     // Animation settings
     animationLevel: 'moderate' as AnimationLevel,
-    setAnimationLevel: () => {},
+    setAnimationLevel: () => { },
     sidebarStyle: "default" as SidebarStyle,
-    
+
     // Navigation settings
     navigationStyle: 'default' as NavigationStyle,
-    setNavigationStyle: () => {},
+    setNavigationStyle: () => { },
     iconStyle: 'outline' as IconStyle,
-    setIconStyle: () => {},
+    setIconStyle: () => { },
     spacingSize: 'default' as SpacingSize,
-    setSpacingSize: () => {},
+    setSpacingSize: () => { },
     loadingStyle: "spinner" as LoadingStyle,
-    
+
     // Additional settings
     compactMode: false,
-    setCompactMode: () => {},
+    setCompactMode: () => { },
     highContrast: false,
-    setHighContrast: () => {},
+    setHighContrast: () => { },
     reducedMotion: false,
-    setReducedMotion: () => {},
+    setReducedMotion: () => { },
     stickyHeader: true,
-    setStickyHeader: () => {},
+    setStickyHeader: () => { },
     showFooter: true,
-    setShowFooter: () => {},
+    setShowFooter: () => { },
     formStyle: 'default' as FormStyle,
-    setFormStyle: () => {},
+    setFormStyle: () => { },
     checkboxStyle: 'default' as CheckboxStyle,
-    setCheckboxStyle: () => {},
+    setCheckboxStyle: () => { },
     radioStyle: 'default' as RadioStyle,
-    setRadioStyle: () => {},
-    
+    setRadioStyle: () => { },
+
     // Logo settings
     logoType: 'default' as LogoType,
-    setLogoType: () => {},
+    setLogoType: () => { },
     modalStyle: "default" as ModalStyle,
     tableStyle: "default" as TableStyle,
     treeStyle: "modern" as TreeStyle,
-    
+
     // Hover effect settings
     hoverEffectType: 'elevate' as HoverEffectType,
-    setHoverEffectType: () => {},
+    setHoverEffectType: () => { },
     hoverEffectIntensity: 'medium' as HoverEffectIntensity,
-    setHoverEffectIntensity: () => {},
+    setHoverEffectIntensity: () => { },
   };
 }
 
@@ -517,7 +518,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   // Load settings from localStorage on mount
   useEffect(() => {
     try {
-      const savedSettings = localStorage.getItem("dashboard-settings");
+      const savedSettings = localStorage.getItem(STORAGE_KEYS.DASHBOARD_SETTINGS);
       if (savedSettings) {
         const parsed = JSON.parse(savedSettings);
         setSettings({ ...defaultSettings, ...parsed });
@@ -533,7 +534,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (isHydrated && settings.autoSave) {
       try {
-        localStorage.setItem("dashboard-settings", JSON.stringify(settings));
+        localStorage.setItem(STORAGE_KEYS.DASHBOARD_SETTINGS, JSON.stringify(settings));
       } catch (error) {
         appLogger.error("Failed to save settings:", error);
       }
@@ -589,8 +590,8 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
         settings.fontSize === "small"
           ? "14px"
           : settings.fontSize === "large"
-          ? "18px"
-          : "16px"
+            ? "18px"
+            : "16px"
       );
 
       root.style.setProperty(
@@ -598,10 +599,10 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
         settings.spacingSize === "compact"
           ? "0.5rem"
           : settings.spacingSize === "comfortable"
-          ? "1.5rem"
-          : settings.spacingSize === "spacious"
-          ? "2rem"
-          : "1rem"
+            ? "1.5rem"
+            : settings.spacingSize === "spacious"
+              ? "2rem"
+              : "1rem"
       );
 
       root.style.setProperty(
@@ -609,12 +610,12 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
         settings.borderRadius === "none"
           ? "0"
           : settings.borderRadius === "small"
-          ? "0.25rem"
-          : settings.borderRadius === "large"
-          ? "0.75rem"
-          : settings.borderRadius === "full"
-          ? "9999px"
-          : "0.5rem"
+            ? "0.25rem"
+            : settings.borderRadius === "large"
+              ? "0.75rem"
+              : settings.borderRadius === "full"
+                ? "9999px"
+                : "0.5rem"
       );
 
       root.style.setProperty(
@@ -622,10 +623,10 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
         settings.shadowIntensity === "none"
           ? "none"
           : settings.shadowIntensity === "subtle"
-          ? "0 1px 2px 0 rgb(0 0 0 / 0.05)"
-          : settings.shadowIntensity === "strong"
-          ? "0 25px 50px -12px rgb(0 0 0 / 0.25)"
-          : "0 4px 6px -1px rgb(0 0 0 / 0.1)"
+            ? "0 1px 2px 0 rgb(0 0 0 / 0.05)"
+            : settings.shadowIntensity === "strong"
+              ? "0 25px 50px -12px rgb(0 0 0 / 0.25)"
+              : "0 4px 6px -1px rgb(0 0 0 / 0.1)"
       );
     }
   }, [settings, isHydrated]);

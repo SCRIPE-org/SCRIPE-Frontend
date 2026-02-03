@@ -7,11 +7,7 @@ import { useServices } from "@core/providers/service-provider";
 import { NavigationData, MenuItemActions } from "@core/domain/entities";
 import { NavigationMapper } from "@core/domain/mappers/NavigationMapper";
 import { appLogger } from "@core/common/logger";
-
-// LocalStorage key for navigation cache
-export const NAVIGATION_CACHE_KEY = "navigation_data_v2"; // Updated version for new structure
-export const NAVIGATION_CACHE_EXPIRY_KEY = "navigation_data_expiry_v2";
-const CACHE_EXPIRY_TIME = 1000 * 60 * 30; // 30 minutes
+import { STORAGE_KEYS, CACHE_EXPIRY } from "@core/config/storage-keys";
 
 interface NavigationContextType {
   navigationData: NavigationData | null;
@@ -27,10 +23,10 @@ const NavigationContext = createContext<NavigationContextType | undefined>(undef
 export function NavigationProvider({ children }: { children: React.ReactNode }) {
   // Initialize with cached data immediately (sync operation)
   const [navigationData, setNavigationData] = useState<NavigationData | null>(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       try {
-        const cachedData = localStorage.getItem(NAVIGATION_CACHE_KEY);
-        const cacheExpiry = localStorage.getItem(NAVIGATION_CACHE_EXPIRY_KEY);
+        const cachedData = localStorage.getItem(STORAGE_KEYS.NAVIGATION_CACHE);
+        const cacheExpiry = localStorage.getItem(STORAGE_KEYS.NAVIGATION_CACHE_EXPIRY);
 
         if (!cachedData || !cacheExpiry) {
           return null;
@@ -40,21 +36,21 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
         const now = Date.now();
 
         if (now > expiryTime) {
-          localStorage.removeItem(NAVIGATION_CACHE_KEY);
-          localStorage.removeItem(NAVIGATION_CACHE_EXPIRY_KEY);
+          localStorage.removeItem(STORAGE_KEYS.NAVIGATION_CACHE);
+          localStorage.removeItem(STORAGE_KEYS.NAVIGATION_CACHE_EXPIRY);
           return null;
         }
 
         const parsedData = JSON.parse(cachedData);
         const navData = NavigationMapper.navigationDataFromJson({
           menuItems: parsedData.menuItems,
-          routes: parsedData.routes
+          routes: parsedData.routes,
         });
 
-        appLogger.debug('Navigation data loaded from cache on initialization');
+        appLogger.debug("Navigation data loaded from cache on initialization");
         return navData;
       } catch (error) {
-        appLogger.error('Failed to load navigation from cache on init:', error);
+        appLogger.error("Failed to load navigation from cache on init:", error);
         return null;
       }
     }
@@ -72,8 +68,8 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
    */
   const loadFromCache = useCallback((): NavigationData | null => {
     try {
-      const cachedData = localStorage.getItem(NAVIGATION_CACHE_KEY);
-      const cacheExpiry = localStorage.getItem(NAVIGATION_CACHE_EXPIRY_KEY);
+      const cachedData = localStorage.getItem(STORAGE_KEYS.NAVIGATION_CACHE);
+      const cacheExpiry = localStorage.getItem(STORAGE_KEYS.NAVIGATION_CACHE_EXPIRY);
 
       if (!cachedData || !cacheExpiry) {
         return null;
@@ -84,9 +80,9 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
 
       // Check if cache is expired
       if (now > expiryTime) {
-        appLogger.debug('Navigation cache expired, clearing...');
-        localStorage.removeItem(NAVIGATION_CACHE_KEY);
-        localStorage.removeItem(NAVIGATION_CACHE_EXPIRY_KEY);
+        appLogger.debug("Navigation cache expired, clearing...");
+        localStorage.removeItem(STORAGE_KEYS.NAVIGATION_CACHE);
+        localStorage.removeItem(STORAGE_KEYS.NAVIGATION_CACHE_EXPIRY);
         return null;
       }
 
@@ -94,16 +90,16 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
       const parsedData = JSON.parse(cachedData);
       const navigationData = NavigationMapper.navigationDataFromJson({
         menuItems: parsedData.menuItems,
-        routes: parsedData.routes
+        routes: parsedData.routes,
       });
 
-      appLogger.debug('Navigation data loaded from cache');
+      appLogger.debug("Navigation data loaded from cache");
       return navigationData;
     } catch (error) {
-      appLogger.error('Failed to load navigation from cache:', error);
+      appLogger.error("Failed to load navigation from cache:", error);
       // Clear invalid cache
-      localStorage.removeItem(NAVIGATION_CACHE_KEY);
-      localStorage.removeItem(NAVIGATION_CACHE_EXPIRY_KEY);
+      localStorage.removeItem(STORAGE_KEYS.NAVIGATION_CACHE);
+      localStorage.removeItem(STORAGE_KEYS.NAVIGATION_CACHE_EXPIRY);
       return null;
     }
   }, []);
@@ -114,11 +110,14 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
   const saveToCache = useCallback((data: NavigationData) => {
     try {
       const cacheData = NavigationMapper.navigationDataToPlainObject(data);
-      localStorage.setItem(NAVIGATION_CACHE_KEY, JSON.stringify(cacheData));
-      localStorage.setItem(NAVIGATION_CACHE_EXPIRY_KEY, (Date.now() + CACHE_EXPIRY_TIME).toString());
-      appLogger.debug('Navigation data saved to cache');
+      localStorage.setItem(STORAGE_KEYS.NAVIGATION_CACHE, JSON.stringify(cacheData));
+      localStorage.setItem(
+        STORAGE_KEYS.NAVIGATION_CACHE_EXPIRY,
+        (Date.now() + CACHE_EXPIRY.NAVIGATION).toString()
+      );
+      appLogger.debug("Navigation data saved to cache");
     } catch (error) {
-      appLogger.error('Failed to save navigation to cache:', error);
+      appLogger.error("Failed to save navigation to cache:", error);
     }
   }, []);
 
@@ -127,55 +126,58 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
    */
   const clearCache = useCallback(() => {
     try {
-      localStorage.removeItem(NAVIGATION_CACHE_KEY);
-      localStorage.removeItem(NAVIGATION_CACHE_EXPIRY_KEY);
-      appLogger.debug('Navigation cache cleared');
+      localStorage.removeItem(STORAGE_KEYS.NAVIGATION_CACHE);
+      localStorage.removeItem(STORAGE_KEYS.NAVIGATION_CACHE_EXPIRY);
+      appLogger.debug("Navigation cache cleared");
     } catch (error) {
-      appLogger.error('Failed to clear navigation cache:', error);
+      appLogger.error("Failed to clear navigation cache:", error);
     }
   }, []);
 
-  const refreshNavigation = useCallback(async (skipLoading = false, forceRefresh = false) => {
-    // When force refreshing (e.g., after login), skip the isAuthenticated check
-    // because the store may not have updated yet
-    if (!forceRefresh && !isAuthenticated) {
-      setNavigationData(null);
-      navigationService.clearNavigationData();
-      clearCache();
-      return;
-    }
-
-    // Allow force refresh from login hook
-    if (forceRefresh) {
-      setHasTriggeredRefresh(false);
-    }
-
-    // Don't set loading state if we're refreshing in background with existing data
-    if (!skipLoading) {
-      setIsLoading(true);
-    }
-
-    try {
-      const data = await navigationService.fetchMenuItems();
-      setNavigationData(data);
-      saveToCache(data); // Save to cache after successful fetch
-      setHasTriggeredRefresh(true);
-    } catch (error) {
-      appLogger.error("Failed to fetch navigation data:", error);
-      // Try to load from cache as fallback
-      const cachedData = loadFromCache();
-      if (cachedData) {
-        appLogger.debug('Using cached navigation data due to fetch error');
-        setNavigationData(cachedData);
-      } else {
+  const refreshNavigation = useCallback(
+    async (skipLoading = false, forceRefresh = false) => {
+      // When force refreshing (e.g., after login), skip the isAuthenticated check
+      // because the store may not have updated yet
+      if (!forceRefresh && !isAuthenticated) {
         setNavigationData(null);
+        navigationService.clearNavigationData();
+        clearCache();
+        return;
       }
-    } finally {
+
+      // Allow force refresh from login hook
+      if (forceRefresh) {
+        setHasTriggeredRefresh(false);
+      }
+
+      // Don't set loading state if we're refreshing in background with existing data
       if (!skipLoading) {
-        setIsLoading(false);
+        setIsLoading(true);
       }
-    }
-  }, [isAuthenticated, navigationService, saveToCache, loadFromCache, clearCache]);
+
+      try {
+        const data = await navigationService.fetchMenuItems();
+        setNavigationData(data);
+        saveToCache(data); // Save to cache after successful fetch
+        setHasTriggeredRefresh(true);
+      } catch (error) {
+        appLogger.error("Failed to fetch navigation data:", error);
+        // Try to load from cache as fallback
+        const cachedData = loadFromCache();
+        if (cachedData) {
+          appLogger.debug("Using cached navigation data due to fetch error");
+          setNavigationData(cachedData);
+        } else {
+          setNavigationData(null);
+        }
+      } finally {
+        if (!skipLoading) {
+          setIsLoading(false);
+        }
+      }
+    },
+    [isAuthenticated, navigationService, saveToCache, loadFromCache, clearCache]
+  );
 
   // Handle logout - clear navigation data when user logs out
   // Navigation fetch is now handled explicitly by useAuthLogin.onSuccess
@@ -198,7 +200,7 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
   // automatically trigger a refresh instead of leaving the user stuck.
   useEffect(() => {
     if (isAuthenticated && !navigationData && !isLoading && !hasTriggeredRefresh) {
-      appLogger.debug('Navigation data missing for authenticated user, auto-refreshing...');
+      appLogger.debug("Navigation data missing for authenticated user, auto-refreshing...");
       refreshNavigation(false, true); // forceRefresh = true
     }
   }, [isAuthenticated, navigationData, isLoading, hasTriggeredRefresh, refreshNavigation]);
@@ -210,14 +212,12 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
   useEffect(() => {
     if (!isAuthenticated) return;
 
-    const REFRESH_CHECK_INTERVAL = 1000 * 60 * 5; // Check every 5 minutes
-
     const checkAndRefresh = () => {
       try {
-        const cacheExpiry = localStorage.getItem(NAVIGATION_CACHE_EXPIRY_KEY);
+        const cacheExpiry = localStorage.getItem(STORAGE_KEYS.NAVIGATION_CACHE_EXPIRY);
         if (!cacheExpiry) {
           // No expiry means no cache, trigger refresh
-          appLogger.debug('Periodic check: No navigation cache, refreshing...');
+          appLogger.debug("Periodic check: No navigation cache, refreshing...");
           refreshNavigation(true, true); // skipLoading=true, forceRefresh=true
           return;
         }
@@ -227,12 +227,12 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
         const timeUntilExpiry = expiryTime - now;
 
         // If cache expires in less than 5 minutes, proactively refresh
-        if (timeUntilExpiry < 1000 * 60 * 5) {
-          appLogger.debug('Periodic check: Navigation cache expiring soon, refreshing...');
+        if (timeUntilExpiry < CACHE_EXPIRY.NAVIGATION_REFRESH_CHECK) {
+          appLogger.debug("Periodic check: Navigation cache expiring soon, refreshing...");
           refreshNavigation(true, true); // Background refresh
         }
       } catch (error) {
-        appLogger.error('Periodic refresh check failed:', error);
+        appLogger.error("Periodic refresh check failed:", error);
       }
     };
 
@@ -240,7 +240,7 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
     const initialCheckTimeout = setTimeout(checkAndRefresh, 1000);
 
     // Periodic checks
-    const intervalId = setInterval(checkAndRefresh, REFRESH_CHECK_INTERVAL);
+    const intervalId = setInterval(checkAndRefresh, CACHE_EXPIRY.NAVIGATION_REFRESH_CHECK);
 
     return () => {
       clearTimeout(initialCheckTimeout);
@@ -248,40 +248,43 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
     };
   }, [isAuthenticated, refreshNavigation]);
 
-  const hasPageAccess = useCallback((pathname: string): boolean => {
-    if (!isAuthenticated) {
-      return false;
-    }
+  const hasPageAccess = useCallback(
+    (pathname: string): boolean => {
+      if (!isAuthenticated) {
+        return false;
+      }
 
-    // Remove query parameters and trailing slashes for comparison
-    const cleanPath = pathname.split('?')[0].replace(/\/$/, '') || '/';
+      // Remove query parameters and trailing slashes for comparison
+      const cleanPath = pathname.split("?")[0].replace(/\/$/, "") || "/";
 
-    // Always allow access to system pages for authenticated users
-    const systemPages = [
-      '/',
-      '',
-      '/dashboard',
-      '/not-authorized',
-      '/profile',
-      '/_not-found',
-      '/not-found',
-      '/404',
-      '/500',
-      '/global-error',
-      '/error'
-    ];
+      // Always allow access to system pages for authenticated users
+      const systemPages = [
+        "/",
+        "",
+        "/dashboard",
+        "/not-authorized",
+        "/profile",
+        "/_not-found",
+        "/not-found",
+        "/404",
+        "/500",
+        "/global-error",
+        "/error",
+      ];
 
-    if (systemPages.includes(cleanPath)) {
-      return true;
-    }
+      if (systemPages.includes(cleanPath)) {
+        return true;
+      }
 
-    // If no navigation data yet, allow access temporarily (RouteGuard will re-check)
-    if (!navigationData) {
-      return true;
-    }
+      // If no navigation data yet, allow access temporarily (RouteGuard will re-check)
+      if (!navigationData) {
+        return true;
+      }
 
-    return navigationData.hasPageAccess(cleanPath);
-  }, [navigationData, isAuthenticated]);
+      return navigationData.hasPageAccess(cleanPath);
+    },
+    [navigationData, isAuthenticated]
+  );
 
   const getRoutes = useCallback((): string[] => {
     return navigationData?.routes || [];
@@ -290,10 +293,13 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
   /**
    * Get page-level actions (canView, canCreate, canUpdate, canDelete)
    */
-  const getPageActions = useCallback((pathname: string): MenuItemActions | null => {
-    if (!navigationData) return null;
-    return navigationData.getPageActions(pathname);
-  }, [navigationData]);
+  const getPageActions = useCallback(
+    (pathname: string): MenuItemActions | null => {
+      if (!navigationData) return null;
+      return navigationData.getPageActions(pathname);
+    },
+    [navigationData]
+  );
 
   return (
     <NavigationContext.Provider

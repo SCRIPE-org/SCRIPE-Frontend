@@ -90,4 +90,10 @@ export interface IApiService {
        * Called when access token is expired and needs refresh
        */
       setRefreshHandler(handler: () => Promise<string | null>): void;
+
+      /**
+       * Set the tenant context for multi-tenant operations
+       * @param tenantId - Tenant ID or null to clear
+       */
+      setTenantContext(tenantId: string | null): void;
 }

@@ -5,36 +5,58 @@ import { createContext, useContext, useMemo } from "react";
 import { ApiService } from "@core/services/api.service";
 import { NotificationService } from "@core/services/notification.service";
 import { NavigationService } from "@core/services/navigation.service";
+import { AuthService, type IAuthService } from "@modules/auth/core/data/services/AuthService";
 import { AuthRepository } from "@modules/auth/core/data/repositories/AuthRepository";
-import { UserService } from "@core/services/user.service";
+import { UserProfileService, type IUserProfileService } from "@modules/user/src/data/services/UserProfileService";
+import { UserProfileRepository } from "@modules/user/src/data/repositories/UserProfileRepository";
+import type { IAuthRepository } from "@modules/auth/core/domain/interfaces/IAuthRepository";
+import type { IUserProfileRepository } from "@modules/user/src/domain/interfaces/IUserProfileRepository";
+import type { IApiService } from "@core/interfaces/api.interface";
 
+/**
+ * Services Interface
+ * 
+ * SOLID: Interface Segregation - expose interfaces not implementations
+ */
 interface Services {
-  apiService: ApiService;
+  apiService: IApiService;
   notificationService: NotificationService;
   navigationService: NavigationService;
-  authRepository: AuthRepository;
-  userService: UserService;
-
+  authService: IAuthService;
+  authRepository: IAuthRepository;
+  userProfileRepository: IUserProfileRepository;
 }
 
 const ServiceContext = createContext<Services | null>(null);
 
+/**
+ * Service Provider
+ * 
+ * Clean Architecture DI Container for React.
+ * Creates: Service → Repository chain with proper dependency injection.
+ */
 export function ServiceProvider({ children }: { children: React.ReactNode }) {
   const services = useMemo(() => {
+    // Core Services
     const notificationService = new NotificationService();
     const apiService = new ApiService(process.env.NEXT_PUBLIC_API_URL || "");
-    const authRepository = new AuthRepository(apiService);
-    const userService = new UserService(apiService);
     const navigationService = new NavigationService(apiService);
 
+    // Auth Module - SOLID: Service → Repository
+    const authService = new AuthService(apiService);
+    const authRepository = new AuthRepository(authService);
+
+    // User Module - SOLID: Service → Repository
+    const userProfileService = new UserProfileService(apiService);
+    const userProfileRepository = new UserProfileRepository(userProfileService);
 
     return {
       apiService,
       notificationService,
       navigationService,
+      authService,
       authRepository,
-      userService,
-
+      userProfileRepository,
     };
   }, []);
 

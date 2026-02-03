@@ -1,65 +1,67 @@
-import { IApiService } from "@core/interfaces/api.interface";
-import { API_ENDPOINTS } from "@core/config/api-endpoints";
-import { secureTokenService } from "@core/common/secure-token-service";
-import { LoginRequest, LoginResponse, RefreshTokenRequest } from "../../domain/entities/Auth";
-import { User } from "../../domain/entities/User";
-import { NAVIGATION_CACHE_KEY, NAVIGATION_CACHE_EXPIRY_KEY } from "@core/providers/navigation-provider";
-import { AuthMapper } from "../mappers/AuthMapper";
-import { UserMapper } from "../../../../user/src/data/mappers/UserMapper";
-import { appLogger } from "@core/common/logger";
-
-import { IAuthRepository } from "../../domain/interfaces/IAuthRepository";
-import { Result } from "@core/common/types/result";
-
-
 /**
- * Storage keys to clear on logout
+ * Auth Repository Implementation
+ *
+ * Implements IAuthRepository using AuthService.
+ * Uses AuthMapper to convert Models → Entities.
+ *
+ * Clean Architecture:
+ * View → ViewModel → Repository → Service → IApiService
+ *                       ↓
+ *                   Mapper (Model ↔ Entity)
+ *
+ * @module auth/data
  */
-const STORAGE_KEYS_TO_CLEAR = [
-  NAVIGATION_CACHE_KEY,
-  NAVIGATION_CACHE_EXPIRY_KEY,
-  // potentially other legacy keys if they exist
-  "user-data",
-  "permissions",
-  "roles",
-];
+import { secureTokenService } from "@core/common/secure-token-service";
+import { LoginRequest, LoginResponse } from "../../domain/entities/Auth";
+import { User } from "../../domain/entities/User";
+import { AuthMapper } from "../mappers/AuthMapper";
+import { appLogger } from "@core/common/logger";
+import { LoginRequestModel, RefreshTokenRequestModel } from "../models/AuthModel";
+import type { IAuthService } from "../services/AuthService";
+import type { IAuthRepository } from "../../domain/interfaces/IAuthRepository";
+import { Result } from "@core/common/types/result";
+import { AUTH_STORAGE_KEYS_TO_CLEAR } from "@core/config/storage-keys";
 
 /**
  * Clear all authentication related data from local storage
  */
 function clearAllLocalStorage(): void {
   if (typeof window !== "undefined") {
-    // Clear known keys
-    STORAGE_KEYS_TO_CLEAR.forEach(key => {
+    // Clear known keys using centralized constants
+    AUTH_STORAGE_KEYS_TO_CLEAR.forEach((key) => {
       localStorage.removeItem(key);
     });
-
     // Clear SecureTokenService tokens
     secureTokenService.clearTokens();
-
     sessionStorage.clear();
     appLogger.auth("Auth data and cache cleared");
   }
 }
 
+/**
+ * Auth Repository
+ *
+ * Uses AuthService for API calls (SOLID compliant).
+ */
 export class AuthRepository implements IAuthRepository {
-  constructor(private readonly apiService: IApiService) { }
+  constructor(private readonly service: IAuthService) { }
 
   async login(credentials: LoginRequest): Promise<User> {
-    // ========================================
-    // REAL API ENDPOINT
-    // ========================================
-    const response = await this.apiService.postPublic<LoginResponse>(
-      API_ENDPOINTS.LOGIN,
-      AuthMapper.loginRequestToJson(credentials)
+    // Create request model from entity
+    const requestModel = new LoginRequestModel(
+      credentials.username,
+      credentials.password
     );
 
-    appLogger.auth("Login response received:", response);
+    // Call service (returns Model)
+    const responseModel = await this.service.login(requestModel);
 
-    if (response && response.accessToken) {
-      secureTokenService.setAccessToken(response.accessToken);
-      if (response.refreshToken) {
-        secureTokenService.setRefreshToken(response.refreshToken);
+    appLogger.auth("Login response received");
+
+    if (responseModel.accessToken) {
+      secureTokenService.setAccessToken(responseModel.accessToken);
+      if (responseModel.refreshToken) {
+        secureTokenService.setRefreshToken(responseModel.refreshToken);
       }
       return this.getMe();
     }
@@ -68,29 +70,19 @@ export class AuthRepository implements IAuthRepository {
 
   async logout(): Promise<void> {
     try {
-      // ========================================
-      // REAL API ENDPOINT
-      // ========================================
-      // Backend requires refreshToken in the request body
       const refreshToken = secureTokenService.getRefreshToken();
-      await this.apiService.post(API_ENDPOINTS.LOGOUT, {
-        refreshToken: refreshToken || ""
-      });
+      await this.service.logout(refreshToken || "");
     } catch (error) {
       appLogger.warn("Logout API call failed, clearing tokens locally:", error);
     } finally {
-      // Always clear local tokens and cache
       clearAllLocalStorage();
     }
   }
 
   async getMe(): Promise<User> {
-    // ========================================
-    // REAL API ENDPOINT
-    // ========================================
     try {
-      const response = await this.apiService.get<User>(API_ENDPOINTS.GET_ADMIN_ME);
-      return UserMapper.fromJson(response);
+      const response = await this.service.getMe<any>();
+      return AuthMapper.userFromJson(response);
     } catch (error) {
       appLogger.error("Failed to get current user:", error);
       throw error;
@@ -103,15 +95,13 @@ export class AuthRepository implements IAuthRepository {
 
   async refreshToken(token: string): Promise<Result<LoginResponse, Error>> {
     try {
-      const refreshRequest = new RefreshTokenRequest({ refreshToken: token });
-      const response = await this.apiService.postPublic<LoginResponse>(
-        API_ENDPOINTS.REFRESH,
-        AuthMapper.refreshTokenRequestToJson(refreshRequest)
-      );
+      const requestModel = new RefreshTokenRequestModel(token);
+      const responseModel = await this.service.refreshToken(requestModel);
 
-      const loginResponse = AuthMapper.loginResponseFromJson(response);
-      if (loginResponse.isSuccessful) {
-        secureTokenService.setAccessToken(loginResponse.accessToken);
+      if (responseModel.isSuccessful) {
+        secureTokenService.setAccessToken(responseModel.accessToken);
+        // Map model to entity
+        const loginResponse = AuthMapper.loginResponseFromModel(responseModel);
         return Result.ok(loginResponse);
       }
       return Result.err(new Error("Refresh failed"));

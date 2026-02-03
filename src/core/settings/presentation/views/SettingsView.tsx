@@ -16,6 +16,7 @@ import {
   RotateCcw,
 } from "lucide-react";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
+import { STORAGE_KEYS } from "@core/config/storage-keys";
 const CheckboxRadioTab = dynamic(() => import("./settings/checkbox-radio-tab").then(mod => ({ default: mod.CheckboxRadioTab })), {
   loading: () => <LoadingSpinner size="sm" />,
 });
@@ -106,7 +107,7 @@ export function SettingsView() {
 
   const handleSaveSettings = () => {
     try {
-      localStorage.setItem("dashboard-settings", settings.exportSettings());
+      localStorage.setItem(STORAGE_KEYS.DASHBOARD_SETTINGS, settings.exportSettings());
       toast({
         title: t("settings.saveSuccess"),
         description: t("settings.saveSuccessDesc"),

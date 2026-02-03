@@ -9,7 +9,7 @@ import { USE_DYNAMIC_NAVIGATION } from "@core/config/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { secureTokenService } from "@core/common/secure-token-service";
-import { NAVIGATION_CACHE_KEY, NAVIGATION_CACHE_EXPIRY_KEY } from "@core/providers/navigation-provider";
+import { STORAGE_KEYS } from "@core/config/storage-keys";
 
 interface RouteGuardProps {
   children: React.ReactNode;
@@ -35,8 +35,8 @@ function forceLogout() {
 
   // Clear navigation cache
   if (typeof window !== "undefined") {
-    localStorage.removeItem(NAVIGATION_CACHE_KEY);
-    localStorage.removeItem(NAVIGATION_CACHE_EXPIRY_KEY);
+    localStorage.removeItem(STORAGE_KEYS.NAVIGATION_CACHE);
+    localStorage.removeItem(STORAGE_KEYS.NAVIGATION_CACHE_EXPIRY);
   }
 
   console.log("[RouteGuard] Forced logout - cleared auth tokens and cache");

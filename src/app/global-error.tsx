@@ -9,6 +9,7 @@ import { handleError } from '@core/common/error-handler';
 import { appLogger } from '@core/common/logger';
 import { ar } from '@core/locales/ar';
 import { en } from '@core/locales/en';
+import { STORAGE_KEYS } from '@core/config/storage-keys';
 
 // Translation function that takes language as parameter
 const getTranslations = (language: 'ar' | 'en') => {
@@ -19,7 +20,7 @@ const t = (key: string, language: 'ar' | 'en'): string => {
   const translations = getTranslations(language);
   const keys = key.split('.');
   let value: any = translations;
-  
+
   for (const k of keys) {
     if (value && typeof value === 'object' && k in value) {
       value = value[k];
@@ -27,7 +28,7 @@ const t = (key: string, language: 'ar' | 'en'): string => {
       return key; // Return the key if path not found
     }
   }
-  
+
   return typeof value === 'string' ? value : key;
 };
 
@@ -50,7 +51,7 @@ export default function GlobalError({
   useEffect(() => {
     // Detect language from localStorage
     if (typeof window !== 'undefined') {
-      const savedLanguage = localStorage.getItem('language');
+      const savedLanguage = localStorage.getItem(STORAGE_KEYS.LANGUAGE);
       if (savedLanguage === 'en' || savedLanguage === 'ar') {
         setLanguage(savedLanguage);
       }
@@ -82,7 +83,7 @@ export default function GlobalError({
               <p className="text-sm text-muted-foreground text-center">
                 {t('errors.boundary.description', language)}
               </p>
-              
+
               {process.env.NODE_ENV === 'development' && (
                 <details className="mt-4">
                   <summary className="cursor-pointer text-sm font-medium text-muted-foreground">
@@ -95,17 +96,17 @@ export default function GlobalError({
                   </pre>
                 </details>
               )}
-              
+
               <div className="flex gap-2">
-                <Button 
-                  onClick={handleRetry} 
+                <Button
+                  onClick={handleRetry}
                   className="flex-1"
                   variant="outline"
                 >
                   <RefreshCw className="h-4 w-4 mr-2" />
                   {t('errors.boundary.retry', language)}
                 </Button>
-                <Button 
+                <Button
                   onClick={handleGoHome}
                   className="flex-1"
                 >
