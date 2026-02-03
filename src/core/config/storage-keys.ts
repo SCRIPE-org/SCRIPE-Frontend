@@ -24,8 +24,8 @@ export const STORAGE_KEYS = {
       ROLES: "roles",
 
       // Navigation cache
-      NAVIGATION_CACHE: "navigation_data_v2",
-      NAVIGATION_CACHE_EXPIRY: "navigation_data_expiry_v2",
+      NAVIGATION_CACHE: "navigation_data",
+      NAVIGATION_CACHE_EXPIRY: "navigation_data_expiry",
 
       // Language & i18n
       LANGUAGE: "language",

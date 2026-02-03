@@ -52,10 +52,15 @@ export function TenantsView() {
                               search: query || undefined,
                         });
 
-                        return permissions.map((p) => ({
-                              value: p.id,
-                              label: `${p.getLocalizedName(language)} (${p.code})`,
-                        }));
+                        return permissions.map((p) => {
+                              // Use permission code as value (stable identifier)
+                              // The ID changes between requests due to encryption/rotation
+                              const stableCode = p.code || `${p.resource}.${p.action}`;
+                              return {
+                                    value: stableCode,
+                                    label: `${p.getLocalizedName(language)} (${stableCode})`,
+                              };
+                        });
                   } catch {
                         return [];
                   }

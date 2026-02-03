@@ -159,6 +159,10 @@ export const GenericSelect = React.forwardRef<
     const [serverOptions, setServerOptions] = React.useState<
       GenericSelectOption[]
     >([]);
+    // Cache for selected options - persists labels even when serverOptions changes
+    const [selectedOptionsCache, setSelectedOptionsCache] = React.useState<
+      Map<string, GenericSelectOption>
+    >(new Map());
     const [dropdownPosition, setDropdownPosition] = React.useState({
       top: 0,
       left: 0,
@@ -305,6 +309,11 @@ export const GenericSelect = React.forwardRef<
       // Add static options
       addToMap(options || []);
 
+      // Add cached selected options (important for server search)
+      selectedOptionsCache.forEach((option, key) => {
+        map.set(key, option);
+      });
+
       // Add server options
       addToMap(serverOptions);
 
@@ -318,6 +327,7 @@ export const GenericSelect = React.forwardRef<
     }, [
       options,
       serverOptions,
+      selectedOptionsCache,
       flattenedTreeOptions,
       treeData,
       isTreeSelect,
@@ -354,8 +364,8 @@ export const GenericSelect = React.forwardRef<
           ? serverOptions
           : filteredOptions
         : searchType === "server"
-        ? serverOptions
-        : filteredOptions) || [];
+          ? serverOptions
+          : filteredOptions) || [];
     const showLoading = loading || isSearching;
 
     // Fixed positioning that stays attached to field with 1px seam (feels attached)
@@ -630,14 +640,14 @@ export const GenericSelect = React.forwardRef<
           requestAnimationFrame(() => {
             try {
               triggerRef.current?.focus();
-            } catch {}
+            } catch { }
           });
         } else if (!isOpen && previouslyFocused && previouslyFocused.focus) {
           // Fallback: return to previously focused element
           requestAnimationFrame(() => {
             try {
               previouslyFocused.focus();
-            } catch {}
+            } catch { }
           });
         }
       };
@@ -655,8 +665,20 @@ export const GenericSelect = React.forwardRef<
     const handleSelect = (optionValue: string) => {
       if (!onValueChange) return;
 
+      // Cache the selected option to preserve its label
+      const selectedOption = allOptionsMap.get(optionValue);
+      if (selectedOption && !selectedOptionsCache.has(optionValue)) {
+        setSelectedOptionsCache(prev => {
+          const newCache = new Map(prev);
+          newCache.set(optionValue, selectedOption);
+          return newCache;
+        });
+      }
+
       if (isMultiSelect) {
-        const newValues = currentValues.includes(optionValue)
+        // Toggle: if already selected, remove it; otherwise add it
+        const alreadySelected = currentValues.includes(optionValue);
+        const newValues = alreadySelected
           ? currentValues.filter((v) => v !== optionValue)
           : [...currentValues, optionValue];
         onValueChange(newValues);
@@ -709,7 +731,7 @@ export const GenericSelect = React.forwardRef<
           if (triggerRef.current) {
             try {
               triggerRef.current.focus();
-            } catch {}
+            } catch { }
           }
         });
         // Don't reset server options when closing - keep them for next open
@@ -875,7 +897,7 @@ export const GenericSelect = React.forwardRef<
                 // Safe assignment for forwarded ref
                 try {
                   (ref as any).current = containerRef.current;
-                } catch {}
+                } catch { }
               }
             }
           }}
@@ -883,8 +905,8 @@ export const GenericSelect = React.forwardRef<
             styles.trigger,
             // When open, suppress parent focus visuals so it doesn't look like parent is focused
             isOpen &&
-              isSearchable &&
-              "ring-0 focus:ring-0 focus-within:ring-0 outline-none"
+            isSearchable &&
+            "ring-0 focus:ring-0 focus-within:ring-0 outline-none"
           )}
           onClick={handleToggle}
           onMouseDownCapture={(e) => {
@@ -907,14 +929,14 @@ export const GenericSelect = React.forwardRef<
                 requestAnimationFrame(() => {
                   try {
                     searchInputRef.current?.focus({ preventScroll: true });
-                  } catch {}
+                  } catch { }
                 });
               } else {
                 setIsOpen(false);
                 requestAnimationFrame(() => {
                   try {
                     triggerRef.current?.focus();
-                  } catch {}
+                  } catch { }
                 });
               }
             }
@@ -1045,9 +1067,8 @@ export const GenericSelect = React.forwardRef<
                 left: dropdownPosition.left,
                 width: dropdownPosition.width,
                 maxHeight: dropdownPosition.maxHeight,
-                transform: `translateZ(0) translateY(${
-                  animateOpen ? 0 : shouldShowAboveRef.current ? 6 : -6
-                }px)`,
+                transform: `translateZ(0) translateY(${animateOpen ? 0 : shouldShowAboveRef.current ? 6 : -6
+                  }px)`,
                 willChange: "transform, opacity", // Optimize for frequent position changes
                 opacity: animateOpen ? 1 : 0,
                 transition:
@@ -1096,14 +1117,14 @@ export const GenericSelect = React.forwardRef<
                         // Explicitly focus the input to defeat any focus traps
                         try {
                           (e.currentTarget as HTMLInputElement).focus();
-                        } catch {}
+                        } catch { }
                       }}
                       onPointerDownCapture={(e) => e.stopPropagation()}
                       onPointerDown={(e) => {
                         e.stopPropagation();
                         try {
                           (e.currentTarget as HTMLInputElement).focus();
-                        } catch {}
+                        } catch { }
                       }}
                       onClick={(e) => e.stopPropagation()}
                       autoFocus
@@ -1147,9 +1168,8 @@ export const GenericSelect = React.forwardRef<
               <div
                 className="overflow-y-auto p-1 scrollbar-thin scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent"
                 style={{
-                  maxHeight: `calc(${dropdownPosition.maxHeight}px - ${
-                    isSearchable ? "84px" : "40px"
-                  })`,
+                  maxHeight: `calc(${dropdownPosition.maxHeight}px - ${isSearchable ? "84px" : "40px"
+                    })`,
                 }}
               >
                 {showLoading ? (
@@ -1182,13 +1202,13 @@ export const GenericSelect = React.forwardRef<
                             ? level === 0
                               ? "bg-gradient-to-r from-primary/5 to-primary/10 border border-primary/20 hover:from-primary/10 hover:to-primary/15 hover:border-primary/30 shadow-sm"
                               : level === 1
-                              ? "bg-gradient-to-r from-blue-500/5 to-blue-500/10 border border-blue-500/20 hover:from-blue-500/10 hover:to-blue-500/15 hover:border-blue-500/30"
-                              : "bg-gradient-to-r from-muted/30 to-muted/50 border border-border/50 hover:from-muted/50 hover:to-muted/70 hover:border-border/70"
+                                ? "bg-gradient-to-r from-blue-500/5 to-blue-500/10 border border-blue-500/20 hover:from-blue-500/10 hover:to-blue-500/15 hover:border-blue-500/30"
+                                : "bg-gradient-to-r from-muted/30 to-muted/50 border border-border/50 hover:from-muted/50 hover:to-muted/70 hover:border-border/70"
                             : "hover:bg-accent hover:text-accent-foreground",
                           isSelected &&
-                            (isTreeSelect
-                              ? "ring-2 ring-primary/50 bg-primary/10 border-primary/40 shadow-md"
-                              : "bg-accent text-accent-foreground"),
+                          (isTreeSelect
+                            ? "ring-2 ring-primary/50 bg-primary/10 border-primary/40 shadow-md"
+                            : "bg-accent text-accent-foreground"),
                           option.disabled && "pointer-events-none opacity-50",
                           direction === "rtl" ? "text-right" : "text-left"
                         )}
@@ -1251,11 +1271,11 @@ export const GenericSelect = React.forwardRef<
                               className={cn(
                                 "font-medium transition-colors",
                                 isTreeSelect &&
-                                  level === 0 &&
-                                  "text-primary font-semibold",
+                                level === 0 &&
+                                "text-primary font-semibold",
                                 isTreeSelect &&
-                                  level === 1 &&
-                                  "text-blue-600 font-medium",
+                                level === 1 &&
+                                "text-blue-600 font-medium",
                                 isTreeSelect && level > 1 && "text-foreground"
                               )}
                             >
@@ -1271,15 +1291,15 @@ export const GenericSelect = React.forwardRef<
                               <div className="text-xs text-muted-foreground/70 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                 {direction === "rtl"
                                   ? getNodePath(
-                                      option.value,
-                                      treeData || options
-                                    )
-                                      .reverse()
-                                      .join(" ‹ ")
+                                    option.value,
+                                    treeData || options
+                                  )
+                                    .reverse()
+                                    .join(" ‹ ")
                                   : getNodePath(
-                                      option.value,
-                                      treeData || options
-                                    ).join(" › ")}
+                                    option.value,
+                                    treeData || options
+                                  ).join(" › ")}
                               </div>
                             )}
                           </div>
