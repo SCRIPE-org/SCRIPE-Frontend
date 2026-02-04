@@ -12,6 +12,7 @@ import type {
       UpdateTenantJson,
 } from "../../data/models/TenantModel";
 import type { TenantStats } from "./ITenantRepository";
+import type { PermissionModel } from "@modules/system/permissions/src/data/models/PermissionModel";
 
 export interface ServiceTenantListParams {
       page?: number;
@@ -47,6 +48,11 @@ export interface ITenantService {
       update(id: string, json: UpdateTenantJson): Promise<void>;
       delete(id: string): Promise<void>;
       getDescendantCount(id: string): Promise<number>;
+      /**
+       * Get available permissions for creating a child tenant
+       * @param parentId - Optional parent tenant ID. If null, returns current user's permissions
+       */
+      getCreationPermissions(parentId?: string): Promise<PermissionModel[]>;
       /**
        * Set the current tenant context for multi-tenant API calls.
        * @param tenantId - The tenant ID to set, or null to clear

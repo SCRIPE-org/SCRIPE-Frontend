@@ -23,6 +23,7 @@ import type {
       TenantListResult,
 } from "../../domain/interfaces/ITenantService";
 import type { TenantStats } from "../../domain/interfaces/ITenantRepository";
+import { PermissionModel, type PermissionJson } from "@modules/system/permissions/src/data/models/PermissionModel";
 
 export class TenantService implements ITenantService {
       constructor(private readonly api: IApiService) { }
@@ -94,6 +95,14 @@ export class TenantService implements ITenantService {
 
       async getDescendantCount(id: string): Promise<number> {
             return this.api.get<number>(`${API_ENDPOINTS.TENANTS.BY_ID(id)}/descendant-count`);
+      }
+
+      async getCreationPermissions(parentId?: string): Promise<PermissionModel[]> {
+            const url = buildUrl(API_ENDPOINTS.TENANTS.CREATION_PERMISSIONS, {
+                  parentId,
+            });
+            const jsonList = await this.api.get<PermissionJson[]>(url);
+            return jsonList.map((json) => PermissionModel.fromJson(json));
       }
 
       setTenantContext(tenantId: string | null): void {

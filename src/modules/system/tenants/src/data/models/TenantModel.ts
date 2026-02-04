@@ -49,7 +49,7 @@ export interface TenantListResponseJson {
 export interface CreateTenantJson {
       name: string;
       code: string;
-      parentId?: string;
+      parentTenantId?: string;
       description?: string;
       availablePermissionIds?: string[];
       address?: string;
@@ -171,7 +171,7 @@ export class CreateTenantModel {
             return {
                   name: this.name,
                   code: this.code,
-                  parentId: this.parentId,
+                  parentTenantId: this.parentId,
                   description: this.description,
                   availablePermissionIds: this.availablePermissionIds,
                   address: this.address,
