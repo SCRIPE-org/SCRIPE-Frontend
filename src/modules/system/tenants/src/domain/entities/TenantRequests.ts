@@ -28,3 +28,12 @@ export interface UpdateTenantRequest {
       address?: string;
       isActive?: boolean;
 }
+
+/**
+ * Delete tenant request
+ * Supports cascade delete of entire hierarchy
+ */
+export interface DeleteTenantRequest {
+      /** If true, cascade soft delete all descendant tenants, admins, and roles */
+      cascadeChildren?: boolean;
+}

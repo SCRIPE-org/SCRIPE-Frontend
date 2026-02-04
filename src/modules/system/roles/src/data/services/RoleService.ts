@@ -43,6 +43,7 @@ export interface IRoleService {
       assignPermissions(roleId: string, json: AssignPermissionsJson): Promise<void>;
       removePermission(roleId: string, permissionId: string): Promise<void>;
       getRolePermissions(roleId: string): Promise<RoleJson["permissions"]>;
+      getAdminCount(roleId: string): Promise<number>;
 }
 
 export class RoleService implements IRoleService {
@@ -103,5 +104,9 @@ export class RoleService implements IRoleService {
             return this.api.get<RoleJson["permissions"]>(
                   API_ENDPOINTS.ROLES.PERMISSIONS(roleId)
             );
+      }
+
+      async getAdminCount(roleId: string): Promise<number> {
+            return this.api.get<number>(`${API_ENDPOINTS.ROLES.BY_ID(roleId)}/admin-count`);
       }
 }

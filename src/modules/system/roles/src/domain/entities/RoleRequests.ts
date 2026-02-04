@@ -38,3 +38,12 @@ export interface PermissionAssignment {
       permissionId: string;
       scope?: string;
 }
+
+/**
+ * Delete role request
+ * Supports admin transfer before deletion
+ */
+export interface DeleteRoleRequest {
+      /** Role ID to transfer admins to before deletion */
+      fallbackRoleId?: string;
+}

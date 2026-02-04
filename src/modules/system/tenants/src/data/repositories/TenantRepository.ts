@@ -15,6 +15,7 @@ import { Tenant, type TenantTreeNode } from "../../domain/entities/Tenant";
 import type {
       CreateTenantRequest,
       UpdateTenantRequest,
+      DeleteTenantRequest,
 } from "../../domain/entities/TenantRequests";
 import type { PagedResult } from "@modules/system/core/domain/types";
 import type { ITenantService } from "../services/TenantService";
@@ -62,7 +63,16 @@ export class TenantRepository implements ITenantRepository {
             await this.service.update(id, model.toJson());
       }
 
-      async delete(id: string): Promise<void> {
-            await this.service.delete(id);
+      async delete(id: string, options?: DeleteTenantRequest): Promise<void> {
+            const params = new URLSearchParams();
+            if (options?.cascadeChildren) {
+                  params.append('cascadeChildren', 'true');
+            }
+            const queryString = params.toString();
+            await this.service.delete(queryString ? `${id}?${queryString}` : id);
+      }
+
+      async getDescendantCount(id: string): Promise<number> {
+            return this.service.getDescendantCount(id);
       }
 }

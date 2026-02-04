@@ -53,6 +53,7 @@ export interface ITenantService {
       create(json: CreateTenantJson): Promise<{ id: string }>;
       update(id: string, json: UpdateTenantJson): Promise<void>;
       delete(id: string): Promise<void>;
+      getDescendantCount(id: string): Promise<number>;
 }
 
 export class TenantService implements ITenantService {
@@ -107,5 +108,9 @@ export class TenantService implements ITenantService {
 
       async getStats(id: string): Promise<TenantStats> {
             return this.api.get<TenantStats>(API_ENDPOINTS.TENANTS.STATS(id));
+      }
+
+      async getDescendantCount(id: string): Promise<number> {
+            return this.api.get<number>(`${API_ENDPOINTS.TENANTS.BY_ID(id)}/descendant-count`);
       }
 }

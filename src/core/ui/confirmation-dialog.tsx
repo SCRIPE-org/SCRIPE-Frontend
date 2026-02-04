@@ -28,6 +28,10 @@ export interface ConfirmationDialogProps {
   variant?: "destructive" | "warning" | "info" | "default"
   icon?: React.ReactNode
   isLoading?: boolean
+  /** Custom content to render in the dialog body */
+  children?: React.ReactNode
+  /** Disable confirm button externally (e.g., validation not met) */
+  disableConfirm?: boolean
 }
 
 const variantConfig = {
@@ -73,10 +77,12 @@ export function ConfirmationDialog({
   variant = "default",
   icon,
   isLoading = false,
+  children,
+  disableConfirm = false,
 }: ConfirmationDialogProps) {
   const config = variantConfig[variant]
   const IconComponent = config.icon
-  
+
   const handleConfirm = async () => {
     try {
       await onConfirm()
@@ -108,6 +114,14 @@ export function ConfirmationDialog({
             {description || config.description}
           </AlertDialogDescription>
         </AlertDialogHeader>
+
+        {/* Custom children content */}
+        {children && (
+          <div className="py-2">
+            {children}
+          </div>
+        )}
+
         <AlertDialogFooter className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end sm:gap-2">
           <AlertDialogCancel asChild>
             <Button
@@ -122,7 +136,7 @@ export function ConfirmationDialog({
             <Button
               variant={config.confirmVariant}
               onClick={handleConfirm}
-              disabled={isLoading}
+              disabled={isLoading || disableConfirm}
               className="min-w-[80px]"
             >
               {isLoading ? (
@@ -149,7 +163,7 @@ export function useConfirmationDialog() {
   }>({
     open: false,
     props: {
-      onConfirm: () => {},
+      onConfirm: () => { },
     },
   })
 

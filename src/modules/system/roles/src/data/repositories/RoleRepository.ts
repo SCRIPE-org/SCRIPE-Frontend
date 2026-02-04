@@ -15,6 +15,7 @@ import type {
       CreateRoleRequest,
       UpdateRoleRequest,
       AssignPermissionsRequest,
+      DeleteRoleRequest,
 } from "../../domain/entities/RoleRequests";
 import type { PagedResult } from "@modules/system/core/domain/types";
 import type { IRoleService } from "../services/RoleService";
@@ -53,8 +54,13 @@ export class RoleRepository implements IRoleRepository {
             await this.service.update(id, model.toJson());
       }
 
-      async delete(id: string): Promise<void> {
-            await this.service.delete(id);
+      async delete(id: string, options?: DeleteRoleRequest): Promise<void> {
+            const params = new URLSearchParams();
+            if (options?.fallbackRoleId) {
+                  params.append('fallbackRoleId', options.fallbackRoleId);
+            }
+            const queryString = params.toString();
+            await this.service.delete(queryString ? `${id}?${queryString}` : id);
       }
 
       async assignPermissions(
@@ -71,5 +77,9 @@ export class RoleRepository implements IRoleRepository {
 
       async getRolePermissions(roleId: string): Promise<any[]> {
             return this.service.getRolePermissions(roleId);
+      }
+
+      async getAdminCount(roleId: string): Promise<number> {
+            return this.service.getAdminCount(roleId);
       }
 }

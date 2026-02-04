@@ -7,6 +7,7 @@ import type { Tenant, TenantData, TenantTreeNode } from "../entities/Tenant";
 import type {
       CreateTenantRequest,
       UpdateTenantRequest,
+      DeleteTenantRequest,
 } from "../entities/TenantRequests";
 import type { PagedResult } from "@modules/system/core/domain/types";
 
@@ -65,8 +66,14 @@ export interface ITenantRepository {
       update(id: string, request: UpdateTenantRequest): Promise<void>;
 
       /**
-       * Delete a tenant
+       * Delete a tenant (soft delete)
+       * @param options - Optional cascade options
        */
-      delete(id: string): Promise<void>;
+      delete(id: string, options?: DeleteTenantRequest): Promise<void>;
+
+      /**
+       * Get descendant count (children + grandchildren etc.)
+       */
+      getDescendantCount(id: string): Promise<number>;
 }
 

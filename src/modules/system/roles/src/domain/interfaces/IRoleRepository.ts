@@ -8,6 +8,7 @@ import type {
       CreateRoleRequest,
       UpdateRoleRequest,
       AssignPermissionsRequest,
+      DeleteRoleRequest,
 } from "../entities/RoleRequests";
 import type { PagedResult } from "@modules/system/core/domain/types";
 
@@ -46,9 +47,10 @@ export interface IRoleRepository {
       update(id: string, request: UpdateRoleRequest): Promise<void>;
 
       /**
-       * Delete a role
+       * Delete a role (soft delete)
+       * @param options - Optional fallback role for admin transfer
        */
-      delete(id: string): Promise<void>;
+      delete(id: string, options?: DeleteRoleRequest): Promise<void>;
 
       /**
        * Assign permissions to a role (replaces all permissions)
@@ -64,4 +66,9 @@ export interface IRoleRepository {
        * Get permissions assigned to a role
        */
       getRolePermissions(roleId: string): Promise<any[]>;
+
+      /**
+       * Get count of admins assigned to this role
+       */
+      getAdminCount(roleId: string): Promise<number>;
 }
