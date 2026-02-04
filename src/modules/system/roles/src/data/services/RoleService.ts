@@ -16,40 +16,12 @@ import {
       type UpdateRoleJson,
       type AssignPermissionsJson,
 } from "../models/RoleModel";
-
-export interface RoleListParams {
-      page?: number;
-      pageSize?: number;
-      search?: string;
-      tenantId?: string;
-}
-
-export interface RoleListResult {
-      items: RoleModel[];
-      totalCount: number;
-      page: number;
-      pageSize: number;
-      totalPages: number;
-      hasNextPage: boolean;
-      hasPreviousPage: boolean;
-}
-
-export interface IRoleService {
-      getAll(params: RoleListParams): Promise<RoleListResult>;
-      getById(id: string): Promise<RoleModel>;
-      create(json: CreateRoleJson): Promise<{ id: string }>;
-      update(id: string, json: UpdateRoleJson): Promise<void>;
-      delete(id: string): Promise<void>;
-      assignPermissions(roleId: string, json: AssignPermissionsJson): Promise<void>;
-      removePermission(roleId: string, permissionId: string): Promise<void>;
-      getRolePermissions(roleId: string): Promise<RoleJson["permissions"]>;
-      getAdminCount(roleId: string): Promise<number>;
-}
+import type { IRoleService, RoleListResult, ServiceRoleListParams } from "../../domain/interfaces/IRoleService";
 
 export class RoleService implements IRoleService {
       constructor(private readonly api: IApiService) { }
 
-      async getAll(params: RoleListParams): Promise<RoleListResult> {
+      async getAll(params: ServiceRoleListParams): Promise<RoleListResult> {
             const url = buildUrl(API_ENDPOINTS.ROLES.LIST, {
                   page: params.page,
                   pageSize: params.pageSize,

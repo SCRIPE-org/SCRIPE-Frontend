@@ -28,4 +28,4 @@ export type { IRoleRepository, RoleListParams } from "./src/domain/interfaces/IR
 
 // Services (for DI)
 export { RoleService } from "./src/data/services/RoleService";
-export type { IRoleService } from "./src/data/services/RoleService";
+export type { IRoleService, ServiceRoleListParams, RoleListResult } from "./src/domain/interfaces/IRoleService";

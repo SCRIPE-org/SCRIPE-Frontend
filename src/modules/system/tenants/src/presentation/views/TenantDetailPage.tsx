@@ -12,7 +12,6 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTenantContext } from "@core/providers/tenant-context-provider";
 import { useI18n } from "@core/providers/i18n-provider";
-import { useServices } from "@core/providers/service-provider";
 import { systemContainer } from "@modules/system/di";
 import { PageBreadcrumbs } from "@core/ui/page-breadcrumbs";
 import { Skeleton } from "@core/ui/skeleton";
@@ -31,7 +30,7 @@ export function TenantDetailPage({ tenantId }: TenantDetailPageProps) {
       const router = useRouter();
       const { t, direction } = useI18n();
       const { enterTenantWorld, exitTenantWorld, breadcrumbs } = useTenantContext();
-      const { apiService } = useServices();
+      const { tenantRepository } = systemContainer;
 
       const [tenant, setTenant] = useState<Tenant | null>(null);
       const [loading, setLoading] = useState(true);
@@ -43,7 +42,7 @@ export function TenantDetailPage({ tenantId }: TenantDetailPageProps) {
                   try {
                         setLoading(true);
                         setError(null);
-                        const result = await systemContainer.tenantRepository.getById(tenantId);
+                        const result = await tenantRepository.getById(tenantId);
                         if (result) {
                               setTenant(result);
                               // Enter tenant world context
@@ -52,8 +51,8 @@ export function TenantDetailPage({ tenantId }: TenantDetailPageProps) {
                                     name: result.name,
                                     parentId: result.parentId,
                               });
-                              // Set API context header
-                              apiService.setTenantContext(result.id);
+                              // Set API context header via Repository (Clean Architecture)
+                              tenantRepository.setTenantContext(result.id);
                         } else {
                               setError(t("tenant.notFound") || "Tenant not found");
                         }
@@ -70,14 +69,14 @@ export function TenantDetailPage({ tenantId }: TenantDetailPageProps) {
             // Cleanup on unmount
             return () => {
                   exitTenantWorld();
-                  apiService.setTenantContext(null);
+                  tenantRepository.setTenantContext(null);
             };
-      }, [tenantId, enterTenantWorld, exitTenantWorld, apiService, t]);
+      }, [tenantId, enterTenantWorld, exitTenantWorld, tenantRepository, t]);
 
       // Handle back navigation
       const handleBack = () => {
             exitTenantWorld();
-            apiService.setTenantContext(null);
+            tenantRepository.setTenantContext(null);
             router.push("/tenants");
       };
 

@@ -13,7 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
 import { Badge } from "@core/ui/badge";
 import { useTenantContext, TenantInfo } from "@core/providers/tenant-context-provider";
 import { useI18n } from "@core/providers/i18n-provider";
-import { useServices } from "@core/providers/service-provider";
+import { systemContainer } from "@modules/system/di";
 import {
       X,
       Users,
@@ -41,7 +41,7 @@ interface TenantWorldPanelProps {
 export function TenantWorldPanel({ open, onClose, tenant: propTenant }: TenantWorldPanelProps) {
       const { t } = useI18n();
       const { currentTenant, exitTenantWorld, enterTenantWorld, breadcrumbs } = useTenantContext();
-      const { apiService } = useServices();
+      const { tenantRepository } = systemContainer;
 
       const [activeTab, setActiveTab] = useState("admins");
 
@@ -52,15 +52,15 @@ export function TenantWorldPanel({ open, onClose, tenant: propTenant }: TenantWo
       useEffect(() => {
             if (open && propTenant && (!currentTenant || currentTenant.id !== propTenant.id)) {
                   enterTenantWorld(propTenant);
-                  // Set tenant context in API service
-                  apiService.setTenantContext(propTenant.id);
+                  // Set tenant context via Repository (Clean Architecture)
+                  tenantRepository.setTenantContext(propTenant.id);
             }
-      }, [open, propTenant, currentTenant, enterTenantWorld, apiService]);
+      }, [open, propTenant, currentTenant, enterTenantWorld, tenantRepository]);
 
       // Handle close - exit tenant world
       const handleClose = () => {
             exitTenantWorld();
-            apiService.setTenantContext(null);
+            tenantRepository.setTenantContext(null);
             onClose();
       };
 

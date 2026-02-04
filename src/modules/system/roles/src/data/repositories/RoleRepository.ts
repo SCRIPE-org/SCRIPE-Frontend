@@ -18,7 +18,7 @@ import type {
       DeleteRoleRequest,
 } from "../../domain/entities/RoleRequests";
 import type { PagedResult } from "@modules/system/core/domain/types";
-import type { IRoleService } from "../services/RoleService";
+import type { IRoleService } from "../../domain/interfaces/IRoleService";
 import { RoleMapper } from "../mappers/RoleMapper";
 
 export class RoleRepository implements IRoleRepository {

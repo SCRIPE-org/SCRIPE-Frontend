@@ -22,15 +22,17 @@ import { PermissionRepository } from "./permissions/src/data/repositories/Permis
 import { TenantRepository } from "./tenants/src/data/repositories/TenantRepository";
 import { MenuRepository } from "./menus/src/data/repositories/MenuRepository";
 
-// Interfaces
+// Interfaces - Repositories
 import type { IAdminRepository } from "./admin/src/domain/interfaces/IAdminRepository";
 import type { IRoleRepository } from "./roles/src/domain/interfaces/IRoleRepository";
 import type { IPermissionRepository } from "./permissions/src/domain/interfaces/IPermissionRepository";
 import type { ITenantRepository } from "./tenants/src/domain/interfaces/ITenantRepository";
 import type { IMenuRepository } from "./menus/src/domain/interfaces/IMenuRepository";
-import type { IPermissionService } from "./permissions/src/data/services/PermissionService";
-import type { IRoleService } from "./roles/src/data/services/RoleService";
-import type { ITenantService } from "./tenants/src/data/services/TenantService";
+
+// Interfaces - Services (from domain/interfaces, NOT data/services)
+import type { IPermissionService } from "./permissions/src/domain/interfaces/IPermissionService";
+import type { IRoleService } from "./roles/src/domain/interfaces/IRoleService";
+import type { ITenantService } from "./tenants/src/domain/interfaces/ITenantService";
 
 export interface SystemContainer {
       // Services

@@ -19,21 +19,8 @@ import {
       type CreatePermissionJson,
       type UpdatePermissionJson,
 } from "../models/PermissionModel";
-
-export interface PermissionListParams {
-      category?: string;
-      search?: string;
-}
-
-export interface IPermissionService {
-      getAll(params?: PermissionListParams): Promise<PermissionModel[]>;
-      getMyPermissions(params?: PermissionListParams): Promise<PermissionModel[]>;
-      getById(id: string): Promise<PermissionModel>;
-      getCategories(): Promise<string[]>;
-      create(json: CreatePermissionJson): Promise<{ id: string }>;
-      update(id: string, json: UpdatePermissionJson): Promise<void>;
-      delete(id: string): Promise<void>;
-}
+import type { IPermissionService } from "../../domain/interfaces/IPermissionService";
+import type { PermissionListParams } from "../../domain/interfaces/IPermissionRepository";
 
 export class PermissionService implements IPermissionService {
       constructor(private readonly api: IApiService) { }

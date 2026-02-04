@@ -30,4 +30,9 @@ export type {
 
 // Services (for DI)
 export { TenantService } from "./src/data/services/TenantService";
-export type { ITenantService } from "./src/data/services/TenantService";
+export type {
+      ITenantService,
+      ServiceTenantListParams,
+      TenantListResult,
+} from "./src/domain/interfaces/ITenantService";
+export type { TenantStats } from "./src/domain/interfaces/ITenantRepository";

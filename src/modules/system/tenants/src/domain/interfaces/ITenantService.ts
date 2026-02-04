@@ -1,0 +1,47 @@
+/**
+ * Tenant Service Interface
+ *
+ * Defines the contract for tenant API operations.
+ * Implementation in data/services/TenantService.ts
+ *
+ * @module tenants/domain
+ */
+import type { TenantModel, TenantTreeNodeModel } from "../../data/models/TenantModel";
+import type {
+      CreateTenantJson,
+      UpdateTenantJson,
+} from "../../data/models/TenantModel";
+import type { TenantStats } from "./ITenantRepository";
+
+export interface ServiceTenantListParams {
+      page?: number;
+      pageSize?: number;
+      search?: string;
+      parentId?: string;
+}
+
+export interface TenantListResult {
+      items: TenantModel[];
+      totalCount: number;
+      page: number;
+      pageSize: number;
+      totalPages: number;
+      hasNextPage: boolean;
+      hasPreviousPage: boolean;
+}
+
+export interface ITenantService {
+      getAll(params: ServiceTenantListParams): Promise<TenantListResult>;
+      getTree(): Promise<TenantTreeNodeModel[]>;
+      getById(id: string): Promise<TenantModel>;
+      getStats(id: string): Promise<TenantStats>;
+      create(json: CreateTenantJson): Promise<{ id: string }>;
+      update(id: string, json: UpdateTenantJson): Promise<void>;
+      delete(id: string): Promise<void>;
+      getDescendantCount(id: string): Promise<number>;
+      /**
+       * Set the current tenant context for multi-tenant API calls.
+       * @param tenantId - The tenant ID to set, or null to clear
+       */
+      setTenantContext(tenantId: string | null): void;
+}

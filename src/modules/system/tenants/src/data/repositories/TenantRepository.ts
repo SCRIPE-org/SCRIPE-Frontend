@@ -18,7 +18,7 @@ import type {
       DeleteTenantRequest,
 } from "../../domain/entities/TenantRequests";
 import type { PagedResult } from "@modules/system/core/domain/types";
-import type { ITenantService } from "../services/TenantService";
+import type { ITenantService } from "../../domain/interfaces/ITenantService";
 import { TenantMapper } from "../mappers/TenantMapper";
 
 export class TenantRepository implements ITenantRepository {
@@ -74,5 +74,9 @@ export class TenantRepository implements ITenantRepository {
 
       async getDescendantCount(id: string): Promise<number> {
             return this.service.getDescendantCount(id);
+      }
+
+      setTenantContext(tenantId: string | null): void {
+            this.service.setTenantContext(tenantId);
       }
 }

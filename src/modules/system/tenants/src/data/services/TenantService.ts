@@ -17,49 +17,17 @@ import {
       type CreateTenantJson,
       type UpdateTenantJson,
 } from "../models/TenantModel";
-
-export interface TenantListParams {
-      page?: number;
-      pageSize?: number;
-      search?: string;
-      parentId?: string;
-}
-
-export interface TenantListResult {
-      items: TenantModel[];
-      totalCount: number;
-      page: number;
-      pageSize: number;
-      totalPages: number;
-      hasNextPage: boolean;
-      hasPreviousPage: boolean;
-}
-
-/**
- * Tenant statistics response
- */
-export interface TenantStats {
-      adminsCount: number;
-      rolesCount: number;
-      subTenantsCount: number;
-      permissionsCount: number;
-}
-
-export interface ITenantService {
-      getAll(params: TenantListParams): Promise<TenantListResult>;
-      getTree(): Promise<TenantTreeNodeModel[]>;
-      getById(id: string): Promise<TenantModel>;
-      getStats(id: string): Promise<TenantStats>;
-      create(json: CreateTenantJson): Promise<{ id: string }>;
-      update(id: string, json: UpdateTenantJson): Promise<void>;
-      delete(id: string): Promise<void>;
-      getDescendantCount(id: string): Promise<number>;
-}
+import type {
+      ITenantService,
+      ServiceTenantListParams,
+      TenantListResult,
+} from "../../domain/interfaces/ITenantService";
+import type { TenantStats } from "../../domain/interfaces/ITenantRepository";
 
 export class TenantService implements ITenantService {
       constructor(private readonly api: IApiService) { }
 
-      async getAll(params: TenantListParams): Promise<TenantListResult> {
+      async getAll(params: ServiceTenantListParams): Promise<TenantListResult> {
             const url = buildUrl(API_ENDPOINTS.TENANTS.LIST, {
                   page: params.page,
                   pageSize: params.pageSize,
@@ -112,5 +80,9 @@ export class TenantService implements ITenantService {
 
       async getDescendantCount(id: string): Promise<number> {
             return this.api.get<number>(`${API_ENDPOINTS.TENANTS.BY_ID(id)}/descendant-count`);
+      }
+
+      setTenantContext(tenantId: string | null): void {
+            this.api.setTenantContext(tenantId);
       }
 }

@@ -75,5 +75,12 @@ export interface ITenantRepository {
        * Get descendant count (children + grandchildren etc.)
        */
       getDescendantCount(id: string): Promise<number>;
+
+      /**
+       * Set the current tenant context for multi-tenant API calls.
+       * This sets the X-Tenant-Id header for subsequent requests.
+       * @param tenantId - The tenant ID to set, or null to clear context
+       */
+      setTenantContext(tenantId: string | null): void;
 }
 

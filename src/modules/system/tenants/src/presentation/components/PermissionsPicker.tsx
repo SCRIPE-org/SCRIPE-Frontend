@@ -2,8 +2,10 @@
  * Permissions Picker Component
  *
  * Multi-select permissions picker grouped by category.
- * Fetches creator's permissions from /api/Permissions/my
+ * Fetches creator's permissions via PermissionRepository.
  * Used in tenant creation form.
+ *
+ * Clean Architecture: Component → Repository (via DI)
  *
  * @module tenants
  */
@@ -12,7 +14,7 @@
 import { useState, useMemo, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
-import { useServices } from "@core/providers/service-provider";
+import { systemContainer } from "@modules/system/di";
 import { Checkbox } from "@core/ui/checkbox";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
@@ -27,20 +29,7 @@ import {
 } from "@core/ui/collapsible";
 import { ChevronDown, ChevronRight, Search, Shield, Check } from "lucide-react";
 import { cn } from "@core/common/utils";
-
-// Permission response type from API
-interface PermissionResponse {
-      id: string;
-      resource: string;
-      action: string;
-      permissionCode: string;
-      defaultScope: string;
-      description?: string;
-      nameEn?: string;
-      nameAr?: string;
-      category: string;
-      displayOrder: number;
-}
+import type { Permission } from "@modules/system/permissions";
 
 interface PermissionsPickerProps {
       /** Selected permission IDs */
@@ -60,21 +49,16 @@ export function PermissionsPicker({
       compact = false,
 }: PermissionsPickerProps) {
       const { t, language } = useI18n();
-      const { apiService } = useServices();
+      const { permissionRepository } = systemContainer;
       const [search, setSearch] = useState("");
       const [expandedCategories, setExpandedCategories] = useState<Set<string>>(
             new Set()
       );
 
-      // Fetch creator's permissions
+      // Fetch creator's permissions via Repository (Clean Architecture)
       const { data: permissions, isLoading } = useQuery({
             queryKey: ["permissions", "my"],
-            queryFn: async () => {
-                  const response = await apiService.get<PermissionResponse[]>(
-                        "/api/Permissions/my"
-                  );
-                  return response;
-            },
+            queryFn: () => permissionRepository.getMyPermissions(),
             staleTime: 5 * 60 * 1000, // 5 minutes
       });
 
@@ -86,7 +70,7 @@ export function PermissionsPicker({
                   if (!search) return true;
                   const searchLower = search.toLowerCase();
                   return (
-                        p.permissionCode.toLowerCase().includes(searchLower) ||
+                        p.code.toLowerCase().includes(searchLower) ||
                         p.description?.toLowerCase().includes(searchLower) ||
                         p.category.toLowerCase().includes(searchLower)
                   );
@@ -101,7 +85,7 @@ export function PermissionsPicker({
                         acc[category].push(permission);
                         return acc;
                   },
-                  {} as Record<string, PermissionResponse[]>
+                  {} as Record<string, Permission[]>
             );
       }, [permissions, search]);
 
@@ -182,11 +166,11 @@ export function PermissionsPicker({
 
       // Get permission display name
       const getPermissionName = useCallback(
-            (permission: PermissionResponse) => {
+            (permission: Permission) => {
                   if (language === "ar" && permission.nameAr) {
                         return permission.nameAr;
                   }
-                  return permission.nameEn || permission.permissionCode;
+                  return permission.nameEn || permission.code;
             },
             [language]
       );
@@ -329,7 +313,7 @@ export function PermissionsPicker({
                                                                                           )}
                                                                                     </div>
                                                                                     <code className="text-xs text-muted-foreground bg-muted px-1.5 py-0.5 rounded shrink-0">
-                                                                                          {permission.permissionCode}
+                                                                                          {permission.code}
                                                                                     </code>
                                                                               </label>
                                                                         ))}

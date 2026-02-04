@@ -20,7 +20,7 @@ import type {
       CreatePermissionRequest,
       UpdatePermissionRequest,
 } from "../../domain/entities/PermissionRequests";
-import type { IPermissionService } from "../services/PermissionService";
+import type { IPermissionService } from "../../domain/interfaces/IPermissionService";
 import { PermissionMapper } from "../mappers/PermissionMapper";
 
 export class PermissionRepository implements IPermissionRepository {

@@ -27,4 +27,4 @@ export type {
 
 // Services (for DI)
 export { PermissionService } from "./src/data/services/PermissionService";
-export type { IPermissionService } from "./src/data/services/PermissionService";
+export type { IPermissionService } from "./src/domain/interfaces/IPermissionService";
