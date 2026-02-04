@@ -2,7 +2,7 @@
 
 > **ABSOLUTE LAW**: Modules are isolated islands. They CANNOT import from each other.
 
-## The Golden Rule
+## The Golden Rule (Module Imports)
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -20,6 +20,43 @@
 ```
 
 ---
+
+## Layer Boundary Rules (STRICT)
+
+> **ABSOLUTE LAW**: Each layer can ONLY call the layer directly below it.
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                      LAYER HIERARCHY                         │
+├─────────────────────────────────────────────────────────────┤
+│                                                              │
+│   View  →  ViewModel  →  Repository  →  Service  →  API     │
+│            (via DI)      (via Mapper)  (injected)            │
+│                                                              │
+├─────────────────────────────────────────────────────────────┤
+│                      LAYER RULES                             │
+├─────────────────────────────────────────────────────────────┤
+│  View       │ ✅ ViewModel hooks    │ ❌ Repository, Service │
+│  ViewModel  │ ✅ Repository (DI)    │ ❌ Service, IApiService│
+│  Repository │ ✅ Service (injected) │ ❌ IApiService directly│
+│  Service    │ ✅ IApiService        │ ❌ Repository, Mapper  │
+│  Mapper     │ ✅ Nothing (pure)     │ ❌ Any other layer     │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Why ViewModels CANNOT Call Services
+
+```typescript
+// ❌ WRONG: ViewModel calling Service
+const productService = systemContainer.productService;
+await productService.create(data);
+
+// ✅ CORRECT: ViewModel calling Repository
+const productRepo = systemContainer.productRepository;
+await productRepo.create(data);
+```
+
+**Reason:** Repository handles mapping. If ViewModel calls Service directly, it must know about Models (DTOs), breaking separation of concerns.
 
 ## Import Examples
 
