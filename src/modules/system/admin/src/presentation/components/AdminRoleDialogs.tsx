@@ -337,3 +337,114 @@ export function ViewRolesDialog({
             </Dialog>
       );
 }
+
+// ========== Reset Password Dialog ==========
+
+interface ResetPasswordDialogProps {
+      open: boolean;
+      onOpenChange: (open: boolean) => void;
+      admin: Admin | null;
+      onResetPassword: (newPassword: string) => Promise<void>;
+      isLoading: boolean;
+      /** Default password to use - displayed as placeholder */
+      defaultPassword?: string;
+}
+
+export function ResetPasswordDialog({
+      open,
+      onOpenChange,
+      admin,
+      onResetPassword,
+      isLoading,
+      defaultPassword = "P@ssw0rd",
+}: ResetPasswordDialogProps) {
+      const { t } = useI18n();
+      const [password, setPassword] = useState("");
+      const [useDefault, setUseDefault] = useState(true);
+
+      // Reset form when dialog opens
+      useEffect(() => {
+            if (open) {
+                  setPassword("");
+                  setUseDefault(true);
+            }
+      }, [open]);
+
+      const handleSubmit = async () => {
+            const newPassword = useDefault ? defaultPassword : password;
+            if (!newPassword) return;
+
+            await onResetPassword(newPassword);
+            onOpenChange(false);
+      };
+
+      const isValid = useDefault || password.length >= 6;
+
+      return (
+            <Dialog open={open} onOpenChange={onOpenChange}>
+                  <DialogContent className="max-w-md">
+                        <DialogHeader>
+                              <DialogTitle>{t("admin.resetPassword") || "Reset Password"}</DialogTitle>
+                              <DialogDescription>
+                                    {t("admin.resetPasswordDescription") || "Reset password for"}{" "}
+                                    <strong>{admin?.displayName}</strong>
+                              </DialogDescription>
+                        </DialogHeader>
+
+                        <div className="space-y-4 py-4">
+                              {/* Default Password Toggle */}
+                              <div className="flex items-center justify-between p-3 border rounded-lg bg-muted/30">
+                                    <div className="space-y-0.5">
+                                          <Label htmlFor="useDefault">{t("admin.useDefaultPassword") || "Use Default Password"}</Label>
+                                          <p className="text-xs text-muted-foreground">
+                                                {t("admin.defaultPasswordHint") || `Set password to "${defaultPassword}"`}
+                                          </p>
+                                    </div>
+                                    <Switch
+                                          id="useDefault"
+                                          checked={useDefault}
+                                          onCheckedChange={setUseDefault}
+                                    />
+                              </div>
+
+                              {/* Custom Password Input */}
+                              {!useDefault && (
+                                    <div className="space-y-2">
+                                          <Label htmlFor="password">{t("admin.newPassword") || "New Password"} *</Label>
+                                          <input
+                                                id="password"
+                                                type="password"
+                                                value={password}
+                                                onChange={(e) => setPassword(e.target.value)}
+                                                placeholder={t("admin.enterNewPassword") || "Enter new password..."}
+                                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                                                minLength={6}
+                                          />
+                                          {password && password.length < 6 && (
+                                                <p className="text-xs text-destructive">
+                                                      {t("admin.passwordMinLength") || "Password must be at least 6 characters"}
+                                                </p>
+                                          )}
+                                    </div>
+                              )}
+                        </div>
+
+                        <DialogFooter>
+                              <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading}>
+                                    {t("common.cancel") || "Cancel"}
+                              </Button>
+                              <Button onClick={handleSubmit} disabled={!isValid || isLoading} variant="destructive">
+                                    {isLoading ? (
+                                          <>
+                                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                                {t("common.resetting") || "Resetting..."}
+                                          </>
+                                    ) : (
+                                          t("admin.resetPassword") || "Reset Password"
+                                    )}
+                              </Button>
+                        </DialogFooter>
+                  </DialogContent>
+            </Dialog>
+      );
+}

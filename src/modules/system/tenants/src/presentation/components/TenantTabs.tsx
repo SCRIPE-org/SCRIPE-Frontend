@@ -26,7 +26,7 @@ import { useTreeViewModel } from "@core/hooks/use-tree-view-model";
 // Admin imports
 import { Admin } from "@modules/system/admin/src/domain/entities/Admin";
 import { useAdminsViewModel } from "@modules/system/admin/src/presentation/viewmodels/useAdminsViewModel";
-import { AssignRoleDialog, ViewRolesDialog } from "@modules/system/admin/src/presentation/components/AdminRoleDialogs";
+import { AssignRoleDialog, ViewRolesDialog, ResetPasswordDialog } from "@modules/system/admin/src/presentation/components/AdminRoleDialogs";
 import type { AssignRoleRequest } from "@modules/system/admin/src/domain/entities/AdminRequests";
 
 // Role imports
@@ -142,8 +142,10 @@ function TenantAdminsTab({
             handleToggleActive,
             handleAssignRole,
             handleRemoveRole,
+            handleResetPassword,
             isAssigningRole,
             isRemovingRole,
+            isResettingPassword,
       } = useAdminsViewModel({ tenantId });
 
       const configBase = getConfigBase();
@@ -152,6 +154,7 @@ function TenantAdminsTab({
       const [selectedAdminForRole, setSelectedAdminForRole] = useState<Admin | null>(null);
       const [assignRoleDialogOpen, setAssignRoleDialogOpen] = useState(false);
       const [viewRolesDialogOpen, setViewRolesDialogOpen] = useState(false);
+      const [resetPasswordDialogOpen, setResetPasswordDialogOpen] = useState(false);
 
       // Role dialog handlers
       const handleOpenAssignRole = useCallback((admin: Admin) => {
@@ -162,6 +165,11 @@ function TenantAdminsTab({
       const handleOpenViewRoles = useCallback((admin: Admin) => {
             setSelectedAdminForRole(admin);
             setViewRolesDialogOpen(true);
+      }, []);
+
+      const handleOpenResetPassword = useCallback((admin: Admin) => {
+            setSelectedAdminForRole(admin);
+            setResetPasswordDialogOpen(true);
       }, []);
 
       const onAssignRoleSubmit = useCallback(
@@ -179,6 +187,14 @@ function TenantAdminsTab({
                   await handleRemoveRole(selectedAdminForRole.id, roleId, tenantId);
             },
             [handleRemoveRole, selectedAdminForRole]
+      );
+
+      const onResetPasswordSubmit = useCallback(
+            async (newPassword: string) => {
+                  if (!selectedAdminForRole) return;
+                  await handleResetPassword(selectedAdminForRole.id, newPassword);
+            },
+            [handleResetPassword, selectedAdminForRole]
       );
 
       // Configuration for the generic view
@@ -270,6 +286,13 @@ function TenantAdminsTab({
                                     icon: <Shield className="h-4 w-4" />,
                               },
                               {
+                                    label: tFn("admin.resetPassword") || "Reset Password",
+                                    onClick: (item: Admin) => handleOpenResetPassword(item),
+                                    variant: "ghost" as const,
+                                    className: "text-orange-600 hover:text-orange-700",
+                                    icon: <Settings className="h-4 w-4" />,
+                              },
+                              {
                                     label: tFn("common.delete") || "Delete",
                                     onClick: (item: Admin) => handleDeleteFn?.(item),
                                     variant: "ghost" as const,
@@ -286,6 +309,7 @@ function TenantAdminsTab({
                   handleToggleActive,
                   handleOpenViewRoles,
                   handleOpenAssignRole,
+                  handleOpenResetPassword,
             ]
       );
 
@@ -322,6 +346,14 @@ function TenantAdminsTab({
                         admin={selectedAdminForRole}
                         onRemoveRole={onRemoveRole}
                         isRemoving={isRemovingRole}
+                  />
+
+                  <ResetPasswordDialog
+                        open={resetPasswordDialogOpen}
+                        onOpenChange={setResetPasswordDialogOpen}
+                        admin={selectedAdminForRole}
+                        onResetPassword={onResetPasswordSubmit}
+                        isLoading={isResettingPassword}
                   />
             </div>
       );
