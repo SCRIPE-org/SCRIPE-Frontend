@@ -56,6 +56,7 @@ export const ar = {
     tenants: "المستأجرون",
     permissions: "الصلاحيات",
     menus: "إدارة القوائم",
+    tenant_settings: "إعدادات المستأجر",
   },
 
   // Tenants - المستأجرون
@@ -157,6 +158,63 @@ export const ar = {
     permissionsSelected: "{{count}} صلاحية مختارة",
     address: "العنوان",
     addressPlaceholder: "أدخل عنوان المستأجر",
+  },
+
+  // إعدادات المستأجر (/settings/tenant)
+  tenantSettings: {
+    title: "إعدادات مستأجري",
+    description: "تكوين إعدادات منظمتك",
+    quotas: "الحصص",
+    quotasDescription: "تحديد الموارد لهذا المستأجر",
+    security: "الأمان",
+    securityDescription: "سياسات كلمة المرور وإعدادات المصادقة",
+    branding: "العلامة التجارية",
+    brandingDescription: "تخصيص مظهر منظمتك",
+    // حقول الحصص
+    maxAdmins: "الحد الأقصى للمشرفين",
+    maxAdminsHelp: "الحد الأقصى لعدد المشرفين. -1 غير محدود.",
+    maxRoles: "الحد الأقصى للأدوار",
+    maxRolesHelp: "الحد الأقصى لعدد الأدوار المخصصة. -1 غير محدود.",
+    maxSubTenants: "الحد الأقصى للمستأجرين الفرعيين",
+    maxSubTenantsHelp: "الحد الأقصى لعدد المنظمات الفرعية. -1 غير محدود.",
+    unlimited: "غير محدود",
+    // حقول كلمة المرور
+    passwordMinLength: "الحد الأدنى للطول",
+    passwordMinLengthHelp: "الحد الأدنى لطول كلمة المرور المطلوب.",
+    passwordRequireUppercase: "تتطلب أحرف كبيرة",
+    passwordRequireUppercaseHelp: "يجب أن تحتوي كلمة المرور على أحرف كبيرة.",
+    passwordRequireNumber: "تتطلب رقم",
+    passwordRequireNumberHelp: "يجب أن تحتوي كلمة المرور على أرقام.",
+    passwordRequireSpecial: "تتطلب رمز خاص",
+    passwordRequireSpecialHelp: "يجب أن تحتوي كلمة المرور على رموز خاصة (!@#$%).",
+    passwordExpiryDays: "انتهاء صلاحية كلمة المرور (أيام)",
+    passwordExpiryDaysHelp: "عدد الأيام قبل انتهاء صلاحية كلمة المرور. 0 بدون انتهاء.",
+    // أمان تسجيل الدخول
+    loginLockoutThreshold: "حد القفل",
+    loginLockoutThresholdHelp: "عدد المحاولات الفاشلة قبل قفل الحساب.",
+    loginLockoutMinutes: "مدة القفل (دقائق)",
+    loginLockoutMinutesHelp: "الدقائق قبل فتح الحساب المقفل.",
+    require2FA: "تتطلب المصادقة الثنائية",
+    require2FAHelp: "يجب على جميع المستخدمين تفعيل المصادقة الثنائية.",
+    // التدقيق
+    auditEnabled: "تفعيل سجل التدقيق",
+    auditEnabledHelp: "تتبع جميع إجراءات المستخدم في سجل التدقيق.",
+    auditRetentionDays: "فترة الاحتفاظ بالتدقيق (أيام)",
+    auditRetentionDaysHelp: "عدد أيام الاحتفاظ بسجلات التدقيق قبل الحذف.",
+    // العلامة التجارية
+    logoUrl: "رابط الشعار",
+    logoUrlHelp: "رابط شعار منظمتك.",
+    primaryColor: "اللون الأساسي",
+    primaryColorHelp: "لون العلامة الأساسي (بصيغة hex).",
+    companyName: "اسم الشركة",
+    companyNameHelp: "اسم العرض لمنظمتك.",
+    // الإجراءات
+    saveSettings: "حفظ الإعدادات",
+    saving: "جاري الحفظ...",
+    saveSuccess: "تم حفظ الإعدادات بنجاح",
+    saveError: "فشل في حفظ الإعدادات",
+    loadError: "فشل في تحميل الإعدادات",
+    systemAdminMessage: "مدراء النظام ليس لديهم إعدادات مستأجر. يرجى استخدام صفحة إدارة المستأجرين لتكوين إعدادات مستأجر محدد.",
   },
 
   // Admin - المشرفون

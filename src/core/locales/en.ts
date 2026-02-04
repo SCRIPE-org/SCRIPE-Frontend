@@ -57,6 +57,7 @@ export const en = {
     tenants: "Tenants",
     permissions: "Permissions",
     menus: "Menu Management",
+    tenant_settings: "My Tenant Settings",
   },
 
   // Tenants
@@ -159,6 +160,63 @@ export const en = {
     permissionsSelected: "{{count}} permissions selected",
     address: "Address",
     addressPlaceholder: "Enter tenant address",
+  },
+
+  // Tenant Settings Page (/settings/tenant)
+  tenantSettings: {
+    title: "My Tenant Settings",
+    description: "Configure settings for your organization",
+    quotas: "Quotas",
+    quotasDescription: "Limit resources for this tenant",
+    security: "Security",
+    securityDescription: "Password policies and authentication settings",
+    branding: "Branding",
+    brandingDescription: "Customize your organization's appearance",
+    // Quota fields
+    maxAdmins: "Max Admins",
+    maxAdminsHelp: "Maximum number of administrators. -1 for unlimited.",
+    maxRoles: "Max Roles",
+    maxRolesHelp: "Maximum number of custom roles. -1 for unlimited.",
+    maxSubTenants: "Max Sub-Tenants",
+    maxSubTenantsHelp: "Maximum number of child organizations. -1 for unlimited.",
+    unlimited: "Unlimited",
+    // Password fields
+    passwordMinLength: "Minimum Length",
+    passwordMinLengthHelp: "Minimum password length required.",
+    passwordRequireUppercase: "Require Uppercase",
+    passwordRequireUppercaseHelp: "Password must contain uppercase letters.",
+    passwordRequireNumber: "Require Number",
+    passwordRequireNumberHelp: "Password must contain numbers.",
+    passwordRequireSpecial: "Require Special Character",
+    passwordRequireSpecialHelp: "Password must contain special characters (!@#$%).",
+    passwordExpiryDays: "Password Expiry (Days)",
+    passwordExpiryDaysHelp: "Days before password expires. 0 for no expiry.",
+    // Login security
+    loginLockoutThreshold: "Lockout Threshold",
+    loginLockoutThresholdHelp: "Failed attempts before account lockout.",
+    loginLockoutMinutes: "Lockout Duration (Minutes)",
+    loginLockoutMinutesHelp: "Minutes before locked account is released.",
+    require2FA: "Require 2FA",
+    require2FAHelp: "All users must enable two-factor authentication.",
+    // Audit
+    auditEnabled: "Enable Audit Logging",
+    auditEnabledHelp: "Track all user actions in audit log.",
+    auditRetentionDays: "Audit Retention (Days)",
+    auditRetentionDaysHelp: "Days to keep audit logs before deletion.",
+    // Branding
+    logoUrl: "Logo URL",
+    logoUrlHelp: "URL to your organization's logo.",
+    primaryColor: "Primary Color",
+    primaryColorHelp: "Primary brand color (hex format).",
+    companyName: "Company Name",
+    companyNameHelp: "Display name for your organization.",
+    // Actions
+    saveSettings: "Save Settings",
+    saving: "Saving...",
+    saveSuccess: "Settings saved successfully",
+    saveError: "Failed to save settings",
+    loadError: "Failed to load settings",
+    systemAdminMessage: "System administrators do not have tenant settings. Please use the tenant management page to configure specific tenant settings.",
   },
 
   // Admin

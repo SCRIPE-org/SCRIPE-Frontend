@@ -13,6 +13,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
+import { Button } from "@core/ui/button";
 import { Users, Shield, Building2, Settings, UserCheck, Trash2, Pencil, Eye } from "lucide-react";
 import { cn } from "@core/common/utils";
 import { format } from "date-fns";
@@ -32,11 +33,13 @@ import type { AssignRoleRequest } from "@modules/system/admin/src/domain/entitie
 // Role imports
 import { Role } from "@modules/system/roles/src/domain/entities/Role";
 import { useRolesViewModel } from "@modules/system/roles/src/presentation/viewmodels/useRolesViewModel";
+import { RolePermissionsDialog } from "@modules/system/roles/src/presentation/components/RolePermissionsDialog";
 
 // Tenant imports
 import { systemContainer } from "@modules/system/di";
 import { createChildrenTreeService } from "../../data/services/TenantTreeService";
 import type { TenantTreeNode } from "../../domain/entities/Tenant";
+import { TenantPermissionsDialog } from "./TenantPermissionsDialog";
 
 interface TenantTabsProps {
       tenantId: string;
@@ -374,6 +377,16 @@ function TenantRolesTab({
       // Pass tenantId to filter roles for this specific tenant
       const vm = useRolesViewModel({ tenantId });
 
+      // Role permissions dialog state
+      const [selectedRoleForPermissions, setSelectedRoleForPermissions] = useState<Role | null>(null);
+      const [permissionsDialogOpen, setPermissionsDialogOpen] = useState(false);
+
+      // Handler for opening permissions dialog
+      const handleOpenPermissions = useCallback((role: Role) => {
+            setSelectedRoleForPermissions(role);
+            setPermissionsDialogOpen(true);
+      }, []);
+
       // Configuration for the generic view
       const config: CrudConfig<Role> = useMemo(
             () => ({
@@ -508,10 +521,7 @@ function TenantRolesTab({
                               },
                               {
                                     label: tFn("role.managePermissions") || "Permissions",
-                                    onClick: (item: Role) => {
-                                          // TODO: Open permissions dialog
-                                          console.log("Manage permissions for:", item.name);
-                                    },
+                                    onClick: (item: Role) => handleOpenPermissions(item),
                                     variant: "ghost" as const,
                                     icon: <Shield className="h-4 w-4" />,
                               },
@@ -524,7 +534,7 @@ function TenantRolesTab({
                               },
                         ],
             }),
-            [t]
+            [t, handleOpenPermissions]
       );
 
       return (
@@ -543,6 +553,14 @@ function TenantRolesTab({
                   <div className="border rounded-lg overflow-hidden">
                         <GenericCrudView viewModel={vm} config={config} />
                   </div>
+
+                  {/* Role Permissions Dialog */}
+                  <RolePermissionsDialog
+                        open={permissionsDialogOpen}
+                        onOpenChange={setPermissionsDialogOpen}
+                        role={selectedRoleForPermissions}
+                        tenantId={tenantId}
+                  />
             </div>
       );
 }
@@ -673,6 +691,7 @@ function TenantSettingsTab({
       tenantName: string;
 }) {
       const { t, direction } = useI18n();
+      const [permissionsDialogOpen, setPermissionsDialogOpen] = useState(false);
 
       return (
             <div className="space-y-6" dir={direction}>
@@ -776,6 +795,30 @@ function TenantSettingsTab({
                               </CardContent>
                         </Card>
 
+                        {/* Permissions Management */}
+                        <Card>
+                              <CardHeader>
+                                    <CardTitle className="text-base flex items-center gap-2">
+                                          <Shield className="h-4 w-4" />
+                                          {t("tenant.settingsPermissions") || "Permissions"}
+                                    </CardTitle>
+                                    <CardDescription>
+                                          {t("tenant.settingsPermissionsDesc") ||
+                                                "Manage which permissions are available to this tenant"}
+                                    </CardDescription>
+                              </CardHeader>
+                              <CardContent>
+                                    <Button
+                                          variant="outline"
+                                          onClick={() => setPermissionsDialogOpen(true)}
+                                          className="flex items-center gap-2"
+                                    >
+                                          <Shield className="h-4 w-4" />
+                                          {t("tenant.managePermissions") || "Manage Permissions"}
+                                    </Button>
+                              </CardContent>
+                        </Card>
+
                         {/* Branding Settings */}
                         <Card>
                               <CardHeader>
@@ -795,6 +838,15 @@ function TenantSettingsTab({
                               </CardContent>
                         </Card>
                   </div>
+
+                  {/* Tenant Permissions Dialog */}
+                  <TenantPermissionsDialog
+                        open={permissionsDialogOpen}
+                        onOpenChange={setPermissionsDialogOpen}
+                        tenantId={tenantId}
+                        tenantName={tenantName}
+                  />
             </div>
       );
 }
+
