@@ -36,6 +36,8 @@ interface AssignRoleDialogProps {
       admin: Admin | null;
       onAssign: (request: AssignRoleRequest) => Promise<void>;
       isLoading: boolean;
+      /** If provided, roles will be filtered by this tenant and tenant selector will be hidden */
+      tenantId?: string;
 }
 
 export function AssignRoleDialog({
@@ -44,6 +46,7 @@ export function AssignRoleDialog({
       admin,
       onAssign,
       isLoading,
+      tenantId,
 }: AssignRoleDialogProps) {
       const { t } = useI18n();
       const { roleRepository, tenantRepository } = systemContainer;
@@ -53,18 +56,22 @@ export function AssignRoleDialog({
       const [selectedTenantId, setSelectedTenantId] = useState<string>("");
       const [inheritToChildren, setInheritToChildren] = useState(false);
 
-      // Fetch roles for dropdown
+      // Fetch roles for dropdown - filter by tenant if in tenant context
       const { data: rolesData, isLoading: isLoadingRoles } = useQuery({
-            queryKey: ["roles-for-select"],
-            queryFn: () => roleRepository.getAll({ page: 1, pageSize: 100 }),
+            queryKey: ["roles-for-select", tenantId],
+            queryFn: () => roleRepository.getAll({
+                  page: 1,
+                  pageSize: 100,
+                  tenantId: tenantId || undefined
+            }),
             enabled: open,
       });
 
-      // Fetch tenants for dropdown
+      // Fetch tenants for dropdown (only needed if not in tenant context)
       const { data: tenantsTree, isLoading: isLoadingTenants } = useQuery({
             queryKey: ["tenants-tree-for-select"],
             queryFn: () => tenantRepository.getTree(),
-            enabled: open,
+            enabled: open && !tenantId, // Only fetch if no tenant context
       });
 
       // Transform roles to select options
@@ -101,10 +108,11 @@ export function AssignRoleDialog({
       useEffect(() => {
             if (open) {
                   setSelectedRoleId("");
-                  setSelectedTenantId("");
+                  // Auto-select tenant if in tenant context
+                  setSelectedTenantId(tenantId || "");
                   setInheritToChildren(false);
             }
-      }, [open]);
+      }, [open, tenantId]);
 
       const handleSubmit = async () => {
             if (!selectedRoleId) return;
@@ -144,22 +152,24 @@ export function AssignRoleDialog({
                                     />
                               </div>
 
-                              {/* Tenant Selection (optional) */}
-                              <div className="space-y-2">
-                                    <Label>{t("admin.role.tenantScope") || "Tenant Scope"}</Label>
-                                    <GenericSelect
-                                          options={tenantOptions}
-                                          value={selectedTenantId}
-                                          onValueChange={(val: string | string[]) => setSelectedTenantId(val as string)}
-                                          placeholder={t("admin.role.selectTenantPlaceholder") || "Global (applies to all)"}
-                                          type="tree"
-                                          loading={isLoadingTenants}
-                                    />
-                                    <p className="text-xs text-muted-foreground">
-                                          {t("admin.role.tenantScopeHelp") ||
-                                                "Leave empty for global access, or select a tenant to limit scope."}
-                                    </p>
-                              </div>
+                              {/* Tenant Selection (optional) - Hidden when in tenant context */}
+                              {!tenantId && (
+                                    <div className="space-y-2">
+                                          <Label>{t("admin.role.tenantScope") || "Tenant Scope"}</Label>
+                                          <GenericSelect
+                                                options={tenantOptions}
+                                                value={selectedTenantId}
+                                                onValueChange={(val: string | string[]) => setSelectedTenantId(val as string)}
+                                                placeholder={t("admin.role.selectTenantPlaceholder") || "Global (applies to all)"}
+                                                type="tree"
+                                                loading={isLoadingTenants}
+                                          />
+                                          <p className="text-xs text-muted-foreground">
+                                                {t("admin.role.tenantScopeHelp") ||
+                                                      "Leave empty for global access, or select a tenant to limit scope."}
+                                          </p>
+                                    </div>
+                              )}
 
                               {/* Inherit to Children (only if tenant selected) */}
                               {selectedTenantId && (
@@ -218,18 +228,29 @@ export function ViewRolesDialog({
       isRemoving,
 }: ViewRolesDialogProps) {
       const { t } = useI18n();
+      const { adminRepository } = systemContainer;
       const [removingRoleId, setRemovingRoleId] = useState<string | null>(null);
+
+      // Fetch admin roles from API when dialog opens
+      const { data: roles = [], isLoading, refetch } = useQuery({
+            queryKey: ["admin-roles", admin?.id],
+            queryFn: async (): Promise<AdminRoleData[]> => {
+                  if (!admin?.id) return [];
+                  return adminRepository.getRoles(admin.id);
+            },
+            enabled: open && !!admin?.id,
+      });
 
       const handleRemove = async (role: AdminRoleData) => {
             setRemovingRoleId(role.roleId);
             try {
                   await onRemoveRole(role.roleId, role.tenantId);
+                  // Refetch roles after removal
+                  await refetch();
             } finally {
                   setRemovingRoleId(null);
             }
       };
-
-      const roles = admin?.roles ?? [];
 
       return (
             <Dialog open={open} onOpenChange={onOpenChange}>
@@ -243,7 +264,12 @@ export function ViewRolesDialog({
                         </DialogHeader>
 
                         <div className="py-4">
-                              {roles.length === 0 ? (
+                              {isLoading ? (
+                                    <div className="text-center py-8">
+                                          <Loader2 className="mx-auto h-8 w-8 animate-spin text-primary" />
+                                          <p className="mt-2 text-muted-foreground">{t("common.loading") || "Loading..."}</p>
+                                    </div>
+                              ) : roles.length === 0 ? (
                                     <div className="text-center py-8 text-muted-foreground">
                                           <Shield className="mx-auto h-12 w-12 opacity-50 mb-2" />
                                           <p>{t("admin.role.noRoles") || "No roles assigned yet."}</p>

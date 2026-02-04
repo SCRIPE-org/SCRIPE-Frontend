@@ -83,6 +83,11 @@ export interface IAdminRepository {
       removeRole(adminId: string, roleId: string, tenantId?: string): Promise<void>;
 
       /**
+       * Get all roles assigned to an admin
+       */
+      getRoles(adminId: string): Promise<import("../entities/Admin").AdminRoleData[]>;
+
+      /**
        * Reset admin's password
        */
       resetPassword(id: string, newPassword: string): Promise<void>;

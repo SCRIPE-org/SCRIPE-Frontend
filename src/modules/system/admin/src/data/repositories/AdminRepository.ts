@@ -9,7 +9,7 @@ import type {
       IAdminRepository,
       AdminListParams,
 } from "../../domain/interfaces/IAdminRepository";
-import { Admin, AdminData } from "../../domain/entities/Admin";
+import { Admin, type AdminData, type AdminRoleData } from "../../domain/entities/Admin";
 import type {
       CreateAdminRequest,
       UpdateAdminRequest,
@@ -143,6 +143,10 @@ export class AdminRepository implements IAdminRepository {
                   tenantId,
             });
             await this.api.delete(url);
+      }
+
+      async getRoles(adminId: string): Promise<AdminRoleData[]> {
+            return this.api.get<AdminRoleData[]>(API_ENDPOINTS.ADMINS.ROLES(adminId));
       }
 
       async resetPassword(id: string, newPassword: string): Promise<void> {

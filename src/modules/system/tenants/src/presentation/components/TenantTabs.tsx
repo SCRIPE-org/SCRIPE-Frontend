@@ -313,6 +313,7 @@ function TenantAdminsTab({
                         admin={selectedAdminForRole}
                         onAssign={onAssignRoleSubmit}
                         isLoading={isAssigningRole}
+                        tenantId={tenantId}
                   />
 
                   <ViewRolesDialog

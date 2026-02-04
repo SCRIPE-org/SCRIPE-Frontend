@@ -29,7 +29,10 @@ export interface AdminData extends BaseEntity {
       isActive: boolean;
       lastLoginAt?: string;
       notes?: string;
-      roles: AdminRoleData[];
+      /** Full role data (from details API) */
+      roles?: AdminRoleData[];
+      /** Simple role names (from list API) */
+      roleNames?: string[];
       /** The tenant this admin belongs to (null for system admins) */
       tenantId?: string;
       tenantName?: string;
@@ -88,12 +91,24 @@ export class Admin {
             return this.data.roles ?? [];
       }
 
+      /**
+       * Get role names as comma-separated string.
+       * Uses roleNames array from list API or extracts from roles array from details API.
+       */
       get roleNames(): string {
-            return (this.data.roles ?? []).map((r) => r.roleName).join(", ") || "No roles";
+            // Prefer roleNames from list API if available
+            if (this.data.roleNames && this.data.roleNames.length > 0) {
+                  return this.data.roleNames.join(", ");
+            }
+            // Fallback to roles array from details API
+            if (this.data.roles && this.data.roles.length > 0) {
+                  return this.data.roles.map((r) => r.roleName).join(", ");
+            }
+            return "No roles";
       }
 
       get hasRoles(): boolean {
-            return (this.data.roles ?? []).length > 0;
+            return (this.data.roleNames?.length ?? 0) > 0 || (this.data.roles?.length ?? 0) > 0;
       }
 
       /** The tenant this admin belongs to (null for system admins) */
@@ -116,9 +131,9 @@ export class Admin {
       }
 
       /**
-       * Get role by tenant
+       * Get role by tenant (only works with full role data from details API)
        */
       getRoleForTenant(tenantId?: string): AdminRoleData | undefined {
-            return this.data.roles.find((r) => r.tenantId === tenantId);
+            return this.data.roles?.find((r) => r.tenantId === tenantId);
       }
 }
