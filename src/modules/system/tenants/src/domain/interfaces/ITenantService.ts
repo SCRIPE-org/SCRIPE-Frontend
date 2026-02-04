@@ -54,6 +54,11 @@ export interface ITenantService {
        */
       getCreationPermissions(parentId?: string): Promise<PermissionModel[]>;
       /**
+       * Get permissions available to a specific tenant
+       * @param tenantId - The tenant ID to get permissions for
+       */
+      getTenantPermissions(tenantId: string): Promise<PermissionModel[]>;
+      /**
        * Set the current tenant context for multi-tenant API calls.
        * @param tenantId - The tenant ID to set, or null to clear
        */

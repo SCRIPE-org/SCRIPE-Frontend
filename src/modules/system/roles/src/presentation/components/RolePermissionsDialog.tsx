@@ -26,7 +26,7 @@ import { useToast } from "@core/hooks/use-toast";
 import { Loader2, Search, Shield, ShieldCheck } from "lucide-react";
 import { systemContainer } from "@modules/system/di";
 import type { Role } from "../../domain/entities/Role";
-import type { Permission } from "@modules/system/permissions/src/domain/entities/Permission";
+import { PermissionModel } from "@modules/system/permissions/src/data/models/PermissionModel";
 
 interface RolePermissionsDialogProps {
       open: boolean;
@@ -52,8 +52,8 @@ export function RolePermissionsDialog({
       const { data: tenantPermissions, isLoading: loadingTenantPerms } = useQuery({
             queryKey: ["tenant-permissions", tenantId],
             queryFn: async () => {
-                  // Get permissions this tenant is allowed to use
-                  return systemContainer.permissionRepository.getMyPermissions({});
+                  // Get permissions this specific tenant is allowed to use
+                  return systemContainer.tenantService.getTenantPermissions(tenantId);
             },
             enabled: open && !!tenantId,
       });
@@ -116,18 +116,23 @@ export function RolePermissionsDialog({
             );
       };
 
+      // Helper to get localized name
+      const getLocalizedName = (p: PermissionModel) => {
+            return language === "ar" ? (p.nameAr || p.nameEn || p.permissionCode) : (p.nameEn || p.permissionCode);
+      };
+
       // Filter permissions by search
       const filteredPermissions =
-            tenantPermissions?.filter((p: Permission) => {
+            tenantPermissions?.filter((p: PermissionModel) => {
                   const searchLower = search.toLowerCase();
-                  const name = p.getLocalizedName(language).toLowerCase();
-                  const code = p.code?.toLowerCase() || "";
+                  const name = getLocalizedName(p).toLowerCase();
+                  const code = p.permissionCode?.toLowerCase() || "";
                   return name.includes(searchLower) || code.includes(searchLower);
             }) ?? [];
 
       // Group permissions by resource
       const groupedPermissions = filteredPermissions.reduce(
-            (acc: Record<string, Permission[]>, p: Permission) => {
+            (acc: Record<string, PermissionModel[]>, p: PermissionModel) => {
                   const resource = p.resource || "other";
                   if (!acc[resource]) acc[resource] = [];
                   acc[resource].push(p);
@@ -192,7 +197,7 @@ export function RolePermissionsDialog({
                                                                   <Badge variant="secondary">{resource}</Badge>
                                                             </h4>
                                                             <div className="space-y-2 ms-2">
-                                                                  {(perms as Permission[]).map((permission) => (
+                                                                  {(perms as PermissionModel[]).map((permission) => (
                                                                         <div
                                                                               key={permission.id}
                                                                               className="flex items-center space-x-3 rtl:space-x-reverse p-2 rounded-md hover:bg-muted/50"
@@ -207,10 +212,10 @@ export function RolePermissionsDialog({
                                                                                     className="flex-1 text-sm cursor-pointer"
                                                                               >
                                                                                     <span className="font-medium">
-                                                                                          {permission.getLocalizedName(language)}
+                                                                                          {getLocalizedName(permission)}
                                                                                     </span>
                                                                                     <span className="text-muted-foreground ms-2 text-xs">
-                                                                                          ({permission.code})
+                                                                                          ({permission.permissionCode})
                                                                                     </span>
                                                                               </label>
                                                                         </div>
