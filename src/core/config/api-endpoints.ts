@@ -93,6 +93,7 @@ export const API_ENDPOINTS = {
     UPDATE: (id: string) => `/Tenants/${id}`,
     DELETE: (id: string) => `/Tenants/${id}`,
     CREATION_PERMISSIONS: "/Tenants/creation-permissions",
+    MY_SETTINGS: "/Tenants/my/settings",
   },
 
   // ===== MENUS =====
