@@ -41,9 +41,21 @@ export interface ITenantRepository {
       getAll(params: TenantListParams): Promise<PagedResult<Tenant>>;
 
       /**
-       * Get the full tenant hierarchy tree
+       * Get the full tenant hierarchy tree (System admin only)
        */
       getTree(): Promise<TenantTreeNode[]>;
+
+      /**
+       * Get MY children tenants (for /tenants page)
+       * Admin sees only their direct children, not their own tenant
+       */
+      getMyChildren(): Promise<TenantTreeNode[]>;
+
+      /**
+       * Get children of a specific tenant (for tenant detail children tab)
+       * Returns only DIRECT children of the specified parent
+       */
+      getChildren(parentId: string): Promise<TenantTreeNode[]>;
 
       /**
        * Get tenant by ID

@@ -55,6 +55,20 @@ export class TenantService implements ITenantService {
             return jsonList.map((json) => TenantTreeNodeModel.fromJson(json));
       }
 
+      async getMyChildren(): Promise<TenantTreeNodeModel[]> {
+            const jsonList = await this.api.get<TenantTreeNodeJson[]>(
+                  API_ENDPOINTS.TENANTS.MY_CHILDREN
+            );
+            return jsonList.map((json) => TenantTreeNodeModel.fromJson(json));
+      }
+
+      async getChildren(parentId: string): Promise<TenantTreeNodeModel[]> {
+            const jsonList = await this.api.get<TenantTreeNodeJson[]>(
+                  API_ENDPOINTS.TENANTS.CHILDREN(parentId)
+            );
+            return jsonList.map((json) => TenantTreeNodeModel.fromJson(json));
+      }
+
       async getById(id: string): Promise<TenantModel> {
             const json = await this.api.get<TenantJson>(
                   API_ENDPOINTS.TENANTS.BY_ID(id)

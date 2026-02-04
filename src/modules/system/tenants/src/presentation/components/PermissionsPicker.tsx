@@ -107,15 +107,39 @@ export function PermissionsPicker({
             });
       }, []);
 
-      // Toggle single permission
+      // Toggle single permission WITH AUTO-GRANT LOGIC
+      // When selecting any action permission (except 'view'), 
+      // automatically select the corresponding {resource}.view permission
       const togglePermission = useCallback(
             (id: string) => {
-                  const newValue = value.includes(id)
-                        ? value.filter((v) => v !== id)
-                        : [...value, id];
-                  onChange(newValue);
+                  if (value.includes(id)) {
+                        // Deselecting - just remove
+                        onChange(value.filter((v) => v !== id));
+                        return;
+                  }
+
+                  // Selecting - auto-grant view permission for the same resource
+                  const selectedPermission = permissions?.find((p) => p.id === id);
+                  if (!selectedPermission) {
+                        onChange([...value, id]);
+                        return;
+                  }
+
+                  // If selecting a non-view action, auto-add the view permission
+                  if (selectedPermission.action !== 'view') {
+                        const viewPermission = permissions?.find(
+                              (p) => p.resource === selectedPermission.resource && p.action === 'view'
+                        );
+                        if (viewPermission && !value.includes(viewPermission.id)) {
+                              // Auto-grant: add both the selected permission AND view permission
+                              onChange([...value, id, viewPermission.id]);
+                              return;
+                        }
+                  }
+
+                  onChange([...value, id]);
             },
-            [value, onChange]
+            [value, onChange, permissions]
       );
 
       // Toggle all in category
@@ -173,6 +197,24 @@ export function PermissionsPicker({
                   return permission.nameEn || permission.code;
             },
             [language]
+      );
+
+      // Check if a view permission is auto-granted (required because other actions in same resource are selected)
+      const isAutoGranted = useCallback(
+            (permission: Permission) => {
+                  // Only applies to view permissions
+                  if (permission.action !== 'view') return false;
+
+                  // Check if any non-view permission in the same resource is selected
+                  const hasOtherActionSelected = permissions?.some(
+                        (p) => p.resource === permission.resource &&
+                              p.action !== 'view' &&
+                              value.includes(p.id)
+                  );
+
+                  return hasOtherActionSelected && value.includes(permission.id);
+            },
+            [permissions, value]
       );
 
       if (isLoading) {
@@ -303,8 +345,13 @@ export function PermissionsPicker({
                                                                                           className="shrink-0"
                                                                                     />
                                                                                     <div className="flex-1 min-w-0">
-                                                                                          <div className="text-sm font-medium truncate">
+                                                                                          <div className="text-sm font-medium truncate flex items-center gap-2">
                                                                                                 {getPermissionName(permission)}
+                                                                                                {isAutoGranted(permission) && (
+                                                                                                      <Badge variant="outline" className="text-xs py-0 px-1.5 text-primary border-primary/50">
+                                                                                                            {t("permission.autoGranted") || "Auto"}
+                                                                                                      </Badge>
+                                                                                                )}
                                                                                           </div>
                                                                                           {permission.description && (
                                                                                                 <div className="text-xs text-muted-foreground truncate">

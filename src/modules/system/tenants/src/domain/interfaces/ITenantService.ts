@@ -33,6 +33,14 @@ export interface TenantListResult {
 export interface ITenantService {
       getAll(params: ServiceTenantListParams): Promise<TenantListResult>;
       getTree(): Promise<TenantTreeNodeModel[]>;
+      /**
+       * Get MY children tenants (for /tenants page - shows only my direct children)
+       */
+      getMyChildren(): Promise<TenantTreeNodeModel[]>;
+      /**
+       * Get children of a specific tenant (for /tenants/{id}/children tab)
+       */
+      getChildren(parentId: string): Promise<TenantTreeNodeModel[]>;
       getById(id: string): Promise<TenantModel>;
       getStats(id: string): Promise<TenantStats>;
       create(json: CreateTenantJson): Promise<{ id: string }>;

@@ -108,3 +108,129 @@ function countNodes(nodes: TenantTreeNode[]): number {
             0
       );
 }
+
+/**
+ * Adapter that wraps ITenantRepository for CHILDREN view only.
+ * Uses getChildren(parentId) to show only direct children of a parent tenant.
+ */
+export function createChildrenTreeService(
+      repository: ITenantRepository,
+      parentId: string
+): TreeService<TenantTreeNode, CreateTenantRequest, UpdateTenantRequest> {
+      return {
+            getWithChildren: async (params) => {
+                  // Fetch ONLY children of the specified parent
+                  const children = await repository.getChildren(parentId);
+
+                  // Apply search filter if provided
+                  let filteredTree = children;
+                  if (params.PageSearch) {
+                        const searchTerm = params.PageSearch.toLowerCase();
+                        filteredTree = filterTree(children, searchTerm);
+                  }
+
+                  return {
+                        data: filteredTree,
+                        pagination: {
+                              itemsCount: countNodes(filteredTree),
+                              pageSize: params.pageSize,
+                              page: params.page,
+                              pagesCount: 1,
+                        },
+                  };
+            },
+
+            create: async (data: CreateTenantRequest) => {
+                  const id = await repository.create({
+                        ...data,
+                        parentId: data.parentId || parentId, // Ensure parent is set
+                  });
+                  return {
+                        id,
+                        name: data.name,
+                        code: data.code,
+                        parentId: data.parentId || parentId,
+                        isActive: true,
+                        level: 0,
+                        children: [],
+                  } as TenantTreeNode;
+            },
+
+            update: async (id: string, data: UpdateTenantRequest) => {
+                  await repository.update(id, data);
+                  return {
+                        id,
+                        name: data.name || "",
+                        code: "",
+                        isActive: data.isActive ?? true,
+                        level: 0,
+                        children: [],
+                  } as TenantTreeNode;
+            },
+
+            delete: async (id: string) => {
+                  await repository.delete(id);
+            },
+      };
+}
+
+/**
+ * Adapter that wraps ITenantRepository for MY CHILDREN view.
+ * Uses getMyChildren() to show only MY direct children (for /tenants page).
+ */
+export function createMyChildrenTreeService(
+      repository: ITenantRepository
+): TreeService<TenantTreeNode, CreateTenantRequest, UpdateTenantRequest> {
+      return {
+            getWithChildren: async (params) => {
+                  // Fetch ONLY my children
+                  const children = await repository.getMyChildren();
+
+                  // Apply search filter if provided
+                  let filteredTree = children;
+                  if (params.PageSearch) {
+                        const searchTerm = params.PageSearch.toLowerCase();
+                        filteredTree = filterTree(children, searchTerm);
+                  }
+
+                  return {
+                        data: filteredTree,
+                        pagination: {
+                              itemsCount: countNodes(filteredTree),
+                              pageSize: params.pageSize,
+                              page: params.page,
+                              pagesCount: 1,
+                        },
+                  };
+            },
+
+            create: async (data: CreateTenantRequest) => {
+                  const id = await repository.create(data);
+                  return {
+                        id,
+                        name: data.name,
+                        code: data.code,
+                        parentId: data.parentId,
+                        isActive: true,
+                        level: 0,
+                        children: [],
+                  } as TenantTreeNode;
+            },
+
+            update: async (id: string, data: UpdateTenantRequest) => {
+                  await repository.update(id, data);
+                  return {
+                        id,
+                        name: data.name || "",
+                        code: "",
+                        isActive: data.isActive ?? true,
+                        level: 0,
+                        children: [],
+                  } as TenantTreeNode;
+            },
+
+            delete: async (id: string) => {
+                  await repository.delete(id);
+            },
+      };
+}

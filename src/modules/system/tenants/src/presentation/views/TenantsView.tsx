@@ -17,8 +17,9 @@ import { GenericTreeView } from "@core/crud/components/generic-tree-view";
 import { useTreeViewModel } from "@core/hooks/use-tree-view-model";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useTenantContext } from "@core/providers/tenant-context-provider";
+import { useAppStore } from "@core/store/useAppStore";
 import { systemContainer } from "@modules/system/di";
-import { createTenantTreeService } from "../../data/services/TenantTreeService";
+import { createTenantTreeService, createMyChildrenTreeService } from "../../data/services/TenantTreeService";
 import type { TenantTreeNode } from "../../domain/entities/Tenant";
 import type {
       CreateTenantRequest,
@@ -36,11 +37,23 @@ export function TenantsView() {
       const router = useRouter();
       const { t, language } = useI18n();
       const { canEnterTenantWorld } = useTenantContext();
+      const user = useAppStore((state) => state.user);
 
-      // Create tree service from repository (via DI container)
+      // System admins (with 'super' or 'system' in adminTypeName) see full tree
+      // Tenant admins see only their children
+      const isSystemAdmin = useMemo(() => {
+            const adminType = user?.adminTypeName?.toLowerCase() || '';
+            return adminType.includes('super') || adminType.includes('system');
+      }, [user]);
+
+      // Create tree service based on user type:
+      // - System admin: Full tree (getTree)
+      // - Tenant admin: My children only (getMyChildren)
       const treeService = useMemo(
-            () => createTenantTreeService(systemContainer.tenantRepository),
-            []
+            () => isSystemAdmin
+                  ? createTenantTreeService(systemContainer.tenantRepository)
+                  : createMyChildrenTreeService(systemContainer.tenantRepository),
+            [isSystemAdmin]
       );
 
       // Server search for permissions using permissionRepository (via DI)
