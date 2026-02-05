@@ -248,6 +248,7 @@ export const ar = {
     createdAt: "تاريخ الإنشاء",
     noRoles: "لا توجد أدوار",
     toggleStatus: "تبديل الحالة",
+    resetPassword: "إعادة تعيين كلمة المرور",
     // Role assignment
     role: {
       assignTitle: "تعيين دور",
@@ -334,6 +335,10 @@ export const ar = {
     codePlaceholder: "مثال: CONTENT_MANAGER",
     descriptionPlaceholder: "وصف اختياري...",
     priorityPlaceholder: "مثال: 10",
+    selectPermissions: "اختر الصلاحيات",
+    selectPermissionsPlaceholder: "اختر الصلاحيات...",
+    managePermissions: "إدارة الصلاحيات",
+    managePermissionsFor:"إدارة الصلاحيات لـ",
   },
 
   // Role Detail View
@@ -2588,6 +2593,7 @@ export const ar = {
 
   // Common
   common: {
+    selected: "محدد",
     errorLoading: "حدث خطأ أثناء تحميل البيانات",
     confirm: "تأكيد",
     close: "إغلاق",

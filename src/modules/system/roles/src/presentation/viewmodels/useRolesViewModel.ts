@@ -65,12 +65,13 @@ export function useRolesViewModel(params: UseRolesViewModelParams = {}) {
                   create: async (data) => {
                         // Add tenantId if creating for a specific tenant
                         const createData = tenantId ? { ...data, tenantId } : data;
-                        await roleRepository.create(createData as CreateRoleRequest);
+                        const roleId = await roleRepository.create(createData as CreateRoleRequest);
                         success({
                               title: "Role Created",
                               description: "The role has been created successfully.",
                         });
-                        return {} as Role;
+                        // Return role with ID for potential chaining
+                        return { id: roleId } as Role;
                   },
                   update: async (id, data) => {
                         await roleRepository.update(id, data);
@@ -88,6 +89,33 @@ export function useRolesViewModel(params: UseRolesViewModelParams = {}) {
                         });
                   },
             }
+      );
+
+      // Custom create with permissions - creates role then assigns permissions
+      const createWithPermissions = useCallback(
+            async (roleData: CreateRoleRequest, permissionIds?: string[]) => {
+                  const createData = tenantId ? { ...roleData, tenantId } : roleData;
+                  const roleId = await roleRepository.create(createData);
+
+                  // Assign permissions if provided
+                  if (permissionIds && permissionIds.length > 0) {
+                        const assignments = permissionIds.map((id) => ({ permissionId: id }));
+                        await roleRepository.assignPermissions(roleId, { permissions: assignments });
+                  }
+
+                  success({
+                        title: "Role Created",
+                        description: permissionIds?.length
+                              ? "The role has been created with permissions."
+                              : "The role has been created successfully.",
+                  });
+
+                  // Invalidate query to refresh the list
+                  queryClient.invalidateQueries({ queryKey });
+
+                  return roleId;
+            },
+            [roleRepository, tenantId, success, queryClient, queryKey]
       );
 
       // Assign permissions mutation (additional role-specific operation)
@@ -124,6 +152,7 @@ export function useRolesViewModel(params: UseRolesViewModelParams = {}) {
       return {
             ...vm,
             // Additional role-specific operations
+            createWithPermissions,
             handleAssignPermissions,
             isAssigningPermissions: assignPermissionsMutation.isPending,
       };

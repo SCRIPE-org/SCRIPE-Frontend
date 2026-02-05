@@ -249,6 +249,7 @@ export const en = {
     status: "Status",
     createdAt: "Created At",
     noRoles: "No roles",
+    resetPassword:"Reset Password",
     // Role assignment
     role: {
       assignTitle: "Assign Role",
@@ -335,6 +336,7 @@ export const en = {
     codePlaceholder: "e.g., CONTENT_MANAGER",
     descriptionPlaceholder: "Optional description...",
     priorityPlaceholder: "e.g., 10",
+    managePermissionsFor: "Manage Permissions For",
   },
 
   // Role Detail View
@@ -2579,6 +2581,7 @@ export const en = {
   },
   // Common
   common: {
+    selected: "Selected",
     more: "More",
     close: "Close",
     status: "Status",
