@@ -273,6 +273,10 @@ export const ar = {
     emailPlaceholder: "أدخل البريد الإلكتروني",
     notes: "ملاحظات",
     notesPlaceholder: "أدخل ملاحظات",
+    useDefaultPassword: "استخدام كلمة المرور الافتراضية",
+    resetPasswordDescription : "إعادة تعيين كلمة المرور لـ",
+    isActive: "نشط",
+    inActive: "غير نشط",
     // Role assignment
     role: {
       assignTitle: "تعيين دور",
