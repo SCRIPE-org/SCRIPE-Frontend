@@ -115,86 +115,112 @@ export function useTenantPermissionsDialog({
             }
       }, [open, tenantId]);
 
+      const [debouncedSearch, setDebouncedSearch] = useState("");
+
+      // Debounce search
+      useEffect(() => {
+            const timer = setTimeout(() => {
+                  setDebouncedSearch(search);
+            }, 300);
+            return () => clearTimeout(timer);
+      }, [search]);
+
+
+
       // Fetch AVAILABLE permissions (from parent or all for root tenants)
+      // Fetch AVAILABLE permissions (via Repository which handles Parent vs Root logic + Search)
       const { data: availablePermissions = [], isLoading: loadingAvailable } = useQuery({
-            queryKey: ["tenant-available-permissions", tenantId, parentTenantId],
+            queryKey: ["tenant-available-permissions", tenantId, parentTenantId, debouncedSearch],
             queryFn: async (): Promise<AvailablePermission[]> => {
-                  appLogger.debug("[ViewModel] Fetching available permissions - tenantId:", tenantId, "parentId:", parentTenantId);
-                  if (parentTenantId) {
-                        // Child tenant: get PARENT's permissions as available
-                        const result = await getCoreContainer().apiService.get<AvailablePermission[]>(
-                              `/Tenants/${parentTenantId}/permissions`
-                        );
-                        appLogger.debug("[ViewModel] Parent permissions:", result?.length);
-                        return result;
-                  } else {
-                        // Root tenant: get all creation permissions
-                        const result = await getCoreContainer().apiService.get<AvailablePermission[]>(
-                              `/Tenants/creation-permissions`
-                        );
-                        appLogger.debug("[ViewModel] Creation permissions:", result?.length);
-                        return result;
-                  }
+                  appLogger.debug("[ViewModel] Fetching available permissions - tenantId:", tenantId, "search:", debouncedSearch);
+
+                  // Repository handles the logic: if parentId -> getTenantPermissions(parent), else getCreationPermissions
+                  // ... (comments removed for brevity)
+
+                  const permissions = await systemContainer.tenantRepository.getAvailablePermissions(tenantId, parentTenantId || undefined, debouncedSearch);
+                  return permissions as any as AvailablePermission[];
             },
             enabled: open && !!tenantId,
       });
 
       // Fetch CURRENT tenant's assigned permissions
+      // We do NOT filter this by search so we always know what is currently assigned for initialization
       const { data: tenantPermissions = [], isLoading: loadingTenant } = useQuery({
             queryKey: ["tenant-current-permissions", tenantId],
             queryFn: async (): Promise<TenantCurrentPermission[]> => {
                   appLogger.debug("[ViewModel] Fetching tenant's current permissions:", tenantId);
-                  const result = await getCoreContainer().apiService.get<TenantCurrentPermission[]>(
-                        `/Tenants/${tenantId}/permissions`
-                  );
-                  appLogger.debug("[ViewModel] Tenant's current permissions:", result?.length, result?.map(p => p.code));
-                  return result;
+                  const permissions = await systemContainer.tenantRepository.getTenantPermissions(tenantId);
+                  return permissions as any as TenantCurrentPermission[];
             },
             enabled: open && !!tenantId,
       });
+
+      // Map to track Code -> ID for saving (accumulates as we browse/search)
+      const codeToIdRef = useRef<Map<string, string>>(new Map());
+
+      // Update mapping when data changes
+      useEffect(() => {
+            [...availablePermissions, ...tenantPermissions].forEach(p => {
+                  if (p.code && p.id) {
+                        codeToIdRef.current.set(p.code, p.id);
+                  }
+            });
+      }, [availablePermissions, tenantPermissions]);
 
       // Initialize selection from tenant's permissions (only once per tenant)
       useEffect(() => {
             if (
                   open &&
                   tenantId &&
-                  availablePermissions.length > 0 &&
+                  // We wait for tenantPermissions to be loaded to know what is assigned
+                  // We don't necessarily need availablePermissions to be fully loaded if we trust tenantPermissions codes
+                  // But to be safe and ensure we only select valid codes, we might check available.
+                  // HOWEVER, if available is now filtered by search, checking against it is WRONG for initialization 
+                  // if we assume "Select All" or similar logic. 
+                  // But for "Initial Selection", we just want to select what the tenant HAS.
+                  // We should select ALL tenantPermissions codes that appear, regardless of whether they are in the current filtered available list.
+                  // The Checkbox will only render if it's in available (visible).
+                  // But 'selectedCodes' should hold ALL.
                   !loadingTenant &&
                   initializedTenantRef.current !== tenantId
             ) {
-                  // Get codes that are valid (exist in available)
-                  const validCodes = new Set(availablePermissions.map(p => p.code));
-                  // Get codes that are currently assigned to this tenant
                   const tenantCodes = tenantPermissions.map(p => p.code);
-                  // Filter to only include valid codes
-                  const selectedFromTenant = tenantCodes.filter(code => validCodes.has(code));
 
-                  appLogger.debug("[ViewModel] Valid codes:", Array.from(validCodes));
-                  appLogger.debug("[ViewModel] Tenant codes:", tenantCodes);
-                  appLogger.debug("[ViewModel] Selected (filtered):", selectedFromTenant);
+                  appLogger.debug("[ViewModel] Initializing selection from tenant codes:", tenantCodes);
 
-                  setSelectedCodes(new Set(selectedFromTenant));
+                  setSelectedCodes(new Set(tenantCodes));
 
-                  // Auto-expand groups with selected permissions
+                  // Update Groups to Expand based on Tenant Permissions (initial view)
                   const groupsWithSelection = new Set<string>();
-                  availablePermissions.forEach(p => {
-                        if (selectedFromTenant.includes(p.code)) {
-                              groupsWithSelection.add(p.resource);
-                        }
+                  tenantPermissions.forEach(p => {
+                        groupsWithSelection.add(p.resource);
                   });
                   setExpandedGroups(Array.from(groupsWithSelection));
 
                   // Mark as initialized for this tenant
                   initializedTenantRef.current = tenantId;
             }
-      }, [open, tenantId, availablePermissions, tenantPermissions, loadingTenant]);
+      }, [open, tenantId, tenantPermissions, loadingTenant]);
 
       // Save mutation
       const saveMutation = useMutation({
             mutationFn: async () => {
-                  const selectedIds = availablePermissions
-                        .filter(p => selectedCodes.has(p.code))
-                        .map(p => p.id);
+                  // Map selected codes to IDs using our validation map
+                  const selectedIds: string[] = [];
+                  const missingCodes: string[] = [];
+
+                  selectedCodes.forEach(code => {
+                        const id = codeToIdRef.current.get(code);
+                        if (id) {
+                              selectedIds.push(id);
+                        } else {
+                              missingCodes.push(code);
+                        }
+                  });
+
+                  if (missingCodes.length > 0) {
+                        appLogger.warn("[ViewModel] Warning: Some selected codes missing IDs:", missingCodes);
+                  }
 
                   appLogger.debug("[ViewModel] Saving permissions - codes:", Array.from(selectedCodes));
                   appLogger.debug("[ViewModel] Mapped to IDs:", selectedIds);
@@ -234,21 +260,14 @@ export function useTenantPermissionsDialog({
             });
       };
 
-      // Filter and group permissions
+      // Group permissions (No client-side filtering needed as backend handles it)
       const grouped = useMemo(() => {
-            const searchLower = search.toLowerCase();
-            const filtered = availablePermissions.filter(p => {
-                  if (!search) return true;
-                  const name = (language === "ar" ? p.nameAr : p.nameEn) || p.description || p.code;
-                  return name.toLowerCase().includes(searchLower) || p.code.toLowerCase().includes(searchLower);
-            });
-
-            return filtered.reduce((acc, p) => {
+            return availablePermissions.reduce((acc, p) => {
                   const key = p.resource || "other";
                   (acc[key] = acc[key] || []).push(p);
                   return acc;
             }, {} as GroupedPermissions);
-      }, [availablePermissions, search, language]);
+      }, [availablePermissions]);
 
       // Helpers
       const getName = (p: AvailablePermission) =>

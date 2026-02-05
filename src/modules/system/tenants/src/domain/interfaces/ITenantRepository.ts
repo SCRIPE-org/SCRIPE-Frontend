@@ -94,13 +94,13 @@ export interface ITenantRepository {
        * Returns the parent tenant's permissions (child can only have subset of parent).
        * @param parentId - Optional parent tenant ID. If null, uses current user's tenant permissions.
        */
-      getCreationPermissions(parentId?: string): Promise<Permission[]>;
+      getCreationPermissions(parentId?: string, search?: string): Promise<Permission[]>;
 
       /**
        * Get the current permissions assigned to a tenant.
        * @param tenantId - The tenant ID to get permissions for.
        */
-      getTenantPermissions(tenantId: string): Promise<Permission[]>;
+      getTenantPermissions(tenantId: string, search?: string): Promise<Permission[]>;
 
       /**
        * Get available permissions that can be assigned to a tenant based on its parent.
@@ -109,7 +109,7 @@ export interface ITenantRepository {
        * @param tenantId - The tenant ID to get available permissions for.
        * @param parentId - The parent tenant ID (null/undefined for root tenants).
        */
-      getAvailablePermissions(tenantId: string, parentId?: string): Promise<Permission[]>;
+      getAvailablePermissions(tenantId: string, parentId?: string, search?: string): Promise<Permission[]>;
 
       /**
        * Update permissions for a tenant.

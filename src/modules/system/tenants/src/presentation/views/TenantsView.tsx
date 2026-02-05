@@ -61,18 +61,10 @@ export function TenantsView() {
       const createPermissionSearch = useCallback(
             (parentId?: string) => async (query: string): Promise<FieldOption[]> => {
                   try {
-                        // Use tenantRepository.getCreationPermissions to get ONLY parent's permissions
-                        // This ensures child can only have subset of parent's permissions
-                        let permissions = await systemContainer.tenantRepository.getCreationPermissions(parentId);
+                        // Use tenantRepository.getCreationPermissions with search query
+                        // This leverages the server-side filtering we implemented
+                        const permissions = await systemContainer.tenantRepository.getCreationPermissions(parentId, query);
 
-                        // Client-side filter if there's a search query
-                        if (query) {
-                              const lowerQuery = query.toLowerCase();
-                              permissions = permissions.filter((p) =>
-                                    p.getLocalizedName(language).toLowerCase().includes(lowerQuery) ||
-                                    p.code.toLowerCase().includes(lowerQuery)
-                              );
-                        }
 
                         return permissions.map((p) => {
                               // Use stable code for deduplication (uniqueKey)

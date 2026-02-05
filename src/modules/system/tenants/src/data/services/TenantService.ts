@@ -97,18 +97,20 @@ export class TenantService implements ITenantService {
             return this.api.get<number>(`${API_ENDPOINTS.TENANTS.BY_ID(id)}/descendant-count`);
       }
 
-      async getCreationPermissions(parentId?: string): Promise<PermissionModel[]> {
+      async getCreationPermissions(parentId?: string, search?: string): Promise<PermissionModel[]> {
             const url = buildUrl(API_ENDPOINTS.TENANTS.CREATION_PERMISSIONS, {
                   parentId,
+                  search,
             });
             const jsonList = await this.api.get<PermissionJson[]>(url);
             return jsonList.map((json) => PermissionModel.fromJson(json));
       }
 
-      async getTenantPermissions(tenantId: string): Promise<PermissionModel[]> {
-            const jsonList = await this.api.get<PermissionJson[]>(
-                  API_ENDPOINTS.TENANTS.PERMISSIONS(tenantId)
-            );
+      async getTenantPermissions(tenantId: string, search?: string): Promise<PermissionModel[]> {
+            const url = buildUrl(API_ENDPOINTS.TENANTS.PERMISSIONS(tenantId), {
+                  search,
+            });
+            const jsonList = await this.api.get<PermissionJson[]>(url);
             return jsonList.map((json) => PermissionModel.fromJson(json));
       }
 

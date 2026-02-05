@@ -89,30 +89,30 @@ export class TenantRepository implements ITenantRepository {
             return this.service.getDescendantCount(id);
       }
 
-      async getCreationPermissions(parentId?: string): Promise<Permission[]> {
-            const models = await this.service.getCreationPermissions(parentId);
+      async getCreationPermissions(parentId?: string, search?: string): Promise<Permission[]> {
+            const models = await this.service.getCreationPermissions(parentId, search);
             return PermissionMapper.toEntityList(models);
       }
 
-      async getTenantPermissions(tenantId: string): Promise<Permission[]> {
-            const models = await this.service.getTenantPermissions(tenantId);
+      async getTenantPermissions(tenantId: string, search?: string): Promise<Permission[]> {
+            const models = await this.service.getTenantPermissions(tenantId, search);
             return PermissionMapper.toEntityList(models);
       }
 
-      async getAvailablePermissions(tenantId: string, parentId?: string): Promise<Permission[]> {
-            appLogger.debug("[Repo] getAvailablePermissions called with tenantId:", tenantId, "parentId:", parentId);
+      async getAvailablePermissions(tenantId: string, parentId?: string, search?: string): Promise<Permission[]> {
+            appLogger.debug("[Repo] getAvailablePermissions called with tenantId:", tenantId, "parentId:", parentId, "search:", search);
             // If tenant has a parent, get the parent's permissions
             // If tenant is a root tenant (no parent), get all available permissions from current admin's perspective
             if (parentId) {
                   // Child tenant: available permissions = parent tenant's permissions
                   appLogger.debug("[Repo] Fetching PARENT tenant permissions for:", parentId);
-                  const models = await this.service.getTenantPermissions(parentId);
+                  const models = await this.service.getTenantPermissions(parentId, search);
                   appLogger.debug("[Repo] Parent permissions count:", models?.length);
                   return PermissionMapper.toEntityList(models);
             } else {
                   // Root tenant: available permissions = creation permissions (current admin's perspective)
                   appLogger.debug("[Repo] Fetching CREATION permissions (no parent)");
-                  const models = await this.service.getCreationPermissions();
+                  const models = await this.service.getCreationPermissions(undefined, search);
                   appLogger.debug("[Repo] Creation permissions count:", models?.length);
                   return PermissionMapper.toEntityList(models);
             }

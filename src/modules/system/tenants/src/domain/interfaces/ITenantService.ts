@@ -52,12 +52,12 @@ export interface ITenantService {
        * Get available permissions for creating a child tenant
        * @param parentId - Optional parent tenant ID. If null, returns current user's permissions
        */
-      getCreationPermissions(parentId?: string): Promise<PermissionModel[]>;
+      getCreationPermissions(parentId?: string, search?: string): Promise<PermissionModel[]>;
       /**
        * Get permissions available to a specific tenant
        * @param tenantId - The tenant ID to get permissions for
        */
-      getTenantPermissions(tenantId: string): Promise<PermissionModel[]>;
+      getTenantPermissions(tenantId: string, search?: string): Promise<PermissionModel[]>;
       /**
        * Update permissions for a tenant
        * @param tenantId - The tenant ID to update permissions for
