@@ -87,10 +87,14 @@ export function useRolePermissionsDialog({
       const [selectedCodes, setSelectedCodes] = useState<Set<string>>(new Set());
       const [expandedGroups, setExpandedGroups] = useState<string[]>([]);
 
-      // Reset when dialog opens
+      // Reset all state when dialog opens or role changes
       useEffect(() => {
-            if (open) setSearch("");
-      }, [open]);
+            if (open) {
+                  setSearch("");
+                  setSelectedCodes(new Set());
+                  setExpandedGroups([]);
+            }
+      }, [open, role?.id]);
 
       // Fetch tenant's available permissions
       const { data: tenantPermissions = [], isLoading: loadingTenant } = useQuery({
@@ -111,9 +115,10 @@ export function useRolePermissionsDialog({
             enabled: open && !!role?.id,
       });
 
-      // Initialize selection when data loads
+      // Initialize selection from role's permissions when data loads
       useEffect(() => {
-            if (rolePermissions.length > 0 && tenantPermissions.length > 0) {
+            // Only run when tenant permissions are loaded (role permissions can be empty)
+            if (tenantPermissions.length > 0) {
                   const validCodes = new Set(tenantPermissions.map(p => p.code));
                   const roleCodes = rolePermissions.map(p => p.permissionCode);
                   const selectedFromRole = roleCodes.filter(code => validCodes.has(code));
