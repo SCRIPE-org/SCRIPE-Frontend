@@ -63,6 +63,11 @@ export const ar = {
 
   // Tenants - المستأجرون
   tenant: {
+    deactivateTenant: "إلغاء نشاط المستأجر",
+    activateTenant: "تفعيل المستأجر",
+    deactivateConfirmation: "هل أنت متأكد من إلغاء نشاط المستأجر؟",
+    activateConfirmation: "هل أنت متأكد من تفعيل المستأجر؟",
+    editDialogDescription:"",
     permissionsLimitedByParent: "الصلاحيات محدودة بواسطة المستأجر الرئيسي",
     limitedByParent: "محدود بواسطة المستأجر الرئيسي",
     managePermissionsFor: "إدارة الصلاحيات لـ",

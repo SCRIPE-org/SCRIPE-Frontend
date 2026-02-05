@@ -62,6 +62,10 @@ export const en = {
 
   // Tenants
   tenant: {
+    deactivateTenant: "Deactivate Tenant",
+    activateTenant: "Activate Tenant",
+    deactivateConfirmation: "Are you sure you want to deactivate this tenant?",
+    activateConfirmation: "Are you sure you want to activate this tenant?",
     title: "Tenants",
     description: "Manage organizational hierarchy and tenants.",
     hierarchy: "Tenant Hierarchy",

@@ -50,6 +50,7 @@ export function TenantHeader({ tenant, onUpdate }: TenantHeaderProps) {
       const [deleteOpen, setDeleteOpen] = useState(false);
       const [isUpdating, setIsUpdating] = useState(false);
       const [isDeleting, setIsDeleting] = useState(false);
+      const [statusConfirmOpen, setStatusConfirmOpen] = useState(false);
 
       // Edit form state
       const [editForm, setEditForm] = useState({
@@ -213,7 +214,7 @@ export function TenantHeader({ tenant, onUpdate }: TenantHeaderProps) {
                                           <Button
                                                 variant="outline"
                                                 size="sm"
-                                                onClick={handleToggleStatus}
+                                                onClick={() => setStatusConfirmOpen(true)}
                                                 disabled={isUpdating}
                                           >
                                                 {isUpdating ? (
@@ -317,6 +318,39 @@ export function TenantHeader({ tenant, onUpdate }: TenantHeaderProps) {
                                     >
                                           {isDeleting && <Loader2 className="h-4 w-4 me-2 animate-spin" />}
                                           {t("common.delete")}
+                                    </Button>
+                              </DialogFooter>
+                        </DialogContent>
+                  </Dialog>
+
+                  {/* Status Change Confirmation Dialog */}
+                  <Dialog open={statusConfirmOpen} onOpenChange={setStatusConfirmOpen}>
+                        <DialogContent dir={direction}>
+                              <DialogHeader>
+                                    <DialogTitle>
+                                          {tenant.isActive
+                                                ? t("tenant.deactivateTenant") || "Deactivate Tenant"
+                                                : t("tenant.activateTenant") || "Activate Tenant"}
+                                    </DialogTitle>
+                                    <DialogDescription>
+                                          {tenant.isActive
+                                                ? t("tenant.deactivateConfirmation", { name: tenant.name }) || `Are you sure you want to deactivate ${tenant.name}?`
+                                                : t("tenant.activateConfirmation", { name: tenant.name }) || `Are you sure you want to activate ${tenant.name}?`}
+                                    </DialogDescription>
+                              </DialogHeader>
+                              <DialogFooter className={cn(isRtl && "flex-row-reverse sm:flex-row-reverse")}>
+                                    <Button variant="outline" onClick={() => setStatusConfirmOpen(false)}>
+                                          {t("common.cancel")}
+                                    </Button>
+                                    <Button
+                                          onClick={() => {
+                                                handleToggleStatus();
+                                                setStatusConfirmOpen(false);
+                                          }}
+                                          disabled={isUpdating}
+                                    >
+                                          {isUpdating && <Loader2 className="h-4 w-4 me-2 animate-spin" />}
+                                          {tenant.isActive ? t("common.deactivate") : t("common.activate")}
                                     </Button>
                               </DialogFooter>
                         </DialogContent>
