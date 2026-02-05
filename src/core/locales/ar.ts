@@ -272,6 +272,7 @@ export const ar = {
       assignDescription: "تعيين دور لـ",
       selectRole: "الدور",
       selectRolePlaceholder: "اختر دوراً...",
+      selectRolesPlaceholder: "اختر الأدوار...",
       tenantScope: "نطاق المستأجر",
       selectTenantPlaceholder: "عام (ينطبق على الجميع)",
       tenantScopeHelp: "اتركه فارغاً للوصول العام، أو اختر مستأجراً لتحديد النطاق.",
@@ -355,7 +356,7 @@ export const ar = {
     selectPermissions: "اختر الصلاحيات",
     selectPermissionsPlaceholder: "اختر الصلاحيات...",
     managePermissions: "إدارة الصلاحيات",
-    managePermissionsFor:"إدارة الصلاحيات لـ",
+    managePermissionsFor: "إدارة الصلاحيات لـ",
   },
 
   // Role Detail View

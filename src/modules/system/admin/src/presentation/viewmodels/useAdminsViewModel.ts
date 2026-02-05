@@ -224,14 +224,14 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
       const getConfigBase = useCallback((): Partial<CrudConfig<Admin>> => ({
             createFields: [
                   {
-                        name: "roleId",
-                        label: t("admin.role.selectRole") || "Role",
-                        type: "searchable-select" as const,
-                        placeholder: t("admin.role.selectRolePlaceholder") || "Select a role...",
+                        name: "roleIds",
+                        label: t("admin.roles") || "Roles",
+                        type: "multi-select" as const,
+                        placeholder: t("admin.role.selectRolesPlaceholder") || "Select roles...",
                         searchPlaceholder: t("admin.role.searchRoles") || "Search roles...",
                         required: true,
                         onServerSearch: handleRoleSearch,
-                        searchType: "server",
+                        searchType: "server" as const,
                         noResultsText: t("roles.noRolesFound") || "No roles found",
                   },
                   {
@@ -306,7 +306,7 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
                   { name: "id", type: "hidden" as const, required: true },
             ],
             createInitialValues: {
-                  roleId: "", // Required - must select a role
+                  roleIds: [] as string[], // Required - must select at least one role
                   username: "",
                   password: "",
                   firstName: "",
