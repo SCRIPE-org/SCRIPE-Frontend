@@ -81,9 +81,10 @@ export function useRoleDetailViewModel() {
             enabled: !!roleId,
       });
 
+      // Use roleRepository's available permissions (tenant-scoped)
       const { data: allPermissions, isLoading: permissionsLoading } = useQuery<Permission[]>({
-            queryKey: ["myPermissions"],
-            queryFn: () => permissionRepository.getMyPermissions(),
+            queryKey: ["myTenantAvailablePermissions"],
+            queryFn: () => roleRepository.getMyTenantAvailablePermissions(),
       });
 
       // === INITIALIZE SELECTED PERMISSIONS WHEN DATA LOADS ===

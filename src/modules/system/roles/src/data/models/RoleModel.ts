@@ -25,7 +25,7 @@ export interface RoleJson {
       isSystem: boolean;
       priority: number;
       isActive: boolean;
-      permissions: RolePermissionJson[];
+      permissions?: RolePermissionJson[];  // Optional for list responses
       createdAt: string;
       modifiedAt?: string;
 }
@@ -105,7 +105,7 @@ export class RoleModel {
                   json.isSystem,
                   json.priority,
                   json.isActive,
-                  json.permissions.map((p) => RolePermissionModel.fromJson(p)),
+                  (json.permissions ?? []).map((p) => RolePermissionModel.fromJson(p)),
                   json.createdAt,
                   json.description,
                   json.tenantId,

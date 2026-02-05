@@ -350,6 +350,7 @@ export const ar = {
 
   // Roles
   roles: {
+    descriptionCol: "الوصف",
     title: "الأدوار",
     description: "إدارة الأدوار وصلاحياتها.",
     name: "الاسم",

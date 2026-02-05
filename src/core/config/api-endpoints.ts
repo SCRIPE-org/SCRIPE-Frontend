@@ -56,13 +56,14 @@ export const API_ENDPOINTS = {
   UPDATE_ADMIN_PROFILE: "/auth/admin/me",
   CHANGE_ADMIN_PASSWORD: "/auth/admin/me/password",
 
-  // ===== ROLES =====
   ROLES: {
     LIST: "/Roles",
     BY_ID: (id: string) => `/Roles/${id}`,
     BY_TENANT_ID: (tenantId: string) => `/Roles/byTenantId/${tenantId}`,
     MY_TENANT_ROLES: "/Roles/myTenantRoles",
+    MY_TENANT_AVAILABLE_PERMISSIONS: "/Roles/myTenant/available-permissions",
     CREATE: "/Roles",
+    CREATE_FOR_MY_TENANT: "/Roles/createForMyTenant",
     UPDATE: (id: string) => `/Roles/${id}`,
     DELETE: (id: string) => `/Roles/${id}`,
     PERMISSIONS: (id: string) => `/Roles/${id}/permissions`,

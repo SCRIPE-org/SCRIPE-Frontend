@@ -9,6 +9,7 @@
 import type {
       IRoleRepository,
       RoleListParams,
+      MyTenantRoleListParams,
 } from "../../domain/interfaces/IRoleRepository";
 import { Role } from "../../domain/entities/Role";
 import type {
@@ -38,6 +39,20 @@ export class RoleRepository implements IRoleRepository {
             };
       }
 
+      async getMyTenantRoles(params: MyTenantRoleListParams): Promise<PagedResult<Role>> {
+            const result = await this.service.getMyTenantRoles(params);
+
+            return {
+                  items: RoleMapper.toEntityList(result.items),
+                  totalCount: result.totalCount,
+                  page: result.page,
+                  pageSize: result.pageSize,
+                  totalPages: result.totalPages,
+                  hasNextPage: result.hasNextPage,
+                  hasPreviousPage: result.hasPreviousPage,
+            };
+      }
+
       async getById(id: string): Promise<Role> {
             const model = await this.service.getById(id);
             return RoleMapper.toEntity(model);
@@ -46,6 +61,12 @@ export class RoleRepository implements IRoleRepository {
       async create(request: CreateRoleRequest): Promise<string> {
             const model = RoleMapper.toCreateModel(request);
             const response = await this.service.create(model.toJson());
+            return response.id;
+      }
+
+      async createForMyTenant(request: Omit<CreateRoleRequest, 'tenantId'>): Promise<string> {
+            const model = RoleMapper.toCreateModel(request as CreateRoleRequest);
+            const response = await this.service.createForMyTenant(model.toJson());
             return response.id;
       }
 
@@ -76,7 +97,12 @@ export class RoleRepository implements IRoleRepository {
       }
 
       async getRolePermissions(roleId: string): Promise<any[]> {
-            return this.service.getRolePermissions(roleId);
+            const result = await this.service.getRolePermissions(roleId);
+            return result ?? [];
+      }
+
+      async getMyTenantAvailablePermissions(category?: string): Promise<any[]> {
+            return this.service.getMyTenantAvailablePermissions(category);
       }
 
       async getAdminCount(roleId: string): Promise<number> {

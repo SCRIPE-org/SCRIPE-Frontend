@@ -46,12 +46,18 @@ export function useRolesViewModel(params: UseRolesViewModelParams = {}) {
             {
                   getAll: async (queryParams) => {
                         // Choose appropriate endpoint based on options
-                        const res = await roleRepository.getAll({
-                              page: queryParams.page,
-                              pageSize: queryParams.pageSize,
-                              search: queryParams.search,
-                              tenantId,
-                        });
+                        const res = useMyTenant
+                              ? await roleRepository.getMyTenantRoles({
+                                    page: queryParams.page,
+                                    pageSize: queryParams.pageSize,
+                                    search: queryParams.search,
+                              })
+                              : await roleRepository.getAll({
+                                    page: queryParams.page,
+                                    pageSize: queryParams.pageSize,
+                                    search: queryParams.search,
+                                    tenantId,
+                              });
                         return {
                               items: res.items || [],
                               pagination: {
@@ -63,9 +69,10 @@ export function useRolesViewModel(params: UseRolesViewModelParams = {}) {
                         };
                   },
                   create: async (data) => {
-                        // Add tenantId if creating for a specific tenant
-                        const createData = tenantId ? { ...data, tenantId } : data;
-                        const roleId = await roleRepository.create(createData as CreateRoleRequest);
+                        // Use appropriate endpoint based on mode
+                        const roleId = useMyTenant
+                              ? await roleRepository.createForMyTenant(data)
+                              : await roleRepository.create(tenantId ? { ...data, tenantId } : data as CreateRoleRequest);
                         success({
                               title: "Role Created",
                               description: "The role has been created successfully.",

@@ -16,7 +16,7 @@ import {
       type UpdateRoleJson,
       type AssignPermissionsJson,
 } from "../models/RoleModel";
-import type { IRoleService, RoleListResult, ServiceRoleListParams } from "../../domain/interfaces/IRoleService";
+import type { IRoleService, RoleListResult, ServiceRoleListParams, MyTenantRoleListParams } from "../../domain/interfaces/IRoleService";
 
 export class RoleService implements IRoleService {
       constructor(private readonly api: IApiService) { }
@@ -42,6 +42,26 @@ export class RoleService implements IRoleService {
             };
       }
 
+      async getMyTenantRoles(params: MyTenantRoleListParams): Promise<RoleListResult> {
+            const url = buildUrl(API_ENDPOINTS.ROLES.MY_TENANT_ROLES, {
+                  page: params.page,
+                  pageSize: params.pageSize,
+                  search: params.search,
+            });
+
+            const response = await this.api.get<RoleListResponseJson>(url);
+
+            return {
+                  items: response.items.map((json) => RoleModel.fromJson(json)),
+                  totalCount: response.totalCount,
+                  page: response.page,
+                  pageSize: response.pageSize,
+                  totalPages: response.totalPages,
+                  hasNextPage: response.hasNextPage,
+                  hasPreviousPage: response.hasPreviousPage,
+            };
+      }
+
       async getById(id: string): Promise<RoleModel> {
             const json = await this.api.get<RoleJson>(API_ENDPOINTS.ROLES.BY_ID(id));
             return RoleModel.fromJson(json);
@@ -49,6 +69,10 @@ export class RoleService implements IRoleService {
 
       async create(json: CreateRoleJson): Promise<{ id: string }> {
             return this.api.post<{ id: string }>(API_ENDPOINTS.ROLES.CREATE, json);
+      }
+
+      async createForMyTenant(json: Omit<CreateRoleJson, 'tenantId'>): Promise<{ id: string }> {
+            return this.api.post<{ id: string }>(API_ENDPOINTS.ROLES.CREATE_FOR_MY_TENANT, json);
       }
 
       async update(id: string, json: UpdateRoleJson): Promise<void> {
@@ -76,6 +100,18 @@ export class RoleService implements IRoleService {
             return this.api.get<RoleJson["permissions"]>(
                   API_ENDPOINTS.ROLES.PERMISSIONS(roleId)
             );
+      }
+
+      async getMyTenantAvailablePermissions(category?: string): Promise<any[]> {
+            const params = new URLSearchParams();
+            if (category) params.set("category", category);
+
+            const queryString = params.toString();
+            const url = queryString
+                  ? `${API_ENDPOINTS.ROLES.MY_TENANT_AVAILABLE_PERMISSIONS}?${queryString}`
+                  : API_ENDPOINTS.ROLES.MY_TENANT_AVAILABLE_PERMISSIONS;
+
+            return this.api.get<any[]>(url);
       }
 
       async getAdminCount(roleId: string): Promise<number> {

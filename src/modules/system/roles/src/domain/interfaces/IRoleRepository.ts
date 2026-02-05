@@ -22,6 +22,12 @@ export interface RoleListParams {
       tenantId?: string;
 }
 
+export interface MyTenantRoleListParams {
+      page: number;
+      pageSize: number;
+      search?: string;
+}
+
 /**
  * Role repository interface
  */
@@ -32,6 +38,11 @@ export interface IRoleRepository {
       getAll(params: RoleListParams): Promise<PagedResult<Role>>;
 
       /**
+       * Get paginated list of roles belonging to current user's tenant
+       */
+      getMyTenantRoles(params: MyTenantRoleListParams): Promise<PagedResult<Role>>;
+
+      /**
        * Get role by ID
        */
       getById(id: string): Promise<Role>;
@@ -40,6 +51,11 @@ export interface IRoleRepository {
        * Create a new role
        */
       create(request: CreateRoleRequest): Promise<string>;
+
+      /**
+       * Create a role for the current user's tenant (tenantId from JWT)
+       */
+      createForMyTenant(request: Omit<CreateRoleRequest, 'tenantId'>): Promise<string>;
 
       /**
        * Update an existing role
@@ -66,6 +82,11 @@ export interface IRoleRepository {
        * Get permissions assigned to a role
        */
       getRolePermissions(roleId: string): Promise<any[]>;
+
+      /**
+       * Get available permissions for role assignment in current user's tenant
+       */
+      getMyTenantAvailablePermissions(category?: string): Promise<any[]>;
 
       /**
        * Get count of admins assigned to this role

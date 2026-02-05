@@ -21,6 +21,12 @@ export interface ServiceRoleListParams {
       tenantId?: string;
 }
 
+export interface MyTenantRoleListParams {
+      page?: number;
+      pageSize?: number;
+      search?: string;
+}
+
 export interface RoleListResult {
       items: RoleModel[];
       totalCount: number;
@@ -33,8 +39,11 @@ export interface RoleListResult {
 
 export interface IRoleService {
       getAll(params: ServiceRoleListParams): Promise<RoleListResult>;
+      getMyTenantRoles(params: MyTenantRoleListParams): Promise<RoleListResult>;
+      getMyTenantAvailablePermissions(category?: string): Promise<any[]>;
       getById(id: string): Promise<RoleModel>;
       create(json: CreateRoleJson): Promise<{ id: string }>;
+      createForMyTenant(json: Omit<CreateRoleJson, 'tenantId'>): Promise<{ id: string }>;
       update(id: string, json: UpdateRoleJson): Promise<void>;
       delete(id: string): Promise<void>;
       assignPermissions(roleId: string, json: AssignPermissionsJson): Promise<void>;

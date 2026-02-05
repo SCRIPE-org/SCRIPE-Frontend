@@ -20,7 +20,7 @@ import type { Role } from "../../domain/entities/Role";
 export function RolesView() {
       const { t } = useI18n();
       const router = useRouter();
-      const viewModel = useRolesViewModel();
+      const viewModel = useRolesViewModel({ useMyTenant: true });
 
       const columns: CrudColumn<Role>[] = [
             { key: "name", label: t("roles.name"), sortable: true, className: "font-medium" },
