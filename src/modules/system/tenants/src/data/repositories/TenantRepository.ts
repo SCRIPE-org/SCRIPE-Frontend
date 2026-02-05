@@ -22,6 +22,7 @@ import type { ITenantService } from "../../domain/interfaces/ITenantService";
 import { TenantMapper } from "../mappers/TenantMapper";
 import type { Permission } from "@modules/system/permissions/src/domain/entities/Permission";
 import { PermissionMapper } from "@modules/system/permissions/src/data/mappers/PermissionMapper";
+import { appLogger } from "@core/common/logger";
 
 export class TenantRepository implements ITenantRepository {
       constructor(private readonly service: ITenantService) { }
@@ -99,20 +100,20 @@ export class TenantRepository implements ITenantRepository {
       }
 
       async getAvailablePermissions(tenantId: string, parentId?: string): Promise<Permission[]> {
-            console.log("[Repo Debug] getAvailablePermissions called with tenantId:", tenantId, "parentId:", parentId);
+            appLogger.debug("[Repo] getAvailablePermissions called with tenantId:", tenantId, "parentId:", parentId);
             // If tenant has a parent, get the parent's permissions
             // If tenant is a root tenant (no parent), get all available permissions from current admin's perspective
             if (parentId) {
                   // Child tenant: available permissions = parent tenant's permissions
-                  console.log("[Repo Debug] Fetching PARENT tenant permissions for:", parentId);
+                  appLogger.debug("[Repo] Fetching PARENT tenant permissions for:", parentId);
                   const models = await this.service.getTenantPermissions(parentId);
-                  console.log("[Repo Debug] Parent permissions count:", models?.length);
+                  appLogger.debug("[Repo] Parent permissions count:", models?.length);
                   return PermissionMapper.toEntityList(models);
             } else {
                   // Root tenant: available permissions = creation permissions (current admin's perspective)
-                  console.log("[Repo Debug] Fetching CREATION permissions (no parent)");
+                  appLogger.debug("[Repo] Fetching CREATION permissions (no parent)");
                   const models = await this.service.getCreationPermissions();
-                  console.log("[Repo Debug] Creation permissions count:", models?.length);
+                  appLogger.debug("[Repo] Creation permissions count:", models?.length);
                   return PermissionMapper.toEntityList(models);
             }
       }

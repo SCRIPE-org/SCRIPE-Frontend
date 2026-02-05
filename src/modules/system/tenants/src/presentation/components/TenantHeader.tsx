@@ -34,6 +34,7 @@ import {
 import { systemContainer } from "@modules/system/di";
 import type { Tenant } from "../../domain/entities/Tenant";
 import { cn } from "@core/common/utils";
+import { appLogger } from "@/core/common/logger";
 
 interface TenantHeaderProps {
       tenant: Tenant;
@@ -69,7 +70,7 @@ export function TenantHeader({ tenant, onUpdate }: TenantHeaderProps) {
                   setEditOpen(false);
                   onUpdate?.();
             } catch (error) {
-                  console.error("Failed to update tenant:", error);
+                  appLogger.error("Failed to update tenant:", error);
             } finally {
                   setIsUpdating(false);
             }
@@ -84,7 +85,7 @@ export function TenantHeader({ tenant, onUpdate }: TenantHeaderProps) {
                   });
                   onUpdate?.();
             } catch (error) {
-                  console.error("Failed to toggle tenant status:", error);
+                  appLogger.error("Failed to toggle tenant status:", error);
             } finally {
                   setIsUpdating(false);
             }
@@ -98,7 +99,7 @@ export function TenantHeader({ tenant, onUpdate }: TenantHeaderProps) {
                   // Navigate away after delete
                   window.location.href = "/tenants";
             } catch (error) {
-                  console.error("Failed to delete tenant:", error);
+                  appLogger.error("Failed to delete tenant:", error);
                   setIsDeleting(false);
             }
       };

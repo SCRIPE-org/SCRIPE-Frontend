@@ -3,6 +3,7 @@ import { persist } from "zustand/middleware";
 import { User } from "@modules/auth/core/domain/entities/User";
 import { PermissionCode, AdminRole } from "@core/common/types/permissions";
 import { secureTokenService } from "@core/common/secure-token-service";
+import { appLogger } from "../common/logger";
 
 interface AppState {
       // Sidebar State
@@ -86,7 +87,7 @@ export const useAppStore = create<AppState>()(
                         // After rehydration, validate that token still exists
                         // If store says authenticated but no token, reset auth state
                         if (state?.isAuthenticated && !secureTokenService.hasToken()) {
-                              console.log("[AppStore] Token missing after rehydration, resetting auth state");
+                              appLogger.debug("[AppStore] Token missing after rehydration, resetting auth state");
                               state.logout();
                               return;
                         }

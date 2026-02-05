@@ -19,6 +19,7 @@
 import React, { createContext, useContext, useState, useCallback, useMemo } from "react";
 import { useAppStore } from "@core/store/useAppStore";
 import { usePermissions } from "@core/providers/permission-provider";
+import { appLogger } from "../common/logger";
 
 /**
  * Tenant information for context
@@ -91,7 +92,7 @@ export function TenantContextProvider({ children }: TenantContextProviderProps) 
 
       const enterTenantWorld = useCallback((tenant: TenantInfo) => {
             if (!canEnterTenantWorld) {
-                  console.warn("User does not have permission to enter tenant world");
+                  appLogger.warn("User does not have permission to enter tenant world");
                   return;
             }
 

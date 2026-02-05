@@ -63,6 +63,7 @@ import GenericSelect from "./generic-select";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSettings } from "@core/providers/settings-provider";
 import { cn, getHoverEffectClasses, getTableHoverEffectClasses } from "@core/common/utils";
+import { appLogger } from "@/core/common/logger";
 
 /**
  * Column configuration for the table
@@ -215,7 +216,7 @@ export function GenericTable<T extends Record<string, any>>({
   // Debug sticky actions and handle scroll shadows
   useEffect(() => {
     if (stickyActions && actions && actions.length > 0) {
-      console.log("Sticky Actions Debug:", {
+      appLogger.debug("Sticky Actions Debug:", {
         stickyActions,
         actionsCount: actions.length,
         direction,

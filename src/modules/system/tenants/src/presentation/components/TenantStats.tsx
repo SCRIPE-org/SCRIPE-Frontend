@@ -15,6 +15,7 @@ import { Users, Shield, Building2, Key, Loader2 } from "lucide-react";
 import { cn } from "@core/common/utils";
 import { systemContainer } from "@modules/system/di";
 import type { TenantStats as TenantStatsType } from "../../domain/interfaces/ITenantRepository";
+import { appLogger } from "@/core/common/logger";
 
 interface TenantStatsProps {
       tenantId: string;
@@ -48,7 +49,7 @@ export function TenantStats({ tenantId, onTabChange }: TenantStatsProps) {
                               permissionsCount: data.permissionsCount,
                         });
                   } catch (error) {
-                        console.error("Failed to fetch tenant stats:", error);
+                        appLogger.error("Failed to fetch tenant stats:", error);
                         setStats({
                               adminsCount: 0,
                               rolesCount: 0,

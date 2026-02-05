@@ -10,6 +10,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { secureTokenService } from "@core/common/secure-token-service";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
+import { appLogger } from "../common/logger";
 
 interface RouteGuardProps {
   children: React.ReactNode;
@@ -39,7 +40,7 @@ function forceLogout() {
     localStorage.removeItem(STORAGE_KEYS.NAVIGATION_CACHE_EXPIRY);
   }
 
-  console.log("[RouteGuard] Forced logout - cleared auth tokens and cache");
+  appLogger.debug("[RouteGuard] Forced logout - cleared auth tokens and cache");
 }
 
 export function RouteGuard({ children }: RouteGuardProps) {
@@ -94,7 +95,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
 
       // If no token exists, redirect to login
       if (!hasToken) {
-        console.log("[RouteGuard] No token found, redirecting to login");
+        appLogger.debug("[RouteGuard] No token found, redirecting to login");
         hasRedirected.current = true;
         forceLogout();
         logout();
@@ -105,7 +106,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
       // If store says not authenticated but token exists, 
       // this is an inconsistent state - clear everything and redirect
       if (!isAuthenticated && hasToken) {
-        console.log("[RouteGuard] Inconsistent auth state, clearing and redirecting to login");
+        appLogger.debug("[RouteGuard] Inconsistent auth state, clearing and redirecting to login");
         hasRedirected.current = true;
         forceLogout();
         logout();
@@ -116,7 +117,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
       // At this point: has token AND authenticated
       // Check RBAC permissions
       if (!canAccessPage(pathname)) {
-        console.log("[RouteGuard] Access denied by permissions");
+        appLogger.debug("[RouteGuard] Access denied by permissions");
         hasRedirected.current = true;
         router.push("/not-authorized");
         return;
@@ -137,7 +138,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
       const hasAccess = hasPageAccess(pathname);
 
       if (!hasAccess) {
-        console.log("[RouteGuard] Access denied by dynamic navigation");
+        appLogger.debug("[RouteGuard] Access denied by dynamic navigation");
         hasRedirected.current = true;
         router.push("/not-authorized");
         return;

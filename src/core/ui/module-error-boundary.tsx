@@ -4,6 +4,7 @@ import React, { Component, ErrorInfo, ReactNode } from "react";
 import { Button } from "@core/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { AlertTriangle, RefreshCw, Home } from "lucide-react";
+import { appLogger } from "../common/logger";
 
 interface ModuleErrorBoundaryProps {
       children: ReactNode;
@@ -43,8 +44,8 @@ export class ModuleErrorBoundary extends Component<
 
       componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
             // Log to console in development
-            console.error(`[${this.props.moduleName || "Module"}] Error:`, error);
-            console.error("Error Info:", errorInfo);
+            appLogger.error(`[${this.props.moduleName || "Module"}] Error:`, error);
+            appLogger.error("Error Info:", errorInfo);
 
             // Call optional error handler (e.g., for Sentry)
             this.props.onError?.(error, errorInfo);

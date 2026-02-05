@@ -4,6 +4,7 @@ import { useAppStore } from "@core/store/useAppStore";
 import { AuthMapper } from "../core/data/mappers/AuthMapper";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useNavigation } from "@core/providers/navigation-provider";
+import { appLogger } from "@/core/common/logger";
 
 export function useAuthLogin() {
       const { authRepository } = useServices();
@@ -34,7 +35,7 @@ export function useAuthLogin() {
                   try {
                         await refreshNavigation(false, true); // skipLoading=false, forceRefresh=true
                   } catch (error) {
-                        console.error("Failed to fetch navigation after login:", error);
+                        appLogger.error("Failed to fetch navigation after login:", error);
                   }
 
                   // 4. Invalidate any cached queries to ensure fresh data on protected pages

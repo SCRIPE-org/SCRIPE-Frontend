@@ -17,6 +17,7 @@ import { useState, useEffect, useMemo, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useToast } from "@core/hooks/use-toast";
+import { appLogger } from "@core/common/logger";
 import { getCoreContainer } from "@core/di";
 import { systemContainer } from "@modules/system/di";
 
@@ -118,20 +119,20 @@ export function useTenantPermissionsDialog({
       const { data: availablePermissions = [], isLoading: loadingAvailable } = useQuery({
             queryKey: ["tenant-available-permissions", tenantId, parentTenantId],
             queryFn: async (): Promise<AvailablePermission[]> => {
-                  console.log("[ViewModel] Fetching available permissions - tenantId:", tenantId, "parentId:", parentTenantId);
+                  appLogger.debug("[ViewModel] Fetching available permissions - tenantId:", tenantId, "parentId:", parentTenantId);
                   if (parentTenantId) {
                         // Child tenant: get PARENT's permissions as available
                         const result = await getCoreContainer().apiService.get<AvailablePermission[]>(
                               `/Tenants/${parentTenantId}/permissions`
                         );
-                        console.log("[ViewModel] Parent permissions:", result?.length);
+                        appLogger.debug("[ViewModel] Parent permissions:", result?.length);
                         return result;
                   } else {
                         // Root tenant: get all creation permissions
                         const result = await getCoreContainer().apiService.get<AvailablePermission[]>(
                               `/Tenants/creation-permissions`
                         );
-                        console.log("[ViewModel] Creation permissions:", result?.length);
+                        appLogger.debug("[ViewModel] Creation permissions:", result?.length);
                         return result;
                   }
             },
@@ -142,11 +143,11 @@ export function useTenantPermissionsDialog({
       const { data: tenantPermissions = [], isLoading: loadingTenant } = useQuery({
             queryKey: ["tenant-current-permissions", tenantId],
             queryFn: async (): Promise<TenantCurrentPermission[]> => {
-                  console.log("[ViewModel] Fetching tenant's current permissions:", tenantId);
+                  appLogger.debug("[ViewModel] Fetching tenant's current permissions:", tenantId);
                   const result = await getCoreContainer().apiService.get<TenantCurrentPermission[]>(
                         `/Tenants/${tenantId}/permissions`
                   );
-                  console.log("[ViewModel] Tenant's current permissions:", result?.length, result?.map(p => p.code));
+                  appLogger.debug("[ViewModel] Tenant's current permissions:", result?.length, result?.map(p => p.code));
                   return result;
             },
             enabled: open && !!tenantId,
@@ -168,9 +169,9 @@ export function useTenantPermissionsDialog({
                   // Filter to only include valid codes
                   const selectedFromTenant = tenantCodes.filter(code => validCodes.has(code));
 
-                  console.log("[ViewModel] Valid codes:", Array.from(validCodes));
-                  console.log("[ViewModel] Tenant codes:", tenantCodes);
-                  console.log("[ViewModel] Selected (filtered):", selectedFromTenant);
+                  appLogger.debug("[ViewModel] Valid codes:", Array.from(validCodes));
+                  appLogger.debug("[ViewModel] Tenant codes:", tenantCodes);
+                  appLogger.debug("[ViewModel] Selected (filtered):", selectedFromTenant);
 
                   setSelectedCodes(new Set(selectedFromTenant));
 
@@ -195,8 +196,8 @@ export function useTenantPermissionsDialog({
                         .filter(p => selectedCodes.has(p.code))
                         .map(p => p.id);
 
-                  console.log("[ViewModel] Saving permissions - codes:", Array.from(selectedCodes));
-                  console.log("[ViewModel] Mapped to IDs:", selectedIds);
+                  appLogger.debug("[ViewModel] Saving permissions - codes:", Array.from(selectedCodes));
+                  appLogger.debug("[ViewModel] Mapped to IDs:", selectedIds);
 
                   await systemContainer.tenantRepository.updateTenantPermissions(tenantId, selectedIds);
             },

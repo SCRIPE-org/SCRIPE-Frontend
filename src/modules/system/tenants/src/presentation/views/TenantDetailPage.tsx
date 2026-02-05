@@ -21,6 +21,7 @@ import type { Tenant } from "../../domain/entities/Tenant";
 import { TenantHeader } from "../components/TenantHeader";
 import { TenantStats } from "../components/TenantStats";
 import { TenantTabs } from "../components/TenantTabs";
+import { appLogger } from "@/core/common/logger";
 
 interface TenantDetailPageProps {
       tenantId: string;
@@ -57,7 +58,7 @@ export function TenantDetailPage({ tenantId }: TenantDetailPageProps) {
                               setError(t("tenant.notFound") || "Tenant not found");
                         }
                   } catch (err) {
-                        console.error("Failed to fetch tenant:", err);
+                        appLogger.error("Failed to fetch tenant:", err);
                         setError(t("common.errorLoading") || "Failed to load tenant");
                   } finally {
                         setLoading(false);

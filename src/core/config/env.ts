@@ -6,6 +6,7 @@
  */
 
 import { z } from "zod";
+import { appLogger } from "../common/logger";
 
 /**
  * Environment schema definition
@@ -44,8 +45,8 @@ function validateEnv() {
       const result = envSchema.safeParse(env);
 
       if (!result.success) {
-            console.error("❌ Invalid environment variables:");
-            console.error(result.error.flatten().fieldErrors);
+            appLogger.error("❌ Invalid environment variables:");
+            appLogger.error(`❌ Invalid environment variables: ${result.error.flatten().fieldErrors}`);
             // In development, throw to catch issues early
             if (process.env.NODE_ENV === "development") {
                   throw new Error("Invalid environment configuration");
