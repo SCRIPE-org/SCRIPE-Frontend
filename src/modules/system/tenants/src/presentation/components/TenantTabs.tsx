@@ -24,9 +24,10 @@ import { TenantSettingsTab } from "./tabs/TenantSettingsTab";
 interface TenantTabsProps {
       tenantId: string;
       tenantName: string;
+      tenantCode: string;
 }
 
-export function TenantTabs({ tenantId, tenantName }: TenantTabsProps) {
+export function TenantTabs({ tenantId, tenantName, tenantCode }: TenantTabsProps) {
       const { t, direction } = useI18n();
       const [activeTab, setActiveTab] = useState("admins");
 
@@ -92,7 +93,7 @@ export function TenantTabs({ tenantId, tenantName }: TenantTabsProps) {
 
                               {/* Sub-Tenants Tab */}
                               <TabsContent value="subtenants" className="m-0 p-6">
-                                    <SubTenantsTab parentId={tenantId} parentName={tenantName} />
+                                    <SubTenantsTab parentId={tenantId} parentName={tenantName} parentCode={tenantCode} />
                               </TabsContent>
 
                               {/* Settings Tab */}
