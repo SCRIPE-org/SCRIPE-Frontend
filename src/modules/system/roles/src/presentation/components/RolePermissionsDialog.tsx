@@ -1,8 +1,8 @@
 /**
  * Role Permissions Dialog
  * 
- * Simplified dialog for managing permissions assigned to a role.
- * Uses the generic multi-select pattern with proper permission matching.
+ * Professional dialog for managing permissions assigned to a role.
+ * Features collapsible resource groups with smooth animations.
  *
  * @module roles/presentation/components
  */
@@ -18,14 +18,29 @@ import {
       DialogHeader,
       DialogTitle,
 } from "@core/ui/dialog";
+import {
+      Accordion,
+      AccordionContent,
+      AccordionItem,
+      AccordionTrigger,
+} from "@core/ui/accordion";
 import { Button } from "@core/ui/button";
 import { Checkbox } from "@core/ui/checkbox";
 import { Input } from "@core/ui/input";
 import { ScrollArea } from "@core/ui/scroll-area";
 import { Badge } from "@core/ui/badge";
+import { Separator } from "@core/ui/separator";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useToast } from "@core/hooks/use-toast";
-import { Loader2, Search, Shield, ShieldCheck, CheckCircle2 } from "lucide-react";
+import {
+      Loader2,
+      Search,
+      Shield,
+      ShieldCheck,
+      Check,
+      Layers,
+      FolderOpen,
+} from "lucide-react";
 import { systemContainer } from "@modules/system/di";
 import { getCoreContainer } from "@core/di";
 import type { Role } from "../../domain/entities/Role";
@@ -36,7 +51,7 @@ interface TenantPermission {
       id: string;
       resource: string;
       action: string;
-      code: string;  // This is the actual field name from API!
+      code: string;
       defaultScope: string;
       description?: string;
       nameEn?: string;
@@ -70,8 +85,9 @@ export function RolePermissionsDialog({
 
       const [search, setSearch] = useState("");
       const [selectedCodes, setSelectedCodes] = useState<Set<string>>(new Set());
+      const [expandedGroups, setExpandedGroups] = useState<string[]>([]);
 
-      // Reset search when dialog opens
+      // Reset when dialog opens
       useEffect(() => {
             if (open) setSearch("");
       }, [open]);
@@ -80,10 +96,9 @@ export function RolePermissionsDialog({
       const { data: tenantPermissions = [], isLoading: loadingTenant } = useQuery({
             queryKey: ["tenant-permissions-raw", tenantId],
             queryFn: async () => {
-                  const response = await getCoreContainer().apiService.get<TenantPermission[]>(
+                  return getCoreContainer().apiService.get<TenantPermission[]>(
                         `/Tenants/${tenantId}/permissions`
                   );
-                  return response;
             },
             enabled: open && !!tenantId,
       });
@@ -101,14 +116,20 @@ export function RolePermissionsDialog({
       // Initialize selection when data loads
       useEffect(() => {
             if (rolePermissions.length > 0 && tenantPermissions.length > 0) {
-                  // Get valid codes from tenant permissions
                   const validCodes = new Set(tenantPermissions.map(p => p.code));
-
-                  // Get role's permission codes and intersect with valid codes
                   const roleCodes = rolePermissions.map(p => p.permissionCode);
                   const selectedFromRole = roleCodes.filter(code => validCodes.has(code));
 
                   setSelectedCodes(new Set(selectedFromRole));
+
+                  // Auto-expand groups with selected permissions
+                  const groupsWithSelection = new Set<string>();
+                  tenantPermissions.forEach(p => {
+                        if (selectedFromRole.includes(p.code)) {
+                              groupsWithSelection.add(p.resource);
+                        }
+                  });
+                  setExpandedGroups(Array.from(groupsWithSelection));
             }
       }, [rolePermissions, tenantPermissions]);
 
@@ -117,7 +138,6 @@ export function RolePermissionsDialog({
             mutationFn: async () => {
                   if (!role) throw new Error("No role selected");
 
-                  // Convert codes to permission IDs
                   const selectedIds = tenantPermissions
                         .filter(p => selectedCodes.has(p.code))
                         .map(p => p.id);
@@ -127,17 +147,21 @@ export function RolePermissionsDialog({
                   });
             },
             onSuccess: () => {
-                  toast({ title: t("role.permissionsSaved") || "Permissions saved" });
+                  toast({ title: t("role.permissionsSaved") || "Permissions saved successfully" });
                   queryClient.invalidateQueries({ queryKey: ["role-permissions", role?.id] });
                   queryClient.invalidateQueries({ queryKey: ["roles"] });
                   onOpenChange(false);
             },
             onError: (error: Error) => {
-                  toast({ title: t("role.permissionsSaveError") || "Save failed", description: error.message, variant: "destructive" });
+                  toast({
+                        title: t("role.permissionsSaveError") || "Failed to save",
+                        description: error.message,
+                        variant: "destructive"
+                  });
             },
       });
 
-      // Toggle single permission
+      // Toggle handlers
       const toggle = (code: string) => {
             setSelectedCodes(prev => {
                   const next = new Set(prev);
@@ -146,7 +170,6 @@ export function RolePermissionsDialog({
             });
       };
 
-      // Toggle all in group
       const toggleGroup = (codes: string[]) => {
             const allSelected = codes.every(c => selectedCodes.has(c));
             setSelectedCodes(prev => {
@@ -174,101 +197,206 @@ export function RolePermissionsDialog({
 
       const isLoading = loadingTenant || loadingRole;
       const getName = (p: TenantPermission) => (language === "ar" ? p.nameAr : p.nameEn) || p.description || p.code;
+      const groupCount = Object.keys(grouped).length;
 
       return (
             <Dialog open={open} onOpenChange={onOpenChange}>
-                  <DialogContent className="max-w-xl max-h-[80vh] flex flex-col">
-                        <DialogHeader className="pb-3 border-b">
-                              <DialogTitle className="flex items-center gap-2">
-                                    <Shield className="h-5 w-5 text-primary" />
-                                    {t("role.managePermissions") || "Manage Permissions"}
-                              </DialogTitle>
-                              <DialogDescription>
-                                    <Badge variant="outline" className="font-mono">{role?.code}</Badge>
-                                    <span className="ms-2">{role?.name}</span>
-                              </DialogDescription>
+                  <DialogContent className="max-w-2xl max-h-[85vh] flex flex-col p-0 gap-0 overflow-hidden">
+                        {/* Header */}
+                        <DialogHeader className="px-6 py-4 bg-gradient-to-r from-primary/5 to-transparent border-b">
+                              <div className="flex items-center gap-3">
+                                    <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-primary/10 text-primary">
+                                          <Shield className="h-5 w-5" />
+                                    </div>
+                                    <div className="flex-1">
+                                          <DialogTitle className="text-lg font-semibold">
+                                                {t("role.managePermissions") || "Manage Permissions"}
+                                          </DialogTitle>
+                                          <DialogDescription className="flex items-center gap-2 mt-0.5">
+                                                <Badge variant="secondary" className="font-mono text-xs">
+                                                      {role?.code}
+                                                </Badge>
+                                                <span className="text-muted-foreground">•</span>
+                                                <span>{role?.name}</span>
+                                          </DialogDescription>
+                                    </div>
+                              </div>
                         </DialogHeader>
 
-                        <div className="flex items-center gap-2 py-3">
-                              <div className="relative flex-1">
-                                    <Search className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                                    <Input
-                                          placeholder={t("common.search") || "Search..."}
-                                          value={search}
-                                          onChange={(e) => setSearch(e.target.value)}
-                                          className="ps-9"
-                                    />
+                        {/* Search & Stats Bar */}
+                        <div className="px-6 py-3 border-b bg-muted/30">
+                              <div className="flex items-center gap-3">
+                                    <div className="relative flex-1">
+                                          <Search className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                          <Input
+                                                placeholder={t("common.search") || "Search permissions..."}
+                                                value={search}
+                                                onChange={(e) => setSearch(e.target.value)}
+                                                className="ps-9 bg-background"
+                                          />
+                                    </div>
+                                    <div className="flex items-center gap-4 text-sm">
+                                          <div className="flex items-center gap-1.5 text-muted-foreground">
+                                                <Layers className="h-4 w-4" />
+                                                <span>{groupCount} {t("common.groups") || "groups"}</span>
+                                          </div>
+                                          <Separator orientation="vertical" className="h-4" />
+                                          <div className="flex items-center gap-1.5">
+                                                <ShieldCheck className="h-4 w-4 text-primary" />
+                                                <span className="font-medium text-primary">
+                                                      {selectedCodes.size}
+                                                </span>
+                                                <span className="text-muted-foreground">
+                                                      / {tenantPermissions.length}
+                                                </span>
+                                          </div>
+                                    </div>
                               </div>
-                              <Badge variant="secondary">
-                                    <ShieldCheck className="h-3 w-3 me-1" />
-                                    {selectedCodes.size}/{tenantPermissions.length}
-                              </Badge>
                         </div>
 
-                        <ScrollArea className="flex-1 -mx-6 px-6">
-                              {isLoading ? (
-                                    <div className="flex justify-center py-8">
-                                          <Loader2 className="h-6 w-6 animate-spin" />
-                                    </div>
-                              ) : Object.keys(grouped).length === 0 ? (
-                                    <div className="text-center text-muted-foreground py-8">
-                                          {t("permission.noPermissionsFound") || "No permissions found"}
-                                    </div>
-                              ) : (
-                                    <div className="space-y-4">
-                                          {Object.entries(grouped).map(([resource, perms]) => {
-                                                const codes = perms.map(p => p.code);
-                                                const count = codes.filter(c => selectedCodes.has(c)).length;
-                                                const allChecked = count === perms.length;
+                        {/* Content */}
+                        <ScrollArea className="flex-1 px-6">
+                              <div className="py-4">
+                                    {isLoading ? (
+                                          <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
+                                                <Loader2 className="h-8 w-8 animate-spin mb-3" />
+                                                <p>{t("common.loading") || "Loading permissions..."}</p>
+                                          </div>
+                                    ) : groupCount === 0 ? (
+                                          <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
+                                                <FolderOpen className="h-12 w-12 mb-3 opacity-50" />
+                                                <p className="font-medium">{t("permission.noPermissionsFound") || "No permissions found"}</p>
+                                                <p className="text-sm">{t("common.tryDifferentSearch") || "Try a different search term"}</p>
+                                          </div>
+                                    ) : (
+                                          <Accordion
+                                                type="multiple"
+                                                value={expandedGroups}
+                                                onValueChange={setExpandedGroups}
+                                                className="space-y-3"
+                                          >
+                                                {Object.entries(grouped).map(([resource, perms]) => {
+                                                      const codes = perms.map(p => p.code);
+                                                      const selectedCount = codes.filter(c => selectedCodes.has(c)).length;
+                                                      const allChecked = selectedCount === perms.length;
+                                                      const someChecked = selectedCount > 0 && !allChecked;
 
-                                                return (
-                                                      <div key={resource} className="border rounded-lg p-3">
-                                                            {/* Group Header */}
-                                                            <label className="flex items-center gap-2 cursor-pointer mb-2 pb-2 border-b">
-                                                                  <Checkbox
-                                                                        checked={allChecked}
-                                                                        onCheckedChange={() => toggleGroup(codes)}
-                                                                  />
-                                                                  <Badge variant="secondary" className="capitalize">{resource}</Badge>
-                                                                  <span className="text-xs text-muted-foreground ms-auto">{count}/{perms.length}</span>
-                                                            </label>
-
-                                                            {/* Permissions */}
-                                                            <div className="space-y-1">
-                                                                  {perms.map(p => {
-                                                                        const checked = selectedCodes.has(p.code);
-                                                                        return (
-                                                                              <label
-                                                                                    key={p.id}
+                                                      return (
+                                                            <AccordionItem
+                                                                  key={resource}
+                                                                  value={resource}
+                                                                  className="border rounded-xl overflow-hidden bg-card shadow-sm"
+                                                            >
+                                                                  <AccordionTrigger className="px-4 py-3 hover:no-underline hover:bg-muted/50 transition-colors [&>svg]:text-muted-foreground">
+                                                                        <div className="flex items-center gap-3 flex-1">
+                                                                              <Checkbox
+                                                                                    checked={allChecked}
                                                                                     className={cn(
-                                                                                          "flex items-center gap-2 p-2 rounded cursor-pointer transition-colors",
-                                                                                          checked ? "bg-primary/5" : "hover:bg-muted/50"
+                                                                                          "data-[state=checked]:bg-primary",
+                                                                                          someChecked && "bg-primary/50 border-primary"
                                                                                     )}
-                                                                              >
-                                                                                    <Checkbox checked={checked} onCheckedChange={() => toggle(p.code)} />
-                                                                                    <div className="flex-1 min-w-0">
-                                                                                          <div className="text-sm">{getName(p)}</div>
-                                                                                          <div className="text-xs text-muted-foreground font-mono">{p.code}</div>
-                                                                                    </div>
-                                                                                    {checked && <CheckCircle2 className="h-4 w-4 text-primary shrink-0" />}
-                                                                              </label>
-                                                                        );
-                                                                  })}
-                                                            </div>
-                                                      </div>
-                                                );
-                                          })}
-                                    </div>
-                              )}
+                                                                                    onCheckedChange={() => toggleGroup(codes)}
+                                                                                    onClick={(e) => e.stopPropagation()}
+                                                                              />
+                                                                              <div className="flex items-center gap-2">
+                                                                                    <Badge
+                                                                                          variant={selectedCount > 0 ? "default" : "secondary"}
+                                                                                          className="capitalize font-medium"
+                                                                                    >
+                                                                                          {resource}
+                                                                                    </Badge>
+                                                                              </div>
+                                                                              <div className="ms-auto me-2 flex items-center gap-1">
+                                                                                    <span className={cn(
+                                                                                          "text-sm font-medium",
+                                                                                          selectedCount > 0 ? "text-primary" : "text-muted-foreground"
+                                                                                    )}>
+                                                                                          {selectedCount}
+                                                                                    </span>
+                                                                                    <span className="text-sm text-muted-foreground">
+                                                                                          / {perms.length}
+                                                                                    </span>
+                                                                              </div>
+                                                                        </div>
+                                                                  </AccordionTrigger>
+                                                                  <AccordionContent className="px-4 pb-3">
+                                                                        <div className="grid gap-1.5 pt-1">
+                                                                              {perms.map(permission => {
+                                                                                    const isChecked = selectedCodes.has(permission.code);
+                                                                                    return (
+                                                                                          <label
+                                                                                                key={permission.id}
+                                                                                                className={cn(
+                                                                                                      "flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all duration-200",
+                                                                                                      "border",
+                                                                                                      isChecked
+                                                                                                            ? "bg-primary/5 border-primary/30 shadow-sm"
+                                                                                                            : "bg-background border-transparent hover:bg-muted/50 hover:border-muted"
+                                                                                                )}
+                                                                                          >
+                                                                                                <Checkbox
+                                                                                                      checked={isChecked}
+                                                                                                      onCheckedChange={() => toggle(permission.code)}
+                                                                                                      className="data-[state=checked]:bg-primary"
+                                                                                                />
+                                                                                                <div className="flex-1 min-w-0">
+                                                                                                      <div className={cn(
+                                                                                                            "font-medium text-sm",
+                                                                                                            isChecked && "text-primary"
+                                                                                                      )}>
+                                                                                                            {getName(permission)}
+                                                                                                      </div>
+                                                                                                      <div className="text-xs text-muted-foreground font-mono mt-0.5">
+                                                                                                            {permission.code}
+                                                                                                      </div>
+                                                                                                </div>
+                                                                                                {isChecked && (
+                                                                                                      <div className="flex items-center justify-center w-6 h-6 rounded-full bg-primary text-primary-foreground">
+                                                                                                            <Check className="h-3.5 w-3.5" />
+                                                                                                      </div>
+                                                                                                )}
+                                                                                          </label>
+                                                                                    );
+                                                                              })}
+                                                                        </div>
+                                                                  </AccordionContent>
+                                                            </AccordionItem>
+                                                      );
+                                                })}
+                                          </Accordion>
+                                    )}
+                              </div>
                         </ScrollArea>
 
-                        <DialogFooter className="border-t pt-3">
-                              <Button variant="outline" onClick={() => onOpenChange(false)}>
-                                    {t("common.cancel") || "Cancel"}
-                              </Button>
-                              <Button onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending}>
-                                    {saveMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : t("common.save") || "Save"}
-                              </Button>
+                        {/* Footer */}
+                        <DialogFooter className="px-6 py-4 border-t bg-muted/30">
+                              <div className="flex items-center justify-between w-full">
+                                    <p className="text-sm text-muted-foreground">
+                                          {selectedCodes.size} {t("common.selected") || "selected"}
+                                    </p>
+                                    <div className="flex items-center gap-2">
+                                          <Button
+                                                variant="outline"
+                                                onClick={() => onOpenChange(false)}
+                                          >
+                                                {t("common.cancel") || "Cancel"}
+                                          </Button>
+                                          <Button
+                                                onClick={() => saveMutation.mutate()}
+                                                disabled={saveMutation.isPending}
+                                                className="min-w-[100px]"
+                                          >
+                                                {saveMutation.isPending ? (
+                                                      <Loader2 className="h-4 w-4 animate-spin" />
+                                                ) : (
+                                                      <>
+                                                            <ShieldCheck className="h-4 w-4 me-2" />
+                                                            {t("common.save") || "Save"}
+                                                      </>
+                                                )}
+                                          </Button>
+                                    </div>
+                              </div>
                         </DialogFooter>
                   </DialogContent>
             </Dialog>

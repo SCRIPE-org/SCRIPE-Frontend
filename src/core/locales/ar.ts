@@ -2593,6 +2593,7 @@ export const ar = {
 
   // Common
   common: {
+    groups: "المجموعات",
     selected: "محدد",
     errorLoading: "حدث خطأ أثناء تحميل البيانات",
     confirm: "تأكيد",

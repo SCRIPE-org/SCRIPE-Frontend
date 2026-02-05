@@ -2582,6 +2582,7 @@ export const en = {
   // Common
   common: {
     selected: "Selected",
+    groups: "Groups",
     more: "More",
     close: "Close",
     status: "Status",
