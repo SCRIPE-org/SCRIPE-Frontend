@@ -51,7 +51,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ar" dir="rtl" suppressHydrationWarning>
-      <body className="font-sans antialiased">
+      <body className="font-cairo antialiased">
         <AppProvider>
           {children}
         </AppProvider>

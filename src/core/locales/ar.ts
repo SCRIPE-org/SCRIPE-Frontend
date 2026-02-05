@@ -1,3 +1,5 @@
+import { title } from "process";
+
 export const ar = {
   // Authentication
   auth: {
@@ -61,6 +63,7 @@ export const ar = {
 
   // Tenants - المستأجرون
   tenant: {
+    managePermissionsFor: "إدارة الصلاحيات لـ",
     title: "المستأجرون",
     description: "إدارة التسلسل الهرمي والمستأجرين.",
     hierarchy: "هرمية المستأجرين",
@@ -2611,6 +2614,8 @@ export const ar = {
 
   // Common
   common: {
+    selectAll: "اختر الكل",
+    clearAll: "مسح الكل",
     groups: "المجموعات",
     selected: "محدد",
     errorLoading: "حدث خطأ أثناء تحميل البيانات",
