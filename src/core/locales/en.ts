@@ -157,6 +157,7 @@ export const en = {
     selectPermissionsDesc: "Choose which permissions this tenant can use",
     noPermissionsAvailable: "No permissions available",
     noPermissionsSelected: "No permissions selected",
+    parentTenant: "Parent Tenant",
     permissionsSelected: "{{count}} permissions selected",
     address: "Address",
     addressPlaceholder: "Enter tenant address",

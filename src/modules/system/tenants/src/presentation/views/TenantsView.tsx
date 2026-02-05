@@ -56,14 +56,23 @@ export function TenantsView() {
             [isSystemAdmin]
       );
 
-      // Server search for permissions using permissionRepository (via DI)
-      const searchPermissions = useCallback(
-            async (query: string): Promise<FieldOption[]> => {
+      // Server search for permissions - needs parentId to filter by parent's permissions
+      // Returns a function factory that creates a search callback with the parent context
+      const createPermissionSearch = useCallback(
+            (parentId?: string) => async (query: string): Promise<FieldOption[]> => {
                   try {
-                        // Use Repository instead of direct API call - CLEAN ARCHITECTURE
-                        const permissions = await systemContainer.permissionRepository.getMyPermissions({
-                              search: query || undefined,
-                        });
+                        // Use tenantRepository.getCreationPermissions to get ONLY parent's permissions
+                        // This ensures child can only have subset of parent's permissions
+                        let permissions = await systemContainer.tenantRepository.getCreationPermissions(parentId);
+
+                        // Client-side filter if there's a search query
+                        if (query) {
+                              const lowerQuery = query.toLowerCase();
+                              permissions = permissions.filter((p) =>
+                                    p.getLocalizedName(language).toLowerCase().includes(lowerQuery) ||
+                                    p.code.toLowerCase().includes(lowerQuery)
+                              );
+                        }
 
                         return permissions.map((p) => {
                               // Use stable code for deduplication (uniqueKey)
@@ -130,6 +139,19 @@ export function TenantsView() {
                         });
                   }
 
+                  // Show parent tenant info when creating under a parent (read-only display)
+                  if (!editing && parentForNew) {
+                        fields.push({
+                              name: "parentDisplay",
+                              label: t("tenant.parentTenant") || "Parent Tenant",
+                              type: "text",
+                              placeholder: "",
+                              required: false,
+                              disabled: true,
+                              defaultValue: `${parentForNew.name} (${parentForNew.code})`,
+                        });
+                  }
+
                   // Show permissions multi-select only when creating
                   if (!editing) {
                         fields.push({
@@ -140,7 +162,8 @@ export function TenantsView() {
                               searchPlaceholder: t("permission.searchPlaceholder") || "Search permissions...",
                               required: false,
                               searchType: "server",
-                              onServerSearch: searchPermissions,
+                              // Pass parentId to filter permissions by parent tenant's available permissions
+                              onServerSearch: createPermissionSearch(parentForNew?.id),
                               debounceMs: 300,
                               allowClear: true,
                               noResultsText: t("tenant.noPermissionsAvailable"),
@@ -149,7 +172,7 @@ export function TenantsView() {
 
                   return fields;
             },
-            [t, searchPermissions]
+            [t, createPermissionSearch]
       );
 
       // Tree view model

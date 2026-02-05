@@ -155,6 +155,7 @@ export const ar = {
     selectPermissionsDesc: "اختر الصلاحيات التي يمكن لهذا المستأجر استخدامها",
     noPermissionsAvailable: "لا توجد صلاحيات متاحة",
     noPermissionsSelected: "لم يتم اختيار صلاحيات",
+    parentTenant: "المستأجر الأب",
     permissionsSelected: "{{count}} صلاحية مختارة",
     address: "العنوان",
     addressPlaceholder: "أدخل عنوان المستأجر",

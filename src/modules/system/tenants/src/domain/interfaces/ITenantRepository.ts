@@ -10,6 +10,7 @@ import type {
       DeleteTenantRequest,
 } from "../entities/TenantRequests";
 import type { PagedResult } from "@modules/system/core/domain/types";
+import type { Permission } from "@modules/system/permissions/src/domain/entities/Permission";
 
 /**
  * Tenant list query parameters
@@ -87,6 +88,13 @@ export interface ITenantRepository {
        * Get descendant count (children + grandchildren etc.)
        */
       getDescendantCount(id: string): Promise<number>;
+
+      /**
+       * Get available permissions for creating a child tenant.
+       * Returns the parent tenant's permissions (child can only have subset of parent).
+       * @param parentId - Optional parent tenant ID. If null, uses current user's tenant permissions.
+       */
+      getCreationPermissions(parentId?: string): Promise<Permission[]>;
 
       /**
        * Set the current tenant context for multi-tenant API calls.

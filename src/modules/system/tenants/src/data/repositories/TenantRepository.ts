@@ -20,6 +20,8 @@ import type {
 import type { PagedResult } from "@modules/system/core/domain/types";
 import type { ITenantService } from "../../domain/interfaces/ITenantService";
 import { TenantMapper } from "../mappers/TenantMapper";
+import type { Permission } from "@modules/system/permissions/src/domain/entities/Permission";
+import { PermissionMapper } from "@modules/system/permissions/src/data/mappers/PermissionMapper";
 
 export class TenantRepository implements ITenantRepository {
       constructor(private readonly service: ITenantService) { }
@@ -84,6 +86,11 @@ export class TenantRepository implements ITenantRepository {
 
       async getDescendantCount(id: string): Promise<number> {
             return this.service.getDescendantCount(id);
+      }
+
+      async getCreationPermissions(parentId?: string): Promise<Permission[]> {
+            const models = await this.service.getCreationPermissions(parentId);
+            return PermissionMapper.toEntityList(models);
       }
 
       setTenantContext(tenantId: string | null): void {
