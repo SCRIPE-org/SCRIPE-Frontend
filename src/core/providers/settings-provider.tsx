@@ -350,7 +350,7 @@ interface SettingsContextType extends Settings {
 const defaultSettings: Settings = {
   colorTheme: "blue",
   lightBackgroundTheme: "default",
-  darkBackgroundTheme: "default",
+  darkBackgroundTheme: "slate",
   shadowIntensity: "moderate",
   layoutTemplate: "navigation",
   cardStyle: "default",

@@ -142,7 +142,12 @@ export function TenantDetailPage({ tenantId }: TenantDetailPageProps) {
                   <TenantStats tenantId={tenantId} />
 
                   {/* Tabbed Content */}
-                  <TenantTabs tenantId={tenantId} tenantName={tenant.name} tenantCode={tenant.code} />
+                  <TenantTabs
+                        tenantId={tenantId}
+                        tenantName={tenant.name}
+                        tenantCode={tenant.code}
+                        parentTenantId={tenant.parentId}
+                  />
             </main>
       );
 }

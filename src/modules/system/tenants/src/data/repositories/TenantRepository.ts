@@ -93,6 +93,34 @@ export class TenantRepository implements ITenantRepository {
             return PermissionMapper.toEntityList(models);
       }
 
+      async getTenantPermissions(tenantId: string): Promise<Permission[]> {
+            const models = await this.service.getTenantPermissions(tenantId);
+            return PermissionMapper.toEntityList(models);
+      }
+
+      async getAvailablePermissions(tenantId: string, parentId?: string): Promise<Permission[]> {
+            console.log("[Repo Debug] getAvailablePermissions called with tenantId:", tenantId, "parentId:", parentId);
+            // If tenant has a parent, get the parent's permissions
+            // If tenant is a root tenant (no parent), get all available permissions from current admin's perspective
+            if (parentId) {
+                  // Child tenant: available permissions = parent tenant's permissions
+                  console.log("[Repo Debug] Fetching PARENT tenant permissions for:", parentId);
+                  const models = await this.service.getTenantPermissions(parentId);
+                  console.log("[Repo Debug] Parent permissions count:", models?.length);
+                  return PermissionMapper.toEntityList(models);
+            } else {
+                  // Root tenant: available permissions = creation permissions (current admin's perspective)
+                  console.log("[Repo Debug] Fetching CREATION permissions (no parent)");
+                  const models = await this.service.getCreationPermissions();
+                  console.log("[Repo Debug] Creation permissions count:", models?.length);
+                  return PermissionMapper.toEntityList(models);
+            }
+      }
+
+      async updateTenantPermissions(tenantId: string, permissionIds: string[]): Promise<void> {
+            await this.service.updateTenantPermissions(tenantId, permissionIds);
+      }
+
       setTenantContext(tenantId: string | null): void {
             this.service.setTenantContext(tenantId);
       }

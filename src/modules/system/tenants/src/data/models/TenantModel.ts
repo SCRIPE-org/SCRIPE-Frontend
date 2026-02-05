@@ -13,16 +13,24 @@ export interface TenantJson {
       id: string;
       name: string;
       code: string;
-      level: number;
-      path: string;
+      level?: number;
+      hierarchyLevel?: number;
+      path?: string;
       isActive: boolean;
       createdAt: string;
+      // Backend uses parentTenantId, we map to parentId
       parentId?: string;
+      parentTenantId?: string;
       parentName?: string;
+      parentTenantName?: string;
       description?: string;
       settings?: Record<string, unknown>;
       modifiedAt?: string;
       children?: TenantJson[];
+      // Stats from backend
+      childCount?: number;
+      adminCount?: number;
+      address?: string;
 }
 
 export interface TenantTreeNodeJson {
@@ -86,12 +94,14 @@ export class TenantModel {
                   json.id,
                   json.name,
                   json.code,
-                  json.level,
-                  json.path,
+                  // Backend returns hierarchyLevel, frontend uses level
+                  json.level ?? json.hierarchyLevel ?? 0,
+                  json.path ?? '',
                   json.isActive,
                   json.createdAt,
-                  json.parentId,
-                  json.parentName,
+                  // Backend returns parentTenantId, frontend uses parentId
+                  json.parentId ?? json.parentTenantId,
+                  json.parentName ?? json.parentTenantName,
                   json.description,
                   json.settings,
                   json.modifiedAt,

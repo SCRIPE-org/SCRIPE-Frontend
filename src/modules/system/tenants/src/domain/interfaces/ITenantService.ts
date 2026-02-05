@@ -59,6 +59,12 @@ export interface ITenantService {
        */
       getTenantPermissions(tenantId: string): Promise<PermissionModel[]>;
       /**
+       * Update permissions for a tenant
+       * @param tenantId - The tenant ID to update permissions for
+       * @param permissionIds - Array of permission IDs to assign
+       */
+      updateTenantPermissions(tenantId: string, permissionIds: string[]): Promise<void>;
+      /**
        * Set the current tenant context for multi-tenant API calls.
        * @param tenantId - The tenant ID to set, or null to clear
        */

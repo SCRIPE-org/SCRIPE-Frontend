@@ -25,9 +25,10 @@ interface TenantTabsProps {
       tenantId: string;
       tenantName: string;
       tenantCode: string;
+      parentTenantId?: string;
 }
 
-export function TenantTabs({ tenantId, tenantName, tenantCode }: TenantTabsProps) {
+export function TenantTabs({ tenantId, tenantName, tenantCode, parentTenantId }: TenantTabsProps) {
       const { t, direction } = useI18n();
       const [activeTab, setActiveTab] = useState("admins");
 
@@ -98,7 +99,7 @@ export function TenantTabs({ tenantId, tenantName, tenantCode }: TenantTabsProps
 
                               {/* Settings Tab */}
                               <TabsContent value="settings" className="m-0 p-6">
-                                    <TenantSettingsTab tenantId={tenantId} tenantName={tenantName} />
+                                    <TenantSettingsTab tenantId={tenantId} tenantName={tenantName} parentTenantId={parentTenantId} />
                               </TabsContent>
                         </CardContent>
                   </Tabs>

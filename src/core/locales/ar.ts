@@ -63,6 +63,8 @@ export const ar = {
 
   // Tenants - المستأجرون
   tenant: {
+    permissionsLimitedByParent: "الصلاحيات محدودة بواسطة المستأجر الرئيسي",
+    limitedByParent: "محدود بواسطة المستأجر الرئيسي",
     managePermissionsFor: "إدارة الصلاحيات لـ",
     title: "المستأجرون",
     description: "إدارة التسلسل الهرمي والمستأجرين.",
@@ -180,6 +182,8 @@ export const ar = {
     requireNumber: "أرقام",
     requireSpecial: "رموز خاصة",
     managePermissions: "إدارة الصلاحيات",
+    permissionsSaved: "تم حفظ الصلاحيات بنجاح",
+    permissionsSaveError: "فشل في حفظ الصلاحيات",
   },
 
   // إعدادات المستأجر (/settings/tenant)

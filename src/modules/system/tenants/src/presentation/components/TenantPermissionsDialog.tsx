@@ -1,311 +1,310 @@
 /**
  * Tenant Permissions Dialog
  *
- * Dialog for managing which permissions are available to a tenant.
- * System admins can assign any permission; tenant admins can only assign permissions they have.
+ * Professional dialog for managing permissions available to a tenant.
+ * Pure UI component - all logic is in useTenantPermissionsDialog ViewModel.
+ * 
+ * COPIED FROM working RolePermissionsDialog pattern with tenant-specific adaptations.
+ *
+ * @module tenants/presentation/components
  */
 "use client";
 
-import { useState, useEffect } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
       Dialog,
       DialogContent,
-      DialogDescription,
       DialogFooter,
       DialogHeader,
       DialogTitle,
 } from "@core/ui/dialog";
+import {
+      Accordion,
+      AccordionContent,
+      AccordionItem,
+      AccordionTrigger,
+} from "@core/ui/accordion";
 import { Button } from "@core/ui/button";
 import { Checkbox } from "@core/ui/checkbox";
 import { Input } from "@core/ui/input";
 import { ScrollArea } from "@core/ui/scroll-area";
 import { Badge } from "@core/ui/badge";
+import { Separator } from "@core/ui/separator";
 import { useI18n } from "@core/providers/i18n-provider";
-import { useToast } from "@core/hooks/use-toast";
-import { Loader2, Search, Shield, ShieldCheck, Building2 } from "lucide-react";
-import { systemContainer } from "@modules/system/di";
-import type { Permission } from "@modules/system/permissions/src/domain/entities/Permission";
+import {
+      Loader2,
+      Search,
+      Shield,
+      ShieldCheck,
+      Check,
+      Layers,
+      FolderOpen,
+      Building,
+      Lock,
+} from "lucide-react";
+import { cn } from "@core/common/utils";
+import { useTenantPermissionsDialog, type AvailablePermission } from "../viewmodels/useTenantPermissionsViewModel";
 
 interface TenantPermissionsDialogProps {
       open: boolean;
       onOpenChange: (open: boolean) => void;
       tenantId: string;
       tenantName: string;
+      parentTenantId?: string | null;
 }
 
-export function TenantPermissionsDialog({
-      open,
-      onOpenChange,
-      tenantId,
-      tenantName,
-}: TenantPermissionsDialogProps) {
-      const { t, language } = useI18n();
-      const { toast } = useToast();
-      const queryClient = useQueryClient();
-
-      const [search, setSearch] = useState("");
-      const [selectedPermissionIds, setSelectedPermissionIds] = useState<string[]>([]);
-
-      // Fetch all available permissions (what the current user can assign)
-      const { data: availablePermissions, isLoading: loadingAvailable } = useQuery({
-            queryKey: ["my-permissions"],
-            queryFn: async () => {
-                  return systemContainer.permissionRepository.getMyPermissions({});
-            },
-            enabled: open,
-      });
-
-      // Fetch tenant's current permissions
-      // TODO: Add proper backend endpoint GET /api/tenants/{id}/permissions to fetch tenant's assigned permissions
-      const { data: tenantPermissions, isLoading: loadingTenant } = useQuery({
-            queryKey: ["tenant-permissions", tenantId],
-            queryFn: async () => {
-                  // Placeholder: In a full implementation, call an API to get tenant's permissions
-                  // For now, return empty array - user will need to save permissions first
-                  // The backend endpoint UpdateTenantPermissions is ready
-                  console.log(`Fetching permissions for tenant: ${tenantId}`);
-                  return [] as any[];
-            },
-            enabled: open && !!tenantId,
-      });
-
-      // Initialize selected permissions when tenant permissions load
-      useEffect(() => {
-            if (tenantPermissions && Array.isArray(tenantPermissions)) {
-                  const ids = tenantPermissions.map((p: any) => p.id || p.permissionId);
-                  setSelectedPermissionIds(ids);
-            }
-      }, [tenantPermissions]);
-
-      // Save mutation - calls PUT /api/tenants/{id}/permissions
-      const saveMutation = useMutation({
-            mutationFn: async () => {
-                  const response = await fetch(
-                        `${process.env.NEXT_PUBLIC_API_URL}/api/tenants/${tenantId}/permissions`,
-                        {
-                              method: "PUT",
-                              headers: {
-                                    "Content-Type": "application/json",
-                                    // Auth headers are added by interceptor
-                              },
-                              body: JSON.stringify({
-                                    permissionIds: selectedPermissionIds,
-                              }),
-                        }
-                  );
-
-                  if (!response.ok) {
-                        const errorData = await response.json();
-                        throw new Error(errorData.error || "Failed to update permissions");
-                  }
-            },
-            onSuccess: () => {
-                  toast({
-                        title: t("tenant.permissionsSaved") || "Permissions saved successfully",
-                        variant: "default",
-                  });
-                  queryClient.invalidateQueries({ queryKey: ["tenant-permissions", tenantId] });
-                  onOpenChange(false);
-            },
-            onError: (error: Error) => {
-                  toast({
-                        title: t("tenant.permissionsSaveError") || "Failed to save permissions",
-                        description: error.message,
-                        variant: "destructive",
-                  });
-            },
-      });
-
-      // Toggle permission selection
-      const togglePermission = (permissionId: string) => {
-            setSelectedPermissionIds((prev) =>
-                  prev.includes(permissionId)
-                        ? prev.filter((id) => id !== permissionId)
-                        : [...prev, permissionId]
-            );
-      };
-
-      // Select all in a resource group
-      const selectAllInGroup = (perms: Permission[]) => {
-            const ids = perms.map((p) => p.id);
-            setSelectedPermissionIds((prev) => {
-                  const newSet = new Set([...prev, ...ids]);
-                  return Array.from(newSet);
-            });
-      };
-
-      // Deselect all in a resource group
-      const deselectAllInGroup = (perms: Permission[]) => {
-            const ids = new Set(perms.map((p) => p.id));
-            setSelectedPermissionIds((prev) => prev.filter((id) => !ids.has(id)));
-      };
-
-      // Filter permissions by search
-      const filteredPermissions =
-            availablePermissions?.filter((p: Permission) => {
-                  const searchLower = search.toLowerCase();
-                  const name = p.getLocalizedName(language).toLowerCase();
-                  const code = p.code?.toLowerCase() || "";
-                  return name.includes(searchLower) || code.includes(searchLower);
-            }) ?? [];
-
-      // Group permissions by resource
-      const groupedPermissions = filteredPermissions.reduce(
-            (acc: Record<string, Permission[]>, p: Permission) => {
-                  const resource = p.resource || "other";
-                  if (!acc[resource]) acc[resource] = [];
-                  acc[resource].push(p);
-                  return acc;
-            },
-            {}
-      );
-
-      const isLoading = loadingAvailable || loadingTenant;
-
-      // Check if all in a group are selected
-      const isGroupSelected = (perms: Permission[]) =>
-            perms.every((p) => selectedPermissionIds.includes(p.id));
+export function TenantPermissionsDialog(props: TenantPermissionsDialogProps) {
+      const { open, onOpenChange, tenantName, parentTenantId } = props;
+      const { t } = useI18n();
+      const vm = useTenantPermissionsDialog(props);
 
       return (
             <Dialog open={open} onOpenChange={onOpenChange}>
-                  <DialogContent className="max-w-3xl max-h-[85vh]">
-                        <DialogHeader>
-                              <DialogTitle className="flex items-center gap-2">
-                                    <Building2 className="h-5 w-5" />
-                                    {t("tenant.managePermissions") || "Manage Tenant Permissions"}
-                              </DialogTitle>
-                              <DialogDescription>
-                                    {t("tenant.managePermissionsFor")?.replace("{tenant}", tenantName) ||
-                                          `Manage available permissions for: ${tenantName}`}
-                              </DialogDescription>
+                  <DialogContent className="max-w-2xl h-[85vh] flex flex-col p-0 gap-0">
+                        {/* Header */}
+                        <DialogHeader className="shrink-0 px-6 py-4 bg-gradient-to-r from-primary/5 to-transparent border-b">
+                              <div className="flex items-center gap-3">
+                                    <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-primary/10 text-primary">
+                                          <Shield className="h-5 w-5" />
+                                    </div>
+                                    <div className="flex-1">
+                                          <DialogTitle className="text-lg font-semibold">
+                                                {t("tenant.managePermissions") || "Manage Permissions"}
+                                          </DialogTitle>
+                                          {/* Use div instead of DialogDescription to avoid p > div nesting */}
+                                          <div className="text-sm text-muted-foreground flex items-center gap-2 mt-0.5">
+                                                <Badge variant="secondary" className="font-mono text-xs">
+                                                      <Building className="h-3 w-3 me-1" />
+                                                      {tenantName}
+                                                </Badge>
+                                                {vm.hasParent && (
+                                                      <>
+                                                            <span>•</span>
+                                                            <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                                                                  <Lock className="h-3 w-3" />
+                                                                  <span>{t("tenant.limitedByParent") || "Limited by parent"}</span>
+                                                            </div>
+                                                      </>
+                                                )}
+                                          </div>
+                                    </div>
+                              </div>
                         </DialogHeader>
 
-                        <div className="space-y-4">
-                              {/* Search */}
-                              <div className="relative">
-                                    <Search className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                                    <Input
-                                          placeholder={t("permission.searchPlaceholder") || "Search permissions..."}
-                                          value={search}
-                                          onChange={(e) => setSearch(e.target.value)}
-                                          className="ps-10"
-                                    />
-                              </div>
-
-                              {/* Selection Stats */}
-                              <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                          <ShieldCheck className="h-4 w-4" />
-                                          <span>
-                                                {selectedPermissionIds.length} / {availablePermissions?.length || 0}{" "}
-                                                {t("common.selected") || "selected"}
-                                          </span>
+                        {/* Search & Stats Bar */}
+                        <div className="shrink-0 px-6 py-3 border-b bg-muted/30">
+                              <div className="flex items-center gap-3">
+                                    <div className="relative flex-1">
+                                          <Search className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                          <Input
+                                                placeholder={t("common.search") || "Search permissions..."}
+                                                value={vm.search}
+                                                onChange={(e) => vm.setSearch(e.target.value)}
+                                                className="ps-9 bg-background"
+                                          />
                                     </div>
-                                    <div className="flex gap-2">
-                                          <Button
-                                                variant="outline"
-                                                size="sm"
-                                                onClick={() =>
-                                                      setSelectedPermissionIds(
-                                                            availablePermissions?.map((p: Permission) => p.id) || []
-                                                      )
-                                                }
-                                          >
-                                                {t("common.selectAll") || "Select All"}
-                                          </Button>
-                                          <Button
-                                                variant="outline"
-                                                size="sm"
-                                                onClick={() => setSelectedPermissionIds([])}
-                                          >
-                                                {t("common.clearAll") || "Clear All"}
-                                          </Button>
+                                    <div className="flex items-center gap-4 text-sm">
+                                          <div className="flex items-center gap-1.5 text-muted-foreground">
+                                                <Layers className="h-4 w-4" />
+                                                <span>{vm.groupCount}</span>
+                                          </div>
+                                          <Separator orientation="vertical" className="h-4" />
+                                          <div className="flex items-center gap-1.5">
+                                                <ShieldCheck className="h-4 w-4 text-primary" />
+                                                <span className="font-medium text-primary">{vm.selectedCount}</span>
+                                                <span className="text-muted-foreground">/ {vm.totalCount}</span>
+                                          </div>
                                     </div>
                               </div>
+                        </div>
 
-                              {/* Permissions List */}
-                              <ScrollArea className="h-[400px] pr-4">
-                                    {isLoading ? (
-                                          <div className="flex items-center justify-center h-full">
-                                                <Loader2 className="h-6 w-6 animate-spin" />
-                                          </div>
-                                    ) : Object.keys(groupedPermissions).length === 0 ? (
-                                          <div className="text-center text-muted-foreground py-8">
-                                                {t("permission.noPermissionsFound") || "No permissions found"}
-                                          </div>
-                                    ) : (
-                                          <div className="space-y-6">
-                                                {Object.entries(groupedPermissions).map(([resource, perms]) => (
-                                                      <div key={resource} className="border rounded-lg p-4">
-                                                            <div className="flex items-center justify-between mb-3">
-                                                                  <h4 className="font-medium text-sm capitalize flex items-center gap-2">
-                                                                        <Badge variant="secondary">{resource}</Badge>
-                                                                        <span className="text-muted-foreground text-xs">
-                                                                              ({(perms as Permission[]).length})
-                                                                        </span>
-                                                                  </h4>
-                                                                  <Button
-                                                                        variant="ghost"
-                                                                        size="sm"
-                                                                        onClick={() =>
-                                                                              isGroupSelected(perms as Permission[])
-                                                                                    ? deselectAllInGroup(perms as Permission[])
-                                                                                    : selectAllInGroup(perms as Permission[])
-                                                                        }
-                                                                  >
-                                                                        {isGroupSelected(perms as Permission[])
-                                                                              ? t("common.deselectAll") || "Deselect All"
-                                                                              : t("common.selectAll") || "Select All"}
-                                                                  </Button>
-                                                            </div>
-                                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                                                                  {(perms as Permission[]).map((permission) => (
-                                                                        <div
-                                                                              key={permission.id}
-                                                                              className="flex items-center space-x-3 rtl:space-x-reverse p-2 rounded-md hover:bg-muted/50"
-                                                                        >
-                                                                              <Checkbox
-                                                                                    id={permission.id}
-                                                                                    checked={selectedPermissionIds.includes(permission.id)}
-                                                                                    onCheckedChange={() => togglePermission(permission.id)}
-                                                                              />
-                                                                              <label
-                                                                                    htmlFor={permission.id}
-                                                                                    className="flex-1 text-sm cursor-pointer"
-                                                                              >
-                                                                                    <span className="font-medium">
-                                                                                          {permission.getLocalizedName(language)}
-                                                                                    </span>
-                                                                                    <span className="text-muted-foreground ms-2 text-xs block">
-                                                                                          {permission.code}
-                                                                                    </span>
-                                                                              </label>
-                                                                        </div>
-                                                                  ))}
-                                                            </div>
-                                                      </div>
-                                                ))}
-                                          </div>
-                                    )}
+                        {/* Content - Scrollable Area */}
+                        <div className="flex-1 min-h-0 overflow-hidden">
+                              <ScrollArea className="h-full">
+                                    <div className="px-6 py-4">
+                                          {vm.isLoading ? (
+                                                <LoadingState />
+                                          ) : vm.groupCount === 0 ? (
+                                                <EmptyState />
+                                          ) : (
+                                                <PermissionGroups vm={vm} />
+                                          )}
+                                    </div>
                               </ScrollArea>
                         </div>
 
-                        <DialogFooter>
-                              <Button variant="outline" onClick={() => onOpenChange(false)}>
-                                    {t("common.cancel") || "Cancel"}
-                              </Button>
-                              <Button
-                                    onClick={() => saveMutation.mutate()}
-                                    disabled={saveMutation.isPending}
-                              >
-                                    {saveMutation.isPending && (
-                                          <Loader2 className="h-4 w-4 animate-spin me-2" />
-                                    )}
-                                    {t("common.save") || "Save"}
-                              </Button>
+                        {/* Footer */}
+                        <DialogFooter className="shrink-0 px-6 py-4 border-t bg-muted/30">
+                              <div className="flex items-center justify-between w-full">
+                                    <p className="text-sm text-muted-foreground">
+                                          {vm.hasParent && (
+                                                <span className="flex items-center gap-1">
+                                                      <Lock className="h-3 w-3" />
+                                                      {t("tenant.permissionsLimitedByParent") || "Permissions limited by parent tenant"}
+                                                </span>
+                                          )}
+                                          {!vm.hasParent && (
+                                                <span>{vm.selectedCount} {t("common.selected") || "selected"}</span>
+                                          )}
+                                    </p>
+                                    <div className="flex items-center gap-2">
+                                          <Button variant="outline" onClick={() => onOpenChange(false)}>
+                                                {t("common.cancel") || "Cancel"}
+                                          </Button>
+                                          <Button onClick={vm.save} disabled={vm.isSaving} className="min-w-[100px]">
+                                                {vm.isSaving ? (
+                                                      <Loader2 className="h-4 w-4 animate-spin" />
+                                                ) : (
+                                                      <>
+                                                            <ShieldCheck className="h-4 w-4 me-2" />
+                                                            {t("common.save") || "Save"}
+                                                      </>
+                                                )}
+                                          </Button>
+                                    </div>
+                              </div>
                         </DialogFooter>
                   </DialogContent>
             </Dialog>
+      );
+}
+
+// ─────────────────────────────────────────────────────────────────
+// Sub-components
+// ─────────────────────────────────────────────────────────────────
+
+function LoadingState() {
+      const { t } = useI18n();
+      return (
+            <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
+                  <Loader2 className="h-8 w-8 animate-spin mb-3" />
+                  <p>{t("common.loading") || "Loading..."}</p>
+            </div>
+      );
+}
+
+function EmptyState() {
+      const { t } = useI18n();
+      return (
+            <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
+                  <FolderOpen className="h-12 w-12 mb-3 opacity-50" />
+                  <p className="font-medium">{t("permission.noPermissionsFound") || "No permissions found"}</p>
+            </div>
+      );
+}
+
+interface PermissionGroupsProps {
+      vm: ReturnType<typeof useTenantPermissionsDialog>;
+}
+
+function PermissionGroups({ vm }: PermissionGroupsProps) {
+      return (
+            <Accordion
+                  type="multiple"
+                  value={vm.expandedGroups}
+                  onValueChange={vm.setExpandedGroups}
+                  className="space-y-3"
+            >
+                  {Object.entries(vm.grouped).map(([resource, perms]) => (
+                        <PermissionGroup
+                              key={resource}
+                              resource={resource}
+                              permissions={perms}
+                              vm={vm}
+                        />
+                  ))}
+            </Accordion>
+      );
+}
+
+interface PermissionGroupProps {
+      resource: string;
+      permissions: AvailablePermission[];
+      vm: ReturnType<typeof useTenantPermissionsDialog>;
+}
+
+function PermissionGroup({ resource, permissions, vm }: PermissionGroupProps) {
+      const codes = permissions.map(p => p.code);
+      const stats = vm.getGroupStats(codes);
+
+      return (
+            <AccordionItem
+                  value={resource}
+                  className="border rounded-xl overflow-hidden bg-card shadow-sm"
+            >
+                  <AccordionTrigger className="px-4 py-3 hover:no-underline hover:bg-muted/50 [&>svg]:text-muted-foreground">
+                        <div className="flex items-center gap-3 flex-1">
+                              {/* Move checkbox outside trigger - use div with checkbox indicator */}
+                              <div
+                                    className={cn(
+                                          "h-4 w-4 shrink-0 rounded-sm border border-primary flex items-center justify-center cursor-pointer",
+                                          stats.allChecked && "bg-primary",
+                                          stats.someChecked && "bg-primary/50"
+                                    )}
+                                    onClick={(e) => {
+                                          e.stopPropagation();
+                                          vm.toggleGroup(codes);
+                                    }}
+                              >
+                                    {(stats.allChecked || stats.someChecked) && (
+                                          <Check className="h-3 w-3 text-primary-foreground" />
+                                    )}
+                              </div>
+                              <Badge variant={stats.count > 0 ? "default" : "secondary"} className="capitalize">
+                                    {resource}
+                              </Badge>
+                              <div className="ms-auto me-2 text-sm">
+                                    <span className={stats.count > 0 ? "text-primary font-medium" : "text-muted-foreground"}>
+                                          {stats.count}
+                                    </span>
+                                    <span className="text-muted-foreground"> / {stats.total}</span>
+                              </div>
+                        </div>
+                  </AccordionTrigger>
+                  <AccordionContent className="px-4 pb-3">
+                        <div className="grid gap-1.5 pt-1">
+                              {permissions.map(p => (
+                                    <PermissionItem key={p.id} permission={p} vm={vm} />
+                              ))}
+                        </div>
+                  </AccordionContent>
+            </AccordionItem>
+      );
+}
+
+interface PermissionItemProps {
+      permission: AvailablePermission;
+      vm: ReturnType<typeof useTenantPermissionsDialog>;
+}
+
+function PermissionItem({ permission, vm }: PermissionItemProps) {
+      const isChecked = vm.isChecked(permission.code);
+
+      return (
+            <label
+                  className={cn(
+                        "flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all border",
+                        isChecked
+                              ? "bg-primary/5 border-primary/30 shadow-sm"
+                              : "bg-background border-transparent hover:bg-muted/50"
+                  )}
+            >
+                  <Checkbox
+                        checked={isChecked}
+                        onCheckedChange={() => vm.toggle(permission.code)}
+                  />
+                  <div className="flex-1 min-w-0">
+                        <div className={cn("font-medium text-sm", isChecked && "text-primary")}>
+                              {vm.getName(permission)}
+                        </div>
+                        <div className="text-xs text-muted-foreground font-mono mt-0.5">
+                              {permission.code}
+                        </div>
+                  </div>
+                  {isChecked && (
+                        <div className="flex items-center justify-center w-6 h-6 rounded-full bg-primary text-primary-foreground">
+                              <Check className="h-3.5 w-3.5" />
+                        </div>
+                  )}
+            </label>
       );
 }

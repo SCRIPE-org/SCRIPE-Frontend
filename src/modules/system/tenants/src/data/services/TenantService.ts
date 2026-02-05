@@ -112,6 +112,10 @@ export class TenantService implements ITenantService {
             return jsonList.map((json) => PermissionModel.fromJson(json));
       }
 
+      async updateTenantPermissions(tenantId: string, permissionIds: string[]): Promise<void> {
+            await this.api.put(API_ENDPOINTS.TENANTS.PERMISSIONS(tenantId), { permissionIds });
+      }
+
       setTenantContext(tenantId: string | null): void {
             this.api.setTenantContext(tenantId);
       }

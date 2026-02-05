@@ -179,6 +179,10 @@ export const en = {
     requireNumber: "Number",
     requireSpecial: "Special Character",
     managePermissions: "Manage Permissions",
+    limitedByParent: "Limited by Parent",
+    permissionsLimitedByParent: "Permissions limited by parent tenant",
+    permissionsSaved: "Permissions saved successfully",
+    permissionsSaveError: "Failed to save permissions",
   },
 
   // Tenant Settings Page (/settings/tenant)

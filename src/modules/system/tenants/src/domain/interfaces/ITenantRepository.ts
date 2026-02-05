@@ -97,6 +97,28 @@ export interface ITenantRepository {
       getCreationPermissions(parentId?: string): Promise<Permission[]>;
 
       /**
+       * Get the current permissions assigned to a tenant.
+       * @param tenantId - The tenant ID to get permissions for.
+       */
+      getTenantPermissions(tenantId: string): Promise<Permission[]>;
+
+      /**
+       * Get available permissions that can be assigned to a tenant based on its parent.
+       * For root tenants: returns all system permissions (from current admin's perspective).
+       * For child tenants: returns only the parent tenant's permissions.
+       * @param tenantId - The tenant ID to get available permissions for.
+       * @param parentId - The parent tenant ID (null/undefined for root tenants).
+       */
+      getAvailablePermissions(tenantId: string, parentId?: string): Promise<Permission[]>;
+
+      /**
+       * Update permissions for a tenant.
+       * @param tenantId - The tenant ID to update permissions for.
+       * @param permissionIds - Array of permission IDs to assign.
+       */
+      updateTenantPermissions(tenantId: string, permissionIds: string[]): Promise<void>;
+
+      /**
        * Set the current tenant context for multi-tenant API calls.
        * This sets the X-Tenant-Id header for subsequent requests.
        * @param tenantId - The tenant ID to set, or null to clear context

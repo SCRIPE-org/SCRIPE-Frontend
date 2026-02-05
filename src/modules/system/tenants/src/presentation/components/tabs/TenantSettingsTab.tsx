@@ -20,9 +20,10 @@ import { TenantPermissionsDialog } from "../TenantPermissionsDialog";
 interface TenantSettingsTabProps {
       tenantId: string;
       tenantName: string;
+      parentTenantId?: string;
 }
 
-export function TenantSettingsTab({ tenantId, tenantName }: TenantSettingsTabProps) {
+export function TenantSettingsTab({ tenantId, tenantName, parentTenantId }: TenantSettingsTabProps) {
       const { t, direction } = useI18n();
       const [permissionsDialogOpen, setPermissionsDialogOpen] = useState(false);
 
@@ -178,6 +179,7 @@ export function TenantSettingsTab({ tenantId, tenantName }: TenantSettingsTabPro
                         onOpenChange={setPermissionsDialogOpen}
                         tenantId={tenantId}
                         tenantName={tenantName}
+                        parentTenantId={parentTenantId}
                   />
             </div>
       );
