@@ -93,6 +93,7 @@ export const API_ENDPOINTS = {
     UPDATE: (id: string) => `/Tenants/${id}`,
     DELETE: (id: string) => `/Tenants/${id}`,
     CREATION_PERMISSIONS: "/Tenants/creation-permissions",
+    SETTINGS: (id: string) => `/Tenants/${id}/settings`,
     MY_SETTINGS: "/Tenants/my/settings",
     PERMISSIONS: (id: string) => `/Tenants/${id}/permissions`,
   },

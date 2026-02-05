@@ -6,6 +6,7 @@
  *
  * @module tenants/domain
  */
+import type { TenantSettingsModel, UpdateTenantSettingsRequest } from "@modules/system/tenant-settings/src/data/models/TenantSettingsModel";
 import type { TenantModel, TenantTreeNodeModel } from "../../data/models/TenantModel";
 import type {
       CreateTenantJson,
@@ -76,4 +77,14 @@ export interface ITenantService {
        * @param isActive - The NEW status to set
        */
       toggleStatus(id: string, isActive: boolean): Promise<void>;
+
+      /**
+       * Get settings for a specific tenant
+       */
+      getSettings(tenantId: string): Promise<TenantSettingsModel>;
+
+      /**
+       * Update settings for a specific tenant
+       */
+      updateSettings(tenantId: string, request: UpdateTenantSettingsRequest): Promise<void>;
 }

@@ -63,11 +63,13 @@ export const ar = {
 
   // Tenants - المستأجرون
   tenant: {
+    require2FA: "التحقق من الهوية بخطوتين",
+    settingsAudit: "إعدادات التدقيق",
     deactivateTenant: "إلغاء نشاط المستأجر",
     activateTenant: "تفعيل المستأجر",
     deactivateConfirmation: "هل أنت متأكد من إلغاء نشاط المستأجر؟",
     activateConfirmation: "هل أنت متأكد من تفعيل المستأجر؟",
-    editDialogDescription:"",
+    editDialogDescription: "",
     permissionsLimitedByParent: "الصلاحيات محدودة بواسطة المستأجر الرئيسي",
     limitedByParent: "محدود بواسطة المستأجر الرئيسي",
     managePermissionsFor: "إدارة الصلاحيات لـ",
@@ -189,6 +191,28 @@ export const ar = {
     managePermissions: "إدارة الصلاحيات",
     permissionsSaved: "تم حفظ الصلاحيات بنجاح",
     permissionsSaveError: "فشل في حفظ الصلاحيات",
+    // Settings Edit Dialog
+    editSettings: "تعديل إعدادات المستأجر",
+    editSettingsDesc: "تحديث تكوين هذا المستأجر.",
+    quotas: "الحصص",
+    security: "الأمان",
+    audit: "التدقيق",
+    branding: "العلامة التجارية",
+    auditEnabled: "تفعيل سجل التدقيق",
+    auditRetention: "الاحتفاظ (أيام)",
+    companyName: "اسم الشركة",
+    primaryColor: "اللون الأساسي",
+    logoUrl: "رابط الشعار",
+    settingsSaved: "تم تحديث الإعدادات بنجاح",
+    noLogo: "لا يوجد شعار",
+    noCompanyName: "لا يوجد اسم شركة",
+    defaultColor: "لون افتراضي",
+    retentionLabel: "الاحتفاظ: {{days}} يوم",
+    enabled: "مفعل",
+    disabled: "معطل",
+    unlimitedHelp: "-1 لغير محدود",
+    maximumLimit: "الحد الأقصى",
+    logoPreview: "معاينة الشعار",
   },
 
   // إعدادات المستأجر (/settings/tenant)
@@ -279,7 +303,7 @@ export const ar = {
     notes: "ملاحظات",
     notesPlaceholder: "أدخل ملاحظات",
     useDefaultPassword: "استخدام كلمة المرور الافتراضية",
-    resetPasswordDescription : "إعادة تعيين كلمة المرور لـ",
+    resetPasswordDescription: "إعادة تعيين كلمة المرور لـ",
     isActive: "نشط",
     inActive: "غير نشط",
     // Role assignment

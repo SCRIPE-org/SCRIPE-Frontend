@@ -24,6 +24,7 @@ import type {
 } from "../../domain/interfaces/ITenantService";
 import type { TenantStats } from "../../domain/interfaces/ITenantRepository";
 import { PermissionModel, type PermissionJson } from "@modules/system/permissions/src/data/models/PermissionModel";
+import type { TenantSettingsModel, UpdateTenantSettingsRequest } from "@modules/system/tenant-settings/src/data/models/TenantSettingsModel";
 
 export class TenantService implements ITenantService {
       constructor(private readonly api: IApiService) { }
@@ -135,5 +136,13 @@ export class TenantService implements ITenantService {
 
       setTenantContext(tenantId: string | null): void {
             this.api.setTenantContext(tenantId);
+      }
+
+      async getSettings(tenantId: string): Promise<TenantSettingsModel> {
+            return this.api.get<TenantSettingsModel>(API_ENDPOINTS.TENANTS.SETTINGS(tenantId));
+      }
+
+      async updateSettings(tenantId: string, request: UpdateTenantSettingsRequest): Promise<void> {
+            await this.api.put(API_ENDPOINTS.TENANTS.SETTINGS(tenantId), request);
       }
 }
