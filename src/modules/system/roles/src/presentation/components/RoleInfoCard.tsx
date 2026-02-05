@@ -23,7 +23,7 @@ export function RoleInfoCard({
       selectedCount,
       totalCount,
 }: RoleInfoCardProps) {
-      const { t } = useI18n();
+      const { t, language } = useI18n();
 
       return (
             <Card>
@@ -38,11 +38,11 @@ export function RoleInfoCard({
                               <RoleInfoSkeleton />
                         ) : (
                               <>
-                                    <InfoField label={t("roles.name")} value={role?.name} />
+                                    <InfoField label={t("roles.name")} value={language === 'ar' ? role?.nameAr : role?.nameEn} />
                                     <InfoField label={t("roles.code")} value={role?.code} mono />
                                     <InfoField
                                           label={t("roles.description")}
-                                          value={role?.description || "-"}
+                                          value={language === 'ar' ? role?.descriptionAr : role?.descriptionEn || "-"}
                                     />
                                     <div>
                                           <label className="text-sm text-muted-foreground">

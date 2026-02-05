@@ -50,7 +50,7 @@ interface RolePermissionsDialogProps {
 
 export function RolePermissionsDialog(props: RolePermissionsDialogProps) {
       const { open, onOpenChange, role } = props;
-      const { t } = useI18n();
+      const { t, language } = useI18n();
       const vm = useRolePermissionsDialog(props);
 
       return (
@@ -72,7 +72,7 @@ export function RolePermissionsDialog(props: RolePermissionsDialogProps) {
                                                       {role?.code}
                                                 </Badge>
                                                 <span>•</span>
-                                                <span>{role?.name}</span>
+                                                <span>{language === 'ar' ? role?.nameAr : role?.nameEn}</span>
                                           </div>
                                     </div>
                               </div>

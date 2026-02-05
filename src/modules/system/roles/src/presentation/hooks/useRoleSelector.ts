@@ -64,8 +64,8 @@ export function useRoleSelectorWithSearch(options: UseRoleSelectorOptions = {}) 
       const getRoleOptions = (language: string = 'en') => {
             return roles.map((role) => ({
                   value: role.id,
-                  label: language === 'ar' ? (role.nameAr || role.name) : (role.nameEn || role.name),
-                  description: language === 'ar' ? (role.descriptionAr || role.description) : (role.descriptionEn || role.description),
+                  label: language === 'ar' ? role.nameAr : role.nameEn,
+                  description: language === 'ar' ? role.descriptionAr : role.descriptionEn,
                   priority: role.priority,
                   isSystem: role.isSystem,
             }));

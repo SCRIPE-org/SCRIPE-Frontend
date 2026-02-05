@@ -33,7 +33,6 @@ export class RoleMapper {
 
             const props: RoleProps = {
                   id: model.id,
-                  name: model.name,
                   nameEn: model.nameEn,
                   nameAr: model.nameAr,
                   code: model.code,
@@ -42,7 +41,6 @@ export class RoleMapper {
                   isActive: model.isActive,
                   permissions,
                   createdAt: model.createdAt,
-                  description: model.description,
                   descriptionEn: model.descriptionEn,
                   descriptionAr: model.descriptionAr,
                   tenantId: model.tenantId,
@@ -63,16 +61,14 @@ export class RoleMapper {
 
             return new RoleModel(
                   entity.id,
-                  entity.name,
+                  entity.nameEn,
+                  entity.nameAr,
                   entity.code,
                   entity.isSystem,
                   entity.priority,
                   entity.isActive,
                   permissions,
                   entity.createdAt,
-                  entity.description,
-                  entity.nameEn,
-                  entity.nameAr,
                   entity.descriptionEn,
                   entity.descriptionAr,
                   entity.tenantId,
@@ -96,10 +92,10 @@ export class RoleMapper {
                   request.nameEn,
                   request.nameAr,
                   request.code,
-                  request.priority ?? 0, // Default priority if not provided
+                  request.priority ?? 0,
                   request.descriptionEn,
                   request.descriptionAr,
-                  undefined // permissionIds handled separately via assignPermissions
+                  undefined
             );
       }
 
@@ -113,7 +109,7 @@ export class RoleMapper {
                   request.priority,
                   request.descriptionEn,
                   request.descriptionAr,
-                  undefined // isActive not in UpdateRoleRequest
+                  undefined
             );
       }
 
@@ -123,7 +119,6 @@ export class RoleMapper {
       static toAssignPermissionsModel(
             request: AssignPermissionsRequest
       ): AssignPermissionsModel {
-            // Extract permissionIds from the permissions array
             const permissionIds = request.permissions.map((p) => p.permissionId);
             return new AssignPermissionsModel(permissionIds);
       }

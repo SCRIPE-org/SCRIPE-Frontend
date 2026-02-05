@@ -130,7 +130,7 @@ export function RolesView() {
                         variant: "destructive",
                   }
             ],
-            getItemDisplayName: (role) => language === 'ar' ? (role.nameAr || role.name) : (role.nameEn || role.name),
+            getItemDisplayName: (role) => language === 'ar' ? role.nameAr : role.nameEn,
             itemTypeKey: "roles.roleDetails"  // Used for delete confirmation ("Delete Role Details" -> "Delete Role")
       };
 

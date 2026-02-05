@@ -15,16 +15,14 @@ export interface RolePermission {
 
 export interface RoleProps {
       id: string;
-      name: string;
-      nameEn?: string;
-      nameAr?: string;
+      nameEn: string;
+      nameAr: string;
       code: string;
       isSystem: boolean;
       priority: number;
       isActive: boolean;
       permissions: RolePermission[];
       createdAt: string;
-      description?: string;
       descriptionEn?: string;
       descriptionAr?: string;
       tenantId?: string;
@@ -48,24 +46,16 @@ export class Role {
             return this.props.id;
       }
 
-      get name(): string {
-            return this.props.name;
-      }
-
-      get nameEn(): string | undefined {
+      get nameEn(): string {
             return this.props.nameEn;
       }
 
-      get nameAr(): string | undefined {
+      get nameAr(): string {
             return this.props.nameAr;
       }
 
       get code(): string {
             return this.props.code;
-      }
-
-      get description(): string | undefined {
-            return this.props.description;
       }
 
       get descriptionEn(): string | undefined {

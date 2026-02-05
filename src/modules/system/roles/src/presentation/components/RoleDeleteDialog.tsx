@@ -31,7 +31,7 @@ export function RoleDeleteDialog({
       onConfirm,
       isDeleting,
 }: RoleDeleteDialogProps) {
-      const { t } = useI18n();
+      const { t, language } = useI18n();
       const [fallbackRoleId, setFallbackRoleId] = useState<string>("");
 
       // Reset fallback selection when dialog opens
@@ -70,7 +70,7 @@ export function RoleDeleteDialog({
       const roleOptions: GenericSelectOption[] = useMemo(() => {
             return availableRoles.map((r) => ({
                   value: r.id,
-                  label: r.name,
+                  label: language === 'ar' ? r.nameAr : r.nameEn,
             }));
       }, [availableRoles]);
 
@@ -90,7 +90,7 @@ export function RoleDeleteDialog({
                   title={t("common.confirmDelete") || "Confirm Delete"}
                   description={
                         t("role.deleteConfirm") ||
-                        `Are you sure you want to delete the role "${role?.name}"?`
+                        `Are you sure you want to delete the role "${language === 'ar' ? role?.nameAr : role?.nameEn}"?`
                   }
                   confirmText={t("common.delete") || "Delete"}
                   cancelText={t("common.cancel") || "Cancel"}

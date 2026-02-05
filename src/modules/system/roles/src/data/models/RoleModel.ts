@@ -17,11 +17,9 @@ export interface RolePermissionJson {
 
 export interface RoleJson {
       id: string;
-      name: string;
-      nameEn?: string;
-      nameAr?: string;
+      nameEn: string;
+      nameAr: string;
       code: string;
-      description?: string;
       descriptionEn?: string;
       descriptionAr?: string;
       tenantId?: string;
@@ -92,16 +90,14 @@ export class RolePermissionModel {
 export class RoleModel {
       constructor(
             public readonly id: string,
-            public readonly name: string,
+            public readonly nameEn: string,
+            public readonly nameAr: string,
             public readonly code: string,
             public readonly isSystem: boolean,
             public readonly priority: number,
             public readonly isActive: boolean,
             public readonly permissions: RolePermissionModel[],
             public readonly createdAt: string,
-            public readonly description?: string,
-            public readonly nameEn?: string,
-            public readonly nameAr?: string,
             public readonly descriptionEn?: string,
             public readonly descriptionAr?: string,
             public readonly tenantId?: string,
@@ -112,16 +108,14 @@ export class RoleModel {
       static fromJson(json: RoleJson): RoleModel {
             return new RoleModel(
                   json.id,
-                  json.name,
+                  json.nameEn,
+                  json.nameAr,
                   json.code,
                   json.isSystem,
                   json.priority,
                   json.isActive,
                   (json.permissions ?? []).map((p) => RolePermissionModel.fromJson(p)),
                   json.createdAt,
-                  json.description,
-                  json.nameEn,
-                  json.nameAr,
                   json.descriptionEn,
                   json.descriptionAr,
                   json.tenantId,
@@ -133,11 +127,9 @@ export class RoleModel {
       toJson(): RoleJson {
             return {
                   id: this.id,
-                  name: this.name,
                   nameEn: this.nameEn,
                   nameAr: this.nameAr,
                   code: this.code,
-                  description: this.description,
                   descriptionEn: this.descriptionEn,
                   descriptionAr: this.descriptionAr,
                   tenantId: this.tenantId,

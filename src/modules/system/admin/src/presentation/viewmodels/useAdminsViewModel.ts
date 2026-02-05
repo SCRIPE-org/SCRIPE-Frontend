@@ -213,7 +213,7 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
 
                   return (result.items || []).map((role) => ({
                         value: role.id,
-                        label: language === 'ar' ? (role.nameAr || role.name) : (role.nameEn || role.name),
+                        label: language === 'ar' ? role.nameAr : role.nameEn,
                   }));
             } catch {
                   return [];

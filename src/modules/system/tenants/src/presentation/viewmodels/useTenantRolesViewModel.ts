@@ -281,8 +281,8 @@ export function useTenantRolesViewModel({
 
       const getEditInitialValues = useCallback(
             (item: Role) => ({
-                  name: item.name,
-                  description: item.description || "",
+                  name: language === 'ar' ? item.nameAr : item.nameEn,
+                  description: language === 'ar' ? item.descriptionAr : item.descriptionEn,
                   priority: item.priority,
             }),
             []

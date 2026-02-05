@@ -77,8 +77,8 @@ export function AssignRoleDialog({
       // Transform roles to select options - use localized name based on current language
       const roleOptions: GenericSelectOption[] = (rolesData?.items ?? []).map((role) => ({
             value: role.id,
-            label: language === 'ar' ? (role.nameAr || role.name) : (role.nameEn || role.name),
-            description: language === 'ar' ? (role.descriptionAr || role.description) : (role.descriptionEn || role.description),
+            label: language === 'ar' ? role.nameAr : role.nameEn,
+            description: language === 'ar' ? role.descriptionAr : role.descriptionEn,
       }));
 
       // Transform tenants tree to select options

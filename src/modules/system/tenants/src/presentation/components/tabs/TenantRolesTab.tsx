@@ -38,7 +38,7 @@ interface TenantRolesTabProps {
  * All state, operations, and data transformations are in useTenantRolesViewModel.
  */
 export function TenantRolesTab({ tenantId, tenantName }: TenantRolesTabProps) {
-      const { t } = useI18n();
+      const { t, language } = useI18n();
 
       // All logic delegated to ViewModel
       const vm = useTenantRolesViewModel({ tenantId, tenantName });
@@ -70,7 +70,7 @@ export function TenantRolesTab({ tenantId, tenantName }: TenantRolesTabProps) {
             editFields: vm.editFields,
             createInitialValues: vm.createInitialValues,
             editInitialValues: vm.getEditInitialValues,
-            getItemDisplayName: (item: Role) => item.name,
+            getItemDisplayName: (item: Role) => language === 'ar' ? item.nameAr : item.nameEn,
             permissions: {
                   canView: "roles.view",
                   canCreate: "roles.create",

@@ -23,11 +23,11 @@ export function RoleDetailHeader({
       isSaving,
       onSave,
 }: RoleDetailHeaderProps) {
-      const { t } = useI18n();
-
+      const { t, language } = useI18n();
+      const roleName = language === 'ar' ? role?.nameAr : role?.nameEn;
       const breadcrumbSegments = [
             { label: t("roles.title"), href: "/roles" },
-            { label: isLoading ? "..." : (role?.name || t("roles.roleDetails")) },
+            { label: isLoading ? "..." : (roleName || t("roles.roleDetails")) },
       ];
 
       return (
@@ -45,7 +45,7 @@ export function RoleDetailHeader({
                                     </>
                               ) : (
                                     <>
-                                          <h1 className="text-3xl font-bold">{role?.name}</h1>
+                                          <h1 className="text-3xl font-bold">{roleName}</h1>
                                           <span className="text-muted-foreground">{role?.code}</span>
                                     </>
                               )}
