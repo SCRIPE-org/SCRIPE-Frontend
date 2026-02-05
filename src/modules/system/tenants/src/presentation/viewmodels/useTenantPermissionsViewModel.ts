@@ -1,13 +1,10 @@
 /**
  * Tenant Permissions Dialog ViewModel
- *
- * Encapsulates all logic for managing tenant permissions.
- * COPIED FROM working useRolePermissionsDialog pattern with tenant-specific adaptations.
- *
- * Key features:
- * - Fetches tenant's current permissions and available permissions from parent
- * - Uses `code` for matching (IDs change due to encryption)
- * - Auto-selects currently assigned permissions
+ * 
+ * FOLLOWS PATTERN from useTenantRolesViewModel.ts as requested.
+ * - Uses systemContainer.tenantService (not direct API)
+ * - Robust permission mapping logic with fallback
+ * - Merges tenantAssignedPermissions into available pool to ensure visibility
  *
  * @module tenants/presentation/viewmodels
  */
@@ -15,14 +12,13 @@
 
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useI18n } from "@core/providers/i18n-provider";
 import { useToast } from "@core/hooks/use-toast";
+import { useI18n } from "@core/providers/i18n-provider";
 import { appLogger } from "@core/common/logger";
-import { getCoreContainer } from "@core/di";
 import { systemContainer } from "@modules/system/di";
 
-// Types matching actual API responses
-export interface AvailablePermission {
+// Types matching actual API responses (EXACT same as role dialog)
+export interface ParentPermission {
       id: string;
       resource: string;
       action: string;
@@ -45,7 +41,7 @@ export interface TenantCurrentPermission {
 }
 
 export interface GroupedPermissions {
-      [resource: string]: AvailablePermission[];
+      [resource: string]: ParentPermission[];
 }
 
 export interface UseTenantPermissionsDialogProps {
@@ -79,7 +75,7 @@ export interface UseTenantPermissionsDialogResult {
       isSaving: boolean;
 
       // Helpers
-      getName: (p: AvailablePermission) => string;
+      getName: (p: ParentPermission) => string;
       isChecked: (code: string) => boolean;
       getGroupStats: (codes: string[]) => { count: number; total: number; allChecked: boolean; someChecked: boolean };
 }
@@ -115,122 +111,137 @@ export function useTenantPermissionsDialog({
             }
       }, [open, tenantId]);
 
-      const [debouncedSearch, setDebouncedSearch] = useState("");
+      // Fetch PARENT's available permissions
+      const { data: parentPermissions = [], isLoading: loadingParent } = useQuery({
+            queryKey: ["parent-permissions-service", parentTenantId],
+            queryFn: async () => {
+                  try {
+                        appLogger.debug("[ViewModel] Fetching available permissions via Service, parentTenantId:", parentTenantId);
 
-      // Debounce search
-      useEffect(() => {
-            const timer = setTimeout(() => {
-                  setDebouncedSearch(search);
-            }, 300);
-            return () => clearTimeout(timer);
-      }, [search]);
+                        let permissions;
+                        if (parentTenantId) {
+                              permissions = await systemContainer.tenantService.getTenantPermissions(parentTenantId);
+                        } else {
+                              // Fallback for root - creation permissions
+                              permissions = await systemContainer.tenantService.getCreationPermissions();
+                        }
 
-
-
-      // Fetch AVAILABLE permissions (from parent or all for root tenants)
-      // Fetch AVAILABLE permissions (via Repository which handles Parent vs Root logic + Search)
-      const { data: availablePermissions = [], isLoading: loadingAvailable } = useQuery({
-            queryKey: ["tenant-available-permissions", tenantId, parentTenantId, debouncedSearch],
-            queryFn: async (): Promise<AvailablePermission[]> => {
-                  appLogger.debug("[ViewModel] Fetching available permissions - tenantId:", tenantId, "search:", debouncedSearch);
-
-                  // Repository handles the logic: if parentId -> getTenantPermissions(parent), else getCreationPermissions
-                  // ... (comments removed for brevity)
-
-                  const permissions = await systemContainer.tenantRepository.getAvailablePermissions(tenantId, parentTenantId || undefined, debouncedSearch);
-                  return permissions as any as AvailablePermission[];
+                        // Robust mapping logic
+                        return permissions.map((p: any) => ({
+                              id: p.id,
+                              resource: p.resource,
+                              action: p.action,
+                              code: p.code || p.permissionCode || `${p.resource}.${p.action}`,
+                              defaultScope: p.defaultScope || "own_tenant",
+                              description: p.description,
+                              nameEn: p.nameEn,
+                              nameAr: p.nameAr,
+                        }));
+                  } catch (error) {
+                        appLogger.error("Failed to fetch available permissions", error);
+                        return [];
+                  }
             },
             enabled: open && !!tenantId,
       });
 
-      // Fetch CURRENT tenant's assigned permissions
-      // We do NOT filter this by search so we always know what is currently assigned for initialization
+      // Fetch TENANT's current permissions
       const { data: tenantPermissions = [], isLoading: loadingTenant } = useQuery({
-            queryKey: ["tenant-current-permissions", tenantId],
-            queryFn: async (): Promise<TenantCurrentPermission[]> => {
-                  appLogger.debug("[ViewModel] Fetching tenant's current permissions:", tenantId);
-                  const permissions = await systemContainer.tenantRepository.getTenantPermissions(tenantId);
-                  return permissions as any as TenantCurrentPermission[];
+            queryKey: ["tenant-current-permissions-service", tenantId],
+            queryFn: async () => {
+                  try {
+                        appLogger.debug("[ViewModel] Fetching tenant's current permissions via Service:", tenantId);
+
+                        const permissions = await systemContainer.tenantService.getTenantPermissions(tenantId);
+
+                        // Robust mapping logic
+                        return permissions.map((p: any) => ({
+                              id: p.id,
+                              resource: p.resource,
+                              action: p.action,
+                              code: p.code || p.permissionCode || `${p.resource}.${p.action}`,
+                              defaultScope: p.defaultScope || "own_tenant",
+                              description: p.description,
+                              nameEn: p.nameEn,
+                              nameAr: p.nameAr,
+                        }));
+                  } catch (error) {
+                        appLogger.error("Failed to fetch tenant permissions", error);
+                        return [];
+                  }
             },
             enabled: open && !!tenantId,
       });
 
-      // Map to track Code -> ID for saving (accumulates as we browse/search)
-      const codeToIdRef = useRef<Map<string, string>>(new Map());
+      // Merge parent and tenant permissions to ensure we show what the tenant HAS,
+      // even if the parent no longer has it (or data mismatch).
+      const allPermissions = useMemo(() => {
+            const combined = [...parentPermissions];
+            const codeSet = new Set(combined.map(p => p.code));
 
-      // Update mapping when data changes
-      useEffect(() => {
-            [...availablePermissions, ...tenantPermissions].forEach(p => {
-                  if (p.code && p.id) {
-                        codeToIdRef.current.set(p.code, p.id);
+            tenantPermissions.forEach(p => {
+                  if (!codeSet.has(p.code)) {
+                        combined.push(p);
+                        codeSet.add(p.code);
                   }
             });
-      }, [availablePermissions, tenantPermissions]);
+            return combined;
+      }, [parentPermissions, tenantPermissions]);
 
       // Initialize selection from tenant's permissions (only once per tenant)
       useEffect(() => {
             if (
                   open &&
                   tenantId &&
-                  // We wait for tenantPermissions to be loaded to know what is assigned
-                  // We don't necessarily need availablePermissions to be fully loaded if we trust tenantPermissions codes
-                  // But to be safe and ensure we only select valid codes, we might check available.
-                  // HOWEVER, if available is now filtered by search, checking against it is WRONG for initialization 
-                  // if we assume "Select All" or similar logic. 
-                  // But for "Initial Selection", we just want to select what the tenant HAS.
-                  // We should select ALL tenantPermissions codes that appear, regardless of whether they are in the current filtered available list.
-                  // The Checkbox will only render if it's in available (visible).
-                  // But 'selectedCodes' should hold ALL.
+                  allPermissions.length > 0 &&
                   !loadingTenant &&
                   initializedTenantRef.current !== tenantId
             ) {
+                  // Get valid codes from ALL known permissions (parent + current)
+                  const validCodes = new Set(allPermissions.map(p => p.code));
+
+                  // Get tenant's current permission codes
                   const tenantCodes = tenantPermissions.map(p => p.code);
 
-                  appLogger.debug("[ViewModel] Initializing selection from tenant codes:", tenantCodes);
+                  // Filter to only valid codes (should be all of them now)
+                  const selectedFromTenant = tenantCodes.filter(code => validCodes.has(code));
 
-                  setSelectedCodes(new Set(tenantCodes));
+                  console.log("========== PERMISSION MATCHING ==========");
+                  console.log("All permissions pool:", allPermissions.length);
+                  console.log("Tenant permissions:", tenantPermissions.length);
+                  console.log("Matched:", selectedFromTenant);
+                  console.log("==========================================");
 
-                  // Update Groups to Expand based on Tenant Permissions (initial view)
+                  setSelectedCodes(new Set(selectedFromTenant));
+
+                  // Auto-expand groups with selected permissions
                   const groupsWithSelection = new Set<string>();
-                  tenantPermissions.forEach(p => {
-                        groupsWithSelection.add(p.resource);
+                  allPermissions.forEach(p => {
+                        if (selectedFromTenant.includes(p.code)) {
+                              groupsWithSelection.add(p.resource);
+                        }
                   });
                   setExpandedGroups(Array.from(groupsWithSelection));
 
                   // Mark as initialized for this tenant
                   initializedTenantRef.current = tenantId;
             }
-      }, [open, tenantId, tenantPermissions, loadingTenant]);
+      }, [open, tenantId, allPermissions, tenantPermissions, loadingTenant]);
 
       // Save mutation
       const saveMutation = useMutation({
             mutationFn: async () => {
-                  // Map selected codes to IDs using our validation map
-                  const selectedIds: string[] = [];
-                  const missingCodes: string[] = [];
+                  // Map selected codes to IDs from all available permissions
+                  const selectedIds = allPermissions
+                        .filter(p => selectedCodes.has(p.code))
+                        .map(p => p.id);
 
-                  selectedCodes.forEach(code => {
-                        const id = codeToIdRef.current.get(code);
-                        if (id) {
-                              selectedIds.push(id);
-                        } else {
-                              missingCodes.push(code);
-                        }
-                  });
-
-                  if (missingCodes.length > 0) {
-                        appLogger.warn("[ViewModel] Warning: Some selected codes missing IDs:", missingCodes);
-                  }
-
-                  appLogger.debug("[ViewModel] Saving permissions - codes:", Array.from(selectedCodes));
-                  appLogger.debug("[ViewModel] Mapped to IDs:", selectedIds);
-
-                  await systemContainer.tenantRepository.updateTenantPermissions(tenantId, selectedIds);
+                  await systemContainer.tenantService.updateTenantPermissions(tenantId, selectedIds);
             },
             onSuccess: () => {
                   toast({ title: t("tenant.permissionsSaved") || "Permissions saved successfully" });
-                  queryClient.invalidateQueries({ queryKey: ["tenant-current-permissions", tenantId] });
-                  queryClient.invalidateQueries({ queryKey: ["tenant-permissions", tenantId] });
+                  queryClient.invalidateQueries({ queryKey: ["tenant-current-permissions-service", tenantId] });
+                  queryClient.invalidateQueries({ queryKey: ["tenants"] });
                   onOpenChange(false);
             },
             onError: (error: Error) => {
@@ -260,17 +271,24 @@ export function useTenantPermissionsDialog({
             });
       };
 
-      // Group permissions (No client-side filtering needed as backend handles it)
+      // Filter and group permissions
       const grouped = useMemo(() => {
-            return availablePermissions.reduce((acc, p) => {
+            const searchLower = search.toLowerCase();
+            const filtered = allPermissions.filter(p => {
+                  if (!search) return true;
+                  const name = (language === "ar" ? p.nameAr : p.nameEn) || p.description || p.code;
+                  return name.toLowerCase().includes(searchLower) || p.code.toLowerCase().includes(searchLower);
+            });
+
+            return filtered.reduce((acc, p) => {
                   const key = p.resource || "other";
                   (acc[key] = acc[key] || []).push(p);
                   return acc;
             }, {} as GroupedPermissions);
-      }, [availablePermissions]);
+      }, [allPermissions, search, language]);
 
       // Helpers
-      const getName = (p: AvailablePermission) =>
+      const getName = (p: ParentPermission) =>
             (language === "ar" ? p.nameAr : p.nameEn) || p.description || p.code;
 
       const isChecked = (code: string) => selectedCodes.has(code);
@@ -280,7 +298,7 @@ export function useTenantPermissionsDialog({
             return {
                   count,
                   total: codes.length,
-                  allChecked: count === codes.length && codes.length > 0,
+                  allChecked: count === codes.length,
                   someChecked: count > 0 && count < codes.length,
             };
       };
@@ -295,10 +313,10 @@ export function useTenantPermissionsDialog({
 
             // Data
             grouped,
-            totalCount: availablePermissions.length,
+            totalCount: allPermissions.length,
             selectedCount: selectedCodes.size,
             groupCount: Object.keys(grouped).length,
-            isLoading: loadingAvailable || loadingTenant,
+            isLoading: loadingParent || loadingTenant,
             hasParent: !!parentTenantId,
 
             // Actions

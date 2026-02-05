@@ -42,7 +42,7 @@ import {
       Lock,
 } from "lucide-react";
 import { cn } from "@core/common/utils";
-import { useTenantPermissionsDialog, type AvailablePermission } from "../viewmodels/useTenantPermissionsViewModel";
+import { useTenantPermissionsDialog, type ParentPermission } from "../viewmodels/useTenantPermissionsViewModel";
 
 interface TenantPermissionsDialogProps {
       open: boolean;
@@ -218,7 +218,7 @@ function PermissionGroups({ vm }: PermissionGroupsProps) {
 
 interface PermissionGroupProps {
       resource: string;
-      permissions: AvailablePermission[];
+      permissions: ParentPermission[];
       vm: ReturnType<typeof useTenantPermissionsDialog>;
 }
 
@@ -272,7 +272,7 @@ function PermissionGroup({ resource, permissions, vm }: PermissionGroupProps) {
 }
 
 interface PermissionItemProps {
-      permission: AvailablePermission;
+      permission: ParentPermission;
       vm: ReturnType<typeof useTenantPermissionsDialog>;
 }
 

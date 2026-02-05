@@ -14,7 +14,7 @@ export interface PermissionJson {
       id: string;
       resource: string;
       action: string;
-      permissionCode: string;
+      code: string;  // Backend returns 'code', not 'permissionCode'
       defaultScope: string;
       description?: string;
       nameEn?: string;
@@ -61,13 +61,14 @@ export class PermissionModel {
 
       /**
        * Create Model from JSON (API response)
+       * Note: Backend returns 'code' field, we map it to 'permissionCode'
        */
       static fromJson(json: PermissionJson): PermissionModel {
             return new PermissionModel(
                   json.id,
                   json.resource,
                   json.action,
-                  json.permissionCode,
+                  json.code,  // Backend uses 'code', not 'permissionCode'
                   json.defaultScope,
                   json.category,
                   json.displayOrder,
@@ -85,7 +86,7 @@ export class PermissionModel {
                   id: this.id,
                   resource: this.resource,
                   action: this.action,
-                  permissionCode: this.permissionCode,
+                  code: this.permissionCode,  // Map internal permissionCode to 'code' for API
                   defaultScope: this.defaultScope,
                   category: this.category,
                   displayOrder: this.displayOrder,
