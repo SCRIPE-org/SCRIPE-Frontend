@@ -48,7 +48,7 @@ export function AssignRoleDialog({
       isLoading,
       tenantId,
 }: AssignRoleDialogProps) {
-      const { t } = useI18n();
+      const { t, language } = useI18n();
       const { roleRepository, tenantRepository } = systemContainer;
 
       // Form state
@@ -74,11 +74,11 @@ export function AssignRoleDialog({
             enabled: open && !tenantId, // Only fetch if no tenant context
       });
 
-      // Transform roles to select options
+      // Transform roles to select options - use localized name based on current language
       const roleOptions: GenericSelectOption[] = (rolesData?.items ?? []).map((role) => ({
             value: role.id,
-            label: role.name,
-            description: role.description,
+            label: language === 'ar' ? (role.nameAr || role.name) : (role.nameEn || role.name),
+            description: language === 'ar' ? (role.descriptionAr || role.description) : (role.descriptionEn || role.description),
       }));
 
       // Transform tenants tree to select options

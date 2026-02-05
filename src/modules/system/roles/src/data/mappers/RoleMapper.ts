@@ -34,6 +34,8 @@ export class RoleMapper {
             const props: RoleProps = {
                   id: model.id,
                   name: model.name,
+                  nameEn: model.nameEn,
+                  nameAr: model.nameAr,
                   code: model.code,
                   isSystem: model.isSystem,
                   priority: model.priority,
@@ -41,6 +43,8 @@ export class RoleMapper {
                   permissions,
                   createdAt: model.createdAt,
                   description: model.description,
+                  descriptionEn: model.descriptionEn,
+                  descriptionAr: model.descriptionAr,
                   tenantId: model.tenantId,
                   tenantName: model.tenantName,
                   modifiedAt: model.modifiedAt,
@@ -67,6 +71,10 @@ export class RoleMapper {
                   permissions,
                   entity.createdAt,
                   entity.description,
+                  entity.nameEn,
+                  entity.nameAr,
+                  entity.descriptionEn,
+                  entity.descriptionAr,
                   entity.tenantId,
                   entity.tenantName,
                   entity.modifiedAt
@@ -85,10 +93,12 @@ export class RoleMapper {
        */
       static toCreateModel(request: CreateRoleRequest): CreateRoleModel {
             return new CreateRoleModel(
-                  request.name,
+                  request.nameEn,
+                  request.nameAr,
                   request.code,
                   request.priority ?? 0, // Default priority if not provided
-                  request.description,
+                  request.descriptionEn,
+                  request.descriptionAr,
                   undefined // permissionIds handled separately via assignPermissions
             );
       }
@@ -98,9 +108,11 @@ export class RoleMapper {
        */
       static toUpdateModel(request: UpdateRoleRequest): UpdateRoleModel {
             return new UpdateRoleModel(
-                  request.name,
-                  request.description,
+                  request.nameEn,
+                  request.nameAr,
                   request.priority,
+                  request.descriptionEn,
+                  request.descriptionAr,
                   undefined // isActive not in UpdateRoleRequest
             );
       }

@@ -18,7 +18,7 @@ import { Shield, Pencil, Trash } from "lucide-react";
 import type { Role } from "../../domain/entities/Role";
 
 export function RolesView() {
-      const { t } = useI18n();
+      const { t, language } = useI18n();
       const router = useRouter();
       const viewModel = useRolesViewModel({ useMyTenant: true });
 
@@ -41,11 +41,18 @@ export function RolesView() {
             columns,
             createFields: [
                   {
-                        name: "name",
-                        label: t("roles.name"),
+                        name: "nameEn",
+                        label: t("roles.nameEn") || "Name (English)",
                         type: "text",
                         required: true,
                         placeholder: t("roles.namePlaceholder")
+                  },
+                  {
+                        name: "nameAr",
+                        label: t("roles.nameAr") || "Name (Arabic)",
+                        type: "text",
+                        required: true,
+                        placeholder: t("roles.nameArPlaceholder") || t("roles.namePlaceholder")
                   },
                   {
                         name: "code",
@@ -55,10 +62,16 @@ export function RolesView() {
                         placeholder: t("roles.codePlaceholder")
                   },
                   {
-                        name: "description",
-                        label: t("roles.descriptionField") || t("roles.description"),
+                        name: "descriptionEn",
+                        label: t("roles.descriptionEn") || "Description (English)",
                         type: "textarea",
                         placeholder: t("roles.descriptionPlaceholder")
+                  },
+                  {
+                        name: "descriptionAr",
+                        label: t("roles.descriptionAr") || "Description (Arabic)",
+                        type: "textarea",
+                        placeholder: t("roles.descriptionArPlaceholder") || t("roles.descriptionPlaceholder")
                   },
                   {
                         name: "priority",
@@ -69,14 +82,25 @@ export function RolesView() {
             ],
             editFields: [
                   {
-                        name: "name",
-                        label: t("roles.name"),
+                        name: "nameEn",
+                        label: t("roles.nameEn") || "Name (English)",
                         type: "text",
                         required: true
                   },
                   {
-                        name: "description",
-                        label: t("roles.descriptionField") || t("roles.description"),
+                        name: "nameAr",
+                        label: t("roles.nameAr") || "Name (Arabic)",
+                        type: "text",
+                        required: true
+                  },
+                  {
+                        name: "descriptionEn",
+                        label: t("roles.descriptionEn") || "Description (English)",
+                        type: "textarea"
+                  },
+                  {
+                        name: "descriptionAr",
+                        label: t("roles.descriptionAr") || "Description (Arabic)",
                         type: "textarea"
                   },
                   {
@@ -106,7 +130,7 @@ export function RolesView() {
                         variant: "destructive",
                   }
             ],
-            getItemDisplayName: (role) => role.name,
+            getItemDisplayName: (role) => language === 'ar' ? (role.nameAr || role.name) : (role.nameEn || role.name),
             itemTypeKey: "roles.roleDetails"  // Used for delete confirmation ("Delete Role Details" -> "Delete Role")
       };
 

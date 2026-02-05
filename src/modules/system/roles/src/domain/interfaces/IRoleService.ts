@@ -13,6 +13,7 @@ import type {
       UpdateRoleJson,
       AssignPermissionsJson,
 } from "../../data/models/RoleModel";
+import type { MyTenantRoleListParams } from "./IRoleRepository";
 
 export interface ServiceRoleListParams {
       page?: number;
@@ -21,11 +22,8 @@ export interface ServiceRoleListParams {
       tenantId?: string;
 }
 
-export interface MyTenantRoleListParams {
-      page?: number;
-      pageSize?: number;
-      search?: string;
-}
+// Re-export for convenience (single source of truth in IRoleRepository)
+export type { MyTenantRoleListParams };
 
 export interface RoleListResult {
       items: RoleModel[];

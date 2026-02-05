@@ -34,7 +34,7 @@ interface AdminsViewModelOptions {
 export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
       const { tenantId, useMyTenant } = options;
       const { adminRepository, roleRepository } = systemContainer;
-      const { t } = useI18n();
+      const { t, language } = useI18n();
       const queryClient = useQueryClient();
       const { success, error: toastError } = useEnhancedToast();
 
@@ -211,14 +211,14 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
                         tenantId: tenantId, // Will be undefined if not provided
                   });
 
-                  return (result.items || []).map((role: { id: string; name: string }) => ({
+                  return (result.items || []).map((role) => ({
                         value: role.id,
-                        label: role.name,
+                        label: language === 'ar' ? (role.nameAr || role.name) : (role.nameEn || role.name),
                   }));
             } catch {
                   return [];
             }
-      }, [roleRepository, tenantId]);
+      }, [roleRepository, tenantId, language]);
 
       // ============ Config Base (Fields, Actions, Initial Values) ============
       const getConfigBase = useCallback((): Partial<CrudConfig<Admin>> => ({

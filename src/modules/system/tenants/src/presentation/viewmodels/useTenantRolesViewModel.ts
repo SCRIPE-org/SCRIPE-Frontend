@@ -132,10 +132,17 @@ export function useTenantRolesViewModel({
       const createFields: FieldConfig[] = useMemo(
             () => [
                   {
-                        name: "name",
-                        label: t("role.name") || "Name",
+                        name: "nameEn",
+                        label: t("roles.nameEn") || "Name (English)",
                         type: "text",
                         placeholder: t("role.namePlaceholder") || "Enter role name",
+                        required: true,
+                  },
+                  {
+                        name: "nameAr",
+                        label: t("roles.nameAr") || "Name (Arabic)",
+                        type: "text",
+                        placeholder: t("roles.nameArPlaceholder") || "Enter role name in Arabic",
                         required: true,
                   },
                   {
@@ -146,10 +153,17 @@ export function useTenantRolesViewModel({
                         required: true,
                   },
                   {
-                        name: "description",
-                        label: t("role.description") || "Description",
+                        name: "descriptionEn",
+                        label: t("roles.descriptionEn") || "Description (English)",
                         type: "textarea",
                         placeholder: t("role.descriptionPlaceholder") || "Optional description...",
+                        required: false,
+                  },
+                  {
+                        name: "descriptionAr",
+                        label: t("roles.descriptionAr") || "Description (Arabic)",
+                        type: "textarea",
+                        placeholder: t("roles.descriptionArPlaceholder") || "Optional description in Arabic...",
                         required: false,
                   },
                   {
@@ -182,17 +196,31 @@ export function useTenantRolesViewModel({
       const editFields: FieldConfig[] = useMemo(
             () => [
                   {
-                        name: "name",
-                        label: t("role.name") || "Name",
+                        name: "nameEn",
+                        label: t("roles.nameEn") || "Name (English)",
                         type: "text",
                         placeholder: t("role.namePlaceholder") || "Enter role name",
                         required: true,
                   },
                   {
-                        name: "description",
-                        label: t("role.description") || "Description",
+                        name: "nameAr",
+                        label: t("roles.nameAr") || "Name (Arabic)",
+                        type: "text",
+                        placeholder: t("roles.nameArPlaceholder") || "Enter role name in Arabic",
+                        required: true,
+                  },
+                  {
+                        name: "descriptionEn",
+                        label: t("roles.descriptionEn") || "Description (English)",
                         type: "textarea",
                         placeholder: t("role.descriptionPlaceholder") || "Optional description...",
+                        required: false,
+                  },
+                  {
+                        name: "descriptionAr",
+                        label: t("roles.descriptionAr") || "Description (Arabic)",
+                        type: "textarea",
+                        placeholder: t("roles.descriptionArPlaceholder") || "Optional description in Arabic...",
                         required: false,
                   },
                   {

@@ -61,11 +61,11 @@ export function useRoleSelector(options: UseRoleSelectorOptions = {}): UseRoleSe
 export function useRoleSelectorWithSearch(options: UseRoleSelectorOptions = {}) {
       const { roles, isLoading, isError, error } = useRoleSelector(options);
 
-      const getRoleOptions = () => {
+      const getRoleOptions = (language: string = 'en') => {
             return roles.map((role) => ({
                   value: role.id,
-                  label: role.name,
-                  description: role.description,
+                  label: language === 'ar' ? (role.nameAr || role.name) : (role.nameEn || role.name),
+                  description: language === 'ar' ? (role.descriptionAr || role.description) : (role.descriptionEn || role.description),
                   priority: role.priority,
                   isSystem: role.isSystem,
             }));

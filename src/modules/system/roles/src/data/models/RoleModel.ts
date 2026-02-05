@@ -18,8 +18,12 @@ export interface RolePermissionJson {
 export interface RoleJson {
       id: string;
       name: string;
+      nameEn?: string;
+      nameAr?: string;
       code: string;
       description?: string;
+      descriptionEn?: string;
+      descriptionAr?: string;
       tenantId?: string;
       tenantName?: string;
       isSystem: boolean;
@@ -41,17 +45,21 @@ export interface RoleListResponseJson {
 }
 
 export interface CreateRoleJson {
-      name: string;
+      nameEn: string;
+      nameAr: string;
       code: string;
-      description?: string;
+      descriptionEn?: string;
+      descriptionAr?: string;
       priority: number;
       permissionIds?: string[];
 }
 
 export interface UpdateRoleJson {
-      name?: string;
-      description?: string;
-      priority?: number;
+      nameEn: string;
+      nameAr: string;
+      descriptionEn?: string;
+      descriptionAr?: string;
+      priority: number;
       isActive?: boolean;
 }
 
@@ -92,6 +100,10 @@ export class RoleModel {
             public readonly permissions: RolePermissionModel[],
             public readonly createdAt: string,
             public readonly description?: string,
+            public readonly nameEn?: string,
+            public readonly nameAr?: string,
+            public readonly descriptionEn?: string,
+            public readonly descriptionAr?: string,
             public readonly tenantId?: string,
             public readonly tenantName?: string,
             public readonly modifiedAt?: string
@@ -108,6 +120,10 @@ export class RoleModel {
                   (json.permissions ?? []).map((p) => RolePermissionModel.fromJson(p)),
                   json.createdAt,
                   json.description,
+                  json.nameEn,
+                  json.nameAr,
+                  json.descriptionEn,
+                  json.descriptionAr,
                   json.tenantId,
                   json.tenantName,
                   json.modifiedAt
@@ -118,8 +134,12 @@ export class RoleModel {
             return {
                   id: this.id,
                   name: this.name,
+                  nameEn: this.nameEn,
+                  nameAr: this.nameAr,
                   code: this.code,
                   description: this.description,
+                  descriptionEn: this.descriptionEn,
+                  descriptionAr: this.descriptionAr,
                   tenantId: this.tenantId,
                   tenantName: this.tenantName,
                   isSystem: this.isSystem,
@@ -134,19 +154,23 @@ export class RoleModel {
 
 export class CreateRoleModel {
       constructor(
-            public readonly name: string,
+            public readonly nameEn: string,
+            public readonly nameAr: string,
             public readonly code: string,
             public readonly priority: number,
-            public readonly description?: string,
+            public readonly descriptionEn?: string,
+            public readonly descriptionAr?: string,
             public readonly permissionIds?: string[]
       ) { }
 
       toJson(): CreateRoleJson {
             return {
-                  name: this.name,
+                  nameEn: this.nameEn,
+                  nameAr: this.nameAr,
                   code: this.code,
                   priority: this.priority,
-                  description: this.description,
+                  descriptionEn: this.descriptionEn,
+                  descriptionAr: this.descriptionAr,
                   permissionIds: this.permissionIds,
             };
       }
@@ -154,16 +178,20 @@ export class CreateRoleModel {
 
 export class UpdateRoleModel {
       constructor(
-            public readonly name?: string,
-            public readonly description?: string,
-            public readonly priority?: number,
+            public readonly nameEn: string,
+            public readonly nameAr: string,
+            public readonly priority: number,
+            public readonly descriptionEn?: string,
+            public readonly descriptionAr?: string,
             public readonly isActive?: boolean
       ) { }
 
       toJson(): UpdateRoleJson {
             return {
-                  name: this.name,
-                  description: this.description,
+                  nameEn: this.nameEn,
+                  nameAr: this.nameAr,
+                  descriptionEn: this.descriptionEn,
+                  descriptionAr: this.descriptionAr,
                   priority: this.priority,
                   isActive: this.isActive,
             };

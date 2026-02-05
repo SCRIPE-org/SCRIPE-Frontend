@@ -8,9 +8,11 @@
  * Create role request
  */
 export interface CreateRoleRequest {
-      name: string;
+      nameEn: string;
+      nameAr: string;
       code: string;
-      description?: string;
+      descriptionEn?: string;
+      descriptionAr?: string;
       tenantId?: string;
       priority?: number;
 }
@@ -19,9 +21,11 @@ export interface CreateRoleRequest {
  * Update role request
  */
 export interface UpdateRoleRequest {
-      name?: string;
-      description?: string;
-      priority?: number;
+      nameEn: string;
+      nameAr: string;
+      descriptionEn?: string;
+      descriptionAr?: string;
+      priority: number;
 }
 
 /**
