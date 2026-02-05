@@ -69,4 +69,11 @@ export interface ITenantService {
        * @param tenantId - The tenant ID to set, or null to clear
        */
       setTenantContext(tenantId: string | null): void;
+      /**
+       * Toggle tenant status (Active/Inactive)
+       * NOTE: Backend requires full update, so implementation must fetch-then-update.
+       * @param id - The tenant ID
+       * @param isActive - The NEW status to set
+       */
+      toggleStatus(id: string, isActive: boolean): Promise<void>;
 }

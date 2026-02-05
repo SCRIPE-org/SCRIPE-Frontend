@@ -86,7 +86,8 @@ export class TenantModel {
             public readonly description?: string,
             public readonly settings?: Record<string, unknown>,
             public readonly modifiedAt?: string,
-            public readonly children?: TenantModel[]
+            public readonly children?: TenantModel[],
+            public readonly address?: string
       ) { }
 
       static fromJson(json: TenantJson): TenantModel {
@@ -105,7 +106,8 @@ export class TenantModel {
                   json.description,
                   json.settings,
                   json.modifiedAt,
-                  json.children?.map((c) => TenantModel.fromJson(c))
+                  json.children?.map((c) => TenantModel.fromJson(c)),
+                  json.address
             );
       }
 
@@ -124,6 +126,7 @@ export class TenantModel {
                   settings: this.settings,
                   modifiedAt: this.modifiedAt,
                   children: this.children?.map((c) => c.toJson()),
+                  address: this.address,
             };
       }
 }

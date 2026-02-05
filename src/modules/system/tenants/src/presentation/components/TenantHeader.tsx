@@ -80,9 +80,9 @@ export function TenantHeader({ tenant, onUpdate }: TenantHeaderProps) {
       const handleToggleStatus = async () => {
             try {
                   setIsUpdating(true);
-                  await systemContainer.tenantRepository.update(tenant.id, {
-                        isActive: !tenant.isActive,
-                  });
+                  // Use Service's toggleStatus to handle Fetch -> Update pattern
+                  // This is required because backend's UpdateTenant requires Name/Description/Address
+                  await systemContainer.tenantService.toggleStatus(tenant.id, !tenant.isActive);
                   onUpdate?.();
             } catch (error) {
                   appLogger.error("Failed to toggle tenant status:", error);
