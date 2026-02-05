@@ -11,7 +11,6 @@
 import {
       Dialog,
       DialogContent,
-      DialogDescription,
       DialogFooter,
       DialogHeader,
       DialogTitle,
@@ -67,13 +66,14 @@ export function RolePermissionsDialog(props: RolePermissionsDialogProps) {
                                           <DialogTitle className="text-lg font-semibold">
                                                 {t("role.managePermissions") || "Manage Permissions"}
                                           </DialogTitle>
-                                          <DialogDescription className="flex items-center gap-2 mt-0.5">
+                                          {/* Use div instead of DialogDescription to avoid p > div nesting */}
+                                          <div className="text-sm text-muted-foreground flex items-center gap-2 mt-0.5">
                                                 <Badge variant="secondary" className="font-mono text-xs">
                                                       {role?.code}
                                                 </Badge>
-                                                <span className="text-muted-foreground">•</span>
+                                                <span>•</span>
                                                 <span>{role?.name}</span>
-                                          </DialogDescription>
+                                          </div>
                                     </div>
                               </div>
                         </DialogHeader>
@@ -213,12 +213,22 @@ function PermissionGroup({ resource, permissions, vm }: PermissionGroupProps) {
             >
                   <AccordionTrigger className="px-4 py-3 hover:no-underline hover:bg-muted/50 [&>svg]:text-muted-foreground">
                         <div className="flex items-center gap-3 flex-1">
-                              <Checkbox
-                                    checked={stats.allChecked}
-                                    className={cn(stats.someChecked && "bg-primary/50 border-primary")}
-                                    onCheckedChange={() => vm.toggleGroup(codes)}
-                                    onClick={(e) => e.stopPropagation()}
-                              />
+                              {/* Move checkbox outside trigger - use div with checkbox indicator */}
+                              <div
+                                    className={cn(
+                                          "h-4 w-4 shrink-0 rounded-sm border border-primary flex items-center justify-center cursor-pointer",
+                                          stats.allChecked && "bg-primary",
+                                          stats.someChecked && "bg-primary/50"
+                                    )}
+                                    onClick={(e) => {
+                                          e.stopPropagation();
+                                          vm.toggleGroup(codes);
+                                    }}
+                              >
+                                    {(stats.allChecked || stats.someChecked) && (
+                                          <Check className="h-3 w-3 text-primary-foreground" />
+                                    )}
+                              </div>
                               <Badge variant={stats.count > 0 ? "default" : "secondary"} className="capitalize">
                                     {resource}
                               </Badge>

@@ -8,7 +8,7 @@
  */
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@core/hooks/use-toast";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -87,12 +87,19 @@ export function useRolePermissionsDialog({
       const [selectedCodes, setSelectedCodes] = useState<Set<string>>(new Set());
       const [expandedGroups, setExpandedGroups] = useState<string[]>([]);
 
-      // Reset all state when dialog opens or role changes
+      // Track if we've initialized for this role to prevent infinite loops
+      const initializedRoleRef = useRef<string | null>(null);
+
+      // Reset when dialog opens with a different role
       useEffect(() => {
-            if (open) {
+            if (open && role?.id !== initializedRoleRef.current) {
                   setSearch("");
                   setSelectedCodes(new Set());
                   setExpandedGroups([]);
+                  initializedRoleRef.current = null; // Mark as not initialized
+            }
+            if (!open) {
+                  initializedRoleRef.current = null; // Reset when dialog closes
             }
       }, [open, role?.id]);
 
@@ -115,10 +122,15 @@ export function useRolePermissionsDialog({
             enabled: open && !!role?.id,
       });
 
-      // Initialize selection from role's permissions when data loads
+      // Initialize selection from role's permissions (only once per role)
       useEffect(() => {
-            // Only run when tenant permissions are loaded (role permissions can be empty)
-            if (tenantPermissions.length > 0) {
+            if (
+                  open &&
+                  role?.id &&
+                  tenantPermissions.length > 0 &&
+                  !loadingRole &&
+                  initializedRoleRef.current !== role.id
+            ) {
                   const validCodes = new Set(tenantPermissions.map(p => p.code));
                   const roleCodes = rolePermissions.map(p => p.permissionCode);
                   const selectedFromRole = roleCodes.filter(code => validCodes.has(code));
@@ -133,8 +145,11 @@ export function useRolePermissionsDialog({
                         }
                   });
                   setExpandedGroups(Array.from(groupsWithSelection));
+
+                  // Mark as initialized for this role
+                  initializedRoleRef.current = role.id;
             }
-      }, [rolePermissions, tenantPermissions]);
+      }, [open, role?.id, tenantPermissions, rolePermissions, loadingRole]);
 
       // Save mutation
       const saveMutation = useMutation({
