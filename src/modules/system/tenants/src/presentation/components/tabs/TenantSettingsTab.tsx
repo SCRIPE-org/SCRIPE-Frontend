@@ -148,7 +148,11 @@ export function TenantSettingsTab({ tenantId, tenantName, parentTenantId }: Tena
                               <CardContent className="space-y-4 pt-4">
                                     <div className="flex items-center gap-6">
                                           {settings.logoUrl ? (
-                                                <img src={settings.logoUrl} alt={t("tenant.logo")} className="h-16 w-16 object-contain border rounded p-1" />
+                                                <img
+                                                      src={settings.logoUrl.startsWith('http') ? settings.logoUrl : `${process.env.NEXT_PUBLIC_File_URL || ''}${settings.logoUrl}`}
+                                                      alt={t("tenant.logo")}
+                                                      className="h-16 w-16 object-contain border rounded p-1"
+                                                />
                                           ) : (
                                                 <div className="h-16 w-16 bg-muted rounded flex items-center justify-center text-xs text-muted-foreground">
                                                       {t("tenant.noLogo") || "No Logo"}
@@ -241,6 +245,7 @@ export function TenantSettingsTab({ tenantId, tenantName, parentTenantId }: Tena
                         settings={settings}
                         onSave={vm.updateSettings}
                         isSaving={vm.isUpdating}
+                        onUploadLogo={vm.uploadLogo}
                   />
 
                   <TenantPermissionsDialog

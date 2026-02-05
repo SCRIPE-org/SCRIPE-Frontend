@@ -18,6 +18,7 @@ interface TenantSettingsEditDialogProps {
       settings: TenantSettingsModel;
       onSave: (data: UpdateTenantSettingsRequest) => void;
       isSaving: boolean;
+      onUploadLogo?: (file: File) => Promise<string>;
 }
 
 export function TenantSettingsEditDialog({
@@ -26,7 +27,8 @@ export function TenantSettingsEditDialog({
       initialSection,
       settings,
       onSave,
-      isSaving
+      isSaving,
+      onUploadLogo
 }: TenantSettingsEditDialogProps) {
       const { t, direction } = useI18n();
       const [activeTab, setActiveTab] = useState(initialSection || 'quotas');
@@ -223,17 +225,36 @@ export function TenantSettingsEditDialog({
                                                 </div>
                                           </div>
                                           <div className="space-y-2">
-                                                <Label>{t("tenant.logoUrl") || "Logo URL"}</Label>
-                                                <Input
-                                                      value={formData.logoUrl || ''}
-                                                      onChange={e => handleChange('logoUrl', e.target.value)}
-                                                      placeholder="https://..."
-                                                />
+                                                <Label>{t("tenant.logoUrl") || "Logo"}</Label>
+                                                <div className="flex flex-col gap-4">
+                                                      <div className="flex items-center gap-4">
+                                                            <Input
+                                                                  type="file"
+                                                                  accept="image/*"
+                                                                  onChange={async (e) => {
+                                                                        const file = e.target.files?.[0];
+                                                                        if (file && onUploadLogo) {
+                                                                              try {
+                                                                                    const url = await onUploadLogo(file);
+                                                                                    handleChange('logoUrl', url);
+                                                                              } catch (error) {
+                                                                                    console.error("Upload failed", error);
+                                                                              }
+                                                                        }
+                                                                  }}
+                                                                  disabled={!onUploadLogo}
+                                                            />
+                                                      </div>
+                                                </div>
                                           </div>
                                     </div>
                                     {formData.logoUrl && (
                                           <div className="mt-4 p-4 border rounded bg-muted/20 flex justify-center">
-                                                <img src={formData.logoUrl} alt={t("tenant.logoPreview") || "Logo Preview"} className="max-h-24 object-contain" />
+                                                <img
+                                                      src={formData.logoUrl.startsWith('http') ? formData.logoUrl : `${process.env.NEXT_PUBLIC_File_URL || ''}${formData.logoUrl}`}
+                                                      alt={t("tenant.logoPreview") || "Logo Preview"}
+                                                      className="max-h-24 object-contain"
+                                                />
                                           </div>
                                     )}
                               </TabsContent>

@@ -145,4 +145,19 @@ export class TenantService implements ITenantService {
       async updateSettings(tenantId: string, request: UpdateTenantSettingsRequest): Promise<void> {
             await this.api.put(API_ENDPOINTS.TENANTS.SETTINGS(tenantId), request);
       }
+
+      async uploadLogo(tenantId: string, file: File): Promise<{ url: string }> {
+            const formData = new FormData();
+            formData.append("file", file);
+
+            // NOTE: When sending FormData, let the browser set Content-Type header (it adds boundary)
+            // ApiService should handle FormData correctly or allow overriding headers
+            return this.api.post<{ url: string }>(
+                  `${API_ENDPOINTS.TENANTS.BY_ID(tenantId)}/logo`,
+                  formData,
+                  // Assuming ApiService supports a way to handle FormData implicitly or explicitly.
+                  // If strictly JSON, we might need a specific handling.
+                  // Standard axios/fetch handles FormData passed as body.
+            );
+      }
 }

@@ -88,6 +88,12 @@ export class ApiService implements IApiService {
           appLogger.api(`Tenant context: ${this.tenantContextId}`);
         }
 
+        // Fix for 415 Unsupported Media Type with FormData
+        if (config.data instanceof FormData) {
+          // Let browser set Content-Type with boundary
+          delete config.headers["Content-Type"];
+        }
+
         appLogger.api(`${config.method?.toUpperCase()} ${config.url}`);
         return config;
       },

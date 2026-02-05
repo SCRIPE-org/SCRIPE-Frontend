@@ -30,6 +30,8 @@ export interface UseTenantSettingsViewModelResult {
 
       permissionsOpen: boolean;
       setPermissionsOpen: (open: boolean) => void;
+
+      uploadLogo: (file: File) => Promise<string>;
 }
 
 export function useTenantSettingsViewModel(tenantId: string): UseTenantSettingsViewModelResult {
@@ -82,5 +84,25 @@ export function useTenantSettingsViewModel(tenantId: string): UseTenantSettingsV
             // Permissions Dialog State
             permissionsOpen,
             setPermissionsOpen,
+
+            // Logo Upload
+            uploadLogo: async (file: File) => {
+                  try {
+                        const result = await systemContainer.tenantService.uploadLogo(tenantId, file);
+                        toast({
+                              title: t("common.success") || "Success",
+                              description: t("tenant.settingsSaved") || "Settings updated successfully"
+                        });
+                        queryClient.invalidateQueries({ queryKey: ["tenant-settings", tenantId] });
+                        return result.url;
+                  } catch (err: any) {
+                        toast({
+                              title: t("common.error") || "Error",
+                              description: err.message,
+                              variant: "destructive",
+                        });
+                        throw err;
+                  }
+            },
       };
 }

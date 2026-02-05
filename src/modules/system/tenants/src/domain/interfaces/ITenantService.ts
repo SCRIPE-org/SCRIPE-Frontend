@@ -87,4 +87,12 @@ export interface ITenantService {
        * Update settings for a specific tenant
        */
       updateSettings(tenantId: string, request: UpdateTenantSettingsRequest): Promise<void>;
+
+      /**
+       * Upload tenant logo
+       * @param tenantId - The tenant ID
+       * @param file - The file to upload
+       * @returns The uploaded logo URL
+       */
+      uploadLogo(tenantId: string, file: File): Promise<{ url: string }>;
 }
