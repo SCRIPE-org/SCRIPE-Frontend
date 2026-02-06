@@ -65,24 +65,21 @@ export function useAdminRolesViewModel(
       })), [rolesData, language]);
 
       // Transform tenants tree
-      const flattenTenants = useCallback((nodes: any[], level = 0): GenericSelectOption[] => {
-            return nodes.flatMap((node) => [
-                  {
-                        value: node.id,
-                        label: node.name,
-                        level,
-                        children: node.children?.length > 0
-                              ? flattenTenants(node.children, level + 1)
-                              : undefined,
-                  },
-                  ...(node.children ? flattenTenants(node.children, level + 1) : []),
-            ]);
+      // Transform tenants tree
+      const transformTenants = useCallback((nodes: any[]): GenericSelectOption[] => {
+            return nodes.map((node) => ({
+                  value: node.id,
+                  label: node.name,
+                  children: node.children?.length > 0
+                        ? transformTenants(node.children)
+                        : undefined,
+            }));
       }, []);
 
       const tenantOptions: GenericSelectOption[] = useMemo(() => [
             { value: "", label: t("admin.role.systemScope") || "System Level (Global Access)" },
-            ...(Array.isArray(tenantsTree) ? flattenTenants(tenantsTree) : []),
-      ], [tenantsTree, flattenTenants, t]);
+            ...(Array.isArray(tenantsTree) ? transformTenants(tenantsTree) : []),
+      ], [tenantsTree, transformTenants, t]);
 
       const resetAssignForm = useCallback(() => {
             setAssignRoleIds([]);

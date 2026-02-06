@@ -277,6 +277,7 @@ export const en = {
     name: "Name",
     roles: "Roles",
     status: "Status",
+    toggleStatus: "Toggle Status",
     createdAt: "Created At",
     noRoles: "No roles",
     resetPassword: "Reset Password",
@@ -299,6 +300,7 @@ export const en = {
     notesPlaceholder: "Enter notes",
     // Role assignment
     role: {
+      systemScope: "System Scope",
       searchRoles: "Search roles...",
       assignTitle: "Assign Role",
       assignDescription: "Assign a role to",
