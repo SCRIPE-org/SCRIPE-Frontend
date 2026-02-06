@@ -71,7 +71,7 @@ export function PermissionsPicker({
                   const searchLower = search.toLowerCase();
                   return (
                         p.code.toLowerCase().includes(searchLower) ||
-                        p.description?.toLowerCase().includes(searchLower) ||
+                        p.getLocalizedDescription(language).toLowerCase().includes(searchLower) ||
                         p.category.toLowerCase().includes(searchLower)
                   );
             });
@@ -188,16 +188,6 @@ export function PermissionsPicker({
             [groupedPermissions, value]
       );
 
-      // Get permission display name
-      const getPermissionName = useCallback(
-            (permission: Permission) => {
-                  if (language === "ar" && permission.nameAr) {
-                        return permission.nameAr;
-                  }
-                  return permission.nameEn || permission.code;
-            },
-            [language]
-      );
 
       // Check if a view permission is auto-granted (required because other actions in same resource are selected)
       const isAutoGranted = useCallback(
@@ -346,16 +336,16 @@ export function PermissionsPicker({
                                                                                     />
                                                                                     <div className="flex-1 min-w-0">
                                                                                           <div className="text-sm font-medium truncate flex items-center gap-2">
-                                                                                                {getPermissionName(permission)}
+                                                                                                {permission.getLocalizedName(language)}
                                                                                                 {isAutoGranted(permission) && (
                                                                                                       <Badge variant="outline" className="text-xs py-0 px-1.5 text-primary border-primary/50">
                                                                                                             {t("permission.autoGranted") || "Auto"}
                                                                                                       </Badge>
                                                                                                 )}
                                                                                           </div>
-                                                                                          {permission.description && (
+                                                                                          {permission.getLocalizedDescription(language) && (
                                                                                                 <div className="text-xs text-muted-foreground truncate">
-                                                                                                      {permission.description}
+                                                                                                      {permission.getLocalizedDescription(language)}
                                                                                                 </div>
                                                                                           )}
                                                                                     </div>

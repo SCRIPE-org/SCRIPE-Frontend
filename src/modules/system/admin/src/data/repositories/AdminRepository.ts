@@ -142,8 +142,8 @@ export class AdminRepository implements IAdminRepository {
       }
 
       async getRoles(adminId: string): Promise<AdminRoleData[]> {
-            // Service returns AdminRoleJson which matches AdminRoleData structure
-            return this.service.getRoles(adminId);
+            const roles = await this.service.getRoles(adminId);
+            return AdminMapper.toRoleDataList(roles);
       }
 
       async resetPassword(id: string, newPassword: string): Promise<void> {

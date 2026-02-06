@@ -16,7 +16,8 @@ export interface PermissionJson {
       action: string;
       code: string;  // Backend returns 'code', not 'permissionCode'
       defaultScope: string;
-      description?: string;
+      descriptionEn?: string;
+      descriptionAr?: string;
       nameEn?: string;
       nameAr?: string;
       category: string;
@@ -27,7 +28,8 @@ export interface CreatePermissionJson {
       resource: string;
       action: string;
       permissionCode: string;
-      description?: string;
+      descriptionEn?: string;
+      descriptionAr?: string;
       nameEn?: string;
       nameAr?: string;
       category: string;
@@ -35,7 +37,8 @@ export interface CreatePermissionJson {
 }
 
 export interface UpdatePermissionJson {
-      description?: string;
+      descriptionEn?: string;
+      descriptionAr?: string;
       nameEn?: string;
       nameAr?: string;
       category?: string;
@@ -54,7 +57,8 @@ export class PermissionModel {
             public readonly defaultScope: string,
             public readonly category: string,
             public readonly displayOrder: number,
-            public readonly description?: string,
+            public readonly descriptionEn?: string,
+            public readonly descriptionAr?: string,
             public readonly nameEn?: string,
             public readonly nameAr?: string
       ) { }
@@ -72,7 +76,8 @@ export class PermissionModel {
                   json.defaultScope,
                   json.category,
                   json.displayOrder,
-                  json.description,
+                  json.descriptionEn,
+                  json.descriptionAr,
                   json.nameEn,
                   json.nameAr
             );
@@ -90,7 +95,8 @@ export class PermissionModel {
                   defaultScope: this.defaultScope,
                   category: this.category,
                   displayOrder: this.displayOrder,
-                  description: this.description,
+                  descriptionEn: this.descriptionEn,
+                  descriptionAr: this.descriptionAr,
                   nameEn: this.nameEn,
                   nameAr: this.nameAr,
             };
@@ -107,7 +113,8 @@ export class CreatePermissionModel {
             public readonly permissionCode: string,
             public readonly category: string,
             public readonly displayOrder: number = 0,
-            public readonly description?: string,
+            public readonly descriptionEn?: string,
+            public readonly descriptionAr?: string,
             public readonly nameEn?: string,
             public readonly nameAr?: string
       ) { }
@@ -122,7 +129,8 @@ export class CreatePermissionModel {
                   permissionCode: this.permissionCode,
                   category: this.category,
                   displayOrder: this.displayOrder,
-                  description: this.description,
+                  descriptionEn: this.descriptionEn,
+                  descriptionAr: this.descriptionAr,
                   nameEn: this.nameEn,
                   nameAr: this.nameAr,
             };
@@ -134,7 +142,8 @@ export class CreatePermissionModel {
  */
 export class UpdatePermissionModel {
       constructor(
-            public readonly description?: string,
+            public readonly descriptionEn?: string,
+            public readonly descriptionAr?: string,
             public readonly nameEn?: string,
             public readonly nameAr?: string,
             public readonly category?: string,
@@ -146,7 +155,8 @@ export class UpdatePermissionModel {
        */
       toJson(): UpdatePermissionJson {
             return {
-                  description: this.description,
+                  descriptionEn: this.descriptionEn,
+                  descriptionAr: this.descriptionAr,
                   nameEn: this.nameEn,
                   nameAr: this.nameAr,
                   category: this.category,

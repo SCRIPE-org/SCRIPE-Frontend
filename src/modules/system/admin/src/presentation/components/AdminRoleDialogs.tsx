@@ -177,7 +177,7 @@ export function ViewRolesDialog({
                                                             <Shield className="h-4 w-4 text-primary" />
                                                       </div>
                                                       <div>
-                                                            <div className="font-medium">{role.roleName}</div>
+                                                            <div className="font-medium">{role.roleNameEn}</div>
                                                             <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
                                                                   {role.tenantName ? (
                                                                         <span className="flex items-center gap-1 bg-background px-1.5 py-0.5 rounded border shadow-sm">

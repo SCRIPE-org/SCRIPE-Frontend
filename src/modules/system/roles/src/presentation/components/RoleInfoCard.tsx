@@ -38,11 +38,11 @@ export function RoleInfoCard({
                               <RoleInfoSkeleton />
                         ) : (
                               <>
-                                    <InfoField label={t("roles.name")} value={language === 'ar' ? role?.nameAr : role?.nameEn} />
+                                    <InfoField label={t("roles.name")} value={role?.getLocalizedName(language)} />
                                     <InfoField label={t("roles.code")} value={role?.code} mono />
                                     <InfoField
                                           label={t("roles.description")}
-                                          value={language === 'ar' ? role?.descriptionAr : role?.descriptionEn || "-"}
+                                          value={role?.getLocalizedDescription(language)}
                                     />
                                     <div>
                                           <label className="text-sm text-muted-foreground">

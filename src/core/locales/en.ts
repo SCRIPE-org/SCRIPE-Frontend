@@ -333,6 +333,7 @@ export const en = {
     noPermissionsDescription: "No permissions are configured yet.",
     adjustFilters: "Try adjusting your filters.",
     // Table columns
+    name: "Name",
     code: "Code",
     resource: "Resource",
     action: "Action",

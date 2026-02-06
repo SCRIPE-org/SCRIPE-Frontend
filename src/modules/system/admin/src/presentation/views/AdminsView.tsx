@@ -24,7 +24,7 @@ interface AdminsViewProps {
 }
 
 export function AdminsView({ tenantId }: AdminsViewProps = {}) {
-      const { t } = useI18n();
+      const { t, language } = useI18n();
       // Use myTenantAdmins by default, or specific tenant if provided
       const {
             vm,
@@ -101,7 +101,7 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
                         label: t("admin.roles") || "Roles",
                         render: (_val: unknown, admin: Admin) => (
                               <span className="text-sm text-muted-foreground">
-                                    {admin.roleNames || t("admin.noRoles") || "No roles"}
+                                    {admin.getLocalizedRoleNames(language)}
                               </span>
                         ),
                   },

@@ -10,7 +10,8 @@
 export interface CreatePermissionRequest {
       resource: string;
       action: string;
-      description?: string;
+      descriptionEn?: string;
+      descriptionAr?: string;
       category?: string;
       defaultScope?: string;
       displayOrder?: number;
@@ -20,7 +21,8 @@ export interface CreatePermissionRequest {
  * Update permission request
  */
 export interface UpdatePermissionRequest {
-      description?: string;
+      descriptionEn?: string;
+      descriptionAr?: string;
       category?: string;
       defaultScope?: string;
       displayOrder?: number;

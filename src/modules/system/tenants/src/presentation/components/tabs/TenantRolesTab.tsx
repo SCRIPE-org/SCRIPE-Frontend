@@ -55,9 +55,9 @@ export function TenantRolesTab({ tenantId, tenantName }: TenantRolesTabProps) {
                                     <code className="text-xs bg-muted px-2 py-0.5 rounded">{value}</code>
                               )
                               : col.key === "description"
-                                    ? (value: string) => (
+                                    ? (value: string, role: Role) => (
                                           <span className="text-sm text-muted-foreground truncate max-w-[200px] block">
-                                                {value || "-"}
+                                                {role.getLocalizedDescription(language)}
                                           </span>
                                     )
                                     : col.key === "priority"
@@ -70,7 +70,7 @@ export function TenantRolesTab({ tenantId, tenantName }: TenantRolesTabProps) {
             editFields: vm.editFields,
             createInitialValues: vm.createInitialValues,
             editInitialValues: vm.getEditInitialValues,
-            getItemDisplayName: (item: Role) => language === 'ar' ? item.nameAr : item.nameEn,
+            getItemDisplayName: (item: Role) => item.getLocalizedName(language),
             permissions: {
                   canView: "roles.view",
                   canCreate: "roles.create",

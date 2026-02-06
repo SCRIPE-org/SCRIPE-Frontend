@@ -15,7 +15,8 @@ export interface PermissionProps {
       defaultScope: string;
       category: string;
       displayOrder: number;
-      description?: string;
+      descriptionEn?: string;
+      descriptionAr?: string;
       nameEn?: string;
       nameAr?: string;
 }
@@ -60,8 +61,12 @@ export class Permission {
             return this.props.displayOrder;
       }
 
-      get description(): string | undefined {
-            return this.props.description;
+      get descriptionEn(): string | undefined {
+            return this.props.descriptionEn;
+      }
+
+      get descriptionAr(): string | undefined {
+            return this.props.descriptionAr;
       }
 
       get nameEn(): string | undefined {
@@ -85,6 +90,19 @@ export class Permission {
                   return this.props.nameEn;
             }
             return this.displayName;
+      }
+
+      /**
+       * Get localized description based on language
+       */
+      getLocalizedDescription(lang: string = "en"): string {
+            if (lang === "ar" && this.props.descriptionAr) {
+                  return this.props.descriptionAr;
+            }
+            if (this.props.descriptionEn) {
+                  return this.props.descriptionEn;
+            }
+            return "";
       }
 
       /**

@@ -10,7 +10,8 @@ import type { BaseEntity } from "@modules/system/core/domain/types";
  */
 export interface AdminRoleData {
       roleId: string;
-      roleName: string;
+      roleNameEn: string;
+      roleNameAr: string;
       roleCode: string;
       tenantId?: string;
       tenantName?: string;
@@ -32,7 +33,8 @@ export interface AdminData extends BaseEntity {
       /** Full role data (from details API) */
       roles?: AdminRoleData[];
       /** Simple role names (from list API) */
-      roleNames?: string[];
+      roleNamesEn?: string[];
+      roleNamesAr?: string[];
       /** The tenant this admin belongs to (null for system admins) */
       tenantId?: string;
       tenantName?: string;
@@ -92,23 +94,40 @@ export class Admin {
       }
 
       /**
-       * Get role names as comma-separated string.
-       * Uses roleNames array from list API or extracts from roles array from details API.
+       * Get role names as comma-separated string (English default).
        */
       get roleNames(): string {
-            // Prefer roleNames from list API if available
-            if (this.data.roleNames && this.data.roleNames.length > 0) {
-                  return this.data.roleNames.join(", ");
+            return this.getLocalizedRoleNames("en");
+      }
+
+      /**
+       * Get localized role names
+       */
+      getLocalizedRoleNames(lang: string = "en"): string {
+            // prefer specific language list from API
+            if (lang === "ar") {
+                  if (this.data.roleNamesAr && this.data.roleNamesAr.length > 0) {
+                        return this.data.roleNamesAr.join(", ");
+                  }
+                  // Fallback to details array if available
+                  if (this.data.roles && this.data.roles.length > 0) {
+                        return this.data.roles.map(r => r.roleNameAr || r.roleNameEn).join(", ");
+                  }
+            } else {
+                  if (this.data.roleNamesEn && this.data.roleNamesEn.length > 0) {
+                        return this.data.roleNamesEn.join(", ");
+                  }
+                  if (this.data.roles && this.data.roles.length > 0) {
+                        return this.data.roles.map(r => r.roleNameEn).join(", ");
+                  }
             }
-            // Fallback to roles array from details API
-            if (this.data.roles && this.data.roles.length > 0) {
-                  return this.data.roles.map((r) => r.roleName).join(", ");
-            }
+
+            // Absolute fallback
             return "No roles";
       }
 
       get hasRoles(): boolean {
-            return (this.data.roleNames?.length ?? 0) > 0 || (this.data.roles?.length ?? 0) > 0;
+            return (this.data.roleNamesEn?.length ?? 0) > 0 || (this.data.roles?.length ?? 0) > 0;
       }
 
       /** The tenant this admin belongs to (null for system admins) */

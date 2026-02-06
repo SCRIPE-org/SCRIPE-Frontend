@@ -35,7 +35,7 @@ interface PermissionCategoryAccordionProps {
 }
 
 export function PermissionCategoryAccordion({ groups }: PermissionCategoryAccordionProps) {
-      const { t } = useI18n();
+      const { t, language } = useI18n();
 
       return (
             <Accordion type="multiple" className="w-full" defaultValue={groups.map(g => g.category)}>
@@ -55,6 +55,7 @@ export function PermissionCategoryAccordion({ groups }: PermissionCategoryAccord
                                           <Table>
                                                 <TableHeader>
                                                       <TableRow className="bg-muted/50">
+                                                            <TableHead>{t("permission.name")}</TableHead>
                                                             <TableHead>{t("permission.code")}</TableHead>
                                                             <TableHead>{t("permission.resource")}</TableHead>
                                                             <TableHead>{t("permission.action")}</TableHead>
@@ -65,6 +66,9 @@ export function PermissionCategoryAccordion({ groups }: PermissionCategoryAccord
                                                 <TableBody>
                                                       {group.permissions.map((permission) => (
                                                             <TableRow key={permission.id} className="hover:bg-muted/25">
+                                                                  <TableCell className="font-medium text-sm">
+                                                                        {permission.getLocalizedName(language)}
+                                                                  </TableCell>
                                                                   <TableCell>
                                                                         <code className="text-sm bg-muted px-2 py-1 rounded">
                                                                               {permission.code}
@@ -73,7 +77,7 @@ export function PermissionCategoryAccordion({ groups }: PermissionCategoryAccord
                                                                   <TableCell className="text-sm">{permission.resource}</TableCell>
                                                                   <TableCell className="text-sm">{permission.action}</TableCell>
                                                                   <TableCell className="text-sm text-muted-foreground max-w-xs truncate">
-                                                                        {permission.description || "-"}
+                                                                        {permission.getLocalizedDescription(language) || "-"}
                                                                   </TableCell>
                                                                   <TableCell>
                                                                         <Badge variant="outline" className="text-xs">

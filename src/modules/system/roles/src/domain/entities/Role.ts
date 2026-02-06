@@ -100,6 +100,33 @@ export class Role {
 
       // ===== Business Logic =====
 
+      /**
+       * Get localized name based on language
+       */
+      getLocalizedName(lang: string = "en"): string {
+            if (lang === "ar" && this.props.nameAr) {
+                  return this.props.nameAr;
+            }
+            return this.props.nameEn;
+      }
+
+      /**
+       * Get localized description based on language
+       */
+      getLocalizedDescription(lang: string = "en"): string {
+            if (lang === "ar" && this.props.descriptionAr) {
+                  return this.props.descriptionAr;
+            }
+            return this.props.descriptionEn ?? "";
+      }
+
+      /**
+       * Get display name (alias for localized name)
+       */
+      get displayName(): string {
+            return this.nameEn;
+      }
+
       get permissionCount(): number {
             return this.props.permissions.length;
       }

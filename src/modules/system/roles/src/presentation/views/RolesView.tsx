@@ -23,9 +23,9 @@ export function RolesView() {
       const viewModel = useRolesViewModel({ useMyTenant: true });
 
       const columns: CrudColumn<Role>[] = [
-            { key: "nameAr", label: t("roles.name"), sortable: true, className: "font-medium", render: (value: unknown, role: Role) => language === 'ar' ? role.nameAr : role.nameEn },
+            { key: "nameAr", label: t("roles.name"), sortable: true, className: "font-medium", render: (value: unknown, role: Role) => role.getLocalizedName(language) },
             { key: "code", label: t("roles.code"), sortable: true, className: "font-mono text-xs" },
-            { key: "description", label: t("roles.descriptionCol") || t("roles.description"), className: "hidden md:table-cell", render: (value: unknown, role: Role) => language === 'ar' ? role?.descriptionAr ?? "" : role?.descriptionEn ?? "" },
+            { key: "description", label: t("roles.descriptionCol") || t("roles.description"), className: "hidden md:table-cell", render: (value: unknown, role: Role) => role.getLocalizedDescription(language) },
             {
                   key: "priority",
                   label: t("roles.priority"),
@@ -130,7 +130,7 @@ export function RolesView() {
                         variant: "destructive",
                   }
             ],
-            getItemDisplayName: (role) => language === 'ar' ? role.nameAr : role.nameEn,
+            getItemDisplayName: (role) => role.getLocalizedName(language),
             itemTypeKey: "roles.roleDetails"  // Used for delete confirmation ("Delete Role Details" -> "Delete Role")
       };
 

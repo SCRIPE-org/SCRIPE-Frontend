@@ -341,6 +341,7 @@ export const ar = {
     noPermissionsDescription: "لم يتم تكوين أي صلاحيات بعد.",
     adjustFilters: "حاول تعديل عوامل التصفية.",
     // Table columns
+    name: "الاسم",
     code: "الرمز",
     resource: "المورد",
     action: "الإجراء",

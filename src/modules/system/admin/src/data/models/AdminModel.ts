@@ -13,7 +13,8 @@
  */
 export interface AdminRoleJson {
       roleId: string;
-      roleName: string;
+      roleNameEn: string;
+      roleNameAr: string;
       roleCode: string;
       tenantId?: string;
       tenantName?: string;
@@ -37,7 +38,8 @@ export interface AdminJson {
       /** Full role data (from details API) */
       roles?: AdminRoleJson[];
       /** Simple role names (from list API) */
-      roleNames?: string[];
+      roleNamesEn?: string[];
+      roleNamesAr?: string[];
       /** The tenant this admin belongs to */
       tenantId?: string;
       tenantName?: string;
@@ -122,7 +124,8 @@ export class AdminModel {
             public readonly lastLoginAt?: string,
             public readonly notes?: string,
             public readonly roles?: AdminRoleJson[],
-            public readonly roleNames?: string[],
+            public readonly roleNamesEn?: string[],
+            public readonly roleNamesAr?: string[],
             public readonly tenantId?: string,
             public readonly tenantName?: string,
             public readonly isSuperAdmin?: boolean,
@@ -144,7 +147,8 @@ export class AdminModel {
                   json.lastLoginAt,
                   json.notes,
                   json.roles,
-                  json.roleNames,
+                  json.roleNamesEn,
+                  json.roleNamesAr,
                   json.tenantId,
                   json.tenantName,
                   json.isSuperAdmin,
@@ -167,7 +171,8 @@ export class AdminModel {
                   lastLoginAt: this.lastLoginAt,
                   notes: this.notes,
                   roles: this.roles,
-                  roleNames: this.roleNames,
+                  roleNamesEn: this.roleNamesEn,
+                  roleNamesAr: this.roleNamesAr,
                   tenantId: this.tenantId,
                   tenantName: this.tenantName,
                   isSuperAdmin: this.isSuperAdmin,

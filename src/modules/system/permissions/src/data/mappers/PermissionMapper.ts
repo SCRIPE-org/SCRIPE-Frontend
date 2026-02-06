@@ -35,7 +35,8 @@ export class PermissionMapper {
                   defaultScope: model.defaultScope,
                   category: model.category,
                   displayOrder: model.displayOrder,
-                  description: model.description,
+                  descriptionEn: model.descriptionEn,
+                  descriptionAr: model.descriptionAr,
                   nameEn: model.nameEn,
                   nameAr: model.nameAr,
             };
@@ -54,7 +55,8 @@ export class PermissionMapper {
                   entity.defaultScope,
                   entity.category,
                   entity.displayOrder,
-                  entity.description,
+                  entity.descriptionEn,
+                  entity.descriptionAr,
                   entity.nameEn,
                   entity.nameAr
             );
@@ -79,7 +81,8 @@ export class PermissionMapper {
                   permissionCode,
                   request.category || "system",
                   request.displayOrder ?? 0,
-                  request.description,
+                  request.descriptionEn,
+                  request.descriptionAr,
                   undefined, // nameEn not in request
                   undefined // nameAr not in request
             );
@@ -90,7 +93,8 @@ export class PermissionMapper {
        */
       static toUpdateModel(request: UpdatePermissionRequest): UpdatePermissionModel {
             return new UpdatePermissionModel(
-                  request.description,
+                  request.descriptionEn,
+                  request.descriptionAr,
                   undefined, // nameEn not in request
                   undefined, // nameAr not in request
                   request.category,

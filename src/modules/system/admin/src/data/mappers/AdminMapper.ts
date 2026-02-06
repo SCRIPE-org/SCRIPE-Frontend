@@ -6,8 +6,8 @@
  *
  * @module admin/data
  */
-import { Admin, type AdminData } from "../../domain/entities/Admin";
-import { AdminModel, type AdminJson } from "../models/AdminModel";
+import { Admin, type AdminData, type AdminRoleData } from "../../domain/entities/Admin";
+import { AdminModel, type AdminJson, type AdminRoleJson } from "../models/AdminModel";
 
 export class AdminMapper {
       /**
@@ -24,8 +24,9 @@ export class AdminMapper {
                   phoneNumber: model.phoneNumber,
                   lastLoginAt: model.lastLoginAt,
                   notes: model.notes,
-                  roles: model.roles,
-                  roleNames: model.roleNames,
+                  roles: model.roles ? AdminMapper.toRoleDataList(model.roles) : undefined,
+                  roleNamesEn: model.roleNamesEn,
+                  roleNamesAr: model.roleNamesAr,
                   tenantId: model.tenantId,
                   tenantName: model.tenantName,
                   isSuperAdmin: model.isSuperAdmin,
@@ -49,7 +50,8 @@ export class AdminMapper {
                   entity.lastLoginAt,
                   entity.notes,
                   entity.roles,
-                  entity.data.roleNames,
+                  entity.data.roleNamesEn,
+                  entity.data.roleNamesAr,
                   entity.tenantId,
                   entity.tenantName,
                   entity.isSuperAdmin,
@@ -77,5 +79,21 @@ export class AdminMapper {
       static toJsonFromEntity(entity: Admin): AdminJson {
             const model = AdminMapper.toModel(entity);
             return model.toJson();
+      }
+
+      /**
+       * Convert AdminRoleJson list to AdminRoleData list
+       */
+      static toRoleDataList(roles: AdminRoleJson[]): AdminRoleData[] {
+            return roles.map(r => AdminMapper.toRoleData(r));
+      }
+
+      /**
+       * Convert single AdminRoleJson to AdminRoleData
+       */
+      static toRoleData(role: AdminRoleJson): AdminRoleData {
+            return {
+                  ...role
+            };
       }
 }
