@@ -1,15 +1,21 @@
 /**
  * Admin Repository Implementation
  *
- * Implements IAdminRepository using the API service.
+ * Implements IAdminRepository using the AdminService.
+ * Uses AdminMapper to convert between Models (DTOs) and Entities.
+ *
+ * Clean Architecture Pattern:
+ * - Service handles API calls, returns Models
+ * - Repository uses Mapper to convert to Entities
+ * - ViewModel uses Repository, works with Entities
  */
-import type { IApiService } from "@core/interfaces/api.interface";
-import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
 import type {
       IAdminRepository,
       AdminListParams,
 } from "../../domain/interfaces/IAdminRepository";
-import { Admin, type AdminData, type AdminRoleData } from "../../domain/entities/Admin";
+import type { IAdminService, ImpersonateResult } from "../../domain/interfaces/IAdminService";
+import { Admin, type AdminRoleData } from "../../domain/entities/Admin";
+import { AdminMapper } from "../mappers/AdminMapper";
 import type {
       CreateAdminRequest,
       UpdateAdminRequest,
@@ -18,120 +24,113 @@ import type {
 } from "../../domain/entities/AdminRequests";
 import type { PagedResult } from "@modules/system/core/domain/types";
 
-/**
- * API response shape for paginated admins (matches backend)
- */
-interface AdminListApiResponse {
-      items: AdminData[];
-      totalCount: number;
-      page: number;
-      pageSize: number;
-      totalPages: number;
-      hasNextPage: boolean;
-      hasPreviousPage: boolean;
-}
-
 export class AdminRepository implements IAdminRepository {
-      constructor(private readonly api: IApiService) { }
+      constructor(private readonly service: IAdminService) { }
 
       async getAll(params: AdminListParams): Promise<PagedResult<Admin>> {
-            const url = buildUrl(API_ENDPOINTS.ADMINS.LIST, {
-                  page: params.page,
-                  pageSize: params.pageSize,
-                  search: params.search,
-                  isActive: params.isActive,
-            });
-
-            const response = await this.api.get<AdminListApiResponse>(url);
+            const result = await this.service.getAll(params);
 
             return {
-                  items: response.items.map((data) => new Admin(data)),
-                  totalCount: response.totalCount,
-                  page: response.page,
-                  pageSize: response.pageSize,
-                  totalPages: response.totalPages,
-                  hasNextPage: response.hasNextPage,
-                  hasPreviousPage: response.hasPreviousPage,
+                  items: result.items.map((model) => AdminMapper.toEntity(model)),
+                  totalCount: result.totalCount,
+                  page: result.page,
+                  pageSize: result.pageSize,
+                  totalPages: result.totalPages,
+                  hasNextPage: result.hasNextPage,
+                  hasPreviousPage: result.hasPreviousPage,
             };
       }
 
-      async getByTenantId(tenantId: string, params: AdminListParams): Promise<PagedResult<Admin>> {
-            const url = buildUrl(API_ENDPOINTS.ADMINS.BY_TENANT_ID(tenantId), {
-                  page: params.page,
-                  pageSize: params.pageSize,
-                  search: params.search,
-                  isActive: params.isActive,
-            });
-
-            const response = await this.api.get<AdminListApiResponse>(url);
+      async getByTenantId(
+            tenantId: string,
+            params: AdminListParams
+      ): Promise<PagedResult<Admin>> {
+            const result = await this.service.getByTenantId(tenantId, params);
 
             return {
-                  items: response.items.map((data) => new Admin(data)),
-                  totalCount: response.totalCount,
-                  page: response.page,
-                  pageSize: response.pageSize,
-                  totalPages: response.totalPages,
-                  hasNextPage: response.hasNextPage,
-                  hasPreviousPage: response.hasPreviousPage,
+                  items: result.items.map((model) => AdminMapper.toEntity(model)),
+                  totalCount: result.totalCount,
+                  page: result.page,
+                  pageSize: result.pageSize,
+                  totalPages: result.totalPages,
+                  hasNextPage: result.hasNextPage,
+                  hasPreviousPage: result.hasPreviousPage,
             };
       }
 
       async getMyTenantAdmins(params: AdminListParams): Promise<PagedResult<Admin>> {
-            const url = buildUrl(API_ENDPOINTS.ADMINS.MY_TENANT_ADMINS, {
-                  page: params.page,
-                  pageSize: params.pageSize,
-                  search: params.search,
-                  isActive: params.isActive,
-            });
-
-            const response = await this.api.get<AdminListApiResponse>(url);
+            const result = await this.service.getMyTenantAdmins(params);
 
             return {
-                  items: response.items.map((data) => new Admin(data)),
-                  totalCount: response.totalCount,
-                  page: response.page,
-                  pageSize: response.pageSize,
-                  totalPages: response.totalPages,
-                  hasNextPage: response.hasNextPage,
-                  hasPreviousPage: response.hasPreviousPage,
+                  items: result.items.map((model) => AdminMapper.toEntity(model)),
+                  totalCount: result.totalCount,
+                  page: result.page,
+                  pageSize: result.pageSize,
+                  totalPages: result.totalPages,
+                  hasNextPage: result.hasNextPage,
+                  hasPreviousPage: result.hasPreviousPage,
             };
       }
 
       async getById(id: string): Promise<Admin> {
-            const data = await this.api.get<AdminData>(API_ENDPOINTS.ADMINS.BY_ID(id));
-            return new Admin(data);
+            const model = await this.service.getById(id);
+            return AdminMapper.toEntity(model);
       }
 
       async create(request: CreateAdminRequest): Promise<string> {
-            const response = await this.api.post<{ id: string }>(
-                  API_ENDPOINTS.ADMINS.CREATE,
-                  request
-            );
+            const response = await this.service.create({
+                  username: request.username,
+                  password: request.password,
+                  firstName: request.firstName,
+                  lastName: request.lastName,
+                  phoneNumber: request.phoneNumber,
+                  notes: request.notes,
+                  tenantId: request.tenantId,
+                  roleIds: request.roleIds,
+            });
             return response.id;
       }
 
-      async createForMyTenant(request: Omit<CreateAdminRequest, 'tenantId'>): Promise<string> {
-            const response = await this.api.post<{ id: string }>(
-                  API_ENDPOINTS.ADMINS.CREATE_FOR_MY_TENANT,
-                  request
-            );
+      async createForMyTenant(
+            request: Omit<CreateAdminRequest, "tenantId">
+      ): Promise<string> {
+            const response = await this.service.createForMyTenant({
+                  username: request.username,
+                  password: request.password,
+                  firstName: request.firstName,
+                  lastName: request.lastName,
+                  phoneNumber: request.phoneNumber,
+                  notes: request.notes,
+                  roleIds: request.roleIds,
+            });
             return response.id;
       }
 
       async update(id: string, request: UpdateAdminRequest): Promise<void> {
-            await this.api.put(API_ENDPOINTS.ADMINS.UPDATE(id), request);
+            await this.service.update(id, {
+                  firstName: request.firstName,
+                  lastName: request.lastName,
+                  phoneNumber: request.phoneNumber,
+                  notes: request.notes,
+                  isActive: request.isActive,
+            });
       }
 
       async delete(id: string): Promise<void> {
-            await this.api.delete(API_ENDPOINTS.ADMINS.DELETE(id));
+            await this.service.delete(id);
       }
 
       async setActive(id: string, isActive: boolean): Promise<void> {
-            await this.api.patch(API_ENDPOINTS.ADMINS.SET_ACTIVE(id), isActive);
+            await this.service.setActive(id, isActive);
       }
 
       async assignRole(adminId: string, request: AssignRoleRequest): Promise<void> {
-            await this.api.post(API_ENDPOINTS.ADMINS.ROLES(adminId), request);
+            await this.service.assignRole(adminId, {
+                  roleId: request.roleId,
+                  tenantId: request.tenantId,
+                  expiresAt: request.expiresAt,
+                  inheritToChildren: request.inheritToChildren,
+            });
       }
 
       async removeRole(
@@ -139,65 +138,47 @@ export class AdminRepository implements IAdminRepository {
             roleId: string,
             tenantId?: string
       ): Promise<void> {
-            const url = buildUrl(API_ENDPOINTS.ADMINS.REMOVE_ROLE(adminId, roleId), {
-                  tenantId,
-            });
-            await this.api.delete(url);
+            await this.service.removeRole(adminId, roleId, tenantId);
       }
 
       async getRoles(adminId: string): Promise<AdminRoleData[]> {
-            return this.api.get<AdminRoleData[]>(API_ENDPOINTS.ADMINS.ROLES(adminId));
+            // Service returns AdminRoleJson which matches AdminRoleData structure
+            return this.service.getRoles(adminId);
       }
 
       async resetPassword(id: string, newPassword: string): Promise<void> {
-            await this.api.post(API_ENDPOINTS.ADMINS.RESET_PASSWORD(id), { newPassword });
+            await this.service.resetPassword(id, newPassword);
       }
 
       async bulkActivate(ids: string[]): Promise<number> {
-            const response = await this.api.post<number>(
-                  API_ENDPOINTS.ADMINS.BULK.ACTIVATE,
-                  ids
-            );
-            return response;
+            return this.service.bulkActivate(ids);
       }
 
       async bulkDeactivate(ids: string[]): Promise<number> {
-            const response = await this.api.post<number>(
-                  API_ENDPOINTS.ADMINS.BULK.DEACTIVATE,
-                  ids
-            );
-            return response;
+            return this.service.bulkDeactivate(ids);
       }
 
       async bulkDelete(ids: string[]): Promise<number> {
-            const response = await this.api.post<number>(
-                  API_ENDPOINTS.ADMINS.BULK.DELETE,
-                  ids
-            );
-            return response;
+            return this.service.bulkDelete(ids);
       }
 
       async bulkActivateAll(filter: BulkAdminsFilterRequest): Promise<number> {
-            const response = await this.api.post<number>(
-                  API_ENDPOINTS.ADMINS.BULK.ACTIVATE,
-                  filter
-            );
-            return response;
+            return this.service.bulkActivateAll(filter);
       }
 
       async bulkDeactivateAll(filter: BulkAdminsFilterRequest): Promise<number> {
-            const response = await this.api.post<number>(
-                  API_ENDPOINTS.ADMINS.BULK.DEACTIVATE,
-                  filter
-            );
-            return response;
+            return this.service.bulkDeactivateAll(filter);
       }
 
       async bulkDeleteAll(filter: BulkAdminsFilterRequest): Promise<number> {
-            const response = await this.api.post<number>(
-                  API_ENDPOINTS.ADMINS.BULK.DELETE,
-                  filter
-            );
-            return response;
+            return this.service.bulkDeleteAll(filter);
+      }
+
+      async impersonate(id: string): Promise<ImpersonateResult> {
+            return this.service.impersonate(id);
+      }
+
+      async transfer(id: string, targetTenantId: string): Promise<void> {
+            return this.service.transfer(id, targetTenantId);
       }
 }

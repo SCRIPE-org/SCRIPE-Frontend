@@ -49,7 +49,12 @@ export const API_ENDPOINTS = {
       ACTIVATE: "/Admins/bulk/activate",
       DEACTIVATE: "/Admins/bulk/deactivate",
       DELETE: "/Admins/bulk/delete",
+      ACTIVATE_ALL: "/Admins/bulk/activate-all",
+      DEACTIVATE_ALL: "/Admins/bulk/deactivate-all",
+      DELETE_ALL: "/Admins/bulk/delete-all",
     },
+    IMPERSONATE: (id: string) => `/Admins/${id}/impersonate`,
+    TRANSFER: (id: string) => `/Admins/${id}/transfer`,
   },
 
   // Legacy profile endpoints

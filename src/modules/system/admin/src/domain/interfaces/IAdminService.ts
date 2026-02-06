@@ -1,22 +1,25 @@
 /**
- * Admin Repository Interface
+ * Admin Service Interface
  *
- * Defines the contract for admin data operations.
+ * Defines the contract for Admin API operations.
+ * Service returns AdminModel (DTO), not domain entities.
+ * Repository uses Mapper to convert to entities.
+ *
+ * @module admin/domain
  */
-import type { Admin } from "../entities/Admin";
 import type {
-      CreateAdminRequest,
-      UpdateAdminRequest,
-      AssignRoleRequest,
-      // ResetPasswordRequest,
-      BulkAdminsFilterRequest,
-} from "../entities/AdminRequests";
-import type { PagedResult } from "@modules/system/core/domain/types";
+      AdminModel,
+      AdminRoleJson,
+      CreateAdminJson,
+      UpdateAdminJson,
+      AssignRoleJson,
+      BulkAdminsFilterJson,
+} from "../../data/models/AdminModel";
 
 /**
  * Admin list query parameters
  */
-export interface AdminListParams {
+export interface ServiceAdminListParams {
       page: number;
       pageSize: number;
       search?: string;
@@ -24,43 +27,64 @@ export interface AdminListParams {
 }
 
 /**
- * Admin repository interface
+ * Paginated result from service
  */
-export interface IAdminRepository {
+export interface AdminListResult {
+      items: AdminModel[];
+      totalCount: number;
+      page: number;
+      pageSize: number;
+      totalPages: number;
+      hasNextPage: boolean;
+      hasPreviousPage: boolean;
+}
+
+/**
+ * Impersonation result
+ */
+export interface ImpersonateResult {
+      token: string;
+      expiresAt: string;
+}
+
+/**
+ * Admin Service Interface
+ */
+export interface IAdminService {
       /**
        * Get paginated list of admins based on user's data scope
        */
-      getAll(params: AdminListParams): Promise<PagedResult<Admin>>;
+      getAll(params: ServiceAdminListParams): Promise<AdminListResult>;
 
       /**
        * Get admins for a specific tenant by tenant ID
        */
-      getByTenantId(tenantId: string, params: AdminListParams): Promise<PagedResult<Admin>>;
+      getByTenantId(tenantId: string, params: ServiceAdminListParams): Promise<AdminListResult>;
 
       /**
        * Get admins belonging to current user's tenant
        */
-      getMyTenantAdmins(params: AdminListParams): Promise<PagedResult<Admin>>;
+      getMyTenantAdmins(params: ServiceAdminListParams): Promise<AdminListResult>;
 
       /**
        * Get admin by ID
        */
-      getById(id: string): Promise<Admin>;
+      getById(id: string): Promise<AdminModel>;
 
       /**
        * Create a new admin (with explicit tenantId)
        */
-      create(request: CreateAdminRequest): Promise<string>;
+      create(json: CreateAdminJson): Promise<{ id: string }>;
 
       /**
        * Create admin for current user's tenant (tenantId from token)
        */
-      createForMyTenant(request: Omit<CreateAdminRequest, 'tenantId'>): Promise<string>;
+      createForMyTenant(json: Omit<CreateAdminJson, "tenantId">): Promise<{ id: string }>;
 
       /**
        * Update an existing admin
        */
-      update(id: string, request: UpdateAdminRequest): Promise<void>;
+      update(id: string, json: UpdateAdminJson): Promise<void>;
 
       /**
        * Delete an admin (soft delete)
@@ -75,7 +99,7 @@ export interface IAdminRepository {
       /**
        * Assign a role to an admin
        */
-      assignRole(adminId: string, request: AssignRoleRequest): Promise<void>;
+      assignRole(adminId: string, json: AssignRoleJson): Promise<void>;
 
       /**
        * Remove a role from an admin
@@ -85,7 +109,7 @@ export interface IAdminRepository {
       /**
        * Get all roles assigned to an admin
        */
-      getRoles(adminId: string): Promise<import("../entities/Admin").AdminRoleData[]>;
+      getRoles(adminId: string): Promise<AdminRoleJson[]>;
 
       /**
        * Reset admin's password
@@ -110,22 +134,22 @@ export interface IAdminRepository {
       /**
        * Bulk activate all matching admins
        */
-      bulkActivateAll(filter: BulkAdminsFilterRequest): Promise<number>;
+      bulkActivateAll(filter: BulkAdminsFilterJson): Promise<number>;
 
       /**
        * Bulk deactivate all matching admins
        */
-      bulkDeactivateAll(filter: BulkAdminsFilterRequest): Promise<number>;
+      bulkDeactivateAll(filter: BulkAdminsFilterJson): Promise<number>;
 
       /**
        * Bulk delete all matching admins
        */
-      bulkDeleteAll(filter: BulkAdminsFilterRequest): Promise<number>;
+      bulkDeleteAll(filter: BulkAdminsFilterJson): Promise<number>;
 
       /**
        * Impersonate an admin (returns new token)
        */
-      impersonate(id: string): Promise<{ token: string; expiresAt: string }>;
+      impersonate(id: string): Promise<ImpersonateResult>;
 
       /**
        * Transfer admin to another tenant

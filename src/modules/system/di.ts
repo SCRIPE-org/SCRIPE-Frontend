@@ -11,6 +11,7 @@
 import { getCoreContainer } from "@/core/di";
 
 // Services
+import { AdminService } from "./admin/src/data/services/AdminService";
 import { PermissionService } from "./permissions/src/data/services/PermissionService";
 import { RoleService } from "./roles/src/data/services/RoleService";
 import { TenantService } from "./tenants/src/data/services/TenantService";
@@ -33,6 +34,7 @@ import type { IMenuRepository } from "./menus/src/domain/interfaces/IMenuReposit
 import type { ITenantSettingsRepository } from "./tenant-settings/src/domain/interfaces/ITenantSettingsRepository";
 
 // Interfaces - Services (from domain/interfaces, NOT data/services)
+import type { IAdminService } from "./admin/src/domain/interfaces/IAdminService";
 import type { IPermissionService } from "./permissions/src/domain/interfaces/IPermissionService";
 import type { IRoleService } from "./roles/src/domain/interfaces/IRoleService";
 import type { ITenantService } from "./tenants/src/domain/interfaces/ITenantService";
@@ -40,6 +42,7 @@ import type { ITenantSettingsService } from "./tenant-settings/src/domain/interf
 
 export interface SystemContainer {
       // Services
+      adminService: IAdminService;
       permissionService: IPermissionService;
       roleService: IRoleService;
       tenantService: ITenantService;
@@ -63,6 +66,7 @@ export function getSystemContainer(): SystemContainer {
             const { apiService } = getCoreContainer();
 
             // Create Services (wrap IApiService)
+            const adminService = new AdminService(apiService);
             const permissionService = new PermissionService(apiService);
             const roleService = new RoleService(apiService);
             const tenantService = new TenantService(apiService);
@@ -71,12 +75,13 @@ export function getSystemContainer(): SystemContainer {
             // Create Repositories (use Services)
             _container = {
                   // Services
+                  adminService,
                   permissionService,
                   roleService,
                   tenantService,
                   tenantSettingsService,
                   // Repositories
-                  adminRepository: new AdminRepository(apiService), // TODO: Add AdminService
+                  adminRepository: new AdminRepository(adminService),
                   roleRepository: new RoleRepository(roleService),
                   permissionRepository: new PermissionRepository(permissionService),
                   tenantRepository: new TenantRepository(tenantService),

@@ -174,6 +174,59 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
             },
       });
 
+      // Impersonate mutation
+      const impersonateMutation = useMutation({
+            mutationFn: (id: string) => adminRepository.impersonate(id),
+            onSuccess: (data) => {
+                  success({ title: "Impersonating...", description: "Redirecting to admin dashboard" });
+                  localStorage.setItem("impersonationToken", data.token);
+                  window.location.href = "/dashboard?impersonated=true";
+            },
+            onError: (err: Error) => {
+                  toastError({ title: t("common.error") || "Error", description: err.message });
+            },
+      });
+
+      // Transfer mutation
+      const transferMutation = useMutation({
+            mutationFn: ({ id, targetTenantId }: { id: string; targetTenantId: string }) =>
+                  adminRepository.transfer(id, targetTenantId),
+            onSuccess: () => {
+                  queryClient.invalidateQueries({ queryKey: ["admins"] });
+                  success({ title: t("admin.transferred") || "Admin Transferred", description: t("admin.transferredDesc") || "Admin transferred successfully." });
+            },
+            onError: (err: Error) => {
+                  toastError({ title: t("common.error") || "Error", description: err.message });
+            },
+      });
+
+      // Bulk Activate
+      const bulkActivateMutation = useMutation({
+            mutationFn: (ids: string[]) => adminRepository.bulkActivate(ids),
+            onSuccess: (count) => {
+                  queryClient.invalidateQueries({ queryKey: ["admins"] });
+                  success({ title: "Bulk Activated", description: `${count} admins activated.` });
+            }
+      });
+
+      // Bulk Deactivate
+      const bulkDeactivateMutation = useMutation({
+            mutationFn: (ids: string[]) => adminRepository.bulkDeactivate(ids),
+            onSuccess: (count) => {
+                  queryClient.invalidateQueries({ queryKey: ["admins"] });
+                  success({ title: "Bulk Deactivated", description: `${count} admins deactivated.` });
+            }
+      });
+
+      // Bulk Delete
+      const bulkDeleteMutation = useMutation({
+            mutationFn: (ids: string[]) => adminRepository.bulkDelete(ids),
+            onSuccess: (count) => {
+                  queryClient.invalidateQueries({ queryKey: ["admins"] });
+                  success({ title: "Bulk Deleted", description: `${count} admins deleted.` });
+            }
+      });
+
       // ============ Handler Functions ============
       const handleDelete = useCallback(async (admin: Admin) => {
             await adminRepository.delete(admin.id);
@@ -340,10 +393,18 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
             handleAssignRole,
             handleRemoveRole,
             handleResetPassword,
+            handleImpersonate: (id: string) => impersonateMutation.mutate(id),
+            handleTransfer: (id: string, targetTenantId: string) => transferMutation.mutate({ id, targetTenantId }),
+            handleBulkActivate: (ids: string[]) => bulkActivateMutation.mutate(ids),
+            handleBulkDeactivate: (ids: string[]) => bulkDeactivateMutation.mutate(ids),
+            handleBulkDelete: (ids: string[]) => bulkDeleteMutation.mutate(ids),
+
             isTogglingActive: toggleActiveMutation.isPending,
             isAssigningRole: assignRoleMutation.isPending,
             isRemovingRole: removeRoleMutation.isPending,
             isResettingPassword: resetPasswordMutation.isPending,
+            isImpersonating: impersonateMutation.isPending,
+            isTransferring: transferMutation.isPending,
             t,
       };
 }
