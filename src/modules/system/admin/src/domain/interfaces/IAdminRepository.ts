@@ -93,6 +93,11 @@ export interface IAdminRepository {
       resetPassword(id: string, newPassword: string): Promise<void>;
 
       /**
+       * Change admin's own password
+       */
+      changePassword(id: string, currentPassword: string, newPassword: string): Promise<void>;
+
+      /**
        * Bulk activate admins by IDs
        */
       bulkActivate(ids: string[]): Promise<number>;

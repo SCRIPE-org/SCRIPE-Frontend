@@ -147,6 +147,13 @@ export class AdminService implements IAdminService {
             await this.api.post(API_ENDPOINTS.ADMINS.RESET_PASSWORD(id), { newPassword });
       }
 
+      async changePassword(id: string, currentPassword: string, newPassword: string): Promise<void> {
+            await this.api.post(API_ENDPOINTS.ADMINS.CHANGE_PASSWORD(id), {
+                  currentPassword,
+                  newPassword,
+            });
+      }
+
       async bulkActivate(ids: string[]): Promise<number> {
             return this.api.post<number>(API_ENDPOINTS.ADMINS.BULK.ACTIVATE, ids);
       }

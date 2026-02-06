@@ -29,6 +29,7 @@ export class AdminMapper {
                   tenantId: model.tenantId,
                   tenantName: model.tenantName,
                   isSuperAdmin: model.isSuperAdmin,
+                  // permissions: model.permissions - Admin entity doesn't store calculated permissions, they come from roles
             };
             return new Admin(data);
       }
@@ -51,7 +52,12 @@ export class AdminMapper {
                   entity.data.roleNames,
                   entity.tenantId,
                   entity.tenantName,
-                  entity.isSuperAdmin
+                  entity.isSuperAdmin,
+                  // Entity might not have permissions populated if it came from internal logic, 
+                  // but if it came from API -> Model -> Entity, we might lose it. 
+                  // However, Admin Entity is domain, it shouldn't care about DTO's calculated permissions.
+                  // We'll leave it undefined for toModel unless we extend Entity data.
+                  undefined
             );
       }
 

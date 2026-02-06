@@ -150,6 +150,10 @@ export class AdminRepository implements IAdminRepository {
             await this.service.resetPassword(id, newPassword);
       }
 
+      async changePassword(id: string, currentPassword: string, newPassword: string): Promise<void> {
+            await this.service.changePassword(id, currentPassword, newPassword);
+      }
+
       async bulkActivate(ids: string[]): Promise<number> {
             return this.service.bulkActivate(ids);
       }

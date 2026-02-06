@@ -43,6 +43,8 @@ export interface AdminJson {
       tenantName?: string;
       /** Whether this admin is a super/system admin */
       isSuperAdmin?: boolean;
+      /** Effective permissions calculated by backend */
+      permissions?: string[];
 }
 
 /**
@@ -123,7 +125,8 @@ export class AdminModel {
             public readonly roleNames?: string[],
             public readonly tenantId?: string,
             public readonly tenantName?: string,
-            public readonly isSuperAdmin?: boolean
+            public readonly isSuperAdmin?: boolean,
+            public readonly permissions?: string[]
       ) { }
 
       /**
@@ -144,7 +147,8 @@ export class AdminModel {
                   json.roleNames,
                   json.tenantId,
                   json.tenantName,
-                  json.isSuperAdmin
+                  json.isSuperAdmin,
+                  json.permissions
             );
       }
 
@@ -167,6 +171,7 @@ export class AdminModel {
                   tenantId: this.tenantId,
                   tenantName: this.tenantName,
                   isSuperAdmin: this.isSuperAdmin,
+                  permissions: this.permissions,
             };
       }
 
