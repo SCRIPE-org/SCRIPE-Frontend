@@ -28,19 +28,25 @@ export function useAdminRolesViewModel(
       const effectiveTenantId = forcedTenantId || admin?.tenantId;
 
       // ============ Assign Role Logic ============
-      const [assignRoleId, setAssignRoleId] = useState<string>("");
+      const [assignRoleIds, setAssignRoleIds] = useState<string[]>([]);
       const [assignTenantId, setAssignTenantId] = useState<string>("");
       const [inheritToChildren, setInheritToChildren] = useState(false);
 
       // Fetch roles for dropdown
+      // Trigger fetch when: 
+      // 1. Dialog is open (enabled: !!admin)
+      // 2. effectiveTenantId changes (forced context)
+      // 3. assignTenantId changes (user selected scope)
+      const targetTenantId = effectiveTenantId || assignTenantId;
+
       const { data: rolesData, isLoading: isLoadingRoles } = useQuery({
-            queryKey: ["roles-for-select", effectiveTenantId],
+            queryKey: ["roles-for-select", targetTenantId],
             queryFn: () => roleRepository.getAll({
                   page: 1,
                   pageSize: 100,
-                  tenantId: effectiveTenantId || undefined
+                  tenantId: targetTenantId || undefined
             }),
-            enabled: !!admin, // Only fetch when admin is selected (dialog open)
+            enabled: !!admin,
       });
 
       // Fetch tenants for dropdown (only if no tenant context determined)
@@ -55,6 +61,7 @@ export function useAdminRolesViewModel(
             value: role.id,
             label: language === 'ar' ? role.nameAr : role.nameEn,
             description: language === 'ar' ? role.descriptionAr : role.descriptionEn,
+            uniqueKey: role.code // Use code for stable selection if IDs rotate
       })), [rolesData, language]);
 
       // Transform tenants tree
@@ -73,24 +80,38 @@ export function useAdminRolesViewModel(
       }, []);
 
       const tenantOptions: GenericSelectOption[] = useMemo(() => [
-            { value: "", label: t("admin.role.globalScope") || "Global (All Tenants)" },
+            { value: "", label: t("admin.role.systemScope") || "System Level (Global Access)" },
             ...(Array.isArray(tenantsTree) ? flattenTenants(tenantsTree) : []),
       ], [tenantsTree, flattenTenants, t]);
 
       const resetAssignForm = useCallback(() => {
-            setAssignRoleId("");
+            setAssignRoleIds([]);
             setAssignTenantId(effectiveTenantId || "");
             setInheritToChildren(false);
       }, [effectiveTenantId]);
 
       const handleAssignSubmit = async () => {
-            if (!assignRoleId) return;
-            await onAssignRole({
-                  roleId: assignRoleId,
-                  tenantId: assignTenantId || undefined,
-                  inheritToChildren: assignTenantId ? inheritToChildren : undefined
-            });
-            resetAssignForm();
+            if (assignRoleIds.length === 0) return;
+
+            // AssignRoleRequest only accepts single roleId, so we must loop
+            // In a real app, a bulk endpoint would be better
+            const promises = assignRoleIds.map(roleId =>
+                  onAssignRole({
+                        roleId: roleId,
+                        tenantId: assignTenantId || undefined,
+                        inheritToChildren: assignTenantId ? inheritToChildren : undefined
+                  })
+            );
+
+            try {
+                  await Promise.all(promises);
+                  resetAssignForm();
+            } catch (error) {
+                  // Error is handled by the mutation wrapper in the View, 
+                  // but we catch here to prevent reset if partial failure? 
+                  // For now let it bubble up.
+                  throw error;
+            }
       };
 
       // ============ View Roles Logic ============
@@ -116,8 +137,8 @@ export function useAdminRolesViewModel(
             isLoadingCurrentRoles,
 
             // Form State
-            assignRoleId,
-            setAssignRoleId,
+            assignRoleIds,
+            setAssignRoleIds,
             assignTenantId,
             setAssignTenantId,
             inheritToChildren,

@@ -61,20 +61,8 @@ export function AssignRoleDialog({
                   size="md"
             >
                   <div className="space-y-4 py-2">
-                        {/* Role Selection */}
-                        <div className="space-y-2">
-                              <Label>{vm.t("admin.role.selectRole") || "Role"} *</Label>
-                              <GenericSelect
-                                    options={vm.roleOptions}
-                                    value={vm.assignRoleId}
-                                    onValueChange={(val: string | string[]) => vm.setAssignRoleId(val as string)}
-                                    placeholder={vm.t("admin.role.selectRolePlaceholder") || "Select a role..."}
-                                    type="searchable"
-                                    loading={vm.isLoadingRoles}
-                              />
-                        </div>
-
-                        {/* Tenant Selection - Hide if we have an effective tenant context */}
+                        {/* Tenant Selection - Moved up to contextually filter roles */}
+                        {/* Only show if we don't have a forced effective tenant context */}
                         {!vm.effectiveTenantId && (
                               <div className="space-y-2">
                                     <Label>{vm.t("admin.role.tenantScope") || "Tenant Scope"}</Label>
@@ -87,10 +75,23 @@ export function AssignRoleDialog({
                                           loading={vm.isLoadingTenants}
                                     />
                                     <p className="text-xs text-muted-foreground">
-                                          {vm.t("admin.role.tenantScopeHelp") || "Leave empty for global access."}
+                                          {vm.t("admin.role.tenantScopeHelp") || "Determines where this role applies and which roles are available."}
                                     </p>
                               </div>
                         )}
+
+                        {/* Role Selection */}
+                        <div className="space-y-2">
+                              <Label>{vm.t("admin.role.selectRole") || "Roles"} *</Label>
+                              <GenericSelect
+                                    options={vm.roleOptions}
+                                    value={vm.assignRoleIds}
+                                    onValueChange={(val: string | string[]) => vm.setAssignRoleIds(Array.isArray(val) ? val : [val])}
+                                    placeholder={vm.t("admin.role.selectRolePlaceholder") || "Select roles..."}
+                                    type="multi"
+                                    loading={vm.isLoadingRoles}
+                              />
+                        </div>
 
                         {/* Inherit Toggle - Show if tenant selected */}
                         {vm.assignTenantId && (
@@ -110,9 +111,9 @@ export function AssignRoleDialog({
                               <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading}>
                                     {vm.t("common.cancel") || "Cancel"}
                               </Button>
-                              <Button onClick={handleSave} disabled={!vm.assignRoleId || isLoading}>
+                              <Button onClick={handleSave} disabled={vm.assignRoleIds.length === 0 || isLoading}>
                                     {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                                    {vm.t("admin.role.assign") || "Assign Role"}
+                                    {vm.t("admin.role.assign") || "Assign Roles"}
                               </Button>
                         </div>
                   </div>

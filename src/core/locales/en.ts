@@ -2907,6 +2907,9 @@ export const en = {
   },
 
   components: {
+    searchableSelect: {
+      placeholder: "Select......",
+    },
     select: {
       placeholder: "Select......",
     },
@@ -2920,12 +2923,15 @@ export const en = {
       currentStyle: "Current Style",
       placeholders: {
         selectTechnologies: "Select technologies",
+        searchTechnologies: "Search technologies",
       },
       selected: "Selected: None",
       availableStyles: "Available Styles",
       buttons: {
         apply: "Apply",
         active: "Active",
+        selectAll: "Select All",
+        deselectAll: "Deselect All",
       },
       categories: {
         webTech: {
