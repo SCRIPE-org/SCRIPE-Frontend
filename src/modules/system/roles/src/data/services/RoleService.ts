@@ -16,6 +16,7 @@ import {
       type UpdateRoleJson,
       type AssignPermissionsJson,
 } from "../models/RoleModel";
+import { PermissionModel } from "@modules/system/permissions/src/data/models/PermissionModel";
 import type { IRoleService, RoleListResult, ServiceRoleListParams, MyTenantRoleListParams } from "../../domain/interfaces/IRoleService";
 
 export class RoleService implements IRoleService {
@@ -102,7 +103,7 @@ export class RoleService implements IRoleService {
             );
       }
 
-      async getMyTenantAvailablePermissions(category?: string): Promise<any[]> {
+      async getMyTenantAvailablePermissions(category?: string): Promise<PermissionModel[]> {
             const params = new URLSearchParams();
             if (category) params.set("category", category);
 
@@ -111,7 +112,8 @@ export class RoleService implements IRoleService {
                   ? `${API_ENDPOINTS.ROLES.MY_TENANT_AVAILABLE_PERMISSIONS}?${queryString}`
                   : API_ENDPOINTS.ROLES.MY_TENANT_AVAILABLE_PERMISSIONS;
 
-            return this.api.get<any[]>(url);
+            const response = await this.api.get<any[]>(url);
+            return response.map(p => PermissionModel.fromJson(p));
       }
 
       async getAdminCount(roleId: string): Promise<number> {

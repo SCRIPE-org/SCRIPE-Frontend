@@ -21,6 +21,9 @@ import type {
 import type { PagedResult } from "@modules/system/core/domain/types";
 import type { IRoleService } from "../../domain/interfaces/IRoleService";
 import { RoleMapper } from "../mappers/RoleMapper";
+import { Permission } from "@modules/system/permissions/src/domain/entities/Permission";
+import { PermissionMapper } from "@modules/system/permissions/src/data/mappers/PermissionMapper";
+import { PermissionModel } from "@modules/system/permissions/src/data/models/PermissionModel";
 
 export class RoleRepository implements IRoleRepository {
       constructor(private readonly service: IRoleService) { }
@@ -101,8 +104,9 @@ export class RoleRepository implements IRoleRepository {
             return result ?? [];
       }
 
-      async getMyTenantAvailablePermissions(category?: string): Promise<any[]> {
-            return this.service.getMyTenantAvailablePermissions(category);
+      async getMyTenantAvailablePermissions(category?: string): Promise<Permission[]> {
+            const models = await this.service.getMyTenantAvailablePermissions(category);
+            return PermissionMapper.toEntityList(models);
       }
 
       async getAdminCount(roleId: string): Promise<number> {

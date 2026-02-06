@@ -4,6 +4,7 @@
  * Defines the contract for role data operations.
  */
 import type { Role, RoleData } from "../entities/Role";
+import type { Permission } from "@modules/system/permissions/src/domain/entities/Permission";
 import type {
       CreateRoleRequest,
       UpdateRoleRequest,
@@ -86,7 +87,7 @@ export interface IRoleRepository {
       /**
        * Get available permissions for role assignment in current user's tenant
        */
-      getMyTenantAvailablePermissions(category?: string): Promise<any[]>;
+      getMyTenantAvailablePermissions(category?: string): Promise<Permission[]>;
 
       /**
        * Get count of admins assigned to this role

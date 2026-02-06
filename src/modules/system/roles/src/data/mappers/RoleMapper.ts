@@ -7,13 +7,7 @@
  */
 
 import { Role, type RoleProps, type RolePermission } from "../../domain/entities/Role";
-import {
-      RoleModel,
-      RolePermissionModel,
-      CreateRoleModel,
-      UpdateRoleModel,
-      AssignPermissionsModel,
-} from "../models/RoleModel";
+import * as RoleModel from "../models/RoleModel";
 import type {
       CreateRoleRequest,
       UpdateRoleRequest,
@@ -24,7 +18,7 @@ export class RoleMapper {
       /**
        * Map Model (DTO) to Domain Entity
        */
-      static toEntity(model: RoleModel): Role {
+      static toEntity(model: RoleModel.RoleModel): Role {
             const permissions: RolePermission[] = model.permissions.map((p) => ({
                   permissionId: p.permissionId,
                   permissionCode: p.permissionCode,
@@ -54,12 +48,12 @@ export class RoleMapper {
       /**
        * Map Domain Entity to Model (DTO)
        */
-      static toModel(entity: Role): RoleModel {
+      static toModel(entity: Role): RoleModel.RoleModel {
             const permissions = entity.permissions.map(
-                  (p) => new RolePermissionModel(p.permissionId, p.permissionCode, p.scope)
+                  (p) => new RoleModel.RolePermissionModel(p.permissionId, p.permissionCode, p.scope)
             );
 
-            return new RoleModel(
+            return new RoleModel.RoleModel(
                   entity.id,
                   entity.nameEn,
                   entity.nameAr,
@@ -80,15 +74,15 @@ export class RoleMapper {
       /**
        * Map array of Models to Entities
        */
-      static toEntityList(models: RoleModel[]): Role[] {
+      static toEntityList(models: RoleModel.RoleModel[]): Role[] {
             return models.map((model) => RoleMapper.toEntity(model));
       }
 
       /**
        * Map CreateRoleRequest to CreateRoleModel
        */
-      static toCreateModel(request: CreateRoleRequest): CreateRoleModel {
-            return new CreateRoleModel(
+      static toCreateModel(request: CreateRoleRequest): RoleModel.CreateRoleModel {
+            return new RoleModel.CreateRoleModel(
                   request.nameEn,
                   request.nameAr,
                   request.code,
@@ -102,8 +96,8 @@ export class RoleMapper {
       /**
        * Map UpdateRoleRequest to UpdateRoleModel
        */
-      static toUpdateModel(request: UpdateRoleRequest): UpdateRoleModel {
-            return new UpdateRoleModel(
+      static toUpdateModel(request: UpdateRoleRequest): RoleModel.UpdateRoleModel {
+            return new RoleModel.UpdateRoleModel(
                   request.nameEn,
                   request.nameAr,
                   request.priority,
@@ -118,8 +112,8 @@ export class RoleMapper {
        */
       static toAssignPermissionsModel(
             request: AssignPermissionsRequest
-      ): AssignPermissionsModel {
+      ): RoleModel.AssignPermissionsModel {
             const permissionIds = request.permissions.map((p) => p.permissionId);
-            return new AssignPermissionsModel(permissionIds);
+            return new RoleModel.AssignPermissionsModel(permissionIds);
       }
 }

@@ -13,6 +13,7 @@ import type {
       UpdateRoleJson,
       AssignPermissionsJson,
 } from "../../data/models/RoleModel";
+import type { PermissionModel } from "@modules/system/permissions/src/data/models/PermissionModel";
 import type { MyTenantRoleListParams } from "./IRoleRepository";
 
 export interface ServiceRoleListParams {
@@ -38,7 +39,7 @@ export interface RoleListResult {
 export interface IRoleService {
       getAll(params: ServiceRoleListParams): Promise<RoleListResult>;
       getMyTenantRoles(params: MyTenantRoleListParams): Promise<RoleListResult>;
-      getMyTenantAvailablePermissions(category?: string): Promise<any[]>;
+      getMyTenantAvailablePermissions(category?: string): Promise<PermissionModel[]>;
       getById(id: string): Promise<RoleModel>;
       create(json: CreateRoleJson): Promise<{ id: string }>;
       createForMyTenant(json: Omit<CreateRoleJson, 'tenantId'>): Promise<{ id: string }>;

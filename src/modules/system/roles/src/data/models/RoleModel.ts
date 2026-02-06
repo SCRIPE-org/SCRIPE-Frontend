@@ -62,30 +62,9 @@ export interface UpdateRoleJson {
 }
 
 export interface AssignPermissionsJson {
-      permissionIds: string[];
+      permissions: string[];
 }
 
-// ===== Model Classes =====
-
-export class RolePermissionModel {
-      constructor(
-            public readonly permissionId: string,
-            public readonly permissionCode: string,
-            public readonly scope?: string
-      ) { }
-
-      static fromJson(json: RolePermissionJson): RolePermissionModel {
-            return new RolePermissionModel(json.permissionId, json.permissionCode, json.scope);
-      }
-
-      toJson(): RolePermissionJson {
-            return {
-                  permissionId: this.permissionId,
-                  permissionCode: this.permissionCode,
-                  scope: this.scope,
-            };
-      }
-}
 
 export class RoleModel {
       constructor(
@@ -114,7 +93,7 @@ export class RoleModel {
                   json.isSystem,
                   json.priority,
                   json.isActive,
-                  (json.permissions ?? []).map((p) => RolePermissionModel.fromJson(p)),
+                  json.permissions?.map(p => RolePermissionModel.fromJson(p)) ?? [],
                   json.createdAt,
                   json.descriptionEn,
                   json.descriptionAr,
@@ -123,7 +102,6 @@ export class RoleModel {
                   json.modifiedAt
             );
       }
-
       toJson(): RoleJson {
             return {
                   id: this.id,
@@ -140,6 +118,30 @@ export class RoleModel {
                   permissions: this.permissions.map((p) => p.toJson()),
                   createdAt: this.createdAt,
                   modifiedAt: this.modifiedAt,
+            };
+      }
+}
+
+export class RolePermissionModel {
+      constructor(
+            public readonly permissionId: string,
+            public readonly permissionCode: string,
+            public readonly scope?: string
+      ) { }
+
+      static fromJson(json: RolePermissionJson): RolePermissionModel {
+            return new RolePermissionModel(
+                  json.permissionId,
+                  json.permissionCode,
+                  json.scope
+            );
+      }
+
+      toJson(): RolePermissionJson {
+            return {
+                  permissionId: this.permissionId,
+                  permissionCode: this.permissionCode,
+                  scope: this.scope,
             };
       }
 }
@@ -190,10 +192,11 @@ export class UpdateRoleModel {
       }
 }
 
+
 export class AssignPermissionsModel {
       constructor(public readonly permissionIds: string[]) { }
 
       toJson(): AssignPermissionsJson {
-            return { permissionIds: this.permissionIds };
+            return { permissions: this.permissionIds };
       }
 }
