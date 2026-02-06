@@ -299,6 +299,7 @@ export const en = {
     notesPlaceholder: "Enter notes",
     // Role assignment
     role: {
+      searchRoles: "Search roles...",
       assignTitle: "Assign Role",
       assignDescription: "Assign a role to",
       selectRole: "Role",

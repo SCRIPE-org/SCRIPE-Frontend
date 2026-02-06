@@ -308,6 +308,7 @@ export const ar = {
     inActive: "غير نشط",
     // Role assignment
     role: {
+      searchRoles: "بحث عن الأدوار",
       assignTitle: "تعيين دور",
       assignDescription: "تعيين دور لـ",
       selectRole: "الدور",

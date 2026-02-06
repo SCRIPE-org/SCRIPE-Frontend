@@ -22,9 +22,9 @@ import { useI18n } from "@core/providers/i18n-provider";
 // Role imports
 import { Role } from "@modules/system/roles/src/domain/entities/Role";
 import { RolePermissionsDialog } from "@modules/system/roles/src/presentation/components/RolePermissionsDialog";
+import { useTenantRolesViewModel } from "../../viewmodels/useTenantRolesViewModel";
 
 // ViewModel - all logic lives here
-import { useTenantRolesViewModel } from "../../viewmodels/useTenantRolesViewModel";
 
 interface TenantRolesTabProps {
       tenantId: string;

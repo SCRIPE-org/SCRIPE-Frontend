@@ -23,9 +23,9 @@ export function RolesView() {
       const viewModel = useRolesViewModel({ useMyTenant: true });
 
       const columns: CrudColumn<Role>[] = [
-            { key: "name", label: t("roles.name"), sortable: true, className: "font-medium" },
+            { key: "nameAr", label: t("roles.name"), sortable: true, className: "font-medium", render: (value: unknown, role: Role) => language === 'ar' ? role.nameAr : role.nameEn },
             { key: "code", label: t("roles.code"), sortable: true, className: "font-mono text-xs" },
-            { key: "description", label: t("roles.descriptionCol") || t("roles.description"), className: "hidden md:table-cell" },
+            { key: "description", label: t("roles.descriptionCol") || t("roles.description"), className: "hidden md:table-cell", render: (value: unknown, role: Role) => language === 'ar' ? role?.descriptionAr ?? "" : role?.descriptionEn ?? "" },
             {
                   key: "priority",
                   label: t("roles.priority"),

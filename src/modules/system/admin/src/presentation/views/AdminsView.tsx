@@ -14,13 +14,18 @@ import type { AssignRoleRequest } from "../../domain/entities/AdminRequests";
 import { useAdminsViewModel } from "../viewmodels/useAdminsViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Badge } from "@core/ui/badge";
-import { UserCheck, Shield, Trash2, Pencil, Eye } from "lucide-react";
+import { UserCheck, Shield, Trash2, Pencil, Eye, Settings } from "lucide-react";
 import { format } from "date-fns";
-import { AssignRoleDialog, ViewRolesDialog } from "../components/AdminRoleDialogs";
+import { AssignRoleDialog, ViewRolesDialog, ResetPasswordDialog } from "../components/AdminRoleDialogs";
 
-export function AdminsView() {
+interface AdminsViewProps {
+      /** Optional tenant ID to show admins for a specific tenant */
+      tenantId?: string;
+}
+
+export function AdminsView({ tenantId }: AdminsViewProps = {}) {
       const { t } = useI18n();
-      // Use myTenantAdmins endpoint for the main admins page
+      // Use myTenantAdmins by default, or specific tenant if provided
       const {
             vm,
             getConfigBase,
@@ -28,38 +33,51 @@ export function AdminsView() {
             handleToggleActive,
             handleAssignRole,
             handleRemoveRole,
+            handleResetPassword,
             isAssigningRole,
             isRemovingRole,
-      } = useAdminsViewModel({ useMyTenant: true });
+            isResettingPassword,
+      } = useAdminsViewModel({ useMyTenant: !tenantId, tenantId });
 
       const configBase = getConfigBase();
 
-      // Role dialog state
-      const [selectedAdminForRole, setSelectedAdminForRole] = useState<Admin | null>(null);
+      // Role/Password dialog state
+      const [selectedAdminForAction, setSelectedAdminForAction] = useState<Admin | null>(null);
       const [assignRoleDialogOpen, setAssignRoleDialogOpen] = useState(false);
       const [viewRolesDialogOpen, setViewRolesDialogOpen] = useState(false);
+      const [resetPasswordDialogOpen, setResetPasswordDialogOpen] = useState(false);
 
-      // Role dialog handlers
+      // Dialog handlers
       const handleOpenAssignRole = useCallback((admin: Admin) => {
-            setSelectedAdminForRole(admin);
+            setSelectedAdminForAction(admin);
             setAssignRoleDialogOpen(true);
       }, []);
 
       const handleOpenViewRoles = useCallback((admin: Admin) => {
-            setSelectedAdminForRole(admin);
+            setSelectedAdminForAction(admin);
             setViewRolesDialogOpen(true);
       }, []);
 
+      const handleOpenResetPassword = useCallback((admin: Admin) => {
+            setSelectedAdminForAction(admin);
+            setResetPasswordDialogOpen(true);
+      }, []);
+
       const onAssignRoleSubmit = useCallback(async (request: AssignRoleRequest) => {
-            if (!selectedAdminForRole) return;
-            await handleAssignRole(selectedAdminForRole.id, request);
+            if (!selectedAdminForAction) return;
+            await handleAssignRole(selectedAdminForAction.id, request);
             setAssignRoleDialogOpen(false);
-      }, [handleAssignRole, selectedAdminForRole]);
+      }, [handleAssignRole, selectedAdminForAction]);
 
       const onRemoveRole = useCallback(async (roleId: string, tenantId?: string) => {
-            if (!selectedAdminForRole) return;
-            await handleRemoveRole(selectedAdminForRole.id, roleId, tenantId);
-      }, [handleRemoveRole, selectedAdminForRole]);
+            if (!selectedAdminForAction) return;
+            await handleRemoveRole(selectedAdminForAction.id, roleId, tenantId);
+      }, [handleRemoveRole, selectedAdminForAction]);
+
+      const onResetPasswordSubmit = useCallback(async (newPassword: string) => {
+            if (!selectedAdminForAction) return;
+            await handleResetPassword(selectedAdminForAction.id, newPassword);
+      }, [handleResetPassword, selectedAdminForAction]);
 
       // Configuration for the generic view
       const config: CrudConfig<Admin> = useMemo(() => ({
@@ -143,6 +161,13 @@ export function AdminsView() {
                         icon: <Shield className="h-4 w-4" />,
                   },
                   {
+                        label: tFn("admin.resetPassword") || "Reset Password",
+                        onClick: (item: Admin) => handleOpenResetPassword(item),
+                        variant: "ghost" as const,
+                        className: "text-orange-600 hover:text-orange-700",
+                        icon: <Settings className="h-4 w-4" />,
+                  },
+                  {
                         label: tFn("common.delete") || "Delete",
                         onClick: (item: Admin) => handleDeleteFn?.(item),
                         variant: "ghost" as const,
@@ -150,7 +175,7 @@ export function AdminsView() {
                         icon: <Trash2 className="h-4 w-4" />,
                   },
             ],
-      }), [t, vm, handleDelete, configBase, handleToggleActive, handleOpenViewRoles, handleOpenAssignRole]);
+      }), [t, vm, handleDelete, configBase, handleToggleActive, handleOpenViewRoles, handleOpenAssignRole, handleOpenResetPassword]);
 
       return (
             <>
@@ -160,17 +185,26 @@ export function AdminsView() {
                   <AssignRoleDialog
                         open={assignRoleDialogOpen}
                         onOpenChange={setAssignRoleDialogOpen}
-                        admin={selectedAdminForRole}
+                        admin={selectedAdminForAction}
                         onAssign={onAssignRoleSubmit}
                         isLoading={isAssigningRole}
+                        tenantId={tenantId}
                   />
 
                   <ViewRolesDialog
                         open={viewRolesDialogOpen}
                         onOpenChange={setViewRolesDialogOpen}
-                        admin={selectedAdminForRole}
+                        admin={selectedAdminForAction}
                         onRemoveRole={onRemoveRole}
                         isRemoving={isRemovingRole}
+                  />
+
+                  <ResetPasswordDialog
+                        open={resetPasswordDialogOpen}
+                        onOpenChange={setResetPasswordDialogOpen}
+                        admin={selectedAdminForAction}
+                        onResetPassword={onResetPasswordSubmit}
+                        isLoading={isResettingPassword}
                   />
             </>
       );
