@@ -29,7 +29,13 @@ export class RoleRepository implements IRoleRepository {
       constructor(private readonly service: IRoleService) { }
 
       async getAll(params: RoleListParams): Promise<PagedResult<Role>> {
-            const result = await this.service.getAll(params);
+            const result = await this.service.getAll({
+                  page: params.page,
+                  pageSize: params.pageSize,
+                  search: params.search,
+                  tenantId: params.tenantId,
+                  strict: params.strict,
+            });
 
             return {
                   items: RoleMapper.toEntityList(result.items),

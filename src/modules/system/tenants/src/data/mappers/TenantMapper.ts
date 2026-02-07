@@ -9,6 +9,7 @@
 import {
       Tenant,
       TenantTreeNode,
+      SYSTEM_TENANT_ID,
       type TenantProps,
       type TenantTreeNodeProps,
 } from "../../domain/entities/Tenant";
@@ -29,7 +30,7 @@ export class TenantMapper {
        */
       static toEntity(model: TenantModel): Tenant {
             const props: TenantProps = {
-                  id: model.id,
+                  id: model.id ?? SYSTEM_TENANT_ID,
                   name: model.name,
                   code: model.code,
                   level: model.level,
@@ -51,7 +52,7 @@ export class TenantMapper {
        */
       static toTreeNode(model: TenantTreeNodeModel): TenantTreeNode {
             const props: TenantTreeNodeProps = {
-                  id: model.id,
+                  id: model.id ?? SYSTEM_TENANT_ID,
                   name: model.name,
                   code: model.code,
                   level: model.level,

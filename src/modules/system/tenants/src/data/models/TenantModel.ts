@@ -34,7 +34,7 @@ export interface TenantJson {
 }
 
 export interface TenantTreeNodeJson {
-      id: string;
+      id: string | null; // null for "System" pseudo-tenant (Super Admin)
       name: string;
       code: string;
       level: number;
@@ -133,7 +133,7 @@ export class TenantModel {
 
 export class TenantTreeNodeModel {
       constructor(
-            public readonly id: string,
+            public readonly id: string | null, // null for "System" pseudo-tenant
             public readonly name: string,
             public readonly code: string,
             public readonly level: number,

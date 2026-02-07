@@ -21,6 +21,7 @@ export interface RoleListParams {
       pageSize: number;
       search?: string;
       tenantId?: string;
+      strict?: boolean;
 }
 
 export interface MyTenantRoleListParams {

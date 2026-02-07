@@ -28,6 +28,7 @@ export class RoleService implements IRoleService {
                   pageSize: params.pageSize,
                   search: params.search,
                   tenantId: params.tenantId,
+                  strict: params.strict,
             });
 
             const response = await this.api.get<RoleListResponseJson>(url);

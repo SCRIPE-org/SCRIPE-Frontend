@@ -7,6 +7,8 @@
  * @module tenants/domain
  */
 
+export const SYSTEM_TENANT_ID = "__SYSTEM__";
+
 export interface TenantProps {
       id: string;
       name: string;
@@ -24,7 +26,7 @@ export interface TenantProps {
 }
 
 export interface TenantTreeNodeProps {
-      id: string;
+      id: string; // "System" pseudo-tenant mapped to "__SYSTEM__" via Mapper
       name: string;
       code: string;
       level: number;

@@ -21,6 +21,7 @@ export interface ServiceRoleListParams {
       pageSize?: number;
       search?: string;
       tenantId?: string;
+      strict?: boolean;
 }
 
 // Re-export for convenience (single source of truth in IRoleRepository)
