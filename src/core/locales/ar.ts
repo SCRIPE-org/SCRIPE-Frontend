@@ -63,6 +63,7 @@ export const ar = {
 
   // Tenants - المستأجرون
   tenant: {
+    context:"سياق المستأجر",
     require2FA: "التحقق من الهوية بخطوتين",
     settingsAudit: "إعدادات التدقيق",
     deactivateTenant: "إلغاء نشاط المستأجر",
@@ -274,6 +275,7 @@ export const ar = {
 
   // Admin - المشرفون
   admin: {
+    impersonating:"انت الان منتحل شخصية مستخدم هذا النظام",
     impersonate:"الدخول كهذا المستخدم",
     transferTitle: "نقل المستخدم",
     transfer:"نقل المستخدم",
@@ -2693,6 +2695,7 @@ export const ar = {
 
   // Common
   common: {
+    stop:"ايقاف",
     exit: "خروج",
     selectAll: "اختر الكل",
     clearAll: "مسح الكل",

@@ -31,6 +31,13 @@ export function useImpersonation() {
             secureTokenService.setAccessToken(token);
             setIsImpersonating(true);
 
+            // Clear persistent storage to force fresh load of user profile & menu
+            if (typeof window !== "undefined") {
+                  localStorage.removeItem("app-storage"); // Clear Zustand persist
+                  localStorage.removeItem("navigation-cache"); // Clear Menu cache
+                  localStorage.removeItem("navigation-cache-expiry");
+            }
+
             // Force reload to ensure all app state (sockets, queries) is reset with new token
             window.location.href = "/?impersonated=true";
       }, []);

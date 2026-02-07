@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useAppStore } from "@core/store/useAppStore";
 import { useNavigation } from "@core/providers/navigation-provider";
+import { useServices } from "@core/providers/service-provider";
 import { usePermissions } from "@core/hooks/use-permissions";
 import { USE_DYNAMIC_NAVIGATION } from "@core/config/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -47,6 +48,8 @@ export function RouteGuard({ children }: RouteGuardProps) {
   const isAuthenticated = useAppStore((state) => state.isAuthenticated);
   const logout = useAppStore((state) => state.logout);
   const hasHydrated = useAppStore((state) => state._hasHydrated);
+  const setAuth = useAppStore((state) => state.setAuth);
+  const { authRepository } = useServices();
   const authLoading = !hasHydrated;
   const { hasPageAccess, isLoading: navLoading } = useNavigation();
   const { canAccessPage } = usePermissions();
@@ -104,14 +107,26 @@ export function RouteGuard({ children }: RouteGuardProps) {
       }
 
       // If store says not authenticated but token exists, 
-      // this is an inconsistent state - clear everything and redirect
+      // attempt to restore session from token (e.g. after refresh or impersonation)
       if (!isAuthenticated && hasToken) {
-        appLogger.debug("[RouteGuard] Inconsistent auth state, clearing and redirecting to login");
-        hasRedirected.current = true;
-        forceLogout();
-        logout();
-        router.push("/login");
-        return;
+        appLogger.debug("[RouteGuard] Token exists but state missing. Attempting to restore session...");
+
+        try {
+          const user = await authRepository.getMe();
+          if (user) {
+            appLogger.debug("[RouteGuard] Session restored successfully");
+            setAuth(user, user.permissions || [], []);
+            // Allow this render cycle to complete, state update will trigger re-render
+            return;
+          }
+        } catch (error) {
+          appLogger.error("[RouteGuard] Failed to restore session:", error);
+          hasRedirected.current = true;
+          forceLogout();
+          logout();
+          router.push("/login");
+          return;
+        }
       }
 
       // At this point: has token AND authenticated
