@@ -13,6 +13,8 @@ import { Admin } from "../../domain/entities/Admin";
 import type { AssignRoleRequest } from "../../domain/entities/AdminRequests";
 import { useAdminsViewModel } from "../viewmodels/useAdminsViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
+import { usePermissions } from "@core/providers/permission-provider";
+import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { Badge } from "@core/ui/badge";
 import { UserCheck, Shield, Trash2, Pencil, Eye, Settings, ArrowRightLeft } from "lucide-react";
 import { format } from "date-fns";
@@ -26,6 +28,7 @@ interface AdminsViewProps {
 
 export function AdminsView({ tenantId }: AdminsViewProps = {}) {
       const { t, language } = useI18n();
+      const { hasPermission } = usePermissions();
       // Use myTenantAdmins by default, or specific tenant if provided
       const {
             vm,
@@ -99,6 +102,7 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
       const config: CrudConfig<Admin> = useMemo(() => ({
             titleKey: "admin.title",
             subtitleKey: "admin.description",
+            resource: "admins", // Checks permissions (admins.view, admins.create, etc.)
             columns: [
                   {
                         key: "username",
@@ -160,65 +164,80 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
             getItemDisplayName: configBase.getItemDisplayName,
             enableBulkActions: configBase.enableBulkActions,
             permissions: configBase.permissions,
-            getActions: (vmInstance: any, tFn: any, handleDeleteFn: any): CrudAction<Admin>[] => [
-                  {
-                        label: tFn("common.view") || "View",
-                        onClick: (item: Admin) => vmInstance.openViewModal(item),
-                        variant: "ghost" as const,
-                        icon: <Eye className="h-4 w-4" />,
-                  },
-                  {
-                        label: tFn("common.edit") || "Edit",
-                        onClick: (item: Admin) => vmInstance.openEditModal(item),
-                        variant: "ghost" as const,
-                        icon: <Pencil className="h-4 w-4" />,
-                  },
-                  {
-                        label: tFn("admin.impersonate") || "Impersonate",
-                        onClick: (item: Admin) => handleImpersonate(item.id),
-                        variant: "ghost" as const,
-                        icon: <UserCheck className="h-4 w-4" />,
-                  },
-                  {
+            getActions: (vmInstance: any, tFn: any, handleDeleteFn: any): CrudAction<Admin>[] => {
+                  const actions: CrudAction<Admin>[] = [
+                        {
+                              label: tFn("common.view") || "View",
+                              onClick: (item: Admin) => vmInstance.openViewModal(item),
+                              variant: "ghost" as const,
+                              icon: <Eye className="h-4 w-4" />,
+                        },
+                        {
+                              label: tFn("common.edit") || "Edit",
+                              onClick: (item: Admin) => vmInstance.openEditModal(item),
+                              variant: "ghost" as const,
+                              icon: <Pencil className="h-4 w-4" />,
+                        },
+                        {
+                              label: tFn("admin.impersonate") || "Impersonate",
+                              onClick: (item: Admin) => handleImpersonate(item.id),
+                              variant: "ghost" as const,
+                              icon: <UserCheck className="h-4 w-4" />,
+                              requiredPermission: SYSTEM_PERMISSIONS.ADMINS_IMPERSONATE,
+                        }     
+                  ];
+
+                  actions.push({
                         label: tFn("admin.transfer") || "Transfer",
                         onClick: (item: Admin) => handleOpenTransfer(item),
                         variant: "ghost" as const,
                         icon: <ArrowRightLeft className="h-4 w-4" />,
-                  },
-                  {
-                        label: tFn("admin.toggleStatus") || "Toggle Status",
-                        onClick: (item: Admin) => handleToggleActive(item.id, !item.isActive),
-                        variant: "ghost" as const,
-                        icon: <UserCheck className="h-4 w-4" />,
-                  },
-                  {
-                        label: tFn("admin.role.viewTitle") || "View Roles",
-                        onClick: (item: Admin) => handleOpenViewRoles(item),
-                        variant: "ghost" as const,
-                        icon: <Shield className="h-4 w-4" />,
-                  },
-                  {
-                        label: tFn("admin.role.assign") || "Assign Role",
-                        onClick: (item: Admin) => handleOpenAssignRole(item),
-                        variant: "ghost" as const,
-                        icon: <Shield className="h-4 w-4" />,
-                  },
-                  {
-                        label: tFn("admin.resetPassword") || "Reset Password",
-                        onClick: (item: Admin) => handleOpenResetPassword(item),
-                        variant: "ghost" as const,
-                        className: "text-orange-600 hover:text-orange-700",
-                        icon: <Settings className="h-4 w-4" />,
-                  },
-                  {
-                        label: tFn("common.delete") || "Delete",
-                        onClick: (item: Admin) => handleDeleteFn?.(item),
-                        variant: "ghost" as const,
-                        className: "text-red-600 hover:text-red-700",
-                        icon: <Trash2 className="h-4 w-4" />,
-                  },
-            ],
-      }), [t, vm, handleDelete, configBase, handleToggleActive, handleOpenViewRoles, handleOpenAssignRole, handleOpenResetPassword, handleImpersonate, handleOpenTransfer, language]);
+                        requiredPermission: SYSTEM_PERMISSIONS.ADMINS_TRANSFER,
+                  });
+
+                  actions.push(
+                        {
+                              label: tFn("admin.toggleStatus") || "Toggle Status",
+                              onClick: (item: Admin) => handleToggleActive(item.id, !item.isActive),
+                              variant: "ghost" as const,
+                              icon: <UserCheck className="h-4 w-4" />,
+                              requiredPermission: SYSTEM_PERMISSIONS.ADMINS_UPDATE,
+                        },
+                        {
+                              label: tFn("admin.role.viewTitle") || "View Roles",
+                              onClick: (item: Admin) => handleOpenViewRoles(item),
+                              variant: "ghost" as const,
+                              icon: <Shield className="h-4 w-4" />,
+                              requiredPermission: SYSTEM_PERMISSIONS.ADMINS_VIEW,
+                        },
+                        {
+                              label: tFn("admin.role.assign") || "Assign Role",
+                              onClick: (item: Admin) => handleOpenAssignRole(item),
+                              variant: "ghost" as const,
+                              icon: <Shield className="h-4 w-4" />,
+                              requiredPermission: SYSTEM_PERMISSIONS.ADMINS_ASSIGN_ROLES,
+                        },
+                        {
+                              label: tFn("admin.resetPassword") || "Reset Password",
+                              onClick: (item: Admin) => handleOpenResetPassword(item),
+                              variant: "ghost" as const,
+                              className: "text-orange-600 hover:text-orange-700",
+                              icon: <Settings className="h-4 w-4" />,
+                              requiredPermission: SYSTEM_PERMISSIONS.ADMINS_RESET_PASSWORD,
+                        },
+                        {
+                              label: tFn("common.delete") || "Delete",
+                              onClick: (item: Admin) => handleDeleteFn?.(item),
+                              variant: "ghost" as const,
+                              className: "text-red-600 hover:text-red-700",
+                              icon: <Trash2 className="h-4 w-4" />,
+                              requiredPermission: SYSTEM_PERMISSIONS.ADMINS_DELETE,
+                        }
+                  );
+
+                  return actions;
+            },
+      }), [t, vm, handleDelete, configBase, handleToggleActive, handleOpenViewRoles, handleOpenAssignRole, handleOpenResetPassword, handleImpersonate, handleOpenTransfer, language, hasPermission]);
 
       const [transferDialogOpen, setTransferDialogOpen] = useState(false);
 

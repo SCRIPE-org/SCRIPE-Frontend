@@ -22,6 +22,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { secureTokenService } from "@core/common/secure-token-service";
 import { useCurrentTenantId } from "@core/providers/tenant-context-provider";
+import { useImpersonation } from "@modules/auth/hooks/useImpersonation";
 
 /**
  * useAdminsViewModel hook options
@@ -183,22 +184,12 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
       });
 
       // Impersonate mutation
+      const { startImpersonation } = useImpersonation();
       const impersonateMutation = useMutation({
             mutationFn: (id: string) => adminRepository.impersonate(id),
             onSuccess: (data) => {
                   success({ title: "Impersonating...", description: "Redirecting to admin dashboard" });
-
-                  // 1. Backup current admin token
-                  const currentToken = secureTokenService.getAccessToken();
-                  if (currentToken) {
-                        sessionStorage.setItem("admin_backup_token", currentToken);
-                  }
-
-                  // 2. Set new token
-                  secureTokenService.setAccessToken(data.token);
-
-                  // 3. Reload to reset state
-                  window.location.href = "/?impersonated=true";
+                  startImpersonation(data.token);
             },
             onError: (err: Error) => {
                   toastError({ title: t("common.error") || "Error", description: err.message });

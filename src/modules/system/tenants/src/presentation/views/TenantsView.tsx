@@ -36,7 +36,7 @@ import type { FieldConfig, FieldOption } from "@core/ui/forms/generic-form";
 export function TenantsView() {
       const router = useRouter();
       const { t, language } = useI18n();
-      const { canEnterTenantWorld } = useTenantContext();
+      const { canEnterTenantWorld, enterTenantWorld } = useTenantContext();
       const user = useAppStore((state) => state.user);
 
       // System admins (with 'super' or 'system' in adminTypeName) see full tree
@@ -198,12 +198,20 @@ export function TenantsView() {
                   }) as UpdateTenantRequest,
       });
 
-      // Handler for entering tenant world - navigates to detail page
+
+
+      // Handler for entering tenant world
       const handleEnterTenantWorld = useCallback(
             (node: TenantTreeNode) => {
-                  router.push(`/tenants/${node.id}`);
+                  enterTenantWorld({
+                        id: node.id,
+                        name: node.name,
+                        parentId: node.parentId,
+                  });
+                  // Redirect to admin dashboard (or could stay here with filtered view)
+                  router.push("/");
             },
-            [router]
+            [enterTenantWorld, router]
       );
 
       // Custom actions for tenant nodes

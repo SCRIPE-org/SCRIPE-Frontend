@@ -16,9 +16,10 @@
  */
 "use client";
 
-import React, { createContext, useContext, useState, useCallback, useMemo } from "react";
+import React, { createContext, useContext, useState, useCallback, useMemo, useEffect } from "react";
 import { useAppStore } from "@core/store/useAppStore";
 import { usePermissions } from "@core/providers/permission-provider";
+import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { appLogger } from "../common/logger";
 
 /**
@@ -85,10 +86,25 @@ export function TenantContextProvider({ children }: TenantContextProviderProps) 
       // Can enter tenant world if system admin (no tenant) or has super_admin role
       const canEnterTenantWorld = useMemo(() => {
             // System admin (no tenant assigned) or super admin can enter tenant contexts
-            return !userTenantId || isSuperAdmin || hasPermission("tenants.manage");
+            return !userTenantId || isSuperAdmin || hasPermission(SYSTEM_PERMISSIONS.TENANTS_VIEW_DETAILS);
       }, [userTenantId, isSuperAdmin, hasPermission]);
 
       const isInTenantWorld = currentTenant !== null;
+
+      // Load from session storage on mount
+      useEffect(() => {
+            const saved = sessionStorage.getItem("tenant_context");
+            if (saved) {
+                  try {
+                        const parsed = JSON.parse(saved);
+                        if (parsed?.id && parsed?.name) {
+                              setCurrentTenant(parsed);
+                        }
+                  } catch (e) {
+                        sessionStorage.removeItem("tenant_context");
+                  }
+            }
+      }, []);
 
       const enterTenantWorld = useCallback((tenant: TenantInfo) => {
             if (!canEnterTenantWorld) {
@@ -97,6 +113,8 @@ export function TenantContextProvider({ children }: TenantContextProviderProps) 
             }
 
             setCurrentTenant(tenant);
+            sessionStorage.setItem("tenant_context", JSON.stringify(tenant));
+
             setBreadcrumbs((prev) => {
                   // Add to breadcrumb trail
                   const existingIndex = prev.findIndex((b) => b.id === tenant.id);
@@ -110,6 +128,7 @@ export function TenantContextProvider({ children }: TenantContextProviderProps) 
 
       const exitTenantWorld = useCallback(() => {
             setCurrentTenant(null);
+            sessionStorage.removeItem("tenant_context");
             setBreadcrumbs([]);
       }, []);
 

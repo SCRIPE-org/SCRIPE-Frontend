@@ -14,6 +14,10 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { useAppStore } from "@core/store/useAppStore";
 import { useAuthLogout } from "@modules/auth/hooks/useAuthLogout";
 import { useSettings } from "@core/providers/settings-provider";
+import { useTenantContext } from "@core/providers/tenant-context-provider";
+import { secureTokenService } from "@core/common/secure-token-service";
+import { useImpersonation } from "@modules/auth/hooks/useImpersonation";
+import { UserCheck } from "lucide-react";
 import { useLayoutStyles } from "./use-layout-styles";
 import { useDynamicNavigation } from "@core/ui/navigation/dynamic-navigation";
 import { cn } from "@core/common/utils";
@@ -47,6 +51,11 @@ export function NavigationHeader({
   const { getAnimationClass } = useLayoutStyles();
   const animationClass = getAnimationClass();
   const router = useRouter();
+
+  // Get state from stores
+  const { currentTenant, exitTenantWorld } = useTenantContext();
+  const { isImpersonating, stopImpersonation } = useImpersonation();
+  const activeTenantId = currentTenant?.id;
 
   return (
     <header
@@ -139,22 +148,55 @@ export function NavigationHeader({
           </div>
         </div>
 
-        {/* Center Section - Search */}
+        {/* Center Section - Search or Banners */}
         <div className="flex-1 max-w-md mx-8 min-w-0 hidden md:block">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-            <Input
-              type="search"
-              placeholder={t("layout.search_placeholder") || "Search here..."}
-              className={cn(
-                "w-full pl-10 pr-12 transition-all duration-200 bg-transparent border-border",
-                "focus:border-primary focus:ring-primary/20 focus:bg-transparent"
-              )}
-            />
-            <kbd className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border border-border bg-muted px-1.5 font-mono text-xs text-muted-foreground">
-              /
-            </kbd>
-          </div>
+          {isImpersonating ? (
+            <div className="flex items-center justify-center bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 px-4 py-2 rounded-md border border-red-200 dark:border-red-800">
+              <UserCheck className="w-4 h-4 mr-2" />
+              <span className="text-sm font-medium mr-4">{t("admin.impersonating") || "Impersonating User"}</span>
+              <Button
+                variant="destructive"
+                size="sm"
+                className="h-7 text-xs"
+                onClick={stopImpersonation}
+              >
+                {t("common.stop") || "Stop"}
+              </Button>
+            </div>
+          ) : activeTenantId && currentTenant ? (
+            <div className="flex items-center justify-center bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-4 py-2 rounded-md border border-blue-200 dark:border-blue-800">
+              <div className="flex flex-col items-start mr-4">
+                <span className="text-xs font-semibold uppercase opacity-70">{t("tenant.context") || "Tenant Context"}</span>
+                <span className="text-sm font-bold">{currentTenant.name}</span>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-7 text-xs border-blue-300 dark:border-blue-700 hover:bg-blue-200 dark:hover:bg-blue-800"
+                onClick={() => {
+                  exitTenantWorld();
+                  router.push("/tenants");
+                }}
+              >
+                {t("common.exit") || "Exit"}
+              </Button>
+            </div>
+          ) : (
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+              <Input
+                type="search"
+                placeholder={t("layout.search_placeholder") || "Search here..."}
+                className={cn(
+                  "w-full pl-10 pr-12 transition-all duration-200 bg-transparent border-border",
+                  "focus:border-primary focus:ring-primary/20 focus:bg-transparent"
+                )}
+              />
+              <kbd className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border border-border bg-muted px-1.5 font-mono text-xs text-muted-foreground">
+                /
+              </kbd>
+            </div>
+          )}
         </div>
 
         {/* Right Section - Theme, Language, Profile */}

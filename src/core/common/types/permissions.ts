@@ -132,6 +132,8 @@ export const SYSTEM_PERMISSIONS = {
       ADMINS_DELETE: "admins.delete",
       ADMINS_ASSIGN_ROLES: "admins.assign_roles",
       ADMINS_RESET_PASSWORD: "admins.reset_password",
+      ADMINS_IMPERSONATE: "admins.impersonate",
+      ADMINS_TRANSFER: "admins.transfer",
 
       // Roles
       ROLES_VIEW: "roles.view",
@@ -149,6 +151,7 @@ export const SYSTEM_PERMISSIONS = {
 
       // Tenants
       TENANTS_VIEW: "tenants.view",
+      TENANTS_VIEW_DETAILS: "tenants.view_details",
       TENANTS_CREATE: "tenants.create",
       TENANTS_UPDATE: "tenants.update",
       TENANTS_DELETE: "tenants.delete",

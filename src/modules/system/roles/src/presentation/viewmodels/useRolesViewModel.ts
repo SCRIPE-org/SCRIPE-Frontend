@@ -18,6 +18,8 @@ import type {
 } from "../../domain/entities/RoleRequests";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 
+import { useCurrentTenantId } from "@core/providers/tenant-context-provider";
+
 interface UseRolesViewModelParams {
       page?: number;
       pageSize?: number;
@@ -28,7 +30,12 @@ interface UseRolesViewModelParams {
 }
 
 export function useRolesViewModel(params: UseRolesViewModelParams = {}) {
-      const { tenantId, useMyTenant } = params;
+      const { tenantId: propTenantId, useMyTenant } = params;
+      const contextTenantId = useCurrentTenantId();
+
+      // Use prop tenantId if provided, otherwise context tenantId
+      const tenantId = useMyTenant ? undefined : ((propTenantId || contextTenantId) ?? undefined);
+
       const queryClient = useQueryClient();
       const { success, error: toastError } = useEnhancedToast();
       const { roleRepository } = systemContainer;

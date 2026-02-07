@@ -39,6 +39,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { useCallback, useMemo } from "react";
 import { appLogger } from "@core/common/logger";
 import { usePermission } from "@core/hooks/use-permission";
+import { usePermissions } from "@core/hooks/use-permissions";
 import type { PermissionCode } from "@core/common/types/permissions";
 
 /* ========================================
@@ -81,6 +82,8 @@ export interface CrudAction<TItem = any> {
   icon?: React.ReactNode;
   /** Conditional display logic */
   show?: (item: TItem) => boolean;
+  /** Permission required to show this action */
+  requiredPermission?: PermissionCode;
   /** Confirmation dialog title (if confirmation needed) */
   confirmTitle?: string;
   /** Confirmation dialog description (supports {name} placeholder) */
@@ -336,6 +339,7 @@ export function GenericCrudView<T>(props: GenericCrudViewProps<T>) {
   } = props;
   const settings = useSettings();
   const { t } = useI18n();
+  const { hasPermission } = usePermissions();
 
   // Enhanced delete system for professional confirmation dialogs
   const deleteSystem = useEnhancedDelete();
@@ -476,13 +480,23 @@ export function GenericCrudView<T>(props: GenericCrudViewProps<T>) {
   // Hide actions column if specified
   const actions = config?.hideActionsColumn
     ? undefined
-    : rawActions?.map((action) => ({
-      ...action,
-      onClick:
-        action.onClick === handleDelete
-          ? handleDelete
-          : (item: any) => handleIndividualAction(action, item),
-    }));
+    : rawActions
+      ?.filter((action) => {
+        if (
+          action.requiredPermission &&
+          !hasPermission(action.requiredPermission)
+        ) {
+          return false;
+        }
+        return true;
+      })
+      .map((action) => ({
+        ...action,
+        onClick:
+          action.onClick === handleDelete
+            ? handleDelete
+            : (item: any) => handleIndividualAction(action, item),
+      }));
 
   const createFields = config ? config.createFields : propCreateFields!;
   const editFields = config
