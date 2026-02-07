@@ -40,7 +40,8 @@ export interface AssignPermissionsRequest {
  */
 export interface PermissionAssignment {
       permissionId: string;
-      scope?: string;
+      scopeOverride?: string | null;
+      restrictedFields?: string[] | null;
 }
 
 /**

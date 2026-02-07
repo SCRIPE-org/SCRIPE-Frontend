@@ -13,6 +13,7 @@ import { Search, Lock, Shield, Users, Settings, Layout } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { PermissionCategoryRow, PermissionTreeSkeleton } from "./index";
 import type { PermissionTreeProps } from "../viewmodels/useRoleDetailViewModel";
+import type { PermissionAssignmentJson } from "../../data/models/RoleModel";
 
 // Category Icons mapping
 const CATEGORY_ICONS: Record<string, React.ReactNode> = {
@@ -36,6 +37,8 @@ export function PermissionTreeCard({
       onTogglePermission,
       onExpandAll,
       onCollapseAll,
+      assignments,
+      onUpdateConfig,
 }: PermissionTreeProps) {
       const { t } = useI18n();
 
@@ -78,10 +81,12 @@ export function PermissionTreeCard({
                                                 permissions={cat.permissions}
                                                 isExpanded={expandedCategories.has(cat.category)}
                                                 selectedPermissionCodes={selectedPermissionCodes}
+                                                assignments={assignments}
                                                 categoryIcon={CATEGORY_ICONS[cat.category]}
                                                 onToggleCategory={() => onToggleCategory(cat.category)}
                                                 onToggleAllInCategory={() => onToggleAllInCategory(cat.permissions)}
                                                 onTogglePermission={onTogglePermission}
+                                                onUpdateConfig={onUpdateConfig}
                                           />
                                     ))}
                               </div>

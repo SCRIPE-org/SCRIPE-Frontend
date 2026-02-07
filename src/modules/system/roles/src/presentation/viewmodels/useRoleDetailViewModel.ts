@@ -19,6 +19,7 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { systemContainer } from "@modules/system/di";
 import type { Permission } from "@modules/system/permissions/src/domain/entities/Permission";
 import type { Role } from "../../domain/entities/Role";
+import type { PermissionAssignmentJson } from "../../data/models/RoleModel";
 
 // === Types ===
 export interface PermissionCategory {
@@ -52,6 +53,8 @@ export interface PermissionTreeProps {
       onTogglePermission: (code: string) => void;
       onExpandAll: () => void;
       onCollapseAll: () => void;
+      assignments: Map<string, PermissionAssignmentJson>;
+      onUpdateConfig: (code: string, assignment: PermissionAssignmentJson) => void;
 }
 
 // === ViewModel ===
@@ -64,7 +67,8 @@ export function useRoleDetailViewModel() {
       const { roleRepository, permissionRepository } = systemContainer;
 
       // === STATE ===
-      const [selectedPermissionCodes, setSelectedPermissionCodes] = useState<Set<string>>(new Set());
+      // Changed from Set<string> to Map to hold config (scope, restrictions)
+      const [assignments, setAssignments] = useState<Map<string, PermissionAssignmentJson>>(new Map());
       const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
       const [searchQuery, setSearchQuery] = useState("");
 
@@ -87,42 +91,57 @@ export function useRoleDetailViewModel() {
             queryFn: () => roleRepository.getMyTenantAvailablePermissions(),
       });
 
-      // === INITIALIZE SELECTED PERMISSIONS WHEN DATA LOADS ===
+      // === INITIALIZE ASSIGNMENTS WHEN DATA LOADS ===
       useEffect(() => {
             if (rolePermissions && rolePermissions.length > 0) {
                   appLogger.debug("rolePermissions raw:", rolePermissions);
 
-                  const permCodes = new Set(
-                        rolePermissions.map((rp: any) =>
-                              rp.permissionCode || rp.PermissionCode || rp.code || rp.Code
-                        ).filter(Boolean)
-                  );
+                  const newAssignments = new Map<string, PermissionAssignmentJson>();
 
-                  appLogger.debug("Extracted permission CODES:", Array.from(permCodes));
-                  setSelectedPermissionCodes(permCodes as Set<string>);
+                  rolePermissions.forEach((rp: any) => {
+                        // Handle various casing from backend
+                        const code = rp.permissionCode || rp.PermissionCode || rp.code || rp.Code;
+
+                        if (code) {
+                              newAssignments.set(code, {
+                                    permissionId: rp.permissionId || rp.PermissionId || rp.id || rp.Id,
+                                    scopeOverride: rp.scope || rp.ScopeOverride,
+                                    restrictedFields: rp.restrictedFields ? JSON.parse(rp.restrictedFields) : undefined
+                              });
+                        }
+                  });
+
+                  appLogger.debug("Initialized assignments map size:", newAssignments.size);
+                  setAssignments(newAssignments);
             }
       }, [rolePermissions]);
 
       // === MUTATION ===
       const saveMutation = useMutation({
-            mutationFn: async (permissionCodes: string[]) => {
+            mutationFn: async () => {
                   const codeToIdMap = new Map<string, string>();
                   allPermissions?.forEach(p => {
                         codeToIdMap.set(p.code, p.id);
                   });
 
-                  const permissionIds = permissionCodes
-                        .map(code => codeToIdMap.get(code))
-                        .filter(Boolean) as string[];
+                  // Convert map values to array for payload
+                  // Ensure permissionId is set (if missing in map, try to lookup from code)
+                  const permissionsPayload = Array.from(assignments.entries()).map(([code, assignment]) => {
+                        let id = assignment.permissionId;
+                        if (!id) {
+                              id = codeToIdMap.get(code) || "";
+                        }
+                        return {
+                              permissionId: id,
+                              scopeOverride: assignment.scopeOverride ?? null,
+                              restrictedFields: assignment.restrictedFields ?? []
+                        };
+                  }).filter(p => !!p.permissionId);
 
-                  appLogger.debug("Saving permissions - codes:", permissionCodes);
-                  appLogger.debug("Saving permissions - ids:", permissionIds);
+                  appLogger.debug("Saving permissions payload:", permissionsPayload);
 
                   await roleRepository.assignPermissions(roleId, {
-                        permissions: permissionIds.map((id) => ({
-                              permissionId: id,
-                              scopeOverride: "own_tenant",
-                        })),
+                        permissions: permissionsPayload,
                   });
             },
             onSuccess: () => {
@@ -178,9 +197,27 @@ export function useRoleDetailViewModel() {
       }, []);
 
       const togglePermission = useCallback((permissionCode: string) => {
-            setSelectedPermissionCodes((prev) => {
-                  const next = new Set(prev);
-                  next.has(permissionCode) ? next.delete(permissionCode) : next.add(permissionCode);
+            setAssignments((prev) => {
+                  const next = new Map(prev);
+                  if (next.has(permissionCode)) {
+                        next.delete(permissionCode);
+                  } else {
+                        // Find permission ID from allPermissions if possible
+                        const permission = allPermissions?.find(p => p.code === permissionCode);
+                        next.set(permissionCode, {
+                              permissionId: permission?.id || "",
+                              scopeOverride: "Tenant", // Default to Tenant scope
+                              restrictedFields: []
+                        });
+                  }
+                  return next;
+            });
+      }, [allPermissions]);
+
+      const updateAssignment = useCallback((code: string, assignment: PermissionAssignmentJson) => {
+            setAssignments(prev => {
+                  const next = new Map(prev);
+                  next.set(code, assignment);
                   return next;
             });
       }, []);
@@ -188,15 +225,28 @@ export function useRoleDetailViewModel() {
       const toggleCategoryPermissions = useCallback(
             (permissions: Permission[]) => {
                   const categoryCodes = permissions.map((p) => p.code);
-                  const allSelected = categoryCodes.every((code) => selectedPermissionCodes.has(code));
+                  const allSelected = categoryCodes.every((code) => assignments.has(code));
 
-                  setSelectedPermissionCodes((prev) => {
-                        const next = new Set(prev);
-                        categoryCodes.forEach((code) => (allSelected ? next.delete(code) : next.add(code)));
+                  setAssignments((prev) => {
+                        const next = new Map(prev);
+                        categoryCodes.forEach((code) => {
+                              if (allSelected) {
+                                    next.delete(code);
+                              } else {
+                                    if (!next.has(code)) {
+                                          const permission = permissions.find(p => p.code === code);
+                                          next.set(code, {
+                                                permissionId: permission?.id || "",
+                                                scopeOverride: "Tenant",
+                                                restrictedFields: []
+                                          });
+                                    }
+                              }
+                        });
                         return next;
                   });
             },
-            [selectedPermissionCodes]
+            [assignments]
       );
 
       const expandAll = useCallback(() => {
@@ -208,11 +258,12 @@ export function useRoleDetailViewModel() {
       }, []);
 
       const handleSave = useCallback(() => {
-            saveMutation.mutate(Array.from(selectedPermissionCodes));
-      }, [selectedPermissionCodes, saveMutation]);
+            saveMutation.mutate();
+      }, [saveMutation]);
 
       // === DERIVED STATE ===
       const isLoading = roleLoading || permissionsLoading || rolePermissionsLoading;
+      const selectedPermissionCodes = new Set(assignments.keys());
 
       // === RETURN PROPS FOR VIEW ===
       return {
@@ -228,7 +279,7 @@ export function useRoleDetailViewModel() {
             info: {
                   role,
                   isLoading: roleLoading,
-                  selectedCount: selectedPermissionCodes.size,
+                  selectedCount: assignments.size,
                   totalCount: allPermissions?.length || 0,
             } as RoleInfoCardProps,
 
@@ -245,6 +296,8 @@ export function useRoleDetailViewModel() {
                   onTogglePermission: togglePermission,
                   onExpandAll: expandAll,
                   onCollapseAll: collapseAll,
+                  assignments: assignments,
+                  onUpdateConfig: updateAssignment
             } as PermissionTreeProps,
       };
 }

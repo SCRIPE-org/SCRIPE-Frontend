@@ -113,7 +113,6 @@ export class RoleMapper {
       static toAssignPermissionsModel(
             request: AssignPermissionsRequest
       ): RoleModel.AssignPermissionsModel {
-            const permissionIds = request.permissions.map((p) => p.permissionId);
-            return new RoleModel.AssignPermissionsModel(permissionIds);
+            return new RoleModel.AssignPermissionsModel(request.permissions);
       }
 }

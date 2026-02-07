@@ -61,8 +61,14 @@ export interface UpdateRoleJson {
       isActive?: boolean;
 }
 
+export interface PermissionAssignmentJson {
+      permissionId: string;
+      scopeOverride?: string | null;
+      restrictedFields?: string[] | null;
+}
+
 export interface AssignPermissionsJson {
-      permissions: string[];
+      permissions: PermissionAssignmentJson[];
 }
 
 
@@ -194,9 +200,11 @@ export class UpdateRoleModel {
 
 
 export class AssignPermissionsModel {
-      constructor(public readonly permissionIds: string[]) { }
+      constructor(public readonly permissions: PermissionAssignmentJson[]) { }
 
       toJson(): AssignPermissionsJson {
-            return { permissions: this.permissionIds };
+            return {
+                  permissions: this.permissions
+            };
       }
 }

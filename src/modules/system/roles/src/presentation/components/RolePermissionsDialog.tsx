@@ -8,6 +8,7 @@
  */
 "use client";
 
+import { useState } from "react";
 import {
       Dialog,
       DialogContent,
@@ -36,10 +37,13 @@ import {
       Check,
       Layers,
       FolderOpen,
+      Settings,
 } from "lucide-react";
 import { cn } from "@core/common/utils";
 import type { Role } from "../../domain/entities/Role";
 import { useRolePermissionsDialog, type TenantPermission } from "../viewmodels/useRolePermissionsDialog";
+import { PermissionConfigDialog } from "./PermissionConfigDialog";
+import type { PermissionAssignmentJson } from "../../data/models/RoleModel";
 
 interface RolePermissionsDialogProps {
       open: boolean;
@@ -257,34 +261,84 @@ interface PermissionItemProps {
 }
 
 function PermissionItem({ permission, vm }: PermissionItemProps) {
+      const { language } = useI18n();
+      const [showConfig, setShowConfig] = useState(false);
       const isChecked = vm.isChecked(permission.code);
+      const assignment = vm.assignments.get(permission.code);
+      const hasCustomConfig = !!assignment?.scopeOverride || (assignment?.restrictedFields?.length ?? 0) > 0;
+
+      // Construct simple permission object for dialog
+      const permissionSimple = {
+            id: permission.id,
+            code: permission.code,
+            displayName: vm.getName(permission),
+      };
+
+      const handleUpdateConfig = (newAssignment: PermissionAssignmentJson) => {
+            vm.updateAssignment(permission.code, newAssignment);
+      };
 
       return (
-            <label
-                  className={cn(
-                        "flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all border",
-                        isChecked
-                              ? "bg-primary/5 border-primary/30 shadow-sm"
-                              : "bg-background border-transparent hover:bg-muted/50"
-                  )}
-            >
-                  <Checkbox
-                        checked={isChecked}
-                        onCheckedChange={() => vm.toggle(permission.code)}
-                  />
-                  <div className="flex-1 min-w-0">
-                        <div className={cn("font-medium text-sm", isChecked && "text-primary")}>
-                              {vm.getName(permission)}
+            <div className="group relative">
+                  <label
+                        className={cn(
+                              "flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all border",
+                              isChecked
+                                    ? "bg-primary/5 border-primary/30 shadow-sm"
+                                    : "bg-background border-transparent hover:bg-muted/50"
+                        )}
+                  >
+                        <Checkbox
+                              checked={isChecked}
+                              onCheckedChange={() => vm.toggle(permission.code)}
+                              className="translate-y-[2px]"
+                        />
+                        <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2">
+                                    <div className={cn("font-medium text-sm", isChecked && "text-primary")}>
+                                          {vm.getName(permission)}
+                                    </div>
+                                    {isChecked && hasCustomConfig && (
+                                          <Badge variant="outline" className="text-[10px] h-4 px-1 bg-blue-50 text-blue-700 border-blue-200">
+                                                Custom
+                                          </Badge>
+                                    )}
+                              </div>
+                              <div className="text-xs text-muted-foreground font-mono mt-0.5">
+                                    {permission.code}
+                              </div>
                         </div>
-                        <div className="text-xs text-muted-foreground font-mono mt-0.5">
-                              {permission.code}
-                        </div>
-                  </div>
+                        {isChecked && (
+                              <div className="flex items-center justify-center w-6 h-6 rounded-full bg-primary text-primary-foreground">
+                                    <Check className="h-3.5 w-3.5" />
+                              </div>
+                        )}
+                  </label>
+
+                  {/* Config Button - Absolute positioned or standard layout? Relative creates stacking context */}
                   {isChecked && (
-                        <div className="flex items-center justify-center w-6 h-6 rounded-full bg-primary text-primary-foreground">
-                              <Check className="h-3.5 w-3.5" />
-                        </div>
+                        <Button
+                              variant="ghost"
+                              size="icon"
+                              className="absolute right-12 top-1/2 -translate-y-1/2 h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
+                              onClick={(e) => {
+                                    e.stopPropagation();
+                                    setShowConfig(true);
+                              }}
+                        >
+                              <Settings className="h-4 w-4 text-muted-foreground" />
+                        </Button>
                   )}
-            </label>
+
+                  {showConfig && (
+                        <PermissionConfigDialog
+                              open={showConfig}
+                              onOpenChange={setShowConfig}
+                              permission={permissionSimple}
+                              currentAssignment={assignment}
+                              onSave={handleUpdateConfig}
+                        />
+                  )}
+            </div>
       );
 }

@@ -33,11 +33,14 @@ export interface RolePermission {
       permissionCode: string;
       description?: string;
       scope?: string;
+      restrictedFields?: string; // JSON string from backend
 }
 
 export interface GroupedPermissions {
       [resource: string]: TenantPermission[];
 }
+
+import type { PermissionAssignmentJson } from "../../data/models/RoleModel";
 
 export interface UseRolePermissionsDialogProps {
       open: boolean;
@@ -46,11 +49,12 @@ export interface UseRolePermissionsDialogProps {
       tenantId: string;
 }
 
+
 export interface UseRolePermissionsDialogResult {
       // State
       search: string;
       setSearch: (value: string) => void;
-      selectedCodes: Set<string>;
+      assignments: Map<string, PermissionAssignmentJson>;
       expandedGroups: string[];
       setExpandedGroups: (groups: string[]) => void;
 
@@ -63,6 +67,7 @@ export interface UseRolePermissionsDialogResult {
 
       // Actions
       toggle: (code: string) => void;
+      updateAssignment: (code: string, assignment: PermissionAssignmentJson) => void;
       toggleGroup: (codes: string[]) => void;
       save: () => void;
       isSaving: boolean;
@@ -84,7 +89,7 @@ export function useRolePermissionsDialog({
       const queryClient = useQueryClient();
 
       const [search, setSearch] = useState("");
-      const [selectedCodes, setSelectedCodes] = useState<Set<string>>(new Set());
+      const [assignments, setAssignments] = useState<Map<string, PermissionAssignmentJson>>(new Map());
       const [expandedGroups, setExpandedGroups] = useState<string[]>([]);
 
       // Track if we've initialized for this role to prevent infinite loops
@@ -94,7 +99,7 @@ export function useRolePermissionsDialog({
       useEffect(() => {
             if (open && role?.id !== initializedRoleRef.current) {
                   setSearch("");
-                  setSelectedCodes(new Set());
+                  setAssignments(new Map());
                   setExpandedGroups([]);
                   initializedRoleRef.current = null; // Mark as not initialized
             }
@@ -131,19 +136,29 @@ export function useRolePermissionsDialog({
                   !loadingRole &&
                   initializedRoleRef.current !== role.id
             ) {
-                  const validCodes = new Set(tenantPermissions.map(p => p.code));
-                  const roleCodes = rolePermissions.map(p => p.permissionCode);
-                  const selectedFromRole = roleCodes.filter(code => validCodes.has(code));
+                  const validCodes = new Map<string, string>(); // code -> id
+                  tenantPermissions.forEach(p => validCodes.set(p.code, p.id));
 
-                  setSelectedCodes(new Set(selectedFromRole));
-
-                  // Auto-expand groups with selected permissions
+                  const newAssignments = new Map<string, PermissionAssignmentJson>();
                   const groupsWithSelection = new Set<string>();
-                  tenantPermissions.forEach(p => {
-                        if (selectedFromRole.includes(p.code)) {
-                              groupsWithSelection.add(p.resource);
+
+                  rolePermissions.forEach(rp => {
+                        if (validCodes.has(rp.permissionCode)) {
+                              newAssignments.set(rp.permissionCode, {
+                                    permissionId: rp.permissionId,
+                                    scopeOverride: rp.scope,
+                                    restrictedFields: rp.restrictedFields ? JSON.parse(rp.restrictedFields) : undefined
+                              });
+
+                              // Find generic resource group
+                              const permissionDef = tenantPermissions.find(p => p.code === rp.permissionCode);
+                              if (permissionDef?.resource) {
+                                    groupsWithSelection.add(permissionDef.resource);
+                              }
                         }
                   });
+
+                  setAssignments(newAssignments);
                   setExpandedGroups(Array.from(groupsWithSelection));
 
                   // Mark as initialized for this role
@@ -156,12 +171,16 @@ export function useRolePermissionsDialog({
             mutationFn: async () => {
                   if (!role) throw new Error("No role selected");
 
-                  const selectedIds = tenantPermissions
-                        .filter(p => selectedCodes.has(p.code))
-                        .map(p => p.id);
+                  // Assignments map already contains corect JSON objects including config
+                  // Force structure to ensure keys are present (map undefined to null)
+                  const permissions = Array.from(assignments.values()).map(a => ({
+                        permissionId: a.permissionId,
+                        scopeOverride: a.scopeOverride ?? null,
+                        restrictedFields: a.restrictedFields ?? []
+                  }));
 
                   await systemContainer.roleRepository.assignPermissions(role.id, {
-                        permissions: selectedIds.map(id => ({ permissionId: id })),
+                        permissions: permissions,
                   });
             },
             onSuccess: () => {
@@ -181,18 +200,53 @@ export function useRolePermissionsDialog({
 
       // Toggle handlers
       const toggle = (code: string) => {
-            setSelectedCodes(prev => {
-                  const next = new Set(prev);
-                  next.has(code) ? next.delete(code) : next.add(code);
+            setAssignments(prev => {
+                  const next = new Map(prev);
+                  if (next.has(code)) {
+                        next.delete(code);
+                  } else {
+                        // Find permission ID
+                        const permission = tenantPermissions.find(p => p.code === code);
+                        if (permission) {
+                              next.set(code, {
+                                    permissionId: permission.id,
+                                    scopeOverride: "Tenant",
+                                    restrictedFields: []
+                              });
+                        }
+                  }
                   return next;
             });
       };
 
+      const updateAssignment = (code: string, assignment: PermissionAssignmentJson) => {
+            setAssignments(prev => {
+                  const next = new Map(prev);
+                  next.set(code, assignment);
+                  return next;
+            });
+      }
+
       const toggleGroup = (codes: string[]) => {
-            const allSelected = codes.every(c => selectedCodes.has(c));
-            setSelectedCodes(prev => {
-                  const next = new Set(prev);
-                  codes.forEach(c => allSelected ? next.delete(c) : next.add(c));
+            const allSelected = codes.every(c => assignments.has(c));
+            setAssignments(prev => {
+                  const next = new Map(prev);
+                  codes.forEach(c => {
+                        if (allSelected) {
+                              next.delete(c);
+                        } else {
+                              if (!next.has(c)) {
+                                    const permission = tenantPermissions.find(p => p.code === c);
+                                    if (permission) {
+                                          next.set(c, {
+                                                permissionId: permission.id,
+                                                scopeOverride: "Tenant",
+                                                restrictedFields: []
+                                          });
+                                    }
+                              }
+                        }
+                  });
                   return next;
             });
       };
@@ -217,10 +271,10 @@ export function useRolePermissionsDialog({
       const getName = (p: TenantPermission) =>
             (language === "ar" ? p.nameAr : p.nameEn) || p.description || p.code;
 
-      const isChecked = (code: string) => selectedCodes.has(code);
+      const isChecked = (code: string) => assignments.has(code);
 
       const getGroupStats = (codes: string[]) => {
-            const count = codes.filter(c => selectedCodes.has(c)).length;
+            const count = codes.filter(c => assignments.has(c)).length;
             return {
                   count,
                   total: codes.length,
@@ -233,19 +287,20 @@ export function useRolePermissionsDialog({
             // State
             search,
             setSearch,
-            selectedCodes,
+            assignments,
             expandedGroups,
             setExpandedGroups,
 
             // Data
             grouped,
             totalCount: tenantPermissions.length,
-            selectedCount: selectedCodes.size,
+            selectedCount: assignments.size,
             groupCount: Object.keys(grouped).length,
             isLoading: loadingTenant || loadingRole,
 
             // Actions
             toggle,
+            updateAssignment,
             toggleGroup,
             save: () => saveMutation.mutate(),
             isSaving: saveMutation.isPending,
