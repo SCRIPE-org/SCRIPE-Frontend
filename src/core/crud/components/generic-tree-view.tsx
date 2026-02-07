@@ -21,6 +21,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import type { TreeViewModel, TreeNode } from "@core/hooks/use-tree-view-model";
 import { appLogger } from "@core/common/logger";
 import { usePermission } from "@core/hooks/use-permission";
+import { usePermissions } from "@core/hooks/use-permissions";
 import type { PermissionCode } from "@core/common/types/permissions";
 
 /**
@@ -64,6 +65,8 @@ export interface GenericTreeViewProps<T extends TreeNode, TCreate, TUpdate> {
     icon?: React.ReactNode;
     variant?: "default" | "destructive";
     disabled?: boolean;
+    requiredPermission?: PermissionCode;
+    show?: (node: T) => boolean;
   }>;
 
   /* ========================================
@@ -132,6 +135,8 @@ export function GenericTreeView<T extends TreeNode, TCreate, TUpdate>({
     },
     []
   );
+
+  const { hasPermission } = usePermissions();
 
   const effectivePermissions = useMemo(() => {
     if (permissions) {
@@ -282,6 +287,14 @@ export function GenericTreeView<T extends TreeNode, TCreate, TUpdate>({
               if (customActions) {
                 const custom = customActions(n);
                 custom.forEach((action) => {
+                  if (action.show && !action.show(n)) return;
+                  if (
+                    action.requiredPermission &&
+                    !hasPermission(action.requiredPermission)
+                  ) {
+                    return;
+                  }
+
                   actions.push({
                     label: action.label,
                     onClick: action.onClick,

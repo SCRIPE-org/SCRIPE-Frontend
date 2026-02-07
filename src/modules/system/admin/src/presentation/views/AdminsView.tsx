@@ -13,7 +13,7 @@ import { Admin } from "../../domain/entities/Admin";
 import type { AssignRoleRequest } from "../../domain/entities/AdminRequests";
 import { useAdminsViewModel } from "../viewmodels/useAdminsViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
-import { usePermissions } from "@core/providers/permission-provider";
+
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { Badge } from "@core/ui/badge";
 import { UserCheck, Shield, Trash2, Pencil, Eye, Settings, ArrowRightLeft } from "lucide-react";
@@ -28,7 +28,7 @@ interface AdminsViewProps {
 
 export function AdminsView({ tenantId }: AdminsViewProps = {}) {
       const { t, language } = useI18n();
-      const { hasPermission } = usePermissions();
+
       // Use myTenantAdmins by default, or specific tenant if provided
       const {
             vm,
@@ -184,18 +184,14 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
                               variant: "ghost" as const,
                               icon: <UserCheck className="h-4 w-4" />,
                               requiredPermission: SYSTEM_PERMISSIONS.ADMINS_IMPERSONATE,
-                        }     
-                  ];
-
-                  actions.push({
-                        label: tFn("admin.transfer") || "Transfer",
-                        onClick: (item: Admin) => handleOpenTransfer(item),
-                        variant: "ghost" as const,
-                        icon: <ArrowRightLeft className="h-4 w-4" />,
-                        requiredPermission: SYSTEM_PERMISSIONS.ADMINS_TRANSFER,
-                  });
-
-                  actions.push(
+                        },
+                        {
+                              label: tFn("admin.transfer") || "Transfer",
+                              onClick: (item: Admin) => handleOpenTransfer(item),
+                              variant: "ghost" as const,
+                              icon: <ArrowRightLeft className="h-4 w-4" />,
+                              requiredPermission: SYSTEM_PERMISSIONS.ADMINS_TRANSFER,
+                        },
                         {
                               label: tFn("admin.toggleStatus") || "Toggle Status",
                               onClick: (item: Admin) => handleToggleActive(item.id, !item.isActive),
@@ -233,11 +229,11 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
                               icon: <Trash2 className="h-4 w-4" />,
                               requiredPermission: SYSTEM_PERMISSIONS.ADMINS_DELETE,
                         }
-                  );
+                  ];
 
                   return actions;
             },
-      }), [t, vm, handleDelete, configBase, handleToggleActive, handleOpenViewRoles, handleOpenAssignRole, handleOpenResetPassword, handleImpersonate, handleOpenTransfer, language, hasPermission]);
+      }), [t, vm, handleDelete, configBase, handleToggleActive, handleOpenViewRoles, handleOpenAssignRole, handleOpenResetPassword, handleImpersonate, handleOpenTransfer, language]);
 
       const [transferDialogOpen, setTransferDialogOpen] = useState(false);
 

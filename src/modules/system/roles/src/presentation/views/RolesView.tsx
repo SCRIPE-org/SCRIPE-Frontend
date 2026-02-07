@@ -15,6 +15,7 @@ import {
       type CrudColumn
 } from "@core/crud/components/generic-crud-view";
 import { Shield, Pencil, Trash } from "lucide-react";
+import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import type { Role } from "../../domain/entities/Role";
 
 export function RolesView() {
@@ -115,6 +116,7 @@ export function RolesView() {
                         label: t("roles.managePermissions"),
                         icon: <Shield className="h-4 w-4" />,
                         onClick: (role) => router.push(`/roles/${role.id}`),
+                        requiredPermission: SYSTEM_PERMISSIONS.ROLES_UPDATE,
                   },
                   // Edit (Standard)
                   {

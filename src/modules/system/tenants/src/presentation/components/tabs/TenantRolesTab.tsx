@@ -18,6 +18,7 @@ import { GenericCrudView } from "@core/crud/components/generic-crud-view";
 import type { CrudConfig, CrudAction } from "@core/crud/components/generic-crud-view";
 import { Badge } from "@core/ui/badge";
 import { useI18n } from "@core/providers/i18n-provider";
+import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 
 // Role imports
 import { Role } from "@modules/system/roles/src/domain/entities/Role";
@@ -99,6 +100,7 @@ export function TenantRolesTab({ tenantId, tenantName }: TenantRolesTabProps) {
                         onClick: (item: Role) => vm.openPermissionsDialog(item),
                         variant: "ghost",
                         icon: <Shield className="h-4 w-4" />,
+                        requiredPermission: SYSTEM_PERMISSIONS.ROLES_UPDATE,
                   },
                   {
                         label: tFn("common.delete") || "Delete",

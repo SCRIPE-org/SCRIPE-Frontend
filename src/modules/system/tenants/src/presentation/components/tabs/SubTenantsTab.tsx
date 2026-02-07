@@ -14,6 +14,7 @@
 import { useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
+import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { Badge } from "@core/ui/badge";
 import { LogIn } from "lucide-react";
 
@@ -91,6 +92,7 @@ export function SubTenantsTab({ parentId, parentName, parentCode }: SubTenantsTa
                         label: t("tenant.enterTenantWorld") || "Enter Tenant Details",
                         onClick: () => handleEnterTenantWorld(node),
                         icon: <LogIn className="h-4 w-4" />,
+                        requiredPermission: SYSTEM_PERMISSIONS.TENANTS_VIEW_DETAILS,
                   },
             ];
       }, [t, handleEnterTenantWorld]);

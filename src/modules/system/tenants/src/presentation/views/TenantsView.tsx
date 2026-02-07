@@ -216,13 +216,12 @@ export function TenantsView() {
 
       // Custom actions for tenant nodes
       const customActions = useMemo(() => {
-            if (!canEnterTenantWorld) return undefined;
-
             return (node: TenantTreeNode) => [
                   {
                         label: t("tenant.enterTenantWorld"),
                         onClick: () => handleEnterTenantWorld(node),
                         icon: <LogIn className="h-4 w-4" />,
+                        show: () => canEnterTenantWorld,
                   },
             ];
       }, [canEnterTenantWorld, t, handleEnterTenantWorld]);
