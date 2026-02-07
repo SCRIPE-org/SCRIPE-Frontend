@@ -2660,6 +2660,7 @@ export const en = {
   },
   // Common
   common: {
+    exit:"Exit",
     selected: "Selected",
     groups: "Groups",
     more: "More",

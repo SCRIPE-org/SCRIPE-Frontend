@@ -16,12 +16,16 @@ import {
 } from "@core/crud/components/generic-crud-view";
 import { Shield, Pencil, Trash } from "lucide-react";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
+import { usePermissions } from "@core/providers/permission-provider";
 import type { Role } from "../../domain/entities/Role";
 
 export function RolesView() {
       const { t, language } = useI18n();
       const router = useRouter();
-      const viewModel = useRolesViewModel({ useMyTenant: true });
+      const { isSuperAdmin } = usePermissions();
+
+      // Logic: Super Admins see System/Context, Tenant Admins see My Tenant
+      const viewModel = useRolesViewModel({ useMyTenant: !isSuperAdmin });
 
       const columns: CrudColumn<Role>[] = [
             { key: "nameAr", label: t("roles.name"), sortable: true, className: "font-medium", render: (value: unknown, role: Role) => role.getLocalizedName(language) },

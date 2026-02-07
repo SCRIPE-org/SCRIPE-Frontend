@@ -2693,6 +2693,7 @@ export const ar = {
 
   // Common
   common: {
+    exit: "خروج",
     selectAll: "اختر الكل",
     clearAll: "مسح الكل",
     groups: "المجموعات",

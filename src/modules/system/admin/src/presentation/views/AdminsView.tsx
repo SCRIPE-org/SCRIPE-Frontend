@@ -13,6 +13,7 @@ import { Admin } from "../../domain/entities/Admin";
 import type { AssignRoleRequest } from "../../domain/entities/AdminRequests";
 import { useAdminsViewModel } from "../viewmodels/useAdminsViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
+import { usePermissions } from "@core/providers/permission-provider";
 
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { Badge } from "@core/ui/badge";
@@ -28,6 +29,13 @@ interface AdminsViewProps {
 
 export function AdminsView({ tenantId }: AdminsViewProps = {}) {
       const { t, language } = useI18n();
+      const { isSuperAdmin } = usePermissions();
+
+      // Logic:
+      // - If tenantId prop is provided -> View specific tenant
+      // - If Super Admin -> View specific (if prop provided) OR System/Context (if not)
+      // - If Tenant Admin (not super) -> ALWAYS view My Tenant
+      const shouldUseMyTenant = !isSuperAdmin && !tenantId;
 
       // Use myTenantAdmins by default, or specific tenant if provided
       const {
@@ -45,7 +53,7 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
             isImpersonating,
             handleTransfer,
             isTransferring,
-      } = useAdminsViewModel({ useMyTenant: !tenantId, tenantId });
+      } = useAdminsViewModel({ useMyTenant: shouldUseMyTenant, tenantId });
 
       const configBase = getConfigBase();
 

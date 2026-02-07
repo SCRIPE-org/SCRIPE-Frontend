@@ -16,7 +16,7 @@ import { useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { Badge } from "@core/ui/badge";
-import { LogIn } from "lucide-react";
+import { LogIn, Eye } from "lucide-react";
 
 // Generic CRUD imports
 import { GenericTreeView } from "@core/crud/components/generic-tree-view";
@@ -88,6 +88,11 @@ export function SubTenantsTab({ parentId, parentName, parentCode }: SubTenantsTa
       // Custom actions for tenant nodes
       const customActions = useMemo(() => {
             return (node: TenantTreeNode) => [
+                  {
+                        label: t("common.view") || "View",
+                        onClick: () => router.push(`/tenants/${node.id}`),
+                        icon: <Eye className="h-4 w-4" />,
+                  },
                   {
                         label: t("tenant.enterTenantWorld") || "Enter Tenant Details",
                         onClick: () => handleEnterTenantWorld(node),

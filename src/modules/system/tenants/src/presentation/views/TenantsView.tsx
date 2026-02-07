@@ -26,7 +26,7 @@ import type {
       UpdateTenantRequest,
 } from "../../domain/entities/TenantRequests";
 import { Badge } from "@core/ui/badge";
-import { LogIn } from "lucide-react";
+import { LogIn, Eye } from "lucide-react";
 import type { FieldConfig, FieldOption } from "@core/ui/forms/generic-form";
 
 // ============================================
@@ -217,6 +217,11 @@ export function TenantsView() {
       // Custom actions for tenant nodes
       const customActions = useMemo(() => {
             return (node: TenantTreeNode) => [
+                  {
+                        label: t("common.view") || "View",
+                        onClick: () => router.push(`/tenants/${node.id}`),
+                        icon: <Eye className="h-4 w-4" />,
+                  },
                   {
                         label: t("tenant.enterTenantWorld"),
                         onClick: () => handleEnterTenantWorld(node),
