@@ -147,7 +147,9 @@ export function useRolePermissionsDialog({
                               newAssignments.set(rp.permissionCode, {
                                     permissionId: rp.permissionId,
                                     scopeOverride: rp.scope,
-                                    restrictedFields: rp.restrictedFields ? JSON.parse(rp.restrictedFields) : undefined
+                                    restrictedFields: (rp.restrictedFields && rp.restrictedFields !== "null" && rp.restrictedFields !== "")
+                                          ? JSON.parse(rp.restrictedFields)
+                                          : []
                               });
 
                               // Find generic resource group
