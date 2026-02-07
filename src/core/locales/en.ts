@@ -395,6 +395,18 @@ export const en = {
     descriptionPlaceholder: "Optional description...",
     priorityPlaceholder: "e.g., 10",
     managePermissionsFor: "Manage Permissions For",
+    // Permission Config Dialog
+    scopeOverride: "Scope Override",
+    selectScope: "Select Scope",
+    scopeDefault: "Default (None)",
+    scopeSelf: "Self Only",
+    scopeTenant: "Tenant Level",
+    scopeGlobal: "Global (All Tenants)",
+    scopeHint: "Overrides the default data access scope for this permission.",
+    restrictedFields: "Restricted Fields",
+    enterField: "e.g. Salary, SSN",
+    noRestrictions: "No field restrictions",
+    restrictionHint: "Specific API fields to hide from the user.",
   },
 
   // Role Detail View

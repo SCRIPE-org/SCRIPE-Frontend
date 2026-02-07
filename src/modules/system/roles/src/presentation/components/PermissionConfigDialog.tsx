@@ -74,10 +74,10 @@ export function PermissionConfigDialog({
 
       // Scope Options
       const scopeOptions = [
-            { value: "default", label: t("role.scopeDefault") || "Default (None)" },
-            { value: "Self", label: t("role.scopeSelf") || "Self Only" },
-            { value: "Tenant", label: t("role.scopeTenant") || "Tenant Level" },
-            { value: "Global", label: t("role.scopeGlobal") || "Global (All Tenants)" },
+            { value: "default", label: t("role.scopeDefault") },
+            { value: "Self", label: t("role.scopeSelf") },
+            { value: "Tenant", label: t("role.scopeTenant") },
+            { value: "Global", label: t("role.scopeGlobal") },
       ];
 
       return (
@@ -94,7 +94,7 @@ export function PermissionConfigDialog({
                               {/* Scope Override using GenericSelect */}
                               <div className="space-y-2">
                                     <Label className="flex items-center gap-2">
-                                          {t("role.scopeOverride") || "Scope Override"}
+                                          {t("role.scopeOverride")}
                                           <Info className="h-3 w-3 text-muted-foreground" />
                                     </Label>
 
@@ -103,26 +103,26 @@ export function PermissionConfigDialog({
                                           options={scopeOptions}
                                           value={scope}
                                           onValueChange={(val: string | string[]) => setScope(val as string)}
-                                          placeholder={t("role.selectScope") || "Select Scope"}
+                                          placeholder={t("role.selectScope")}
                                           className="w-full"
                                     />
 
                                     <p className="text-xs text-muted-foreground">
-                                          {t("role.scopeHint") || "Overrides the default data access scope for this permission."}
+                                          {t("role.scopeHint")}
                                     </p>
                               </div>
 
                               {/* Restricted Fields (Custom Tag Input) */}
                               <div className="space-y-2">
                                     <Label className="flex items-center gap-2">
-                                          {t("role.restrictedFields") || "Restricted Fields"}
+                                          {t("role.restrictedFields")}
                                     </Label>
                                     <div className="flex gap-2">
                                           <Input
                                                 value={newField}
                                                 onChange={(e) => setNewField(e.target.value)}
                                                 onKeyDown={(e) => e.key === "Enter" && handleAddField()}
-                                                placeholder={t("role.enterField") || "e.g. Salary, SSN"}
+                                                placeholder={t("role.enterField")}
                                                 className="flex-1"
                                           />
                                           <Button type="button" size="icon" variant="secondary" onClick={handleAddField}>
@@ -134,7 +134,7 @@ export function PermissionConfigDialog({
                                     <div className="flex flex-wrap gap-2 min-h-[2.5rem] p-2 border rounded-md bg-muted/20">
                                           {restrictedFields.length === 0 && (
                                                 <span className="text-sm text-muted-foreground italic">
-                                                      {t("role.noRestrictions") || "No field restrictions"}
+                                                      {t("role.noRestrictions")}
                                                 </span>
                                           )}
                                           {restrictedFields.map((field) => (
@@ -151,17 +151,17 @@ export function PermissionConfigDialog({
                                           ))}
                                     </div>
                                     <p className="text-xs text-muted-foreground">
-                                          {t("role.restrictionHint") || "Specific API fields to hide from the user."}
+                                          {t("role.restrictionHint")}
                                     </p>
                               </div>
                         </div>
 
                         <DialogFooter>
                               <Button variant="outline" onClick={() => onOpenChange(false)}>
-                                    {t("common.cancel") || "Cancel"}
+                                    {t("common.cancel")}
                               </Button>
                               <Button onClick={handleSave}>
-                                    {t("common.save") || "Save Configuration"}
+                                    {t("common.save")}
                               </Button>
                         </DialogFooter>
                   </DialogContent>
