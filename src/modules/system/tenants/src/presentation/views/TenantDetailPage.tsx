@@ -46,14 +46,12 @@ export function TenantDetailPage({ tenantId }: TenantDetailPageProps) {
                         const result = await tenantRepository.getById(tenantId);
                         if (result) {
                               setTenant(result);
-                              // Enter tenant world context
-                              enterTenantWorld({
-                                    id: result.id,
-                                    name: result.name,
-                                    parentId: result.parentId,
-                              });
-                              // Set API context header via Repository (Clean Architecture)
-                              tenantRepository.setTenantContext(result.id);
+                              // DO NOT auto-enter tenant world here.
+                              // "View Details" should be distinct from "Drill Down" (Context Switch).
+
+                              // However, for API calls in the tabs to work without Drill Down, 
+                              // we might need to rely on the ID passed to components, 
+                              // NOT the global header which is for "Drill Down" mode.
                         } else {
                               setError(t("tenant.notFound") || "Tenant not found");
                         }
@@ -69,15 +67,16 @@ export function TenantDetailPage({ tenantId }: TenantDetailPageProps) {
 
             // Cleanup on unmount
             return () => {
-                  exitTenantWorld();
-                  tenantRepository.setTenantContext(null);
+                  // No need to exit world if we didn't enter it automatically.
+                  // If user manually enters, they should manually exit or navigate away.
+
+                  // However, if we set any temporary context, clear it here.
+                  // tenantRepository.setTenantContext(null);
             };
       }, [tenantId, enterTenantWorld, exitTenantWorld, tenantRepository, t]);
 
       // Handle back navigation
       const handleBack = () => {
-            exitTenantWorld();
-            tenantRepository.setTenantContext(null);
             router.push("/tenants");
       };
 
@@ -136,6 +135,14 @@ export function TenantDetailPage({ tenantId }: TenantDetailPageProps) {
                         onUpdate={() => {
                               // Refetch tenant after update
                               systemContainer.tenantRepository.getById(tenantId).then(setTenant);
+                        }}
+                        onEnter={() => {
+                              enterTenantWorld({
+                                    id: tenant.id,
+                                    name: tenant.name,
+                                    parentId: tenant.parentId,
+                              });
+                              router.push("/");
                         }}
                   />
 

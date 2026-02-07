@@ -49,6 +49,15 @@ export function useImpersonation() {
                   sessionStorage.removeItem(BACKUP_TOKEN_KEY);
                   setIsImpersonating(false);
 
+                  // Clear persistent storage to force fresh load of admin profile & menu
+                  if (typeof window !== "undefined") {
+                        localStorage.removeItem("app-storage"); // Clear Zustand persist
+                        localStorage.removeItem("navigation-cache"); // Clear Menu cache
+                        localStorage.removeItem("navigation-cache-expiry");
+                        // ALSO Clear tenant context to preventing getting stuck in "Drill Down" mode
+                        sessionStorage.removeItem("tenant_context");
+                  }
+
                   success({
                         title: "Impersonation Ended",
                         description: "You have returned to your admin account."

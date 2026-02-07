@@ -30,6 +30,7 @@ import {
       Power,
       Trash2,
       Loader2,
+      LogIn,
 } from "lucide-react";
 import { systemContainer } from "@modules/system/di";
 import type { Tenant } from "../../domain/entities/Tenant";
@@ -39,9 +40,10 @@ import { appLogger } from "@/core/common/logger";
 interface TenantHeaderProps {
       tenant: Tenant;
       onUpdate?: () => void;
+      onEnter?: () => void;
 }
 
-export function TenantHeader({ tenant, onUpdate }: TenantHeaderProps) {
+export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
       const { t, direction } = useI18n();
       const isRtl = direction === "rtl";
 
@@ -196,6 +198,17 @@ export function TenantHeader({ tenant, onUpdate }: TenantHeaderProps) {
 
                                     {/* Actions */}
                                     <div className="flex flex-wrap items-center gap-2 shrink-0">
+                                          {onEnter && (
+                                                <Button
+                                                      variant="default"
+                                                      size="sm"
+                                                      onClick={onEnter}
+                                                      className="bg-primary hover:bg-primary/90"
+                                                >
+                                                      <LogIn className="h-4 w-4" />
+                                                      <span className="ms-2">{t("tenant.enterTenantWorld")}</span>
+                                                </Button>
+                                          )}
                                           <Button
                                                 variant="outline"
                                                 size="sm"
