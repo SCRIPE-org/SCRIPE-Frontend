@@ -56,7 +56,6 @@ import { DatePicker } from "@core/ui/date-picker";
 import { RichTextEditor } from "@core/ui/rich-text-editor";
 import { ImageUploader } from "@core/ui/image-uploader";
 import { PasswordInput } from "@core/ui/password-input";
-import { MultiSelect } from "@core/ui/multi-select";
 
 /**
  * Field option for select, radio, and other choice-based inputs
@@ -582,27 +581,44 @@ export function GenericForm({
                     key={`searchable-select-${field.name}`}
                   />
                 ) : field.type === "multi-select" ? (
-                  <MultiSelect
+                  <GenericSelect
+                    type="multi"
                     options={
                       field.options?.map((opt) => ({
                         value: opt.value,
                         label: opt.label,
+                        uniqueKey: opt.uniqueKey,
                       })) || []
                     }
-                    selected={formData[field.name] || []}
-                    onChange={(selected: string[]) =>
-                      handleChange(field.name, selected)
+                    value={formData[field.name] || []}
+                    onValueChange={(value: string | string[]) =>
+                      handleChange(field.name, value)
                     }
                     placeholder={field.placeholder}
-                    className={getInputClasses("")} // Empty to avoid height conflict
-                    onSearch={
+                    searchPlaceholder={field.searchPlaceholder}
+                    searchType={field.searchType}
+                    onServerSearch={
                       field.onServerSearch
-                        ? async (query) => {
+                        ? async (query: string) => {
                           const results = await field.onServerSearch!(query);
-                          return results.map(r => ({ label: r.label, value: r.value }));
+                          return results.map((r) => ({
+                            value: r.value,
+                            label: r.label,
+                            uniqueKey: r.uniqueKey,
+                          }));
                         }
                         : undefined
                     }
+                    searchEndpoint={field.searchEndpoint}
+                    debounceMs={field.debounceMs}
+                    allowClear={field.allowClear}
+                    noResultsText={field.noResultsText}
+                    searchingText={field.searchingText}
+                    maxSelectedDisplay={3}
+                    disabled={field.disabled || readOnly}
+                    className={getInputClasses(getInputHeight())}
+                    // Stable key to avoid remounting (which closes dropdown) on each selection
+                    key={`multi-select-${field.name}`}
                   />
                 ) : field.type === "tree" ? (
                   <GenericSelect
