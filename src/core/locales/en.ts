@@ -270,6 +270,10 @@ export const en = {
 
   // Admin
   admin: {
+    targetRole:"Target Role",
+    targetRolePlaceholder:"Enter Target Role",
+    selectRole:"Select Role",
+    selectTenantFirst:"Select Tenant First",
     impersonate:"Impersonate",
     transferTitle: "Transfer User",
     transfer:"Transfer User",

@@ -38,9 +38,11 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
       const { tenantId: propTenantId, useMyTenant } = options;
       const contextTenantId = useCurrentTenantId();
 
-      // Use prop tenantId if provided, otherwise context tenantId, otherwise undefined (system level)
-      // If useMyTenant is true, we ignore both and let the repo use /myTenantAdmins
-      const tenantId = useMyTenant ? undefined : ((propTenantId || contextTenantId) ?? undefined);
+      // Use prop tenantId if provided (Priority 1)
+      // Otherwise if useMyTenant is true, use undefined (to trigger myTenant endpoint)
+      // Otherwise use context tenantId (System Admin browsing context)
+      const rawTenantId = propTenantId ?? (useMyTenant ? undefined : contextTenantId);
+      const tenantId = rawTenantId ?? undefined; // Normalize null to undefined
 
       const { adminRepository, roleRepository } = systemContainer;
       const { t, language } = useI18n();
@@ -198,8 +200,8 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
 
       // Transfer mutation
       const transferMutation = useMutation({
-            mutationFn: ({ id, targetTenantId }: { id: string; targetTenantId: string }) =>
-                  adminRepository.transfer(id, targetTenantId),
+            mutationFn: ({ id, request }: { id: string; request: import("../../domain/entities/AdminRequests").TransferAdminRequest }) =>
+                  adminRepository.transfer(id, request),
             onSuccess: () => {
                   queryClient.invalidateQueries({ queryKey: ["admins"] });
                   success({ title: t("admin.transferred") || "Admin Transferred", description: t("admin.transferredDesc") || "Admin transferred successfully." });
@@ -403,7 +405,7 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
             handleRemoveRole,
             handleResetPassword,
             handleImpersonate: (id: string) => impersonateMutation.mutate(id),
-            handleTransfer: (id: string, targetTenantId: string) => transferMutation.mutate({ id, targetTenantId }),
+            handleTransfer: (id: string, request: import("../../domain/entities/AdminRequests").TransferAdminRequest) => transferMutation.mutate({ id, request }),
             handleBulkActivate: (ids: string[]) => bulkActivateMutation.mutate(ids),
             handleBulkDeactivate: (ids: string[]) => bulkDeactivateMutation.mutate(ids),
             handleBulkDelete: (ids: string[]) => bulkDeleteMutation.mutate(ids),

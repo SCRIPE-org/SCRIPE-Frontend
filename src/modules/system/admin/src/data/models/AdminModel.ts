@@ -108,6 +108,14 @@ export interface BulkAdminsFilterJson {
 }
 
 /**
+ * Transfer admin model
+ */
+export interface TransferAdminJson {
+      targetTenantId: string | null;
+      targetRoleId: string;
+}
+
+/**
  * Admin Model class
  *
  * Wraps API JSON with fromJson/toJson methods.

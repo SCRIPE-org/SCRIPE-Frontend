@@ -275,6 +275,10 @@ export const ar = {
 
   // Admin - المشرفون
   admin: {
+    targetRole:"الدور المستهدف",
+    targetRolePlaceholder:"أدخل الدور المستهدف",
+    selectRole:"اختر الدور",
+    selectTenantFirst:"اختر المستأجر",
     impersonating:"انت الان منتحل شخصية مستخدم هذا النظام",
     impersonate:"الدخول كهذا المستخدم",
     transferTitle: "نقل المستخدم",

@@ -10,6 +10,7 @@ import type {
       AssignRoleRequest,
       // ResetPasswordRequest,
       BulkAdminsFilterRequest,
+      TransferAdminRequest,
 } from "../entities/AdminRequests";
 import type { PagedResult } from "@modules/system/core/domain/types";
 
@@ -135,5 +136,5 @@ export interface IAdminRepository {
       /**
        * Transfer admin to another tenant
        */
-      transfer(id: string, targetTenantId: string): Promise<void>;
+      transfer(id: string, request: TransferAdminRequest): Promise<void>;
 }

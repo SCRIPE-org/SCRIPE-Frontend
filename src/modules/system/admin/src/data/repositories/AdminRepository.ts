@@ -182,7 +182,10 @@ export class AdminRepository implements IAdminRepository {
             return this.service.impersonate(id);
       }
 
-      async transfer(id: string, targetTenantId: string): Promise<void> {
-            return this.service.transfer(id, targetTenantId);
+      async transfer(id: string, request: import("../../domain/entities/AdminRequests").TransferAdminRequest): Promise<void> {
+            return this.service.transfer(id, {
+                  targetTenantId: request.targetTenantId,
+                  targetRoleId: request.targetRoleId,
+            });
       }
 }

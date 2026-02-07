@@ -14,6 +14,7 @@ import type {
       UpdateAdminJson,
       AssignRoleJson,
       BulkAdminsFilterJson,
+      TransferAdminJson,
 } from "../../data/models/AdminModel";
 
 /**
@@ -159,5 +160,5 @@ export interface IAdminService {
       /**
        * Transfer admin to another tenant
        */
-      transfer(id: string, targetTenantId: string): Promise<void>;
+      transfer(id: string, json: TransferAdminJson): Promise<void>;
 }

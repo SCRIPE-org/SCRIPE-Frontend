@@ -62,3 +62,11 @@ export interface BulkAdminsFilterRequest {
       search?: string;
       isActive?: boolean;
 }
+
+/**
+ * Transfer admin request
+ */
+export interface TransferAdminRequest {
+      targetTenantId: string | null; // Null for System (Super Admin)
+      targetRoleId: string;
+}

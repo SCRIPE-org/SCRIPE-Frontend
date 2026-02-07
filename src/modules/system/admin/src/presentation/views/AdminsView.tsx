@@ -96,8 +96,8 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
             setTransferDialogOpen(true);
       }, []);
 
-      const onTransferSubmit = useCallback(async (adminId: string, targetTenantId: string) => {
-            await handleTransfer(adminId, targetTenantId);
+      const onTransferSubmit = useCallback(async (adminId: string, request: import("../../domain/entities/AdminRequests").TransferAdminRequest) => {
+            await handleTransfer(adminId, request);
             setTransferDialogOpen(false);
       }, [handleTransfer]);
 
