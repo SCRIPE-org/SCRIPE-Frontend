@@ -208,3 +208,13 @@ export class AssignPermissionsModel {
             };
       }
 }
+// ===== Constants (Frontend Enums) =====
+
+export const PermissionScopes = {
+      Default: "default",
+      Self: "Self",
+      Tenant: "Tenant",
+      Global: "Global",
+} as const;
+
+export type PermissionScopeType = typeof PermissionScopes[keyof typeof PermissionScopes];

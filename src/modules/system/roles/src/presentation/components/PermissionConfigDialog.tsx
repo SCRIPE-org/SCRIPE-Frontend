@@ -14,7 +14,7 @@ import { GenericSelect } from "@core/crud/components/generic-select"; // Updated
 import { Input } from "@core/ui/input";
 import { Badge } from "@core/ui/badge";
 import { useI18n } from "@core/providers/i18n-provider";
-import type { PermissionAssignmentJson } from "../../data/models/RoleModel";
+import { PermissionAssignmentJson, PermissionScopes } from "../../data/models/RoleModel";
 
 export interface PermissionConfigDialogProps {
       open: boolean;
@@ -37,14 +37,14 @@ export function PermissionConfigDialog({
 }: PermissionConfigDialogProps) {
       const { t } = useI18n(); // Removed unused language
 
-      const [scope, setScope] = useState<string>("default");
+      const [scope, setScope] = useState<string>(PermissionScopes.Default);
       const [restrictedFields, setRestrictedFields] = useState<string[]>([]);
       const [newField, setNewField] = useState("");
 
       // Initialize state from current assignment
       useEffect(() => {
             if (open) {
-                  setScope(currentAssignment?.scopeOverride || "default");
+                  setScope(currentAssignment?.scopeOverride || PermissionScopes.Default);
                   setRestrictedFields(currentAssignment?.restrictedFields || []);
                   setNewField("");
             }
@@ -65,7 +65,7 @@ export function PermissionConfigDialog({
       const handleSave = () => {
             const assignment: PermissionAssignmentJson = {
                   permissionId: permission.id,
-                  scopeOverride: scope === "default" ? undefined : scope,
+                  scopeOverride: scope === PermissionScopes.Default ? undefined : scope,
                   restrictedFields: restrictedFields.length > 0 ? restrictedFields : undefined,
             };
             onSave(assignment);
@@ -74,10 +74,10 @@ export function PermissionConfigDialog({
 
       // Scope Options
       const scopeOptions = [
-            { value: "default", label: t("role.scopeDefault") },
-            { value: "Self", label: t("role.scopeSelf") },
-            { value: "Tenant", label: t("role.scopeTenant") },
-            { value: "Global", label: t("role.scopeGlobal") },
+            { value: PermissionScopes.Default, label: t("role.scopeDefault") },
+            { value: PermissionScopes.Self, label: t("role.scopeSelf") },
+            { value: PermissionScopes.Tenant, label: t("role.scopeTenant") },
+            { value: PermissionScopes.Global, label: t("role.scopeGlobal") },
       ];
 
       return (
