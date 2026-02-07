@@ -275,6 +275,14 @@ export const ar = {
   // Admin - المشرفون
   admin: {
     impersonate:"الدخول كهذا المستخدم",
+    transferTitle: "نقل المستخدم",
+    transfer:"نقل المستخدم",
+    transferDesc:"نقل المستخدم إلى منظمة أخرى",
+    targetTenant:"المنظمة المستهدفة",
+    targetTenantPlaceholder:"أدخل المنظمة المستهدفة",
+    transferConfirm:"تأكيد نقل المستخدم",
+    selectTenant:"اختر مستأجر",
+    newPassword:"إعادة تعيين كلمة المرور",
     title: "المشرفون",
     description: "إدارة مشرفي النظام وصلاحياتهم.",
     // Table columns and fields

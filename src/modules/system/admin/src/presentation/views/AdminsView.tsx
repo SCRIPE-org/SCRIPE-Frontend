@@ -14,9 +14,10 @@ import type { AssignRoleRequest } from "../../domain/entities/AdminRequests";
 import { useAdminsViewModel } from "../viewmodels/useAdminsViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Badge } from "@core/ui/badge";
-import { UserCheck, Shield, Trash2, Pencil, Eye, Settings } from "lucide-react";
+import { UserCheck, Shield, Trash2, Pencil, Eye, Settings, ArrowRightLeft } from "lucide-react";
 import { format } from "date-fns";
 import { AssignRoleDialog, ViewRolesDialog, ResetPasswordDialog } from "../components/AdminRoleDialogs";
+import { AdminTransferDialog } from "../components/AdminTransferDialog";
 
 interface AdminsViewProps {
       /** Optional tenant ID to show admins for a specific tenant */
@@ -39,6 +40,8 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
             isRemovingRole,
             isResettingPassword,
             isImpersonating,
+            handleTransfer,
+            isTransferring,
       } = useAdminsViewModel({ useMyTenant: !tenantId, tenantId });
 
       const configBase = getConfigBase();
@@ -80,6 +83,17 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
             if (!selectedAdminForAction) return;
             await handleResetPassword(selectedAdminForAction.id, newPassword);
       }, [handleResetPassword, selectedAdminForAction]);
+
+      // Configuration for the generic view
+      const handleOpenTransfer = useCallback((admin: Admin) => {
+            setSelectedAdminForAction(admin);
+            setTransferDialogOpen(true);
+      }, []);
+
+      const onTransferSubmit = useCallback(async (adminId: string, targetTenantId: string) => {
+            await handleTransfer(adminId, targetTenantId);
+            setTransferDialogOpen(false);
+      }, [handleTransfer]);
 
       // Configuration for the generic view
       const config: CrudConfig<Admin> = useMemo(() => ({
@@ -164,7 +178,12 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
                         onClick: (item: Admin) => handleImpersonate(item.id),
                         variant: "ghost" as const,
                         icon: <UserCheck className="h-4 w-4" />,
-                        // Only show if not current user and has permission (handled by backend usually, but UI check is good too)
+                  },
+                  {
+                        label: tFn("admin.transfer") || "Transfer",
+                        onClick: (item: Admin) => handleOpenTransfer(item),
+                        variant: "ghost" as const,
+                        icon: <ArrowRightLeft className="h-4 w-4" />,
                   },
                   {
                         label: tFn("admin.toggleStatus") || "Toggle Status",
@@ -199,7 +218,9 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
                         icon: <Trash2 className="h-4 w-4" />,
                   },
             ],
-      }), [t, vm, handleDelete, configBase, handleToggleActive, handleOpenViewRoles, handleOpenAssignRole, handleOpenResetPassword, language]);
+      }), [t, vm, handleDelete, configBase, handleToggleActive, handleOpenViewRoles, handleOpenAssignRole, handleOpenResetPassword, handleImpersonate, handleOpenTransfer, language]);
+
+      const [transferDialogOpen, setTransferDialogOpen] = useState(false);
 
       return (
             <>
@@ -229,6 +250,14 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
                         admin={selectedAdminForAction}
                         onResetPassword={onResetPasswordSubmit}
                         isLoading={isResettingPassword}
+                  />
+
+                  <AdminTransferDialog
+                        open={transferDialogOpen}
+                        onOpenChange={setTransferDialogOpen}
+                        admin={selectedAdminForAction}
+                        onTransfer={onTransferSubmit}
+                        isTransferring={isTransferring}
                   />
             </>
       );

@@ -270,6 +270,15 @@ export const en = {
 
   // Admin
   admin: {
+    impersonate:"Impersonate",
+    transferTitle: "Transfer User",
+    transfer:"Transfer User",
+    transferDesc:"Transfer User to another organization",
+    targetTenant:"Target Tenant",
+    targetTenantPlaceholder:"Enter Target Tenant",
+    transferConfirm:"Transfer User",
+    selectTenant:"Selet Tenant",
+    newPassword:"Reset Password",
     title: "Administrators",
     description: "Manage system administrators and their access.",
     // Table columns and fields
