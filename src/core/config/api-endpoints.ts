@@ -92,6 +92,7 @@ export const API_ENDPOINTS = {
     LIST: "/Tenants",
     TREE: "/Tenants/tree",
     MY_CHILDREN: "/Tenants/myChildren",
+    MY_TENANT_AND_CHILDREN: "/Tenants/myTenantAndChildren",
     CHILDREN: (parentId: string) => `/Tenants/${parentId}/children`,
     BY_ID: (id: string) => `/Tenants/${id}`,
     STATS: (id: string) => `/Tenants/${id}/stats`,

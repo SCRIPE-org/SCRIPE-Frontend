@@ -60,37 +60,19 @@ export function AdminTransferDialog({
 
       const handleTenantSearch = useCallback(async (query: string) => {
             try {
-                  if (isSuperAdmin) {
-                        const result = await systemContainer.tenantRepository.getAll({
-                              search: query,
-                              page: 1,
-                              pageSize: 20
-                        });
-                        return result.items.map(tenant => ({
-                              value: tenant.id,
-                              label: `${tenant.name} (${tenant.code})`
-                        }));
-                  } else {
-                        // For Tenant Admins, use myChildren (as requested)
-                        // This endpoint returns all accessible children, so we filter locally
-                        const result = await systemContainer.tenantRepository.getMyChildren();
+                  // Use unified endpoint - returns own tenant + all children for everyone
+                  // Super admins get a "System" pseudo-tenant (null ID) for promoting to super admin
+                  const result = await systemContainer.tenantRepository.getMyTenantAndChildren(query);
 
-                        const filtered = query
-                              ? result.filter(t =>
-                                    t.name.toLowerCase().includes(query.toLowerCase()) ||
-                                    t.code.toLowerCase().includes(query.toLowerCase())
-                              )
-                              : result;
-
-                        return filtered.map(tenant => ({
-                              value: tenant.id,
-                              label: `${tenant.name} (${tenant.code})`
-                        }));
-                  }
+                  return result.map(tenant => ({
+                        // Handle null ID for System pseudo-tenant
+                        value: tenant.id ?? '',
+                        label: `${tenant.name} (${tenant.code})`
+                  }));
             } catch (e) {
                   return [];
             }
-      }, [isSuperAdmin]);
+      }, []);
 
       const handleRoleSearch = useCallback(async (query: string) => {
             try {

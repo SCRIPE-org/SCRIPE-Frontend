@@ -59,6 +59,13 @@ export interface ITenantRepository {
       getChildren(parentId: string): Promise<TenantTreeNode[]>;
 
       /**
+       * Get current user's tenant AND all children tenants
+       * For Admin Transfer dialog - returns own tenant + all descendants
+       * System admins get a "System" pseudo-tenant (null ID)
+       */
+      getMyTenantAndChildren(search?: string): Promise<TenantTreeNode[]>;
+
+      /**
        * Get tenant by ID
        */
       getById(id: string): Promise<Tenant>;

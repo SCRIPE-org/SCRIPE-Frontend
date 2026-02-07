@@ -56,6 +56,11 @@ export class TenantRepository implements ITenantRepository {
             return TenantMapper.toTreeNodeList(models);
       }
 
+      async getMyTenantAndChildren(search?: string): Promise<TenantTreeNode[]> {
+            const models = await this.service.getMyTenantAndChildren(search);
+            return TenantMapper.toTreeNodeList(models);
+      }
+
       async getById(id: string): Promise<Tenant> {
             const model = await this.service.getById(id);
             return TenantMapper.toEntity(model);
