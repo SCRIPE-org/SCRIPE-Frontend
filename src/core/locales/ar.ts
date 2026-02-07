@@ -274,6 +274,7 @@ export const ar = {
 
   // Admin - المشرفون
   admin: {
+    impersonate:"الدخول كهذا المستخدم",
     title: "المشرفون",
     description: "إدارة مشرفي النظام وصلاحياتهم.",
     // Table columns and fields

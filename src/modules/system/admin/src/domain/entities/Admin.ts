@@ -130,6 +130,32 @@ export class Admin {
             return (this.data.roleNamesEn?.length ?? 0) > 0 || (this.data.roles?.length ?? 0) > 0;
       }
 
+      /**
+       * Get localized role names as an array
+       */
+      getLocalizedRoles(lang: string = "en"): string[] {
+            // prefer specific language list from API
+            if (lang === "ar") {
+                  if (this.data.roleNamesAr && this.data.roleNamesAr.length > 0) {
+                        return this.data.roleNamesAr;
+                  }
+                  // Fallback to details array if available
+                  if (this.data.roles && this.data.roles.length > 0) {
+                        return this.data.roles.map(r => r.roleNameAr || r.roleNameEn);
+                  }
+            } else {
+                  if (this.data.roleNamesEn && this.data.roleNamesEn.length > 0) {
+                        return this.data.roleNamesEn;
+                  }
+                  if (this.data.roles && this.data.roles.length > 0) {
+                        return this.data.roles.map(r => r.roleNameEn);
+                  }
+            }
+
+            // Absolute fallback
+            return [];
+      }
+
       /** The tenant this admin belongs to (null for system admins) */
       get tenantId(): string | undefined {
             return this.data.tenantId;

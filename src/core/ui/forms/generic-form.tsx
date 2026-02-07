@@ -55,6 +55,8 @@ import { cn, toDateInputValue, fromDateInputValue } from "@core/common/utils";
 import { DatePicker } from "@core/ui/date-picker";
 import { RichTextEditor } from "@core/ui/rich-text-editor";
 import { ImageUploader } from "@core/ui/image-uploader";
+import { PasswordInput } from "@core/ui/password-input";
+import { MultiSelect } from "@core/ui/multi-select";
 
 /**
  * Field option for select, radio, and other choice-based inputs
@@ -580,44 +582,27 @@ export function GenericForm({
                     key={`searchable-select-${field.name}`}
                   />
                 ) : field.type === "multi-select" ? (
-                  <GenericSelect
-                    type="multi"
+                  <MultiSelect
                     options={
                       field.options?.map((opt) => ({
                         value: opt.value,
                         label: opt.label,
-                        uniqueKey: opt.uniqueKey,
                       })) || []
                     }
-                    value={formData[field.name] || []}
-                    onValueChange={(value: string | string[]) =>
-                      handleChange(field.name, value)
+                    selected={formData[field.name] || []}
+                    onChange={(selected: string[]) =>
+                      handleChange(field.name, selected)
                     }
                     placeholder={field.placeholder}
-                    searchPlaceholder={field.searchPlaceholder}
-                    searchType={field.searchType}
-                    onServerSearch={
+                    className={getInputClasses("")} // Empty to avoid height conflict
+                    onSearch={
                       field.onServerSearch
-                        ? async (query: string) => {
+                        ? async (query) => {
                           const results = await field.onServerSearch!(query);
-                          return results.map((r) => ({
-                            value: r.value,
-                            label: r.label,
-                            uniqueKey: r.uniqueKey,
-                          }));
+                          return results.map(r => ({ label: r.label, value: r.value }));
                         }
                         : undefined
                     }
-                    searchEndpoint={field.searchEndpoint}
-                    debounceMs={field.debounceMs}
-                    allowClear={field.allowClear}
-                    noResultsText={field.noResultsText}
-                    searchingText={field.searchingText}
-                    maxSelectedDisplay={3}
-                    disabled={field.disabled || readOnly}
-                    className={getInputClasses(getInputHeight())}
-                    // Stable key to avoid remounting (which closes dropdown) on each selection
-                    key={`multi-select-${field.name}`}
                   />
                 ) : field.type === "tree" ? (
                   <GenericSelect
@@ -827,26 +812,42 @@ export function GenericForm({
                     dir={direction}
                   />
                 ) : (
-                  <Input
-                    id={field.name}
-                    type={field.type}
-                    value={formData[field.name] || ""}
-                    onChange={(e) => handleChange(field.name, e.target.value)}
-                    required={field.required}
-                    className={cn(
-                      getInputClasses(getInputHeight()),
-                      direction === "rtl" ? "text-right" : "text-left"
-                    )}
-                    placeholder={field.placeholder}
-                    min={field.min}
-                    max={field.max}
-                    step={field.step}
-                    pattern={field.pattern}
-                    minLength={field.minLength}
-                    maxLength={field.maxLength}
-                    disabled={field.disabled || readOnly}
-                    dir={direction}
-                  />
+                  field.type === "password" ? (
+                    <PasswordInput
+                      id={field.name}
+                      value={formData[field.name] || ""}
+                      onChange={(e) => handleChange(field.name, e.target.value)}
+                      required={field.required}
+                      className={cn(
+                        getInputClasses(getInputHeight()),
+                        direction === "rtl" ? "text-right" : "text-left"
+                      )}
+                      placeholder={field.placeholder}
+                      disabled={field.disabled || readOnly}
+                      showStrengthIndicator={true} // Enable for admin forms
+                    />
+                  ) : (
+                    <Input
+                      id={field.name}
+                      type={field.type}
+                      value={formData[field.name] || ""}
+                      onChange={(e) => handleChange(field.name, e.target.value)}
+                      required={field.required}
+                      className={cn(
+                        getInputClasses(getInputHeight()),
+                        direction === "rtl" ? "text-right" : "text-left"
+                      )}
+                      placeholder={field.placeholder}
+                      min={field.min}
+                      max={field.max}
+                      step={field.step}
+                      pattern={field.pattern}
+                      minLength={field.minLength}
+                      maxLength={field.maxLength}
+                      disabled={field.disabled || readOnly}
+                      dir={direction}
+                    />
+                  )
                 )}
               </div>
             )

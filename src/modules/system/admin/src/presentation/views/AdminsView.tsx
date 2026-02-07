@@ -34,9 +34,11 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
             handleAssignRole,
             handleRemoveRole,
             handleResetPassword,
+            handleImpersonate,
             isAssigningRole,
             isRemovingRole,
             isResettingPassword,
+            isImpersonating,
       } = useAdminsViewModel({ useMyTenant: !tenantId, tenantId });
 
       const configBase = getConfigBase();
@@ -99,17 +101,32 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
                   {
                         key: "roles",
                         label: t("admin.roles") || "Roles",
-                        render: (_val: unknown, admin: Admin) => (
-                              <span className="text-sm text-muted-foreground">
-                                    {admin.getLocalizedRoleNames(language)}
-                              </span>
-                        ),
+                        render: (_val: unknown, admin: Admin) => {
+                              const roles = admin.getLocalizedRoles(language);
+                              return (
+                                    <div className="flex flex-wrap gap-1">
+                                          {roles.length > 0 ? (
+                                                roles.map((roleName, index) => (
+                                                      <Badge
+                                                            key={`${index}-${roleName}`}
+                                                            variant="outline"
+                                                            className="text-xs"
+                                                      >
+                                                            {roleName}
+                                                      </Badge>
+                                                ))
+                                          ) : (
+                                                <span className="text-muted-foreground">-</span>
+                                          )}
+                                    </div>
+                              );
+                        },
                   },
                   {
                         key: "isActive",
                         label: t("admin.status") || "Status",
                         render: (value: boolean) => (
-                              <Badge variant={value ? "active" : "inactive"}>
+                              <Badge variant={value ? "success" : "secondary"}>
                                     {value ? t("common.active") || "Active" : t("common.inactive") || "Inactive"}
                               </Badge>
                         ),
@@ -141,6 +158,13 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
                         onClick: (item: Admin) => vmInstance.openEditModal(item),
                         variant: "ghost" as const,
                         icon: <Pencil className="h-4 w-4" />,
+                  },
+                  {
+                        label: tFn("admin.impersonate") || "Impersonate",
+                        onClick: (item: Admin) => handleImpersonate(item.id),
+                        variant: "ghost" as const,
+                        icon: <UserCheck className="h-4 w-4" />,
+                        // Only show if not current user and has permission (handled by backend usually, but UI check is good too)
                   },
                   {
                         label: tFn("admin.toggleStatus") || "Toggle Status",
@@ -175,7 +199,7 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
                         icon: <Trash2 className="h-4 w-4" />,
                   },
             ],
-      }), [t, vm, handleDelete, configBase, handleToggleActive, handleOpenViewRoles, handleOpenAssignRole, handleOpenResetPassword]);
+      }), [t, vm, handleDelete, configBase, handleToggleActive, handleOpenViewRoles, handleOpenAssignRole, handleOpenResetPassword, language]);
 
       return (
             <>

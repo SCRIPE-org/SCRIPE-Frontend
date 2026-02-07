@@ -20,6 +20,8 @@ import type { CrudConfig } from "@core/crud/components/generic-crud-view";
 import type { FieldConfig, FieldOption } from "@core/ui/forms/generic-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import { secureTokenService } from "@core/common/secure-token-service";
+import { useCurrentTenantId } from "@core/providers/tenant-context-provider";
 
 /**
  * useAdminsViewModel hook options
@@ -32,7 +34,13 @@ interface AdminsViewModelOptions {
 }
 
 export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
-      const { tenantId, useMyTenant } = options;
+      const { tenantId: propTenantId, useMyTenant } = options;
+      const contextTenantId = useCurrentTenantId();
+
+      // Use prop tenantId if provided, otherwise context tenantId, otherwise undefined (system level)
+      // If useMyTenant is true, we ignore both and let the repo use /myTenantAdmins
+      const tenantId = useMyTenant ? undefined : ((propTenantId || contextTenantId) ?? undefined);
+
       const { adminRepository, roleRepository } = systemContainer;
       const { t, language } = useI18n();
       const queryClient = useQueryClient();
@@ -179,7 +187,17 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
             mutationFn: (id: string) => adminRepository.impersonate(id),
             onSuccess: (data) => {
                   success({ title: "Impersonating...", description: "Redirecting to admin dashboard" });
-                  localStorage.setItem("impersonationToken", data.token);
+
+                  // 1. Backup current admin token
+                  const currentToken = secureTokenService.getAccessToken();
+                  if (currentToken) {
+                        sessionStorage.setItem("admin_backup_token", currentToken);
+                  }
+
+                  // 2. Set new token
+                  secureTokenService.setAccessToken(data.token);
+
+                  // 3. Reload to reset state
                   window.location.href = "/dashboard?impersonated=true";
             },
             onError: (err: Error) => {
