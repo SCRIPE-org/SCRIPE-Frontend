@@ -198,7 +198,7 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
                   secureTokenService.setAccessToken(data.token);
 
                   // 3. Reload to reset state
-                  window.location.href = "/dashboard?impersonated=true";
+                  window.location.href = "/?impersonated=true";
             },
             onError: (err: Error) => {
                   toastError({ title: t("common.error") || "Error", description: err.message });
