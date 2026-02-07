@@ -36,11 +36,16 @@ const ServiceContext = createContext<Services | null>(null);
  * Clean Architecture DI Container for React.
  * Creates: Service → Repository chain with proper dependency injection.
  */
+import { getCoreContainer } from "@core/di";
+
+// ...
+
 export function ServiceProvider({ children }: { children: React.ReactNode }) {
   const services = useMemo(() => {
-    // Core Services
+    // Core Services - Use Singleton from DI Container
+    // CRITICAL: This ensures we share the same instance (headers, tokens) as the rest of the app
+    const apiService = getCoreContainer().apiService;
     const notificationService = new NotificationService();
-    const apiService = new ApiService(process.env.NEXT_PUBLIC_API_URL || "");
     const navigationService = new NavigationService(apiService);
 
     // Auth Module - SOLID: Service → Repository

@@ -18,6 +18,7 @@
 
 import React, { createContext, useContext, useState, useCallback, useMemo, useEffect } from "react";
 import { useAppStore } from "@core/store/useAppStore";
+import { useServices } from "@core/providers/service-provider";
 import { usePermissions } from "@core/providers/permission-provider";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { appLogger } from "../common/logger";
@@ -75,6 +76,7 @@ interface TenantContextProviderProps {
 export function TenantContextProvider({ children }: TenantContextProviderProps) {
       const { isSuperAdmin, hasPermission } = usePermissions();
       const roles = useAppStore((state) => state.roles);
+      const { apiService } = useServices();
 
       // Get user's primary tenant ID from their roles (if any)
       const userTenantId = roles.find((r) => r.tenantId)?.tenantId ?? null;
@@ -99,12 +101,14 @@ export function TenantContextProvider({ children }: TenantContextProviderProps) 
                         const parsed = JSON.parse(saved);
                         if (parsed?.id && parsed?.name) {
                               setCurrentTenant(parsed);
+                              // Sync with API Service
+                              apiService.setTenantContext(parsed.id);
                         }
                   } catch (e) {
                         sessionStorage.removeItem("tenant_context");
                   }
             }
-      }, []);
+      }, [apiService]);
 
       const enterTenantWorld = useCallback((tenant: TenantInfo) => {
             if (!canEnterTenantWorld) {
@@ -114,6 +118,8 @@ export function TenantContextProvider({ children }: TenantContextProviderProps) 
 
             setCurrentTenant(tenant);
             sessionStorage.setItem("tenant_context", JSON.stringify(tenant));
+            // Sync with API Service
+            apiService.setTenantContext(tenant.id);
 
             setBreadcrumbs((prev) => {
                   // Add to breadcrumb trail
@@ -124,13 +130,15 @@ export function TenantContextProvider({ children }: TenantContextProviderProps) 
                   }
                   return [...prev, { id: tenant.id, name: tenant.name }];
             });
-      }, [canEnterTenantWorld]);
+      }, [canEnterTenantWorld, apiService]);
 
       const exitTenantWorld = useCallback(() => {
             setCurrentTenant(null);
             sessionStorage.removeItem("tenant_context");
+            // Sync with API Service
+            apiService.setTenantContext(null);
             setBreadcrumbs([]);
-      }, []);
+      }, [apiService]);
 
       const navigateToBreadcrumb = useCallback((tenantId: string) => {
             const index = breadcrumbs.findIndex((b) => b.id === tenantId);
@@ -148,8 +156,10 @@ export function TenantContextProvider({ children }: TenantContextProviderProps) 
                         id: targetCrumb.id,
                         name: targetCrumb.name,
                   });
+                  // Sync with API Service
+                  apiService.setTenantContext(targetCrumb.id);
             }
-      }, [breadcrumbs, exitTenantWorld]);
+      }, [breadcrumbs, exitTenantWorld, apiService]);
 
       const value = useMemo(
             () => ({

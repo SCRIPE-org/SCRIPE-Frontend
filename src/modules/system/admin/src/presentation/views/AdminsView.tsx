@@ -31,13 +31,8 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
       const { t, language } = useI18n();
       const { isSuperAdmin } = usePermissions();
 
-      // Logic:
-      // - If tenantId prop is provided -> View specific tenant
-      // - If Super Admin -> View specific (if prop provided) OR System/Context (if not)
-      // - If Tenant Admin (not super) -> ALWAYS view My Tenant
-      const shouldUseMyTenant = !isSuperAdmin && !tenantId;
-
-      // Use myTenantAdmins by default, or specific tenant if provided
+      // Use myTenantAdmins if not super admin (Tenant Admin mode)
+      // Super Admins use the standard endpoint, which is now Context-Aware on the backend
       const {
             vm,
             getConfigBase,
@@ -53,7 +48,7 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
             isImpersonating,
             handleTransfer,
             isTransferring,
-      } = useAdminsViewModel({ useMyTenant: shouldUseMyTenant, tenantId });
+      } = useAdminsViewModel({ useMyTenant: !isSuperAdmin, tenantId });
 
       const configBase = getConfigBase();
 

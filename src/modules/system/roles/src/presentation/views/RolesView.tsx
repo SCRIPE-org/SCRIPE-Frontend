@@ -24,7 +24,7 @@ export function RolesView() {
       const router = useRouter();
       const { isSuperAdmin } = usePermissions();
 
-      // Logic: Super Admins see System/Context, Tenant Admins see My Tenant
+      // Logic: Super Admins see System/Context (Auto-Scoped), Tenant Admins see My Tenant
       const viewModel = useRolesViewModel({ useMyTenant: !isSuperAdmin });
 
       const columns: CrudColumn<Role>[] = [
