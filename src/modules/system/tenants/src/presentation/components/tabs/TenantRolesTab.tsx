@@ -54,17 +54,21 @@ export function TenantRolesTab({ tenantId, tenantName }: TenantRolesTabProps) {
                               ? (value: string) => (
                                     <code className="text-xs bg-muted px-2 py-0.5 rounded">{value}</code>
                               )
-                              : col.key === "descriptionAr"
-                                    ? (value: string, role: Role) => (
-                                          <span className="text-sm text-muted-foreground truncate max-w-[200px] block">
-                                                {role.getLocalizedDescription(language)}
-                                          </span>
+                              : col.key === "name"
+                                    ? (_: unknown, role: Role) => (
+                                          <span className="font-medium">{role.getLocalizedName(language)}</span>
                                     )
-                                    : col.key === "priority"
-                                          ? (value: number) => <Badge variant="outline">{value}</Badge>
-                                          : col.key === "createdAt"
-                                                ? (value: string) => (value ? format(new Date(value), "MMM d, yyyy") : "-")
-                                                : undefined,
+                                    : col.key === "description"
+                                          ? (_: unknown, role: Role) => (
+                                                <span className="text-sm text-muted-foreground truncate max-w-[200px] block">
+                                                      {role.getLocalizedDescription(language)}
+                                                </span>
+                                          )
+                                          : col.key === "priority"
+                                                ? (value: number) => <Badge variant="outline">{value}</Badge>
+                                                : col.key === "createdAt"
+                                                      ? (value: string) => (value ? format(new Date(value), "MMM d, yyyy") : "-")
+                                                      : undefined,
             })),
             createFields: vm.createFields,
             editFields: vm.editFields,
