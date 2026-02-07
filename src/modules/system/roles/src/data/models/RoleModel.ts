@@ -211,7 +211,7 @@ export class AssignPermissionsModel {
 // ===== Constants (Frontend Enums) =====
 
 export const PermissionScopes = {
-      Default: "default",
+      Default: "own_tenant",
       Self: "Self",
       Tenant: "Tenant",
       Global: "Global",
