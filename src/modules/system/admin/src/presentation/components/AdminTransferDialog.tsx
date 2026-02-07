@@ -134,6 +134,7 @@ export function AdminTransferDialog({
                                     <div className="space-y-2">
                                           <Label>{t("admin.targetTenant") || "Target Tenant"}</Label>
                                           <GenericSelect
+                                                options={[]}
                                                 type="searchable"
                                                 searchType="server"
                                                 placeholder={t("admin.selectTenant") || "Select target tenant..."}
@@ -151,6 +152,7 @@ export function AdminTransferDialog({
                                     <Label>{t("admin.targetRole") || "Target Role"}</Label>
                                     <GenericSelect
                                           key={isSystemAdmin ? 'system' : targetTenantId} // Force re-render/reset when context changes
+                                          options={[]}
                                           type="searchable"
                                           searchType="server"
                                           placeholder={t("admin.selectRole") || "Select role..."}
