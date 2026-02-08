@@ -111,7 +111,10 @@ export interface IAdminService {
       /**
        * Sync all roles for an admin (Nuke & Pave pattern).
        */
-      syncRoles(adminId: string, assignments: SyncRoleAssignmentJson[]): Promise<void>;
+      /**
+       * Sync all roles for an admin (Nuke & Pave pattern).
+       */
+      syncRoles(adminId: string, assignments: SyncRoleAssignmentJson[], scopeTenantId?: string): Promise<void>;
 
       /**
        * Get all roles assigned to an admin

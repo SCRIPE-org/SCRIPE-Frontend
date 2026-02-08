@@ -76,23 +76,34 @@ export function ManageRolesDialog({
       });
 
       // Transform roles to options
+      // Transform roles to options
       // Transform available roles from API
+      // CRITICAL: Filter available roles to match the selected scope
       const availableRoleOptions: GenericSelectOption[] = useMemo(() =>
-            (rolesData?.items ?? []).map((role) => ({
-                  value: role.id,
-                  label: language === 'ar' ? role.nameAr : role.nameEn,
-                  description: language === 'ar' ? role.descriptionAr : role.descriptionEn,
-            })),
-            [rolesData, language]
+            (rolesData?.items ?? [])
+                  // Backend getAll might return mixed roles if user is super admin?
+                  // Ensure we only show roles valid for the current scope.
+                  // Global Scope (selectedTenantId="") -> Role.TenantId must be null
+                  // Tenant Scope (selectedTenantId="...") -> Role.TenantId must match
+                  .filter(role => (role.tenantId || "") === selectedTenantId)
+                  .map((role) => ({
+                        value: role.id,
+                        label: language === 'ar' ? role.nameAr : role.nameEn,
+                        description: language === 'ar' ? role.descriptionAr : role.descriptionEn,
+                  })),
+            [rolesData, language, selectedTenantId]
       );
 
       // Transform current roles to options (to ensure selected roles are always visible)
+      // FILTER BY SCOPE: Only include roles that belong to the selected scope (Global or Specific Tenant)
       const currentRoleOptions: GenericSelectOption[] = useMemo(() =>
-            (currentRoles ?? []).map((role) => ({
-                  value: role.roleId,
-                  label: language === 'ar' ? role.roleNameAr : role.roleNameEn,
-            })),
-            [currentRoles, language]
+            (currentRoles ?? [])
+                  .filter(r => (r.tenantId || "") === selectedTenantId) // Only match exact scope
+                  .map((role) => ({
+                        value: role.roleId,
+                        label: language === 'ar' ? role.roleNameAr : role.roleNameEn,
+                  })),
+            [currentRoles, language, selectedTenantId]
       );
 
       // Merge options: available + current (if missing)
@@ -140,22 +151,36 @@ export function ManageRolesDialog({
             // Set tenant scope from first role or effective
             if (open) {
                   const firstRoleTenant = currentRoles?.[0]?.tenantId;
-                  setSelectedTenantId(effectiveTenantId || firstRoleTenant || "");
+                  // Only set default if not already set (or if logic demands it)
+                  // But careful not to override user choice if re-opening?
+                  // For now, respect effectiveTenantId or fallback
+                  if (!selectedTenantId && !effectiveTenantId) {
+                        setSelectedTenantId(firstRoleTenant || "");
+                  } else if (effectiveTenantId) {
+                        setSelectedTenantId(effectiveTenantId);
+                  }
             }
-      }, [open, currentRoles, effectiveTenantId]);
+      }, [open, currentRoles, effectiveTenantId]); // Remove selectedTenantId from dependency to avoid loop
 
       // Sync roles mutation
       const syncMutation = useMutation({
             mutationFn: async () => {
                   if (!admin?.id) throw new Error("No admin selected");
 
-                  const assignments: SyncRoleAssignment[] = selectedRoleIds.map((roleId) => ({
+                  const scopeTenantId = selectedTenantId || undefined;
+
+                  // CRITICAL: Filter selected IDs to ensure we only send roles valid for this scope
+                  // (e.g. exclude Tenant A roles when syncing Global Scope)
+                  const validRoleIds = new Set(roleOptions.map(o => o.value));
+                  const filteredSelectedIds = selectedRoleIds.filter(id => validRoleIds.has(id));
+
+                  const assignments: SyncRoleAssignment[] = filteredSelectedIds.map((roleId) => ({
                         roleId,
-                        tenantId: selectedTenantId || undefined,
-                        inheritToChildren: selectedTenantId ? inheritToChildren : undefined,
+                        tenantId: scopeTenantId,
+                        inheritToChildren: scopeTenantId ? inheritToChildren : undefined,
                   }));
 
-                  await adminRepository.syncRoles(admin.id, assignments);
+                  await adminRepository.syncRoles(admin.id, assignments, scopeTenantId);
             },
             onSuccess: () => {
                   toast.success({ title: t("admin.role.syncSuccess") || "Roles updated successfully" });

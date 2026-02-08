@@ -141,9 +141,10 @@ export class AdminService implements IAdminService {
 
       async syncRoles(
             adminId: string,
-            assignments: import("../models/AdminModel").SyncRoleAssignmentJson[]
+            assignments: import("../models/AdminModel").SyncRoleAssignmentJson[],
+            scopeTenantId?: string
       ): Promise<void> {
-            await this.api.post(API_ENDPOINTS.ADMINS.SYNC_ROLES(adminId), { assignments });
+            await this.api.post(API_ENDPOINTS.ADMINS.SYNC_ROLES(adminId), { assignments, scopeTenantId });
       }
 
       async getRoles(adminId: string): Promise<AdminRoleJson[]> {

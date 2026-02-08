@@ -1,8 +1,3 @@
-/**
- * Admin Repository Interface
- *
- * Defines the contract for admin data operations.
- */
 import type { Admin } from "../entities/Admin";
 import type {
       CreateAdminRequest,
@@ -93,10 +88,12 @@ export interface IAdminRepository {
       removeRole(adminId: string, roleId: string, tenantId?: string): Promise<void>;
 
       /**
-       * Sync all roles for an admin (Nuke & Pave pattern).
-       * Replaces ALL existing roles with the provided list.
+       * Sync roles (Nuke & Pave)
+       * @param adminId Admin ID
+       * @param assignments List of role assignments
+       * @param scopeTenantId Optional scope to restrict the sync (e.g. only sync roles for a specific tenant)
        */
-      syncRoles(adminId: string, assignments: SyncRoleAssignment[]): Promise<void>;
+      syncRoles(adminId: string, assignments: SyncRoleAssignment[], scopeTenantId?: string): Promise<void>;
 
       /**
        * Get all roles assigned to an admin
