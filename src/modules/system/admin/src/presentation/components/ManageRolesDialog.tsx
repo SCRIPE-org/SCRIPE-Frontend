@@ -55,7 +55,8 @@ export function ManageRolesDialog({
             queryFn: () => roleRepository.getAll({
                   page: 1,
                   pageSize: 100,
-                  tenantId: scopeTenantId || undefined
+                  tenantId: scopeTenantId || undefined,
+                  strict: true,
             }),
             enabled: open && !!admin,
       });

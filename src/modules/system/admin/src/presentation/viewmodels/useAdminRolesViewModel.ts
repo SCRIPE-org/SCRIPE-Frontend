@@ -44,7 +44,8 @@ export function useAdminRolesViewModel(
             queryFn: () => roleRepository.getAll({
                   page: 1,
                   pageSize: 100,
-                  tenantId: targetTenantId || undefined
+                  tenantId: targetTenantId || undefined,
+                  strict: true,
             }),
             enabled: !!admin,
       });

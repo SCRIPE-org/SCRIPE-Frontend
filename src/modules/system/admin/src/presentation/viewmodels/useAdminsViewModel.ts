@@ -273,6 +273,7 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
                         page: 1,
                         pageSize: 20,
                         tenantId: tenantId, // Will be undefined if not provided
+                        strict: true, // Force strict filtering (Global context -> Global roles only)
                   });
 
                   return (result.items || []).map((role) => ({
