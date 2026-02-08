@@ -41,6 +41,7 @@ export interface GroupedPermissions {
 }
 
 import type { PermissionAssignmentJson } from "../../data/models/RoleModel";
+import { PermissionScopes } from "../../data/models/RoleModel";
 
 export interface UseRolePermissionsDialogProps {
       open: boolean;
@@ -70,6 +71,7 @@ export interface UseRolePermissionsDialogResult {
       updateAssignment: (code: string, assignment: PermissionAssignmentJson) => void;
       toggleGroup: (codes: string[]) => void;
       save: () => void;
+      bulkUpdateScope: (scope: string) => void;
       isSaving: boolean;
 
       // Helpers
@@ -212,7 +214,8 @@ export function useRolePermissionsDialog({
                         if (permission) {
                               next.set(code, {
                                     permissionId: permission.id,
-                                    scopeOverride: "Tenant",
+                                    // Use explicit constant for Tenant scope
+                                    scopeOverride: PermissionScopes.Tenant,
                                     restrictedFields: []
                               });
                         }
@@ -242,12 +245,27 @@ export function useRolePermissionsDialog({
                                     if (permission) {
                                           next.set(c, {
                                                 permissionId: permission.id,
-                                                scopeOverride: "Tenant",
+                                                scopeOverride: PermissionScopes.Tenant,
                                                 restrictedFields: []
                                           });
                                     }
                               }
                         }
+                  });
+                  return next;
+            });
+      };
+
+      const bulkUpdateScope = (scope: string) => {
+            // "default" maps to undefined/null to remove override
+            const scopeValue = scope === PermissionScopes.Default ? undefined : scope;
+
+            setAssignments(prev => {
+                  const next = new Map(prev);
+                  // Update all SELECTED permissions
+                  Array.from(next.keys()).forEach(key => {
+                        const current = next.get(key)!;
+                        next.set(key, { ...current, scopeOverride: scopeValue });
                   });
                   return next;
             });
@@ -304,6 +322,7 @@ export function useRolePermissionsDialog({
             toggle,
             updateAssignment,
             toggleGroup,
+            bulkUpdateScope,
             save: () => saveMutation.mutate(),
             isSaving: saveMutation.isPending,
 

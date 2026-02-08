@@ -44,6 +44,8 @@ import type { Role } from "../../domain/entities/Role";
 import { useRolePermissionsDialog, type TenantPermission } from "../viewmodels/useRolePermissionsDialog";
 import { PermissionConfigDialog } from "./PermissionConfigDialog";
 import type { PermissionAssignmentJson } from "../../data/models/RoleModel";
+import { PermissionScopes } from "../../data/models/RoleModel"; // Imported PermissionScopes
+import { GenericSelect } from "@core/crud/components/generic-select"; // Imported GenericSelect
 
 interface RolePermissionsDialogProps {
       open: boolean;
@@ -95,6 +97,26 @@ export function RolePermissionsDialog(props: RolePermissionsDialogProps) {
                                           />
                                     </div>
                                     <div className="flex items-center gap-4 text-sm">
+                                          {/* Bulk Scope Control */}
+                                          <div className="flex items-center gap-2 border-r pr-4 mr-0">
+                                                <span className="text-xs text-muted-foreground whitespace-nowrap">
+                                                      {t("role.bulkScope") || "Bulk Scope"}:
+                                                </span>
+                                                <GenericSelect
+                                                      options={[
+                                                            { value: PermissionScopes.Default, label: t("role.scopeDefault") || "Default" },
+                                                            { value: PermissionScopes.Self, label: t("role.scopeSelf") || "Self Only" },
+                                                            { value: PermissionScopes.Tenant, label: t("role.scopeTenant") || "Tenant Level" },
+                                                            { value: PermissionScopes.Global, label: t("role.scopeGlobal") || "Global" },
+                                                      ]}
+                                                      value=""
+                                                      onValueChange={(val: string) => {
+                                                            if (val) vm.bulkUpdateScope(val);
+                                                      }}
+                                                      placeholder={t("role.applyToAll") || "Apply to All..."}
+                                                      className="w-[130px] h-8 text-xs"
+                                                />
+                                          </div>
                                           <div className="flex items-center gap-1.5 text-muted-foreground">
                                                 <Layers className="h-4 w-4" />
                                                 <span>{vm.groupCount}</span>
@@ -324,6 +346,7 @@ function PermissionItem({ permission, vm }: PermissionItemProps) {
                               onClick={(e) => {
                                     e.stopPropagation();
                                     setShowConfig(true);
+
                               }}
                         >
                               <Settings className="h-4 w-4 text-muted-foreground" />

@@ -55,6 +55,7 @@ export interface PermissionTreeProps {
       onCollapseAll: () => void;
       assignments: Map<string, PermissionAssignmentJson>;
       onUpdateConfig: (code: string, assignment: PermissionAssignmentJson) => void;
+      onBulkScopeUpdate: (scope: string) => void;
 }
 
 // === ViewModel ===
@@ -261,6 +262,21 @@ export function useRoleDetailViewModel() {
             saveMutation.mutate();
       }, [saveMutation]);
 
+      const bulkUpdateScope = useCallback((scope: string) => {
+            // "own_tenant" means default/no override (undefined)
+            const scopeValue = scope === "own_tenant" ? undefined : scope;
+
+            setAssignments((prev) => {
+                  const next = new Map(prev);
+                  // Update all SELECTED permissions
+                  Array.from(next.keys()).forEach((key) => {
+                        const current = next.get(key)!;
+                        next.set(key, { ...current, scopeOverride: scopeValue });
+                  });
+                  return next;
+            });
+      }, []);
+
       // === DERIVED STATE ===
       const isLoading = roleLoading || permissionsLoading || rolePermissionsLoading;
       const selectedPermissionCodes = new Set(assignments.keys());
@@ -297,7 +313,8 @@ export function useRoleDetailViewModel() {
                   onExpandAll: expandAll,
                   onCollapseAll: collapseAll,
                   assignments: assignments,
-                  onUpdateConfig: updateAssignment
+                  onUpdateConfig: updateAssignment,
+                  onBulkScopeUpdate: bulkUpdateScope
             } as PermissionTreeProps,
       };
 }

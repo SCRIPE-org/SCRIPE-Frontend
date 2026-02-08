@@ -211,10 +211,10 @@ export class AssignPermissionsModel {
 // ===== Constants (Frontend Enums) =====
 
 export const PermissionScopes = {
-      Default: "own_tenant",
-      Self: "Self",
-      Tenant: "Tenant",
-      Global: "Global",
+      Default: "default",
+      Self: "own",
+      Tenant: "own_tenant",
+      Global: "all_tenants",
 } as const;
 
 export type PermissionScopeType = typeof PermissionScopes[keyof typeof PermissionScopes];
