@@ -116,6 +116,15 @@ export interface TransferAdminJson {
 }
 
 /**
+ * Role assignment for sync operation
+ */
+export interface SyncRoleAssignmentJson {
+      roleId: string;
+      tenantId?: string;
+      inheritToChildren?: boolean;
+}
+
+/**
  * Admin Model class
  *
  * Wraps API JSON with fromJson/toJson methods.

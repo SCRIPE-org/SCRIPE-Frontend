@@ -313,6 +313,12 @@ export const en = {
     notesPlaceholder: "Enter notes",
     // Role assignment
     role: {
+      manageTitle: "Manage Roles",
+      manageDescription: "Manage roles",
+      selectRoles:"Select Roles",
+      selectRolesHelp:"Select roles",
+      saveRoles:"Save Roles",
+      inheritToChildrenHelp:"Role applies to all child tenants as well.",
       systemScope: "System Scope",
       searchRoles: "Search roles...",
       assignTitle: "Assign Role",

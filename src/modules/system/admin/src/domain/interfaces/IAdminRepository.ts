@@ -25,6 +25,15 @@ export interface AdminListParams {
 }
 
 /**
+ * Role assignment for sync operation
+ */
+export interface SyncRoleAssignment {
+      roleId: string;
+      tenantId?: string;
+      inheritToChildren?: boolean;
+}
+
+/**
  * Admin repository interface
  */
 export interface IAdminRepository {
@@ -82,6 +91,12 @@ export interface IAdminRepository {
        * Remove a role from an admin
        */
       removeRole(adminId: string, roleId: string, tenantId?: string): Promise<void>;
+
+      /**
+       * Sync all roles for an admin (Nuke & Pave pattern).
+       * Replaces ALL existing roles with the provided list.
+       */
+      syncRoles(adminId: string, assignments: SyncRoleAssignment[]): Promise<void>;
 
       /**
        * Get all roles assigned to an admin

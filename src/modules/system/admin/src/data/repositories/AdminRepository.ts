@@ -141,6 +141,13 @@ export class AdminRepository implements IAdminRepository {
             await this.service.removeRole(adminId, roleId, tenantId);
       }
 
+      async syncRoles(
+            adminId: string,
+            assignments: import("../../domain/interfaces/IAdminRepository").SyncRoleAssignment[]
+      ): Promise<void> {
+            await this.service.syncRoles(adminId, assignments);
+      }
+
       async getRoles(adminId: string): Promise<AdminRoleData[]> {
             const roles = await this.service.getRoles(adminId);
             return AdminMapper.toRoleDataList(roles);

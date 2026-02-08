@@ -139,6 +139,13 @@ export class AdminService implements IAdminService {
             await this.api.delete(url);
       }
 
+      async syncRoles(
+            adminId: string,
+            assignments: import("../models/AdminModel").SyncRoleAssignmentJson[]
+      ): Promise<void> {
+            await this.api.post(API_ENDPOINTS.ADMINS.SYNC_ROLES(adminId), { assignments });
+      }
+
       async getRoles(adminId: string): Promise<AdminRoleJson[]> {
             return this.api.get<AdminRoleJson[]>(API_ENDPOINTS.ADMINS.ROLES(adminId));
       }

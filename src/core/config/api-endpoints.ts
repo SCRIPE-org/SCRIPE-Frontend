@@ -55,6 +55,7 @@ export const API_ENDPOINTS = {
     },
     IMPERSONATE: (id: string) => `/Admins/${id}/impersonate`,
     TRANSFER: (id: string) => `/Admins/${id}/transfer`,
+    SYNC_ROLES: (id: string) => `/Admins/${id}/roles/sync`,
   },
 
   // Legacy profile endpoints

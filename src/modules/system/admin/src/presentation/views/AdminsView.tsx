@@ -19,7 +19,8 @@ import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { Badge } from "@core/ui/badge";
 import { UserCheck, Shield, Trash2, Pencil, Eye, Settings, ArrowRightLeft } from "lucide-react";
 import { format } from "date-fns";
-import { AssignRoleDialog, ViewRolesDialog, ResetPasswordDialog } from "../components/AdminRoleDialogs";
+import { ResetPasswordDialog } from "../components/AdminRoleDialogs";
+import { ManageRolesDialog } from "../components/ManageRolesDialog";
 import { AdminTransferDialog } from "../components/AdminTransferDialog";
 
 interface AdminsViewProps {
@@ -54,19 +55,13 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
 
       // Role/Password dialog state
       const [selectedAdminForAction, setSelectedAdminForAction] = useState<Admin | null>(null);
-      const [assignRoleDialogOpen, setAssignRoleDialogOpen] = useState(false);
-      const [viewRolesDialogOpen, setViewRolesDialogOpen] = useState(false);
+      const [manageRolesDialogOpen, setManageRolesDialogOpen] = useState(false);
       const [resetPasswordDialogOpen, setResetPasswordDialogOpen] = useState(false);
 
       // Dialog handlers
-      const handleOpenAssignRole = useCallback((admin: Admin) => {
+      const handleOpenManageRoles = useCallback((admin: Admin) => {
             setSelectedAdminForAction(admin);
-            setAssignRoleDialogOpen(true);
-      }, []);
-
-      const handleOpenViewRoles = useCallback((admin: Admin) => {
-            setSelectedAdminForAction(admin);
-            setViewRolesDialogOpen(true);
+            setManageRolesDialogOpen(true);
       }, []);
 
       const handleOpenResetPassword = useCallback((admin: Admin) => {
@@ -74,16 +69,7 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
             setResetPasswordDialogOpen(true);
       }, []);
 
-      const onAssignRoleSubmit = useCallback(async (request: AssignRoleRequest) => {
-            if (!selectedAdminForAction) return;
-            await handleAssignRole(selectedAdminForAction.id, request);
-            setAssignRoleDialogOpen(false);
-      }, [handleAssignRole, selectedAdminForAction]);
 
-      const onRemoveRole = useCallback(async (roleId: string, tenantId?: string) => {
-            if (!selectedAdminForAction) return;
-            await handleRemoveRole(selectedAdminForAction.id, roleId, tenantId);
-      }, [handleRemoveRole, selectedAdminForAction]);
 
       const onResetPasswordSubmit = useCallback(async (newPassword: string) => {
             if (!selectedAdminForAction) return;
@@ -203,15 +189,8 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
                               requiredPermission: SYSTEM_PERMISSIONS.ADMINS_UPDATE,
                         },
                         {
-                              label: tFn("admin.role.viewTitle") || "View Roles",
-                              onClick: (item: Admin) => handleOpenViewRoles(item),
-                              variant: "ghost" as const,
-                              icon: <Shield className="h-4 w-4" />,
-                              requiredPermission: SYSTEM_PERMISSIONS.ADMINS_VIEW,
-                        },
-                        {
-                              label: tFn("admin.role.assign") || "Assign Role",
-                              onClick: (item: Admin) => handleOpenAssignRole(item),
+                              label: tFn("admin.role.manageTitle") || "Manage Roles",
+                              onClick: (item: Admin) => handleOpenManageRoles(item),
                               variant: "ghost" as const,
                               icon: <Shield className="h-4 w-4" />,
                               requiredPermission: SYSTEM_PERMISSIONS.ADMINS_ASSIGN_ROLES,
@@ -236,7 +215,7 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
 
                   return actions;
             },
-      }), [t, vm, handleDelete, configBase, handleToggleActive, handleOpenViewRoles, handleOpenAssignRole, handleOpenResetPassword, handleImpersonate, handleOpenTransfer, language]);
+      }), [t, vm, handleDelete, configBase, handleToggleActive, handleOpenManageRoles, handleOpenResetPassword, handleImpersonate, handleOpenTransfer, language]);
 
       const [transferDialogOpen, setTransferDialogOpen] = useState(false);
 
@@ -244,22 +223,12 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
             <>
                   <GenericCrudView viewModel={vm} config={config} />
 
-                  {/* Role Management Dialogs */}
-                  <AssignRoleDialog
-                        open={assignRoleDialogOpen}
-                        onOpenChange={setAssignRoleDialogOpen}
+                  {/* Role Management Dialog */}
+                  <ManageRolesDialog
+                        open={manageRolesDialogOpen}
+                        onOpenChange={setManageRolesDialogOpen}
                         admin={selectedAdminForAction}
-                        onAssign={onAssignRoleSubmit}
-                        isLoading={isAssigningRole}
                         tenantId={tenantId}
-                  />
-
-                  <ViewRolesDialog
-                        open={viewRolesDialogOpen}
-                        onOpenChange={setViewRolesDialogOpen}
-                        admin={selectedAdminForAction}
-                        onRemoveRole={onRemoveRole}
-                        isRemoving={isRemovingRole}
                   />
 
                   <ResetPasswordDialog

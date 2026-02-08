@@ -15,6 +15,7 @@ import type {
       AssignRoleJson,
       BulkAdminsFilterJson,
       TransferAdminJson,
+      SyncRoleAssignmentJson,
 } from "../../data/models/AdminModel";
 
 /**
@@ -106,6 +107,11 @@ export interface IAdminService {
        * Remove a role from an admin
        */
       removeRole(adminId: string, roleId: string, tenantId?: string): Promise<void>;
+
+      /**
+       * Sync all roles for an admin (Nuke & Pave pattern).
+       */
+      syncRoles(adminId: string, assignments: SyncRoleAssignmentJson[]): Promise<void>;
 
       /**
        * Get all roles assigned to an admin

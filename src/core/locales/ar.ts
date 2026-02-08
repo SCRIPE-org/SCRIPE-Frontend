@@ -323,6 +323,12 @@ export const ar = {
     inActive: "غير نشط",
     // Role assignment
     role: {
+      selectRoles:"اختر الأدوار",
+      selectRolesHelp:"اختر الأدوار المرتبطة بـ",
+      saveRoles:"حفظ الأدوار",
+      inheritToChildrenHelp:"الدور ينطبق على جميع المستأجرين الفرعيين أيضاً.",
+      manageTitle: "إدارة الأدوار",
+      manageDescription: "إدارة الأدوار",
       systemScope: "نطاق النظام",
       searchRoles: "بحث عن الأدوار",
       assignTitle: "تعيين دور",
