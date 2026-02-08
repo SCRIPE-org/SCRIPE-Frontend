@@ -3,6 +3,7 @@
  *
  * Unified dialog for assigning/removing roles using multi-select.
  * Uses "Nuke & Pave" pattern via syncRoles endpoint.
+ * Enforces "Strict Context" (no dropdown) and fixes ID mismatch via Code matching.
  */
 "use client";
 
@@ -36,29 +37,30 @@ export function ManageRolesDialog({
       const { t, language } = useI18n();
       const toast = useEnhancedToast();
       const queryClient = useQueryClient();
-      const { roleRepository, tenantRepository, adminRepository } = systemContainer;
+      const { roleRepository, adminRepository } = systemContainer;
 
       // Form state
       const [selectedRoleIds, setSelectedRoleIds] = useState<string[]>([]);
-      const [selectedTenantId, setSelectedTenantId] = useState<string>("");
       const [inheritToChildren, setInheritToChildren] = useState(false);
 
-      // Effective tenant: explicit prop > admin's tenant
-      const effectiveTenantId = tenantId || admin?.tenantId;
-      const targetTenantId = effectiveTenantId || selectedTenantId;
+      // Strict Scope Calculation
+      // If tenantId is passed (Drill-Down), use it.
+      // Else if admin has a tenantId (Tenant Admin), use it.
+      // Else (Global Admin in Global Context), use empty string (Global Scope).
+      const scopeTenantId = tenantId || admin?.tenantId || "";
 
-      // Fetch available roles
+      // Fetch available roles for the VALID scope
       const { data: rolesData, isLoading: isLoadingRoles } = useQuery({
-            queryKey: ["roles-for-manage", targetTenantId],
+            queryKey: ["roles-for-manage", scopeTenantId],
             queryFn: () => roleRepository.getAll({
                   page: 1,
                   pageSize: 100,
-                  tenantId: targetTenantId || undefined
+                  tenantId: scopeTenantId || undefined
             }),
             enabled: open && !!admin,
       });
 
-      // Fetch current roles for pre-selection
+      // Fetch current roles
       const { data: currentRoles, isLoading: isLoadingCurrentRoles } = useQuery({
             queryKey: ["admin-roles", admin?.id],
             queryFn: async () => {
@@ -68,119 +70,63 @@ export function ManageRolesDialog({
             enabled: open && !!admin?.id,
       });
 
-      // Fetch tenants tree (only if no forced context)
-      const { data: tenantsTree, isLoading: isLoadingTenants } = useQuery({
-            queryKey: ["tenants-tree-for-select"],
-            queryFn: () => tenantRepository.getTree(),
-            enabled: open && !!admin && !effectiveTenantId,
-      });
-
-      // Transform roles to options
-      // Transform roles to options
-      // Transform available roles from API
-      // CRITICAL: Filter available roles to match the selected scope
-      const availableRoleOptions: GenericSelectOption[] = useMemo(() =>
+      // Transform available roles to options
+      const roleOptions: GenericSelectOption[] = useMemo(() =>
             (rolesData?.items ?? [])
-                  // Backend getAll might return mixed roles if user is super admin?
-                  // Ensure we only show roles valid for the current scope.
-                  // Global Scope (selectedTenantId="") -> Role.TenantId must be null
-                  // Tenant Scope (selectedTenantId="...") -> Role.TenantId must match
-                  .filter(role => (role.tenantId || "") === selectedTenantId)
+                  .filter(role => (role.tenantId || "") === scopeTenantId) // Double check strict scope
                   .map((role) => ({
                         value: role.id,
                         label: language === 'ar' ? role.nameAr : role.nameEn,
                         description: language === 'ar' ? role.descriptionAr : role.descriptionEn,
                   })),
-            [rolesData, language, selectedTenantId]
+            [rolesData, language, scopeTenantId]
       );
 
-      // Transform current roles to options (to ensure selected roles are always visible)
-      // FILTER BY SCOPE: Only include roles that belong to the selected scope (Global or Specific Tenant)
-      const currentRoleOptions: GenericSelectOption[] = useMemo(() =>
-            (currentRoles ?? [])
-                  .filter(r => (r.tenantId || "") === selectedTenantId) // Only match exact scope
-                  .map((role) => ({
-                        value: role.roleId,
-                        label: language === 'ar' ? role.roleNameAr : role.roleNameEn,
-                  })),
-            [currentRoles, language, selectedTenantId]
-      );
-
-      // Merge options: available + current (if missing)
-      const roleOptions: GenericSelectOption[] = useMemo(() => {
-            const optionsMap = new Map<string, GenericSelectOption>();
-
-            // 1. Add available roles
-            availableRoleOptions.forEach(opt => optionsMap.set(opt.value, opt));
-
-            // 2. Add current roles if missing from available list
-            currentRoleOptions.forEach(opt => {
-                  if (!optionsMap.has(opt.value)) {
-                        optionsMap.set(opt.value, opt);
-                  }
-            });
-
-            return Array.from(optionsMap.values());
-      }, [availableRoleOptions, currentRoleOptions]);
-
-      // Transform tenants tree
-      const transformTenants = (nodes: any[]): GenericSelectOption[] => {
-            return nodes.map((node) => ({
-                  value: node.id,
-                  label: node.name,
-                  children: node.children?.length > 0 ? transformTenants(node.children) : undefined,
-            }));
-      };
-
-      const tenantOptions: GenericSelectOption[] = useMemo(() => [
-            { value: "", label: t("admin.role.systemScope") || "System Level (Global Access)" },
-            ...(Array.isArray(tenantsTree) ? transformTenants(tenantsTree) : []),
-      ], [tenantsTree, t]);
-
-      // Pre-populate selected roles when dialog opens
+      // Logic: Map Current Roles to Available Options using ROLE CODE
+      // This fixes the validation/duplication bug caused by randomized ID encryption
       useEffect(() => {
-            if (open && currentRoles && currentRoles.length > 0) {
-                  // Map current roles to their IDs for pre-selection
-                  setSelectedRoleIds(currentRoles.map((r) => r.roleId));
-                  // Default inherit from first role if any
-                  setInheritToChildren(currentRoles.some((r) => r.inheritToChildren));
+            if (open && currentRoles && rolesData?.items) {
+                  // 1. Filter current roles to only those in current scope
+                  const scopedCurrentRoles = currentRoles.filter(r => (r.tenantId || "") === scopeTenantId);
+
+                  // 2. Find matching Available Role ID by comparing CODES
+                  const matchedIds: string[] = [];
+                  scopedCurrentRoles.forEach(cr => {
+                        const match = rolesData.items.find(ar => ar.code === cr.roleCode);
+                        if (match) {
+                              matchedIds.push(match.id);
+                        }
+                  });
+
+                  setSelectedRoleIds(matchedIds);
+                  setInheritToChildren(scopedCurrentRoles.some((r) => r.inheritToChildren));
             } else if (open) {
-                  setSelectedRoleIds([]);
-                  setInheritToChildren(false);
-            }
-            // Set tenant scope from first role or effective
-            if (open) {
-                  const firstRoleTenant = currentRoles?.[0]?.tenantId;
-                  // Only set default if not already set (or if logic demands it)
-                  // But careful not to override user choice if re-opening?
-                  // For now, respect effectiveTenantId or fallback
-                  if (!selectedTenantId && !effectiveTenantId) {
-                        setSelectedTenantId(firstRoleTenant || "");
-                  } else if (effectiveTenantId) {
-                        setSelectedTenantId(effectiveTenantId);
+                  // Reset if no data yet (or empty)
+                  // But wait for data to load to avoid clearing briefly?
+                  // No, React Query handles loading state.
+                  // Also reset for a fresh open
+                  if (!currentRoles && !rolesData) {
+                        setSelectedRoleIds([]);
+                        setInheritToChildren(false);
                   }
             }
-      }, [open, currentRoles, effectiveTenantId]); // Remove selectedTenantId from dependency to avoid loop
+      }, [open, currentRoles, rolesData, scopeTenantId]);
+
 
       // Sync roles mutation
       const syncMutation = useMutation({
             mutationFn: async () => {
                   if (!admin?.id) throw new Error("No admin selected");
 
-                  const scopeTenantId = selectedTenantId || undefined;
-
-                  // CRITICAL: Filter selected IDs to ensure we only send roles valid for this scope
-                  // (e.g. exclude Tenant A roles when syncing Global Scope)
-                  const validRoleIds = new Set(roleOptions.map(o => o.value));
-                  const filteredSelectedIds = selectedRoleIds.filter(id => validRoleIds.has(id));
-
-                  const assignments: SyncRoleAssignment[] = filteredSelectedIds.map((roleId) => ({
+                  // We only send assignments for the CURRENT SCOPE.
+                  // The backend "RemoveRolesByScopeAsync" handles preserving other scopes.
+                  const assignments: SyncRoleAssignment[] = selectedRoleIds.map((roleId) => ({
                         roleId,
-                        tenantId: scopeTenantId,
+                        tenantId: scopeTenantId || undefined,
                         inheritToChildren: scopeTenantId ? inheritToChildren : undefined,
                   }));
 
-                  await adminRepository.syncRoles(admin.id, assignments, scopeTenantId);
+                  await adminRepository.syncRoles(admin.id, assignments, scopeTenantId || undefined);
             },
             onSuccess: () => {
                   toast.success({ title: t("admin.role.syncSuccess") || "Roles updated successfully" });
@@ -197,7 +143,7 @@ export function ManageRolesDialog({
             syncMutation.mutate();
       };
 
-      const isLoading = isLoadingRoles || isLoadingCurrentRoles || isLoadingTenants;
+      const isLoading = isLoadingRoles || isLoadingCurrentRoles;
 
       return (
             <GenericModal
@@ -215,22 +161,13 @@ export function ManageRolesDialog({
                               </div>
                         ) : (
                               <>
-                                    {/* Tenant Scope Selection (only show if not in forced context) */}
-                                    {!effectiveTenantId && (
-                                          <div className="space-y-2">
-                                                <Label>{t("admin.role.tenantScope") || "Tenant Scope"}</Label>
-                                                <GenericSelect
-                                                      options={tenantOptions}
-                                                      value={selectedTenantId}
-                                                      onValueChange={(val: string | string[]) => setSelectedTenantId(val as string)}
-                                                      placeholder={t("admin.role.selectTenantPlaceholder") || "Global (All Tenants)"}
-                                                      type="tree"
-                                                />
-                                                <p className="text-xs text-muted-foreground">
-                                                      {t("admin.role.tenantScopeHelp") || "Determines role scope and available roles."}
-                                                </p>
-                                          </div>
-                                    )}
+                                    {/* Scope Indicator (Informational Only) */}
+                                    <div className="bg-muted/50 p-2 rounded text-xs text-muted-foreground flex justify-between">
+                                          <span>{t("admin.role.currentScope") || "Current Scope"}:</span>
+                                          <span className="font-medium text-foreground">
+                                                {scopeTenantId ? (t("admin.role.tenantWrapper") || "Tenant") : (t("admin.role.systemScope") || "System / Global")}
+                                          </span>
+                                    </div>
 
                                     {/* Role Multi-Selection */}
                                     <div className="space-y-2">
@@ -246,12 +183,12 @@ export function ManageRolesDialog({
                                                 type="multi"
                                           />
                                           <p className="text-xs text-muted-foreground">
-                                                {t("admin.role.selectRolesHelp") || "All existing roles will be replaced with selection."}
+                                                {t("admin.role.selectRolesHelp") || "Selection replaces existing roles in this scope."}
                                           </p>
                                     </div>
 
-                                    {/* Inherit Toggle (only if tenant selected) */}
-                                    {selectedTenantId && (
+                                    {/* Inherit Toggle (only if tenant context) */}
+                                    {scopeTenantId && (
                                           <div className="flex items-center justify-between border p-3 rounded-lg">
                                                 <div className="space-y-0.5">
                                                       <Label htmlFor="inherit" className="cursor-pointer">

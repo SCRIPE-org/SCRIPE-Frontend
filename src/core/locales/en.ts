@@ -313,6 +313,7 @@ export const en = {
     notesPlaceholder: "Enter notes",
     // Role assignment
     role: {
+      currentScope:"Current Scope",
       manageTitle: "Manage Roles",
       manageDescription: "Manage roles",
       selectRoles:"Select Roles",

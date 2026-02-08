@@ -323,6 +323,7 @@ export const ar = {
     inActive: "غير نشط",
     // Role assignment
     role: {
+      currentScope:"النطاق الحالي",
       selectRoles:"اختر الأدوار",
       selectRolesHelp:"اختر الأدوار المرتبطة بـ",
       saveRoles:"حفظ الأدوار",
