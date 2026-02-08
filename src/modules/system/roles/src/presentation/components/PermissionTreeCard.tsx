@@ -41,6 +41,8 @@ export function PermissionTreeCard({
       assignments,
       onUpdateConfig,
       onBulkScopeUpdate,
+      bulkScopeValue,
+      setBulkScopeValue,
 }: PermissionTreeProps) {
       const { t } = useI18n();
 
@@ -59,8 +61,9 @@ export function PermissionTreeCard({
                                                 {t("role.bulkScope") || "Bulk Scope"}:
                                           </span>
                                           <BulkScopeSelect
-                                                value=""
+                                                value={bulkScopeValue}
                                                 onValueChange={(val) => {
+                                                      setBulkScopeValue(val);
                                                       if (val) onBulkScopeUpdate(val);
                                                 }}
                                           />

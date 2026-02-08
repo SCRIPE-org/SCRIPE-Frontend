@@ -56,6 +56,8 @@ export interface PermissionTreeProps {
       assignments: Map<string, PermissionAssignmentJson>;
       onUpdateConfig: (code: string, assignment: PermissionAssignmentJson) => void;
       onBulkScopeUpdate: (scope: string) => void;
+      bulkScopeValue: string;
+      setBulkScopeValue: (scope: string) => void;
 }
 
 // === ViewModel ===
@@ -72,6 +74,7 @@ export function useRoleDetailViewModel() {
       const [assignments, setAssignments] = useState<Map<string, PermissionAssignmentJson>>(new Map());
       const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
       const [searchQuery, setSearchQuery] = useState("");
+      const [bulkScopeValue, setBulkScopeValue] = useState<string>("");
 
       // === QUERIES ===
       const { data: role, isLoading: roleLoading } = useQuery<Role>({
@@ -314,7 +317,9 @@ export function useRoleDetailViewModel() {
                   onCollapseAll: collapseAll,
                   assignments: assignments,
                   onUpdateConfig: updateAssignment,
-                  onBulkScopeUpdate: bulkUpdateScope
+                  onBulkScopeUpdate: bulkUpdateScope,
+                  bulkScopeValue,
+                  setBulkScopeValue,
             } as PermissionTreeProps,
       };
 }
