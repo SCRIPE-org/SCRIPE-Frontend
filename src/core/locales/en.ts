@@ -405,6 +405,8 @@ export const en = {
 
   // Role - For table columns (singular context)
   role: {
+    bulkScope:"Apply to All Permissions",
+    applyToAll:"Select to apply to all permissions",
     name: "Name",
     code: "Code",
     description: "Description",

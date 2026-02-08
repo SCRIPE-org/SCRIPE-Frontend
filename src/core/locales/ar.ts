@@ -323,6 +323,7 @@ export const ar = {
     inActive: "غير نشط",
     // Role assignment
     role: {
+      
       currentScope:"النطاق الحالي",
       selectRoles:"اختر الأدوار",
       selectRolesHelp:"اختر الأدوار المرتبطة بـ",
@@ -428,6 +429,8 @@ export const ar = {
 
   // Role - For table columns (singular context)
   role: {
+    bulkScope:"تطبيق على كل الصلاحيات",
+    applyToAll:"اختر ليتم التطبيق على كل الصلاحيات",
     scopeOverride: "تجاوز النطاق",
     selectScope: "اختر النطاق",
     scopeDefault: "افتراضي (لا شيء)",

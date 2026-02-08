@@ -109,12 +109,13 @@ export function RolePermissionsDialog(props: RolePermissionsDialogProps) {
                                                             { value: PermissionScopes.Tenant, label: t("role.scopeTenant") || "Tenant Level" },
                                                             { value: PermissionScopes.Global, label: t("role.scopeGlobal") || "Global" },
                                                       ]}
-                                                      value=""
+                                                      value={vm.bulkScopeValue}
                                                       onValueChange={(val: string) => {
+                                                            vm.setBulkScopeValue(val);
                                                             if (val) vm.bulkUpdateScope(val);
                                                       }}
                                                       placeholder={t("role.applyToAll") || "Apply to All..."}
-                                                      className="w-[130px] h-8 text-xs"
+                                                      className="w-[140px] h-8 text-xs"
                                                 />
                                           </div>
                                           <div className="flex items-center gap-1.5 text-muted-foreground">

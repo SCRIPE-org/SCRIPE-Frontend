@@ -72,6 +72,8 @@ export interface UseRolePermissionsDialogResult {
       toggleGroup: (codes: string[]) => void;
       save: () => void;
       bulkUpdateScope: (scope: string) => void;
+      bulkScopeValue: string;
+      setBulkScopeValue: (scope: string) => void;
       isSaving: boolean;
 
       // Helpers
@@ -93,6 +95,7 @@ export function useRolePermissionsDialog({
       const [search, setSearch] = useState("");
       const [assignments, setAssignments] = useState<Map<string, PermissionAssignmentJson>>(new Map());
       const [expandedGroups, setExpandedGroups] = useState<string[]>([]);
+      const [bulkScopeValue, setBulkScopeValue] = useState<string>("");
 
       // Track if we've initialized for this role to prevent infinite loops
       const initializedRoleRef = useRef<string | null>(null);
@@ -323,6 +326,8 @@ export function useRolePermissionsDialog({
             updateAssignment,
             toggleGroup,
             bulkUpdateScope,
+            bulkScopeValue,
+            setBulkScopeValue,
             save: () => saveMutation.mutate(),
             isSaving: saveMutation.isPending,
 
