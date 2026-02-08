@@ -43,9 +43,8 @@ import { cn } from "@core/common/utils";
 import type { Role } from "../../domain/entities/Role";
 import { useRolePermissionsDialog, type TenantPermission } from "../viewmodels/useRolePermissionsDialog";
 import { PermissionConfigDialog } from "./PermissionConfigDialog";
+import { BulkScopeSelect } from "./BulkScopeSelect";
 import type { PermissionAssignmentJson } from "../../data/models/RoleModel";
-import { PermissionScopes } from "../../data/models/RoleModel"; // Imported PermissionScopes
-import { GenericSelect } from "@core/crud/components/generic-select"; // Imported GenericSelect
 
 interface RolePermissionsDialogProps {
       open: boolean;
@@ -102,20 +101,12 @@ export function RolePermissionsDialog(props: RolePermissionsDialogProps) {
                                                 <span className="text-xs text-muted-foreground whitespace-nowrap">
                                                       {t("role.bulkScope") || "Bulk Scope"}:
                                                 </span>
-                                                <GenericSelect
-                                                      options={[
-                                                            { value: PermissionScopes.Default, label: t("role.scopeDefault") || "Default" },
-                                                            { value: PermissionScopes.Self, label: t("role.scopeSelf") || "Self Only" },
-                                                            { value: PermissionScopes.Tenant, label: t("role.scopeTenant") || "Tenant Level" },
-                                                            { value: PermissionScopes.Global, label: t("role.scopeGlobal") || "Global" },
-                                                      ]}
+                                                <BulkScopeSelect
                                                       value={vm.bulkScopeValue}
                                                       onValueChange={(val: string) => {
                                                             vm.setBulkScopeValue(val);
                                                             if (val) vm.bulkUpdateScope(val);
                                                       }}
-                                                      placeholder={t("role.applyToAll") || "Apply to All..."}
-                                                      className="w-[140px] h-8 text-xs"
                                                 />
                                           </div>
                                           <div className="flex items-center gap-1.5 text-muted-foreground">

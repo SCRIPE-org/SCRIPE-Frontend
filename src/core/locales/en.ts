@@ -405,6 +405,10 @@ export const en = {
 
   // Role - For table columns (singular context)
   role: {
+    scopeOwnTenant: "Own Tenant",
+    scopeOwn: "Own Only",
+    scopeHierarchy: "Hierarchy",
+    scopeAllTenants: "All Tenants",
     bulkScope:"Apply to All Permissions",
     applyToAll:"Select to apply to all permissions",
     name: "Name",

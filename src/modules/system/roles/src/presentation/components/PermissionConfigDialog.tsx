@@ -72,12 +72,13 @@ export function PermissionConfigDialog({
             onOpenChange(false);
       };
 
-      // Scope Options
+      // Scope Options - matching backend DataScope constants
       const scopeOptions = [
             { value: PermissionScopes.Default, label: t("role.scopeDefault") },
-            { value: PermissionScopes.Self, label: t("role.scopeSelf") },
-            { value: PermissionScopes.Tenant, label: t("role.scopeTenant") },
-            { value: PermissionScopes.Global, label: t("role.scopeGlobal") },
+            { value: PermissionScopes.Own, label: t("role.scopeOwn") },
+            { value: PermissionScopes.OwnTenant, label: t("role.scopeOwnTenant") },
+            { value: PermissionScopes.Hierarchy, label: t("role.scopeHierarchy") },
+            { value: PermissionScopes.AllTenants, label: t("role.scopeAllTenants") },
       ];
 
       return (

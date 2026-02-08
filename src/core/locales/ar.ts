@@ -429,6 +429,10 @@ export const ar = {
 
   // Role - For table columns (singular context)
   role: {
+    scopeOwnTenant: "مستوى المستأجر",
+    scopeOwn: "الذات فقط",
+    scopeHierarchy: "الهرمية",
+    scopeAllTenants: "جميع المستأجرين",
     bulkScope:"تطبيق على كل الصلاحيات",
     applyToAll:"اختر ليتم التطبيق على كل الصلاحيات",
     scopeOverride: "تجاوز النطاق",

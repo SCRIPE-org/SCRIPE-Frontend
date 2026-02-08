@@ -59,7 +59,7 @@ export default function GlobalError({
   }, []);
 
   const handleRetry = () => {
-    reset();
+    window.location.reload();
   };
 
   const handleGoHome = () => {

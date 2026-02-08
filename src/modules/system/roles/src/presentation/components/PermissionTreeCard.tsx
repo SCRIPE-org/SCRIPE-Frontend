@@ -11,6 +11,7 @@ import { Input } from "@core/ui/input";
 import { Button } from "@core/ui/button";
 import { Search, Lock, Shield, Users, Settings, Layout } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
+import { BulkScopeSelect } from "./BulkScopeSelect";
 import { PermissionCategoryRow, PermissionTreeSkeleton } from "./index";
 import type { PermissionTreeProps } from "../viewmodels/useRoleDetailViewModel";
 import type { PermissionAssignmentJson } from "../../data/models/RoleModel";
@@ -39,6 +40,7 @@ export function PermissionTreeCard({
       onCollapseAll,
       assignments,
       onUpdateConfig,
+      onBulkScopeUpdate,
 }: PermissionTreeProps) {
       const { t } = useI18n();
 
@@ -51,6 +53,18 @@ export function PermissionTreeCard({
                                     {t("roleDetail.permissions")}
                               </CardTitle>
                               <div className="flex items-center gap-2">
+                                    {/* Bulk Scope Override */}
+                                    <div className="flex items-center gap-2 border-r pr-3 mr-1">
+                                          <span className="text-xs text-muted-foreground whitespace-nowrap">
+                                                {t("role.bulkScope") || "Bulk Scope"}:
+                                          </span>
+                                          <BulkScopeSelect
+                                                value=""
+                                                onValueChange={(val) => {
+                                                      if (val) onBulkScopeUpdate(val);
+                                                }}
+                                          />
+                                    </div>
                                     <Button variant="ghost" size="sm" onClick={onExpandAll}>
                                           {t("common.expandAll")}
                                     </Button>

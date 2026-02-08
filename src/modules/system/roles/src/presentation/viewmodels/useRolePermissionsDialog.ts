@@ -218,7 +218,7 @@ export function useRolePermissionsDialog({
                               next.set(code, {
                                     permissionId: permission.id,
                                     // Use explicit constant for Tenant scope
-                                    scopeOverride: PermissionScopes.Tenant,
+                                    scopeOverride: PermissionScopes.OwnTenant,
                                     restrictedFields: []
                               });
                         }
@@ -248,7 +248,7 @@ export function useRolePermissionsDialog({
                                     if (permission) {
                                           next.set(c, {
                                                 permissionId: permission.id,
-                                                scopeOverride: PermissionScopes.Tenant,
+                                                scopeOverride: PermissionScopes.OwnTenant,
                                                 restrictedFields: []
                                           });
                                     }
