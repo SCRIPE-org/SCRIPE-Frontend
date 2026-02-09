@@ -176,6 +176,21 @@ export const SYSTEM_PERMISSIONS = {
       // Audit
       AUDIT_VIEW: "audit.view",
       AUDIT_EXPORT: "audit.export",
+      AUDIT_VIEW_CHILDREN: "audit.view_children",
+      AUDIT_EXPORT_PDF: "audit.export_pdf",
+
+      // Dashboard
+      DASHBOARD_VIEW: "dashboard.view",
+      DASHBOARD_VIEW_SYSTEM: "dashboard.view_system",
+
+      // Security Monitoring
+      SECURITY_VIEW: "security.view",
+      SECURITY_MANAGE_SETTINGS: "security.manage_settings",
+
+      // Analytics
+      ANALYTICS_VIEW: "analytics.view",
+      ANALYTICS_VIEW_CHILDREN: "analytics.view_children",
+      ANALYTICS_EXPORT: "analytics.export",
 
       // System
       SYSTEM_IMPERSONATE: "system.impersonate",
@@ -197,9 +212,18 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
       "/profile": [],
 
       // System module pages
-      "/system/admins": [SYSTEM_PERMISSIONS.ADMINS_VIEW],
-      "/system/roles": [SYSTEM_PERMISSIONS.ROLES_VIEW],
-      "/system/permissions": [SYSTEM_PERMISSIONS.PERMISSIONS_VIEW],
-      "/system/tenants": [SYSTEM_PERMISSIONS.TENANTS_VIEW],
-      "/system/menus": [SYSTEM_PERMISSIONS.MENUS_VIEW],
+      "/admins": [SYSTEM_PERMISSIONS.ADMINS_VIEW],
+      "/roles": [SYSTEM_PERMISSIONS.ROLES_VIEW],
+      "/settings/permissions": [SYSTEM_PERMISSIONS.PERMISSIONS_VIEW],
+      "/tenants": [SYSTEM_PERMISSIONS.TENANTS_VIEW],
+      "/settings/menus": [SYSTEM_PERMISSIONS.MENUS_VIEW],
+
+      // Monitoring & Analytics pages
+      "/dashboard": [SYSTEM_PERMISSIONS.DASHBOARD_VIEW],
+      "/audit": [SYSTEM_PERMISSIONS.AUDIT_VIEW],
+      "/security": [SYSTEM_PERMISSIONS.SECURITY_VIEW],
+      "/analytics": [SYSTEM_PERMISSIONS.ANALYTICS_VIEW],
+
+      // Tenant settings
+      "/settings/tenant": [SYSTEM_PERMISSIONS.TENANT_SETTINGS_VIEW],
 };
