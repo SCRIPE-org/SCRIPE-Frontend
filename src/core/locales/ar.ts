@@ -427,6 +427,61 @@ export const ar = {
     restrictionHint: "حقول API محددة لإخفائها عن المستخدم.",
   },
 
+  // إدارة القوائم (قائمة التنقل)
+  menus: {
+    title: "إدارة القوائم",
+    description: "إدارة عناصر قائمة التنقل والترتيب والرؤية.",
+    items: "عنصر",
+    createMenuItem: "إنشاء عنصر قائمة",
+    structure: "هيكل القائمة",
+    activeItems: "نشط",
+    inactiveItems: "غير نشط",
+    emptyTitle: "لا توجد عناصر قائمة",
+    emptyDesc: "أنشئ أول عنصر قائمة لبناء هيكل التنقل.",
+
+    // حقول النموذج
+    slug: "المعرّف",
+    nameEn: "الاسم (بالإنجليزية)",
+    nameAr: "الاسم (بالعربية)",
+    href: "مسار الرابط",
+    icon: "الأيقونة",
+    resource: "مورد الصلاحية",
+    resourceHint: "يربط عنصر القائمة هذا بمورد صلاحية للتحكم في الرؤية.",
+
+    // عناوين الحوارات
+    createTitle: "إنشاء عنصر قائمة",
+    createDesc: "إضافة عنصر قائمة رئيسي جديد.",
+    editTitle: "تعديل عنصر القائمة",
+    editDesc: "تحديث تفاصيل عنصر القائمة.",
+    addChildTitle: "إضافة عنصر فرعي",
+    addChildDesc: "إضافة عنصر فرعي تحت",
+    deleteTitle: "حذف عنصر القائمة",
+    deleteDesc: "هل أنت متأكد من حذف \"{{name}}\"؟ سيتم أيضاً حذف جميع العناصر الفرعية.",
+    addChild: "إضافة فرعي",
+
+    // رسائل النجاح/الخطأ
+    createSuccess: "تم إنشاء عنصر القائمة",
+    createSuccessDesc: "تم إنشاء عنصر القائمة بنجاح.",
+    createFailed: "فشل الإنشاء",
+    createFailedDesc: "فشل في إنشاء عنصر القائمة.",
+    updateSuccess: "تم تحديث عنصر القائمة",
+    updateSuccessDesc: "تم تحديث عنصر القائمة بنجاح.",
+    updateFailed: "فشل التحديث",
+    updateFailedDesc: "فشل في تحديث عنصر القائمة.",
+    deleteSuccess: "تم حذف عنصر القائمة",
+    deleteSuccessDesc: "تم حذف عنصر القائمة بنجاح.",
+    deleteFailed: "فشل الحذف",
+    deleteFailedDesc: "فشل في حذف عنصر القائمة.",
+    reorderSuccess: "تم إعادة ترتيب القائمة",
+    reorderSuccessDesc: "تم إعادة ترتيب عناصر القائمة بنجاح.",
+    reorderFailed: "فشل إعادة الترتيب",
+    reorderFailedDesc: "فشل في إعادة ترتيب عناصر القائمة.",
+    visibilitySuccess: "تم تحديث الرؤية",
+    visibilitySuccessDesc: "تم تحديث رؤية قائمة الدور.",
+    visibilityFailed: "فشل تحديث الرؤية",
+    visibilityFailedDesc: "فشل في تحديث رؤية قائمة الدور.",
+  },
+
   // Role - For table columns (singular context)
   role: {
     scopeOwnTenant: "مستوى المستأجر",

@@ -10,6 +10,7 @@ import type {
       UpdateRoleRequest,
       AssignPermissionsRequest,
       DeleteRoleRequest,
+      CloneRoleRequest,
 } from "../entities/RoleRequests";
 import type { PagedResult } from "@modules/system/core/domain/types";
 
@@ -94,4 +95,9 @@ export interface IRoleRepository {
        * Get count of admins assigned to this role
        */
       getAdminCount(roleId: string): Promise<number>;
+
+      /**
+       * Clone a role (copies permissions filtered to cloner's own permissions)
+       */
+      clone(roleId: string, request: CloneRoleRequest): Promise<string>;
 }

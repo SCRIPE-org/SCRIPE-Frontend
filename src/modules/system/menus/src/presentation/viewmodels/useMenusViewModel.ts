@@ -2,6 +2,7 @@
  * Menus ViewModel
  *
  * Provides data and operations for the menu management view.
+ * Handles CRUD, reorder, and role-visibility mutations.
  */
 "use client";
 
@@ -12,13 +13,17 @@ import type { MenuTreeNode } from "../../domain/entities/MenuItem";
 import type {
       CreateMenuItemRequest,
       UpdateMenuItemRequest,
+      ReorderMenuItemsRequest,
+      SetRoleMenuVisibilityRequest,
 } from "../../domain/entities/MenuItemRequests";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import { useI18n } from "@core/providers/i18n-provider";
 
 export function useMenusViewModel() {
       const queryClient = useQueryClient();
       const { success, error: toastError } = useEnhancedToast();
       const { menuRepository } = systemContainer;
+      const { t, language } = useI18n();
 
       // Fetch menu tree
       const {
@@ -37,15 +42,17 @@ export function useMenusViewModel() {
             mutationFn: (request: CreateMenuItemRequest) => menuRepository.create(request),
             onSuccess: () => {
                   queryClient.invalidateQueries({ queryKey: ["menus"] });
+                  // Also invalidate navigation to reflect new items
+                  queryClient.invalidateQueries({ queryKey: ["navigation"] });
                   success({
-                        title: "Menu Item Created",
-                        description: "The menu item has been created successfully.",
+                        title: t("menus.createSuccess"),
+                        description: t("menus.createSuccessDesc"),
                   });
             },
             onError: (err: Error) => {
                   toastError({
-                        title: "Create Failed",
-                        description: err.message || "Failed to create menu item.",
+                        title: t("menus.createFailed"),
+                        description: err.message || t("menus.createFailedDesc"),
                   });
             },
       });
@@ -56,15 +63,16 @@ export function useMenusViewModel() {
                   menuRepository.update(id, request),
             onSuccess: () => {
                   queryClient.invalidateQueries({ queryKey: ["menus"] });
+                  queryClient.invalidateQueries({ queryKey: ["navigation"] });
                   success({
-                        title: "Menu Item Updated",
-                        description: "The menu item has been updated successfully.",
+                        title: t("menus.updateSuccess"),
+                        description: t("menus.updateSuccessDesc"),
                   });
             },
             onError: (err: Error) => {
                   toastError({
-                        title: "Update Failed",
-                        description: err.message || "Failed to update menu item.",
+                        title: t("menus.updateFailed"),
+                        description: err.message || t("menus.updateFailedDesc"),
                   });
             },
       });
@@ -74,15 +82,53 @@ export function useMenusViewModel() {
             mutationFn: (id: string) => menuRepository.delete(id),
             onSuccess: () => {
                   queryClient.invalidateQueries({ queryKey: ["menus"] });
+                  queryClient.invalidateQueries({ queryKey: ["navigation"] });
                   success({
-                        title: "Menu Item Deleted",
-                        description: "The menu item has been deleted successfully.",
+                        title: t("menus.deleteSuccess"),
+                        description: t("menus.deleteSuccessDesc"),
                   });
             },
             onError: (err: Error) => {
                   toastError({
-                        title: "Delete Failed",
-                        description: err.message || "Failed to delete menu item.",
+                        title: t("menus.deleteFailed"),
+                        description: err.message || t("menus.deleteFailedDesc"),
+                  });
+            },
+      });
+
+      // Reorder menu items mutation
+      const reorderMutation = useMutation({
+            mutationFn: (request: ReorderMenuItemsRequest) => menuRepository.reorder(request),
+            onSuccess: () => {
+                  queryClient.invalidateQueries({ queryKey: ["menus"] });
+                  queryClient.invalidateQueries({ queryKey: ["navigation"] });
+                  success({
+                        title: t("menus.reorderSuccess"),
+                        description: t("menus.reorderSuccessDesc"),
+                  });
+            },
+            onError: (err: Error) => {
+                  toastError({
+                        title: t("menus.reorderFailed"),
+                        description: err.message || t("menus.reorderFailedDesc"),
+                  });
+            },
+      });
+
+      // Set role visibility mutation
+      const visibilityMutation = useMutation({
+            mutationFn: (request: SetRoleMenuVisibilityRequest) => menuRepository.setRoleVisibility(request),
+            onSuccess: () => {
+                  queryClient.invalidateQueries({ queryKey: ["menus"] });
+                  success({
+                        title: t("menus.visibilitySuccess"),
+                        description: t("menus.visibilitySuccessDesc"),
+                  });
+            },
+            onError: (err: Error) => {
+                  toastError({
+                        title: t("menus.visibilityFailed"),
+                        description: err.message || t("menus.visibilityFailedDesc"),
                   });
             },
       });
@@ -98,6 +144,12 @@ export function useMenusViewModel() {
             };
             return Array.isArray(menuTree) ? countNodes(menuTree) : 0;
       }, [menuTree]);
+
+      // Helpers
+      const getLocalizedName = useCallback(
+            (node: MenuTreeNode) => language === "ar" ? node.nameAr : node.nameEn,
+            [language]
+      );
 
       // Handlers
       const handleCreate = useCallback(
@@ -116,6 +168,16 @@ export function useMenusViewModel() {
             [deleteMutation]
       );
 
+      const handleReorder = useCallback(
+            (request: ReorderMenuItemsRequest) => reorderMutation.mutateAsync(request),
+            [reorderMutation]
+      );
+
+      const handleSetVisibility = useCallback(
+            (request: SetRoleMenuVisibilityRequest) => visibilityMutation.mutateAsync(request),
+            [visibilityMutation]
+      );
+
       return {
             // Data
             menuTree: menuTree ?? [],
@@ -126,15 +188,23 @@ export function useMenusViewModel() {
             isError,
             error,
 
+            // Localization
+            language,
+            getLocalizedName,
+
             // Handlers
             handleCreate,
             handleUpdate,
             handleDelete,
+            handleReorder,
+            handleSetVisibility,
             refetch: () => refetch(),
 
             // Mutation states
             isCreating: createMutation.isPending,
             isUpdating: updateMutation.isPending,
             isDeleting: deleteMutation.isPending,
+            isReordering: reorderMutation.isPending,
+            isSettingVisibility: visibilityMutation.isPending,
       };
 }

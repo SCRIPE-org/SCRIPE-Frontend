@@ -7,6 +7,8 @@ import type { MenuItem, MenuTreeNode } from "../entities/MenuItem";
 import type {
       CreateMenuItemRequest,
       UpdateMenuItemRequest,
+      ReorderMenuItemsRequest,
+      SetRoleMenuVisibilityRequest,
 } from "../entities/MenuItemRequests";
 
 /**
@@ -14,7 +16,7 @@ import type {
  */
 export interface IMenuRepository {
       /**
-       * Get the full menu tree
+       * Get the full menu tree (admin view — all items)
        */
       getAll(): Promise<MenuTreeNode[]>;
 
@@ -37,4 +39,14 @@ export interface IMenuRepository {
        * Delete a menu item
        */
       delete(id: string): Promise<void>;
+
+      /**
+       * Reorder menu items (drag-drop bulk update)
+       */
+      reorder(request: ReorderMenuItemsRequest): Promise<void>;
+
+      /**
+       * Set role-level menu item visibility
+       */
+      setRoleVisibility(request: SetRoleMenuVisibilityRequest): Promise<void>;
 }

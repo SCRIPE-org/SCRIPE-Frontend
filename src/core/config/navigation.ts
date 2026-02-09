@@ -248,19 +248,38 @@ export const getFlatNavigationItems = (
  * 🔄 Converts backend menu items to frontend navigation format
  * Used internally by the dynamic navigation system
  */
-/** Shape of a single backend menu item */
+/** Shape of a single backend menu item (bilingual) */
 interface BackendMenuItem {
+  nameEn?: string;
+  nameAr?: string;
+  slug?: string;
+  /** @deprecated Legacy field — use nameEn/nameAr */
   name?: string;
+  /** @deprecated Legacy field — use nameEn/nameAr */
   displayName?: string;
   href?: string;
   icon?: string;
   order?: number;
+  resource?: string;
   children?: BackendMenuItem[];
 }
 
 /**
- * Converts backend menu items to frontend navigation format
- * Used internally by the dynamic navigation system
+ * Gets the current language from localStorage (fallback: 'en')
+ */
+function getCurrentLanguage(): string {
+  if (typeof window === "undefined") return "en";
+  try {
+    return localStorage.getItem("language") || "en";
+  } catch {
+    return "en";
+  }
+}
+
+/**
+ * Converts backend menu items to frontend navigation format.
+ * Handles bilingual fields (nameEn/nameAr) — picks name by current language.
+ * Used internally by the dynamic navigation system.
  */
 export const convertMenuItemsToNavigation = (
   menuItemsData: unknown
@@ -286,11 +305,18 @@ export const convertMenuItemsToNavigation = (
     menuItems = [];
   }
 
+  const lang = getCurrentLanguage();
+
   const convertMenuItem = (item: BackendMenuItem): NavigationItem => {
+    // Bilingual name resolution: prefer nameEn/nameAr, fallback to legacy fields
+    const displayName = lang === "ar"
+      ? (item.nameAr || item.nameEn || item.name || item.displayName || "Unnamed")
+      : (item.nameEn || item.name || item.displayName || "Unnamed");
+
     return {
-      name: item.name || item.displayName || 'Unnamed',
+      name: displayName,
       href: item.href || undefined,
-      icon: iconMap[item.icon ?? ''] || iconMap["Package"],
+      icon: iconMap[item.icon ?? ""] || iconMap["Package"],
       children: item.children?.map(convertMenuItem) || [],
       disabled: false,
     };

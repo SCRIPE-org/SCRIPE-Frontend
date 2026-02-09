@@ -15,6 +15,7 @@ import type {
       CreateRoleRequest,
       UpdateRoleRequest,
       AssignPermissionsRequest,
+      CloneRoleRequest,
 } from "../../domain/entities/RoleRequests";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 
@@ -162,6 +163,31 @@ export function useRolesViewModel(params: UseRolesViewModelParams = {}) {
             [assignPermissionsMutation]
       );
 
+      // Clone role mutation
+      const cloneMutation = useMutation({
+            mutationFn: ({ request, roleId }: { request: CloneRoleRequest; roleId: string }) =>
+                  roleRepository.clone(roleId, request),
+            onSuccess: () => {
+                  queryClient.invalidateQueries({ queryKey });
+                  success({
+                        title: "Role Cloned",
+                        description: "The role has been cloned successfully.",
+                  });
+            },
+            onError: (err: Error) => {
+                  toastError({
+                        title: "Clone Failed",
+                        description: err.message || "Failed to clone role.",
+                  });
+            },
+      });
+
+      const clone = useCallback(
+            (request: CloneRoleRequest, roleId: string) =>
+                  cloneMutation.mutateAsync({ request, roleId }),
+            [cloneMutation]
+      );
+
       // Return the vm directly plus any additional role-specific properties
       return {
             ...vm,
@@ -169,5 +195,7 @@ export function useRolesViewModel(params: UseRolesViewModelParams = {}) {
             createWithPermissions,
             handleAssignPermissions,
             isAssigningPermissions: assignPermissionsMutation.isPending,
+            clone,
+            isCloning: cloneMutation.isPending,
       };
 }

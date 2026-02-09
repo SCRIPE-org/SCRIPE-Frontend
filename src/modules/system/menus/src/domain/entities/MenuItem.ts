@@ -2,29 +2,28 @@
  * Menu Item Entity
  *
  * Represents a menu item in the navigation system.
+ * Supports bilingual names (English/Arabic) matching backend.
  */
 import type { BaseEntity } from "@modules/system/core/domain/types";
 
 /**
- * Menu item data from API
+ * Menu item data from API (matches backend MenuItemResponse)
  */
 export interface MenuItemData extends BaseEntity {
-      name: string;
-      title: string;
-      path?: string;
+      slug: string;
+      nameEn: string;
+      nameAr: string;
+      href?: string;
       icon?: string;
-      parentId?: string;
+      parentMenuItemId?: string;
       order: number;
-      tenantId?: string;
-      requiredPermission?: string;
-      isVisible: boolean;
-      isExternal: boolean;
-      externalUrl?: string;
+      resource?: string;
+      isActive: boolean;
       children?: MenuItemData[];
 }
 
 /**
- * Menu item entity class
+ * Menu item entity class with bilingual support
  */
 export class MenuItem {
       constructor(public readonly data: MenuItemData) { }
@@ -33,48 +32,47 @@ export class MenuItem {
             return this.data.id;
       }
 
-      get name(): string {
-            return this.data.name;
+      get slug(): string {
+            return this.data.slug;
       }
 
-      get title(): string {
-            return this.data.title;
+      get nameEn(): string {
+            return this.data.nameEn;
       }
 
-      get path(): string | undefined {
-            return this.data.path;
+      get nameAr(): string {
+            return this.data.nameAr;
+      }
+
+      /**
+       * Get localized name based on current language
+       */
+      getLocalizedName(language: string): string {
+            return language === "ar" ? this.data.nameAr : this.data.nameEn;
+      }
+
+      get href(): string | undefined {
+            return this.data.href;
       }
 
       get icon(): string | undefined {
             return this.data.icon;
       }
 
-      get parentId(): string | undefined {
-            return this.data.parentId;
+      get parentMenuItemId(): string | undefined {
+            return this.data.parentMenuItemId;
       }
 
       get order(): number {
             return this.data.order;
       }
 
-      get tenantId(): string | undefined {
-            return this.data.tenantId;
+      get resource(): string | undefined {
+            return this.data.resource;
       }
 
-      get requiredPermission(): string | undefined {
-            return this.data.requiredPermission;
-      }
-
-      get isVisible(): boolean {
-            return this.data.isVisible;
-      }
-
-      get isExternal(): boolean {
-            return this.data.isExternal;
-      }
-
-      get externalUrl(): string | undefined {
-            return this.data.externalUrl;
+      get isActive(): boolean {
+            return this.data.isActive;
       }
 
       get hasChildren(): boolean {
@@ -86,33 +84,33 @@ export class MenuItem {
       }
 
       /**
-       * Get the effective URL (path or external URL)
-       */
-      get url(): string | undefined {
-            return this.data.isExternal ? this.data.externalUrl : this.data.path;
-      }
-
-      /**
        * Check if this is a root menu item
        */
       get isRoot(): boolean {
-            return !this.data.parentId;
+            return !this.data.parentMenuItemId;
+      }
+
+      /**
+       * Check if this is a parent-only item (no href)
+       */
+      get isParentOnly(): boolean {
+            return !this.data.href;
       }
 }
 
 /**
- * Menu tree node for hierarchical display
+ * Menu tree node for hierarchical display (used in views)
  */
 export interface MenuTreeNode {
       id: string;
-      name: string;
-      title: string;
-      path?: string;
+      slug: string;
+      nameEn: string;
+      nameAr: string;
+      href?: string;
       icon?: string;
       order: number;
-      isVisible: boolean;
-      isExternal: boolean;
-      requiredPermission?: string;
-      parentId?: string;
+      resource?: string;
+      isActive: boolean;
+      parentMenuItemId?: string;
       children: MenuTreeNode[];
 }

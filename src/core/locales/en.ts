@@ -403,6 +403,61 @@ export const en = {
     totalRoles: "{{count}} roles",
   },
 
+  // Menu Management (Admin — Navigation Menu Items)
+  menus: {
+    title: "Menu Management",
+    description: "Manage navigation menu items, ordering, and visibility.",
+    items: "items",
+    createMenuItem: "Create Menu Item",
+    structure: "Menu Structure",
+    activeItems: "Active",
+    inactiveItems: "Inactive",
+    emptyTitle: "No Menu Items",
+    emptyDesc: "Create your first menu item to build the navigation structure.",
+
+    // Form fields
+    slug: "Slug",
+    nameEn: "Name (English)",
+    nameAr: "Name (Arabic)",
+    href: "URL Path",
+    icon: "Icon",
+    resource: "Permission Resource",
+    resourceHint: "Links this menu item to a permission resource for visibility control.",
+
+    // Dialog titles
+    createTitle: "Create Menu Item",
+    createDesc: "Add a new top-level menu item.",
+    editTitle: "Edit Menu Item",
+    editDesc: "Update menu item details.",
+    addChildTitle: "Add Child Item",
+    addChildDesc: "Add a child item under",
+    deleteTitle: "Delete Menu Item",
+    deleteDesc: "Are you sure you want to delete \"{{name}}\"? This will also remove all child items.",
+    addChild: "Add Child",
+
+    // Success/Error messages
+    createSuccess: "Menu Item Created",
+    createSuccessDesc: "The menu item has been created successfully.",
+    createFailed: "Creation Failed",
+    createFailedDesc: "Failed to create menu item.",
+    updateSuccess: "Menu Item Updated",
+    updateSuccessDesc: "The menu item has been updated successfully.",
+    updateFailed: "Update Failed",
+    updateFailedDesc: "Failed to update menu item.",
+    deleteSuccess: "Menu Item Deleted",
+    deleteSuccessDesc: "The menu item has been deleted successfully.",
+    deleteFailed: "Deletion Failed",
+    deleteFailedDesc: "Failed to delete menu item.",
+    reorderSuccess: "Menu Reordered",
+    reorderSuccessDesc: "Menu items have been reordered successfully.",
+    reorderFailed: "Reorder Failed",
+    reorderFailedDesc: "Failed to reorder menu items.",
+    visibilitySuccess: "Visibility Updated",
+    visibilitySuccessDesc: "Role menu visibility has been updated.",
+    visibilityFailed: "Visibility Update Failed",
+    visibilityFailedDesc: "Failed to update role menu visibility.",
+  },
+
   // Role - For table columns (singular context)
   role: {
     scopeOwnTenant: "Own Tenant",

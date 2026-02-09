@@ -1,44 +1,55 @@
 /**
  * Menu Item Requests
  *
- * DTOs for menu API operations.
+ * DTOs for menu API operations. Matches backend request models.
  */
 
 /**
- * Create menu item request
+ * Create menu item request (matches backend CreateMenuItemRequest)
  */
 export interface CreateMenuItemRequest {
-      name: string;
-      title: string;
-      path?: string;
+      slug: string;
+      nameEn: string;
+      nameAr: string;
+      href?: string;
       icon?: string;
-      parentId?: string;
+      parentMenuItemId?: string;
       order?: number;
-      requiredPermission?: string;
-      isVisible?: boolean;
-      isExternal?: boolean;
-      externalUrl?: string;
+      resource?: string;
 }
 
 /**
- * Update menu item request
+ * Update menu item request (matches backend UpdateMenuItemRequest)
  */
 export interface UpdateMenuItemRequest {
-      name?: string;
-      title?: string;
-      path?: string;
+      slug: string;
+      nameEn: string;
+      nameAr: string;
+      href?: string;
       icon?: string;
-      parentId?: string;
+      parentMenuItemId?: string;
       order?: number;
-      requiredPermission?: string;
-      isVisible?: boolean;
-      isExternal?: boolean;
-      externalUrl?: string;
+      resource?: string;
 }
 
 /**
- * Reorder menu items request
+ * Reorder menu items request (matches backend ReorderMenuItemsRequest)
  */
 export interface ReorderMenuItemsRequest {
-      items: { id: string; order: number; parentId?: string }[];
+      items: ReorderItemDto[];
+}
+
+export interface ReorderItemDto {
+      id: string;
+      order: number;
+      parentMenuItemId?: string;
+}
+
+/**
+ * Set role menu visibility request (matches backend SetRoleMenuVisibilityRequest)
+ */
+export interface SetRoleMenuVisibilityRequest {
+      roleId: string;
+      menuItemId: string;
+      isVisible: boolean;
 }

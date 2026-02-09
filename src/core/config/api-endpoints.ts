@@ -75,6 +75,7 @@ export const API_ENDPOINTS = {
     PERMISSIONS: (id: string) => `/Roles/${id}/permissions`,
     REMOVE_PERMISSION: (roleId: string, permissionId: string) =>
       `/Roles/${roleId}/permissions/${permissionId}`,
+    CLONE: (id: string) => `/Roles/${id}/clone`,
   },
 
   // ===== PERMISSIONS =====
@@ -114,6 +115,8 @@ export const API_ENDPOINTS = {
     CREATE: "/Menus",
     UPDATE: (id: string) => `/Menus/${id}`,
     DELETE: (id: string) => `/Menus/${id}`,
+    REORDER: "/Menus/reorder",
+    ROLE_VISIBILITY: "/Menus/role-visibility",
   },
 
   // ===== DASHBOARD =====

@@ -120,4 +120,8 @@ export class RoleService implements IRoleService {
       async getAdminCount(roleId: string): Promise<number> {
             return this.api.get<number>(`${API_ENDPOINTS.ROLES.BY_ID(roleId)}/admin-count`);
       }
+
+      async clone(id: string, json: { nameEn: string; nameAr: string; descriptionEn?: string; descriptionAr?: string }): Promise<{ id: string }> {
+            return this.api.post<{ id: string }>(API_ENDPOINTS.ROLES.CLONE(id), json);
+      }
 }

@@ -6,23 +6,22 @@
 import type { IApiService } from "@core/interfaces/api.interface";
 import { API_ENDPOINTS } from "@core/config/api-endpoints";
 import type { IMenuRepository } from "../../domain/interfaces/IMenuRepository";
-import { MenuItem, MenuItemData, MenuTreeNode } from "../../domain/entities/MenuItem";
+import { MenuItem, type MenuItemData, type MenuTreeNode } from "../../domain/entities/MenuItem";
 import type {
       CreateMenuItemRequest,
       UpdateMenuItemRequest,
+      ReorderMenuItemsRequest,
+      SetRoleMenuVisibilityRequest,
 } from "../../domain/entities/MenuItemRequests";
 
 export class MenuRepository implements IMenuRepository {
       constructor(private readonly api: IApiService) { }
 
       async getAll(): Promise<MenuTreeNode[]> {
-            // Use the admin menu endpoint which returns all menu items
-            return await this.api.get<MenuTreeNode[]>(API_ENDPOINTS.MENUS.MY);
+            return await this.api.get<MenuTreeNode[]>(API_ENDPOINTS.MENUS.LIST);
       }
 
       async getById(id: string): Promise<MenuItem> {
-            // For individual menu item, we'd need a specific endpoint
-            // For now, we can fetch all and find
             const all = await this.getAll();
             const found = this.findInTree(all, id);
             if (!found) {
@@ -45,6 +44,14 @@ export class MenuRepository implements IMenuRepository {
 
       async delete(id: string): Promise<void> {
             await this.api.delete(API_ENDPOINTS.MENUS.DELETE(id));
+      }
+
+      async reorder(request: ReorderMenuItemsRequest): Promise<void> {
+            await this.api.put(API_ENDPOINTS.MENUS.REORDER, request);
+      }
+
+      async setRoleVisibility(request: SetRoleMenuVisibilityRequest): Promise<void> {
+            await this.api.put(API_ENDPOINTS.MENUS.ROLE_VISIBILITY, request);
       }
 
       private findInTree(

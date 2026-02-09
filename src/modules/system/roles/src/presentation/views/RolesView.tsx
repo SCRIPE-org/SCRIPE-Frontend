@@ -14,7 +14,7 @@ import {
       type CrudConfig,
       type CrudColumn
 } from "@core/crud/components/generic-crud-view";
-import { Shield, Pencil, Trash } from "lucide-react";
+import { Shield, Pencil, Trash, Copy } from "lucide-react";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { usePermissions } from "@core/providers/permission-provider";
 import type { Role } from "../../domain/entities/Role";
@@ -121,6 +121,22 @@ export function RolesView() {
                         icon: <Shield className="h-4 w-4" />,
                         onClick: (role) => router.push(`/roles/${role.id}`),
                         requiredPermission: SYSTEM_PERMISSIONS.ROLES_UPDATE,
+                  },
+                  // Clone Role
+                  {
+                        label: t("roles.cloneRole"),
+                        icon: <Copy className="h-4 w-4" />,
+                        onClick: (role) => {
+                              const cloneName = `${role.getLocalizedName("en")} (Copy)`;
+                              const cloneNameAr = `${role.getLocalizedName("ar")} (نسخة)`;
+                              if (vm.clone) {
+                                    vm.clone({
+                                          nameEn: cloneName,
+                                          nameAr: cloneNameAr,
+                                    }, role.id);
+                              }
+                        },
+                        requiredPermission: SYSTEM_PERMISSIONS.ROLES_CREATE,
                   },
                   // Edit (Standard)
                   {

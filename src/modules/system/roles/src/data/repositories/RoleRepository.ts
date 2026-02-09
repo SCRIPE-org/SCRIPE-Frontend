@@ -17,6 +17,7 @@ import type {
       UpdateRoleRequest,
       AssignPermissionsRequest,
       DeleteRoleRequest,
+      CloneRoleRequest,
 } from "../../domain/entities/RoleRequests";
 import type { PagedResult } from "@modules/system/core/domain/types";
 import type { IRoleService } from "../../domain/interfaces/IRoleService";
@@ -117,5 +118,10 @@ export class RoleRepository implements IRoleRepository {
 
       async getAdminCount(roleId: string): Promise<number> {
             return this.service.getAdminCount(roleId);
+      }
+
+      async clone(roleId: string, request: CloneRoleRequest): Promise<string> {
+            const response = await this.service.clone(roleId, request);
+            return response.id;
       }
 }

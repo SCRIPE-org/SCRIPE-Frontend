@@ -52,3 +52,14 @@ export interface DeleteRoleRequest {
       /** Role ID to transfer admins to before deletion */
       fallbackRoleId?: string;
 }
+
+/**
+ * Clone role request
+ * Creates a new role with the same permissions (filtered to cloner's permissions)
+ */
+export interface CloneRoleRequest {
+      nameEn: string;
+      nameAr: string;
+      descriptionEn?: string;
+      descriptionAr?: string;
+}
