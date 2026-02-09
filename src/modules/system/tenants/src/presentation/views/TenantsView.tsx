@@ -218,8 +218,8 @@ export function TenantsView() {
 
       // Custom actions for tenant nodes
       const customActions = useMemo(() => {
-            // Check permission for drill-down functionality
-            const hasViewDetails = hasPermission("tenants.view_details");
+            // Check guard permission for drill-down functionality
+            const hasDrillDown = hasPermission("tenants.drill_down");
 
             return (node: TenantTreeNode) => [
                   {
@@ -233,8 +233,8 @@ export function TenantsView() {
                         label: t("tenant.enterTenantWorld"),
                         onClick: () => handleEnterTenantWorld(node),
                         icon: <LogIn className="h-4 w-4" />,
-                        // Drill-down requires tenants.view_details permission
-                        show: () => canEnterTenantWorld && hasViewDetails,
+                        // Drill-down requires tenants.drill_down guard permission
+                        show: () => canEnterTenantWorld && hasDrillDown,
                   },
             ];
       }, [canEnterTenantWorld, hasPermission, t, handleEnterTenantWorld, router]);

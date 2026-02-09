@@ -52,7 +52,7 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
       // Permission checks
       const canUpdate = hasPermission("tenants.update");
       const canDelete = hasPermission("tenants.delete");
-      const canViewDetails = hasPermission("tenants.view_details");
+      const canDrillDown = hasPermission("tenants.drill_down"); // Guard permission for Enter Tenant World
 
       // Dialog states
       const [editOpen, setEditOpen] = useState(false);
@@ -205,7 +205,7 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
 
                                     {/* Actions - Only show buttons user has permission for */}
                                     <div className="flex flex-wrap items-center gap-2 shrink-0">
-                                          {onEnter && canViewDetails && (
+                                          {onEnter && canDrillDown && (
                                                 <Button
                                                       variant="default"
                                                       size="sm"
