@@ -3359,6 +3359,12 @@ export const en = {
       oldValues: "Old Values",
       newValues: "New Values",
     },
+    realtime: {
+      connected: "Live",
+      connecting: "Connecting...",
+      reconnecting: "Reconnecting...",
+      disconnected: "Offline",
+    },
   },
 
   // ===== SECURITY DASHBOARD =====

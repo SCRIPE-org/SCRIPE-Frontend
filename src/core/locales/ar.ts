@@ -3158,6 +3158,12 @@ export const ar = {
       dateTo: "إلى",
       reset: "إعادة تعيين",
     },
+    realtime: {
+      connected: 'مباشر',
+      connecting: 'جارٍ الاتصال...',
+      reconnecting: 'إعادة الاتصال...',
+      disconnected: 'غير متصل',
+    },
     results: {
       title: "النتائج",
       totalCount: "{{count}} سجل",
@@ -3293,4 +3299,6 @@ export const ar = {
     recentActivity: 'النشاط الأخير',
     noActivity: 'لا يوجد نشاط حديث',
   },
+
+
 };
