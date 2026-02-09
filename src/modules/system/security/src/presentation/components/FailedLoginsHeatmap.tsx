@@ -3,22 +3,21 @@
 /**
  * Failed Logins Heatmap
  *
- * Displays a bar chart of daily failed login attempts.
+ * Bar chart showing daily failed login attempts.
+ * Uses core ChartContainer for theme-aware dark/light mode rendering.
+ * Uses SectionState for consistent loading/error/empty UX.
  */
 import { useMemo, memo } from 'react';
 import { useI18n } from '@core/providers/i18n-provider';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@core/ui/card';
-import { Skeleton } from '@core/ui/skeleton';
-import { Button } from '@core/ui/button';
+import { SectionState } from '@core/ui/section-state';
 import {
-      BarChart,
-      Bar,
-      XAxis,
-      YAxis,
-      CartesianGrid,
-      Tooltip,
-      ResponsiveContainer,
-} from 'recharts';
+      ChartContainer,
+      ChartTooltip,
+      ChartTooltipContent,
+      type ChartConfig,
+} from '@core/ui/chart';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { ShieldAlert } from 'lucide-react';
 
 interface HeatmapPoint {
@@ -33,6 +32,13 @@ interface Props {
       error?: Error | null;
       onRetry?: () => void;
 }
+
+const chartConfig: ChartConfig = {
+      failed: {
+            label: 'Failed Logins',
+            color: 'hsl(var(--destructive))',
+      },
+};
 
 export const FailedLoginsHeatmap = memo(function FailedLoginsHeatmap({ data, isLoading, error, onRetry }: Props) {
       const { t } = useI18n();
@@ -54,32 +60,24 @@ export const FailedLoginsHeatmap = memo(function FailedLoginsHeatmap({ data, isL
                         <CardDescription>{t('security.failedLogins.description')}</CardDescription>
                   </CardHeader>
                   <CardContent>
-                        {isLoading ? (
-                              <Skeleton className="h-[250px] w-full" aria-label={t('common.loading')} />
-                        ) : error ? (
-                              <div className="flex flex-col items-center justify-center h-[250px] text-muted-foreground gap-3">
-                                    <p className="text-sm">{t('common.error')}</p>
-                                    {onRetry && <Button variant="ghost" size="sm" onClick={onRetry}>{t('common.retry')}</Button>}
-                              </div>
-                        ) : chartData.length === 0 ? (
-                              <div className="flex items-center justify-center h-[250px] text-muted-foreground">
-                                    <p className="text-sm">{t('security.noEvents')}</p>
-                              </div>
-                        ) : (
-                              <div aria-live="polite">
-                                    <ResponsiveContainer width="100%" height={250}>
-                                          <BarChart data={chartData} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
-                                                <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                                                <XAxis dataKey="date" className="text-xs" tick={{ fontSize: 11 }} />
-                                                <YAxis allowDecimals={false} className="text-xs" tick={{ fontSize: 11 }} />
-                                                <Tooltip
-                                                      contentStyle={{ backgroundColor: 'hsl(var(--popover))', border: '1px solid hsl(var(--border))', borderRadius: '8px', fontSize: '12px' }}
-                                                />
-                                                <Bar dataKey="failed" fill="hsl(var(--destructive))" radius={[4, 4, 0, 0]} />
-                                          </BarChart>
-                                    </ResponsiveContainer>
-                              </div>
-                        )}
+                        <SectionState
+                              isLoading={isLoading}
+                              error={error}
+                              onRetry={onRetry}
+                              isEmpty={chartData.length === 0}
+                              emptyMessage={t('security.noEvents')}
+                              height={250}
+                        >
+                              <ChartContainer config={chartConfig} className="h-[250px]">
+                                    <BarChart data={chartData} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
+                                          <CartesianGrid vertical={false} strokeDasharray="3 3" className="stroke-muted" />
+                                          <XAxis dataKey="date" tickLine={false} axisLine={false} className="text-xs" />
+                                          <YAxis allowDecimals={false} tickLine={false} axisLine={false} className="text-xs" />
+                                          <ChartTooltip content={<ChartTooltipContent />} />
+                                          <Bar dataKey="failed" fill="var(--color-failed)" radius={[4, 4, 0, 0]} />
+                                    </BarChart>
+                              </ChartContainer>
+                        </SectionState>
                   </CardContent>
             </Card>
       );

@@ -4,13 +4,13 @@
  * Blocked IPs Table
  *
  * Shows table of blocked IP addresses with their failed attempt counts.
+ * Uses SectionState for consistent loading/error/empty states.
  */
 import { memo } from 'react';
 import { useI18n } from '@core/providers/i18n-provider';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@core/ui/card';
 import { Badge } from '@core/ui/badge';
-import { Skeleton } from '@core/ui/skeleton';
-import { Button } from '@core/ui/button';
+import { SectionState } from '@core/ui/section-state';
 import {
       Table,
       TableBody,
@@ -42,22 +42,16 @@ export const BlockedIPsTable = memo(function BlockedIPsTable({ data, isLoading, 
                         <CardDescription>{t('security.blockedIPs.description')}</CardDescription>
                   </CardHeader>
                   <CardContent>
-                        {isLoading ? (
-                              <div className="space-y-3" role="status" aria-label={t('common.loading')}>
-                                    {Array.from({ length: 5 }).map((_, i) => (
-                                          <Skeleton key={i} className="h-10 w-full" />
-                                    ))}
-                              </div>
-                        ) : error ? (
-                              <div className="flex flex-col items-center justify-center h-[200px] text-muted-foreground gap-3">
-                                    <p className="text-sm">{t('common.error')}</p>
-                                    {onRetry && <Button variant="ghost" size="sm" onClick={onRetry}>{t('common.retry')}</Button>}
-                              </div>
-                        ) : data.length === 0 ? (
-                              <div className="flex items-center justify-center h-[200px] text-muted-foreground">
-                                    <p className="text-sm">{t('dashboard.blockedIPs.noBlocked')}</p>
-                              </div>
-                        ) : (
+                        <SectionState
+                              isLoading={isLoading}
+                              error={error}
+                              onRetry={onRetry}
+                              isEmpty={data.length === 0}
+                              emptyMessage={t('dashboard.blockedIPs.noBlocked')}
+                              height={200}
+                              skeletonType="rows"
+                              skeletonRows={5}
+                        >
                               <Table>
                                     <TableHeader>
                                           <TableRow>
@@ -88,7 +82,7 @@ export const BlockedIPsTable = memo(function BlockedIPsTable({ data, isLoading, 
                                           ))}
                                     </TableBody>
                               </Table>
-                        )}
+                        </SectionState>
                   </CardContent>
             </Card>
       );

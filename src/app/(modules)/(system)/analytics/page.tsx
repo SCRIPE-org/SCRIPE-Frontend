@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { ModuleErrorBoundary } from '@core/ui/module-error-boundary';
 import { TenantAnalyticsView } from '@modules/system/analytics';
 
 export const metadata: Metadata = {
@@ -9,7 +10,9 @@ export const metadata: Metadata = {
 export default function AnalyticsPage() {
       return (
             <main>
-                  <TenantAnalyticsView />
+                  <ModuleErrorBoundary moduleName="Tenant Analytics">
+                        <TenantAnalyticsView />
+                  </ModuleErrorBoundary>
             </main>
       );
 }

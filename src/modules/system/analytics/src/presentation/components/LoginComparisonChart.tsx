@@ -4,22 +4,20 @@
  * Login Comparison Chart
  *
  * Multi-line area chart comparing successful vs failed logins over time.
+ * Uses core ChartContainer for theme-aware dark/light mode rendering.
+ * Uses SectionState for consistent loading/error/empty states.
  */
 import { useMemo, memo } from 'react';
 import { useI18n } from '@core/providers/i18n-provider';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@core/ui/card';
-import { Skeleton } from '@core/ui/skeleton';
-import { Button } from '@core/ui/button';
+import { SectionState } from '@core/ui/section-state';
 import {
-      AreaChart,
-      Area,
-      XAxis,
-      YAxis,
-      CartesianGrid,
-      Tooltip,
-      ResponsiveContainer,
-      Legend,
-} from 'recharts';
+      ChartContainer,
+      ChartTooltip,
+      ChartTooltipContent,
+      type ChartConfig,
+} from '@core/ui/chart';
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 import { TrendingUp } from 'lucide-react';
 import type { LoginActivityPoint } from '@modules/system/dashboard/src/domain/entities/DashboardEntities';
 
@@ -32,6 +30,17 @@ interface Props {
 
 export const LoginComparisonChart = memo(function LoginComparisonChart({ data, isLoading, error, onRetry }: Props) {
       const { t } = useI18n();
+
+      const chartConfig = useMemo<ChartConfig>(() => ({
+            successful: {
+                  label: t('tenantAnalytics.comparison.successful'),
+                  color: 'hsl(var(--chart-2))',
+            },
+            failed: {
+                  label: t('tenantAnalytics.comparison.failed'),
+                  color: 'hsl(var(--chart-5))',
+            },
+      }), [t]);
 
       const chartData = useMemo(() =>
             data.map((d) => ({
@@ -51,44 +60,34 @@ export const LoginComparisonChart = memo(function LoginComparisonChart({ data, i
                         <CardDescription>{t('tenantAnalytics.comparison.description')}</CardDescription>
                   </CardHeader>
                   <CardContent>
-                        {isLoading ? (
-                              <Skeleton className="h-[280px] w-full" aria-label={t('common.loading')} />
-                        ) : error ? (
-                              <div className="flex flex-col items-center justify-center h-[280px] text-muted-foreground gap-3">
-                                    <p className="text-sm">{t('common.error')}</p>
-                                    {onRetry && <Button variant="ghost" size="sm" onClick={onRetry}>{t('common.retry')}</Button>}
-                              </div>
-                        ) : chartData.length === 0 ? (
-                              <div className="flex items-center justify-center h-[280px] text-muted-foreground">
-                                    <p className="text-sm">{t('common.noData')}</p>
-                              </div>
-                        ) : (
-                              <div aria-live="polite">
-                                    <ResponsiveContainer width="100%" height={280}>
-                                          <AreaChart data={chartData} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
-                                                <defs>
-                                                      <linearGradient id="colorSuccessful" x1="0" y1="0" x2="0" y2="1">
-                                                            <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
-                                                            <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
-                                                      </linearGradient>
-                                                      <linearGradient id="colorFailed" x1="0" y1="0" x2="0" y2="1">
-                                                            <stop offset="5%" stopColor="#ef4444" stopOpacity={0.3} />
-                                                            <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
-                                                      </linearGradient>
-                                                </defs>
-                                                <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                                                <XAxis dataKey="date" className="text-xs" tick={{ fontSize: 11 }} />
-                                                <YAxis allowDecimals={false} className="text-xs" tick={{ fontSize: 11 }} />
-                                                <Tooltip
-                                                      contentStyle={{ backgroundColor: 'hsl(var(--popover))', border: '1px solid hsl(var(--border))', borderRadius: '8px', fontSize: '12px' }}
-                                                />
-                                                <Legend />
-                                                <Area type="monotone" dataKey="successful" stroke="#10b981" fillOpacity={1} fill="url(#colorSuccessful)" />
-                                                <Area type="monotone" dataKey="failed" stroke="#ef4444" fillOpacity={1} fill="url(#colorFailed)" />
-                                          </AreaChart>
-                                    </ResponsiveContainer>
-                              </div>
-                        )}
+                        <SectionState
+                              isLoading={isLoading}
+                              error={error}
+                              onRetry={onRetry}
+                              isEmpty={chartData.length === 0}
+                              height={280}
+                        >
+                              <ChartContainer config={chartConfig} className="h-[280px]">
+                                    <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                                          <defs>
+                                                <linearGradient id="fillSuccessful" x1="0" y1="0" x2="0" y2="1">
+                                                      <stop offset="5%" stopColor="var(--color-successful)" stopOpacity={0.8} />
+                                                      <stop offset="95%" stopColor="var(--color-successful)" stopOpacity={0.1} />
+                                                </linearGradient>
+                                                <linearGradient id="fillFailed" x1="0" y1="0" x2="0" y2="1">
+                                                      <stop offset="5%" stopColor="var(--color-failed)" stopOpacity={0.8} />
+                                                      <stop offset="95%" stopColor="var(--color-failed)" stopOpacity={0.1} />
+                                                </linearGradient>
+                                          </defs>
+                                          <CartesianGrid vertical={false} strokeDasharray="3 3" className="stroke-muted" />
+                                          <XAxis dataKey="date" tickLine={false} axisLine={false} className="text-xs" />
+                                          <YAxis allowDecimals={false} tickLine={false} axisLine={false} className="text-xs" />
+                                          <ChartTooltip content={<ChartTooltipContent />} />
+                                          <Area type="monotone" dataKey="successful" stroke="var(--color-successful)" fill="url(#fillSuccessful)" strokeWidth={2} />
+                                          <Area type="monotone" dataKey="failed" stroke="var(--color-failed)" fill="url(#fillFailed)" strokeWidth={2} />
+                                    </AreaChart>
+                              </ChartContainer>
+                        </SectionState>
                   </CardContent>
             </Card>
       );

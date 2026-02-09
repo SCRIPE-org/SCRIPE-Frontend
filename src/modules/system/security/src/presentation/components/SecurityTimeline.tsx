@@ -10,7 +10,7 @@ import { useI18n } from '@core/providers/i18n-provider';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@core/ui/card';
 import { Badge } from '@core/ui/badge';
 import { Skeleton } from '@core/ui/skeleton';
-import { Button } from '@core/ui/button';
+import { SectionState } from '@core/ui/section-state';
 import {
       Shield,
       LogIn,
@@ -66,44 +66,44 @@ export const SecurityTimeline = memo(function SecurityTimeline({ data, isLoading
                                           </div>
                                     ))}
                               </div>
-                        ) : error ? (
-                              <div className="flex flex-col items-center justify-center h-[200px] text-muted-foreground gap-3">
-                                    <p className="text-sm">{t('common.error')}</p>
-                                    {onRetry && <Button variant="ghost" size="sm" onClick={onRetry}>{t('common.retry')}</Button>}
-                              </div>
-                        ) : data.length === 0 ? (
-                              <div className="flex items-center justify-center h-[200px] text-muted-foreground">
-                                    <p className="text-sm">{t('security.noEvents')}</p>
-                              </div>
                         ) : (
-                              <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2" aria-live="polite">
-                                    {data.map((event) => {
-                                          const config = EVENT_ICONS[event.eventType] ?? { icon: Shield, color: 'text-gray-500' };
-                                          const Icon = config.icon;
+                              <SectionState
+                                    isLoading={false}
+                                    error={error}
+                                    onRetry={onRetry}
+                                    isEmpty={data.length === 0}
+                                    emptyMessage={t('security.noEvents')}
+                                    height={200}
+                              >
+                                    <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
+                                          {data.map((event) => {
+                                                const config = EVENT_ICONS[event.eventType] ?? { icon: Shield, color: 'text-gray-500' };
+                                                const Icon = config.icon;
 
-                                          return (
-                                                <div key={event.id} className="flex items-start gap-3 group">
-                                                      <div className={`p-1.5 rounded-full bg-muted ${config.color} shrink-0 transition-transform group-hover:scale-110`}>
-                                                            <Icon className="h-3.5 w-3.5" aria-hidden="true" />
-                                                      </div>
-                                                      <div className="flex-1 min-w-0">
-                                                            <div className="flex items-center gap-2 flex-wrap">
-                                                                  <Badge variant="outline" className="text-[10px]">{event.eventType}</Badge>
-                                                                  {event.username && (
-                                                                        <span className="text-xs text-muted-foreground">{event.username}</span>
-                                                                  )}
+                                                return (
+                                                      <div key={event.id} className="flex items-start gap-3 group">
+                                                            <div className={`p-1.5 rounded-full bg-muted ${config.color} shrink-0 transition-transform group-hover:scale-110`}>
+                                                                  <Icon className="h-3.5 w-3.5" aria-hidden="true" />
                                                             </div>
-                                                            <p className="text-xs text-muted-foreground mt-0.5 tabular-nums">
-                                                                  {new Date(event.timestamp).toLocaleString()}
-                                                            </p>
+                                                            <div className="flex-1 min-w-0">
+                                                                  <div className="flex items-center gap-2 flex-wrap">
+                                                                        <Badge variant="outline" className="text-[10px]">{event.eventType}</Badge>
+                                                                        {event.username && (
+                                                                              <span className="text-xs text-muted-foreground">{event.username}</span>
+                                                                        )}
+                                                                  </div>
+                                                                  <p className="text-xs text-muted-foreground mt-0.5 tabular-nums">
+                                                                        {new Date(event.timestamp).toLocaleString()}
+                                                                  </p>
+                                                            </div>
+                                                            <Badge variant={event.isSuccess ? 'default' : 'destructive'} className="text-[9px] shrink-0">
+                                                                  {event.isSuccess ? '✓' : '✕'}
+                                                            </Badge>
                                                       </div>
-                                                      <Badge variant={event.isSuccess ? 'default' : 'destructive'} className="text-[9px] shrink-0">
-                                                            {event.isSuccess ? '✓' : '✕'}
-                                                      </Badge>
-                                                </div>
-                                          );
-                                    })}
-                              </div>
+                                                );
+                                          })}
+                                    </div>
+                              </SectionState>
                         )}
                   </CardContent>
             </Card>

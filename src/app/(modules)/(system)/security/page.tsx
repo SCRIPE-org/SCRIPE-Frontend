@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { ModuleErrorBoundary } from '@core/ui/module-error-boundary';
 import { SecurityDashboardView } from '@modules/system/security';
 
 export const metadata: Metadata = {
@@ -9,7 +10,9 @@ export const metadata: Metadata = {
 export default function SecurityPage() {
       return (
             <main>
-                  <SecurityDashboardView />
+                  <ModuleErrorBoundary moduleName="Security Dashboard">
+                        <SecurityDashboardView />
+                  </ModuleErrorBoundary>
             </main>
       );
 }

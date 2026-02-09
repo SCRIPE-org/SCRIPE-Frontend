@@ -3,13 +3,13 @@
 /**
  * Admin Distribution Pie Chart
  *
- * Donut chart showing event distribution across types (reusing dashboard data).
+ * Donut chart showing event distribution across types.
+ * Uses SectionState for consistent loading/error/empty states.
  */
 import { useMemo, memo } from 'react';
 import { useI18n } from '@core/providers/i18n-provider';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@core/ui/card';
-import { Skeleton } from '@core/ui/skeleton';
-import { Button } from '@core/ui/button';
+import { SectionState } from '@core/ui/section-state';
 import {
       PieChart,
       Pie,
@@ -53,54 +53,52 @@ export const AdminDistributionPie = memo(function AdminDistributionPie({ data, i
                         <CardDescription>{t('tenantAnalytics.distribution.description')}</CardDescription>
                   </CardHeader>
                   <CardContent>
-                        {isLoading ? (
-                              <Skeleton className="h-[280px] w-full" aria-label={t('common.loading')} />
-                        ) : error ? (
-                              <div className="flex flex-col items-center justify-center h-[280px] text-muted-foreground gap-3">
-                                    <p className="text-sm">{t('common.error')}</p>
-                                    {onRetry && <Button variant="ghost" size="sm" onClick={onRetry}>{t('common.retry')}</Button>}
-                              </div>
-                        ) : chartData.length === 0 ? (
-                              <div className="flex items-center justify-center h-[280px] text-muted-foreground">
-                                    <p className="text-sm">{t('common.noData')}</p>
-                              </div>
-                        ) : (
-                              <div aria-live="polite">
-                                    <ResponsiveContainer width="100%" height={280}>
-                                          <PieChart>
-                                                <Pie
-                                                      data={chartData}
-                                                      cx="50%"
-                                                      cy="50%"
-                                                      innerRadius={60}
-                                                      outerRadius={90}
-                                                      paddingAngle={2}
-                                                      dataKey="value"
-                                                >
-                                                      {chartData.map((entry, index) => (
-                                                            <Cell key={entry.name} fill={entry.fill} />
-                                                      ))}
-                                                </Pie>
-                                                <Tooltip
-                                                      contentStyle={{ backgroundColor: 'hsl(var(--popover))', border: '1px solid hsl(var(--border))', borderRadius: '8px', fontSize: '12px' }}
-                                                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                                                      formatter={(value: any) => {
-                                                            const num = Number(value) || 0;
-                                                            const pct = total > 0 ? ((num / total) * 100).toFixed(1) : '0';
-                                                            return [num + ' (' + pct + '%)', ''];
-                                                      }}
-                                                />
-                                                <Legend
-                                                      formatter={(value: string) => {
-                                                            const item = chartData.find(d => d.name === value);
-                                                            const pct = item && total > 0 ? ((item.value / total) * 100).toFixed(0) : '0';
-                                                            return value + ' (' + pct + '%)';
-                                                      }}
-                                                />
-                                          </PieChart>
-                                    </ResponsiveContainer>
-                              </div>
-                        )}
+                        <SectionState
+                              isLoading={isLoading}
+                              error={error}
+                              onRetry={onRetry}
+                              isEmpty={chartData.length === 0}
+                              height={280}
+                        >
+                              <ResponsiveContainer width="100%" height={280}>
+                                    <PieChart>
+                                          <Pie
+                                                data={chartData}
+                                                cx="50%"
+                                                cy="50%"
+                                                innerRadius={60}
+                                                outerRadius={90}
+                                                paddingAngle={2}
+                                                dataKey="value"
+                                          >
+                                                {chartData.map((entry) => (
+                                                      <Cell key={entry.name} fill={entry.fill} className="outline-none" />
+                                                ))}
+                                          </Pie>
+                                          <Tooltip
+                                                contentStyle={{
+                                                      backgroundColor: 'hsl(var(--popover))',
+                                                      border: '1px solid hsl(var(--border))',
+                                                      borderRadius: '8px',
+                                                      fontSize: '12px',
+                                                }}
+                                                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                                formatter={(value: any) => {
+                                                      const num = Number(value) || 0;
+                                                      const pct = total > 0 ? ((num / total) * 100).toFixed(1) : '0';
+                                                      return [num + ' (' + pct + '%)', ''];
+                                                }}
+                                          />
+                                          <Legend
+                                                formatter={(value: string) => {
+                                                      const item = chartData.find(d => d.name === value);
+                                                      const pct = item && total > 0 ? ((item.value / total) * 100).toFixed(0) : '0';
+                                                      return value + ' (' + pct + '%)';
+                                                }}
+                                          />
+                                    </PieChart>
+                              </ResponsiveContainer>
+                        </SectionState>
                   </CardContent>
             </Card>
       );
