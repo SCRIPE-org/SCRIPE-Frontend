@@ -98,6 +98,10 @@ export interface Action<T> {
   className?: string;
   /** Function to determine if the action should be shown */
   show?: (row: T) => boolean;
+  /** Function to determine if the action should be disabled (greyed out, non-clickable) */
+  disabled?: (row: T) => boolean;
+  /** Tooltip text for the action (shown on hover via title attribute) */
+  tooltip?: string;
 }
 
 /**
@@ -1014,13 +1018,20 @@ export function GenericTable<T extends Record<string, any>>({
                               .map((action, actionIndex) => (
                                 <DropdownMenuItem
                                   key={actionIndex}
-                                  onClick={() => action.onClick(row)}
+                                  onClick={() => {
+                                    if (action.disabled?.(row)) return;
+                                    action.onClick(row);
+                                  }}
+                                  disabled={action.disabled?.(row)}
+                                  title={action.tooltip}
                                   className={cn(
-                                    "transition-all duration-200 cursor-pointer",
-                                    "hover:bg-primary/10 hover:shadow-sm",
+                                    "transition-all duration-200",
+                                    action.disabled?.(row)
+                                      ? "opacity-50 cursor-not-allowed"
+                                      : "cursor-pointer hover:bg-primary/10 hover:shadow-sm",
                                     action.variant === "destructive"
                                       ? "text-destructive focus:text-destructive hover:bg-destructive/10"
-                                      : "hover:text-primary",
+                                      : !action.disabled?.(row) && "hover:text-primary",
                                     action.className
                                   )}
                                 >
@@ -1372,13 +1383,20 @@ export function GenericTable<T extends Record<string, any>>({
                                         .map((action, actionIndex) => (
                                           <DropdownMenuItem
                                             key={actionIndex}
-                                            onClick={() => action.onClick(row)}
+                                            onClick={() => {
+                                              if (action.disabled?.(row)) return;
+                                              action.onClick(row);
+                                            }}
+                                            disabled={action.disabled?.(row)}
+                                            title={action.tooltip}
                                             className={cn(
-                                              "transition-all duration-200 cursor-pointer",
-                                              "hover:bg-primary/10 hover:shadow-sm",
+                                              "transition-all duration-200",
+                                              action.disabled?.(row)
+                                                ? "opacity-50 cursor-not-allowed"
+                                                : "cursor-pointer hover:bg-primary/10 hover:shadow-sm",
                                               action.variant === "destructive"
                                                 ? "text-destructive focus:text-destructive hover:bg-destructive/10"
-                                                : "hover:text-primary",
+                                                : !action.disabled?.(row) && "hover:text-primary",
                                               action.className
                                             )}
                                           >

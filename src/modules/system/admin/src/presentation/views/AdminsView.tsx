@@ -222,6 +222,8 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
                               variant: "ghost" as const,
                               icon: <UserCheck className="h-4 w-4" />,
                               requiredPermission: SYSTEM_PERMISSIONS.ADMINS_UPDATE,
+                              disabled: (item: Admin) => item.hasGuardianProtection,
+                              tooltip: tFn("guardian.protectedAdminTooltip") || "This admin is protected",
                         },
                         {
                               label: tFn("admin.role.manageTitle") || "Manage Roles",
@@ -237,6 +239,8 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
                               className: "text-orange-600 hover:text-orange-700",
                               icon: <Settings className="h-4 w-4" />,
                               requiredPermission: SYSTEM_PERMISSIONS.ADMINS_RESET_PASSWORD,
+                              disabled: (item: Admin) => item.hasGuardianProtection,
+                              tooltip: tFn("guardian.protectedAdminTooltip") || "This admin is protected",
                         },
                         {
                               label: tFn("common.delete") || "Delete",
@@ -245,6 +249,8 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
                               className: "text-red-600 hover:text-red-700",
                               icon: <Trash2 className="h-4 w-4" />,
                               requiredPermission: SYSTEM_PERMISSIONS.ADMINS_DELETE,
+                              disabled: (item: Admin) => item.hasGuardianProtection,
+                              tooltip: tFn("guardian.protectedAdminTooltip") || "This admin is protected",
                         }
                   ];
 
