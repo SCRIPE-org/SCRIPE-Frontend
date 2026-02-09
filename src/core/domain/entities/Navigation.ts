@@ -30,6 +30,8 @@ export interface MenuItemData {
   id: string;
   slug: string;
   name: string;
+  nameEn: string;
+  nameAr: string;
   href: string | null;
   icon: string;
   order: number;
@@ -42,6 +44,8 @@ export class MenuItem {
   public readonly id: string;
   public readonly slug: string;
   public readonly name: string;
+  public readonly nameEn: string;
+  public readonly nameAr: string;
   public readonly href: string | null;
   public readonly icon: string;
   public readonly order: number;
@@ -52,7 +56,9 @@ export class MenuItem {
   constructor(data: MenuItemData) {
     this.id = data.id;
     this.slug = data.slug;
-    this.name = data.name;
+    this.nameEn = data.nameEn;
+    this.nameAr = data.nameAr;
+    this.name = data.name || data.nameEn || data.nameAr || '';
     this.href = data.href;
     this.icon = data.icon;
     this.order = data.order;
@@ -62,10 +68,17 @@ export class MenuItem {
   }
 
   /**
+   * Get localized name based on language
+   */
+  getLocalizedName(language: string): string {
+    return language === 'ar' ? (this.nameAr || this.nameEn || 'Unnamed') : (this.nameEn || this.nameAr || 'Unnamed');
+  }
+
+  /**
    * Get display name for the menu item
    */
   get displayName(): string {
-    return this.name || 'Unnamed Item';
+    return this.name || this.nameEn || 'Unnamed Item';
   }
 
   /**
@@ -249,6 +262,8 @@ export class MenuItemsResponse {
       id: item.id,
       slug: item.slug,
       name: item.name,
+      nameEn: item.nameEn,
+      nameAr: item.nameAr,
       href: item.href,
       icon: item.icon,
       order: item.order,
