@@ -17,6 +17,7 @@ import { GenericTreeView } from "@core/crud/components/generic-tree-view";
 import { useTreeViewModel } from "@core/hooks/use-tree-view-model";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useTenantContext } from "@core/providers/tenant-context-provider";
+import { usePermissions } from "@core/hooks/use-permissions";
 import { useAppStore } from "@core/store/useAppStore";
 import { systemContainer } from "@modules/system/di";
 import { createTenantTreeService, createMyChildrenTreeService } from "../../data/services/TenantTreeService";
@@ -37,6 +38,7 @@ export function TenantsView() {
       const router = useRouter();
       const { t, language } = useI18n();
       const { canEnterTenantWorld, enterTenantWorld } = useTenantContext();
+      const { hasPermission } = usePermissions();
       const user = useAppStore((state) => state.user);
 
       // System admins (with 'super' or 'system' in adminTypeName) see full tree
@@ -216,20 +218,26 @@ export function TenantsView() {
 
       // Custom actions for tenant nodes
       const customActions = useMemo(() => {
+            // Check permission for drill-down functionality
+            const hasViewDetails = hasPermission("tenants.view_details");
+
             return (node: TenantTreeNode) => [
                   {
                         label: t("common.view") || "View",
                         onClick: () => router.push(`/tenants/${node.id}`),
                         icon: <Eye className="h-4 w-4" />,
+                        // View action uses tenants.view (handled at page level)
                   },
+
                   {
                         label: t("tenant.enterTenantWorld"),
                         onClick: () => handleEnterTenantWorld(node),
                         icon: <LogIn className="h-4 w-4" />,
-                        show: () => canEnterTenantWorld,
+                        // Drill-down requires tenants.view_details permission
+                        show: () => canEnterTenantWorld && hasViewDetails,
                   },
             ];
-      }, [canEnterTenantWorld, t, handleEnterTenantWorld]);
+      }, [canEnterTenantWorld, hasPermission, t, handleEnterTenantWorld, router]);
 
       return (
             <GenericTreeView

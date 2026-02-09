@@ -10,6 +10,7 @@
 
 import React, { useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
+import { usePermissions } from "@core/hooks/use-permissions";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import {
@@ -45,7 +46,13 @@ interface TenantHeaderProps {
 
 export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
       const { t, direction } = useI18n();
+      const { hasPermission } = usePermissions();
       const isRtl = direction === "rtl";
+
+      // Permission checks
+      const canUpdate = hasPermission("tenants.update");
+      const canDelete = hasPermission("tenants.delete");
+      const canViewDetails = hasPermission("tenants.view_details");
 
       // Dialog states
       const [editOpen, setEditOpen] = useState(false);
@@ -196,9 +203,9 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
                                           </div>
                                     </div>
 
-                                    {/* Actions */}
+                                    {/* Actions - Only show buttons user has permission for */}
                                     <div className="flex flex-wrap items-center gap-2 shrink-0">
-                                          {onEnter && (
+                                          {onEnter && canViewDetails && (
                                                 <Button
                                                       variant="default"
                                                       size="sm"
@@ -209,46 +216,52 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
                                                       <span className="ms-2">{t("tenant.enterTenantWorld")}</span>
                                                 </Button>
                                           )}
-                                          <Button
-                                                variant="outline"
-                                                size="sm"
-                                                onClick={() => {
-                                                      setEditForm({
-                                                            name: tenant.name,
-                                                            description: tenant.description || "",
-                                                            isActive: tenant.isActive,
-                                                      });
-                                                      setEditOpen(true);
-                                                }}
-                                          >
-                                                <Pencil className="h-4 w-4" />
-                                                <span className="ms-2">{t("common.edit")}</span>
-                                          </Button>
-                                          <Button
-                                                variant="outline"
-                                                size="sm"
-                                                onClick={() => setStatusConfirmOpen(true)}
-                                                disabled={isUpdating}
-                                          >
-                                                {isUpdating ? (
-                                                      <Loader2 className="h-4 w-4 animate-spin" />
-                                                ) : (
-                                                      <Power className="h-4 w-4" />
-                                                )}
-                                                <span className="ms-2">
-                                                      {tenant.isActive
-                                                            ? t("common.deactivate")
-                                                            : t("common.activate")}
-                                                </span>
-                                          </Button>
-                                          <Button
-                                                variant="destructive"
-                                                size="sm"
-                                                onClick={() => setDeleteOpen(true)}
-                                          >
-                                                <Trash2 className="h-4 w-4" />
-                                                <span className="ms-2">{t("common.delete")}</span>
-                                          </Button>
+                                          {canUpdate && (
+                                                <Button
+                                                      variant="outline"
+                                                      size="sm"
+                                                      onClick={() => {
+                                                            setEditForm({
+                                                                  name: tenant.name,
+                                                                  description: tenant.description || "",
+                                                                  isActive: tenant.isActive,
+                                                            });
+                                                            setEditOpen(true);
+                                                      }}
+                                                >
+                                                      <Pencil className="h-4 w-4" />
+                                                      <span className="ms-2">{t("common.edit")}</span>
+                                                </Button>
+                                          )}
+                                          {canUpdate && (
+                                                <Button
+                                                      variant="outline"
+                                                      size="sm"
+                                                      onClick={() => setStatusConfirmOpen(true)}
+                                                      disabled={isUpdating}
+                                                >
+                                                      {isUpdating ? (
+                                                            <Loader2 className="h-4 w-4 animate-spin" />
+                                                      ) : (
+                                                            <Power className="h-4 w-4" />
+                                                      )}
+                                                      <span className="ms-2">
+                                                            {tenant.isActive
+                                                                  ? t("common.deactivate")
+                                                                  : t("common.activate")}
+                                                      </span>
+                                                </Button>
+                                          )}
+                                          {canDelete && (
+                                                <Button
+                                                      variant="destructive"
+                                                      size="sm"
+                                                      onClick={() => setDeleteOpen(true)}
+                                                >
+                                                      <Trash2 className="h-4 w-4" />
+                                                      <span className="ms-2">{t("common.delete")}</span>
+                                                </Button>
+                                          )}
                                     </div>
                               </div>
                         </div>
