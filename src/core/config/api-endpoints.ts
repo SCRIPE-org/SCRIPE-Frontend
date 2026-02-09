@@ -116,6 +116,22 @@ export const API_ENDPOINTS = {
     DELETE: (id: string) => `/Menus/${id}`,
   },
 
+  // ===== DASHBOARD =====
+  DASHBOARD: {
+    SUMMARY: "/Dashboard/summary",
+    LOGIN_ACTIVITY: "/Dashboard/login-activity",
+    RECENT_CHANGES: "/Dashboard/recent-changes",
+    EVENT_DISTRIBUTION: "/Dashboard/event-distribution",
+    SECURITY_EVENTS: "/Dashboard/security-events",
+    TOP_BLOCKED_IPS: "/Dashboard/top-blocked-ips",
+  },
+
+  // ===== AUDIT =====
+  AUDIT: {
+    LOGS: "/Audit/logs",
+    LOG_DETAIL: (id: string) => `/Audit/logs/${id}`,
+  },
+
   // Legacy menu endpoints
   GET_MENU_ITEMS: "/Menus/my",
 };

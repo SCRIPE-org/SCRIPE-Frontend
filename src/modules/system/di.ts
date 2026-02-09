@@ -16,6 +16,7 @@ import { PermissionService } from "./permissions/src/data/services/PermissionSer
 import { RoleService } from "./roles/src/data/services/RoleService";
 import { TenantService } from "./tenants/src/data/services/TenantService";
 import { TenantSettingsService } from "./tenant-settings/src/data/services/TenantSettingsService";
+import { DashboardService } from "./dashboard/src/data/services/DashboardService";
 
 // Repositories
 import { AdminRepository } from "./admin/src/data/repositories/AdminRepository";
@@ -24,6 +25,7 @@ import { PermissionRepository } from "./permissions/src/data/repositories/Permis
 import { TenantRepository } from "./tenants/src/data/repositories/TenantRepository";
 import { MenuRepository } from "./menus/src/data/repositories/MenuRepository";
 import { TenantSettingsRepository } from "./tenant-settings/src/data/repositories/TenantSettingsRepository";
+import { DashboardRepository } from "./dashboard/src/data/repositories/DashboardRepository";
 
 // Interfaces - Repositories
 import type { IAdminRepository } from "./admin/src/domain/interfaces/IAdminRepository";
@@ -32,6 +34,7 @@ import type { IPermissionRepository } from "./permissions/src/domain/interfaces/
 import type { ITenantRepository } from "./tenants/src/domain/interfaces/ITenantRepository";
 import type { IMenuRepository } from "./menus/src/domain/interfaces/IMenuRepository";
 import type { ITenantSettingsRepository } from "./tenant-settings/src/domain/interfaces/ITenantSettingsRepository";
+import type { IDashboardRepository } from "./dashboard/src/domain/interfaces/IDashboardRepository";
 
 // Interfaces - Services (from domain/interfaces, NOT data/services)
 import type { IAdminService } from "./admin/src/domain/interfaces/IAdminService";
@@ -54,6 +57,7 @@ export interface SystemContainer {
       tenantRepository: ITenantRepository;
       menuRepository: IMenuRepository;
       tenantSettingsRepository: ITenantSettingsRepository;
+      dashboardRepository: IDashboardRepository;
 }
 
 let _container: SystemContainer | null = null;
@@ -87,6 +91,7 @@ export function getSystemContainer(): SystemContainer {
                   tenantRepository: new TenantRepository(tenantService),
                   menuRepository: new MenuRepository(apiService), // TODO: Add MenuService
                   tenantSettingsRepository: new TenantSettingsRepository(tenantSettingsService),
+                  dashboardRepository: new DashboardRepository(new DashboardService(apiService)),
             };
       }
 
@@ -128,5 +133,8 @@ export const systemContainer = {
       },
       get tenantSettingsRepository() {
             return getSystemContainer().tenantSettingsRepository;
+      },
+      get dashboardRepository() {
+            return getSystemContainer().dashboardRepository;
       },
 };

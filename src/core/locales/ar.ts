@@ -566,13 +566,56 @@ export const ar = {
 
   // Dashboard
   dashboard: {
-    title: "نظرة عامة على لوحة التحكم",
+    title: "لوحة التحكم",
+    subtitle: "نظرة عامة على النظام والتحليلات",
     welcome: "مرحباً بعودتك!",
     totalUsers: "إجمالي المستخدمين",
     revenue: "الإيرادات",
     orders: "الطلبات",
     growth: "النمو",
     revenueOverview: "نظرة عامة على الإيرادات",
+    kpi: {
+      totalAdmins: "إجمالي المشرفين",
+      totalUsers: "إجمالي المستخدمين",
+      totalTenants: "إجمالي المستأجرين",
+      totalRoles: "إجمالي الأدوار",
+      loginsToday: "تسجيلات الدخول اليوم",
+      failedLogins: "تسجيلات الدخول الفاشلة (24 ساعة)",
+      active: "نشط",
+    },
+    loginActivity: {
+      title: "نشاط تسجيل الدخول",
+      description: "محاولات تسجيل الدخول الناجحة والفاشلة عبر الزمن",
+      successful: "ناجحة",
+      failed: "فاشلة",
+    },
+    recentChanges: {
+      title: "التغييرات الأخيرة",
+      description: "آخر التعديلات على النظام",
+      noChanges: "لا توجد تغييرات حديثة",
+      by: "بواسطة",
+    },
+    eventDistribution: {
+      title: "توزيع الأحداث",
+      description: "تفصيل أحداث التدقيق حسب النوع",
+    },
+    securityEvents: {
+      title: "أحداث الأمان",
+      description: "نشاط الأمان الأخير",
+      noEvents: "لا توجد أحداث أمان",
+      count: "العدد",
+    },
+    blockedIPs: {
+      title: "أكثر العناوين المحظورة",
+      description: "عناوين IP ذات أكثر المحاولات الفاشلة",
+      noBlocked: "لا توجد عناوين محظورة",
+      ipAddress: "عنوان IP",
+      attempts: "المحاولات",
+      lastUser: "آخر مستخدم",
+      lastAttempt: "آخر محاولة",
+      blocked: "محظور",
+      active: "نشط",
+    },
   },
 
   // Analytics
@@ -2770,6 +2813,12 @@ export const ar = {
     unexpectedError:
       "حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى أو الاتصال بالدعم إذا استمرت المشكلة.",
     errorId: "معرف الخطأ",
+    timeAgo: {
+      justNow: "الآن",
+      minutesAgo: "منذ {{count}} دقيقة",
+      hoursAgo: "منذ {{count}} ساعة",
+      daysAgo: "منذ {{count}} يوم",
+    },
   },
 
   // Table
@@ -3086,6 +3135,126 @@ export const ar = {
       GUARDIAN_LOCKED_ROLE: "لا يمكن تعديل صلاحيات هذا الدور المقفل.",
       GUARDIAN_ADMIN_NOT_FOUND: "المشرف غير موجود.",
       GUARDIAN_ROLE_NOT_FOUND: "الدور غير موجود.",
+    },
+  },
+
+  // ===== سجل التدقيق =====
+  audit: {
+    title: "سجل التدقيق",
+    subtitle: "عرض وبحث سجل التدقيق الكامل",
+    filters: {
+      title: "التصفية",
+      description: "تضييق نتائج سجل التدقيق",
+      searchPlaceholder: "بحث حسب الحدث، المستخدم، الكيان...",
+      eventType: "نوع الحدث",
+      allEvents: "جميع الأحداث",
+      username: "اسم المستخدم",
+      entityType: "نوع الكيان",
+      status: "الحالة",
+      allStatus: "الكل",
+      success: "ناجح",
+      failed: "فاشل",
+      dateFrom: "من",
+      dateTo: "إلى",
+      reset: "إعادة تعيين",
+    },
+    results: {
+      title: "النتائج",
+      totalCount: "{{count}} سجل",
+      noResults: "لم يتم العثور على سجلات تدقيق",
+    },
+    table: {
+      timestamp: "الوقت",
+      eventType: "الحدث",
+      user: "المستخدم",
+      entity: "الكيان",
+      status: "الحالة",
+    },
+    detail: {
+      title: "تفاصيل سجل التدقيق",
+      description: "التفاصيل الكاملة للسجل المحدد",
+      timestamp: "الوقت",
+      user: "المستخدم",
+      ipAddress: "عنوان IP",
+      userAgent: "وكيل المستخدم",
+      endpoint: "نقطة النهاية",
+      entity: "الكيان",
+      correlationId: "معرف الارتباط",
+      duration: "المدة",
+      statusCode: "رمز الحالة",
+      errorMessage: "رسالة الخطأ",
+      changes: "التغييرات في البيانات",
+      changedFields: "الحقول المتغيرة",
+      oldValues: "القيم القديمة",
+      newValues: "القيم الجديدة",
+    },
+  },
+
+  // ===== لوحة الأمان =====
+  security: {
+    title: "لوحة الأمان",
+    subtitle: "مراقبة التهديدات وتسجيلات الدخول الفاشلة وعناوين IP المحظورة",
+    threats: {
+      title: "ملخص التهديدات",
+      description: "نظرة عامة على التهديدات الأمنية",
+      failedLogins: "تسجيلات دخول فاشلة",
+      accountLockouts: "حسابات مقفلة",
+      accessDenied: "وصول مرفوض",
+      privilegeEscalation: "تصعيد صلاحيات",
+    },
+    failedLogins: {
+      title: "خريطة تسجيلات الدخول الفاشلة",
+      description: "محاولات تسجيل الدخول الفاشلة حسب الساعة واليوم",
+    },
+    blockedIPs: {
+      title: "عناوين IP المحظورة",
+      description: "العناوين ذات أكثر المحاولات الفاشلة",
+    },
+    timeline: {
+      title: "الجدول الزمني للأمان",
+      description: "أحداث الأمان الأخيرة بالترتيب الزمني",
+    },
+    lockouts: {
+      title: "الحسابات المقفلة",
+      description: "الحسابات المقفلة مؤخراً",
+      username: "اسم المستخدم",
+      lockedAt: "وقت القفل",
+      reason: "السبب",
+    },
+    noEvents: "لا توجد أحداث أمنية في هذه الفترة",
+  },
+
+  // ===== تحليلات المستأجرين =====
+  tenantAnalytics: {
+    title: "تحليلات المستأجرين",
+    subtitle: "مقاييس الأداء والمقارنة بين المستأجرين",
+    metrics: {
+      title: "مقاييس المستأجرين",
+      description: "المقاييس الرئيسية عبر المستأجرين",
+      totalTenants: "إجمالي المستأجرين",
+      activeTenants: "المستأجرون النشطون",
+      totalUsers: "إجمالي المستخدمين",
+      avgUsersPerTenant: "المتوسط/مستأجر",
+    },
+    hierarchy: {
+      title: "هيكل المستأجرين",
+      description: "هيكل الشجرة التنظيمية",
+    },
+    distribution: {
+      title: "توزيع المشرفين",
+      description: "المشرفون حسب المستأجر",
+    },
+    comparison: {
+      title: "مقارنة تسجيلات الدخول",
+      description: "نشاط تسجيل الدخول عبر أفضل المستأجرين",
+    },
+    inactive: {
+      title: "المستأجرون غير النشطين",
+      description: "المستأجرون بدون نشاط حديث",
+      noInactive: "جميع المستأجرين نشطون حالياً",
+      tenant: "المستأجر",
+      lastActivity: "آخر نشاط",
+      users: "المستخدمين",
     },
   },
 };

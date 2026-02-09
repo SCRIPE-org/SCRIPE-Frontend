@@ -2791,6 +2791,12 @@ export const en = {
     inactive: "Inactive",
     activate: "Activate",
     deactivate: "Deactivate",
+    timeAgo: {
+      justNow: "just now",
+      minutesAgo: "{{count}}m ago",
+      hoursAgo: "{{count}}h ago",
+      daysAgo: "{{count}}d ago",
+    },
   },
 
   // Toast Messages
@@ -3252,6 +3258,174 @@ export const en = {
       GUARDIAN_LOCKED_ROLE: "Cannot modify permissions of this locked role.",
       GUARDIAN_ADMIN_NOT_FOUND: "Admin not found.",
       GUARDIAN_ROLE_NOT_FOUND: "Role not found.",
+    },
+  },
+
+  // Dashboard & Audit
+  dashboard: {
+    title: "Dashboard",
+    subtitle: "System overview and analytics",
+    kpi: {
+      totalAdmins: "Total Admins",
+      totalUsers: "Total Users",
+      totalTenants: "Total Tenants",
+      totalRoles: "Total Roles",
+      loginsToday: "Logins Today",
+      failedLogins: "Failed Logins (24h)",
+      active: "active",
+    },
+    loginActivity: {
+      title: "Login Activity",
+      description: "Successful and failed login attempts over time",
+      successful: "Successful",
+      failed: "Failed",
+    },
+    recentChanges: {
+      title: "Recent Changes",
+      description: "Latest system modifications",
+      noChanges: "No recent changes",
+      by: "by",
+    },
+    eventDistribution: {
+      title: "Event Distribution",
+      description: "Audit event breakdown by type",
+    },
+    securityEvents: {
+      title: "Security Events",
+      description: "Recent security-related activity",
+      noEvents: "No security events",
+      count: "Count",
+    },
+    blockedIPs: {
+      title: "Top Blocked IPs",
+      description: "IP addresses with most failed attempts",
+      noBlocked: "No blocked IPs",
+      ipAddress: "IP Address",
+      attempts: "Attempts",
+      lastUser: "Last User",
+      lastAttempt: "Last Attempt",
+      blocked: "Blocked",
+      active: "Active",
+    },
+  },
+
+  // ===== AUDIT LOG =====
+  audit: {
+    title: "Audit Log",
+    subtitle: "View and search the complete audit trail",
+    filters: {
+      title: "Filters",
+      description: "Narrow down audit log entries",
+      searchPlaceholder: "Search by event, user, entity...",
+      eventType: "Event Type",
+      allEvents: "All Events",
+      username: "Username",
+      entityType: "Entity Type",
+      status: "Status",
+      allStatus: "All",
+      success: "Success",
+      failed: "Failed",
+      dateFrom: "From",
+      dateTo: "To",
+      reset: "Reset",
+    },
+    results: {
+      title: "Results",
+      totalCount: "{{count}} entries",
+      noResults: "No audit log entries found",
+    },
+    table: {
+      timestamp: "Timestamp",
+      eventType: "Event",
+      user: "User",
+      entity: "Entity",
+      status: "Status",
+    },
+    detail: {
+      title: "Audit Log Detail",
+      description: "Full details of the selected audit entry",
+      timestamp: "Timestamp",
+      user: "User",
+      ipAddress: "IP Address",
+      userAgent: "User Agent",
+      endpoint: "Endpoint",
+      entity: "Entity",
+      correlationId: "Correlation ID",
+      duration: "Duration",
+      statusCode: "Status Code",
+      errorMessage: "Error Message",
+      changes: "Data Changes",
+      changedFields: "Changed Fields",
+      oldValues: "Old Values",
+      newValues: "New Values",
+    },
+  },
+
+  // ===== SECURITY DASHBOARD =====
+  security: {
+    title: "Security Dashboard",
+    subtitle: "Monitor threats, failed logins, and blocked IPs",
+    threats: {
+      title: "Threat Summary",
+      description: "Overview of security threats",
+      failedLogins: "Failed Logins",
+      accountLockouts: "Account Lockouts",
+      accessDenied: "Access Denied",
+      privilegeEscalation: "Privilege Escalation",
+    },
+    failedLogins: {
+      title: "Failed Login Heatmap",
+      description: "Failed login attempts by hour and day",
+    },
+    blockedIPs: {
+      title: "Blocked IP Addresses",
+      description: "IPs with most failed attempts",
+    },
+    timeline: {
+      title: "Security Timeline",
+      description: "Recent security events in chronological order",
+    },
+    lockouts: {
+      title: "Account Lockouts",
+      description: "Recently locked accounts",
+      username: "Username",
+      lockedAt: "Locked At",
+      reason: "Reason",
+    },
+    noEvents: "No security events in this period",
+  },
+
+  // ===== TENANT ANALYTICS =====
+  tenantAnalytics: {
+    title: "Tenant Analytics",
+    subtitle: "Performance metrics and comparison across tenants",
+    metrics: {
+      title: "Tenant Metrics",
+      description: "Key metrics across tenants",
+      totalTenants: "Total Tenants",
+      activeTenants: "Active Tenants",
+      totalUsers: "Total Users",
+      avgUsersPerTenant: "Avg Users/Tenant",
+    },
+    hierarchy: {
+      title: "Tenant Hierarchy",
+      description: "Organization tree structure",
+    },
+    distribution: {
+      title: "Admin Distribution",
+      description: "Admins per tenant breakdown",
+    },
+    comparison: {
+      title: "Login Comparison",
+      description: "Login activity across top tenants",
+    },
+    inactive: {
+      title: "Inactive Tenants",
+      description: "Tenants with no recent activity",
+      noInactive: "All tenants are currently active",
+      tenant: "Tenant",
+      lastActivity: "Last Activity",
+      users: "Users",
     },
   },
 };
