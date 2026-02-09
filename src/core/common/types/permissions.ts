@@ -127,11 +127,15 @@ export function hasAllPermissions(
 export const SYSTEM_PERMISSIONS = {
       // Admins
       ADMINS_VIEW: "admins.view",
+      ADMINS_VIEW_DETAILS: "admins.view_details",
       ADMINS_CREATE: "admins.create",
       ADMINS_UPDATE: "admins.update",
       ADMINS_DELETE: "admins.delete",
       ADMINS_ASSIGN_ROLES: "admins.assign_roles",
       ADMINS_RESET_PASSWORD: "admins.reset_password",
+      ADMINS_BULK_ACTIVATE: "admins.bulk_activate",
+      ADMINS_BULK_DEACTIVATE: "admins.bulk_deactivate",
+      ADMINS_BULK_DELETE: "admins.bulk_delete",
       ADMINS_IMPERSONATE: "admins.impersonate",
       ADMINS_TRANSFER: "admins.transfer",
 
@@ -152,15 +156,34 @@ export const SYSTEM_PERMISSIONS = {
       // Tenants
       TENANTS_VIEW: "tenants.view",
       TENANTS_VIEW_DETAILS: "tenants.view_details",
+      TENANTS_VIEW_SUBTENANTS: "tenants.view_subTenants",
+      TENANTS_DRILL_DOWN: "tenants.drill_down",
+      TENANTS_VIEW_ADMINS: "tenants.view_admins",
+      TENANTS_VIEW_ROLES: "tenants.view_roles",
       TENANTS_CREATE: "tenants.create",
       TENANTS_UPDATE: "tenants.update",
       TENANTS_DELETE: "tenants.delete",
+      TENANTS_MANAGE_QUOTAS: "tenants.manage_quotas",
+      TENANTS_MANAGE_SETTINGS: "tenants.manage_settings",
 
       // Menus
       MENUS_VIEW: "menus.view",
       MENUS_CREATE: "menus.create",
       MENUS_UPDATE: "menus.update",
       MENUS_DELETE: "menus.delete",
+      MENUS_MANAGE_LINKS: "menus.manage_links",
+
+      // Audit
+      AUDIT_VIEW: "audit.view",
+      AUDIT_EXPORT: "audit.export",
+
+      // System
+      SYSTEM_IMPERSONATE: "system.impersonate",
+      SYSTEM_MANAGE_SETTINGS: "system.manage_settings",
+
+      // Tenant Settings (for My Tenant page)
+      TENANT_SETTINGS_VIEW: "tenant_settings.view",
+      TENANT_SETTINGS_UPDATE: "tenant_settings.update",
 } as const;
 
 /**
