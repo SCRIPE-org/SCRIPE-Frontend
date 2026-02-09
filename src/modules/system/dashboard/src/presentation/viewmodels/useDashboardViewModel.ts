@@ -78,12 +78,13 @@ export function useEventDistribution(days: number = 30) {
 }
 
 /** Security Events Hook */
-export function useSecurityEvents(days: number = 7) {
+export function useSecurityEvents(days: number = 7, enabled = true) {
       const repo = getSystemContainer().dashboardRepository;
 
       return useQuery({
             queryKey: dashboardKeys.securityEvents(days),
             queryFn: () => repo.getSecurityEvents(days),
+            enabled,
             staleTime: 60 * 1000,
             refetchInterval: 60 * 1000,
             refetchOnWindowFocus: false,
@@ -92,12 +93,13 @@ export function useSecurityEvents(days: number = 7) {
 }
 
 /** Top Blocked IPs Hook */
-export function useTopBlockedIPs(days: number = 30, limit: number = 10) {
+export function useTopBlockedIPs(days: number = 30, limit: number = 10, enabled = true) {
       const repo = getSystemContainer().dashboardRepository;
 
       return useQuery({
             queryKey: dashboardKeys.topBlockedIPs(days, limit),
             queryFn: () => repo.getTopBlockedIPs(days, limit),
+            enabled,
             staleTime: 5 * 60 * 1000,
             refetchOnWindowFocus: false,
             retry: 2,
@@ -109,16 +111,15 @@ export function useTopBlockedIPs(days: number = 30, limit: number = 10) {
 /**
  * Dashboard Page ViewModel (Orchestrator)
  *
- * Composes all individual hooks into a single typed interface for the View.
- * Exposes data, loading, error, and refetch for each section.
+ * @param hasSecurityPermission — set to false to disable security API calls
  */
-export function useDashboardViewModel() {
+export function useDashboardViewModel(hasSecurityPermission = true) {
       const summary = useDashboardSummary();
       const loginActivity = useLoginActivity(30);
       const recentChanges = useRecentChanges(10);
       const eventDistribution = useEventDistribution(30);
-      const securityEvents = useSecurityEvents(7);
-      const topBlockedIPs = useTopBlockedIPs(30, 10);
+      const securityEvents = useSecurityEvents(7, hasSecurityPermission);
+      const topBlockedIPs = useTopBlockedIPs(30, 10, hasSecurityPermission);
 
       const isLoading = useMemo(() =>
             summary.isLoading ||
@@ -154,6 +155,7 @@ export function useDashboardViewModel() {
             topBlockedIPs,
             isLoading,
             hasError,
+            hasSecurityPermission,
             refetchAll,
       };
 }

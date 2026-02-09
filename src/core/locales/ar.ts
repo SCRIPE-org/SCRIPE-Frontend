@@ -3298,6 +3298,12 @@ export const ar = {
     },
     recentActivity: 'النشاط الأخير',
     noActivity: 'لا يوجد نشاط حديث',
+    minimal: {
+      title: 'حسابك نشط',
+      description: 'تواصل مع المسؤول للحصول على صلاحية الوصول إلى لوحة التحكم.',
+      profile: 'ملفي الشخصي',
+      settings: 'الإعدادات',
+    },
   },
 
 

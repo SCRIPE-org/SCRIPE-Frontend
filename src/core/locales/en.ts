@@ -3469,5 +3469,11 @@ export const en = {
     },
     recentActivity: 'Recent Activity',
     noActivity: 'No recent activity',
+    minimal: {
+      title: 'Your Account is Active',
+      description: 'Contact your administrator for dashboard access.',
+      profile: 'My Profile',
+      settings: 'Settings',
+    },
   },
 };

@@ -3,13 +3,18 @@
 /**
  * Dashboard View
  *
- * Pure UI composition — ~70 lines.
+ * Pure UI composition with permission-gated sections.
  * All logic lives in useDashboardViewModel.
  * Real-time updates via SignalR.
+ *
+ * Route-level guard: PAGE_PERMISSIONS["/dashboard"] = [DASHBOARD_VIEW]
+ * Section-level guard: Security sections require SECURITY_VIEW
  */
 import { useDashboardViewModel } from '../viewmodels/useDashboardViewModel';
 import { useDashboardRealtime } from '../viewmodels/useDashboardRealtime';
 import { useI18n } from '@core/providers/i18n-provider';
+import { usePermission } from '@core/hooks/use-permission';
+import { SYSTEM_PERMISSIONS } from '@core/common/types/permissions';
 import { KPICardsSection } from '../components/KPICardsSection';
 import { LoginActivityChart } from '../components/LoginActivityChart';
 import { EventDistributionChart } from '../components/EventDistributionChart';
@@ -27,7 +32,8 @@ const connectionColors = {
 } as const;
 
 export function DashboardView() {
-      const vm = useDashboardViewModel();
+      const hasSecurityPerm = usePermission(SYSTEM_PERMISSIONS.SECURITY_VIEW);
+      const vm = useDashboardViewModel(hasSecurityPerm);
       const { connectionState } = useDashboardRealtime();
       const { t } = useI18n();
 
@@ -78,29 +84,33 @@ export function DashboardView() {
                         </div>
                   </div>
 
-                  {/* Bottom Row: Recent Changes + Security */}
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Bottom Row: Recent Changes + Security (permission-gated) */}
+                  <div className={`grid grid-cols-1 ${vm.hasSecurityPermission ? 'lg:grid-cols-2' : ''} gap-6`}>
                         <RecentChangesSection
                               data={vm.recentChanges.data ?? []}
                               isLoading={vm.recentChanges.isLoading}
                               error={vm.recentChanges.error}
                               onRetry={() => vm.recentChanges.refetch()}
                         />
-                        <SecurityEventsSection
-                              data={vm.securityEvents.data ?? []}
-                              isLoading={vm.securityEvents.isLoading}
-                              error={vm.securityEvents.error}
-                              onRetry={() => vm.securityEvents.refetch()}
-                        />
+                        {vm.hasSecurityPermission && (
+                              <SecurityEventsSection
+                                    data={vm.securityEvents.data ?? []}
+                                    isLoading={vm.securityEvents.isLoading}
+                                    error={vm.securityEvents.error}
+                                    onRetry={() => vm.securityEvents.refetch()}
+                              />
+                        )}
                   </div>
 
-                  {/* Blocked IPs */}
-                  <BlockedIPsSection
-                        data={vm.topBlockedIPs.data ?? []}
-                        isLoading={vm.topBlockedIPs.isLoading}
-                        error={vm.topBlockedIPs.error}
-                        onRetry={() => vm.topBlockedIPs.refetch()}
-                  />
+                  {/* Blocked IPs — security.view required */}
+                  {vm.hasSecurityPermission && (
+                        <BlockedIPsSection
+                              data={vm.topBlockedIPs.data ?? []}
+                              isLoading={vm.topBlockedIPs.isLoading}
+                              error={vm.topBlockedIPs.error}
+                              onRetry={() => vm.topBlockedIPs.refetch()}
+                        />
+                  )}
             </div>
       );
 }

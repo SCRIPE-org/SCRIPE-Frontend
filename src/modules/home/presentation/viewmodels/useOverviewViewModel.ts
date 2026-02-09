@@ -20,22 +20,24 @@ const overviewKeys = {
 
 // ─── Sub-Hooks ───────────────────────────────────────────────────────
 
-function useOverviewSummary() {
+function useOverviewSummary(enabled: boolean) {
       const repo = getSystemContainer().dashboardRepository;
       return useQuery({
             queryKey: overviewKeys.summary,
             queryFn: () => repo.getSummary(),
+            enabled,
             staleTime: 60 * 1000,
             refetchOnWindowFocus: false,
             retry: 2,
       });
 }
 
-function useOverviewRecentActivity(limit = 5) {
+function useOverviewRecentActivity(limit = 5, enabled = true) {
       const repo = getSystemContainer().dashboardRepository;
       return useQuery({
             queryKey: overviewKeys.recentActivity,
             queryFn: () => repo.getRecentChanges(limit),
+            enabled,
             staleTime: 30 * 1000,
             refetchOnWindowFocus: false,
             retry: 2,
@@ -66,9 +68,12 @@ function useGreeting() {
 
 // ─── Orchestrator ────────────────────────────────────────────────────
 
-export function useOverviewViewModel() {
-      const summary = useOverviewSummary();
-      const recentActivity = useOverviewRecentActivity(5);
+/**
+ * @param hasDashboardPermission — set to false to disable dashboard API calls
+ */
+export function useOverviewViewModel(hasDashboardPermission = true) {
+      const summary = useOverviewSummary(hasDashboardPermission);
+      const recentActivity = useOverviewRecentActivity(5, hasDashboardPermission);
       const { greeting, displayName } = useGreeting();
 
       const refetchAll = useCallback(() => {
@@ -83,5 +88,6 @@ export function useOverviewViewModel() {
             summary,
             recentActivity,
             refetchAll,
+            hasDashboardPermission,
       };
 }
