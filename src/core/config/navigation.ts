@@ -33,6 +33,10 @@ import {
   Palette,
   Map,
   Ticket,
+  UserCog,
+  Key,
+  Menu,
+  Building2,
   type LucideIcon,
 } from "lucide-react";
 
@@ -76,6 +80,10 @@ export const iconMap: Record<string, LucideIcon> = {
   PieChart: PieChart,
   BarChart: BarChart,
   Type: Type,
+  UserCog: UserCog,
+  Key: Key,
+  Menu: Menu,
+  Building2: Building2,
 };
 
 /**
