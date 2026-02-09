@@ -11,6 +11,7 @@
 import React, { useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { usePermissions } from "@core/hooks/use-permissions";
+import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import {
@@ -49,10 +50,10 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
       const { hasPermission } = usePermissions();
       const isRtl = direction === "rtl";
 
-      // Permission checks
-      const canUpdate = hasPermission("tenants.update");
-      const canDelete = hasPermission("tenants.delete");
-      const canDrillDown = hasPermission("tenants.drill_down"); // Guard permission for Enter Tenant World
+      // Permission checks using constants
+      const canUpdate = hasPermission(SYSTEM_PERMISSIONS.TENANTS_UPDATE);
+      const canDelete = hasPermission(SYSTEM_PERMISSIONS.TENANTS_DELETE);
+      const canDrillDown = hasPermission(SYSTEM_PERMISSIONS.TENANTS_DRILL_DOWN);
 
       // Dialog states
       const [editOpen, setEditOpen] = useState(false);

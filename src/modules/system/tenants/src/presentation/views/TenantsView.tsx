@@ -18,6 +18,7 @@ import { useTreeViewModel } from "@core/hooks/use-tree-view-model";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useTenantContext } from "@core/providers/tenant-context-provider";
 import { usePermissions } from "@core/hooks/use-permissions";
+import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { useAppStore } from "@core/store/useAppStore";
 import { systemContainer } from "@modules/system/di";
 import { createTenantTreeService, createMyChildrenTreeService } from "../../data/services/TenantTreeService";
@@ -219,13 +220,14 @@ export function TenantsView() {
       // Custom actions for tenant nodes
       const customActions = useMemo(() => {
             // Check guard permission for drill-down functionality
-            const hasDrillDown = hasPermission("tenants.drill_down");
-
+            const hasDrillDown = hasPermission(SYSTEM_PERMISSIONS.TENANTS_DRILL_DOWN);
+            const canViewDetails = hasPermission(SYSTEM_PERMISSIONS.TENANTS_VIEW_DETAILS);
             return (node: TenantTreeNode) => [
                   {
                         label: t("common.view") || "View",
                         onClick: () => router.push(`/tenants/${node.id}`),
                         icon: <Eye className="h-4 w-4" />,
+                        show: () => canViewDetails,
                         // View action uses tenants.view (handled at page level)
                   },
 

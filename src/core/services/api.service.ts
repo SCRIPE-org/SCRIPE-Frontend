@@ -165,6 +165,18 @@ export class ApiService implements IApiService {
           }
         }
 
+        // Handle 403 TENANT_CONTEXT_FORBIDDEN - user lacks drill_down permission
+        if (error.response?.status === 403) {
+          const data = error.response.data as { error?: string; message?: string };
+          if (data.error === "TENANT_CONTEXT_FORBIDDEN") {
+            appLogger.warn("Tenant context forbidden - clearing context");
+            // Clear the tenant context to exit drill-down mode
+            this.setTenantContext(null);
+            // The error message will be shown to the user via the normal error flow
+            return Promise.reject(new Error(data.message || "You do not have permission to switch tenant context"));
+          }
+        }
+
         // Log other errors
         const message = this.extractErrorMessage(error);
         appLogger.error(`API Error: ${message}`);
