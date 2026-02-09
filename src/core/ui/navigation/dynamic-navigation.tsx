@@ -1,5 +1,7 @@
 "use client";
 
+import { useMemo } from "react";
+
 import { useNavigation } from "@core/providers/navigation-provider";
 import { useI18n } from "@core/providers/i18n-provider";
 import { convertMenuItemsToNavigation, getNavigationItems, fallbackNavigation, navigation, USE_DYNAMIC_NAVIGATION } from "@core/config/navigation";
@@ -70,28 +72,30 @@ export function DynamicNavigation({ children }: DynamicNavigationProps) {
    * Everything else is handled automatically!
    */
 export function useDynamicNavigation(): NavigationItem[] {
-  // For SSR/prerendering, return empty array to avoid provider errors
-  if (typeof window === 'undefined') {
-    return [];
-  }
-
-  const { navigationData, isLoading } = useNavigation();
+  // ⚠️ All hooks MUST be called before any early returns (React Rules of Hooks)
+  const navContext = useNavigation();
   const { t } = useI18n();
 
-  // Check if we should use dynamic navigation
-  if (!USE_DYNAMIC_NAVIGATION) {
-    // Use static navigation
-    return getNavigationItems(t, navigation);
-  }
+  return useMemo(() => {
+    // SSR safety — return empty during server-side rendering
+    if (typeof window === 'undefined') {
+      return [];
+    }
 
-  // If still loading or no data, use fallback navigation
-  if (isLoading || !navigationData) {
-    return getNavigationItems(t, fallbackNavigation);
-  }
+    const { navigationData, isLoading } = navContext;
 
-  // Convert backend menu items to navigation format
-  const backendNavigation = convertMenuItemsToNavigation(navigationData.menuItems);
+    // Static mode — return hardcoded navigation
+    if (!USE_DYNAMIC_NAVIGATION) {
+      return getNavigationItems(t, navigation);
+    }
 
-  // Translate navigation items
-  return getNavigationItems(t, backendNavigation);
+    // Loading or no data — use fallback navigation
+    if (isLoading || !navigationData) {
+      return getNavigationItems(t, fallbackNavigation);
+    }
+
+    // Dynamic mode — convert backend menu items to navigation format
+    const backendNavigation = convertMenuItemsToNavigation(navigationData.menuItems);
+    return getNavigationItems(t, backendNavigation);
+  }, [navContext, t]);
 }

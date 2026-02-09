@@ -17,6 +17,8 @@ export type {
 export type {
       CreateMenuItemRequest,
       UpdateMenuItemRequest,
+      ReorderMenuItemsRequest,
+      SetRoleMenuVisibilityRequest,
 } from "./src/domain/entities/MenuItemRequests";
 
 // Interfaces

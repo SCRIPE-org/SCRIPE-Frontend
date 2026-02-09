@@ -21,6 +21,8 @@ export type {
       CreateRoleRequest,
       UpdateRoleRequest,
       AssignPermissionsRequest,
+      CloneRoleRequest,
+      DeleteRoleRequest,
 } from "./src/domain/entities/RoleRequests";
 
 // Interfaces
