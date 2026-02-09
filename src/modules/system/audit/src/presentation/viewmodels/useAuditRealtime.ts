@@ -3,18 +3,19 @@
 /**
  * useAuditRealtime — SignalR hook for live audit event updates.
  *
- * Listens for "AuditEvent" messages from the backend AuditHub.
+ * Listens for AuditEvent messages from the backend AuditHub.
  * On each event:
  *   1. Invalidates TanStack Query caches (auto-refresh)
  *   2. Shows a throttled toast notification
  *
- * All authenticated admin users join the "global" group.
+ * All authenticated admin users join the global group.
  */
 
 import { useEffect, useCallback, useState, useRef } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useSignalR, type SignalRConnectionState } from '@core/hooks/useSignalR';
 import { useEnhancedToast } from '@core/hooks/use-enhanced-toast';
+import { HUB_EVENTS, HUB_METHODS } from '@core/common/constants/signalr';
 import { auditKeys } from './useAuditViewModel';
 
 /** Lightweight audit event DTO matching backend AuditEventDto */
@@ -83,15 +84,12 @@ export function useAuditRealtime(): UseAuditRealtimeResult {
       useEffect(() => {
             if (!connection || connectionState !== 'connected') return;
 
-            // Listen for audit events
-            connection.on('AuditEvent', handleAuditEvent);
-
-            // Join global group (admin panel — all admins see all events)
-            connection.invoke('JoinGlobalGroup').catch(() => { });
+            connection.on(HUB_EVENTS.AUDIT_EVENT, handleAuditEvent);
+            connection.invoke(HUB_METHODS.JOIN_GLOBAL_GROUP).catch(() => { });
 
             return () => {
-                  connection.off('AuditEvent', handleAuditEvent);
-                  connection.invoke('LeaveGlobalGroup').catch(() => { });
+                  connection.off(HUB_EVENTS.AUDIT_EVENT, handleAuditEvent);
+                  connection.invoke(HUB_METHODS.LEAVE_GLOBAL_GROUP).catch(() => { });
             };
       }, [connection, connectionState, handleAuditEvent]);
 
