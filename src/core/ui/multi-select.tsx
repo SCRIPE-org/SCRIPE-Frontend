@@ -5,6 +5,7 @@ import { X } from "lucide-react";
 import { Badge } from "@/core/ui/badge";
 import { Command, CommandGroup, CommandItem, CommandList } from "@/core/ui/command";
 import { Command as CommandPrimitive } from "cmdk";
+import { appLogger } from "../common/logger";
 
 type Option = {
       label: string;
@@ -46,7 +47,7 @@ export function MultiSelect({
                               const results = await onSearch(inputValue);
                               setInternalOptions(results);
                         } catch (error) {
-                              console.error("Search failed", error);
+                              appLogger.error("Search failed", error);
                         } finally {
                               setIsLoading(false);
                         }

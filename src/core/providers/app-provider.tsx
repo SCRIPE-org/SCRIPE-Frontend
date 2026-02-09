@@ -11,6 +11,7 @@ import { RouteGuard } from "@core/providers/route-guard";
 import { PermissionProvider } from "@core/providers/permission-provider";
 import { TenantContextProvider } from "@core/providers/tenant-context-provider";
 import { AuthRefreshProvider } from "@core/providers/auth-refresh-provider";
+import { SignalRProvider } from "@core/providers/signalr-provider";
 import { EnhancedToaster } from "@core/ui/enhanced-toaster";
 import { ErrorBoundary } from "@core/ui/error-boundary";
 
@@ -39,10 +40,12 @@ const queryClient = new QueryClient({
  * 4. SettingsProvider - User preferences and settings
  * 5. I18nProvider - Internationalization (depends on settings)
  * 6. ErrorBoundary - Catches all errors (must be inside I18nProvider for localization)
- * 7. AuthProvider - Authentication state
- * 8. NavigationProvider - Navigation and permissions (depends on auth)
- * 9. AuthRefreshProvider - Periodic refresh of permissions (depends on auth)
- * 10. RouteGuard - Route protection (depends on auth and navigation)
+ * 7. PermissionProvider - Permission state
+ * 8. TenantContextProvider - Tenant scoping
+ * 9. SignalRProvider - Real-time connection (depends on auth)
+ * 10. NavigationProvider - Navigation and permissions (depends on auth)
+ * 11. AuthRefreshProvider - Periodic refresh of permissions (depends on auth)
+ * 12. RouteGuard - Route protection (depends on auth and navigation)
  * 
  * @param children - The app content to be wrapped
  */
@@ -56,13 +59,15 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
               <ErrorBoundary>
                 <PermissionProvider>
                   <TenantContextProvider>
-                    <NavigationProvider>
-                      <AuthRefreshProvider intervalMs={1000 * 60 * 5}>
-                        <RouteGuard>
-                          {children}
-                        </RouteGuard>
-                      </AuthRefreshProvider>
-                    </NavigationProvider>
+                    <SignalRProvider>
+                      <NavigationProvider>
+                        <AuthRefreshProvider intervalMs={1000 * 60 * 5}>
+                          <RouteGuard>
+                            {children}
+                          </RouteGuard>
+                        </AuthRefreshProvider>
+                      </NavigationProvider>
+                    </SignalRProvider>
                   </TenantContextProvider>
                 </PermissionProvider>
               </ErrorBoundary>

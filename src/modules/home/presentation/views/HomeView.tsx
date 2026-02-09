@@ -8,6 +8,7 @@
  * All logic lives in useOverviewViewModel.
  */
 import { useOverviewViewModel } from '../viewmodels/useOverviewViewModel';
+import { useOverviewRealtime } from '../viewmodels/useOverviewRealtime';
 import { WelcomeHeader } from '../components/WelcomeHeader';
 import { QuickStatsStrip } from '../components/QuickStatsStrip';
 import { QuickActionsGrid } from '../components/QuickActionsGrid';
@@ -15,6 +16,7 @@ import { RecentActivityFeed } from '../components/RecentActivityFeed';
 
 export function HomeView() {
   const vm = useOverviewViewModel();
+  useOverviewRealtime(); // Silent real-time cache invalidation
 
   return (
     <div className="space-y-8 p-6">

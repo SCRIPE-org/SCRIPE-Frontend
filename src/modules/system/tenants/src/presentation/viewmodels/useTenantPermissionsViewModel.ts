@@ -206,11 +206,11 @@ export function useTenantPermissionsDialog({
                   // Filter to only valid codes (should be all of them now)
                   const selectedFromTenant = tenantCodes.filter(code => validCodes.has(code));
 
-                  console.log("========== PERMISSION MATCHING ==========");
-                  console.log("All permissions pool:", allPermissions.length);
-                  console.log("Tenant permissions:", tenantPermissions.length);
-                  console.log("Matched:", selectedFromTenant);
-                  console.log("==========================================");
+                  appLogger.debug("========== PERMISSION MATCHING ==========");
+                  appLogger.debug("All permissions pool:", allPermissions.length);
+                  appLogger.debug("Tenant permissions:", tenantPermissions.length);
+                  appLogger.debug("Matched:", selectedFromTenant);
+                  appLogger.debug("==========================================");
 
                   setSelectedCodes(new Set(selectedFromTenant));
 

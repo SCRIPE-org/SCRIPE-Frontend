@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { TenantSettingsModel, UpdateTenantSettingsRequest } from "@modules/system/tenant-settings/src/data/models/TenantSettingsModel";
 import { Loader2 } from "lucide-react";
+import { appLogger } from "@/core/common/logger";
 
 interface TenantSettingsEditDialogProps {
       open: boolean;
@@ -238,7 +239,7 @@ export function TenantSettingsEditDialog({
                                                                                     const url = await onUploadLogo(file);
                                                                                     handleChange('logoUrl', url);
                                                                               } catch (error) {
-                                                                                    console.error("Upload failed", error);
+                                                                                    appLogger.error("Upload failed", error);
                                                                               }
                                                                         }
                                                                   }}
