@@ -142,7 +142,8 @@ export function useDashboardViewModel() {
             eventDistribution.refetch();
             securityEvents.refetch();
             topBlockedIPs.refetch();
-      }, [summary, loginActivity, recentChanges, eventDistribution, securityEvents, topBlockedIPs]);
+            // eslint-disable-next-line react-hooks/exhaustive-deps
+      }, [summary.refetch, loginActivity.refetch, recentChanges.refetch, eventDistribution.refetch, securityEvents.refetch, topBlockedIPs.refetch]);
 
       return {
             summary,

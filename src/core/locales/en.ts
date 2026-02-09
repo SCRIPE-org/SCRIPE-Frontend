@@ -3428,4 +3428,40 @@ export const en = {
       users: "Users",
     },
   },
+
+  // Overview Page
+  overview: {
+    greeting: {
+      morning: 'Good morning',
+      afternoon: 'Good afternoon',
+      evening: 'Good evening',
+    },
+    stats: {
+      totalAdmins: 'Total Admins',
+      activeUsers: 'Active Users',
+      activeTenants: 'Active Tenants',
+      loginsToday: 'Logins Today',
+    },
+    quickActions: 'Quick Actions',
+    actions: {
+      dashboard: 'Dashboard',
+      dashboardDesc: 'KPIs, charts & monitoring',
+      audit: 'Audit Log',
+      auditDesc: 'Full system event trail',
+      security: 'Security',
+      securityDesc: 'Threats & blocked IPs',
+      analytics: 'Analytics',
+      analyticsDesc: 'Tenant metrics & trends',
+      admins: 'Admins',
+      adminsDesc: 'Manage administrators',
+      tenants: 'Tenants',
+      tenantsDesc: 'Manage organizations',
+      roles: 'Roles',
+      rolesDesc: 'Roles & permissions',
+      settings: 'Settings',
+      settingsDesc: 'System configuration',
+    },
+    recentActivity: 'Recent Activity',
+    noActivity: 'No recent activity',
+  },
 };

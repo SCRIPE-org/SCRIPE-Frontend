@@ -5,10 +5,11 @@
  *
  * Summary cards for security-related events (failed logins, lockouts, etc.)
  */
+import { memo } from 'react';
 import type { SecurityEventSummary } from '../../domain/entities/DashboardEntities';
 import { useI18n } from '@core/providers/i18n-provider';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@core/ui/card';
-import { Skeleton } from '@core/ui/skeleton';
+import { SectionState } from '@core/ui/section-state';
 import { Badge } from '@core/ui/badge';
 import {
       AlertTriangle,
@@ -36,7 +37,7 @@ const eventConfig: Record<string, { icon: typeof AlertTriangle; color: string; b
       PasswordReset: { icon: KeyRound, color: 'text-blue-500', bgColor: 'bg-blue-500/10' },
 };
 
-export function SecurityEventsSection({ data, isLoading, error, onRetry }: Props) {
+export const SecurityEventsSection = memo(function SecurityEventsSection({ data, isLoading, error, onRetry }: Props) {
       const { t } = useI18n();
 
       return (
@@ -51,47 +52,22 @@ export function SecurityEventsSection({ data, isLoading, error, onRetry }: Props
                         </div>
                   </CardHeader>
                   <CardContent>
-                        {isLoading ? (
-                              <div className="space-y-3" role="status" aria-label={t('common.loading')}>
-                                    {Array.from({ length: 4 }).map((_, i) => (
-                                          <div key={i} className="flex items-center justify-between">
-                                                <div className="flex items-center gap-2">
-                                                      <Skeleton className="h-8 w-8 rounded" />
-                                                      <Skeleton className="h-4 w-32" />
-                                                </div>
-                                                <Skeleton className="h-6 w-12 rounded-full" />
-                                          </div>
-                                    ))}
-                              </div>
-                        ) : error ? (
-                              <div className="flex flex-col items-center justify-center h-[200px] text-muted-foreground gap-3">
-                                    <p className="text-sm">{t('common.error')}</p>
-                                    {onRetry && (
-                                          <button onClick={onRetry} className="text-sm text-primary hover:underline">
-                                                {t('common.retry')}
-                                          </button>
-                                    )}
-                              </div>
-                        ) : data.length === 0 ? (
-                              <div className="flex flex-col items-center justify-center h-[200px] text-muted-foreground gap-2">
-                                    <ShieldX className="h-8 w-8 opacity-50" />
-                                    <span>{t('dashboard.securityEvents.noEvents')}</span>
-                              </div>
-                        ) : (
+                        <SectionState
+                              isLoading={isLoading}
+                              error={error}
+                              onRetry={onRetry}
+                              isEmpty={data.length === 0}
+                              emptyMessage={t('dashboard.securityEvents.noEvents')}
+                              skeletonType="rows"
+                              skeletonRows={4}
+                              height={200}
+                        >
                               <div className="space-y-3" aria-live="polite">
                                     {data.map((event) => {
-                                          const config = eventConfig[event.eventType] ?? {
-                                                icon: AlertTriangle,
-                                                color: 'text-gray-500',
-                                                bgColor: 'bg-gray-500/10',
-                                          };
+                                          const config = eventConfig[event.eventType] ?? { icon: AlertTriangle, color: 'text-gray-500', bgColor: 'bg-gray-500/10' };
                                           const Icon = config.icon;
-
                                           return (
-                                                <div
-                                                      key={event.eventType}
-                                                      className="flex items-center justify-between p-2.5 rounded-lg border transition-colors hover:bg-muted/30"
-                                                >
+                                                <div key={event.eventType} className="flex items-center justify-between p-2.5 rounded-lg border transition-colors hover:bg-muted/30">
                                                       <div className="flex items-center gap-3">
                                                             <div className={`p-2 rounded-lg ${config.bgColor}`}>
                                                                   <Icon className={`h-4 w-4 ${config.color}`} />
@@ -99,24 +75,19 @@ export function SecurityEventsSection({ data, isLoading, error, onRetry }: Props
                                                             <div>
                                                                   <p className="text-sm font-medium">{event.eventType}</p>
                                                                   {event.latestOccurrence && (
-                                                                        <p className="text-[10px] text-muted-foreground">
-                                                                              Last: {new Date(event.latestOccurrence).toLocaleString()}
-                                                                        </p>
+                                                                        <p className="text-[10px] text-muted-foreground">Last: {new Date(event.latestOccurrence).toLocaleString()}</p>
                                                                   )}
                                                             </div>
                                                       </div>
-                                                      <Badge
-                                                            variant={event.count > 10 ? 'destructive' : 'secondary'}
-                                                            className="tabular-nums"
-                                                      >
+                                                      <Badge variant={event.count > 10 ? 'destructive' : 'secondary'} className="tabular-nums">
                                                             {event.count.toLocaleString()}
                                                       </Badge>
                                                 </div>
                                           );
                                     })}
                               </div>
-                        )}
+                        </SectionState>
                   </CardContent>
             </Card>
       );
-}
+});

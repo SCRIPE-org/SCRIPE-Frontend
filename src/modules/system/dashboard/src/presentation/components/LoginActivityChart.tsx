@@ -6,11 +6,11 @@
  * Area chart showing successful vs failed logins over time.
  * Uses Recharts via core chart wrapper.
  */
-import { useMemo } from 'react';
+import { useMemo, memo } from 'react';
 import type { LoginActivityPoint } from '../../domain/entities/DashboardEntities';
 import { useI18n } from '@core/providers/i18n-provider';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@core/ui/card';
-import { Skeleton } from '@core/ui/skeleton';
+import { SectionState } from '@core/ui/section-state';
 import {
       ChartContainer,
       ChartTooltip,
@@ -27,7 +27,7 @@ interface Props {
       onRetry?: () => void;
 }
 
-export function LoginActivityChart({ data, isLoading, error, onRetry }: Props) {
+export const LoginActivityChart = memo(function LoginActivityChart({ data, isLoading, error, onRetry }: Props) {
       const { t } = useI18n();
 
       const chartConfig = useMemo<ChartConfig>(() => ({
@@ -61,27 +61,7 @@ export function LoginActivityChart({ data, isLoading, error, onRetry }: Props) {
                         </div>
                   </CardHeader>
                   <CardContent>
-                        {isLoading ? (
-                              <div className="space-y-3" role="status" aria-label={t('common.loading')}>
-                                    <Skeleton className="h-[300px] w-full" />
-                              </div>
-                        ) : error ? (
-                              <div className="flex flex-col items-center justify-center h-[300px] text-muted-foreground gap-3">
-                                    <p className="text-sm">{t('common.error')}</p>
-                                    {onRetry && (
-                                          <button
-                                                onClick={onRetry}
-                                                className="text-sm text-primary hover:underline"
-                                          >
-                                                {t('common.retry')}
-                                          </button>
-                                    )}
-                              </div>
-                        ) : data.length === 0 ? (
-                              <div className="flex items-center justify-center h-[300px] text-muted-foreground">
-                                    {t('common.noData')}
-                              </div>
-                        ) : (
+                        <SectionState isLoading={isLoading} error={error} onRetry={onRetry} isEmpty={data.length === 0} height={300}>
                               <ChartContainer config={chartConfig} className="h-[300px]">
                                     <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                                           <defs>
@@ -98,24 +78,12 @@ export function LoginActivityChart({ data, isLoading, error, onRetry }: Props) {
                                           <XAxis dataKey="date" tickLine={false} axisLine={false} className="text-xs" />
                                           <YAxis tickLine={false} axisLine={false} className="text-xs" allowDecimals={false} />
                                           <ChartTooltip content={<ChartTooltipContent />} />
-                                          <Area
-                                                type="monotone"
-                                                dataKey="successCount"
-                                                stroke="var(--color-successCount)"
-                                                fill="url(#fillSuccess)"
-                                                strokeWidth={2}
-                                          />
-                                          <Area
-                                                type="monotone"
-                                                dataKey="failedCount"
-                                                stroke="var(--color-failedCount)"
-                                                fill="url(#fillFailed)"
-                                                strokeWidth={2}
-                                          />
+                                          <Area type="monotone" dataKey="successCount" stroke="var(--color-successCount)" fill="url(#fillSuccess)" strokeWidth={2} />
+                                          <Area type="monotone" dataKey="failedCount" stroke="var(--color-failedCount)" fill="url(#fillFailed)" strokeWidth={2} />
                                     </AreaChart>
                               </ChartContainer>
-                        )}
+                        </SectionState>
                   </CardContent>
             </Card>
       );
-}
+});

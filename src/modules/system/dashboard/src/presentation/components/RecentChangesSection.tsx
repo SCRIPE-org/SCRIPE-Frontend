@@ -5,11 +5,11 @@
  *
  * Activity feed showing latest entity modifications.
  */
-import { useMemo } from 'react';
+import { useMemo, memo } from 'react';
 import type { RecentChange } from '../../domain/entities/DashboardEntities';
 import { useI18n } from '@core/providers/i18n-provider';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@core/ui/card';
-import { Skeleton } from '@core/ui/skeleton';
+import { SectionState } from '@core/ui/section-state';
 import { Badge } from '@core/ui/badge';
 import { ScrollArea } from '@core/ui/scroll-area';
 import {
@@ -60,7 +60,7 @@ function formatTimeAgo(timestamp: string, t: (key: string, params?: Record<strin
       return t('common.timeAgo.daysAgo', { count: days });
 }
 
-export function RecentChangesSection({ data, isLoading, error, onRetry }: Props) {
+export const RecentChangesSection = memo(function RecentChangesSection({ data, isLoading, error, onRetry }: Props) {
       const { t } = useI18n();
 
       const items = useMemo(() => data, [data]);
@@ -77,54 +77,30 @@ export function RecentChangesSection({ data, isLoading, error, onRetry }: Props)
                         </div>
                   </CardHeader>
                   <CardContent>
-                        {isLoading ? (
-                              <div className="space-y-3" role="status" aria-label={t('common.loading')}>
-                                    {Array.from({ length: 5 }).map((_, i) => (
-                                          <div key={i} className="flex items-center gap-3">
-                                                <Skeleton className="h-8 w-8 rounded-full" />
-                                                <div className="flex-1">
-                                                      <Skeleton className="h-4 w-3/4" />
-                                                      <Skeleton className="h-3 w-1/2 mt-1" />
-                                                </div>
-                                          </div>
-                                    ))}
-                              </div>
-                        ) : error ? (
-                              <div className="flex flex-col items-center justify-center h-[200px] text-muted-foreground gap-3">
-                                    <p className="text-sm">{t('common.error')}</p>
-                                    {onRetry && (
-                                          <button onClick={onRetry} className="text-sm text-primary hover:underline">
-                                                {t('common.retry')}
-                                          </button>
-                                    )}
-                              </div>
-                        ) : data.length === 0 ? (
-                              <div className="flex items-center justify-center h-[200px] text-muted-foreground">
-                                    {t('dashboard.recentChanges.noChanges')}
-                              </div>
-                        ) : (
+                        <SectionState
+                              isLoading={isLoading}
+                              error={error}
+                              onRetry={onRetry}
+                              isEmpty={data.length === 0}
+                              emptyMessage={t('dashboard.recentChanges.noChanges')}
+                              skeletonType="rows"
+                              skeletonRows={5}
+                              height={350}
+                        >
                               <ScrollArea className="h-[350px]">
                                     <div className="space-y-3" aria-live="polite">
                                           {items.map((change) => {
                                                 const Icon = eventIconMap[change.eventType] ?? Activity;
                                                 const colorClass = eventColorMap[change.eventType] ?? 'bg-gray-500/10 text-gray-500';
-
                                                 return (
-                                                      <div
-                                                            key={change.id}
-                                                            className="flex items-start gap-3 p-2 rounded-lg hover:bg-muted/50 transition-colors"
-                                                      >
+                                                      <div key={change.id} className="flex items-start gap-3 p-2 rounded-lg hover:bg-muted/50 transition-colors">
                                                             <div className={`p-2 rounded-full shrink-0 ${colorClass}`}>
                                                                   <Icon className="h-3.5 w-3.5" />
                                                             </div>
                                                             <div className="flex-1 min-w-0">
                                                                   <div className="flex items-center gap-2">
-                                                                        <span className="font-medium text-sm truncate">
-                                                                              {change.username ?? 'System'}
-                                                                        </span>
-                                                                        <Badge variant="outline" className="text-[10px] px-1.5 py-0 shrink-0">
-                                                                              {change.eventType}
-                                                                        </Badge>
+                                                                        <span className="font-medium text-sm truncate">{change.username ?? 'System'}</span>
+                                                                        <Badge variant="outline" className="text-[10px] px-1.5 py-0 shrink-0">{change.eventType}</Badge>
                                                                   </div>
                                                                   <p className="text-xs text-muted-foreground mt-0.5 truncate">
                                                                         {change.entityType} {change.entityId ? `#${change.entityId.slice(0, 8)}` : ''}
@@ -138,8 +114,8 @@ export function RecentChangesSection({ data, isLoading, error, onRetry }: Props)
                                           })}
                                     </div>
                               </ScrollArea>
-                        )}
+                        </SectionState>
                   </CardContent>
             </Card>
       );
-}
+});

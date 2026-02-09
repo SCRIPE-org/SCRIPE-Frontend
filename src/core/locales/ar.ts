@@ -3257,4 +3257,40 @@ export const ar = {
       users: "المستخدمين",
     },
   },
+
+  // صفحة النظرة العامة
+  overview: {
+    greeting: {
+      morning: 'صباح الخير',
+      afternoon: 'مساء الخير',
+      evening: 'مساء الخير',
+    },
+    stats: {
+      totalAdmins: 'إجمالي المشرفين',
+      activeUsers: 'المستخدمون النشطون',
+      activeTenants: 'المستأجرون النشطون',
+      loginsToday: 'تسجيلات الدخول اليوم',
+    },
+    quickActions: 'إجراءات سريعة',
+    actions: {
+      dashboard: 'لوحة التحكم',
+      dashboardDesc: 'المؤشرات والرسوم البيانية',
+      audit: 'سجل التدقيق',
+      auditDesc: 'سجل أحداث النظام الكامل',
+      security: 'الأمان',
+      securityDesc: 'التهديدات وعناوين IP المحظورة',
+      analytics: 'التحليلات',
+      analyticsDesc: 'مقاييس المستأجرين والاتجاهات',
+      admins: 'المشرفون',
+      adminsDesc: 'إدارة المشرفين',
+      tenants: 'المستأجرون',
+      tenantsDesc: 'إدارة المؤسسات',
+      roles: 'الأدوار',
+      rolesDesc: 'الأدوار والصلاحيات',
+      settings: 'الإعدادات',
+      settingsDesc: 'إعدادات النظام',
+    },
+    recentActivity: 'النشاط الأخير',
+    noActivity: 'لا يوجد نشاط حديث',
+  },
 };

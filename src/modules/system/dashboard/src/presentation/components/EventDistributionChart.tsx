@@ -5,11 +5,11 @@
  *
  * Pie/donut chart showing event type breakdown.
  */
-import { useMemo } from 'react';
+import { useMemo, memo } from 'react';
 import type { EventTypeCount } from '../../domain/entities/DashboardEntities';
 import { useI18n } from '@core/providers/i18n-provider';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@core/ui/card';
-import { Skeleton } from '@core/ui/skeleton';
+import { SectionState } from '@core/ui/section-state';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from '@core/ui/chart';
 import { Pie, PieChart, Cell } from 'recharts';
 import { PieChartIcon } from 'lucide-react';
@@ -32,7 +32,7 @@ const COLORS = [
       'hsl(30, 80%, 50%)',
 ];
 
-export function EventDistributionChart({ data, isLoading, error, onRetry }: Props) {
+export const EventDistributionChart = memo(function EventDistributionChart({ data, isLoading, error, onRetry }: Props) {
       const { t } = useI18n();
 
       const chartConfig = useMemo<ChartConfig>(() => {
@@ -70,58 +70,23 @@ export function EventDistributionChart({ data, isLoading, error, onRetry }: Prop
                         </div>
                   </CardHeader>
                   <CardContent>
-                        {isLoading ? (
-                              <div role="status" aria-label={t('common.loading')}>
-                                    <Skeleton className="h-[300px] w-full" />
-                              </div>
-                        ) : error ? (
-                              <div className="flex flex-col items-center justify-center h-[300px] text-muted-foreground gap-3">
-                                    <p className="text-sm">{t('common.error')}</p>
-                                    {onRetry && (
-                                          <button onClick={onRetry} className="text-sm text-primary hover:underline">
-                                                {t('common.retry')}
-                                          </button>
-                                    )}
-                              </div>
-                        ) : data.length === 0 ? (
-                              <div className="flex items-center justify-center h-[300px] text-muted-foreground">
-                                    {t('common.noData')}
-                              </div>
-                        ) : (
+                        <SectionState isLoading={isLoading} error={error} onRetry={onRetry} isEmpty={data.length === 0} height={300}>
                               <div className="space-y-4">
                                     <ChartContainer config={chartConfig} className="h-[200px]">
                                           <PieChart>
-                                                <Pie
-                                                      data={chartData}
-                                                      cx="50%"
-                                                      cy="50%"
-                                                      innerRadius={50}
-                                                      outerRadius={80}
-                                                      paddingAngle={2}
-                                                      dataKey="value"
-                                                >
-                                                      {chartData.map((entry) => (
-                                                            <Cell key={entry.name} fill={entry.fill} />
-                                                      ))}
+                                                <Pie data={chartData} cx="50%" cy="50%" innerRadius={50} outerRadius={80} paddingAngle={2} dataKey="value">
+                                                      {chartData.map((entry) => (<Cell key={entry.name} fill={entry.fill} />))}
                                                 </Pie>
                                                 <ChartTooltip content={<ChartTooltipContent />} />
                                           </PieChart>
                                     </ChartContainer>
-
-                                    {/* Legend */}
                                     <div className="space-y-1.5">
                                           {data.slice(0, 5).map((item, index) => {
-                                                const percentage = totalEvents > 0
-                                                      ? ((item.count / totalEvents) * 100).toFixed(1)
-                                                      : '0';
-
+                                                const percentage = totalEvents > 0 ? ((item.count / totalEvents) * 100).toFixed(1) : '0';
                                                 return (
                                                       <div key={item.eventType} className="flex items-center justify-between text-xs">
                                                             <div className="flex items-center gap-2">
-                                                                  <div
-                                                                        className="h-2.5 w-2.5 rounded-full shrink-0"
-                                                                        style={{ backgroundColor: COLORS[index % COLORS.length] }}
-                                                                  />
+                                                                  <div className="h-2.5 w-2.5 rounded-full shrink-0" style={{ backgroundColor: COLORS[index % COLORS.length] }} />
                                                                   <span className="text-muted-foreground truncate">{item.eventType}</span>
                                                             </div>
                                                             <div className="flex items-center gap-2 shrink-0">
@@ -132,14 +97,12 @@ export function EventDistributionChart({ data, isLoading, error, onRetry }: Prop
                                                 );
                                           })}
                                           {data.length > 5 && (
-                                                <p className="text-[10px] text-muted-foreground text-center">
-                                                      +{data.length - 5} more
-                                                </p>
+                                                <p className="text-[10px] text-muted-foreground text-center">+{data.length - 5} more</p>
                                           )}
                                     </div>
                               </div>
-                        )}
+                        </SectionState>
                   </CardContent>
             </Card>
       );
-}
+});
