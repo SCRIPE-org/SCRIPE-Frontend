@@ -33,12 +33,13 @@ import {
   Palette,
   Map,
   Ticket,
+  type LucideIcon,
 } from "lucide-react";
 
 export interface NavigationItem {
   name: string;
   href?: string;
-  icon?: any; // Make icon optional
+  icon?: LucideIcon;
   children?: NavigationItem[];
   badge?: string | number; // Optional badge for notifications
   disabled?: boolean; // Optional disabled state
@@ -48,7 +49,7 @@ export interface NavigationItem {
  * Icon mapping from string names to actual icon components
  * Used to convert backend icon names to React components
  */
-export const iconMap: Record<string, any> = {
+export const iconMap: Record<string, LucideIcon> = {
   MapPin: MapPin,
   ShieldCheck: ShieldCheck,
   ArrowRightLeft: ArrowRightLeft,
@@ -179,7 +180,7 @@ export const fallbackNavigation: NavigationItem[] = navigation;
  * Translates navigation items using the i18n system
  */
 export const getNavigationItems = (
-  t: (key: string, params?: Record<string, any>) => string,
+  t: (key: string, params?: Record<string, string>) => string,
   navigationItems: NavigationItem[] = fallbackNavigation
 ): NavigationItem[] => {
   const translateItem = (item: NavigationItem): NavigationItem => ({
@@ -247,44 +248,57 @@ export const getFlatNavigationItems = (
  * 🔄 Converts backend menu items to frontend navigation format
  * Used internally by the dynamic navigation system
  */
+/** Shape of a single backend menu item */
+interface BackendMenuItem {
+  name?: string;
+  displayName?: string;
+  href?: string;
+  icon?: string;
+  order?: number;
+  children?: BackendMenuItem[];
+}
+
+/**
+ * Converts backend menu items to frontend navigation format
+ * Used internally by the dynamic navigation system
+ */
 export const convertMenuItemsToNavigation = (
-  menuItemsData: any
+  menuItemsData: unknown
 ): NavigationItem[] => {
   // Handle different possible data structures
-  let menuItems: any[] = [];
+  let menuItems: BackendMenuItem[] = [];
 
   if (Array.isArray(menuItemsData)) {
-    menuItems = menuItemsData;
+    menuItems = menuItemsData as BackendMenuItem[];
   } else if (
     menuItemsData &&
     typeof menuItemsData === "object" &&
-    menuItemsData.menuItem
+    "menuItem" in menuItemsData
   ) {
-    menuItems = menuItemsData.menuItem;
+    menuItems = (menuItemsData as Record<string, unknown>).menuItem as BackendMenuItem[];
   } else if (
     menuItemsData &&
     typeof menuItemsData === "object" &&
-    Object.keys(menuItemsData).length > 0
+    Object.keys(menuItemsData as object).length > 0
   ) {
-    // If it's an object with properties, convert it to an array
-    menuItems = [menuItemsData];
+    menuItems = [menuItemsData as BackendMenuItem];
   } else {
     menuItems = [];
   }
 
-  const convertMenuItem = (item: any): NavigationItem => {
+  const convertMenuItem = (item: BackendMenuItem): NavigationItem => {
     return {
       name: item.name || item.displayName || 'Unnamed',
       href: item.href || undefined,
-      icon: iconMap[item.icon] || iconMap["Package"], // Default fallback icon
+      icon: iconMap[item.icon ?? ''] || iconMap["Package"],
       children: item.children?.map(convertMenuItem) || [],
-      disabled: false, // Items returned from backend are assumed active
+      disabled: false,
     };
   };
 
   // Backend already returns only active, non-deleted items
   // Just sort by order and convert
-  const sortedMenuItems = [...menuItems].sort((a, b) => (a.order || 0) - (b.order || 0));
+  const sortedMenuItems = [...menuItems].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
 
   return sortedMenuItems.map(convertMenuItem);
 };

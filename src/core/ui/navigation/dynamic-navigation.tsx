@@ -58,17 +58,17 @@ export function DynamicNavigation({ children }: DynamicNavigationProps) {
   // Convert backend menu items to navigation format
   const backendNavigation = convertMenuItemsToNavigation(navigationData.menuItems);
 
-  // Translate navigation items
-  return getNavigationItems(t, backendNavigation);
-
+  // Translate and render via children
+  const translatedBackend = getNavigationItems(t, backendNavigation);
+  return <>{children(translatedBackend)}</>;
 }
 
 /**
- * 🪝 Main Navigation Hook - USE THIS IN ALL SIDEBAR COMPONENTS
- * 
- * Simply call: const navigation = useDynamicNavigation();
- * Everything else is handled automatically!
- */
+   * 🪝 Main Navigation Hook - USE THIS IN ALL SIDEBAR COMPONENTS
+   * 
+   * Simply call: const navigation = useDynamicNavigation();
+   * Everything else is handled automatically!
+   */
 export function useDynamicNavigation(): NavigationItem[] {
   // For SSR/prerendering, return empty array to avoid provider errors
   if (typeof window === 'undefined') {

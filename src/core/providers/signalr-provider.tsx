@@ -18,6 +18,7 @@ import {
 } from '@microsoft/signalr';
 import { secureTokenService } from '@core/common/secure-token-service';
 import { useAppStore } from '@core/store/useAppStore';
+import { HUB_PATHS } from '@core/common/constants/signalr';
 
 // ─── Types ───────────────────────────────────────────────────────────
 export type SignalRConnectionState =
@@ -53,13 +54,13 @@ function getHubUrl(hubPath: string): string {
 
 // ─── Provider Component ──────────────────────────────────────────────
 interface SignalRProviderProps {
-      /** Hub path relative to API origin (default: "/hubs/audit") */
+      /** Hub path relative to API origin (default: HUB_PATHS.AUDIT) */
       hubPath?: string;
       children: React.ReactNode;
 }
 
 export function SignalRProvider({
-      hubPath = '/hubs/audit',
+      hubPath = HUB_PATHS.AUDIT,
       children,
 }: SignalRProviderProps) {
       const connectionRef = useRef<HubConnection | null>(null);

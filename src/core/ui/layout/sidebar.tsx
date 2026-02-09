@@ -133,12 +133,16 @@ export function Sidebar({
                       : "bg-primary/10 group-hover:bg-primary/20"
                   )}
                 >
-                  <Icon
-                    className={cn(
-                      "w-4 h-4 transition-all duration-300 group-hover:scale-110",
-                      isActive ? "text-white" : "text-primary"
-                    )}
-                  />
+                  {Icon ? (
+                    <Icon
+                      className={cn(
+                        "w-4 h-4 transition-all duration-300 group-hover:scale-110",
+                        isActive ? "text-white" : "text-primary"
+                      )}
+                    />
+                  ) : (
+                    <div className="w-4 h-4" />
+                  )}
                 </div>
                 <span className="truncate">{item.name}</span>
                 {item.badge && (
@@ -197,12 +201,16 @@ export function Sidebar({
                 : "bg-primary/10 group-hover:bg-primary/20"
             )}
           >
-            <Icon
-              className={cn(
-                "w-4 h-4 transition-all duration-300 group-hover:scale-110",
-                isActive ? "text-white" : "text-primary"
-              )}
-            />
+            {Icon ? (
+              <Icon
+                className={cn(
+                  "w-4 h-4 transition-all duration-300 group-hover:scale-110",
+                  isActive ? "text-white" : "text-primary"
+                )}
+              />
+            ) : (
+              <div className="w-4 h-4" />
+            )}
           </div>
           <span className="truncate">{item.name}</span>
         </div>

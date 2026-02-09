@@ -139,7 +139,7 @@ export function MinimalHeader() {
                         )}
                       >
                         <div className="flex items-center">
-                          <Icon className="mr-2 h-4 w-4" />
+                          {Icon && <Icon className="mr-2 h-4 w-4" />}
                           <span>{item.name}</span>
                         </div>
                         {item.badge && (
