@@ -270,19 +270,19 @@ export const en = {
 
   // Admin
   admin: {
-    targetRole:"Target Role",
-    targetRolePlaceholder:"Enter Target Role",
-    selectRole:"Select Role",
-    selectTenantFirst:"Select Tenant First",
-    impersonate:"Impersonate",
+    targetRole: "Target Role",
+    targetRolePlaceholder: "Enter Target Role",
+    selectRole: "Select Role",
+    selectTenantFirst: "Select Tenant First",
+    impersonate: "Impersonate",
     transferTitle: "Transfer User",
-    transfer:"Transfer User",
-    transferDesc:"Transfer User to another organization",
-    targetTenant:"Target Tenant",
-    targetTenantPlaceholder:"Enter Target Tenant",
-    transferConfirm:"Transfer User",
-    selectTenant:"Selet Tenant",
-    newPassword:"Reset Password",
+    transfer: "Transfer User",
+    transferDesc: "Transfer User to another organization",
+    targetTenant: "Target Tenant",
+    targetTenantPlaceholder: "Enter Target Tenant",
+    transferConfirm: "Transfer User",
+    selectTenant: "Selet Tenant",
+    newPassword: "Reset Password",
     title: "Administrators",
     description: "Manage system administrators and their access.",
     // Table columns and fields
@@ -313,13 +313,13 @@ export const en = {
     notesPlaceholder: "Enter notes",
     // Role assignment
     role: {
-      currentScope:"Current Scope",
+      currentScope: "Current Scope",
       manageTitle: "Manage Roles",
       manageDescription: "Manage roles",
-      selectRoles:"Select Roles",
-      selectRolesHelp:"Select roles",
-      saveRoles:"Save Roles",
-      inheritToChildrenHelp:"Role applies to all child tenants as well.",
+      selectRoles: "Select Roles",
+      selectRolesHelp: "Select roles",
+      saveRoles: "Save Roles",
+      inheritToChildrenHelp: "Role applies to all child tenants as well.",
       systemScope: "System Scope",
       searchRoles: "Search roles...",
       assignTitle: "Assign Role",
@@ -409,8 +409,8 @@ export const en = {
     scopeOwn: "Own Only",
     scopeHierarchy: "Hierarchy",
     scopeAllTenants: "All Tenants",
-    bulkScope:"Apply to All Permissions",
-    applyToAll:"Select to apply to all permissions",
+    bulkScope: "Apply to All Permissions",
+    applyToAll: "Select to apply to all permissions",
     name: "Name",
     code: "Code",
     description: "Description",
@@ -2677,7 +2677,7 @@ export const en = {
   },
   // Common
   common: {
-    exit:"Exit",
+    exit: "Exit",
     selected: "Selected",
     groups: "Groups",
     more: "More",
@@ -3220,6 +3220,38 @@ export const en = {
       contentSaved: "Content saved successfully",
       autoSaveEnabled: "Auto-save is enabled",
       spellCheckEnabled: "Spell check is enabled",
+    },
+  },
+
+  // Guardian Protection (Tenant Security)
+  guardian: {
+    // Badges and Labels
+    protected: "Protected",
+    protectedAdmin: "Protected Admin",
+    lastSuperAdmin: "Last Super Admin",
+    superAdminRole: "Super Admin Role",
+    defaultRole: "Default Role",
+    permissionsLocked: "Permissions Locked",
+    nonDeletable: "Non-Deletable",
+
+    // Tooltips
+    protectedAdminTooltip: "This admin is protected and cannot be deleted or demoted.",
+    lastSuperAdminTooltip: "This is the last super admin in the tenant. Cannot be deleted, transferred, or demoted.",
+    superAdminRoleTooltip: "This role grants full tenant management access and cannot be deleted.",
+    defaultRoleTooltip: "This is the default role assigned to new users. Cannot be deleted.",
+    permissionsLockedTooltip: "Permissions for this role are locked and cannot be modified.",
+
+    // Error Messages
+    errors: {
+      GUARDIAN_SYSTEM_SUPERADMIN: "Cannot modify the system super admin. This account is protected.",
+      GUARDIAN_PROTECTED_ADMIN: "Cannot modify this protected admin. This admin is required for tenant operation.",
+      GUARDIAN_LAST_SUPERADMIN: "Cannot perform this action. At least one super admin must remain in the tenant.",
+      GUARDIAN_PROTECTED_ROLE: "This role is protected and cannot be deleted.",
+      GUARDIAN_SUPERADMIN_ROLE: "Cannot delete the super admin role. It is required for tenant operation.",
+      GUARDIAN_DEFAULT_ROLE: "Cannot delete the default role. It is required for new users.",
+      GUARDIAN_LOCKED_ROLE: "Cannot modify permissions of this locked role.",
+      GUARDIAN_ADMIN_NOT_FOUND: "Admin not found.",
+      GUARDIAN_ROLE_NOT_FOUND: "Role not found.",
     },
   },
 };

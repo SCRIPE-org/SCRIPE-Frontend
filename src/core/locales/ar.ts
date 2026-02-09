@@ -63,7 +63,7 @@ export const ar = {
 
   // Tenants - المستأجرون
   tenant: {
-    context:"سياق المستأجر",
+    context: "سياق المستأجر",
     require2FA: "التحقق من الهوية بخطوتين",
     settingsAudit: "إعدادات التدقيق",
     deactivateTenant: "إلغاء نشاط المستأجر",
@@ -275,20 +275,20 @@ export const ar = {
 
   // Admin - المشرفون
   admin: {
-    targetRole:"الدور المستهدف",
-    targetRolePlaceholder:"أدخل الدور المستهدف",
-    selectRole:"اختر الدور",
-    selectTenantFirst:"اختر المستأجر",
-    impersonating:"انت الان منتحل شخصية مستخدم هذا النظام",
-    impersonate:"الدخول كهذا المستخدم",
+    targetRole: "الدور المستهدف",
+    targetRolePlaceholder: "أدخل الدور المستهدف",
+    selectRole: "اختر الدور",
+    selectTenantFirst: "اختر المستأجر",
+    impersonating: "انت الان منتحل شخصية مستخدم هذا النظام",
+    impersonate: "الدخول كهذا المستخدم",
     transferTitle: "نقل المستخدم",
-    transfer:"نقل المستخدم",
-    transferDesc:"نقل المستخدم إلى منظمة أخرى",
-    targetTenant:"المنظمة المستهدفة",
-    targetTenantPlaceholder:"أدخل المنظمة المستهدفة",
-    transferConfirm:"تأكيد نقل المستخدم",
-    selectTenant:"اختر مستأجر",
-    newPassword:"إعادة تعيين كلمة المرور",
+    transfer: "نقل المستخدم",
+    transferDesc: "نقل المستخدم إلى منظمة أخرى",
+    targetTenant: "المنظمة المستهدفة",
+    targetTenantPlaceholder: "أدخل المنظمة المستهدفة",
+    transferConfirm: "تأكيد نقل المستخدم",
+    selectTenant: "اختر مستأجر",
+    newPassword: "إعادة تعيين كلمة المرور",
     title: "المشرفون",
     description: "إدارة مشرفي النظام وصلاحياتهم.",
     // Table columns and fields
@@ -323,12 +323,12 @@ export const ar = {
     inActive: "غير نشط",
     // Role assignment
     role: {
-      
-      currentScope:"النطاق الحالي",
-      selectRoles:"اختر الأدوار",
-      selectRolesHelp:"اختر الأدوار المرتبطة بـ",
-      saveRoles:"حفظ الأدوار",
-      inheritToChildrenHelp:"الدور ينطبق على جميع المستأجرين الفرعيين أيضاً.",
+
+      currentScope: "النطاق الحالي",
+      selectRoles: "اختر الأدوار",
+      selectRolesHelp: "اختر الأدوار المرتبطة بـ",
+      saveRoles: "حفظ الأدوار",
+      inheritToChildrenHelp: "الدور ينطبق على جميع المستأجرين الفرعيين أيضاً.",
       manageTitle: "إدارة الأدوار",
       manageDescription: "إدارة الأدوار",
       systemScope: "نطاق النظام",
@@ -433,8 +433,8 @@ export const ar = {
     scopeOwn: "الذات فقط",
     scopeHierarchy: "الهرمية",
     scopeAllTenants: "جميع المستأجرين",
-    bulkScope:"تطبيق على كل الصلاحيات",
-    applyToAll:"اختر ليتم التطبيق على كل الصلاحيات",
+    bulkScope: "تطبيق على كل الصلاحيات",
+    applyToAll: "اختر ليتم التطبيق على كل الصلاحيات",
     scopeOverride: "تجاوز النطاق",
     selectScope: "اختر النطاق",
     scopeDefault: "افتراضي (لا شيء)",
@@ -2713,7 +2713,7 @@ export const ar = {
 
   // Common
   common: {
-    stop:"ايقاف",
+    stop: "ايقاف",
     exit: "خروج",
     selectAll: "اختر الكل",
     clearAll: "مسح الكل",
@@ -3054,6 +3054,38 @@ export const ar = {
       unauthorized: "ليس لديك صلاحية للوصول إلى هذا المورد.",
       sessionExpired: "انتهت صلاحية جلستك. يرجى تسجيل الدخول مرة أخرى.",
       loginRequired: "يرجى تسجيل الدخول للمتابعة.",
+    },
+  },
+
+  // حماية الوصي (أمان المستأجر)
+  guardian: {
+    // الشارات والتسميات
+    protected: "محمي",
+    protectedAdmin: "مشرف محمي",
+    lastSuperAdmin: "آخر مشرف عام",
+    superAdminRole: "دور المشرف العام",
+    defaultRole: "الدور الافتراضي",
+    permissionsLocked: "الصلاحيات مقفلة",
+    nonDeletable: "غير قابل للحذف",
+
+    // التلميحات
+    protectedAdminTooltip: "هذا المشرف محمي ولا يمكن حذفه أو تنزيل رتبته.",
+    lastSuperAdminTooltip: "هذا هو آخر مشرف عام في المستأجر. لا يمكن حذفه أو نقله أو تنزيل رتبته.",
+    superAdminRoleTooltip: "هذا الدور يمنح صلاحية إدارة المستأجر بالكامل ولا يمكن حذفه.",
+    defaultRoleTooltip: "هذا هو الدور الافتراضي المعين للمستخدمين الجدد. لا يمكن حذفه.",
+    permissionsLockedTooltip: "صلاحيات هذا الدور مقفلة ولا يمكن تعديلها.",
+
+    // رسائل الخطأ
+    errors: {
+      GUARDIAN_SYSTEM_SUPERADMIN: "لا يمكن تعديل المشرف العام للنظام. هذا الحساب محمي.",
+      GUARDIAN_PROTECTED_ADMIN: "لا يمكن تعديل هذا المشرف المحمي. هذا المشرف مطلوب لتشغيل المستأجر.",
+      GUARDIAN_LAST_SUPERADMIN: "لا يمكن تنفيذ هذا الإجراء. يجب أن يبقى مشرف عام واحد على الأقل في المستأجر.",
+      GUARDIAN_PROTECTED_ROLE: "هذا الدور محمي ولا يمكن حذفه.",
+      GUARDIAN_SUPERADMIN_ROLE: "لا يمكن حذف دور المشرف العام. هو مطلوب لتشغيل المستأجر.",
+      GUARDIAN_DEFAULT_ROLE: "لا يمكن حذف الدور الافتراضي. هو مطلوب للمستخدمين الجدد.",
+      GUARDIAN_LOCKED_ROLE: "لا يمكن تعديل صلاحيات هذا الدور المقفل.",
+      GUARDIAN_ADMIN_NOT_FOUND: "المشرف غير موجود.",
+      GUARDIAN_ROLE_NOT_FOUND: "الدور غير موجود.",
     },
   },
 };
