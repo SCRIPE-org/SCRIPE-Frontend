@@ -5,7 +5,7 @@
  *
  * Displays a bar chart of daily failed login attempts.
  */
-import { useMemo } from 'react';
+import { useMemo, memo } from 'react';
 import { useI18n } from '@core/providers/i18n-provider';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@core/ui/card';
 import { Skeleton } from '@core/ui/skeleton';
@@ -34,7 +34,7 @@ interface Props {
       onRetry?: () => void;
 }
 
-export function FailedLoginsHeatmap({ data, isLoading, error, onRetry }: Props) {
+export const FailedLoginsHeatmap = memo(function FailedLoginsHeatmap({ data, isLoading, error, onRetry }: Props) {
       const { t } = useI18n();
 
       const chartData = useMemo(() =>
@@ -83,4 +83,4 @@ export function FailedLoginsHeatmap({ data, isLoading, error, onRetry }: Props) 
                   </CardContent>
             </Card>
       );
-}
+});

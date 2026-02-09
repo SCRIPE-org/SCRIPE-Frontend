@@ -5,6 +5,7 @@
  *
  * Chronological feed of recent security-related events.
  */
+import { memo } from 'react';
 import { useI18n } from '@core/providers/i18n-provider';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@core/ui/card';
 import { Badge } from '@core/ui/badge';
@@ -40,7 +41,7 @@ const EVENT_ICONS: Record<string, { icon: typeof Shield; color: string }> = {
       PermissionRevoked: { icon: AlertTriangle, color: 'text-rose-500' },
 };
 
-export function SecurityTimeline({ data, isLoading, error, onRetry }: Props) {
+export const SecurityTimeline = memo(function SecurityTimeline({ data, isLoading, error, onRetry }: Props) {
       const { t } = useI18n();
 
       return (
@@ -107,4 +108,4 @@ export function SecurityTimeline({ data, isLoading, error, onRetry }: Props) {
                   </CardContent>
             </Card>
       );
-}
+});

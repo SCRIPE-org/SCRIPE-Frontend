@@ -5,6 +5,7 @@
  *
  * Filter bar for audit log table — event type, date range, user, entity, status.
  */
+import { memo } from 'react';
 import { useI18n } from '@core/providers/i18n-provider';
 import { Input } from '@core/ui/input';
 import { Button } from '@core/ui/button';
@@ -34,7 +35,7 @@ const EVENT_TYPES = [
       'PasswordReset', 'SessionRevoked',
 ];
 
-export function AuditFilterPanel({ filters, updateFilter, resetFilters, hasActiveFilters }: Props) {
+export const AuditFilterPanel = memo(function AuditFilterPanel({ filters, updateFilter, resetFilters, hasActiveFilters }: Props) {
       const { t } = useI18n();
 
       return (
@@ -57,6 +58,7 @@ export function AuditFilterPanel({ filters, updateFilter, resetFilters, hasActiv
                                     value={filters.dateFrom}
                                     onChange={(e) => updateFilter('dateFrom', e.target.value)}
                                     className="w-36"
+                                    aria-label={t('audit.filters.dateFrom')}
                               />
                               <Input
                                     type="date"
@@ -64,6 +66,7 @@ export function AuditFilterPanel({ filters, updateFilter, resetFilters, hasActiv
                                     value={filters.dateTo}
                                     onChange={(e) => updateFilter('dateTo', e.target.value)}
                                     className="w-36"
+                                    aria-label={t('audit.filters.dateTo')}
                               />
                         </div>
                   </div>
@@ -132,4 +135,4 @@ export function AuditFilterPanel({ filters, updateFilter, resetFilters, hasActiv
                   </div>
             </div>
       );
-}
+});

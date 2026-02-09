@@ -5,6 +5,7 @@
  *
  * Shows table of blocked IP addresses with their failed attempt counts.
  */
+import { memo } from 'react';
 import { useI18n } from '@core/providers/i18n-provider';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@core/ui/card';
 import { Badge } from '@core/ui/badge';
@@ -28,7 +29,7 @@ interface Props {
       onRetry?: () => void;
 }
 
-export function BlockedIPsTable({ data, isLoading, error, onRetry }: Props) {
+export const BlockedIPsTable = memo(function BlockedIPsTable({ data, isLoading, error, onRetry }: Props) {
       const { t } = useI18n();
 
       return (
@@ -91,4 +92,4 @@ export function BlockedIPsTable({ data, isLoading, error, onRetry }: Props) {
                   </CardContent>
             </Card>
       );
-}
+});

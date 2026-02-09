@@ -7,7 +7,7 @@
  * Reuses dashboard repository for API calls.
  */
 import { useQuery } from '@tanstack/react-query';
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { getSystemContainer } from '@modules/system/di';
 import type { AuditLogFilterParams } from '@modules/system/dashboard/src/domain/interfaces/IDashboardRepository';
 
@@ -47,6 +47,16 @@ const defaultFilters: AuditFilterState = {
 
 export function useAuditFilterViewModel() {
       const [filters, setFilters] = useState<AuditFilterState>(defaultFilters);
+      const [debouncedSearch, setDebouncedSearch] = useState('');
+      const debounceTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+      // Debounce search input (300ms)
+      useEffect(() => {
+            debounceTimer.current = setTimeout(() => {
+                  setDebouncedSearch(filters.search);
+            }, 300);
+            return () => clearTimeout(debounceTimer.current);
+      }, [filters.search]);
 
       const updateFilter = useCallback(<K extends keyof AuditFilterState>(
             key: K,
@@ -57,6 +67,7 @@ export function useAuditFilterViewModel() {
 
       const resetFilters = useCallback(() => {
             setFilters(defaultFilters);
+            setDebouncedSearch('');
       }, []);
 
       const setPage = useCallback((page: number) => {
@@ -69,12 +80,12 @@ export function useAuditFilterViewModel() {
             eventType: filters.eventType || undefined,
             username: filters.username || undefined,
             entityType: filters.entityType || undefined,
-            search: filters.search || undefined,
+            search: debouncedSearch || undefined,
             correlationId: filters.correlationId || undefined,
             dateFrom: filters.dateFrom || undefined,
             dateTo: filters.dateTo || undefined,
             isSuccess: filters.isSuccess,
-      }), [filters]);
+      }), [filters.page, filters.pageSize, filters.eventType, filters.username, filters.entityType, debouncedSearch, filters.correlationId, filters.dateFrom, filters.dateTo, filters.isSuccess]);
 
       const hasActiveFilters = useMemo(() => {
             return filters.eventType !== '' ||

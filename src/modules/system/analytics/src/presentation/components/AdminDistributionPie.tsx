@@ -5,7 +5,7 @@
  *
  * Donut chart showing event distribution across types (reusing dashboard data).
  */
-import { useMemo } from 'react';
+import { useMemo, memo } from 'react';
 import { useI18n } from '@core/providers/i18n-provider';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@core/ui/card';
 import { Skeleton } from '@core/ui/skeleton';
@@ -30,7 +30,7 @@ interface Props {
       onRetry?: () => void;
 }
 
-export function AdminDistributionPie({ data, isLoading, error, onRetry }: Props) {
+export const AdminDistributionPie = memo(function AdminDistributionPie({ data, isLoading, error, onRetry }: Props) {
       const { t } = useI18n();
 
       const chartData = useMemo(() =>
@@ -104,4 +104,4 @@ export function AdminDistributionPie({ data, isLoading, error, onRetry }: Props)
                   </CardContent>
             </Card>
       );
-}
+});

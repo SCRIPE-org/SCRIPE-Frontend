@@ -88,7 +88,8 @@ export function useTenantAnalyticsViewModel() {
             metrics.refetch();
             distribution.refetch();
             comparison.refetch();
-      }, [metrics, distribution, comparison]);
+            // eslint-disable-next-line react-hooks/exhaustive-deps
+      }, [metrics.refetch, distribution.refetch, comparison.refetch]);
 
       return {
             metrics,

@@ -5,7 +5,7 @@
  *
  * Multi-line area chart comparing successful vs failed logins over time.
  */
-import { useMemo } from 'react';
+import { useMemo, memo } from 'react';
 import { useI18n } from '@core/providers/i18n-provider';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@core/ui/card';
 import { Skeleton } from '@core/ui/skeleton';
@@ -30,7 +30,7 @@ interface Props {
       onRetry?: () => void;
 }
 
-export function LoginComparisonChart({ data, isLoading, error, onRetry }: Props) {
+export const LoginComparisonChart = memo(function LoginComparisonChart({ data, isLoading, error, onRetry }: Props) {
       const { t } = useI18n();
 
       const chartData = useMemo(() =>
@@ -92,4 +92,4 @@ export function LoginComparisonChart({ data, isLoading, error, onRetry }: Props)
                   </CardContent>
             </Card>
       );
-}
+});
