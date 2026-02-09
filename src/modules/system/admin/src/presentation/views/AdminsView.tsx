@@ -17,11 +17,17 @@ import { usePermissions } from "@core/providers/permission-provider";
 
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { Badge } from "@core/ui/badge";
-import { UserCheck, Shield, Trash2, Pencil, Eye, Settings, ArrowRightLeft } from "lucide-react";
+import { UserCheck, Shield, Trash2, Pencil, Eye, Settings, ArrowRightLeft, ShieldAlert, Crown } from "lucide-react";
 import { format } from "date-fns";
 import { ResetPasswordDialog } from "../components/AdminRoleDialogs";
 import { ManageRolesDialog } from "../components/ManageRolesDialog";
 import { AdminTransferDialog } from "../components/AdminTransferDialog";
+import {
+      Tooltip,
+      TooltipContent,
+      TooltipProvider,
+      TooltipTrigger,
+} from "@core/ui/tooltip";
 
 interface AdminsViewProps {
       /** Optional tenant ID to show admins for a specific tenant */
@@ -97,6 +103,35 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
                         key: "username",
                         label: t("admin.username") || "Username",
                         sortable: true,
+                        render: (_val: unknown, admin: Admin) => (
+                              <div className="flex items-center gap-2">
+                                    <span>{admin.username}</span>
+                                    {admin.hasGuardianProtection && (
+                                          <TooltipProvider>
+                                                <Tooltip>
+                                                      <TooltipTrigger asChild>
+                                                            <span>
+                                                                  {admin.isSuperAdmin ? (
+                                                                        <Crown className="h-4 w-4 text-amber-500" />
+                                                                  ) : admin.isLastSuperAdminInTenant ? (
+                                                                        <ShieldAlert className="h-4 w-4 text-orange-500" />
+                                                                  ) : (
+                                                                        <Shield className="h-4 w-4 text-blue-500" />
+                                                                  )}
+                                                            </span>
+                                                      </TooltipTrigger>
+                                                      <TooltipContent>
+                                                            {admin.isSuperAdmin
+                                                                  ? t("guardian.protectedAdminTooltip")
+                                                                  : admin.isLastSuperAdminInTenant
+                                                                        ? t("guardian.lastSuperAdminTooltip")
+                                                                        : t("guardian.protectedAdminTooltip")}
+                                                      </TooltipContent>
+                                                </Tooltip>
+                                          </TooltipProvider>
+                                    )}
+                              </div>
+                        ),
                   },
                   {
                         key: "name",
