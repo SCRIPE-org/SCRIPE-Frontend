@@ -170,8 +170,12 @@ export class ApiService implements IApiService {
           const data = error.response.data as { error?: string; message?: string };
           if (data.error === "TENANT_CONTEXT_FORBIDDEN") {
             appLogger.warn("Tenant context forbidden - clearing context");
-            // Clear the tenant context to exit drill-down mode
+            // Clear the tenant context to exit drill-down mode (in-memory)
             this.setTenantContext(null);
+            // Also clear sessionStorage so drill-down doesn't persist on refresh
+            if (typeof window !== "undefined") {
+              sessionStorage.removeItem("tenant_context");
+            }
             // The error message will be shown to the user via the normal error flow
             return Promise.reject(new Error(data.message || "You do not have permission to switch tenant context"));
           }

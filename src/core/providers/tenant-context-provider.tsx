@@ -17,7 +17,6 @@
 "use client";
 
 import React, { createContext, useContext, useState, useCallback, useMemo, useEffect } from "react";
-import { useAppStore } from "@core/store/useAppStore";
 import { useServices } from "@core/providers/service-provider";
 import { usePermissions } from "@core/providers/permission-provider";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
@@ -74,22 +73,21 @@ interface TenantContextProviderProps {
  * Must be placed inside PermissionProvider.
  */
 export function TenantContextProvider({ children }: TenantContextProviderProps) {
-      const { isSuperAdmin, hasPermission } = usePermissions();
-      const roles = useAppStore((state) => state.roles);
+      const { hasPermission } = usePermissions();
       const { apiService } = useServices();
 
-      // Get user's primary tenant ID from their roles (if any)
-      const userTenantId = roles.find((r) => r.tenantId)?.tenantId ?? null;
+
 
       // Context state
       const [currentTenant, setCurrentTenant] = useState<TenantInfo | null>(null);
       const [breadcrumbs, setBreadcrumbs] = useState<TenantBreadcrumb[]>([]);
 
-      // Can enter tenant world if system admin (no tenant) or has super_admin role
+      // Can enter tenant world if has drill_down permission
+      // This is the guard permission for switching tenant context
       const canEnterTenantWorld = useMemo(() => {
-            // System admin (no tenant assigned) or super admin can enter tenant contexts
-            return !userTenantId || isSuperAdmin || hasPermission(SYSTEM_PERMISSIONS.TENANTS_VIEW_DETAILS);
-      }, [userTenantId, isSuperAdmin, hasPermission]);
+            // Must have tenants.drill_down permission to switch context
+            return hasPermission(SYSTEM_PERMISSIONS.TENANTS_DRILL_DOWN);
+      }, [hasPermission]);
 
       const isInTenantWorld = currentTenant !== null;
 
