@@ -1,12 +1,13 @@
 /**
- * Menus ViewModel
+ * Menus ViewModel (Orchestrator)
  *
- * Provides data and operations for the menu management view.
- * Handles CRUD, reorder, and role-visibility mutations.
+ * Single source of truth for the menu management page.
+ * Handles CRUD mutations, dialog state, DnD reorder logic,
+ * and permission checks. The view destructures this and renders.
  */
 "use client";
 
-import { useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { systemContainer } from "@modules/system/di";
 import type { MenuTreeNode } from "../../domain/entities/MenuItem";
@@ -18,14 +19,33 @@ import type {
 } from "../../domain/entities/MenuItemRequests";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
+import { usePermissions } from "@core/providers/permission-provider";
+import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
+import { flattenIds } from "../components/MenuTreeItem";
+import type { DragEndEvent } from "@dnd-kit/core";
+
+/* -------------------------------------------------------------------------- */
+/*  Hook                                                                       */
+/* -------------------------------------------------------------------------- */
 
 export function useMenusViewModel() {
       const queryClient = useQueryClient();
       const { success, error: toastError } = useEnhancedToast();
       const { menuRepository } = systemContainer;
       const { t, language } = useI18n();
+      const { hasPermission } = usePermissions();
 
-      // Fetch menu tree
+      // ── Permission ─────────────────────────────────────────────────────
+      const canReorder = hasPermission(SYSTEM_PERMISSIONS.MENUS_UPDATE);
+
+      // ── Dialog state ───────────────────────────────────────────────────
+      const [createDialogOpen, setCreateDialogOpen] = useState(false);
+      const [editDialogOpen, setEditDialogOpen] = useState(false);
+      const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+      const [selectedNode, setSelectedNode] = useState<MenuTreeNode | null>(null);
+      const [parentForNew, setParentForNew] = useState<MenuTreeNode | null>(null);
+
+      // ── Query ──────────────────────────────────────────────────────────
       const {
             data: menuTree,
             isLoading,
@@ -37,12 +57,35 @@ export function useMenusViewModel() {
             queryFn: () => menuRepository.getAll(),
       });
 
-      // Create menu item mutation
+      const safeMenuTree = useMemo(() => menuTree ?? [], [menuTree]);
+
+      // ── Computed ───────────────────────────────────────────────────────
+      const totalItems = useMemo(() => {
+            const countNodes = (nodes: MenuTreeNode[]): number => {
+                  if (!Array.isArray(nodes)) return 0;
+                  return nodes.reduce(
+                        (sum, node) => sum + 1 + countNodes(node.children || []),
+                        0
+                  );
+            };
+            return countNodes(safeMenuTree);
+      }, [safeMenuTree]);
+
+      const sortableIds = useMemo(
+            () => (Array.isArray(safeMenuTree) ? flattenIds(safeMenuTree) : []),
+            [safeMenuTree]
+      );
+
+      const deleteNodeName = useMemo(() => {
+            if (!selectedNode) return "";
+            return language === "ar" ? selectedNode.nameAr : selectedNode.nameEn;
+      }, [selectedNode, language]);
+
+      // ── Mutations ──────────────────────────────────────────────────────
       const createMutation = useMutation({
             mutationFn: (request: CreateMenuItemRequest) => menuRepository.create(request),
             onSuccess: () => {
                   queryClient.invalidateQueries({ queryKey: ["menus"] });
-                  // Also invalidate navigation to reflect new items
                   queryClient.invalidateQueries({ queryKey: ["navigation"] });
                   success({
                         title: t("menus.createSuccess"),
@@ -57,7 +100,6 @@ export function useMenusViewModel() {
             },
       });
 
-      // Update menu item mutation
       const updateMutation = useMutation({
             mutationFn: ({ id, request }: { id: string; request: UpdateMenuItemRequest }) =>
                   menuRepository.update(id, request),
@@ -77,7 +119,6 @@ export function useMenusViewModel() {
             },
       });
 
-      // Delete menu item mutation
       const deleteMutation = useMutation({
             mutationFn: (id: string) => menuRepository.delete(id),
             onSuccess: () => {
@@ -96,7 +137,6 @@ export function useMenusViewModel() {
             },
       });
 
-      // Reorder menu items mutation
       const reorderMutation = useMutation({
             mutationFn: (request: ReorderMenuItemsRequest) => menuRepository.reorder(request),
             onSuccess: () => {
@@ -115,7 +155,6 @@ export function useMenusViewModel() {
             },
       });
 
-      // Set role visibility mutation
       const visibilityMutation = useMutation({
             mutationFn: (request: SetRoleMenuVisibilityRequest) => menuRepository.setRoleVisibility(request),
             onSuccess: () => {
@@ -133,55 +172,133 @@ export function useMenusViewModel() {
             },
       });
 
-      // Calculate total items
-      const totalItems = useMemo(() => {
-            const countNodes = (nodes: MenuTreeNode[]): number => {
-                  if (!Array.isArray(nodes)) return 0;
-                  return nodes.reduce(
-                        (sum, node) => sum + 1 + countNodes(node.children || []),
-                        0
-                  );
-            };
-            return Array.isArray(menuTree) ? countNodes(menuTree) : 0;
-      }, [menuTree]);
-
-      // Helpers
-      const getLocalizedName = useCallback(
-            (node: MenuTreeNode) => language === "ar" ? node.nameAr : node.nameEn,
-            [language]
+      // ── DnD helpers ────────────────────────────────────────────────────
+      const buildReorderPayload = useCallback(
+            (siblings: MenuTreeNode[], parentId?: string) => ({
+                  items: siblings.map((s, i) => ({
+                        id: s.id,
+                        order: i + 1,
+                        parentMenuItemId: parentId,
+                  })),
+            }),
+            []
       );
 
-      // Handlers
-      const handleCreate = useCallback(
-            (request: CreateMenuItemRequest) => createMutation.mutateAsync(request),
+      const findSiblingsAndParent = useCallback(
+            (nodeId: string, nodes: MenuTreeNode[], parentId?: string): { siblings: MenuTreeNode[]; parentId?: string } | null => {
+                  const idx = nodes.findIndex((n) => n.id === nodeId);
+                  if (idx >= 0) return { siblings: nodes, parentId };
+                  for (const node of nodes) {
+                        if (node.children.length > 0) {
+                              const result = findSiblingsAndParent(nodeId, node.children, node.id);
+                              if (result) return result;
+                        }
+                  }
+                  return null;
+            },
+            []
+      );
+
+      const handleMoveUp = useCallback(
+            (nodeId: string) => {
+                  const result = findSiblingsAndParent(nodeId, safeMenuTree);
+                  if (!result) return;
+                  const { siblings, parentId } = result;
+                  const sorted = [...siblings].sort((a, b) => a.order - b.order);
+                  const idx = sorted.findIndex((n) => n.id === nodeId);
+                  if (idx <= 0) return;
+                  [sorted[idx], sorted[idx - 1]] = [sorted[idx - 1], sorted[idx]];
+                  reorderMutation.mutateAsync(buildReorderPayload(sorted, parentId));
+            },
+            [safeMenuTree, findSiblingsAndParent, reorderMutation, buildReorderPayload]
+      );
+
+      const handleMoveDown = useCallback(
+            (nodeId: string) => {
+                  const result = findSiblingsAndParent(nodeId, safeMenuTree);
+                  if (!result) return;
+                  const { siblings, parentId } = result;
+                  const sorted = [...siblings].sort((a, b) => a.order - b.order);
+                  const idx = sorted.findIndex((n) => n.id === nodeId);
+                  if (idx < 0 || idx >= sorted.length - 1) return;
+                  [sorted[idx], sorted[idx + 1]] = [sorted[idx + 1], sorted[idx]];
+                  reorderMutation.mutateAsync(buildReorderPayload(sorted, parentId));
+            },
+            [safeMenuTree, findSiblingsAndParent, reorderMutation, buildReorderPayload]
+      );
+
+      const handleDragEnd = useCallback(
+            (event: DragEndEvent) => {
+                  const { active, over } = event;
+                  if (!over || active.id === over.id) return;
+
+                  const activeId = String(active.id);
+                  const overId = String(over.id);
+
+                  const activeResult = findSiblingsAndParent(activeId, safeMenuTree);
+                  const overResult = findSiblingsAndParent(overId, safeMenuTree);
+
+                  if (!activeResult || !overResult) return;
+                  if (activeResult.parentId !== overResult.parentId) return;
+
+                  const sorted = [...activeResult.siblings].sort((a, b) => a.order - b.order);
+                  const activeIdx = sorted.findIndex((n) => n.id === activeId);
+                  const overIdx = sorted.findIndex((n) => n.id === overId);
+
+                  if (activeIdx < 0 || overIdx < 0) return;
+
+                  const [moved] = sorted.splice(activeIdx, 1);
+                  sorted.splice(overIdx, 0, moved);
+
+                  reorderMutation.mutateAsync(buildReorderPayload(sorted, activeResult.parentId));
+            },
+            [safeMenuTree, findSiblingsAndParent, reorderMutation, buildReorderPayload]
+      );
+
+      // ── Dialog handlers ────────────────────────────────────────────────
+      const openCreateDialog = useCallback((parent?: MenuTreeNode) => {
+            setParentForNew(parent || null);
+            setCreateDialogOpen(true);
+      }, []);
+
+      const openEditDialog = useCallback((node: MenuTreeNode) => {
+            setSelectedNode(node);
+            setEditDialogOpen(true);
+      }, []);
+
+      const openDeleteDialog = useCallback((node: MenuTreeNode) => {
+            setSelectedNode(node);
+            setDeleteDialogOpen(true);
+      }, []);
+
+      const onCreateSubmit = useCallback(
+            async (data: CreateMenuItemRequest | { id: string; request: UpdateMenuItemRequest }) => {
+                  await createMutation.mutateAsync(data as CreateMenuItemRequest);
+            },
             [createMutation]
       );
 
-      const handleUpdate = useCallback(
-            (id: string, request: UpdateMenuItemRequest) =>
-                  updateMutation.mutateAsync({ id, request }),
+      const onEditSubmit = useCallback(
+            async (data: CreateMenuItemRequest | { id: string; request: UpdateMenuItemRequest }) => {
+                  const editData = data as { id: string; request: UpdateMenuItemRequest };
+                  await updateMutation.mutateAsync({ id: editData.id, request: editData.request });
+            },
             [updateMutation]
       );
 
-      const handleDelete = useCallback(
-            (id: string) => deleteMutation.mutateAsync(id),
-            [deleteMutation]
-      );
+      const onDeleteConfirm = useCallback(async () => {
+            if (!selectedNode) return;
+            await deleteMutation.mutateAsync(selectedNode.id);
+            setDeleteDialogOpen(false);
+            setSelectedNode(null);
+      }, [deleteMutation, selectedNode]);
 
-      const handleReorder = useCallback(
-            (request: ReorderMenuItemsRequest) => reorderMutation.mutateAsync(request),
-            [reorderMutation]
-      );
-
-      const handleSetVisibility = useCallback(
-            (request: SetRoleMenuVisibilityRequest) => visibilityMutation.mutateAsync(request),
-            [visibilityMutation]
-      );
-
+      // ── Return ─────────────────────────────────────────────────────────
       return {
             // Data
-            menuTree: menuTree ?? [],
+            menuTree: safeMenuTree,
             totalItems,
+            sortableIds,
 
             // State
             isLoading,
@@ -190,21 +307,41 @@ export function useMenusViewModel() {
 
             // Localization
             language,
-            getLocalizedName,
 
-            // Handlers
-            handleCreate,
-            handleUpdate,
-            handleDelete,
-            handleReorder,
-            handleSetVisibility,
-            refetch: () => refetch(),
+            // Permission
+            canReorder,
+
+            // DnD
+            handleDragEnd: canReorder ? handleDragEnd : undefined,
+            handleMoveUp,
+            handleMoveDown,
+
+            // Dialog state
+            createDialogOpen,
+            setCreateDialogOpen,
+            editDialogOpen,
+            setEditDialogOpen,
+            deleteDialogOpen,
+            setDeleteDialogOpen,
+            selectedNode,
+            parentForNew,
+            deleteNodeName,
+
+            // Dialog handlers
+            openCreateDialog,
+            openEditDialog,
+            openDeleteDialog,
+            onCreateSubmit,
+            onEditSubmit,
+            onDeleteConfirm,
 
             // Mutation states
             isCreating: createMutation.isPending,
             isUpdating: updateMutation.isPending,
             isDeleting: deleteMutation.isPending,
             isReordering: reorderMutation.isPending,
-            isSettingVisibility: visibilityMutation.isPending,
+
+            // Actions
+            refetch: () => refetch(),
       };
 }
