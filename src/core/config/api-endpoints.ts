@@ -133,6 +133,7 @@ export const API_ENDPOINTS = {
   AUDIT: {
     LOGS: "/Audit/logs",
     LOG_DETAIL: (id: string) => `/Audit/logs/${id}`,
+    EXPORT: "/Audit/export",
   },
 
   // Legacy menu endpoints

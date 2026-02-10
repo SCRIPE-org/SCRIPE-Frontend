@@ -3421,6 +3421,23 @@ export const en = {
       reconnecting: "Reconnecting...",
       disconnected: "Offline",
     },
+    export: {
+      button: "Export",
+      title: "Export Audit Logs",
+      description: "Download audit logs in your preferred format",
+      from: "From",
+      to: "To",
+      appliedFilters: "Applied Filters",
+      generating: "Generating...",
+      download: "Download",
+      success: "Export downloaded successfully!",
+      failed: "Export failed. Please try again.",
+      formats: {
+        csv: "Simple data, opens in any editor",
+        excel: "Multi-sheet workbook with analytics",
+        pdf: "Professional report with charts",
+      },
+    },
   },
 
   // ===== SECURITY DASHBOARD =====

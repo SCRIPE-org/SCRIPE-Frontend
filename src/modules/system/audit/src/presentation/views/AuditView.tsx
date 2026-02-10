@@ -4,18 +4,21 @@
  * Audit View
  *
  * Pure UI composition — audit log listing with filters, table, detail dialog,
- * and real-time SignalR connection status.
- * SOLID: ~70 lines, zero state, zero logic — all delegated to ViewModels.
+ * real-time SignalR connection status, and professional export dialog.
+ * SOLID: ~80 lines, zero logic — all delegated to ViewModels.
  */
+import { useState } from 'react';
 import { useAuditViewModel } from '../viewmodels/useAuditViewModel';
 import { useAuditRealtime } from '../viewmodels/useAuditRealtime';
 import { useI18n } from '@core/providers/i18n-provider';
 import { AuditFilterPanel } from '../components/AuditFilterPanel';
 import { AuditLogTable } from '../components/AuditLogTable';
 import { AuditDetailDialog } from '../components/AuditDetailDialog';
+import { AuditExportDialog } from '../components/AuditExportDialog';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@core/ui/card';
 import { Badge } from '@core/ui/badge';
-import { FileText, Radio } from 'lucide-react';
+import { Button } from '@core/ui/button';
+import { FileText, Radio, Download } from 'lucide-react';
 
 const connectionColors = {
       connected: 'bg-emerald-500',
@@ -28,6 +31,7 @@ export function AuditView() {
       const vm = useAuditViewModel();
       const realtime = useAuditRealtime();
       const { t } = useI18n();
+      const [exportOpen, setExportOpen] = useState(false);
 
       return (
             <div className="space-y-6">
@@ -41,17 +45,30 @@ export function AuditView() {
                               <p className="text-muted-foreground">{t('audit.subtitle')}</p>
                         </div>
 
-                        {/* Real-time connection status */}
-                        <Badge variant="outline" className="flex items-center gap-1.5 text-xs">
-                              <span className={`h-2 w-2 rounded-full ${connectionColors[realtime.connectionState]}`} />
-                              <Radio className="h-3 w-3" aria-hidden="true" />
-                              {t(`audit.realtime.${realtime.connectionState}`)}
-                              {realtime.realtimeEventCount > 0 && (
-                                    <span className="ml-1 tabular-nums text-muted-foreground">
-                                          ({realtime.realtimeEventCount})
-                                    </span>
-                              )}
-                        </Badge>
+                        <div className="flex items-center gap-2">
+                              {/* Export Button */}
+                              <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => setExportOpen(true)}
+                                    className="flex items-center gap-1.5"
+                              >
+                                    <Download className="h-4 w-4" />
+                                    {t('audit.export.button')}
+                              </Button>
+
+                              {/* Real-time connection status */}
+                              <Badge variant="outline" className="flex items-center gap-1.5 text-xs">
+                                    <span className={`h-2 w-2 rounded-full ${connectionColors[realtime.connectionState]}`} />
+                                    <Radio className="h-3 w-3" aria-hidden="true" />
+                                    {t(`audit.realtime.${realtime.connectionState}`)}
+                                    {realtime.realtimeEventCount > 0 && (
+                                          <span className="ml-1 tabular-nums text-muted-foreground">
+                                                ({realtime.realtimeEventCount})
+                                          </span>
+                                    )}
+                              </Badge>
+                        </div>
                   </div>
 
                   {/* Filters */}
@@ -100,6 +117,13 @@ export function AuditView() {
                         onClose={vm.closeDetail}
                         data={vm.detail.data}
                         isLoading={vm.detail.isLoading}
+                  />
+
+                  {/* Export Dialog */}
+                  <AuditExportDialog
+                        open={exportOpen}
+                        onClose={() => setExportOpen(false)}
+                        filters={vm.filters}
                   />
             </div>
       );
