@@ -3207,6 +3207,7 @@ export const ar = {
       allEvents: "جميع الأحداث",
       username: "اسم المستخدم",
       entityType: "نوع الكيان",
+      allEntities: "جميع الكيانات",
       status: "الحالة",
       allStatus: "الكل",
       success: "ناجح",

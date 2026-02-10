@@ -3,7 +3,7 @@
 /**
  * Audit Filter Panel
  *
- * Filter bar for audit log table — event type, date range, user, entity, status.
+ * Filter bar for audit log table — grouped event types, date range, user, entity type, status.
  */
 import { memo } from 'react';
 import { useI18n } from '@core/providers/i18n-provider';
@@ -12,7 +12,9 @@ import { Button } from '@core/ui/button';
 import {
       Select,
       SelectContent,
+      SelectGroup,
       SelectItem,
+      SelectLabel,
       SelectTrigger,
       SelectValue,
 } from '@core/ui/select';
@@ -26,14 +28,50 @@ interface Props {
       hasActiveFilters: boolean;
 }
 
-const EVENT_TYPES = [
-      'Create', 'Update', 'Delete',
-      'LoginSuccess', 'LoginFailed',
-      'RoleAssigned', 'RoleUnassigned',
-      'PermissionGranted', 'PermissionRevoked',
-      'AccountLocked', 'AccessDenied',
-      'PasswordReset', 'SessionRevoked',
-];
+// ─── Grouped Event Type Categories ───────────────────────────
+const EVENT_TYPE_GROUPS = [
+      {
+            label: 'CRUD',
+            items: ['Create', 'Update', 'Delete', 'Request'],
+      },
+      {
+            label: 'Authentication',
+            items: ['LoginSuccess', 'LoginFailed', 'Logout', 'TokenRefreshed', 'ExternalLogin'],
+      },
+      {
+            label: 'Security',
+            items: [
+                  'AccessDenied', 'AccountLocked', 'AccountUnlocked',
+                  'PasswordChanged', 'PasswordReset', 'SessionRevoked',
+                  'TwoFactorEnabled', 'TwoFactorDisabled', 'TwoFactorVerified',
+            ],
+      },
+      {
+            label: 'Role & Permission',
+            items: ['RoleAssigned', 'RoleUnassigned', 'PermissionGranted', 'PermissionRevoked'],
+      },
+      {
+            label: 'Admin Actions',
+            items: [
+                  'AdminStatusChanged', 'BulkAdminDelete', 'BulkAdminStatusUpdate',
+                  'Impersonation', 'AdminTransfer',
+            ],
+      },
+      {
+            label: 'Tenant',
+            items: ['TenantPermissionsUpdated', 'BulkTenantCascadeDelete'],
+      },
+      {
+            label: 'System',
+            items: ['Error', 'DataExport'],
+      },
+] as const;
+
+// ─── Entity Types ────────────────────────────────────────────
+const ENTITY_TYPES = [
+      'Admin', 'Role', 'Tenant', 'Menu',
+      'User', 'Permission', 'Auth', 'AuditLog',
+] as const;
 
 export const AuditFilterPanel = memo(function AuditFilterPanel({ filters, updateFilter, resetFilters, hasActiveFilters }: Props) {
       const { t } = useI18n();
@@ -78,18 +116,25 @@ export const AuditFilterPanel = memo(function AuditFilterPanel({ filters, update
                               <span>{t('common.filter')}</span>
                         </div>
 
-                        {/* Event Type */}
+                        {/* Event Type — Grouped */}
                         <Select
                               value={filters.eventType || 'all'}
                               onValueChange={(v) => updateFilter('eventType', v === 'all' ? '' : v)}
                         >
-                              <SelectTrigger className="w-44">
+                              <SelectTrigger className="w-52">
                                     <SelectValue placeholder={t('audit.filters.eventType')} />
                               </SelectTrigger>
-                              <SelectContent>
+                              <SelectContent className="max-h-72">
                                     <SelectItem value="all">{t('audit.filters.allEvents')}</SelectItem>
-                                    {EVENT_TYPES.map((type) => (
-                                          <SelectItem key={type} value={type}>{type}</SelectItem>
+                                    {EVENT_TYPE_GROUPS.map((group) => (
+                                          <SelectGroup key={group.label}>
+                                                <SelectLabel className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                                                      {group.label}
+                                                </SelectLabel>
+                                                {group.items.map((type) => (
+                                                      <SelectItem key={type} value={type}>{type}</SelectItem>
+                                                ))}
+                                          </SelectGroup>
                                     ))}
                               </SelectContent>
                         </Select>
@@ -102,13 +147,21 @@ export const AuditFilterPanel = memo(function AuditFilterPanel({ filters, update
                               className="w-40"
                         />
 
-                        {/* Entity Type */}
-                        <Input
-                              placeholder={t('audit.filters.entityType')}
-                              value={filters.entityType}
-                              onChange={(e) => updateFilter('entityType', e.target.value)}
-                              className="w-40"
-                        />
+                        {/* Entity Type — Dropdown */}
+                        <Select
+                              value={filters.entityType || 'all'}
+                              onValueChange={(v) => updateFilter('entityType', v === 'all' ? '' : v)}
+                        >
+                              <SelectTrigger className="w-40">
+                                    <SelectValue placeholder={t('audit.filters.entityType')} />
+                              </SelectTrigger>
+                              <SelectContent>
+                                    <SelectItem value="all">{t('audit.filters.allEntities')}</SelectItem>
+                                    {ENTITY_TYPES.map((type) => (
+                                          <SelectItem key={type} value={type}>{type}</SelectItem>
+                                    ))}
+                              </SelectContent>
+                        </Select>
 
                         {/* Status Filter */}
                         <Select

@@ -3376,6 +3376,7 @@ export const en = {
       allEvents: "All Events",
       username: "Username",
       entityType: "Entity Type",
+      allEntities: "All Entities",
       status: "Status",
       allStatus: "All",
       success: "Success",
