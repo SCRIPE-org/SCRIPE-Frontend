@@ -44,7 +44,7 @@ function DetailRow({ icon: Icon, label, value }: { icon: typeof Clock; label: st
                   <Icon className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" aria-hidden="true" />
                   <div className="min-w-0">
                         <p className="text-xs text-muted-foreground">{label}</p>
-                        <p className="text-sm font-medium break-all">{value}</p>
+                        <div className="text-sm font-medium break-all">{value}</div>
                   </div>
             </div>
       );

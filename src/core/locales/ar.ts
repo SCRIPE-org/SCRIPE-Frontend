@@ -3287,6 +3287,7 @@ export const ar = {
 
   // ===== تحليلات المستأجرين =====
   tenantAnalytics: {
+
     title: "تحليلات المستأجرين",
     subtitle: "مقاييس الأداء والمقارنة بين المستأجرين",
     metrics: {
@@ -3297,6 +3298,7 @@ export const ar = {
       totalUsers: "إجمالي المستخدمين",
       avgUsersPerTenant: "المتوسط/مستأجر",
     },
+
     hierarchy: {
       title: "هيكل المستأجرين",
       description: "هيكل الشجرة التنظيمية",
@@ -3308,6 +3310,8 @@ export const ar = {
     comparison: {
       title: "مقارنة تسجيلات الدخول",
       description: "نشاط تسجيل الدخول عبر أفضل المستأجرين",
+      successful: "ناجح",
+      failed: "فشل",
     },
     inactive: {
       title: "المستأجرون غير النشطين",

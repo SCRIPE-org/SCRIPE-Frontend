@@ -15,11 +15,11 @@ import {
       Pie,
       Cell,
       ResponsiveContainer,
-      Tooltip,
       Legend,
 } from 'recharts';
 import { PieChart as PieChartIcon } from 'lucide-react';
 import type { EventTypeCount } from '@modules/system/dashboard/src/domain/entities/DashboardEntities';
+import { ChartTooltip } from '@core/ui/chart';
 
 const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16'];
 
@@ -75,12 +75,19 @@ export const AdminDistributionPie = memo(function AdminDistributionPie({ data, i
                                                       <Cell key={entry.name} fill={entry.fill} className="outline-none" />
                                                 ))}
                                           </Pie>
-                                          <Tooltip
+                                          <ChartTooltip
                                                 contentStyle={{
                                                       backgroundColor: 'hsl(var(--popover))',
+                                                      color: 'hsl(var(--popover-foreground))',
                                                       border: '1px solid hsl(var(--border))',
                                                       borderRadius: '8px',
                                                       fontSize: '12px',
+                                                }}
+                                                itemStyle={{
+                                                      color: 'hsl(var(--popover-foreground))',
+                                                }}
+                                                labelStyle={{
+                                                      color: 'hsl(var(--popover-foreground))',
                                                 }}
                                                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                                 formatter={(value: any) => {

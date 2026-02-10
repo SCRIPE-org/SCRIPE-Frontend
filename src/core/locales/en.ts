@@ -3479,6 +3479,8 @@ export const en = {
     comparison: {
       title: "Login Comparison",
       description: "Login activity across top tenants",
+      successful: "Successful",
+      failed: "Failed",
     },
     inactive: {
       title: "Inactive Tenants",
@@ -3531,4 +3533,5 @@ export const en = {
       settings: 'Settings',
     },
   },
+
 };

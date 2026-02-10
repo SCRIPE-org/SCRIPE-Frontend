@@ -47,6 +47,13 @@
   --sidebar-border: 240 5.9% 90%;
   --sidebar-ring: 262 83% 58%;
 
+  /* Chart colors (used by Recharts via shadcn ChartContainer) */
+  --chart-1: 221 83% 53%;
+  --chart-2: 142 71% 45%;
+  --chart-3: 38 92% 50%;
+  --chart-4: 280 65% 60%;
+  --chart-5: 0 84% 60%;
+
   /* Shadow colors */
   --shadow-primary: 262 83% 58%;
   --shadow-secondary: 240 5% 64.9%;
@@ -275,6 +282,13 @@ html {
   --sidebar-accent-foreground: 0 0% 98%;
   --sidebar-border: 240 3.7% 15.9%;
   --sidebar-ring: 262 83% 58%;
+
+  /* Chart colors (dark mode — brighter/more saturated for visibility) */
+  --chart-1: 217 91% 60%;
+  --chart-2: 160 60% 45%;
+  --chart-3: 43 96% 56%;
+  --chart-4: 270 70% 65%;
+  --chart-5: 0 72% 51%;
 }
 
 /* ========================================
