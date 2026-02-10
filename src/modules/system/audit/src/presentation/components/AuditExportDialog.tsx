@@ -85,7 +85,7 @@ export function AuditExportDialog({ open, onClose, filters }: AuditExportDialogP
       if (filters.entityType) activeFilters.push(`${t('audit.filters.entityType')}: ${filters.entityType}`);
       if (filters.dateFrom) activeFilters.push(`${t('audit.export.from')}: ${filters.dateFrom}`);
       if (filters.dateTo) activeFilters.push(`${t('audit.export.to')}: ${filters.dateTo}`);
-      if (filters.isSuccess !== undefined) activeFilters.push(`${t('audit.filters.status')}: ${filters.isSuccess ? t('audit.filters.success') : t('audit.filters.failure')}`);
+      if (filters.isSuccess !== undefined) activeFilters.push(`${t('audit.filters.status')}: ${filters.isSuccess ? t('audit.filters.success') : t('audit.filters.failed')}`);
 
       return (
             <Dialog open={open} onOpenChange={handleOpenChange}>
