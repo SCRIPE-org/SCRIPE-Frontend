@@ -76,11 +76,11 @@ function JsonDiff({ label, value }: { label: string; value: string | null }) {
 }
 
 export function AuditDetailDialog({ open, onClose, data, isLoading }: Props) {
-      const { t } = useI18n();
+      const { t, direction } = useI18n();
 
       return (
-            <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
-                  <DialogContent className="max-w-2xl max-h-[85vh]">
+            <Dialog open={open} onOpenChange={(v) => !v && onClose()} >
+                  <DialogContent className="max-w-2xl max-h-[85vh]" >
                         <DialogHeader>
                               <DialogTitle className="flex items-center gap-2">
                                     {data?.eventType ?? t('audit.detail.title')}
@@ -102,7 +102,7 @@ export function AuditDetailDialog({ open, onClose, data, isLoading }: Props) {
                                     ))}
                               </div>
                         ) : data ? (
-                              <ScrollArea className="max-h-[60vh]">
+                              <ScrollArea className="max-h-[60vh]" dir={direction}>
                                     <div className="space-y-1 pr-4">
                                           {/* Core Details */}
                                           <DetailRow icon={Clock} label={t('audit.detail.timestamp')} value={new Date(data.timestamp).toLocaleString()} />
