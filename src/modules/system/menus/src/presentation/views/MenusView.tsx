@@ -29,7 +29,7 @@ import {
       DropdownMenuSeparator,
 } from "@core/ui/dropdown-menu";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
-import { PermissionGate } from "@core/providers/permission-provider";
+import { PermissionGate, usePermissions } from "@core/providers/permission-provider";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import type { MenuTreeNode } from "../../domain/entities/MenuItem";
 import type { CreateMenuItemRequest, UpdateMenuItemRequest } from "../../domain/entities/MenuItemRequests";
@@ -94,6 +94,7 @@ interface MenuTreeItemProps {
       onAddChild: (node: MenuTreeNode) => void;
       onMoveUp?: () => void;
       onMoveDown?: () => void;
+      canReorder?: boolean;
 }
 
 function MenuTreeItem({
@@ -105,6 +106,7 @@ function MenuTreeItem({
       onAddChild,
       onMoveUp,
       onMoveDown,
+      canReorder = false,
 }: MenuTreeItemProps) {
       const { t } = useI18n();
       const [expanded, setExpanded] = useState(true);
@@ -118,7 +120,7 @@ function MenuTreeItem({
             transform,
             transition,
             isDragging,
-      } = useSortable({ id: node.id });
+      } = useSortable({ id: node.id, disabled: !canReorder });
 
       const style = {
             transform: CSS.Transform.toString(transform),
@@ -137,11 +139,13 @@ function MenuTreeItem({
                         )}
                         style={{ marginLeft: depth * 24 }}
                   >
-                        <GripVertical
-                              className="h-4 w-4 text-muted-foreground cursor-grab opacity-0 group-hover:opacity-100 transition-opacity"
-                              {...attributes}
-                              {...listeners}
-                        />
+                        {canReorder && (
+                              <GripVertical
+                                    className="h-4 w-4 text-muted-foreground cursor-grab opacity-0 group-hover:opacity-100 transition-opacity"
+                                    {...attributes}
+                                    {...listeners}
+                              />
+                        )}
 
                         {hasChildren ? (
                               <button
@@ -193,12 +197,12 @@ function MenuTreeItem({
                         )}
 
                         <div className="ml-auto flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                              {onMoveUp && (
+                              {canReorder && onMoveUp && (
                                     <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onMoveUp}>
                                           <ArrowUp className="h-3.5 w-3.5" />
                                     </Button>
                               )}
-                              {onMoveDown && (
+                              {canReorder && onMoveDown && (
                                     <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onMoveDown}>
                                           <ArrowDown className="h-3.5 w-3.5" />
                                     </Button>
@@ -250,6 +254,7 @@ function MenuTreeItem({
                                                 onEdit={onEdit}
                                                 onDelete={onDelete}
                                                 onAddChild={onAddChild}
+                                                canReorder={canReorder}
                                                 onMoveUp={index > 0 ? () => onEdit(child) : undefined}
                                                 onMoveDown={index < arr.length - 1 ? () => onEdit(child) : undefined}
                                           />
@@ -455,6 +460,8 @@ function MenuFormDialog({
 
 export function MenusView() {
       const { t } = useI18n();
+      const { hasPermission } = usePermissions();
+      const canReorder = hasPermission(SYSTEM_PERMISSIONS.MENUS_UPDATE);
 
       // Dialog state
       const [createDialogOpen, setCreateDialogOpen] = useState(false);
@@ -691,7 +698,7 @@ export function MenusView() {
                                     <DndContext
                                           sensors={sensors}
                                           collisionDetection={closestCenter}
-                                          onDragEnd={handleDragEnd}
+                                          onDragEnd={canReorder ? handleDragEnd : undefined}
                                     >
                                           <SortableContext
                                                 items={sortableIds}
@@ -708,6 +715,7 @@ export function MenusView() {
                                                                         onEdit={handleOpenEdit}
                                                                         onDelete={handleOpenDelete}
                                                                         onAddChild={handleOpenCreate}
+                                                                        canReorder={canReorder}
                                                                         onMoveUp={index > 0 ? () => handleMoveUp(node.id) : undefined}
                                                                         onMoveDown={index < arr.length - 1 ? () => handleMoveDown(node.id) : undefined}
                                                                   />
