@@ -201,6 +201,7 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
                               onClick: (item: Admin) => vmInstance.openEditModal(item),
                               variant: "ghost" as const,
                               icon: <Pencil className="h-4 w-4" />,
+                              requiredPermission: SYSTEM_PERMISSIONS.ADMINS_UPDATE,
                         },
                         {
                               label: tFn("admin.impersonate") || "Impersonate",
