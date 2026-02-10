@@ -1,12 +1,12 @@
 /**
  * Menus View
  *
- * Main view component for menu management with tree editor
- * and bilingual create/edit forms.
+ * Main view component for menu management with tree editor,
+ * drag-drop reorder, and bilingual create/edit forms.
  */
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { useMenusViewModel } from "../viewmodels/useMenusViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
@@ -45,15 +45,44 @@ import {
       GripVertical,
       EyeOff,
       Eye,
-      ExternalLink,
-      Copy,
       ArrowUp,
       ArrowDown,
 } from "lucide-react";
 import { cn } from "@core/common/utils";
+import {
+      DndContext,
+      closestCenter,
+      KeyboardSensor,
+      PointerSensor,
+      useSensor,
+      useSensors,
+      type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+      SortableContext,
+      useSortable,
+      verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 /* -------------------------------------------------------------------------- */
-/*  Menu Tree Item Component                                                   */
+/*  Helper: Flatten tree into ordered IDs for SortableContext                    */
+/* -------------------------------------------------------------------------- */
+
+function flattenIds(nodes: MenuTreeNode[]): string[] {
+      const ids: string[] = [];
+      const sorted = [...nodes].sort((a, b) => a.order - b.order);
+      for (const node of sorted) {
+            ids.push(node.id);
+            if (node.children.length > 0) {
+                  ids.push(...flattenIds(node.children));
+            }
+      }
+      return ids;
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Menu Tree Item Component (Sortable)                                         */
 /* -------------------------------------------------------------------------- */
 
 interface MenuTreeItemProps {
@@ -82,16 +111,37 @@ function MenuTreeItem({
       const hasChildren = node.children.length > 0;
       const displayName = language === "ar" ? node.nameAr : node.nameEn;
 
+      const {
+            attributes,
+            listeners,
+            setNodeRef,
+            transform,
+            transition,
+            isDragging,
+      } = useSortable({ id: node.id });
+
+      const style = {
+            transform: CSS.Transform.toString(transform),
+            transition,
+            opacity: isDragging ? 0.5 : 1,
+            zIndex: isDragging ? 50 : undefined,
+      };
+
       return (
-            <div>
+            <div ref={setNodeRef} style={style}>
                   <div
                         className={cn(
                               "flex items-center gap-2 py-2.5 px-3 rounded-lg hover:bg-muted/50 group border-l-2 transition-all duration-150",
-                              node.isActive ? "border-l-primary/60" : "border-l-muted opacity-60"
+                              node.isActive ? "border-l-primary/60" : "border-l-muted opacity-60",
+                              isDragging && "shadow-lg ring-2 ring-primary/30 bg-card"
                         )}
                         style={{ marginLeft: depth * 24 }}
                   >
-                        <GripVertical className="h-4 w-4 text-muted-foreground cursor-grab opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <GripVertical
+                              className="h-4 w-4 text-muted-foreground cursor-grab opacity-0 group-hover:opacity-100 transition-opacity"
+                              {...attributes}
+                              {...listeners}
+                        />
 
                         {hasChildren ? (
                               <button
@@ -200,8 +250,8 @@ function MenuTreeItem({
                                                 onEdit={onEdit}
                                                 onDelete={onDelete}
                                                 onAddChild={onAddChild}
-                                                onMoveUp={index > 0 ? () => { } : undefined}
-                                                onMoveDown={index < arr.length - 1 ? () => { } : undefined}
+                                                onMoveUp={index > 0 ? () => onEdit(child) : undefined}
+                                                onMoveDown={index < arr.length - 1 ? () => onEdit(child) : undefined}
                                           />
                                     ))}
                         </div>
@@ -422,11 +472,115 @@ export function MenusView() {
             handleCreate,
             handleUpdate,
             handleDelete,
+            handleReorder,
             refetch,
             isCreating,
             isUpdating,
             isDeleting,
+            isReordering,
       } = useMenusViewModel();
+
+      // DnD sensors
+      const sensors = useSensors(
+            useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+            useSensor(KeyboardSensor)
+      );
+
+      // Flatten tree IDs for SortableContext
+      const sortableIds = useMemo(
+            () => (Array.isArray(menuTree) ? flattenIds(menuTree) : []),
+            [menuTree]
+      );
+
+      // ── Move helpers ──────────────────────────────────────────────────
+      const buildReorderPayload = useCallback(
+            (siblings: MenuTreeNode[], parentId?: string) => ({
+                  items: siblings.map((s, i) => ({
+                        id: s.id,
+                        order: i + 1,
+                        parentMenuItemId: parentId,
+                  })),
+            }),
+            []
+      );
+
+      const findSiblingsAndParent = useCallback(
+            (nodeId: string, nodes: MenuTreeNode[], parentId?: string): { siblings: MenuTreeNode[]; parentId?: string } | null => {
+                  const idx = nodes.findIndex((n) => n.id === nodeId);
+                  if (idx >= 0) return { siblings: nodes, parentId };
+                  for (const node of nodes) {
+                        if (node.children.length > 0) {
+                              const result = findSiblingsAndParent(nodeId, node.children, node.id);
+                              if (result) return result;
+                        }
+                  }
+                  return null;
+            },
+            []
+      );
+
+      const handleMoveUp = useCallback(
+            (nodeId: string) => {
+                  const result = findSiblingsAndParent(nodeId, menuTree);
+                  if (!result) return;
+                  const { siblings, parentId } = result;
+                  const sorted = [...siblings].sort((a, b) => a.order - b.order);
+                  const idx = sorted.findIndex((n) => n.id === nodeId);
+                  if (idx <= 0) return;
+                  // Swap with previous sibling
+                  [sorted[idx], sorted[idx - 1]] = [sorted[idx - 1], sorted[idx]];
+                  handleReorder(buildReorderPayload(sorted, parentId));
+            },
+            [menuTree, findSiblingsAndParent, handleReorder, buildReorderPayload]
+      );
+
+      const handleMoveDown = useCallback(
+            (nodeId: string) => {
+                  const result = findSiblingsAndParent(nodeId, menuTree);
+                  if (!result) return;
+                  const { siblings, parentId } = result;
+                  const sorted = [...siblings].sort((a, b) => a.order - b.order);
+                  const idx = sorted.findIndex((n) => n.id === nodeId);
+                  if (idx < 0 || idx >= sorted.length - 1) return;
+                  // Swap with next sibling
+                  [sorted[idx], sorted[idx + 1]] = [sorted[idx + 1], sorted[idx]];
+                  handleReorder(buildReorderPayload(sorted, parentId));
+            },
+            [menuTree, findSiblingsAndParent, handleReorder, buildReorderPayload]
+      );
+
+      // ── Drag end handler ──────────────────────────────────────────────
+      const handleDragEnd = useCallback(
+            (event: DragEndEvent) => {
+                  const { active, over } = event;
+                  if (!over || active.id === over.id) return;
+
+                  const activeId = String(active.id);
+                  const overId = String(over.id);
+
+                  // Find active item's siblings
+                  const activeResult = findSiblingsAndParent(activeId, menuTree);
+                  const overResult = findSiblingsAndParent(overId, menuTree);
+
+                  if (!activeResult || !overResult) return;
+
+                  // Only reorder within the same parent level
+                  if (activeResult.parentId !== overResult.parentId) return;
+
+                  const sorted = [...activeResult.siblings].sort((a, b) => a.order - b.order);
+                  const activeIdx = sorted.findIndex((n) => n.id === activeId);
+                  const overIdx = sorted.findIndex((n) => n.id === overId);
+
+                  if (activeIdx < 0 || overIdx < 0) return;
+
+                  // Move the item
+                  const [moved] = sorted.splice(activeIdx, 1);
+                  sorted.splice(overIdx, 0, moved);
+
+                  handleReorder(buildReorderPayload(sorted, activeResult.parentId));
+            },
+            [menuTree, findSiblingsAndParent, handleReorder, buildReorderPayload]
+      );
 
       // Handlers
       const handleOpenCreate = useCallback((parent?: MenuTreeNode) => {
@@ -472,6 +626,11 @@ export function MenusView() {
                         </div>
                         <div className="flex items-center gap-2">
                               <Badge variant="secondary">{totalItems} {t("menus.items")}</Badge>
+                              {isReordering && (
+                                    <Badge variant="outline" className="text-primary animate-pulse">
+                                          {t("menus.saving") ?? "Saving..."}
+                                    </Badge>
+                              )}
                               <Button variant="outline" size="icon" onClick={refetch} disabled={isLoading}>
                                     <RefreshCw className={cn("h-4 w-4", isLoading && "animate-spin")} />
                               </Button>
@@ -529,22 +688,33 @@ export function MenusView() {
                                     </div>
                               </CardHeader>
                               <CardContent>
-                                    <div className="space-y-0.5">
-                                          {Array.isArray(menuTree) && menuTree
-                                                .sort((a, b) => a.order - b.order)
-                                                .map((node, index, arr) => (
-                                                      <MenuTreeItem
-                                                            key={node.id}
-                                                            node={node}
-                                                            language={language}
-                                                            onEdit={handleOpenEdit}
-                                                            onDelete={handleOpenDelete}
-                                                            onAddChild={handleOpenCreate}
-                                                            onMoveUp={index > 0 ? () => { } : undefined}
-                                                            onMoveDown={index < arr.length - 1 ? () => { } : undefined}
-                                                      />
-                                                ))}
-                                    </div>
+                                    <DndContext
+                                          sensors={sensors}
+                                          collisionDetection={closestCenter}
+                                          onDragEnd={handleDragEnd}
+                                    >
+                                          <SortableContext
+                                                items={sortableIds}
+                                                strategy={verticalListSortingStrategy}
+                                          >
+                                                <div className="space-y-0.5">
+                                                      {Array.isArray(menuTree) && menuTree
+                                                            .sort((a, b) => a.order - b.order)
+                                                            .map((node, index, arr) => (
+                                                                  <MenuTreeItem
+                                                                        key={node.id}
+                                                                        node={node}
+                                                                        language={language}
+                                                                        onEdit={handleOpenEdit}
+                                                                        onDelete={handleOpenDelete}
+                                                                        onAddChild={handleOpenCreate}
+                                                                        onMoveUp={index > 0 ? () => handleMoveUp(node.id) : undefined}
+                                                                        onMoveDown={index < arr.length - 1 ? () => handleMoveDown(node.id) : undefined}
+                                                                  />
+                                                            ))}
+                                                </div>
+                                          </SortableContext>
+                                    </DndContext>
                               </CardContent>
                         </Card>
                   )}

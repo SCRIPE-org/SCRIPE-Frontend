@@ -8,7 +8,7 @@
  * and recent activity refresh automatically.
  */
 
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useRef } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useSignalR } from '@core/hooks/useSignalR';
 import { HUB_EVENTS, HUB_METHODS } from '@core/common/constants/signalr';
@@ -16,9 +16,14 @@ import { HUB_EVENTS, HUB_METHODS } from '@core/common/constants/signalr';
 export function useOverviewRealtime() {
       const queryClient = useQueryClient();
       const { connection, connectionState } = useSignalR();
+      const debounceRef = useRef(false);
 
       const handleAuditEvent = useCallback(() => {
+            // Debounce: max 1 invalidation per 5 seconds
+            if (debounceRef.current) return;
+            debounceRef.current = true;
             queryClient.invalidateQueries({ queryKey: ['overview'] });
+            setTimeout(() => { debounceRef.current = false; }, 5000);
       }, [queryClient]);
 
       useEffect(() => {
