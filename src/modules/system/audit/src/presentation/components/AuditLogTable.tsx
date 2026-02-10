@@ -46,7 +46,7 @@ export const AuditLogTable = memo(function AuditLogTable({
       onRowClick,
       onPageChange,
 }: Props) {
-      const { t } = useI18n();
+      const { t,language } = useI18n();
 
       const handleKeyDown = useCallback((e: React.KeyboardEvent, id: string) => {
             if (e.key === 'Enter' || e.key === ' ') {
@@ -162,7 +162,7 @@ export const AuditLogTable = memo(function AuditLogTable({
                                           onClick={() => onPageChange(data.pageNumber - 1)}
                                           aria-label={t('common.previous')}
                                     >
-                                          <ChevronLeft className="h-4 w-4" />
+                                          {language === 'ar' ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
                                     </Button>
                                     <Button
                                           variant="outline"
@@ -171,7 +171,7 @@ export const AuditLogTable = memo(function AuditLogTable({
                                           onClick={() => onPageChange(data.pageNumber + 1)}
                                           aria-label={t('common.next')}
                                     >
-                                          <ChevronRight className="h-4 w-4" />
+                                          {language === 'ar' ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
                                     </Button>
                               </div>
                         </div>

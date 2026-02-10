@@ -2811,6 +2811,8 @@ export const ar = {
 
   // Common
   common: {
+    page: "صفحة",
+    of: "من",
     stop: "ايقاف",
     exit: "خروج",
     selectAll: "اختر الكل",
