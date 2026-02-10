@@ -118,6 +118,9 @@ export const ar = {
     creating: "جاري الإنشاء...",
     saving: "جاري الحفظ...",
     deleting: "جاري الحذف...",
+    hasDescendants: "هذا المستأجر لديه مستأجرين فرعيين.",
+    cascadeDelete: "حذف جميع الفروع (سيتم أيضًا حذف المسؤولين والأدوار والمستخدمين)",
+    cascadeDeleteNotPermitted: "هذا المستأجر لديه فروع. ليس لديك صلاحية الحذف المتتالي.",
     // أوصاف الحوار
     createDescription: "إضافة مستأجر جذري جديد للنظام.",
     createChildDescription: "إضافة مستأجر فرعي جديد تحت",

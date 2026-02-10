@@ -4,6 +4,7 @@
  * Uses GenericTreeView for tenant hierarchy management.
  * Clicking "Enter Tenant" navigates to the full detail page.
  * Supports permission assignment during tenant creation via repository.
+ * Delete uses TenantDeleteDialog with cascade support.
  *
  * Clean Architecture: View calls ViewModel, ViewModel calls Repository
  *
@@ -11,8 +12,9 @@
  */
 "use client";
 
-import { useMemo, useCallback, useState, useEffect } from "react";
+import { useMemo, useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import { GenericTreeView } from "@core/crud/components/generic-tree-view";
 import { useTreeViewModel } from "@core/hooks/use-tree-view-model";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -20,16 +22,19 @@ import { useTenantContext } from "@core/providers/tenant-context-provider";
 import { usePermissions } from "@core/hooks/use-permissions";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { useAppStore } from "@core/store/useAppStore";
+import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { systemContainer } from "@modules/system/di";
 import { createTenantTreeService, createMyChildrenTreeService } from "../../data/services/TenantTreeService";
-import type { TenantTreeNode } from "../../domain/entities/Tenant";
+import { TenantDeleteDialog } from "../components/TenantDeleteDialog";
+import type { TenantTreeNode, Tenant } from "../../domain/entities/Tenant";
 import type {
       CreateTenantRequest,
       UpdateTenantRequest,
 } from "../../domain/entities/TenantRequests";
 import { Badge } from "@core/ui/badge";
-import { LogIn, Eye } from "lucide-react";
+import { LogIn, Eye, Trash2 } from "lucide-react";
 import type { FieldConfig, FieldOption } from "@core/ui/forms/generic-form";
+import { appLogger } from "@core/common/logger";
 
 // ============================================
 // TenantsView Component
@@ -37,10 +42,17 @@ import type { FieldConfig, FieldOption } from "@core/ui/forms/generic-form";
 
 export function TenantsView() {
       const router = useRouter();
+      const queryClient = useQueryClient();
       const { t, language } = useI18n();
       const { canEnterTenantWorld, enterTenantWorld } = useTenantContext();
       const { hasPermission } = usePermissions();
+      const { success: toastSuccess, error: toastError } = useEnhancedToast();
       const user = useAppStore((state) => state.user);
+
+      // Delete dialog state
+      const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+      const [tenantToDelete, setTenantToDelete] = useState<Tenant | null>(null);
+      const [isDeleting, setIsDeleting] = useState(false);
 
       // System admins (with 'super' or 'system' in adminTypeName) see full tree
       // Tenant admins see only their children
@@ -60,23 +72,16 @@ export function TenantsView() {
       );
 
       // Server search for permissions - needs parentId to filter by parent's permissions
-      // Returns a function factory that creates a search callback with the parent context
       const createPermissionSearch = useCallback(
             (parentId?: string) => async (query: string): Promise<FieldOption[]> => {
                   try {
-                        // Use tenantRepository.getCreationPermissions with search query
-                        // This leverages the server-side filtering we implemented
                         const permissions = await systemContainer.tenantRepository.getCreationPermissions(parentId, query);
-
-
                         return permissions.map((p) => {
-                              // Use stable code for deduplication (uniqueKey)
-                              // because ID changes between requests due to encryption/rotation
                               const stableCode = p.code || `${p.resource}.${p.action}`;
                               return {
-                                    value: p.id,          // ID is sent to backend (for decryption)
+                                    value: p.id,
                                     label: `${p.getLocalizedName(language)} (${stableCode})`,
-                                    uniqueKey: stableCode, // Code is used for deduplication
+                                    uniqueKey: stableCode,
                               };
                         });
                   } catch {
@@ -104,7 +109,6 @@ export function TenantsView() {
                         },
                   ];
 
-                  // Only show code field for new tenants
                   if (!editing) {
                         fields.push({
                               name: "code",
@@ -123,7 +127,6 @@ export function TenantsView() {
                         required: false,
                   });
 
-                  // Show active toggle only when editing
                   if (editing) {
                         fields.push({
                               name: "isActive",
@@ -134,7 +137,6 @@ export function TenantsView() {
                         });
                   }
 
-                  // Show parent tenant info when creating under a parent (read-only display)
                   if (!editing && parentForNew) {
                         fields.push({
                               name: "parentDisplay",
@@ -147,7 +149,6 @@ export function TenantsView() {
                         });
                   }
 
-                  // Show permissions multi-select only when creating
                   if (!editing) {
                         fields.push({
                               name: "availablePermissionIds",
@@ -157,7 +158,6 @@ export function TenantsView() {
                               searchPlaceholder: t("permission.searchPlaceholder") || "Search permissions...",
                               required: false,
                               searchType: "server",
-                              // Pass parentId to filter permissions by parent tenant's available permissions
                               onServerSearch: createPermissionSearch(parentForNew?.id),
                               debounceMs: 300,
                               allowClear: true,
@@ -201,8 +201,6 @@ export function TenantsView() {
                   }) as UpdateTenantRequest,
       });
 
-
-
       // Handler for entering tenant world
       const handleEnterTenantWorld = useCallback(
             (node: TenantTreeNode) => {
@@ -211,60 +209,126 @@ export function TenantsView() {
                         name: node.name,
                         parentId: node.parentId,
                   });
-                  // Redirect to admin dashboard (or could stay here with filtered view)
                   router.push("/");
             },
             [enterTenantWorld, router]
       );
 
+      // Custom delete handler using TenantDeleteDialog
+      const handleOpenDeleteDialog = useCallback(
+            (node: TenantTreeNode) => {
+                  setTenantToDelete({
+                        id: node.id,
+                        name: node.name,
+                  } as Tenant);
+                  setDeleteDialogOpen(true);
+            },
+            []
+      );
+
+      const handleDeleteConfirm = useCallback(
+            async (cascadeChildren: boolean) => {
+                  if (!tenantToDelete) return;
+                  setIsDeleting(true);
+                  try {
+                        await systemContainer.tenantRepository.delete(tenantToDelete.id, { cascadeChildren });
+                        queryClient.invalidateQueries({ queryKey: ["tenants"] });
+                        toastSuccess({
+                              title: t("tenant.deleteSuccess") || "Tenant deleted successfully",
+                        });
+                        setDeleteDialogOpen(false);
+                        setTenantToDelete(null);
+                  } catch (err) {
+                        appLogger.error("Failed to delete tenant:", err);
+                        toastError({
+                              title: t("common.error") || "Error",
+                              description: err instanceof Error ? err.message : "Failed to delete tenant.",
+                        });
+                  } finally {
+                        setIsDeleting(false);
+                  }
+            },
+            [tenantToDelete, queryClient, t, toastSuccess, toastError]
+      );
+
       // Custom actions for tenant nodes
       const customActions = useMemo(() => {
-            // Check guard permission for drill-down functionality
             const hasDrillDown = hasPermission(SYSTEM_PERMISSIONS.TENANTS_DRILL_DOWN);
             const canViewDetails = hasPermission(SYSTEM_PERMISSIONS.TENANTS_VIEW_DETAILS);
-            return (node: TenantTreeNode) => [
-                  {
-                        label: t("common.view") || "View",
-                        onClick: () => router.push(`/tenants/${node.id}`),
-                        icon: <Eye className="h-4 w-4" />,
-                        show: () => canViewDetails,
-                        // View action uses tenants.view (handled at page level)
-                  },
+            const canDelete = hasPermission(SYSTEM_PERMISSIONS.TENANTS_DELETE);
+            return (node: TenantTreeNode) => {
+                  const actions: Array<{
+                        label: string;
+                        onClick: () => void;
+                        icon?: React.ReactNode;
+                        show?: () => boolean;
+                        variant?: "default" | "destructive";
+                  }> = [
+                              {
+                                    label: t("common.view") || "View",
+                                    onClick: () => router.push(`/tenants/${node.id}`),
+                                    icon: <Eye className="h-4 w-4" />,
+                                    show: () => canViewDetails,
+                              },
+                              {
+                                    label: t("tenant.enterTenantWorld"),
+                                    onClick: () => handleEnterTenantWorld(node),
+                                    icon: <LogIn className="h-4 w-4" />,
+                                    show: () => canEnterTenantWorld && hasDrillDown,
+                              },
+                        ];
 
-                  {
-                        label: t("tenant.enterTenantWorld"),
-                        onClick: () => handleEnterTenantWorld(node),
-                        icon: <LogIn className="h-4 w-4" />,
-                        // Drill-down requires tenants.drill_down guard permission
-                        show: () => canEnterTenantWorld && hasDrillDown,
-                  },
-            ];
-      }, [canEnterTenantWorld, hasPermission, t, handleEnterTenantWorld, router]);
+                  // Add delete action (uses TenantDeleteDialog instead of built-in)
+                  if (canDelete) {
+                        actions.push({
+                              label: t("common.delete") || "Delete",
+                              onClick: () => handleOpenDeleteDialog(node),
+                              icon: <Trash2 className="h-4 w-4" />,
+                              show: () => true,
+                              variant: "destructive",
+                        });
+                  }
+
+                  return actions;
+            };
+      }, [canEnterTenantWorld, hasPermission, t, handleEnterTenantWorld, handleOpenDeleteDialog, router]);
 
       return (
-            <GenericTreeView
-                  viewModel={viewModel}
-                  title={t("tenant.title")}
-                  subtitle={t("tenant.description")}
-                  getId={(node) => node.id}
-                  getLabel={(node) => (
-                        <>
-                              {node.name}
-                              <span className="text-muted-foreground text-xs ms-2">
-                                    ({node.code})
-                              </span>
-                              <Badge
-                                    variant={node.isActive ? "success" : "secondary"}
-                                    className="ms-2"
-                              >
-                                    {node.isActive ? t("tenant.active") : t("tenant.inactive")}
-                              </Badge>
-                        </>
-                  )}
-                  getChildren={(node) => node.children}
-                  renderFormFields={getFormFields}
-                  resource="tenants"
-                  customActions={customActions}
-            />
+            <>
+                  <GenericTreeView
+                        viewModel={viewModel}
+                        title={t("tenant.title")}
+                        subtitle={t("tenant.description")}
+                        getId={(node) => node.id}
+                        getLabel={(node) => (
+                              <>
+                                    {node.name}
+                                    <span className="text-muted-foreground text-xs ms-2">
+                                          ({node.code})
+                                    </span>
+                                    <Badge
+                                          variant={node.isActive ? "success" : "secondary"}
+                                          className="ms-2"
+                                    >
+                                          {node.isActive ? t("tenant.active") : t("tenant.inactive")}
+                                    </Badge>
+                              </>
+                        )}
+                        getChildren={(node) => node.children}
+                        renderFormFields={getFormFields}
+                        resource="tenants"
+                        permissions={{ canDelete: false }}
+                        customActions={customActions}
+                  />
+
+                  {/* Custom delete dialog with cascade support */}
+                  <TenantDeleteDialog
+                        open={deleteDialogOpen}
+                        onOpenChange={setDeleteDialogOpen}
+                        tenant={tenantToDelete}
+                        onConfirm={handleDeleteConfirm}
+                        isDeleting={isDeleting}
+                  />
+            </>
       );
 }

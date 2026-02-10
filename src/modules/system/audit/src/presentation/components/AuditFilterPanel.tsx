@@ -36,7 +36,7 @@ const EVENT_TYPE_GROUPS = [
       },
       {
             label: 'Authentication',
-            items: ['LoginSuccess', 'LoginFailed', 'Logout', 'TokenRefreshed', 'ExternalLogin'],
+            items: ['Login', 'Logout', 'TokenRefreshed', 'ExternalLogin'],
       },
       {
             label: 'Security',

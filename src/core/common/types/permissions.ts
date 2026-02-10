@@ -163,6 +163,7 @@ export const SYSTEM_PERMISSIONS = {
       TENANTS_CREATE: "tenants.create",
       TENANTS_UPDATE: "tenants.update",
       TENANTS_DELETE: "tenants.delete",
+      TENANTS_CASCADE_DELETE: "tenants.cascade_delete",
       TENANTS_MANAGE_QUOTAS: "tenants.manage_quotas",
       TENANTS_MANAGE_SETTINGS: "tenants.manage_settings",
 

@@ -1,16 +1,19 @@
-/**
+      /**
  * Tenant Delete Dialog
  *
  * Uses ConfirmationDialog with cascade warning for descendants.
+ * Cascade checkbox is gated behind tenants.cascade_delete permission.
  */
 "use client";
 
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
+import { usePermissions } from "@core/providers/permission-provider";
+import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
 import { Checkbox } from "@core/ui/checkbox";
-import { Loader2 } from "lucide-react";
+import { Loader2, ShieldAlert } from "lucide-react";
 import { systemContainer } from "@modules/system/di";
 import type { Tenant } from "../../domain/entities/Tenant";
 
@@ -30,7 +33,10 @@ export function TenantDeleteDialog({
       isDeleting,
 }: TenantDeleteDialogProps) {
       const { t } = useI18n();
+      const { hasPermission } = usePermissions();
       const [cascadeChildren, setCascadeChildren] = useState(false);
+
+      const canCascadeDelete = hasPermission(SYSTEM_PERMISSIONS.TENANTS_CASCADE_DELETE);
 
       // Reset cascade checkbox when dialog opens
       useEffect(() => {
@@ -51,6 +57,9 @@ export function TenantDeleteDialog({
 
       const hasDescendants = descendantCount > 0;
 
+      // Disable confirm if has descendants and user hasn't checked cascade (or lacks permission)
+      const isConfirmDisabled = hasDescendants && (!canCascadeDelete || !cascadeChildren);
+
       const handleConfirm = async () => {
             await onConfirm(cascadeChildren);
             onOpenChange(false);
@@ -70,35 +79,47 @@ export function TenantDeleteDialog({
                   cancelText={t("common.cancel") || "Cancel"}
                   onConfirm={handleConfirm}
                   isLoading={isDeleting || isLoading}
-                  disableConfirm={hasDescendants && !cascadeChildren}
+                  disableConfirm={isConfirmDisabled}
             >
                   {isLoading ? (
                         <div className="flex items-center justify-center py-4">
                               <Loader2 className="h-6 w-6 animate-spin" />
                         </div>
                   ) : hasDescendants ? (
-                        <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-4 dark:border-yellow-900 dark:bg-yellow-950">
-                              <p className="text-sm font-medium text-yellow-800 dark:text-yellow-200">
-                                    {t("tenant.hasDescendants") ||
-                                          `This tenant has ${descendantCount} descendant(s).`}
-                              </p>
-                              <div className="mt-3 flex items-center space-x-2">
-                                    <Checkbox
-                                          id="cascade"
-                                          checked={cascadeChildren}
-                                          onCheckedChange={(checked) =>
-                                                setCascadeChildren(checked === true)
-                                          }
-                                    />
-                                    <label
-                                          htmlFor="cascade"
-                                          className="text-sm text-yellow-700 dark:text-yellow-300"
-                                    >
-                                          {t("tenant.cascadeDelete") ||
-                                                "Delete all descendants (admins and roles will also be deleted)"}
-                                    </label>
+                        canCascadeDelete ? (
+                              <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-4 dark:border-yellow-900 dark:bg-yellow-950">
+                                    <p className="text-sm font-medium text-yellow-800 dark:text-yellow-200">
+                                          {t("tenant.hasDescendants") ||
+                                                `This tenant has ${descendantCount} descendant(s).`}
+                                    </p>
+                                    <div className="mt-3 flex items-center space-x-2">
+                                          <Checkbox
+                                                id="cascade"
+                                                checked={cascadeChildren}
+                                                onCheckedChange={(checked) =>
+                                                      setCascadeChildren(checked === true)
+                                                }
+                                          />
+                                          <label
+                                                htmlFor="cascade"
+                                                className="text-sm text-yellow-700 dark:text-yellow-300"
+                                          >
+                                                {t("tenant.cascadeDelete") ||
+                                                      "Delete all descendants (admins and roles will also be deleted)"}
+                                          </label>
+                                    </div>
                               </div>
-                        </div>
+                        ) : (
+                              <div className="rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-900 dark:bg-red-950">
+                                    <div className="flex items-center gap-2">
+                                          <ShieldAlert className="h-5 w-5 text-red-600 dark:text-red-400" />
+                                          <p className="text-sm font-medium text-red-800 dark:text-red-200">
+                                                {t("tenant.cascadeDeleteNotPermitted") ||
+                                                      `This tenant has ${descendantCount} descendant(s). You do not have permission to cascade delete.`}
+                                          </p>
+                                    </div>
+                              </div>
+                        )
                   ) : (
                         <p className="text-sm text-muted-foreground">
                               {t("common.deleteWarning") || "This action cannot be undone."}
