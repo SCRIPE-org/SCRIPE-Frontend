@@ -267,12 +267,17 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
       // ============ Role Search for Create Form ============
       const handleRoleSearch = useCallback(async (query: string): Promise<FieldOption[]> => {
             try {
-                  // Search roles - pass tenantId as a param if available
+                  // For role search, always use the most specific tenant context:
+                  // 1. Explicit propTenantId (from tenant detail page)
+                  // 2. Context tenantId (from drill-down)
+                  // 3. undefined (system-level roles)
+                  const roleSearchTenantId = propTenantId ?? contextTenantId ?? undefined;
+
                   const result = await roleRepository.getAll({
                         search: query,
                         page: 1,
                         pageSize: 20,
-                        tenantId: tenantId, // Will be undefined if not provided
+                        tenantId: roleSearchTenantId,
                         strict: true, // Force strict filtering (Global context -> Global roles only)
                   });
 
@@ -283,7 +288,7 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
             } catch {
                   return [];
             }
-      }, [roleRepository, tenantId, language]);
+      }, [roleRepository, propTenantId, contextTenantId, language]);
 
       // ============ Config Base (Fields, Actions, Initial Values) ============
       const getConfigBase = useCallback((): Partial<CrudConfig<Admin>> => ({

@@ -36,6 +36,7 @@ import {
 } from "lucide-react";
 import { systemContainer } from "@modules/system/di";
 import type { Tenant } from "../../domain/entities/Tenant";
+import { TenantDeleteDialog } from "./TenantDeleteDialog";
 import { cn } from "@core/common/utils";
 import { appLogger } from "@/core/common/logger";
 
@@ -103,10 +104,10 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
       };
 
       // Handle delete
-      const handleDelete = async () => {
+      const handleDelete = async (cascadeChildren: boolean) => {
             try {
                   setIsDeleting(true);
-                  await systemContainer.tenantRepository.delete(tenant.id);
+                  await systemContainer.tenantRepository.delete(tenant.id, { cascadeChildren });
                   // Navigate away after delete
                   window.location.href = "/tenants";
             } catch (error) {
@@ -326,29 +327,13 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
                   </Dialog>
 
                   {/* Delete Confirmation Dialog */}
-                  <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
-                        <DialogContent dir={direction}>
-                              <DialogHeader>
-                                    <DialogTitle>{t("tenant.deleteTenant")}</DialogTitle>
-                                    <DialogDescription>
-                                          {t("tenant.deleteConfirmation", { name: tenant.name })}
-                                    </DialogDescription>
-                              </DialogHeader>
-                              <DialogFooter className={cn(isRtl && "flex-row-reverse sm:flex-row-reverse")}>
-                                    <Button variant="outline" onClick={() => setDeleteOpen(false)}>
-                                          {t("common.cancel")}
-                                    </Button>
-                                    <Button
-                                          variant="destructive"
-                                          onClick={handleDelete}
-                                          disabled={isDeleting}
-                                    >
-                                          {isDeleting && <Loader2 className="h-4 w-4 me-2 animate-spin" />}
-                                          {t("common.delete")}
-                                    </Button>
-                              </DialogFooter>
-                        </DialogContent>
-                  </Dialog>
+                  <TenantDeleteDialog
+                        open={deleteOpen}
+                        onOpenChange={setDeleteOpen}
+                        tenant={tenant}
+                        onConfirm={handleDelete}
+                        isDeleting={isDeleting}
+                  />
 
                   {/* Status Change Confirmation Dialog */}
                   <Dialog open={statusConfirmOpen} onOpenChange={setStatusConfirmOpen}>

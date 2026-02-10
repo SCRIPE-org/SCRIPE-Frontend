@@ -2860,7 +2860,7 @@ export const ar = {
     unknown: "غير معروف",
     user: "مستخدم",
     confirmDelete: "تأكيد الحذف",
-    deleteConfirmation: "هل أنت متأكد من حذف {name}؟",
+    deleteConfirmation: "هل أنت متأكد من حذف ؟",
     deleteWarning: "لا يمكن التراجع عن هذا الإجراء.",
     deleting: "جاري الحذف...",
     pageNotFound: "الصفحة غير موجودة",
