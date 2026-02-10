@@ -3555,4 +3555,32 @@ export const en = {
     },
   },
 
+  // Recycle Bin
+  recycleBin: {
+    title: "Recycle Bin",
+    description: "View and restore recently deleted items before permanent removal",
+    tabs: {
+      tenants: "Tenants",
+      admins: "Admins",
+      users: "Users",
+      roles: "Roles",
+    },
+    columns: {
+      name: "Name",
+      email: "Email",
+      tenant: "Tenant",
+      deletedAt: "Deleted At",
+      daysRemaining: "Days Remaining",
+    },
+    restore: "Restore",
+    restoreConfirm: "Are you sure you want to restore this item?",
+    restoreConfirmTitle: "Restore Item",
+    restoreSuccess: "Item restored successfully",
+    restoreError: "Failed to restore item",
+    noItems: "No deleted items found",
+    daysLeft: "{{days}} days left",
+    permanent: "Permanent soon",
+    loading: "Loading deleted items...",
+  },
+
 };

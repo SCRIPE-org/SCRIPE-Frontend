@@ -200,6 +200,10 @@ export const SYSTEM_PERMISSIONS = {
       // Tenant Settings (for My Tenant page)
       TENANT_SETTINGS_VIEW: "tenant_settings.view",
       TENANT_SETTINGS_UPDATE: "tenant_settings.update",
+
+      // Recycle Bin
+      RECYCLE_BIN_VIEW: "recycle_bin.view",
+      RECYCLE_BIN_RESTORE: "recycle_bin.restore",
 } as const;
 
 /**
@@ -227,4 +231,7 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
 
       // Tenant settings
       "/settings/tenant": [SYSTEM_PERMISSIONS.TENANT_SETTINGS_VIEW],
+
+      // Recycle Bin
+      "/recycle-bin": [SYSTEM_PERMISSIONS.RECYCLE_BIN_VIEW],
 };

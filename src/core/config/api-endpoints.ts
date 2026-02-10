@@ -136,6 +136,12 @@ export const API_ENDPOINTS = {
     EXPORT: "/Audit/export",
   },
 
+  // ===== RECYCLE BIN =====
+  RECYCLE_BIN: {
+    LIST: "/recycle-bin",
+    RESTORE: (entityType: string, id: string) => `/recycle-bin/${entityType}/${id}/restore`,
+  },
+
   // Legacy menu endpoints
   GET_MENU_ITEMS: "/Menus/my",
 };

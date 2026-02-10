@@ -3388,5 +3388,32 @@ export const ar = {
     },
   },
 
+  // Recycle Bin
+  recycleBin: {
+    title: "سلة المحذوفات",
+    description: "عرض واستعادة العناصر المحذوفة مؤخراً قبل الحذف النهائي",
+    tabs: {
+      tenants: "المستأجرون",
+      admins: "المشرفون",
+      users: "المستخدمون",
+      roles: "الأدوار",
+    },
+    columns: {
+      name: "الاسم",
+      email: "البريد الإلكتروني",
+      tenant: "المستأجر",
+      deletedAt: "تاريخ الحذف",
+      daysRemaining: "الأيام المتبقية",
+    },
+    restore: "استعادة",
+    restoreConfirm: "هل أنت متأكد من استعادة هذا العنصر؟",
+    restoreConfirmTitle: "استعادة العنصر",
+    restoreSuccess: "تم استعادة العنصر بنجاح",
+    restoreError: "فشل في استعادة العنصر",
+    noItems: "لا توجد عناصر محذوفة",
+    daysLeft: "{{days}} يوم متبقي",
+    permanent: "سيحذف قريباً",
+    loading: "جاري تحميل العناصر المحذوفة...",
+  },
 
 };

@@ -17,6 +17,7 @@ import { RoleService } from "./roles/src/data/services/RoleService";
 import { TenantService } from "./tenants/src/data/services/TenantService";
 import { TenantSettingsService } from "./tenant-settings/src/data/services/TenantSettingsService";
 import { DashboardService } from "./dashboard/src/data/services/DashboardService";
+import { RecycleBinService } from "./recycle-bin/src/data/services/RecycleBinService";
 
 // Repositories
 import { AdminRepository } from "./admin/src/data/repositories/AdminRepository";
@@ -26,6 +27,7 @@ import { TenantRepository } from "./tenants/src/data/repositories/TenantReposito
 import { MenuRepository } from "./menus/src/data/repositories/MenuRepository";
 import { TenantSettingsRepository } from "./tenant-settings/src/data/repositories/TenantSettingsRepository";
 import { DashboardRepository } from "./dashboard/src/data/repositories/DashboardRepository";
+import { RecycleBinRepository } from "./recycle-bin/src/data/repositories/RecycleBinRepository";
 
 // Interfaces - Repositories
 import type { IAdminRepository } from "./admin/src/domain/interfaces/IAdminRepository";
@@ -35,6 +37,8 @@ import type { ITenantRepository } from "./tenants/src/domain/interfaces/ITenantR
 import type { IMenuRepository } from "./menus/src/domain/interfaces/IMenuRepository";
 import type { ITenantSettingsRepository } from "./tenant-settings/src/domain/interfaces/ITenantSettingsRepository";
 import type { IDashboardRepository } from "./dashboard/src/domain/interfaces/IDashboardRepository";
+import type { IRecycleBinRepository } from "./recycle-bin/src/domain/interfaces/IRecycleBinRepository";
+import type { IRecycleBinService } from "./recycle-bin/src/domain/interfaces/IRecycleBinService";
 
 // Interfaces - Services (from domain/interfaces, NOT data/services)
 import type { IAdminService } from "./admin/src/domain/interfaces/IAdminService";
@@ -58,6 +62,8 @@ export interface SystemContainer {
       menuRepository: IMenuRepository;
       tenantSettingsRepository: ITenantSettingsRepository;
       dashboardRepository: IDashboardRepository;
+      recycleBinService: IRecycleBinService;
+      recycleBinRepository: IRecycleBinRepository;
 }
 
 let _container: SystemContainer | null = null;
@@ -75,6 +81,7 @@ export function getSystemContainer(): SystemContainer {
             const roleService = new RoleService(apiService);
             const tenantService = new TenantService(apiService);
             const tenantSettingsService = new TenantSettingsService(apiService);
+            const recycleBinService = new RecycleBinService(apiService);
 
             // Create Repositories (use Services)
             _container = {
@@ -92,6 +99,8 @@ export function getSystemContainer(): SystemContainer {
                   menuRepository: new MenuRepository(apiService), // TODO: Add MenuService
                   tenantSettingsRepository: new TenantSettingsRepository(tenantSettingsService),
                   dashboardRepository: new DashboardRepository(new DashboardService(apiService)),
+                  recycleBinService,
+                  recycleBinRepository: new RecycleBinRepository(recycleBinService),
             };
       }
 
@@ -136,5 +145,11 @@ export const systemContainer = {
       },
       get dashboardRepository() {
             return getSystemContainer().dashboardRepository;
+      },
+      get recycleBinService() {
+            return getSystemContainer().recycleBinService;
+      },
+      get recycleBinRepository() {
+            return getSystemContainer().recycleBinRepository;
       },
 };
