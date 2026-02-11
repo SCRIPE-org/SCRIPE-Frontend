@@ -191,7 +191,7 @@ export class Admin {
 
       /** Guardian: Whether any guardian protection is active */
       get hasGuardianProtection(): boolean {
-            return this.isProtected || this.isLastSuperAdminInTenant || this.isSuperAdmin;
+            return this.isProtected || this.isLastSuperAdminInTenant;
       }
 
       /**
