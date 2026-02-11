@@ -3583,4 +3583,43 @@ export const en = {
     loading: "Loading deleted items...",
   },
 
+  // ===== EXPORT (Shared) =====
+  export: {
+    button: "Export Report",
+    title: "Export Report",
+    description: "Download a report for the selected time period",
+    interval: {
+      label: "Time Period",
+      daily: "Today",
+      weekly: "Last 7 Days",
+      monthly: "Last 30 Days",
+      yearly: "Last Year",
+      custom: "Custom Range",
+      from: "Start Date",
+      to: "End Date",
+    },
+    generating: "Generating report...",
+    download: "Download",
+    success: "Report downloaded successfully!",
+    failed: "Export failed. Please try again.",
+    formats: {
+      csv: "Simple data, opens in any editor",
+      excel: "Multi-sheet workbook with analytics",
+      pdf: "Professional report with charts",
+    },
+    // Page-specific titles
+    overview: {
+      title: "Export Overview Report",
+      description: "KPI summary and recent changes",
+    },
+    analytics: {
+      title: "Export Analytics Report",
+      description: "Tenant metrics, admin distribution, and login trends",
+    },
+    security: {
+      title: "Export Security Report",
+      description: "Threat summary, failed logins, and blocked IPs",
+    },
+  },
+
 };

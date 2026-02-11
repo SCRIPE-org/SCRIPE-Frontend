@@ -8,6 +8,7 @@
 import { memo } from 'react';
 import { useI18n } from '@core/providers/i18n-provider';
 import { Input } from '@core/ui/input';
+import { DatePicker } from '@core/ui/date-picker';
 import { Button } from '@core/ui/button';
 import {
       Select,
@@ -90,21 +91,19 @@ export const AuditFilterPanel = memo(function AuditFilterPanel({ filters, update
                               />
                         </div>
                         <div className="flex gap-2">
-                              <Input
-                                    type="date"
+                              <DatePicker
+                                    id="audit-date-from"
                                     placeholder={t('audit.filters.dateFrom')}
                                     value={filters.dateFrom}
-                                    onChange={(e) => updateFilter('dateFrom', e.target.value)}
-                                    className="w-36"
-                                    aria-label={t('audit.filters.dateFrom')}
+                                    onChange={(v) => updateFilter('dateFrom', v)}
+                                    className="w-44"
                               />
-                              <Input
-                                    type="date"
+                              <DatePicker
+                                    id="audit-date-to"
                                     placeholder={t('audit.filters.dateTo')}
                                     value={filters.dateTo}
-                                    onChange={(e) => updateFilter('dateTo', e.target.value)}
-                                    className="w-36"
-                                    aria-label={t('audit.filters.dateTo')}
+                                    onChange={(v) => updateFilter('dateTo', v)}
+                                    className="w-44"
                               />
                         </div>
                   </div>

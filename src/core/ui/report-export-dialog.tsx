@@ -1,27 +1,29 @@
 'use client';
 
 /**
- * AuditExportDialog
+ * ReportExportDialog — Reusable export dialog for dashboard pages.
  *
- * Professional export modal with interval selection (daily/weekly/monthly/yearly/custom),
- * format selection (CSV, Excel, PDF), filter summary, and download trigger.
+ * Combines interval selection (daily/weekly/monthly/yearly/custom)
+ * with format selection (CSV, Excel, PDF) and download trigger.
  *
- * SOLID: Pure UI — delegates all logic to useExportAudit hook.
+ * Used by: DashboardView, TenantAnalyticsView, SecurityDashboardView.
  */
 import { useState } from 'react';
 import { useI18n } from '@core/providers/i18n-provider';
-import { useExportAudit, type ExportFormat } from '../viewmodels/useExportAudit';
-import type { AuditFilterState } from '../viewmodels/useAuditViewModel';
+import { useExportReport, type ExportFormat } from '@core/hooks/use-export-report';
 import { ExportIntervalSelect, type IntervalDates } from '@core/ui/export-interval-select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@core/ui/dialog';
 import { Button } from '@core/ui/button';
-import { Badge } from '@core/ui/badge';
 import { FileSpreadsheet, FileText, FileDown, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
 
-interface AuditExportDialogProps {
+interface ReportExportDialogProps {
       open: boolean;
       onClose: () => void;
-      filters: AuditFilterState;
+      /** API endpoint path for the export (e.g., '/Dashboard/export') */
+      endpoint: string;
+      /** Translation key prefix for title/description (e.g., 'export.overview') */
+      titleKey: string;
+      descriptionKey: string;
 }
 
 interface FormatOption {
@@ -52,9 +54,15 @@ const FORMAT_OPTIONS: FormatOption[] = [
       },
 ];
 
-export function AuditExportDialog({ open, onClose, filters }: AuditExportDialogProps) {
+export function ReportExportDialog({
+      open,
+      onClose,
+      endpoint,
+      titleKey,
+      descriptionKey,
+}: ReportExportDialogProps) {
       const { t } = useI18n();
-      const { exportAudit, isExporting, error } = useExportAudit();
+      const { exportReport, isExporting, error } = useExportReport();
       const [selectedFormat, setSelectedFormat] = useState<ExportFormat>('excel');
       const [success, setSuccess] = useState(false);
       const [intervalDates, setIntervalDates] = useState<IntervalDates>({ dateFrom: '', dateTo: '' });
@@ -62,13 +70,12 @@ export function AuditExportDialog({ open, onClose, filters }: AuditExportDialogP
       const handleExport = async () => {
             setSuccess(false);
             try {
-                  // Merge interval dates into filters (interval overrides filter dates)
-                  const mergedFilters: AuditFilterState = {
-                        ...filters,
-                        dateFrom: intervalDates.dateFrom || filters.dateFrom,
-                        dateTo: intervalDates.dateTo || filters.dateTo,
-                  };
-                  await exportAudit({ format: selectedFormat, filters: mergedFilters });
+                  await exportReport({
+                        endpoint,
+                        format: selectedFormat,
+                        dateFrom: intervalDates.dateFrom || undefined,
+                        dateTo: intervalDates.dateTo || undefined,
+                  });
                   setSuccess(true);
                   setTimeout(() => {
                         setSuccess(false);
@@ -86,23 +93,16 @@ export function AuditExportDialog({ open, onClose, filters }: AuditExportDialogP
             }
       };
 
-      // Active filter summary (non-date filters)
-      const activeFilters: string[] = [];
-      if (filters.eventType) activeFilters.push(`${t('audit.filters.eventType')}: ${filters.eventType}`);
-      if (filters.username) activeFilters.push(`${t('audit.filters.username')}: ${filters.username}`);
-      if (filters.entityType) activeFilters.push(`${t('audit.filters.entityType')}: ${filters.entityType}`);
-      if (filters.isSuccess !== undefined) activeFilters.push(`${t('audit.filters.status')}: ${filters.isSuccess ? t('audit.filters.success') : t('audit.filters.failed')}`);
-
       return (
             <Dialog open={open} onOpenChange={handleOpenChange}>
                   <DialogContent className="sm:max-w-md">
                         <DialogHeader>
                               <DialogTitle className="flex items-center gap-2">
                                     <FileDown className="h-5 w-5" />
-                                    {t('audit.export.title')}
+                                    {t(titleKey)}
                               </DialogTitle>
                               <DialogDescription>
-                                    {t('audit.export.description')}
+                                    {t(descriptionKey)}
                               </DialogDescription>
                         </DialogHeader>
 
@@ -130,27 +130,11 @@ export function AuditExportDialog({ open, onClose, filters }: AuditExportDialogP
                                           <span className={opt.color}>{opt.icon}</span>
                                           <span className="text-sm font-semibold uppercase">{opt.value === 'excel' ? 'XLSX' : opt.value.toUpperCase()}</span>
                                           <span className="text-[10px] text-muted-foreground text-center leading-tight">
-                                                {t(`audit.export.formats.${opt.value}`)}
+                                                {t(`export.formats.${opt.value}`)}
                                           </span>
                                     </button>
                               ))}
                         </div>
-
-                        {/* Active Filters Summary */}
-                        {activeFilters.length > 0 && (
-                              <div className="rounded-md bg-muted/50 p-3 space-y-1.5">
-                                    <p className="text-xs font-medium text-muted-foreground">
-                                          {t('audit.export.appliedFilters')}
-                                    </p>
-                                    <div className="flex flex-wrap gap-1.5">
-                                          {activeFilters.map((f, i) => (
-                                                <Badge key={i} variant="secondary" className="text-[10px]">
-                                                      {f}
-                                                </Badge>
-                                          ))}
-                                    </div>
-                              </div>
-                        )}
 
                         {/* Error */}
                         {error && (
@@ -164,7 +148,7 @@ export function AuditExportDialog({ open, onClose, filters }: AuditExportDialogP
                         {success && (
                               <div className="flex items-center gap-2 rounded-md bg-emerald-500/10 p-3 text-sm text-emerald-600">
                                     <CheckCircle className="h-4 w-4 shrink-0" />
-                                    {t('audit.export.success')}
+                                    {t('export.success')}
                               </div>
                         )}
 
@@ -176,12 +160,12 @@ export function AuditExportDialog({ open, onClose, filters }: AuditExportDialogP
                                     {isExporting ? (
                                           <>
                                                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                                {t('audit.export.generating')}
+                                                {t('export.generating')}
                                           </>
                                     ) : (
                                           <>
                                                 <FileDown className="mr-2 h-4 w-4" />
-                                                {t('audit.export.download')}
+                                                {t('export.download')}
                                           </>
                                     )}
                               </Button>

@@ -127,6 +127,9 @@ export const API_ENDPOINTS = {
     EVENT_DISTRIBUTION: "/Dashboard/event-distribution",
     SECURITY_EVENTS: "/Dashboard/security-events",
     TOP_BLOCKED_IPS: "/Dashboard/top-blocked-ips",
+    EXPORT_OVERVIEW: "/Dashboard/export/overview",
+    EXPORT_ANALYTICS: "/Dashboard/export/analytics",
+    EXPORT_SECURITY: "/Dashboard/export/security",
   },
 
   // ===== AUDIT =====

@@ -10,6 +10,7 @@
  * Route-level guard: PAGE_PERMISSIONS["/dashboard"] = [DASHBOARD_VIEW]
  * Section-level guard: Security sections require SECURITY_VIEW
  */
+import { useState } from 'react';
 import { useDashboardViewModel } from '../viewmodels/useDashboardViewModel';
 import { useDashboardRealtime } from '../viewmodels/useDashboardRealtime';
 import { useI18n } from '@core/providers/i18n-provider';
@@ -21,8 +22,11 @@ import { EventDistributionChart } from '../components/EventDistributionChart';
 import { RecentChangesSection } from '../components/RecentChangesSection';
 import { SecurityEventsSection } from '../components/SecurityEventsSection';
 import { BlockedIPsSection } from '../components/BlockedIPsSection';
+import { ReportExportDialog } from '@core/ui/report-export-dialog';
+import { API_ENDPOINTS } from '@core/config/api-endpoints';
 import { Badge } from '@core/ui/badge';
-import { Radio } from 'lucide-react';
+import { Button } from '@core/ui/button';
+import { Radio, FileDown } from 'lucide-react';
 
 const connectionColors = {
       connected: 'bg-emerald-500',
@@ -36,6 +40,7 @@ export function DashboardView() {
       const vm = useDashboardViewModel(hasSecurityPerm);
       const { connectionState } = useDashboardRealtime();
       const { t } = useI18n();
+      const [exportOpen, setExportOpen] = useState(false);
 
       return (
             <div className="space-y-6">
@@ -49,11 +54,22 @@ export function DashboardView() {
                                     {t('dashboard.subtitle')}
                               </p>
                         </div>
-                        <Badge variant="outline" className="flex items-center gap-1.5 text-xs">
-                              <span className={`h-2 w-2 rounded-full ${connectionColors[connectionState]}`} />
-                              <Radio className="h-3 w-3" aria-hidden="true" />
-                              {t(`audit.realtime.${connectionState}`)}
-                        </Badge>
+                        <div className="flex items-center gap-2">
+                              <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => setExportOpen(true)}
+                                    className="gap-1.5"
+                              >
+                                    <FileDown className="h-4 w-4" />
+                                    {t('export.button')}
+                              </Button>
+                              <Badge variant="outline" className="flex items-center gap-1.5 text-xs">
+                                    <span className={`h-2 w-2 rounded-full ${connectionColors[connectionState]}`} />
+                                    <Radio className="h-3 w-3" aria-hidden="true" />
+                                    {t(`audit.realtime.${connectionState}`)}
+                              </Badge>
+                        </div>
                   </div>
 
                   {/* KPI Cards Row */}
@@ -111,6 +127,15 @@ export function DashboardView() {
                               onRetry={() => vm.topBlockedIPs.refetch()}
                         />
                   )}
+
+                  {/* Export Dialog */}
+                  <ReportExportDialog
+                        open={exportOpen}
+                        onClose={() => setExportOpen(false)}
+                        endpoint={API_ENDPOINTS.DASHBOARD.EXPORT_OVERVIEW}
+                        titleKey="export.overview.title"
+                        descriptionKey="export.overview.description"
+                  />
             </div>
       );
 }
