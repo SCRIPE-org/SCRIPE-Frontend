@@ -278,6 +278,9 @@ export const ar = {
 
   // Admin - المشرفون
   admin: {
+    protectionTransfered:"تم نقل الحماية",
+    transferProtection:"نقل الحماية إلى هذا المشرف",
+    transferProtectionDesc:"نقل الحماية من هذا المشرف إلى مستخدم آخر",
     targetRole: "الدور المستهدف",
     targetRolePlaceholder: "أدخل الدور المستهدف",
     selectRole: "اختر الدور",

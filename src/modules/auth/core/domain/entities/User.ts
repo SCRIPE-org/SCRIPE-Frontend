@@ -75,6 +75,7 @@ export class User {
       adminTypeName: this.adminTypeName,
       role: this.role,
       permissions: this.permissions,
+      isProtected: this.isProtected,
       ...updates,
     });
   }

@@ -273,6 +273,8 @@ export const en = {
 
   // Admin
   admin: {
+    transferProtection:"Transfer Protection",
+    transferProtectionDesc:"Transfer Protection",
     targetRole: "Target Role",
     targetRolePlaceholder: "Enter Target Role",
     selectRole: "Select Role",
