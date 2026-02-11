@@ -165,15 +165,12 @@ export function RecycleBinView() {
                   <Tabs value={vm.activeTab} onValueChange={(v) => vm.setActiveTab(v as TabType)}>
                         <TabsList className="grid w-full grid-cols-4">
                               {tabs.map((tab) => (
-                                    <TabsTrigger key={tab.key} value={tab.key} className="relative">
+                                    <TabsTrigger key={tab.key} value={tab.key} className="relative gap-1.5">
                                           {tab.label}
                                           {tab.count > 0 && (
-                                                <Badge
-                                                      variant="destructive"
-                                                      className="absolute -top-1 ltr:-right-1 rtl:-left-1 h-5 min-w-5 px-1 text-[10px]"
-                                                >
+                                                <span className="inline-flex items-center justify-center rounded-full bg-primary/15 text-primary font-semibold min-w-[20px] h-5 px-1.5 text-[11px] leading-none">
                                                       {tab.count}
-                                                </Badge>
+                                                </span>
                                           )}
                                     </TabsTrigger>
                               ))}
