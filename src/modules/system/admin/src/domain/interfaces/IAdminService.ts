@@ -170,4 +170,9 @@ export interface IAdminService {
        * Transfer admin to another tenant
        */
       transfer(id: string, json: TransferAdminJson): Promise<void>;
+
+      /**
+       * Transfer IsProtected flag from one admin to another
+       */
+      transferProtection(fromAdminId: string, targetAdminId: string): Promise<void>;
 }

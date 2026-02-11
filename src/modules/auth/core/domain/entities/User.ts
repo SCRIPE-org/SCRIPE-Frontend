@@ -15,6 +15,7 @@ export interface UserData {
   adminTypeName: string;
   role?: string;
   permissions?: string[];
+  isProtected?: boolean;
 }
 
 export class User {
@@ -26,6 +27,7 @@ export class User {
   public readonly adminTypeName: string;
   public readonly role?: string;
   public readonly permissions?: string[];
+  public readonly isProtected: boolean;
 
   constructor(data: UserData) {
     this.id = data.id;
@@ -36,6 +38,7 @@ export class User {
     this.adminTypeName = data.adminTypeName;
     this.role = data.role;
     this.permissions = data.permissions;
+    this.isProtected = data.isProtected ?? false;
   }
 
   /**

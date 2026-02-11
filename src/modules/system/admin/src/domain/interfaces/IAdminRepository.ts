@@ -6,6 +6,7 @@ import type {
       // ResetPasswordRequest,
       BulkAdminsFilterRequest,
       TransferAdminRequest,
+      TransferProtectionRequest,
 } from "../entities/AdminRequests";
 import type { PagedResult } from "@modules/system/core/domain/types";
 
@@ -149,4 +150,9 @@ export interface IAdminRepository {
        * Transfer admin to another tenant
        */
       transfer(id: string, request: TransferAdminRequest): Promise<void>;
+
+      /**
+       * Transfer IsProtected flag from one admin to another
+       */
+      transferProtection(fromAdminId: string, request: TransferProtectionRequest): Promise<void>;
 }

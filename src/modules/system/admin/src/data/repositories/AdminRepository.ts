@@ -21,6 +21,8 @@ import type {
       UpdateAdminRequest,
       AssignRoleRequest,
       BulkAdminsFilterRequest,
+      TransferAdminRequest,
+      TransferProtectionRequest,
 } from "../../domain/entities/AdminRequests";
 import type { PagedResult } from "@modules/system/core/domain/types";
 
@@ -189,10 +191,14 @@ export class AdminRepository implements IAdminRepository {
             return this.service.impersonate(id);
       }
 
-      async transfer(id: string, request: import("../../domain/entities/AdminRequests").TransferAdminRequest): Promise<void> {
+      async transfer(id: string, request: TransferAdminRequest): Promise<void> {
             return this.service.transfer(id, {
                   targetTenantId: request.targetTenantId,
                   targetRoleId: request.targetRoleId,
             });
+      }
+
+      async transferProtection(fromAdminId: string, request: TransferProtectionRequest): Promise<void> {
+            return this.service.transferProtection(fromAdminId, request.targetAdminId);
       }
 }

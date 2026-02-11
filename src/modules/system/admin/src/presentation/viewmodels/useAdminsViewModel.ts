@@ -211,6 +211,19 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
             },
       });
 
+      // Transfer Protection mutation
+      const transferProtectionMutation = useMutation({
+            mutationFn: ({ fromAdminId, targetAdminId }: { fromAdminId: string; targetAdminId: string }) =>
+                  adminRepository.transferProtection(fromAdminId, { targetAdminId }),
+            onSuccess: () => {
+                  queryClient.invalidateQueries({ queryKey: ["admins"] });
+                  success({ title: t("admin.protectionTransferred") || "Protection Transferred", description: t("admin.protectionTransferredDesc") || "Admin protection transferred successfully." });
+            },
+            onError: (err: Error) => {
+                  toastError({ title: t("common.error") || "Error", description: err.message });
+            },
+      });
+
       // Bulk Activate
       const bulkActivateMutation = useMutation({
             mutationFn: (ids: string[]) => adminRepository.bulkActivate(ids),
@@ -415,6 +428,7 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
             handleResetPassword,
             handleImpersonate: (id: string) => impersonateMutation.mutate(id),
             handleTransfer: (id: string, request: import("../../domain/entities/AdminRequests").TransferAdminRequest) => transferMutation.mutate({ id, request }),
+            handleTransferProtection: (fromAdminId: string, targetAdminId: string) => transferProtectionMutation.mutate({ fromAdminId, targetAdminId }),
             handleBulkActivate: (ids: string[]) => bulkActivateMutation.mutate(ids),
             handleBulkDeactivate: (ids: string[]) => bulkDeactivateMutation.mutate(ids),
             handleBulkDelete: (ids: string[]) => bulkDeleteMutation.mutate(ids),
@@ -425,6 +439,7 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
             isResettingPassword: resetPasswordMutation.isPending,
             isImpersonating: impersonateMutation.isPending,
             isTransferring: transferMutation.isPending,
+            isTransferringProtection: transferProtectionMutation.isPending,
             t,
       };
 }

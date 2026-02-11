@@ -196,4 +196,8 @@ export class AdminService implements IAdminService {
       async transfer(id: string, json: import("../models/AdminModel").TransferAdminJson): Promise<void> {
             await this.api.post(API_ENDPOINTS.ADMINS.TRANSFER(id), json);
       }
+
+      async transferProtection(fromAdminId: string, targetAdminId: string): Promise<void> {
+            await this.api.post(API_ENDPOINTS.ADMINS.TRANSFER_PROTECTION(fromAdminId), { targetAdminId });
+      }
 }

@@ -70,3 +70,10 @@ export interface TransferAdminRequest {
       targetTenantId: string | null; // Null for System (Super Admin)
       targetRoleId: string;
 }
+
+/**
+ * Transfer protection request
+ */
+export interface TransferProtectionRequest {
+      targetAdminId: string;
+}
