@@ -133,6 +133,9 @@ export function useRecycleBinViewModel() {
             isBulkRestoring: bulkRestoreMutation.isPending,
             handleBulkRestore,
 
+            // Refresh
+            refreshItems: () => queryClient.invalidateQueries({ queryKey: [...RECYCLE_BIN_QUERY_KEY] }),
+
             // i18n
             t,
       };
