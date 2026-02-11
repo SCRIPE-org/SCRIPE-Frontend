@@ -215,6 +215,8 @@ export function MenusView() {
                                                             onAddChild={vm.openCreateDialog}
                                                             onRename={overrideVm.openRenameDialog}
                                                             onHide={overrideVm.toggleHideItem}
+                                                            onRemoveOverride={overrideVm.deleteOverride}
+                                                            canRemoveOverride={overrideVm.canRemoveOverride}
                                                             onMoveUp={index > 0 ? () => vm.handleMoveUp(node.id) : undefined}
                                                             onMoveDown={index < arr.length - 1 ? () => vm.handleMoveDown(node.id) : undefined}
                                                             onMoveUpChild={vm.handleMoveUp}

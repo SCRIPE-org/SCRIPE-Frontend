@@ -435,7 +435,7 @@ export const ar = {
 
   // إدارة القوائم (قائمة التنقل)
   menus: {
-    dragToReorder:"اسحب لإعادة الترتيب",
+    dragToReorder: "اسحب لإعادة الترتيب",
     title: "إدارة القوائم",
     description: "إدارة عناصر قائمة التنقل والترتيب والرؤية.",
     items: "عنصر",
@@ -498,11 +498,14 @@ export const ar = {
     overrideRenameDesc: "تجاوز اسم العرض لعنصر القائمة هذا.",
     overrideScope: "نطاق التخصيص",
     scopeUser: "لي فقط",
+    scopePersonal: "شخصي",
     scopeTenant: "مستأجري",
+    scopeOrganization: "المؤسسة",
     scopeGlobal: "المستأجر والفروع",
     overrideSaved: "تم حفظ التخصيص بنجاح.",
     overrideDeleted: "تم إزالة التخصيص بنجاح.",
     hideItem: "إخفاء العنصر",
+    removeOverride: "إزالة التخصيص",
   },
 
   // Role - For table columns (singular context)

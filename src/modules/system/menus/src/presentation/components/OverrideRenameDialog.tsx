@@ -23,11 +23,10 @@ interface OverrideRenameDialogProps {
       isSaving: boolean;
 }
 
-/** Map enum values to labels */
+/** Map enum values to human-friendly labels */
 const SCOPE_LABEL_KEYS: Record<MenuOverrideScope, string> = {
-      [MenuOverrideScope.User]: 'menus.scopeUser',
-      [MenuOverrideScope.Tenant]: 'menus.scopeTenant',
-      [MenuOverrideScope.TenantAndChildren]: 'menus.scopeGlobal',
+      [MenuOverrideScope.User]: 'menus.scopePersonal',
+      [MenuOverrideScope.Tenant]: 'menus.scopeOrganization',
 };
 
 export function OverrideRenameDialog({

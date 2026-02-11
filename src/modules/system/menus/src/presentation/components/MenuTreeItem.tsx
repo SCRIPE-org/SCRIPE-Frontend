@@ -37,6 +37,7 @@ import {
       Type,
       FolderOpen,
       FileText,
+      Undo2,
 } from "lucide-react";
 import { cn } from "@core/common/utils";
 
@@ -69,6 +70,8 @@ export interface MenuTreeItemProps {
       onAddChild: (node: MenuTreeNode) => void;
       onRename?: (node: MenuTreeNode) => void;
       onHide?: (node: MenuTreeNode) => void;
+      onRemoveOverride?: (overrideId: string) => void;
+      canRemoveOverride?: (override: { scope: string }) => boolean;
       onMoveUp?: () => void;
       onMoveDown?: () => void;
       onMoveUpChild?: (childId: string) => void;
@@ -121,6 +124,8 @@ export function MenuTreeItem({
       onAddChild,
       onRename,
       onHide,
+      onRemoveOverride,
+      canRemoveOverride,
       onMoveUp,
       onMoveDown,
       onMoveUpChild,
@@ -344,11 +349,15 @@ export function MenuTreeItem({
                               const scopeColors: Record<string, string> = {
                                     User: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400',
                                     Tenant: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
-                                    TenantAndChildren: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
                               };
+                              const scopeLabels: Record<string, string> = {
+                                    User: t('menus.scopePersonal'),
+                                    Tenant: t('menus.scopeOrganization'),
+                              };
+                              const scopeLabel = scopeLabels[ov.scope] ?? ov.scope;
                               const label = ov.isHidden
-                                    ? `⊘ ${ov.scope}`
-                                    : `✎ ${ov.scope}`;
+                                    ? `⊘ ${scopeLabel}`
+                                    : `✎ ${scopeLabel}`;
                               return (
                                     <Badge
                                           variant="outline"
@@ -409,6 +418,19 @@ export function MenuTreeItem({
                                                       </DropdownMenuItem>
                                                 </PermissionGate>
                                           )}
+                                          {onRemoveOverride && overrideMap?.has(node.id) && (
+                                                (() => {
+                                                      const override = overrideMap.get(node.id)!;
+                                                      // Check scope-specific permission via ViewModel callback
+                                                      if (canRemoveOverride && !canRemoveOverride(override)) return null;
+                                                      return (
+                                                            <DropdownMenuItem onClick={() => onRemoveOverride(override.id)}>
+                                                                  <Undo2 className="mr-2 h-4 w-4" />
+                                                                  {t("menus.removeOverride")}
+                                                            </DropdownMenuItem>
+                                                      );
+                                                })()
+                                          )}
                                           <DropdownMenuSeparator />
                                           <PermissionGate permission={SYSTEM_PERMISSIONS.MENUS_DELETE}>
                                                 <DropdownMenuItem
@@ -450,6 +472,8 @@ export function MenuTreeItem({
                                                 onAddChild={onAddChild}
                                                 onRename={onRename}
                                                 onHide={onHide}
+                                                onRemoveOverride={onRemoveOverride}
+                                                canRemoveOverride={canRemoveOverride}
                                                 onMoveUp={index > 0 && onMoveUpChild ? () => onMoveUpChild(child.id) : undefined}
                                                 onMoveDown={index < arr.length - 1 && onMoveDownChild ? () => onMoveDownChild(child.id) : undefined}
                                                 onMoveUpChild={onMoveUpChild}

@@ -175,7 +175,6 @@ export const SYSTEM_PERMISSIONS = {
       MENUS_MANAGE_LINKS: "menus.manage_links",
       MENUS_CUSTOMIZE: "menus.customize",
       MENUS_CUSTOMIZE_TENANT: "menus.customize_tenant",
-      MENUS_CUSTOMIZE_GLOBAL: "menus.customize_global",
 
       // Audit
       AUDIT_VIEW: "audit.view",

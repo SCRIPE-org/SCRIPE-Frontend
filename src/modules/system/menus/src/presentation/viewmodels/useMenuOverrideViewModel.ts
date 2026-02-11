@@ -40,6 +40,7 @@ export interface UseMenuOverrideViewModelResult {
       saveRename: (nameEn: string, nameAr: string) => void;
       toggleHideItem: (node: MenuTreeNode) => void;
       deleteOverride: (overrideId: string) => void;
+      canRemoveOverride: (override: { scope: string }) => boolean;
       isSaving: boolean;
       isDeleting: boolean;
 }
@@ -54,27 +55,23 @@ export function useMenuOverrideViewModel(): UseMenuOverrideViewModelResult {
             s.roles?.some((r) => r.roleCode === 'SYSTEM_SUPER_ADMIN')
       );
 
-      // ── Available Scopes (permission-gated) ──────────────────────────────
+      // ── Available Scopes (permission-gated, 2-scope model) ─────────────
       const availableScopes = useMemo(() => {
-            // Super admins get all scopes
-            if (isSuperAdmin) {
-                  return [
-                        MenuOverrideScope.User,
-                        MenuOverrideScope.Tenant,
-                        MenuOverrideScope.TenantAndChildren,
-                  ];
-            }
-
             const scopes: MenuOverrideScope[] = [];
 
+            // Super admin (no tenant): only personal overrides
+            // To change menus for everyone, super admin edits the base menu directly
+            if (isSuperAdmin) {
+                  scopes.push(MenuOverrideScope.User);
+                  return scopes;
+            }
+
+            // Regular/tenant admin: check permissions
             if (hasPermission(permissions, SYSTEM_PERMISSIONS.MENUS_CUSTOMIZE)) {
                   scopes.push(MenuOverrideScope.User);
             }
             if (hasPermission(permissions, SYSTEM_PERMISSIONS.MENUS_CUSTOMIZE_TENANT)) {
                   scopes.push(MenuOverrideScope.Tenant);
-            }
-            if (hasPermission(permissions, SYSTEM_PERMISSIONS.MENUS_CUSTOMIZE_GLOBAL)) {
-                  scopes.push(MenuOverrideScope.TenantAndChildren);
             }
 
             return scopes;
@@ -116,6 +113,7 @@ export function useMenuOverrideViewModel(): UseMenuOverrideViewModelResult {
                   queryClient.invalidateQueries({ queryKey: ['menus'] });
                   success({ title: t('menus.overrideSaved') });
                   setOverrideDialog({ open: false, node: null, mode: null });
+                  setScope(availableScopes[0] ?? MenuOverrideScope.User);
             },
             onError: () => {
                   toastError({ title: t('common.error') });
@@ -141,7 +139,10 @@ export function useMenuOverrideViewModel(): UseMenuOverrideViewModelResult {
 
       const closeOverrideDialog = useCallback(() => {
             setOverrideDialog({ open: false, node: null, mode: null });
-      }, []);
+            // Reset scope to default (Personal) so stale Tenant selection
+            // doesn't carry over to next dialog open or hide action
+            setScope(availableScopes[0] ?? MenuOverrideScope.User);
+      }, [availableScopes]);
 
       // ── Save Rename (reads ref to avoid stale closure) ─────────────────
       const saveRename = useCallback(
@@ -157,15 +158,38 @@ export function useMenuOverrideViewModel(): UseMenuOverrideViewModelResult {
             [buildRequest, saveMutation]
       );
 
-      // ── Hide Item (always hides — backend strips hidden items from the response,
-      //    so this function is only ever called on visible items.
-      //    To UNHIDE: use deleteOverride to remove the hiding override.) ─────
+      // ── Permission check for removing overrides ─────────────────────────
+      //    Only show "Remove Override" button when the user has the right
+      //    permission for that override's scope. Prevents showing buttons
+      //    that would result in a 403 from the backend.
+      const canRemoveOverride = useCallback(
+            (override: { scope: string }) => {
+                  if (isSuperAdmin) return true;
+                  if (override.scope === 'User') {
+                        return hasPermission(permissions, SYSTEM_PERMISSIONS.MENUS_CUSTOMIZE);
+                  }
+                  if (override.scope === 'Tenant') {
+                        return hasPermission(permissions, SYSTEM_PERMISSIONS.MENUS_CUSTOMIZE_TENANT);
+                  }
+                  return false;
+            },
+            [permissions, isSuperAdmin]
+      );
+
+      // ── Hide Item ──────────────────────────────────────────────────────
+      //    SAFETY: Always uses User (personal) scope so a quick-hide never
+      //    accidentally affects the entire organization.
+      //    To UNHIDE: use deleteOverride to remove the hiding override.
       const toggleHideItem = useCallback(
             (node: MenuTreeNode) => {
-                  const request = buildRequest(node.id, { isHidden: true });
+                  const request: SaveMenuOverrideRequest = {
+                        menuItemId: node.id,
+                        scope: MenuOverrideScope.User,
+                        isHidden: true,
+                  };
                   saveMutation.mutate(request);
             },
-            [buildRequest, saveMutation]
+            [saveMutation]
       );
 
       // ── Delete Override ─────────────────────────────────────────────────
@@ -186,6 +210,7 @@ export function useMenuOverrideViewModel(): UseMenuOverrideViewModelResult {
             saveRename,
             toggleHideItem,
             deleteOverride,
+            canRemoveOverride,
             isSaving: saveMutation.isPending,
             isDeleting: deleteMutation.isPending,
       };

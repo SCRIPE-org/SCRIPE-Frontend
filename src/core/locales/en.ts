@@ -410,7 +410,7 @@ export const en = {
 
   // Menu Management (Admin — Navigation Menu Items)
   menus: {
-    dragToReorder:"Drag to reorder",
+    dragToReorder: "Drag to reorder",
     title: "Menu Management",
     description: "Manage navigation menu items, ordering, and visibility.",
     items: "items",
@@ -473,11 +473,14 @@ export const en = {
     overrideRenameDesc: "Override the display name for this menu item.",
     overrideScope: "Override Scope",
     scopeUser: "Only Me",
+    scopePersonal: "Personal",
     scopeTenant: "My Tenant",
+    scopeOrganization: "Organization",
     scopeGlobal: "Tenant & Children",
     overrideSaved: "Override saved successfully.",
     overrideDeleted: "Override removed successfully.",
     hideItem: "Hide Item",
+    removeOverride: "Remove Override",
   },
 
   // Role - For table columns (singular context)

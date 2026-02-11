@@ -61,11 +61,11 @@ export interface SetRoleMenuVisibilityRequest {
 
 /**
  * Menu override scope (matches backend MenuOverrideScope enum)
+ * Simplified 2-scope model: User (personal) and Tenant (organization).
  */
 export enum MenuOverrideScope {
       User = 'User',
       Tenant = 'Tenant',
-      TenantAndChildren = 'TenantAndChildren',
 }
 
 /**
@@ -83,10 +83,13 @@ export interface SaveMenuOverrideRequest {
 
 /**
  * Menu override response DTO (matches backend MenuOverrideDto)
+ * Includes tenantId/adminId for identifying override ownership.
  */
 export interface MenuOverrideDto {
       id: string;
       menuItemId: string;
+      tenantId?: string;
+      adminId?: string;
       scope: string;
       nameEnOverride?: string;
       nameArOverride?: string;
