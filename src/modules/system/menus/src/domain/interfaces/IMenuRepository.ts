@@ -12,16 +12,7 @@ import type {
       SaveMenuOverrideRequest,
 } from "../entities/MenuItemRequests";
 
-/** Page definition response from the API */
-export interface PageDefinitionResponse {
-      id: string;
-      href: string;
-      labelEn: string;
-      labelAr: string;
-      resource?: string;
-      icon?: string;
-      order: number;
-}
+
 
 /**
  * Menu repository interface
@@ -72,8 +63,4 @@ export interface IMenuRepository {
        */
       deleteOverride(id: string): Promise<void>;
 
-      /**
-       * Get all page definitions for the href picker
-       */
-      getPageDefinitions(): Promise<PageDefinitionResponse[]>;
 }

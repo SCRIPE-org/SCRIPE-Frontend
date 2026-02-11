@@ -5,7 +5,7 @@
  */
 import type { IApiService } from "@core/interfaces/api.interface";
 import { API_ENDPOINTS } from "@core/config/api-endpoints";
-import type { IMenuRepository, PageDefinitionResponse } from "../../domain/interfaces/IMenuRepository";
+import type { IMenuRepository } from "../../domain/interfaces/IMenuRepository";
 import { MenuItem, type MenuItemData, type MenuTreeNode } from "../../domain/entities/MenuItem";
 import type {
       CreateMenuItemRequest,
@@ -67,11 +67,7 @@ export class MenuRepository implements IMenuRepository {
             await this.api.delete(API_ENDPOINTS.MENUS.DELETE_OVERRIDE(id));
       }
 
-      async getPageDefinitions(): Promise<PageDefinitionResponse[]> {
-            return await this.api.get<PageDefinitionResponse[]>(
-                  API_ENDPOINTS.MENUS.PAGE_DEFINITIONS
-            );
-      }
+
 
       private findInTree(
             nodes: MenuTreeNode[],

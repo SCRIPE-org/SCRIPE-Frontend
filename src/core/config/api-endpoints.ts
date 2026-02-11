@@ -118,7 +118,6 @@ export const API_ENDPOINTS = {
     DELETE: (id: string) => `/Menus/${id}`,
     REORDER: "/Menus/reorder",
     ROLE_VISIBILITY: "/Menus/role-visibility",
-    PAGE_DEFINITIONS: "/Menus/page-definitions",
     OVERRIDES: "/Menus/overrides",
     DELETE_OVERRIDE: (id: string) => `/Menus/overrides/${id}`,
   },
