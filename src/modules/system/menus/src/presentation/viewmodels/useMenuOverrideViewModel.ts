@@ -157,13 +157,12 @@ export function useMenuOverrideViewModel(): UseMenuOverrideViewModelResult {
             [buildRequest, saveMutation]
       );
 
-      // ── Toggle Hide (true to hide, false to show via new override) ─────
+      // ── Hide Item (always hides — backend strips hidden items from the response,
+      //    so this function is only ever called on visible items.
+      //    To UNHIDE: use deleteOverride to remove the hiding override.) ─────
       const toggleHideItem = useCallback(
             (node: MenuTreeNode) => {
-                  // If the node is currently hidden (has an override hiding it), unhide it
-                  // Otherwise, hide it
-                  const isCurrentlyHidden = !!(node as MenuTreeNode & { isHidden?: boolean }).isHidden;
-                  const request = buildRequest(node.id, { isHidden: !isCurrentlyHidden });
+                  const request = buildRequest(node.id, { isHidden: true });
                   saveMutation.mutate(request);
             },
             [buildRequest, saveMutation]

@@ -214,16 +214,20 @@ export function MenuTreeItem({
                                                 </DropdownMenuItem>
                                           </PermissionGate>
                                           {onRename && (
-                                                <DropdownMenuItem onClick={() => onRename(node)}>
-                                                      <Type className="mr-2 h-4 w-4" />
-                                                      {t("menus.overrideRename")}
-                                                </DropdownMenuItem>
+                                                <PermissionGate permission={SYSTEM_PERMISSIONS.MENUS_CUSTOMIZE}>
+                                                      <DropdownMenuItem onClick={() => onRename(node)}>
+                                                            <Type className="mr-2 h-4 w-4" />
+                                                            {t("menus.overrideRename")}
+                                                      </DropdownMenuItem>
+                                                </PermissionGate>
                                           )}
                                           {onHide && (
-                                                <DropdownMenuItem onClick={() => onHide(node)}>
-                                                      <EyeOff className="mr-2 h-4 w-4" />
-                                                      {t("menus.hideItem")}
-                                                </DropdownMenuItem>
+                                                <PermissionGate permission={SYSTEM_PERMISSIONS.MENUS_CUSTOMIZE}>
+                                                      <DropdownMenuItem onClick={() => onHide(node)}>
+                                                            <EyeOff className="mr-2 h-4 w-4" />
+                                                            {t("menus.hideItem")}
+                                                      </DropdownMenuItem>
+                                                </PermissionGate>
                                           )}
                                           <DropdownMenuSeparator />
                                           <PermissionGate permission={SYSTEM_PERMISSIONS.MENUS_DELETE}>
