@@ -102,13 +102,13 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
                   },
                   create: async (data) => {
                         // Choose endpoint based on context:
-                        // - useMyTenant: createForMyTenant (tenantId from token)
-                        // - explicit tenantId: create with tenantId in body
-                        // - neither: create regular system admin
-                        if (useMyTenant) {
-                              await adminRepository.createForMyTenant(data);
-                        } else if (tenantId) {
+                        // Priority 1: explicit tenantId (from tenant detail page props) — always wins
+                        // Priority 2: useMyTenant: createForMyTenant (tenantId from JWT token)
+                        // Priority 3: neither — create regular system admin
+                        if (tenantId) {
                               await adminRepository.create({ ...data, tenantId });
+                        } else if (useMyTenant) {
+                              await adminRepository.createForMyTenant(data);
                         } else {
                               await adminRepository.create(data);
                         }

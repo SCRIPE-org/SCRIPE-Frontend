@@ -77,10 +77,14 @@ export function useRolesViewModel(params: UseRolesViewModelParams = {}) {
                         };
                   },
                   create: async (data) => {
-                        // Use appropriate endpoint based on mode
-                        const roleId = useMyTenant
-                              ? await roleRepository.createForMyTenant(data)
-                              : await roleRepository.create(tenantId ? { ...data, tenantId } : data as CreateRoleRequest);
+                        // Priority 1: explicit tenantId (from tenant detail page) — always wins
+                        // Priority 2: useMyTenant (tenant admin's own tenant from JWT)
+                        // Priority 3: neither — system-level role
+                        const roleId = tenantId
+                              ? await roleRepository.create({ ...data, tenantId })
+                              : useMyTenant
+                                    ? await roleRepository.createForMyTenant(data)
+                                    : await roleRepository.create(data as CreateRoleRequest);
                         success({
                               title: "Role Created",
                               description: "The role has been created successfully.",
