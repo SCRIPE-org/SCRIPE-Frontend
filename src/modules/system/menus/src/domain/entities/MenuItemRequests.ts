@@ -53,3 +53,25 @@ export interface SetRoleMenuVisibilityRequest {
       menuItemId: string;
       isVisible: boolean;
 }
+
+/**
+ * Menu override scope (matches backend MenuOverrideScope enum)
+ */
+export enum MenuOverrideScope {
+      User = 'User',
+      Tenant = 'Tenant',
+      TenantAndChildren = 'TenantAndChildren',
+}
+
+/**
+ * Save menu override request (matches backend SaveMenuOverrideRequest)
+ */
+export interface SaveMenuOverrideRequest {
+      menuItemId: string;
+      scope: MenuOverrideScope;
+      nameEnOverride?: string;
+      nameArOverride?: string;
+      orderOverride?: number;
+      parentMenuItemIdOverride?: string;
+      isHidden: boolean;
+}

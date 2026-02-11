@@ -32,6 +32,7 @@ import {
       EyeOff,
       ArrowUp,
       ArrowDown,
+      Type,
 } from "lucide-react";
 import { cn } from "@core/common/utils";
 import { useSortable } from "@dnd-kit/sortable";
@@ -65,8 +66,14 @@ export interface MenuTreeItemProps {
       onEdit: (node: MenuTreeNode) => void;
       onDelete: (node: MenuTreeNode) => void;
       onAddChild: (node: MenuTreeNode) => void;
+      onRename?: (node: MenuTreeNode) => void;
+      onHide?: (node: MenuTreeNode) => void;
       onMoveUp?: () => void;
       onMoveDown?: () => void;
+      /** Called to move a child node up within this node's children */
+      onMoveUpChild?: (childId: string) => void;
+      /** Called to move a child node down within this node's children */
+      onMoveDownChild?: (childId: string) => void;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -81,8 +88,12 @@ export function MenuTreeItem({
       onEdit,
       onDelete,
       onAddChild,
+      onRename,
+      onHide,
       onMoveUp,
       onMoveDown,
+      onMoveUpChild,
+      onMoveDownChild,
 }: MenuTreeItemProps) {
       const { t } = useI18n();
       const [expanded, setExpanded] = useState(true);
@@ -202,6 +213,18 @@ export function MenuTreeItem({
                                                       {t("common.edit")}
                                                 </DropdownMenuItem>
                                           </PermissionGate>
+                                          {onRename && (
+                                                <DropdownMenuItem onClick={() => onRename(node)}>
+                                                      <Type className="mr-2 h-4 w-4" />
+                                                      {t("menus.overrideRename")}
+                                                </DropdownMenuItem>
+                                          )}
+                                          {onHide && (
+                                                <DropdownMenuItem onClick={() => onHide(node)}>
+                                                      <EyeOff className="mr-2 h-4 w-4" />
+                                                      {t("menus.hideItem")}
+                                                </DropdownMenuItem>
+                                          )}
                                           <DropdownMenuSeparator />
                                           <PermissionGate permission={SYSTEM_PERMISSIONS.MENUS_DELETE}>
                                                 <DropdownMenuItem
@@ -231,8 +254,12 @@ export function MenuTreeItem({
                                                 onEdit={onEdit}
                                                 onDelete={onDelete}
                                                 onAddChild={onAddChild}
-                                                onMoveUp={index > 0 ? () => onEdit(child) : undefined}
-                                                onMoveDown={index < arr.length - 1 ? () => onEdit(child) : undefined}
+                                                onRename={onRename}
+                                                onHide={onHide}
+                                                onMoveUp={index > 0 && onMoveUpChild ? () => onMoveUpChild(child.id) : undefined}
+                                                onMoveDown={index < arr.length - 1 && onMoveDownChild ? () => onMoveDownChild(child.id) : undefined}
+                                                onMoveUpChild={onMoveUpChild}
+                                                onMoveDownChild={onMoveDownChild}
                                           />
                                     ))}
                         </div>

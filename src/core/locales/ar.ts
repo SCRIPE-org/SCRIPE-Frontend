@@ -486,6 +486,21 @@ export const ar = {
     visibilitySuccessDesc: "تم تحديث رؤية قائمة الدور.",
     visibilityFailed: "فشل تحديث الرؤية",
     visibilityFailedDesc: "فشل في تحديث رؤية قائمة الدور.",
+
+    // محدد الصفحات
+    selectPage: "اختر صفحة...",
+    customHref: "رابط مخصص...",
+    saving: "جاري الحفظ...",
+
+    // التخصيصات
+    overrideRename: "تخصيص الاسم",
+    overrideRenameDesc: "تجاوز اسم العرض لعنصر القائمة هذا.",
+    overrideScope: "نطاق التخصيص",
+    scopeUser: "لي فقط",
+    scopeTenant: "مستأجري",
+    scopeGlobal: "المستأجر والفروع",
+    overrideSaved: "تم حفظ التخصيص بنجاح.",
+    hideItem: "إخفاء العنصر",
   },
 
   // Role - For table columns (singular context)

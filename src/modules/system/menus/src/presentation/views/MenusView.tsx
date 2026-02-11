@@ -7,6 +7,7 @@
 "use client";
 
 import { useMenusViewModel } from "../viewmodels/useMenusViewModel";
+import { useMenuOverrideViewModel } from "../viewmodels/useMenuOverrideViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
@@ -16,6 +17,7 @@ import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { MenuTreeItem } from "../components/MenuTreeItem";
 import { MenuFormDialog } from "../components/MenuFormDialog";
 import { DeleteMenuDialog } from "../components/DeleteMenuDialog";
+import { OverrideRenameDialog } from "../components/OverrideRenameDialog";
 import { Plus, Menu, RefreshCw, Eye, EyeOff } from "lucide-react";
 import { cn } from "@core/common/utils";
 import {
@@ -34,6 +36,7 @@ import {
 export function MenusView() {
       const { t } = useI18n();
       const vm = useMenusViewModel();
+      const overrideVm = useMenuOverrideViewModel();
 
       const sensors = useSensors(
             useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -133,8 +136,13 @@ export function MenusView() {
                                                                         onEdit={vm.openEditDialog}
                                                                         onDelete={vm.openDeleteDialog}
                                                                         onAddChild={vm.openCreateDialog}
+                                                                        onRename={overrideVm.openRenameDialog}
+
+                                                                        onHide={overrideVm.toggleHideItem}
                                                                         onMoveUp={index > 0 ? () => vm.handleMoveUp(node.id) : undefined}
                                                                         onMoveDown={index < arr.length - 1 ? () => vm.handleMoveDown(node.id) : undefined}
+                                                                        onMoveUpChild={vm.handleMoveUp}
+                                                                        onMoveDownChild={vm.handleMoveDown}
                                                                   />
                                                             ))}
                                                 </div>
@@ -167,6 +175,14 @@ export function MenusView() {
                         itemName={vm.deleteNodeName}
                         onConfirm={vm.onDeleteConfirm}
                         isPending={vm.isDeleting}
+                  />
+                  <OverrideRenameDialog
+                        dialog={overrideVm.overrideDialog}
+                        scope={overrideVm.scope}
+                        onScopeChange={overrideVm.setScope}
+                        onSave={overrideVm.saveRename}
+                        onClose={overrideVm.closeOverrideDialog}
+                        isSaving={overrideVm.isSaving}
                   />
             </div>
       );

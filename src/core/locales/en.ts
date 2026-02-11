@@ -461,6 +461,21 @@ export const en = {
     visibilitySuccessDesc: "Role menu visibility has been updated.",
     visibilityFailed: "Visibility Update Failed",
     visibilityFailedDesc: "Failed to update role menu visibility.",
+
+    // Page picker
+    selectPage: "Select a page...",
+    customHref: "Custom URL...",
+    saving: "Saving...",
+
+    // Overrides
+    overrideRename: "Customize Name",
+    overrideRenameDesc: "Override the display name for this menu item.",
+    overrideScope: "Override Scope",
+    scopeUser: "Only Me",
+    scopeTenant: "My Tenant",
+    scopeGlobal: "Tenant & Children",
+    overrideSaved: "Override saved successfully.",
+    hideItem: "Hide Item",
   },
 
   // Role - For table columns (singular context)

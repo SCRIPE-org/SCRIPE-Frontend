@@ -239,18 +239,49 @@ export function useMenusViewModel() {
                   const overResult = findSiblingsAndParent(overId, safeMenuTree);
 
                   if (!activeResult || !overResult) return;
-                  if (activeResult.parentId !== overResult.parentId) return;
 
-                  const sorted = [...activeResult.siblings].sort((a, b) => a.order - b.order);
-                  const activeIdx = sorted.findIndex((n) => n.id === activeId);
-                  const overIdx = sorted.findIndex((n) => n.id === overId);
+                  // ── Same parent: simple reorder ──────────────────────────
+                  if (activeResult.parentId === overResult.parentId) {
+                        const sorted = [...activeResult.siblings].sort((a, b) => a.order - b.order);
+                        const activeIdx = sorted.findIndex((n) => n.id === activeId);
+                        const overIdx = sorted.findIndex((n) => n.id === overId);
+                        if (activeIdx < 0 || overIdx < 0) return;
 
-                  if (activeIdx < 0 || overIdx < 0) return;
+                        const [moved] = sorted.splice(activeIdx, 1);
+                        sorted.splice(overIdx, 0, moved);
 
-                  const [moved] = sorted.splice(activeIdx, 1);
-                  sorted.splice(overIdx, 0, moved);
+                        reorderMutation.mutateAsync(buildReorderPayload(sorted, activeResult.parentId));
+                        return;
+                  }
 
-                  reorderMutation.mutateAsync(buildReorderPayload(sorted, activeResult.parentId));
+                  // ── Cross-parent: reparent item ──────────────────────────
+                  // 1. Remove from old parent's children
+                  const oldSiblings = [...activeResult.siblings]
+                        .sort((a, b) => a.order - b.order)
+                        .filter((n) => n.id !== activeId);
+
+                  // 2. Find the dragged node
+                  const draggedNode = activeResult.siblings.find((n) => n.id === activeId);
+                  if (!draggedNode) return;
+
+                  // 3. Insert into new parent's children at drop position
+                  const newSiblings = [...overResult.siblings].sort((a, b) => a.order - b.order);
+                  const overIdx = newSiblings.findIndex((n) => n.id === overId);
+                  newSiblings.splice(overIdx >= 0 ? overIdx + 1 : newSiblings.length, 0, draggedNode);
+
+                  // 4. Build combined reorder payload (old + new parent siblings)
+                  const oldItems = oldSiblings.map((s, i) => ({
+                        id: s.id,
+                        order: i + 1,
+                        parentMenuItemId: activeResult.parentId,
+                  }));
+                  const newItems = newSiblings.map((s, i) => ({
+                        id: s.id,
+                        order: i + 1,
+                        parentMenuItemId: overResult.parentId,
+                  }));
+
+                  reorderMutation.mutateAsync({ items: [...oldItems, ...newItems] });
             },
             [safeMenuTree, findSiblingsAndParent, reorderMutation, buildReorderPayload]
       );

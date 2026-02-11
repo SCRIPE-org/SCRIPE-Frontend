@@ -5,13 +5,14 @@
  */
 import type { IApiService } from "@core/interfaces/api.interface";
 import { API_ENDPOINTS } from "@core/config/api-endpoints";
-import type { IMenuRepository } from "../../domain/interfaces/IMenuRepository";
+import type { IMenuRepository, PageDefinitionResponse } from "../../domain/interfaces/IMenuRepository";
 import { MenuItem, type MenuItemData, type MenuTreeNode } from "../../domain/entities/MenuItem";
 import type {
       CreateMenuItemRequest,
       UpdateMenuItemRequest,
       ReorderMenuItemsRequest,
       SetRoleMenuVisibilityRequest,
+      SaveMenuOverrideRequest,
 } from "../../domain/entities/MenuItemRequests";
 
 export class MenuRepository implements IMenuRepository {
@@ -52,6 +53,24 @@ export class MenuRepository implements IMenuRepository {
 
       async setRoleVisibility(request: SetRoleMenuVisibilityRequest): Promise<void> {
             await this.api.put(API_ENDPOINTS.MENUS.ROLE_VISIBILITY, request);
+      }
+
+      async saveOverride(request: SaveMenuOverrideRequest): Promise<string> {
+            const response = await this.api.post<{ id: string }>(
+                  API_ENDPOINTS.MENUS.OVERRIDES,
+                  request
+            );
+            return response.id;
+      }
+
+      async deleteOverride(id: string): Promise<void> {
+            await this.api.delete(API_ENDPOINTS.MENUS.DELETE_OVERRIDE(id));
+      }
+
+      async getPageDefinitions(): Promise<PageDefinitionResponse[]> {
+            return await this.api.get<PageDefinitionResponse[]>(
+                  API_ENDPOINTS.MENUS.PAGE_DEFINITIONS
+            );
       }
 
       private findInTree(

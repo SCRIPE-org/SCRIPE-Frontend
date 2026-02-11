@@ -9,7 +9,19 @@ import type {
       UpdateMenuItemRequest,
       ReorderMenuItemsRequest,
       SetRoleMenuVisibilityRequest,
+      SaveMenuOverrideRequest,
 } from "../entities/MenuItemRequests";
+
+/** Page definition response from the API */
+export interface PageDefinitionResponse {
+      id: string;
+      href: string;
+      labelEn: string;
+      labelAr: string;
+      resource?: string;
+      icon?: string;
+      order: number;
+}
 
 /**
  * Menu repository interface
@@ -49,4 +61,19 @@ export interface IMenuRepository {
        * Set role-level menu item visibility
        */
       setRoleVisibility(request: SetRoleMenuVisibilityRequest): Promise<void>;
+
+      /**
+       * Save (upsert) a menu override
+       */
+      saveOverride(request: SaveMenuOverrideRequest): Promise<string>;
+
+      /**
+       * Delete a menu override by ID
+       */
+      deleteOverride(id: string): Promise<void>;
+
+      /**
+       * Get all page definitions for the href picker
+       */
+      getPageDefinitions(): Promise<PageDefinitionResponse[]>;
 }
