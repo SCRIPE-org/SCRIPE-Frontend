@@ -96,6 +96,8 @@ export function RecycleBinView() {
                               loading: vm.isRestoring,
                               confirmTitle: t('recycleBin.confirmRestore') || 'Confirm Restore',
                               confirmDescription: t('recycleBin.confirmRestoreDesc') || 'Are you sure you want to restore {name}?',
+                              confirmVariant: 'default' as const,
+                              confirmButtonText: t('recycleBin.restore') || 'Restore',
                         },
                   ];
             },

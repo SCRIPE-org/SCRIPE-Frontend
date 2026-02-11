@@ -88,6 +88,10 @@ export interface CrudAction<TItem = any> {
   confirmTitle?: string;
   /** Confirmation dialog description (supports {name} placeholder) */
   confirmDescription?: string;
+  /** Confirmation dialog variant: destructive (red/trash), warning, info, or default (green/check) */
+  confirmVariant?: "destructive" | "warning" | "info" | "default";
+  /** Custom confirm button text (e.g. 'Confirm', 'Transfer', 'Restore') */
+  confirmButtonText?: string;
   /** Whether the action is disabled */
   disabled?: (item: TItem) => boolean;
   /** Tooltip text for the action */
@@ -443,6 +447,8 @@ export function GenericCrudView<T>(props: GenericCrudViewProps<T>) {
             confirmDescription:
               action.confirmDescription?.replace("{name}", itemDisplayName) ||
               `Are you sure you want to ${action.label.toLowerCase()} ${itemDisplayName}?`,
+            variant: action.confirmVariant || "default",
+            confirmButtonText: action.confirmButtonText,
           }
         );
       } else {
@@ -858,7 +864,7 @@ export function GenericCrudView<T>(props: GenericCrudViewProps<T>) {
         </DialogContent>
       </Dialog>
 
-      {/* Professional confirmation dialog for delete operations */}
+      {/* Professional confirmation dialog for delete and action operations */}
       <ConfirmationDialog
         open={deleteSystem.showConfirmation}
         onOpenChange={deleteSystem.cancelDelete}
@@ -869,11 +875,16 @@ export function GenericCrudView<T>(props: GenericCrudViewProps<T>) {
           deleteSystem.deleteOptions.confirmDescription ||
           t("common.deleteWarning")
         }
-        confirmText={t("common.delete")}
+        confirmText={
+          deleteSystem.deleteOptions.confirmButtonText ||
+          (deleteSystem.deleteOptions.variant === "destructive" || !deleteSystem.deleteOptions.variant
+            ? t("common.delete")
+            : t("common.confirm"))
+        }
         cancelText={t("common.cancel")}
         onConfirm={deleteSystem.executeDelete}
         onCancel={deleteSystem.cancelDelete}
-        variant="destructive"
+        variant={deleteSystem.deleteOptions.variant || "destructive"}
         isLoading={deleteSystem.isDeleting}
       />
     </div>

@@ -12,6 +12,10 @@ export interface DeleteOptions {
   errorMessage?: string
   onSuccess?: () => void
   onError?: (error: any) => void
+  /** Dialog variant: destructive (red/trash), warning, info, or default (green/check) */
+  variant?: "destructive" | "warning" | "info" | "default"
+  /** Custom confirm button text (defaults to 'Delete' for destructive, 'Confirm' for others) */
+  confirmButtonText?: string
 }
 
 export function useEnhancedDelete() {
@@ -38,22 +42,22 @@ export function useEnhancedDelete() {
 
     try {
       await deleteAction()
-      
+
       // Show success toast
-      const successMsg = deleteOptions.successMessage || 
+      const successMsg = deleteOptions.successMessage ||
         `${deleteOptions.itemType || 'Item'} deleted successfully`
-      
+
       operationSuccess("Delete", deleteOptions.itemName)
-      
+
       // Call success callback
       deleteOptions.onSuccess?.()
     } catch (error) {
       // Show error toast
-      const errorMsg = deleteOptions.errorMessage || 
+      const errorMsg = deleteOptions.errorMessage ||
         `Failed to delete ${deleteOptions.itemType?.toLowerCase() || 'item'}`
-      
+
       operationError("Delete", deleteOptions.itemName, errorMsg)
-      
+
       // Call error callback
       deleteOptions.onError?.(error)
     } finally {

@@ -227,6 +227,8 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
                               show: (item: Admin) => item.id !== currentUser.id && item.canModify,
                               confirmTitle: tFn("admin.transferProtection") || "Transfer Protection",
                               confirmDescription: tFn("admin.transferProtectionDesc") || "Are you sure you want to transfer protection to {name}?",
+                              confirmVariant: "warning" as const,
+                              confirmButtonText: tFn("common.confirm") || "Confirm",
                         }] : []),
                         {
                               label: tFn("admin.toggleStatus") || "Toggle Status",
