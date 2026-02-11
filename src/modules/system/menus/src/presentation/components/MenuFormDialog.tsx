@@ -2,36 +2,20 @@
  * Menu Form Dialog
  *
  * Bilingual create / edit form for menu items.
- * Handles slug, names (EN/AR), href (page picker), icon, and resource fields.
+ * Uses GenericModal + GenericForm for consistent form handling and working selects.
  */
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useMemo } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
-import { Button } from "@core/ui/button";
-import { Input } from "@core/ui/input";
-import { Label } from "@core/ui/label";
-import {
-      Dialog,
-      DialogContent,
-      DialogHeader,
-      DialogTitle,
-      DialogDescription,
-      DialogFooter,
-} from "@core/ui/dialog";
-import {
-      Select,
-      SelectContent,
-      SelectGroup,
-      SelectItem,
-      SelectLabel,
-      SelectSeparator,
-      SelectTrigger,
-      SelectValue,
-} from "@core/ui/select";
+import { GenericModal } from "@core/crud/components/generic-modal";
+import { GenericForm, type FieldConfig } from "@core/ui/forms/generic-form";
 import type { MenuTreeNode } from "../../domain/entities/MenuItem";
-import type { CreateMenuItemRequest, UpdateMenuItemRequest } from "../../domain/entities/MenuItemRequests";
-import { PAGE_REGISTRY, type PageDefinition } from "@core/common/pageRegistry";
+import type {
+      CreateMenuItemRequest,
+      UpdateMenuItemRequest,
+} from "../../domain/entities/MenuItemRequests";
+import { PAGE_REGISTRY } from "@core/common/pageRegistry";
 
 /* -------------------------------------------------------------------------- */
 /*  Props                                                                      */
@@ -43,7 +27,9 @@ export interface MenuFormDialogProps {
       mode: "create" | "edit";
       parentNode?: MenuTreeNode | null;
       editNode?: MenuTreeNode | null;
-      onSubmit: (data: CreateMenuItemRequest | { id: string; request: UpdateMenuItemRequest }) => Promise<void>;
+      onSubmit: (
+            data: CreateMenuItemRequest | { id: string; request: UpdateMenuItemRequest }
+      ) => Promise<void>;
       isPending: boolean;
 }
 
@@ -52,12 +38,6 @@ export interface MenuFormDialogProps {
 /* -------------------------------------------------------------------------- */
 
 const CUSTOM_HREF_VALUE = "__custom__";
-
-const CATEGORY_LABELS: Record<string, { en: string; ar: string }> = {
-      general: { en: "General", ar: "عام" },
-      system: { en: "System", ar: "النظام" },
-      settings: { en: "Settings", ar: "الإعدادات" },
-};
 
 /* -------------------------------------------------------------------------- */
 /*  Component                                                                  */
@@ -74,250 +54,195 @@ export function MenuFormDialog({
 }: MenuFormDialogProps) {
       const { t, language } = useI18n();
 
-      const [slug, setSlug] = useState("");
-      const [nameEn, setNameEn] = useState("");
-      const [nameAr, setNameAr] = useState("");
-      const [href, setHref] = useState("");
-      const [useCustomHref, setUseCustomHref] = useState(false);
-      const [icon, setIcon] = useState("");
-      const [resource, setResource] = useState("");
+      // ── Build page options from PAGE_REGISTRY ──────────────────────────
+      const pageOptions = useMemo(() => {
+            const opts = PAGE_REGISTRY.map((page) => ({
+                  value: page.href,
+                  label:
+                        language === "ar"
+                              ? `${page.labelAr}  ${page.href}`
+                              : `${page.labelEn}  ${page.href}`,
+            }));
+            // Add "Custom URL" option at the end
+            opts.push({
+                  value: CUSTOM_HREF_VALUE,
+                  label: t("menus.customHref") || "Custom URL...",
+            });
+            return opts;
+      }, [language, t]);
 
-      // ── Group pages by category ──────────────────────────────────────
-      const pagesByCategory = PAGE_REGISTRY.reduce<Record<string, PageDefinition[]>>(
-            (acc, page) => {
-                  if (!acc[page.category]) acc[page.category] = [];
-                  acc[page.category].push(page);
-                  return acc;
-            },
-            {}
+      // ── Check if an href matches a registered page ─────────────────────
+      const isRegisteredPage = (h: string) =>
+            PAGE_REGISTRY.some((p) => p.href === h);
+
+      // ── Compute initial values ─────────────────────────────────────────
+      const initialValues = useMemo(() => {
+            if (mode === "edit" && editNode) {
+                  const isCustom =
+                        !!editNode.href && !isRegisteredPage(editNode.href);
+                  return {
+                        href: isCustom ? CUSTOM_HREF_VALUE : editNode.href ?? "",
+                        customHref: isCustom ? editNode.href : "",
+                        slug: editNode.slug,
+                        nameEn: editNode.nameEn,
+                        nameAr: editNode.nameAr,
+                        icon: editNode.icon ?? "",
+                        resource: editNode.resource ?? "",
+                  };
+            }
+            return {
+                  href: "",
+                  customHref: "",
+                  slug: "",
+                  nameEn: "",
+                  nameAr: "",
+                  icon: "",
+                  resource: "",
+            };
+      }, [mode, editNode]);
+
+      // ── Define form fields ─────────────────────────────────────────────
+      const fields: FieldConfig[] = useMemo(
+            () => [
+                  {
+                        name: "href",
+                        label: t("menus.href") || "Page",
+                        type: "searchable-select",
+                        options: pageOptions,
+                        placeholder: t("menus.selectPage") || "Select a page...",
+                        searchPlaceholder: t("common.search") || "Search...",
+                        onChange: (value: any, formData: Record<string, any>) => {
+                              if (value === CUSTOM_HREF_VALUE) {
+                                    return { ...formData, href: CUSTOM_HREF_VALUE };
+                              }
+                              // Auto-fill from page definition
+                              const page = PAGE_REGISTRY.find((p) => p.href === value);
+                              if (page) {
+                                    const updates: Record<string, any> = { ...formData, href: value, customHref: "" };
+                                    if (!formData.slug?.trim())
+                                          updates.slug = page.href
+                                                .replace(/^\//, "")
+                                                .replace(/\//g, "-");
+                                    if (!formData.nameEn?.trim())
+                                          updates.nameEn = page.labelEn;
+                                    if (!formData.nameAr?.trim())
+                                          updates.nameAr = page.labelAr;
+                                    if (!formData.icon?.trim() && page.icon)
+                                          updates.icon = page.icon;
+                                    if (!formData.resource?.trim() && page.resource)
+                                          updates.resource = page.resource;
+                                    return updates;
+                              }
+                              return { ...formData, href: value, customHref: "" };
+                        },
+                  },
+                  {
+                        name: "customHref",
+                        label: t("menus.customHref") || "Custom URL",
+                        type: "text",
+                        placeholder: "/custom-page",
+                        isVisible: (formData) => formData.href === CUSTOM_HREF_VALUE,
+                  },
+                  {
+                        name: "slug",
+                        label: t("menus.slug"),
+                        type: "text",
+                        required: true,
+                        placeholder: "dashboard",
+                  },
+                  {
+                        name: "nameEn",
+                        label: t("menus.nameEn"),
+                        type: "text",
+                        required: true,
+                        placeholder: "Dashboard",
+                  },
+                  {
+                        name: "nameAr",
+                        label: t("menus.nameAr"),
+                        type: "text",
+                        placeholder: "لوحة التحكم",
+                  },
+                  {
+                        name: "icon",
+                        label: t("menus.icon"),
+                        type: "text",
+                        placeholder: "LayoutDashboard",
+                  },
+                  {
+                        name: "resource",
+                        label: t("menus.resource"),
+                        type: "text",
+                        placeholder: "users",
+                  },
+            ],
+            [t, pageOptions]
       );
 
-      // ── Check if href matches a registered page ─────────────────────
-      const isRegisteredPage = (h: string) => PAGE_REGISTRY.some((p) => p.href === h);
+      // ── Dialog title / description ─────────────────────────────────────
+      const title =
+            mode === "create"
+                  ? parentNode
+                        ? t("menus.addChildTitle")
+                        : t("menus.createTitle")
+                  : t("menus.editTitle");
 
-      // ── Reset form when dialog opens ─────────────────────────────────
-      useEffect(() => {
-            if (open) {
-                  if (mode === "edit" && editNode) {
-                        setSlug(editNode.slug);
-                        setNameEn(editNode.nameEn);
-                        setNameAr(editNode.nameAr);
-                        setHref(editNode.href ?? "");
-                        setUseCustomHref(!!editNode.href && !isRegisteredPage(editNode.href));
-                        setIcon(editNode.icon ?? "");
-                        setResource(editNode.resource ?? "");
-                  } else {
-                        setSlug("");
-                        setNameEn("");
-                        setNameAr("");
-                        setHref("");
-                        setUseCustomHref(false);
-                        setIcon("");
-                        setResource("");
-                  }
-            }
-      }, [open, mode, editNode]);
+      const description =
+            mode === "create" && parentNode
+                  ? `${t("menus.addChildDesc")} "${parentNode.nameEn}"`
+                  : mode === "create"
+                        ? t("menus.createDesc")
+                        : t("menus.editDesc");
 
-      // ── When a page is selected, auto-fill slug, icon, resource ─────
-      const handlePageSelect = useCallback((value: string) => {
-            if (value === CUSTOM_HREF_VALUE) {
-                  setUseCustomHref(true);
-                  setHref("");
-                  return;
-            }
-
-            setUseCustomHref(false);
-            setHref(value);
-
-            const page = PAGE_REGISTRY.find((p) => p.href === value);
-            if (page) {
-                  // Auto-fill empty fields from page definition
-                  if (!slug.trim()) setSlug(page.href.replace(/^\//, "").replace(/\//g, "-"));
-                  if (!nameEn.trim()) setNameEn(page.labelEn);
-                  if (!nameAr.trim()) setNameAr(page.labelAr);
-                  if (!icon.trim() && page.icon) setIcon(page.icon);
-                  if (!resource.trim() && page.resource) setResource(page.resource);
-            }
-      }, [slug, nameEn, nameAr, icon, resource]);
-
-      const handleSubmit = async (e: React.FormEvent) => {
-            e.preventDefault();
-            if (!nameEn.trim() || !slug.trim()) return;
+      // ── Handle submit ──────────────────────────────────────────────────
+      const handleSubmit = async (data: Record<string, any>) => {
+            const resolvedHref =
+                  data.href === CUSTOM_HREF_VALUE
+                        ? data.customHref?.trim() || undefined
+                        : data.href?.trim() || undefined;
 
             if (mode === "create") {
                   await onSubmit({
-                        slug: slug.trim(),
-                        nameEn: nameEn.trim(),
-                        nameAr: nameAr.trim() || nameEn.trim(),
-                        href: href.trim() || undefined,
-                        icon: icon.trim() || undefined,
+                        slug: data.slug.trim(),
+                        nameEn: data.nameEn.trim(),
+                        nameAr: data.nameAr?.trim() || data.nameEn.trim(),
+                        href: resolvedHref,
+                        icon: data.icon?.trim() || undefined,
                         parentMenuItemId: parentNode?.id,
-                        resource: resource.trim() || undefined,
+                        resource: data.resource?.trim() || undefined,
                   } as CreateMenuItemRequest);
             } else if (editNode) {
                   await onSubmit({
                         id: editNode.id,
                         request: {
-                              slug: slug.trim(),
-                              nameEn: nameEn.trim(),
-                              nameAr: nameAr.trim() || nameEn.trim(),
-                              href: href.trim() || undefined,
-                              icon: icon.trim() || undefined,
-                              resource: resource.trim() || undefined,
+                              slug: data.slug.trim(),
+                              nameEn: data.nameEn.trim(),
+                              nameAr: data.nameAr?.trim() || data.nameEn.trim(),
+                              href: resolvedHref,
+                              icon: data.icon?.trim() || undefined,
+                              resource: data.resource?.trim() || undefined,
                         },
                   });
             }
             onOpenChange(false);
       };
 
-      // Current select value for the page picker
-      const selectValue = useCustomHref ? CUSTOM_HREF_VALUE : href || undefined;
-
       return (
-            <Dialog open={open} onOpenChange={onOpenChange}>
-                  <DialogContent className="max-w-lg">
-                        <DialogHeader>
-                              <DialogTitle>
-                                    {mode === "create"
-                                          ? parentNode
-                                                ? t("menus.addChildTitle")
-                                                : t("menus.createTitle")
-                                          : t("menus.editTitle")}
-                              </DialogTitle>
-                              <DialogDescription>
-                                    {mode === "create" && parentNode
-                                          ? `${t("menus.addChildDesc")} "${parentNode.nameEn}"`
-                                          : mode === "create"
-                                                ? t("menus.createDesc")
-                                                : t("menus.editDesc")}
-                              </DialogDescription>
-                        </DialogHeader>
-
-                        <form onSubmit={handleSubmit} className="space-y-4 py-2">
-                              {/* Page Picker (href) */}
-                              <div className="space-y-2">
-                                    <Label>{t("menus.href") || "Page"}</Label>
-                                    <Select
-                                          value={selectValue}
-                                          onValueChange={handlePageSelect}
-                                    >
-                                          <SelectTrigger>
-                                                <SelectValue placeholder={t("menus.selectPage") || "Select a page..."} />
-                                          </SelectTrigger>
-                                          <SelectContent>
-                                                {Object.entries(pagesByCategory).map(([category, pages], idx) => (
-                                                      <SelectGroup key={category}>
-                                                            <SelectLabel>
-                                                                  {language === "ar"
-                                                                        ? CATEGORY_LABELS[category]?.ar ?? category
-                                                                        : CATEGORY_LABELS[category]?.en ?? category
-                                                                  }
-                                                            </SelectLabel>
-                                                            {pages.map((page) => (
-                                                                  <SelectItem key={page.href} value={page.href}>
-                                                                        <span className="flex items-center gap-2">
-                                                                              <span>{language === "ar" ? page.labelAr : page.labelEn}</span>
-                                                                              <span className="text-xs text-muted-foreground font-mono">{page.href}</span>
-                                                                        </span>
-                                                                  </SelectItem>
-                                                            ))}
-                                                            {idx < Object.keys(pagesByCategory).length - 1 && <SelectSeparator />}
-                                                      </SelectGroup>
-                                                ))}
-                                                <SelectSeparator />
-                                                <SelectItem value={CUSTOM_HREF_VALUE}>
-                                                      <span className="text-muted-foreground italic">
-                                                            {t("menus.customHref") || "Custom URL..."}
-                                                      </span>
-                                                </SelectItem>
-                                          </SelectContent>
-                                    </Select>
-
-                                    {/* Custom href input — shown when "Custom URL" is selected */}
-                                    {useCustomHref && (
-                                          <Input
-                                                value={href}
-                                                onChange={(e) => setHref(e.target.value)}
-                                                placeholder="/custom-page"
-                                                className="font-mono text-sm mt-2"
-                                          />
-                                    )}
-                              </div>
-
-                              {/* Slug */}
-                              <div className="space-y-2">
-                                    <Label htmlFor="slug">{t("menus.slug")}</Label>
-                                    <Input
-                                          id="slug"
-                                          value={slug}
-                                          onChange={(e) => setSlug(e.target.value)}
-                                          placeholder="dashboard"
-                                          required
-                                          className="font-mono text-sm"
-                                    />
-                              </div>
-
-                              {/* Bilingual Names */}
-                              <div className="grid grid-cols-2 gap-4">
-                                    <div className="space-y-2">
-                                          <Label htmlFor="nameEn">{t("menus.nameEn")}</Label>
-                                          <Input
-                                                id="nameEn"
-                                                value={nameEn}
-                                                onChange={(e) => setNameEn(e.target.value)}
-                                                placeholder="Dashboard"
-                                                required
-                                          />
-                                    </div>
-                                    <div className="space-y-2">
-                                          <Label htmlFor="nameAr">{t("menus.nameAr")}</Label>
-                                          <Input
-                                                id="nameAr"
-                                                value={nameAr}
-                                                onChange={(e) => setNameAr(e.target.value)}
-                                                placeholder="لوحة التحكم"
-                                                dir="rtl"
-                                          />
-                                    </div>
-                              </div>
-
-                              {/* Icon & Resource */}
-                              <div className="grid grid-cols-2 gap-4">
-                                    <div className="space-y-2">
-                                          <Label htmlFor="icon">{t("menus.icon")}</Label>
-                                          <Input
-                                                id="icon"
-                                                value={icon}
-                                                onChange={(e) => setIcon(e.target.value)}
-                                                placeholder="LayoutDashboard"
-                                                className="font-mono text-sm"
-                                          />
-                                    </div>
-                                    <div className="space-y-2">
-                                          <Label htmlFor="resource">{t("menus.resource")}</Label>
-                                          <Input
-                                                id="resource"
-                                                value={resource}
-                                                onChange={(e) => setResource(e.target.value)}
-                                                placeholder="users"
-                                                className="font-mono text-sm"
-                                          />
-                                          <p className="text-xs text-muted-foreground">
-                                                {t("menus.resourceHint")}
-                                          </p>
-                                    </div>
-                              </div>
-
-                              <DialogFooter>
-                                    <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-                                          {t("common.cancel")}
-                                    </Button>
-                                    <Button type="submit" disabled={isPending || !nameEn.trim() || !slug.trim()}>
-                                          {isPending ? t("common.saving") : mode === "create" ? t("common.create") : t("common.save")}
-                                    </Button>
-                              </DialogFooter>
-                        </form>
-                  </DialogContent>
-            </Dialog>
+            <GenericModal
+                  open={open}
+                  onOpenChange={onOpenChange}
+                  title={title}
+                  description={description}
+                  size="md"
+                  formKey={`menu-form-${mode}-${editNode?.id ?? "new"}`}
+            >
+                  <GenericForm
+                        key={`${mode}-${editNode?.id ?? "new"}`}
+                        fields={fields}
+                        initialValues={initialValues}
+                        onSubmit={handleSubmit}
+                        onCancel={() => onOpenChange(false)}
+                  />
+            </GenericModal>
       );
 }

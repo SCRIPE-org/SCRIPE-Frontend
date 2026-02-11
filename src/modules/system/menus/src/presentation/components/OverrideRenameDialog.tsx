@@ -2,30 +2,14 @@
  * Override Rename Dialog
  *
  * Modal for customizing menu item names per scope.
- * Uses the override ViewModel for save operations.
+ * Uses GenericModal + GenericForm for consistent form handling and working selects.
  */
 'use client';
 
-import { useState } from 'react';
-import {
-      Dialog,
-      DialogContent,
-      DialogHeader,
-      DialogTitle,
-      DialogDescription,
-      DialogFooter,
-} from '@core/ui/dialog';
-import { Button } from '@core/ui/button';
-import { Input } from '@core/ui/input';
-import { Label } from '@core/ui/label';
-import {
-      Select,
-      SelectContent,
-      SelectItem,
-      SelectTrigger,
-      SelectValue,
-} from '@core/ui/select';
+import { useMemo } from 'react';
 import { useI18n } from '@core/providers/i18n-provider';
+import { GenericModal } from '@core/crud/components/generic-modal';
+import { GenericForm, type FieldConfig } from '@core/ui/forms/generic-form';
 import { MenuOverrideScope } from '../../domain/entities/MenuItemRequests';
 import type { OverrideDialogState } from '../viewmodels/useMenuOverrideViewModel';
 
@@ -39,105 +23,13 @@ interface OverrideRenameDialogProps {
       isSaving: boolean;
 }
 
-/**
- * Inner form component — uses key={node.id} to reset state when node changes.
- * This avoids the useEffect sync-state-to-props anti-pattern.
- */
-function RenameForm({
-      initialNameEn,
-      initialNameAr,
-      onSave,
-      onClose,
-      isSaving,
-      scope,
-      onScopeChange,
-      availableScopes,
-}: {
-      initialNameEn: string;
-      initialNameAr: string;
-      onSave: (nameEn: string, nameAr: string) => void;
-      onClose: () => void;
-      isSaving: boolean;
-      scope: MenuOverrideScope;
-      onScopeChange: (scope: MenuOverrideScope) => void;
-      availableScopes: MenuOverrideScope[];
-}) {
-      const { t } = useI18n();
-      const [nameEn, setNameEn] = useState(initialNameEn);
-      const [nameAr, setNameAr] = useState(initialNameAr);
+/** Map enum values to labels */
+const SCOPE_LABEL_KEYS: Record<MenuOverrideScope, string> = {
+      [MenuOverrideScope.User]: 'menus.scopeUser',
+      [MenuOverrideScope.Tenant]: 'menus.scopeTenant',
+      [MenuOverrideScope.TenantAndChildren]: 'menus.scopeGlobal',
+};
 
-      const handleSubmit = () => {
-            if (!nameEn.trim()) return;
-            onSave(nameEn.trim(), nameAr.trim());
-      };
-
-      return (
-            <>
-                  {/* Scope selector */}
-                  <div className="space-y-2">
-                        <Label>{t('menus.overrideScope')}</Label>
-                        <Select value={scope} onValueChange={(v) => onScopeChange(v as MenuOverrideScope)}>
-                              <SelectTrigger>
-                                    <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                    {availableScopes.includes(MenuOverrideScope.User) && (
-                                          <SelectItem value={MenuOverrideScope.User}>
-                                                {t('menus.scopeUser')}
-                                          </SelectItem>
-                                    )}
-                                    {availableScopes.includes(MenuOverrideScope.Tenant) && (
-                                          <SelectItem value={MenuOverrideScope.Tenant}>
-                                                {t('menus.scopeTenant')}
-                                          </SelectItem>
-                                    )}
-                                    {availableScopes.includes(MenuOverrideScope.TenantAndChildren) && (
-                                          <SelectItem value={MenuOverrideScope.TenantAndChildren}>
-                                                {t('menus.scopeGlobal')}
-                                          </SelectItem>
-                                    )}
-                              </SelectContent>
-                        </Select>
-                  </div>
-
-                  {/* English name */}
-                  <div className="space-y-2">
-                        <Label htmlFor="override-name-en">{t('menus.nameEn')}</Label>
-                        <Input
-                              id="override-name-en"
-                              value={nameEn}
-                              onChange={(e) => setNameEn(e.target.value)}
-                              dir="ltr"
-                        />
-                  </div>
-
-                  {/* Arabic name */}
-                  <div className="space-y-2">
-                        <Label htmlFor="override-name-ar">{t('menus.nameAr')}</Label>
-                        <Input
-                              id="override-name-ar"
-                              value={nameAr}
-                              onChange={(e) => setNameAr(e.target.value)}
-                              dir="rtl"
-                        />
-                  </div>
-
-                  <DialogFooter>
-                        <Button variant="outline" onClick={onClose} disabled={isSaving}>
-                              {t('common.cancel')}
-                        </Button>
-                        <Button onClick={handleSubmit} disabled={isSaving || !nameEn.trim()}>
-                              {isSaving ? t('menus.saving') : t('common.save')}
-                        </Button>
-                  </DialogFooter>
-            </>
-      );
-}
-
-/**
- * Wrapper that controls open/close and uses key={node.id} to reset RenameForm
- * state when switching between different menu items.
- */
 export function OverrideRenameDialog({
       dialog,
       scope,
@@ -149,32 +41,77 @@ export function OverrideRenameDialog({
 }: OverrideRenameDialogProps) {
       const { t } = useI18n();
 
-      return (
-            <Dialog open={dialog.open && dialog.mode === 'rename'} onOpenChange={(open) => !open && onClose()}>
-                  <DialogContent className="sm:max-w-md">
-                        <DialogHeader>
-                              <DialogTitle>{t('menus.overrideRename')}</DialogTitle>
-                              <DialogDescription>
-                                    {t('menus.overrideRenameDesc')}
-                              </DialogDescription>
-                        </DialogHeader>
+      const isOpen = dialog.open && dialog.mode === 'rename';
+      const node = dialog.node;
 
-                        <div className="space-y-4 py-4">
-                              {dialog.node && (
-                                    <RenameForm
-                                          key={dialog.node.id}
-                                          initialNameEn={dialog.node.nameEn ?? ''}
-                                          initialNameAr={dialog.node.nameAr ?? ''}
-                                          onSave={onSave}
-                                          onClose={onClose}
-                                          isSaving={isSaving}
-                                          scope={scope}
-                                          onScopeChange={onScopeChange}
-                                          availableScopes={availableScopes}
-                                    />
-                              )}
-                        </div>
-                  </DialogContent>
-            </Dialog>
+      // ── Build scope options from availableScopes ───────────────────────
+      const scopeOptions = useMemo(
+            () =>
+                  availableScopes.map((s) => ({
+                        value: s,
+                        label: t(SCOPE_LABEL_KEYS[s]),
+                  })),
+            [availableScopes, t]
+      );
+
+      // ── Define form fields ─────────────────────────────────────────────
+      const fields: FieldConfig[] = useMemo(
+            () => [
+                  {
+                        name: 'scope',
+                        label: t('menus.overrideScope'),
+                        type: 'select' as const,
+                        options: scopeOptions,
+                        required: true,
+                        onChange: (value: any) => {
+                              onScopeChange(value as MenuOverrideScope);
+                        },
+                  },
+                  {
+                        name: 'nameEn',
+                        label: t('menus.nameEn'),
+                        type: 'text' as const,
+                        required: true,
+                  },
+                  {
+                        name: 'nameAr',
+                        label: t('menus.nameAr'),
+                        type: 'text' as const,
+                  },
+            ],
+            [t, scopeOptions, onScopeChange]
+      );
+
+      // ── Initial values reset per node ──────────────────────────────────
+      const initialValues = useMemo(
+            () => ({
+                  scope,
+                  nameEn: node?.nameEn ?? '',
+                  nameAr: node?.nameAr ?? '',
+            }),
+            [scope, node]
+      );
+
+      return (
+            <GenericModal
+                  open={isOpen}
+                  onOpenChange={(open) => !open && onClose()}
+                  title={t('menus.overrideRename')}
+                  description={t('menus.overrideRenameDesc')}
+                  size="sm"
+                  formKey={`override-rename-${node?.id ?? 'none'}`}
+            >
+                  {node && (
+                        <GenericForm
+                              key={node.id}
+                              fields={fields}
+                              initialValues={initialValues}
+                              onSubmit={async (data) => {
+                                    onSave(data.nameEn?.trim() ?? '', data.nameAr?.trim() ?? '');
+                              }}
+                              onCancel={onClose}
+                        />
+                  )}
+            </GenericModal>
       );
 }
