@@ -1,12 +1,13 @@
 /**
- * Menu Tree Item Component (Sortable)
+ * Menu Tree Item Component (Native HTML5 DnD)
  *
  * Renders a single menu node inside the tree editor.
- * Supports drag-drop reorder, expand/collapse, and per-item actions.
+ * Supports native drag-and-drop with 3-zone detection
+ * (before / inside / after), expand/collapse, and per-item actions.
  */
 "use client";
 
-import { useState } from "react";
+import { useCallback, useRef } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
@@ -20,12 +21,12 @@ import {
 import { PermissionGate } from "@core/providers/permission-provider";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import type { MenuTreeNode } from "../../domain/entities/MenuItem";
+import type { DropPosition, DropTarget } from "../viewmodels/useMenusViewModel";
 import {
       Plus,
       MoreHorizontal,
       Pencil,
       Trash2,
-      Menu,
       ChevronRight,
       ChevronDown,
       GripVertical,
@@ -33,26 +34,10 @@ import {
       ArrowUp,
       ArrowDown,
       Type,
+      FolderOpen,
+      FileText,
 } from "lucide-react";
 import { cn } from "@core/common/utils";
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
-
-/* -------------------------------------------------------------------------- */
-/*  Helper: Flatten tree into ordered IDs for SortableContext                  */
-/* -------------------------------------------------------------------------- */
-
-export function flattenIds(nodes: MenuTreeNode[]): string[] {
-      const ids: string[] = [];
-      const sorted = [...nodes].sort((a, b) => a.order - b.order);
-      for (const node of sorted) {
-            ids.push(node.id);
-            if (node.children.length > 0) {
-                  ids.push(...flattenIds(node.children));
-            }
-      }
-      return ids;
-}
 
 /* -------------------------------------------------------------------------- */
 /*  Props                                                                      */
@@ -63,6 +48,21 @@ export interface MenuTreeItemProps {
       depth?: number;
       language: string;
       canReorder?: boolean;
+
+      // Expand / Collapse
+      expandedNodes: Set<string>;
+      onToggleExpand: (nodeId: string) => void;
+
+      // DnD (native)
+      draggedNode: MenuTreeNode | null;
+      dropTarget: DropTarget | null;
+      onDragStart: (node: MenuTreeNode) => void;
+      onDragOver: (nodeId: string, position: DropPosition) => void;
+      onDragLeave: () => void;
+      onDragEnd: () => void;
+      onDrop: (targetNodeId: string, position: DropPosition) => void;
+
+      // Actions
       onEdit: (node: MenuTreeNode) => void;
       onDelete: (node: MenuTreeNode) => void;
       onAddChild: (node: MenuTreeNode) => void;
@@ -70,11 +70,29 @@ export interface MenuTreeItemProps {
       onHide?: (node: MenuTreeNode) => void;
       onMoveUp?: () => void;
       onMoveDown?: () => void;
-      /** Called to move a child node up within this node's children */
       onMoveUpChild?: (childId: string) => void;
-      /** Called to move a child node down within this node's children */
       onMoveDownChild?: (childId: string) => void;
 }
+
+/* -------------------------------------------------------------------------- */
+/*  Level colors for hierarchy visualization                                   */
+/* -------------------------------------------------------------------------- */
+
+const LEVEL_COLORS = [
+      "border-l-blue-500",
+      "border-l-emerald-500",
+      "border-l-amber-500",
+      "border-l-purple-500",
+      "border-l-pink-500",
+];
+
+const LEVEL_BG_COLORS = [
+      "bg-blue-500/5",
+      "bg-emerald-500/5",
+      "bg-amber-500/5",
+      "bg-purple-500/5",
+      "bg-pink-500/5",
+];
 
 /* -------------------------------------------------------------------------- */
 /*  Component                                                                  */
@@ -85,6 +103,15 @@ export function MenuTreeItem({
       depth = 0,
       language,
       canReorder = false,
+      expandedNodes,
+      onToggleExpand,
+      draggedNode,
+      dropTarget,
+      onDragStart,
+      onDragOver,
+      onDragLeave,
+      onDragEnd,
+      onDrop,
       onEdit,
       onDelete,
       onAddChild,
@@ -96,94 +123,218 @@ export function MenuTreeItem({
       onMoveDownChild,
 }: MenuTreeItemProps) {
       const { t } = useI18n();
-      const [expanded, setExpanded] = useState(true);
+      const rowRef = useRef<HTMLDivElement>(null);
+      const dragCounterRef = useRef(0);
+
       const hasChildren = node.children.length > 0;
+      const isExpanded = expandedNodes.has(node.id);
       const displayName = language === "ar" ? node.nameAr : node.nameEn;
+      const isDragging = draggedNode?.id === node.id;
+      const isDropTarget = dropTarget?.nodeId === node.id;
+      const levelColor = LEVEL_COLORS[depth % LEVEL_COLORS.length];
+      const levelBg = LEVEL_BG_COLORS[depth % LEVEL_BG_COLORS.length];
 
-      const {
-            attributes,
-            listeners,
-            setNodeRef,
-            transform,
-            transition,
-            isDragging,
-      } = useSortable({ id: node.id, disabled: !canReorder });
+      // ── 3-zone position calculation ────────────────────────────────────
 
-      const style = {
-            transform: CSS.Transform.toString(transform),
-            transition,
-            opacity: isDragging ? 0.5 : 1,
-            zIndex: isDragging ? 50 : undefined,
+      const computePosition = useCallback(
+            (e: React.DragEvent): DropPosition => {
+                  const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+                  const y = e.clientY - rect.top;
+                  const height = rect.height;
+
+                  if (y < height * 0.25) return "before";
+                  if (y > height * 0.75) return "after";
+                  return "inside";
+            },
+            []
+      );
+
+      // ── Native DnD handlers ────────────────────────────────────────────
+
+      const handleDragStart = useCallback(
+            (e: React.DragEvent) => {
+                  e.dataTransfer.effectAllowed = "move";
+                  e.dataTransfer.setData("text/plain", node.id);
+                  // Delay to let browser render the drag ghost
+                  setTimeout(() => onDragStart(node), 0);
+            },
+            [node, onDragStart]
+      );
+
+      const handleDragEnd = useCallback(
+            (e: React.DragEvent) => {
+                  e.preventDefault();
+                  dragCounterRef.current = 0;
+                  onDragEnd();
+            },
+            [onDragEnd]
+      );
+
+      const handleDragEnter = useCallback(
+            (e: React.DragEvent) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  dragCounterRef.current++;
+            },
+            []
+      );
+
+      const handleDragLeave = useCallback(
+            (e: React.DragEvent) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  dragCounterRef.current--;
+                  if (dragCounterRef.current <= 0) {
+                        dragCounterRef.current = 0;
+                        onDragLeave();
+                  }
+            },
+            [onDragLeave]
+      );
+
+      const handleDragOver = useCallback(
+            (e: React.DragEvent) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  e.dataTransfer.dropEffect = "move";
+                  const position = computePosition(e);
+                  onDragOver(node.id, position);
+            },
+            [node.id, computePosition, onDragOver]
+      );
+
+      const handleDrop = useCallback(
+            (e: React.DragEvent) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  dragCounterRef.current = 0;
+                  const position = computePosition(e);
+                  onDrop(node.id, position);
+            },
+            [node.id, computePosition, onDrop]
+      );
+
+      // ── Drop indicator styles ──────────────────────────────────────────
+
+      const getDropIndicatorStyles = (): string => {
+            if (!isDropTarget || !dropTarget || isDragging) return "";
+
+            switch (dropTarget.position) {
+                  case "before":
+                        return "before:absolute before:top-0 before:inset-x-0 before:h-[3px] before:bg-blue-500 before:rounded-full before:z-10";
+                  case "after":
+                        return "after:absolute after:bottom-0 after:inset-x-0 after:h-[3px] after:bg-blue-500 after:rounded-full after:z-10";
+                  case "inside":
+                        return "ring-2 ring-blue-500 ring-inset bg-blue-500/10";
+                  default:
+                        return "";
+            }
       };
 
       return (
-            <div ref={setNodeRef} style={style}>
+            <div className={cn(isDragging && "opacity-30")}>
+                  {/* Node Row */}
                   <div
+                        ref={rowRef}
+                        draggable={canReorder}
+                        onDragStart={canReorder ? handleDragStart : undefined}
+                        onDragEnd={canReorder ? handleDragEnd : undefined}
+                        onDragEnter={handleDragEnter}
+                        onDragLeave={handleDragLeave}
+                        onDragOver={handleDragOver}
+                        onDrop={handleDrop}
                         className={cn(
-                              "flex items-center gap-2 py-2.5 px-3 rounded-lg hover:bg-muted/50 group border-l-2 transition-all duration-150",
-                              node.isActive ? "border-l-primary/60" : "border-l-muted opacity-60",
-                              isDragging && "shadow-lg ring-2 ring-primary/30 bg-card"
+                              "group relative flex items-center gap-2 py-2.5 px-3 rounded-lg",
+                              "hover:bg-muted/50 transition-all duration-150",
+                              "border-l-2",
+                              node.isActive ? levelColor : "border-l-muted/40",
+                              !node.isActive && "opacity-60",
+                              depth > 0 && levelBg,
+                              getDropIndicatorStyles()
                         )}
-                        style={{ marginLeft: depth * 24 }}
+                        style={{ marginInlineStart: depth * 24 }}
                   >
+                        {/* Drag handle */}
                         {canReorder && (
                               <GripVertical
-                                    className="h-4 w-4 text-muted-foreground cursor-grab opacity-0 group-hover:opacity-100 transition-opacity"
-                                    {...attributes}
-                                    {...listeners}
+                                    className={cn(
+                                          "h-4 w-4 text-muted-foreground cursor-grab active:cursor-grabbing",
+                                          "opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
+                                    )}
                               />
                         )}
 
+                        {/* Expand / Collapse */}
                         {hasChildren ? (
                               <button
-                                    onClick={() => setExpanded(!expanded)}
-                                    className="p-0.5 hover:bg-muted rounded-sm"
+                                    onClick={(e) => {
+                                          e.stopPropagation();
+                                          onToggleExpand(node.id);
+                                    }}
+                                    className="p-0.5 hover:bg-muted rounded-sm shrink-0"
                               >
-                                    {expanded ? (
+                                    {isExpanded ? (
                                           <ChevronDown className="h-4 w-4 text-muted-foreground" />
                                     ) : (
                                           <ChevronRight className="h-4 w-4 text-muted-foreground" />
                                     )}
                               </button>
                         ) : (
-                              <div className="w-5" />
+                              <div className="w-5 shrink-0" />
                         )}
 
-                        <Menu className="h-4 w-4 text-muted-foreground shrink-0" />
+                        {/* Icon */}
+                        {hasChildren ? (
+                              <FolderOpen className="h-4 w-4 text-primary shrink-0" />
+                        ) : (
+                              <FileText className="h-4 w-4 text-muted-foreground shrink-0" />
+                        )}
 
-                        <span className={cn("font-medium text-sm", !node.isActive && "text-muted-foreground line-through")}>
+                        {/* Name */}
+                        <span
+                              className={cn(
+                                    "font-medium text-sm truncate",
+                                    !node.isActive && "text-muted-foreground line-through"
+                              )}
+                        >
                               {displayName}
                         </span>
 
+                        {/* Icon code badge */}
                         {node.icon && (
-                              <code className="text-xs text-muted-foreground bg-muted px-1.5 py-0.5 rounded font-mono">
+                              <code className="text-[10px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded font-mono hidden sm:inline">
                                     {node.icon}
                               </code>
                         )}
 
+                        {/* URL */}
                         {node.href && (
-                              <span className="text-xs text-muted-foreground font-mono hidden sm:inline">
+                              <span className="text-[10px] text-muted-foreground font-mono hidden md:inline truncate max-w-[120px]">
                                     {node.href}
                               </span>
                         )}
 
+                        {/* Hidden indicator */}
                         {!node.isActive && (
                               <EyeOff className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
                         )}
 
+                        {/* Resource badge */}
                         {node.resource && (
-                              <Badge variant="outline" className="text-[10px] px-1.5 py-0">
+                              <Badge variant="outline" className="text-[10px] px-1.5 py-0 hidden sm:inline-flex">
                                     {node.resource}
                               </Badge>
                         )}
 
+                        {/* Children count */}
                         {hasChildren && (
                               <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
                                     {node.children.length}
                               </Badge>
                         )}
 
-                        <div className="ml-auto flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                        {/* Actions */}
+                        <div className="ms-auto flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
                               {canReorder && onMoveUp && (
                                     <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onMoveUp}>
                                           <ArrowUp className="h-3.5 w-3.5" />
@@ -244,7 +395,8 @@ export function MenuTreeItem({
                         </div>
                   </div>
 
-                  {expanded && hasChildren && (
+                  {/* Children */}
+                  {isExpanded && hasChildren && (
                         <div className="mt-0.5">
                               {node.children
                                     .sort((a, b) => a.order - b.order)
@@ -255,6 +407,15 @@ export function MenuTreeItem({
                                                 depth={depth + 1}
                                                 language={language}
                                                 canReorder={canReorder}
+                                                expandedNodes={expandedNodes}
+                                                onToggleExpand={onToggleExpand}
+                                                draggedNode={draggedNode}
+                                                dropTarget={dropTarget}
+                                                onDragStart={onDragStart}
+                                                onDragOver={onDragOver}
+                                                onDragLeave={onDragLeave}
+                                                onDragEnd={onDragEnd}
+                                                onDrop={onDrop}
                                                 onEdit={onEdit}
                                                 onDelete={onDelete}
                                                 onAddChild={onAddChild}
