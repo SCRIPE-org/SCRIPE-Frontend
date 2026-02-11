@@ -16,6 +16,8 @@ export interface CreateMenuItemRequest {
       parentMenuItemId?: string;
       order?: number;
       resource?: string;
+      tenantScopeJson?: string;
+      featureFlag?: string;
 }
 
 /**
@@ -27,9 +29,12 @@ export interface UpdateMenuItemRequest {
       nameAr: string;
       href?: string;
       icon?: string;
+      order: number;
       parentMenuItemId?: string;
-      order?: number;
       resource?: string;
+      tenantScopeJson?: string;
+      featureFlag?: string;
+      isActive: boolean;
 }
 
 /**

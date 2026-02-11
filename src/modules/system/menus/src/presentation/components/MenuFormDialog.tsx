@@ -220,7 +220,10 @@ export function MenuFormDialog({
                               nameAr: data.nameAr?.trim() || data.nameEn.trim(),
                               href: resolvedHref,
                               icon: data.icon?.trim() || undefined,
+                              order: editNode.order,
+                              parentMenuItemId: editNode.parentMenuItemId,
                               resource: data.resource?.trim() || undefined,
+                              isActive: editNode.isActive,
                         },
                   });
             }
