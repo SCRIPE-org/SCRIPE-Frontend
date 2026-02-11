@@ -63,16 +63,23 @@ export function SignalRProvider({
       hubPath = HUB_PATHS.AUDIT,
       children,
 }: SignalRProviderProps) {
-      const connectionRef = useRef<HubConnection | null>(null);
+      // Use STATE (not ref) for the connection so context consumers re-render
+      const [connection, setConnection] = useState<HubConnection | null>(null);
       const [connectionState, setConnectionState] =
             useState<SignalRConnectionState>('disconnected');
       const isAuthenticated = useAppStore((s) => s.isAuthenticated);
 
+      // Ref to track the latest connection for cleanup (avoids stale closures)
+      const connectionRef = useRef<HubConnection | null>(null);
+      // Mutex flag — prevents double-negotiate in React Strict Mode (dev only)
+      const isConnectingRef = useRef(false);
+
       const hubUrl = getHubUrl(hubPath);
 
       const connect = useCallback(async () => {
-            // Guard: skip if already connected or connecting
+            // Guard: skip if already connected, connecting, or a connect() call is in-flight
             if (
+                  isConnectingRef.current ||
                   connectionRef.current?.state === HubConnectionState.Connected ||
                   connectionRef.current?.state === HubConnectionState.Connecting ||
                   connectionRef.current?.state === HubConnectionState.Reconnecting
@@ -84,9 +91,10 @@ export function SignalRProvider({
             if (!token) return;
 
             try {
+                  isConnectingRef.current = true;
                   setConnectionState('connecting');
 
-                  const connection = new HubConnectionBuilder()
+                  const conn = new HubConnectionBuilder()
                         .withUrl(hubUrl, {
                               accessTokenFactory: () =>
                                     secureTokenService.getAccessToken() ?? '',
@@ -108,15 +116,26 @@ export function SignalRProvider({
                         .build();
 
                   // Lifecycle handlers
-                  connection.onreconnecting(() => setConnectionState('reconnecting'));
-                  connection.onreconnected(() => setConnectionState('connected'));
-                  connection.onclose(() => setConnectionState('disconnected'));
+                  conn.onreconnecting(() => setConnectionState('reconnecting'));
+                  conn.onreconnected(() => setConnectionState('connected'));
+                  conn.onclose(() => {
+                        setConnectionState('disconnected');
+                        setConnection(null);
+                        connectionRef.current = null;
+                  });
 
-                  await connection.start();
-                  connectionRef.current = connection;
+                  await conn.start();
+
+                  // Update BOTH ref (for guards) and state (for context consumers)
+                  connectionRef.current = conn;
+                  setConnection(conn);
                   setConnectionState('connected');
+                  isConnectingRef.current = false;
             } catch {
                   setConnectionState('disconnected');
+                  setConnection(null);
+                  connectionRef.current = null;
+                  isConnectingRef.current = false;
             }
       }, [hubUrl]);
 
@@ -128,6 +147,7 @@ export function SignalRProvider({
                   // User logged out — tear down connection
                   connectionRef.current?.stop();
                   connectionRef.current = null;
+                  setConnection(null);
                   setConnectionState('disconnected');
             }
 
@@ -141,7 +161,7 @@ export function SignalRProvider({
       return (
             <SignalRContext.Provider
                   value={{
-                        connection: connectionRef.current,
+                        connection,
                         connectionState,
                   }}
             >
