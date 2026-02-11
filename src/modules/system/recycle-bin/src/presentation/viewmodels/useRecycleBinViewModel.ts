@@ -58,6 +58,25 @@ export function useRecycleBinViewModel() {
             },
       });
 
+      // ============ Bulk Restore Mutation ============
+      const bulkRestoreMutation = useMutation({
+            mutationFn: (items: { entityType: string; id: string }[]) =>
+                  recycleBinRepository.bulkRestore(items),
+            onSuccess: (count) => {
+                  queryClient.invalidateQueries({ queryKey: [...RECYCLE_BIN_QUERY_KEY] });
+                  success({
+                        title: t('recycleBin.restored'),
+                        description: (t('recycleBin.bulkRestoredDesc') || '{count} items restored successfully').replace('{count}', String(count)),
+                  });
+            },
+            onError: (err: Error) => {
+                  toastError({
+                        title: t('common.error'),
+                        description: err.message,
+                  });
+            },
+      });
+
       // ============ Computed Data ============
       const tabCounts = useMemo(() => ({
             tenants: data?.tenants?.length ?? 0,
@@ -80,6 +99,19 @@ export function useRecycleBinViewModel() {
       const handleRestore = (entityType: string, id: string) =>
             restoreMutation.mutate({ entityType, id });
 
+      const handleBulkRestore = (ids: string[]) => {
+            // Map selected IDs to items with entityType from currentItems
+            const items = ids
+                  .map(id => {
+                        const item = currentItems.find(ci => ci.id === id);
+                        return item ? { entityType: item.entityType.toLowerCase(), id: item.id } : null;
+                  })
+                  .filter((i): i is { entityType: string; id: string } => i !== null);
+            if (items.length > 0) {
+                  bulkRestoreMutation.mutate(items);
+            }
+      };
+
       return {
             // Data
             currentItems,
@@ -96,6 +128,10 @@ export function useRecycleBinViewModel() {
             canRestore,
             isRestoring: restoreMutation.isPending,
             handleRestore,
+
+            // Bulk Restore
+            isBulkRestoring: bulkRestoreMutation.isPending,
+            handleBulkRestore,
 
             // i18n
             t,

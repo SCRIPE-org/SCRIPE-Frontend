@@ -33,4 +33,9 @@ export interface IRecycleBinService {
        * Restore a single deleted item
        */
       restore(entityType: string, id: string): Promise<void>;
+
+      /**
+       * Bulk restore multiple deleted items
+       */
+      bulkRestore(items: { entityType: string; id: string }[]): Promise<number>;
 }

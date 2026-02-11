@@ -9,6 +9,8 @@
 import { useState, useCallback, useMemo } from "react";
 import { systemContainer } from "@modules/system/di";
 import { useI18n } from "@core/providers/i18n-provider";
+import { useServices } from "@core/providers/service-provider";
+import { useAppStore } from "@core/store/useAppStore";
 import { useCrudViewModel } from "@core/crud/hooks/useCrudViewModel";
 import type { Admin, AdminData } from "../../domain/entities/Admin";
 import type {
@@ -48,6 +50,8 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
       const { t, language } = useI18n();
       const queryClient = useQueryClient();
       const { success, error: toastError } = useEnhancedToast();
+      const { authRepository } = useServices();
+      const setAuth = useAppStore((state) => state.setAuth);
 
       // Build query key based on mode
       const queryKey = tenantId
@@ -215,8 +219,18 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
       const transferProtectionMutation = useMutation({
             mutationFn: ({ fromAdminId, targetAdminId }: { fromAdminId: string; targetAdminId: string }) =>
                   adminRepository.transferProtection(fromAdminId, { targetAdminId }),
-            onSuccess: () => {
+            onSuccess: async () => {
+                  // Refresh admin list
                   queryClient.invalidateQueries({ queryKey: ["admins"] });
+                  // Refresh current user data (isProtected has changed)
+                  try {
+                        const user = await authRepository.getMe();
+                        if (user) {
+                              setAuth(user, user.permissions || [], []);
+                        }
+                  } catch {
+                        // Silently fail – user can re-login to refresh
+                  }
                   success({ title: t("admin.protectionTransferred") || "Protection Transferred", description: t("admin.protectionTransferredDesc") || "Admin protection transferred successfully." });
             },
             onError: (err: Error) => {

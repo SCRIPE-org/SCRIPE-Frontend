@@ -9,11 +9,11 @@
  */
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useRecycleBinViewModel, type TabType } from '../viewmodels/useRecycleBinViewModel';
 import { useI18n } from '@core/providers/i18n-provider';
 import { GenericCrudView } from '@core/crud/components/generic-crud-view';
-import type { CrudConfig, CrudAction } from '@core/crud/components/generic-crud-view';
+import type { CrudConfig, CrudAction, BulkAction } from '@core/crud/components/generic-crud-view';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@core/ui/tabs';
 import { Badge } from '@core/ui/badge';
 import { RotateCcw } from 'lucide-react';
@@ -34,6 +34,7 @@ export function RecycleBinView() {
 
       // ============ Columns (defined in View for JSX rendering) ============
       const config: CrudConfig<DeletedItem> = useMemo(() => ({
+            enableBulkActions: true,
             titleKey: 'recycleBin.title',
             subtitleKey: 'recycleBin.description',
             resource: 'recycle_bin',
@@ -93,16 +94,33 @@ export function RecycleBinView() {
                               variant: 'ghost' as const,
                               icon: <RotateCcw className="h-4 w-4" />,
                               loading: vm.isRestoring,
+                              confirmTitle: t('recycleBin.confirmRestore') || 'Confirm Restore',
+                              confirmDescription: t('recycleBin.confirmRestoreDesc') || 'Are you sure you want to restore {name}?',
                         },
                   ];
             },
+            bulkActions: vm.canRestore ? [
+                  {
+                        label: t('recycleBin.bulkRestore') || 'Restore Selected',
+                        onClick: async (selectedIds: string[]) => vm.handleBulkRestore(selectedIds),
+                        variant: 'default' as const,
+                        icon: <RotateCcw className="h-4 w-4" />,
+                        requiresConfirmation: true,
+                        confirmTitle: t('recycleBin.confirmBulkRestore') || 'Bulk Restore',
+                        confirmDescription: t('recycleBin.confirmBulkRestoreDesc') || 'Are you sure you want to restore {count} items?',
+                        minItems: 1,
+                  } satisfies BulkAction,
+            ] : [],
             permissions: {
                   canView: SYSTEM_PERMISSIONS.RECYCLE_BIN_VIEW,
                   canCreate: false,
                   canUpdate: false,
                   canDelete: false,
             },
-      }), [t, vm.canRestore, vm.isRestoring, vm.handleRestore]);
+      }), [t, vm.canRestore, vm.isRestoring, vm.handleRestore, vm.handleBulkRestore]);
+
+      // Selection state for bulk operations
+      const [selectedItems, setSelectedItems] = useState<string[]>([]);
 
       // Build a lightweight viewModel shape that GenericCrudView expects
       const crudVm = useMemo(() => ({
@@ -128,8 +146,8 @@ export function RecycleBinView() {
             viewItem: null,
             openViewModal: () => { },
             closeViewModal: () => { },
-            selectedItems: [] as string[],
-            setSelectedItems: () => { },
+            selectedItems,
+            setSelectedItems,
             createItem: async () => { },
             updateItem: async () => { },
             deleteItem: async () => { },
@@ -137,7 +155,7 @@ export function RecycleBinView() {
             isCreating: false,
             isUpdating: false,
             isDeleting: false,
-      }), [vm.currentItems, vm.isLoading, vm.error]);
+      }), [vm.currentItems, vm.isLoading, vm.error, selectedItems]);
 
       return (
             <div className="space-y-6" dir={direction}>
@@ -160,7 +178,7 @@ export function RecycleBinView() {
 
                         {tabs.map((tab) => (
                               <TabsContent key={tab.key} value={tab.key}>
-                                    <GenericCrudView 
+                                    <GenericCrudView
                                           viewModel={{
                                                 ...crudVm,
                                                 items: vm.activeTab === tab.key ? vm.currentItems : [],

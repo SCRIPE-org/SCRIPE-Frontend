@@ -273,8 +273,8 @@ export const en = {
 
   // Admin
   admin: {
-    transferProtection:"Transfer Protection",
-    transferProtectionDesc:"Transfer Protection",
+    transferProtection: "Transfer Protection",
+    transferProtectionDesc: "Transfer Protection",
     targetRole: "Target Role",
     targetRolePlaceholder: "Enter Target Role",
     selectRole: "Select Role",
@@ -3579,6 +3579,14 @@ export const en = {
     restoreConfirmTitle: "Restore Item",
     restoreSuccess: "Item restored successfully",
     restoreError: "Failed to restore item",
+    restored: "Item Restored",
+    restoredDesc: "The item has been restored successfully.",
+    confirmRestore: "Confirm Restore",
+    confirmRestoreDesc: "Are you sure you want to restore {name}?",
+    bulkRestore: "Restore Selected",
+    bulkRestoredDesc: "{count} items restored successfully",
+    confirmBulkRestore: "Bulk Restore",
+    confirmBulkRestoreDesc: "Are you sure you want to restore {count} items?",
     noItems: "No deleted items found",
     daysLeft: "{{days}} days left",
     permanent: "Permanent soon",

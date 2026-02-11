@@ -225,6 +225,8 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
                               requiredPermission: SYSTEM_PERMISSIONS.ADMINS_UPDATE,
                               // Only show for other admins who are not protected
                               show: (item: Admin) => item.id !== currentUser.id && item.canModify,
+                              confirmTitle: tFn("admin.transferProtection") || "Transfer Protection",
+                              confirmDescription: tFn("admin.transferProtectionDesc") || "Are you sure you want to transfer protection to {name}?",
                         }] : []),
                         {
                               label: tFn("admin.toggleStatus") || "Toggle Status",

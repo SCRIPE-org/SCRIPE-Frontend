@@ -278,9 +278,9 @@ export const ar = {
 
   // Admin - المشرفون
   admin: {
-    protectionTransfered:"تم نقل الحماية",
-    transferProtection:"نقل الحماية إلى هذا المشرف",
-    transferProtectionDesc:"نقل الحماية من هذا المشرف إلى مستخدم آخر",
+    protectionTransfered: "تم نقل الحماية",
+    transferProtection: "نقل الحماية إلى هذا المشرف",
+    transferProtectionDesc: "نقل الحماية من هذا المشرف إلى مستخدم آخر",
     targetRole: "الدور المستهدف",
     targetRolePlaceholder: "أدخل الدور المستهدف",
     selectRole: "اختر الدور",
@@ -2817,6 +2817,7 @@ export const ar = {
 
   // Common
   common: {
+    clearSelection: "مسح التحديد",
     page: "صفحة",
     of: "من",
     stop: "ايقاف",
@@ -3413,6 +3414,14 @@ export const ar = {
     restoreConfirmTitle: "استعادة العنصر",
     restoreSuccess: "تم استعادة العنصر بنجاح",
     restoreError: "فشل في استعادة العنصر",
+    restored: "تمت الاستعادة",
+    restoredDesc: "تم استعادة العنصر بنجاح.",
+    confirmRestore: "تأكيد الاستعادة",
+    confirmRestoreDesc: "هل أنت متأكد من استعادة {name}؟",
+    bulkRestore: "استعادة المحدد",
+    bulkRestoredDesc: "تم استعادة {count} عناصر بنجاح",
+    confirmBulkRestore: "استعادة مجمعة",
+    confirmBulkRestoreDesc: "هل أنت متأكد من استعادة {count} عناصر؟",
     noItems: "لا توجد عناصر محذوفة",
     daysLeft: "{{days}} يوم متبقي",
     permanent: "سيحذف قريباً",

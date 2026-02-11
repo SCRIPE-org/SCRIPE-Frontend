@@ -33,4 +33,8 @@ export class RecycleBinRepository implements IRecycleBinRepository {
       async restore(entityType: string, id: string): Promise<void> {
             await this.service.restore(entityType, id);
       }
+
+      async bulkRestore(items: { entityType: string; id: string }[]): Promise<number> {
+            return this.service.bulkRestore(items);
+      }
 }

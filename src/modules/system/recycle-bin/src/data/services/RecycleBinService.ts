@@ -31,4 +31,12 @@ export class RecycleBinService implements IRecycleBinService {
       async restore(entityType: string, id: string): Promise<void> {
             await this.api.post(API_ENDPOINTS.RECYCLE_BIN.RESTORE(entityType, id), {});
       }
+
+      async bulkRestore(items: { entityType: string; id: string }[]): Promise<number> {
+            const response = await this.api.post<{ restoredCount: number }>(
+                  API_ENDPOINTS.RECYCLE_BIN.BULK_RESTORE,
+                  items.map(i => ({ entityType: i.entityType, id: i.id }))
+            );
+            return response.restoredCount;
+      }
 }

@@ -144,6 +144,7 @@ export const API_ENDPOINTS = {
   RECYCLE_BIN: {
     LIST: "/recycle-bin",
     RESTORE: (entityType: string, id: string) => `/recycle-bin/${entityType}/${id}/restore`,
+    BULK_RESTORE: "/recycle-bin/bulk-restore",
   },
 
   // Legacy menu endpoints
