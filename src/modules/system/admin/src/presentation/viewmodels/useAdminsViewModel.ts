@@ -395,12 +395,15 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
             }),
             getItemDisplayName: (admin: Admin) => admin.displayName || admin.username,
             enableBulkActions: false,
+            deleteService: async (id: string) => {
+                  await adminRepository.delete(id);
+            },
             permissions: {
                   canCreate: "admins:create",
                   canUpdate: "admins:update",
                   canDelete: "admins:delete",
             },
-      }), [t]);
+      }), [t, adminRepository]);
 
       return {
             vm,

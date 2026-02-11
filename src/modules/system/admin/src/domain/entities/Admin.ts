@@ -40,10 +40,8 @@ export interface AdminData extends BaseEntity {
       tenantName?: string;
       /** Whether this admin is a super/system admin */
       isSuperAdmin?: boolean;
-      /** Guardian: Whether this admin is protected from deletion/modification */
-      isProtected?: boolean;
-      /** Guardian: Whether this is the last super admin in the tenant */
-      isLastSuperAdminInTenant?: boolean;
+      /** Server-computed: Whether this admin can be modified (deleted, toggled, reset) */
+      canModify?: boolean;
 }
 
 /**
@@ -179,19 +177,14 @@ export class Admin {
             return this.isSuperAdmin || !this.tenantId;
       }
 
-      /** Guardian: Whether this admin is protected from deletion/modification */
-      get isProtected(): boolean {
-            return this.data.isProtected ?? false;
+      /** Server-computed: Whether this admin can be modified (deleted, toggled, reset) */
+      get canModify(): boolean {
+            return this.data.canModify!;
       }
 
-      /** Guardian: Whether this is the last super admin in the tenant */
-      get isLastSuperAdminInTenant(): boolean {
-            return this.data.isLastSuperAdminInTenant ?? false;
-      }
-
-      /** Guardian: Whether any guardian protection is active */
+      /** Whether any guardian protection is active (inverse of canModify) */
       get hasGuardianProtection(): boolean {
-            return this.isProtected || this.isLastSuperAdminInTenant;
+            return !this.canModify;
       }
 
       /**

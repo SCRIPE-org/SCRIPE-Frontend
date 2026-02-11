@@ -113,19 +113,13 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
                                                             <span>
                                                                   {admin.isSuperAdmin ? (
                                                                         <Crown className="h-4 w-4 text-amber-500" />
-                                                                  ) : admin.isLastSuperAdminInTenant ? (
-                                                                        <ShieldAlert className="h-4 w-4 text-orange-500" />
                                                                   ) : (
                                                                         <Shield className="h-4 w-4 text-blue-500" />
                                                                   )}
                                                             </span>
                                                       </TooltipTrigger>
                                                       <TooltipContent>
-                                                            {admin.isSuperAdmin
-                                                                  ? t("guardian.protectedAdminTooltip")
-                                                                  : admin.isLastSuperAdminInTenant
-                                                                        ? t("guardian.lastSuperAdminTooltip")
-                                                                        : t("guardian.protectedAdminTooltip")}
+                                                            {t("guardian.protectedAdminTooltip")}
                                                       </TooltipContent>
                                                 </Tooltip>
                                           </TooltipProvider>
