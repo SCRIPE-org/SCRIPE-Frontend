@@ -14,7 +14,7 @@ import type { AssignRoleRequest } from "../../domain/entities/AdminRequests";
 import { useAdminsViewModel } from "../viewmodels/useAdminsViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
 import { usePermissions } from "@core/providers/permission-provider";
-import { useAppStore } from "@core/store/useAppStore";
+
 
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { Badge } from "@core/ui/badge";
@@ -38,7 +38,6 @@ interface AdminsViewProps {
 export function AdminsView({ tenantId }: AdminsViewProps = {}) {
       const { t, language } = useI18n();
       const { isSuperAdmin } = usePermissions();
-      const currentUser = useAppStore((s) => s.user);
 
       // Use myTenantAdmins if not super admin (Tenant Admin mode)
       // Super Admins use the standard endpoint, which is now Context-Aware on the backend
@@ -216,20 +215,27 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
                               icon: <ArrowRightLeft className="h-4 w-4" />,
                               requiredPermission: SYSTEM_PERMISSIONS.ADMINS_TRANSFER,
                         },
-                        // Transfer Protection: only shown when current user is protected
-                        ...(currentUser?.isProtected ? [{
-                              label: tFn("admin.transferProtection") || "Transfer Protection",
-                              onClick: (item: Admin) => handleTransferProtection(currentUser.id, item.id),
-                              variant: "ghost" as const,
-                              icon: <ShieldCheck className="h-4 w-4" />,
-                              requiredPermission: SYSTEM_PERMISSIONS.ADMINS_UPDATE,
-                              // Only show for other admins who are not protected
-                              show: (item: Admin) => item.id !== currentUser.id && item.canModify,
-                              confirmTitle: tFn("admin.transferProtection") || "Transfer Protection",
-                              confirmDescription: tFn("admin.transferProtectionDesc") || "Are you sure you want to transfer protection to {name}?",
-                              confirmVariant: "warning" as const,
-                              confirmButtonText: tFn("common.confirm") || "Confirm",
-                        }] : []),
+                        // Transfer Protection: shown when any admin in the list is protected
+                        // Uses the protected admin's ID as source (not currentUser)
+                        ...(() => {
+                              const protectedAdmin = (vmInstance.items as Admin[])?.find(
+                                    (a: Admin) => a.hasGuardianProtection
+                              );
+                              if (!protectedAdmin) return [];
+                              return [{
+                                    label: tFn("admin.transferProtection") || "Transfer Protection",
+                                    onClick: (item: Admin) => handleTransferProtection(protectedAdmin.id, item.id),
+                                    variant: "ghost" as const,
+                                    icon: <ShieldCheck className="h-4 w-4" />,
+                                    requiredPermission: SYSTEM_PERMISSIONS.ADMINS_UPDATE,
+                                    // Only show for admins who are NOT the protected one
+                                    show: (item: Admin) => item.id !== protectedAdmin.id && item.canModify,
+                                    confirmTitle: tFn("admin.transferProtection") || "Transfer Protection",
+                                    confirmDescription: tFn("admin.transferProtectionDesc") || "Are you sure you want to transfer protection to {name}?",
+                                    confirmVariant: "warning" as const,
+                                    confirmButtonText: tFn("common.confirm") || "Confirm",
+                              }];
+                        })(),
                         {
                               label: tFn("admin.toggleStatus") || "Toggle Status",
                               onClick: (item: Admin) => handleToggleActive(item.id, !item.isActive),
@@ -270,7 +276,7 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
 
                   return actions;
             },
-      }), [t, vm, handleDelete, configBase, handleToggleActive, handleOpenManageRoles, handleOpenResetPassword, handleImpersonate, handleOpenTransfer, handleTransferProtection, currentUser, language]);
+      }), [t, vm, handleDelete, configBase, handleToggleActive, handleOpenManageRoles, handleOpenResetPassword, handleImpersonate, handleOpenTransfer, handleTransferProtection, language]);
 
       const [transferDialogOpen, setTransferDialogOpen] = useState(false);
 
