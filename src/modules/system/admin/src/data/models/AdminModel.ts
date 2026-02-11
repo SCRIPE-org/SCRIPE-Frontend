@@ -45,6 +45,8 @@ export interface AdminJson {
       tenantName?: string;
       /** Whether this admin is a super/system admin */
       isSuperAdmin?: boolean;
+      /** Server-computed: whether this admin can be modified */
+      canModify?: boolean;
       /** Effective permissions calculated by backend */
       permissions?: string[];
 }
@@ -146,6 +148,7 @@ export class AdminModel {
             public readonly tenantId?: string,
             public readonly tenantName?: string,
             public readonly isSuperAdmin?: boolean,
+            public readonly canModify?: boolean,
             public readonly permissions?: string[]
       ) { }
 
@@ -169,6 +172,7 @@ export class AdminModel {
                   json.tenantId,
                   json.tenantName,
                   json.isSuperAdmin,
+                  json.canModify,
                   json.permissions
             );
       }
@@ -193,6 +197,7 @@ export class AdminModel {
                   tenantId: this.tenantId,
                   tenantName: this.tenantName,
                   isSuperAdmin: this.isSuperAdmin,
+                  canModify: this.canModify,
                   permissions: this.permissions,
             };
       }

@@ -179,7 +179,7 @@ export class Admin {
 
       /** Server-computed: Whether this admin can be modified (deleted, toggled, reset) */
       get canModify(): boolean {
-            return this.data.canModify!;
+            return this.data.canModify ?? true;
       }
 
       /** Whether any guardian protection is active (inverse of canModify) */

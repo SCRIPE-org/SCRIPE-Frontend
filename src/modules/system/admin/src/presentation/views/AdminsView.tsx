@@ -182,6 +182,7 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
             getItemDisplayName: configBase.getItemDisplayName,
             enableBulkActions: configBase.enableBulkActions,
             permissions: configBase.permissions,
+            deleteService: configBase.deleteService,
             getActions: (vmInstance: any, tFn: any, handleDeleteFn: any): CrudAction<Admin>[] => {
                   const actions: CrudAction<Admin>[] = [
                         {
