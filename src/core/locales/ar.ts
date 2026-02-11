@@ -500,6 +500,7 @@ export const ar = {
     scopeTenant: "مستأجري",
     scopeGlobal: "المستأجر والفروع",
     overrideSaved: "تم حفظ التخصيص بنجاح.",
+    overrideDeleted: "تم إزالة التخصيص بنجاح.",
     hideItem: "إخفاء العنصر",
   },
 

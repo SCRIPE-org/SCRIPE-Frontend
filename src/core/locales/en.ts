@@ -475,6 +475,7 @@ export const en = {
     scopeTenant: "My Tenant",
     scopeGlobal: "Tenant & Children",
     overrideSaved: "Override saved successfully.",
+    overrideDeleted: "Override removed successfully.",
     hideItem: "Hide Item",
   },
 

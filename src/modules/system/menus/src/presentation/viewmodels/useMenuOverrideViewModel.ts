@@ -9,13 +9,15 @@
  */
 'use client';
 
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useMemo } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { systemContainer } from '@modules/system/di';
 import { MenuOverrideScope, type SaveMenuOverrideRequest } from '../../domain/entities/MenuItemRequests';
 import type { MenuTreeNode } from '../../domain/entities/MenuItem';
 import { useEnhancedToast } from '@core/hooks/use-enhanced-toast';
 import { useI18n } from '@core/providers/i18n-provider';
+import { useAppStore } from '@core/store/useAppStore';
+import { hasPermission, SYSTEM_PERMISSIONS } from '@core/common/types/permissions';
 
 export interface OverrideDialogState {
       open: boolean;
@@ -32,11 +34,14 @@ export interface UseMenuOverrideViewModelResult {
       // Scope
       scope: MenuOverrideScope;
       setScope: (scope: MenuOverrideScope) => void;
+      availableScopes: MenuOverrideScope[];
 
       // Actions
       saveRename: (nameEn: string, nameAr: string) => void;
       toggleHideItem: (node: MenuTreeNode) => void;
+      deleteOverride: (overrideId: string) => void;
       isSaving: boolean;
+      isDeleting: boolean;
 }
 
 export function useMenuOverrideViewModel(): UseMenuOverrideViewModelResult {
@@ -44,6 +49,36 @@ export function useMenuOverrideViewModel(): UseMenuOverrideViewModelResult {
       const { success, error: toastError } = useEnhancedToast();
       const { menuRepository } = systemContainer;
       const { t } = useI18n();
+      const permissions = useAppStore((s) => s.permissions);
+      const isSuperAdmin = useAppStore((s) =>
+            s.roles?.some((r) => r.roleCode === 'SYSTEM_SUPER_ADMIN')
+      );
+
+      // ── Available Scopes (permission-gated) ──────────────────────────────
+      const availableScopes = useMemo(() => {
+            // Super admins get all scopes
+            if (isSuperAdmin) {
+                  return [
+                        MenuOverrideScope.User,
+                        MenuOverrideScope.Tenant,
+                        MenuOverrideScope.TenantAndChildren,
+                  ];
+            }
+
+            const scopes: MenuOverrideScope[] = [];
+
+            if (hasPermission(permissions, SYSTEM_PERMISSIONS.MENUS_CUSTOMIZE)) {
+                  scopes.push(MenuOverrideScope.User);
+            }
+            if (hasPermission(permissions, SYSTEM_PERMISSIONS.MENUS_CUSTOMIZE_TENANT)) {
+                  scopes.push(MenuOverrideScope.Tenant);
+            }
+            if (hasPermission(permissions, SYSTEM_PERMISSIONS.MENUS_CUSTOMIZE_GLOBAL)) {
+                  scopes.push(MenuOverrideScope.TenantAndChildren);
+            }
+
+            return scopes;
+      }, [permissions, isSuperAdmin]);
 
       // ── State ──────────────────────────────────────────────────────────
       const [overrideDialog, setOverrideDialog] = useState<OverrideDialogState>({
@@ -51,7 +86,9 @@ export function useMenuOverrideViewModel(): UseMenuOverrideViewModelResult {
             node: null,
             mode: null,
       });
-      const [scope, setScope] = useState<MenuOverrideScope>(MenuOverrideScope.User);
+      const [scope, setScope] = useState<MenuOverrideScope>(
+            availableScopes[0] ?? MenuOverrideScope.User
+      );
 
       // Keep a ref to the current dialog node to avoid stale closures
       const dialogNodeRef = useRef<MenuTreeNode | null>(null);
@@ -85,6 +122,18 @@ export function useMenuOverrideViewModel(): UseMenuOverrideViewModelResult {
             },
       });
 
+      // ── Delete Override Mutation ─────────────────────────────────────────
+      const deleteMutation = useMutation({
+            mutationFn: (id: string) => menuRepository.deleteOverride(id),
+            onSuccess: () => {
+                  queryClient.invalidateQueries({ queryKey: ['menus'] });
+                  success({ title: t('menus.overrideDeleted') });
+            },
+            onError: () => {
+                  toastError({ title: t('common.error') });
+            },
+      });
+
       // ── Dialog Actions ─────────────────────────────────────────────────
       const openRenameDialog = useCallback((node: MenuTreeNode) => {
             setOverrideDialog({ open: true, node, mode: 'rename' });
@@ -108,13 +157,24 @@ export function useMenuOverrideViewModel(): UseMenuOverrideViewModelResult {
             [buildRequest, saveMutation]
       );
 
-      // ── Toggle Hide ────────────────────────────────────────────────────
+      // ── Toggle Hide (true to hide, false to show via new override) ─────
       const toggleHideItem = useCallback(
             (node: MenuTreeNode) => {
-                  const request = buildRequest(node.id, { isHidden: true });
+                  // If the node is currently hidden (has an override hiding it), unhide it
+                  // Otherwise, hide it
+                  const isCurrentlyHidden = !!(node as MenuTreeNode & { isHidden?: boolean }).isHidden;
+                  const request = buildRequest(node.id, { isHidden: !isCurrentlyHidden });
                   saveMutation.mutate(request);
             },
             [buildRequest, saveMutation]
+      );
+
+      // ── Delete Override ─────────────────────────────────────────────────
+      const deleteOverride = useCallback(
+            (overrideId: string) => {
+                  deleteMutation.mutate(overrideId);
+            },
+            [deleteMutation]
       );
 
       return {
@@ -123,8 +183,11 @@ export function useMenuOverrideViewModel(): UseMenuOverrideViewModelResult {
             closeOverrideDialog,
             scope,
             setScope,
+            availableScopes,
             saveRename,
             toggleHideItem,
+            deleteOverride,
             isSaving: saveMutation.isPending,
+            isDeleting: deleteMutation.isPending,
       };
 }

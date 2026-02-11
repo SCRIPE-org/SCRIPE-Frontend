@@ -180,6 +180,7 @@ export function MenusView() {
                         dialog={overrideVm.overrideDialog}
                         scope={overrideVm.scope}
                         onScopeChange={overrideVm.setScope}
+                        availableScopes={overrideVm.availableScopes}
                         onSave={overrideVm.saveRename}
                         onClose={overrideVm.closeOverrideDialog}
                         isSaving={overrideVm.isSaving}

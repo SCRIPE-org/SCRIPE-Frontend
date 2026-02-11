@@ -33,6 +33,7 @@ interface OverrideRenameDialogProps {
       dialog: OverrideDialogState;
       scope: MenuOverrideScope;
       onScopeChange: (scope: MenuOverrideScope) => void;
+      availableScopes: MenuOverrideScope[];
       onSave: (nameEn: string, nameAr: string) => void;
       onClose: () => void;
       isSaving: boolean;
@@ -50,6 +51,7 @@ function RenameForm({
       isSaving,
       scope,
       onScopeChange,
+      availableScopes,
 }: {
       initialNameEn: string;
       initialNameAr: string;
@@ -58,6 +60,7 @@ function RenameForm({
       isSaving: boolean;
       scope: MenuOverrideScope;
       onScopeChange: (scope: MenuOverrideScope) => void;
+      availableScopes: MenuOverrideScope[];
 }) {
       const { t } = useI18n();
       const [nameEn, setNameEn] = useState(initialNameEn);
@@ -78,15 +81,21 @@ function RenameForm({
                                     <SelectValue />
                               </SelectTrigger>
                               <SelectContent>
-                                    <SelectItem value={MenuOverrideScope.User}>
-                                          {t('menus.scopeUser')}
-                                    </SelectItem>
-                                    <SelectItem value={MenuOverrideScope.Tenant}>
-                                          {t('menus.scopeTenant')}
-                                    </SelectItem>
-                                    <SelectItem value={MenuOverrideScope.TenantAndChildren}>
-                                          {t('menus.scopeGlobal')}
-                                    </SelectItem>
+                                    {availableScopes.includes(MenuOverrideScope.User) && (
+                                          <SelectItem value={MenuOverrideScope.User}>
+                                                {t('menus.scopeUser')}
+                                          </SelectItem>
+                                    )}
+                                    {availableScopes.includes(MenuOverrideScope.Tenant) && (
+                                          <SelectItem value={MenuOverrideScope.Tenant}>
+                                                {t('menus.scopeTenant')}
+                                          </SelectItem>
+                                    )}
+                                    {availableScopes.includes(MenuOverrideScope.TenantAndChildren) && (
+                                          <SelectItem value={MenuOverrideScope.TenantAndChildren}>
+                                                {t('menus.scopeGlobal')}
+                                          </SelectItem>
+                                    )}
                               </SelectContent>
                         </Select>
                   </div>
@@ -133,6 +142,7 @@ export function OverrideRenameDialog({
       dialog,
       scope,
       onScopeChange,
+      availableScopes,
       onSave,
       onClose,
       isSaving,
@@ -160,6 +170,7 @@ export function OverrideRenameDialog({
                                           isSaving={isSaving}
                                           scope={scope}
                                           onScopeChange={onScopeChange}
+                                          availableScopes={availableScopes}
                                     />
                               )}
                         </div>
