@@ -21,6 +21,7 @@ import {
 import { PermissionGate } from "@core/providers/permission-provider";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import type { MenuTreeNode } from "../../domain/entities/MenuItem";
+import type { MenuOverrideDto } from "../../domain/entities/MenuItemRequests";
 import type { DropPosition, DropTarget } from "../viewmodels/useMenusViewModel";
 import {
       Plus,
@@ -72,6 +73,9 @@ export interface MenuTreeItemProps {
       onMoveDown?: () => void;
       onMoveUpChild?: (childId: string) => void;
       onMoveDownChild?: (childId: string) => void;
+
+      // Override indicators
+      overrideMap?: Map<string, MenuOverrideDto>;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -121,6 +125,7 @@ export function MenuTreeItem({
       onMoveDown,
       onMoveUpChild,
       onMoveDownChild,
+      overrideMap,
 }: MenuTreeItemProps) {
       const { t } = useI18n();
       const rowRef = useRef<HTMLDivElement>(null);
@@ -333,6 +338,30 @@ export function MenuTreeItem({
                               </Badge>
                         )}
 
+                        {/* Override indicator */}
+                        {overrideMap?.has(node.id) && (() => {
+                              const ov = overrideMap.get(node.id)!;
+                              const scopeColors: Record<string, string> = {
+                                    User: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400',
+                                    Tenant: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
+                                    TenantAndChildren: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
+                              };
+                              const label = ov.isHidden
+                                    ? `⊘ ${ov.scope}`
+                                    : `✎ ${ov.scope}`;
+                              return (
+                                    <Badge
+                                          variant="outline"
+                                          className={cn(
+                                                'text-[9px] px-1.5 py-0 font-medium border-0',
+                                                scopeColors[ov.scope] ?? 'bg-muted text-muted-foreground'
+                                          )}
+                                    >
+                                          {label}
+                                    </Badge>
+                              );
+                        })()}
+
                         {/* Actions */}
                         <div className="ms-auto flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
                               {canReorder && onMoveUp && (
@@ -425,6 +454,7 @@ export function MenuTreeItem({
                                                 onMoveDown={index < arr.length - 1 && onMoveDownChild ? () => onMoveDownChild(child.id) : undefined}
                                                 onMoveUpChild={onMoveUpChild}
                                                 onMoveDownChild={onMoveDownChild}
+                                                overrideMap={overrideMap}
                                           />
                                     ))}
                         </div>

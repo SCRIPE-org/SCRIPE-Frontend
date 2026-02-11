@@ -111,6 +111,7 @@ export const API_ENDPOINTS = {
   // ===== MENUS =====
   MENUS: {
     MY: "/Menus/my",
+    MY_OVERRIDES: "/Menus/overrides/my",
     LIST: "/Menus",
     BY_ID: (id: string) => `/Menus/${id}`,
     CREATE: "/Menus",

@@ -6,7 +6,7 @@
  */
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useCallback } from 'react';
 import { useI18n } from '@core/providers/i18n-provider';
 import { GenericModal } from '@core/crud/components/generic-modal';
 import { GenericForm, type FieldConfig } from '@core/ui/forms/generic-form';
@@ -54,6 +54,16 @@ export function OverrideRenameDialog({
             [availableScopes, t]
       );
 
+      // Defer scope change to avoid setState-in-render
+      // GenericForm calls field.onChange inside setFormData, which is synchronous.
+      // Calling onScopeChange directly triggers a parent setState during child render.
+      const deferredScopeChange = useCallback(
+            (value: any) => {
+                  queueMicrotask(() => onScopeChange(value as MenuOverrideScope));
+            },
+            [onScopeChange]
+      );
+
       // ── Define form fields ─────────────────────────────────────────────
       const fields: FieldConfig[] = useMemo(
             () => [
@@ -64,7 +74,7 @@ export function OverrideRenameDialog({
                         options: scopeOptions,
                         required: true,
                         onChange: (value: any) => {
-                              onScopeChange(value as MenuOverrideScope);
+                              deferredScopeChange(value);
                         },
                   },
                   {
@@ -79,7 +89,7 @@ export function OverrideRenameDialog({
                         type: 'text' as const,
                   },
             ],
-            [t, scopeOptions, onScopeChange]
+            [t, scopeOptions, deferredScopeChange]
       );
 
       // ── Initial values reset per node ──────────────────────────────────

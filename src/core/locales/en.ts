@@ -410,6 +410,7 @@ export const en = {
 
   // Menu Management (Admin — Navigation Menu Items)
   menus: {
+    dragToReorder:"Drag to reorder",
     title: "Menu Management",
     description: "Manage navigation menu items, ordering, and visibility.",
     items: "items",

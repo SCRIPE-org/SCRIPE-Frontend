@@ -20,6 +20,7 @@ import {
       type UpdateMenuItemRequest,
       type ReorderMenuItemsRequest,
       type SetRoleMenuVisibilityRequest,
+      type MenuOverrideDto,
 } from "../../domain/entities/MenuItemRequests";
 import { systemContainer } from "@modules/system/di";
 
@@ -72,6 +73,22 @@ export function useMenusViewModel() {
             queryKey: ["menus", "tree"],
             queryFn: () => menuRepository.getAll(),
       });
+
+      // ── Overrides query (for showing badges) ─────────────────────────
+      const { data: overridesList } = useQuery({
+            queryKey: ["menus", "overrides"],
+            queryFn: () => menuRepository.getMyOverrides(),
+      });
+
+      const overrideMap = useMemo(() => {
+            const map = new Map<string, MenuOverrideDto>();
+            if (overridesList) {
+                  for (const ov of overridesList) {
+                        map.set(ov.menuItemId, ov);
+                  }
+            }
+            return map;
+      }, [overridesList]);
 
       const safeMenuTree = useMemo(() => menuTree ?? [], [menuTree]);
 
@@ -646,5 +663,8 @@ export function useMenusViewModel() {
 
             // Actions
             refetch: () => refetch(),
+
+            // Override indicators
+            overrideMap,
       };
 }

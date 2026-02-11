@@ -10,6 +10,7 @@ import type {
       ReorderMenuItemsRequest,
       SetRoleMenuVisibilityRequest,
       SaveMenuOverrideRequest,
+      MenuOverrideDto,
 } from "../entities/MenuItemRequests";
 
 
@@ -62,5 +63,10 @@ export interface IMenuRepository {
        * Delete a menu override by ID
        */
       deleteOverride(id: string): Promise<void>;
+
+      /**
+       * Get all overrides for the current admin's context
+       */
+      getMyOverrides(): Promise<MenuOverrideDto[]>;
 
 }

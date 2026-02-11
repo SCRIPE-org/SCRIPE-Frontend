@@ -219,6 +219,7 @@ export function MenusView() {
                                                             onMoveDown={index < arr.length - 1 ? () => vm.handleMoveDown(node.id) : undefined}
                                                             onMoveUpChild={vm.handleMoveUp}
                                                             onMoveDownChild={vm.handleMoveDown}
+                                                            overrideMap={vm.overrideMap}
                                                       />
                                                 ))}
                                     </div>

@@ -13,6 +13,7 @@ import type {
       ReorderMenuItemsRequest,
       SetRoleMenuVisibilityRequest,
       SaveMenuOverrideRequest,
+      MenuOverrideDto,
 } from "../../domain/entities/MenuItemRequests";
 
 export class MenuRepository implements IMenuRepository {
@@ -65,6 +66,10 @@ export class MenuRepository implements IMenuRepository {
 
       async deleteOverride(id: string): Promise<void> {
             await this.api.delete(API_ENDPOINTS.MENUS.DELETE_OVERRIDE(id));
+      }
+
+      async getMyOverrides(): Promise<MenuOverrideDto[]> {
+            return await this.api.get<MenuOverrideDto[]>(API_ENDPOINTS.MENUS.MY_OVERRIDES);
       }
 
 
