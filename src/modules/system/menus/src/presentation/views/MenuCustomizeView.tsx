@@ -170,7 +170,35 @@ export function MenuCustomizeView() {
                                                             expandedNodes={vm.expandedNodes}
                                                             onToggleExpand={vm.toggleExpand}
                                                             onSelectItem={vm.selectItem}
+                                                            draggedNode={vm.draggedNode}
+                                                            dropTarget={vm.dropTarget}
+                                                            onDragStart={vm.handleDragStart}
+                                                            onDragOver={vm.handleDragOver}
+                                                            onDragLeave={vm.handleDragLeave}
+                                                            onDragEnd={vm.handleDragEnd}
+                                                            onDrop={vm.handleDrop}
                                                       />
+
+                                                      {/* Root Drop Zone — visible only during drag */}
+                                                      {vm.draggedNode && (
+                                                            <div
+                                                                  onDragOver={(e) => {
+                                                                        e.preventDefault();
+                                                                        e.currentTarget.classList.add('border-primary', 'bg-primary/5');
+                                                                  }}
+                                                                  onDragLeave={(e) => {
+                                                                        e.currentTarget.classList.remove('border-primary', 'bg-primary/5');
+                                                                  }}
+                                                                  onDrop={(e) => {
+                                                                        e.preventDefault();
+                                                                        e.currentTarget.classList.remove('border-primary', 'bg-primary/5');
+                                                                        vm.handleDropAtRoot();
+                                                                  }}
+                                                                  className="mt-3 flex items-center justify-center gap-2 p-4 rounded-lg border-2 border-dashed border-muted-foreground/25 text-muted-foreground text-sm transition-colors"
+                                                            >
+                                                                  {t('menus.dropToRoot') ?? 'Drop here to move to root level'}
+                                                            </div>
+                                                      )}
                                                 </CardContent>
                                           </Card>
                                     </div>

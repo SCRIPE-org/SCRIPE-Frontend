@@ -55,6 +55,13 @@ export interface ActiveOverrideEntry {
       override: MenuItemOverrideInfo;
 }
 
+/** DnD types for the customize page */
+export type CustomizeDropPosition = 'before' | 'inside' | 'after';
+export interface CustomizeDropTarget {
+      nodeId: string;
+      position: CustomizeDropPosition;
+}
+
 /* -------------------------------------------------------------------------- */
 /*  Hook                                                                       */
 /* -------------------------------------------------------------------------- */
@@ -335,6 +342,172 @@ export function useMenuCustomizeViewModel() {
             }
       }, [activeOverrides, menuRepository, queryClient, success, toastError, t]);
 
+      // ── DnD State ─────────────────────────────────────────────────────────
+      const [draggedNode, setDraggedNode] = useState<MenuTreeNode | null>(null);
+      const [dropTarget, setDropTarget] = useState<CustomizeDropTarget | null>(null);
+
+      /** Find siblings and parent for a node in the tree */
+      const findSiblingsAndParent = useCallback(
+            (nodeId: string, nodes: MenuTreeNode[] = menuTree, parentId?: string): { siblings: MenuTreeNode[]; parentId?: string } | null => {
+                  for (const node of nodes) {
+                        if (node.id === nodeId) return { siblings: nodes, parentId };
+                        const found = findSiblingsAndParent(nodeId, node.children, node.id);
+                        if (found) return found;
+                  }
+                  return null;
+            },
+            [menuTree]
+      );
+
+      const handleDragStart = useCallback(
+            (node: MenuTreeNode) => {
+                  setDraggedNode(node);
+                  // Collapse dragged node's children
+                  setExpandedNodes(prev => {
+                        const next = new Set(prev);
+                        next.delete(node.id);
+                        return next;
+                  });
+            },
+            []
+      );
+
+      const handleDragOver = useCallback(
+            (nodeId: string, position: CustomizeDropPosition) => {
+                  if (!draggedNode) return;
+                  if (draggedNode.id === nodeId) {
+                        setDropTarget(null);
+                        return;
+                  }
+                  // Prevent dropping parent into its own children
+                  const descendants = getDescendantIds(draggedNode.id);
+                  if (descendants.has(nodeId)) {
+                        setDropTarget(null);
+                        return;
+                  }
+                  setDropTarget({ nodeId, position });
+            },
+            [draggedNode, getDescendantIds]
+      );
+
+      const handleDragLeave = useCallback(() => {
+            setDropTarget(null);
+      }, []);
+
+      const handleDragEnd = useCallback(() => {
+            setDraggedNode(null);
+            setDropTarget(null);
+      }, []);
+
+      /**
+       * DnD Drop handler for the customize page.
+       * Instead of calling the reorder API (base menu), saves order+parent
+       * overrides for the dragged item.
+       *
+       * Strategy:
+       * - "inside": save override with parentMenuItemIdOverride = targetNodeId,
+       *   orderOverride = targetNode.children.length + 1 (append to end)
+       * - "before"/"after": save override with parentMenuItemIdOverride = target's parent,
+       *   orderOverride = calculated based on target's position among siblings
+       */
+      const handleDrop = useCallback(
+            async (targetNodeId: string, position: CustomizeDropPosition) => {
+                  if (!draggedNode) return;
+
+                  const targetNode = findNode(targetNodeId);
+                  if (!targetNode) { handleDragEnd(); return; }
+
+                  // Prevent drop on self or descendants
+                  if (draggedNode.id === targetNodeId) { handleDragEnd(); return; }
+                  const descendants = getDescendantIds(draggedNode.id);
+                  if (descendants.has(targetNodeId)) { handleDragEnd(); return; }
+
+                  let newParentId: string | undefined;
+                  let newOrder: number;
+
+                  if (position === 'inside') {
+                        // Move inside targetNode as last child
+                        newParentId = targetNodeId;
+                        newOrder = targetNode.children.length + 1;
+                        // Auto-expand
+                        setExpandedNodes(prev => new Set([...prev, targetNodeId]));
+                  } else {
+                        // Move before/after targetNode — same parent as target
+                        const targetResult = findSiblingsAndParent(targetNodeId);
+                        if (!targetResult) { handleDragEnd(); return; }
+
+                        newParentId = targetResult.parentId;
+                        const siblings = [...targetResult.siblings]
+                              .sort((a, b) => a.order - b.order)
+                              .filter(n => n.id !== draggedNode.id);
+                        const targetIdx = siblings.findIndex(n => n.id === targetNodeId);
+                        const insertAt = position === 'before' ? targetIdx : targetIdx + 1;
+
+                        // Calculate order: midpoint between neighbors or offset
+                        if (insertAt === 0) {
+                              newOrder = siblings.length > 0 ? siblings[0].order - 1 : 1;
+                        } else if (insertAt >= siblings.length) {
+                              newOrder = siblings[siblings.length - 1].order + 1;
+                        } else {
+                              // Midpoint between the two neighbors
+                              newOrder = Math.floor((siblings[insertAt - 1].order + siblings[insertAt].order) / 2);
+                              // If collision, just use insertAt + 1
+                              if (newOrder === siblings[insertAt - 1].order) newOrder = insertAt + 1;
+                        }
+                  }
+
+                  // Build and fire override save
+                  const request: SaveMenuOverrideRequest = {
+                        menuItemId: draggedNode.id,
+                        scope,
+                        orderOverride: newOrder,
+                        parentMenuItemIdOverride: newParentId,
+                        isHidden: false,
+                  };
+
+                  try {
+                        await saveMutation.mutateAsync(request);
+                        // Also select the dropped item
+                        setSelectedItemId(draggedNode.id);
+                  } catch {
+                        // Error handled by mutation onError
+                  }
+
+                  handleDragEnd();
+            },
+            [draggedNode, findNode, getDescendantIds, findSiblingsAndParent, scope, saveMutation, handleDragEnd]
+      );
+
+      /** Drop at root level — save override with no parent */
+      const handleDropAtRoot = useCallback(
+            async () => {
+                  if (!draggedNode) return;
+                  const rootItems = menuTree.filter(n => n.id !== draggedNode.id);
+                  const newOrder = rootItems.length > 0
+                        ? Math.max(...rootItems.map(n => n.order)) + 1
+                        : 1;
+
+                  const request: SaveMenuOverrideRequest = {
+                        menuItemId: draggedNode.id,
+                        scope,
+                        orderOverride: newOrder,
+                        // Empty string signals "move to root" (no parent)
+                        parentMenuItemIdOverride: undefined,
+                        isHidden: false,
+                  };
+
+                  try {
+                        await saveMutation.mutateAsync(request);
+                        setSelectedItemId(draggedNode.id);
+                  } catch {
+                        // handled by mutation onError
+                  }
+
+                  handleDragEnd();
+            },
+            [draggedNode, menuTree, scope, saveMutation, handleDragEnd]
+      );
+
       return {
             // State
             scope,
@@ -361,6 +534,16 @@ export function useMenuCustomizeViewModel() {
             removeOverride,
             resetAllOverrides,
             refetch,
+
+            // DnD
+            draggedNode,
+            dropTarget,
+            handleDragStart,
+            handleDragOver,
+            handleDragLeave,
+            handleDragEnd,
+            handleDrop,
+            handleDropAtRoot,
 
             // Derived data
             flatMenuItems,

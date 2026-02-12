@@ -3,15 +3,20 @@
  *
  * Left panel: shows the menu tree as it will appear.
  * Click-to-select an item to edit in the panel.
+ * Drag-and-drop to reorder/regroup as customization overrides.
  * Override indicators show colored left borders and badges.
  */
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
 import { useI18n } from '@core/providers/i18n-provider';
 import { Badge } from '@core/ui/badge';
 import type { MenuTreeNode } from '../../domain/entities/MenuItem';
 import { MenuOverrideScope } from '../../domain/entities/MenuItemRequests';
+import type {
+      CustomizeDropPosition,
+      CustomizeDropTarget,
+} from '../viewmodels/useMenuCustomizeViewModel';
 import {
       ChevronRight,
       ChevronDown,
@@ -19,6 +24,7 @@ import {
       FileText,
       EyeOff,
       Pencil,
+      GripVertical,
 } from 'lucide-react';
 import { cn } from '@core/common/utils';
 
@@ -34,6 +40,15 @@ interface CustomizePreviewTreeProps {
       expandedNodes: Set<string>;
       onToggleExpand: (nodeId: string) => void;
       onSelectItem: (nodeId: string) => void;
+
+      // DnD props
+      draggedNode: MenuTreeNode | null;
+      dropTarget: CustomizeDropTarget | null;
+      onDragStart: (node: MenuTreeNode) => void;
+      onDragOver: (nodeId: string, position: CustomizeDropPosition) => void;
+      onDragLeave: () => void;
+      onDragEnd: () => void;
+      onDrop: (targetNodeId: string, position: CustomizeDropPosition) => void;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -48,6 +63,13 @@ export function CustomizePreviewTree({
       expandedNodes,
       onToggleExpand,
       onSelectItem,
+      draggedNode,
+      dropTarget,
+      onDragStart,
+      onDragOver,
+      onDragLeave,
+      onDragEnd,
+      onDrop,
 }: CustomizePreviewTreeProps) {
       return (
             <div className="space-y-0.5">
@@ -64,6 +86,13 @@ export function CustomizePreviewTree({
                                     expandedNodes={expandedNodes}
                                     onToggleExpand={onToggleExpand}
                                     onSelectItem={onSelectItem}
+                                    draggedNode={draggedNode}
+                                    dropTarget={dropTarget}
+                                    onDragStart={onDragStart}
+                                    onDragOver={onDragOver}
+                                    onDragLeave={onDragLeave}
+                                    onDragEnd={onDragEnd}
+                                    onDrop={onDrop}
                               />
                         ))}
             </div>
@@ -71,7 +100,7 @@ export function CustomizePreviewTree({
 }
 
 /* -------------------------------------------------------------------------- */
-/*  Tree Node (recursive)                                                      */
+/*  Tree Node (recursive) — with native HTML5 DnD                              */
 /* -------------------------------------------------------------------------- */
 
 interface PreviewTreeNodeProps {
@@ -83,6 +112,14 @@ interface PreviewTreeNodeProps {
       expandedNodes: Set<string>;
       onToggleExpand: (nodeId: string) => void;
       onSelectItem: (nodeId: string) => void;
+      // DnD
+      draggedNode: MenuTreeNode | null;
+      dropTarget: CustomizeDropTarget | null;
+      onDragStart: (node: MenuTreeNode) => void;
+      onDragOver: (nodeId: string, position: CustomizeDropPosition) => void;
+      onDragLeave: () => void;
+      onDragEnd: () => void;
+      onDrop: (targetNodeId: string, position: CustomizeDropPosition) => void;
 }
 
 function PreviewTreeNode({
@@ -94,11 +131,22 @@ function PreviewTreeNode({
       expandedNodes,
       onToggleExpand,
       onSelectItem,
+      draggedNode,
+      dropTarget,
+      onDragStart,
+      onDragOver,
+      onDragLeave,
+      onDragEnd,
+      onDrop,
 }: PreviewTreeNodeProps) {
       const { t } = useI18n();
+      const rowRef = useRef<HTMLDivElement>(null);
       const hasChildren = node.children.length > 0;
       const isExpanded = expandedNodes.has(node.id);
       const isSelected = selectedItemId === node.id;
+      const isDragging = draggedNode?.id === node.id;
+      const isDropTarget = dropTarget?.nodeId === node.id;
+      const dropPosition = isDropTarget ? dropTarget?.position : null;
 
       // Get override for current scope
       const override = scope === MenuOverrideScope.User
@@ -125,13 +173,108 @@ function PreviewTreeNode({
             onToggleExpand(node.id);
       }, [node.id, onToggleExpand]);
 
+      // ── DnD Handlers ───────────────────────────────────────────────────
+
+      const handleDragStartEvent = useCallback(
+            (e: React.DragEvent) => {
+                  e.stopPropagation();
+                  e.dataTransfer.effectAllowed = 'move';
+                  e.dataTransfer.setData('text/plain', node.id);
+                  onDragStart(node);
+            },
+            [node, onDragStart]
+      );
+
+      const handleDragOverEvent = useCallback(
+            (e: React.DragEvent) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  if (!rowRef.current || !draggedNode) return;
+
+                  const rect = rowRef.current.getBoundingClientRect();
+                  const y = e.clientY - rect.top;
+                  const height = rect.height;
+
+                  // 3-zone detection: top 25% = before, bottom 25% = after, middle 50% = inside
+                  let position: CustomizeDropPosition;
+                  if (y < height * 0.25) {
+                        position = 'before';
+                  } else if (y > height * 0.75) {
+                        position = 'after';
+                  } else {
+                        position = 'inside';
+                  }
+
+                  onDragOver(node.id, position);
+            },
+            [node.id, draggedNode, onDragOver]
+      );
+
+      const handleDragLeaveEvent = useCallback(
+            (e: React.DragEvent) => {
+                  e.stopPropagation();
+                  // Only fire if we're truly leaving this element (not entering a child)
+                  if (rowRef.current && !rowRef.current.contains(e.relatedTarget as Node)) {
+                        onDragLeave();
+                  }
+            },
+            [onDragLeave]
+      );
+
+      const handleDropEvent = useCallback(
+            (e: React.DragEvent) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  if (!rowRef.current || !draggedNode) return;
+
+                  const rect = rowRef.current.getBoundingClientRect();
+                  const y = e.clientY - rect.top;
+                  const height = rect.height;
+
+                  let position: CustomizeDropPosition;
+                  if (y < height * 0.25) {
+                        position = 'before';
+                  } else if (y > height * 0.75) {
+                        position = 'after';
+                  } else {
+                        position = 'inside';
+                  }
+
+                  onDrop(node.id, position);
+            },
+            [node.id, draggedNode, onDrop]
+      );
+
+      const handleDragEndEvent = useCallback(
+            (e: React.DragEvent) => {
+                  e.stopPropagation();
+                  onDragEnd();
+            },
+            [onDragEnd]
+      );
+
       return (
-            <div>
+            <div className={cn(isDragging && 'opacity-30')}>
+                  {/* Drop indicator line (before) */}
+                  {isDropTarget && dropPosition === 'before' && (
+                        <div
+                              className="h-0.5 rounded-full bg-primary mx-2 mb-0.5 transition-all"
+                              style={{ marginInlineStart: depth * 20 + 8 }}
+                        />
+                  )}
+
                   {/* Node Row */}
                   <div
+                        ref={rowRef}
                         onClick={handleClick}
+                        draggable
+                        onDragStart={handleDragStartEvent}
+                        onDragOver={handleDragOverEvent}
+                        onDragLeave={handleDragLeaveEvent}
+                        onDrop={handleDropEvent}
+                        onDragEnd={handleDragEndEvent}
                         className={cn(
-                              'group relative flex items-center gap-2 py-2 px-3 rounded-lg cursor-pointer',
+                              'group relative flex items-center gap-1.5 py-2 px-2 rounded-lg cursor-pointer',
                               'transition-all duration-150',
                               'border-l-2',
                               // Selected state
@@ -142,9 +285,14 @@ function PreviewTreeNode({
                               hasOverride && !isSelected && 'border-l-amber-500',
                               // Hidden item styling
                               isHidden && 'opacity-40',
+                              // Drop target highlight
+                              isDropTarget && dropPosition === 'inside' && 'bg-primary/5 ring-1 ring-primary/30 ring-dashed',
                         )}
                         style={{ marginInlineStart: depth * 20 }}
                   >
+                        {/* Drag Handle */}
+                        <GripVertical className="h-3.5 w-3.5 text-muted-foreground/40 hover:text-muted-foreground shrink-0 cursor-grab active:cursor-grabbing" />
+
                         {/* Expand / Collapse */}
                         {hasChildren ? (
                               <button
@@ -199,6 +347,14 @@ function PreviewTreeNode({
                         )}
                   </div>
 
+                  {/* Drop indicator line (after) */}
+                  {isDropTarget && dropPosition === 'after' && (
+                        <div
+                              className="h-0.5 rounded-full bg-primary mx-2 mt-0.5 transition-all"
+                              style={{ marginInlineStart: depth * 20 + 8 }}
+                        />
+                  )}
+
                   {/* Children */}
                   {isExpanded && hasChildren && (
                         <div className="mt-0.5">
@@ -215,6 +371,13 @@ function PreviewTreeNode({
                                                 expandedNodes={expandedNodes}
                                                 onToggleExpand={onToggleExpand}
                                                 onSelectItem={onSelectItem}
+                                                draggedNode={draggedNode}
+                                                dropTarget={dropTarget}
+                                                onDragStart={onDragStart}
+                                                onDragOver={onDragOver}
+                                                onDragLeave={onDragLeave}
+                                                onDragEnd={onDragEnd}
+                                                onDrop={onDrop}
                                           />
                                     ))}
                         </div>
