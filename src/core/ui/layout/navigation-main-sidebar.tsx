@@ -1,12 +1,8 @@
 "use client";
 
 import type React from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { usePathname } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useDynamicNavigation } from "@core/ui/navigation/dynamic-navigation";
-import { isNavigationItemActive } from "@core/config/navigation";
 import { cn } from "@core/common/utils";
 import { Button } from "@core/ui/button";
 import { ScrollArea } from "@core/ui/scroll-area";
@@ -18,24 +14,34 @@ import {
 } from "@core/ui/tooltip";
 import { Logo } from "@core/ui/logo";
 import { useSettings } from "@core/providers/settings-provider";
+import type { NavigationItem } from "@core/config/navigation";
+import {
+  getMainItemClasses,
+  getBorderRadiusClass,
+  getAnimationClass,
+  getIconClasses,
+  getSidebarBgClass,
+  getIndicatorColor,
+  type NavigationStyleConfig,
+} from "./navigation-styles";
 
 interface NavigationMainSidebarProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  activeItem: string;
-  selectedItem: string | null;
-  onItemSelect: (itemName: string) => void;
+  activeMainItem: string;
+  selectedMainItem: string | null;
+  onItemClick: (item: NavigationItem) => void;
+  isMobile: boolean;
 }
 
 export function NavigationMainSidebar({
   open,
   onOpenChange,
-  activeItem,
-  selectedItem,
-  onItemSelect,
+  activeMainItem,
+  selectedMainItem,
+  onItemClick,
+  isMobile,
 }: NavigationMainSidebarProps) {
-  const router = useRouter();
-  const pathname = usePathname();
   const { direction, t } = useI18n();
   const navigation = useDynamicNavigation();
   const {
@@ -47,152 +53,44 @@ export function NavigationMainSidebar({
     iconStyle,
   } = useSettings();
 
+  const styleConfig: NavigationStyleConfig = {
+    colorTheme,
+    animationLevel,
+    borderRadius,
+    navigationStyle,
+    iconStyle,
+    cardStyle,
+    direction,
+  };
 
-  const getBorderRadiusClass = () => {
-    switch (borderRadius) {
-      case "none":
-        return "rounded-none";
-      case "small":
-        return "rounded-sm";
-      case "large":
-        return "rounded-lg";
-      case "full":
-        return "rounded-full";
-      default:
-        return "rounded-md";
+  // ── Click handler ──
+  const handleItemClick = (item: NavigationItem) => {
+    onItemClick(item);
+    // Close mobile sidebar when navigating to a leaf page
+    const hasChildren = !!(item.children && item.children.length > 0);
+    if (!hasChildren && item.href && isMobile) {
+      onOpenChange(false);
     }
   };
 
-  const getAnimationClass = () => {
-    if (animationLevel === "none") return "";
-    if (animationLevel === "minimal") return "transition-colors duration-200";
-    if (animationLevel === "moderate") return "transition-all duration-200";
-    return "transition-all duration-300 hover:scale-105";
-  };
-
-  const getIconClasses = () => {
-    const baseClasses = "w-6 h-6";
-    
-    switch (iconStyle) {
-      case "filled":
-        return cn(baseClasses, "fill-current");
-      case "duotone":
-        return cn(baseClasses, "fill-current opacity-75");
-      case "minimal":
-        return cn(baseClasses, "stroke-2");
-      default: // "outline"
-        return cn(baseClasses, "stroke-current fill-none");
-    }
-  };
-
-  const getNavigationStyleClasses = (isActive: boolean, isMobile = false) => {
-    const baseClasses = isMobile ? "w-full justify-start gap-3 h-12" : "w-14 h-14 relative group";
-    
-    if (!isActive) {
-      return cn(baseClasses, "hover:bg-accent hover:text-accent-foreground");
-    }
-
-    // Active item styling based on navigation style
-    switch (navigationStyle) {
-      case "pills":
-        return cn(
-          baseClasses,
-          "text-white shadow-lg",
-          isMobile ? "rounded-full" : "rounded-full",
-          colorTheme === "blue" && "bg-blue-600 hover:bg-blue-700",
-          colorTheme === "purple" && "bg-purple-600 hover:bg-purple-700",
-          colorTheme === "green" && "bg-green-600 hover:bg-green-700",
-          colorTheme === "orange" && "bg-orange-600 hover:bg-orange-700",
-          colorTheme === "red" && "bg-red-600 hover:bg-red-700",
-          colorTheme === "teal" && "bg-teal-600 hover:bg-teal-700"
-        );
-      case "underline":
-        return cn(
-          baseClasses,
-          "rounded-none border-b-2",
-          colorTheme === "blue" && "border-blue-600 text-blue-600",
-          colorTheme === "purple" && "border-purple-600 text-purple-600",
-          colorTheme === "green" && "border-green-600 text-green-600",
-          colorTheme === "orange" && "border-orange-600 text-orange-600",
-          colorTheme === "red" && "border-red-600 text-red-600",
-          colorTheme === "teal" && "border-teal-600 text-teal-600"
-        );
-      case "sidebar":
-        return cn(
-          baseClasses,
-          "rounded-none", // Remove border radius for clean sidebar style
-          // For desktop main sidebar: right border for LTR, left border for RTL
-          // For mobile: left border for LTR, right border for RTL
-          isMobile 
-            ? (direction === "rtl" ? "border-r-4" : "border-l-4")
-            : (direction === "rtl" ? "border-l-4" : "border-r-4"),
-          colorTheme === "blue" && "bg-blue-600/20 border-blue-600 text-blue-600",
-          colorTheme === "purple" && "bg-purple-600/20 border-purple-600 text-purple-600",
-          colorTheme === "green" && "bg-green-600/20 border-green-600 text-green-600",
-          colorTheme === "orange" && "bg-orange-600/20 border-orange-600 text-orange-600",
-          colorTheme === "red" && "bg-red-600/20 border-red-600 text-red-600",
-          colorTheme === "teal" && "bg-teal-600/20 border-teal-600 text-teal-600"
-        );
-      default: // "default"
-        return cn(
-          baseClasses,
-          "text-white shadow-lg",
-          colorTheme === "blue" && "bg-blue-600 hover:bg-blue-700",
-          colorTheme === "purple" && "bg-purple-600 hover:bg-purple-700",
-          colorTheme === "green" && "bg-green-600 hover:bg-green-700",
-          colorTheme === "orange" && "bg-orange-600 hover:bg-orange-700",
-          colorTheme === "red" && "bg-red-600 hover:bg-red-700",
-          colorTheme === "teal" && "bg-teal-600 hover:bg-teal-700"
-        );
-    }
-  };
-
-  const handleItemClick = (item: any) => {
-    const hasChildren = item.children && item.children.length > 0;
-    const isCurrentlyActive = item.name === activeItem;
-
-    if (hasChildren) {
-      // If clicking on the active item, clear selection and return to default state
-      if (isCurrentlyActive) {
-        onItemSelect(""); // Clear selection by passing empty string
-      } else {
-        // Item has children - show panel sidebar
-        onItemSelect(item.name);
-      }
-    } else if (item.href) {
-      // Item has no children but has href - navigate directly
-      // Clear selection when navigating
-      onItemSelect("");
-      router.push(item.href);
-      // Close mobile sidebar after navigation
-      if (window.innerWidth < 1024) {
-        onOpenChange(false);
-      }
-    } else {
-      // Item has no children and no href - clear selection
-      onItemSelect("");
-    }
-  };
-
-  const renderNavigationItem = (item: any) => {
-    const hasChildren = item.children && item.children.length > 0;
+  // ── Render a single navigation item (desktop icon button) ──
+  const renderNavigationItem = (item: NavigationItem) => {
+    const hasChildren = !!(item.children && item.children.length > 0);
     const hasHref = !!item.href;
     const displayName = t(item.name) || item.name;
 
-    // Check if item is selected (user clicked) or active (URL-based)
-    const isSelected = item.name === selectedItem;
-    const isActive = item.name === activeItem;
-    const isCurrentlyFocused = isSelected || (isActive && selectedItem === null);
-    
-    // Apply primary highlight if selected, secondary if active (but not selected)
-    let itemIsHighlighted = false;
+    // Determine active/selected state
+    const isSelected = item.name === selectedMainItem;
+    const isActive = item.name === activeMainItem;
+    const isCurrentlyFocused = isSelected || (isActive && selectedMainItem === null);
+
+    // Opacity: if user selected another item, dim this one (still active but not focused)
     let itemOpacity = "opacity-100";
-    
+    let itemIsHighlighted = false;
+
     if (isSelected) {
-      // User clicked this item - primary highlight
       itemIsHighlighted = true;
-    } else if (isActive && selectedItem !== null) {
-      // This is the active item but user clicked another - secondary highlight (with opacity)
+    } else if (isActive && selectedMainItem !== null) {
       itemIsHighlighted = true;
       itemOpacity = "opacity-60";
     }
@@ -205,33 +103,28 @@ export function NavigationMainSidebar({
               variant="ghost"
               size="icon"
               className={cn(
-                getNavigationStyleClasses(isCurrentlyFocused),
-                getBorderRadiusClass(),
-                getAnimationClass(),
+                getMainItemClasses(isCurrentlyFocused, styleConfig),
+                getBorderRadiusClass(borderRadius),
+                getAnimationClass(animationLevel, "main"),
                 item.disabled && "opacity-50 cursor-not-allowed",
-                itemOpacity
+                itemOpacity,
               )}
               onClick={() => handleItemClick(item)}
               disabled={item.disabled}
             >
               {item.icon ? (
-                <item.icon className={getIconClasses()} />
+                <item.icon className={getIconClasses(iconStyle)} />
               ) : (
                 <div className="w-3 h-3 rounded-full bg-white" />
               )}
 
-              {/* Active indicator - only show for non-sidebar navigation styles */}
+              {/* Active indicator bar — only for non-sidebar navigation styles */}
               {itemIsHighlighted && navigationStyle !== "sidebar" && (
                 <div
                   className={cn(
                     "absolute w-1 h-8 rounded-full",
                     direction === "rtl" ? "left-0" : "right-0",
-                    colorTheme === "blue" && "bg-blue-300",
-                    colorTheme === "purple" && "bg-purple-300",
-                    colorTheme === "green" && "bg-green-300",
-                    colorTheme === "orange" && "bg-orange-300",
-                    colorTheme === "red" && "bg-red-300",
-                    colorTheme === "teal" && "bg-teal-300"
+                    getIndicatorColor(colorTheme),
                   )}
                 />
               )}
@@ -266,14 +159,7 @@ export function NavigationMainSidebar({
       <aside
         className={cn(
           "navigation-main-sidebar fixed inset-y-0 z-50 w-24 transform transition-all duration-300 ease-in-out hidden lg:flex flex-col",
-          cardStyle === "glass"
-            ? "bg-white/5 dark:bg-white/5 backdrop-blur-xl border-white/10 dark:border-white/10 shadow-[0_8px_32px_0_rgba(31,38,135,0.37)] dark:shadow-[0_8px_32px_0_rgba(255,255,255,0.1)]"
-            : cardStyle === "solid"
-            ? "bg-card border-border backdrop-blur-sm"
-            : cardStyle === "bordered"
-            ? "bg-card border border-border"
-            : "bg-card",
-          direction === "rtl" ? "right-0 border-l" : "left-0 border-r"
+          getSidebarBgClass(cardStyle, direction),
         )}
       >
         {/* Logo */}
@@ -293,19 +179,12 @@ export function NavigationMainSidebar({
       <aside
         className={cn(
           "navigation-main-sidebar fixed inset-y-0 z-50 w-64 transform transition-all duration-300 ease-in-out lg:hidden",
-          cardStyle === "glass"
-            ? "bg-white/5 dark:bg-white/5 backdrop-blur-xl border-white/10 dark:border-white/10 shadow-[0_8px_32px_0_rgba(31,38,135,0.37)] dark:shadow-[0_8px_32px_0_rgba(255,255,255,0.1)]"
-            : cardStyle === "solid"
-            ? "bg-card border-border backdrop-blur-sm"
-            : cardStyle === "bordered"
-            ? "bg-card border border-border"
-            : "bg-card",
-          direction === "rtl" ? "right-0 border-l" : "left-0 border-r",
+          getSidebarBgClass(cardStyle, direction),
           open
             ? "translate-x-0"
             : direction === "rtl"
-            ? "translate-x-full"
-            : "-translate-x-full"
+              ? "translate-x-full"
+              : "-translate-x-full",
         )}
       >
         {/* Mobile Header */}
@@ -325,23 +204,15 @@ export function NavigationMainSidebar({
         <ScrollArea className="flex-1 py-4">
           <div className="space-y-1 px-3">
             {navigation.map((item) => {
-              const hasChildren = item.children && item.children.length > 0;
-              const hasHref = !!item.href;
+              const hasChildren = !!(item.children && item.children.length > 0);
               const displayName = t(item.name) || item.name;
 
-              // Check if item is selected (user clicked) or active (URL-based)
-              const isSelected = item.name === selectedItem;
-              const isActive = item.name === activeItem;
-              const isCurrentlyFocused = isSelected || (isActive && selectedItem === null);
-              
-              // Apply primary highlight if selected, secondary if active (but not selected)
+              const isSelected = item.name === selectedMainItem;
+              const isActive = item.name === activeMainItem;
+              const isCurrentlyFocused = isSelected || (isActive && selectedMainItem === null);
+
               let itemOpacity = "opacity-100";
-              
-              if (isSelected) {
-                // User clicked this item - primary highlight
-                itemOpacity = "opacity-100";
-              } else if (isActive && selectedItem !== null) {
-                // This is the active item but user clicked another - secondary highlight (with opacity)
+              if (isActive && selectedMainItem !== null && !isSelected) {
                 itemOpacity = "opacity-60";
               }
 
@@ -350,17 +221,17 @@ export function NavigationMainSidebar({
                   key={item.name}
                   variant="ghost"
                   className={cn(
-                    getNavigationStyleClasses(isCurrentlyFocused, true),
-                    getBorderRadiusClass(),
-                    getAnimationClass(),
+                    getMainItemClasses(isCurrentlyFocused, styleConfig, true),
+                    getBorderRadiusClass(borderRadius),
+                    getAnimationClass(animationLevel, "main"),
                     item.disabled && "opacity-50 cursor-not-allowed",
-                    itemOpacity
+                    itemOpacity,
                   )}
                   onClick={() => handleItemClick(item)}
                   disabled={item.disabled}
                 >
                   {item.icon ? (
-                    <item.icon className={getIconClasses()} />
+                    <item.icon className={getIconClasses(iconStyle)} />
                   ) : (
                     <div className="w-3 h-3 rounded-full bg-white" />
                   )}
