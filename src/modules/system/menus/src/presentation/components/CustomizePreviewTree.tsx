@@ -1,10 +1,10 @@
 /**
- * Customize Preview Tree
+ * Customize Preview Tree (Effective View)
  *
- * Left panel: shows the menu tree as it will appear.
- * Click-to-select an item to edit in the panel.
+ * Shows the EFFECTIVE menu tree with all overrides applied.
+ * This is what the menu will actually look like.
  * Drag-and-drop to reorder/regroup as customization overrides.
- * Override indicators show colored left borders and badges.
+ * Items with overrides show a subtle "modified" indicator.
  */
 'use client';
 
@@ -12,6 +12,7 @@ import { useCallback, useRef } from 'react';
 import { useI18n } from '@core/providers/i18n-provider';
 import { Badge } from '@core/ui/badge';
 import type { MenuTreeNode } from '../../domain/entities/MenuItem';
+import type { EffectiveTreeNode } from '../../domain/utils/computeEffectiveTree';
 import { MenuOverrideScope } from '../../domain/entities/MenuItemRequests';
 import type {
       CustomizeDropPosition,
@@ -22,9 +23,8 @@ import {
       ChevronDown,
       FolderOpen,
       FileText,
-      EyeOff,
-      Pencil,
       GripVertical,
+      Sparkles,
 } from 'lucide-react';
 import { cn } from '@core/common/utils';
 
@@ -33,9 +33,8 @@ import { cn } from '@core/common/utils';
 /* -------------------------------------------------------------------------- */
 
 interface CustomizePreviewTreeProps {
-      menuTree: MenuTreeNode[];
+      effectiveTree: EffectiveTreeNode[];
       language: string;
-      scope: MenuOverrideScope;
       selectedItemId: string | null;
       expandedNodes: Set<string>;
       onToggleExpand: (nodeId: string) => void;
@@ -56,9 +55,8 @@ interface CustomizePreviewTreeProps {
 /* -------------------------------------------------------------------------- */
 
 export function CustomizePreviewTree({
-      menuTree,
+      effectiveTree,
       language,
-      scope,
       selectedItemId,
       expandedNodes,
       onToggleExpand,
@@ -73,41 +71,37 @@ export function CustomizePreviewTree({
 }: CustomizePreviewTreeProps) {
       return (
             <div className="space-y-0.5">
-                  {menuTree
-                        .sort((a, b) => a.order - b.order)
-                        .map(node => (
-                              <PreviewTreeNode
-                                    key={node.id}
-                                    node={node}
-                                    depth={0}
-                                    language={language}
-                                    scope={scope}
-                                    selectedItemId={selectedItemId}
-                                    expandedNodes={expandedNodes}
-                                    onToggleExpand={onToggleExpand}
-                                    onSelectItem={onSelectItem}
-                                    draggedNode={draggedNode}
-                                    dropTarget={dropTarget}
-                                    onDragStart={onDragStart}
-                                    onDragOver={onDragOver}
-                                    onDragLeave={onDragLeave}
-                                    onDragEnd={onDragEnd}
-                                    onDrop={onDrop}
-                              />
-                        ))}
+                  {effectiveTree.map(node => (
+                        <PreviewTreeNode
+                              key={node.id}
+                              node={node}
+                              depth={0}
+                              language={language}
+                              selectedItemId={selectedItemId}
+                              expandedNodes={expandedNodes}
+                              onToggleExpand={onToggleExpand}
+                              onSelectItem={onSelectItem}
+                              draggedNode={draggedNode}
+                              dropTarget={dropTarget}
+                              onDragStart={onDragStart}
+                              onDragOver={onDragOver}
+                              onDragLeave={onDragLeave}
+                              onDragEnd={onDragEnd}
+                              onDrop={onDrop}
+                        />
+                  ))}
             </div>
       );
 }
 
 /* -------------------------------------------------------------------------- */
-/*  Tree Node (recursive) — with native HTML5 DnD                              */
+/*  Tree Node (recursive) — with native HTML5 DnD on EffectiveTreeNode         */
 /* -------------------------------------------------------------------------- */
 
 interface PreviewTreeNodeProps {
-      node: MenuTreeNode;
+      node: EffectiveTreeNode;
       depth: number;
       language: string;
-      scope: MenuOverrideScope;
       selectedItemId: string | null;
       expandedNodes: Set<string>;
       onToggleExpand: (nodeId: string) => void;
@@ -126,7 +120,6 @@ function PreviewTreeNode({
       node,
       depth,
       language,
-      scope,
       selectedItemId,
       expandedNodes,
       onToggleExpand,
@@ -148,20 +141,68 @@ function PreviewTreeNode({
       const isDropTarget = dropTarget?.nodeId === node.id;
       const dropPosition = isDropTarget ? dropTarget?.position : null;
 
-      // Get override for current scope
-      const override = scope === MenuOverrideScope.User
-            ? node.userOverride
-            : node.tenantOverride;
-      const hasOverride = !!override;
-      const isHidden = override?.isHidden ?? false;
+      // Effective display name — already overridden by computeEffectiveTree
+      const displayName = language === 'ar' ? node.nameAr : node.nameEn;
 
-      // Display name: show override name if available
-      const getDisplayName = useCallback(() => {
-            if (language === 'ar') {
-                  return override?.nameArOverride || node.nameAr;
+      // Show change info if the name differs from original
+      const nameChanged = language === 'ar'
+            ? node.nameAr !== node.originalNameAr
+            : node.nameEn !== node.originalNameEn;
+      const orderChanged = node.order !== node.originalOrder;
+
+      /* ── DnD Handlers ────────────────────────────────────────────────── */
+
+      const handleDragStartEvent = useCallback((e: React.DragEvent) => {
+            e.stopPropagation();
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', node.id);
+            // We pass a "stub" MenuTreeNode with the effective data for the DnD handler
+            onDragStart({
+                  id: node.id,
+                  slug: node.slug,
+                  nameEn: node.nameEn,
+                  nameAr: node.nameAr,
+                  order: node.order,
+                  isActive: node.isActive,
+                  children: [],
+            } as MenuTreeNode);
+      }, [node, onDragStart]);
+
+      const handleDragOverEvent = useCallback((e: React.DragEvent) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (!rowRef.current || isDragging) return;
+
+            const rect = rowRef.current.getBoundingClientRect();
+            const y = e.clientY - rect.top;
+            const height = rect.height;
+
+            // 3-zone detection: top 25% = before, bottom 25% = after, middle 50% = inside
+            let position: CustomizeDropPosition;
+            if (y < height * 0.25) {
+                  position = 'before';
+            } else if (y > height * 0.75) {
+                  position = 'after';
+            } else {
+                  position = 'inside';
             }
-            return override?.nameEnOverride || node.nameEn;
-      }, [language, override, node]);
+
+            onDragOver(node.id, position);
+      }, [node.id, isDragging, onDragOver]);
+
+      const handleDragLeaveEvent = useCallback((e: React.DragEvent) => {
+            e.stopPropagation();
+            if (rowRef.current && !rowRef.current.contains(e.relatedTarget as Node)) {
+                  onDragLeave();
+            }
+      }, [onDragLeave]);
+
+      const handleDropEvent = useCallback((e: React.DragEvent) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (!dropPosition) return;
+            onDrop(node.id, dropPosition);
+      }, [node.id, dropPosition, onDrop]);
 
       const handleClick = useCallback((e: React.MouseEvent) => {
             e.stopPropagation();
@@ -173,213 +214,117 @@ function PreviewTreeNode({
             onToggleExpand(node.id);
       }, [node.id, onToggleExpand]);
 
-      // ── DnD Handlers ───────────────────────────────────────────────────
-
-      const handleDragStartEvent = useCallback(
-            (e: React.DragEvent) => {
-                  e.stopPropagation();
-                  e.dataTransfer.effectAllowed = 'move';
-                  e.dataTransfer.setData('text/plain', node.id);
-                  onDragStart(node);
-            },
-            [node, onDragStart]
-      );
-
-      const handleDragOverEvent = useCallback(
-            (e: React.DragEvent) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  if (!rowRef.current || !draggedNode) return;
-
-                  const rect = rowRef.current.getBoundingClientRect();
-                  const y = e.clientY - rect.top;
-                  const height = rect.height;
-
-                  // 3-zone detection: top 25% = before, bottom 25% = after, middle 50% = inside
-                  let position: CustomizeDropPosition;
-                  if (y < height * 0.25) {
-                        position = 'before';
-                  } else if (y > height * 0.75) {
-                        position = 'after';
-                  } else {
-                        position = 'inside';
-                  }
-
-                  onDragOver(node.id, position);
-            },
-            [node.id, draggedNode, onDragOver]
-      );
-
-      const handleDragLeaveEvent = useCallback(
-            (e: React.DragEvent) => {
-                  e.stopPropagation();
-                  // Only fire if we're truly leaving this element (not entering a child)
-                  if (rowRef.current && !rowRef.current.contains(e.relatedTarget as Node)) {
-                        onDragLeave();
-                  }
-            },
-            [onDragLeave]
-      );
-
-      const handleDropEvent = useCallback(
-            (e: React.DragEvent) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  if (!rowRef.current || !draggedNode) return;
-
-                  const rect = rowRef.current.getBoundingClientRect();
-                  const y = e.clientY - rect.top;
-                  const height = rect.height;
-
-                  let position: CustomizeDropPosition;
-                  if (y < height * 0.25) {
-                        position = 'before';
-                  } else if (y > height * 0.75) {
-                        position = 'after';
-                  } else {
-                        position = 'inside';
-                  }
-
-                  onDrop(node.id, position);
-            },
-            [node.id, draggedNode, onDrop]
-      );
-
-      const handleDragEndEvent = useCallback(
-            (e: React.DragEvent) => {
-                  e.stopPropagation();
-                  onDragEnd();
-            },
-            [onDragEnd]
-      );
-
       return (
-            <div className={cn(isDragging && 'opacity-30')}>
-                  {/* Drop indicator line (before) */}
+            <div>
+                  {/* Drop indicator: before */}
                   {isDropTarget && dropPosition === 'before' && (
                         <div
-                              className="h-0.5 rounded-full bg-primary mx-2 mb-0.5 transition-all"
-                              style={{ marginInlineStart: depth * 20 + 8 }}
+                              className="h-0.5 bg-primary rounded-full mx-2 transition-all"
+                              style={{ marginInlineStart: depth * 18 + 8 }}
                         />
                   )}
 
                   {/* Node Row */}
                   <div
                         ref={rowRef}
-                        onClick={handleClick}
                         draggable
                         onDragStart={handleDragStartEvent}
                         onDragOver={handleDragOverEvent}
                         onDragLeave={handleDragLeaveEvent}
+                        onDragEnd={onDragEnd}
                         onDrop={handleDropEvent}
-                        onDragEnd={handleDragEndEvent}
+                        onClick={handleClick}
                         className={cn(
-                              'group relative flex items-center gap-1.5 py-2 px-2 rounded-lg cursor-pointer',
+                              'group relative flex items-center gap-1.5 py-1.5 px-2 rounded-lg cursor-pointer',
                               'transition-all duration-150',
-                              'border-l-2',
-                              // Selected state
+                              // Dragging
+                              isDragging && 'opacity-40 ring-1 ring-primary/30 ring-dashed',
+                              // Selected
                               isSelected
-                                    ? 'bg-primary/10 border-l-primary ring-1 ring-primary/20'
-                                    : 'hover:bg-muted/50 border-l-transparent',
-                              // Override indicator
-                              hasOverride && !isSelected && 'border-l-amber-500',
-                              // Hidden item styling
-                              isHidden && 'opacity-40',
-                              // Drop target highlight
-                              isDropTarget && dropPosition === 'inside' && 'bg-primary/5 ring-1 ring-primary/30 ring-dashed',
+                                    ? 'bg-primary/10 ring-1 ring-primary/20'
+                                    : 'hover:bg-muted/50',
+                              // Drop target: "inside" — dashed ring
+                              isDropTarget && dropPosition === 'inside' && 'ring-2 ring-primary ring-dashed bg-primary/5',
                         )}
-                        style={{ marginInlineStart: depth * 20 }}
+                        style={{ marginInlineStart: depth * 18 }}
                   >
                         {/* Drag Handle */}
-                        <GripVertical className="h-3.5 w-3.5 text-muted-foreground/40 hover:text-muted-foreground shrink-0 cursor-grab active:cursor-grabbing" />
+                        <GripVertical
+                              className="h-3 w-3 text-muted-foreground/40 group-hover:text-muted-foreground cursor-grab shrink-0"
+                        />
 
-                        {/* Expand / Collapse */}
+                        {/* Expand/Collapse */}
                         {hasChildren ? (
                               <button
                                     onClick={handleExpandClick}
                                     className="p-0.5 hover:bg-muted rounded-sm shrink-0"
                               >
                                     {isExpanded ? (
-                                          <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
+                                          <ChevronDown className="h-3 w-3 text-muted-foreground" />
                                     ) : (
-                                          <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />
+                                          <ChevronRight className="h-3 w-3 text-muted-foreground" />
                                     )}
                               </button>
                         ) : (
-                              <div className="w-4.5 shrink-0" />
+                              <div className="w-4 shrink-0" />
                         )}
 
                         {/* Icon */}
                         {hasChildren ? (
-                              <FolderOpen className="h-3.5 w-3.5 text-primary shrink-0" />
+                              <FolderOpen className="h-3.5 w-3.5 text-primary/70 shrink-0" />
                         ) : (
                               <FileText className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
                         )}
 
-                        {/* Name */}
-                        <span
-                              className={cn(
-                                    'text-sm truncate flex-1',
-                                    isSelected && 'font-semibold',
-                                    isHidden && 'line-through',
-                              )}
-                        >
-                              {getDisplayName()}
+                        {/* Name (effective — after overrides) */}
+                        <span className={cn('text-sm truncate flex-1', isSelected && 'font-medium')}>
+                              {displayName}
                         </span>
 
-                        {/* Override badge */}
-                        {hasOverride && (
+                        {/* Modified badge */}
+                        {node.hasOverride && (
                               <Badge
                                     variant="outline"
-                                    className={cn(
-                                          'text-[9px] px-1.5 py-0 font-medium border-0 shrink-0',
-                                          isHidden
-                                                ? 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400'
-                                                : 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
-                                    )}
+                                    className="text-[8px] px-1 py-0 font-medium border-0 shrink-0 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400"
                               >
-                                    {isHidden ? (
-                                          <><EyeOff className="h-2.5 w-2.5 mr-0.5" /> {t('menus.badgeHidden')}</>
-                                    ) : (
-                                          <><Pencil className="h-2.5 w-2.5 mr-0.5" /> {t('menus.customized')}</>
-                                    )}
+                                    <Sparkles className="h-2 w-2 mr-0.5" />
+                                    {nameChanged || orderChanged
+                                          ? (t('menus.modified') ?? 'Modified')
+                                          : (t('menus.customized') ?? 'Customized')}
                               </Badge>
                         )}
                   </div>
 
-                  {/* Drop indicator line (after) */}
+                  {/* Drop indicator: after */}
                   {isDropTarget && dropPosition === 'after' && (
                         <div
-                              className="h-0.5 rounded-full bg-primary mx-2 mt-0.5 transition-all"
-                              style={{ marginInlineStart: depth * 20 + 8 }}
+                              className="h-0.5 bg-primary rounded-full mx-2 transition-all"
+                              style={{ marginInlineStart: depth * 18 + 8 }}
                         />
                   )}
 
                   {/* Children */}
                   {isExpanded && hasChildren && (
                         <div className="mt-0.5">
-                              {node.children
-                                    .sort((a, b) => a.order - b.order)
-                                    .map(child => (
-                                          <PreviewTreeNode
-                                                key={child.id}
-                                                node={child}
-                                                depth={depth + 1}
-                                                language={language}
-                                                scope={scope}
-                                                selectedItemId={selectedItemId}
-                                                expandedNodes={expandedNodes}
-                                                onToggleExpand={onToggleExpand}
-                                                onSelectItem={onSelectItem}
-                                                draggedNode={draggedNode}
-                                                dropTarget={dropTarget}
-                                                onDragStart={onDragStart}
-                                                onDragOver={onDragOver}
-                                                onDragLeave={onDragLeave}
-                                                onDragEnd={onDragEnd}
-                                                onDrop={onDrop}
-                                          />
-                                    ))}
+                              {node.children.map(child => (
+                                    <PreviewTreeNode
+                                          key={child.id}
+                                          node={child}
+                                          depth={depth + 1}
+                                          language={language}
+                                          selectedItemId={selectedItemId}
+                                          expandedNodes={expandedNodes}
+                                          onToggleExpand={onToggleExpand}
+                                          onSelectItem={onSelectItem}
+                                          draggedNode={draggedNode}
+                                          dropTarget={dropTarget}
+                                          onDragStart={onDragStart}
+                                          onDragOver={onDragOver}
+                                          onDragLeave={onDragLeave}
+                                          onDragEnd={onDragEnd}
+                                          onDrop={onDrop}
+                                    />
+                              ))}
                         </div>
                   )}
             </div>

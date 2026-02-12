@@ -20,6 +20,7 @@ import {
       MenuOverrideScope,
       type SaveMenuOverrideRequest,
 } from '../../domain/entities/MenuItemRequests';
+import { computeEffectiveTree, type EffectiveTreeNode } from '../../domain/utils/computeEffectiveTree';
 import { systemContainer } from '@modules/system/di';
 
 /* -------------------------------------------------------------------------- */
@@ -86,14 +87,15 @@ export function useMenuCustomizeViewModel() {
       }, [canCustomize, canCustomizeTenant]);
 
       const [scope, setScope] = useState<MenuOverrideScope>(
-            canCustomizeTenant ? MenuOverrideScope.Tenant : MenuOverrideScope.User
+            availableScopes[0] ?? MenuOverrideScope.User
       );
 
       // ── Selected item ───────────────────────────────────────────────────
       const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
 
-      // ── Expanded nodes (for the preview tree) ───────────────────────────
-      const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set());
+      // ── Expanded nodes (separate for Original and Preview trees) ────────
+      const [expandedOriginal, setExpandedOriginal] = useState<Set<string>>(new Set());
+      const [expandedPreview, setExpandedPreview] = useState<Set<string>>(new Set());
 
       // ── Query: Full menu tree ───────────────────────────────────────────
       const {
@@ -105,9 +107,15 @@ export function useMenuCustomizeViewModel() {
             queryFn: () => menuRepository.getAll(),
       });
 
-      // Auto-expand all on first load
+      // ── Effective tree (overrides applied) ──────────────────────────────
+      const effectiveTree: EffectiveTreeNode[] = useMemo(
+            () => computeEffectiveTree(menuTree, scope),
+            [menuTree, scope],
+      );
+
+      // ── Auto-expand all on first load (both trees) ────────────────────
       useEffect(() => {
-            if (menuTree.length > 0 && expandedNodes.size === 0) {
+            if (menuTree.length > 0 && expandedOriginal.size === 0) {
                   const allIds = new Set<string>();
                   const collectIds = (nodes: MenuTreeNode[]) => {
                         for (const n of nodes) {
@@ -118,13 +126,24 @@ export function useMenuCustomizeViewModel() {
                         }
                   };
                   collectIds(menuTree);
-                  setExpandedNodes(allIds);
+                  setExpandedOriginal(allIds);
+                  setExpandedPreview(new Set(allIds));
             }
       }, [menuTree]);
 
-      // ── Toggle expand/collapse ──────────────────────────────────────────
-      const toggleExpand = useCallback((nodeId: string) => {
-            setExpandedNodes(prev => {
+      // ── Toggle expand/collapse (Original tree) ─────────────────────────
+      const toggleExpandOriginal = useCallback((nodeId: string) => {
+            setExpandedOriginal(prev => {
+                  const next = new Set(prev);
+                  if (next.has(nodeId)) next.delete(nodeId);
+                  else next.add(nodeId);
+                  return next;
+            });
+      }, []);
+
+      // ── Toggle expand/collapse (Preview tree) ──────────────────────────
+      const toggleExpandPreview = useCallback((nodeId: string) => {
+            setExpandedPreview(prev => {
                   const next = new Set(prev);
                   if (next.has(nodeId)) next.delete(nodeId);
                   else next.add(nodeId);
@@ -143,11 +162,13 @@ export function useMenuCustomizeViewModel() {
                   }
             };
             collect(menuTree);
-            setExpandedNodes(allIds);
+            setExpandedOriginal(allIds);
+            setExpandedPreview(new Set(allIds));
       }, [menuTree]);
 
       const collapseAll = useCallback(() => {
-            setExpandedNodes(new Set());
+            setExpandedOriginal(new Set());
+            setExpandedPreview(new Set());
       }, []);
 
       // ── Flat menu items (for parent picker, excluding self and descendants) ──
@@ -363,7 +384,7 @@ export function useMenuCustomizeViewModel() {
             (node: MenuTreeNode) => {
                   setDraggedNode(node);
                   // Collapse dragged node's children
-                  setExpandedNodes(prev => {
+                  setExpandedPreview(prev => {
                         const next = new Set(prev);
                         next.delete(node.id);
                         return next;
@@ -430,7 +451,7 @@ export function useMenuCustomizeViewModel() {
                         newParentId = targetNodeId;
                         newOrder = targetNode.children.length + 1;
                         // Auto-expand
-                        setExpandedNodes(prev => new Set([...prev, targetNodeId]));
+                        setExpandedPreview(prev => new Set([...prev, targetNodeId]));
                   } else {
                         // Move before/after targetNode — same parent as target
                         const targetResult = findSiblingsAndParent(targetNodeId);
@@ -518,12 +539,17 @@ export function useMenuCustomizeViewModel() {
             selectedOverride,
             formData,
             menuTree,
+            effectiveTree,
             isLoading,
             language,
 
-            // Tree controls
-            expandedNodes,
-            toggleExpand,
+            // Tree controls — Original
+            expandedOriginal,
+            toggleExpandOriginal,
+            // Tree controls — Preview
+            expandedPreview,
+            toggleExpandPreview,
+            // Tree controls — Both
             expandAll,
             collapseAll,
 
@@ -535,7 +561,7 @@ export function useMenuCustomizeViewModel() {
             resetAllOverrides,
             refetch,
 
-            // DnD
+            // DnD (used by Preview tree)
             draggedNode,
             dropTarget,
             handleDragStart,
