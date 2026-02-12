@@ -92,22 +92,22 @@ export function useMenusViewModel() {
 
       const safeMenuTree = useMemo(() => menuTree ?? [], [menuTree]);
 
-      // Auto-expand all on first load
-      useMemo(() => {
-            if (safeMenuTree.length > 0 && expandedNodes.size === 0) {
-                  const allIds = new Set<string>();
-                  const collect = (nodes: MenuTreeNode[]) => {
-                        for (const n of nodes) {
-                              if (n.children.length > 0) {
-                                    allIds.add(n.id);
-                                    collect(n.children);
-                              }
+      // Auto-expand all on first load only (ref guard prevents re-running after mutations)
+      const hasInitialExpand = useRef(false);
+      if (safeMenuTree.length > 0 && !hasInitialExpand.current) {
+            hasInitialExpand.current = true;
+            const allIds = new Set<string>();
+            const collect = (nodes: MenuTreeNode[]) => {
+                  for (const n of nodes) {
+                        if (n.children.length > 0) {
+                              allIds.add(n.id);
+                              collect(n.children);
                         }
-                  };
-                  collect(safeMenuTree);
-                  setExpandedNodes(allIds);
-            }
-      }, [safeMenuTree]);
+                  }
+            };
+            collect(safeMenuTree);
+            setExpandedNodes(allIds);
+      }
 
       // ── Computed ───────────────────────────────────────────────────────
       const totalItems = useMemo(() => {
