@@ -1,11 +1,17 @@
 /**
  * Menu Override ViewModel
  *
- * Handles saving and deleting menu overrides (rename, hide, reorder).
+ * Handles saving and deleting menu overrides (customize, hide).
  * Follows SOLID pattern — one concern: override operations.
  *
  * The backend auto-populates adminId/tenantId from the JWT token,
  * so the frontend only sends scope + override fields.
+ *
+ * Supports all 5 override types:
+ *   - NameEnOverride / NameArOverride (display name)
+ *   - OrderOverride (display order)
+ *   - ParentMenuItemIdOverride (reparenting)
+ *   - IsHidden (visibility)
  */
 'use client';
 
@@ -23,13 +29,22 @@ import { hasPermission, SYSTEM_PERMISSIONS } from '@core/common/types/permission
 export interface OverrideDialogState {
       open: boolean;
       node: MenuTreeNode | null;
-      mode: 'rename' | 'hide' | null;
+      mode: 'customize' | 'hide' | null;
+}
+
+/** Data shape from the customize dialog form */
+export interface OverrideFormData {
+      nameEn?: string;
+      nameAr?: string;
+      orderOverride?: number;
+      parentMenuItemIdOverride?: string;
+      isHidden: boolean;
 }
 
 export interface UseMenuOverrideViewModelResult {
       // Dialog state
       overrideDialog: OverrideDialogState;
-      openRenameDialog: (node: MenuTreeNode) => void;
+      openCustomizeDialog: (node: MenuTreeNode) => void;
       closeOverrideDialog: () => void;
 
       // Scope
@@ -38,7 +53,7 @@ export interface UseMenuOverrideViewModelResult {
       availableScopes: MenuOverrideScope[];
 
       // Actions
-      saveRename: (nameEn: string, nameAr: string) => void;
+      saveOverride: (data: OverrideFormData) => void;
       toggleHideItem: (node: MenuTreeNode) => void;
       confirmDeleteOverride: (overrideId: string) => void;
       onDeleteOverrideConfirm: () => void;
@@ -47,6 +62,14 @@ export interface UseMenuOverrideViewModelResult {
       canRemoveOverride: (override: { scope: string }) => boolean;
       isSaving: boolean;
       isDeleting: boolean;
+
+      // Flat menu items for parent picker
+      flatMenuItems: Array<{ id: string; nameEn: string; nameAr: string; depth: number }>;
+      setMenuTree: (tree: MenuTreeNode[]) => void;
+
+      // Legacy compat - keep openRenameDialog as alias
+      openRenameDialog: (node: MenuTreeNode) => void;
+      saveRename: (nameEn: string, nameAr: string) => void;
 }
 
 export function useMenuOverrideViewModel(): UseMenuOverrideViewModelResult {
@@ -56,7 +79,6 @@ export function useMenuOverrideViewModel(): UseMenuOverrideViewModelResult {
       const { t } = useI18n();
       const { refreshNavigation } = useNavigation();
 
-
       const permissions = useAppStore((s) => s.permissions);
       const userTenantId = useAppStore((s) => s.user?.tenantId);
       const isSuperAdmin = useMemo(
@@ -65,23 +87,17 @@ export function useMenuOverrideViewModel(): UseMenuOverrideViewModelResult {
       );
 
       // ── Available Scopes (permission + tenant gated, 2-scope model) ────
-      // Rule: Tenant scope requires BOTH the permission AND a non-null tenantId.
-      // Super admins (no tenant) can only have personal overrides — they
-      // edit the base menu directly to affect everyone.
       const availableScopes = useMemo(() => {
             const scopes: MenuOverrideScope[] = [];
 
             if (isSuperAdmin) {
-                  // Super admin: personal only (edit base menu for org-wide changes)
                   scopes.push(MenuOverrideScope.User);
                   return scopes;
             }
 
-            // Regular/tenant admin: check permissions
             if (hasPermission(permissions, SYSTEM_PERMISSIONS.MENUS_CUSTOMIZE)) {
                   scopes.push(MenuOverrideScope.User);
             }
-            // Tenant scope requires BOTH the permission AND an actual tenant
             if (
                   userTenantId &&
                   hasPermission(permissions, SYSTEM_PERMISSIONS.MENUS_CUSTOMIZE_TENANT)
@@ -106,6 +122,23 @@ export function useMenuOverrideViewModel(): UseMenuOverrideViewModelResult {
       const dialogNodeRef = useRef<MenuTreeNode | null>(null);
       dialogNodeRef.current = overrideDialog.node;
 
+      // ── Flat menu items for parent picker ──────────────────────────────
+      const [menuTree, setMenuTree] = useState<MenuTreeNode[]>([]);
+
+      const flatMenuItems = useMemo(() => {
+            const items: Array<{ id: string; nameEn: string; nameAr: string; depth: number }> = [];
+            const flatten = (nodes: MenuTreeNode[], depth: number) => {
+                  for (const node of nodes.sort((a, b) => a.order - b.order)) {
+                        items.push({ id: node.id, nameEn: node.nameEn, nameAr: node.nameAr, depth });
+                        if (node.children.length > 0) {
+                              flatten(node.children, depth + 1);
+                        }
+                  }
+            };
+            flatten(menuTree, 0);
+            return items;
+      }, [menuTree]);
+
       // ── Helpers ────────────────────────────────────────────────────────
       const buildRequest = useCallback(
             (
@@ -126,9 +159,11 @@ export function useMenuOverrideViewModel(): UseMenuOverrideViewModelResult {
                   menuRepository.saveOverride(request),
             onSuccess: () => {
                   queryClient.invalidateQueries({ queryKey: ['menus'] });
-                  // Refresh sidebar navigation so overrides appear immediately
                   refreshNavigation(true, true);
-                  success({ title: t('menus.overrideSaved') });
+                  const scopeLabel = scope === MenuOverrideScope.User
+                        ? t('menus.overrideSavedUser')
+                        : t('menus.overrideSavedTenant');
+                  success({ title: scopeLabel || t('menus.overrideSaved') });
                   setOverrideDialog({ open: false, node: null, mode: null });
                   setScope(availableScopes[0] ?? MenuOverrideScope.User);
             },
@@ -137,12 +172,11 @@ export function useMenuOverrideViewModel(): UseMenuOverrideViewModelResult {
             },
       });
 
-      // ── Delete Override Mutation ─────────────────────────────────────────
+      // ── Delete Override Mutation ───────────────────────────────────────
       const deleteMutation = useMutation({
             mutationFn: (id: string) => menuRepository.deleteOverride(id),
             onSuccess: () => {
                   queryClient.invalidateQueries({ queryKey: ['menus'] });
-                  // Refresh sidebar navigation so removal of override appears immediately
                   refreshNavigation(true, true);
                   success({ title: t('menus.overrideDeleted') });
             },
@@ -152,35 +186,44 @@ export function useMenuOverrideViewModel(): UseMenuOverrideViewModelResult {
       });
 
       // ── Dialog Actions ─────────────────────────────────────────────────
-      const openRenameDialog = useCallback((node: MenuTreeNode) => {
-            setOverrideDialog({ open: true, node, mode: 'rename' });
+      const openCustomizeDialog = useCallback((node: MenuTreeNode) => {
+            setOverrideDialog({ open: true, node, mode: 'customize' });
       }, []);
+
+      // Legacy alias (context menu still calls onRename)
+      const openRenameDialog = openCustomizeDialog;
 
       const closeOverrideDialog = useCallback(() => {
             setOverrideDialog({ open: false, node: null, mode: null });
-            // Reset scope to default (Personal) so stale Tenant selection
-            // doesn't carry over to next dialog open or hide action
             setScope(availableScopes[0] ?? MenuOverrideScope.User);
       }, [availableScopes]);
 
-      // ── Save Rename (reads ref to avoid stale closure) ─────────────────
-      const saveRename = useCallback(
-            (nameEn: string, nameAr: string) => {
+      // ── Save Override (all fields) ─────────────────────────────────────
+      const saveOverride = useCallback(
+            (data: OverrideFormData) => {
                   const node = dialogNodeRef.current;
                   if (!node) return;
                   const request = buildRequest(node.id, {
-                        nameEnOverride: nameEn,
-                        nameArOverride: nameAr,
+                        nameEnOverride: data.nameEn || undefined,
+                        nameArOverride: data.nameAr || undefined,
+                        orderOverride: data.orderOverride,
+                        parentMenuItemIdOverride: data.parentMenuItemIdOverride || undefined,
+                        isHidden: data.isHidden,
                   });
                   saveMutation.mutate(request);
             },
             [buildRequest, saveMutation]
       );
 
-      // ── Permission check for removing overrides ─────────────────────────
-      //    Only show "Remove Override" button when the user has the right
-      //    permission for that override's scope. Prevents showing buttons
-      //    that would result in a 403 from the backend.
+      // ── Legacy: Save Rename (backwards compat) ─────────────────────────
+      const saveRename = useCallback(
+            (nameEn: string, nameAr: string) => {
+                  saveOverride({ nameEn, nameAr, isHidden: false });
+            },
+            [saveOverride]
+      );
+
+      // ── Permission check for removing overrides ───────────────────────
       const canRemoveOverride = useCallback(
             (override: { scope: string }) => {
                   if (isSuperAdmin) return true;
@@ -196,9 +239,6 @@ export function useMenuOverrideViewModel(): UseMenuOverrideViewModelResult {
       );
 
       // ── Hide Item ──────────────────────────────────────────────────────
-      //    SAFETY: Always uses User (personal) scope so a quick-hide never
-      //    accidentally affects the entire organization.
-      //    To UNHIDE: use deleteOverride to remove the hiding override.
       const toggleHideItem = useCallback(
             (node: MenuTreeNode) => {
                   const request: SaveMenuOverrideRequest = {
@@ -211,10 +251,9 @@ export function useMenuOverrideViewModel(): UseMenuOverrideViewModelResult {
             [saveMutation]
       );
 
-      // ── Delete Override (with confirmation) ───────────────────────────────
+      // ── Delete Override (with confirmation) ────────────────────────────
       const [deleteConfirmOverrideId, setDeleteConfirmOverrideId] = useState<string | null>(null);
 
-      /** Open the confirmation dialog — stores the override ID to delete */
       const confirmDeleteOverride = useCallback(
             (overrideId: string) => {
                   setDeleteConfirmOverrideId(overrideId);
@@ -222,7 +261,6 @@ export function useMenuOverrideViewModel(): UseMenuOverrideViewModelResult {
             []
       );
 
-      /** Actually delete after user confirms */
       const onDeleteOverrideConfirm = useCallback(() => {
             if (!deleteConfirmOverrideId) return;
             deleteMutation.mutate(deleteConfirmOverrideId, {
@@ -230,19 +268,20 @@ export function useMenuOverrideViewModel(): UseMenuOverrideViewModelResult {
             });
       }, [deleteConfirmOverrideId, deleteMutation]);
 
-      /** Close the confirmation dialog without deleting */
       const closeDeleteOverrideDialog = useCallback(() => {
             setDeleteConfirmOverrideId(null);
       }, []);
 
       return {
             overrideDialog,
+            openCustomizeDialog,
             openRenameDialog,
             closeOverrideDialog,
             scope,
             setScope,
             availableScopes,
 
+            saveOverride,
             saveRename,
             toggleHideItem,
             confirmDeleteOverride,
@@ -252,5 +291,8 @@ export function useMenuOverrideViewModel(): UseMenuOverrideViewModelResult {
             canRemoveOverride,
             isSaving: saveMutation.isPending,
             isDeleting: deleteMutation.isPending,
+
+            flatMenuItems,
+            setMenuTree,
       };
 }

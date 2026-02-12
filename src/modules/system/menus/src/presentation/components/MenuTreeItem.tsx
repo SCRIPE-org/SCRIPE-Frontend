@@ -365,16 +365,25 @@ export function MenuTreeItem({
                                                       {node.userOverride.isHidden ? '⊘' : '✎'} {t('menus.scopePersonal')}
                                                 </Badge>
                                           </TooltipTrigger>
-                                          <TooltipContent side="top" className="text-xs">
+                                          <TooltipContent side="top" className="text-xs max-w-xs">
                                                 {node.userOverride.isHidden ? (
                                                       <span>{t('menus.hiddenOverride')}</span>
                                                 ) : (
                                                       <div className="flex flex-col gap-0.5">
                                                             {node.userOverride.nameEnOverride && (
-                                                                  <span><strong>EN:</strong> {node.userOverride.nameEnOverride}</span>
+                                                                  <span><strong>{t('menus.badgeRenamed')}:</strong> {node.userOverride.nameEnOverride}</span>
                                                             )}
                                                             {node.userOverride.nameArOverride && (
                                                                   <span><strong>AR:</strong> {node.userOverride.nameArOverride}</span>
+                                                            )}
+                                                            {node.userOverride.orderOverride != null && (
+                                                                  <span><strong>{t('menus.badgeReordered')}:</strong> #{node.userOverride.orderOverride}</span>
+                                                            )}
+                                                            {node.userOverride.parentMenuItemIdOverride && (
+                                                                  <span><strong>{t('menus.badgeMoved')}</strong></span>
+                                                            )}
+                                                            {!node.userOverride.nameEnOverride && !node.userOverride.nameArOverride && node.userOverride.orderOverride == null && !node.userOverride.parentMenuItemIdOverride && (
+                                                                  <span>{t('menus.customizeItem')}</span>
                                                             )}
                                                       </div>
                                                 )}
@@ -396,16 +405,25 @@ export function MenuTreeItem({
                                                       {node.tenantOverride.isHidden ? '⊘' : '✎'} {t('menus.scopeOrganization')}
                                                 </Badge>
                                           </TooltipTrigger>
-                                          <TooltipContent side="top" className="text-xs">
+                                          <TooltipContent side="top" className="text-xs max-w-xs">
                                                 {node.tenantOverride.isHidden ? (
                                                       <span>{t('menus.hiddenOverride')}</span>
                                                 ) : (
                                                       <div className="flex flex-col gap-0.5">
                                                             {node.tenantOverride.nameEnOverride && (
-                                                                  <span><strong>EN:</strong> {node.tenantOverride.nameEnOverride}</span>
+                                                                  <span><strong>{t('menus.badgeRenamed')}:</strong> {node.tenantOverride.nameEnOverride}</span>
                                                             )}
                                                             {node.tenantOverride.nameArOverride && (
                                                                   <span><strong>AR:</strong> {node.tenantOverride.nameArOverride}</span>
+                                                            )}
+                                                            {node.tenantOverride.orderOverride != null && (
+                                                                  <span><strong>{t('menus.badgeReordered')}:</strong> #{node.tenantOverride.orderOverride}</span>
+                                                            )}
+                                                            {node.tenantOverride.parentMenuItemIdOverride && (
+                                                                  <span><strong>{t('menus.badgeMoved')}</strong></span>
+                                                            )}
+                                                            {!node.tenantOverride.nameEnOverride && !node.tenantOverride.nameArOverride && node.tenantOverride.orderOverride == null && !node.tenantOverride.parentMenuItemIdOverride && (
+                                                                  <span>{t('menus.customizeItem')}</span>
                                                             )}
                                                       </div>
                                                 )}
@@ -449,7 +467,7 @@ export function MenuTreeItem({
                                                 {onRename && canCustomizeProp && (
                                                       <DropdownMenuItem onClick={() => onRename(node)}>
                                                             <Type className="mr-2 h-4 w-4" />
-                                                            {t("menus.overrideRename")}
+                                                            {t("menus.customizeItem")}
                                                       </DropdownMenuItem>
                                                 )}
                                                 {onHide && canCustomizeProp && (

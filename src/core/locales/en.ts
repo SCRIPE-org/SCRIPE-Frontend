@@ -483,7 +483,23 @@ export const en = {
     hiddenOverride: "This item is hidden",
     removeOverride: "Remove Override",
     removeOverrideTitle: "Remove Customization",
-    removeOverrideDesc: "Are you sure you want to remove this customization? The menu item will revert to its default name.",
+    removeOverrideDesc: "Are you sure you want to remove this customization? The menu item will revert to its default settings.",
+
+    // Customize dialog
+    customizeItem: "Customize",
+    customizeDesc: "Customize how this menu item appears:",
+    overrideOrder: "Display Order",
+    overrideParent: "Parent Item",
+    keepCurrentParent: "Keep current parent",
+    rootLevel: "Root Level (No Parent)",
+    overrideSavedUser: "Personal customization saved.",
+    overrideSavedTenant: "Organization customization saved.",
+
+    // Badge labels
+    badgeRenamed: "Renamed",
+    badgeReordered: "Reordered",
+    badgeMoved: "Moved to different parent",
+    badgeHidden: "Hidden",
   },
 
   // Role - For table columns (singular context)

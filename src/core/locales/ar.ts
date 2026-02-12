@@ -508,7 +508,23 @@ export const ar = {
     hiddenOverride: "هذا العنصر مخفي",
     removeOverride: "إزالة التخصيص",
     removeOverrideTitle: "إزالة التخصيص",
-    removeOverrideDesc: "هل أنت متأكد من إزالة هذا التخصيص؟ سيعود عنصر القائمة إلى اسمه الافتراضي.",
+    removeOverrideDesc: "هل أنت متأكد من إزالة هذا التخصيص؟ سيعود عنصر القائمة إلى إعداداته الافتراضية.",
+
+    // حوار التخصيص
+    customizeItem: "تخصيص",
+    customizeDesc: "تخصيص كيفية ظهور عنصر القائمة هذا:",
+    overrideOrder: "ترتيب العرض",
+    overrideParent: "العنصر الأب",
+    keepCurrentParent: "الإبقاء على الأب الحالي",
+    rootLevel: "المستوى الجذري (بدون أب)",
+    overrideSavedUser: "تم حفظ التخصيص الشخصي.",
+    overrideSavedTenant: "تم حفظ تخصيص المؤسسة.",
+
+    // تسميات الشارات
+    badgeRenamed: "أعيدت تسميته",
+    badgeReordered: "أعيد ترتيبه",
+    badgeMoved: "نُقل إلى أب مختلف",
+    badgeHidden: "مخفي",
   },
 
   // Role - For table columns (singular context)

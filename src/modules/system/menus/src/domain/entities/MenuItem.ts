@@ -127,6 +127,8 @@ export interface MenuItemOverrideInfo {
       id: string;
       nameEnOverride?: string;
       nameArOverride?: string;
+      orderOverride?: number;
+      parentMenuItemIdOverride?: string;
       isHidden: boolean;
 }
 

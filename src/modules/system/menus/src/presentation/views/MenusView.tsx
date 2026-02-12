@@ -25,7 +25,7 @@ import {
 import { MenuTreeItem } from "../components/MenuTreeItem";
 import { MenuFormDialog } from "../components/MenuFormDialog";
 import { DeleteMenuDialog } from "../components/DeleteMenuDialog";
-import { OverrideRenameDialog } from "../components/OverrideRenameDialog";
+import { OverrideCustomizeDialog } from "../components/OverrideCustomizeDialog";
 import {
       Plus,
       Menu,
@@ -44,6 +44,13 @@ export function MenusView() {
       const overrideVm = useMenuOverrideViewModel();
       const scrollContainerRef = useRef<HTMLDivElement>(null);
       const scrollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+      // Push menu tree to override ViewModel for parent picker
+      useEffect(() => {
+            if (vm.menuTree.length > 0) {
+                  overrideVm.setMenuTree(vm.menuTree);
+            }
+      }, [vm.menuTree]);
 
       // ── Auto-scroll when dragging near edges ───────────────────────────
       useEffect(() => {
@@ -220,7 +227,7 @@ export function MenusView() {
                                                             onEdit={vm.openEditDialog}
                                                             onDelete={vm.openDeleteDialog}
                                                             onAddChild={vm.openCreateDialog}
-                                                            onRename={overrideVm.openRenameDialog}
+                                                            onRename={overrideVm.openCustomizeDialog}
                                                             onHide={overrideVm.toggleHideItem}
                                                             onRemoveOverride={overrideVm.confirmDeleteOverride}
                                                             canRemoveOverride={overrideVm.canRemoveOverride}
@@ -281,14 +288,15 @@ export function MenusView() {
                         onConfirm={vm.onDeleteConfirm}
                         isPending={vm.isDeleting}
                   />
-                  <OverrideRenameDialog
+                  <OverrideCustomizeDialog
                         dialog={overrideVm.overrideDialog}
                         scope={overrideVm.scope}
                         onScopeChange={overrideVm.setScope}
                         availableScopes={overrideVm.availableScopes}
-                        onSave={overrideVm.saveRename}
+                        onSave={overrideVm.saveOverride}
                         onClose={overrideVm.closeOverrideDialog}
                         isSaving={overrideVm.isSaving}
+                        flatMenuItems={overrideVm.flatMenuItems}
                   />
 
                   {/* Override removal confirmation */}
