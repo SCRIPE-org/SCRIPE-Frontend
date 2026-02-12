@@ -1,6 +1,5 @@
 "use client";
 
-import type React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronRight, ChevronDown, ChevronLeft } from "lucide-react";
@@ -69,17 +68,18 @@ export function NavigationPanelSidebar({
     direction,
   };
 
-  // Get the current main navigation item
   const selectedNavItem = navigation.find(
     (item) => item.name === currentMainItem
   );
 
-  // Don't render if no children or not open
   if (!selectedNavItem || !hasChildren || !open) {
     return null;
   }
 
-  // ── Check if item matches current path (for active styling) ──
+  // ── Helpers ──
+  const isRTL = direction === "rtl";
+  const CollapsedChevron = isRTL ? ChevronLeft : ChevronRight;
+
   const isItemActive = (item: NavigationItem): boolean => {
     if (!item.href) return false;
     if (pathname === item.href) return true;
@@ -90,7 +90,6 @@ export function NavigationPanelSidebar({
     return false;
   };
 
-  // ── Check if any descendant is active (for parent active styling) ──
   const hasActiveDescendant = (item: NavigationItem): boolean => {
     if (item.children) {
       return item.children.some((child) => {
@@ -101,24 +100,26 @@ export function NavigationPanelSidebar({
     return false;
   };
 
-  // ── Render navigation item — recursive, unlimited depth ──
+  // ── Render item — single JSX order: [icon] [text] [badge] [chevron] ──
+  // RTL mirroring is handled entirely by flex-row-reverse on the container.
   const renderNavigationItem = (item: NavigationItem, level: number = 0) => {
     const isActive = isItemActive(item);
     const hasSubChildren = item.children && item.children.length > 0;
     const isExpanded = expandedItems.includes(item.name);
     const displayName = t(item.name) || item.name;
-    const indent = level * 12; // Indent per nesting level
+    const indent = level * 12;
 
-    // Parent group with children — collapsible
+    const indentStyle = isRTL
+      ? { paddingRight: `${12 + indent}px` }
+      : { paddingLeft: `${12 + indent}px` };
+
+    // ── Parent group (collapsible) ──
     if (hasSubChildren) {
       const isParentOfActive = hasActiveDescendant(item);
-
-      // 3-tier styling: parent-of-active (subtle) vs inactive (none)
-      // The active LEAF uses getPanelItemClasses(true) — full solid
-      // A PARENT with active descendant uses getPanelParentClasses — subtle tint
-      const parentClasses = isParentOfActive
+      const parentBaseClasses = "w-full gap-2 h-10 px-3";
+      const parentColorClasses = isParentOfActive
         ? getPanelParentClasses(styleConfig)
-        : "hover:bg-accent hover:text-accent-foreground";
+        : cn(parentBaseClasses, "hover:bg-accent hover:text-accent-foreground");
 
       return (
         <Collapsible
@@ -130,82 +131,57 @@ export function NavigationPanelSidebar({
             <Button
               variant="ghost"
               className={cn(
-                parentClasses,
-                direction === "rtl" ? "justify-end" : "justify-start",
+                parentColorClasses,
+                "!justify-start",
+                isRTL && "flex-row-reverse",
                 getBorderRadiusClass(borderRadius),
                 getAnimationClass(animationLevel, "panel"),
               )}
-              style={
-                direction === "rtl"
-                  ? { paddingRight: `${12 + indent}px` }
-                  : { paddingLeft: `${12 + indent}px` }
-              }
+              style={indentStyle}
             >
-              {/* RTL/LTR layout */}
-              {direction === "rtl" ? (
-                <>
-                  {isExpanded ? (
-                    <ChevronDown className="w-3.5 h-3.5 opacity-60" />
-                  ) : (
-                    <ChevronLeft className="w-3.5 h-3.5 opacity-60" />
-                  )}
-                  {item.badge && (
-                    <Badge variant="secondary" className="mr-auto text-[10px] h-5">
-                      {item.badge}
-                    </Badge>
-                  )}
-                  <span className="flex-1 text-right text-sm">{displayName}</span>
-                  {item.icon ? (
-                    <item.icon className={getIconClasses(iconStyle, "sm")} />
-                  ) : level > 0 ? (
-                    <div className="w-1.5 h-1.5 rounded-full bg-current opacity-40" />
-                  ) : (
-                    <div className="w-2 h-2 rounded-full bg-primary" />
-                  )}
-                </>
+              {/* Icon */}
+              {item.icon ? (
+                <item.icon className={getIconClasses(iconStyle, "sm")} />
+              ) : level > 0 ? (
+                <div className="w-1.5 h-1.5 rounded-full bg-current opacity-40" />
               ) : (
-                <>
-                  {item.icon ? (
-                    <item.icon className={getIconClasses(iconStyle, "sm")} />
-                  ) : level > 0 ? (
-                    <div className="w-1.5 h-1.5 rounded-full bg-current opacity-40" />
-                  ) : (
-                    <div className="w-2 h-2 rounded-full bg-primary" />
-                  )}
-                  <span className="flex-1 text-left text-sm">{displayName}</span>
-                  {item.badge && (
-                    <Badge variant="secondary" className="ml-auto text-[10px] h-5">
-                      {item.badge}
-                    </Badge>
-                  )}
-                  {isExpanded ? (
-                    <ChevronDown className="w-3.5 h-3.5 opacity-60" />
-                  ) : (
-                    <ChevronRight className="w-3.5 h-3.5 opacity-60" />
-                  )}
-                </>
+                <div className="w-2 h-2 rounded-full bg-primary" />
+              )}
+
+              {/* Text */}
+              <span className="flex-1 text-sm">{displayName}</span>
+
+              {/* Badge */}
+              {item.badge && (
+                <Badge variant="secondary" className="text-[10px] h-5">
+                  {item.badge}
+                </Badge>
+              )}
+
+              {/* Chevron */}
+              {isExpanded ? (
+                <ChevronDown className="w-3.5 h-3.5 opacity-60 flex-shrink-0" />
+              ) : (
+                <CollapsedChevron className="w-3.5 h-3.5 opacity-60 flex-shrink-0" />
               )}
             </Button>
           </CollapsibleTrigger>
 
           <CollapsibleContent>
-            {/* Depth connector line for nested children */}
             <div
               className="relative"
               style={
-                direction === "rtl"
+                isRTL
                   ? { marginRight: `${20 + indent}px` }
                   : { marginLeft: `${20 + indent}px` }
               }
             >
-              {/* Vertical depth line */}
               <div
                 className={cn(
                   "absolute top-0 bottom-0 w-px bg-border/60",
-                  direction === "rtl" ? "right-0" : "left-0",
+                  isRTL ? "right-0" : "left-0",
                 )}
               />
-
               <div className="space-y-0.5 py-1">
                 {item.children!.map((child) =>
                   renderNavigationItem(child, level + 1)
@@ -217,7 +193,7 @@ export function NavigationPanelSidebar({
       );
     }
 
-    // Leaf item — link
+    // ── Leaf item (link) ──
     return (
       <Button
         key={item.name}
@@ -225,77 +201,55 @@ export function NavigationPanelSidebar({
         asChild
         className={cn(
           getPanelItemClasses(isActive, styleConfig),
-          direction === "rtl" ? "justify-end" : "justify-start",
+          "!justify-start",
+          isRTL && "flex-row-reverse",
           getBorderRadiusClass(borderRadius),
           getAnimationClass(animationLevel, "panel"),
           item.disabled && "opacity-50 cursor-not-allowed",
-          // Smaller text for deeper levels
           level > 0 && "text-sm",
         )}
-        style={
-          direction === "rtl"
-            ? { paddingRight: `${12 + indent}px` }
-            : { paddingLeft: `${12 + indent}px` }
-        }
+        style={indentStyle}
         disabled={item.disabled}
       >
         <Link
           href={item.href || "#"}
           className={cn(
             "flex items-center gap-2 w-full",
-            direction === "rtl" ? "justify-end" : "justify-start",
+            isRTL && "flex-row-reverse",
           )}
         >
-          {direction === "rtl" ? (
-            <>
-              {item.badge && (
-                <Badge
-                  variant={isActive ? "secondary" : "outline"}
-                  className="mr-auto text-[10px] h-5"
-                >
-                  {item.badge}
-                </Badge>
-              )}
-              <span className="flex-1 text-right">{displayName}</span>
-              {item.icon ? (
-                <item.icon className="w-4 h-4" />
-              ) : (
-                <div className={cn(
-                  "rounded-full",
-                  isActive
-                    ? "w-2 h-2 bg-current"
-                    : "w-1.5 h-1.5 bg-muted-foreground/50",
-                )} />
-              )}
-            </>
+          {/* Icon / dot */}
+          {item.icon ? (
+            <item.icon className="w-4 h-4" />
           ) : (
-            <>
-              {item.icon ? (
-                <item.icon className="w-4 h-4" />
-              ) : (
-                <div className={cn(
-                  "rounded-full",
-                  isActive
-                    ? "w-2 h-2 bg-current"
-                    : "w-1.5 h-1.5 bg-muted-foreground/50",
-                )} />
+            <div
+              className={cn(
+                "rounded-full",
+                isActive
+                  ? "w-2 h-2 bg-current"
+                  : "w-1.5 h-1.5 bg-muted-foreground/50",
               )}
-              <span className="flex-1 text-left">{displayName}</span>
-              {item.badge && (
-                <Badge
-                  variant={isActive ? "secondary" : "outline"}
-                  className="ml-auto text-[10px] h-5"
-                >
-                  {item.badge}
-                </Badge>
-              )}
-            </>
+            />
+          )}
+
+          {/* Text */}
+          <span className="flex-1">{displayName}</span>
+
+          {/* Badge */}
+          {item.badge && (
+            <Badge
+              variant={isActive ? "secondary" : "outline"}
+              className="text-[10px] h-5"
+            >
+              {item.badge}
+            </Badge>
           )}
         </Link>
       </Button>
     );
   };
 
+  // ── Panel sidebar shell ──
   return (
     <div
       className={cn(
@@ -310,10 +264,9 @@ export function NavigationPanelSidebar({
           <div
             className={cn(
               "flex items-center gap-3",
-              direction === "rtl" ? "items-center text-right" : "flex-row",
+              isRTL && "flex-row-reverse",
             )}
           >
-            {/* Icon badge */}
             {selectedNavItem.icon && (
               <div
                 className={cn(
@@ -325,11 +278,10 @@ export function NavigationPanelSidebar({
                 <selectedNavItem.icon className="w-4 h-4" />
               </div>
             )}
-            <div className={cn(direction === "rtl" && "text-right")}>
+            <div className={cn(isRTL && "text-right")}>
               <h3 className="font-semibold text-sm">
                 {t(selectedNavItem.name) || selectedNavItem.name}
               </h3>
-              {/* Item count subtitle */}
               {selectedNavItem.children && (
                 <p className="text-xs text-muted-foreground mt-0.5">
                   {selectedNavItem.children.length} {t("layout.items") || "items"}
