@@ -132,37 +132,40 @@ export function NavigationPanelSidebar({
               variant="ghost"
               className={cn(
                 parentColorClasses,
-                "!justify-start",
+                "!justify-start !gap-0",
                 isRTL && "flex-row-reverse",
                 getBorderRadiusClass(borderRadius),
                 getAnimationClass(animationLevel, "panel"),
               )}
               style={indentStyle}
             >
-              {/* Icon */}
-              {item.icon ? (
-                <item.icon className={getIconClasses(iconStyle, "sm")} />
-              ) : level > 0 ? (
-                <div className="w-1.5 h-1.5 rounded-full bg-current opacity-40" />
-              ) : (
-                <div className="w-2 h-2 rounded-full bg-primary" />
-              )}
-
-              {/* Text */}
-              <span className="flex-1 text-sm">{displayName}</span>
+              {/* Icon + Text grouped tightly */}
+              <span className={cn(
+                "flex items-center gap-3 flex-1 min-w-0",
+                isRTL && "flex-row-reverse",
+              )}>
+                {item.icon ? (
+                  <item.icon className={cn(getIconClasses(iconStyle, "sm"), "flex-shrink-0")} />
+                ) : level > 0 ? (
+                  <div className="w-1.5 h-1.5 rounded-full bg-current opacity-40 flex-shrink-0" />
+                ) : (
+                  <div className="w-2 h-2 rounded-full bg-primary flex-shrink-0" />
+                )}
+                <span className="text-sm truncate">{displayName}</span>
+              </span>
 
               {/* Badge */}
               {item.badge && (
-                <Badge variant="secondary" className="text-[10px] h-5">
+                <Badge variant="secondary" className="text-[10px] h-5 ml-1">
                   {item.badge}
                 </Badge>
               )}
 
               {/* Chevron */}
               {isExpanded ? (
-                <ChevronDown className="w-3.5 h-3.5 opacity-60 flex-shrink-0" />
+                <ChevronDown className="w-3.5 h-3.5 opacity-60 flex-shrink-0 ml-1" />
               ) : (
-                <CollapsedChevron className="w-3.5 h-3.5 opacity-60 flex-shrink-0" />
+                <CollapsedChevron className="w-3.5 h-3.5 opacity-60 flex-shrink-0 ml-1" />
               )}
             </Button>
           </CollapsibleTrigger>
@@ -214,32 +217,35 @@ export function NavigationPanelSidebar({
         <Link
           href={item.href || "#"}
           className={cn(
-            "flex items-center gap-2 w-full",
+            "flex items-center w-full !gap-0",
             isRTL && "flex-row-reverse",
           )}
         >
-          {/* Icon / dot */}
-          {item.icon ? (
-            <item.icon className="w-4 h-4" />
-          ) : (
-            <div
-              className={cn(
-                "rounded-full",
-                isActive
-                  ? "w-2 h-2 bg-current"
-                  : "w-1.5 h-1.5 bg-muted-foreground/50",
-              )}
-            />
-          )}
-
-          {/* Text */}
-          <span className="flex-1">{displayName}</span>
+          {/* Icon + Text grouped tightly */}
+          <span className={cn(
+            "flex items-center gap-1.5 flex-1 min-w-0",
+            isRTL && "flex-row-reverse",
+          )}>
+            {item.icon ? (
+              <item.icon className="w-4 h-4 flex-shrink-0" />
+            ) : (
+              <div
+                className={cn(
+                  "rounded-full flex-shrink-0",
+                  isActive
+                    ? "w-2 h-2 bg-current"
+                    : "w-1.5 h-1.5 bg-muted-foreground/50",
+                )}
+              />
+            )}
+            <span className="truncate">{displayName}</span>
+          </span>
 
           {/* Badge */}
           {item.badge && (
             <Badge
               variant={isActive ? "secondary" : "outline"}
-              className="text-[10px] h-5"
+              className="text-[10px] h-5 ml-1"
             >
               {item.badge}
             </Badge>
