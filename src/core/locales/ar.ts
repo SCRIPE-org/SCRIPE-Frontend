@@ -507,6 +507,8 @@ export const ar = {
     hideItem: "إخفاء العنصر",
     hiddenOverride: "هذا العنصر مخفي",
     removeOverride: "إزالة التخصيص",
+    removeOverrideTitle: "إزالة التخصيص",
+    removeOverrideDesc: "هل أنت متأكد من إزالة هذا التخصيص؟ سيعود عنصر القائمة إلى اسمه الافتراضي.",
   },
 
   // Role - For table columns (singular context)

@@ -13,6 +13,14 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
+import {
+      Dialog,
+      DialogContent,
+      DialogHeader,
+      DialogTitle,
+      DialogDescription,
+      DialogFooter,
+} from "@core/ui/dialog";
 import { PermissionGate } from "@core/providers/permission-provider";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { MenuTreeItem } from "../components/MenuTreeItem";
@@ -215,7 +223,7 @@ export function MenusView() {
                                                             onAddChild={vm.openCreateDialog}
                                                             onRename={overrideVm.openRenameDialog}
                                                             onHide={overrideVm.toggleHideItem}
-                                                            onRemoveOverride={overrideVm.deleteOverride}
+                                                            onRemoveOverride={overrideVm.confirmDeleteOverride}
                                                             canRemoveOverride={overrideVm.canRemoveOverride}
                                                             onMoveUp={index > 0 ? () => vm.handleMoveUp(node.id) : undefined}
                                                             onMoveDown={index < arr.length - 1 ? () => vm.handleMoveDown(node.id) : undefined}
@@ -278,6 +286,30 @@ export function MenusView() {
                         onClose={overrideVm.closeOverrideDialog}
                         isSaving={overrideVm.isSaving}
                   />
+
+                  {/* Override removal confirmation */}
+                  <Dialog open={overrideVm.deleteConfirmOpen} onOpenChange={(open: boolean) => !open && overrideVm.closeDeleteOverrideDialog()}>
+                        <DialogContent className="max-w-sm">
+                              <DialogHeader>
+                                    <DialogTitle>{t('menus.removeOverrideTitle')}</DialogTitle>
+                                    <DialogDescription>
+                                          {t('menus.removeOverrideDesc')}
+                                    </DialogDescription>
+                              </DialogHeader>
+                              <DialogFooter className="gap-2">
+                                    <Button variant="outline" onClick={overrideVm.closeDeleteOverrideDialog}>
+                                          {t('common.cancel')}
+                                    </Button>
+                                    <Button
+                                          variant="destructive"
+                                          onClick={overrideVm.onDeleteOverrideConfirm}
+                                          disabled={overrideVm.isDeleting}
+                                    >
+                                          {overrideVm.isDeleting ? t('common.deleting') : t('menus.removeOverride')}
+                                    </Button>
+                              </DialogFooter>
+                        </DialogContent>
+                  </Dialog>
             </div>
       );
 }

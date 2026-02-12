@@ -482,6 +482,8 @@ export const en = {
     hideItem: "Hide Item",
     hiddenOverride: "This item is hidden",
     removeOverride: "Remove Override",
+    removeOverrideTitle: "Remove Customization",
+    removeOverrideDesc: "Are you sure you want to remove this customization? The menu item will revert to its default name.",
   },
 
   // Role - For table columns (singular context)

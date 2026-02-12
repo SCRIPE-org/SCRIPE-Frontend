@@ -35,6 +35,14 @@ export interface DropTarget {
 }
 
 /* -------------------------------------------------------------------------- */
+/*  Module-level cache for expanded state                                      */
+/*  Survives component remounts caused by navigation/provider re-renders       */
+/* -------------------------------------------------------------------------- */
+
+let _cachedExpandedNodes: Set<string> | null = null;
+let _hasInitialExpand = false;
+
+/* -------------------------------------------------------------------------- */
 /*  Hook                                                                       */
 /* -------------------------------------------------------------------------- */
 
@@ -58,8 +66,20 @@ export function useMenusViewModel() {
       // ── DnD state ──────────────────────────────────────────────────────
       const [draggedNode, setDraggedNode] = useState<MenuTreeNode | null>(null);
       const [dropTarget, setDropTarget] = useState<DropTarget | null>(null);
-      const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set());
+      // Initialize from module-level cache so state survives remounts
+      const [expandedNodes, _setExpandedNodes] = useState<Set<string>>(
+            () => _cachedExpandedNodes ?? new Set()
+      );
       const expandedBeforeDragRef = useRef<Set<string>>(new Set());
+
+      // Wrap setExpandedNodes to sync module-level cache
+      const setExpandedNodes = useCallback((valOrFn: Set<string> | ((prev: Set<string>) => Set<string>)) => {
+            _setExpandedNodes((prev) => {
+                  const next = typeof valOrFn === 'function' ? valOrFn(prev) : valOrFn;
+                  _cachedExpandedNodes = next;
+                  return next;
+            });
+      }, []);
 
       // ── Query ──────────────────────────────────────────────────────────
       const {
@@ -77,10 +97,9 @@ export function useMenusViewModel() {
 
       const safeMenuTree = useMemo(() => menuTree ?? [], [menuTree]);
 
-      // Auto-expand all on first load only (ref guard prevents re-running after mutations)
-      const hasInitialExpand = useRef(false);
-      if (safeMenuTree.length > 0 && !hasInitialExpand.current) {
-            hasInitialExpand.current = true;
+      // Auto-expand all on first load only (module-level flag survives remounts)
+      if (safeMenuTree.length > 0 && !_hasInitialExpand) {
+            _hasInitialExpand = true;
             const allIds = new Set<string>();
             const collect = (nodes: MenuTreeNode[]) => {
                   for (const n of nodes) {
@@ -91,7 +110,8 @@ export function useMenusViewModel() {
                   }
             };
             collect(safeMenuTree);
-            setExpandedNodes(allIds);
+            _cachedExpandedNodes = allIds;
+            _setExpandedNodes(allIds);
       }
 
       // ── Computed ───────────────────────────────────────────────────────

@@ -40,7 +40,10 @@ export interface UseMenuOverrideViewModelResult {
       // Actions
       saveRename: (nameEn: string, nameAr: string) => void;
       toggleHideItem: (node: MenuTreeNode) => void;
-      deleteOverride: (overrideId: string) => void;
+      confirmDeleteOverride: (overrideId: string) => void;
+      onDeleteOverrideConfirm: () => void;
+      closeDeleteOverrideDialog: () => void;
+      deleteConfirmOpen: boolean;
       canRemoveOverride: (override: { scope: string }) => boolean;
       isSaving: boolean;
       isDeleting: boolean;
@@ -208,13 +211,29 @@ export function useMenuOverrideViewModel(): UseMenuOverrideViewModelResult {
             [saveMutation]
       );
 
-      // ── Delete Override ─────────────────────────────────────────────────
-      const deleteOverride = useCallback(
+      // ── Delete Override (with confirmation) ───────────────────────────────
+      const [deleteConfirmOverrideId, setDeleteConfirmOverrideId] = useState<string | null>(null);
+
+      /** Open the confirmation dialog — stores the override ID to delete */
+      const confirmDeleteOverride = useCallback(
             (overrideId: string) => {
-                  deleteMutation.mutate(overrideId);
+                  setDeleteConfirmOverrideId(overrideId);
             },
-            [deleteMutation]
+            []
       );
+
+      /** Actually delete after user confirms */
+      const onDeleteOverrideConfirm = useCallback(() => {
+            if (!deleteConfirmOverrideId) return;
+            deleteMutation.mutate(deleteConfirmOverrideId, {
+                  onSettled: () => setDeleteConfirmOverrideId(null),
+            });
+      }, [deleteConfirmOverrideId, deleteMutation]);
+
+      /** Close the confirmation dialog without deleting */
+      const closeDeleteOverrideDialog = useCallback(() => {
+            setDeleteConfirmOverrideId(null);
+      }, []);
 
       return {
             overrideDialog,
@@ -226,7 +245,10 @@ export function useMenuOverrideViewModel(): UseMenuOverrideViewModelResult {
 
             saveRename,
             toggleHideItem,
-            deleteOverride,
+            confirmDeleteOverride,
+            onDeleteOverrideConfirm,
+            closeDeleteOverrideDialog,
+            deleteConfirmOpen: deleteConfirmOverrideId !== null,
             canRemoveOverride,
             isSaving: saveMutation.isPending,
             isDeleting: deleteMutation.isPending,
