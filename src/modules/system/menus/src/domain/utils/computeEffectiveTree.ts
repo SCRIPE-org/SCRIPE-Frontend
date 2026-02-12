@@ -10,6 +10,7 @@
  *   - Re-sort children by effective order
  */
 
+import { appLogger } from '@/core/common/logger';
 import type { MenuTreeNode, MenuItemOverrideInfo } from '../entities/MenuItem';
 import { MenuOverrideScope } from '../entities/MenuItemRequests';
 
