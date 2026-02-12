@@ -270,7 +270,6 @@ export function NavigationPanelSidebar({
           <div
             className={cn(
               "flex items-center gap-3",
-              isRTL && "flex-row-reverse",
             )}
           >
             {selectedNavItem.icon && (
