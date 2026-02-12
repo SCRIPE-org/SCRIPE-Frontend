@@ -9,6 +9,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Card, CardContent } from "@core/ui/card";
 import { Users, Shield, Building2, Key, Loader2 } from "lucide-react";
@@ -32,37 +33,21 @@ interface Stats {
 export function TenantStats({ tenantId, onTabChange }: TenantStatsProps) {
       const { t, direction } = useI18n();
       const isRtl = direction === "rtl";
-      const [stats, setStats] = useState<Stats | null>(null);
-      const [loading, setLoading] = useState(true);
 
-      // Fetch stats from API on mount
-      useEffect(() => {
-            async function fetchStats() {
-                  try {
-                        setLoading(true);
-                        // Call real API via repository
-                        const data = await systemContainer.tenantRepository.getStats(tenantId);
-                        setStats({
-                              adminsCount: data.adminsCount,
-                              rolesCount: data.rolesCount,
-                              subTenantsCount: data.subTenantsCount,
-                              permissionsCount: data.permissionsCount,
-                        });
-                  } catch (error) {
-                        appLogger.error("Failed to fetch tenant stats:", error);
-                        setStats({
-                              adminsCount: 0,
-                              rolesCount: 0,
-                              subTenantsCount: 0,
-                              permissionsCount: 0,
-                        });
-                  } finally {
-                        setLoading(false);
-                  }
-            }
-
-            fetchStats();
-      }, [tenantId]);
+      // Use TanStack Query so invalidateQueries can refresh stats
+      const { data: stats, isLoading: loading } = useQuery({
+            queryKey: ["tenant-stats", tenantId],
+            queryFn: async () => {
+                  const data = await systemContainer.tenantRepository.getStats(tenantId);
+                  return {
+                        adminsCount: data.adminsCount,
+                        rolesCount: data.rolesCount,
+                        subTenantsCount: data.subTenantsCount,
+                        permissionsCount: data.permissionsCount,
+                  } as Stats;
+            },
+            enabled: !!tenantId,
+      });
 
       const statCards = [
             {

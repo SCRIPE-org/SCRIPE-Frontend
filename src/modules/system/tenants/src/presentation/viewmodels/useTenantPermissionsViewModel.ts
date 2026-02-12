@@ -12,7 +12,7 @@
 
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useToast } from "@core/hooks/use-toast";
+import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 import { appLogger } from "@core/common/logger";
 import { systemContainer } from "@modules/system/di";
@@ -88,7 +88,7 @@ export function useTenantPermissionsDialog({
       parentTenantId,
 }: UseTenantPermissionsDialogProps): UseTenantPermissionsDialogResult {
       const { t, language } = useI18n();
-      const { toast } = useToast();
+      const { success: toastSuccess, error: toastError } = useEnhancedToast();
       const queryClient = useQueryClient();
 
       const [search, setSearch] = useState("");
@@ -239,16 +239,16 @@ export function useTenantPermissionsDialog({
                   await systemContainer.tenantService.updateTenantPermissions(tenantId, selectedIds);
             },
             onSuccess: () => {
-                  toast({ title: t("tenant.permissionsSaved") || "Permissions saved successfully" });
+                  toastSuccess({ title: t("tenant.permissionsSaved") || "Permissions saved successfully" });
                   queryClient.invalidateQueries({ queryKey: ["tenant-current-permissions-service", tenantId] });
+                  queryClient.invalidateQueries({ queryKey: ["tenant-stats", tenantId] });
                   queryClient.invalidateQueries({ queryKey: ["tenants"] });
                   onOpenChange(false);
             },
             onError: (error: Error) => {
-                  toast({
+                  toastError({
                         title: t("tenant.permissionsSaveError") || "Failed to save",
                         description: error.message,
-                        variant: "destructive"
                   });
             },
       });
