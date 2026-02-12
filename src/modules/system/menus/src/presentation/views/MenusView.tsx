@@ -21,8 +21,7 @@ import {
       DialogDescription,
       DialogFooter,
 } from "@core/ui/dialog";
-import { PermissionGate } from "@core/providers/permission-provider";
-import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
+
 import { MenuTreeItem } from "../components/MenuTreeItem";
 import { MenuFormDialog } from "../components/MenuFormDialog";
 import { DeleteMenuDialog } from "../components/DeleteMenuDialog";
@@ -137,12 +136,12 @@ export function MenusView() {
                               <Button variant="outline" size="icon" onClick={vm.refetch} disabled={vm.isLoading}>
                                     <RefreshCw className={cn("h-4 w-4", vm.isLoading && "animate-spin")} />
                               </Button>
-                              <PermissionGate permission={SYSTEM_PERMISSIONS.MENUS_CREATE}>
+                              {vm.canCreate && (
                                     <Button onClick={() => vm.openCreateDialog()}>
                                           <Plus className="mr-2 h-4 w-4" />
                                           {t("menus.createMenuItem")}
                                     </Button>
-                              </PermissionGate>
+                              )}
                         </div>
                   </div>
 
@@ -166,12 +165,12 @@ export function MenusView() {
                                     <p className="text-muted-foreground text-center mb-6 max-w-sm">
                                           {t("menus.emptyDesc")}
                                     </p>
-                                    <PermissionGate permission={SYSTEM_PERMISSIONS.MENUS_CREATE}>
+                                    {vm.canCreate && (
                                           <Button onClick={() => vm.openCreateDialog()}>
                                                 <Plus className="mr-2 h-4 w-4" />
                                                 {t("menus.createMenuItem")}
                                           </Button>
-                                    </PermissionGate>
+                                    )}
                               </CardContent>
                         </Card>
                   ) : (
@@ -229,6 +228,11 @@ export function MenusView() {
                                                             onMoveDown={index < arr.length - 1 ? () => vm.handleMoveDown(node.id) : undefined}
                                                             onMoveUpChild={vm.handleMoveUp}
                                                             onMoveDownChild={vm.handleMoveDown}
+                                                            canCreate={vm.canCreate}
+                                                            canEdit={vm.canEdit}
+                                                            canDelete={vm.canDelete}
+                                                            canCustomize={vm.canCustomize}
+                                                            hasAnyAction={vm.hasAnyAction}
                                                       />
                                                 ))}
                                     </div>

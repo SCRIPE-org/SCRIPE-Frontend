@@ -19,8 +19,6 @@ import {
       DropdownMenuTrigger,
       DropdownMenuSeparator,
 } from "@core/ui/dropdown-menu";
-import { PermissionGate } from "@core/providers/permission-provider";
-import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import type { MenuTreeNode } from "../../domain/entities/MenuItem";
 
 import type { DropPosition, DropTarget } from "../viewmodels/useMenusViewModel";
@@ -78,6 +76,12 @@ export interface MenuTreeItemProps {
       onMoveUpChild?: (childId: string) => void;
       onMoveDownChild?: (childId: string) => void;
 
+      // Permission flags (parent controls visibility)
+      canCreate?: boolean;
+      canEdit?: boolean;
+      canDelete?: boolean;
+      canCustomize?: boolean;
+      hasAnyAction?: boolean;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -129,6 +133,11 @@ export function MenuTreeItem({
       onMoveDown,
       onMoveUpChild,
       onMoveDownChild,
+      canCreate: canCreateProp = false,
+      canEdit: canEditProp = false,
+      canDelete: canDeleteProp = false,
+      canCustomize: canCustomizeProp = false,
+      hasAnyAction: hasAnyActionProp = false,
 }: MenuTreeItemProps) {
       const { t } = useI18n();
       const rowRef = useRef<HTMLDivElement>(null);
@@ -405,82 +414,82 @@ export function MenuTreeItem({
                               </TooltipProvider>
                         )}
 
-                        {/* Actions */}
-                        <div className="ms-auto flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                              {canReorder && onMoveUp && (
-                                    <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onMoveUp}>
-                                          <ArrowUp className="h-3.5 w-3.5" />
-                                    </Button>
-                              )}
-                              {canReorder && onMoveDown && (
-                                    <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onMoveDown}>
-                                          <ArrowDown className="h-3.5 w-3.5" />
-                                    </Button>
-                              )}
-                              <DropdownMenu>
-                                    <DropdownMenuTrigger asChild>
-                                          <Button variant="ghost" className="h-7 w-7 p-0">
-                                                <MoreHorizontal className="h-4 w-4" />
+                        {/* Actions — only show if user has ANY action permission */}
+                        {hasAnyActionProp && (
+                              <div className="ms-auto flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    {canReorder && onMoveUp && (
+                                          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onMoveUp}>
+                                                <ArrowUp className="h-3.5 w-3.5" />
                                           </Button>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent align="end">
-                                          <PermissionGate permission={SYSTEM_PERMISSIONS.MENUS_CREATE}>
-                                                <DropdownMenuItem onClick={() => onAddChild(node)}>
-                                                      <Plus className="mr-2 h-4 w-4" />
-                                                      {t("menus.addChild")}
-                                                </DropdownMenuItem>
-                                          </PermissionGate>
-                                          <PermissionGate permission={SYSTEM_PERMISSIONS.MENUS_UPDATE}>
-                                                <DropdownMenuItem onClick={() => onEdit(node)}>
-                                                      <Pencil className="mr-2 h-4 w-4" />
-                                                      {t("common.edit")}
-                                                </DropdownMenuItem>
-                                          </PermissionGate>
-                                          {onRename && (
-                                                <PermissionGate permission={SYSTEM_PERMISSIONS.MENUS_CUSTOMIZE}>
+                                    )}
+                                    {canReorder && onMoveDown && (
+                                          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onMoveDown}>
+                                                <ArrowDown className="h-3.5 w-3.5" />
+                                          </Button>
+                                    )}
+                                    <DropdownMenu>
+                                          <DropdownMenuTrigger asChild>
+                                                <Button variant="ghost" className="h-7 w-7 p-0">
+                                                      <MoreHorizontal className="h-4 w-4" />
+                                                </Button>
+                                          </DropdownMenuTrigger>
+                                          <DropdownMenuContent align="end">
+                                                {canCreateProp && (
+                                                      <DropdownMenuItem onClick={() => onAddChild(node)}>
+                                                            <Plus className="mr-2 h-4 w-4" />
+                                                            {t("menus.addChild")}
+                                                      </DropdownMenuItem>
+                                                )}
+                                                {canEditProp && (
+                                                      <DropdownMenuItem onClick={() => onEdit(node)}>
+                                                            <Pencil className="mr-2 h-4 w-4" />
+                                                            {t("common.edit")}
+                                                      </DropdownMenuItem>
+                                                )}
+                                                {onRename && canCustomizeProp && (
                                                       <DropdownMenuItem onClick={() => onRename(node)}>
                                                             <Type className="mr-2 h-4 w-4" />
                                                             {t("menus.overrideRename")}
                                                       </DropdownMenuItem>
-                                                </PermissionGate>
-                                          )}
-                                          {onHide && (
-                                                <PermissionGate permission={SYSTEM_PERMISSIONS.MENUS_CUSTOMIZE}>
+                                                )}
+                                                {onHide && canCustomizeProp && (
                                                       <DropdownMenuItem onClick={() => onHide(node)}>
                                                             <EyeOff className="mr-2 h-4 w-4" />
                                                             {t("menus.hideItem")}
                                                       </DropdownMenuItem>
-                                                </PermissionGate>
-                                          )}
-                                          {onRemoveOverride && node.userOverride && (
-                                                (!canRemoveOverride || canRemoveOverride({ scope: 'User' })) && (
-                                                      <DropdownMenuItem onClick={() => onRemoveOverride(node.userOverride!.id)}>
-                                                            <Undo2 className="mr-2 h-4 w-4" />
-                                                            {t('menus.removeOverride')} ({t('menus.scopePersonal')})
-                                                      </DropdownMenuItem>
-                                                )
-                                          )}
-                                          {onRemoveOverride && node.tenantOverride && (
-                                                (!canRemoveOverride || canRemoveOverride({ scope: 'Tenant' })) && (
-                                                      <DropdownMenuItem onClick={() => onRemoveOverride(node.tenantOverride!.id)}>
-                                                            <Undo2 className="mr-2 h-4 w-4" />
-                                                            {t('menus.removeOverride')} ({t('menus.scopeOrganization')})
-                                                      </DropdownMenuItem>
-                                                )
-                                          )}
-                                          <DropdownMenuSeparator />
-                                          <PermissionGate permission={SYSTEM_PERMISSIONS.MENUS_DELETE}>
-                                                <DropdownMenuItem
-                                                      className="text-destructive"
-                                                      onClick={() => onDelete(node)}
-                                                >
-                                                      <Trash2 className="mr-2 h-4 w-4" />
-                                                      {t("common.delete")}
-                                                </DropdownMenuItem>
-                                          </PermissionGate>
-                                    </DropdownMenuContent>
-                              </DropdownMenu>
-                        </div>
+                                                )}
+                                                {onRemoveOverride && node.userOverride && (
+                                                      (!canRemoveOverride || canRemoveOverride({ scope: 'User' })) && (
+                                                            <DropdownMenuItem onClick={() => onRemoveOverride(node.userOverride!.id)}>
+                                                                  <Undo2 className="mr-2 h-4 w-4" />
+                                                                  {t('menus.removeOverride')} ({t('menus.scopePersonal')})
+                                                            </DropdownMenuItem>
+                                                      )
+                                                )}
+                                                {onRemoveOverride && node.tenantOverride && (
+                                                      (!canRemoveOverride || canRemoveOverride({ scope: 'Tenant' })) && (
+                                                            <DropdownMenuItem onClick={() => onRemoveOverride(node.tenantOverride!.id)}>
+                                                                  <Undo2 className="mr-2 h-4 w-4" />
+                                                                  {t('menus.removeOverride')} ({t('menus.scopeOrganization')})
+                                                            </DropdownMenuItem>
+                                                      )
+                                                )}
+                                                {canDeleteProp && (
+                                                      <>
+                                                            <DropdownMenuSeparator />
+                                                            <DropdownMenuItem
+                                                                  className="text-destructive"
+                                                                  onClick={() => onDelete(node)}
+                                                            >
+                                                                  <Trash2 className="mr-2 h-4 w-4" />
+                                                                  {t("common.delete")}
+                                                            </DropdownMenuItem>
+                                                      </>
+                                                )}
+                                          </DropdownMenuContent>
+                                    </DropdownMenu>
+                              </div>
+                        )}
                   </div>
 
                   {/* Children */}
@@ -515,7 +524,11 @@ export function MenuTreeItem({
                                                 onMoveDown={index < arr.length - 1 && onMoveDownChild ? () => onMoveDownChild(child.id) : undefined}
                                                 onMoveUpChild={onMoveUpChild}
                                                 onMoveDownChild={onMoveDownChild}
-
+                                                canCreate={canCreateProp}
+                                                canEdit={canEditProp}
+                                                canDelete={canDeleteProp}
+                                                canCustomize={canCustomizeProp}
+                                                hasAnyAction={hasAnyActionProp}
                                           />
                                     ))}
                         </div>

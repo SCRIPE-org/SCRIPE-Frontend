@@ -54,7 +54,13 @@ export function useMenusViewModel() {
       const { hasPermission } = usePermissions();
 
       // ── Permission ─────────────────────────────────────────────────────
-      const canReorder = hasPermission(SYSTEM_PERMISSIONS.MENUS_UPDATE);
+      const canCreate = hasPermission(SYSTEM_PERMISSIONS.MENUS_CREATE);
+      const canEdit = hasPermission(SYSTEM_PERMISSIONS.MENUS_UPDATE);
+      const canDelete = hasPermission(SYSTEM_PERMISSIONS.MENUS_DELETE);
+      const canCustomize = hasPermission(SYSTEM_PERMISSIONS.MENUS_CUSTOMIZE);
+      const canReorder = canEdit;
+      // True if user has ANY action permission (to show/hide the actions column)
+      const hasAnyAction = canCreate || canEdit || canDelete || canCustomize;
 
       // ── Dialog state ───────────────────────────────────────────────────
       const [createDialogOpen, setCreateDialogOpen] = useState(false);
@@ -618,8 +624,13 @@ export function useMenusViewModel() {
             // Localization
             language,
 
-            // Permission
+            // Permissions
+            canCreate,
+            canEdit,
+            canDelete,
+            canCustomize,
             canReorder,
+            hasAnyAction,
 
             // Expand / Collapse
             expandedNodes,
