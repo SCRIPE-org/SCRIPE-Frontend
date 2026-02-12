@@ -58,7 +58,7 @@ export function useMenusViewModel() {
       const canEdit = hasPermission(SYSTEM_PERMISSIONS.MENUS_UPDATE);
       const canDelete = hasPermission(SYSTEM_PERMISSIONS.MENUS_DELETE);
       const canCustomize = hasPermission(SYSTEM_PERMISSIONS.MENUS_CUSTOMIZE);
-      const canReorder = hasPermission(SYSTEM_PERMISSIONS.MENUS_REORDER);
+      const canReorder = hasPermission(SYSTEM_PERMISSIONS.MENUS_UPDATE);
       // True if user has ANY action permission (to show/hide the actions column)
       const hasAnyAction = canCreate || canEdit || canDelete || canCustomize;
 

@@ -73,9 +73,12 @@ export function computeEffectiveTree(
                   originalOrder: node.order,
                   resource: node.resource,
                   isActive: node.isActive,
-                  // If override has parentMenuItemIdOverride, use it; else keep original
-                  effectiveParentId: override?.parentMenuItemIdOverride !== undefined
-                        ? (override.parentMenuItemIdOverride || undefined) // empty string → root
+                  // If override has parentMenuItemIdOverride set (not null/undefined), use it:
+                  // - valid ID string → reparent to that item
+                  // - empty string '' → move to root (no parent)
+                  // null/undefined from JSON → keep original parent
+                  effectiveParentId: (override?.parentMenuItemIdOverride != null)
+                        ? (override.parentMenuItemIdOverride || undefined) // '' → undefined (root)
                         : node.originalParentId,
                   hasOverride,
                   isHidden,
