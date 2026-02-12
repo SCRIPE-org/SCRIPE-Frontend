@@ -480,6 +480,7 @@ export const en = {
     overrideSaved: "Override saved successfully.",
     overrideDeleted: "Override removed successfully.",
     hideItem: "Hide Item",
+    hiddenOverride: "This item is hidden",
     removeOverride: "Remove Override",
   },
 

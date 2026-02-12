@@ -11,6 +11,7 @@ import { useCallback, useRef } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@core/ui/tooltip";
 import {
       DropdownMenu,
       DropdownMenuContent,
@@ -340,28 +341,68 @@ export function MenuTreeItem({
                               </Badge>
                         )}
 
-                        {/* Override indicators (User + Tenant badges) */}
+                        {/* Override indicators (User + Tenant badges with tooltips) */}
                         {node.userOverride && (
-                              <Badge
-                                    variant="outline"
-                                    className={cn(
-                                          'text-[9px] px-1.5 py-0 font-medium border-0',
-                                          'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400'
-                                    )}
-                              >
-                                    {node.userOverride.isHidden ? '⊘' : '✎'} {t('menus.scopePersonal')}
-                              </Badge>
+                              <TooltipProvider>
+                                    <Tooltip>
+                                          <TooltipTrigger asChild>
+                                                <Badge
+                                                      variant="outline"
+                                                      className={cn(
+                                                            'text-[9px] px-1.5 py-0 font-medium border-0 cursor-help',
+                                                            'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400'
+                                                      )}
+                                                >
+                                                      {node.userOverride.isHidden ? '⊘' : '✎'} {t('menus.scopePersonal')}
+                                                </Badge>
+                                          </TooltipTrigger>
+                                          <TooltipContent side="top" className="text-xs">
+                                                {node.userOverride.isHidden ? (
+                                                      <span>{t('menus.hiddenOverride')}</span>
+                                                ) : (
+                                                      <div className="flex flex-col gap-0.5">
+                                                            {node.userOverride.nameEnOverride && (
+                                                                  <span><strong>EN:</strong> {node.userOverride.nameEnOverride}</span>
+                                                            )}
+                                                            {node.userOverride.nameArOverride && (
+                                                                  <span><strong>AR:</strong> {node.userOverride.nameArOverride}</span>
+                                                            )}
+                                                      </div>
+                                                )}
+                                          </TooltipContent>
+                                    </Tooltip>
+                              </TooltipProvider>
                         )}
                         {node.tenantOverride && (
-                              <Badge
-                                    variant="outline"
-                                    className={cn(
-                                          'text-[9px] px-1.5 py-0 font-medium border-0',
-                                          'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
-                                    )}
-                              >
-                                    {node.tenantOverride.isHidden ? '⊘' : '✎'} {t('menus.scopeOrganization')}
-                              </Badge>
+                              <TooltipProvider>
+                                    <Tooltip>
+                                          <TooltipTrigger asChild>
+                                                <Badge
+                                                      variant="outline"
+                                                      className={cn(
+                                                            'text-[9px] px-1.5 py-0 font-medium border-0 cursor-help',
+                                                            'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
+                                                      )}
+                                                >
+                                                      {node.tenantOverride.isHidden ? '⊘' : '✎'} {t('menus.scopeOrganization')}
+                                                </Badge>
+                                          </TooltipTrigger>
+                                          <TooltipContent side="top" className="text-xs">
+                                                {node.tenantOverride.isHidden ? (
+                                                      <span>{t('menus.hiddenOverride')}</span>
+                                                ) : (
+                                                      <div className="flex flex-col gap-0.5">
+                                                            {node.tenantOverride.nameEnOverride && (
+                                                                  <span><strong>EN:</strong> {node.tenantOverride.nameEnOverride}</span>
+                                                            )}
+                                                            {node.tenantOverride.nameArOverride && (
+                                                                  <span><strong>AR:</strong> {node.tenantOverride.nameArOverride}</span>
+                                                            )}
+                                                      </div>
+                                                )}
+                                          </TooltipContent>
+                                    </Tooltip>
+                              </TooltipProvider>
                         )}
 
                         {/* Actions */}

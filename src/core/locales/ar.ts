@@ -505,6 +505,7 @@ export const ar = {
     overrideSaved: "تم حفظ التخصيص بنجاح.",
     overrideDeleted: "تم إزالة التخصيص بنجاح.",
     hideItem: "إخفاء العنصر",
+    hiddenOverride: "هذا العنصر مخفي",
     removeOverride: "إزالة التخصيص",
   },
 
