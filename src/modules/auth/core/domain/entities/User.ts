@@ -16,6 +16,7 @@ export interface UserData {
   role?: string;
   permissions?: string[];
   isProtected?: boolean;
+  tenantId?: string | null;
 }
 
 export class User {
@@ -28,6 +29,7 @@ export class User {
   public readonly role?: string;
   public readonly permissions?: string[];
   public readonly isProtected: boolean;
+  public readonly tenantId?: string | null;
 
   constructor(data: UserData) {
     this.id = data.id;
@@ -39,6 +41,7 @@ export class User {
     this.role = data.role;
     this.permissions = data.permissions;
     this.isProtected = data.isProtected ?? false;
+    this.tenantId = data.tenantId ?? null;
   }
 
   /**
@@ -76,6 +79,7 @@ export class User {
       role: this.role,
       permissions: this.permissions,
       isProtected: this.isProtected,
+      tenantId: this.tenantId,
       ...updates,
     });
   }

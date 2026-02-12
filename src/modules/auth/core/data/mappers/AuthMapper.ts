@@ -119,6 +119,7 @@ export class AuthMapper {
         json.roles?.[0]?.roleCode || json.roles?.[0]?.roleName || undefined,
       permissions: json.permissions || [],
       isProtected: json.isProtected ?? false,
+      tenantId: json.tenantId ?? null,
     });
   }
 }

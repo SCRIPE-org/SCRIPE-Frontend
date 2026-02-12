@@ -51,17 +51,21 @@ export function useMenuOverrideViewModel(): UseMenuOverrideViewModelResult {
       const { menuRepository } = systemContainer;
       const { t } = useI18n();
       const permissions = useAppStore((s) => s.permissions);
-      const isSuperAdmin = useAppStore((s) =>
-            s.roles?.some((r) => r.roleCode === 'SYSTEM_SUPER_ADMIN')
+      const userTenantId = useAppStore((s) => s.user?.tenantId);
+      const isSuperAdmin = useMemo(
+            () => permissions.includes('*'),
+            [permissions]
       );
 
-      // ── Available Scopes (permission-gated, 2-scope model) ─────────────
+      // ── Available Scopes (permission + tenant gated, 2-scope model) ────
+      // Rule: Tenant scope requires BOTH the permission AND a non-null tenantId.
+      // Super admins (no tenant) can only have personal overrides — they
+      // edit the base menu directly to affect everyone.
       const availableScopes = useMemo(() => {
             const scopes: MenuOverrideScope[] = [];
 
-            // Super admin (no tenant): only personal overrides
-            // To change menus for everyone, super admin edits the base menu directly
             if (isSuperAdmin) {
+                  // Super admin: personal only (edit base menu for org-wide changes)
                   scopes.push(MenuOverrideScope.User);
                   return scopes;
             }
@@ -70,12 +74,16 @@ export function useMenuOverrideViewModel(): UseMenuOverrideViewModelResult {
             if (hasPermission(permissions, SYSTEM_PERMISSIONS.MENUS_CUSTOMIZE)) {
                   scopes.push(MenuOverrideScope.User);
             }
-            if (hasPermission(permissions, SYSTEM_PERMISSIONS.MENUS_CUSTOMIZE_TENANT)) {
+            // Tenant scope requires BOTH the permission AND an actual tenant
+            if (
+                  userTenantId &&
+                  hasPermission(permissions, SYSTEM_PERMISSIONS.MENUS_CUSTOMIZE_TENANT)
+            ) {
                   scopes.push(MenuOverrideScope.Tenant);
             }
 
             return scopes;
-      }, [permissions, isSuperAdmin]);
+      }, [permissions, isSuperAdmin, userTenantId]);
 
       // ── State ──────────────────────────────────────────────────────────
       const [overrideDialog, setOverrideDialog] = useState<OverrideDialogState>({

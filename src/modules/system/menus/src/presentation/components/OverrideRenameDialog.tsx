@@ -64,18 +64,29 @@ export function OverrideRenameDialog({
       );
 
       // ── Define form fields ─────────────────────────────────────────────
+      const hasSingleScope = availableScopes.length <= 1;
+
       const fields: FieldConfig[] = useMemo(
             () => [
-                  {
-                        name: 'scope',
-                        label: t('menus.overrideScope'),
-                        type: 'select' as const,
-                        options: scopeOptions,
-                        required: true,
-                        onChange: (value: any) => {
-                              deferredScopeChange(value);
+                  // Single scope → disabled text field showing the label
+                  // Multiple scopes → select dropdown
+                  hasSingleScope
+                        ? {
+                              name: 'scope',
+                              label: t('menus.overrideScope'),
+                              type: 'text' as const,
+                              disabled: true,
+                        }
+                        : {
+                              name: 'scope',
+                              label: t('menus.overrideScope'),
+                              type: 'select' as const,
+                              options: scopeOptions,
+                              required: true,
+                              onChange: (value: any) => {
+                                    deferredScopeChange(value);
+                              },
                         },
-                  },
                   {
                         name: 'nameEn',
                         label: t('menus.nameEn'),
@@ -88,17 +99,20 @@ export function OverrideRenameDialog({
                         type: 'text' as const,
                   },
             ],
-            [t, scopeOptions, deferredScopeChange]
+            [t, scopeOptions, deferredScopeChange, hasSingleScope]
       );
 
       // ── Initial values reset per node ──────────────────────────────────
       const initialValues = useMemo(
             () => ({
-                  scope,
+                  // When disabled text, show the translated label; when select, use the enum value
+                  scope: hasSingleScope
+                        ? (scopeOptions.find(o => o.value === scope)?.label ?? scope)
+                        : scope,
                   nameEn: node?.nameEn ?? '',
                   nameAr: node?.nameAr ?? '',
             }),
-            [scope, node]
+            [scope, node, hasSingleScope, scopeOptions]
       );
 
       return (
