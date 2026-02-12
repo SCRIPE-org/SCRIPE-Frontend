@@ -113,4 +113,20 @@ export interface MenuTreeNode {
       isActive: boolean;
       parentMenuItemId?: string;
       children: MenuTreeNode[];
+      /** User-scope override for this item (null if none) */
+      userOverride?: MenuItemOverrideInfo;
+      /** Tenant-scope override for this item (null if none) */
+      tenantOverride?: MenuItemOverrideInfo;
 }
+
+/**
+ * Light override info attached to each menu item (admin view only).
+ * Contains just enough data for the customize dialog and remove-override button.
+ */
+export interface MenuItemOverrideInfo {
+      id: string;
+      nameEnOverride?: string;
+      nameArOverride?: string;
+      isHidden: boolean;
+}
+

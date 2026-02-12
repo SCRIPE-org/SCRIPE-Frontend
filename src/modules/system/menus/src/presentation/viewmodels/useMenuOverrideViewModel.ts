@@ -11,6 +11,7 @@
 
 import { useState, useCallback, useRef, useMemo } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useNavigation } from '@core/providers/navigation-provider';
 import { systemContainer } from '@modules/system/di';
 import { MenuOverrideScope, type SaveMenuOverrideRequest } from '../../domain/entities/MenuItemRequests';
 import type { MenuTreeNode } from '../../domain/entities/MenuItem';
@@ -50,6 +51,9 @@ export function useMenuOverrideViewModel(): UseMenuOverrideViewModelResult {
       const { success, error: toastError } = useEnhancedToast();
       const { menuRepository } = systemContainer;
       const { t } = useI18n();
+      const { refreshNavigation } = useNavigation();
+
+
       const permissions = useAppStore((s) => s.permissions);
       const userTenantId = useAppStore((s) => s.user?.tenantId);
       const isSuperAdmin = useMemo(
@@ -119,6 +123,8 @@ export function useMenuOverrideViewModel(): UseMenuOverrideViewModelResult {
                   menuRepository.saveOverride(request),
             onSuccess: () => {
                   queryClient.invalidateQueries({ queryKey: ['menus'] });
+                  // Refresh sidebar navigation so overrides appear immediately
+                  refreshNavigation(true, true);
                   success({ title: t('menus.overrideSaved') });
                   setOverrideDialog({ open: false, node: null, mode: null });
                   setScope(availableScopes[0] ?? MenuOverrideScope.User);
@@ -133,6 +139,8 @@ export function useMenuOverrideViewModel(): UseMenuOverrideViewModelResult {
             mutationFn: (id: string) => menuRepository.deleteOverride(id),
             onSuccess: () => {
                   queryClient.invalidateQueries({ queryKey: ['menus'] });
+                  // Refresh sidebar navigation so removal of override appears immediately
+                  refreshNavigation(true, true);
                   success({ title: t('menus.overrideDeleted') });
             },
             onError: () => {
@@ -215,6 +223,7 @@ export function useMenuOverrideViewModel(): UseMenuOverrideViewModelResult {
             scope,
             setScope,
             availableScopes,
+
             saveRename,
             toggleHideItem,
             deleteOverride,

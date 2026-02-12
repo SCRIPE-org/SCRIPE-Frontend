@@ -80,21 +80,3 @@ export interface SaveMenuOverrideRequest {
       parentMenuItemIdOverride?: string;
       isHidden: boolean;
 }
-
-/**
- * Menu override response DTO (matches backend MenuOverrideDto)
- * Includes tenantId/adminId for identifying override ownership.
- */
-export interface MenuOverrideDto {
-      id: string;
-      menuItemId: string;
-      tenantId?: string;
-      adminId?: string;
-      scope: string;
-      nameEnOverride?: string;
-      nameArOverride?: string;
-      orderOverride?: number;
-      parentMenuItemIdOverride?: string;
-      isHidden: boolean;
-      createdAt: string;
-}

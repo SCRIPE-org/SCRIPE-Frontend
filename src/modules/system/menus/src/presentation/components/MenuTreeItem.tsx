@@ -21,7 +21,7 @@ import {
 import { PermissionGate } from "@core/providers/permission-provider";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import type { MenuTreeNode } from "../../domain/entities/MenuItem";
-import type { MenuOverrideDto } from "../../domain/entities/MenuItemRequests";
+
 import type { DropPosition, DropTarget } from "../viewmodels/useMenusViewModel";
 import {
       Plus,
@@ -77,8 +77,6 @@ export interface MenuTreeItemProps {
       onMoveUpChild?: (childId: string) => void;
       onMoveDownChild?: (childId: string) => void;
 
-      // Override indicators
-      overrideMap?: Map<string, MenuOverrideDto>;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -130,7 +128,6 @@ export function MenuTreeItem({
       onMoveDown,
       onMoveUpChild,
       onMoveDownChild,
-      overrideMap,
 }: MenuTreeItemProps) {
       const { t } = useI18n();
       const rowRef = useRef<HTMLDivElement>(null);
@@ -343,33 +340,29 @@ export function MenuTreeItem({
                               </Badge>
                         )}
 
-                        {/* Override indicator */}
-                        {overrideMap?.has(node.id) && (() => {
-                              const ov = overrideMap.get(node.id)!;
-                              const scopeColors: Record<string, string> = {
-                                    User: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400',
-                                    Tenant: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
-                              };
-                              const scopeLabels: Record<string, string> = {
-                                    User: t('menus.scopePersonal'),
-                                    Tenant: t('menus.scopeOrganization'),
-                              };
-                              const scopeLabel = scopeLabels[ov.scope] ?? ov.scope;
-                              const label = ov.isHidden
-                                    ? `⊘ ${scopeLabel}`
-                                    : `✎ ${scopeLabel}`;
-                              return (
-                                    <Badge
-                                          variant="outline"
-                                          className={cn(
-                                                'text-[9px] px-1.5 py-0 font-medium border-0',
-                                                scopeColors[ov.scope] ?? 'bg-muted text-muted-foreground'
-                                          )}
-                                    >
-                                          {label}
-                                    </Badge>
-                              );
-                        })()}
+                        {/* Override indicators (User + Tenant badges) */}
+                        {node.userOverride && (
+                              <Badge
+                                    variant="outline"
+                                    className={cn(
+                                          'text-[9px] px-1.5 py-0 font-medium border-0',
+                                          'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400'
+                                    )}
+                              >
+                                    {node.userOverride.isHidden ? '⊘' : '✎'} {t('menus.scopePersonal')}
+                              </Badge>
+                        )}
+                        {node.tenantOverride && (
+                              <Badge
+                                    variant="outline"
+                                    className={cn(
+                                          'text-[9px] px-1.5 py-0 font-medium border-0',
+                                          'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
+                                    )}
+                              >
+                                    {node.tenantOverride.isHidden ? '⊘' : '✎'} {t('menus.scopeOrganization')}
+                              </Badge>
+                        )}
 
                         {/* Actions */}
                         <div className="ms-auto flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -418,18 +411,21 @@ export function MenuTreeItem({
                                                       </DropdownMenuItem>
                                                 </PermissionGate>
                                           )}
-                                          {onRemoveOverride && overrideMap?.has(node.id) && (
-                                                (() => {
-                                                      const override = overrideMap.get(node.id)!;
-                                                      // Check scope-specific permission via ViewModel callback
-                                                      if (canRemoveOverride && !canRemoveOverride(override)) return null;
-                                                      return (
-                                                            <DropdownMenuItem onClick={() => onRemoveOverride(override.id)}>
-                                                                  <Undo2 className="mr-2 h-4 w-4" />
-                                                                  {t("menus.removeOverride")}
-                                                            </DropdownMenuItem>
-                                                      );
-                                                })()
+                                          {onRemoveOverride && node.userOverride && (
+                                                (!canRemoveOverride || canRemoveOverride({ scope: 'User' })) && (
+                                                      <DropdownMenuItem onClick={() => onRemoveOverride(node.userOverride!.id)}>
+                                                            <Undo2 className="mr-2 h-4 w-4" />
+                                                            {t('menus.removeOverride')} ({t('menus.scopePersonal')})
+                                                      </DropdownMenuItem>
+                                                )
+                                          )}
+                                          {onRemoveOverride && node.tenantOverride && (
+                                                (!canRemoveOverride || canRemoveOverride({ scope: 'Tenant' })) && (
+                                                      <DropdownMenuItem onClick={() => onRemoveOverride(node.tenantOverride!.id)}>
+                                                            <Undo2 className="mr-2 h-4 w-4" />
+                                                            {t('menus.removeOverride')} ({t('menus.scopeOrganization')})
+                                                      </DropdownMenuItem>
+                                                )
                                           )}
                                           <DropdownMenuSeparator />
                                           <PermissionGate permission={SYSTEM_PERMISSIONS.MENUS_DELETE}>
@@ -478,7 +474,7 @@ export function MenuTreeItem({
                                                 onMoveDown={index < arr.length - 1 && onMoveDownChild ? () => onMoveDownChild(child.id) : undefined}
                                                 onMoveUpChild={onMoveUpChild}
                                                 onMoveDownChild={onMoveDownChild}
-                                                overrideMap={overrideMap}
+
                                           />
                                     ))}
                         </div>

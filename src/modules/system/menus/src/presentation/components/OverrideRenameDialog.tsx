@@ -3,6 +3,9 @@
  *
  * Modal for customizing menu item names per scope.
  * Uses GenericModal + GenericForm for consistent form handling and working selects.
+ *
+ * Pre-fills with existing override values from the node's embedded
+ * userOverride/tenantOverride data for the selected scope.
  */
 'use client';
 
@@ -42,6 +45,14 @@ export function OverrideRenameDialog({
 
       const isOpen = dialog.open && dialog.mode === 'rename';
       const node = dialog.node;
+
+      // ── Get existing override for current scope from the node itself ────
+      const existingOverride = useMemo(() => {
+            if (!node) return null;
+            return scope === MenuOverrideScope.User
+                  ? node.userOverride ?? null
+                  : node.tenantOverride ?? null;
+      }, [node, scope]);
 
       // ── Build scope options from availableScopes ───────────────────────
       const scopeOptions = useMemo(
@@ -102,17 +113,18 @@ export function OverrideRenameDialog({
             [t, scopeOptions, deferredScopeChange, hasSingleScope]
       );
 
-      // ── Initial values reset per node ──────────────────────────────────
+      // ── Initial values: use override values if they exist for this scope ─
       const initialValues = useMemo(
             () => ({
                   // When disabled text, show the translated label; when select, use the enum value
                   scope: hasSingleScope
                         ? (scopeOptions.find(o => o.value === scope)?.label ?? scope)
                         : scope,
-                  nameEn: node?.nameEn ?? '',
-                  nameAr: node?.nameAr ?? '',
+                  // Pre-fill with existing override values, fallback to defaults
+                  nameEn: existingOverride?.nameEnOverride || node?.nameEn || '',
+                  nameAr: existingOverride?.nameArOverride || node?.nameAr || '',
             }),
-            [scope, node, hasSingleScope, scopeOptions]
+            [scope, node, hasSingleScope, scopeOptions, existingOverride]
       );
 
       return (
@@ -122,11 +134,11 @@ export function OverrideRenameDialog({
                   title={t('menus.overrideRename')}
                   description={t('menus.overrideRenameDesc')}
                   size="sm"
-                  formKey={`override-rename-${node?.id ?? 'none'}`}
+                  formKey={`override-rename-${node?.id ?? 'none'}-${scope}`}
             >
                   {node && (
                         <GenericForm
-                              key={node.id}
+                              key={`${node.id}-${scope}`}
                               fields={fields}
                               initialValues={initialValues}
                               onSubmit={async (data) => {
@@ -138,3 +150,4 @@ export function OverrideRenameDialog({
             </GenericModal>
       );
 }
+
