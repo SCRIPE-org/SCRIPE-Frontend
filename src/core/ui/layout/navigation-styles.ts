@@ -37,7 +37,7 @@ export interface NavigationStyleConfig {
 
 const THEME_COLORS: Record<
       string,
-      { bg: string; hover: string; text: string; border: string; bgAlpha: string; light: string; gradient: string }
+      { bg: string; hover: string; text: string; border: string; bgAlpha: string; bgAlpha10: string; light: string; gradient: string }
 > = {
       blue: {
             bg: "bg-blue-600",
@@ -45,6 +45,7 @@ const THEME_COLORS: Record<
             text: "text-blue-600",
             border: "border-blue-600",
             bgAlpha: "bg-blue-600/20",
+            bgAlpha10: "bg-blue-600/10",
             light: "bg-blue-300",
             gradient: "bg-gradient-to-br from-blue-500 to-blue-600",
       },
@@ -54,6 +55,7 @@ const THEME_COLORS: Record<
             text: "text-purple-600",
             border: "border-purple-600",
             bgAlpha: "bg-purple-600/20",
+            bgAlpha10: "bg-purple-600/10",
             light: "bg-purple-300",
             gradient: "bg-gradient-to-br from-purple-500 to-purple-600",
       },
@@ -63,6 +65,7 @@ const THEME_COLORS: Record<
             text: "text-green-600",
             border: "border-green-600",
             bgAlpha: "bg-green-600/20",
+            bgAlpha10: "bg-green-600/10",
             light: "bg-green-300",
             gradient: "bg-gradient-to-br from-green-500 to-green-600",
       },
@@ -72,6 +75,7 @@ const THEME_COLORS: Record<
             text: "text-orange-600",
             border: "border-orange-600",
             bgAlpha: "bg-orange-600/20",
+            bgAlpha10: "bg-orange-600/10",
             light: "bg-orange-300",
             gradient: "bg-gradient-to-br from-orange-500 to-orange-600",
       },
@@ -81,6 +85,7 @@ const THEME_COLORS: Record<
             text: "text-red-600",
             border: "border-red-600",
             bgAlpha: "bg-red-600/20",
+            bgAlpha10: "bg-red-600/10",
             light: "bg-red-300",
             gradient: "bg-gradient-to-br from-red-500 to-red-600",
       },
@@ -90,6 +95,7 @@ const THEME_COLORS: Record<
             text: "text-teal-600",
             border: "border-teal-600",
             bgAlpha: "bg-teal-600/20",
+            bgAlpha10: "bg-teal-600/10",
             light: "bg-teal-300",
             gradient: "bg-gradient-to-br from-teal-500 to-teal-600",
       },
@@ -99,6 +105,7 @@ const THEME_COLORS: Record<
             text: "text-pink-600",
             border: "border-pink-600",
             bgAlpha: "bg-pink-600/20",
+            bgAlpha10: "bg-pink-600/10",
             light: "bg-pink-300",
             gradient: "bg-gradient-to-br from-pink-500 to-pink-600",
       },
@@ -108,6 +115,7 @@ const THEME_COLORS: Record<
             text: "text-indigo-600",
             border: "border-indigo-600",
             bgAlpha: "bg-indigo-600/20",
+            bgAlpha10: "bg-indigo-600/10",
             light: "bg-indigo-300",
             gradient: "bg-gradient-to-br from-indigo-500 to-indigo-600",
       },
@@ -117,6 +125,7 @@ const THEME_COLORS: Record<
             text: "text-cyan-600",
             border: "border-cyan-600",
             bgAlpha: "bg-cyan-600/20",
+            bgAlpha10: "bg-cyan-600/10",
             light: "bg-cyan-300",
             gradient: "bg-gradient-to-br from-cyan-500 to-cyan-600",
       },
@@ -246,6 +255,35 @@ export function getPanelItemClasses(
             }
             default:
                   return cn(baseClasses, "text-white shadow-sm", c.bg, c.hover);
+      }
+}
+
+/**
+ * Panel sidebar PARENT GROUP styling — subtler than the active leaf.
+ * Used when a parent contains an active descendant but is not the active page itself.
+ *
+ * Visual hierarchy:
+ *   inactive  → no color
+ *   parent    → light tinted bg + colored text (this function)
+ *   active    → full solid bg + white text (getPanelItemClasses)
+ */
+export function getPanelParentClasses(
+      config: NavigationStyleConfig,
+): string {
+      const baseClasses = "w-full gap-2 h-10 px-3";
+      const c = getColors(config.colorTheme);
+
+      switch (config.navigationStyle) {
+            case "pills":
+                  return cn(baseClasses, "rounded-full", c.bgAlpha10, c.text, "font-medium");
+            case "underline":
+                  return cn(baseClasses, "rounded-none border-b", c.border, c.text, "border-opacity-40");
+            case "sidebar": {
+                  const borderSide = config.direction === "rtl" ? "border-l-2" : "border-r-2";
+                  return cn(baseClasses, "rounded-none", borderSide, c.bgAlpha10, c.border, c.text, "border-opacity-50");
+            }
+            default:
+                  return cn(baseClasses, c.bgAlpha10, c.text, "font-medium");
       }
 }
 

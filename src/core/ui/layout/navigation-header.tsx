@@ -183,16 +183,23 @@ export function NavigationHeader({
             </div>
           ) : (
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+              <Search className={cn(
+                "absolute top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4",
+                direction === "rtl" ? "right-3" : "left-3"
+              )} />
               <Input
                 type="search"
                 placeholder={t("layout.search_placeholder") || "Search here..."}
                 className={cn(
-                  "w-full pl-10 pr-12 transition-all duration-200 bg-transparent border-border",
-                  "focus:border-primary focus:ring-primary/20 focus:bg-transparent"
+                  "w-full transition-all duration-200 bg-transparent border-border",
+                  "focus:border-primary focus:ring-primary/20 focus:bg-transparent",
+                  direction === "rtl" ? "pr-10 pl-12" : "pl-10 pr-12"
                 )}
               />
-              <kbd className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border border-border bg-muted px-1.5 font-mono text-xs text-muted-foreground">
+              <kbd className={cn(
+                "absolute top-1/2 transform -translate-y-1/2 pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border border-border bg-muted px-1.5 font-mono text-xs text-muted-foreground",
+                direction === "rtl" ? "left-3" : "right-3"
+              )}>
                 /
               </kbd>
             </div>
