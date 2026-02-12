@@ -14,6 +14,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useI18n } from '@core/providers/i18n-provider';
 import { usePermissions } from '@core/hooks/use-permissions';
 import { useEnhancedToast } from '@core/hooks/use-enhanced-toast';
+import { useAppStore } from '@core/store/useAppStore';
 import { SYSTEM_PERMISSIONS } from '@core/common/types/permissions';
 import type { MenuTreeNode, MenuItemOverrideInfo } from '../../domain/entities/MenuItem';
 import {
@@ -72,11 +73,15 @@ export function useMenuCustomizeViewModel() {
       const { menuRepository } = systemContainer;
       const { t, language } = useI18n();
       const { hasPermission } = usePermissions();
+      const user = useAppStore((state) => state.user);
       const { success, error: toastError } = useEnhancedToast();
 
       // ── Permissions ─────────────────────────────────────────────────────
       const canCustomize = hasPermission(SYSTEM_PERMISSIONS.MENUS_CUSTOMIZE);
-      const canCustomizeTenant = hasPermission(SYSTEM_PERMISSIONS.MENUS_CUSTOMIZE_TENANT);
+      // Tenant customization requires BOTH the permission AND a non-null tenantId
+      // System superadmins (tenantId === null) should not see the tenant scope
+      const hasTenantId = !!user?.tenantId;
+      const canCustomizeTenant = hasPermission(SYSTEM_PERMISSIONS.MENUS_CUSTOMIZE_TENANT) && hasTenantId;
 
       // ── Scope management ────────────────────────────────────────────────
       const availableScopes = useMemo(() => {
@@ -422,25 +427,55 @@ export function useMenuCustomizeViewModel() {
 
       /**
        * DnD Drop handler for the customize page.
-       * Instead of calling the reorder API (base menu), saves order+parent
-       * overrides for the dragged item.
-       *
-       * Strategy:
-       * - "inside": save override with parentMenuItemIdOverride = targetNodeId,
-       *   orderOverride = targetNode.children.length + 1 (append to end)
-       * - "before"/"after": save override with parentMenuItemIdOverride = target's parent,
-       *   orderOverride = calculated based on target's position among siblings
+       * Uses the EFFECTIVE tree (what the user sees) for sibling/parent lookups.
+       * Saves order+parent overrides for the dragged item.
        */
       const handleDrop = useCallback(
             async (targetNodeId: string, position: CustomizeDropPosition) => {
                   if (!draggedNode) return;
 
-                  const targetNode = findNode(targetNodeId);
+                  // --- Search the EFFECTIVE tree (what user sees), not the base tree ---
+                  type AnyNode = { id: string; order: number; children: AnyNode[] };
+                  const findInTree = (id: string, nodes: AnyNode[]): AnyNode | null => {
+                        for (const n of nodes) {
+                              if (n.id === id) return n;
+                              const found = findInTree(id, n.children);
+                              if (found) return found;
+                        }
+                        return null;
+                  };
+                  const findSiblingsInTree = (
+                        id: string, nodes: AnyNode[], parentId?: string,
+                  ): { siblings: AnyNode[]; parentId?: string } | null => {
+                        for (const n of nodes) {
+                              if (n.id === id) return { siblings: nodes, parentId };
+                              const found = findSiblingsInTree(id, n.children, n.id);
+                              if (found) return found;
+                        }
+                        return null;
+                  };
+                  const collectDescendants = (id: string, nodes: AnyNode[]): Set<string> => {
+                        const ids = new Set<string>();
+                        const walk = (list: AnyNode[]) => {
+                              for (const n of list) {
+                                    if (n.id === id) {
+                                          const addAll = (ch: AnyNode[]) => { for (const c of ch) { ids.add(c.id); addAll(c.children); } };
+                                          addAll(n.children);
+                                          return;
+                                    }
+                                    walk(n.children);
+                              }
+                        };
+                        walk(nodes);
+                        return ids;
+                  };
+
+                  const targetNode = findInTree(targetNodeId, effectiveTree);
                   if (!targetNode) { handleDragEnd(); return; }
 
                   // Prevent drop on self or descendants
                   if (draggedNode.id === targetNodeId) { handleDragEnd(); return; }
-                  const descendants = getDescendantIds(draggedNode.id);
+                  const descendants = collectDescendants(draggedNode.id, effectiveTree);
                   if (descendants.has(targetNodeId)) { handleDragEnd(); return; }
 
                   let newParentId: string | undefined;
@@ -453,8 +488,8 @@ export function useMenuCustomizeViewModel() {
                         // Auto-expand
                         setExpandedPreview(prev => new Set([...prev, targetNodeId]));
                   } else {
-                        // Move before/after targetNode — same parent as target
-                        const targetResult = findSiblingsAndParent(targetNodeId);
+                        // Move before/after targetNode — same parent as target (in effective tree)
+                        const targetResult = findSiblingsInTree(targetNodeId, effectiveTree);
                         if (!targetResult) { handleDragEnd(); return; }
 
                         newParentId = targetResult.parentId;
@@ -482,7 +517,9 @@ export function useMenuCustomizeViewModel() {
                         menuItemId: draggedNode.id,
                         scope,
                         orderOverride: newOrder,
-                        parentMenuItemIdOverride: newParentId,
+                        // Use empty string '' to signal 'move to root (no parent)'
+                        // vs undefined which means 'don't override parent'
+                        parentMenuItemIdOverride: newParentId ?? '',
                         isHidden: false,
                   };
 
@@ -496,7 +533,7 @@ export function useMenuCustomizeViewModel() {
 
                   handleDragEnd();
             },
-            [draggedNode, findNode, getDescendantIds, findSiblingsAndParent, scope, saveMutation, handleDragEnd]
+            [draggedNode, effectiveTree, scope, saveMutation, handleDragEnd]
       );
 
       /** Drop at root level — save override with no parent */
@@ -512,8 +549,8 @@ export function useMenuCustomizeViewModel() {
                         menuItemId: draggedNode.id,
                         scope,
                         orderOverride: newOrder,
-                        // Empty string signals "move to root" (no parent)
-                        parentMenuItemIdOverride: undefined,
+                        // Empty string signals 'move to root (no parent)'
+                        parentMenuItemIdOverride: '',
                         isHidden: false,
                   };
 
