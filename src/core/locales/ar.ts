@@ -435,6 +435,9 @@ export const ar = {
 
   // إدارة القوائم (قائمة التنقل)
   menus: {
+    noActiveOverrides: "لا توجد تجاوزات نشطة",
+    noActiveOverridesDesc: "لا توجد تجاوزات نشطة",
+    noActiveOverridesHint: "لا توجد تجاوزات نشطة",
     dragToReorder: "اسحب لإعادة الترتيب",
     customizeMenu: "تخصيص القائمة",
     customizePage: "صفحة التخصيص",
