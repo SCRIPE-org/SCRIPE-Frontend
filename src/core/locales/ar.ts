@@ -436,6 +436,14 @@ export const ar = {
   // إدارة القوائم (قائمة التنقل)
   menus: {
     dragToReorder: "اسحب لإعادة الترتيب",
+    customizeMenu: "تخصيص القائمة",
+    customizePage: "صفحة التخصيص",
+    customizePageDesc: "تخصيص عناصر قائمة التنقل",
+    selectItemToCustomize: "اختر عنصر قائمة للتخصيص",
+    selectItemHint: "اختر عنصر قائمة من القائمة على اليسار لتخصيصه.",
+    visibility: "الرؤية",
+    itemVisible: "مرئي",
+    itemHidden: "مخفي",
     title: "إدارة القوائم",
     description: "إدارة عناصر قائمة التنقل والترتيب والرؤية.",
     items: "عنصر",
@@ -2858,6 +2866,7 @@ export const ar = {
   common: {
     clearSelection: "مسح التحديد",
     page: "صفحة",
+    reset: "إعادة تعيين",
     of: "من",
     stop: "ايقاف",
     exit: "خروج",

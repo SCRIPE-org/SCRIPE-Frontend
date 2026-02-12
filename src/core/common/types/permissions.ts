@@ -224,6 +224,7 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
       "/settings/permissions": [SYSTEM_PERMISSIONS.PERMISSIONS_VIEW],
       "/tenants": [SYSTEM_PERMISSIONS.TENANTS_VIEW],
       "/settings/menus": [SYSTEM_PERMISSIONS.MENUS_VIEW],
+      "/settings/menus/customize": [SYSTEM_PERMISSIONS.MENUS_CUSTOMIZE],
 
       // Monitoring & Analytics pages
       "/dashboard": [SYSTEM_PERMISSIONS.DASHBOARD_VIEW],

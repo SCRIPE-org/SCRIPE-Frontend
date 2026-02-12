@@ -1,9 +1,11 @@
 /**
- * Menu Tree Item Component (Native HTML5 DnD)
+ * Menu Tree Item Component (Native HTML5 DnD) — Admin Only
  *
  * Renders a single menu node inside the tree editor.
  * Supports native drag-and-drop with 3-zone detection
- * (before / inside / after), expand/collapse, and per-item actions.
+ * (before / inside / after), expand/collapse, and admin CRUD actions.
+ *
+ * Override customization is handled on a separate page.
  */
 "use client";
 
@@ -11,7 +13,6 @@ import { useCallback, useRef } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
-import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@core/ui/tooltip";
 import {
       DropdownMenu,
       DropdownMenuContent,
@@ -33,10 +34,8 @@ import {
       EyeOff,
       ArrowUp,
       ArrowDown,
-      Type,
       FolderOpen,
       FileText,
-      Undo2,
 } from "lucide-react";
 import { cn } from "@core/common/utils";
 
@@ -63,24 +62,19 @@ export interface MenuTreeItemProps {
       onDragEnd: () => void;
       onDrop: (targetNodeId: string, position: DropPosition) => void;
 
-      // Actions
+      // Admin CRUD actions
       onEdit: (node: MenuTreeNode) => void;
       onDelete: (node: MenuTreeNode) => void;
       onAddChild: (node: MenuTreeNode) => void;
-      onRename?: (node: MenuTreeNode) => void;
-      onHide?: (node: MenuTreeNode) => void;
-      onRemoveOverride?: (overrideId: string) => void;
-      canRemoveOverride?: (override: { scope: string }) => boolean;
       onMoveUp?: () => void;
       onMoveDown?: () => void;
       onMoveUpChild?: (childId: string) => void;
       onMoveDownChild?: (childId: string) => void;
 
-      // Permission flags (parent controls visibility)
+      // Permission flags
       canCreate?: boolean;
       canEdit?: boolean;
       canDelete?: boolean;
-      canCustomize?: boolean;
       hasAnyAction?: boolean;
 }
 
@@ -125,10 +119,6 @@ export function MenuTreeItem({
       onEdit,
       onDelete,
       onAddChild,
-      onRename,
-      onHide,
-      onRemoveOverride,
-      canRemoveOverride,
       onMoveUp,
       onMoveDown,
       onMoveUpChild,
@@ -136,7 +126,6 @@ export function MenuTreeItem({
       canCreate: canCreateProp = false,
       canEdit: canEditProp = false,
       canDelete: canDeleteProp = false,
-      canCustomize: canCustomizeProp = false,
       hasAnyAction: hasAnyActionProp = false,
 }: MenuTreeItemProps) {
       const { t } = useI18n();
@@ -172,7 +161,6 @@ export function MenuTreeItem({
             (e: React.DragEvent) => {
                   e.dataTransfer.effectAllowed = "move";
                   e.dataTransfer.setData("text/plain", node.id);
-                  // Delay to let browser render the drag ghost
                   setTimeout(() => onDragStart(node), 0);
             },
             [node, onDragStart]
@@ -350,89 +338,7 @@ export function MenuTreeItem({
                               </Badge>
                         )}
 
-                        {/* Override indicators (User + Tenant badges with tooltips) */}
-                        {node.userOverride && (
-                              <TooltipProvider>
-                                    <Tooltip>
-                                          <TooltipTrigger asChild>
-                                                <Badge
-                                                      variant="outline"
-                                                      className={cn(
-                                                            'text-[9px] px-1.5 py-0 font-medium border-0 cursor-help',
-                                                            'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400'
-                                                      )}
-                                                >
-                                                      {node.userOverride.isHidden ? '⊘' : '✎'} {t('menus.scopePersonal')}
-                                                </Badge>
-                                          </TooltipTrigger>
-                                          <TooltipContent side="top" className="text-xs max-w-xs">
-                                                {node.userOverride.isHidden ? (
-                                                      <span>{t('menus.hiddenOverride')}</span>
-                                                ) : (
-                                                      <div className="flex flex-col gap-0.5">
-                                                            {node.userOverride.nameEnOverride && (
-                                                                  <span><strong>{t('menus.badgeRenamed')}:</strong> {node.userOverride.nameEnOverride}</span>
-                                                            )}
-                                                            {node.userOverride.nameArOverride && (
-                                                                  <span><strong>AR:</strong> {node.userOverride.nameArOverride}</span>
-                                                            )}
-                                                            {node.userOverride.orderOverride != null && (
-                                                                  <span><strong>{t('menus.badgeReordered')}:</strong> #{node.userOverride.orderOverride}</span>
-                                                            )}
-                                                            {node.userOverride.parentMenuItemIdOverride && (
-                                                                  <span><strong>{t('menus.badgeMoved')}</strong></span>
-                                                            )}
-                                                            {!node.userOverride.nameEnOverride && !node.userOverride.nameArOverride && node.userOverride.orderOverride == null && !node.userOverride.parentMenuItemIdOverride && (
-                                                                  <span>{t('menus.customizeItem')}</span>
-                                                            )}
-                                                      </div>
-                                                )}
-                                          </TooltipContent>
-                                    </Tooltip>
-                              </TooltipProvider>
-                        )}
-                        {node.tenantOverride && (
-                              <TooltipProvider>
-                                    <Tooltip>
-                                          <TooltipTrigger asChild>
-                                                <Badge
-                                                      variant="outline"
-                                                      className={cn(
-                                                            'text-[9px] px-1.5 py-0 font-medium border-0 cursor-help',
-                                                            'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
-                                                      )}
-                                                >
-                                                      {node.tenantOverride.isHidden ? '⊘' : '✎'} {t('menus.scopeOrganization')}
-                                                </Badge>
-                                          </TooltipTrigger>
-                                          <TooltipContent side="top" className="text-xs max-w-xs">
-                                                {node.tenantOverride.isHidden ? (
-                                                      <span>{t('menus.hiddenOverride')}</span>
-                                                ) : (
-                                                      <div className="flex flex-col gap-0.5">
-                                                            {node.tenantOverride.nameEnOverride && (
-                                                                  <span><strong>{t('menus.badgeRenamed')}:</strong> {node.tenantOverride.nameEnOverride}</span>
-                                                            )}
-                                                            {node.tenantOverride.nameArOverride && (
-                                                                  <span><strong>AR:</strong> {node.tenantOverride.nameArOverride}</span>
-                                                            )}
-                                                            {node.tenantOverride.orderOverride != null && (
-                                                                  <span><strong>{t('menus.badgeReordered')}:</strong> #{node.tenantOverride.orderOverride}</span>
-                                                            )}
-                                                            {node.tenantOverride.parentMenuItemIdOverride && (
-                                                                  <span><strong>{t('menus.badgeMoved')}</strong></span>
-                                                            )}
-                                                            {!node.tenantOverride.nameEnOverride && !node.tenantOverride.nameArOverride && node.tenantOverride.orderOverride == null && !node.tenantOverride.parentMenuItemIdOverride && (
-                                                                  <span>{t('menus.customizeItem')}</span>
-                                                            )}
-                                                      </div>
-                                                )}
-                                          </TooltipContent>
-                                    </Tooltip>
-                              </TooltipProvider>
-                        )}
-
-                        {/* Actions — only show if user has ANY action permission */}
+                        {/* Admin actions — only show if user has ANY action permission */}
                         {hasAnyActionProp && (
                               <div className="ms-auto flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
                                     {canReorder && onMoveUp && (
@@ -463,34 +369,6 @@ export function MenuTreeItem({
                                                             <Pencil className="mr-2 h-4 w-4" />
                                                             {t("common.edit")}
                                                       </DropdownMenuItem>
-                                                )}
-                                                {onRename && canCustomizeProp && (
-                                                      <DropdownMenuItem onClick={() => onRename(node)}>
-                                                            <Type className="mr-2 h-4 w-4" />
-                                                            {t("menus.customizeItem")}
-                                                      </DropdownMenuItem>
-                                                )}
-                                                {onHide && canCustomizeProp && (
-                                                      <DropdownMenuItem onClick={() => onHide(node)}>
-                                                            <EyeOff className="mr-2 h-4 w-4" />
-                                                            {t("menus.hideItem")}
-                                                      </DropdownMenuItem>
-                                                )}
-                                                {onRemoveOverride && node.userOverride && (
-                                                      (!canRemoveOverride || canRemoveOverride({ scope: 'User' })) && (
-                                                            <DropdownMenuItem onClick={() => onRemoveOverride(node.userOverride!.id)}>
-                                                                  <Undo2 className="mr-2 h-4 w-4" />
-                                                                  {t('menus.removeOverride')} ({t('menus.scopePersonal')})
-                                                            </DropdownMenuItem>
-                                                      )
-                                                )}
-                                                {onRemoveOverride && node.tenantOverride && (
-                                                      (!canRemoveOverride || canRemoveOverride({ scope: 'Tenant' })) && (
-                                                            <DropdownMenuItem onClick={() => onRemoveOverride(node.tenantOverride!.id)}>
-                                                                  <Undo2 className="mr-2 h-4 w-4" />
-                                                                  {t('menus.removeOverride')} ({t('menus.scopeOrganization')})
-                                                            </DropdownMenuItem>
-                                                      )
                                                 )}
                                                 {canDeleteProp && (
                                                       <>
@@ -534,10 +412,6 @@ export function MenuTreeItem({
                                                 onEdit={onEdit}
                                                 onDelete={onDelete}
                                                 onAddChild={onAddChild}
-                                                onRename={onRename}
-                                                onHide={onHide}
-                                                onRemoveOverride={onRemoveOverride}
-                                                canRemoveOverride={canRemoveOverride}
                                                 onMoveUp={index > 0 && onMoveUpChild ? () => onMoveUpChild(child.id) : undefined}
                                                 onMoveDown={index < arr.length - 1 && onMoveDownChild ? () => onMoveDownChild(child.id) : undefined}
                                                 onMoveUpChild={onMoveUpChild}
@@ -545,7 +419,6 @@ export function MenuTreeItem({
                                                 canCreate={canCreateProp}
                                                 canEdit={canEditProp}
                                                 canDelete={canDeleteProp}
-                                                canCustomize={canCustomizeProp}
                                                 hasAnyAction={hasAnyActionProp}
                                           />
                                     ))}

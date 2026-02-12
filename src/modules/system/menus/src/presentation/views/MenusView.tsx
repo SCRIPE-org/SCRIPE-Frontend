@@ -1,31 +1,22 @@
 /**
- * Menus View (Pure UI)
+ * Menus View (Pure UI) — Admin Management
  *
  * Composes all menu-tree components with native HTML5 DnD.
- * No @dnd-kit — all drag state comes from useMenusViewModel.
+ * Handles CRUD operations and base reordering only.
+ * Override customization is on a separate page: /settings/menus/customize
  */
 "use client";
 
 import { useRef, useEffect, useCallback } from "react";
 import { useMenusViewModel } from "../viewmodels/useMenusViewModel";
-import { useMenuOverrideViewModel } from "../viewmodels/useMenuOverrideViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
-import {
-      Dialog,
-      DialogContent,
-      DialogHeader,
-      DialogTitle,
-      DialogDescription,
-      DialogFooter,
-} from "@core/ui/dialog";
 
 import { MenuTreeItem } from "../components/MenuTreeItem";
 import { MenuFormDialog } from "../components/MenuFormDialog";
 import { DeleteMenuDialog } from "../components/DeleteMenuDialog";
-import { OverrideCustomizeDialog } from "../components/OverrideCustomizeDialog";
 import {
       Plus,
       Menu,
@@ -35,22 +26,16 @@ import {
       ChevronDown,
       ChevronRight,
       ArrowDownToLine,
+      Palette,
 } from "lucide-react";
 import { cn } from "@core/common/utils";
+import Link from "next/link";
 
 export function MenusView() {
       const { t } = useI18n();
       const vm = useMenusViewModel();
-      const overrideVm = useMenuOverrideViewModel();
       const scrollContainerRef = useRef<HTMLDivElement>(null);
       const scrollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
-      // Push menu tree to override ViewModel for parent picker
-      useEffect(() => {
-            if (vm.menuTree.length > 0) {
-                  overrideVm.setMenuTree(vm.menuTree);
-            }
-      }, [vm.menuTree]);
 
       // ── Auto-scroll when dragging near edges ───────────────────────────
       useEffect(() => {
@@ -114,7 +99,6 @@ export function MenusView() {
             [vm.handleDropAtRoot]
       );
 
-      // Show root drop zone when dragging a non-root item
       const showRootDropZone = vm.draggedNode != null;
 
       return (
@@ -132,6 +116,17 @@ export function MenusView() {
                                           {t("menus.saving") ?? "Saving..."}
                                     </Badge>
                               )}
+
+                              {/* Customize Menu — link to dedicated page */}
+                              {vm.canCustomize && (
+                                    <Button variant="outline" size="sm" asChild>
+                                          <Link href="/settings/menus/customize">
+                                                <Palette className="h-4 w-4 ltr:mr-1.5 rtl:ml-1.5" />
+                                                {t("menus.customizeMenu")}
+                                          </Link>
+                                    </Button>
+                              )}
+
                               <Button variant="outline" size="sm" onClick={vm.expandAll}>
                                     <ChevronDown className="h-4 w-4 ltr:mr-1 rtl:ml-1" />
                                     {t("common.expandAll") ?? "Expand All"}
@@ -227,10 +222,6 @@ export function MenusView() {
                                                             onEdit={vm.openEditDialog}
                                                             onDelete={vm.openDeleteDialog}
                                                             onAddChild={vm.openCreateDialog}
-                                                            onRename={overrideVm.openCustomizeDialog}
-                                                            onHide={overrideVm.toggleHideItem}
-                                                            onRemoveOverride={overrideVm.confirmDeleteOverride}
-                                                            canRemoveOverride={overrideVm.canRemoveOverride}
                                                             onMoveUp={index > 0 ? () => vm.handleMoveUp(node.id) : undefined}
                                                             onMoveDown={index < arr.length - 1 ? () => vm.handleMoveDown(node.id) : undefined}
                                                             onMoveUpChild={vm.handleMoveUp}
@@ -238,8 +229,7 @@ export function MenusView() {
                                                             canCreate={vm.canCreate}
                                                             canEdit={vm.canEdit}
                                                             canDelete={vm.canDelete}
-                                                            canCustomize={vm.canCustomize}
-                                                            hasAnyAction={vm.hasAnyAction}
+                                                            hasAnyAction={vm.canCreate || vm.canEdit || vm.canDelete}
                                                       />
                                                 ))}
                                     </div>
@@ -264,7 +254,7 @@ export function MenusView() {
                         </Card>
                   )}
 
-                  {/* Dialogs */}
+                  {/* Dialogs — Admin CRUD only */}
                   <MenuFormDialog
                         open={vm.createDialogOpen}
                         onOpenChange={vm.setCreateDialogOpen}
@@ -288,40 +278,6 @@ export function MenusView() {
                         onConfirm={vm.onDeleteConfirm}
                         isPending={vm.isDeleting}
                   />
-                  <OverrideCustomizeDialog
-                        dialog={overrideVm.overrideDialog}
-                        scope={overrideVm.scope}
-                        onScopeChange={overrideVm.setScope}
-                        availableScopes={overrideVm.availableScopes}
-                        onSave={overrideVm.saveOverride}
-                        onClose={overrideVm.closeOverrideDialog}
-                        isSaving={overrideVm.isSaving}
-                        flatMenuItems={overrideVm.flatMenuItems}
-                  />
-
-                  {/* Override removal confirmation */}
-                  <Dialog open={overrideVm.deleteConfirmOpen} onOpenChange={(open: boolean) => !open && overrideVm.closeDeleteOverrideDialog()}>
-                        <DialogContent className="max-w-sm">
-                              <DialogHeader>
-                                    <DialogTitle>{t('menus.removeOverrideTitle')}</DialogTitle>
-                                    <DialogDescription>
-                                          {t('menus.removeOverrideDesc')}
-                                    </DialogDescription>
-                              </DialogHeader>
-                              <DialogFooter className="gap-2">
-                                    <Button variant="outline" onClick={overrideVm.closeDeleteOverrideDialog}>
-                                          {t('common.cancel')}
-                                    </Button>
-                                    <Button
-                                          variant="destructive"
-                                          onClick={overrideVm.onDeleteOverrideConfirm}
-                                          disabled={overrideVm.isDeleting}
-                                    >
-                                          {overrideVm.isDeleting ? t('common.deleting') : t('menus.removeOverride')}
-                                    </Button>
-                              </DialogFooter>
-                        </DialogContent>
-                  </Dialog>
             </div>
       );
 }

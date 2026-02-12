@@ -500,6 +500,27 @@ export const en = {
     badgeReordered: "Reordered",
     badgeMoved: "Moved to different parent",
     badgeHidden: "Hidden",
+
+    // Customization Page
+    customizeMenu: "Customize Menu",
+    customizePage: "Customize Menu",
+    customizePageDesc: "Personalize your menu layout, names, visibility, and ordering.",
+    customized: "Customized",
+    selectItemToCustomize: "Select an Item",
+    selectItemHint: "Click on a menu item in the tree to customize it.",
+    noItemsToCustomize: "No menu items available to customize yet.",
+    backToManagement: "Back to Menu Management",
+    activeOverridesTitle: "Active Customizations",
+    activeOverridesCount: "customizations",
+    noActiveOverrides: "No Active Customizations",
+    noActiveOverridesHint: "Select a menu item and make changes to see your customizations here.",
+    resetAll: "Reset All",
+    allOverridesReset: "All customizations have been removed.",
+    overrideRemoved: "Customization removed.",
+    visibility: "Visibility",
+    itemHidden: "Hidden from menu",
+    itemVisible: "Visible in menu",
+    orderHint: "Lower numbers appear first. Leave blank for default order.",
   },
 
   // Role - For table columns (singular context)
