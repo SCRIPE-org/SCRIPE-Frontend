@@ -3294,7 +3294,8 @@ export const ar = {
   common: {
     navigate: "انتقال",
     enabled: "مفعل",
-    next:"التالي", 
+    next:"التالي",
+    previous:"السابق", 
     disabled: "غير مفعل",
     open: "فتح",
     recent: "مستخدم مؤخرا",

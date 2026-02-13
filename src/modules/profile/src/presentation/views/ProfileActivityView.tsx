@@ -10,7 +10,7 @@ import { Button } from "@core/ui/button";
 import { Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 
 export function ProfileActivityView() {
-      const { t } = useI18n();
+      const { t, direction } = useI18n();
       const vm = useActivityLogViewModel();
 
       if (vm.isLoading) {
@@ -46,7 +46,7 @@ export function ProfileActivityView() {
                               onClick={() => vm.setPage(Math.max(1, vm.page - 1))}
                               disabled={vm.page <= 1}
                         >
-                              <ChevronLeft className="h-4 w-4 me-1" />
+                              {direction === "rtl" ? <ChevronRight className="h-4 w-4 me-1" /> : <ChevronLeft className="h-4 w-4 me-1" />}
                               {t("common.previous")}
                         </Button>
                         <span className="text-sm text-muted-foreground">
@@ -59,7 +59,8 @@ export function ProfileActivityView() {
                               disabled={!vm.hasMore}
                         >
                               {t("common.next")}
-                              <ChevronRight className="h-4 w-4 ms-1" />
+                              {direction === "rtl" ? <ChevronLeft className="h-4 w-4 me-1" /> : <ChevronRight className="h-4 w-4 ms-1" />}
+
                         </Button>
                   </div>
             </div>
