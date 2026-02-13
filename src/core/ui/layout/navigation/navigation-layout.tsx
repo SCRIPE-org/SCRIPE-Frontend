@@ -37,13 +37,19 @@ export function NavigationLayout({
     const handleClickOutside = (event: MouseEvent) => {
       if (!nav.isMobile || !event.target) return;
 
-      const sidebar = document.querySelector(".navigation-main-sidebar");
+      const sidebars = document.querySelectorAll(".navigation-main-sidebar");
       const panelSidebar = document.querySelector(".navigation-panel-sidebar");
       const sidebarTrigger = document.querySelector(".sidebar-trigger");
       const target = event.target as Node;
 
+      // Check if click is inside ANY sidebar element (desktop or mobile)
+      let insideSidebar = false;
+      sidebars.forEach((sidebar) => {
+        if (sidebar.contains(target)) insideSidebar = true;
+      });
+
       const clickedOutside =
-        (!sidebar || !sidebar.contains(target)) &&
+        !insideSidebar &&
         (!panelSidebar || !panelSidebar.contains(target)) &&
         (!sidebarTrigger || !sidebarTrigger.contains(target));
 

@@ -1,6 +1,10 @@
 "use client";
 
 import type React from "react";
+import { useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { ChevronRight, ChevronDown, ChevronLeft } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useDynamicNavigation } from "@core/ui/navigation/dynamic-navigation";
 import { cn } from "@core/common/utils";
@@ -12,6 +16,11 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@core/ui/tooltip";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@core/ui/collapsible";
 import { Logo } from "@core/ui/logo";
 import { useSettings } from "@core/providers/settings-provider";
 import type { NavigationItem } from "@core/config/navigation";
@@ -43,6 +52,7 @@ export function NavigationMainSidebar({
   isMobile,
 }: NavigationMainSidebarProps) {
   const { direction, t } = useI18n();
+  const pathname = usePathname();
   const navigation = useDynamicNavigation();
   const {
     colorTheme,
@@ -52,6 +62,17 @@ export function NavigationMainSidebar({
     navigationStyle,
     iconStyle,
   } = useSettings();
+
+  // ── Mobile collapsible tree state ──
+  const [mobileExpandedItems, setMobileExpandedItems] = useState<string[]>([]);
+
+  const toggleMobileExpanded = (name: string) => {
+    setMobileExpandedItems((prev) =>
+      prev.includes(name)
+        ? prev.filter((n) => n !== name)
+        : [...prev, name]
+    );
+  };
 
   const styleConfig: NavigationStyleConfig = {
     colorTheme,
@@ -63,6 +84,9 @@ export function NavigationMainSidebar({
     direction,
   };
 
+  const isRTL = direction === "rtl";
+  const CollapsedChevron = isRTL ? ChevronLeft : ChevronRight;
+
   // ── Click handler ──
   const handleItemClick = (item: NavigationItem) => {
     onItemClick(item);
@@ -71,6 +95,25 @@ export function NavigationMainSidebar({
     if (!hasChildren && item.href && isMobile) {
       onOpenChange(false);
     }
+  };
+
+  // ── Helper: check if item or descendant is active ──
+  const isItemActive = (item: NavigationItem): boolean => {
+    if (!item.href) return false;
+    if (pathname === item.href) return true;
+    if (item.href !== "/" && pathname.startsWith(item.href)) {
+      const nextChar = pathname[item.href.length];
+      return nextChar === undefined || nextChar === "/";
+    }
+    return false;
+  };
+
+  const hasActiveDescendant = (item: NavigationItem): boolean => {
+    if (isItemActive(item)) return true;
+    if (item.children) {
+      return item.children.some((child) => hasActiveDescendant(child));
+    }
+    return false;
   };
 
   // ── Render a single navigation item (desktop icon button) ──
@@ -153,6 +196,122 @@ export function NavigationMainSidebar({
     );
   };
 
+  // ── Mobile: recursive nav item renderer ──
+  const renderMobileNavItem = (item: NavigationItem, level: number = 0) => {
+    const hasChildren = !!(item.children && item.children.length > 0);
+    const displayName = t(item.name) || item.name;
+    const isExpanded = mobileExpandedItems.includes(item.name);
+    const active = isItemActive(item);
+    const hasActivChild = hasActiveDescendant(item);
+    const indent = level * 12;
+
+    const indentStyle = isRTL
+      ? { paddingRight: `${12 + indent}px` }
+      : { paddingLeft: `${12 + indent}px` };
+
+    // ── Parent item with children: collapsible ──
+    if (hasChildren) {
+      return (
+        <Collapsible
+          key={item.name}
+          open={isExpanded}
+          onOpenChange={() => toggleMobileExpanded(item.name)}
+        >
+          <CollapsibleTrigger asChild>
+            <Button
+              variant="ghost"
+              className={cn(
+                "w-full justify-start gap-3 h-10",
+                isRTL && "flex-row-reverse",
+                hasActivChild
+                  ? "bg-primary/10 text-primary font-medium"
+                  : "text-sidebar-foreground/80 hover:bg-accent hover:text-accent-foreground",
+                getBorderRadiusClass(borderRadius),
+              )}
+              style={indentStyle}
+            >
+              {item.icon ? (
+                <item.icon className="w-4 h-4 flex-shrink-0" />
+              ) : (
+                <div className="w-2 h-2 rounded-full bg-primary flex-shrink-0" />
+              )}
+              <span className="flex-1 text-sm truncate text-start">{displayName}</span>
+              {isExpanded ? (
+                <ChevronDown className="w-3.5 h-3.5 opacity-60 flex-shrink-0" />
+              ) : (
+                <CollapsedChevron className="w-3.5 h-3.5 opacity-60 flex-shrink-0" />
+              )}
+            </Button>
+          </CollapsibleTrigger>
+
+          <CollapsibleContent>
+            <div
+              className="relative"
+              style={
+                isRTL
+                  ? { marginRight: `${20 + indent}px` }
+                  : { marginLeft: `${20 + indent}px` }
+              }
+            >
+              <div
+                className={cn(
+                  "absolute top-0 bottom-0 w-px bg-border/60",
+                  isRTL ? "right-0" : "left-0",
+                )}
+              />
+              <div className="space-y-0.5 py-1">
+                {item.children!.map((child) =>
+                  renderMobileNavItem(child, level + 1)
+                )}
+              </div>
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
+      );
+    }
+
+    // ── Leaf item: link ──
+    return (
+      <Button
+        key={item.name}
+        variant="ghost"
+        asChild
+        className={cn(
+          "w-full justify-start gap-3 h-9",
+          isRTL && "flex-row-reverse",
+          active
+            ? "bg-primary text-primary-foreground font-medium shadow-sm"
+            : "text-sidebar-foreground/70 hover:bg-accent hover:text-accent-foreground",
+          getBorderRadiusClass(borderRadius),
+          item.disabled && "opacity-50 cursor-not-allowed",
+        )}
+        style={indentStyle}
+        disabled={item.disabled}
+      >
+        <Link
+          href={item.href || "#"}
+          onClick={() => onOpenChange(false)}
+          className={cn(
+            "flex items-center w-full gap-3",
+            isRTL && "flex-row-reverse",
+          )}
+        >
+          {item.icon ? (
+            <item.icon className="w-4 h-4 flex-shrink-0" />
+          ) : (
+            <div
+              className={cn(
+                "rounded-full flex-shrink-0",
+                active ? "w-2 h-2 bg-current" : "w-1.5 h-1.5 bg-muted-foreground/50",
+              )}
+            />
+          )}
+          <span className="text-sm truncate">{displayName}</span>
+        </Link>
+      </Button>
+    );
+  };
+
   return (
     <>
       {/* Desktop Sidebar */}
@@ -175,10 +334,10 @@ export function NavigationMainSidebar({
         </ScrollArea>
       </aside>
 
-      {/* Mobile Sidebar */}
+      {/* Mobile Sidebar — Full tree with collapsible children */}
       <aside
         className={cn(
-          "navigation-main-sidebar fixed inset-y-0 z-50 w-64 transform transition-all duration-300 ease-in-out lg:hidden",
+          "navigation-main-sidebar fixed inset-y-0 z-50 w-72 transform transition-all duration-300 ease-in-out lg:hidden",
           getSidebarBgClass(cardStyle, direction),
           open
             ? "translate-x-0"
@@ -200,45 +359,10 @@ export function NavigationMainSidebar({
           </Button>
         </div>
 
-        {/* Mobile Navigation Items */}
-        <ScrollArea className="flex-1 py-4">
-          <div className="space-y-1 px-3">
-            {navigation.map((item) => {
-              const hasChildren = !!(item.children && item.children.length > 0);
-              const displayName = t(item.name) || item.name;
-
-              const isSelected = item.name === selectedMainItem;
-              const isActive = item.name === activeMainItem;
-              const isCurrentlyFocused = isSelected || (isActive && selectedMainItem === null);
-
-              let itemOpacity = "opacity-100";
-              if (isActive && selectedMainItem !== null && !isSelected) {
-                itemOpacity = "opacity-60";
-              }
-
-              return (
-                <Button
-                  key={item.name}
-                  variant="ghost"
-                  className={cn(
-                    getMainItemClasses(isCurrentlyFocused, styleConfig, true),
-                    getBorderRadiusClass(borderRadius),
-                    getAnimationClass(animationLevel, "main"),
-                    item.disabled && "opacity-50 cursor-not-allowed",
-                    itemOpacity,
-                  )}
-                  onClick={() => handleItemClick(item)}
-                  disabled={item.disabled}
-                >
-                  {item.icon ? (
-                    <item.icon className={getIconClasses(iconStyle)} />
-                  ) : (
-                    <div className="w-3 h-3 rounded-full bg-white" />
-                  )}
-                  <span className="flex-1">{displayName}</span>
-                </Button>
-              );
-            })}
+        {/* Mobile Navigation — Recursive collapsible tree */}
+        <ScrollArea className="flex-1 py-3">
+          <div className="space-y-0.5 px-2">
+            {navigation.map((item) => renderMobileNavItem(item))}
           </div>
         </ScrollArea>
       </aside>
