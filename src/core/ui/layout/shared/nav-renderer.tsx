@@ -70,7 +70,7 @@ const variantStyles: Record<NavVariant, {
             hoverClass: "text-sidebar-foreground/70 hover:bg-gradient-to-r hover:from-primary/10 hover:to-primary/5 hover:text-primary hover:shadow-sm",
             chevronSize: "w-4 h-4",
             indentPx: 16,
-            gap: "space-x-3 rtl:space-x-reverse",
+            gap: "gap-3",
       },
       compact: {
             itemPadding: "px-3 py-1.5",
@@ -81,7 +81,7 @@ const variantStyles: Record<NavVariant, {
             hoverClass: "text-sidebar-foreground/70 hover:bg-muted/60 hover:text-foreground",
             chevronSize: "w-3.5 h-3.5",
             indentPx: 12,
-            gap: "space-x-2 rtl:space-x-reverse",
+            gap: "gap-2",
       },
       elegant: {
             itemPadding: "px-4 py-3",
@@ -92,7 +92,7 @@ const variantStyles: Record<NavVariant, {
             hoverClass: "text-sidebar-foreground/70 hover:bg-white/5 hover:text-primary",
             chevronSize: "w-4 h-4",
             indentPx: 16,
-            gap: "space-x-3 rtl:space-x-reverse",
+            gap: "gap-3",
       },
       modern: {
             itemPadding: "px-3 py-2.5",
@@ -103,7 +103,7 @@ const variantStyles: Record<NavVariant, {
             hoverClass: "text-sidebar-foreground/70 hover:bg-muted/50 hover:text-foreground",
             chevronSize: "w-4 h-4",
             indentPx: 14,
-            gap: "space-x-3 rtl:space-x-reverse",
+            gap: "gap-3",
       },
       floating: {
             itemPadding: "px-3 py-2",
@@ -114,7 +114,7 @@ const variantStyles: Record<NavVariant, {
             hoverClass: "text-foreground/70 hover:bg-muted/50 hover:text-foreground",
             chevronSize: "w-3.5 h-3.5",
             indentPx: 14,
-            gap: "space-x-2.5 rtl:space-x-reverse",
+            gap: "gap-2.5",
       },
       navigation: {
             itemPadding: "px-3 py-2",
@@ -125,7 +125,7 @@ const variantStyles: Record<NavVariant, {
             hoverClass: "text-sidebar-foreground/70 hover:bg-muted/40 hover:text-foreground",
             chevronSize: "w-3.5 h-3.5",
             indentPx: 14,
-            gap: "space-x-2.5 rtl:space-x-reverse",
+            gap: "gap-2.5",
       },
       hud: {
             itemPadding: "px-3 py-2",
@@ -136,7 +136,7 @@ const variantStyles: Record<NavVariant, {
             hoverClass: "text-foreground/70 hover:bg-muted/50 hover:text-foreground",
             chevronSize: "w-3.5 h-3.5",
             indentPx: 14,
-            gap: "space-x-2.5 rtl:space-x-reverse",
+            gap: "gap-2.5",
       },
 };
 
@@ -198,7 +198,7 @@ export function NavRenderer({
       maxIndentLevel = 5,
 }: NavRendererProps) {
       const pathname = usePathname();
-      const { direction } = useI18n();
+      const { direction, t } = useI18n();
       const dynamicItems = useDynamicNavigation();
       const items = externalItems ?? dynamicItems;
 
@@ -306,7 +306,7 @@ export function NavRenderer({
                                     >
                                           <div className={cn("flex items-center min-w-0", style.gap)}>
                                                 {iconElement}
-                                                <span className="break-words leading-snug">{item.name}</span>
+                                                <span className="break-words leading-snug">{t(item.name) || item.name}</span>
                                                 {badgeElement}
                                           </div>
                                           <ChevronDown
@@ -346,7 +346,7 @@ export function NavRenderer({
                   >
                         <div className={cn("flex items-center min-w-0", style.gap)}>
                               {iconElement}
-                              <span className="break-words leading-snug">{item.name}</span>
+                              <span className="break-words leading-snug">{t(item.name) || item.name}</span>
                         </div>
                         {badgeElement}
                   </Link>
@@ -357,6 +357,7 @@ export function NavRenderer({
             <nav
                   role="tree"
                   aria-label="Navigation"
+                  dir={direction}
                   className={cn("space-y-0.5", className)}
             >
                   {items.map((item) => renderItem(item, 0))}

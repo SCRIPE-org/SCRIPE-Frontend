@@ -17,13 +17,17 @@ interface FloatingLayoutProps {
 }
 
 /**
- * Floating Layout — Content-first, sidebar hidden by default.
+ * Floating Layout — Everything floats as detached panels over a background.
  *
- * Sidebar is an overlay panel triggered from the header's menu button.
- * Content stays full-width at all times — no margin shifts.
- * Close sidebar on Escape key press.
+ * Design philosophy:
+ * - A subtle background pattern/gradient is always visible behind all panels
+ * - Header floats with margins, rounded corners, shadow
+ * - Sidebar floats as an overlay card (not edge-attached)
+ * - Content area itself is wrapped in a floating card
+ * - Gaps between all elements create a sense of depth and space
+ * - Close sidebar on Escape key press
  *
- * Inspired by Figma/Framer overlay panels.
+ * Inspired by Figma/Framer floating panel aesthetic.
  */
 export function FloatingLayout({
       children,
@@ -49,7 +53,9 @@ export function FloatingLayout({
       return (
             <div
                   className={cn(
-                        "min-h-screen bg-background",
+                        "min-h-screen",
+                        // Subtle background — visible behind floating panels
+                        "bg-gradient-to-br from-muted/30 via-background to-muted/20",
                         styles.getAnimationClass(),
                         direction === "rtl" ? "rtl" : "ltr",
                         settings.compactMode === true && "compact-mode",
@@ -57,42 +63,60 @@ export function FloatingLayout({
                         settings.reducedMotion === true && "reduce-motion"
                   )}
             >
-                  {/* Overlay Sidebar */}
+                  {/* Subtle dot pattern overlay for texture */}
+                  <div
+                        className="fixed inset-0 pointer-events-none opacity-[0.015] dark:opacity-[0.03]"
+                        style={{
+                              backgroundImage: "radial-gradient(circle, currentColor 1px, transparent 1px)",
+                              backgroundSize: "24px 24px",
+                        }}
+                  />
+
+                  {/* Floating Sidebar — an overlay card */}
                   <FloatingSidebar
                         open={sidebarOpen}
                         onOpenChange={onSidebarOpenChange}
                   />
 
-                  {/* Header — always full width */}
+                  {/* Floating Header — detached from edges */}
                   <FloatingHeader
                         onMenuClick={() => onSidebarOpenChange(!sidebarOpen)}
                         sidebarOpen={sidebarOpen}
                   />
 
-                  {/* Content — always full width, no margin, centered */}
-                  <main className="min-h-[calc(100vh-3.5rem)]">
-                        <div className={cn(styles.getSpacingClass())}>
-                              <div
-                                    className={cn(
-                                          "max-w-6xl mx-auto",
-                                          styles.getBorderRadiusClass(),
-                                          styles.getShadowClass(),
-                                          settings.cardStyle === "bordered" && "border border-border",
-                                          settings.cardStyle === "elevated" && "bg-card shadow-lg",
-                                          settings.animationLevel === "high" && "animate-fade-in"
-                                    )}
-                                    style={{
-                                          borderRadius: "var(--border-radius)",
-                                          boxShadow: "var(--shadow-intensity)",
-                                          padding: "var(--spacing-unit)",
-                                    }}
-                              >
-                                    {children}
+                  {/* Floating Content — wrapped in a card with margins */}
+                  <main className="px-3 py-3">
+                        <div
+                              className={cn(
+                                    "max-w-7xl mx-auto",
+                                    "rounded-2xl",
+                                    "bg-card/80 backdrop-blur-sm",
+                                    "border border-border/40",
+                                    "shadow-sm",
+                                    "min-h-[calc(100vh-8rem)]",
+                                    settings.animationLevel === "high" && "animate-fade-in",
+                              )}
+                        >
+                              <div className={cn(styles.getSpacingClass())}>
+                                    <div
+                                          style={{
+                                                borderRadius: "var(--border-radius)",
+                                                padding: "var(--spacing-unit)",
+                                          }}
+                                    >
+                                          {children}
+                                    </div>
                               </div>
                         </div>
                   </main>
 
-                  {settings.showFooter === true && <Footer />}
+                  {settings.showFooter === true && (
+                        <div className="px-3 pb-3">
+                              <div className="rounded-2xl bg-card/60 border border-border/30 overflow-hidden">
+                                    <Footer />
+                              </div>
+                        </div>
+                  )}
             </div>
       );
 }

@@ -382,7 +382,7 @@ const defaultSettings: Settings = {
   logoText: "SA",
   showBreadcrumbs: true,
   showUserAvatar: true,
-  showNotifications: true,
+  showNotifications: false,
   compactMode: false,
   highContrast: false,
   reducedMotion: false,
