@@ -197,30 +197,36 @@ export function TwoFactorSetupDialog({
 
                                     <div className="flex flex-col items-center gap-4 py-6">
                                           {(error || confirmError) && (
-                                                <div className="w-full p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-sm">
-                                                      {error || confirmError}
+                                                <div className="w-full p-3.5 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-sm flex items-center gap-2.5">
+                                                      <div className="h-5 w-5 rounded-full bg-destructive/20 flex items-center justify-center flex-shrink-0">
+                                                            <span className="text-xs font-bold">!</span>
+                                                      </div>
+                                                      <span>{error || confirmError}</span>
                                                 </div>
                                           )}
 
-                                          <InputOTP
-                                                maxLength={6}
-                                                value={code}
-                                                onChange={setCode}
-                                                disabled={isConfirming}
-                                                onComplete={handleVerify}
-                                          >
-                                                <InputOTPGroup>
-                                                      <InputOTPSlot index={0} />
-                                                      <InputOTPSlot index={1} />
-                                                      <InputOTPSlot index={2} />
-                                                </InputOTPGroup>
-                                                <span className="text-muted-foreground">-</span>
-                                                <InputOTPGroup>
-                                                      <InputOTPSlot index={3} />
-                                                      <InputOTPSlot index={4} />
-                                                      <InputOTPSlot index={5} />
-                                                </InputOTPGroup>
-                                          </InputOTP>
+                                          <div dir="ltr">
+                                                <InputOTP
+                                                      maxLength={6}
+                                                      value={code}
+                                                      onChange={setCode}
+                                                      disabled={isConfirming}
+                                                      onComplete={handleVerify}
+                                                      className="gap-2"
+                                                >
+                                                      <InputOTPGroup className="gap-1.5">
+                                                            <InputOTPSlot index={0} className="h-14 w-12 text-xl font-semibold border-2 rounded-xl transition-all focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20" />
+                                                            <InputOTPSlot index={1} className="h-14 w-12 text-xl font-semibold border-2 rounded-xl transition-all focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20" />
+                                                            <InputOTPSlot index={2} className="h-14 w-12 text-xl font-semibold border-2 rounded-xl transition-all focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20" />
+                                                      </InputOTPGroup>
+                                                      <span className="text-xl font-light text-muted-foreground/50 mx-1">–</span>
+                                                      <InputOTPGroup className="gap-1.5">
+                                                            <InputOTPSlot index={3} className="h-14 w-12 text-xl font-semibold border-2 rounded-xl transition-all focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20" />
+                                                            <InputOTPSlot index={4} className="h-14 w-12 text-xl font-semibold border-2 rounded-xl transition-all focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20" />
+                                                            <InputOTPSlot index={5} className="h-14 w-12 text-xl font-semibold border-2 rounded-xl transition-all focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20" />
+                                                      </InputOTPGroup>
+                                                </InputOTP>
+                                          </div>
                                     </div>
 
                                     <DialogFooter>

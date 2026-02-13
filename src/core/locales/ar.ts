@@ -3290,6 +3290,8 @@ export const ar = {
   // Common
   common: {
     navigate: "انتقال",
+    enabled: "مفعل",
+    disabled: "غير مفعل",
     open: "فتح",
     recent: "مستخدم مؤخرا",
     quickActions: "إجراءات سريعة",
