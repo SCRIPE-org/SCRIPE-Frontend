@@ -14,7 +14,7 @@
   --font-cairo: "Cairo", sans-serif;
   --font-size-base: 16px;
   --spacing-unit: 1rem;
-  
+
   /* Light theme colors - Default Purple */
   --background: 0 0% 100%;
   --foreground: 240 10% 3.9%;
@@ -128,6 +128,112 @@ html {
   --sidebar-primary: 188 94% 43%;
   --sidebar-ring: 188 94% 43%;
   --shadow-primary: 188 94% 43%;
+}
+
+:root[data-theme="amber"] {
+  --primary: 38 92% 50%;
+  --ring: 38 92% 50%;
+  --sidebar-primary: 38 92% 50%;
+  --sidebar-ring: 38 92% 50%;
+  --shadow-primary: 38 92% 50%;
+}
+
+:root[data-theme="yellow"] {
+  --primary: 48 96% 53%;
+  --ring: 48 96% 53%;
+  --sidebar-primary: 48 96% 53%;
+  --sidebar-ring: 48 96% 53%;
+  --shadow-primary: 48 96% 53%;
+  --primary-foreground: 240 10% 3.9%;
+}
+
+:root[data-theme="lime"] {
+  --primary: 84 81% 44%;
+  --ring: 84 81% 44%;
+  --sidebar-primary: 84 81% 44%;
+  --sidebar-ring: 84 81% 44%;
+  --shadow-primary: 84 81% 44%;
+}
+
+:root[data-theme="emerald"] {
+  --primary: 160 84% 39%;
+  --ring: 160 84% 39%;
+  --sidebar-primary: 160 84% 39%;
+  --sidebar-ring: 160 84% 39%;
+  --shadow-primary: 160 84% 39%;
+}
+
+:root[data-theme="sky"] {
+  --primary: 199 89% 48%;
+  --ring: 199 89% 48%;
+  --sidebar-primary: 199 89% 48%;
+  --sidebar-ring: 199 89% 48%;
+  --shadow-primary: 199 89% 48%;
+}
+
+:root[data-theme="violet"] {
+  --primary: 258 90% 66%;
+  --ring: 258 90% 66%;
+  --sidebar-primary: 258 90% 66%;
+  --sidebar-ring: 258 90% 66%;
+  --shadow-primary: 258 90% 66%;
+}
+
+:root[data-theme="fuchsia"] {
+  --primary: 292 84% 61%;
+  --ring: 292 84% 61%;
+  --sidebar-primary: 292 84% 61%;
+  --sidebar-ring: 292 84% 61%;
+  --shadow-primary: 292 84% 61%;
+}
+
+:root[data-theme="rose"] {
+  --primary: 350 89% 60%;
+  --ring: 350 89% 60%;
+  --sidebar-primary: 350 89% 60%;
+  --sidebar-ring: 350 89% 60%;
+  --shadow-primary: 350 89% 60%;
+}
+
+:root[data-theme="slate"] {
+  --primary: 215 20% 50%;
+  --ring: 215 20% 50%;
+  --sidebar-primary: 215 20% 50%;
+  --sidebar-ring: 215 20% 50%;
+  --shadow-primary: 215 20% 50%;
+}
+
+:root[data-theme="zinc"] {
+  --primary: 240 4% 46%;
+  --ring: 240 4% 46%;
+  --sidebar-primary: 240 4% 46%;
+  --sidebar-ring: 240 4% 46%;
+  --shadow-primary: 240 4% 46%;
+}
+
+:root[data-theme="stone"] {
+  --primary: 25 5% 45%;
+  --ring: 25 5% 45%;
+  --sidebar-primary: 25 5% 45%;
+  --sidebar-ring: 25 5% 45%;
+  --shadow-primary: 25 5% 45%;
+}
+
+:root[data-theme="gold"] {
+  --primary: 43 96% 46%;
+  --ring: 43 96% 46%;
+  --sidebar-primary: 43 96% 46%;
+  --sidebar-ring: 43 96% 46%;
+  --shadow-primary: 43 96% 46%;
+  --primary-foreground: 240 10% 3.9%;
+}
+
+:root[data-theme="coral"] {
+  --primary: 16 85% 61%;
+  --ring: 16 85% 61%;
+  --sidebar-primary: 16 85% 61%;
+  --sidebar-ring: 16 85% 61%;
+  --shadow-primary: 16 85% 61%;
 }
 
 /* ========================================
@@ -250,6 +356,97 @@ html {
   --sidebar-border: 350 10% 85%;
 }
 
+:root:not(.dark)[data-light-bg-theme="sky"] {
+  --background: 200 100% 97%;
+  --card: 200 80% 98%;
+  --popover: 200 80% 99%;
+  --sidebar: 200 60% 95%;
+  --secondary: 200 40% 92%;
+  --muted: 200 40% 92%;
+  --accent: 200 40% 92%;
+  --border: 200 30% 86%;
+  --input: 200 30% 86%;
+  --sidebar-border: 200 30% 86%;
+}
+
+:root:not(.dark)[data-light-bg-theme="sand"] {
+  --background: 35 55% 96%;
+  --card: 35 45% 97%;
+  --popover: 35 45% 98%;
+  --sidebar: 35 35% 93%;
+  --secondary: 35 25% 89%;
+  --muted: 35 25% 89%;
+  --accent: 35 25% 89%;
+  --border: 35 18% 83%;
+  --input: 35 18% 83%;
+  --sidebar-border: 35 18% 83%;
+}
+
+:root:not(.dark)[data-light-bg-theme="pearl"] {
+  --background: 220 20% 97%;
+  --card: 220 15% 98%;
+  --popover: 220 15% 99%;
+  --sidebar: 220 12% 95%;
+  --secondary: 220 8% 91%;
+  --muted: 220 8% 91%;
+  --accent: 220 8% 91%;
+  --border: 220 6% 86%;
+  --input: 220 6% 86%;
+  --sidebar-border: 220 6% 86%;
+}
+
+:root:not(.dark)[data-light-bg-theme="ice"] {
+  --background: 195 60% 97%;
+  --card: 195 50% 98%;
+  --popover: 195 50% 99%;
+  --sidebar: 195 40% 95%;
+  --secondary: 195 30% 91%;
+  --muted: 195 30% 91%;
+  --accent: 195 30% 91%;
+  --border: 195 20% 86%;
+  --input: 195 20% 86%;
+  --sidebar-border: 195 20% 86%;
+}
+
+:root:not(.dark)[data-light-bg-theme="linen"] {
+  --background: 30 40% 96%;
+  --card: 30 30% 97%;
+  --popover: 30 30% 98%;
+  --sidebar: 30 22% 93%;
+  --secondary: 30 16% 89%;
+  --muted: 30 16% 89%;
+  --accent: 30 16% 89%;
+  --border: 30 12% 83%;
+  --input: 30 12% 83%;
+  --sidebar-border: 30 12% 83%;
+}
+
+:root:not(.dark)[data-light-bg-theme="cloud"] {
+  --background: 230 25% 97%;
+  --card: 230 20% 98%;
+  --popover: 230 20% 99%;
+  --sidebar: 230 15% 95%;
+  --secondary: 230 10% 91%;
+  --muted: 230 10% 91%;
+  --accent: 230 10% 91%;
+  --border: 230 8% 86%;
+  --input: 230 8% 86%;
+  --sidebar-border: 230 8% 86%;
+}
+
+:root:not(.dark)[data-light-bg-theme="snow"] {
+  --background: 0 0% 99%;
+  --card: 0 0% 100%;
+  --popover: 0 0% 100%;
+  --sidebar: 210 10% 97%;
+  --secondary: 210 5% 94%;
+  --muted: 210 5% 94%;
+  --accent: 210 5% 94%;
+  --border: 210 4% 89%;
+  --input: 210 4% 89%;
+  --sidebar-border: 210 4% 89%;
+}
+
 /* ========================================
    DARK THEME BASE COLORS
    ======================================== */
@@ -356,6 +553,112 @@ html {
   --sidebar-primary: 188 94% 43%;
   --sidebar-ring: 188 94% 43%;
   --shadow-primary: 188 94% 43%;
+}
+
+.dark[data-theme="amber"] {
+  --primary: 38 92% 50%;
+  --ring: 38 92% 50%;
+  --sidebar-primary: 38 92% 50%;
+  --sidebar-ring: 38 92% 50%;
+  --shadow-primary: 38 92% 50%;
+}
+
+.dark[data-theme="yellow"] {
+  --primary: 48 96% 53%;
+  --ring: 48 96% 53%;
+  --sidebar-primary: 48 96% 53%;
+  --sidebar-ring: 48 96% 53%;
+  --shadow-primary: 48 96% 53%;
+  --primary-foreground: 240 10% 3.9%;
+}
+
+.dark[data-theme="lime"] {
+  --primary: 84 81% 44%;
+  --ring: 84 81% 44%;
+  --sidebar-primary: 84 81% 44%;
+  --sidebar-ring: 84 81% 44%;
+  --shadow-primary: 84 81% 44%;
+}
+
+.dark[data-theme="emerald"] {
+  --primary: 160 84% 39%;
+  --ring: 160 84% 39%;
+  --sidebar-primary: 160 84% 39%;
+  --sidebar-ring: 160 84% 39%;
+  --shadow-primary: 160 84% 39%;
+}
+
+.dark[data-theme="sky"] {
+  --primary: 199 89% 48%;
+  --ring: 199 89% 48%;
+  --sidebar-primary: 199 89% 48%;
+  --sidebar-ring: 199 89% 48%;
+  --shadow-primary: 199 89% 48%;
+}
+
+.dark[data-theme="violet"] {
+  --primary: 258 90% 66%;
+  --ring: 258 90% 66%;
+  --sidebar-primary: 258 90% 66%;
+  --sidebar-ring: 258 90% 66%;
+  --shadow-primary: 258 90% 66%;
+}
+
+.dark[data-theme="fuchsia"] {
+  --primary: 292 84% 61%;
+  --ring: 292 84% 61%;
+  --sidebar-primary: 292 84% 61%;
+  --sidebar-ring: 292 84% 61%;
+  --shadow-primary: 292 84% 61%;
+}
+
+.dark[data-theme="rose"] {
+  --primary: 350 89% 60%;
+  --ring: 350 89% 60%;
+  --sidebar-primary: 350 89% 60%;
+  --sidebar-ring: 350 89% 60%;
+  --shadow-primary: 350 89% 60%;
+}
+
+.dark[data-theme="slate"] {
+  --primary: 215 20% 58%;
+  --ring: 215 20% 58%;
+  --sidebar-primary: 215 20% 58%;
+  --sidebar-ring: 215 20% 58%;
+  --shadow-primary: 215 20% 58%;
+}
+
+.dark[data-theme="zinc"] {
+  --primary: 240 4% 56%;
+  --ring: 240 4% 56%;
+  --sidebar-primary: 240 4% 56%;
+  --sidebar-ring: 240 4% 56%;
+  --shadow-primary: 240 4% 56%;
+}
+
+.dark[data-theme="stone"] {
+  --primary: 25 5% 55%;
+  --ring: 25 5% 55%;
+  --sidebar-primary: 25 5% 55%;
+  --sidebar-ring: 25 5% 55%;
+  --shadow-primary: 25 5% 55%;
+}
+
+.dark[data-theme="gold"] {
+  --primary: 43 96% 46%;
+  --ring: 43 96% 46%;
+  --sidebar-primary: 43 96% 46%;
+  --sidebar-ring: 43 96% 46%;
+  --shadow-primary: 43 96% 46%;
+  --primary-foreground: 240 10% 3.9%;
+}
+
+.dark[data-theme="coral"] {
+  --primary: 16 85% 61%;
+  --ring: 16 85% 61%;
+  --sidebar-primary: 16 85% 61%;
+  --sidebar-ring: 16 85% 61%;
+  --shadow-primary: 16 85% 61%;
 }
 
 /* ========================================
@@ -476,6 +779,97 @@ html {
   --border: 350 25% 16%;
   --input: 350 25% 16%;
   --sidebar-border: 350 25% 16%;
+}
+
+.dark[data-dark-bg-theme="midnight"] {
+  --background: 230 60% 3%;
+  --card: 230 60% 3%;
+  --popover: 230 60% 3%;
+  --sidebar: 230 55% 7%;
+  --secondary: 230 45% 11%;
+  --muted: 230 45% 11%;
+  --accent: 230 45% 11%;
+  --border: 230 35% 15%;
+  --input: 230 35% 15%;
+  --sidebar-border: 230 35% 15%;
+}
+
+.dark[data-dark-bg-theme="charcoal"] {
+  --background: 0 0% 8%;
+  --card: 0 0% 8%;
+  --popover: 0 0% 8%;
+  --sidebar: 0 0% 12%;
+  --secondary: 0 0% 16%;
+  --muted: 0 0% 16%;
+  --accent: 0 0% 16%;
+  --border: 0 0% 20%;
+  --input: 0 0% 20%;
+  --sidebar-border: 0 0% 20%;
+}
+
+.dark[data-dark-bg-theme="obsidian"] {
+  --background: 260 30% 3%;
+  --card: 260 30% 3%;
+  --popover: 260 30% 3%;
+  --sidebar: 260 25% 7%;
+  --secondary: 260 20% 11%;
+  --muted: 260 20% 11%;
+  --accent: 260 20% 11%;
+  --border: 260 15% 15%;
+  --input: 260 15% 15%;
+  --sidebar-border: 260 15% 15%;
+}
+
+.dark[data-dark-bg-theme="navy"] {
+  --background: 220 60% 5%;
+  --card: 220 60% 5%;
+  --popover: 220 60% 5%;
+  --sidebar: 220 55% 9%;
+  --secondary: 220 45% 13%;
+  --muted: 220 45% 13%;
+  --accent: 220 45% 13%;
+  --border: 220 35% 17%;
+  --input: 220 35% 17%;
+  --sidebar-border: 220 35% 17%;
+}
+
+.dark[data-dark-bg-theme="graphite"] {
+  --background: 220 10% 10%;
+  --card: 220 10% 10%;
+  --popover: 220 10% 10%;
+  --sidebar: 220 8% 14%;
+  --secondary: 220 6% 18%;
+  --muted: 220 6% 18%;
+  --accent: 220 6% 18%;
+  --border: 220 5% 22%;
+  --input: 220 5% 22%;
+  --sidebar-border: 220 5% 22%;
+}
+
+.dark[data-dark-bg-theme="onyx"] {
+  --background: 0 0% 2%;
+  --card: 0 0% 2%;
+  --popover: 0 0% 2%;
+  --sidebar: 0 0% 5%;
+  --secondary: 0 0% 9%;
+  --muted: 0 0% 9%;
+  --accent: 0 0% 9%;
+  --border: 0 0% 13%;
+  --input: 0 0% 13%;
+  --sidebar-border: 0 0% 13%;
+}
+
+.dark[data-dark-bg-theme="volcanic"] {
+  --background: 10 35% 4%;
+  --card: 10 35% 4%;
+  --popover: 10 35% 4%;
+  --sidebar: 10 30% 8%;
+  --secondary: 10 25% 12%;
+  --muted: 10 25% 12%;
+  --accent: 10 25% 12%;
+  --border: 10 20% 16%;
+  --input: 10 20% 16%;
+  --sidebar-border: 10 20% 16%;
 }
 
 /* ========================================
@@ -680,19 +1074,22 @@ html {
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground font-arabic transition-colors duration-300;
   }
 }
 
 @layer utilities {
+
   /* Modal blur utilities - applied to ENTIRE layout (sidebars, headers, content) when modal is open */
   .modal-blurred-content {
     filter: blur(8px) brightness(0.7) !important;
     pointer-events: none !important;
     user-select: none !important;
     transition: filter 0.2s ease-in-out;
-    position: relative; /* Ensure it's in stacking context */
+    position: relative;
+    /* Ensure it's in stacking context */
   }
 
   /* Ensure modal portal is always above blurred content */
@@ -700,7 +1097,8 @@ html {
   body.modal-blur-open [data-radix-portal] {
     z-index: 1000 !important;
     isolation: isolate;
-    filter: none !important; /* Portal itself should not be blurred */
+    filter: none !important;
+    /* Portal itself should not be blurred */
   }
 
   html.modal-blur-open [data-radix-dialog-overlay],
@@ -713,8 +1111,10 @@ html {
   body.modal-blur-open [data-radix-dialog-content] {
     z-index: 1000 !important;
     isolation: isolate;
-    filter: none !important; /* Ensure modal content is never blurred */
-    position: relative; /* Ensure proper stacking */
+    filter: none !important;
+    /* Ensure modal content is never blurred */
+    position: relative;
+    /* Ensure proper stacking */
   }
 
   /* Prevent any child of modal from being blurred */
@@ -762,6 +1162,7 @@ html {
     transform: translateX(100%);
     opacity: 0;
   }
+
   to {
     transform: translateX(0);
     opacity: 1;
@@ -773,6 +1174,7 @@ html {
     transform: translateX(-100%);
     opacity: 0;
   }
+
   to {
     transform: translateX(0);
     opacity: 1;
@@ -784,6 +1186,7 @@ html {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -791,10 +1194,12 @@ html {
 }
 
 @keyframes float {
+
   0%,
   100% {
     transform: translateY(0px);
   }
+
   50% {
     transform: translateY(-10px);
   }
@@ -820,19 +1225,15 @@ html {
    UTILITY CLASSES - GRADIENTS & EFFECTS
    ======================================== */
 .gradient-primary {
-  background: linear-gradient(
-    135deg,
-    hsl(var(--primary)) 0%,
-    hsl(var(--primary)) 100%
-  );
+  background: linear-gradient(135deg,
+      hsl(var(--primary)) 0%,
+      hsl(var(--primary)) 100%);
 }
 
 .gradient-card {
-  background: linear-gradient(
-    135deg,
-    hsl(var(--card)) 0%,
-    hsl(var(--muted)) 100%
-  );
+  background: linear-gradient(135deg,
+      hsl(var(--card)) 0%,
+      hsl(var(--muted)) 100%);
 }
 
 /* Glass effect */
@@ -873,11 +1274,9 @@ html {
    UTILITY CLASSES - BACKGROUND PATTERNS
    ======================================== */
 .bg-grid-pattern {
-  background-image: radial-gradient(
-    circle,
-    hsl(var(--muted-foreground) / 0.1) 1px,
-    transparent 1px
-  );
+  background-image: radial-gradient(circle,
+      hsl(var(--muted-foreground) / 0.1) 1px,
+      transparent 1px);
   background-size: 20px 20px;
 }
 

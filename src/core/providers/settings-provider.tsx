@@ -15,7 +15,20 @@ export type ColorTheme =
   | "teal"
   | "pink"
   | "indigo"
-  | "cyan";
+  | "cyan"
+  | "amber"
+  | "yellow"
+  | "lime"
+  | "emerald"
+  | "sky"
+  | "violet"
+  | "fuchsia"
+  | "rose"
+  | "slate"
+  | "zinc"
+  | "stone"
+  | "gold"
+  | "coral";
 
 export type LightBackgroundTheme =
   | "default"
@@ -26,7 +39,14 @@ export type LightBackgroundTheme =
   | "cream"
   | "mint"
   | "lavender"
-  | "rose";
+  | "rose"
+  | "sky"
+  | "sand"
+  | "pearl"
+  | "ice"
+  | "linen"
+  | "cloud"
+  | "snow";
 
 export type DarkBackgroundTheme =
   | "default"
@@ -37,7 +57,14 @@ export type DarkBackgroundTheme =
   | "forest"
   | "ocean"
   | "purple-dark"
-  | "crimson";
+  | "crimson"
+  | "midnight"
+  | "charcoal"
+  | "obsidian"
+  | "navy"
+  | "graphite"
+  | "onyx"
+  | "volcanic";
 
 export type ShadowIntensity = "none" | "subtle" | "moderate" | "strong";
 export type LayoutTemplate =
