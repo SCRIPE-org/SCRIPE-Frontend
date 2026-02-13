@@ -5,13 +5,19 @@ import { useState, useEffect } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSettings } from "@core/providers/settings-provider";
 
-// Active layout components
+// All layout components
 import { NavigationLayout } from "@core/ui/layout/navigation/navigation-layout";
 import { TabbedLayout } from "@core/ui/layout/tabbed/tabbed-layout";
 import { DualLayout } from "@core/ui/layout/dual/dual-layout";
 import { CommandLayout } from "@core/ui/layout/command/command-layout";
 import { StackedLayout } from "@core/ui/layout/stacked/stacked-layout";
 import { HUDLayout } from "@core/ui/layout/hud/hud-layout";
+import { ClassicLayout } from "@core/ui/layout/classic/classic-layout";
+import { CompactLayout } from "@core/ui/layout/compact/compact-layout";
+import { ElegantLayout } from "@core/ui/layout/elegant/elegant-layout";
+import { FloatingLayout } from "@core/ui/layout/floating/floating-layout";
+import { MinimalLayout } from "@core/ui/layout/minimal/minimal-layout";
+import { ModernLayout } from "@core/ui/layout/modern/modern-layout";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -55,6 +61,68 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     };
   }, [collapsibleSidebar]);
 
+  // ── Layouts that manage their own sidebar ──
+
+  // Classic Layout
+  if (layoutTemplate === "classic") {
+    return (
+      <ClassicLayout
+        sidebarOpen={sidebarOpen}
+        onSidebarOpenChange={setSidebarOpen}
+      >
+        {children}
+      </ClassicLayout>
+    );
+  }
+
+  // Compact Layout
+  if (layoutTemplate === "compact") {
+    return (
+      <CompactLayout
+        sidebarOpen={sidebarOpen}
+        onSidebarOpenChange={setSidebarOpen}
+      >
+        {children}
+      </CompactLayout>
+    );
+  }
+
+  // Elegant Layout
+  if (layoutTemplate === "elegant") {
+    return (
+      <ElegantLayout
+        sidebarOpen={sidebarOpen}
+        onSidebarOpenChange={setSidebarOpen}
+      >
+        {children}
+      </ElegantLayout>
+    );
+  }
+
+  // Floating Layout
+  if (layoutTemplate === "floating") {
+    return (
+      <FloatingLayout
+        sidebarOpen={sidebarOpen}
+        onSidebarOpenChange={setSidebarOpen}
+      >
+        {children}
+      </FloatingLayout>
+    );
+  }
+
+  // Modern Layout
+  if (layoutTemplate === "modern") {
+    return (
+      <ModernLayout
+        sidebarOpen={sidebarOpen}
+        onSidebarOpenChange={setSidebarOpen}
+      >
+        {children}
+      </ModernLayout>
+    );
+  }
+
   // Tabbed Layout
   if (layoutTemplate === "tabbed") {
     return (
@@ -94,7 +162,12 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     return <HUDLayout>{children}</HUDLayout>;
   }
 
-  // Navigation Layout (default — also handles classic/compact/elegant/floating/minimal/modern until rebuilt)
+  // ── Minimal Layout (no sidebar) ──
+  if (layoutTemplate === "minimal") {
+    return <MinimalLayout>{children}</MinimalLayout>;
+  }
+
+  // ── Default: Navigation Layout ──
   return (
     <NavigationLayout
       sidebarOpen={sidebarOpen}
