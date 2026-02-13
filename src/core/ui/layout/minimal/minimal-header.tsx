@@ -16,12 +16,12 @@ import {
 } from "@core/ui/dropdown-menu";
 import { Badge } from "@core/ui/badge";
 import { useI18n } from "@core/providers/i18n-provider";
-import { useLayoutStyles } from "./use-layout-styles";
+import { useLayoutStyles } from "../shared/use-layout-styles";
 import { UserProfileDropdown } from "@core/ui/user-profile-dropdown";
 import { cn } from "@core/common/utils";
 import { useDynamicNavigation } from "@core/ui/navigation/dynamic-navigation";
 import { Logo } from "@core/ui/logo";
-import { LanguageSwitcher, ThemeSwitcher } from "./common";
+import { LanguageSwitcher, ThemeSwitcher } from "../common";
 import { useRouter } from "next/navigation";
 
 export function MinimalHeader() {

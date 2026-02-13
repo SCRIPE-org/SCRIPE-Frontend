@@ -2,22 +2,27 @@
 
 import type React from "react";
 import { useState, useEffect } from "react";
-import { Sidebar } from "@core/ui/layout/sidebar";
-import { Header } from "@core/ui/layout/header";
-import { MinimalHeader } from "@core/ui/layout/minimal-header";
-import { ClassicHeader } from "@core/ui/layout/classic-header";
-import { ClassicSidebar } from "@core/ui/layout/classic-sidebar";
-import { ModernSidebar } from "@core/ui/layout/modern-sidebar";
-import { Footer } from "@core/ui/layout/footer";
+import { Sidebar } from "@core/ui/layout/shared/sidebar";
+import { Header } from "@core/ui/layout/shared/header";
+import { Footer } from "@core/ui/layout/shared/footer";
+import { MinimalHeader } from "@core/ui/layout/minimal/minimal-header";
+import { ClassicHeader } from "@core/ui/layout/classic/classic-header";
+import { ClassicSidebar } from "@core/ui/layout/classic/classic-sidebar";
+import { ModernSidebar } from "@core/ui/layout/modern/modern-sidebar";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSettings } from "@core/providers/settings-provider";
 import { cn } from "@core/common/utils";
 
 // Import the layout components
-import { ElegantLayout } from "@core/ui/layout/elegant-layout";
-import { CompactLayout } from "@core/ui/layout/compact-layout";
-import { FloatingLayout } from "@core/ui/layout/floating-layout";
-import { NavigationLayout } from "@core/ui/layout/navigation-layout";
+import { ElegantLayout } from "@core/ui/layout/elegant/elegant-layout";
+import { CompactLayout } from "@core/ui/layout/compact/compact-layout";
+import { FloatingLayout } from "@core/ui/layout/floating/floating-layout";
+import { NavigationLayout } from "@core/ui/layout/navigation/navigation-layout";
+import { TabbedLayout } from "@core/ui/layout/tabbed/tabbed-layout";
+import { DualLayout } from "@core/ui/layout/dual/dual-layout";
+import { CommandLayout } from "@core/ui/layout/command/command-layout";
+import { StackedLayout } from "@core/ui/layout/stacked/stacked-layout";
+import { HUDLayout } from "@core/ui/layout/hud/hud-layout";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -29,8 +34,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     settings.collapsibleSidebar ? false : true
   );
   const [sidebarHovered, setSidebarHovered] = useState(false);
-    const { direction } = useI18n();
-    const { layoutTemplate, showFooter, collapsibleSidebar } = settings;
+  const { direction } = useI18n();
+  const { layoutTemplate, showFooter, collapsibleSidebar } = settings;
 
   useEffect(() => {
     if (!collapsibleSidebar) {
@@ -62,7 +67,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     };
   }, [collapsibleSidebar]);
 
-  // Navigation Layout - NEW
+  // Navigation Layout
   if (layoutTemplate === "navigation") {
     return (
       <NavigationLayout
@@ -72,6 +77,45 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         {children}
       </NavigationLayout>
     );
+  }
+
+  // Tabbed Layout
+  if (layoutTemplate === "tabbed") {
+    return (
+      <TabbedLayout
+        sidebarOpen={sidebarOpen}
+        onSidebarOpenChange={setSidebarOpen}
+      >
+        {children}
+      </TabbedLayout>
+    );
+  }
+
+  // Dual Layout
+  if (layoutTemplate === "dual") {
+    return (
+      <DualLayout
+        sidebarOpen={sidebarOpen}
+        onSidebarOpenChange={setSidebarOpen}
+      >
+        {children}
+      </DualLayout>
+    );
+  }
+
+  // Command Layout
+  if (layoutTemplate === "command") {
+    return <CommandLayout>{children}</CommandLayout>;
+  }
+
+  // Stacked Layout
+  if (layoutTemplate === "stacked") {
+    return <StackedLayout>{children}</StackedLayout>;
+  }
+
+  // HUD Layout
+  if (layoutTemplate === "hud") {
+    return <HUDLayout>{children}</HUDLayout>;
   }
 
   // Elegant Layout
@@ -135,18 +179,18 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                 ? "lg:mr-80"
                 : "lg:mr-20"
               : sidebarHovered
-              ? "lg:ml-80"
-              : "lg:ml-20"
+                ? "lg:ml-80"
+                : "lg:ml-20"
           )}
         >
           {/* Modern header */}
-            <Header onMenuClick={() => setSidebarOpen(true)} isModern={true} />
+          <Header onMenuClick={() => setSidebarOpen(true)} isModern={true} />
 
-            <main className="p-6 pt-24">
-              <div className="animate-fade-in">{children}</div>
-            </main>
-            {showFooter && <Footer />}
-          </div>
+          <main className="p-6 pt-24">
+            <div className="animate-fade-in">{children}</div>
+          </main>
+          {showFooter && <Footer />}
+        </div>
 
         {/* Mobile overlay */}
         {sidebarOpen && collapsibleSidebar && (
@@ -169,13 +213,13 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         )}
       >
         {/* Minimal layout has no sidebar, just a header with dropdown navigation */}
-          <MinimalHeader />
+        <MinimalHeader />
 
-          <main className="p-6 pt-20">
-            <div className="animate-fade-in max-w-7xl mx-auto">{children}</div>
-          </main>
-          {showFooter && <Footer />}
-        </div>
+        <main className="p-6 pt-20">
+          <div className="animate-fade-in max-w-7xl mx-auto">{children}</div>
+        </main>
+        {showFooter && <Footer />}
+      </div>
     );
   }
 
@@ -229,21 +273,21 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         direction === "rtl" ? "rtl" : "ltr"
       )}
     >
-        <Sidebar open={sidebarOpen} onOpenChange={setSidebarOpen} />
+      <Sidebar open={sidebarOpen} onOpenChange={setSidebarOpen} />
 
-        <div
-          className={cn(
-            "transition-all duration-300 ease-in-out",
-            direction === "rtl" ? "lg:mr-80" : "lg:ml-80"
-          )}
-        >
-          <Header onMenuClick={() => setSidebarOpen(true)} />
+      <div
+        className={cn(
+          "transition-all duration-300 ease-in-out",
+          direction === "rtl" ? "lg:mr-80" : "lg:ml-80"
+        )}
+      >
+        <Header onMenuClick={() => setSidebarOpen(true)} />
 
-          <main className="p-6">
-            <div className="animate-fade-in">{children}</div>
-          </main>
-          {showFooter && <Footer />}
-        </div>
+        <main className="p-6">
+          <div className="animate-fade-in">{children}</div>
+        </main>
+        {showFooter && <Footer />}
+      </div>
 
       {/* Mobile overlay */}
       {sidebarOpen && collapsibleSidebar && (

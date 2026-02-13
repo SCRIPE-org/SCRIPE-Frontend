@@ -1,12 +1,12 @@
 "use client";
 
 import type React from "react";
-import { CompactSidebar } from "@core/ui/layout/compact-sidebar";
-import { CompactHeader } from "@core/ui/layout/compact-header";
+import { CompactSidebar } from "./compact-sidebar";
+import { CompactHeader } from "./compact-header";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSettings } from "@core/providers/settings-provider";
 import { cn } from "@core/common/utils";
-import { Footer } from "@core/ui/layout/footer";
+import { Footer } from "@core/ui/layout/shared/footer";
 
 interface CompactLayoutProps {
   children: React.ReactNode;

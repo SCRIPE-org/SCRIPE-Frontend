@@ -1,12 +1,12 @@
 "use client";
 
 import type React from "react";
-import { FloatingNavigation } from "@core/ui/layout/floating-navigation";
-import { FloatingHeader } from "@core/ui/layout/floating-header";
+import { FloatingNavigation } from "./floating-navigation";
+import { FloatingHeader } from "./floating-header";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSettings } from "@core/providers/settings-provider";
 import { cn } from "@core/common/utils";
-import { Footer } from "@core/ui/layout/footer";
+import { Footer } from "@core/ui/layout/shared/footer";
 
 interface FloatingLayoutProps {
   children: React.ReactNode;

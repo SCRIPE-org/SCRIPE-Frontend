@@ -1,12 +1,12 @@
 "use client";
 
 import type React from "react";
-import { ElegantSidebar } from "@core/ui/layout/elegant-sidebar";
-import { ElegantHeader } from "@core/ui/layout/elegant-header";
+import { ElegantSidebar } from "./elegant-sidebar";
+import { ElegantHeader } from "./elegant-header";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSettings } from "@core/providers/settings-provider";
 import { cn } from "@core/common/utils";
-import { Footer } from "@core/ui/layout/footer";
+import { Footer } from "@core/ui/layout/shared/footer";
 
 interface ElegantLayoutProps {
   children: React.ReactNode;

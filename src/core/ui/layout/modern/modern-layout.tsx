@@ -1,8 +1,8 @@
 "use client"
 
 import type React from "react"
-import { Sidebar } from "@core/ui/layout/sidebar"
-import { Header } from "@core/ui/layout/header"
+import { Sidebar } from "@core/ui/layout/shared/sidebar"
+import { Header } from "@core/ui/layout/shared/header"
 import { useI18n } from "@core/providers/i18n-provider"
 import { cn } from "@core/common/utils"
 

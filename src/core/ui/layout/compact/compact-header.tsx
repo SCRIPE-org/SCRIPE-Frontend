@@ -3,11 +3,11 @@
 import { Menu, X, Home } from "lucide-react";
 import { Button } from "@core/ui/button";
 import { useI18n } from "@core/providers/i18n-provider";
-import { useLayoutStyles } from "./use-layout-styles";
+import { useLayoutStyles } from "../shared/use-layout-styles";
 import { UserProfileDropdown } from "@core/ui/user-profile-dropdown";
 import { cn } from "@core/common/utils";
-import { Logo } from "../logo";
-import { LanguageSwitcher, ThemeSwitcher, HeaderSearch } from "./common";
+import { Logo } from "../../logo";
+import { LanguageSwitcher, ThemeSwitcher, HeaderSearch } from "../common";
 import { useRouter } from "next/navigation";
 import { useSettings } from "@core/providers/settings-provider";
 

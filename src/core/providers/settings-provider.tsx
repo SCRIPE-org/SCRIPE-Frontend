@@ -47,7 +47,12 @@ export type LayoutTemplate =
   | "compact"
   | "floating"
   | "elegant"
-  | "navigation";
+  | "navigation"
+  | "tabbed"
+  | "dual"
+  | "command"
+  | "stacked"
+  | "hud";
 
 export type CardStyle = "default" | "glass" | "solid" | "bordered" | "elevated";
 export type AnimationLevel = "none" | "minimal" | "moderate" | "high";

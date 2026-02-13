@@ -6,7 +6,7 @@ import { ClassicHeader } from "./classic-header"
 import { useI18n } from "@core/providers/i18n-provider"
 import { useSettings } from "@core/providers/settings-provider"
 import { cn } from "@core/common/utils"
-import { useLayoutStyles } from "./use-layout-styles"
+import { useLayoutStyles } from "../shared/use-layout-styles"
 
 interface ClassicLayoutProps {
   children: React.ReactNode

@@ -10,7 +10,7 @@ import { NavigationMainSidebar } from "./navigation-main-sidebar";
 import { NavigationPanelSidebar } from "./navigation-panel-sidebar";
 import { useNavigationState } from "./useNavigationState";
 import { cn } from "@core/common/utils";
-import { Footer } from "@core/ui/layout/footer";
+import { Footer } from "@core/ui/layout/shared/footer";
 
 interface NavigationLayoutProps {
   children: React.ReactNode;

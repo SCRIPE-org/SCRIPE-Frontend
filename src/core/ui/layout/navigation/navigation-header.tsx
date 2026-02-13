@@ -12,19 +12,18 @@ import {
 } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useAppStore } from "@core/store/useAppStore";
-import { useAuthLogout } from "@modules/auth/hooks/useAuthLogout";
 import { useSettings } from "@core/providers/settings-provider";
 import { useTenantContext } from "@core/providers/tenant-context-provider";
 import { secureTokenService } from "@core/common/secure-token-service";
 import { useImpersonation } from "@modules/auth/hooks/useImpersonation";
 import { UserCheck } from "lucide-react";
-import { useLayoutStyles } from "./use-layout-styles";
+import { useLayoutStyles } from "../shared/use-layout-styles";
 import { useDynamicNavigation } from "@core/ui/navigation/dynamic-navigation";
 import { cn } from "@core/common/utils";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { UserProfileDropdown } from "@core/ui/user-profile-dropdown";
-import { LanguageSwitcher, ThemeSwitcher } from "./common";
+import { LanguageSwitcher, ThemeSwitcher } from "../common";
 import { useRouter } from "next/navigation";
 
 interface NavigationHeaderProps {
@@ -46,7 +45,6 @@ export function NavigationHeader({
 }: NavigationHeaderProps) {
   const { language, direction, t } = useI18n();
   const user = useAppStore((state) => state.user);
-  const { logout } = useAuthLogout();
   const { colorTheme, cardStyle } = useSettings();
   const { getAnimationClass } = useLayoutStyles();
   const animationClass = getAnimationClass();
