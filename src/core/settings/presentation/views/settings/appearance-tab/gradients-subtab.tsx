@@ -1,7 +1,8 @@
 "use client";
 
+import { useState, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
-import { Check, ArrowUp, ArrowUpRight, ArrowRight, ArrowDownRight, ArrowDown, ArrowDownLeft, ArrowLeft, ArrowUpLeft } from "lucide-react";
+import { Check, ArrowUp, ArrowUpRight, ArrowRight, ArrowDownRight, ArrowDown, ArrowDownLeft, ArrowLeft, ArrowUpLeft, Pipette } from "lucide-react";
 import { useSettings } from "@core/providers/settings-provider";
 import { useI18n } from "@core/providers/i18n-provider";
 import { cn } from "@core/common/utils";
@@ -54,8 +55,112 @@ export function GradientsSubtab() {
       const { t } = useI18n();
       const settings = useSettings();
 
+      const isGradientMode = settings.backgroundMode === "gradient";
+
       return (
             <div className="space-y-6">
+                  {/* Mode hint */}
+                  {!isGradientMode && (
+                        <div className="p-3 rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800">
+                              <p className="text-sm text-amber-700 dark:text-amber-300">
+                                    ⚠️ {t("settings.gradientWarning")}
+                              </p>
+                              <button
+                                    className="mt-2 text-xs font-medium text-primary hover:underline"
+                                    onClick={() => settings.setBackgroundMode("gradient")}
+                              >
+                                    {t("settings.switchToGradient")}
+                              </button>
+                        </div>
+                  )}
+
+                  {/* Custom Gradient Colors */}
+                  <Card>
+                        <CardHeader>
+                              <CardTitle className="text-base flex items-center gap-2">
+                                    <Pipette className="w-4 h-4 text-primary" />
+                                    {t("settings.gradient.customColors")}
+                              </CardTitle>
+                              <CardDescription>{t("settings.gradient.customColorsDesc")}</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                              <div className="space-y-4">
+                                    <div className="flex flex-col sm:flex-row gap-4">
+                                          {/* Start Color */}
+                                          <div className="flex-1 space-y-2">
+                                                <label className="text-sm font-medium text-foreground">
+                                                      {t("settings.gradient.startColor")}
+                                                </label>
+                                                <div className="flex items-center gap-3">
+                                                      <input
+                                                            type="color"
+                                                            value={settings.gradientStartColor || "#6366f1"}
+                                                            onChange={(e) => settings.setGradientStartColor(e.target.value)}
+                                                            className="w-12 h-12 rounded-xl border-2 border-muted cursor-pointer hover:border-primary transition-colors [&::-webkit-color-swatch-wrapper]:p-1 [&::-webkit-color-swatch]:rounded-lg"
+                                                      />
+                                                      <input
+                                                            type="text"
+                                                            value={settings.gradientStartColor || ""}
+                                                            onChange={(e) => settings.setGradientStartColor(e.target.value)}
+                                                            placeholder="#6366f1"
+                                                            className="flex-1 px-3 py-2 rounded-lg border border-input bg-background text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary/20"
+                                                      />
+                                                </div>
+                                          </div>
+
+                                          {/* End Color */}
+                                          <div className="flex-1 space-y-2">
+                                                <label className="text-sm font-medium text-foreground">
+                                                      {t("settings.gradient.endColor")}
+                                                </label>
+                                                <div className="flex items-center gap-3">
+                                                      <input
+                                                            type="color"
+                                                            value={settings.gradientEndColor || "#8b5cf6"}
+                                                            onChange={(e) => settings.setGradientEndColor(e.target.value)}
+                                                            className="w-12 h-12 rounded-xl border-2 border-muted cursor-pointer hover:border-primary transition-colors [&::-webkit-color-swatch-wrapper]:p-1 [&::-webkit-color-swatch]:rounded-lg"
+                                                      />
+                                                      <input
+                                                            type="text"
+                                                            value={settings.gradientEndColor || ""}
+                                                            onChange={(e) => settings.setGradientEndColor(e.target.value)}
+                                                            placeholder="#8b5cf6"
+                                                            className="flex-1 px-3 py-2 rounded-lg border border-input bg-background text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary/20"
+                                                      />
+                                                </div>
+                                          </div>
+                                    </div>
+
+                                    {/* Live Preview */}
+                                    {settings.gradientStartColor && settings.gradientEndColor && (
+                                          <div className="space-y-2">
+                                                <span className="text-xs font-medium text-muted-foreground">{t("settings.gradient.preview")}</span>
+                                                <div
+                                                      className="w-full h-16 rounded-xl border border-border shadow-sm"
+                                                      style={{
+                                                            background: `linear-gradient(${{ "to-t": "0deg", "to-tr": "45deg", "to-r": "90deg", "to-br": "135deg", "to-b": "180deg", "to-bl": "225deg", "to-l": "270deg", "to-tl": "315deg" }[settings.gradientDirection] || "135deg"
+                                                                  }, ${settings.gradientStartColor}, ${settings.gradientEndColor})`,
+                                                      }}
+                                                />
+                                          </div>
+                                    )}
+
+                                    {/* Clear custom */}
+                                    {(settings.gradientStartColor || settings.gradientEndColor) && (
+                                          <button
+                                                onClick={() => {
+                                                      settings.setGradientStartColor("");
+                                                      settings.setGradientEndColor("");
+                                                }}
+                                                className="text-xs font-medium text-destructive hover:underline"
+                                          >
+                                                {t("settings.gradient.clearCustom")}
+                                          </button>
+                                    )}
+                              </div>
+                        </CardContent>
+                  </Card>
+
                   {/* Direction Picker */}
                   <Card>
                         <CardHeader>
@@ -106,7 +211,7 @@ export function GradientsSubtab() {
                         </CardContent>
                   </Card>
 
-                  {/* Light Gradients */}
+                  {/* Light Gradient Presets */}
                   <Card>
                         <CardHeader>
                               <CardTitle className="text-base">{t("settings.appearanceSettings.lightGradients")}</CardTitle>
@@ -123,7 +228,12 @@ export function GradientsSubtab() {
                                                             ? "border-primary shadow-md ring-2 ring-primary/20"
                                                             : "border-transparent hover:border-muted-foreground/20"
                                                 )}
-                                                onClick={() => settings.setLightGradientTheme(g.value)}
+                                                onClick={() => {
+                                                      settings.setLightGradientTheme(g.value);
+                                                      // Clear custom gradient when selecting preset
+                                                      settings.setGradientStartColor("");
+                                                      settings.setGradientEndColor("");
+                                                }}
                                           >
                                                 <div className="w-full h-10 rounded-lg border border-gray-200/60 relative overflow-hidden flex">
                                                       <div className={cn("w-1/2 h-full", g.from)} />
@@ -138,7 +248,7 @@ export function GradientsSubtab() {
                         </CardContent>
                   </Card>
 
-                  {/* Dark Gradients */}
+                  {/* Dark Gradient Presets */}
                   <Card>
                         <CardHeader>
                               <CardTitle className="text-base">{t("settings.appearanceSettings.darkGradients")}</CardTitle>
@@ -155,7 +265,12 @@ export function GradientsSubtab() {
                                                             ? "border-primary shadow-md ring-2 ring-primary/20"
                                                             : "border-transparent hover:border-muted-foreground/20"
                                                 )}
-                                                onClick={() => settings.setDarkGradientTheme(g.value)}
+                                                onClick={() => {
+                                                      settings.setDarkGradientTheme(g.value);
+                                                      // Clear custom gradient when selecting preset
+                                                      settings.setGradientStartColor("");
+                                                      settings.setGradientEndColor("");
+                                                }}
                                           >
                                                 <div className="w-full h-10 rounded-lg border border-gray-700/40 relative overflow-hidden flex">
                                                       <div className={cn("w-1/2 h-full", g.from)} />

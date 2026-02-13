@@ -1340,6 +1340,32 @@ html {
   }
 }
 
+/* ========================================
+   BACKGROUND MODE OVERRIDE
+   When data-bg-mode is "gradient" or "custom" and --bg-override is set,
+   override body background and make layout wrapper divs transparent.
+   ======================================== */
+
+/* Override body background when bg-override is active */
+html[data-bg-mode="gradient"] body,
+html[data-bg-mode="custom"] body {
+  background: var(--bg-override, inherit) !important;
+  background-attachment: fixed !important;
+  min-height: 100vh !important;
+}
+
+/* Make top-level layout wrapper divs transparent so body bg shows through */
+html[data-bg-mode="gradient"] body>div>div,
+html[data-bg-mode="custom"] body>div>div {
+  background-color: transparent !important;
+}
+
+/* Also handle deeper layout wrapper divs (some layouts nest an extra level) */
+html[data-bg-mode="gradient"] body>div>div>div.min-h-screen,
+html[data-bg-mode="custom"] body>div>div>div.min-h-screen {
+  background-color: transparent !important;
+}
+
 @layer utilities {
 
   /* Modal blur utilities - applied to ENTIRE layout (sidebars, headers, content) when modal is open */

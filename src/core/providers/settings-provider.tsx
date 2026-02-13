@@ -113,6 +113,9 @@ export type DarkGradientTheme =
   | "cyber-punk"
   | "dark-forest"
   | "nebula";
+
+// Background mode - which background system is active
+export type BackgroundMode = "preset" | "gradient" | "custom";
 export type LayoutTemplate =
   | "modern"
   | "minimal"
@@ -349,6 +352,9 @@ export interface Settings {
   customLightBgColor: string;
   customDarkBgColor: string;
   activePalette: string;
+  backgroundMode: BackgroundMode;
+  gradientStartColor: string;
+  gradientEndColor: string;
   layoutTemplate: LayoutTemplate;
   cardStyle: CardStyle;
   animationLevel: AnimationLevel;
@@ -429,6 +435,9 @@ interface SettingsContextType extends Settings {
   setCustomLightBgColor: (color: string) => void;
   setCustomDarkBgColor: (color: string) => void;
   setActivePalette: (palette: string) => void;
+  setBackgroundMode: (mode: BackgroundMode) => void;
+  setGradientStartColor: (color: string) => void;
+  setGradientEndColor: (color: string) => void;
   setLayoutTemplate: (template: LayoutTemplate) => void;
   setCardStyle: (style: CardStyle) => void;
   setAnimationLevel: (level: AnimationLevel) => void;
@@ -501,6 +510,9 @@ const defaultSettings: Settings = {
   customLightBgColor: "",
   customDarkBgColor: "",
   activePalette: "",
+  backgroundMode: "preset",
+  gradientStartColor: "",
+  gradientEndColor: "",
   layoutTemplate: "navigation",
   cardStyle: "default",
   animationLevel: "moderate",
@@ -762,6 +774,45 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
         root.style.removeProperty("--custom-dark-bg");
       }
 
+      // Apply background based on mode via CSS custom properties
+      const bgMode = settings.backgroundMode || "preset";
+      root.setAttribute("data-bg-mode", bgMode);
+
+      // Clear previous bg override
+      root.style.removeProperty("--bg-override");
+
+      if (bgMode === "gradient") {
+        const dirMap: Record<string, string> = {
+          "to-t": "0deg", "to-tr": "45deg", "to-r": "90deg", "to-br": "135deg",
+          "to-b": "180deg", "to-bl": "225deg", "to-l": "270deg", "to-tl": "315deg",
+        };
+        const angle = dirMap[settings.gradientDirection] || "135deg";
+        const isDark = root.classList.contains("dark");
+
+        if (settings.gradientStartColor && settings.gradientEndColor) {
+          root.style.setProperty("--bg-override", `linear-gradient(${angle}, ${settings.gradientStartColor}, ${settings.gradientEndColor})`);
+        } else if (isDark && settings.darkGradientTheme && settings.darkGradientTheme !== "none") {
+          const fromStyle = getComputedStyle(root).getPropertyValue("--gradient-from").trim();
+          const toStyle = getComputedStyle(root).getPropertyValue("--gradient-to").trim();
+          if (fromStyle && toStyle) {
+            root.style.setProperty("--bg-override", `linear-gradient(${angle}, hsl(${fromStyle}), hsl(${toStyle}))`);
+          }
+        } else if (!isDark && settings.lightGradientTheme && settings.lightGradientTheme !== "none") {
+          const fromStyle = getComputedStyle(root).getPropertyValue("--gradient-from").trim();
+          const toStyle = getComputedStyle(root).getPropertyValue("--gradient-to").trim();
+          if (fromStyle && toStyle) {
+            root.style.setProperty("--bg-override", `linear-gradient(${angle}, hsl(${fromStyle}), hsl(${toStyle}))`);
+          }
+        }
+      } else if (bgMode === "custom") {
+        const isDark = root.classList.contains("dark");
+        const customBg = isDark ? settings.customDarkBgColor : settings.customLightBgColor;
+        if (customBg) {
+          root.style.setProperty("--bg-override", customBg);
+        }
+      }
+
+
       // Apply CSS custom properties for responsive design
       root.style.setProperty(
         "--font-size-base",
@@ -856,6 +907,9 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     setCustomLightBgColor: (color) => updateSetting("customLightBgColor", color),
     setCustomDarkBgColor: (color) => updateSetting("customDarkBgColor", color),
     setActivePalette: (palette) => updateSetting("activePalette", palette),
+    setBackgroundMode: (mode) => updateSetting("backgroundMode", mode),
+    setGradientStartColor: (color) => updateSetting("gradientStartColor", color),
+    setGradientEndColor: (color) => updateSetting("gradientEndColor", color),
     setLayoutTemplate: (template) => updateSetting("layoutTemplate", template),
     setCardStyle: (style) => updateSetting("cardStyle", style),
     setAnimationLevel: (level) => updateSetting("animationLevel", level),

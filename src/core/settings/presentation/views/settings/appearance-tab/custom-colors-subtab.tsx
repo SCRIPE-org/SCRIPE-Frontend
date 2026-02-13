@@ -97,6 +97,20 @@ export function CustomColorsSubtab() {
 
       return (
             <div className="space-y-4">
+                  {settings.backgroundMode !== "custom" && (
+                        <div className="p-3 rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800">
+                              <p className="text-sm text-amber-700 dark:text-amber-300">
+                                    ⚠️ {t("settings.customBgWarning")}
+                              </p>
+                              <button
+                                    className="mt-2 text-xs font-medium text-primary hover:underline"
+                                    onClick={() => settings.setBackgroundMode("custom")}
+                              >
+                                    {t("settings.switchToCustom")}
+                              </button>
+                        </div>
+                  )}
+
                   <div className="p-3 rounded-lg bg-muted/50 border border-muted">
                         <p className="text-sm text-muted-foreground">
                               {t("settings.appearanceSettings.customColorsInfo")}
