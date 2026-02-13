@@ -12,6 +12,10 @@ import { AlternativeLayoutsTab, ALTERNATIVE_LAYOUT_VALUES } from "./layout-tab/a
 import { StructuralLayoutsTab, STRUCTURAL_LAYOUT_VALUES } from "./layout-tab/structural-layouts";
 import { VisualLayoutsTab, VISUAL_LAYOUT_VALUES } from "./layout-tab/visual-layouts";
 import { SpecializedLayoutsTab, SPECIALIZED_LAYOUT_VALUES } from "./layout-tab/specialized-layouts";
+import { NavigationLayoutsTab, NAVIGATION_LAYOUT_VALUES } from "./layout-tab/navigation-layouts";
+import { WorkspaceLayoutsTab, WORKSPACE_LAYOUT_VALUES } from "./layout-tab/workspace-layouts";
+import { AdvancedLayoutsTab, ADVANCED_LAYOUT_VALUES } from "./layout-tab/advanced-layouts";
+import { IndustryLayoutsTab, INDUSTRY_LAYOUT_VALUES } from "./layout-tab/industry-layouts";
 import { StylesTab } from "./layout-tab/styles-tab";
 
 // ────────────────────────────────────────────
@@ -23,6 +27,10 @@ const categoryMap = [
   { key: "structural", values: STRUCTURAL_LAYOUT_VALUES },
   { key: "visual", values: VISUAL_LAYOUT_VALUES },
   { key: "specialized", values: SPECIALIZED_LAYOUT_VALUES },
+  { key: "navigation", values: NAVIGATION_LAYOUT_VALUES },
+  { key: "workspace", values: WORKSPACE_LAYOUT_VALUES },
+  { key: "advanced", values: ADVANCED_LAYOUT_VALUES },
+  { key: "industry", values: INDUSTRY_LAYOUT_VALUES },
 ] as const;
 
 function getActiveCategory(layout: string): string | null {
@@ -47,6 +55,10 @@ export function LayoutTab() {
     { key: "structural", label: t("settings.layoutTemplate.categories.structural") },
     { key: "visual", label: t("settings.layoutTemplate.categories.visual") },
     { key: "specialized", label: t("settings.layoutTemplate.categories.specialized") },
+    { key: "navigation", label: t("settings.layoutTemplate.categories.navigation") },
+    { key: "workspace", label: t("settings.layoutTemplate.categories.workspace") },
+    { key: "advanced", label: t("settings.layoutTemplate.categories.advanced") },
+    { key: "industry", label: t("settings.layoutTemplate.categories.industry") },
     { key: "styles", label: t("settings.headerStyle.title") || "Styles" },
   ];
 
@@ -95,6 +107,18 @@ export function LayoutTab() {
             <TabsContent value="specialized">
               <SpecializedLayoutsTab />
             </TabsContent>
+            <TabsContent value="navigation">
+              <NavigationLayoutsTab />
+            </TabsContent>
+            <TabsContent value="workspace">
+              <WorkspaceLayoutsTab />
+            </TabsContent>
+            <TabsContent value="advanced">
+              <AdvancedLayoutsTab />
+            </TabsContent>
+            <TabsContent value="industry">
+              <IndustryLayoutsTab />
+            </TabsContent>
             <TabsContent value="styles">
               <StylesTab />
             </TabsContent>
@@ -104,3 +128,4 @@ export function LayoutTab() {
     </>
   );
 }
+

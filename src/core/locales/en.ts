@@ -1386,6 +1386,14 @@ export const en = {
         visualDesc: "Dramatic visual themes for complete branding overhauls",
         specialized: "Specialized Layouts",
         specializedDesc: "Purpose-built layouts for specific use cases",
+        navigation: "Navigation Layouts",
+        navigationDesc: "Innovative navigation structures and patterns",
+        workspace: "Workspace Layouts",
+        workspaceDesc: "Multi-zone productivity and workspace patterns",
+        advanced: "Advanced Layouts",
+        advancedDesc: "Professional multi-panel and advanced patterns",
+        industry: "Industry Layouts",
+        industryDesc: "Domain-specific layouts for specialized workflows",
       },
       options: {
         modern: {
@@ -1487,6 +1495,102 @@ export const en = {
         vault: {
           name: "Vault",
           description: "Cloud console mega menu with searchable service grid",
+        },
+        bottombar: {
+          name: "Bottom Bar",
+          description: "Mobile-first bottom tab navigation with overflow menu",
+        },
+        megamenu: {
+          name: "Mega Menu",
+          description: "Enterprise mega dropdown panels with grouped content",
+        },
+        breadcrumb: {
+          name: "Breadcrumb",
+          description: "Breadcrumb trail as primary hierarchical navigation",
+        },
+        ribbon: {
+          name: "Ribbon",
+          description: "Microsoft Office-style tabbed toolbar with sections",
+        },
+        treeview: {
+          name: "Tree View",
+          description: "IDE-style recursive tree explorer sidebar",
+        },
+        overlay: {
+          name: "Overlay",
+          description: "Fullscreen animated overlay menu with transitions",
+        },
+        hub: {
+          name: "Hub",
+          description: "Card-grid navigation hub with grouped modules",
+        },
+        wizard: {
+          name: "Wizard",
+          description: "Horizontal stepper navigation with step tracking",
+        },
+        shelf: {
+          name: "Shelf",
+          description: "Expanding bottom drawer with pull-up navigation",
+        },
+        collapseheader: {
+          name: "Collapse Header",
+          description: "Auto-hiding header on scroll with scroll-up reveal",
+        },
+        splitpane: {
+          name: "Split Pane",
+          description: "IDE-style sidebar with toggleable bottom panel",
+        },
+        inbox: {
+          name: "Inbox",
+          description: "Three-column email client-inspired layout",
+        },
+        dualheader: {
+          name: "Dual Header",
+          description: "Two-row header with primary bar and module tabs",
+        },
+        topside: {
+          name: "Top Side",
+          description: "Header tab modules with sub-item left sidebar",
+        },
+        focus: {
+          name: "Focus",
+          description: "Distraction-free focus mode with floating pill nav",
+        },
+        multipanel: {
+          name: "Multi Panel",
+          description: "Left sidebar, content area, and right inspector panel",
+        },
+        kanban: {
+          name: "Kanban",
+          description: "Navigation as horizontal swimlane columns",
+        },
+        bento: {
+          name: "Bento",
+          description: "Apple-style grid of varying-size navigation cards",
+        },
+        chat: {
+          name: "Chat",
+          description: "Messaging app-style channel sidebar layout",
+        },
+        map: {
+          name: "Map",
+          description: "Full-bleed content with floating overlay controls",
+        },
+        feed: {
+          name: "Feed",
+          description: "Social media three-column feed with trending sidebar",
+        },
+        calendar: {
+          name: "Calendar",
+          description: "Date-centric layout with mini calendar widget",
+        },
+        crm: {
+          name: "CRM",
+          description: "Sales dashboard with search bar and KPI metrics strip",
+        },
+        terminal: {
+          name: "Terminal",
+          description: "Hacker-style CLI with command navigation and mono font",
         },
       },
     },

@@ -31,6 +31,30 @@ import { RailLayout } from "@core/ui/layout/rail/rail-layout";
 import { NewspaperLayout } from "@core/ui/layout/newspaper/newspaper-layout";
 import { CinemaLayout } from "@core/ui/layout/cinema/cinema-layout";
 import { VaultLayout } from "@core/ui/layout/vault/vault-layout";
+import { BottomBarLayout } from "@core/ui/layout/bottombar/bottombar-layout";
+import { MegaMenuLayout } from "@core/ui/layout/megamenu/megamenu-layout";
+import { BreadcrumbLayout } from "@core/ui/layout/breadcrumb/breadcrumb-layout";
+import { RibbonLayout } from "@core/ui/layout/ribbon/ribbon-layout";
+import { TreeViewLayout } from "@core/ui/layout/treeview/treeview-layout";
+import { OverlayLayout } from "@core/ui/layout/overlay/overlay-layout";
+import { HubLayout } from "@core/ui/layout/hub/hub-layout";
+import { WizardLayout } from "@core/ui/layout/wizard/wizard-layout";
+import { ShelfLayout } from "@core/ui/layout/shelf/shelf-layout";
+import { CollapseHeaderLayout } from "@core/ui/layout/collapseheader/collapseheader-layout";
+import { SplitPaneLayout } from "@core/ui/layout/splitpane/splitpane-layout";
+import { InboxLayout } from "@core/ui/layout/inbox/inbox-layout";
+import { DualHeaderLayout } from "@core/ui/layout/dualheader/dualheader-layout";
+import { TopSideLayout } from "@core/ui/layout/topside/topside-layout";
+import { FocusLayout } from "@core/ui/layout/focus/focus-layout";
+import { MultiPanelLayout } from "@core/ui/layout/multipanel/multipanel-layout";
+import { KanbanLayout } from "@core/ui/layout/kanban/kanban-layout";
+import { BentoLayout } from "@core/ui/layout/bento/bento-layout";
+import { ChatLayout } from "@core/ui/layout/chat/chat-layout";
+import { MapLayout } from "@core/ui/layout/map/map-layout";
+import { FeedLayout } from "@core/ui/layout/feed/feed-layout";
+import { CalendarLayout } from "@core/ui/layout/calendar/calendar-layout";
+import { CRMLayout } from "@core/ui/layout/crm/crm-layout";
+import { TerminalLayout } from "@core/ui/layout/terminal/terminal-layout";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -219,6 +243,78 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   }
   if (layoutTemplate === "vault") {
     return <VaultLayout>{children}</VaultLayout>;
+  }
+  if (layoutTemplate === "bottombar") {
+    return <BottomBarLayout>{children}</BottomBarLayout>;
+  }
+  if (layoutTemplate === "megamenu") {
+    return <MegaMenuLayout>{children}</MegaMenuLayout>;
+  }
+  if (layoutTemplate === "breadcrumb") {
+    return <BreadcrumbLayout>{children}</BreadcrumbLayout>;
+  }
+  if (layoutTemplate === "ribbon") {
+    return <RibbonLayout>{children}</RibbonLayout>;
+  }
+  if (layoutTemplate === "treeview") {
+    return <TreeViewLayout>{children}</TreeViewLayout>;
+  }
+  if (layoutTemplate === "overlay") {
+    return <OverlayLayout>{children}</OverlayLayout>;
+  }
+  if (layoutTemplate === "hub") {
+    return <HubLayout>{children}</HubLayout>;
+  }
+  if (layoutTemplate === "wizard") {
+    return <WizardLayout>{children}</WizardLayout>;
+  }
+  if (layoutTemplate === "shelf") {
+    return <ShelfLayout>{children}</ShelfLayout>;
+  }
+  if (layoutTemplate === "collapseheader") {
+    return <CollapseHeaderLayout>{children}</CollapseHeaderLayout>;
+  }
+  if (layoutTemplate === "splitpane") {
+    return <SplitPaneLayout>{children}</SplitPaneLayout>;
+  }
+  if (layoutTemplate === "inbox") {
+    return <InboxLayout>{children}</InboxLayout>;
+  }
+  if (layoutTemplate === "dualheader") {
+    return <DualHeaderLayout>{children}</DualHeaderLayout>;
+  }
+  if (layoutTemplate === "topside") {
+    return <TopSideLayout>{children}</TopSideLayout>;
+  }
+  if (layoutTemplate === "focus") {
+    return <FocusLayout>{children}</FocusLayout>;
+  }
+  if (layoutTemplate === "multipanel") {
+    return <MultiPanelLayout>{children}</MultiPanelLayout>;
+  }
+  if (layoutTemplate === "kanban") {
+    return <KanbanLayout>{children}</KanbanLayout>;
+  }
+  if (layoutTemplate === "bento") {
+    return <BentoLayout>{children}</BentoLayout>;
+  }
+  if (layoutTemplate === "chat") {
+    return <ChatLayout>{children}</ChatLayout>;
+  }
+  if (layoutTemplate === "map") {
+    return <MapLayout>{children}</MapLayout>;
+  }
+  if (layoutTemplate === "feed") {
+    return <FeedLayout>{children}</FeedLayout>;
+  }
+  if (layoutTemplate === "calendar") {
+    return <CalendarLayout>{children}</CalendarLayout>;
+  }
+  if (layoutTemplate === "crm") {
+    return <CRMLayout>{children}</CRMLayout>;
+  }
+  if (layoutTemplate === "terminal") {
+    return <TerminalLayout>{children}</TerminalLayout>;
   }
 
   // ── Default: Navigation Layout ──

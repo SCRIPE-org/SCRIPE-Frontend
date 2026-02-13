@@ -133,7 +133,7 @@ export function NavigationPanelSidebar({
               className={cn(
                 parentColorClasses,
                 "!justify-start !gap-0",
-                isRTL && "flex-row-reverse",
+
                 getBorderRadiusClass(borderRadius),
                 getAnimationClass(animationLevel, "panel"),
               )}
@@ -142,7 +142,7 @@ export function NavigationPanelSidebar({
               {/* Icon + Text grouped tightly */}
               <span className={cn(
                 "flex items-center gap-3 flex-1 min-w-0",
-                isRTL && "flex-row-reverse",
+
               )}>
                 {item.icon ? (
                   <item.icon className={cn(getIconClasses(iconStyle, "sm"), "flex-shrink-0")} />
@@ -205,7 +205,7 @@ export function NavigationPanelSidebar({
         className={cn(
           getPanelItemClasses(isActive, styleConfig),
           "!justify-start",
-          isRTL && "flex-row-reverse",
+
           getBorderRadiusClass(borderRadius),
           getAnimationClass(animationLevel, "panel"),
           item.disabled && "opacity-50 cursor-not-allowed",
@@ -218,13 +218,13 @@ export function NavigationPanelSidebar({
           href={item.href || "#"}
           className={cn(
             "flex items-center w-full !gap-0",
-            isRTL && "flex-row-reverse",
+
           )}
         >
           {/* Icon + Text grouped tightly */}
           <span className={cn(
             "flex items-center gap-1.5 flex-1 min-w-0",
-            isRTL && "flex-row-reverse",
+
           )}>
             {item.icon ? (
               <item.icon className="w-4 h-4 flex-shrink-0" />

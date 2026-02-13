@@ -65,7 +65,36 @@ export type LayoutTemplate =
   | "rail"
   | "newspaper"
   | "cinema"
-  | "vault";
+  | "vault"
+  // Batch 1 — Navigation Innovations
+  | "bottombar"
+  | "megamenu"
+  | "breadcrumb"
+  | "ribbon"
+  | "treeview"
+  | "overlay"
+  // Batch 2 — Multi-Zone / Pro
+  | "hub"
+  | "wizard"
+  | "shelf"
+  | "collapseheader"
+  | "splitpane"
+  | "inbox"
+  // Batch 3 — More Pro Patterns
+  | "dualheader"
+  | "topside"
+  | "focus"
+  | "multipanel"
+  | "kanban"
+  | "bento"
+  // Batch 4 — Industry-Specific
+  | "chat"
+  | "map"
+  | "feed"
+  | "calendar"
+  | "crm"
+  | "terminal";
+
 
 export type CardStyle = "default" | "glass" | "solid" | "bordered" | "elevated";
 export type AnimationLevel = "none" | "minimal" | "moderate" | "high";

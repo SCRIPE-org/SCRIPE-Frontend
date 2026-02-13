@@ -18,7 +18,11 @@ export type LayoutCategory =
       | "alternative"
       | "structural"
       | "visual"
-      | "specialized";
+      | "specialized"
+      | "navigation"
+      | "workspace"
+      | "advanced"
+      | "industry";
 
 // ────────────────────────────────────────────
 // Layout Card
