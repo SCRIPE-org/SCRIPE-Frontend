@@ -24,6 +24,7 @@ export interface LoginResponseJson {
       success?: boolean;
       accessToken: string;
       refreshToken: string;
+      requires2FA?: boolean;
 }
 
 export interface RefreshTokenRequestJson {
@@ -62,14 +63,16 @@ export class LoginResponseModel {
       constructor(
             public readonly accessToken: string,
             public readonly refreshToken: string,
-            public readonly success: boolean = true
+            public readonly success: boolean = true,
+            public readonly requires2FA: boolean = false
       ) { }
 
       static fromJson(json: LoginResponseJson): LoginResponseModel {
             return new LoginResponseModel(
                   json.accessToken,
                   json.refreshToken,
-                  json.success ?? true
+                  json.success ?? true,
+                  json.requires2FA ?? false
             );
       }
 
@@ -78,6 +81,7 @@ export class LoginResponseModel {
                   success: this.success,
                   accessToken: this.accessToken,
                   refreshToken: this.refreshToken,
+                  requires2FA: this.requires2FA,
             };
       }
 

@@ -3,7 +3,7 @@
 /**
  * ProfileSecurityView — Security settings page
  *
- * Sections: Password Expiry Banner + Change Password + 2FA Status
+ * Sections: Password Expiry Banner + Change Password + 2FA Status + Dialogs
  */
 import { useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -13,6 +13,8 @@ import { PasswordExpiryBanner } from "../components/PasswordExpiryBanner";
 import { PasswordChangeForm } from "../components/PasswordChangeForm";
 import { TwoFactorStatus } from "../components/TwoFactorStatus";
 import { BackupCodesDialog } from "../components/BackupCodesDialog";
+import { TwoFactorSetupDialog } from "../components/TwoFactorSetupDialog";
+import { TwoFactorDisableDialog } from "../components/TwoFactorDisableDialog";
 import { Loader2 } from "lucide-react";
 
 export function ProfileSecurityView() {
@@ -82,6 +84,9 @@ export function ProfileSecurityView() {
                               isEnabled={profile.isTwoFactorEnabled}
                               backupCodesRemaining={profile.backupCodesRemaining}
                               onRegenerateBackupCodes={() => setShowBackupDialog(true)}
+                              onEnable={() => security.openSetupDialog()}
+                              onDisable={() => security.setShowDisableDialog(true)}
+                              isEnabling={security.isEnabling2FA}
                         />
                   </section>
 
@@ -96,6 +101,25 @@ export function ProfileSecurityView() {
                               setShowBackupDialog(false);
                               security.clearBackupCodes();
                         }}
+                  />
+
+                  {/* 2FA Setup Dialog */}
+                  <TwoFactorSetupDialog
+                        open={security.showSetupDialog}
+                        onOpenChange={security.setShowSetupDialog}
+                        setupData={security.setupData}
+                        onConfirm={security.confirm2FA}
+                        isConfirming={security.isConfirming2FA}
+                        confirmError={security.confirmError}
+                  />
+
+                  {/* 2FA Disable Dialog */}
+                  <TwoFactorDisableDialog
+                        open={security.showDisableDialog}
+                        onOpenChange={security.setShowDisableDialog}
+                        onDisable={security.disable2FA}
+                        isDisabling={security.isDisabling2FA}
+                        disableError={security.disableError}
                   />
             </div>
       );

@@ -20,6 +20,12 @@ export interface ChangePasswordRequest {
       twoFactorCode?: string;
 }
 
+export interface Enable2FAResult {
+      qrCodeDataUri: string;
+      manualEntryKey: string;
+      backupCodes: string[];
+}
+
 export interface IProfileRepository {
       // Profile
       getProfile(): Promise<AdminProfile>;
@@ -37,7 +43,10 @@ export interface IProfileRepository {
       revokeSession(tokenId: string): Promise<void>;
       revokeAllSessions(): Promise<{ revokedCount: number }>;
 
-      // 2FA Backup Codes
+      // 2FA Management
+      enable2FA(): Promise<Enable2FAResult>;
+      confirm2FA(code: string): Promise<void>;
+      disable2FA(password: string): Promise<void>;
       regenerateBackupCodes(twoFactorCode: string): Promise<string[]>;
 
       // Security Log

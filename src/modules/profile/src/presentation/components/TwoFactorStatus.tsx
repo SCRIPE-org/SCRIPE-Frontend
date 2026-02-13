@@ -1,24 +1,31 @@
 "use client";
 
 /**
- * TwoFactorStatus — 2FA status card with backup code progress
+ * TwoFactorStatus — 2FA status card with enable/disable + backup code progress
  */
 import { useI18n } from "@core/providers/i18n-provider";
-import { Shield, ShieldCheck, ShieldX } from "lucide-react";
+import { Shield, ShieldCheck, ShieldX, ShieldPlus } from "lucide-react";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { cn } from "@core/common/utils";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
 
 interface TwoFactorStatusProps {
       isEnabled: boolean;
       backupCodesRemaining: number | null;
       onRegenerateBackupCodes: () => void;
+      onEnable: () => void;
+      onDisable: () => void;
+      isEnabling?: boolean;
 }
 
 export function TwoFactorStatus({
       isEnabled,
       backupCodesRemaining,
       onRegenerateBackupCodes,
+      onEnable,
+      onDisable,
+      isEnabling = false,
 }: TwoFactorStatusProps) {
       const { t } = useI18n();
       const totalCodes = 10;
@@ -52,9 +59,36 @@ export function TwoFactorStatus({
                                     </p>
                               </div>
                         </div>
-                        <Badge variant={isEnabled ? "default" : "secondary"} className="text-xs">
-                              {isEnabled ? t("common.enabled") : t("common.disabled")}
-                        </Badge>
+                        <div className="flex items-center gap-2">
+                              <Badge variant={isEnabled ? "default" : "secondary"} className="text-xs">
+                                    {isEnabled ? t("common.enabled") : t("common.disabled")}
+                              </Badge>
+                              {isEnabled ? (
+                                    <Button
+                                          variant="outline"
+                                          size="sm"
+                                          className="text-destructive hover:text-destructive"
+                                          onClick={onDisable}
+                                    >
+                                          <ShieldX className="h-3.5 w-3.5 me-1.5" />
+                                          {t("common.disable")}
+                                    </Button>
+                              ) : (
+                                    <Button
+                                          variant="outline"
+                                          size="sm"
+                                          onClick={onEnable}
+                                          disabled={isEnabling}
+                                    >
+                                          {isEnabling ? (
+                                                <LoadingSpinner size="inline" showText={false} />
+                                          ) : (
+                                                <ShieldPlus className="h-3.5 w-3.5 me-1.5" />
+                                          )}
+                                          {t("common.enable")}
+                                    </Button>
+                              )}
+                        </div>
                   </div>
 
                   {isEnabled && backupCodesRemaining !== null && (

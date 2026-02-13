@@ -5,6 +5,7 @@ import { AuthMapper } from "../core/data/mappers/AuthMapper";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useNavigation } from "@core/providers/navigation-provider";
 import { appLogger } from "@/core/common/logger";
+import { TwoFactorRequiredError } from "../core/data/repositories/AuthRepository";
 
 export function useAuthLogin() {
       const { authRepository } = useServices();
@@ -42,7 +43,10 @@ export function useAuthLogin() {
                   queryClient.invalidateQueries();
             },
             onError: (error: Error) => {
+                  // Don't show toast for 2FA required — it's not an error, it's a flow step
+                  if (error instanceof TwoFactorRequiredError) return;
                   operationError(error.message || "Login failed");
             }
       });
 }
+

@@ -13,6 +13,19 @@ export const en = {
     redirecting: "Redirecting...",
     welcomeBack: "Welcome back!",
     validationError: "Please fill in all required fields",
+    twoFactor: {
+      title: "Two-Factor Authentication",
+      enterAuthCode: "Enter the 6-digit code from your authenticator app",
+      enterBackupCode: "Enter one of your backup codes",
+      enterCode: "Please enter a verification code",
+      backupCode: "Backup Code",
+      verify: "Verify",
+      verifying: "Verifying...",
+      invalidCode: "Invalid verification code",
+      useAuthenticator: "Use authenticator app",
+      useBackupCode: "Use a backup code instead",
+      backToLogin: "Back to login",
+    },
   },
 
   // Not Authorized Page
@@ -1285,7 +1298,7 @@ export const en = {
 
   // Months
 
-  
+
 
   // Settings
   settings: {
@@ -3118,6 +3131,9 @@ export const en = {
     collapseAll: "Collapse All",
     expandAll: "Expand All",
     save: "Save",
+    enable: "Enable",
+    disable: "Disable",
+    done: "Done",
     saveChanges: "Save Changes",
     saving: "Saving...",
     selectDate: "Select Date",
@@ -4057,6 +4073,25 @@ export const en = {
         disabled: "2FA is not enabled for your account",
         backupCodes: "Backup Codes Remaining",
         regenerate: "Regenerate Codes",
+        setup: {
+          scanQR: "Scan QR Code",
+          scanDescription: "Scan this QR code with your authenticator app (like Google Authenticator, Authy, or 1Password)",
+          manualEntry: "Or enter this key manually:",
+          verifyTitle: "Verify Setup",
+          verifyDescription: "Enter the 6-digit code from your authenticator app to complete the setup",
+          backupTitle: "Save Your Backup Codes",
+          backupDescription: "These are your one-time-use backup codes. Each code can only be used once.",
+          backupWarning: "⚠️ Store these codes in a safe place. They will not be shown again.",
+          download: "Download Codes",
+        },
+        disable: {
+          title: "Disable Two-Factor Authentication",
+          description: "This will remove the extra layer of security from your account. You will need to confirm your current password.",
+          passwordRequired: "Please enter your current password",
+          passwordLabel: "Current Password",
+          confirm: "Disable 2FA",
+          failed: "Failed to disable 2FA",
+        },
       },
       backupCodes: {
         title: "Backup Codes",

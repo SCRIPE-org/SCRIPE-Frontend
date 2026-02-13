@@ -17,10 +17,22 @@ import { User } from "../../domain/entities/User";
 import { AuthMapper } from "../mappers/AuthMapper";
 import { appLogger } from "@core/common/logger";
 import { LoginRequestModel, RefreshTokenRequestModel } from "../models/AuthModel";
+import { Verify2FARequestModel } from "../models/TwoFactorModels";
 import type { IAuthService } from "../services/AuthService";
 import type { IAuthRepository } from "../../domain/interfaces/IAuthRepository";
 import { Result } from "@core/common/types/result";
 import { AUTH_STORAGE_KEYS_TO_CLEAR } from "@core/config/storage-keys";
+
+/**
+ * Custom error thrown when login requires 2FA verification.
+ * The UI catches this to transition to the 2FA input step.
+ */
+export class TwoFactorRequiredError extends Error {
+  constructor() {
+    super("Two-factor authentication required");
+    this.name = "TwoFactorRequiredError";
+  }
+}
 
 /**
  * Clear all authentication related data from local storage
@@ -58,6 +70,12 @@ export class AuthRepository implements IAuthRepository {
 
     appLogger.auth("Login response received");
 
+    // Check if 2FA is required — throw specific error for UI to catch
+    if (responseModel.requires2FA) {
+      appLogger.auth("2FA verification required");
+      throw new TwoFactorRequiredError();
+    }
+
     if (responseModel.accessToken) {
       secureTokenService.setAccessToken(responseModel.accessToken);
       if (responseModel.refreshToken) {
@@ -66,6 +84,26 @@ export class AuthRepository implements IAuthRepository {
       return this.getMe();
     }
     throw new Error("Login failed: No access token received.");
+  }
+
+  /**
+   * Verify 2FA code during login.
+   * Called after login() throws TwoFactorRequiredError.
+   */
+  async verify2FA(username: string, password: string, code: string): Promise<User> {
+    const requestModel = new Verify2FARequestModel(username, password, code);
+    const responseModel = await this.service.verify2FA(requestModel);
+
+    appLogger.auth("2FA verification successful");
+
+    if (responseModel.accessToken) {
+      secureTokenService.setAccessToken(responseModel.accessToken);
+      if (responseModel.refreshToken) {
+        secureTokenService.setRefreshToken(responseModel.refreshToken);
+      }
+      return this.getMe();
+    }
+    throw new Error("2FA verification failed: No access token received.");
   }
 
   async logout(): Promise<void> {

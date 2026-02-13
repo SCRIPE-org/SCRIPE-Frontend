@@ -14,6 +14,7 @@ import type {
       AdminProfileDto,
       ActiveSessionDto,
       SecurityLogEntryDto,
+      Enable2FAResultDto,
 } from "../models/ProfileModels";
 import { ProfileMapper } from "../mappers/ProfileMapper";
 
@@ -39,7 +40,7 @@ export class ProfileRepository implements IProfileRepository {
 
       async uploadAvatar(file: File): Promise<{ profileImageUrl: string }> {
             const formData = new FormData();
-            formData.append("file", file);
+            formData.append("image", file);
             return await this.api.post<{ profileImageUrl: string }>(
                   API_ENDPOINTS.PROFILE.AVATAR,
                   formData
@@ -84,9 +85,32 @@ export class ProfileRepository implements IProfileRepository {
       // ── 2FA Backup Codes ─────────────────────────────────
 
       async regenerateBackupCodes(twoFactorCode: string): Promise<string[]> {
-            return await this.api.post<string[]>(
+            const result = await this.api.post<{ backupCodes: string[] }>(
                   API_ENDPOINTS.PROFILE.BACKUP_CODES_REGENERATE,
-                  { twoFactorCode }
+                  { username: "", password: "", code: twoFactorCode }
+            );
+            return result.backupCodes;
+      }
+
+      // ── 2FA Management ─────────────────────────────────────
+
+      async enable2FA(): Promise<{ qrCodeDataUri: string; manualEntryKey: string; backupCodes: string[] }> {
+            return await this.api.post<Enable2FAResultDto>(
+                  API_ENDPOINTS.AUTH.TWO_FA.ENABLE
+            );
+      }
+
+      async confirm2FA(code: string): Promise<void> {
+            await this.api.post(
+                  API_ENDPOINTS.AUTH.TWO_FA.CONFIRM,
+                  { code }
+            );
+      }
+
+      async disable2FA(password: string): Promise<void> {
+            await this.api.post(
+                  API_ENDPOINTS.AUTH.TWO_FA.DISABLE,
+                  { password }
             );
       }
 

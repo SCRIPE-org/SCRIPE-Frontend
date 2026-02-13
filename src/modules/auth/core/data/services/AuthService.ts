@@ -17,9 +17,15 @@ import {
       RefreshTokenRequestModel,
       type LoginResponseJson,
 } from "../models/AuthModel";
+import {
+      Verify2FARequestModel,
+      Verify2FAResponseModel,
+      type Verify2FAResponseJson,
+} from "../models/TwoFactorModels";
 
 export interface IAuthService {
       login(request: LoginRequestModel): Promise<LoginResponseModel>;
+      verify2FA(request: Verify2FARequestModel): Promise<Verify2FAResponseModel>;
       logout(refreshToken: string): Promise<void>;
       refreshToken(request: RefreshTokenRequestModel): Promise<LoginResponseModel>;
       getMe<T>(): Promise<T>;
@@ -34,6 +40,14 @@ export class AuthService implements IAuthService {
                   request.toJson()
             );
             return LoginResponseModel.fromJson(json);
+      }
+
+      async verify2FA(request: Verify2FARequestModel): Promise<Verify2FAResponseModel> {
+            const json = await this.api.postPublic<Verify2FAResponseJson>(
+                  API_ENDPOINTS.AUTH.TWO_FA.VERIFY,
+                  request.toJson()
+            );
+            return Verify2FAResponseModel.fromJson(json);
       }
 
       async logout(refreshToken: string): Promise<void> {

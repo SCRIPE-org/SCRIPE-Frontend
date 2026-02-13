@@ -13,6 +13,21 @@ export const ar = {
     usernamePlaceholder: "المشرف العام",
     connectionError: "خطأ في الاتصال بالخادم. يرجى المحاولة مرة أخرى.",
     redirecting: "جاري التحويل...",
+    welcomeBack: "أهلاً بعودتك!",
+    validationError: "يرجى ملء جميع الحقول المطلوبة",
+    twoFactor: {
+      title: "المصادقة الثنائية",
+      enterAuthCode: "أدخل الرمز المكون من 6 أرقام من تطبيق المصادقة",
+      enterBackupCode: "أدخل أحد رموز النسخ الاحتياطي",
+      enterCode: "يرجى إدخال رمز التحقق",
+      backupCode: "رمز النسخ الاحتياطي",
+      verify: "تحقق",
+      verifying: "جاري التحقق...",
+      invalidCode: "رمز التحقق غير صالح",
+      useAuthenticator: "استخدم تطبيق المصادقة",
+      useBackupCode: "استخدم رمز نسخ احتياطي بدلاً من ذلك",
+      backToLogin: "العودة لتسجيل الدخول",
+    },
   },
 
   // Not Authorized Page
@@ -1614,7 +1629,7 @@ export const ar = {
     campaignF: "الحملة و",
   },
 
-   // Profile Module
+  // Profile Module
   profile: {
     nav: {
       general: "عام",
@@ -1672,6 +1687,25 @@ export const ar = {
         disabled: "المصادقة الثنائية غير مفعلة لحسابك",
         backupCodes: "رموز النسخ الاحتياطي المتبقية",
         regenerate: "تجديد الرموز",
+        setup: {
+          scanQR: "مسح رمز QR",
+          scanDescription: "امسح رمز QR هذا باستخدام تطبيق المصادقة (مثل Google Authenticator أو Authy أو 1Password)",
+          manualEntry: "أو أدخل هذا المفتاح يدوياً:",
+          verifyTitle: "تأكيد الإعداد",
+          verifyDescription: "أدخل الرمز المكون من 6 أرقام من تطبيق المصادقة لإكمال الإعداد",
+          backupTitle: "احفظ رموز النسخ الاحتياطي",
+          backupDescription: "هذه رموز النسخ الاحتياطي للاستخدام مرة واحدة. يمكن استخدام كل رمز مرة واحدة فقط.",
+          backupWarning: "⚠️ احفظ هذه الرموز في مكان آمن. لن يتم عرضها مرة أخرى.",
+          download: "تنزيل الرموز",
+        },
+        disable: {
+          title: "تعطيل المصادقة الثنائية",
+          description: "سيؤدي هذا إلى إزالة طبقة الأمان الإضافية من حسابك. ستحتاج إلى تأكيد كلمة المرور الحالية.",
+          passwordRequired: "يرجى إدخال كلمة المرور الحالية",
+          passwordLabel: "كلمة المرور الحالية",
+          confirm: "تعطيل المصادقة الثنائية",
+          failed: "فشل في تعطيل المصادقة الثنائية",
+        },
       },
       backupCodes: {
         title: "رموز النسخ الاحتياطي",
@@ -3297,6 +3331,9 @@ export const ar = {
     export: "تصدير",
     import: "استيراد",
     save: "حفظ",
+    enable: "تفعيل",
+    disable: "تعطيل",
+    done: "تم",
     saveChanges: "حفظ التغييرات",
     saving: "جاري الحفظ...",
     cancel: "إلغاء",

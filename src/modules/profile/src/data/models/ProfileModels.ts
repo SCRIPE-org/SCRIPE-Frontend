@@ -60,3 +60,19 @@ export interface ChangePasswordDto {
 export interface RegenerateBackupCodesDto {
       twoFactorCode: string;
 }
+
+// ===== 2FA Setup DTOs =====
+
+export interface Enable2FAResultDto {
+      qrCodeDataUri: string;
+      manualEntryKey: string;
+      backupCodes: string[];
+}
+
+export interface Confirm2FADto {
+      code: string;
+}
+
+export interface Disable2FADto {
+      password: string;
+}
