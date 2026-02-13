@@ -415,12 +415,12 @@ export const en = {
     description: "Manage navigation menu items, ordering, and visibility.",
     items: "items",
     createMenuItem: "Create Menu Item",
-    originalTree:"Original Tree",
-    originalTreeDesc:"Original Tree",
-    effectiveTree:"Effective Tree",
-    effectiveTreeDesc:"Effective Tree",
-    modified:"Modified",
-    modifiedDesc:"Modified",
+    originalTree: "Original Tree",
+    originalTreeDesc: "Original Tree",
+    effectiveTree: "Effective Tree",
+    effectiveTreeDesc: "Effective Tree",
+    modified: "Modified",
+    modifiedDesc: "Modified",
     structure: "Menu Structure",
     activeItems: "Active",
     inactiveItems: "Inactive",
@@ -1372,6 +1372,93 @@ export const en = {
     layout: "Layout",
     localization: "Language",
     advanced: "Advanced",
+    layoutTemplate: {
+      title: "Layout Template",
+      description: "Choose a layout that suits your workflow",
+      categories: {
+        sidebar: "Sidebar Layouts",
+        sidebarDesc: "Traditional sidebar navigation with content area",
+        alternative: "Alternative Layouts",
+        alternativeDesc: "Unique navigation patterns for modern workflows",
+      },
+      options: {
+        modern: {
+          name: "Modern",
+          description: "Auto-expanding sidebar with sleek hover effects",
+        },
+        classic: {
+          name: "Classic",
+          description: "Traditional fixed sidebar with full navigation",
+        },
+        compact: {
+          name: "Compact",
+          description: "Space-efficient sidebar with condensed items",
+        },
+        elegant: {
+          name: "Elegant",
+          description: "Refined sidebar with premium gradient accents",
+        },
+        minimal: {
+          name: "Minimal",
+          description: "Clean distraction-free interface with icon rail",
+        },
+        floating: {
+          name: "Floating",
+          description: "Elevated card-style sidebar with rounded edges",
+        },
+        navigation: {
+          name: "Navigation",
+          description: "VS Code-style icon rail with expandable panels",
+        },
+        tabbed: {
+          name: "Tabbed",
+          description: "Horizontal tab bar with categorized sections",
+        },
+        dual: {
+          name: "Dual Panel",
+          description: "Three-column layout with detail side panel",
+        },
+        command: {
+          name: "Command",
+          description: "Zero-chrome, navigate entirely via ⌘K palette",
+        },
+        stacked: {
+          name: "Stacked",
+          description: "Overlay drawer with pin-to-push option",
+        },
+        hud: {
+          name: "HUD",
+          description: "Bottom dock bar with flyout menu navigation",
+        },
+      },
+    },
+    headerStyle: {
+      title: "Header Style",
+      description: "Choose the header appearance",
+      options: {
+        default: { name: "Default", description: "Standard header with subtle shadow" },
+        compact: { name: "Compact", description: "Slim header to save vertical space" },
+        elevated: { name: "Elevated", description: "Floating header with prominent shadow" },
+        transparent: { name: "Transparent", description: "Transparent blending header" },
+      },
+    },
+    sidebarStyle: {
+      title: "Sidebar Style",
+      description: "Choose the sidebar appearance",
+      options: {
+        default: { name: "Default", description: "Standard sidebar with border" },
+        compact: { name: "Compact", description: "Narrow icon-focused sidebar" },
+        floating: { name: "Floating", description: "Floating sidebar with shadow" },
+        minimal: { name: "Minimal", description: "Borderless minimal sidebar" },
+      },
+    },
+    cardStyle: {
+      title: "Card Style",
+      description: "Choose the card appearance",
+    },
+    cardStyleOptions: {
+      elevated: "Elevated",
+    },
     colorTheme: {
       title: "Color Theme",
       description: "Choose your preferred color theme",
@@ -2029,53 +2116,7 @@ export const en = {
       },
     },
 
-    layoutTemplate: {
-      title: "Layout Template",
-      description: "Choose your preferred layout style",
-      designOptions: {
-        default: { name: "Default", description: "Standard layout" },
-        modern: { name: "Modern", description: "Clean contemporary design" },
-        classic: { name: "Classic", description: "Traditional layout" },
-        compact: { name: "Compact", description: "Space-efficient" },
-        elegant: { name: "Elegant", description: "Sophisticated design" },
-        minimal: { name: "Minimal", description: "Clean and simple" },
-        floating: { name: "Floating", description: "Cards and overlays" },
-        navigation: {
-          name: "Navigation",
-          description: "Dual sidebar system",
-        },
-      },
-    },
-    headerStyle: {
-      title: "Header Style",
-      description: "Choose how the header should appear",
-      options: {
-        default: { name: "Default", description: "Standard header" },
-        compact: { name: "Compact", description: "Smaller height" },
-        elevated: { name: "Elevated", description: "With shadow" },
-        transparent: {
-          name: "Transparent",
-          description: "Transparent background",
-        },
-      },
-    },
-    sidebarStyle: {
-      title: "Sidebar Style",
-      description: "Choose how the sidebar should appear",
-      options: {
-        default: { name: "Default", description: "Standard sidebar" },
-        compact: { name: "Compact", description: "Narrower width" },
-        floating: { name: "Floating", description: "Floating with margin" },
-        minimal: { name: "Minimal", description: "Clean design" },
-      },
-    },
-    cardStyle: {
-      title: "Card Style",
-      description: "Choose how cards should appear throughout the app",
-    },
-    cardStyleOptions: {
-      elevated: "Elevated",
-    },
+
     buttonStyle: {
       title: "Button Style",
       description: "Customize button appearance",
