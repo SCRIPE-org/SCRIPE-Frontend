@@ -1,13 +1,14 @@
 "use client";
 
 import type React from "react";
-import { useMemo } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSettings } from "@core/providers/settings-provider";
 import { useLayoutStyles } from "@core/ui/layout/shared/use-layout-styles";
 import { Logo } from "@core/ui/logo";
 import { Button } from "@core/ui/button";
+import { Badge } from "@core/ui/badge";
 import { LanguageSwitcher, ThemeSwitcher, HeaderSearch } from "@core/ui/layout/common";
 import { UserProfileDropdown } from "@core/ui/user-profile-dropdown";
 import { Footer } from "@core/ui/layout/shared/footer";
@@ -16,7 +17,7 @@ import {
       isNavigationItemActive,
       type NavigationItem,
 } from "@core/config/navigation";
-import { Bell, Home } from "lucide-react";
+import { Bell, Home, ChevronDown } from "lucide-react";
 import { cn } from "@core/common/utils";
 
 interface NewspaperLayoutProps {
@@ -29,9 +30,9 @@ interface NewspaperLayoutProps {
  * Structure:
  * - No sidebar
  * - Masthead header with logo, search, actions
- * - Horizontal tab nav for modules
+ * - Horizontal tab nav for modules (tabs with children show dropdown)
  * - Content uses CSS for dense information display
- * - Thin column dividers, compact spacing
+ * - Badge counts on tabs
  *
  * Inspired by Bloomberg Terminal, Financial Times, Google News
  */
@@ -44,18 +45,26 @@ export function NewspaperLayout({ children }: NewspaperLayoutProps) {
       const navigation = useDynamicNavigation();
       const isRTL = direction === "rtl";
 
-      // Top-level tabs
-      const tabItems = useMemo(() => {
-            const items: NavigationItem[] = [];
-            for (const item of navigation) {
-                  if (item.href) items.push(item);
-                  else if (item.children) {
-                        items.push(item);
-                  }
-            }
-            return items;
-      }, [navigation]);
+      const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+      const dropdownRef = useRef<HTMLDivElement>(null);
 
+      // Close dropdown on click outside
+      useEffect(() => {
+            const handler = (e: MouseEvent) => {
+                  if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+                        setOpenDropdown(null);
+                  }
+            };
+            document.addEventListener("mousedown", handler);
+            return () => document.removeEventListener("mousedown", handler);
+      }, []);
+
+      // Close on route change
+      useEffect(() => {
+            setOpenDropdown(null);
+      }, [pathname]);
+
+      // Active tab
       const activeTab = useMemo(() => {
             for (const item of navigation) {
                   if (item.href && isNavigationItemActive(item, pathname)) return item;
@@ -67,6 +76,20 @@ export function NewspaperLayout({ children }: NewspaperLayoutProps) {
             }
             return navigation[0] || null;
       }, [navigation, pathname]);
+
+      // Badge helper
+      const getGroupBadge = (item: NavigationItem): string | number | undefined => {
+            if (item.badge) return item.badge;
+            if (item.children) {
+                  let total = 0;
+                  for (const child of item.children) {
+                        if (child.badge && typeof child.badge === "number") total += child.badge;
+                        else if (child.badge) return child.badge;
+                  }
+                  return total > 0 ? total : undefined;
+            }
+            return undefined;
+      };
 
       return (
             <div
@@ -118,30 +141,90 @@ export function NewspaperLayout({ children }: NewspaperLayoutProps) {
                               </div>
                         </div>
 
-                        {/* Navigation tabs */}
-                        <div className="border-t border-border/50">
-                              <div className="flex items-center px-6 overflow-x-auto scrollbar-hide">
-                                    {tabItems.map((tab) => {
+                        {/* Navigation tabs with dropdowns */}
+                        <div className="border-t border-border/50" ref={dropdownRef}>
+                              <div className="flex items-center flex-wrap px-6">
+                                    {navigation.map((tab) => {
                                           const isActive = tab === activeTab;
                                           const Icon = tab.icon;
+                                          const hasChildren = tab.children && tab.children.length > 0;
+                                          const isDropdownOpen = openDropdown === tab.name;
+                                          const badge = getGroupBadge(tab);
+
                                           return (
-                                                <button
-                                                      key={tab.name}
-                                                      onClick={() => {
-                                                            if (tab.href) router.push(tab.href);
-                                                            else if (tab.children?.[0]?.href) router.push(tab.children[0].href);
-                                                      }}
-                                                      className={cn(
-                                                            "flex items-center gap-1.5 px-4 py-2 text-xs font-semibold uppercase tracking-wider whitespace-nowrap",
-                                                            "border-b-2 -mb-px transition-colors",
-                                                            isActive
-                                                                  ? "border-foreground text-foreground"
-                                                                  : "border-transparent text-muted-foreground hover:text-foreground",
+                                                <div key={tab.name} className="relative">
+                                                      <button
+                                                            onClick={() => {
+                                                                  if (hasChildren) {
+                                                                        setOpenDropdown(isDropdownOpen ? null : tab.name);
+                                                                  } else if (tab.href) {
+                                                                        router.push(tab.href);
+                                                                  }
+                                                            }}
+                                                            className={cn(
+                                                                  "flex items-center gap-1.5 px-4 py-2 text-xs font-semibold uppercase tracking-wider whitespace-nowrap",
+                                                                  "border-b-2 -mb-px transition-colors",
+                                                                  isActive
+                                                                        ? "border-foreground text-foreground"
+                                                                        : "border-transparent text-muted-foreground hover:text-foreground",
+                                                            )}
+                                                      >
+                                                            {Icon && <Icon className="w-3.5 h-3.5" />}
+                                                            {t(tab.name) || tab.name}
+                                                            {badge && (
+                                                                  <Badge variant="secondary" className="text-[10px] px-1 py-0 h-4 min-w-[14px] bg-primary/10 text-primary">
+                                                                        {badge}
+                                                                  </Badge>
+                                                            )}
+                                                            {hasChildren && (
+                                                                  <ChevronDown className={cn(
+                                                                        "w-3 h-3 transition-transform",
+                                                                        isDropdownOpen && "rotate-180",
+                                                                  )} />
+                                                            )}
+                                                      </button>
+
+                                                      {/* Dropdown for children */}
+                                                      {hasChildren && isDropdownOpen && (
+                                                            <div className={cn(
+                                                                  "absolute top-full mt-1 z-50",
+                                                                  "min-w-[200px] py-1",
+                                                                  "rounded-lg border border-border bg-card shadow-xl",
+                                                                  "animate-in fade-in slide-in-from-top-1 duration-150",
+                                                                  isRTL ? "right-0" : "left-0",
+                                                            )}>
+                                                                  {tab.children!.map((child) => {
+                                                                        const childActive = child.href && isNavigationItemActive(child, pathname);
+                                                                        const ChildIcon = child.icon;
+                                                                        return (
+                                                                              <button
+                                                                                    key={child.name}
+                                                                                    onClick={() => {
+                                                                                          if (child.href) {
+                                                                                                router.push(child.href);
+                                                                                                setOpenDropdown(null);
+                                                                                          }
+                                                                                    }}
+                                                                                    className={cn(
+                                                                                          "flex items-center gap-2.5 w-full px-4 py-2 text-sm transition-colors",
+                                                                                          childActive
+                                                                                                ? "bg-primary/10 text-primary font-medium"
+                                                                                                : "text-foreground/80 hover:bg-muted/60 hover:text-foreground",
+                                                                                    )}
+                                                                              >
+                                                                                    {ChildIcon && <ChildIcon className="w-3.5 h-3.5 shrink-0" />}
+                                                                                    <span className="flex-1 text-start">{t(child.name) || child.name}</span>
+                                                                                    {child.badge && (
+                                                                                          <Badge variant="secondary" className="text-[10px] px-1 py-0 h-4 bg-primary/10 text-primary">
+                                                                                                {child.badge}
+                                                                                          </Badge>
+                                                                                    )}
+                                                                              </button>
+                                                                        );
+                                                                  })}
+                                                            </div>
                                                       )}
-                                                >
-                                                      {Icon && <Icon className="w-3.5 h-3.5" />}
-                                                      {t(tab.name) || tab.name}
-                                                </button>
+                                                </div>
                                           );
                                     })}
                               </div>

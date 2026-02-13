@@ -8,6 +8,7 @@ import { useSettings } from "@core/providers/settings-provider";
 import { useLayoutStyles } from "@core/ui/layout/shared/use-layout-styles";
 import { Logo } from "@core/ui/logo";
 import { Button } from "@core/ui/button";
+import { Badge } from "@core/ui/badge";
 import { LanguageSwitcher, ThemeSwitcher } from "@core/ui/layout/common";
 import { UserProfileDropdown } from "@core/ui/user-profile-dropdown";
 import { Footer } from "@core/ui/layout/shared/footer";
@@ -49,7 +50,7 @@ export function SpotlightLayout({ children }: SpotlightLayoutProps) {
 
       // Get all navigable items as category pills
       const categoryPills = useMemo(() => {
-            const pills: { label: string; href: string; active: boolean; icon?: React.ComponentType<{ className?: string }> }[] = [];
+            const pills: { label: string; href: string; active: boolean; icon?: React.ComponentType<{ className?: string }>; badge?: string | number }[] = [];
             for (const item of navigation) {
                   if (item.href) {
                         pills.push({
@@ -57,6 +58,7 @@ export function SpotlightLayout({ children }: SpotlightLayoutProps) {
                               href: item.href,
                               active: isNavigationItemActive(item, pathname),
                               icon: item.icon,
+                              badge: item.badge,
                         });
                   }
                   if (item.children) {
@@ -67,6 +69,7 @@ export function SpotlightLayout({ children }: SpotlightLayoutProps) {
                                           href: child.href,
                                           active: isNavigationItemActive(child, pathname),
                                           icon: child.icon,
+                                          badge: child.badge,
                                     });
                               }
                         }
@@ -106,7 +109,7 @@ export function SpotlightLayout({ children }: SpotlightLayoutProps) {
 
                   {/* ── Giant Search Hero ── */}
                   <div className="px-6 pt-8 pb-4 flex flex-col items-center">
-                        <div className="w-full max-w-2xl">
+                        <div className="w-full max-w-3xl">
                               {/* Large search input */}
                               <div className={cn(
                                     "flex items-center gap-3 w-full px-5 py-4",
@@ -127,7 +130,7 @@ export function SpotlightLayout({ children }: SpotlightLayoutProps) {
                               </div>
 
                               {/* Category Pills */}
-                              <div className="flex items-center gap-2 mt-4 overflow-x-auto scrollbar-hide pb-1">
+                              <div className="flex flex-wrap items-center gap-2 mt-4 pb-1">
                                     {categoryPills.map((pill) => {
                                           const Icon = pill.icon;
                                           return (
@@ -144,6 +147,16 @@ export function SpotlightLayout({ children }: SpotlightLayoutProps) {
                                                 >
                                                       {Icon && <Icon className="w-3.5 h-3.5" />}
                                                       {pill.label}
+                                                      {pill.badge && (
+                                                            <Badge variant="secondary" className={cn(
+                                                                  "text-[10px] px-1.5 py-0 h-4 min-w-[14px]",
+                                                                  pill.active
+                                                                        ? "bg-white/20 text-primary-foreground"
+                                                                        : "bg-primary/10 text-primary",
+                                                            )}>
+                                                                  {pill.badge}
+                                                            </Badge>
+                                                      )}
                                                 </button>
                                           );
                                     })}
@@ -153,7 +166,7 @@ export function SpotlightLayout({ children }: SpotlightLayoutProps) {
 
                   {/* ── Content ── */}
                   <main className="flex-1 px-6">
-                        <div className="max-w-6xl mx-auto">
+                        <div className="max-w-7xl mx-auto">
                               <div className={cn(styles.getSpacingClass())}>
                                     <div
                                           style={{

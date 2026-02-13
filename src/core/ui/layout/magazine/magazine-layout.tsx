@@ -8,6 +8,7 @@ import { useSettings } from "@core/providers/settings-provider";
 import { useLayoutStyles } from "@core/ui/layout/shared/use-layout-styles";
 import { Logo } from "@core/ui/logo";
 import { Button } from "@core/ui/button";
+import { ScrollArea } from "@core/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@core/ui/tooltip";
 import { LanguageSwitcher, ThemeSwitcher } from "@core/ui/layout/common";
 import { UserProfileDropdown } from "@core/ui/user-profile-dropdown";
@@ -15,7 +16,6 @@ import { Footer } from "@core/ui/layout/shared/footer";
 import { useDynamicNavigation } from "@core/ui/navigation/dynamic-navigation";
 import {
       isNavigationItemActive,
-      getFlatNavigationItems,
       type NavigationItem,
 } from "@core/config/navigation";
 import { Bell } from "lucide-react";
@@ -30,9 +30,15 @@ interface MagazineLayoutProps {
  *
  * Structure:
  * - Ultra-slim left icon rail (48px) — icons only, tooltip on hover
- * - Wide centered content column (max-720px) — reading-optimized
+ * - Wide centered content column — reading-optimized
  * - Optional right widget sidebar (200px) — contextual widgets
  * - Thin top bar with minimal actions
+ *
+ * Fixes:
+ * - Only shows navigable items (with href) in the rail
+ * - Group parents are NOT shown as disabled — only their children appear
+ * - No arbitrary item cap — rail scrolls vertically
+ * - Badge dots on items with badges
  *
  * Inspired by Medium, Substack, Bloomberg, Financial Times
  */
@@ -43,22 +49,22 @@ export function MagazineLayout({ children }: MagazineLayoutProps) {
       const pathname = usePathname();
       const router = useRouter();
       const navigation = useDynamicNavigation();
-      const flatItems = useMemo(() => getFlatNavigationItems(navigation), [navigation]);
       const isRTL = direction === "rtl";
 
-      // Get navigable items for the icon rail
+      // Flatten to only navigable items (with href) — NO group parents
       const railItems = useMemo(() => {
             const items: NavigationItem[] = [];
             for (const item of navigation) {
-                  if (item.href) items.push(item);
-                  else if (item.children) {
-                        items.push(item); // group icon
+                  if (item.href) {
+                        items.push(item);
+                  } else if (item.children) {
+                        // Only push children with href, skip the parent
                         for (const child of item.children) {
                               if (child.href) items.push(child);
                         }
                   }
             }
-            return items.slice(0, 10);
+            return items; // No cap — scrollable rail
       }, [navigation]);
 
       return (
@@ -74,42 +80,55 @@ export function MagazineLayout({ children }: MagazineLayoutProps) {
                         className={cn(
                               "hidden lg:flex flex-col items-center w-12 shrink-0",
                               "bg-card border-e border-border",
-                              "py-3 gap-1",
                         )}
                   >
-                        <div className="mb-3">
+                        <div className="py-3 mb-1">
                               <Logo size="sm" />
                         </div>
 
-                        <TooltipProvider delayDuration={0}>
-                              <nav className="flex flex-col items-center gap-0.5 flex-1">
-                                    {railItems.map((item) => {
-                                          const Icon = item.icon;
-                                          const isActive = item.href ? isNavigationItemActive(item, pathname) : false;
-                                          return (
-                                                <Tooltip key={item.name}>
-                                                      <TooltipTrigger asChild>
-                                                            <button
-                                                                  onClick={() => item.href && router.push(item.href)}
-                                                                  className={cn(
-                                                                        "w-9 h-9 rounded-lg flex items-center justify-center transition-colors",
-                                                                        isActive
-                                                                              ? "bg-primary/15 text-primary"
-                                                                              : "text-muted-foreground hover:text-foreground hover:bg-muted/50",
-                                                                        !item.href && "opacity-50 cursor-default",
-                                                                  )}
-                                                            >
-                                                                  {Icon && <Icon className="w-4 h-4" />}
-                                                            </button>
-                                                      </TooltipTrigger>
-                                                      <TooltipContent side={isRTL ? "left" : "right"}>
-                                                            {t(item.name) || item.name}
-                                                      </TooltipContent>
-                                                </Tooltip>
-                                          );
-                                    })}
-                              </nav>
-                        </TooltipProvider>
+                        <ScrollArea className="flex-1 w-full">
+                              <TooltipProvider delayDuration={0}>
+                                    <nav className="flex flex-col items-center gap-0.5 px-1.5 py-1">
+                                          {railItems.map((item) => {
+                                                const Icon = item.icon;
+                                                const isActive = isNavigationItemActive(item, pathname);
+                                                return (
+                                                      <Tooltip key={item.name}>
+                                                            <TooltipTrigger asChild>
+                                                                  <button
+                                                                        onClick={() => item.href && router.push(item.href)}
+                                                                        className={cn(
+                                                                              "relative w-9 h-9 rounded-lg flex items-center justify-center transition-colors",
+                                                                              isActive
+                                                                                    ? "bg-primary/15 text-primary"
+                                                                                    : "text-muted-foreground hover:text-foreground hover:bg-muted/50",
+                                                                        )}
+                                                                  >
+                                                                        {Icon && <Icon className="w-4 h-4" />}
+
+                                                                        {/* Badge dot */}
+                                                                        {item.badge && (
+                                                                              <span className={cn(
+                                                                                    "absolute top-0.5 end-0.5 min-w-[14px] h-[14px]",
+                                                                                    "flex items-center justify-center",
+                                                                                    "rounded-full text-[8px] font-bold leading-none",
+                                                                                    "bg-destructive text-destructive-foreground",
+                                                                                    "px-0.5",
+                                                                              )}>
+                                                                                    {typeof item.badge === "number" ? item.badge : "•"}
+                                                                              </span>
+                                                                        )}
+                                                                  </button>
+                                                            </TooltipTrigger>
+                                                            <TooltipContent side={isRTL ? "left" : "right"}>
+                                                                  {t(item.name) || item.name}
+                                                            </TooltipContent>
+                                                      </Tooltip>
+                                                );
+                                          })}
+                                    </nav>
+                              </TooltipProvider>
+                        </ScrollArea>
                   </aside>
 
                   {/* ── Main Area ── */}

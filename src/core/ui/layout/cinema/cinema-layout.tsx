@@ -1,13 +1,14 @@
 "use client";
 
 import type React from "react";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSettings } from "@core/providers/settings-provider";
 import { useLayoutStyles } from "@core/ui/layout/shared/use-layout-styles";
 import { Logo } from "@core/ui/logo";
 import { Button } from "@core/ui/button";
+import { Badge } from "@core/ui/badge";
 import { ScrollArea } from "@core/ui/scroll-area";
 import { LanguageSwitcher, ThemeSwitcher } from "@core/ui/layout/common";
 import { UserProfileDropdown } from "@core/ui/user-profile-dropdown";
@@ -19,7 +20,7 @@ import {
       getFlatNavigationItems,
       type NavigationItem,
 } from "@core/config/navigation";
-import { Bell, Menu, X } from "lucide-react";
+import { Bell, Menu, X, ChevronDown } from "lucide-react";
 import { cn } from "@core/common/utils";
 
 interface CinemaLayoutProps {
@@ -32,9 +33,11 @@ interface CinemaLayoutProps {
  * Structure:
  * - No persistent sidebar (overlay-only when triggered)
  * - Horizontal scrollable nav in transparent header
+ * - If items overflow, a "More" dropdown shows remaining items
  * - Hero section at top with gradient background
  * - Content below in full width
  * - Dark immersive design
+ * - Badge counts on nav items
  *
  * Inspired by Netflix, Spotify, Apple TV+, Disney+
  */
@@ -50,6 +53,8 @@ export function CinemaLayout({ children }: CinemaLayoutProps) {
 
       const [sidebarOpen, setSidebarOpen] = useState(false);
       const [scrolled, setScrolled] = useState(false);
+      const [moreOpen, setMoreOpen] = useState(false);
+      const moreRef = useRef<HTMLDivElement>(null);
 
       // Track scroll for header transparency
       useEffect(() => {
@@ -58,9 +63,25 @@ export function CinemaLayout({ children }: CinemaLayoutProps) {
             return () => window.removeEventListener("scroll", handler);
       }, []);
 
-      // Get top-level nav items for horizontal nav
+      // Close "More" dropdown on outside click
+      useEffect(() => {
+            const handler = (e: MouseEvent) => {
+                  if (moreRef.current && !moreRef.current.contains(e.target as Node)) {
+                        setMoreOpen(false);
+                  }
+            };
+            document.addEventListener("mousedown", handler);
+            return () => document.removeEventListener("mousedown", handler);
+      }, []);
+
+      // Close on route change
+      useEffect(() => {
+            setMoreOpen(false);
+      }, [pathname]);
+
+      // Flatten navigation for horizontal nav — ALL items, no cap
       const navItems = useMemo(() => {
-            const items: { label: string; href: string; active: boolean; icon?: React.ComponentType<{ className?: string }> }[] = [];
+            const items: { label: string; href: string; active: boolean; icon?: React.ComponentType<{ className?: string }>; badge?: string | number }[] = [];
             for (const item of navigation) {
                   if (item.href) {
                         items.push({
@@ -68,6 +89,7 @@ export function CinemaLayout({ children }: CinemaLayoutProps) {
                               href: item.href,
                               active: isNavigationItemActive(item, pathname),
                               icon: item.icon,
+                              badge: item.badge,
                         });
                   }
                   if (item.children) {
@@ -78,6 +100,7 @@ export function CinemaLayout({ children }: CinemaLayoutProps) {
                                           href: child.href,
                                           active: isNavigationItemActive(child, pathname),
                                           icon: child.icon,
+                                          badge: child.badge,
                                     });
                               }
                         }
@@ -85,6 +108,11 @@ export function CinemaLayout({ children }: CinemaLayoutProps) {
             }
             return items;
       }, [navigation, pathname, t]);
+
+      // Split: show first 8 inline, rest in "More" dropdown
+      const VISIBLE_LIMIT = 8;
+      const visibleItems = navItems.slice(0, VISIBLE_LIMIT);
+      const overflowItems = navItems.slice(VISIBLE_LIMIT);
 
       // Get current page title
       const currentTitle = useMemo(() => {
@@ -124,14 +152,14 @@ export function CinemaLayout({ children }: CinemaLayoutProps) {
                                     <Logo size="sm" />
                               </div>
 
-                              {/* Horizontal nav — hidden on mobile */}
-                              <nav className="hidden lg:flex items-center gap-1 overflow-x-auto">
-                                    {navItems.slice(0, 6).map((item) => (
+                              {/* Horizontal nav */}
+                              <nav className="hidden lg:flex items-center flex-wrap gap-1">
+                                    {visibleItems.map((item) => (
                                           <button
                                                 key={item.href}
                                                 onClick={() => router.push(item.href)}
                                                 className={cn(
-                                                      "px-3 py-1.5 rounded-md text-sm font-medium whitespace-nowrap transition-colors",
+                                                      "flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium whitespace-nowrap transition-colors",
                                                       item.active
                                                             ? scrolled
                                                                   ? "bg-primary/10 text-primary"
@@ -142,8 +170,68 @@ export function CinemaLayout({ children }: CinemaLayoutProps) {
                                                 )}
                                           >
                                                 {item.label}
+                                                {item.badge && (
+                                                      <Badge variant="secondary" className={cn(
+                                                            "text-[10px] px-1 py-0 h-4 min-w-[14px]",
+                                                            item.active
+                                                                  ? scrolled ? "bg-primary/15 text-primary" : "bg-white/25 text-white"
+                                                                  : scrolled ? "bg-muted text-muted-foreground" : "bg-white/15 text-white/80",
+                                                      )}>
+                                                            {item.badge}
+                                                      </Badge>
+                                                )}
                                           </button>
                                     ))}
+
+                                    {/* "More" dropdown for overflow items */}
+                                    {overflowItems.length > 0 && (
+                                          <div ref={moreRef} className="relative">
+                                                <button
+                                                      onClick={() => setMoreOpen(!moreOpen)}
+                                                      className={cn(
+                                                            "flex items-center gap-1 px-3 py-1.5 rounded-md text-sm font-medium whitespace-nowrap transition-colors",
+                                                            scrolled
+                                                                  ? "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                                                                  : "text-white/70 hover:text-white hover:bg-white/10",
+                                                      )}
+                                                >
+                                                      {t("common.more") || "More"}
+                                                      <ChevronDown className={cn("w-3 h-3 transition-transform", moreOpen && "rotate-180")} />
+                                                </button>
+                                                {moreOpen && (
+                                                      <div className={cn(
+                                                            "absolute top-full mt-1 z-50",
+                                                            "min-w-[200px] py-1",
+                                                            "rounded-lg border border-border bg-card shadow-xl",
+                                                            "animate-in fade-in slide-in-from-top-1 duration-150",
+                                                            isRTL ? "right-0" : "left-0",
+                                                      )}>
+                                                            {overflowItems.map((item) => (
+                                                                  <button
+                                                                        key={item.href}
+                                                                        onClick={() => {
+                                                                              router.push(item.href);
+                                                                              setMoreOpen(false);
+                                                                        }}
+                                                                        className={cn(
+                                                                              "flex items-center gap-2.5 w-full px-4 py-2 text-sm transition-colors",
+                                                                              item.active
+                                                                                    ? "bg-primary/10 text-primary font-medium"
+                                                                                    : "text-foreground/80 hover:bg-muted/60 hover:text-foreground",
+                                                                        )}
+                                                                  >
+                                                                        <span className="flex-1 text-start">{item.label}</span>
+                                                                        {item.badge && (
+                                                                              <Badge variant="secondary" className="text-[10px] px-1 py-0 h-4 bg-primary/10 text-primary">
+                                                                                    {item.badge}
+                                                                              </Badge>
+                                                                        )}
+                                                                  </button>
+                                                            ))}
+                                                      </div>
+                                                )}
+                                          </div>
+                                    )}
                               </nav>
 
                               <div className="flex items-center gap-2">
@@ -176,7 +264,7 @@ export function CinemaLayout({ children }: CinemaLayoutProps) {
                                           isRTL ? "right-0" : "left-0",
                                           "bg-card border-e border-border",
                                           "shadow-2xl",
-                                          "animate-in slide-in-from-left duration-300",
+                                          isRTL ? "animate-in slide-in-from-right duration-300" : "animate-in slide-in-from-left duration-300",
                                     )}
                               >
                                     <div className="flex items-center justify-between p-4 h-14 border-b border-border">
