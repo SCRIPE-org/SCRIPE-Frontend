@@ -26,7 +26,13 @@ const PUBLIC_PAGES = [
   "/error",
   "/404",
   "/500",
-  "/settings"
+  "/settings",
+  "/profile",
+  "/profile/security",
+  "/profile/activity",
+  "/profile/sessions",
+  "/profile/notifications",
+  "/profile/settings"
 ];
 
 /**
