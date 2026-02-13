@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Avatar, AvatarFallback } from "@core/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@core/ui/avatar";
 import { Button } from "@core/ui/button";
 import {
   DropdownMenu,
@@ -18,6 +18,21 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { cn } from "@core/common/utils";
 import { useSettings } from "@core/providers/settings-provider";
 import { appLogger } from "@core/common/logger";
+
+const API_URL = process.env.NEXT_PUBLIC_File_URL || "";
+
+/**
+ * Build the full avatar URL by prepending the API base URL
+ * if the path is relative (starts with /).
+ * Also strips any existing ?v= cache-buster and appends a fresh one.
+ */
+function getAvatarUrl(profileImageUrl: string | null | undefined): string | undefined {
+  if (!profileImageUrl) return undefined;
+  // Strip any query string
+  const base = `${API_URL}${profileImageUrl}`;
+  // Append cache-buster to force reload after avatar change
+  return `${base}?v=${Date.now()}`;
+}
 
 interface UserProfileDropdownProps {
   variant?:
@@ -44,6 +59,8 @@ export function UserProfileDropdown({
   const settings = useSettings();
 
   if (!user || !settings.showUserAvatar) return null;
+
+  const avatarUrl = getAvatarUrl(user.profileImageUrl);
 
   const getInitials = () => {
     // Safe handling of user name
@@ -124,6 +141,7 @@ export function UserProfileDropdown({
           )}
         >
           <Avatar className={cn(getAvatarSize(), "border-2 border-primary/20")}>
+            {avatarUrl && <AvatarImage src={avatarUrl} alt={getDisplayName()} />}
             <AvatarFallback className="bg-gradient-to-br from-blue-400 to-blue-600 text-white font-semibold text-sm">
               {getInitials()}
             </AvatarFallback>
@@ -168,6 +186,7 @@ export function UserProfileDropdown({
       >
         <div className="flex items-center gap-3 p-2 mb-2">
           <Avatar className="h-10 w-10 border-2 border-primary/20">
+            {avatarUrl && <AvatarImage src={avatarUrl} alt={getDisplayName()} />}
             <AvatarFallback className="bg-gradient-to-br from-blue-400 to-blue-600 text-white font-semibold">
               {getInitials()}
             </AvatarFallback>

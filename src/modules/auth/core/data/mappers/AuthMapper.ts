@@ -115,6 +115,7 @@ export class AuthMapper {
       lastName: json.lastName || "",
       phoneNumber: json.phoneNumber || "",
       adminTypeName: json.adminTypeName || "",
+      profileImageUrl: json.profileImageUrl ?? null,
       role:
         json.roles?.[0]?.roleCode || json.roles?.[0]?.roleName || undefined,
       permissions: json.permissions || [],

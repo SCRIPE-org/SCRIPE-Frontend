@@ -41,10 +41,11 @@ export class ProfileRepository implements IProfileRepository {
       async uploadAvatar(file: File): Promise<{ profileImageUrl: string }> {
             const formData = new FormData();
             formData.append("image", file);
-            return await this.api.post<{ profileImageUrl: string }>(
+            const response = await this.api.post<{ imageUrl: string }>(
                   API_ENDPOINTS.PROFILE.AVATAR,
                   formData
             );
+            return { profileImageUrl: response.imageUrl };
       }
 
       async removeAvatar(): Promise<void> {

@@ -4,11 +4,13 @@
  * Avatar ViewModel
  *
  * Handles avatar upload and removal with preview.
+ * After upload/remove, updates the app store user so the dropdown reflects changes immediately.
  */
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState, useCallback } from "react";
 import { container } from "../../../di";
 import { profileKeys } from "./useProfilePageViewModel";
+import { useAppStore } from "@core/store/useAppStore";
 
 export function useAvatarViewModel() {
       const repo = container.profileRepository;
@@ -17,9 +19,17 @@ export function useAvatarViewModel() {
 
       const uploadMutation = useMutation({
             mutationFn: (file: File) => repo.uploadAvatar(file),
-            onSuccess: () => {
+            onSuccess: (data) => {
                   queryClient.invalidateQueries({ queryKey: profileKeys.me() });
                   setPreviewUrl(null);
+
+                  // Update the app store so the dropdown avatar reflects immediately
+                  const currentUser = useAppStore.getState().user;
+                  if (currentUser && data?.profileImageUrl) {
+                        useAppStore.getState().setUser(
+                              currentUser.update({ profileImageUrl: data.profileImageUrl })
+                        );
+                  }
             },
       });
 
@@ -28,6 +38,14 @@ export function useAvatarViewModel() {
             onSuccess: () => {
                   queryClient.invalidateQueries({ queryKey: profileKeys.me() });
                   setPreviewUrl(null);
+
+                  // Clear avatar from the app store
+                  const currentUser = useAppStore.getState().user;
+                  if (currentUser) {
+                        useAppStore.getState().setUser(
+                              currentUser.update({ profileImageUrl: null })
+                        );
+                  }
             },
       });
 

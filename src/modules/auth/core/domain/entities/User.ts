@@ -13,6 +13,7 @@ export interface UserData {
   lastName: string;
   phoneNumber: string;
   adminTypeName: string;
+  profileImageUrl?: string | null;
   role?: string;
   permissions?: string[];
   isProtected?: boolean;
@@ -26,6 +27,7 @@ export class User {
   public readonly lastName: string;
   public readonly phoneNumber: string;
   public readonly adminTypeName: string;
+  public readonly profileImageUrl?: string | null;
   public readonly role?: string;
   public readonly permissions?: string[];
   public readonly isProtected: boolean;
@@ -38,6 +40,7 @@ export class User {
     this.lastName = data.lastName;
     this.phoneNumber = data.phoneNumber;
     this.adminTypeName = data.adminTypeName;
+    this.profileImageUrl = data.profileImageUrl ?? null;
     this.role = data.role;
     this.permissions = data.permissions;
     this.isProtected = data.isProtected ?? false;
@@ -76,6 +79,7 @@ export class User {
       lastName: this.lastName,
       phoneNumber: this.phoneNumber,
       adminTypeName: this.adminTypeName,
+      profileImageUrl: this.profileImageUrl,
       role: this.role,
       permissions: this.permissions,
       isProtected: this.isProtected,

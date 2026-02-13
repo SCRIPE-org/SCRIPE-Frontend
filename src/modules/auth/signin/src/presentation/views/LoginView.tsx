@@ -73,11 +73,11 @@ export function LoginView() {
             </div>
           ) : (
             <div>
-              <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-3">
-                <ShieldCheck className="h-6 w-6 text-primary" />
+              <div className="mx-auto w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/10 flex items-center justify-center mb-4 shadow-lg shadow-primary/10">
+                <ShieldCheck className="h-8 w-8 text-primary animate-in zoom-in-50 duration-500" />
               </div>
               <h1 className="text-2xl font-bold">{t("auth.twoFactor.title")}</h1>
-              <p className="text-muted-foreground mt-2">
+              <p className="text-muted-foreground mt-2 text-sm leading-relaxed">
                 {vm.useBackupCode
                   ? t("auth.twoFactor.enterBackupCode")
                   : t("auth.twoFactor.enterAuthCode")}
@@ -170,22 +170,28 @@ export function LoginView() {
           {vm.loginStep === "two-factor" && (
             <div className="space-y-6">
               {vm.error && (
-                <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-sm">
-                  {vm.error}
+                <div className="p-3.5 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-sm flex items-center gap-2.5 animate-in slide-in-from-top-2 duration-300">
+                  <div className="h-5 w-5 rounded-full bg-destructive/20 flex items-center justify-center flex-shrink-0">
+                    <span className="text-xs font-bold">!</span>
+                  </div>
+                  <span>{vm.error}</span>
                 </div>
               )}
 
               {vm.useBackupCode ? (
                 /* Backup Code Input */
-                <div className="space-y-2">
-                  <Label htmlFor="backup-code">{t("auth.twoFactor.backupCode")}</Label>
+                <div className="space-y-3">
+                  <Label htmlFor="backup-code" className="text-sm font-medium">
+                    {t("auth.twoFactor.backupCode")}
+                  </Label>
                   <Input
                     id="backup-code"
                     type="text"
                     value={vm.twoFactorCode}
                     onChange={(e) => vm.setTwoFactorCode(e.target.value)}
                     placeholder="XXXX-XXXX"
-                    className="h-12 text-center text-lg font-mono tracking-wider"
+                    className="h-14 text-center text-lg font-mono tracking-[0.3em] border-2 focus:border-primary/50 transition-colors"
+                    style={{ direction: "ltr" }}
                     disabled={vm.isVerifying2FA}
                     autoFocus
                     onKeyDown={(e) => {
@@ -196,25 +202,26 @@ export function LoginView() {
                   />
                 </div>
               ) : (
-                /* TOTP Code Input */
-                <div className="flex flex-col items-center gap-4">
+                /* TOTP Code Input — always LTR */
+                <div className="flex flex-col items-center gap-2" dir="ltr">
                   <InputOTP
                     maxLength={6}
                     value={vm.twoFactorCode}
                     onChange={vm.setTwoFactorCode}
                     disabled={vm.isVerifying2FA}
                     onComplete={vm.handleVerify2FA}
+                    className="gap-2"
                   >
-                    <InputOTPGroup>
-                      <InputOTPSlot index={0} />
-                      <InputOTPSlot index={1} />
-                      <InputOTPSlot index={2} />
+                    <InputOTPGroup className="gap-1.5">
+                      <InputOTPSlot index={0} className="h-14 w-12 text-xl font-semibold border-2 rounded-xl transition-all focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20" />
+                      <InputOTPSlot index={1} className="h-14 w-12 text-xl font-semibold border-2 rounded-xl transition-all focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20" />
+                      <InputOTPSlot index={2} className="h-14 w-12 text-xl font-semibold border-2 rounded-xl transition-all focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20" />
                     </InputOTPGroup>
-                    <span className="text-muted-foreground">-</span>
-                    <InputOTPGroup>
-                      <InputOTPSlot index={3} />
-                      <InputOTPSlot index={4} />
-                      <InputOTPSlot index={5} />
+                    <span className="text-xl font-light text-muted-foreground/50 mx-1">–</span>
+                    <InputOTPGroup className="gap-1.5">
+                      <InputOTPSlot index={3} className="h-14 w-12 text-xl font-semibold border-2 rounded-xl transition-all focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20" />
+                      <InputOTPSlot index={4} className="h-14 w-12 text-xl font-semibold border-2 rounded-xl transition-all focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20" />
+                      <InputOTPSlot index={5} className="h-14 w-12 text-xl font-semibold border-2 rounded-xl transition-all focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20" />
                     </InputOTPGroup>
                   </InputOTP>
                 </div>
@@ -222,7 +229,7 @@ export function LoginView() {
 
               <Button
                 type="button"
-                className="w-full h-12 gradient-primary"
+                className="w-full h-12 gradient-primary text-base font-medium shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-shadow"
                 disabled={vm.isVerifying2FA || !vm.twoFactorCode.trim()}
                 onClick={vm.handleVerify2FA}
               >
@@ -232,33 +239,41 @@ export function LoginView() {
                     <span>{t("auth.twoFactor.verifying")}</span>
                   </div>
                 ) : (
-                  t("auth.twoFactor.verify")
+                  <div className="flex items-center gap-2">
+                    <ShieldCheck className="h-4.5 w-4.5" />
+                    <span>{t("auth.twoFactor.verify")}</span>
+                  </div>
                 )}
               </Button>
 
+              {/* Divider */}
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-border/50" />
+                </div>
+              </div>
+
               {/* Toggle between TOTP and backup code */}
-              <div className="text-center">
+              <div className="flex flex-col items-center gap-1 pt-1">
                 <Button
                   type="button"
                   variant="ghost"
                   size="sm"
-                  className="text-xs text-muted-foreground hover:text-foreground"
+                  className="text-sm text-muted-foreground hover:text-primary transition-colors"
                   onClick={vm.toggleBackupCode}
                 >
-                  <KeyRound className="h-3 w-3 me-1.5" />
+                  <KeyRound className="h-3.5 w-3.5 me-2" />
                   {vm.useBackupCode
                     ? t("auth.twoFactor.useAuthenticator")
                     : t("auth.twoFactor.useBackupCode")}
                 </Button>
-              </div>
 
-              {/* Back button */}
-              <div className="text-center">
+                {/* Back button */}
                 <Button
                   type="button"
                   variant="ghost"
                   size="sm"
-                  className="text-xs text-muted-foreground hover:text-foreground"
+                  className="text-xs text-muted-foreground/70 hover:text-foreground transition-colors"
                   onClick={vm.goBackToCredentials}
                   disabled={vm.isVerifying2FA}
                 >

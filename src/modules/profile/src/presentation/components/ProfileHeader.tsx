@@ -29,11 +29,16 @@ export function ProfileHeader({ profile, isLoading }: ProfileHeaderProps) {
       const initials = `${(profile.firstName?.[0] ?? "").toUpperCase()}${(profile.lastName?.[0] ?? "").toUpperCase()}` || "U";
       const fullName = `${profile.firstName} ${profile.lastName}`.trim() || profile.username;
 
+      const fileUrl = process.env.NEXT_PUBLIC_File_URL || "";
+      const avatarSrc = profile.profileImageUrl
+            ? `${fileUrl}${profile.profileImageUrl}`
+            : null;
+
       return (
             <div className="flex flex-col items-center gap-3 p-4">
                   <Avatar className="h-20 w-20 border-2 border-primary/20 shadow-lg">
-                        {profile.profileImageUrl && (
-                              <AvatarImage src={profile.profileImageUrl} alt={fullName} />
+                        {avatarSrc && (
+                              <AvatarImage src={avatarSrc} alt={fullName} />
                         )}
                         <AvatarFallback className="bg-gradient-to-br from-blue-500 to-indigo-600 text-white text-xl font-semibold">
                               {initials}

@@ -41,7 +41,11 @@ export function AvatarUpload({
       const [localError, setLocalError] = useState<string | null>(null);
       const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-      const displayUrl = previewUrl || currentImageUrl;
+      const fileUrl = process.env.NEXT_PUBLIC_File_URL || "";
+      const resolvedImageUrl = currentImageUrl
+            ? `${fileUrl}${currentImageUrl}`
+            : null;
+      const displayUrl = previewUrl || resolvedImageUrl;
 
       const handleFile = useCallback(
             (file: File) => {
