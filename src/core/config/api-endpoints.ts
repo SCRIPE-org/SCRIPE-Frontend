@@ -59,6 +59,19 @@ export const API_ENDPOINTS = {
     SYNC_ROLES: (id: string) => `/Admins/${id}/roles/sync`,
   },
 
+  // ===== PROFILE (Self-Service) =====
+  PROFILE: {
+    ME: "/auth/admin/me",
+    UPDATE_ME: "/auth/admin/me",
+    AVATAR: "/auth/admin/me/avatar",
+    CHANGE_PASSWORD: (id: string) => `/Admins/${id}/change-password`,
+    SESSIONS: "/auth/admin/sessions",
+    REVOKE_SESSION: (tokenId: string) => `/auth/admin/sessions/${tokenId}`,
+    REVOKE_ALL_SESSIONS: "/auth/admin/sessions/revoke-all",
+    BACKUP_CODES_REGENERATE: "/auth/admin/2fa/backup-codes/regenerate",
+    SECURITY_LOG: "/auth/admin/security-log",
+  },
+
   // Legacy profile endpoints
   UPDATE_ADMIN_PROFILE: "/auth/admin/me",
   CHANGE_ADMIN_PASSWORD: "/auth/admin/me/password",

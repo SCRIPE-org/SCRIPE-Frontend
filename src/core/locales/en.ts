@@ -1285,86 +1285,7 @@ export const en = {
 
   // Months
 
-  // Profile
-  profile: {
-    title: "Profile",
-    subtitle: "Manage your personal info and password",
-    personalInformation: "Personal Information",
-    firstName: "First Name",
-    lastName: "Last Name",
-    phoneNumber: "Phone Number",
-    updateProfile: "Update Profile",
-    updateSuccess: "Profile updated successfully!",
-
-    // Header section
-    online: "Online",
-    changePhoto: "Change Photo",
-    accountOverview: "Account Overview",
-    profileComplete: "Profile Complete",
-    accountStatus: "Account Status",
-    accessLevel: "Access Level",
-    securityStatus: "Security Status",
-    active: "Active",
-    admin: "Admin",
-    secure: "Secure",
-
-    // Info cards
-    username: "Username",
-    phone: "Phone",
-    role: "Role",
-    status: "Status",
-
-    // Form descriptions
-    personalInfoDescription:
-      "Update your personal details and contact information",
-    passwordDescription: "Update your password to keep your account secure",
-
-    // Password section
-    password: {
-      title: "Change Password",
-      current: "Current Password",
-      new: "New Password",
-      confirm: "Confirm New Password",
-      requirements: "Password Requirements",
-      requirementLength: "At least 6 characters long",
-      requirementCase: "Mix of uppercase and lowercase letters",
-      requirementNumbers: "Include numbers and special characters",
-      success: "Password updated successfully!",
-      update: "Update Password",
-      updating: "Updating Password...",
-      description: "Update your password to keep your account secure",
-    },
-
-    // Sidebar sections
-    accountSecurity: "Account Security",
-    twoFactorAuth: "Two-Factor Auth",
-    enabled: "Enabled",
-    lastLogin: "Last Login",
-    loginLocation: "Login Location",
-    quickActions: "Quick Actions",
-    exportProfileData: "Export Profile Data",
-    privacySettings: "Privacy Settings",
-    activityLog: "Activity Log",
-    systemInfo: "System Info",
-    accountType: "Account Type",
-    memberSince: "Member Since",
-    profileVersion: "Profile Version",
-
-    // Time formats
-    hoursAgo: "{hours} hours ago",
-    minutesAgo: "{minutes} minutes ago",
-    daysAgo: "{days} days ago",
-
-    errors: {
-      fetch: "Failed to load profile",
-      update: "Failed to update profile",
-      passwordMismatch: "New passwords do not match",
-      passwordLength: "New password must be at least 6 characters",
-      currentPassword: "Current password is incorrect",
-      updatePassword: "Failed to update password",
-      unexpected: "An unexpected error occurred",
-    },
-  },
+  
 
   // Settings
   settings: {
@@ -4075,6 +3996,92 @@ export const en = {
     security: {
       title: "Export Security Report",
       description: "Threat summary, failed logins, and blocked IPs",
+    },
+  },
+
+  // Profile Module
+  profile: {
+    nav: {
+      general: "General",
+      security: "Security",
+      sessions: "Sessions",
+      activity: "Activity",
+    },
+    avatar: {
+      clickOrDrag: "Click or drag to upload a new photo",
+      formats: "JPG, PNG, or WebP • Max 5MB",
+      recommended: "Recommended: 256×256px or larger",
+      upload: "Upload",
+      remove: "Remove",
+    },
+    fields: {
+      firstName: "First Name",
+      lastName: "Last Name",
+      phoneNumber: "Phone Number",
+      username: "Username",
+      usernameHint: "Username cannot be changed",
+      role: "Role",
+    },
+    general: {
+      title: "General",
+      description: "Manage your personal information and profile picture.",
+      profilePicture: "Profile Picture",
+      personalInfo: "Personal Information",
+      saved: "Profile updated successfully!",
+    },
+    security: {
+      title: "Security",
+      description: "Manage your password and two-factor authentication settings.",
+      changePassword: "Change Password",
+      currentPassword: "Current Password",
+      newPassword: "New Password",
+      confirmPassword: "Confirm New Password",
+      updatePassword: "Update Password",
+      passwordChanged: "Password changed successfully!",
+      passwordMismatch: "Passwords do not match",
+      passwordExpired: "Your password has expired. Please change it immediately.",
+      passwordExpiringSoon: "Your password expires in {{days}} days.",
+      lastChanged: "Last changed",
+      twoFactorCode: "Two-Factor Code",
+      twoFactorCodeHint: "Enter the code from your authenticator app",
+      strength: {
+        minLength: "8+ characters",
+        uppercase: "Uppercase letter",
+        number: "Number",
+        special: "Special character",
+      },
+      twoFactor: {
+        title: "Two-Factor Authentication",
+        sectionTitle: "Two-Factor Authentication",
+        enabled: "Your account is protected with 2FA",
+        disabled: "2FA is not enabled for your account",
+        backupCodes: "Backup Codes Remaining",
+        regenerate: "Regenerate Codes",
+      },
+      backupCodes: {
+        title: "Backup Codes",
+        warning: "Regenerating will invalidate all existing backup codes. Make sure to save the new ones.",
+        saveWarning: "Save these codes somewhere safe. They will not be shown again.",
+        regenerate: "Regenerate",
+      },
+    },
+    sessions: {
+      title: "Active Sessions",
+      description: "Manage your active login sessions across devices.",
+      current: "Current",
+      currentSession: "Current Session",
+      otherSessions: "Other Sessions",
+      signedIn: "Signed in",
+      expires: "Expires",
+      revoke: "Revoke",
+      revokeAll: "Revoke All",
+      noOther: "No other active sessions",
+      securityTip: "If you notice any suspicious sessions, revoke them immediately and change your password.",
+    },
+    activity: {
+      title: "Activity Log",
+      description: "Review your recent security-related activity.",
+      noEntries: "No activity recorded yet.",
     },
   },
 

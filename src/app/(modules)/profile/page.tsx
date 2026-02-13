@@ -1,18 +1,10 @@
-import { Metadata } from 'next';
-import { ModuleErrorBoundary } from '@core/ui/module-error-boundary';
-import { ProfileView } from '@modules/user/src/presentation/views/ProfileView';
+import { ProfileGeneralView } from "@modules/profile/src/presentation/views/ProfileGeneralView";
 
-export const metadata: Metadata = {
-      title: 'Profile | Verified',
-      description: 'View and update your account profile and preferences',
+export const metadata = {
+      title: "Profile | Verified",
+      description: "Manage your profile settings",
 };
 
 export default function ProfilePage() {
-      return (
-            <main>
-                  <ModuleErrorBoundary moduleName="Profile">
-                        <ProfileView />
-                  </ModuleErrorBoundary>
-            </main>
-      );
+      return <ProfileGeneralView />;
 }

@@ -8,16 +8,14 @@ import { ApiService, NotificationService, NavigationService } from "@core/servic
 
 import { AuthService, type IAuthService } from "@modules/auth/core/data/services/AuthService";
 import { AuthRepository } from "@modules/auth/core/data/repositories/AuthRepository";
-import { UserProfileService, type IUserProfileService } from "@modules/user/src/data/services/UserProfileService";
-import { UserProfileRepository } from "@modules/user/src/data/repositories/UserProfileRepository";
 import type { IAuthRepository } from "@modules/auth/core/domain/interfaces/IAuthRepository";
-import type { IUserProfileRepository } from "@modules/user/src/domain/interfaces/IUserProfileRepository";
 import type { IApiService } from "@core/interfaces/api.interface";
 
 /**
  * Services Interface
  * 
  * SOLID: Interface Segregation - expose interfaces not implementations
+ * NOTE: Profile module now uses its own DI container (profile/di.ts)
  */
 interface Services {
   apiService: IApiService;
@@ -25,7 +23,6 @@ interface Services {
   navigationService: NavigationService;
   authService: IAuthService;
   authRepository: IAuthRepository;
-  userProfileRepository: IUserProfileRepository;
 }
 
 const ServiceContext = createContext<Services | null>(null);
@@ -37,8 +34,6 @@ const ServiceContext = createContext<Services | null>(null);
  * Creates: Service → Repository chain with proper dependency injection.
  */
 import { getCoreContainer } from "@core/di";
-
-// ...
 
 export function ServiceProvider({ children }: { children: React.ReactNode }) {
   const services = useMemo(() => {
@@ -52,17 +47,12 @@ export function ServiceProvider({ children }: { children: React.ReactNode }) {
     const authService = new AuthService(apiService);
     const authRepository = new AuthRepository(authService);
 
-    // User Module - SOLID: Service → Repository
-    const userProfileService = new UserProfileService(apiService);
-    const userProfileRepository = new UserProfileRepository(userProfileService);
-
     return {
       apiService,
       notificationService,
       navigationService,
       authService,
       authRepository,
-      userProfileRepository,
     };
   }, []);
 
