@@ -27,10 +27,10 @@ export function CompactSidebar({
   } = useLayoutStyles();
 
   const sidebarStyleClass = getSidebarStyleClass({
-    compact: "w-56",
-    floating: "w-64 m-2 rounded-2xl shadow-2xl",
-    minimal: "w-60 border-r-0 shadow-lg",
-    default: "w-64",
+    compact: "w-64",
+    floating: "w-72 m-2 rounded-2xl shadow-2xl",
+    minimal: "w-72 border-r-0 shadow-lg",
+    default: "w-72",
   });
   const animationClass = getAnimationClass();
 

@@ -84,8 +84,8 @@ export function CompactLayout({
         className={cn(
           getAnimationClass(),
           settings.stickyHeader ? "pt-16" : "pt-4",
-          // Desktop margins - sidebar width is 16rem (256px)
-          direction === "rtl" ? "lg:mr-64" : "lg:ml-64"
+          // Desktop margins - sidebar width is 18rem (288px)
+          direction === "rtl" ? "lg:mr-72" : "lg:ml-72"
         )}
       >
         <div className={cn(getSpacingClass())}>
@@ -93,11 +93,11 @@ export function CompactLayout({
             className={cn(
               "animate-fade-in space-y-6 max-w-7xl mx-auto",
               settings.cardStyle === "bordered" &&
-                "border border-border rounded-lg p-6",
+              "border border-border rounded-lg p-6",
               settings.cardStyle === "elevated" &&
-                "bg-card shadow-lg rounded-lg p-6",
+              "bg-card shadow-lg rounded-lg p-6",
               settings.cardStyle === "glass" &&
-                "bg-background/80 backdrop-blur-sm rounded-lg p-6"
+              "bg-background/80 backdrop-blur-sm rounded-lg p-6"
             )}
             style={{
               borderRadius: `var(--border-radius)`,
@@ -110,18 +110,18 @@ export function CompactLayout({
         </div>
       </main>
 
-        {settings.showFooter && <Footer />}
+      {settings.showFooter && <Footer />}
 
-        {/* Mobile overlay */}
-        {sidebarOpen && settings.collapsibleSidebar && (
-          <div
-            className={cn(
-              "fixed inset-0 bg-black/50 z-30 lg:hidden",
-              getAnimationClass()
-            )}
-            onClick={() => onSidebarOpenChange(false)}
-          />
-        )}
-      </div>
-    );
-  }
+      {/* Mobile overlay */}
+      {sidebarOpen && settings.collapsibleSidebar && (
+        <div
+          className={cn(
+            "fixed inset-0 bg-black/50 z-30 lg:hidden",
+            getAnimationClass()
+          )}
+          onClick={() => onSidebarOpenChange(false)}
+        />
+      )}
+    </div>
+  );
+}

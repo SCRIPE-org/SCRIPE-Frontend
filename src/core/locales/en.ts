@@ -2730,6 +2730,9 @@ export const en = {
 
   // Layout Templates
   layout: {
+    detail_panel: "Detail Panel",
+    detail_placeholder: "Select an item to view its details here",
+    navigate: "Navigate",
     hide_panel: "Hide panel",
     show_panel: "Show panel",
     classic: "Classic",
@@ -2844,6 +2847,9 @@ export const en = {
   },
   // Common
   common: {
+    navigate: "Navigate",
+    open: "Open",
+    recent:"Recently used",
     exit: "Exit",
     selected: "Selected",
     groups: "Groups",
@@ -2891,7 +2897,6 @@ export const en = {
     sort: "Sort",
     import: "Import",
     refresh: "Refresh",
-    open: "Open",
     download: "Download",
     upload: "Upload",
     share: "Share",

@@ -33,7 +33,7 @@ export function ElegantSidebar({
   const sidebarWidth =
     sidebarStyle === "compact" ? "w-64"
       : sidebarStyle === "floating" ? "w-72 m-3 rounded-2xl shadow-xl"
-        : sidebarStyle === "minimal" ? "w-60 border-r-0"
+        : sidebarStyle === "minimal" ? "w-72 border-r-0"
           : "w-72";
 
   return (

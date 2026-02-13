@@ -150,7 +150,7 @@ export function TabbedLayout({
                   {hasSubNav && (
                         <aside
                               className={cn(
-                                    "fixed top-[6.25rem] bottom-0 z-20 w-60 bg-card/50 border-e border-border overflow-y-auto hidden lg:block",
+                                    "fixed top-[6.25rem] bottom-0 z-20 w-72 bg-card/50 border-e border-border overflow-y-auto hidden lg:block",
                                     direction === "rtl" ? "right-0" : "left-0"
                               )}
                         >
@@ -203,7 +203,7 @@ export function TabbedLayout({
                   <main
                         className={cn(
                               "pt-[6.25rem] transition-all duration-300",
-                              hasSubNav ? (direction === "rtl" ? "lg:pr-60" : "lg:pl-60") : ""
+                              hasSubNav ? (direction === "rtl" ? "lg:pr-72" : "lg:pl-72") : ""
                         )}
                   >
                         <div className="p-6 animate-fade-in">{children}</div>

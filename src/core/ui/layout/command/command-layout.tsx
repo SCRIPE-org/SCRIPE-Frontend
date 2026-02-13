@@ -76,7 +76,7 @@ export function CommandLayout({ children }: CommandLayoutProps) {
                   <header className="fixed top-0 inset-x-0 z-40 h-9 bg-card/80 backdrop-blur-md border-b border-border/50 flex items-center px-4 lg:px-6">
                         {/* Left: Logo + Breadcrumbs */}
                         <div className="flex items-center gap-2 flex-1 min-w-0">
-                              <div className="w-5 h-5 bg-primary rounded flex items-center justify-center shrink-0">
+                              <div className="w-5 h-5 mx-6 bg-primary rounded flex items-center justify-center shrink-0">
                                     <Logo size="xs" className="text-primary-foreground" />
                               </div>
 

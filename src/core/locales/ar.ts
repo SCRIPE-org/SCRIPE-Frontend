@@ -2812,6 +2812,8 @@ export const ar = {
 
   // Layout Templates
   layout: {
+    detail_panel: "لوحة التفاصيل",
+    detail_placeholder: "اختر عنصراً لعرض تفاصيله هنا",
     hide_panel: "اخفاء القائمة",
     show_panel: "إظهار القائمة",
     classic: "كلاسيكي",
@@ -2919,6 +2921,9 @@ export const ar = {
 
   // Common
   common: {
+    navigate: "انتقال",
+    open: "فتح",
+    recent:"مستخدم مؤخرا",
     clearSelection: "مسح التحديد",
     page: "صفحة",
     reset: "إعادة تعيين",

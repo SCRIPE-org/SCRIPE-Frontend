@@ -306,7 +306,7 @@ export function NavRenderer({
                                     >
                                           <div className={cn("flex items-center min-w-0", style.gap)}>
                                                 {iconElement}
-                                                <span className="truncate">{item.name}</span>
+                                                <span className="break-words leading-snug">{item.name}</span>
                                                 {badgeElement}
                                           </div>
                                           <ChevronDown
@@ -346,7 +346,7 @@ export function NavRenderer({
                   >
                         <div className={cn("flex items-center min-w-0", style.gap)}>
                               {iconElement}
-                              <span className="truncate">{item.name}</span>
+                              <span className="break-words leading-snug">{item.name}</span>
                         </div>
                         {badgeElement}
                   </Link>

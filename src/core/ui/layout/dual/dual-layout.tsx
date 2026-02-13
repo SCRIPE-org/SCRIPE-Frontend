@@ -43,7 +43,7 @@ export function DualLayout({
 }: DualLayoutProps) {
       const { t, direction } = useI18n();
       const { showFooter } = useSettings();
-      const [detailOpen, setDetailOpen] = useState(false);
+      const [detailOpen, setDetailOpen] = useState(true);
 
       return (
             <div
@@ -97,7 +97,7 @@ export function DualLayout({
                   {/* ── LEFT SIDEBAR (desktop) ── */}
                   <aside
                         className={cn(
-                              "fixed top-14 bottom-0 z-20 w-60 bg-sidebar border-e border-sidebar-border overflow-y-auto hidden lg:flex flex-col",
+                              "fixed top-14 bottom-0 z-20 w-72 bg-sidebar border-e border-sidebar-border overflow-y-auto hidden lg:flex flex-col",
                               direction === "rtl" ? "right-0" : "left-0"
                         )}
                   >
@@ -167,7 +167,7 @@ export function DualLayout({
                   <main
                         className={cn(
                               "pt-14 transition-all duration-300",
-                              direction === "rtl" ? "lg:pr-60" : "lg:pl-60",
+                              direction === "rtl" ? "lg:pr-72" : "lg:pl-72",
                               detailOpen && (direction === "rtl" ? "lg:pl-80" : "lg:pr-80")
                         )}
                   >
