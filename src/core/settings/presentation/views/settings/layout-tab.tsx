@@ -17,6 +17,19 @@ import {
   Command,
   Layers,
   Monitor,
+  Anchor,
+  Briefcase,
+  BookOpen,
+  Search,
+  AlignVerticalJustifyStart,
+  Aperture,
+  Orbit,
+  Zap,
+  Clock3,
+  Waves,
+  Newspaper,
+  Clapperboard,
+  Vault,
 } from "lucide-react";
 import { useSettings } from "@core/providers/settings-provider";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -31,7 +44,7 @@ interface LayoutOption {
   preview: React.ReactNode;
 }
 
-type LayoutCategory = "sidebar" | "alternative";
+type LayoutCategory = "sidebar" | "alternative" | "structural" | "visual" | "specialized";
 
 // ────────────────────────────────────────────
 // Inline SVG Layout Previews
@@ -286,6 +299,357 @@ function AlternativePreview({ variant }: { variant: string }) {
 }
 
 // ────────────────────────────────────────────
+// New Layout Previews — Structural
+// ────────────────────────────────────────────
+function StructuralPreview({ variant }: { variant: string }) {
+  // Dock — bottom bar with magnified icons
+  if (variant === "dock") {
+    return (
+      <div className="w-full aspect-[16/10] bg-slate-100 dark:bg-slate-900 rounded-md overflow-hidden flex flex-col border border-slate-200/50 dark:border-slate-700/50">
+        <div className="h-[10%] bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 flex items-center px-2">
+          <div className="w-2 h-2 rounded-full bg-primary" />
+          <div className="flex-1" />
+          <div className="w-3 h-1 bg-slate-300 dark:bg-slate-600 rounded-full" />
+        </div>
+        <div className="flex-1 p-2">
+          <div className="h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full w-3/4 mb-1.5" />
+          <div className="h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full w-1/2" />
+        </div>
+        <div className="h-[16%] border-t border-slate-200 dark:border-slate-700 flex items-end justify-center gap-1 pb-1 px-3">
+          {[2, 2.5, 3, 3.5, 3, 2.5, 2].map((h, i) => (
+            <div key={i} className={cn("rounded bg-slate-300 dark:bg-slate-600 transition-all", i === 3 && "bg-primary/40")} style={{ width: `${h * 2.5}px`, height: `${h * 2.5}px` }} />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // Executive — double header with tab bar
+  if (variant === "executive") {
+    return (
+      <div className="w-full aspect-[16/10] bg-slate-100 dark:bg-slate-900 rounded-md overflow-hidden flex flex-col border border-slate-200/50 dark:border-slate-700/50">
+        <div className="h-[16%] bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 flex items-center px-2 gap-1">
+          <div className="w-2 h-2 rounded-full bg-primary" />
+          <div className="flex-1" />
+          <div className="w-3 h-1 bg-slate-300 dark:bg-slate-600 rounded-full" />
+          <div className="w-2 h-1 bg-slate-300 dark:bg-slate-600 rounded-full" />
+        </div>
+        <div className="h-[8%] bg-slate-50 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-700 flex items-center px-2 gap-0.5">
+          <div className="w-3 h-0.5 bg-slate-400 dark:bg-slate-500 rounded-full" />
+          <div className="w-1 h-0.5 bg-slate-300 dark:bg-slate-600 rounded-full" />
+          <div className="w-4 h-0.5 bg-slate-300 dark:bg-slate-600 rounded-full" />
+        </div>
+        <div className="h-[10%] bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 flex items-end px-2 gap-1">
+          <div className="w-5 h-[70%] border-b-2 border-primary" />
+          <div className="w-5 h-[60%]" />
+          <div className="w-5 h-[60%]" />
+        </div>
+        <div className="flex-1 p-2">
+          <div className="h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full w-3/4 mb-1.5" />
+          <div className="h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full w-1/2" />
+        </div>
+      </div>
+    );
+  }
+
+  // Magazine — slim rail + centered content + right sidebar
+  if (variant === "magazine") {
+    return (
+      <div className="w-full aspect-[16/10] bg-slate-100 dark:bg-slate-900 rounded-md overflow-hidden flex border border-slate-200/50 dark:border-slate-700/50">
+        <div className="w-[6%] bg-slate-200 dark:bg-slate-800 flex flex-col items-center pt-2 gap-1">
+          {[false, true, false, false].map((a, i) => (
+            <div key={i} className={cn("w-1.5 h-1.5 rounded", a ? "bg-primary/60" : "bg-slate-400/30")} />
+          ))}
+        </div>
+        <div className="flex-1 flex justify-center">
+          <div className="w-[60%] p-2">
+            <div className="h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full w-3/4 mb-1.5" />
+            <div className="h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full w-1/2 mb-1" />
+            <div className="h-1 bg-slate-200/60 dark:bg-slate-800/60 rounded-full w-2/3" />
+          </div>
+        </div>
+        <div className="w-[18%] bg-slate-50 dark:bg-slate-800/60 border-l border-slate-200 dark:border-slate-700 p-1 pt-2 space-y-1">
+          <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded" />
+          <div className="h-3 bg-slate-200/60 dark:bg-slate-700/60 rounded" />
+        </div>
+      </div>
+    );
+  }
+
+  // Spotlight — big search + category pills
+  if (variant === "spotlight") {
+    return (
+      <div className="w-full aspect-[16/10] bg-slate-100 dark:bg-slate-900 rounded-md overflow-hidden flex flex-col border border-slate-200/50 dark:border-slate-700/50">
+        <div className="h-[8%] bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 flex items-center px-2">
+          <div className="w-2 h-2 rounded-full bg-primary" />
+          <div className="flex-1" />
+          <div className="w-2 h-1 bg-slate-300 dark:bg-slate-600 rounded-full" />
+        </div>
+        {/* Big search */}
+        <div className="flex items-center justify-center py-2.5">
+          <div className="w-[65%] h-3 bg-white dark:bg-slate-800 rounded-full border border-slate-300 dark:border-slate-600 flex items-center px-2">
+            <div className="w-1.5 h-1.5 rounded-full bg-slate-400" />
+          </div>
+        </div>
+        {/* Pills */}
+        <div className="flex items-center justify-center gap-1 pb-1.5">
+          {[true, false, false, false].map((a, i) => (
+            <div key={i} className={cn("h-1.5 rounded-full", a ? "w-4 bg-primary/30" : "w-3 bg-slate-300 dark:bg-slate-600")} />
+          ))}
+        </div>
+        <div className="flex-1 p-2">
+          <div className="h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full w-3/4 mb-1.5" />
+          <div className="h-1 bg-slate-200 dark:bg-slate-800 rounded-full w-1/2" />
+        </div>
+      </div>
+    );
+  }
+
+  // Rail — permanent icon strip with popover
+  if (variant === "rail") {
+    return (
+      <div className="w-full aspect-[16/10] bg-slate-100 dark:bg-slate-900 rounded-md overflow-hidden flex border border-slate-200/50 dark:border-slate-700/50">
+        <div className="w-[8%] bg-slate-200 dark:bg-slate-800 border-r border-slate-300 dark:border-slate-700 flex flex-col items-center pt-2 gap-1.5">
+          {[false, true, false, false, false].map((a, i) => (
+            <div key={i} className={cn("w-2 h-2 rounded", a ? "bg-primary/60 ring-1 ring-primary/30" : "bg-slate-400/30")} />
+          ))}
+        </div>
+        {/* Floating popover */}
+        <div className="relative flex-1">
+          <div className="absolute top-3 left-1 w-[30%] bg-white dark:bg-slate-800 rounded shadow-lg border border-slate-200 dark:border-slate-700 p-1 space-y-0.5">
+            <div className="h-1 bg-slate-300 dark:bg-slate-600 rounded-full w-4/5" />
+            <div className="h-1 bg-slate-200 dark:bg-slate-700 rounded-full w-3/5" />
+            <div className="h-1 bg-slate-200 dark:bg-slate-700 rounded-full w-2/3" />
+          </div>
+          <div className="flex-1 flex flex-col">
+            <div className="h-[14%] bg-white dark:bg-slate-900 border-b border-slate-200/50 dark:border-slate-700/50" />
+            <div className="flex-1 p-2 pt-10">
+              <div className="h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full w-3/4 mb-1.5" />
+              <div className="h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full w-1/2" />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return null;
+}
+
+// ────────────────────────────────────────────
+// New Layout Previews — Visual Identity
+// ────────────────────────────────────────────
+function VisualPreview({ variant }: { variant: string }) {
+  // Glassmorphism — transparent panels over gradient
+  if (variant === "glassmorphism") {
+    return (
+      <div className="w-full aspect-[16/10] rounded-md overflow-hidden flex border border-slate-200/50 dark:border-slate-700/50 relative">
+        <div className="absolute inset-0 bg-gradient-to-br from-violet-400/40 via-fuchsia-400/30 to-cyan-400/40" />
+        <div className="w-[24%] bg-white/15 backdrop-blur-sm border-r border-white/20 p-1 pt-3 space-y-1 relative">
+          {[70, 55, 45].map((w, i) => (
+            <div key={i} className="h-1 rounded-full bg-white/30" style={{ width: `${w}%` }} />
+          ))}
+        </div>
+        <div className="flex-1 flex flex-col relative">
+          <div className="h-[14%] bg-white/10 backdrop-blur-sm border-b border-white/15" />
+          <div className="flex-1 p-2">
+            <div className="h-1.5 bg-white/25 rounded-full w-3/4 mb-1.5" />
+            <div className="h-1.5 bg-white/15 rounded-full w-1/2" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Galaxy — layered depth with shadows
+  if (variant === "galaxy") {
+    return (
+      <div className="w-full aspect-[16/10] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-md overflow-hidden flex border border-slate-700/50" style={{ perspective: "200px" }}>
+        <div className="w-[24%] bg-slate-800 border-r border-slate-700 p-1 pt-3 space-y-1" style={{ boxShadow: "4px 0 15px rgba(0,0,0,0.4)" }}>
+          {[70, 55, 45].map((w, i) => (
+            <div key={i} className="h-1 rounded-full bg-slate-600" style={{ width: `${w}%` }} />
+          ))}
+        </div>
+        <div className="flex-1 flex flex-col">
+          <div className="h-[14%] bg-slate-800/80 border-b border-slate-700" />
+          <div className="flex-1 p-2">
+            <div className="h-4 bg-slate-700/80 rounded-lg mb-1.5 shadow-lg" />
+            <div className="h-3 bg-slate-800/60 rounded-lg shadow" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Neon — dark with glowing borders
+  if (variant === "neon") {
+    return (
+      <div className="w-full aspect-[16/10] bg-[#0a0a0f] rounded-md overflow-hidden flex border border-cyan-500/30">
+        <div className="w-[24%] border-r border-cyan-500/20 p-1 pt-3 space-y-1" style={{ boxShadow: "inset -1px 0 8px rgba(0,255,255,0.05)" }}>
+          {[70, 55, 45].map((w, i) => (
+            <div key={i} className="h-1 rounded-full bg-cyan-500/30" style={{ width: `${w}%` }} />
+          ))}
+        </div>
+        <div className="flex-1 flex flex-col">
+          <div className="h-[14%] border-b border-cyan-500/20" />
+          <div className="flex-1 p-2 relative">
+            <div className="h-1.5 bg-cyan-500/20 rounded-full w-3/4 mb-1.5" />
+            <div className="h-1.5 bg-magenta-500/10 rounded-full w-1/2" style={{ backgroundColor: "rgba(255,0,255,0.1)" }} />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Retro — Windows 95 look
+  if (variant === "retro") {
+    return (
+      <div className="w-full aspect-[16/10] bg-[#008080] rounded-md overflow-hidden flex flex-col border border-slate-200/50 dark:border-slate-700/50">
+        {/* Window */}
+        <div className="m-1 flex-1 bg-[#c0c0c0] flex flex-col" style={{ boxShadow: "inset 1px 1px 0 #fff, inset -1px -1px 0 #808080" }}>
+          <div className="h-[18%] bg-gradient-to-r from-[#000080] to-[#1084d0] flex items-center px-1 gap-0.5">
+            <div className="w-2 h-1 bg-white/50 rounded-sm" />
+            <div className="flex-1" />
+            <div className="flex gap-px">
+              {['─', '□', '×'].map((c, i) => (
+                <div key={i} className="w-2 h-2 bg-[#c0c0c0] flex items-center justify-center" style={{ boxShadow: "inset 1px 1px 0 #fff, inset -1px -1px 0 #808080", fontSize: "4px", lineHeight: 1 }}>
+                  <span className="text-black">{c}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="flex-1 p-1">
+            <div className="h-1 bg-[#808080] rounded-none w-3/4 mb-1" />
+            <div className="h-1 bg-[#808080]/60 rounded-none w-1/2" />
+          </div>
+        </div>
+        {/* Taskbar */}
+        <div className="h-[12%] bg-[#c0c0c0] border-t border-white flex items-center px-1 gap-1" style={{ boxShadow: "inset 0 1px 0 #fff" }}>
+          <div className="h-[75%] px-1 bg-[#c0c0c0] flex items-center" style={{ boxShadow: "inset 1px 1px 0 #fff, inset -1px -1px 0 #808080", fontSize: "3px" }}>
+            <span className="text-black font-bold">Start</span>
+          </div>
+          <div className="flex-1" />
+          <div className="h-[65%] px-1 bg-[#c0c0c0]" style={{ boxShadow: "inset -1px -1px 0 #fff, inset 1px 1px 0 #808080", fontSize: "3px" }}>
+            <span className="text-black">12:00</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Aurora — animated gradient sidebar + conic borders
+  if (variant === "aurora") {
+    return (
+      <div className="w-full aspect-[16/10] bg-slate-100 dark:bg-slate-900 rounded-md overflow-hidden flex border border-slate-200/50 dark:border-slate-700/50">
+        <div className="w-[24%] bg-gradient-to-b from-purple-500/60 via-blue-500/50 to-teal-500/60 p-1 pt-3 space-y-1">
+          {[70, 55, 45].map((w, i) => (
+            <div key={i} className="h-1 rounded-full bg-white/30" style={{ width: `${w}%` }} />
+          ))}
+        </div>
+        <div className="flex-1 flex flex-col">
+          <div className="h-[14%] bg-white/60 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-700" />
+          <div className="flex-1 p-2">
+            <div className="h-4 rounded-lg bg-gradient-to-r from-purple-200/30 to-blue-200/30 dark:from-purple-900/20 dark:to-blue-900/20 p-1 mb-1.5 ring-1 ring-purple-400/20">
+              <div className="h-1 bg-slate-400/40 rounded-full w-3/4" />
+            </div>
+            <div className="h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full w-1/2" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return null;
+}
+
+// ────────────────────────────────────────────
+// New Layout Previews — Specialized
+// ────────────────────────────────────────────
+function SpecializedPreview({ variant }: { variant: string }) {
+  // Newspaper — masthead with date + tabs
+  if (variant === "newspaper") {
+    return (
+      <div className="w-full aspect-[16/10] bg-white dark:bg-slate-900 rounded-md overflow-hidden flex flex-col border border-slate-200/50 dark:border-slate-700/50">
+        <div className="h-[8%] bg-slate-50 dark:bg-slate-800 flex items-center px-2">
+          <div className="w-8 h-0.5 bg-slate-400 dark:bg-slate-500 rounded-full" />
+          <div className="flex-1" />
+          <div className="w-6 h-0.5 bg-slate-300 dark:bg-slate-600 rounded-full" />
+        </div>
+        <div className="h-[14%] border-b-2 border-foreground/10 flex items-center px-2 gap-1">
+          <div className="w-3 h-3 rounded-full bg-primary/30" />
+          <div className="w-6 h-1 bg-slate-400 dark:bg-slate-500 rounded-full" />
+        </div>
+        <div className="h-[10%] border-b border-slate-200 dark:border-slate-700 flex items-end px-2 gap-1">
+          {[true, false, false, false].map((a, i) => (
+            <div key={i} className={cn("h-[60%] w-5 border-b-2", a ? "border-foreground" : "border-transparent")} />
+          ))}
+        </div>
+        <div className="flex-1 p-2">
+          <div className="h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full w-3/4 mb-1.5" />
+          <div className="h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full w-1/2" />
+        </div>
+      </div>
+    );
+  }
+
+  // Cinema — hero gradient + overlay
+  if (variant === "cinema") {
+    return (
+      <div className="w-full aspect-[16/10] rounded-md overflow-hidden flex flex-col border border-slate-200/50 dark:border-slate-700/50">
+        <div className="h-[45%] bg-gradient-to-br from-primary/70 via-primary/50 to-primary/30 relative">
+          <div className="absolute top-0 left-0 right-0 h-[30%] flex items-center px-2 gap-1">
+            <div className="w-2 h-2 bg-white/40 rounded" />
+            <div className="flex-1" />
+            <div className="w-3 h-1 bg-white/30 rounded-full" />
+            <div className="w-2 h-1 bg-white/30 rounded-full" />
+          </div>
+          <div className="absolute bottom-2 left-2">
+            <div className="h-1.5 bg-white/60 rounded-full w-12 mb-1" />
+            <div className="h-1 bg-white/30 rounded-full w-8" />
+          </div>
+        </div>
+        <div className="h-3 bg-gradient-to-b from-primary/10 to-transparent" />
+        <div className="flex-1 bg-slate-100 dark:bg-slate-900 p-2">
+          <div className="h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full w-3/4 mb-1.5" />
+          <div className="h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full w-1/2" />
+        </div>
+      </div>
+    );
+  }
+
+  // Vault — mega menu grid
+  if (variant === "vault") {
+    return (
+      <div className="w-full aspect-[16/10] bg-white dark:bg-slate-900 rounded-md overflow-hidden flex flex-col border border-slate-200/50 dark:border-slate-700/50">
+        <div className="h-[14%] bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 flex items-center px-2 gap-1">
+          <div className="w-3 h-2 bg-primary/30 rounded-sm" />
+          <div className="w-5 h-0.5 bg-slate-400 dark:bg-slate-500 rounded-full" />
+          <div className="flex-1" />
+          <div className="w-4 h-1 bg-slate-300 dark:bg-slate-600 rounded-full" />
+        </div>
+        {/* Mega menu overlay */}
+        <div className="flex-1 bg-white/95 dark:bg-slate-800/95 p-1.5">
+          <div className="h-1.5 w-8 bg-slate-200 dark:bg-slate-700 rounded mb-1.5" />
+          <div className="grid grid-cols-3 gap-1">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <div key={i} className="p-0.5">
+                <div className="h-0.5 bg-slate-400/40 rounded-full w-3/4 mb-0.5" />
+                <div className="space-y-px">
+                  <div className="h-1 bg-slate-200 dark:bg-slate-700 rounded" />
+                  <div className="h-1 bg-slate-200/60 dark:bg-slate-700/60 rounded" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return null;
+}
+
+// ────────────────────────────────────────────
 // Layout Data
 // ────────────────────────────────────────────
 const sidebarLayouts: LayoutOption[] = [
@@ -304,6 +668,28 @@ const alternativeLayouts: LayoutOption[] = [
   { value: "command", icon: Command, preview: <AlternativePreview variant="command" /> },
   { value: "stacked", icon: Layers, preview: <AlternativePreview variant="stacked" /> },
   { value: "hud", icon: Monitor, preview: <AlternativePreview variant="hud" /> },
+];
+
+const structuralLayouts: LayoutOption[] = [
+  { value: "dock", icon: Anchor, preview: <StructuralPreview variant="dock" /> },
+  { value: "executive", icon: Briefcase, preview: <StructuralPreview variant="executive" /> },
+  { value: "magazine", icon: BookOpen, preview: <StructuralPreview variant="magazine" /> },
+  { value: "spotlight", icon: Search, preview: <StructuralPreview variant="spotlight" /> },
+  { value: "rail", icon: AlignVerticalJustifyStart, preview: <StructuralPreview variant="rail" /> },
+];
+
+const visualLayouts: LayoutOption[] = [
+  { value: "glassmorphism", icon: Aperture, preview: <VisualPreview variant="glassmorphism" /> },
+  { value: "galaxy", icon: Orbit, preview: <VisualPreview variant="galaxy" /> },
+  { value: "neon", icon: Zap, preview: <VisualPreview variant="neon" /> },
+  { value: "retro", icon: Clock3, preview: <VisualPreview variant="retro" /> },
+  { value: "aurora", icon: Waves, preview: <VisualPreview variant="aurora" /> },
+];
+
+const specializedLayouts: LayoutOption[] = [
+  { value: "newspaper", icon: Newspaper, preview: <SpecializedPreview variant="newspaper" /> },
+  { value: "cinema", icon: Clapperboard, preview: <SpecializedPreview variant="cinema" /> },
+  { value: "vault", icon: Vault, preview: <SpecializedPreview variant="vault" /> },
 ];
 
 // ────────────────────────────────────────────
@@ -479,6 +865,45 @@ export function LayoutTab() {
             category="alternative"
             categoryLabel={t("settings.layoutTemplate.categories.alternative")}
             categoryDesc={t("settings.layoutTemplate.categories.alternativeDesc")}
+            selectedLayout={settings.layoutTemplate}
+            onSelectLayout={(v) => settings.setLayoutTemplate(v as any)}
+            t={t}
+          />
+
+          <div className="border-t" />
+
+          {/* Structural Layouts */}
+          <LayoutCategorySection
+            layouts={structuralLayouts}
+            category="structural"
+            categoryLabel={t("settings.layoutTemplate.categories.structural")}
+            categoryDesc={t("settings.layoutTemplate.categories.structuralDesc")}
+            selectedLayout={settings.layoutTemplate}
+            onSelectLayout={(v) => settings.setLayoutTemplate(v as any)}
+            t={t}
+          />
+
+          <div className="border-t" />
+
+          {/* Visual Identity Layouts */}
+          <LayoutCategorySection
+            layouts={visualLayouts}
+            category="visual"
+            categoryLabel={t("settings.layoutTemplate.categories.visual")}
+            categoryDesc={t("settings.layoutTemplate.categories.visualDesc")}
+            selectedLayout={settings.layoutTemplate}
+            onSelectLayout={(v) => settings.setLayoutTemplate(v as any)}
+            t={t}
+          />
+
+          <div className="border-t" />
+
+          {/* Specialized Layouts */}
+          <LayoutCategorySection
+            layouts={specializedLayouts}
+            category="specialized"
+            categoryLabel={t("settings.layoutTemplate.categories.specialized")}
+            categoryDesc={t("settings.layoutTemplate.categories.specializedDesc")}
             selectedLayout={settings.layoutTemplate}
             onSelectLayout={(v) => settings.setLayoutTemplate(v as any)}
             t={t}

@@ -18,6 +18,19 @@ import { ElegantLayout } from "@core/ui/layout/elegant/elegant-layout";
 import { FloatingLayout } from "@core/ui/layout/floating/floating-layout";
 import { MinimalLayout } from "@core/ui/layout/minimal/minimal-layout";
 import { ModernLayout } from "@core/ui/layout/modern/modern-layout";
+import { DockLayout } from "@core/ui/layout/dock/dock-layout";
+import { ExecutiveLayout } from "@core/ui/layout/executive/executive-layout";
+import { MagazineLayout } from "@core/ui/layout/magazine/magazine-layout";
+import { SpotlightLayout } from "@core/ui/layout/spotlight/spotlight-layout";
+import { GlassmorphismLayout } from "@core/ui/layout/glassmorphism/glassmorphism-layout";
+import { GalaxyLayout } from "@core/ui/layout/galaxy/galaxy-layout";
+import { NeonLayout } from "@core/ui/layout/neon/neon-layout";
+import { RetroLayout } from "@core/ui/layout/retro/retro-layout";
+import { AuroraLayout } from "@core/ui/layout/aurora/aurora-layout";
+import { RailLayout } from "@core/ui/layout/rail/rail-layout";
+import { NewspaperLayout } from "@core/ui/layout/newspaper/newspaper-layout";
+import { CinemaLayout } from "@core/ui/layout/cinema/cinema-layout";
+import { VaultLayout } from "@core/ui/layout/vault/vault-layout";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -165,6 +178,47 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   // ── Minimal Layout (no sidebar) ──
   if (layoutTemplate === "minimal") {
     return <MinimalLayout>{children}</MinimalLayout>;
+  }
+
+  // ── New Layouts (self-managing sidebar) ──
+  if (layoutTemplate === "dock") {
+    return <DockLayout>{children}</DockLayout>;
+  }
+  if (layoutTemplate === "executive") {
+    return <ExecutiveLayout>{children}</ExecutiveLayout>;
+  }
+  if (layoutTemplate === "magazine") {
+    return <MagazineLayout>{children}</MagazineLayout>;
+  }
+  if (layoutTemplate === "spotlight") {
+    return <SpotlightLayout>{children}</SpotlightLayout>;
+  }
+  if (layoutTemplate === "glassmorphism") {
+    return <GlassmorphismLayout>{children}</GlassmorphismLayout>;
+  }
+  if (layoutTemplate === "galaxy") {
+    return <GalaxyLayout>{children}</GalaxyLayout>;
+  }
+  if (layoutTemplate === "neon") {
+    return <NeonLayout>{children}</NeonLayout>;
+  }
+  if (layoutTemplate === "retro") {
+    return <RetroLayout>{children}</RetroLayout>;
+  }
+  if (layoutTemplate === "aurora") {
+    return <AuroraLayout>{children}</AuroraLayout>;
+  }
+  if (layoutTemplate === "rail") {
+    return <RailLayout>{children}</RailLayout>;
+  }
+  if (layoutTemplate === "newspaper") {
+    return <NewspaperLayout>{children}</NewspaperLayout>;
+  }
+  if (layoutTemplate === "cinema") {
+    return <CinemaLayout>{children}</CinemaLayout>;
+  }
+  if (layoutTemplate === "vault") {
+    return <VaultLayout>{children}</VaultLayout>;
   }
 
   // ── Default: Navigation Layout ──

@@ -52,7 +52,20 @@ export type LayoutTemplate =
   | "dual"
   | "command"
   | "stacked"
-  | "hud";
+  | "hud"
+  | "dock"
+  | "executive"
+  | "magazine"
+  | "spotlight"
+  | "glassmorphism"
+  | "galaxy"
+  | "neon"
+  | "retro"
+  | "aurora"
+  | "rail"
+  | "newspaper"
+  | "cinema"
+  | "vault";
 
 export type CardStyle = "default" | "glass" | "solid" | "bordered" | "elevated";
 export type AnimationLevel = "none" | "minimal" | "moderate" | "high";

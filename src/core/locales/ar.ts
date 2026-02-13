@@ -2212,6 +2212,12 @@ export const ar = {
         sidebarDesc: "شريط تنقل جانبي تقليدي مع منطقة محتوى",
         alternative: "تخطيطات بديلة",
         alternativeDesc: "أنماط تنقل فريدة لسير العمل الحديث",
+        structural: "تخطيطات هيكلية",
+        structuralDesc: "أنماط تنقل فريدة بهيكل مميز",
+        visual: "تخطيطات الهوية البصرية",
+        visualDesc: "سمات بصرية مميزة لتغيير كامل للعلامة التجارية",
+        specialized: "تخطيطات متخصصة",
+        specializedDesc: "تخطيطات مصممة لحالات استخدام محددة",
       },
       options: {
         modern: {
@@ -2261,6 +2267,58 @@ export const ar = {
         hud: {
           name: "شريط سفلي",
           description: "شريط إرساء سفلي مع قوائم تنقل منبثقة",
+        },
+        dock: {
+          name: "شريط إرساء",
+          description: "شريط إرساء سفلي بنمط ماك مع تكبير الأيقونات",
+        },
+        executive: {
+          name: "تنفيذي",
+          description: "رأسية ضخمة مع مسار التنقل وشريط ألسنة",
+        },
+        magazine: {
+          name: "مجلة",
+          description: "شريط أيقونات مع محتوى مركزي وشريط مصغرات",
+        },
+        spotlight: {
+          name: "تسليط الضوء",
+          description: "تنقل يركز على البحث مع أزرار تصنيف",
+        },
+        rail: {
+          name: "قضيب",
+          description: "شريط أيقونات دائم مع قوائم منبثقة عائمة",
+        },
+        glassmorphism: {
+          name: "زجاجي",
+          description: "واجهة زجاجية شفافة مع شبكة تدرج متحركة",
+        },
+        galaxy: {
+          name: "مجرة",
+          description: "عمق مكاني ثلاثي الأبعاد مع ظلال متعددة الطبقات",
+        },
+        neon: {
+          name: "نيون",
+          description: "جمالية سايبربانك مع حدود متوهجة وخطوط مسح",
+        },
+        retro: {
+          name: "كلاسيكي قديم",
+          description: "سطح مكتب كلاسيكي مع نوافذ وشريط مهام",
+        },
+        aurora: {
+          name: "شفق قطبي",
+          description: "موجات تدرج متحركة مع حدود مخروطية",
+        },
+        newspaper: {
+          name: "صحيفة",
+          description: "رأسية صحفية مع شريط تاريخ وتنقل بالألسنة",
+        },
+        cinema: {
+          name: "سينما",
+          description: "تدرج بطولي غامر مع رأسية شفافة عند التمرير",
+        },
+        vault: {
+          name: "خزنة",
+          description: "قائمة ضخمة لوحدة التحكم السحابية مع شبكة خدمات",
         },
       },
     },
@@ -2940,6 +2998,9 @@ export const ar = {
     navigate: "انتقال",
     open: "فتح",
     recent: "مستخدم مؤخرا",
+    quickActions: "إجراءات سريعة",
+    stats: "إحصائيات",
+    services:"الخدمات",
     clearSelection: "مسح التحديد",
     page: "صفحة",
     reset: "إعادة تعيين",

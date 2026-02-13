@@ -1380,6 +1380,12 @@ export const en = {
         sidebarDesc: "Traditional sidebar navigation with content area",
         alternative: "Alternative Layouts",
         alternativeDesc: "Unique navigation patterns for modern workflows",
+        structural: "Structural Layouts",
+        structuralDesc: "Unique navigation paradigms with distinct structure",
+        visual: "Visual Identity Layouts",
+        visualDesc: "Dramatic visual themes for complete branding overhauls",
+        specialized: "Specialized Layouts",
+        specializedDesc: "Purpose-built layouts for specific use cases",
       },
       options: {
         modern: {
@@ -1429,6 +1435,58 @@ export const en = {
         hud: {
           name: "HUD",
           description: "Bottom dock bar with flyout menu navigation",
+        },
+        dock: {
+          name: "Dock",
+          description: "macOS-style bottom dock with icon magnification",
+        },
+        executive: {
+          name: "Executive",
+          description: "Corporate mega header with breadcrumbs and tab bar",
+        },
+        magazine: {
+          name: "Magazine",
+          description: "Icon rail with centered content and widget sidebar",
+        },
+        spotlight: {
+          name: "Spotlight",
+          description: "Search-first navigation with category pills",
+        },
+        rail: {
+          name: "Rail",
+          description: "Permanent icon rail with floating popover menus",
+        },
+        glassmorphism: {
+          name: "Glassmorphism",
+          description: "Full transparent glass UI with animated gradient mesh",
+        },
+        galaxy: {
+          name: "Galaxy",
+          description: "3D spatial depth with perspective and layered shadows",
+        },
+        neon: {
+          name: "Neon",
+          description: "Cyberpunk aesthetic with glowing borders and scanlines",
+        },
+        retro: {
+          name: "Retro",
+          description: "Classic desktop with window chrome and taskbar",
+        },
+        aurora: {
+          name: "Aurora",
+          description: "Animated gradient waves with conic-gradient borders",
+        },
+        newspaper: {
+          name: "Newspaper",
+          description: "Print-media masthead with date bar and tab navigation",
+        },
+        cinema: {
+          name: "Cinema",
+          description: "Immersive hero gradient with transparent header on scroll",
+        },
+        vault: {
+          name: "Vault",
+          description: "Cloud console mega menu with searchable service grid",
         },
       },
     },
@@ -2866,6 +2924,8 @@ export const en = {
     navigate: "Navigate",
     open: "Open",
     recent: "Recently used",
+    quickActions: "Quick Actions",
+    stats: "Stats",
     exit: "Exit",
     selected: "Selected",
     groups: "Groups",
