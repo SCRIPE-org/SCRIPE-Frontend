@@ -22,6 +22,7 @@ export function NavigationSidebar({
   return (
     <>
       <div
+        dir={direction}
         className={cn(
           "navigation-sidebar fixed inset-y-0 z-50 w-72",
           "bg-slate-950 border-r border-slate-800",

@@ -61,6 +61,7 @@ export function ClassicSidebar({
             <>
                   {/* Sidebar panel */}
                   <aside
+                        dir={direction}
                         className={cn(
                               "fixed top-0 bottom-0 z-50 flex flex-col w-72",
                               "bg-sidebar border-sidebar-border",

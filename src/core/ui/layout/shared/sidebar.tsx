@@ -25,11 +25,12 @@ export function Sidebar({
   onOpenChange,
   isModern = false,
 }: SidebarProps) {
-  const { t } = useI18n();
+  const { t, direction } = useI18n();
 
   return (
     <>
       <div
+        dir={direction}
         className={cn(
           "flex flex-col h-full bg-gradient-to-b from-sidebar via-sidebar/98 to-sidebar border-r border-sidebar-border sidebar-shadow",
           "backdrop-blur-sm"
@@ -37,7 +38,7 @@ export function Sidebar({
       >
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-sidebar-border">
-          <div className="flex items-center space-x-3 rtl:space-x-reverse">
+          <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center shadow-md">
               <Logo size="sm" className="text-primary-foreground" />
             </div>
@@ -46,7 +47,7 @@ export function Sidebar({
                 {t("app.title")}
               </h1>
               <p className="text-xs text-sidebar-foreground/60 flex items-center">
-                <Logo size="xs" className="mr-1 rtl:mr-0 rtl:ml-1" />
+                <Logo size="xs" className="me-1" />
                 {isModern ? t("app.modern") : t("app.default")}
               </p>
             </div>

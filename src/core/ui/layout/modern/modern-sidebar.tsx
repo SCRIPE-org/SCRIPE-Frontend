@@ -61,6 +61,7 @@ export function ModernSidebar({
       return (
             <TooltipProvider delayDuration={300}>
                   <aside
+                        dir={direction}
                         className={cn(
                               "fixed top-0 bottom-0 z-50 flex",
                               direction === "rtl" ? "right-0" : "left-0",

@@ -32,6 +32,7 @@ export function CompactSidebar({
 
       return (
             <aside
+                  dir={direction}
                   className={cn(
                         "fixed top-0 bottom-0 z-50 flex flex-col w-56",
                         "bg-sidebar border-sidebar-border",

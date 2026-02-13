@@ -65,7 +65,7 @@ export function UserCard({
       return (
             <div
                   className={cn(
-                        "flex items-center space-x-3 rtl:space-x-reverse rounded-xl",
+                        "flex items-center gap-3 rounded-xl",
                         "bg-gradient-to-br from-primary/5 to-primary/2 border border-primary/10",
                         "shadow-sm hover:shadow-md transition-all duration-300",
                         config.container,

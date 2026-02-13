@@ -159,9 +159,9 @@ export function MagazineLayout({ children }: MagazineLayoutProps) {
 
                         {/* Content + Widget sidebar */}
                         <div className="flex-1 flex">
-                              {/* Centered content column */}
-                              <main className="flex-1 flex justify-center">
-                                    <div className="w-full max-w-3xl px-6 py-8">
+                              {/* Content column — fills available space */}
+                              <main className="flex-1 min-w-0">
+                                    <div className="w-full px-6 py-8">
                                           <div
                                                 style={{
                                                       borderRadius: "var(--border-radius)",

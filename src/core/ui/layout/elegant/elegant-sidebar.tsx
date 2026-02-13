@@ -34,6 +34,7 @@ export function ElegantSidebar({
 
       return (
             <aside
+                  dir={direction}
                   className={cn(
                         "fixed z-50 flex flex-col w-72",
                         // Floating with margin and rounded corners
