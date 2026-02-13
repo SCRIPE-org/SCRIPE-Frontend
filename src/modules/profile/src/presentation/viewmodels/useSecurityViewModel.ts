@@ -64,7 +64,8 @@ export function useSecurityViewModel() {
 
       // ── Disable 2FA ────────────────────────────────
       const disable2FAMutation = useMutation({
-            mutationFn: (password: string) => repo.disable2FA(password),
+            mutationFn: (data: { password: string; twoFactorCode: string }) =>
+                  repo.disable2FA(data.password, data.twoFactorCode),
             onSuccess: () => {
                   queryClient.invalidateQueries({ queryKey: profileKeys.me() });
                   setShowDisableDialog(false);
@@ -104,7 +105,8 @@ export function useSecurityViewModel() {
             confirmError: confirm2FAMutation.error?.message ?? null,
 
             // 2FA Disable
-            disable2FA: disable2FAMutation.mutateAsync,
+            disable2FA: (password: string, twoFactorCode: string) =>
+                  disable2FAMutation.mutateAsync({ password, twoFactorCode }),
             isDisabling2FA: disable2FAMutation.isPending,
             disableError: disable2FAMutation.error?.message ?? null,
             showDisableDialog,

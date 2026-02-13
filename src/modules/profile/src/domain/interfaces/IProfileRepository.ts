@@ -46,7 +46,7 @@ export interface IProfileRepository {
       // 2FA Management
       enable2FA(): Promise<Enable2FAResult>;
       confirm2FA(code: string): Promise<void>;
-      disable2FA(password: string): Promise<void>;
+      disable2FA(password: string, twoFactorCode: string): Promise<void>;
       regenerateBackupCodes(twoFactorCode: string): Promise<string[]>;
 
       // Security Log

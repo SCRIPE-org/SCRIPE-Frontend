@@ -108,10 +108,10 @@ export class ProfileRepository implements IProfileRepository {
             );
       }
 
-      async disable2FA(password: string): Promise<void> {
+      async disable2FA(password: string, twoFactorCode: string): Promise<void> {
             await this.api.post(
                   API_ENDPOINTS.AUTH.TWO_FA.DISABLE,
-                  { password }
+                  { password, twoFactorCode }
             );
       }
 
