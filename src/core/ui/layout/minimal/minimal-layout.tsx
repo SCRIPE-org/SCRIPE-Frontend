@@ -29,12 +29,18 @@ export function MinimalLayout({ children }: MinimalLayoutProps) {
 
   const getFontSizeClass = () => {
     switch (settings.fontSize) {
+      case "xs":
+        return "text-xs";
       case "small":
         return "text-sm";
-      case "large":
-        return "text-lg";
-      default:
+      case "medium":
         return "text-base";
+      case "large":
+        return "text-xl";
+      case "xl":
+        return "text-2xl";
+      default:
+        return "text-lg";
     }
   };
 
@@ -74,11 +80,11 @@ export function MinimalLayout({ children }: MinimalLayoutProps) {
           className={cn(
             "animate-fade-in max-w-7xl mx-auto",
             settings.cardStyle === "bordered" &&
-              "border border-border rounded-lg p-6",
+            "border border-border rounded-lg p-6",
             settings.cardStyle === "elevated" &&
-              "bg-card shadow-lg rounded-lg p-6",
+            "bg-card shadow-lg rounded-lg p-6",
             settings.cardStyle === "glass" &&
-              "bg-background/80 backdrop-blur-sm rounded-lg p-6",
+            "bg-background/80 backdrop-blur-sm rounded-lg p-6",
             getAnimationClass()
           )}
           style={{

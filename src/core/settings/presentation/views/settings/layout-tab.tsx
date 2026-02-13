@@ -2,6 +2,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
+import { Switch } from "@core/ui/switch";
 import {
   Check,
   PanelLeft,
@@ -400,6 +401,28 @@ export function LayoutTab() {
           />
         </CardContent>
       </Card>
+
+      {/* ── Dual Layout Options (visible only when dual is selected) ── */}
+      {settings.layoutTemplate === "dual" && (
+        <Card>
+          <CardHeader>
+            <CardTitle>{t("settings.dualLayout.title")}</CardTitle>
+            <CardDescription>{t("settings.dualLayout.description")}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between rounded-lg border p-4">
+              <div className="space-y-0.5">
+                <label className="text-sm font-medium">{t("settings.dualLayout.showPanel")}</label>
+                <p className="text-xs text-muted-foreground">{t("settings.dualLayout.showPanelDesc")}</p>
+              </div>
+              <Switch
+                checked={settings.showDetailPanel}
+                onCheckedChange={settings.setShowDetailPanel}
+              />
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* ── Header Styles ── */}
       <Card>

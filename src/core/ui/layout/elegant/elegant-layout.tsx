@@ -37,12 +37,18 @@ export function ElegantLayout({
 
   const getFontSizeClass = () => {
     switch (settings.fontSize) {
+      case "xs":
+        return "text-xs";
       case "small":
         return "text-sm";
-      case "large":
-        return "text-lg";
-      default:
+      case "medium":
         return "text-base";
+      case "large":
+        return "text-xl";
+      case "xl":
+        return "text-2xl";
+      default:
+        return "text-lg";
     }
   };
 
@@ -116,11 +122,11 @@ export function ElegantLayout({
       />
 
       {/* Main Content - Enhanced with better spacing and animations */}
-        <main
-          className={cn(
-            "relative",
-            getAnimationClass(),
-            settings.stickyHeader ? "pt-20" : "pt-4",
+      <main
+        className={cn(
+          "relative",
+          getAnimationClass(),
+          settings.stickyHeader ? "pt-20" : "pt-4",
           // Desktop margins
           direction === "rtl" ? "lg:mr-80 xl:mr-72" : "lg:ml-80 xl:ml-72",
           // Mobile - no margins when sidebar is closed
@@ -137,9 +143,9 @@ export function ElegantLayout({
             className={cn(
               "relative z-10",
               settings.animationLevel === "high" &&
-                "animate-in fade-in-0 slide-in-from-bottom-6 duration-1000",
+              "animate-in fade-in-0 slide-in-from-bottom-6 duration-1000",
               settings.animationLevel === "moderate" &&
-                "transition-all duration-500 ease-out"
+              "transition-all duration-500 ease-out"
             )}
             style={{
               borderRadius: `var(--border-radius)`,
@@ -150,18 +156,18 @@ export function ElegantLayout({
             {children}
           </div>
         </div>
-        </main>
-        {settings.showFooter && <Footer />}
+      </main>
+      {settings.showFooter && <Footer />}
 
-        {/* Mobile overlay with enhanced blur and gradient */}
-        {sidebarOpen && settings.collapsibleSidebar && (
+      {/* Mobile overlay with enhanced blur and gradient */}
+      {sidebarOpen && settings.collapsibleSidebar && (
         <div
           className={cn(
             "fixed inset-0 z-30 lg:hidden",
             "bg-gradient-to-br from-black/50 via-black/40 to-black/30",
             "backdrop-blur-xl",
             settings.animationLevel !== "none" &&
-              "animate-in fade-in-0 duration-500"
+            "animate-in fade-in-0 duration-500"
           )}
           onClick={() => onSidebarOpenChange(false)}
         />

@@ -37,12 +37,18 @@ export function FloatingLayout({
 
   const getFontSizeClass = () => {
     switch (settings.fontSize) {
+      case "xs":
+        return "text-xs";
       case "small":
         return "text-sm";
-      case "large":
-        return "text-lg";
-      default:
+      case "medium":
         return "text-base";
+      case "large":
+        return "text-xl";
+      case "xl":
+        return "text-2xl";
+      default:
+        return "text-lg";
     }
   };
 
@@ -89,23 +95,23 @@ export function FloatingLayout({
       />
 
       {/* Main Content */}
-        <main
-          className={cn(
-            "relative z-10",
-            settings.stickyHeader ? "pt-24" : "pt-8",
-            getSpacingClass()
-          )}
-        >
+      <main
+        className={cn(
+          "relative z-10",
+          settings.stickyHeader ? "pt-24" : "pt-8",
+          getSpacingClass()
+        )}
+      >
         <div className="max-w-7xl mx-auto">
           <div
             className={cn(
               "animate-fade-in",
               settings.cardStyle === "bordered" &&
-                "border border-border rounded-lg p-6",
+              "border border-border rounded-lg p-6",
               settings.cardStyle === "elevated" &&
-                "bg-card shadow-lg rounded-lg p-6",
+              "bg-card shadow-lg rounded-lg p-6",
               settings.cardStyle === "glass" &&
-                "bg-background/80 backdrop-blur-sm rounded-lg p-6",
+              "bg-background/80 backdrop-blur-sm rounded-lg p-6",
               getAnimationClass()
             )}
             style={{
@@ -117,15 +123,15 @@ export function FloatingLayout({
             {children}
           </div>
         </div>
-        </main>
-        {settings.showFooter && <Footer />}
+      </main>
+      {settings.showFooter && <Footer />}
 
-        {/* Mobile overlay */}
-        {sidebarOpen && settings.collapsibleSidebar && (
-          <div
-            className={cn(
-              "fixed inset-0 bg-black/20 backdrop-blur-sm z-30 lg:hidden",
-              getAnimationClass()
+      {/* Mobile overlay */}
+      {sidebarOpen && settings.collapsibleSidebar && (
+        <div
+          className={cn(
+            "fixed inset-0 bg-black/20 backdrop-blur-sm z-30 lg:hidden",
+            getAnimationClass()
           )}
           onClick={() => onSidebarOpenChange(false)}
         />

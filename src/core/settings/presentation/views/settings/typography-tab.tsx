@@ -21,22 +21,40 @@ export function TypographyTab() {
 
   const fontSizes = [
     {
+      value: "xs",
+      name: t("fontSize.xs"),
+      example: "text-xs",
+      description: t("fontSize.xsDesc"),
+    },
+    {
       value: "small",
       name: t("fontSize.small"),
       example: "text-sm",
       description: t("fontSize.smallDesc"),
     },
     {
+      value: "medium",
+      name: t("fontSize.medium"),
+      example: "text-base",
+      description: t("fontSize.mediumDesc"),
+    },
+    {
       value: "default",
       name: t("fontSize.default"),
-      example: "text-base",
+      example: "text-lg",
       description: t("fontSize.defaultDesc"),
     },
     {
       value: "large",
       name: t("fontSize.large"),
-      example: "text-lg",
+      example: "text-xl",
       description: t("fontSize.largeDesc"),
+    },
+    {
+      value: "xl",
+      name: t("fontSize.xl"),
+      example: "text-2xl",
+      description: t("fontSize.xlDesc"),
     },
   ];
 
@@ -82,7 +100,7 @@ export function TypographyTab() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             {fontSizes.map((size) => (
               <div
                 key={size.value}
@@ -525,7 +543,7 @@ export function TypographyTab() {
                           </Toast>
                         </ToastProvider>
                       </div>
-                      
+
                       {/* Error State Preview */}
                       <div className="w-full">
                         <ToastProvider>
@@ -804,7 +822,7 @@ export function TypographyTab() {
                         {t("settings.switchStyle.labels.on")}
                       </span>
                     </div>
-                    
+
                     {/* ON State Preview */}
                     <div className="flex items-center space-x-3">
                       <span className="text-xs text-muted-foreground opacity-50">

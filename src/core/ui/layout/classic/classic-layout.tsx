@@ -41,21 +41,27 @@ export function ClassicLayout({ children, sidebarOpen, onSidebarOpenChange }: Cl
 
   const getFontSizeClass = () => {
     switch (settings.fontSize) {
+      case "xs":
+        return "text-xs";
       case "small":
-        return "text-sm"
+        return "text-sm";
+      case "medium":
+        return "text-base";
       case "large":
-        return "text-lg"
+        return "text-xl";
+      case "xl":
+        return "text-2xl";
       default:
-        return "text-base"
+        return "text-lg";
     }
-  }
+  };
 
-  
+
 
   return (
-    <div 
+    <div
       className={cn(
-        "min-h-screen bg-background", 
+        "min-h-screen bg-background",
         direction === "rtl" ? "rtl" : "ltr",
         getFontSizeClass(),
         settings.compactMode && "compact-mode",
@@ -69,7 +75,7 @@ export function ClassicLayout({ children, sidebarOpen, onSidebarOpenChange }: Cl
       {/* Classic sidebar - wider with larger icons and text */}
       <ClassicSidebar open={sidebarOpen} onOpenChange={onSidebarOpenChange} />
 
-      <div 
+      <div
         className={cn(
           animationClass,
           direction === "rtl" ? "lg:mr-80" : "lg:ml-80"
@@ -79,7 +85,7 @@ export function ClassicLayout({ children, sidebarOpen, onSidebarOpenChange }: Cl
         <ClassicHeader onMenuClick={() => onSidebarOpenChange(true)} />
 
         <main className={cn(spacingClass)}>
-          <div 
+          <div
             className={cn(
               "animate-fade-in",
               borderRadiusClass,

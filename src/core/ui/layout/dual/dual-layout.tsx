@@ -42,8 +42,8 @@ export function DualLayout({
       onSidebarOpenChange,
 }: DualLayoutProps) {
       const { t, direction } = useI18n();
-      const { showFooter } = useSettings();
-      const [detailOpen, setDetailOpen] = useState(true);
+      const { showFooter, showDetailPanel } = useSettings();
+      const [detailOpen, setDetailOpen] = useState(showDetailPanel);
 
       return (
             <div

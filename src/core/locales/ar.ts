@@ -2264,6 +2264,12 @@ export const ar = {
         },
       },
     },
+    dualLayout: {
+      title: "خيارات لوحة التفاصيل",
+      description: "إعدادات لوحة التفاصيل في التصميم المزدوج",
+      showPanel: "إظهار لوحة التفاصيل",
+      showPanelDesc: "إظهار لوحة التفاصيل على الجانب الأيمن من التصميم المزدوج",
+    },
     headerStyle: {
       title: "نمط الرأس",
       description: "اختر مظهر الترويسة",
@@ -2432,9 +2438,12 @@ export const ar = {
       title: "حجم الخط",
       description: "اضبط حجم الخط الأساسي لقراءة أفضل",
       sampleTexts: {
+        xs: "نص صغير جداً",
         small: "نص تجريبي بحجم صغير",
+        medium: "نص تجريبي بحجم متوسط",
         default: "نص تجريبي بالحجم الافتراضي",
         large: "نص تجريبي بحجم كبير",
+        xl: "نص كبير جداً",
       },
     },
     borderRadius: {
@@ -2814,6 +2823,7 @@ export const ar = {
   layout: {
     detail_panel: "لوحة التفاصيل",
     detail_placeholder: "اختر عنصراً لعرض تفاصيله هنا",
+    navigation: "التنقل",
     hide_panel: "اخفاء القائمة",
     show_panel: "إظهار القائمة",
     classic: "كلاسيكي",
@@ -2883,12 +2893,18 @@ export const ar = {
 
   // Font Sizes
   fontSize: {
+    xs: "صغير جداً",
     small: "صغير",
-    default: "متوسط",
+    medium: "متوسط",
+    default: "افتراضي",
     large: "كبير",
-    smallDesc: "خط أصغر للواجهة",
-    defaultDesc: "حجم الخط الافتراضي",
-    largeDesc: "خط أكبر للواجهة",
+    xl: "كبير جداً",
+    xsDesc: "خط مضغوط للواجهة (13px)",
+    smallDesc: "خط أصغر للواجهة (14px)",
+    mediumDesc: "حجم الخط القياسي (16px)",
+    defaultDesc: "حجم مريح للقراءة (18px)",
+    largeDesc: "خط أكبر للواجهة (20px)",
+    xlDesc: "أقصى وضوح للقراءة (22px)",
   },
 
   // Border Radius
@@ -2923,7 +2939,7 @@ export const ar = {
   common: {
     navigate: "انتقال",
     open: "فتح",
-    recent:"مستخدم مؤخرا",
+    recent: "مستخدم مؤخرا",
     clearSelection: "مسح التحديد",
     page: "صفحة",
     reset: "إعادة تعيين",

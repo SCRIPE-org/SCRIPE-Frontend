@@ -1432,6 +1432,12 @@ export const en = {
         },
       },
     },
+    dualLayout: {
+      title: "Detail Panel Options",
+      description: "Configure the detail panel for the dual layout",
+      showPanel: "Show Detail Panel",
+      showPanelDesc: "Show the detail panel on the right side of the dual layout",
+    },
     headerStyle: {
       title: "Header Style",
       description: "Choose the header appearance",
@@ -2237,9 +2243,12 @@ export const en = {
       title: "Font Size",
       description: "Adjust the base font size for better readability",
       sampleTexts: {
-        small: "Sample text in small size",
-        default: "Sample text in default size",
-        large: "Sample text in large size",
+        xs: "Very small text",
+        small: "Small text sample",
+        medium: "Medium text sample",
+        default: "Default text sample",
+        large: "Large text sample",
+        xl: "Extra large text",
       },
     },
     borderRadius: {
@@ -2733,6 +2742,7 @@ export const en = {
     detail_panel: "Detail Panel",
     detail_placeholder: "Select an item to view its details here",
     navigate: "Navigate",
+    navigation: "Navigation",
     hide_panel: "Hide panel",
     show_panel: "Show panel",
     classic: "Classic",
@@ -2796,12 +2806,18 @@ export const en = {
 
   // Font Sizes
   fontSize: {
+    xs: "Very Small",
     small: "Small",
+    medium: "Medium",
     default: "Default",
     large: "Large",
-    smallDesc: "Smaller interface font",
-    defaultDesc: "Default font size",
-    largeDesc: "Larger interface font",
+    xl: "Extra Large",
+    xsDesc: "Compact interface font (13px)",
+    smallDesc: "Smaller interface font (14px)",
+    mediumDesc: "Standard font size (16px)",
+    defaultDesc: "Comfortable reading size (18px)",
+    largeDesc: "Larger interface font (20px)",
+    xlDesc: "Maximum readability (22px)",
   },
 
   // Border Radius
@@ -2849,7 +2865,7 @@ export const en = {
   common: {
     navigate: "Navigate",
     open: "Open",
-    recent:"Recently used",
+    recent: "Recently used",
     exit: "Exit",
     selected: "Selected",
     groups: "Groups",

@@ -37,12 +37,18 @@ export function CompactLayout({
 
   const getFontSizeClass = () => {
     switch (settings.fontSize) {
+      case "xs":
+        return "text-xs";
       case "small":
         return "text-sm";
-      case "large":
-        return "text-lg";
-      default:
+      case "medium":
         return "text-base";
+      case "large":
+        return "text-xl";
+      case "xl":
+        return "text-2xl";
+      default:
+        return "text-lg";
     }
   };
 

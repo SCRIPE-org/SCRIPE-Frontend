@@ -58,7 +58,7 @@ export type CardStyle = "default" | "glass" | "solid" | "bordered" | "elevated";
 export type AnimationLevel = "none" | "minimal" | "moderate" | "high";
 export type AnimationSpeed = "slow" | "normal" | "fast";
 export type Theme = "light" | "dark" | "system";
-export type FontSize = "small" | "default" | "large";
+export type FontSize = "xs" | "small" | "medium" | "default" | "large" | "xl";
 export type BorderRadius = "none" | "small" | "default" | "large" | "full";
 export type SidebarPosition = "left" | "right";
 
@@ -229,6 +229,7 @@ export interface Settings {
   cardStyle: CardStyle;
   animationLevel: AnimationLevel;
   fontSize: FontSize;
+  showDetailPanel: boolean;
   borderRadius: BorderRadius;
   sidebarPosition: SidebarPosition;
 
@@ -299,6 +300,7 @@ interface SettingsContextType extends Settings {
   setCardStyle: (style: CardStyle) => void;
   setAnimationLevel: (level: AnimationLevel) => void;
   setFontSize: (size: FontSize) => void;
+  setShowDetailPanel: (show: boolean) => void;
   setBorderRadius: (radius: BorderRadius) => void;
   setSidebarPosition: (position: SidebarPosition) => void;
   setHeaderStyle: (style: HeaderStyle) => void;
@@ -360,7 +362,8 @@ const defaultSettings: Settings = {
   layoutTemplate: "navigation",
   cardStyle: "default",
   animationLevel: "moderate",
-  fontSize: "default",
+  fontSize: "medium",
+  showDetailPanel: true,
   borderRadius: "default",
   sidebarPosition: "left",
   headerStyle: "default",
@@ -430,8 +433,10 @@ function createFallbackSettings(): Partial<SettingsContextType> {
     setLayoutTemplate: () => { },
 
     // Font size
-    fontSize: 'default' as FontSize,
+    fontSize: 'medium' as FontSize,
     setFontSize: () => { },
+    showDetailPanel: true,
+    setShowDetailPanel: () => { },
 
     // Border radius
     borderRadius: 'default' as BorderRadius,
@@ -592,11 +597,17 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       // Apply CSS custom properties for responsive design
       root.style.setProperty(
         "--font-size-base",
-        settings.fontSize === "small"
-          ? "14px"
-          : settings.fontSize === "large"
-            ? "18px"
-            : "16px"
+        settings.fontSize === "xs"
+          ? "13px"
+          : settings.fontSize === "small"
+            ? "14px"
+            : settings.fontSize === "medium"
+              ? "16px"
+              : settings.fontSize === "large"
+                ? "20px"
+                : settings.fontSize === "xl"
+                  ? "22px"
+                  : "18px"
       );
 
       root.style.setProperty(
@@ -672,6 +683,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     setCardStyle: (style) => updateSetting("cardStyle", style),
     setAnimationLevel: (level) => updateSetting("animationLevel", level),
     setFontSize: (size) => updateSetting("fontSize", size),
+    setShowDetailPanel: (show) => updateSetting("showDetailPanel", show),
     setBorderRadius: (radius) => updateSetting("borderRadius", radius),
     setSidebarPosition: (position) => updateSetting("sidebarPosition", position),
     setHeaderStyle: (style) => updateSetting("headerStyle", style),
