@@ -67,6 +67,52 @@ export type DarkBackgroundTheme =
   | "volcanic";
 
 export type ShadowIntensity = "none" | "subtle" | "moderate" | "strong";
+
+// Secondary color (same palette as primary)
+export type SecondaryColorTheme = ColorTheme;
+
+// Gradient direction
+export type GradientDirection =
+  | "to-t"
+  | "to-tr"
+  | "to-r"
+  | "to-br"
+  | "to-b"
+  | "to-bl"
+  | "to-l"
+  | "to-tl";
+
+// Light gradient themes
+export type LightGradientTheme =
+  | "none"
+  | "sunrise"
+  | "ocean-breeze"
+  | "lavender-mist"
+  | "meadow"
+  | "peach-glow"
+  | "sky-wash"
+  | "cotton-candy"
+  | "lemonade"
+  | "seafoam"
+  | "blush"
+  | "arctic"
+  | "golden-hour";
+
+// Dark gradient themes
+export type DarkGradientTheme =
+  | "none"
+  | "midnight-blue"
+  | "aurora"
+  | "deep-space"
+  | "ember"
+  | "twilight"
+  | "neon-noir"
+  | "volcanic-ash"
+  | "northern-lights"
+  | "abyss"
+  | "cyber-punk"
+  | "dark-forest"
+  | "nebula";
 export type LayoutTemplate =
   | "modern"
   | "minimal"
@@ -294,6 +340,15 @@ export interface Settings {
   lightBackgroundTheme: LightBackgroundTheme;
   darkBackgroundTheme: DarkBackgroundTheme;
   shadowIntensity: ShadowIntensity;
+  secondaryColorTheme: SecondaryColorTheme;
+  gradientDirection: GradientDirection;
+  lightGradientTheme: LightGradientTheme;
+  darkGradientTheme: DarkGradientTheme;
+  customPrimaryColor: string;
+  customSecondaryColor: string;
+  customLightBgColor: string;
+  customDarkBgColor: string;
+  activePalette: string;
   layoutTemplate: LayoutTemplate;
   cardStyle: CardStyle;
   animationLevel: AnimationLevel;
@@ -365,6 +420,15 @@ interface SettingsContextType extends Settings {
   setLightBackgroundTheme: (theme: LightBackgroundTheme) => void;
   setDarkBackgroundTheme: (theme: DarkBackgroundTheme) => void;
   setShadowIntensity: (intensity: ShadowIntensity) => void;
+  setSecondaryColorTheme: (theme: SecondaryColorTheme) => void;
+  setGradientDirection: (dir: GradientDirection) => void;
+  setLightGradientTheme: (theme: LightGradientTheme) => void;
+  setDarkGradientTheme: (theme: DarkGradientTheme) => void;
+  setCustomPrimaryColor: (color: string) => void;
+  setCustomSecondaryColor: (color: string) => void;
+  setCustomLightBgColor: (color: string) => void;
+  setCustomDarkBgColor: (color: string) => void;
+  setActivePalette: (palette: string) => void;
   setLayoutTemplate: (template: LayoutTemplate) => void;
   setCardStyle: (style: CardStyle) => void;
   setAnimationLevel: (level: AnimationLevel) => void;
@@ -428,6 +492,15 @@ const defaultSettings: Settings = {
   lightBackgroundTheme: "default",
   darkBackgroundTheme: "slate",
   shadowIntensity: "moderate",
+  secondaryColorTheme: "purple",
+  gradientDirection: "to-br",
+  lightGradientTheme: "none",
+  darkGradientTheme: "none",
+  customPrimaryColor: "",
+  customSecondaryColor: "",
+  customLightBgColor: "",
+  customDarkBgColor: "",
+  activePalette: "",
   layoutTemplate: "navigation",
   cardStyle: "default",
   animationLevel: "moderate",
@@ -662,6 +735,32 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       root.setAttribute("data-radio-design", settings.radioStyle);
       root.setAttribute("data-hover-effect-type", settings.hoverEffectType);
       root.setAttribute("data-hover-effect-intensity", settings.hoverEffectIntensity);
+      root.setAttribute("data-secondary-theme", settings.secondaryColorTheme);
+      root.setAttribute("data-gradient-dir", settings.gradientDirection);
+      root.setAttribute("data-light-gradient", settings.lightGradientTheme);
+      root.setAttribute("data-dark-gradient", settings.darkGradientTheme);
+
+      // Apply custom colors as CSS custom properties
+      if (settings.customPrimaryColor) {
+        root.style.setProperty("--custom-primary", settings.customPrimaryColor);
+      } else {
+        root.style.removeProperty("--custom-primary");
+      }
+      if (settings.customSecondaryColor) {
+        root.style.setProperty("--custom-secondary", settings.customSecondaryColor);
+      } else {
+        root.style.removeProperty("--custom-secondary");
+      }
+      if (settings.customLightBgColor) {
+        root.style.setProperty("--custom-light-bg", settings.customLightBgColor);
+      } else {
+        root.style.removeProperty("--custom-light-bg");
+      }
+      if (settings.customDarkBgColor) {
+        root.style.setProperty("--custom-dark-bg", settings.customDarkBgColor);
+      } else {
+        root.style.removeProperty("--custom-dark-bg");
+      }
 
       // Apply CSS custom properties for responsive design
       root.style.setProperty(
@@ -748,6 +847,15 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     setLightBackgroundTheme: (theme) => updateSetting("lightBackgroundTheme", theme),
     setDarkBackgroundTheme: (theme) => updateSetting("darkBackgroundTheme", theme),
     setShadowIntensity: (intensity) => updateSetting("shadowIntensity", intensity),
+    setSecondaryColorTheme: (theme) => updateSetting("secondaryColorTheme", theme),
+    setGradientDirection: (dir) => updateSetting("gradientDirection", dir),
+    setLightGradientTheme: (theme) => updateSetting("lightGradientTheme", theme),
+    setDarkGradientTheme: (theme) => updateSetting("darkGradientTheme", theme),
+    setCustomPrimaryColor: (color) => updateSetting("customPrimaryColor", color),
+    setCustomSecondaryColor: (color) => updateSetting("customSecondaryColor", color),
+    setCustomLightBgColor: (color) => updateSetting("customLightBgColor", color),
+    setCustomDarkBgColor: (color) => updateSetting("customDarkBgColor", color),
+    setActivePalette: (palette) => updateSetting("activePalette", palette),
     setLayoutTemplate: (template) => updateSetting("layoutTemplate", template),
     setCardStyle: (style) => updateSetting("cardStyle", style),
     setAnimationLevel: (level) => updateSetting("animationLevel", level),

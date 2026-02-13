@@ -873,6 +873,266 @@ html {
 }
 
 /* ========================================
+   SECONDARY COLOR THEMES
+   ======================================== */
+:root {
+  --secondary-accent: 262 83% 58%;
+}
+
+:root[data-secondary-theme="purple"] {
+  --secondary-accent: 262 83% 58%;
+}
+
+:root[data-secondary-theme="blue"] {
+  --secondary-accent: 221 83% 53%;
+}
+
+:root[data-secondary-theme="green"] {
+  --secondary-accent: 142 76% 36%;
+}
+
+:root[data-secondary-theme="orange"] {
+  --secondary-accent: 24 95% 53%;
+}
+
+:root[data-secondary-theme="red"] {
+  --secondary-accent: 0 84% 60%;
+}
+
+:root[data-secondary-theme="teal"] {
+  --secondary-accent: 166 72% 40%;
+}
+
+:root[data-secondary-theme="pink"] {
+  --secondary-accent: 330 81% 60%;
+}
+
+:root[data-secondary-theme="indigo"] {
+  --secondary-accent: 239 84% 67%;
+}
+
+:root[data-secondary-theme="cyan"] {
+  --secondary-accent: 188 94% 43%;
+}
+
+:root[data-secondary-theme="amber"] {
+  --secondary-accent: 38 92% 50%;
+}
+
+:root[data-secondary-theme="yellow"] {
+  --secondary-accent: 48 96% 53%;
+}
+
+:root[data-secondary-theme="lime"] {
+  --secondary-accent: 84 81% 44%;
+}
+
+:root[data-secondary-theme="emerald"] {
+  --secondary-accent: 160 84% 39%;
+}
+
+:root[data-secondary-theme="sky"] {
+  --secondary-accent: 199 89% 48%;
+}
+
+:root[data-secondary-theme="violet"] {
+  --secondary-accent: 258 90% 66%;
+}
+
+:root[data-secondary-theme="fuchsia"] {
+  --secondary-accent: 292 84% 61%;
+}
+
+:root[data-secondary-theme="rose"] {
+  --secondary-accent: 350 89% 60%;
+}
+
+:root[data-secondary-theme="slate"] {
+  --secondary-accent: 215 20% 50%;
+}
+
+:root[data-secondary-theme="zinc"] {
+  --secondary-accent: 240 4% 46%;
+}
+
+:root[data-secondary-theme="stone"] {
+  --secondary-accent: 25 5% 45%;
+}
+
+:root[data-secondary-theme="gold"] {
+  --secondary-accent: 43 96% 46%;
+}
+
+:root[data-secondary-theme="coral"] {
+  --secondary-accent: 16 85% 61%;
+}
+
+/* ========================================
+   GRADIENT DIRECTIONS
+   ======================================== */
+:root {
+  --gradient-angle: 135deg;
+}
+
+:root[data-gradient-dir="to-t"] {
+  --gradient-angle: 0deg;
+}
+
+:root[data-gradient-dir="to-tr"] {
+  --gradient-angle: 45deg;
+}
+
+:root[data-gradient-dir="to-r"] {
+  --gradient-angle: 90deg;
+}
+
+:root[data-gradient-dir="to-br"] {
+  --gradient-angle: 135deg;
+}
+
+:root[data-gradient-dir="to-b"] {
+  --gradient-angle: 180deg;
+}
+
+:root[data-gradient-dir="to-bl"] {
+  --gradient-angle: 225deg;
+}
+
+:root[data-gradient-dir="to-l"] {
+  --gradient-angle: 270deg;
+}
+
+:root[data-gradient-dir="to-tl"] {
+  --gradient-angle: 315deg;
+}
+
+/* ========================================
+   LIGHT GRADIENT THEMES
+   ======================================== */
+:root:not(.dark)[data-light-gradient="sunrise"] {
+  --gradient-from: 30 100% 95%;
+  --gradient-to: 350 100% 93%;
+}
+
+:root:not(.dark)[data-light-gradient="ocean-breeze"] {
+  --gradient-from: 200 100% 95%;
+  --gradient-to: 170 80% 93%;
+}
+
+:root:not(.dark)[data-light-gradient="lavender-mist"] {
+  --gradient-from: 270 80% 96%;
+  --gradient-to: 230 70% 94%;
+}
+
+:root:not(.dark)[data-light-gradient="meadow"] {
+  --gradient-from: 120 60% 95%;
+  --gradient-to: 80 50% 93%;
+}
+
+:root:not(.dark)[data-light-gradient="peach-glow"] {
+  --gradient-from: 20 100% 95%;
+  --gradient-to: 40 90% 93%;
+}
+
+:root:not(.dark)[data-light-gradient="sky-wash"] {
+  --gradient-from: 200 90% 96%;
+  --gradient-to: 220 80% 94%;
+}
+
+:root:not(.dark)[data-light-gradient="cotton-candy"] {
+  --gradient-from: 300 80% 96%;
+  --gradient-to: 200 70% 95%;
+}
+
+:root:not(.dark)[data-light-gradient="lemonade"] {
+  --gradient-from: 50 100% 94%;
+  --gradient-to: 80 80% 92%;
+}
+
+:root:not(.dark)[data-light-gradient="seafoam"] {
+  --gradient-from: 160 70% 95%;
+  --gradient-to: 190 60% 93%;
+}
+
+:root:not(.dark)[data-light-gradient="blush"] {
+  --gradient-from: 340 80% 96%;
+  --gradient-to: 10 60% 95%;
+}
+
+:root:not(.dark)[data-light-gradient="arctic"] {
+  --gradient-from: 195 80% 96%;
+  --gradient-to: 210 40% 97%;
+}
+
+:root:not(.dark)[data-light-gradient="golden-hour"] {
+  --gradient-from: 35 90% 94%;
+  --gradient-to: 15 80% 92%;
+}
+
+/* ========================================
+   DARK GRADIENT THEMES
+   ======================================== */
+.dark[data-dark-gradient="midnight-blue"] {
+  --gradient-from: 230 60% 6%;
+  --gradient-to: 210 50% 12%;
+}
+
+.dark[data-dark-gradient="aurora"] {
+  --gradient-from: 160 40% 5%;
+  --gradient-to: 260 50% 10%;
+}
+
+.dark[data-dark-gradient="deep-space"] {
+  --gradient-from: 240 30% 3%;
+  --gradient-to: 260 20% 8%;
+}
+
+.dark[data-dark-gradient="ember"] {
+  --gradient-from: 0 40% 5%;
+  --gradient-to: 30 50% 10%;
+}
+
+.dark[data-dark-gradient="twilight"] {
+  --gradient-from: 270 40% 6%;
+  --gradient-to: 300 30% 12%;
+}
+
+.dark[data-dark-gradient="neon-noir"] {
+  --gradient-from: 0 0% 3%;
+  --gradient-to: 280 50% 8%;
+}
+
+.dark[data-dark-gradient="volcanic-ash"] {
+  --gradient-from: 10 20% 4%;
+  --gradient-to: 350 30% 8%;
+}
+
+.dark[data-dark-gradient="northern-lights"] {
+  --gradient-from: 180 40% 5%;
+  --gradient-to: 280 40% 10%;
+}
+
+.dark[data-dark-gradient="abyss"] {
+  --gradient-from: 220 50% 3%;
+  --gradient-to: 200 40% 7%;
+}
+
+.dark[data-dark-gradient="cyber-punk"] {
+  --gradient-from: 300 50% 5%;
+  --gradient-to: 180 60% 8%;
+}
+
+.dark[data-dark-gradient="dark-forest"] {
+  --gradient-from: 140 50% 4%;
+  --gradient-to: 160 40% 8%;
+}
+
+.dark[data-dark-gradient="nebula"] {
+  --gradient-from: 280 50% 5%;
+  --gradient-to: 330 40% 10%;
+}
+
+/* ========================================
    SHADOW INTENSITY LEVELS
    ======================================== */
 :root[data-shadow="none"] {
