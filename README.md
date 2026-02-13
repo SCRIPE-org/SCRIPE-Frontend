@@ -1,9 +1,7 @@
-# 🏗️ Next Frontend Template - Modular Clean Architecture
-
-![Version](https://img.shields.io/badge/version-1.0.0-blue.svg) ![License](https://img.shields.io/badge/license-MIT-green.svg) ![Status](https://img.shields.io/badge/status-production_ready-success)
+# 🏗️ Next Frontend Template — Modular Clean Architecture
 
 > **The "Perfect" Foundation.**
-> A Scalable, Type-Safe, and Modular Monolith Architecture for Next.js.
+> A Scalable, Type-Safe, and Modular Monolith Architecture for Next.js 16.
 > Combining the power of an ERP Engine with the soul of a Premium UI.
 
 ---
@@ -14,39 +12,83 @@ This is not just another boilerplate. It is a **strict architectural standard** 
 
 ### ✅ Key Features
 
-- **Modular Monolith**: Strict domain separation (Core vs Modules).
-- **ERP Engine**: "Generic CRUD" system builds full features in minutes.
-- **State Management**: Zustand (Client) + React Query (Server) + Hydration Guards.
-- **Robust Auth**: RBAC (Role-Based Access Control) + JWT Interceptors.
-- **Type Safety**: End-to-End TypeScript + Zod Validation.
-- **Premium UI**: 65+ Shadcn Components, Motion Animations, Dark Mode.
-- **Storybook**: Isolated UI Workshop & Auto-Documentation.
-- **Testing Suite**: Vitest + React Testing Library + Coverage Reports.
-- **Security**: Input Sanitization + API Retries + RBAC Guards.
-- **Code Quality**: Prettier + Husky Pre-Commit Hooks + Lint Staged.
-- **Production Ready**: Optimized Build, SEO, and Environment Validation.
+- **Modular Monolith**: Strict domain separation — Core shared kernel + isolated feature modules
+- **ERP Engine**: Generic CRUD system builds full-featured data management pages in minutes
+- **SOLID View/ViewModel**: Views are pure UI (~60 lines), ViewModels handle all logic
+- **State Management**: Zustand (client state) + TanStack Query v5 (server state)
+- **Robust Auth**: JWT + refresh tokens, 2FA (TOTP), session management, permission guards
+- **Type Safety**: End-to-end TypeScript + Zod validation
+- **Premium UI**: Shadcn/ui components, dark mode, RTL/LTR support, micro-animations
+- **Bilingual**: Full Arabic + English localization with `LanguageProvider`
+- **Security**: Input sanitization, API retries, RBAC permission gate, route protection
 
 ---
 
 ## 📂 Architecture Overview
 
-We follow the **Verified Modular Monolith** pattern:
-
 ```bash
 src/
-├── app/               # 🔌 Route Connectors (Pages only, no logic)
-├── config/            # ⚙️ Global Config (Env, Constants)
-├── core/              # 🧠 Shared Infrastructure (The Engine)
-│   ├── common/        # Shared Utilities (Sanitize, Format)
-│   ├── ui/            # Design System (Shadcn)
-│   ├── crud/          # Generic CRUD Engine
-│   ├── services/      # API Service (Axios + Retry)
-│   ├── store/         # Global State (Zustand)
-│   └── stories/       # Storybook Stories (Core)
-├── modules/           # 📦 Feature Domains (Self-Contained)
-    ├── auth/          # Authentication Domain
-    ├── product/       # Example Domain
-    └── _template/     # Copy-paste this to start!
+├── app/                # 🔌 Route Connectors (Server Components — no logic)
+│   ├── (auth)/        #     Auth routes (login)
+│   └── (modules)/     #     Protected module routes
+│       ├── admins/
+│       ├── analytics/
+│       ├── audit/
+│       ├── dashboard/
+│       ├── profile/
+│       ├── recycle-bin/
+│       ├── roles/
+│       ├── security/
+│       ├── settings/
+│       └── tenants/
+│
+├── config/             # ⚙️ Environment validation & constants
+│
+├── core/               # 🧠 Shared Infrastructure (The Engine)
+│   ├── common/        #     Utilities (sanitize, format, Result)
+│   ├── crud/          #     Generic CRUD Engine (GenericCrudView, DataTable, forms)
+│   ├── locales/       #     Dictionary files (en.ts, ar.ts)
+│   ├── network/       #     API service (Axios + interceptors + retry)
+│   ├── providers/     #     LanguageProvider, MainProvider, QueryProvider
+│   ├── store/         #     Zustand stores (auth, UI, toast)
+│   └── ui/            #     Shadcn/ui design system (65+ components)
+│
+└── modules/            # 📦 Feature Domains (Self-Contained)
+    ├── auth/          #     Authentication (signin, 2FA verify)
+    ├── home/          #     Home page
+    ├── profile/       #     Profile, security, sessions, activity log
+    └── system/        #     System administration
+        ├── admin/     #       Admin management (CRUD, bulk ops)
+        ├── analytics/ #       Analytics dashboard
+        ├── audit/     #       Audit log viewer
+        ├── dashboard/ #       Dashboard (KPIs, charts)
+        ├── menus/     #       Menu management
+        ├── permissions/#      Permission viewer
+        ├── recycle-bin/#      Recycle bin
+        ├── roles/     #       Role management (CRUD, permissions)
+        ├── security/  #       Security dashboard
+        ├── tenants/   #       Tenant management (CRUD, settings)
+        └── tenant-settings/  # Tenant settings
+```
+
+### Module Structure (per module)
+
+```
+module/
+├── di.ts                     # Module DI Container
+├── index.ts                  # Public API exports
+└── src/
+    ├── domain/               # Business Logic (Pure TS)
+    │   ├── entities/         #   Zod schemas
+    │   └── interfaces/       #   Repository contracts
+    ├── data/                 # Data Access
+    │   ├── models/           #   API DTOs
+    │   ├── mappers/          #   DTO ↔ Entity mapping
+    │   └── repositories/     #   API implementations
+    └── presentation/         # UI (SOLID Pattern)
+        ├── viewmodels/       #   All logic lives here
+        ├── views/            #   Pure UI (~60 lines)
+        └── components/       #   Section components
 ```
 
 ---
@@ -56,15 +98,12 @@ src/
 ### 1. Prerequisites
 
 - Node.js 18+
-- pnpm 8+ (Recommended)
+- pnpm 8+
 
 ### 2. Installation
 
 ```bash
-# Install dependencies
 pnpm install
-
-# Setup Environment
 cp .env.example .env
 ```
 
@@ -72,17 +111,9 @@ cp .env.example .env
 
 ```bash
 pnpm dev
-# OR Run Storybook
-pnpm storybook
 ```
 
-### 4. Run Tests
-
-```bash
-pnpm test
-```
-
-### 5. Production Build
+### 4. Production Build
 
 ```bash
 pnpm build
@@ -96,18 +127,29 @@ pnpm start
 Stop writing the same table code 100 times. Use the engine:
 
 ```tsx
-export function ProductView() {
-  const settings = useProductViewModel(); // Connects to Repository
+export function AdminManagementView() {
+  const vm = useAdminManagementViewModel();
 
   return (
-    <GenericCrudView
-      title="Products"
-      columns={columns}
-      crud={settings.crud} // Just pass the controller!
-      schema={ProductSchema}
-    />
+    <div>
+      <StatisticsSection {...vm.statistics} />
+      <FilterSection {...vm.filters} />
+      <GenericCrudView crud={vm.table} columns={vm.columns} />
+    </div>
   );
 }
+```
+
+### Column Helpers
+
+```typescript
+column.index('No')
+column.text('name', 'Name')
+column.date('createdAt', 'Date', { locale: 'en-GB' })
+column.status('status', 'Status', statusMap)
+column.switch('isActive', 'Active', { getChecked, onChange, isLoading })
+column.link('email', 'Email', { type: 'email' })
+column.custom('any', 'Header', renderFn)
 ```
 
 ---
@@ -116,19 +158,14 @@ export function ProductView() {
 
 ### Global Permissions System
 
-A robust, enterprise-grade permission system that works for **any** action or page:
-
 ```tsx
-// Hook - check single permission
+// Hook — check permission
 const canCreate = usePermission("admins.create");
 
-// Component - declarative UI gating
+// Component — declarative UI gating
 <PermissionGate permission="reports.export">
   <ExportButton />
 </PermissionGate>
-
-// GenericCrudView - automatic permission checking
-<GenericCrudView config={{ resource: "admins", ... }} />
 ```
 
 ### Security Layers
@@ -146,27 +183,71 @@ const canCreate = usePermission("admins.create");
 
 ---
 
+## 🌐 Localization
+
+Full Arabic + English support with RTL/LTR auto-switching:
+
+```typescript
+const { t, language, direction, setLanguage } = Language();
+
+// Simple key
+<p>{t('common.loading')}</p>
+
+// With interpolation
+<p>{t('errors.minLength', { min: 5 })}</p>
+
+// Switch language
+<button onClick={() => setLanguage(language === 'ar' ? 'en' : 'ar')}>
+  {language === 'ar' ? 'English' : 'العربية'}
+</button>
+```
+
+---
+
 ## 📚 Documentation
 
-Detailed guides can be found in the `/docs` directory:
+### Architecture
 
-| Topic               | Guide                                                             |
-| :------------------ | :---------------------------------------------------------------- |
-| **Architecture**    | [📖 Architecture Guide](docs/architecture/01-modularity.md)       |
-| **Modules**         | [🏗️ Creating Your First Module](docs/tutorial/01-first-module.md) |
-| **API Integration** | [🔌 Connecting to API](docs/tutorial/02-api-integration.md)       |
-| **Permissions**     | [🛡️ Global Permissions System](docs/tutorial/03-permissions.md)  |
-| **Testing**         | [🧪 Vitest Guide](docs/tutorial/04-testing-guide.md)              |
-| **Security**        | [🔒 Security & Sanitization](docs/tutorial/05-security-guide.md)  |
-| **Code Quality**    | [✨ Husky & Prettier](docs/tutorial/06-code-quality.md)           |
-| **Storybook**       | [📘 Storybook Guide](docs/tutorial/storybook-guide.md)            |
+| Topic | Guide |
+|-------|-------|
+| Modularity & Boundaries | [01-modularity.md](docs/architecture/01-modularity.md) |
+| State Management | [02-state-management.md](docs/architecture/02-state-management.md) |
+| SOLID View/ViewModel | [solid-patterns.md](docs/architecture/solid-patterns.md) |
+| Server vs Client Components | [components.md](docs/architecture/components.md) |
+| Module Boundaries | [boundaries.md](docs/architecture/boundaries.md) |
+
+### Feature Documentation
+
+| Feature | Guide |
+|---------|-------|
+| Auth Module | [auth-module.md](docs/features/auth-module.md) |
+| Profile Module | [profile-module.md](docs/features/profile-module.md) |
+| System Module | [system-module.md](docs/features/system-module.md) |
+
+### Tutorials
+
+| # | Tutorial | Description |
+|---|----------|-------------|
+| 1 | [First Module](docs/tutorial/01-first-module.md) | Create a complete module |
+| 2 | [API Integration](docs/tutorial/02-api-integration.md) | Connect to backend |
+| 3 | [Permissions](docs/tutorial/03-permissions.md) | Integrate RBAC |
+| 4 | [Testing Guide](docs/tutorial/04-testing-guide.md) | Write tests |
+| 5 | [Security Guide](docs/tutorial/05-security-guide.md) | Secure your module |
+| 6 | [Code Quality](docs/tutorial/06-code-quality.md) | Linting & formatting |
 
 ---
 
-## 🤝 Contribution
+## 📊 Project Stats
 
-Strict architectural rules apply. Please read the [Checklist](docs/CHECKLIST.md) before submitting PRs.
+| Metric | Count |
+|--------|-------|
+| **Frontend Modules** | 4 (auth, home, profile, system) |
+| **System Sub-Modules** | 12 (admin, analytics, audit, dashboard, menus, permissions, recycle-bin, roles, security, tenants, tenant-settings, core) |
+| **Routes** | 21 pages |
+| **Core UI Components** | 65+ (Shadcn/ui) |
+| **Supported Languages** | 2 (English, Arabic) |
+| **Architecture** | SOLID View/ViewModel, Clean Architecture, Modular Monolith |
 
 ---
 
-**Built with ❤️ and Precision.**
+**Built with Next.js 16, precision architecture, and zero compromises.**

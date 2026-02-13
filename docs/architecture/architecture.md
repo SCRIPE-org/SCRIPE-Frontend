@@ -284,15 +284,29 @@ flowchart LR
 
 | Module | Type | Description |
 |--------|------|-------------|
-| `auth` | Core | Authentication, user session |
-| `home` | Feature | Home page components |
-| `admin` | Parent | Admin panel |
-| `admin/dashboard` | Child | Dashboard statistics |
-| `admin/user-management` | Child | User CRUD |
+| `auth` | Core | Login, 2FA, token management, route guards |
+| `home` | Feature | Landing / home page |
+| `profile` | Feature | Admin profile, security settings, sessions, activity |
+| `system` | Parent | Admin panel with sub-modules below |
+| `system/admin-management` | Child | Admin CRUD, role assignment, impersonation |
+| `system/user-management` | Child | User CRUD, verification, password reset |
+| `system/role-management` | Child | Role CRUD, permission assignment |
+| `system/permission-management` | Child | Permission viewer |
+| `system/tenant-management` | Child | Tenant CRUD, hierarchy, settings, logos |
+| `system/menu-management` | Child | Menu CRUD, reorder, visibility |
+| `system/dashboard` | Child | KPIs, charts, analytics, export |
+| `system/audit-log` | Child | Audit log viewer, filtering, export |
+| `system/recycle-bin` | Child | Soft-deleted items, restore |
+| `system/sessions` | Child | Active session management |
+| `system/settings` | Child | System-wide settings |
 
 ---
 
 ## Related Documents
 
-- [README.md](../README.md) - Quick start guide
-- [.gemini/RULES-memories/](../.gemini/RULES-memories/) - AI architecture rules
+- [README.md](../README.md) — Quick start guide
+- [Module Architecture Spec](module_architecture_spec.md) — Complete example module with all layers
+- [View/ViewModel Rules](view-viewmodel-rules.md) — SOLID pattern checklist
+- [State Management](02-state-management.md) — Server vs Client state
+- [Modularity](01-modularity.md) — Module boundary rules
+- [Feature Docs](../features/) — Auth, Profile, System module docs
