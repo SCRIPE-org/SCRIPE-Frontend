@@ -7,7 +7,6 @@ import { useTocViewModel } from '../viewmodels/useTocViewModel';
 import { useDocsI18n } from '../providers/DocsI18nProvider';
 
 // Layout components
-import { DocsLayout } from '../components/layout/DocsLayout';
 import { DocsHeader } from '../components/layout/DocsHeader';
 import { DocsSidebar } from '../components/layout/DocsSidebar';
 import { DocsBreadcrumb } from '../components/layout/DocsBreadcrumb';
@@ -30,15 +29,12 @@ interface DocsPageViewProps {
       slug: string;
 }
 
+/**
+ * DocsPageView — Pure UI composition for a documentation page.
+ * DocsLayout (i18n + theme providers) is in (docs)/layout.tsx.
+ * This view is a pure SOLID View with zero providers.
+ */
 export function DocsPageView({ slug }: DocsPageViewProps) {
-      return (
-            <DocsLayout>
-                  <DocsPageViewInner slug={slug} />
-            </DocsLayout>
-      );
-}
-
-function DocsPageViewInner({ slug }: DocsPageViewProps) {
       const { t, direction } = useDocsI18n();
       const vm = useDocsViewModel(slug);
       const sidebar = useSidebarViewModel();

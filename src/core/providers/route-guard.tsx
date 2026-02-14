@@ -32,8 +32,18 @@ const PUBLIC_PAGES = [
   "/profile/activity",
   "/profile/sessions",
   "/profile/notifications",
-  "/profile/settings"
+  "/profile/settings",
+  "/docs",
 ];
+
+// Route prefixes that are always public (no auth checks at all)
+const PUBLIC_PREFIXES = ["/docs"];
+
+/** Check if a pathname is a public page (no auth required) */
+function isPublicPage(pathname: string): boolean {
+  if (PUBLIC_PAGES.includes(pathname)) return true;
+  return PUBLIC_PREFIXES.some((prefix) => pathname.startsWith(prefix + "/"));
+}
 
 /**
  * Force clear auth tokens on logout (preserves user settings)
@@ -89,7 +99,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
       }
 
       // Check if this is a public page FIRST - always allow
-      if (PUBLIC_PAGES.includes(pathname)) {
+      if (isPublicPage(pathname)) {
         setIsChecking(false);
         return;
       }
@@ -177,7 +187,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
   }
 
   // Show loading only when actually checking auth (not navigation loading for public pages)
-  if (authLoading || (isChecking && !PUBLIC_PAGES.includes(pathname))) {
+  if (authLoading || (isChecking && !isPublicPage(pathname))) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
@@ -189,7 +199,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
   }
 
   // Always render children for public pages
-  if (PUBLIC_PAGES.includes(pathname)) {
+  if (isPublicPage(pathname)) {
     return <>{children}</>;
   }
 
