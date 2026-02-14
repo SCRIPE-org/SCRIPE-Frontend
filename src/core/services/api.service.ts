@@ -88,6 +88,10 @@ export class ApiService implements IApiService {
           appLogger.api(`Tenant context: ${this.tenantContextId}`);
         }
 
+        // Add Accept-Language header for backend localization
+        const language = typeof window !== "undefined" ? localStorage.getItem("language") || "en" : "en";
+        config.headers["Accept-Language"] = language;
+
         // Fix for 415 Unsupported Media Type with FormData
         if (config.data instanceof FormData) {
           // Let browser set Content-Type with boundary
@@ -190,8 +194,12 @@ export class ApiService implements IApiService {
       }
     );
 
-    // Public instance - just log requests
+    // Public instance - log requests and add Accept-Language
     this.axiosPublic.interceptors.request.use((config: InternalAxiosRequestConfig) => {
+      // Add Accept-Language header for backend localization
+      const language = typeof window !== "undefined" ? localStorage.getItem("language") || "en" : "en";
+      config.headers["Accept-Language"] = language;
+
       appLogger.api(`${config.method?.toUpperCase()} ${config.url} (public)`);
       return config;
     });
