@@ -31,7 +31,7 @@ export function DocsHeader({ onSearchOpen, onMobileMenuOpen }: DocsHeaderProps) 
 
                   {/* Logo */}
                   <a href="/docs" className="docs-header-logo">
-                        <div className="docs-header-logo-icon">V</div>
+                        <img src="/app-logo.png" alt="Nexora" className="docs-header-logo-img" />
                         <span>Docs</span>
                   </a>
 
