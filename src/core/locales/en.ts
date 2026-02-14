@@ -6,7 +6,7 @@ export const en = {
     password: "Password",
     loginButton: "Sign In",
     loginError: "Invalid username or password",
-    welcome: "App Name",
+    welcome: "NEXORA",
     pleaseLogin: "Please sign in to continue",
     usernamePlaceholder: "superadmin",
     connectionError: "Server connection error. Please try again.",
@@ -646,7 +646,7 @@ export const en = {
   app: {
     title: "Admin Dashboard",
     subtitle: "Administrative",
-    tagline: "App Name",
+    tagline: "NEXORA",
     modern: "Modern",
     classic: "Classic",
     elegant: "Elegant",
@@ -654,7 +654,7 @@ export const en = {
     compact: "Compact",
     floating: "Floating",
     floatingDesign: "Floating Design",
-    version: "v2.1.0",
+    version: "all rights reserved © 2026 NEXORA v1.1.0",
   },
 
   // Logo & Icons

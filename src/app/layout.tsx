@@ -5,12 +5,12 @@ import { AppProvider } from "@core/providers/app-provider"
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'),
-  title: "App Name",
-  description: "Professional App Name with multi-language support",
-  keywords: ["app name", "next template", "administration", "system"],
-  authors: [{ name: "App Name Team" }],
-  creator: "App Name",
-  publisher: "App Name",
+  title: "NEXORA",
+  description: "Professional NEXORA with multi-language support",
+  keywords: ["NEXORA", "next template", "administration", "system"],
+  authors: [{ name: "NEXORA Team" }],
+  creator: "NEXORA",
+  publisher: "NEXORA",
   icons: {
     icon: [
       { url: "/app-logo.png", sizes: "32x32", type: "image/png" },
@@ -21,16 +21,16 @@ export const metadata: Metadata = {
   },
   manifest: "/manifest.json",
   openGraph: {
-    title: "App Name",
-    description: "Professional App Name with multi-language support",
+    title: "NEXORA",
+    description: "Professional NEXORA with multi-language support",
     url: "https://app-name.com",
-    siteName: "App Name",
+    siteName: "NEXORA",
     images: [
       {
         url: "/app-logo.png",
         width: 512,
         height: 512,
-        alt: "App Name Logo",
+        alt: "NEXORA Logo",
       },
     ],
     locale: "ar_SA",
@@ -38,8 +38,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "App Name",
-    description: "Professional App Name with multi-language support",
+    title: "NEXORA",
+    description: "Professional NEXORA with multi-language support",
     images: ["/app-logo.png"],
   },
 }

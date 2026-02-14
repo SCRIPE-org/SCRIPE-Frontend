@@ -8,7 +8,7 @@ export const ar = {
     password: "كلمة المرور",
     loginButton: "دخول",
     loginError: "خطأ في اسم المستخدم أو كلمة المرور",
-    welcome: "اسم التطبيق",
+    welcome: "NEXORA",
     pleaseLogin: "يرجى تسجيل الدخول للمتابعة",
     usernamePlaceholder: "المشرف العام",
     connectionError: "خطأ في الاتصال بالخادم. يرجى المحاولة مرة أخرى.",
@@ -681,9 +681,9 @@ export const ar = {
 
   // Layout & App
   app: {
-    title: "اسم التطبيق",
+    title: "NEXORA",
     subtitle: "الإدارية",
-    tagline: "اسم التطبيق",
+    tagline: "NEXORA",
     modern: "العصرية",
     classic: "الكلاسيكية",
     elegant: "الأنيقة",
@@ -691,7 +691,7 @@ export const ar = {
     compact: "المدمجة",
     floating: "العائمة",
     floatingDesign: "تصميم عائم",
-    version: "v2.1.0",
+    version: "جميع الحقوق محفوظة © 2026 NEXORA - v1.1.0",
   },
 
   // Logo & Icons
@@ -3294,8 +3294,8 @@ export const ar = {
   common: {
     navigate: "انتقال",
     enabled: "مفعل",
-    next:"التالي",
-    previous:"السابق", 
+    next: "التالي",
+    previous: "السابق",
     disabled: "غير مفعل",
     open: "فتح",
     recent: "مستخدم مؤخرا",

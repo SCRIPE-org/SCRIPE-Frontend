@@ -32,7 +32,7 @@ export function DocsHeader({ onSearchOpen, onMobileMenuOpen }: DocsHeaderProps) 
                   {/* Logo */}
                   <a href="/docs" className="docs-header-logo">
                         <img src="/app-logo.png" alt="Nexora" className="docs-header-logo-img" />
-                        <span>Docs</span>
+                        <span>NEXORA</span>
                   </a>
 
                   {/* Search Trigger */}
