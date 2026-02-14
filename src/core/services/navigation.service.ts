@@ -1,11 +1,7 @@
 import { type IApiService } from "../interfaces/api.interface";
 import { API_ENDPOINTS } from "@core/config/api-endpoints";
 import { appLogger } from "@core/common/logger";
-import {
-  NavigationData,
-  MenuItemsResponse,
-  MenuItem,
-} from "@core/domain/entities/Navigation";
+import { NavigationData, MenuItemsResponse, MenuItem } from "@core/domain/entities/Navigation";
 import { NavigationMapper } from "@core/domain/mappers/NavigationMapper";
 
 export interface INavigationService {
@@ -20,7 +16,7 @@ export interface INavigationService {
 export class NavigationService implements INavigationService {
   private navigationData: NavigationData | null = null;
 
-  constructor(private readonly apiService: IApiService) { }
+  constructor(private readonly apiService: IApiService) {}
 
   /**
    * Fetch menu items from the backend
@@ -29,17 +25,17 @@ export class NavigationService implements INavigationService {
     try {
       const response = await this.apiService.get<any>(API_ENDPOINTS.GET_MENU_ITEMS);
 
-      appLogger.debug('Navigation API Response:', response);
+      appLogger.debug("Navigation API Response:", response);
 
       // Use mapper to handle different response formats
       const navigationData = NavigationMapper.handleApiResponse(response);
 
       this.navigationData = navigationData;
 
-      appLogger.debug('Processed navigation data:', navigationData);
+      appLogger.debug("Processed navigation data:", navigationData);
       return navigationData;
     } catch (error) {
-      appLogger.error('Error fetching menu items:', error);
+      appLogger.error("Error fetching menu items:", error);
       throw error;
     }
   }
@@ -84,7 +80,7 @@ export class NavigationService implements INavigationService {
       return [];
     }
 
-    return this.navigationData.menuItems.map(item =>
+    return this.navigationData.menuItems.map((item) =>
       NavigationMapper.menuItemToPlainObject(item)
     );
   }

@@ -1,6 +1,6 @@
 /**
  * Module Dependency Injection Container
- * 
+ *
  * This file is the factory for all module dependencies.
  * Copy this file when creating a new module and register your repositories.
  */
@@ -10,11 +10,11 @@
 // import type { IExampleRepository } from './src/domain/interfaces/IExampleRepository';
 
 export interface TemplateContainer {
-      // exampleRepository: IExampleRepository;
+  // exampleRepository: IExampleRepository;
 }
 
 export const createTemplateContainer = (): TemplateContainer => ({
-      // exampleRepository: new ExampleRepository(),
+  // exampleRepository: new ExampleRepository(),
 });
 
 export const container = createTemplateContainer();

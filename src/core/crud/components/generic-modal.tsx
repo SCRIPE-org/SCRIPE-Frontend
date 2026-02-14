@@ -1,7 +1,13 @@
 "use client";
 
 import React from "react";
-import { PAGE_BLUR_Z_INDEX, PAGE_BLUR_PX, PAGE_BLUR_BRIGHTNESS, MODAL_Z_INDEX, OVERLAY_Z_INDEX } from "@core/ui/modal-tokens";
+import {
+  PAGE_BLUR_Z_INDEX,
+  PAGE_BLUR_PX,
+  PAGE_BLUR_BRIGHTNESS,
+  MODAL_Z_INDEX,
+  OVERLAY_Z_INDEX,
+} from "@core/ui/modal-tokens";
 import {
   Dialog,
   DialogContent,
@@ -49,56 +55,56 @@ export function GenericModal({
     if (open) {
       // Find the root layout wrapper - try multiple selectors to catch all layout types
       const selectors = [
-        'body > div.min-h-screen', // Most common layout wrapper
+        "body > div.min-h-screen", // Most common layout wrapper
         'body > div[class*="min-h-screen"]', // Any div with min-h-screen
-        'body > div:not([data-radix-portal]):first-child', // First non-portal child
-        '#__next > div:not([data-radix-portal])', // Next.js root div
+        "body > div:not([data-radix-portal]):first-child", // First non-portal child
+        "#__next > div:not([data-radix-portal])", // Next.js root div
       ];
-      
+
       let layoutWrapper: HTMLElement | null = null;
       for (const selector of selectors) {
         const found = document.querySelector(selector);
-        if (found && !found.hasAttribute('data-radix-portal')) {
+        if (found && !found.hasAttribute("data-radix-portal")) {
           layoutWrapper = found as HTMLElement;
           break;
         }
       }
-      
+
       // If no single wrapper found, blur all direct children of body except portals and scripts
       if (!layoutWrapper) {
         const bodyChildren = Array.from(document.body.children) as HTMLElement[];
         bodyChildren.forEach((child) => {
           if (
-            !child.hasAttribute('data-radix-portal') && 
-            child.tagName !== 'SCRIPT' && 
-            child.tagName !== 'STYLE' &&
-            child.tagName !== 'NOSCRIPT'
+            !child.hasAttribute("data-radix-portal") &&
+            child.tagName !== "SCRIPT" &&
+            child.tagName !== "STYLE" &&
+            child.tagName !== "NOSCRIPT"
           ) {
-            child.classList.add('modal-blurred-content');
+            child.classList.add("modal-blurred-content");
           }
         });
       } else {
         // Blur the entire layout wrapper (includes sidebars, headers, main content)
-        layoutWrapper.classList.add('modal-blurred-content');
+        layoutWrapper.classList.add("modal-blurred-content");
       }
-      
+
       // Also blur html to catch anything else
-      document.documentElement.classList.add('modal-blur-open');
+      document.documentElement.classList.add("modal-blur-open");
       document.body.classList.add("modal-blur-open");
     } else {
       // Remove from all elements
-      document.querySelectorAll('.modal-blurred-content').forEach((el) => {
-        el.classList.remove('modal-blurred-content');
+      document.querySelectorAll(".modal-blurred-content").forEach((el) => {
+        el.classList.remove("modal-blurred-content");
       });
-      document.documentElement.classList.remove('modal-blur-open');
+      document.documentElement.classList.remove("modal-blur-open");
       document.body.classList.remove("modal-blur-open");
     }
 
     return () => {
-      document.querySelectorAll('.modal-blurred-content').forEach((el) => {
-        el.classList.remove('modal-blurred-content');
+      document.querySelectorAll(".modal-blurred-content").forEach((el) => {
+        el.classList.remove("modal-blurred-content");
       });
-      document.documentElement.classList.remove('modal-blur-open');
+      document.documentElement.classList.remove("modal-blur-open");
       document.body.classList.remove("modal-blur-open");
     };
   }, [open]);
@@ -111,11 +117,15 @@ export function GenericModal({
     document.documentElement.style.overflow = "hidden";
 
     // Find the active dialog content (our modal)
-    const dialogContent = document.querySelector('[data-radix-dialog-content]') as HTMLElement | null;
+    const dialogContent = document.querySelector(
+      "[data-radix-dialog-content]"
+    ) as HTMLElement | null;
     const portalRoot = dialogContent?.parentElement || null;
 
     // Collect all top-level elements that should be disabled (siblings of the portal root)
-    const disabledElements: Array<HTMLElement & { __prevInert?: any; __prevAriaHidden?: string | null }> = [];
+    const disabledElements: Array<
+      HTMLElement & { __prevInert?: any; __prevAriaHidden?: string | null }
+    > = [];
     const roots = Array.from(document.body.children) as HTMLElement[];
     roots.forEach((el) => {
       if (portalRoot && (el === portalRoot || portalRoot.contains(el))) return; // keep portal interactive
@@ -124,7 +134,9 @@ export function GenericModal({
       // Disable everything else
       (el as any).__prevInert = (el as any).inert;
       (el as any).__prevAriaHidden = el.getAttribute("aria-hidden");
-      try { (el as any).inert = true; } catch {}
+      try {
+        (el as any).inert = true;
+      } catch {}
       el.setAttribute("aria-hidden", "true");
       disabledElements.push(el as any);
     });
@@ -137,7 +149,9 @@ export function GenericModal({
         const prevHidden = (el as any).__prevAriaHidden;
         if (prevHidden == null) el.removeAttribute("aria-hidden");
         else el.setAttribute("aria-hidden", prevHidden);
-        try { (el as any).inert = (el as any).__prevInert; } catch {}
+        try {
+          (el as any).inert = (el as any).__prevInert;
+        } catch {}
         delete (el as any).__prevAriaHidden;
         delete (el as any).__prevInert;
       });
@@ -183,8 +197,7 @@ export function GenericModal({
     switch (settings.modalStyle) {
       case "centered":
         // Keep default centering behavior
-        sizeClasses =
-          "w-[95vw] max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl max-h-[90vh]";
+        sizeClasses = "w-[95vw] max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl max-h-[90vh]";
         break;
       case "fullscreen":
         // Responsive fullscreen - full on mobile, large on desktop
@@ -194,8 +207,7 @@ export function GenericModal({
         break;
       case "drawer":
         // Drawer from right side - responsive width
-        sizeClasses =
-          "w-full h-[95vh] max-w-md sm:max-w-lg md:max-w-xl max-h-none";
+        sizeClasses = "w-full h-[95vh] max-w-md sm:max-w-lg md:max-w-xl max-h-none";
         styleClasses =
           "!translate-x-0 !translate-y-0 !left-auto !top-0 right-0 rounded-l-lg rounded-r-none";
         break;
@@ -213,8 +225,7 @@ export function GenericModal({
       case "card":
         // Wide card with proper contrast
         sizeClasses = "w-[95vw] max-w-4xl max-h-[85vh]";
-        styleClasses =
-          "bg-background border-4 border-emerald-500/40 shadow-2xl rounded-xl";
+        styleClasses = "bg-background border-4 border-emerald-500/40 shadow-2xl rounded-xl";
         break;
       case "overlay":
         // Full screen with inverted theme colors
@@ -264,13 +275,7 @@ export function GenericModal({
         shadowClasses = "shadow-lg";
     }
 
-    return cn(
-      baseClasses,
-      sizeClasses,
-      styleClasses,
-      radiusClasses,
-      shadowClasses
-    );
+    return cn(baseClasses, sizeClasses, styleClasses, radiusClasses, shadowClasses);
   };
 
   const getHeaderPadding = () => {
@@ -312,22 +317,12 @@ export function GenericModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange} modal={false}>
-      <DialogContent 
-        className={cn(getModalClasses())}
-      >
+      <DialogContent className={cn(getModalClasses())}>
         {showHeader && (
-          <DialogHeader
-            className={cn(
-              getHeaderPadding(),
-              "border-b shrink-0",
-              headerClassName
-            )}
-          >
-            <DialogTitle className={cn("font-semibold", getTitleSize())}>
-              {title}
-            </DialogTitle>
+          <DialogHeader className={cn(getHeaderPadding(), "shrink-0 border-b", headerClassName)}>
+            <DialogTitle className={cn("font-semibold", getTitleSize())}>{title}</DialogTitle>
             {showDescription && (
-              <DialogDescription className="text-sm text-muted-foreground mt-1">
+              <DialogDescription className="mt-1 text-sm text-muted-foreground">
                 {description || "Please fill out the form below."}
               </DialogDescription>
             )}

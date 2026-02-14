@@ -3,7 +3,7 @@
  *
  * Centralized endpoint definitions for all API calls.
  * Organized by module for better maintainability.
- * 
+ *
  * IMPORTANT: These paths must match the backend controller routes exactly.
  * Backend uses [Route("api/[controller]")] which results in PascalCase paths.
  */
@@ -41,8 +41,7 @@ export const API_ENDPOINTS = {
     DELETE: (id: string) => `/Admins/${id}`,
     SET_ACTIVE: (id: string) => `/Admins/${id}/active`,
     ROLES: (id: string) => `/Admins/${id}/roles`,
-    REMOVE_ROLE: (adminId: string, roleId: string) =>
-      `/Admins/${adminId}/roles/${roleId}`,
+    REMOVE_ROLE: (adminId: string, roleId: string) => `/Admins/${adminId}/roles/${roleId}`,
     RESET_PASSWORD: (id: string) => `/Admins/${id}/reset-password`,
     CHANGE_PASSWORD: (id: string) => `/Admins/${id}/change-password`,
     BULK: {

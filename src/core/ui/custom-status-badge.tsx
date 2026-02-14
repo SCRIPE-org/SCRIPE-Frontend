@@ -64,8 +64,7 @@ const statusConfig = {
         "bg-gradient-to-r from-red-500 to-rose-500 text-white border-0 shadow-lg dark:from-red-600 dark:to-rose-600",
       outlined:
         "bg-transparent text-red-600 border-2 border-red-500 dark:text-red-400 dark:border-red-400",
-      filled:
-        "bg-red-500 text-white border-red-500 shadow-md dark:bg-red-600 dark:border-red-600",
+      filled: "bg-red-500 text-white border-red-500 shadow-md dark:bg-red-600 dark:border-red-600",
       minimal: "bg-transparent text-red-600 border-0 dark:text-red-400",
       pill: "bg-red-100 text-red-800 border-red-200 dark:bg-red-900/20 dark:text-red-400 dark:border-red-800/30",
       square:
@@ -182,8 +181,7 @@ export function CustomStatusBadge({
   const settings = useSettings();
 
   // Use design from props or fall back to settings badgeStyle
-  const effectiveDesign: BadgeStyle = (design ||
-    settings.badgeStyle) as BadgeStyle;
+  const effectiveDesign: BadgeStyle = (design || settings.badgeStyle) as BadgeStyle;
 
   // Resolve status aliases
   const resolvedStatus = statusAliases[status] || status;
@@ -247,10 +245,7 @@ export function CustomStatusBadge({
     >
       {showIcon && (
         <IconComponent
-          className={cn(
-            iconSizeClasses[size],
-            status === "processing" && "animate-spin"
-          )}
+          className={cn(iconSizeClasses[size], status === "processing" && "animate-spin")}
         />
       )}
       <span className="select-none">{displayText}</span>

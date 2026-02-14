@@ -24,26 +24,21 @@ export function Header({ onMenuClick, isModern = false }: HeaderProps) {
     <header
       className={cn(
         settings.stickyHeader ? "sticky top-0" : "relative",
-        "z-40 glass border-b border-border",
-        isModern && "h-20 flex flex-col"
+        "glass z-40 border-b border-border",
+        isModern && "flex h-20 flex-col"
       )}
     >
-      <div
-        className={cn(
-          "flex items-center justify-between px-6",
-          isModern ? "py-6" : "py-4"
-        )}
-      >
+      <div className={cn("flex items-center justify-between px-6", isModern ? "py-6" : "py-4")}>
         {/* Left side */}
         <div className="flex items-center space-x-4 rtl:space-x-reverse">
           {settings.collapsibleSidebar && (
             <Button
               variant="ghost"
               size="icon"
-              className="lg:hidden hover-lift sidebar-trigger"
+              className="hover-lift sidebar-trigger lg:hidden"
               onClick={onMenuClick}
             >
-              <Menu className="w-5 h-5" />
+              <Menu className="h-5 w-5" />
             </Button>
           )}
 
@@ -68,20 +63,20 @@ export function Header({ onMenuClick, isModern = false }: HeaderProps) {
             className="hover-lift"
             title={t("nav.home") || "Home"}
           >
-            <Home className="w-5 h-5" />
+            <Home className="h-5 w-5" />
           </Button>
           <LanguageSwitcher buttonClassName="hover-lift" />
           <ThemeSwitcher buttonClassName="hover-lift" />
           {settings.showNotifications && (
             <Button variant="ghost" size="icon" className="hover-lift">
-              <Bell className="w-5 h-5" />
+              <Bell className="h-5 w-5" />
             </Button>
           )}
           <UserProfileDropdown showName={false} />
         </div>
       </div>
       {settings.showBreadcrumbs && (
-        <div className="px-6 pb-2 hidden md:block">
+        <div className="hidden px-6 pb-2 md:block">
           <PageBreadcrumbs segments={[]} />
         </div>
       )}

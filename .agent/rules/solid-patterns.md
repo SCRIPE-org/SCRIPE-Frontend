@@ -52,13 +52,13 @@ trigger: always_on
 
 ### SOLID Breakdown
 
-| Principle | Application |
-|-----------|-------------|
+| Principle                 | Application                                                     |
+| ------------------------- | --------------------------------------------------------------- |
 | **S**ingle Responsibility | Each ViewModel handles ONE concern (filter, stats, table, etc.) |
-| **O**pen/Closed | ViewModels extend via composition, not modification |
-| **L**iskov Substitution | All ViewModels return consistent typed interfaces |
-| **I**nterface Segregation | Views receive only the props they need |
-| **D**ependency Inversion | ViewModels depend on Repository interfaces, not implementations |
+| **O**pen/Closed           | ViewModels extend via composition, not modification             |
+| **L**iskov Substitution   | All ViewModels return consistent typed interfaces               |
+| **I**nterface Segregation | Views receive only the props they need                          |
+| **D**ependency Inversion  | ViewModels depend on Repository interfaces, not implementations |
 
 ---
 
@@ -83,12 +83,13 @@ trigger: always_on
 ```
 
 **View Pattern**:
+
 ```typescript
 'use client';
 
 export function UserManagementView() {
   const vm = useUserManagementViewModel();
-  
+
   return (
     <div>
       <h1>{vm.title}</h1>
@@ -123,30 +124,34 @@ export function UserManagementView() {
 ```
 
 **ViewModel Pattern**:
+
 ```typescript
-'use client';
+"use client";
 
 interface ChartViewModelResult {
   data: ChartDataPoint[];
   isLoading: boolean;
-  period: 'week' | 'month' | 'year';
-  setPeriod: (p: 'week' | 'month' | 'year') => void;
+  period: "week" | "month" | "year";
+  setPeriod: (p: "week" | "month" | "year") => void;
   chartConfig: ChartConfig;
 }
 
 export function useChartViewModel(): ChartViewModelResult {
-  const [period, setPeriod] = useState<'week' | 'month' | 'year'>('month');
-  
+  const [period, setPeriod] = useState<"week" | "month" | "year">("month");
+
   const { data, isLoading } = useQuery({
-    queryKey: ['chart', period],
+    queryKey: ["chart", period],
     queryFn: () => analyticsRepository.getSalesData(period),
   });
 
-  const chartConfig = useMemo(() => ({
-    type: 'line',
-    colors: ['#3b82f6'],
-    // ...
-  }), []);
+  const chartConfig = useMemo(
+    () => ({
+      type: "line",
+      colors: ["#3b82f6"],
+      // ...
+    }),
+    []
+  );
 
   return { data: data ?? [], isLoading, period, setPeriod, chartConfig };
 }
@@ -175,46 +180,57 @@ export function useChartViewModel(): ChartViewModelResult {
 ```
 
 **Orchestrator Pattern**:
+
 ```typescript
-'use client';
+"use client";
 
 interface UserProfileViewModelResult {
   user: User | null;
   isLoading: boolean;
   error: Error | null;
-  
+
   activeTab: string;
   setActiveTab: (tab: string) => void;
   tabs: TabConfig[];
-  
+
   header: ProfileHeaderViewModelResult;
   activity: ActivityTabViewModelResult;
   settings: SettingsTabViewModelResult;
 }
 
 export function useUserProfileViewModel(userId: string): UserProfileViewModelResult {
-  const [activeTab, setActiveTab] = useState('activity');
-  
+  const [activeTab, setActiveTab] = useState("activity");
+
   // Fetch main user data
-  const { data: user, isLoading, error } = useQuery({
-    queryKey: ['user', userId],
+  const {
+    data: user,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["user", userId],
     queryFn: () => userRepository.getById(userId),
   });
-  
+
   // Compose section ViewModels
   const header = useProfileHeaderViewModel(user);
   const activity = useActivityTabViewModel(userId);
   const settings = useSettingsTabViewModel(userId);
-  
+
   const tabs = [
-    { id: 'activity', label: t('profile.tabs.activity') },
-    { id: 'settings', label: t('profile.tabs.settings') },
+    { id: "activity", label: t("profile.tabs.activity") },
+    { id: "settings", label: t("profile.tabs.settings") },
   ];
 
   return {
-    user, isLoading, error,
-    activeTab, setActiveTab, tabs,
-    header, activity, settings,
+    user,
+    isLoading,
+    error,
+    activeTab,
+    setActiveTab,
+    tabs,
+    header,
+    activity,
+    settings,
   };
 }
 ```
@@ -241,8 +257,9 @@ export function useUserProfileViewModel(userId: string): UserProfileViewModelRes
 ```
 
 **Form Section ViewModel Pattern**:
+
 ```typescript
-'use client';
+"use client";
 
 interface GeneralSettingsViewModelResult {
   form: UseFormReturn<GeneralSettingsSchema>;
@@ -256,22 +273,22 @@ export function useGeneralSettingsViewModel(): GeneralSettingsViewModelResult {
   const form = useForm<GeneralSettingsSchema>({
     resolver: zodResolver(generalSettingsSchema),
   });
-  
+
   // Fetch current settings
   const { data, isLoading } = useQuery({
-    queryKey: ['settings', 'general'],
+    queryKey: ["settings", "general"],
     queryFn: () => settingsRepository.getGeneral(),
   });
-  
+
   // Populate form when data arrives
   useEffect(() => {
     if (data) form.reset(data);
   }, [data, form]);
-  
+
   // Save mutation
   const { mutate, isPending: isSaving } = useMutation({
     mutationFn: settingsRepository.updateGeneral,
-    onSuccess: () => toast.success(t('settings.saved')),
+    onSuccess: () => toast.success(t("settings.saved")),
   });
 
   return {
@@ -307,23 +324,24 @@ export function useGeneralSettingsViewModel(): GeneralSettingsViewModelResult {
 ```
 
 **Wizard ViewModel Pattern**:
+
 ```typescript
-'use client';
+"use client";
 
 interface OnboardingViewModelResult {
   currentStep: number;
   totalSteps: number;
   canGoNext: boolean;
   canGoPrev: boolean;
-  
+
   goNext: () => void;
   goPrev: () => void;
   goToStep: (step: number) => void;
-  
+
   step1: Step1ViewModelResult;
   step2: Step2ViewModelResult;
   step3: Step3ViewModelResult;
-  
+
   isSubmitting: boolean;
   submitAll: () => void;
 }
@@ -331,11 +349,11 @@ interface OnboardingViewModelResult {
 export function useOnboardingViewModel(): OnboardingViewModelResult {
   const [currentStep, setCurrentStep] = useState(1);
   const totalSteps = 3;
-  
+
   const step1 = useStep1ViewModel();
   const step2 = useStep2ViewModel();
   const step3 = useStep3ViewModel();
-  
+
   const canGoNext = useMemo(() => {
     if (currentStep === 1) return step1.form.formState.isValid;
     if (currentStep === 2) return step2.form.formState.isValid;
@@ -354,13 +372,18 @@ export function useOnboardingViewModel(): OnboardingViewModelResult {
   });
 
   return {
-    currentStep, totalSteps,
-    canGoNext, canGoPrev: currentStep > 1,
+    currentStep,
+    totalSteps,
+    canGoNext,
+    canGoPrev: currentStep > 1,
     goNext: () => setCurrentStep((s) => Math.min(s + 1, totalSteps)),
     goPrev: () => setCurrentStep((s) => Math.max(s - 1, 1)),
     goToStep: setCurrentStep,
-    step1, step2, step3,
-    isSubmitting, submitAll,
+    step1,
+    step2,
+    step3,
+    isSubmitting,
+    submitAll,
   };
 }
 ```
@@ -385,8 +408,9 @@ export function useOnboardingViewModel(): OnboardingViewModelResult {
 ```
 
 **Report ViewModel Pattern**:
+
 ```typescript
-'use client';
+"use client";
 
 interface ReportBuilderViewModelResult {
   // Filters
@@ -394,12 +418,12 @@ interface ReportBuilderViewModelResult {
   setDateRange: (range: DateRange) => void;
   selectedColumns: string[];
   toggleColumn: (col: string) => void;
-  
+
   // Preview
   previewData: ReportRow[];
   isLoadingPreview: boolean;
   refreshPreview: () => void;
-  
+
   // Export
   isExporting: boolean;
   exportPdf: () => void;
@@ -425,6 +449,7 @@ interface ReportBuilderViewModelResult {
 ```
 
 **Simpler ViewModel (No Mutations)**:
+
 ```typescript
 'use client';
 
@@ -432,12 +457,12 @@ interface ActivityLogViewModelResult {
   activities: Activity[];
   isLoading: boolean;
   error: Error | null;
-  
+
   // Pagination
   page: number;
   setPage: (p: number) => void;
   totalPages: number;
-  
+
   // Filtering
   search: string;
   setSearch: (s: string) => void;
@@ -460,3 +485,4 @@ export function useActivityLogViewModel(): ActivityLogViewModelResult {
     isLoading, error,
     page, setPage,
     to
+```

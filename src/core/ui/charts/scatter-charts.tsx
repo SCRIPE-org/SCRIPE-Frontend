@@ -260,7 +260,7 @@ export function ProfessionalScatterCharts() {
         type="scatter"
         filterable={false}
       />
-      
+
       <GenericChart
         title={t("charts.scatter.multiSeries.title")}
         description={t("charts.scatter.multiSeries.description")}
@@ -268,7 +268,7 @@ export function ProfessionalScatterCharts() {
         type="scatter"
         filterable={true}
       />
-      
+
       <GenericChart
         title={t("charts.scatter.bubble.title")}
         description={t("charts.scatter.bubble.description")}
@@ -276,7 +276,7 @@ export function ProfessionalScatterCharts() {
         type="bubble"
         filterable={false}
       />
-      
+
       <GenericChart
         title={t("charts.scatter.correlation.title")}
         description={t("charts.scatter.correlation.description")}
@@ -284,7 +284,7 @@ export function ProfessionalScatterCharts() {
         type="scatter"
         filterable={false}
       />
-      
+
       <GenericChart
         title={t("charts.scatter.performance.title")}
         description={t("charts.scatter.performance.description")}
@@ -292,7 +292,7 @@ export function ProfessionalScatterCharts() {
         type="scatter"
         filterable={false}
       />
-      
+
       <GenericChart
         title={t("charts.scatter.timeSeries.title")}
         description={t("charts.scatter.timeSeries.description")}
@@ -300,7 +300,7 @@ export function ProfessionalScatterCharts() {
         type="scatter"
         filterable={false}
       />
-      
+
       <GenericChart
         title={t("charts.scatter.cluster.title")}
         description={t("charts.scatter.cluster.description")}
@@ -308,7 +308,7 @@ export function ProfessionalScatterCharts() {
         type="scatter"
         filterable={true}
       />
-      
+
       <GenericChart
         title={t("charts.scatter.outlier.title")}
         description={t("charts.scatter.outlier.description")}

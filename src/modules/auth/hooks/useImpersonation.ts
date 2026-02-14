@@ -6,71 +6,72 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 const BACKUP_TOKEN_KEY = "admin_backup_token";
 
 export function useImpersonation() {
-      const router = useRouter();
-      const { success } = useEnhancedToast();
-      const [isImpersonating, setIsImpersonating] = useState(false);
+  const router = useRouter();
+  const { success } = useEnhancedToast();
+  const [isImpersonating, setIsImpersonating] = useState(false);
 
-      // Check status on mount
-      useEffect(() => {
-            const checkStatus = () => {
-                  const hasBackup = typeof window !== "undefined" && sessionStorage.getItem(BACKUP_TOKEN_KEY) !== null;
-                  setIsImpersonating(hasBackup);
-            };
+  // Check status on mount
+  useEffect(() => {
+    const checkStatus = () => {
+      const hasBackup =
+        typeof window !== "undefined" && sessionStorage.getItem(BACKUP_TOKEN_KEY) !== null;
+      setIsImpersonating(hasBackup);
+    };
 
-            checkStatus();
-            // Listen for storage events in case it changes in another tab (optional but good practice)
-            window.addEventListener("storage", checkStatus);
-            return () => window.removeEventListener("storage", checkStatus);
-      }, []);
+    checkStatus();
+    // Listen for storage events in case it changes in another tab (optional but good practice)
+    window.addEventListener("storage", checkStatus);
+    return () => window.removeEventListener("storage", checkStatus);
+  }, []);
 
-      const startImpersonation = useCallback((token: string) => {
-            const currentToken = secureTokenService.getAccessToken();
-            if (currentToken) {
-                  sessionStorage.setItem(BACKUP_TOKEN_KEY, currentToken);
-            }
-            secureTokenService.setAccessToken(token);
-            setIsImpersonating(true);
+  const startImpersonation = useCallback((token: string) => {
+    const currentToken = secureTokenService.getAccessToken();
+    if (currentToken) {
+      sessionStorage.setItem(BACKUP_TOKEN_KEY, currentToken);
+    }
+    secureTokenService.setAccessToken(token);
+    setIsImpersonating(true);
 
-            // Clear persistent storage to force fresh load of user profile & menu
-            if (typeof window !== "undefined") {
-                  localStorage.removeItem("app-storage"); // Clear Zustand persist
-                  localStorage.removeItem("navigation-cache"); // Clear Menu cache
-                  localStorage.removeItem("navigation-cache-expiry");
-            }
+    // Clear persistent storage to force fresh load of user profile & menu
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("app-storage"); // Clear Zustand persist
+      localStorage.removeItem("navigation-cache"); // Clear Menu cache
+      localStorage.removeItem("navigation-cache-expiry");
+    }
 
-            // Force reload to ensure all app state (sockets, queries) is reset with new token
-            window.location.href = "/?impersonated=true";
-      }, []);
+    // Force reload to ensure all app state (sockets, queries) is reset with new token
+    window.location.href = "/?impersonated=true";
+  }, []);
 
-      const stopImpersonation = useCallback(() => {
-            const backupToken = sessionStorage.getItem(BACKUP_TOKEN_KEY);
-            if (backupToken) {
-                  secureTokenService.setAccessToken(backupToken);
-                  sessionStorage.removeItem(BACKUP_TOKEN_KEY);
-                  setIsImpersonating(false);
+  const stopImpersonation = useCallback(() => {
+    const backupToken = sessionStorage.getItem(BACKUP_TOKEN_KEY);
+    if (backupToken) {
+      secureTokenService.setAccessToken(backupToken);
+      sessionStorage.removeItem(BACKUP_TOKEN_KEY);
+      setIsImpersonating(false);
 
-                  // Clear persistent storage to force fresh load of admin profile & menu
-                  if (typeof window !== "undefined") {
-                        localStorage.removeItem("app-storage"); // Clear Zustand persist
-                        localStorage.removeItem("navigation-cache"); // Clear Menu cache
-                        localStorage.removeItem("navigation-cache-expiry");
-                        // ALSO Clear tenant context to preventing getting stuck in "Drill Down" mode
-                        sessionStorage.removeItem("tenant_context");
-                  }
+      // Clear persistent storage to force fresh load of admin profile & menu
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("app-storage"); // Clear Zustand persist
+        localStorage.removeItem("navigation-cache"); // Clear Menu cache
+        localStorage.removeItem("navigation-cache-expiry");
+        // ALSO Clear tenant context to preventing getting stuck in "Drill Down" mode
+        sessionStorage.removeItem("tenant_context");
+      }
 
-                  success({
-                        title: "Impersonation Ended",
-                        description: "You have returned to your admin account."
-                  });
+      success({
+        title: "Impersonation Ended",
+        description: "You have returned to your admin account.",
+      });
 
-                  // Force reload to reset state
-                  window.location.href = "/?impersonation_ended=true";
-            }
-      }, [success]);
+      // Force reload to reset state
+      window.location.href = "/?impersonation_ended=true";
+    }
+  }, [success]);
 
-      return {
-            isImpersonating,
-            startImpersonation,
-            stopImpersonation
-      };
+  return {
+    isImpersonating,
+    startImpersonation,
+    stopImpersonation,
+  };
 }

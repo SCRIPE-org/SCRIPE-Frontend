@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 /**
  * ReportExportDialog — Reusable export dialog for dashboard pages.
@@ -8,169 +8,177 @@
  *
  * Used by: DashboardView, TenantAnalyticsView, SecurityDashboardView.
  */
-import { useState } from 'react';
-import { useI18n } from '@core/providers/i18n-provider';
-import { useExportReport, type ExportFormat } from '@core/hooks/use-export-report';
-import { ExportIntervalSelect, type IntervalDates } from '@core/ui/export-interval-select';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@core/ui/dialog';
-import { Button } from '@core/ui/button';
-import { FileSpreadsheet, FileText, FileDown, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
+import { useState } from "react";
+import { useI18n } from "@core/providers/i18n-provider";
+import { useExportReport, type ExportFormat } from "@core/hooks/use-export-report";
+import { ExportIntervalSelect, type IntervalDates } from "@core/ui/export-interval-select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@core/ui/dialog";
+import { Button } from "@core/ui/button";
+import {
+  FileSpreadsheet,
+  FileText,
+  FileDown,
+  Loader2,
+  CheckCircle,
+  AlertCircle,
+} from "lucide-react";
 
 interface ReportExportDialogProps {
-      open: boolean;
-      onClose: () => void;
-      /** API endpoint path for the export (e.g., '/Dashboard/export') */
-      endpoint: string;
-      /** Translation key prefix for title/description (e.g., 'export.overview') */
-      titleKey: string;
-      descriptionKey: string;
+  open: boolean;
+  onClose: () => void;
+  /** API endpoint path for the export (e.g., '/Dashboard/export') */
+  endpoint: string;
+  /** Translation key prefix for title/description (e.g., 'export.overview') */
+  titleKey: string;
+  descriptionKey: string;
 }
 
 interface FormatOption {
-      value: ExportFormat;
-      icon: React.ReactNode;
-      color: string;
-      borderActive: string;
+  value: ExportFormat;
+  icon: React.ReactNode;
+  color: string;
+  borderActive: string;
 }
 
 const FORMAT_OPTIONS: FormatOption[] = [
-      {
-            value: 'csv',
-            icon: <FileText className="h-8 w-8" />,
-            color: 'text-emerald-500',
-            borderActive: 'border-emerald-500 bg-emerald-500/10',
-      },
-      {
-            value: 'excel',
-            icon: <FileSpreadsheet className="h-8 w-8" />,
-            color: 'text-blue-500',
-            borderActive: 'border-blue-500 bg-blue-500/10',
-      },
-      {
-            value: 'pdf',
-            icon: <FileDown className="h-8 w-8" />,
-            color: 'text-red-500',
-            borderActive: 'border-red-500 bg-red-500/10',
-      },
+  {
+    value: "csv",
+    icon: <FileText className="h-8 w-8" />,
+    color: "text-emerald-500",
+    borderActive: "border-emerald-500 bg-emerald-500/10",
+  },
+  {
+    value: "excel",
+    icon: <FileSpreadsheet className="h-8 w-8" />,
+    color: "text-blue-500",
+    borderActive: "border-blue-500 bg-blue-500/10",
+  },
+  {
+    value: "pdf",
+    icon: <FileDown className="h-8 w-8" />,
+    color: "text-red-500",
+    borderActive: "border-red-500 bg-red-500/10",
+  },
 ];
 
 export function ReportExportDialog({
-      open,
-      onClose,
-      endpoint,
-      titleKey,
-      descriptionKey,
+  open,
+  onClose,
+  endpoint,
+  titleKey,
+  descriptionKey,
 }: ReportExportDialogProps) {
-      const { t } = useI18n();
-      const { exportReport, isExporting, error } = useExportReport();
-      const [selectedFormat, setSelectedFormat] = useState<ExportFormat>('excel');
-      const [success, setSuccess] = useState(false);
-      const [intervalDates, setIntervalDates] = useState<IntervalDates>({ dateFrom: '', dateTo: '' });
+  const { t } = useI18n();
+  const { exportReport, isExporting, error } = useExportReport();
+  const [selectedFormat, setSelectedFormat] = useState<ExportFormat>("excel");
+  const [success, setSuccess] = useState(false);
+  const [intervalDates, setIntervalDates] = useState<IntervalDates>({ dateFrom: "", dateTo: "" });
 
-      const handleExport = async () => {
-            setSuccess(false);
-            try {
-                  await exportReport({
-                        endpoint,
-                        format: selectedFormat,
-                        dateFrom: intervalDates.dateFrom || undefined,
-                        dateTo: intervalDates.dateTo || undefined,
-                  });
-                  setSuccess(true);
-                  setTimeout(() => {
-                        setSuccess(false);
-                        onClose();
-                  }, 1500);
-            } catch {
-                  // Error handled by hook
-            }
-      };
+  const handleExport = async () => {
+    setSuccess(false);
+    try {
+      await exportReport({
+        endpoint,
+        format: selectedFormat,
+        dateFrom: intervalDates.dateFrom || undefined,
+        dateTo: intervalDates.dateTo || undefined,
+      });
+      setSuccess(true);
+      setTimeout(() => {
+        setSuccess(false);
+        onClose();
+      }, 1500);
+    } catch {
+      // Error handled by hook
+    }
+  };
 
-      const handleOpenChange = (isOpen: boolean) => {
-            if (!isOpen && !isExporting) {
-                  setSuccess(false);
-                  onClose();
-            }
-      };
+  const handleOpenChange = (isOpen: boolean) => {
+    if (!isOpen && !isExporting) {
+      setSuccess(false);
+      onClose();
+    }
+  };
 
-      return (
-            <Dialog open={open} onOpenChange={handleOpenChange}>
-                  <DialogContent className="sm:max-w-md">
-                        <DialogHeader>
-                              <DialogTitle className="flex items-center gap-2">
-                                    <FileDown className="h-5 w-5" />
-                                    {t(titleKey)}
-                              </DialogTitle>
-                              <DialogDescription>
-                                    {t(descriptionKey)}
-                              </DialogDescription>
-                        </DialogHeader>
+  return (
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <FileDown className="h-5 w-5" />
+            {t(titleKey)}
+          </DialogTitle>
+          <DialogDescription>{t(descriptionKey)}</DialogDescription>
+        </DialogHeader>
 
-                        {/* Time Period / Interval Selector */}
-                        <div className="space-y-2">
-                              <p className="text-sm font-medium">{t('export.interval.label')}</p>
-                              <ExportIntervalSelect
-                                    value={intervalDates}
-                                    onChange={setIntervalDates}
-                              />
-                        </div>
+        {/* Time Period / Interval Selector */}
+        <div className="space-y-2">
+          <p className="text-sm font-medium">{t("export.interval.label")}</p>
+          <ExportIntervalSelect value={intervalDates} onChange={setIntervalDates} />
+        </div>
 
-                        {/* Format Cards */}
-                        <div className="grid grid-cols-3 gap-3 py-2">
-                              {FORMAT_OPTIONS.map((opt) => (
-                                    <button
-                                          key={opt.value}
-                                          onClick={() => setSelectedFormat(opt.value)}
-                                          disabled={isExporting}
-                                          className={`flex flex-col items-center gap-2 rounded-lg border-2 p-4 transition-all hover:shadow-md
-                                                ${selectedFormat === opt.value ? opt.borderActive : 'border-border hover:border-muted-foreground/30'}
-                                                ${isExporting ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
-                                          `}
-                                    >
-                                          <span className={opt.color}>{opt.icon}</span>
-                                          <span className="text-sm font-semibold uppercase">{opt.value === 'excel' ? 'XLSX' : opt.value.toUpperCase()}</span>
-                                          <span className="text-[10px] text-muted-foreground text-center leading-tight">
-                                                {t(`export.formats.${opt.value}`)}
-                                          </span>
-                                    </button>
-                              ))}
-                        </div>
+        {/* Format Cards */}
+        <div className="grid grid-cols-3 gap-3 py-2">
+          {FORMAT_OPTIONS.map((opt) => (
+            <button
+              key={opt.value}
+              onClick={() => setSelectedFormat(opt.value)}
+              disabled={isExporting}
+              className={`flex flex-col items-center gap-2 rounded-lg border-2 p-4 transition-all hover:shadow-md ${selectedFormat === opt.value ? opt.borderActive : "border-border hover:border-muted-foreground/30"} ${isExporting ? "cursor-not-allowed opacity-50" : "cursor-pointer"} `}
+            >
+              <span className={opt.color}>{opt.icon}</span>
+              <span className="text-sm font-semibold uppercase">
+                {opt.value === "excel" ? "XLSX" : opt.value.toUpperCase()}
+              </span>
+              <span className="text-center text-[10px] leading-tight text-muted-foreground">
+                {t(`export.formats.${opt.value}`)}
+              </span>
+            </button>
+          ))}
+        </div>
 
-                        {/* Error */}
-                        {error && (
-                              <div className="flex items-center gap-2 rounded-md bg-destructive/10 p-3 text-sm text-destructive">
-                                    <AlertCircle className="h-4 w-4 shrink-0" />
-                                    {error}
-                              </div>
-                        )}
+        {/* Error */}
+        {error && (
+          <div className="flex items-center gap-2 rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+            <AlertCircle className="h-4 w-4 shrink-0" />
+            {error}
+          </div>
+        )}
 
-                        {/* Success */}
-                        {success && (
-                              <div className="flex items-center gap-2 rounded-md bg-emerald-500/10 p-3 text-sm text-emerald-600">
-                                    <CheckCircle className="h-4 w-4 shrink-0" />
-                                    {t('export.success')}
-                              </div>
-                        )}
+        {/* Success */}
+        {success && (
+          <div className="flex items-center gap-2 rounded-md bg-emerald-500/10 p-3 text-sm text-emerald-600">
+            <CheckCircle className="h-4 w-4 shrink-0" />
+            {t("export.success")}
+          </div>
+        )}
 
-                        <DialogFooter>
-                              <Button variant="outline" onClick={onClose} disabled={isExporting}>
-                                    {t('common.cancel')}
-                              </Button>
-                              <Button onClick={handleExport} disabled={isExporting}>
-                                    {isExporting ? (
-                                          <>
-                                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                                {t('export.generating')}
-                                          </>
-                                    ) : (
-                                          <>
-                                                <FileDown className="mr-2 h-4 w-4" />
-                                                {t('export.download')}
-                                          </>
-                                    )}
-                              </Button>
-                        </DialogFooter>
-                  </DialogContent>
-            </Dialog>
-      );
+        <DialogFooter>
+          <Button variant="outline" onClick={onClose} disabled={isExporting}>
+            {t("common.cancel")}
+          </Button>
+          <Button onClick={handleExport} disabled={isExporting}>
+            {isExporting ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                {t("export.generating")}
+              </>
+            ) : (
+              <>
+                <FileDown className="mr-2 h-4 w-4" />
+                {t("export.download")}
+              </>
+            )}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
 }

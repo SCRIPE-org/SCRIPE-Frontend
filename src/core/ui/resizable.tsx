@@ -1,32 +1,26 @@
-"use client"
+"use client";
 
-import { GripVertical } from "lucide-react"
+import { GripVertical } from "lucide-react";
 // @ts-ignore
-import { PanelGroup, Panel, PanelResizeHandle } from "react-resizable-panels"
+import { PanelGroup, Panel, PanelResizeHandle } from "react-resizable-panels";
 
-import { cn } from "@core/common/utils"
+import { cn } from "@core/common/utils";
 
-const ResizablePanelGroup = ({
-  className,
-  ...props
-}: React.ComponentProps<typeof PanelGroup>) => (
+const ResizablePanelGroup = ({ className, ...props }: React.ComponentProps<typeof PanelGroup>) => (
   <PanelGroup
-    className={cn(
-      "flex h-full w-full data-[panel-group-direction=vertical]:flex-col",
-      className
-    )}
+    className={cn("flex h-full w-full data-[panel-group-direction=vertical]:flex-col", className)}
     {...props}
   />
-)
+);
 
-const ResizablePanel = Panel
+const ResizablePanel = Panel;
 
 const ResizableHandle = ({
   withHandle,
   className,
   ...props
 }: React.ComponentProps<typeof PanelResizeHandle> & {
-  withHandle?: boolean
+  withHandle?: boolean;
 }) => (
   <PanelResizeHandle
     className={cn(
@@ -41,6 +35,6 @@ const ResizableHandle = ({
       </div>
     )}
   </PanelResizeHandle>
-)
+);
 
-export { ResizablePanelGroup, ResizablePanel, ResizableHandle }
+export { ResizablePanelGroup, ResizablePanel, ResizableHandle };

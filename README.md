@@ -143,13 +143,13 @@ export function AdminManagementView() {
 ### Column Helpers
 
 ```typescript
-column.index('No')
-column.text('name', 'Name')
-column.date('createdAt', 'Date', { locale: 'en-GB' })
-column.status('status', 'Status', statusMap)
-column.switch('isActive', 'Active', { getChecked, onChange, isLoading })
-column.link('email', 'Email', { type: 'email' })
-column.custom('any', 'Header', renderFn)
+column.index("No");
+column.text("name", "Name");
+column.date("createdAt", "Date", { locale: "en-GB" });
+column.status("status", "Status", statusMap);
+column.switch("isActive", "Active", { getChecked, onChange, isLoading });
+column.link("email", "Email", { type: "email" });
+column.custom("any", "Header", renderFn);
 ```
 
 ---
@@ -165,19 +165,19 @@ const canCreate = usePermission("admins.create");
 // Component — declarative UI gating
 <PermissionGate permission="reports.export">
   <ExportButton />
-</PermissionGate>
+</PermissionGate>;
 ```
 
 ### Security Layers
 
-| Layer | Protection |
-|-------|------------|
-| **Backend** | `[PermissionRequired]` attributes on all endpoints |
-| **Frontend** | UX-only permission hiding (not security) |
+| Layer            | Protection                                          |
+| ---------------- | --------------------------------------------------- |
+| **Backend**      | `[PermissionRequired]` attributes on all endpoints  |
+| **Frontend**     | UX-only permission hiding (not security)            |
 | **Sanitization** | All inputs sanitized via `@core/common/sanitize.ts` |
-| **API Retry** | 5xx errors auto-retried with exponential backoff |
-| **Route Guard** | Automatic page protection based on auth state |
-| **Hydration** | Prevents "flash of unauthenticated content" |
+| **API Retry**    | 5xx errors auto-retried with exponential backoff    |
+| **Route Guard**  | Automatic page protection based on auth state       |
+| **Hydration**    | Prevents "flash of unauthenticated content"         |
 
 > ⚠️ **Security Principle**: Frontend checks are UX-only. Backend is the gatekeeper.
 
@@ -208,45 +208,45 @@ const { t, language, direction, setLanguage } = Language();
 
 ### Architecture
 
-| Topic | Guide |
-|-------|-------|
-| Modularity & Boundaries | [01-modularity.md](docs/architecture/01-modularity.md) |
-| State Management | [02-state-management.md](docs/architecture/02-state-management.md) |
-| SOLID View/ViewModel | [solid-patterns.md](docs/architecture/solid-patterns.md) |
-| Server vs Client Components | [components.md](docs/architecture/components.md) |
-| Module Boundaries | [boundaries.md](docs/architecture/boundaries.md) |
+| Topic                       | Guide                                                              |
+| --------------------------- | ------------------------------------------------------------------ |
+| Modularity & Boundaries     | [01-modularity.md](docs/architecture/01-modularity.md)             |
+| State Management            | [02-state-management.md](docs/architecture/02-state-management.md) |
+| SOLID View/ViewModel        | [solid-patterns.md](docs/architecture/solid-patterns.md)           |
+| Server vs Client Components | [components.md](docs/architecture/components.md)                   |
+| Module Boundaries           | [boundaries.md](docs/architecture/boundaries.md)                   |
 
 ### Feature Documentation
 
-| Feature | Guide |
-|---------|-------|
-| Auth Module | [auth-module.md](docs/features/auth-module.md) |
+| Feature        | Guide                                                |
+| -------------- | ---------------------------------------------------- |
+| Auth Module    | [auth-module.md](docs/features/auth-module.md)       |
 | Profile Module | [profile-module.md](docs/features/profile-module.md) |
-| System Module | [system-module.md](docs/features/system-module.md) |
+| System Module  | [system-module.md](docs/features/system-module.md)   |
 
 ### Tutorials
 
-| # | Tutorial | Description |
-|---|----------|-------------|
-| 1 | [First Module](docs/tutorial/01-first-module.md) | Create a complete module |
-| 2 | [API Integration](docs/tutorial/02-api-integration.md) | Connect to backend |
-| 3 | [Permissions](docs/tutorial/03-permissions.md) | Integrate RBAC |
-| 4 | [Testing Guide](docs/tutorial/04-testing-guide.md) | Write tests |
-| 5 | [Security Guide](docs/tutorial/05-security-guide.md) | Secure your module |
-| 6 | [Code Quality](docs/tutorial/06-code-quality.md) | Linting & formatting |
+| #   | Tutorial                                               | Description              |
+| --- | ------------------------------------------------------ | ------------------------ |
+| 1   | [First Module](docs/tutorial/01-first-module.md)       | Create a complete module |
+| 2   | [API Integration](docs/tutorial/02-api-integration.md) | Connect to backend       |
+| 3   | [Permissions](docs/tutorial/03-permissions.md)         | Integrate RBAC           |
+| 4   | [Testing Guide](docs/tutorial/04-testing-guide.md)     | Write tests              |
+| 5   | [Security Guide](docs/tutorial/05-security-guide.md)   | Secure your module       |
+| 6   | [Code Quality](docs/tutorial/06-code-quality.md)       | Linting & formatting     |
 
 ---
 
 ## 📊 Project Stats
 
-| Metric | Count |
-|--------|-------|
-| **Frontend Modules** | 4 (auth, home, profile, system) |
-| **System Sub-Modules** | 12 (admin, analytics, audit, dashboard, menus, permissions, recycle-bin, roles, security, tenants, tenant-settings, core) |
-| **Routes** | 21 pages |
-| **Core UI Components** | 65+ (Shadcn/ui) |
-| **Supported Languages** | 2 (English, Arabic) |
-| **Architecture** | SOLID View/ViewModel, Clean Architecture, Modular Monolith |
+| Metric                  | Count                                                                                                                     |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| **Frontend Modules**    | 4 (auth, home, profile, system)                                                                                           |
+| **System Sub-Modules**  | 12 (admin, analytics, audit, dashboard, menus, permissions, recycle-bin, roles, security, tenants, tenant-settings, core) |
+| **Routes**              | 21 pages                                                                                                                  |
+| **Core UI Components**  | 65+ (Shadcn/ui)                                                                                                           |
+| **Supported Languages** | 2 (English, Arabic)                                                                                                       |
+| **Architecture**        | SOLID View/ViewModel, Clean Architecture, Modular Monolith                                                                |
 
 ---
 

@@ -56,14 +56,11 @@ function clearAllLocalStorage(): void {
  * Uses AuthService for API calls (SOLID compliant).
  */
 export class AuthRepository implements IAuthRepository {
-  constructor(private readonly service: IAuthService) { }
+  constructor(private readonly service: IAuthService) {}
 
   async login(credentials: LoginRequest): Promise<User> {
     // Create request model from entity
-    const requestModel = new LoginRequestModel(
-      credentials.username,
-      credentials.password
-    );
+    const requestModel = new LoginRequestModel(credentials.username, credentials.password);
 
     // Call service (returns Model)
     const responseModel = await this.service.login(requestModel);

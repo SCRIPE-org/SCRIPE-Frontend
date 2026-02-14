@@ -33,13 +33,13 @@ graph TB
 
 ### Views
 
-| ✅ DO | ❌ DON'T |
-|-------|----------|
-| Call ONE ViewModel hook | Use useState |
-| Pass props to components | Use useEffect |
-| Render conditionally | Use useQuery/useMutation |
-| Be ~60 lines max | Use useDebounce |
-| Destructure from ViewModel | Define local handlers |
+| ✅ DO                      | ❌ DON'T                 |
+| -------------------------- | ------------------------ |
+| Call ONE ViewModel hook    | Use useState             |
+| Pass props to components   | Use useEffect            |
+| Render conditionally       | Use useQuery/useMutation |
+| Be ~60 lines max           | Use useDebounce          |
+| Destructure from ViewModel | Define local handlers    |
 
 ```tsx
 // ✅ CORRECT - Pure UI (33 lines)
@@ -62,13 +62,13 @@ export default function RoleDetailView() {
   const [expandedCategories, setExpandedCategories] = useState(new Set());
   const { data: role } = useQuery({ queryKey: ["role"] });
   const saveMutation = useMutation({ ... });
-  
+
   useEffect(() => {
     if (rolePermissions) { ... } // NO!
   }, [rolePermissions]);
-  
+
   const handleSave = useCallback(() => { ... }); // NO!
-  
+
   return <Card>...</Card>;
 }
 ```
@@ -77,13 +77,13 @@ export default function RoleDetailView() {
 
 ### ViewModels
 
-| ✅ DO | ❌ DON'T |
-|-------|----------|
-| Own ALL state (useState) | Return JSX |
-| Own ALL queries (useQuery) | Import components |
-| Own ALL mutations (useMutation) | Use DOM APIs |
-| Own useDebounce, useCallback | Mix concerns |
-| Return typed props for View | Expose internal state |
+| ✅ DO                           | ❌ DON'T              |
+| ------------------------------- | --------------------- |
+| Own ALL state (useState)        | Return JSX            |
+| Own ALL queries (useQuery)      | Import components     |
+| Own ALL mutations (useMutation) | Use DOM APIs          |
+| Own useDebounce, useCallback    | Mix concerns          |
+| Return typed props for View     | Expose internal state |
 
 ```typescript
 // ✅ CORRECT - All logic in ViewModel
@@ -91,9 +91,9 @@ export function useRoleDetailViewModel() {
   const [selectedPermissionCodes, setSelectedPermissionCodes] = useState(new Set());
   const { data: role, isLoading } = useQuery({ ... });
   const saveMutation = useMutation({ ... });
-  
+
   const handleSave = useCallback(() => { ... }, []);
-  
+
   // Return structured props for View sections
   return {
     header: { role, isLoading, isSaving: saveMutation.isPending, onSave: handleSave },
@@ -107,11 +107,11 @@ export function useRoleDetailViewModel() {
 
 ### Section Components
 
-| ✅ DO | ❌ DON'T |
-|-------|----------|
-| Receive props only | Call ViewModels |
-| Render UI | Manage state |
-| Be reusable | Fetch data |
+| ✅ DO                  | ❌ DON'T                   |
+| ---------------------- | -------------------------- |
+| Receive props only     | Call ViewModels            |
+| Render UI              | Manage state               |
+| Be reusable            | Fetch data                 |
 | Use destructured props | Use hooks (except useI18n) |
 
 ```tsx
@@ -131,12 +131,12 @@ export function PermissionTreeCard({
 
 ## File Naming
 
-| Type | Convention | Example |
-|------|------------|---------|
-| View | `{Name}View.tsx` | `RoleDetailView.tsx` |
-| ViewModel | `use{Name}ViewModel.ts` | `useRoleDetailViewModel.ts` |
+| Type       | Convention                 | Example                     |
+| ---------- | -------------------------- | --------------------------- |
+| View       | `{Name}View.tsx`           | `RoleDetailView.tsx`        |
+| ViewModel  | `use{Name}ViewModel.ts`    | `useRoleDetailViewModel.ts` |
 | Section VM | `use{Section}ViewModel.ts` | `useStatisticsViewModel.ts` |
-| Section UI | `{Section}Card.tsx` | `PermissionTreeCard.tsx` |
+| Section UI | `{Section}Card.tsx`        | `PermissionTreeCard.tsx`    |
 
 ---
 
@@ -191,4 +191,3 @@ export function PermissionsView() {
 - [ ] ViewModel returns structured props
 - [ ] Section components are props-only
 - [ ] One concern per ViewModel
-

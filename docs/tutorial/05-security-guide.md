@@ -80,7 +80,7 @@ import { PermissionGate } from "@core/components/permission-gate";
 
 <PermissionGate permission="products.delete">
   <DeleteButton />
-</PermissionGate>
+</PermissionGate>;
 ```
 
 ---
@@ -111,21 +111,20 @@ import { PermissionGate } from "@core/components/permission-gate";
 
 ## 5. When to Refresh Permissions
 
-| Data | When Fetched | Auto-Refresh? |
-|------|-------------|---------------|
-| Access Token | Login | ✅ Yes (on 401) |
-| Refresh Token | Login | ❌ No |
-| Permissions | Login (GetMe) | ❌ Must re-login |
-| Menu Items | After Login | ✅ Manual refresh |
+| Data          | When Fetched  | Auto-Refresh?     |
+| ------------- | ------------- | ----------------- |
+| Access Token  | Login         | ✅ Yes (on 401)   |
+| Refresh Token | Login         | ❌ No             |
+| Permissions   | Login (GetMe) | ❌ Must re-login  |
+| Menu Items    | After Login   | ✅ Manual refresh |
 
 ---
 
 ## 6. Summary
 
-| Layer | Responsibility |
-|-------|----------------|
-| **Frontend** | Hide buttons, improve UX |
-| **Backend** | Enforce security, reject unauthorized |
-| **JWT** | Cryptographic proof of identity |
-| **[PermissionRequired]** | Granular API protection |
-
+| Layer                    | Responsibility                        |
+| ------------------------ | ------------------------------------- |
+| **Frontend**             | Hide buttons, improve UX              |
+| **Backend**              | Enforce security, reject unauthorized |
+| **JWT**                  | Cryptographic proof of identity       |
+| **[PermissionRequired]** | Granular API protection               |

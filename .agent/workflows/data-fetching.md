@@ -26,9 +26,9 @@ Create the repository contract. This defines WHAT operations are available, not 
 
 ```typescript
 // src/modules/hr/src/domain/interfaces/IEmployeeRepository.ts
-import { Result } from '@core/common/Result';
-import { AppError } from '@core/common/AppError';
-import { Employee } from '../entities/Employee';
+import { Result } from "@core/common/Result";
+import { AppError } from "@core/common/AppError";
+import { Employee } from "../entities/Employee";
 
 export interface GetEmployeesParams {
   page?: number;
@@ -92,9 +92,9 @@ Transform DTOs to domain entities and vice versa.
 
 ```typescript
 // src/modules/hr/src/data/mappers/EmployeeMapper.ts
-import { Employee } from '../../domain/entities/Employee';
-import { EmployeeDto, EmployeeListResponseDto } from '../models/EmployeeDto';
-import { PaginatedResult } from '../../domain/interfaces/IEmployeeRepository';
+import { Employee } from "../../domain/entities/Employee";
+import { EmployeeDto, EmployeeListResponseDto } from "../models/EmployeeDto";
+import { PaginatedResult } from "../../domain/interfaces/IEmployeeRepository";
 
 export const EmployeeMapper = {
   toDomain(dto: EmployeeDto): Employee {
@@ -138,19 +138,22 @@ Create the concrete implementation using the API service.
 
 ```typescript
 // src/modules/hr/src/data/repositories/EmployeeRepository.ts
-import { IEmployeeRepository, GetEmployeesParams, PaginatedResult } from '../../domain/interfaces/IEmployeeRepository';
-import { Employee } from '../../domain/entities/Employee';
-import { Result, ok, err } from '@core/common/Result';
-import { AppError } from '@core/common/AppError';
-import { apiService } from '@core/network';
-import { EmployeeMapper } from '../mappers/EmployeeMapper';
-import { EmployeeListResponseDto, EmployeeDto } from '../models/EmployeeDto';
+import {
+  IEmployeeRepository,
+  GetEmployeesParams,
+  PaginatedResult,
+} from "../../domain/interfaces/IEmployeeRepository";
+import { Employee } from "../../domain/entities/Employee";
+import { Result, ok, err } from "@core/common/Result";
+import { AppError } from "@core/common/AppError";
+import { apiService } from "@core/network";
+import { EmployeeMapper } from "../mappers/EmployeeMapper";
+import { EmployeeListResponseDto, EmployeeDto } from "../models/EmployeeDto";
 
 export class EmployeeRepository implements IEmployeeRepository {
-  
   async getAll(params?: GetEmployeesParams): Promise<Result<PaginatedResult<Employee>, AppError>> {
     try {
-      const response = await apiService.get<EmployeeListResponseDto>('/employees', {
+      const response = await apiService.get<EmployeeListResponseDto>("/employees", {
         params: {
           page: params?.page ?? 1,
           limit: params?.limit ?? 10,
@@ -158,7 +161,7 @@ export class EmployeeRepository implements IEmployeeRepository {
           department: params?.department,
         },
       });
-      
+
       return ok(EmployeeMapper.toPaginatedDomain(response.data));
     } catch (error) {
       return err(AppError.fromUnknown(error));
@@ -177,7 +180,7 @@ export class EmployeeRepository implements IEmployeeRepository {
   async create(data: CreateEmployeeInput): Promise<Result<Employee, AppError>> {
     try {
       const response = await apiService.post<EmployeeDto>(
-        '/employees',
+        "/employees",
         EmployeeMapper.toCreateDto(data)
       );
       return ok(EmployeeMapper.toDomain(response.data));
@@ -188,10 +191,7 @@ export class EmployeeRepository implements IEmployeeRepository {
 
   async update(id: string, data: UpdateEmployeeInput): Promise<Result<Employee, AppError>> {
     try {
-      const response = await apiService.patch<EmployeeDto>(
-        `/employees/${id}`,
-        data
-      );
+      const response = await apiService.patch<EmployeeDto>(`/employees/${id}`, data);
       return ok(EmployeeMapper.toDomain(response.data));
     } catch (error) {
       return err(AppError.fromUnknown(error));
@@ -219,18 +219,18 @@ Create hooks that wrap TanStack Query.
 
 ```typescript
 // src/modules/hr/src/presentation/viewmodels/useEmployees.ts
-'use client';
+"use client";
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { container } from '../../di';
-import type { GetEmployeesParams } from '../../domain/interfaces/IEmployeeRepository';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { container } from "../../di";
+import type { GetEmployeesParams } from "../../domain/interfaces/IEmployeeRepository";
 
 // Query key factory
 export const employeeKeys = {
-  all: ['employees'] as const,
-  lists: () => [...employeeKeys.all, 'list'] as const,
+  all: ["employees"] as const,
+  lists: () => [...employeeKeys.all, "list"] as const,
   list: (params: GetEmployeesParams) => [...employeeKeys.lists(), params] as const,
-  details: () => [...employeeKeys.all, 'detail'] as const,
+  details: () => [...employeeKeys.all, "detail"] as const,
   detail: (id: string) => [...employeeKeys.details(), id] as const,
 };
 
@@ -354,7 +354,7 @@ interface Props {
 export function EmployeeListView({ initialPage = 1, initialSearch = '' }: Props) {
   const [page, setPage] = useState(initialPage);
   const [search, setSearch] = useState(initialSearch);
-  
+
   const { data, isLoading, error } = useEmployees({ page, search, limit: 10 });
   const deleteEmployee = useDeleteEmployee();
   const { toast } = useToast();
@@ -383,13 +383,13 @@ export function EmployeeListView({ initialPage = 1, initialSearch = '' }: Props)
         onChange={setSearch}
         placeholder="Search employees..."
       />
-      
+
       <EmployeeTable
         data={data?.data ?? []}
         loading={isLoading}
         onDelete={handleDelete}
       />
-      
+
       {data && (
         <Pagination
           currentPage={data.page}

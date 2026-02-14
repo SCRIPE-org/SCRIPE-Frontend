@@ -36,7 +36,11 @@ export class NotificationService implements INotificationService {
   /**
    * Show success notification
    */
-  success(message: string, title: string = 'Success', options: Partial<NotificationData> = {}): void {
+  success(
+    message: string,
+    title: string = "Success",
+    options: Partial<NotificationData> = {}
+  ): void {
     const notification = NotificationMapper.createSuccessNotification(message, title, options);
     this.add(notification);
     appLogger.info("Success notification:", { title, message });
@@ -45,7 +49,7 @@ export class NotificationService implements INotificationService {
   /**
    * Show error notification
    */
-  error(message: string, title: string = 'Error', options: Partial<NotificationData> = {}): void {
+  error(message: string, title: string = "Error", options: Partial<NotificationData> = {}): void {
     const notification = NotificationMapper.createErrorNotification(message, title, options);
     this.add(notification);
     appLogger.error("Error notification:", { title, message });
@@ -54,7 +58,11 @@ export class NotificationService implements INotificationService {
   /**
    * Show info notification
    */
-  info(message: string, title: string = 'Information', options: Partial<NotificationData> = {}): void {
+  info(
+    message: string,
+    title: string = "Information",
+    options: Partial<NotificationData> = {}
+  ): void {
     const notification = NotificationMapper.createInfoNotification(message, title, options);
     this.add(notification);
     appLogger.info("Info notification:", { title, message });
@@ -63,7 +71,11 @@ export class NotificationService implements INotificationService {
   /**
    * Show warning notification
    */
-  warning(message: string, title: string = 'Warning', options: Partial<NotificationData> = {}): void {
+  warning(
+    message: string,
+    title: string = "Warning",
+    options: Partial<NotificationData> = {}
+  ): void {
     const notification = NotificationMapper.createWarningNotification(message, title, options);
     this.add(notification);
     appLogger.warn("Warning notification:", { title, message });
@@ -187,15 +199,15 @@ export class NotificationService implements INotificationService {
   private getDefaultTitle(type: NotificationType): string {
     switch (type) {
       case NotificationType.SUCCESS:
-        return 'Success';
+        return "Success";
       case NotificationType.ERROR:
-        return 'Error';
+        return "Error";
       case NotificationType.INFO:
-        return 'Information';
+        return "Information";
       case NotificationType.WARNING:
-        return 'Warning';
+        return "Warning";
       default:
-        return 'Notification';
+        return "Notification";
     }
   }
 }

@@ -200,26 +200,19 @@ export class ErrorHandler {
    */
   getUserFriendlyMessage(error: AppError): string {
     const messages: Record<string, string> = {
-      [ERROR_CODES.AUTH_TOKEN_EXPIRED]:
-        "Your session has expired. Please log in again.",
+      [ERROR_CODES.AUTH_TOKEN_EXPIRED]: "Your session has expired. Please log in again.",
       [ERROR_CODES.AUTH_INVALID_CREDENTIALS]: "Invalid username or password.",
-      [ERROR_CODES.AUTH_UNAUTHORIZED]:
-        "You are not authorized to perform this action.",
-      [ERROR_CODES.AUTH_FORBIDDEN]:
-        "Access denied. You do not have permission.",
+      [ERROR_CODES.AUTH_UNAUTHORIZED]: "You are not authorized to perform this action.",
+      [ERROR_CODES.AUTH_FORBIDDEN]: "Access denied. You do not have permission.",
       [ERROR_CODES.NETWORK_TIMEOUT]: "Request timed out. Please try again.",
       [ERROR_CODES.NETWORK_CONNECTION_FAILED]:
         "Connection failed. Please check your internet connection.",
-      [ERROR_CODES.NETWORK_SERVER_ERROR]:
-        "Server error. Please try again later.",
-      [ERROR_CODES.VALIDATION_REQUIRED_FIELD]:
-        "Please fill in all required fields.",
-      [ERROR_CODES.VALIDATION_INVALID_FORMAT]:
-        "Please check the format of your input.",
+      [ERROR_CODES.NETWORK_SERVER_ERROR]: "Server error. Please try again later.",
+      [ERROR_CODES.VALIDATION_REQUIRED_FIELD]: "Please fill in all required fields.",
+      [ERROR_CODES.VALIDATION_INVALID_FORMAT]: "Please check the format of your input.",
       [ERROR_CODES.RESOURCE_NOT_FOUND]: "The requested resource was not found.",
       [ERROR_CODES.RESOURCE_ALREADY_EXISTS]: "This resource already exists.",
-      [ERROR_CODES.SYSTEM_UNKNOWN_ERROR]:
-        "An unexpected error occurred. Please try again.",
+      [ERROR_CODES.SYSTEM_UNKNOWN_ERROR]: "An unexpected error occurred. Please try again.",
     };
 
     return messages[error.code] || error.message;
@@ -275,10 +268,7 @@ export const globalErrorHandler = new ErrorHandler({
 /**
  * Utility function to handle errors consistently
  */
-export function handleError(
-  error: Error | AppError,
-  context?: string
-): AppError {
+export function handleError(error: Error | AppError, context?: string): AppError {
   return globalErrorHandler.handleError(error, context);
 }
 
@@ -286,8 +276,7 @@ export function handleError(
  * Utility function to get user-friendly error message
  */
 export function getUserFriendlyErrorMessage(error: Error | AppError): string {
-  const appError =
-    error instanceof Error ? globalErrorHandler.handleError(error) : error;
+  const appError = error instanceof Error ? globalErrorHandler.handleError(error) : error;
 
   return globalErrorHandler.getUserFriendlyMessage(appError);
 }

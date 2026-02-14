@@ -20,12 +20,7 @@ import { Button } from "@core/ui/button";
 import { Card, CardContent } from "@core/ui/card";
 import { GenericTable } from "./generic-table";
 import { GenericModal } from "./generic-modal";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@core/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@core/ui/dialog";
 import { GenericForm, FieldConfig } from "@core/ui/forms/generic-form";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { ErrorMessage } from "@core/ui/error-message";
@@ -228,11 +223,7 @@ export interface CrudConfig<TItem = any> {
    * ACTION CONFIGURATION
    * ======================================== */
   /** Function to generate individual row actions */
-  getActions?: (
-    vm: any,
-    t: any,
-    handleDelete?: (item: TItem) => void
-  ) => CrudAction<TItem>[];
+  getActions?: (vm: any, t: any, handleDelete?: (item: TItem) => void) => CrudAction<TItem>[];
   /** Generic bulk actions for selected items */
   bulkActions?: BulkAction[];
   /** Custom actions (always visible) */
@@ -277,12 +268,12 @@ export interface CrudConfig<TItem = any> {
    * Permission configuration for this CRUD view.
    * If provided, controls visibility of Add button, Edit/Delete actions.
    * Can be boolean (static) or PermissionCode (dynamic check against user permissions).
-   * 
+   *
    * @example
    * // Static permissions
    * permissions: { canCreate: false, canDelete: true }
-   * 
-   * @example  
+   *
+   * @example
    * // Dynamic permissions (checks user's effective permissions)
    * permissions: { canCreate: "admins.create", canDelete: "admins.delete" }
    */
@@ -292,9 +283,9 @@ export interface CrudConfig<TItem = any> {
    * Resource name for auto-generating permission codes.
    * If set, and permissions is not provided, will auto-check:
    * - canCreate: `{resource}.create`
-   * - canUpdate: `{resource}.update`  
+   * - canUpdate: `{resource}.update`
    * - canDelete: `{resource}.delete`
-   * 
+   *
    * @example
    * resource: "admins" // Auto-checks admins.create, admins.update, admins.delete
    */
@@ -374,10 +365,7 @@ export function GenericCrudView<T>(props: GenericCrudViewProps<T>) {
           itemName: itemDisplayName,
           itemType: itemType,
           confirmTitle: t("common.confirmDelete"),
-          confirmDescription: t("common.deleteConfirmation").replace(
-            "{name}",
-            itemDisplayName
-          ),
+          confirmDescription: t("common.deleteConfirmation").replace("{name}", itemDisplayName),
         }
       );
     },
@@ -398,8 +386,7 @@ export function GenericCrudView<T>(props: GenericCrudViewProps<T>) {
           confirmTitle: action.confirmTitle || action.label,
           confirmDescription:
             action.confirmDescription ||
-            `Are you sure you want to ${action.label.toLowerCase()} ${selectedIds.length
-            } items?`,
+            `Are you sure you want to ${action.label.toLowerCase()} ${selectedIds.length} items?`,
         }
       );
     },
@@ -419,8 +406,7 @@ export function GenericCrudView<T>(props: GenericCrudViewProps<T>) {
           itemType: config?.itemTypeKey ? t(config.itemTypeKey) : "Items",
           confirmTitle: action.confirmTitle || action.label,
           confirmDescription:
-            action.confirmDescription ||
-            `Are you sure you want to ${action.label.toLowerCase()}?`,
+            action.confirmDescription || `Are you sure you want to ${action.label.toLowerCase()}?`,
         }
       );
     },
@@ -473,9 +459,7 @@ export function GenericCrudView<T>(props: GenericCrudViewProps<T>) {
 
   // Use config if provided, otherwise use direct props (backward compatibility)
   const title = config ? t(config.titleKey) : propTitle!;
-  const subtitle = config
-    ? config.customSubtitle || t(config.subtitleKey)
-    : propSubtitle;
+  const subtitle = config ? config.customSubtitle || t(config.subtitleKey) : propSubtitle;
   const columns = config ? config.columns : propColumns!;
 
   // Wrap actions to use the generic individual action handler
@@ -487,47 +471,42 @@ export function GenericCrudView<T>(props: GenericCrudViewProps<T>) {
   const actions = config?.hideActionsColumn
     ? undefined
     : rawActions
-      ?.filter((action) => {
-        if (
-          action.requiredPermission &&
-          !hasPermission(action.requiredPermission)
-        ) {
-          return false;
-        }
-        return true;
-      })
-      .map((action) => ({
-        ...action,
-        onClick:
-          action.onClick === handleDelete
-            ? handleDelete
-            : (item: any) => handleIndividualAction(action, item),
-      }));
+        ?.filter((action) => {
+          if (action.requiredPermission && !hasPermission(action.requiredPermission)) {
+            return false;
+          }
+          return true;
+        })
+        .map((action) => ({
+          ...action,
+          onClick:
+            action.onClick === handleDelete
+              ? handleDelete
+              : (item: any) => handleIndividualAction(action, item),
+        }));
 
   const createFields = config ? config.createFields : propCreateFields!;
-  const editFields = config
-    ? config.editFields
-    : propEditFields || propCreateFields!;
+  const editFields = config ? config.editFields : propEditFields || propCreateFields!;
 
   // Auto-generate pagination and search for config-based usage
   const pagination =
     propPagination ||
     (config
       ? {
-        ...viewModel.pagination,
-        onPageChange: viewModel.changePage,
-        onPageSizeChange: viewModel.changePageSize,
-      }
+          ...viewModel.pagination,
+          onPageChange: viewModel.changePage,
+          onPageSizeChange: viewModel.changePageSize,
+        }
       : undefined);
 
   const search =
     propSearch ||
     (config
       ? {
-        value: viewModel.searchValue,
-        onChange: viewModel.handleSearchChange,
-        inputRef: viewModel.searchInputRef,
-      }
+          value: viewModel.searchValue,
+          onChange: viewModel.handleSearchChange,
+          inputRef: viewModel.searchInputRef,
+        }
       : undefined);
 
   // ========================================
@@ -587,7 +566,15 @@ export function GenericCrudView<T>(props: GenericCrudViewProps<T>) {
       canUpdate: true,
       canDelete: true,
     };
-  }, [config?.permissions, resource, resolvePermissionValue, resourceViewPerm, resourceCreatePerm, resourceUpdatePerm, resourceDeletePerm]);
+  }, [
+    config?.permissions,
+    resource,
+    resolvePermissionValue,
+    resourceViewPerm,
+    resourceCreatePerm,
+    resourceUpdatePerm,
+    resourceDeletePerm,
+  ]);
 
   // Determine if Add button should be shown
   const showAddButton = !config?.hideAddButton && effectivePermissions.canCreate;
@@ -615,11 +602,7 @@ export function GenericCrudView<T>(props: GenericCrudViewProps<T>) {
       "shadow-[0_12px_32px_rgba(0,0,0,0.2)] dark:shadow-[0_12px_32px_rgba(0,0,0,0.5)]";
     switch (settings.cardStyle) {
       case "glass":
-        return cn(
-          base,
-          "bg-white/10 backdrop-blur border-white/20",
-          bottomShadow
-        );
+        return cn(base, "bg-white/10 backdrop-blur border-white/20", bottomShadow);
       case "solid":
         return cn(base, "bg-muted border-0", bottomShadow);
       case "bordered":
@@ -648,19 +631,17 @@ export function GenericCrudView<T>(props: GenericCrudViewProps<T>) {
   }
 
   if (viewModel.error && viewModel.items.length === 0) {
-    return (
-      <ErrorMessage message={viewModel.error} onRetry={viewModel.refresh} />
-    );
+    return <ErrorMessage message={viewModel.error} onRetry={viewModel.refresh} />;
   }
 
   return (
     <div className={getSpacingClasses()}>
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
           {subtitle && <p className="text-muted-foreground">{subtitle}</p>}
         </div>
-        <div className="flex flex-col sm:flex-row gap-2">
+        <div className="flex flex-col gap-2 sm:flex-row">
           {config?.customActions?.map((action, index) => (
             <Button
               key={index}
@@ -674,59 +655,47 @@ export function GenericCrudView<T>(props: GenericCrudViewProps<T>) {
               {action.label}
             </Button>
           ))}
-          {config?.enableBulkActions === true &&
-            viewModel.selectedItems.length > 0 && (
-              <div className="flex flex-col sm:flex-row gap-2 mt-2 sm:mt-0">
-                {config?.bulkActions?.map((action, index) => {
-                  const meetsMin =
-                    !action.minItems ||
-                    viewModel.selectedItems.length >= action.minItems;
-                  const meetsMax =
-                    !action.maxItems ||
-                    viewModel.selectedItems.length <= action.maxItems;
-                  const enabled = meetsMin && meetsMax;
+          {config?.enableBulkActions === true && viewModel.selectedItems.length > 0 && (
+            <div className="mt-2 flex flex-col gap-2 sm:mt-0 sm:flex-row">
+              {config?.bulkActions?.map((action, index) => {
+                const meetsMin =
+                  !action.minItems || viewModel.selectedItems.length >= action.minItems;
+                const meetsMax =
+                  !action.maxItems || viewModel.selectedItems.length <= action.maxItems;
+                const enabled = meetsMin && meetsMax;
 
-                  return (
-                    <Button
-                      key={index}
-                      onClick={() =>
-                        handleBulkAction(action, viewModel.selectedItems)
-                      }
-                      variant={action.variant || "outline"}
-                      size={getButtonSize()}
-                      className="flex-1 sm:flex-none"
-                      disabled={!enabled}
-                    >
-                      {action.icon && (
-                        <span className="mr-2">{action.icon}</span>
-                      )}
-                      {action.label.replace(
-                        "{count}",
-                        viewModel.selectedItems.length.toString()
-                      )}
-                    </Button>
-                  );
-                })}
-                <Button
-                  onClick={() => viewModel.setSelectedItems([])}
-                  variant="outline"
-                  size={getButtonSize()}
-                  className="flex-1 sm:flex-none"
-                >
-                  {t("common.clearSelection")}
-                </Button>
-              </div>
-            )}
-          {(!config ||
-            config.enableBulkActions !== true ||
-            viewModel.selectedItems.length === 0) &&
+                return (
+                  <Button
+                    key={index}
+                    onClick={() => handleBulkAction(action, viewModel.selectedItems)}
+                    variant={action.variant || "outline"}
+                    size={getButtonSize()}
+                    className="flex-1 sm:flex-none"
+                    disabled={!enabled}
+                  >
+                    {action.icon && <span className="mr-2">{action.icon}</span>}
+                    {action.label.replace("{count}", viewModel.selectedItems.length.toString())}
+                  </Button>
+                );
+              })}
+              <Button
+                onClick={() => viewModel.setSelectedItems([])}
+                variant="outline"
+                size={getButtonSize()}
+                className="flex-1 sm:flex-none"
+              >
+                {t("common.clearSelection")}
+              </Button>
+            </div>
+          )}
+          {(!config || config.enableBulkActions !== true || viewModel.selectedItems.length === 0) &&
             !config?.hideActionButtons && (
               <>
                 <Button
                   onClick={viewModel.refresh}
                   variant="outline"
                   size={getButtonSize()}
-                  className="bg-transparent flex-1 sm:flex-none"
+                  className="flex-1 bg-transparent sm:flex-none"
                 >
                   {t("common.refresh")}
                 </Button>
@@ -745,9 +714,7 @@ export function GenericCrudView<T>(props: GenericCrudViewProps<T>) {
       </div>
 
       {/* Custom header content */}
-      {config?.customHeaderContent && (
-        <div className="mb-6">{config.customHeaderContent}</div>
-      )}
+      {config?.customHeaderContent && <div className="mb-6">{config.customHeaderContent}</div>}
 
       <GenericTable
         data={viewModel.items}
@@ -760,9 +727,9 @@ export function GenericCrudView<T>(props: GenericCrudViewProps<T>) {
         pagination={
           pagination
             ? {
-              ...pagination,
-              currentPage: pagination.page, // Map page to currentPage for GenericTable
-            }
+                ...pagination,
+                currentPage: pagination.page, // Map page to currentPage for GenericTable
+              }
             : undefined
         }
         onSearch={search?.onChange}
@@ -770,17 +737,13 @@ export function GenericCrudView<T>(props: GenericCrudViewProps<T>) {
         searchInputRef={search?.inputRef}
         stickyActions={config?.stickyActions}
         renderActions={
-          config?.renderActions
-            ? (row) => config.renderActions?.(row as T)
-            : undefined
+          config?.renderActions ? (row) => config.renderActions?.(row as T) : undefined
         }
         {...(config?.customTableProps || {})}
       />
 
       {/* Custom footer content */}
-      {config?.customFooterContent && (
-        <div className="mt-6">{config.customFooterContent}</div>
-      )}
+      {config?.customFooterContent && <div className="mt-6">{config.customFooterContent}</div>}
 
       {/* Unified Modal for Create */}
       <GenericModal
@@ -804,21 +767,16 @@ export function GenericCrudView<T>(props: GenericCrudViewProps<T>) {
       <GenericModal
         open={viewModel.isEditModalOpen}
         onOpenChange={(open) => {
-          appLogger.debug(
-            "Edit modal onOpenChange:",
-            open,
-            "editingItem:",
-            viewModel.editingItem
-          );
+          appLogger.debug("Edit modal onOpenChange:", open, "editingItem:", viewModel.editingItem);
           if (!open) {
             viewModel.closeEditModal();
           }
         }}
         title={`${t("common.edit")} ${title}`}
         description={`Edit the ${title.toLowerCase()} details below.`}
-        formKey={`edit-form-${viewModel.editingItem?.id || "new"
-          }-${JSON.stringify(editFields?.map((f) => f.name).sort())}-${config?.formKey || 0
-          }`}
+        formKey={`edit-form-${
+          viewModel.editingItem?.id || "new"
+        }-${JSON.stringify(editFields?.map((f) => f.name).sort())}-${config?.formKey || 0}`}
       >
         <GenericForm
           fields={editFields || createFields}
@@ -857,7 +815,7 @@ export function GenericCrudView<T>(props: GenericCrudViewProps<T>) {
                 ? config.editInitialValues(viewModel.viewItem)
                 : viewModel.viewItem || {}
             }
-            onSubmit={async () => { }} // No-op for read-only
+            onSubmit={async () => {}} // No-op for read-only
             onCancel={viewModel.closeViewModal}
             readOnly={true}
           />
@@ -868,16 +826,12 @@ export function GenericCrudView<T>(props: GenericCrudViewProps<T>) {
       <ConfirmationDialog
         open={deleteSystem.showConfirmation}
         onOpenChange={deleteSystem.cancelDelete}
-        title={
-          deleteSystem.deleteOptions.confirmTitle || t("common.confirmDelete")
-        }
-        description={
-          deleteSystem.deleteOptions.confirmDescription ||
-          t("common.deleteWarning")
-        }
+        title={deleteSystem.deleteOptions.confirmTitle || t("common.confirmDelete")}
+        description={deleteSystem.deleteOptions.confirmDescription || t("common.deleteWarning")}
         confirmText={
           deleteSystem.deleteOptions.confirmButtonText ||
-          (deleteSystem.deleteOptions.variant === "destructive" || !deleteSystem.deleteOptions.variant
+          (deleteSystem.deleteOptions.variant === "destructive" ||
+          !deleteSystem.deleteOptions.variant
             ? t("common.delete")
             : t("common.confirm"))
         }

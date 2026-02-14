@@ -5,4 +5,4 @@
  *
  * @module recycle-bin
  */
-export { RecycleBinView } from './src/presentation/views/RecycleBinView';
+export { RecycleBinView } from "./src/presentation/views/RecycleBinView";

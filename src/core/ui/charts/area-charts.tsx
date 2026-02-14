@@ -5,16 +5,16 @@ import { GenericChart, ChartUtils, GENERIC_COLORS } from "./generic-chart";
 import { ResponsiveTabs } from "@core/ui/responsive-tabs";
 import { useI18n } from "@core/providers/i18n-provider";
 import {
-  TrendingUp, 
-  Layers, 
-  Activity, 
-  BarChart3, 
-  Clock, 
+  TrendingUp,
+  Layers,
+  Activity,
+  BarChart3,
+  Clock,
   Target,
   Sparkles,
   Zap,
   PieChart,
-  BarChart
+  BarChart,
 } from "lucide-react";
 
 const areaChartVariants = [
@@ -37,19 +37,21 @@ export function ProfessionalAreaCharts() {
 
   const getChartData = (variant: string) => {
     const baseLabels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug"];
-    
+
     switch (variant) {
       case "basic":
         return {
           labels: baseLabels,
-          datasets: [{
-            label: "Revenue",
-            data: [12000, 19000, 3000, 5000, 2000, 3000, 8000, 15000],
-            borderColor: GENERIC_COLORS.primary[0],
-            backgroundColor: GENERIC_COLORS.primary[0] + "40",
-            fill: true,
-            tension: 0.4,
-          }],
+          datasets: [
+            {
+              label: "Revenue",
+              data: [12000, 19000, 3000, 5000, 2000, 3000, 8000, 15000],
+              borderColor: GENERIC_COLORS.primary[0],
+              backgroundColor: GENERIC_COLORS.primary[0] + "40",
+              fill: true,
+              tension: 0.4,
+            },
+          ],
         };
 
       case "stacked":
@@ -94,14 +96,16 @@ export function ProfessionalAreaCharts() {
       case "gradient":
         return {
           labels: baseLabels,
-          datasets: [{
-            label: "Website Traffic",
-            data: [1200, 1900, 3000, 5000, 2000, 3000, 1500, 2500],
-            borderColor: GENERIC_COLORS.primary[4],
-            backgroundColor: GENERIC_COLORS.primary[4] + "50",
-            fill: true,
-            tension: 0.4,
-          }],
+          datasets: [
+            {
+              label: "Website Traffic",
+              data: [1200, 1900, 3000, 5000, 2000, 3000, 1500, 2500],
+              borderColor: GENERIC_COLORS.primary[4],
+              backgroundColor: GENERIC_COLORS.primary[4] + "50",
+              fill: true,
+              tension: 0.4,
+            },
+          ],
         };
 
       case "smooth":
@@ -276,27 +280,31 @@ export function ProfessionalAreaCharts() {
       case "polar":
         return {
           labels: ["North", "South", "East", "West", "Center"],
-          datasets: [{
-            label: "Polar Data",
-            data: [65, 59, 80, 81, 56],
-            borderColor: GENERIC_COLORS.primary[6],
-            backgroundColor: GENERIC_COLORS.primary[6] + "40",
-            fill: true,
-            tension: 0.4,
-          }],
+          datasets: [
+            {
+              label: "Polar Data",
+              data: [65, 59, 80, 81, 56],
+              borderColor: GENERIC_COLORS.primary[6],
+              backgroundColor: GENERIC_COLORS.primary[6] + "40",
+              fill: true,
+              tension: 0.4,
+            },
+          ],
         };
 
       default:
         return {
           labels: baseLabels,
-          datasets: [{
-            label: "Default",
-            data: [10, 20, 15, 25, 20, 30, 25, 35],
-            borderColor: GENERIC_COLORS.primary[0],
-            backgroundColor: GENERIC_COLORS.primary[0] + "40",
-            fill: true,
-            tension: 0.4,
-          }],
+          datasets: [
+            {
+              label: "Default",
+              data: [10, 20, 15, 25, 20, 30, 25, 35],
+              borderColor: GENERIC_COLORS.primary[0],
+              backgroundColor: GENERIC_COLORS.primary[0] + "40",
+              fill: true,
+              tension: 0.4,
+            },
+          ],
         };
     }
   };
@@ -394,10 +402,10 @@ export function ProfessionalAreaCharts() {
   };
 
   const variantInfo = getVariantInfo(activeVariant);
-  
+
   return (
     <div className="space-y-6">
-      <div className="text-center space-y-2">
+      <div className="space-y-2 text-center">
         <h2 className="text-2xl font-bold">Professional Area Charts</h2>
         <p className="text-muted-foreground">
           Emphasize magnitude of change with filled areas under lines
@@ -420,14 +428,14 @@ export function ProfessionalAreaCharts() {
         className="mb-6"
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         {areaChartVariants.slice(0, 9).map((variant) => (
           <div
             key={variant.id}
-            className="p-4 border rounded-lg cursor-pointer transition-all hover:shadow-md"
+            className="cursor-pointer rounded-lg border p-4 transition-all hover:shadow-md"
             onClick={() => setActiveVariant(variant.id)}
           >
-            <div className="flex items-center gap-2 mb-2">
+            <div className="mb-2 flex items-center gap-2">
               {variant.icon}
               <span className="font-medium">{variant.label}</span>
             </div>

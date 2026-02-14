@@ -1,39 +1,35 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import * as LabelPrimitive from "@radix-ui/react-label"
-import { cva, type VariantProps } from "class-variance-authority"
-import { useSettings } from "@core/providers/settings-provider"
-import { cn } from "@core/common/utils"
+import * as React from "react";
+import * as LabelPrimitive from "@radix-ui/react-label";
+import { cva, type VariantProps } from "class-variance-authority";
+import { useSettings } from "@core/providers/settings-provider";
+import { cn } from "@core/common/utils";
 
 const labelVariants = cva(
   "font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-)
+);
 
 const Label = React.forwardRef<
   React.ElementRef<typeof LabelPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root> &
-    VariantProps<typeof labelVariants>
+  React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root> & VariantProps<typeof labelVariants>
 >(({ className, ...props }, ref) => {
-  const settings = useSettings()
-  
+  const settings = useSettings();
+
   const getLabelClasses = () => {
     return cn(
       labelVariants(),
-      settings.fontSize === "small" ? "text-xs" :
-      settings.fontSize === "large" ? "text-base" : "text-sm",
+      settings.fontSize === "small"
+        ? "text-xs"
+        : settings.fontSize === "large"
+          ? "text-base"
+          : "text-sm",
       className
-    )
-  }
+    );
+  };
 
-  return (
-    <LabelPrimitive.Root
-      ref={ref}
-      className={getLabelClasses()}
-      {...props}
-    />
-  )
-})
-Label.displayName = LabelPrimitive.Root.displayName
+  return <LabelPrimitive.Root ref={ref} className={getLabelClasses()} {...props} />;
+});
+Label.displayName = LabelPrimitive.Root.displayName;
 
-export { Label }
+export { Label };

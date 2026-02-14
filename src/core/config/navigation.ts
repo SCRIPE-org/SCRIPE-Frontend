@@ -203,10 +203,7 @@ export const getNavigationItems = (
 /**
  * Checks if a navigation item or its children match the current pathname
  */
-export const isNavigationItemActive = (
-  item: NavigationItem,
-  pathname: string
-): boolean => {
+export const isNavigationItemActive = (item: NavigationItem, pathname: string): boolean => {
   // Check exact match first
   if (item.href && pathname === item.href) return true;
 
@@ -222,9 +219,7 @@ export const isNavigationItemActive = (
   }
 
   if (item.children) {
-    return item.children.some((child) =>
-      isNavigationItemActive(child, pathname)
-    );
+    return item.children.some((child) => isNavigationItemActive(child, pathname));
   }
   return false;
 };
@@ -289,19 +284,13 @@ function getCurrentLanguage(): string {
  * Handles bilingual fields (nameEn/nameAr) — picks name by current language.
  * Used internally by the dynamic navigation system.
  */
-export const convertMenuItemsToNavigation = (
-  menuItemsData: unknown
-): NavigationItem[] => {
+export const convertMenuItemsToNavigation = (menuItemsData: unknown): NavigationItem[] => {
   // Handle different possible data structures
   let menuItems: BackendMenuItem[] = [];
 
   if (Array.isArray(menuItemsData)) {
     menuItems = menuItemsData as BackendMenuItem[];
-  } else if (
-    menuItemsData &&
-    typeof menuItemsData === "object" &&
-    "menuItem" in menuItemsData
-  ) {
+  } else if (menuItemsData && typeof menuItemsData === "object" && "menuItem" in menuItemsData) {
     menuItems = (menuItemsData as Record<string, unknown>).menuItem as BackendMenuItem[];
   } else if (
     menuItemsData &&
@@ -317,9 +306,10 @@ export const convertMenuItemsToNavigation = (
 
   const convertMenuItem = (item: BackendMenuItem): NavigationItem => {
     // Bilingual name resolution: prefer nameEn/nameAr, fallback to legacy fields
-    const displayName = lang === "ar"
-      ? (item.nameAr || item.nameEn || item.name || item.displayName || "Unnamed")
-      : (item.nameEn || item.name || item.displayName || "Unnamed");
+    const displayName =
+      lang === "ar"
+        ? item.nameAr || item.nameEn || item.name || item.displayName || "Unnamed"
+        : item.nameEn || item.name || item.displayName || "Unnamed";
 
     return {
       name: displayName,

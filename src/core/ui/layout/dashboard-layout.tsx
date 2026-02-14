@@ -62,9 +62,7 @@ interface DashboardLayoutProps {
 
 export function DashboardLayout({ children }: DashboardLayoutProps) {
   const settings = useSettings();
-  const [sidebarOpen, setSidebarOpen] = useState(
-    settings.collapsibleSidebar ? false : true
-  );
+  const [sidebarOpen, setSidebarOpen] = useState(settings.collapsibleSidebar ? false : true);
   const { direction } = useI18n();
   const { layoutTemplate, collapsibleSidebar } = settings;
 
@@ -103,10 +101,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   // Classic Layout
   if (layoutTemplate === "classic") {
     return (
-      <ClassicLayout
-        sidebarOpen={sidebarOpen}
-        onSidebarOpenChange={setSidebarOpen}
-      >
+      <ClassicLayout sidebarOpen={sidebarOpen} onSidebarOpenChange={setSidebarOpen}>
         {children}
       </ClassicLayout>
     );
@@ -115,10 +110,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   // Compact Layout
   if (layoutTemplate === "compact") {
     return (
-      <CompactLayout
-        sidebarOpen={sidebarOpen}
-        onSidebarOpenChange={setSidebarOpen}
-      >
+      <CompactLayout sidebarOpen={sidebarOpen} onSidebarOpenChange={setSidebarOpen}>
         {children}
       </CompactLayout>
     );
@@ -127,10 +119,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   // Elegant Layout
   if (layoutTemplate === "elegant") {
     return (
-      <ElegantLayout
-        sidebarOpen={sidebarOpen}
-        onSidebarOpenChange={setSidebarOpen}
-      >
+      <ElegantLayout sidebarOpen={sidebarOpen} onSidebarOpenChange={setSidebarOpen}>
         {children}
       </ElegantLayout>
     );
@@ -139,10 +128,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   // Floating Layout
   if (layoutTemplate === "floating") {
     return (
-      <FloatingLayout
-        sidebarOpen={sidebarOpen}
-        onSidebarOpenChange={setSidebarOpen}
-      >
+      <FloatingLayout sidebarOpen={sidebarOpen} onSidebarOpenChange={setSidebarOpen}>
         {children}
       </FloatingLayout>
     );
@@ -151,10 +137,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   // Modern Layout
   if (layoutTemplate === "modern") {
     return (
-      <ModernLayout
-        sidebarOpen={sidebarOpen}
-        onSidebarOpenChange={setSidebarOpen}
-      >
+      <ModernLayout sidebarOpen={sidebarOpen} onSidebarOpenChange={setSidebarOpen}>
         {children}
       </ModernLayout>
     );
@@ -163,10 +146,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   // Tabbed Layout
   if (layoutTemplate === "tabbed") {
     return (
-      <TabbedLayout
-        sidebarOpen={sidebarOpen}
-        onSidebarOpenChange={setSidebarOpen}
-      >
+      <TabbedLayout sidebarOpen={sidebarOpen} onSidebarOpenChange={setSidebarOpen}>
         {children}
       </TabbedLayout>
     );
@@ -175,10 +155,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   // Dual Layout
   if (layoutTemplate === "dual") {
     return (
-      <DualLayout
-        sidebarOpen={sidebarOpen}
-        onSidebarOpenChange={setSidebarOpen}
-      >
+      <DualLayout sidebarOpen={sidebarOpen} onSidebarOpenChange={setSidebarOpen}>
         {children}
       </DualLayout>
     );
@@ -319,10 +296,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
   // ── Default: Navigation Layout ──
   return (
-    <NavigationLayout
-      sidebarOpen={sidebarOpen}
-      onSidebarOpenChange={setSidebarOpen}
-    >
+    <NavigationLayout sidebarOpen={sidebarOpen} onSidebarOpenChange={setSidebarOpen}>
       {children}
     </NavigationLayout>
   );

@@ -1,18 +1,12 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import type {
-  HoverEffectType,
-  HoverEffectIntensity,
-} from "@core/providers/settings-provider";
+import type { HoverEffectType, HoverEffectIntensity } from "@core/providers/settings-provider";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function formatDate(
-  date: string | Date | null | undefined,
-  locale: string = "ar-SA"
-) {
+export function formatDate(date: string | Date | null | undefined, locale: string = "ar-SA") {
   try {
     // Handle null/undefined cases
     if (date === null || date === undefined || date === "") {
@@ -35,10 +29,7 @@ export function formatDate(
   }
 }
 
-export function formatDateTime(
-  date: string | Date | null | undefined,
-  locale: string = "ar-SA"
-) {
+export function formatDateTime(date: string | Date | null | undefined, locale: string = "ar-SA") {
   try {
     // Handle null/undefined cases
     if (date === null || date === undefined || date === "") {
@@ -71,9 +62,7 @@ export function formatCurrency(amount: number, currency = "USD") {
 }
 
 // Convert ISO date string to HTML date input format (YYYY-MM-DD)
-export function toDateInputValue(
-  date: string | Date | null | undefined
-): string {
+export function toDateInputValue(date: string | Date | null | undefined): string {
   if (!date) return "";
 
   try {
@@ -108,9 +97,7 @@ export function fromDateInputValue(dateValue: string): string {
 
         // Ensure time part has seconds (add :00 if only HH:mm)
         const timeWithSeconds =
-          timePart.includes(":") && timePart.split(":").length === 2
-            ? `${timePart}:00`
-            : timePart;
+          timePart.includes(":") && timePart.split(":").length === 2 ? `${timePart}:00` : timePart;
 
         // Construct ISO string directly from the datetime-local value
         // This treats the selected time as UTC to preserve the exact time chosen
@@ -157,11 +144,7 @@ export function getHoverEffectClasses(
     case "elevate":
       switch (intensity) {
         case "small":
-          return cn(
-            baseTransition,
-            "hover:-translate-y-0.5",
-            "hover:shadow-md"
-          );
+          return cn(baseTransition, "hover:-translate-y-0.5", "hover:shadow-md");
         case "medium":
           return cn(baseTransition, "hover:-translate-y-2", "hover:shadow-xl");
         case "strong":
@@ -247,23 +230,11 @@ export function getHoverEffectClasses(
     case "slide":
       switch (intensity) {
         case "small":
-          return cn(
-            baseTransition,
-            "hover:-translate-y-0.5",
-            "hover:translate-x-1"
-          );
+          return cn(baseTransition, "hover:-translate-y-0.5", "hover:translate-x-1");
         case "medium":
-          return cn(
-            baseTransition,
-            "hover:-translate-y-2",
-            "hover:translate-x-1"
-          );
+          return cn(baseTransition, "hover:-translate-y-2", "hover:translate-x-1");
         case "strong":
-          return cn(
-            baseTransition,
-            "hover:-translate-y-4",
-            "hover:translate-x-1"
-          );
+          return cn(baseTransition, "hover:-translate-y-4", "hover:translate-x-1");
         default:
           return "";
       }

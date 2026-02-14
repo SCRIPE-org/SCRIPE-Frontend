@@ -31,11 +31,11 @@ export function getCoreContainer(): CoreContainer { ... }
 
 ### What Goes in Core?
 
-| ✅ Include | ❌ Exclude |
-|-----------|-----------|
-| `IApiService` | Module-specific services |
-| `NotificationService` | Module repositories |
-| `AuthRepository` | Feature business logic |
+| ✅ Include            | ❌ Exclude               |
+| --------------------- | ------------------------ |
+| `IApiService`         | Module-specific services |
+| `NotificationService` | Module repositories      |
+| `AuthRepository`      | Feature business logic   |
 
 ---
 
@@ -56,33 +56,33 @@ import { ProductService } from "./src/data/services/ProductService";
 import { ProductRepository } from "./src/data/repositories/ProductRepository";
 
 export interface ProductsContainer {
-    productService: IProductService;      // Internal use
-    productRepository: IProductRepository; // Public access
+  productService: IProductService; // Internal use
+  productRepository: IProductRepository; // Public access
 }
 
 let _container: ProductsContainer | null = null;
 
 export function getProductsContainer(): ProductsContainer {
-    if (!_container) {
-        const { apiService } = getCoreContainer();
+  if (!_container) {
+    const { apiService } = getCoreContainer();
 
-        // Chain: Service ← API, Repository ← Service
-        const productService = new ProductService(apiService);
-        
-        _container = {
-            productService,
-            productRepository: new ProductRepository(productService),
-        };
-    }
-    return _container;
+    // Chain: Service ← API, Repository ← Service
+    const productService = new ProductService(apiService);
+
+    _container = {
+      productService,
+      productRepository: new ProductRepository(productService),
+    };
+  }
+  return _container;
 }
 
 // PUBLIC ACCESSOR - Only expose what ViewModels need
 export const productsContainer = {
-    get productRepository() {
-        return getProductsContainer().productRepository;
-    },
-    // NOTE: productService is NOT exposed to ViewModels
+  get productRepository() {
+    return getProductsContainer().productRepository;
+  },
+  // NOTE: productService is NOT exposed to ViewModels
 };
 ```
 
@@ -98,6 +98,7 @@ graph LR
 ```
 
 **Order of creation:**
+
 1. Get `IApiService` from core DI
 2. Create `Service(apiService)`
 3. Create `Repository(service)`
@@ -114,12 +115,12 @@ graph LR
 import { productsContainer } from "../../di";
 
 export function useProductsViewModel() {
-    const repo = productsContainer.productRepository; // ← From DI
-    
-    return useQuery({
-        queryKey: ['products'],
-        queryFn: () => repo.getAll(),
-    });
+  const repo = productsContainer.productRepository; // ← From DI
+
+  return useQuery({
+    queryKey: ["products"],
+    queryFn: () => repo.getAll(),
+  });
 }
 ```
 
@@ -174,20 +175,20 @@ DI allows easy mocking:
 ```typescript
 // Create mock container for tests
 const mockRepo: IProductRepository = {
-    getAll: vi.fn().mockResolvedValue({ items: [], totalCount: 0 }),
-    getById: vi.fn(),
-    create: vi.fn(),
-    update: vi.fn(),
-    delete: vi.fn(),
+  getAll: vi.fn().mockResolvedValue({ items: [], totalCount: 0 }),
+  getById: vi.fn(),
+  create: vi.fn(),
+  update: vi.fn(),
+  delete: vi.fn(),
 };
 
 // Inject mock in test
-vi.mock('../../di', () => ({
-    productsContainer: {
-        get productRepository() {
-            return mockRepo;
-        },
+vi.mock("../../di", () => ({
+  productsContainer: {
+    get productRepository() {
+      return mockRepo;
     },
+  },
 }));
 ```
 

@@ -28,17 +28,14 @@ const avatarVariants = cva("relative flex shrink-0 overflow-hidden", {
 
 const Avatar = React.forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Root> &
-    VariantProps<typeof avatarVariants>
+  React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Root> & VariantProps<typeof avatarVariants>
 >(({ className, size, ...props }, ref) => {
   const settings = useSettings();
 
   return (
     <AvatarPrimitive.Root
       ref={ref}
-      className={cn(
-        avatarVariants({ size, avatarStyle: settings.avatarStyle, className })
-      )}
+      className={cn(avatarVariants({ size, avatarStyle: settings.avatarStyle, className }))}
       {...props}
     />
   );

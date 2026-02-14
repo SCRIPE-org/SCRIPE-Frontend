@@ -125,7 +125,8 @@ export const en = {
     deleting: "Deleting...",
     hasDescendants: "This tenant has descendant tenant(s).",
     cascadeDelete: "Delete all descendants (admins, roles, and users will also be deleted)",
-    cascadeDeleteNotPermitted: "This tenant has descendant(s). You do not have permission to cascade delete.",
+    cascadeDeleteNotPermitted:
+      "This tenant has descendant(s). You do not have permission to cascade delete.",
     // Dialog descriptions
     createDescription: "Add a new root tenant to the system.",
     createChildDescription: "Add a new child tenant under",
@@ -281,7 +282,8 @@ export const en = {
     saveSuccess: "Settings saved successfully",
     saveError: "Failed to save settings",
     loadError: "Failed to load settings",
-    systemAdminMessage: "System administrators do not have tenant settings. Please use the tenant management page to configure specific tenant settings.",
+    systemAdminMessage:
+      "System administrators do not have tenant settings. Please use the tenant management page to configure specific tenant settings.",
   },
 
   // Admin
@@ -364,7 +366,8 @@ export const en = {
   permission: {
     title: "Permissions",
     description: "View system permissions. Permissions are pre-configured and read-only.",
-    infoTooltip: "Permissions are seeded by the system and cannot be modified. Contact a system administrator for permission changes.",
+    infoTooltip:
+      "Permissions are seeded by the system and cannot be modified. Contact a system administrator for permission changes.",
     searchPlaceholder: "Search permissions...",
     allCategories: "All Categories",
     noPermissionsFound: "No permissions found",
@@ -396,7 +399,8 @@ export const en = {
     searchPermissions: "Search permissions...",
     searchRoles: "Search roles...",
     createRole: "Create Role",
-    createRoleDescription: "Add a new role to the system. You can assign permissions after creating.",
+    createRoleDescription:
+      "Add a new role to the system. You can assign permissions after creating.",
     editRole: "Edit Role",
     editRoleDescription: "Update role details for",
     deleteRole: "Delete Role",
@@ -457,7 +461,8 @@ export const en = {
     addChildTitle: "Add Child Item",
     addChildDesc: "Add a child item under",
     deleteTitle: "Delete Menu Item",
-    deleteDesc: "Are you sure you want to delete \"{{name}}\"? This will also remove all child items.",
+    deleteDesc:
+      'Are you sure you want to delete "{{name}}"? This will also remove all child items.',
     addChild: "Add Child",
 
     // Success/Error messages
@@ -502,7 +507,8 @@ export const en = {
     hiddenOverride: "This item is hidden",
     removeOverride: "Remove Override",
     removeOverrideTitle: "Remove Customization",
-    removeOverrideDesc: "Are you sure you want to remove this customization? The menu item will revert to its default settings.",
+    removeOverrideDesc:
+      "Are you sure you want to remove this customization? The menu item will revert to its default settings.",
 
     // Customize dialog
     customizeItem: "Customize",
@@ -709,8 +715,7 @@ export const en = {
     areaDesc: "Emphasize magnitude of change with filled areas under lines",
     barDesc: "Compare categories with horizontal or vertical bars",
     pieDesc: "Show proportional data with circular visualizations",
-    scatterDesc:
-      "Visualize relationships between variables with plotted points",
+    scatterDesc: "Visualize relationships between variables with plotted points",
     mixedDesc: "Combine different chart types for comprehensive data views",
     radarDesc: "Multi-dimensional data and KPI visualization",
     heatmapDesc: "Pattern recognition and hierarchical data visualization",
@@ -755,8 +760,7 @@ export const en = {
     // Comprehensive examples
     comprehensive: {
       title: "Comprehensive Chart Examples",
-      description:
-        "Explore all chart types with advanced styling, animations, and interactions",
+      description: "Explore all chart types with advanced styling, animations, and interactions",
     },
 
     // Chart types with detailed examples
@@ -791,8 +795,7 @@ export const en = {
       },
       interactive: {
         title: "Interactive Line Chart",
-        description:
-          "Line chart with hover effects and data point interactions",
+        description: "Line chart with hover effects and data point interactions",
       },
       realtime: {
         title: "Real-time Line Chart",
@@ -1179,8 +1182,7 @@ export const en = {
       },
       interactive: {
         title: "Interactive Timeline",
-        description:
-          "Timeline chart with zoom, pan, and selection capabilities",
+        description: "Timeline chart with zoom, pan, and selection capabilities",
       },
       multiTrack: {
         title: "Multi-Track Timeline",
@@ -1297,8 +1299,6 @@ export const en = {
   },
 
   // Months
-
-
 
   // Settings
   settings: {
@@ -1731,8 +1731,7 @@ export const en = {
     importSuccess: "Settings Imported",
     importSuccessDesc: "Your settings have been imported successfully.",
     importFailed: "Import Failed",
-    importFailedDesc:
-      "Failed to import settings. Please check the file format.",
+    importFailedDesc: "Failed to import settings. Please check the file format.",
     invalidFormat: "Invalid format",
     exportFileName: "app-settings.json",
     resetSuccess: "Settings Reset",
@@ -1776,8 +1775,7 @@ export const en = {
       },
       line: {
         title: "Line Charts",
-        description:
-          "Display trends and changes over time with connected data points",
+        description: "Display trends and changes over time with connected data points",
         basic: {
           title: "Basic Line Chart",
           description: "Simple line chart showing sales data over time",
@@ -1797,8 +1795,7 @@ export const en = {
       },
       area: {
         title: "Area Charts",
-        description:
-          "Emphasize magnitude of change with filled areas under lines",
+        description: "Emphasize magnitude of change with filled areas under lines",
         basic: {
           title: "Basic Area Chart",
           description: "Simple area chart with gradient fill",
@@ -1845,8 +1842,7 @@ export const en = {
         },
         donut: {
           title: "Donut Chart",
-          description:
-            "Pie chart with hollow center for additional information",
+          description: "Pie chart with hollow center for additional information",
         },
         semiCircle: {
           title: "Semi-Circle Chart",
@@ -1859,8 +1855,7 @@ export const en = {
       },
       scatter: {
         title: "Scatter & Bubble Charts",
-        description:
-          "Visualize relationships between variables with plotted points",
+        description: "Visualize relationships between variables with plotted points",
         basic: {
           title: "Basic Scatter Chart",
           description: "Plot data points to show correlation patterns",
@@ -1880,8 +1875,7 @@ export const en = {
       },
       mixed: {
         title: "Mixed Charts",
-        description:
-          "Combine different chart types for comprehensive data views",
+        description: "Combine different chart types for comprehensive data views",
         lineBar: {
           title: "Line + Bar Chart",
           description: "Combine line and bar charts for dual perspective",
@@ -2226,7 +2220,8 @@ export const en = {
       lightGradientsDesc: "Gradient backgrounds for light mode",
       darkGradients: "Dark Gradients",
       darkGradientsDesc: "Gradient backgrounds for dark mode",
-      customColorsInfo: "Custom colors override preset selections. Clear a custom color to use the preset value instead.",
+      customColorsInfo:
+        "Custom colors override preset selections. Clear a custom color to use the preset value instead.",
       customPrimary: "Custom Primary",
       customPrimaryDesc: "Override the primary accent color",
       customSecondary: "Custom Secondary",
@@ -2235,7 +2230,8 @@ export const en = {
       customLightBgDesc: "Override the light mode background color",
       customDarkBg: "Custom Dark Background",
       customDarkBgDesc: "Override the dark mode background color",
-      palettesInfo: "Apply a complete color palette in one click. Sets primary, secondary, and background colors together.",
+      palettesInfo:
+        "Apply a complete color palette in one click. Sets primary, secondary, and background colors together.",
     },
     lightBgCategories: {
       bright: "Bright — Near White",
@@ -2331,13 +2327,16 @@ export const en = {
       custom: "Custom",
       customDesc: "Use your own hex colors for the background",
     },
-    gradientWarning: "Gradient mode is not active. Gradient settings will not take effect until you switch the background mode to Gradient.",
+    gradientWarning:
+      "Gradient mode is not active. Gradient settings will not take effect until you switch the background mode to Gradient.",
     switchToGradient: "Switch to Gradient mode →",
-    customBgWarning: "Custom background mode is not active. Custom colors will not take effect until you switch the background mode to Custom.",
+    customBgWarning:
+      "Custom background mode is not active. Custom colors will not take effect until you switch the background mode to Custom.",
     switchToCustom: "Switch to Custom mode →",
     gradient: {
       customColors: "Custom Gradient Colors",
-      customColorsDesc: "Pick your own start and end colors for the gradient. These override preset gradients when set.",
+      customColorsDesc:
+        "Pick your own start and end colors for the gradient. These override preset gradients when set.",
       startColor: "Start Color",
       endColor: "End Color",
       preview: "Live Preview",
@@ -2367,7 +2366,6 @@ export const en = {
         bob: "bob@example.com",
       },
     },
-
 
     buttonStyle: {
       title: "Button Style",
@@ -2633,8 +2631,7 @@ export const en = {
         },
       },
       testButton: "Test {{style}}",
-      testInstructions:
-        'Click "Test" buttons to preview each modal style with sample content',
+      testInstructions: 'Click "Test" buttons to preview each modal style with sample content',
       previewTitle: "{{style}} Modal Style Preview",
       previewDescription: "This is a preview of the {{style}} modal style.",
       sampleContentTitle: "Sample Content",
@@ -2977,8 +2974,7 @@ export const en = {
       typography: {
         label: "Typography",
         heading: "Heading Sample",
-        paragraph:
-          "This is sample paragraph text showing current font size and spacing.",
+        paragraph: "This is sample paragraph text showing current font size and spacing.",
       },
     },
   },
@@ -3209,8 +3205,7 @@ export const en = {
     improvement: "Improvement",
     enhancement: "Enhancement",
     pageNotFound: "Page Not Found",
-    pageNotFoundDescription:
-      "The page you're looking for doesn't exist or has been moved.",
+    pageNotFoundDescription: "The page you're looking for doesn't exist or has been moved.",
     goBack: "Go Back",
     goHome: "Go Home",
     unexpectedError:
@@ -3475,8 +3470,7 @@ export const en = {
         },
       },
       serverSearchDemo: "Server-side search demo...",
-      serverSearchDescription:
-        "This is an example of a search processed on the server.",
+      serverSearchDescription: "This is an example of a search processed on the server.",
       serverSearchPlaceholder: "Server-side search demo...",
       serverSearchSearchPlaceholder: "Type to search server...",
       serverSearchSearchingText: "Searching server...",
@@ -3485,8 +3479,7 @@ export const en = {
       serverSearchApi: "API",
       serverSearchSdk: "SDK",
       features: "Features",
-      featuresDescription:
-        "Showcase the main features of the multi-select tool.",
+      featuresDescription: "Showcase the main features of the multi-select tool.",
     },
     treeSelect: {
       title: "Tree Select",
@@ -3555,8 +3548,7 @@ export const en = {
       home: "Go Home",
     },
     network: {
-      offline:
-        "You are currently offline. Please check your internet connection.",
+      offline: "You are currently offline. Please check your internet connection.",
       timeout: "Request timed out. Please try again.",
       serverError: "Server error occurred. Please try again later.",
     },
@@ -3685,18 +3677,23 @@ export const en = {
 
     // Tooltips
     protectedAdminTooltip: "This admin is protected and cannot be deleted or demoted.",
-    lastSuperAdminTooltip: "This is the last super admin in the tenant. Cannot be deleted, transferred, or demoted.",
+    lastSuperAdminTooltip:
+      "This is the last super admin in the tenant. Cannot be deleted, transferred, or demoted.",
     superAdminRoleTooltip: "This role grants full tenant management access and cannot be deleted.",
     defaultRoleTooltip: "This is the default role assigned to new users. Cannot be deleted.",
     permissionsLockedTooltip: "Permissions for this role are locked and cannot be modified.",
 
     // Error Messages
     errors: {
-      GUARDIAN_SYSTEM_SUPERADMIN: "Cannot modify the system super admin. This account is protected.",
-      GUARDIAN_PROTECTED_ADMIN: "Cannot modify this protected admin. This admin is required for tenant operation.",
-      GUARDIAN_LAST_SUPERADMIN: "Cannot perform this action. At least one super admin must remain in the tenant.",
+      GUARDIAN_SYSTEM_SUPERADMIN:
+        "Cannot modify the system super admin. This account is protected.",
+      GUARDIAN_PROTECTED_ADMIN:
+        "Cannot modify this protected admin. This admin is required for tenant operation.",
+      GUARDIAN_LAST_SUPERADMIN:
+        "Cannot perform this action. At least one super admin must remain in the tenant.",
       GUARDIAN_PROTECTED_ROLE: "This role is protected and cannot be deleted.",
-      GUARDIAN_SUPERADMIN_ROLE: "Cannot delete the super admin role. It is required for tenant operation.",
+      GUARDIAN_SUPERADMIN_ROLE:
+        "Cannot delete the super admin role. It is required for tenant operation.",
       GUARDIAN_DEFAULT_ROLE: "Cannot delete the default role. It is required for new users.",
       GUARDIAN_LOCKED_ROLE: "Cannot modify permissions of this locked role.",
       GUARDIAN_ADMIN_NOT_FOUND: "Admin not found.",
@@ -3901,42 +3898,42 @@ export const en = {
   // Overview Page
   overview: {
     greeting: {
-      morning: 'Good morning',
-      afternoon: 'Good afternoon',
-      evening: 'Good evening',
+      morning: "Good morning",
+      afternoon: "Good afternoon",
+      evening: "Good evening",
     },
     stats: {
-      totalAdmins: 'Total Admins',
-      activeUsers: 'Active Users',
-      activeTenants: 'Active Tenants',
-      loginsToday: 'Logins Today',
+      totalAdmins: "Total Admins",
+      activeUsers: "Active Users",
+      activeTenants: "Active Tenants",
+      loginsToday: "Logins Today",
     },
-    quickActions: 'Quick Actions',
+    quickActions: "Quick Actions",
     actions: {
-      dashboard: 'Dashboard',
-      dashboardDesc: 'KPIs, charts & monitoring',
-      audit: 'Audit Log',
-      auditDesc: 'Full system event trail',
-      security: 'Security',
-      securityDesc: 'Threats & blocked IPs',
-      analytics: 'Analytics',
-      analyticsDesc: 'Tenant metrics & trends',
-      admins: 'Admins',
-      adminsDesc: 'Manage administrators',
-      tenants: 'Tenants',
-      tenantsDesc: 'Manage organizations',
-      roles: 'Roles',
-      rolesDesc: 'Roles & permissions',
-      settings: 'Settings',
-      settingsDesc: 'System configuration',
+      dashboard: "Dashboard",
+      dashboardDesc: "KPIs, charts & monitoring",
+      audit: "Audit Log",
+      auditDesc: "Full system event trail",
+      security: "Security",
+      securityDesc: "Threats & blocked IPs",
+      analytics: "Analytics",
+      analyticsDesc: "Tenant metrics & trends",
+      admins: "Admins",
+      adminsDesc: "Manage administrators",
+      tenants: "Tenants",
+      tenantsDesc: "Manage organizations",
+      roles: "Roles",
+      rolesDesc: "Roles & permissions",
+      settings: "Settings",
+      settingsDesc: "System configuration",
     },
-    recentActivity: 'Recent Activity',
-    noActivity: 'No recent activity',
+    recentActivity: "Recent Activity",
+    noActivity: "No recent activity",
     minimal: {
-      title: 'Your Account is Active',
-      description: 'Contact your administrator for dashboard access.',
-      profile: 'My Profile',
-      settings: 'Settings',
+      title: "Your Account is Active",
+      description: "Contact your administrator for dashboard access.",
+      profile: "My Profile",
+      settings: "Settings",
     },
   },
 
@@ -4075,18 +4072,22 @@ export const en = {
         regenerate: "Regenerate Codes",
         setup: {
           scanQR: "Scan QR Code",
-          scanDescription: "Scan this QR code with your authenticator app (like Google Authenticator, Authy, or 1Password)",
+          scanDescription:
+            "Scan this QR code with your authenticator app (like Google Authenticator, Authy, or 1Password)",
           manualEntry: "Or enter this key manually:",
           verifyTitle: "Verify Setup",
-          verifyDescription: "Enter the 6-digit code from your authenticator app to complete the setup",
+          verifyDescription:
+            "Enter the 6-digit code from your authenticator app to complete the setup",
           backupTitle: "Save Your Backup Codes",
-          backupDescription: "These are your one-time-use backup codes. Each code can only be used once.",
+          backupDescription:
+            "These are your one-time-use backup codes. Each code can only be used once.",
           backupWarning: "⚠️ Store these codes in a safe place. They will not be shown again.",
           download: "Download Codes",
         },
         disable: {
           title: "Disable Two-Factor Authentication",
-          description: "This will remove the extra layer of security from your account. You will need to confirm your current password.",
+          description:
+            "This will remove the extra layer of security from your account. You will need to confirm your current password.",
           passwordRequired: "Please enter your current password",
           passwordLabel: "Current Password",
           verifyTitle: "Verify Your Identity",
@@ -4098,7 +4099,8 @@ export const en = {
       },
       backupCodes: {
         title: "Backup Codes",
-        warning: "Regenerating will invalidate all existing backup codes. Make sure to save the new ones.",
+        warning:
+          "Regenerating will invalidate all existing backup codes. Make sure to save the new ones.",
         saveWarning: "Save these codes somewhere safe. They will not be shown again.",
         regenerate: "Regenerate",
       },
@@ -4114,7 +4116,8 @@ export const en = {
       revoke: "Revoke",
       revokeAll: "Revoke All",
       noOther: "No other active sessions",
-      securityTip: "If you notice any suspicious sessions, revoke them immediately and change your password.",
+      securityTip:
+        "If you notice any suspicious sessions, revoke them immediately and change your password.",
     },
     activity: {
       title: "Activity Log",
@@ -4122,5 +4125,4 @@ export const en = {
       noEntries: "No activity recorded yet.",
     },
   },
-
 };

@@ -1,6 +1,6 @@
 /**
  * Validation Utilities
- * 
+ *
  * Centralized validation functions for consistent validation across the application.
  * Provides reusable validation logic for forms, inputs, and data validation.
  */
@@ -43,90 +43,95 @@ export const VALIDATION_ERROR_CODES = {
  */
 export const VALIDATION_PATTERNS = {
   // Email validation (RFC 5322 compliant)
-  EMAIL: /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
-  
+  EMAIL:
+    /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
+
   // Phone number validation (international format)
   PHONE: /^[\+]?[1-9][\d]{0,15}$/,
-  
+
   // Username validation (alphanumeric, underscore, hyphen, 3-30 characters)
   USERNAME: /^[a-zA-Z0-9_-]{3,30}$/,
-  
+
   // URL validation
   URL: /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/,
-  
+
   // Password strength patterns
   PASSWORD_LOWERCASE: /(?=.*[a-z])/,
   PASSWORD_UPPERCASE: /(?=.*[A-Z])/,
   PASSWORD_NUMBER: /(?=.*\d)/,
   PASSWORD_SPECIAL: /(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])/,
-  
+
   // Name validation (letters, spaces, hyphens, apostrophes)
   NAME: /^[a-zA-Z\s\-']+$/,
-  
+
   // Alphanumeric with spaces
   ALPHANUMERIC_SPACES: /^[a-zA-Z0-9\s]+$/,
-  
+
   // Numbers only
   NUMBERS_ONLY: /^\d+$/,
-  
+
   // Decimal numbers
   DECIMAL: /^\d+(\.\d+)?$/,
-  
+
   // Strong password (at least 8 chars, uppercase, lowercase, number, special char)
-  STRONG_PASSWORD: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/,
-  
+  STRONG_PASSWORD:
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/,
+
   // Credit card patterns
   CREDIT_CARD: /^\d{4}\s?\d{4}\s?\d{4}\s?\d{4}$/,
   CVV: /^\d{3,4}$/,
   EXPIRY_DATE: /^(0[1-9]|1[0-2])\/\d{2}$/,
-  
+
   // Address patterns
   ZIP_CODE_US: /^\d{5}(-\d{4})?$/,
   ZIP_CODE_CA: /^[A-Za-z]\d[A-Za-z] ?\d[A-Za-z]\d$/,
   POSTAL_CODE: /^[A-Za-z0-9\s-]{3,10}$/,
-  
+
   // Business patterns
   SKU: /^[A-Z0-9-]+$/,
   ISBN: /^(?:ISBN(?:-1[03])?:? )?(?=[0-9X]{10}$|(?=(?:[0-9]+[- ]){3})[- 0-9X]{13}$|97[89][0-9]{10}$|(?=(?:[0-9]+[- ]){4})[- 0-9]{17}$)(?:97[89][- ]?)?[0-9]{1,5}[- ]?[0-9]+[- ]?[0-9]+[- ]?[0-9X]$/,
   UPC: /^\d{12}$/,
   EAN: /^\d{13}$/,
-  
+
   // Social patterns
   TWITTER_HANDLE: /^@?[A-Za-z0-9_]{1,15}$/,
   INSTAGRAM_HANDLE: /^@?[A-Za-z0-9._]{1,30}$/,
   LINKEDIN_URL: /^https?:\/\/(www\.)?linkedin\.com\/in\/[A-Za-z0-9-]+\/?$/,
-  
+
   // Technical patterns
   HEX_COLOR: /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/,
   RGB_COLOR: /^rgb\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*\)$/,
   HSL_COLOR: /^hsl\(\s*\d+\s*,\s*\d+%\s*,\s*\d+%\s*\)$/,
-  
+
   // File patterns
   IMAGE_EXTENSIONS: /\.(jpg|jpeg|png|gif|bmp|webp|svg)$/i,
   DOCUMENT_EXTENSIONS: /\.(pdf|doc|docx|txt|rtf)$/i,
   VIDEO_EXTENSIONS: /\.(mp4|avi|mov|wmv|flv|webm)$/i,
   AUDIO_EXTENSIONS: /\.(mp3|wav|flac|aac|ogg)$/i,
-  
+
   // Network patterns
-  IP_ADDRESS: /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/,
+  IP_ADDRESS:
+    /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/,
   MAC_ADDRESS: /^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/,
-  PORT_NUMBER: /^([1-9][0-9]{0,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$/,
-  
+  PORT_NUMBER:
+    /^([1-9][0-9]{0,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$/,
+
   // Currency patterns
   CURRENCY_USD: /^\$?(\d{1,3}(,\d{3})*|(\d+))(\.\d{2})?$/,
   CURRENCY_EUR: /^€?(\d{1,3}(\.\d{3})*|(\d+))(,\d{2})?$/,
-  
+
   // Time patterns
   TIME_12H: /^(0?[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)$/i,
   TIME_24H: /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/,
-  
+
   // Coordinate patterns
   LATITUDE: /^-?([1-8]?[0-9](\.[0-9]+)?|90(\.0+)?)$/,
   LONGITUDE: /^-?((1[0-7][0-9])|([1-9]?[0-9]))(\.[0-9]+)?$/,
-  
+
   // Version patterns
-  SEMANTIC_VERSION: /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z][-0-9a-zA-Z]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z][-0-9a-zA-Z]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/,
-  
+  SEMANTIC_VERSION:
+    /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z][-0-9a-zA-Z]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z][-0-9a-zA-Z]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/,
+
   // ERP Business Patterns
   // Financial patterns
   ACCOUNT_NUMBER: /^[0-9]{4,20}$/,
@@ -138,7 +143,7 @@ export const VALIDATION_PATTERNS = {
   VAT_NUMBER: /^[A-Z]{2}[0-9A-Z]{2,12}$/,
   CURRENCY_CODE: /^[A-Z]{3}$/,
   BANK_ACCOUNT: /^[0-9]{8,20}$/,
-  
+
   // Inventory patterns
   PART_NUMBER: /^[A-Z0-9-]{3,20}$/,
   SERIAL_NUMBER: /^[A-Z0-9-]{5,30}$/,
@@ -147,7 +152,7 @@ export const VALIDATION_PATTERNS = {
   WAREHOUSE_CODE: /^[A-Z0-9]{2,10}$/,
   LOCATION_CODE: /^[A-Z0-9-]{3,15}$/,
   BIN_LOCATION: /^[A-Z0-9-]{2,10}$/,
-  
+
   // HR patterns
   EMPLOYEE_ID: /^[A-Z0-9]{3,15}$/,
   DEPARTMENT_CODE: /^[A-Z0-9]{2,10}$/,
@@ -155,58 +160,59 @@ export const VALIDATION_PATTERNS = {
   PAYROLL_ID: /^[A-Z0-9]{3,15}$/,
   SSN_US: /^\d{3}-?\d{2}-?\d{4}$/,
   NATIONAL_ID: /^[A-Z0-9]{5,20}$/,
-  
+
   // CRM patterns
   CUSTOMER_ID: /^[A-Z0-9]{3,15}$/,
   LEAD_ID: /^[A-Z0-9]{3,15}$/,
   OPPORTUNITY_ID: /^[A-Z0-9]{3,15}$/,
   CASE_NUMBER: /^[A-Z0-9]{3,15}$/,
   TICKET_NUMBER: /^[A-Z0-9]{3,15}$/,
-  
+
   // Project Management patterns
   PROJECT_CODE: /^[A-Z0-9-]{3,15}$/,
   TASK_ID: /^[A-Z0-9-]{3,15}$/,
   MILESTONE_CODE: /^[A-Z0-9-]{3,15}$/,
   RESOURCE_ID: /^[A-Z0-9]{3,15}$/,
-  
+
   // Manufacturing patterns
   WORK_ORDER: /^[A-Z0-9-]{3,15}$/,
   PRODUCTION_LINE: /^[A-Z0-9]{2,10}$/,
   EQUIPMENT_ID: /^[A-Z0-9-]{3,15}$/,
   QUALITY_LOT: /^[A-Z0-9-]{3,15}$/,
-  
+
   // Compliance patterns
   LICENSE_NUMBER: /^[A-Z0-9-]{3,20}$/,
   PERMIT_NUMBER: /^[A-Z0-9-]{3,20}$/,
   CERTIFICATE_NUMBER: /^[A-Z0-9-]{3,20}$/,
   AUDIT_ID: /^[A-Z0-9-]{3,15}$/,
-  
+
   // API patterns
   API_KEY: /^[A-Za-z0-9]{20,100}$/,
   SECRET_KEY: /^[A-Za-z0-9]{20,100}$/,
   TOKEN: /^[A-Za-z0-9._-]{20,100}$/,
-  WEBHOOK_URL: /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/,
-  
+  WEBHOOK_URL:
+    /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/,
+
   // Database patterns
   TABLE_NAME: /^[a-zA-Z_][a-zA-Z0-9_]{0,63}$/,
   COLUMN_NAME: /^[a-zA-Z_][a-zA-Z0-9_]{0,63}$/,
   INDEX_NAME: /^[a-zA-Z_][a-zA-Z0-9_]{0,63}$/,
-  
+
   // Configuration patterns
   ENVIRONMENT: /^(development|staging|production|test)$/,
   FEATURE_FLAG: /^[a-zA-Z_][a-zA-Z0-9_]{0,50}$/,
   CONFIG_KEY: /^[a-zA-Z_][a-zA-Z0-9_]{0,50}$/,
-  
+
   // Security patterns
   PASSWORD_HASH: /^\$2[aby]\$\d{2}\$[./0-9A-Za-z]{53}$/,
   JWT_TOKEN: /^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$/,
   UUID: /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
-  
+
   // Performance patterns
   MEMORY_SIZE: /^\d+(\.\d+)?\s*(KB|MB|GB|TB)$/i,
   CPU_CORES: /^[1-9]\d*$/,
   DISK_SIZE: /^\d+(\.\d+)?\s*(KB|MB|GB|TB)$/i,
-  
+
   // Monitoring patterns
   METRIC_NAME: /^[a-zA-Z_][a-zA-Z0-9_]{0,50}$/,
   ALERT_NAME: /^[a-zA-Z_][a-zA-Z0-9_]{0,50}$/,
@@ -236,7 +242,12 @@ export type ValidationRule = (value: any) => ValidationResult;
  */
 export function required(message: string = "This field is required"): ValidationRule {
   return (value: any): ValidationResult => {
-    if (value === null || value === undefined || value === "" || (typeof value === "string" && value.trim() === "")) {
+    if (
+      value === null ||
+      value === undefined ||
+      value === "" ||
+      (typeof value === "string" && value.trim() === "")
+    ) {
       return {
         isValid: false,
         message,
@@ -308,7 +319,7 @@ export function email(message: string = "Please enter a valid email address"): V
 export function phone(message: string = "Please enter a valid phone number"): ValidationRule {
   return (value: any): ValidationResult => {
     if (typeof value === "string") {
-      const cleanPhone = value.replace(/\s/g, '');
+      const cleanPhone = value.replace(/\s/g, "");
       if (!VALIDATION_PATTERNS.PHONE.test(cleanPhone)) {
         return {
           isValid: false,
@@ -324,7 +335,9 @@ export function phone(message: string = "Please enter a valid phone number"): Va
 /**
  * Username validation
  */
-export function username(message: string = "Username must be 3-30 characters long and contain only letters, numbers, underscores, and hyphens"): ValidationRule {
+export function username(
+  message: string = "Username must be 3-30 characters long and contain only letters, numbers, underscores, and hyphens"
+): ValidationRule {
   return pattern(VALIDATION_PATTERNS.USERNAME, message, VALIDATION_ERROR_CODES.INVALID_USERNAME);
 }
 
@@ -338,7 +351,9 @@ export function url(message: string = "Please enter a valid URL"): ValidationRul
 /**
  * Name validation (for first name, last name, etc.)
  */
-export function name(message: string = "Name can only contain letters, spaces, hyphens, and apostrophes"): ValidationRule {
+export function name(
+  message: string = "Name can only contain letters, spaces, hyphens, and apostrophes"
+): ValidationRule {
   return pattern(VALIDATION_PATTERNS.NAME, message, VALIDATION_ERROR_CODES.INVALID_FORMAT);
 }
 
@@ -395,14 +410,16 @@ export function maxNumber(max: number, message?: string): ValidationRule {
 /**
  * Password strength validation
  */
-export function passwordStrength(options: {
-  minLength?: number;
-  requireLowercase?: boolean;
-  requireUppercase?: boolean;
-  requireNumber?: boolean;
-  requireSpecial?: boolean;
-  customMessage?: string;
-} = {}): ValidationRule {
+export function passwordStrength(
+  options: {
+    minLength?: number;
+    requireLowercase?: boolean;
+    requireUppercase?: boolean;
+    requireNumber?: boolean;
+    requireSpecial?: boolean;
+    customMessage?: string;
+  } = {}
+): ValidationRule {
   const {
     minLength: minLen = 6,
     requireLowercase = true,
@@ -473,7 +490,10 @@ export function passwordStrength(options: {
 /**
  * Password confirmation validation
  */
-export function passwordConfirmation(password: string, message: string = "Passwords do not match"): ValidationRule {
+export function passwordConfirmation(
+  password: string,
+  message: string = "Passwords do not match"
+): ValidationRule {
   return (value: any): ValidationResult => {
     if (typeof value === "string" && value !== password) {
       return {
@@ -489,7 +509,11 @@ export function passwordConfirmation(password: string, message: string = "Passwo
 /**
  * Custom validation function
  */
-export function custom(validator: (value: any) => boolean, message: string, errorCode?: string): ValidationRule {
+export function custom(
+  validator: (value: any) => boolean,
+  message: string,
+  errorCode?: string
+): ValidationRule {
   return (value: any): ValidationResult => {
     if (!validator(value)) {
       return {
@@ -505,7 +529,9 @@ export function custom(validator: (value: any) => boolean, message: string, erro
 /**
  * Credit card validation
  */
-export function creditCard(message: string = "Please enter a valid credit card number"): ValidationRule {
+export function creditCard(
+  message: string = "Please enter a valid credit card number"
+): ValidationRule {
   return pattern(VALIDATION_PATTERNS.CREDIT_CARD, message, VALIDATION_ERROR_CODES.INVALID_FORMAT);
 }
 
@@ -519,7 +545,9 @@ export function cvv(message: string = "Please enter a valid CVV"): ValidationRul
 /**
  * Expiry date validation
  */
-export function expiryDate(message: string = "Please enter a valid expiry date (MM/YY)"): ValidationRule {
+export function expiryDate(
+  message: string = "Please enter a valid expiry date (MM/YY)"
+): ValidationRule {
   return pattern(VALIDATION_PATTERNS.EXPIRY_DATE, message, VALIDATION_ERROR_CODES.INVALID_FORMAT);
 }
 
@@ -533,14 +561,18 @@ export function zipCodeUS(message: string = "Please enter a valid US ZIP code"):
 /**
  * ZIP code validation (Canadian format)
  */
-export function zipCodeCA(message: string = "Please enter a valid Canadian postal code"): ValidationRule {
+export function zipCodeCA(
+  message: string = "Please enter a valid Canadian postal code"
+): ValidationRule {
   return pattern(VALIDATION_PATTERNS.ZIP_CODE_CA, message, VALIDATION_ERROR_CODES.INVALID_FORMAT);
 }
 
 /**
  * SKU validation
  */
-export function sku(message: string = "SKU must contain only uppercase letters, numbers, and hyphens"): ValidationRule {
+export function sku(
+  message: string = "SKU must contain only uppercase letters, numbers, and hyphens"
+): ValidationRule {
   return pattern(VALIDATION_PATTERNS.SKU, message, VALIDATION_ERROR_CODES.INVALID_FORMAT);
 }
 
@@ -568,21 +600,35 @@ export function ean(message: string = "Please enter a valid EAN code"): Validati
 /**
  * Twitter handle validation
  */
-export function twitterHandle(message: string = "Please enter a valid Twitter handle"): ValidationRule {
-  return pattern(VALIDATION_PATTERNS.TWITTER_HANDLE, message, VALIDATION_ERROR_CODES.INVALID_FORMAT);
+export function twitterHandle(
+  message: string = "Please enter a valid Twitter handle"
+): ValidationRule {
+  return pattern(
+    VALIDATION_PATTERNS.TWITTER_HANDLE,
+    message,
+    VALIDATION_ERROR_CODES.INVALID_FORMAT
+  );
 }
 
 /**
  * Instagram handle validation
  */
-export function instagramHandle(message: string = "Please enter a valid Instagram handle"): ValidationRule {
-  return pattern(VALIDATION_PATTERNS.INSTAGRAM_HANDLE, message, VALIDATION_ERROR_CODES.INVALID_FORMAT);
+export function instagramHandle(
+  message: string = "Please enter a valid Instagram handle"
+): ValidationRule {
+  return pattern(
+    VALIDATION_PATTERNS.INSTAGRAM_HANDLE,
+    message,
+    VALIDATION_ERROR_CODES.INVALID_FORMAT
+  );
 }
 
 /**
  * LinkedIn URL validation
  */
-export function linkedinUrl(message: string = "Please enter a valid LinkedIn profile URL"): ValidationRule {
+export function linkedinUrl(
+  message: string = "Please enter a valid LinkedIn profile URL"
+): ValidationRule {
   return pattern(VALIDATION_PATTERNS.LINKEDIN_URL, message, VALIDATION_ERROR_CODES.INVALID_URL);
 }
 
@@ -624,7 +670,9 @@ export function macAddress(message: string = "Please enter a valid MAC address")
 /**
  * Port number validation
  */
-export function portNumber(message: string = "Please enter a valid port number (1-65535)"): ValidationRule {
+export function portNumber(
+  message: string = "Please enter a valid port number (1-65535)"
+): ValidationRule {
   return pattern(VALIDATION_PATTERNS.PORT_NUMBER, message, VALIDATION_ERROR_CODES.INVALID_FORMAT);
 }
 
@@ -645,36 +693,50 @@ export function currencyEUR(message: string = "Please enter a valid EUR amount")
 /**
  * Time validation (12-hour format)
  */
-export function time12H(message: string = "Please enter a valid time in 12-hour format (HH:MM AM/PM)"): ValidationRule {
+export function time12H(
+  message: string = "Please enter a valid time in 12-hour format (HH:MM AM/PM)"
+): ValidationRule {
   return pattern(VALIDATION_PATTERNS.TIME_12H, message, VALIDATION_ERROR_CODES.INVALID_FORMAT);
 }
 
 /**
  * Time validation (24-hour format)
  */
-export function time24H(message: string = "Please enter a valid time in 24-hour format (HH:MM)"): ValidationRule {
+export function time24H(
+  message: string = "Please enter a valid time in 24-hour format (HH:MM)"
+): ValidationRule {
   return pattern(VALIDATION_PATTERNS.TIME_24H, message, VALIDATION_ERROR_CODES.INVALID_FORMAT);
 }
 
 /**
  * Latitude validation
  */
-export function latitude(message: string = "Please enter a valid latitude (-90 to 90)"): ValidationRule {
+export function latitude(
+  message: string = "Please enter a valid latitude (-90 to 90)"
+): ValidationRule {
   return pattern(VALIDATION_PATTERNS.LATITUDE, message, VALIDATION_ERROR_CODES.INVALID_FORMAT);
 }
 
 /**
  * Longitude validation
  */
-export function longitude(message: string = "Please enter a valid longitude (-180 to 180)"): ValidationRule {
+export function longitude(
+  message: string = "Please enter a valid longitude (-180 to 180)"
+): ValidationRule {
   return pattern(VALIDATION_PATTERNS.LONGITUDE, message, VALIDATION_ERROR_CODES.INVALID_FORMAT);
 }
 
 /**
  * Semantic version validation
  */
-export function semanticVersion(message: string = "Please enter a valid semantic version (e.g., 1.0.0)"): ValidationRule {
-  return pattern(VALIDATION_PATTERNS.SEMANTIC_VERSION, message, VALIDATION_ERROR_CODES.INVALID_FORMAT);
+export function semanticVersion(
+  message: string = "Please enter a valid semantic version (e.g., 1.0.0)"
+): ValidationRule {
+  return pattern(
+    VALIDATION_PATTERNS.SEMANTIC_VERSION,
+    message,
+    VALIDATION_ERROR_CODES.INVALID_FORMAT
+  );
 }
 
 /**
@@ -686,7 +748,7 @@ export function fileType(allowedTypes: string[], message?: string): ValidationRu
       if (!allowedTypes.includes(value.type)) {
         return {
           isValid: false,
-          message: message || `File type must be one of: ${allowedTypes.join(', ')}`,
+          message: message || `File type must be one of: ${allowedTypes.join(", ")}`,
           errorCode: VALIDATION_ERROR_CODES.INVALID_FORMAT,
         };
       }
@@ -718,14 +780,34 @@ export function fileSize(maxSizeInMB: number, message?: string): ValidationRule 
  * Image file validation
  */
 export function imageFile(message: string = "Please select an image file"): ValidationRule {
-  return fileType(['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/bmp', 'image/webp', 'image/svg+xml'], message);
+  return fileType(
+    [
+      "image/jpeg",
+      "image/jpg",
+      "image/png",
+      "image/gif",
+      "image/bmp",
+      "image/webp",
+      "image/svg+xml",
+    ],
+    message
+  );
 }
 
 /**
  * Document file validation
  */
 export function documentFile(message: string = "Please select a document file"): ValidationRule {
-  return fileType(['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'text/plain', 'application/rtf'], message);
+  return fileType(
+    [
+      "application/pdf",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "text/plain",
+      "application/rtf",
+    ],
+    message
+  );
 }
 
 /**
@@ -733,7 +815,7 @@ export function documentFile(message: string = "Please select a document file"):
  */
 export function date(message: string = "Please enter a valid date"): ValidationRule {
   return (value: any): ValidationResult => {
-    if (typeof value === 'string' && !isNaN(Date.parse(value))) {
+    if (typeof value === "string" && !isNaN(Date.parse(value))) {
       return { isValid: true };
     }
     return {
@@ -749,7 +831,7 @@ export function date(message: string = "Please enter a valid date"): ValidationR
  */
 export function futureDate(message: string = "Date must be in the future"): ValidationRule {
   return (value: any): ValidationResult => {
-    if (typeof value === 'string') {
+    if (typeof value === "string") {
       const date = new Date(value);
       if (!isNaN(date.getTime()) && date > new Date()) {
         return { isValid: true };
@@ -768,7 +850,7 @@ export function futureDate(message: string = "Date must be in the future"): Vali
  */
 export function pastDate(message: string = "Date must be in the past"): ValidationRule {
   return (value: any): ValidationResult => {
-    if (typeof value === 'string') {
+    if (typeof value === "string") {
       const date = new Date(value);
       if (!isNaN(date.getTime()) && date < new Date()) {
         return { isValid: true };
@@ -787,14 +869,15 @@ export function pastDate(message: string = "Date must be in the past"): Validati
  */
 export function age(minAge: number, maxAge: number = 120, message?: string): ValidationRule {
   return (value: any): ValidationResult => {
-    if (typeof value === 'string') {
+    if (typeof value === "string") {
       const birthDate = new Date(value);
       const today = new Date();
       const age = today.getFullYear() - birthDate.getFullYear();
       const monthDiff = today.getMonth() - birthDate.getMonth();
-      
-      const actualAge = monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate()) ? age - 1 : age;
-      
+
+      const actualAge =
+        monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate()) ? age - 1 : age;
+
       if (actualAge >= minAge && actualAge <= maxAge) {
         return { isValid: true };
       }
@@ -812,12 +895,24 @@ export function age(minAge: number, maxAge: number = 120, message?: string): Val
 /**
  * Financial Validations
  */
-export function accountNumber(message: string = "Please enter a valid account number"): ValidationRule {
-  return pattern(VALIDATION_PATTERNS.ACCOUNT_NUMBER, message, VALIDATION_ERROR_CODES.INVALID_FORMAT);
+export function accountNumber(
+  message: string = "Please enter a valid account number"
+): ValidationRule {
+  return pattern(
+    VALIDATION_PATTERNS.ACCOUNT_NUMBER,
+    message,
+    VALIDATION_ERROR_CODES.INVALID_FORMAT
+  );
 }
 
-export function routingNumber(message: string = "Please enter a valid routing number"): ValidationRule {
-  return pattern(VALIDATION_PATTERNS.ROUTING_NUMBER, message, VALIDATION_ERROR_CODES.INVALID_FORMAT);
+export function routingNumber(
+  message: string = "Please enter a valid routing number"
+): ValidationRule {
+  return pattern(
+    VALIDATION_PATTERNS.ROUTING_NUMBER,
+    message,
+    VALIDATION_ERROR_CODES.INVALID_FORMAT
+  );
 }
 
 export function swiftCode(message: string = "Please enter a valid SWIFT code"): ValidationRule {
@@ -836,11 +931,15 @@ export function vatNumber(message: string = "Please enter a valid VAT number"): 
   return pattern(VALIDATION_PATTERNS.VAT_NUMBER, message, VALIDATION_ERROR_CODES.INVALID_FORMAT);
 }
 
-export function currencyCode(message: string = "Please enter a valid currency code (e.g., USD, EUR)"): ValidationRule {
+export function currencyCode(
+  message: string = "Please enter a valid currency code (e.g., USD, EUR)"
+): ValidationRule {
   return pattern(VALIDATION_PATTERNS.CURRENCY_CODE, message, VALIDATION_ERROR_CODES.INVALID_FORMAT);
 }
 
-export function bankAccount(message: string = "Please enter a valid bank account number"): ValidationRule {
+export function bankAccount(
+  message: string = "Please enter a valid bank account number"
+): ValidationRule {
   return pattern(VALIDATION_PATTERNS.BANK_ACCOUNT, message, VALIDATION_ERROR_CODES.INVALID_FORMAT);
 }
 
@@ -851,7 +950,9 @@ export function partNumber(message: string = "Please enter a valid part number")
   return pattern(VALIDATION_PATTERNS.PART_NUMBER, message, VALIDATION_ERROR_CODES.INVALID_FORMAT);
 }
 
-export function serialNumber(message: string = "Please enter a valid serial number"): ValidationRule {
+export function serialNumber(
+  message: string = "Please enter a valid serial number"
+): ValidationRule {
   return pattern(VALIDATION_PATTERNS.SERIAL_NUMBER, message, VALIDATION_ERROR_CODES.INVALID_FORMAT);
 }
 
@@ -863,11 +964,19 @@ export function batchNumber(message: string = "Please enter a valid batch number
   return pattern(VALIDATION_PATTERNS.BATCH_NUMBER, message, VALIDATION_ERROR_CODES.INVALID_FORMAT);
 }
 
-export function warehouseCode(message: string = "Please enter a valid warehouse code"): ValidationRule {
-  return pattern(VALIDATION_PATTERNS.WAREHOUSE_CODE, message, VALIDATION_ERROR_CODES.INVALID_FORMAT);
+export function warehouseCode(
+  message: string = "Please enter a valid warehouse code"
+): ValidationRule {
+  return pattern(
+    VALIDATION_PATTERNS.WAREHOUSE_CODE,
+    message,
+    VALIDATION_ERROR_CODES.INVALID_FORMAT
+  );
 }
 
-export function locationCode(message: string = "Please enter a valid location code"): ValidationRule {
+export function locationCode(
+  message: string = "Please enter a valid location code"
+): ValidationRule {
   return pattern(VALIDATION_PATTERNS.LOCATION_CODE, message, VALIDATION_ERROR_CODES.INVALID_FORMAT);
 }
 
@@ -882,11 +991,19 @@ export function employeeId(message: string = "Please enter a valid employee ID")
   return pattern(VALIDATION_PATTERNS.EMPLOYEE_ID, message, VALIDATION_ERROR_CODES.INVALID_FORMAT);
 }
 
-export function departmentCode(message: string = "Please enter a valid department code"): ValidationRule {
-  return pattern(VALIDATION_PATTERNS.DEPARTMENT_CODE, message, VALIDATION_ERROR_CODES.INVALID_FORMAT);
+export function departmentCode(
+  message: string = "Please enter a valid department code"
+): ValidationRule {
+  return pattern(
+    VALIDATION_PATTERNS.DEPARTMENT_CODE,
+    message,
+    VALIDATION_ERROR_CODES.INVALID_FORMAT
+  );
 }
 
-export function positionCode(message: string = "Please enter a valid position code"): ValidationRule {
+export function positionCode(
+  message: string = "Please enter a valid position code"
+): ValidationRule {
   return pattern(VALIDATION_PATTERNS.POSITION_CODE, message, VALIDATION_ERROR_CODES.INVALID_FORMAT);
 }
 
@@ -894,7 +1011,9 @@ export function payrollId(message: string = "Please enter a valid payroll ID"): 
   return pattern(VALIDATION_PATTERNS.PAYROLL_ID, message, VALIDATION_ERROR_CODES.INVALID_FORMAT);
 }
 
-export function ssnUS(message: string = "Please enter a valid US Social Security Number"): ValidationRule {
+export function ssnUS(
+  message: string = "Please enter a valid US Social Security Number"
+): ValidationRule {
   return pattern(VALIDATION_PATTERNS.SSN_US, message, VALIDATION_ERROR_CODES.INVALID_FORMAT);
 }
 
@@ -913,15 +1032,23 @@ export function leadId(message: string = "Please enter a valid lead ID"): Valida
   return pattern(VALIDATION_PATTERNS.LEAD_ID, message, VALIDATION_ERROR_CODES.INVALID_FORMAT);
 }
 
-export function opportunityId(message: string = "Please enter a valid opportunity ID"): ValidationRule {
-  return pattern(VALIDATION_PATTERNS.OPPORTUNITY_ID, message, VALIDATION_ERROR_CODES.INVALID_FORMAT);
+export function opportunityId(
+  message: string = "Please enter a valid opportunity ID"
+): ValidationRule {
+  return pattern(
+    VALIDATION_PATTERNS.OPPORTUNITY_ID,
+    message,
+    VALIDATION_ERROR_CODES.INVALID_FORMAT
+  );
 }
 
 export function caseNumber(message: string = "Please enter a valid case number"): ValidationRule {
   return pattern(VALIDATION_PATTERNS.CASE_NUMBER, message, VALIDATION_ERROR_CODES.INVALID_FORMAT);
 }
 
-export function ticketNumber(message: string = "Please enter a valid ticket number"): ValidationRule {
+export function ticketNumber(
+  message: string = "Please enter a valid ticket number"
+): ValidationRule {
   return pattern(VALIDATION_PATTERNS.TICKET_NUMBER, message, VALIDATION_ERROR_CODES.INVALID_FORMAT);
 }
 
@@ -936,8 +1063,14 @@ export function taskId(message: string = "Please enter a valid task ID"): Valida
   return pattern(VALIDATION_PATTERNS.TASK_ID, message, VALIDATION_ERROR_CODES.INVALID_FORMAT);
 }
 
-export function milestoneCode(message: string = "Please enter a valid milestone code"): ValidationRule {
-  return pattern(VALIDATION_PATTERNS.MILESTONE_CODE, message, VALIDATION_ERROR_CODES.INVALID_FORMAT);
+export function milestoneCode(
+  message: string = "Please enter a valid milestone code"
+): ValidationRule {
+  return pattern(
+    VALIDATION_PATTERNS.MILESTONE_CODE,
+    message,
+    VALIDATION_ERROR_CODES.INVALID_FORMAT
+  );
 }
 
 export function resourceId(message: string = "Please enter a valid resource ID"): ValidationRule {
@@ -951,8 +1084,14 @@ export function workOrder(message: string = "Please enter a valid work order"): 
   return pattern(VALIDATION_PATTERNS.WORK_ORDER, message, VALIDATION_ERROR_CODES.INVALID_FORMAT);
 }
 
-export function productionLine(message: string = "Please enter a valid production line"): ValidationRule {
-  return pattern(VALIDATION_PATTERNS.PRODUCTION_LINE, message, VALIDATION_ERROR_CODES.INVALID_FORMAT);
+export function productionLine(
+  message: string = "Please enter a valid production line"
+): ValidationRule {
+  return pattern(
+    VALIDATION_PATTERNS.PRODUCTION_LINE,
+    message,
+    VALIDATION_ERROR_CODES.INVALID_FORMAT
+  );
 }
 
 export function equipmentId(message: string = "Please enter a valid equipment ID"): ValidationRule {
@@ -966,16 +1105,30 @@ export function qualityLot(message: string = "Please enter a valid quality lot")
 /**
  * Compliance Validations
  */
-export function licenseNumber(message: string = "Please enter a valid license number"): ValidationRule {
-  return pattern(VALIDATION_PATTERNS.LICENSE_NUMBER, message, VALIDATION_ERROR_CODES.INVALID_FORMAT);
+export function licenseNumber(
+  message: string = "Please enter a valid license number"
+): ValidationRule {
+  return pattern(
+    VALIDATION_PATTERNS.LICENSE_NUMBER,
+    message,
+    VALIDATION_ERROR_CODES.INVALID_FORMAT
+  );
 }
 
-export function permitNumber(message: string = "Please enter a valid permit number"): ValidationRule {
+export function permitNumber(
+  message: string = "Please enter a valid permit number"
+): ValidationRule {
   return pattern(VALIDATION_PATTERNS.PERMIT_NUMBER, message, VALIDATION_ERROR_CODES.INVALID_FORMAT);
 }
 
-export function certificateNumber(message: string = "Please enter a valid certificate number"): ValidationRule {
-  return pattern(VALIDATION_PATTERNS.CERTIFICATE_NUMBER, message, VALIDATION_ERROR_CODES.INVALID_FORMAT);
+export function certificateNumber(
+  message: string = "Please enter a valid certificate number"
+): ValidationRule {
+  return pattern(
+    VALIDATION_PATTERNS.CERTIFICATE_NUMBER,
+    message,
+    VALIDATION_ERROR_CODES.INVALID_FORMAT
+  );
 }
 
 export function auditId(message: string = "Please enter a valid audit ID"): ValidationRule {
@@ -1019,22 +1172,30 @@ export function indexName(message: string = "Please enter a valid index name"): 
 /**
  * Configuration Validations
  */
-export function environment(message: string = "Please enter a valid environment (development, staging, production, test)"): ValidationRule {
+export function environment(
+  message: string = "Please enter a valid environment (development, staging, production, test)"
+): ValidationRule {
   return pattern(VALIDATION_PATTERNS.ENVIRONMENT, message, VALIDATION_ERROR_CODES.INVALID_FORMAT);
 }
 
-export function featureFlag(message: string = "Please enter a valid feature flag name"): ValidationRule {
+export function featureFlag(
+  message: string = "Please enter a valid feature flag name"
+): ValidationRule {
   return pattern(VALIDATION_PATTERNS.FEATURE_FLAG, message, VALIDATION_ERROR_CODES.INVALID_FORMAT);
 }
 
-export function configKey(message: string = "Please enter a valid configuration key"): ValidationRule {
+export function configKey(
+  message: string = "Please enter a valid configuration key"
+): ValidationRule {
   return pattern(VALIDATION_PATTERNS.CONFIG_KEY, message, VALIDATION_ERROR_CODES.INVALID_FORMAT);
 }
 
 /**
  * Security Validations
  */
-export function passwordHash(message: string = "Please enter a valid password hash"): ValidationRule {
+export function passwordHash(
+  message: string = "Please enter a valid password hash"
+): ValidationRule {
   return pattern(VALIDATION_PATTERNS.PASSWORD_HASH, message, VALIDATION_ERROR_CODES.INVALID_FORMAT);
 }
 
@@ -1049,15 +1210,21 @@ export function uuid(message: string = "Please enter a valid UUID"): ValidationR
 /**
  * Performance Validations
  */
-export function memorySize(message: string = "Please enter a valid memory size (e.g., 512MB, 2GB)"): ValidationRule {
+export function memorySize(
+  message: string = "Please enter a valid memory size (e.g., 512MB, 2GB)"
+): ValidationRule {
   return pattern(VALIDATION_PATTERNS.MEMORY_SIZE, message, VALIDATION_ERROR_CODES.INVALID_FORMAT);
 }
 
-export function cpuCores(message: string = "Please enter a valid number of CPU cores"): ValidationRule {
+export function cpuCores(
+  message: string = "Please enter a valid number of CPU cores"
+): ValidationRule {
   return pattern(VALIDATION_PATTERNS.CPU_CORES, message, VALIDATION_ERROR_CODES.INVALID_FORMAT);
 }
 
-export function diskSize(message: string = "Please enter a valid disk size (e.g., 100GB, 1TB)"): ValidationRule {
+export function diskSize(
+  message: string = "Please enter a valid disk size (e.g., 100GB, 1TB)"
+): ValidationRule {
   return pattern(VALIDATION_PATTERNS.DISK_SIZE, message, VALIDATION_ERROR_CODES.INVALID_FORMAT);
 }
 
@@ -1072,14 +1239,20 @@ export function alertName(message: string = "Please enter a valid alert name"): 
   return pattern(VALIDATION_PATTERNS.ALERT_NAME, message, VALIDATION_ERROR_CODES.INVALID_FORMAT);
 }
 
-export function logLevel(message: string = "Please enter a valid log level (DEBUG, INFO, WARN, ERROR, FATAL)"): ValidationRule {
+export function logLevel(
+  message: string = "Please enter a valid log level (DEBUG, INFO, WARN, ERROR, FATAL)"
+): ValidationRule {
   return pattern(VALIDATION_PATTERNS.LOG_LEVEL, message, VALIDATION_ERROR_CODES.INVALID_FORMAT);
 }
 
 /**
  * Business Logic Validations
  */
-export function businessRule(rule: (value: any, context?: any) => boolean, message: string, errorCode?: string): ValidationRule {
+export function businessRule(
+  rule: (value: any, context?: any) => boolean,
+  message: string,
+  errorCode?: string
+): ValidationRule {
   return (value: any): ValidationResult => {
     if (!rule(value)) {
       return {
@@ -1092,7 +1265,11 @@ export function businessRule(rule: (value: any, context?: any) => boolean, messa
   };
 }
 
-export function inventoryLevel(minLevel: number, maxLevel: number, message?: string): ValidationRule {
+export function inventoryLevel(
+  minLevel: number,
+  maxLevel: number,
+  message?: string
+): ValidationRule {
   return (value: any): ValidationResult => {
     const numValue = Number(value);
     if (isNaN(numValue) || numValue < minLevel || numValue > maxLevel) {
@@ -1120,7 +1297,9 @@ export function priceRange(minPrice: number, maxPrice: number, message?: string)
   };
 }
 
-export function percentage(message: string = "Please enter a valid percentage (0-100)"): ValidationRule {
+export function percentage(
+  message: string = "Please enter a valid percentage (0-100)"
+): ValidationRule {
   return (value: any): ValidationResult => {
     const numValue = Number(value);
     if (isNaN(numValue) || numValue < 0 || numValue > 100) {
@@ -1134,15 +1313,21 @@ export function percentage(message: string = "Please enter a valid percentage (0
   };
 }
 
-export function discountRate(message: string = "Please enter a valid discount rate (0-100%)"): ValidationRule {
+export function discountRate(
+  message: string = "Please enter a valid discount rate (0-100%)"
+): ValidationRule {
   return percentage(message);
 }
 
-export function taxRate(message: string = "Please enter a valid tax rate (0-100%)"): ValidationRule {
+export function taxRate(
+  message: string = "Please enter a valid tax rate (0-100%)"
+): ValidationRule {
   return percentage(message);
 }
 
-export function commissionRate(message: string = "Please enter a valid commission rate (0-100%)"): ValidationRule {
+export function commissionRate(
+  message: string = "Please enter a valid commission rate (0-100%)"
+): ValidationRule {
   return percentage(message);
 }
 
@@ -1154,7 +1339,7 @@ export function workflowStatus(allowedStatuses: string[], message?: string): Val
     if (!allowedStatuses.includes(value)) {
       return {
         isValid: false,
-        message: message || `Status must be one of: ${allowedStatuses.join(', ')}`,
+        message: message || `Status must be one of: ${allowedStatuses.join(", ")}`,
         errorCode: VALIDATION_ERROR_CODES.CONSTRAINT_VIOLATION,
       };
     }
@@ -1167,7 +1352,7 @@ export function priority(allowedPriorities: string[], message?: string): Validat
     if (!allowedPriorities.includes(value)) {
       return {
         isValid: false,
-        message: message || `Priority must be one of: ${allowedPriorities.join(', ')}`,
+        message: message || `Priority must be one of: ${allowedPriorities.join(", ")}`,
         errorCode: VALIDATION_ERROR_CODES.CONSTRAINT_VIOLATION,
       };
     }
@@ -1180,7 +1365,7 @@ export function category(allowedCategories: string[], message?: string): Validat
     if (!allowedCategories.includes(value)) {
       return {
         isValid: false,
-        message: message || `Category must be one of: ${allowedCategories.join(', ')}`,
+        message: message || `Category must be one of: ${allowedCategories.join(", ")}`,
         errorCode: VALIDATION_ERROR_CODES.CONSTRAINT_VIOLATION,
       };
     }
@@ -1193,7 +1378,7 @@ export function category(allowedCategories: string[], message?: string): Validat
  */
 export function uniqueInList(list: any[], message?: string): ValidationRule {
   return (value: any): ValidationResult => {
-    const count = list.filter(item => item === value).length;
+    const count = list.filter((item) => item === value).length;
     if (count > 1) {
       return {
         isValid: false,
@@ -1234,7 +1419,10 @@ export function notExistsInList(list: any[], message?: string): ValidationRule {
 /**
  * Conditional validation - only validate if condition is true
  */
-export function conditional(condition: (value: any) => boolean, rule: ValidationRule): ValidationRule {
+export function conditional(
+  condition: (value: any) => boolean,
+  rule: ValidationRule
+): ValidationRule {
   return (value: any): ValidationResult => {
     if (condition(value)) {
       return rule(value);
@@ -1246,7 +1434,10 @@ export function conditional(condition: (value: any) => boolean, rule: Validation
 /**
  * Array validation - validate each item in an array
  */
-export function arrayOf(rules: ValidationRule[], message: string = "One or more items in the array are invalid"): ValidationRule {
+export function arrayOf(
+  rules: ValidationRule[],
+  message: string = "One or more items in the array are invalid"
+): ValidationRule {
   return (value: any): ValidationResult => {
     if (Array.isArray(value)) {
       for (let i = 0; i < value.length; i++) {
@@ -1267,7 +1458,10 @@ export function arrayOf(rules: ValidationRule[], message: string = "One or more 
 /**
  * Object validation - validate properties of an object
  */
-export function objectOf(validators: Record<string, ValidationRule[]>, message: string = "One or more object properties are invalid"): ValidationRule {
+export function objectOf(
+  validators: Record<string, ValidationRule[]>,
+  message: string = "One or more object properties are invalid"
+): ValidationRule {
   return (value: any): ValidationResult => {
     if (typeof value === "object" && value !== null) {
       for (const [key, rules] of Object.entries(validators)) {
@@ -1304,7 +1498,10 @@ export const VALIDATION_SETS = {
     password: [required(), passwordStrength({ minLength: 8 })],
     confirmPassword: [required()],
     phoneNumber: [required(), phone()],
-    termsAccepted: [required(), custom((value: boolean) => value === true, "You must accept the terms")],
+    termsAccepted: [
+      required(),
+      custom((value: boolean) => value === true, "You must accept the terms"),
+    ],
   },
 
   // Profile form validation
@@ -1368,8 +1565,14 @@ export const VALIDATION_SETS = {
 
   // Payment form validation
   PAYMENT_FORM: {
-    cardNumber: [required(), pattern(/^\d{4}\s?\d{4}\s?\d{4}\s?\d{4}$/, "Please enter a valid card number")],
-    expiryDate: [required(), pattern(/^(0[1-9]|1[0-2])\/\d{2}$/, "Please enter a valid expiry date (MM/YY)")],
+    cardNumber: [
+      required(),
+      pattern(/^\d{4}\s?\d{4}\s?\d{4}\s?\d{4}$/, "Please enter a valid card number"),
+    ],
+    expiryDate: [
+      required(),
+      pattern(/^(0[1-9]|1[0-2])\/\d{2}$/, "Please enter a valid expiry date (MM/YY)"),
+    ],
     cvv: [required(), pattern(/^\d{3,4}$/, "Please enter a valid CVV")],
     cardholderName: [required(), name(), minLength(2), maxLength(100)],
     billingAddress: [required(), minLength(10), maxLength(200)],
@@ -1384,9 +1587,11 @@ export const VALIDATION_SETS = {
     role: [required()],
     department: [required(), minLength(2), maxLength(100)],
     phoneNumber: [phone()], // Optional
-    isActive: [required(), custom((value: boolean) => typeof value === 'boolean', "Please select a status")],
+    isActive: [
+      required(),
+      custom((value: boolean) => typeof value === "boolean", "Please select a status"),
+    ],
   },
-
 
   // Generic form validation sets
   EMAIL_FIELD: [required(), email()],
@@ -1409,22 +1614,51 @@ export const VALIDATION_SETS = {
   OPTIONAL_TEXT: [minLength(0), maxLength(255)],
 
   // Date validation sets
-  DATE_FIELD: [required(), custom((value: string) => !isNaN(Date.parse(value)), "Please enter a valid date")],
-  FUTURE_DATE_FIELD: [required(), custom((value: string) => new Date(value) > new Date(), "Date must be in the future")],
-  PAST_DATE_FIELD: [required(), custom((value: string) => new Date(value) < new Date(), "Date must be in the past")],
+  DATE_FIELD: [
+    required(),
+    custom((value: string) => !isNaN(Date.parse(value)), "Please enter a valid date"),
+  ],
+  FUTURE_DATE_FIELD: [
+    required(),
+    custom((value: string) => new Date(value) > new Date(), "Date must be in the future"),
+  ],
+  PAST_DATE_FIELD: [
+    required(),
+    custom((value: string) => new Date(value) < new Date(), "Date must be in the past"),
+  ],
 
   // File validation sets
-  IMAGE_FILE: [required(), custom((value: File) => value.type.startsWith('image/'), "Please select an image file")],
-  DOCUMENT_FILE: [required(), custom((value: File) => value.type.includes('pdf') || value.type.includes('document'), "Please select a document file")],
+  IMAGE_FILE: [
+    required(),
+    custom((value: File) => value.type.startsWith("image/"), "Please select an image file"),
+  ],
+  DOCUMENT_FILE: [
+    required(),
+    custom(
+      (value: File) => value.type.includes("pdf") || value.type.includes("document"),
+      "Please select a document file"
+    ),
+  ],
   ANY_FILE: [required(), custom((value: File) => value instanceof File, "Please select a file")],
 
   // Array validation sets
   TAGS_FIELD: [arrayOf([minLength(2), maxLength(20)], "All tags must be 2-20 characters")],
-  MULTIPLE_SELECT_FIELD: [required(), custom((value: any[]) => Array.isArray(value) && value.length > 0, "Please select at least one option")],
+  MULTIPLE_SELECT_FIELD: [
+    required(),
+    custom(
+      (value: any[]) => Array.isArray(value) && value.length > 0,
+      "Please select at least one option"
+    ),
+  ],
 
   // Boolean validation sets
-  CHECKBOX_FIELD: [required(), custom((value: boolean) => value === true, "This field must be checked")],
-  OPTIONAL_CHECKBOX_FIELD: [custom((value: boolean) => typeof value === 'boolean', "Please select a valid option")],
+  CHECKBOX_FIELD: [
+    required(),
+    custom((value: boolean) => value === true, "This field must be checked"),
+  ],
+  OPTIONAL_CHECKBOX_FIELD: [
+    custom((value: boolean) => typeof value === "boolean", "Please select a valid option"),
+  ],
 
   // ==================== ERP ENTERPRISE VALIDATION SETS ====================
 
@@ -1432,7 +1666,10 @@ export const VALIDATION_SETS = {
   BANK_ACCOUNT_FORM: {
     accountNumber: [required(), accountNumber()],
     routingNumber: [required(), routingNumber()],
-    accountType: [required(), workflowStatus(['checking', 'savings', 'business'], "Please select a valid account type")],
+    accountType: [
+      required(),
+      workflowStatus(["checking", "savings", "business"], "Please select a valid account type"),
+    ],
     bankName: [required(), minLength(2), maxLength(100)],
     accountHolderName: [required(), name(), minLength(2), maxLength(100)],
   },
@@ -1447,7 +1684,10 @@ export const VALIDATION_SETS = {
   },
 
   INVOICE_FORM: {
-    invoiceNumber: [required(), pattern(/^INV-\d{6,10}$/, "Invoice number must be in format INV-XXXXXX")],
+    invoiceNumber: [
+      required(),
+      pattern(/^INV-\d{6,10}$/, "Invoice number must be in format INV-XXXXXX"),
+    ],
     customerId: [required(), customerId()],
     issueDate: [required(), date()],
     dueDate: [required(), date(), futureDate()],
@@ -1460,7 +1700,7 @@ export const VALIDATION_SETS = {
     expenseId: [required(), pattern(/^EXP-\d{6,10}$/, "Expense ID must be in format EXP-XXXXXX")],
     employeeId: [required(), employeeId()],
     amount: [required(), number(), minNumber(0.01)],
-    category: [required(), category(['travel', 'meals', 'office', 'transportation', 'other'])],
+    category: [required(), category(["travel", "meals", "office", "transportation", "other"])],
     description: [required(), minLength(10), maxLength(500)],
     receiptFile: [required(), imageFile()],
     expenseDate: [required(), date()],
@@ -1471,7 +1711,7 @@ export const VALIDATION_SETS = {
     partNumber: [required(), partNumber()],
     name: [required(), minLength(2), maxLength(200)],
     description: [required(), minLength(10), maxLength(2000)],
-    category: [required(), category(['electronics', 'clothing', 'books', 'home', 'automotive'])],
+    category: [required(), category(["electronics", "clothing", "books", "home", "automotive"])],
     price: [required(), number(), minNumber(0.01)],
     cost: [required(), number(), minNumber(0)],
     sku: [required(), sku()],
@@ -1484,9 +1724,15 @@ export const VALIDATION_SETS = {
   },
 
   INVENTORY_ADJUSTMENT_FORM: {
-    adjustmentId: [required(), pattern(/^ADJ-\d{6,10}$/, "Adjustment ID must be in format ADJ-XXXXXX")],
+    adjustmentId: [
+      required(),
+      pattern(/^ADJ-\d{6,10}$/, "Adjustment ID must be in format ADJ-XXXXXX"),
+    ],
     partNumber: [required(), partNumber()],
-    adjustmentType: [required(), workflowStatus(['increase', 'decrease', 'transfer'], "Please select adjustment type")],
+    adjustmentType: [
+      required(),
+      workflowStatus(["increase", "decrease", "transfer"], "Please select adjustment type"),
+    ],
     quantity: [required(), number(), minNumber(1)],
     reason: [required(), minLength(10), maxLength(500)],
     employeeId: [required(), employeeId()],
@@ -1523,7 +1769,10 @@ export const VALIDATION_SETS = {
   PAYROLL_FORM: {
     payrollId: [required(), payrollId()],
     employeeId: [required(), employeeId()],
-    payPeriod: [required(), workflowStatus(['weekly', 'bi-weekly', 'monthly'], "Please select pay period")],
+    payPeriod: [
+      required(),
+      workflowStatus(["weekly", "bi-weekly", "monthly"], "Please select pay period"),
+    ],
     grossPay: [required(), number(), minNumber(0)],
     deductions: [required(), number(), minNumber(0)],
     netPay: [required(), number(), minNumber(0)],
@@ -1551,7 +1800,10 @@ export const VALIDATION_SETS = {
     state: [required(), name(), minLength(2), maxLength(100)],
     zipCode: [required(), zipCodeUS()],
     country: [required(), name(), minLength(2), maxLength(100)],
-    industry: [required(), category(['technology', 'manufacturing', 'retail', 'healthcare', 'finance'])],
+    industry: [
+      required(),
+      category(["technology", "manufacturing", "retail", "healthcare", "finance"]),
+    ],
   },
 
   LEAD_FORM: {
@@ -1561,9 +1813,9 @@ export const VALIDATION_SETS = {
     email: [required(), email()],
     phone: [phone()],
     company: [minLength(2), maxLength(200)],
-    source: [required(), category(['website', 'referral', 'cold-call', 'email', 'social'])],
-    status: [required(), workflowStatus(['new', 'contacted', 'qualified', 'proposal', 'closed'])],
-    priority: [required(), priority(['low', 'medium', 'high', 'urgent'])],
+    source: [required(), category(["website", "referral", "cold-call", "email", "social"])],
+    status: [required(), workflowStatus(["new", "contacted", "qualified", "proposal", "closed"])],
+    priority: [required(), priority(["low", "medium", "high", "urgent"])],
   },
 
   OPPORTUNITY_FORM: {
@@ -1573,7 +1825,17 @@ export const VALIDATION_SETS = {
     name: [required(), minLength(2), maxLength(200)],
     value: [required(), number(), minNumber(0.01)],
     probability: [required(), percentage()],
-    stage: [required(), workflowStatus(['prospecting', 'qualification', 'proposal', 'negotiation', 'closed-won', 'closed-lost'])],
+    stage: [
+      required(),
+      workflowStatus([
+        "prospecting",
+        "qualification",
+        "proposal",
+        "negotiation",
+        "closed-won",
+        "closed-lost",
+      ]),
+    ],
     expectedCloseDate: [required(), date(), futureDate()],
     description: [required(), minLength(10), maxLength(1000)],
   },
@@ -1586,8 +1848,11 @@ export const VALIDATION_SETS = {
     startDate: [required(), date()],
     endDate: [required(), date(), futureDate()],
     budget: [required(), number(), minNumber(0)],
-    status: [required(), workflowStatus(['planning', 'active', 'on-hold', 'completed', 'cancelled'])],
-    priority: [required(), priority(['low', 'medium', 'high', 'critical'])],
+    status: [
+      required(),
+      workflowStatus(["planning", "active", "on-hold", "completed", "cancelled"]),
+    ],
+    priority: [required(), priority(["low", "medium", "high", "critical"])],
     managerId: [required(), employeeId()],
     customerId: [customerId()],
   },
@@ -1602,8 +1867,8 @@ export const VALIDATION_SETS = {
     dueDate: [required(), date(), futureDate()],
     estimatedHours: [required(), number(), minNumber(0.1)],
     actualHours: [number(), minNumber(0)],
-    status: [required(), workflowStatus(['not-started', 'in-progress', 'completed', 'blocked'])],
-    priority: [required(), priority(['low', 'medium', 'high', 'urgent'])],
+    status: [required(), workflowStatus(["not-started", "in-progress", "completed", "blocked"])],
+    priority: [required(), priority(["low", "medium", "high", "urgent"])],
   },
 
   // Manufacturing Forms
@@ -1614,8 +1879,8 @@ export const VALIDATION_SETS = {
     productionLine: [required(), productionLine()],
     startDate: [required(), date()],
     endDate: [required(), date(), futureDate()],
-    status: [required(), workflowStatus(['planned', 'in-progress', 'completed', 'cancelled'])],
-    priority: [required(), priority(['low', 'medium', 'high', 'urgent'])],
+    status: [required(), workflowStatus(["planned", "in-progress", "completed", "cancelled"])],
+    priority: [required(), priority(["low", "medium", "high", "urgent"])],
     supervisorId: [required(), employeeId()],
   },
 
@@ -1625,7 +1890,7 @@ export const VALIDATION_SETS = {
     batchNumber: [required(), batchNumber()],
     inspectorId: [required(), employeeId()],
     inspectionDate: [required(), date()],
-    result: [required(), workflowStatus(['pass', 'fail', 'conditional'])],
+    result: [required(), workflowStatus(["pass", "fail", "conditional"])],
     defects: [number(), minNumber(0)],
     notes: [minLength(0), maxLength(1000)],
   },
@@ -1633,21 +1898,21 @@ export const VALIDATION_SETS = {
   // Compliance Forms
   AUDIT_FORM: {
     auditId: [required(), auditId()],
-    auditType: [required(), category(['financial', 'operational', 'compliance', 'security'])],
+    auditType: [required(), category(["financial", "operational", "compliance", "security"])],
     auditorId: [required(), employeeId()],
     auditDate: [required(), date()],
     findings: [required(), minLength(10), maxLength(2000)],
     recommendations: [required(), minLength(10), maxLength(2000)],
-    status: [required(), workflowStatus(['planned', 'in-progress', 'completed', 'follow-up'])],
+    status: [required(), workflowStatus(["planned", "in-progress", "completed", "follow-up"])],
   },
 
   LICENSE_FORM: {
     licenseNumber: [required(), licenseNumber()],
-    licenseType: [required(), category(['business', 'professional', 'operating', 'permits'])],
+    licenseType: [required(), category(["business", "professional", "operating", "permits"])],
     issuedBy: [required(), minLength(2), maxLength(100)],
     issueDate: [required(), date()],
     expiryDate: [required(), date(), futureDate()],
-    status: [required(), workflowStatus(['active', 'expired', 'suspended', 'revoked'])],
+    status: [required(), workflowStatus(["active", "expired", "suspended", "revoked"])],
   },
 
   // API & Integration Forms
@@ -1665,9 +1930,15 @@ export const VALIDATION_SETS = {
   WEBHOOK_FORM: {
     name: [required(), minLength(2), maxLength(100)],
     url: [required(), webhookUrl()],
-    events: [required(), arrayOf([minLength(2), maxLength(50)], "All events must be 2-50 characters")],
+    events: [
+      required(),
+      arrayOf([minLength(2), maxLength(50)], "All events must be 2-50 characters"),
+    ],
     secret: [required(), secretKey()],
-    isActive: [required(), custom((value: boolean) => typeof value === 'boolean', "Please select a status")],
+    isActive: [
+      required(),
+      custom((value: boolean) => typeof value === "boolean", "Please select a status"),
+    ],
   },
 
   // Configuration Forms
@@ -1676,12 +1947,18 @@ export const VALIDATION_SETS = {
     configValue: [required(), minLength(1), maxLength(1000)],
     environment: [required(), environment()],
     description: [required(), minLength(10), maxLength(500)],
-    isEncrypted: [required(), custom((value: boolean) => typeof value === 'boolean', "Please select encryption status")],
+    isEncrypted: [
+      required(),
+      custom((value: boolean) => typeof value === "boolean", "Please select encryption status"),
+    ],
   },
 
   FEATURE_FLAG_FORM: {
     featureFlag: [required(), featureFlag()],
-    isEnabled: [required(), custom((value: boolean) => typeof value === 'boolean', "Please select enable status")],
+    isEnabled: [
+      required(),
+      custom((value: boolean) => typeof value === "boolean", "Please select enable status"),
+    ],
     environment: [required(), environment()],
     description: [required(), minLength(10), maxLength(500)],
     rolloutPercentage: [required(), percentage()],
@@ -1691,18 +1968,24 @@ export const VALIDATION_SETS = {
   USER_ROLE_FORM: {
     roleName: [required(), minLength(2), maxLength(50)],
     description: [required(), minLength(10), maxLength(500)],
-    permissions: [required(), arrayOf([minLength(2), maxLength(50)], "All permissions must be 2-50 characters")],
-    isActive: [required(), custom((value: boolean) => typeof value === 'boolean', "Please select a status")],
+    permissions: [
+      required(),
+      arrayOf([minLength(2), maxLength(50)], "All permissions must be 2-50 characters"),
+    ],
+    isActive: [
+      required(),
+      custom((value: boolean) => typeof value === "boolean", "Please select a status"),
+    ],
   },
 
   SECURITY_AUDIT_FORM: {
     auditId: [required(), auditId()],
-    auditType: [required(), category(['login', 'permission', 'data-access', 'system'])],
+    auditType: [required(), category(["login", "permission", "data-access", "system"])],
     userId: [required(), employeeId()],
     ipAddress: [required(), ipAddress()],
     timestamp: [required(), date()],
     action: [required(), minLength(2), maxLength(100)],
-    result: [required(), workflowStatus(['success', 'failure', 'blocked'])],
+    result: [required(), workflowStatus(["success", "failure", "blocked"])],
   },
 
   // Monitoring Forms
@@ -1710,9 +1993,12 @@ export const VALIDATION_SETS = {
     alertName: [required(), alertName()],
     metricName: [required(), metricName()],
     threshold: [required(), number()],
-    operator: [required(), workflowStatus(['greater-than', 'less-than', 'equals', 'not-equals'])],
-    severity: [required(), priority(['low', 'medium', 'high', 'critical'])],
-    isActive: [required(), custom((value: boolean) => typeof value === 'boolean', "Please select a status")],
+    operator: [required(), workflowStatus(["greater-than", "less-than", "equals", "not-equals"])],
+    severity: [required(), priority(["low", "medium", "high", "critical"])],
+    isActive: [
+      required(),
+      custom((value: boolean) => typeof value === "boolean", "Please select a status"),
+    ],
   },
 
   LOG_CONFIG_FORM: {
@@ -1720,20 +2006,26 @@ export const VALIDATION_SETS = {
     logLevel: [required(), logLevel()],
     environment: [required(), environment()],
     retentionDays: [required(), number(), minNumber(1), maxNumber(365)],
-    isActive: [required(), custom((value: boolean) => typeof value === 'boolean', "Please select a status")],
+    isActive: [
+      required(),
+      custom((value: boolean) => typeof value === "boolean", "Please select a status"),
+    ],
   },
 };
 
 /**
  * Validate a form using predefined validation sets
  */
-export function validateForm(formData: Record<string, any>, validationSet: Record<string, ValidationRule[]>): Record<string, ValidationResult> {
+export function validateForm(
+  formData: Record<string, any>,
+  validationSet: Record<string, ValidationRule[]>
+): Record<string, ValidationResult> {
   const results: Record<string, ValidationResult> = {};
-  
+
   for (const [fieldName, rules] of Object.entries(validationSet)) {
     results[fieldName] = validate(formData[fieldName], rules);
   }
-  
+
   return results;
 }
 
@@ -1741,28 +2033,32 @@ export function validateForm(formData: Record<string, any>, validationSet: Recor
  * Check if a form is valid
  */
 export function isFormValid(validationResults: Record<string, ValidationResult>): boolean {
-  return Object.values(validationResults).every(result => result.isValid);
+  return Object.values(validationResults).every((result) => result.isValid);
 }
 
 /**
  * Get all validation errors from a form
  */
-export function getFormErrors(validationResults: Record<string, ValidationResult>): Record<string, string> {
+export function getFormErrors(
+  validationResults: Record<string, ValidationResult>
+): Record<string, string> {
   const errors: Record<string, string> = {};
-  
+
   for (const [fieldName, result] of Object.entries(validationResults)) {
     if (!result.isValid && result.message) {
       errors[fieldName] = result.message;
     }
   }
-  
+
   return errors;
 }
 
 /**
  * Get the first validation error from a form
  */
-export function getFirstFormError(validationResults: Record<string, ValidationResult>): string | null {
+export function getFirstFormError(
+  validationResults: Record<string, ValidationResult>
+): string | null {
   for (const result of Object.values(validationResults)) {
     if (!result.isValid && result.message) {
       return result.message;

@@ -1,77 +1,78 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useEnhancedToast } from "./use-enhanced-toast"
+import { useState } from "react";
+import { useEnhancedToast } from "./use-enhanced-toast";
 
 export interface DeleteOptions {
-  itemName?: string
-  itemType?: string
-  confirmTitle?: string
-  confirmDescription?: string
-  successMessage?: string
-  errorMessage?: string
-  onSuccess?: () => void
-  onError?: (error: any) => void
+  itemName?: string;
+  itemType?: string;
+  confirmTitle?: string;
+  confirmDescription?: string;
+  successMessage?: string;
+  errorMessage?: string;
+  onSuccess?: () => void;
+  onError?: (error: any) => void;
   /** Dialog variant: destructive (red/trash), warning, info, or default (green/check) */
-  variant?: "destructive" | "warning" | "info" | "default"
+  variant?: "destructive" | "warning" | "info" | "default";
   /** Custom confirm button text (defaults to 'Delete' for destructive, 'Confirm' for others) */
-  confirmButtonText?: string
+  confirmButtonText?: string;
 }
 
 export function useEnhancedDelete() {
-  const [isDeleting, setIsDeleting] = useState(false)
-  const [showConfirmation, setShowConfirmation] = useState(false)
-  const [deleteAction, setDeleteAction] = useState<(() => Promise<void>) | null>(null)
-  const [deleteOptions, setDeleteOptions] = useState<DeleteOptions>({})
-  const { operationSuccess, operationError } = useEnhancedToast()
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [deleteAction, setDeleteAction] = useState<(() => Promise<void>) | null>(null);
+  const [deleteOptions, setDeleteOptions] = useState<DeleteOptions>({});
+  const { operationSuccess, operationError } = useEnhancedToast();
 
   const confirmDelete = async (
     deleteFunction: () => Promise<void>,
     options: DeleteOptions = {}
   ) => {
-    setDeleteAction(() => deleteFunction)
-    setDeleteOptions(options)
-    setShowConfirmation(true)
-  }
+    setDeleteAction(() => deleteFunction);
+    setDeleteOptions(options);
+    setShowConfirmation(true);
+  };
 
   const executeDelete = async () => {
-    if (!deleteAction) return
+    if (!deleteAction) return;
 
-    setIsDeleting(true)
-    setShowConfirmation(false)
+    setIsDeleting(true);
+    setShowConfirmation(false);
 
     try {
-      await deleteAction()
+      await deleteAction();
 
       // Show success toast
-      const successMsg = deleteOptions.successMessage ||
-        `${deleteOptions.itemType || 'Item'} deleted successfully`
+      const successMsg =
+        deleteOptions.successMessage || `${deleteOptions.itemType || "Item"} deleted successfully`;
 
-      operationSuccess("Delete", deleteOptions.itemName)
+      operationSuccess("Delete", deleteOptions.itemName);
 
       // Call success callback
-      deleteOptions.onSuccess?.()
+      deleteOptions.onSuccess?.();
     } catch (error) {
       // Show error toast
-      const errorMsg = deleteOptions.errorMessage ||
-        `Failed to delete ${deleteOptions.itemType?.toLowerCase() || 'item'}`
+      const errorMsg =
+        deleteOptions.errorMessage ||
+        `Failed to delete ${deleteOptions.itemType?.toLowerCase() || "item"}`;
 
-      operationError("Delete", deleteOptions.itemName, errorMsg)
+      operationError("Delete", deleteOptions.itemName, errorMsg);
 
       // Call error callback
-      deleteOptions.onError?.(error)
+      deleteOptions.onError?.(error);
     } finally {
-      setIsDeleting(false)
-      setDeleteAction(null)
-      setDeleteOptions({})
+      setIsDeleting(false);
+      setDeleteAction(null);
+      setDeleteOptions({});
     }
-  }
+  };
 
   const cancelDelete = () => {
-    setShowConfirmation(false)
-    setDeleteAction(null)
-    setDeleteOptions({})
-  }
+    setShowConfirmation(false);
+    setDeleteAction(null);
+    setDeleteOptions({});
+  };
 
   return {
     isDeleting,
@@ -80,5 +81,5 @@ export function useEnhancedDelete() {
     confirmDelete,
     executeDelete,
     cancelDelete,
-  }
+  };
 }

@@ -11,15 +11,15 @@
 // ===== JSON Shapes =====
 
 export interface Verify2FARequestJson {
-      username: string;
-      password: string;
-      code: string;
+  username: string;
+  password: string;
+  code: string;
 }
 
 export interface Verify2FAResponseJson {
-      accessToken: string;
-      refreshToken: string;
-      expiresAt: string;
+  accessToken: string;
+  refreshToken: string;
+  expiresAt: string;
 }
 
 // ===== Model Classes =====
@@ -28,36 +28,32 @@ export interface Verify2FAResponseJson {
  * Verify 2FA Request Model
  */
 export class Verify2FARequestModel {
-      constructor(
-            public readonly username: string,
-            public readonly password: string,
-            public readonly code: string
-      ) { }
+  constructor(
+    public readonly username: string,
+    public readonly password: string,
+    public readonly code: string
+  ) {}
 
-      toJson(): Verify2FARequestJson {
-            return {
-                  username: this.username,
-                  password: this.password,
-                  code: this.code,
-            };
-      }
+  toJson(): Verify2FARequestJson {
+    return {
+      username: this.username,
+      password: this.password,
+      code: this.code,
+    };
+  }
 }
 
 /**
  * Verify 2FA Response Model
  */
 export class Verify2FAResponseModel {
-      constructor(
-            public readonly accessToken: string,
-            public readonly refreshToken: string,
-            public readonly expiresAt: string
-      ) { }
+  constructor(
+    public readonly accessToken: string,
+    public readonly refreshToken: string,
+    public readonly expiresAt: string
+  ) {}
 
-      static fromJson(json: Verify2FAResponseJson): Verify2FAResponseModel {
-            return new Verify2FAResponseModel(
-                  json.accessToken,
-                  json.refreshToken,
-                  json.expiresAt
-            );
-      }
+  static fromJson(json: Verify2FAResponseJson): Verify2FAResponseModel {
+    return new Verify2FAResponseModel(json.accessToken, json.refreshToken, json.expiresAt);
+  }
 }

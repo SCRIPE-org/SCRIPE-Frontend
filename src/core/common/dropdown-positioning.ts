@@ -8,7 +8,7 @@ export interface DropdownPosition {
   left: number;
   width: number;
   maxHeight?: number;
-  placement: 'bottom' | 'top' | 'bottom-start' | 'top-start';
+  placement: "bottom" | "top" | "bottom-start" | "top-start";
 }
 
 export interface PositionOptions {
@@ -29,14 +29,14 @@ export function calculateDropdownPosition({
   dropdownWidth,
   offset = 4,
   minWidth = 200,
-  maxHeight = 240
+  maxHeight = 240,
 }: PositionOptions): DropdownPosition {
   const rect = triggerElement.getBoundingClientRect();
   const viewport = {
     width: window.innerWidth,
     height: window.innerHeight,
     scrollX: window.scrollX,
-    scrollY: window.scrollY
+    scrollY: window.scrollY,
   };
 
   // Calculate preferred width (use trigger width or specified width)
@@ -51,7 +51,7 @@ export function calculateDropdownPosition({
 
   // Calculate vertical position
   let top: number;
-  let placement: 'bottom' | 'top' | 'bottom-start' | 'top-start';
+  let placement: "bottom" | "top" | "bottom-start" | "top-start";
 
   // Calculate available height first to anchor dropdown right above/below trigger
   const availableHeight = shouldOpenUpward
@@ -63,11 +63,11 @@ export function calculateDropdownPosition({
   if (shouldOpenUpward) {
     // Stick just above the trigger: triggerTop - effectiveHeight - offset
     top = rect.top + viewport.scrollY - effectiveHeight - offset;
-    placement = 'top-start';
+    placement = "top-start";
   } else {
     // Stick just below the trigger
     top = rect.bottom + viewport.scrollY + offset;
-    placement = 'bottom-start';
+    placement = "bottom-start";
   }
 
   // Calculate horizontal position with viewport bounds checking
@@ -89,7 +89,7 @@ export function calculateDropdownPosition({
     left,
     width: preferredWidth,
     maxHeight: Math.max(availableHeight, 120), // Minimum 120px height
-    placement
+    placement,
   };
 }
 
@@ -112,9 +112,9 @@ export function isElementInViewport(element: HTMLElement): boolean {
 export function scrollIntoViewIfNeeded(element: HTMLElement): void {
   if (!isElementInViewport(element)) {
     element.scrollIntoView({
-      behavior: 'smooth',
-      block: 'nearest',
-      inline: 'nearest'
+      behavior: "smooth",
+      block: "nearest",
+      inline: "nearest",
     });
   }
 }

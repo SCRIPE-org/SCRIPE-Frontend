@@ -13,7 +13,7 @@ import type { IApiService } from "@core/interfaces/api.interface";
 
 /**
  * Services Interface
- * 
+ *
  * SOLID: Interface Segregation - expose interfaces not implementations
  * NOTE: Profile module now uses its own DI container (profile/di.ts)
  */
@@ -29,7 +29,7 @@ const ServiceContext = createContext<Services | null>(null);
 
 /**
  * Service Provider
- * 
+ *
  * Clean Architecture DI Container for React.
  * Creates: Service → Repository chain with proper dependency injection.
  */
@@ -56,11 +56,7 @@ export function ServiceProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  return (
-    <ServiceContext.Provider value={services}>
-      {children}
-    </ServiceContext.Provider>
-  );
+  return <ServiceContext.Provider value={services}>{children}</ServiceContext.Provider>;
 }
 
 export function useServices() {

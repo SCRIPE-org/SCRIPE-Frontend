@@ -4,18 +4,18 @@ import React, { useState } from "react";
 import { ResponsiveTabs } from "@core/ui/responsive-tabs";
 import { useI18n } from "@core/providers/i18n-provider";
 import {
-  TrendingUp, 
-  BarChart3, 
-  PieChart, 
-  Dot, 
-  Radar, 
+  TrendingUp,
+  BarChart3,
+  PieChart,
+  Dot,
+  Radar,
   Activity,
   Layers,
   Target,
   Zap,
   Sparkles,
   Clock,
-  BarChart
+  BarChart,
 } from "lucide-react";
 
 // Import chart components
@@ -84,28 +84,29 @@ export function ProfessionalChartsTab() {
 
   return (
     <div className="space-y-6">
-      <div className="text-center space-y-4">
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+      <div className="space-y-4 text-center">
+        <h1 className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-3xl font-bold text-transparent">
           Professional Charts Collection
         </h1>
-        <p className="text-xl text-muted-foreground max-w-4xl mx-auto">
-          Enterprise-grade chart components with professional styling, smooth animations, and comprehensive interactivity
+        <p className="mx-auto max-w-4xl text-xl text-muted-foreground">
+          Enterprise-grade chart components with professional styling, smooth animations, and
+          comprehensive interactivity
         </p>
         <div className="flex justify-center gap-4 text-sm text-muted-foreground">
           <span className="flex items-center gap-1">
-            <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+            <div className="h-2 w-2 rounded-full bg-blue-500"></div>
             {chartTypes.length} Chart Types
           </span>
           <span className="flex items-center gap-1">
-            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+            <div className="h-2 w-2 rounded-full bg-green-500"></div>
             100+ Chart Variants
           </span>
           <span className="flex items-center gap-1">
-            <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+            <div className="h-2 w-2 rounded-full bg-purple-500"></div>
             Interactive & Responsive
           </span>
           <span className="flex items-center gap-1">
-            <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+            <div className="h-2 w-2 rounded-full bg-orange-500"></div>
             Professional Grade
           </span>
         </div>
@@ -118,32 +119,30 @@ export function ProfessionalChartsTab() {
         className="mb-8"
       />
 
-      <div className="min-h-[600px]">
-        {renderChartComponent()}
-      </div>
+      <div className="min-h-[600px]">{renderChartComponent()}</div>
 
-      <div className="mt-12 p-8 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950 dark:to-purple-950 rounded-lg">
-        <div className="text-center space-y-4">
+      <div className="mt-12 rounded-lg bg-gradient-to-r from-blue-50 to-purple-50 p-8 dark:from-blue-950 dark:to-purple-950">
+        <div className="space-y-4 text-center">
           <h3 className="text-2xl font-bold">Chart Capabilities</h3>
-          <p className="text-muted-foreground max-w-3xl mx-auto">
-            Our professional chart collection provides enterprise-grade visualization capabilities 
+          <p className="mx-auto max-w-3xl text-muted-foreground">
+            Our professional chart collection provides enterprise-grade visualization capabilities
             perfect for complex business data analysis, reporting, and decision-making.
           </p>
-          
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
-            <div className="text-center p-4 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
+
+          <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4">
+            <div className="rounded-lg bg-white p-4 text-center shadow-sm dark:bg-gray-800">
               <div className="text-2xl font-bold text-blue-600">{chartTypes.length}</div>
               <div className="text-sm text-muted-foreground">Chart Types</div>
             </div>
-            <div className="text-center p-4 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
+            <div className="rounded-lg bg-white p-4 text-center shadow-sm dark:bg-gray-800">
               <div className="text-2xl font-bold text-green-600">100+</div>
               <div className="text-sm text-muted-foreground">Chart Variants</div>
             </div>
-            <div className="text-center p-4 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
+            <div className="rounded-lg bg-white p-4 text-center shadow-sm dark:bg-gray-800">
               <div className="text-2xl font-bold text-purple-600">3</div>
               <div className="text-sm text-muted-foreground">Export Formats</div>
             </div>
-            <div className="text-center p-4 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
+            <div className="rounded-lg bg-white p-4 text-center shadow-sm dark:bg-gray-800">
               <div className="text-2xl font-bold text-orange-600">∞</div>
               <div className="text-sm text-muted-foreground">Customizable</div>
             </div>

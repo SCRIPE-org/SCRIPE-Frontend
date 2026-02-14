@@ -81,34 +81,34 @@ export interface FieldConfig {
   name: string;
   label?: string; // Optional for hidden fields
   type:
-  | "text"
-  | "password"
-  | "email"
-  | "number"
-  | "tel"
-  | "url"
-  | "textarea"
-  | "richtext"
-  | "select"
-  | "searchable-select"
-  | "server-select"
-  | "multi-select"
-  | "tree"
-  | "switch"
-  | "checkbox"
-  | "radio"
-  | "slider"
-  | "range"
-  | "hidden"
-  | "date"
-  | "datetime"
-  | "datetime-local"
-  | "time"
-  | "month"
-  | "week"
-  | "color"
-  | "file"
-  | "image";
+    | "text"
+    | "password"
+    | "email"
+    | "number"
+    | "tel"
+    | "url"
+    | "textarea"
+    | "richtext"
+    | "select"
+    | "searchable-select"
+    | "server-select"
+    | "multi-select"
+    | "tree"
+    | "switch"
+    | "checkbox"
+    | "radio"
+    | "slider"
+    | "range"
+    | "hidden"
+    | "date"
+    | "datetime"
+    | "datetime-local"
+    | "time"
+    | "month"
+    | "week"
+    | "color"
+    | "file"
+    | "image";
   placeholder?: string;
   searchPlaceholder?: string; // For searchable selects
   required?: boolean;
@@ -138,10 +138,7 @@ export interface FieldConfig {
   // Dynamic field behavior
   dependsOn?: string; // Field name this field depends on
   isVisible?: (formData: Record<string, any>) => boolean; // Function to determine visibility
-  onChange?: (
-    value: any,
-    formData: Record<string, any>
-  ) => void | Record<string, any>; // Callback when field value changes, can return object to update multiple fields
+  onChange?: (value: any, formData: Record<string, any>) => void | Record<string, any>; // Callback when field value changes, can return object to update multiple fields
   loading?: boolean; // Show loading state
   disabled?: boolean; // Disable field
   // Validation
@@ -192,17 +189,11 @@ export function GenericForm({
 
   // Helper function to initialize form data with default values
   const initializeFormData = React.useCallback(
-    (
-      currentFields: FieldConfig[],
-      currentInitialValues: Record<string, any>
-    ) => {
+    (currentFields: FieldConfig[], currentInitialValues: Record<string, any>) => {
       const data = { ...currentInitialValues };
       // Set default values for fields that have them and convert dates for HTML inputs
       currentFields.forEach((field) => {
-        if (
-          field.defaultValue !== undefined &&
-          data[field.name] === undefined
-        ) {
+        if (field.defaultValue !== undefined && data[field.name] === undefined) {
           data[field.name] = field.defaultValue;
         }
         // Convert date fields from API format to HTML input format
@@ -236,10 +227,7 @@ export function GenericForm({
       const preservedData = { ...prevData };
       fields.forEach((field) => {
         // Only override if the field has a new default value or initial value
-        if (
-          field.defaultValue !== undefined &&
-          prevData[field.name] === undefined
-        ) {
+        if (field.defaultValue !== undefined && prevData[field.name] === undefined) {
           preservedData[field.name] = field.defaultValue;
         }
         if (initialValues[field.name] !== undefined) {
@@ -407,10 +395,7 @@ export function GenericForm({
           "bg-gradient-to-br from-background to-muted/20 rounded-2xl border shadow-lg"
         );
       case "glass":
-        return cn(
-          baseClasses,
-          "bg-white/10 backdrop-blur-md rounded-2xl border border-white/20"
-        );
+        return cn(baseClasses, "bg-white/10 backdrop-blur-md rounded-2xl border border-white/20");
       case "minimal":
         return cn(baseClasses, "bg-transparent border-none shadow-none p-4");
       case "card":
@@ -430,10 +415,7 @@ export function GenericForm({
       case "glass":
         return cn(baseClasses, "text-foreground/80");
       case "minimal":
-        return cn(
-          baseClasses,
-          "text-sm text-muted-foreground uppercase tracking-wide"
-        );
+        return cn(baseClasses, "text-sm text-muted-foreground uppercase tracking-wide");
       case "card":
         return cn(baseClasses, "text-card-foreground");
       default:
@@ -451,10 +433,7 @@ export function GenericForm({
           "rounded-xl border-2 bg-background/50 focus:bg-background transition-colors"
         );
       case "glass":
-        return cn(
-          baseInputClasses,
-          "rounded-xl bg-white/10 border-white/30 backdrop-blur-sm"
-        );
+        return cn(baseInputClasses, "rounded-xl bg-white/10 border-white/30 backdrop-blur-sm");
       case "minimal":
         return cn(
           baseInputClasses,
@@ -489,10 +468,7 @@ export function GenericForm({
 
   return (
     <div
-      className={cn(
-        getFormContainerClasses(),
-        direction === "rtl" ? "text-right" : "text-left"
-      )}
+      className={cn(getFormContainerClasses(), direction === "rtl" ? "text-right" : "text-left")}
       dir={direction}
     >
       <form onSubmit={handleSubmit} className={getFormSpacing()}>
@@ -530,17 +506,13 @@ export function GenericForm({
                     }
                     value={formData[field.name] || ""}
                     onValueChange={(value: string | string[]) =>
-                      handleChange(
-                        field.name,
-                        typeof value === "string" ? value : value[0]
-                      )
+                      handleChange(field.name, typeof value === "string" ? value : value[0])
                     }
                     placeholder={field.placeholder}
                     disabled={field.disabled || readOnly}
                     className={getInputClasses(getInputHeight())}
                   />
-                ) : field.type === "searchable-select" ||
-                  field.type === "server-select" ? (
+                ) : field.type === "searchable-select" || field.type === "server-select" ? (
                   <GenericSelect
                     type="searchable"
                     options={
@@ -551,10 +523,7 @@ export function GenericForm({
                     }
                     value={formData[field.name] || ""}
                     onValueChange={(value: string | string[]) =>
-                      handleChange(
-                        field.name,
-                        typeof value === "string" ? value : value[0]
-                      )
+                      handleChange(field.name, typeof value === "string" ? value : value[0])
                     }
                     placeholder={field.placeholder}
                     searchPlaceholder={field.searchPlaceholder}
@@ -562,12 +531,12 @@ export function GenericForm({
                     onServerSearch={
                       field.onServerSearch
                         ? async (query: string) => {
-                          const results = await field.onServerSearch!(query);
-                          return results.map((r) => ({
-                            value: r.value,
-                            label: r.label,
-                          }));
-                        }
+                            const results = await field.onServerSearch!(query);
+                            return results.map((r) => ({
+                              value: r.value,
+                              label: r.label,
+                            }));
+                          }
                         : undefined
                     }
                     searchEndpoint={field.searchEndpoint}
@@ -591,22 +560,20 @@ export function GenericForm({
                       })) || []
                     }
                     value={formData[field.name] || []}
-                    onValueChange={(value: string | string[]) =>
-                      handleChange(field.name, value)
-                    }
+                    onValueChange={(value: string | string[]) => handleChange(field.name, value)}
                     placeholder={field.placeholder}
                     searchPlaceholder={field.searchPlaceholder}
                     searchType={field.searchType}
                     onServerSearch={
                       field.onServerSearch
                         ? async (query: string) => {
-                          const results = await field.onServerSearch!(query);
-                          return results.map((r) => ({
-                            value: r.value,
-                            label: r.label,
-                            uniqueKey: r.uniqueKey,
-                          }));
-                        }
+                            const results = await field.onServerSearch!(query);
+                            return results.map((r) => ({
+                              value: r.value,
+                              label: r.label,
+                              uniqueKey: r.uniqueKey,
+                            }));
+                          }
                         : undefined
                     }
                     searchEndpoint={field.searchEndpoint}
@@ -626,10 +593,7 @@ export function GenericForm({
                     treeData={field.treeData || []}
                     value={formData[field.name] || ""}
                     onValueChange={(value: string | string[]) =>
-                      handleChange(
-                        field.name,
-                        typeof value === "string" ? value : value[0]
-                      )
+                      handleChange(field.name, typeof value === "string" ? value : value[0])
                     }
                     placeholder={field.placeholder}
                     searchPlaceholder={field.searchPlaceholder}
@@ -660,9 +624,7 @@ export function GenericForm({
                     placeholder={field.placeholder}
                     disabled={field.disabled}
                     minHeight={field.rows ? field.rows * 20 : 200}
-                    className={cn(
-                      direction === "rtl" ? "text-right" : "text-left"
-                    )}
+                    className={cn(direction === "rtl" ? "text-right" : "text-left")}
                   />
                 ) : field.type === "switch" ? (
                   <div className={cn("flex items-center justify-between")}>
@@ -678,9 +640,7 @@ export function GenericForm({
                     <Switch
                       id={field.name}
                       checked={formData[field.name] || false}
-                      onCheckedChange={(checked) =>
-                        handleChange(field.name, checked)
-                      }
+                      onCheckedChange={(checked) => handleChange(field.name, checked)}
                       disabled={field.disabled || readOnly}
                     />
                   </div>
@@ -688,26 +648,19 @@ export function GenericForm({
                   <div
                     className={cn(
                       "flex items-center",
-                      direction === "rtl"
-                        ? "space-x-reverse space-x-2"
-                        : "space-x-2"
+                      direction === "rtl" ? "space-x-2 space-x-reverse" : "space-x-2"
                     )}
                   >
                     <Checkbox
                       id={field.name}
                       checked={formData[field.name] || false}
-                      onCheckedChange={(checked) =>
-                        handleChange(field.name, checked)
-                      }
+                      onCheckedChange={(checked) => handleChange(field.name, checked)}
                       disabled={field.disabled || readOnly}
                       design={settings.checkboxStyle}
                     />
                     <Label
                       htmlFor={field.name}
-                      className={cn(
-                        "text-sm",
-                        direction === "rtl" ? "text-right" : "text-left"
-                      )}
+                      className={cn("text-sm", direction === "rtl" ? "text-right" : "text-left")}
                     >
                       {field.label}
                     </Label>
@@ -735,7 +688,7 @@ export function GenericForm({
                         <Label
                           htmlFor={`${field.name}-${option.value}`}
                           className={cn(
-                            "text-sm cursor-pointer",
+                            "cursor-pointer text-sm",
                             direction === "rtl" ? "text-right" : "text-left"
                           )}
                         >
@@ -748,9 +701,7 @@ export function GenericForm({
                   <div className="space-y-2">
                     <Slider
                       value={[formData[field.name] || field.min || 0]}
-                      onValueChange={(value) =>
-                        handleChange(field.name, value[0])
-                      }
+                      onValueChange={(value) => handleChange(field.name, value[0])}
                       min={Number(field.min) || 0}
                       max={Number(field.max) || 100}
                       step={Number(field.step) || 1}
@@ -763,8 +714,7 @@ export function GenericForm({
                         direction === "rtl" ? "text-right" : "text-left"
                       )}
                     >
-                      {t("common.value")}:{" "}
-                      {formData[field.name] || field.min || 0}
+                      {t("common.value")}: {formData[field.name] || field.min || 0}
                     </div>
                   </div>
                 ) : field.type === "date" ||
@@ -775,11 +725,7 @@ export function GenericForm({
                   field.type === "week" ? (
                   <DatePicker
                     id={field.name}
-                    type={
-                      field.type === "datetime"
-                        ? "datetime-local"
-                        : (field.type as any)
-                    }
+                    type={field.type === "datetime" ? "datetime-local" : (field.type as any)}
                     value={formData[field.name] || ""}
                     onChange={(value) => handleChange(field.name, value)}
                     required={field.required}
@@ -809,10 +755,7 @@ export function GenericForm({
                     onChange={(e) => {
                       const files = e.target.files;
                       if (field.multiple) {
-                        handleChange(
-                          field.name,
-                          files ? Array.from(files) : []
-                        );
+                        handleChange(field.name, files ? Array.from(files) : []);
                       } else {
                         handleChange(field.name, files?.[0] || null);
                       }
@@ -827,43 +770,41 @@ export function GenericForm({
                     disabled={field.disabled || readOnly}
                     dir={direction}
                   />
+                ) : field.type === "password" ? (
+                  <PasswordInput
+                    id={field.name}
+                    value={formData[field.name] || ""}
+                    onChange={(e) => handleChange(field.name, e.target.value)}
+                    required={field.required}
+                    className={cn(
+                      getInputClasses(getInputHeight()),
+                      direction === "rtl" ? "text-right" : "text-left"
+                    )}
+                    placeholder={field.placeholder}
+                    disabled={field.disabled || readOnly}
+                    showStrengthIndicator={true} // Enable for admin forms
+                  />
                 ) : (
-                  field.type === "password" ? (
-                    <PasswordInput
-                      id={field.name}
-                      value={formData[field.name] || ""}
-                      onChange={(e) => handleChange(field.name, e.target.value)}
-                      required={field.required}
-                      className={cn(
-                        getInputClasses(getInputHeight()),
-                        direction === "rtl" ? "text-right" : "text-left"
-                      )}
-                      placeholder={field.placeholder}
-                      disabled={field.disabled || readOnly}
-                      showStrengthIndicator={true} // Enable for admin forms
-                    />
-                  ) : (
-                    <Input
-                      id={field.name}
-                      type={field.type}
-                      value={formData[field.name] || ""}
-                      onChange={(e) => handleChange(field.name, e.target.value)}
-                      required={field.required}
-                      className={cn(
-                        getInputClasses(getInputHeight()),
-                        direction === "rtl" ? "text-right" : "text-left"
-                      )}
-                      placeholder={field.placeholder}
-                      min={field.min}
-                      max={field.max}
-                      step={field.step}
-                      pattern={field.pattern}
-                      minLength={field.minLength}
-                      maxLength={field.maxLength}
-                      disabled={field.disabled || readOnly}
-                      dir={direction}
-                    />
-                  )
+                  <Input
+                    id={field.name}
+                    type={field.type}
+                    value={formData[field.name] || ""}
+                    onChange={(e) => handleChange(field.name, e.target.value)}
+                    required={field.required}
+                    className={cn(
+                      getInputClasses(getInputHeight()),
+                      direction === "rtl" ? "text-right" : "text-left"
+                    )}
+                    placeholder={field.placeholder}
+                    min={field.min}
+                    max={field.max}
+                    step={field.step}
+                    pattern={field.pattern}
+                    minLength={field.minLength}
+                    maxLength={field.maxLength}
+                    disabled={field.disabled || readOnly}
+                    dir={direction}
+                  />
                 )}
               </div>
             )
@@ -886,9 +827,7 @@ export function GenericForm({
               onClick={onCancel}
               className={cn(
                 getInputHeight(),
-                direction === "rtl"
-                  ? "order-1 sm:order-2"
-                  : "order-2 sm:order-1"
+                direction === "rtl" ? "order-1 sm:order-2" : "order-2 sm:order-1"
               )}
               disabled={loading}
               size={getButtonSize()}
@@ -901,9 +840,7 @@ export function GenericForm({
               className={cn(
                 getInputHeight(),
                 "gradient-primary",
-                direction === "rtl"
-                  ? "order-2 sm:order-1"
-                  : "order-1 sm:order-2"
+                direction === "rtl" ? "order-2 sm:order-1" : "order-1 sm:order-2"
               )}
               size={getButtonSize()}
             >

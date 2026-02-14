@@ -54,30 +54,30 @@ modules/profile/
 
 ### Profile Page (`/profile`)
 
-| Section | ViewModel | Description |
-|---------|-----------|-------------|
-| Avatar | `useProfileViewModel` | Upload/remove avatar photo |
-| Info Form | `useProfileViewModel` | Edit name, email, phone |
+| Section   | ViewModel             | Description                |
+| --------- | --------------------- | -------------------------- |
+| Avatar    | `useProfileViewModel` | Upload/remove avatar photo |
+| Info Form | `useProfileViewModel` | Edit name, email, phone    |
 
 ### Security Page (`/profile/security`)
 
-| Section | ViewModel | Description |
-|---------|-----------|-------------|
-| Password | `useSecurityViewModel` | Change password |
-| Two-Factor Auth | `useSecurityViewModel` | Enable/disable 2FA |
-| Backup Codes | `useSecurityViewModel` | Regenerate backup codes |
+| Section         | ViewModel              | Description             |
+| --------------- | ---------------------- | ----------------------- |
+| Password        | `useSecurityViewModel` | Change password         |
+| Two-Factor Auth | `useSecurityViewModel` | Enable/disable 2FA      |
+| Backup Codes    | `useSecurityViewModel` | Regenerate backup codes |
 
 ### Sessions Page (`/profile/sessions`)
 
-| Section | ViewModel | Description |
-|---------|-----------|-------------|
-| Session List | `useSessionsViewModel` | All active sessions |
-| Revoke | `useSessionsViewModel` | Revoke individual/all |
+| Section      | ViewModel              | Description           |
+| ------------ | ---------------------- | --------------------- |
+| Session List | `useSessionsViewModel` | All active sessions   |
+| Revoke       | `useSessionsViewModel` | Revoke individual/all |
 
 ### Activity Log Page (`/profile/activity`)
 
-| Section | ViewModel | Description |
-|---------|-----------|-------------|
+| Section   | ViewModel                 | Description               |
+| --------- | ------------------------- | ------------------------- |
 | Log Table | `useActivityLogViewModel` | Paginated security events |
 
 ---
@@ -91,31 +91,31 @@ Handles all security-related operations:
 ```typescript
 export function useSecurityViewModel() {
     const repo = container.profileRepository;
-    
+
     // 2FA state
     const [showSetupDialog, setShowSetupDialog] = useState(false);
     const [showDisableDialog, setShowDisableDialog] = useState(false);
-    
+
     // Change password
     const changePasswordMutation = useMutation({
         mutationFn: (data) => repo.changePassword(data.currentPassword, data.newPassword),
     });
-    
+
     // Enable 2FA
     const enable2FAMutation = useMutation({
         mutationFn: (password) => repo.enable2FA(password),
     });
-    
+
     // Disable 2FA (2-step: password + OTP/backup code)
     const disable2FA = async (password: string, twoFactorCode: string) => {
         await repo.disable2FA(password, twoFactorCode);
     };
-    
+
     // Regenerate backup codes
     const regenerateBackupCodes = useMutation({
         mutationFn: (data) => repo.regenerateBackupCodes(data.password, data.code),
     });
-    
+
     return { changePassword, enable2FA, disable2FA, ... };
 }
 ```
@@ -123,6 +123,7 @@ export function useSecurityViewModel() {
 ### TwoFactorDisableDialog
 
 Two-step verification dialog:
+
 1. **Step 1**: Enter password → click "Next"
 2. **Step 2**: Enter OTP **or** toggle to backup code → click "Disable"
 
@@ -132,12 +133,12 @@ This ensures 2FA cannot be disabled with just a stolen password.
 
 ## SOLID Pattern Compliance
 
-| Principle | Implementation |
-|-----------|---------------|
+| Principle                 | Implementation                                                |
+| ------------------------- | ------------------------------------------------------------- |
 | **Single Responsibility** | Separate ViewModels for profile, security, sessions, activity |
-| **Open/Closed** | ViewModels compose base TanStack Query hooks |
-| **Interface Segregation** | Each view receives only the props it needs |
-| **Dependency Inversion** | ViewModels depend on `IProfileRepository` interface |
+| **Open/Closed**           | ViewModels compose base TanStack Query hooks                  |
+| **Interface Segregation** | Each view receives only the props it needs                    |
+| **Dependency Inversion**  | ViewModels depend on `IProfileRepository` interface           |
 
 ---
 

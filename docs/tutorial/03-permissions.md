@@ -98,18 +98,12 @@ export function ProductPage() {
       </PermissionGate>
 
       {/* Multiple permissions - ALL required */}
-      <PermissionGate 
-        permissions={["analytics.view", "analytics.export"]} 
-        requireAll
-      >
+      <PermissionGate permissions={["analytics.view", "analytics.export"]} requireAll>
         <AnalyticsExport />
       </PermissionGate>
 
       {/* With fallback */}
-      <PermissionGate 
-        permission="premium.feature" 
-        fallback={<UpgradePrompt />}
-      >
+      <PermissionGate permission="premium.feature" fallback={<UpgradePrompt />}>
         <PremiumFeature />
       </PermissionGate>
     </div>
@@ -130,7 +124,7 @@ const adminsConfig: CrudConfig<Admin> = {
   columns: [...],
   createFields: [...],
   editFields: [...],
-  
+
   // ✅ Auto-checks: admins.create, admins.update, admins.delete
   resource: "admins",
 };
@@ -141,11 +135,11 @@ Or use explicit permissions:
 ```tsx
 const config: CrudConfig<Product> = {
   // ... other config
-  
+
   permissions: {
-    canCreate: "products.create",    // Dynamic check
-    canUpdate: "products.update",    // Dynamic check
-    canDelete: false,                // Static: always hidden
+    canCreate: "products.create", // Dynamic check
+    canUpdate: "products.update", // Dynamic check
+    canDelete: false, // Static: always hidden
   },
 };
 ```
@@ -156,15 +150,15 @@ const config: CrudConfig<Product> = {
 
 Permissions follow a `resource.action` format:
 
-| Permission | Description |
-|------------|-------------|
-| `admins.view` | View admin list |
-| `admins.create` | Create new admins |
-| `admins.update` | Edit existing admins |
-| `admins.delete` | Delete admins |
+| Permission            | Description            |
+| --------------------- | ---------------------- |
+| `admins.view`         | View admin list        |
+| `admins.create`       | Create new admins      |
+| `admins.update`       | Edit existing admins   |
+| `admins.delete`       | Delete admins          |
 | `admins.assign_roles` | Assign roles to admins |
-| `reports.print` | Print reports |
-| `reports.export` | Export reports to PDF |
+| `reports.print`       | Print reports          |
+| `reports.export`      | Export reports to PDF  |
 
 ---
 
@@ -192,12 +186,12 @@ Permissions follow a `resource.action` format:
 
 ## 7. Security Principles
 
-| Principle | Implementation |
-|-----------|----------------|
-| **Backend is truth** | All APIs have `[PermissionRequired]` attributes |
-| **Frontend is UX** | Hide buttons users can't use |
-| **Never trust client** | Modified localStorage won't bypass backend |
-| **Privilege escalation** | Backend prevents assigning higher permissions |
+| Principle                | Implementation                                  |
+| ------------------------ | ----------------------------------------------- |
+| **Backend is truth**     | All APIs have `[PermissionRequired]` attributes |
+| **Frontend is UX**       | Hide buttons users can't use                    |
+| **Never trust client**   | Modified localStorage won't bypass backend      |
+| **Privilege escalation** | Backend prevents assigning higher permissions   |
 
 ---
 

@@ -11,11 +11,7 @@ import {
 } from "@core/common/dropdown-positioning";
 
 // Re-export for use in other components
-export {
-  calculateDropdownPosition,
-  scrollIntoViewIfNeeded,
-  type DropdownPosition,
-};
+export { calculateDropdownPosition, scrollIntoViewIfNeeded, type DropdownPosition };
 import { useSettings } from "@core/providers/settings-provider";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { SelectStyle } from "@core/providers/settings-provider";
@@ -93,8 +89,7 @@ export function getGenericSelectStyles(
           "after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-gradient-to-r after:from-primary after:to-primary/50 hover:after:w-full after:transition-all after:duration-500",
           directionClasses
         ),
-        dropdown:
-          "rounded-md bg-background border border-input shadow-2xl shadow-primary/10",
+        dropdown: "rounded-md bg-background border border-input shadow-2xl shadow-primary/10",
         chip: "bg-primary/15 text-primary border-0 hover:bg-primary/25 shadow-lg hover:scale-110 transition-all duration-300",
       };
 
@@ -516,7 +511,7 @@ export const ResponsiveChip: React.FC<{
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-medium max-w-[150px]",
+        "inline-flex max-w-[150px] items-center gap-1 rounded-full px-2 py-1 text-xs font-medium",
         direction === "rtl" ? "flex-row-reverse" : "flex-row",
         className
       )}
@@ -529,7 +524,7 @@ export const ResponsiveChip: React.FC<{
           e.stopPropagation();
           onRemove();
         }}
-        className="inline-flex h-3 w-3 items-center justify-center rounded-full hover:bg-primary/20 focus:outline-none focus:ring-1 focus:ring-primary flex-shrink-0"
+        className="inline-flex h-3 w-3 flex-shrink-0 items-center justify-center rounded-full hover:bg-primary/20 focus:outline-none focus:ring-1 focus:ring-primary"
       >
         <X className="h-2 w-2" />
       </button>

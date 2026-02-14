@@ -27,38 +27,38 @@ graph TB
     subgraph "Presentation Layer"
         NEXTJS[Next.js App Router]
         PAGES[Pages - src/app/]
-        
+
         subgraph "UI Components"
             CORE_UI[Core UI - src/core/ui/]
             MOD_VIEWS[Module Views]
             MOD_COMP[Module Components]
         end
     end
-    
+
     subgraph "Application Layer"
         PROVIDERS[Providers - React Context]
         VIEWMODELS[ViewModels - TanStack Query]
         STORES[Zustand Stores]
     end
-    
+
     subgraph "Domain Layer"
         ENTITIES[Entities - Zod Schemas]
         INTERFACES[Repository Interfaces]
     end
-    
+
     subgraph "Data Layer"
         REPOS[Repositories]
         MAPPERS[Mappers]
         DTOS[DTOs/Models]
         API[API Service]
     end
-    
+
     subgraph "Infrastructure"
         CORE_DI[Core DI Container]
         NETWORK[Network Layer]
         LOCALES[Localization]
     end
-    
+
     NEXTJS --> PAGES
     PAGES --> MOD_VIEWS
     MOD_VIEWS --> VIEWMODELS
@@ -82,23 +82,23 @@ graph TB
     subgraph "View (Pure UI)"
         V[PageView<br/>~60 lines max]
     end
-    
+
     subgraph "Sections"
         S1[Section Component 1]
         S2[Section Component 2]
         S3[Section Component N]
     end
-    
+
     subgraph "Orchestrator"
         OVM[usePageViewModel<br/>Composes all]
     end
-    
+
     subgraph "Section ViewModels"
         VM1[useSectionVM 1]
         VM2[useSectionVM 2]
         CVM[useCrudViewModel]
     end
-    
+
     V --> OVM
     OVM --> VM1
     OVM --> VM2
@@ -110,13 +110,13 @@ graph TB
 
 ### SOLID Principles
 
-| Principle | Application |
-|-----------|-------------|
-| **S** Single Responsibility | Each ViewModel handles ONE concern |
-| **O** Open/Closed | Base hooks extended, not modified |
-| **L** Liskov Substitution | All ViewModels return consistent interfaces |
-| **I** Interface Segregation | Components receive only needed props |
-| **D** Dependency Inversion | Views depend on ViewModel interfaces |
+| Principle                   | Application                                 |
+| --------------------------- | ------------------------------------------- |
+| **S** Single Responsibility | Each ViewModel handles ONE concern          |
+| **O** Open/Closed           | Base hooks extended, not modified           |
+| **L** Liskov Substitution   | All ViewModels return consistent interfaces |
+| **I** Interface Segregation | Components receive only needed props        |
+| **D** Dependency Inversion  | Views depend on ViewModel interfaces        |
 
 ### Rules
 
@@ -147,7 +147,7 @@ presentation/
 // View - PURE UI
 export function PageView() {
   const vm = usePageViewModel();
-  
+
   return (
     <div>
       <FilterSection {...vm.filters} />
@@ -163,7 +163,7 @@ export function usePageViewModel() {
   const filters = useFilterViewModel();
   const table = useCrudViewModel(config);
   const columns = [...]; // Defined here
-  
+
   return { statistics, filters, table, columns };
 }
 ```
@@ -221,13 +221,13 @@ src/core/crud/
 ### Column Helpers
 
 ```typescript
-column.index('No')
-column.text('name', 'Name')
-column.date('createdAt', 'Date', { locale: 'en-GB' })
-column.status('status', 'Status', statusMap)
-column.switch('block', 'Block', { getChecked, onChange, isLoading })
-column.link('email', 'Email', { type: 'email' })
-column.custom('any', 'Header', renderFn)
+column.index("No");
+column.text("name", "Name");
+column.date("createdAt", "Date", { locale: "en-GB" });
+column.status("status", "Status", statusMap);
+column.switch("block", "Block", { getChecked, onChange, isLoading });
+column.link("email", "Email", { type: "email" });
+column.custom("any", "Header", renderFn);
 ```
 
 ---
@@ -239,8 +239,8 @@ column.custom('any', 'Header', renderFn)
 ```typescript
 // src/core/di.ts
 export interface CoreContainer {
-    apiService: IApiService;
-    authRepository: IAuthRepository;
+  apiService: IApiService;
+  authRepository: IAuthRepository;
 }
 ```
 
@@ -249,7 +249,7 @@ export interface CoreContainer {
 ```typescript
 // module/di.ts
 export const container = {
-    someRepository: new SomeRepository(),
+  someRepository: new SomeRepository(),
 };
 ```
 
@@ -286,13 +286,13 @@ flowchart LR
 
 ## Module Registry
 
-| Module | Type | Description |
-|--------|------|-------------|
-| `auth` | Core | Authentication, user session |
-| `home` | Feature | Home page components |
-| `admin` | Parent | Admin panel |
-| `admin/dashboard` | Child | Dashboard statistics |
-| `admin/user-management` | Child | User CRUD |
+| Module                  | Type    | Description                  |
+| ----------------------- | ------- | ---------------------------- |
+| `auth`                  | Core    | Authentication, user session |
+| `home`                  | Feature | Home page components         |
+| `admin`                 | Parent  | Admin panel                  |
+| `admin/dashboard`       | Child   | Dashboard statistics         |
+| `admin/user-management` | Child   | User CRUD                    |
 
 ---
 

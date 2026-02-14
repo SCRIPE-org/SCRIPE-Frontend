@@ -5,22 +5,22 @@
  * Mapped from API DTO via ProfileMapper.
  */
 export interface AdminProfile {
-      id: string;
-      username: string;
-      firstName: string;
-      lastName: string;
-      phoneNumber: string;
-      adminTypeName: string;
-      profileImageUrl: string | null;
-      roles: Array<{ roleCode?: string; roleName?: string }>;
-      permissions: string[];
+  id: string;
+  username: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  adminTypeName: string;
+  profileImageUrl: string | null;
+  roles: Array<{ roleCode?: string; roleName?: string }>;
+  permissions: string[];
 
-      // 2FA
-      isTwoFactorEnabled: boolean;
-      backupCodesRemaining: number | null;
+  // 2FA
+  isTwoFactorEnabled: boolean;
+  backupCodesRemaining: number | null;
 
-      // Password expiry
-      isPasswordExpired: boolean;
-      daysUntilPasswordExpiry: number | null;
-      passwordLastChanged: Date | null;
+  // Password expiry
+  isPasswordExpired: boolean;
+  daysUntilPasswordExpiry: number | null;
+  passwordLastChanged: Date | null;
 }

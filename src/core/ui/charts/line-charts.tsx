@@ -5,14 +5,14 @@ import { GenericChart, ChartUtils, GENERIC_COLORS } from "./generic-chart";
 import { ResponsiveTabs } from "@core/ui/responsive-tabs";
 import { useI18n } from "@core/providers/i18n-provider";
 import {
-  TrendingUp, 
-  Activity, 
-  Zap, 
-  BarChart3, 
-  Clock, 
+  TrendingUp,
+  Activity,
+  Zap,
+  BarChart3,
+  Clock,
   Layers,
   Sparkles,
-  Target
+  Target,
 } from "lucide-react";
 
 const lineChartVariants = [
@@ -32,19 +32,21 @@ export function ProfessionalLineCharts() {
 
   const getChartData = (variant: string) => {
     const baseLabels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug"];
-    
+
     switch (variant) {
       case "basic":
         return {
           labels: baseLabels,
-          datasets: [{
-            label: "Revenue",
-            data: [12000, 19000, 3000, 5000, 2000, 3000, 8000, 15000],
-            borderColor: GENERIC_COLORS.primary[0],
-            backgroundColor: GENERIC_COLORS.primary[0] + "20",
-            fill: false,
-            tension: 0.4,
-          }],
+          datasets: [
+            {
+              label: "Revenue",
+              data: [12000, 19000, 3000, 5000, 2000, 3000, 8000, 15000],
+              borderColor: GENERIC_COLORS.primary[0],
+              backgroundColor: GENERIC_COLORS.primary[0] + "20",
+              fill: false,
+              tension: 0.4,
+            },
+          ],
         };
 
       case "multiSeries":
@@ -81,28 +83,32 @@ export function ProfessionalLineCharts() {
       case "curved":
         return {
           labels: baseLabels,
-          datasets: [{
-            label: "Growth Rate",
-            data: [65, 59, 80, 81, 56, 55, 40, 45],
-            borderColor: GENERIC_COLORS.primary[3],
-            backgroundColor: GENERIC_COLORS.primary[3] + "20",
-            fill: false,
-            tension: 0.8,
-          }],
+          datasets: [
+            {
+              label: "Growth Rate",
+              data: [65, 59, 80, 81, 56, 55, 40, 45],
+              borderColor: GENERIC_COLORS.primary[3],
+              backgroundColor: GENERIC_COLORS.primary[3] + "20",
+              fill: false,
+              tension: 0.8,
+            },
+          ],
         };
 
       case "stepped":
         return {
           labels: ["Phase 1", "Phase 2", "Phase 3", "Phase 4", "Phase 5"],
-          datasets: [{
-            label: "Project Progress",
-            data: [10, 20, 20, 30, 30, 40, 40, 50, 50, 60],
-            borderColor: GENERIC_COLORS.primary[4],
-            backgroundColor: GENERIC_COLORS.primary[4] + "20",
-            fill: false,
-            tension: 0,
-            stepped: true,
-          }],
+          datasets: [
+            {
+              label: "Project Progress",
+              data: [10, 20, 20, 30, 30, 40, 40, 50, 50, 60],
+              borderColor: GENERIC_COLORS.primary[4],
+              backgroundColor: GENERIC_COLORS.primary[4] + "20",
+              fill: false,
+              tension: 0,
+              stepped: true,
+            },
+          ],
         };
 
       case "realtime":
@@ -156,40 +162,46 @@ export function ProfessionalLineCharts() {
       case "gradient":
         return {
           labels: baseLabels,
-          datasets: [{
-            label: "Premium Users",
-            data: [25, 35, 30, 45, 40, 50, 45, 60],
-            borderColor: GENERIC_COLORS.primary[2],
-            backgroundColor: GENERIC_COLORS.primary[2] + "40",
-            fill: true,
-            tension: 0.4,
-          }],
+          datasets: [
+            {
+              label: "Premium Users",
+              data: [25, 35, 30, 45, 40, 50, 45, 60],
+              borderColor: GENERIC_COLORS.primary[2],
+              backgroundColor: GENERIC_COLORS.primary[2] + "40",
+              fill: true,
+              tension: 0.4,
+            },
+          ],
         };
 
       case "animated":
         return {
           labels: baseLabels,
-          datasets: [{
-            label: "Animated Data",
-            data: [30, 40, 35, 50, 45, 60, 55, 70],
-            borderColor: GENERIC_COLORS.primary[3],
-            backgroundColor: GENERIC_COLORS.primary[3] + "20",
-            fill: false,
-            tension: 0.4,
-          }],
+          datasets: [
+            {
+              label: "Animated Data",
+              data: [30, 40, 35, 50, 45, 60, 55, 70],
+              borderColor: GENERIC_COLORS.primary[3],
+              backgroundColor: GENERIC_COLORS.primary[3] + "20",
+              fill: false,
+              tension: 0.4,
+            },
+          ],
         };
 
       default:
         return {
           labels: baseLabels,
-          datasets: [{
-            label: "Default",
-            data: [10, 20, 15, 25, 20, 30, 25, 35],
-            borderColor: GENERIC_COLORS.primary[0],
-            backgroundColor: GENERIC_COLORS.primary[0] + "20",
-            fill: false,
-            tension: 0.4,
-          }],
+          datasets: [
+            {
+              label: "Default",
+              data: [10, 20, 15, 25, 20, 30, 25, 35],
+              borderColor: GENERIC_COLORS.primary[0],
+              backgroundColor: GENERIC_COLORS.primary[0] + "20",
+              fill: false,
+              tension: 0.4,
+            },
+          ],
         };
     }
   };
@@ -205,52 +217,55 @@ export function ProfessionalLineCharts() {
           },
         },
       },
-      scales: variant === "multiAxis" ? {
-        x: {
-          display: true,
-          title: {
-            display: true,
-            text: "Time Period",
-          },
-        },
-        y: {
-          type: "linear" as const,
-          display: true,
-          position: "left" as const,
-          title: {
-            display: true,
-            text: "Revenue ($)",
-          },
-        },
-        y1: {
-          type: "linear" as const,
-          display: true,
-          position: "right" as const,
-          title: {
-            display: true,
-            text: "Units Sold",
-          },
-          grid: {
-            drawOnChartArea: false,
-          },
-        },
-      } : {
-        x: {
-          display: true,
-          title: {
-            display: true,
-            text: "Time Period",
-          },
-        },
-        y: {
-          display: true,
-          title: {
-            display: true,
-            text: "Value",
-          },
-          beginAtZero: true,
-        },
-      },
+      scales:
+        variant === "multiAxis"
+          ? {
+              x: {
+                display: true,
+                title: {
+                  display: true,
+                  text: "Time Period",
+                },
+              },
+              y: {
+                type: "linear" as const,
+                display: true,
+                position: "left" as const,
+                title: {
+                  display: true,
+                  text: "Revenue ($)",
+                },
+              },
+              y1: {
+                type: "linear" as const,
+                display: true,
+                position: "right" as const,
+                title: {
+                  display: true,
+                  text: "Units Sold",
+                },
+                grid: {
+                  drawOnChartArea: false,
+                },
+              },
+            }
+          : {
+              x: {
+                display: true,
+                title: {
+                  display: true,
+                  text: "Time Period",
+                },
+              },
+              y: {
+                display: true,
+                title: {
+                  display: true,
+                  text: "Value",
+                },
+                beginAtZero: true,
+              },
+            },
     };
 
     return baseOptions;
@@ -260,11 +275,13 @@ export function ProfessionalLineCharts() {
     const variants = {
       basic: {
         title: "Basic Line Chart",
-        description: "Simple line chart showing data trends over time with clean, professional styling.",
+        description:
+          "Simple line chart showing data trends over time with clean, professional styling.",
       },
       multiSeries: {
         title: "Multi-Series Line Chart",
-        description: "Compare multiple data series on the same chart with distinct colors and styles.",
+        description:
+          "Compare multiple data series on the same chart with distinct colors and styles.",
       },
       curved: {
         title: "Curved Line Chart",
@@ -298,7 +315,7 @@ export function ProfessionalLineCharts() {
 
   return (
     <div className="space-y-6">
-      <div className="text-center space-y-2">
+      <div className="space-y-2 text-center">
         <h2 className="text-2xl font-bold">Professional Line Charts</h2>
         <p className="text-muted-foreground">
           Display trends and changes over time with connected data points
@@ -321,14 +338,14 @@ export function ProfessionalLineCharts() {
         className="mb-6"
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         {lineChartVariants.slice(0, 6).map((variant) => (
           <div
             key={variant.id}
-            className="p-4 border rounded-lg cursor-pointer transition-all hover:shadow-md"
+            className="cursor-pointer rounded-lg border p-4 transition-all hover:shadow-md"
             onClick={() => setActiveVariant(variant.id)}
           >
-            <div className="flex items-center gap-2 mb-2">
+            <div className="mb-2 flex items-center gap-2">
               {variant.icon}
               <span className="font-medium">{variant.label}</span>
             </div>

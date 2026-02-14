@@ -95,12 +95,10 @@ export function TypographyTab() {
       <Card>
         <CardHeader>
           <CardTitle>{t("settings.fontSizeSection.title")}</CardTitle>
-          <CardDescription>
-            {t("settings.fontSizeSection.description")}
-          </CardDescription>
+          <CardDescription>{t("settings.fontSizeSection.description")}</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
             {fontSizes.map((size) => (
               <div
                 key={size.value}
@@ -117,12 +115,10 @@ export function TypographyTab() {
                   <p className={cn("text-muted-foreground", size.example)}>
                     {t(`settings.fontSizeSection.sampleTexts.${size.value}`)}
                   </p>
-                  <p className="text-xs text-muted-foreground">
-                    {size.description}
-                  </p>
+                  <p className="text-xs text-muted-foreground">{size.description}</p>
                 </div>
                 {settings.fontSize === size.value && (
-                  <div className="absolute -top-1 -right-1 h-5 w-5 bg-primary rounded-full flex items-center justify-center">
+                  <div className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
                     <Check className="h-3 w-3 text-primary-foreground" />
                   </div>
                 )}
@@ -136,12 +132,10 @@ export function TypographyTab() {
       <Card>
         <CardHeader>
           <CardTitle>{t("settings.borderRadius.title")}</CardTitle>
-          <CardDescription>
-            {t("settings.borderRadius.description")}
-          </CardDescription>
+          <CardDescription>{t("settings.borderRadius.description")}</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
             {borderRadiusOptions.map((radius) => (
               <div
                 key={radius.value}
@@ -155,14 +149,10 @@ export function TypographyTab() {
                 onClick={() => settings.setBorderRadius(radius.value as any)}
               >
                 <div className={cn("h-8 bg-muted", radius.class)}></div>
-                <p className="mt-2 text-sm font-medium text-center">
-                  {radius.name}
-                </p>
-                <p className="text-xs text-muted-foreground text-center">
-                  {radius.px}
-                </p>
+                <p className="mt-2 text-center text-sm font-medium">{radius.name}</p>
+                <p className="text-center text-xs text-muted-foreground">{radius.px}</p>
                 {settings.borderRadius === radius.value && (
-                  <div className="absolute -top-1 -right-1 h-5 w-5 bg-primary rounded-full flex items-center justify-center">
+                  <div className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
                     <Check className="h-3 w-3 text-primary-foreground" />
                   </div>
                 )}
@@ -176,12 +166,10 @@ export function TypographyTab() {
       <Card>
         <CardHeader>
           <CardTitle>{t("settings.spacing.title")}</CardTitle>
-          <CardDescription>
-            {t("settings.spacing.description")}
-          </CardDescription>
+          <CardDescription>{t("settings.spacing.description")}</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
             {spacingOptions.map((spacing) => (
               <div
                 key={spacing.value}
@@ -194,13 +182,11 @@ export function TypographyTab() {
                 )}
                 onClick={() => settings.setSpacingSize(spacing.value as any)}
               >
-                <div className="bg-muted rounded h-4"></div>
-                <div className="bg-muted rounded h-4"></div>
-                <p className="text-sm font-medium text-center">
-                  {spacing.name}
-                </p>
+                <div className="h-4 rounded bg-muted"></div>
+                <div className="h-4 rounded bg-muted"></div>
+                <p className="text-center text-sm font-medium">{spacing.name}</p>
                 {settings.spacingSize === spacing.value && (
-                  <div className="absolute -top-1 -right-1 h-5 w-5 bg-primary rounded-full flex items-center justify-center">
+                  <div className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
                     <Check className="h-3 w-3 text-primary-foreground" />
                   </div>
                 )}
@@ -219,10 +205,8 @@ export function TypographyTab() {
         <CardContent className="space-y-6">
           {/* Logo Type */}
           <div className="space-y-3">
-            <Label className="text-sm font-semibold">
-              {t("settings.logo.typeLabel")}
-            </Label>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <Label className="text-sm font-semibold">{t("settings.logo.typeLabel")}</Label>
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
               {[
                 { value: "sparkles", name: t("logoType.sparkles"), icon: Sparkles },
                 { value: "shield", name: t("logoType.shield"), icon: Shield },
@@ -243,12 +227,10 @@ export function TypographyTab() {
                     <div className="flex justify-center">
                       <type.icon className="h-8 w-8" />
                     </div>
-                    <p className="text-sm font-medium text-center">
-                      {type.name}
-                    </p>
+                    <p className="text-center text-sm font-medium">{type.name}</p>
                   </div>
                   {settings.logoType === type.value && (
-                    <div className="absolute -top-1 -right-1 h-5 w-5 bg-primary rounded-full flex items-center justify-center">
+                    <div className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
                       <Check className="h-3 w-3 text-primary-foreground" />
                     </div>
                   )}
@@ -261,9 +243,7 @@ export function TypographyTab() {
 
           {/* Logo Size */}
           <div className="space-y-3">
-            <Label className="text-sm font-semibold">
-              {t("settings.logo.sizeLabel")}
-            </Label>
+            <Label className="text-sm font-semibold">{t("settings.logo.sizeLabel")}</Label>
             <div className="grid grid-cols-5 gap-4">
               {[
                 { value: "xs", name: t("settings.logo.sizeOptions.xs"), size: "h-4 w-4" },
@@ -286,12 +266,10 @@ export function TypographyTab() {
                     <div className="flex justify-center">
                       <Sparkles className={cn(size.size)} />
                     </div>
-                    <p className="text-xs font-medium text-center">
-                      {size.name}
-                    </p>
+                    <p className="text-center text-xs font-medium">{size.name}</p>
                   </div>
                   {settings.logoSize === size.value && (
-                    <div className="absolute -top-1 -right-1 h-5 w-5 bg-primary rounded-full flex items-center justify-center">
+                    <div className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
                       <Check className="h-3 w-3 text-primary-foreground" />
                     </div>
                   )}
@@ -304,38 +282,28 @@ export function TypographyTab() {
 
           {/* Logo Animation */}
           <div className="space-y-3">
-            <Label className="text-sm font-semibold">
-              {t("settings.logo.animationLabel")}
-            </Label>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <Label className="text-sm font-semibold">{t("settings.logo.animationLabel")}</Label>
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
               {[
                 {
                   value: "none",
                   name: t("settings.logo.animationOptions.none.name"),
-                  description: t(
-                    "settings.logo.animationOptions.none.description",
-                  ),
+                  description: t("settings.logo.animationOptions.none.description"),
                 },
                 {
                   value: "spin",
                   name: t("settings.logo.animationOptions.spin.name"),
-                  description: t(
-                    "settings.logo.animationOptions.spin.description",
-                  ),
+                  description: t("settings.logo.animationOptions.spin.description"),
                 },
                 {
                   value: "pulse",
                   name: t("settings.logo.animationOptions.pulse.name"),
-                  description: t(
-                    "settings.logo.animationOptions.pulse.description",
-                  ),
+                  description: t("settings.logo.animationOptions.pulse.description"),
                 },
                 {
                   value: "fancy",
                   name: t("settings.logo.animationOptions.fancy.name"),
-                  description: t(
-                    "settings.logo.animationOptions.fancy.description",
-                  ),
+                  description: t("settings.logo.animationOptions.fancy.description"),
                 },
               ].map((animation) => (
                 <div
@@ -359,15 +327,13 @@ export function TypographyTab() {
                         )}
                       />
                     </div>
-                    <p className="text-sm font-medium text-center">
-                      {animation.name}
-                    </p>
-                    <p className="text-xs text-muted-foreground text-center">
+                    <p className="text-center text-sm font-medium">{animation.name}</p>
+                    <p className="text-center text-xs text-muted-foreground">
                       {animation.description}
                     </p>
                   </div>
                   {settings.logoAnimation === animation.value && (
-                    <div className="absolute -top-1 -right-1 h-5 w-5 bg-primary rounded-full flex items-center justify-center">
+                    <div className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
                       <Check className="h-3 w-3 text-primary-foreground" />
                     </div>
                   )}
@@ -382,18 +348,14 @@ export function TypographyTab() {
           {settings.logoType === "custom" && (
             <>
               <div className="space-y-3">
-                <Label className="text-sm font-semibold">
-                  {t("settings.logo.textLabel")}
-                </Label>
+                <Label className="text-sm font-semibold">{t("settings.logo.textLabel")}</Label>
                 <Input
                   value={settings.logoText}
                   onChange={(e) => settings.setLogoText(e.target.value)}
                   placeholder={t("settings.logo.textPlaceholder")}
                   className="max-w-xs"
                 />
-                <p className="text-xs text-muted-foreground">
-                  {t("settings.logo.textHelp")}
-                </p>
+                <p className="text-xs text-muted-foreground">{t("settings.logo.textHelp")}</p>
               </div>
               <Separator />
             </>
@@ -402,9 +364,7 @@ export function TypographyTab() {
           {settings.logoType === "image" && (
             <>
               <div className="space-y-3">
-                <p className="text-sm text-muted-foreground">
-                  {t("settings.logo.imageInfo")}
-                </p>
+                <p className="text-sm text-muted-foreground">{t("settings.logo.imageInfo")}</p>
               </div>
               <Separator />
             </>
@@ -412,13 +372,11 @@ export function TypographyTab() {
 
           {/* Logo Preview */}
           <div className="space-y-3">
-            <Label className="text-sm font-semibold">
-              {t("settings.logo.previewLabel")}
-            </Label>
-            <div className="flex items-center justify-center p-6 border rounded-lg bg-muted/20">
+            <Label className="text-sm font-semibold">{t("settings.logo.previewLabel")}</Label>
+            <div className="flex items-center justify-center rounded-lg border bg-muted/20 p-6">
               <Logo showText={true} />
             </div>
-            <p className="text-xs text-muted-foreground text-center">
+            <p className="text-center text-xs text-muted-foreground">
               {t("settings.logo.previewHelp")}
             </p>
           </div>
@@ -434,80 +392,58 @@ export function TypographyTab() {
         <CardContent className="space-y-6">
           {/* Toast Design */}
           <div className="space-y-3">
-            <Label className="text-sm font-semibold">
-              {t("settings.toast.designLabel")}
-            </Label>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+            <Label className="text-sm font-semibold">{t("settings.toast.designLabel")}</Label>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5">
               {[
                 {
                   value: "classic",
                   name: t("settings.toast.designOptions.classic.name"),
-                  description: t(
-                    "settings.toast.designOptions.classic.description"
-                  ),
+                  description: t("settings.toast.designOptions.classic.description"),
                 },
                 {
                   value: "minimal",
                   name: t("settings.toast.designOptions.minimal.name"),
-                  description: t(
-                    "settings.toast.designOptions.minimal.description"
-                  ),
+                  description: t("settings.toast.designOptions.minimal.description"),
                 },
                 {
                   value: "modern",
                   name: t("settings.toast.designOptions.modern.name"),
-                  description: t(
-                    "settings.toast.designOptions.modern.description"
-                  ),
+                  description: t("settings.toast.designOptions.modern.description"),
                 },
                 {
                   value: "gradient",
                   name: t("settings.toast.designOptions.gradient.name"),
-                  description: t(
-                    "settings.toast.designOptions.gradient.description"
-                  ),
+                  description: t("settings.toast.designOptions.gradient.description"),
                 },
                 {
                   value: "outlined",
                   name: t("settings.toast.designOptions.outlined.name"),
-                  description: t(
-                    "settings.toast.designOptions.outlined.description"
-                  ),
+                  description: t("settings.toast.designOptions.outlined.description"),
                 },
                 {
                   value: "neon",
                   name: t("settings.toast.designOptions.neon.name"),
-                  description: t(
-                    "settings.toast.designOptions.neon.description"
-                  ),
+                  description: t("settings.toast.designOptions.neon.description"),
                 },
                 {
                   value: "glassmorphism",
                   name: t("settings.toast.designOptions.glassmorphism.name"),
-                  description: t(
-                    "settings.toast.designOptions.glassmorphism.description"
-                  ),
+                  description: t("settings.toast.designOptions.glassmorphism.description"),
                 },
                 {
                   value: "neumorphism",
                   name: t("settings.toast.designOptions.neumorphism.name"),
-                  description: t(
-                    "settings.toast.designOptions.neumorphism.description"
-                  ),
+                  description: t("settings.toast.designOptions.neumorphism.description"),
                 },
                 {
                   value: "aurora",
                   name: t("settings.toast.designOptions.aurora.name"),
-                  description: t(
-                    "settings.toast.designOptions.aurora.description"
-                  ),
+                  description: t("settings.toast.designOptions.aurora.description"),
                 },
                 {
                   value: "cosmic",
                   name: t("settings.toast.designOptions.cosmic.name"),
-                  description: t(
-                    "settings.toast.designOptions.cosmic.description"
-                  ),
+                  description: t("settings.toast.designOptions.cosmic.description"),
                 },
               ].map((design) => (
                 <div
@@ -523,9 +459,7 @@ export function TypographyTab() {
                   <div className="space-y-4">
                     <div className="text-center">
                       <h4 className="font-semibold">{design.name}</h4>
-                      <p className="text-xs text-muted-foreground">
-                        {design.description}
-                      </p>
+                      <p className="text-xs text-muted-foreground">{design.description}</p>
                     </div>
 
                     {/* Toast Preview */}
@@ -533,7 +467,11 @@ export function TypographyTab() {
                       {/* Success State Preview */}
                       <div className="w-full">
                         <ToastProvider>
-                          <Toast variant="success" design={design.value as ToastStyle} className="pointer-events-none text-xs">
+                          <Toast
+                            variant="success"
+                            design={design.value as ToastStyle}
+                            className="pointer-events-none text-xs"
+                          >
                             <ToastContent
                               variant="success"
                               title={t("settings.toast.preview.successTitle")}
@@ -547,7 +485,11 @@ export function TypographyTab() {
                       {/* Error State Preview */}
                       <div className="w-full">
                         <ToastProvider>
-                          <Toast variant="destructive" design={design.value as ToastStyle} className="pointer-events-none text-xs">
+                          <Toast
+                            variant="destructive"
+                            design={design.value as ToastStyle}
+                            className="pointer-events-none text-xs"
+                          >
                             <ToastContent
                               variant="destructive"
                               title={t("settings.toast.preview.errorTitle")}
@@ -560,7 +502,7 @@ export function TypographyTab() {
                     </div>
                   </div>
                   {settings.toastStyle === design.value && (
-                    <div className="absolute -top-1 -right-1 h-5 w-5 bg-primary rounded-full flex items-center justify-center">
+                    <div className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
                       <Check className="h-3 w-3 text-primary-foreground" />
                     </div>
                   )}
@@ -574,38 +516,28 @@ export function TypographyTab() {
           {/* Toast Options */}
           <div className="space-y-4">
             <div className="space-y-3">
-              <Label className="text-sm font-semibold">
-                {t("settings.toast.durationLabel")}
-              </Label>
+              <Label className="text-sm font-semibold">{t("settings.toast.durationLabel")}</Label>
               <div className="grid grid-cols-4 gap-4">
                 {[
                   {
                     value: 1000,
                     name: t("settings.toast.durationOptions.quick.name"),
-                    description: t(
-                      "settings.toast.durationOptions.quick.description"
-                    ),
+                    description: t("settings.toast.durationOptions.quick.description"),
                   },
                   {
                     value: 3000,
                     name: t("settings.toast.durationOptions.normal.name"),
-                    description: t(
-                      "settings.toast.durationOptions.normal.description"
-                    ),
+                    description: t("settings.toast.durationOptions.normal.description"),
                   },
                   {
                     value: 5000,
                     name: t("settings.toast.durationOptions.long.name"),
-                    description: t(
-                      "settings.toast.durationOptions.long.description"
-                    ),
+                    description: t("settings.toast.durationOptions.long.description"),
                   },
                   {
                     value: 10000,
                     name: t("settings.toast.durationOptions.extended.name"),
-                    description: t(
-                      "settings.toast.durationOptions.extended.description"
-                    ),
+                    description: t("settings.toast.durationOptions.extended.description"),
                   },
                 ].map((duration) => (
                   <div
@@ -618,14 +550,12 @@ export function TypographyTab() {
                     )}
                     onClick={() => settings.setToastDuration?.(duration.value)}
                   >
-                    <div className="text-center space-y-1">
+                    <div className="space-y-1 text-center">
                       <p className="text-lg font-bold">{duration.name}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {duration.description}
-                      </p>
+                      <p className="text-xs text-muted-foreground">{duration.description}</p>
                     </div>
                     {settings.toastDuration === duration.value && (
-                      <div className="absolute -top-1 -right-1 h-5 w-5 bg-primary rounded-full flex items-center justify-center">
+                      <div className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
                         <Check className="h-3 w-3 text-primary-foreground" />
                       </div>
                     )}
@@ -639,10 +569,8 @@ export function TypographyTab() {
 
           {/* Toast Preview */}
           <div className="space-y-3">
-            <Label className="text-sm font-semibold">
-              {t("settings.toast.testLabel")}
-            </Label>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <Label className="text-sm font-semibold">{t("settings.toast.testLabel")}</Label>
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
               <Button
                 variant="default"
                 size="sm"
@@ -696,9 +624,7 @@ export function TypographyTab() {
                 {t("settings.toast.testButtons.info")}
               </Button>
             </div>
-            <p className="text-xs text-muted-foreground">
-              {t("settings.toast.testHint")}
-            </p>
+            <p className="text-xs text-muted-foreground">{t("settings.toast.testHint")}</p>
           </div>
         </CardContent>
       </Card>
@@ -710,7 +636,7 @@ export function TypographyTab() {
           <CardDescription>{t("settings.switchStyle.description")}</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {[
               {
                 value: "default",
@@ -801,9 +727,7 @@ export function TypographyTab() {
                 <div className="space-y-4">
                   <div className="text-center">
                     <h4 className="font-semibold">{style.name}</h4>
-                    <p className="text-xs text-muted-foreground">
-                      {style.description}
-                    </p>
+                    <p className="text-xs text-muted-foreground">{style.description}</p>
                   </div>
 
                   {/* Switch Preview */}
@@ -840,7 +764,7 @@ export function TypographyTab() {
                   </div>
                 </div>
                 {settings.switchStyle === style.value && (
-                  <div className="absolute -top-1 -right-1 h-5 w-5 bg-primary rounded-full flex items-center justify-center">
+                  <div className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
                     <Check className="h-3 w-3 text-primary-foreground" />
                   </div>
                 )}
@@ -852,4 +776,3 @@ export function TypographyTab() {
     </>
   );
 }
-

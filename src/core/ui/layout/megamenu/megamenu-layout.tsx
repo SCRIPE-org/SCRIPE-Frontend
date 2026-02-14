@@ -8,10 +8,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { useSettings } from "@core/providers/settings-provider";
 import { useLayoutStyles } from "@core/ui/layout/shared/use-layout-styles";
 import { useDynamicNavigation } from "@core/ui/navigation/dynamic-navigation";
-import {
-      isNavigationItemActive,
-      type NavigationItem,
-} from "@core/config/navigation";
+import { isNavigationItemActive, type NavigationItem } from "@core/config/navigation";
 import { Logo } from "@core/ui/logo";
 import { Button } from "@core/ui/button";
 import { LanguageSwitcher, ThemeSwitcher } from "@core/ui/layout/common";
@@ -23,7 +20,7 @@ import { LogoutButton } from "@core/ui/layout/shared/logout-button";
 import { cn } from "@core/common/utils";
 
 interface MegaMenuLayoutProps {
-      children: React.ReactNode;
+  children: React.ReactNode;
 }
 
 /**
@@ -38,224 +35,216 @@ interface MegaMenuLayoutProps {
  * Inspired by Salesforce, SAP Fiori, enterprise portals
  */
 export function MegaMenuLayout({ children }: MegaMenuLayoutProps) {
-      const { direction, t } = useI18n();
-      const settings = useSettings();
-      const styles = useLayoutStyles();
-      const pathname = usePathname();
-      const router = useRouter();
-      const navigation = useDynamicNavigation();
-      const [openMenu, setOpenMenu] = useState<string | null>(null);
-      const [mobileOpen, setMobileOpen] = useState(false);
-      const menuRef = useRef<HTMLDivElement>(null);
+  const { direction, t } = useI18n();
+  const settings = useSettings();
+  const styles = useLayoutStyles();
+  const pathname = usePathname();
+  const router = useRouter();
+  const navigation = useDynamicNavigation();
+  const [openMenu, setOpenMenu] = useState<string | null>(null);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
 
-      // Close mega panel when clicking outside
-      useEffect(() => {
-            const handler = (e: MouseEvent) => {
-                  if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-                        setOpenMenu(null);
-                  }
-            };
-            document.addEventListener("mousedown", handler);
-            return () => document.removeEventListener("mousedown", handler);
-      }, []);
+  // Close mega panel when clicking outside
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setOpenMenu(null);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
 
-      // Close on route change
-      useEffect(() => {
-            setOpenMenu(null);
-            setMobileOpen(false);
-      }, [pathname]);
+  // Close on route change
+  useEffect(() => {
+    setOpenMenu(null);
+    setMobileOpen(false);
+  }, [pathname]);
 
-      // Separate top-level items: groups (with children) and direct links
-      const topItems = useMemo(() => navigation, [navigation]);
+  // Separate top-level items: groups (with children) and direct links
+  const topItems = useMemo(() => navigation, [navigation]);
 
-      return (
-            <div
-                  className={cn(
-                        "min-h-screen flex flex-col bg-background",
-                        styles.getAnimationClass(),
-                  )}
-                  dir={direction}
-            >
-                  {/* ── Top Header Bar ── */}
-                  <header
-                        ref={menuRef}
-                        className={cn(
-                              settings.stickyHeader ? "sticky top-0 z-40" : "relative",
-                              "bg-card border-b border-border",
-                        )}
+  return (
+    <div
+      className={cn("flex min-h-screen flex-col bg-background", styles.getAnimationClass())}
+      dir={direction}
+    >
+      {/* ── Top Header Bar ── */}
+      <header
+        ref={menuRef}
+        className={cn(
+          settings.stickyHeader ? "sticky top-0 z-40" : "relative",
+          "border-b border-border bg-card"
+        )}
+      >
+        {/* Primary bar: logo + nav + actions */}
+        <div className="flex h-14 items-center justify-between px-4 lg:px-6">
+          <div className="flex items-center gap-4">
+            <Logo size="sm" />
+            <span className="hidden text-sm font-bold text-foreground md:block">
+              {t("app.title")}
+            </span>
+          </div>
+
+          {/* Desktop nav items */}
+          <nav className="hidden flex-1 items-center justify-center gap-1 lg:flex">
+            {topItems.map((item) => {
+              const hasChildren = item.children && item.children.length > 0;
+              const isActive = isNavigationItemActive(item, pathname);
+              const isOpen = openMenu === item.name;
+              const Icon = item.icon;
+
+              if (!hasChildren && item.href) {
+                return (
+                  <button
+                    key={item.name}
+                    onClick={() => router.push(item.href!)}
+                    className={cn(
+                      "flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                      isActive
+                        ? "bg-primary/10 text-primary"
+                        : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+                    )}
                   >
-                        {/* Primary bar: logo + nav + actions */}
-                        <div className="flex items-center justify-between h-14 px-4 lg:px-6">
-                              <div className="flex items-center gap-4">
-                                    <Logo size="sm" />
-                                    <span className="text-sm font-bold text-foreground hidden md:block">
-                                          {t("app.title")}
-                                    </span>
-                              </div>
+                    {Icon && <Icon className="h-4 w-4" />}
+                    {t(item.name) || item.name}
+                  </button>
+                );
+              }
 
-                              {/* Desktop nav items */}
-                              <nav className="hidden lg:flex items-center gap-1 flex-1 justify-center">
-                                    {topItems.map((item) => {
-                                          const hasChildren = item.children && item.children.length > 0;
-                                          const isActive = isNavigationItemActive(item, pathname);
-                                          const isOpen = openMenu === item.name;
-                                          const Icon = item.icon;
-
-                                          if (!hasChildren && item.href) {
-                                                return (
-                                                      <button
-                                                            key={item.name}
-                                                            onClick={() => router.push(item.href!)}
-                                                            className={cn(
-                                                                  "flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-                                                                  isActive
-                                                                        ? "bg-primary/10 text-primary"
-                                                                        : "text-muted-foreground hover:text-foreground hover:bg-muted/50",
-                                                            )}
-                                                      >
-                                                            {Icon && <Icon className="w-4 h-4" />}
-                                                            {t(item.name) || item.name}
-                                                      </button>
-                                                );
-                                          }
-
-                                          return (
-                                                <button
-                                                      key={item.name}
-                                                      onClick={() => setOpenMenu(isOpen ? null : item.name)}
-                                                      onMouseEnter={() => {
-                                                            if (openMenu) setOpenMenu(item.name);
-                                                      }}
-                                                      className={cn(
-                                                            "flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-                                                            isActive || isOpen
-                                                                  ? "bg-primary/10 text-primary"
-                                                                  : "text-muted-foreground hover:text-foreground hover:bg-muted/50",
-                                                      )}
-                                                >
-                                                      {Icon && <Icon className="w-4 h-4" />}
-                                                      {t(item.name) || item.name}
-                                                      <ChevronDown
-                                                            className={cn(
-                                                                  "w-3 h-3 transition-transform",
-                                                                  isOpen && "rotate-180",
-                                                            )}
-                                                      />
-                                                </button>
-                                          );
-                                    })}
-                              </nav>
-
-                              <div className="flex items-center gap-2">
-                                    <LanguageSwitcher />
-                                    <ThemeSwitcher />
-                                    <UserProfileDropdown showName={false} />
-                                    {/* Mobile hamburger */}
-                                    <Button
-                                          variant="ghost"
-                                          size="icon"
-                                          className="lg:hidden"
-                                          onClick={() => setMobileOpen(!mobileOpen)}
-                                    >
-                                          {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-                                    </Button>
-                              </div>
-                        </div>
-
-                        {/* ── Mega Dropdown Panel (desktop) ── */}
-                        {openMenu && (
-                              <div className="absolute inset-x-0 top-full z-50 bg-card border-b border-border shadow-xl">
-                                    <div className="max-w-5xl mx-auto p-6">
-                                          {topItems
-                                                .filter((item) => item.name === openMenu && item.children)
-                                                .map((item) => (
-                                                      <div
-                                                            key={item.name}
-                                                            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
-                                                      >
-                                                            {item.children!.map((child) => {
-                                                                  const ChildIcon = child.icon;
-                                                                  const childIsActive = isNavigationItemActive(child, pathname);
-                                                                  return (
-                                                                        <button
-                                                                              key={child.name}
-                                                                              onClick={() => {
-                                                                                    if (child.href) router.push(child.href);
-                                                                                    setOpenMenu(null);
-                                                                              }}
-                                                                              className={cn(
-                                                                                    "flex items-center gap-3 p-3 rounded-xl transition-colors text-start",
-                                                                                    childIsActive
-                                                                                          ? "bg-primary/10 text-primary"
-                                                                                          : "hover:bg-muted/50 text-foreground",
-                                                                              )}
-                                                                        >
-                                                                              {ChildIcon && (
-                                                                                    <div
-                                                                                          className={cn(
-                                                                                                "w-9 h-9 rounded-lg flex items-center justify-center shrink-0",
-                                                                                                childIsActive
-                                                                                                      ? "bg-primary/20"
-                                                                                                      : "bg-muted",
-                                                                                          )}
-                                                                                    >
-                                                                                          <ChildIcon className="w-4 h-4" />
-                                                                                    </div>
-                                                                              )}
-                                                                              <div className="min-w-0">
-                                                                                    <div className="text-sm font-medium truncate">
-                                                                                          {t(child.name) || child.name}
-                                                                                    </div>
-                                                                              </div>
-                                                                        </button>
-                                                                  );
-                                                            })}
-                                                      </div>
-                                                ))}
-                                    </div>
-                              </div>
-                        )}
-                  </header>
-
-                  {/* ── Mobile Drawer ── */}
-                  {mobileOpen && (
-                        <>
-                              <div
-                                    className="fixed inset-0 z-30 bg-black/30 lg:hidden"
-                                    onClick={() => setMobileOpen(false)}
-                              />
-                              <aside
-                                    dir={direction}
-                                    className={cn(
-                                          "fixed top-14 bottom-0 w-80 z-40 bg-card border-e border-border overflow-y-auto flex flex-col lg:hidden",
-                                          direction === "rtl" ? "right-0" : "left-0",
-                                    )}
-                              >
-                                    <div className="p-3 border-b border-border">
-                                          <UserCard size="sm" />
-                                    </div>
-                                    <div className="flex-1 p-3 overflow-y-auto">
-                                          <NavRenderer variant="default" onNavigate={() => setMobileOpen(false)} />
-                                    </div>
-                                    <div className="p-3 border-t border-border">
-                                          <LogoutButton />
-                                    </div>
-                              </aside>
-                        </>
+              return (
+                <button
+                  key={item.name}
+                  onClick={() => setOpenMenu(isOpen ? null : item.name)}
+                  onMouseEnter={() => {
+                    if (openMenu) setOpenMenu(item.name);
+                  }}
+                  className={cn(
+                    "flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                    isActive || isOpen
+                      ? "bg-primary/10 text-primary"
+                      : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
                   )}
+                >
+                  {Icon && <Icon className="h-4 w-4" />}
+                  {t(item.name) || item.name}
+                  <ChevronDown
+                    className={cn("h-3 w-3 transition-transform", isOpen && "rotate-180")}
+                  />
+                </button>
+              );
+            })}
+          </nav>
 
-                  {/* ── Content ── */}
-                  <main className="flex-1 p-6">
-                        <div
-                              style={{
-                                    borderRadius: "var(--border-radius)",
-                              }}
+          <div className="flex items-center gap-2">
+            <LanguageSwitcher />
+            <ThemeSwitcher />
+            <UserProfileDropdown showName={false} />
+            {/* Mobile hamburger */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="lg:hidden"
+              onClick={() => setMobileOpen(!mobileOpen)}
+            >
+              {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </Button>
+          </div>
+        </div>
+
+        {/* ── Mega Dropdown Panel (desktop) ── */}
+        {openMenu && (
+          <div className="absolute inset-x-0 top-full z-50 border-b border-border bg-card shadow-xl">
+            <div className="mx-auto max-w-5xl p-6">
+              {topItems
+                .filter((item) => item.name === openMenu && item.children)
+                .map((item) => (
+                  <div
+                    key={item.name}
+                    className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4"
+                  >
+                    {item.children!.map((child) => {
+                      const ChildIcon = child.icon;
+                      const childIsActive = isNavigationItemActive(child, pathname);
+                      return (
+                        <button
+                          key={child.name}
+                          onClick={() => {
+                            if (child.href) router.push(child.href);
+                            setOpenMenu(null);
+                          }}
+                          className={cn(
+                            "flex items-center gap-3 rounded-xl p-3 text-start transition-colors",
+                            childIsActive
+                              ? "bg-primary/10 text-primary"
+                              : "text-foreground hover:bg-muted/50"
+                          )}
                         >
-                              {children}
-                        </div>
-                  </main>
-
-                  {settings.showFooter && <Footer />}
+                          {ChildIcon && (
+                            <div
+                              className={cn(
+                                "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg",
+                                childIsActive ? "bg-primary/20" : "bg-muted"
+                              )}
+                            >
+                              <ChildIcon className="h-4 w-4" />
+                            </div>
+                          )}
+                          <div className="min-w-0">
+                            <div className="truncate text-sm font-medium">
+                              {t(child.name) || child.name}
+                            </div>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                ))}
             </div>
-      );
+          </div>
+        )}
+      </header>
+
+      {/* ── Mobile Drawer ── */}
+      {mobileOpen && (
+        <>
+          <div
+            className="fixed inset-0 z-30 bg-black/30 lg:hidden"
+            onClick={() => setMobileOpen(false)}
+          />
+          <aside
+            dir={direction}
+            className={cn(
+              "fixed bottom-0 top-14 z-40 flex w-80 flex-col overflow-y-auto border-e border-border bg-card lg:hidden",
+              direction === "rtl" ? "right-0" : "left-0"
+            )}
+          >
+            <div className="border-b border-border p-3">
+              <UserCard size="sm" />
+            </div>
+            <div className="flex-1 overflow-y-auto p-3">
+              <NavRenderer variant="default" onNavigate={() => setMobileOpen(false)} />
+            </div>
+            <div className="border-t border-border p-3">
+              <LogoutButton />
+            </div>
+          </aside>
+        </>
+      )}
+
+      {/* ── Content ── */}
+      <main className="flex-1 p-6">
+        <div
+          style={{
+            borderRadius: "var(--border-radius)",
+          }}
+        >
+          {children}
+        </div>
+      </main>
+
+      {settings.showFooter && <Footer />}
+    </div>
+  );
 }

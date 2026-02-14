@@ -1,6 +1,6 @@
 /**
  * Generic CRUD View Model Hook
- * 
+ *
  * A comprehensive, reusable hook for managing CRUD operations with the following features:
  * - Type-safe CRUD operations (Create, Read, Update, Delete)
  * - **TanStack Query integration** for caching and deduplication
@@ -12,18 +12,18 @@
  * - Dropdown data management for form fields
  * - Optimistic updates and data synchronization
  * - Memory leak prevention and cleanup
- * 
+ *
  * @example
  * ```typescript
  * const vm = useGenericCrudViewModel(adminService, {
  *   queryKey: ['admins'],
  *   itemTypeName: "Admin",
- *   itemTypeNamePlural: "Admins", 
+ *   itemTypeNamePlural: "Admins",
  *   getItemDisplayName: (admin) => admin.username,
  *   searchParamName: "PageSearch"
  * });
  * ```
- * 
+ *
  * @author Seif
  * @version 3.0.0 - TanStack Query Integration
  * @since 1.0.0
@@ -78,7 +78,7 @@ export interface GenericCrudConfigWithDropdowns<
   TItem,
   TCreate,
   TUpdate,
-  TDropdownItem = any
+  TDropdownItem = any,
 > extends GenericCrudConfig<TItem, TCreate, TUpdate> {
   dropdownService?: DropdownService<TDropdownItem>;
   dropdownSearchParamName?: "search" | "PageSearch";
@@ -92,7 +92,7 @@ export function useGenericCrudViewModel<
   TCreate,
   TUpdate,
   TResponse extends { data: TItem[]; pagination: PaginationInfo },
-  TDropdownItem = any
+  TDropdownItem = any,
 >(
   service: GenericCrudService<TItem, TCreate, TUpdate, TResponse>,
   config: GenericCrudConfigWithDropdowns<TItem, TCreate, TUpdate, TDropdownItem>
@@ -149,7 +149,7 @@ export function useGenericCrudViewModel<
   // Update pagination from query response
   useEffect(() => {
     if (queryData?.pagination) {
-      setPagination(prev => ({
+      setPagination((prev) => ({
         ...queryData.pagination,
         page: prev.page,
         pageSize: prev.pageSize,
@@ -210,7 +210,7 @@ export function useGenericCrudViewModel<
   }, [dropdownSearchTerm, config.dropdownSearchParamName]);
 
   const { data: dropdownData } = useQuery({
-    queryKey: [...config.queryKey, 'dropdown', dropdownParams],
+    queryKey: [...config.queryKey, "dropdown", dropdownParams],
     queryFn: () => config.dropdownService?.getData(dropdownParams),
     enabled: !!config.dropdownService,
     staleTime: 60 * 1000, // 1 minute for dropdowns
@@ -279,24 +279,27 @@ export function useGenericCrudViewModel<
   // Pagination handlers
   // ==========================================
   const changePage = useCallback((page: number) => {
-    setPagination(prev => ({ ...prev, page }));
+    setPagination((prev) => ({ ...prev, page }));
   }, []);
 
   const changePageSize = useCallback((pageSize: number) => {
-    setPagination(prev => ({ ...prev, pageSize, page: 1 }));
+    setPagination((prev) => ({ ...prev, pageSize, page: 1 }));
   }, []);
 
   // Legacy compatibility
-  const searchItems = useCallback((term: string) => {
-    handleSearchChange(term);
-  }, [handleSearchChange]);
+  const searchItems = useCallback(
+    (term: string) => {
+      handleSearchChange(term);
+    },
+    [handleSearchChange]
+  );
 
   // ==========================================
   // Dropdown options
   // ==========================================
   const dropdownOptionsMapped = useMemo(() => {
     if (!config.dropdownService || !dropdownData?.data) return [];
-    return dropdownData.data.map(item => ({
+    return dropdownData.data.map((item) => ({
       label: config.dropdownService!.getLabel(item),
       value: config.dropdownService!.getValue(item),
     }));

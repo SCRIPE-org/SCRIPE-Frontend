@@ -1,26 +1,30 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { useDocsI18n } from '../../providers/DocsI18nProvider';
+import Link from "next/link";
+import { useDocsI18n } from "../../providers/DocsI18nProvider";
 
 interface DocsBreadcrumbProps {
-      slug: string;
-      categoryTitleKey: string;
-      pageTitleKey: string;
+  slug: string;
+  categoryTitleKey: string;
+  pageTitleKey: string;
 }
 
 export function DocsBreadcrumb({ slug, categoryTitleKey, pageTitleKey }: DocsBreadcrumbProps) {
-      const { t } = useDocsI18n();
+  const { t } = useDocsI18n();
 
-      const category = slug.split('/')[0];
+  const category = slug.split("/")[0];
 
-      return (
-            <nav className="docs-breadcrumb" aria-label="Breadcrumb">
-                  <Link href="/docs">{t('common.home')}</Link>
-                  <span className="docs-breadcrumb-separator" aria-hidden>›</span>
-                  <Link href={`/docs/${category}`}>{t(categoryTitleKey)}</Link>
-                  <span className="docs-breadcrumb-separator" aria-hidden>›</span>
-                  <span className="docs-breadcrumb-current">{t(pageTitleKey)}</span>
-            </nav>
-      );
+  return (
+    <nav className="docs-breadcrumb" aria-label="Breadcrumb">
+      <Link href="/docs">{t("common.home")}</Link>
+      <span className="docs-breadcrumb-separator" aria-hidden>
+        ›
+      </span>
+      <Link href={`/docs/${category}`}>{t(categoryTitleKey)}</Link>
+      <span className="docs-breadcrumb-separator" aria-hidden>
+        ›
+      </span>
+      <span className="docs-breadcrumb-current">{t(pageTitleKey)}</span>
+    </nav>
+  );
 }

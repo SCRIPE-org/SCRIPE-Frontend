@@ -1,4 +1,3 @@
-
 # Services Architecture
 
 > **MANDATORY**: All services MUST use interface/implementation separation and be registered in the ServiceProvider.
@@ -20,12 +19,12 @@ src/core/services/
 
 ## Naming Conventions
 
-| Type | Convention | Example |
-|------|------------|---------|
-| Interface | `I{ServiceName}` | `IApiService` |
-| Implementation | `{ServiceName}` | `ApiService` |
+| Type             | Convention            | Example            |
+| ---------------- | --------------------- | ------------------ |
+| Interface        | `I{ServiceName}`      | `IApiService`      |
+| Implementation   | `{ServiceName}`       | `ApiService`       |
 | File (Interface) | `{name}.interface.ts` | `api.interface.ts` |
-| File (Service) | `{name}.service.ts` | `api.service.ts` |
+| File (Service)   | `{name}.service.ts`   | `api.service.ts`   |
 
 ## Creating a New Service
 
@@ -44,9 +43,9 @@ export interface IAuthService {
 
 ```typescript
 // src/core/services/auth.service.ts
-import type { IAuthService } from './interfaces';
-import type { IApiService } from './interfaces';
-import { API_ENDPOINTS } from './endpoints';
+import type { IAuthService } from "./interfaces";
+import type { IApiService } from "./interfaces";
+import { API_ENDPOINTS } from "./endpoints";
 
 export class AuthService implements IAuthService {
   constructor(private apiService: IApiService) {}
@@ -80,10 +79,10 @@ export function ServiceProvider({ children }) {
   const services = useMemo(() => {
     const apiService = new ApiService(process.env.NEXT_PUBLIC_API_URL || '');
     const authService = new AuthService(apiService);  // Inject dependencies
-    
+
     return { apiService, authService };
   }, []);
-  
+
   return <ServiceContext.Provider value={services}>{children}</ServiceContext.Provider>;
 }
 ```
@@ -92,11 +91,11 @@ export function ServiceProvider({ children }) {
 
 ```typescript
 // In any component
-import { useServices } from '@/core/services';
+import { useServices } from "@/core/services";
 
 function LoginForm() {
   const { authService } = useServices();
-  
+
   const handleLogin = async () => {
     await authService.login(email, password);
   };
@@ -106,13 +105,13 @@ function LoginForm() {
 ## Using Endpoints
 
 ```typescript
-import { API_ENDPOINTS } from '@/core/services';
+import { API_ENDPOINTS } from "@/core/services";
 
 // Static endpoint
 await apiService.get(API_ENDPOINTS.USERS.BASE);
 
 // Dynamic endpoint
-await apiService.get(API_ENDPOINTS.USERS.BY_ID('123'));
+await apiService.get(API_ENDPOINTS.USERS.BY_ID("123"));
 ```
 
 ## Rules
@@ -122,5 +121,3 @@ await apiService.get(API_ENDPOINTS.USERS.BY_ID('123'));
 3. ✅ **Use API_ENDPOINTS** - Never hardcode endpoint strings
 4. ✅ **Register in ServiceProvider** - All services must be in the DI container
 5. ❌ **Never import services directly** - Always use `useServices()` hook
-
-

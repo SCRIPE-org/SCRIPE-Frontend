@@ -11,30 +11,33 @@
  *
  * @module recycle-bin/data
  */
-import type { IRecycleBinRepository, DeletedItemsGrouped } from "../../domain/interfaces/IRecycleBinRepository";
+import type {
+  IRecycleBinRepository,
+  DeletedItemsGrouped,
+} from "../../domain/interfaces/IRecycleBinRepository";
 import type { IRecycleBinService } from "../../domain/interfaces/IRecycleBinService";
 import { DeletedItemMapper } from "../mappers/DeletedItemMapper";
 
 export class RecycleBinRepository implements IRecycleBinRepository {
-      constructor(private readonly service: IRecycleBinService) { }
+  constructor(private readonly service: IRecycleBinService) {}
 
-      async getAll(): Promise<DeletedItemsGrouped> {
-            const result = await this.service.getAll();
+  async getAll(): Promise<DeletedItemsGrouped> {
+    const result = await this.service.getAll();
 
-            return {
-                  tenants: DeletedItemMapper.toEntityList(result.tenants),
-                  admins: DeletedItemMapper.toEntityList(result.admins),
-                  users: DeletedItemMapper.toEntityList(result.users),
-                  roles: DeletedItemMapper.toEntityList(result.roles),
-                  totalCount: result.totalCount,
-            };
-      }
+    return {
+      tenants: DeletedItemMapper.toEntityList(result.tenants),
+      admins: DeletedItemMapper.toEntityList(result.admins),
+      users: DeletedItemMapper.toEntityList(result.users),
+      roles: DeletedItemMapper.toEntityList(result.roles),
+      totalCount: result.totalCount,
+    };
+  }
 
-      async restore(entityType: string, id: string): Promise<void> {
-            await this.service.restore(entityType, id);
-      }
+  async restore(entityType: string, id: string): Promise<void> {
+    await this.service.restore(entityType, id);
+  }
 
-      async bulkRestore(items: { entityType: string; id: string }[]): Promise<number> {
-            return this.service.bulkRestore(items);
-      }
+  async bulkRestore(items: { entityType: string; id: string }[]): Promise<number> {
+    return this.service.bulkRestore(items);
+  }
 }

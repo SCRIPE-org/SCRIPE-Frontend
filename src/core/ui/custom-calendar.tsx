@@ -58,19 +58,17 @@ export function CustomCalendar({
 }: CustomCalendarProps) {
   const { calendarStyle, borderRadius } = useSettings();
   const { t, language, direction } = useI18n();
-  
+
   const locale = language === "ar" ? "ar-EG" : "en-US";
-  
+
   // Safe date initialization
   const [currentDate, setCurrentDate] = useState(() => {
     const parsed = parseDateSafe(value);
     return parsed || new Date();
   });
-  
-  const [selectedDate, setSelectedDate] = useState<Date | null>(
-    parseDateSafe(value)
-  );
-  
+
+  const [selectedDate, setSelectedDate] = useState<Date | null>(parseDateSafe(value));
+
   const [selectedTime, setSelectedTime] = useState(() => {
     if (value && type === "datetime-local") {
       const parts = value.split("T");
@@ -78,10 +76,10 @@ export function CustomCalendar({
     }
     return "12:00";
   });
-  
+
   const [viewMode, setViewMode] = useState<"calendar" | "month" | "year">("calendar");
   const [focusedDate, setFocusedDate] = useState<number | null>(null);
-  
+
   const [yearRangeStart, setYearRangeStart] = useState(() => {
     const currentYear = new Date().getFullYear();
     return Math.floor((currentYear - 12) / 10) * 10;
@@ -110,11 +108,23 @@ export function CustomCalendar({
   }, [value, type]);
 
   // Memoize months array (remove duplicate)
-  const months = useMemo(() => [
-    t("months.jan"), t("months.feb"), t("months.mar"), t("months.apr"),
-    t("months.may"), t("months.jun"), t("months.jul"), t("months.aug"),
-    t("months.sep"), t("months.oct"), t("months.nov"), t("months.dec")
-  ], [t]);
+  const months = useMemo(
+    () => [
+      t("months.jan"),
+      t("months.feb"),
+      t("months.mar"),
+      t("months.apr"),
+      t("months.may"),
+      t("months.jun"),
+      t("months.jul"),
+      t("months.aug"),
+      t("months.sep"),
+      t("months.oct"),
+      t("months.nov"),
+      t("months.dec"),
+    ],
+    [t]
+  );
 
   // Get locale-aware weekdays
   const weekDays = useMemo(() => getWeekDays(locale), [locale]);
@@ -122,36 +132,56 @@ export function CustomCalendar({
   // Memoize style functions
   const borderRadiusClass = useMemo(() => {
     switch (borderRadius) {
-      case "none": return "rounded-none";
-      case "small": return "rounded-sm";
-      case "large": return "rounded-lg";
-      case "full": return "rounded-xl";
-      default: return "rounded-md";
+      case "none":
+        return "rounded-none";
+      case "small":
+        return "rounded-sm";
+      case "large":
+        return "rounded-lg";
+      case "full":
+        return "rounded-xl";
+      default:
+        return "rounded-md";
     }
   }, [borderRadius]);
 
   const calendarStyles = useMemo(() => {
     const baseStyles = "w-full bg-background border shadow-lg transition-all duration-200";
-    
+
     switch (calendarStyle) {
       case "modern":
-        return cn(baseStyles, "bg-gradient-to-br from-background to-muted/20",
+        return cn(
+          baseStyles,
+          "bg-gradient-to-br from-background to-muted/20",
           "border-border/50 shadow-xl backdrop-blur-sm",
-          "ring-1 ring-primary/10", borderRadiusClass);
+          "ring-1 ring-primary/10",
+          borderRadiusClass
+        );
       case "glass":
-        return cn(baseStyles, "bg-background/80 backdrop-blur-md",
+        return cn(
+          baseStyles,
+          "bg-background/80 backdrop-blur-md",
           "border-white/20 shadow-2xl",
-          "ring-1 ring-white/10", borderRadiusClass);
+          "ring-1 ring-white/10",
+          borderRadiusClass
+        );
       case "elegant":
-        return cn(baseStyles, "bg-gradient-to-br from-background via-background to-primary/5",
+        return cn(
+          baseStyles,
+          "bg-gradient-to-br from-background via-background to-primary/5",
           "border-primary/20 shadow-xl",
-          "ring-1 ring-primary/20", borderRadiusClass);
+          "ring-1 ring-primary/20",
+          borderRadiusClass
+        );
       case "minimal":
-        return cn(baseStyles, "bg-background border-border shadow-md",
-          "ring-0", borderRadiusClass);
+        return cn(baseStyles, "bg-background border-border shadow-md", "ring-0", borderRadiusClass);
       case "dark":
-        return cn(baseStyles, "bg-slate-900 border-slate-700 shadow-2xl",
-          "ring-1 ring-slate-600/50", borderRadiusClass);
+        return cn(
+          baseStyles,
+          "bg-slate-900 border-slate-700 shadow-2xl",
+          "ring-1 ring-slate-600/50",
+          borderRadiusClass
+        );
       default:
         return cn(baseStyles, "border-border shadow-lg", borderRadiusClass);
     }
@@ -174,77 +204,121 @@ export function CustomCalendar({
     }
   }, [calendarStyle]);
 
-  const getButtonStyles = useCallback((isSelected = false, isToday = false, isOtherMonth = false) => {
-    const baseStyles = "w-10 h-10 flex items-center justify-center text-sm transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2";
-    
-    if (isSelected) {
+  const getButtonStyles = useCallback(
+    (isSelected = false, isToday = false, isOtherMonth = false) => {
+      const baseStyles =
+        "w-10 h-10 flex items-center justify-center text-sm transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2";
+
+      if (isSelected) {
+        switch (calendarStyle) {
+          case "modern":
+            return cn(
+              baseStyles,
+              "bg-primary text-primary-foreground rounded-lg shadow-md font-semibold"
+            );
+          case "glass":
+            return cn(
+              baseStyles,
+              "bg-primary/80 text-white rounded-lg shadow-lg backdrop-blur-sm font-medium"
+            );
+          case "elegant":
+            return cn(
+              baseStyles,
+              "bg-gradient-to-br from-primary to-primary/80 text-white rounded-lg shadow-lg font-semibold"
+            );
+          case "minimal":
+            return cn(baseStyles, "bg-primary text-primary-foreground rounded-md font-medium");
+          case "dark":
+            return cn(baseStyles, "bg-blue-600 text-white rounded-lg shadow-md font-semibold");
+          default:
+            return cn(baseStyles, "bg-primary text-primary-foreground rounded-md");
+        }
+      }
+
+      if (isToday) {
+        switch (calendarStyle) {
+          case "modern":
+            return cn(
+              baseStyles,
+              "bg-primary/20 text-primary rounded-lg font-semibold ring-2 ring-primary/30"
+            );
+          case "glass":
+            return cn(
+              baseStyles,
+              "bg-white/20 text-primary rounded-lg font-medium ring-1 ring-primary/50"
+            );
+          case "elegant":
+            return cn(
+              baseStyles,
+              "bg-primary/10 text-primary rounded-lg font-semibold ring-1 ring-primary/40"
+            );
+          case "minimal":
+            return cn(baseStyles, "bg-muted text-primary rounded-md font-medium");
+          case "dark":
+            return cn(baseStyles, "bg-blue-900/50 text-blue-300 rounded-lg font-semibold");
+          default:
+            return cn(baseStyles, "bg-muted text-primary rounded-md");
+        }
+      }
+
+      if (isOtherMonth) {
+        return cn(
+          baseStyles,
+          "text-muted-foreground/40 hover:text-muted-foreground hover:bg-muted/50 rounded-md"
+        );
+      }
+
       switch (calendarStyle) {
         case "modern":
-          return cn(baseStyles, "bg-primary text-primary-foreground rounded-lg shadow-md font-semibold");
+          return cn(
+            baseStyles,
+            "text-foreground hover:bg-primary/10 hover:text-primary rounded-lg"
+          );
         case "glass":
-          return cn(baseStyles, "bg-primary/80 text-white rounded-lg shadow-lg backdrop-blur-sm font-medium");
+          return cn(
+            baseStyles,
+            "text-foreground/80 hover:bg-white/10 hover:text-foreground rounded-lg"
+          );
         case "elegant":
-          return cn(baseStyles, "bg-gradient-to-br from-primary to-primary/80 text-white rounded-lg shadow-lg font-semibold");
+          return cn(baseStyles, "text-foreground hover:bg-primary/5 hover:text-primary rounded-lg");
         case "minimal":
-          return cn(baseStyles, "bg-primary text-primary-foreground rounded-md font-medium");
+          return cn(baseStyles, "text-foreground hover:bg-muted rounded-md");
         case "dark":
-          return cn(baseStyles, "bg-blue-600 text-white rounded-lg shadow-md font-semibold");
+          return cn(baseStyles, "text-slate-300 hover:bg-slate-700 hover:text-white rounded-lg");
         default:
-          return cn(baseStyles, "bg-primary text-primary-foreground rounded-md");
+          return cn(baseStyles, "text-foreground hover:bg-muted rounded-md");
       }
-    }
-    
-    if (isToday) {
-      switch (calendarStyle) {
-        case "modern":
-          return cn(baseStyles, "bg-primary/20 text-primary rounded-lg font-semibold ring-2 ring-primary/30");
-        case "glass":
-          return cn(baseStyles, "bg-white/20 text-primary rounded-lg font-medium ring-1 ring-primary/50");
-        case "elegant":
-          return cn(baseStyles, "bg-primary/10 text-primary rounded-lg font-semibold ring-1 ring-primary/40");
-        case "minimal":
-          return cn(baseStyles, "bg-muted text-primary rounded-md font-medium");
-        case "dark":
-          return cn(baseStyles, "bg-blue-900/50 text-blue-300 rounded-lg font-semibold");
-        default:
-          return cn(baseStyles, "bg-muted text-primary rounded-md");
-      }
-    }
-    
-    if (isOtherMonth) {
-      return cn(baseStyles, "text-muted-foreground/40 hover:text-muted-foreground hover:bg-muted/50 rounded-md");
-    }
-    
-    switch (calendarStyle) {
-      case "modern":
-        return cn(baseStyles, "text-foreground hover:bg-primary/10 hover:text-primary rounded-lg");
-      case "glass":
-        return cn(baseStyles, "text-foreground/80 hover:bg-white/10 hover:text-foreground rounded-lg");
-      case "elegant":
-        return cn(baseStyles, "text-foreground hover:bg-primary/5 hover:text-primary rounded-lg");
-      case "minimal":
-        return cn(baseStyles, "text-foreground hover:bg-muted rounded-md");
-      case "dark":
-        return cn(baseStyles, "text-slate-300 hover:bg-slate-700 hover:text-white rounded-lg");
-      default:
-        return cn(baseStyles, "text-foreground hover:bg-muted rounded-md");
-    }
-  }, [calendarStyle]);
+    },
+    [calendarStyle]
+  );
 
   const timeInputStyles = useMemo(() => {
-    const baseStyles = "w-full px-3 py-2 text-sm bg-transparent border outline-none transition-all duration-200";
-    
+    const baseStyles =
+      "w-full px-3 py-2 text-sm bg-transparent border outline-none transition-all duration-200";
+
     switch (calendarStyle) {
       case "modern":
-        return cn(baseStyles, "border-border/50 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20");
+        return cn(
+          baseStyles,
+          "border-border/50 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20"
+        );
       case "glass":
-        return cn(baseStyles, "border-white/20 rounded-lg focus:border-primary/50 focus:ring-1 focus:ring-primary/30 bg-white/5");
+        return cn(
+          baseStyles,
+          "border-white/20 rounded-lg focus:border-primary/50 focus:ring-1 focus:ring-primary/30 bg-white/5"
+        );
       case "elegant":
-        return cn(baseStyles, "border-primary/20 rounded-lg focus:border-primary focus:ring-1 focus:ring-primary/30");
+        return cn(
+          baseStyles,
+          "border-primary/20 rounded-lg focus:border-primary focus:ring-1 focus:ring-primary/30"
+        );
       case "minimal":
         return cn(baseStyles, "border-border rounded-md focus:border-primary");
       case "dark":
-        return cn(baseStyles, "border-slate-600 rounded-lg focus:border-blue-500 bg-slate-800 text-slate-200");
+        return cn(
+          baseStyles,
+          "border-slate-600 rounded-lg focus:border-blue-500 bg-slate-800 text-slate-200"
+        );
       default:
         return cn(baseStyles, "border-border rounded-md focus:border-primary");
     }
@@ -254,95 +328,110 @@ export function CustomCalendar({
     return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
   }, []);
 
-  const getFirstDayAdjusted = useCallback((date: Date) => {
-    return getFirstDayOfMonth(date, locale);
-  }, [locale]);
+  const getFirstDayAdjusted = useCallback(
+    (date: Date) => {
+      return getFirstDayOfMonth(date, locale);
+    },
+    [locale]
+  );
 
   // Format date using local time components
   const formatDateLocal = useCallback((date: Date): string => {
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
   }, []);
 
   // Submit the selected date and time
-  const submitDateAndTime = useCallback((dateToSubmit: Date) => {
-    if (type === "date") {
-      const dateString = formatDateLocal(dateToSubmit);
-      onChange?.(dateString);
-      onClose?.();
-    } else {
-      const dateString = `${formatDateLocal(dateToSubmit)}T${selectedTime}`;
-      onChange?.(dateString);
-      onClose?.();
-    }
-  }, [type, selectedTime, formatDateLocal, onChange, onClose]);
-
-  const handleDateSelect = useCallback((day: number, isOtherMonth = false) => {
-    let newDate: Date;
-    
-    if (isOtherMonth) {
-      if (day > 15) {
-        // Previous month - fix edge case: set to first day of month before changing
-        const tempDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-        tempDate.setMonth(tempDate.getMonth() - 1);
-        newDate = new Date(tempDate.getFullYear(), tempDate.getMonth(), day);
+  const submitDateAndTime = useCallback(
+    (dateToSubmit: Date) => {
+      if (type === "date") {
+        const dateString = formatDateLocal(dateToSubmit);
+        onChange?.(dateString);
+        onClose?.();
       } else {
-        // Next month
-        const tempDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-        tempDate.setMonth(tempDate.getMonth() + 1);
-        newDate = new Date(tempDate.getFullYear(), tempDate.getMonth(), day);
+        const dateString = `${formatDateLocal(dateToSubmit)}T${selectedTime}`;
+        onChange?.(dateString);
+        onClose?.();
       }
-    } else {
-      newDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
-    }
-    
-    setSelectedDate(newDate);
-    setFocusedDate(day);
-    
-    if (type === "date") {
-      const dateString = formatDateLocal(newDate);
-      onChange?.(dateString);
-      onClose?.();
-    } else {
-      const dateString = `${formatDateLocal(newDate)}T${selectedTime}`;
-      onChange?.(dateString);
-    }
-  }, [currentDate, type, selectedTime, formatDateLocal, onChange, onClose]);
+    },
+    [type, selectedTime, formatDateLocal, onChange, onClose]
+  );
 
-  const handleDateDoubleClick = useCallback((day: number, isOtherMonth = false) => {
-    let newDate: Date;
-    
-    if (isOtherMonth) {
-      if (day > 15) {
-        const tempDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-        tempDate.setMonth(tempDate.getMonth() - 1);
-        newDate = new Date(tempDate.getFullYear(), tempDate.getMonth(), day);
+  const handleDateSelect = useCallback(
+    (day: number, isOtherMonth = false) => {
+      let newDate: Date;
+
+      if (isOtherMonth) {
+        if (day > 15) {
+          // Previous month - fix edge case: set to first day of month before changing
+          const tempDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+          tempDate.setMonth(tempDate.getMonth() - 1);
+          newDate = new Date(tempDate.getFullYear(), tempDate.getMonth(), day);
+        } else {
+          // Next month
+          const tempDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+          tempDate.setMonth(tempDate.getMonth() + 1);
+          newDate = new Date(tempDate.getFullYear(), tempDate.getMonth(), day);
+        }
       } else {
-        const tempDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-        tempDate.setMonth(tempDate.getMonth() + 1);
-        newDate = new Date(tempDate.getFullYear(), tempDate.getMonth(), day);
+        newDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
       }
-    } else {
-      newDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
-    }
-    
-    setSelectedDate(newDate);
-    submitDateAndTime(newDate);
-  }, [currentDate, submitDateAndTime]);
 
-  const handleTimeChange = useCallback((time: string) => {
-    setSelectedTime(time);
-    if (selectedDate) {
-      const dateString = `${formatDateLocal(selectedDate)}T${time}`;
-      onChange?.(dateString);
-    }
-  }, [selectedDate, formatDateLocal, onChange]);
+      setSelectedDate(newDate);
+      setFocusedDate(day);
+
+      if (type === "date") {
+        const dateString = formatDateLocal(newDate);
+        onChange?.(dateString);
+        onClose?.();
+      } else {
+        const dateString = `${formatDateLocal(newDate)}T${selectedTime}`;
+        onChange?.(dateString);
+      }
+    },
+    [currentDate, type, selectedTime, formatDateLocal, onChange, onClose]
+  );
+
+  const handleDateDoubleClick = useCallback(
+    (day: number, isOtherMonth = false) => {
+      let newDate: Date;
+
+      if (isOtherMonth) {
+        if (day > 15) {
+          const tempDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+          tempDate.setMonth(tempDate.getMonth() - 1);
+          newDate = new Date(tempDate.getFullYear(), tempDate.getMonth(), day);
+        } else {
+          const tempDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+          tempDate.setMonth(tempDate.getMonth() + 1);
+          newDate = new Date(tempDate.getFullYear(), tempDate.getMonth(), day);
+        }
+      } else {
+        newDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+      }
+
+      setSelectedDate(newDate);
+      submitDateAndTime(newDate);
+    },
+    [currentDate, submitDateAndTime]
+  );
+
+  const handleTimeChange = useCallback(
+    (time: string) => {
+      setSelectedTime(time);
+      if (selectedDate) {
+        const dateString = `${formatDateLocal(selectedDate)}T${time}`;
+        onChange?.(dateString);
+      }
+    },
+    [selectedDate, formatDateLocal, onChange]
+  );
 
   // Navigate month - FIX: Handle edge case (Jan 31 -> Feb)
   const navigateMonth = useCallback((direction: "prev" | "next") => {
-    setCurrentDate(prev => {
+    setCurrentDate((prev) => {
       const newDate = new Date(prev);
       // Set to first day to avoid month overflow issues
       newDate.setDate(1);
@@ -370,7 +459,7 @@ export function CustomCalendar({
   }, [currentDate]);
 
   const handleMonthSelect = useCallback((monthIndex: number) => {
-    setCurrentDate(prev => {
+    setCurrentDate((prev) => {
       const newDate = new Date(prev);
       // Fix edge case: set to first day before changing month
       newDate.setDate(1);
@@ -381,174 +470,194 @@ export function CustomCalendar({
     setFocusedDate(null);
   }, []);
 
-  const handleYearSelect = useCallback((year: number) => {
-    setCurrentDate(prev => {
-      const newDate = new Date(prev);
-      newDate.setDate(1); // Set to first day to avoid month overflow
-      newDate.setFullYear(year);
-      return newDate;
-    });
-    if (year < yearRangeStart || year >= yearRangeStart + 12) {
-      setYearRangeStart(Math.floor((year - 6) / 12) * 12);
-    }
-    setViewMode("calendar");
-    setFocusedDate(null);
-  }, [yearRangeStart]);
+  const handleYearSelect = useCallback(
+    (year: number) => {
+      setCurrentDate((prev) => {
+        const newDate = new Date(prev);
+        newDate.setDate(1); // Set to first day to avoid month overflow
+        newDate.setFullYear(year);
+        return newDate;
+      });
+      if (year < yearRangeStart || year >= yearRangeStart + 12) {
+        setYearRangeStart(Math.floor((year - 6) / 12) * 12);
+      }
+      setViewMode("calendar");
+      setFocusedDate(null);
+    },
+    [yearRangeStart]
+  );
 
   const navigateYearRange = useCallback((direction: "prev" | "next") => {
-    setYearRangeStart(prev => direction === "prev" ? prev - 12 : prev + 12);
+    setYearRangeStart((prev) => (direction === "prev" ? prev - 12 : prev + 12));
   }, []);
 
   // Keyboard navigation
-  const getDateByOffset = useCallback((offset: number): { day: number; isOtherMonth: boolean } | null => {
-    const daysInMonth = getDaysInMonth(currentDate);
-    const firstDay = getFirstDayAdjusted(currentDate);
-    const today = focusedDate || selectedDate?.getDate() || 1;
-    
-    const totalDays = Math.ceil((firstDay + daysInMonth) / 7) * 7;
-    const currentIndex = firstDay + (today - 1);
-    const newIndex = currentIndex + offset;
-    
-    if (newIndex < 0) {
-      // Previous month
-      const prevMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 0);
-      const daysInPrevMonth = prevMonth.getDate();
-      const day = daysInPrevMonth + newIndex + 1;
-      return { day: Math.max(1, day), isOtherMonth: true };
-    } else if (newIndex >= totalDays) {
-      // Next month
-      const day = newIndex - totalDays + 1;
-      return { day, isOtherMonth: true };
-    } else if (newIndex < firstDay) {
-      // Previous month (within current view)
-      const prevMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 0);
-      const daysInPrevMonth = prevMonth.getDate();
-      const day = daysInPrevMonth - (firstDay - newIndex - 1);
-      return { day, isOtherMonth: true };
-    } else if (newIndex >= firstDay + daysInMonth) {
-      // Next month (within current view)
-      const day = newIndex - (firstDay + daysInMonth) + 1;
-      return { day, isOtherMonth: true };
-    } else {
-      // Current month
-      const day = newIndex - firstDay + 1;
-      return { day, isOtherMonth: false };
-    }
-  }, [currentDate, focusedDate, selectedDate, getDaysInMonth, getFirstDayAdjusted]);
+  const getDateByOffset = useCallback(
+    (offset: number): { day: number; isOtherMonth: boolean } | null => {
+      const daysInMonth = getDaysInMonth(currentDate);
+      const firstDay = getFirstDayAdjusted(currentDate);
+      const today = focusedDate || selectedDate?.getDate() || 1;
 
-  const handleKeyDown = useCallback((e: React.KeyboardEvent | KeyboardEvent) => {
-    if (viewMode !== "calendar") {
-      if (e.key === "Escape") {
-        e.preventDefault();
-        setViewMode("calendar");
+      const totalDays = Math.ceil((firstDay + daysInMonth) / 7) * 7;
+      const currentIndex = firstDay + (today - 1);
+      const newIndex = currentIndex + offset;
+
+      if (newIndex < 0) {
+        // Previous month
+        const prevMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 0);
+        const daysInPrevMonth = prevMonth.getDate();
+        const day = daysInPrevMonth + newIndex + 1;
+        return { day: Math.max(1, day), isOtherMonth: true };
+      } else if (newIndex >= totalDays) {
+        // Next month
+        const day = newIndex - totalDays + 1;
+        return { day, isOtherMonth: true };
+      } else if (newIndex < firstDay) {
+        // Previous month (within current view)
+        const prevMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 0);
+        const daysInPrevMonth = prevMonth.getDate();
+        const day = daysInPrevMonth - (firstDay - newIndex - 1);
+        return { day, isOtherMonth: true };
+      } else if (newIndex >= firstDay + daysInMonth) {
+        // Next month (within current view)
+        const day = newIndex - (firstDay + daysInMonth) + 1;
+        return { day, isOtherMonth: true };
+      } else {
+        // Current month
+        const day = newIndex - firstDay + 1;
+        return { day, isOtherMonth: false };
       }
-      return;
-    }
+    },
+    [currentDate, focusedDate, selectedDate, getDaysInMonth, getFirstDayAdjusted]
+  );
 
-    const daysInMonth = getDaysInMonth(currentDate);
-    const today = focusedDate || selectedDate?.getDate() || 1;
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent | KeyboardEvent) => {
+      if (viewMode !== "calendar") {
+        if (e.key === "Escape") {
+          e.preventDefault();
+          setViewMode("calendar");
+        }
+        return;
+      }
 
-    switch (e.key) {
-      case "ArrowLeft":
-        e.preventDefault();
-        const leftDate = getDateByOffset(-1);
-        if (leftDate) {
-          if (leftDate.isOtherMonth) {
-            navigateMonth("prev");
-            setTimeout(() => setFocusedDate(leftDate.day), 0);
-          } else {
-            setFocusedDate(leftDate.day);
-            handleDateSelect(leftDate.day, false);
-          }
-        }
-        break;
-      
-      case "ArrowRight":
-        e.preventDefault();
-        const rightDate = getDateByOffset(1);
-        if (rightDate) {
-          if (rightDate.isOtherMonth) {
-            navigateMonth("next");
-            setTimeout(() => setFocusedDate(rightDate.day), 0);
-          } else {
-            setFocusedDate(rightDate.day);
-            handleDateSelect(rightDate.day, false);
-          }
-        }
-        break;
-      
-      case "ArrowUp":
-        e.preventDefault();
-        const upDate = getDateByOffset(-7);
-        if (upDate) {
-          if (upDate.isOtherMonth) {
-            if (upDate.day > 15) {
+      const daysInMonth = getDaysInMonth(currentDate);
+      const today = focusedDate || selectedDate?.getDate() || 1;
+
+      switch (e.key) {
+        case "ArrowLeft":
+          e.preventDefault();
+          const leftDate = getDateByOffset(-1);
+          if (leftDate) {
+            if (leftDate.isOtherMonth) {
               navigateMonth("prev");
+              setTimeout(() => setFocusedDate(leftDate.day), 0);
             } else {
-              navigateMonth("next");
+              setFocusedDate(leftDate.day);
+              handleDateSelect(leftDate.day, false);
             }
-            setTimeout(() => setFocusedDate(upDate.day), 0);
-          } else {
-            setFocusedDate(upDate.day);
-            handleDateSelect(upDate.day, false);
           }
-        }
-        break;
-      
-      case "ArrowDown":
-        e.preventDefault();
-        const downDate = getDateByOffset(7);
-        if (downDate) {
-          if (downDate.isOtherMonth) {
-            if (downDate.day > 15) {
-              navigateMonth("prev");
+          break;
+
+        case "ArrowRight":
+          e.preventDefault();
+          const rightDate = getDateByOffset(1);
+          if (rightDate) {
+            if (rightDate.isOtherMonth) {
+              navigateMonth("next");
+              setTimeout(() => setFocusedDate(rightDate.day), 0);
             } else {
-              navigateMonth("next");
+              setFocusedDate(rightDate.day);
+              handleDateSelect(rightDate.day, false);
             }
-            setTimeout(() => setFocusedDate(downDate.day), 0);
-          } else {
-            setFocusedDate(downDate.day);
-            handleDateSelect(downDate.day, false);
           }
-        }
-        break;
-      
-      case "Home":
-        e.preventDefault();
-        setFocusedDate(1);
-        handleDateSelect(1, false);
-        break;
-      
-      case "End":
-        e.preventDefault();
-        setFocusedDate(daysInMonth);
-        handleDateSelect(daysInMonth, false);
-        break;
-      
-      case "PageUp":
-        e.preventDefault();
-        navigateMonth("prev");
-        break;
-      
-      case "PageDown":
-        e.preventDefault();
-        navigateMonth("next");
-        break;
-      
-      case "Enter":
-      case " ":
-        e.preventDefault();
-        if (selectedDate) {
-          submitDateAndTime(selectedDate);
-        }
-        break;
-      
-      case "Escape":
-        e.preventDefault();
-        onClose?.();
-        break;
-    }
-  }, [viewMode, currentDate, focusedDate, selectedDate, getDaysInMonth, getDateByOffset, navigateMonth, handleDateSelect, submitDateAndTime, onClose]);
+          break;
+
+        case "ArrowUp":
+          e.preventDefault();
+          const upDate = getDateByOffset(-7);
+          if (upDate) {
+            if (upDate.isOtherMonth) {
+              if (upDate.day > 15) {
+                navigateMonth("prev");
+              } else {
+                navigateMonth("next");
+              }
+              setTimeout(() => setFocusedDate(upDate.day), 0);
+            } else {
+              setFocusedDate(upDate.day);
+              handleDateSelect(upDate.day, false);
+            }
+          }
+          break;
+
+        case "ArrowDown":
+          e.preventDefault();
+          const downDate = getDateByOffset(7);
+          if (downDate) {
+            if (downDate.isOtherMonth) {
+              if (downDate.day > 15) {
+                navigateMonth("prev");
+              } else {
+                navigateMonth("next");
+              }
+              setTimeout(() => setFocusedDate(downDate.day), 0);
+            } else {
+              setFocusedDate(downDate.day);
+              handleDateSelect(downDate.day, false);
+            }
+          }
+          break;
+
+        case "Home":
+          e.preventDefault();
+          setFocusedDate(1);
+          handleDateSelect(1, false);
+          break;
+
+        case "End":
+          e.preventDefault();
+          setFocusedDate(daysInMonth);
+          handleDateSelect(daysInMonth, false);
+          break;
+
+        case "PageUp":
+          e.preventDefault();
+          navigateMonth("prev");
+          break;
+
+        case "PageDown":
+          e.preventDefault();
+          navigateMonth("next");
+          break;
+
+        case "Enter":
+        case " ":
+          e.preventDefault();
+          if (selectedDate) {
+            submitDateAndTime(selectedDate);
+          }
+          break;
+
+        case "Escape":
+          e.preventDefault();
+          onClose?.();
+          break;
+      }
+    },
+    [
+      viewMode,
+      currentDate,
+      focusedDate,
+      selectedDate,
+      getDaysInMonth,
+      getDateByOffset,
+      navigateMonth,
+      handleDateSelect,
+      submitDateAndTime,
+      onClose,
+    ]
+  );
 
   // Keyboard event listener
   useEffect(() => {
@@ -571,7 +680,7 @@ export function CustomCalendar({
     // Previous month's trailing days
     const prevMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 0);
     const daysInPrevMonth = prevMonth.getDate();
-    
+
     for (let i = firstDay - 1; i >= 0; i--) {
       const day = daysInPrevMonth - i;
       const dateKey = `prev-${day}`;
@@ -596,16 +705,19 @@ export function CustomCalendar({
 
     // Current month's days
     for (let day = 1; day <= daysInMonth; day++) {
-      const isSelected = selectedDate ? 
-        selectedDate.getDate() === day && 
-        selectedDate.getMonth() === currentDate.getMonth() &&
-        selectedDate.getFullYear() === currentDate.getFullYear() : false;
-      
-      const isToday = today.getDate() === day && 
+      const isSelected = selectedDate
+        ? selectedDate.getDate() === day &&
+          selectedDate.getMonth() === currentDate.getMonth() &&
+          selectedDate.getFullYear() === currentDate.getFullYear()
+        : false;
+
+      const isToday =
+        today.getDate() === day &&
         today.getMonth() === currentDate.getMonth() &&
         today.getFullYear() === currentDate.getFullYear();
-      
-      const isFocused = (focusedDate === day || (!focusedDate && isSelected)) && viewMode === "calendar";
+
+      const isFocused =
+        (focusedDate === day || (!focusedDate && isSelected)) && viewMode === "calendar";
 
       days.push(
         <button
@@ -628,7 +740,7 @@ export function CustomCalendar({
     // Next month's leading days
     const totalCells = Math.ceil((firstDay + daysInMonth) / 7) * 7;
     const remainingCells = totalCells - (firstDay + daysInMonth);
-    
+
     for (let day = 1; day <= remainingCells; day++) {
       const dateKey = `next-${day}`;
       const isFocused = focusedDate === day && viewMode === "calendar";
@@ -651,7 +763,20 @@ export function CustomCalendar({
     }
 
     return days;
-  }, [currentDate, selectedDate, focusedDate, viewMode, getDaysInMonth, getFirstDayAdjusted, months, getButtonStyles, handleDateSelect, handleDateDoubleClick, handleKeyDown, t]);
+  }, [
+    currentDate,
+    selectedDate,
+    focusedDate,
+    viewMode,
+    getDaysInMonth,
+    getFirstDayAdjusted,
+    months,
+    getButtonStyles,
+    handleDateSelect,
+    handleDateDoubleClick,
+    handleKeyDown,
+    t,
+  ]);
 
   // RTL-aware navigation icons
   // In RTL: left button = next (→), right button = previous (←)
@@ -660,7 +785,7 @@ export function CustomCalendar({
   const NextIcon = direction === "rtl" ? ChevronLeft : ChevronRight;
 
   return (
-    <div 
+    <div
       ref={calendarContainerRef}
       data-calendar-content="true"
       className={cn(calendarStyles, "h-full min-w-[320px]", className)}
@@ -679,18 +804,22 @@ export function CustomCalendar({
                 navigateMonth("prev");
               }
             }}
-            className="p-1 hover:bg-primary/10 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
-            aria-label={viewMode === "year" ? t("common.previousYearRange") || "Previous year range" : t("common.previousMonth") || "Previous month"}
+            className="rounded-md p-1 transition-colors hover:bg-primary/10 focus:outline-none focus:ring-2 focus:ring-primary"
+            aria-label={
+              viewMode === "year"
+                ? t("common.previousYearRange") || "Previous year range"
+                : t("common.previousMonth") || "Previous month"
+            }
           >
             <PrevIcon className="h-4 w-4" aria-hidden="true" />
           </button>
-          
+
           <div className="flex items-center gap-2">
             <Calendar className="h-4 w-4 text-primary" aria-hidden="true" />
             <div className="flex items-center gap-1">
               <button
                 onClick={handleMonthClick}
-                className="px-2 py-1 hover:bg-primary/10 rounded-md transition-colors font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                className="rounded-md px-2 py-1 text-sm font-semibold transition-colors hover:bg-primary/10 focus:outline-none focus:ring-2 focus:ring-primary"
                 aria-label={t("common.selectMonth") || "Select month"}
                 aria-expanded={viewMode === "month"}
               >
@@ -698,7 +827,7 @@ export function CustomCalendar({
               </button>
               <button
                 onClick={handleYearClick}
-                className="px-2 py-1 hover:bg-primary/10 rounded-md transition-colors font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                className="rounded-md px-2 py-1 text-sm font-semibold transition-colors hover:bg-primary/10 focus:outline-none focus:ring-2 focus:ring-primary"
                 aria-label={t("common.selectYear") || "Select year"}
                 aria-expanded={viewMode === "year"}
               >
@@ -706,7 +835,7 @@ export function CustomCalendar({
               </button>
             </div>
           </div>
-          
+
           <button
             onClick={() => {
               if (viewMode === "year") {
@@ -715,8 +844,12 @@ export function CustomCalendar({
                 navigateMonth("next");
               }
             }}
-            className="p-1 hover:bg-primary/10 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
-            aria-label={viewMode === "year" ? t("common.nextYearRange") || "Next year range" : t("common.nextMonth") || "Next month"}
+            className="rounded-md p-1 transition-colors hover:bg-primary/10 focus:outline-none focus:ring-2 focus:ring-primary"
+            aria-label={
+              viewMode === "year"
+                ? t("common.nextYearRange") || "Next year range"
+                : t("common.nextMonth") || "Next month"
+            }
           >
             <NextIcon className="h-4 w-4" aria-hidden="true" />
           </button>
@@ -728,11 +861,11 @@ export function CustomCalendar({
         {viewMode === "calendar" && (
           <>
             {/* Week Days */}
-            <div className="grid grid-cols-7 gap-1 mb-2" role="row">
+            <div className="mb-2 grid grid-cols-7 gap-1" role="row">
               {weekDays.map((day, index) => (
                 <div
                   key={index}
-                  className="w-10 h-10 flex items-center justify-center text-xs font-medium text-muted-foreground"
+                  className="flex h-10 w-10 items-center justify-center text-xs font-medium text-muted-foreground"
                   role="columnheader"
                   aria-label={day}
                 >
@@ -742,9 +875,9 @@ export function CustomCalendar({
             </div>
 
             {/* Calendar Days */}
-            <div 
+            <div
               ref={gridRef}
-              className="grid grid-cols-7 gap-1" 
+              className="grid grid-cols-7 gap-1"
               role="grid"
               aria-label={`${months[currentDate.getMonth()]} ${currentDate.getFullYear()}`}
             >
@@ -754,7 +887,11 @@ export function CustomCalendar({
         )}
 
         {viewMode === "month" && (
-          <div className="grid grid-cols-3 gap-2" role="listbox" aria-label={t("common.selectMonth") || "Select month"}>
+          <div
+            className="grid grid-cols-3 gap-2"
+            role="listbox"
+            aria-label={t("common.selectMonth") || "Select month"}
+          >
             {months.map((month, index) => {
               const isSelected = currentDate.getMonth() === index;
               return (
@@ -763,9 +900,9 @@ export function CustomCalendar({
                   onClick={() => handleMonthSelect(index)}
                   onKeyDown={handleKeyDown}
                   className={cn(
-                    "h-12 px-3 text-sm font-medium rounded-md transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary",
+                    "h-12 rounded-md px-3 text-sm font-medium transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary",
                     isSelected
-                      ? "bg-primary text-primary-foreground font-semibold shadow-md"
+                      ? "bg-primary font-semibold text-primary-foreground shadow-md"
                       : "hover:bg-primary/10 hover:text-primary"
                   )}
                   role="option"
@@ -781,7 +918,11 @@ export function CustomCalendar({
 
         {viewMode === "year" && (
           <>
-            <div className="grid grid-cols-4 gap-2 mb-2" role="listbox" aria-label={t("common.selectYear") || "Select year"}>
+            <div
+              className="mb-2 grid grid-cols-4 gap-2"
+              role="listbox"
+              aria-label={t("common.selectYear") || "Select year"}
+            >
               {Array.from({ length: 12 }, (_, i) => {
                 const year = yearRangeStart + i;
                 const isSelected = currentDate.getFullYear() === year;
@@ -792,12 +933,12 @@ export function CustomCalendar({
                     onClick={() => handleYearSelect(year)}
                     onKeyDown={handleKeyDown}
                     className={cn(
-                      "h-12 px-3 text-sm font-medium rounded-md transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary",
+                      "h-12 rounded-md px-3 text-sm font-medium transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary",
                       isSelected
-                        ? "bg-primary text-primary-foreground font-semibold shadow-md"
+                        ? "bg-primary font-semibold text-primary-foreground shadow-md"
                         : isCurrentYear
-                        ? "bg-primary/20 text-primary font-semibold ring-2 ring-primary/30 hover:bg-primary/30"
-                        : "hover:bg-primary/10 hover:text-primary"
+                          ? "bg-primary/20 font-semibold text-primary ring-2 ring-primary/30 hover:bg-primary/30"
+                          : "hover:bg-primary/10 hover:text-primary"
                     )}
                     role="option"
                     aria-selected={isSelected}
@@ -808,11 +949,11 @@ export function CustomCalendar({
                 );
               })}
             </div>
-            <div className="flex justify-between items-center mt-2 pt-2 border-t border-border">
+            <div className="mt-2 flex items-center justify-between border-t border-border pt-2">
               <button
                 onClick={() => navigateYearRange("prev")}
                 onKeyDown={handleKeyDown}
-                className="px-3 py-1 text-xs text-muted-foreground hover:text-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
+                className="px-3 py-1 text-xs text-muted-foreground transition-colors hover:text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                 aria-label={`${yearRangeStart - 12} - ${yearRangeStart - 1}`}
               >
                 {direction === "rtl" ? `→` : `←`} {yearRangeStart - 12} - {yearRangeStart - 1}
@@ -823,7 +964,7 @@ export function CustomCalendar({
               <button
                 onClick={() => navigateYearRange("next")}
                 onKeyDown={handleKeyDown}
-                className="px-3 py-1 text-xs text-muted-foreground hover:text-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
+                className="px-3 py-1 text-xs text-muted-foreground transition-colors hover:text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                 aria-label={`${yearRangeStart + 12} - ${yearRangeStart + 23}`}
               >
                 {yearRangeStart + 12} - {yearRangeStart + 23} {direction === "rtl" ? `←` : `→`}
@@ -835,8 +976,8 @@ export function CustomCalendar({
 
       {/* Time Picker for datetime-local */}
       {type === "datetime-local" && (
-        <div className="p-4 border-t border-border">
-          <div className="flex items-center gap-2 mb-2">
+        <div className="border-t border-border p-4">
+          <div className="mb-2 flex items-center gap-2">
             <Clock className="h-4 w-4 text-primary" aria-hidden="true" />
             <label htmlFor="time-input" className="text-sm font-medium">
               {t("common.time") || "Time"}
@@ -854,11 +995,11 @@ export function CustomCalendar({
       )}
 
       {/* Action Buttons */}
-      <div className="p-4 border-t border-border flex justify-end gap-2">
+      <div className="flex justify-end gap-2 border-t border-border p-4">
         <button
           onClick={onClose}
           onKeyDown={handleKeyDown}
-          className="px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-primary rounded-md"
+          className="rounded-md px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
           aria-label={t("common.cancel") || "Cancel"}
         >
           {t("common.cancel")}
@@ -873,7 +1014,7 @@ export function CustomCalendar({
               onClose?.();
             }}
             onKeyDown={handleKeyDown}
-            className="px-3 py-1.5 text-sm bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+            className="rounded-md bg-primary px-3 py-1.5 text-sm text-primary-foreground transition-colors hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
             aria-label={t("common.ok") || "OK"}
           >
             {t("common.ok") || "OK"}

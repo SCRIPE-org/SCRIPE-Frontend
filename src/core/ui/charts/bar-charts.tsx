@@ -5,17 +5,17 @@ import { GenericChart, ChartUtils, GENERIC_COLORS } from "./generic-chart";
 import { ResponsiveTabs } from "@core/ui/responsive-tabs";
 import { useI18n } from "@core/providers/i18n-provider";
 import {
-  BarChart3, 
-  Layers, 
-  Activity, 
-  TrendingUp, 
-  Clock, 
+  BarChart3,
+  Layers,
+  Activity,
+  TrendingUp,
+  Clock,
   Target,
   Sparkles,
   Zap,
   PieChart,
   BarChart,
-  ArrowUpDown
+  ArrowUpDown,
 } from "lucide-react";
 
 const barChartVariants = [
@@ -37,7 +37,7 @@ export function ProfessionalBarCharts() {
 
   const getChartData = (variant: string) => {
     const baseLabels = ["Desktop", "Mobile", "Tablet", "TV", "Watch"];
-    
+
     switch (variant) {
       case "basic":
         return {
@@ -63,13 +63,15 @@ export function ProfessionalBarCharts() {
       case "horizontal":
         return {
           labels: ["Marketing", "Sales", "Development", "Support", "Design"],
-          datasets: [{
-            label: "Team Size",
-            data: [12, 19, 3, 5, 2],
-            backgroundColor: GENERIC_COLORS.primary[2] + "80",
-            borderColor: GENERIC_COLORS.primary[2],
-            borderWidth: 2,
-          }],
+          datasets: [
+            {
+              label: "Team Size",
+              data: [12, 19, 3, 5, 2],
+              backgroundColor: GENERIC_COLORS.primary[2] + "80",
+              borderColor: GENERIC_COLORS.primary[2],
+              borderWidth: 2,
+            },
+          ],
         };
 
       case "stacked":
@@ -131,25 +133,27 @@ export function ProfessionalBarCharts() {
       case "waterfall":
         return {
           labels: ["Start", "Sales", "Costs", "Marketing", "End"],
-          datasets: [{
-            label: "Waterfall",
-            data: [100, 150, -50, -20, 180],
-            backgroundColor: [
-              GENERIC_COLORS.primary[0] + "80",
-              GENERIC_COLORS.primary[1] + "80",
-              GENERIC_COLORS.primary[2] + "80",
-              GENERIC_COLORS.primary[3] + "80",
-              GENERIC_COLORS.primary[4] + "80",
-            ],
-            borderColor: [
-              GENERIC_COLORS.primary[0],
-              GENERIC_COLORS.primary[1],
-              GENERIC_COLORS.primary[2],
-              GENERIC_COLORS.primary[3],
-              GENERIC_COLORS.primary[4],
-            ],
-            borderWidth: 2,
-          }],
+          datasets: [
+            {
+              label: "Waterfall",
+              data: [100, 150, -50, -20, 180],
+              backgroundColor: [
+                GENERIC_COLORS.primary[0] + "80",
+                GENERIC_COLORS.primary[1] + "80",
+                GENERIC_COLORS.primary[2] + "80",
+                GENERIC_COLORS.primary[3] + "80",
+                GENERIC_COLORS.primary[4] + "80",
+              ],
+              borderColor: [
+                GENERIC_COLORS.primary[0],
+                GENERIC_COLORS.primary[1],
+                GENERIC_COLORS.primary[2],
+                GENERIC_COLORS.primary[3],
+                GENERIC_COLORS.primary[4],
+              ],
+              borderWidth: 2,
+            },
+          ],
         };
 
       case "floating":
@@ -176,37 +180,43 @@ export function ProfessionalBarCharts() {
       case "gradient":
         return {
           labels: ["Week 1", "Week 2", "Week 3", "Week 4"],
-          datasets: [{
-            label: "Gradient Data",
-            data: [40, 50, 45, 60],
-            backgroundColor: GENERIC_COLORS.primary[0] + "80",
-            borderColor: GENERIC_COLORS.primary[0],
-            borderWidth: 2,
-          }],
+          datasets: [
+            {
+              label: "Gradient Data",
+              data: [40, 50, 45, 60],
+              backgroundColor: GENERIC_COLORS.primary[0] + "80",
+              borderColor: GENERIC_COLORS.primary[0],
+              borderWidth: 2,
+            },
+          ],
         };
 
       case "animated":
         return {
           labels: ["Mon", "Tue", "Wed", "Thu", "Fri"],
-          datasets: [{
-            label: "Animated Data",
-            data: [25, 35, 30, 45, 40],
-            backgroundColor: GENERIC_COLORS.primary[1] + "80",
-            borderColor: GENERIC_COLORS.primary[1],
-            borderWidth: 2,
-          }],
+          datasets: [
+            {
+              label: "Animated Data",
+              data: [25, 35, 30, 45, 40],
+              backgroundColor: GENERIC_COLORS.primary[1] + "80",
+              borderColor: GENERIC_COLORS.primary[1],
+              borderWidth: 2,
+            },
+          ],
         };
 
       case "interactive":
         return {
           labels: ["Q1", "Q2", "Q3", "Q4"],
-          datasets: [{
-            label: "Interactive Data",
-            data: [60, 70, 65, 75],
-            backgroundColor: GENERIC_COLORS.primary[2] + "80",
-            borderColor: GENERIC_COLORS.primary[2],
-            borderWidth: 2,
-          }],
+          datasets: [
+            {
+              label: "Interactive Data",
+              data: [60, 70, 65, 75],
+              backgroundColor: GENERIC_COLORS.primary[2] + "80",
+              borderColor: GENERIC_COLORS.primary[2],
+              borderWidth: 2,
+            },
+          ],
         };
 
       case "multiAxis":
@@ -235,13 +245,15 @@ export function ProfessionalBarCharts() {
       default:
         return {
           labels: baseLabels,
-          datasets: [{
-            label: "Default",
-            data: [10, 20, 15, 25, 20],
-            backgroundColor: GENERIC_COLORS.primary[0] + "80",
-            borderColor: GENERIC_COLORS.primary[0],
-            borderWidth: 2,
-          }],
+          datasets: [
+            {
+              label: "Default",
+              data: [10, 20, 15, 25, 20],
+              backgroundColor: GENERIC_COLORS.primary[0] + "80",
+              borderColor: GENERIC_COLORS.primary[0],
+              borderWidth: 2,
+            },
+          ],
         };
     }
   };
@@ -257,70 +269,75 @@ export function ProfessionalBarCharts() {
           },
         },
       },
-      scales: variant === "horizontal" ? {
-        x: {
-          beginAtZero: true,
-          display: true,
-          title: {
-            display: true,
-            text: "Value",
-          },
-        },
-        y: {
-          beginAtZero: true,
-          display: true,
-          title: {
-            display: true,
-            text: "Category",
-          },
-        },
-      } : variant === "multiAxis" ? {
-        x: {
-          display: true,
-          title: {
-            display: true,
-            text: "Month",
-          },
-        },
-        y: {
-          type: "linear" as const,
-          display: true,
-          position: "left" as const,
-          title: {
-            display: true,
-            text: "Revenue ($)",
-          },
-        },
-        y1: {
-          type: "linear" as const,
-          display: true,
-          position: "right" as const,
-          title: {
-            display: true,
-            text: "Units Sold",
-          },
-          grid: {
-            drawOnChartArea: false,
-          },
-        },
-      } : {
-        x: {
-          display: true,
-          title: {
-            display: true,
-            text: "Category",
-          },
-        },
-        y: {
-          display: true,
-          title: {
-            display: true,
-            text: "Value",
-          },
-          beginAtZero: true,
-          stacked: variant === "stacked",
-        },
-      },
+      scales:
+        variant === "horizontal"
+          ? {
+              x: {
+                beginAtZero: true,
+                display: true,
+                title: {
+                  display: true,
+                  text: "Value",
+                },
+              },
+              y: {
+                beginAtZero: true,
+                display: true,
+                title: {
+                  display: true,
+                  text: "Category",
+                },
+              },
+            }
+          : variant === "multiAxis"
+            ? {
+                x: {
+                  display: true,
+                  title: {
+                    display: true,
+                    text: "Month",
+                  },
+                },
+                y: {
+                  type: "linear" as const,
+                  display: true,
+                  position: "left" as const,
+                  title: {
+                    display: true,
+                    text: "Revenue ($)",
+                  },
+                },
+                y1: {
+                  type: "linear" as const,
+                  display: true,
+                  position: "right" as const,
+                  title: {
+                    display: true,
+                    text: "Units Sold",
+                  },
+                  grid: {
+                    drawOnChartArea: false,
+                  },
+                },
+              }
+            : {
+                x: {
+                  display: true,
+                  title: {
+                    display: true,
+                    text: "Category",
+                  },
+                },
+                y: {
+                  display: true,
+                  title: {
+                    display: true,
+                    text: "Value",
+                  },
+                  beginAtZero: true,
+                  stacked: variant === "stacked",
+                },
+              },
     };
 
     return baseOptions;
@@ -376,11 +393,9 @@ export function ProfessionalBarCharts() {
 
   return (
     <div className="space-y-6">
-      <div className="text-center space-y-2">
+      <div className="space-y-2 text-center">
         <h2 className="text-2xl font-bold">Professional Bar Charts</h2>
-        <p className="text-muted-foreground">
-          Compare categories with horizontal or vertical bars
-        </p>
+        <p className="text-muted-foreground">Compare categories with horizontal or vertical bars</p>
       </div>
 
       <ResponsiveTabs
@@ -399,14 +414,14 @@ export function ProfessionalBarCharts() {
         className="mb-6"
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         {barChartVariants.slice(0, 9).map((variant) => (
           <div
             key={variant.id}
-            className="p-4 border rounded-lg cursor-pointer transition-all hover:shadow-md"
+            className="cursor-pointer rounded-lg border p-4 transition-all hover:shadow-md"
             onClick={() => setActiveVariant(variant.id)}
           >
-            <div className="flex items-center gap-2 mb-2">
+            <div className="mb-2 flex items-center gap-2">
               {variant.icon}
               <span className="font-medium">{variant.label}</span>
             </div>

@@ -9,40 +9,56 @@ import { Button } from "@core/ui/button";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSettings } from "@core/providers/settings-provider";
 import { useToast } from "@core/hooks/use-toast";
-import {
-  Download,
-  Upload,
-  Save,
-  RotateCcw,
-} from "lucide-react";
+import { Download, Upload, Save, RotateCcw } from "lucide-react";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
-const CheckboxRadioTab = dynamic(() => import("./settings/checkbox-radio-tab").then(mod => ({ default: mod.CheckboxRadioTab })), {
-  loading: () => <LoadingSpinner size="sm" />,
-});
+const CheckboxRadioTab = dynamic(
+  () => import("./settings/checkbox-radio-tab").then((mod) => ({ default: mod.CheckboxRadioTab })),
+  {
+    loading: () => <LoadingSpinner size="sm" />,
+  }
+);
 
 // Dynamic imports for heavy components
-const AppearanceTab = dynamic(() => import("./settings").then(mod => ({ default: mod.AppearanceTab })), {
+const AppearanceTab = dynamic(
+  () => import("./settings").then((mod) => ({ default: mod.AppearanceTab })),
+  {
+    loading: () => <LoadingSpinner size="sm" />,
+  }
+);
+const LayoutTab = dynamic(() => import("./settings").then((mod) => ({ default: mod.LayoutTab })), {
   loading: () => <LoadingSpinner size="sm" />,
 });
-const LayoutTab = dynamic(() => import("./settings").then(mod => ({ default: mod.LayoutTab })), {
-  loading: () => <LoadingSpinner size="sm" />,
-});
-const ComponentsTab = dynamic(() => import("./settings").then(mod => ({ default: mod.ComponentsTab })), {
-  loading: () => <LoadingSpinner size="sm" />,
-});
-const TypographyTab = dynamic(() => import("./settings").then(mod => ({ default: mod.TypographyTab })), {
-  loading: () => <LoadingSpinner size="sm" />,
-});
-const BehaviorTab = dynamic(() => import("./settings").then(mod => ({ default: mod.BehaviorTab })), {
-  loading: () => <LoadingSpinner size="sm" />,
-});
-const PreviewPanel = dynamic(() => import("./settings").then(mod => ({ default: mod.PreviewPanel })), {
-  loading: () => <LoadingSpinner size="sm" />,
-});
-const ProfessionalChartsTab = dynamic(() => import("./settings/charts-tab").then(mod => ({ default: mod.ProfessionalChartsTab })), {
-  loading: () => <LoadingSpinner size="sm" />,
-});
+const ComponentsTab = dynamic(
+  () => import("./settings").then((mod) => ({ default: mod.ComponentsTab })),
+  {
+    loading: () => <LoadingSpinner size="sm" />,
+  }
+);
+const TypographyTab = dynamic(
+  () => import("./settings").then((mod) => ({ default: mod.TypographyTab })),
+  {
+    loading: () => <LoadingSpinner size="sm" />,
+  }
+);
+const BehaviorTab = dynamic(
+  () => import("./settings").then((mod) => ({ default: mod.BehaviorTab })),
+  {
+    loading: () => <LoadingSpinner size="sm" />,
+  }
+);
+const PreviewPanel = dynamic(
+  () => import("./settings").then((mod) => ({ default: mod.PreviewPanel })),
+  {
+    loading: () => <LoadingSpinner size="sm" />,
+  }
+);
+const ProfessionalChartsTab = dynamic(
+  () => import("./settings/charts-tab").then((mod) => ({ default: mod.ProfessionalChartsTab })),
+  {
+    loading: () => <LoadingSpinner size="sm" />,
+  }
+);
 
 export function SettingsView() {
   const { t } = useI18n();
@@ -67,9 +83,7 @@ export function SettingsView() {
     });
   };
 
-  const handleImportSettings = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
+  const handleImportSettings = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       const reader = new FileReader();
@@ -123,7 +137,7 @@ export function SettingsView() {
 
   return (
     <TooltipProvider>
-      <div className="container mx-auto p-6 space-y-6">
+      <div className="container mx-auto space-y-6 p-6">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold">{t("settings.pageTitle")}</h1>
@@ -131,12 +145,12 @@ export function SettingsView() {
           </div>
           <div className="flex gap-2">
             <Button variant="outline" onClick={handleExportSettings}>
-              <Download className="h-4 w-4 mx-2" />
+              <Download className="mx-2 h-4 w-4" />
               {t("common.export")}
             </Button>
             <Button variant="outline" asChild>
               <label htmlFor="import-settings" className="cursor-pointer">
-                <Upload className="h-4 w-4 mx-2" />
+                <Upload className="mx-2 h-4 w-4" />
                 {t("common.import")}
               </label>
             </Button>
@@ -147,50 +161,28 @@ export function SettingsView() {
               className="hidden"
               onChange={handleImportSettings}
             />
-            <Button
-              variant="secondary"
-              onClick={handleSaveSettings}
-              disabled={settings.autoSave}
-            >
-              <Save className="h-4 w-4 mx-2" />
+            <Button variant="secondary" onClick={handleSaveSettings} disabled={settings.autoSave}>
+              <Save className="mx-2 h-4 w-4" />
               {t("common.save")}
             </Button>
             <Button variant="destructive" onClick={handleResetSettings}>
-              <RotateCcw className="h-4 w-4 mx-2" />
+              <RotateCcw className="mx-2 h-4 w-4" />
               {t("settings.resetAll")}
             </Button>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-5">
           <div className="lg:col-span-3">
-            <Tabs
-              value={activeTab}
-              onValueChange={setActiveTab}
-              className="space-y-6"
-            >
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
               <TabsList className="grid w-full grid-cols-7">
-                <TabsTrigger value="appearance">
-                  {t("settings.tabs.appearance")}
-                </TabsTrigger>
-                <TabsTrigger value="layout">
-                  {t("settings.tabs.layout")}
-                </TabsTrigger>
-                <TabsTrigger value="components">
-                  {t("settings.tabs.components")}
-                </TabsTrigger>
-                <TabsTrigger value="charts">
-                  {t("settings.tabs.charts")}
-                </TabsTrigger>
-                <TabsTrigger value="checkboxRadio">
-                  {t("settings.tabs.checkboxRadio")}
-                </TabsTrigger>
-                <TabsTrigger value="typography">
-                  {t("settings.tabs.typography")}
-                </TabsTrigger>
-                <TabsTrigger value="behavior">
-                  {t("settings.tabs.behavior")}
-                </TabsTrigger>
+                <TabsTrigger value="appearance">{t("settings.tabs.appearance")}</TabsTrigger>
+                <TabsTrigger value="layout">{t("settings.tabs.layout")}</TabsTrigger>
+                <TabsTrigger value="components">{t("settings.tabs.components")}</TabsTrigger>
+                <TabsTrigger value="charts">{t("settings.tabs.charts")}</TabsTrigger>
+                <TabsTrigger value="checkboxRadio">{t("settings.tabs.checkboxRadio")}</TabsTrigger>
+                <TabsTrigger value="typography">{t("settings.tabs.typography")}</TabsTrigger>
+                <TabsTrigger value="behavior">{t("settings.tabs.behavior")}</TabsTrigger>
               </TabsList>
 
               <TabsContent value="appearance">
@@ -239,4 +231,3 @@ export function SettingsView() {
     </TooltipProvider>
   );
 }
-

@@ -1,9 +1,9 @@
 /**
  * Navigation Domain Models
- * 
+ *
  * Contains all navigation-related domain models including
  * menu items, navigation data, and related structures.
- * 
+ *
  * @version 2.0 - Refactored for new backend contract with granular actions.
  */
 
@@ -58,27 +58,29 @@ export class MenuItem {
     this.slug = data.slug;
     this.nameEn = data.nameEn;
     this.nameAr = data.nameAr;
-    this.name = data.name || data.nameEn || data.nameAr || '';
+    this.name = data.name || data.nameEn || data.nameAr || "";
     this.href = data.href;
     this.icon = data.icon;
     this.order = data.order;
     this.resource = data.resource;
     this.actions = data.actions;
-    this.children = data.children.map(child => new MenuItem(child));
+    this.children = data.children.map((child) => new MenuItem(child));
   }
 
   /**
    * Get localized name based on language
    */
   getLocalizedName(language: string): string {
-    return language === 'ar' ? (this.nameAr || this.nameEn || 'Unnamed') : (this.nameEn || this.nameAr || 'Unnamed');
+    return language === "ar"
+      ? this.nameAr || this.nameEn || "Unnamed"
+      : this.nameEn || this.nameAr || "Unnamed";
   }
 
   /**
    * Get display name for the menu item
    */
   get displayName(): string {
-    return this.name || this.nameEn || 'Unnamed Item';
+    return this.name || this.nameEn || "Unnamed Item";
   }
 
   /**
@@ -131,7 +133,7 @@ export class NavigationData {
   public readonly routes: string[];
 
   constructor(data: NavigationDataData) {
-    this.menuItems = data.menuItems.map(item => new MenuItem(item));
+    this.menuItems = data.menuItems.map((item) => new MenuItem(item));
     this.routes = data.routes;
   }
 
@@ -146,10 +148,10 @@ export class NavigationData {
    * Check if user has access to a specific page
    */
   hasPageAccess(pathname: string): boolean {
-    const cleanPath = pathname.split('?')[0].replace(/\/$/, '') || '/';
+    const cleanPath = pathname.split("?")[0].replace(/\/$/, "") || "/";
 
     // Allow access to root dashboard
-    if (cleanPath === '' || cleanPath === '/') {
+    if (cleanPath === "" || cleanPath === "/") {
       return true;
     }
 
@@ -160,21 +162,21 @@ export class NavigationData {
 
     // Check for case-insensitive match
     const lowerCleanPath = cleanPath.toLowerCase();
-    if (this.routes.some(page => page.toLowerCase() === lowerCleanPath)) {
+    if (this.routes.some((page) => page.toLowerCase() === lowerCleanPath)) {
       return true;
     }
 
     // Check for hierarchical access (parent route grants child access)
-    const pathSegments = cleanPath.split('/').filter(segment => segment !== '');
+    const pathSegments = cleanPath.split("/").filter((segment) => segment !== "");
 
     for (let i = pathSegments.length - 1; i > 0; i--) {
-      const parentPath = '/' + pathSegments.slice(0, i).join('/');
+      const parentPath = "/" + pathSegments.slice(0, i).join("/");
       if (this.routes.includes(parentPath)) {
         return true;
       }
 
       const lowerParentPath = parentPath.toLowerCase();
-      if (this.routes.some(page => page.toLowerCase() === lowerParentPath)) {
+      if (this.routes.some((page) => page.toLowerCase() === lowerParentPath)) {
         return true;
       }
     }
@@ -201,7 +203,7 @@ export class NavigationData {
    * Get actions for a specific page
    */
   getPageActions(pathname: string): MenuItemActions | null {
-    const cleanPath = pathname.split('?')[0].replace(/\/$/, '') || '/';
+    const cleanPath = pathname.split("?")[0].replace(/\/$/, "") || "/";
     const item = this.findMenuItemByHref(cleanPath);
     return item?.actions ?? null;
   }
@@ -234,8 +236,8 @@ export class MenuItemsResponse {
     this.statusCode = data.statusCode;
     this.message = data.message;
     this.data = {
-      menuItems: data.data.menuItems.map(item => new MenuItem(item)),
-      routes: data.data.routes
+      menuItems: data.data.menuItems.map((item) => new MenuItem(item)),
+      routes: data.data.routes,
     };
     this.errors = data.errors;
   }
@@ -252,8 +254,8 @@ export class MenuItemsResponse {
    */
   toNavigationData(): NavigationData {
     return new NavigationData({
-      menuItems: this.data.menuItems.map(item => this.mapMenuItemToData(item)),
-      routes: this.data.routes
+      menuItems: this.data.menuItems.map((item) => this.mapMenuItemToData(item)),
+      routes: this.data.routes,
     });
   }
 
@@ -269,7 +271,7 @@ export class MenuItemsResponse {
       order: item.order,
       resource: item.resource,
       actions: item.actions,
-      children: item.children.map(child => this.mapMenuItemToData(child)),
+      children: item.children.map((child) => this.mapMenuItemToData(child)),
     };
   }
 }

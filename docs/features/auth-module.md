@@ -70,7 +70,7 @@ export function useSignInViewModel() {
     });
 
     const loginMutation = useMutation({
-        mutationFn: (data: LoginSchema) => 
+        mutationFn: (data: LoginSchema) =>
             repo.login(data.username, data.password, navigator.userAgent),
         onSuccess: (response) => {
             if (response.requires2FA) {
@@ -99,13 +99,13 @@ export function useSignInViewModel() {
 ```typescript
 // core/store/useAuthStore.ts
 interface AuthState {
-    accessToken: string | null;
-    refreshToken: string | null;
-    isAuthenticated: boolean;
-    
-    login: (accessToken: string, refreshToken: string) => void;
-    logout: () => void;
-    updateTokens: (tokens: TokenResponse) => void;
+  accessToken: string | null;
+  refreshToken: string | null;
+  isAuthenticated: boolean;
+
+  login: (accessToken: string, refreshToken: string) => void;
+  logout: () => void;
+  updateTokens: (tokens: TokenResponse) => void;
 }
 ```
 
@@ -116,30 +116,30 @@ Tokens persisted to `localStorage` via Zustand's `persist` middleware.
 ```typescript
 // core/network/apiService.ts
 api.interceptors.request.use((config) => {
-    const token = useAuthStore.getState().accessToken;
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
+  const token = useAuthStore.getState().accessToken;
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
 });
 
 api.interceptors.response.use(
-    (response) => response,
-    async (error) => {
-        if (error.response?.status === 401 && !error.config._retry) {
-            error.config._retry = true;
-            try {
-                const newTokens = await refreshTokens();
-                useAuthStore.getState().updateTokens(newTokens);
-                error.config.headers.Authorization = `Bearer ${newTokens.accessToken}`;
-                return api(error.config);
-            } catch {
-                useAuthStore.getState().logout();
-                window.location.href = '/auth/signin';
-            }
-        }
-        throw error;
+  (response) => response,
+  async (error) => {
+    if (error.response?.status === 401 && !error.config._retry) {
+      error.config._retry = true;
+      try {
+        const newTokens = await refreshTokens();
+        useAuthStore.getState().updateTokens(newTokens);
+        error.config.headers.Authorization = `Bearer ${newTokens.accessToken}`;
+        return api(error.config);
+      } catch {
+        useAuthStore.getState().logout();
+        window.location.href = "/auth/signin";
+      }
     }
+    throw error;
+  }
 );
 ```
 
@@ -152,11 +152,11 @@ api.interceptors.response.use(
 ```typescript
 // middleware.ts (Next.js)
 export function middleware(request: NextRequest) {
-    const token = request.cookies.get('auth-token');
-    
-    if (!token && !request.nextUrl.pathname.startsWith('/auth')) {
-        return NextResponse.redirect(new URL('/auth/signin', request.url));
-    }
+  const token = request.cookies.get("auth-token");
+
+  if (!token && !request.nextUrl.pathname.startsWith("/auth")) {
+    return NextResponse.redirect(new URL("/auth/signin", request.url));
+  }
 }
 ```
 
@@ -168,13 +168,13 @@ Prevents "flash of unauthenticated content" during SSR hydration:
 // core/providers/AuthGuard.tsx
 export function AuthGuard({ children }) {
     const { isAuthenticated, isHydrated } = useAuthStore();
-    
+
     if (!isHydrated) return <LoadingScreen />;
     if (!isAuthenticated) {
         redirect('/auth/signin');
         return null;
     }
-    
+
     return children;
 }
 ```
@@ -184,6 +184,7 @@ export function AuthGuard({ children }) {
 ## 2FA Verification UI
 
 The 2FA step shows:
+
 - 6-digit OTP input (forced LTR direction for RTL languages)
 - Auto-submit on 6 digits entered
 - Premium styling with shake animation on error

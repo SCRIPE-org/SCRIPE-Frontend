@@ -1,15 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import {
-  Shield,
-  ArrowLeft,
-  Home,
-  AlertTriangle,
-  Lock,
-  HelpCircle,
-  ArrowRight,
-} from "lucide-react";
+import { Shield, ArrowLeft, Home, AlertTriangle, Lock, HelpCircle, ArrowRight } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import {
   Card,
@@ -28,42 +20,42 @@ export default function NotAuthorizedView() {
   const { t, language } = useI18n();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-muted/20 flex items-center justify-center p-4">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-background via-background/95 to-muted/20 p-4">
       <div className="w-full max-w-2xl space-y-6">
         {/* Main Error Card */}
-        <Card className="text-center relative overflow-hidden">
+        <Card className="relative overflow-hidden text-center">
           {/* Background Pattern */}
-          <div className="absolute inset-0 bg-gradient-to-br from-destructive/5 via-transparent to-destructive/10 pointer-events-none" />
-          <div className="absolute top-0 right-0 w-32 h-32 bg-destructive/5 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute bottom-0 left-0 w-24 h-24 bg-primary/5 rounded-full blur-2xl pointer-events-none" />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-destructive/5 via-transparent to-destructive/10" />
+          <div className="pointer-events-none absolute right-0 top-0 h-32 w-32 rounded-full bg-destructive/5 blur-3xl" />
+          <div className="pointer-events-none absolute bottom-0 left-0 h-24 w-24 rounded-full bg-primary/5 blur-2xl" />
 
           <CardHeader className="relative">
             {/* Icon with animated glow */}
-            <div className="mx-auto mb-4 relative">
-              <div className="w-24 h-24 bg-gradient-to-br from-destructive/20 to-destructive/10 rounded-full flex items-center justify-center relative">
-                <div className="absolute inset-0 bg-destructive/20 rounded-full animate-pulse pointer-events-none" />
-                <Shield className="w-12 h-12 text-destructive relative z-10" />
+            <div className="relative mx-auto mb-4">
+              <div className="relative flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-destructive/20 to-destructive/10">
+                <div className="pointer-events-none absolute inset-0 animate-pulse rounded-full bg-destructive/20" />
+                <Shield className="relative z-10 h-12 w-12 text-destructive" />
               </div>
             </div>
 
-            <CardTitle className="text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">
+            <CardTitle className="bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-3xl font-bold text-transparent">
               {t("notAuthorized.title")}
             </CardTitle>
 
-            <CardDescription className="text-lg mt-2">
+            <CardDescription className="mt-2 text-lg">
               {t("notAuthorized.description")}
             </CardDescription>
           </CardHeader>
 
-          <CardContent className="space-y-6 relative z-10">
+          <CardContent className="relative z-10 space-y-6">
             {/* Status Alert */}
             <div className="relative w-full rounded-lg border border-destructive/20 bg-destructive/5 p-4">
               <div
                 className={`flex items-start ${
-                  language === "ar" ? "space-x-reverse space-x-3" : "space-x-3"
+                  language === "ar" ? "space-x-3 space-x-reverse" : "space-x-3"
                 }`}
               >
-                <AlertTriangle className="text-destructive mt-0.5 flex-shrink-0" />
+                <AlertTriangle className="mt-0.5 flex-shrink-0 text-destructive" />
                 <div className={language === "ar" ? "text-right" : "text-left"}>
                   <strong className="text-destructive">
                     {t("notAuthorized.accessDeniedAlert")}
@@ -74,7 +66,7 @@ export default function NotAuthorizedView() {
             </div>
 
             {/* Action Buttons */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 relative z-20">
+            <div className="relative z-20 grid grid-cols-1 gap-4 sm:grid-cols-2">
               <Button
                 onClick={() => {
                   appLogger.ui("Back button clicked");
@@ -83,13 +75,13 @@ export default function NotAuthorizedView() {
                 }}
                 variant="default"
                 size="lg"
-                className="w-full group relative z-30 cursor-pointer"
+                className="group relative z-30 w-full cursor-pointer"
                 type="button"
               >
                 {language == "en" ? (
-                  <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform " />
+                  <ArrowLeft className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1" />
                 ) : (
-                  <ArrowRight className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform " />
+                  <ArrowRight className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1" />
                 )}
                 {t("notAuthorized.goBack")}
               </Button>
@@ -101,24 +93,24 @@ export default function NotAuthorizedView() {
                 }}
                 variant="outline"
                 size="lg"
-                className="w-full group relative z-30 cursor-pointer"
+                className="group relative z-30 w-full cursor-pointer"
                 type="button"
               >
-                <Home className="w-4 h-4 mx-2 group-hover:scale-110 transition-transform" />
+                <Home className="mx-2 h-4 w-4 transition-transform group-hover:scale-110" />
                 {t("notAuthorized.goHome")}
               </Button>
             </div>
           </CardContent>
 
           <CardFooter className="flex-col space-y-4">
-            <div className="w-full h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+            <div className="h-px w-full bg-gradient-to-r from-transparent via-border to-transparent" />
 
             <div
               className={`flex items-center justify-center text-sm text-muted-foreground ${
-                language === "ar" ? "space-x-reverse space-x-2" : "space-x-2"
+                language === "ar" ? "space-x-2 space-x-reverse" : "space-x-2"
               }`}
             >
-              <HelpCircle className="w-4 h-4" />
+              <HelpCircle className="h-4 w-4" />
               <span>{t("notAuthorized.contactAdmin")}</span>
             </div>
           </CardFooter>
@@ -129,17 +121,17 @@ export default function NotAuthorizedView() {
           <CardContent className="pt-6">
             <div
               className={`flex items-start ${
-                language === "ar" ? "space-x-reverse space-x-4" : "space-x-4"
+                language === "ar" ? "space-x-4 space-x-reverse" : "space-x-4"
               }`}
             >
-              <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                <Lock className="w-5 h-5 text-primary" />
+              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                <Lock className="h-5 w-5 text-primary" />
               </div>
               <div className="space-y-2">
                 <h3 className="font-semibold text-foreground">
                   {t("notAuthorized.needAccessTitle")}
                 </h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">
+                <p className="text-sm leading-relaxed text-muted-foreground">
                   {t("notAuthorized.needAccessDescription")}
                 </p>
               </div>

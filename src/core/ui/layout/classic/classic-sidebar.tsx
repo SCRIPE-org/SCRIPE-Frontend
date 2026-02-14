@@ -13,9 +13,9 @@ import { LogoutButton } from "@core/ui/layout/shared/logout-button";
 import { useDynamicNavigation } from "@core/ui/navigation/dynamic-navigation";
 
 interface ClassicSidebarProps {
-      open: boolean;
-      onOpenChange: (open: boolean) => void;
-      collapsible: boolean;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  collapsible: boolean;
 }
 
 /**
@@ -28,124 +28,122 @@ interface ClassicSidebarProps {
  * - Section dividers with subtle spacing
  * - UserCard at top, LogoutButton + version at bottom
  */
-export function ClassicSidebar({
-      open,
-      onOpenChange,
-      collapsible,
-}: ClassicSidebarProps) {
-      const { t, direction } = useI18n();
-      const [searchQuery, setSearchQuery] = useState("");
-      const allItems = useDynamicNavigation();
+export function ClassicSidebar({ open, onOpenChange, collapsible }: ClassicSidebarProps) {
+  const { t, direction } = useI18n();
+  const [searchQuery, setSearchQuery] = useState("");
+  const allItems = useDynamicNavigation();
 
-      // Filter nav items by search query (recursive)
-      const filteredItems = useMemo(() => {
-            if (!searchQuery.trim()) return allItems;
-            const q = searchQuery.toLowerCase();
-            const filterItems = (items: typeof allItems): typeof allItems =>
-                  items
-                        .map((item) => {
-                              const nameMatch = item.name.toLowerCase().includes(q);
-                              const filteredChildren = item.children
-                                    ? filterItems(item.children)
-                                    : [];
-                              if (nameMatch || filteredChildren.length > 0) {
-                                    return { ...item, children: filteredChildren.length > 0 ? filteredChildren : item.children };
-                              }
-                              return null;
-                        })
-                        .filter(Boolean) as typeof allItems;
-            return filterItems(allItems);
-      }, [allItems, searchQuery]);
+  // Filter nav items by search query (recursive)
+  const filteredItems = useMemo(() => {
+    if (!searchQuery.trim()) return allItems;
+    const q = searchQuery.toLowerCase();
+    const filterItems = (items: typeof allItems): typeof allItems =>
+      items
+        .map((item) => {
+          const nameMatch = item.name.toLowerCase().includes(q);
+          const filteredChildren = item.children ? filterItems(item.children) : [];
+          if (nameMatch || filteredChildren.length > 0) {
+            return {
+              ...item,
+              children: filteredChildren.length > 0 ? filteredChildren : item.children,
+            };
+          }
+          return null;
+        })
+        .filter(Boolean) as typeof allItems;
+    return filterItems(allItems);
+  }, [allItems, searchQuery]);
 
-      return (
-            <>
-                  {/* Sidebar panel */}
-                  <aside
-                        dir={direction}
-                        className={cn(
-                              "fixed top-0 bottom-0 z-50 flex flex-col w-72",
-                              "bg-sidebar border-sidebar-border",
-                              direction === "rtl"
-                                    ? "right-0 border-l"
-                                    : "left-0 border-r",
-                              "transition-transform duration-300 ease-in-out",
-                              // Mobile: slide in/out
-                              !open && (direction === "rtl"
-                                    ? "translate-x-full lg:translate-x-0"
-                                    : "-translate-x-full lg:translate-x-0"),
-                              open && "translate-x-0"
-                        )}
-                  >
-                        {/* ── Logo Header ── */}
-                        <div className="flex items-center justify-between px-5 py-4 border-b border-sidebar-border/50">
-                              <div className="flex items-center gap-3">
-                                    <div className="w-9 h-9 bg-primary rounded-lg flex items-center justify-center shadow-sm">
-                                          <Logo size="sm" className="text-primary-foreground" />
-                                    </div>
-                                    <div>
-                                          <h1 className="text-sm font-bold text-sidebar-foreground leading-tight">
-                                                {t("app.title")}
-                                          </h1>
-                                          <p className="text-[10px] text-sidebar-foreground/50 leading-tight">
-                                                {t("app.version")}
-                                          </p>
-                                    </div>
-                              </div>
+  return (
+    <>
+      {/* Sidebar panel */}
+      <aside
+        dir={direction}
+        className={cn(
+          "fixed bottom-0 top-0 z-50 flex w-72 flex-col",
+          "border-sidebar-border bg-sidebar",
+          direction === "rtl" ? "right-0 border-l" : "left-0 border-r",
+          "transition-transform duration-300 ease-in-out",
+          // Mobile: slide in/out
+          !open &&
+            (direction === "rtl"
+              ? "translate-x-full lg:translate-x-0"
+              : "-translate-x-full lg:translate-x-0"),
+          open && "translate-x-0"
+        )}
+      >
+        {/* ── Logo Header ── */}
+        <div className="flex items-center justify-between border-b border-sidebar-border/50 px-5 py-4">
+          <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary shadow-sm">
+              <Logo size="sm" className="text-primary-foreground" />
+            </div>
+            <div>
+              <h1 className="text-sm font-bold leading-tight text-sidebar-foreground">
+                {t("app.title")}
+              </h1>
+              <p className="text-[10px] leading-tight text-sidebar-foreground/50">
+                {t("app.version")}
+              </p>
+            </div>
+          </div>
 
-                              {/* Close button — mobile only */}
-                              <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="lg:hidden text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent rounded-lg h-8 w-8"
-                                    onClick={() => onOpenChange(false)}
-                              >
-                                    <X className="w-4 h-4" />
-                              </Button>
-                        </div>
+          {/* Close button — mobile only */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 rounded-lg text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-foreground lg:hidden"
+            onClick={() => onOpenChange(false)}
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
 
-                        {/* ── User Card ── */}
-                        <div className="px-4 py-3 border-b border-sidebar-border/30">
-                              <UserCard size="md" />
-                        </div>
+        {/* ── User Card ── */}
+        <div className="border-b border-sidebar-border/30 px-4 py-3">
+          <UserCard size="md" />
+        </div>
 
-                        {/* ── Quick Search ── */}
-                        <div className="px-4 py-3">
-                              <div className="relative">
-                                    <Search className={cn(
-                                          "absolute top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-sidebar-foreground/40",
-                                          direction === "rtl" ? "right-3" : "left-3"
-                                    )} />
-                                    <Input
-                                          type="text"
-                                          placeholder={t("common.search") || "Search..."}
-                                          value={searchQuery}
-                                          onChange={(e) => setSearchQuery(e.target.value)}
-                                          className={cn(
-                                                "h-8 text-xs bg-sidebar-accent/50 border-sidebar-border/30",
-                                                "placeholder:text-sidebar-foreground/30 text-sidebar-foreground",
-                                                "focus:bg-sidebar-accent focus:border-primary/30 rounded-lg",
-                                                direction === "rtl" ? "pr-9 pl-3" : "pl-9 pr-3"
-                                          )}
-                                    />
-                              </div>
-                        </div>
+        {/* ── Quick Search ── */}
+        <div className="px-4 py-3">
+          <div className="relative">
+            <Search
+              className={cn(
+                "absolute top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-sidebar-foreground/40",
+                direction === "rtl" ? "right-3" : "left-3"
+              )}
+            />
+            <Input
+              type="text"
+              placeholder={t("common.search") || "Search..."}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className={cn(
+                "h-8 border-sidebar-border/30 bg-sidebar-accent/50 text-xs",
+                "text-sidebar-foreground placeholder:text-sidebar-foreground/30",
+                "rounded-lg focus:border-primary/30 focus:bg-sidebar-accent",
+                direction === "rtl" ? "pl-3 pr-9" : "pl-9 pr-3"
+              )}
+            />
+          </div>
+        </div>
 
-                        {/* ── Navigation ── */}
-                        <div className="flex-1 px-3 pb-3 overflow-y-auto scrollbar-thin">
-                              <NavRenderer
-                                    variant="default"
-                                    items={filteredItems}
-                                    onNavigate={() => {
-                                          if (window.innerWidth < 1024) onOpenChange(false);
-                                    }}
-                              />
-                        </div>
+        {/* ── Navigation ── */}
+        <div className="scrollbar-thin flex-1 overflow-y-auto px-3 pb-3">
+          <NavRenderer
+            variant="default"
+            items={filteredItems}
+            onNavigate={() => {
+              if (window.innerWidth < 1024) onOpenChange(false);
+            }}
+          />
+        </div>
 
-                        {/* ── Footer ── */}
-                        <div className="px-3 py-3 border-t border-sidebar-border/30">
-                              <LogoutButton />
-                        </div>
-                  </aside>
-            </>
-      );
+        {/* ── Footer ── */}
+        <div className="border-t border-sidebar-border/30 px-3 py-3">
+          <LogoutButton />
+        </div>
+      </aside>
+    </>
+  );
 }

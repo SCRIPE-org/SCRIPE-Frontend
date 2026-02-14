@@ -21,6 +21,7 @@ Copy-Item -Recurse "src/modules/_template" "src/modules/{module-name}"
 ```
 
 Example for creating an RFQ module:
+
 ```powershell
 Copy-Item -Recurse "src/modules/_template" "src/modules/rfq"
 ```
@@ -33,13 +34,13 @@ Create your Zod schemas in `src/modules/{name}/src/domain/entities/`:
 
 ```typescript
 // src/modules/rfq/src/domain/entities/RFQ.ts
-import { z } from 'zod';
+import { z } from "zod";
 
 export const RFQSchema = z.object({
   id: z.string().uuid(),
   title: z.string().min(1),
   description: z.string(),
-  status: z.enum(['draft', 'published', 'closed']),
+  status: z.enum(["draft", "published", "closed"]),
   deadline: z.coerce.date(),
   createdAt: z.coerce.date(),
 });
@@ -55,14 +56,14 @@ Create the contract in `src/modules/{name}/src/domain/interfaces/`:
 
 ```typescript
 // src/modules/rfq/src/domain/interfaces/IRFQRepository.ts
-import { Result } from '@core/common/Result';
-import { AppError } from '@core/common/AppError';
-import { RFQ } from '../entities/RFQ';
+import { Result } from "@core/common/Result";
+import { AppError } from "@core/common/AppError";
+import { RFQ } from "../entities/RFQ";
 
 export interface IRFQRepository {
   getAll(): Promise<Result<RFQ[], AppError>>;
   getById(id: string): Promise<Result<RFQ, AppError>>;
-  create(data: Omit<RFQ, 'id' | 'createdAt'>): Promise<Result<RFQ, AppError>>;
+  create(data: Omit<RFQ, "id" | "createdAt">): Promise<Result<RFQ, AppError>>;
   update(id: string, data: Partial<RFQ>): Promise<Result<RFQ, AppError>>;
   delete(id: string): Promise<Result<void, AppError>>;
 }
@@ -90,8 +91,8 @@ Create mappers in `src/modules/{name}/src/data/mappers/`:
 
 ```typescript
 // src/modules/rfq/src/data/mappers/RFQMapper.ts
-import { RFQ } from '../../domain/entities/RFQ';
-import { RFQDto } from '../models/RFQDto';
+import { RFQ } from "../../domain/entities/RFQ";
+import { RFQDto } from "../models/RFQDto";
 
 export const RFQMapper = {
   toDomain(dto: RFQDto): RFQ {
@@ -99,13 +100,13 @@ export const RFQMapper = {
       id: dto.rfq_id,
       title: dto.title,
       description: dto.description,
-      status: dto.status as RFQ['status'],
+      status: dto.status as RFQ["status"],
       deadline: new Date(dto.deadline),
       createdAt: new Date(dto.created_at),
     };
   },
-  
-  toDto(entity: Omit<RFQ, 'id' | 'createdAt'>): Omit<RFQDto, 'rfq_id' | 'created_at'> {
+
+  toDto(entity: Omit<RFQ, "id" | "createdAt">): Omit<RFQDto, "rfq_id" | "created_at"> {
     return {
       title: entity.title,
       description: entity.description,
@@ -124,24 +125,24 @@ Create implementation in `src/modules/{name}/src/data/repositories/`:
 
 ```typescript
 // src/modules/rfq/src/data/repositories/RFQRepository.ts
-import { IRFQRepository } from '../../domain/interfaces/IRFQRepository';
-import { RFQ } from '../../domain/entities/RFQ';
-import { Result, ok, err } from '@core/common/Result';
-import { AppError } from '@core/common/AppError';
-import { apiService } from '@core/network';
-import { RFQMapper } from '../mappers/RFQMapper';
-import { RFQDto } from '../models/RFQDto';
+import { IRFQRepository } from "../../domain/interfaces/IRFQRepository";
+import { RFQ } from "../../domain/entities/RFQ";
+import { Result, ok, err } from "@core/common/Result";
+import { AppError } from "@core/common/AppError";
+import { apiService } from "@core/network";
+import { RFQMapper } from "../mappers/RFQMapper";
+import { RFQDto } from "../models/RFQDto";
 
 export class RFQRepository implements IRFQRepository {
   async getAll(): Promise<Result<RFQ[], AppError>> {
     try {
-      const response = await apiService.get<RFQDto[]>('/rfqs');
+      const response = await apiService.get<RFQDto[]>("/rfqs");
       return ok(response.data.map(RFQMapper.toDomain));
     } catch (error) {
       return err(AppError.fromUnknown(error));
     }
   }
-  
+
   // Implement other methods...
 }
 ```
@@ -154,8 +155,8 @@ Update `src/modules/{name}/di.ts`:
 
 ```typescript
 // src/modules/rfq/di.ts
-import { RFQRepository } from './src/data/repositories/RFQRepository';
-import type { IRFQRepository } from './src/domain/interfaces/IRFQRepository';
+import { RFQRepository } from "./src/data/repositories/RFQRepository";
+import type { IRFQRepository } from "./src/domain/interfaces/IRFQRepository";
 
 export interface RFQContainer {
   rfqRepository: IRFQRepository;
@@ -176,20 +177,20 @@ Create hooks in `src/modules/{name}/src/presentation/viewmodels/`:
 
 ```typescript
 // src/modules/rfq/src/presentation/viewmodels/useRFQs.ts
-'use client';
+"use client";
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { container } from '../../di';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { container } from "../../di";
 
 export const rfqKeys = {
-  all: ['rfqs'] as const,
-  list: () => [...rfqKeys.all, 'list'] as const,
-  detail: (id: string) => [...rfqKeys.all, 'detail', id] as const,
+  all: ["rfqs"] as const,
+  list: () => [...rfqKeys.all, "list"] as const,
+  detail: (id: string) => [...rfqKeys.all, "detail", id] as const,
 };
 
 export function useRFQs() {
   const repo = container.rfqRepository;
-  
+
   return useQuery({
     queryKey: rfqKeys.list(),
     queryFn: async () => {
@@ -215,10 +216,10 @@ import { useRFQs } from '../viewmodels/useRFQs';
 
 export function RFQListView() {
   const { data, isLoading, error } = useRFQs();
-  
+
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
-  
+
   return (
     <ul>
       {data?.map(rfq => (

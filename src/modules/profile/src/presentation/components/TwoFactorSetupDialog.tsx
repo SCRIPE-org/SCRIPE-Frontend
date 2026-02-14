@@ -11,12 +11,12 @@
 import { useState, useCallback } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import {
-      Dialog,
-      DialogContent,
-      DialogHeader,
-      DialogTitle,
-      DialogDescription,
-      DialogFooter,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
 } from "@core/ui/dialog";
 import { Button } from "@core/ui/button";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@core/ui/input-otp";
@@ -27,284 +27,269 @@ import type { Enable2FAResult } from "../../../src/domain/interfaces/IProfileRep
 type SetupStep = "qr-code" | "verify" | "backup-codes";
 
 interface TwoFactorSetupDialogProps {
-      open: boolean;
-      onOpenChange: (open: boolean) => void;
-      setupData: Enable2FAResult | null;
-      onConfirm: (code: string) => Promise<void>;
-      isConfirming: boolean;
-      confirmError: string | null;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  setupData: Enable2FAResult | null;
+  onConfirm: (code: string) => Promise<void>;
+  isConfirming: boolean;
+  confirmError: string | null;
 }
 
 export function TwoFactorSetupDialog({
-      open,
-      onOpenChange,
-      setupData,
-      onConfirm,
-      isConfirming,
-      confirmError,
+  open,
+  onOpenChange,
+  setupData,
+  onConfirm,
+  isConfirming,
+  confirmError,
 }: TwoFactorSetupDialogProps) {
-      const { t } = useI18n();
-      const [step, setStep] = useState<SetupStep>("qr-code");
-      const [code, setCode] = useState("");
-      const [error, setError] = useState("");
-      const [copiedKey, setCopiedKey] = useState(false);
+  const { t } = useI18n();
+  const [step, setStep] = useState<SetupStep>("qr-code");
+  const [code, setCode] = useState("");
+  const [error, setError] = useState("");
+  const [copiedKey, setCopiedKey] = useState(false);
 
-      const handleVerify = useCallback(async () => {
-            if (code.length < 6) {
-                  setError(t("auth.twoFactor.enterCode"));
-                  return;
-            }
-            setError("");
-            try {
-                  await onConfirm(code);
-                  setStep("backup-codes");
-            } catch (err) {
-                  setError(
-                        err instanceof Error
-                              ? err.message
-                              : t("auth.twoFactor.invalidCode")
-                  );
-            }
-      }, [code, onConfirm, t]);
+  const handleVerify = useCallback(async () => {
+    if (code.length < 6) {
+      setError(t("auth.twoFactor.enterCode"));
+      return;
+    }
+    setError("");
+    try {
+      await onConfirm(code);
+      setStep("backup-codes");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t("auth.twoFactor.invalidCode"));
+    }
+  }, [code, onConfirm, t]);
 
-      const handleCopyKey = useCallback(() => {
-            if (setupData?.manualEntryKey) {
-                  navigator.clipboard.writeText(setupData.manualEntryKey);
-                  setCopiedKey(true);
-                  setTimeout(() => setCopiedKey(false), 2000);
-            }
-      }, [setupData]);
+  const handleCopyKey = useCallback(() => {
+    if (setupData?.manualEntryKey) {
+      navigator.clipboard.writeText(setupData.manualEntryKey);
+      setCopiedKey(true);
+      setTimeout(() => setCopiedKey(false), 2000);
+    }
+  }, [setupData]);
 
-      const handleDownloadCodes = useCallback(() => {
-            if (!setupData?.backupCodes) return;
-            const content = [
-                  "=== TWO-FACTOR AUTHENTICATION BACKUP CODES ===",
-                  "",
-                  "Store these codes in a safe place.",
-                  "Each code can only be used once.",
-                  "",
-                  ...setupData.backupCodes.map((code, i) => `${i + 1}. ${code}`),
-                  "",
-                  `Generated: ${new Date().toISOString()}`,
-            ].join("\n");
-            const blob = new Blob([content], { type: "text/plain" });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = "2fa-backup-codes.txt";
-            a.click();
-            URL.revokeObjectURL(url);
-      }, [setupData]);
+  const handleDownloadCodes = useCallback(() => {
+    if (!setupData?.backupCodes) return;
+    const content = [
+      "=== TWO-FACTOR AUTHENTICATION BACKUP CODES ===",
+      "",
+      "Store these codes in a safe place.",
+      "Each code can only be used once.",
+      "",
+      ...setupData.backupCodes.map((code, i) => `${i + 1}. ${code}`),
+      "",
+      `Generated: ${new Date().toISOString()}`,
+    ].join("\n");
+    const blob = new Blob([content], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "2fa-backup-codes.txt";
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [setupData]);
 
-      const handleClose = useCallback(
-            (isOpen: boolean) => {
-                  if (!isOpen) {
-                        // Reset state when closing
-                        setStep("qr-code");
-                        setCode("");
-                        setError("");
-                        setCopiedKey(false);
-                  }
-                  onOpenChange(isOpen);
-            },
-            [onOpenChange]
-      );
+  const handleClose = useCallback(
+    (isOpen: boolean) => {
+      if (!isOpen) {
+        // Reset state when closing
+        setStep("qr-code");
+        setCode("");
+        setError("");
+        setCopiedKey(false);
+      }
+      onOpenChange(isOpen);
+    },
+    [onOpenChange]
+  );
 
-      if (!setupData) return null;
+  if (!setupData) return null;
 
-      return (
-            <Dialog open={open} onOpenChange={handleClose}>
-                  <DialogContent className="sm:max-w-lg">
-                        {/* Step 1: QR Code */}
-                        {step === "qr-code" && (
-                              <>
-                                    <DialogHeader>
-                                          <div className="flex items-center gap-2">
-                                                <QrCode className="h-5 w-5 text-primary" />
-                                                <DialogTitle>
-                                                      {t("profile.security.twoFactor.setup.scanQR")}
-                                                </DialogTitle>
-                                          </div>
-                                          <DialogDescription>
-                                                {t("profile.security.twoFactor.setup.scanDescription")}
-                                          </DialogDescription>
-                                    </DialogHeader>
+  return (
+    <Dialog open={open} onOpenChange={handleClose}>
+      <DialogContent className="sm:max-w-lg">
+        {/* Step 1: QR Code */}
+        {step === "qr-code" && (
+          <>
+            <DialogHeader>
+              <div className="flex items-center gap-2">
+                <QrCode className="h-5 w-5 text-primary" />
+                <DialogTitle>{t("profile.security.twoFactor.setup.scanQR")}</DialogTitle>
+              </div>
+              <DialogDescription>
+                {t("profile.security.twoFactor.setup.scanDescription")}
+              </DialogDescription>
+            </DialogHeader>
 
-                                    <div className="flex flex-col items-center gap-4 py-4">
-                                          {/* QR Code Image */}
-                                          <div className="p-4 bg-white rounded-xl">
-                                                {/* eslint-disable-next-line @next/next/no-img-element */}
-                                                <img
-                                                      src={setupData.qrCodeDataUri}
-                                                      alt="2FA QR Code"
-                                                      className="w-48 h-48"
-                                                />
-                                          </div>
+            <div className="flex flex-col items-center gap-4 py-4">
+              {/* QR Code Image */}
+              <div className="rounded-xl bg-white p-4">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={setupData.qrCodeDataUri} alt="2FA QR Code" className="h-48 w-48" />
+              </div>
 
-                                          {/* Manual Entry Key */}
-                                          <div className="w-full">
-                                                <p className="text-xs text-muted-foreground mb-2 text-center">
-                                                      {t("profile.security.twoFactor.setup.manualEntry")}
-                                                </p>
-                                                <div className="flex items-center gap-2 p-3 bg-muted/50 rounded-lg">
-                                                      <code className="flex-1 text-sm font-mono text-center tracking-wider break-all">
-                                                            {setupData.manualEntryKey}
-                                                      </code>
-                                                      <Button
-                                                            variant="ghost"
-                                                            size="icon"
-                                                            className="flex-shrink-0 h-8 w-8"
-                                                            onClick={handleCopyKey}
-                                                      >
-                                                            {copiedKey ? (
-                                                                  <Check className="h-3.5 w-3.5 text-emerald-500" />
-                                                            ) : (
-                                                                  <Copy className="h-3.5 w-3.5" />
-                                                            )}
-                                                      </Button>
-                                                </div>
-                                          </div>
-                                    </div>
+              {/* Manual Entry Key */}
+              <div className="w-full">
+                <p className="mb-2 text-center text-xs text-muted-foreground">
+                  {t("profile.security.twoFactor.setup.manualEntry")}
+                </p>
+                <div className="flex items-center gap-2 rounded-lg bg-muted/50 p-3">
+                  <code className="flex-1 break-all text-center font-mono text-sm tracking-wider">
+                    {setupData.manualEntryKey}
+                  </code>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 flex-shrink-0"
+                    onClick={handleCopyKey}
+                  >
+                    {copiedKey ? (
+                      <Check className="h-3.5 w-3.5 text-emerald-500" />
+                    ) : (
+                      <Copy className="h-3.5 w-3.5" />
+                    )}
+                  </Button>
+                </div>
+              </div>
+            </div>
 
-                                    <DialogFooter>
-                                          <Button
-                                                variant="outline"
-                                                onClick={() => handleClose(false)}
-                                          >
-                                                {t("common.cancel")}
-                                          </Button>
-                                          <Button onClick={() => setStep("verify")}>
-                                                {t("common.next")}
-                                          </Button>
-                                    </DialogFooter>
-                              </>
-                        )}
+            <DialogFooter>
+              <Button variant="outline" onClick={() => handleClose(false)}>
+                {t("common.cancel")}
+              </Button>
+              <Button onClick={() => setStep("verify")}>{t("common.next")}</Button>
+            </DialogFooter>
+          </>
+        )}
 
-                        {/* Step 2: Verify Code */}
-                        {step === "verify" && (
-                              <>
-                                    <DialogHeader>
-                                          <div className="flex items-center gap-2">
-                                                <ShieldCheck className="h-5 w-5 text-primary" />
-                                                <DialogTitle>
-                                                      {t("profile.security.twoFactor.setup.verifyTitle")}
-                                                </DialogTitle>
-                                          </div>
-                                          <DialogDescription>
-                                                {t("profile.security.twoFactor.setup.verifyDescription")}
-                                          </DialogDescription>
-                                    </DialogHeader>
+        {/* Step 2: Verify Code */}
+        {step === "verify" && (
+          <>
+            <DialogHeader>
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="h-5 w-5 text-primary" />
+                <DialogTitle>{t("profile.security.twoFactor.setup.verifyTitle")}</DialogTitle>
+              </div>
+              <DialogDescription>
+                {t("profile.security.twoFactor.setup.verifyDescription")}
+              </DialogDescription>
+            </DialogHeader>
 
-                                    <div className="flex flex-col items-center gap-4 py-6">
-                                          {(error || confirmError) && (
-                                                <div className="w-full p-3.5 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-sm flex items-center gap-2.5">
-                                                      <div className="h-5 w-5 rounded-full bg-destructive/20 flex items-center justify-center flex-shrink-0">
-                                                            <span className="text-xs font-bold">!</span>
-                                                      </div>
-                                                      <span>{error || confirmError}</span>
-                                                </div>
-                                          )}
+            <div className="flex flex-col items-center gap-4 py-6">
+              {(error || confirmError) && (
+                <div className="flex w-full items-center gap-2.5 rounded-xl border border-destructive/20 bg-destructive/10 p-3.5 text-sm text-destructive">
+                  <div className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-destructive/20">
+                    <span className="text-xs font-bold">!</span>
+                  </div>
+                  <span>{error || confirmError}</span>
+                </div>
+              )}
 
-                                          <div dir="ltr">
-                                                <InputOTP
-                                                      maxLength={6}
-                                                      value={code}
-                                                      onChange={setCode}
-                                                      disabled={isConfirming}
-                                                      onComplete={handleVerify}
-                                                      className="gap-2"
-                                                >
-                                                      <InputOTPGroup className="gap-1.5">
-                                                            <InputOTPSlot index={0} className="h-14 w-12 text-xl font-semibold border-2 rounded-xl transition-all focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20" />
-                                                            <InputOTPSlot index={1} className="h-14 w-12 text-xl font-semibold border-2 rounded-xl transition-all focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20" />
-                                                            <InputOTPSlot index={2} className="h-14 w-12 text-xl font-semibold border-2 rounded-xl transition-all focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20" />
-                                                      </InputOTPGroup>
-                                                      <span className="text-xl font-light text-muted-foreground/50 mx-1">–</span>
-                                                      <InputOTPGroup className="gap-1.5">
-                                                            <InputOTPSlot index={3} className="h-14 w-12 text-xl font-semibold border-2 rounded-xl transition-all focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20" />
-                                                            <InputOTPSlot index={4} className="h-14 w-12 text-xl font-semibold border-2 rounded-xl transition-all focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20" />
-                                                            <InputOTPSlot index={5} className="h-14 w-12 text-xl font-semibold border-2 rounded-xl transition-all focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20" />
-                                                      </InputOTPGroup>
-                                                </InputOTP>
-                                          </div>
-                                    </div>
+              <div dir="ltr">
+                <InputOTP
+                  maxLength={6}
+                  value={code}
+                  onChange={setCode}
+                  disabled={isConfirming}
+                  onComplete={handleVerify}
+                  className="gap-2"
+                >
+                  <InputOTPGroup className="gap-1.5">
+                    <InputOTPSlot
+                      index={0}
+                      className="h-14 w-12 rounded-xl border-2 text-xl font-semibold transition-all focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20"
+                    />
+                    <InputOTPSlot
+                      index={1}
+                      className="h-14 w-12 rounded-xl border-2 text-xl font-semibold transition-all focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20"
+                    />
+                    <InputOTPSlot
+                      index={2}
+                      className="h-14 w-12 rounded-xl border-2 text-xl font-semibold transition-all focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20"
+                    />
+                  </InputOTPGroup>
+                  <span className="mx-1 text-xl font-light text-muted-foreground/50">–</span>
+                  <InputOTPGroup className="gap-1.5">
+                    <InputOTPSlot
+                      index={3}
+                      className="h-14 w-12 rounded-xl border-2 text-xl font-semibold transition-all focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20"
+                    />
+                    <InputOTPSlot
+                      index={4}
+                      className="h-14 w-12 rounded-xl border-2 text-xl font-semibold transition-all focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20"
+                    />
+                    <InputOTPSlot
+                      index={5}
+                      className="h-14 w-12 rounded-xl border-2 text-xl font-semibold transition-all focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20"
+                    />
+                  </InputOTPGroup>
+                </InputOTP>
+              </div>
+            </div>
 
-                                    <DialogFooter>
-                                          <Button
-                                                variant="outline"
-                                                onClick={() => setStep("qr-code")}
-                                                disabled={isConfirming}
-                                          >
-                                                {t("common.back")}
-                                          </Button>
-                                          <Button
-                                                onClick={handleVerify}
-                                                disabled={isConfirming || code.length < 6}
-                                          >
-                                                {isConfirming ? (
-                                                      <div className="flex items-center gap-2">
-                                                            <LoadingSpinner size="inline" showText={false} />
-                                                            <span>{t("auth.twoFactor.verifying")}</span>
-                                                      </div>
-                                                ) : (
-                                                      t("auth.twoFactor.verify")
-                                                )}
-                                          </Button>
-                                    </DialogFooter>
-                              </>
-                        )}
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setStep("qr-code")} disabled={isConfirming}>
+                {t("common.back")}
+              </Button>
+              <Button onClick={handleVerify} disabled={isConfirming || code.length < 6}>
+                {isConfirming ? (
+                  <div className="flex items-center gap-2">
+                    <LoadingSpinner size="inline" showText={false} />
+                    <span>{t("auth.twoFactor.verifying")}</span>
+                  </div>
+                ) : (
+                  t("auth.twoFactor.verify")
+                )}
+              </Button>
+            </DialogFooter>
+          </>
+        )}
 
-                        {/* Step 3: Backup Codes */}
-                        {step === "backup-codes" && (
-                              <>
-                                    <DialogHeader>
-                                          <div className="flex items-center gap-2">
-                                                <KeyRound className="h-5 w-5 text-emerald-500" />
-                                                <DialogTitle>
-                                                      {t("profile.security.twoFactor.setup.backupTitle")}
-                                                </DialogTitle>
-                                          </div>
-                                          <DialogDescription>
-                                                {t("profile.security.twoFactor.setup.backupDescription")}
-                                          </DialogDescription>
-                                    </DialogHeader>
+        {/* Step 3: Backup Codes */}
+        {step === "backup-codes" && (
+          <>
+            <DialogHeader>
+              <div className="flex items-center gap-2">
+                <KeyRound className="h-5 w-5 text-emerald-500" />
+                <DialogTitle>{t("profile.security.twoFactor.setup.backupTitle")}</DialogTitle>
+              </div>
+              <DialogDescription>
+                {t("profile.security.twoFactor.setup.backupDescription")}
+              </DialogDescription>
+            </DialogHeader>
 
-                                    <div className="py-4">
-                                          <div className="grid grid-cols-2 gap-2 p-4 bg-muted/30 rounded-lg border border-border/40">
-                                                {setupData.backupCodes.map((code, i) => (
-                                                      <code
-                                                            key={i}
-                                                            className="text-sm font-mono text-center py-1.5 px-3 bg-background rounded border"
-                                                      >
-                                                            {code}
-                                                      </code>
-                                                ))}
-                                          </div>
+            <div className="py-4">
+              <div className="grid grid-cols-2 gap-2 rounded-lg border border-border/40 bg-muted/30 p-4">
+                {setupData.backupCodes.map((code, i) => (
+                  <code
+                    key={i}
+                    className="rounded border bg-background px-3 py-1.5 text-center font-mono text-sm"
+                  >
+                    {code}
+                  </code>
+                ))}
+              </div>
 
-                                          <p className="text-xs text-muted-foreground mt-3 text-center">
-                                                {t("profile.security.twoFactor.setup.backupWarning")}
-                                          </p>
-                                    </div>
+              <p className="mt-3 text-center text-xs text-muted-foreground">
+                {t("profile.security.twoFactor.setup.backupWarning")}
+              </p>
+            </div>
 
-                                    <DialogFooter className="flex-col gap-2 sm:flex-row">
-                                          <Button
-                                                variant="outline"
-                                                className="flex-1"
-                                                onClick={handleDownloadCodes}
-                                          >
-                                                <Download className="h-4 w-4 me-2" />
-                                                {t("profile.security.twoFactor.setup.download")}
-                                          </Button>
-                                          <Button
-                                                className="flex-1"
-                                                onClick={() => handleClose(false)}
-                                          >
-                                                {t("common.done")}
-                                          </Button>
-                                    </DialogFooter>
-                              </>
-                        )}
-                  </DialogContent>
-            </Dialog>
-      );
+            <DialogFooter className="flex-col gap-2 sm:flex-row">
+              <Button variant="outline" className="flex-1" onClick={handleDownloadCodes}>
+                <Download className="me-2 h-4 w-4" />
+                {t("profile.security.twoFactor.setup.download")}
+              </Button>
+              <Button className="flex-1" onClick={() => handleClose(false)}>
+                {t("common.done")}
+              </Button>
+            </DialogFooter>
+          </>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
 }

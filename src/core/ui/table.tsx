@@ -1,51 +1,42 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 
-import { cn } from "@core/common/utils"
-import { useSettings } from "@core/providers/settings-provider"
-import { useI18n } from "@core/providers/i18n-provider"
+import { cn } from "@core/common/utils";
+import { useSettings } from "@core/providers/settings-provider";
+import { useI18n } from "@core/providers/i18n-provider";
 
 /**
  * Table component with automatic RTL/LTR support
  */
-const Table = React.forwardRef<
-  HTMLTableElement,
-  React.HTMLAttributes<HTMLTableElement>
->(({ className, dir, ...props }, ref) => {
-  const { direction } = useI18n()
+const Table = React.forwardRef<HTMLTableElement, React.HTMLAttributes<HTMLTableElement>>(
+  ({ className, dir, ...props }, ref) => {
+    const { direction } = useI18n();
 
-  return (
-    <div className="relative w-full overflow-auto" dir={dir ?? direction}>
-      <table
-        ref={ref}
-        className={cn("w-full caption-bottom text-sm", className)}
-        {...props}
-      />
-    </div>
-  )
-})
-Table.displayName = "Table"
+    return (
+      <div className="relative w-full overflow-auto" dir={dir ?? direction}>
+        <table ref={ref} className={cn("w-full caption-bottom text-sm", className)} {...props} />
+      </div>
+    );
+  }
+);
+Table.displayName = "Table";
 
 const TableHeader = React.forwardRef<
   HTMLTableSectionElement,
   React.HTMLAttributes<HTMLTableSectionElement>
 >(({ className, ...props }, ref) => (
   <thead ref={ref} className={cn("[&_tr]:border-b", className)} {...props} />
-))
-TableHeader.displayName = "TableHeader"
+));
+TableHeader.displayName = "TableHeader";
 
 const TableBody = React.forwardRef<
   HTMLTableSectionElement,
   React.HTMLAttributes<HTMLTableSectionElement>
 >(({ className, ...props }, ref) => (
-  <tbody
-    ref={ref}
-    className={cn("[&_tr:last-child]:border-0", className)}
-    {...props}
-  />
-))
-TableBody.displayName = "TableBody"
+  <tbody ref={ref} className={cn("[&_tr:last-child]:border-0", className)} {...props} />
+));
+TableBody.displayName = "TableBody";
 
 const TableFooter = React.forwardRef<
   HTMLTableSectionElement,
@@ -53,39 +44,30 @@ const TableFooter = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <tfoot
     ref={ref}
-    className={cn(
-      "border-t bg-muted/50 font-medium [&>tr]:last:border-b-0",
-      className
-    )}
+    className={cn("border-t bg-muted/50 font-medium [&>tr]:last:border-b-0", className)}
     {...props}
   />
-))
-TableFooter.displayName = "TableFooter"
+));
+TableFooter.displayName = "TableFooter";
 
-const TableRow = React.forwardRef<
-  HTMLTableRowElement,
-  React.HTMLAttributes<HTMLTableRowElement>
->(({ className, ...props }, ref) => {
-  const settings = useSettings()
-  const hasHoverEffect = settings.hoverEffectType !== "none" && settings.hoverEffectIntensity !== "none"
+const TableRow = React.forwardRef<HTMLTableRowElement, React.HTMLAttributes<HTMLTableRowElement>>(
+  ({ className, ...props }, ref) => {
+    const settings = useSettings();
+    const hasHoverEffect =
+      settings.hoverEffectType !== "none" && settings.hoverEffectIntensity !== "none";
 
-  // If className is provided, it will override defaults - don't add base hover effects
-  // This allows GenericTable to fully control the hover behavior
-  const baseClasses = className
-    ? "border-b data-[state=selected]:bg-muted" // Minimal base classes when custom className provided
-    : hasHoverEffect
-      ? "border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted" // Default hover when enabled
-      : "border-b transition-none hover:bg-transparent data-[state=selected]:bg-muted"; // No hover when disabled
+    // If className is provided, it will override defaults - don't add base hover effects
+    // This allows GenericTable to fully control the hover behavior
+    const baseClasses = className
+      ? "border-b data-[state=selected]:bg-muted" // Minimal base classes when custom className provided
+      : hasHoverEffect
+        ? "border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted" // Default hover when enabled
+        : "border-b transition-none hover:bg-transparent data-[state=selected]:bg-muted"; // No hover when disabled
 
-  return (
-    <tr
-      ref={ref}
-      className={cn(baseClasses, className)}
-      {...props}
-    />
-  )
-})
-TableRow.displayName = "TableRow"
+    return <tr ref={ref} className={cn(baseClasses, className)} {...props} />;
+  }
+);
+TableRow.displayName = "TableRow";
 
 const TableHead = React.forwardRef<
   HTMLTableCellElement,
@@ -100,8 +82,8 @@ const TableHead = React.forwardRef<
     )}
     {...props}
   />
-))
-TableHead.displayName = "TableHead"
+));
+TableHead.displayName = "TableHead";
 
 const TableCell = React.forwardRef<
   HTMLTableCellElement,
@@ -111,33 +93,20 @@ const TableCell = React.forwardRef<
     ref={ref}
     className={cn(
       // Using ps/pe (padding-start/end) instead of pl/pr for RTL support
-      "p-4 align-middle text-start [&:has([role=checkbox])]:pe-0 [&:has([role=checkbox])]:ps-4",
+      "p-4 text-start align-middle [&:has([role=checkbox])]:pe-0 [&:has([role=checkbox])]:ps-4",
       className
     )}
     {...props}
   />
-))
-TableCell.displayName = "TableCell"
+));
+TableCell.displayName = "TableCell";
 
 const TableCaption = React.forwardRef<
   HTMLTableCaptionElement,
   React.HTMLAttributes<HTMLTableCaptionElement>
 >(({ className, ...props }, ref) => (
-  <caption
-    ref={ref}
-    className={cn("mt-4 text-sm text-muted-foreground", className)}
-    {...props}
-  />
-))
-TableCaption.displayName = "TableCaption"
+  <caption ref={ref} className={cn("mt-4 text-sm text-muted-foreground", className)} {...props} />
+));
+TableCaption.displayName = "TableCaption";
 
-export {
-  Table,
-  TableHeader,
-  TableBody,
-  TableFooter,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableCaption,
-}
+export { Table, TableHeader, TableBody, TableFooter, TableHead, TableRow, TableCell, TableCaption };

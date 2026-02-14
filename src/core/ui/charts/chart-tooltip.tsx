@@ -8,12 +8,12 @@ import { useI18n } from "@core/providers/i18n-provider";
 export const CustomChartTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-background border border-border rounded-lg shadow-lg p-3 min-w-[120px]">
-        <p className="text-foreground font-medium mb-2">{label}</p>
+      <div className="min-w-[120px] rounded-lg border border-border bg-background p-3 shadow-lg">
+        <p className="mb-2 font-medium text-foreground">{label}</p>
         {payload.map((entry: any, index: number) => (
-          <p key={index} className="text-sm flex items-center gap-2">
-            <span 
-              className="w-3 h-3 rounded-full inline-block" 
+          <p key={index} className="flex items-center gap-2 text-sm">
+            <span
+              className="inline-block h-3 w-3 rounded-full"
               style={{ backgroundColor: entry.color }}
             />
             <span className="text-muted-foreground">{entry.name}:</span>
@@ -27,21 +27,19 @@ export const CustomChartTooltip = ({ active, payload, label }: any) => {
 };
 
 // Wrapper for UI Tooltip with chart data
-export const ChartTooltipWrapper = ({ 
-  children, 
-  content, 
-  side = "top" 
-}: { 
-  children: React.ReactNode; 
-  content: string; 
+export const ChartTooltipWrapper = ({
+  children,
+  content,
+  side = "top",
+}: {
+  children: React.ReactNode;
+  content: string;
   side?: "top" | "bottom" | "left" | "right";
 }) => {
   return (
     <TooltipProvider>
       <Tooltip>
-        <TooltipTrigger asChild>
-          {children}
-        </TooltipTrigger>
+        <TooltipTrigger asChild>{children}</TooltipTrigger>
         <TooltipContent side={side}>
           <p>{content}</p>
         </TooltipContent>
@@ -51,20 +49,12 @@ export const ChartTooltipWrapper = ({
 };
 
 // Heatmap tooltip component
-export const HeatmapTooltip = ({
-  item,
-  children
-}: {
-  item: any;
-  children: React.ReactNode;
-}) => {
+export const HeatmapTooltip = ({ item, children }: { item: any; children: React.ReactNode }) => {
   const { t } = useI18n();
   return (
     <TooltipProvider>
       <Tooltip>
-        <TooltipTrigger asChild>
-          {children}
-        </TooltipTrigger>
+        <TooltipTrigger asChild>{children}</TooltipTrigger>
         <TooltipContent>
           <p>{item.label || t("charts.heatmap.value", { value: item.value })}</p>
         </TooltipContent>

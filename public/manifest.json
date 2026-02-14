@@ -21,11 +21,7 @@
       "purpose": "any maskable"
     }
   ],
-  "categories": [
-    "business",
-    "productivity",
-    "government"
-  ],
+  "categories": ["business", "productivity", "government"],
   "lang": "ar",
   "dir": "rtl"
 }

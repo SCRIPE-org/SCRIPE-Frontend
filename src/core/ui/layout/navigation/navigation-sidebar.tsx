@@ -13,10 +13,7 @@ interface NavigationSidebarProps {
   onOpenChange: (open: boolean) => void;
 }
 
-export function NavigationSidebar({
-  open,
-  onOpenChange,
-}: NavigationSidebarProps) {
+export function NavigationSidebar({ open, onOpenChange }: NavigationSidebarProps) {
   const { t, direction } = useI18n();
 
   return (
@@ -25,56 +22,47 @@ export function NavigationSidebar({
         dir={direction}
         className={cn(
           "navigation-sidebar fixed inset-y-0 z-50 w-72",
-          "bg-slate-950 border-r border-slate-800",
+          "border-r border-slate-800 bg-slate-950",
           "transform transition-transform duration-300 ease-in-out lg:translate-x-0",
           direction === "rtl" ? "right-0" : "left-0",
-          open
-            ? "translate-x-0"
-            : direction === "rtl"
-              ? "translate-x-full"
-              : "-translate-x-full"
+          open ? "translate-x-0" : direction === "rtl" ? "translate-x-full" : "-translate-x-full"
         )}
       >
-        <div className="flex flex-col h-full">
+        <div className="flex h-full flex-col">
           {/* Logo Section */}
-          <div className="flex items-center gap-3 px-6 py-6 border-b border-slate-800">
-            <Logo className="w-8 h-8" />
-            <div className="flex-1 min-w-0">
-              <h1 className="text-white font-semibold text-lg leading-tight break-words">
+          <div className="flex items-center gap-3 border-b border-slate-800 px-6 py-6">
+            <Logo className="h-8 w-8" />
+            <div className="min-w-0 flex-1">
+              <h1 className="break-words text-lg font-semibold leading-tight text-white">
                 {t("app.tagline")}
               </h1>
-              <p className="text-slate-400 text-sm">{t("nav.dashboard")}</p>
+              <p className="text-sm text-slate-400">{t("nav.dashboard")}</p>
             </div>
           </div>
 
           {/* Navigation — replaces 85-line renderNavigationItem */}
           <NavRenderer
             variant="navigation"
-            className="flex-1 overflow-y-auto py-6 px-4 space-y-2 custom-scrollbar"
+            className="custom-scrollbar flex-1 space-y-2 overflow-y-auto px-4 py-6"
             onNavigate={() => {
               if (window.innerWidth < 1024) onOpenChange(false);
             }}
           />
 
           {/* User Section */}
-          <div className="border-t border-slate-800 p-4 space-y-3">
-            <UserCard
-              size="sm"
-              showStatus
-              showRole
-              className="bg-slate-800/50 border-slate-700"
-            />
+          <div className="space-y-3 border-t border-slate-800 p-4">
+            <UserCard size="sm" showStatus showRole className="border-slate-700 bg-slate-800/50" />
             <Button
               variant="ghost"
-              className="w-full justify-start gap-3 text-slate-300 hover:text-white hover:bg-slate-800/50"
+              className="w-full justify-start gap-3 text-slate-300 hover:bg-slate-800/50 hover:text-white"
               asChild
             >
               <Link href="/dashboard/settings">
-                <Settings className="w-4 h-4" />
+                <Settings className="h-4 w-4" />
                 {t("nav.settings")}
               </Link>
             </Button>
-            <LogoutButton className="w-full justify-start text-slate-300 hover:text-white hover:bg-slate-800/50" />
+            <LogoutButton className="w-full justify-start text-slate-300 hover:bg-slate-800/50 hover:text-white" />
           </div>
         </div>
       </div>

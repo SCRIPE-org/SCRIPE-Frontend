@@ -10,15 +10,12 @@ export { useMenusViewModel } from "./src/presentation/viewmodels/useMenusViewMod
 
 // Entities
 export { MenuItem } from "./src/domain/entities/MenuItem";
+export type { MenuItemData, MenuTreeNode } from "./src/domain/entities/MenuItem";
 export type {
-      MenuItemData,
-      MenuTreeNode,
-} from "./src/domain/entities/MenuItem";
-export type {
-      CreateMenuItemRequest,
-      UpdateMenuItemRequest,
-      ReorderMenuItemsRequest,
-      SetRoleMenuVisibilityRequest,
+  CreateMenuItemRequest,
+  UpdateMenuItemRequest,
+  ReorderMenuItemsRequest,
+  SetRoleMenuVisibilityRequest,
 } from "./src/domain/entities/MenuItemRequests";
 
 // Interfaces

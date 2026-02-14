@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -10,28 +10,28 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@core/ui/alert-dialog"
-import { Button } from "@core/ui/button"
-import { Trash2, AlertTriangle, Info, CheckCircle } from "lucide-react"
-import { cn } from "@core/common/utils"
-import { appLogger } from "@core/common/logger"
+} from "@core/ui/alert-dialog";
+import { Button } from "@core/ui/button";
+import { Trash2, AlertTriangle, Info, CheckCircle } from "lucide-react";
+import { cn } from "@core/common/utils";
+import { appLogger } from "@core/common/logger";
 
 export interface ConfirmationDialogProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  title?: string
-  description?: string
-  confirmText?: string
-  cancelText?: string
-  onConfirm: () => void | Promise<void>
-  onCancel?: () => void
-  variant?: "destructive" | "warning" | "info" | "default"
-  icon?: React.ReactNode
-  isLoading?: boolean
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  title?: string;
+  description?: string;
+  confirmText?: string;
+  cancelText?: string;
+  onConfirm: () => void | Promise<void>;
+  onCancel?: () => void;
+  variant?: "destructive" | "warning" | "info" | "default";
+  icon?: React.ReactNode;
+  isLoading?: boolean;
   /** Custom content to render in the dialog body */
-  children?: React.ReactNode
+  children?: React.ReactNode;
   /** Disable confirm button externally (e.g., validation not met) */
-  disableConfirm?: boolean
+  disableConfirm?: boolean;
 }
 
 const variantConfig = {
@@ -63,7 +63,7 @@ const variantConfig = {
     title: "Confirm Action",
     description: "Are you sure you want to proceed?",
   },
-}
+};
 
 export function ConfirmationDialog({
   open,
@@ -80,21 +80,21 @@ export function ConfirmationDialog({
   children,
   disableConfirm = false,
 }: ConfirmationDialogProps) {
-  const config = variantConfig[variant]
-  const IconComponent = config.icon
+  const config = variantConfig[variant];
+  const IconComponent = config.icon;
 
   const handleConfirm = async () => {
     try {
-      await onConfirm()
+      await onConfirm();
     } catch (error) {
-      appLogger.error("Confirmation action failed:", error)
+      appLogger.error("Confirmation action failed:", error);
     }
-  }
+  };
 
   const handleCancel = () => {
-    onCancel?.()
-    onOpenChange(false)
-  }
+    onCancel?.();
+    onOpenChange(false);
+  };
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
@@ -106,29 +106,19 @@ export function ConfirmationDialog({
                 <IconComponent className="h-6 w-6" />
               </div>
             )}
-            <AlertDialogTitle className="text-left">
-              {title || config.title}
-            </AlertDialogTitle>
+            <AlertDialogTitle className="text-left">{title || config.title}</AlertDialogTitle>
           </div>
-          <AlertDialogDescription className="text-left mt-2">
+          <AlertDialogDescription className="mt-2 text-left">
             {description || config.description}
           </AlertDialogDescription>
         </AlertDialogHeader>
 
         {/* Custom children content */}
-        {children && (
-          <div className="py-2">
-            {children}
-          </div>
-        )}
+        {children && <div className="py-2">{children}</div>}
 
         <AlertDialogFooter className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end sm:gap-2">
           <AlertDialogCancel asChild>
-            <Button
-              variant="outline"
-              onClick={handleCancel}
-              disabled={isLoading}
-            >
+            <Button variant="outline" onClick={handleCancel} disabled={isLoading}>
               {cancelText}
             </Button>
           </AlertDialogCancel>
@@ -152,37 +142,37 @@ export function ConfirmationDialog({
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-  )
+  );
 }
 
 // Hook for easier usage
 export function useConfirmationDialog() {
   const [dialogState, setDialogState] = React.useState<{
-    open: boolean
-    props: Omit<ConfirmationDialogProps, "open" | "onOpenChange">
+    open: boolean;
+    props: Omit<ConfirmationDialogProps, "open" | "onOpenChange">;
   }>({
     open: false,
     props: {
-      onConfirm: () => { },
+      onConfirm: () => {},
     },
-  })
+  });
 
   const showConfirmation = React.useCallback(
     (props: Omit<ConfirmationDialogProps, "open" | "onOpenChange">) => {
       setDialogState({
         open: true,
         props,
-      })
+      });
     },
     []
-  )
+  );
 
   const hideConfirmation = React.useCallback(() => {
-    setDialogState(prev => ({
+    setDialogState((prev) => ({
       ...prev,
       open: false,
-    }))
-  }, [])
+    }));
+  }, []);
 
   const ConfirmationDialogComponent = React.useCallback(
     () => (
@@ -193,11 +183,11 @@ export function useConfirmationDialog() {
       />
     ),
     [dialogState, hideConfirmation]
-  )
+  );
 
   return {
     showConfirmation,
     hideConfirmation,
     ConfirmationDialog: ConfirmationDialogComponent,
-  }
+  };
 }

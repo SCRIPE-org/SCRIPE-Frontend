@@ -6,13 +6,13 @@ import type { Result } from "@core/common/types/result";
  * Follows Clean Architecture - domain layer contract
  */
 export interface ITenantSettingsRepository {
-      /**
-       * Get the current user's tenant settings
-       */
-      getMySettings(): Promise<Result<TenantSettings, Error>>;
+  /**
+   * Get the current user's tenant settings
+   */
+  getMySettings(): Promise<Result<TenantSettings, Error>>;
 
-      /**
-       * Update the current user's tenant settings
-       */
-      updateMySettings(settings: Partial<TenantSettings>): Promise<Result<void, Error>>;
+  /**
+   * Update the current user's tenant settings
+   */
+  updateMySettings(settings: Partial<TenantSettings>): Promise<Result<void, Error>>;
 }

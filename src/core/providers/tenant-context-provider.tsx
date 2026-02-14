@@ -26,44 +26,44 @@ import { appLogger } from "../common/logger";
  * Tenant information for context
  */
 export interface TenantInfo {
-      id: string;
-      name: string;
-      parentId?: string;
-      hierarchyPath?: string;
+  id: string;
+  name: string;
+  parentId?: string;
+  hierarchyPath?: string;
 }
 
 /**
  * Breadcrumb item for tenant navigation
  */
 export interface TenantBreadcrumb {
-      id: string;
-      name: string;
+  id: string;
+  name: string;
 }
 
 /**
  * Tenant context state and actions
  */
 interface TenantContextType {
-      /** Current tenant context (null = system level) */
-      currentTenant: TenantInfo | null;
-      /** Whether we're inside a tenant world */
-      isInTenantWorld: boolean;
-      /** Breadcrumb trail for navigation */
-      breadcrumbs: TenantBreadcrumb[];
-      /** Enter a tenant's context */
-      enterTenantWorld: (tenant: TenantInfo) => void;
-      /** Exit the current tenant context */
-      exitTenantWorld: () => void;
-      /** Navigate to a specific breadcrumb level */
-      navigateToBreadcrumb: (tenantId: string) => void;
-      /** Check if user can enter tenant contexts */
-      canEnterTenantWorld: boolean;
+  /** Current tenant context (null = system level) */
+  currentTenant: TenantInfo | null;
+  /** Whether we're inside a tenant world */
+  isInTenantWorld: boolean;
+  /** Breadcrumb trail for navigation */
+  breadcrumbs: TenantBreadcrumb[];
+  /** Enter a tenant's context */
+  enterTenantWorld: (tenant: TenantInfo) => void;
+  /** Exit the current tenant context */
+  exitTenantWorld: () => void;
+  /** Navigate to a specific breadcrumb level */
+  navigateToBreadcrumb: (tenantId: string) => void;
+  /** Check if user can enter tenant contexts */
+  canEnterTenantWorld: boolean;
 }
 
 const TenantContext = createContext<TenantContextType | undefined>(undefined);
 
 interface TenantContextProviderProps {
-      children: React.ReactNode;
+  children: React.ReactNode;
 }
 
 /**
@@ -73,118 +73,118 @@ interface TenantContextProviderProps {
  * Must be placed inside PermissionProvider.
  */
 export function TenantContextProvider({ children }: TenantContextProviderProps) {
-      const { hasPermission } = usePermissions();
-      const { apiService } = useServices();
+  const { hasPermission } = usePermissions();
+  const { apiService } = useServices();
 
+  // Context state
+  const [currentTenant, setCurrentTenant] = useState<TenantInfo | null>(null);
+  const [breadcrumbs, setBreadcrumbs] = useState<TenantBreadcrumb[]>([]);
 
+  // Can enter tenant world if has drill_down permission
+  // This is the guard permission for switching tenant context
+  const canEnterTenantWorld = useMemo(() => {
+    // Must have tenants.drill_down permission to switch context
+    return hasPermission(SYSTEM_PERMISSIONS.TENANTS_DRILL_DOWN);
+  }, [hasPermission]);
 
-      // Context state
-      const [currentTenant, setCurrentTenant] = useState<TenantInfo | null>(null);
-      const [breadcrumbs, setBreadcrumbs] = useState<TenantBreadcrumb[]>([]);
+  const isInTenantWorld = currentTenant !== null;
 
-      // Can enter tenant world if has drill_down permission
-      // This is the guard permission for switching tenant context
-      const canEnterTenantWorld = useMemo(() => {
-            // Must have tenants.drill_down permission to switch context
-            return hasPermission(SYSTEM_PERMISSIONS.TENANTS_DRILL_DOWN);
-      }, [hasPermission]);
+  // Load from session storage on mount
+  useEffect(() => {
+    const saved = sessionStorage.getItem("tenant_context");
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (parsed?.id && parsed?.name) {
+          setCurrentTenant(parsed);
+          // Sync with API Service
+          apiService.setTenantContext(parsed.id);
+        }
+      } catch (e) {
+        sessionStorage.removeItem("tenant_context");
+      }
+    }
+  }, [apiService]);
 
-      const isInTenantWorld = currentTenant !== null;
+  const enterTenantWorld = useCallback(
+    (tenant: TenantInfo) => {
+      if (!canEnterTenantWorld) {
+        appLogger.warn("User does not have permission to enter tenant world");
+        return;
+      }
 
-      // Load from session storage on mount
-      useEffect(() => {
-            const saved = sessionStorage.getItem("tenant_context");
-            if (saved) {
-                  try {
-                        const parsed = JSON.parse(saved);
-                        if (parsed?.id && parsed?.name) {
-                              setCurrentTenant(parsed);
-                              // Sync with API Service
-                              apiService.setTenantContext(parsed.id);
-                        }
-                  } catch (e) {
-                        sessionStorage.removeItem("tenant_context");
-                  }
-            }
-      }, [apiService]);
+      setCurrentTenant(tenant);
+      sessionStorage.setItem("tenant_context", JSON.stringify(tenant));
+      // Sync with API Service
+      apiService.setTenantContext(tenant.id);
 
-      const enterTenantWorld = useCallback((tenant: TenantInfo) => {
-            if (!canEnterTenantWorld) {
-                  appLogger.warn("User does not have permission to enter tenant world");
-                  return;
-            }
+      setBreadcrumbs((prev) => {
+        // Add to breadcrumb trail
+        const existingIndex = prev.findIndex((b) => b.id === tenant.id);
+        if (existingIndex >= 0) {
+          // Already in trail, truncate to this point
+          return prev.slice(0, existingIndex + 1);
+        }
+        return [...prev, { id: tenant.id, name: tenant.name }];
+      });
+    },
+    [canEnterTenantWorld, apiService]
+  );
 
-            setCurrentTenant(tenant);
-            sessionStorage.setItem("tenant_context", JSON.stringify(tenant));
-            // Sync with API Service
-            apiService.setTenantContext(tenant.id);
+  const exitTenantWorld = useCallback(() => {
+    setCurrentTenant(null);
+    sessionStorage.removeItem("tenant_context");
+    // Sync with API Service
+    apiService.setTenantContext(null);
+    setBreadcrumbs([]);
+  }, [apiService]);
 
-            setBreadcrumbs((prev) => {
-                  // Add to breadcrumb trail
-                  const existingIndex = prev.findIndex((b) => b.id === tenant.id);
-                  if (existingIndex >= 0) {
-                        // Already in trail, truncate to this point
-                        return prev.slice(0, existingIndex + 1);
-                  }
-                  return [...prev, { id: tenant.id, name: tenant.name }];
-            });
-      }, [canEnterTenantWorld, apiService]);
+  const navigateToBreadcrumb = useCallback(
+    (tenantId: string) => {
+      const index = breadcrumbs.findIndex((b) => b.id === tenantId);
+      if (index < 0) return;
 
-      const exitTenantWorld = useCallback(() => {
-            setCurrentTenant(null);
-            sessionStorage.removeItem("tenant_context");
-            // Sync with API Service
-            apiService.setTenantContext(null);
-            setBreadcrumbs([]);
-      }, [apiService]);
+      if (index === 0 && breadcrumbs.length === 1) {
+        // Clicking on first and only breadcrumb exits tenant world
+        exitTenantWorld();
+      } else {
+        // Truncate breadcrumbs and update current tenant
+        const newBreadcrumbs = breadcrumbs.slice(0, index + 1);
+        setBreadcrumbs(newBreadcrumbs);
+        const targetCrumb = newBreadcrumbs[newBreadcrumbs.length - 1];
+        setCurrentTenant({
+          id: targetCrumb.id,
+          name: targetCrumb.name,
+        });
+        // Sync with API Service
+        apiService.setTenantContext(targetCrumb.id);
+      }
+    },
+    [breadcrumbs, exitTenantWorld, apiService]
+  );
 
-      const navigateToBreadcrumb = useCallback((tenantId: string) => {
-            const index = breadcrumbs.findIndex((b) => b.id === tenantId);
-            if (index < 0) return;
+  const value = useMemo(
+    () => ({
+      currentTenant,
+      isInTenantWorld,
+      breadcrumbs,
+      enterTenantWorld,
+      exitTenantWorld,
+      navigateToBreadcrumb,
+      canEnterTenantWorld,
+    }),
+    [
+      currentTenant,
+      isInTenantWorld,
+      breadcrumbs,
+      enterTenantWorld,
+      exitTenantWorld,
+      navigateToBreadcrumb,
+      canEnterTenantWorld,
+    ]
+  );
 
-            if (index === 0 && breadcrumbs.length === 1) {
-                  // Clicking on first and only breadcrumb exits tenant world
-                  exitTenantWorld();
-            } else {
-                  // Truncate breadcrumbs and update current tenant
-                  const newBreadcrumbs = breadcrumbs.slice(0, index + 1);
-                  setBreadcrumbs(newBreadcrumbs);
-                  const targetCrumb = newBreadcrumbs[newBreadcrumbs.length - 1];
-                  setCurrentTenant({
-                        id: targetCrumb.id,
-                        name: targetCrumb.name,
-                  });
-                  // Sync with API Service
-                  apiService.setTenantContext(targetCrumb.id);
-            }
-      }, [breadcrumbs, exitTenantWorld, apiService]);
-
-      const value = useMemo(
-            () => ({
-                  currentTenant,
-                  isInTenantWorld,
-                  breadcrumbs,
-                  enterTenantWorld,
-                  exitTenantWorld,
-                  navigateToBreadcrumb,
-                  canEnterTenantWorld,
-            }),
-            [
-                  currentTenant,
-                  isInTenantWorld,
-                  breadcrumbs,
-                  enterTenantWorld,
-                  exitTenantWorld,
-                  navigateToBreadcrumb,
-                  canEnterTenantWorld,
-            ]
-      );
-
-      return (
-            <TenantContext.Provider value={value}>
-                  {children}
-            </TenantContext.Provider>
-      );
+  return <TenantContext.Provider value={value}>{children}</TenantContext.Provider>;
 }
 
 /**
@@ -200,13 +200,13 @@ export function TenantContextProvider({ children }: TenantContextProviderProps) 
  * }
  */
 export function useTenantContext(): TenantContextType {
-      const context = useContext(TenantContext);
+  const context = useContext(TenantContext);
 
-      if (context === undefined) {
-            throw new Error("useTenantContext must be used within a TenantContextProvider");
-      }
+  if (context === undefined) {
+    throw new Error("useTenantContext must be used within a TenantContextProvider");
+  }
 
-      return context;
+  return context;
 }
 
 /**
@@ -214,6 +214,6 @@ export function useTenantContext(): TenantContextType {
  * Returns null if not in tenant world
  */
 export function useCurrentTenantId(): string | null {
-      const context = useContext(TenantContext);
-      return context?.currentTenant?.id ?? null;
+  const context = useContext(TenantContext);
+  return context?.currentTenant?.id ?? null;
 }

@@ -9,96 +9,93 @@ const TreemapChart = ({ data, colors, title, description }: any) => {
   const totalValue = data.reduce((sum: number, item: any) => sum + item.value, 0);
   const maxValue = Math.max(...data.map((item: any) => item.value));
   const minValue = Math.min(...data.map((item: any) => item.value));
-  
+
   return (
-    <Card className="w-full bg-gradient-to-br from-slate-900 to-slate-800 border-slate-700 shadow-2xl hover:shadow-3xl transition-all duration-300">
+    <Card className="hover:shadow-3xl w-full border-slate-700 bg-gradient-to-br from-slate-900 to-slate-800 shadow-2xl transition-all duration-300">
       <CardHeader className="pb-6">
-        <CardTitle className="text-2xl font-bold text-white bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+        <CardTitle className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-2xl font-bold text-transparent text-white">
           {title}
         </CardTitle>
-        <CardDescription className="text-slate-300 text-base">
-          {description}
-        </CardDescription>
-        <div className="flex items-center gap-4 mt-4 text-sm text-slate-400">
+        <CardDescription className="text-base text-slate-300">{description}</CardDescription>
+        <div className="mt-4 flex items-center gap-4 text-sm text-slate-400">
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded" style={{ backgroundColor: colors[0] }}></div>
+            <div className="h-3 w-3 rounded" style={{ backgroundColor: colors[0] }}></div>
             <span>Min: {minValue}</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded" style={{ backgroundColor: colors[colors.length - 1] }}></div>
+            <div
+              className="h-3 w-3 rounded"
+              style={{ backgroundColor: colors[colors.length - 1] }}
+            ></div>
             <span>Max: {maxValue}</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded bg-slate-600"></div>
+            <div className="h-3 w-3 rounded bg-slate-600"></div>
             <span>Total: {totalValue}</span>
           </div>
         </div>
       </CardHeader>
       <CardContent className="pt-0">
-        <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 shadow-inner">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 h-80">
+        <div className="rounded-xl bg-gradient-to-br from-slate-800 to-slate-900 p-6 shadow-inner">
+          <div className="grid h-80 grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4">
             {data.map((item: any, index: number) => {
               const percentage = (item.value / totalValue) * 100;
               const intensity = (item.value - minValue) / (maxValue - minValue);
               const gridSpan = Math.max(1, Math.ceil(percentage / 20)); // Minimum 1, scale by percentage
               const colorIndex = Math.floor(intensity * (colors.length - 1));
               const backgroundColor = colors[colorIndex] || colors[colors.length - 1];
-              
+
               return (
                 <div
                   key={index}
-                  className="relative group cursor-pointer transition-all duration-300 hover:scale-105 hover:z-10 hover:shadow-lg"
+                  className="group relative cursor-pointer transition-all duration-300 hover:z-10 hover:scale-105 hover:shadow-lg"
                   style={{
                     gridColumn: `span ${gridSpan}`,
                     gridRow: `span ${gridSpan}`,
                     backgroundColor: backgroundColor,
                     borderRadius: "8px",
                     minHeight: "60px",
-                    boxShadow: intensity > 0.7 ? "0 0 15px rgba(255, 255, 255, 0.2)" : "none"
+                    boxShadow: intensity > 0.7 ? "0 0 15px rgba(255, 255, 255, 0.2)" : "none",
                   }}
                 >
-                  <div className="absolute inset-0 p-3 flex flex-col justify-between">
-                    <div className="text-white font-semibold text-sm truncate group-hover:text-yellow-200 transition-colors duration-200">
+                  <div className="absolute inset-0 flex flex-col justify-between p-3">
+                    <div className="truncate text-sm font-semibold text-white transition-colors duration-200 group-hover:text-yellow-200">
                       {item.label}
                     </div>
-                    <div className="text-white font-bold text-lg group-hover:text-yellow-100 transition-colors duration-200">
+                    <div className="text-lg font-bold text-white transition-colors duration-200 group-hover:text-yellow-100">
                       {item.value}
                     </div>
-                    <div className="text-white/80 text-xs group-hover:text-white/90 transition-colors duration-200">
+                    <div className="text-xs text-white/80 transition-colors duration-200 group-hover:text-white/90">
                       {percentage.toFixed(1)}%
                     </div>
                   </div>
-                  
+
                   {/* Hover overlay */}
-                  <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg flex items-center justify-center">
-                    <div className="text-white text-center p-3 bg-black/50 rounded-lg">
-                      <div className="font-bold text-xl mb-1">{item.value}</div>
-                      <div className="text-sm mb-1">{item.label}</div>
-                      <div className="text-xs opacity-75">
-                        {percentage.toFixed(1)}% of total
-                      </div>
-                      <div className="text-xs opacity-75 mt-1">
-                        Rank: #{index + 1}
-                      </div>
+                  <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-black/30 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                    <div className="rounded-lg bg-black/50 p-3 text-center text-white">
+                      <div className="mb-1 text-xl font-bold">{item.value}</div>
+                      <div className="mb-1 text-sm">{item.label}</div>
+                      <div className="text-xs opacity-75">{percentage.toFixed(1)}% of total</div>
+                      <div className="mt-1 text-xs opacity-75">Rank: #{index + 1}</div>
                     </div>
                   </div>
-                  
+
                   {/* Corner indicator for large items */}
                   {percentage > 15 && (
-                    <div className="absolute top-1 right-1 w-2 h-2 bg-white/30 rounded-full"></div>
+                    <div className="absolute right-1 top-1 h-2 w-2 rounded-full bg-white/30"></div>
                   )}
                 </div>
               );
             })}
           </div>
-          
+
           {/* Legend */}
           <div className="mt-6 flex items-center justify-center gap-2">
             <span className="text-xs text-slate-400">Size represents value:</span>
             {colors.slice(0, 5).map((color: string, index: number) => (
               <div
                 key={index}
-                className="w-4 h-4 rounded-sm border border-slate-600"
+                className="h-4 w-4 rounded-sm border border-slate-600"
                 style={{ backgroundColor: color }}
                 title={`${Math.round((index / 4) * 100)}% intensity`}
               ></div>
@@ -113,7 +110,16 @@ const TreemapChart = ({ data, colors, title, description }: any) => {
 export function ProfessionalTreemapCharts() {
   const { t } = useI18n();
 
-  const colors = ["#ef4444", "#f97316", "#eab308", "#22c55e", "#3b82f6", "#8b5cf6", "#ec4899", "#06b6d4"];
+  const colors = [
+    "#ef4444",
+    "#f97316",
+    "#eab308",
+    "#22c55e",
+    "#3b82f6",
+    "#8b5cf6",
+    "#ec4899",
+    "#06b6d4",
+  ];
 
   const basicTreemapData = [
     { label: t("charts.common.categoryA"), value: 300 },

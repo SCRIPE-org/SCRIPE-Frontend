@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 /**
  * HomeView (Overview Page)
@@ -8,15 +8,15 @@
  * KPI cards + recent activity only shown if user has `dashboard.view`.
  * Users without that permission see a MinimalWelcome card instead.
  */
-import { useOverviewViewModel } from '../viewmodels/useOverviewViewModel';
-import { useOverviewRealtime } from '../viewmodels/useOverviewRealtime';
-import { WelcomeHeader } from '../components/WelcomeHeader';
-import { QuickStatsStrip } from '../components/QuickStatsStrip';
-import { QuickActionsGrid } from '../components/QuickActionsGrid';
-import { RecentActivityFeed } from '../components/RecentActivityFeed';
-import { MinimalWelcome } from '../components/MinimalWelcome';
-import { usePermission } from '@core/hooks/use-permission';
-import { SYSTEM_PERMISSIONS } from '@core/common/types/permissions';
+import { useOverviewViewModel } from "../viewmodels/useOverviewViewModel";
+import { useOverviewRealtime } from "../viewmodels/useOverviewRealtime";
+import { WelcomeHeader } from "../components/WelcomeHeader";
+import { QuickStatsStrip } from "../components/QuickStatsStrip";
+import { QuickActionsGrid } from "../components/QuickActionsGrid";
+import { RecentActivityFeed } from "../components/RecentActivityFeed";
+import { MinimalWelcome } from "../components/MinimalWelcome";
+import { usePermission } from "@core/hooks/use-permission";
+import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 
 export function HomeView() {
   const hasDashboardPerm = usePermission(SYSTEM_PERMISSIONS.DASHBOARD_VIEW);

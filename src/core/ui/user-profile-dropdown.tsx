@@ -35,13 +35,7 @@ function getAvatarUrl(profileImageUrl: string | null | undefined): string | unde
 }
 
 interface UserProfileDropdownProps {
-  variant?:
-  | "default"
-  | "compact"
-  | "minimal"
-  | "elegant"
-  | "floating"
-  | "navigation";
+  variant?: "default" | "compact" | "minimal" | "elegant" | "floating" | "navigation";
   showName?: boolean;
   className?: string;
 }
@@ -134,7 +128,7 @@ export function UserProfileDropdown({
         <Button
           variant="ghost"
           className={cn(
-            "flex items-center gap-2 p-2 hover:bg-accent/50 transition-colors h-10",
+            "flex h-10 items-center gap-2 p-2 transition-colors hover:bg-accent/50",
             variant === "navigation" && "h-9",
             variant === "floating" && "rounded-full",
             className
@@ -142,25 +136,20 @@ export function UserProfileDropdown({
         >
           <Avatar className={cn(getAvatarSize(), "border-2 border-primary/20")}>
             {avatarUrl && <AvatarImage src={avatarUrl} alt={getDisplayName()} />}
-            <AvatarFallback className="bg-gradient-to-br from-blue-400 to-blue-600 text-white font-semibold text-sm">
+            <AvatarFallback className="bg-gradient-to-br from-blue-400 to-blue-600 text-sm font-semibold text-white">
               {getInitials()}
             </AvatarFallback>
           </Avatar>
 
           {showName && (
-            <div className="flex items-center gap-2 min-w-0">
-              <div className="text-right rtl:text-left min-w-0">
-                <p
-                  className={cn(
-                    "font-medium truncate max-w-[120px]",
-                    getTextSize()
-                  )}
-                >
+            <div className="flex min-w-0 items-center gap-2">
+              <div className="min-w-0 text-right rtl:text-left">
+                <p className={cn("max-w-[120px] truncate font-medium", getTextSize())}>
                   {getDisplayName()}
                 </p>
                 <p
                   className={cn(
-                    "text-muted-foreground truncate max-w-[120px]",
+                    "max-w-[120px] truncate text-muted-foreground",
                     variant === "navigation" ? "text-xs" : "text-xs"
                   )}
                 >
@@ -169,7 +158,7 @@ export function UserProfileDropdown({
               </div>
               <ChevronDown
                 className={cn(
-                  "transition-transform duration-200 flex-shrink-0",
+                  "flex-shrink-0 transition-transform duration-200",
                   isOpen && "rotate-180",
                   variant === "compact" ? "h-3 w-3" : "h-4 w-4"
                 )}
@@ -184,16 +173,16 @@ export function UserProfileDropdown({
         className="w-56 p-2"
         side={variant === "navigation" ? "bottom" : "bottom"}
       >
-        <div className="flex items-center gap-3 p-2 mb-2">
+        <div className="mb-2 flex items-center gap-3 p-2">
           <Avatar className="h-10 w-10 border-2 border-primary/20">
             {avatarUrl && <AvatarImage src={avatarUrl} alt={getDisplayName()} />}
-            <AvatarFallback className="bg-gradient-to-br from-blue-400 to-blue-600 text-white font-semibold">
+            <AvatarFallback className="bg-gradient-to-br from-blue-400 to-blue-600 font-semibold text-white">
               {getInitials()}
             </AvatarFallback>
           </Avatar>
-          <div className="text-right rtl:text-left min-w-0">
-            <p className="font-medium text-sm truncate">{getDisplayName()}</p>
-            <p className="text-xs text-muted-foreground truncate">
+          <div className="min-w-0 text-right rtl:text-left">
+            <p className="truncate text-sm font-medium">{getDisplayName()}</p>
+            <p className="truncate text-xs text-muted-foreground">
               {user.adminTypeName || (user as any).role || t("common.user")}
             </p>
           </div>
@@ -203,7 +192,7 @@ export function UserProfileDropdown({
 
         <DropdownMenuItem
           onClick={handleProfileClick}
-          className="flex items-center gap-3 p-3 cursor-pointer hover:bg-accent/50 rounded-md"
+          className="flex cursor-pointer items-center gap-3 rounded-md p-3 hover:bg-accent/50"
         >
           <User className="h-4 w-4" />
           <span>{t("nav.profile")}</span>
@@ -211,7 +200,7 @@ export function UserProfileDropdown({
 
         <DropdownMenuItem
           onClick={handleSettingsClick}
-          className="flex items-center gap-3 p-3 cursor-pointer hover:bg-accent/50 rounded-md"
+          className="flex cursor-pointer items-center gap-3 rounded-md p-3 hover:bg-accent/50"
         >
           <Settings className="h-4 w-4" />
           <span>{t("nav.settings")}</span>
@@ -221,7 +210,7 @@ export function UserProfileDropdown({
 
         <DropdownMenuItem
           onClick={handleSignOut}
-          className="flex items-center gap-3 p-3 cursor-pointer hover:bg-destructive/10 text-destructive rounded-md"
+          className="flex cursor-pointer items-center gap-3 rounded-md p-3 text-destructive hover:bg-destructive/10"
         >
           <LogOut className="h-4 w-4" />
           <span>{t("nav.logout")}</span>

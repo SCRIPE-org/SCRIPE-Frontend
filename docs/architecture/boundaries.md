@@ -29,16 +29,16 @@
 // Inside src/modules/hr/src/presentation/views/EmployeeList.tsx
 
 // ✅ Core imports
-import { Result } from '@core/common/Result';
-import { useTranslation } from '@core/localization';
-import { Button } from '@core/ui/button';
+import { Result } from "@core/common/Result";
+import { useTranslation } from "@core/localization";
+import { Button } from "@core/ui/button";
 
 // ✅ Own module imports
-import { useEmployees } from '@modules/hr/src/presentation/viewmodels/useEmployees';
-import { Employee } from '@modules/hr/src/domain/entities/Employee';
+import { useEmployees } from "@modules/hr/src/presentation/viewmodels/useEmployees";
+import { Employee } from "@modules/hr/src/domain/entities/Employee";
 
 // ✅ External packages
-import { useQuery } from '@tanstack/react-query';
+import { useQuery } from "@tanstack/react-query";
 ```
 
 ### ❌ FORBIDDEN
@@ -47,11 +47,11 @@ import { useQuery } from '@tanstack/react-query';
 // Inside src/modules/hr/src/presentation/views/EmployeeList.tsx
 
 // ❌ BANNED: Importing from another module
-import { Vendor } from '@modules/vendor/src/domain/entities/Vendor';
-import { useVendors } from '@modules/vendor/src/presentation/viewmodels/useVendors';
+import { Vendor } from "@modules/vendor/src/domain/entities/Vendor";
+import { useVendors } from "@modules/vendor/src/presentation/viewmodels/useVendors";
 
 // ❌ BANNED: Relative path to another module
-import { RFQ } from '../../../rfq/src/domain/entities/RFQ';
+import { RFQ } from "../../../rfq/src/domain/entities/RFQ";
 ```
 
 ---
@@ -84,15 +84,15 @@ export function EmployeeCard({ employee }) {
 ```typescript
 // src/core/events/EventBus.ts
 type EventMap = {
-  'employee:created': { id: string; name: string };
-  'vendor:updated': { id: string };
+  "employee:created": { id: string; name: string };
+  "vendor:updated": { id: string };
 };
 
 // Publishing from HR module
-eventBus.emit('employee:created', { id: '123', name: 'John' });
+eventBus.emit("employee:created", { id: "123", name: "John" });
 
 // Subscribing in Vendor module
-eventBus.on('employee:created', (data) => {
+eventBus.on("employee:created", (data) => {
   // React to employee creation
 });
 ```
@@ -117,13 +117,13 @@ export const EmployeeSchema = z.object({
 
 ## Why This Matters
 
-| Without Boundaries | With Boundaries |
-|-------------------|-----------------|
-| Spaghetti imports | Clear dependencies |
-| Breaking one module breaks all | Isolated failures |
+| Without Boundaries              | With Boundaries               |
+| ------------------------------- | ----------------------------- |
+| Spaghetti imports               | Clear dependencies            |
+| Breaking one module breaks all  | Isolated failures             |
 | Cannot extract to separate repo | Easy Git Submodule extraction |
-| Merge conflicts everywhere | Team autonomy |
-| Full rebuild on any change | Incremental builds |
+| Merge conflicts everywhere      | Team autonomy                 |
+| Full rebuild on any change      | Incremental builds            |
 
 ---
 
@@ -186,4 +186,3 @@ src/core/
 ```
 
 If you need to share code between modules, it MUST go in `@core/`.
-

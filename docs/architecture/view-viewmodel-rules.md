@@ -30,12 +30,12 @@ graph TB
 
 ### Views
 
-| ✅ DO | ❌ DON'T |
-|-------|----------|
-| Call ONE ViewModel hook | Use useState |
-| Pass props to components | Use useEffect |
-| Render conditionally | Call APIs |
-| Be ~60 lines max | Define mutations |
+| ✅ DO                    | ❌ DON'T         |
+| ------------------------ | ---------------- |
+| Call ONE ViewModel hook  | Use useState     |
+| Pass props to components | Use useEffect    |
+| Render conditionally     | Call APIs        |
+| Be ~60 lines max         | Define mutations |
 
 ```tsx
 // ✅ CORRECT
@@ -61,12 +61,12 @@ export function PageView() {
 
 ### ViewModels
 
-| ✅ DO | ❌ DON'T |
-|-------|----------|
-| Handle all state | Return JSX |
-| Define columns | Import components |
-| Compose other VMs | Use DOM APIs |
-| Return flat interface | Mix concerns |
+| ✅ DO                 | ❌ DON'T          |
+| --------------------- | ----------------- |
+| Handle all state      | Return JSX        |
+| Define columns        | Import components |
+| Compose other VMs     | Use DOM APIs      |
+| Return flat interface | Mix concerns      |
 
 ```typescript
 // ✅ CORRECT
@@ -74,13 +74,13 @@ export function usePageViewModel() {
   const stats = useStatisticsViewModel();
   const filters = useFilterViewModel();
   const table = useCrudViewModel(config);
-  
+
   const columns = [
     column.index('No'),
     column.text('name', 'Name'),
     column.switch('block', 'Block', {...}),
   ];
-  
+
   return { stats, filters, table, columns };
 }
 ```
@@ -89,11 +89,11 @@ export function usePageViewModel() {
 
 ### Section Components
 
-| ✅ DO | ❌ DON'T |
-|-------|----------|
+| ✅ DO         | ❌ DON'T        |
+| ------------- | --------------- |
 | Receive props | Call ViewModels |
-| Render UI | Manage state |
-| Be reusable | Fetch data |
+| Render UI     | Manage state    |
+| Be reusable   | Fetch data      |
 
 ```tsx
 // ✅ CORRECT
@@ -112,12 +112,12 @@ export function StatisticsSection({ statistics, isLoading }: Props) {
 
 ## File Naming
 
-| Type | Convention | Example |
-|------|------------|---------|
-| View | `{Name}View.tsx` | `UserManagementView.tsx` |
-| ViewModel | `use{Name}ViewModel.ts` | `useUserManagementViewModel.ts` |
-| Section VM | `use{Section}ViewModel.ts` | `useStatisticsViewModel.ts` |
-| Section UI | `{Section}Section.tsx` | `StatisticsSection.tsx` |
+| Type       | Convention                 | Example                         |
+| ---------- | -------------------------- | ------------------------------- |
+| View       | `{Name}View.tsx`           | `UserManagementView.tsx`        |
+| ViewModel  | `use{Name}ViewModel.ts`    | `useUserManagementViewModel.ts` |
+| Section VM | `use{Section}ViewModel.ts` | `useStatisticsViewModel.ts`     |
+| Section UI | `{Section}Section.tsx`     | `StatisticsSection.tsx`         |
 
 ---
 

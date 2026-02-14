@@ -11,11 +11,7 @@ import { cn } from "@core/common/utils";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { ScrollArea } from "@core/ui/scroll-area";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@core/ui/collapsible";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@core/ui/collapsible";
 import {
   getPanelItemClasses,
   getPanelParentClasses,
@@ -49,14 +45,8 @@ export function NavigationPanelSidebar({
   const pathname = usePathname();
   const { direction, t } = useI18n();
   const navigation = useDynamicNavigation();
-  const {
-    colorTheme,
-    cardStyle,
-    animationLevel,
-    borderRadius,
-    navigationStyle,
-    iconStyle,
-  } = useSettings();
+  const { colorTheme, cardStyle, animationLevel, borderRadius, navigationStyle, iconStyle } =
+    useSettings();
 
   const styleConfig: NavigationStyleConfig = {
     colorTheme,
@@ -68,9 +58,7 @@ export function NavigationPanelSidebar({
     direction,
   };
 
-  const selectedNavItem = navigation.find(
-    (item) => item.name === currentMainItem
-  );
+  const selectedNavItem = navigation.find((item) => item.name === currentMainItem);
 
   if (!selectedNavItem || !hasChildren || !open) {
     return null;
@@ -135,37 +123,34 @@ export function NavigationPanelSidebar({
                 "!justify-start !gap-0",
 
                 getBorderRadiusClass(borderRadius),
-                getAnimationClass(animationLevel, "panel"),
+                getAnimationClass(animationLevel, "panel")
               )}
               style={indentStyle}
             >
               {/* Icon + Text grouped tightly */}
-              <span className={cn(
-                "flex items-center gap-3 flex-1 min-w-0",
-
-              )}>
+              <span className={cn("flex min-w-0 flex-1 items-center gap-3")}>
                 {item.icon ? (
                   <item.icon className={cn(getIconClasses(iconStyle, "sm"), "flex-shrink-0")} />
                 ) : level > 0 ? (
-                  <div className="w-1.5 h-1.5 rounded-full bg-current opacity-40 flex-shrink-0" />
+                  <div className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-current opacity-40" />
                 ) : (
-                  <div className="w-2 h-2 rounded-full bg-primary flex-shrink-0" />
+                  <div className="h-2 w-2 flex-shrink-0 rounded-full bg-primary" />
                 )}
-                <span className="text-sm truncate">{displayName}</span>
+                <span className="truncate text-sm">{displayName}</span>
               </span>
 
               {/* Badge */}
               {item.badge && (
-                <Badge variant="secondary" className="text-[10px] h-5 ml-1">
+                <Badge variant="secondary" className="ml-1 h-5 text-[10px]">
                   {item.badge}
                 </Badge>
               )}
 
               {/* Chevron */}
               {isExpanded ? (
-                <ChevronDown className="w-3.5 h-3.5 opacity-60 flex-shrink-0 ml-1" />
+                <ChevronDown className="ml-1 h-3.5 w-3.5 flex-shrink-0 opacity-60" />
               ) : (
-                <CollapsedChevron className="w-3.5 h-3.5 opacity-60 flex-shrink-0 ml-1" />
+                <CollapsedChevron className="ml-1 h-3.5 w-3.5 flex-shrink-0 opacity-60" />
               )}
             </Button>
           </CollapsibleTrigger>
@@ -174,21 +159,17 @@ export function NavigationPanelSidebar({
             <div
               className="relative"
               style={
-                isRTL
-                  ? { marginRight: `${20 + indent}px` }
-                  : { marginLeft: `${20 + indent}px` }
+                isRTL ? { marginRight: `${20 + indent}px` } : { marginLeft: `${20 + indent}px` }
               }
             >
               <div
                 className={cn(
-                  "absolute top-0 bottom-0 w-px bg-border/60",
-                  isRTL ? "right-0" : "left-0",
+                  "absolute bottom-0 top-0 w-px bg-border/60",
+                  isRTL ? "right-0" : "left-0"
                 )}
               />
               <div className="space-y-0.5 py-1">
-                {item.children!.map((child) =>
-                  renderNavigationItem(child, level + 1)
-                )}
+                {item.children!.map((child) => renderNavigationItem(child, level + 1))}
               </div>
             </div>
           </CollapsibleContent>
@@ -208,33 +189,22 @@ export function NavigationPanelSidebar({
 
           getBorderRadiusClass(borderRadius),
           getAnimationClass(animationLevel, "panel"),
-          item.disabled && "opacity-50 cursor-not-allowed",
-          level > 0 && "text-sm",
+          item.disabled && "cursor-not-allowed opacity-50",
+          level > 0 && "text-sm"
         )}
         style={indentStyle}
         disabled={item.disabled}
       >
-        <Link
-          href={item.href || "#"}
-          className={cn(
-            "flex items-center w-full !gap-0",
-
-          )}
-        >
+        <Link href={item.href || "#"} className={cn("flex w-full items-center !gap-0")}>
           {/* Icon + Text grouped tightly */}
-          <span className={cn(
-            "flex items-center gap-1.5 flex-1 min-w-0",
-
-          )}>
+          <span className={cn("flex min-w-0 flex-1 items-center gap-1.5")}>
             {item.icon ? (
-              <item.icon className="w-4 h-4 flex-shrink-0" />
+              <item.icon className="h-4 w-4 flex-shrink-0" />
             ) : (
               <div
                 className={cn(
-                  "rounded-full flex-shrink-0",
-                  isActive
-                    ? "w-2 h-2 bg-current"
-                    : "w-1.5 h-1.5 bg-muted-foreground/50",
+                  "flex-shrink-0 rounded-full",
+                  isActive ? "h-2 w-2 bg-current" : "h-1.5 w-1.5 bg-muted-foreground/50"
                 )}
               />
             )}
@@ -243,10 +213,7 @@ export function NavigationPanelSidebar({
 
           {/* Badge */}
           {item.badge && (
-            <Badge
-              variant={isActive ? "secondary" : "outline"}
-              className="text-[10px] h-5 ml-1"
-            >
+            <Badge variant={isActive ? "secondary" : "outline"} className="ml-1 h-5 text-[10px]">
               {item.badge}
             </Badge>
           )}
@@ -259,36 +226,32 @@ export function NavigationPanelSidebar({
   return (
     <div
       className={cn(
-        "navigation-panel-sidebar fixed inset-y-0 z-40 w-64 transform transition-all duration-300 ease-in-out sidebar-shadow",
+        "navigation-panel-sidebar sidebar-shadow fixed inset-y-0 z-40 w-64 transform transition-all duration-300 ease-in-out",
         getPanelBgClass(cardStyle, direction),
-        "lg:translate-x-0",
+        "lg:translate-x-0"
       )}
     >
-      <div className="flex flex-col h-full">
+      <div className="flex h-full flex-col">
         {/* Header */}
-        <div className="p-4 border-b border-border/50">
-          <div
-            className={cn(
-              "flex items-center gap-3",
-            )}
-          >
+        <div className="border-b border-border/50 p-4">
+          <div className={cn("flex items-center gap-3")}>
             {selectedNavItem.icon && (
               <div
                 className={cn(
-                  "w-8 h-8 flex items-center justify-center text-white flex-shrink-0",
+                  "flex h-8 w-8 flex-shrink-0 items-center justify-center text-white",
                   getBorderRadiusClass(borderRadius),
-                  getPanelHeaderGradient(colorTheme),
+                  getPanelHeaderGradient(colorTheme)
                 )}
               >
-                <selectedNavItem.icon className="w-4 h-4" />
+                <selectedNavItem.icon className="h-4 w-4" />
               </div>
             )}
             <div className={cn(isRTL && "text-right")}>
-              <h3 className="font-semibold text-sm">
+              <h3 className="text-sm font-semibold">
                 {t(selectedNavItem.name) || selectedNavItem.name}
               </h3>
               {selectedNavItem.children && (
-                <p className="text-xs text-muted-foreground mt-0.5">
+                <p className="mt-0.5 text-xs text-muted-foreground">
                   {selectedNavItem.children.length} {t("layout.items") || "items"}
                 </p>
               )}
@@ -299,9 +262,7 @@ export function NavigationPanelSidebar({
         {/* Navigation Items */}
         <ScrollArea className="flex-1 px-2 py-3">
           <div className="space-y-0.5">
-            {selectedNavItem.children?.map((item) =>
-              renderNavigationItem(item)
-            )}
+            {selectedNavItem.children?.map((item) => renderNavigationItem(item))}
           </div>
         </ScrollArea>
       </div>

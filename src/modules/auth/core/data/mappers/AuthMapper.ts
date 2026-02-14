@@ -13,11 +13,7 @@
  * @module auth/data
  */
 
-import {
-  LoginRequest,
-  LoginResponse,
-  RefreshTokenRequest,
-} from "../../domain/entities/Auth";
+import { LoginRequest, LoginResponse, RefreshTokenRequest } from "../../domain/entities/Auth";
 import { User } from "../../domain/entities/User";
 import { LoginResponseModel } from "../models/AuthModel";
 
@@ -116,8 +112,7 @@ export class AuthMapper {
       phoneNumber: json.phoneNumber || "",
       adminTypeName: json.adminTypeName || "",
       profileImageUrl: json.profileImageUrl ?? null,
-      role:
-        json.roles?.[0]?.roleCode || json.roles?.[0]?.roleName || undefined,
+      role: json.roles?.[0]?.roleCode || json.roles?.[0]?.roleName || undefined,
       permissions: json.permissions || [],
       isProtected: json.isProtected ?? false,
       tenantId: json.tenantId ?? null,

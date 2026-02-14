@@ -11,7 +11,7 @@ import { UserProfileDropdown } from "@core/ui/user-profile-dropdown";
 import { PageBreadcrumbs } from "@core/ui/page-breadcrumbs";
 
 interface CompactHeaderProps {
-      onMenuClick: () => void;
+  onMenuClick: () => void;
 }
 
 /**
@@ -24,54 +24,54 @@ interface CompactHeaderProps {
  * - No search bar in header (sidebar has its own density)
  */
 export function CompactHeader({ onMenuClick }: CompactHeaderProps) {
-      const { t } = useI18n();
-      const settings = useSettings();
-      const router = useRouter();
+  const { t } = useI18n();
+  const settings = useSettings();
+  const router = useRouter();
 
-      return (
-            <header
-                  className={cn(
-                        settings.stickyHeader ? "sticky top-0" : "relative",
-                        "z-40 bg-background border-b border-border/40 h-10"
-                  )}
+  return (
+    <header
+      className={cn(
+        settings.stickyHeader ? "sticky top-0" : "relative",
+        "z-40 h-10 border-b border-border/40 bg-background"
+      )}
+    >
+      <div className="flex h-full items-center justify-between px-4">
+        {/* Left — Menu + Breadcrumbs inline */}
+        <div className="flex items-center gap-2">
+          {settings.collapsibleSidebar && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="sidebar-trigger h-7 w-7 rounded lg:hidden"
+              onClick={onMenuClick}
             >
-                  <div className="flex items-center justify-between px-4 h-full">
-                        {/* Left — Menu + Breadcrumbs inline */}
-                        <div className="flex items-center gap-2">
-                              {settings.collapsibleSidebar && (
-                                    <Button
-                                          variant="ghost"
-                                          size="icon"
-                                          className="lg:hidden sidebar-trigger h-7 w-7 rounded"
-                                          onClick={onMenuClick}
-                                    >
-                                          <Menu className="w-3.5 h-3.5" />
-                                    </Button>
-                              )}
+              <Menu className="h-3.5 w-3.5" />
+            </Button>
+          )}
 
-                              {settings.showBreadcrumbs && (
-                                    <div className="hidden md:block">
-                                          <PageBreadcrumbs segments={[]} />
-                                    </div>
-                              )}
-                        </div>
+          {settings.showBreadcrumbs && (
+            <div className="hidden md:block">
+              <PageBreadcrumbs segments={[]} />
+            </div>
+          )}
+        </div>
 
-                        {/* Right — Compact actions */}
-                        <div className="flex items-center gap-1">
-                              <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    onClick={() => router.push("/")}
-                                    className="h-7 w-7 rounded text-muted-foreground hover:text-foreground"
-                                    title={t("nav.home") || "Home"}
-                              >
-                                    <Home className="w-3.5 h-3.5" />
-                              </Button>
-                              <LanguageSwitcher buttonClassName="h-7 w-7 rounded" />
-                              <ThemeSwitcher buttonClassName="h-7 w-7 rounded" />
-                              <UserProfileDropdown showName={false} />
-                        </div>
-                  </div>
-            </header>
-      );
+        {/* Right — Compact actions */}
+        <div className="flex items-center gap-1">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => router.push("/")}
+            className="h-7 w-7 rounded text-muted-foreground hover:text-foreground"
+            title={t("nav.home") || "Home"}
+          >
+            <Home className="h-3.5 w-3.5" />
+          </Button>
+          <LanguageSwitcher buttonClassName="h-7 w-7 rounded" />
+          <ThemeSwitcher buttonClassName="h-7 w-7 rounded" />
+          <UserProfileDropdown showName={false} />
+        </div>
+      </div>
+    </header>
+  );
 }

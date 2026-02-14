@@ -171,7 +171,6 @@ export type LayoutTemplate =
   | "crm"
   | "terminal";
 
-
 export type CardStyle = "default" | "glass" | "solid" | "bordered" | "elevated";
 export type AnimationLevel = "none" | "minimal" | "moderate" | "high";
 export type AnimationSpeed = "slow" | "normal" | "fast";
@@ -212,20 +211,89 @@ export type TableStyle =
   | "matrix"
   | "diamond";
 
-export type BadgeStyle = "default" | "modern" | "glass" | "neon" | "gradient" | "outlined" | "filled" | "minimal" | "pill" | "square";
+export type BadgeStyle =
+  | "default"
+  | "modern"
+  | "glass"
+  | "neon"
+  | "gradient"
+  | "outlined"
+  | "filled"
+  | "minimal"
+  | "pill"
+  | "square";
 export type AvatarStyle = "default" | "rounded" | "square" | "hexagon";
 export type LogoType = "sparkles" | "shield" | "image" | "custom";
 export type LogoAnimation = "none" | "spin" | "pulse" | "fancy";
 export type LogoSize = "xs" | "sm" | "md" | "lg" | "xl";
 
-export type FormStyle = "default" | "compact" | "spacious" | "inline" | "modern" | "glass" | "minimal" | "card" | "neon" | "elegant" | "organic" | "retro";
-export type LoadingStyle = "spinner" | "dots" | "bars" | "pulse" | "wave" | "orbit" | "ripple" | "gradient" | "matrix" | "helix" | "quantum" | "morphing";
-export type TooltipStyle = "default" | "rounded" | "sharp" | "bubble" | "glass" | "neon" | "minimal" | "elegant";
-export type ModalStyle = "default" | "centered" | "fullscreen" | "drawer" | "glass" | "floating" | "card" | "overlay";
+export type FormStyle =
+  | "default"
+  | "compact"
+  | "spacious"
+  | "inline"
+  | "modern"
+  | "glass"
+  | "minimal"
+  | "card"
+  | "neon"
+  | "elegant"
+  | "organic"
+  | "retro";
+export type LoadingStyle =
+  | "spinner"
+  | "dots"
+  | "bars"
+  | "pulse"
+  | "wave"
+  | "orbit"
+  | "ripple"
+  | "gradient"
+  | "matrix"
+  | "helix"
+  | "quantum"
+  | "morphing";
+export type TooltipStyle =
+  | "default"
+  | "rounded"
+  | "sharp"
+  | "bubble"
+  | "glass"
+  | "neon"
+  | "minimal"
+  | "elegant";
+export type ModalStyle =
+  | "default"
+  | "centered"
+  | "fullscreen"
+  | "drawer"
+  | "glass"
+  | "floating"
+  | "card"
+  | "overlay";
 
-export type TreeStyle = "lines" | "cards" | "minimal" | "bubble" | "modern" | "glass" | "elegant" | "professional" | "gradient" | "neon" | "organic" | "corporate";
+export type TreeStyle =
+  | "lines"
+  | "cards"
+  | "minimal"
+  | "bubble"
+  | "modern"
+  | "glass"
+  | "elegant"
+  | "professional"
+  | "gradient"
+  | "neon"
+  | "organic"
+  | "corporate";
 export type ToastDesign = "minimal" | "modern" | "gradient" | "outlined" | "filled";
-export type DatePickerStyle = "default" | "modern" | "glass" | "outlined" | "filled" | "minimal" | "elegant";
+export type DatePickerStyle =
+  | "default"
+  | "modern"
+  | "glass"
+  | "outlined"
+  | "filled"
+  | "minimal"
+  | "elegant";
 export type CalendarStyle = "default" | "modern" | "glass" | "elegant" | "minimal" | "dark";
 
 export type SelectStyle =
@@ -257,7 +325,22 @@ export type SelectStyle =
   | "vortex"
   | "phoenix";
 
-export type SwitchStyle = "default" | "modern" | "ios" | "android" | "toggle" | "slider" | "neon" | "neumorphism" | "liquid" | "cyberpunk" | "glassmorphism" | "aurora" | "matrix" | "cosmic" | "retro";
+export type SwitchStyle =
+  | "default"
+  | "modern"
+  | "ios"
+  | "android"
+  | "toggle"
+  | "slider"
+  | "neon"
+  | "neumorphism"
+  | "liquid"
+  | "cyberpunk"
+  | "glassmorphism"
+  | "aurora"
+  | "matrix"
+  | "cosmic"
+  | "retro";
 
 export type CheckboxStyle =
   | "default"
@@ -569,101 +652,101 @@ const defaultSettings: Settings = {
 function createFallbackSettings(): Partial<SettingsContextType> {
   return {
     // Color theme
-    colorTheme: 'purple' as ColorTheme,
-    setColorTheme: () => { },
+    colorTheme: "purple" as ColorTheme,
+    setColorTheme: () => {},
 
     // Background themes
-    lightBackgroundTheme: 'default' as LightBackgroundTheme,
-    setLightBackgroundTheme: () => { },
-    darkBackgroundTheme: 'default' as DarkBackgroundTheme,
-    setDarkBackgroundTheme: () => { },
+    lightBackgroundTheme: "default" as LightBackgroundTheme,
+    setLightBackgroundTheme: () => {},
+    darkBackgroundTheme: "default" as DarkBackgroundTheme,
+    setDarkBackgroundTheme: () => {},
 
     // Shadow intensity
-    shadowIntensity: 'moderate' as ShadowIntensity,
-    setShadowIntensity: () => { },
+    shadowIntensity: "moderate" as ShadowIntensity,
+    setShadowIntensity: () => {},
 
     // Layout template
-    layoutTemplate: 'modern' as LayoutTemplate,
-    setLayoutTemplate: () => { },
+    layoutTemplate: "modern" as LayoutTemplate,
+    setLayoutTemplate: () => {},
 
     // Font size
-    fontSize: 'medium' as FontSize,
-    setFontSize: () => { },
+    fontSize: "medium" as FontSize,
+    setFontSize: () => {},
     showDetailPanel: true,
-    setShowDetailPanel: () => { },
+    setShowDetailPanel: () => {},
 
     // Border radius
-    borderRadius: 'default' as BorderRadius,
-    setBorderRadius: () => { },
+    borderRadius: "default" as BorderRadius,
+    setBorderRadius: () => {},
 
     // Sidebar position
-    sidebarPosition: 'right' as SidebarPosition,
-    setSidebarPosition: () => { },
+    sidebarPosition: "right" as SidebarPosition,
+    setSidebarPosition: () => {},
 
     // Component styles
-    cardStyle: 'default' as CardStyle,
-    setCardStyle: () => { },
-    badgeStyle: 'default' as BadgeStyle,
-    setBadgeStyle: () => { },
-    buttonStyle: 'default' as ButtonStyle,
-    setButtonStyle: () => { },
-    inputStyle: 'default' as InputStyle,
-    setInputStyle: () => { },
-    selectStyle: 'default' as SelectStyle,
-    setSelectStyle: () => { },
-    switchStyle: 'default' as SwitchStyle,
-    setSwitchStyle: () => { },
-    datePickerStyle: 'default' as DatePickerStyle,
-    setDatePickerStyle: () => { },
-    calendarStyle: 'default' as CalendarStyle,
-    setCalendarStyle: () => { },
-    toastStyle: 'default' as ToastStyle,
-    setToastStyle: () => { },
+    cardStyle: "default" as CardStyle,
+    setCardStyle: () => {},
+    badgeStyle: "default" as BadgeStyle,
+    setBadgeStyle: () => {},
+    buttonStyle: "default" as ButtonStyle,
+    setButtonStyle: () => {},
+    inputStyle: "default" as InputStyle,
+    setInputStyle: () => {},
+    selectStyle: "default" as SelectStyle,
+    setSelectStyle: () => {},
+    switchStyle: "default" as SwitchStyle,
+    setSwitchStyle: () => {},
+    datePickerStyle: "default" as DatePickerStyle,
+    setDatePickerStyle: () => {},
+    calendarStyle: "default" as CalendarStyle,
+    setCalendarStyle: () => {},
+    toastStyle: "default" as ToastStyle,
+    setToastStyle: () => {},
 
     // Animation settings
-    animationLevel: 'moderate' as AnimationLevel,
-    setAnimationLevel: () => { },
+    animationLevel: "moderate" as AnimationLevel,
+    setAnimationLevel: () => {},
     sidebarStyle: "default" as SidebarStyle,
 
     // Navigation settings
-    navigationStyle: 'default' as NavigationStyle,
-    setNavigationStyle: () => { },
-    iconStyle: 'outline' as IconStyle,
-    setIconStyle: () => { },
-    spacingSize: 'default' as SpacingSize,
-    setSpacingSize: () => { },
+    navigationStyle: "default" as NavigationStyle,
+    setNavigationStyle: () => {},
+    iconStyle: "outline" as IconStyle,
+    setIconStyle: () => {},
+    spacingSize: "default" as SpacingSize,
+    setSpacingSize: () => {},
     loadingStyle: "spinner" as LoadingStyle,
 
     // Additional settings
     compactMode: false,
-    setCompactMode: () => { },
+    setCompactMode: () => {},
     highContrast: false,
-    setHighContrast: () => { },
+    setHighContrast: () => {},
     reducedMotion: false,
-    setReducedMotion: () => { },
+    setReducedMotion: () => {},
     stickyHeader: true,
-    setStickyHeader: () => { },
+    setStickyHeader: () => {},
     showFooter: true,
-    setShowFooter: () => { },
-    formStyle: 'default' as FormStyle,
-    setFormStyle: () => { },
-    checkboxStyle: 'default' as CheckboxStyle,
-    setCheckboxStyle: () => { },
-    radioStyle: 'default' as RadioStyle,
-    setRadioStyle: () => { },
+    setShowFooter: () => {},
+    formStyle: "default" as FormStyle,
+    setFormStyle: () => {},
+    checkboxStyle: "default" as CheckboxStyle,
+    setCheckboxStyle: () => {},
+    radioStyle: "default" as RadioStyle,
+    setRadioStyle: () => {},
 
     // Logo settings
-    logoType: 'default' as LogoType,
-    setLogoType: () => { },
+    logoType: "default" as LogoType,
+    setLogoType: () => {},
     modalStyle: "default" as ModalStyle,
     tableStyle: "default" as TableStyle,
     treeStyle: "modern" as TreeStyle,
 
     // Hover effect settings
-    hoverEffectType: 'elevate' as HoverEffectType,
-    setHoverEffectType: () => { },
-    hoverEffectIntensity: 'medium' as HoverEffectIntensity,
-    setHoverEffectIntensity: () => { },
+    hoverEffectType: "elevate" as HoverEffectType,
+    setHoverEffectType: () => {},
+    hoverEffectIntensity: "medium" as HoverEffectIntensity,
+    setHoverEffectIntensity: () => {},
   };
 }
 
@@ -671,7 +754,7 @@ const SettingsContext = createContext<SettingsContextType | undefined>(undefined
 
 /**
  * Settings Provider Component
- * 
+ *
  * Provides centralized settings management with localStorage persistence
  * and optimized performance through reduced re-renders.
  */
@@ -783,25 +866,44 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
 
       if (bgMode === "gradient") {
         const dirMap: Record<string, string> = {
-          "to-t": "0deg", "to-tr": "45deg", "to-r": "90deg", "to-br": "135deg",
-          "to-b": "180deg", "to-bl": "225deg", "to-l": "270deg", "to-tl": "315deg",
+          "to-t": "0deg",
+          "to-tr": "45deg",
+          "to-r": "90deg",
+          "to-br": "135deg",
+          "to-b": "180deg",
+          "to-bl": "225deg",
+          "to-l": "270deg",
+          "to-tl": "315deg",
         };
         const angle = dirMap[settings.gradientDirection] || "135deg";
         const isDark = root.classList.contains("dark");
 
         if (settings.gradientStartColor && settings.gradientEndColor) {
-          root.style.setProperty("--bg-override", `linear-gradient(${angle}, ${settings.gradientStartColor}, ${settings.gradientEndColor})`);
+          root.style.setProperty(
+            "--bg-override",
+            `linear-gradient(${angle}, ${settings.gradientStartColor}, ${settings.gradientEndColor})`
+          );
         } else if (isDark && settings.darkGradientTheme && settings.darkGradientTheme !== "none") {
           const fromStyle = getComputedStyle(root).getPropertyValue("--gradient-from").trim();
           const toStyle = getComputedStyle(root).getPropertyValue("--gradient-to").trim();
           if (fromStyle && toStyle) {
-            root.style.setProperty("--bg-override", `linear-gradient(${angle}, hsl(${fromStyle}), hsl(${toStyle}))`);
+            root.style.setProperty(
+              "--bg-override",
+              `linear-gradient(${angle}, hsl(${fromStyle}), hsl(${toStyle}))`
+            );
           }
-        } else if (!isDark && settings.lightGradientTheme && settings.lightGradientTheme !== "none") {
+        } else if (
+          !isDark &&
+          settings.lightGradientTheme &&
+          settings.lightGradientTheme !== "none"
+        ) {
           const fromStyle = getComputedStyle(root).getPropertyValue("--gradient-from").trim();
           const toStyle = getComputedStyle(root).getPropertyValue("--gradient-to").trim();
           if (fromStyle && toStyle) {
-            root.style.setProperty("--bg-override", `linear-gradient(${angle}, hsl(${fromStyle}), hsl(${toStyle}))`);
+            root.style.setProperty(
+              "--bg-override",
+              `linear-gradient(${angle}, hsl(${fromStyle}), hsl(${toStyle}))`
+            );
           }
         }
       } else if (bgMode === "custom") {
@@ -811,7 +913,6 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
           root.style.setProperty("--bg-override", customBg);
         }
       }
-
 
       // Apply CSS custom properties for responsive design
       root.style.setProperty(
@@ -867,10 +968,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   }, [settings, isHydrated]);
 
   // Generic update function to reduce code duplication
-  const updateSetting = <K extends keyof Settings>(
-    key: K,
-    value: Settings[K]
-  ) => {
+  const updateSetting = <K extends keyof Settings>(key: K, value: Settings[K]) => {
     setSettings((prev) => ({ ...prev, [key]: value }));
   };
 
@@ -965,19 +1063,15 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
 
   // Don't render until hydrated to prevent hydration mismatches
   if (!isHydrated) {
-    return <div className="min-h-screen bg-background animate-pulse" />;
+    return <div className="min-h-screen animate-pulse bg-background" />;
   }
 
-  return (
-    <SettingsContext.Provider value={contextValue}>
-      {children}
-    </SettingsContext.Provider>
-  );
+  return <SettingsContext.Provider value={contextValue}>{children}</SettingsContext.Provider>;
 }
 
 /**
  * Hook to access settings context
- * 
+ *
  * @returns Settings context with all settings and setters
  * @throws Error if used outside of SettingsProvider
  */
@@ -985,7 +1079,7 @@ export function useSettings() {
   const context = useContext(SettingsContext);
   if (context === undefined) {
     // During SSR/prerendering or hydration issues, provide fallback values
-    if (typeof window === 'undefined') {
+    if (typeof window === "undefined") {
       return createFallbackSettings() as SettingsContextType;
     }
     // Client-side fallback for hydration issues

@@ -1,13 +1,13 @@
 /**
  * Generic Tree View Model Hook
- * 
+ *
  * A comprehensive, reusable hook for managing hierarchical tree data with:
  * - **TanStack Query integration** for caching and deduplication
  * - Type-safe CRUD operations
  * - Tree traversal and selection
  * - Auto-parent selection
  * - Form handling for create/edit
- * 
+ *
  * @version 2.0.0 - TanStack Query Integration
  */
 "use client";
@@ -25,11 +25,7 @@ export interface TreeNode {
 }
 
 export interface TreeService<T extends TreeNode, TCreate, TUpdate> {
-  getWithChildren: (params: {
-    page: number;
-    pageSize: number;
-    PageSearch: string;
-  }) => Promise<{
+  getWithChildren: (params: { page: number; pageSize: number; PageSearch: string }) => Promise<{
     data: T[];
     pagination: PaginationInfo;
   }>;
@@ -50,9 +46,7 @@ export function createMockTreeService<T extends TreeNode>(
       if (params.PageSearch && searchFields.length > 0) {
         const searchTerm = params.PageSearch.toLowerCase();
         filteredData = mockData.filter((item: any) =>
-          searchFields.some((field) =>
-            item[field]?.toString().toLowerCase().includes(searchTerm)
-          )
+          searchFields.some((field) => item[field]?.toString().toLowerCase().includes(searchTerm))
         );
       }
 
@@ -111,11 +105,7 @@ export interface TreeViewModelConfig<T extends TreeNode> {
   staleTime?: number;
 }
 
-export function useTreeViewModel<
-  T extends TreeNode,
-  TCreate = any,
-  TUpdate = any
->(
+export function useTreeViewModel<T extends TreeNode, TCreate = any, TUpdate = any>(
   service?: TreeService<T, TCreate, TUpdate> | null,
   config: TreeViewModelConfig<T> = {}
 ) {
@@ -144,9 +134,7 @@ export function useTreeViewModel<
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<T | null>(null);
   const [parentForNew, setParentForNew] = useState<T | null>(null);
-  const [formValues, setFormValues] = useState<any>(
-    config.getInitialFormValues?.() || {}
-  );
+  const [formValues, setFormValues] = useState<any>(config.getInitialFormValues?.() || {});
 
   // Search state - separate display value from search term
   const [searchValue, setSearchValue] = useState<string>(""); // What user types (immediate)
@@ -159,14 +147,17 @@ export function useTreeViewModel<
   const deleteHook = useEnhancedDelete();
 
   // Build query key
-  const effectiveQueryKey = config.queryKey ?? ['tree'];
+  const effectiveQueryKey = config.queryKey ?? ["tree"];
 
   // Build query params
-  const queryParams = useMemo(() => ({
-    page: pagination.page,
-    pageSize: pagination.pageSize,
-    PageSearch: searchTerm,
-  }), [pagination.page, pagination.pageSize, searchTerm]);
+  const queryParams = useMemo(
+    () => ({
+      page: pagination.page,
+      pageSize: pagination.pageSize,
+      PageSearch: searchTerm,
+    }),
+    [pagination.page, pagination.pageSize, searchTerm]
+  );
 
   // ==========================================
   // TanStack Query - Main Data Fetching
@@ -195,7 +186,7 @@ export function useTreeViewModel<
   // Update pagination from query response
   useEffect(() => {
     if (queryData?.pagination) {
-      setPagination(prev => ({
+      setPagination((prev) => ({
         ...queryData.pagination,
         pageSize: prev.pageSize, // Keep user-selected page size
       }));
@@ -282,65 +273,48 @@ export function useTreeViewModel<
   // ==========================================
 
   // Helper function to find all parent IDs for a given item
-  const findAllParents = useCallback(
-    (itemId: string, treeData: T[]): string[] => {
-      const parents: string[] = [];
+  const findAllParents = useCallback((itemId: string, treeData: T[]): string[] => {
+    const parents: string[] = [];
 
-      const findParent = (
-        nodes: T[],
-        targetId: string,
-        currentParents: string[] = []
-      ): boolean => {
-        for (const node of nodes) {
-          if (node.id === targetId) {
-            parents.push(...currentParents);
+    const findParent = (nodes: T[], targetId: string, currentParents: string[] = []): boolean => {
+      for (const node of nodes) {
+        if (node.id === targetId) {
+          parents.push(...currentParents);
+          return true;
+        }
+        if (node.children && node.children.length > 0) {
+          if (findParent(node.children as T[], targetId, [...currentParents, node.id])) {
             return true;
           }
-          if (node.children && node.children.length > 0) {
-            if (
-              findParent(node.children as T[], targetId, [
-                ...currentParents,
-                node.id,
-              ])
-            ) {
-              return true;
-            }
-          }
         }
-        return false;
-      };
+      }
+      return false;
+    };
 
-      findParent(treeData, itemId);
-      return parents;
-    },
-    []
-  );
+    findParent(treeData, itemId);
+    return parents;
+  }, []);
 
   // Helper function to find the immediate parent of a given item
-  const findImmediateParent = useCallback(
-    (itemId: string, treeData: T[]): T | null => {
-      const findParent = (nodes: T[], targetId: string): T | null => {
-        for (const node of nodes) {
-          if (node.children && node.children.length > 0) {
-            const hasTargetChild = (node.children as T[]).some(
-              (child) => child.id === targetId
-            );
-            if (hasTargetChild) {
-              return node;
-            }
-            const found = findParent(node.children as T[], targetId);
-            if (found) {
-              return found;
-            }
+  const findImmediateParent = useCallback((itemId: string, treeData: T[]): T | null => {
+    const findParent = (nodes: T[], targetId: string): T | null => {
+      for (const node of nodes) {
+        if (node.children && node.children.length > 0) {
+          const hasTargetChild = (node.children as T[]).some((child) => child.id === targetId);
+          if (hasTargetChild) {
+            return node;
+          }
+          const found = findParent(node.children as T[], targetId);
+          if (found) {
+            return found;
           }
         }
-        return null;
-      };
+      }
+      return null;
+    };
 
-      return findParent(treeData, itemId);
-    },
-    []
-  );
+    return findParent(treeData, itemId);
+  }, []);
 
   // ==========================================
   // Selection handlers
@@ -470,10 +444,7 @@ export function useTreeViewModel<
     }
 
     searchTimeoutRef.current = setTimeout(() => {
-      if (
-        searchInputRef.current &&
-        document.activeElement !== searchInputRef.current
-      ) {
+      if (searchInputRef.current && document.activeElement !== searchInputRef.current) {
         searchInputRef.current.focus();
       }
 
@@ -517,8 +488,7 @@ export function useTreeViewModel<
 
       setEditing(null);
       setParentForNew(parent);
-      const initialValues =
-        config.getInitialFormValues?.(undefined, parent || undefined) || {};
+      const initialValues = config.getInitialFormValues?.(undefined, parent || undefined) || {};
       setFormValues(initialValues);
       setModalOpen(true);
     },
@@ -534,8 +504,7 @@ export function useTreeViewModel<
       setEditing(item);
       const parent = findImmediateParent(item.id, tree);
       setParentForNew(parent);
-      const initialValues =
-        config.getInitialFormValues?.(item, parent || undefined) || {};
+      const initialValues = config.getInitialFormValues?.(item, parent || undefined) || {};
       setFormValues(initialValues);
       setModalOpen(true);
     },
@@ -552,8 +521,7 @@ export function useTreeViewModel<
 
       try {
         if (editing) {
-          const updateData =
-            config.updateFormData?.(dataToSubmit, editing) || dataToSubmit;
+          const updateData = config.updateFormData?.(dataToSubmit, editing) || dataToSubmit;
           await updateItem(editing.id, updateData);
         } else {
           const createData = config.createFormData?.(dataToSubmit) || dataToSubmit;

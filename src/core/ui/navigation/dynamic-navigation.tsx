@@ -4,31 +4,37 @@ import { useMemo } from "react";
 
 import { useNavigation } from "@core/providers/navigation-provider";
 import { useI18n } from "@core/providers/i18n-provider";
-import { convertMenuItemsToNavigation, getNavigationItems, fallbackNavigation, navigation, USE_DYNAMIC_NAVIGATION } from "@core/config/navigation";
+import {
+  convertMenuItemsToNavigation,
+  getNavigationItems,
+  fallbackNavigation,
+  navigation,
+  USE_DYNAMIC_NAVIGATION,
+} from "@core/config/navigation";
 import type { NavigationItem } from "@core/config/navigation";
 
 /**
  * ============================================================================
  * 🚀 DYNAMIC NAVIGATION SYSTEM
  * ============================================================================
- * 
+ *
  * This is the CORE of the navigation system. Super easy to use:
- * 
+ *
  * 📱 IN COMPONENTS:
  * const navigation = useDynamicNavigation(); // That's it!
- * 
+ *
  * 🔄 AUTOMATIC SWITCHING:
  * - Static mode: Returns hardcoded navigation items
  * - Dynamic mode: Returns backend navigation items with fallback
  * - Translation: Automatically applied
  * - Icons: Automatically mapped from strings to components
- * 
+ *
  * 💡 BENEFITS:
  * - Zero configuration needed in components
  * - Automatic fallback when backend fails
  * - Built-in translation support
  * - Route protection in dynamic mode
- * 
+ *
  * ============================================================================
  */
 
@@ -66,11 +72,11 @@ export function DynamicNavigation({ children }: DynamicNavigationProps) {
 }
 
 /**
-   * 🪝 Main Navigation Hook - USE THIS IN ALL SIDEBAR COMPONENTS
-   * 
-   * Simply call: const navigation = useDynamicNavigation();
-   * Everything else is handled automatically!
-   */
+ * 🪝 Main Navigation Hook - USE THIS IN ALL SIDEBAR COMPONENTS
+ *
+ * Simply call: const navigation = useDynamicNavigation();
+ * Everything else is handled automatically!
+ */
 export function useDynamicNavigation(): NavigationItem[] {
   // ⚠️ All hooks MUST be called before any early returns (React Rules of Hooks)
   const navContext = useNavigation();
@@ -78,7 +84,7 @@ export function useDynamicNavigation(): NavigationItem[] {
 
   return useMemo(() => {
     // SSR safety — return empty during server-side rendering
-    if (typeof window === 'undefined') {
+    if (typeof window === "undefined") {
       return [];
     }
 

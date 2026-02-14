@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 /**
  * useSignalR — Convenience hook to access the shared SignalR connection.
@@ -12,5 +12,5 @@
  * ```
  */
 
-export { useSignalRContext as useSignalR } from '@core/providers/signalr-provider';
-export type { SignalRConnectionState } from '@core/providers/signalr-provider';
+export { useSignalRContext as useSignalR } from "@core/providers/signalr-provider";
+export type { SignalRConnectionState } from "@core/providers/signalr-provider";

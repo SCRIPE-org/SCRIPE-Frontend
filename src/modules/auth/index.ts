@@ -3,11 +3,11 @@
  */
 
 // Core
-export * from './core/domain/entities';
-export * from './core/domain/interfaces';
-export { AuthRepository } from './core/data/repositories/AuthRepository';
-export { authContainer } from './di';
+export * from "./core/domain/entities";
+export * from "./core/domain/interfaces";
+export { AuthRepository } from "./core/data/repositories/AuthRepository";
+export { authContainer } from "./di";
 
 // Submodules
-export { LoginView } from './signin';
+export { LoginView } from "./signin";
 // export { RouteGuard } from './core/presentation/components/RouteGuard'; // RouteGuard moved to Core

@@ -28,7 +28,7 @@ const DialogOverlay = React.forwardRef<
   <DialogPrimitive.Overlay
     ref={ref}
     className={cn(
-      `fixed inset-0 z-[${OVERLAY_Z_INDEX}] bg-black/70 supports-[backdrop-filter]:backdrop-blur-2xl supports-[backdrop-filter]:backdrop-brightness-50 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0`,
+      `fixed inset-0 z-[${OVERLAY_Z_INDEX}] bg-black/70 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 supports-[backdrop-filter]:backdrop-blur-2xl supports-[backdrop-filter]:backdrop-brightness-50`,
       className
     )}
     style={{
@@ -49,8 +49,7 @@ const DialogContent = React.forwardRef<
   const isRtl = (dir || direction) === "rtl";
 
   // Check if this is a drawer style modal
-  const isDrawer =
-    className?.includes("right-0") && className?.includes("!translate-x-0");
+  const isDrawer = className?.includes("right-0") && className?.includes("!translate-x-0");
 
   const getPositionClasses = () => {
     if (isDrawer) {
@@ -88,7 +87,7 @@ const DialogContent = React.forwardRef<
         onPointerDownOutside={(e) => {
           // Block closing for non-left clicks (e.g., right-click)
           const orig = (e as any).detail?.originalEvent as PointerEvent | MouseEvent | undefined;
-          const button = (orig && 'button' in orig ? (orig as any).button : 0) as number;
+          const button = (orig && "button" in orig ? (orig as any).button : 0) as number;
           if (button !== 0) {
             e.preventDefault();
           }
@@ -132,10 +131,7 @@ const DialogContent = React.forwardRef<
 });
 DialogContent.displayName = DialogPrimitive.Content.displayName;
 
-const DialogHeader = ({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) => {
+const DialogHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => {
   const { direction } = useI18n();
   const isRtl = direction === "rtl";
 
@@ -152,10 +148,7 @@ const DialogHeader = ({
 };
 DialogHeader.displayName = "DialogHeader";
 
-const DialogFooter = ({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) => {
+const DialogFooter = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => {
   const { direction } = useI18n();
   const isRtl = direction === "rtl";
 
@@ -163,7 +156,7 @@ const DialogFooter = ({
     <div
       className={cn(
         "flex flex-col-reverse sm:flex-row sm:justify-end",
-        isRtl ? "sm:space-x-reverse sm:space-x-2" : "sm:space-x-2",
+        isRtl ? "sm:space-x-2 sm:space-x-reverse" : "sm:space-x-2",
         className
       )}
       {...props}
@@ -178,10 +171,7 @@ const DialogTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Title
     ref={ref}
-    className={cn(
-      "text-lg font-semibold leading-none tracking-tight",
-      className
-    )}
+    className={cn("text-lg font-semibold leading-none tracking-tight", className)}
     {...props}
   />
 ));

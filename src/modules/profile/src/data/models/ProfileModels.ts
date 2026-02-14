@@ -8,71 +8,71 @@
 // ===== Response DTOs =====
 
 export interface AdminProfileDto {
-      id: string;
-      username: string;
-      firstName: string;
-      lastName: string;
-      phoneNumber: string;
-      adminTypeName: string;
-      profileImageUrl: string | null;
-      roles?: Array<{ roleCode?: string; roleName?: string }>;
-      permissions?: string[];
-      isTwoFactorEnabled: boolean;
-      backupCodesRemaining: number | null;
-      isPasswordExpired: boolean;
-      daysUntilPasswordExpiry: number | null;
-      passwordLastChanged: string | null;
+  id: string;
+  username: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  adminTypeName: string;
+  profileImageUrl: string | null;
+  roles?: Array<{ roleCode?: string; roleName?: string }>;
+  permissions?: string[];
+  isTwoFactorEnabled: boolean;
+  backupCodesRemaining: number | null;
+  isPasswordExpired: boolean;
+  daysUntilPasswordExpiry: number | null;
+  passwordLastChanged: string | null;
 }
 
 export interface ActiveSessionDto {
-      tokenId: string;
-      deviceInfo: string;
-      ipAddress: string;
-      createdAt: string;
-      expiresAt: string;
-      isCurrent: boolean;
+  tokenId: string;
+  deviceInfo: string;
+  ipAddress: string;
+  createdAt: string;
+  expiresAt: string;
+  isCurrent: boolean;
 }
 
 export interface SecurityLogEntryDto {
-      id: string;
-      eventType: string;
-      description: string;
-      ipAddress: string | null;
-      userAgent: string | null;
-      timestamp: string;
-      details: string | null;
+  id: string;
+  eventType: string;
+  description: string;
+  ipAddress: string | null;
+  userAgent: string | null;
+  timestamp: string;
+  details: string | null;
 }
 
 // ===== Request DTOs =====
 
 export interface UpdateProfileDto {
-      firstName: string;
-      lastName: string;
-      phoneNumber: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
 }
 
 export interface ChangePasswordDto {
-      currentPassword: string;
-      newPassword: string;
-      twoFactorCode?: string;
+  currentPassword: string;
+  newPassword: string;
+  twoFactorCode?: string;
 }
 
 export interface RegenerateBackupCodesDto {
-      twoFactorCode: string;
+  twoFactorCode: string;
 }
 
 // ===== 2FA Setup DTOs =====
 
 export interface Enable2FAResultDto {
-      qrCodeDataUri: string;
-      manualEntryKey: string;
-      backupCodes: string[];
+  qrCodeDataUri: string;
+  manualEntryKey: string;
+  backupCodes: string[];
 }
 
 export interface Confirm2FADto {
-      code: string;
+  code: string;
 }
 
 export interface Disable2FADto {
-      password: string;
+  password: string;
 }

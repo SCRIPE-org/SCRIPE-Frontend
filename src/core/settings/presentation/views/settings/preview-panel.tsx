@@ -51,7 +51,7 @@ export function PreviewPanel() {
   ];
 
   return (
-    <div className="lg:col-span-2 space-y-6">
+    <div className="space-y-6 lg:col-span-2">
       <Card>
         <CardHeader>
           <CardTitle>{t("settings.preview.title")}</CardTitle>
@@ -59,10 +59,8 @@ export function PreviewPanel() {
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-3">
-            <Label className="text-sm font-semibold">
-              {t("settings.preview.buttons.label")}
-            </Label>
-            <div className="flex gap-2 flex-wrap">
+            <Label className="text-sm font-semibold">{t("settings.preview.buttons.label")}</Label>
+            <div className="flex flex-wrap gap-2">
               <Button size="sm">{t("settings.preview.buttons.primary")}</Button>
               <Button size="sm" variant="secondary">
                 {t("settings.preview.buttons.secondary")}
@@ -76,10 +74,8 @@ export function PreviewPanel() {
           <Separator />
 
           <div className="space-y-3">
-            <Label className="text-sm font-semibold">
-              {t("settings.preview.badges.label")}
-            </Label>
-            <div className="flex gap-2 flex-wrap">
+            <Label className="text-sm font-semibold">{t("settings.preview.badges.label")}</Label>
+            <div className="flex flex-wrap gap-2">
               <Badge variant="active">Active</Badge>
               <Badge variant="inactive">Inactive</Badge>
               <Badge variant="pending">Pending</Badge>
@@ -90,9 +86,7 @@ export function PreviewPanel() {
           <Separator />
 
           <div className="space-y-3">
-            <Label className="text-sm font-semibold">
-              {t("settings.preview.avatars.label")}
-            </Label>
+            <Label className="text-sm font-semibold">{t("settings.preview.avatars.label")}</Label>
             <div className="flex gap-2">
               <Avatar className="h-8 w-8">
                 <AvatarFallback className="text-xs">
@@ -100,14 +94,10 @@ export function PreviewPanel() {
                 </AvatarFallback>
               </Avatar>
               <Avatar>
-                <AvatarFallback>
-                  {t("settings.preview.avatars.md")}
-                </AvatarFallback>
+                <AvatarFallback>{t("settings.preview.avatars.md")}</AvatarFallback>
               </Avatar>
               <Avatar className="h-12 w-12">
-                <AvatarFallback>
-                  {t("settings.preview.avatars.lg")}
-                </AvatarFallback>
+                <AvatarFallback>{t("settings.preview.avatars.lg")}</AvatarFallback>
               </Avatar>
             </div>
           </div>
@@ -115,18 +105,14 @@ export function PreviewPanel() {
           <Separator />
 
           <div className="space-y-3">
-            <Label className="text-sm font-semibold">
-              {t("settings.preview.input.label")}
-            </Label>
+            <Label className="text-sm font-semibold">{t("settings.preview.input.label")}</Label>
             <Input placeholder={t("settings.preview.input.placeholder")} />
           </div>
 
           <Separator />
 
           <div className="space-y-3">
-            <Label className="text-sm font-semibold">
-              {t("settings.preview.loading.label")}
-            </Label>
+            <Label className="text-sm font-semibold">{t("settings.preview.loading.label")}</Label>
             <div className="flex justify-center py-4">
               <div className="scale-50">
                 <LoadingSpinner />
@@ -137,9 +123,7 @@ export function PreviewPanel() {
           <Separator />
 
           <div className="space-y-3">
-            <Label className="text-sm font-semibold">
-              {t("settings.preview.tooltip.label")}
-            </Label>
+            <Label className="text-sm font-semibold">{t("settings.preview.tooltip.label")}</Label>
             <div className="flex justify-center">
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -157,29 +141,19 @@ export function PreviewPanel() {
           <Separator />
 
           <div className="space-y-3">
-            <Label className="text-sm font-semibold">
-              {t("settings.preview.table.label")}
-            </Label>
+            <Label className="text-sm font-semibold">{t("settings.preview.table.label")}</Label>
             <div className="text-xs">
-              <GenericTable
-                data={sampleTableData}
-                columns={sampleTableColumns}
-                loading={false}
-              />
+              <GenericTable data={sampleTableData} columns={sampleTableColumns} loading={false} />
             </div>
           </div>
 
           <Separator />
 
           <div className="space-y-3">
-            <Label className="text-sm font-semibold">
-              {t("settings.preview.card.label")}
-            </Label>
+            <Label className="text-sm font-semibold">{t("settings.preview.card.label")}</Label>
             <Card className="p-3">
               <CardHeader className="p-0 pb-2">
-                <CardTitle className="text-sm">
-                  {t("settings.preview.card.title")}
-                </CardTitle>
+                <CardTitle className="text-sm">{t("settings.preview.card.title")}</CardTitle>
                 <CardDescription className="text-xs">
                   {t("settings.preview.card.description")}
                 </CardDescription>
@@ -199,9 +173,7 @@ export function PreviewPanel() {
               {t("settings.preview.typography.label")}
             </Label>
             <div className="space-y-1">
-              <h4 className="font-semibold">
-                {t("settings.preview.typography.heading")}
-              </h4>
+              <h4 className="font-semibold">{t("settings.preview.typography.heading")}</h4>
               <p className="text-sm text-muted-foreground">
                 {t("settings.preview.typography.paragraph")}
               </p>
@@ -212,4 +184,3 @@ export function PreviewPanel() {
     </div>
   );
 }
-

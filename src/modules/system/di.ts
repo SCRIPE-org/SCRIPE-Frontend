@@ -2,7 +2,7 @@
  * System Module DI Container
  *
  * Provides dependency injection for all system submodules.
- * 
+ *
  * Clean Architecture Pattern:
  * - Services wrap IApiService (API calls only)
  * - Repositories use Services and map Models → Entities
@@ -48,22 +48,22 @@ import type { ITenantService } from "./tenants/src/domain/interfaces/ITenantServ
 import type { ITenantSettingsService } from "./tenant-settings/src/domain/interfaces/ITenantSettingsService";
 
 export interface SystemContainer {
-      // Services
-      adminService: IAdminService;
-      permissionService: IPermissionService;
-      roleService: IRoleService;
-      tenantService: ITenantService;
-      tenantSettingsService: ITenantSettingsService;
-      // Repositories
-      adminRepository: IAdminRepository;
-      roleRepository: IRoleRepository;
-      permissionRepository: IPermissionRepository;
-      tenantRepository: ITenantRepository;
-      menuRepository: IMenuRepository;
-      tenantSettingsRepository: ITenantSettingsRepository;
-      dashboardRepository: IDashboardRepository;
-      recycleBinService: IRecycleBinService;
-      recycleBinRepository: IRecycleBinRepository;
+  // Services
+  adminService: IAdminService;
+  permissionService: IPermissionService;
+  roleService: IRoleService;
+  tenantService: ITenantService;
+  tenantSettingsService: ITenantSettingsService;
+  // Repositories
+  adminRepository: IAdminRepository;
+  roleRepository: IRoleRepository;
+  permissionRepository: IPermissionRepository;
+  tenantRepository: ITenantRepository;
+  menuRepository: IMenuRepository;
+  tenantSettingsRepository: ITenantSettingsRepository;
+  dashboardRepository: IDashboardRepository;
+  recycleBinService: IRecycleBinService;
+  recycleBinRepository: IRecycleBinRepository;
 }
 
 let _container: SystemContainer | null = null;
@@ -72,84 +72,84 @@ let _container: SystemContainer | null = null;
  * Get the system container (lazy initialization)
  */
 export function getSystemContainer(): SystemContainer {
-      if (!_container) {
-            const { apiService } = getCoreContainer();
+  if (!_container) {
+    const { apiService } = getCoreContainer();
 
-            // Create Services (wrap IApiService)
-            const adminService = new AdminService(apiService);
-            const permissionService = new PermissionService(apiService);
-            const roleService = new RoleService(apiService);
-            const tenantService = new TenantService(apiService);
-            const tenantSettingsService = new TenantSettingsService(apiService);
-            const recycleBinService = new RecycleBinService(apiService);
+    // Create Services (wrap IApiService)
+    const adminService = new AdminService(apiService);
+    const permissionService = new PermissionService(apiService);
+    const roleService = new RoleService(apiService);
+    const tenantService = new TenantService(apiService);
+    const tenantSettingsService = new TenantSettingsService(apiService);
+    const recycleBinService = new RecycleBinService(apiService);
 
-            // Create Repositories (use Services)
-            _container = {
-                  // Services
-                  adminService,
-                  permissionService,
-                  roleService,
-                  tenantService,
-                  tenantSettingsService,
-                  // Repositories
-                  adminRepository: new AdminRepository(adminService),
-                  roleRepository: new RoleRepository(roleService),
-                  permissionRepository: new PermissionRepository(permissionService),
-                  tenantRepository: new TenantRepository(tenantService),
-                  menuRepository: new MenuRepository(apiService), // TODO: Add MenuService
-                  tenantSettingsRepository: new TenantSettingsRepository(tenantSettingsService),
-                  dashboardRepository: new DashboardRepository(new DashboardService(apiService)),
-                  recycleBinService,
-                  recycleBinRepository: new RecycleBinRepository(recycleBinService),
-            };
-      }
+    // Create Repositories (use Services)
+    _container = {
+      // Services
+      adminService,
+      permissionService,
+      roleService,
+      tenantService,
+      tenantSettingsService,
+      // Repositories
+      adminRepository: new AdminRepository(adminService),
+      roleRepository: new RoleRepository(roleService),
+      permissionRepository: new PermissionRepository(permissionService),
+      tenantRepository: new TenantRepository(tenantService),
+      menuRepository: new MenuRepository(apiService), // TODO: Add MenuService
+      tenantSettingsRepository: new TenantSettingsRepository(tenantSettingsService),
+      dashboardRepository: new DashboardRepository(new DashboardService(apiService)),
+      recycleBinService,
+      recycleBinRepository: new RecycleBinRepository(recycleBinService),
+    };
+  }
 
-      return _container;
+  return _container;
 }
 
 /**
  * System container accessor (for use in components)
  */
 export const systemContainer = {
-      // Services
-      get permissionService() {
-            return getSystemContainer().permissionService;
-      },
-      get roleService() {
-            return getSystemContainer().roleService;
-      },
-      get tenantService() {
-            return getSystemContainer().tenantService;
-      },
-      get tenantSettingsService() {
-            return getSystemContainer().tenantSettingsService;
-      },
-      // Repositories
-      get adminRepository() {
-            return getSystemContainer().adminRepository;
-      },
-      get roleRepository() {
-            return getSystemContainer().roleRepository;
-      },
-      get permissionRepository() {
-            return getSystemContainer().permissionRepository;
-      },
-      get tenantRepository() {
-            return getSystemContainer().tenantRepository;
-      },
-      get menuRepository() {
-            return getSystemContainer().menuRepository;
-      },
-      get tenantSettingsRepository() {
-            return getSystemContainer().tenantSettingsRepository;
-      },
-      get dashboardRepository() {
-            return getSystemContainer().dashboardRepository;
-      },
-      get recycleBinService() {
-            return getSystemContainer().recycleBinService;
-      },
-      get recycleBinRepository() {
-            return getSystemContainer().recycleBinRepository;
-      },
+  // Services
+  get permissionService() {
+    return getSystemContainer().permissionService;
+  },
+  get roleService() {
+    return getSystemContainer().roleService;
+  },
+  get tenantService() {
+    return getSystemContainer().tenantService;
+  },
+  get tenantSettingsService() {
+    return getSystemContainer().tenantSettingsService;
+  },
+  // Repositories
+  get adminRepository() {
+    return getSystemContainer().adminRepository;
+  },
+  get roleRepository() {
+    return getSystemContainer().roleRepository;
+  },
+  get permissionRepository() {
+    return getSystemContainer().permissionRepository;
+  },
+  get tenantRepository() {
+    return getSystemContainer().tenantRepository;
+  },
+  get menuRepository() {
+    return getSystemContainer().menuRepository;
+  },
+  get tenantSettingsRepository() {
+    return getSystemContainer().tenantSettingsRepository;
+  },
+  get dashboardRepository() {
+    return getSystemContainer().dashboardRepository;
+  },
+  get recycleBinService() {
+    return getSystemContainer().recycleBinService;
+  },
+  get recycleBinRepository() {
+    return getSystemContainer().recycleBinRepository;
+  },
 };

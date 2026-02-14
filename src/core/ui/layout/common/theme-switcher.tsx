@@ -1,25 +1,25 @@
-"use client"
+"use client";
 
-import { Sun, Moon, Monitor } from "lucide-react"
-import { Button } from "@core/ui/button"
+import { Sun, Moon, Monitor } from "lucide-react";
+import { Button } from "@core/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@core/ui/dropdown-menu"
-import { useTheme } from "next-themes"
-import { useI18n } from "@core/providers/i18n-provider"
-import { cn } from "@core/common/utils"
+} from "@core/ui/dropdown-menu";
+import { useTheme } from "next-themes";
+import { useI18n } from "@core/providers/i18n-provider";
+import { cn } from "@core/common/utils";
 
 interface ThemeSwitcherProps {
-  buttonClassName?: string
-  contentClassName?: string
+  buttonClassName?: string;
+  contentClassName?: string;
 }
 
 export function ThemeSwitcher({ buttonClassName, contentClassName }: ThemeSwitcherProps) {
-  const { setTheme } = useTheme()
-  const { t, direction } = useI18n()
+  const { setTheme } = useTheme();
+  const { t, direction } = useI18n();
 
   return (
     <DropdownMenu>
@@ -47,6 +47,5 @@ export function ThemeSwitcher({ buttonClassName, contentClassName }: ThemeSwitch
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }
-

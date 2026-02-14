@@ -247,7 +247,7 @@ export function ProfessionalMixedCharts() {
           },
         }}
       />
-      
+
       <GenericChart
         title={t("charts.mixed.areaLine.title")}
         description={t("charts.mixed.areaLine.description")}
@@ -270,7 +270,7 @@ export function ProfessionalMixedCharts() {
           },
         }}
       />
-      
+
       <GenericChart
         title={t("charts.mixed.barAreaLine.title")}
         description={t("charts.mixed.barAreaLine.description")}
@@ -299,7 +299,7 @@ export function ProfessionalMixedCharts() {
           },
         }}
       />
-      
+
       <GenericChart
         title={t("charts.mixed.dualAxis.title")}
         description={t("charts.mixed.dualAxis.description")}
@@ -322,7 +322,7 @@ export function ProfessionalMixedCharts() {
           },
         }}
       />
-      
+
       <GenericChart
         title={t("charts.mixed.scatterLine.title")}
         description={t("charts.mixed.scatterLine.description")}
@@ -330,7 +330,7 @@ export function ProfessionalMixedCharts() {
         type="scatter"
         filterable={true}
       />
-      
+
       <GenericChart
         title={t("charts.mixed.bubbleLine.title")}
         description={t("charts.mixed.bubbleLine.description")}
@@ -338,7 +338,7 @@ export function ProfessionalMixedCharts() {
         type="bubble"
         filterable={true}
       />
-      
+
       <GenericChart
         title={t("charts.mixed.radarLine.title")}
         description={t("charts.mixed.radarLine.description")}
@@ -346,7 +346,7 @@ export function ProfessionalMixedCharts() {
         type="line"
         filterable={true}
       />
-      
+
       <GenericChart
         title={t("charts.mixed.pieBar.title")}
         description={t("charts.mixed.pieBar.description")}

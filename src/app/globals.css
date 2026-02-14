@@ -1146,39 +1146,46 @@ html {
 
 :root[data-shadow="subtle"] {
   --shadow-sm: 0 1px 2px 0 hsl(var(--shadow-primary) / 0.05);
-  --shadow: 0 1px 3px 0 hsl(var(--shadow-primary) / 0.1),
-    0 1px 2px -1px hsl(var(--shadow-primary) / 0.1);
-  --shadow-md: 0 4px 6px -1px hsl(var(--shadow-primary) / 0.1),
-    0 2px 4px -2px hsl(var(--shadow-primary) / 0.1);
-  --shadow-lg: 0 10px 15px -3px hsl(var(--shadow-primary) / 0.1),
+  --shadow:
+    0 1px 3px 0 hsl(var(--shadow-primary) / 0.1), 0 1px 2px -1px hsl(var(--shadow-primary) / 0.1);
+  --shadow-md:
+    0 4px 6px -1px hsl(var(--shadow-primary) / 0.1), 0 2px 4px -2px hsl(var(--shadow-primary) / 0.1);
+  --shadow-lg:
+    0 10px 15px -3px hsl(var(--shadow-primary) / 0.1),
     0 4px 6px -4px hsl(var(--shadow-primary) / 0.1);
-  --shadow-xl: 0 20px 25px -5px hsl(var(--shadow-primary) / 0.1),
+  --shadow-xl:
+    0 20px 25px -5px hsl(var(--shadow-primary) / 0.1),
     0 8px 10px -6px hsl(var(--shadow-primary) / 0.1);
   --shadow-2xl: 0 25px 50px -12px hsl(var(--shadow-primary) / 0.25);
 }
 
 :root[data-shadow="moderate"] {
   --shadow-sm: 0 1px 2px 0 hsl(var(--shadow-primary) / 0.1);
-  --shadow: 0 1px 3px 0 hsl(var(--shadow-primary) / 0.15),
-    0 1px 2px -1px hsl(var(--shadow-primary) / 0.15);
-  --shadow-md: 0 4px 6px -1px hsl(var(--shadow-primary) / 0.15),
+  --shadow:
+    0 1px 3px 0 hsl(var(--shadow-primary) / 0.15), 0 1px 2px -1px hsl(var(--shadow-primary) / 0.15);
+  --shadow-md:
+    0 4px 6px -1px hsl(var(--shadow-primary) / 0.15),
     0 2px 4px -2px hsl(var(--shadow-primary) / 0.15);
-  --shadow-lg: 0 10px 15px -3px hsl(var(--shadow-primary) / 0.15),
+  --shadow-lg:
+    0 10px 15px -3px hsl(var(--shadow-primary) / 0.15),
     0 4px 6px -4px hsl(var(--shadow-primary) / 0.15);
-  --shadow-xl: 0 20px 25px -5px hsl(var(--shadow-primary) / 0.15),
+  --shadow-xl:
+    0 20px 25px -5px hsl(var(--shadow-primary) / 0.15),
     0 8px 10px -6px hsl(var(--shadow-primary) / 0.15);
   --shadow-2xl: 0 25px 50px -12px hsl(var(--shadow-primary) / 0.3);
 }
 
 :root[data-shadow="strong"] {
   --shadow-sm: 0 1px 2px 0 hsl(var(--shadow-primary) / 0.15);
-  --shadow: 0 1px 3px 0 hsl(var(--shadow-primary) / 0.2),
-    0 1px 2px -1px hsl(var(--shadow-primary) / 0.2);
-  --shadow-md: 0 4px 6px -1px hsl(var(--shadow-primary) / 0.2),
-    0 2px 4px -2px hsl(var(--shadow-primary) / 0.2);
-  --shadow-lg: 0 10px 15px -3px hsl(var(--shadow-primary) / 0.2),
+  --shadow:
+    0 1px 3px 0 hsl(var(--shadow-primary) / 0.2), 0 1px 2px -1px hsl(var(--shadow-primary) / 0.2);
+  --shadow-md:
+    0 4px 6px -1px hsl(var(--shadow-primary) / 0.2), 0 2px 4px -2px hsl(var(--shadow-primary) / 0.2);
+  --shadow-lg:
+    0 10px 15px -3px hsl(var(--shadow-primary) / 0.2),
     0 4px 6px -4px hsl(var(--shadow-primary) / 0.2);
-  --shadow-xl: 0 20px 25px -5px hsl(var(--shadow-primary) / 0.2),
+  --shadow-xl:
+    0 20px 25px -5px hsl(var(--shadow-primary) / 0.2),
     0 8px 10px -6px hsl(var(--shadow-primary) / 0.2);
   --shadow-2xl: 0 25px 50px -12px hsl(var(--shadow-primary) / 0.4);
 }
@@ -1336,7 +1343,7 @@ html {
   }
 
   body {
-    @apply bg-background text-foreground font-arabic transition-colors duration-300;
+    @apply bg-background font-arabic text-foreground transition-colors duration-300;
   }
 }
 
@@ -1355,19 +1362,18 @@ html[data-bg-mode="custom"] body {
 }
 
 /* Make top-level layout wrapper divs transparent so body bg shows through */
-html[data-bg-mode="gradient"] body>div>div,
-html[data-bg-mode="custom"] body>div>div {
+html[data-bg-mode="gradient"] body > div > div,
+html[data-bg-mode="custom"] body > div > div {
   background-color: transparent !important;
 }
 
 /* Also handle deeper layout wrapper divs (some layouts nest an extra level) */
-html[data-bg-mode="gradient"] body>div>div>div.min-h-screen,
-html[data-bg-mode="custom"] body>div>div>div.min-h-screen {
+html[data-bg-mode="gradient"] body > div > div > div.min-h-screen,
+html[data-bg-mode="custom"] body > div > div > div.min-h-screen {
   background-color: transparent !important;
 }
 
 @layer utilities {
-
   /* Modal blur utilities - applied to ENTIRE layout (sidebars, headers, content) when modal is open */
   .modal-blurred-content {
     filter: blur(8px) brightness(0.7) !important;
@@ -1433,7 +1439,7 @@ html[data-bg-mode="custom"] body>div>div>div.min-h-screen {
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  @apply bg-muted-foreground/20 rounded-full;
+  @apply rounded-full bg-muted-foreground/20;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
@@ -1480,7 +1486,6 @@ html[data-bg-mode="custom"] body>div>div>div.min-h-screen {
 }
 
 @keyframes float {
-
   0%,
   100% {
     transform: translateY(0px);
@@ -1511,15 +1516,11 @@ html[data-bg-mode="custom"] body>div>div>div.min-h-screen {
    UTILITY CLASSES - GRADIENTS & EFFECTS
    ======================================== */
 .gradient-primary {
-  background: linear-gradient(135deg,
-      hsl(var(--primary)) 0%,
-      hsl(var(--primary)) 100%);
+  background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary)) 100%);
 }
 
 .gradient-card {
-  background: linear-gradient(135deg,
-      hsl(var(--card)) 0%,
-      hsl(var(--muted)) 100%);
+  background: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--muted)) 100%);
 }
 
 /* Glass effect */
@@ -1540,7 +1541,9 @@ html[data-bg-mode="custom"] body>div>div>div.min-h-screen {
    UTILITY CLASSES - HOVER EFFECTS
    ======================================== */
 .hover-lift {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .hover-lift:hover {
@@ -1552,7 +1555,9 @@ html[data-bg-mode="custom"] body>div>div>div.min-h-screen {
    THEME TRANSITIONS
    ======================================== */
 * {
-  transition: background-color 0.3s ease, border-color 0.3s ease,
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease,
     color 0.3s ease;
 }
 
@@ -1560,9 +1565,11 @@ html[data-bg-mode="custom"] body>div>div>div.min-h-screen {
    UTILITY CLASSES - BACKGROUND PATTERNS
    ======================================== */
 .bg-grid-pattern {
-  background-image: radial-gradient(circle,
-      hsl(var(--muted-foreground) / 0.1) 1px,
-      transparent 1px);
+  background-image: radial-gradient(
+    circle,
+    hsl(var(--muted-foreground) / 0.1) 1px,
+    transparent 1px
+  );
   background-size: 20px 20px;
 }
 
@@ -1722,7 +1729,7 @@ html[data-compact-mode="true"] {
 }
 
 .custom-tree .tree-node::before {
-  content: '';
+  content: "";
   position: absolute;
   left: calc(var(--tree-indent) / 2);
   top: 0;
@@ -1737,7 +1744,7 @@ html[data-compact-mode="true"] {
 }
 
 .custom-tree .tree-node::after {
-  content: '';
+  content: "";
   position: absolute;
   left: calc(var(--tree-indent) / 2);
   top: 50%;

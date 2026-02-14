@@ -13,7 +13,11 @@ export interface CrudService<T, CreateReq, UpdateReq> {
 /** Optional adapters to “enhance” UX without hard deps */
 export interface NotificationsAdapter {
   operationSuccess: (op: "Load" | "Create" | "Update" | "Delete", subject: string) => void;
-  operationError: (op: "Load" | "Create" | "Update" | "Delete", subject: string, message: string) => void;
+  operationError: (
+    op: "Load" | "Create" | "Update" | "Delete",
+    subject: string,
+    message: string
+  ) => void;
 }
 
 export interface ConfirmationRequest {
@@ -39,8 +43,8 @@ export interface I18nAdapter {
 /** ------ Options ------ */
 export interface CrudViewModelOptions<T> {
   /** UX labels */
-  itemTypeName?: string;        // "User"
-  itemTypeNamePlural?: string;  // "Users"
+  itemTypeName?: string; // "User"
+  itemTypeNamePlural?: string; // "Users"
   /** Display formatter for items */
   getItemDisplayName?: (item: T) => string;
 
@@ -88,7 +92,7 @@ const createSecureConfirmation = (title: string, description: string): Promise<b
   return new Promise<boolean>((resolve) => {
     // Create a modal-like confirmation using DOM manipulation
     // This is safer than window.confirm as it doesn't block the thread
-    const modal = document.createElement('div');
+    const modal = document.createElement("div");
     modal.style.cssText = `
       position: fixed;
       top: 0;
@@ -101,8 +105,8 @@ const createSecureConfirmation = (title: string, description: string): Promise<b
       justify-content: center;
       z-index: 9999;
     `;
-    
-    const dialog = document.createElement('div');
+
+    const dialog = document.createElement("div");
     dialog.style.cssText = `
       background: white;
       padding: 20px;
@@ -110,7 +114,7 @@ const createSecureConfirmation = (title: string, description: string): Promise<b
       max-width: 400px;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     `;
-    
+
     dialog.innerHTML = `
       <h3 style="margin: 0 0 10px 0; color: #dc2626;">${title}</h3>
       <p style="margin: 0 0 20px 0; color: #666;">${description}</p>
@@ -119,31 +123,31 @@ const createSecureConfirmation = (title: string, description: string): Promise<b
         <button id="confirm-btn" style="padding: 8px 16px; border: none; background: #dc2626; color: white; border-radius: 4px; cursor: pointer;">Confirm</button>
       </div>
     `;
-    
+
     modal.appendChild(dialog);
     document.body.appendChild(modal);
-    
+
     const cleanup = () => {
       if (document.body.contains(modal)) {
         document.body.removeChild(modal);
       }
     };
-    
-    const cancelBtn = dialog.querySelector('#cancel-btn');
-    const confirmBtn = dialog.querySelector('#confirm-btn');
-    
-    cancelBtn?.addEventListener('click', () => {
+
+    const cancelBtn = dialog.querySelector("#cancel-btn");
+    const confirmBtn = dialog.querySelector("#confirm-btn");
+
+    cancelBtn?.addEventListener("click", () => {
       cleanup();
       resolve(false);
     });
-    
-    confirmBtn?.addEventListener('click', () => {
+
+    confirmBtn?.addEventListener("click", () => {
       cleanup();
       resolve(true);
     });
-    
+
     // Close on backdrop click
-    modal.addEventListener('click', (e) => {
+    modal.addEventListener("click", (e) => {
       if (e.target === modal) {
         cleanup();
         resolve(false);
@@ -157,11 +161,10 @@ const noopI18n: I18nAdapter = {
 };
 
 /** ------ Unified Hook ------ */
-export function useCrudViewModel<
-  T extends { id: string },
-  CreateReq,
-  UpdateReq
->(service: CrudService<T, CreateReq, UpdateReq>, options: CrudViewModelOptions<T> = {}) {
+export function useCrudViewModel<T extends { id: string }, CreateReq, UpdateReq>(
+  service: CrudService<T, CreateReq, UpdateReq>,
+  options: CrudViewModelOptions<T> = {}
+) {
   const [items, setItems] = useState<T[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -208,7 +211,11 @@ export function useCrudViewModel<
       setIsCreateModalOpen(false);
       operationSuccess("Create", itemTypeName);
     } catch (err) {
-      operationError("Create", itemTypeName, err instanceof Error ? err.message : "Failed to create");
+      operationError(
+        "Create",
+        itemTypeName,
+        err instanceof Error ? err.message : "Failed to create"
+      );
       throw err;
     }
   };
@@ -223,7 +230,11 @@ export function useCrudViewModel<
       operationSuccess("Update", itemTypeName);
     } catch (err) {
       // Don't close modal on error - let user see the error and try again
-      operationError("Update", itemTypeName, err instanceof Error ? err.message : "Failed to update");
+      operationError(
+        "Update",
+        itemTypeName,
+        err instanceof Error ? err.message : "Failed to update"
+      );
       throw err; // Re-throw to prevent modal from closing
     }
   };
@@ -231,15 +242,18 @@ export function useCrudViewModel<
   /** Accept either an id or the full item */
   const deleteItem = async (itemOrId: string | T) => {
     const id = typeof itemOrId === "string" ? itemOrId : itemOrId.id;
-    const name = typeof itemOrId === "string"
-      ? `${itemTypeName} ${id}`
-      : getItemDisplayName(itemOrId);
+    const name =
+      typeof itemOrId === "string" ? `${itemTypeName} ${id}` : getItemDisplayName(itemOrId);
 
     showConfirmation({
       variant: "destructive",
       title: t("common.confirmDelete"),
-      description: `${(t("common.deleteConfirmation") || "Are you sure you want to delete this {itemType}?")
-        .replace("{itemType}", itemTypeName.toLowerCase())} "${name}". ${(t("common.deleteWarning") || "This action cannot be undone.")}`,
+      description: `${(
+        t("common.deleteConfirmation") || "Are you sure you want to delete this {itemType}?"
+      ).replace(
+        "{itemType}",
+        itemTypeName.toLowerCase()
+      )} "${name}". ${t("common.deleteWarning") || "This action cannot be undone."}`,
       confirmText: t("common.delete") || "Delete",
       cancelText: t("common.cancel") || "Cancel",
       onConfirm: async () => {
@@ -263,8 +277,12 @@ export function useCrudViewModel<
     showConfirmation({
       variant: "destructive",
       title: t("common.confirmDelete"),
-      description: `${(t("common.deleteConfirmation") || "Are you sure you want to delete this {itemType}?")
-        .replace("{itemType}", `${count} ${itemsText.toLowerCase()}`)}. ${(t("common.deleteWarning") || "This action cannot be undone.")}`,
+      description: `${(
+        t("common.deleteConfirmation") || "Are you sure you want to delete this {itemType}?"
+      ).replace(
+        "{itemType}",
+        `${count} ${itemsText.toLowerCase()}`
+      )}. ${t("common.deleteWarning") || "This action cannot be undone."}`,
       confirmText: `${t("common.delete") || "Delete"} ${count} ${itemsText}`,
       cancelText: t("common.cancel") || "Cancel",
       onConfirm: async () => {

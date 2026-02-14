@@ -6,16 +6,19 @@
  *
  * @module tenant-settings/domain
  */
-import type { TenantSettingsModel, UpdateTenantSettingsRequest } from "../../data/models/TenantSettingsModel";
+import type {
+  TenantSettingsModel,
+  UpdateTenantSettingsRequest,
+} from "../../data/models/TenantSettingsModel";
 
 export interface ITenantSettingsService {
-      /**
-       * Get the current user's tenant settings
-       */
-      getMySettings(): Promise<TenantSettingsModel>;
+  /**
+   * Get the current user's tenant settings
+   */
+  getMySettings(): Promise<TenantSettingsModel>;
 
-      /**
-       * Update the current user's tenant settings
-       */
-      updateMySettings(request: UpdateTenantSettingsRequest): Promise<void>;
+  /**
+   * Update the current user's tenant settings
+   */
+  updateMySettings(request: UpdateTenantSettingsRequest): Promise<void>;
 }

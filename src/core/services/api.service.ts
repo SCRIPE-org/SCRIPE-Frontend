@@ -177,7 +177,9 @@ export class ApiService implements IApiService {
               sessionStorage.removeItem("tenant_context");
             }
             // The error message will be shown to the user via the normal error flow
-            return Promise.reject(new Error(data.message || "You do not have permission to switch tenant context"));
+            return Promise.reject(
+              new Error(data.message || "You do not have permission to switch tenant context")
+            );
           }
         }
 

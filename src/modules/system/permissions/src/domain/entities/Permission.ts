@@ -8,126 +8,124 @@
  */
 
 export interface PermissionProps {
-      id: string;
-      resource: string;
-      action: string;
-      code: string;
-      defaultScope: string;
-      category: string;
-      displayOrder: number;
-      descriptionEn?: string;
-      descriptionAr?: string;
-      nameEn?: string;
-      nameAr?: string;
+  id: string;
+  resource: string;
+  action: string;
+  code: string;
+  defaultScope: string;
+  category: string;
+  displayOrder: number;
+  descriptionEn?: string;
+  descriptionAr?: string;
+  nameEn?: string;
+  nameAr?: string;
 }
 
 /**
  * Permission domain entity
  */
 export class Permission {
-      private readonly props: PermissionProps;
+  private readonly props: PermissionProps;
 
-      constructor(props: PermissionProps) {
-            this.props = props;
-      }
+  constructor(props: PermissionProps) {
+    this.props = props;
+  }
 
-      // ===== Getters =====
+  // ===== Getters =====
 
-      get id(): string {
-            return this.props.id;
-      }
+  get id(): string {
+    return this.props.id;
+  }
 
-      get resource(): string {
-            return this.props.resource;
-      }
+  get resource(): string {
+    return this.props.resource;
+  }
 
-      get action(): string {
-            return this.props.action;
-      }
+  get action(): string {
+    return this.props.action;
+  }
 
-      get code(): string {
-            return this.props.code;
-      }
+  get code(): string {
+    return this.props.code;
+  }
 
-      get defaultScope(): string {
-            return this.props.defaultScope;
-      }
+  get defaultScope(): string {
+    return this.props.defaultScope;
+  }
 
-      get category(): string {
-            return this.props.category;
-      }
+  get category(): string {
+    return this.props.category;
+  }
 
-      get displayOrder(): number {
-            return this.props.displayOrder;
-      }
+  get displayOrder(): number {
+    return this.props.displayOrder;
+  }
 
-      get descriptionEn(): string | undefined {
-            return this.props.descriptionEn;
-      }
+  get descriptionEn(): string | undefined {
+    return this.props.descriptionEn;
+  }
 
-      get descriptionAr(): string | undefined {
-            return this.props.descriptionAr;
-      }
+  get descriptionAr(): string | undefined {
+    return this.props.descriptionAr;
+  }
 
-      get nameEn(): string | undefined {
-            return this.props.nameEn;
-      }
+  get nameEn(): string | undefined {
+    return this.props.nameEn;
+  }
 
-      get nameAr(): string | undefined {
-            return this.props.nameAr;
-      }
+  get nameAr(): string | undefined {
+    return this.props.nameAr;
+  }
 
-      // ===== Business Logic =====
+  // ===== Business Logic =====
 
-      /**
-       * Get localized name based on language
-       */
-      getLocalizedName(lang: string = "en"): string {
-            if (lang === "ar" && this.props.nameAr) {
-                  return this.props.nameAr;
-            }
-            if (this.props.nameEn) {
-                  return this.props.nameEn;
-            }
-            return this.displayName;
-      }
+  /**
+   * Get localized name based on language
+   */
+  getLocalizedName(lang: string = "en"): string {
+    if (lang === "ar" && this.props.nameAr) {
+      return this.props.nameAr;
+    }
+    if (this.props.nameEn) {
+      return this.props.nameEn;
+    }
+    return this.displayName;
+  }
 
-      /**
-       * Get localized description based on language
-       */
-      getLocalizedDescription(lang: string = "en"): string {
-            if (lang === "ar" && this.props.descriptionAr) {
-                  return this.props.descriptionAr;
-            }
-            if (this.props.descriptionEn) {
-                  return this.props.descriptionEn;
-            }
-            return "";
-      }
+  /**
+   * Get localized description based on language
+   */
+  getLocalizedDescription(lang: string = "en"): string {
+    if (lang === "ar" && this.props.descriptionAr) {
+      return this.props.descriptionAr;
+    }
+    if (this.props.descriptionEn) {
+      return this.props.descriptionEn;
+    }
+    return "";
+  }
 
-      /**
-       * Get display name (formatted from resource.action)
-       */
-      get displayName(): string {
-            const resource =
-                  this.props.resource.charAt(0).toUpperCase() + this.props.resource.slice(1);
-            const action =
-                  this.props.action.charAt(0).toUpperCase() + this.props.action.slice(1);
-            return `${resource} - ${action}`;
-      }
+  /**
+   * Get display name (formatted from resource.action)
+   */
+  get displayName(): string {
+    const resource = this.props.resource.charAt(0).toUpperCase() + this.props.resource.slice(1);
+    const action = this.props.action.charAt(0).toUpperCase() + this.props.action.slice(1);
+    return `${resource} - ${action}`;
+  }
 
-      /**
-       * Get raw props (for serialization via mapper)
-       */
-      toProps(): PermissionProps {
-            return { ...this.props };
-      }
+  /**
+   * Get raw props (for serialization via mapper)
+   */
+  toProps(): PermissionProps {
+    return { ...this.props };
+  }
 }
 
 /**
  * Permission grouped by category
  */
 export interface PermissionCategoryGroup {
-      category: string;
-      permissions: Permission[];
+  category: string;
+  permissions: Permission[];
 }

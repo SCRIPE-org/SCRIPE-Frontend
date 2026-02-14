@@ -1,20 +1,20 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import * as PopoverPrimitive from "@radix-ui/react-popover"
+import * as React from "react";
+import * as PopoverPrimitive from "@radix-ui/react-popover";
 
-import { cn } from "@core/common/utils"
-import { useI18n } from "@core/providers/i18n-provider"
+import { cn } from "@core/common/utils";
+import { useI18n } from "@core/providers/i18n-provider";
 
-const Popover = PopoverPrimitive.Root
+const Popover = PopoverPrimitive.Root;
 
-const PopoverTrigger = PopoverPrimitive.Trigger
+const PopoverTrigger = PopoverPrimitive.Trigger;
 
 const PopoverContent = React.forwardRef<
   React.ElementRef<typeof PopoverPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof PopoverPrimitive.Content>
 >(({ className, align = "center", sideOffset = 4, dir, ...props }, ref) => {
-  const { direction } = useI18n()
+  const { direction } = useI18n();
 
   return (
     <PopoverPrimitive.Portal>
@@ -30,8 +30,8 @@ const PopoverContent = React.forwardRef<
         {...props}
       />
     </PopoverPrimitive.Portal>
-  )
-})
-PopoverContent.displayName = PopoverPrimitive.Content.displayName
+  );
+});
+PopoverContent.displayName = PopoverPrimitive.Content.displayName;
 
-export { Popover, PopoverTrigger, PopoverContent }
+export { Popover, PopoverTrigger, PopoverContent };

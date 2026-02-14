@@ -1,28 +1,39 @@
-import { registerPage } from '../../repositories/DocsRepository';
-import type { DocPageData } from '../../../domain/entities/DocPage';
+import { registerPage } from "../../repositories/DocsRepository";
+import type { DocPageData } from "../../../domain/entities/DocPage";
 
 const page: DocPageData = {
-      slug: 'tutorials/first-frontend-module', titleKey: 'tutorials.firstFrontendModule.title', descriptionKey: 'tutorials.firstFrontendModule.description', category: 'tutorials', order: 2,
-      sections: [
-            { type: 'info', variant: 'note', contentKey: 'tutorials.firstFrontendModule.description' },
-            {
-                  type: 'flowchart', title: 'Frontend Module Structure', direction: 'vertical',
-                  nodes: [
-                        { id: 'domain', label: '1. Domain (Entities + Interfaces)', type: 'primary' },
-                        { id: 'data', label: '2. Data (Repository + Mappers)', type: 'info' },
-                        { id: 'vm', label: '3. ViewModels (Hooks)', type: 'success' },
-                        { id: 'view', label: '4. View (Pure UI)', type: 'warning' },
-                        { id: 'route', label: '5. Route Registration', type: 'danger' },
-                  ],
-                  connections: [
-                        { from: 'domain', to: 'data' }, { from: 'data', to: 'vm' }, { from: 'vm', to: 'view' }, { from: 'view', to: 'route' },
-                  ],
-            },
-            {
-                  type: 'step-guide', steps: [
-                        {
-                              titleKey: 'tutorials.firstFrontendModule.title', contentKey: 'tutorials.firstFrontendModule.description',
-                              code: `// src/modules/products/src/domain/entities/Product.ts
+  slug: "tutorials/first-frontend-module",
+  titleKey: "tutorials.firstFrontendModule.title",
+  descriptionKey: "tutorials.firstFrontendModule.description",
+  category: "tutorials",
+  order: 2,
+  sections: [
+    { type: "info", variant: "note", contentKey: "tutorials.firstFrontendModule.description" },
+    {
+      type: "flowchart",
+      title: "Frontend Module Structure",
+      direction: "vertical",
+      nodes: [
+        { id: "domain", label: "1. Domain (Entities + Interfaces)", type: "primary" },
+        { id: "data", label: "2. Data (Repository + Mappers)", type: "info" },
+        { id: "vm", label: "3. ViewModels (Hooks)", type: "success" },
+        { id: "view", label: "4. View (Pure UI)", type: "warning" },
+        { id: "route", label: "5. Route Registration", type: "danger" },
+      ],
+      connections: [
+        { from: "domain", to: "data" },
+        { from: "data", to: "vm" },
+        { from: "vm", to: "view" },
+        { from: "view", to: "route" },
+      ],
+    },
+    {
+      type: "step-guide",
+      steps: [
+        {
+          titleKey: "tutorials.firstFrontendModule.title",
+          contentKey: "tutorials.firstFrontendModule.description",
+          code: `// src/modules/products/src/domain/entities/Product.ts
 import { z } from 'zod';
 
 export const ProductSchema = z.object({
@@ -34,11 +45,14 @@ export const ProductSchema = z.object({
   createdAt: z.string().datetime(),
 });
 
-export type Product = z.infer<typeof ProductSchema>;`, codeLanguage: 'typescript', codeFilename: 'domain/entities/Product.ts'
-                        },
-                        {
-                              titleKey: 'tutorials.firstFrontendModule.title', contentKey: 'tutorials.firstFrontendModule.description',
-                              code: `// src/modules/products/src/presentation/viewmodels/useProductsViewModel.ts
+export type Product = z.infer<typeof ProductSchema>;`,
+          codeLanguage: "typescript",
+          codeFilename: "domain/entities/Product.ts",
+        },
+        {
+          titleKey: "tutorials.firstFrontendModule.title",
+          contentKey: "tutorials.firstFrontendModule.description",
+          code: `// src/modules/products/src/presentation/viewmodels/useProductsViewModel.ts
 'use client';
 
 import { useCrudViewModel } from '@core/crud';
@@ -58,11 +72,14 @@ export function useProductsViewModel() {
   ];
 
   return { ...crud, columns };
-}`, codeLanguage: 'typescript', codeFilename: 'viewmodels/useProductsViewModel.ts'
-                        },
-                        {
-                              titleKey: 'tutorials.firstFrontendModule.title', contentKey: 'tutorials.firstFrontendModule.description',
-                              code: `// src/modules/products/src/presentation/views/ProductsView.tsx
+}`,
+          codeLanguage: "typescript",
+          codeFilename: "viewmodels/useProductsViewModel.ts",
+        },
+        {
+          titleKey: "tutorials.firstFrontendModule.title",
+          contentKey: "tutorials.firstFrontendModule.description",
+          code: `// src/modules/products/src/presentation/views/ProductsView.tsx
 'use client';
 
 import { useProductsViewModel } from '../viewmodels/useProductsViewModel';
@@ -77,11 +94,13 @@ export function ProductsView() {
       <GenericCrudView {...vm} columns={vm.columns} />
     </div>
   );
-}`, codeLanguage: 'typescript', codeFilename: 'views/ProductsView.tsx'
-                        },
-                  ]
-            },
+}`,
+          codeLanguage: "typescript",
+          codeFilename: "views/ProductsView.tsx",
+        },
       ],
-      relatedSlugs: ['architecture/solid-pattern', 'architecture/frontend', 'frontend/crud-engine'],
+    },
+  ],
+  relatedSlugs: ["architecture/solid-pattern", "architecture/frontend", "frontend/crud-engine"],
 };
 registerPage(page);

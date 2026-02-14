@@ -65,10 +65,14 @@ export function NavigationLayout({
   // ── Styling helpers ──
   const getBackgroundClass = () => {
     switch (settings.cardStyle) {
-      case "glass": return "bg-gradient-to-br from-background/50 to-background/30 backdrop-blur-xl";
-      case "solid": return "bg-background";
-      case "bordered": return "bg-background border border-border";
-      default: return "bg-background";
+      case "glass":
+        return "bg-gradient-to-br from-background/50 to-background/30 backdrop-blur-xl";
+      case "solid":
+        return "bg-background";
+      case "bordered":
+        return "bg-background border border-border";
+      default:
+        return "bg-background";
     }
   };
 
@@ -81,10 +85,14 @@ export function NavigationLayout({
 
   const getSpacingClass = () => {
     switch (settings.spacingSize) {
-      case "compact": return "p-4 lg:p-6";
-      case "comfortable": return "p-8 lg:p-12";
-      case "spacious": return "p-12 lg:p-16";
-      default: return "p-6 lg:p-8";
+      case "compact":
+        return "p-4 lg:p-6";
+      case "comfortable":
+        return "p-8 lg:p-12";
+      case "spacious":
+        return "p-12 lg:p-16";
+      default:
+        return "p-6 lg:p-8";
     }
   };
 
@@ -107,20 +115,29 @@ export function NavigationLayout({
 
   const getBorderRadiusClass = () => {
     switch (settings.borderRadius) {
-      case "none": return "rounded-none";
-      case "small": return "rounded-sm";
-      case "large": return "rounded-lg";
-      case "full": return "rounded-full";
-      default: return "rounded-md";
+      case "none":
+        return "rounded-none";
+      case "small":
+        return "rounded-sm";
+      case "large":
+        return "rounded-lg";
+      case "full":
+        return "rounded-full";
+      default:
+        return "rounded-md";
     }
   };
 
   const getShadowClass = () => {
     switch (settings.shadowIntensity) {
-      case "none": return "";
-      case "subtle": return "shadow-sm";
-      case "strong": return "shadow-lg";
-      default: return "shadow-md";
+      case "none":
+        return "";
+      case "subtle":
+        return "shadow-sm";
+      case "strong":
+        return "shadow-lg";
+      default:
+        return "shadow-md";
     }
   };
 
@@ -135,7 +152,7 @@ export function NavigationLayout({
         direction === "rtl" ? "rtl" : "ltr",
         settings.compactMode === true && "compact-mode",
         settings.highContrast === true && "high-contrast",
-        settings.reducedMotion === true && "reduce-motion",
+        settings.reducedMotion === true && "reduce-motion"
       )}
       style={{ fontSize: "var(--font-size-base)" }}
     >
@@ -178,14 +195,8 @@ export function NavigationLayout({
           getAnimationClass(),
           // Dynamic margins based on sidebar states and direction
           direction === "rtl"
-            ? cn(
-              "lg:mr-24",
-              nav.panelOpen && "lg:mr-[352px]",
-            )
-            : cn(
-              "lg:ml-24",
-              nav.panelOpen && "lg:ml-[352px]",
-            ),
+            ? cn("lg:mr-24", nav.panelOpen && "lg:mr-[352px]")
+            : cn("lg:ml-24", nav.panelOpen && "lg:ml-[352px]")
         )}
       >
         <main className={cn("min-h-screen bg-background px-6 py-4")}>
@@ -197,7 +208,7 @@ export function NavigationLayout({
                 getBorderRadiusClass(),
                 getShadowClass(),
                 settings.cardStyle === "bordered" && "border border-border",
-                settings.cardStyle === "elevated" && "bg-card shadow-lg",
+                settings.cardStyle === "elevated" && "bg-card shadow-lg"
               )}
               style={{
                 borderRadius: "var(--border-radius)",
@@ -216,9 +227,9 @@ export function NavigationLayout({
       {(sidebarOpen || (nav.panelOpen && nav.isMobile)) && (
         <div
           className={cn(
-            "fixed inset-0 z-40 lg:hidden backdrop-blur-sm",
+            "fixed inset-0 z-40 backdrop-blur-sm lg:hidden",
             settings.cardStyle === "glass" ? "bg-black/20" : "bg-black/50",
-            getAnimationClass(),
+            getAnimationClass()
           )}
           onClick={() => {
             onSidebarOpenChange(false);

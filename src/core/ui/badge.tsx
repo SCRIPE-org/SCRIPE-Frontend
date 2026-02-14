@@ -8,36 +8,29 @@ const badgeVariants = cva(
   {
     variants: {
       variant: {
-        default:
-          "border-transparent bg-primary text-primary-foreground hover:bg-primary/80",
+        default: "border-transparent bg-primary text-primary-foreground hover:bg-primary/80",
         secondary:
           "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
         destructive:
           "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
         outline: "text-foreground border-border",
         // Status variants
-        success:
-          "border-transparent bg-green-500 text-white hover:bg-green-600",
+        success: "border-transparent bg-green-500 text-white hover:bg-green-600",
         error: "border-transparent bg-red-500 text-white hover:bg-red-600",
-        warning:
-          "border-transparent bg-yellow-500 text-white hover:bg-yellow-600",
+        warning: "border-transparent bg-yellow-500 text-white hover:bg-yellow-600",
         info: "border-transparent bg-blue-500 text-white hover:bg-blue-600",
-        pending:
-          "border-transparent bg-orange-500 text-white hover:bg-orange-600",
+        pending: "border-transparent bg-orange-500 text-white hover:bg-orange-600",
         // Active/Inactive variants
         active: "border-transparent bg-green-500 text-white hover:bg-green-600",
         inactive: "border-transparent bg-gray-500 text-white hover:bg-gray-600",
       },
       badgeStyle: {
         default: "rounded-full border border-border",
-        modern:
-          "rounded-lg border border-border/50 backdrop-blur-sm shadow-sm hover:shadow-md",
-        glass:
-          "rounded-xl border border-border/30 backdrop-blur-md shadow-lg hover:shadow-xl",
+        modern: "rounded-lg border border-border/50 backdrop-blur-sm shadow-sm hover:shadow-md",
+        glass: "rounded-xl border border-border/30 backdrop-blur-md shadow-lg hover:shadow-xl",
         neon: "rounded-md border border-primary/40 shadow-lg shadow-primary/20 hover:shadow-primary/40 hover:shadow-xl",
         gradient: "rounded-full border-0 shadow-lg",
-        outlined:
-          "rounded-lg border-2 border-primary/50 hover:border-primary/70",
+        outlined: "rounded-lg border-2 border-primary/50 hover:border-primary/70",
         filled: "rounded-md border-0 shadow-md hover:shadow-lg",
         minimal: "rounded-none border-0",
         pill: "rounded-full border border-border hover:shadow-md",
@@ -239,8 +232,7 @@ const badgeVariants = cva(
       {
         variant: "error",
         badgeStyle: "outlined",
-        class:
-          "bg-transparent text-red-600 border-red-500 dark:text-red-400 dark:border-red-400",
+        class: "bg-transparent text-red-600 border-red-500 dark:text-red-400 dark:border-red-400",
       },
       {
         variant: "warning",
@@ -271,14 +263,12 @@ const badgeVariants = cva(
       {
         variant: ["success", "active"],
         badgeStyle: "filled",
-        class:
-          "bg-green-500 text-white border-green-500 dark:bg-green-600 dark:border-green-600",
+        class: "bg-green-500 text-white border-green-500 dark:bg-green-600 dark:border-green-600",
       },
       {
         variant: "error",
         badgeStyle: "filled",
-        class:
-          "bg-red-500 text-white border-red-500 dark:bg-red-600 dark:border-red-600",
+        class: "bg-red-500 text-white border-red-500 dark:bg-red-600 dark:border-red-600",
       },
       {
         variant: "warning",
@@ -289,8 +279,7 @@ const badgeVariants = cva(
       {
         variant: "info",
         badgeStyle: "filled",
-        class:
-          "bg-blue-500 text-white border-blue-500 dark:bg-blue-600 dark:border-blue-600",
+        class: "bg-blue-500 text-white border-blue-500 dark:bg-blue-600 dark:border-blue-600",
       },
       {
         variant: "pending",
@@ -301,8 +290,7 @@ const badgeVariants = cva(
       {
         variant: "inactive",
         badgeStyle: "filled",
-        class:
-          "bg-gray-500 text-white border-gray-500 dark:bg-gray-600 dark:border-gray-600",
+        class: "bg-gray-500 text-white border-gray-500 dark:bg-gray-600 dark:border-gray-600",
       },
 
       // MINIMAL STYLE - No backgrounds, just colored text
@@ -421,8 +409,7 @@ const badgeVariants = cva(
 );
 
 export interface BadgeProps
-  extends React.HTMLAttributes<HTMLSpanElement>,
-  VariantProps<typeof badgeVariants> { }
+  extends React.HTMLAttributes<HTMLSpanElement>, VariantProps<typeof badgeVariants> {}
 
 function Badge({ className, variant, ...props }: BadgeProps) {
   const settings = useSettings();

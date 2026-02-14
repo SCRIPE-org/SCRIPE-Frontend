@@ -1,10 +1,17 @@
-import { registerPage } from '../../repositories/DocsRepository';
+import { registerPage } from "../../repositories/DocsRepository";
 registerPage({
-      slug: 'tutorials/add-api-endpoint', titleKey: 'tutorials.addApiEndpoint.title', descriptionKey: 'tutorials.addApiEndpoint.description', category: 'tutorials', order: 7,
-      sections: [
-            { type: 'info', variant: 'note', contentKey: 'tutorials.addApiEndpoint.description' },
-            {
-                  type: 'code', language: 'csharp', filename: 'Controllers/InvoiceController.cs', code: `[ApiController]
+  slug: "tutorials/add-api-endpoint",
+  titleKey: "tutorials.addApiEndpoint.title",
+  descriptionKey: "tutorials.addApiEndpoint.description",
+  category: "tutorials",
+  order: 7,
+  sections: [
+    { type: "info", variant: "note", contentKey: "tutorials.addApiEndpoint.description" },
+    {
+      type: "code",
+      language: "csharp",
+      filename: "Controllers/InvoiceController.cs",
+      code: `[ApiController]
 [Route("api/[controller]")]
 [Authorize]
 public class InvoiceController : ControllerBase
@@ -34,15 +41,41 @@ public class InvoiceController : ControllerBase
     [PermissionRequired(InvoicePermissions.Delete)]
     public async Task<IActionResult> Delete(Guid id)
         => (await _mediator.Send(new DeleteInvoiceCommand(id))).ToActionResult();
-}` },
-            {
-                  type: 'api-table', endpoints: [
-                        { method: 'GET', path: '/api/invoice', description: 'List all invoices (paginated)', auth: true, permission: 'Invoices.View' },
-                        { method: 'POST', path: '/api/invoice', description: 'Create new invoice', auth: true, permission: 'Invoices.Create' },
-                        { method: 'PUT', path: '/api/invoice/{id}', description: 'Update invoice', auth: true, permission: 'Invoices.Edit' },
-                        { method: 'DELETE', path: '/api/invoice/{id}', description: 'Soft-delete invoice', auth: true, permission: 'Invoices.Delete' },
-                  ]
-            },
+}`,
+    },
+    {
+      type: "api-table",
+      endpoints: [
+        {
+          method: "GET",
+          path: "/api/invoice",
+          description: "List all invoices (paginated)",
+          auth: true,
+          permission: "Invoices.View",
+        },
+        {
+          method: "POST",
+          path: "/api/invoice",
+          description: "Create new invoice",
+          auth: true,
+          permission: "Invoices.Create",
+        },
+        {
+          method: "PUT",
+          path: "/api/invoice/{id}",
+          description: "Update invoice",
+          auth: true,
+          permission: "Invoices.Edit",
+        },
+        {
+          method: "DELETE",
+          path: "/api/invoice/{id}",
+          description: "Soft-delete invoice",
+          auth: true,
+          permission: "Invoices.Delete",
+        },
       ],
-      relatedSlugs: ['tutorials/api-integration', 'tutorials/add-permissions'],
+    },
+  ],
+  relatedSlugs: ["tutorials/api-integration", "tutorials/add-permissions"],
 });

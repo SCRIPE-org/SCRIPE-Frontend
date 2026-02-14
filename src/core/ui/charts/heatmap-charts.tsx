@@ -8,77 +8,86 @@ import { useI18n } from "@core/providers/i18n-provider";
 const HeatmapChart = ({ data, xLabels, yLabels, colors, title, description }: any) => {
   const maxValue = Math.max(...data.flat());
   const minValue = Math.min(...data.flat());
-  
+
   return (
-    <Card className="w-full bg-gradient-to-br from-slate-900 to-slate-800 border-slate-700 shadow-2xl hover:shadow-3xl transition-all duration-300">
+    <Card className="hover:shadow-3xl w-full border-slate-700 bg-gradient-to-br from-slate-900 to-slate-800 shadow-2xl transition-all duration-300">
       <CardHeader className="pb-6">
-        <CardTitle className="text-2xl font-bold text-white bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+        <CardTitle className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-2xl font-bold text-transparent text-white">
           {title}
         </CardTitle>
-        <CardDescription className="text-slate-300 text-base">
-          {description}
-        </CardDescription>
-        <div className="flex items-center gap-4 mt-4 text-sm text-slate-400">
+        <CardDescription className="text-base text-slate-300">{description}</CardDescription>
+        <div className="mt-4 flex items-center gap-4 text-sm text-slate-400">
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded" style={{ backgroundColor: colors[0] }}></div>
+            <div className="h-3 w-3 rounded" style={{ backgroundColor: colors[0] }}></div>
             <span>Min: {minValue}</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded" style={{ backgroundColor: colors[colors.length - 1] }}></div>
+            <div
+              className="h-3 w-3 rounded"
+              style={{ backgroundColor: colors[colors.length - 1] }}
+            ></div>
             <span>Max: {maxValue}</span>
           </div>
         </div>
       </CardHeader>
       <CardContent className="pt-0">
-        <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 shadow-inner">
-          <div className="grid gap-1" style={{ gridTemplateColumns: `repeat(${xLabels.length + 1}, 1fr)` }}>
+        <div className="rounded-xl bg-gradient-to-br from-slate-800 to-slate-900 p-6 shadow-inner">
+          <div
+            className="grid gap-1"
+            style={{ gridTemplateColumns: `repeat(${xLabels.length + 1}, 1fr)` }}
+          >
             {/* Empty corner */}
             <div></div>
-            
+
             {/* X Labels */}
             {xLabels.map((label: string, index: number) => (
-              <div key={index} className="text-center text-xs text-slate-300 font-medium py-2 hover:text-white transition-colors duration-200">
+              <div
+                key={index}
+                className="py-2 text-center text-xs font-medium text-slate-300 transition-colors duration-200 hover:text-white"
+              >
                 {label}
               </div>
             ))}
-            
+
             {/* Y Labels and Data */}
             {yLabels.map((yLabel: string, yIndex: number) => (
               <React.Fragment key={yIndex}>
                 {/* Y Label */}
-                <div className="text-right text-xs text-slate-300 font-medium pr-2 flex items-center justify-end hover:text-white transition-colors duration-200">
+                <div className="flex items-center justify-end pr-2 text-right text-xs font-medium text-slate-300 transition-colors duration-200 hover:text-white">
                   {yLabel}
                 </div>
-                
+
                 {/* Data Cells */}
                 {data[yIndex].map((value: number, xIndex: number) => {
                   const intensity = (value - minValue) / (maxValue - minValue);
                   const colorIndex = Math.floor(intensity * (colors.length - 1));
                   const backgroundColor = colors[colorIndex] || colors[colors.length - 1];
-                  
+
                   return (
                     <div
                       key={`${yIndex}-${xIndex}`}
-                      className="aspect-square flex items-center justify-center text-xs font-medium rounded-sm transition-all duration-300 hover:scale-110 hover:z-10 cursor-pointer group relative"
+                      className="group relative flex aspect-square cursor-pointer items-center justify-center rounded-sm text-xs font-medium transition-all duration-300 hover:z-10 hover:scale-110"
                       style={{
                         backgroundColor: backgroundColor,
                         color: intensity > 0.5 ? "#ffffff" : "#000000",
                         minHeight: "40px",
-                        boxShadow: intensity > 0.7 ? "0 0 10px rgba(255, 255, 255, 0.3)" : "none"
+                        boxShadow: intensity > 0.7 ? "0 0 10px rgba(255, 255, 255, 0.3)" : "none",
                       }}
                       title={`${yLabel} - ${xLabels[xIndex]}: ${value}`}
                     >
-                      <span className="group-hover:scale-110 transition-transform duration-200">
+                      <span className="transition-transform duration-200 group-hover:scale-110">
                         {value}
                       </span>
-                      
+
                       {/* Hover overlay */}
-                      <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-sm flex items-center justify-center">
-                        <div className="text-white text-center p-2 bg-black/50 rounded">
-                          <div className="font-bold text-sm">{value}</div>
-                          <div className="text-xs">{yLabel} - {xLabels[xIndex]}</div>
+                      <div className="absolute inset-0 flex items-center justify-center rounded-sm bg-black/20 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                        <div className="rounded bg-black/50 p-2 text-center text-white">
+                          <div className="text-sm font-bold">{value}</div>
+                          <div className="text-xs">
+                            {yLabel} - {xLabels[xIndex]}
+                          </div>
                           <div className="text-xs opacity-75">
-                            {((intensity * 100).toFixed(1))}% intensity
+                            {(intensity * 100).toFixed(1)}% intensity
                           </div>
                         </div>
                       </div>
@@ -88,14 +97,14 @@ const HeatmapChart = ({ data, xLabels, yLabels, colors, title, description }: an
               </React.Fragment>
             ))}
           </div>
-          
+
           {/* Legend */}
           <div className="mt-6 flex items-center justify-center gap-2">
             <span className="text-xs text-slate-400">Intensity:</span>
             {colors.map((color: string, index: number) => (
               <div
                 key={index}
-                className="w-4 h-4 rounded-sm border border-slate-600"
+                className="h-4 w-4 rounded-sm border border-slate-600"
                 style={{ backgroundColor: color }}
                 title={`${Math.round((index / (colors.length - 1)) * 100)}% intensity`}
               ></div>
@@ -111,8 +120,16 @@ export function ProfessionalHeatmapCharts() {
   const { t } = useI18n();
 
   const colors = [
-    "#1e293b", "#334155", "#475569", "#64748b", "#94a3b8", 
-    "#cbd5e1", "#e2e8f0", "#f1f5f9", "#f8fafc", "#ffffff"
+    "#1e293b",
+    "#334155",
+    "#475569",
+    "#64748b",
+    "#94a3b8",
+    "#cbd5e1",
+    "#e2e8f0",
+    "#f1f5f9",
+    "#f8fafc",
+    "#ffffff",
   ];
 
   // Sample data for heatmaps

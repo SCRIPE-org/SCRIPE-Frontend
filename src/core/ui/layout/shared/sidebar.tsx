@@ -20,11 +20,7 @@ interface SidebarProps {
  * Now uses shared NavRenderer (unlimited depth, ARIA, RTL),
  * shared UserCard, and shared LogoutButton (no @modules/auth import).
  */
-export function Sidebar({
-  open,
-  onOpenChange,
-  isModern = false,
-}: SidebarProps) {
+export function Sidebar({ open, onOpenChange, isModern = false }: SidebarProps) {
   const { t, direction } = useI18n();
 
   return (
@@ -32,21 +28,19 @@ export function Sidebar({
       <div
         dir={direction}
         className={cn(
-          "flex flex-col h-full bg-gradient-to-b from-sidebar via-sidebar/98 to-sidebar border-r border-sidebar-border sidebar-shadow",
+          "via-sidebar/98 sidebar-shadow flex h-full flex-col border-r border-sidebar-border bg-gradient-to-b from-sidebar to-sidebar",
           "backdrop-blur-sm"
         )}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-sidebar-border">
+        <div className="flex items-center justify-between border-b border-sidebar-border p-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center shadow-md">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary shadow-md">
               <Logo size="sm" className="text-primary-foreground" />
             </div>
             <div className={cn(isModern && "sidebar-text")}>
-              <h1 className="text-lg font-bold text-sidebar-foreground">
-                {t("app.title")}
-              </h1>
-              <p className="text-xs text-sidebar-foreground/60 flex items-center">
+              <h1 className="text-lg font-bold text-sidebar-foreground">{t("app.title")}</h1>
+              <p className="flex items-center text-xs text-sidebar-foreground/60">
                 <Logo size="xs" className="me-1" />
                 {isModern ? t("app.modern") : t("app.default")}
               </p>
@@ -57,25 +51,22 @@ export function Sidebar({
             variant="ghost"
             size="icon"
             className={cn(
-              "lg:hidden text-sidebar-foreground hover:bg-sidebar-accent transition-all duration-300",
-              "rounded-lg shadow-sm hover:shadow-md hover:scale-105"
+              "text-sidebar-foreground transition-all duration-300 hover:bg-sidebar-accent lg:hidden",
+              "rounded-lg shadow-sm hover:scale-105 hover:shadow-md"
             )}
             onClick={() => onOpenChange(false)}
           >
-            <X className="w-4 h-4" />
+            <X className="h-4 w-4" />
           </Button>
         </div>
 
         {/* User Info */}
-        <div className="p-4 border-b border-sidebar-border">
-          <UserCard
-            size="md"
-            textClassName={cn(isModern && "sidebar-text")}
-          />
+        <div className="border-b border-sidebar-border p-4">
+          <UserCard size="md" textClassName={cn(isModern && "sidebar-text")} />
         </div>
 
         {/* Navigation — unlimited depth via NavRenderer */}
-        <div className="flex-1 p-3 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto p-3">
           <NavRenderer
             variant={isModern ? "modern" : "default"}
             onNavigate={() => onOpenChange(false)}
@@ -83,11 +74,11 @@ export function Sidebar({
         </div>
 
         {/* Footer */}
-        <div className="p-3 border-t border-sidebar-border">
+        <div className="border-t border-sidebar-border p-3">
           <LogoutButton textClassName={cn(isModern && "sidebar-text")} />
           <div
             className={cn(
-              "text-xs text-sidebar-foreground/60 text-center mt-2",
+              "mt-2 text-center text-xs text-sidebar-foreground/60",
               isModern && "sidebar-text"
             )}
           >

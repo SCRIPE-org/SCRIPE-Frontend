@@ -10,8 +10,8 @@ import { DEFAULT_TENANT_SETTINGS } from "../../domain/entities/TenantSettings";
 
 // Query keys factory
 export const tenantSettingsKeys = {
-      all: ["tenantSettings"] as const,
-      my: () => [...tenantSettingsKeys.all, "my"] as const,
+  all: ["tenantSettings"] as const,
+  my: () => [...tenantSettingsKeys.all, "my"] as const,
 };
 
 /**
@@ -19,107 +19,104 @@ export const tenantSettingsKeys = {
  * Handles fetching and updating tenant settings via repository
  */
 export function useTenantSettingsViewModel() {
-      const { t } = useI18n();
-      const { toast } = useToast();
-      const queryClient = useQueryClient();
-      const [formData, setFormData] = useState<TenantSettings | null>(null);
+  const { t } = useI18n();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const [formData, setFormData] = useState<TenantSettings | null>(null);
 
-      // Get repository from system DI container
-      const tenantSettingsRepository = systemContainer.tenantSettingsRepository;
+  // Get repository from system DI container
+  const tenantSettingsRepository = systemContainer.tenantSettingsRepository;
 
-      // Fetch settings via repository
-      const {
-            data: settings,
-            isLoading,
-            error,
-            isError,
-      } = useQuery<TenantSettings, Error>({
-            queryKey: tenantSettingsKeys.my(),
-            queryFn: async () => {
-                  const result = await tenantSettingsRepository.getMySettings();
-                  if (result.kind === "err") {
-                        throw result.error;
-                  }
-                  return result.value;
-            },
-            staleTime: 5 * 60 * 1000, // 5 minutes
+  // Fetch settings via repository
+  const {
+    data: settings,
+    isLoading,
+    error,
+    isError,
+  } = useQuery<TenantSettings, Error>({
+    queryKey: tenantSettingsKeys.my(),
+    queryFn: async () => {
+      const result = await tenantSettingsRepository.getMySettings();
+      if (result.kind === "err") {
+        throw result.error;
+      }
+      return result.value;
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+
+  // Initialize form when data loads
+  const effectiveSettings = formData ?? settings ?? DEFAULT_TENANT_SETTINGS;
+
+  // Update field helper
+  const updateField = <K extends keyof TenantSettings>(field: K, value: TenantSettings[K]) => {
+    setFormData((prev) => ({
+      ...(prev ?? settings ?? DEFAULT_TENANT_SETTINGS),
+      [field]: value,
+    }));
+  };
+
+  // Save mutation via repository
+  const saveMutation = useMutation({
+    mutationFn: async (data: Partial<TenantSettings>) => {
+      const result = await tenantSettingsRepository.updateMySettings(data);
+      if (result.kind === "err") {
+        throw result.error;
+      }
+    },
+    onSuccess: () => {
+      toast({
+        title: t("tenantSettings.saveSuccess"),
+        variant: "default",
       });
-
-      // Initialize form when data loads
-      const effectiveSettings = formData ?? settings ?? DEFAULT_TENANT_SETTINGS;
-
-      // Update field helper
-      const updateField = <K extends keyof TenantSettings>(
-            field: K,
-            value: TenantSettings[K]
-      ) => {
-            setFormData((prev) => ({
-                  ...(prev ?? settings ?? DEFAULT_TENANT_SETTINGS),
-                  [field]: value,
-            }));
-      };
-
-      // Save mutation via repository
-      const saveMutation = useMutation({
-            mutationFn: async (data: Partial<TenantSettings>) => {
-                  const result = await tenantSettingsRepository.updateMySettings(data);
-                  if (result.kind === "err") {
-                        throw result.error;
-                  }
-            },
-            onSuccess: () => {
-                  toast({
-                        title: t("tenantSettings.saveSuccess"),
-                        variant: "default",
-                  });
-                  queryClient.invalidateQueries({ queryKey: tenantSettingsKeys.my() });
-                  setFormData(null); // Reset to server state
-            },
-            onError: (error: Error) => {
-                  toast({
-                        title: t("tenantSettings.saveError"),
-                        description: error.message,
-                        variant: "destructive",
-                  });
-            },
+      queryClient.invalidateQueries({ queryKey: tenantSettingsKeys.my() });
+      setFormData(null); // Reset to server state
+    },
+    onError: (error: Error) => {
+      toast({
+        title: t("tenantSettings.saveError"),
+        description: error.message,
+        variant: "destructive",
       });
+    },
+  });
 
-      // Check if there are unsaved changes
-      const hasChanges = formData !== null;
+  // Check if there are unsaved changes
+  const hasChanges = formData !== null;
 
-      // Save handler
-      const saveSettings = () => {
-            if (formData) {
-                  saveMutation.mutate(formData);
-            }
-      };
+  // Save handler
+  const saveSettings = () => {
+    if (formData) {
+      saveMutation.mutate(formData);
+    }
+  };
 
-      // Reset form
-      const resetForm = () => {
-            setFormData(null);
-      };
+  // Reset form
+  const resetForm = () => {
+    setFormData(null);
+  };
 
-      // Check if system admin (no tenant)
-      const isSystemAdmin = isError && error?.message?.includes("System administrators");
+  // Check if system admin (no tenant)
+  const isSystemAdmin = isError && error?.message?.includes("System administrators");
 
-      return {
-            // State
-            settings: effectiveSettings,
-            isLoading,
-            isError,
-            error,
-            isSystemAdmin,
+  return {
+    // State
+    settings: effectiveSettings,
+    isLoading,
+    isError,
+    error,
+    isSystemAdmin,
 
-            // Form state
-            hasChanges,
-            updateField,
-            resetForm,
+    // Form state
+    hasChanges,
+    updateField,
+    resetForm,
 
-            // Actions
-            saveSettings,
-            isSaving: saveMutation.isPending,
+    // Actions
+    saveSettings,
+    isSaving: saveMutation.isPending,
 
-            // Translations
-            t,
-      };
+    // Translations
+    t,
+  };
 }

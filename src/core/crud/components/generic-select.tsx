@@ -1,14 +1,7 @@
 "use client";
 
 import React from "react";
-import {
-  ChevronDown,
-  X,
-  Search,
-  Check,
-  Loader2,
-  ChevronRight,
-} from "lucide-react";
+import { ChevronDown, X, Search, Check, Loader2, ChevronRight } from "lucide-react";
 import { createPortal } from "react-dom";
 import { cn } from "@core/common/utils";
 import { useSettings } from "@core/providers/settings-provider";
@@ -81,10 +74,7 @@ export interface GenericSelectProps {
   [key: string]: any;
 }
 
-export const GenericSelect = React.forwardRef<
-  HTMLDivElement,
-  GenericSelectProps
->(
+export const GenericSelect = React.forwardRef<HTMLDivElement, GenericSelectProps>(
   (
     {
       options,
@@ -126,11 +116,7 @@ export const GenericSelect = React.forwardRef<
 
     // Determine if this is a multi-select based on type or value array
     const isMultiSelect = type === "multi" || Array.isArray(value);
-    const isSearchable =
-      type === "searchable" ||
-      searchable ||
-      type === "multi" ||
-      type === "tree";
+    const isSearchable = type === "searchable" || searchable || type === "multi" || type === "tree";
     const isTreeSelect = type === "tree";
 
     // Default localized text values
@@ -148,23 +134,18 @@ export const GenericSelect = React.forwardRef<
       noResultsText || t("components.multiSelect.searchStates.noResults");
     const defaultSearchingText =
       searchingText || t("components.multiSelect.searchStates.searching");
-    const defaultSelectAllText =
-      selectAllText || t("components.multiSelect.buttons.selectAll");
-    const defaultClearAllText =
-      clearAllText || t("components.multiSelect.buttons.clearAll");
-    const defaultSelectedText =
-      selectedText || t("components.multiSelect.searchStates.selected");
+    const defaultSelectAllText = selectAllText || t("components.multiSelect.buttons.selectAll");
+    const defaultClearAllText = clearAllText || t("components.multiSelect.buttons.clearAll");
+    const defaultSelectedText = selectedText || t("components.multiSelect.searchStates.selected");
 
     // State management
     const [isOpen, setIsOpen] = React.useState(false);
     const [searchQuery, setSearchQuery] = React.useState("");
-    const [filteredOptions, setFilteredOptions] = React.useState<
-      GenericSelectOption[]
-    >(options || []);
+    const [filteredOptions, setFilteredOptions] = React.useState<GenericSelectOption[]>(
+      options || []
+    );
     const [isSearching, setIsSearching] = React.useState(false);
-    const [serverOptions, setServerOptions] = React.useState<
-      GenericSelectOption[]
-    >([]);
+    const [serverOptions, setServerOptions] = React.useState<GenericSelectOption[]>([]);
     // Cache for selected options - persists labels even when serverOptions changes
     const [selectedOptionsCache, setSelectedOptionsCache] = React.useState<
       Map<string, GenericSelectOption>
@@ -177,11 +158,10 @@ export const GenericSelect = React.forwardRef<
     });
     const shouldShowAboveRef = React.useRef(false);
     const [animateOpen, setAnimateOpen] = React.useState(false);
-    const [internalExpandedKeys, setInternalExpandedKeys] =
-      React.useState<string[]>(expandedKeys);
-    const [flattenedTreeOptions, setFlattenedTreeOptions] = React.useState<
-      GenericSelectOption[]
-    >([]);
+    const [internalExpandedKeys, setInternalExpandedKeys] = React.useState<string[]>(expandedKeys);
+    const [flattenedTreeOptions, setFlattenedTreeOptions] = React.useState<GenericSelectOption[]>(
+      []
+    );
 
     // Refs
     const containerRef = React.useRef<HTMLDivElement>(null);
@@ -251,11 +231,7 @@ export const GenericSelect = React.forwardRef<
               return currentPath; // Return path without the target node itself
             }
             if (node.children) {
-              const childPath = findParents(
-                node.children,
-                targetValue,
-                newPath
-              );
+              const childPath = findParents(node.children, targetValue, newPath);
               if (childPath) return childPath;
             }
           }
@@ -359,9 +335,7 @@ export const GenericSelect = React.forwardRef<
 
     // Get source options based on select type
     const sourceOptions = isTreeSelect ? flattenedTreeOptions : options;
-    const allTreeNodes = isTreeSelect
-      ? getAllTreeNodes(treeData || options)
-      : [];
+    const allTreeNodes = isTreeSelect ? getAllTreeNodes(treeData || options) : [];
 
     // Get display options based on search type
     const displayOptions =
@@ -394,8 +368,7 @@ export const GenericSelect = React.forwardRef<
       const minDropdownHeight = 120; // Minimum height
 
       // Prefer showing below unless there's very little space
-      const shouldShowAbove =
-        spaceBelow < minDropdownHeight && spaceAbove > spaceBelow + 50;
+      const shouldShowAbove = spaceBelow < minDropdownHeight && spaceAbove > spaceBelow + 50;
       shouldShowAboveRef.current = shouldShowAbove;
 
       let top: number;
@@ -460,9 +433,7 @@ export const GenericSelect = React.forwardRef<
 
           if (parentNodes.length > 0) {
             // Merge existing expanded keys with parent nodes (avoid duplicates)
-            const newExpandedKeys = Array.from(
-              new Set([...internalExpandedKeys, ...parentNodes])
-            );
+            const newExpandedKeys = Array.from(new Set([...internalExpandedKeys, ...parentNodes]));
             setInternalExpandedKeys(newExpandedKeys);
             onExpandedKeysChange?.(newExpandedKeys);
           }
@@ -484,13 +455,7 @@ export const GenericSelect = React.forwardRef<
         const dataToUse = treeData || options;
         setFlattenedTreeOptions(flattenTreeData(dataToUse));
       }
-    }, [
-      isTreeSelect,
-      internalExpandedKeys,
-      treeData,
-      options,
-      flattenTreeData,
-    ]);
+    }, [isTreeSelect, internalExpandedKeys, treeData, options, flattenTreeData]);
 
     // Client-side filtering with position recalculation
     React.useEffect(() => {
@@ -585,7 +550,8 @@ export const GenericSelect = React.forwardRef<
         if (onServerSearchRef.current && !hasLoadedInitialServerOptions.current) {
           hasLoadedInitialServerOptions.current = true;
           setIsSearching(true);
-          onServerSearchRef.current("")
+          onServerSearchRef
+            .current("")
             .then((results: GenericSelectOption[]) => {
               setServerOptions(results);
               setIsSearching(false);
@@ -625,9 +591,7 @@ export const GenericSelect = React.forwardRef<
             // Use focus() with preventScroll and explicitly request focus
             searchInputRef.current.focus({ preventScroll: true });
             // Also dispatch a focus event to ensure it's recognized
-            searchInputRef.current.dispatchEvent(
-              new FocusEvent("focus", { bubbles: true })
-            );
+            searchInputRef.current.dispatchEvent(new FocusEvent("focus", { bubbles: true }));
           } catch (err) {
             // Silently fail if focus is blocked
           }
@@ -664,26 +628,21 @@ export const GenericSelect = React.forwardRef<
           requestAnimationFrame(() => {
             try {
               triggerRef.current?.focus();
-            } catch { }
+            } catch {}
           });
         } else if (!isOpen && previouslyFocused && previouslyFocused.focus) {
           // Fallback: return to previously focused element
           requestAnimationFrame(() => {
             try {
               previouslyFocused.focus();
-            } catch { }
+            } catch {}
           });
         }
       };
     }, [isOpen, isSearchable]);
 
     // Get Generic styling
-    const styles = getGenericSelectStyles(
-      effectiveDesign,
-      direction,
-      disabled,
-      className
-    );
+    const styles = getGenericSelectStyles(effectiveDesign, direction, disabled, className);
 
     // Handle selection
     const handleSelect = (optionValue: string) => {
@@ -694,7 +653,7 @@ export const GenericSelect = React.forwardRef<
 
       // Cache the selected option to preserve its label
       if (selectedOption && !selectedOptionsCache.has(optionValue)) {
-        setSelectedOptionsCache(prev => {
+        setSelectedOptionsCache((prev) => {
           const newCache = new Map(prev);
           newCache.set(optionValue, selectedOption);
           return newCache;
@@ -709,7 +668,7 @@ export const GenericSelect = React.forwardRef<
         let alreadySelectedValue: string | undefined;
         if (optionUniqueKey) {
           // Find existing selection with same uniqueKey
-          alreadySelectedValue = currentValues.find(v => {
+          alreadySelectedValue = currentValues.find((v) => {
             const cachedOpt = allOptionsMap.get(v) || selectedOptionsCache.get(v);
             return cachedOpt?.uniqueKey === optionUniqueKey;
           });
@@ -774,7 +733,7 @@ export const GenericSelect = React.forwardRef<
           if (triggerRef.current) {
             try {
               triggerRef.current.focus();
-            } catch { }
+            } catch {}
           }
         });
         // Don't reset server options when closing - keep them for next open
@@ -785,9 +744,7 @@ export const GenericSelect = React.forwardRef<
     // Handle select all (multi-select only)
     const handleSelectAll = () => {
       if (!onValueChange || !isMultiSelect) return;
-      const allValues = displayOptions
-        .filter((opt) => !opt.disabled)
-        .map((opt) => opt.value);
+      const allValues = displayOptions.filter((opt) => !opt.disabled).map((opt) => opt.value);
       onValueChange(allValues);
     };
 
@@ -817,35 +774,29 @@ export const GenericSelect = React.forwardRef<
             const parentPath = reversedPath.slice(1); // Parent path (R2, R1, WH1)
 
             return (
-              <div className="flex items-center gap-1 text-sm overflow-hidden">
+              <div className="flex items-center gap-1 overflow-hidden text-sm">
                 {parentPath.length > 0 && (
                   <>
-                    <span className="text-muted-foreground text-xs truncate">
+                    <span className="truncate text-xs text-muted-foreground">
                       {parentPath.join(" ‹ ")}
                     </span>
 
-                    <span className="text-muted-foreground text-xs flex-shrink-0">
-                      ›
-                    </span>
+                    <span className="flex-shrink-0 text-xs text-muted-foreground">›</span>
                   </>
                 )}
-                <span className="font-medium truncate">{selectedItem}</span>
+                <span className="truncate font-medium">{selectedItem}</span>
               </div>
             );
           } else {
             return (
-              <div className="flex items-center gap-1 text-sm overflow-hidden">
-                <span className="text-muted-foreground text-xs truncate">
+              <div className="flex items-center gap-1 overflow-hidden text-sm">
+                <span className="truncate text-xs text-muted-foreground">
                   {path.slice(0, -1).join(" › ")}
                 </span>
                 {path.length > 1 && (
-                  <span className="text-muted-foreground text-xs flex-shrink-0">
-                    ›
-                  </span>
+                  <span className="flex-shrink-0 text-xs text-muted-foreground">›</span>
                 )}
-                <span className="font-medium truncate">
-                  {path[path.length - 1]}
-                </span>
+                <span className="truncate font-medium">{path[path.length - 1]}</span>
               </div>
             );
           }
@@ -870,10 +821,8 @@ export const GenericSelect = React.forwardRef<
     React.useEffect(() => {
       const handleClickOutside = (event: MouseEvent) => {
         const target = event.target as Node;
-        const isClickInTrigger =
-          containerRef.current && containerRef.current.contains(target);
-        const isClickInDropdown =
-          dropdownRef.current && dropdownRef.current.contains(target);
+        const isClickInTrigger = containerRef.current && containerRef.current.contains(target);
+        const isClickInDropdown = dropdownRef.current && dropdownRef.current.contains(target);
 
         if (!isClickInTrigger && !isClickInDropdown) {
           setIsOpen(false);
@@ -940,16 +889,14 @@ export const GenericSelect = React.forwardRef<
                 // Safe assignment for forwarded ref
                 try {
                   (ref as any).current = containerRef.current;
-                } catch { }
+                } catch {}
               }
             }
           }}
           className={cn(
             styles.trigger,
             // When open, suppress parent focus visuals so it doesn't look like parent is focused
-            isOpen &&
-            isSearchable &&
-            "ring-0 focus:ring-0 focus-within:ring-0 outline-none"
+            isOpen && isSearchable && "outline-none ring-0 focus-within:ring-0 focus:ring-0"
           )}
           onClick={handleToggle}
           onMouseDownCapture={(e) => {
@@ -972,14 +919,14 @@ export const GenericSelect = React.forwardRef<
                 requestAnimationFrame(() => {
                   try {
                     searchInputRef.current?.focus({ preventScroll: true });
-                  } catch { }
+                  } catch {}
                 });
               } else {
                 setIsOpen(false);
                 requestAnimationFrame(() => {
                   try {
                     triggerRef.current?.focus();
-                  } catch { }
+                  } catch {}
                 });
               }
             }
@@ -990,25 +937,15 @@ export const GenericSelect = React.forwardRef<
           tabIndex={disabled ? -1 : isOpen && isSearchable ? -1 : 0}
           style={{
             // Visually merge trigger with dropdown so borders don't overlap
-            borderBottomLeftRadius:
-              isOpen && !shouldShowAboveRef.current ? 0 : undefined,
-            borderBottomRightRadius:
-              isOpen && !shouldShowAboveRef.current ? 0 : undefined,
-            borderTopLeftRadius:
-              isOpen && shouldShowAboveRef.current ? 0 : undefined,
-            borderTopRightRadius:
-              isOpen && shouldShowAboveRef.current ? 0 : undefined,
-            borderBottom:
-              isOpen && !shouldShowAboveRef.current
-                ? ("none" as const)
-                : undefined,
-            borderTop:
-              isOpen && shouldShowAboveRef.current
-                ? ("none" as const)
-                : undefined,
+            borderBottomLeftRadius: isOpen && !shouldShowAboveRef.current ? 0 : undefined,
+            borderBottomRightRadius: isOpen && !shouldShowAboveRef.current ? 0 : undefined,
+            borderTopLeftRadius: isOpen && shouldShowAboveRef.current ? 0 : undefined,
+            borderTopRightRadius: isOpen && shouldShowAboveRef.current ? 0 : undefined,
+            borderBottom: isOpen && !shouldShowAboveRef.current ? ("none" as const) : undefined,
+            borderTop: isOpen && shouldShowAboveRef.current ? ("none" as const) : undefined,
           }}
         >
-          <div className="flex-1 flex flex-wrap gap-1 items-center min-h-[1.5rem] overflow-hidden">
+          <div className="flex min-h-[1.5rem] flex-1 flex-wrap items-center gap-1 overflow-hidden">
             {isMultiSelect && selectedOptions.length > 0 ? (
               selectedOptions.length <= maxSelectedDisplay ? (
                 // Show individual chips for small selections
@@ -1033,9 +970,7 @@ export const GenericSelect = React.forwardRef<
                       label={displayLabel}
                       onRemove={() => {
                         if (!onValueChange) return;
-                        onValueChange(
-                          currentValues.filter((v) => v !== option.value)
-                        );
+                        onValueChange(currentValues.filter((v) => v !== option.value));
                       }}
                       className={styles.chip}
                       direction={direction}
@@ -1044,17 +979,15 @@ export const GenericSelect = React.forwardRef<
                 })
               ) : (
                 // Show summary text for large selections with responsive handling
-                <span className="text-sm text-muted-foreground truncate max-w-full">
+                <span className="max-w-full truncate text-sm text-muted-foreground">
                   {`${selectedOptions.length} ${defaultSelectedText}`}
                 </span>
               )
             ) : (
               <span
                 className={cn(
-                  "text-sm truncate max-w-full",
-                  selectedOptions.length === 0
-                    ? "text-muted-foreground"
-                    : "text-foreground"
+                  "max-w-full truncate text-sm",
+                  selectedOptions.length === 0 ? "text-muted-foreground" : "text-foreground"
                 )}
               >
                 {getDisplayText()}
@@ -1062,7 +995,7 @@ export const GenericSelect = React.forwardRef<
             )}
           </div>
 
-          <div className="flex items-center gap-2 flex-shrink-0">
+          <div className="flex flex-shrink-0 items-center gap-2">
             {allowClear && !disabled && selectedOptions.length > 0 && (
               <button
                 type="button"
@@ -1074,7 +1007,7 @@ export const GenericSelect = React.forwardRef<
                     onValueChange?.("");
                   }
                 }}
-                className="h-4 w-4 rounded-full hover:bg-muted flex items-center justify-center"
+                className="flex h-4 w-4 items-center justify-center rounded-full hover:bg-muted"
               >
                 <X className="h-3 w-3" />
               </button>
@@ -1082,7 +1015,7 @@ export const GenericSelect = React.forwardRef<
             <ChevronDown
               className={cn(
                 "h-4 w-4 transition-transform duration-200",
-                isOpen && "transform rotate-180"
+                isOpen && "rotate-180 transform"
               )}
             />
           </div>
@@ -1096,7 +1029,7 @@ export const GenericSelect = React.forwardRef<
               data-dropdown-portal="true"
               data-searchable-select="true"
               className={cn(
-                "fixed z-[2147483647] min-w-[8rem] overflow-hidden shadow-lg pointer-events-auto",
+                "pointer-events-auto fixed z-[2147483647] min-w-[8rem] overflow-hidden shadow-lg",
                 styles.dropdown
               )}
               onMouseDownCapture={(e) => {
@@ -1110,41 +1043,36 @@ export const GenericSelect = React.forwardRef<
                 left: dropdownPosition.left,
                 width: dropdownPosition.width,
                 maxHeight: dropdownPosition.maxHeight,
-                transform: `translateZ(0) translateY(${animateOpen ? 0 : shouldShowAboveRef.current ? 6 : -6
-                  }px)`,
+                transform: `translateZ(0) translateY(${
+                  animateOpen ? 0 : shouldShowAboveRef.current ? 6 : -6
+                }px)`,
                 willChange: "transform, opacity", // Optimize for frequent position changes
                 opacity: animateOpen ? 1 : 0,
                 transition:
                   "transform 120ms cubic-bezier(.2,.8,.2,1), opacity 120ms cubic-bezier(.2,.8,.2,1)",
                 // Make dropdown visually attach to the trigger field
                 borderTopLeftRadius: shouldShowAboveRef.current ? undefined : 0,
-                borderTopRightRadius: shouldShowAboveRef.current
-                  ? undefined
-                  : 0,
-                borderBottomLeftRadius: shouldShowAboveRef.current
-                  ? 0
-                  : undefined,
-                borderBottomRightRadius: shouldShowAboveRef.current
-                  ? 0
-                  : undefined,
+                borderTopRightRadius: shouldShowAboveRef.current ? undefined : 0,
+                borderBottomLeftRadius: shouldShowAboveRef.current ? 0 : undefined,
+                borderBottomRightRadius: shouldShowAboveRef.current ? 0 : undefined,
                 borderTopWidth: shouldShowAboveRef.current ? 1 : 0,
                 borderBottomWidth: shouldShowAboveRef.current ? 0 : 1,
               }}
             >
               {/* Search input for searchable types */}
               {isSearchable && (
-                <div className="p-2 border-b border-border/50">
+                <div className="border-b border-border/50 p-2">
                   <div className="relative">
                     <Search
                       className={cn(
-                        "absolute top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground",
+                        "absolute top-1/2 h-4 w-4 -translate-y-1/2 transform text-muted-foreground",
                         direction === "rtl" ? "right-3" : "left-3"
                       )}
                     />
                     {showLoading && (
                       <Loader2
                         className={cn(
-                          "absolute top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground animate-spin",
+                          "absolute top-1/2 h-4 w-4 -translate-y-1/2 transform animate-spin text-muted-foreground",
                           direction === "rtl" ? "left-3" : "right-3"
                         )}
                       />
@@ -1160,14 +1088,14 @@ export const GenericSelect = React.forwardRef<
                         // Explicitly focus the input to defeat any focus traps
                         try {
                           (e.currentTarget as HTMLInputElement).focus();
-                        } catch { }
+                        } catch {}
                       }}
                       onPointerDownCapture={(e) => e.stopPropagation()}
                       onPointerDown={(e) => {
                         e.stopPropagation();
                         try {
                           (e.currentTarget as HTMLInputElement).focus();
-                        } catch { }
+                        } catch {}
                       }}
                       onClick={(e) => e.stopPropagation()}
                       autoFocus
@@ -1176,9 +1104,7 @@ export const GenericSelect = React.forwardRef<
                       placeholder={defaultSearchPlaceholder}
                       className={cn(
                         "w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
-                        direction === "rtl"
-                          ? "pr-10 pl-3 text-right"
-                          : "pl-10 pr-3 text-left"
+                        direction === "rtl" ? "pl-3 pr-10 text-right" : "pl-10 pr-3 text-left"
                       )}
                       dir={direction}
                     />
@@ -1188,11 +1114,11 @@ export const GenericSelect = React.forwardRef<
 
               {/* Multi-select batch operations */}
               {isMultiSelect && displayOptions.length > 0 && (
-                <div className="p-2 border-b border-border/50 flex gap-2">
+                <div className="flex gap-2 border-b border-border/50 p-2">
                   <button
                     type="button"
                     onClick={handleSelectAll}
-                    className="text-xs text-primary hover:text-primary/80 font-medium"
+                    className="text-xs font-medium text-primary hover:text-primary/80"
                   >
                     {defaultSelectAllText}
                   </button>
@@ -1200,7 +1126,7 @@ export const GenericSelect = React.forwardRef<
                   <button
                     type="button"
                     onClick={handleClearAll}
-                    className="text-xs text-muted-foreground hover:text-foreground font-medium"
+                    className="text-xs font-medium text-muted-foreground hover:text-foreground"
                   >
                     {defaultClearAllText}
                   </button>
@@ -1209,10 +1135,11 @@ export const GenericSelect = React.forwardRef<
 
               {/* Options list with dynamic scrollable height */}
               <div
-                className="overflow-y-auto p-1 scrollbar-thin scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent"
+                className="scrollbar-thin scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent overflow-y-auto p-1"
                 style={{
-                  maxHeight: `calc(${dropdownPosition.maxHeight}px - ${isSearchable ? "84px" : "40px"
-                    })`,
+                  maxHeight: `calc(${dropdownPosition.maxHeight}px - ${
+                    isSearchable ? "84px" : "40px"
+                  })`,
                 }}
               >
                 {showLoading ? (
@@ -1230,41 +1157,36 @@ export const GenericSelect = React.forwardRef<
                   displayOptions.map((option) => {
                     // Check if selected - use uniqueKey if available for deduplication
                     const isSelected = option.uniqueKey
-                      ? currentValues.some(v => {
-                        const cachedOpt = allOptionsMap.get(v) || selectedOptionsCache.get(v);
-                        return cachedOpt?.uniqueKey === option.uniqueKey;
-                      })
+                      ? currentValues.some((v) => {
+                          const cachedOpt = allOptionsMap.get(v) || selectedOptionsCache.get(v);
+                          return cachedOpt?.uniqueKey === option.uniqueKey;
+                        })
                       : currentValues.includes(option.value);
-                    const hasChildren =
-                      option.children && option.children.length > 0;
-                    const isExpanded = internalExpandedKeys.includes(
-                      option.value
-                    );
+                    const hasChildren = option.children && option.children.length > 0;
+                    const isExpanded = internalExpandedKeys.includes(option.value);
                     const level = option.level || 0;
 
                     return (
                       <div
                         key={option.value}
                         className={cn(
-                          "group relative flex cursor-pointer select-none items-center rounded-lg my-0.5 py-2.5 text-sm outline-none transition-all duration-200",
+                          "group relative my-0.5 flex cursor-pointer select-none items-center rounded-lg py-2.5 text-sm outline-none transition-all duration-200",
                           isTreeSelect
                             ? level === 0
-                              ? "bg-gradient-to-r from-primary/5 to-primary/10 border border-primary/20 hover:from-primary/10 hover:to-primary/15 hover:border-primary/30 shadow-sm"
+                              ? "border border-primary/20 bg-gradient-to-r from-primary/5 to-primary/10 shadow-sm hover:border-primary/30 hover:from-primary/10 hover:to-primary/15"
                               : level === 1
-                                ? "bg-gradient-to-r from-blue-500/5 to-blue-500/10 border border-blue-500/20 hover:from-blue-500/10 hover:to-blue-500/15 hover:border-blue-500/30"
-                                : "bg-gradient-to-r from-muted/30 to-muted/50 border border-border/50 hover:from-muted/50 hover:to-muted/70 hover:border-border/70"
+                                ? "border border-blue-500/20 bg-gradient-to-r from-blue-500/5 to-blue-500/10 hover:border-blue-500/30 hover:from-blue-500/10 hover:to-blue-500/15"
+                                : "border border-border/50 bg-gradient-to-r from-muted/30 to-muted/50 hover:border-border/70 hover:from-muted/50 hover:to-muted/70"
                             : "hover:bg-accent hover:text-accent-foreground",
                           isSelected &&
-                          (isTreeSelect
-                            ? "ring-2 ring-primary/50 bg-primary/10 border-primary/40 shadow-md"
-                            : "bg-accent text-accent-foreground"),
+                            (isTreeSelect
+                              ? "border-primary/40 bg-primary/10 shadow-md ring-2 ring-primary/50"
+                              : "bg-accent text-accent-foreground"),
                           option.disabled && "pointer-events-none opacity-50",
                           direction === "rtl" ? "text-right" : "text-left"
                         )}
                         style={{
-                          paddingLeft: isTreeSelect
-                            ? `${12 + level * 20}px`
-                            : "12px",
+                          paddingLeft: isTreeSelect ? `${12 + level * 20}px` : "12px",
                           paddingRight: isTreeSelect ? "12px" : "12px",
                           marginLeft: isTreeSelect ? `${level * 4}px` : "0px",
                         }}
@@ -1276,7 +1198,7 @@ export const GenericSelect = React.forwardRef<
                             className={cn(
                               "flex h-6 w-6 items-center justify-center rounded-full transition-all duration-200",
                               hasChildren
-                                ? "hover:bg-primary/20 hover:shadow-sm border border-transparent hover:border-primary/30"
+                                ? "border border-transparent hover:border-primary/30 hover:bg-primary/20 hover:shadow-sm"
                                 : "opacity-30",
                               direction === "rtl" ? "ml-2" : "mr-2"
                             )}
@@ -1288,7 +1210,7 @@ export const GenericSelect = React.forwardRef<
                             {hasChildren ? (
                               <ChevronRight
                                 className={cn(
-                                  "h-4 w-4 transition-all duration-300 text-primary",
+                                  "h-4 w-4 text-primary transition-all duration-300",
                                   isExpanded && "rotate-90 text-primary/80"
                                 )}
                               />
@@ -1300,10 +1222,8 @@ export const GenericSelect = React.forwardRef<
 
                         {/* Option content */}
                         <div
-                          className="flex-1 flex items-center"
-                          onClick={() =>
-                            !option.disabled && handleSelect(option.value)
-                          }
+                          className="flex flex-1 items-center"
+                          onClick={() => !option.disabled && handleSelect(option.value)}
                         >
                           {option.icon && (
                             <span
@@ -1319,43 +1239,33 @@ export const GenericSelect = React.forwardRef<
                             <div
                               className={cn(
                                 "font-medium transition-colors",
-                                isTreeSelect &&
-                                level === 0 &&
-                                "text-primary font-semibold",
-                                isTreeSelect &&
-                                level === 1 &&
-                                "text-blue-600 font-medium",
+                                isTreeSelect && level === 0 && "font-semibold text-primary",
+                                isTreeSelect && level === 1 && "font-medium text-blue-600",
                                 isTreeSelect && level > 1 && "text-foreground"
                               )}
                             >
                               {option.label}
                             </div>
                             {option.description && (
-                              <div className="text-xs text-muted-foreground mt-0.5">
+                              <div className="mt-0.5 text-xs text-muted-foreground">
                                 {option.description}
                               </div>
                             )}
                             {/* Show breadcrumb path for tree items on hover with RTL support */}
                             {isTreeSelect && level > 0 && (
-                              <div className="text-xs text-muted-foreground/70 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                              <div className="mt-1 text-xs text-muted-foreground/70 opacity-0 transition-opacity group-hover:opacity-100">
                                 {direction === "rtl"
-                                  ? getNodePath(
-                                    option.value,
-                                    treeData || options
-                                  )
-                                    .reverse()
-                                    .join(" ‹ ")
-                                  : getNodePath(
-                                    option.value,
-                                    treeData || options
-                                  ).join(" › ")}
+                                  ? getNodePath(option.value, treeData || options)
+                                      .reverse()
+                                      .join(" ‹ ")
+                                  : getNodePath(option.value, treeData || options).join(" › ")}
                               </div>
                             )}
                           </div>
                           {isSelected && (
                             <div
                               className={cn(
-                                "flex items-center justify-center h-5 w-5 rounded-full bg-primary text-primary-foreground shadow-sm",
+                                "flex h-5 w-5 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm",
                                 direction === "rtl" ? "mr-2" : "ml-2"
                               )}
                             >
@@ -1378,9 +1288,7 @@ export const GenericSelect = React.forwardRef<
               if (!containerRef.current || !dropdownRef.current) return;
               const rect = containerRef.current.getBoundingClientRect();
               const dh = dropdownRef.current.offsetHeight;
-              const top = shouldShowAboveRef.current
-                ? rect.top - dh - 1
-                : rect.bottom + 1;
+              const top = shouldShowAboveRef.current ? rect.top - dh - 1 : rect.bottom + 1;
               setDropdownPosition((pos) => ({ ...pos, top: Math.max(top, 1) }));
             }}
           />

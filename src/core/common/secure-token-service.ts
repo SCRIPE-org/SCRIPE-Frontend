@@ -1,11 +1,11 @@
 /**
  * Secure Token Service
- * 
+ *
  * Provides secure token management with proper error handling,
  * validation, and security measures for localStorage operations.
  */
 
-import { appLogger } from './logger';
+import { appLogger } from "./logger";
 
 export interface TokenData {
   accessToken: string;
@@ -14,25 +14,25 @@ export interface TokenData {
 }
 
 export class SecureTokenService {
-  private static readonly ACCESS_TOKEN_KEY = 'accessToken';
-  private static readonly REFRESH_TOKEN_KEY = 'refreshToken';
-  private static readonly TOKEN_EXPIRY_KEY = 'tokenExpiry';
+  private static readonly ACCESS_TOKEN_KEY = "accessToken";
+  private static readonly REFRESH_TOKEN_KEY = "refreshToken";
+  private static readonly TOKEN_EXPIRY_KEY = "tokenExpiry";
 
   /**
    * Store access token securely
    */
   static setAccessToken(token: string): boolean {
-    if (typeof window === 'undefined') return false;
+    if (typeof window === "undefined") return false;
     try {
-      if (!token || typeof token !== 'string') {
-        appLogger.error('Invalid token provided');
+      if (!token || typeof token !== "string") {
+        appLogger.error("Invalid token provided");
         return false;
       }
 
       localStorage.setItem(this.ACCESS_TOKEN_KEY, token);
       return true;
     } catch (error) {
-      appLogger.error('Failed to store access token:', error);
+      appLogger.error("Failed to store access token:", error);
       return false;
     }
   }
@@ -41,17 +41,17 @@ export class SecureTokenService {
    * Store refresh token securely
    */
   static setRefreshToken(token: string): boolean {
-    if (typeof window === 'undefined') return false;
+    if (typeof window === "undefined") return false;
     try {
-      if (!token || typeof token !== 'string') {
-        appLogger.error('Invalid refresh token provided');
+      if (!token || typeof token !== "string") {
+        appLogger.error("Invalid refresh token provided");
         return false;
       }
 
       localStorage.setItem(this.REFRESH_TOKEN_KEY, token);
       return true;
     } catch (error) {
-      appLogger.error('Failed to store refresh token:', error);
+      appLogger.error("Failed to store refresh token:", error);
       return false;
     }
   }
@@ -60,17 +60,17 @@ export class SecureTokenService {
    * Store token expiry timestamp
    */
   static setTokenExpiry(expiresAt: number): boolean {
-    if (typeof window === 'undefined') return false;
+    if (typeof window === "undefined") return false;
     try {
-      if (!expiresAt || typeof expiresAt !== 'number') {
-        appLogger.error('Invalid expiry timestamp provided');
+      if (!expiresAt || typeof expiresAt !== "number") {
+        appLogger.error("Invalid expiry timestamp provided");
         return false;
       }
 
       localStorage.setItem(this.TOKEN_EXPIRY_KEY, expiresAt.toString());
       return true;
     } catch (error) {
-      appLogger.error('Failed to store token expiry:', error);
+      appLogger.error("Failed to store token expiry:", error);
       return false;
     }
   }
@@ -79,7 +79,7 @@ export class SecureTokenService {
    * Store all token data at once
    */
   static setTokens(tokenData: TokenData): boolean {
-    if (typeof window === 'undefined') return false;
+    if (typeof window === "undefined") return false;
     try {
       const success = this.setAccessToken(tokenData.accessToken);
 
@@ -93,7 +93,7 @@ export class SecureTokenService {
 
       return success;
     } catch (error) {
-      appLogger.error('Failed to store tokens:', error);
+      appLogger.error("Failed to store tokens:", error);
       return false;
     }
   }
@@ -102,7 +102,7 @@ export class SecureTokenService {
    * Get access token securely
    */
   static getAccessToken(): string | null {
-    if (typeof window === 'undefined') return null;
+    if (typeof window === "undefined") return null;
     try {
       const token = localStorage.getItem(this.ACCESS_TOKEN_KEY);
 
@@ -118,7 +118,7 @@ export class SecureTokenService {
 
       return token;
     } catch (error) {
-      appLogger.error('Failed to retrieve access token:', error);
+      appLogger.error("Failed to retrieve access token:", error);
       return null;
     }
   }
@@ -127,11 +127,11 @@ export class SecureTokenService {
    * Get refresh token securely
    */
   static getRefreshToken(): string | null {
-    if (typeof window === 'undefined') return null;
+    if (typeof window === "undefined") return null;
     try {
       return localStorage.getItem(this.REFRESH_TOKEN_KEY);
     } catch (error) {
-      appLogger.error('Failed to retrieve refresh token:', error);
+      appLogger.error("Failed to retrieve refresh token:", error);
       return null;
     }
   }
@@ -147,7 +147,7 @@ export class SecureTokenService {
    * Check if token is expired
    */
   static isTokenExpired(): boolean {
-    if (typeof window === 'undefined') return false;
+    if (typeof window === "undefined") return false;
     try {
       const expiryStr = localStorage.getItem(this.TOKEN_EXPIRY_KEY);
       if (!expiryStr) {
@@ -159,7 +159,7 @@ export class SecureTokenService {
 
       return now >= expiry;
     } catch (error) {
-      appLogger.error('Failed to check token expiry:', error);
+      appLogger.error("Failed to check token expiry:", error);
       return true; // Assume expired if we can't check
     }
   }
@@ -168,14 +168,14 @@ export class SecureTokenService {
    * Clear all tokens securely
    */
   static clearTokens(): boolean {
-    if (typeof window === 'undefined') return false;
+    if (typeof window === "undefined") return false;
     try {
       localStorage.removeItem(this.ACCESS_TOKEN_KEY);
       localStorage.removeItem(this.REFRESH_TOKEN_KEY);
       localStorage.removeItem(this.TOKEN_EXPIRY_KEY);
       return true;
     } catch (error) {
-      appLogger.error('Failed to clear tokens:', error);
+      appLogger.error("Failed to clear tokens:", error);
       return false;
     }
   }
@@ -184,7 +184,7 @@ export class SecureTokenService {
    * Get token info for debugging (development only)
    */
   static getTokenInfo(): { hasToken: boolean; isExpired: boolean; expiresAt?: number } {
-    if (process.env.NODE_ENV !== 'development') {
+    if (process.env.NODE_ENV !== "development") {
       return { hasToken: false, isExpired: true };
     }
 
@@ -195,10 +195,10 @@ export class SecureTokenService {
       return {
         hasToken: this.hasToken(),
         isExpired: this.isTokenExpired(),
-        expiresAt
+        expiresAt,
       };
     } catch (error) {
-      appLogger.error('Failed to get token info:', error);
+      appLogger.error("Failed to get token info:", error);
       return { hasToken: false, isExpired: true };
     }
   }
@@ -207,18 +207,18 @@ export class SecureTokenService {
    * Validate token format (basic validation)
    */
   static validateTokenFormat(token: string): boolean {
-    if (!token || typeof token !== 'string') {
+    if (!token || typeof token !== "string") {
       return false;
     }
 
     // Basic JWT format validation (3 parts separated by dots)
-    const parts = token.split('.');
+    const parts = token.split(".");
     if (parts.length !== 3) {
       return false;
     }
 
     // Check if each part is base64-like
-    return parts.every(part => /^[A-Za-z0-9_-]+$/.test(part));
+    return parts.every((part) => /^[A-Za-z0-9_-]+$/.test(part));
   }
 }
 

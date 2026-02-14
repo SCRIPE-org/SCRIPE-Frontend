@@ -26,103 +26,146 @@ import {
   Minus,
   Heading1,
   Heading2,
-  Heading3
+  Heading3,
 } from "lucide-react";
 
 // Enhanced HTML Sanitization utility that preserves formatting
 const sanitizeHTML = (html: string): string => {
   // Create a temporary div to parse HTML
-  const tempDiv = document.createElement('div');
+  const tempDiv = document.createElement("div");
   tempDiv.innerHTML = html;
-  
+
   // Remove dangerous elements
-  const dangerousElements = tempDiv.querySelectorAll('script, iframe, object, embed, form, input, button');
-  dangerousElements.forEach(element => element.remove());
-  
+  const dangerousElements = tempDiv.querySelectorAll(
+    "script, iframe, object, embed, form, input, button"
+  );
+  dangerousElements.forEach((element) => element.remove());
+
   // Define allowed tags and attributes for rich text formatting
   const allowedTags = [
-    'p', 'br', 'strong', 'b', 'em', 'i', 'u', 's', 'strike', 'del',
-    'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-    'ul', 'ol', 'li',
-    'blockquote', 'pre', 'code',
-    'a', 'img',
-    'div', 'span',
-    'table', 'thead', 'tbody', 'tr', 'th', 'td',
-    'hr' // Add horizontal rule
+    "p",
+    "br",
+    "strong",
+    "b",
+    "em",
+    "i",
+    "u",
+    "s",
+    "strike",
+    "del",
+    "h1",
+    "h2",
+    "h3",
+    "h4",
+    "h5",
+    "h6",
+    "ul",
+    "ol",
+    "li",
+    "blockquote",
+    "pre",
+    "code",
+    "a",
+    "img",
+    "div",
+    "span",
+    "table",
+    "thead",
+    "tbody",
+    "tr",
+    "th",
+    "td",
+    "hr", // Add horizontal rule
   ];
-  
+
   const allowedAttributes: Record<string, string[]> = {
-    'a': ['href', 'title', 'target'],
-    'img': ['src', 'alt', 'title', 'width', 'height'],
-    'table': ['border', 'cellpadding', 'cellspacing'],
-    'td': ['colspan', 'rowspan'],
-    'th': ['colspan', 'rowspan'],
-    '*': ['style', 'class', 'id'] // Allow styling attributes
+    a: ["href", "title", "target"],
+    img: ["src", "alt", "title", "width", "height"],
+    table: ["border", "cellpadding", "cellspacing"],
+    td: ["colspan", "rowspan"],
+    th: ["colspan", "rowspan"],
+    "*": ["style", "class", "id"], // Allow styling attributes
   };
-  
+
   // Process all elements
-  const allElements = tempDiv.querySelectorAll('*');
-  allElements.forEach(element => {
+  const allElements = tempDiv.querySelectorAll("*");
+  allElements.forEach((element) => {
     const tagName = element.tagName.toLowerCase();
-    
+
     // Remove disallowed tags
     if (!allowedTags.includes(tagName)) {
       element.outerHTML = element.innerHTML;
       return;
     }
-    
+
     // Remove dangerous event handlers
-    const eventHandlers = ['onclick', 'onload', 'onerror', 'onmouseover', 'onmouseout', 'onfocus', 'onblur', 'onchange', 'onsubmit'];
-    eventHandlers.forEach(handler => {
+    const eventHandlers = [
+      "onclick",
+      "onload",
+      "onerror",
+      "onmouseover",
+      "onmouseout",
+      "onfocus",
+      "onblur",
+      "onchange",
+      "onsubmit",
+    ];
+    eventHandlers.forEach((handler) => {
       element.removeAttribute(handler);
     });
-    
+
     // Clean attributes based on tag
-    const allowedAttrs = allowedAttributes[tagName] || allowedAttributes['*'] || [];
+    const allowedAttrs = allowedAttributes[tagName] || allowedAttributes["*"] || [];
     const attributesToRemove: string[] = [];
-    
-    Array.from(element.attributes).forEach(attr => {
+
+    Array.from(element.attributes).forEach((attr) => {
       if (!allowedAttrs.includes(attr.name)) {
         attributesToRemove.push(attr.name);
       }
     });
-    
-    attributesToRemove.forEach(attrName => {
+
+    attributesToRemove.forEach((attrName) => {
       element.removeAttribute(attrName);
     });
-    
+
     // Special handling for links and images
-    if (tagName === 'a') {
-      const href = element.getAttribute('href');
-      if (href && (href.toLowerCase().startsWith('javascript:') || href.toLowerCase().startsWith('data:'))) {
-        element.removeAttribute('href');
+    if (tagName === "a") {
+      const href = element.getAttribute("href");
+      if (
+        href &&
+        (href.toLowerCase().startsWith("javascript:") || href.toLowerCase().startsWith("data:"))
+      ) {
+        element.removeAttribute("href");
       }
     }
-    
-    if (tagName === 'img') {
-      const src = element.getAttribute('src');
-      if (src && (src.toLowerCase().startsWith('javascript:') || src.toLowerCase().startsWith('data:'))) {
-        element.removeAttribute('src');
+
+    if (tagName === "img") {
+      const src = element.getAttribute("src");
+      if (
+        src &&
+        (src.toLowerCase().startsWith("javascript:") || src.toLowerCase().startsWith("data:"))
+      ) {
+        element.removeAttribute("src");
       }
     }
-    
+
     // Clean style attributes to remove dangerous CSS
-    if (element.hasAttribute('style')) {
-      const style = element.getAttribute('style');
+    if (element.hasAttribute("style")) {
+      const style = element.getAttribute("style");
       if (style) {
         // Remove dangerous CSS properties
-        const dangerousStyles = ['expression', 'javascript:', 'vbscript:', 'onload', 'onerror'];
+        const dangerousStyles = ["expression", "javascript:", "vbscript:", "onload", "onerror"];
         let cleanStyle = style;
-        
-        dangerousStyles.forEach(dangerous => {
-          cleanStyle = cleanStyle.replace(new RegExp(dangerous, 'gi'), '');
+
+        dangerousStyles.forEach((dangerous) => {
+          cleanStyle = cleanStyle.replace(new RegExp(dangerous, "gi"), "");
         });
-        
-        element.setAttribute('style', cleanStyle);
+
+        element.setAttribute("style", cleanStyle);
       }
     }
   });
-  
+
   return tempDiv.innerHTML;
 };
 
@@ -131,7 +174,7 @@ const isValidURL = (url: string): boolean => {
   try {
     const urlObj = new URL(url);
     // Only allow http and https protocols
-    return urlObj.protocol === 'http:' || urlObj.protocol === 'https:';
+    return urlObj.protocol === "http:" || urlObj.protocol === "https:";
   } catch {
     return false;
   }
@@ -152,7 +195,7 @@ export function RichTextEditor({
   placeholder = "Start typing...",
   className,
   disabled = false,
-  minHeight = 200
+  minHeight = 200,
 }: RichTextEditorProps) {
   const editorRef = useRef<HTMLDivElement>(null);
   const [isActive, setIsActive] = useState(false);
@@ -208,7 +251,7 @@ export function RichTextEditor({
         { icon: Heading1, command: "formatBlock", value: "h1", title: "Heading 1" },
         { icon: Heading2, command: "formatBlock", value: "h2", title: "Heading 2" },
         { icon: Heading3, command: "formatBlock", value: "h3", title: "Heading 3" },
-      ]
+      ],
     },
     {
       group: "format",
@@ -217,7 +260,7 @@ export function RichTextEditor({
         { icon: Italic, command: "italic", title: "Italic (Ctrl+I)" },
         { icon: Underline, command: "underline", title: "Underline (Ctrl+U)" },
         { icon: Strikethrough, command: "strikeThrough", title: "Strikethrough" },
-      ]
+      ],
     },
     {
       group: "align",
@@ -226,7 +269,7 @@ export function RichTextEditor({
         { icon: AlignCenter, command: "justifyCenter", title: "Align Center" },
         { icon: AlignRight, command: "justifyRight", title: "Align Right" },
         { icon: AlignJustify, command: "justifyFull", title: "Justify" },
-      ]
+      ],
     },
     {
       group: "lists",
@@ -234,7 +277,7 @@ export function RichTextEditor({
         { icon: List, command: "insertUnorderedList", title: "Bullet List" },
         { icon: ListOrdered, command: "insertOrderedList", title: "Numbered List" },
         { icon: Quote, command: "formatBlock", value: "blockquote", title: "Quote" },
-      ]
+      ],
     },
     {
       group: "insert",
@@ -243,30 +286,32 @@ export function RichTextEditor({
         { icon: Image, action: insertImage, title: "Insert Image" },
         { icon: Code, command: "formatBlock", value: "pre", title: "Code Block" },
         { icon: Minus, command: "insertHorizontalRule", title: "Horizontal Rule" },
-      ]
+      ],
     },
     {
       group: "history",
       buttons: [
         { icon: Undo, command: "undo", title: "Undo (Ctrl+Z)" },
         { icon: Redo, command: "redo", title: "Redo (Ctrl+Y)" },
-      ]
-    }
+      ],
+    },
   ] as const;
 
   return (
-    <div className={cn("border rounded-md bg-background", className)}>
+    <div className={cn("rounded-md border bg-background", className)}>
       {/* Toolbar */}
-      <div className="border-b p-2 flex flex-wrap gap-1 bg-muted/30">
+      <div className="flex flex-wrap gap-1 border-b bg-muted/30 p-2">
         {/* Font Size */}
         <select
-          className="px-2 py-1 text-sm border rounded bg-background"
+          className="rounded border bg-background px-2 py-1 text-sm"
           onChange={(e) => changeFontSize(e.target.value)}
           disabled={disabled}
         >
           <option value="1">8pt</option>
           <option value="2">10pt</option>
-          <option value="3" selected>12pt</option>
+          <option value="3" selected>
+            12pt
+          </option>
           <option value="4">14pt</option>
           <option value="5">18pt</option>
           <option value="6">24pt</option>
@@ -280,7 +325,7 @@ export function RichTextEditor({
           <Palette className="h-4 w-4" />
           <input
             type="color"
-            className="w-8 h-6 border rounded cursor-pointer"
+            className="h-6 w-8 cursor-pointer rounded border"
             onChange={(e) => changeTextColor(e.target.value)}
             disabled={disabled}
             title="Text Color"
@@ -300,10 +345,10 @@ export function RichTextEditor({
                   size="sm"
                   className="h-8 w-8 p-0"
                   onClick={() => {
-                    if ('action' in button) {
+                    if ("action" in button) {
                       button.action();
                     } else {
-                      executeCommand(button.command, 'value' in button ? button.value : undefined);
+                      executeCommand(button.command, "value" in button ? button.value : undefined);
                     }
                   }}
                   disabled={disabled}
@@ -328,7 +373,7 @@ export function RichTextEditor({
           "p-4 outline-none focus:ring-0",
           "prose prose-sm max-w-none",
           "min-h-[200px]",
-          disabled && "opacity-50 cursor-not-allowed"
+          disabled && "cursor-not-allowed opacity-50"
         )}
         style={{ minHeight }}
         onInput={handleContentChange}
@@ -338,37 +383,37 @@ export function RichTextEditor({
           // Handle keyboard shortcuts
           if (e.ctrlKey || e.metaKey) {
             switch (e.key) {
-              case 'b':
+              case "b":
                 e.preventDefault();
-                executeCommand('bold');
+                executeCommand("bold");
                 break;
-              case 'i':
+              case "i":
                 e.preventDefault();
-                executeCommand('italic');
+                executeCommand("italic");
                 break;
-              case 'u':
+              case "u":
                 e.preventDefault();
-                executeCommand('underline');
+                executeCommand("underline");
                 break;
-              case 'z':
+              case "z":
                 e.preventDefault();
-                executeCommand('undo');
+                executeCommand("undo");
                 break;
-              case 'y':
+              case "y":
                 e.preventDefault();
-                executeCommand('redo');
+                executeCommand("redo");
                 break;
-              case '1':
+              case "1":
                 e.preventDefault();
-                executeCommand('formatBlock', 'h1');
+                executeCommand("formatBlock", "h1");
                 break;
-              case '2':
+              case "2":
                 e.preventDefault();
-                executeCommand('formatBlock', 'h2');
+                executeCommand("formatBlock", "h2");
                 break;
-              case '3':
+              case "3":
                 e.preventDefault();
-                executeCommand('formatBlock', 'h3');
+                executeCommand("formatBlock", "h3");
                 break;
             }
           }
@@ -378,11 +423,9 @@ export function RichTextEditor({
       />
 
       {/* Status Bar */}
-      <div className="border-t px-4 py-2 text-xs text-muted-foreground bg-muted/30">
-        <div className="flex justify-between items-center">
-          <span>
-            {editorRef.current?.textContent?.length || 0} characters
-          </span>
+      <div className="border-t bg-muted/30 px-4 py-2 text-xs text-muted-foreground">
+        <div className="flex items-center justify-between">
+          <span>{editorRef.current?.textContent?.length || 0} characters</span>
           <span className="flex items-center gap-2">
             {isActive && <span className="text-green-600">● Active</span>}
             <span>Rich Text Editor</span>
@@ -397,41 +440,42 @@ export function RichTextEditor({
           color: #6b7280;
           pointer-events: none;
         }
-        
+
         [contenteditable] h1 {
           font-size: 2em;
           font-weight: bold;
           margin: 0.67em 0;
         }
-        
+
         [contenteditable] h2 {
           font-size: 1.5em;
           font-weight: bold;
           margin: 0.75em 0;
         }
-        
+
         [contenteditable] h3 {
           font-size: 1.17em;
           font-weight: bold;
           margin: 0.83em 0;
         }
-        
+
         [contenteditable] p {
           margin: 1em 0;
         }
-        
+
         [contenteditable] blockquote {
           margin: 1em 0;
           padding-left: 1em;
           border-left: 4px solid #e5e7eb;
           font-style: italic;
         }
-        
-        [contenteditable] ul, [contenteditable] ol {
+
+        [contenteditable] ul,
+        [contenteditable] ol {
           margin: 1em 0;
           padding-left: 2em;
         }
-        
+
         [contenteditable] pre {
           background-color: #f3f4f6;
           padding: 1em;
@@ -439,12 +483,12 @@ export function RichTextEditor({
           overflow-x: auto;
           font-family: monospace;
         }
-        
+
         [contenteditable] a {
           color: #3b82f6;
           text-decoration: underline;
         }
-        
+
         [contenteditable] img {
           max-width: 100%;
           height: auto;

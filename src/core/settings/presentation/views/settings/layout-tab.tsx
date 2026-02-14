@@ -72,18 +72,18 @@ export function LayoutTab() {
         </CardHeader>
         <CardContent>
           <Tabs defaultValue={activeCategory || "sidebar"} className="space-y-6">
-            <TabsList className="flex flex-wrap h-auto gap-1 bg-muted/50 p-1 rounded-xl">
+            <TabsList className="flex h-auto flex-wrap gap-1 rounded-xl bg-muted/50 p-1">
               {tabs.map((tab) => (
                 <TabsTrigger
                   key={tab.key}
                   value={tab.key}
-                  className="relative rounded-lg text-xs sm:text-sm px-3 py-1.5 data-[state=active]:bg-background data-[state=active]:shadow-sm"
+                  className="relative rounded-lg px-3 py-1.5 text-xs data-[state=active]:bg-background data-[state=active]:shadow-sm sm:text-sm"
                 >
                   {tab.label}
                   {activeCategory === tab.key && (
                     <Badge
                       variant="secondary"
-                      className="ml-1.5 text-[10px] px-1 py-0 bg-primary/10 text-primary border-primary/20"
+                      className="ml-1.5 border-primary/20 bg-primary/10 px-1 py-0 text-[10px] text-primary"
                     >
                       {t("common.active")}
                     </Badge>
@@ -128,4 +128,3 @@ export function LayoutTab() {
     </>
   );
 }
-

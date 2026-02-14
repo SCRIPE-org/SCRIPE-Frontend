@@ -1,6 +1,6 @@
 /**
  * User Domain Model
- * 
+ *
  * Represents the core user entity in the domain layer.
  * This model is independent of external concerns and focuses
  * purely on user data and business logic.
@@ -65,7 +65,7 @@ export class User {
    * Check if user is an administrator
    */
   get isAdmin(): boolean {
-    return this.adminTypeName.toLowerCase().includes('admin');
+    return this.adminTypeName.toLowerCase().includes("admin");
   }
 
   /**

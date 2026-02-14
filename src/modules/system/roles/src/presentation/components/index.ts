@@ -12,4 +12,3 @@ export { PermissionTreeCard } from "./PermissionTreeCard";
 export { BulkScopeSelect } from "./BulkScopeSelect";
 
 // RolesView now uses GenericCrudView, so specific components like RoleCard are removed.
-

@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   ResponsiveContainer,
@@ -11,22 +11,22 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
-} from "recharts"
+} from "recharts";
 
 interface ChartProps {
-  data: any[]
-  type: "line" | "bar"
-  dataKey?: string
-  height?: number
+  data: any[];
+  type: "line" | "bar";
+  dataKey?: string;
+  height?: number;
   multiple?: Array<{
-    dataKey: string
-    color: string
-    name: string
-  }>
+    dataKey: string;
+    color: string;
+    name: string;
+  }>;
 }
 
 export function GenericChart({ data, type, dataKey, height = 300, multiple }: ChartProps) {
-  const ChartComponent = type === "line" ? LineChart : BarChart
+  const ChartComponent = type === "line" ? LineChart : BarChart;
 
   return (
     <ResponsiveContainer width="100%" height={height}>
@@ -56,15 +56,20 @@ export function GenericChart({ data, type, dataKey, height = 300, multiple }: Ch
                 />
               ) : (
                 <Bar key={item.dataKey} dataKey={item.dataKey} fill={item.color} name={item.name} />
-              ),
+              )
             )}
           </>
         ) : type === "line" ? (
-          <Line type="monotone" dataKey={dataKey || "value"} stroke="hsl(var(--primary))" strokeWidth={2} />
+          <Line
+            type="monotone"
+            dataKey={dataKey || "value"}
+            stroke="hsl(var(--primary))"
+            strokeWidth={2}
+          />
         ) : (
           <Bar dataKey={dataKey || "value"} fill="hsl(var(--primary))" />
         )}
       </ChartComponent>
     </ResponsiveContainer>
-  )
+  );
 }

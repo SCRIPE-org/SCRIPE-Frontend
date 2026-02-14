@@ -301,7 +301,7 @@ export function ProfessionalRadarCharts() {
         type="radar"
         filterable={false}
       />
-      
+
       <GenericChart
         title={t("charts.radar.multiSeries.title")}
         description={t("charts.radar.multiSeries.description")}
@@ -309,7 +309,7 @@ export function ProfessionalRadarCharts() {
         type="radar"
         filterable={true}
       />
-      
+
       <GenericChart
         title={t("charts.radar.skillAssessment.title")}
         description={t("charts.radar.skillAssessment.description")}
@@ -317,7 +317,7 @@ export function ProfessionalRadarCharts() {
         type="radar"
         filterable={false}
       />
-      
+
       <GenericChart
         title={t("charts.radar.marketAnalysis.title")}
         description={t("charts.radar.marketAnalysis.description")}
@@ -325,7 +325,7 @@ export function ProfessionalRadarCharts() {
         type="radar"
         filterable={true}
       />
-      
+
       <GenericChart
         title={t("charts.radar.teamPerformance.title")}
         description={t("charts.radar.teamPerformance.description")}
@@ -333,7 +333,7 @@ export function ProfessionalRadarCharts() {
         type="radar"
         filterable={true}
       />
-      
+
       <GenericChart
         title={t("charts.radar.projectMetrics.title")}
         description={t("charts.radar.projectMetrics.description")}
@@ -341,7 +341,7 @@ export function ProfessionalRadarCharts() {
         type="radar"
         filterable={false}
       />
-      
+
       <GenericChart
         title={t("charts.radar.customerSatisfaction.title")}
         description={t("charts.radar.customerSatisfaction.description")}
@@ -349,7 +349,7 @@ export function ProfessionalRadarCharts() {
         type="radar"
         filterable={false}
       />
-      
+
       <GenericChart
         title={t("charts.radar.competitiveAnalysis.title")}
         description={t("charts.radar.competitiveAnalysis.description")}

@@ -10,122 +10,122 @@
 export const SYSTEM_TENANT_ID = "__SYSTEM__";
 
 export interface TenantProps {
-      id: string;
-      name: string;
-      code: string;
-      level: number;
-      path: string;
-      isActive: boolean;
-      createdAt: string;
-      parentId?: string;
-      parentName?: string;
-      description?: string;
-      settings?: Record<string, unknown>;
-      modifiedAt?: string;
-      children?: TenantProps[];
+  id: string;
+  name: string;
+  code: string;
+  level: number;
+  path: string;
+  isActive: boolean;
+  createdAt: string;
+  parentId?: string;
+  parentName?: string;
+  description?: string;
+  settings?: Record<string, unknown>;
+  modifiedAt?: string;
+  children?: TenantProps[];
 }
 
 export interface TenantTreeNodeProps {
-      id: string; // "System" pseudo-tenant mapped to "__SYSTEM__" via Mapper
-      name: string;
-      code: string;
-      level: number;
-      isActive: boolean;
-      description?: string;
-      parentId?: string;
-      children: TenantTreeNodeProps[];
+  id: string; // "System" pseudo-tenant mapped to "__SYSTEM__" via Mapper
+  name: string;
+  code: string;
+  level: number;
+  isActive: boolean;
+  description?: string;
+  parentId?: string;
+  children: TenantTreeNodeProps[];
 }
 
 /**
  * Tenant domain entity
  */
 export class Tenant {
-      private readonly props: TenantProps;
+  private readonly props: TenantProps;
 
-      constructor(props: TenantProps) {
-            this.props = props;
-      }
+  constructor(props: TenantProps) {
+    this.props = props;
+  }
 
-      // ===== Getters =====
+  // ===== Getters =====
 
-      get id(): string {
-            return this.props.id;
-      }
+  get id(): string {
+    return this.props.id;
+  }
 
-      get name(): string {
-            return this.props.name;
-      }
+  get name(): string {
+    return this.props.name;
+  }
 
-      get code(): string {
-            return this.props.code;
-      }
+  get code(): string {
+    return this.props.code;
+  }
 
-      get parentId(): string | undefined {
-            return this.props.parentId;
-      }
+  get parentId(): string | undefined {
+    return this.props.parentId;
+  }
 
-      get parentName(): string | undefined {
-            return this.props.parentName;
-      }
+  get parentName(): string | undefined {
+    return this.props.parentName;
+  }
 
-      get level(): number {
-            return this.props.level;
-      }
+  get level(): number {
+    return this.props.level;
+  }
 
-      get path(): string {
-            return this.props.path;
-      }
+  get path(): string {
+    return this.props.path;
+  }
 
-      get isActive(): boolean {
-            return this.props.isActive;
-      }
+  get isActive(): boolean {
+    return this.props.isActive;
+  }
 
-      get description(): string | undefined {
-            return this.props.description;
-      }
+  get description(): string | undefined {
+    return this.props.description;
+  }
 
-      get settings(): Record<string, unknown> | undefined {
-            return this.props.settings;
-      }
+  get settings(): Record<string, unknown> | undefined {
+    return this.props.settings;
+  }
 
-      get createdAt(): string {
-            return this.props.createdAt;
-      }
+  get createdAt(): string {
+    return this.props.createdAt;
+  }
 
-      get modifiedAt(): string | undefined {
-            return this.props.modifiedAt;
-      }
+  get modifiedAt(): string | undefined {
+    return this.props.modifiedAt;
+  }
 
-      // ===== Business Logic =====
+  // ===== Business Logic =====
 
-      get hasChildren(): boolean {
-            return (this.props.children?.length ?? 0) > 0;
-      }
+  get hasChildren(): boolean {
+    return (this.props.children?.length ?? 0) > 0;
+  }
 
-      get children(): Tenant[] {
-            return (this.props.children ?? []).map((c) => new Tenant(c));
-      }
+  get children(): Tenant[] {
+    return (this.props.children ?? []).map((c) => new Tenant(c));
+  }
 
-      get pathSegments(): string[] {
-            return this.props.path.split("/").filter(Boolean);
-      }
+  get pathSegments(): string[] {
+    return this.props.path.split("/").filter(Boolean);
+  }
 
-      get isRoot(): boolean {
-            return !this.props.parentId;
-      }
+  get isRoot(): boolean {
+    return !this.props.parentId;
+  }
 
-      /**
-       * Get raw props (for serialization via mapper)
-       */
-      toProps(): TenantProps {
-            return { ...this.props };
-      }
+  /**
+   * Get raw props (for serialization via mapper)
+   */
+  toProps(): TenantProps {
+    return { ...this.props };
+  }
 }
 
 /**
  * Tenant tree node for hierarchical display
  */
-export interface TenantTreeNode extends TenantTreeNodeProps { }
+export interface TenantTreeNode extends TenantTreeNodeProps {}
 
 // Keep backward compatibility alias
 export type TenantData = TenantProps;

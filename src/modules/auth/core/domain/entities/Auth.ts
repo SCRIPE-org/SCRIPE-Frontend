@@ -1,6 +1,6 @@
 /**
  * Authentication Domain Models
- * 
+ *
  * Contains all authentication-related domain models including
  * login requests, responses, and related data structures.
  */
@@ -61,9 +61,8 @@ export class LoginRequest {
       { username: this.username, password: this.password },
       VALIDATION_SETS.LOGIN_FORM
     );
-    return Object.values(validationResults).every(result => result.isValid);
+    return Object.values(validationResults).every((result) => result.isValid);
   }
-
 }
 
 export class LoginResponse {
@@ -83,7 +82,6 @@ export class LoginResponse {
   get isSuccessful(): boolean {
     return this.success && !!(this.accessToken && this.refreshToken);
   }
-
 }
 
 export class RefreshTokenRequest {
@@ -99,5 +97,4 @@ export class RefreshTokenRequest {
   get isValid(): boolean {
     return !!(this.refreshToken && this.refreshToken.trim().length > 0);
   }
-
 }

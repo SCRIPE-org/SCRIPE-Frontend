@@ -114,11 +114,11 @@ export function GenericChart({
     };
 
     if (isFilterOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isFilterOpen]);
 
@@ -132,10 +132,11 @@ export function GenericChart({
   // Filter datasets based on visibility
   const filteredData = {
     ...data,
-        datasets: data.datasets?.map((dataset: any, index: number) => ({
-      ...dataset,
-      hidden: !visibleDatasets[index],
-    })) || [],
+    datasets:
+      data.datasets?.map((dataset: any, index: number) => ({
+        ...dataset,
+        hidden: !visibleDatasets[index],
+      })) || [],
   };
 
   const handleDatasetToggle = (index: number) => {
@@ -145,7 +146,7 @@ export function GenericChart({
   };
 
   const toggleAllDatasets = () => {
-    const allVisible = visibleDatasets.every(visible => visible);
+    const allVisible = visibleDatasets.every((visible) => visible);
     setVisibleDatasets(new Array(data.datasets?.length || 0).fill(!allVisible));
   };
 
@@ -188,30 +189,33 @@ export function GenericChart({
                 padding: 12,
               },
             },
-            scales: type === "pie" || type === "doughnut" ? {} : {
-              x: {
-                grid: {
-                  color: "rgba(255, 255, 255, 0.1)",
-                },
-                ticks: {
-                  color: "rgba(255, 255, 255, 0.7)",
-                  font: {
-                    size: 11,
+            scales:
+              type === "pie" || type === "doughnut"
+                ? {}
+                : {
+                    x: {
+                      grid: {
+                        color: "rgba(255, 255, 255, 0.1)",
+                      },
+                      ticks: {
+                        color: "rgba(255, 255, 255, 0.7)",
+                        font: {
+                          size: 11,
+                        },
+                      },
+                    },
+                    y: {
+                      grid: {
+                        color: "rgba(255, 255, 255, 0.1)",
+                      },
+                      ticks: {
+                        color: "rgba(255, 255, 255, 0.7)",
+                        font: {
+                          size: 11,
+                        },
+                      },
+                    },
                   },
-                },
-              },
-              y: {
-                grid: {
-                  color: "rgba(255, 255, 255, 0.1)",
-                },
-                ticks: {
-                  color: "rgba(255, 255, 255, 0.7)",
-                  font: {
-                    size: 11,
-                  },
-                },
-              },
-            },
             elements: {
               point: {
                 radius: 4,
@@ -265,7 +269,6 @@ export function GenericChart({
     }
   };
 
-
   return (
     <Card className={cn("w-full", className)}>
       <CardHeader className="pb-4">
@@ -278,15 +281,14 @@ export function GenericChart({
             {filterable && data.datasets && data.datasets.length > 1 && (
               <Collapsible open={isFilterOpen} onOpenChange={setIsFilterOpen}>
                 <CollapsibleTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="h-8 w-8 p-0"
-                  >
+                  <Button variant="outline" size="sm" className="h-8 w-8 p-0">
                     <Filter className="h-4 w-4" />
                   </Button>
                 </CollapsibleTrigger>
-                 <CollapsibleContent ref={filterRef} className="absolute top-12 right-0 z-50 w-64 p-4 bg-background border rounded-lg shadow-lg">
+                <CollapsibleContent
+                  ref={filterRef}
+                  className="absolute right-0 top-12 z-50 w-64 rounded-lg border bg-background p-4 shadow-lg"
+                >
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
                       <h4 className="text-sm font-medium">Filter Datasets</h4>
@@ -296,11 +298,11 @@ export function GenericChart({
                         onClick={toggleAllDatasets}
                         className="text-xs"
                       >
-                        {visibleDatasets.every(visible => visible) ? "Hide All" : "Show All"}
+                        {visibleDatasets.every((visible) => visible) ? "Hide All" : "Show All"}
                       </Button>
                     </div>
                     <div className="space-y-2">
-                              {data.datasets.map((dataset: any, index: number) => (
+                      {data.datasets.map((dataset: any, index: number) => (
                         <div key={index} className="flex items-center space-x-2">
                           <Checkbox
                             id={`dataset-${index}`}
@@ -321,32 +323,17 @@ export function GenericChart({
               </Collapsible>
             )}
             {exportable && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleExport}
-                className="h-8 w-8 p-0"
-              >
+              <Button variant="outline" size="sm" onClick={handleExport} className="h-8 w-8 p-0">
                 <Download className="h-4 w-4" />
               </Button>
             )}
             {resizable && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleMaximize}
-                className="h-8 w-8 p-0"
-              >
+              <Button variant="outline" size="sm" onClick={handleMaximize} className="h-8 w-8 p-0">
                 <Maximize2 className="h-4 w-4" />
               </Button>
             )}
             {onReset && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={onReset}
-                className="h-8 w-8 p-0"
-              >
+              <Button variant="outline" size="sm" onClick={onReset} className="h-8 w-8 p-0">
                 <RotateCcw className="h-4 w-4" />
               </Button>
             )}
@@ -354,8 +341,14 @@ export function GenericChart({
         </div>
       </CardHeader>
       <CardContent>
-        <div className="relative" style={{ height: typeof height === 'number' ? `${height}px` : height, width: typeof width === 'number' ? `${width}px` : width }}>
-          <canvas ref={canvasRef} className="w-full h-full" />
+        <div
+          className="relative"
+          style={{
+            height: typeof height === "number" ? `${height}px` : height,
+            width: typeof width === "number" ? `${width}px` : width,
+          }}
+        >
+          <canvas ref={canvasRef} className="h-full w-full" />
         </div>
       </CardContent>
     </Card>
@@ -406,9 +399,7 @@ export const ChartUtils = {
   },
 
   generateData: (count: number, min: number = 0, max: number = 100) => {
-    return Array.from({ length: count }, () => 
-      Math.floor(Math.random() * (max - min + 1)) + min
-    );
+    return Array.from({ length: count }, () => Math.floor(Math.random() * (max - min + 1)) + min);
   },
 
   generateTimeSeriesData: (days: number, baseValue: number = 50) => {

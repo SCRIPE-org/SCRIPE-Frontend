@@ -29,15 +29,19 @@ Create your entity in `src/domain/entities/Category.ts`.
 export interface CategoryData {
   id: string;
   name: string;
-  status: 'active' | 'inactive';
+  status: "active" | "inactive";
 }
 
 export class Category {
   constructor(public readonly data: CategoryData) {}
 
-  get id() { return this.data.id; }
-  get name() { return this.data.name; }
-  
+  get id() {
+    return this.data.id;
+  }
+  get name() {
+    return this.data.name;
+  }
+
   // Add domain logic here
 }
 ```
@@ -53,7 +57,7 @@ import { BaseRepository } from "@core/common/base-repository";
 
 export class CategoryRepository extends BaseRepository {
   async getCategories(params: any) {
-    return this.api.get('/categories', { params });
+    return this.api.get("/categories", { params });
   }
 }
 ```
@@ -65,13 +69,13 @@ export class CategoryRepository extends BaseRepository {
 Register your repository in `di.ts`.
 
 ```typescript
-import { getCoreContainer } from '@/core/di';
-import { CategoryRepository } from './src/data/repositories/CategoryRepository';
+import { getCoreContainer } from "@/core/di";
+import { CategoryRepository } from "./src/data/repositories/CategoryRepository";
 
 const { apiService } = getCoreContainer();
 
 export const categoryContainer = {
-  categoryRepository: new CategoryRepository(apiService)
+  categoryRepository: new CategoryRepository(apiService),
 };
 ```
 
@@ -87,7 +91,7 @@ import { categoryContainer } from "../../di";
 
 export function useCategoryViewModel() {
   const { data, isLoading } = useGenericQuery(
-    ['categories', 'list'], 
+    ["categories", "list"],
     (params) => categoryContainer.categoryRepository.getCategories(params),
     { page: 1 }
   );

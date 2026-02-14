@@ -7,15 +7,15 @@
  * @module tenants/data
  */
 import type {
-      ITenantRepository,
-      TenantListParams,
-      TenantStats,
+  ITenantRepository,
+  TenantListParams,
+  TenantStats,
 } from "../../domain/interfaces/ITenantRepository";
 import { Tenant, type TenantTreeNode } from "../../domain/entities/Tenant";
 import type {
-      CreateTenantRequest,
-      UpdateTenantRequest,
-      DeleteTenantRequest,
+  CreateTenantRequest,
+  UpdateTenantRequest,
+  DeleteTenantRequest,
 } from "../../domain/entities/TenantRequests";
 import type { PagedResult } from "@modules/system/core/domain/types";
 import type { ITenantService } from "../../domain/interfaces/ITenantService";
@@ -25,109 +25,120 @@ import { PermissionMapper } from "@modules/system/permissions/src/data/mappers/P
 import { appLogger } from "@core/common/logger";
 
 export class TenantRepository implements ITenantRepository {
-      constructor(private readonly service: ITenantService) { }
+  constructor(private readonly service: ITenantService) {}
 
-      async getAll(params: TenantListParams): Promise<PagedResult<Tenant>> {
-            const result = await this.service.getAll(params);
+  async getAll(params: TenantListParams): Promise<PagedResult<Tenant>> {
+    const result = await this.service.getAll(params);
 
-            return {
-                  items: TenantMapper.toEntityList(result.items),
-                  totalCount: result.totalCount,
-                  page: result.page,
-                  pageSize: result.pageSize,
-                  totalPages: result.totalPages,
-                  hasNextPage: result.hasNextPage,
-                  hasPreviousPage: result.hasPreviousPage,
-            };
-      }
+    return {
+      items: TenantMapper.toEntityList(result.items),
+      totalCount: result.totalCount,
+      page: result.page,
+      pageSize: result.pageSize,
+      totalPages: result.totalPages,
+      hasNextPage: result.hasNextPage,
+      hasPreviousPage: result.hasPreviousPage,
+    };
+  }
 
-      async getTree(): Promise<TenantTreeNode[]> {
-            const models = await this.service.getTree();
-            return TenantMapper.toTreeNodeList(models);
-      }
+  async getTree(): Promise<TenantTreeNode[]> {
+    const models = await this.service.getTree();
+    return TenantMapper.toTreeNodeList(models);
+  }
 
-      async getMyChildren(): Promise<TenantTreeNode[]> {
-            const models = await this.service.getMyChildren();
-            return TenantMapper.toTreeNodeList(models);
-      }
+  async getMyChildren(): Promise<TenantTreeNode[]> {
+    const models = await this.service.getMyChildren();
+    return TenantMapper.toTreeNodeList(models);
+  }
 
-      async getChildren(parentId: string): Promise<TenantTreeNode[]> {
-            const models = await this.service.getChildren(parentId);
-            return TenantMapper.toTreeNodeList(models);
-      }
+  async getChildren(parentId: string): Promise<TenantTreeNode[]> {
+    const models = await this.service.getChildren(parentId);
+    return TenantMapper.toTreeNodeList(models);
+  }
 
-      async getMyTenantAndChildren(search?: string): Promise<TenantTreeNode[]> {
-            const models = await this.service.getMyTenantAndChildren(search);
-            return TenantMapper.toTreeNodeList(models);
-      }
+  async getMyTenantAndChildren(search?: string): Promise<TenantTreeNode[]> {
+    const models = await this.service.getMyTenantAndChildren(search);
+    return TenantMapper.toTreeNodeList(models);
+  }
 
-      async getById(id: string): Promise<Tenant> {
-            const model = await this.service.getById(id);
-            return TenantMapper.toEntity(model);
-      }
+  async getById(id: string): Promise<Tenant> {
+    const model = await this.service.getById(id);
+    return TenantMapper.toEntity(model);
+  }
 
-      async getStats(id: string): Promise<TenantStats> {
-            return this.service.getStats(id);
-      }
+  async getStats(id: string): Promise<TenantStats> {
+    return this.service.getStats(id);
+  }
 
-      async create(request: CreateTenantRequest): Promise<string> {
-            const model = TenantMapper.toCreateModel(request);
-            const response = await this.service.create(model.toJson());
-            return response.id;
-      }
+  async create(request: CreateTenantRequest): Promise<string> {
+    const model = TenantMapper.toCreateModel(request);
+    const response = await this.service.create(model.toJson());
+    return response.id;
+  }
 
-      async update(id: string, request: UpdateTenantRequest): Promise<void> {
-            const model = TenantMapper.toUpdateModel(request);
-            await this.service.update(id, model.toJson());
-      }
+  async update(id: string, request: UpdateTenantRequest): Promise<void> {
+    const model = TenantMapper.toUpdateModel(request);
+    await this.service.update(id, model.toJson());
+  }
 
-      async delete(id: string, options?: DeleteTenantRequest): Promise<void> {
-            const params = new URLSearchParams();
-            if (options?.cascadeChildren) {
-                  params.append('cascadeChildren', 'true');
-            }
-            const queryString = params.toString();
-            await this.service.delete(queryString ? `${id}?${queryString}` : id);
-      }
+  async delete(id: string, options?: DeleteTenantRequest): Promise<void> {
+    const params = new URLSearchParams();
+    if (options?.cascadeChildren) {
+      params.append("cascadeChildren", "true");
+    }
+    const queryString = params.toString();
+    await this.service.delete(queryString ? `${id}?${queryString}` : id);
+  }
 
-      async getDescendantCount(id: string): Promise<number> {
-            return this.service.getDescendantCount(id);
-      }
+  async getDescendantCount(id: string): Promise<number> {
+    return this.service.getDescendantCount(id);
+  }
 
-      async getCreationPermissions(parentId?: string, search?: string): Promise<Permission[]> {
-            const models = await this.service.getCreationPermissions(parentId, search);
-            return PermissionMapper.toEntityList(models);
-      }
+  async getCreationPermissions(parentId?: string, search?: string): Promise<Permission[]> {
+    const models = await this.service.getCreationPermissions(parentId, search);
+    return PermissionMapper.toEntityList(models);
+  }
 
-      async getTenantPermissions(tenantId: string, search?: string): Promise<Permission[]> {
-            const models = await this.service.getTenantPermissions(tenantId, search);
-            return PermissionMapper.toEntityList(models);
-      }
+  async getTenantPermissions(tenantId: string, search?: string): Promise<Permission[]> {
+    const models = await this.service.getTenantPermissions(tenantId, search);
+    return PermissionMapper.toEntityList(models);
+  }
 
-      async getAvailablePermissions(tenantId: string, parentId?: string, search?: string): Promise<Permission[]> {
-            appLogger.debug("[Repo] getAvailablePermissions called with tenantId:", tenantId, "parentId:", parentId, "search:", search);
-            // If tenant has a parent, get the parent's permissions
-            // If tenant is a root tenant (no parent), get all available permissions from current admin's perspective
-            if (parentId) {
-                  // Child tenant: available permissions = parent tenant's permissions
-                  appLogger.debug("[Repo] Fetching PARENT tenant permissions for:", parentId);
-                  const models = await this.service.getTenantPermissions(parentId, search);
-                  appLogger.debug("[Repo] Parent permissions count:", models?.length);
-                  return PermissionMapper.toEntityList(models);
-            } else {
-                  // Root tenant: available permissions = creation permissions (current admin's perspective)
-                  appLogger.debug("[Repo] Fetching CREATION permissions (no parent)");
-                  const models = await this.service.getCreationPermissions(undefined, search);
-                  appLogger.debug("[Repo] Creation permissions count:", models?.length);
-                  return PermissionMapper.toEntityList(models);
-            }
-      }
+  async getAvailablePermissions(
+    tenantId: string,
+    parentId?: string,
+    search?: string
+  ): Promise<Permission[]> {
+    appLogger.debug(
+      "[Repo] getAvailablePermissions called with tenantId:",
+      tenantId,
+      "parentId:",
+      parentId,
+      "search:",
+      search
+    );
+    // If tenant has a parent, get the parent's permissions
+    // If tenant is a root tenant (no parent), get all available permissions from current admin's perspective
+    if (parentId) {
+      // Child tenant: available permissions = parent tenant's permissions
+      appLogger.debug("[Repo] Fetching PARENT tenant permissions for:", parentId);
+      const models = await this.service.getTenantPermissions(parentId, search);
+      appLogger.debug("[Repo] Parent permissions count:", models?.length);
+      return PermissionMapper.toEntityList(models);
+    } else {
+      // Root tenant: available permissions = creation permissions (current admin's perspective)
+      appLogger.debug("[Repo] Fetching CREATION permissions (no parent)");
+      const models = await this.service.getCreationPermissions(undefined, search);
+      appLogger.debug("[Repo] Creation permissions count:", models?.length);
+      return PermissionMapper.toEntityList(models);
+    }
+  }
 
-      async updateTenantPermissions(tenantId: string, permissionIds: string[]): Promise<void> {
-            await this.service.updateTenantPermissions(tenantId, permissionIds);
-      }
+  async updateTenantPermissions(tenantId: string, permissionIds: string[]): Promise<void> {
+    await this.service.updateTenantPermissions(tenantId, permissionIds);
+  }
 
-      setTenantContext(tenantId: string | null): void {
-            this.service.setTenantContext(tenantId);
-      }
+  setTenantContext(tenantId: string | null): void {
+    this.service.setTenantContext(tenantId);
+  }
 }

@@ -12,29 +12,28 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { AdminsView } from "@modules/system/admin";
 
 interface TenantAdminsTabProps {
-      tenantId: string;
-      tenantName: string;
+  tenantId: string;
+  tenantName: string;
 }
 
 export function TenantAdminsTab({ tenantId, tenantName }: TenantAdminsTabProps) {
-      const { t } = useI18n();
+  const { t } = useI18n();
 
-      return (
-            <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                        <div>
-                              <h3 className="text-lg font-semibold">{t("tenant.manageAdmins")}</h3>
-                              <p className="text-sm text-muted-foreground">
-                                    {t("tenant.adminsDescription") ||
-                                          `Manage administrators for ${tenantName}`}
-                              </p>
-                        </div>
-                  </div>
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <div>
+          <h3 className="text-lg font-semibold">{t("tenant.manageAdmins")}</h3>
+          <p className="text-sm text-muted-foreground">
+            {t("tenant.adminsDescription") || `Manage administrators for ${tenantName}`}
+          </p>
+        </div>
+      </div>
 
-                  {/* Use the shared widget with explicit tenant context */}
-                  <div className="border rounded-lg overflow-hidden">
-                        <AdminsView tenantId={tenantId} />
-                  </div>
-            </div>
-      );
+      {/* Use the shared widget with explicit tenant context */}
+      <div className="overflow-hidden rounded-lg border">
+        <AdminsView tenantId={tenantId} />
+      </div>
+    </div>
+  );
 }

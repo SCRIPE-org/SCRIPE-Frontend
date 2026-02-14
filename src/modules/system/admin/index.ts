@@ -12,9 +12,9 @@ export { useAdminsViewModel } from "./src/presentation/viewmodels/useAdminsViewM
 export { Admin } from "./src/domain/entities/Admin";
 export type { AdminData, AdminRoleData } from "./src/domain/entities/Admin";
 export type {
-      CreateAdminRequest,
-      UpdateAdminRequest,
-      AssignRoleRequest,
+  CreateAdminRequest,
+  UpdateAdminRequest,
+  AssignRoleRequest,
 } from "./src/domain/entities/AdminRequests";
 
 // Interfaces

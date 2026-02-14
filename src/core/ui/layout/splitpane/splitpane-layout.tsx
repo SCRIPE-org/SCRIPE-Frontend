@@ -17,7 +17,7 @@ import { LogoutButton } from "@core/ui/layout/shared/logout-button";
 import { cn } from "@core/common/utils";
 
 interface SplitPaneLayoutProps {
-      children: React.ReactNode;
+  children: React.ReactNode;
 }
 
 /**
@@ -33,144 +33,151 @@ interface SplitPaneLayoutProps {
  * Inspired by VS Code, Outlook, Figma
  */
 export function SplitPaneLayout({ children }: SplitPaneLayoutProps) {
-      const { direction, t } = useI18n();
-      const settings = useSettings();
-      const styles = useLayoutStyles();
-      const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-      const [bottomPanelOpen, setBottomPanelOpen] = useState(false);
+  const { direction, t } = useI18n();
+  const settings = useSettings();
+  const styles = useLayoutStyles();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [bottomPanelOpen, setBottomPanelOpen] = useState(false);
 
-      return (
+  return (
+    <div
+      className={cn("flex min-h-screen flex-col bg-background", styles.getAnimationClass())}
+      dir={direction}
+    >
+      {/* ── Header ── */}
+      <header
+        className={cn(
+          settings.stickyHeader ? "sticky top-0 z-30" : "relative",
+          "glass border-b border-border",
+          "flex h-11 items-center justify-between px-4"
+        )}
+      >
+        <div className="flex items-center gap-3">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 lg:hidden"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            {mobileMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+          </Button>
+          <Logo size="sm" />
+          <span className="hidden text-sm font-semibold text-foreground sm:block">
+            {t("app.title")}
+          </span>
+        </div>
+        <div className="flex items-center gap-2">
+          {/* Bottom panel toggle */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="hidden h-8 w-8 lg:flex"
+            onClick={() => setBottomPanelOpen(!bottomPanelOpen)}
+            title={bottomPanelOpen ? "Hide panel" : "Show panel"}
+          >
+            {bottomPanelOpen ? (
+              <PanelBottomClose className="h-4 w-4" />
+            ) : (
+              <PanelBottomOpen className="h-4 w-4" />
+            )}
+          </Button>
+          <LanguageSwitcher />
+          <ThemeSwitcher />
+          <UserProfileDropdown showName={false} />
+        </div>
+      </header>
+
+      <div className="flex flex-1 overflow-hidden">
+        {/* ── Desktop Sidebar ── */}
+        <aside
+          className={cn("hidden w-60 shrink-0 flex-col lg:flex", "border-e border-border bg-card")}
+        >
+          <div className="border-b border-border p-3">
+            <UserCard size="sm" />
+          </div>
+          <div className="flex-1 overflow-y-auto p-2">
+            <NavRenderer variant="compact" />
+          </div>
+          <div className="border-t border-border p-2">
+            <LogoutButton />
+          </div>
+        </aside>
+
+        {/* ── Mobile Drawer ── */}
+        {mobileMenuOpen && (
+          <>
             <div
-                  className={cn(
-                        "min-h-screen flex flex-col bg-background",
-                        styles.getAnimationClass(),
-                  )}
-                  dir={direction}
+              className="fixed inset-0 z-30 bg-black/30 lg:hidden"
+              onClick={() => setMobileMenuOpen(false)}
+            />
+            <aside
+              dir={direction}
+              className={cn(
+                "fixed bottom-0 top-11 z-40 flex w-72 flex-col border-e border-border bg-card lg:hidden",
+                direction === "rtl" ? "right-0" : "left-0"
+              )}
             >
-                  {/* ── Header ── */}
-                  <header
-                        className={cn(
-                              settings.stickyHeader ? "sticky top-0 z-30" : "relative",
-                              "glass border-b border-border",
-                              "flex items-center justify-between px-4 h-11",
-                        )}
-                  >
-                        <div className="flex items-center gap-3">
-                              <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="lg:hidden h-8 w-8"
-                                    onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                              >
-                                    {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
-                              </Button>
-                              <Logo size="sm" />
-                              <span className="text-sm font-semibold text-foreground hidden sm:block">
-                                    {t("app.title")}
-                              </span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                              {/* Bottom panel toggle */}
-                              <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="h-8 w-8 hidden lg:flex"
-                                    onClick={() => setBottomPanelOpen(!bottomPanelOpen)}
-                                    title={bottomPanelOpen ? "Hide panel" : "Show panel"}
-                              >
-                                    {bottomPanelOpen
-                                          ? <PanelBottomClose className="w-4 h-4" />
-                                          : <PanelBottomOpen className="w-4 h-4" />}
-                              </Button>
-                              <LanguageSwitcher />
-                              <ThemeSwitcher />
-                              <UserProfileDropdown showName={false} />
-                        </div>
-                  </header>
+              <div className="border-b border-border p-3">
+                <UserCard size="sm" />
+              </div>
+              <div className="flex-1 overflow-y-auto p-2">
+                <NavRenderer variant="default" onNavigate={() => setMobileMenuOpen(false)} />
+              </div>
+              <div className="border-t border-border p-2">
+                <LogoutButton />
+              </div>
+            </aside>
+          </>
+        )}
 
-                  <div className="flex-1 flex overflow-hidden">
-                        {/* ── Desktop Sidebar ── */}
-                        <aside
-                              className={cn(
-                                    "hidden lg:flex flex-col w-60 shrink-0",
-                                    "bg-card border-e border-border",
-                              )}
-                        >
-                              <div className="p-3 border-b border-border">
-                                    <UserCard size="sm" />
-                              </div>
-                              <div className="flex-1 p-2 overflow-y-auto">
-                                    <NavRenderer variant="compact" />
-                              </div>
-                              <div className="p-2 border-t border-border">
-                                    <LogoutButton />
-                              </div>
-                        </aside>
+        {/* ── Content + Bottom Panel ── */}
+        <div className="flex min-w-0 flex-1 flex-col">
+          <main className="flex-1 overflow-y-auto p-6">
+            <div style={{ borderRadius: "var(--border-radius)" }}>{children}</div>
+          </main>
 
-                        {/* ── Mobile Drawer ── */}
-                        {mobileMenuOpen && (
-                              <>
-                                    <div className="fixed inset-0 z-30 bg-black/30 lg:hidden" onClick={() => setMobileMenuOpen(false)} />
-                                    <aside
-                                          dir={direction}
-                                          className={cn(
-                                                "fixed top-11 bottom-0 w-72 z-40 bg-card border-e border-border flex flex-col lg:hidden",
-                                                direction === "rtl" ? "right-0" : "left-0",
-                                          )}
-                                    >
-                                          <div className="p-3 border-b border-border"><UserCard size="sm" /></div>
-                                          <div className="flex-1 p-2 overflow-y-auto">
-                                                <NavRenderer variant="default" onNavigate={() => setMobileMenuOpen(false)} />
-                                          </div>
-                                          <div className="p-2 border-t border-border"><LogoutButton /></div>
-                                    </aside>
-                              </>
-                        )}
-
-                        {/* ── Content + Bottom Panel ── */}
-                        <div className="flex-1 flex flex-col min-w-0">
-                              <main className="flex-1 p-6 overflow-y-auto">
-                                    <div style={{ borderRadius: "var(--border-radius)" }}>
-                                          {children}
-                                    </div>
-                              </main>
-
-                              {/* Bottom Panel */}
-                              {bottomPanelOpen && (
-                                    <div className="hidden lg:block border-t border-border bg-card h-44 shrink-0">
-                                          <div className="flex items-center justify-between px-4 py-2 border-b border-border/50">
-                                                <div className="flex items-center gap-4">
-                                                      <span className="text-xs font-semibold text-primary">
-                                                            {t("common.output") || "Output"}
-                                                      </span>
-                                                      <span className="text-xs text-muted-foreground cursor-pointer hover:text-foreground">
-                                                            {t("common.activity") || "Activity"}
-                                                      </span>
-                                                      <span className="text-xs text-muted-foreground cursor-pointer hover:text-foreground">
-                                                            {t("common.console") || "Console"}
-                                                      </span>
-                                                </div>
-                                                <Button
-                                                      variant="ghost"
-                                                      size="icon"
-                                                      className="h-6 w-6"
-                                                      onClick={() => setBottomPanelOpen(false)}
-                                                >
-                                                      <X className="w-3 h-3" />
-                                                </Button>
-                                          </div>
-                                          <div className="p-3 text-xs font-mono text-muted-foreground overflow-y-auto h-[calc(100%-36px)]">
-                                                <div className="space-y-1">
-                                                      <p><span className="text-muted-foreground/60">[info]</span> {t("common.ready") || "System ready"}</p>
-                                                      <p><span className="text-green-500">[ok]</span> {t("common.connected") || "Connected"}</p>
-                                                </div>
-                                          </div>
-                                    </div>
-                              )}
-                        </div>
-                  </div>
-
-                  {settings.showFooter && <Footer />}
+          {/* Bottom Panel */}
+          {bottomPanelOpen && (
+            <div className="hidden h-44 shrink-0 border-t border-border bg-card lg:block">
+              <div className="flex items-center justify-between border-b border-border/50 px-4 py-2">
+                <div className="flex items-center gap-4">
+                  <span className="text-xs font-semibold text-primary">
+                    {t("common.output") || "Output"}
+                  </span>
+                  <span className="cursor-pointer text-xs text-muted-foreground hover:text-foreground">
+                    {t("common.activity") || "Activity"}
+                  </span>
+                  <span className="cursor-pointer text-xs text-muted-foreground hover:text-foreground">
+                    {t("common.console") || "Console"}
+                  </span>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6"
+                  onClick={() => setBottomPanelOpen(false)}
+                >
+                  <X className="h-3 w-3" />
+                </Button>
+              </div>
+              <div className="h-[calc(100%-36px)] overflow-y-auto p-3 font-mono text-xs text-muted-foreground">
+                <div className="space-y-1">
+                  <p>
+                    <span className="text-muted-foreground/60">[info]</span>{" "}
+                    {t("common.ready") || "System ready"}
+                  </p>
+                  <p>
+                    <span className="text-green-500">[ok]</span>{" "}
+                    {t("common.connected") || "Connected"}
+                  </p>
+                </div>
+              </div>
             </div>
-      );
+          )}
+        </div>
+      </div>
+
+      {settings.showFooter && <Footer />}
+    </div>
+  );
 }

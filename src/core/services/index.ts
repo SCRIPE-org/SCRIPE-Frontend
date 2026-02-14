@@ -12,7 +12,4 @@ export type { IApiService } from "@core/interfaces/api.interface";
 
 export { NavigationService } from "./navigation.service";
 
-export {
-      NotificationService,
-      type INotificationService,
-} from "./notification.service";
+export { NotificationService, type INotificationService } from "./notification.service";

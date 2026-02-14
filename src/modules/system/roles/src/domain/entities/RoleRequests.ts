@@ -8,40 +8,40 @@
  * Create role request
  */
 export interface CreateRoleRequest {
-      nameEn: string;
-      nameAr: string;
-      code: string;
-      descriptionEn?: string;
-      descriptionAr?: string;
-      tenantId?: string;
-      priority?: number;
+  nameEn: string;
+  nameAr: string;
+  code: string;
+  descriptionEn?: string;
+  descriptionAr?: string;
+  tenantId?: string;
+  priority?: number;
 }
 
 /**
  * Update role request
  */
 export interface UpdateRoleRequest {
-      nameEn: string;
-      nameAr: string;
-      descriptionEn?: string;
-      descriptionAr?: string;
-      priority: number;
+  nameEn: string;
+  nameAr: string;
+  descriptionEn?: string;
+  descriptionAr?: string;
+  priority: number;
 }
 
 /**
  * Assign permissions to role request
  */
 export interface AssignPermissionsRequest {
-      permissions: PermissionAssignment[];
+  permissions: PermissionAssignment[];
 }
 
 /**
  * Permission assignment with optional scope
  */
 export interface PermissionAssignment {
-      permissionId: string;
-      scopeOverride?: string | null;
-      restrictedFields?: string[] | null;
+  permissionId: string;
+  scopeOverride?: string | null;
+  restrictedFields?: string[] | null;
 }
 
 /**
@@ -49,8 +49,8 @@ export interface PermissionAssignment {
  * Supports admin transfer before deletion
  */
 export interface DeleteRoleRequest {
-      /** Role ID to transfer admins to before deletion */
-      fallbackRoleId?: string;
+  /** Role ID to transfer admins to before deletion */
+  fallbackRoleId?: string;
 }
 
 /**
@@ -58,8 +58,8 @@ export interface DeleteRoleRequest {
  * Creates a new role with the same permissions (filtered to cloner's permissions)
  */
 export interface CloneRoleRequest {
-      nameEn: string;
-      nameAr: string;
-      descriptionEn?: string;
-      descriptionAr?: string;
+  nameEn: string;
+  nameAr: string;
+  descriptionEn?: string;
+  descriptionAr?: string;
 }

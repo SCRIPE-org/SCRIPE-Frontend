@@ -154,7 +154,14 @@ export function GenericTreeView<T extends TreeNode, TCreate, TUpdate>({
       };
     }
     return { canCreate: true, canUpdate: true, canDelete: true };
-  }, [permissions, resource, resolvePermissionValue, resourceCreatePerm, resourceUpdatePerm, resourceDeletePerm]);
+  }, [
+    permissions,
+    resource,
+    resolvePermissionValue,
+    resourceCreatePerm,
+    resourceUpdatePerm,
+    resourceDeletePerm,
+  ]);
 
   // Determine button visibility
   const showAddButton = showAddRoot && effectivePermissions.canCreate;
@@ -165,12 +172,12 @@ export function GenericTreeView<T extends TreeNode, TCreate, TUpdate>({
     <div className="flex items-center gap-2">
       {showAddButton && (
         <Button size="sm" onClick={() => vm.openAddChild(null)}>
-          <Plus className="h-4 w-4 mr-2 rtl:mr-0 rtl:ml-2" />
+          <Plus className="mr-2 h-4 w-4 rtl:ml-2 rtl:mr-0" />
           {t("common.add")}
         </Button>
       )}
       {/* Pagination controls */}
-      <div className="hidden md:flex items-center gap-2">
+      <div className="hidden items-center gap-2 md:flex">
         <GenericSelect
           type="single"
           options={[10, 25, 50, 100].map((size) => ({
@@ -181,7 +188,7 @@ export function GenericTreeView<T extends TreeNode, TCreate, TUpdate>({
           onValueChange={(v: string | string[]) =>
             vm.changePageSize(Number(typeof v === "string" ? v : v[0]))
           }
-          className="min-w-[100px] w-auto max-w-[120px] h-8 text-center font-medium"
+          className="h-8 w-auto min-w-[100px] max-w-[120px] text-center font-medium"
           allowClear={false}
         />
         {vm.pagination.pagesCount > 1 && (
@@ -194,17 +201,10 @@ export function GenericTreeView<T extends TreeNode, TCreate, TUpdate>({
                     e.preventDefault();
                     vm.changePage(Math.max(1, vm.pagination.page - 1));
                   }}
-                  className={
-                    vm.pagination.page === 1
-                      ? "pointer-events-none opacity-50"
-                      : ""
-                  }
+                  className={vm.pagination.page === 1 ? "pointer-events-none opacity-50" : ""}
                 />
               </PaginationItem>
-              {Array.from(
-                { length: vm.pagination.pagesCount },
-                (_, i) => i + 1
-              ).map((page) => (
+              {Array.from({ length: vm.pagination.pagesCount }, (_, i) => i + 1).map((page) => (
                 <PaginationItem key={page}>
                   <PaginationLink
                     href="#"
@@ -223,9 +223,7 @@ export function GenericTreeView<T extends TreeNode, TCreate, TUpdate>({
                   href="#"
                   onClick={(e) => {
                     e.preventDefault();
-                    vm.changePage(
-                      Math.min(vm.pagination.pagesCount, vm.pagination.page + 1)
-                    );
+                    vm.changePage(Math.min(vm.pagination.pagesCount, vm.pagination.page + 1));
                   }}
                   className={
                     vm.pagination.page === vm.pagination.pagesCount
@@ -266,55 +264,52 @@ export function GenericTreeView<T extends TreeNode, TCreate, TUpdate>({
           vm.config.selectable
             ? undefined
             : (n) => {
-              const actions = [];
-              // Add Child - requires create permission
-              if (effectivePermissions.canCreate) {
-                actions.push({
-                  label: t("common.add_child") ?? "Add child",
-                  onClick: () => vm.openAddChild(n),
-                  disabled: vm.loading,
-                });
-              }
-              // Edit - requires update permission
-              if (effectivePermissions.canUpdate) {
-                actions.push({
-                  label: t("common.edit"),
-                  onClick: () => vm.openEdit(n),
-                  disabled: vm.loading,
-                });
-              }
-              // Custom actions (added before Delete)
-              if (customActions) {
-                const custom = customActions(n);
-                custom.forEach((action) => {
-                  if (action.show && !action.show(n)) return;
-                  if (
-                    action.requiredPermission &&
-                    !hasPermission(action.requiredPermission)
-                  ) {
-                    return;
-                  }
-
+                const actions = [];
+                // Add Child - requires create permission
+                if (effectivePermissions.canCreate) {
                   actions.push({
-                    label: action.label,
-                    onClick: action.onClick,
-                    variant: action.variant,
-                    icon: action.icon,
-                    disabled: action.disabled || vm.loading,
+                    label: t("common.add_child") ?? "Add child",
+                    onClick: () => vm.openAddChild(n),
+                    disabled: vm.loading,
                   });
-                });
+                }
+                // Edit - requires update permission
+                if (effectivePermissions.canUpdate) {
+                  actions.push({
+                    label: t("common.edit"),
+                    onClick: () => vm.openEdit(n),
+                    disabled: vm.loading,
+                  });
+                }
+                // Custom actions (added before Delete)
+                if (customActions) {
+                  const custom = customActions(n);
+                  custom.forEach((action) => {
+                    if (action.show && !action.show(n)) return;
+                    if (action.requiredPermission && !hasPermission(action.requiredPermission)) {
+                      return;
+                    }
+
+                    actions.push({
+                      label: action.label,
+                      onClick: action.onClick,
+                      variant: action.variant,
+                      icon: action.icon,
+                      disabled: action.disabled || vm.loading,
+                    });
+                  });
+                }
+                // Delete - requires delete permission (stays at bottom)
+                if (effectivePermissions.canDelete) {
+                  actions.push({
+                    label: t("common.delete"),
+                    onClick: () => vm.deleteItem(n),
+                    variant: "destructive" as const,
+                    disabled: vm.loading,
+                  });
+                }
+                return actions;
               }
-              // Delete - requires delete permission (stays at bottom)
-              if (effectivePermissions.canDelete) {
-                actions.push({
-                  label: t("common.delete"),
-                  onClick: () => vm.deleteItem(n),
-                  variant: "destructive" as const,
-                  disabled: vm.loading,
-                });
-              }
-              return actions;
-            }
         }
         selectable={vm.config.selectable}
         selectedValues={vm.selectedValues}
@@ -354,19 +349,12 @@ export function GenericTreeView<T extends TreeNode, TCreate, TUpdate>({
           }
           description={
             vm.editing
-              ? `Edit the ${vm.config.itemTypeName?.toLowerCase() ?? "item"
-              } details below.`
-              : `Add a new ${vm.config.itemTypeName?.toLowerCase() ?? "item"
-              } below.`
+              ? `Edit the ${vm.config.itemTypeName?.toLowerCase() ?? "item"} details below.`
+              : `Add a new ${vm.config.itemTypeName?.toLowerCase() ?? "item"} below.`
           }
         >
           <GenericForm
-            fields={renderFormFields(
-              vm.formValues,
-              vm.setFormValues,
-              vm.editing,
-              vm.parentForNew
-            )}
+            fields={renderFormFields(vm.formValues, vm.setFormValues, vm.editing, vm.parentForNew)}
             initialValues={vm.formValues}
             onSubmit={vm.onSubmit}
             onCancel={() => {
@@ -388,9 +376,7 @@ export function GenericTreeView<T extends TreeNode, TCreate, TUpdate>({
             "{itemType}",
             vm.deleteOptions.itemType || t("common.item")
           )} "${vm.deleteOptions.itemName}". ${t("common.deleteWarning")}`}
-          confirmText={
-            vm.isDeleting ? t("common.deleting") : t("common.delete")
-          }
+          confirmText={vm.isDeleting ? t("common.deleting") : t("common.delete")}
           cancelText={t("common.cancel")}
           variant="destructive"
           isLoading={vm.isDeleting}

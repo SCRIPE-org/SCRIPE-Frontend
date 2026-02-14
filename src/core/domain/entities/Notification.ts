@@ -1,24 +1,24 @@
 /**
  * Notification Domain Models
- * 
+ *
  * Contains all notification-related domain models including
  * notifications, notification types, and related structures.
  */
 
 export enum NotificationType {
-  SUCCESS = 'success',
-  ERROR = 'error',
-  INFO = 'info',
-  WARNING = 'warning',
+  SUCCESS = "success",
+  ERROR = "error",
+  INFO = "info",
+  WARNING = "warning",
 }
 
 export enum NotificationPosition {
-  TOP_LEFT = 'top-left',
-  TOP_RIGHT = 'top-right',
-  TOP_CENTER = 'top-center',
-  BOTTOM_LEFT = 'bottom-left',
-  BOTTOM_RIGHT = 'bottom-right',
-  BOTTOM_CENTER = 'bottom-center',
+  TOP_LEFT = "top-left",
+  TOP_RIGHT = "top-right",
+  TOP_CENTER = "top-center",
+  BOTTOM_LEFT = "bottom-left",
+  BOTTOM_RIGHT = "bottom-right",
+  BOTTOM_CENTER = "bottom-center",
 }
 
 export interface NotificationData {
@@ -36,7 +36,7 @@ export interface NotificationData {
 export interface NotificationAction {
   label: string;
   action: () => void;
-  variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
+  variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
 }
 
 export interface NotificationConfigData {
@@ -76,7 +76,7 @@ export class Notification {
   get isExpired(): boolean {
     const now = new Date().getTime();
     const notificationTime = new Date(this.timestamp).getTime();
-    return (now - notificationTime) > this.duration;
+    return now - notificationTime > this.duration;
   }
 
   /**
@@ -92,15 +92,15 @@ export class Notification {
   private getDefaultTitle(): string {
     switch (this.type) {
       case NotificationType.SUCCESS:
-        return 'Success';
+        return "Success";
       case NotificationType.ERROR:
-        return 'Error';
+        return "Error";
       case NotificationType.INFO:
-        return 'Information';
+        return "Information";
       case NotificationType.WARNING:
-        return 'Warning';
+        return "Warning";
       default:
-        return 'Notification';
+        return "Notification";
     }
   }
 
@@ -202,10 +202,10 @@ export class NotificationQueue {
   add(notification: Notification): void {
     // Remove expired notifications
     this.removeExpired();
-    
+
     // Add new notification
     this.notifications.push(notification);
-    
+
     // Limit queue size
     if (this.notifications.length > this.config.maxNotifications) {
       this.notifications = this.notifications.slice(-this.config.maxNotifications);
@@ -216,7 +216,7 @@ export class NotificationQueue {
    * Remove notification by ID
    */
   remove(id: string): void {
-    this.notifications = this.notifications.filter(n => n.id !== id);
+    this.notifications = this.notifications.filter((n) => n.id !== id);
   }
 
   /**
@@ -230,7 +230,7 @@ export class NotificationQueue {
    * Remove expired notifications
    */
   removeExpired(): void {
-    this.notifications = this.notifications.filter(n => !n.isExpired);
+    this.notifications = this.notifications.filter((n) => !n.isExpired);
   }
 
   /**
@@ -245,14 +245,14 @@ export class NotificationQueue {
    * Get visible notifications
    */
   getVisible(): Notification[] {
-    return this.getAll().filter(n => n.isVisible);
+    return this.getAll().filter((n) => n.isVisible);
   }
 
   /**
    * Get notifications by type
    */
   getByType(type: NotificationType): Notification[] {
-    return this.getAll().filter(n => n.type === type);
+    return this.getAll().filter((n) => n.type === type);
   }
 
   /**

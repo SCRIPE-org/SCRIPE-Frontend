@@ -22,6 +22,7 @@ graph TD
 ```
 
 ### Why?
+
 - **Scalability**: You can delete a module folder, and the rest of the app works perfectly.
 - **Maintainability**: Everything related to "Auth" is in one folder.
 - **Testability**: Interfaces allow easy mocking.
@@ -29,13 +30,17 @@ graph TD
 ## Directory Structure
 
 ### `src/core` (The Infrastructure)
+
 Contains things that **never change** when business rules change.
+
 - UI Components (Buttons, Inputs)
 - Network Layer (Axios)
 - Generic Logic (CRUD Engine)
 
 ### `src/modules` (The Business)
+
 Contains the specific rules of your application.
+
 - `domain/`: Entities (Pure TS classes)
 - `data/`: Repositories (API calls)
 - `presentation/`: Views & ViewModels (React)

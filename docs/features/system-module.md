@@ -33,15 +33,16 @@ modules/system/
 
 ### Admin Management (`/admins`)
 
-| Feature | Implementation |
-|---------|---------------|
-| List | `GenericCrudView` with pagination, search, filters |
-| Create | `FormDialog` with role assignment |
-| Edit | `FormDialog` with inline role management |
-| Bulk Ops | Activate/deactivate/delete selected |
+| Feature    | Implementation                                       |
+| ---------- | ---------------------------------------------------- |
+| List       | `GenericCrudView` with pagination, search, filters   |
+| Create     | `FormDialog` with role assignment                    |
+| Edit       | `FormDialog` with inline role management             |
+| Bulk Ops   | Activate/deactivate/delete selected                  |
 | Statistics | Cards showing total, active, inactive, locked counts |
 
 **Key ViewModels**:
+
 - `useAdminManagementViewModel` — Orchestrator
 - `useStatisticsViewModel` — KPI cards
 - `useFilterViewModel` — Search + filters
@@ -50,14 +51,15 @@ modules/system/
 
 ### Role Management (`/roles`)
 
-| Feature | Implementation |
-|---------|---------------|
-| List | `GenericCrudView` with admin count per role |
-| Detail | Role info + permission assignment by category |
-| Clone | Anti-privilege-escalation clone |
+| Feature     | Implementation                                                |
+| ----------- | ------------------------------------------------------------- |
+| List        | `GenericCrudView` with admin count per role                   |
+| Detail      | Role info + permission assignment by category                 |
+| Clone       | Anti-privilege-escalation clone                               |
 | Permissions | Grouped by category, field-level restrictions, scope selector |
 
 **Key ViewModels**:
+
 - `useRoleListViewModel` — List page
 - `useRoleDetailViewModel` — Detail page with permissions
 
@@ -65,24 +67,25 @@ modules/system/
 
 ### Permission Viewer (`/settings/permissions`)
 
-| Feature | Implementation |
-|---------|---------------|
-| View | All permissions grouped by category |
-| Search | Filter by name/category |
+| Feature   | Implementation                                 |
+| --------- | ---------------------------------------------- |
+| View      | All permissions grouped by category            |
+| Search    | Filter by name/category                        |
 | Read-only | No create/edit/delete — permissions are seeded |
 
 ---
 
 ### Tenant Management (`/tenants`)
 
-| Feature | Implementation |
-|---------|---------------|
-| List | `GenericCrudView` with hierarchy indicators |
-| Hierarchy | Tree visualization of tenant structure |
-| Detail | Settings form + permission pool management |
-| Stats | Admin count, role count, child count |
+| Feature   | Implementation                              |
+| --------- | ------------------------------------------- |
+| List      | `GenericCrudView` with hierarchy indicators |
+| Hierarchy | Tree visualization of tenant structure      |
+| Detail    | Settings form + permission pool management  |
+| Stats     | Admin count, role count, child count        |
 
 **Key ViewModels**:
+
 - `useTenantListViewModel` — List page
 - `useTenantDetailViewModel` — Detail + settings
 
@@ -90,27 +93,28 @@ modules/system/
 
 ### Menu Management (`/settings/menus`)
 
-| Feature | Implementation |
-|---------|---------------|
-| Tree | Drag-and-drop tree view of all menu items |
-| Create/Edit | Form dialog for menu item properties |
-| Reorder | Drag items to reorder or reparent |
-| Visibility | Per-role visibility toggles |
+| Feature     | Implementation                            |
+| ----------- | ----------------------------------------- |
+| Tree        | Drag-and-drop tree view of all menu items |
+| Create/Edit | Form dialog for menu item properties      |
+| Reorder     | Drag items to reorder or reparent         |
+| Visibility  | Per-role visibility toggles               |
 
 ---
 
 ### Dashboard (`/dashboard`)
 
-| Feature | Implementation |
-|---------|---------------|
-| KPI Cards | Admin count, sessions, today's logins, failed attempts |
-| Login Chart | Line chart of login activity over time |
-| Event Pie | Distribution of event types |
-| Security Events | Recent security incidents table |
-| Top Blocked IPs | Most blocked IP addresses |
-| Export | CSV/Excel/PDF export for each section |
+| Feature         | Implementation                                         |
+| --------------- | ------------------------------------------------------ |
+| KPI Cards       | Admin count, sessions, today's logins, failed attempts |
+| Login Chart     | Line chart of login activity over time                 |
+| Event Pie       | Distribution of event types                            |
+| Security Events | Recent security incidents table                        |
+| Top Blocked IPs | Most blocked IP addresses                              |
+| Export          | CSV/Excel/PDF export for each section                  |
 
 **Key ViewModels**:
+
 - `useDashboardViewModel` — Orchestrator
 - `useKPIViewModel` — Summary cards
 - `useLoginChartViewModel` — Login activity chart
@@ -126,29 +130,30 @@ Extended analytics with more detailed charts and configurable date ranges.
 
 ### Audit Log (`/audit`)
 
-| Feature | Implementation |
-|---------|---------------|
-| Log Table | Paginated, searchable audit events |
-| Detail | Side-by-side diff of entity changes |
-| Filters | By event type, entity type, admin, date range |
-| Export | CSV/Excel/PDF |
+| Feature   | Implementation                                |
+| --------- | --------------------------------------------- |
+| Log Table | Paginated, searchable audit events            |
+| Detail    | Side-by-side diff of entity changes           |
+| Filters   | By event type, entity type, admin, date range |
+| Export    | CSV/Excel/PDF                                 |
 
 ---
 
 ### Recycle Bin (`/recycle-bin`)
 
-| Feature | Implementation |
-|---------|---------------|
-| List | All soft-deleted items across entity types |
-| Restore | Restore individual items |
-| Bulk Restore | Restore selected items |
-| Filter | By entity type |
+| Feature      | Implementation                             |
+| ------------ | ------------------------------------------ |
+| List         | All soft-deleted items across entity types |
+| Restore      | Restore individual items                   |
+| Bulk Restore | Restore selected items                     |
+| Filter       | By entity type                             |
 
 ---
 
 ### Security Dashboard (`/security`)
 
 Security-focused view with:
+
 - Active lockouts
 - Recent failed login attempts
 - 2FA statistics
@@ -158,11 +163,11 @@ Security-focused view with:
 
 ### Tenant Settings (`/settings/tenant`)
 
-| Feature | Implementation |
-|---------|---------------|
-| Settings Form | Theme, colors, language, session timeout |
-| Logo Upload | Upload/remove tenant logo |
-| Permission Pool | View tenant's available permissions |
+| Feature         | Implementation                           |
+| --------------- | ---------------------------------------- |
+| Settings Form   | Theme, colors, language, session timeout |
+| Logo Upload     | Upload/remove tenant logo                |
+| Permission Pool | View tenant's available permissions      |
 
 ---
 

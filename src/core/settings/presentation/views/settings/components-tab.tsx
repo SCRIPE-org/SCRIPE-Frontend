@@ -1,21 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@core/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
 import { Button } from "@core/ui/button";
 import { Badge, badgeVariants } from "@core/ui/badge";
 import GenericSelect from "@core/crud/components/generic-select";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@core/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@core/ui/tooltip";
 import { GenericModal } from "@core/crud/components/generic-modal";
 import {
   Check,
@@ -39,7 +29,12 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { cn, getHoverEffectClasses } from "@core/common/utils";
 
 // Custom Badge component for style previews that overrides badgeStyle
-function StylePreviewBadge({ variant, badgeStyle, children, className }: {
+function StylePreviewBadge({
+  variant,
+  badgeStyle,
+  children,
+  className,
+}: {
   variant: string;
   badgeStyle: string;
   children: React.ReactNode;
@@ -47,11 +42,13 @@ function StylePreviewBadge({ variant, badgeStyle, children, className }: {
 }) {
   return (
     <div
-      className={cn(badgeVariants({
-        variant: variant as any,
-        badgeStyle: badgeStyle as any,
-        className
-      }))}
+      className={cn(
+        badgeVariants({
+          variant: variant as any,
+          badgeStyle: badgeStyle as any,
+          className,
+        })
+      )}
     >
       {children}
     </div>
@@ -62,11 +59,10 @@ export function ComponentsTab() {
   const { t, language } = useI18n();
   const settings = useSettings();
   const [multiSelectDemo, setMultiSelectDemo] = useState<string[]>([]);
-  const [styleSelections, setStyleSelections] = useState<
-    Record<string, string | string[]>
-  >({});
+  const [styleSelections, setStyleSelections] = useState<Record<string, string | string[]>>({});
   const [testModalOpen, setTestModalOpen] = useState<string | null>(null);
-  const hasHoverEffect = settings.hoverEffectType !== "none" && settings.hoverEffectIntensity !== "none";
+  const hasHoverEffect =
+    settings.hoverEffectType !== "none" && settings.hoverEffectIntensity !== "none";
 
   const { setModalStyle } = settings;
 
@@ -124,13 +120,12 @@ export function ComponentsTab() {
       render: (value: string) => (
         <span
           className={cn(
-            "px-2 py-1 rounded-full text-xs font-medium",
+            "rounded-full px-2 py-1 text-xs font-medium",
             value === "active" &&
-            "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
+              "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
             value === "pending" &&
-            "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
-            value === "inactive" &&
-            "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
+              "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
+            value === "inactive" && "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
           )}
         >
           {t(`settings.sampleTable.${value}`)}
@@ -236,9 +231,7 @@ export function ComponentsTab() {
     const getRowClasses = (index: number) => {
       switch (style) {
         case "striped":
-          return index % 2 === 0
-            ? "bg-muted/20 hover:bg-muted/30"
-            : "bg-card hover:bg-muted/20";
+          return index % 2 === 0 ? "bg-muted/20 hover:bg-muted/30" : "bg-card hover:bg-muted/20";
         case "bordered":
           return "border-b bg-card hover:bg-muted/20";
         case "minimal":
@@ -268,19 +261,14 @@ export function ComponentsTab() {
       <div className={getTableClasses()}>
         <table className="w-full text-xs">
           <thead>
-            <tr
-              className={cn(
-                "font-medium text-muted-foreground",
-                getHeaderClasses()
-              )}
-            >
-              <th className="text-left py-1.5 px-2 font-semibold">
+            <tr className={cn("font-medium text-muted-foreground", getHeaderClasses())}>
+              <th className="px-2 py-1.5 text-left font-semibold">
                 {t("settings.sampleTable.name")}
               </th>
-              <th className="text-left py-1.5 px-2 font-semibold">
+              <th className="px-2 py-1.5 text-left font-semibold">
                 {t("settings.sampleTable.role")}
               </th>
-              <th className="text-left py-1.5 px-2 font-semibold">
+              <th className="px-2 py-1.5 text-left font-semibold">
                 {t("settings.sampleTable.status")}
               </th>
             </tr>
@@ -288,20 +276,20 @@ export function ComponentsTab() {
           <tbody>
             {sampleTableData.map((row, index) => (
               <tr key={row.id} className={getRowClasses(index)}>
-                <td className="py-1.5 px-2 font-medium">{row.name}</td>
-                <td className="py-1.5 px-2 text-muted-foreground">
+                <td className="px-2 py-1.5 font-medium">{row.name}</td>
+                <td className="px-2 py-1.5 text-muted-foreground">
                   {t(`settings.sampleTable.roles.${row.role}`)}
                 </td>
-                <td className="py-1.5 px-2">
+                <td className="px-2 py-1.5">
                   <span
                     className={cn(
-                      "px-1.5 py-0.5 rounded text-[10px] font-medium",
+                      "rounded px-1.5 py-0.5 text-[10px] font-medium",
                       row.status === "active" &&
-                      "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
+                        "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
                       row.status === "pending" &&
-                      "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
+                        "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
                       row.status === "inactive" &&
-                      "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
+                        "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
                     )}
                   >
                     {t(`settings.sampleTable.${row.status}`)}
@@ -394,10 +382,10 @@ export function ComponentsTab() {
       description: t("settings.treeStyle.options.lines.description"),
       preview: (
         <div className="p-3">
-          <div className="h-2 w-24 bg-muted rounded mb-2" />
-          <div className="border-l border-muted-foreground/30 ml-4 pl-3 space-y-2">
-            <div className="h-2 w-20 bg-muted rounded" />
-            <div className="h-2 w-16 bg-muted rounded" />
+          <div className="mb-2 h-2 w-24 rounded bg-muted" />
+          <div className="ml-4 space-y-2 border-l border-muted-foreground/30 pl-3">
+            <div className="h-2 w-20 rounded bg-muted" />
+            <div className="h-2 w-16 rounded bg-muted" />
           </div>
         </div>
       ),
@@ -407,11 +395,11 @@ export function ComponentsTab() {
       name: t("settings.treeStyle.options.cards.name"),
       description: t("settings.treeStyle.options.cards.description"),
       preview: (
-        <div className="p-3 space-y-2">
-          <div className="h-6 w-28 bg-card border rounded shadow-sm" />
-          <div className="pl-6 space-y-2">
-            <div className="h-6 w-24 bg-card border rounded shadow-sm" />
-            <div className="h-6 w-20 bg-card border rounded shadow-sm" />
+        <div className="space-y-2 p-3">
+          <div className="h-6 w-28 rounded border bg-card shadow-sm" />
+          <div className="space-y-2 pl-6">
+            <div className="h-6 w-24 rounded border bg-card shadow-sm" />
+            <div className="h-6 w-20 rounded border bg-card shadow-sm" />
           </div>
         </div>
       ),
@@ -422,10 +410,10 @@ export function ComponentsTab() {
       description: t("settings.treeStyle.options.minimal.description"),
       preview: (
         <div className="p-3">
-          <div className="h-2 w-24 bg-muted rounded mb-2" />
-          <div className="border-l border-dashed border-muted-foreground/30 ml-4 pl-3 space-y-2">
-            <div className="h-2 w-20 bg-muted rounded" />
-            <div className="h-2 w-16 bg-muted rounded" />
+          <div className="mb-2 h-2 w-24 rounded bg-muted" />
+          <div className="ml-4 space-y-2 border-l border-dashed border-muted-foreground/30 pl-3">
+            <div className="h-2 w-20 rounded bg-muted" />
+            <div className="h-2 w-16 rounded bg-muted" />
           </div>
         </div>
       ),
@@ -436,14 +424,14 @@ export function ComponentsTab() {
       description: t("settings.treeStyle.options.bubble.description"),
       preview: (
         <div className="p-3">
-          <div className="inline-flex gap-2 flex-wrap">
-            <div className="px-2 py-1 rounded-full bg-primary/10 text-primary text-[10px]">
+          <div className="inline-flex flex-wrap gap-2">
+            <div className="rounded-full bg-primary/10 px-2 py-1 text-[10px] text-primary">
               {t("settings.treeStyle.sample.parent")}
             </div>
-            <div className="px-2 py-1 rounded-full bg-primary/10 text-primary text-[10px]">
+            <div className="rounded-full bg-primary/10 px-2 py-1 text-[10px] text-primary">
               {t("settings.treeStyle.sample.child1")}
             </div>
-            <div className="px-2 py-1 rounded-full bg-primary/10 text-primary text-[10px]">
+            <div className="rounded-full bg-primary/10 px-2 py-1 text-[10px] text-primary">
               {t("settings.treeStyle.sample.child2")}
             </div>
           </div>
@@ -455,11 +443,11 @@ export function ComponentsTab() {
       name: t("settings.treeStyle.options.modern.name"),
       description: t("settings.treeStyle.options.modern.description"),
       preview: (
-        <div className="p-3 space-y-1">
-          <div className="h-6 w-28 bg-gradient-to-r from-background via-background/95 to-background/90 border border-border/50 rounded shadow-sm" />
-          <div className="pl-8 space-y-1">
-            <div className="h-6 w-24 bg-gradient-to-r from-background via-background/95 to-background/90 border border-border/50 rounded shadow-sm" />
-            <div className="h-6 w-20 bg-gradient-to-r from-background via-background/95 to-background/90 border border-border/50 rounded shadow-sm" />
+        <div className="space-y-1 p-3">
+          <div className="h-6 w-28 rounded border border-border/50 bg-gradient-to-r from-background via-background/95 to-background/90 shadow-sm" />
+          <div className="space-y-1 pl-8">
+            <div className="h-6 w-24 rounded border border-border/50 bg-gradient-to-r from-background via-background/95 to-background/90 shadow-sm" />
+            <div className="h-6 w-20 rounded border border-border/50 bg-gradient-to-r from-background via-background/95 to-background/90 shadow-sm" />
           </div>
         </div>
       ),
@@ -469,11 +457,11 @@ export function ComponentsTab() {
       name: t("settings.treeStyle.options.glass.name"),
       description: t("settings.treeStyle.options.glass.description"),
       preview: (
-        <div className="p-3 space-y-3">
-          <div className="h-6 w-28 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl shadow-lg" />
-          <div className="pl-6 space-y-3">
-            <div className="h-6 w-24 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl shadow-lg" />
-            <div className="h-6 w-20 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl shadow-lg" />
+        <div className="space-y-3 p-3">
+          <div className="h-6 w-28 rounded-xl border border-white/20 bg-white/10 shadow-lg backdrop-blur-sm" />
+          <div className="space-y-3 pl-6">
+            <div className="h-6 w-24 rounded-xl border border-white/20 bg-white/10 shadow-lg backdrop-blur-sm" />
+            <div className="h-6 w-20 rounded-xl border border-white/20 bg-white/10 shadow-lg backdrop-blur-sm" />
           </div>
         </div>
       ),
@@ -483,11 +471,11 @@ export function ComponentsTab() {
       name: t("settings.treeStyle.options.elegant.name"),
       description: t("settings.treeStyle.options.elegant.description"),
       preview: (
-        <div className="p-3 space-y-1">
-          <div className="h-6 w-28 bg-gradient-to-br from-background via-background/98 to-muted/30 border-l-4 border-l-primary/60 border-y border-r border-border/30 rounded-r-lg shadow-sm" />
-          <div className="pl-6 space-y-1">
-            <div className="h-6 w-24 bg-gradient-to-br from-background via-background/98 to-muted/30 border-l-4 border-l-primary/60 border-y border-r border-border/30 rounded-r-lg shadow-sm" />
-            <div className="h-6 w-20 bg-gradient-to-br from-background via-background/98 to-muted/30 border-l-4 border-l-primary/60 border-y border-r border-border/30 rounded-r-lg shadow-sm" />
+        <div className="space-y-1 p-3">
+          <div className="via-background/98 h-6 w-28 rounded-r-lg border-y border-l-4 border-r border-border/30 border-l-primary/60 bg-gradient-to-br from-background to-muted/30 shadow-sm" />
+          <div className="space-y-1 pl-6">
+            <div className="via-background/98 h-6 w-24 rounded-r-lg border-y border-l-4 border-r border-border/30 border-l-primary/60 bg-gradient-to-br from-background to-muted/30 shadow-sm" />
+            <div className="via-background/98 h-6 w-20 rounded-r-lg border-y border-l-4 border-r border-border/30 border-l-primary/60 bg-gradient-to-br from-background to-muted/30 shadow-sm" />
           </div>
         </div>
       ),
@@ -497,11 +485,11 @@ export function ComponentsTab() {
       name: t("settings.treeStyle.options.professional.name"),
       description: t("settings.treeStyle.options.professional.description"),
       preview: (
-        <div className="p-3 space-y-1">
-          <div className="h-6 w-28 bg-card border border-border border-l-4 border-l-primary/60 rounded-md shadow-sm relative overflow-hidden" />
-          <div className="pl-8 space-y-1">
-            <div className="h-6 w-24 bg-card border border-border rounded-md shadow-sm" />
-            <div className="h-6 w-20 bg-card border border-border rounded-md shadow-sm" />
+        <div className="space-y-1 p-3">
+          <div className="relative h-6 w-28 overflow-hidden rounded-md border border-l-4 border-border border-l-primary/60 bg-card shadow-sm" />
+          <div className="space-y-1 pl-8">
+            <div className="h-6 w-24 rounded-md border border-border bg-card shadow-sm" />
+            <div className="h-6 w-20 rounded-md border border-border bg-card shadow-sm" />
           </div>
         </div>
       ),
@@ -511,11 +499,11 @@ export function ComponentsTab() {
       name: t("settings.treeStyle.options.gradient.name"),
       description: t("settings.treeStyle.options.gradient.description"),
       preview: (
-        <div className="p-3 space-y-2">
-          <div className="h-6 w-28 bg-gradient-to-r from-primary/20 via-background to-secondary/20 border border-transparent rounded shadow-md" />
-          <div className="pl-8 space-y-2">
-            <div className="h-6 w-24 bg-gradient-to-r from-primary/10 via-background to-secondary/10 border border-transparent rounded shadow-md" />
-            <div className="h-6 w-20 bg-gradient-to-r from-primary/10 via-background to-secondary/10 border border-transparent rounded shadow-md" />
+        <div className="space-y-2 p-3">
+          <div className="h-6 w-28 rounded border border-transparent bg-gradient-to-r from-primary/20 via-background to-secondary/20 shadow-md" />
+          <div className="space-y-2 pl-8">
+            <div className="h-6 w-24 rounded border border-transparent bg-gradient-to-r from-primary/10 via-background to-secondary/10 shadow-md" />
+            <div className="h-6 w-20 rounded border border-transparent bg-gradient-to-r from-primary/10 via-background to-secondary/10 shadow-md" />
           </div>
         </div>
       ),
@@ -525,11 +513,11 @@ export function ComponentsTab() {
       name: t("settings.treeStyle.options.neon.name"),
       description: t("settings.treeStyle.options.neon.description"),
       preview: (
-        <div className="p-3 space-y-2">
-          <div className="h-6 w-28 bg-background/90 border border-primary/50 rounded-lg shadow-lg shadow-primary/20 text-primary font-bold" />
-          <div className="pl-8 space-y-2">
-            <div className="h-6 w-24 bg-background/90 border border-primary/30 rounded-lg shadow-md shadow-primary/10" />
-            <div className="h-6 w-20 bg-background/90 border border-primary/30 rounded-lg shadow-md shadow-primary/10" />
+        <div className="space-y-2 p-3">
+          <div className="h-6 w-28 rounded-lg border border-primary/50 bg-background/90 font-bold text-primary shadow-lg shadow-primary/20" />
+          <div className="space-y-2 pl-8">
+            <div className="h-6 w-24 rounded-lg border border-primary/30 bg-background/90 shadow-md shadow-primary/10" />
+            <div className="h-6 w-20 rounded-lg border border-primary/30 bg-background/90 shadow-md shadow-primary/10" />
           </div>
         </div>
       ),
@@ -539,11 +527,11 @@ export function ComponentsTab() {
       name: t("settings.treeStyle.options.organic.name"),
       description: t("settings.treeStyle.options.organic.description"),
       preview: (
-        <div className="p-3 space-y-3">
-          <div className="h-6 w-28 bg-gradient-to-br from-green-50/50 via-background to-blue-50/50 border border-green-200/30 rounded-2xl shadow-sm transform rotate-1" />
-          <div className="pl-10 space-y-3">
-            <div className="h-6 w-24 bg-gradient-to-br from-green-50/50 via-background to-blue-50/50 border border-green-200/30 rounded-2xl shadow-sm" />
-            <div className="h-6 w-20 bg-gradient-to-br from-green-50/50 via-background to-blue-50/50 border border-green-200/30 rounded-2xl shadow-sm" />
+        <div className="space-y-3 p-3">
+          <div className="h-6 w-28 rotate-1 transform rounded-2xl border border-green-200/30 bg-gradient-to-br from-green-50/50 via-background to-blue-50/50 shadow-sm" />
+          <div className="space-y-3 pl-10">
+            <div className="h-6 w-24 rounded-2xl border border-green-200/30 bg-gradient-to-br from-green-50/50 via-background to-blue-50/50 shadow-sm" />
+            <div className="h-6 w-20 rounded-2xl border border-green-200/30 bg-gradient-to-br from-green-50/50 via-background to-blue-50/50 shadow-sm" />
           </div>
         </div>
       ),
@@ -553,11 +541,11 @@ export function ComponentsTab() {
       name: t("settings.treeStyle.options.corporate.name"),
       description: t("settings.treeStyle.options.corporate.description"),
       preview: (
-        <div className="p-3 space-y-1">
-          <div className="h-6 w-28 bg-slate-50/50 border-l-8 border-l-blue-600 border-y border-r border-slate-200 rounded-r-md font-bold text-slate-900" />
-          <div className="pl-6 space-y-1">
-            <div className="h-6 w-24 bg-slate-50/50 border-l-4 border-l-blue-600 border-y border-r border-slate-200 rounded-r-md text-slate-700" />
-            <div className="h-6 w-20 bg-slate-50/50 border-l-4 border-l-blue-600 border-y border-r border-slate-200 rounded-r-md text-slate-700" />
+        <div className="space-y-1 p-3">
+          <div className="h-6 w-28 rounded-r-md border-y border-l-8 border-r border-slate-200 border-l-blue-600 bg-slate-50/50 font-bold text-slate-900" />
+          <div className="space-y-1 pl-6">
+            <div className="h-6 w-24 rounded-r-md border-y border-l-4 border-r border-slate-200 border-l-blue-600 bg-slate-50/50 text-slate-700" />
+            <div className="h-6 w-20 rounded-r-md border-y border-l-4 border-r border-slate-200 border-l-blue-600 bg-slate-50/50 text-slate-700" />
           </div>
         </div>
       ),
@@ -626,8 +614,7 @@ export function ComponentsTab() {
       value: "glass",
       name: t("settings.datePickerStyle.options.glass.name"),
       description: t("settings.datePickerStyle.options.glass.description"),
-      preview:
-        "bg-background/60 backdrop-blur-sm border border-white/20 rounded-md shadow-lg",
+      preview: "bg-background/60 backdrop-blur-sm border border-white/20 rounded-md shadow-lg",
     },
     {
       value: "outlined",
@@ -693,22 +680,19 @@ export function ComponentsTab() {
       value: "default",
       name: t("settings.badgeStyle.options.default.name"),
       description: t("settings.badgeStyle.options.default.description"),
-      class:
-        "rounded-full border border-border bg-background/80 text-foreground",
+      class: "rounded-full border border-border bg-background/80 text-foreground",
     },
     {
       value: "modern",
       name: t("settings.badgeStyle.options.modern.name"),
       description: t("settings.badgeStyle.options.modern.description"),
-      class:
-        "rounded-lg border border-border/50 bg-muted/50 backdrop-blur-sm text-foreground",
+      class: "rounded-lg border border-border/50 bg-muted/50 backdrop-blur-sm text-foreground",
     },
     {
       value: "glass",
       name: t("settings.badgeStyle.options.glass.name"),
       description: t("settings.badgeStyle.options.glass.description"),
-      class:
-        "rounded-xl border border-border/30 bg-background/20 backdrop-blur-md text-foreground",
+      class: "rounded-xl border border-border/30 bg-background/20 backdrop-blur-md text-foreground",
     },
     {
       value: "neon",
@@ -728,8 +712,7 @@ export function ComponentsTab() {
       value: "outlined",
       name: t("settings.badgeStyle.options.outlined.name"),
       description: t("settings.badgeStyle.options.outlined.description"),
-      class:
-        "rounded-lg border-2 border-primary/50 bg-transparent text-primary",
+      class: "rounded-lg border-2 border-primary/50 bg-transparent text-primary",
     },
     {
       value: "filled",
@@ -748,8 +731,7 @@ export function ComponentsTab() {
       value: "pill",
       name: t("settings.badgeStyle.options.pill.name"),
       description: t("settings.badgeStyle.options.pill.description"),
-      class:
-        "rounded-full border border-border bg-muted/30 text-foreground px-3",
+      class: "rounded-full border border-border bg-muted/30 text-foreground px-3",
     },
     {
       value: "square",
@@ -844,13 +826,7 @@ export function ComponentsTab() {
   ];
 
   // Form preview component
-  const FormPreview = ({
-    style,
-    isSelected,
-  }: {
-    style: string;
-    isSelected?: boolean;
-  }) => {
+  const FormPreview = ({ style, isSelected }: { style: string; isSelected?: boolean }) => {
     const getContainerClasses = () => {
       const baseClasses = "p-3 space-y-3";
 
@@ -934,10 +910,7 @@ export function ComponentsTab() {
         case "compact":
           return cn(baseClasses, "h-6 px-2 border rounded bg-background");
         case "spacious":
-          return cn(
-            baseClasses,
-            "h-9 px-3 border rounded-lg bg-background shadow-sm"
-          );
+          return cn(baseClasses, "h-9 px-3 border rounded-lg bg-background shadow-sm");
         case "inline":
           return cn(baseClasses, "h-7 px-2 border rounded bg-background");
         case "modern":
@@ -996,53 +969,32 @@ export function ComponentsTab() {
 
     return (
       <div
-        className={cn(
-          getContainerClasses(),
-          isSelected && "ring-2 ring-primary/20 bg-primary/5"
-        )}
+        className={cn(getContainerClasses(), isSelected && "bg-primary/5 ring-2 ring-primary/20")}
       >
         <div className={getFieldClasses()}>
           <label className={getLabelClasses()}>Name</label>
-          <input
-            className={getInputClasses()}
-            placeholder="John Doe"
-            readOnly
-          />
+          <input className={getInputClasses()} placeholder="John Doe" readOnly />
         </div>
         <div className={getFieldClasses()}>
           <label className={getLabelClasses()}>Email</label>
-          <input
-            className={getInputClasses()}
-            placeholder="john@example.com"
-            readOnly
-          />
+          <input className={getInputClasses()} placeholder="john@example.com" readOnly />
         </div>
         {style !== "inline" && (
           <div className="pt-1">
             <button
               className={cn(
-                "px-3 py-1.5 text-xs font-medium rounded transition-colors",
+                "rounded px-3 py-1.5 text-xs font-medium transition-colors",
                 style === "modern" &&
-                "bg-primary text-primary-foreground rounded-xl shadow-md hover:shadow-lg",
+                  "rounded-xl bg-primary text-primary-foreground shadow-md hover:shadow-lg",
                 style === "glass" &&
-                "bg-white/20 text-foreground border border-white/30 rounded-xl backdrop-blur-sm",
+                  "rounded-xl border border-white/30 bg-white/20 text-foreground backdrop-blur-sm",
                 style === "minimal" &&
-                "bg-transparent text-primary border-b-2 border-primary rounded-none",
-                style === "card" &&
-                "bg-primary text-primary-foreground rounded-lg shadow-sm",
-                style === "compact" &&
-                "bg-primary text-primary-foreground rounded",
-                style === "spacious" &&
-                "bg-primary text-primary-foreground rounded-lg px-4 py-2",
-                ![
-                  "modern",
-                  "glass",
-                  "minimal",
-                  "card",
-                  "compact",
-                  "spacious",
-                ].includes(style) &&
-                "bg-primary text-primary-foreground rounded"
+                  "rounded-none border-b-2 border-primary bg-transparent text-primary",
+                style === "card" && "rounded-lg bg-primary text-primary-foreground shadow-sm",
+                style === "compact" && "rounded bg-primary text-primary-foreground",
+                style === "spacious" && "rounded-lg bg-primary px-4 py-2 text-primary-foreground",
+                !["modern", "glass", "minimal", "card", "compact", "spacious"].includes(style) &&
+                  "rounded bg-primary text-primary-foreground"
               )}
             >
               Submit
@@ -1050,7 +1002,7 @@ export function ComponentsTab() {
           </div>
         )}
         {isSelected && (
-          <div className="absolute top-1 right-1 text-xs text-primary font-medium bg-primary/10 px-2 py-0.5 rounded">
+          <div className="absolute right-1 top-1 rounded bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
             Current
           </div>
         )}
@@ -1063,7 +1015,7 @@ export function ComponentsTab() {
       name: t("settings.loadingStyle.options.spinner.name"),
       description: t("settings.loadingStyle.options.spinner.description"),
       component: (
-        <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+        <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
       ),
     },
     {
@@ -1072,9 +1024,9 @@ export function ComponentsTab() {
       description: t("settings.loadingStyle.options.dots.description"),
       component: (
         <div className="flex space-x-1">
-          <div className="w-2 h-2 bg-primary rounded-full animate-bounce"></div>
-          <div className="w-2 h-2 bg-primary rounded-full animate-bounce delay-100"></div>
-          <div className="w-2 h-2 bg-primary rounded-full animate-bounce delay-200"></div>
+          <div className="h-2 w-2 animate-bounce rounded-full bg-primary"></div>
+          <div className="h-2 w-2 animate-bounce rounded-full bg-primary delay-100"></div>
+          <div className="h-2 w-2 animate-bounce rounded-full bg-primary delay-200"></div>
         </div>
       ),
     },
@@ -1084,9 +1036,9 @@ export function ComponentsTab() {
       description: t("settings.loadingStyle.options.bars.description"),
       component: (
         <div className="flex space-x-1">
-          <div className="w-1 h-6 bg-primary animate-pulse"></div>
-          <div className="w-1 h-6 bg-primary animate-pulse delay-100"></div>
-          <div className="w-1 h-6 bg-primary animate-pulse delay-200"></div>
+          <div className="h-6 w-1 animate-pulse bg-primary"></div>
+          <div className="h-6 w-1 animate-pulse bg-primary delay-100"></div>
+          <div className="h-6 w-1 animate-pulse bg-primary delay-200"></div>
         </div>
       ),
     },
@@ -1094,21 +1046,19 @@ export function ComponentsTab() {
       value: "pulse",
       name: t("settings.loadingStyle.options.pulse.name"),
       description: t("settings.loadingStyle.options.pulse.description"),
-      component: (
-        <div className="w-6 h-6 bg-primary rounded animate-pulse"></div>
-      ),
+      component: <div className="h-6 w-6 animate-pulse rounded bg-primary"></div>,
     },
     {
       value: "wave",
       name: t("settings.loadingStyle.options.wave.name"),
       description: t("settings.loadingStyle.options.wave.description"),
       component: (
-        <div className="flex space-x-1 items-end">
-          <div className="w-1 h-3 bg-primary rounded-full animate-pulse"></div>
-          <div className="w-1 h-4 bg-primary rounded-full animate-pulse delay-75"></div>
-          <div className="w-1 h-6 bg-primary rounded-full animate-pulse delay-150"></div>
-          <div className="w-1 h-4 bg-primary rounded-full animate-pulse delay-225"></div>
-          <div className="w-1 h-3 bg-primary rounded-full animate-pulse delay-300"></div>
+        <div className="flex items-end space-x-1">
+          <div className="h-3 w-1 animate-pulse rounded-full bg-primary"></div>
+          <div className="h-4 w-1 animate-pulse rounded-full bg-primary delay-75"></div>
+          <div className="h-6 w-1 animate-pulse rounded-full bg-primary delay-150"></div>
+          <div className="delay-225 h-4 w-1 animate-pulse rounded-full bg-primary"></div>
+          <div className="h-3 w-1 animate-pulse rounded-full bg-primary delay-300"></div>
         </div>
       ),
     },
@@ -1117,9 +1067,9 @@ export function ComponentsTab() {
       name: t("settings.loadingStyle.options.orbit.name"),
       description: t("settings.loadingStyle.options.orbit.description"),
       component: (
-        <div className="relative w-6 h-6">
-          <div className="absolute inset-0 border border-primary/20 rounded-full"></div>
-          <div className="absolute top-0 left-1/2 w-1.5 h-1.5 -ml-0.75 -mt-0.75 bg-primary rounded-full animate-spin origin-[0_12px]"></div>
+        <div className="relative h-6 w-6">
+          <div className="absolute inset-0 rounded-full border border-primary/20"></div>
+          <div className="-ml-0.75 -mt-0.75 absolute left-1/2 top-0 h-1.5 w-1.5 origin-[0_12px] animate-spin rounded-full bg-primary"></div>
         </div>
       ),
     },
@@ -1128,9 +1078,9 @@ export function ComponentsTab() {
       name: t("settings.loadingStyle.options.ripple.name"),
       description: t("settings.loadingStyle.options.ripple.description"),
       component: (
-        <div className="relative w-6 h-6">
-          <div className="absolute inset-0 border border-primary rounded-full animate-ping"></div>
-          <div className="absolute inset-0 border border-primary rounded-full animate-ping delay-150"></div>
+        <div className="relative h-6 w-6">
+          <div className="absolute inset-0 animate-ping rounded-full border border-primary"></div>
+          <div className="absolute inset-0 animate-ping rounded-full border border-primary delay-150"></div>
         </div>
       ),
     },
@@ -1139,7 +1089,7 @@ export function ComponentsTab() {
       name: t("settings.loadingStyle.options.gradient.name"),
       description: t("settings.loadingStyle.options.gradient.description"),
       component: (
-        <div className="w-6 h-6 bg-gradient-to-r from-primary via-primary/50 to-transparent rounded-full animate-spin"></div>
+        <div className="h-6 w-6 animate-spin rounded-full bg-gradient-to-r from-primary via-primary/50 to-transparent"></div>
       ),
     },
     {
@@ -1148,14 +1098,14 @@ export function ComponentsTab() {
       description: t("settings.loadingStyle.options.matrix.description"),
       component: (
         <div className="grid grid-cols-4 gap-0.5">
-          <div className="w-1 h-4 bg-primary animate-pulse opacity-100"></div>
-          <div className="w-1 h-5 bg-primary animate-pulse delay-100 opacity-75"></div>
-          <div className="w-1 h-3 bg-primary animate-pulse delay-200 opacity-50"></div>
-          <div className="w-1 h-4 bg-primary animate-pulse delay-300 opacity-75"></div>
-          <div className="w-1 h-3 bg-primary animate-pulse delay-75 opacity-60"></div>
-          <div className="w-1 h-5 bg-primary animate-pulse delay-175 opacity-90"></div>
-          <div className="w-1 h-4 bg-primary animate-pulse delay-250 opacity-70"></div>
-          <div className="w-1 h-3 bg-primary animate-pulse delay-325 opacity-80"></div>
+          <div className="h-4 w-1 animate-pulse bg-primary opacity-100"></div>
+          <div className="h-5 w-1 animate-pulse bg-primary opacity-75 delay-100"></div>
+          <div className="h-3 w-1 animate-pulse bg-primary opacity-50 delay-200"></div>
+          <div className="h-4 w-1 animate-pulse bg-primary opacity-75 delay-300"></div>
+          <div className="h-3 w-1 animate-pulse bg-primary opacity-60 delay-75"></div>
+          <div className="delay-175 h-5 w-1 animate-pulse bg-primary opacity-90"></div>
+          <div className="delay-250 h-4 w-1 animate-pulse bg-primary opacity-70"></div>
+          <div className="delay-325 h-3 w-1 animate-pulse bg-primary opacity-80"></div>
         </div>
       ),
     },
@@ -1164,19 +1114,18 @@ export function ComponentsTab() {
       name: t("settings.loadingStyle.options.helix.name"),
       description: t("settings.loadingStyle.options.helix.description"),
       component: (
-        <div className="relative w-6 h-6">
+        <div className="relative h-6 w-6">
           <div
-            className="absolute w-2 h-2 bg-primary rounded-full animate-spin"
+            className="absolute h-2 w-2 animate-spin rounded-full bg-primary"
             style={{
-              animation:
-                "spin 1.5s linear infinite, helixMove 3s ease-in-out infinite",
+              animation: "spin 1.5s linear infinite, helixMove 3s ease-in-out infinite",
               left: "50%",
               top: "50%",
               transform: "translate(-50%, -50%)",
             }}
           ></div>
           <div
-            className="absolute w-1.5 h-1.5 bg-primary/70 rounded-full animate-spin"
+            className="absolute h-1.5 w-1.5 animate-spin rounded-full bg-primary/70"
             style={{
               animation:
                 "spin 1.5s linear infinite reverse, helixMove 3s ease-in-out infinite reverse",
@@ -1193,12 +1142,12 @@ export function ComponentsTab() {
       name: t("settings.loadingStyle.options.quantum.name"),
       description: t("settings.loadingStyle.options.quantum.description"),
       component: (
-        <div className="relative w-6 h-6">
-          <div className="absolute inset-0 border border-primary/20 rounded-full animate-pulse"></div>
-          <div className="absolute inset-1 border border-primary/40 rounded-full animate-pulse delay-200"></div>
-          <div className="absolute inset-2 border border-primary/60 rounded-full animate-pulse delay-400"></div>
-          <div className="absolute inset-3 bg-primary rounded-full animate-pulse delay-600"></div>
-          <div className="absolute top-1/2 left-1/2 w-0.5 h-0.5 bg-primary rounded-full animate-ping transform -translate-x-1/2 -translate-y-1/2"></div>
+        <div className="relative h-6 w-6">
+          <div className="absolute inset-0 animate-pulse rounded-full border border-primary/20"></div>
+          <div className="absolute inset-1 animate-pulse rounded-full border border-primary/40 delay-200"></div>
+          <div className="delay-400 absolute inset-2 animate-pulse rounded-full border border-primary/60"></div>
+          <div className="delay-600 absolute inset-3 animate-pulse rounded-full bg-primary"></div>
+          <div className="absolute left-1/2 top-1/2 h-0.5 w-0.5 -translate-x-1/2 -translate-y-1/2 transform animate-ping rounded-full bg-primary"></div>
         </div>
       ),
     },
@@ -1207,16 +1156,16 @@ export function ComponentsTab() {
       name: t("settings.loadingStyle.options.morphing.name"),
       description: t("settings.loadingStyle.options.morphing.description"),
       component: (
-        <div className="relative w-6 h-6">
+        <div className="relative h-6 w-6">
           <div
-            className="absolute inset-0 bg-primary animate-pulse"
+            className="absolute inset-0 animate-pulse bg-primary"
             style={{
               animation: "morphShape 3s ease-in-out infinite",
               borderRadius: "50%",
             }}
           ></div>
           <div
-            className="absolute inset-1 bg-primary/70 animate-pulse"
+            className="absolute inset-1 animate-pulse bg-primary/70"
             style={{
               animation: "morphShape 3s ease-in-out infinite reverse",
               borderRadius: "20%",
@@ -1311,21 +1260,17 @@ export function ComponentsTab() {
       description: t("settings.modalStyle.options.overlay.description"),
     },
   ];
-  const previewStyleName = modalStyles.find(
-    (s) => s.value === testModalOpen
-  )?.name;
+  const previewStyleName = modalStyles.find((s) => s.value === testModalOpen)?.name;
   return (
     <>
       {/* Button Styles - UPDATED WITH MORE OPTIONS */}
       <Card>
         <CardHeader>
           <CardTitle>{t("settings.buttonStyle.title")}</CardTitle>
-          <CardDescription>
-            {t("settings.buttonStyle.description")}
-          </CardDescription>
+          <CardDescription>{t("settings.buttonStyle.description")}</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
             {buttonStyles.map((style) => (
               <div
                 key={style.value}
@@ -1341,7 +1286,7 @@ export function ComponentsTab() {
                 <div className="space-y-2">
                   <div
                     className={cn(
-                      "h-8 bg-primary text-primary-foreground flex items-center justify-center text-xs font-medium",
+                      "flex h-8 items-center justify-center bg-primary text-xs font-medium text-primary-foreground",
                       style.class
                     )}
                   >
@@ -1349,13 +1294,11 @@ export function ComponentsTab() {
                   </div>
                   <div className="text-center">
                     <p className="text-xs font-medium">{style.name}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {style.description}
-                    </p>
+                    <p className="text-xs text-muted-foreground">{style.description}</p>
                   </div>
                 </div>
                 {settings.buttonStyle === style.value && (
-                  <div className="absolute -top-1 -right-1 h-5 w-5 bg-primary rounded-full flex items-center justify-center">
+                  <div className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
                     <Check className="h-3 w-3 text-primary-foreground" />
                   </div>
                 )}
@@ -1368,12 +1311,10 @@ export function ComponentsTab() {
       <Card>
         <CardHeader>
           <CardTitle>{t("settings.treeStyle.title")}</CardTitle>
-          <CardDescription>
-            {t("settings.treeStyle.description")}
-          </CardDescription>
+          <CardDescription>{t("settings.treeStyle.description")}</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
             {treeStyles.map((style) => (
               <div
                 key={style.value}
@@ -1387,13 +1328,11 @@ export function ComponentsTab() {
               >
                 <div className="space-y-2">
                   <h4 className="font-semibold">{style.name}</h4>
-                  <p className="text-sm text-muted-foreground">
-                    {style.description}
-                  </p>
-                  <div className="bg-muted/30 rounded">{style.preview}</div>
+                  <p className="text-sm text-muted-foreground">{style.description}</p>
+                  <div className="rounded bg-muted/30">{style.preview}</div>
                 </div>
                 {settings.treeStyle === style.value && (
-                  <div className="absolute -top-1 -right-1 h-5 w-5 bg-primary rounded-full flex items-center justify-center">
+                  <div className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
                     <Check className="h-3 w-3 text-primary-foreground" />
                   </div>
                 )}
@@ -1407,12 +1346,10 @@ export function ComponentsTab() {
       <Card>
         <CardHeader>
           <CardTitle>{t("settings.navigationStyle.title")}</CardTitle>
-          <CardDescription>
-            {t("settings.navigationStyle.description")}
-          </CardDescription>
+          <CardDescription>{t("settings.navigationStyle.description")}</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
             {navigationStyles.map((style) => (
               <div
                 key={style.value}
@@ -1426,38 +1363,36 @@ export function ComponentsTab() {
               >
                 <div className="space-y-2">
                   <h4 className="font-semibold">{style.name}</h4>
-                  <p className="text-sm text-muted-foreground">
-                    {style.description}
-                  </p>
+                  <p className="text-sm text-muted-foreground">{style.description}</p>
                   <div className="flex gap-1">
                     {style.value === "pills" && (
                       <>
-                        <div className="h-6 w-12 bg-primary rounded-full"></div>
-                        <div className="h-6 w-12 bg-muted rounded-full"></div>
+                        <div className="h-6 w-12 rounded-full bg-primary"></div>
+                        <div className="h-6 w-12 rounded-full bg-muted"></div>
                       </>
                     )}
                     {style.value === "underline" && (
                       <>
-                        <div className="h-6 w-12 bg-muted border-b-2 border-primary"></div>
+                        <div className="h-6 w-12 border-b-2 border-primary bg-muted"></div>
                         <div className="h-6 w-12 bg-muted"></div>
                       </>
                     )}
                     {style.value === "sidebar" && (
                       <>
-                        <div className="h-6 w-2 bg-primary rounded"></div>
-                        <div className="h-6 w-16 bg-muted rounded"></div>
+                        <div className="h-6 w-2 rounded bg-primary"></div>
+                        <div className="h-6 w-16 rounded bg-muted"></div>
                       </>
                     )}
                     {style.value === "default" && (
                       <>
-                        <div className="h-6 w-12 bg-primary rounded"></div>
-                        <div className="h-6 w-12 bg-muted rounded"></div>
+                        <div className="h-6 w-12 rounded bg-primary"></div>
+                        <div className="h-6 w-12 rounded bg-muted"></div>
                       </>
                     )}
                   </div>
                 </div>
                 {settings.navigationStyle === style.value && (
-                  <div className="absolute -top-1 -right-1 h-5 w-5 bg-primary rounded-full flex items-center justify-center">
+                  <div className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
                     <Check className="h-3 w-3 text-primary-foreground" />
                   </div>
                 )}
@@ -1471,12 +1406,10 @@ export function ComponentsTab() {
       <Card>
         <CardHeader>
           <CardTitle>{t("settings.datePickerStyle.title")}</CardTitle>
-          <CardDescription>
-            {t("settings.datePickerStyle.description")}
-          </CardDescription>
+          <CardDescription>{t("settings.datePickerStyle.description")}</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             {datePickerStyles.map((style) => (
               <div
                 key={style.value}
@@ -1490,14 +1423,12 @@ export function ComponentsTab() {
               >
                 <div className="space-y-3">
                   <h4 className="font-semibold">{style.name}</h4>
-                  <p className="text-xs text-muted-foreground">
-                    {style.description}
-                  </p>
+                  <p className="text-xs text-muted-foreground">{style.description}</p>
                   {/* DatePicker Preview */}
                   <div className="space-y-2">
                     <div
                       className={cn(
-                        "h-10 w-full px-3 flex items-center justify-between text-xs text-muted-foreground",
+                        "flex h-10 w-full items-center justify-between px-3 text-xs text-muted-foreground",
                         style.preview
                       )}
                     >
@@ -1507,7 +1438,7 @@ export function ComponentsTab() {
                   </div>
                 </div>
                 {settings.datePickerStyle === style.value && (
-                  <div className="absolute -top-1 -right-1 h-5 w-5 bg-primary rounded-full flex items-center justify-center">
+                  <div className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
                     <Check className="h-3 w-3 text-primary-foreground" />
                   </div>
                 )}
@@ -1521,12 +1452,10 @@ export function ComponentsTab() {
       <Card>
         <CardHeader>
           <CardTitle>{t("settings.calendarStyle.title")}</CardTitle>
-          <CardDescription>
-            {t("settings.calendarStyle.description")}
-          </CardDescription>
+          <CardDescription>{t("settings.calendarStyle.description")}</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             {calendarStyles.map((style) => (
               <div
                 key={style.value}
@@ -1540,9 +1469,7 @@ export function ComponentsTab() {
               >
                 <div className="space-y-3">
                   <h4 className="font-semibold">{style.name}</h4>
-                  <p className="text-xs text-muted-foreground">
-                    {style.description}
-                  </p>
+                  <p className="text-xs text-muted-foreground">{style.description}</p>
                   {/* Calendar Preview */}
                   <div className="space-y-2">
                     <div className="flex items-center justify-between text-xs">
@@ -1554,7 +1481,7 @@ export function ComponentsTab() {
                       {weekDays.map((day, i) => (
                         <div
                           key={i}
-                          className="h-4 w-4 flex items-center justify-center text-muted-foreground"
+                          className="flex h-4 w-4 items-center justify-center text-muted-foreground"
                         >
                           {day}
                         </div>
@@ -1563,10 +1490,8 @@ export function ComponentsTab() {
                         <div
                           key={i}
                           className={cn(
-                            "h-4 w-4 flex items-center justify-center rounded-sm text-xs",
-                            i === 3
-                              ? "bg-primary text-primary-foreground"
-                              : "hover:bg-muted"
+                            "flex h-4 w-4 items-center justify-center rounded-sm text-xs",
+                            i === 3 ? "bg-primary text-primary-foreground" : "hover:bg-muted"
                           )}
                         >
                           {i + 1}
@@ -1576,7 +1501,7 @@ export function ComponentsTab() {
                   </div>
                 </div>
                 {settings.calendarStyle === style.value && (
-                  <div className="absolute -top-1 -right-1 h-5 w-5 bg-primary rounded-full flex items-center justify-center">
+                  <div className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
                     <Check className="h-3 w-3 text-primary-foreground" />
                   </div>
                 )}
@@ -1590,12 +1515,10 @@ export function ComponentsTab() {
       <Card>
         <CardHeader>
           <CardTitle>{t("settings.iconStyle.title")}</CardTitle>
-          <CardDescription>
-            {t("settings.iconStyle.description")}
-          </CardDescription>
+          <CardDescription>{t("settings.iconStyle.description")}</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
             {iconStyles.map((style) => (
               <div
                 key={style.value}
@@ -1609,17 +1532,15 @@ export function ComponentsTab() {
               >
                 <div className="space-y-2">
                   <h4 className="font-semibold">{style.name}</h4>
-                  <p className="text-sm text-muted-foreground">
-                    {style.description}
-                  </p>
-                  <div className="flex gap-2 justify-center">
+                  <p className="text-sm text-muted-foreground">{style.description}</p>
+                  <div className="flex justify-center gap-2">
                     <Home className="h-6 w-6" />
                     <Users className="h-6 w-6" />
                     <Settings className="h-6 w-6" />
                   </div>
                 </div>
                 {settings.iconStyle === style.value && (
-                  <div className="absolute -top-1 -right-1 h-5 w-5 bg-primary rounded-full flex items-center justify-center">
+                  <div className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
                     <Check className="h-3 w-3 text-primary-foreground" />
                   </div>
                 )}
@@ -1633,12 +1554,10 @@ export function ComponentsTab() {
       <Card>
         <CardHeader>
           <CardTitle>{t("settings.inputStyle.title")}</CardTitle>
-          <CardDescription>
-            {t("settings.inputStyle.description")}
-          </CardDescription>
+          <CardDescription>{t("settings.inputStyle.description")}</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
             {inputStyles.map((style) => (
               <div
                 key={style.value}
@@ -1653,16 +1572,13 @@ export function ComponentsTab() {
                 <div className="space-y-2">
                   <h4 className="font-semibold">{style.name}</h4>
                   <div
-                    className={cn(
-                      "h-8 bg-background text-sm flex items-center px-3",
-                      style.class
-                    )}
+                    className={cn("flex h-8 items-center bg-background px-3 text-sm", style.class)}
                   >
                     Sample input
                   </div>
                 </div>
                 {settings.inputStyle === style.value && (
-                  <div className="absolute -top-1 -right-1 h-5 w-5 bg-primary rounded-full flex items-center justify-center">
+                  <div className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
                     <Check className="h-3 w-3 text-primary-foreground" />
                   </div>
                 )}
@@ -1676,55 +1592,45 @@ export function ComponentsTab() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
-              <div className="grid grid-cols-3 gap-0.5 h-4 w-4">
-                <div className="bg-primary/60 rounded-[1px]"></div>
-                <div className="bg-primary/60 rounded-[1px]"></div>
-                <div className="bg-primary/60 rounded-[1px]"></div>
-                <div className="bg-primary/40 rounded-[1px]"></div>
-                <div className="bg-primary/40 rounded-[1px]"></div>
-                <div className="bg-primary/40 rounded-[1px]"></div>
-                <div className="bg-primary/30 rounded-[1px]"></div>
-                <div className="bg-primary/30 rounded-[1px]"></div>
-                <div className="bg-primary/30 rounded-[1px]"></div>
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
+              <div className="grid h-4 w-4 grid-cols-3 gap-0.5">
+                <div className="rounded-[1px] bg-primary/60"></div>
+                <div className="rounded-[1px] bg-primary/60"></div>
+                <div className="rounded-[1px] bg-primary/60"></div>
+                <div className="rounded-[1px] bg-primary/40"></div>
+                <div className="rounded-[1px] bg-primary/40"></div>
+                <div className="rounded-[1px] bg-primary/40"></div>
+                <div className="rounded-[1px] bg-primary/30"></div>
+                <div className="rounded-[1px] bg-primary/30"></div>
+                <div className="rounded-[1px] bg-primary/30"></div>
               </div>
             </div>
             {t("settings.tableStyle.title")}
           </CardTitle>
-          <CardDescription>
-            {t("settings.tableStyle.description")}
-          </CardDescription>
+          <CardDescription>{t("settings.tableStyle.description")}</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {[
               {
                 value: "default",
                 name: t("settings.tableStyle.options.default.title"),
-                description: t(
-                  "settings.tableStyle.options.default.description"
-                ),
+                description: t("settings.tableStyle.options.default.description"),
               },
               {
                 value: "striped",
                 name: t("settings.tableStyle.options.striped.title"),
-                description: t(
-                  "settings.tableStyle.options.striped.description"
-                ),
+                description: t("settings.tableStyle.options.striped.description"),
               },
               {
                 value: "bordered",
                 name: t("settings.tableStyle.options.bordered.title"),
-                description: t(
-                  "settings.tableStyle.options.bordered.description"
-                ),
+                description: t("settings.tableStyle.options.bordered.description"),
               },
               {
                 value: "minimal",
                 name: t("settings.tableStyle.options.minimal.title"),
-                description: t(
-                  "settings.tableStyle.options.minimal.description"
-                ),
+                description: t("settings.tableStyle.options.minimal.description"),
               },
               {
                 value: "glass",
@@ -1739,44 +1645,32 @@ export function ComponentsTab() {
               {
                 value: "gradient",
                 name: t("settings.tableStyle.options.gradient.title"),
-                description: t(
-                  "settings.tableStyle.options.gradient.description"
-                ),
+                description: t("settings.tableStyle.options.gradient.description"),
               },
               {
                 value: "neumorphism",
                 name: t("settings.tableStyle.options.neumorphism.title"),
-                description: t(
-                  "settings.tableStyle.options.neumorphism.description"
-                ),
+                description: t("settings.tableStyle.options.neumorphism.description"),
               },
               {
                 value: "cyberpunk",
                 name: t("settings.tableStyle.options.cyberpunk.title"),
-                description: t(
-                  "settings.tableStyle.options.cyberpunk.description"
-                ),
+                description: t("settings.tableStyle.options.cyberpunk.description"),
               },
               {
                 value: "luxury",
                 name: t("settings.tableStyle.options.luxury.title"),
-                description: t(
-                  "settings.tableStyle.options.luxury.description"
-                ),
+                description: t("settings.tableStyle.options.luxury.description"),
               },
               {
                 value: "matrix",
                 name: t("settings.tableStyle.options.matrix.title"),
-                description: t(
-                  "settings.tableStyle.options.matrix.description"
-                ),
+                description: t("settings.tableStyle.options.matrix.description"),
               },
               {
                 value: "diamond",
                 name: t("settings.tableStyle.options.diamond.title"),
-                description: t(
-                  "settings.tableStyle.options.diamond.description"
-                ),
+                description: t("settings.tableStyle.options.diamond.description"),
               },
             ].map((style) => (
               <div
@@ -1792,18 +1686,16 @@ export function ComponentsTab() {
                 <div className="space-y-4">
                   <div className="text-center">
                     <h4 className="font-semibold">{style.name}</h4>
-                    <p className="text-xs text-muted-foreground">
-                      {style.description}
-                    </p>
+                    <p className="text-xs text-muted-foreground">{style.description}</p>
                   </div>
 
                   {/* Table Preview */}
-                  <div className="w-full scale-90 origin-center">
+                  <div className="w-full origin-center scale-90">
                     <TablePreview style={style.value} />
                   </div>
                 </div>
                 {settings.tableStyle === style.value && (
-                  <div className="absolute -top-1 -right-1 h-5 w-5 bg-primary rounded-full flex items-center justify-center">
+                  <div className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
                     <Check className="h-3 w-3 text-primary-foreground" />
                   </div>
                 )}
@@ -1817,25 +1709,26 @@ export function ComponentsTab() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
               <MoveUp className="h-5 w-5 text-primary" />
             </div>
             Hover Effects
           </CardTitle>
           <CardDescription>
-            Customize hover effects for cards and tables. Choose from 6 effect types and 4 intensity levels.
+            Customize hover effects for cards and tables. Choose from 6 effect types and 4 intensity
+            levels.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Hover Effect Type */}
           <div className="space-y-4">
             <div>
-              <h4 className="text-sm font-semibold mb-2">Hover Effect Type</h4>
-              <p className="text-xs text-muted-foreground mb-4">
+              <h4 className="mb-2 text-sm font-semibold">Hover Effect Type</h4>
+              <p className="mb-4 text-xs text-muted-foreground">
                 Select the type of hover effect to apply
               </p>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-4">
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-7">
               {[
                 {
                   value: "none",
@@ -1895,14 +1788,12 @@ export function ComponentsTab() {
                       <effect.icon className="h-6 w-6 text-primary" />
                     </div>
                     <div className="text-center">
-                      <h4 className="font-semibold text-sm">{effect.name}</h4>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {effect.description}
-                      </p>
+                      <h4 className="text-sm font-semibold">{effect.name}</h4>
+                      <p className="mt-1 text-xs text-muted-foreground">{effect.description}</p>
                     </div>
                   </div>
                   {settings.hoverEffectType === effect.value && (
-                    <div className="absolute -top-1 -right-1 h-5 w-5 bg-primary rounded-full flex items-center justify-center">
+                    <div className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
                       <Check className="h-3 w-3 text-primary-foreground" />
                     </div>
                   )}
@@ -1914,12 +1805,12 @@ export function ComponentsTab() {
           {/* Hover Effect Intensity */}
           <div className="space-y-4">
             <div>
-              <h4 className="text-sm font-semibold mb-2">Hover Effect Intensity</h4>
-              <p className="text-xs text-muted-foreground mb-4">
+              <h4 className="mb-2 text-sm font-semibold">Hover Effect Intensity</h4>
+              <p className="mb-4 text-xs text-muted-foreground">
                 Control the strength of the hover effect
               </p>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
               {[
                 {
                   value: "none",
@@ -1963,22 +1854,18 @@ export function ComponentsTab() {
                           key={i}
                           className={cn(
                             "h-8 rounded transition-all",
-                            i < intensity.intensity
-                              ? "bg-primary w-3"
-                              : "bg-muted w-3"
+                            i < intensity.intensity ? "w-3 bg-primary" : "w-3 bg-muted"
                           )}
                         />
                       ))}
                     </div>
                     <div className="text-center">
-                      <h4 className="font-semibold text-sm">{intensity.name}</h4>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {intensity.description}
-                      </p>
+                      <h4 className="text-sm font-semibold">{intensity.name}</h4>
+                      <p className="mt-1 text-xs text-muted-foreground">{intensity.description}</p>
                     </div>
                   </div>
                   {settings.hoverEffectIntensity === intensity.value && (
-                    <div className="absolute -top-1 -right-1 h-5 w-5 bg-primary rounded-full flex items-center justify-center">
+                    <div className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
                       <Check className="h-3 w-3 text-primary-foreground" />
                     </div>
                   )}
@@ -1990,31 +1877,32 @@ export function ComponentsTab() {
           {/* Preview */}
           <div className="space-y-4">
             <div>
-              <h4 className="text-sm font-semibold mb-2">Preview</h4>
-              <p className="text-xs text-muted-foreground mb-4">
+              <h4 className="mb-2 text-sm font-semibold">Preview</h4>
+              <p className="mb-4 text-xs text-muted-foreground">
                 Hover over the cards below to see the effect
               </p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <Card className="cursor-pointer">
                 <CardHeader>
                   <CardTitle className="text-lg">Card Preview</CardTitle>
-                  <CardDescription>
-                    This card demonstrates the hover effect
-                  </CardDescription>
+                  <CardDescription>This card demonstrates the hover effect</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-muted-foreground">
-                    Hover over this card to see the {settings.hoverEffectType !== "none" ? settings.hoverEffectType : "no"} effect
+                    Hover over this card to see the{" "}
+                    {settings.hoverEffectType !== "none" ? settings.hoverEffectType : "no"} effect
                   </p>
                 </CardContent>
               </Card>
-              <div className={cn(
-                "border rounded-lg p-4 cursor-pointer bg-card",
-                !hasHoverEffect && "transition-none",
-                getHoverEffectClasses(settings.hoverEffectType, settings.hoverEffectIntensity)
-              )}>
-                <div className="text-sm font-semibold mb-2">Table Row Preview</div>
+              <div
+                className={cn(
+                  "cursor-pointer rounded-lg border bg-card p-4",
+                  !hasHoverEffect && "transition-none",
+                  getHoverEffectClasses(settings.hoverEffectType, settings.hoverEffectIntensity)
+                )}
+              >
+                <div className="mb-2 text-sm font-semibold">Table Row Preview</div>
                 <div className="text-xs text-muted-foreground">
                   Hover over this element to see the table row hover effect
                 </div>
@@ -2028,12 +1916,10 @@ export function ComponentsTab() {
       <Card>
         <CardHeader>
           <CardTitle>{t("settings.badgeStyle.title")}</CardTitle>
-          <CardDescription>
-            {t("settings.badgeStyle.description")}
-          </CardDescription>
+          <CardDescription>{t("settings.badgeStyle.description")}</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
             {badgeStyles.map((style) => (
               <div
                 key={style.value}
@@ -2048,22 +1934,16 @@ export function ComponentsTab() {
                 <div className="space-y-2">
                   <h4 className="font-semibold">{style.name}</h4>
                   <div className="flex justify-center gap-1">
-                    <StylePreviewBadge
-                      variant="active"
-                      badgeStyle={style.value}
-                    >
+                    <StylePreviewBadge variant="active" badgeStyle={style.value}>
                       Active
                     </StylePreviewBadge>
-                    <StylePreviewBadge
-                      variant="inactive"
-                      badgeStyle={style.value}
-                    >
+                    <StylePreviewBadge variant="inactive" badgeStyle={style.value}>
                       Inactive
                     </StylePreviewBadge>
                   </div>
                 </div>
                 {settings.badgeStyle === style.value && (
-                  <div className="absolute -top-1 -right-1 h-5 w-5 bg-primary rounded-full flex items-center justify-center">
+                  <div className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
                     <Check className="h-3 w-3 text-primary-foreground" />
                   </div>
                 )}
@@ -2077,12 +1957,10 @@ export function ComponentsTab() {
       <Card>
         <CardHeader>
           <CardTitle>{t("settings.avatarStyle.title")}</CardTitle>
-          <CardDescription>
-            {t("settings.avatarStyle.description")}
-          </CardDescription>
+          <CardDescription>{t("settings.avatarStyle.description")}</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
             {avatarStyles.map((style) => (
               <div
                 key={style.value}
@@ -2099,7 +1977,7 @@ export function ComponentsTab() {
                   <div className="flex justify-center">
                     <div
                       className={cn(
-                        "w-10 h-10 bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium",
+                        "flex h-10 w-10 items-center justify-center bg-primary text-sm font-medium text-primary-foreground",
                         style.class
                       )}
                     >
@@ -2108,7 +1986,7 @@ export function ComponentsTab() {
                   </div>
                 </div>
                 {settings.avatarStyle === style.value && (
-                  <div className="absolute -top-1 -right-1 h-5 w-5 bg-primary rounded-full flex items-center justify-center">
+                  <div className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
                     <Check className="h-3 w-3 text-primary-foreground" />
                   </div>
                 )}
@@ -2122,12 +2000,10 @@ export function ComponentsTab() {
       <Card>
         <CardHeader>
           <CardTitle>{t("settings.formStyle.title")}</CardTitle>
-          <CardDescription>
-            {t("settings.formStyle.description")}
-          </CardDescription>
+          <CardDescription>{t("settings.formStyle.description")}</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
             {formStyles.map((style) => (
               <div
                 key={style.value}
@@ -2141,14 +2017,12 @@ export function ComponentsTab() {
               >
                 <div className="space-y-3 p-3">
                   <div className="text-center">
-                    <h4 className="font-semibold text-sm">{style.name}</h4>
-                    <p className="text-xs text-muted-foreground">
-                      {style.description}
-                    </p>
+                    <h4 className="text-sm font-semibold">{style.name}</h4>
+                    <p className="text-xs text-muted-foreground">{style.description}</p>
                   </div>
 
                   {/* Form Preview */}
-                  <div className="scale-90 origin-center">
+                  <div className="origin-center scale-90">
                     <FormPreview
                       style={style.value}
                       isSelected={settings.formStyle === style.value}
@@ -2156,7 +2030,7 @@ export function ComponentsTab() {
                   </div>
                 </div>
                 {settings.formStyle === style.value && (
-                  <div className="absolute -top-1 -right-1 h-5 w-5 bg-primary rounded-full flex items-center justify-center">
+                  <div className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
                     <Check className="h-3 w-3 text-primary-foreground" />
                   </div>
                 )}
@@ -2170,12 +2044,10 @@ export function ComponentsTab() {
       <Card>
         <CardHeader>
           <CardTitle>{t("settings.loadingStyle.title")}</CardTitle>
-          <CardDescription>
-            {t("settings.loadingStyle.description")}
-          </CardDescription>
+          <CardDescription>{t("settings.loadingStyle.description")}</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
             {loadingStyles.map((style) => (
               <div
                 key={style.value}
@@ -2189,13 +2061,11 @@ export function ComponentsTab() {
               >
                 <div className="space-y-2">
                   <h4 className="font-semibold">{style.name}</h4>
-                  <p className="text-sm text-muted-foreground">
-                    {style.description}
-                  </p>
+                  <p className="text-sm text-muted-foreground">{style.description}</p>
                   <div className="flex justify-center">{style.component}</div>
                 </div>
                 {settings.loadingStyle === style.value && (
-                  <div className="absolute -top-1 -right-1 h-5 w-5 bg-primary rounded-full flex items-center justify-center">
+                  <div className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
                     <Check className="h-3 w-3 text-primary-foreground" />
                   </div>
                 )}
@@ -2209,12 +2079,10 @@ export function ComponentsTab() {
       <Card>
         <CardHeader>
           <CardTitle>{t("settings.tooltipStyle.title")}</CardTitle>
-          <CardDescription>
-            {t("settings.tooltipStyle.description")}
-          </CardDescription>
+          <CardDescription>{t("settings.tooltipStyle.description")}</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
             {tooltipStyles.map((style) => (
               <div
                 key={style.value}
@@ -2228,9 +2096,7 @@ export function ComponentsTab() {
               >
                 <div className="space-y-2">
                   <h4 className="font-semibold">{style.name}</h4>
-                  <p className="text-sm text-muted-foreground">
-                    {style.description}
-                  </p>
+                  <p className="text-sm text-muted-foreground">{style.description}</p>
                   <div className="flex justify-center">
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -2248,7 +2114,7 @@ export function ComponentsTab() {
                   </div>
                 </div>
                 {settings.tooltipStyle === style.value && (
-                  <div className="absolute -top-1 -right-1 h-5 w-5 bg-primary rounded-full flex items-center justify-center">
+                  <div className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
                     <Check className="h-3 w-3 text-primary-foreground" />
                   </div>
                 )}
@@ -2262,12 +2128,10 @@ export function ComponentsTab() {
       <Card>
         <CardHeader>
           <CardTitle>{t("settings.modalStyle.title")}</CardTitle>
-          <CardDescription>
-            {t("settings.modalStyle.description")}
-          </CardDescription>
+          <CardDescription>{t("settings.modalStyle.description")}</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
             {modalStyles.map((style) => (
               <div
                 key={style.value}
@@ -2281,26 +2145,24 @@ export function ComponentsTab() {
               >
                 <div className="space-y-2">
                   <h4 className="font-semibold">{style.name}</h4>
-                  <p className="text-sm text-muted-foreground">
-                    {style.description}
-                  </p>
-                  <div className="relative h-12 bg-gray-100 rounded">
+                  <p className="text-sm text-muted-foreground">{style.description}</p>
+                  <div className="relative h-12 rounded bg-gray-100">
                     {style.value === "default" && (
-                      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-6 bg-white border rounded shadow"></div>
+                      <div className="absolute left-1/2 top-1/2 h-6 w-8 -translate-x-1/2 -translate-y-1/2 rounded border bg-white shadow"></div>
                     )}
                     {style.value === "centered" && (
-                      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-6 bg-white border rounded shadow"></div>
+                      <div className="absolute left-1/2 top-1/2 h-6 w-8 -translate-x-1/2 -translate-y-1/2 rounded border bg-white shadow"></div>
                     )}
                     {style.value === "fullscreen" && (
-                      <div className="absolute inset-1 bg-white border rounded shadow"></div>
+                      <div className="absolute inset-1 rounded border bg-white shadow"></div>
                     )}
                     {style.value === "drawer" && (
-                      <div className="absolute right-1 top-1 bottom-1 w-6 bg-white border rounded shadow"></div>
+                      <div className="absolute bottom-1 right-1 top-1 w-6 rounded border bg-white shadow"></div>
                     )}
                   </div>
                 </div>
                 {settings.modalStyle === style.value && (
-                  <div className="absolute -top-1 -right-1 h-5 w-5 bg-primary rounded-full flex items-center justify-center">
+                  <div className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
                     <Check className="h-3 w-3 text-primary-foreground" />
                   </div>
                 )}
@@ -2314,17 +2176,14 @@ export function ComponentsTab() {
       <Card>
         <CardHeader>
           <CardTitle>{t("components.multiSelect.title")}</CardTitle>
-          <CardDescription>
-            {t("components.multiSelect.description")}
-          </CardDescription>
+          <CardDescription>{t("components.multiSelect.description")}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-6">
             {/* Current Style Demo */}
             <div className="space-y-3">
               <h4 className="font-medium">
-                {t("components.multiSelect.currentStyle")}:{" "}
-                {settings.selectStyle}
+                {t("components.multiSelect.currentStyle")}: {settings.selectStyle}
               </h4>
               <div className="max-w-md">
                 <GenericSelect
@@ -2332,9 +2191,7 @@ export function ComponentsTab() {
                   options={[
                     {
                       value: "react",
-                      label: t(
-                        "components.multiSelect.categories.webTech.react"
-                      ),
+                      label: t("components.multiSelect.categories.webTech.react"),
                     },
                     {
                       value: "vue",
@@ -2342,50 +2199,37 @@ export function ComponentsTab() {
                     },
                     {
                       value: "angular",
-                      label: t(
-                        "components.multiSelect.categories.webTech.angular"
-                      ),
+                      label: t("components.multiSelect.categories.webTech.angular"),
                     },
                     {
                       value: "svelte",
-                      label: t(
-                        "components.multiSelect.categories.webTech.svelte"
-                      ),
+                      label: t("components.multiSelect.categories.webTech.svelte"),
                     },
                     {
                       value: "nextjs",
-                      label: t(
-                        "components.multiSelect.categories.webTech.nextjs"
-                      ),
+                      label: t("components.multiSelect.categories.webTech.nextjs"),
                     },
                     {
                       value: "typescript",
-                      label: t(
-                        "components.multiSelect.categories.webTech.typescript"
-                      ),
+                      label: t("components.multiSelect.categories.webTech.typescript"),
                     },
                   ]}
                   value={multiSelectDemo}
                   onValueChange={(value: string | string[]) =>
                     setMultiSelectDemo(Array.isArray(value) ? value : [value])
                   }
-                // All text will be localized automatically by the component
+                  // All text will be localized automatically by the component
                 />
               </div>
               <p className="text-xs text-muted-foreground">
-                Selected:{" "}
-                {multiSelectDemo.length > 0
-                  ? multiSelectDemo.join(", ")
-                  : "None"}
+                Selected: {multiSelectDemo.length > 0 ? multiSelectDemo.join(", ") : "None"}
               </p>
             </div>
 
             {/* Style Variations Grid */}
             <div className="space-y-3">
-              <h4 className="font-medium">
-                {t("components.multiSelect.availableStyles")}
-              </h4>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <h4 className="font-medium">{t("components.multiSelect.availableStyles")}</h4>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {[
                   {
                     style: "default",
@@ -2393,21 +2237,15 @@ export function ComponentsTab() {
                     options: [
                       {
                         value: "html",
-                        label: t(
-                          "components.multiSelect.categories.webTech.html"
-                        ),
+                        label: t("components.multiSelect.categories.webTech.html"),
                       },
                       {
                         value: "css",
-                        label: t(
-                          "components.multiSelect.categories.webTech.css"
-                        ),
+                        label: t("components.multiSelect.categories.webTech.css"),
                       },
                       {
                         value: "javascript",
-                        label: t(
-                          "components.multiSelect.categories.webTech.javascript"
-                        ),
+                        label: t("components.multiSelect.categories.webTech.javascript"),
                       },
                     ],
                   },
@@ -2417,21 +2255,15 @@ export function ComponentsTab() {
                     options: [
                       {
                         value: "react",
-                        label: t(
-                          "components.multiSelect.categories.webTech.react"
-                        ),
+                        label: t("components.multiSelect.categories.webTech.react"),
                       },
                       {
                         value: "vue",
-                        label: t(
-                          "components.multiSelect.categories.webTech.vue"
-                        ),
+                        label: t("components.multiSelect.categories.webTech.vue"),
                       },
                       {
                         value: "angular",
-                        label: t(
-                          "components.multiSelect.categories.webTech.angular"
-                        ),
+                        label: t("components.multiSelect.categories.webTech.angular"),
                       },
                     ],
                   },
@@ -2441,21 +2273,15 @@ export function ComponentsTab() {
                     options: [
                       {
                         value: "figma",
-                        label: t(
-                          "components.multiSelect.categories.design.figma"
-                        ),
+                        label: t("components.multiSelect.categories.design.figma"),
                       },
                       {
                         value: "sketch",
-                        label: t(
-                          "components.multiSelect.categories.design.sketch"
-                        ),
+                        label: t("components.multiSelect.categories.design.sketch"),
                       },
                       {
                         value: "adobe",
-                        label: t(
-                          "components.multiSelect.categories.design.adobe"
-                        ),
+                        label: t("components.multiSelect.categories.design.adobe"),
                       },
                     ],
                   },
@@ -2465,21 +2291,15 @@ export function ComponentsTab() {
                     options: [
                       {
                         value: "nodejs",
-                        label: t(
-                          "components.multiSelect.categories.backend.nodejs"
-                        ),
+                        label: t("components.multiSelect.categories.backend.nodejs"),
                       },
                       {
                         value: "python",
-                        label: t(
-                          "components.multiSelect.categories.backend.python"
-                        ),
+                        label: t("components.multiSelect.categories.backend.python"),
                       },
                       {
                         value: "java",
-                        label: t(
-                          "components.multiSelect.categories.backend.java"
-                        ),
+                        label: t("components.multiSelect.categories.backend.java"),
                       },
                     ],
                   },
@@ -2489,21 +2309,15 @@ export function ComponentsTab() {
                     options: [
                       {
                         value: "mysql",
-                        label: t(
-                          "components.multiSelect.categories.database.mysql"
-                        ),
+                        label: t("components.multiSelect.categories.database.mysql"),
                       },
                       {
                         value: "postgres",
-                        label: t(
-                          "components.multiSelect.categories.database.postgres"
-                        ),
+                        label: t("components.multiSelect.categories.database.postgres"),
                       },
                       {
                         value: "mongodb",
-                        label: t(
-                          "components.multiSelect.categories.database.mongodb"
-                        ),
+                        label: t("components.multiSelect.categories.database.mongodb"),
                       },
                     ],
                   },
@@ -2513,21 +2327,15 @@ export function ComponentsTab() {
                     options: [
                       {
                         value: "git",
-                        label: t(
-                          "components.multiSelect.categories.devops.git"
-                        ),
+                        label: t("components.multiSelect.categories.devops.git"),
                       },
                       {
                         value: "github",
-                        label: t(
-                          "components.multiSelect.categories.devops.github"
-                        ),
+                        label: t("components.multiSelect.categories.devops.github"),
                       },
                       {
                         value: "gitlab",
-                        label: t(
-                          "components.multiSelect.categories.devops.gitlab"
-                        ),
+                        label: t("components.multiSelect.categories.devops.gitlab"),
                       },
                     ],
                   },
@@ -2541,9 +2349,7 @@ export function ComponentsTab() {
                       },
                       {
                         value: "azure",
-                        label: t(
-                          "components.multiSelect.categories.cloud.azure"
-                        ),
+                        label: t("components.multiSelect.categories.cloud.azure"),
                       },
                       {
                         value: "gcp",
@@ -2557,21 +2363,15 @@ export function ComponentsTab() {
                     options: [
                       {
                         value: "docker",
-                        label: t(
-                          "components.multiSelect.categories.devops.docker"
-                        ),
+                        label: t("components.multiSelect.categories.devops.docker"),
                       },
                       {
                         value: "kubernetes",
-                        label: t(
-                          "components.multiSelect.categories.devops.kubernetes"
-                        ),
+                        label: t("components.multiSelect.categories.devops.kubernetes"),
                       },
                       {
                         value: "jenkins",
-                        label: t(
-                          "components.multiSelect.categories.devops.jenkins"
-                        ),
+                        label: t("components.multiSelect.categories.devops.jenkins"),
                       },
                     ],
                   },
@@ -2581,21 +2381,15 @@ export function ComponentsTab() {
                     options: [
                       {
                         value: "cybersecurity",
-                        label: t(
-                          "components.multiSelect.categories.security.cybersecurity"
-                        ),
+                        label: t("components.multiSelect.categories.security.cybersecurity"),
                       },
                       {
                         value: "ethicalHacking",
-                        label: t(
-                          "components.multiSelect.categories.security.ethicalHacking"
-                        ),
+                        label: t("components.multiSelect.categories.security.ethicalHacking"),
                       },
                       {
                         value: "penetrationTesting",
-                        label: t(
-                          "components.multiSelect.categories.security.penetrationTesting"
-                        ),
+                        label: t("components.multiSelect.categories.security.penetrationTesting"),
                       },
                     ],
                   },
@@ -2605,21 +2399,15 @@ export function ComponentsTab() {
                     options: [
                       {
                         value: "uiDesign",
-                        label: t(
-                          "components.multiSelect.categories.ux.uiDesign"
-                        ),
+                        label: t("components.multiSelect.categories.ux.uiDesign"),
                       },
                       {
                         value: "uxResearch",
-                        label: t(
-                          "components.multiSelect.categories.ux.uxResearch"
-                        ),
+                        label: t("components.multiSelect.categories.ux.uxResearch"),
                       },
                       {
                         value: "userTesting",
-                        label: t(
-                          "components.multiSelect.categories.ux.userTesting"
-                        ),
+                        label: t("components.multiSelect.categories.ux.userTesting"),
                       },
                     ],
                   },
@@ -2629,21 +2417,15 @@ export function ComponentsTab() {
                     options: [
                       {
                         value: "ios",
-                        label: t(
-                          "components.multiSelect.categories.mobile.ios"
-                        ),
+                        label: t("components.multiSelect.categories.mobile.ios"),
                       },
                       {
                         value: "android",
-                        label: t(
-                          "components.multiSelect.categories.mobile.android"
-                        ),
+                        label: t("components.multiSelect.categories.mobile.android"),
                       },
                       {
                         value: "reactNative",
-                        label: t(
-                          "components.multiSelect.categories.mobile.reactNative"
-                        ),
+                        label: t("components.multiSelect.categories.mobile.reactNative"),
                       },
                     ],
                   },
@@ -2653,21 +2435,15 @@ export function ComponentsTab() {
                     options: [
                       {
                         value: "blockchain",
-                        label: t(
-                          "components.multiSelect.categories.security.blockchain"
-                        ),
+                        label: t("components.multiSelect.categories.security.blockchain"),
                       },
                       {
                         value: "crypto",
-                        label: t(
-                          "components.multiSelect.categories.security.crypto"
-                        ),
+                        label: t("components.multiSelect.categories.security.crypto"),
                       },
                       {
                         value: "machineLearning",
-                        label: t(
-                          "components.multiSelect.categories.ai.machineLearning"
-                        ),
+                        label: t("components.multiSelect.categories.ai.machineLearning"),
                       },
                     ],
                   },
@@ -2677,21 +2453,15 @@ export function ComponentsTab() {
                     options: [
                       {
                         value: "premium",
-                        label: t(
-                          "components.multiSelect.categories.business.premium"
-                        ),
+                        label: t("components.multiSelect.categories.business.premium"),
                       },
                       {
                         value: "enterprise",
-                        label: t(
-                          "components.multiSelect.categories.business.enterprise"
-                        ),
+                        label: t("components.multiSelect.categories.business.enterprise"),
                       },
                       {
                         value: "consulting",
-                        label: t(
-                          "components.multiSelect.categories.business.consulting"
-                        ),
+                        label: t("components.multiSelect.categories.business.consulting"),
                       },
                     ],
                   },
@@ -2701,21 +2471,15 @@ export function ComponentsTab() {
                     options: [
                       {
                         value: "quantumComputing",
-                        label: t(
-                          "components.multiSelect.categories.ai.quantumComputing"
-                        ),
+                        label: t("components.multiSelect.categories.ai.quantumComputing"),
                       },
                       {
                         value: "neuralNetworks",
-                        label: t(
-                          "components.multiSelect.categories.ai.neuralNetworks"
-                        ),
+                        label: t("components.multiSelect.categories.ai.neuralNetworks"),
                       },
                       {
                         value: "deepLearning",
-                        label: t(
-                          "components.multiSelect.categories.ai.deepLearning"
-                        ),
+                        label: t("components.multiSelect.categories.ai.deepLearning"),
                       },
                     ],
                   },
@@ -2725,21 +2489,15 @@ export function ComponentsTab() {
                     options: [
                       {
                         value: "spaceExploration",
-                        label: t(
-                          "components.multiSelect.categories.science.spaceExploration"
-                        ),
+                        label: t("components.multiSelect.categories.science.spaceExploration"),
                       },
                       {
                         value: "astronomy",
-                        label: t(
-                          "components.multiSelect.categories.science.astronomy"
-                        ),
+                        label: t("components.multiSelect.categories.science.astronomy"),
                       },
                       {
                         value: "astrophysics",
-                        label: t(
-                          "components.multiSelect.categories.science.astrophysics"
-                        ),
+                        label: t("components.multiSelect.categories.science.astrophysics"),
                       },
                     ],
                   },
@@ -2749,21 +2507,15 @@ export function ComponentsTab() {
                     options: [
                       {
                         value: "optics",
-                        label: t(
-                          "components.multiSelect.categories.science.optics"
-                        ),
+                        label: t("components.multiSelect.categories.science.optics"),
                       },
                       {
                         value: "photography",
-                        label: t(
-                          "components.multiSelect.categories.creative.photography"
-                        ),
+                        label: t("components.multiSelect.categories.creative.photography"),
                       },
                       {
                         value: "visualEffects",
-                        label: t(
-                          "components.multiSelect.categories.creative.visualEffects"
-                        ),
+                        label: t("components.multiSelect.categories.creative.visualEffects"),
                       },
                     ],
                   },
@@ -2773,21 +2525,15 @@ export function ComponentsTab() {
                     options: [
                       {
                         value: "solarEnergy",
-                        label: t(
-                          "components.multiSelect.categories.energy.solarEnergy"
-                        ),
+                        label: t("components.multiSelect.categories.energy.solarEnergy"),
                       },
                       {
                         value: "renewableEnergy",
-                        label: t(
-                          "components.multiSelect.categories.energy.renewableEnergy"
-                        ),
+                        label: t("components.multiSelect.categories.energy.renewableEnergy"),
                       },
                       {
                         value: "sustainability",
-                        label: t(
-                          "components.multiSelect.categories.energy.sustainability"
-                        ),
+                        label: t("components.multiSelect.categories.energy.sustainability"),
                       },
                     ],
                   },
@@ -2797,21 +2543,15 @@ export function ComponentsTab() {
                     options: [
                       {
                         value: "fluidDynamics",
-                        label: t(
-                          "components.multiSelect.categories.physics.fluidDynamics"
-                        ),
+                        label: t("components.multiSelect.categories.physics.fluidDynamics"),
                       },
                       {
                         value: "aerodynamics",
-                        label: t(
-                          "components.multiSelect.categories.physics.aerodynamics"
-                        ),
+                        label: t("components.multiSelect.categories.physics.aerodynamics"),
                       },
                       {
                         value: "turbulence",
-                        label: t(
-                          "components.multiSelect.categories.physics.turbulence"
-                        ),
+                        label: t("components.multiSelect.categories.physics.turbulence"),
                       },
                     ],
                   },
@@ -2821,21 +2561,15 @@ export function ComponentsTab() {
                     options: [
                       {
                         value: "gameDesign",
-                        label: t(
-                          "components.multiSelect.categories.gaming.gameDesign"
-                        ),
+                        label: t("components.multiSelect.categories.gaming.gameDesign"),
                       },
                       {
                         value: "animation",
-                        label: t(
-                          "components.multiSelect.categories.creative.animation"
-                        ),
+                        label: t("components.multiSelect.categories.creative.animation"),
                       },
                       {
                         value: "digitalArt",
-                        label: t(
-                          "components.multiSelect.categories.creative.digitalArt"
-                        ),
+                        label: t("components.multiSelect.categories.creative.digitalArt"),
                       },
                     ],
                   },
@@ -2846,7 +2580,7 @@ export function ComponentsTab() {
                       <button
                         onClick={() => settings.setSelectStyle(style as any)}
                         className={cn(
-                          "px-2 py-1 text-xs rounded transition-colors",
+                          "rounded px-2 py-1 text-xs transition-colors",
                           settings.selectStyle === style
                             ? "bg-primary text-primary-foreground"
                             : "bg-muted hover:bg-muted-foreground/20"
@@ -2868,18 +2602,12 @@ export function ComponentsTab() {
                           type="single"
                           design={style as any}
                           options={options.slice(0, 3)}
-                          value={
-                            styleSelections[`${style}-single`] ||
-                            options[0]?.value ||
-                            ""
-                          }
+                          value={styleSelections[`${style}-single`] || options[0]?.value || ""}
                           onValueChange={(newValue: string | string[]) =>
                             setStyleSelections((prev) => ({
                               ...prev,
                               [`${style}-single`]:
-                                typeof newValue === "string"
-                                  ? newValue
-                                  : newValue[0],
+                                typeof newValue === "string" ? newValue : newValue[0],
                             }))
                           }
                           placeholder={`${style} Single Select`}
@@ -2900,9 +2628,7 @@ export function ComponentsTab() {
                             setStyleSelections((prev) => ({
                               ...prev,
                               [`${style}-search`]:
-                                typeof newValue === "string"
-                                  ? newValue
-                                  : newValue[0],
+                                typeof newValue === "string" ? newValue : newValue[0],
                             }))
                           }
                           placeholder={`Search ${style} options...`}
@@ -2920,15 +2646,12 @@ export function ComponentsTab() {
                           design={style as any}
                           options={options}
                           value={
-                            styleSelections[`${style}-multi`] ||
-                            [options[0]?.value].filter(Boolean)
+                            styleSelections[`${style}-multi`] || [options[0]?.value].filter(Boolean)
                           }
                           onValueChange={(newValue: string | string[]) =>
                             setStyleSelections((prev) => ({
                               ...prev,
-                              [`${style}-multi`]: Array.isArray(newValue)
-                                ? newValue
-                                : [newValue],
+                              [`${style}-multi`]: Array.isArray(newValue) ? newValue : [newValue],
                             }))
                           }
                           placeholder={`Multi-select ${style} items...`}
@@ -2944,68 +2667,45 @@ export function ComponentsTab() {
 
             {/* Server-Side Search Demo */}
             <div className="space-y-3">
-              <h4 className="font-medium">
-                {t("components.multiSelect.serverSearchDemo")}
-              </h4>
+              <h4 className="font-medium">{t("components.multiSelect.serverSearchDemo")}</h4>
               <div className="max-w-md">
                 <GenericSelect
                   type="multi"
                   searchType="server"
                   options={[]}
                   value={[]}
-                  onValueChange={(value: string | string[]) => { }}
+                  onValueChange={(value: string | string[]) => {}}
                   onServerSearch={async (query: string) => {
                     // Simulate server search
                     await new Promise((resolve) => setTimeout(resolve, 500));
                     const mockResults = [
                       {
                         value: `${query}-1`,
-                        label: `${query} ${t(
-                          "components.multiSelect.serverSearchResult"
-                        )} 1`,
+                        label: `${query} ${t("components.multiSelect.serverSearchResult")} 1`,
                       },
                       {
                         value: `${query}-2`,
-                        label: `${query} ${t(
-                          "components.multiSelect.serverSearchResult"
-                        )} 2`,
+                        label: `${query} ${t("components.multiSelect.serverSearchResult")} 2`,
                       },
                       {
                         value: `${query}-3`,
-                        label: `${query} ${t(
-                          "components.multiSelect.serverSearchResult"
-                        )} 3`,
+                        label: `${query} ${t("components.multiSelect.serverSearchResult")} 3`,
                       },
                       {
                         value: `${query}-api`,
-                        label: `${query} ${t(
-                          "components.multiSelect.serverSearchApi"
-                        )}`,
+                        label: `${query} ${t("components.multiSelect.serverSearchApi")}`,
                       },
                       {
                         value: `${query}-sdk`,
-                        label: `${query} ${t(
-                          "components.multiSelect.serverSearchSdk"
-                        )}`,
+                        label: `${query} ${t("components.multiSelect.serverSearchSdk")}`,
                       },
                     ];
-                    return mockResults.slice(
-                      0,
-                      Math.floor(Math.random() * 5) + 1
-                    );
+                    return mockResults.slice(0, Math.floor(Math.random() * 5) + 1);
                   }}
-                  placeholder={t(
-                    "components.multiSelect.serverSearchPlaceholder"
-                  )}
-                  searchPlaceholder={t(
-                    "components.multiSelect.serverSearchSearchPlaceholder"
-                  )}
-                  searchingText={t(
-                    "components.multiSelect.serverSearchSearchingText"
-                  )}
-                  noResultsText={t(
-                    "components.multiSelect.serverSearchNoResultsText"
-                  )}
+                  placeholder={t("components.multiSelect.serverSearchPlaceholder")}
+                  searchPlaceholder={t("components.multiSelect.serverSearchSearchPlaceholder")}
+                  searchingText={t("components.multiSelect.serverSearchSearchingText")}
+                  noResultsText={t("components.multiSelect.serverSearchNoResultsText")}
                 />
               </div>
               <p className="text-xs text-muted-foreground">
@@ -3015,9 +2715,7 @@ export function ComponentsTab() {
 
             {/* Tree Select Demo */}
             <div className="space-y-3">
-              <h4 className="font-medium">
-                {t("components.treeSelect.title")}
-              </h4>
+              <h4 className="font-medium">{t("components.treeSelect.title")}</h4>
               <div className="max-w-md">
                 <GenericSelect
                   type="tree"
@@ -3054,9 +2752,7 @@ export function ComponentsTab() {
                     },
                   ]}
                   placeholder={t("components.treeSelect.placeholder")}
-                  searchPlaceholder={t(
-                    "components.treeSelect.searchPlaceholder"
-                  )}
+                  searchPlaceholder={t("components.treeSelect.searchPlaceholder")}
                 />
               </div>
               <p className="text-xs text-muted-foreground">
@@ -3064,7 +2760,7 @@ export function ComponentsTab() {
               </p>
             </div>
 
-            <div className="pt-4 border-t">
+            <div className="border-t pt-4">
               <p className="text-xs text-muted-foreground">
                 <strong>{t("components.multiSelect.features")}:</strong>{" "}
                 {t("components.multiSelect.featuresDescription")}
@@ -3078,18 +2774,14 @@ export function ComponentsTab() {
       <Card>
         <CardHeader>
           <CardTitle>{t("settings.modalStyle.title")}</CardTitle>
-          <CardDescription>
-            {t("settings.modalStyle.description")}
-          </CardDescription>
+          <CardDescription>{t("settings.modalStyle.description")}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             {modalStyles.map((style) => (
               <div key={style.value} className="space-y-2">
                 <Button
-                  variant={
-                    settings.modalStyle === style.value ? "default" : "outline"
-                  }
+                  variant={settings.modalStyle === style.value ? "default" : "outline"}
                   size="sm"
                   onClick={() => setModalStyle(style.value as any)}
                   className="w-full"
@@ -3128,10 +2820,8 @@ export function ComponentsTab() {
             })}
           </div>
           <div className="space-y-3">
-            <div className="p-4 bg-muted/50 rounded-lg">
-              <h4 className="font-medium mb-2">
-                {t("settings.modalStyle.sampleContentTitle")}
-              </h4>
+            <div className="rounded-lg bg-muted/50 p-4">
+              <h4 className="mb-2 font-medium">{t("settings.modalStyle.sampleContentTitle")}</h4>
               <p className="text-sm text-muted-foreground">
                 {t("settings.modalStyle.sampleContentDescription", {
                   style: previewStyleName || "",

@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import type React from 'react';
-import { DocsI18nProvider } from '../../providers/DocsI18nProvider';
-import { ThemeProvider } from '@core/providers/theme-provider';
-import '../../styles/docs.css';
+import type React from "react";
+import { DocsI18nProvider } from "../../providers/DocsI18nProvider";
+import { ThemeProvider } from "@core/providers/theme-provider";
+import "../../styles/docs.css";
 
 interface DocsLayoutProps {
-      children: React.ReactNode;
+  children: React.ReactNode;
 }
 
 /**
@@ -14,11 +14,9 @@ interface DocsLayoutProps {
  * Provides isolated i18n and theme contexts.
  */
 export function DocsLayout({ children }: DocsLayoutProps) {
-      return (
-            <ThemeProvider>
-                  <DocsI18nProvider>
-                        {children}
-                  </DocsI18nProvider>
-            </ThemeProvider>
-      );
+  return (
+    <ThemeProvider>
+      <DocsI18nProvider>{children}</DocsI18nProvider>
+    </ThemeProvider>
+  );
 }

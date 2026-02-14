@@ -1,5 +1,3 @@
-
-
 # UI Components Rule
 
 > **MANDATORY**: Always use shadcn/ui components from `components/ui/` instead of native HTML elements.
@@ -10,37 +8,34 @@ When creating ANY UI element, ALWAYS check if there's a shadcn component availab
 
 ## Component Mapping
 
-| Instead of... | Use... | Import from |
-|---------------|--------|-------------|
-| `<button>` | `<Button>` | `@/components/ui/button` |
-| `<input>` | `<Input>` | `@/components/ui/input` |
-| `<textarea>` | `<Textarea>` | `@/components/ui/textarea` |
-| `<select>` | `<Select>` | `@/components/ui/select` |
-| `<checkbox>` | `<Checkbox>` | `@/components/ui/checkbox` |
-| `<label>` | `<Label>` | `@/components/ui/label` |
-| `<dialog>` | `<Dialog>` | `@/components/ui/dialog` |
-| `<table>` | `<Table>` | `@/components/ui/table` |
-| `<a>` (styled) | `<Button asChild>` | `@/components/ui/button` |
+| Instead of...  | Use...             | Import from                |
+| -------------- | ------------------ | -------------------------- |
+| `<button>`     | `<Button>`         | `@/components/ui/button`   |
+| `<input>`      | `<Input>`          | `@/components/ui/input`    |
+| `<textarea>`   | `<Textarea>`       | `@/components/ui/textarea` |
+| `<select>`     | `<Select>`         | `@/components/ui/select`   |
+| `<checkbox>`   | `<Checkbox>`       | `@/components/ui/checkbox` |
+| `<label>`      | `<Label>`          | `@/components/ui/label`    |
+| `<dialog>`     | `<Dialog>`         | `@/components/ui/dialog`   |
+| `<table>`      | `<Table>`          | `@/components/ui/table`    |
+| `<a>` (styled) | `<Button asChild>` | `@/components/ui/button`   |
 
 ## Custom UI Components
 
 These custom components are also available in `components/ui/`:
 
-| Component | Purpose | Import from |
-|-----------|---------|-------------|
+| Component       | Purpose                    | Import from                      |
+| --------------- | -------------------------- | -------------------------------- |
 | `CarouselArrow` | Carousel navigation arrows | `@/components/ui/carousel-arrow` |
-| `CarouselDot` | Single carousel dot | `@/components/ui/carousel-dots` |
-| `CarouselDots` | Carousel dots container | `@/components/ui/carousel-dots` |
+| `CarouselDot`   | Single carousel dot        | `@/components/ui/carousel-dots`  |
+| `CarouselDots`  | Carousel dots container    | `@/components/ui/carousel-dots`  |
 
 ## Examples
 
 ### ❌ DON'T: Use native button
 
 ```tsx
-<button 
-  onClick={onClick}
-  className="bg-blue-500 text-white px-4 py-2 rounded"
->
+<button onClick={onClick} className="rounded bg-blue-500 px-4 py-2 text-white">
   Click me
 </button>
 ```
@@ -48,11 +43,11 @@ These custom components are also available in `components/ui/`:
 ### ✅ DO: Use Button component
 
 ```tsx
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 
 <Button onClick={onClick} variant="default">
   Click me
-</Button>
+</Button>;
 ```
 
 ### ❌ DON'T: Build custom carousel arrows
@@ -66,13 +61,9 @@ import { Button } from '@/components/ui/button';
 ### ✅ DO: Use CarouselArrow component
 
 ```tsx
-import { CarouselArrow } from '@/components/ui/carousel-arrow';
+import { CarouselArrow } from "@/components/ui/carousel-arrow";
 
-<CarouselArrow 
-  direction="left" 
-  onClick={prevSlide}
-  bgColor="bg-brand-cta"
-/>
+<CarouselArrow direction="left" onClick={prevSlide} bgColor="bg-brand-cta" />;
 ```
 
 ## When Custom Elements Are Acceptable
@@ -86,8 +77,7 @@ import { CarouselArrow } from '@/components/ui/carousel-arrow';
 ## Enforcement
 
 Before creating any interactive element, ask:
+
 1. Is there a shadcn component for this?
 2. Is there a custom component in `components/ui/`?
 3. If yes to either, USE IT!
-
-

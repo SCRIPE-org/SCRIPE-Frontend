@@ -64,7 +64,7 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
   const user = useAppStore((state) => state.user);
   const { navigationService } = useServices();
   const pathname = usePathname();
-  const isDocsRoute = pathname?.startsWith('/docs');
+  const isDocsRoute = pathname?.startsWith("/docs");
 
   /**
    * Load navigation data from localStorage cache
@@ -207,7 +207,14 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
       appLogger.debug("Navigation data missing for authenticated user, auto-refreshing...");
       refreshNavigation(false, true); // forceRefresh = true
     }
-  }, [isAuthenticated, navigationData, isLoading, hasTriggeredRefresh, refreshNavigation, isDocsRoute]);
+  }, [
+    isAuthenticated,
+    navigationData,
+    isLoading,
+    hasTriggeredRefresh,
+    refreshNavigation,
+    isDocsRoute,
+  ]);
 
   // ========================================
   // PERIODIC REFRESH CHECK (every 5 minutes)

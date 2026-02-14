@@ -1,6 +1,6 @@
 /**
  * Validation Hook
- * 
+ *
  * Provides a convenient hook for form validation using the validation utilities.
  * Handles validation state, error messages, and form submission validation.
  */
@@ -52,29 +52,32 @@ export function useValidation<T extends Record<string, any>>(
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   // Validate a specific field
-  const validateField = useCallback((field: keyof T): boolean => {
-    if (!validationRules[field as string]) {
-      return true;
-    }
+  const validateField = useCallback(
+    (field: keyof T): boolean => {
+      if (!validationRules[field as string]) {
+        return true;
+      }
 
-    const validationResults = validateForm(
-      { [field]: values[field] },
-      { [field]: validationRules[field as string] }
-    );
+      const validationResults = validateForm(
+        { [field]: values[field] },
+        { [field]: validationRules[field as string] }
+      );
 
-    const result = validationResults[field as string];
-    if (!result.isValid) {
-      setErrors(prev => ({ ...prev, [field]: result.message || "" }));
-      return false;
-    } else {
-      setErrors(prev => {
-        const newErrors = { ...prev };
-        delete newErrors[field as string];
-        return newErrors;
-      });
-      return true;
-    }
-  }, [values, validationRules]);
+      const result = validationResults[field as string];
+      if (!result.isValid) {
+        setErrors((prev) => ({ ...prev, [field]: result.message || "" }));
+        return false;
+      } else {
+        setErrors((prev) => {
+          const newErrors = { ...prev };
+          delete newErrors[field as string];
+          return newErrors;
+        });
+        return true;
+      }
+    },
+    [values, validationRules]
+  );
 
   // Validate all fields
   const validateAll = useCallback((): boolean => {
@@ -91,58 +94,64 @@ export function useValidation<T extends Record<string, any>>(
 
   // Set a single field value
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const setValue = useCallback((field: keyof T, value: any) => {
-    setValuesState(prev => ({ ...prev, [field]: value }));
+  const setValue = useCallback(
+    (field: keyof T, value: any) => {
+      setValuesState((prev) => ({ ...prev, [field]: value }));
 
-    // Clear error when user starts typing
-    if (errors[field as string]) {
-      setErrors(prev => {
-        const newErrors = { ...prev };
-        delete newErrors[field as string];
-        return newErrors;
-      });
-    }
+      // Clear error when user starts typing
+      if (errors[field as string]) {
+        setErrors((prev) => {
+          const newErrors = { ...prev };
+          delete newErrors[field as string];
+          return newErrors;
+        });
+      }
 
-    // Validate on change if enabled
-    if (validateOnChange) {
-      setTimeout(() => validateField(field), 0);
-    }
-  }, [errors, validateOnChange, validateField]);
+      // Validate on change if enabled
+      if (validateOnChange) {
+        setTimeout(() => validateField(field), 0);
+      }
+    },
+    [errors, validateOnChange, validateField]
+  );
 
   // Set multiple field values
-  const setValues = useCallback((newValues: Partial<T>) => {
-    setValuesState(prev => ({ ...prev, ...newValues }));
+  const setValues = useCallback(
+    (newValues: Partial<T>) => {
+      setValuesState((prev) => ({ ...prev, ...newValues }));
 
-    // Clear errors for changed fields
-    const fieldsToClear = Object.keys(newValues);
-    setErrors(prev => {
-      const newErrors = { ...prev };
-      fieldsToClear.forEach(field => {
-        delete newErrors[field];
-      });
-      return newErrors;
-    });
-
-    // Validate changed fields if validate on change is enabled
-    if (validateOnChange) {
-      setTimeout(() => {
-        fieldsToClear.forEach(field => {
-          if (validationRules[field]) {
-            validateField(field as keyof T);
-          }
+      // Clear errors for changed fields
+      const fieldsToClear = Object.keys(newValues);
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        fieldsToClear.forEach((field) => {
+          delete newErrors[field];
         });
-      }, 0);
-    }
-  }, [validateOnChange, validateField, validationRules]);
+        return newErrors;
+      });
+
+      // Validate changed fields if validate on change is enabled
+      if (validateOnChange) {
+        setTimeout(() => {
+          fieldsToClear.forEach((field) => {
+            if (validationRules[field]) {
+              validateField(field as keyof T);
+            }
+          });
+        }, 0);
+      }
+    },
+    [validateOnChange, validateField, validationRules]
+  );
 
   // Set a specific error
   const setError = useCallback((field: keyof T, error: string) => {
-    setErrors(prev => ({ ...prev, [field]: error }));
+    setErrors((prev) => ({ ...prev, [field]: error }));
   }, []);
 
   // Clear a specific error
   const clearError = useCallback((field: keyof T) => {
-    setErrors(prev => {
+    setErrors((prev) => {
       const newErrors = { ...prev };
       delete newErrors[field as string];
       return newErrors;
@@ -155,12 +164,15 @@ export function useValidation<T extends Record<string, any>>(
   }, []);
 
   // Validate a specific field or all fields
-  const validate = useCallback((field?: keyof T): boolean => {
-    if (field) {
-      return validateField(field);
-    }
-    return validateAll();
-  }, [validateField, validateAll]);
+  const validate = useCallback(
+    (field?: keyof T): boolean => {
+      if (field) {
+        return validateField(field);
+      }
+      return validateAll();
+    },
+    [validateField, validateAll]
+  );
 
   // Reset form to initial values
   const reset = useCallback(() => {
@@ -169,14 +181,20 @@ export function useValidation<T extends Record<string, any>>(
   }, [initialValues]);
 
   // Get error for a specific field
-  const getFieldError = useCallback((field: keyof T): string | undefined => {
-    return errors[field as string];
-  }, [errors]);
+  const getFieldError = useCallback(
+    (field: keyof T): string | undefined => {
+      return errors[field as string];
+    },
+    [errors]
+  );
 
   // Check if a field has an error
-  const hasError = useCallback((field: keyof T): boolean => {
-    return !!errors[field as string];
-  }, [errors]);
+  const hasError = useCallback(
+    (field: keyof T): boolean => {
+      return !!errors[field as string];
+    },
+    [errors]
+  );
 
   // Check if form is valid
   const isValid = useMemo(() => {
@@ -235,20 +253,23 @@ export function useFieldValidation<T>(
     }
   }, [value, rules]);
 
-  const handleChange = useCallback((newValue: T) => {
-    setValue(newValue);
-    setTouched(true);
+  const handleChange = useCallback(
+    (newValue: T) => {
+      setValue(newValue);
+      setTouched(true);
 
-    // Clear error when user starts typing
-    if (error) {
-      setError("");
-    }
+      // Clear error when user starts typing
+      if (error) {
+        setError("");
+      }
 
-    // Validate on change if enabled
-    if (validateOnChange) {
-      setTimeout(() => validate(), 0);
-    }
-  }, [error, validateOnChange, validate]);
+      // Validate on change if enabled
+      if (validateOnChange) {
+        setTimeout(() => validate(), 0);
+      }
+    },
+    [error, validateOnChange, validate]
+  );
 
   const handleBlur = useCallback(() => {
     setTouched(true);

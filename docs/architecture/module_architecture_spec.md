@@ -12,25 +12,25 @@ graph TD
         V[View<br/>Pure UI]
         VM[ViewModel<br/>TanStack Query + Zustand]
     end
-    
+
     subgraph "Domain Layer"
         IR[IRepository<br/>interface]
         IS[IService<br/>interface]
         E[Entity<br/>Zod schema]
     end
-    
+
     subgraph "Data Layer"
         R[Repository<br/>implements IRepository]
         S[Service<br/>implements IService]
         M[Model<br/>API DTO]
         MAP[Mapper<br/>Model ↔ Entity]
     end
-    
+
     subgraph "Infrastructure"
         API[IApiService]
         DI[DI Container]
     end
-    
+
     V --> VM
     VM -->|uses| IR
     R -.implements.-> IR
@@ -49,12 +49,14 @@ graph TD
 ## Layer Rules
 
 ### 1. View Layer (`.../views/`)
+
 - ✅ Calls ViewModel hooks
 - ✅ Renders JSX
 - ❌ **NEVER** imports Repository or Service
 - ❌ **NEVER** has business logic
 
 ### 2. ViewModel Layer (`.../viewmodels/`)
+
 - ✅ Calls Repository (via DI)
 - ✅ Uses TanStack Query for caching
 - ✅ Returns data for Views
@@ -62,18 +64,21 @@ graph TD
 - ❌ **NEVER** calls IApiService directly
 
 ### 3. Repository Layer (`.../repositories/`)
+
 - ✅ Calls Service (via DI injection)
 - ✅ Uses Mapper to convert Model ↔ Entity
 - ✅ Returns **Entities** to ViewModel
 - ❌ **NEVER** calls IApiService directly
 
 ### 4. Service Layer (`.../services/`)
+
 - ✅ Calls IApiService
 - ✅ Returns **Models** (DTOs) to Repository
 - ❌ **NEVER** has business logic
 - ❌ **NEVER** transforms data (that's Mapper's job)
 
 ### 5. Mapper Layer (`.../mappers/`)
+
 - ✅ Converts Model → Entity (for reading)
 - ✅ Converts Entity → Model (for writing)
 - ❌ **NEVER** has API calls
@@ -162,15 +167,15 @@ import { z } from "zod";
  * This is the domain model used throughout the app
  */
 export const ProductSchema = z.object({
-    id: z.string().uuid(),
-    name: z.string().min(1),
-    description: z.string().optional(),
-    price: z.number().positive(),
-    stock: z.number().int().min(0),
-    category: z.string(),
-    isActive: z.boolean(),
-    createdAt: z.date(),
-    updatedAt: z.date(),
+  id: z.string().uuid(),
+  name: z.string().min(1),
+  description: z.string().optional(),
+  price: z.number().positive(),
+  stock: z.number().int().min(0),
+  category: z.string(),
+  isActive: z.boolean(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
 });
 
 export type ProductData = z.infer<typeof ProductSchema>;
@@ -179,27 +184,27 @@ export type ProductData = z.infer<typeof ProductSchema>;
  * Product Entity Class
  */
 export class Product {
-    readonly id: string;
-    readonly name: string;
-    readonly description?: string;
-    readonly price: number;
-    readonly stock: number;
-    readonly category: string;
-    readonly isActive: boolean;
-    readonly createdAt: Date;
-    readonly updatedAt: Date;
+  readonly id: string;
+  readonly name: string;
+  readonly description?: string;
+  readonly price: number;
+  readonly stock: number;
+  readonly category: string;
+  readonly isActive: boolean;
+  readonly createdAt: Date;
+  readonly updatedAt: Date;
 
-    constructor(data: ProductData) {
-        Object.assign(this, data);
-    }
+  constructor(data: ProductData) {
+    Object.assign(this, data);
+  }
 
-    get isOutOfStock(): boolean {
-        return this.stock === 0;
-    }
+  get isOutOfStock(): boolean {
+    return this.stock === 0;
+  }
 
-    get formattedPrice(): string {
-        return `$${this.price.toFixed(2)}`;
-    }
+  get formattedPrice(): string {
+    return `$${this.price.toFixed(2)}`;
+  }
 }
 ```
 
@@ -209,20 +214,20 @@ export class Product {
 
 ```typescript
 export interface CreateProductRequest {
-    name: string;
-    description?: string;
-    price: number;
-    stock: number;
-    category: string;
+  name: string;
+  description?: string;
+  price: number;
+  stock: number;
+  category: string;
 }
 
 export interface UpdateProductRequest {
-    name?: string;
-    description?: string;
-    price?: number;
-    stock?: number;
-    category?: string;
-    isActive?: boolean;
+  name?: string;
+  description?: string;
+  price?: number;
+  stock?: number;
+  category?: string;
+  isActive?: boolean;
 }
 ```
 
@@ -235,28 +240,28 @@ import type { Product } from "../entities/Product";
 import type { CreateProductRequest, UpdateProductRequest } from "../entities/ProductRequests";
 
 export interface ProductListParams {
-    page: number;
-    pageSize: number;
-    search?: string;
-    category?: string;
+  page: number;
+  pageSize: number;
+  search?: string;
+  category?: string;
 }
 
 export interface PagedResult<T> {
-    items: T[];
-    totalCount: number;
-    page: number;
-    pageSize: number;
-    totalPages: number;
-    hasNextPage: boolean;
-    hasPreviousPage: boolean;
+  items: T[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
 }
 
 export interface IProductRepository {
-    getAll(params: ProductListParams): Promise<PagedResult<Product>>;
-    getById(id: string): Promise<Product>;
-    create(request: CreateProductRequest): Promise<string>;
-    update(id: string, request: UpdateProductRequest): Promise<void>;
-    delete(id: string): Promise<void>;
+  getAll(params: ProductListParams): Promise<PagedResult<Product>>;
+  getById(id: string): Promise<Product>;
+  create(request: CreateProductRequest): Promise<string>;
+  update(id: string, request: UpdateProductRequest): Promise<void>;
+  delete(id: string): Promise<void>;
 }
 ```
 
@@ -268,45 +273,45 @@ export interface IProductRepository {
 import type { ProductModel } from "../../data/models/ProductModel";
 
 export interface ProductListParams {
-    page?: number;
-    pageSize?: number;
-    search?: string;
-    category?: string;
+  page?: number;
+  pageSize?: number;
+  search?: string;
+  category?: string;
 }
 
 export interface ProductListResult {
-    items: ProductModel[];
-    totalCount: number;
-    page: number;
-    pageSize: number;
-    totalPages: number;
-    hasNextPage: boolean;
-    hasPreviousPage: boolean;
+  items: ProductModel[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
 }
 
 export interface CreateProductJson {
-    name: string;
-    description?: string;
-    price: number;
-    stock: number;
-    category: string;
+  name: string;
+  description?: string;
+  price: number;
+  stock: number;
+  category: string;
 }
 
 export interface UpdateProductJson {
-    name?: string;
-    description?: string;
-    price?: number;
-    stock?: number;
-    category?: string;
-    isActive?: boolean;
+  name?: string;
+  description?: string;
+  price?: number;
+  stock?: number;
+  category?: string;
+  isActive?: boolean;
 }
 
 export interface IProductService {
-    getAll(params: ProductListParams): Promise<ProductListResult>;
-    getById(id: string): Promise<ProductModel>;
-    create(data: CreateProductJson): Promise<{ id: string }>;
-    update(id: string, data: UpdateProductJson): Promise<void>;
-    delete(id: string): Promise<void>;
+  getAll(params: ProductListParams): Promise<ProductListResult>;
+  getById(id: string): Promise<ProductModel>;
+  create(data: CreateProductJson): Promise<{ id: string }>;
+  update(id: string, data: UpdateProductJson): Promise<void>;
+  delete(id: string): Promise<void>;
 }
 ```
 
@@ -320,49 +325,49 @@ export interface IProductService {
  * Matches exactly what the API returns/expects
  */
 export interface ProductJson {
-    id: string;
-    name: string;
-    description: string | null;
-    price: number;
-    stock: number;
-    category: string;
-    isActive: boolean;
-    createdAt: string;  // ISO string from API
-    updatedAt: string;
+  id: string;
+  name: string;
+  description: string | null;
+  price: number;
+  stock: number;
+  category: string;
+  isActive: boolean;
+  createdAt: string; // ISO string from API
+  updatedAt: string;
 }
 
 export class ProductModel {
-    readonly id: string;
-    readonly name: string;
-    readonly description: string | null;
-    readonly price: number;
-    readonly stock: number;
-    readonly category: string;
-    readonly isActive: boolean;
-    readonly createdAt: string;
-    readonly updatedAt: string;
+  readonly id: string;
+  readonly name: string;
+  readonly description: string | null;
+  readonly price: number;
+  readonly stock: number;
+  readonly category: string;
+  readonly isActive: boolean;
+  readonly createdAt: string;
+  readonly updatedAt: string;
 
-    constructor(json: ProductJson) {
-        Object.assign(this, json);
-    }
+  constructor(json: ProductJson) {
+    Object.assign(this, json);
+  }
 
-    static fromJson(json: ProductJson): ProductModel {
-        return new ProductModel(json);
-    }
+  static fromJson(json: ProductJson): ProductModel {
+    return new ProductModel(json);
+  }
 
-    toJson(): ProductJson {
-        return {
-            id: this.id,
-            name: this.name,
-            description: this.description,
-            price: this.price,
-            stock: this.stock,
-            category: this.category,
-            isActive: this.isActive,
-            createdAt: this.createdAt,
-            updatedAt: this.updatedAt,
-        };
-    }
+  toJson(): ProductJson {
+    return {
+      id: this.id,
+      name: this.name,
+      description: this.description,
+      price: this.price,
+      stock: this.stock,
+      category: this.category,
+      isActive: this.isActive,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt,
+    };
+  }
 }
 ```
 
@@ -372,7 +377,10 @@ export class ProductModel {
 
 ```typescript
 import { Product } from "../../domain/entities/Product";
-import type { CreateProductRequest, UpdateProductRequest } from "../../domain/entities/ProductRequests";
+import type {
+  CreateProductRequest,
+  UpdateProductRequest,
+} from "../../domain/entities/ProductRequests";
 import { ProductModel } from "../models/ProductModel";
 import type { CreateProductJson, UpdateProductJson } from "../../domain/interfaces/IProductService";
 
@@ -381,50 +389,50 @@ import type { CreateProductJson, UpdateProductJson } from "../../domain/interfac
  * Converts between Model (API) ↔ Entity (Domain)
  */
 export class ProductMapper {
-    /**
-     * Model → Entity (for reading from API)
-     */
-    static toEntity(model: ProductModel): Product {
-        return new Product({
-            id: model.id,
-            name: model.name,
-            description: model.description ?? undefined,
-            price: model.price,
-            stock: model.stock,
-            category: model.category,
-            isActive: model.isActive,
-            createdAt: new Date(model.createdAt),
-            updatedAt: new Date(model.updatedAt),
-        });
-    }
+  /**
+   * Model → Entity (for reading from API)
+   */
+  static toEntity(model: ProductModel): Product {
+    return new Product({
+      id: model.id,
+      name: model.name,
+      description: model.description ?? undefined,
+      price: model.price,
+      stock: model.stock,
+      category: model.category,
+      isActive: model.isActive,
+      createdAt: new Date(model.createdAt),
+      updatedAt: new Date(model.updatedAt),
+    });
+  }
 
-    static toEntityList(models: ProductModel[]): Product[] {
-        return models.map(this.toEntity);
-    }
+  static toEntityList(models: ProductModel[]): Product[] {
+    return models.map(this.toEntity);
+  }
 
-    /**
-     * Entity → Model (for writing to API)
-     */
-    static toCreateJson(request: CreateProductRequest): CreateProductJson {
-        return {
-            name: request.name,
-            description: request.description,
-            price: request.price,
-            stock: request.stock,
-            category: request.category,
-        };
-    }
+  /**
+   * Entity → Model (for writing to API)
+   */
+  static toCreateJson(request: CreateProductRequest): CreateProductJson {
+    return {
+      name: request.name,
+      description: request.description,
+      price: request.price,
+      stock: request.stock,
+      category: request.category,
+    };
+  }
 
-    static toUpdateJson(request: UpdateProductRequest): UpdateProductJson {
-        return {
-            name: request.name,
-            description: request.description,
-            price: request.price,
-            stock: request.stock,
-            category: request.category,
-            isActive: request.isActive,
-        };
-    }
+  static toUpdateJson(request: UpdateProductRequest): UpdateProductJson {
+    return {
+      name: request.name,
+      description: request.description,
+      price: request.price,
+      stock: request.stock,
+      category: request.category,
+      isActive: request.isActive,
+    };
+  }
 }
 ```
 
@@ -435,65 +443,63 @@ export class ProductMapper {
 ```typescript
 import type { IApiService } from "@core/interfaces/api.interface";
 import type {
-    IProductService,
-    ProductListParams,
-    ProductListResult,
-    CreateProductJson,
-    UpdateProductJson,
+  IProductService,
+  ProductListParams,
+  ProductListResult,
+  CreateProductJson,
+  UpdateProductJson,
 } from "../../domain/interfaces/IProductService";
 import { ProductModel, type ProductJson } from "../models/ProductModel";
 
 interface ProductListResponse {
-    items: ProductJson[];
-    totalCount: number;
-    page: number;
-    pageSize: number;
-    totalPages: number;
-    hasNextPage: boolean;
-    hasPreviousPage: boolean;
+  items: ProductJson[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
 }
 
 export class ProductService implements IProductService {
-    constructor(private readonly api: IApiService) {}
+  constructor(private readonly api: IApiService) {}
 
-    async getAll(params: ProductListParams): Promise<ProductListResult> {
-        const queryParams = new URLSearchParams();
-        if (params.page) queryParams.set("page", String(params.page));
-        if (params.pageSize) queryParams.set("pageSize", String(params.pageSize));
-        if (params.search) queryParams.set("search", params.search);
-        if (params.category) queryParams.set("category", params.category);
+  async getAll(params: ProductListParams): Promise<ProductListResult> {
+    const queryParams = new URLSearchParams();
+    if (params.page) queryParams.set("page", String(params.page));
+    if (params.pageSize) queryParams.set("pageSize", String(params.pageSize));
+    if (params.search) queryParams.set("search", params.search);
+    if (params.category) queryParams.set("category", params.category);
 
-        const response = await this.api.get<ProductListResponse>(
-            `/products?${queryParams.toString()}`
-        );
+    const response = await this.api.get<ProductListResponse>(`/products?${queryParams.toString()}`);
 
-        return {
-            items: response.items.map(ProductModel.fromJson),
-            totalCount: response.totalCount,
-            page: response.page,
-            pageSize: response.pageSize,
-            totalPages: response.totalPages,
-            hasNextPage: response.hasNextPage,
-            hasPreviousPage: response.hasPreviousPage,
-        };
-    }
+    return {
+      items: response.items.map(ProductModel.fromJson),
+      totalCount: response.totalCount,
+      page: response.page,
+      pageSize: response.pageSize,
+      totalPages: response.totalPages,
+      hasNextPage: response.hasNextPage,
+      hasPreviousPage: response.hasPreviousPage,
+    };
+  }
 
-    async getById(id: string): Promise<ProductModel> {
-        const json = await this.api.get<ProductJson>(`/products/${id}`);
-        return ProductModel.fromJson(json);
-    }
+  async getById(id: string): Promise<ProductModel> {
+    const json = await this.api.get<ProductJson>(`/products/${id}`);
+    return ProductModel.fromJson(json);
+  }
 
-    async create(data: CreateProductJson): Promise<{ id: string }> {
-        return this.api.post<{ id: string }>("/products", data);
-    }
+  async create(data: CreateProductJson): Promise<{ id: string }> {
+    return this.api.post<{ id: string }>("/products", data);
+  }
 
-    async update(id: string, data: UpdateProductJson): Promise<void> {
-        await this.api.put(`/products/${id}`, data);
-    }
+  async update(id: string, data: UpdateProductJson): Promise<void> {
+    await this.api.put(`/products/${id}`, data);
+  }
 
-    async delete(id: string): Promise<void> {
-        await this.api.delete(`/products/${id}`);
-    }
+  async delete(id: string): Promise<void> {
+    await this.api.delete(`/products/${id}`);
+  }
 }
 ```
 
@@ -503,51 +509,54 @@ export class ProductService implements IProductService {
 
 ```typescript
 import type {
-    IProductRepository,
-    ProductListParams,
-    PagedResult,
+  IProductRepository,
+  ProductListParams,
+  PagedResult,
 } from "../../domain/interfaces/IProductRepository";
 import type { IProductService } from "../../domain/interfaces/IProductService";
 import { Product } from "../../domain/entities/Product";
-import type { CreateProductRequest, UpdateProductRequest } from "../../domain/entities/ProductRequests";
+import type {
+  CreateProductRequest,
+  UpdateProductRequest,
+} from "../../domain/entities/ProductRequests";
 import { ProductMapper } from "../mappers/ProductMapper";
 
 export class ProductRepository implements IProductRepository {
-    constructor(private readonly service: IProductService) {}
+  constructor(private readonly service: IProductService) {}
 
-    async getAll(params: ProductListParams): Promise<PagedResult<Product>> {
-        const result = await this.service.getAll(params);
+  async getAll(params: ProductListParams): Promise<PagedResult<Product>> {
+    const result = await this.service.getAll(params);
 
-        return {
-            items: ProductMapper.toEntityList(result.items),
-            totalCount: result.totalCount,
-            page: result.page,
-            pageSize: result.pageSize,
-            totalPages: result.totalPages,
-            hasNextPage: result.hasNextPage,
-            hasPreviousPage: result.hasPreviousPage,
-        };
-    }
+    return {
+      items: ProductMapper.toEntityList(result.items),
+      totalCount: result.totalCount,
+      page: result.page,
+      pageSize: result.pageSize,
+      totalPages: result.totalPages,
+      hasNextPage: result.hasNextPage,
+      hasPreviousPage: result.hasPreviousPage,
+    };
+  }
 
-    async getById(id: string): Promise<Product> {
-        const model = await this.service.getById(id);
-        return ProductMapper.toEntity(model);
-    }
+  async getById(id: string): Promise<Product> {
+    const model = await this.service.getById(id);
+    return ProductMapper.toEntity(model);
+  }
 
-    async create(request: CreateProductRequest): Promise<string> {
-        const json = ProductMapper.toCreateJson(request);
-        const response = await this.service.create(json);
-        return response.id;
-    }
+  async create(request: CreateProductRequest): Promise<string> {
+    const json = ProductMapper.toCreateJson(request);
+    const response = await this.service.create(json);
+    return response.id;
+  }
 
-    async update(id: string, request: UpdateProductRequest): Promise<void> {
-        const json = ProductMapper.toUpdateJson(request);
-        await this.service.update(id, json);
-    }
+  async update(id: string, request: UpdateProductRequest): Promise<void> {
+    const json = ProductMapper.toUpdateJson(request);
+    await this.service.update(id, json);
+  }
 
-    async delete(id: string): Promise<void> {
-        await this.service.delete(id);
-    }
+  async delete(id: string): Promise<void> {
+    await this.service.delete(id);
+  }
 }
 ```
 
@@ -563,34 +572,34 @@ import { ProductService } from "./src/data/services/ProductService";
 import { ProductRepository } from "./src/data/repositories/ProductRepository";
 
 export interface ProductsContainer {
-    productService: IProductService;
-    productRepository: IProductRepository;
+  productService: IProductService;
+  productRepository: IProductRepository;
 }
 
 let _container: ProductsContainer | null = null;
 
 export function getProductsContainer(): ProductsContainer {
-    if (!_container) {
-        const { apiService } = getCoreContainer();
+  if (!_container) {
+    const { apiService } = getCoreContainer();
 
-        // 1. Create Service (uses IApiService)
-        const productService = new ProductService(apiService);
+    // 1. Create Service (uses IApiService)
+    const productService = new ProductService(apiService);
 
-        // 2. Create Repository (uses Service)
-        _container = {
-            productService,
-            productRepository: new ProductRepository(productService),
-        };
-    }
-    return _container;
+    // 2. Create Repository (uses Service)
+    _container = {
+      productService,
+      productRepository: new ProductRepository(productService),
+    };
+  }
+  return _container;
 }
 
 // Convenient accessor
 export const productsContainer = {
-    get productRepository() {
-        return getProductsContainer().productRepository;
-    },
-    // Note: productService is NOT exposed - only Repository is public
+  get productRepository() {
+    return getProductsContainer().productRepository;
+  },
+  // Note: productService is NOT exposed - only Repository is public
 };
 ```
 
@@ -607,57 +616,57 @@ import type { CreateProductRequest } from "../../src/domain/entities/ProductRequ
 
 // Query keys
 export const productKeys = {
-    all: ["products"] as const,
-    list: (params: { page: number; search?: string }) =>
-        [...productKeys.all, "list", params] as const,
-    detail: (id: string) => [...productKeys.all, "detail", id] as const,
+  all: ["products"] as const,
+  list: (params: { page: number; search?: string }) =>
+    [...productKeys.all, "list", params] as const,
+  detail: (id: string) => [...productKeys.all, "detail", id] as const,
 };
 
 export function useProductsViewModel(params: { page: number; search?: string }) {
-    const queryClient = useQueryClient();
-    const repo = productsContainer.productRepository; // ← From DI, NOT new ProductRepository()
+  const queryClient = useQueryClient();
+  const repo = productsContainer.productRepository; // ← From DI, NOT new ProductRepository()
 
-    // Fetch products
-    const query = useQuery({
-        queryKey: productKeys.list(params),
-        queryFn: () => repo.getAll({ ...params, pageSize: 10 }),
-    });
+  // Fetch products
+  const query = useQuery({
+    queryKey: productKeys.list(params),
+    queryFn: () => repo.getAll({ ...params, pageSize: 10 }),
+  });
 
-    // Create product
-    const createMutation = useMutation({
-        mutationFn: (request: CreateProductRequest) => repo.create(request),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: productKeys.all });
-        },
-    });
+  // Create product
+  const createMutation = useMutation({
+    mutationFn: (request: CreateProductRequest) => repo.create(request),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: productKeys.all });
+    },
+  });
 
-    // Delete product
-    const deleteMutation = useMutation({
-        mutationFn: (id: string) => repo.delete(id),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: productKeys.all });
-        },
-    });
+  // Delete product
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => repo.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: productKeys.all });
+    },
+  });
 
-    return {
-        // Data
-        products: query.data?.items ?? [],
-        pagination: query.data
-            ? {
-                  page: query.data.page,
-                  totalPages: query.data.totalPages,
-                  totalCount: query.data.totalCount,
-              }
-            : null,
-        isLoading: query.isLoading,
-        error: query.error,
+  return {
+    // Data
+    products: query.data?.items ?? [],
+    pagination: query.data
+      ? {
+          page: query.data.page,
+          totalPages: query.data.totalPages,
+          totalCount: query.data.totalCount,
+        }
+      : null,
+    isLoading: query.isLoading,
+    error: query.error,
 
-        // Actions
-        createProduct: createMutation.mutate,
-        deleteProduct: deleteMutation.mutate,
-        isCreating: createMutation.isPending,
-        isDeleting: deleteMutation.isPending,
-    };
+    // Actions
+    createProduct: createMutation.mutate,
+    deleteProduct: deleteMutation.mutate,
+    isCreating: createMutation.isPending,
+    isDeleting: deleteMutation.isPending,
+  };
 }
 ```
 
@@ -725,13 +734,13 @@ export function ProductsView() {
 
 ## Summary: Who Calls Who
 
-| Layer | Calls | Via |
-|-------|-------|-----|
-| View | ViewModel | React hooks |
-| ViewModel | Repository | DI container |
-| Repository | Service | Constructor injection |
-| Service | IApiService | Constructor injection |
-| Mapper | Nothing | Pure functions |
+| Layer      | Calls       | Via                   |
+| ---------- | ----------- | --------------------- |
+| View       | ViewModel   | React hooks           |
+| ViewModel  | Repository  | DI container          |
+| Repository | Service     | Constructor injection |
+| Service    | IApiService | Constructor injection |
+| Mapper     | Nothing     | Pure functions        |
 
 ---
 

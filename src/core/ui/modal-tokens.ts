@@ -7,5 +7,3 @@ export const OVERLAY_BACKDROP_BLUR_PX = 16; // CSS backdrop-filter blur
 export const OVERLAY_BACKDROP_BRIGHTNESS = 0.6; // brightness multiplier
 export const PAGE_BLUR_PX = 16; // page-level fallback blur
 export const PAGE_BLUR_BRIGHTNESS = 0.7; // page blur brightness
-
-

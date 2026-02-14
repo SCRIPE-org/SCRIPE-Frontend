@@ -10,17 +10,8 @@ import { useDynamicNavigation } from "@core/ui/navigation/dynamic-navigation";
 import { cn } from "@core/common/utils";
 import { Button } from "@core/ui/button";
 import { ScrollArea } from "@core/ui/scroll-area";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@core/ui/tooltip";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@core/ui/collapsible";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@core/ui/tooltip";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@core/ui/collapsible";
 import { Logo } from "@core/ui/logo";
 import { useSettings } from "@core/providers/settings-provider";
 import type { NavigationItem } from "@core/config/navigation";
@@ -54,23 +45,15 @@ export function NavigationMainSidebar({
   const { direction, t } = useI18n();
   const pathname = usePathname();
   const navigation = useDynamicNavigation();
-  const {
-    colorTheme,
-    cardStyle,
-    animationLevel,
-    borderRadius,
-    navigationStyle,
-    iconStyle,
-  } = useSettings();
+  const { colorTheme, cardStyle, animationLevel, borderRadius, navigationStyle, iconStyle } =
+    useSettings();
 
   // ── Mobile collapsible tree state ──
   const [mobileExpandedItems, setMobileExpandedItems] = useState<string[]>([]);
 
   const toggleMobileExpanded = (name: string) => {
     setMobileExpandedItems((prev) =>
-      prev.includes(name)
-        ? prev.filter((n) => n !== name)
-        : [...prev, name]
+      prev.includes(name) ? prev.filter((n) => n !== name) : [...prev, name]
     );
   };
 
@@ -149,8 +132,8 @@ export function NavigationMainSidebar({
                 getMainItemClasses(isCurrentlyFocused, styleConfig),
                 getBorderRadiusClass(borderRadius),
                 getAnimationClass(animationLevel, "main"),
-                item.disabled && "opacity-50 cursor-not-allowed",
-                itemOpacity,
+                item.disabled && "cursor-not-allowed opacity-50",
+                itemOpacity
               )}
               onClick={() => handleItemClick(item)}
               disabled={item.disabled}
@@ -158,16 +141,16 @@ export function NavigationMainSidebar({
               {item.icon ? (
                 <item.icon className={getIconClasses(iconStyle)} />
               ) : (
-                <div className="w-3 h-3 rounded-full bg-white" />
+                <div className="h-3 w-3 rounded-full bg-white" />
               )}
 
               {/* Active indicator bar — only for non-sidebar navigation styles */}
               {itemIsHighlighted && navigationStyle !== "sidebar" && (
                 <div
                   className={cn(
-                    "absolute w-1 h-8 rounded-full",
+                    "absolute h-8 w-1 rounded-full",
                     direction === "rtl" ? "left-0" : "right-0",
-                    getIndicatorColor(colorTheme),
+                    getIndicatorColor(colorTheme)
                   )}
                 />
               )}
@@ -175,7 +158,7 @@ export function NavigationMainSidebar({
           </TooltipTrigger>
           <TooltipContent
             side={direction === "rtl" ? "left" : "right"}
-            className="bg-popover border-border"
+            className="border-border bg-popover"
           >
             <div className="flex flex-col gap-1">
               <span className="font-medium">{displayName}</span>
@@ -221,25 +204,25 @@ export function NavigationMainSidebar({
             <Button
               variant="ghost"
               className={cn(
-                "w-full justify-start gap-3 h-10",
+                "h-10 w-full justify-start gap-3",
                 isRTL && "flex-row-reverse",
                 hasActivChild
-                  ? "bg-primary/10 text-primary font-medium"
+                  ? "bg-primary/10 font-medium text-primary"
                   : "text-sidebar-foreground/80 hover:bg-accent hover:text-accent-foreground",
-                getBorderRadiusClass(borderRadius),
+                getBorderRadiusClass(borderRadius)
               )}
               style={indentStyle}
             >
               {item.icon ? (
-                <item.icon className="w-4 h-4 flex-shrink-0" />
+                <item.icon className="h-4 w-4 flex-shrink-0" />
               ) : (
-                <div className="w-2 h-2 rounded-full bg-primary flex-shrink-0" />
+                <div className="h-2 w-2 flex-shrink-0 rounded-full bg-primary" />
               )}
-              <span className="flex-1 text-sm truncate text-start">{displayName}</span>
+              <span className="flex-1 truncate text-start text-sm">{displayName}</span>
               {isExpanded ? (
-                <ChevronDown className="w-3.5 h-3.5 opacity-60 flex-shrink-0" />
+                <ChevronDown className="h-3.5 w-3.5 flex-shrink-0 opacity-60" />
               ) : (
-                <CollapsedChevron className="w-3.5 h-3.5 opacity-60 flex-shrink-0" />
+                <CollapsedChevron className="h-3.5 w-3.5 flex-shrink-0 opacity-60" />
               )}
             </Button>
           </CollapsibleTrigger>
@@ -248,21 +231,17 @@ export function NavigationMainSidebar({
             <div
               className="relative"
               style={
-                isRTL
-                  ? { marginRight: `${20 + indent}px` }
-                  : { marginLeft: `${20 + indent}px` }
+                isRTL ? { marginRight: `${20 + indent}px` } : { marginLeft: `${20 + indent}px` }
               }
             >
               <div
                 className={cn(
-                  "absolute top-0 bottom-0 w-px bg-border/60",
-                  isRTL ? "right-0" : "left-0",
+                  "absolute bottom-0 top-0 w-px bg-border/60",
+                  isRTL ? "right-0" : "left-0"
                 )}
               />
               <div className="space-y-0.5 py-1">
-                {item.children!.map((child) =>
-                  renderMobileNavItem(child, level + 1)
-                )}
+                {item.children!.map((child) => renderMobileNavItem(child, level + 1))}
               </div>
             </div>
           </CollapsibleContent>
@@ -277,13 +256,13 @@ export function NavigationMainSidebar({
         variant="ghost"
         asChild
         className={cn(
-          "w-full justify-start gap-3 h-9",
+          "h-9 w-full justify-start gap-3",
           isRTL && "flex-row-reverse",
           active
-            ? "bg-primary text-primary-foreground font-medium shadow-sm"
+            ? "bg-primary font-medium text-primary-foreground shadow-sm"
             : "text-sidebar-foreground/70 hover:bg-accent hover:text-accent-foreground",
           getBorderRadiusClass(borderRadius),
-          item.disabled && "opacity-50 cursor-not-allowed",
+          item.disabled && "cursor-not-allowed opacity-50"
         )}
         style={indentStyle}
         disabled={item.disabled}
@@ -291,22 +270,19 @@ export function NavigationMainSidebar({
         <Link
           href={item.href || "#"}
           onClick={() => onOpenChange(false)}
-          className={cn(
-            "flex items-center w-full gap-3",
-            isRTL && "flex-row-reverse",
-          )}
+          className={cn("flex w-full items-center gap-3", isRTL && "flex-row-reverse")}
         >
           {item.icon ? (
-            <item.icon className="w-4 h-4 flex-shrink-0" />
+            <item.icon className="h-4 w-4 flex-shrink-0" />
           ) : (
             <div
               className={cn(
-                "rounded-full flex-shrink-0",
-                active ? "w-2 h-2 bg-current" : "w-1.5 h-1.5 bg-muted-foreground/50",
+                "flex-shrink-0 rounded-full",
+                active ? "h-2 w-2 bg-current" : "h-1.5 w-1.5 bg-muted-foreground/50"
               )}
             />
           )}
-          <span className="text-sm truncate">{displayName}</span>
+          <span className="truncate text-sm">{displayName}</span>
         </Link>
       </Button>
     );
@@ -317,12 +293,12 @@ export function NavigationMainSidebar({
       {/* Desktop Sidebar */}
       <aside
         className={cn(
-          "navigation-main-sidebar fixed inset-y-0 z-50 w-24 transform transition-all duration-300 ease-in-out hidden lg:flex flex-col",
-          getSidebarBgClass(cardStyle, direction),
+          "navigation-main-sidebar fixed inset-y-0 z-50 hidden w-24 transform flex-col transition-all duration-300 ease-in-out lg:flex",
+          getSidebarBgClass(cardStyle, direction)
         )}
       >
         {/* Logo */}
-        <div className="flex items-center justify-center h-16 border-b border-border/50">
+        <div className="flex h-16 items-center justify-center border-b border-border/50">
           <Logo size="sm" />
         </div>
 
@@ -339,15 +315,11 @@ export function NavigationMainSidebar({
         className={cn(
           "navigation-main-sidebar fixed inset-y-0 z-50 w-72 transform transition-all duration-300 ease-in-out lg:hidden",
           getSidebarBgClass(cardStyle, direction),
-          open
-            ? "translate-x-0"
-            : direction === "rtl"
-              ? "translate-x-full"
-              : "-translate-x-full",
+          open ? "translate-x-0" : direction === "rtl" ? "translate-x-full" : "-translate-x-full"
         )}
       >
         {/* Mobile Header */}
-        <div className="flex items-center justify-between h-16 px-4 border-b border-border/50">
+        <div className="flex h-16 items-center justify-between border-b border-border/50 px-4">
           <Logo size="sm" />
           <Button
             variant="ghost"

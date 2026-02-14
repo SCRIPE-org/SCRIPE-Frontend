@@ -1,6 +1,6 @@
 /**
  * Console Logger Utility
- * 
+ *
  * Provides environment-aware logging that automatically removes logs in production
  * while maintaining development debugging capabilities.
  */
@@ -23,15 +23,15 @@ class Logger {
 
   constructor(config: Partial<LoggerConfig> = {}) {
     this.config = {
-      level: process.env.NODE_ENV === 'development' ? LogLevel.DEBUG : LogLevel.WARN,
+      level: process.env.NODE_ENV === "development" ? LogLevel.DEBUG : LogLevel.WARN,
       enableInProduction: false,
-      prefix: '[App]',
+      prefix: "[App]",
       ...config,
     };
   }
 
   private shouldLog(level: LogLevel): boolean {
-    if (process.env.NODE_ENV === 'production' && !this.config.enableInProduction) {
+    if (process.env.NODE_ENV === "production" && !this.config.enableInProduction) {
       return false;
     }
     return level >= this.config.level;
@@ -39,31 +39,31 @@ class Logger {
 
   private formatMessage(level: string, message: string, ...args: any[]): [string, ...any[]] {
     const timestamp = new Date().toISOString();
-    const prefix = this.config.prefix ? `${this.config.prefix} ` : '';
+    const prefix = this.config.prefix ? `${this.config.prefix} ` : "";
     return [`${prefix}[${timestamp}] ${level}: ${message}`, ...args];
   }
 
   debug(message: string, ...args: any[]): void {
     if (this.shouldLog(LogLevel.DEBUG)) {
-      console.debug(...this.formatMessage('DEBUG', message, ...args));
+      console.debug(...this.formatMessage("DEBUG", message, ...args));
     }
   }
 
   info(message: string, ...args: any[]): void {
     if (this.shouldLog(LogLevel.INFO)) {
-      console.info(...this.formatMessage('INFO', message, ...args));
+      console.info(...this.formatMessage("INFO", message, ...args));
     }
   }
 
   warn(message: string, ...args: any[]): void {
     if (this.shouldLog(LogLevel.WARN)) {
-      console.warn(...this.formatMessage('WARN', message, ...args));
+      console.warn(...this.formatMessage("WARN", message, ...args));
     }
   }
 
   error(message: string, ...args: any[]): void {
     if (this.shouldLog(LogLevel.ERROR)) {
-      console.error(...this.formatMessage('ERROR', message, ...args));
+      console.error(...this.formatMessage("ERROR", message, ...args));
     }
   }
 
@@ -87,9 +87,9 @@ class Logger {
 
 // Global logger instance
 export const logger = new Logger({
-  level: process.env.NODE_ENV === 'development' ? LogLevel.DEBUG : LogLevel.WARN,
+  level: process.env.NODE_ENV === "development" ? LogLevel.DEBUG : LogLevel.WARN,
   enableInProduction: false,
-  prefix: '[Next-Frontend-Template]',
+  prefix: "[Next-Frontend-Template]",
 });
 
 // Convenience exports
@@ -108,4 +108,4 @@ export const noopLogger = {
 };
 
 // Export appropriate logger based on environment
-export const appLogger = process.env.NODE_ENV === 'production' ? noopLogger : logger;
+export const appLogger = process.env.NODE_ENV === "production" ? noopLogger : logger;

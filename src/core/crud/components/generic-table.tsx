@@ -41,14 +41,7 @@
 
 import type React from "react";
 import { useState, useEffect, useRef } from "react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@core/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@core/ui/table";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Checkbox } from "@core/ui/checkbox";
@@ -233,9 +226,7 @@ export function GenericTable<T extends Record<string, any>>({
       const tableContainer = tableRef.current;
       if (!tableContainer) return;
 
-      const scrollableElement = tableContainer.querySelector(
-        ".overflow-x-auto"
-      ) as HTMLElement;
+      const scrollableElement = tableContainer.querySelector(".overflow-x-auto") as HTMLElement;
       if (!scrollableElement) return;
 
       const { scrollLeft, scrollWidth, clientWidth } = scrollableElement;
@@ -250,9 +241,7 @@ export function GenericTable<T extends Record<string, any>>({
     const tableContainer = tableRef.current;
     if (!tableContainer) return;
 
-    const scrollableElement = tableContainer.querySelector(
-      ".overflow-x-auto"
-    ) as HTMLElement;
+    const scrollableElement = tableContainer.querySelector(".overflow-x-auto") as HTMLElement;
     if (!scrollableElement) return;
 
     // Initial check
@@ -278,12 +267,12 @@ export function GenericTable<T extends Record<string, any>>({
   };
 
   const filteredData = onSearch
-    ? (data || [])
+    ? data || []
     : (data || []).filter((item) =>
-      Object.values(item).some((value) =>
-        String(value).toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    );
+        Object.values(item).some((value) =>
+          String(value).toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      );
 
   const sortedData = [...filteredData].sort((a, b) => {
     if (!sortColumn) return 0;
@@ -349,10 +338,7 @@ export function GenericTable<T extends Record<string, any>>({
           "before:absolute before:inset-0 before:bg-[conic-gradient(from_0deg,transparent_0%,hsl(var(--primary)/0.1)_25%,hsl(var(--primary)/0.15)_50%,hsl(var(--primary)/0.1)_75%,transparent_100%)] before:animate-spin before:pointer-events-none"
         );
       case "minimal":
-        return cn(
-          "bg-background/90 backdrop-blur-sm border-border/50",
-          "shadow-sm"
-        );
+        return cn("bg-background/90 backdrop-blur-sm border-border/50", "shadow-sm");
       case "striped":
       case "bordered":
       case "default":
@@ -367,12 +353,8 @@ export function GenericTable<T extends Record<string, any>>({
   // Get table style classes based on settings or override
   const getTableContainerClasses = () => {
     const hasHoverEffect =
-      settings.hoverEffectType !== "none" &&
-      settings.hoverEffectIntensity !== "none";
-    const baseClasses = cn(
-      "overflow-visible",
-      hasHoverEffect && "transition-all duration-300"
-    );
+      settings.hoverEffectType !== "none" && settings.hoverEffectIntensity !== "none";
+    const baseClasses = cn("overflow-visible", hasHoverEffect && "transition-all duration-300");
     const currentStyle = overrideTableStyle || settings.tableStyle;
 
     switch (currentStyle) {
@@ -463,7 +445,8 @@ export function GenericTable<T extends Record<string, any>>({
     // Get hover classes for tables - shadows only, no transforms
     // ALWAYS apply shadows based on global settings, or use default if none
     const effectType = settings.hoverEffectType === "none" ? "elevate" : settings.hoverEffectType;
-    const intensity = settings.hoverEffectIntensity === "none" ? "medium" : settings.hoverEffectIntensity;
+    const intensity =
+      settings.hoverEffectIntensity === "none" ? "medium" : settings.hoverEffectIntensity;
     const hoverClasses = getTableHoverEffectClasses(effectType, intensity);
     const currentStyle = overrideTableStyle || settings.tableStyle;
 
@@ -502,7 +485,7 @@ export function GenericTable<T extends Record<string, any>>({
         styleClasses = cn(
           "border-b-2 border-border/50 bg-background",
           index % 2 === 0 &&
-          "shadow-[inset_2px_2px_4px_rgba(0,0,0,0.05),inset_-2px_-2px_4px_rgba(255,255,255,0.05)]"
+            "shadow-[inset_2px_2px_4px_rgba(0,0,0,0.05),inset_-2px_-2px_4px_rgba(255,255,255,0.05)]"
         );
         break;
       case "cyberpunk":
@@ -517,7 +500,7 @@ export function GenericTable<T extends Record<string, any>>({
           "border-b border-amber-200/20 bg-gradient-to-r from-amber-50/20 to-transparent",
           "dark:border-amber-400/20 dark:from-amber-900/10",
           index % 2 === 0 &&
-          "from-amber-100/30 to-amber-50/10 dark:from-amber-900/20 dark:to-amber-800/10"
+            "from-amber-100/30 to-amber-50/10 dark:from-amber-900/20 dark:to-amber-800/10"
         );
         break;
       case "matrix":
@@ -534,7 +517,7 @@ export function GenericTable<T extends Record<string, any>>({
           "text-primary",
           "dark:from-primary/10 dark:via-primary/5 dark:to-primary/15 dark:text-primary dark:border-primary/20",
           index % 2 === 0 &&
-          "from-primary/15 via-primary/10 to-primary/20 dark:from-primary/15 dark:via-primary/10 dark:to-primary/20"
+            "from-primary/15 via-primary/10 to-primary/20 dark:from-primary/15 dark:via-primary/10 dark:to-primary/20"
         );
         break;
       default:
@@ -545,8 +528,7 @@ export function GenericTable<T extends Record<string, any>>({
     // Table row hover effects should override everything
     switch (currentStyle) {
       case "striped":
-        styleClasses +=
-          index % 2 === 0 ? " hover:bg-muted/50" : " hover:bg-muted/30";
+        styleClasses += index % 2 === 0 ? " hover:bg-muted/50" : " hover:bg-muted/30";
         break;
       case "bordered":
         styleClasses += " hover:bg-muted/30";
@@ -581,8 +563,7 @@ export function GenericTable<T extends Record<string, any>>({
         styleClasses += " hover:bg-primary/10 hover:border-primary/50";
         break;
       case "diamond":
-        styleClasses +=
-          " hover:from-primary/20 hover:via-primary/15 hover:to-primary/25";
+        styleClasses += " hover:from-primary/20 hover:via-primary/15 hover:to-primary/25";
         break;
       default:
         styleClasses += " hover:bg-muted/30";
@@ -631,8 +612,7 @@ export function GenericTable<T extends Record<string, any>>({
 
   const getHeaderClasses = () => {
     const hasHoverEffect =
-      settings.hoverEffectType !== "none" &&
-      settings.hoverEffectIntensity !== "none";
+      settings.hoverEffectType !== "none" && settings.hoverEffectIntensity !== "none";
     const baseClasses = cn(
       "font-semibold text-foreground",
       hasHoverEffect && "transition-all duration-300"
@@ -676,8 +656,7 @@ export function GenericTable<T extends Record<string, any>>({
           "bg-background border-b-2 border-primary/50 text-primary font-bold",
           "dark:bg-black/95",
           "shadow-[0_0_15px_rgba(var(--primary),0.3)]",
-          hasHoverEffect &&
-          "hover:border-primary hover:shadow-[0_0_25px_rgba(var(--primary),0.4)]"
+          hasHoverEffect && "hover:border-primary hover:shadow-[0_0_25px_rgba(var(--primary),0.4)]"
         );
       case "gradient":
         return cn(
@@ -685,8 +664,7 @@ export function GenericTable<T extends Record<string, any>>({
           heightClass,
           "bg-gradient-to-r from-primary/30 via-primary/20 to-primary/30 border-b border-primary/30",
           "text-foreground font-bold shadow-lg",
-          hasHoverEffect &&
-          "hover:from-primary/40 hover:via-primary/30 hover:to-primary/40"
+          hasHoverEffect && "hover:from-primary/40 hover:via-primary/30 hover:to-primary/40"
         );
       case "neumorphism":
         return cn(
@@ -696,7 +674,7 @@ export function GenericTable<T extends Record<string, any>>({
           "shadow-[8px_8px_16px_rgba(0,0,0,0.1),-8px_-8px_16px_rgba(255,255,255,0.1)]",
           "dark:shadow-[8px_8px_16px_rgba(0,0,0,0.2),-8px_-8px_16px_rgba(255,255,255,0.05)]",
           hasHoverEffect &&
-          "hover:shadow-[12px_12px_24px_rgba(0,0,0,0.15),-12px_-12px_24px_rgba(255,255,255,0.15)]"
+            "hover:shadow-[12px_12px_24px_rgba(0,0,0,0.15),-12px_-12px_24px_rgba(255,255,255,0.15)]"
         );
       case "cyberpunk":
         return cn(
@@ -705,8 +683,7 @@ export function GenericTable<T extends Record<string, any>>({
           "bg-background border-b-2 border-primary/60 text-primary font-bold",
           "dark:bg-black/95",
           "shadow-[0_0_20px_rgba(var(--primary),0.4)]",
-          hasHoverEffect &&
-          "hover:border-primary hover:shadow-[0_0_30px_rgba(var(--primary),0.5)]"
+          hasHoverEffect && "hover:border-primary hover:shadow-[0_0_30px_rgba(var(--primary),0.5)]"
         );
       case "luxury":
         return cn(
@@ -715,10 +692,9 @@ export function GenericTable<T extends Record<string, any>>({
           "bg-gradient-to-r from-amber-100/50 via-amber-50/30 to-amber-100/50 border-b border-amber-300/40",
           "dark:from-amber-900/30 dark:via-amber-800/20 dark:to-amber-900/30 dark:border-amber-400/30",
           "text-amber-900 dark:text-amber-100 font-bold shadow-lg shadow-amber-200/20",
+          hasHoverEffect && "hover:from-amber-200/60 hover:via-amber-100/40 hover:to-amber-200/60",
           hasHoverEffect &&
-          "hover:from-amber-200/60 hover:via-amber-100/40 hover:to-amber-200/60",
-          hasHoverEffect &&
-          "dark:hover:from-amber-800/40 dark:hover:via-amber-700/30 dark:hover:to-amber-800/40"
+            "dark:hover:from-amber-800/40 dark:hover:via-amber-700/30 dark:hover:to-amber-800/40"
         );
       case "matrix":
         return cn(
@@ -757,8 +733,7 @@ export function GenericTable<T extends Record<string, any>>({
 
   const getCardClasses = () => {
     const hasHoverEffect =
-      settings.hoverEffectType !== "none" &&
-      settings.hoverEffectIntensity !== "none";
+      settings.hoverEffectType !== "none" && settings.hoverEffectIntensity !== "none";
     const baseClasses = cn(
       "border rounded-lg p-4 space-y-3",
       hasHoverEffect && "transition-all duration-300"
@@ -777,8 +752,8 @@ export function GenericTable<T extends Record<string, any>>({
           "bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl",
           "dark:bg-black/20 dark:border-white/10",
           settings.hoverEffectType !== "none" &&
-          settings.hoverEffectIntensity !== "none" &&
-          "hover:bg-white/15 dark:hover:bg-black/30 hover:shadow-3xl"
+            settings.hoverEffectIntensity !== "none" &&
+            "hover:bg-white/15 dark:hover:bg-black/30 hover:shadow-3xl"
         );
       case "neon":
         return cn(
@@ -787,8 +762,8 @@ export function GenericTable<T extends Record<string, any>>({
           "bg-background border-2 border-primary/30 shadow-[0_0_20px_rgba(var(--primary),0.3)] rounded-xl",
           "dark:bg-black/95",
           settings.hoverEffectType !== "none" &&
-          settings.hoverEffectIntensity !== "none" &&
-          "hover:border-primary/50 hover:shadow-[0_0_30px_rgba(var(--primary),0.5)] hover:bg-primary/5"
+            settings.hoverEffectIntensity !== "none" &&
+            "hover:border-primary/50 hover:shadow-[0_0_30px_rgba(var(--primary),0.5)] hover:bg-primary/5"
         );
       case "gradient":
         return cn(
@@ -796,8 +771,8 @@ export function GenericTable<T extends Record<string, any>>({
           hoverClasses,
           "bg-gradient-to-br from-primary/20 via-background to-primary/10 border-0 shadow-2xl rounded-2xl",
           settings.hoverEffectType !== "none" &&
-          settings.hoverEffectIntensity !== "none" &&
-          "hover:from-primary/30 hover:via-background hover:to-primary/20 hover:shadow-3xl"
+            settings.hoverEffectIntensity !== "none" &&
+            "hover:from-primary/30 hover:via-background hover:to-primary/20 hover:shadow-3xl"
         );
       case "neumorphism":
         return cn(
@@ -807,8 +782,8 @@ export function GenericTable<T extends Record<string, any>>({
           "shadow-[15px_15px_30px_rgba(0,0,0,0.1),-15px_-15px_30px_rgba(255,255,255,0.1)]",
           "dark:shadow-[15px_15px_30px_rgba(0,0,0,0.3),-15px_-15px_30px_rgba(255,255,255,0.05)]",
           settings.hoverEffectType !== "none" &&
-          settings.hoverEffectIntensity !== "none" &&
-          "hover:shadow-[20px_20px_40px_rgba(0,0,0,0.15),-20px_-20px_40px_rgba(255,255,255,0.15)]"
+            settings.hoverEffectIntensity !== "none" &&
+            "hover:shadow-[20px_20px_40px_rgba(0,0,0,0.15),-20px_-20px_40px_rgba(255,255,255,0.15)]"
         );
       case "cyberpunk":
         return cn(
@@ -819,8 +794,8 @@ export function GenericTable<T extends Record<string, any>>({
           "before:absolute before:top-0 before:left-0 before:h-0.5 before:w-full before:bg-gradient-to-r before:from-transparent before:via-primary before:to-transparent",
           "relative",
           settings.hoverEffectType !== "none" &&
-          settings.hoverEffectIntensity !== "none" &&
-          "hover:bg-primary/10 hover:shadow-[0_0_40px_rgba(var(--primary),0.6)]"
+            settings.hoverEffectIntensity !== "none" &&
+            "hover:bg-primary/10 hover:shadow-[0_0_40px_rgba(var(--primary),0.6)]"
         );
       case "luxury":
         return cn(
@@ -829,8 +804,8 @@ export function GenericTable<T extends Record<string, any>>({
           "bg-gradient-to-br from-amber-50/50 to-amber-100/30 border border-amber-200/30 shadow-2xl rounded-2xl",
           "dark:from-amber-900/20 dark:to-amber-800/10 dark:border-amber-400/20",
           settings.hoverEffectType !== "none" &&
-          settings.hoverEffectIntensity !== "none" &&
-          "hover:from-amber-100/60 hover:to-amber-50/40 hover:shadow-3xl hover:shadow-amber-200/30",
+            settings.hoverEffectIntensity !== "none" &&
+            "hover:from-amber-100/60 hover:to-amber-50/40 hover:shadow-3xl hover:shadow-amber-200/30",
           "dark:hover:from-amber-800/30 dark:hover:to-amber-700/20"
         );
       case "matrix":
@@ -840,8 +815,8 @@ export function GenericTable<T extends Record<string, any>>({
           "bg-background border-2 border-green-400/40 shadow-[0_0_20px_rgba(34,197,94,0.4)] rounded-lg",
           "dark:bg-black/98 dark:border-green-400/50",
           settings.hoverEffectType !== "none" &&
-          settings.hoverEffectIntensity !== "none" &&
-          "hover:border-green-400/60 hover:shadow-[0_0_30px_rgba(34,197,94,0.6)] hover:bg-green-400/5"
+            settings.hoverEffectIntensity !== "none" &&
+            "hover:border-green-400/60 hover:shadow-[0_0_30px_rgba(34,197,94,0.6)] hover:bg-green-400/5"
         );
       case "diamond":
         return cn(
@@ -850,8 +825,8 @@ export function GenericTable<T extends Record<string, any>>({
           "bg-gradient-to-br from-violet-50/40 via-pink-50/30 to-blue-50/40 border-2 border-violet-300/50 shadow-[0_0_25px_rgba(139,92,246,0.4)] rounded-2xl",
           "dark:from-violet-900/30 dark:via-pink-900/20 dark:to-blue-900/30 dark:border-violet-400/40",
           settings.hoverEffectType !== "none" &&
-          settings.hoverEffectIntensity !== "none" &&
-          "hover:from-violet-100/50 hover:via-pink-100/40 hover:to-blue-100/50 hover:shadow-[0_0_35px_rgba(139,92,246,0.6)]"
+            settings.hoverEffectIntensity !== "none" &&
+            "hover:from-violet-100/50 hover:via-pink-100/40 hover:to-blue-100/50 hover:shadow-[0_0_35px_rgba(139,92,246,0.6)]"
         );
       case "striped":
         return cn(
@@ -859,8 +834,8 @@ export function GenericTable<T extends Record<string, any>>({
           hoverClasses,
           "bg-card border",
           settings.hoverEffectType !== "none" &&
-          settings.hoverEffectIntensity !== "none" &&
-          "hover:shadow-lg"
+            settings.hoverEffectIntensity !== "none" &&
+            "hover:shadow-lg"
         );
       case "bordered":
         return cn(
@@ -868,8 +843,8 @@ export function GenericTable<T extends Record<string, any>>({
           hoverClasses,
           "bg-card border-2",
           settings.hoverEffectType !== "none" &&
-          settings.hoverEffectIntensity !== "none" &&
-          "hover:shadow-lg"
+            settings.hoverEffectIntensity !== "none" &&
+            "hover:shadow-lg"
         );
       case "minimal":
         return cn(
@@ -877,8 +852,8 @@ export function GenericTable<T extends Record<string, any>>({
           hoverClasses,
           "bg-transparent border-0",
           settings.hoverEffectType !== "none" &&
-          settings.hoverEffectIntensity !== "none" &&
-          "hover:bg-muted/20"
+            settings.hoverEffectIntensity !== "none" &&
+            "hover:bg-muted/20"
         );
       default:
         return cn(
@@ -886,8 +861,8 @@ export function GenericTable<T extends Record<string, any>>({
           hoverClasses,
           "bg-card",
           settings.hoverEffectType !== "none" &&
-          settings.hoverEffectIntensity !== "none" &&
-          "hover:shadow-lg"
+            settings.hoverEffectIntensity !== "none" &&
+            "hover:shadow-lg"
         );
     }
   };
@@ -896,7 +871,7 @@ export function GenericTable<T extends Record<string, any>>({
     return (
       <div className="space-y-3">
         {[...Array(5)].map((_, i) => (
-          <div key={i} className="h-16 bg-muted/50 animate-pulse rounded-lg" />
+          <div key={i} className="h-16 animate-pulse rounded-lg bg-muted/50" />
         ))}
       </div>
     );
@@ -907,7 +882,7 @@ export function GenericTable<T extends Record<string, any>>({
       {/* Search Bar - Only show if search functionality is enabled */}
       {onSearch !== undefined && (
         <div className="relative">
-          <Search className="absolute left-3 rtl:left-auto rtl:right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-muted-foreground rtl:left-auto rtl:right-3" />
           <Input
             ref={searchInputRef}
             placeholder={placeholder}
@@ -919,22 +894,19 @@ export function GenericTable<T extends Record<string, any>>({
       )}
 
       {/* Mobile Cards View */}
-      <div className="block md:hidden space-y-4">
+      <div className="block space-y-4 md:hidden">
         {sortedData.length === 0 ? (
-          <div className="text-center py-12 text-muted-foreground">{empty}</div>
+          <div className="py-12 text-center text-muted-foreground">{empty}</div>
         ) : (
           sortedData.map((row, index) => {
             const isSelected = selectable && selectedItems.includes(row.id);
             return (
               <div
                 key={index}
-                className={cn(
-                  getCardClasses(),
-                  isSelected && "ring-2 ring-primary"
-                )}
+                className={cn(getCardClasses(), isSelected && "ring-2 ring-primary")}
               >
                 {selectable && (
-                  <div className="flex items-center space-x-2 rtl:space-x-reverse pb-2 border-b">
+                  <div className="flex items-center space-x-2 border-b pb-2 rtl:space-x-reverse">
                     <Checkbox
                       checked={isSelected}
                       onCheckedChange={(checked) => {
@@ -946,16 +918,11 @@ export function GenericTable<T extends Record<string, any>>({
                         }
                       }}
                     />
-                    <span className="text-sm text-muted-foreground">
-                      {t("table.select")}
-                    </span>
+                    <span className="text-sm text-muted-foreground">{t("table.select")}</span>
                   </div>
                 )}
                 {columns.map((column) => (
-                  <div
-                    key={String(column.key)}
-                    className="flex justify-between items-center"
-                  >
+                  <div key={String(column.key)} className="flex items-center justify-between">
                     <span
                       className={cn(
                         "font-medium text-muted-foreground",
@@ -984,7 +951,7 @@ export function GenericTable<T extends Record<string, any>>({
                   </div>
                 ))}
                 {((actions && actions.length > 0) || renderActions) && (
-                  <div className="flex justify-end pt-2 border-t border-border/50">
+                  <div className="flex justify-end border-t border-border/50 pt-2">
                     {renderActions ? (
                       renderActions(row)
                     ) : (
@@ -995,8 +962,8 @@ export function GenericTable<T extends Record<string, any>>({
                             size="sm"
                             className={cn(
                               "transition-all duration-200",
-                              "hover:bg-primary/10 hover:shadow-md hover:scale-105",
-                              "active:scale-95 focus:ring-2 focus:ring-primary/20"
+                              "hover:scale-105 hover:bg-primary/10 hover:shadow-md",
+                              "focus:ring-2 focus:ring-primary/20 active:scale-95"
                             )}
                           >
                             <MoreHorizontal className="h-4 w-4 transition-colors duration-200" />
@@ -1005,16 +972,14 @@ export function GenericTable<T extends Record<string, any>>({
                         <DropdownMenuContent
                           align="end"
                           className={cn(
-                            "min-w-[160px] shadow-xl border-border/50",
+                            "min-w-[160px] border-border/50 shadow-xl",
                             "bg-background/95 backdrop-blur-md",
-                            "animate-in slide-in-from-top-2 duration-200"
+                            "duration-200 animate-in slide-in-from-top-2"
                           )}
                         >
                           {actions &&
                             actions
-                              .filter(
-                                (action) => !action.show || action.show(row)
-                              )
+                              .filter((action) => !action.show || action.show(row))
                               .map((action, actionIndex) => (
                                 <DropdownMenuItem
                                   key={actionIndex}
@@ -1027,22 +992,20 @@ export function GenericTable<T extends Record<string, any>>({
                                   className={cn(
                                     "transition-all duration-200",
                                     action.disabled?.(row)
-                                      ? "opacity-50 cursor-not-allowed"
+                                      ? "cursor-not-allowed opacity-50"
                                       : "cursor-pointer hover:bg-primary/10 hover:shadow-sm",
                                     action.variant === "destructive"
-                                      ? "text-destructive focus:text-destructive hover:bg-destructive/10"
+                                      ? "text-destructive hover:bg-destructive/10 focus:text-destructive"
                                       : !action.disabled?.(row) && "hover:text-primary",
                                     action.className
                                   )}
                                 >
                                   {action.icon && (
-                                    <span className="mr-2 rtl:mr-0 rtl:ml-2 transition-transform duration-200 group-hover:scale-110">
+                                    <span className="mr-2 transition-transform duration-200 group-hover:scale-110 rtl:ml-2 rtl:mr-0">
                                       {action.icon}
                                     </span>
                                   )}
-                                  <span className="font-medium">
-                                    {action.label}
-                                  </span>
+                                  <span className="font-medium">{action.label}</span>
                                 </DropdownMenuItem>
                               ))}
                         </DropdownMenuContent>
@@ -1057,17 +1020,22 @@ export function GenericTable<T extends Record<string, any>>({
       </div>
 
       {/* Desktop Table View */}
-      <div
-        className={cn("hidden md:block", getTableContainerClasses())}
-        ref={tableRef}
-      >
-        <div className="relative" style={{ paddingTop: '12px', paddingBottom: '12px', paddingLeft: '8px', paddingRight: '8px' }}>
+      <div className={cn("hidden md:block", getTableContainerClasses())} ref={tableRef}>
+        <div
+          className="relative"
+          style={{
+            paddingTop: "12px",
+            paddingBottom: "12px",
+            paddingLeft: "8px",
+            paddingRight: "8px",
+          }}
+        >
           <div className="overflow-x-auto">
             {/* Scroll Shadow Overlays */}
             {showLeftShadow && (
               <div
                 className={cn(
-                  "absolute top-0 bottom-0 w-4 z-10 pointer-events-none",
+                  "pointer-events-none absolute bottom-0 top-0 z-10 w-4",
                   direction === "rtl"
                     ? "right-0 bg-gradient-to-l from-background/80 to-transparent"
                     : "left-0 bg-gradient-to-r from-background/80 to-transparent"
@@ -1077,7 +1045,7 @@ export function GenericTable<T extends Record<string, any>>({
             {showRightShadow && (
               <div
                 className={cn(
-                  "absolute top-0 bottom-0 w-4 z-10 pointer-events-none",
+                  "pointer-events-none absolute bottom-0 top-0 z-10 w-4",
                   direction === "rtl"
                     ? "left-0 bg-gradient-to-r from-background/80 to-transparent"
                     : "right-0 bg-gradient-to-l from-background/80 to-transparent"
@@ -1088,9 +1056,7 @@ export function GenericTable<T extends Record<string, any>>({
               <TableHeader>
                 <TableRow className={getHeaderClasses()}>
                   {selectable && (
-                    <TableHead
-                      className={cn("w-12", getCellPadding(), "relative")}
-                    >
+                    <TableHead className={cn("w-12", getCellPadding(), "relative")}>
                       <div
                         className={cn(
                           "absolute inset-0 flex items-center",
@@ -1099,14 +1065,11 @@ export function GenericTable<T extends Record<string, any>>({
                       >
                         <Checkbox
                           checked={
-                            selectedItems.length === sortedData.length &&
-                            sortedData.length > 0
+                            selectedItems.length === sortedData.length && sortedData.length > 0
                           }
                           onCheckedChange={(checked) => {
                             if (onSelectionChange) {
-                              const newSelected = checked
-                                ? sortedData.map((row) => row.id)
-                                : [];
+                              const newSelected = checked ? sortedData.map((row) => row.id) : [];
                               onSelectionChange(newSelected);
                             }
                           }}
@@ -1130,29 +1093,25 @@ export function GenericTable<T extends Record<string, any>>({
                         // Add borders to all columns - every column gets a border on the right side
                         cn(
                           direction === "rtl" &&
-                          cn(
-                            columnIndex === 0 &&
-                            "border-l-2 border-l-border/60",
-                            columnIndex > 0 && "border-l-2 border-l-border/60"
-                          ),
+                            cn(
+                              columnIndex === 0 && "border-l-2 border-l-border/60",
+                              columnIndex > 0 && "border-l-2 border-l-border/60"
+                            ),
                           direction !== "rtl" &&
-                          cn(
-                            columnIndex === 0 &&
-                            "border-r-2 border-r-border/60",
-                            columnIndex > 0 && "border-r-2 border-r-border/60"
-                          )
+                            cn(
+                              columnIndex === 0 && "border-r-2 border-r-border/60",
+                              columnIndex > 0 && "border-r-2 border-r-border/60"
+                            )
                         ),
                         // Add border to the last column before actions when sticky actions are enabled
                         stickyActions &&
-                        actions &&
-                        actions.length > 0 &&
-                        columnIndex === columns.length - 1 &&
-                        cn(
-                          direction === "rtl" &&
-                          "border-l-4 border-l-primary/50",
-                          direction !== "rtl" &&
-                          "border-r-4 border-r-primary/50"
-                        )
+                          actions &&
+                          actions.length > 0 &&
+                          columnIndex === columns.length - 1 &&
+                          cn(
+                            direction === "rtl" && "border-l-4 border-l-primary/50",
+                            direction !== "rtl" && "border-r-4 border-r-primary/50"
+                          )
                       )}
                     >
                       {column.sortable ? (
@@ -1166,10 +1125,7 @@ export function GenericTable<T extends Record<string, any>>({
                         >
                           {column.label}
                           <ArrowUpDown
-                            className={cn(
-                              "h-4 w-4",
-                              direction === "rtl" ? "mr-2" : "ml-2"
-                            )}
+                            className={cn("h-4 w-4", direction === "rtl" ? "mr-2" : "ml-2")}
                           />
                         </Button>
                       ) : (
@@ -1185,34 +1141,32 @@ export function GenericTable<T extends Record<string, any>>({
                         getCellPadding(),
                         direction === "rtl" ? "text-right" : "text-left",
                         stickyActions &&
-                        cn(
-                          getStickyActionsClasses(),
-                          "z-20 relative overflow-hidden",
-                          "hover:shadow-xl hover:shadow-black/10 dark:hover:shadow-black/30",
-                          "before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-primary/5 before:to-transparent",
-                          "before:translate-x-[-100%] hover:before:translate-x-[100%] before:transition-transform before:duration-700",
-                          "border-b-4 border-b-primary/70"
-                        ),
+                          cn(
+                            getStickyActionsClasses(),
+                            "relative z-20 overflow-hidden",
+                            "hover:shadow-xl hover:shadow-black/10 dark:hover:shadow-black/30",
+                            "before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-primary/5 before:to-transparent",
+                            "before:translate-x-[-100%] before:transition-transform before:duration-700 hover:before:translate-x-[100%]",
+                            "border-b-4 border-b-primary/70"
+                          ),
                         direction === "rtl" &&
-                        stickyActions &&
-                        "border-r-4 border-r-primary/60 shadow-[-6px_0_12px_rgba(0,0,0,0.2)]",
+                          stickyActions &&
+                          "border-r-4 border-r-primary/60 shadow-[-6px_0_12px_rgba(0,0,0,0.2)]",
                         direction !== "rtl" &&
-                        stickyActions &&
-                        "border-l-4 border-l-primary/60 shadow-[6px_0_12px_rgba(0,0,0,0.2)]"
+                          stickyActions &&
+                          "border-l-4 border-l-primary/60 shadow-[6px_0_12px_rgba(0,0,0,0.2)]"
                       )}
                       style={
                         stickyActions
                           ? {
-                            position: "sticky",
-                            [direction === "rtl" ? "left" : "right"]: "0px",
-                          }
+                              position: "sticky",
+                              [direction === "rtl" ? "left" : "right"]: "0px",
+                            }
                           : undefined
                       }
                     >
                       <div className="flex items-center justify-between">
-                        <span className="font-semibold text-foreground">
-                          {t("table.actions")}
-                        </span>
+                        <span className="font-semibold text-foreground">{t("table.actions")}</span>
                       </div>
                     </TableHead>
                   )}
@@ -1224,9 +1178,7 @@ export function GenericTable<T extends Record<string, any>>({
                     <TableCell
                       colSpan={
                         columns.length +
-                        ((actions && actions.length > 0) || renderActions
-                          ? 1
-                          : 0) +
+                        ((actions && actions.length > 0) || renderActions ? 1 : 0) +
                         (selectable ? 1 : 0)
                       }
                       className="h-32 text-center text-muted-foreground"
@@ -1236,13 +1188,9 @@ export function GenericTable<T extends Record<string, any>>({
                   </TableRow>
                 ) : (
                   sortedData.map((row, index) => {
-                    const isSelected =
-                      selectable && selectedItems.includes(row.id);
+                    const isSelected = selectable && selectedItems.includes(row.id);
                     return (
-                      <TableRow
-                        key={index}
-                        className={getRowClasses(index, isSelected)}
-                      >
+                      <TableRow key={index} className={getRowClasses(index, isSelected)}>
                         {selectable && (
                           <TableCell className={cn(getCellPadding(), "relative")}>
                             <div
@@ -1257,9 +1205,7 @@ export function GenericTable<T extends Record<string, any>>({
                                   if (onSelectionChange) {
                                     const newSelected = checked
                                       ? [...selectedItems, row.id]
-                                      : selectedItems.filter(
-                                        (id) => id !== row.id
-                                      );
+                                      : selectedItems.filter((id) => id !== row.id);
                                     onSelectionChange(newSelected);
                                   }
                                 }}
@@ -1282,31 +1228,25 @@ export function GenericTable<T extends Record<string, any>>({
                               // Add borders to all columns - every column gets a border on the right side
                               cn(
                                 direction === "rtl" &&
-                                cn(
-                                  columnIndex === 0 &&
-                                  "border-l-2 border-l-border/60",
-                                  columnIndex > 0 &&
-                                  "border-l-2 border-l-border/60"
-                                ),
+                                  cn(
+                                    columnIndex === 0 && "border-l-2 border-l-border/60",
+                                    columnIndex > 0 && "border-l-2 border-l-border/60"
+                                  ),
                                 direction !== "rtl" &&
-                                cn(
-                                  columnIndex === 0 &&
-                                  "border-r-2 border-r-border/60",
-                                  columnIndex > 0 &&
-                                  "border-r-2 border-r-border/60"
-                                )
+                                  cn(
+                                    columnIndex === 0 && "border-r-2 border-r-border/60",
+                                    columnIndex > 0 && "border-r-2 border-r-border/60"
+                                  )
                               ),
                               // Add border to the last column before actions when sticky actions are enabled
                               stickyActions &&
-                              actions &&
-                              actions.length > 0 &&
-                              columnIndex === columns.length - 1 &&
-                              cn(
-                                direction === "rtl" &&
-                                "border-l-4 border-l-primary/50",
-                                direction !== "rtl" &&
-                                "border-r-4 border-r-primary/50"
-                              )
+                                actions &&
+                                actions.length > 0 &&
+                                columnIndex === columns.length - 1 &&
+                                cn(
+                                  direction === "rtl" && "border-l-4 border-l-primary/50",
+                                  direction !== "rtl" && "border-r-4 border-r-primary/50"
+                                )
                             )}
                           >
                             {column.render
@@ -1320,29 +1260,28 @@ export function GenericTable<T extends Record<string, any>>({
                               getCellPadding(),
                               "transition-all duration-300 ease-in-out",
                               stickyActions &&
-                              cn(
-                                getStickyActionsClasses(),
-                                "z-20 relative overflow-hidden",
-                                "hover:shadow-xl hover:shadow-black/10 dark:hover:shadow-black/30",
-                                "before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-primary/5 before:to-transparent",
-                                "before:translate-x-[-100%] hover:before:translate-x-[100%] before:transition-transform before:duration-700",
-                                "border-b-4 border-b-primary/60",
-                                index === 0 && "border-t-4 border-t-primary/70"
-                              ),
+                                cn(
+                                  getStickyActionsClasses(),
+                                  "relative z-20 overflow-hidden",
+                                  "hover:shadow-xl hover:shadow-black/10 dark:hover:shadow-black/30",
+                                  "before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-primary/5 before:to-transparent",
+                                  "before:translate-x-[-100%] before:transition-transform before:duration-700 hover:before:translate-x-[100%]",
+                                  "border-b-4 border-b-primary/60",
+                                  index === 0 && "border-t-4 border-t-primary/70"
+                                ),
                               direction === "rtl" &&
-                              stickyActions &&
-                              "border-r-4 border-r-primary/60 shadow-[-6px_0_12px_rgba(0,0,0,0.2)]",
+                                stickyActions &&
+                                "border-r-4 border-r-primary/60 shadow-[-6px_0_12px_rgba(0,0,0,0.2)]",
                               direction !== "rtl" &&
-                              stickyActions &&
-                              "border-l-4 border-l-primary/60 shadow-[6px_0_12px_rgba(0,0,0,0.2)]"
+                                stickyActions &&
+                                "border-l-4 border-l-primary/60 shadow-[6px_0_12px_rgba(0,0,0,0.2)]"
                             )}
                             style={
                               stickyActions
                                 ? {
-                                  position: "sticky",
-                                  [direction === "rtl" ? "left" : "right"]:
-                                    "0px",
-                                }
+                                    position: "sticky",
+                                    [direction === "rtl" ? "left" : "right"]: "0px",
+                                  }
                                 : undefined
                             }
                             ref={index === 0 ? actionsColumnRef : undefined}
@@ -1357,10 +1296,9 @@ export function GenericTable<T extends Record<string, any>>({
                                       variant="ghost"
                                       className={cn(
                                         "h-8 w-8 p-0 transition-all duration-200",
-                                        "hover:bg-primary/10 hover:shadow-md hover:scale-105",
-                                        "active:scale-95 focus:ring-2 focus:ring-primary/20",
-                                        stickyActions &&
-                                        "hover:bg-primary/15 hover:shadow-lg"
+                                        "hover:scale-105 hover:bg-primary/10 hover:shadow-md",
+                                        "focus:ring-2 focus:ring-primary/20 active:scale-95",
+                                        stickyActions && "hover:bg-primary/15 hover:shadow-lg"
                                       )}
                                     >
                                       <MoreHorizontal className="h-4 w-4 transition-colors duration-200" />
@@ -1369,17 +1307,14 @@ export function GenericTable<T extends Record<string, any>>({
                                   <DropdownMenuContent
                                     align={direction === "rtl" ? "start" : "end"}
                                     className={cn(
-                                      "min-w-[160px] shadow-xl border-border/50",
+                                      "min-w-[160px] border-border/50 shadow-xl",
                                       "bg-background/95 backdrop-blur-md",
-                                      "animate-in slide-in-from-top-2 duration-200"
+                                      "duration-200 animate-in slide-in-from-top-2"
                                     )}
                                   >
                                     {actions &&
                                       actions
-                                        .filter(
-                                          (action) =>
-                                            !action.show || action.show(row)
-                                        )
+                                        .filter((action) => !action.show || action.show(row))
                                         .map((action, actionIndex) => (
                                           <DropdownMenuItem
                                             key={actionIndex}
@@ -1392,22 +1327,20 @@ export function GenericTable<T extends Record<string, any>>({
                                             className={cn(
                                               "transition-all duration-200",
                                               action.disabled?.(row)
-                                                ? "opacity-50 cursor-not-allowed"
+                                                ? "cursor-not-allowed opacity-50"
                                                 : "cursor-pointer hover:bg-primary/10 hover:shadow-sm",
                                               action.variant === "destructive"
-                                                ? "text-destructive focus:text-destructive hover:bg-destructive/10"
+                                                ? "text-destructive hover:bg-destructive/10 focus:text-destructive"
                                                 : !action.disabled?.(row) && "hover:text-primary",
                                               action.className
                                             )}
                                           >
                                             {action.icon && (
-                                              <span className="mr-2 rtl:mr-0 rtl:ml-2 transition-transform duration-200 group-hover:scale-110">
+                                              <span className="mr-2 transition-transform duration-200 group-hover:scale-110 rtl:ml-2 rtl:mr-0">
                                                 {action.icon}
                                               </span>
                                             )}
-                                            <span className="font-medium">
-                                              {action.label}
-                                            </span>
+                                            <span className="font-medium">{action.label}</span>
                                           </DropdownMenuItem>
                                         ))}
                                   </DropdownMenuContent>
@@ -1429,12 +1362,12 @@ export function GenericTable<T extends Record<string, any>>({
       {/* Professional Pagination */}
       {pagination && (
         <div className="border-t bg-background/50 backdrop-blur-sm">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between p-4 gap-4">
+          <div className="flex flex-col gap-4 p-4 lg:flex-row lg:items-center lg:justify-between">
             {/* Results Info */}
             <div className="flex items-center gap-4">
               <p
                 className={cn(
-                  "text-muted-foreground font-medium",
+                  "font-medium text-muted-foreground",
                   settings.fontSize === "small"
                     ? "text-xs"
                     : settings.fontSize === "large"
@@ -1443,8 +1376,7 @@ export function GenericTable<T extends Record<string, any>>({
                 )}
               >
                 {(() => {
-                  const start =
-                    (pagination.currentPage - 1) * pagination.pageSize + 1;
+                  const start = (pagination.currentPage - 1) * pagination.pageSize + 1;
                   const end = Math.min(
                     pagination.currentPage * pagination.pageSize,
                     pagination.itemsCount
@@ -1458,9 +1390,7 @@ export function GenericTable<T extends Record<string, any>>({
               {/* Page Size Selector */}
               {pagination.onPageSizeChange && (
                 <div className="flex items-center gap-2">
-                  <span className="text-sm text-muted-foreground">
-                    {t("table.show")}:
-                  </span>
+                  <span className="text-sm text-muted-foreground">{t("table.show")}:</span>
                   <GenericSelect
                     type="single"
                     options={[10, 25, 50, 100].map((size) => ({
@@ -1469,16 +1399,12 @@ export function GenericTable<T extends Record<string, any>>({
                     }))}
                     value={String(pagination.pageSize)}
                     onValueChange={(v: string | string[]) =>
-                      pagination.onPageSizeChange?.(
-                        Number(typeof v === "string" ? v : v[0])
-                      )
+                      pagination.onPageSizeChange?.(Number(typeof v === "string" ? v : v[0]))
                     }
-                    className="min-w-[100px] w-auto max-w-[120px] h-8 text-center font-medium"
+                    className="h-8 w-auto min-w-[100px] max-w-[120px] text-center font-medium"
                     allowClear={false}
                   />
-                  <span className="text-sm text-muted-foreground">
-                    {t("table.perPage")}
-                  </span>
+                  <span className="text-sm text-muted-foreground">{t("table.perPage")}</span>
                 </div>
               )}
             </div>
@@ -1492,18 +1418,10 @@ export function GenericTable<T extends Record<string, any>>({
                   size="sm"
                   onClick={() => pagination.onPageChange(1)}
                   disabled={pagination.currentPage === 1}
-                  className={cn(
-                    "h-8 w-8 p-0",
-                    direction === "rtl" && "rotate-180"
-                  )}
+                  className={cn("h-8 w-8 p-0", direction === "rtl" && "rotate-180")}
                   title={t("table.firstPage")}
                 >
-                  <svg
-                    className="h-4 w-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
+                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -1517,22 +1435,12 @@ export function GenericTable<T extends Record<string, any>>({
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() =>
-                    pagination.onPageChange(pagination.currentPage - 1)
-                  }
+                  onClick={() => pagination.onPageChange(pagination.currentPage - 1)}
                   disabled={pagination.currentPage === 1}
-                  className={cn(
-                    "h-8 w-8 p-0",
-                    direction === "rtl" && "rotate-180"
-                  )}
+                  className={cn("h-8 w-8 p-0", direction === "rtl" && "rotate-180")}
                   title={t("table.previousPage")}
                 >
-                  <svg
-                    className="h-4 w-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
+                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -1570,8 +1478,7 @@ export function GenericTable<T extends Record<string, any>>({
                         // Middle: 1 ... 4 5 6 ... 10
                         pages.push(1);
                         pages.push("...");
-                        for (let i = current - 1; i <= current + 1; i++)
-                          pages.push(i);
+                        for (let i = current - 1; i <= current + 1; i++) pages.push(i);
                         pages.push("...");
                         pages.push(total);
                       }
@@ -1600,8 +1507,7 @@ export function GenericTable<T extends Record<string, any>>({
                           onClick={() => pagination.onPageChange(pageNum)}
                           className={cn(
                             "h-8 w-8 p-0",
-                            isActive &&
-                            "bg-primary text-primary-foreground shadow-sm"
+                            isActive && "bg-primary text-primary-foreground shadow-sm"
                           )}
                         >
                           {pageNum}
@@ -1615,22 +1521,12 @@ export function GenericTable<T extends Record<string, any>>({
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() =>
-                    pagination.onPageChange(pagination.currentPage + 1)
-                  }
+                  onClick={() => pagination.onPageChange(pagination.currentPage + 1)}
                   disabled={pagination.currentPage === pagination.pagesCount}
-                  className={cn(
-                    "h-8 w-8 p-0",
-                    direction === "rtl" && "rotate-180"
-                  )}
+                  className={cn("h-8 w-8 p-0", direction === "rtl" && "rotate-180")}
                   title={t("table.nextPage")}
                 >
-                  <svg
-                    className="h-4 w-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
+                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -1646,18 +1542,10 @@ export function GenericTable<T extends Record<string, any>>({
                   size="sm"
                   onClick={() => pagination.onPageChange(pagination.pagesCount)}
                   disabled={pagination.currentPage === pagination.pagesCount}
-                  className={cn(
-                    "h-8 w-8 p-0",
-                    direction === "rtl" && "rotate-180"
-                  )}
+                  className={cn("h-8 w-8 p-0", direction === "rtl" && "rotate-180")}
                   title={t("table.lastPage")}
                 >
-                  <svg
-                    className="h-4 w-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
+                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -1668,20 +1556,18 @@ export function GenericTable<T extends Record<string, any>>({
                 </Button>
 
                 {/* Page Jump Input */}
-                <div className="flex items-center gap-2 ml-4 pl-4 border-l">
-                  <span className="text-sm text-muted-foreground whitespace-nowrap">
+                <div className="ml-4 flex items-center gap-2 border-l pl-4">
+                  <span className="whitespace-nowrap text-sm text-muted-foreground">
                     {t("table.goToPage")}:
                   </span>
                   <Input
                     type="number"
                     min={1}
                     max={pagination.pagesCount}
-                    className="w-16 h-8 text-center"
+                    className="h-8 w-16 text-center"
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
-                        const value = parseInt(
-                          (e.target as HTMLInputElement).value
-                        );
+                        const value = parseInt((e.target as HTMLInputElement).value);
                         if (value >= 1 && value <= pagination.pagesCount) {
                           pagination.onPageChange(value);
                           (e.target as HTMLInputElement).value = "";

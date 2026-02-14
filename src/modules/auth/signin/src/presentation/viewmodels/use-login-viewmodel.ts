@@ -53,13 +53,16 @@ export function useLoginViewModel() {
   const hasTriggeredRedirect = useRef(false);
 
   // Form field handlers
-  const updateField = useCallback((field: keyof LoginFormData, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    if (error) setError("");
-  }, [error]);
+  const updateField = useCallback(
+    (field: keyof LoginFormData, value: string) => {
+      setFormData((prev) => ({ ...prev, [field]: value }));
+      if (error) setError("");
+    },
+    [error]
+  );
 
   const togglePasswordVisibility = useCallback(() => {
-    setShowPassword(prev => !prev);
+    setShowPassword((prev) => !prev);
   }, []);
 
   // Check if user should be redirected (stable function - no deps that change)
@@ -89,7 +92,7 @@ export function useLoginViewModel() {
     const validationResults = validateForm(formData, VALIDATION_SETS.LOGIN_FORM);
 
     if (!isFormValid(validationResults)) {
-      const firstError = Object.values(validationResults).find(result => !result.isValid);
+      const firstError = Object.values(validationResults).find((result) => !result.isValid);
       setError(firstError?.message || t("auth.validationError"));
       return;
     }
@@ -99,7 +102,7 @@ export function useLoginViewModel() {
     try {
       await loginMutation.mutateAsync({
         username: formData.username,
-        password: formData.password
+        password: formData.password,
       });
 
       // After successful login, redirect
@@ -110,7 +113,6 @@ export function useLoginViewModel() {
       setTimeout(() => {
         router.replace("/");
       }, 100);
-
     } catch (err: unknown) {
       // If 2FA is required, transition to the 2FA step
       if (err instanceof TwoFactorRequiredError) {
@@ -142,11 +144,7 @@ export function useLoginViewModel() {
       );
 
       // Same flow as successful login
-      setAuth(
-        user,
-        user.permissions || [],
-        []
-      );
+      setAuth(user, user.permissions || [], []);
 
       operationSuccess(t("auth.welcomeBack"));
 
@@ -163,14 +161,24 @@ export function useLoginViewModel() {
       setTimeout(() => {
         router.replace("/");
       }, 100);
-
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : t("auth.twoFactor.invalidCode");
       setError(errorMessage);
     } finally {
       setIsVerifying2FA(false);
     }
-  }, [twoFactorCode, formData, authRepository, setAuth, operationSuccess, refreshNavigation, queryClient, router, t, operationError]);
+  }, [
+    twoFactorCode,
+    formData,
+    authRepository,
+    setAuth,
+    operationSuccess,
+    refreshNavigation,
+    queryClient,
+    router,
+    t,
+    operationError,
+  ]);
 
   // Go back to credentials step
   const goBackToCredentials = useCallback(() => {
@@ -182,7 +190,7 @@ export function useLoginViewModel() {
 
   // Toggle between TOTP and backup code input
   const toggleBackupCode = useCallback(() => {
-    setUseBackupCode(prev => !prev);
+    setUseBackupCode((prev) => !prev);
     setTwoFactorCode("");
     setError("");
   }, []);

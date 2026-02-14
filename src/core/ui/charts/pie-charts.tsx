@@ -19,18 +19,8 @@ export function ProfessionalPieCharts() {
       {
         label: t("charts.common.deviceUsage"),
         data: [45, 30, 20, 5],
-        backgroundColor: [
-          "#8884d8",
-          "#82ca9d", 
-          "#ffc658",
-          "#ff7300",
-        ],
-        borderColor: [
-          "#8884d8",
-          "#82ca9d",
-          "#ffc658", 
-          "#ff7300",
-        ],
+        backgroundColor: ["#8884d8", "#82ca9d", "#ffc658", "#ff7300"],
+        borderColor: ["#8884d8", "#82ca9d", "#ffc658", "#ff7300"],
         borderWidth: 2,
       },
     ],
@@ -48,13 +38,7 @@ export function ProfessionalPieCharts() {
       {
         label: t("charts.common.browserUsage"),
         data: [65, 15, 10, 7, 3],
-        backgroundColor: [
-          "#0088FE",
-          "#00C49F",
-          "#FFBB28",
-          "#FF8042",
-          "#8884d8",
-        ],
+        backgroundColor: ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884d8"],
         borderColor: "#ffffff",
         borderWidth: 3,
         cutout: "60%",
@@ -73,12 +57,7 @@ export function ProfessionalPieCharts() {
       {
         label: t("charts.common.quarterlySales"),
         data: [25, 35, 20, 20],
-        backgroundColor: [
-          "#8884d8",
-          "#82ca9d",
-          "#ffc658",
-          "#ff7300",
-        ],
+        backgroundColor: ["#8884d8", "#82ca9d", "#ffc658", "#ff7300"],
         borderColor: "#ffffff",
         borderWidth: 2,
         hoverOffset: 10,
@@ -97,12 +76,7 @@ export function ProfessionalPieCharts() {
       {
         label: t("charts.common.departmentBudget"),
         data: [40, 30, 20, 10],
-        backgroundColor: [
-          "#8884d8",
-          "#82ca9d",
-          "#ffc658",
-          "#ff7300",
-        ],
+        backgroundColor: ["#8884d8", "#82ca9d", "#ffc658", "#ff7300"],
         borderColor: "#ffffff",
         borderWidth: 3,
         hoverOffset: 15,
@@ -122,13 +96,7 @@ export function ProfessionalPieCharts() {
       {
         label: t("charts.common.trafficSources"),
         data: [35, 25, 20, 15, 5],
-        backgroundColor: [
-          "#0088FE",
-          "#00C49F",
-          "#FFBB28",
-          "#FF8042",
-          "#8884d8",
-        ],
+        backgroundColor: ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884d8"],
         borderColor: "#ffffff",
         borderWidth: 2,
         hoverOffset: 8,
@@ -146,11 +114,7 @@ export function ProfessionalPieCharts() {
       {
         label: t("charts.common.subscriptionPlans"),
         data: [60, 30, 10],
-        backgroundColor: [
-          "#8884d8",
-          "#82ca9d",
-          "#ffc658",
-        ],
+        backgroundColor: ["#8884d8", "#82ca9d", "#ffc658"],
         borderColor: "#ffffff",
         borderWidth: 3,
         hoverOffset: 12,
@@ -169,12 +133,7 @@ export function ProfessionalPieCharts() {
       {
         label: t("charts.common.regionalSales"),
         data: [30, 25, 20, 25],
-        backgroundColor: [
-          "#8884d8",
-          "#82ca9d",
-          "#ffc658",
-          "#ff7300",
-        ],
+        backgroundColor: ["#8884d8", "#82ca9d", "#ffc658", "#ff7300"],
         borderColor: "#ffffff",
         borderWidth: 2,
         hoverOffset: 20,
@@ -193,12 +152,7 @@ export function ProfessionalPieCharts() {
       {
         label: t("charts.common.productSales"),
         data: [50, 25, 15, 10],
-        backgroundColor: [
-          "#AF19FF",
-          "#FF1919",
-          "#00C49F",
-          "#FFBB28",
-        ],
+        backgroundColor: ["#AF19FF", "#FF1919", "#00C49F", "#FFBB28"],
         borderColor: "#ffffff",
         borderWidth: 3,
         hoverOffset: 10,
@@ -215,7 +169,7 @@ export function ProfessionalPieCharts() {
         type="pie"
         filterable={false}
       />
-      
+
       <GenericChart
         title={t("charts.pie.doughnut.title")}
         description={t("charts.pie.doughnut.description")}
@@ -223,7 +177,7 @@ export function ProfessionalPieCharts() {
         type="doughnut"
         filterable={false}
       />
-      
+
       <GenericChart
         title={t("charts.pie.multiLevel.title")}
         description={t("charts.pie.multiLevel.description")}
@@ -231,7 +185,7 @@ export function ProfessionalPieCharts() {
         type="pie"
         filterable={false}
       />
-      
+
       <GenericChart
         title={t("charts.pie.gradient.title")}
         description={t("charts.pie.gradient.description")}
@@ -239,7 +193,7 @@ export function ProfessionalPieCharts() {
         type="pie"
         filterable={false}
       />
-      
+
       <GenericChart
         title={t("charts.pie.interactive.title")}
         description={t("charts.pie.interactive.description")}
@@ -247,7 +201,7 @@ export function ProfessionalPieCharts() {
         type="pie"
         filterable={false}
       />
-      
+
       <GenericChart
         title={t("charts.pie.animated.title")}
         description={t("charts.pie.animated.description")}
@@ -255,7 +209,7 @@ export function ProfessionalPieCharts() {
         type="doughnut"
         filterable={false}
       />
-      
+
       <GenericChart
         title={t("charts.pie.exploded.title")}
         description={t("charts.pie.exploded.description")}
@@ -263,7 +217,7 @@ export function ProfessionalPieCharts() {
         type="pie"
         filterable={false}
       />
-      
+
       <GenericChart
         title={t("charts.pie.custom.title")}
         description={t("charts.pie.custom.description")}

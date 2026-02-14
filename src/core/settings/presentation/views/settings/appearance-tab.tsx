@@ -17,9 +17,24 @@ import { PalettesSubtab } from "./appearance-tab/palettes-subtab";
 import { EffectsSubtab } from "./appearance-tab/effects-subtab";
 
 const BG_MODES: { value: BackgroundMode; icon: string; labelKey: string; descKey: string }[] = [
-  { value: "preset", icon: "🎨", labelKey: "settings.bgMode.preset", descKey: "settings.bgMode.presetDesc" },
-  { value: "gradient", icon: "🌈", labelKey: "settings.bgMode.gradient", descKey: "settings.bgMode.gradientDesc" },
-  { value: "custom", icon: "🎯", labelKey: "settings.bgMode.custom", descKey: "settings.bgMode.customDesc" },
+  {
+    value: "preset",
+    icon: "🎨",
+    labelKey: "settings.bgMode.preset",
+    descKey: "settings.bgMode.presetDesc",
+  },
+  {
+    value: "gradient",
+    icon: "🌈",
+    labelKey: "settings.bgMode.gradient",
+    descKey: "settings.bgMode.gradientDesc",
+  },
+  {
+    value: "custom",
+    icon: "🎯",
+    labelKey: "settings.bgMode.custom",
+    descKey: "settings.bgMode.customDesc",
+  },
 ];
 
 export function AppearanceTab() {
@@ -45,12 +60,12 @@ export function AppearanceTab() {
           <CardDescription>{t("settings.bgMode.description")}</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
             {BG_MODES.map((mode) => (
               <button
                 key={mode.value}
                 className={cn(
-                  "relative flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all hover:scale-[1.02]",
+                  "relative flex flex-col items-center gap-2 rounded-xl border-2 p-4 transition-all hover:scale-[1.02]",
                   settings.backgroundMode === mode.value
                     ? "border-primary bg-primary/5 shadow-lg ring-2 ring-primary/20"
                     : "border-muted hover:border-muted-foreground/30"
@@ -59,10 +74,12 @@ export function AppearanceTab() {
               >
                 <span className="text-2xl">{mode.icon}</span>
                 <span className="text-sm font-semibold">{t(mode.labelKey)}</span>
-                <span className="text-[11px] text-muted-foreground text-center leading-tight">{t(mode.descKey)}</span>
+                <span className="text-center text-[11px] leading-tight text-muted-foreground">
+                  {t(mode.descKey)}
+                </span>
                 {settings.backgroundMode === mode.value && (
-                  <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-primary flex items-center justify-center">
-                    <Check className="w-3 h-3 text-primary-foreground" />
+                  <div className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
+                    <Check className="h-3 w-3 text-primary-foreground" />
                   </div>
                 )}
               </button>
@@ -79,16 +96,16 @@ export function AppearanceTab() {
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="colors" className="space-y-6">
-            <TabsList className="flex flex-wrap h-auto gap-1 bg-muted/50 p-1 rounded-xl">
+            <TabsList className="flex h-auto flex-wrap gap-1 rounded-xl bg-muted/50 p-1">
               {tabs.map((tab) => {
                 const Icon = tab.icon;
                 return (
                   <TabsTrigger
                     key={tab.key}
                     value={tab.key}
-                    className="relative rounded-lg text-xs sm:text-sm px-3 py-1.5 data-[state=active]:bg-background data-[state=active]:shadow-sm flex items-center gap-1.5"
+                    className="relative flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs data-[state=active]:bg-background data-[state=active]:shadow-sm sm:text-sm"
                   >
-                    <Icon className="w-3.5 h-3.5" />
+                    <Icon className="h-3.5 w-3.5" />
                     <span className="hidden sm:inline">{tab.label}</span>
                   </TabsTrigger>
                 );

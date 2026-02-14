@@ -122,10 +122,12 @@ export function RouteGuard({ children }: RouteGuardProps) {
         return;
       }
 
-      // If store says not authenticated but token exists, 
+      // If store says not authenticated but token exists,
       // attempt to restore session from token (e.g. after refresh or impersonation)
       if (!isAuthenticated && hasToken) {
-        appLogger.debug("[RouteGuard] Token exists but state missing. Attempting to restore session...");
+        appLogger.debug(
+          "[RouteGuard] Token exists but state missing. Attempting to restore session..."
+        );
 
         try {
           const user = await authRepository.getMe();
@@ -179,7 +181,16 @@ export function RouteGuard({ children }: RouteGuardProps) {
     };
 
     checkAccess();
-  }, [isAuthenticated, authLoading, navLoading, pathname, hasPageAccess, canAccessPage, router, logout]);
+  }, [
+    isAuthenticated,
+    authLoading,
+    navLoading,
+    pathname,
+    hasPageAccess,
+    canAccessPage,
+    router,
+    logout,
+  ]);
 
   // For SSR/prerendering, render children without checks
   if (!isMounted) {
@@ -189,7 +200,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
   // Show loading only when actually checking auth (not navigation loading for public pages)
   if (authLoading || (isChecking && !isPublicPage(pathname))) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="text-center">
           <LoadingSpinner />
           <p className="text-muted-foreground">{t("common.loading")}</p>
@@ -210,7 +221,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
 
   // Default fallback - show loading (redirects should have happened)
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
+    <div className="flex min-h-screen items-center justify-center bg-background">
       <div className="text-center">
         <LoadingSpinner />
       </div>

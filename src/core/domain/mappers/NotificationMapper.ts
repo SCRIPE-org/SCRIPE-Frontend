@@ -1,6 +1,6 @@
 /**
  * Notification Mappers
- * 
+ *
  * Handles conversion between notification domain models and external data formats.
  * Follows Single Responsibility Principle by separating serialization concerns
  * from domain logic.
@@ -12,8 +12,8 @@ import {
   NotificationType,
   NotificationPosition,
   type NotificationData,
-  type NotificationConfigData
-} from '@core/domain/entities/Notification';
+  type NotificationConfigData,
+} from "@core/domain/entities/Notification";
 
 export class NotificationMapper {
   /**
@@ -22,8 +22,8 @@ export class NotificationMapper {
   static notificationFromJson(json: any): Notification {
     return new Notification({
       id: json.id || this.generateId(),
-      title: json.title || '',
-      message: json.message || '',
+      title: json.title || "",
+      message: json.message || "",
       type: this.parseNotificationType(json.type),
       position: this.parseNotificationPosition(json.position),
       duration: json.duration || 5000,
@@ -124,14 +124,14 @@ export class NotificationMapper {
    * Convert array of JSON objects to Notification array
    */
   static notificationArrayFromJson(jsonArray: any[]): Notification[] {
-    return jsonArray.map(json => this.notificationFromJson(json));
+    return jsonArray.map((json) => this.notificationFromJson(json));
   }
 
   /**
    * Convert Notification array to JSON array
    */
   static notificationArrayToJson(notifications: Notification[]): any[] {
-    return notifications.map(notification => this.notificationToJson(notification));
+    return notifications.map((notification) => this.notificationToJson(notification));
   }
 
   /**
@@ -161,7 +161,7 @@ export class NotificationMapper {
    */
   static createSuccessNotification(
     message: string,
-    title: string = 'Success',
+    title: string = "Success",
     options: Partial<NotificationData> = {}
   ): Notification {
     return this.createNotification(title, message, NotificationType.SUCCESS, options);
@@ -172,7 +172,7 @@ export class NotificationMapper {
    */
   static createErrorNotification(
     message: string,
-    title: string = 'Error',
+    title: string = "Error",
     options: Partial<NotificationData> = {}
   ): Notification {
     return this.createNotification(title, message, NotificationType.ERROR, options);
@@ -183,7 +183,7 @@ export class NotificationMapper {
    */
   static createInfoNotification(
     message: string,
-    title: string = 'Information',
+    title: string = "Information",
     options: Partial<NotificationData> = {}
   ): Notification {
     return this.createNotification(title, message, NotificationType.INFO, options);
@@ -194,7 +194,7 @@ export class NotificationMapper {
    */
   static createWarningNotification(
     message: string,
-    title: string = 'Warning',
+    title: string = "Warning",
     options: Partial<NotificationData> = {}
   ): Notification {
     return this.createNotification(title, message, NotificationType.WARNING, options);
@@ -205,13 +205,13 @@ export class NotificationMapper {
    */
   private static parseNotificationType(type: string): NotificationType {
     switch (type?.toLowerCase()) {
-      case 'success':
+      case "success":
         return NotificationType.SUCCESS;
-      case 'error':
+      case "error":
         return NotificationType.ERROR;
-      case 'info':
+      case "info":
         return NotificationType.INFO;
-      case 'warning':
+      case "warning":
         return NotificationType.WARNING;
       default:
         return NotificationType.INFO;
@@ -223,17 +223,17 @@ export class NotificationMapper {
    */
   private static parseNotificationPosition(position: string): NotificationPosition {
     switch (position?.toLowerCase()) {
-      case 'top-left':
+      case "top-left":
         return NotificationPosition.TOP_LEFT;
-      case 'top-right':
+      case "top-right":
         return NotificationPosition.TOP_RIGHT;
-      case 'top-center':
+      case "top-center":
         return NotificationPosition.TOP_CENTER;
-      case 'bottom-left':
+      case "bottom-left":
         return NotificationPosition.BOTTOM_LEFT;
-      case 'bottom-right':
+      case "bottom-right":
         return NotificationPosition.BOTTOM_RIGHT;
-      case 'bottom-center':
+      case "bottom-center":
         return NotificationPosition.BOTTOM_CENTER;
       default:
         return NotificationPosition.TOP_RIGHT;

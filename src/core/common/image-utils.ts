@@ -1,6 +1,6 @@
 /**
  * Image Utilities
- * 
+ *
  * Centralized utilities for image processing, conversion, and validation.
  * These utilities are reusable across the entire application.
  */
@@ -37,21 +37,24 @@ export function validateImageFile(
   file: File,
   options: { maxSize?: number; allowedTypes?: string[] } = {}
 ): ImageValidationResult {
-  const { maxSize = 5 * 1024 * 1024, allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif', 'image/webp'] } = options;
+  const {
+    maxSize = 5 * 1024 * 1024,
+    allowedTypes = ["image/png", "image/jpeg", "image/jpg", "image/gif", "image/webp"],
+  } = options;
 
   // Check if file exists
   if (!file) {
     return {
       isValid: false,
-      error: 'No file provided',
+      error: "No file provided",
     };
   }
 
   // Check file type
-  if (!file.type.startsWith('image/')) {
+  if (!file.type.startsWith("image/")) {
     return {
       isValid: false,
-      error: 'Invalid file type. Please select an image file.',
+      error: "Invalid file type. Please select an image file.",
     };
   }
 
@@ -59,7 +62,7 @@ export function validateImageFile(
   if (allowedTypes.length > 0 && !allowedTypes.includes(file.type)) {
     return {
       isValid: false,
-      error: `File type not allowed. Allowed types: ${allowedTypes.map(t => t.split('/')[1].toUpperCase()).join(', ')}`,
+      error: `File type not allowed. Allowed types: ${allowedTypes.map((t) => t.split("/")[1].toUpperCase()).join(", ")}`,
     };
   }
 
@@ -122,7 +125,7 @@ export async function convertFileToBase64(
       reader.onerror = () => {
         resolve({
           success: false,
-          error: 'Failed to read file',
+          error: "Failed to read file",
         });
       };
 
@@ -131,7 +134,7 @@ export async function convertFileToBase64(
   } catch (error) {
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Unknown error occurred',
+      error: error instanceof Error ? error.message : "Unknown error occurred",
     };
   }
 }
@@ -155,7 +158,7 @@ async function convertAndResizeImage(
     };
 
     img.onload = () => {
-      const canvas = document.createElement('canvas');
+      const canvas = document.createElement("canvas");
       let { width, height } = img;
 
       // Calculate new dimensions maintaining aspect ratio
@@ -165,7 +168,7 @@ async function convertAndResizeImage(
 
         if (width > maxWidth || height > maxHeight) {
           const aspectRatio = width / height;
-          
+
           if (width > height) {
             width = Math.min(width, maxWidth);
             height = width / aspectRatio;
@@ -187,11 +190,11 @@ async function convertAndResizeImage(
       canvas.width = width;
       canvas.height = height;
 
-      const ctx = canvas.getContext('2d');
+      const ctx = canvas.getContext("2d");
       if (!ctx) {
         resolve({
           success: false,
-          error: 'Failed to get canvas context',
+          error: "Failed to get canvas context",
         });
         return;
       }
@@ -199,10 +202,13 @@ async function convertAndResizeImage(
       ctx.drawImage(img, 0, 0, width, height);
 
       // Get output format
-      const outputFormat = options.outputFormat || 'jpeg';
-      const mimeType = outputFormat === 'png' ? 'image/png' : 
-                      outputFormat === 'webp' ? 'image/webp' : 
-                      'image/jpeg';
+      const outputFormat = options.outputFormat || "jpeg";
+      const mimeType =
+        outputFormat === "png"
+          ? "image/png"
+          : outputFormat === "webp"
+            ? "image/webp"
+            : "image/jpeg";
 
       // Convert to base64
       const quality = options.quality !== undefined ? options.quality : 0.9;
@@ -219,7 +225,7 @@ async function convertAndResizeImage(
     img.onerror = () => {
       resolve({
         success: false,
-        error: 'Failed to load image',
+        error: "Failed to load image",
       });
     };
 
@@ -233,10 +239,10 @@ async function convertAndResizeImage(
  * @returns Just the base64 string without the data URL prefix
  */
 export function extractBase64FromDataUrl(dataUrl: string): string {
-  if (!dataUrl || !dataUrl.includes(',')) {
+  if (!dataUrl || !dataUrl.includes(",")) {
     return dataUrl;
   }
-  return dataUrl.split(',')[1];
+  return dataUrl.split(",")[1];
 }
 
 /**
@@ -244,10 +250,12 @@ export function extractBase64FromDataUrl(dataUrl: string): string {
  * @param base64 - Base64 image string or data URL
  * @returns Promise with image dimensions
  */
-export function getImageDimensions(base64: string): Promise<{ width: number; height: number } | null> {
+export function getImageDimensions(
+  base64: string
+): Promise<{ width: number; height: number } | null> {
   return new Promise((resolve) => {
     const img = new Image();
-    
+
     img.onload = () => {
       resolve({
         width: img.naturalWidth,
@@ -269,12 +277,11 @@ export function getImageDimensions(base64: string): Promise<{ width: number; hei
  * @returns Formatted string (e.g., "2.5 MB")
  */
 export function formatFileSize(bytes: number): string {
-  if (bytes === 0) return '0 Bytes';
-  
+  if (bytes === 0) return "0 Bytes";
+
   const k = 1024;
-  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+  const sizes = ["Bytes", "KB", "MB", "GB"];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
-  
+
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`;
 }
-

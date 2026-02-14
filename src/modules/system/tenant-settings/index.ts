@@ -13,7 +13,10 @@
 export { TenantSettingsView } from "./src/presentation/views/TenantSettingsView";
 
 // Public viewmodel
-export { useTenantSettingsViewModel, tenantSettingsKeys } from "./src/presentation/viewmodels/useTenantSettingsViewModel";
+export {
+  useTenantSettingsViewModel,
+  tenantSettingsKeys,
+} from "./src/presentation/viewmodels/useTenantSettingsViewModel";
 
 // Public entities
 export type { TenantSettings } from "./src/domain/entities/TenantSettings";

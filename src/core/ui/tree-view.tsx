@@ -24,7 +24,19 @@ import { Checkbox } from "@core/ui/checkbox";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSettings } from "@core/providers/settings-provider";
 
-export type TreeVariant = "lines" | "cards" | "minimal" | "bubble" | "modern" | "glass" | "elegant" | "professional" | "gradient" | "neon" | "organic" | "corporate";
+export type TreeVariant =
+  | "lines"
+  | "cards"
+  | "minimal"
+  | "bubble"
+  | "modern"
+  | "glass"
+  | "elegant"
+  | "professional"
+  | "gradient"
+  | "neon"
+  | "organic"
+  | "corporate";
 
 export interface TreeAction {
   label: string;
@@ -241,11 +253,7 @@ export function TreeView<T>({
         )}
       </div>
       <div className="flex items-center gap-2">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={isAllExpanded ? collapseAll : expandAll}
-        >
+        <Button variant="outline" size="sm" onClick={isAllExpanded ? collapseAll : expandAll}>
           {isAllExpanded ? t("common.collapseAll") : t("common.expandAll")}
         </Button>
         {toolbar}
@@ -258,9 +266,9 @@ export function TreeView<T>({
       <div className={cn("space-y-4", className)}>
         {headerComponent}
         <div className="space-y-3">
-          <div className="h-9 w-56 bg-muted/50 animate-pulse rounded-md" />
+          <div className="h-9 w-56 animate-pulse rounded-md bg-muted/50" />
           {[...Array(6)].map((_, i) => (
-            <div key={i} className="h-10 bg-muted/30 animate-pulse rounded-md" />
+            <div key={i} className="h-10 animate-pulse rounded-md bg-muted/30" />
           ))}
         </div>
         {footerComponent}
@@ -274,9 +282,7 @@ export function TreeView<T>({
         {headerComponent}
         {Toolbar}
         {aboveTreeComponent}
-        <div className="text-center text-muted-foreground py-12">
-          {emptyMessage ?? "No data"}
-        </div>
+        <div className="py-12 text-center text-muted-foreground">{emptyMessage ?? "No data"}</div>
         {belowTreeComponent}
         {footerComponent}
       </div>
@@ -288,12 +294,7 @@ export function TreeView<T>({
       {headerComponent}
       {Toolbar}
       {aboveTreeComponent}
-      <div
-        className={cn(
-          "relative",
-          computedVariant === "cards" ? "space-y-2" : ""
-        )}
-      >
+      <div className={cn("relative", computedVariant === "cards" ? "space-y-2" : "")}>
         <TreeList<T>
           nodes={data}
           variant={computedVariant}
@@ -378,7 +379,9 @@ function getNodeStyling(
         "shadow-sm hover:shadow-md",
         baseTransition,
         level === 0 ? "font-bold text-foreground" : "font-medium text-muted-foreground",
-        hasChildren && isOpen ? "bg-gradient-to-br from-primary/10 via-background/90 to-primary/20" : ""
+        hasChildren && isOpen
+          ? "bg-gradient-to-br from-primary/10 via-background/90 to-primary/20"
+          : ""
       );
 
     case "professional":
@@ -407,7 +410,9 @@ function getNodeStyling(
         "shadow-md hover:shadow-lg",
         baseTransition,
         hoverScale,
-        level === 0 ? "font-bold bg-gradient-to-r from-primary/20 via-background to-secondary/20" : "font-medium",
+        level === 0
+          ? "font-bold bg-gradient-to-r from-primary/20 via-background to-secondary/20"
+          : "font-medium",
         hasChildren && isOpen ? "from-primary/30 via-background/90 to-secondary/30" : ""
       );
 
@@ -441,7 +446,9 @@ function getNodeStyling(
         baseTransition,
         "transform hover:rotate-1 hover:scale-[1.01]",
         level === 0 ? "font-semibold" : "font-medium",
-        hasChildren && isOpen ? "from-green-100/80 via-background/90 to-blue-100/80 dark:from-green-900/40 dark:via-background/90 dark:to-blue-900/40" : ""
+        hasChildren && isOpen
+          ? "from-green-100/80 via-background/90 to-blue-100/80 dark:from-green-900/40 dark:via-background/90 dark:to-blue-900/40"
+          : ""
       );
 
     case "corporate":
@@ -454,7 +461,9 @@ function getNodeStyling(
         density.pad,
         "rounded-r-md",
         baseTransition,
-        level === 0 ? "font-bold text-slate-900 dark:text-slate-100 border-l-8" : "font-medium text-slate-700 dark:text-slate-300",
+        level === 0
+          ? "font-bold text-slate-900 dark:text-slate-100 border-l-8"
+          : "font-medium text-slate-700 dark:text-slate-300",
         hasChildren && isOpen ? "bg-blue-50/60 dark:bg-blue-950/30 border-l-blue-500" : ""
       );
 
@@ -573,13 +582,17 @@ function TreeList<T>({
   const getAllParentValues = (nodeValue: string, allNodes: T[]): string[] => {
     const parents: string[] = [];
 
-    const findParents = (nodes: T[], targetValue: string, currentParents: string[] = []): boolean => {
+    const findParents = (
+      nodes: T[],
+      targetValue: string,
+      currentParents: string[] = []
+    ): boolean => {
       for (const node of nodes) {
         if (!getValueToSend) return false;
         const nodeVal = getValueToSend(node);
         const children = getChildren(node) ?? [];
 
-        if (children.some(child => getValueToSend(child) === targetValue)) {
+        if (children.some((child) => getValueToSend(child) === targetValue)) {
           parents.push(...currentParents, nodeVal);
           return true;
         }
@@ -603,13 +616,13 @@ function TreeList<T>({
     if (selectedValues.includes(nodeValue)) return false;
 
     const childrenValues = getAllChildrenValues(node);
-    return childrenValues.some(childValue => selectedValues.includes(childValue));
+    return childrenValues.some((childValue) => selectedValues.includes(childValue));
   };
 
   const handleSelectionChange = (nodeValue: string, checked: boolean) => {
     if (!onSelectionChange || !getValueToSend) return;
 
-    const node = nodes.find(n => getValueToSend(n) === nodeValue);
+    const node = nodes.find((n) => getValueToSend(n) === nodeValue);
     if (!node) return;
 
     let newSelection = [...selectedValues];
@@ -622,49 +635,48 @@ function TreeList<T>({
 
       // Auto-select all parents
       const parentValues = getAllParentValues(nodeValue, nodes);
-      parentValues.forEach(parentValue => {
+      parentValues.forEach((parentValue) => {
         if (!newSelection.includes(parentValue)) {
           newSelection.push(parentValue);
         }
       });
     } else {
       // Remove the node
-      newSelection = newSelection.filter(val => val !== nodeValue);
+      newSelection = newSelection.filter((val) => val !== nodeValue);
 
       // Remove all children
       const childrenValues = getAllChildrenValues(node);
-      newSelection = newSelection.filter(val => !childrenValues.includes(val));
+      newSelection = newSelection.filter((val) => !childrenValues.includes(val));
     }
 
     onSelectionChange(newSelection);
   };
 
   return (
-    <ul
-      className={cn(
-        "list-none m-0 p-0",
-        variant === "lines" && level > 0 ? "relative" : ""
-      )}
-    >
+    <ul className={cn("m-0 list-none p-0", variant === "lines" && level > 0 ? "relative" : "")}>
       {nodes.map((node) => {
         const id = getId(node);
         const label = getLabel(node);
-        const nodeValue = getValueToSend ? getValueToSend(node) : '';
+        const nodeValue = getValueToSend ? getValueToSend(node) : "";
         const children = getChildren(node) ?? [];
         const hasChildren = children.length > 0;
         const isOpen = expanded[id];
         const selected = selectable && getValueToSend ? isNodeSelected(nodeValue) : false;
         const indeterminate = selectable && getValueToSend ? isNodeIndeterminate(node) : false;
 
-
-
-        const nodeBase = getNodeStyling(variant, level, density, radius, shadow, cardStyle, hasChildren, isOpen);
+        const nodeBase = getNodeStyling(
+          variant,
+          level,
+          density,
+          radius,
+          shadow,
+          cardStyle,
+          hasChildren,
+          isOpen
+        );
 
         return (
-          <li
-            key={id}
-            className={cn("group relative", variant === "cards" && "mb-2")}
-          >
+          <li key={id} className={cn("group relative", variant === "cards" && "mb-2")}>
             {/* Node row */}
             <div
               className={cn(
@@ -684,9 +696,9 @@ function TreeList<T>({
               <button
                 type="button"
                 className={cn(
-                  "h-7 w-7 flex items-center justify-center rounded hover:bg-muted transition-colors",
-                  !hasChildren && "opacity-60 cursor-default",
-                  disabled && "opacity-50 cursor-not-allowed"
+                  "flex h-7 w-7 items-center justify-center rounded transition-colors hover:bg-muted",
+                  !hasChildren && "cursor-default opacity-60",
+                  disabled && "cursor-not-allowed opacity-50"
                 )}
                 onClick={(e) => {
                   e.stopPropagation();
@@ -712,8 +724,10 @@ function TreeList<T>({
               {selectable && getValueToSend && (
                 <div
                   className={cn(
-                    "flex items-center justify-center p-2 rounded-md min-w-[32px] min-h-[32px]",
-                    disabled ? "!cursor-not-allowed !opacity-60" : "hover:bg-muted/50 cursor-pointer transition-colors"
+                    "flex min-h-[32px] min-w-[32px] items-center justify-center rounded-md p-2",
+                    disabled
+                      ? "!cursor-not-allowed !opacity-60"
+                      : "cursor-pointer transition-colors hover:bg-muted/50"
                   )}
                   onClick={(e) => {
                     e.stopPropagation();
@@ -722,8 +736,8 @@ function TreeList<T>({
                     }
                   }}
                   style={{
-                    cursor: disabled ? 'not-allowed !important' : 'pointer',
-                    opacity: disabled ? '0.6 !important' : '1'
+                    cursor: disabled ? "not-allowed !important" : "pointer",
+                    opacity: disabled ? "0.6 !important" : "1",
                   }}
                 >
                   <Checkbox
@@ -734,16 +748,18 @@ function TreeList<T>({
                         (ref as any).indeterminate = true;
                       }
                     }}
-                    onCheckedChange={(checked) => !disabled && handleSelectionChange(nodeValue, checked === true)}
+                    onCheckedChange={(checked) =>
+                      !disabled && handleSelectionChange(nodeValue, checked === true)
+                    }
                     className={cn(
-                      "data-[state=checked]:bg-primary data-[state=checked]:border-primary",
-                      disabled ? "!opacity-50 !cursor-not-allowed" : "",
+                      "data-[state=checked]:border-primary data-[state=checked]:bg-primary",
+                      disabled ? "!cursor-not-allowed !opacity-50" : "",
                       "pointer-events-none"
                     )}
                     style={{
-                      cursor: disabled ? 'not-allowed !important' : 'default',
-                      opacity: disabled ? '0.5 !important' : '1',
-                      pointerEvents: 'none'
+                      cursor: disabled ? "not-allowed !important" : "default",
+                      opacity: disabled ? "0.5 !important" : "1",
+                      pointerEvents: "none",
                     }}
                   />
                 </div>
@@ -752,8 +768,10 @@ function TreeList<T>({
               {/* Icon + Label */}
               <div
                 className={cn(
-                  "flex items-center gap-2 flex-1 min-w-0",
-                  selectable && !disabled ? "cursor-pointer hover:bg-muted/30 rounded-md p-1 transition-colors" : ""
+                  "flex min-w-0 flex-1 items-center gap-2",
+                  selectable && !disabled
+                    ? "cursor-pointer rounded-md p-1 transition-colors hover:bg-muted/30"
+                    : ""
                 )}
                 onClick={(e) => {
                   if (selectable && getValueToSend && !disabled) {
@@ -775,14 +793,14 @@ function TreeList<T>({
                   className={cn(
                     "truncate",
                     level === 0 ? "text-base" : "text-sm",
-                    selectable && selected ? "text-primary font-medium" : ""
+                    selectable && selected ? "font-medium text-primary" : ""
                   )}
                 >
                   {label}
                 </span>
                 {level === 0 && hasChildren && (
-                  <span className="ml-2 rtl:ml-0 rtl:mr-2 inline-flex items-center text-xs text-muted-foreground">
-                    <GitBranch className="h-3 w-3 mr-1 rtl:mr-0 rtl:ml-1" />
+                  <span className="ml-2 inline-flex items-center text-xs text-muted-foreground rtl:ml-0 rtl:mr-2">
+                    <GitBranch className="mr-1 h-3 w-3 rtl:ml-1 rtl:mr-0" />
                     {children.length}
                   </span>
                 )}
@@ -796,23 +814,18 @@ function TreeList<T>({
                       <MoreHorizontal className="h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent
-                    align={direction === "rtl" ? "start" : "end"}
-                  >
+                  <DropdownMenuContent align={direction === "rtl" ? "start" : "end"}>
                     {actions(node).map((a, idx) => (
                       <DropdownMenuItem
                         key={idx}
                         onClick={a.onClick}
                         disabled={a.disabled}
                         className={cn(
-                          a.variant === "destructive" &&
-                          "text-destructive focus:text-destructive"
+                          a.variant === "destructive" && "text-destructive focus:text-destructive"
                         )}
                       >
                         {a.icon && (
-                          <span className="mr-2 rtl:mr-0 rtl:ml-2 shrink-0">
-                            {a.icon}
-                          </span>
+                          <span className="mr-2 shrink-0 rtl:ml-2 rtl:mr-0">{a.icon}</span>
                         )}
                         {a.label}
                       </DropdownMenuItem>
@@ -833,9 +846,7 @@ function TreeList<T>({
                     connectorLine
                   )}
                 >
-                  <div
-                    className={cn("pl-4 rtl:pl-0 rtl:pr-4", density.childPad)}
-                  >
+                  <div className={cn("pl-4 rtl:pl-0 rtl:pr-4", density.childPad)}>
                     <TreeList<T>
                       nodes={children}
                       variant={variant}
@@ -921,12 +932,7 @@ function TreeList<T>({
 
             {/* Bubble: inline chip-like children wrapping */}
             {variant === "bubble" && hasChildren && isOpen && (
-              <div
-                className={cn(
-                  "mt-2 flex flex-wrap gap-2",
-                  "pl-8 rtl:pl-0 rtl:pr-8"
-                )}
-              >
+              <div className={cn("mt-2 flex flex-wrap gap-2", "pl-8 rtl:pl-0 rtl:pr-8")}>
                 <TreeList<T>
                   nodes={children}
                   variant={variant}

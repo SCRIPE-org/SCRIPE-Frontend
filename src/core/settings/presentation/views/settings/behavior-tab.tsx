@@ -20,10 +20,12 @@ export function BehaviorTab() {
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
-          <div className={cn(
-            "flex items-center justify-between",
-            direction === "rtl" ? "flex-row-reverse" : ""
-          )}>
+          <div
+            className={cn(
+              "flex items-center justify-between",
+              direction === "rtl" ? "flex-row-reverse" : ""
+            )}
+          >
             <div className="space-y-0.5">
               <Label>{t("settings.behavior.breadcrumbs.label")}</Label>
               <p className="text-sm text-muted-foreground">
@@ -38,10 +40,12 @@ export function BehaviorTab() {
 
           <Separator />
 
-          <div className={cn(
-            "flex items-center justify-between",
-            direction === "rtl" ? "flex-row-reverse" : ""
-          )}>
+          <div
+            className={cn(
+              "flex items-center justify-between",
+              direction === "rtl" ? "flex-row-reverse" : ""
+            )}
+          >
             <div className="space-y-0.5">
               <Label>{t("settings.behavior.userAvatar.label")}</Label>
               <p className="text-sm text-muted-foreground">
@@ -56,10 +60,12 @@ export function BehaviorTab() {
 
           <Separator />
 
-          <div className={cn(
-            "flex items-center justify-between",
-            direction === "rtl" ? "flex-row-reverse" : ""
-          )}>
+          <div
+            className={cn(
+              "flex items-center justify-between",
+              direction === "rtl" ? "flex-row-reverse" : ""
+            )}
+          >
             <div className="space-y-0.5">
               <Label>{t("settings.behavior.notifications.label")}</Label>
               <p className="text-sm text-muted-foreground">
@@ -74,100 +80,97 @@ export function BehaviorTab() {
 
           <Separator />
 
-          <div className={cn(
-            "flex items-center justify-between",
-            direction === "rtl" ? "flex-row-reverse" : ""
-          )}>
+          <div
+            className={cn(
+              "flex items-center justify-between",
+              direction === "rtl" ? "flex-row-reverse" : ""
+            )}
+          >
             <div className="space-y-0.5">
               <Label>{t("settings.behavior.logo.label")}</Label>
               <p className="text-sm text-muted-foreground">
                 {t("settings.behavior.logo.description")}
               </p>
             </div>
-            <Switch
-              checked={settings.showLogo}
-              onCheckedChange={settings.setShowLogo}
-            />
+            <Switch checked={settings.showLogo} onCheckedChange={settings.setShowLogo} />
           </div>
 
           <Separator />
 
-          <div className={cn(
-            "flex items-center justify-between",
-            direction === "rtl" ? "flex-row-reverse" : ""
-          )}>
+          <div
+            className={cn(
+              "flex items-center justify-between",
+              direction === "rtl" ? "flex-row-reverse" : ""
+            )}
+          >
             <div className="space-y-0.5">
               <Label>{t("settings.behavior.compact.label")}</Label>
               <p className="text-sm text-muted-foreground">
                 {t("settings.behavior.compact.description")}
               </p>
             </div>
-            <Switch
-              checked={settings.compactMode}
-              onCheckedChange={settings.setCompactMode}
-            />
+            <Switch checked={settings.compactMode} onCheckedChange={settings.setCompactMode} />
           </div>
 
           <Separator />
 
-          <div className={cn(
-            "flex items-center justify-between",
-            direction === "rtl" ? "flex-row-reverse" : ""
-          )}>
+          <div
+            className={cn(
+              "flex items-center justify-between",
+              direction === "rtl" ? "flex-row-reverse" : ""
+            )}
+          >
             <div className="space-y-0.5">
               <Label>{t("settings.behavior.contrast.label")}</Label>
               <p className="text-sm text-muted-foreground">
                 {t("settings.behavior.contrast.description")}
               </p>
             </div>
-            <Switch
-              checked={settings.highContrast}
-              onCheckedChange={settings.setHighContrast}
-            />
+            <Switch checked={settings.highContrast} onCheckedChange={settings.setHighContrast} />
           </div>
 
           <Separator />
 
-          <div className={cn(
-            "flex items-center justify-between",
-            direction === "rtl" ? "flex-row-reverse" : ""
-          )}>
+          <div
+            className={cn(
+              "flex items-center justify-between",
+              direction === "rtl" ? "flex-row-reverse" : ""
+            )}
+          >
             <div className="space-y-0.5">
               <Label>{t("settings.behavior.motion.label")}</Label>
               <p className="text-sm text-muted-foreground">
                 {t("settings.behavior.motion.description")}
               </p>
             </div>
-            <Switch
-              checked={settings.reducedMotion}
-              onCheckedChange={settings.setReducedMotion}
-            />
+            <Switch checked={settings.reducedMotion} onCheckedChange={settings.setReducedMotion} />
           </div>
 
           <Separator />
 
-          <div className={cn(
-            "flex items-center justify-between",
-            direction === "rtl" ? "flex-row-reverse" : ""
-          )}>
+          <div
+            className={cn(
+              "flex items-center justify-between",
+              direction === "rtl" ? "flex-row-reverse" : ""
+            )}
+          >
             <div className="space-y-0.5">
               <Label>{t("settings.behavior.sticky.label")}</Label>
               <p className="text-sm text-muted-foreground">
                 {t("settings.behavior.sticky.description")}
               </p>
             </div>
-            <Switch
-              checked={settings.stickyHeader}
-              onCheckedChange={settings.setStickyHeader}
-            />
+            <Switch checked={settings.stickyHeader} onCheckedChange={settings.setStickyHeader} />
           </div>
 
           <Separator />
 
-          <div className={cn(
-            "flex items-center justify-between",
-            direction === "rtl" ? "flex-row-reverse" : ""
-          )}>
+          <div
+            className={cn(
+              "flex items-center justify-between",
+              direction === "rtl" ? "flex-row-reverse" : ""
+            )}
+          >
             <div className="space-y-0.5">
               <Label>{t("settings.behavior.sidebar.label")}</Label>
               <p className="text-sm text-muted-foreground">
@@ -182,42 +185,39 @@ export function BehaviorTab() {
 
           <Separator />
 
-          <div className={cn(
-            "flex items-center justify-between",
-            direction === "rtl" ? "flex-row-reverse" : ""
-          )}>
+          <div
+            className={cn(
+              "flex items-center justify-between",
+              direction === "rtl" ? "flex-row-reverse" : ""
+            )}
+          >
             <div className="space-y-0.5">
               <Label>{t("settings.behavior.footer.label")}</Label>
               <p className="text-sm text-muted-foreground">
                 {t("settings.behavior.footer.description")}
               </p>
             </div>
-            <Switch
-              checked={settings.showFooter}
-              onCheckedChange={settings.setShowFooter}
-            />
+            <Switch checked={settings.showFooter} onCheckedChange={settings.setShowFooter} />
           </div>
 
           <Separator />
 
-          <div className={cn(
-            "flex items-center justify-between",
-            direction === "rtl" ? "flex-row-reverse" : ""
-          )}>
+          <div
+            className={cn(
+              "flex items-center justify-between",
+              direction === "rtl" ? "flex-row-reverse" : ""
+            )}
+          >
             <div className="space-y-0.5">
               <Label>{t("settings.behavior.autoSave.label")}</Label>
               <p className="text-sm text-muted-foreground">
                 {t("settings.behavior.autoSave.description")}
               </p>
             </div>
-            <Switch
-              checked={settings.autoSave}
-              onCheckedChange={settings.setAutoSave}
-            />
+            <Switch checked={settings.autoSave} onCheckedChange={settings.setAutoSave} />
           </div>
         </div>
       </CardContent>
     </Card>
   );
 }
-

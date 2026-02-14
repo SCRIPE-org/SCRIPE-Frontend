@@ -17,15 +17,10 @@ interface ResponsiveTabsProps {
   className?: string;
 }
 
-export function ResponsiveTabs({
-  tabs,
-  activeTab,
-  onTabChange,
-  className
-}: ResponsiveTabsProps) {
+export function ResponsiveTabs({ tabs, activeTab, onTabChange, className }: ResponsiveTabsProps) {
   return (
     <div className={cn("w-full", className)}>
-      <div className="flex flex-wrap gap-2 p-1 bg-muted/50 rounded-lg">
+      <div className="flex flex-wrap gap-2 rounded-lg bg-muted/50 p-1">
         {tabs.map((tab) => (
           <Button
             key={tab.id}

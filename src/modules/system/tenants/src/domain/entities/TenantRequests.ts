@@ -10,23 +10,23 @@
  * Backend auto-creates {CODE}_SUPER_ADMIN and {CODE}_DEFAULT roles
  */
 export interface CreateTenantRequest {
-      name: string;
-      code: string;
-      parentId?: string;
-      description?: string;
-      address?: string;
-      /** Encrypted permission IDs to assign to this tenant */
-      availablePermissionIds?: string[];
+  name: string;
+  code: string;
+  parentId?: string;
+  description?: string;
+  address?: string;
+  /** Encrypted permission IDs to assign to this tenant */
+  availablePermissionIds?: string[];
 }
 
 /**
  * Update tenant request
  */
 export interface UpdateTenantRequest {
-      name?: string;
-      description?: string;
-      address?: string;
-      isActive?: boolean;
+  name?: string;
+  description?: string;
+  address?: string;
+  isActive?: boolean;
 }
 
 /**
@@ -34,6 +34,6 @@ export interface UpdateTenantRequest {
  * Supports cascade delete of entire hierarchy
  */
 export interface DeleteTenantRequest {
-      /** If true, cascade soft delete all descendant tenants, admins, and roles */
-      cascadeChildren?: boolean;
+  /** If true, cascade soft delete all descendant tenants, admins, and roles */
+  cascadeChildren?: boolean;
 }

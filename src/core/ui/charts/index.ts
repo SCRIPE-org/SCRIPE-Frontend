@@ -1,5 +1,9 @@
 // Professional Chart Components
-export { GenericChart as ProfessionalChart, ChartUtils, GENERIC_COLORS as PROFESSIONAL_COLORS } from "./generic-chart";
+export {
+  GenericChart as ProfessionalChart,
+  ChartUtils,
+  GENERIC_COLORS as PROFESSIONAL_COLORS,
+} from "./generic-chart";
 export { ResponsiveTabs, type Tab } from "../responsive-tabs";
 
 // Individual Chart Types
@@ -16,4 +20,3 @@ export { ProfessionalTreemapCharts } from "./treemap-charts";
 export { ProfessionalTimelineCharts } from "./timeline-charts";
 
 // Main Charts Tab
-

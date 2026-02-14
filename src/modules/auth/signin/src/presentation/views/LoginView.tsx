@@ -17,7 +17,7 @@ import { useLoginViewModel } from "../viewmodels/use-login-viewmodel";
 export function LoginView() {
   const { t, language } = useI18n();
   const vm = useLoginViewModel();
-  const isRTL = language === 'ar';
+  const isRTL = language === "ar";
   const hasCheckedAuth = useRef(false);
 
   // Check for authenticated user ONCE after hydration
@@ -38,7 +38,7 @@ export function LoginView() {
   // Show loading spinner while redirecting or not hydrated
   if (!vm.hasHydrated || vm.isRedirecting || (vm.isAuthenticated && !vm.isLoading)) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/20 via-background to-secondary/20">
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-primary/20 via-background to-secondary/20">
         <div className="text-center">
           <LoadingSpinner size="md" showText={false} />
           <p className="mt-4 text-muted-foreground">{t("auth.redirecting")}</p>
@@ -48,18 +48,18 @@ export function LoginView() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/20 via-background to-secondary/20 p-4">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-primary/20 via-background to-secondary/20 p-4">
       {/* Background Pattern */}
-      <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
+      <div className="bg-grid-pattern absolute inset-0 opacity-5"></div>
 
       {/* Language and Theme Switchers */}
-      <div className="absolute top-4 right-4 flex items-center gap-2">
+      <div className="absolute right-4 top-4 flex items-center gap-2">
         <LanguageSwitcher buttonClassName="glass bg-transparent" />
         <ThemeSwitcher buttonClassName="glass bg-transparent" />
       </div>
 
-      <Card className="w-full max-w-md glass hover-lift animate-fade-in">
-        <CardHeader className="text-center space-y-4">
+      <Card className="glass hover-lift animate-fade-in w-full max-w-md">
+        <CardHeader className="space-y-4 text-center">
           <div className="mx-auto">
             <Logo size="xl" animation="fancy" />
           </div>
@@ -67,17 +67,15 @@ export function LoginView() {
           {vm.loginStep === "credentials" ? (
             <div>
               <h1 className="text-2xl font-bold">{t("auth.welcome")}</h1>
-              <p className="text-muted-foreground mt-2">
-                {t("auth.pleaseLogin")}
-              </p>
+              <p className="mt-2 text-muted-foreground">{t("auth.pleaseLogin")}</p>
             </div>
           ) : (
             <div>
-              <div className="mx-auto w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/10 flex items-center justify-center mb-4 shadow-lg shadow-primary/10">
-                <ShieldCheck className="h-8 w-8 text-primary animate-in zoom-in-50 duration-500" />
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl border border-primary/10 bg-gradient-to-br from-primary/20 to-primary/5 shadow-lg shadow-primary/10">
+                <ShieldCheck className="h-8 w-8 text-primary duration-500 animate-in zoom-in-50" />
               </div>
               <h1 className="text-2xl font-bold">{t("auth.twoFactor.title")}</h1>
-              <p className="text-muted-foreground mt-2 text-sm leading-relaxed">
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                 {vm.useBackupCode
                   ? t("auth.twoFactor.enterBackupCode")
                   : t("auth.twoFactor.enterAuthCode")}
@@ -99,7 +97,7 @@ export function LoginView() {
               className="space-y-6"
             >
               {vm.error && (
-                <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-sm">
+                <div className="rounded-lg border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive">
                   {vm.error}
                 </div>
               )}
@@ -136,22 +134,18 @@ export function LoginView() {
                     type="button"
                     variant="ghost"
                     size="icon"
-                    className={`absolute ${isRTL ? 'left-2' : 'right-2'} top-1/2 -translate-y-1/2 h-10 w-10 hover:bg-muted/50 rounded-xl`}
+                    className={`absolute ${isRTL ? "left-2" : "right-2"} top-1/2 h-10 w-10 -translate-y-1/2 rounded-xl hover:bg-muted/50`}
                     onClick={vm.togglePasswordVisibility}
                     disabled={vm.isLoading}
                   >
-                    {vm.showPassword ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
+                    {vm.showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </Button>
                 </div>
               </div>
 
               <Button
                 type="submit"
-                className="w-full h-12 gradient-primary"
+                className="gradient-primary h-12 w-full"
                 disabled={vm.isLoading || !vm.isFormValid}
               >
                 {vm.isLoading ? (
@@ -170,8 +164,8 @@ export function LoginView() {
           {vm.loginStep === "two-factor" && (
             <div className="space-y-6">
               {vm.error && (
-                <div className="p-3.5 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-sm flex items-center gap-2.5 animate-in slide-in-from-top-2 duration-300">
-                  <div className="h-5 w-5 rounded-full bg-destructive/20 flex items-center justify-center flex-shrink-0">
+                <div className="flex items-center gap-2.5 rounded-xl border border-destructive/20 bg-destructive/10 p-3.5 text-sm text-destructive duration-300 animate-in slide-in-from-top-2">
+                  <div className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-destructive/20">
                     <span className="text-xs font-bold">!</span>
                   </div>
                   <span>{vm.error}</span>
@@ -190,7 +184,7 @@ export function LoginView() {
                     value={vm.twoFactorCode}
                     onChange={(e) => vm.setTwoFactorCode(e.target.value)}
                     placeholder="XXXX-XXXX"
-                    className="h-14 text-center text-lg font-mono tracking-[0.3em] border-2 focus:border-primary/50 transition-colors"
+                    className="h-14 border-2 text-center font-mono text-lg tracking-[0.3em] transition-colors focus:border-primary/50"
                     style={{ direction: "ltr" }}
                     disabled={vm.isVerifying2FA}
                     autoFocus
@@ -213,15 +207,33 @@ export function LoginView() {
                     className="gap-2"
                   >
                     <InputOTPGroup className="gap-1.5">
-                      <InputOTPSlot index={0} className="h-14 w-12 text-xl font-semibold border-2 rounded-xl transition-all focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20" />
-                      <InputOTPSlot index={1} className="h-14 w-12 text-xl font-semibold border-2 rounded-xl transition-all focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20" />
-                      <InputOTPSlot index={2} className="h-14 w-12 text-xl font-semibold border-2 rounded-xl transition-all focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20" />
+                      <InputOTPSlot
+                        index={0}
+                        className="h-14 w-12 rounded-xl border-2 text-xl font-semibold transition-all focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20"
+                      />
+                      <InputOTPSlot
+                        index={1}
+                        className="h-14 w-12 rounded-xl border-2 text-xl font-semibold transition-all focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20"
+                      />
+                      <InputOTPSlot
+                        index={2}
+                        className="h-14 w-12 rounded-xl border-2 text-xl font-semibold transition-all focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20"
+                      />
                     </InputOTPGroup>
-                    <span className="text-xl font-light text-muted-foreground/50 mx-1">–</span>
+                    <span className="mx-1 text-xl font-light text-muted-foreground/50">–</span>
                     <InputOTPGroup className="gap-1.5">
-                      <InputOTPSlot index={3} className="h-14 w-12 text-xl font-semibold border-2 rounded-xl transition-all focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20" />
-                      <InputOTPSlot index={4} className="h-14 w-12 text-xl font-semibold border-2 rounded-xl transition-all focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20" />
-                      <InputOTPSlot index={5} className="h-14 w-12 text-xl font-semibold border-2 rounded-xl transition-all focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20" />
+                      <InputOTPSlot
+                        index={3}
+                        className="h-14 w-12 rounded-xl border-2 text-xl font-semibold transition-all focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20"
+                      />
+                      <InputOTPSlot
+                        index={4}
+                        className="h-14 w-12 rounded-xl border-2 text-xl font-semibold transition-all focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20"
+                      />
+                      <InputOTPSlot
+                        index={5}
+                        className="h-14 w-12 rounded-xl border-2 text-xl font-semibold transition-all focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20"
+                      />
                     </InputOTPGroup>
                   </InputOTP>
                 </div>
@@ -229,7 +241,7 @@ export function LoginView() {
 
               <Button
                 type="button"
-                className="w-full h-12 gradient-primary text-base font-medium shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-shadow"
+                className="gradient-primary h-12 w-full text-base font-medium shadow-lg shadow-primary/20 transition-shadow hover:shadow-primary/30"
                 disabled={vm.isVerifying2FA || !vm.twoFactorCode.trim()}
                 onClick={vm.handleVerify2FA}
               >
@@ -259,10 +271,10 @@ export function LoginView() {
                   type="button"
                   variant="ghost"
                   size="sm"
-                  className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                  className="text-sm text-muted-foreground transition-colors hover:text-primary"
                   onClick={vm.toggleBackupCode}
                 >
-                  <KeyRound className="h-3.5 w-3.5 me-2" />
+                  <KeyRound className="me-2 h-3.5 w-3.5" />
                   {vm.useBackupCode
                     ? t("auth.twoFactor.useAuthenticator")
                     : t("auth.twoFactor.useBackupCode")}
@@ -273,11 +285,11 @@ export function LoginView() {
                   type="button"
                   variant="ghost"
                   size="sm"
-                  className="text-xs text-muted-foreground/70 hover:text-foreground transition-colors"
+                  className="text-xs text-muted-foreground/70 transition-colors hover:text-foreground"
                   onClick={vm.goBackToCredentials}
                   disabled={vm.isVerifying2FA}
                 >
-                  <ArrowLeft className="h-3 w-3 me-1.5" />
+                  <ArrowLeft className="me-1.5 h-3 w-3" />
                   {t("auth.twoFactor.backToLogin")}
                 </Button>
               </div>
@@ -286,14 +298,11 @@ export function LoginView() {
 
           {/* Debug Section */}
           {process.env.NODE_ENV === "development" && (
-            <div className="mt-4 p-3 bg-muted/50 rounded-lg text-xs">
+            <div className="mt-4 rounded-lg bg-muted/50 p-3 text-xs">
               <p>
                 <strong>Debug Info:</strong>
               </p>
-              <p>
-                API URL:{" "}
-                {process.env.NEXT_PUBLIC_API_URL || "Not set - using default"}
-              </p>
+              <p>API URL: {process.env.NEXT_PUBLIC_API_URL || "Not set - using default"}</p>
               <p>Hydrated: {vm.hasHydrated ? "Yes" : "No"}</p>
               <p>Authenticated: {vm.isAuthenticated ? "Yes" : "No"}</p>
               <p>Login Step: {vm.loginStep}</p>

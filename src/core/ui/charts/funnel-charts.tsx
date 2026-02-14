@@ -7,26 +7,24 @@ import { useI18n } from "@core/providers/i18n-provider";
 // Simple funnel chart component using CSS
 const FunnelChart = ({ data, colors, title, description }: any) => {
   const maxValue = Math.max(...data.map((item: any) => item.value));
-  
+
   return (
-    <Card className="w-full bg-gradient-to-br from-slate-900 to-slate-800 border-slate-700 shadow-2xl">
+    <Card className="w-full border-slate-700 bg-gradient-to-br from-slate-900 to-slate-800 shadow-2xl">
       <CardHeader className="pb-6">
-        <CardTitle className="text-2xl font-bold text-white bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+        <CardTitle className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-2xl font-bold text-transparent text-white">
           {title}
         </CardTitle>
-        <CardDescription className="text-slate-300 text-base">
-          {description}
-        </CardDescription>
+        <CardDescription className="text-base text-slate-300">{description}</CardDescription>
       </CardHeader>
       <CardContent className="pt-0">
-        <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 shadow-inner">
+        <div className="rounded-xl bg-gradient-to-br from-slate-800 to-slate-900 p-6 shadow-inner">
           <div className="space-y-2">
             {data.map((item: any, index: number) => {
               const width = (item.value / maxValue) * 100;
               return (
                 <div key={index} className="relative">
                   <div
-                    className="h-12 flex items-center justify-between px-4 text-white font-semibold rounded-lg transition-all duration-300 hover:scale-105"
+                    className="flex h-12 items-center justify-between rounded-lg px-4 font-semibold text-white transition-all duration-300 hover:scale-105"
                     style={{
                       width: `${width}%`,
                       backgroundColor: colors[index % colors.length],
@@ -36,8 +34,13 @@ const FunnelChart = ({ data, colors, title, description }: any) => {
                     <span className="text-sm">{item.label}</span>
                     <span className="text-sm font-bold">{item.value}</span>
                   </div>
-                  <div className="absolute top-0 right-0 h-12 w-0 border-l-[12px] border-l-transparent border-t-[24px] border-b-[24px] border-t-transparent border-b-transparent"
-                       style={{ borderTopColor: colors[index % colors.length], borderBottomColor: colors[index % colors.length] }} />
+                  <div
+                    className="absolute right-0 top-0 h-12 w-0 border-b-[24px] border-l-[12px] border-t-[24px] border-b-transparent border-l-transparent border-t-transparent"
+                    style={{
+                      borderTopColor: colors[index % colors.length],
+                      borderBottomColor: colors[index % colors.length],
+                    }}
+                  />
                 </div>
               );
             })}

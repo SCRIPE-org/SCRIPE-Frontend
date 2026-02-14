@@ -14,12 +14,12 @@ graph LR
         P[page.tsx<br/>Server Component]
         L[layout.tsx<br/>Server Component]
     end
-    
+
     subgraph "src/modules/ (Views)"
         V[View.tsx<br/>Client Component]
         C[Components<br/>Client/Server]
     end
-    
+
     P -->|imports & renders| V
     L -->|wraps| P
 ```
@@ -47,7 +47,7 @@ graph LR
                    ┌─────────┐
               YES  │ CLIENT  │  Add 'use client'
                    └─────────┘
-                        
+
                         │
                         ▼
          ┌─────────────────────────────────────┐
@@ -70,13 +70,13 @@ graph LR
 
 ### `src/app/` - The Connectors (Server Components)
 
-| Responsibility | Example |
-|----------------|---------|
-| Define routes | `(modules)/hr/page.tsx` |
-| Generate metadata | `export const metadata = {...}` |
-| Read URL params | `searchParams`, `params` |
-| Server-side auth | Check session, redirect |
-| Import Views | `import { EmployeeListView } from '@modules/hr'` |
+| Responsibility    | Example                                          |
+| ----------------- | ------------------------------------------------ |
+| Define routes     | `(modules)/hr/page.tsx`                          |
+| Generate metadata | `export const metadata = {...}`                  |
+| Read URL params   | `searchParams`, `params`                         |
+| Server-side auth  | Check session, redirect                          |
+| Import Views      | `import { EmployeeListView } from '@modules/hr'` |
 
 ```typescript
 // src/app/(modules)/hr/page.tsx
@@ -94,10 +94,10 @@ interface Props {
 
 export default async function HRPage({ searchParams }: Props) {
   const { page, search } = await searchParams;
-  
+
   return (
     <main>
-      <EmployeeListView 
+      <EmployeeListView
         initialPage={Number(page) || 1}
         initialSearch={search}
       />
@@ -108,12 +108,12 @@ export default async function HRPage({ searchParams }: Props) {
 
 ### `src/modules/.../views/` - The Views (Client Components)
 
-| Responsibility | Example |
-|----------------|---------|
+| Responsibility    | Example                    |
+| ----------------- | -------------------------- |
 | User interactions | Button clicks, form inputs |
-| State management | useState, TanStack Query |
-| Data fetching | Via ViewModels (hooks) |
-| Rendering UI | JSX with dynamic content |
+| State management  | useState, TanStack Query   |
+| Data fetching     | Via ViewModels (hooks)     |
+| Rendering UI      | JSX with dynamic content   |
 
 ```typescript
 // src/modules/hr/src/presentation/views/EmployeeListView.tsx
@@ -131,9 +131,9 @@ interface Props {
 export function EmployeeListView({ initialPage, initialSearch }: Props) {
   const [page, setPage] = useState(initialPage);
   const [search, setSearch] = useState(initialSearch ?? '');
-  
+
   const { data, isLoading } = useEmployees({ page, search });
-  
+
   return (
     <div>
       <SearchInput value={search} onChange={setSearch} />
@@ -158,13 +158,13 @@ When a Server Component needs small interactivity, extract only that part:
 
 export function SettingsPage() {
   const [darkMode, setDarkMode] = useState(false);
-  
+
   return (
     <div>
       <h1>Settings</h1>  {/* Static */}
       <p>Description...</p>  {/* Static */}
       <footer>...</footer>  {/* Static */}
-      
+
       {/* Only this needs client */}
       <Toggle checked={darkMode} onChange={setDarkMode} />
     </div>
@@ -184,7 +184,7 @@ export default function SettingsPage() {
       <h1>Settings</h1>
       <p>Description...</p>
       <footer>...</footer>
-      
+
       <DarkModeToggle />
     </div>
   );
@@ -204,11 +204,11 @@ export function DarkModeToggle() {
 
 ## UI Component Placement
 
-| Location | Purpose | Example |
-|----------|---------|---------|
-| `@core/ui/` | Shared, generic components | Button, Input, Modal, Toast |
-| `@modules/{name}/.../components/` | Domain-specific components | EmployeeCard, VendorBadge |
-| `src/app/{route}/` | Route-specific tiny client parts | DarkModeToggle (as above) |
+| Location                          | Purpose                          | Example                     |
+| --------------------------------- | -------------------------------- | --------------------------- |
+| `@core/ui/`                       | Shared, generic components       | Button, Input, Modal, Toast |
+| `@modules/{name}/.../components/` | Domain-specific components       | EmployeeCard, VendorBadge   |
+| `src/app/{route}/`                | Route-specific tiny client parts | DarkModeToggle (as above)   |
 
 ### ❌ NEVER in `src/app/`
 
@@ -221,11 +221,11 @@ export function DarkModeToggle() {
 
 ## Quick Reference
 
-| File Location | Component Type | Has `'use client'`? |
-|---------------|----------------|---------------------|
-| `src/app/**/page.tsx` | Server | No |
-| `src/app/**/layout.tsx` | Server | No |
-| `src/app/**/{Small}Toggle.tsx` | Client | Yes |
-| `src/modules/**/views/*.tsx` | Client | Yes |
-| `src/modules/**/components/*.tsx` | Depends | Check needs |
-| `src/core/ui/*.tsx` | Depends | Check needs |
+| File Location                     | Component Type | Has `'use client'`? |
+| --------------------------------- | -------------- | ------------------- |
+| `src/app/**/page.tsx`             | Server         | No                  |
+| `src/app/**/layout.tsx`           | Server         | No                  |
+| `src/app/**/{Small}Toggle.tsx`    | Client         | Yes                 |
+| `src/modules/**/views/*.tsx`      | Client         | Yes                 |
+| `src/modules/**/components/*.tsx` | Depends        | Check needs         |
+| `src/core/ui/*.tsx`               | Depends        | Check needs         |

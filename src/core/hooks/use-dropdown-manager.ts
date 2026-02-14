@@ -1,6 +1,6 @@
 /**
  * Dropdown Manager Hook
- * 
+ *
  * Generic hook for managing dropdown state in view models.
  * Handles preloading, searching, and maintaining current selection.
  * Used by view models that need dropdown functionality.
@@ -17,28 +17,32 @@ export interface UseDropdownManagerOptions<TItem> {
   /**
    * Service method to fetch items for dropdown
    */
-  fetchItems: (params: { page?: number; pageSize?: number; PageSearch?: string }) => Promise<{ data: TItem[] }>;
-  
+  fetchItems: (params: {
+    page?: number;
+    pageSize?: number;
+    PageSearch?: string;
+  }) => Promise<{ data: TItem[] }>;
+
   /**
    * Function to get the ID from an item
    */
   getId: (item: TItem) => string;
-  
+
   /**
    * Function to get the label from an item
    */
   getLabel: (item: TItem) => string;
-  
+
   /**
    * ID of the currently selected item (for edit mode)
    */
   selectedId?: string | null;
-  
+
   /**
    * Method to fetch a single item by ID (for loading current selection)
    */
   fetchItemById?: (id: string) => Promise<TItem>;
-  
+
   /**
    * Initial page size for loading items
    */
@@ -166,4 +170,3 @@ export function useDropdownManager<TItem>({
     search,
   };
 }
-

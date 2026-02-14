@@ -1,22 +1,13 @@
 "use client";
 
-import React, {
-  useState,
-  useRef,
-  useEffect,
-  useMemo,
-  useCallback,
-} from "react";
+import React, { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { CalendarDays, Clock } from "lucide-react";
 import { cn } from "@core/common/utils";
 import { useSettings } from "@core/providers/settings-provider";
 import { useI18n } from "@core/providers/i18n-provider";
 import { CustomCalendar } from "./custom-calendar";
-import {
-  scrollIntoViewIfNeeded,
-  type DropdownPosition,
-} from "@core/common/dropdown-positioning";
+import { scrollIntoViewIfNeeded, type DropdownPosition } from "@core/common/dropdown-positioning";
 
 interface DatePickerProps {
   id?: string;
@@ -70,10 +61,7 @@ function getViewport(): { viewport: Viewport; actualHeight: number } {
     scrollY: window.scrollY || visualViewport?.offsetTop || 0,
   };
   const docElement = document.documentElement;
-  const actualHeight = Math.min(
-    viewport.height,
-    docElement.clientHeight || window.innerHeight
-  );
+  const actualHeight = Math.min(viewport.height, docElement.clientHeight || window.innerHeight);
   return { viewport, actualHeight };
 }
 
@@ -87,26 +75,18 @@ function calculateCalendarPosition(params: PositionCalcParams): PositionResult {
   } = params;
   const { viewport, actualHeight } = getViewport();
 
-  const isNearBottom =
-    triggerRect.bottom > actualHeight * NEAR_BOTTOM_THRESHOLD;
-  const bottomMargin = isNearBottom
-    ? BOTTOM_MARGIN_NEAR_EDGE
-    : BOTTOM_MARGIN_NORMAL;
+  const isNearBottom = triggerRect.bottom > actualHeight * NEAR_BOTTOM_THRESHOLD;
+  const bottomMargin = isNearBottom ? BOTTOM_MARGIN_NEAR_EDGE : BOTTOM_MARGIN_NORMAL;
 
   // Calculate natural width
   let naturalWidth = MIN_CALENDAR_WIDTH;
   if (calendarContent) {
     const contentRect = calendarContent.getBoundingClientRect();
-    naturalWidth = Math.max(
-      contentRect.width || MIN_CALENDAR_WIDTH,
-      MIN_CALENDAR_WIDTH
-    );
+    naturalWidth = Math.max(contentRect.width || MIN_CALENDAR_WIDTH, MIN_CALENDAR_WIDTH);
   }
   const preferredWidth = Math.max(
     naturalWidth,
-    triggerRect.width >= MIN_CALENDAR_WIDTH
-      ? triggerRect.width
-      : MIN_CALENDAR_WIDTH
+    triggerRect.width >= MIN_CALENDAR_WIDTH ? triggerRect.width : MIN_CALENDAR_WIDTH
   );
 
   // Calculate available space
@@ -118,8 +98,7 @@ function calculateCalendarPosition(params: PositionCalcParams): PositionResult {
   const hasEnoughSpaceBelow = spaceBelow >= estimatedHeight + bottomMargin;
   const hasEnoughSpaceAbove = spaceAbove >= estimatedHeight + TOP_MARGIN;
   const shouldShowAbove =
-    !hasEnoughSpaceBelow &&
-    (hasEnoughSpaceAbove || spaceAbove > spaceBelow + 30);
+    !hasEnoughSpaceBelow && (hasEnoughSpaceAbove || spaceAbove > spaceBelow + 30);
 
   // Calculate vertical position
   let top: number;
@@ -129,16 +108,14 @@ function calculateCalendarPosition(params: PositionCalcParams): PositionResult {
     const availableAbove = Math.max(0, spaceAbove - TOP_MARGIN);
     maxHeight = Math.min(MAX_CALENDAR_HEIGHT, availableAbove);
     maxHeight = Math.max(maxHeight, MIN_CALENDAR_HEIGHT);
-    const calendarTop =
-      triggerRect.top + viewport.scrollY - estimatedHeight - 1;
+    const calendarTop = triggerRect.top + viewport.scrollY - estimatedHeight - 1;
     const safeTop = viewport.scrollY + TOP_MARGIN;
     top = Math.max(calendarTop, safeTop);
   } else {
     const availableBelow = Math.max(0, spaceBelow - bottomMargin);
     maxHeight = Math.min(MAX_CALENDAR_HEIGHT, availableBelow);
     maxHeight = Math.max(maxHeight, MIN_CALENDAR_HEIGHT);
-    const calendarBottom =
-      triggerRect.bottom + viewport.scrollY + estimatedHeight;
+    const calendarBottom = triggerRect.bottom + viewport.scrollY + estimatedHeight;
     const safeBottom = actualHeight + viewport.scrollY - bottomMargin;
 
     if (calendarBottom > safeBottom) {
@@ -146,8 +123,7 @@ function calculateCalendarPosition(params: PositionCalcParams): PositionResult {
       const availableAbove = Math.max(0, spaceAbove - TOP_MARGIN);
       maxHeight = Math.min(MAX_CALENDAR_HEIGHT, availableAbove);
       maxHeight = Math.max(maxHeight, MIN_CALENDAR_HEIGHT);
-      const calendarTop =
-        triggerRect.top + viewport.scrollY - estimatedHeight - 1;
+      const calendarTop = triggerRect.top + viewport.scrollY - estimatedHeight - 1;
       const safeTop = viewport.scrollY + TOP_MARGIN;
       top = Math.max(calendarTop, safeTop);
       return {
@@ -168,8 +144,7 @@ function calculateCalendarPosition(params: PositionCalcParams): PositionResult {
   const calendarRightEdge = left + preferredWidth;
 
   if (calendarRightEdge > rightEdge) {
-    const rightAlignLeft =
-      triggerRect.right + viewport.scrollX - preferredWidth;
+    const rightAlignLeft = triggerRect.right + viewport.scrollX - preferredWidth;
     const leftEdge = viewport.scrollX + 8;
     left = rightAlignLeft >= leftEdge ? rightAlignLeft : leftEdge;
   }
@@ -447,8 +422,7 @@ export function DatePicker({
   }, [borderRadius]);
 
   const datePickerStyles = useMemo(() => {
-    const baseStyles =
-      "relative w-full transition-all duration-200 ease-in-out";
+    const baseStyles = "relative w-full transition-all duration-200 ease-in-out";
     switch (datePickerStyle) {
       case "modern":
         return cn(
@@ -585,8 +559,7 @@ export function DatePicker({
     const baseIconStyles =
       "absolute top-1/2 -translate-y-1/2 transition-all duration-200 pointer-events-none";
     const iconPosition = direction === "rtl" ? "right-3" : "left-3";
-    const baseHoverFocus =
-      "group-hover:text-primary group-focus-within:text-primary";
+    const baseHoverFocus = "group-hover:text-primary group-focus-within:text-primary";
 
     switch (datePickerStyle) {
       case "modern":
@@ -635,12 +608,7 @@ export function DatePicker({
           "group-focus-within:scale-105 drop-shadow-sm"
         );
       default:
-        return cn(
-          baseIconStyles,
-          iconPosition,
-          "text-muted-foreground",
-          baseHoverFocus
-        );
+        return cn(baseIconStyles, iconPosition, "text-muted-foreground", baseHoverFocus);
     }
   }, [datePickerStyle, direction]);
 
@@ -689,8 +657,7 @@ export function DatePicker({
           baseLabelStyles,
           labelPosition,
           "top-1/2 -translate-y-1/2 text-muted-foreground text-sm",
-          (isFocused || showCalendar) &&
-            "top-2 text-xs text-primary font-medium"
+          (isFocused || showCalendar) && "top-2 text-xs text-primary font-medium"
         );
       default:
         return cn(
@@ -750,8 +717,7 @@ export function DatePicker({
         aria-disabled={disabled}
       >
         <span id={descriptionId} className="sr-only">
-          {t("common.datePickerInstructions") ||
-            "Press Enter or Space to open calendar"}
+          {t("common.datePickerInstructions") || "Press Enter or Space to open calendar"}
         </span>
         <span
           className={cn(
@@ -764,20 +730,20 @@ export function DatePicker({
         </span>
         <IconComponent
           className={cn(
-            "h-4 w-4 transition-all duration-200 flex-shrink-0",
+            "h-4 w-4 flex-shrink-0 transition-all duration-200",
             direction === "rtl" ? "mr-2" : "ml-2",
-            showCalendar ? "text-primary scale-110" : "text-muted-foreground",
-            "hover:text-primary hover:scale-105"
+            showCalendar ? "scale-110 text-primary" : "text-muted-foreground",
+            "hover:scale-105 hover:text-primary"
           )}
           aria-hidden="true"
         />
       </div>
 
       {datePickerStyle === "glass" && isFocused && (
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent rounded-inherit pointer-events-none" />
+        <div className="rounded-inherit pointer-events-none absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent" />
       )}
       {datePickerStyle === "elegant" && (
-        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-primary/30 to-transparent opacity-0 group-focus-within:opacity-100 transition-opacity duration-300" />
+        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-primary/30 to-transparent opacity-0 transition-opacity duration-300 group-focus-within:opacity-100" />
       )}
 
       {showCalendar &&
@@ -793,10 +759,8 @@ export function DatePicker({
             aria-modal="true"
             aria-label={t("common.calendarDialog") || "Calendar"}
             className={cn(
-              "fixed z-[2147483647] pointer-events-auto shadow-lg",
-              shouldShowAboveRef.current
-                ? "border-b-0 rounded-b-none"
-                : "border-t-0 rounded-t-none"
+              "pointer-events-auto fixed z-[2147483647] shadow-lg",
+              shouldShowAboveRef.current ? "rounded-b-none border-b-0" : "rounded-t-none border-t-0"
             )}
             style={{
               top: `${calendarPosition.top}px`,
@@ -851,21 +815,14 @@ export function DatePicker({
             if (calendarContent) {
               const contentRect = calendarContent.getBoundingClientRect();
               const measuredContentWidth =
-                contentRect.width ||
-                calendarContent.scrollWidth ||
-                MIN_CALENDAR_WIDTH;
+                contentRect.width || calendarContent.scrollWidth || MIN_CALENDAR_WIDTH;
               const wrapperStyle = window.getComputedStyle(calendarRef.current);
               const paddingLeft = parseFloat(wrapperStyle.paddingLeft) || 0;
               const paddingRight = parseFloat(wrapperStyle.paddingRight) || 0;
               const borderLeft = parseFloat(wrapperStyle.borderLeftWidth) || 0;
-              const borderRight =
-                parseFloat(wrapperStyle.borderRightWidth) || 0;
+              const borderRight = parseFloat(wrapperStyle.borderRightWidth) || 0;
               naturalWidth = Math.max(
-                measuredContentWidth +
-                  paddingLeft +
-                  paddingRight +
-                  borderLeft +
-                  borderRight,
+                measuredContentWidth + paddingLeft + paddingRight + borderLeft + borderRight,
                 MIN_CALENDAR_WIDTH
               );
             }
@@ -882,9 +839,7 @@ export function DatePicker({
             // Override width with natural width calculation
             position.width = Math.max(
               naturalWidth,
-              triggerRect.width >= MIN_CALENDAR_WIDTH
-                ? triggerRect.width
-                : MIN_CALENDAR_WIDTH
+              triggerRect.width >= MIN_CALENDAR_WIDTH ? triggerRect.width : MIN_CALENDAR_WIDTH
             );
 
             shouldShowAboveRef.current = position.shouldShowAbove;

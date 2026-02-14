@@ -5,54 +5,54 @@
  */
 import type { Permission } from "../entities/Permission";
 import type {
-      CreatePermissionRequest,
-      UpdatePermissionRequest,
+  CreatePermissionRequest,
+  UpdatePermissionRequest,
 } from "../entities/PermissionRequests";
 
 /**
  * Permission list query parameters
  */
 export interface PermissionListParams {
-      category?: string;
-      search?: string;
+  category?: string;
+  search?: string;
 }
 
 /**
  * Permission repository interface
  */
 export interface IPermissionRepository {
-      /**
-       * Get all permissions with optional filtering
-       */
-      getAll(params?: PermissionListParams): Promise<Permission[]>;
+  /**
+   * Get all permissions with optional filtering
+   */
+  getAll(params?: PermissionListParams): Promise<Permission[]>;
 
-      /**
-       * Get only current user's assigned permissions
-       */
-      getMyPermissions(params?: PermissionListParams): Promise<Permission[]>;
+  /**
+   * Get only current user's assigned permissions
+   */
+  getMyPermissions(params?: PermissionListParams): Promise<Permission[]>;
 
-      /**
-       * Get permission by ID
-       */
-      getById(id: string): Promise<Permission>;
+  /**
+   * Get permission by ID
+   */
+  getById(id: string): Promise<Permission>;
 
-      /**
-       * Get all permission categories
-       */
-      getCategories(): Promise<string[]>;
+  /**
+   * Get all permission categories
+   */
+  getCategories(): Promise<string[]>;
 
-      /**
-       * Create a new permission
-       */
-      create(request: CreatePermissionRequest): Promise<string>;
+  /**
+   * Create a new permission
+   */
+  create(request: CreatePermissionRequest): Promise<string>;
 
-      /**
-       * Update an existing permission
-       */
-      update(id: string, request: UpdatePermissionRequest): Promise<void>;
+  /**
+   * Update an existing permission
+   */
+  update(id: string, request: UpdatePermissionRequest): Promise<void>;
 
-      /**
-       * Delete a permission
-       */
-      delete(id: string): Promise<void>;
+  /**
+   * Delete a permission
+   */
+  delete(id: string): Promise<void>;
 }

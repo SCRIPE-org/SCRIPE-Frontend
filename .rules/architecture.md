@@ -25,25 +25,25 @@ graph TD
         V[View<br/>Pure UI]
         VM[ViewModel<br/>TanStack Query + Zustand]
     end
-    
+
     subgraph "Domain Layer"
         IR[IRepository<br/>interface]
         IS[IService<br/>interface]
         E[Entity<br/>Zod schema]
     end
-    
+
     subgraph "Data Layer"
         R[Repository<br/>implements IRepository]
         S[Service<br/>implements IService]
         M[Model<br/>API DTO]
         MAP[Mapper<br/>Model ↔ Entity]
     end
-    
+
     subgraph "Infrastructure"
         API[IApiService]
         DI[DI Container]
     end
-    
+
     V --> VM
     VM -->|"uses (via DI)"| IR
     R -.implements.-> IR
@@ -74,22 +74,22 @@ View → ViewModel → Repository → Service → IApiService
 
 ### Layer Rules
 
-| Layer | ✅ CAN Call | ❌ CANNOT Call |
-|-------|-------------|----------------|
-| **View** | ViewModel hooks | Repository, Service, API |
-| **ViewModel** | Repository (via DI) | Service, IApiService |
-| **Repository** | Service (injected), Mapper | IApiService directly |
-| **Service** | IApiService (injected) | Repository, Mapper |
-| **Mapper** | Nothing (pure functions) | Any other layer |
+| Layer          | ✅ CAN Call                | ❌ CANNOT Call           |
+| -------------- | -------------------------- | ------------------------ |
+| **View**       | ViewModel hooks            | Repository, Service, API |
+| **ViewModel**  | Repository (via DI)        | Service, IApiService     |
+| **Repository** | Service (injected), Mapper | IApiService directly     |
+| **Service**    | IApiService (injected)     | Repository, Mapper       |
+| **Mapper**     | Nothing (pure functions)   | Any other layer          |
 
 ### Why This Matters
 
-| Without Boundaries | With Boundaries |
-|-------------------|-----------------|
-| Can't swap implementations | Easy test mocks |
-| Tight coupling | Loose coupling |
-| Hard to test | Easy to test |
-| One change breaks many | Isolated changes |
+| Without Boundaries         | With Boundaries  |
+| -------------------------- | ---------------- |
+| Can't swap implementations | Easy test mocks  |
+| Tight coupling             | Loose coupling   |
+| Hard to test               | Easy to test     |
+| One change breaks many     | Isolated changes |
 
 ---
 
@@ -190,18 +190,18 @@ src/
 ```typescript
 // src/core/di.ts
 export interface CoreContainer {
-    apiService: IApiService;
-    notificationService: NotificationService;
-    authRepository: IAuthRepository;
+  apiService: IApiService;
+  notificationService: NotificationService;
+  authRepository: IAuthRepository;
 }
 
 let container: CoreContainer | null = null;
 
 export function getCoreContainer(): CoreContainer {
-    if (!container) {
-        container = initContainer();
-    }
-    return container;
+  if (!container) {
+    container = initContainer();
+  }
+  return container;
 }
 ```
 
@@ -216,33 +216,33 @@ import { ProductService } from "./src/data/services/ProductService";
 import { ProductRepository } from "./src/data/repositories/ProductRepository";
 
 export interface ProductsContainer {
-    productService: IProductService;
-    productRepository: IProductRepository;
+  productService: IProductService;
+  productRepository: IProductRepository;
 }
 
 let _container: ProductsContainer | null = null;
 
 export function getProductsContainer(): ProductsContainer {
-    if (!_container) {
-        const { apiService } = getCoreContainer();
+  if (!_container) {
+    const { apiService } = getCoreContainer();
 
-        // 1. Create Service (uses IApiService)
-        const productService = new ProductService(apiService);
+    // 1. Create Service (uses IApiService)
+    const productService = new ProductService(apiService);
 
-        // 2. Create Repository (uses Service)
-        _container = {
-            productService,
-            productRepository: new ProductRepository(productService),
-        };
-    }
-    return _container;
+    // 2. Create Repository (uses Service)
+    _container = {
+      productService,
+      productRepository: new ProductRepository(productService),
+    };
+  }
+  return _container;
 }
 
 // Public accessor (only exposes Repository, not Service)
 export const productsContainer = {
-    get productRepository() {
-        return getProductsContainer().productRepository;
-    },
+  get productRepository() {
+    return getProductsContainer().productRepository;
+  },
 };
 ```
 
@@ -262,13 +262,13 @@ const repo = new ProductRepository(new ProductService(apiService));
 
 ### Principles
 
-| Principle | Application |
-|-----------|-------------|
-| **S** Single Responsibility | Each ViewModel handles ONE concern |
-| **O** Open/Closed | Base hooks extended, not modified |
-| **L** Liskov Substitution | All ViewModels return consistent interfaces |
-| **I** Interface Segregation | Components receive only needed props |
-| **D** Dependency Inversion | Views depend on ViewModel interfaces |
+| Principle                   | Application                                 |
+| --------------------------- | ------------------------------------------- |
+| **S** Single Responsibility | Each ViewModel handles ONE concern          |
+| **O** Open/Closed           | Base hooks extended, not modified           |
+| **L** Liskov Substitution   | All ViewModels return consistent interfaces |
+| **I** Interface Segregation | Components receive only needed props        |
+| **D** Dependency Inversion  | Views depend on ViewModel interfaces        |
 
 ### Rules
 
@@ -284,7 +284,7 @@ const repo = new ProductRepository(new ProductService(apiService));
 // View - PURE UI
 export function PageView() {
   const vm = usePageViewModel();
-  
+
   return (
     <div>
       <FilterSection {...vm.filters} />
@@ -297,12 +297,12 @@ export function PageView() {
 // ViewModel - ALL LOGIC
 export function usePageViewModel() {
   const repo = moduleContainer.repository; // ← From DI
-  
+
   const query = useQuery({
     queryKey: ['items'],
     queryFn: () => repo.getAll(),
   });
-  
+
   return { data: query.data, isLoading: query.isLoading };
 }
 ```
@@ -334,30 +334,30 @@ src/core/crud/
 ### Column Helpers
 
 ```typescript
-column.index('No')
-column.text('name', 'Name')
-column.date('createdAt', 'Date', { locale: 'en-GB' })
-column.status('status', 'Status', statusMap)
-column.switch('block', 'Block', { getChecked, onChange, isLoading })
-column.link('email', 'Email', { type: 'email' })
-column.custom('any', 'Header', renderFn)
+column.index("No");
+column.text("name", "Name");
+column.date("createdAt", "Date", { locale: "en-GB" });
+column.status("status", "Status", statusMap);
+column.switch("block", "Block", { getChecked, onChange, isLoading });
+column.link("email", "Email", { type: "email" });
+column.custom("any", "Header", renderFn);
 ```
 
 ---
 
 ## Module Registry
 
-| Module | Type | Description |
-|--------|------|-------------|
-| `auth` | Core | Authentication, user session |
-| `home` | Feature | Home page components |
-| `user` | Feature | User profile management |
-| `system` | Parent | System administration |
-| `system/admin` | Child | Admin user CRUD |
-| `system/roles` | Child | Role management |
-| `system/tenants` | Child | Tenant management |
-| `system/permissions` | Child | Permission management |
-| `system/menus` | Child | Menu configuration |
+| Module               | Type    | Description                  |
+| -------------------- | ------- | ---------------------------- |
+| `auth`               | Core    | Authentication, user session |
+| `home`               | Feature | Home page components         |
+| `user`               | Feature | User profile management      |
+| `system`             | Parent  | System administration        |
+| `system/admin`       | Child   | Admin user CRUD              |
+| `system/roles`       | Child   | Role management              |
+| `system/tenants`     | Child   | Tenant management            |
+| `system/permissions` | Child   | Permission management        |
+| `system/menus`       | Child   | Menu configuration           |
 
 ---
 

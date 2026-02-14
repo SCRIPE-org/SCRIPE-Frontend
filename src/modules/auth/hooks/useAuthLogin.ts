@@ -8,45 +8,43 @@ import { appLogger } from "@/core/common/logger";
 import { TwoFactorRequiredError } from "../core/data/repositories/AuthRepository";
 
 export function useAuthLogin() {
-      const { authRepository } = useServices();
-      const setAuth = useAppStore((state) => state.setAuth);
-      const { operationError, operationSuccess } = useEnhancedToast();
-      const { refreshNavigation } = useNavigation();
-      const queryClient = useQueryClient();
+  const { authRepository } = useServices();
+  const setAuth = useAppStore((state) => state.setAuth);
+  const { operationError, operationSuccess } = useEnhancedToast();
+  const { refreshNavigation } = useNavigation();
+  const queryClient = useQueryClient();
 
-      return useMutation({
-            mutationFn: async ({ username, password }: { username: string; password: string }) => {
-                  const request = AuthMapper.loginRequestFromJson({ username, password });
-                  return authRepository.login(request);
-            },
-            onSuccess: async (user) => {
-                  // 1. Set user in store with permissions and roles
-                  // This triggers isAuthenticated = true and populates permissions
-                  setAuth(
-                        user,
-                        user.permissions || [], // Permission codes from backend
-                        [] // Roles - can be populated if needed
-                  );
+  return useMutation({
+    mutationFn: async ({ username, password }: { username: string; password: string }) => {
+      const request = AuthMapper.loginRequestFromJson({ username, password });
+      return authRepository.login(request);
+    },
+    onSuccess: async (user) => {
+      // 1. Set user in store with permissions and roles
+      // This triggers isAuthenticated = true and populates permissions
+      setAuth(
+        user,
+        user.permissions || [], // Permission codes from backend
+        [] // Roles - can be populated if needed
+      );
 
-                  // 2. Show success toast
-                  operationSuccess("Login successful!");
+      // 2. Show success toast
+      operationSuccess("Login successful!");
 
+      // 3. Fetch navigation data immediately after login (force refresh)
+      try {
+        await refreshNavigation(false, true); // skipLoading=false, forceRefresh=true
+      } catch (error) {
+        appLogger.error("Failed to fetch navigation after login:", error);
+      }
 
-                  // 3. Fetch navigation data immediately after login (force refresh)
-                  try {
-                        await refreshNavigation(false, true); // skipLoading=false, forceRefresh=true
-                  } catch (error) {
-                        appLogger.error("Failed to fetch navigation after login:", error);
-                  }
-
-                  // 4. Invalidate any cached queries to ensure fresh data on protected pages
-                  queryClient.invalidateQueries();
-            },
-            onError: (error: Error) => {
-                  // Don't show toast for 2FA required — it's not an error, it's a flow step
-                  if (error instanceof TwoFactorRequiredError) return;
-                  operationError(error.message || "Login failed");
-            }
-      });
+      // 4. Invalidate any cached queries to ensure fresh data on protected pages
+      queryClient.invalidateQueries();
+    },
+    onError: (error: Error) => {
+      // Don't show toast for 2FA required — it's not an error, it's a flow step
+      if (error instanceof TwoFactorRequiredError) return;
+      operationError(error.message || "Login failed");
+    },
+  });
 }
-

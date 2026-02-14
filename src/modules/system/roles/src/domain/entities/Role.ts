@@ -8,146 +8,146 @@
  */
 
 export interface RolePermission {
-      permissionId: string;
-      permissionCode: string;
-      scope?: string;
+  permissionId: string;
+  permissionCode: string;
+  scope?: string;
 }
 
 export interface RoleProps {
-      id: string;
-      nameEn: string;
-      nameAr: string;
-      code: string;
-      isSystem: boolean;
-      priority: number;
-      isActive: boolean;
-      permissions: RolePermission[];
-      createdAt: string;
-      descriptionEn?: string;
-      descriptionAr?: string;
-      tenantId?: string;
-      tenantName?: string;
-      modifiedAt?: string;
+  id: string;
+  nameEn: string;
+  nameAr: string;
+  code: string;
+  isSystem: boolean;
+  priority: number;
+  isActive: boolean;
+  permissions: RolePermission[];
+  createdAt: string;
+  descriptionEn?: string;
+  descriptionAr?: string;
+  tenantId?: string;
+  tenantName?: string;
+  modifiedAt?: string;
 }
 
 /**
  * Role domain entity
  */
 export class Role {
-      private readonly props: RoleProps;
+  private readonly props: RoleProps;
 
-      constructor(props: RoleProps) {
-            this.props = props;
-      }
+  constructor(props: RoleProps) {
+    this.props = props;
+  }
 
-      // ===== Getters =====
+  // ===== Getters =====
 
-      get id(): string {
-            return this.props.id;
-      }
+  get id(): string {
+    return this.props.id;
+  }
 
-      get nameEn(): string {
-            return this.props.nameEn;
-      }
+  get nameEn(): string {
+    return this.props.nameEn;
+  }
 
-      get nameAr(): string {
-            return this.props.nameAr;
-      }
+  get nameAr(): string {
+    return this.props.nameAr;
+  }
 
-      get code(): string {
-            return this.props.code;
-      }
+  get code(): string {
+    return this.props.code;
+  }
 
-      get descriptionEn(): string | undefined {
-            return this.props.descriptionEn;
-      }
+  get descriptionEn(): string | undefined {
+    return this.props.descriptionEn;
+  }
 
-      get descriptionAr(): string | undefined {
-            return this.props.descriptionAr;
-      }
+  get descriptionAr(): string | undefined {
+    return this.props.descriptionAr;
+  }
 
-      get tenantId(): string | undefined {
-            return this.props.tenantId;
-      }
+  get tenantId(): string | undefined {
+    return this.props.tenantId;
+  }
 
-      get tenantName(): string | undefined {
-            return this.props.tenantName;
-      }
+  get tenantName(): string | undefined {
+    return this.props.tenantName;
+  }
 
-      get isSystem(): boolean {
-            return this.props.isSystem;
-      }
+  get isSystem(): boolean {
+    return this.props.isSystem;
+  }
 
-      get priority(): number {
-            return this.props.priority;
-      }
+  get priority(): number {
+    return this.props.priority;
+  }
 
-      get isActive(): boolean {
-            return this.props.isActive;
-      }
+  get isActive(): boolean {
+    return this.props.isActive;
+  }
 
-      get permissions(): RolePermission[] {
-            return this.props.permissions;
-      }
+  get permissions(): RolePermission[] {
+    return this.props.permissions;
+  }
 
-      get createdAt(): string {
-            return this.props.createdAt;
-      }
+  get createdAt(): string {
+    return this.props.createdAt;
+  }
 
-      get modifiedAt(): string | undefined {
-            return this.props.modifiedAt;
-      }
+  get modifiedAt(): string | undefined {
+    return this.props.modifiedAt;
+  }
 
-      // ===== Business Logic =====
+  // ===== Business Logic =====
 
-      /**
-       * Get localized name based on language
-       */
-      getLocalizedName(lang: string = "en"): string {
-            if (lang === "ar" && this.props.nameAr) {
-                  return this.props.nameAr;
-            }
-            return this.props.nameEn;
-      }
+  /**
+   * Get localized name based on language
+   */
+  getLocalizedName(lang: string = "en"): string {
+    if (lang === "ar" && this.props.nameAr) {
+      return this.props.nameAr;
+    }
+    return this.props.nameEn;
+  }
 
-      /**
-       * Get localized description based on language
-       */
-      getLocalizedDescription(lang: string = "en"): string {
-            if (lang === "ar" && this.props.descriptionAr) {
-                  return this.props.descriptionAr;
-            }
-            return this.props.descriptionEn ?? "";
-      }
+  /**
+   * Get localized description based on language
+   */
+  getLocalizedDescription(lang: string = "en"): string {
+    if (lang === "ar" && this.props.descriptionAr) {
+      return this.props.descriptionAr;
+    }
+    return this.props.descriptionEn ?? "";
+  }
 
-      /**
-       * Get display name (alias for localized name)
-       */
-      get displayName(): string {
-            return this.nameEn;
-      }
+  /**
+   * Get display name (alias for localized name)
+   */
+  get displayName(): string {
+    return this.nameEn;
+  }
 
-      get permissionCount(): number {
-            return this.props.permissions.length;
-      }
+  get permissionCount(): number {
+    return this.props.permissions.length;
+  }
 
-      get permissionCodes(): string[] {
-            return this.props.permissions.map((p) => p.permissionCode);
-      }
+  get permissionCodes(): string[] {
+    return this.props.permissions.map((p) => p.permissionCode);
+  }
 
-      /**
-       * Check if role has a specific permission
-       */
-      hasPermission(permissionCode: string): boolean {
-            return this.props.permissions.some((p) => p.permissionCode === permissionCode);
-      }
+  /**
+   * Check if role has a specific permission
+   */
+  hasPermission(permissionCode: string): boolean {
+    return this.props.permissions.some((p) => p.permissionCode === permissionCode);
+  }
 
-      /**
-       * Get raw props (for serialization via mapper)
-       */
-      toProps(): RoleProps {
-            return { ...this.props };
-      }
+  /**
+   * Get raw props (for serialization via mapper)
+   */
+  toProps(): RoleProps {
+    return { ...this.props };
+  }
 }
 
 // Keep backward compatibility alias
