@@ -63,7 +63,7 @@ export function DocsSearch({ isOpen, onClose, onSearch }: DocsSearchProps) {
       // Global Cmd+K
       useEffect(() => {
             const handler = (e: KeyboardEvent) => {
-                  if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+                  if ((e.metaKey || e.ctrlKey) && e.code === 'KeyK') {
                         e.preventDefault();
                         if (isOpen) onClose();
                         else {

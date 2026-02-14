@@ -98,7 +98,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
       // Global ⌘K / Ctrl+K listener
       useEffect(() => {
             const handler = (e: KeyboardEvent) => {
-                  if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+                  if ((e.metaKey || e.ctrlKey) && e.code === "KeyK") {
                         e.preventDefault();
                         onOpenChange(!open);
                   }

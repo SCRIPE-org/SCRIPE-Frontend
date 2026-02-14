@@ -15,7 +15,7 @@ export function useSearchViewModel(searchFn: (query: string) => SearchResult[]) 
       // Global Cmd+K listener
       useEffect(() => {
             const handler = (e: KeyboardEvent) => {
-                  if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+                  if ((e.metaKey || e.ctrlKey) && e.code === 'KeyK') {
                         e.preventDefault();
                         setIsSearchOpen((prev) => !prev);
                   }
