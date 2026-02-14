@@ -10,6 +10,7 @@
  */
 
 import React, { createContext, useContext, useEffect, useRef, useState, useCallback } from 'react';
+import { usePathname } from 'next/navigation';
 import {
       HubConnectionBuilder,
       HubConnection,
@@ -68,6 +69,8 @@ export function SignalRProvider({
       const [connectionState, setConnectionState] =
             useState<SignalRConnectionState>('disconnected');
       const isAuthenticated = useAppStore((s) => s.isAuthenticated);
+      const pathname = usePathname();
+      const isDocsRoute = pathname?.startsWith('/docs');
 
       // Ref to track the latest connection for cleanup (avoids stale closures)
       const connectionRef = useRef<HubConnection | null>(null);
@@ -141,6 +144,7 @@ export function SignalRProvider({
 
       // Auto-connect on auth, disconnect on logout/unmount
       useEffect(() => {
+            if (isDocsRoute) return; // Skip SignalR on docs routes
             if (isAuthenticated) {
                   connect();
             } else {
@@ -156,7 +160,7 @@ export function SignalRProvider({
                   connectionRef.current = null;
             };
             // eslint-disable-next-line react-hooks/exhaustive-deps
-      }, [isAuthenticated]);
+      }, [isAuthenticated, isDocsRoute]);
 
       return (
             <SignalRContext.Provider

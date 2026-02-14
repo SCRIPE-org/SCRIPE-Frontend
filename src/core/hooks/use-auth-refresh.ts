@@ -11,6 +11,7 @@
  */
 
 import { useEffect, useCallback, useRef } from "react";
+import { usePathname } from "next/navigation";
 import { useAppStore } from "@core/store/useAppStore";
 import { useServices } from "@core/providers/service-provider";
 import { appLogger } from "@core/common/logger";
@@ -39,6 +40,8 @@ export function useAuthRefresh(options: UseAuthRefreshOptions = {}) {
       const isAuthenticated = useAppStore((state) => state.isAuthenticated);
       const setAuth = useAppStore((state) => state.setAuth);
       const { authRepository } = useServices();
+      const pathname = usePathname();
+      const isDocsRoute = pathname?.startsWith('/docs');
 
       const isRefreshing = useRef(false);
 
@@ -74,7 +77,7 @@ export function useAuthRefresh(options: UseAuthRefreshOptions = {}) {
 
       // Set up periodic refresh
       useEffect(() => {
-            if (!enabled || !isAuthenticated) return;
+            if (!enabled || !isAuthenticated || isDocsRoute) return;
 
             // Initial delay before first refresh (give app time to settle)
             const initialDelay = setTimeout(() => {
@@ -92,7 +95,7 @@ export function useAuthRefresh(options: UseAuthRefreshOptions = {}) {
 
       // Also refresh when window regains focus (user returns to tab)
       useEffect(() => {
-            if (!enabled || !isAuthenticated) return;
+            if (!enabled || !isAuthenticated || isDocsRoute) return;
 
             const handleVisibilityChange = () => {
                   if (document.visibilityState === 'visible') {

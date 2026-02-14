@@ -2,6 +2,7 @@
 
 import type React from "react";
 import { createContext, useContext, useState, useEffect, useCallback } from "react";
+import { usePathname } from "next/navigation";
 import { useAppStore } from "@core/store/useAppStore";
 import { useServices } from "@core/providers/service-provider";
 import { NavigationData, MenuItemActions } from "@core/domain/entities";
@@ -62,6 +63,8 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
   const isAuthenticated = useAppStore((state) => state.isAuthenticated);
   const user = useAppStore((state) => state.user);
   const { navigationService } = useServices();
+  const pathname = usePathname();
+  const isDocsRoute = pathname?.startsWith('/docs');
 
   /**
    * Load navigation data from localStorage cache
@@ -199,18 +202,19 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
   // When user is authenticated but navigation data is null (expired or missing),
   // automatically trigger a refresh instead of leaving the user stuck.
   useEffect(() => {
+    if (isDocsRoute) return; // Skip navigation fetch on docs routes
     if (isAuthenticated && !navigationData && !isLoading && !hasTriggeredRefresh) {
       appLogger.debug("Navigation data missing for authenticated user, auto-refreshing...");
       refreshNavigation(false, true); // forceRefresh = true
     }
-  }, [isAuthenticated, navigationData, isLoading, hasTriggeredRefresh, refreshNavigation]);
+  }, [isAuthenticated, navigationData, isLoading, hasTriggeredRefresh, refreshNavigation, isDocsRoute]);
 
   // ========================================
   // PERIODIC REFRESH CHECK (every 5 minutes)
   // ========================================
   // Periodically check if cache is about to expire and refresh proactively
   useEffect(() => {
-    if (!isAuthenticated) return;
+    if (!isAuthenticated || isDocsRoute) return;
 
     const checkAndRefresh = () => {
       try {
@@ -246,7 +250,7 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
       clearTimeout(initialCheckTimeout);
       clearInterval(intervalId);
     };
-  }, [isAuthenticated, refreshNavigation]);
+  }, [isAuthenticated, refreshNavigation, isDocsRoute]);
 
   const hasPageAccess = useCallback(
     (pathname: string): boolean => {
