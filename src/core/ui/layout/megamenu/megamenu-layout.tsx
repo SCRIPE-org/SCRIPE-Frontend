@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import type React from "react";
 import { useState, useMemo, useRef, useEffect } from "react";
@@ -18,19 +18,20 @@ import { NavRenderer } from "@core/ui/layout/shared/nav-renderer";
 import { UserCard } from "@core/ui/layout/shared/user-card";
 import { LogoutButton } from "@core/ui/layout/shared/logout-button";
 import { cn } from "@core/common/utils";
+import { NotificationBell } from "@core/ui/notification";
 
 interface MegaMenuLayoutProps {
   children: React.ReactNode;
 }
 
 /**
- * Mega Menu Layout — Enterprise-grade horizontal navigation.
+ * Mega Menu Layout â€” Enterprise-grade horizontal navigation.
  *
  * Structure:
  * - Horizontal top nav with module/group items
- * - Hover/click on item → mega dropdown panel with multi-column links
+ * - Hover/click on item â†’ mega dropdown panel with multi-column links
  * - Full-width content below
- * - Mobile: hamburger → accordion-style expandable sections
+ * - Mobile: hamburger â†’ accordion-style expandable sections
  *
  * Inspired by Salesforce, SAP Fiori, enterprise portals
  */
@@ -70,7 +71,7 @@ export function MegaMenuLayout({ children }: MegaMenuLayoutProps) {
       className={cn("flex min-h-screen flex-col bg-background", styles.getAnimationClass())}
       dir={direction}
     >
-      {/* ── Top Header Bar ── */}
+      {/* â”€â”€ Top Header Bar â”€â”€ */}
       <header
         ref={menuRef}
         className={cn(
@@ -140,6 +141,7 @@ export function MegaMenuLayout({ children }: MegaMenuLayoutProps) {
           <div className="flex items-center gap-2">
             <LanguageSwitcher />
             <ThemeSwitcher />
+            <NotificationBell iconClassName="h-4 w-4" />
             <UserProfileDropdown showName={false} />
             {/* Mobile hamburger */}
             <Button
@@ -153,7 +155,7 @@ export function MegaMenuLayout({ children }: MegaMenuLayoutProps) {
           </div>
         </div>
 
-        {/* ── Mega Dropdown Panel (desktop) ── */}
+        {/* â”€â”€ Mega Dropdown Panel (desktop) â”€â”€ */}
         {openMenu && (
           <div className="absolute inset-x-0 top-full z-50 border-b border-border bg-card shadow-xl">
             <div className="mx-auto max-w-5xl p-6">
@@ -206,7 +208,7 @@ export function MegaMenuLayout({ children }: MegaMenuLayoutProps) {
         )}
       </header>
 
-      {/* ── Mobile Drawer ── */}
+      {/* â”€â”€ Mobile Drawer â”€â”€ */}
       {mobileOpen && (
         <>
           <div
@@ -233,7 +235,7 @@ export function MegaMenuLayout({ children }: MegaMenuLayoutProps) {
         </>
       )}
 
-      {/* ── Content ── */}
+      {/* â”€â”€ Content â”€â”€ */}
       <main className="flex-1 p-6">
         <div
           style={{

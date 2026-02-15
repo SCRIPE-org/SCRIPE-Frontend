@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import type React from "react";
 import { useState } from "react";
@@ -15,13 +15,14 @@ import { NavRenderer } from "@core/ui/layout/shared/nav-renderer";
 import { UserCard } from "@core/ui/layout/shared/user-card";
 import { LogoutButton } from "@core/ui/layout/shared/logout-button";
 import { cn } from "@core/common/utils";
+import { NotificationBell } from "@core/ui/notification";
 
 interface MultiPanelLayoutProps {
   children: React.ReactNode;
 }
 
 /**
- * Multi-Panel Workbench Layout — IDE-style with left nav + content + right details.
+ * Multi-Panel Workbench Layout â€” IDE-style with left nav + content + right details.
  *
  * Structure:
  * - Header bar
@@ -44,7 +45,7 @@ export function MultiPanelLayout({ children }: MultiPanelLayoutProps) {
       className={cn("flex min-h-screen flex-col bg-background", styles.getAnimationClass())}
       dir={direction}
     >
-      {/* ── Header ── */}
+      {/* â”€â”€ Header â”€â”€ */}
       <header
         className={cn(
           settings.stickyHeader ? "sticky top-0 z-30" : "relative",
@@ -82,12 +83,13 @@ export function MultiPanelLayout({ children }: MultiPanelLayoutProps) {
           </Button>
           <LanguageSwitcher />
           <ThemeSwitcher />
+          <NotificationBell iconClassName="h-4 w-4" />
           <UserProfileDropdown showName={false} />
         </div>
       </header>
 
       <div className="flex flex-1 overflow-hidden">
-        {/* ── Left Sidebar ── */}
+        {/* â”€â”€ Left Sidebar â”€â”€ */}
         <aside
           className={cn("hidden w-56 shrink-0 flex-col lg:flex", "border-e border-border bg-card")}
         >
@@ -102,7 +104,7 @@ export function MultiPanelLayout({ children }: MultiPanelLayoutProps) {
           </div>
         </aside>
 
-        {/* ── Mobile Drawer ── */}
+        {/* â”€â”€ Mobile Drawer â”€â”€ */}
         {mobileMenuOpen && (
           <>
             <div
@@ -129,12 +131,12 @@ export function MultiPanelLayout({ children }: MultiPanelLayoutProps) {
           </>
         )}
 
-        {/* ── Main Content ── */}
+        {/* â”€â”€ Main Content â”€â”€ */}
         <main className="min-w-0 flex-1 overflow-y-auto p-6">
           <div style={{ borderRadius: "var(--border-radius)" }}>{children}</div>
         </main>
 
-        {/* ── Right Inspector Panel ── */}
+        {/* â”€â”€ Right Inspector Panel â”€â”€ */}
         {rightPanelOpen && (
           <aside
             className={cn(

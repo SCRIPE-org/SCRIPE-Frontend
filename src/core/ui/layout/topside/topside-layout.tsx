@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import type React from "react";
 import { useState, useMemo } from "react";
@@ -19,13 +19,14 @@ import { NavRenderer } from "@core/ui/layout/shared/nav-renderer";
 import { UserCard } from "@core/ui/layout/shared/user-card";
 import { LogoutButton } from "@core/ui/layout/shared/logout-button";
 import { cn } from "@core/common/utils";
+import { NotificationBell } from "@core/ui/notification";
 
 interface TopSideLayoutProps {
   children: React.ReactNode;
 }
 
 /**
- * Top+Side Combo Layout — Header with module tabs + sidebar for sub-items.
+ * Top+Side Combo Layout â€” Header with module tabs + sidebar for sub-items.
  *
  * Structure:
  * - Top header with logo + group tabs + actions
@@ -76,7 +77,7 @@ export function TopSideLayout({ children }: TopSideLayoutProps) {
       className={cn("flex min-h-screen flex-col bg-background", styles.getAnimationClass())}
       dir={direction}
     >
-      {/* ── Header with Tabs ── */}
+      {/* â”€â”€ Header with Tabs â”€â”€ */}
       <header
         className={cn(
           settings.stickyHeader ? "sticky top-0 z-30" : "relative",
@@ -139,6 +140,7 @@ export function TopSideLayout({ children }: TopSideLayoutProps) {
           <div className="flex items-center gap-2">
             <LanguageSwitcher />
             <ThemeSwitcher />
+            <NotificationBell iconClassName="h-4 w-4" />
             <UserProfileDropdown showName={false} />
             <Button
               variant="ghost"
@@ -153,7 +155,7 @@ export function TopSideLayout({ children }: TopSideLayoutProps) {
       </header>
 
       <div className="flex flex-1">
-        {/* ── Left Sidebar (sub-items of active group) ── */}
+        {/* â”€â”€ Left Sidebar (sub-items of active group) â”€â”€ */}
         {sidebarItems.length > 0 && (
           <aside
             className={cn(
@@ -190,7 +192,7 @@ export function TopSideLayout({ children }: TopSideLayoutProps) {
           </aside>
         )}
 
-        {/* ── Mobile Drawer ── */}
+        {/* â”€â”€ Mobile Drawer â”€â”€ */}
         {mobileMenuOpen && (
           <>
             <div
@@ -223,7 +225,7 @@ export function TopSideLayout({ children }: TopSideLayoutProps) {
           </>
         )}
 
-        {/* ── Content ── */}
+        {/* â”€â”€ Content â”€â”€ */}
         <main className="min-w-0 flex-1 p-6">
           <div style={{ borderRadius: "var(--border-radius)" }}>{children}</div>
         </main>

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import type React from "react";
 import {
@@ -25,6 +25,7 @@ import { Input } from "@core/ui/input";
 import { UserProfileDropdown } from "@core/ui/user-profile-dropdown";
 import { LanguageSwitcher, ThemeSwitcher } from "../common";
 import { useRouter } from "next/navigation";
+import { NotificationBell } from "@core/ui/notification";
 
 interface NavigationHeaderProps {
   onMenuClick: () => void;
@@ -263,6 +264,7 @@ export function NavigationHeader({
           />
 
           {/* User Profile Dropdown */}
+          <NotificationBell iconClassName="h-4 w-4" />
           <UserProfileDropdown
             variant="navigation"
             showName={!isMobile}

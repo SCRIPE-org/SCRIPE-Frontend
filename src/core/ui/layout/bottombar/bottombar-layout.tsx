@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import type React from "react";
 import { useState, useMemo } from "react";
@@ -18,13 +18,14 @@ import { NavRenderer } from "@core/ui/layout/shared/nav-renderer";
 import { UserCard } from "@core/ui/layout/shared/user-card";
 import { LogoutButton } from "@core/ui/layout/shared/logout-button";
 import { cn } from "@core/common/utils";
+import { NotificationBell } from "@core/ui/notification";
 
 interface BottomBarLayoutProps {
   children: React.ReactNode;
 }
 
 /**
- * Bottom Bar Layout — Mobile-first navigation at the bottom.
+ * Bottom Bar Layout â€” Mobile-first navigation at the bottom.
  *
  * Structure:
  * - Thin top header with logo + actions
@@ -69,7 +70,7 @@ export function BottomBarLayout({ children }: BottomBarLayoutProps) {
       className={cn("flex min-h-screen flex-col bg-background", styles.getAnimationClass())}
       dir={direction}
     >
-      {/* ── Top Header ── */}
+      {/* â”€â”€ Top Header â”€â”€ */}
       <header
         className={cn(
           settings.stickyHeader ? "sticky top-0 z-30" : "relative",
@@ -86,11 +87,12 @@ export function BottomBarLayout({ children }: BottomBarLayoutProps) {
         <div className="flex items-center gap-2">
           <LanguageSwitcher />
           <ThemeSwitcher />
+          <NotificationBell iconClassName="h-4 w-4" />
           <UserProfileDropdown showName={false} />
         </div>
       </header>
 
-      {/* ── Content Area ── */}
+      {/* â”€â”€ Content Area â”€â”€ */}
       <main className="flex-1 p-6 pb-20">
         <div
           style={{
@@ -103,7 +105,7 @@ export function BottomBarLayout({ children }: BottomBarLayoutProps) {
 
       {settings.showFooter && <Footer />}
 
-      {/* ── "More" Overlay ── */}
+      {/* â”€â”€ "More" Overlay â”€â”€ */}
       {moreOpen && (
         <>
           <div
@@ -148,7 +150,7 @@ export function BottomBarLayout({ children }: BottomBarLayoutProps) {
         </>
       )}
 
-      {/* ── Bottom Navigation Bar ── */}
+      {/* â”€â”€ Bottom Navigation Bar â”€â”€ */}
       <nav
         className={cn(
           "fixed inset-x-0 bottom-0 z-30",

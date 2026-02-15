@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import type React from "react";
 import { useState, useMemo } from "react";
@@ -18,13 +18,14 @@ import { NavRenderer } from "@core/ui/layout/shared/nav-renderer";
 import { UserCard } from "@core/ui/layout/shared/user-card";
 import { LogoutButton } from "@core/ui/layout/shared/logout-button";
 import { cn } from "@core/common/utils";
+import { NotificationBell } from "@core/ui/notification";
 
 interface MapLayoutProps {
   children: React.ReactNode;
 }
 
 /**
- * Map-Centric Layout — Content/map takes full space, nav in floating sidebar.
+ * Map-Centric Layout â€” Content/map takes full space, nav in floating sidebar.
  *
  * Structure:
  * - Full-bleed content area (designed for maps / dashboards)
@@ -48,10 +49,10 @@ export function MapLayout({ children }: MapLayoutProps) {
       className={cn("relative h-screen overflow-hidden bg-background", styles.getAnimationClass())}
       dir={direction}
     >
-      {/* ── Full-bleed content ── */}
+      {/* â”€â”€ Full-bleed content â”€â”€ */}
       <main className="absolute inset-0">{children}</main>
 
-      {/* ── Floating header controls ── */}
+      {/* â”€â”€ Floating header controls â”€â”€ */}
       <div className="pointer-events-none absolute inset-x-3 top-3 z-20 flex items-start justify-between">
         {/* Start side: logo + menu */}
         <div className="pointer-events-auto flex items-center gap-2">
@@ -74,12 +75,13 @@ export function MapLayout({ children }: MapLayoutProps) {
           <div className="flex items-center gap-1 rounded-lg border border-border bg-card/90 px-1 shadow-lg backdrop-blur-xl">
             <LanguageSwitcher />
             <ThemeSwitcher />
+            <NotificationBell iconClassName="h-4 w-4" />
             <UserProfileDropdown showName={false} />
           </div>
         </div>
       </div>
 
-      {/* ── Sliding Panel ── */}
+      {/* â”€â”€ Sliding Panel â”€â”€ */}
       {panelOpen && (
         <>
           <div className="absolute inset-0 z-20 bg-black/10" onClick={() => setPanelOpen(false)} />

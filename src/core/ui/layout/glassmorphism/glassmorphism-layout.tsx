@@ -14,9 +14,10 @@ import { NavRenderer } from "@core/ui/layout/shared/nav-renderer";
 import { UserCard } from "@core/ui/layout/shared/user-card";
 import { LogoutButton } from "@core/ui/layout/shared/logout-button";
 import { Footer } from "@core/ui/layout/shared/footer";
-import { Bell, Home, Menu, X } from "lucide-react";
+import { Home, Menu, X } from "lucide-react";
 import { cn } from "@core/common/utils";
 import { useRouter } from "next/navigation";
+import { NotificationBell } from "@core/ui/notification";
 
 interface GlassmorphismLayoutProps {
   children: React.ReactNode;
@@ -216,13 +217,7 @@ export function GlassmorphismLayout({ children }: GlassmorphismLayoutProps) {
               <LanguageSwitcher />
               <ThemeSwitcher />
               {settings.showNotifications && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="text-foreground/70 hover:text-foreground"
-                >
-                  <Bell className="h-4 w-4" />
-                </Button>
+                <NotificationBell iconClassName="h-4 w-4" className="text-foreground/70 hover:text-foreground" />
               )}
               <UserProfileDropdown showName={false} />
             </div>

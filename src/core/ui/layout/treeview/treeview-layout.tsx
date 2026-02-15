@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import type React from "react";
 import { useState, useMemo, useCallback } from "react";
@@ -27,6 +27,7 @@ import { Footer } from "@core/ui/layout/shared/footer";
 import { UserCard } from "@core/ui/layout/shared/user-card";
 import { LogoutButton } from "@core/ui/layout/shared/logout-button";
 import { cn } from "@core/common/utils";
+import { NotificationBell } from "@core/ui/notification";
 
 interface TreeViewLayoutProps {
   children: React.ReactNode;
@@ -135,7 +136,7 @@ function TreeNode({
 }
 
 /**
- * Tree View Layout — IDE / file-explorer-style navigation.
+ * Tree View Layout â€” IDE / file-explorer-style navigation.
  *
  * Structure:
  * - Header bar with logo + actions
@@ -257,7 +258,7 @@ export function TreeViewLayout({ children }: TreeViewLayoutProps) {
       className={cn("flex min-h-screen flex-col bg-background", styles.getAnimationClass())}
       dir={direction}
     >
-      {/* ── Header ── */}
+      {/* â”€â”€ Header â”€â”€ */}
       <header
         className={cn(
           settings.stickyHeader ? "sticky top-0 z-30" : "relative",
@@ -282,19 +283,20 @@ export function TreeViewLayout({ children }: TreeViewLayoutProps) {
         <div className="flex items-center gap-2">
           <LanguageSwitcher />
           <ThemeSwitcher />
+          <NotificationBell iconClassName="h-4 w-4" />
           <UserProfileDropdown showName={false} />
         </div>
       </header>
 
       <div className="flex flex-1">
-        {/* ── Desktop Tree Sidebar ── */}
+        {/* â”€â”€ Desktop Tree Sidebar â”€â”€ */}
         <aside
           className={cn("hidden w-64 shrink-0 flex-col lg:flex", "border-e border-border bg-card")}
         >
           {TreeContent}
         </aside>
 
-        {/* ── Mobile Drawer ── */}
+        {/* â”€â”€ Mobile Drawer â”€â”€ */}
         {mobileOpen && (
           <>
             <div
@@ -312,7 +314,7 @@ export function TreeViewLayout({ children }: TreeViewLayoutProps) {
           </>
         )}
 
-        {/* ── Content ── */}
+        {/* â”€â”€ Content â”€â”€ */}
         <main className="min-w-0 flex-1 p-6">
           <div style={{ borderRadius: "var(--border-radius)" }}>{children}</div>
         </main>

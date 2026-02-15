@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import type React from "react";
 import { useState, useMemo } from "react";
@@ -15,13 +15,14 @@ import { ScrollArea } from "@core/ui/scroll-area";
 import { LanguageSwitcher, ThemeSwitcher } from "@core/ui/layout/common";
 import { UserProfileDropdown } from "@core/ui/user-profile-dropdown";
 import { cn } from "@core/common/utils";
+import { NotificationBell } from "@core/ui/notification";
 
 interface TerminalLayoutProps {
   children: React.ReactNode;
 }
 
 /**
- * Terminal / CLI Layout — Hacker-style monotone.
+ * Terminal / CLI Layout â€” Hacker-style monotone.
  *
  * Structure:
  * - Slim title bar (macOS-style traffic lights + title)
@@ -63,7 +64,7 @@ export function TerminalLayout({ children }: TerminalLayoutProps) {
       )}
       dir={direction}
     >
-      {/* ── Title Bar ── */}
+      {/* â”€â”€ Title Bar â”€â”€ */}
       <div className="flex h-9 shrink-0 items-center border-b border-[#30363d] bg-[#161b22] px-3">
         {/* Traffic lights */}
         <div className="flex items-center gap-1.5">
@@ -74,7 +75,7 @@ export function TerminalLayout({ children }: TerminalLayoutProps) {
         <div className="flex flex-1 items-center justify-center gap-2">
           <TerminalIcon className="h-3 w-3 text-[#8b949e]" />
           <span className="text-xs text-[#8b949e]">
-            {t("app.title")} — {t("layout.terminal") || "terminal"}
+            {t("app.title")} â€” {t("layout.terminal") || "terminal"}
           </span>
         </div>
         <div className="flex items-center gap-1">
@@ -86,16 +87,17 @@ export function TerminalLayout({ children }: TerminalLayoutProps) {
             buttonClassName="text-[#8b949e] hover:text-[#c9d1d9] hover:bg-[#30363d]"
             contentClassName="bg-[#161b22] border-[#30363d]"
           />
+          <NotificationBell iconClassName="h-4 w-4" />
           <UserProfileDropdown showName={false} />
         </div>
       </div>
 
       <div className="flex flex-1 overflow-hidden">
-        {/* ── Desktop: Command Nav ── */}
+        {/* â”€â”€ Desktop: Command Nav â”€â”€ */}
         <aside className="hidden w-52 shrink-0 flex-col border-e border-[#30363d] bg-[#0d1117] lg:flex">
           <div className="border-b border-[#30363d] px-3 py-2">
             <div className="flex items-center gap-1.5">
-              <span className="text-xs text-[#27c93f]">▶</span>
+              <span className="text-xs text-[#27c93f]">â–¶</span>
               <span className="text-xs text-[#8b949e]">~/navigation</span>
             </div>
           </div>
@@ -135,7 +137,7 @@ export function TerminalLayout({ children }: TerminalLayoutProps) {
           </div>
         </aside>
 
-        {/* ── Mobile Nav Toggle ── */}
+        {/* â”€â”€ Mobile Nav Toggle â”€â”€ */}
         <Button
           variant="ghost"
           size="icon"
@@ -145,7 +147,7 @@ export function TerminalLayout({ children }: TerminalLayoutProps) {
           <TerminalIcon className="h-4 w-4" />
         </Button>
 
-        {/* ── Mobile Nav Sheet ── */}
+        {/* â”€â”€ Mobile Nav Sheet â”€â”€ */}
         {navOpen && (
           <>
             <div
@@ -197,7 +199,7 @@ export function TerminalLayout({ children }: TerminalLayoutProps) {
           </>
         )}
 
-        {/* ── Content ── */}
+        {/* â”€â”€ Content â”€â”€ */}
         <main className="min-w-0 flex-1 overflow-y-auto p-6">
           <div style={{ borderRadius: "var(--border-radius)" }}>{children}</div>
         </main>

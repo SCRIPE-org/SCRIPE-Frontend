@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { Menu, Home } from "lucide-react";
 import { Button } from "@core/ui/button";
@@ -9,13 +9,14 @@ import { LanguageSwitcher, ThemeSwitcher, HeaderSearch } from "@core/ui/layout/c
 import { useRouter } from "next/navigation";
 import { UserProfileDropdown } from "@core/ui/user-profile-dropdown";
 import { PageBreadcrumbs } from "@core/ui/page-breadcrumbs";
+import { NotificationBell } from "@core/ui/notification";
 
 interface ModernHeaderProps {
   onMenuClick: () => void;
 }
 
 /**
- * Modern Header — Slim, aware of rail width.
+ * Modern Header â€” Slim, aware of rail width.
  *
  * Similar to compact header but designed to sit beside the icon rail.
  * No sidebar toggle on desktop (the rail is always visible).
@@ -33,7 +34,7 @@ export function ModernHeader({ onMenuClick }: ModernHeaderProps) {
       )}
     >
       <div className="flex h-12 items-center justify-between px-5">
-        {/* Left — Mobile menu + breadcrumbs */}
+        {/* Left â€” Mobile menu + breadcrumbs */}
         <div className="flex items-center gap-2">
           <Button
             variant="ghost"
@@ -51,7 +52,7 @@ export function ModernHeader({ onMenuClick }: ModernHeaderProps) {
           )}
         </div>
 
-        {/* Center — Search (wider since we have space) */}
+        {/* Center â€” Search (wider since we have space) */}
         <HeaderSearch
           containerClassName="hidden md:block"
           inputClassName={cn(
@@ -62,7 +63,7 @@ export function ModernHeader({ onMenuClick }: ModernHeaderProps) {
           iconClassName="left-3 rtl:left-auto rtl:right-3 w-3.5 h-3.5"
         />
 
-        {/* Right — Actions */}
+        {/* Right â€” Actions */}
         <div className="flex items-center gap-1.5">
           <Button
             variant="ghost"
@@ -75,6 +76,7 @@ export function ModernHeader({ onMenuClick }: ModernHeaderProps) {
           </Button>
           <LanguageSwitcher buttonClassName="h-8 w-8 rounded-lg" />
           <ThemeSwitcher buttonClassName="h-8 w-8 rounded-lg" />
+          <NotificationBell iconClassName="h-4 w-4" />
           <UserProfileDropdown showName={false} />
         </div>
       </div>

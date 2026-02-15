@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import type React from "react";
 import { useState } from "react";
@@ -14,6 +14,7 @@ import { NavRenderer } from "../shared/nav-renderer";
 import { UserCard } from "../shared/user-card";
 import { LogoutButton } from "../shared/logout-button";
 import { Footer } from "../shared/footer";
+import { NotificationBell } from "@core/ui/notification";
 
 interface DualLayoutProps {
   children: React.ReactNode;
@@ -22,19 +23,19 @@ interface DualLayoutProps {
 }
 
 /**
- * Dual Layout — Inspired by Slack / Outlook / Teams.
+ * Dual Layout â€” Inspired by Slack / Outlook / Teams.
  *
  * Structure:
- * ┌──────────────────────────────────────────────┐
- * │ HEADER (56px) — logo, search, profile        │
- * ├──────────┬─────────────┬─────────────────────┤
- * │ LEFT NAV │             │ DETAIL PANEL        │
- * │ (240px)  │ MAIN CONTENT│ (320px, toggleable) │
- * │          │             │                     │
- * │          │             │                     │
- * ├──────────┴─────────────┴─────────────────────┤
- * │ FOOTER (if enabled)                          │
- * └──────────────────────────────────────────────┘
+ * â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+ * â”‚ HEADER (56px) â€” logo, search, profile        â”‚
+ * â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+ * â”‚ LEFT NAV â”‚             â”‚ DETAIL PANEL        â”‚
+ * â”‚ (240px)  â”‚ MAIN CONTENTâ”‚ (320px, toggleable) â”‚
+ * â”‚          â”‚             â”‚                     â”‚
+ * â”‚          â”‚             â”‚                     â”‚
+ * â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+ * â”‚ FOOTER (if enabled)                          â”‚
+ * â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
  */
 export function DualLayout({ children, sidebarOpen, onSidebarOpenChange }: DualLayoutProps) {
   const { t, direction } = useI18n();
@@ -43,7 +44,7 @@ export function DualLayout({ children, sidebarOpen, onSidebarOpenChange }: DualL
 
   return (
     <div className={cn("min-h-screen bg-background", direction === "rtl" ? "rtl" : "ltr")}>
-      {/* ── HEADER ── */}
+      {/* â”€â”€ HEADER â”€â”€ */}
       <header className="fixed inset-x-0 top-0 z-40 flex h-14 items-center border-b border-border bg-card px-4 backdrop-blur-sm lg:px-6">
         <div className="flex shrink-0 items-center gap-3">
           <Button
@@ -87,11 +88,12 @@ export function DualLayout({ children, sidebarOpen, onSidebarOpenChange }: DualL
             buttonClassName="hover:bg-accent"
             contentClassName="bg-popover border-border"
           />
+          <NotificationBell iconClassName="h-4 w-4" />
           <UserProfileDropdown variant="navigation" showName={false} />
         </div>
       </header>
 
-      {/* ── LEFT SIDEBAR (desktop) ── */}
+      {/* â”€â”€ LEFT SIDEBAR (desktop) â”€â”€ */}
       <aside
         className={cn(
           "fixed bottom-0 top-14 z-20 hidden w-72 flex-col overflow-y-auto border-e border-sidebar-border bg-sidebar lg:flex",
@@ -109,7 +111,7 @@ export function DualLayout({ children, sidebarOpen, onSidebarOpenChange }: DualL
         </div>
       </aside>
 
-      {/* ── MOBILE SIDEBAR OVERLAY ── */}
+      {/* â”€â”€ MOBILE SIDEBAR OVERLAY â”€â”€ */}
       {sidebarOpen && (
         <>
           <div
@@ -138,7 +140,7 @@ export function DualLayout({ children, sidebarOpen, onSidebarOpenChange }: DualL
         </>
       )}
 
-      {/* ── DETAIL PANEL (desktop) ── */}
+      {/* â”€â”€ DETAIL PANEL (desktop) â”€â”€ */}
       <aside
         className={cn(
           "fixed bottom-0 top-14 z-20 hidden w-80 overflow-y-auto border-s border-border bg-card transition-transform duration-300 lg:block",
@@ -160,7 +162,7 @@ export function DualLayout({ children, sidebarOpen, onSidebarOpenChange }: DualL
         </div>
       </aside>
 
-      {/* ── MAIN CONTENT ── */}
+      {/* â”€â”€ MAIN CONTENT â”€â”€ */}
       <main
         className={cn(
           "pt-14 transition-all duration-300",

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import type React from "react";
 import { useState, useEffect, useMemo } from "react";
@@ -16,6 +16,7 @@ import { LogoutButton } from "../shared/logout-button";
 import { Footer } from "../shared/footer";
 import { useDynamicNavigation } from "@core/ui/navigation/dynamic-navigation";
 import { isNavigationItemActive, type NavigationItem } from "@core/config/navigation";
+import { NotificationBell } from "@core/ui/notification";
 
 interface TabbedLayoutProps {
   children: React.ReactNode;
@@ -24,21 +25,21 @@ interface TabbedLayoutProps {
 }
 
 /**
- * Tabbed Layout — Inspired by Google Cloud Console / Jira.
+ * Tabbed Layout â€” Inspired by Google Cloud Console / Jira.
  *
  * Structure:
- * ┌──────────────────────────────────────────┐
- * │ HEADER (56px) — logo, search, profile    │
- * ├──────────────────────────────────────────┤
- * │ TAB BAR (44px) — horizontal scrollable   │
- * ├──────────┬───────────────────────────────┤
- * │ SUB-NAV  │                               │
- * │ (240px)  │       MAIN CONTENT            │
- * │ children │                               │
- * │ of tab   │                               │
- * ├──────────┴───────────────────────────────┤
- * │ FOOTER (if enabled)                      │
- * └──────────────────────────────────────────┘
+ * â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+ * â”‚ HEADER (56px) â€” logo, search, profile    â”‚
+ * â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+ * â”‚ TAB BAR (44px) â€” horizontal scrollable   â”‚
+ * â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+ * â”‚ SUB-NAV  â”‚                               â”‚
+ * â”‚ (240px)  â”‚       MAIN CONTENT            â”‚
+ * â”‚ children â”‚                               â”‚
+ * â”‚ of tab   â”‚                               â”‚
+ * â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+ * â”‚ FOOTER (if enabled)                      â”‚
+ * â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
  */
 export function TabbedLayout({ children, sidebarOpen, onSidebarOpenChange }: TabbedLayoutProps) {
   const pathname = usePathname();
@@ -67,7 +68,7 @@ export function TabbedLayout({ children, sidebarOpen, onSidebarOpenChange }: Tab
 
   return (
     <div className={cn("min-h-screen bg-background", direction === "rtl" ? "rtl" : "ltr")}>
-      {/* ── HEADER ── */}
+      {/* â”€â”€ HEADER â”€â”€ */}
       <header className="fixed inset-x-0 top-0 z-40 flex h-14 items-center border-b border-border bg-card px-4 backdrop-blur-sm lg:px-6">
         {/* Left: Logo + Mobile Toggle */}
         <div className="flex shrink-0 items-center gap-3">
@@ -99,11 +100,12 @@ export function TabbedLayout({ children, sidebarOpen, onSidebarOpenChange }: Tab
             buttonClassName="hover:bg-accent"
             contentClassName="bg-popover border-border"
           />
+          <NotificationBell iconClassName="h-4 w-4" />
           <UserProfileDropdown variant="navigation" showName={false} />
         </div>
       </header>
 
-      {/* ── TAB BAR ── */}
+      {/* â”€â”€ TAB BAR â”€â”€ */}
       <div className="fixed inset-x-0 top-14 z-30 h-11 border-b border-border bg-card/95 backdrop-blur-sm">
         <div className="scrollbar-none flex h-full items-end gap-0 overflow-x-auto px-4 lg:px-6">
           {tabs.map((tab, idx) => {
@@ -135,7 +137,7 @@ export function TabbedLayout({ children, sidebarOpen, onSidebarOpenChange }: Tab
         </div>
       </div>
 
-      {/* ── SUB-NAV SIDEBAR (desktop) ── */}
+      {/* â”€â”€ SUB-NAV SIDEBAR (desktop) â”€â”€ */}
       {hasSubNav && (
         <aside
           className={cn(
@@ -152,7 +154,7 @@ export function TabbedLayout({ children, sidebarOpen, onSidebarOpenChange }: Tab
         </aside>
       )}
 
-      {/* ── MOBILE SIDEBAR OVERLAY ── */}
+      {/* â”€â”€ MOBILE SIDEBAR OVERLAY â”€â”€ */}
       {sidebarOpen && (
         <>
           <div
@@ -181,7 +183,7 @@ export function TabbedLayout({ children, sidebarOpen, onSidebarOpenChange }: Tab
         </>
       )}
 
-      {/* ── MAIN CONTENT ── */}
+      {/* â”€â”€ MAIN CONTENT â”€â”€ */}
       <main
         className={cn(
           "pt-[6.25rem] transition-all duration-300",

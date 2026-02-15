@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell, Menu, Home } from "lucide-react";
+import { Menu, Home } from "lucide-react";
 import { Button } from "@core/ui/button";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSettings } from "@core/providers/settings-provider";
@@ -9,6 +9,7 @@ import { LanguageSwitcher, ThemeSwitcher, HeaderSearch } from "../common";
 import { useRouter } from "next/navigation";
 import { UserProfileDropdown } from "@core/ui/user-profile-dropdown";
 import { PageBreadcrumbs } from "@core/ui/page-breadcrumbs";
+import { NotificationBell } from "@core/ui/notification";
 
 interface HeaderProps {
   onMenuClick: () => void;
@@ -68,9 +69,7 @@ export function Header({ onMenuClick, isModern = false }: HeaderProps) {
           <LanguageSwitcher buttonClassName="hover-lift" />
           <ThemeSwitcher buttonClassName="hover-lift" />
           {settings.showNotifications && (
-            <Button variant="ghost" size="icon" className="hover-lift">
-              <Bell className="h-5 w-5" />
-            </Button>
+            <NotificationBell iconClassName="h-5 w-5" />
           )}
           <UserProfileDropdown showName={false} />
         </div>

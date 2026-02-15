@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import type React from "react";
 import { useMemo, useState } from "react";
@@ -18,13 +18,14 @@ import { NavRenderer } from "@core/ui/layout/shared/nav-renderer";
 import { UserCard } from "@core/ui/layout/shared/user-card";
 import { LogoutButton } from "@core/ui/layout/shared/logout-button";
 import { cn } from "@core/common/utils";
+import { NotificationBell } from "@core/ui/notification";
 
 interface WizardLayoutProps {
   children: React.ReactNode;
 }
 
 /**
- * Wizard / Stepper Layout — Step-by-step navigation.
+ * Wizard / Stepper Layout â€” Step-by-step navigation.
  *
  * Structure:
  * - Header with logo + actions
@@ -75,7 +76,7 @@ export function WizardLayout({ children }: WizardLayoutProps) {
       className={cn("flex min-h-screen flex-col bg-background", styles.getAnimationClass())}
       dir={direction}
     >
-      {/* ── Header ── */}
+      {/* â”€â”€ Header â”€â”€ */}
       <header
         className={cn(
           settings.stickyHeader ? "sticky top-0 z-30" : "relative",
@@ -100,11 +101,12 @@ export function WizardLayout({ children }: WizardLayoutProps) {
         <div className="flex items-center gap-2">
           <LanguageSwitcher />
           <ThemeSwitcher />
+          <NotificationBell iconClassName="h-4 w-4" />
           <UserProfileDropdown showName={false} />
         </div>
       </header>
 
-      {/* ── Stepper ── */}
+      {/* â”€â”€ Stepper â”€â”€ */}
       <div className="scrollbar-none overflow-x-auto border-b border-border bg-card/50 px-4 py-3 lg:px-6">
         <div className="mx-auto flex min-w-max max-w-4xl items-center gap-2">
           {steps.map((step, i) => {
@@ -145,7 +147,7 @@ export function WizardLayout({ children }: WizardLayoutProps) {
         </div>
       </div>
 
-      {/* ── Mobile Drawer ── */}
+      {/* â”€â”€ Mobile Drawer â”€â”€ */}
       {mobileMenuOpen && (
         <>
           <div
@@ -178,7 +180,7 @@ export function WizardLayout({ children }: WizardLayoutProps) {
         </>
       )}
 
-      {/* ── Content ── */}
+      {/* â”€â”€ Content â”€â”€ */}
       <main className="flex-1 p-6">
         <div style={{ borderRadius: "var(--border-radius)" }}>{children}</div>
       </main>

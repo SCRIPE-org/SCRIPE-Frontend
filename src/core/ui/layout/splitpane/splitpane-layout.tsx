@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import type React from "react";
 import { useState } from "react";
@@ -15,13 +15,14 @@ import { NavRenderer } from "@core/ui/layout/shared/nav-renderer";
 import { UserCard } from "@core/ui/layout/shared/user-card";
 import { LogoutButton } from "@core/ui/layout/shared/logout-button";
 import { cn } from "@core/common/utils";
+import { NotificationBell } from "@core/ui/notification";
 
 interface SplitPaneLayoutProps {
   children: React.ReactNode;
 }
 
 /**
- * Split Pane / IDE Layout — Sidebar + content + resizable bottom panel.
+ * Split Pane / IDE Layout â€” Sidebar + content + resizable bottom panel.
  *
  * Structure:
  * - Header bar
@@ -44,7 +45,7 @@ export function SplitPaneLayout({ children }: SplitPaneLayoutProps) {
       className={cn("flex min-h-screen flex-col bg-background", styles.getAnimationClass())}
       dir={direction}
     >
-      {/* ── Header ── */}
+      {/* â”€â”€ Header â”€â”€ */}
       <header
         className={cn(
           settings.stickyHeader ? "sticky top-0 z-30" : "relative",
@@ -83,12 +84,13 @@ export function SplitPaneLayout({ children }: SplitPaneLayoutProps) {
           </Button>
           <LanguageSwitcher />
           <ThemeSwitcher />
+          <NotificationBell iconClassName="h-4 w-4" />
           <UserProfileDropdown showName={false} />
         </div>
       </header>
 
       <div className="flex flex-1 overflow-hidden">
-        {/* ── Desktop Sidebar ── */}
+        {/* â”€â”€ Desktop Sidebar â”€â”€ */}
         <aside
           className={cn("hidden w-60 shrink-0 flex-col lg:flex", "border-e border-border bg-card")}
         >
@@ -103,7 +105,7 @@ export function SplitPaneLayout({ children }: SplitPaneLayoutProps) {
           </div>
         </aside>
 
-        {/* ── Mobile Drawer ── */}
+        {/* â”€â”€ Mobile Drawer â”€â”€ */}
         {mobileMenuOpen && (
           <>
             <div
@@ -130,7 +132,7 @@ export function SplitPaneLayout({ children }: SplitPaneLayoutProps) {
           </>
         )}
 
-        {/* ── Content + Bottom Panel ── */}
+        {/* â”€â”€ Content + Bottom Panel â”€â”€ */}
         <div className="flex min-w-0 flex-1 flex-col">
           <main className="flex-1 overflow-y-auto p-6">
             <div style={{ borderRadius: "var(--border-radius)" }}>{children}</div>

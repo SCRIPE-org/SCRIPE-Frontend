@@ -18,8 +18,9 @@ import {
   getFlatNavigationItems,
   type NavigationItem,
 } from "@core/config/navigation";
-import { Bell, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { cn } from "@core/common/utils";
+import { NotificationBell } from "@core/ui/notification";
 
 interface SpotlightLayoutProps {
   children: React.ReactNode;
@@ -102,9 +103,7 @@ export function SpotlightLayout({ children }: SpotlightLayoutProps) {
           <LanguageSwitcher />
           <ThemeSwitcher />
           {settings.showNotifications && (
-            <Button variant="ghost" size="icon" className="h-7 w-7">
-              <Bell className="h-3.5 w-3.5" />
-            </Button>
+            <NotificationBell iconClassName="h-3.5 w-3.5" className="h-7 w-7" />
           )}
           <UserProfileDropdown showName={false} />
         </div>

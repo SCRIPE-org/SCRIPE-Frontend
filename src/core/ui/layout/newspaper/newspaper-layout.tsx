@@ -14,8 +14,9 @@ import { UserProfileDropdown } from "@core/ui/user-profile-dropdown";
 import { Footer } from "@core/ui/layout/shared/footer";
 import { useDynamicNavigation } from "@core/ui/navigation/dynamic-navigation";
 import { isNavigationItemActive, type NavigationItem } from "@core/config/navigation";
-import { Bell, Home, ChevronDown } from "lucide-react";
+import { Home, ChevronDown } from "lucide-react";
 import { cn } from "@core/common/utils";
+import { NotificationBell } from "@core/ui/notification";
 
 interface NewspaperLayoutProps {
   children: React.ReactNode;
@@ -142,9 +143,7 @@ export function NewspaperLayout({ children }: NewspaperLayoutProps) {
               <Home className="h-4 w-4" />
             </Button>
             {settings.showNotifications && (
-              <Button variant="ghost" size="icon" className="h-8 w-8">
-                <Bell className="h-4 w-4" />
-              </Button>
+              <NotificationBell iconClassName="h-4 w-4" className="h-8 w-8" />
             )}
             <UserProfileDropdown showName={false} />
           </div>

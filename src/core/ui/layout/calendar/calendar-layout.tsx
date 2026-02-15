@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import type React from "react";
 import { useState, useMemo } from "react";
@@ -18,13 +18,14 @@ import { NavRenderer } from "@core/ui/layout/shared/nav-renderer";
 import { UserCard } from "@core/ui/layout/shared/user-card";
 import { LogoutButton } from "@core/ui/layout/shared/logout-button";
 import { cn } from "@core/common/utils";
+import { NotificationBell } from "@core/ui/notification";
 
 interface CalendarLayoutProps {
   children: React.ReactNode;
 }
 
 /**
- * Calendar / Planner Layout — Date-centric navigation.
+ * Calendar / Planner Layout â€” Date-centric navigation.
  *
  * Structure:
  * - Header with date picker and actions
@@ -76,7 +77,7 @@ export function CalendarLayout({ children }: CalendarLayoutProps) {
       className={cn("flex min-h-screen flex-col bg-background", styles.getAnimationClass())}
       dir={direction}
     >
-      {/* ── Header ── */}
+      {/* â”€â”€ Header â”€â”€ */}
       <header
         className={cn(
           settings.stickyHeader ? "sticky top-0 z-30" : "relative",
@@ -118,12 +119,13 @@ export function CalendarLayout({ children }: CalendarLayoutProps) {
         <div className="flex items-center gap-2">
           <LanguageSwitcher />
           <ThemeSwitcher />
+          <NotificationBell iconClassName="h-4 w-4" />
           <UserProfileDropdown showName={false} />
         </div>
       </header>
 
       <div className="flex flex-1">
-        {/* ── Left Sidebar with mini calendar ── */}
+        {/* â”€â”€ Left Sidebar with mini calendar â”€â”€ */}
         <aside
           className={cn("hidden w-56 shrink-0 flex-col lg:flex", "border-e border-border bg-card")}
         >
@@ -164,7 +166,7 @@ export function CalendarLayout({ children }: CalendarLayoutProps) {
           </div>
         </aside>
 
-        {/* ── Mobile Drawer ── */}
+        {/* â”€â”€ Mobile Drawer â”€â”€ */}
         {mobileMenuOpen && (
           <>
             <div
@@ -197,7 +199,7 @@ export function CalendarLayout({ children }: CalendarLayoutProps) {
           </>
         )}
 
-        {/* ── Content ── */}
+        {/* â”€â”€ Content â”€â”€ */}
         <main className="min-w-0 flex-1 overflow-y-auto p-4">
           <div style={{ borderRadius: "var(--border-radius)" }}>{children}</div>
         </main>

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { Menu, X, Home } from "lucide-react";
@@ -15,18 +15,19 @@ import { useDynamicNavigation } from "@core/ui/navigation/dynamic-navigation";
 import { isNavigationItemActive } from "@core/config/navigation";
 import { MinimalDropdown } from "./minimal-dropdown";
 import { NavRenderer } from "@core/ui/layout/shared/nav-renderer";
+import { NotificationBell } from "@core/ui/notification";
 
 interface MinimalHeaderProps {}
 
 /**
- * Minimal Header — Full horizontal navigation bar.
+ * Minimal Header â€” Full horizontal navigation bar.
  *
  * Features:
  * - Logo on left
  * - Horizontal nav items with dropdown menus for those with children
  * - Simple text links for items without children
  * - Search, lang, theme, profile on right
- * - Mobile: hamburger → full-screen overlay menu
+ * - Mobile: hamburger â†’ full-screen overlay menu
  */
 export function MinimalHeader({}: MinimalHeaderProps) {
   const { t } = useI18n();
@@ -44,7 +45,7 @@ export function MinimalHeader({}: MinimalHeaderProps) {
         )}
       >
         <div className="flex h-14 items-center justify-between px-6">
-          {/* Left — Logo + Nav */}
+          {/* Left â€” Logo + Nav */}
           <div className="flex items-center gap-6">
             {/* Logo */}
             <Link href="/" className="flex shrink-0 items-center gap-2.5">
@@ -84,7 +85,7 @@ export function MinimalHeader({}: MinimalHeaderProps) {
             </nav>
           </div>
 
-          {/* Right — Actions */}
+          {/* Right â€” Actions */}
           <div className="flex items-center gap-2">
             <HeaderSearch
               containerClassName="hidden md:block"
@@ -97,6 +98,7 @@ export function MinimalHeader({}: MinimalHeaderProps) {
             />
             <LanguageSwitcher buttonClassName="h-8 w-8 rounded-lg" />
             <ThemeSwitcher buttonClassName="h-8 w-8 rounded-lg" />
+            <NotificationBell iconClassName="h-4 w-4" />
             <UserProfileDropdown showName={false} />
 
             {/* Mobile hamburger */}

@@ -20,8 +20,9 @@ import {
   getFlatNavigationItems,
   type NavigationItem,
 } from "@core/config/navigation";
-import { Bell, Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronDown } from "lucide-react";
 import { cn } from "@core/common/utils";
+import { NotificationBell } from "@core/ui/notification";
 
 interface CinemaLayoutProps {
   children: React.ReactNode;
@@ -255,13 +256,7 @@ export function CinemaLayout({ children }: CinemaLayoutProps) {
             <LanguageSwitcher />
             <ThemeSwitcher />
             {settings.showNotifications && (
-              <Button
-                variant="ghost"
-                size="icon"
-                className={cn(scrolled ? "" : "text-white hover:bg-white/10")}
-              >
-                <Bell className="h-4 w-4" />
-              </Button>
+              <NotificationBell iconClassName="h-4 w-4" />
             )}
             <UserProfileDropdown showName={false} />
           </div>

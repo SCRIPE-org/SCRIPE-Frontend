@@ -4125,4 +4125,10 @@ export const en = {
       noEntries: "No activity recorded yet.",
     },
   },
+  notifications: {
+    title: "Notifications",
+    description: "Display notification bell in header",
+    empty: "No notifications",
+    emptyDesc: "No notifications currently",
+  },
 };

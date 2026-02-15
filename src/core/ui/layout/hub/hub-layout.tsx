@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import type React from "react";
 import { useMemo } from "react";
@@ -13,13 +13,14 @@ import { LanguageSwitcher, ThemeSwitcher } from "@core/ui/layout/common";
 import { UserProfileDropdown } from "@core/ui/user-profile-dropdown";
 import { Footer } from "@core/ui/layout/shared/footer";
 import { cn } from "@core/common/utils";
+import { NotificationBell } from "@core/ui/notification";
 
 interface HubLayoutProps {
   children: React.ReactNode;
 }
 
 /**
- * Hub / Portal Layout — Card-grid as primary navigation.
+ * Hub / Portal Layout â€” Card-grid as primary navigation.
  *
  * Structure:
  * - Simple header bar
@@ -56,7 +57,7 @@ export function HubLayout({ children }: HubLayoutProps) {
       className={cn("flex min-h-screen flex-col bg-background", styles.getAnimationClass())}
       dir={direction}
     >
-      {/* ── Header ── */}
+      {/* â”€â”€ Header â”€â”€ */}
       <header
         className={cn(
           settings.stickyHeader ? "sticky top-0 z-30" : "relative",
@@ -71,11 +72,12 @@ export function HubLayout({ children }: HubLayoutProps) {
         <div className="flex items-center gap-2">
           <LanguageSwitcher />
           <ThemeSwitcher />
+          <NotificationBell iconClassName="h-4 w-4" />
           <UserProfileDropdown showName />
         </div>
       </header>
 
-      {/* ── Hub Navigation Grid ── */}
+      {/* â”€â”€ Hub Navigation Grid â”€â”€ */}
       <div className="border-b border-border/50 bg-muted/20 px-6 py-6">
         <div className="mx-auto max-w-5xl">
           <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
@@ -121,7 +123,7 @@ export function HubLayout({ children }: HubLayoutProps) {
         </div>
       </div>
 
-      {/* ── Content ── */}
+      {/* â”€â”€ Content â”€â”€ */}
       <main className="flex-1 p-6">
         <div className="mx-auto max-w-5xl" style={{ borderRadius: "var(--border-radius)" }}>
           {children}

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import type React from "react";
 import { useState, useMemo } from "react";
@@ -18,13 +18,14 @@ import { NavRenderer } from "@core/ui/layout/shared/nav-renderer";
 import { UserCard } from "@core/ui/layout/shared/user-card";
 import { LogoutButton } from "@core/ui/layout/shared/logout-button";
 import { cn } from "@core/common/utils";
+import { NotificationBell } from "@core/ui/notification";
 
 interface FocusLayoutProps {
   children: React.ReactNode;
 }
 
 /**
- * Focus Mode Layout — Distraction-free with toggle to minimal UI.
+ * Focus Mode Layout â€” Distraction-free with toggle to minimal UI.
  *
  * Structure:
  * - Ultra-minimal header (logo + focus toggle + profile)
@@ -49,7 +50,7 @@ export function FocusLayout({ children }: FocusLayoutProps) {
       className={cn("min-h-screen bg-background transition-all", styles.getAnimationClass())}
       dir={direction}
     >
-      {/* ── Focus Mode Pill (shown when header is hidden) ── */}
+      {/* â”€â”€ Focus Mode Pill (shown when header is hidden) â”€â”€ */}
       {focusMode && (
         <div
           className={cn(
@@ -79,7 +80,7 @@ export function FocusLayout({ children }: FocusLayoutProps) {
         </div>
       )}
 
-      {/* ── Header (hidden in focus mode) ── */}
+      {/* â”€â”€ Header (hidden in focus mode) â”€â”€ */}
       {!focusMode && (
         <header
           className={cn(
@@ -114,12 +115,13 @@ export function FocusLayout({ children }: FocusLayoutProps) {
             </Button>
             <LanguageSwitcher />
             <ThemeSwitcher />
+            <NotificationBell iconClassName="h-4 w-4" />
             <UserProfileDropdown showName={false} />
           </div>
         </header>
       )}
 
-      {/* ── Sidebar Overlay ── */}
+      {/* â”€â”€ Sidebar Overlay â”€â”€ */}
       {sidebarOpen && (
         <>
           <div className="fixed inset-0 z-30 bg-black/30" onClick={() => setSidebarOpen(false)} />
@@ -149,7 +151,7 @@ export function FocusLayout({ children }: FocusLayoutProps) {
         </>
       )}
 
-      {/* ── Content ── */}
+      {/* â”€â”€ Content â”€â”€ */}
       <main className={cn("flex-1 p-6", focusMode && "p-8 lg:p-12")}>
         <div
           className={cn(focusMode && "mx-auto max-w-4xl")}

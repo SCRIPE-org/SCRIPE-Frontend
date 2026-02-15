@@ -17,8 +17,9 @@ import {
   getFlatNavigationItems,
   type NavigationItem,
 } from "@core/config/navigation";
-import { Bell, Home, ChevronRight, Search, Grid3X3, X } from "lucide-react";
+import { Home, ChevronRight, Search, Grid3X3, X } from "lucide-react";
 import { cn } from "@core/common/utils";
+import { NotificationBell } from "@core/ui/notification";
 
 interface VaultLayoutProps {
   children: React.ReactNode;
@@ -76,22 +77,22 @@ export function VaultLayout({ children }: VaultLayoutProps) {
         icon: group.icon,
         items: group.children
           ? group.children
-              .filter((child) => child.href)
-              .map((child) => ({
-                name: t(child.name) || child.name,
-                href: child.href!,
-                icon: child.icon,
-                active: isNavigationItemActive(child, pathname),
-              }))
+            .filter((child) => child.href)
+            .map((child) => ({
+              name: t(child.name) || child.name,
+              href: child.href!,
+              icon: child.icon,
+              active: isNavigationItemActive(child, pathname),
+            }))
           : group.href
             ? [
-                {
-                  name: t(group.name) || group.name,
-                  href: group.href,
-                  icon: group.icon,
-                  active: isNavigationItemActive(group, pathname),
-                },
-              ]
+              {
+                name: t(group.name) || group.name,
+                href: group.href,
+                icon: group.icon,
+                active: isNavigationItemActive(group, pathname),
+              },
+            ]
             : [],
       }))
       .filter((cat) => cat.items.length > 0);
@@ -171,9 +172,7 @@ export function VaultLayout({ children }: VaultLayoutProps) {
             <LanguageSwitcher />
             <ThemeSwitcher />
             {settings.showNotifications && (
-              <Button variant="ghost" size="icon">
-                <Bell className="h-4 w-4" />
-              </Button>
+              <NotificationBell iconClassName="h-4 w-4" />
             )}
             <UserProfileDropdown showName={false} />
           </div>

@@ -3,7 +3,7 @@
 import type React from "react";
 import { useState, useMemo } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { Menu, X, Search, Bell, Plus, Users, BarChart3 } from "lucide-react";
+import { Menu, X, Search, Plus, Users, BarChart3 } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSettings } from "@core/providers/settings-provider";
 import { useLayoutStyles } from "@core/ui/layout/shared/use-layout-styles";
@@ -19,6 +19,7 @@ import { NavRenderer } from "@core/ui/layout/shared/nav-renderer";
 import { UserCard } from "@core/ui/layout/shared/user-card";
 import { LogoutButton } from "@core/ui/layout/shared/logout-button";
 import { cn } from "@core/common/utils";
+import { NotificationBell } from "@core/ui/notification";
 
 interface CRMLayoutProps {
   children: React.ReactNode;
@@ -98,10 +99,7 @@ export function CRMLayout({ children }: CRMLayoutProps) {
               <Plus className="h-3.5 w-3.5" />
               <span className="text-xs">{t("common.create") || "New"}</span>
             </Button>
-            <Button variant="ghost" size="icon" className="relative h-8 w-8">
-              <Bell className="h-4 w-4" />
-              <span className="absolute -end-0.5 -top-0.5 h-2 w-2 rounded-full bg-destructive" />
-            </Button>
+            <NotificationBell iconClassName="h-4 w-4" className="h-8 w-8" />
             <LanguageSwitcher />
             <ThemeSwitcher />
             <UserProfileDropdown showName={false} />

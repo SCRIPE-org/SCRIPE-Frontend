@@ -14,9 +14,10 @@ import { NavRenderer } from "@core/ui/layout/shared/nav-renderer";
 import { UserCard } from "@core/ui/layout/shared/user-card";
 import { LogoutButton } from "@core/ui/layout/shared/logout-button";
 import { Footer } from "@core/ui/layout/shared/footer";
-import { Bell, Home, Menu, X, Zap } from "lucide-react";
+import { Home, Menu, X, Zap } from "lucide-react";
 import { cn } from "@core/common/utils";
 import { useRouter } from "next/navigation";
+import { NotificationBell } from "@core/ui/notification";
 
 interface NeonLayoutProps {
   children: React.ReactNode;
@@ -213,9 +214,7 @@ export function NeonLayout({ children }: NeonLayoutProps) {
               <LanguageSwitcher />
               <ThemeSwitcher />
               {settings.showNotifications && (
-                <Button variant="ghost" size="icon" className="hover:neon-text-cyan text-white/50">
-                  <Bell className="h-4 w-4" />
-                </Button>
+                <NotificationBell iconClassName="h-4 w-4" className="hover:neon-text-cyan text-white/50" />
               )}
               <UserProfileDropdown showName={false} />
             </div>

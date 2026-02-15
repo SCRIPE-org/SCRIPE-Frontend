@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import type React from "react";
 import { useState, useMemo } from "react";
@@ -15,13 +15,14 @@ import { ScrollArea } from "@core/ui/scroll-area";
 import { LanguageSwitcher, ThemeSwitcher } from "@core/ui/layout/common";
 import { UserProfileDropdown } from "@core/ui/user-profile-dropdown";
 import { cn } from "@core/common/utils";
+import { NotificationBell } from "@core/ui/notification";
 
 interface ChatLayoutProps {
   children: React.ReactNode;
 }
 
 /**
- * Chat-Centric Layout — Messaging app style.
+ * Chat-Centric Layout â€” Messaging app style.
  *
  * Structure:
  * - Left: channels/rooms sidebar (nav items as channels)
@@ -100,7 +101,7 @@ export function ChatLayout({ children }: ChatLayoutProps) {
       className={cn("flex h-screen overflow-hidden bg-background", styles.getAnimationClass())}
       dir={direction}
     >
-      {/* ── Desktop Sidebar ── */}
+      {/* â”€â”€ Desktop Sidebar â”€â”€ */}
       <aside
         className={cn("hidden w-60 shrink-0 flex-col lg:flex", "border-e border-border bg-card")}
       >
@@ -110,11 +111,12 @@ export function ChatLayout({ children }: ChatLayoutProps) {
         </div>
         {ChannelList}
         <div className="border-t border-border p-2">
+          <NotificationBell iconClassName="h-4 w-4" />
           <UserProfileDropdown showName />
         </div>
       </aside>
 
-      {/* ── Mobile Sidebar Overlay ── */}
+      {/* â”€â”€ Mobile Sidebar Overlay â”€â”€ */}
       {sidebarOpen && (
         <>
           <div
@@ -139,7 +141,7 @@ export function ChatLayout({ children }: ChatLayoutProps) {
         </>
       )}
 
-      {/* ── Content Area ── */}
+      {/* â”€â”€ Content Area â”€â”€ */}
       <div className="flex min-w-0 flex-1 flex-col">
         {/* Chat header bar */}
         <div className="flex h-12 shrink-0 items-center justify-between border-b border-border bg-card/50 px-4">

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { Menu, Home } from "lucide-react";
 import { Button } from "@core/ui/button";
@@ -9,16 +9,17 @@ import { LanguageSwitcher, ThemeSwitcher, HeaderSearch } from "@core/ui/layout/c
 import { useRouter } from "next/navigation";
 import { UserProfileDropdown } from "@core/ui/user-profile-dropdown";
 import { PageBreadcrumbs } from "@core/ui/page-breadcrumbs";
+import { NotificationBell } from "@core/ui/notification";
 
 interface ClassicHeaderProps {
   onMenuClick: () => void;
 }
 
 /**
- * Classic Header — Slim and contextual.
+ * Classic Header â€” Slim and contextual.
  *
  * Features:
- * - Minimal height — just enough for breadcrumbs + actions
+ * - Minimal height â€” just enough for breadcrumbs + actions
  * - Search bar left, user actions right
  * - Breadcrumbs below (conditional)
  * - Sticky when enabled in settings
@@ -36,7 +37,7 @@ export function ClassicHeader({ onMenuClick }: ClassicHeaderProps) {
       )}
     >
       <div className="flex h-14 items-center justify-between px-6">
-        {/* Left — Menu + Search */}
+        {/* Left â€” Menu + Search */}
         <div className="flex items-center gap-3">
           {settings.collapsibleSidebar && (
             <Button
@@ -60,7 +61,7 @@ export function ClassicHeader({ onMenuClick }: ClassicHeaderProps) {
           />
         </div>
 
-        {/* Right — Actions */}
+        {/* Right â€” Actions */}
         <div className="flex items-center gap-2">
           <Button
             variant="ghost"
@@ -73,6 +74,7 @@ export function ClassicHeader({ onMenuClick }: ClassicHeaderProps) {
           </Button>
           <LanguageSwitcher buttonClassName="h-8 w-8 rounded-lg" />
           <ThemeSwitcher buttonClassName="h-8 w-8 rounded-lg" />
+          <NotificationBell iconClassName="h-4 w-4" />
           <UserProfileDropdown showName={false} />
         </div>
       </div>

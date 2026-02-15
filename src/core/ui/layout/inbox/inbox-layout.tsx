@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import type React from "react";
 import { useState, useMemo } from "react";
@@ -26,13 +26,14 @@ import { LanguageSwitcher, ThemeSwitcher } from "@core/ui/layout/common";
 import { UserProfileDropdown } from "@core/ui/user-profile-dropdown";
 import { Footer } from "@core/ui/layout/shared/footer";
 import { cn } from "@core/common/utils";
+import { NotificationBell } from "@core/ui/notification";
 
 interface InboxLayoutProps {
   children: React.ReactNode;
 }
 
 /**
- * Inbox / Three-Column Layout — Email client-style.
+ * Inbox / Three-Column Layout â€” Email client-style.
  *
  * Structure:
  * - Header bar
@@ -87,7 +88,7 @@ export function InboxLayout({ children }: InboxLayoutProps) {
       className={cn("flex min-h-screen flex-col bg-background", styles.getAnimationClass())}
       dir={direction}
     >
-      {/* ── Header ── */}
+      {/* â”€â”€ Header â”€â”€ */}
       <header
         className={cn(
           settings.stickyHeader ? "sticky top-0 z-30" : "relative",
@@ -112,12 +113,13 @@ export function InboxLayout({ children }: InboxLayoutProps) {
         <div className="flex items-center gap-2">
           <LanguageSwitcher />
           <ThemeSwitcher />
+          <NotificationBell iconClassName="h-4 w-4" />
           <UserProfileDropdown showName={false} />
         </div>
       </header>
 
       <div className="flex flex-1 overflow-hidden">
-        {/* ── Column 1: Folders (desktop) ── */}
+        {/* â”€â”€ Column 1: Folders (desktop) â”€â”€ */}
         <aside
           className={cn("hidden w-52 shrink-0 flex-col lg:flex", "border-e border-border bg-card")}
         >
@@ -155,7 +157,7 @@ export function InboxLayout({ children }: InboxLayoutProps) {
           </ScrollArea>
         </aside>
 
-        {/* ── Column 2: Item List ── */}
+        {/* â”€â”€ Column 2: Item List â”€â”€ */}
         <div
           className={cn(
             "hidden w-64 shrink-0 flex-col lg:flex",
@@ -195,7 +197,7 @@ export function InboxLayout({ children }: InboxLayoutProps) {
           </ScrollArea>
         </div>
 
-        {/* ── Mobile Drawer ── */}
+        {/* â”€â”€ Mobile Drawer â”€â”€ */}
         {mobileMenuOpen && (
           <>
             <div
@@ -250,7 +252,7 @@ export function InboxLayout({ children }: InboxLayoutProps) {
           </>
         )}
 
-        {/* ── Column 3: Content/Detail ── */}
+        {/* â”€â”€ Column 3: Content/Detail â”€â”€ */}
         <main className="min-w-0 flex-1 overflow-y-auto p-6">
           <div style={{ borderRadius: "var(--border-radius)" }}>{children}</div>
         </main>

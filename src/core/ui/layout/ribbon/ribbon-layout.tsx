@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import type React from "react";
 import { useState, useMemo } from "react";
@@ -18,13 +18,14 @@ import { NavRenderer } from "@core/ui/layout/shared/nav-renderer";
 import { UserCard } from "@core/ui/layout/shared/user-card";
 import { LogoutButton } from "@core/ui/layout/shared/logout-button";
 import { cn } from "@core/common/utils";
+import { NotificationBell } from "@core/ui/notification";
 
 interface RibbonLayoutProps {
   children: React.ReactNode;
 }
 
 /**
- * Ribbon Layout — Microsoft Office-inspired tabbed toolbar.
+ * Ribbon Layout â€” Microsoft Office-inspired tabbed toolbar.
  *
  * Structure:
  * - Top header with logo + actions
@@ -84,7 +85,7 @@ export function RibbonLayout({ children }: RibbonLayoutProps) {
       className={cn("flex min-h-screen flex-col bg-background", styles.getAnimationClass())}
       dir={direction}
     >
-      {/* ── Header ── */}
+      {/* â”€â”€ Header â”€â”€ */}
       <header
         className={cn(
           settings.stickyHeader ? "sticky top-0 z-30" : "relative",
@@ -110,6 +111,7 @@ export function RibbonLayout({ children }: RibbonLayoutProps) {
           <div className="flex items-center gap-2">
             <LanguageSwitcher />
             <ThemeSwitcher />
+            <NotificationBell iconClassName="h-4 w-4" />
             <UserProfileDropdown showName={false} />
           </div>
         </div>
@@ -164,7 +166,7 @@ export function RibbonLayout({ children }: RibbonLayoutProps) {
           })}
         </div>
 
-        {/* Ribbon panel — grouped action buttons for selected tab */}
+        {/* Ribbon panel â€” grouped action buttons for selected tab */}
         {currentTabItems.length > 0 && (
           <div className="hidden items-center gap-1 bg-muted/30 px-4 py-2 lg:flex">
             {currentTabItems.map((item) => {
@@ -192,7 +194,7 @@ export function RibbonLayout({ children }: RibbonLayoutProps) {
         )}
       </header>
 
-      {/* ── Mobile Drawer ── */}
+      {/* â”€â”€ Mobile Drawer â”€â”€ */}
       {mobileMenuOpen && (
         <>
           <div
@@ -225,7 +227,7 @@ export function RibbonLayout({ children }: RibbonLayoutProps) {
         </>
       )}
 
-      {/* ── Content ── */}
+      {/* â”€â”€ Content â”€â”€ */}
       <main className="flex-1 p-6">
         <div style={{ borderRadius: "var(--border-radius)" }}>{children}</div>
       </main>

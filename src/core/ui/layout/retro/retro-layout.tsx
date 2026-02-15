@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import type React from "react";
 import { useState, useMemo, useEffect } from "react";
@@ -22,16 +22,17 @@ import {
 } from "@core/config/navigation";
 import { Minus, Square, X as XIcon, Menu } from "lucide-react";
 import { cn } from "@core/common/utils";
+import { NotificationBell } from "@core/ui/notification";
 
 interface RetroLayoutProps {
   children: React.ReactNode;
 }
 
 /**
- * Retro Layout — Classic Desktop / Windows-inspired.
+ * Retro Layout â€” Classic Desktop / Windows-inspired.
  *
  * Structure:
- * - Navigation panel styled as a "window" with title bar + [─][□][×]
+ * - Navigation panel styled as a "window" with title bar + [â”€][â–¡][Ã—]
  * - Main content as another "window" with title bar
  * - Bottom taskbar with module icons
  * - Classic inset/outset borders, System-like UI
@@ -119,7 +120,7 @@ export function RetroLayout({ children }: RetroLayoutProps) {
         className="retro-layout flex flex-1 gap-2 p-2"
         style={{ backgroundColor: "var(--retro-bg)" }}
       >
-        {/* ── Navigation Window ── */}
+        {/* â”€â”€ Navigation Window â”€â”€ */}
         {sidebarOpen && !sidebarMinimized && (
           <>
             {/* Mobile overlay */}
@@ -142,7 +143,7 @@ export function RetroLayout({ children }: RetroLayoutProps) {
                 style={{ background: "var(--retro-title-active)" }}
               >
                 <span className="flex items-center gap-1 text-xs font-bold text-white">
-                  📁 {t("common.navigation") || "Navigation"}
+                  ðŸ“ {t("common.navigation") || "Navigation"}
                 </span>
                 <div className="flex items-center gap-0.5">
                   <button
@@ -188,7 +189,7 @@ export function RetroLayout({ children }: RetroLayoutProps) {
           </>
         )}
 
-        {/* ── Content Window ── */}
+        {/* â”€â”€ Content Window â”€â”€ */}
         <div className="flex min-w-0 flex-1 flex-col" style={{ boxShadow: "var(--retro-outset)" }}>
           {/* Title bar */}
           <div
@@ -196,11 +197,12 @@ export function RetroLayout({ children }: RetroLayoutProps) {
             style={{ background: "var(--retro-title-active)" }}
           >
             <span className="flex items-center gap-1 text-xs font-bold text-white">
-              📄 {currentPageTitle}
+              ðŸ“„ {currentPageTitle}
             </span>
             <div className="flex items-center gap-1">
               <LanguageSwitcher />
               <ThemeSwitcher />
+              <NotificationBell iconClassName="h-4 w-4" />
               <UserProfileDropdown showName={false} />
             </div>
           </div>
@@ -244,7 +246,7 @@ export function RetroLayout({ children }: RetroLayoutProps) {
         </div>
       </div>
 
-      {/* ── Bottom Taskbar ── */}
+      {/* â”€â”€ Bottom Taskbar â”€â”€ */}
       <div
         className="flex h-10 shrink-0 items-center gap-1 px-1"
         style={{ boxShadow: "var(--retro-outset)", backgroundColor: "var(--retro-bg)" }}
@@ -258,7 +260,7 @@ export function RetroLayout({ children }: RetroLayoutProps) {
             setSidebarMinimized(false);
           }}
         >
-          ⊞ {t("common.start") || "Start"}
+          âŠž {t("common.start") || "Start"}
         </button>
         <div className="h-6 w-px" style={{ backgroundColor: "#808080" }} />
         {/* Active windows */}
@@ -272,14 +274,14 @@ export function RetroLayout({ children }: RetroLayoutProps) {
               }}
               onClick={() => setSidebarMinimized(!sidebarMinimized)}
             >
-              📁 {t("common.navigation") || "Nav"}
+              ðŸ“ {t("common.navigation") || "Nav"}
             </button>
           )}
           <button
             className="flex h-6 max-w-[120px] items-center gap-1 truncate px-2 text-xs"
             style={{ boxShadow: "var(--retro-inset)", backgroundColor: "var(--retro-bg)" }}
           >
-            📄 {currentPageTitle}
+            ðŸ“„ {currentPageTitle}
           </button>
         </div>
         {/* System tray */}

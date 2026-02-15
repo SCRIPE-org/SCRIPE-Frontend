@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import type React from "react";
 import { useState, useMemo } from "react";
@@ -15,19 +15,20 @@ import { LanguageSwitcher, ThemeSwitcher } from "@core/ui/layout/common";
 import { UserProfileDropdown } from "@core/ui/user-profile-dropdown";
 import { Footer } from "@core/ui/layout/shared/footer";
 import { cn } from "@core/common/utils";
+import { NotificationBell } from "@core/ui/notification";
 
 interface OverlayLayoutProps {
   children: React.ReactNode;
 }
 
 /**
- * Overlay Layout — Fullscreen menu that takes over on open.
+ * Overlay Layout â€” Fullscreen menu that takes over on open.
  *
  * Structure:
  * - Minimal top header with logo + hamburger + actions
  * - Full-width content (zero chrome)
  * - Menu button opens a fullscreen overlay with large nav links
- * - Mobile: same experience — overlay IS the mobile pattern
+ * - Mobile: same experience â€” overlay IS the mobile pattern
  *
  * Inspired by Stripe, creative portfolios, luxury brands
  */
@@ -76,7 +77,7 @@ export function OverlayLayout({ children }: OverlayLayoutProps) {
       className={cn("flex min-h-screen flex-col bg-background", styles.getAnimationClass())}
       dir={direction}
     >
-      {/* ── Minimal Header ── */}
+      {/* â”€â”€ Minimal Header â”€â”€ */}
       <header
         className={cn(
           settings.stickyHeader ? "sticky top-0 z-30" : "relative",
@@ -94,6 +95,7 @@ export function OverlayLayout({ children }: OverlayLayoutProps) {
         <div className="flex items-center gap-2">
           <LanguageSwitcher />
           <ThemeSwitcher />
+          <NotificationBell iconClassName="h-4 w-4" />
           <UserProfileDropdown showName={false} />
           <Button variant="outline" size="sm" onClick={() => setMenuOpen(true)} className="gap-2">
             <Menu className="h-4 w-4" />
@@ -102,14 +104,14 @@ export function OverlayLayout({ children }: OverlayLayoutProps) {
         </div>
       </header>
 
-      {/* ── Content ── */}
+      {/* â”€â”€ Content â”€â”€ */}
       <main className="flex-1 p-6">
         <div style={{ borderRadius: "var(--border-radius)" }}>{children}</div>
       </main>
 
       {settings.showFooter && <Footer />}
 
-      {/* ── Fullscreen Overlay Menu ── */}
+      {/* â”€â”€ Fullscreen Overlay Menu â”€â”€ */}
       {menuOpen && (
         <div
           className={cn(

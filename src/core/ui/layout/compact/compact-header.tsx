@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { Menu, Home } from "lucide-react";
 import { Button } from "@core/ui/button";
@@ -9,16 +9,17 @@ import { LanguageSwitcher, ThemeSwitcher, HeaderSearch } from "@core/ui/layout/c
 import { useRouter } from "next/navigation";
 import { UserProfileDropdown } from "@core/ui/user-profile-dropdown";
 import { PageBreadcrumbs } from "@core/ui/page-breadcrumbs";
+import { NotificationBell } from "@core/ui/notification";
 
 interface CompactHeaderProps {
   onMenuClick: () => void;
 }
 
 /**
- * Compact Header — Ultra-slim, 40px height.
+ * Compact Header â€” Ultra-slim, 40px height.
  *
  * Features:
- * - Only 40px tall — minimal chrome, maximum content
+ * - Only 40px tall â€” minimal chrome, maximum content
  * - Single-line breadcrumbs inline (no separate row)
  * - Small action buttons (h-7 w-7)
  * - No search bar in header (sidebar has its own density)
@@ -36,7 +37,7 @@ export function CompactHeader({ onMenuClick }: CompactHeaderProps) {
       )}
     >
       <div className="flex h-full items-center justify-between px-4">
-        {/* Left — Menu + Breadcrumbs inline */}
+        {/* Left â€” Menu + Breadcrumbs inline */}
         <div className="flex items-center gap-2">
           {settings.collapsibleSidebar && (
             <Button
@@ -56,7 +57,7 @@ export function CompactHeader({ onMenuClick }: CompactHeaderProps) {
           )}
         </div>
 
-        {/* Right — Compact actions */}
+        {/* Right â€” Compact actions */}
         <div className="flex items-center gap-1">
           <Button
             variant="ghost"
@@ -69,6 +70,7 @@ export function CompactHeader({ onMenuClick }: CompactHeaderProps) {
           </Button>
           <LanguageSwitcher buttonClassName="h-7 w-7 rounded" />
           <ThemeSwitcher buttonClassName="h-7 w-7 rounded" />
+          <NotificationBell iconClassName="h-4 w-4" />
           <UserProfileDropdown showName={false} />
         </div>
       </div>

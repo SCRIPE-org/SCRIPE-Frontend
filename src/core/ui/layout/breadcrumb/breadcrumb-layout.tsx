@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import type React from "react";
 import { useMemo, useState } from "react";
@@ -18,13 +18,14 @@ import { NavRenderer } from "@core/ui/layout/shared/nav-renderer";
 import { UserCard } from "@core/ui/layout/shared/user-card";
 import { LogoutButton } from "@core/ui/layout/shared/logout-button";
 import { cn } from "@core/common/utils";
+import { NotificationBell } from "@core/ui/notification";
 
 interface BreadcrumbLayoutProps {
   children: React.ReactNode;
 }
 
 /**
- * Breadcrumb Layout — No sidebar, navigate entirely via breadcrumb trail.
+ * Breadcrumb Layout â€” No sidebar, navigate entirely via breadcrumb trail.
  *
  * Structure:
  * - Top bar with logo, breadcrumb trail, and actions
@@ -79,7 +80,7 @@ export function BreadcrumbLayout({ children }: BreadcrumbLayoutProps) {
       className={cn("flex min-h-screen flex-col bg-background", styles.getAnimationClass())}
       dir={direction}
     >
-      {/* ── Header with Breadcrumbs ── */}
+      {/* â”€â”€ Header with Breadcrumbs â”€â”€ */}
       <header
         className={cn(
           settings.stickyHeader ? "sticky top-0 z-30" : "relative",
@@ -104,6 +105,7 @@ export function BreadcrumbLayout({ children }: BreadcrumbLayoutProps) {
           <div className="flex items-center gap-2">
             <LanguageSwitcher />
             <ThemeSwitcher />
+            <NotificationBell iconClassName="h-4 w-4" />
             <UserProfileDropdown showName={false} />
           </div>
         </div>
@@ -134,7 +136,7 @@ export function BreadcrumbLayout({ children }: BreadcrumbLayoutProps) {
         </div>
       </header>
 
-      {/* ── Mobile Navigation Drawer ── */}
+      {/* â”€â”€ Mobile Navigation Drawer â”€â”€ */}
       {mobileMenuOpen && (
         <>
           <div
@@ -167,7 +169,7 @@ export function BreadcrumbLayout({ children }: BreadcrumbLayoutProps) {
         </>
       )}
 
-      {/* ── Content ── */}
+      {/* â”€â”€ Content â”€â”€ */}
       <main className="flex-1 p-6">
         <div
           style={{

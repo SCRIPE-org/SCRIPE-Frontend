@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import type React from "react";
 import { useState, useEffect, useRef, useMemo } from "react";
@@ -18,13 +18,14 @@ import { NavRenderer } from "@core/ui/layout/shared/nav-renderer";
 import { UserCard } from "@core/ui/layout/shared/user-card";
 import { LogoutButton } from "@core/ui/layout/shared/logout-button";
 import { cn } from "@core/common/utils";
+import { NotificationBell } from "@core/ui/notification";
 
 interface CollapseHeaderLayoutProps {
   children: React.ReactNode;
 }
 
 /**
- * Collapse Header Layout — Auto-hiding header on scroll.
+ * Collapse Header Layout â€” Auto-hiding header on scroll.
  *
  * Structure:
  * - Horizontal top nav with links
@@ -80,7 +81,7 @@ export function CollapseHeaderLayout({ children }: CollapseHeaderLayoutProps) {
       className={cn("flex min-h-screen flex-col bg-background", styles.getAnimationClass())}
       dir={direction}
     >
-      {/* ── Auto-hiding Header ── */}
+      {/* â”€â”€ Auto-hiding Header â”€â”€ */}
       <header
         className={cn(
           "fixed inset-x-0 top-0 z-30",
@@ -131,11 +132,12 @@ export function CollapseHeaderLayout({ children }: CollapseHeaderLayoutProps) {
         <div className="flex items-center gap-2">
           <LanguageSwitcher />
           <ThemeSwitcher />
+          <NotificationBell iconClassName="h-4 w-4" />
           <UserProfileDropdown showName={false} />
         </div>
       </header>
 
-      {/* ── Mobile Drawer ── */}
+      {/* â”€â”€ Mobile Drawer â”€â”€ */}
       {mobileMenuOpen && (
         <>
           <div
@@ -168,7 +170,7 @@ export function CollapseHeaderLayout({ children }: CollapseHeaderLayoutProps) {
         </>
       )}
 
-      {/* ── Content ── */}
+      {/* â”€â”€ Content â”€â”€ */}
       <main className="flex-1 p-6 pt-14">
         <div style={{ borderRadius: "var(--border-radius)" }}>{children}</div>
       </main>

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import type React from "react";
 import { useState, useMemo } from "react";
@@ -18,13 +18,14 @@ import { NavRenderer } from "@core/ui/layout/shared/nav-renderer";
 import { UserCard } from "@core/ui/layout/shared/user-card";
 import { LogoutButton } from "@core/ui/layout/shared/logout-button";
 import { cn } from "@core/common/utils";
+import { NotificationBell } from "@core/ui/notification";
 
 interface DualHeaderLayoutProps {
   children: React.ReactNode;
 }
 
 /**
- * Dual Header Layout — Two-row header for modules + actions.
+ * Dual Header Layout â€” Two-row header for modules + actions.
  *
  * Structure:
  * - Primary header: logo + global actions
@@ -62,7 +63,7 @@ export function DualHeaderLayout({ children }: DualHeaderLayoutProps) {
       className={cn("flex min-h-screen flex-col bg-background", styles.getAnimationClass())}
       dir={direction}
     >
-      {/* ── Primary Header ── */}
+      {/* â”€â”€ Primary Header â”€â”€ */}
       <header
         className={cn(
           settings.stickyHeader ? "sticky top-0 z-30" : "relative",
@@ -87,11 +88,12 @@ export function DualHeaderLayout({ children }: DualHeaderLayoutProps) {
           <div className="flex items-center gap-2">
             <LanguageSwitcher />
             <ThemeSwitcher />
+            <NotificationBell iconClassName="h-4 w-4" />
             <UserProfileDropdown showName />
           </div>
         </div>
 
-        {/* ── Secondary Header (module tabs) ── */}
+        {/* â”€â”€ Secondary Header (module tabs) â”€â”€ */}
         <div className="scrollbar-none flex items-center gap-1 overflow-x-auto border-t border-border/30 bg-muted/20 px-4 lg:px-6">
           {flatItems.map((item) => {
             const Icon = item.icon;
@@ -115,7 +117,7 @@ export function DualHeaderLayout({ children }: DualHeaderLayoutProps) {
         </div>
       </header>
 
-      {/* ── Mobile Drawer ── */}
+      {/* â”€â”€ Mobile Drawer â”€â”€ */}
       {mobileMenuOpen && (
         <>
           <div
@@ -148,7 +150,7 @@ export function DualHeaderLayout({ children }: DualHeaderLayoutProps) {
         </>
       )}
 
-      {/* ── Content ── */}
+      {/* â”€â”€ Content â”€â”€ */}
       <main className="flex-1 p-6">
         <div style={{ borderRadius: "var(--border-radius)" }}>{children}</div>
       </main>

@@ -8,9 +8,10 @@ import { Logo } from "@core/ui/logo";
 import { UserProfileDropdown } from "@core/ui/user-profile-dropdown";
 import { PageBreadcrumbs } from "@core/ui/page-breadcrumbs";
 import { useRouter } from "next/navigation";
-import { Bell, Menu, Home, Search } from "lucide-react";
+import { Menu, Home, Search } from "lucide-react";
 import { cn } from "@core/common/utils";
 import { HeaderSearch, LanguageSwitcher, ThemeSwitcher } from "../common";
+import { NotificationBell } from "@core/ui/notification";
 
 interface FloatingHeaderProps {
   onMenuClick: () => void;
@@ -99,9 +100,7 @@ export function FloatingHeader({ onMenuClick, sidebarOpen }: FloatingHeaderProps
 
           {/* Notifications */}
           {settings.showNotifications && (
-            <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl hover:bg-muted">
-              <Bell className="h-4 w-4" />
-            </Button>
+            <NotificationBell iconClassName="h-4 w-4" className="h-9 w-9 rounded-xl hover:bg-muted" />
           )}
 
           {/* Mobile Search */}

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import type React from "react";
 import { useState, useMemo, useRef, useCallback } from "react";
@@ -14,13 +14,14 @@ import { LanguageSwitcher, ThemeSwitcher } from "@core/ui/layout/common";
 import { UserProfileDropdown } from "@core/ui/user-profile-dropdown";
 import { Footer } from "@core/ui/layout/shared/footer";
 import { cn } from "@core/common/utils";
+import { NotificationBell } from "@core/ui/notification";
 
 interface ShelfLayoutProps {
   children: React.ReactNode;
 }
 
 /**
- * Shelf / Drawer Layout — Bottom drawer navigation that slides up.
+ * Shelf / Drawer Layout â€” Bottom drawer navigation that slides up.
  *
  * Structure:
  * - Header with logo + actions
@@ -57,7 +58,7 @@ export function ShelfLayout({ children }: ShelfLayoutProps) {
       className={cn("flex min-h-screen flex-col bg-background", styles.getAnimationClass())}
       dir={direction}
     >
-      {/* ── Header ── */}
+      {/* â”€â”€ Header â”€â”€ */}
       <header
         className={cn(
           settings.stickyHeader ? "sticky top-0 z-30" : "relative",
@@ -74,23 +75,24 @@ export function ShelfLayout({ children }: ShelfLayoutProps) {
         <div className="flex items-center gap-2">
           <LanguageSwitcher />
           <ThemeSwitcher />
+          <NotificationBell iconClassName="h-4 w-4" />
           <UserProfileDropdown showName={false} />
         </div>
       </header>
 
-      {/* ── Content ── */}
+      {/* â”€â”€ Content â”€â”€ */}
       <main className={cn("flex-1 p-6", expanded ? "pb-72" : "pb-24")}>
         <div style={{ borderRadius: "var(--border-radius)" }}>{children}</div>
       </main>
 
       {settings.showFooter && <Footer />}
 
-      {/* ── Backdrop when expanded ── */}
+      {/* â”€â”€ Backdrop when expanded â”€â”€ */}
       {expanded && (
         <div className="fixed inset-0 z-30 bg-black/20" onClick={() => setExpanded(false)} />
       )}
 
-      {/* ── Bottom Shelf ── */}
+      {/* â”€â”€ Bottom Shelf â”€â”€ */}
       <div
         className={cn(
           "fixed inset-x-0 bottom-0 z-40",
@@ -108,7 +110,7 @@ export function ShelfLayout({ children }: ShelfLayoutProps) {
         </button>
 
         {expanded ? (
-          /* ── Expanded: full grid ── */
+          /* â”€â”€ Expanded: full grid â”€â”€ */
           <div className="h-[calc(100%-24px)] overflow-y-auto px-4 pb-4">
             <p className="mb-3 px-1 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
               {t("layout.navigation") || "Navigation"}
@@ -141,7 +143,7 @@ export function ShelfLayout({ children }: ShelfLayoutProps) {
             </div>
           </div>
         ) : (
-          /* ── Collapsed: icon row ── */
+          /* â”€â”€ Collapsed: icon row â”€â”€ */
           <div className="flex h-[calc(100%-16px)] items-center justify-around px-2">
             {flatItems.slice(0, 5).map((item) => {
               const Icon = item.icon;
