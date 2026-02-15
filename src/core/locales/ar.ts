@@ -452,6 +452,7 @@ export const ar = {
 
   // إدارة القوائم (قائمة التنقل)
   menus: {
+    dropToRoot:"افلت هنا لجعله فرع رئيسي",
     noActiveOverrides: "لا توجد تجاوزات نشطة",
     noActiveOverridesDesc: "لا توجد تجاوزات نشطة",
     noActiveOverridesHint: "لا توجد تجاوزات نشطة",

@@ -428,6 +428,7 @@ export const en = {
   // Menu Management (Admin — Navigation Menu Items)
   menus: {
     dragToReorder: "Drag to reorder",
+    dropToRoot: "Drop here to make it a root item",
     title: "Menu Management",
     description: "Manage navigation menu items, ordering, and visibility.",
     items: "items",
