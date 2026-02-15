@@ -8,7 +8,7 @@
  * - Repositories use Services and map Models → Entities
  * - ViewModels use Repositories
  */
-import { getCoreContainer } from "@/core/di";
+import { getModuleApiService } from "@core/services/api-factory";
 
 // Services
 import { AdminService } from "./admin/src/data/services/AdminService";
@@ -73,7 +73,7 @@ let _container: SystemContainer | null = null;
  */
 export function getSystemContainer(): SystemContainer {
   if (!_container) {
-    const { apiService } = getCoreContainer();
+    const apiService = getModuleApiService("IDENTITY");
 
     // Create Services (wrap IApiService)
     const adminService = new AdminService(apiService);

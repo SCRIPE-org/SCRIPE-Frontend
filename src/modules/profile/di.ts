@@ -1,10 +1,10 @@
 /**
  * Profile Module DI Container
  *
- * Provides singleton instances of profile-related services.
- * Uses lazy initialization: repository is created on first access.
+ * Profile is part of the Identity backend module.
+ * Uses NEXT_PUBLIC_IDENTITY_API_URL with fallback to NEXT_PUBLIC_API_URL.
  */
-import { getCoreContainer } from "@core/di";
+import { getModuleApiService } from "@core/services/api-factory";
 import { ProfileRepository } from "./src/data/repositories/ProfileRepository";
 import type { IProfileRepository } from "./src/domain/interfaces/IProfileRepository";
 
@@ -15,7 +15,7 @@ interface ProfileContainer {
 let _instance: ProfileContainer | null = null;
 
 function createContainer(): ProfileContainer {
-  const profileRepository = new ProfileRepository(getCoreContainer().apiService);
+  const profileRepository = new ProfileRepository(getModuleApiService("IDENTITY"));
   return { profileRepository };
 }
 

@@ -6,7 +6,7 @@
 export * from "./core/domain/entities";
 export * from "./core/domain/interfaces";
 export { AuthRepository } from "./core/data/repositories/AuthRepository";
-export { authContainer } from "./di";
+export { authContainer, getAuthContainer } from "./di";
 
 // Submodules
 export { LoginView } from "./signin";

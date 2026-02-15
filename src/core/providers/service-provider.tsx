@@ -3,19 +3,21 @@
 import type React from "react";
 import { createContext, useContext, useMemo } from "react";
 
-// Core services - using barrel import for hot reload stability
-import { ApiService, NotificationService, NavigationService } from "@core/services";
-
-import { AuthService, type IAuthService } from "@modules/auth/core/data/services/AuthService";
-import { AuthRepository } from "@modules/auth/core/data/repositories/AuthRepository";
-import type { IAuthRepository } from "@modules/auth/core/domain/interfaces/IAuthRepository";
+// Core services
+import { NotificationService, NavigationService } from "@core/services";
+import { getCoreContainer } from "@core/di";
+import { getAuthContainer } from "@modules/auth/di";
 import type { IApiService } from "@core/interfaces/api.interface";
+import type { IAuthRepository } from "@modules/auth/core/domain/interfaces/IAuthRepository";
+import type { IAuthService } from "@modules/auth/core/data/services/AuthService";
 
 /**
  * Services Interface
  *
  * SOLID: Interface Segregation - expose interfaces not implementations
- * NOTE: Profile module now uses its own DI container (profile/di.ts)
+ *
+ * Core services (apiService, notificationService) come from core/di.ts
+ * Auth services (authService, authRepository) come from auth/di.ts
  */
 interface Services {
   apiService: IApiService;
@@ -30,22 +32,17 @@ const ServiceContext = createContext<Services | null>(null);
 /**
  * Service Provider
  *
- * Clean Architecture DI Container for React.
- * Creates: Service → Repository chain with proper dependency injection.
+ * React context wrapper that composes services from the DI containers.
+ * No service creation here — just delegates to the proper DI containers.
  */
-import { getCoreContainer } from "@core/di";
-
 export function ServiceProvider({ children }: { children: React.ReactNode }) {
   const services = useMemo(() => {
-    // Core Services - Use Singleton from DI Container
-    // CRITICAL: This ensures we share the same instance (headers, tokens) as the rest of the app
-    const apiService = getCoreContainer().apiService;
-    const notificationService = new NotificationService();
+    // Core DI Container
+    const { apiService, notificationService } = getCoreContainer();
     const navigationService = new NavigationService(apiService);
 
-    // Auth Module - SOLID: Service → Repository
-    const authService = new AuthService(apiService);
-    const authRepository = new AuthRepository(authService);
+    // Auth DI Container (triggers refresh handler wiring on first access)
+    const { authService, authRepository } = getAuthContainer();
 
     return {
       apiService,
