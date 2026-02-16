@@ -1,11 +1,13 @@
 import type { IApiService } from "@core/interfaces/api.interface";
 import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
-import type { EmailRecipient, SendManualEmailPayload, SentEmail } from "../../domain/entities/Email";
+import type { EmailRecipient, SendManualEmailPayload, SentEmail, EmailTemplateListResponse } from "../../domain/entities/Email";
 
 export interface IEmailService {
       searchRecipients(query: string): Promise<EmailRecipient[]>;
       send(data: SendManualEmailPayload): Promise<void>;
       getSentHistory(params: { page: number; pageSize: number }): Promise<{ items: SentEmail[]; totalCount: number }>;
+      cancelEmail(id: string): Promise<void>;
+      getEmailTemplates(params: { page: number; pageSize: number; search?: string }): Promise<EmailTemplateListResponse>;
 }
 
 export class EmailService implements IEmailService {
@@ -23,5 +25,14 @@ export class EmailService implements IEmailService {
       async getSentHistory(params: { page: number; pageSize: number }): Promise<{ items: SentEmail[]; totalCount: number }> {
             const url = buildUrl(API_ENDPOINTS.EMAILS.SENT_HISTORY, params);
             return this.api.get(url);
+      }
+
+      async cancelEmail(id: string): Promise<void> {
+            await this.api.delete(API_ENDPOINTS.EMAILS.CANCEL(id));
+      }
+
+      async getEmailTemplates(params: { page: number; pageSize: number; search?: string }): Promise<EmailTemplateListResponse> {
+            const url = buildUrl(API_ENDPOINTS.MESSAGE_TEMPLATES.LIST, { ...params, channel: "Email" });
+            return this.api.get<EmailTemplateListResponse>(url);
       }
 }

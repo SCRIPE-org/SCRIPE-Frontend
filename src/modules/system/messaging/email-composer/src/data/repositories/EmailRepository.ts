@@ -1,5 +1,5 @@
 import type { IEmailRepository } from "../../domain/interfaces/IEmailRepository";
-import type { EmailRecipient, SendManualEmailPayload, SentEmail } from "../../domain/entities/Email";
+import type { EmailRecipient, SendManualEmailPayload, SentEmail, EmailTemplateListResponse } from "../../domain/entities/Email";
 import type { IEmailService } from "../services/EmailService";
 
 export class EmailRepository implements IEmailRepository {
@@ -15,5 +15,13 @@ export class EmailRepository implements IEmailRepository {
 
       async getSentHistory(params: { page: number; pageSize: number }): Promise<{ items: SentEmail[]; totalCount: number }> {
             return this.service.getSentHistory(params);
+      }
+
+      async cancelEmail(id: string): Promise<void> {
+            await this.service.cancelEmail(id);
+      }
+
+      async getEmailTemplates(params: { page: number; pageSize: number; search?: string }): Promise<EmailTemplateListResponse> {
+            return this.service.getEmailTemplates(params);
       }
 }

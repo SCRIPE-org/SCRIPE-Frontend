@@ -32,3 +32,22 @@ export interface SentEmail {
       status: "sent" | "failed" | "pending";
       errorMessage: string | null;
 }
+
+/**
+ * Lightweight template reference for the template picker.
+ * Only includes fields needed to select and fill the composer.
+ */
+export interface EmailTemplate {
+      id: string;
+      key: string;
+      channel: string;
+      language: string;
+      subject: string | null;
+      body: string;
+      isActive: boolean;
+}
+
+export interface EmailTemplateListResponse {
+      items: EmailTemplate[];
+      totalCount: number;
+}

@@ -407,6 +407,12 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
           placeholder: t("admin.phoneNumberPlaceholder") || "+1 234 567 8900",
         },
         {
+          name: "email",
+          label: t("admin.email") || "Email",
+          type: "text" as const,
+          placeholder: t("admin.emailPlaceholder") || "admin@example.com",
+        },
+        {
           name: "notes",
           label: t("admin.notes") || "Notes",
           type: "textarea" as const,
@@ -433,6 +439,12 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
           placeholder: t("admin.phoneNumberPlaceholder") || "+1 234 567 8900",
         },
         {
+          name: "email",
+          label: t("admin.email") || "Email",
+          type: "text" as const,
+          placeholder: t("admin.emailPlaceholder") || "admin@example.com",
+        },
+        {
           name: "notes",
           label: t("admin.notes") || "Notes",
           type: "textarea" as const,
@@ -452,6 +464,7 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
         firstName: "",
         lastName: "",
         phoneNumber: "",
+        email: "",
         notes: "",
         // tenantId is added at create time from options
       },
@@ -460,6 +473,7 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
         firstName: admin.firstName || "",
         lastName: admin.lastName || "",
         phoneNumber: admin.phoneNumber || "",
+        email: admin.email || "",
         notes: admin.notes || "",
         isActive: admin.isActive,
       }),

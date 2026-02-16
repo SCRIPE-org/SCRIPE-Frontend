@@ -27,6 +27,7 @@ export interface AdminData extends BaseEntity {
   firstName?: string;
   lastName?: string;
   phoneNumber?: string;
+  email?: string;
   isActive: boolean;
   lastLoginAt?: string;
   notes?: string;
@@ -48,7 +49,7 @@ export interface AdminData extends BaseEntity {
  * Admin entity class
  */
 export class Admin {
-  constructor(public readonly data: AdminData) {}
+  constructor(public readonly data: AdminData) { }
 
   get id(): string {
     return this.data.id;
@@ -73,6 +74,10 @@ export class Admin {
 
   get phoneNumber(): string | undefined {
     return this.data.phoneNumber;
+  }
+
+  get email(): string | undefined {
+    return this.data.email;
   }
 
   get isActive(): boolean {

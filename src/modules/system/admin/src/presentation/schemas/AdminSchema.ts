@@ -26,6 +26,12 @@ export const createAdminSchema = z.object({
     .regex(/^[\d\s+\-()]*$/, "Invalid phone number format")
     .optional()
     .or(z.literal("")),
+  email: z
+    .string()
+    .email("Invalid email format")
+    .max(256, "Email must be at most 256 characters")
+    .optional()
+    .or(z.literal("")),
   notes: z.string().max(500, "Notes must be at most 500 characters").optional(),
 });
 
@@ -39,6 +45,12 @@ export const updateAdminSchema = z.object({
     .string()
     .max(20, "Phone number must be at most 20 characters")
     .regex(/^[\d\s+\-()]*$/, "Invalid phone number format")
+    .optional()
+    .or(z.literal("")),
+  email: z
+    .string()
+    .email("Invalid email format")
+    .max(256, "Email must be at most 256 characters")
     .optional()
     .or(z.literal("")),
   notes: z.string().max(500, "Notes must be at most 500 characters").optional(),

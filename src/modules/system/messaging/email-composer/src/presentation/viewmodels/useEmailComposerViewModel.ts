@@ -8,6 +8,7 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import type {
       EmailRecipient,
       SendManualEmailPayload,
+      EmailTemplate,
 } from "../../domain/entities/Email";
 
 const HISTORY_QUERY_KEY = ["emails", "history"];
@@ -37,6 +38,17 @@ export function useEmailComposerViewModel() {
 
       // ─── Validation state ─────────────────────────────────────
       const [fieldErrors, setFieldErrors] = useState<Record<string, boolean>>({});
+
+      // ─── Preview state ──────────────────────────────────────────
+      const [previewOpen, setPreviewOpen] = useState(false);
+
+      // ─── Template selection handler ─────────────────────────────
+      const applyTemplate = useCallback((template: EmailTemplate) => {
+            if (template.subject) setSubject(template.subject);
+            setBody(template.body);
+            setFieldErrors({});
+            success({ title: t("messaging.email.templateApplied") || `Template "${template.key}" applied` });
+      }, [t, success]);
 
       // ─── Recipient Search ──────────────────────────────────────
       const recipientSearchQuery = useQuery({
@@ -229,6 +241,36 @@ export function useEmailComposerViewModel() {
             enabled: activeTab === "history",
       });
 
+      // ─── Cancel Email ───────────────────────────────────────────
+      const [cancelConfirmOpen, setCancelConfirmOpen] = useState(false);
+      const [cancelEmailId, setCancelEmailId] = useState<string | null>(null);
+
+      const cancelMutation = useMutation({
+            mutationFn: async (id: string) => {
+                  await repo.cancelEmail(id);
+            },
+            onSuccess: () => {
+                  queryClient.invalidateQueries({ queryKey: HISTORY_QUERY_KEY });
+                  success({ title: t("messaging.email.cancelSuccess") || "Email cancelled successfully" });
+            },
+            onError: () => {
+                  toastError({ title: t("messaging.email.cancelError") || "Failed to cancel email" });
+            },
+      });
+
+      const cancelEmail = useCallback((id: string) => {
+            setCancelEmailId(id);
+            setCancelConfirmOpen(true);
+      }, []);
+
+      const confirmCancelEmail = useCallback(() => {
+            if (cancelEmailId) {
+                  cancelMutation.mutate(cancelEmailId);
+            }
+            setCancelConfirmOpen(false);
+            setCancelEmailId(null);
+      }, [cancelEmailId, cancelMutation]);
+
       const historyTotalPages = Math.ceil((historyQuery.data?.totalCount ?? 0) / historyPageSize);
 
       return {
@@ -282,6 +324,18 @@ export function useEmailComposerViewModel() {
             setHistoryPage,
             historyTotalPages,
             isHistoryLoading: historyQuery.isLoading,
+            // Cancel
+            cancelEmail,
+            confirmCancelEmail,
+            cancelConfirmOpen,
+            setCancelConfirmOpen,
+            isCancelling: cancelMutation.isPending,
+            // Preview
+            previewOpen,
+            setPreviewOpen,
+            // Template
+            applyTemplate,
+            repository: repo,
             t,
       };
 }

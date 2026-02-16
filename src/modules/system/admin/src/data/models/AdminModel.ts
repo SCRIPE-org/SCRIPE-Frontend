@@ -31,6 +31,7 @@ export interface AdminJson {
   firstName?: string;
   lastName?: string;
   phoneNumber?: string;
+  email?: string;
   isActive: boolean;
   lastLoginAt?: string;
   notes?: string;
@@ -73,6 +74,7 @@ export interface CreateAdminJson {
   firstName?: string;
   lastName?: string;
   phoneNumber?: string;
+  email?: string;
   notes?: string;
   tenantId?: string;
   roleIds?: string[];
@@ -86,6 +88,7 @@ export interface UpdateAdminJson {
   firstName?: string;
   lastName?: string;
   phoneNumber?: string;
+  email?: string;
   notes?: string;
   isActive?: boolean;
 }
@@ -140,6 +143,7 @@ export class AdminModel {
     public readonly firstName?: string,
     public readonly lastName?: string,
     public readonly phoneNumber?: string,
+    public readonly email?: string,
     public readonly lastLoginAt?: string,
     public readonly notes?: string,
     public readonly roles?: AdminRoleJson[],
@@ -150,7 +154,7 @@ export class AdminModel {
     public readonly isSuperAdmin?: boolean,
     public readonly canModify?: boolean,
     public readonly permissions?: string[]
-  ) {}
+  ) { }
 
   /**
    * Create AdminModel from API JSON
@@ -164,6 +168,7 @@ export class AdminModel {
       json.firstName,
       json.lastName,
       json.phoneNumber,
+      json.email,
       json.lastLoginAt,
       json.notes,
       json.roles,
@@ -189,6 +194,7 @@ export class AdminModel {
       firstName: this.firstName,
       lastName: this.lastName,
       phoneNumber: this.phoneNumber,
+      email: this.email,
       lastLoginAt: this.lastLoginAt,
       notes: this.notes,
       roles: this.roles,

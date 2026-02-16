@@ -3966,8 +3966,14 @@ export const ar = {
 
   // ===== مركز الرسائل =====
   messaging: {
-    
     templates: {
+      editTemplate: "تعديل القالب",
+      editDescription: "تعديل قوالب البريد الإلكتروني والرسائل القصيرة والإشعارات بصيغة Scriban.",
+      subjectDescription: "العنوان",
+      bodyDescription: "المحتوى",
+      settings: "الإعدادات",
+      addNew: "إضافة قالب جديد",
+      createDescription: "إنشاء قوالب البريد الإلكتروني والرسائل القصيرة والإشعارات بصيغة Scriban.",
       title: "قوالب الرسائل",
       description: "إدارة قوالب البريد الإلكتروني والرسائل القصيرة والإشعارات بصيغة Scriban.",
       key: "مفتاح القالب",

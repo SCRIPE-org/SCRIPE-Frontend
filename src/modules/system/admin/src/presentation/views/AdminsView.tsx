@@ -147,6 +147,18 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
           render: (_val: unknown, admin: Admin) => <span>{admin.displayName}</span>,
         },
         {
+          key: "email",
+          label: t("admin.email") || "Email",
+          render: (_val: unknown, admin: Admin) =>
+            admin.email ? (
+              <a href={`mailto:${admin.email}`} className="text-primary hover:underline text-sm">
+                {admin.email}
+              </a>
+            ) : (
+              <span className="text-muted-foreground">-</span>
+            ),
+        },
+        {
           key: "roles",
           label: t("admin.roles") || "Roles",
           render: (_val: unknown, admin: Admin) => {

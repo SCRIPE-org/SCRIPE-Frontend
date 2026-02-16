@@ -40,6 +40,7 @@ export function MessageTemplatesView() {
       const config: CrudConfig<MessageTemplate> = useMemo(
             () => ({
                   ...configBase,
+                  createFields: [], // No modal form — we navigate to full-page form
                   // Override: navigate to full-page form instead of modal
                   onCreateClick: handleCreateClick,
                   columns: [
