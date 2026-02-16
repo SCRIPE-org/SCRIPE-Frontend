@@ -448,12 +448,13 @@ export function GenericCrudView<T>(props: GenericCrudViewProps<T>) {
 
   // Handle create button click
   const handleCreateClick = useCallback(() => {
-    // Call the onCreateClick callback if provided (either from props or config)
+    // If a custom create handler is provided (e.g. page navigation), use it exclusively
     const onCreateHandler = onCreateClick || config?.onCreateClick;
     if (onCreateHandler) {
       onCreateHandler();
+      return; // Don't open the modal — the handler owns the flow
     }
-    // Open the create modal
+    // Otherwise open the create modal
     viewModel.setIsCreateModalOpen(true);
   }, [onCreateClick, config, viewModel]);
 
@@ -471,19 +472,19 @@ export function GenericCrudView<T>(props: GenericCrudViewProps<T>) {
   const actions = config?.hideActionsColumn
     ? undefined
     : rawActions
-        ?.filter((action) => {
-          if (action.requiredPermission && !hasPermission(action.requiredPermission)) {
-            return false;
-          }
-          return true;
-        })
-        .map((action) => ({
-          ...action,
-          onClick:
-            action.onClick === handleDelete
-              ? handleDelete
-              : (item: any) => handleIndividualAction(action, item),
-        }));
+      ?.filter((action) => {
+        if (action.requiredPermission && !hasPermission(action.requiredPermission)) {
+          return false;
+        }
+        return true;
+      })
+      .map((action) => ({
+        ...action,
+        onClick:
+          action.onClick === handleDelete
+            ? handleDelete
+            : (item: any) => handleIndividualAction(action, item),
+      }));
 
   const createFields = config ? config.createFields : propCreateFields!;
   const editFields = config ? config.editFields : propEditFields || propCreateFields!;
@@ -493,20 +494,20 @@ export function GenericCrudView<T>(props: GenericCrudViewProps<T>) {
     propPagination ||
     (config
       ? {
-          ...viewModel.pagination,
-          onPageChange: viewModel.changePage,
-          onPageSizeChange: viewModel.changePageSize,
-        }
+        ...viewModel.pagination,
+        onPageChange: viewModel.changePage,
+        onPageSizeChange: viewModel.changePageSize,
+      }
       : undefined);
 
   const search =
     propSearch ||
     (config
       ? {
-          value: viewModel.searchValue,
-          onChange: viewModel.handleSearchChange,
-          inputRef: viewModel.searchInputRef,
-        }
+        value: viewModel.searchValue,
+        onChange: viewModel.handleSearchChange,
+        inputRef: viewModel.searchInputRef,
+      }
       : undefined);
 
   // ========================================
@@ -727,9 +728,9 @@ export function GenericCrudView<T>(props: GenericCrudViewProps<T>) {
         pagination={
           pagination
             ? {
-                ...pagination,
-                currentPage: pagination.page, // Map page to currentPage for GenericTable
-              }
+              ...pagination,
+              currentPage: pagination.page, // Map page to currentPage for GenericTable
+            }
             : undefined
         }
         onSearch={search?.onChange}
@@ -774,9 +775,8 @@ export function GenericCrudView<T>(props: GenericCrudViewProps<T>) {
         }}
         title={`${t("common.edit")} ${title}`}
         description={`Edit the ${title.toLowerCase()} details below.`}
-        formKey={`edit-form-${
-          viewModel.editingItem?.id || "new"
-        }-${JSON.stringify(editFields?.map((f) => f.name).sort())}-${config?.formKey || 0}`}
+        formKey={`edit-form-${viewModel.editingItem?.id || "new"
+          }-${JSON.stringify(editFields?.map((f) => f.name).sort())}-${config?.formKey || 0}`}
       >
         <GenericForm
           fields={editFields || createFields}
@@ -815,7 +815,7 @@ export function GenericCrudView<T>(props: GenericCrudViewProps<T>) {
                 ? config.editInitialValues(viewModel.viewItem)
                 : viewModel.viewItem || {}
             }
-            onSubmit={async () => {}} // No-op for read-only
+            onSubmit={async () => { }} // No-op for read-only
             onCancel={viewModel.closeViewModal}
             readOnly={true}
           />
@@ -831,7 +831,7 @@ export function GenericCrudView<T>(props: GenericCrudViewProps<T>) {
         confirmText={
           deleteSystem.deleteOptions.confirmButtonText ||
           (deleteSystem.deleteOptions.variant === "destructive" ||
-          !deleteSystem.deleteOptions.variant
+            !deleteSystem.deleteOptions.variant
             ? t("common.delete")
             : t("common.confirm"))
         }

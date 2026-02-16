@@ -5,7 +5,6 @@ import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Badge } from "@core/ui/badge";
 import { Popover, PopoverContent, PopoverTrigger } from "@core/ui/popover";
-import { ScrollArea } from "@core/ui/scroll-area";
 import {
       Braces,
       Search,
@@ -242,48 +241,46 @@ export function VariablePicker({ variables, onInsert }: VariablePickerProps) {
                               </div>
                         </div>
 
-                        {/* Variable List */}
-                        <ScrollArea className="max-h-80">
-                              <div className="p-1.5">
-                                    {filtered.length === 0 ? (
-                                          <div className="text-center py-6 text-sm text-muted-foreground">
-                                                <Clock className="h-5 w-5 mx-auto mb-1 opacity-40" />
-                                                No variables found
-                                          </div>
-                                    ) : (
-                                          categoryOrder.map((cat) => {
-                                                const items = grouped[cat];
-                                                if (!items || items.length === 0) return null;
-                                                const config = CATEGORY_CONFIG[cat];
-                                                return (
-                                                      <div key={cat} className="mb-2">
-                                                            <div className="flex items-center gap-1.5 px-2 py-1.5">
-                                                                  <span className={config.color}>
-                                                                        {config.icon}
-                                                                  </span>
-                                                                  <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                                                                        {config.label}
-                                                                  </span>
-                                                                  <Badge
-                                                                        variant="secondary"
-                                                                        className="text-[10px] px-1 py-0 h-4 ml-auto"
-                                                                  >
-                                                                        {items.length}
-                                                                  </Badge>
-                                                            </div>
-                                                            {items.map((v) => (
-                                                                  <VariableItem
-                                                                        key={v.key}
-                                                                        variable={v}
-                                                                        onInsert={handleInsert}
-                                                                  />
-                                                            ))}
+                        {/* Variable List — native scroll with overscroll-contain to prevent page scroll */}
+                        <div className="max-h-[320px] overflow-y-auto overscroll-contain p-1.5">
+                              {filtered.length === 0 ? (
+                                    <div className="text-center py-6 text-sm text-muted-foreground">
+                                          <Clock className="h-5 w-5 mx-auto mb-1 opacity-40" />
+                                          No variables found
+                                    </div>
+                              ) : (
+                                    categoryOrder.map((cat) => {
+                                          const items = grouped[cat];
+                                          if (!items || items.length === 0) return null;
+                                          const config = CATEGORY_CONFIG[cat];
+                                          return (
+                                                <div key={cat} className="mb-2">
+                                                      <div className="flex items-center gap-1.5 px-2 py-1.5">
+                                                            <span className={config.color}>
+                                                                  {config.icon}
+                                                            </span>
+                                                            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                                                                  {config.label}
+                                                            </span>
+                                                            <Badge
+                                                                  variant="secondary"
+                                                                  className="text-[10px] px-1 py-0 h-4 ml-auto"
+                                                            >
+                                                                  {items.length}
+                                                            </Badge>
                                                       </div>
-                                                );
-                                          })
-                                    )}
-                              </div>
-                        </ScrollArea>
+                                                      {items.map((v) => (
+                                                            <VariableItem
+                                                                  key={v.key}
+                                                                  variable={v}
+                                                                  onInsert={handleInsert}
+                                                            />
+                                                      ))}
+                                                </div>
+                                          );
+                                    })
+                              )}
+                        </div>
                   </PopoverContent>
             </Popover>
       );
