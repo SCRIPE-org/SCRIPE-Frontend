@@ -3966,6 +3966,7 @@ export const ar = {
 
   // ===== مركز الرسائل =====
   messaging: {
+    
     templates: {
       title: "قوالب الرسائل",
       description: "إدارة قوالب البريد الإلكتروني والرسائل القصيرة والإشعارات بصيغة Scriban.",
@@ -4020,6 +4021,16 @@ export const ar = {
       recipientsLabel: "مستلم(ين)",
     },
     notifications: {
+      type: "النوع",
+      typeInfo:"معلومة",
+      typeSuccess:"نجاح",
+      typeWarning:"تحذير",
+      typeError:"خطأ",
+      typeSystem:"نظام",
+      categoryGeneral:"عام",
+      categorySecurity:"امان",
+      categoryPerformance:"الأداء",
+      categoryActivity:"نشاط",
       title: "مُرسل الإشعارات",
       description: "إرسال إشعارات فورية للمشرفين أو الأدوار أو المستأجرين.",
       sendTitle: "إرسال إشعار",

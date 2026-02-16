@@ -10,13 +10,7 @@ import { Textarea } from "@core/ui/textarea";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { Label } from "@core/ui/label";
-import {
-      Select,
-      SelectContent,
-      SelectItem,
-      SelectTrigger,
-      SelectValue,
-} from "@core/ui/select";
+import { GenericSelect } from "@core/crud/components/generic-select";
 import { Bell, Send, X, Loader2, RotateCcw, Search } from "lucide-react";
 import { cn } from "@core/common/utils";
 import type { NotificationType, NotificationCategory } from "../../domain/entities/Notification";
@@ -194,34 +188,22 @@ export function NotificationSenderView() {
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                           <div className="space-y-2">
                                                 <Label>{t("messaging.notifications.category")}</Label>
-                                                <Select value={vm.category} onValueChange={(v) => vm.setCategory(v as NotificationCategory)}>
-                                                      <SelectTrigger>
-                                                            <SelectValue />
-                                                      </SelectTrigger>
-                                                      <SelectContent>
-                                                            {vm.categoryOptions.map((opt) => (
-                                                                  <SelectItem key={opt.value} value={opt.value}>
-                                                                        {opt.label}
-                                                                  </SelectItem>
-                                                            ))}
-                                                      </SelectContent>
-                                                </Select>
+                                                <GenericSelect
+                                                      options={vm.categoryOptions}
+                                                      value={vm.category}
+                                                      onValueChange={(v: string | string[]) => vm.setCategory(v as NotificationCategory)}
+                                                      placeholder={t("messaging.notifications.category")}
+                                                />
                                           </div>
 
                                           <div className="space-y-2">
                                                 <Label>{t("messaging.notifications.type") || "Type"}</Label>
-                                                <Select value={vm.type} onValueChange={(v) => vm.setType(v as NotificationType)}>
-                                                      <SelectTrigger>
-                                                            <SelectValue />
-                                                      </SelectTrigger>
-                                                      <SelectContent>
-                                                            {vm.typeOptions.map((opt) => (
-                                                                  <SelectItem key={opt.value} value={opt.value}>
-                                                                        {opt.label}
-                                                                  </SelectItem>
-                                                            ))}
-                                                      </SelectContent>
-                                                </Select>
+                                                <GenericSelect
+                                                      options={vm.typeOptions}
+                                                      value={vm.type}
+                                                      onValueChange={(v: string | string[]) => vm.setType(v as NotificationType)}
+                                                      placeholder={t("messaging.notifications.type") || "Type"}
+                                                />
                                           </div>
                                     </div>
 
