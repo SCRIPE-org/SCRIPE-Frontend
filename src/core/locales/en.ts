@@ -4187,6 +4187,26 @@ export const en = {
       confirmSendTitle: "Send Email",
       confirmSendDescription: "Send this email to",
       recipientsLabel: "recipient(s)",
+      // Template picker
+      loadingTemplates: "Loading templates...",
+      selectTemplate: "Use a template...",
+      applyTemplate: "Apply",
+      templateApplied: "Template applied successfully",
+      // Email preview
+      previewTitle: "Email Preview",
+      previewDescription: "Preview how your email will appear to recipients.",
+      previewSend: "Send",
+      // Cancel email
+      cancelEmail: "Cancel email",
+      cancelConfirmTitle: "Cancel Email",
+      cancelConfirmDescription: "Are you sure you want to cancel this pending email? This action cannot be undone.",
+      cancelConfirm: "Cancel Email",
+      cancelSuccess: "Email cancelled successfully",
+      cancelError: "Failed to cancel email",
+      // Email statuses
+      statusCancelled: "Cancelled",
+      statusScheduled: "Scheduled",
+      scheduledAt: "Scheduled At",
     },
     notifications: {
       title: "Notification Sender",
