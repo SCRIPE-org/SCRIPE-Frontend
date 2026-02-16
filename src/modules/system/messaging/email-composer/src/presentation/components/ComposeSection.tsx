@@ -9,12 +9,16 @@ import { DEFAULT_VARIABLES } from "@core/ui/rich-text-editor/VariablePicker";
 import { Badge } from "@core/ui/badge";
 import { Label } from "@core/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
-import { Mail, Send, Loader2, RotateCcw, Search, X, Eye } from "lucide-react";
+import { Mail, Send, Loader2, RotateCcw, Search, X, Eye, Paperclip, CalendarClock } from "lucide-react";
 import { cn } from "@core/common/utils";
 import type { EmailRecipient } from "../../domain/entities/Email";
 import type { IEmailRepository } from "../../domain/interfaces/IEmailRepository";
 import type { EmailTemplate } from "../../domain/entities/Email";
 import { TemplatePicker } from "./TemplatePicker";
+import { AttachmentUploader } from "./AttachmentUploader";
+import type { AttachmentFile } from "./AttachmentUploader";
+import { SchedulePicker } from "./SchedulePicker";
+import type { ScheduleConfig } from "./SchedulePicker";
 
 // ─── Character Limits ──────────────────────────────────────
 const SUBJECT_MAX = 200;
@@ -182,6 +186,13 @@ export interface ComposeSectionProps {
       repository: IEmailRepository;
       applyTemplate: (template: EmailTemplate) => void;
       onPreview?: () => void;
+      // Attachments
+      attachments: AttachmentFile[];
+      onAddAttachments: (files: File[]) => void;
+      onRemoveAttachment: (id: string) => void;
+      // Schedule
+      schedule: ScheduleConfig;
+      onScheduleChange: (config: ScheduleConfig) => void;
 }
 
 export function ComposeSection(vm: ComposeSectionProps) {
@@ -296,6 +307,21 @@ export function ComposeSection(vm: ComposeSectionProps) {
                                     variables={DEFAULT_VARIABLES}
                                     showSourceToggle
                                     error={vm.fieldErrors.body}
+                              />
+                        </div>
+
+                        {/* Attachments & Schedule — collapsible section */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <AttachmentUploader
+                                    attachments={vm.attachments}
+                                    onAdd={vm.onAddAttachments}
+                                    onRemove={vm.onRemoveAttachment}
+                                    maxFiles={10}
+                                    maxSizeMb={25}
+                              />
+                              <SchedulePicker
+                                    value={vm.schedule}
+                                    onChange={vm.onScheduleChange}
                               />
                         </div>
 

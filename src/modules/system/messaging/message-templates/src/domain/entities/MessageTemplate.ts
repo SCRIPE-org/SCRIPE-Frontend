@@ -2,6 +2,8 @@
  * MessageTemplate entity
  */
 
+export type TemplateCategory = "transactional" | "marketing" | "notification" | "onboarding" | "security" | "billing" | "custom";
+
 export type PlaceholderType = "text" | "number" | "date" | "boolean" | "list" | "object";
 
 export interface PlaceholderDefinition {
@@ -28,6 +30,12 @@ export interface MessageTemplate {
       version: number;
       createdAt: string;
       modifiedAt: string | null;
+      // New Phase 5 fields (optional for backwards compat)
+      category?: TemplateCategory;
+      tags?: string[];
+      usageCount?: number;
+      lastUsedAt?: string | null;
+      metadata?: Record<string, unknown>;
 }
 
 export interface CreateMessageTemplateRequest {
@@ -61,4 +69,33 @@ export interface PreviewTemplateRequest {
 export interface PreviewTemplateResponse {
       subject: string | null;
       body: string;
+}
+
+export interface ImportTemplatePayload {
+      key: string;
+      channel: string;
+      subject?: string;
+      body: string;
+      language: string;
+      isActive: boolean;
+      description?: string;
+      placeholderSchema?: string;
+      designVariables?: string;
+      category?: TemplateCategory;
+      tags?: string[];
+}
+
+export interface ExportedTemplate {
+      key: string;
+      channel: string;
+      subject: string | null;
+      body: string;
+      language: string;
+      description: string | null;
+      placeholderSchema: PlaceholderDefinition[];
+      designVariables: Record<string, string> | null;
+      category?: TemplateCategory;
+      tags?: string[];
+      exportedAt: string;
+      version: number;
 }

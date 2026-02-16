@@ -51,7 +51,13 @@ export function EmailComposerView() {
                               </TabsList>
 
                               <TabsContent value="compose">
-                                    <ComposeSection {...vm} onPreview={() => vm.setPreviewOpen(true)} />
+                                    <ComposeSection
+                                          {...vm}
+                                          onPreview={() => vm.setPreviewOpen(true)}
+                                          onAddAttachments={vm.addAttachments}
+                                          onRemoveAttachment={vm.removeAttachment}
+                                          onScheduleChange={vm.setSchedule}
+                                    />
                               </TabsContent>
 
                               <TabsContent value="history">
@@ -65,15 +71,54 @@ export function EmailComposerView() {
                         open={vm.confirmSendOpen}
                         onOpenChange={vm.setConfirmSendOpen}
                         title={t("messaging.email.confirmSendTitle") || "Send Email"}
-                        description={
-                              `${t("messaging.email.confirmSendDescription") || "Send this email to"} ${vm.recipients.length} ${t("messaging.email.recipientsLabel") || "recipient(s)"}?`
-                        }
-                        confirmText={t("messaging.email.send") || "Send Email"}
+                        description={t("messaging.email.confirmSendDescription") || "Review the details below before sending."}
+                        confirmText={vm.schedule.mode === "scheduled" ? (t("messaging.email.scheduleEmail") || "Schedule") : (t("messaging.email.send") || "Send Now")}
                         cancelText={t("common.cancel") || "Cancel"}
                         onConfirm={vm.confirmSend}
                         isLoading={vm.isSending}
                         variant="info"
-                  />
+                  >
+                        <div className="space-y-3 text-sm">
+                              {/* Recipients Summary */}
+                              <div className="flex items-center justify-between">
+                                    <span className="text-muted-foreground">To</span>
+                                    <span className="font-medium">
+                                          {vm.recipients.length} {t("messaging.email.recipientsLabel") || "recipient(s)"}
+                                    </span>
+                              </div>
+                              {vm.ccRecipients.length > 0 && (
+                                    <div className="flex items-center justify-between">
+                                          <span className="text-muted-foreground">CC</span>
+                                          <span className="font-medium">{vm.ccRecipients.length}</span>
+                                    </div>
+                              )}
+                              {vm.bccRecipients.length > 0 && (
+                                    <div className="flex items-center justify-between">
+                                          <span className="text-muted-foreground">BCC</span>
+                                          <span className="font-medium">{vm.bccRecipients.length}</span>
+                                    </div>
+                              )}
+                              {/* Subject */}
+                              <div className="flex items-center justify-between">
+                                    <span className="text-muted-foreground">{t("messaging.email.subject") || "Subject"}</span>
+                                    <span className="font-medium truncate max-w-[200px]">{vm.subject}</span>
+                              </div>
+                              {/* Attachments */}
+                              {vm.attachments.length > 0 && (
+                                    <div className="flex items-center justify-between">
+                                          <span className="text-muted-foreground">Attachments</span>
+                                          <span className="font-medium">{vm.attachments.length} file(s)</span>
+                                    </div>
+                              )}
+                              {/* Schedule */}
+                              {vm.schedule.mode !== "now" && (
+                                    <div className="flex items-center justify-between">
+                                          <span className="text-muted-foreground">Schedule</span>
+                                          <span className="font-medium capitalize">{vm.schedule.mode}</span>
+                                    </div>
+                              )}
+                        </div>
+                  </ConfirmationDialog>
 
                   {/* Cancel Email Confirmation Dialog */}
                   <ConfirmationDialog

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
 import { systemContainer } from "@modules/system/di";
@@ -9,7 +10,10 @@ import type {
       EmailRecipient,
       SendManualEmailPayload,
       EmailTemplate,
+      SentEmail,
 } from "../../domain/entities/Email";
+import type { AttachmentFile } from "../components/AttachmentUploader";
+import type { ScheduleConfig } from "../components/SchedulePicker";
 
 const HISTORY_QUERY_KEY = ["emails", "history"];
 
@@ -18,6 +22,7 @@ export function useEmailComposerViewModel() {
       const queryClient = useQueryClient();
       const { success, error: toastError } = useEnhancedToast();
       const { emailRepository: repo } = systemContainer;
+      const router = useRouter();
 
       // ─── Active Tab ────────────────────────────────────────────
       const [activeTab, setActiveTab] = useState<"compose" | "history">("compose");
@@ -32,6 +37,27 @@ export function useEmailComposerViewModel() {
       const [recipientSearch, setRecipientSearch] = useState("");
       const [ccSearch, setCcSearch] = useState("");
       const [bccSearch, setBccSearch] = useState("");
+
+      // ─── Attachment State ──────────────────────────────────────
+      const [attachments, setAttachments] = useState<AttachmentFile[]>([]);
+
+      const addAttachments = useCallback((files: File[]) => {
+            const newFiles: AttachmentFile[] = files.map((f) => ({
+                  id: `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+                  name: f.name,
+                  size: f.size,
+                  type: f.type,
+                  progress: 100, // Immediate — no upload endpoint yet
+            }));
+            setAttachments((prev) => [...prev, ...newFiles]);
+      }, []);
+
+      const removeAttachment = useCallback((id: string) => {
+            setAttachments((prev) => prev.filter((a) => a.id !== id));
+      }, []);
+
+      // ─── Schedule State ────────────────────────────────────────
+      const [schedule, setSchedule] = useState<ScheduleConfig>({ mode: "now" });
 
       // ─── Confirmation state ───────────────────────────────────
       const [confirmSendOpen, setConfirmSendOpen] = useState(false);
@@ -230,6 +256,8 @@ export function useEmailComposerViewModel() {
             setCcSearch("");
             setBccSearch("");
             setFieldErrors({});
+            setAttachments([]);
+            setSchedule({ mode: "now" });
       }, []);
 
       // ─── History ───────────────────────────────────────────────
@@ -336,6 +364,28 @@ export function useEmailComposerViewModel() {
             // Template
             applyTemplate,
             repository: repo,
+            // Attachments
+            attachments,
+            addAttachments,
+            removeAttachment,
+            // Schedule
+            schedule,
+            setSchedule,
+            // Resend / Use as Template
+            onResend: useCallback((email: SentEmail) => {
+                  setSubject(email.subject);
+                  setBody(email.body);
+                  setActiveTab("compose");
+                  success({ title: "Email content loaded — update recipients and send" });
+            }, [success]),
+            onUseAsTemplate: useCallback((email: SentEmail) => {
+                  // Navigate to template creation with pre-filled subject/body
+                  const params = new URLSearchParams({
+                        subject: email.subject,
+                        body: email.body,
+                  });
+                  router.push(`/messaging/templates/create?${params.toString()}`);
+            }, [router]),
             t,
       };
 }

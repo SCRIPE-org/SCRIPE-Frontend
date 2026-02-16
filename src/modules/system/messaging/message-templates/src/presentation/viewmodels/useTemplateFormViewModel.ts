@@ -12,6 +12,9 @@ import type {
       UpdateMessageTemplateRequest,
       MessageChannel,
 } from "../../domain/entities/MessageTemplate";
+import type { PlaceholderField } from "../components/PlaceholderSchemaBuilder";
+import type { DesignVariables } from "../components/DesignVariablesPanel";
+import { DEFAULT_DESIGN } from "../components/DesignVariablesPanel";
 
 const QUERY_KEY = ["message-templates"];
 
@@ -25,6 +28,8 @@ export interface TemplateFormValues {
       body: string;
       description: string;
       isActive: boolean;
+      placeholderSchema: PlaceholderField[];
+      designVariables: DesignVariables;
 }
 
 export function useTemplateFormViewModel() {
@@ -47,6 +52,8 @@ export function useTemplateFormViewModel() {
             body: "",
             description: "",
             isActive: true,
+            placeholderSchema: [],
+            designVariables: { ...DEFAULT_DESIGN },
       });
 
       // ─── Fetch template for edit mode ────────────────────────
@@ -63,6 +70,34 @@ export function useTemplateFormViewModel() {
       // Populate form when template loads
       useEffect(() => {
             if (template) {
+                  // Parse placeholderSchema — may be a JSON string or an array
+                  let parsedSchema: PlaceholderField[] = [];
+                  if (template.placeholderSchema) {
+                        try {
+                              if (typeof template.placeholderSchema === "string") {
+                                    parsedSchema = JSON.parse(template.placeholderSchema);
+                              } else if (Array.isArray(template.placeholderSchema)) {
+                                    parsedSchema = template.placeholderSchema as unknown as PlaceholderField[];
+                              }
+                        } catch {
+                              parsedSchema = [];
+                        }
+                  }
+
+                  // Parse designVariables — may be a JSON string or an object
+                  let parsedDesign: DesignVariables = { ...DEFAULT_DESIGN };
+                  if (template.designVariables) {
+                        try {
+                              if (typeof template.designVariables === "string") {
+                                    parsedDesign = { ...DEFAULT_DESIGN, ...JSON.parse(template.designVariables) };
+                              } else if (typeof template.designVariables === "object") {
+                                    parsedDesign = { ...DEFAULT_DESIGN, ...(template.designVariables as unknown as DesignVariables) };
+                              }
+                        } catch {
+                              parsedDesign = { ...DEFAULT_DESIGN };
+                        }
+                  }
+
                   setForm({
                         key: template.key,
                         channel: template.channel,
@@ -71,6 +106,8 @@ export function useTemplateFormViewModel() {
                         body: template.body || "",
                         description: template.description || "",
                         isActive: template.isActive,
+                        placeholderSchema: parsedSchema,
+                        designVariables: parsedDesign,
                   });
             }
       }, [template]);
@@ -81,6 +118,15 @@ export function useTemplateFormViewModel() {
             value: TemplateFormValues[K]
       ) => {
             setForm(prev => ({ ...prev, [field]: value }));
+      }, []);
+
+      // ─── Convenience updaters for complex fields ──────────────
+      const updatePlaceholderFields = useCallback((fields: PlaceholderField[]) => {
+            setForm(prev => ({ ...prev, placeholderSchema: fields }));
+      }, []);
+
+      const updateDesignVariables = useCallback((vars: DesignVariables) => {
+            setForm(prev => ({ ...prev, designVariables: vars }));
       }, []);
 
       // ─── Create Mutation ─────────────────────────────────────
@@ -111,6 +157,12 @@ export function useTemplateFormViewModel() {
 
       // ─── Submit ──────────────────────────────────────────────
       const handleSubmit = useCallback(() => {
+            // Serialize complex fields to JSON strings for the API
+            const serializedSchema = form.placeholderSchema.length > 0
+                  ? JSON.stringify(form.placeholderSchema)
+                  : undefined;
+            const serializedDesign = JSON.stringify(form.designVariables);
+
             if (mode === "create") {
                   const payload: CreateMessageTemplateRequest = {
                         key: form.key,
@@ -120,6 +172,8 @@ export function useTemplateFormViewModel() {
                         body: form.body,
                         description: form.description || undefined,
                         isActive: form.isActive,
+                        placeholderSchema: serializedSchema,
+                        designVariables: serializedDesign,
                   };
                   createMutation.mutate(payload);
             } else {
@@ -128,6 +182,8 @@ export function useTemplateFormViewModel() {
                         body: form.body,
                         description: form.description || undefined,
                         isActive: form.isActive,
+                        placeholderSchema: serializedSchema,
+                        designVariables: serializedDesign,
                   };
                   updateMutation.mutate(payload);
             }
@@ -154,6 +210,8 @@ export function useTemplateFormViewModel() {
             mode,
             form,
             updateField,
+            updatePlaceholderFields,
+            updateDesignVariables,
             handleSubmit,
             handleCancel,
             isFetching,

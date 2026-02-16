@@ -1,16 +1,30 @@
 "use client";
 
-import { useMemo, useCallback } from "react";
+import { useMemo, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
 import type { CrudConfig, CrudAction } from "@core/crud/components/generic-crud-view";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useMessageTemplatesViewModel } from "../viewmodels/useMessageTemplatesViewModel";
 import { PreviewDialog } from "../components/PreviewDialog";
-import type { MessageTemplate } from "../../domain/entities/MessageTemplate";
+import type { MessageTemplate, TemplateCategory, ExportedTemplate } from "../../domain/entities/MessageTemplate";
 import { Badge } from "@core/ui/badge";
-import { Copy, Eye, Pencil, Trash2 } from "lucide-react";
+import { Button } from "@core/ui/button";
+import { Copy, Eye, Pencil, Trash2, Download, Upload, BarChart3 } from "lucide-react";
 import { format } from "date-fns";
+import { cn } from "@core/common/utils";
+import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+
+// ─── Category Colors ────────────────────────────────────────
+const CATEGORY_COLORS: Record<TemplateCategory, { bg: string; text: string }> = {
+      transactional: { bg: "bg-blue-500/15", text: "text-blue-600 dark:text-blue-400" },
+      marketing: { bg: "bg-pink-500/15", text: "text-pink-600 dark:text-pink-400" },
+      notification: { bg: "bg-purple-500/15", text: "text-purple-600 dark:text-purple-400" },
+      onboarding: { bg: "bg-emerald-500/15", text: "text-emerald-600 dark:text-emerald-400" },
+      security: { bg: "bg-red-500/15", text: "text-red-600 dark:text-red-400" },
+      billing: { bg: "bg-amber-500/15", text: "text-amber-600 dark:text-amber-400" },
+      custom: { bg: "bg-gray-500/15", text: "text-gray-600 dark:text-gray-400" },
+};
 
 export function MessageTemplatesView() {
       const router = useRouter();
@@ -26,6 +40,65 @@ export function MessageTemplatesView() {
             isPreviewLoading,
             t,
       } = useMessageTemplatesViewModel();
+      const { success } = useEnhancedToast();
+      const fileInputRef = useRef<HTMLInputElement>(null);
+
+      // ─── Export ────────────────────────────────────────────────
+      const handleExport = useCallback((item: MessageTemplate) => {
+            const exported: ExportedTemplate = {
+                  key: item.key,
+                  channel: item.channel,
+                  subject: item.subject,
+                  body: item.body,
+                  language: item.language,
+                  description: item.description,
+                  placeholderSchema: item.placeholderSchema,
+                  designVariables: item.designVariables,
+                  category: item.category,
+                  tags: item.tags,
+                  exportedAt: new Date().toISOString(),
+                  version: item.version,
+            };
+            const blob = new Blob([JSON.stringify(exported, null, 2)], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `template-${item.key}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            success({ title: "Template exported successfully" });
+      }, [success]);
+
+      const handleImportClick = useCallback(() => {
+            fileInputRef.current?.click();
+      }, []);
+
+      const handleImportFile = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+            const file = e.target.files?.[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = () => {
+                  try {
+                        const data = JSON.parse(reader.result as string);
+                        // Navigate to template creation form with imported data
+                        const params = new URLSearchParams({
+                              key: data.key || "",
+                              channel: data.channel || "Email",
+                              subject: data.subject || "",
+                              body: data.body || "",
+                              language: data.language || "en",
+                              description: data.description || "",
+                              imported: "true",
+                        });
+                        router.push(`/messaging/templates/new?${params.toString()}`);
+                  } catch {
+                        success({ title: "Invalid template file" });
+                  }
+            };
+            reader.readAsText(file);
+            // Reset so same file can be re-imported
+            e.target.value = "";
+      }, [router, success]);
 
       // Navigate to full-page form instead of opening modal
       const handleCreateClick = useCallback(() => {
@@ -50,6 +123,22 @@ export function MessageTemplatesView() {
                               sortable: true,
                         },
                         {
+                              key: "category",
+                              label: t("messaging.templates.category") || "Category",
+                              render: (value: TemplateCategory | undefined) => {
+                                    if (!value) return <Badge variant="outline" className="text-xs">—</Badge>;
+                                    const colors = CATEGORY_COLORS[value] || CATEGORY_COLORS.custom;
+                                    return (
+                                          <Badge
+                                                variant="outline"
+                                                className={cn("text-xs capitalize border-0", colors.bg, colors.text)}
+                                          >
+                                                {value}
+                                          </Badge>
+                                    );
+                              },
+                        },
+                        {
                               key: "channel",
                               label: t("messaging.templates.channel") || "Channel",
                         },
@@ -67,8 +156,26 @@ export function MessageTemplatesView() {
                               ),
                         },
                         {
+                              key: "usageCount",
+                              label: t("messaging.templates.usage") || "Usage",
+                              render: (value: number | undefined, item: MessageTemplate) => (
+                                    <div className="flex items-center gap-1.5">
+                                          <BarChart3 className="h-3.5 w-3.5 text-muted-foreground" />
+                                          <span className="font-medium">{value ?? 0}</span>
+                                          {item.lastUsedAt && (
+                                                <span className="text-xs text-muted-foreground">
+                                                      · {format(new Date(item.lastUsedAt), "MMM d")}
+                                                </span>
+                                          )}
+                                    </div>
+                              ),
+                        },
+                        {
                               key: "version",
                               label: t("messaging.templates.version") || "Version",
+                              render: (value: number) => (
+                                    <Badge variant="outline" className="text-xs font-mono">v{value}</Badge>
+                              ),
                         },
                         {
                               key: "createdAt",
@@ -94,6 +201,11 @@ export function MessageTemplatesView() {
                               disabled: () => isCloning,
                         },
                         {
+                              label: t("messaging.templates.export") || "Export",
+                              icon: <Download className="h-4 w-4" />,
+                              onClick: (item: MessageTemplate) => handleExport(item),
+                        },
+                        {
                               label: t("common.delete") || "Delete",
                               icon: <Trash2 className="h-4 w-4" />,
                               onClick: handleDelete,
@@ -103,11 +215,33 @@ export function MessageTemplatesView() {
                         },
                   ],
             }),
-            [configBase, t, handlePreview, handleClone, isCloning, handleEdit, handleCreateClick]
+            [configBase, t, handlePreview, handleClone, isCloning, handleEdit, handleCreateClick, handleExport]
       );
 
       return (
             <>
+                  {/* Import/Export Toolbar */}
+                  <div className="flex justify-end mb-4">
+                        <div className="flex gap-2">
+                              <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="gap-1.5 text-xs h-8"
+                                    onClick={handleImportClick}
+                              >
+                                    <Upload className="h-3.5 w-3.5" />
+                                    Import
+                              </Button>
+                              <input
+                                    ref={fileInputRef}
+                                    type="file"
+                                    accept=".json"
+                                    className="hidden"
+                                    onChange={handleImportFile}
+                              />
+                        </div>
+                  </div>
+
                   <GenericCrudView viewModel={vm} config={config} onCreateClick={handleCreateClick} />
 
                   <PreviewDialog

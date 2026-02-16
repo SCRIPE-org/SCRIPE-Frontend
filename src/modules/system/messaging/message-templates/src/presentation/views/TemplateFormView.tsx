@@ -10,8 +10,11 @@ import { RichTextEditor } from "@core/ui/rich-text-editor/RichTextEditor";
 import { DEFAULT_VARIABLES } from "@core/ui/rich-text-editor/VariablePicker";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
-import { ArrowLeft, Save, Loader2 } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
+import { ArrowLeft, Save, Loader2, Settings, Palette, Braces } from "lucide-react";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
+import { PlaceholderSchemaBuilder } from "../components/PlaceholderSchemaBuilder";
+import { DesignVariablesPanel } from "../components/DesignVariablesPanel";
 
 export function TemplateFormView() {
       const vm = useTemplateFormViewModel();
@@ -96,77 +99,116 @@ export function TemplateFormView() {
 
                         {/* Sidebar — right 1/3 */}
                         <div className="space-y-6">
-                              {/* Settings */}
+                              {/* Tabbed sidebar for Settings, Placeholders, Design */}
                               <Card>
-                                    <CardHeader>
-                                          <CardTitle>{vm.t("messaging.templates.settings") || "Settings"}</CardTitle>
-                                    </CardHeader>
-                                    <CardContent className="space-y-5">
-                                          {/* Template Key (create only) */}
-                                          {vm.mode === "create" && (
-                                                <div className="space-y-2">
-                                                      <Label>{vm.t("messaging.templates.key") || "Template Key"}</Label>
-                                                      <Input
-                                                            value={vm.form.key}
-                                                            onChange={(e) => vm.updateField("key", e.target.value)}
-                                                            placeholder="e.g., welcome-email"
+                                    <Tabs defaultValue="settings">
+                                          <CardHeader className="pb-3">
+                                                <TabsList className="w-full">
+                                                      <TabsTrigger value="settings" className="flex-1 gap-1.5">
+                                                            <Settings className="h-3.5 w-3.5" />
+                                                            <span className="hidden sm:inline">{vm.t("messaging.templates.settings") || "Settings"}</span>
+                                                      </TabsTrigger>
+                                                      <TabsTrigger value="placeholders" className="flex-1 gap-1.5">
+                                                            <Braces className="h-3.5 w-3.5" />
+                                                            <span className="hidden sm:inline">{vm.t("messaging.templates.placeholders") || "Variables"}</span>
+                                                      </TabsTrigger>
+                                                      <TabsTrigger value="design" className="flex-1 gap-1.5">
+                                                            <Palette className="h-3.5 w-3.5" />
+                                                            <span className="hidden sm:inline">{vm.t("messaging.templates.design") || "Design"}</span>
+                                                      </TabsTrigger>
+                                                </TabsList>
+                                          </CardHeader>
+
+                                          {/* Settings Tab */}
+                                          <TabsContent value="settings">
+                                                <CardContent className="space-y-5 pt-0">
+                                                      {/* Template Key (create only) */}
+                                                      {vm.mode === "create" && (
+                                                            <div className="space-y-2">
+                                                                  <Label>{vm.t("messaging.templates.key") || "Template Key"}</Label>
+                                                                  <Input
+                                                                        value={vm.form.key}
+                                                                        onChange={(e) => vm.updateField("key", e.target.value)}
+                                                                        placeholder="e.g., welcome-email"
+                                                                  />
+                                                            </div>
+                                                      )}
+
+                                                      {/* Channel (create only) */}
+                                                      {vm.mode === "create" && (
+                                                            <div className="space-y-2">
+                                                                  <Label>{vm.t("messaging.templates.channel") || "Channel"}</Label>
+                                                                  <Select
+                                                                        value={vm.form.channel}
+                                                                        onValueChange={(v) => vm.updateField("channel", v as any)}
+                                                                  >
+                                                                        <SelectTrigger>
+                                                                              <SelectValue />
+                                                                        </SelectTrigger>
+                                                                        <SelectContent>
+                                                                              {vm.channelOptions.map((opt) => (
+                                                                                    <SelectItem key={opt.value} value={opt.value}>
+                                                                                          {opt.label}
+                                                                                    </SelectItem>
+                                                                              ))}
+                                                                        </SelectContent>
+                                                                  </Select>
+                                                            </div>
+                                                      )}
+
+                                                      {/* Language (create only) */}
+                                                      {vm.mode === "create" && (
+                                                            <div className="space-y-2">
+                                                                  <Label>{vm.t("messaging.templates.language") || "Language"}</Label>
+                                                                  <Select
+                                                                        value={vm.form.language}
+                                                                        onValueChange={(v) => vm.updateField("language", v)}
+                                                                  >
+                                                                        <SelectTrigger>
+                                                                              <SelectValue />
+                                                                        </SelectTrigger>
+                                                                        <SelectContent>
+                                                                              {vm.languageOptions.map((opt) => (
+                                                                                    <SelectItem key={opt.value} value={opt.value}>
+                                                                                          {opt.label}
+                                                                                    </SelectItem>
+                                                                              ))}
+                                                                        </SelectContent>
+                                                                  </Select>
+                                                            </div>
+                                                      )}
+
+                                                      {/* Active toggle */}
+                                                      <div className="flex items-center justify-between">
+                                                            <Label>{vm.t("common.active") || "Active"}</Label>
+                                                            <Switch
+                                                                  checked={vm.form.isActive}
+                                                                  onCheckedChange={(v) => vm.updateField("isActive", v)}
+                                                            />
+                                                      </div>
+                                                </CardContent>
+                                          </TabsContent>
+
+                                          {/* Placeholders Tab */}
+                                          <TabsContent value="placeholders">
+                                                <CardContent className="pt-0">
+                                                      <PlaceholderSchemaBuilder
+                                                            fields={vm.form.placeholderSchema}
+                                                            onChange={vm.updatePlaceholderFields}
                                                       />
-                                                </div>
-                                          )}
+                                                </CardContent>
+                                          </TabsContent>
 
-                                          {/* Channel (create only) */}
-                                          {vm.mode === "create" && (
-                                                <div className="space-y-2">
-                                                      <Label>{vm.t("messaging.templates.channel") || "Channel"}</Label>
-                                                      <Select
-                                                            value={vm.form.channel}
-                                                            onValueChange={(v) => vm.updateField("channel", v as any)}
-                                                      >
-                                                            <SelectTrigger>
-                                                                  <SelectValue />
-                                                            </SelectTrigger>
-                                                            <SelectContent>
-                                                                  {vm.channelOptions.map((opt) => (
-                                                                        <SelectItem key={opt.value} value={opt.value}>
-                                                                              {opt.label}
-                                                                        </SelectItem>
-                                                                  ))}
-                                                            </SelectContent>
-                                                      </Select>
-                                                </div>
-                                          )}
-
-                                          {/* Language (create only) */}
-                                          {vm.mode === "create" && (
-                                                <div className="space-y-2">
-                                                      <Label>{vm.t("messaging.templates.language") || "Language"}</Label>
-                                                      <Select
-                                                            value={vm.form.language}
-                                                            onValueChange={(v) => vm.updateField("language", v)}
-                                                      >
-                                                            <SelectTrigger>
-                                                                  <SelectValue />
-                                                            </SelectTrigger>
-                                                            <SelectContent>
-                                                                  {vm.languageOptions.map((opt) => (
-                                                                        <SelectItem key={opt.value} value={opt.value}>
-                                                                              {opt.label}
-                                                                        </SelectItem>
-                                                                  ))}
-                                                            </SelectContent>
-                                                      </Select>
-                                                </div>
-                                          )}
-
-                                          {/* Active toggle */}
-                                          <div className="flex items-center justify-between">
-                                                <Label>{vm.t("common.active") || "Active"}</Label>
-                                                <Switch
-                                                      checked={vm.form.isActive}
-                                                      onCheckedChange={(v) => vm.updateField("isActive", v)}
-                                                />
-                                          </div>
-                                    </CardContent>
+                                          {/* Design Variables Tab */}
+                                          <TabsContent value="design">
+                                                <CardContent className="pt-0">
+                                                      <DesignVariablesPanel
+                                                            value={vm.form.designVariables}
+                                                            onChange={vm.updateDesignVariables}
+                                                      />
+                                                </CardContent>
+                                          </TabsContent>
+                                    </Tabs>
                               </Card>
 
                               {/* Actions */}
