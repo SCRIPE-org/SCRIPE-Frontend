@@ -14,8 +14,33 @@ import type {
 } from "../../domain/entities/Email";
 import type { AttachmentFile } from "../components/AttachmentUploader";
 import type { ScheduleConfig } from "../components/SchedulePicker";
+import type { VariableValuesMap } from "@core/ui/rich-text-editor/VariableValuesPanel";
+import { DEFAULT_VARIABLES } from "@core/ui/rich-text-editor/VariablePicker";
+import type { VariableDefinition } from "@core/ui/rich-text-editor/VariablePicker";
 
 const HISTORY_QUERY_KEY = ["emails", "history"];
+
+/**
+ * Resolve `{{ variableKey }}` and `{{ variableKey | "fallback" }}` patterns
+ * using the provided values map. Unresolved variables use sample values or stay as-is.
+ */
+function resolveTemplateVariables(
+      text: string,
+      values: VariableValuesMap,
+      variables: VariableDefinition[]
+): string {
+      if (!text) return text;
+      return text.replace(
+            /\{\{\s*(\w+)(?:\s*\|\s*"([^"]*)")?\s*\}\}/g,
+            (_match, key: string, fallback?: string) => {
+                  if (values[key]?.trim()) return values[key];
+                  if (fallback) return fallback;
+                  const def = variables.find((v) => v.key === key);
+                  if (def?.sample) return def.sample;
+                  return `{{${key}}}`;
+            }
+      );
+}
 
 export function useEmailComposerViewModel() {
       const { t } = useI18n();
@@ -67,6 +92,9 @@ export function useEmailComposerViewModel() {
 
       // ─── Preview state ──────────────────────────────────────────
       const [previewOpen, setPreviewOpen] = useState(false);
+
+      // ─── Variable Values (shared with preview dialog) ───────────
+      const [variableValues, setVariableValues] = useState<VariableValuesMap>({});
 
       // ─── Template selection handler ─────────────────────────────
       const applyTemplate = useCallback((template: EmailTemplate) => {
@@ -196,14 +224,18 @@ export function useEmailComposerViewModel() {
       // ─── Send ──────────────────────────────────────────────────
       const sendMutation = useMutation({
             mutationFn: async (allRecipients: EmailRecipient[]) => {
+                  // Resolve any {{variable}} placeholders before sending
+                  const resolvedSubject = resolveTemplateVariables(subject, variableValues, DEFAULT_VARIABLES);
+                  const resolvedBody = resolveTemplateVariables(body, variableValues, DEFAULT_VARIABLES);
+
                   // Backend handles one recipient per request, so batch them
                   for (const r of allRecipients) {
                         const payload: SendManualEmailPayload = {
                               recipientType: toBackendRecipientType(r.type),
                               recipientId: r.type === "custom" ? null : r.id,
                               recipientEmail: r.email,
-                              subject,
-                              body,
+                              subject: resolvedSubject,
+                              body: resolvedBody,
                               cc: ccRecipients.length > 0 ? ccRecipients.map(c => c.email) : undefined,
                               bcc: bccRecipients.length > 0 ? bccRecipients.map(b => b.email) : undefined,
                               scheduledAt: schedule.mode === "scheduled" && schedule.scheduledDate
@@ -263,16 +295,24 @@ export function useEmailComposerViewModel() {
             setCcSearch("");
             setBccSearch("");
             setFieldErrors({});
+            setVariableValues({});
             setAttachments([]);
             setSchedule({ mode: "now" });
       }, []);
 
       // ─── History ───────────────────────────────────────────────
       const [historyPage, setHistoryPage] = useState(1);
+      const [historySearch, setHistorySearch] = useState("");
+      const [historyStatus, setHistoryStatus] = useState<string>("");
       const historyPageSize = 20;
       const historyQuery = useQuery({
-            queryKey: [...HISTORY_QUERY_KEY, historyPage],
-            queryFn: () => repo.getSentHistory({ page: historyPage, pageSize: historyPageSize }),
+            queryKey: [...HISTORY_QUERY_KEY, historyPage, historySearch, historyStatus],
+            queryFn: () => repo.getSentHistory({
+                  page: historyPage,
+                  pageSize: historyPageSize,
+                  search: historySearch || undefined,
+                  status: historyStatus || undefined,
+            }),
             enabled: activeTab === "history",
       });
 
@@ -359,6 +399,10 @@ export function useEmailComposerViewModel() {
             setHistoryPage,
             historyTotalPages,
             isHistoryLoading: historyQuery.isLoading,
+            historySearch,
+            setHistorySearch: (v: string) => { setHistorySearch(v); setHistoryPage(1); },
+            historyStatus,
+            setHistoryStatus: (v: string) => { setHistoryStatus(v); setHistoryPage(1); },
             // Cancel
             cancelEmail,
             confirmCancelEmail,
@@ -371,6 +415,9 @@ export function useEmailComposerViewModel() {
             // Template
             applyTemplate,
             repository: repo,
+            // Variable Values (shared with preview)
+            variableValues,
+            setVariableValues,
             // Attachments
             attachments,
             addAttachments,

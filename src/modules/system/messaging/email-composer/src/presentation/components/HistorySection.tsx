@@ -27,6 +27,8 @@ import {
       AlertTriangle,
       CheckCircle2,
       Clock,
+      Search,
+      Filter,
 } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@core/common/utils";
@@ -46,6 +48,12 @@ export interface HistorySectionProps {
       onResend?: (email: SentEmail) => void;
       /** Use as Template: navigate to template creation with body/subject */
       onUseAsTemplate?: (email: SentEmail) => void;
+      /** History search text */
+      historySearch?: string;
+      setHistorySearch?: (v: string) => void;
+      /** History status filter */
+      historyStatus?: string;
+      setHistoryStatus?: (v: string) => void;
 }
 
 // ─── Status Config ──────────────────────────────────────────
@@ -180,6 +188,39 @@ export function HistorySection(vm: HistorySectionProps) {
                         </div>
                   </CardHeader>
                   <CardContent>
+                        {/* Search & Status Filter Bar */}
+                        {(vm.setHistorySearch || vm.setHistoryStatus) && (
+                              <div className="flex flex-col sm:flex-row gap-3 mb-4">
+                                    {vm.setHistorySearch && (
+                                          <div className="relative flex-1">
+                                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                                <input
+                                                      type="text"
+                                                      placeholder={t("common.search") || "Search by recipient or subject..."}
+                                                      value={vm.historySearch || ""}
+                                                      onChange={(e) => vm.setHistorySearch!(e.target.value)}
+                                                      className="w-full pl-9 pr-3 py-2 text-sm border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                                                />
+                                          </div>
+                                    )}
+                                    {vm.setHistoryStatus && (
+                                          <div className="relative min-w-[160px]">
+                                                <Filter className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                                <select
+                                                      value={vm.historyStatus || ""}
+                                                      onChange={(e) => vm.setHistoryStatus!(e.target.value)}
+                                                      className="w-full pl-9 pr-3 py-2 text-sm border rounded-md bg-background appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                                                >
+                                                      <option value="">{t("common.all") || "All Status"}</option>
+                                                      <option value="Sent">Sent</option>
+                                                      <option value="Failed">Failed</option>
+                                                      <option value="Pending">Pending</option>
+                                                      <option value="Cancelled">Cancelled</option>
+                                                </select>
+                                          </div>
+                                    )}
+                              </div>
+                        )}
                         {vm.isHistoryLoading ? (
                               <div className="flex items-center justify-center py-12">
                                     <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />

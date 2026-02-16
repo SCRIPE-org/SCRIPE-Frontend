@@ -66,6 +66,10 @@ export interface EmailPreviewDialogProps {
       recipients: string[];
       /** Additional variables beyond defaults */
       customVariables?: VariableDefinition[];
+      /** Controlled variable values from parent (e.g. ViewModel) */
+      variableValues?: VariableValuesMap;
+      /** Called when variable values change (persists values in parent) */
+      onVariableValuesChange?: (values: VariableValuesMap) => void;
 }
 
 export function EmailPreviewDialog({
@@ -75,11 +79,19 @@ export function EmailPreviewDialog({
       body,
       recipients,
       customVariables,
+      variableValues: controlledValues,
+      onVariableValuesChange,
 }: EmailPreviewDialogProps) {
       const { t } = useI18n();
       const [device, setDevice] = useState<DeviceId>("desktop");
       const [showVariables, setShowVariables] = useState(false);
-      const [variableValues, setVariableValues] = useState<VariableValuesMap>({});
+      // Use controlled values from parent if provided, otherwise local state
+      const [localValues, setLocalValues] = useState<VariableValuesMap>({});
+      const variableValues = controlledValues ?? localValues;
+      const setVariableValues = useCallback((v: VariableValuesMap) => {
+            if (onVariableValuesChange) onVariableValuesChange(v);
+            else setLocalValues(v);
+      }, [onVariableValuesChange]);
 
       // Merge default + custom variables
       const allVariables = useMemo(() => {
@@ -225,8 +237,7 @@ export function EmailPreviewDialog({
                                                 {/* Email Content */}
                                                 <div className="p-4">
                                                       {resolvedBody.includes("<") ? (
-                                                            <div
-                                                                  className="prose prose-sm max-w-none text-black [&_*]:text-inherit"
+                                                            <div className="prose prose-sm max-w-none text-black [&_table]:text-initial [&_a]:text-initial [&_img]:inline [&_img]:my-0"
                                                                   dangerouslySetInnerHTML={{ __html: sanitizedBody }}
                                                             />
                                                       ) : (

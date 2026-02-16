@@ -114,7 +114,7 @@ export function TemplateFormView() {
                                                       </TabsTrigger>
                                                       <TabsTrigger value="design" className="flex-1 gap-1.5">
                                                             <Palette className="h-3.5 w-3.5" />
-                                                            <span className="hidden sm:inline">{vm.t("messaging.templates.design") || "Design"}</span>
+                                                            <span className="hidden sm:inline">{vm.t("messaging.templates.design.title") || "Design"}</span>
                                                       </TabsTrigger>
                                                 </TabsList>
                                           </CardHeader>

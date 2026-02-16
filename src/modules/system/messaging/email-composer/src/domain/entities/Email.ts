@@ -41,6 +41,7 @@ export interface SentEmail {
       sentByAdminId: string;
       templateKey: string | null;
       recipientType: string;
+      recipientId: string | null;       // system user ID
       cc: string | null;              // comma-separated CC addresses
       bcc: string | null;             // comma-separated BCC addresses
       retryCount: number;

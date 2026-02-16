@@ -6,7 +6,6 @@ import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Switch } from "@core/ui/switch";
 import { Popover, PopoverContent, PopoverTrigger } from "@core/ui/popover";
-import { ScrollArea } from "@core/ui/scroll-area";
 import { cn } from "@core/common/utils";
 import { Share2 } from "lucide-react";
 import {
@@ -172,148 +171,146 @@ export function SocialBlock({ onInsert }: SocialBlockProps) {
                               <span className="hidden sm:inline">Social</span>
                         </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-80 p-0" align="start">
-                        <ScrollArea className="max-h-[60vh]">
-                              <div className="space-y-4 p-4">
-                                    <h4 className="text-sm font-semibold">Social Media Links</h4>
+                  <PopoverContent className="w-80 p-0" align="start" side="bottom" sideOffset={8}>
+                        <div className="max-h-[70vh] overflow-y-auto overscroll-contain p-4 space-y-4">
+                              <h4 className="text-sm font-semibold">Social Media Links</h4>
 
-                                    {/* Settings */}
-                                    <div className="grid grid-cols-3 gap-2">
-                                          <div className="space-y-1">
-                                                <Label className="text-xs">Style</Label>
-                                                <Select value={iconStyle} onValueChange={(v) => setIconStyle(v as "colored" | "mono")}>
-                                                      <SelectTrigger className="h-8 text-xs">
-                                                            <SelectValue />
-                                                      </SelectTrigger>
-                                                      <SelectContent>
-                                                            <SelectItem value="colored">Colored</SelectItem>
-                                                            <SelectItem value="mono">Mono</SelectItem>
-                                                      </SelectContent>
-                                                </Select>
-                                          </div>
-                                          <div className="space-y-1">
-                                                <Label className="text-xs">Shape</Label>
-                                                <Select value={shape} onValueChange={(v) => setShape(v as "circle" | "rounded")}>
-                                                      <SelectTrigger className="h-8 text-xs">
-                                                            <SelectValue />
-                                                      </SelectTrigger>
-                                                      <SelectContent>
-                                                            <SelectItem value="circle">Circle</SelectItem>
-                                                            <SelectItem value="rounded">Rounded</SelectItem>
-                                                      </SelectContent>
-                                                </Select>
-                                          </div>
-                                          <div className="space-y-1">
-                                                <Label className="text-xs">Align</Label>
-                                                <Select value={alignment} onValueChange={(v) => setAlignment(v as "left" | "center" | "right")}>
-                                                      <SelectTrigger className="h-8 text-xs">
-                                                            <SelectValue />
-                                                      </SelectTrigger>
-                                                      <SelectContent>
-                                                            <SelectItem value="left">Left</SelectItem>
-                                                            <SelectItem value="center">Center</SelectItem>
-                                                            <SelectItem value="right">Right</SelectItem>
-                                                      </SelectContent>
-                                                </Select>
-                                          </div>
+                              {/* Settings */}
+                              <div className="grid grid-cols-3 gap-2">
+                                    <div className="space-y-1">
+                                          <Label className="text-xs">Style</Label>
+                                          <Select value={iconStyle} onValueChange={(v) => setIconStyle(v as "colored" | "mono")}>
+                                                <SelectTrigger className="h-8 text-xs">
+                                                      <SelectValue />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                      <SelectItem value="colored">Colored</SelectItem>
+                                                      <SelectItem value="mono">Mono</SelectItem>
+                                                </SelectContent>
+                                          </Select>
                                     </div>
+                                    <div className="space-y-1">
+                                          <Label className="text-xs">Shape</Label>
+                                          <Select value={shape} onValueChange={(v) => setShape(v as "circle" | "rounded")}>
+                                                <SelectTrigger className="h-8 text-xs">
+                                                      <SelectValue />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                      <SelectItem value="circle">Circle</SelectItem>
+                                                      <SelectItem value="rounded">Rounded</SelectItem>
+                                                </SelectContent>
+                                          </Select>
+                                    </div>
+                                    <div className="space-y-1">
+                                          <Label className="text-xs">Align</Label>
+                                          <Select value={alignment} onValueChange={(v) => setAlignment(v as "left" | "center" | "right")}>
+                                                <SelectTrigger className="h-8 text-xs">
+                                                      <SelectValue />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                      <SelectItem value="left">Left</SelectItem>
+                                                      <SelectItem value="center">Center</SelectItem>
+                                                      <SelectItem value="right">Right</SelectItem>
+                                                </SelectContent>
+                                          </Select>
+                                    </div>
+                              </div>
 
-                                    {/* Platform List with SVG brand icons */}
-                                    <div className="space-y-2">
-                                          {entries.map((entry) => {
+                              {/* Platform List with SVG brand icons */}
+                              <div className="space-y-2">
+                                    {entries.map((entry) => {
+                                          const platform = PLATFORMS.find((p) => p.id === entry.platformId)!;
+                                          const bgColor = iconStyle === "colored" ? platform.brandColor : platform.monoColor;
+                                          return (
+                                                <div
+                                                      key={entry.platformId}
+                                                      className={cn(
+                                                            "rounded-lg border p-2 space-y-1.5 transition-colors",
+                                                            entry.enabled ? "bg-accent/30 border-accent" : "opacity-60"
+                                                      )}
+                                                >
+                                                      <div className="flex items-center justify-between">
+                                                            <div className="flex items-center gap-2">
+                                                                  <span
+                                                                        className="h-7 w-7 rounded-full flex items-center justify-center"
+                                                                        style={{ backgroundColor: bgColor }}
+                                                                  >
+                                                                        <svg
+                                                                              xmlns="http://www.w3.org/2000/svg"
+                                                                              viewBox="0 0 24 24"
+                                                                              fill="#ffffff"
+                                                                              className="h-4 w-4"
+                                                                        >
+                                                                              <path d={platform.svgPath} />
+                                                                        </svg>
+                                                                  </span>
+                                                                  <span className="text-sm font-medium">{platform.label}</span>
+                                                            </div>
+                                                            <Switch
+                                                                  checked={entry.enabled}
+                                                                  onCheckedChange={(v) =>
+                                                                        updateEntry(entry.platformId, { enabled: v })
+                                                                  }
+                                                            />
+                                                      </div>
+                                                      {entry.enabled && (
+                                                            <Input
+                                                                  value={entry.url}
+                                                                  onChange={(e) =>
+                                                                        updateEntry(entry.platformId, {
+                                                                              url: e.target.value,
+                                                                        })
+                                                                  }
+                                                                  placeholder={platform.defaultUrl}
+                                                                  className="h-7 text-xs"
+                                                            />
+                                                      )}
+                                                </div>
+                                          );
+                                    })}
+                              </div>
+
+                              {/* Preview */}
+                              {enabledEntries.length > 0 && (
+                                    <div
+                                          className="border rounded-lg p-3 bg-muted/20"
+                                          style={{ textAlign: alignment }}
+                                    >
+                                          {enabledEntries.map((entry) => {
                                                 const platform = PLATFORMS.find((p) => p.id === entry.platformId)!;
                                                 const bgColor = iconStyle === "colored" ? platform.brandColor : platform.monoColor;
                                                 return (
-                                                      <div
+                                                      <span
                                                             key={entry.platformId}
                                                             className={cn(
-                                                                  "rounded-lg border p-2 space-y-1.5 transition-colors",
-                                                                  entry.enabled ? "bg-accent/30 border-accent" : "opacity-60"
+                                                                  "inline-flex items-center justify-center w-9 h-9 text-white mx-0.5",
+                                                                  shape === "circle" ? "rounded-full" : "rounded-md"
                                                             )}
+                                                            style={{ backgroundColor: bgColor }}
                                                       >
-                                                            <div className="flex items-center justify-between">
-                                                                  <div className="flex items-center gap-2">
-                                                                        <span
-                                                                              className="h-7 w-7 rounded-full flex items-center justify-center"
-                                                                              style={{ backgroundColor: bgColor }}
-                                                                        >
-                                                                              <svg
-                                                                                    xmlns="http://www.w3.org/2000/svg"
-                                                                                    viewBox="0 0 24 24"
-                                                                                    fill="#ffffff"
-                                                                                    className="h-4 w-4"
-                                                                              >
-                                                                                    <path d={platform.svgPath} />
-                                                                              </svg>
-                                                                        </span>
-                                                                        <span className="text-sm font-medium">{platform.label}</span>
-                                                                  </div>
-                                                                  <Switch
-                                                                        checked={entry.enabled}
-                                                                        onCheckedChange={(v) =>
-                                                                              updateEntry(entry.platformId, { enabled: v })
-                                                                        }
-                                                                  />
-                                                            </div>
-                                                            {entry.enabled && (
-                                                                  <Input
-                                                                        value={entry.url}
-                                                                        onChange={(e) =>
-                                                                              updateEntry(entry.platformId, {
-                                                                                    url: e.target.value,
-                                                                              })
-                                                                        }
-                                                                        placeholder={platform.defaultUrl}
-                                                                        className="h-7 text-xs"
-                                                                  />
-                                                            )}
-                                                      </div>
+                                                            <svg
+                                                                  xmlns="http://www.w3.org/2000/svg"
+                                                                  viewBox="0 0 24 24"
+                                                                  fill="#ffffff"
+                                                                  className="h-4.5 w-4.5"
+                                                            >
+                                                                  <path d={platform.svgPath} />
+                                                            </svg>
+                                                      </span>
                                                 );
                                           })}
                                     </div>
+                              )}
 
-                                    {/* Preview */}
-                                    {enabledEntries.length > 0 && (
-                                          <div
-                                                className="border rounded-lg p-3 bg-muted/20"
-                                                style={{ textAlign: alignment }}
-                                          >
-                                                {enabledEntries.map((entry) => {
-                                                      const platform = PLATFORMS.find((p) => p.id === entry.platformId)!;
-                                                      const bgColor = iconStyle === "colored" ? platform.brandColor : platform.monoColor;
-                                                      return (
-                                                            <span
-                                                                  key={entry.platformId}
-                                                                  className={cn(
-                                                                        "inline-flex items-center justify-center w-9 h-9 text-white mx-0.5",
-                                                                        shape === "circle" ? "rounded-full" : "rounded-md"
-                                                                  )}
-                                                                  style={{ backgroundColor: bgColor }}
-                                                            >
-                                                                  <svg
-                                                                        xmlns="http://www.w3.org/2000/svg"
-                                                                        viewBox="0 0 24 24"
-                                                                        fill="#ffffff"
-                                                                        className="h-4.5 w-4.5"
-                                                                  >
-                                                                        <path d={platform.svgPath} />
-                                                                  </svg>
-                                                            </span>
-                                                      );
-                                                })}
-                                          </div>
-                                    )}
-
-                                    {/* Insert */}
-                                    <Button
-                                          onClick={handleInsert}
-                                          className="w-full"
-                                          disabled={enabledEntries.length === 0}
-                                    >
-                                          Insert Social Links ({enabledEntries.length})
-                                    </Button>
-                              </div>
-                        </ScrollArea>
+                              {/* Insert */}
+                              <Button
+                                    onClick={handleInsert}
+                                    className="w-full"
+                                    disabled={enabledEntries.length === 0}
+                              >
+                                    Insert Social Links ({enabledEntries.length})
+                              </Button>
+                        </div>
                   </PopoverContent>
             </Popover>
       );

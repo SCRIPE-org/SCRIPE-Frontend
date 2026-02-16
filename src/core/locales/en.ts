@@ -3106,6 +3106,7 @@ export const en = {
   },
   // Common
   common: {
+    actions: "Actions",
     navigate: "Navigate",
     open: "Open",
     recent: "Recently used",

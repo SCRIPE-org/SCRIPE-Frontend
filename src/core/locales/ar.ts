@@ -3296,6 +3296,8 @@ export const ar = {
 
   // Common
   common: {
+    actions: "الإجراءات",
+    items: "العناصر",
     navigate: "انتقال",
     enabled: "مفعل",
     next: "التالي",
@@ -3967,6 +3969,10 @@ export const ar = {
   // ===== مركز الرسائل =====
   messaging: {
     templates: {
+      usage: "الاستخدام",
+      category: "الفئة",
+      export: "تصدير",
+      placeholders: "المتغيرات",
       editTemplate: "تعديل القالب",
       editDescription: "تعديل قوالب البريد الإلكتروني والرسائل القصيرة والإشعارات بصيغة Scriban.",
       subjectDescription: "العنوان",

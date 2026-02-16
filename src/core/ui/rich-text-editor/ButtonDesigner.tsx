@@ -7,7 +7,6 @@ import { Label } from "@core/ui/label";
 import { Slider } from "@core/ui/slider";
 import { Switch } from "@core/ui/switch";
 import { Popover, PopoverContent, PopoverTrigger } from "@core/ui/popover";
-import { ScrollArea } from "@core/ui/scroll-area";
 import { cn } from "@core/common/utils";
 import { MousePointerClick } from "lucide-react";
 import { ColorPickerField } from "./ColorPickerField";
@@ -82,129 +81,127 @@ export function ButtonDesigner({ onInsert }: ButtonDesignerProps) {
                               <span className="hidden sm:inline">Button</span>
                         </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-80 p-0" align="start">
-                        <ScrollArea className="max-h-[60vh]">
-                              <div className="space-y-4 p-4">
-                                    <h4 className="text-sm font-semibold">CTA Button Designer</h4>
+                  <PopoverContent className="w-80 p-0" align="start" side="bottom" sideOffset={8}>
+                        <div className="max-h-[70vh] overflow-y-auto overscroll-contain p-4 space-y-4">
+                              <h4 className="text-sm font-semibold">CTA Button Designer</h4>
 
-                                    {/* Live Preview */}
-                                    <div className="border rounded-lg p-4 bg-muted/20 flex justify-center">
-                                          <a
-                                                href="#"
-                                                onClick={(e) => e.preventDefault()}
-                                                style={{
-                                                      display: "inline-block",
-                                                      backgroundColor: config.bgColor,
-                                                      color: config.textColor,
-                                                      borderRadius: `${config.borderRadius}px`,
-                                                      padding: `${config.paddingY}px ${config.paddingX}px`,
-                                                      fontSize: `${config.fontSize}px`,
-                                                      fontWeight: 600,
-                                                      textDecoration: "none",
-                                                      textAlign: "center",
-                                                      lineHeight: 1.4,
-                                                      width: config.fullWidth ? "100%" : "auto",
-                                                      boxShadow: config.shadow
-                                                            ? "0 4px 14px 0 rgba(0,0,0,0.15)"
-                                                            : "none",
-                                                }}
-                                          >
-                                                {config.text || "Click Here"}
-                                          </a>
-                                    </div>
-
-                                    {/* Text & URL */}
-                                    <div className="space-y-2">
-                                          <Label className="text-xs">Button Text</Label>
-                                          <Input
-                                                value={config.text}
-                                                onChange={(e) => update("text", e.target.value)}
-                                                placeholder="Click Here"
-                                                className="h-8 text-sm"
-                                          />
-                                    </div>
-                                    <div className="space-y-2">
-                                          <Label className="text-xs">Link URL</Label>
-                                          <Input
-                                                value={config.url}
-                                                onChange={(e) => update("url", e.target.value)}
-                                                placeholder="https://example.com"
-                                                className="h-8 text-sm"
-                                          />
-                                    </div>
-
-                                    {/* Colors (side by side) */}
-                                    <div className="grid grid-cols-2 gap-3">
-                                          <ColorPickerField
-                                                label="Background"
-                                                value={config.bgColor}
-                                                onChange={(c) => update("bgColor", c)}
-                                          />
-                                          <ColorPickerField
-                                                label="Text Color"
-                                                value={config.textColor}
-                                                onChange={(c) => update("textColor", c)}
-                                          />
-                                    </div>
-
-                                    {/* Border Radius */}
-                                    <div className="space-y-2">
-                                          <div className="flex items-center justify-between">
-                                                <Label className="text-xs">Border Radius</Label>
-                                                <span className="text-xs text-muted-foreground">{config.borderRadius}px</span>
-                                          </div>
-                                          <Slider
-                                                value={[config.borderRadius]}
-                                                onValueChange={([v]) => update("borderRadius", v)}
-                                                min={0}
-                                                max={50}
-                                                step={2}
-                                          />
-                                    </div>
-
-                                    {/* Font Size */}
-                                    <div className="space-y-2">
-                                          <div className="flex items-center justify-between">
-                                                <Label className="text-xs">Font Size</Label>
-                                                <span className="text-xs text-muted-foreground">{config.fontSize}px</span>
-                                          </div>
-                                          <Slider
-                                                value={[config.fontSize]}
-                                                onValueChange={([v]) => update("fontSize", v)}
-                                                min={12}
-                                                max={24}
-                                                step={1}
-                                          />
-                                    </div>
-
-                                    {/* Toggles */}
-                                    <div className="space-y-3">
-                                          <div className="flex items-center justify-between">
-                                                <Label className="text-xs">Full Width</Label>
-                                                <Switch
-                                                      checked={config.fullWidth}
-                                                      onCheckedChange={(v) => update("fullWidth", v)}
-                                                />
-                                          </div>
-                                          <div className="flex items-center justify-between">
-                                                <Label className="text-xs">Shadow</Label>
-                                                <Switch
-                                                      checked={config.shadow}
-                                                      onCheckedChange={(v) => update("shadow", v)}
-                                                />
-                                          </div>
-                                    </div>
-
-                                    {/* Insert */}
-                                    <Button
-                                          onClick={handleInsert}
-                                          className="w-full"
-                                          disabled={!config.text.trim() || !config.url.trim()}
+                              {/* Live Preview */}
+                              <div className="border rounded-lg p-4 bg-muted/20 flex justify-center">
+                                    <a
+                                          href="#"
+                                          onClick={(e) => e.preventDefault()}
+                                          style={{
+                                                display: "inline-block",
+                                                backgroundColor: config.bgColor,
+                                                color: config.textColor,
+                                                borderRadius: `${config.borderRadius}px`,
+                                                padding: `${config.paddingY}px ${config.paddingX}px`,
+                                                fontSize: `${config.fontSize}px`,
+                                                fontWeight: 600,
+                                                textDecoration: "none",
+                                                textAlign: "center",
+                                                lineHeight: 1.4,
+                                                width: config.fullWidth ? "100%" : "auto",
+                                                boxShadow: config.shadow
+                                                      ? "0 4px 14px 0 rgba(0,0,0,0.15)"
+                                                      : "none",
+                                          }}
                                     >
-                                          Insert Button
-                                    </Button>
+                                          {config.text || "Click Here"}
+                                    </a>
                               </div>
-                        </ScrollArea>
+
+                              {/* Text & URL */}
+                              <div className="space-y-2">
+                                    <Label className="text-xs">Button Text</Label>
+                                    <Input
+                                          value={config.text}
+                                          onChange={(e) => update("text", e.target.value)}
+                                          placeholder="Click Here"
+                                          className="h-8 text-sm"
+                                    />
+                              </div>
+                              <div className="space-y-2">
+                                    <Label className="text-xs">Link URL</Label>
+                                    <Input
+                                          value={config.url}
+                                          onChange={(e) => update("url", e.target.value)}
+                                          placeholder="https://example.com"
+                                          className="h-8 text-sm"
+                                    />
+                              </div>
+
+                              {/* Colors (side by side) */}
+                              <div className="grid grid-cols-2 gap-3">
+                                    <ColorPickerField
+                                          label="Background"
+                                          value={config.bgColor}
+                                          onChange={(c) => update("bgColor", c)}
+                                    />
+                                    <ColorPickerField
+                                          label="Text Color"
+                                          value={config.textColor}
+                                          onChange={(c) => update("textColor", c)}
+                                    />
+                              </div>
+
+                              {/* Border Radius */}
+                              <div className="space-y-2">
+                                    <div className="flex items-center justify-between">
+                                          <Label className="text-xs">Border Radius</Label>
+                                          <span className="text-xs text-muted-foreground">{config.borderRadius}px</span>
+                                    </div>
+                                    <Slider
+                                          value={[config.borderRadius]}
+                                          onValueChange={([v]) => update("borderRadius", v)}
+                                          min={0}
+                                          max={50}
+                                          step={2}
+                                    />
+                              </div>
+
+                              {/* Font Size */}
+                              <div className="space-y-2">
+                                    <div className="flex items-center justify-between">
+                                          <Label className="text-xs">Font Size</Label>
+                                          <span className="text-xs text-muted-foreground">{config.fontSize}px</span>
+                                    </div>
+                                    <Slider
+                                          value={[config.fontSize]}
+                                          onValueChange={([v]) => update("fontSize", v)}
+                                          min={12}
+                                          max={24}
+                                          step={1}
+                                    />
+                              </div>
+
+                              {/* Toggles */}
+                              <div className="space-y-3">
+                                    <div className="flex items-center justify-between">
+                                          <Label className="text-xs">Full Width</Label>
+                                          <Switch
+                                                checked={config.fullWidth}
+                                                onCheckedChange={(v) => update("fullWidth", v)}
+                                          />
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                          <Label className="text-xs">Shadow</Label>
+                                          <Switch
+                                                checked={config.shadow}
+                                                onCheckedChange={(v) => update("shadow", v)}
+                                          />
+                                    </div>
+                              </div>
+
+                              {/* Insert */}
+                              <Button
+                                    onClick={handleInsert}
+                                    className="w-full"
+                                    disabled={!config.text.trim() || !config.url.trim()}
+                              >
+                                    Insert Button
+                              </Button>
+                        </div>
                   </PopoverContent>
             </Popover>
       );
