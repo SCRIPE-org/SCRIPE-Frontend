@@ -7,9 +7,10 @@ import { systemContainer } from "@modules/system/di";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import type {
       NotificationTarget,
-      SendNotificationRequest,
+      SendNotificationPayload,
+      NotificationType,
       NotificationCategory,
-      NotificationPriority,
+      NotificationTargetType,
 } from "../../domain/entities/Notification";
 
 export function useNotificationSenderViewModel() {
@@ -47,8 +48,8 @@ export function useNotificationSenderViewModel() {
       // ─── Form State ────────────────────────────────────────────
       const [title, setTitle] = useState("");
       const [message, setMessage] = useState("");
-      const [category, setCategory] = useState<NotificationCategory>("info");
-      const [priority, setPriority] = useState<NotificationPriority>("normal");
+      const [type, setType] = useState<NotificationType>("Info");
+      const [category, setCategory] = useState<NotificationCategory>("General");
       const [actionUrl, setActionUrl] = useState("");
 
       // ─── Confirmation state ───────────────────────────────────
@@ -57,9 +58,38 @@ export function useNotificationSenderViewModel() {
       // ─── Validation state ─────────────────────────────────────
       const [fieldErrors, setFieldErrors] = useState<Record<string, boolean>>({});
 
+      // ─── Helper: Map frontend target type to backend enum ──────
+      const toBackendTarget = (target: NotificationTarget): { target: NotificationTargetType; userId: string | null; tenantId: string | null } => {
+            switch (target.type) {
+                  case "admin":
+                        return { target: "User", userId: target.id, tenantId: null };
+                  case "role":
+                        return { target: "Role", userId: target.id, tenantId: null };
+                  case "tenant":
+                        return { target: "Tenant", userId: null, tenantId: target.id };
+                  default:
+                        return { target: "User", userId: target.id, tenantId: null };
+            }
+      };
+
       // ─── Send ──────────────────────────────────────────────────
       const sendMutation = useMutation({
-            mutationFn: (data: SendNotificationRequest) => repo.send(data),
+            mutationFn: async (targets: NotificationTarget[]) => {
+                  for (const t of targets) {
+                        const mapping = toBackendTarget(t);
+                        const payload: SendNotificationPayload = {
+                              title,
+                              body: message,
+                              target: mapping.target,
+                              userId: mapping.userId,
+                              tenantId: mapping.tenantId,
+                              type,
+                              category,
+                              actionUrl: actionUrl || undefined,
+                        };
+                        await repo.send(payload);
+                  }
+            },
             onSuccess: () => {
                   success({ title: t("messaging.notifications.sendSuccess") || "Notification sent" });
                   resetForm();
@@ -90,42 +120,34 @@ export function useNotificationSenderViewModel() {
 
       const confirmSend = useCallback(() => {
             setConfirmSendOpen(false);
-            sendMutation.mutate({
-                  targetIds: selectedTargets.map((t) => t.id),
-                  title,
-                  message,
-                  category,
-                  priority,
-                  actionUrl: actionUrl || undefined,
-            });
-      }, [selectedTargets, title, message, category, priority, actionUrl, sendMutation]);
+            sendMutation.mutate(selectedTargets);
+      }, [selectedTargets, sendMutation]);
 
       // ─── Reset Form ───────────────────────────────────────────
       const resetForm = useCallback(() => {
             setSelectedTargets([]);
             setTitle("");
             setMessage("");
-            setCategory("info");
-            setPriority("normal");
+            setType("Info");
+            setCategory("General");
             setActionUrl("");
             setTargetSearch("");
             setFieldErrors({});
       }, []);
 
-      // ─── Options ───────────────────────────────────────────────
-      const categoryOptions: { value: NotificationCategory; label: string }[] = [
-            { value: "info", label: t("messaging.notifications.categoryInfo") || "Info" },
-            { value: "warning", label: t("messaging.notifications.categoryWarning") || "Warning" },
-            { value: "success", label: t("messaging.notifications.categorySuccess") || "Success" },
-            { value: "error", label: t("messaging.notifications.categoryError") || "Error" },
-            { value: "system", label: t("messaging.notifications.categorySystem") || "System" },
+      // ─── Options (aligned with backend enums) ──────────────────
+      const typeOptions: { value: NotificationType; label: string }[] = [
+            { value: "Info", label: t("messaging.notifications.typeInfo") || "Info" },
+            { value: "Success", label: t("messaging.notifications.typeSuccess") || "Success" },
+            { value: "Warning", label: t("messaging.notifications.typeWarning") || "Warning" },
+            { value: "Error", label: t("messaging.notifications.typeError") || "Error" },
       ];
 
-      const priorityOptions: { value: NotificationPriority; label: string }[] = [
-            { value: "low", label: t("messaging.notifications.priorityLow") || "Low" },
-            { value: "normal", label: t("messaging.notifications.priorityNormal") || "Normal" },
-            { value: "high", label: t("messaging.notifications.priorityHigh") || "High" },
-            { value: "urgent", label: t("messaging.notifications.priorityUrgent") || "Urgent" },
+      const categoryOptions: { value: NotificationCategory; label: string }[] = [
+            { value: "General", label: t("messaging.notifications.categoryGeneral") || "General" },
+            { value: "Security", label: t("messaging.notifications.categorySecurity") || "Security" },
+            { value: "System", label: t("messaging.notifications.categorySystem") || "System" },
+            { value: "Activity", label: t("messaging.notifications.categoryActivity") || "Activity" },
       ];
 
       return {
@@ -142,10 +164,10 @@ export function useNotificationSenderViewModel() {
             setTitle: (v: string) => { setTitle(v); setFieldErrors((p) => ({ ...p, title: false })); },
             message,
             setMessage: (v: string) => { setMessage(v); setFieldErrors((p) => ({ ...p, message: false })); },
+            type,
+            setType,
             category,
             setCategory,
-            priority,
-            setPriority,
             actionUrl,
             setActionUrl,
             // Validation
@@ -158,8 +180,8 @@ export function useNotificationSenderViewModel() {
             isSending: sendMutation.isPending,
             resetForm,
             // Options
+            typeOptions,
             categoryOptions,
-            priorityOptions,
             t,
       };
 }

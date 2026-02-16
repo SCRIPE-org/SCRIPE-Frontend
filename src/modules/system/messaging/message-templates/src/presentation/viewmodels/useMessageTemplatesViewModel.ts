@@ -152,9 +152,10 @@ export function useMessageTemplatesViewModel() {
                         {
                               name: "body",
                               label: t("messaging.templates.body") || "Body",
-                              type: "textarea" as const,
+                              type: "richtext" as const,
                               placeholder: t("messaging.templates.bodyPlaceholder") || "Template body...",
                               required: true,
+                              rows: 15,
                         },
                         {
                               name: "description",
@@ -178,9 +179,10 @@ export function useMessageTemplatesViewModel() {
                         {
                               name: "body",
                               label: t("messaging.templates.body") || "Body",
-                              type: "textarea" as const,
+                              type: "richtext" as const,
                               placeholder: t("messaging.templates.bodyPlaceholder") || "Template body...",
                               required: true,
+                              rows: 15,
                         },
                         {
                               name: "description",

@@ -19,7 +19,7 @@ import {
 } from "@core/ui/select";
 import { Bell, Send, X, Loader2, RotateCcw, Search } from "lucide-react";
 import { cn } from "@core/common/utils";
-import type { NotificationCategory, NotificationPriority } from "../../domain/entities/Notification";
+import type { NotificationType, NotificationCategory } from "../../domain/entities/Notification";
 
 const TITLE_MAX = 150;
 const MESSAGE_MAX = 2000;
@@ -209,13 +209,13 @@ export function NotificationSenderView() {
                                           </div>
 
                                           <div className="space-y-2">
-                                                <Label>{t("messaging.notifications.priority")}</Label>
-                                                <Select value={vm.priority} onValueChange={(v) => vm.setPriority(v as NotificationPriority)}>
+                                                <Label>{t("messaging.notifications.type") || "Type"}</Label>
+                                                <Select value={vm.type} onValueChange={(v) => vm.setType(v as NotificationType)}>
                                                       <SelectTrigger>
                                                             <SelectValue />
                                                       </SelectTrigger>
                                                       <SelectContent>
-                                                            {vm.priorityOptions.map((opt) => (
+                                                            {vm.typeOptions.map((opt) => (
                                                                   <SelectItem key={opt.value} value={opt.value}>
                                                                         {opt.label}
                                                                   </SelectItem>

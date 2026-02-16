@@ -31,6 +31,7 @@ function RecipientSearchInput({
       selectedRecipients,
       onAdd,
       onRemove,
+      onCustomEmail,
       error,
 }: {
       label: string;
@@ -42,6 +43,7 @@ function RecipientSearchInput({
       selectedRecipients: EmailRecipient[];
       onAdd: (r: EmailRecipient) => void;
       onRemove: (email: string) => void;
+      onCustomEmail?: (email: string) => boolean;
       error?: boolean;
 }) {
       const dropdownRef = useRef<HTMLDivElement>(null);
@@ -59,6 +61,7 @@ function RecipientSearchInput({
       }, []);
 
       const noResults = search.length >= 2 && !isSearching && results.length === 0;
+      const showCustomHint = noResults && search.includes("@") && onCustomEmail;
 
       return (
             <div className="space-y-2">
@@ -66,7 +69,12 @@ function RecipientSearchInput({
                   {selectedRecipients.length > 0 && (
                         <div className="flex flex-wrap gap-1.5 mb-2">
                               {selectedRecipients.map((r) => (
-                                    <Badge key={r.email} variant="secondary" className="gap-1">
+                                    <Badge
+                                          key={r.email}
+                                          variant={r.type === "custom" ? "outline" : "secondary"}
+                                          className={cn("gap-1", r.type === "custom" && "border-blue-500/50 text-blue-600 dark:text-blue-400")}
+                                    >
+                                          {r.type === "custom" && <Mail className="h-3 w-3" />}
                                           {r.name || r.email}
                                           <button onClick={() => onRemove(r.email)} className="hover:text-destructive" aria-label={`Remove ${r.name || r.email}`}>
                                                 <X className="h-3 w-3" />
@@ -83,6 +91,13 @@ function RecipientSearchInput({
                                     value={search}
                                     onChange={(e) => { setSearch(e.target.value); setShowDropdown(true); }}
                                     onFocus={() => setShowDropdown(true)}
+                                    onKeyDown={(e) => {
+                                          if (e.key === "Enter" && onCustomEmail && search.trim()) {
+                                                e.preventDefault();
+                                                const added = onCustomEmail(search);
+                                                if (added) setShowDropdown(false);
+                                          }
+                                    }}
                                     className={cn("pl-9", error && "border-destructive focus-visible:ring-destructive")}
                               />
                               {isSearching && (
@@ -102,10 +117,23 @@ function RecipientSearchInput({
                                                       <span className="text-muted-foreground text-xs">{r.email}</span>
                                                 </button>
                                           ))
-                                          : noResults && (
+                                          : showCustomHint ? (
+                                                <button
+                                                      className="w-full px-3 py-3 text-sm text-left hover:bg-accent flex items-center gap-2"
+                                                      onClick={() => {
+                                                            if (onCustomEmail) {
+                                                                  const added = onCustomEmail(search);
+                                                                  if (added) setShowDropdown(false);
+                                                            }
+                                                      }}
+                                                >
+                                                      <Mail className="h-4 w-4 text-blue-500" />
+                                                      <span>Send to <strong className="text-blue-600 dark:text-blue-400">{search.trim()}</strong></span>
+                                                </button>
+                                          ) : noResults && (
                                                 <div className="px-3 py-4 text-sm text-muted-foreground text-center">
                                                       <Search className="h-5 w-5 mx-auto mb-1 opacity-40" />
-                                                      No recipients found
+                                                      No recipients found. Type a full email and press Enter.
                                                 </div>
                                           )}
                               </div>
@@ -219,7 +247,7 @@ export function EmailComposerView() {
                                                 {/* To */}
                                                 <RecipientSearchInput
                                                       label={`${t("messaging.email.to") || "To"} *`}
-                                                      placeholder={t("messaging.email.searchRecipients") || "Type to search recipients..."}
+                                                      placeholder={t("messaging.email.searchRecipients") || "Search or type custom email..."}
                                                       search={vm.recipientSearch}
                                                       setSearch={vm.setRecipientSearch}
                                                       results={vm.recipientResults}
@@ -227,6 +255,7 @@ export function EmailComposerView() {
                                                       selectedRecipients={vm.recipients}
                                                       onAdd={vm.addRecipient}
                                                       onRemove={vm.removeRecipient}
+                                                      onCustomEmail={(email) => vm.addCustomEmail(email, "to")}
                                                       error={vm.fieldErrors.to}
                                                 />
 
@@ -235,7 +264,7 @@ export function EmailComposerView() {
                                                       <>
                                                             <RecipientSearchInput
                                                                   label={t("messaging.email.cc") || "CC"}
-                                                                  placeholder={t("messaging.email.searchRecipients") || "Type to search recipients..."}
+                                                                  placeholder={t("messaging.email.searchRecipients") || "Search or type custom email..."}
                                                                   search={vm.ccSearch}
                                                                   setSearch={vm.setCcSearch}
                                                                   results={vm.ccResults}
@@ -243,12 +272,13 @@ export function EmailComposerView() {
                                                                   selectedRecipients={vm.ccRecipients}
                                                                   onAdd={vm.addCcRecipient}
                                                                   onRemove={vm.removeCcRecipient}
+                                                                  onCustomEmail={(email) => vm.addCustomEmail(email, "cc")}
                                                             />
 
                                                             {/* BCC */}
                                                             <RecipientSearchInput
                                                                   label={t("messaging.email.bcc") || "BCC"}
-                                                                  placeholder={t("messaging.email.searchRecipients") || "Type to search recipients..."}
+                                                                  placeholder={t("messaging.email.searchRecipients") || "Search or type custom email..."}
                                                                   search={vm.bccSearch}
                                                                   setSearch={vm.setBccSearch}
                                                                   results={vm.bccResults}
@@ -256,6 +286,7 @@ export function EmailComposerView() {
                                                                   selectedRecipients={vm.bccRecipients}
                                                                   onAdd={vm.addBccRecipient}
                                                                   onRemove={vm.removeBccRecipient}
+                                                                  onCustomEmail={(email) => vm.addCustomEmail(email, "bcc")}
                                                             />
                                                       </>
                                                 )}

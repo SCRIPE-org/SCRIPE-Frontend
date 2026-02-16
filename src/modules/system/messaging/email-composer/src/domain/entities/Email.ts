@@ -6,13 +6,17 @@ export interface EmailRecipient {
       id: string;
       email: string;
       name: string;
-      type: "admin" | "user";
+      type: "admin" | "user" | "custom";
 }
 
-export interface SendEmailRequest {
-      to: string[];
-      cc?: string[];
-      bcc?: string[];
+/**
+ * Matches backend SendManualEmailCommand exactly.
+ * One request per recipient — the frontend batches multiple recipients.
+ */
+export interface SendManualEmailPayload {
+      recipientType: string;          // "Admin" | "User" | "Custom"
+      recipientId: string | null;     // system user ID, null for custom
+      recipientEmail: string;         // the actual email address
       subject: string;
       body: string;
       templateKey?: string;

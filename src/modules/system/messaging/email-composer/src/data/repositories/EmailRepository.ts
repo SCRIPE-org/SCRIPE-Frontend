@@ -1,5 +1,5 @@
 import type { IEmailRepository } from "../../domain/interfaces/IEmailRepository";
-import type { EmailRecipient, SendEmailRequest, SentEmail } from "../../domain/entities/Email";
+import type { EmailRecipient, SendManualEmailPayload, SentEmail } from "../../domain/entities/Email";
 import type { IEmailService } from "../services/EmailService";
 
 export class EmailRepository implements IEmailRepository {
@@ -9,8 +9,8 @@ export class EmailRepository implements IEmailRepository {
             return this.service.searchRecipients(query);
       }
 
-      async send(data: SendEmailRequest): Promise<void> {
-            await this.service.send(data as unknown as Record<string, unknown>);
+      async send(data: SendManualEmailPayload): Promise<void> {
+            await this.service.send(data);
       }
 
       async getSentHistory(params: { page: number; pageSize: number }): Promise<{ items: SentEmail[]; totalCount: number }> {

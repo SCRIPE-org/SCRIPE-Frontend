@@ -7,7 +7,7 @@ import { systemContainer } from "@modules/system/di";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import type {
       EmailRecipient,
-      SendEmailRequest,
+      SendManualEmailPayload,
 } from "../../domain/entities/Email";
 
 const HISTORY_QUERY_KEY = ["emails", "history"];
@@ -73,6 +73,44 @@ export function useEmailComposerViewModel() {
             []
       );
 
+      // Email validation regex
+      const isValidEmail = useCallback((email: string): boolean => {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+      }, []);
+
+      // Add a custom email address (not from search results)
+      const addCustomEmail = useCallback(
+            (email: string, target: "to" | "cc" | "bcc" = "to") => {
+                  const trimmed = email.trim();
+                  if (!isValidEmail(trimmed)) return false;
+
+                  const customRecipient: EmailRecipient = {
+                        id: `custom-${trimmed}`,
+                        email: trimmed,
+                        name: trimmed,
+                        type: "custom",
+                  };
+
+                  if (target === "to") {
+                        addRecipient(customRecipient);
+                  } else if (target === "cc") {
+                        setCcRecipients((prev) => {
+                              if (prev.some((r) => r.email === trimmed)) return prev;
+                              return [...prev, customRecipient];
+                        });
+                        setCcSearch("");
+                  } else {
+                        setBccRecipients((prev) => {
+                              if (prev.some((r) => r.email === trimmed)) return prev;
+                              return [...prev, customRecipient];
+                        });
+                        setBccSearch("");
+                  }
+                  return true;
+            },
+            [isValidEmail, addRecipient]
+      );
+
       const removeRecipient = useCallback((email: string) => {
             setRecipients((prev) => prev.filter((r) => r.email !== email));
       }, []);
@@ -107,9 +145,31 @@ export function useEmailComposerViewModel() {
             setBccRecipients((prev) => prev.filter((r) => r.email !== email));
       }, []);
 
+      // ─── Helper: convert frontend recipient type to backend enum ─
+      const toBackendRecipientType = (type: EmailRecipient["type"]): string => {
+            switch (type) {
+                  case "admin": return "Admin";
+                  case "user": return "User";
+                  case "custom": return "Custom";
+                  default: return "Custom";
+            }
+      };
+
       // ─── Send ──────────────────────────────────────────────────
       const sendMutation = useMutation({
-            mutationFn: (data: SendEmailRequest) => repo.send(data),
+            mutationFn: async (allRecipients: EmailRecipient[]) => {
+                  // Backend handles one recipient per request, so batch them
+                  for (const r of allRecipients) {
+                        const payload: SendManualEmailPayload = {
+                              recipientType: toBackendRecipientType(r.type),
+                              recipientId: r.type === "custom" ? null : r.id,
+                              recipientEmail: r.email,
+                              subject,
+                              body,
+                        };
+                        await repo.send(payload);
+                  }
+            },
             onSuccess: () => {
                   queryClient.invalidateQueries({ queryKey: HISTORY_QUERY_KEY });
                   success({ title: t("messaging.email.sendSuccess") || "Email sent successfully" });
@@ -141,19 +201,10 @@ export function useEmailComposerViewModel() {
 
       const confirmSend = useCallback(() => {
             setConfirmSendOpen(false);
-            const request: SendEmailRequest = {
-                  to: recipients.map((r) => r.email),
-                  subject,
-                  body,
-            };
-            if (ccRecipients.length > 0) {
-                  request.cc = ccRecipients.map((r) => r.email);
-            }
-            if (bccRecipients.length > 0) {
-                  request.bcc = bccRecipients.map((r) => r.email);
-            }
-            sendMutation.mutate(request);
-      }, [recipients, ccRecipients, bccRecipients, subject, body, sendMutation]);
+            // Merge all recipients (To + CC + BCC) — each gets their own email
+            const allRecipients = [...recipients, ...ccRecipients, ...bccRecipients];
+            sendMutation.mutate(allRecipients);
+      }, [recipients, ccRecipients, bccRecipients, sendMutation]);
 
       // ─── Reset Form ───────────────────────────────────────────
       const resetForm = useCallback(() => {
@@ -187,6 +238,7 @@ export function useEmailComposerViewModel() {
             // Compose — To
             recipients,
             addRecipient,
+            addCustomEmail,
             removeRecipient,
             recipientSearch,
             setRecipientSearch,
