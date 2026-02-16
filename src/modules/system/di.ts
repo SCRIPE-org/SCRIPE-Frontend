@@ -18,6 +18,9 @@ import { TenantService } from "./tenants/src/data/services/TenantService";
 import { TenantSettingsService } from "./tenant-settings/src/data/services/TenantSettingsService";
 import { DashboardService } from "./dashboard/src/data/services/DashboardService";
 import { RecycleBinService } from "./recycle-bin/src/data/services/RecycleBinService";
+import { MessageTemplateService } from "./messaging/message-templates/src/data/services/MessageTemplateService";
+import { EmailService } from "./messaging/email-composer/src/data/services/EmailService";
+import { NotificationSenderService } from "./messaging/notification-sender/src/data/services/NotificationSenderService";
 
 // Repositories
 import { AdminRepository } from "./admin/src/data/repositories/AdminRepository";
@@ -28,6 +31,9 @@ import { MenuRepository } from "./menus/src/data/repositories/MenuRepository";
 import { TenantSettingsRepository } from "./tenant-settings/src/data/repositories/TenantSettingsRepository";
 import { DashboardRepository } from "./dashboard/src/data/repositories/DashboardRepository";
 import { RecycleBinRepository } from "./recycle-bin/src/data/repositories/RecycleBinRepository";
+import { MessageTemplateRepository } from "./messaging/message-templates/src/data/repositories/MessageTemplateRepository";
+import { EmailRepository } from "./messaging/email-composer/src/data/repositories/EmailRepository";
+import { NotificationSenderRepository } from "./messaging/notification-sender/src/data/repositories/NotificationSenderRepository";
 
 // Interfaces - Repositories
 import type { IAdminRepository } from "./admin/src/domain/interfaces/IAdminRepository";
@@ -39,6 +45,9 @@ import type { ITenantSettingsRepository } from "./tenant-settings/src/domain/int
 import type { IDashboardRepository } from "./dashboard/src/domain/interfaces/IDashboardRepository";
 import type { IRecycleBinRepository } from "./recycle-bin/src/domain/interfaces/IRecycleBinRepository";
 import type { IRecycleBinService } from "./recycle-bin/src/domain/interfaces/IRecycleBinService";
+import type { IMessageTemplateRepository } from "./messaging/message-templates/src/domain/interfaces/IMessageTemplateRepository";
+import type { IEmailRepository } from "./messaging/email-composer/src/domain/interfaces/IEmailRepository";
+import type { INotificationSenderRepository } from "./messaging/notification-sender/src/domain/interfaces/INotificationSenderRepository";
 
 // Interfaces - Services (from domain/interfaces, NOT data/services)
 import type { IAdminService } from "./admin/src/domain/interfaces/IAdminService";
@@ -64,6 +73,10 @@ export interface SystemContainer {
   dashboardRepository: IDashboardRepository;
   recycleBinService: IRecycleBinService;
   recycleBinRepository: IRecycleBinRepository;
+  // Messaging
+  messageTemplateRepository: IMessageTemplateRepository;
+  emailRepository: IEmailRepository;
+  notificationSenderRepository: INotificationSenderRepository;
 }
 
 let _container: SystemContainer | null = null;
@@ -82,6 +95,9 @@ export function getSystemContainer(): SystemContainer {
     const tenantService = new TenantService(apiService);
     const tenantSettingsService = new TenantSettingsService(apiService);
     const recycleBinService = new RecycleBinService(apiService);
+    const messageTemplateService = new MessageTemplateService(apiService);
+    const emailService = new EmailService(apiService);
+    const notificationSenderService = new NotificationSenderService(apiService);
 
     // Create Repositories (use Services)
     _container = {
@@ -101,6 +117,10 @@ export function getSystemContainer(): SystemContainer {
       dashboardRepository: new DashboardRepository(new DashboardService(apiService)),
       recycleBinService,
       recycleBinRepository: new RecycleBinRepository(recycleBinService),
+      // Messaging
+      messageTemplateRepository: new MessageTemplateRepository(messageTemplateService),
+      emailRepository: new EmailRepository(emailService),
+      notificationSenderRepository: new NotificationSenderRepository(notificationSenderService),
     };
   }
 
@@ -151,5 +171,15 @@ export const systemContainer = {
   },
   get recycleBinRepository() {
     return getSystemContainer().recycleBinRepository;
+  },
+  // Messaging
+  get messageTemplateRepository() {
+    return getSystemContainer().messageTemplateRepository;
+  },
+  get emailRepository() {
+    return getSystemContainer().emailRepository;
+  },
+  get notificationSenderRepository() {
+    return getSystemContainer().notificationSenderRepository;
   },
 };

@@ -167,6 +167,26 @@ export const API_ENDPOINTS = {
 
   // Legacy menu endpoints
   GET_MENU_ITEMS: `${V1}/Menus/my`,
+
+  // ===== MESSAGING =====
+  MESSAGE_TEMPLATES: {
+    LIST: `${V1}/message-templates`,
+    BY_ID: (id: string) => `${V1}/message-templates/${id}`,
+    CREATE: `${V1}/message-templates`,
+    UPDATE: (id: string) => `${V1}/message-templates/${id}`,
+    DELETE: (id: string) => `${V1}/message-templates/${id}`,
+    PREVIEW: `${V1}/message-templates/preview`,
+    CLONE: (id: string) => `${V1}/message-templates/${id}/clone`,
+  },
+  EMAILS: {
+    SEND: `${V1}/emails/send`,
+    SEARCH_RECIPIENTS: `${V1}/emails/search-recipients`,
+    SENT_HISTORY: `${V1}/emails/sent`,
+  },
+  NOTIFICATIONS_SENDER: {
+    SEARCH_TARGETS: `${V1}/Notifications/search-targets`,
+    SEND: `${V1}/Notifications/send`,
+  },
 };
 
 /**

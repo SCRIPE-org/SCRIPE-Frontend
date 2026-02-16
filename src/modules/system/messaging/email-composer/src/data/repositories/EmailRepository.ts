@@ -1,0 +1,19 @@
+import type { IEmailRepository } from "../../domain/interfaces/IEmailRepository";
+import type { EmailRecipient, SendEmailRequest, SentEmail } from "../../domain/entities/Email";
+import type { IEmailService } from "../services/EmailService";
+
+export class EmailRepository implements IEmailRepository {
+      constructor(private readonly service: IEmailService) { }
+
+      async searchRecipients(query: string): Promise<EmailRecipient[]> {
+            return this.service.searchRecipients(query);
+      }
+
+      async send(data: SendEmailRequest): Promise<void> {
+            await this.service.send(data as unknown as Record<string, unknown>);
+      }
+
+      async getSentHistory(params: { page: number; pageSize: number }): Promise<{ items: SentEmail[]; totalCount: number }> {
+            return this.service.getSentHistory(params);
+      }
+}
