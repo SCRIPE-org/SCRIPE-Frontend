@@ -4003,7 +4003,7 @@ export const ar = {
 
       keyPlaceholder: "مثال: welcome-email",
 
-      // Design
+      // Design (flat keys — legacy)
       primaryColor: "اللون الأساسي",
       secondaryColor: "اللون الثانوي",
       backgroundColor: "لون الخلفية",
@@ -4015,6 +4015,29 @@ export const ar = {
       logoUrl: "رابط الشعار",
       footerText: "نص التذييل",
       resetDesign: "إعادة تعيين التصميم",
+      // Design Panel (nested namespace)
+      design: {
+        title: "متغيرات التصميم",
+        reset: "إعادة تعيين",
+        colors: "الألوان",
+        primaryColor: "الأساسي",
+        secondaryColor: "الثانوي",
+        backgroundColor: "الخلفية",
+        textColor: "النص",
+        typography: "الخطوط",
+        fontFamily: "نوع الخط",
+        headerSize: "حجم العنوان (بكسل)",
+        bodySize: "حجم النص (بكسل)",
+        layout: "التخطيط",
+        borderRadius: "نصف قطر الحدود (بكسل)",
+        branding: "العلامة التجارية",
+        logoUrl: "رابط الشعار",
+        footerText: "نص التذييل",
+        preview: "معاينة",
+        previewHeader: "العنوان",
+        previewBody: "معاينة نص المحتوى",
+        previewButton: "زر",
+      },
       // Placeholders
       addPlaceholder: "إضافة حقل نائب",
       placeholderKey: "المفتاح",

@@ -4171,7 +4171,7 @@ export const en = {
       bodyDescription: "Template body content with placeholders",
 
       settings: "Settings",
-      // Design
+      // Design (flat keys — legacy)
       primaryColor: "Primary Color",
       secondaryColor: "Secondary Color",
       backgroundColor: "Background Color",
@@ -4183,6 +4183,29 @@ export const en = {
       logoUrl: "Logo URL",
       footerText: "Footer Text",
       resetDesign: "Reset Design",
+      // Design Panel (nested namespace)
+      design: {
+        title: "Design Variables",
+        reset: "Reset",
+        colors: "Colors",
+        primaryColor: "Primary",
+        secondaryColor: "Secondary",
+        backgroundColor: "Background",
+        textColor: "Text",
+        typography: "Typography",
+        fontFamily: "Font Family",
+        headerSize: "Header Size (px)",
+        bodySize: "Body Size (px)",
+        layout: "Layout",
+        borderRadius: "Border Radius (px)",
+        branding: "Branding",
+        logoUrl: "Logo URL",
+        footerText: "Footer Text",
+        preview: "Preview",
+        previewHeader: "Header",
+        previewBody: "Body text preview",
+        previewButton: "Button",
+      },
       // Placeholders
       addPlaceholder: "Add Placeholder Field",
       placeholderKey: "Key",

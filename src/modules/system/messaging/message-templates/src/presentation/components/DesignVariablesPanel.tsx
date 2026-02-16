@@ -1,5 +1,6 @@
 "use client";
 
+import { useI18n } from "@core/providers/i18n-provider";
 import { Label } from "@core/ui/label";
 import { Input } from "@core/ui/input";
 import { Button } from "@core/ui/button";
@@ -13,7 +14,7 @@ import {
       SelectValue,
 } from "@core/ui/select";
 import { Paintbrush, RotateCcw } from "lucide-react";
-import ColorPickerField from "@/core/ui/rich-text-editor/ColorPickerField";
+import { ColorPickerField } from "@core/ui/rich-text-editor/ColorPickerField";
 
 // ─── Types ──────────────────────────────────────────────────
 export interface DesignVariables {
@@ -58,8 +59,19 @@ const FONT_OPTIONS = [
       { value: "Cairo, sans-serif", label: "Cairo (Arabic)" },
 ];
 
+// ─── Section Header ─────────────────────────────────────────
+function SectionHeading({ children }: { children: React.ReactNode }) {
+      return (
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  {children}
+            </h4>
+      );
+}
+
 // ─── Main ───────────────────────────────────────────────────
 export function DesignVariablesPanel({ value, onChange }: DesignVariablesPanelProps) {
+      const { t } = useI18n();
+
       const update = (key: keyof DesignVariables, val: string) => {
             onChange({ ...value, [key]: val });
       };
@@ -70,7 +82,7 @@ export function DesignVariablesPanel({ value, onChange }: DesignVariablesPanelPr
                         <div className="flex items-center justify-between">
                               <CardTitle className="flex items-center gap-2 text-base">
                                     <Paintbrush className="h-4 w-4" />
-                                    Design Variables
+                                    {t("messaging.templates.design.title") || "Design Variables"}
                               </CardTitle>
                               <Button
                                     type="button"
@@ -80,53 +92,51 @@ export function DesignVariablesPanel({ value, onChange }: DesignVariablesPanelPr
                                     onClick={() => onChange(DEFAULT_DESIGN)}
                               >
                                     <RotateCcw className="h-3 w-3" />
-                                    Reset
+                                    {t("messaging.templates.design.reset") || "Reset"}
                               </Button>
                         </div>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                        {/* Colors */}
+                        {/* ── Colors ────────────────────────────────────── */}
                         <div className="space-y-3">
-                              <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Colors</h4>
+                              <SectionHeading>
+                                    {t("messaging.templates.design.colors") || "Colors"}
+                              </SectionHeading>
                               <div className="grid grid-cols-2 gap-2">
-                                    <div className="space-y-1">
-                                          <ColorPickerField
-                                                label="Primary"
-                                                value={value.primaryColor}
-                                                onChange={(c: string) => update("primaryColor", c)}
-                                          />
-                                    </div>
-                                    <div className="space-y-1">
-                                          <ColorPickerField
-                                                label="Secondary"
-                                                value={value.secondaryColor}
-                                                onChange={(c: string) => update("secondaryColor", c)}
-                                          />
-                                    </div>
-                                    <div className="space-y-1">
-                                          <ColorPickerField
-                                                label="Background"
-                                                value={value.backgroundColor}
-                                                onChange={(c: string) => update("backgroundColor", c)}
-                                          />
-                                    </div>
-                                    <div className="space-y-1">
-                                          <ColorPickerField
-                                                label="Text"
-                                                value={value.textColor}
-                                                onChange={(c: string) => update("textColor", c)}
-                                          />
-                                    </div>
+                                    <ColorPickerField
+                                          label={t("messaging.templates.design.primaryColor") || "Primary"}
+                                          value={value.primaryColor}
+                                          onChange={(c: string) => update("primaryColor", c)}
+                                    />
+                                    <ColorPickerField
+                                          label={t("messaging.templates.design.secondaryColor") || "Secondary"}
+                                          value={value.secondaryColor}
+                                          onChange={(c: string) => update("secondaryColor", c)}
+                                    />
+                                    <ColorPickerField
+                                          label={t("messaging.templates.design.backgroundColor") || "Background"}
+                                          value={value.backgroundColor}
+                                          onChange={(c: string) => update("backgroundColor", c)}
+                                    />
+                                    <ColorPickerField
+                                          label={t("messaging.templates.design.textColor") || "Text"}
+                                          value={value.textColor}
+                                          onChange={(c: string) => update("textColor", c)}
+                                    />
                               </div>
                         </div>
 
                         <Separator />
 
-                        {/* Typography */}
+                        {/* ── Typography ─────────────────────────────────── */}
                         <div className="space-y-3">
-                              <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Typography</h4>
+                              <SectionHeading>
+                                    {t("messaging.templates.design.typography") || "Typography"}
+                              </SectionHeading>
                               <div className="space-y-2">
-                                    <Label className="text-xs">Font Family</Label>
+                                    <Label className="text-xs">
+                                          {t("messaging.templates.design.fontFamily") || "Font Family"}
+                                    </Label>
                                     <Select value={value.fontFamily} onValueChange={(v) => update("fontFamily", v)}>
                                           <SelectTrigger className="text-sm">
                                                 <SelectValue />
@@ -142,7 +152,9 @@ export function DesignVariablesPanel({ value, onChange }: DesignVariablesPanelPr
                               </div>
                               <div className="grid grid-cols-2 gap-2">
                                     <div className="space-y-1">
-                                          <Label className="text-xs">Header Size (px)</Label>
+                                          <Label className="text-xs">
+                                                {t("messaging.templates.design.headerSize") || "Header Size (px)"}
+                                          </Label>
                                           <Input
                                                 type="number"
                                                 min={16}
@@ -153,7 +165,9 @@ export function DesignVariablesPanel({ value, onChange }: DesignVariablesPanelPr
                                           />
                                     </div>
                                     <div className="space-y-1">
-                                          <Label className="text-xs">Body Size (px)</Label>
+                                          <Label className="text-xs">
+                                                {t("messaging.templates.design.bodySize") || "Body Size (px)"}
+                                          </Label>
                                           <Input
                                                 type="number"
                                                 min={10}
@@ -168,11 +182,15 @@ export function DesignVariablesPanel({ value, onChange }: DesignVariablesPanelPr
 
                         <Separator />
 
-                        {/* Layout */}
+                        {/* ── Layout ─────────────────────────────────────── */}
                         <div className="space-y-3">
-                              <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Layout</h4>
+                              <SectionHeading>
+                                    {t("messaging.templates.design.layout") || "Layout"}
+                              </SectionHeading>
                               <div className="space-y-2">
-                                    <Label className="text-xs">Border Radius (px)</Label>
+                                    <Label className="text-xs">
+                                          {t("messaging.templates.design.borderRadius") || "Border Radius (px)"}
+                                    </Label>
                                     <Input
                                           type="number"
                                           min={0}
@@ -186,11 +204,15 @@ export function DesignVariablesPanel({ value, onChange }: DesignVariablesPanelPr
 
                         <Separator />
 
-                        {/* Branding */}
+                        {/* ── Branding ───────────────────────────────────── */}
                         <div className="space-y-3">
-                              <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Branding</h4>
+                              <SectionHeading>
+                                    {t("messaging.templates.design.branding") || "Branding"}
+                              </SectionHeading>
                               <div className="space-y-2">
-                                    <Label className="text-xs">Logo URL</Label>
+                                    <Label className="text-xs">
+                                          {t("messaging.templates.design.logoUrl") || "Logo URL"}
+                                    </Label>
                                     <Input
                                           value={value.logoUrl}
                                           onChange={(e) => update("logoUrl", e.target.value)}
@@ -199,7 +221,9 @@ export function DesignVariablesPanel({ value, onChange }: DesignVariablesPanelPr
                                     />
                               </div>
                               <div className="space-y-2">
-                                    <Label className="text-xs">Footer Text</Label>
+                                    <Label className="text-xs">
+                                          {t("messaging.templates.design.footerText") || "Footer Text"}
+                                    </Label>
                                     <Input
                                           value={value.footerText}
                                           onChange={(e) => update("footerText", e.target.value)}
@@ -209,10 +233,12 @@ export function DesignVariablesPanel({ value, onChange }: DesignVariablesPanelPr
                               </div>
                         </div>
 
-                        {/* Live Preview Swatch */}
+                        {/* ── Live Preview Swatch ───────────────────────── */}
                         <Separator />
                         <div className="space-y-2">
-                              <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Preview</h4>
+                              <SectionHeading>
+                                    {t("messaging.templates.design.preview") || "Preview"}
+                              </SectionHeading>
                               <div
                                     className="rounded-lg border overflow-hidden"
                                     style={{
@@ -232,7 +258,7 @@ export function DesignVariablesPanel({ value, onChange }: DesignVariablesPanelPr
                                                       fontWeight: 700,
                                                 }}
                                           >
-                                                Header
+                                                {t("messaging.templates.design.previewHeader") || "Header"}
                                           </span>
                                     </div>
                                     <div className="px-4 py-3">
@@ -242,18 +268,19 @@ export function DesignVariablesPanel({ value, onChange }: DesignVariablesPanelPr
                                                       fontSize: `${value.bodyFontSize}px`,
                                                 }}
                                           >
-                                                Body text preview
+                                                {t("messaging.templates.design.previewBody") || "Body text preview"}
                                           </p>
-                                          <button
+                                          <Button
                                                 type="button"
-                                                className="mt-2 px-3 py-1 text-xs text-white font-medium"
+                                                size="sm"
+                                                className="mt-2 text-xs text-white font-medium"
                                                 style={{
                                                       backgroundColor: value.secondaryColor,
                                                       borderRadius: `${value.borderRadius}px`,
                                                 }}
                                           >
-                                                Button
-                                          </button>
+                                                {t("messaging.templates.design.previewButton") || "Button"}
+                                          </Button>
                                     </div>
                               </div>
                         </div>
