@@ -1,30 +1,9 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { notificationBellContainer } from '@core/notification/di';
 import { secureTokenService } from '@core/common/secure-token-service';
-
-/**
- * Notification types matching backend DTOs.
- */
-interface NotificationItem {
-      id: string;
-      title: string;
-      body: string;
-      type: string;
-      category: string;
-      isRead: boolean;
-      readAt: string | null;
-      actionUrl: string | null;
-      metadataJson: string | null;
-      createdAt: string;
-}
-
-interface NotificationListResponse {
-      items: NotificationItem[];
-      totalCount: number;
-      page: number;
-      pageSize: number;
-}
+import type { NotificationItem } from '@core/notification/entities/NotificationItem';
 
 export interface NotificationViewModel {
       /** Notifications list */
@@ -50,6 +29,7 @@ export interface NotificationViewModel {
 /**
  * ViewModel hook for notification bell.
  * Handles polling for unread count and fetching notification list.
+ * Uses the proper data layer: Repository → Service → IApiService.
  * Future: replace polling with SignalR real-time connection.
  */
 export function useNotificationViewModel(): NotificationViewModel {
@@ -59,63 +39,42 @@ export function useNotificationViewModel(): NotificationViewModel {
       const [isOpen, setIsOpen] = useState(false);
       const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-      const apiBase = process.env.NEXT_PUBLIC_API_URL || '';
-
-      const getHeaders = useCallback((): HeadersInit => {
-            const token = secureTokenService.getAccessToken();
-            return {
-                  'Content-Type': 'application/json',
-                  ...(token ? { Authorization: `Bearer ${token}` } : {}),
-            };
-      }, []);
+      const repo = notificationBellContainer.notificationBellRepository;
 
       const isAuthenticated = useCallback((): boolean => {
             return !!secureTokenService.getAccessToken();
       }, []);
 
-      // Fetch unread count
+      // Fetch unread count via repository
       const fetchUnreadCount = useCallback(async () => {
             if (!isAuthenticated()) return;
             try {
-                  const res = await fetch(`${apiBase}/api/v1/notifications/unread-count`, {
-                        headers: getHeaders(),
-                  });
-                  if (res.ok) {
-                        const data = await res.json();
-                        setUnreadCount(data.count ?? data.unreadCount ?? 0);
-                  }
+                  const data = await repo.getUnreadCount();
+                  setUnreadCount(data.count ?? 0);
             } catch {
                   // silently fail — will retry on next poll
             }
-      }, [apiBase, getHeaders, isAuthenticated]);
+      }, [repo, isAuthenticated]);
 
-      // Fetch notifications list
+      // Fetch notifications list via repository
       const fetchNotifications = useCallback(async () => {
             if (!isAuthenticated()) return;
             setIsLoading(true);
             try {
-                  const res = await fetch(`${apiBase}/api/v1/notifications?pageSize=10`, {
-                        headers: getHeaders(),
-                  });
-                  if (res.ok) {
-                        const data: NotificationListResponse = await res.json();
-                        setNotifications(data.items);
-                  }
+                  const data = await repo.getNotifications({ pageSize: 10 });
+                  setNotifications(data.items);
             } catch {
                   // silently fail
             } finally {
                   setIsLoading(false);
             }
-      }, [apiBase, getHeaders, isAuthenticated]);
+      }, [repo, isAuthenticated]);
 
-      // Mark single as read
+      // Mark single as read via repository
       const markAsRead = useCallback(async (id: string) => {
             if (!isAuthenticated()) return;
             try {
-                  await fetch(`${apiBase}/api/v1/notifications/${id}/read`, {
-                        method: 'PATCH',
-                        headers: getHeaders(),
-                  });
+                  await repo.markAsRead(id);
                   setNotifications(prev =>
                         prev.map(n => n.id === id ? { ...n, isRead: true, readAt: new Date().toISOString() } : n)
                   );
@@ -123,22 +82,19 @@ export function useNotificationViewModel(): NotificationViewModel {
             } catch {
                   // silently fail
             }
-      }, [apiBase, getHeaders, isAuthenticated]);
+      }, [repo, isAuthenticated]);
 
-      // Mark all as read
+      // Mark all as read via repository
       const markAllAsRead = useCallback(async () => {
             if (!isAuthenticated()) return;
             try {
-                  await fetch(`${apiBase}/api/v1/notifications/read-all`, {
-                        method: 'PATCH',
-                        headers: getHeaders(),
-                  });
+                  await repo.markAllAsRead();
                   setNotifications(prev => prev.map(n => ({ ...n, isRead: true, readAt: new Date().toISOString() })));
                   setUnreadCount(0);
             } catch {
                   // silently fail
             }
-      }, [apiBase, getHeaders, isAuthenticated]);
+      }, [repo, isAuthenticated]);
 
       // Toggle open — fetch on open
       const toggleOpen = useCallback(() => {
