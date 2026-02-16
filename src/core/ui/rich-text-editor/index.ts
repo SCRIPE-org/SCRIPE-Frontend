@@ -20,3 +20,7 @@ export {
 export { ColorPickerField, type ColorPickerFieldProps } from "./ColorPickerField";
 export { ButtonDesigner, type ButtonDesignerProps } from "./ButtonDesigner";
 export { SocialBlock, type SocialBlockProps } from "./SocialBlock";
+
+// ─── Email HTML Block Extension ─────────────────────────────
+export { EmailHtmlBlock, type EmailHtmlBlockOptions } from "./extensions/EmailHtmlBlock";
+export { EmailHtmlBlockView } from "./EmailHtmlBlockView";

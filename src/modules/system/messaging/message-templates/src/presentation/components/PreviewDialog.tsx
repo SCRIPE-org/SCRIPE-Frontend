@@ -126,9 +126,21 @@ export function PreviewDialog({ open, onOpenChange, result, isLoading }: Preview
                                                 </div>
 
                                                 {/* Content */}
-                                                <div
-                                                      className="p-4 prose prose-sm max-w-none text-black [&_*]:text-inherit"
-                                                      dangerouslySetInnerHTML={{ __html: sanitizedBody }}
+                                                <iframe
+                                                      srcDoc={`<!DOCTYPE html><html><head><meta charset="utf-8"/><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:14px;line-height:1.6;color:#000;padding:16px;background:#fff}img{max-width:100%;height:auto}a{color:#3b82f6}</style></head><body>${sanitizedBody}</body></html>`}
+                                                      sandbox="allow-same-origin"
+                                                      className="w-full border-0"
+                                                      style={{ minHeight: "200px", height: "400px" }}
+                                                      title="Template Preview"
+                                                      onLoad={(e) => {
+                                                            const iframe = e.currentTarget;
+                                                            try {
+                                                                  const body = iframe.contentDocument?.body;
+                                                                  if (body) {
+                                                                        iframe.style.height = `${Math.min(body.scrollHeight + 32, 600)}px`;
+                                                                  }
+                                                            } catch { /* sandbox restriction */ }
+                                                      }}
                                                 />
                                           </div>
                                     </div>

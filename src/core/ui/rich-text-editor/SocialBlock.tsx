@@ -18,7 +18,7 @@ import {
 
 // ─── Types ──────────────────────────────────────────────────
 export interface SocialBlockProps {
-      onInsert: (html: string) => void;
+      onInsert: (attrs: { html: string; label?: string; blockType?: string }) => void;
 }
 
 interface SocialPlatform {
@@ -153,7 +153,11 @@ export function SocialBlock({ onInsert }: SocialBlockProps) {
 
       const handleInsert = () => {
             if (enabledEntries.length === 0) return;
-            onInsert(generateHtml());
+            onInsert({
+                  html: generateHtml(),
+                  label: `Social Links (${enabledEntries.length})`,
+                  blockType: "social",
+            });
             setOpen(false);
       };
 

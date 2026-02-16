@@ -76,8 +76,8 @@ export function EditorToolbar({
       );
 
       const insertHtmlBlock = useCallback(
-            (html: string) => {
-                  editor.chain().focus().insertContent(html, { parseOptions: { preserveWhitespace: false } }).run();
+            (attrs: { html: string; label?: string; blockType?: string }) => {
+                  editor.chain().focus().insertEmailHtmlBlock(attrs).run();
             },
             [editor]
       );

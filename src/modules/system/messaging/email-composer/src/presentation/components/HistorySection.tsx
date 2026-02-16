@@ -115,19 +115,17 @@ function ExpandedEmailRow({
                               {/* Body Preview */}
                               <div>
                                     <p className="text-xs font-medium text-muted-foreground mb-1">Body Preview</p>
-                                    <div className="border rounded-lg bg-white dark:bg-background p-4 max-h-[200px] overflow-y-auto">
+                                    <div className="border rounded-lg bg-white dark:bg-background overflow-hidden max-h-[200px]">
                                           {email.body.includes("<") ? (
-                                                <div
-                                                      className="prose prose-sm max-w-none text-sm"
-                                                      dangerouslySetInnerHTML={{
-                                                            __html: email.body
-                                                                  .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
-                                                                  .replace(/on\w+="[^"]*"/gi, "")
-                                                                  .replace(/on\w+='[^']*'/gi, ""),
-                                                      }}
+                                                <iframe
+                                                      srcDoc={`<!DOCTYPE html><html><head><meta charset="utf-8"/><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:13px;line-height:1.5;color:#000;padding:12px;background:#fff}img{max-width:100%;height:auto}a{color:#3b82f6}</style></head><body>${email.body.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "").replace(/on\w+="[^"]*"/gi, "").replace(/on\w+='[^']*'/gi, "")}</body></html>`}
+                                                      sandbox="allow-same-origin"
+                                                      className="w-full border-0"
+                                                      style={{ height: "180px" }}
+                                                      title="Email Body Preview"
                                                 />
                                           ) : (
-                                                <pre className="whitespace-pre-wrap text-sm font-sans">{email.body}</pre>
+                                                <pre className="whitespace-pre-wrap text-sm font-sans p-4">{email.body}</pre>
                                           )}
                                     </div>
                               </div>

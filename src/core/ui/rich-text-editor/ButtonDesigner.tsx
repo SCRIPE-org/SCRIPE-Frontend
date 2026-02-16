@@ -13,7 +13,7 @@ import { ColorPickerField } from "./ColorPickerField";
 
 // ─── Types ──────────────────────────────────────────────────
 export interface ButtonDesignerProps {
-      onInsert: (html: string) => void;
+      onInsert: (attrs: { html: string; label?: string; blockType?: string }) => void;
 }
 
 interface ButtonConfig {
@@ -62,7 +62,11 @@ export function ButtonDesigner({ onInsert }: ButtonDesignerProps) {
       };
 
       const handleInsert = () => {
-            onInsert(generateHtml());
+            onInsert({
+                  html: generateHtml(),
+                  label: `CTA: ${config.text || "Click Here"}`,
+                  blockType: "button",
+            });
             setOpen(false);
             setConfig({ ...DEFAULT_CONFIG });
       };

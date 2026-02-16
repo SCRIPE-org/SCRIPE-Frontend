@@ -17,6 +17,7 @@ import Superscript from "@tiptap/extension-superscript";
 import { cn } from "@core/common/utils";
 import type { VariableDefinition } from "./VariablePicker";
 import { EditorToolbar } from "./EditorToolbar";
+import { EmailHtmlBlock } from "./extensions/EmailHtmlBlock";
 
 // ─── Types ──────────────────────────────────────────────────
 export interface RichTextEditorProps {
@@ -36,6 +37,36 @@ export interface RichTextEditorProps {
       error?: boolean;
       /** Read-only mode */
       readOnly?: boolean;
+}
+
+// ─── Email HTML Serializer ──────────────────────────────────
+/**
+ * Custom HTML serializer that walks the editor document and replaces
+ * emailHtmlBlock wrapper divs with their stored raw HTML content.
+ * This is what makes email-safe HTML (tables, buttons, social links)
+ * survive the TipTap roundtrip.
+ */
+function getEmailSafeHTML(editor: ReturnType<typeof useEditor>): string {
+      if (!editor) return "";
+
+      // Get standard TipTap HTML
+      const html = editor.getHTML();
+
+      // Replace emailHtmlBlock wrappers with their stored raw HTML
+      // The wrapper has the pattern: <div data-email-html-block="true" data-email-html="...">...</div>
+      const wrapper = document.createElement("div");
+      wrapper.innerHTML = html;
+
+      const blocks = wrapper.querySelectorAll('div[data-email-html-block="true"]');
+      blocks.forEach((block) => {
+            const rawHtml = block.getAttribute("data-email-html") || "";
+            if (rawHtml) {
+                  const fragment = document.createRange().createContextualFragment(rawHtml);
+                  block.replaceWith(fragment);
+            }
+      });
+
+      return wrapper.innerHTML;
 }
 
 // ─── Main Component ─────────────────────────────────────────
@@ -83,6 +114,7 @@ export function RichTextEditor({
                   Placeholder.configure({ placeholder }),
                   Subscript,
                   Superscript,
+                  EmailHtmlBlock,
                   ...(maxLength
                         ? [CharacterCount.configure({ limit: maxLength })]
                         : [CharacterCount]),
@@ -90,7 +122,7 @@ export function RichTextEditor({
             content: value,
             editable: !readOnly,
             onUpdate: ({ editor: e }) => {
-                  const html = e.getHTML();
+                  const html = getEmailSafeHTML(e);
                   onChange(html);
             },
             immediatelyRender: false,
@@ -98,7 +130,7 @@ export function RichTextEditor({
 
       // Sync external value changes
       React.useEffect(() => {
-            if (editor && value !== editor.getHTML()) {
+            if (editor && value !== getEmailSafeHTML(editor)) {
                   editor.commands.setContent(value, { emitUpdate: false });
             }
             // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -113,7 +145,7 @@ export function RichTextEditor({
                   setSourceMode(false);
             } else {
                   // Copy editor HTML to source
-                  setSourceHtml(editor.getHTML());
+                  setSourceHtml(getEmailSafeHTML(editor));
                   setSourceMode(true);
             }
       }, [editor, sourceMode, sourceHtml, onChange]);
