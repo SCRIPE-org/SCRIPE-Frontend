@@ -14,6 +14,7 @@ export interface CreateAdminRequest {
   firstName?: string;
   lastName?: string;
   phoneNumber?: string;
+  email?: string;
   notes?: string;
   roleIds: string[]; // Required - at least one role
   tenantId?: string;
@@ -26,6 +27,7 @@ export interface UpdateAdminRequest {
   firstName?: string;
   lastName?: string;
   phoneNumber?: string;
+  email?: string;
   notes?: string;
   isActive?: boolean;
 }
