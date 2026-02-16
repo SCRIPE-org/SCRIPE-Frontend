@@ -5,8 +5,9 @@ import type { EmailRecipient, SendManualEmailPayload, SentEmail, EmailTemplateLi
 export interface IEmailService {
       searchRecipients(query: string): Promise<EmailRecipient[]>;
       send(data: SendManualEmailPayload): Promise<void>;
-      getSentHistory(params: { page: number; pageSize: number }): Promise<{ items: SentEmail[]; totalCount: number }>;
+      getSentHistory(params: { page: number; pageSize: number; search?: string; status?: string }): Promise<{ items: SentEmail[]; totalCount: number }>;
       cancelEmail(id: string): Promise<void>;
+      resendEmail(id: string): Promise<{ id: string }>;
       getEmailTemplates(params: { page: number; pageSize: number; search?: string }): Promise<EmailTemplateListResponse>;
 }
 
@@ -22,13 +23,17 @@ export class EmailService implements IEmailService {
             await this.api.post(API_ENDPOINTS.EMAILS.SEND, data);
       }
 
-      async getSentHistory(params: { page: number; pageSize: number }): Promise<{ items: SentEmail[]; totalCount: number }> {
+      async getSentHistory(params: { page: number; pageSize: number; search?: string; status?: string }): Promise<{ items: SentEmail[]; totalCount: number }> {
             const url = buildUrl(API_ENDPOINTS.EMAILS.SENT_HISTORY, params);
             return this.api.get(url);
       }
 
       async cancelEmail(id: string): Promise<void> {
             await this.api.delete(API_ENDPOINTS.EMAILS.CANCEL(id));
+      }
+
+      async resendEmail(id: string): Promise<{ id: string }> {
+            return this.api.post(API_ENDPOINTS.EMAILS.RESEND(id), {});
       }
 
       async getEmailTemplates(params: { page: number; pageSize: number; search?: string }): Promise<EmailTemplateListResponse> {

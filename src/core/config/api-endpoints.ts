@@ -183,6 +183,7 @@ export const API_ENDPOINTS = {
     SEARCH_RECIPIENTS: `${V1}/emails/search-recipients`,
     SENT_HISTORY: `${V1}/emails/sent`,
     CANCEL: (id: string) => `${V1}/emails/${id}`,
+    RESEND: (id: string) => `${V1}/emails/${id}/resend`,
   },
   // ===== NOTIFICATIONS (Bell UI — read/unread/preferences) =====
   NOTIFICATIONS: {

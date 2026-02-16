@@ -21,6 +21,11 @@ export interface SendManualEmailPayload {
       body: string;
       templateKey?: string;
       templatePlaceholders?: Record<string, unknown>;
+      scheduledAt?: string | null;    // ISO date, null for default delay
+      attachments?: string[];         // uploaded attachment URLs
+      signatureHtml?: string | null;  // HTML signature block
+      cc?: string[];                  // CC email addresses
+      bcc?: string[];                 // BCC email addresses
 }
 
 export interface SentEmail {
@@ -28,9 +33,17 @@ export interface SentEmail {
       to: string;
       subject: string;
       body: string;
-      sentAt: string;
-      status: "sent" | "failed" | "pending";
+      status: "Sent" | "Failed" | "Pending" | "Cancelled";
+      createdAt: string;
+      sentAt: string | null;
+      scheduledAt: string;
       errorMessage: string | null;
+      sentByAdminId: string;
+      templateKey: string | null;
+      recipientType: string;
+      cc: string | null;              // comma-separated CC addresses
+      bcc: string | null;             // comma-separated BCC addresses
+      retryCount: number;
 }
 
 /**

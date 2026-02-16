@@ -49,24 +49,30 @@ export interface HistorySectionProps {
 }
 
 // ─── Status Config ──────────────────────────────────────────
-const STATUS_CONFIG = {
-      sent: {
+const STATUS_CONFIG: Record<string, { label: string; variant: "success" | "destructive" | "secondary" | "outline"; icon: typeof CheckCircle2; color: string }> = {
+      Sent: {
             label: "Sent",
             variant: "success" as const,
             icon: CheckCircle2,
             color: "text-emerald-500",
       },
-      failed: {
+      Failed: {
             label: "Failed",
             variant: "destructive" as const,
             icon: AlertTriangle,
             color: "text-red-500",
       },
-      pending: {
+      Pending: {
             label: "Pending",
             variant: "secondary" as const,
             icon: Clock,
             color: "text-amber-500",
+      },
+      Cancelled: {
+            label: "Cancelled",
+            variant: "outline" as const,
+            icon: Clock,
+            color: "text-gray-400",
       },
 };
 
@@ -85,7 +91,7 @@ function ExpandedEmailRow({
                   <TableCell colSpan={5} className="p-0">
                         <div className="bg-muted/30 border-t border-b px-6 py-4 space-y-4 animate-in slide-in-from-top-2 duration-200">
                               {/* Error message */}
-                              {email.status === "failed" && email.errorMessage && (
+                              {email.status === "Failed" && email.errorMessage && (
                                     <div className="flex items-center gap-2 px-3 py-2 bg-destructive/10 text-destructive rounded-md text-sm">
                                           <AlertTriangle className="h-4 w-4 shrink-0" />
                                           <span>{email.errorMessage}</span>
@@ -128,7 +134,7 @@ function ExpandedEmailRow({
                                                 onClick={() => onResend(email)}
                                           >
                                                 <RefreshCcw className="h-3 w-3" />
-                                                {email.status === "failed" ? "Retry" : "Resend"}
+                                                {email.status === "Failed" ? "Retry" : "Resend"}
                                           </Button>
                                     )}
                                     {onUseAsTemplate && (
@@ -200,7 +206,7 @@ export function HistorySection(vm: HistorySectionProps) {
                                           <TableBody>
                                                 {vm.history.map((email, idx) => {
                                                       const isExpanded = expandedId === email.id;
-                                                      const statusConf = STATUS_CONFIG[email.status] || STATUS_CONFIG.pending;
+                                                      const statusConf = STATUS_CONFIG[email.status] || STATUS_CONFIG.Pending;
                                                       const StatusIcon = statusConf.icon;
 
                                                       return (
@@ -256,7 +262,7 @@ export function HistorySection(vm: HistorySectionProps) {
                                                                         {/* Quick Actions */}
                                                                         <TableCell>
                                                                               <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
-                                                                                    {email.status === "failed" && vm.onResend && (
+                                                                                    {email.status === "Failed" && vm.onResend && (
                                                                                           <Button
                                                                                                 variant="ghost"
                                                                                                 size="icon"
@@ -267,7 +273,7 @@ export function HistorySection(vm: HistorySectionProps) {
                                                                                                 <RefreshCcw className="h-3.5 w-3.5" />
                                                                                           </Button>
                                                                                     )}
-                                                                                    {email.status === "pending" && (
+                                                                                    {email.status === "Pending" && (
                                                                                           <Button
                                                                                                 variant="ghost"
                                                                                                 size="icon"

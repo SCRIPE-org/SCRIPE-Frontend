@@ -204,6 +204,13 @@ export function useEmailComposerViewModel() {
                               recipientEmail: r.email,
                               subject,
                               body,
+                              cc: ccRecipients.length > 0 ? ccRecipients.map(c => c.email) : undefined,
+                              bcc: bccRecipients.length > 0 ? bccRecipients.map(b => b.email) : undefined,
+                              scheduledAt: schedule.mode === "scheduled" && schedule.scheduledDate
+                                    ? `${schedule.scheduledDate}T${schedule.scheduledTime || "00:00"}:00Z`
+                                    : undefined,
+                              attachments: attachments.length > 0 ? attachments.map(a => a.name) : undefined,
+                              signatureHtml: undefined,
                         };
                         await repo.send(payload);
                   }
@@ -373,11 +380,13 @@ export function useEmailComposerViewModel() {
             setSchedule,
             // Resend / Use as Template
             onResend: useCallback((email: SentEmail) => {
-                  setSubject(email.subject);
-                  setBody(email.body);
-                  setActiveTab("compose");
-                  success({ title: "Email content loaded — update recipients and send" });
-            }, [success]),
+                  repo.resendEmail(email.id).then(() => {
+                        queryClient.invalidateQueries({ queryKey: HISTORY_QUERY_KEY });
+                        success({ title: "Email re-queued for sending" });
+                  }).catch(() => {
+                        toastError({ title: "Failed to resend email" });
+                  });
+            }, [repo, queryClient, success, toastError]),
             onUseAsTemplate: useCallback((email: SentEmail) => {
                   // Navigate to template creation with pre-filled subject/body
                   const params = new URLSearchParams({
