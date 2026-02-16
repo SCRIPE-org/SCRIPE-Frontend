@@ -35,6 +35,7 @@ export function useNotificationSenderViewModel() {
                         return [...prev, target];
                   });
                   setTargetSearch("");
+                  setFieldErrors((prev) => ({ ...prev, targets: false }));
             },
             []
       );
@@ -50,29 +51,45 @@ export function useNotificationSenderViewModel() {
       const [priority, setPriority] = useState<NotificationPriority>("normal");
       const [actionUrl, setActionUrl] = useState("");
 
+      // ─── Confirmation state ───────────────────────────────────
+      const [confirmSendOpen, setConfirmSendOpen] = useState(false);
+
+      // ─── Validation state ─────────────────────────────────────
+      const [fieldErrors, setFieldErrors] = useState<Record<string, boolean>>({});
+
       // ─── Send ──────────────────────────────────────────────────
       const sendMutation = useMutation({
             mutationFn: (data: SendNotificationRequest) => repo.send(data),
             onSuccess: () => {
                   success({ title: t("messaging.notifications.sendSuccess") || "Notification sent" });
-                  // Reset form
-                  setSelectedTargets([]);
-                  setTitle("");
-                  setMessage("");
-                  setCategory("info");
-                  setPriority("normal");
-                  setActionUrl("");
+                  resetForm();
             },
             onError: () => {
                   toastError({ title: t("messaging.notifications.sendError") || "Failed to send notification" });
             },
       });
 
-      const handleSend = useCallback(() => {
-            if (selectedTargets.length === 0 || !title.trim() || !message.trim()) {
+      const validateForm = useCallback((): boolean => {
+            const errors: Record<string, boolean> = {};
+            if (selectedTargets.length === 0) errors.targets = true;
+            if (!title.trim()) errors.title = true;
+            if (!message.trim()) errors.message = true;
+            setFieldErrors(errors);
+
+            if (Object.keys(errors).length > 0) {
                   toastError({ title: t("messaging.notifications.validationError") || "Please fill all required fields" });
-                  return;
+                  return false;
             }
+            return true;
+      }, [selectedTargets, title, message, toastError, t]);
+
+      const handleSend = useCallback(() => {
+            if (!validateForm()) return;
+            setConfirmSendOpen(true);
+      }, [validateForm]);
+
+      const confirmSend = useCallback(() => {
+            setConfirmSendOpen(false);
             sendMutation.mutate({
                   targetIds: selectedTargets.map((t) => t.id),
                   title,
@@ -81,7 +98,19 @@ export function useNotificationSenderViewModel() {
                   priority,
                   actionUrl: actionUrl || undefined,
             });
-      }, [selectedTargets, title, message, category, priority, actionUrl, sendMutation, toastError, t]);
+      }, [selectedTargets, title, message, category, priority, actionUrl, sendMutation]);
+
+      // ─── Reset Form ───────────────────────────────────────────
+      const resetForm = useCallback(() => {
+            setSelectedTargets([]);
+            setTitle("");
+            setMessage("");
+            setCategory("info");
+            setPriority("normal");
+            setActionUrl("");
+            setTargetSearch("");
+            setFieldErrors({});
+      }, []);
 
       // ─── Options ───────────────────────────────────────────────
       const categoryOptions: { value: NotificationCategory; label: string }[] = [
@@ -110,18 +139,24 @@ export function useNotificationSenderViewModel() {
             removeTarget,
             // Form
             title,
-            setTitle,
+            setTitle: (v: string) => { setTitle(v); setFieldErrors((p) => ({ ...p, title: false })); },
             message,
-            setMessage,
+            setMessage: (v: string) => { setMessage(v); setFieldErrors((p) => ({ ...p, message: false })); },
             category,
             setCategory,
             priority,
             setPriority,
             actionUrl,
             setActionUrl,
+            // Validation
+            fieldErrors,
             // Actions
             handleSend,
+            confirmSend,
+            confirmSendOpen,
+            setConfirmSendOpen,
             isSending: sendMutation.isPending,
+            resetForm,
             // Options
             categoryOptions,
             priorityOptions,

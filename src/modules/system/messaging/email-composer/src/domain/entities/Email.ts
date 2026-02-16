@@ -11,6 +11,8 @@ export interface EmailRecipient {
 
 export interface SendEmailRequest {
       to: string[];
+      cc?: string[];
+      bcc?: string[];
       subject: string;
       body: string;
       templateKey?: string;

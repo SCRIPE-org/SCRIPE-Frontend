@@ -1,5 +1,6 @@
 "use client";
 
+import DOMPurify from "dompurify";
 import { useI18n } from "@core/providers/i18n-provider";
 import {
       Dialog,
@@ -7,6 +8,7 @@ import {
       DialogHeader,
       DialogTitle,
 } from "@core/ui/dialog";
+import { Loader2 } from "lucide-react";
 import type { PreviewTemplateResponse } from "../../domain/entities/MessageTemplate";
 
 interface PreviewDialogProps {
@@ -19,6 +21,22 @@ interface PreviewDialogProps {
 export function PreviewDialog({ open, onOpenChange, result, isLoading }: PreviewDialogProps) {
       const { t } = useI18n();
 
+      const sanitizedBody = result?.body
+            ? DOMPurify.sanitize(result.body, {
+                  ALLOWED_TAGS: [
+                        "h1", "h2", "h3", "h4", "h5", "h6",
+                        "p", "br", "hr", "span", "div",
+                        "strong", "b", "em", "i", "u", "s",
+                        "ul", "ol", "li",
+                        "table", "thead", "tbody", "tr", "th", "td",
+                        "a", "img",
+                        "blockquote", "pre", "code",
+                  ],
+                  ALLOWED_ATTR: ["href", "src", "alt", "class", "style", "target", "rel", "width", "height"],
+                  ALLOW_DATA_ATTR: false,
+            })
+            : "";
+
       return (
             <Dialog open={open} onOpenChange={onOpenChange}>
                   <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
@@ -28,7 +46,7 @@ export function PreviewDialog({ open, onOpenChange, result, isLoading }: Preview
 
                         {isLoading && (
                               <div className="flex items-center justify-center py-12">
-                                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+                                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
                               </div>
                         )}
 
@@ -48,10 +66,16 @@ export function PreviewDialog({ open, onOpenChange, result, isLoading }: Preview
                                                 {t("messaging.templates.body") || "Body"}
                                           </p>
                                           <div
-                                                className="border rounded-lg p-4 bg-white dark:bg-zinc-900"
-                                                dangerouslySetInnerHTML={{ __html: result.body }}
+                                                className="border rounded-lg p-4 bg-white dark:bg-zinc-900 prose prose-sm dark:prose-invert max-w-none"
+                                                dangerouslySetInnerHTML={{ __html: sanitizedBody }}
                                           />
                                     </div>
+                              </div>
+                        )}
+
+                        {!result && !isLoading && (
+                              <div className="text-center py-8 text-muted-foreground">
+                                    {t("common.noData") || "No preview available"}
                               </div>
                         )}
                   </DialogContent>
