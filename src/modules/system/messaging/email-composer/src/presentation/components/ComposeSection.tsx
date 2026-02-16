@@ -3,8 +3,9 @@
 import React from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Input } from "@core/ui/input";
-import { Textarea } from "@core/ui/textarea";
 import { Button } from "@core/ui/button";
+import { RichTextEditor } from "@core/ui/rich-text-editor/RichTextEditor";
+import { DEFAULT_VARIABLES } from "@core/ui/rich-text-editor/VariablePicker";
 import { Badge } from "@core/ui/badge";
 import { Label } from "@core/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
@@ -281,25 +282,20 @@ export function ComposeSection(vm: ComposeSectionProps) {
                               />
                         </div>
 
-                        {/* Body */}
+                        {/* Body — Rich Text Editor */}
                         <div className="space-y-2">
-                              <div className="flex items-center justify-between">
-                                    <Label className={cn(vm.fieldErrors.body && "text-destructive")}>
-                                          {t("messaging.email.body") || "Body"} *
-                                    </Label>
-                                    <span className={cn(
-                                          "text-xs",
-                                          vm.body.length > BODY_MAX ? "text-destructive" : "text-muted-foreground"
-                                    )}>
-                                          {vm.body.length.toLocaleString()}/{BODY_MAX.toLocaleString()}
-                                    </span>
-                              </div>
-                              <Textarea
-                                    placeholder={t("messaging.email.bodyPlaceholder") || "Write your email content here..."}
+                              <Label className={cn(vm.fieldErrors.body && "text-destructive")}>
+                                    {t("messaging.email.body") || "Body"} *
+                              </Label>
+                              <RichTextEditor
                                     value={vm.body}
-                                    onChange={(e) => vm.setBody(e.target.value)}
-                                    rows={10}
-                                    className={cn("min-h-[200px]", vm.fieldErrors.body && "border-destructive focus-visible:ring-destructive")}
+                                    onChange={vm.setBody}
+                                    placeholder={t("messaging.email.bodyPlaceholder") || "Write your email content here..."}
+                                    maxLength={BODY_MAX}
+                                    minHeight="250px"
+                                    variables={DEFAULT_VARIABLES}
+                                    showSourceToggle
+                                    error={vm.fieldErrors.body}
                               />
                         </div>
 

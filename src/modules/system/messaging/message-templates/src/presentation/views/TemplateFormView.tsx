@@ -6,6 +6,8 @@ import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Textarea } from "@core/ui/textarea";
 import { Switch } from "@core/ui/switch";
+import { RichTextEditor } from "@core/ui/rich-text-editor/RichTextEditor";
+import { DEFAULT_VARIABLES } from "@core/ui/rich-text-editor/VariablePicker";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
 import { ArrowLeft, Save, Loader2 } from "lucide-react";
@@ -56,7 +58,7 @@ export function TemplateFormView() {
                                     </CardContent>
                               </Card>
 
-                              {/* Body */}
+                              {/* Body — Rich Text Editor */}
                               <Card>
                                     <CardHeader>
                                           <CardTitle>{vm.t("messaging.templates.body") || "Body"}</CardTitle>
@@ -65,12 +67,13 @@ export function TemplateFormView() {
                                           </CardDescription>
                                     </CardHeader>
                                     <CardContent>
-                                          <Textarea
+                                          <RichTextEditor
                                                 value={vm.form.body}
-                                                onChange={(e) => vm.updateField("body", e.target.value)}
+                                                onChange={(html) => vm.updateField("body", html)}
                                                 placeholder={vm.t("messaging.templates.bodyPlaceholder") || "Template body..."}
-                                                rows={20}
-                                                className="font-mono text-sm min-h-[400px]"
+                                                minHeight="400px"
+                                                variables={DEFAULT_VARIABLES}
+                                                showSourceToggle
                                           />
                                     </CardContent>
                               </Card>

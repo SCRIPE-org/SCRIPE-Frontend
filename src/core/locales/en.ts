@@ -4155,6 +4155,54 @@ export const en = {
       previewError: "Failed to preview template",
       placeholderSchema: "Placeholder Schema",
       designVariables: "Design Variables",
+      // List
+
+      createNew: "Create Template",
+      noTemplates: "No templates found",
+      // Form
+      createTitle: "Create Template",
+      editTitle: "Edit Template",
+      createDescription: "Create a new message template",
+      editDescription: "Edit template details",
+      keyPlaceholder: "e.g., welcome-email",
+
+      subjectDescription: "Email subject line (optional for SMS/Push)",
+
+      bodyDescription: "Template body content with placeholders",
+
+      settings: "Settings",
+      // Design
+      primaryColor: "Primary Color",
+      secondaryColor: "Secondary Color",
+      backgroundColor: "Background Color",
+      textColor: "Text Color",
+      fontFamily: "Font Family",
+      headerFontSize: "Header Size",
+      bodyFontSize: "Body Size",
+      borderRadius: "Border Radius",
+      logoUrl: "Logo URL",
+      footerText: "Footer Text",
+      resetDesign: "Reset Design",
+      // Placeholders
+      addPlaceholder: "Add Placeholder Field",
+      placeholderKey: "Key",
+      placeholderLabel: "Label",
+      placeholderType: "Type",
+      placeholderDefault: "Default Value",
+      placeholderRequired: "Required",
+      placeholderDescription: "Description",
+      placeholderOptions: "Options",
+      noPlaceholders: "No custom placeholders defined",
+      // Preview
+      previewTemplate: "Preview Template",
+      // Actions
+      saveSuccess: "Template saved successfully",
+      saveError: "Failed to save template",
+      deleteConfirm: "Are you sure you want to delete this template?",
+      deleteSuccess: "Template deleted successfully",
+      // Status
+      active: "Active",
+      inactive: "Inactive",
     },
     email: {
       title: "Email Composer",
@@ -4207,6 +4255,63 @@ export const en = {
       statusCancelled: "Cancelled",
       statusScheduled: "Scheduled",
       scheduledAt: "Scheduled At",
+      // Composer
+      composerTitle: "Compose Email",
+      composerDescription: "Create and send emails to recipients",
+
+      addRecipient: "Add Recipient",
+
+      noRecipientsFound: "No recipients found",
+      customEmail: "Add custom email",
+      removeRecipient: "Remove",
+      showCc: "CC",
+      showBcc: "BCC",
+      // Attachments
+      attachments: "Attachments",
+      attachFile: "Attach File",
+      dropFiles: "Drop files here or browse",
+      maxFileSize: "Max {{size}}MB per file",
+      maxFiles: "{{count}} files total",
+      fileUploaded: "Uploaded",
+      fileError: "Upload failed",
+      // Scheduling
+      schedule: "Schedule",
+      sendNow: "Send Now",
+      sendNowDesc: "Deliver immediately",
+      scheduled: "Schedule",
+      scheduledDesc: "Pick a date & time",
+      recurring: "Recurring",
+      recurringDesc: "Repeat automatically",
+      scheduledDate: "Date",
+      scheduledTime: "Time",
+      timezone: "Timezone",
+      frequency: "Frequency",
+      daily: "Daily",
+      weekly: "Weekly",
+      monthly: "Monthly",
+      dayOfWeek: "Day of Week",
+      dayOfMonth: "Day of Month",
+      sendTime: "Send Time",
+      // Preview
+
+      desktop: "Desktop",
+      tablet: "Tablet",
+      mobile: "Mobile",
+      // Actions
+      sending: "Sending...",
+      preview: "Preview",
+      clear: "Clear",
+      clearConfirm: "Are you sure you want to clear the form?",
+
+      // Validation
+      recipientRequired: "At least one recipient is required",
+      subjectRequired: "Subject is required",
+      bodyRequired: "Email body is required",
+      invalidEmail: "Invalid email address",
+      // History
+      historyEmpty: "No emails sent yet",
+      sentTo: "Sent to",
+
     },
     notifications: {
       title: "Notification Sender",
@@ -4243,4 +4348,6 @@ export const en = {
       targetsLabel: "target(s)",
     },
   },
+
+
 };
