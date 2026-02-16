@@ -7,7 +7,17 @@
  * @module admin/data
  */
 import { Admin, type AdminData, type AdminRoleData } from "../../domain/entities/Admin";
-import { AdminModel, type AdminJson, type AdminRoleJson } from "../models/AdminModel";
+import {
+  AdminModel,
+  CreateAdminModel,
+  UpdateAdminModel,
+  type AdminJson,
+  type AdminRoleJson,
+} from "../models/AdminModel";
+import type {
+  CreateAdminRequest,
+  UpdateAdminRequest,
+} from "../../domain/entities/AdminRequests";
 
 export class AdminMapper {
   /**
@@ -32,7 +42,6 @@ export class AdminMapper {
       tenantName: model.tenantName,
       isSuperAdmin: model.isSuperAdmin,
       canModify: model.canModify,
-      // permissions: model.permissions - Admin entity doesn't store calculated permissions, they come from roles
     };
     return new Admin(data);
   }
@@ -59,10 +68,6 @@ export class AdminMapper {
       entity.tenantName,
       entity.isSuperAdmin,
       entity.canModify,
-      // Entity might not have permissions populated if it came from internal logic,
-      // but if it came from API -> Model -> Entity, we might lose it.
-      // However, Admin Entity is domain, it shouldn't care about DTO's calculated permissions.
-      // We'll leave it undefined for toModel unless we extend Entity data.
       undefined
     );
   }
@@ -86,6 +91,37 @@ export class AdminMapper {
   }
 
   /**
+   * Map CreateAdminRequest (domain) to CreateAdminModel (data)
+   */
+  static toCreateModel(request: CreateAdminRequest): CreateAdminModel {
+    return new CreateAdminModel(
+      request.username,
+      request.password,
+      request.firstName,
+      request.lastName,
+      request.phoneNumber,
+      request.email,
+      request.notes,
+      request.tenantId,
+      request.roleIds
+    );
+  }
+
+  /**
+   * Map UpdateAdminRequest (domain) to UpdateAdminModel (data)
+   */
+  static toUpdateModel(request: UpdateAdminRequest): UpdateAdminModel {
+    return new UpdateAdminModel(
+      request.firstName,
+      request.lastName,
+      request.phoneNumber,
+      request.email,
+      request.notes,
+      request.isActive
+    );
+  }
+
+  /**
    * Convert AdminRoleJson list to AdminRoleData list
    */
   static toRoleDataList(roles: AdminRoleJson[]): AdminRoleData[] {
@@ -101,3 +137,4 @@ export class AdminMapper {
     };
   }
 }
+

@@ -24,7 +24,7 @@ import type {
 import type { PagedResult } from "@modules/system/core/domain/types";
 
 export class AdminRepository implements IAdminRepository {
-  constructor(private readonly service: IAdminService) {}
+  constructor(private readonly service: IAdminService) { }
 
   async getAll(params: AdminListParams): Promise<PagedResult<Admin>> {
     const result = await this.service.getAll(params);
@@ -74,40 +74,20 @@ export class AdminRepository implements IAdminRepository {
   }
 
   async create(request: CreateAdminRequest): Promise<string> {
-    const response = await this.service.create({
-      username: request.username,
-      password: request.password,
-      firstName: request.firstName,
-      lastName: request.lastName,
-      phoneNumber: request.phoneNumber,
-      notes: request.notes,
-      tenantId: request.tenantId,
-      roleIds: request.roleIds,
-    });
+    const model = AdminMapper.toCreateModel(request);
+    const response = await this.service.create(model.toJson());
     return response.id;
   }
 
   async createForMyTenant(request: Omit<CreateAdminRequest, "tenantId">): Promise<string> {
-    const response = await this.service.createForMyTenant({
-      username: request.username,
-      password: request.password,
-      firstName: request.firstName,
-      lastName: request.lastName,
-      phoneNumber: request.phoneNumber,
-      notes: request.notes,
-      roleIds: request.roleIds,
-    });
+    const model = AdminMapper.toCreateModel(request as CreateAdminRequest);
+    const response = await this.service.createForMyTenant(model.toJson());
     return response.id;
   }
 
   async update(id: string, request: UpdateAdminRequest): Promise<void> {
-    await this.service.update(id, {
-      firstName: request.firstName,
-      lastName: request.lastName,
-      phoneNumber: request.phoneNumber,
-      notes: request.notes,
-      isActive: request.isActive,
-    });
+    const model = AdminMapper.toUpdateModel(request);
+    await this.service.update(id, model.toJson());
   }
 
   async delete(id: string): Promise<void> {

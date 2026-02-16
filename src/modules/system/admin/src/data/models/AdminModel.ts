@@ -216,3 +216,65 @@ export class AdminModel {
     return name || this.username;
   }
 }
+
+/**
+ * Create admin request model
+ *
+ * Maps CreateAdminRequest (domain) → CreateAdminJson (API).
+ * Used by AdminMapper.toCreateModel().
+ */
+export class CreateAdminModel {
+  constructor(
+    public readonly username: string,
+    public readonly password: string,
+    public readonly firstName?: string,
+    public readonly lastName?: string,
+    public readonly phoneNumber?: string,
+    public readonly email?: string,
+    public readonly notes?: string,
+    public readonly tenantId?: string,
+    public readonly roleIds?: string[]
+  ) { }
+
+  toJson(): CreateAdminJson {
+    return {
+      username: this.username,
+      password: this.password,
+      firstName: this.firstName,
+      lastName: this.lastName,
+      phoneNumber: this.phoneNumber,
+      email: this.email,
+      notes: this.notes,
+      tenantId: this.tenantId,
+      roleIds: this.roleIds,
+    };
+  }
+}
+
+/**
+ * Update admin request model
+ *
+ * Maps UpdateAdminRequest (domain) → UpdateAdminJson (API).
+ * Used by AdminMapper.toUpdateModel().
+ */
+export class UpdateAdminModel {
+  constructor(
+    public readonly firstName?: string,
+    public readonly lastName?: string,
+    public readonly phoneNumber?: string,
+    public readonly email?: string,
+    public readonly notes?: string,
+    public readonly isActive?: boolean
+  ) { }
+
+  toJson(): UpdateAdminJson {
+    return {
+      firstName: this.firstName,
+      lastName: this.lastName,
+      phoneNumber: this.phoneNumber,
+      email: this.email,
+      notes: this.notes,
+      isActive: this.isActive,
+    };
+  }
+}
