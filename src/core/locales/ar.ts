@@ -4118,7 +4118,7 @@ export const ar = {
       sendSuccess: "تم إرسال البريد الإلكتروني بنجاح",
       sendError: "فشل في إرسال البريد الإلكتروني",
       confirmSendTitle: "تأكيد الإرسال",
-      confirmSendDescription: "إرسال هذا البريد الإلكتروني إلى {{count}} مستلم(ين)؟",
+      confirmSendDescription: "إرسال هذا البريد الإلكتروني إلى مستلم(ين)؟",
       // Validation
       recipientRequired: "مطلوب مستلم واحد على الأقل",
       subjectRequired: "الموضوع مطلوب",
