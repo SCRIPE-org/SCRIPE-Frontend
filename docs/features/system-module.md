@@ -1,6 +1,6 @@
 # System Module
 
-> Admin, roles, permissions, tenants, menus, dashboard, analytics, audit, and recycle bin.
+> Admin, roles, permissions, tenants, menus, messaging, dashboard, analytics, audit, and recycle bin.
 
 ---
 
@@ -19,6 +19,10 @@ modules/system/
 ├── audit/              # Audit log viewer
 ├── dashboard/          # Main dashboard (KPIs, charts)
 ├── menus/              # Menu management (tree, drag-drop)
+├── messaging/          # Email composer, templates, notifications
+│   ├── email-composer/
+│   ├── message-templates/
+│   └── notification-sender/
 ├── permissions/        # Permission viewer (read-only)
 ├── recycle-bin/        # Recycle bin (restore deleted items)
 ├── roles/              # Role management CRUD + permissions
@@ -150,6 +154,16 @@ Extended analytics with more detailed charts and configurable date ranges.
 
 ---
 
+### Messaging (`/messaging`)
+
+See the dedicated [Messaging Module](messaging-module.md) documentation for full details on:
+
+- **Email Composer** — Rich email composing with templates, attachments, scheduling
+- **Message Templates** — CRUD, live preview, placeholder schema builder, design variables
+- **Notification Sender** — In-app notification composing with admin/role targeting
+
+---
+
 ### Security Dashboard (`/security`)
 
 Security-focused view with:
@@ -232,6 +246,11 @@ src/app/(modules)/
 ├── roles/[id]/page.tsx      → RoleDetailView
 ├── tenants/page.tsx         → TenantListView
 ├── tenants/[id]/page.tsx    → TenantDetailView
+├── messaging/
+│   ├── email-composer/page.tsx  → EmailComposerView
+│   ├── templates/page.tsx       → MessageTemplatesView
+│   ├── templates/[id]/page.tsx  → TemplateFormView
+│   └── notifications/page.tsx   → NotificationSenderView
 └── settings/
     ├── menus/page.tsx       → MenuManagementView
     ├── permissions/page.tsx → PermissionListView
@@ -240,13 +259,15 @@ src/app/(modules)/
 
 ---
 
-## Related Backend Docs
+## Related Docs
 
-- [Admin Management](../../ASP.Net-Login-Project-CQRS/docs/features/admin-management.md)
-- [Role Management](../../ASP.Net-Login-Project-CQRS/docs/features/role-management.md)
-- [Permission System](../../ASP.Net-Login-Project-CQRS/docs/features/permission-system.md)
-- [Tenant Management](../../ASP.Net-Login-Project-CQRS/docs/features/tenant-management.md)
-- [Menu System](../../ASP.Net-Login-Project-CQRS/docs/features/menu-system.md)
-- [Dashboard & Analytics](../../ASP.Net-Login-Project-CQRS/docs/features/dashboard-analytics.md)
-- [Audit Logging](../../ASP.Net-Login-Project-CQRS/docs/features/audit-logging.md)
-- [Recycle Bin](../../ASP.Net-Login-Project-CQRS/docs/features/recycle-bin.md)
+- [Messaging Module](messaging-module.md) — Frontend messaging sub-modules
+- [Backend — Admin Management](../../NEXORA-Backend/docs/features/admin-management.md)
+- [Backend — Role Management](../../NEXORA-Backend/docs/features/role-management.md)
+- [Backend — Permission System](../../NEXORA-Backend/docs/features/permission-system.md)
+- [Backend — Tenant Management](../../NEXORA-Backend/docs/features/tenant-management.md)
+- [Backend — Menu System](../../NEXORA-Backend/docs/features/menu-system.md)
+- [Backend — Messaging & Communication](../../NEXORA-Backend/docs/messaging-communication-center.md)
+- [Backend — Dashboard & Analytics](../../NEXORA-Backend/docs/features/dashboard-analytics.md)
+- [Backend — Audit Logging](../../NEXORA-Backend/docs/features/audit-logging.md)
+- [Backend — Recycle Bin](../../NEXORA-Backend/docs/features/recycle-bin.md)
