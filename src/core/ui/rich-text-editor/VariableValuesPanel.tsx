@@ -8,7 +8,6 @@ import { Label } from "@core/ui/label";
 import { Badge } from "@core/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { Button } from "@core/ui/button";
-import { ScrollArea } from "@core/ui/scroll-area";
 import {
       Select,
       SelectContent,
@@ -357,7 +356,7 @@ export function VariableValuesPanel({
       };
 
       return (
-            <Card className={cn("overflow-hidden", className)}>
+            <Card className={cn("overflow-hidden flex flex-col", className)}>
                   <CardHeader className="pb-3">
                         <div className="flex items-center justify-between">
                               <CardTitle className="text-sm font-semibold">
@@ -391,7 +390,7 @@ export function VariableValuesPanel({
                               </div>
                         </div>
                   </CardHeader>
-                  <CardContent className="pt-0">
+                  <CardContent className="pt-0 flex-1 min-h-0 overflow-y-auto">
                         {totalVars === 0 ? (
                               <div className="text-center py-8 text-sm text-muted-foreground">
                                     <FileText className="h-8 w-8 mx-auto mb-2 opacity-30" />
@@ -404,82 +403,80 @@ export function VariableValuesPanel({
                                     </p>
                               </div>
                         ) : (
-                              <ScrollArea className="max-h-[600px]">
-                                    <div className="space-y-4">
-                                          {CATEGORY_ORDER.map((cat) => {
-                                                const items = grouped[cat];
-                                                if (!items || items.length === 0) return null;
-                                                const config = CATEGORY_CONFIG[cat];
+                              <div className="space-y-4 pb-2">
+                                    {CATEGORY_ORDER.map((cat) => {
+                                          const items = grouped[cat];
+                                          if (!items || items.length === 0) return null;
+                                          const config = CATEGORY_CONFIG[cat];
 
-                                                return (
-                                                      <div key={cat}>
-                                                            {/* Category Header */}
-                                                            <div className={cn(
-                                                                  "flex items-center gap-1.5 px-2 py-1.5 rounded-md mb-2",
-                                                                  config.bgColor
-                                                            )}>
-                                                                  <span className={config.color}>
-                                                                        {config.icon}
-                                                                  </span>
-                                                                  <span className="text-xs font-semibold uppercase tracking-wider">
-                                                                        {config.label}
-                                                                  </span>
-                                                                  <Badge
-                                                                        variant="secondary"
-                                                                        className="text-[10px] px-1 py-0 h-4 ml-auto"
-                                                                  >
-                                                                        {items.filter((v) => values[v.key]?.trim()).length}/{items.length}
-                                                                  </Badge>
-                                                            </div>
-
-                                                            {/* Variable Inputs — Type-Specific */}
-                                                            <div className="space-y-2 pl-1">
-                                                                  {items.map((v) => {
-                                                                        const hasValue = !!values[v.key]?.trim();
-                                                                        return (
-                                                                              <div key={v.key} className="space-y-1">
-                                                                                    <div className="flex items-center justify-between">
-                                                                                          <Label className="text-xs font-medium">
-                                                                                                {v.label}
-                                                                                          </Label>
-                                                                                          <div className="flex items-center gap-1.5">
-                                                                                                <Select
-                                                                                                      value={getEffectiveType(v)}
-                                                                                                      onValueChange={(val) => setTypeOverride(v.key, val)}
-                                                                                                >
-                                                                                                      <SelectTrigger className="h-5 w-auto min-w-0 px-1.5 py-0 text-[9px] font-mono border-dashed gap-0.5">
-                                                                                                            <SelectValue />
-                                                                                                      </SelectTrigger>
-                                                                                                      <SelectContent align="end">
-                                                                                                            {FIELD_TYPE_OPTIONS.map((opt) => (
-                                                                                                                  <SelectItem key={opt.value} value={opt.value} className="text-xs">
-                                                                                                                        {opt.label}
-                                                                                                                  </SelectItem>
-                                                                                                            ))}
-                                                                                                      </SelectContent>
-                                                                                                </Select>
-                                                                                                {hasValue ? (
-                                                                                                      <CheckCircle2 className="h-3 w-3 text-emerald-500" />
-                                                                                                ) : (
-                                                                                                      <AlertCircle className="h-3 w-3 text-amber-400" />
-                                                                                                )}
-                                                                                          </div>
-                                                                                    </div>
-                                                                                    <VariableInput
-                                                                                          variable={v}
-                                                                                          value={values[v.key] || ""}
-                                                                                          onChange={(val) => updateValue(v.key, val)}
-                                                                                          effectiveType={getEffectiveType(v)}
-                                                                                    />
-                                                                              </div>
-                                                                        );
-                                                                  })}
-                                                            </div>
+                                          return (
+                                                <div key={cat}>
+                                                      {/* Category Header */}
+                                                      <div className={cn(
+                                                            "flex items-center gap-1.5 px-2 py-1.5 rounded-md mb-2",
+                                                            config.bgColor
+                                                      )}>
+                                                            <span className={config.color}>
+                                                                  {config.icon}
+                                                            </span>
+                                                            <span className="text-xs font-semibold uppercase tracking-wider">
+                                                                  {config.label}
+                                                            </span>
+                                                            <Badge
+                                                                  variant="secondary"
+                                                                  className="text-[10px] px-1 py-0 h-4 ml-auto"
+                                                            >
+                                                                  {items.filter((v) => values[v.key]?.trim()).length}/{items.length}
+                                                            </Badge>
                                                       </div>
-                                                );
-                                          })}
-                                    </div>
-                              </ScrollArea>
+
+                                                      {/* Variable Inputs — Type-Specific */}
+                                                      <div className="space-y-2 pl-1">
+                                                            {items.map((v) => {
+                                                                  const hasValue = !!values[v.key]?.trim();
+                                                                  return (
+                                                                        <div key={v.key} className="space-y-1">
+                                                                              <div className="flex items-center justify-between">
+                                                                                    <Label className="text-xs font-medium">
+                                                                                          {v.label}
+                                                                                    </Label>
+                                                                                    <div className="flex items-center gap-1.5">
+                                                                                          <Select
+                                                                                                value={getEffectiveType(v)}
+                                                                                                onValueChange={(val) => setTypeOverride(v.key, val)}
+                                                                                          >
+                                                                                                <SelectTrigger className="h-5 w-auto min-w-0 px-1.5 py-0 text-[9px] font-mono border-dashed gap-0.5">
+                                                                                                      <SelectValue />
+                                                                                                </SelectTrigger>
+                                                                                                <SelectContent align="end" className="z-[1100]">
+                                                                                                      {FIELD_TYPE_OPTIONS.map((opt) => (
+                                                                                                            <SelectItem key={opt.value} value={opt.value} className="text-xs">
+                                                                                                                  {opt.label}
+                                                                                                            </SelectItem>
+                                                                                                      ))}
+                                                                                                </SelectContent>
+                                                                                          </Select>
+                                                                                          {hasValue ? (
+                                                                                                <CheckCircle2 className="h-3 w-3 text-emerald-500" />
+                                                                                          ) : (
+                                                                                                <AlertCircle className="h-3 w-3 text-amber-400" />
+                                                                                          )}
+                                                                                    </div>
+                                                                              </div>
+                                                                              <VariableInput
+                                                                                    variable={v}
+                                                                                    value={values[v.key] || ""}
+                                                                                    onChange={(val) => updateValue(v.key, val)}
+                                                                                    effectiveType={getEffectiveType(v)}
+                                                                              />
+                                                                        </div>
+                                                                  );
+                                                            })}
+                                                      </div>
+                                                </div>
+                                          );
+                                    })}
+                              </div>
                         )}
                   </CardContent>
             </Card>

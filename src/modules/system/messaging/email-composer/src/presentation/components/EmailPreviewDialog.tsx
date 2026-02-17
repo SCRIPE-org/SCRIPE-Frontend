@@ -93,10 +93,13 @@ export function EmailPreviewDialog({
             else setLocalValues(v);
       }, [onVariableValuesChange]);
 
-      // Merge default + custom variables
+      // Merge default + custom variables, deduplicating by key
+      // Custom variables win over defaults with the same key
       const allVariables = useMemo(() => {
             if (!customVariables?.length) return DEFAULT_VARIABLES;
-            return [...DEFAULT_VARIABLES, ...customVariables];
+            const customKeys = new Set(customVariables.map((v) => v.key));
+            const uniqueDefaults = DEFAULT_VARIABLES.filter((v) => !customKeys.has(v.key));
+            return [...uniqueDefaults, ...customVariables];
       }, [customVariables]);
 
       // Resolve variables in subject and body
@@ -270,7 +273,7 @@ export function EmailPreviewDialog({
                                           values={variableValues}
                                           onChange={setVariableValues}
                                           templateBody={body + " " + subject}
-                                          className="sticky top-0"
+                                          className="sticky top-0 max-h-[70vh]"
                                     />
                               )}
                         </div>

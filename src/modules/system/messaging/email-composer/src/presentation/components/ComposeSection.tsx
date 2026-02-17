@@ -354,6 +354,7 @@ export function ComposeSection(vm: ComposeSectionProps) {
                                     values={vm.variableValues}
                                     onChange={vm.setVariableValues}
                                     templateBody={vm.body + " " + vm.subject}
+                                    className="max-h-[500px]"
                               />
                         )}
 
