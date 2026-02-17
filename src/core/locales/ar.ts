@@ -3926,6 +3926,7 @@ export const ar = {
     loading: "جاري تحميل العناصر المحذوفة...",
   },
   notifications: {
+    markAllRead: "قراءة الكل",
     title: "الإشعارات",
     description: "عرض واستعادة العناصر المحذوفة مؤخراً قبل الحذف النهائي",
     empty: "لا توجد إشعارات",

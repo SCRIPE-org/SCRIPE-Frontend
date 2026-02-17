@@ -4131,6 +4131,7 @@ export const en = {
     },
   },
   notifications: {
+    markAllRead: "Mark all as read",
     title: "Notifications",
     description: "Display notification bell in header",
     empty: "No notifications",

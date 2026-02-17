@@ -1068,7 +1068,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
 
   // Don't render until hydrated to prevent hydration mismatches
   if (!isHydrated) {
-    return <div className="min-h-screen animate-pulse bg-background" />;
+    return <div className="min-h-screen animate-pulse bg-background" suppressHydrationWarning />;
   }
 
   return <SettingsContext.Provider value={contextValue}>{children}</SettingsContext.Provider>;

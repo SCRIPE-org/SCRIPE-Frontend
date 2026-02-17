@@ -30,11 +30,27 @@ export interface NotificationViewModel {
 }
 
 /**
+ * Push DTO shape from backend NotificationPushDto (C# record).
+ * The SignalR JSON serializer uses camelCase by default.
+ */
+interface NotificationPushPayload {
+      id: string;
+      title: string;
+      body: string;
+      type: string;
+      category: string;
+      actionUrl: string | null;
+      createdAt: string;
+}
+
+const LOG_PREFIX = '[NotificationBell]';
+
+/**
  * ViewModel hook for notification bell.
  *
  * Uses a DEDICATED SignalR connection to `/hubs/notifications` for real-time updates:
  * - `UnreadCountUpdated(count)` → instantly updates badge
- * - `ReceiveNotification(dto)` → prepends to list + increments badge
+ * - `ReceiveNotification(dto)` → prepends to list + Badge reflects authoritative count
  *
  * Falls back to polling every 30s if SignalR connection fails.
  */
@@ -102,6 +118,8 @@ export function useNotificationViewModel(): NotificationViewModel {
                         const origin = apiUrl.replace(/\/api\/?$/, '');
                         const hubUrl = `${origin}${HUB_PATHS.NOTIFICATIONS}`;
 
+                        console.debug(LOG_PREFIX, 'Connecting to', hubUrl);
+
                         const conn = new HubConnectionBuilder()
                               .withUrl(hubUrl, {
                                     accessTokenFactory: () => secureTokenService.getAccessToken() ?? '',
@@ -116,33 +134,64 @@ export function useNotificationViewModel(): NotificationViewModel {
                               .build();
 
                         // ─── Real-time event handlers ─────────────────────
+
+                        // Authoritative unread count from backend (replaces any local count)
                         conn.on(HUB_EVENTS.UNREAD_COUNT_UPDATED, (count: number) => {
+                              console.debug(LOG_PREFIX, 'UnreadCountUpdated →', count);
                               setUnreadCount(count);
                         });
 
-                        conn.on(HUB_EVENTS.RECEIVE_NOTIFICATION, (dto: NotificationItem) => {
-                              // Prepend new notification to the list
-                              setNotifications((prev) => [dto, ...prev].slice(0, 20));
-                              // Also bump unread count
-                              setUnreadCount((prev) => prev + 1);
+                        // New notification push (map from PushDto → NotificationItem)
+                        conn.on(HUB_EVENTS.RECEIVE_NOTIFICATION, (dto: NotificationPushPayload) => {
+                              console.debug(LOG_PREFIX, 'ReceiveNotification →', dto);
+                              const item: NotificationItem = {
+                                    id: dto.id,
+                                    title: dto.title,
+                                    body: dto.body,
+                                    type: dto.type,
+                                    category: dto.category,
+                                    actionUrl: dto.actionUrl,
+                                    createdAt: dto.createdAt,
+                                    isRead: false,
+                                    readAt: null,
+                                    metadataJson: null,
+                              };
+                              setNotifications((prev) => [item, ...prev].slice(0, 20));
+                              // Note: we do NOT increment unreadCount here manually,
+                              // because the backend sends UnreadCountUpdated right after
+                              // with the authoritative DB count.
+                        });
+
+                        conn.onreconnecting(() => {
+                              console.debug(LOG_PREFIX, 'Reconnecting...');
                         });
 
                         conn.onreconnected(() => {
-                              // After reconnect, re-fetch to sync state
+                              console.debug(LOG_PREFIX, 'Reconnected — re-fetching count');
                               fetchUnreadCount();
+                        });
+
+                        conn.onclose(() => {
+                              console.debug(LOG_PREFIX, 'Connection closed');
+                              // Restart polling as fallback
+                              if (!pollingRef.current) {
+                                    pollingRef.current = setInterval(fetchUnreadCount, 30_000);
+                              }
                         });
 
                         await conn.start();
                         connectionRef.current = conn;
                         isConnectingRef.current = false;
+                        console.debug(LOG_PREFIX, '✅ Connected to notification hub');
 
                         // SignalR connected — clear polling fallback
                         if (pollingRef.current) {
                               clearInterval(pollingRef.current);
                               pollingRef.current = null;
                         }
-                  } catch {
+                  } catch (err) {
                         isConnectingRef.current = false;
+                        console.warn(LOG_PREFIX, '❌ SignalR connection failed, falling back to polling', err);
                         // SignalR failed — fall back to polling
                         if (!pollingRef.current) {
                               pollingRef.current = setInterval(fetchUnreadCount, 30_000);
