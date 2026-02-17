@@ -12,11 +12,12 @@ import {
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { cn } from "@core/common/utils";
-import { Monitor, Tablet, Smartphone, Braces, PanelRightOpen, PanelRightClose } from "lucide-react";
+import { Monitor, Tablet, Smartphone, Braces, PanelRightOpen, PanelRightClose, Paperclip, FileText, FileImage, FileArchive, File as FileIcon } from "lucide-react";
 import { DEFAULT_VARIABLES } from "@core/ui/rich-text-editor/VariablePicker";
 import type { VariableDefinition } from "@core/ui/rich-text-editor/VariablePicker";
 import { VariableValuesPanel } from "@core/ui/rich-text-editor/VariableValuesPanel";
 import type { VariableValuesMap } from "@core/ui/rich-text-editor/VariableValuesPanel";
+import type { AttachmentFile } from "./AttachmentUploader";
 
 // ─── Device Presets ─────────────────────────────────────────
 const DEVICES = [
@@ -74,6 +75,8 @@ export interface EmailPreviewDialogProps {
       typeOverrides?: Record<string, string>;
       /** Called when type overrides change */
       onTypeOverridesChange?: (overrides: Record<string, string>) => void;
+      /** Attachments to display in preview */
+      attachments?: AttachmentFile[];
 }
 
 export function EmailPreviewDialog({
@@ -87,6 +90,7 @@ export function EmailPreviewDialog({
       onVariableValuesChange,
       typeOverrides: controlledTypeOverrides,
       onTypeOverridesChange,
+      attachments = [],
 }: EmailPreviewDialogProps) {
       const { t } = useI18n();
       const [device, setDevice] = useState<DeviceId>("desktop");
@@ -268,6 +272,36 @@ export function EmailPreviewDialog({
                                                             </pre>
                                                       )}
                                                 </div>
+
+                                                {/* Attachments */}
+                                                {attachments.length > 0 && (
+                                                      <div className="border-t p-4 bg-gray-50/80">
+                                                            <div className="flex items-center gap-1.5 mb-2">
+                                                                  <Paperclip className="h-3.5 w-3.5 text-muted-foreground" />
+                                                                  <span className="text-xs font-medium text-muted-foreground">
+                                                                        {attachments.length} Attachment{attachments.length > 1 ? "s" : ""}
+                                                                  </span>
+                                                            </div>
+                                                            <div className="flex flex-wrap gap-2">
+                                                                  {attachments.map((a) => {
+                                                                        const isImage = a.type.startsWith("image/");
+                                                                        const isPdf = a.type === "application/pdf";
+                                                                        const isArchive = a.type.includes("zip") || a.type.includes("rar") || a.type.includes("tar");
+                                                                        const Icon = isImage ? FileImage : isPdf ? FileText : isArchive ? FileArchive : FileIcon;
+                                                                        const sizeStr = a.size < 1024 ? `${a.size} B` : a.size < 1048576 ? `${(a.size / 1024).toFixed(1)} KB` : `${(a.size / 1048576).toFixed(1)} MB`;
+                                                                        return (
+                                                                              <div key={a.id} className="flex items-center gap-2 rounded-md border bg-white px-3 py-2 text-xs">
+                                                                                    <Icon className="h-4 w-4 text-muted-foreground shrink-0" />
+                                                                                    <div className="min-w-0">
+                                                                                          <p className="font-medium truncate max-w-[150px] text-foreground">{a.name}</p>
+                                                                                          <p className="text-muted-foreground">{sizeStr}</p>
+                                                                                    </div>
+                                                                              </div>
+                                                                        );
+                                                                  })}
+                                                            </div>
+                                                      </div>
+                                                )}
                                           </div>
                                     </div>
                               </div>

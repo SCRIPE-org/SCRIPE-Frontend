@@ -1,19 +1,12 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
-import { Badge } from "@core/ui/badge";
-import { Input } from "@core/ui/input";
-import {
-      Popover,
-      PopoverContent,
-      PopoverTrigger,
-} from "@core/ui/popover";
-import { ScrollArea } from "@core/ui/scroll-area";
-import { FileText, Loader2, Search, Check, ChevronDown, X } from "lucide-react";
-import { cn } from "@core/common/utils";
+import { Loader2, FileText } from "lucide-react";
+import { GenericSelect } from "@core/crud/components/generic-select";
+import type { GenericSelectOption } from "@core/crud/components/generic-select";
 import type { EmailTemplate } from "../../domain/entities/Email";
 import type { IEmailRepository } from "../../domain/interfaces/IEmailRepository";
 
@@ -25,9 +18,6 @@ export interface TemplatePickerProps {
 
 export function TemplatePicker({ repository, onSelect }: TemplatePickerProps) {
       const { t } = useI18n();
-      const [open, setOpen] = useState(false);
-      const [search, setSearch] = useState("");
-      const [selectedId, setSelectedId] = useState<string>("");
 
       const { data, isLoading } = useQuery({
             queryKey: ["email-templates-list"],
@@ -40,26 +30,26 @@ export function TemplatePicker({ repository, onSelect }: TemplatePickerProps) {
 
       const templates = data ?? [];
 
-      // Client-side filter
-      const filtered = useMemo(() => {
-            if (!search.trim()) return templates;
-            const q = search.toLowerCase();
-            return templates.filter(
-                  (tpl) =>
-                        tpl.key.toLowerCase().includes(q) ||
-                        (tpl.description?.toLowerCase().includes(q)) ||
-                        (tpl.category?.toLowerCase().includes(q)) ||
-                        (tpl.subject?.toLowerCase().includes(q))
-            );
-      }, [templates, search]);
+      // Convert templates to GenericSelect options
+      const options: GenericSelectOption[] = useMemo(() => {
+            return templates.map((tpl) => ({
+                  value: tpl.id,
+                  label: tpl.key,
+                  description: [tpl.category, tpl.language, tpl.description]
+                        .filter(Boolean)
+                        .join(" · "),
+            }));
+      }, [templates]);
+
+      // Selected template ID
+      const [selectedId, setSelectedId] = React.useState<string>("");
 
       const selectedTemplate = templates.find((tpl) => tpl.id === selectedId);
 
-      // Just select — don't apply yet
-      const handleSelect = (template: EmailTemplate) => {
-            setSelectedId(template.id);
-            setOpen(false);
-            setSearch("");
+      // Handle selection from GenericSelect
+      const handleValueChange = (value: string | string[]) => {
+            const id = Array.isArray(value) ? value[0] ?? "" : value;
+            setSelectedId(id);
       };
 
       // Apply the selected template
@@ -67,12 +57,6 @@ export function TemplatePicker({ repository, onSelect }: TemplatePickerProps) {
             if (selectedTemplate) {
                   onSelect(selectedTemplate);
             }
-      };
-
-      const handleClear = (e: React.MouseEvent) => {
-            e.stopPropagation();
-            setSelectedId("");
-            setSearch("");
       };
 
       if (isLoading) {
@@ -89,92 +73,17 @@ export function TemplatePicker({ repository, onSelect }: TemplatePickerProps) {
       return (
             <div className="flex items-center gap-2">
                   <FileText className="h-4 w-4 text-muted-foreground shrink-0" />
-                  <Popover open={open} onOpenChange={setOpen}>
-                        <PopoverTrigger asChild>
-                              <Button
-                                    variant="outline"
-                                    role="combobox"
-                                    aria-expanded={open}
-                                    className="w-[280px] justify-between font-normal"
-                              >
-                                    <span className="truncate">
-                                          {selectedTemplate
-                                                ? selectedTemplate.key
-                                                : t("messaging.email.selectTemplate") || "Use a template..."}
-                                    </span>
-                                    <div className="flex items-center gap-1 ml-2 shrink-0">
-                                          {selectedId && (
-                                                <X
-                                                      className="h-3.5 w-3.5 text-muted-foreground hover:text-foreground cursor-pointer"
-                                                      onClick={handleClear}
-                                                />
-                                          )}
-                                          <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
-                                    </div>
-                              </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-[320px] p-0" align="start">
-                              {/* Search */}
-                              <div className="flex items-center border-b px-3 py-2">
-                                    <Search className="h-4 w-4 text-muted-foreground mr-2 shrink-0" />
-                                    <Input
-                                          value={search}
-                                          onChange={(e) => setSearch(e.target.value)}
-                                          placeholder={t("common.search") || "Search templates..."}
-                                          className="border-0 p-0 h-auto shadow-none focus-visible:ring-0 text-sm"
-                                    />
-                              </div>
-
-                              {/* Template List */}
-                              <ScrollArea className="max-h-[300px]">
-                                    {filtered.length === 0 ? (
-                                          <div className="py-6 text-center text-sm text-muted-foreground">
-                                                {t("common.noResults") || "No templates found"}
-                                          </div>
-                                    ) : (
-                                          <div className="p-1">
-                                                {filtered.map((tpl) => (
-                                                      <button
-                                                            key={tpl.id}
-                                                            type="button"
-                                                            className={cn(
-                                                                  "w-full flex items-start gap-2 p-2 rounded-md text-left text-sm",
-                                                                  "hover:bg-accent hover:text-accent-foreground transition-colors",
-                                                                  selectedId === tpl.id && "bg-accent"
-                                                            )}
-                                                            onClick={() => handleSelect(tpl)}
-                                                      >
-                                                            <Check
-                                                                  className={cn(
-                                                                        "h-4 w-4 mt-0.5 shrink-0",
-                                                                        selectedId === tpl.id ? "opacity-100" : "opacity-0"
-                                                                  )}
-                                                            />
-                                                            <div className="flex-1 min-w-0">
-                                                                  <div className="flex items-center gap-1.5 flex-wrap">
-                                                                        <span className="font-medium truncate">{tpl.key}</span>
-                                                                        <Badge variant="outline" className="text-[10px] px-1 py-0">
-                                                                              {tpl.language}
-                                                                        </Badge>
-                                                                        {tpl.category && (
-                                                                              <Badge variant="secondary" className="text-[10px] px-1 py-0">
-                                                                                    {tpl.category}
-                                                                              </Badge>
-                                                                        )}
-                                                                  </div>
-                                                                  {tpl.description && (
-                                                                        <p className="text-xs text-muted-foreground truncate mt-0.5">
-                                                                              {tpl.description}
-                                                                        </p>
-                                                                  )}
-                                                            </div>
-                                                      </button>
-                                                ))}
-                                          </div>
-                                    )}
-                              </ScrollArea>
-                        </PopoverContent>
-                  </Popover>
+                  <GenericSelect
+                        options={options}
+                        value={selectedId || undefined}
+                        onValueChange={handleValueChange}
+                        type="searchable"
+                        placeholder={t("messaging.email.selectTemplate") || "Use a template..."}
+                        searchPlaceholder={t("common.search") || "Search templates..."}
+                        noResultsText={t("common.noResults") || "No templates found"}
+                        allowClear
+                        className="w-[280px]"
+                  />
 
                   {/* Apply Button */}
                   {selectedId && (

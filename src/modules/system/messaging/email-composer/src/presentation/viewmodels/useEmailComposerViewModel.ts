@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -98,9 +98,27 @@ export function useEmailComposerViewModel() {
       const [variableValues, setVariableValues] = useState<VariableValuesMap>({});
       const [typeOverrides, setTypeOverrides] = useState<TypeOverridesMap>({});
 
+      // ─── Refs for latest state (avoids stale closures in useMutation) ──
+      const subjectRef = useRef(subject);
+      subjectRef.current = subject;
+      const bodyRef = useRef(body);
+      bodyRef.current = body;
+      const variableValuesRef = useRef(variableValues);
+      variableValuesRef.current = variableValues;
+      const ccRecipientsRef = useRef(ccRecipients);
+      ccRecipientsRef.current = ccRecipients;
+      const bccRecipientsRef = useRef(bccRecipients);
+      bccRecipientsRef.current = bccRecipients;
+      const scheduleRef = useRef(schedule);
+      scheduleRef.current = schedule;
+      const attachmentsRef = useRef(attachments);
+      attachmentsRef.current = attachments;
+
       // ─── Template Variables / Schema ──────────────────────────
       const [templateVariables, setTemplateVariables] = useState<VariableDefinition[]>([]);
       const [selectedTemplateKey, setSelectedTemplateKey] = useState<string | null>(null);
+      const selectedTemplateKeyRef = useRef(selectedTemplateKey);
+      selectedTemplateKeyRef.current = selectedTemplateKey;
 
       // Merge default + template variables
       const allVariables = useMemo(() => {
@@ -275,15 +293,25 @@ export function useEmailComposerViewModel() {
       // ─── Send ──────────────────────────────────────────────────
       const sendMutation = useMutation({
             mutationFn: async (allRecipients: EmailRecipient[]) => {
+                  // Read latest state from refs to avoid stale closures
+                  const currentSubject = subjectRef.current;
+                  const currentBody = bodyRef.current;
+                  const currentValues = variableValuesRef.current;
+                  const currentCc = ccRecipientsRef.current;
+                  const currentBcc = bccRecipientsRef.current;
+                  const currentSchedule = scheduleRef.current;
+                  const currentTemplateKey = selectedTemplateKeyRef.current;
+                  const currentAttachments = attachmentsRef.current;
+
                   // Resolve any {{variable}} placeholders before sending
-                  const resolvedSubject = resolveTemplateVariables(subject, variableValues, allVariables);
-                  const resolvedBody = resolveTemplateVariables(body, variableValues, allVariables);
+                  const resolvedSubject = resolveTemplateVariables(currentSubject, currentValues, allVariables);
+                  const resolvedBody = resolveTemplateVariables(currentBody, currentValues, allVariables);
 
                   // Upload attachments NOW (deferred until send)
                   let attachmentUrls: string[] | undefined;
-                  if (attachments.length > 0) {
+                  if (currentAttachments.length > 0) {
                         const uploaded: string[] = [];
-                        for (const a of attachments) {
+                        for (const a of currentAttachments) {
                               if (a.file) {
                                     const result = await repo.uploadAttachment(a.file);
                                     uploaded.push(result.url);
@@ -302,14 +330,14 @@ export function useEmailComposerViewModel() {
                               recipientEmail: r.email,
                               subject: resolvedSubject,
                               body: resolvedBody,
-                              cc: ccRecipients.length > 0 ? ccRecipients.map(c => c.email) : undefined,
-                              bcc: bccRecipients.length > 0 ? bccRecipients.map(b => b.email) : undefined,
-                              scheduledAt: schedule.mode === "scheduled" && schedule.scheduledDate
-                                    ? `${schedule.scheduledDate}T${schedule.scheduledTime || "00:00"}:00Z`
+                              cc: currentCc.length > 0 ? currentCc.map(c => c.email) : undefined,
+                              bcc: currentBcc.length > 0 ? currentBcc.map(b => b.email) : undefined,
+                              scheduledAt: currentSchedule.mode === "scheduled" && currentSchedule.scheduledDate
+                                    ? `${currentSchedule.scheduledDate}T${currentSchedule.scheduledTime || "00:00"}:00Z`
                                     : undefined,
                               attachments: attachmentUrls,
                               signatureHtml: undefined,
-                              templateKey: selectedTemplateKey || undefined,
+                              templateKey: currentTemplateKey || undefined,
                         };
                         await repo.send(payload);
                   }

@@ -145,6 +145,7 @@ export function EmailComposerView() {
                         onVariableValuesChange={vm.setVariableValues}
                         typeOverrides={vm.typeOverrides}
                         onTypeOverridesChange={vm.setTypeOverrides}
+                        attachments={vm.attachments}
                   />
             </>
       );
