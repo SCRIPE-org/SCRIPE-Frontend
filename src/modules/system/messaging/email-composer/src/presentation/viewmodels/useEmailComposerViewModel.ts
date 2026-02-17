@@ -119,7 +119,14 @@ export function useEmailComposerViewModel() {
             // Parse placeholder schema into VariableDefinitions for the template category
             if (template.placeholderSchema) {
                   try {
-                        const schema = JSON.parse(template.placeholderSchema);
+                        // Handle both string (from API) and already-parsed array (if serializer auto-parsed)
+                        let schema: unknown;
+                        if (typeof template.placeholderSchema === "string") {
+                              schema = JSON.parse(template.placeholderSchema);
+                        } else {
+                              schema = template.placeholderSchema;
+                        }
+
                         if (Array.isArray(schema)) {
                               const tplVars: VariableDefinition[] = schema.map((field: { key?: string; name?: string; label?: string; type?: string; defaultValue?: string; options?: string[] }) => ({
                                     key: field.key || field.name || "",
