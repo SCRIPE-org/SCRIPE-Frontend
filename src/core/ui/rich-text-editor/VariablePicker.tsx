@@ -31,6 +31,8 @@ export interface VariableDefinition {
       sample: string;
       /** Whether this variable supports fallback values */
       supportsFallback?: boolean;
+      /** Data source hint for auto-fill (e.g., "api", "context", "manual") */
+      dataSource?: "api" | "context" | "manual";
 }
 
 export interface VariablePickerProps {

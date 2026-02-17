@@ -3296,6 +3296,7 @@ export const ar = {
 
   // Common
   common: {
+    preview: "معاينة",
     actions: "الإجراءات",
     items: "العناصر",
     navigate: "انتقال",

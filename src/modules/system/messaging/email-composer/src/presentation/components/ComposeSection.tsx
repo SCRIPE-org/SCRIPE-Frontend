@@ -5,7 +5,10 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { Input } from "@core/ui/input";
 import { Button } from "@core/ui/button";
 import { RichTextEditor } from "@core/ui/rich-text-editor/RichTextEditor";
+import type { VariableDefinition } from "@core/ui/rich-text-editor/VariablePicker";
 import { DEFAULT_VARIABLES } from "@core/ui/rich-text-editor/VariablePicker";
+import { VariableValuesPanel } from "@core/ui/rich-text-editor/VariableValuesPanel";
+import type { VariableValuesMap } from "@core/ui/rich-text-editor/VariableValuesPanel";
 import { Badge } from "@core/ui/badge";
 import { Label } from "@core/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
@@ -193,6 +196,10 @@ export interface ComposeSectionProps {
       // Schedule
       schedule: ScheduleConfig;
       onScheduleChange: (config: ScheduleConfig) => void;
+      // Variable system
+      allVariables?: VariableDefinition[];
+      variableValues?: VariableValuesMap;
+      setVariableValues?: (values: VariableValuesMap) => void;
 }
 
 export function ComposeSection(vm: ComposeSectionProps) {
@@ -304,11 +311,21 @@ export function ComposeSection(vm: ComposeSectionProps) {
                                     placeholder={t("messaging.email.bodyPlaceholder") || "Write your email content here..."}
                                     maxLength={BODY_MAX}
                                     minHeight="250px"
-                                    variables={DEFAULT_VARIABLES}
+                                    variables={vm.allVariables ?? DEFAULT_VARIABLES}
                                     showSourceToggle
                                     error={vm.fieldErrors.body}
                               />
                         </div>
+
+                        {/* Inline Variable Values — shown when body contains {{ }} */}
+                        {vm.variableValues && vm.setVariableValues && vm.body.includes("{{") && (
+                              <VariableValuesPanel
+                                    variables={vm.allVariables ?? DEFAULT_VARIABLES}
+                                    values={vm.variableValues}
+                                    onChange={vm.setVariableValues}
+                                    templateBody={vm.body + " " + vm.subject}
+                              />
+                        )}
 
                         {/* Attachments & Schedule — collapsible section */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

@@ -140,6 +140,7 @@ export function EmailComposerView() {
                         subject={vm.subject}
                         body={vm.body}
                         recipients={vm.recipients.map((r) => r.email)}
+                        customVariables={vm.templateVariables}
                         variableValues={vm.variableValues}
                         onVariableValuesChange={vm.setVariableValues}
                   />

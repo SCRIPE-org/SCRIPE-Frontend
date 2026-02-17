@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -96,11 +96,48 @@ export function useEmailComposerViewModel() {
       // ─── Variable Values (shared with preview dialog) ───────────
       const [variableValues, setVariableValues] = useState<VariableValuesMap>({});
 
+      // ─── Template-specific variables (from placeholderSchema) ────
+      const [templateVariables, setTemplateVariables] = useState<VariableDefinition[]>([]);
+
+      // Merge default + template variables
+      const allVariables = useMemo(() => {
+            const merged = [...DEFAULT_VARIABLES];
+            for (const tv of templateVariables) {
+                  if (!merged.some((m) => m.key === tv.key)) {
+                        merged.push(tv);
+                  }
+            }
+            return merged;
+      }, [templateVariables]);
+
       // ─── Template selection handler ─────────────────────────────
       const applyTemplate = useCallback((template: EmailTemplate) => {
             if (template.subject) setSubject(template.subject);
             setBody(template.body);
             setFieldErrors({});
+
+            // Parse placeholder schema into VariableDefinitions for the template category
+            if (template.placeholderSchema) {
+                  try {
+                        const schema = JSON.parse(template.placeholderSchema);
+                        if (Array.isArray(schema)) {
+                              const tplVars: VariableDefinition[] = schema.map((field: { key?: string; name?: string; label?: string; type?: string; defaultValue?: string }) => ({
+                                    key: field.key || field.name || "",
+                                    label: field.label || field.key || field.name || "",
+                                    category: "template" as const,
+                                    sample: field.defaultValue || "",
+                                    supportsFallback: true,
+                                    dataSource: "manual" as const,
+                              })).filter((v: VariableDefinition) => v.key);
+                              setTemplateVariables(tplVars);
+                        }
+                  } catch {
+                        // Invalid JSON — ignore
+                  }
+            } else {
+                  setTemplateVariables([]);
+            }
+
             success({ title: t("messaging.email.templateApplied") || `Template "${template.key}" applied` });
       }, [t, success]);
 
@@ -225,8 +262,8 @@ export function useEmailComposerViewModel() {
       const sendMutation = useMutation({
             mutationFn: async (allRecipients: EmailRecipient[]) => {
                   // Resolve any {{variable}} placeholders before sending
-                  const resolvedSubject = resolveTemplateVariables(subject, variableValues, DEFAULT_VARIABLES);
-                  const resolvedBody = resolveTemplateVariables(body, variableValues, DEFAULT_VARIABLES);
+                  const resolvedSubject = resolveTemplateVariables(subject, variableValues, allVariables);
+                  const resolvedBody = resolveTemplateVariables(body, variableValues, allVariables);
 
                   // Backend handles one recipient per request, so batch them
                   for (const r of allRecipients) {
@@ -418,6 +455,9 @@ export function useEmailComposerViewModel() {
             // Variable Values (shared with preview)
             variableValues,
             setVariableValues,
+            // Template-specific variables
+            templateVariables,
+            allVariables,
             // Attachments
             attachments,
             addAttachments,

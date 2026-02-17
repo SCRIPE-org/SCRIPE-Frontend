@@ -7,11 +7,17 @@ export const metadata: Metadata = {
       description: "Edit message template details",
 };
 
-export default function EditTemplatePage() {
+interface Props {
+      params: Promise<{ id: string }>;
+}
+
+export default async function EditTemplatePage({ params }: Props) {
+      const { id } = await params;
+
       return (
             <main>
                   <ModuleErrorBoundary moduleName="Template Form">
-                        <TemplateFormView />
+                        <TemplateFormView templateId={id} />
                   </ModuleErrorBoundary>
             </main>
       );

@@ -11,12 +11,13 @@ import { DEFAULT_VARIABLES } from "@core/ui/rich-text-editor/VariablePicker";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
-import { ArrowLeft, Save, Loader2, Settings, Palette, Braces } from "lucide-react";
+import { ArrowLeft, Save, Loader2, Settings, Palette, Braces, Eye } from "lucide-react";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { PlaceholderSchemaBuilder } from "../components/PlaceholderSchemaBuilder";
 import { DesignVariablesPanel } from "../components/DesignVariablesPanel";
+import { TemplateLivePreview } from "../components/TemplateLivePreview";
 
-export function TemplateFormView() {
+export function TemplateFormView({ templateId: _templateId }: { templateId?: string } = {}) {
       const vm = useTemplateFormViewModel();
 
       if (vm.isFetching) {
@@ -116,6 +117,10 @@ export function TemplateFormView() {
                                                             <Palette className="h-3.5 w-3.5" />
                                                             <span className="hidden sm:inline">{vm.t("messaging.templates.design.title") || "Design"}</span>
                                                       </TabsTrigger>
+                                                      <TabsTrigger value="preview" className="flex-1 gap-1.5">
+                                                            <Eye className="h-3.5 w-3.5" />
+                                                            <span className="hidden sm:inline">{vm.t("common.preview") || "Preview"}</span>
+                                                      </TabsTrigger>
                                                 </TabsList>
                                           </CardHeader>
 
@@ -205,6 +210,16 @@ export function TemplateFormView() {
                                                       <DesignVariablesPanel
                                                             value={vm.form.designVariables}
                                                             onChange={vm.updateDesignVariables}
+                                                      />
+                                                </CardContent>
+                                          </TabsContent>
+
+                                          {/* Live Preview Tab */}
+                                          <TabsContent value="preview">
+                                                <CardContent className="pt-0">
+                                                      <TemplateLivePreview
+                                                            body={vm.form.body}
+                                                            subject={vm.form.subject}
                                                       />
                                                 </CardContent>
                                           </TabsContent>

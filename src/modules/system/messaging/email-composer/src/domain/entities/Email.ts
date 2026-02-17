@@ -59,6 +59,13 @@ export interface EmailTemplate {
       subject: string | null;
       body: string;
       isActive: boolean;
+      description: string | null;
+      placeholderSchema: string | null;
+      designVariables: string | null;
+      category: string | null;
+      tags: string | null;
+      usageCount: number;
+      lastUsedAt: string | null;
 }
 
 export interface EmailTemplateListResponse {

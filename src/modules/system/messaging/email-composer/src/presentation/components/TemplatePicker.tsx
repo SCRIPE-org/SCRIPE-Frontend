@@ -65,11 +65,23 @@ export function TemplatePicker({ repository, onSelect }: TemplatePickerProps) {
                         <SelectContent>
                               {templates.map((tpl) => (
                                     <SelectItem key={tpl.id} value={tpl.id}>
-                                          <div className="flex items-center gap-2">
-                                                <span>{tpl.key}</span>
-                                                <Badge variant="outline" className="text-xs">
-                                                      {tpl.language}
-                                                </Badge>
+                                          <div className="flex flex-col gap-0.5">
+                                                <div className="flex items-center gap-2">
+                                                      <span className="font-medium">{tpl.key}</span>
+                                                      <Badge variant="outline" className="text-xs">
+                                                            {tpl.language}
+                                                      </Badge>
+                                                      {tpl.category && (
+                                                            <Badge variant="secondary" className="text-[10px]">
+                                                                  {tpl.category}
+                                                            </Badge>
+                                                      )}
+                                                </div>
+                                                {tpl.description && (
+                                                      <span className="text-xs text-muted-foreground truncate max-w-[220px]">
+                                                            {tpl.description}
+                                                      </span>
+                                                )}
                                           </div>
                                     </SelectItem>
                               ))}

@@ -13,6 +13,10 @@ export interface MessageTemplateJson {
       description: string | null;
       placeholderSchema: string | null;
       designVariables: string | null;
+      category: string | null;
+      tags: string | null;
+      usageCount: number;
+      lastUsedAt: string | null;
       version: number;
       createdAt: string;
       modifiedAt: string | null;

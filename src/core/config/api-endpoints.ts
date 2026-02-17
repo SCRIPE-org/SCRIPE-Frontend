@@ -180,10 +180,13 @@ export const API_ENDPOINTS = {
   },
   EMAILS: {
     SEND: `${V1}/emails/send`,
+    SEND_BULK: `${V1}/emails/send-bulk`,
     SEARCH_RECIPIENTS: `${V1}/emails/search-recipients`,
     SENT_HISTORY: `${V1}/emails/sent`,
+    STATISTICS: `${V1}/emails/statistics`,
     CANCEL: (id: string) => `${V1}/emails/${id}`,
     RESEND: (id: string) => `${V1}/emails/${id}/resend`,
+    TEMPLATES_LIST: `${V1}/emails/templates`,
   },
   // ===== NOTIFICATIONS (Bell UI — read/unread/preferences) =====
   NOTIFICATIONS: {

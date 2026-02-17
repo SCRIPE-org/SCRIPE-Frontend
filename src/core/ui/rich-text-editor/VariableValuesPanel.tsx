@@ -30,6 +30,8 @@ export interface VariableValuesPanelProps {
       onChange: (values: VariableValuesMap) => void;
       /** When set, only show variables actually used in the template body */
       templateBody?: string;
+      /** Context values from the current session (e.g., recipient data) for auto-fill */
+      contextValues?: VariableValuesMap;
       className?: string;
 }
 
@@ -77,6 +79,7 @@ export function VariableValuesPanel({
       values,
       onChange,
       templateBody,
+      contextValues,
       className,
 }: VariableValuesPanelProps) {
       // If templateBody is provided, filter to only used variables
@@ -116,7 +119,8 @@ export function VariableValuesPanel({
             const populated: VariableValuesMap = { ...values };
             for (const v of usedVariables) {
                   if (!populated[v.key]?.trim()) {
-                        populated[v.key] = v.sample;
+                        // Prefer context values (from recipient/session) over sample data
+                        populated[v.key] = contextValues?.[v.key]?.trim() || v.sample;
                   }
             }
             onChange(populated);
