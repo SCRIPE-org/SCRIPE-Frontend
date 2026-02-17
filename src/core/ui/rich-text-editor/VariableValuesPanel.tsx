@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useMemo, useState, useCallback, lazy, Suspense } from "react";
 import { Input } from "@core/ui/input";
 import { Textarea } from "@core/ui/textarea";
 import { Label } from "@core/ui/label";
@@ -26,6 +26,9 @@ import {
 } from "lucide-react";
 import { cn } from "@core/common/utils";
 import type { VariableCategory, VariableDefinition } from "./VariablePicker";
+
+// Lazy load RichTextEditor to avoid circular dependency / heavy bundle
+const RichTextEditor = lazy(() => import("./RichTextEditor"));
 
 // ─── Types ──────────────────────────────────────────────────
 export interface VariableValuesMap {
@@ -86,12 +89,14 @@ function VariableInput({
       variable,
       value,
       onChange,
+      effectiveType,
 }: {
       variable: VariableDefinition;
       value: string;
       onChange: (val: string) => void;
+      effectiveType?: string;
 }) {
-      const type = variable.fieldType || "text";
+      const type = effectiveType || variable.fieldType || "text";
 
       switch (type) {
             case "textarea":
@@ -107,13 +112,15 @@ function VariableInput({
 
             case "richtext":
                   return (
-                        <Textarea
-                              value={value}
-                              onChange={(e) => onChange(e.target.value)}
-                              placeholder={variable.sample || variable.defaultValue || "HTML content..."}
-                              rows={4}
-                              className="text-sm font-mono resize-none"
-                        />
+                        <Suspense fallback={<Textarea rows={4} disabled placeholder="Loading editor..." className="text-sm resize-none" />}>
+                              <RichTextEditor
+                                    value={value}
+                                    onChange={onChange}
+                                    placeholder={variable.sample || variable.defaultValue || "Enter rich text content..."}
+                                    minHeight="120px"
+                                    showSourceToggle={false}
+                              />
+                        </Suspense>
                   );
 
             case "number":
@@ -264,9 +271,10 @@ export function VariableValuesPanel({
 
             // Third: create entries for any keys found in body but not in the known list
             const knownKeys = new Set(variables.map((v) => v.key));
+            const knownUsedKeys = new Set(knownUsed.map((v) => v.key));
             const autoDetected: VariableDefinition[] = [];
             for (const key of allKeysInBody) {
-                  if (!knownKeys.has(key)) {
+                  if (!knownKeys.has(key) && !knownUsedKeys.has(key)) {
                         autoDetected.push({
                               key,
                               label: key,
@@ -301,6 +309,30 @@ export function VariableValuesPanel({
       const updateValue = (key: string, val: string) => {
             onChange({ ...values, [key]: val });
       };
+
+      // ─── Type overrides (Issue 7) ─────────────────────────────
+      const FIELD_TYPE_OPTIONS = [
+            { value: "text", label: "Text" },
+            { value: "textarea", label: "Textarea" },
+            { value: "richtext", label: "Rich Text" },
+            { value: "number", label: "Number" },
+            { value: "date", label: "Date" },
+            { value: "datetime", label: "Date & Time" },
+            { value: "email", label: "Email" },
+            { value: "url", label: "URL" },
+            { value: "color", label: "Color" },
+      ];
+
+      const [typeOverrides, setTypeOverrides] = useState<Record<string, string>>({});
+
+      const getEffectiveType = useCallback(
+            (v: VariableDefinition) => typeOverrides[v.key] || v.fieldType || "text",
+            [typeOverrides]
+      );
+
+      const setTypeOverride = useCallback((key: string, type: string) => {
+            setTypeOverrides((prev) => ({ ...prev, [key]: type }));
+      }, []);
 
       const autoPopulate = () => {
             const populated: VariableValuesMap = { ...values };
@@ -399,11 +431,21 @@ export function VariableValuesPanel({
                                                                                                 {v.label}
                                                                                           </Label>
                                                                                           <div className="flex items-center gap-1.5">
-                                                                                                {v.fieldType && v.fieldType !== "text" && (
-                                                                                                      <Badge variant="outline" className="text-[9px] px-1 py-0 font-mono">
-                                                                                                            {v.fieldType}
-                                                                                                      </Badge>
-                                                                                                )}
+                                                                                                <Select
+                                                                                                      value={getEffectiveType(v)}
+                                                                                                      onValueChange={(val) => setTypeOverride(v.key, val)}
+                                                                                                >
+                                                                                                      <SelectTrigger className="h-5 w-auto min-w-0 px-1.5 py-0 text-[9px] font-mono border-dashed gap-0.5">
+                                                                                                            <SelectValue />
+                                                                                                      </SelectTrigger>
+                                                                                                      <SelectContent align="end">
+                                                                                                            {FIELD_TYPE_OPTIONS.map((opt) => (
+                                                                                                                  <SelectItem key={opt.value} value={opt.value} className="text-xs">
+                                                                                                                        {opt.label}
+                                                                                                                  </SelectItem>
+                                                                                                            ))}
+                                                                                                      </SelectContent>
+                                                                                                </Select>
                                                                                                 {hasValue ? (
                                                                                                       <CheckCircle2 className="h-3 w-3 text-emerald-500" />
                                                                                                 ) : (
@@ -415,6 +457,7 @@ export function VariableValuesPanel({
                                                                                           variable={v}
                                                                                           value={values[v.key] || ""}
                                                                                           onChange={(val) => updateValue(v.key, val)}
+                                                                                          effectiveType={getEffectiveType(v)}
                                                                                     />
                                                                               </div>
                                                                         );

@@ -3107,6 +3107,7 @@ export const en = {
   // Common
   common: {
     preview: "Preview",
+    all: "All",
     actions: "Actions",
     navigate: "Navigate",
     open: "Open",
@@ -4138,7 +4139,18 @@ export const en = {
 
   // ===== MESSAGING CENTER =====
   messaging: {
+
     templates: {
+      categories: {
+        Transactional: "Transactional",
+        Marketing: "Marketing",
+        Notification: "Notification",
+        Onboarding: "Onboarding",
+        Security: "Security",
+        Billing: "Billing",
+        Custom: "Custom",
+        Other: "Other",
+      },
       title: "Message Templates",
       description: "Manage email, SMS, and push notification templates with Scriban syntax.",
       key: "Template Key",

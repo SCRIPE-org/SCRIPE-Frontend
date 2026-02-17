@@ -9,6 +9,7 @@ export interface IEmailService {
       cancelEmail(id: string): Promise<void>;
       resendEmail(id: string): Promise<{ id: string }>;
       getEmailTemplates(params: { page: number; pageSize: number; search?: string }): Promise<EmailTemplateListResponse>;
+      uploadAttachment(file: File): Promise<{ fileName: string; size: number; url: string; contentType: string }>;
 }
 
 export class EmailService implements IEmailService {
@@ -39,5 +40,11 @@ export class EmailService implements IEmailService {
       async getEmailTemplates(params: { page: number; pageSize: number; search?: string }): Promise<EmailTemplateListResponse> {
             const url = buildUrl(API_ENDPOINTS.MESSAGE_TEMPLATES.LIST, { ...params, channel: "Email" });
             return this.api.get<EmailTemplateListResponse>(url);
+      }
+
+      async uploadAttachment(file: File): Promise<{ fileName: string; size: number; url: string; contentType: string }> {
+            const formData = new FormData();
+            formData.append("file", file);
+            return this.api.post(API_ENDPOINTS.EMAILS.UPLOAD_ATTACHMENT, formData);
       }
 }

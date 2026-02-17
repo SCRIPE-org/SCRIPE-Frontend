@@ -11,6 +11,7 @@ import type {
       CreateMessageTemplateRequest,
       UpdateMessageTemplateRequest,
       MessageChannel,
+      TemplateCategory,
 } from "../../domain/entities/MessageTemplate";
 import type { PlaceholderField } from "../components/PlaceholderSchemaBuilder";
 import type { DesignVariables } from "../components/DesignVariablesPanel";
@@ -28,6 +29,7 @@ export interface TemplateFormValues {
       body: string;
       description: string;
       isActive: boolean;
+      category: TemplateCategory | "";
       placeholderSchema: PlaceholderField[];
       designVariables: DesignVariables;
 }
@@ -52,6 +54,7 @@ export function useTemplateFormViewModel() {
             body: "",
             description: "",
             isActive: true,
+            category: "",
             placeholderSchema: [],
             designVariables: { ...DEFAULT_DESIGN },
       });
@@ -111,6 +114,7 @@ export function useTemplateFormViewModel() {
                         body: template.body || "",
                         description: template.description || "",
                         isActive: template.isActive,
+                        category: (template.category as TemplateCategory) || "",
                         placeholderSchema: parsedSchema,
                         designVariables: parsedDesign,
                   });
@@ -177,6 +181,7 @@ export function useTemplateFormViewModel() {
                         body: form.body,
                         description: form.description || undefined,
                         isActive: form.isActive,
+                        category: form.category || undefined,
                         placeholderSchema: serializedSchema,
                         designVariables: serializedDesign,
                   };
@@ -187,6 +192,7 @@ export function useTemplateFormViewModel() {
                         body: form.body,
                         description: form.description || undefined,
                         isActive: form.isActive,
+                        category: form.category || undefined,
                         placeholderSchema: serializedSchema,
                         designVariables: serializedDesign,
                   };
@@ -211,6 +217,16 @@ export function useTemplateFormViewModel() {
             { value: "ar", label: "العربية" },
       ], []);
 
+      const categoryOptions = useMemo(() => [
+            { value: "transactional", label: "Transactional" },
+            { value: "marketing", label: "Marketing" },
+            { value: "notification", label: "Notification" },
+            { value: "onboarding", label: "Onboarding" },
+            { value: "security", label: "Security" },
+            { value: "billing", label: "Billing" },
+            { value: "custom", label: "Custom" },
+      ], []);
+
       return {
             mode,
             form,
@@ -224,6 +240,7 @@ export function useTemplateFormViewModel() {
             isSaving: createMutation.isPending || updateMutation.isPending,
             channelOptions,
             languageOptions,
+            categoryOptions,
             t,
             title: mode === "create"
                   ? (t("messaging.templates.addNew") || "Create Template")

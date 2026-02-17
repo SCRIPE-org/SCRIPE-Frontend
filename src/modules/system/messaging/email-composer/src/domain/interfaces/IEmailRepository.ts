@@ -7,4 +7,5 @@ export interface IEmailRepository {
       cancelEmail(id: string): Promise<void>;
       resendEmail(id: string): Promise<{ id: string }>;
       getEmailTemplates(params: { page: number; pageSize: number; search?: string }): Promise<EmailTemplateListResponse>;
+      uploadAttachment(file: File): Promise<{ fileName: string; size: number; url: string; contentType: string }>;
 }

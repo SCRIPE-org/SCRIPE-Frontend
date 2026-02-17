@@ -49,6 +49,8 @@ export interface CreateMessageTemplateRequest {
       description?: string;
       placeholderSchema?: string;
       designVariables?: string;
+      category?: string;
+      tags?: string;
 }
 
 export interface UpdateMessageTemplateRequest {
@@ -58,6 +60,8 @@ export interface UpdateMessageTemplateRequest {
       description?: string;
       placeholderSchema?: string;
       designVariables?: string;
+      category?: string;
+      tags?: string;
 }
 
 export interface PreviewTemplateRequest {

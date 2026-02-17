@@ -3297,6 +3297,7 @@ export const ar = {
   // Common
   common: {
     preview: "معاينة",
+    all: "الكل",
     actions: "الإجراءات",
     items: "العناصر",
     navigate: "انتقال",
@@ -3970,7 +3971,21 @@ export const ar = {
 
   // ===== مركز الرسائل =====
   messaging: {
+
     templates: {
+      categories: {
+        Transactional: "المعاملات",
+        Marketing: "التسويق",
+        Notification: "الإشعارات",
+        Onboarding: "الإعداد",
+        Security: "الأمان",
+        Billing: "الفواتير",
+        Custom: "مخصص",
+        Other: "أخرى",
+      },
+      selectCategory: "اختر الفئة",
+      selectChannel: "اختر القناة",
+      selectLanguage: "اختر اللغة",
       usage: "الاستخدام",
       category: "الفئة",
       export: "تصدير",

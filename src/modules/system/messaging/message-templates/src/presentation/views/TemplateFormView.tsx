@@ -191,6 +191,26 @@ export function TemplateFormView({ templateId: _templateId }: { templateId?: str
                                                                   onCheckedChange={(v) => vm.updateField("isActive", v)}
                                                             />
                                                       </div>
+
+                                                      {/* Category */}
+                                                      <div className="space-y-2">
+                                                            <Label>{vm.t("messaging.templates.category") || "Category"}</Label>
+                                                            <Select
+                                                                  value={vm.form.category}
+                                                                  onValueChange={(v) => vm.updateField("category", v as any)}
+                                                            >
+                                                                  <SelectTrigger>
+                                                                        <SelectValue placeholder={vm.t("messaging.templates.selectCategory") || "Select category..."} />
+                                                                  </SelectTrigger>
+                                                                  <SelectContent>
+                                                                        {vm.categoryOptions.map((opt) => (
+                                                                              <SelectItem key={opt.value} value={opt.value}>
+                                                                                    {vm.t(`messaging.templates.categories.${opt.label}`)}
+                                                                              </SelectItem>
+                                                                        ))}
+                                                                  </SelectContent>
+                                                            </Select>
+                                                      </div>
                                                 </CardContent>
                                           </TabsContent>
 

@@ -66,16 +66,41 @@ export function useEmailComposerViewModel() {
       // ─── Attachment State ──────────────────────────────────────
       const [attachments, setAttachments] = useState<AttachmentFile[]>([]);
 
-      const addAttachments = useCallback((files: File[]) => {
-            const newFiles: AttachmentFile[] = files.map((f) => ({
-                  id: `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
-                  name: f.name,
-                  size: f.size,
-                  type: f.type,
-                  progress: 100, // Immediate — no upload endpoint yet
-            }));
-            setAttachments((prev) => [...prev, ...newFiles]);
-      }, []);
+      const addAttachments = useCallback(async (files: File[]) => {
+            for (const f of files) {
+                  const tempId = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+                  // Add placeholder with progress 0
+                  const placeholder: AttachmentFile = {
+                        id: tempId,
+                        name: f.name,
+                        size: f.size,
+                        type: f.type,
+                        progress: 0,
+                  };
+                  setAttachments((prev) => [...prev, placeholder]);
+
+                  try {
+                        const result = await repo.uploadAttachment(f);
+                        // Update with URL and 100% progress
+                        setAttachments((prev) =>
+                              prev.map((a) =>
+                                    a.id === tempId
+                                          ? { ...a, url: result.url, progress: 100 }
+                                          : a
+                              )
+                        );
+                  } catch {
+                        // Mark as error
+                        setAttachments((prev) =>
+                              prev.map((a) =>
+                                    a.id === tempId
+                                          ? { ...a, error: "Upload failed", progress: 100 }
+                                          : a
+                              )
+                        );
+                  }
+            }
+      }, [repo]);
 
       const removeAttachment = useCallback((id: string) => {
             setAttachments((prev) => prev.filter((a) => a.id !== id));
@@ -96,8 +121,9 @@ export function useEmailComposerViewModel() {
       // ─── Variable Values (shared with preview dialog) ───────────
       const [variableValues, setVariableValues] = useState<VariableValuesMap>({});
 
-      // ─── Template-specific variables (from placeholderSchema) ────
+      // ─── Template Variables / Schema ──────────────────────────
       const [templateVariables, setTemplateVariables] = useState<VariableDefinition[]>([]);
+      const [selectedTemplateKey, setSelectedTemplateKey] = useState<string | null>(null);
 
       // Merge default + template variables
       const allVariables = useMemo(() => {
@@ -115,6 +141,7 @@ export function useEmailComposerViewModel() {
             if (template.subject) setSubject(template.subject);
             setBody(template.body);
             setFieldErrors({});
+            setSelectedTemplateKey(template.key);
 
             // Parse placeholder schema into VariableDefinitions for the template category
             if (template.placeholderSchema) {
@@ -288,8 +315,11 @@ export function useEmailComposerViewModel() {
                               scheduledAt: schedule.mode === "scheduled" && schedule.scheduledDate
                                     ? `${schedule.scheduledDate}T${schedule.scheduledTime || "00:00"}:00Z`
                                     : undefined,
-                              attachments: attachments.length > 0 ? attachments.map(a => a.name) : undefined,
+                              attachments: attachments.length > 0
+                                    ? attachments.filter(a => a.url && !a.error).map(a => a.url!)
+                                    : undefined,
                               signatureHtml: undefined,
+                              templateKey: selectedTemplateKey || undefined,
                         };
                         await repo.send(payload);
                   }
@@ -346,6 +376,7 @@ export function useEmailComposerViewModel() {
             setTemplateVariables([]);
             setAttachments([]);
             setSchedule({ mode: "now" });
+            setSelectedTemplateKey(null);
       }, []);
 
       // ─── History ───────────────────────────────────────────────

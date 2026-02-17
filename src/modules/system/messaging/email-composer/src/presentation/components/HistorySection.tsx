@@ -5,6 +5,14 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
+import { Input } from "@core/ui/input";
+import {
+      Select,
+      SelectContent,
+      SelectItem,
+      SelectTrigger,
+      SelectValue,
+} from "@core/ui/select";
 import {
       Table,
       TableHeader,
@@ -191,30 +199,33 @@ export function HistorySection(vm: HistorySectionProps) {
                               <div className="flex flex-col sm:flex-row gap-3 mb-4">
                                     {vm.setHistorySearch && (
                                           <div className="relative flex-1">
-                                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                                                <input
+                                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none z-10" />
+                                                <Input
                                                       type="text"
                                                       placeholder={t("common.search") || "Search by recipient or subject..."}
                                                       value={vm.historySearch || ""}
                                                       onChange={(e) => vm.setHistorySearch!(e.target.value)}
-                                                      className="w-full pl-9 pr-3 py-2 text-sm border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                                                      className="pl-9"
                                                 />
                                           </div>
                                     )}
                                     {vm.setHistoryStatus && (
-                                          <div className="relative min-w-[160px]">
-                                                <Filter className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                                                <select
-                                                      value={vm.historyStatus || ""}
-                                                      onChange={(e) => vm.setHistoryStatus!(e.target.value)}
-                                                      className="w-full pl-9 pr-3 py-2 text-sm border rounded-md bg-background appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                                          <div className="min-w-[160px]">
+                                                <Select
+                                                      value={vm.historyStatus || "all"}
+                                                      onValueChange={(value) => vm.setHistoryStatus!(value === "all" ? "" : value)}
                                                 >
-                                                      <option value="">{t("common.all") || "All Status"}</option>
-                                                      <option value="Sent">Sent</option>
-                                                      <option value="Failed">Failed</option>
-                                                      <option value="Pending">Pending</option>
-                                                      <option value="Cancelled">Cancelled</option>
-                                                </select>
+                                                      <SelectTrigger>
+                                                            <SelectValue placeholder={t("common.all") || "All Status"} />
+                                                      </SelectTrigger>
+                                                      <SelectContent>
+                                                            <SelectItem value="all">{t("common.all") || "All Status"}</SelectItem>
+                                                            <SelectItem value="Sent">Sent</SelectItem>
+                                                            <SelectItem value="Failed">Failed</SelectItem>
+                                                            <SelectItem value="Pending">Pending</SelectItem>
+                                                            <SelectItem value="Cancelled">Cancelled</SelectItem>
+                                                      </SelectContent>
+                                                </Select>
                                           </div>
                                     )}
                               </div>

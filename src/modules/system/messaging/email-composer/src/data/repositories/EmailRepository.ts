@@ -28,4 +28,8 @@ export class EmailRepository implements IEmailRepository {
       async getEmailTemplates(params: { page: number; pageSize: number; search?: string }): Promise<EmailTemplateListResponse> {
             return this.service.getEmailTemplates(params);
       }
+
+      async uploadAttachment(file: File): Promise<{ fileName: string; size: number; url: string; contentType: string }> {
+            return this.service.uploadAttachment(file);
+      }
 }

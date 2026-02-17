@@ -187,6 +187,7 @@ export const API_ENDPOINTS = {
     CANCEL: (id: string) => `${V1}/emails/${id}`,
     RESEND: (id: string) => `${V1}/emails/${id}/resend`,
     TEMPLATES_LIST: `${V1}/emails/templates`,
+    UPLOAD_ATTACHMENT: `${V1}/email/upload-attachment`,
   },
   // ===== NOTIFICATIONS (Bell UI — read/unread/preferences) =====
   NOTIFICATIONS: {
