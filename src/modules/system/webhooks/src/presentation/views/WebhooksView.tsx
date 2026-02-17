@@ -14,7 +14,6 @@ import { useWebhooksViewModel } from "../viewmodels/useWebhooksViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Badge } from "@core/ui/badge";
 import { WebhookStatusBadge } from "../components/WebhookStatusBadge";
-import { WebhookForm } from "../components/WebhookForm";
 import {
       Eye,
       Pencil,
@@ -26,6 +25,7 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 import { useRouter } from "next/navigation";
+import { WebhookForm } from "../components/WebhookForm";
 
 export function WebhooksView() {
       const { t } = useI18n();
@@ -105,10 +105,10 @@ export function WebhooksView() {
                                                 <div className="w-16 h-1.5 bg-muted rounded-full overflow-hidden">
                                                       <div
                                                             className={`h-full rounded-full ${rate >= 95
-                                                                        ? "bg-emerald-500"
-                                                                        : rate >= 80
-                                                                              ? "bg-amber-500"
-                                                                              : "bg-red-500"
+                                                                  ? "bg-emerald-500"
+                                                                  : rate >= 80
+                                                                        ? "bg-amber-500"
+                                                                        : "bg-red-500"
                                                                   }`}
                                                             style={{ width: `${Math.min(rate, 100)}%` }}
                                                       />
@@ -139,8 +139,7 @@ export function WebhooksView() {
                   getItemDisplayName: configBase.getItemDisplayName,
                   deleteService: configBase.deleteService,
                   permissions: configBase.permissions,
-                  useCustomCreateDialog: true,
-                  onCustomCreate: () => setCreateDialogOpen(true),
+                  onCreateClick: () => setCreateDialogOpen(true),
                   getActions: (_vmInstance: any, tFn: any, handleDeleteFn: any): CrudAction<WebhookSubscriptionListItem>[] => [
                         {
                               label: tFn("common.view") || "View Details",
