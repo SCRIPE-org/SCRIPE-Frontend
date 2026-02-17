@@ -3,16 +3,19 @@
 /**
  * useNotificationViewModel — Notification bell ViewModel.
  *
- * THREE layers ensure badge always updates:
- * 1. HTTP fetch on mount → badge shows immediately
- * 2. 10-second polling → guaranteed updates without refresh
- * 3. WebSocket via NotificationSignalRProvider → instant real-time updates (bonus)
+ * PURE WEBSOCKET — zero polling, zero periodic HTTP requests.
+ * Reads real-time unread count from NotificationSignalRProvider context.
+ *
+ * Data flow:
+ * 1. NotificationSignalRProvider connects to /hubs/notifications
+ * 2. Backend OnConnectedAsync() pushes initial UnreadCountUpdated(count)
+ * 3. When a notification is sent, backend pushes ReceiveNotification + UnreadCountUpdated
+ * 4. This viewmodel reads those values from the provider context
  */
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { notificationBellContainer } from '@core/notification/di';
 import { SecureTokenService } from '@core/common/secure-token-service';
-import { useAppStore } from '@core/store/useAppStore';
 import { useNotificationHub } from '@core/providers/notification-provider';
 import type { NotificationItem } from '@core/notification/entities/NotificationItem';
 
@@ -30,70 +33,27 @@ export interface NotificationViewModel {
       refresh: () => void;
 }
 
-const POLL_INTERVAL = 10_000; // 10 seconds
-
 // ─── Hook ────────────────────────────────────────────────────────────
 
 export function useNotificationViewModel(): NotificationViewModel {
       const [notifications, setNotifications] = useState<NotificationItem[]>([]);
       const [isLoading, setIsLoading] = useState(false);
       const [isOpen, setIsOpen] = useState(false);
-      const [pollCount, setPollCount] = useState(0);
 
-      const isAuthenticated = useAppStore((s) => s.isAuthenticated);
-
-      // WebSocket provider (bonus layer — if it connects, provides instant updates)
+      // Pure WebSocket — all data comes from the provider
       const hub = useNotificationHub();
-      const wsCount = hub.unreadCount;
+      const unreadCount = hub.unreadCount;
       const latestNotification = hub.latestNotification;
 
       const repo = notificationBellContainer.notificationBellRepository;
       const mountedRef = useRef(true);
 
-      // ─── HTTP fetch for unread count ───────────────────────────────
-      const fetchCount = useCallback(async () => {
-            const token = SecureTokenService.getAccessToken();
-            if (!token) return;
-            try {
-                  const res = await repo.getUnreadCount();
-                  const count = res.count ?? 0;
-                  if (mountedRef.current) setPollCount(count);
-            } catch {
-                  // silently fail
-            }
-      }, [repo]);
-
-      // ─── Fetch notification list (on dropdown open) ────────────────
-      const fetchList = useCallback(async () => {
-            const token = SecureTokenService.getAccessToken();
-            if (!token) return;
-            setIsLoading(true);
-            try {
-                  const data = await repo.getNotifications({ pageSize: 10 });
-                  if (mountedRef.current) setNotifications(data.items);
-            } catch { /* silently fail */ } finally {
-                  if (mountedRef.current) setIsLoading(false);
-            }
-      }, [repo]);
-
-      // ─── Main effect: HTTP fetch on mount + 10s polling ────────────
       useEffect(() => {
             mountedRef.current = true;
-            if (!isAuthenticated) return;
+            return () => { mountedRef.current = false; };
+      }, []);
 
-            // 1. Immediate fetch
-            fetchCount();
-
-            // 2. Poll every 10 seconds (guaranteed badge updates)
-            const interval = setInterval(fetchCount, POLL_INTERVAL);
-
-            return () => {
-                  mountedRef.current = false;
-                  clearInterval(interval);
-            };
-      }, [isAuthenticated, fetchCount]);
-
-      // ─── Handle new notification from WebSocket (bonus) ────────────
+      // ─── Handle new notification from WebSocket ────────────────────
       useEffect(() => {
             if (!latestNotification) return;
             const item: NotificationItem = {
@@ -109,14 +69,20 @@ export function useNotificationViewModel(): NotificationViewModel {
                   metadataJson: null,
             };
             setNotifications((prev) => [item, ...prev].slice(0, 20));
-            // Also bump the poll count immediately
-            setPollCount((prev) => prev + 1);
       }, [latestNotification]);
 
-      // ─── Merge: use whichever count is higher ──────────────────────
-      // wsCount = from WebSocket provider (instant, if connected)
-      // pollCount = from HTTP polling (guaranteed, every 10s)
-      const unreadCount = Math.max(wsCount, pollCount);
+      // ─── Fetch notification list (only when dropdown opens) ────────
+      const fetchList = useCallback(async () => {
+            const token = SecureTokenService.getAccessToken();
+            if (!token) return;
+            setIsLoading(true);
+            try {
+                  const data = await repo.getNotifications({ pageSize: 10 });
+                  if (mountedRef.current) setNotifications(data.items);
+            } catch { /* silently fail */ } finally {
+                  if (mountedRef.current) setIsLoading(false);
+            }
+      }, [repo]);
 
       // ─── Actions ──────────────────────────────────────────────────
       const markAsRead = useCallback(async (id: string) => {
@@ -125,7 +91,6 @@ export function useNotificationViewModel(): NotificationViewModel {
                   setNotifications((prev) =>
                         prev.map((n) => (n.id === id ? { ...n, isRead: true, readAt: new Date().toISOString() } : n))
                   );
-                  setPollCount((prev) => Math.max(0, prev - 1));
                   hub.setUnreadCount((prev: number) => Math.max(0, prev - 1));
             } catch { /* silently fail */ }
       }, [repo, hub]);
@@ -134,7 +99,6 @@ export function useNotificationViewModel(): NotificationViewModel {
             try {
                   await repo.markAllAsRead();
                   setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true, readAt: new Date().toISOString() })));
-                  setPollCount(0);
                   hub.setUnreadCount(0);
             } catch { /* silently fail */ }
       }, [repo, hub]);
@@ -150,9 +114,8 @@ export function useNotificationViewModel(): NotificationViewModel {
       const close = useCallback(() => setIsOpen(false), []);
 
       const refresh = useCallback(() => {
-            fetchCount();
             if (isOpen) fetchList();
-      }, [fetchCount, fetchList, isOpen]);
+      }, [fetchList, isOpen]);
 
       return {
             notifications,
