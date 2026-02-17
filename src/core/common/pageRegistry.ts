@@ -129,6 +129,14 @@ export const PAGE_REGISTRY: PageDefinition[] = [
     resource: "tenant-settings",
     category: "settings",
   },
+  {
+    href: "/settings/webhooks",
+    labelEn: "Webhooks",
+    labelAr: "الويب هوك",
+    icon: "Webhook",
+    resource: "webhooks",
+    category: "settings",
+  },
 ];
 
 /**

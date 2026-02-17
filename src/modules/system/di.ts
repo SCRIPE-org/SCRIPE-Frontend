@@ -21,6 +21,7 @@ import { RecycleBinService } from "./recycle-bin/src/data/services/RecycleBinSer
 import { MessageTemplateService } from "./messaging/message-templates/src/data/services/MessageTemplateService";
 import { EmailService } from "./messaging/email-composer/src/data/services/EmailService";
 import { NotificationSenderService } from "./messaging/notification-sender/src/data/services/NotificationSenderService";
+import { WebhookService } from "./webhooks/src/data/services/WebhookService";
 
 // Repositories
 import { AdminRepository } from "./admin/src/data/repositories/AdminRepository";
@@ -34,6 +35,7 @@ import { RecycleBinRepository } from "./recycle-bin/src/data/repositories/Recycl
 import { MessageTemplateRepository } from "./messaging/message-templates/src/data/repositories/MessageTemplateRepository";
 import { EmailRepository } from "./messaging/email-composer/src/data/repositories/EmailRepository";
 import { NotificationSenderRepository } from "./messaging/notification-sender/src/data/repositories/NotificationSenderRepository";
+import { WebhookRepository } from "./webhooks/src/data/repositories/WebhookRepository";
 
 // Interfaces - Repositories
 import type { IAdminRepository } from "./admin/src/domain/interfaces/IAdminRepository";
@@ -48,6 +50,7 @@ import type { IRecycleBinService } from "./recycle-bin/src/domain/interfaces/IRe
 import type { IMessageTemplateRepository } from "./messaging/message-templates/src/domain/interfaces/IMessageTemplateRepository";
 import type { IEmailRepository } from "./messaging/email-composer/src/domain/interfaces/IEmailRepository";
 import type { INotificationSenderRepository } from "./messaging/notification-sender/src/domain/interfaces/INotificationSenderRepository";
+import type { IWebhookRepository } from "./webhooks/src/domain/interfaces/IWebhookRepository";
 
 // Interfaces - Services (from domain/interfaces, NOT data/services)
 import type { IAdminService } from "./admin/src/domain/interfaces/IAdminService";
@@ -77,6 +80,8 @@ export interface SystemContainer {
   messageTemplateRepository: IMessageTemplateRepository;
   emailRepository: IEmailRepository;
   notificationSenderRepository: INotificationSenderRepository;
+  // Webhooks
+  webhookRepository: IWebhookRepository;
 }
 
 let _container: SystemContainer | null = null;
@@ -98,6 +103,7 @@ export function getSystemContainer(): SystemContainer {
     const messageTemplateService = new MessageTemplateService(apiService);
     const emailService = new EmailService(apiService);
     const notificationSenderService = new NotificationSenderService(apiService);
+    const webhookService = new WebhookService(apiService);
 
     // Create Repositories (use Services)
     _container = {
@@ -121,6 +127,8 @@ export function getSystemContainer(): SystemContainer {
       messageTemplateRepository: new MessageTemplateRepository(messageTemplateService),
       emailRepository: new EmailRepository(emailService),
       notificationSenderRepository: new NotificationSenderRepository(notificationSenderService),
+      // Webhooks
+      webhookRepository: new WebhookRepository(webhookService),
     };
   }
 
@@ -181,5 +189,9 @@ export const systemContainer = {
   },
   get notificationSenderRepository() {
     return getSystemContainer().notificationSenderRepository;
+  },
+  // Webhooks
+  get webhookRepository() {
+    return getSystemContainer().webhookRepository;
   },
 };

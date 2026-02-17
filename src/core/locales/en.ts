@@ -71,6 +71,7 @@ export const en = {
     permissions: "Permissions",
     menus: "Menu Management",
     tenant_settings: "My Tenant Settings",
+    webhooks: "Webhooks",
   },
 
   // Tenants
@@ -4404,5 +4405,110 @@ export const en = {
     },
   },
 
+
+  // ===== WEBHOOKS =====
+  webhooks: {
+    title: "Webhooks",
+    description: "Manage webhook subscriptions and monitor event deliveries",
+    // List
+    url: "Endpoint URL",
+    urlPlaceholder: "https://your-server.com/webhook",
+    urlHttpsRequired: "URL must use HTTPS (http://localhost allowed for dev)",
+    description_field: "Description",
+    descriptionPlaceholder: "e.g. Production order notifications",
+    events: "Events",
+    eventsRequired: "Select at least one event",
+    selectEvents: "Select events to subscribe to",
+    selected: "selected",
+    selectAll: "Select all",
+    deselectAll: "Deselect all",
+    statusLabel: "Status",
+    lastDelivery: "Last Delivery",
+    untitled: "Untitled Webhook",
+    // Status
+    status: {
+      active: "Active",
+      inactive: "Inactive",
+      autoDisabled: "Auto-disabled",
+      success: "Success",
+      failed: "Failed",
+    },
+    // Actions
+    create: "Create Webhook",
+    createDesc: "Subscribe to events and receive real-time HTTP notifications.",
+    edit: "Edit Webhook",
+    editDesc: "Update the webhook subscription settings.",
+    toggleStatus: "Toggle Status",
+    deactivate: "Deactivate",
+    activate: "Activate",
+    testPing: "Test Ping",
+    testing: "Testing...",
+    // Success messages
+    created: "Webhook Created",
+    createdDesc: "Webhook subscription created successfully.",
+    updated: "Webhook Updated",
+    updatedDesc: "Webhook subscription updated successfully.",
+    deleted: "Webhook Deleted",
+    deletedDesc: "Webhook subscription deleted.",
+    toggled: "Webhook Toggled",
+    toggledDesc: "Webhook status updated.",
+    // Delete confirmation
+    deleteConfirmTitle: "Delete Webhook",
+    deleteConfirmDesc: "This will permanently delete this webhook subscription and all its delivery logs. This action cannot be undone.",
+    // Not found
+    notFound: "Webhook Not Found",
+    notFoundDesc: "The requested webhook could not be found.",
+    // Secret
+    secret: "Signing Secret",
+    secretDescription: "Used to sign webhook payloads with HMAC-SHA256. Keep this secret safe.",
+    rotateSecret: "Rotate Secret",
+    rotateSecretTitle: "Rotate Signing Secret",
+    rotateSecretDesc: "A new secret will be generated. The old secret will remain valid for 24 hours to allow time for updating your integration.",
+    rotateSecretConfirm: "Rotate Secret",
+    secretRotated: "Secret Rotated",
+    secretRotatedDesc: "Secret rotated. Old secret valid for 24 hours.",
+    previousSecretActive: "Previous secret is still valid until",
+    gracePeriod: "Grace Period",
+    // Test
+    testSuccess: "Test Delivered Successfully",
+    testFailed: "Test Delivery Failed",
+    // Stats
+    stats: {
+      total: "Total Deliveries",
+      successful: "Successful",
+      failed: "Failed",
+      successRate: "Success Rate",
+    },
+    // Configuration
+    configuration: "Configuration",
+    maxRetries: "Max Retries",
+    maxRetriesDesc: "Number of retry attempts on failure (0-10)",
+    maxConsecutiveFailures: "Auto-disable Threshold",
+    maxFailuresDesc: "Auto-disable after this many consecutive failures",
+    consecutiveFailuresLabel: "failures",
+    currentFailures: "Current Failures",
+    lastStatus: "Last Status",
+    advancedSettings: "Advanced Settings",
+    // Auto-disabled
+    autoDisabledTitle: "Webhook Auto-Disabled",
+    autoDisabledDesc: "This webhook was automatically disabled after {count} consecutive failures. Click 'Activate' to re-enable.",
+    // Tabs
+    overview: "Overview",
+    deliveryLog: "Delivery Log",
+    subscribedEvents: "Subscribed Events",
+    subscribedEventsDesc: "Events that trigger this webhook",
+    // Delivery log
+    eventType: "Event",
+    httpCode: "HTTP",
+    attempt: "Attempt",
+    latency: "Latency",
+    timestamp: "Timestamp",
+    noDeliveries: "No deliveries yet",
+    noDeliveriesDesc: "Delivery attempts will appear here when events are triggered.",
+    errorMessage: "Error",
+    requestUrl: "Request URL",
+    payload: "Payload",
+    responseBody: "Response Body",
+  },
 
 };

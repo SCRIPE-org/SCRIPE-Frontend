@@ -202,6 +202,20 @@ export const API_ENDPOINTS = {
     SEARCH_TARGETS: `${V1}/Notifications/search-targets`,
     SEND: `${V1}/Notifications/send`,
   },
+
+  // ===== WEBHOOKS =====
+  WEBHOOKS: {
+    LIST: `${V1}/webhooks`,
+    BY_ID: (id: string) => `${V1}/webhooks/${id}`,
+    CREATE: `${V1}/webhooks`,
+    UPDATE: (id: string) => `${V1}/webhooks/${id}`,
+    DELETE: (id: string) => `${V1}/webhooks/${id}`,
+    TOGGLE: (id: string) => `${V1}/webhooks/${id}/toggle`,
+    ROTATE_SECRET: (id: string) => `${V1}/webhooks/${id}/rotate-secret`,
+    TEST: (id: string) => `${V1}/webhooks/${id}/test`,
+    DELIVERY_LOGS: (id: string) => `${V1}/webhooks/${id}/deliveries`,
+    EVENTS: `${V1}/webhooks/events`,
+  },
 };
 
 /**
