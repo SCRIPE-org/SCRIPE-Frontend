@@ -157,36 +157,36 @@ export function WebhookForm({
 
                                                             return (
                                                                   <AccordionItem key={category} value={category}>
-                                                                        <AccordionTrigger className="py-2.5 text-sm hover:no-underline">
-                                                                              <div className="flex items-center gap-2 w-full">
-                                                                                    <Checkbox
-                                                                                          checked={allSelected}
-                                                                                          className={
-                                                                                                someSelected && !allSelected
-                                                                                                      ? "data-[state=unchecked]:bg-primary/20"
-                                                                                                      : ""
-                                                                                          }
-                                                                                          onCheckedChange={() =>
-                                                                                                vm.selectAllInCategory(category)
-                                                                                          }
-                                                                                          onClick={(e) => e.stopPropagation()}
-                                                                                    />
-                                                                                    <span className="font-medium capitalize">
-                                                                                          {category}
-                                                                                    </span>
-                                                                                    <Badge
-                                                                                          variant="outline"
-                                                                                          className="ml-auto mr-2 text-xs"
-                                                                                    >
-                                                                                          {
-                                                                                                events.filter((e) =>
-                                                                                                      vm.selectedEvents.includes(e.key)
-                                                                                                ).length
-                                                                                          }{" "}
-                                                                                          / {events.length}
-                                                                                    </Badge>
-                                                                              </div>
-                                                                        </AccordionTrigger>
+                                                                        <div className="flex items-center gap-2 pr-2 hover:bg-muted/50 transition-colors rounded-lg">
+                                                                              <Checkbox
+                                                                                    checked={allSelected}
+                                                                                    className={`ml-3 mt-1 ${someSelected && !allSelected
+                                                                                                ? "data-[state=unchecked]:bg-primary/20"
+                                                                                                : ""
+                                                                                          }`}
+                                                                                    onCheckedChange={() =>
+                                                                                          vm.selectAllInCategory(category)
+                                                                                    }
+                                                                              />
+                                                                              <AccordionTrigger className="py-2.5 px-2 text-sm hover:no-underline flex-1 hover:bg-transparent">
+                                                                                    <div className="flex items-center gap-2 w-full text-left">
+                                                                                          <span className="font-medium capitalize">
+                                                                                                {category}
+                                                                                          </span>
+                                                                                          <Badge
+                                                                                                variant="outline"
+                                                                                                className="ml-auto mr-1 text-xs"
+                                                                                          >
+                                                                                                {
+                                                                                                      events.filter((e) =>
+                                                                                                            vm.selectedEvents.includes(e.key)
+                                                                                                      ).length
+                                                                                                }{" "}
+                                                                                                / {events.length}
+                                                                                          </Badge>
+                                                                                    </div>
+                                                                              </AccordionTrigger>
+                                                                        </div>
                                                                         <AccordionContent className="pt-1 pb-3">
                                                                               <div className="space-y-1.5 pl-6">
                                                                                     {events.map((event) => (
