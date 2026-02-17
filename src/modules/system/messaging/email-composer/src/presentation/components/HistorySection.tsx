@@ -32,6 +32,7 @@ import {
       ChevronDown,
       ChevronUp,
       FileText,
+      Paperclip,
       AlertTriangle,
       CheckCircle2,
       Clock,
@@ -137,6 +138,38 @@ function ExpandedEmailRow({
                                           )}
                                     </div>
                               </div>
+
+                              {/* Attachments */}
+                              {email.attachments && (() => {
+                                    const urls = email.attachments.split(",").map(u => u.trim()).filter(Boolean);
+                                    if (urls.length === 0) return null;
+                                    return (
+                                          <div>
+                                                <p className="text-xs font-medium text-muted-foreground mb-2 flex items-center gap-1.5">
+                                                      <Paperclip className="h-3.5 w-3.5" />
+                                                      Attachments ({urls.length})
+                                                </p>
+                                                <div className="flex flex-wrap gap-2">
+                                                      {urls.map((url, i) => {
+                                                            const fileName = decodeURIComponent(url.split("/").pop() || `attachment-${i + 1}`);
+                                                            return (
+                                                                  <a
+                                                                        key={i}
+                                                                        href={url}
+                                                                        target="_blank"
+                                                                        rel="noopener noreferrer"
+                                                                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-muted/50 hover:bg-muted border rounded-md text-xs font-medium text-foreground transition-colors"
+                                                                        title={fileName}
+                                                                  >
+                                                                        <FileText className="h-3.5 w-3.5 text-blue-500 shrink-0" />
+                                                                        <span className="truncate max-w-[200px]">{fileName}</span>
+                                                                  </a>
+                                                            );
+                                                      })}
+                                                </div>
+                                          </div>
+                                    );
+                              })()}
 
                               {/* Actions */}
                               <div className="flex items-center gap-2">

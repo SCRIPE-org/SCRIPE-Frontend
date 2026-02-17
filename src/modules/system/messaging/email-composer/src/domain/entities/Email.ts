@@ -46,6 +46,7 @@ export interface SentEmail {
       cc: string | null;              // comma-separated CC addresses
       bcc: string | null;             // comma-separated BCC addresses
       retryCount: number;
+      attachments: string | null;     // comma-separated attachment URLs
 }
 
 /**
