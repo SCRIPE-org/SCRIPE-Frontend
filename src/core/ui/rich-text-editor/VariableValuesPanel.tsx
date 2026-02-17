@@ -83,15 +83,44 @@ export function VariableValuesPanel({
       className,
 }: VariableValuesPanelProps) {
       // If templateBody is provided, filter to only used variables
+      // AND auto-detect any variables in the body that aren't in the provided list
       const usedVariables = useMemo(() => {
             if (!templateBody) return variables;
-            return variables.filter(
+
+            // First: filter known variables to only those used in the body
+            const knownUsed = variables.filter(
                   (v) =>
                         templateBody.includes(`{{${v.key}}}`) ||
                         templateBody.includes(`{{ ${v.key} }}`) ||
                         templateBody.includes(`{{${v.key} |`) ||
                         templateBody.includes(`{{ ${v.key} |`)
             );
+
+            // Second: extract ALL variable keys from the body
+            const allKeysInBody = new Set<string>();
+            const regex = /\{\{\s*(\w+)(?:\s*\|[^}]*)?\s*\}\}/g;
+            let match: RegExpExecArray | null;
+            while ((match = regex.exec(templateBody)) !== null) {
+                  allKeysInBody.add(match[1]);
+            }
+
+            // Third: create entries for any keys found in body but not in the known list
+            const knownKeys = new Set(variables.map((v) => v.key));
+            const autoDetected: VariableDefinition[] = [];
+            for (const key of allKeysInBody) {
+                  if (!knownKeys.has(key)) {
+                        autoDetected.push({
+                              key,
+                              label: key,
+                              category: "template" as VariableCategory,
+                              sample: "",
+                              supportsFallback: true,
+                              dataSource: "manual" as const,
+                        });
+                  }
+            }
+
+            return [...knownUsed, ...autoDetected];
       }, [variables, templateBody]);
 
       // Group by category
@@ -174,7 +203,7 @@ export function VariableValuesPanel({
                                     </p>
                               </div>
                         ) : (
-                              <ScrollArea className="max-h-[400px]">
+                              <ScrollArea className="max-h-[600px]">
                                     <div className="space-y-4">
                                           {CATEGORY_ORDER.map((cat) => {
                                                 const items = grouped[cat];

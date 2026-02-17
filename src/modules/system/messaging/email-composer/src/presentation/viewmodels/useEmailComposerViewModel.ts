@@ -333,6 +333,7 @@ export function useEmailComposerViewModel() {
             setBccSearch("");
             setFieldErrors({});
             setVariableValues({});
+            setTemplateVariables([]);
             setAttachments([]);
             setSchedule({ mode: "now" });
       }, []);

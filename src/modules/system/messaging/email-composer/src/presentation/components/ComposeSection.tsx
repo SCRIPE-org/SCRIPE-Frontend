@@ -12,7 +12,9 @@ import type { VariableValuesMap } from "@core/ui/rich-text-editor/VariableValues
 import { Badge } from "@core/ui/badge";
 import { Label } from "@core/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
-import { Mail, Send, Loader2, RotateCcw, Search, X, Eye, Paperclip, CalendarClock } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@core/ui/popover";
+
+import { Mail, Send, Loader2, RotateCcw, Search, X, Eye, Paperclip, CalendarClock, Braces } from "lucide-react";
 import { cn } from "@core/common/utils";
 import type { EmailRecipient } from "../../domain/entities/Email";
 import type { IEmailRepository } from "../../domain/interfaces/IEmailRepository";
@@ -291,13 +293,41 @@ export function ComposeSection(vm: ComposeSectionProps) {
                                           {vm.subject.length}/{SUBJECT_MAX}
                                     </span>
                               </div>
-                              <Input
-                                    placeholder={t("messaging.email.subjectPlaceholder") || "Enter email subject..."}
-                                    value={vm.subject}
-                                    onChange={(e) => vm.setSubject(e.target.value)}
-                                    maxLength={SUBJECT_MAX}
-                                    className={cn(vm.fieldErrors.subject && "border-destructive focus-visible:ring-destructive")}
-                              />
+                              <div className="flex gap-1.5">
+                                    <Input
+                                          placeholder={t("messaging.email.subjectPlaceholder") || "Enter email subject..."}
+                                          value={vm.subject}
+                                          onChange={(e) => vm.setSubject(e.target.value)}
+                                          maxLength={SUBJECT_MAX}
+                                          className={cn("flex-1", vm.fieldErrors.subject && "border-destructive focus-visible:ring-destructive")}
+                                    />
+                                    <Popover>
+                                          <PopoverTrigger asChild>
+                                                <Button type="button" variant="outline" size="icon" className="shrink-0 h-9 w-9" title="Insert variable">
+                                                      <Braces className="h-4 w-4" />
+                                                </Button>
+                                          </PopoverTrigger>
+                                          <PopoverContent className="w-64 p-0 max-h-64 overflow-y-auto" align="end">
+                                                <div className="p-2 border-b">
+                                                      <p className="text-xs font-medium text-muted-foreground">Insert variable into subject</p>
+                                                </div>
+                                                {(vm.allVariables ?? DEFAULT_VARIABLES).map((v) => (
+                                                      <Button
+                                                            key={v.key}
+                                                            type="button"
+                                                            variant="ghost"
+                                                            className="w-full justify-between gap-2 h-auto py-1.5 px-3 rounded-none font-normal"
+                                                            onClick={() => vm.setSubject(vm.subject + `{{ ${v.key} }}`)}
+                                                      >
+                                                            <span className="truncate text-sm">{v.label}</span>
+                                                            <Badge variant="outline" className="text-[10px] px-1 py-0 font-mono shrink-0">
+                                                                  {`{{${v.key}}}`}
+                                                            </Badge>
+                                                      </Button>
+                                                ))}
+                                          </PopoverContent>
+                                    </Popover>
+                              </div>
                         </div>
 
                         {/* Body — Rich Text Editor */}

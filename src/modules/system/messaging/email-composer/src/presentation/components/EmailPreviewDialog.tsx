@@ -269,7 +269,7 @@ export function EmailPreviewDialog({
                                           variables={allVariables}
                                           values={variableValues}
                                           onChange={setVariableValues}
-                                          templateBody={body}
+                                          templateBody={body + " " + subject}
                                           className="sticky top-0"
                                     />
                               )}
