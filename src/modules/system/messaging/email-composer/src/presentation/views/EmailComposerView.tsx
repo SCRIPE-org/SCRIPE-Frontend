@@ -143,6 +143,8 @@ export function EmailComposerView() {
                         customVariables={vm.templateVariables}
                         variableValues={vm.variableValues}
                         onVariableValuesChange={vm.setVariableValues}
+                        typeOverrides={vm.typeOverrides}
+                        onTypeOverridesChange={vm.setTypeOverrides}
                   />
             </>
       );

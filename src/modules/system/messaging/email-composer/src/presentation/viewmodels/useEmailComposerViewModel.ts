@@ -14,7 +14,7 @@ import type {
 } from "../../domain/entities/Email";
 import type { AttachmentFile } from "../components/AttachmentUploader";
 import type { ScheduleConfig } from "../components/SchedulePicker";
-import type { VariableValuesMap } from "@core/ui/rich-text-editor/VariableValuesPanel";
+import type { VariableValuesMap, TypeOverridesMap } from "@core/ui/rich-text-editor/VariableValuesPanel";
 import { DEFAULT_VARIABLES } from "@core/ui/rich-text-editor/VariablePicker";
 import type { VariableDefinition } from "@core/ui/rich-text-editor/VariablePicker";
 
@@ -96,6 +96,7 @@ export function useEmailComposerViewModel() {
 
       // ─── Variable Values (shared with preview dialog) ───────────
       const [variableValues, setVariableValues] = useState<VariableValuesMap>({});
+      const [typeOverrides, setTypeOverrides] = useState<TypeOverridesMap>({});
 
       // ─── Template Variables / Schema ──────────────────────────
       const [templateVariables, setTemplateVariables] = useState<VariableDefinition[]>([]);
@@ -486,6 +487,9 @@ export function useEmailComposerViewModel() {
             // Variable Values (shared with preview)
             variableValues,
             setVariableValues,
+            // Type overrides (shared with preview)
+            typeOverrides,
+            setTypeOverrides,
             // Template-specific variables
             templateVariables,
             allVariables,

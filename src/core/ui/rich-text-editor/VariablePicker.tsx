@@ -76,24 +76,24 @@ const CATEGORY_CONFIG: Record<
 // ─── Default System Variables ───────────────────────────────
 export const DEFAULT_VARIABLES: VariableDefinition[] = [
       // Recipient
-      { key: "userName", label: "User Name", category: "recipient", sample: "Ahmed Hassan", supportsFallback: true },
-      { key: "userEmail", label: "Email Address", category: "recipient", sample: "ahmed@example.com", supportsFallback: true },
-      { key: "firstName", label: "First Name", category: "recipient", sample: "Ahmed", supportsFallback: true },
-      { key: "lastName", label: "Last Name", category: "recipient", sample: "Hassan", supportsFallback: true },
-      { key: "jobTitle", label: "Job Title", category: "recipient", sample: "Software Engineer", supportsFallback: true },
+      { key: "userName", label: "User Name", category: "recipient", sample: "Ahmed Hassan", supportsFallback: true, fieldType: "text" },
+      { key: "userEmail", label: "Email Address", category: "recipient", sample: "ahmed@example.com", supportsFallback: true, fieldType: "email" },
+      { key: "firstName", label: "First Name", category: "recipient", sample: "Ahmed", supportsFallback: true, fieldType: "text" },
+      { key: "lastName", label: "Last Name", category: "recipient", sample: "Hassan", supportsFallback: true, fieldType: "text" },
+      { key: "jobTitle", label: "Job Title", category: "recipient", sample: "Software Engineer", supportsFallback: true, fieldType: "text" },
       // Company
-      { key: "companyName", label: "Company Name", category: "company", sample: "NEXORA" },
-      { key: "companyLogo", label: "Company Logo URL", category: "company", sample: "/branding/nexora-logo.png" },
-      { key: "companyAddress", label: "Company Address", category: "company", sample: "123 Business Ave" },
-      { key: "companyPhone", label: "Phone Number", category: "company", sample: "+1 (555) 123-4567" },
-      { key: "companyWebsite", label: "Website URL", category: "company", sample: "https://nexora.com" },
+      { key: "companyName", label: "Company Name", category: "company", sample: "NEXORA", fieldType: "text" },
+      { key: "companyLogo", label: "Company Logo URL", category: "company", sample: "/branding/nexora-logo.png", fieldType: "url" },
+      { key: "companyAddress", label: "Company Address", category: "company", sample: "123 Business Ave", fieldType: "text" },
+      { key: "companyPhone", label: "Phone Number", category: "company", sample: "+1 (555) 123-4567", fieldType: "text" },
+      { key: "companyWebsite", label: "Website URL", category: "company", sample: "https://nexora.com", fieldType: "url" },
       // System
-      { key: "currentDate", label: "Current Date", category: "system", sample: "February 16, 2026" },
-      { key: "currentYear", label: "Current Year", category: "system", sample: "2026" },
-      { key: "supportEmail", label: "Support Email", category: "system", sample: "support@nexora.com" },
-      { key: "loginUrl", label: "Login URL", category: "system", sample: "https://app.nexora.com/login" },
-      { key: "dashboardUrl", label: "Dashboard URL", category: "system", sample: "https://app.nexora.com/dashboard" },
-      { key: "unsubscribeUrl", label: "Unsubscribe URL", category: "system", sample: "https://app.nexora.com/unsubscribe" },
+      { key: "currentDate", label: "Current Date", category: "system", sample: "February 16, 2026", fieldType: "date" },
+      { key: "currentYear", label: "Current Year", category: "system", sample: "2026", fieldType: "number" },
+      { key: "supportEmail", label: "Support Email", category: "system", sample: "support@nexora.com", fieldType: "email" },
+      { key: "loginUrl", label: "Login URL", category: "system", sample: "https://app.nexora.com/login", fieldType: "url" },
+      { key: "dashboardUrl", label: "Dashboard URL", category: "system", sample: "https://app.nexora.com/dashboard", fieldType: "url" },
+      { key: "unsubscribeUrl", label: "Unsubscribe URL", category: "system", sample: "https://app.nexora.com/unsubscribe", fieldType: "url" },
 ];
 
 // ─── Variable Item ──────────────────────────────────────────

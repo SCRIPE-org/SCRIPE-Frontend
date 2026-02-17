@@ -202,6 +202,8 @@ export interface ComposeSectionProps {
       allVariables?: VariableDefinition[];
       variableValues?: VariableValuesMap;
       setVariableValues?: (values: VariableValuesMap) => void;
+      typeOverrides?: Record<string, string>;
+      setTypeOverrides?: (overrides: Record<string, string>) => void;
 }
 
 export function ComposeSection(vm: ComposeSectionProps) {
@@ -354,6 +356,8 @@ export function ComposeSection(vm: ComposeSectionProps) {
                                     values={vm.variableValues}
                                     onChange={vm.setVariableValues}
                                     templateBody={vm.body + " " + vm.subject}
+                                    typeOverrides={vm.typeOverrides}
+                                    onTypeOverridesChange={vm.setTypeOverrides}
                                     className="max-h-[500px]"
                               />
                         )}

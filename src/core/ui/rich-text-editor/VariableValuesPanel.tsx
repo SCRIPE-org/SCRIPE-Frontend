@@ -35,6 +35,8 @@ export interface VariableValuesMap {
       [key: string]: string;
 }
 
+export type TypeOverridesMap = Record<string, string>;
+
 export interface VariableValuesPanelProps {
       variables: VariableDefinition[];
       values: VariableValuesMap;
@@ -43,6 +45,10 @@ export interface VariableValuesPanelProps {
       templateBody?: string;
       /** Context values from the current session (e.g., recipient data) for auto-fill */
       contextValues?: VariableValuesMap;
+      /** Controlled type overrides from parent — synced between panels */
+      typeOverrides?: TypeOverridesMap;
+      /** Called when type overrides change (controlled mode) */
+      onTypeOverridesChange?: (overrides: TypeOverridesMap) => void;
       className?: string;
 }
 
@@ -255,6 +261,8 @@ export function VariableValuesPanel({
       onChange,
       templateBody,
       contextValues,
+      typeOverrides: controlledTypeOverrides,
+      onTypeOverridesChange,
       className,
 }: VariableValuesPanelProps) {
       // If templateBody is provided, filter to only used variables
@@ -334,7 +342,8 @@ export function VariableValuesPanel({
             { value: "color", label: "Color" },
       ];
 
-      const [typeOverrides, setTypeOverrides] = useState<Record<string, string>>({});
+      const [localTypeOverrides, setLocalTypeOverrides] = useState<Record<string, string>>({});
+      const typeOverrides = controlledTypeOverrides ?? localTypeOverrides;
 
       const getEffectiveType = useCallback(
             (v: VariableDefinition) => typeOverrides[v.key] || v.fieldType || "text",
@@ -342,8 +351,10 @@ export function VariableValuesPanel({
       );
 
       const setTypeOverride = useCallback((key: string, type: string) => {
-            setTypeOverrides((prev) => ({ ...prev, [key]: type }));
-      }, []);
+            const next = { ...typeOverrides, [key]: type };
+            if (onTypeOverridesChange) onTypeOverridesChange(next);
+            else setLocalTypeOverrides(next);
+      }, [typeOverrides, onTypeOverridesChange]);
 
       const autoPopulate = () => {
             const populated: VariableValuesMap = { ...values };

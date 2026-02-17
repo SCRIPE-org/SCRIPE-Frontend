@@ -70,6 +70,10 @@ export interface EmailPreviewDialogProps {
       variableValues?: VariableValuesMap;
       /** Called when variable values change (persists values in parent) */
       onVariableValuesChange?: (values: VariableValuesMap) => void;
+      /** Controlled type overrides from parent (sync with compose panel) */
+      typeOverrides?: Record<string, string>;
+      /** Called when type overrides change */
+      onTypeOverridesChange?: (overrides: Record<string, string>) => void;
 }
 
 export function EmailPreviewDialog({
@@ -81,6 +85,8 @@ export function EmailPreviewDialog({
       customVariables,
       variableValues: controlledValues,
       onVariableValuesChange,
+      typeOverrides: controlledTypeOverrides,
+      onTypeOverridesChange,
 }: EmailPreviewDialogProps) {
       const { t } = useI18n();
       const [device, setDevice] = useState<DeviceId>("desktop");
@@ -273,6 +279,8 @@ export function EmailPreviewDialog({
                                           values={variableValues}
                                           onChange={setVariableValues}
                                           templateBody={body + " " + subject}
+                                          typeOverrides={controlledTypeOverrides}
+                                          onTypeOverridesChange={onTypeOverridesChange}
                                           className="sticky top-0 max-h-[70vh]"
                                     />
                               )}
