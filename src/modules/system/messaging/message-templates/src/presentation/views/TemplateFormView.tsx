@@ -104,22 +104,22 @@ export function TemplateFormView({ templateId: _templateId }: { templateId?: str
                               <Card>
                                     <Tabs defaultValue="settings">
                                           <CardHeader className="pb-3">
-                                                <TabsList className="w-full">
-                                                      <TabsTrigger value="settings" className="flex-1 gap-1.5">
-                                                            <Settings className="h-3.5 w-3.5" />
-                                                            <span className="hidden sm:inline">{vm.t("messaging.templates.settings") || "Settings"}</span>
+                                                <TabsList className="w-full h-auto flex-wrap gap-1 p-1">
+                                                      <TabsTrigger value="settings" className="flex-1 min-w-0 gap-1 px-2 text-xs">
+                                                            <Settings className="h-3.5 w-3.5 shrink-0" />
+                                                            <span className="hidden sm:inline truncate">{vm.t("messaging.templates.settings") || "Settings"}</span>
                                                       </TabsTrigger>
-                                                      <TabsTrigger value="placeholders" className="flex-1 gap-1.5">
-                                                            <Braces className="h-3.5 w-3.5" />
-                                                            <span className="hidden sm:inline">{vm.t("messaging.templates.placeholders") || "Variables"}</span>
+                                                      <TabsTrigger value="placeholders" className="flex-1 min-w-0 gap-1 px-2 text-xs">
+                                                            <Braces className="h-3.5 w-3.5 shrink-0" />
+                                                            <span className="hidden sm:inline truncate">{vm.t("messaging.templates.placeholders") || "Variables"}</span>
                                                       </TabsTrigger>
-                                                      <TabsTrigger value="design" className="flex-1 gap-1.5">
-                                                            <Palette className="h-3.5 w-3.5" />
-                                                            <span className="hidden sm:inline">{vm.t("messaging.templates.design.title") || "Design"}</span>
+                                                      <TabsTrigger value="design" className="flex-1 min-w-0 gap-1 px-2 text-xs">
+                                                            <Palette className="h-3.5 w-3.5 shrink-0" />
+                                                            <span className="hidden sm:inline truncate">{vm.t("messaging.templates.design.title") || "Design"}</span>
                                                       </TabsTrigger>
-                                                      <TabsTrigger value="preview" className="flex-1 gap-1.5">
-                                                            <Eye className="h-3.5 w-3.5" />
-                                                            <span className="hidden sm:inline">{vm.t("common.preview") || "Preview"}</span>
+                                                      <TabsTrigger value="preview" className="flex-1 min-w-0 gap-1 px-2 text-xs">
+                                                            <Eye className="h-3.5 w-3.5 shrink-0" />
+                                                            <span className="hidden sm:inline truncate">{vm.t("common.preview") || "Preview"}</span>
                                                       </TabsTrigger>
                                                 </TabsList>
                                           </CardHeader>
@@ -200,6 +200,7 @@ export function TemplateFormView({ templateId: _templateId }: { templateId?: str
                                                       <PlaceholderSchemaBuilder
                                                             fields={vm.form.placeholderSchema}
                                                             onChange={vm.updatePlaceholderFields}
+                                                            templateBody={vm.form.body + " " + vm.form.subject}
                                                       />
                                                 </CardContent>
                                           </TabsContent>

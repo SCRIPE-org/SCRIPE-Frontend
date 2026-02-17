@@ -33,6 +33,12 @@ export interface VariableDefinition {
       supportsFallback?: boolean;
       /** Data source hint for auto-fill (e.g., "api", "context", "manual") */
       dataSource?: "api" | "context" | "manual";
+      /** Input field type for the variable values panel */
+      fieldType?: "text" | "textarea" | "richtext" | "number" | "date" | "datetime" | "email" | "url" | "select" | "color";
+      /** Default value for this variable */
+      defaultValue?: string;
+      /** Options for select type */
+      options?: string[];
 }
 
 export interface VariablePickerProps {

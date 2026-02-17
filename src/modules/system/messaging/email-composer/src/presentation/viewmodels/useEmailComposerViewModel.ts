@@ -121,13 +121,16 @@ export function useEmailComposerViewModel() {
                   try {
                         const schema = JSON.parse(template.placeholderSchema);
                         if (Array.isArray(schema)) {
-                              const tplVars: VariableDefinition[] = schema.map((field: { key?: string; name?: string; label?: string; type?: string; defaultValue?: string }) => ({
+                              const tplVars: VariableDefinition[] = schema.map((field: { key?: string; name?: string; label?: string; type?: string; defaultValue?: string; options?: string[] }) => ({
                                     key: field.key || field.name || "",
                                     label: field.label || field.key || field.name || "",
                                     category: "template" as const,
                                     sample: field.defaultValue || "",
                                     supportsFallback: true,
                                     dataSource: "manual" as const,
+                                    fieldType: (field.type || "text") as VariableDefinition["fieldType"],
+                                    defaultValue: field.defaultValue || "",
+                                    options: field.options,
                               })).filter((v: VariableDefinition) => v.key);
                               setTemplateVariables(tplVars);
                         }

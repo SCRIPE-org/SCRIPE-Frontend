@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
@@ -14,11 +14,26 @@ import {
       SelectValue,
 } from "@core/ui/select";
 import { Switch } from "@core/ui/switch";
-import { Braces, Plus, Trash2, GripVertical, Copy } from "lucide-react";
+import {
+      Braces, Plus, Trash2, GripVertical, Copy,
+      AlertTriangle, Sparkles, Type, Hash, Calendar,
+      Mail, Link2, ListChecks, AlignLeft, Paintbrush, Clock,
+} from "lucide-react";
 import { cn } from "@core/common/utils";
+import { useI18n } from "@core/providers/i18n-provider";
 
 // ─── Types ──────────────────────────────────────────────────
-export type PlaceholderType = "text" | "number" | "date" | "email" | "url" | "select";
+export type PlaceholderType =
+      | "text"
+      | "textarea"
+      | "richtext"
+      | "number"
+      | "date"
+      | "datetime"
+      | "email"
+      | "url"
+      | "select"
+      | "color";
 
 export interface PlaceholderField {
       id: string;
@@ -34,6 +49,8 @@ export interface PlaceholderField {
 export interface PlaceholderSchemaBuilderProps {
       fields: PlaceholderField[];
       onChange: (fields: PlaceholderField[]) => void;
+      /** Pass the combined template body + subject so we can auto-detect variables */
+      templateBody?: string;
 }
 
 // ─── Helpers ────────────────────────────────────────────────
@@ -41,18 +58,78 @@ function generateId() {
       return Math.random().toString(36).slice(2, 10);
 }
 
-const TYPE_LABELS: Record<PlaceholderType, string> = {
-      text: "Text",
-      number: "Number",
-      date: "Date",
-      email: "Email",
-      url: "URL",
-      select: "Select",
+// Type metadata with icons
+const TYPE_CONFIG: Record<PlaceholderType, { label: string; icon: React.ElementType }> = {
+      text: { label: "Text", icon: Type },
+      textarea: { label: "Textarea", icon: AlignLeft },
+      richtext: { label: "Rich Text", icon: AlignLeft },
+      number: { label: "Number", icon: Hash },
+      date: { label: "Date", icon: Calendar },
+      datetime: { label: "Date & Time", icon: Clock },
+      email: { label: "Email", icon: Mail },
+      url: { label: "URL", icon: Link2 },
+      select: { label: "Select", icon: ListChecks },
+      color: { label: "Color", icon: Paintbrush },
 };
 
+/** Extract all {{ varName }} keys from a template body string */
+function extractVariableKeys(text: string): Set<string> {
+      const keys = new Set<string>();
+      if (!text) return keys;
+      const regex = /\{\{\s*(\w+)(?:\s*\|[^}]*)?\s*\}\}/g;
+      let match: RegExpExecArray | null;
+      while ((match = regex.exec(text)) !== null) {
+            keys.add(match[1]);
+      }
+      return keys;
+}
+
 // ─── Main Component ─────────────────────────────────────────
-export function PlaceholderSchemaBuilder({ fields, onChange }: PlaceholderSchemaBuilderProps) {
+export function PlaceholderSchemaBuilder({
+      fields,
+      onChange,
+      templateBody,
+}: PlaceholderSchemaBuilderProps) {
+      const { t } = useI18n();
       const [expandedId, setExpandedId] = useState<string | null>(null);
+
+      // Detect variables used in the template body
+      const bodyVarKeys = useMemo(() => extractVariableKeys(templateBody || ""), [templateBody]);
+      const fieldKeys = useMemo(() => new Set(fields.map((f) => f.key)), [fields]);
+
+      // Variables in body but NOT in schema → need to be added
+      const missingKeys = useMemo(() => {
+            const missing: string[] = [];
+            for (const key of bodyVarKeys) {
+                  if (!fieldKeys.has(key)) missing.push(key);
+            }
+            return missing;
+      }, [bodyVarKeys, fieldKeys]);
+
+      // Variables in schema but NOT in body → orphaned
+      const orphanedKeys = useMemo(() => {
+            if (!templateBody) return new Set<string>(); // If no body provided, don't flag
+            const orphaned = new Set<string>();
+            for (const f of fields) {
+                  if (f.key && !bodyVarKeys.has(f.key)) orphaned.add(f.key);
+            }
+            return orphaned;
+      }, [fields, bodyVarKeys, templateBody]);
+
+      // Auto-sync: add missing variables to schema when detected
+      useEffect(() => {
+            if (missingKeys.length === 0) return;
+            const newFields = missingKeys.map((key) => ({
+                  id: generateId(),
+                  key,
+                  label: key, // Default label = key name
+                  type: "text" as PlaceholderType,
+                  required: false,
+                  defaultValue: "",
+            }));
+            onChange([...fields, ...newFields]);
+            // eslint-disable-next-line react-hooks/exhaustive-deps
+      }, [missingKeys.join(",")]);
 
       const addField = () => {
             const newField: PlaceholderField = {
@@ -77,7 +154,7 @@ export function PlaceholderSchemaBuilder({ fields, onChange }: PlaceholderSchema
       };
 
       const copyKey = (key: string) => {
-            navigator.clipboard.writeText(`{{${key}}}`);
+            navigator.clipboard.writeText(`{{ ${key} }}`);
       };
 
       return (
@@ -86,10 +163,10 @@ export function PlaceholderSchemaBuilder({ fields, onChange }: PlaceholderSchema
                         <div className="flex items-center justify-between">
                               <CardTitle className="flex items-center gap-2 text-base">
                                     <Braces className="h-4 w-4" />
-                                    Placeholder Schema
+                                    {t("messaging.templates.placeholderSchema") || "Placeholder Schema"}
                               </CardTitle>
                               <Badge variant="secondary" className="text-xs">
-                                    {fields.length} field{fields.length !== 1 ? "s" : ""}
+                                    {fields.length} {t("messaging.templates.fields") || `field${fields.length !== 1 ? "s" : ""}`}
                               </Badge>
                         </div>
                   </CardHeader>
@@ -97,169 +174,205 @@ export function PlaceholderSchemaBuilder({ fields, onChange }: PlaceholderSchema
                         {fields.length === 0 ? (
                               <div className="text-center py-6 text-sm text-muted-foreground border-2 border-dashed rounded-lg">
                                     <Braces className="h-6 w-6 mx-auto mb-2 opacity-40" />
-                                    <p>No custom placeholders defined</p>
-                                    <p className="text-xs mt-1">Add fields to define your template&apos;s schema</p>
+                                    <p>{t("messaging.templates.noPlaceholders") || "No custom placeholders defined"}</p>
+                                    <p className="text-xs mt-1">
+                                          {t("messaging.templates.addFieldsHint") || "Add fields to define your template\u0027s schema"}
+                                    </p>
+                                    {bodyVarKeys.size > 0 && (
+                                          <div className="mt-3 flex items-center justify-center gap-1.5 text-amber-500">
+                                                <Sparkles className="h-3.5 w-3.5" />
+                                                <span className="text-xs">
+                                                      {bodyVarKeys.size} {t("messaging.templates.varsDetected") || "variable(s) detected in body"}
+                                                </span>
+                                          </div>
+                                    )}
                               </div>
                         ) : (
-                              fields.map((field, idx) => (
-                                    <div
-                                          key={field.id}
-                                          className={cn(
-                                                "border rounded-lg transition-all",
-                                                expandedId === field.id ? "bg-accent/20 border-accent" : "hover:border-primary/30"
-                                          )}
-                                    >
-                                          {/* Summary Row */}
-                                          <button
-                                                type="button"
-                                                className="w-full flex items-center gap-2 p-2.5 text-left"
-                                                onClick={() => setExpandedId(expandedId === field.id ? null : field.id)}
-                                          >
-                                                <GripVertical className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-                                                <span className="text-xs text-muted-foreground w-5">{idx + 1}</span>
-                                                <div className="flex-1 min-w-0">
-                                                      <div className="flex items-center gap-2">
-                                                            <span className="text-sm font-medium truncate">
-                                                                  {field.label || field.key || "Untitled"}
-                                                            </span>
-                                                            {field.key && (
-                                                                  <Badge variant="outline" className="text-[10px] px-1 py-0 font-mono shrink-0">
-                                                                        {`{{${field.key}}}`}
-                                                                  </Badge>
-                                                            )}
-                                                      </div>
-                                                </div>
-                                                <Badge variant="secondary" className="text-[10px] px-1.5 py-0 shrink-0">
-                                                      {TYPE_LABELS[field.type]}
-                                                </Badge>
-                                                {field.required && (
-                                                      <span className="text-destructive text-xs font-bold">*</span>
-                                                )}
-                                          </button>
+                              fields.map((field, idx) => {
+                                    const isOrphaned = orphanedKeys.has(field.key);
+                                    const TypeIcon = TYPE_CONFIG[field.type]?.icon || Type;
 
-                                          {/* Expanded Editor */}
-                                          {expandedId === field.id && (
-                                                <div className="px-3 pb-3 space-y-3 border-t pt-3">
-                                                      <div className="grid grid-cols-2 gap-2">
-                                                            <div className="space-y-1">
-                                                                  <Label className="text-xs">Key</Label>
-                                                                  <div className="flex gap-1">
+                                    return (
+                                          <div
+                                                key={field.id}
+                                                className={cn(
+                                                      "border rounded-lg transition-all",
+                                                      isOrphaned && "border-amber-500/50 bg-amber-500/5",
+                                                      expandedId === field.id ? "bg-accent/20 border-accent" : "hover:border-primary/30"
+                                                )}
+                                          >
+                                                {/* Summary Row */}
+                                                <Button
+                                                      type="button"
+                                                      variant="ghost"
+                                                      className="w-full flex items-center gap-2 p-2.5 h-auto justify-start font-normal"
+                                                      onClick={() => setExpandedId(expandedId === field.id ? null : field.id)}
+                                                >
+                                                      <GripVertical className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                                                      <span className="text-xs text-muted-foreground w-5">{idx + 1}</span>
+                                                      <div className="flex-1 min-w-0">
+                                                            <div className="flex items-center gap-2">
+                                                                  <span className="text-sm font-medium truncate">
+                                                                        {field.label || field.key || (t("messaging.templates.untitled") || "Untitled")}
+                                                                  </span>
+                                                                  {field.key && (
+                                                                        <Badge variant="outline" className="text-[10px] px-1 py-0 font-mono shrink-0">
+                                                                              {`{{${field.key}}}`}
+                                                                        </Badge>
+                                                                  )}
+                                                            </div>
+                                                      </div>
+                                                      {isOrphaned && (
+                                                            <span title="Not used in template body">
+                                                                  <AlertTriangle className="h-3.5 w-3.5 text-amber-500 shrink-0" />
+                                                            </span>
+                                                      )}
+                                                      <Badge variant="secondary" className="text-[10px] px-1.5 py-0 shrink-0 gap-1">
+                                                            <TypeIcon className="h-2.5 w-2.5" />
+                                                            {TYPE_CONFIG[field.type]?.label || field.type}
+                                                      </Badge>
+                                                      {field.required && (
+                                                            <span className="text-destructive text-xs font-bold">*</span>
+                                                      )}
+                                                </Button>
+
+                                                {/* Expanded Editor */}
+                                                {expandedId === field.id && (
+                                                      <div className="px-3 pb-3 space-y-3 border-t pt-3">
+                                                            {isOrphaned && (
+                                                                  <div className="flex items-center gap-2 text-xs text-amber-500 bg-amber-500/10 p-2 rounded">
+                                                                        <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
+                                                                        <span>{t("messaging.templates.orphanedVar") || "This variable is not used in the template body"}</span>
+                                                                  </div>
+                                                            )}
+
+                                                            <div className="grid grid-cols-2 gap-2">
+                                                                  <div className="space-y-1">
+                                                                        <Label className="text-xs">{t("messaging.templates.varKey") || "Key"}</Label>
+                                                                        <div className="flex gap-1">
+                                                                              <Input
+                                                                                    value={field.key}
+                                                                                    onChange={(e) =>
+                                                                                          updateField(field.id, {
+                                                                                                key: e.target.value.replace(/[^a-zA-Z0-9_]/g, ""),
+                                                                                          })
+                                                                                    }
+                                                                                    placeholder="e.g. orderNumber"
+                                                                                    className="h-7 text-xs font-mono"
+                                                                              />
+                                                                              {field.key && (
+                                                                                    <Button
+                                                                                          type="button"
+                                                                                          variant="ghost"
+                                                                                          size="sm"
+                                                                                          className="h-7 w-7 p-0 shrink-0"
+                                                                                          onClick={() => copyKey(field.key)}
+                                                                                          title={t("messaging.templates.copyPlaceholder") || "Copy placeholder"}
+                                                                                    >
+                                                                                          <Copy className="h-3 w-3" />
+                                                                                    </Button>
+                                                                              )}
+                                                                        </div>
+                                                                  </div>
+                                                                  <div className="space-y-1">
+                                                                        <Label className="text-xs">{t("messaging.templates.varLabel") || "Label"}</Label>
                                                                         <Input
-                                                                              value={field.key}
-                                                                              onChange={(e) =>
-                                                                                    updateField(field.id, {
-                                                                                          key: e.target.value.replace(/[^a-zA-Z0-9_]/g, ""),
-                                                                                    })
-                                                                              }
-                                                                              placeholder="e.g. orderNumber"
-                                                                              className="h-7 text-xs font-mono"
+                                                                              value={field.label}
+                                                                              onChange={(e) => updateField(field.id, { label: e.target.value })}
+                                                                              placeholder="e.g. Order Number"
+                                                                              className="h-7 text-xs"
                                                                         />
-                                                                        {field.key && (
-                                                                              <Button
-                                                                                    type="button"
-                                                                                    variant="ghost"
-                                                                                    size="sm"
-                                                                                    className="h-7 w-7 p-0 shrink-0"
-                                                                                    onClick={() => copyKey(field.key)}
-                                                                                    title="Copy placeholder"
-                                                                              >
-                                                                                    <Copy className="h-3 w-3" />
-                                                                              </Button>
-                                                                        )}
                                                                   </div>
                                                             </div>
+
+                                                            <div className="grid grid-cols-2 gap-2">
+                                                                  <div className="space-y-1">
+                                                                        <Label className="text-xs">{t("messaging.templates.varType") || "Type"}</Label>
+                                                                        <Select
+                                                                              value={field.type}
+                                                                              onValueChange={(v) =>
+                                                                                    updateField(field.id, { type: v as PlaceholderType })
+                                                                              }
+                                                                        >
+                                                                              <SelectTrigger className="h-7 text-xs">
+                                                                                    <SelectValue />
+                                                                              </SelectTrigger>
+                                                                              <SelectContent>
+                                                                                    {Object.entries(TYPE_CONFIG).map(([v, cfg]) => {
+                                                                                          const Icon = cfg.icon;
+                                                                                          return (
+                                                                                                <SelectItem key={v} value={v}>
+                                                                                                      <div className="flex items-center gap-2">
+                                                                                                            <Icon className="h-3 w-3 text-muted-foreground" />
+                                                                                                            <span>{cfg.label}</span>
+                                                                                                      </div>
+                                                                                                </SelectItem>
+                                                                                          );
+                                                                                    })}
+                                                                              </SelectContent>
+                                                                        </Select>
+                                                                  </div>
+                                                                  <div className="space-y-1">
+                                                                        <Label className="text-xs">{t("messaging.templates.defaultValue") || "Default Value"}</Label>
+                                                                        <Input
+                                                                              value={field.defaultValue}
+                                                                              onChange={(e) => updateField(field.id, { defaultValue: e.target.value })}
+                                                                              placeholder={t("messaging.templates.optionalDefault") || "Optional default"}
+                                                                              className="h-7 text-xs"
+                                                                        />
+                                                                  </div>
+                                                            </div>
+
+                                                            {field.type === "select" && (
+                                                                  <div className="space-y-1">
+                                                                        <Label className="text-xs">{t("messaging.templates.selectOptions") || "Options (comma-separated)"}</Label>
+                                                                        <Input
+                                                                              value={(field.options || []).join(", ")}
+                                                                              onChange={(e) =>
+                                                                                    updateField(field.id, {
+                                                                                          options: e.target.value.split(",").map((s) => s.trim()).filter(Boolean),
+                                                                                    })
+                                                                              }
+                                                                              placeholder="Option A, Option B, Option C"
+                                                                              className="h-7 text-xs"
+                                                                        />
+                                                                  </div>
+                                                            )}
+
                                                             <div className="space-y-1">
-                                                                  <Label className="text-xs">Label</Label>
+                                                                  <Label className="text-xs">{t("messaging.templates.varDescription") || "Description"}</Label>
                                                                   <Input
-                                                                        value={field.label}
-                                                                        onChange={(e) => updateField(field.id, { label: e.target.value })}
-                                                                        placeholder="e.g. Order Number"
+                                                                        value={field.description || ""}
+                                                                        onChange={(e) => updateField(field.id, { description: e.target.value })}
+                                                                        placeholder={t("messaging.templates.descriptionHint") || "What this field is used for..."}
                                                                         className="h-7 text-xs"
                                                                   />
                                                             </div>
-                                                      </div>
 
-                                                      <div className="grid grid-cols-2 gap-2">
-                                                            <div className="space-y-1">
-                                                                  <Label className="text-xs">Type</Label>
-                                                                  <Select
-                                                                        value={field.type}
-                                                                        onValueChange={(v) =>
-                                                                              updateField(field.id, { type: v as PlaceholderType })
-                                                                        }
+                                                            <div className="flex items-center justify-between pt-1">
+                                                                  <div className="flex items-center gap-2">
+                                                                        <Switch
+                                                                              checked={field.required}
+                                                                              onCheckedChange={(v) => updateField(field.id, { required: v })}
+                                                                        />
+                                                                        <Label className="text-xs">{t("messaging.templates.required") || "Required"}</Label>
+                                                                  </div>
+                                                                  <Button
+                                                                        type="button"
+                                                                        variant="destructive"
+                                                                        size="sm"
+                                                                        className="h-7 text-xs gap-1"
+                                                                        onClick={() => removeField(field.id)}
                                                                   >
-                                                                        <SelectTrigger className="h-7 text-xs">
-                                                                              <SelectValue />
-                                                                        </SelectTrigger>
-                                                                        <SelectContent>
-                                                                              {Object.entries(TYPE_LABELS).map(([v, l]) => (
-                                                                                    <SelectItem key={v} value={v}>
-                                                                                          {l}
-                                                                                    </SelectItem>
-                                                                              ))}
-                                                                        </SelectContent>
-                                                                  </Select>
-                                                            </div>
-                                                            <div className="space-y-1">
-                                                                  <Label className="text-xs">Default Value</Label>
-                                                                  <Input
-                                                                        value={field.defaultValue}
-                                                                        onChange={(e) => updateField(field.id, { defaultValue: e.target.value })}
-                                                                        placeholder="Optional default"
-                                                                        className="h-7 text-xs"
-                                                                  />
+                                                                        <Trash2 className="h-3 w-3" />
+                                                                        {t("common.remove") || "Remove"}
+                                                                  </Button>
                                                             </div>
                                                       </div>
-
-                                                      {field.type === "select" && (
-                                                            <div className="space-y-1">
-                                                                  <Label className="text-xs">Options (comma-separated)</Label>
-                                                                  <Input
-                                                                        value={(field.options || []).join(", ")}
-                                                                        onChange={(e) =>
-                                                                              updateField(field.id, {
-                                                                                    options: e.target.value.split(",").map((s) => s.trim()).filter(Boolean),
-                                                                              })
-                                                                        }
-                                                                        placeholder="Option A, Option B, Option C"
-                                                                        className="h-7 text-xs"
-                                                                  />
-                                                            </div>
-                                                      )}
-
-                                                      <div className="space-y-1">
-                                                            <Label className="text-xs">Description</Label>
-                                                            <Input
-                                                                  value={field.description || ""}
-                                                                  onChange={(e) => updateField(field.id, { description: e.target.value })}
-                                                                  placeholder="What this field is used for..."
-                                                                  className="h-7 text-xs"
-                                                            />
-                                                      </div>
-
-                                                      <div className="flex items-center justify-between pt-1">
-                                                            <div className="flex items-center gap-2">
-                                                                  <Switch
-                                                                        checked={field.required}
-                                                                        onCheckedChange={(v) => updateField(field.id, { required: v })}
-                                                                  />
-                                                                  <Label className="text-xs">Required</Label>
-                                                            </div>
-                                                            <Button
-                                                                  type="button"
-                                                                  variant="destructive"
-                                                                  size="sm"
-                                                                  className="h-7 text-xs gap-1"
-                                                                  onClick={() => removeField(field.id)}
-                                                            >
-                                                                  <Trash2 className="h-3 w-3" />
-                                                                  Remove
-                                                            </Button>
-                                                      </div>
-                                                </div>
-                                          )}
-                                    </div>
-                              ))
+                                                )}
+                                          </div>
+                                    );
+                              })
                         )}
 
                         {/* Add Button */}
@@ -270,7 +383,7 @@ export function PlaceholderSchemaBuilder({ fields, onChange }: PlaceholderSchema
                               onClick={addField}
                         >
                               <Plus className="h-3.5 w-3.5" />
-                              Add Placeholder Field
+                              {t("messaging.templates.addPlaceholderField") || "Add Placeholder Field"}
                         </Button>
                   </CardContent>
             </Card>
