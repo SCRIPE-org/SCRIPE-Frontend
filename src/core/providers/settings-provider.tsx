@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { appLogger } from "@core/common/logger";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
 
@@ -653,100 +653,100 @@ function createFallbackSettings(): Partial<SettingsContextType> {
   return {
     // Color theme
     colorTheme: "purple" as ColorTheme,
-    setColorTheme: () => {},
+    setColorTheme: () => { },
 
     // Background themes
     lightBackgroundTheme: "default" as LightBackgroundTheme,
-    setLightBackgroundTheme: () => {},
+    setLightBackgroundTheme: () => { },
     darkBackgroundTheme: "default" as DarkBackgroundTheme,
-    setDarkBackgroundTheme: () => {},
+    setDarkBackgroundTheme: () => { },
 
     // Shadow intensity
     shadowIntensity: "moderate" as ShadowIntensity,
-    setShadowIntensity: () => {},
+    setShadowIntensity: () => { },
 
     // Layout template
     layoutTemplate: "modern" as LayoutTemplate,
-    setLayoutTemplate: () => {},
+    setLayoutTemplate: () => { },
 
     // Font size
     fontSize: "medium" as FontSize,
-    setFontSize: () => {},
+    setFontSize: () => { },
     showDetailPanel: true,
-    setShowDetailPanel: () => {},
+    setShowDetailPanel: () => { },
 
     // Border radius
     borderRadius: "default" as BorderRadius,
-    setBorderRadius: () => {},
+    setBorderRadius: () => { },
 
     // Sidebar position
     sidebarPosition: "right" as SidebarPosition,
-    setSidebarPosition: () => {},
+    setSidebarPosition: () => { },
 
     // Component styles
     cardStyle: "default" as CardStyle,
-    setCardStyle: () => {},
+    setCardStyle: () => { },
     badgeStyle: "default" as BadgeStyle,
-    setBadgeStyle: () => {},
+    setBadgeStyle: () => { },
     buttonStyle: "default" as ButtonStyle,
-    setButtonStyle: () => {},
+    setButtonStyle: () => { },
     inputStyle: "default" as InputStyle,
-    setInputStyle: () => {},
+    setInputStyle: () => { },
     selectStyle: "default" as SelectStyle,
-    setSelectStyle: () => {},
+    setSelectStyle: () => { },
     switchStyle: "default" as SwitchStyle,
-    setSwitchStyle: () => {},
+    setSwitchStyle: () => { },
     datePickerStyle: "default" as DatePickerStyle,
-    setDatePickerStyle: () => {},
+    setDatePickerStyle: () => { },
     calendarStyle: "default" as CalendarStyle,
-    setCalendarStyle: () => {},
+    setCalendarStyle: () => { },
     toastStyle: "default" as ToastStyle,
-    setToastStyle: () => {},
+    setToastStyle: () => { },
 
     // Animation settings
     animationLevel: "moderate" as AnimationLevel,
-    setAnimationLevel: () => {},
+    setAnimationLevel: () => { },
     sidebarStyle: "default" as SidebarStyle,
 
     // Navigation settings
     navigationStyle: "default" as NavigationStyle,
-    setNavigationStyle: () => {},
+    setNavigationStyle: () => { },
     iconStyle: "outline" as IconStyle,
-    setIconStyle: () => {},
+    setIconStyle: () => { },
     spacingSize: "default" as SpacingSize,
-    setSpacingSize: () => {},
+    setSpacingSize: () => { },
     loadingStyle: "spinner" as LoadingStyle,
 
     // Additional settings
     compactMode: false,
-    setCompactMode: () => {},
+    setCompactMode: () => { },
     highContrast: false,
-    setHighContrast: () => {},
+    setHighContrast: () => { },
     reducedMotion: false,
-    setReducedMotion: () => {},
+    setReducedMotion: () => { },
     stickyHeader: true,
-    setStickyHeader: () => {},
+    setStickyHeader: () => { },
     showFooter: true,
-    setShowFooter: () => {},
+    setShowFooter: () => { },
     formStyle: "default" as FormStyle,
-    setFormStyle: () => {},
+    setFormStyle: () => { },
     checkboxStyle: "default" as CheckboxStyle,
-    setCheckboxStyle: () => {},
+    setCheckboxStyle: () => { },
     radioStyle: "default" as RadioStyle,
-    setRadioStyle: () => {},
+    setRadioStyle: () => { },
 
     // Logo settings
     logoType: "default" as LogoType,
-    setLogoType: () => {},
+    setLogoType: () => { },
     modalStyle: "default" as ModalStyle,
     tableStyle: "default" as TableStyle,
     treeStyle: "modern" as TreeStyle,
 
     // Hover effect settings
     hoverEffectType: "elevate" as HoverEffectType,
-    setHoverEffectType: () => {},
+    setHoverEffectType: () => { },
     hoverEffectIntensity: "medium" as HoverEffectIntensity,
-    setHoverEffectIntensity: () => {},
+    setHoverEffectIntensity: () => { },
   };
 }
 
@@ -791,179 +791,182 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   // Apply settings to document root
   useEffect(() => {
     if (isHydrated && typeof document !== "undefined") {
-      const root = document.documentElement;
+      // Batch all DOM mutations into a single paint cycle
+      requestAnimationFrame(() => {
+        const root = document.documentElement;
 
-      // Apply all data attributes
-      root.setAttribute("data-theme", settings.colorTheme);
-      root.setAttribute("data-light-bg-theme", settings.lightBackgroundTheme);
-      root.setAttribute("data-dark-bg-theme", settings.darkBackgroundTheme);
-      root.setAttribute("data-shadow", settings.shadowIntensity);
-      root.setAttribute("data-layout", settings.layoutTemplate);
-      root.setAttribute("data-card-style", settings.cardStyle);
-      root.setAttribute("data-animation", settings.animationLevel);
-      root.setAttribute("data-font-size", settings.fontSize);
-      root.setAttribute("data-radius", settings.borderRadius);
-      root.setAttribute("data-sidebar-position", settings.sidebarPosition);
-      root.setAttribute("data-header-style", settings.headerStyle);
-      root.setAttribute("data-sidebar-style", settings.sidebarStyle);
-      root.setAttribute("data-button-style", settings.buttonStyle);
-      root.setAttribute("data-navigation-style", settings.navigationStyle);
-      root.setAttribute("data-spacing", settings.spacingSize);
-      root.setAttribute("data-icon-style", settings.iconStyle);
-      root.setAttribute("data-input-style", settings.inputStyle);
-      root.setAttribute("data-table-style", settings.tableStyle);
-      root.setAttribute("data-badge-style", settings.badgeStyle);
-      root.setAttribute("data-avatar-style", settings.avatarStyle);
-      root.setAttribute("data-logo-type", settings.logoType);
-      root.setAttribute("data-logo-animation", settings.logoAnimation);
-      root.setAttribute("data-logo-size", settings.logoSize);
-      root.setAttribute("data-compact-mode", settings.compactMode.toString());
-      root.setAttribute("data-high-contrast", settings.highContrast.toString());
-      root.setAttribute("data-reduced-motion", settings.reducedMotion.toString());
-      root.setAttribute("data-sticky-header", settings.stickyHeader.toString());
-      root.setAttribute("data-form-style", settings.formStyle);
-      root.setAttribute("data-loading-style", settings.loadingStyle);
-      root.setAttribute("data-tooltip-style", settings.tooltipStyle);
-      root.setAttribute("data-modal-style", settings.modalStyle);
-      root.setAttribute("data-tree-style", settings.treeStyle);
-      root.setAttribute("data-checkbox-design", settings.checkboxStyle);
-      root.setAttribute("data-radio-design", settings.radioStyle);
-      root.setAttribute("data-hover-effect-type", settings.hoverEffectType);
-      root.setAttribute("data-hover-effect-intensity", settings.hoverEffectIntensity);
-      root.setAttribute("data-secondary-theme", settings.secondaryColorTheme);
-      root.setAttribute("data-gradient-dir", settings.gradientDirection);
-      root.setAttribute("data-light-gradient", settings.lightGradientTheme);
-      root.setAttribute("data-dark-gradient", settings.darkGradientTheme);
+        // Apply all data attributes
+        root.setAttribute("data-theme", settings.colorTheme);
+        root.setAttribute("data-light-bg-theme", settings.lightBackgroundTheme);
+        root.setAttribute("data-dark-bg-theme", settings.darkBackgroundTheme);
+        root.setAttribute("data-shadow", settings.shadowIntensity);
+        root.setAttribute("data-layout", settings.layoutTemplate);
+        root.setAttribute("data-card-style", settings.cardStyle);
+        root.setAttribute("data-animation", settings.animationLevel);
+        root.setAttribute("data-font-size", settings.fontSize);
+        root.setAttribute("data-radius", settings.borderRadius);
+        root.setAttribute("data-sidebar-position", settings.sidebarPosition);
+        root.setAttribute("data-header-style", settings.headerStyle);
+        root.setAttribute("data-sidebar-style", settings.sidebarStyle);
+        root.setAttribute("data-button-style", settings.buttonStyle);
+        root.setAttribute("data-navigation-style", settings.navigationStyle);
+        root.setAttribute("data-spacing", settings.spacingSize);
+        root.setAttribute("data-icon-style", settings.iconStyle);
+        root.setAttribute("data-input-style", settings.inputStyle);
+        root.setAttribute("data-table-style", settings.tableStyle);
+        root.setAttribute("data-badge-style", settings.badgeStyle);
+        root.setAttribute("data-avatar-style", settings.avatarStyle);
+        root.setAttribute("data-logo-type", settings.logoType);
+        root.setAttribute("data-logo-animation", settings.logoAnimation);
+        root.setAttribute("data-logo-size", settings.logoSize);
+        root.setAttribute("data-compact-mode", settings.compactMode.toString());
+        root.setAttribute("data-high-contrast", settings.highContrast.toString());
+        root.setAttribute("data-reduced-motion", settings.reducedMotion.toString());
+        root.setAttribute("data-sticky-header", settings.stickyHeader.toString());
+        root.setAttribute("data-form-style", settings.formStyle);
+        root.setAttribute("data-loading-style", settings.loadingStyle);
+        root.setAttribute("data-tooltip-style", settings.tooltipStyle);
+        root.setAttribute("data-modal-style", settings.modalStyle);
+        root.setAttribute("data-tree-style", settings.treeStyle);
+        root.setAttribute("data-checkbox-design", settings.checkboxStyle);
+        root.setAttribute("data-radio-design", settings.radioStyle);
+        root.setAttribute("data-hover-effect-type", settings.hoverEffectType);
+        root.setAttribute("data-hover-effect-intensity", settings.hoverEffectIntensity);
+        root.setAttribute("data-secondary-theme", settings.secondaryColorTheme);
+        root.setAttribute("data-gradient-dir", settings.gradientDirection);
+        root.setAttribute("data-light-gradient", settings.lightGradientTheme);
+        root.setAttribute("data-dark-gradient", settings.darkGradientTheme);
 
-      // Apply custom colors as CSS custom properties
-      if (settings.customPrimaryColor) {
-        root.style.setProperty("--custom-primary", settings.customPrimaryColor);
-      } else {
-        root.style.removeProperty("--custom-primary");
-      }
-      if (settings.customSecondaryColor) {
-        root.style.setProperty("--custom-secondary", settings.customSecondaryColor);
-      } else {
-        root.style.removeProperty("--custom-secondary");
-      }
-      if (settings.customLightBgColor) {
-        root.style.setProperty("--custom-light-bg", settings.customLightBgColor);
-      } else {
-        root.style.removeProperty("--custom-light-bg");
-      }
-      if (settings.customDarkBgColor) {
-        root.style.setProperty("--custom-dark-bg", settings.customDarkBgColor);
-      } else {
-        root.style.removeProperty("--custom-dark-bg");
-      }
+        // Apply custom colors as CSS custom properties
+        if (settings.customPrimaryColor) {
+          root.style.setProperty("--custom-primary", settings.customPrimaryColor);
+        } else {
+          root.style.removeProperty("--custom-primary");
+        }
+        if (settings.customSecondaryColor) {
+          root.style.setProperty("--custom-secondary", settings.customSecondaryColor);
+        } else {
+          root.style.removeProperty("--custom-secondary");
+        }
+        if (settings.customLightBgColor) {
+          root.style.setProperty("--custom-light-bg", settings.customLightBgColor);
+        } else {
+          root.style.removeProperty("--custom-light-bg");
+        }
+        if (settings.customDarkBgColor) {
+          root.style.setProperty("--custom-dark-bg", settings.customDarkBgColor);
+        } else {
+          root.style.removeProperty("--custom-dark-bg");
+        }
 
-      // Apply background based on mode via CSS custom properties
-      const bgMode = settings.backgroundMode || "preset";
-      root.setAttribute("data-bg-mode", bgMode);
+        // Apply background based on mode via CSS custom properties
+        const bgMode = settings.backgroundMode || "preset";
+        root.setAttribute("data-bg-mode", bgMode);
 
-      // Clear previous bg override
-      root.style.removeProperty("--bg-override");
+        // Clear previous bg override
+        root.style.removeProperty("--bg-override");
 
-      if (bgMode === "gradient") {
-        const dirMap: Record<string, string> = {
-          "to-t": "0deg",
-          "to-tr": "45deg",
-          "to-r": "90deg",
-          "to-br": "135deg",
-          "to-b": "180deg",
-          "to-bl": "225deg",
-          "to-l": "270deg",
-          "to-tl": "315deg",
-        };
-        const angle = dirMap[settings.gradientDirection] || "135deg";
-        const isDark = root.classList.contains("dark");
+        if (bgMode === "gradient") {
+          const dirMap: Record<string, string> = {
+            "to-t": "0deg",
+            "to-tr": "45deg",
+            "to-r": "90deg",
+            "to-br": "135deg",
+            "to-b": "180deg",
+            "to-bl": "225deg",
+            "to-l": "270deg",
+            "to-tl": "315deg",
+          };
+          const angle = dirMap[settings.gradientDirection] || "135deg";
+          const isDark = root.classList.contains("dark");
 
-        if (settings.gradientStartColor && settings.gradientEndColor) {
-          root.style.setProperty(
-            "--bg-override",
-            `linear-gradient(${angle}, ${settings.gradientStartColor}, ${settings.gradientEndColor})`
-          );
-        } else if (isDark && settings.darkGradientTheme && settings.darkGradientTheme !== "none") {
-          const fromStyle = getComputedStyle(root).getPropertyValue("--gradient-from").trim();
-          const toStyle = getComputedStyle(root).getPropertyValue("--gradient-to").trim();
-          if (fromStyle && toStyle) {
+          if (settings.gradientStartColor && settings.gradientEndColor) {
             root.style.setProperty(
               "--bg-override",
-              `linear-gradient(${angle}, hsl(${fromStyle}), hsl(${toStyle}))`
+              `linear-gradient(${angle}, ${settings.gradientStartColor}, ${settings.gradientEndColor})`
             );
+          } else if (isDark && settings.darkGradientTheme && settings.darkGradientTheme !== "none") {
+            const fromStyle = getComputedStyle(root).getPropertyValue("--gradient-from").trim();
+            const toStyle = getComputedStyle(root).getPropertyValue("--gradient-to").trim();
+            if (fromStyle && toStyle) {
+              root.style.setProperty(
+                "--bg-override",
+                `linear-gradient(${angle}, hsl(${fromStyle}), hsl(${toStyle}))`
+              );
+            }
+          } else if (
+            !isDark &&
+            settings.lightGradientTheme &&
+            settings.lightGradientTheme !== "none"
+          ) {
+            const fromStyle = getComputedStyle(root).getPropertyValue("--gradient-from").trim();
+            const toStyle = getComputedStyle(root).getPropertyValue("--gradient-to").trim();
+            if (fromStyle && toStyle) {
+              root.style.setProperty(
+                "--bg-override",
+                `linear-gradient(${angle}, hsl(${fromStyle}), hsl(${toStyle}))`
+              );
+            }
           }
-        } else if (
-          !isDark &&
-          settings.lightGradientTheme &&
-          settings.lightGradientTheme !== "none"
-        ) {
-          const fromStyle = getComputedStyle(root).getPropertyValue("--gradient-from").trim();
-          const toStyle = getComputedStyle(root).getPropertyValue("--gradient-to").trim();
-          if (fromStyle && toStyle) {
-            root.style.setProperty(
-              "--bg-override",
-              `linear-gradient(${angle}, hsl(${fromStyle}), hsl(${toStyle}))`
-            );
+        } else if (bgMode === "custom") {
+          const isDark = root.classList.contains("dark");
+          const customBg = isDark ? settings.customDarkBgColor : settings.customLightBgColor;
+          if (customBg) {
+            root.style.setProperty("--bg-override", customBg);
           }
         }
-      } else if (bgMode === "custom") {
-        const isDark = root.classList.contains("dark");
-        const customBg = isDark ? settings.customDarkBgColor : settings.customLightBgColor;
-        if (customBg) {
-          root.style.setProperty("--bg-override", customBg);
-        }
-      }
 
-      // Apply CSS custom properties for responsive design
-      root.style.setProperty(
-        "--font-size-base",
-        settings.fontSize === "xs"
-          ? "13px"
-          : settings.fontSize === "small"
-            ? "14px"
-            : settings.fontSize === "medium"
-              ? "16px"
-              : settings.fontSize === "large"
-                ? "20px"
-                : settings.fontSize === "xl"
-                  ? "22px"
-                  : "18px"
-      );
+        // Apply CSS custom properties for responsive design
+        root.style.setProperty(
+          "--font-size-base",
+          settings.fontSize === "xs"
+            ? "13px"
+            : settings.fontSize === "small"
+              ? "14px"
+              : settings.fontSize === "medium"
+                ? "16px"
+                : settings.fontSize === "large"
+                  ? "20px"
+                  : settings.fontSize === "xl"
+                    ? "22px"
+                    : "18px"
+        );
 
-      root.style.setProperty(
-        "--spacing-unit",
-        settings.spacingSize === "compact"
-          ? "0.5rem"
-          : settings.spacingSize === "comfortable"
-            ? "1.5rem"
-            : settings.spacingSize === "spacious"
-              ? "2rem"
-              : "1rem"
-      );
+        root.style.setProperty(
+          "--spacing-unit",
+          settings.spacingSize === "compact"
+            ? "0.5rem"
+            : settings.spacingSize === "comfortable"
+              ? "1.5rem"
+              : settings.spacingSize === "spacious"
+                ? "2rem"
+                : "1rem"
+        );
 
-      root.style.setProperty(
-        "--border-radius",
-        settings.borderRadius === "none"
-          ? "0"
-          : settings.borderRadius === "small"
-            ? "0.25rem"
-            : settings.borderRadius === "large"
-              ? "0.75rem"
-              : settings.borderRadius === "full"
-                ? "9999px"
-                : "0.5rem"
-      );
+        root.style.setProperty(
+          "--border-radius",
+          settings.borderRadius === "none"
+            ? "0"
+            : settings.borderRadius === "small"
+              ? "0.25rem"
+              : settings.borderRadius === "large"
+                ? "0.75rem"
+                : settings.borderRadius === "full"
+                  ? "9999px"
+                  : "0.5rem"
+        );
 
-      root.style.setProperty(
-        "--shadow-intensity",
-        settings.shadowIntensity === "none"
-          ? "none"
-          : settings.shadowIntensity === "subtle"
-            ? "0 1px 2px 0 rgb(0 0 0 / 0.05)"
-            : settings.shadowIntensity === "strong"
-              ? "0 25px 50px -12px rgb(0 0 0 / 0.25)"
-              : "0 4px 6px -1px rgb(0 0 0 / 0.1)"
-      );
+        root.style.setProperty(
+          "--shadow-intensity",
+          settings.shadowIntensity === "none"
+            ? "none"
+            : settings.shadowIntensity === "subtle"
+              ? "0 1px 2px 0 rgb(0 0 0 / 0.05)"
+              : settings.shadowIntensity === "strong"
+                ? "0 25px 50px -12px rgb(0 0 0 / 0.25)"
+                : "0 4px 6px -1px rgb(0 0 0 / 0.1)"
+        );
+      });
     }
   }, [settings, isHydrated]);
 
@@ -990,7 +993,8 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const contextValue: SettingsContextType = {
+  // Memoize context value to prevent unnecessary re-renders of all consumers
+  const contextValue = useMemo<SettingsContextType>(() => ({
     ...settings,
     setColorTheme: (theme) => updateSetting("colorTheme", theme),
     setLightBackgroundTheme: (theme) => updateSetting("lightBackgroundTheme", theme),
@@ -1059,7 +1063,8 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     resetSettings,
     exportSettings,
     importSettings,
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }), [settings]);
 
   // Don't render until hydrated to prevent hydration mismatches
   if (!isHydrated) {

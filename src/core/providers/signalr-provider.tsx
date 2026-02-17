@@ -9,7 +9,7 @@
  * Place inside AppProvider after auth-related providers.
  */
 
-import React, { createContext, useContext, useEffect, useRef, useState, useCallback } from "react";
+import React, { createContext, useContext, useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { usePathname } from "next/navigation";
 import {
   HubConnectionBuilder,
@@ -148,13 +148,14 @@ export function SignalRProvider({ hubPath = HUB_PATHS.AUDIT, children }: SignalR
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, isDocsRoute]);
 
+  // Memoize context value to prevent unnecessary child re-renders
+  const contextValue = useMemo(() => ({
+    connection,
+    connectionState,
+  }), [connection, connectionState]);
+
   return (
-    <SignalRContext.Provider
-      value={{
-        connection,
-        connectionState,
-      }}
-    >
+    <SignalRContext.Provider value={contextValue}>
       {children}
     </SignalRContext.Provider>
   );
