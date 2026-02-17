@@ -170,7 +170,7 @@ export function HUDLayout({ children }: HUDLayoutProps) {
             buttonClassName="h-7 w-7 hover:bg-accent"
             contentClassName="bg-popover border-border"
           />
-          <NotificationBell iconClassName="h-4 w-4" className="h-7 w-7" />
+          <NotificationBell iconClassName="h-5 w-5" className="h-7 w-7" />
           <UserProfileDropdown variant="navigation" showName={false} className="h-7" />
         </div>
       </header>

@@ -115,7 +115,7 @@ export function StackedLayout({ children }: StackedLayoutProps) {
             buttonClassName="hover:bg-accent"
             contentClassName="bg-popover border-border"
           />
-          <NotificationBell iconClassName="h-4 w-4" />
+          <NotificationBell iconClassName="h-5 w-5" />
           <UserProfileDropdown variant="navigation" showName={false} />
         </div>
       </header>

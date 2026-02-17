@@ -264,7 +264,7 @@ export function NavigationHeader({
           />
 
           {/* User Profile Dropdown */}
-          <NotificationBell iconClassName="h-4 w-4" />
+          <NotificationBell iconClassName="h-5 w-5" />
           <UserProfileDropdown
             variant="navigation"
             showName={!isMobile}

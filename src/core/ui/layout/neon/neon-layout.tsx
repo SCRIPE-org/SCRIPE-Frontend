@@ -214,7 +214,7 @@ export function NeonLayout({ children }: NeonLayoutProps) {
               <LanguageSwitcher />
               <ThemeSwitcher />
               {settings.showNotifications && (
-                <NotificationBell iconClassName="h-4 w-4" className="hover:neon-text-cyan text-white/50" />
+                <NotificationBell iconClassName="h-5 w-5" className="hover:neon-text-cyan text-white/50" />
               )}
               <UserProfileDropdown showName={false} />
             </div>

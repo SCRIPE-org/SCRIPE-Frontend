@@ -145,7 +145,7 @@ export function MagazineLayout({ children }: MagazineLayoutProps) {
             <LanguageSwitcher />
             <ThemeSwitcher />
             {settings.showNotifications && (
-              <NotificationBell iconClassName="h-4 w-4" className="h-8 w-8" />
+              <NotificationBell iconClassName="h-5 w-5" className="h-8 w-8" />
             )}
             <UserProfileDropdown showName={false} />
           </div>

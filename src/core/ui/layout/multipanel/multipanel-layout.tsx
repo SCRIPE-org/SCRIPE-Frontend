@@ -83,7 +83,7 @@ export function MultiPanelLayout({ children }: MultiPanelLayoutProps) {
           </Button>
           <LanguageSwitcher />
           <ThemeSwitcher />
-          <NotificationBell iconClassName="h-4 w-4" />
+          <NotificationBell iconClassName="h-5 w-5" />
           <UserProfileDropdown showName={false} />
         </div>
       </header>

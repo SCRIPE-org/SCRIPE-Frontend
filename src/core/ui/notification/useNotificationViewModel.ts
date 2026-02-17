@@ -1,8 +1,11 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { HubConnectionBuilder, HubConnection, HubConnectionState, LogLevel } from '@microsoft/signalr';
 import { notificationBellContainer } from '@core/notification/di';
 import { secureTokenService } from '@core/common/secure-token-service';
+import { HUB_EVENTS, HUB_PATHS } from '@core/common/constants/signalr';
+import { useAppStore } from '@core/store/useAppStore';
 import type { NotificationItem } from '@core/notification/entities/NotificationItem';
 
 export interface NotificationViewModel {
@@ -28,37 +31,43 @@ export interface NotificationViewModel {
 
 /**
  * ViewModel hook for notification bell.
- * Handles polling for unread count and fetching notification list.
- * Uses the proper data layer: Repository → Service → IApiService.
- * Future: replace polling with SignalR real-time connection.
+ *
+ * Uses a DEDICATED SignalR connection to `/hubs/notifications` for real-time updates:
+ * - `UnreadCountUpdated(count)` → instantly updates badge
+ * - `ReceiveNotification(dto)` → prepends to list + increments badge
+ *
+ * Falls back to polling every 30s if SignalR connection fails.
  */
 export function useNotificationViewModel(): NotificationViewModel {
       const [notifications, setNotifications] = useState<NotificationItem[]>([]);
       const [unreadCount, setUnreadCount] = useState(0);
       const [isLoading, setIsLoading] = useState(false);
       const [isOpen, setIsOpen] = useState(false);
-      const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+      const isAuthenticated = useAppStore((s) => s.isAuthenticated);
+
+      const connectionRef = useRef<HubConnection | null>(null);
+      const isConnectingRef = useRef(false);
+      const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
       const repo = notificationBellContainer.notificationBellRepository;
 
-      const isAuthenticated = useCallback((): boolean => {
+      const isLoggedIn = useCallback((): boolean => {
             return !!secureTokenService.getAccessToken();
       }, []);
 
-      // Fetch unread count via repository
+      // ─── Fetch helpers ────────────────────────────────────────────
       const fetchUnreadCount = useCallback(async () => {
-            if (!isAuthenticated()) return;
+            if (!isLoggedIn()) return;
             try {
                   const data = await repo.getUnreadCount();
                   setUnreadCount(data.count ?? 0);
             } catch {
-                  // silently fail — will retry on next poll
+                  // silently fail — will retry on next poll or SignalR event
             }
-      }, [repo, isAuthenticated]);
+      }, [repo, isLoggedIn]);
 
-      // Fetch notifications list via repository
       const fetchNotifications = useCallback(async () => {
-            if (!isAuthenticated()) return;
+            if (!isLoggedIn()) return;
             setIsLoading(true);
             try {
                   const data = await repo.getNotifications({ pageSize: 10 });
@@ -68,11 +77,102 @@ export function useNotificationViewModel(): NotificationViewModel {
             } finally {
                   setIsLoading(false);
             }
-      }, [repo, isAuthenticated]);
+      }, [repo, isLoggedIn]);
 
-      // Mark single as read via repository
+      // ─── SignalR Connection ───────────────────────────────────────
+      useEffect(() => {
+            if (!isAuthenticated || !isLoggedIn()) return;
+
+            const connectSignalR = async () => {
+                  if (
+                        isConnectingRef.current ||
+                        connectionRef.current?.state === HubConnectionState.Connected ||
+                        connectionRef.current?.state === HubConnectionState.Connecting
+                  ) {
+                        return;
+                  }
+
+                  const token = secureTokenService.getAccessToken();
+                  if (!token) return;
+
+                  try {
+                        isConnectingRef.current = true;
+
+                        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+                        const origin = apiUrl.replace(/\/api\/?$/, '');
+                        const hubUrl = `${origin}${HUB_PATHS.NOTIFICATIONS}`;
+
+                        const conn = new HubConnectionBuilder()
+                              .withUrl(hubUrl, {
+                                    accessTokenFactory: () => secureTokenService.getAccessToken() ?? '',
+                              })
+                              .withAutomaticReconnect({
+                                    nextRetryDelayInMilliseconds: (ctx) =>
+                                          Math.min(Math.pow(2, ctx.previousRetryCount) * 1000, 30_000),
+                              })
+                              .configureLogging(
+                                    process.env.NODE_ENV === 'development' ? LogLevel.Information : LogLevel.Warning
+                              )
+                              .build();
+
+                        // ─── Real-time event handlers ─────────────────────
+                        conn.on(HUB_EVENTS.UNREAD_COUNT_UPDATED, (count: number) => {
+                              setUnreadCount(count);
+                        });
+
+                        conn.on(HUB_EVENTS.RECEIVE_NOTIFICATION, (dto: NotificationItem) => {
+                              // Prepend new notification to the list
+                              setNotifications((prev) => [dto, ...prev].slice(0, 20));
+                              // Also bump unread count
+                              setUnreadCount((prev) => prev + 1);
+                        });
+
+                        conn.onreconnected(() => {
+                              // After reconnect, re-fetch to sync state
+                              fetchUnreadCount();
+                        });
+
+                        await conn.start();
+                        connectionRef.current = conn;
+                        isConnectingRef.current = false;
+
+                        // SignalR connected — clear polling fallback
+                        if (pollingRef.current) {
+                              clearInterval(pollingRef.current);
+                              pollingRef.current = null;
+                        }
+                  } catch {
+                        isConnectingRef.current = false;
+                        // SignalR failed — fall back to polling
+                        if (!pollingRef.current) {
+                              pollingRef.current = setInterval(fetchUnreadCount, 30_000);
+                        }
+                  }
+            };
+
+            // Initial fetch + connect
+            fetchUnreadCount();
+            connectSignalR();
+
+            // Start polling as immediate fallback (cleared once SignalR connects)
+            pollingRef.current = setInterval(fetchUnreadCount, 30_000);
+
+            return () => {
+                  // Cleanup
+                  connectionRef.current?.stop();
+                  connectionRef.current = null;
+                  isConnectingRef.current = false;
+                  if (pollingRef.current) {
+                        clearInterval(pollingRef.current);
+                        pollingRef.current = null;
+                  }
+            };
+            // eslint-disable-next-line react-hooks/exhaustive-deps
+      }, [isAuthenticated]);
+
+      // ─── Actions ──────────────────────────────────────────────────
       const markAsRead = useCallback(async (id: string) => {
-            if (!isAuthenticated()) return;
+            if (!isLoggedIn()) return;
             try {
                   await repo.markAsRead(id);
                   setNotifications(prev =>
@@ -82,11 +182,10 @@ export function useNotificationViewModel(): NotificationViewModel {
             } catch {
                   // silently fail
             }
-      }, [repo, isAuthenticated]);
+      }, [repo, isLoggedIn]);
 
-      // Mark all as read via repository
       const markAllAsRead = useCallback(async () => {
-            if (!isAuthenticated()) return;
+            if (!isLoggedIn()) return;
             try {
                   await repo.markAllAsRead();
                   setNotifications(prev => prev.map(n => ({ ...n, isRead: true, readAt: new Date().toISOString() })));
@@ -94,9 +193,8 @@ export function useNotificationViewModel(): NotificationViewModel {
             } catch {
                   // silently fail
             }
-      }, [repo, isAuthenticated]);
+      }, [repo, isLoggedIn]);
 
-      // Toggle open — fetch on open
       const toggleOpen = useCallback(() => {
             setIsOpen(prev => {
                   const next = !prev;
@@ -110,16 +208,6 @@ export function useNotificationViewModel(): NotificationViewModel {
             fetchUnreadCount();
             if (isOpen) fetchNotifications();
       }, [fetchUnreadCount, fetchNotifications, isOpen]);
-
-      // Poll unread count every 30 seconds
-      useEffect(() => {
-            if (!isAuthenticated()) return;
-            fetchUnreadCount();
-            intervalRef.current = setInterval(fetchUnreadCount, 30_000);
-            return () => {
-                  if (intervalRef.current) clearInterval(intervalRef.current);
-            };
-      }, [fetchUnreadCount, isAuthenticated]);
 
       return {
             notifications,

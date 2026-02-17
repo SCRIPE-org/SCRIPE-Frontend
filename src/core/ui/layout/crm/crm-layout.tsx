@@ -99,7 +99,7 @@ export function CRMLayout({ children }: CRMLayoutProps) {
               <Plus className="h-3.5 w-3.5" />
               <span className="text-xs">{t("common.create") || "New"}</span>
             </Button>
-            <NotificationBell iconClassName="h-4 w-4" className="h-8 w-8" />
+            <NotificationBell iconClassName="h-5 w-5" className="h-8 w-8" />
             <LanguageSwitcher />
             <ThemeSwitcher />
             <UserProfileDropdown showName={false} />

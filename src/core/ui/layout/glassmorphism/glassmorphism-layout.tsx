@@ -217,7 +217,7 @@ export function GlassmorphismLayout({ children }: GlassmorphismLayoutProps) {
               <LanguageSwitcher />
               <ThemeSwitcher />
               {settings.showNotifications && (
-                <NotificationBell iconClassName="h-4 w-4" className="text-foreground/70 hover:text-foreground" />
+                <NotificationBell iconClassName="h-5 w-5" className="text-foreground/70 hover:text-foreground" />
               )}
               <UserProfileDropdown showName={false} />
             </div>

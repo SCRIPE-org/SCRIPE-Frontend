@@ -1,8 +1,8 @@
 /**
  * SignalR Hub Constants — Single source of truth.
  *
- * Event names MUST match the backend IAuditHubClient interface methods.
- * Method names MUST match the AuditHub public method signatures.
+ * Event names MUST match the backend hub client interface methods.
+ * Method names MUST match the hub public method signatures.
  * Group names MUST match the backend HubGroupNames constants.
  *
  * If the backend renames a method/event, update ONLY this file.
@@ -12,6 +12,10 @@
 export const HUB_EVENTS = {
   /** Receives a real-time audit event notification */
   AUDIT_EVENT: "AuditEvent",
+  /** Receives a new notification push (matches INotificationHubClient.ReceiveNotification) */
+  RECEIVE_NOTIFICATION: "ReceiveNotification",
+  /** Receives updated unread count (matches INotificationHubClient.UnreadCountUpdated) */
+  UNREAD_COUNT_UPDATED: "UnreadCountUpdated",
 } as const;
 
 // ─── Hub Methods (Client → Server) ───────────────────────────────────
@@ -30,4 +34,6 @@ export const HUB_METHODS = {
 export const HUB_PATHS = {
   /** Audit events hub endpoint */
   AUDIT: "/hubs/audit",
+  /** Notification hub endpoint */
+  NOTIFICATIONS: "/hubs/notifications",
 } as const;

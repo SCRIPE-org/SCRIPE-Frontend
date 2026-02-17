@@ -77,7 +77,7 @@ export function ElegantHeader({ onMenuClick }: ElegantHeaderProps) {
           </Button>
           <LanguageSwitcher buttonClassName="h-8 w-8 rounded-xl hover:bg-white/10" />
           <ThemeSwitcher buttonClassName="h-8 w-8 rounded-xl hover:bg-white/10" />
-          <NotificationBell iconClassName="h-4 w-4" />
+          <NotificationBell iconClassName="h-5 w-5" />
           <UserProfileDropdown showName={false} />
         </div>
       </div>

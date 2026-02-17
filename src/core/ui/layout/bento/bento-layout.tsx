@@ -99,7 +99,7 @@ export function BentoLayout({ children }: BentoLayoutProps) {
         <div className="flex items-center gap-2">
           <LanguageSwitcher />
           <ThemeSwitcher />
-          <NotificationBell iconClassName="h-4 w-4" />
+          <NotificationBell iconClassName="h-5 w-5" />
           <UserProfileDropdown showName={false} />
         </div>
       </header>

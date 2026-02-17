@@ -87,7 +87,7 @@ export function TerminalLayout({ children }: TerminalLayoutProps) {
             buttonClassName="text-[#8b949e] hover:text-[#c9d1d9] hover:bg-[#30363d]"
             contentClassName="bg-[#161b22] border-[#30363d]"
           />
-          <NotificationBell iconClassName="h-4 w-4" />
+          <NotificationBell iconClassName="h-5 w-5" />
           <UserProfileDropdown showName={false} />
         </div>
       </div>

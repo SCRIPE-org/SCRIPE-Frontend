@@ -75,7 +75,7 @@ export function MapLayout({ children }: MapLayoutProps) {
           <div className="flex items-center gap-1 rounded-lg border border-border bg-card/90 px-1 shadow-lg backdrop-blur-xl">
             <LanguageSwitcher />
             <ThemeSwitcher />
-            <NotificationBell iconClassName="h-4 w-4" />
+            <NotificationBell iconClassName="h-5 w-5" />
             <UserProfileDropdown showName={false} />
           </div>
         </div>

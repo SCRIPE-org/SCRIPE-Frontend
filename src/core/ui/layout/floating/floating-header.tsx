@@ -100,7 +100,7 @@ export function FloatingHeader({ onMenuClick, sidebarOpen }: FloatingHeaderProps
 
           {/* Notifications */}
           {settings.showNotifications && (
-            <NotificationBell iconClassName="h-4 w-4" className="h-9 w-9 rounded-xl hover:bg-muted" />
+            <NotificationBell iconClassName="h-5 w-5" className="h-9 w-9 rounded-xl hover:bg-muted" />
           )}
 
           {/* Mobile Search */}

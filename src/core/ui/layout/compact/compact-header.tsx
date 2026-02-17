@@ -70,7 +70,7 @@ export function CompactHeader({ onMenuClick }: CompactHeaderProps) {
           </Button>
           <LanguageSwitcher buttonClassName="h-7 w-7 rounded" />
           <ThemeSwitcher buttonClassName="h-7 w-7 rounded" />
-          <NotificationBell iconClassName="h-4 w-4" />
+          <NotificationBell iconClassName="h-5 w-5" />
           <UserProfileDropdown showName={false} />
         </div>
       </div>

@@ -212,7 +212,7 @@ export function AuroraLayout({ children }: AuroraLayoutProps) {
               <LanguageSwitcher />
               <ThemeSwitcher />
               {settings.showNotifications && (
-                <NotificationBell iconClassName="h-4 w-4" />
+                <NotificationBell iconClassName="h-5 w-5" />
               )}
               <UserProfileDropdown showName={false} />
             </div>

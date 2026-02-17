@@ -76,7 +76,7 @@ export function ModernHeader({ onMenuClick }: ModernHeaderProps) {
           </Button>
           <LanguageSwitcher buttonClassName="h-8 w-8 rounded-lg" />
           <ThemeSwitcher buttonClassName="h-8 w-8 rounded-lg" />
-          <NotificationBell iconClassName="h-4 w-4" />
+          <NotificationBell iconClassName="h-5 w-5" />
           <UserProfileDropdown showName={false} />
         </div>
       </div>

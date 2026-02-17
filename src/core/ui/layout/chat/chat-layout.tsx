@@ -111,7 +111,7 @@ export function ChatLayout({ children }: ChatLayoutProps) {
         </div>
         {ChannelList}
         <div className="border-t border-border p-2">
-          <NotificationBell iconClassName="h-4 w-4" />
+          <NotificationBell iconClassName="h-5 w-5" />
           <UserProfileDropdown showName />
         </div>
       </aside>

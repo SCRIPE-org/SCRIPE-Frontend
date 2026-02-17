@@ -18,7 +18,7 @@ interface NotificationBellProps {
  * NotificationBell — reusable bell icon with unread badge and dropdown panel.
  * Drop-in replacement for static Bell icons in layout headers.
  */
-export function NotificationBell({ iconClassName = 'h-5 w-5', className }: NotificationBellProps) {
+export function NotificationBell({ iconClassName = 'h-10 w-10', className }: NotificationBellProps) {
       const vm = useNotificationViewModel();
       const { t } = useI18n();
       const panelRef = useRef<HTMLDivElement>(null);
