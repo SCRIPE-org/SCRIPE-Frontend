@@ -9,11 +9,13 @@ import type { CrudConfig } from "@core/crud/components/generic-crud-view";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import type {
       MessageTemplate,
+} from "../../domain/entities/MessageTemplate";
+import type {
       CreateMessageTemplateRequest,
       UpdateMessageTemplateRequest,
       PreviewTemplateRequest,
       PreviewTemplateResponse,
-} from "../../domain/entities/MessageTemplate";
+} from "../../domain/entities/MessageTemplateRequests";
 
 const QUERY_KEY = ["message-templates"];
 

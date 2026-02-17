@@ -1,40 +1,39 @@
 /**
- * Notification Sender entities — aligned with backend enums and DTOs
+ * Notification Sender Entities — Domain types for the notification module.
+ *
+ * Classes with getters and domain logic.
+ * Request payloads are in NotificationRequests.ts.
+ *
+ * @module notification-sender/domain
  */
 
-export interface NotificationTarget {
+// ─── Shared Types ──────────────────────────────────────────────
+
+export type NotificationType = "Info" | "Success" | "Warning" | "Error";
+export type NotificationCategory = "General" | "Security" | "System" | "Activity";
+export type NotificationTargetType = "User" | "Role" | "Tenant" | "Broadcast";
+
+// ─── Notification Target Entity ────────────────────────────────
+
+export interface NotificationTargetData {
       id: string;
       name: string;
       type: "admin" | "role" | "tenant";
 }
 
 /**
- * Backend NotificationType enum values
+ * Notification Target Entity
  */
-export type NotificationType = "Info" | "Success" | "Warning" | "Error";
+export class NotificationTarget {
+      constructor(private readonly data: NotificationTargetData) { }
 
-/**
- * Backend NotificationCategory enum values
- */
-export type NotificationCategory = "General" | "Security" | "System" | "Activity";
+      get id(): string { return this.data.id; }
+      get name(): string { return this.data.name; }
+      get type(): "admin" | "role" | "tenant" { return this.data.type; }
 
-/**
- * Backend NotificationTarget enum values
- */
-export type NotificationTargetType = "User" | "Role" | "Tenant" | "Broadcast";
-
-/**
- * Matches backend SendNotificationRequest exactly.
- * One request per target — the frontend batches multiple targets.
- */
-export interface SendNotificationPayload {
-      title: string;
-      body: string;
-      target: NotificationTargetType;
-      userId: string | null;
-      tenantId: string | null;
-      type: NotificationType;
-      category: NotificationCategory;
-      actionUrl?: string;
-      metadataJson?: string;
+      /** Display label with type prefix */
+      get displayLabel(): string {
+            const prefix = this.type.charAt(0).toUpperCase() + this.type.slice(1);
+            return `${prefix}: ${this.name}`;
+      }
 }

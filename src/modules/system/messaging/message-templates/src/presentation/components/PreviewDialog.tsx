@@ -12,7 +12,7 @@ import {
 import { Button } from "@core/ui/button";
 import { cn } from "@core/common/utils";
 import { Loader2, Monitor, Tablet, Smartphone } from "lucide-react";
-import type { PreviewTemplateResponse } from "../../domain/entities/MessageTemplate";
+import type { PreviewTemplateResponse } from "../../domain/entities/MessageTemplateRequests";
 
 // ─── Device Presets ─────────────────────────────────────────
 const DEVICES = [

@@ -5,9 +5,11 @@ import type {
       WebhookDeliveryStats,
       WebhookEventType,
       WebhookTestResult,
+} from "../entities/Webhook";
+import type {
       CreateWebhookRequest,
       UpdateWebhookRequest,
-} from "../entities/Webhook";
+} from "../entities/WebhookRequests";
 
 export interface IWebhookRepository {
       // ─── Subscriptions ─────────────────────────────────────────

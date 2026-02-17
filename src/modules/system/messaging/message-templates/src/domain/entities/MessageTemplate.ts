@@ -1,5 +1,10 @@
 /**
- * MessageTemplate entity
+ * MessageTemplate Entity — Domain types for the message template module.
+ *
+ * Class with getters and domain logic.
+ * Request payloads are in MessageTemplateRequests.ts.
+ *
+ * @module message-templates/domain
  */
 
 export type TemplateCategory = "transactional" | "marketing" | "notification" | "onboarding" | "security" | "billing" | "custom";
@@ -15,7 +20,9 @@ export interface PlaceholderDefinition {
 
 export type MessageChannel = "Email" | "SMS" | "Push";
 
-export interface MessageTemplate {
+// ─── Entity Data ────────────────────────────────────────────────
+
+export interface MessageTemplateData {
       id: string;
       key: string;
       channel: MessageChannel;
@@ -30,7 +37,6 @@ export interface MessageTemplate {
       version: number;
       createdAt: string;
       modifiedAt: string | null;
-      // New Phase 5 fields (optional for backwards compat)
       category?: TemplateCategory;
       tags?: string[];
       usageCount?: number;
@@ -38,56 +44,51 @@ export interface MessageTemplate {
       metadata?: Record<string, unknown>;
 }
 
-export interface CreateMessageTemplateRequest {
-      key: string;
-      channel: string;
-      subject?: string;
-      body: string;
-      language: string;
-      isActive: boolean;
-      tenantId?: string;
-      description?: string;
-      placeholderSchema?: string;
-      designVariables?: string;
-      category?: string;
-      tags?: string;
+/**
+ * Message Template Entity
+ */
+export class MessageTemplate {
+      constructor(private readonly data: MessageTemplateData) { }
+
+      get id(): string { return this.data.id; }
+      get key(): string { return this.data.key; }
+      get channel(): MessageChannel { return this.data.channel; }
+      get subject(): string | null { return this.data.subject; }
+      get body(): string { return this.data.body; }
+      get language(): string { return this.data.language; }
+      get isActive(): boolean { return this.data.isActive; }
+      get tenantId(): string | null { return this.data.tenantId; }
+      get description(): string | null { return this.data.description; }
+      get placeholderSchema(): PlaceholderDefinition[] { return this.data.placeholderSchema; }
+      get designVariables(): Record<string, string> | null { return this.data.designVariables; }
+      get version(): number { return this.data.version; }
+      get createdAt(): string { return this.data.createdAt; }
+      get modifiedAt(): string | null { return this.data.modifiedAt; }
+      get category(): TemplateCategory | undefined { return this.data.category; }
+      get tags(): string[] | undefined { return this.data.tags; }
+      get usageCount(): number | undefined { return this.data.usageCount; }
+      get lastUsedAt(): string | null | undefined { return this.data.lastUsedAt; }
+      get metadata(): Record<string, unknown> | undefined { return this.data.metadata; }
+
+      // ===== Domain Logic =====
+
+      /** Whether this template has placeholders */
+      get hasPlaceholders(): boolean {
+            return this.placeholderSchema.length > 0;
+      }
+
+      /** Whether this is an email template */
+      get isEmail(): boolean {
+            return this.channel === "Email";
+      }
+
+      /** Display name: key with language */
+      get displayName(): string {
+            return `${this.key} (${this.language})`;
+      }
 }
 
-export interface UpdateMessageTemplateRequest {
-      subject?: string;
-      body: string;
-      isActive: boolean;
-      description?: string;
-      placeholderSchema?: string;
-      designVariables?: string;
-      category?: string;
-      tags?: string;
-}
-
-export interface PreviewTemplateRequest {
-      subject?: string;
-      body: string;
-      sampleData?: Record<string, unknown>;
-}
-
-export interface PreviewTemplateResponse {
-      subject: string | null;
-      body: string;
-}
-
-export interface ImportTemplatePayload {
-      key: string;
-      channel: string;
-      subject?: string;
-      body: string;
-      language: string;
-      isActive: boolean;
-      description?: string;
-      placeholderSchema?: string;
-      designVariables?: string;
-      category?: TemplateCategory;
-      tags?: string[];
-}
+// ─── Exported Template (for import/export) ─────────────────────
 
 export interface ExportedTemplate {
       key: string;

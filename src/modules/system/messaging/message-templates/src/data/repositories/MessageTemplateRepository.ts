@@ -1,15 +1,24 @@
+/**
+ * Message Template Repository Implementation
+ *
+ * Uses MessageTemplateService + MessageTemplateMapper.
+ * All reads convert JSON → Entity via Mapper.
+ * All writes convert Request → JSON via Mapper.
+ *
+ * @module message-templates/data
+ */
 import type {
       IMessageTemplateRepository,
 } from "../../domain/interfaces/IMessageTemplateRepository";
+import type { MessageTemplate } from "../../domain/entities/MessageTemplate";
 import type {
-      MessageTemplate,
       CreateMessageTemplateRequest,
       UpdateMessageTemplateRequest,
       PreviewTemplateRequest,
       PreviewTemplateResponse,
-} from "../../domain/entities/MessageTemplate";
+} from "../../domain/entities/MessageTemplateRequests";
 import type { PagedResult } from "@modules/system/core/domain/types";
-import type { IMessageTemplateService } from "../services/MessageTemplateService";
+import type { IMessageTemplateService } from "../../domain/interfaces/IMessageTemplateService";
 import { MessageTemplateMapper } from "../mappers/MessageTemplateMapper";
 
 export class MessageTemplateRepository implements IMessageTemplateRepository {
@@ -35,12 +44,14 @@ export class MessageTemplateRepository implements IMessageTemplateRepository {
       }
 
       async create(data: CreateMessageTemplateRequest): Promise<string> {
-            const result = await this.service.create(data as unknown as Record<string, unknown>);
+            const json = MessageTemplateMapper.toCreateJson(data);
+            const result = await this.service.create(json);
             return result.id;
       }
 
       async update(id: string, data: UpdateMessageTemplateRequest): Promise<void> {
-            await this.service.update(id, data as unknown as Record<string, unknown>);
+            const json = MessageTemplateMapper.toUpdateJson(data);
+            await this.service.update(id, json);
       }
 
       async delete(id: string): Promise<void> {
@@ -53,6 +64,7 @@ export class MessageTemplateRepository implements IMessageTemplateRepository {
       }
 
       async preview(data: PreviewTemplateRequest): Promise<PreviewTemplateResponse> {
-            return this.service.preview(data as unknown as Record<string, unknown>);
+            const json = MessageTemplateMapper.toPreviewJson(data);
+            return this.service.preview(json);
       }
 }

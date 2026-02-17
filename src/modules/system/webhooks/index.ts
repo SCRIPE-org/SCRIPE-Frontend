@@ -10,10 +10,14 @@ export type {
       WebhookDeliveryStats,
       WebhookEventType,
       WebhookTestResult,
-      CreateWebhookRequest,
-      UpdateWebhookRequest,
       WebhookListResponse,
 } from "./src/domain/entities/Webhook";
+
+// Domain request types
+export type {
+      CreateWebhookRequest,
+      UpdateWebhookRequest,
+} from "./src/domain/entities/WebhookRequests";
 
 // Domain interfaces
 export type { IWebhookRepository } from "./src/domain/interfaces/IWebhookRepository";

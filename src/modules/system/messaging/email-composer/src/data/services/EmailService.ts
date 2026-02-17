@@ -1,31 +1,40 @@
+/**
+ * Email Service Implementation
+ *
+ * Handles all email API calls. Returns raw JSON / Model types.
+ * Repository uses Mapper to convert to domain entities.
+ *
+ * @module email-composer/data
+ */
 import type { IApiService } from "@core/interfaces/api.interface";
 import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
-import type { EmailRecipient, SendManualEmailPayload, SentEmail, EmailTemplateListResponse } from "../../domain/entities/Email";
-
-export interface IEmailService {
-      searchRecipients(query: string): Promise<EmailRecipient[]>;
-      send(data: SendManualEmailPayload): Promise<void>;
-      getSentHistory(params: { page: number; pageSize: number; search?: string; status?: string }): Promise<{ items: SentEmail[]; totalCount: number }>;
-      cancelEmail(id: string): Promise<void>;
-      resendEmail(id: string): Promise<{ id: string }>;
-      getEmailTemplates(params: { page: number; pageSize: number; search?: string }): Promise<EmailTemplateListResponse>;
-      uploadAttachment(file: File): Promise<{ fileName: string; size: number; url: string; contentType: string }>;
-}
+import type {
+      IEmailService,
+      ServiceSentHistoryParams,
+      ServiceEmailTemplateListParams,
+} from "../../domain/interfaces/IEmailService";
+import type {
+      EmailRecipientJson,
+      SentEmailListResponseJson,
+      EmailTemplateListResponseJson,
+      SendManualEmailJson,
+      AttachmentUploadResultJson,
+} from "../models/EmailModel";
 
 export class EmailService implements IEmailService {
       constructor(private readonly api: IApiService) { }
 
-      async searchRecipients(query: string): Promise<EmailRecipient[]> {
+      async searchRecipients(query: string): Promise<EmailRecipientJson[]> {
             const url = buildUrl(API_ENDPOINTS.EMAILS.SEARCH_RECIPIENTS, { search: query });
-            return this.api.get<EmailRecipient[]>(url);
+            return this.api.get<EmailRecipientJson[]>(url);
       }
 
-      async send(data: SendManualEmailPayload): Promise<void> {
+      async send(data: SendManualEmailJson): Promise<void> {
             await this.api.post(API_ENDPOINTS.EMAILS.SEND, data);
       }
 
-      async getSentHistory(params: { page: number; pageSize: number; search?: string; status?: string }): Promise<{ items: SentEmail[]; totalCount: number }> {
-            const url = buildUrl(API_ENDPOINTS.EMAILS.SENT_HISTORY, params);
+      async getSentHistory(params: ServiceSentHistoryParams): Promise<SentEmailListResponseJson> {
+            const url = buildUrl(API_ENDPOINTS.EMAILS.SENT_HISTORY, params as unknown as Record<string, string | number | boolean | null | undefined>);
             return this.api.get(url);
       }
 
@@ -37,12 +46,12 @@ export class EmailService implements IEmailService {
             return this.api.post(API_ENDPOINTS.EMAILS.RESEND(id), {});
       }
 
-      async getEmailTemplates(params: { page: number; pageSize: number; search?: string }): Promise<EmailTemplateListResponse> {
-            const url = buildUrl(API_ENDPOINTS.MESSAGE_TEMPLATES.LIST, { ...params, channel: "Email" });
-            return this.api.get<EmailTemplateListResponse>(url);
+      async getEmailTemplates(params: ServiceEmailTemplateListParams): Promise<EmailTemplateListResponseJson> {
+            const url = buildUrl(API_ENDPOINTS.MESSAGE_TEMPLATES.LIST, { ...params, channel: "Email" } as unknown as Record<string, string | number | boolean | null | undefined>);
+            return this.api.get<EmailTemplateListResponseJson>(url);
       }
 
-      async uploadAttachment(file: File): Promise<{ fileName: string; size: number; url: string; contentType: string }> {
+      async uploadAttachment(file: File): Promise<AttachmentUploadResultJson> {
             const formData = new FormData();
             formData.append("file", file);
             return this.api.post(API_ENDPOINTS.EMAILS.UPLOAD_ATTACHMENT, formData);

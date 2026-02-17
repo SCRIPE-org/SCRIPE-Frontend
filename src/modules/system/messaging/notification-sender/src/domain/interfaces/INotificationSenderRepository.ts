@@ -1,4 +1,5 @@
-import type { NotificationTarget, SendNotificationPayload } from "../entities/Notification";
+import type { NotificationTarget } from "../entities/Notification";
+import type { SendNotificationPayload } from "../entities/NotificationRequests";
 
 export interface INotificationSenderRepository {
       searchTargets(query: string): Promise<NotificationTarget[]>;

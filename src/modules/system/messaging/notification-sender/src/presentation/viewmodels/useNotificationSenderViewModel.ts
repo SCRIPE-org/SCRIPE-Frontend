@@ -7,11 +7,11 @@ import { systemContainer } from "@modules/system/di";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import type {
       NotificationTarget,
-      SendNotificationPayload,
       NotificationType,
       NotificationCategory,
       NotificationTargetType,
 } from "../../domain/entities/Notification";
+import type { SendNotificationPayload } from "../../domain/entities/NotificationRequests";
 
 export function useNotificationSenderViewModel() {
       const { t } = useI18n();

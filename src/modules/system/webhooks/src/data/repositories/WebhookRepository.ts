@@ -1,4 +1,18 @@
+/**
+ * Webhook Repository Implementation
+ *
+ * Implements IWebhookRepository using WebhookService.
+ * Uses WebhookMapper to convert between Models (DTOs) and Entities.
+ *
+ * Clean Architecture Pattern:
+ * - Service handles API calls, returns JSON/Models
+ * - Repository uses Mapper to convert to Entities
+ * - ViewModel uses Repository, works with Entities
+ *
+ * @module webhooks/data
+ */
 import type { IWebhookRepository } from "../../domain/interfaces/IWebhookRepository";
+import type { IWebhookService } from "../../domain/interfaces/IWebhookService";
 import type {
       WebhookSubscription,
       WebhookSubscriptionListItem,
@@ -6,10 +20,12 @@ import type {
       WebhookDeliveryStats,
       WebhookEventType,
       WebhookTestResult,
+} from "../../domain/entities/Webhook";
+import type {
       CreateWebhookRequest,
       UpdateWebhookRequest,
-} from "../../domain/entities/Webhook";
-import type { IWebhookService } from "../services/WebhookService";
+} from "../../domain/entities/WebhookRequests";
+import { WebhookMapper } from "../mappers/WebhookMapper";
 
 export class WebhookRepository implements IWebhookRepository {
       constructor(private readonly service: IWebhookService) { }
@@ -20,19 +36,27 @@ export class WebhookRepository implements IWebhookRepository {
             search?: string;
             isActive?: boolean;
       }): Promise<{ items: WebhookSubscriptionListItem[]; totalCount: number }> {
-            return this.service.getAll(params);
+            const result = await this.service.getAll(params);
+            return {
+                  items: result.items.map((json) => WebhookMapper.fromListItemJsonToEntity(json)),
+                  totalCount: result.totalCount,
+            };
       }
 
       async getById(id: string): Promise<WebhookSubscription> {
-            return this.service.getById(id);
+            const json = await this.service.getById(id);
+            return WebhookMapper.fromJsonToEntity(json);
       }
 
       async create(data: CreateWebhookRequest): Promise<WebhookSubscription> {
-            return this.service.create(data);
+            const model = WebhookMapper.toCreateModel(data);
+            const json = await this.service.create(model.toJson());
+            return WebhookMapper.fromJsonToEntity(json);
       }
 
       async update(id: string, data: UpdateWebhookRequest): Promise<void> {
-            await this.service.update(id, data);
+            const model = WebhookMapper.toUpdateModel(data);
+            await this.service.update(id, model.toJson());
       }
 
       async remove(id: string): Promise<void> {
@@ -44,11 +68,13 @@ export class WebhookRepository implements IWebhookRepository {
       }
 
       async rotateSecret(id: string): Promise<WebhookSubscription> {
-            return this.service.rotateSecret(id);
+            const json = await this.service.rotateSecret(id);
+            return WebhookMapper.fromJsonToEntity(json);
       }
 
       async test(id: string): Promise<WebhookTestResult> {
-            return this.service.test(id);
+            const json = await this.service.test(id);
+            return WebhookMapper.toTestResultEntity(json);
       }
 
       async getDeliveryLogs(params: {
@@ -57,16 +83,20 @@ export class WebhookRepository implements IWebhookRepository {
             pageSize: number;
             isSuccess?: boolean;
       }): Promise<{ items: WebhookDeliveryLog[]; totalCount: number }> {
-            return this.service.getDeliveryLogs(params);
+            const result = await this.service.getDeliveryLogs(params);
+            return {
+                  items: result.items.map((json) => WebhookMapper.toDeliveryLogEntity(json)),
+                  totalCount: result.totalCount,
+            };
       }
 
       async getAvailableEvents(): Promise<WebhookEventType[]> {
-            return this.service.getAvailableEvents();
+            const jsonList = await this.service.getAvailableEvents();
+            return jsonList.map((json) => WebhookMapper.toEventTypeEntity(json));
       }
 
-      async getDeliveryStats(
-            subscriptionId: string
-      ): Promise<WebhookDeliveryStats> {
-            return this.service.getDeliveryStats(subscriptionId);
+      async getDeliveryStats(subscriptionId: string): Promise<WebhookDeliveryStats> {
+            const json = await this.service.getDeliveryStats(subscriptionId);
+            return WebhookMapper.toDeliveryStatsEntity(json);
       }
 }

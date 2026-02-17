@@ -1,0 +1,273 @@
+/**
+ * Webhook Model (DTO)
+ *
+ * Represents the raw API response/request shapes for webhooks.
+ * Service returns these; Mapper converts them to domain Entities.
+ *
+ * @module webhooks/data
+ */
+
+// ===== JSON Shapes (API contracts) =====
+
+export interface WebhookSubscriptionJson {
+      id: string;
+      url: string;
+      description: string | null;
+      events: string[];
+      isActive: boolean;
+      secret: string;
+      hasPreviousSecret: boolean;
+      previousSecretExpiresAt: string | null;
+      maxRetries: number;
+      consecutiveFailures: number;
+      maxConsecutiveFailures: number;
+      lastDeliveryAt: string | null;
+      lastDeliveryStatus: string | null;
+      totalDeliveries: number;
+      successfulDeliveries: number;
+      failedDeliveries: number;
+      successRate: number;
+      createdAt: string;
+      modifiedAt: string | null;
+}
+
+export interface WebhookListItemJson {
+      id: string;
+      url: string;
+      description: string | null;
+      events: string[];
+      isActive: boolean;
+      lastDeliveryAt: string | null;
+      lastDeliveryStatus: string | null;
+      successRate: number;
+      totalDeliveries: number;
+      consecutiveFailures?: number;
+      maxConsecutiveFailures?: number;
+      createdAt?: string;
+}
+
+export interface WebhookListResponseJson {
+      items: WebhookListItemJson[];
+      totalCount: number;
+}
+
+export interface WebhookDeliveryLogJson {
+      id: string;
+      subscriptionId?: string;
+      eventType: string;
+      payloadJson: string;
+      requestUrl: string;
+      requestHeaders: string | null;
+      httpStatusCode: number;
+      responseBody: string | null;
+      errorMessage: string | null;
+      attemptNumber: number;
+      latencyMs: number;
+      isSuccess: boolean;
+      createdAt: string;
+}
+
+export interface WebhookDeliveryLogListResponseJson {
+      items: WebhookDeliveryLogJson[];
+      totalCount: number;
+}
+
+export interface WebhookDeliveryStatsJson {
+      totalDeliveries: number;
+      successfulDeliveries: number;
+      failedDeliveries: number;
+      successRate: number;
+      averageLatencyMs: number;
+}
+
+export interface WebhookEventTypeJson {
+      key: string;
+      category: string;
+      description: string;
+}
+
+export interface WebhookTestResultJson {
+      isSuccess: boolean;
+      statusCode: number;
+      latencyMs: number;
+      responsePreview: string | null;
+      errorMessage: string | null;
+}
+
+export interface CreateWebhookJson {
+      url: string;
+      description?: string;
+      events: string[];
+      maxRetries?: number;
+      maxConsecutiveFailures?: number;
+}
+
+export interface UpdateWebhookJson {
+      url?: string;
+      description?: string;
+      events?: string[];
+      maxRetries?: number;
+      maxConsecutiveFailures?: number;
+}
+
+// ===== Model Classes =====
+
+/**
+ * Webhook Subscription Model
+ *
+ * Wraps API JSON with fromJson/toJson methods.
+ */
+export class WebhookSubscriptionModel {
+      constructor(
+            public readonly id: string,
+            public readonly url: string,
+            public readonly description: string | null,
+            public readonly events: string[],
+            public readonly isActive: boolean,
+            public readonly secret: string,
+            public readonly hasPreviousSecret: boolean,
+            public readonly previousSecretExpiresAt: string | null,
+            public readonly maxRetries: number,
+            public readonly consecutiveFailures: number,
+            public readonly maxConsecutiveFailures: number,
+            public readonly lastDeliveryAt: string | null,
+            public readonly lastDeliveryStatus: string | null,
+            public readonly totalDeliveries: number,
+            public readonly successfulDeliveries: number,
+            public readonly failedDeliveries: number,
+            public readonly successRate: number,
+            public readonly createdAt: string,
+            public readonly modifiedAt: string | null
+      ) { }
+
+      static fromJson(json: WebhookSubscriptionJson): WebhookSubscriptionModel {
+            return new WebhookSubscriptionModel(
+                  json.id,
+                  json.url,
+                  json.description,
+                  json.events,
+                  json.isActive,
+                  json.secret,
+                  json.hasPreviousSecret,
+                  json.previousSecretExpiresAt,
+                  json.maxRetries,
+                  json.consecutiveFailures,
+                  json.maxConsecutiveFailures,
+                  json.lastDeliveryAt,
+                  json.lastDeliveryStatus,
+                  json.totalDeliveries,
+                  json.successfulDeliveries,
+                  json.failedDeliveries,
+                  json.successRate,
+                  json.createdAt,
+                  json.modifiedAt
+            );
+      }
+
+      toJson(): WebhookSubscriptionJson {
+            return {
+                  id: this.id,
+                  url: this.url,
+                  description: this.description,
+                  events: this.events,
+                  isActive: this.isActive,
+                  secret: this.secret,
+                  hasPreviousSecret: this.hasPreviousSecret,
+                  previousSecretExpiresAt: this.previousSecretExpiresAt,
+                  maxRetries: this.maxRetries,
+                  consecutiveFailures: this.consecutiveFailures,
+                  maxConsecutiveFailures: this.maxConsecutiveFailures,
+                  lastDeliveryAt: this.lastDeliveryAt,
+                  lastDeliveryStatus: this.lastDeliveryStatus,
+                  totalDeliveries: this.totalDeliveries,
+                  successfulDeliveries: this.successfulDeliveries,
+                  failedDeliveries: this.failedDeliveries,
+                  successRate: this.successRate,
+                  createdAt: this.createdAt,
+                  modifiedAt: this.modifiedAt,
+            };
+      }
+}
+
+/**
+ * Webhook List Item Model
+ */
+export class WebhookListItemModel {
+      constructor(
+            public readonly id: string,
+            public readonly url: string,
+            public readonly description: string | null,
+            public readonly events: string[],
+            public readonly isActive: boolean,
+            public readonly lastDeliveryAt: string | null,
+            public readonly lastDeliveryStatus: string | null,
+            public readonly successRate: number,
+            public readonly totalDeliveries: number,
+            public readonly consecutiveFailures?: number,
+            public readonly maxConsecutiveFailures?: number,
+            public readonly createdAt?: string
+      ) { }
+
+      static fromJson(json: WebhookListItemJson): WebhookListItemModel {
+            return new WebhookListItemModel(
+                  json.id,
+                  json.url,
+                  json.description,
+                  json.events,
+                  json.isActive,
+                  json.lastDeliveryAt,
+                  json.lastDeliveryStatus,
+                  json.successRate,
+                  json.totalDeliveries,
+                  json.consecutiveFailures,
+                  json.maxConsecutiveFailures,
+                  json.createdAt
+            );
+      }
+}
+
+/**
+ * Create webhook request model
+ */
+export class CreateWebhookModel {
+      constructor(
+            public readonly url: string,
+            public readonly events: string[],
+            public readonly description?: string,
+            public readonly maxRetries?: number,
+            public readonly maxConsecutiveFailures?: number
+      ) { }
+
+      toJson(): CreateWebhookJson {
+            return {
+                  url: this.url,
+                  description: this.description,
+                  events: this.events,
+                  maxRetries: this.maxRetries,
+                  maxConsecutiveFailures: this.maxConsecutiveFailures,
+            };
+      }
+}
+
+/**
+ * Update webhook request model
+ */
+export class UpdateWebhookModel {
+      constructor(
+            public readonly url?: string,
+            public readonly description?: string,
+            public readonly events?: string[],
+            public readonly maxRetries?: number,
+            public readonly maxConsecutiveFailures?: number
+      ) { }
+
+      toJson(): UpdateWebhookJson {
+            return {
+                  url: this.url,
+                  description: this.description,
+                  events: this.events,
+                  maxRetries: this.maxRetries,
+                  maxConsecutiveFailures: this.maxConsecutiveFailures,
+            };
+      }
+}

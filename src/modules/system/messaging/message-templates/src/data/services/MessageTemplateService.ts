@@ -1,22 +1,31 @@
+/**
+ * Message Template Service Implementation
+ *
+ * Handles all message template API calls. Returns raw JSON types.
+ * Repository uses Mapper to convert to domain entities.
+ *
+ * @module message-templates/data
+ */
 import type { IApiService } from "@core/interfaces/api.interface";
 import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
-import type { MessageTemplateListResponse, MessageTemplateJson } from "../models/MessageTemplateModel";
-
-export interface IMessageTemplateService {
-      getAll(params: { page: number; pageSize: number; search?: string }): Promise<MessageTemplateListResponse>;
-      getById(id: string): Promise<MessageTemplateJson>;
-      create(data: Record<string, unknown>): Promise<{ id: string }>;
-      update(id: string, data: Record<string, unknown>): Promise<void>;
-      delete(id: string): Promise<void>;
-      clone(id: string, suffix?: string): Promise<{ id: string }>;
-      preview(data: Record<string, unknown>): Promise<{ subject: string | null; body: string }>;
-}
+import type {
+      IMessageTemplateService,
+      ServiceTemplateListParams,
+} from "../../domain/interfaces/IMessageTemplateService";
+import type {
+      MessageTemplateListResponse,
+      MessageTemplateJson,
+      CreateMessageTemplateJson,
+      UpdateMessageTemplateJson,
+      PreviewTemplateJson,
+      PreviewTemplateResponseJson,
+} from "../models/MessageTemplateModel";
 
 export class MessageTemplateService implements IMessageTemplateService {
       constructor(private readonly api: IApiService) { }
 
-      async getAll(params: { page: number; pageSize: number; search?: string }): Promise<MessageTemplateListResponse> {
-            const url = buildUrl(API_ENDPOINTS.MESSAGE_TEMPLATES.LIST, params);
+      async getAll(params: ServiceTemplateListParams): Promise<MessageTemplateListResponse> {
+            const url = buildUrl(API_ENDPOINTS.MESSAGE_TEMPLATES.LIST, params as unknown as Record<string, string | number | boolean | null | undefined>);
             return this.api.get<MessageTemplateListResponse>(url);
       }
 
@@ -24,11 +33,11 @@ export class MessageTemplateService implements IMessageTemplateService {
             return this.api.get<MessageTemplateJson>(API_ENDPOINTS.MESSAGE_TEMPLATES.BY_ID(id));
       }
 
-      async create(data: Record<string, unknown>): Promise<{ id: string }> {
+      async create(data: CreateMessageTemplateJson): Promise<{ id: string }> {
             return this.api.post<{ id: string }>(API_ENDPOINTS.MESSAGE_TEMPLATES.CREATE, data);
       }
 
-      async update(id: string, data: Record<string, unknown>): Promise<void> {
+      async update(id: string, data: UpdateMessageTemplateJson): Promise<void> {
             await this.api.put(API_ENDPOINTS.MESSAGE_TEMPLATES.UPDATE(id), data);
       }
 
@@ -41,7 +50,7 @@ export class MessageTemplateService implements IMessageTemplateService {
             return this.api.post<{ id: string }>(url, {});
       }
 
-      async preview(data: Record<string, unknown>): Promise<{ subject: string | null; body: string }> {
-            return this.api.post<{ subject: string | null; body: string }>(API_ENDPOINTS.MESSAGE_TEMPLATES.PREVIEW, data);
+      async preview(data: PreviewTemplateJson): Promise<PreviewTemplateResponseJson> {
+            return this.api.post<PreviewTemplateResponseJson>(API_ENDPOINTS.MESSAGE_TEMPLATES.PREVIEW, data);
       }
 }

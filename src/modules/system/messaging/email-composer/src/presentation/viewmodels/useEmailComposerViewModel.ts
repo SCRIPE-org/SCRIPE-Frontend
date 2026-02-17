@@ -6,12 +6,12 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
 import { systemContainer } from "@modules/system/di";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
-import type {
+import {
       EmailRecipient,
-      SendManualEmailPayload,
-      EmailTemplate,
-      SentEmail,
+      type EmailTemplate,
+      type SentEmail,
 } from "../../domain/entities/Email";
+import type { SendManualEmailPayload } from "../../domain/entities/EmailRequests";
 import type { AttachmentFile } from "../components/AttachmentUploader";
 import type { ScheduleConfig } from "../components/SchedulePicker";
 import type { VariableValuesMap, TypeOverridesMap } from "@core/ui/rich-text-editor/VariableValuesPanel";
@@ -223,12 +223,12 @@ export function useEmailComposerViewModel() {
                   const trimmed = email.trim();
                   if (!isValidEmail(trimmed)) return false;
 
-                  const customRecipient: EmailRecipient = {
+                  const customRecipient = new EmailRecipient({
                         id: `custom-${trimmed}`,
                         email: trimmed,
                         name: trimmed,
                         type: "custom",
-                  };
+                  });
 
                   if (target === "to") {
                         addRecipient(customRecipient);

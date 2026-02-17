@@ -8,11 +8,13 @@ import { systemContainer } from "@modules/system/di";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import type {
       MessageTemplate,
-      CreateMessageTemplateRequest,
-      UpdateMessageTemplateRequest,
       MessageChannel,
       TemplateCategory,
 } from "../../domain/entities/MessageTemplate";
+import type {
+      CreateMessageTemplateRequest,
+      UpdateMessageTemplateRequest,
+} from "../../domain/entities/MessageTemplateRequests";
 import type { PlaceholderField } from "../components/PlaceholderSchemaBuilder";
 import type { DesignVariables } from "../components/DesignVariablesPanel";
 import { DEFAULT_DESIGN } from "../components/DesignVariablesPanel";

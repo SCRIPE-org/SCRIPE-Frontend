@@ -1,11 +1,11 @@
 import type { PagedResult } from "@modules/system/core/domain/types";
+import type { MessageTemplate } from "../entities/MessageTemplate";
 import type {
-      MessageTemplate,
       CreateMessageTemplateRequest,
       UpdateMessageTemplateRequest,
       PreviewTemplateRequest,
       PreviewTemplateResponse,
-} from "../entities/MessageTemplate";
+} from "../entities/MessageTemplateRequests";
 
 export interface IMessageTemplateRepository {
       getAll(params: { page: number; pageSize: number; search?: string }): Promise<PagedResult<MessageTemplate>>;

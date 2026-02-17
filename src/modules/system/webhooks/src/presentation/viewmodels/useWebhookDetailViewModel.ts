@@ -19,8 +19,8 @@ import type {
       WebhookDeliveryLog,
       WebhookDeliveryStats,
       WebhookTestResult,
-      UpdateWebhookRequest,
 } from "../../domain/entities/Webhook";
+import type { UpdateWebhookRequest } from "../../domain/entities/WebhookRequests";
 
 export function useWebhookDetailViewModel(webhookId: string) {
       const { webhookRepository } = systemContainer;

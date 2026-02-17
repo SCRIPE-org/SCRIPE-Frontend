@@ -14,9 +14,11 @@ import { webhookKeys } from "./useWebhooksViewModel";
 import type {
       WebhookSubscription,
       WebhookEventType,
+} from "../../domain/entities/Webhook";
+import type {
       CreateWebhookRequest,
       UpdateWebhookRequest,
-} from "../../domain/entities/Webhook";
+} from "../../domain/entities/WebhookRequests";
 
 interface UseWebhookFormViewModelOptions {
       mode: "create" | "edit";
