@@ -3,6 +3,7 @@
 import React, { useMemo, useState, useCallback, lazy, Suspense } from "react";
 import { Input } from "@core/ui/input";
 import { Textarea } from "@core/ui/textarea";
+import { DatePicker } from "@core/ui/date-picker";
 import { Label } from "@core/ui/label";
 import { Badge } from "@core/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
@@ -84,6 +85,16 @@ const CATEGORY_ORDER: VariableCategory[] = [
       "template",
 ];
 
+// ─── Heuristic: infer fieldType from variable key name ──────
+function inferFieldType(key: string): VariableDefinition["fieldType"] {
+      const k = key.toLowerCase();
+      if (k.includes("email") || k.includes("mail")) return "email";
+      if (k.includes("datetime") || k.includes("date_time")) return "datetime";
+      if (k.includes("date")) return "date";
+      if (k.includes("url") || k.includes("link") || k.includes("website")) return "url";
+      return "text";
+}
+
 // ─── Type-Specific Input Renderer ───────────────────────────
 function VariableInput({
       variable,
@@ -136,21 +147,21 @@ function VariableInput({
 
             case "date":
                   return (
-                        <Input
+                        <DatePicker
                               type="date"
                               value={value}
-                              onChange={(e) => onChange(e.target.value)}
-                              className="h-8 text-sm"
+                              onChange={onChange}
+                              placeholder={variable.sample || variable.defaultValue || "Select date..."}
                         />
                   );
 
             case "datetime":
                   return (
-                        <Input
+                        <DatePicker
                               type="datetime-local"
                               value={value}
-                              onChange={(e) => onChange(e.target.value)}
-                              className="h-8 text-sm"
+                              onChange={onChange}
+                              placeholder={variable.sample || variable.defaultValue || "Select date & time..."}
                         />
                   );
 
@@ -282,6 +293,7 @@ export function VariableValuesPanel({
                               sample: "",
                               supportsFallback: true,
                               dataSource: "manual" as const,
+                              fieldType: inferFieldType(key),
                         });
                   }
             }

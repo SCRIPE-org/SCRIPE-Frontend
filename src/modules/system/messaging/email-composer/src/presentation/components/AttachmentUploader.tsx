@@ -23,6 +23,8 @@ export interface AttachmentFile {
       name: string;
       size: number;
       type: string;
+      /** Raw file reference for deferred upload */
+      file?: File;
       /** URL after upload — null means pending */
       url?: string;
       progress?: number;

@@ -66,41 +66,17 @@ export function useEmailComposerViewModel() {
       // ─── Attachment State ──────────────────────────────────────
       const [attachments, setAttachments] = useState<AttachmentFile[]>([]);
 
-      const addAttachments = useCallback(async (files: File[]) => {
-            for (const f of files) {
-                  const tempId = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
-                  // Add placeholder with progress 0
-                  const placeholder: AttachmentFile = {
-                        id: tempId,
-                        name: f.name,
-                        size: f.size,
-                        type: f.type,
-                        progress: 0,
-                  };
-                  setAttachments((prev) => [...prev, placeholder]);
-
-                  try {
-                        const result = await repo.uploadAttachment(f);
-                        // Update with URL and 100% progress
-                        setAttachments((prev) =>
-                              prev.map((a) =>
-                                    a.id === tempId
-                                          ? { ...a, url: result.url, progress: 100 }
-                                          : a
-                              )
-                        );
-                  } catch {
-                        // Mark as error
-                        setAttachments((prev) =>
-                              prev.map((a) =>
-                                    a.id === tempId
-                                          ? { ...a, error: "Upload failed", progress: 100 }
-                                          : a
-                              )
-                        );
-                  }
-            }
-      }, [repo]);
+      const addAttachments = useCallback((files: File[]) => {
+            const newFiles: AttachmentFile[] = files.map((f) => ({
+                  id: `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+                  name: f.name,
+                  size: f.size,
+                  type: f.type,
+                  file: f,
+                  progress: 100,
+            }));
+            setAttachments((prev) => [...prev, ...newFiles]);
+      }, []);
 
       const removeAttachment = useCallback((id: string) => {
             setAttachments((prev) => prev.filter((a) => a.id !== id));
@@ -302,6 +278,21 @@ export function useEmailComposerViewModel() {
                   const resolvedSubject = resolveTemplateVariables(subject, variableValues, allVariables);
                   const resolvedBody = resolveTemplateVariables(body, variableValues, allVariables);
 
+                  // Upload attachments NOW (deferred until send)
+                  let attachmentUrls: string[] | undefined;
+                  if (attachments.length > 0) {
+                        const uploaded: string[] = [];
+                        for (const a of attachments) {
+                              if (a.file) {
+                                    const result = await repo.uploadAttachment(a.file);
+                                    uploaded.push(result.url);
+                              } else if (a.url) {
+                                    uploaded.push(a.url);
+                              }
+                        }
+                        if (uploaded.length > 0) attachmentUrls = uploaded;
+                  }
+
                   // Backend handles one recipient per request, so batch them
                   for (const r of allRecipients) {
                         const payload: SendManualEmailPayload = {
@@ -315,9 +306,7 @@ export function useEmailComposerViewModel() {
                               scheduledAt: schedule.mode === "scheduled" && schedule.scheduledDate
                                     ? `${schedule.scheduledDate}T${schedule.scheduledTime || "00:00"}:00Z`
                                     : undefined,
-                              attachments: attachments.length > 0
-                                    ? attachments.filter(a => a.url && !a.error).map(a => a.url!)
-                                    : undefined,
+                              attachments: attachmentUrls,
                               signatureHtml: undefined,
                               templateKey: selectedTemplateKey || undefined,
                         };

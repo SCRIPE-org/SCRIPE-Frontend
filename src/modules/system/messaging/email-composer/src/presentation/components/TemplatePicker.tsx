@@ -55,11 +55,18 @@ export function TemplatePicker({ repository, onSelect }: TemplatePickerProps) {
 
       const selectedTemplate = templates.find((tpl) => tpl.id === selectedId);
 
+      // Just select — don't apply yet
       const handleSelect = (template: EmailTemplate) => {
             setSelectedId(template.id);
             setOpen(false);
             setSearch("");
-            onSelect(template);
+      };
+
+      // Apply the selected template
+      const handleApply = () => {
+            if (selectedTemplate) {
+                  onSelect(selectedTemplate);
+            }
       };
 
       const handleClear = (e: React.MouseEvent) => {
@@ -168,6 +175,18 @@ export function TemplatePicker({ repository, onSelect }: TemplatePickerProps) {
                               </ScrollArea>
                         </PopoverContent>
                   </Popover>
+
+                  {/* Apply Button */}
+                  {selectedId && (
+                        <Button
+                              size="sm"
+                              variant="default"
+                              onClick={handleApply}
+                              className="shrink-0"
+                        >
+                              {t("messaging.email.applyTemplate") || "Apply"}
+                        </Button>
+                  )}
             </div>
       );
 }
