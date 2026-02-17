@@ -83,6 +83,11 @@ export function useTemplateFormViewModel() {
                               parsedSchema = [];
                         }
                   }
+                  // Ensure every field has a unique id (API data may omit it)
+                  parsedSchema = parsedSchema.map((f, i) => ({
+                        ...f,
+                        id: f.id || `ph-${i}-${Math.random().toString(36).slice(2, 10)}`,
+                  }));
 
                   // Parse designVariables — may be a JSON string or an object
                   let parsedDesign: DesignVariables = { ...DEFAULT_DESIGN };
