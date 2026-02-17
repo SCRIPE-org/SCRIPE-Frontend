@@ -13,6 +13,7 @@ import { useState, useCallback, useMemo, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
 import { usePermissions } from "@core/hooks/use-permissions";
+import { useNavigation } from "@core/providers/navigation-provider";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useAppStore } from "@core/store/useAppStore";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
@@ -78,6 +79,7 @@ export function useMenuCustomizeViewModel() {
   const { hasPermission } = usePermissions();
   const user = useAppStore((state) => state.user);
   const { success, error: toastError } = useEnhancedToast();
+  const { refreshNavigation } = useNavigation();
 
   // ── Permissions ─────────────────────────────────────────────────────
   const canCustomize = hasPermission(SYSTEM_PERMISSIONS.MENUS_CUSTOMIZE);
@@ -279,6 +281,7 @@ export function useMenuCustomizeViewModel() {
     mutationFn: (request: SaveMenuOverrideRequest) => menuRepository.saveOverride(request),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["menus", "tree"] });
+      refreshNavigation(true, true);
       const scopeLabel =
         scope === MenuOverrideScope.User
           ? t("menus.overrideSavedUser")
@@ -312,6 +315,7 @@ export function useMenuCustomizeViewModel() {
     mutationFn: (overrideId: string) => menuRepository.deleteOverride(overrideId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["menus", "tree"] });
+      refreshNavigation(true, true);
       success({ title: t("menus.overrideRemoved") || "Override removed" });
     },
     onError: (err: any) => {
@@ -375,6 +379,7 @@ export function useMenuCustomizeViewModel() {
         await menuRepository.deleteOverride(entry.overrideId);
       }
       queryClient.invalidateQueries({ queryKey: ["menus", "tree"] });
+      refreshNavigation(true, true);
       success({ title: t("menus.allOverridesReset") || "All customizations removed" });
     } catch (err: any) {
       toastError({ title: err?.message ?? t("common.error") });

@@ -16,7 +16,7 @@ import type {
 } from "../../domain/entities/MenuItemRequests";
 
 export class MenuRepository implements IMenuRepository {
-  constructor(private readonly api: IApiService) {}
+  constructor(private readonly api: IApiService) { }
 
   async getAll(): Promise<MenuTreeNode[]> {
     return await this.api.get<MenuTreeNode[]>(API_ENDPOINTS.MENUS.LIST);
@@ -54,11 +54,26 @@ export class MenuRepository implements IMenuRepository {
 
   async saveOverride(request: SaveMenuOverrideRequest): Promise<string> {
     const response = await this.api.post<{ id: string }>(API_ENDPOINTS.MENUS.OVERRIDES, request);
+    // Clear navigation cache so sidebar picks up new overrides
+    this.invalidateNavigationCache();
     return response.id;
   }
 
   async deleteOverride(id: string): Promise<void> {
     await this.api.delete(API_ENDPOINTS.MENUS.DELETE_OVERRIDE(id));
+    // Clear navigation cache so sidebar picks up removed overrides
+    this.invalidateNavigationCache();
+  }
+
+  /**
+   * Clear navigation localStorage cache so the sidebar re-fetches fresh data.
+   * This runs at the data layer (not presentation) per architecture rules.
+   */
+  private invalidateNavigationCache(): void {
+    try {
+      localStorage.removeItem("navigation_data");
+      localStorage.removeItem("navigation_data_expiry");
+    } catch { /* SSR safety */ }
   }
 
   private findInTree(nodes: MenuTreeNode[], id: string): MenuTreeNode | undefined {
