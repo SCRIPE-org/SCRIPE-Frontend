@@ -324,6 +324,29 @@ export function useEmailComposerViewModel() {
 
                   // Backend handles one recipient per request, so batch them
                   for (const r of allRecipients) {
+                        // Build templatePlaceholders for backend Scriban rendering
+                        // When templateKey is set, the backend re-renders the template from DB
+                        // using these placeholders — without them, all variables are empty!
+                        let templatePlaceholders: Record<string, unknown> | undefined;
+                        if (currentTemplateKey) {
+                              const placeholders: Record<string, unknown> = {};
+                              // Include all user-set variable values
+                              for (const [key, value] of Object.entries(currentValues)) {
+                                    if (value?.trim()) {
+                                          placeholders[key] = value;
+                                    }
+                              }
+                              // Fill in any remaining variables with their sample/default values
+                              for (const varDef of allVariables) {
+                                    if (!placeholders[varDef.key] && (varDef.sample || varDef.defaultValue)) {
+                                          placeholders[varDef.key] = varDef.defaultValue || varDef.sample;
+                                    }
+                              }
+                              if (Object.keys(placeholders).length > 0) {
+                                    templatePlaceholders = placeholders;
+                              }
+                        }
+
                         const payload: SendManualEmailPayload = {
                               recipientType: toBackendRecipientType(r.type),
                               recipientId: r.type === "custom" ? null : r.id,
@@ -338,6 +361,7 @@ export function useEmailComposerViewModel() {
                               attachments: attachmentUrls,
                               signatureHtml: undefined,
                               templateKey: currentTemplateKey || undefined,
+                              templatePlaceholders,
                         };
                         await repo.send(payload);
                   }
