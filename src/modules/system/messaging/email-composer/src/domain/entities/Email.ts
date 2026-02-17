@@ -20,6 +20,7 @@ export interface SendManualEmailPayload {
       subject: string;
       body: string;
       templateKey?: string;
+      templateLanguage?: string;      // language of the selected template (ar/en)
       templatePlaceholders?: Record<string, unknown>;
       scheduledAt?: string | null;    // ISO date, null for default delay
       attachments?: string[];         // uploaded attachment URLs

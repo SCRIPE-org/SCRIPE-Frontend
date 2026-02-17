@@ -119,6 +119,9 @@ export function useEmailComposerViewModel() {
       const [selectedTemplateKey, setSelectedTemplateKey] = useState<string | null>(null);
       const selectedTemplateKeyRef = useRef(selectedTemplateKey);
       selectedTemplateKeyRef.current = selectedTemplateKey;
+      const [selectedTemplateLanguage, setSelectedTemplateLanguage] = useState<string | null>(null);
+      const selectedTemplateLanguageRef = useRef(selectedTemplateLanguage);
+      selectedTemplateLanguageRef.current = selectedTemplateLanguage;
 
       // Merge default + template variables
       const allVariables = useMemo(() => {
@@ -137,6 +140,7 @@ export function useEmailComposerViewModel() {
             setBody(template.body);
             setFieldErrors({});
             setSelectedTemplateKey(template.key);
+            setSelectedTemplateLanguage(template.language || null);
 
             // Parse placeholder schema into VariableDefinitions for the template category
             if (template.placeholderSchema) {
@@ -301,6 +305,7 @@ export function useEmailComposerViewModel() {
                   const currentBcc = bccRecipientsRef.current;
                   const currentSchedule = scheduleRef.current;
                   const currentTemplateKey = selectedTemplateKeyRef.current;
+                  const currentTemplateLanguage = selectedTemplateLanguageRef.current;
                   const currentAttachments = attachmentsRef.current;
 
                   // Resolve any {{variable}} placeholders before sending
@@ -361,6 +366,7 @@ export function useEmailComposerViewModel() {
                               attachments: attachmentUrls,
                               signatureHtml: undefined,
                               templateKey: currentTemplateKey || undefined,
+                              templateLanguage: currentTemplateLanguage || undefined,
                               templatePlaceholders,
                         };
                         await repo.send(payload);
