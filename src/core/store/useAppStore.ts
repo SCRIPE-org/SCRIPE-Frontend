@@ -84,8 +84,9 @@ export const useAppStore = create<AppState>()(
         if (state?.isAuthenticated && !secureTokenService.hasToken()) {
           appLogger.debug("[AppStore] Token missing after rehydration, resetting auth state");
           state.logout();
-          return;
         }
+        // Always mark hydration complete — even after logout
+        // Without this, the login page stays on the loading spinner forever
         state?.setHasHydrated(true);
       },
     }
