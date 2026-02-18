@@ -3,6 +3,9 @@
  *
  * Contains all authentication-related domain models including
  * login requests, responses, and related data structures.
+ *
+ * Refresh tokens are managed exclusively by httpOnly cookies —
+ * they never appear in the frontend domain layer.
  */
 
 import { validateForm, VALIDATION_SETS } from "@core/common/validation";
@@ -16,13 +19,6 @@ export interface LoginRequestData {
 export interface LoginResponseData {
   success: boolean;
   accessToken: string;
-  /** P5.2: May be absent — refresh token is in httpOnly cookie */
-  refreshToken?: string;
-}
-
-/** @deprecated P5.2: Refresh tokens are in httpOnly cookies — not sent from client */
-export interface RefreshTokenRequestData {
-  refreshToken: string;
 }
 
 /**
@@ -70,36 +66,16 @@ export class LoginRequest {
 export class LoginResponse {
   public readonly success: boolean;
   public readonly accessToken: string;
-  /** P5.2: Always empty string — refresh token is in httpOnly cookie */
-  public readonly refreshToken: string;
 
   constructor(data: LoginResponseData) {
     this.success = data.success;
     this.accessToken = data.accessToken;
-    this.refreshToken = data.refreshToken ?? "";
   }
 
   /**
    * Check if login was successful
-   * P5.2: Only checks accessToken — refreshToken is in httpOnly cookie
    */
   get isSuccessful(): boolean {
     return this.success && !!this.accessToken;
-  }
-}
-
-/** @deprecated P5.2: Refresh tokens are in httpOnly cookies — this class is kept for backward compat */
-export class RefreshTokenRequest {
-  public readonly refreshToken: string;
-
-  constructor(data: RefreshTokenRequestData) {
-    this.refreshToken = data.refreshToken;
-  }
-
-  /**
-   * @deprecated P5.2: Refresh tokens are in httpOnly cookies
-   */
-  get isValid(): boolean {
-    return !!(this.refreshToken && this.refreshToken.trim().length > 0);
   }
 }

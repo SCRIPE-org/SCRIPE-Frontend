@@ -13,7 +13,7 @@
  * @module auth/data
  */
 
-import { LoginRequest, LoginResponse, RefreshTokenRequest } from "../../domain/entities/Auth";
+import { LoginRequest, LoginResponse } from "../../domain/entities/Auth";
 import { User } from "../../domain/entities/User";
 import { LoginResponseModel } from "../models/AuthModel";
 
@@ -51,7 +51,6 @@ export class AuthMapper {
     return new LoginResponse({
       success: json.success || false,
       accessToken: json.accessToken || "",
-      refreshToken: json.refreshToken || "",
     });
   }
 
@@ -62,7 +61,6 @@ export class AuthMapper {
     return new LoginResponse({
       success: model.isSuccessful,
       accessToken: model.accessToken,
-      refreshToken: model.refreshToken,
     });
   }
 
@@ -73,27 +71,6 @@ export class AuthMapper {
     return {
       success: response.success,
       accessToken: response.accessToken,
-      refreshToken: response.refreshToken,
-    };
-  }
-
-  // ===== Refresh Token Request =====
-
-  /**
-   * Convert JSON/API response to RefreshTokenRequest domain model
-   */
-  static refreshTokenRequestFromJson(json: any): RefreshTokenRequest {
-    return new RefreshTokenRequest({
-      refreshToken: json.refreshToken || "",
-    });
-  }
-
-  /**
-   * Convert RefreshTokenRequest domain model to JSON for API requests
-   */
-  static refreshTokenRequestToJson(request: RefreshTokenRequest): any {
-    return {
-      refreshToken: request.refreshToken,
     };
   }
 

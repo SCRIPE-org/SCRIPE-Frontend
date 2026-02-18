@@ -29,9 +29,9 @@ function createContainer(): AuthContainer {
   const authService = new AuthService(apiService);
   const authRepository = new AuthRepository(authService);
 
-  // P5.2: Wire the token refresh handler into the BASE ApiService.
+  // Wire the token refresh handler into the BASE ApiService.
   // The refresh endpoint reads the refresh token from the httpOnly cookie
-  // automatically via CookieAuthMiddleware — no need to read/send it from JS.
+  // automatically via CookieAuthMiddleware — no explicit token needed.
   const baseApi = getBaseApiService();
   baseApi.setRefreshHandler(async () => {
     const result = await authRepository.refreshToken();

@@ -1,28 +1,22 @@
 /**
  * Secure Token Service
  *
- * Provides secure token management with proper error handling,
+ * Manages access token storage with proper error handling,
  * validation, and security measures for localStorage operations.
  *
- * P5.2: Refresh tokens are NO LONGER stored in localStorage.
- * They are managed exclusively by httpOnly cookies set by the
- * backend CookieAuthMiddleware. Only access tokens and expiry
- * timestamps are stored client-side.
+ * Refresh tokens are managed exclusively by httpOnly cookies
+ * set by the backend CookieAuthMiddleware — never stored client-side.
  */
 
 import { appLogger } from "./logger";
 
 export interface TokenData {
   accessToken: string;
-  /** @deprecated P5.2: Refresh tokens are now in httpOnly cookies */
-  refreshToken?: string;
   expiresAt?: number;
 }
 
 export class SecureTokenService {
   private static readonly ACCESS_TOKEN_KEY = "accessToken";
-  /** @deprecated P5.2: Refresh tokens are now in httpOnly cookies — this key is kept only for migration cleanup */
-  private static readonly REFRESH_TOKEN_KEY = "refreshToken";
   private static readonly TOKEN_EXPIRY_KEY = "tokenExpiry";
 
   // P3.7: Cached access token — avoids localStorage reads on every API request
@@ -50,15 +44,6 @@ export class SecureTokenService {
   }
 
   /**
-   * @deprecated P5.2: Refresh tokens are now in httpOnly cookies.
-   * This method is a no-op kept for backward compatibility during migration.
-   */
-  static setRefreshToken(_token: string): boolean {
-    // P5.2: No-op — refresh tokens are managed by httpOnly cookies
-    return true;
-  }
-
-  /**
    * Store token expiry timestamp
    */
   static setTokenExpiry(expiresAt: number): boolean {
@@ -78,15 +63,12 @@ export class SecureTokenService {
   }
 
   /**
-   * Store all token data at once
-   * P5.2: Only stores accessToken and expiry — refreshToken is in httpOnly cookie
+   * Store all token data at once (access token + expiry only)
    */
   static setTokens(tokenData: TokenData): boolean {
     if (typeof window === "undefined") return false;
     try {
       const success = this.setAccessToken(tokenData.accessToken);
-
-      // P5.2: refreshToken is now in httpOnly cookie — do NOT store in localStorage
 
       if (tokenData.expiresAt) {
         this.setTokenExpiry(tokenData.expiresAt);
@@ -140,15 +122,6 @@ export class SecureTokenService {
   }
 
   /**
-   * @deprecated P5.2: Refresh tokens are now in httpOnly cookies.
-   * Returns null — the backend reads it from the cookie automatically.
-   */
-  static getRefreshToken(): string | null {
-    // P5.2: Refresh token is in httpOnly cookie — not accessible from JS
-    return null;
-  }
-
-  /**
    * Check if token exists
    */
   static hasToken(): boolean {
@@ -177,20 +150,16 @@ export class SecureTokenService {
   }
 
   /**
-   * Clear all tokens securely
-   */
-  /**
    * Clear all client-side tokens.
-   * P5.2: Only clears access token and expiry from localStorage.
    * Refresh token cookie is cleared by the backend on logout.
-   * Also cleans up any legacy refresh token key from pre-P5.2.
    */
   static clearTokens(): boolean {
     if (typeof window === "undefined") return false;
     try {
       localStorage.removeItem(this.ACCESS_TOKEN_KEY);
-      localStorage.removeItem(this.REFRESH_TOKEN_KEY); // P5.2: Clean up legacy key
       localStorage.removeItem(this.TOKEN_EXPIRY_KEY);
+      // Clean up any legacy refresh token key that may have been stored previously
+      localStorage.removeItem("refreshToken");
       // P3.7: Invalidate cached token
       this._cachedAccessToken = null;
       this._cacheInitialized = false;

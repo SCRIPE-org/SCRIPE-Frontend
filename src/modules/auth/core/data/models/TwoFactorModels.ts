@@ -5,6 +5,9 @@
  * The verify endpoint is [AllowAnonymous] — it re-validates
  * username + password + TOTP code, then returns tokens.
  *
+ * Refresh tokens are managed exclusively by httpOnly cookies —
+ * they are stripped from API responses by the backend CookieAuthMiddleware.
+ *
  * @module auth/data
  */
 
@@ -18,7 +21,6 @@ export interface Verify2FARequestJson {
 
 export interface Verify2FAResponseJson {
   accessToken: string;
-  refreshToken: string;
   expiresAt: string;
 }
 
@@ -32,7 +34,7 @@ export class Verify2FARequestModel {
     public readonly username: string,
     public readonly password: string,
     public readonly code: string
-  ) {}
+  ) { }
 
   toJson(): Verify2FARequestJson {
     return {
@@ -49,11 +51,10 @@ export class Verify2FARequestModel {
 export class Verify2FAResponseModel {
   constructor(
     public readonly accessToken: string,
-    public readonly refreshToken: string,
     public readonly expiresAt: string
-  ) {}
+  ) { }
 
   static fromJson(json: Verify2FAResponseJson): Verify2FAResponseModel {
-    return new Verify2FAResponseModel(json.accessToken, json.refreshToken, json.expiresAt);
+    return new Verify2FAResponseModel(json.accessToken, json.expiresAt);
   }
 }

@@ -9,8 +9,6 @@ export interface IAuthRepository {
   getMe(): Promise<User>;
   hasToken(): boolean;
   refreshToken(): Promise<Result<LoginResponse, Error>>;
-  /** @deprecated P5.2: Refresh tokens are in httpOnly cookies */
-  getRefreshToken(): string | null;
   clearTokens(): void;
   isAuthenticated(): boolean;
 }

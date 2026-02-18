@@ -14,10 +14,8 @@
  * Authentication related storage keys
  */
 export const STORAGE_KEYS = {
-  // Auth tokens (managed by SecureTokenService)
+  // Auth tokens (managed by SecureTokenService — access token only, refresh is in httpOnly cookie)
   ACCESS_TOKEN: "verified_access_token",
-  /** @deprecated P5.2: Refresh tokens are now in httpOnly cookies. Kept for migration cleanup. */
-  REFRESH_TOKEN: "verified_refresh_token",
 
   // User data
   USER_DATA: "user-data",

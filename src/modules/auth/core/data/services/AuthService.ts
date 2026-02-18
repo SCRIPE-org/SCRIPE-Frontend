@@ -1,16 +1,16 @@
 /**
- * Auth Service
+ * Auth Service (API Layer)
  *
- * Handles all API calls for the Auth module.
- * Returns Models (DTOs) - Repository uses Mapper to convert to Entities.
+ * Handles HTTP communication for authentication endpoints.
+ * Uses IApiService for network calls.
  *
- * Clean Architecture:
- * View → ViewModel → Repository → Service → IApiService
+ * Refresh tokens are managed exclusively by httpOnly cookies —
+ * they are never passed as parameters or included in request bodies.
+ * The browser sends them automatically via withCredentials: true.
  *
  * @module auth/data
  */
-import type { IApiService } from "@core/interfaces/api.interface";
-import { API_ENDPOINTS } from "@core/config/api-endpoints";
+
 import {
   LoginRequestModel,
   LoginResponseModel,
@@ -21,13 +21,13 @@ import {
   Verify2FAResponseModel,
   type Verify2FAResponseJson,
 } from "../models/TwoFactorModels";
+import type { IApiService } from "@core/interfaces/api.interface";
+import { API_ENDPOINTS } from "@core/config/api-endpoints";
 
 export interface IAuthService {
   login(request: LoginRequestModel): Promise<LoginResponseModel>;
   verify2FA(request: Verify2FARequestModel): Promise<Verify2FAResponseModel>;
-  /** P5.2: No refreshToken param — backend reads from httpOnly cookie */
   logout(): Promise<void>;
-  /** P5.2: No request param — backend reads refreshToken from httpOnly cookie */
   refreshToken(): Promise<LoginResponseModel>;
   getMe<T>(): Promise<T>;
 }
@@ -52,18 +52,16 @@ export class AuthService implements IAuthService {
   }
 
   /**
-   * P5.2: Logout — no refresh token needed.
-   * The httpOnly cookie is sent automatically via withCredentials.
-   * Backend CookieAuthMiddleware reads it from the cookie.
+   * Logout — the httpOnly cookie is sent automatically via withCredentials.
+   * Backend CookieAuthMiddleware reads the refresh token from the cookie.
    */
   async logout(): Promise<void> {
     await this.api.post(API_ENDPOINTS.LOGOUT, {});
   }
 
   /**
-   * P5.2: Refresh — no refresh token needed.
-   * The httpOnly cookie is sent automatically via withCredentials.
-   * Backend CookieAuthMiddleware injects it into the request body.
+   * Refresh — the httpOnly cookie is sent automatically via withCredentials.
+   * Backend CookieAuthMiddleware injects the refresh token into the request body.
    */
   async refreshToken(): Promise<LoginResponseModel> {
     const json = await this.api.postPublic<LoginResponseJson>(

@@ -9,6 +9,9 @@
  *                       ↓
  *                   Mapper (Model ↔ Entity)
  *
+ * Refresh tokens are managed exclusively by httpOnly cookies —
+ * the repository never reads, stores, or sends them.
+ *
  * @module auth/data
  */
 import { secureTokenService } from "@core/common/secure-token-service";
@@ -59,10 +62,7 @@ export class AuthRepository implements IAuthRepository {
   constructor(private readonly service: IAuthService) { }
 
   async login(credentials: LoginRequest): Promise<User> {
-    // Create request model from entity
     const requestModel = new LoginRequestModel(credentials.username, credentials.password);
-
-    // Call service (returns Model)
     const responseModel = await this.service.login(requestModel);
 
     appLogger.auth("Login response received");
@@ -75,7 +75,6 @@ export class AuthRepository implements IAuthRepository {
 
     if (responseModel.accessToken) {
       secureTokenService.setAccessToken(responseModel.accessToken);
-      // P5.2: refreshToken is now in httpOnly cookie (set by backend CookieAuthMiddleware)
       return this.getMe();
     }
     throw new Error("Login failed: No access token received.");
@@ -93,7 +92,6 @@ export class AuthRepository implements IAuthRepository {
 
     if (responseModel.accessToken) {
       secureTokenService.setAccessToken(responseModel.accessToken);
-      // P5.2: refreshToken is now in httpOnly cookie (set by backend CookieAuthMiddleware)
       return this.getMe();
     }
     throw new Error("2FA verification failed: No access token received.");
@@ -101,7 +99,6 @@ export class AuthRepository implements IAuthRepository {
 
   async logout(): Promise<void> {
     try {
-      // P5.2: No need to read/send refresh token — backend reads from httpOnly cookie
       await this.service.logout();
     } catch (error) {
       appLogger.warn("Logout API call failed, clearing tokens locally:", error);
@@ -125,10 +122,9 @@ export class AuthRepository implements IAuthRepository {
   }
 
   /**
-   * P5.2: Refresh token is handled by httpOnly cookies.
-   * This method now calls the refresh endpoint with an empty body.
-   * The backend CookieAuthMiddleware reads the refreshToken from the cookie
-   * and injects it into the request body automatically.
+   * Refresh the access token via the backend.
+   * The refresh token is sent automatically as an httpOnly cookie
+   * (via withCredentials) — the backend CookieAuthMiddleware reads it.
    */
   async refreshToken(): Promise<Result<LoginResponse, Error>> {
     try {
@@ -136,7 +132,6 @@ export class AuthRepository implements IAuthRepository {
 
       if (responseModel.isSuccessful) {
         secureTokenService.setAccessToken(responseModel.accessToken);
-        // Map model to entity
         const loginResponse = AuthMapper.loginResponseFromModel(responseModel);
         return Result.ok(loginResponse);
       }
@@ -149,14 +144,6 @@ export class AuthRepository implements IAuthRepository {
 
   isAuthenticated(): boolean {
     return secureTokenService.hasToken();
-  }
-
-  /**
-   * @deprecated P5.2: Refresh tokens are now in httpOnly cookies.
-   * Returns null — the backend reads it from the cookie automatically.
-   */
-  getRefreshToken(): string | null {
-    return null;
   }
 
   clearTokens(): void {

@@ -13,7 +13,7 @@ import type { NextRequest } from "next/server";
  * - Protected paths (modules, settings, profile) → require refresh token cookie
  * - Static assets (_next, favicons, etc.) → skip entirely via matcher
  *
- * The refresh token cookie (P5.2) is the server-side auth signal.
+ * The refresh token cookie is the server-side auth signal.
  * Access tokens live in memory (Zustand) and aren't available server-side.
  */
 
@@ -43,13 +43,10 @@ export function middleware(request: NextRequest) {
             return NextResponse.next();
       }
 
-      // P5.2: Check for refresh token cookie as auth signal
+      // Check for refresh token cookie as auth signal
       const hasRefreshToken = request.cookies.has(REFRESH_TOKEN_COOKIE);
 
-      // Also check for access_token as fallback (backward compat during migration)
-      const hasAccessToken = request.cookies.has("access_token");
-
-      if (!hasRefreshToken && !hasAccessToken) {
+      if (!hasRefreshToken) {
             // Build login URL with redirect parameter
             const loginUrl = new URL("/login", request.url);
             loginUrl.searchParams.set("redirect", pathname);
