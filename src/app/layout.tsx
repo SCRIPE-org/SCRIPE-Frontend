@@ -54,6 +54,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             connect lazily after route navigation, so preconnect for the shared base is sufficient. */}
         <link rel="dns-prefetch" href={process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api"} />
         <link rel="preconnect" href={process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api"} crossOrigin="anonymous" />
+        {/* P5.1: Register Service Worker for PWA offline support */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if ('serviceWorker' in navigator && window.location.protocol === 'https:') {
+                window.addEventListener('load', function() {
+                  navigator.serviceWorker.register('/sw.js');
+                });
+              }
+            `,
+          }}
+        />
       </head>
       <body className="font-cairo antialiased" suppressHydrationWarning>
         <AppProvider>{children}</AppProvider>
