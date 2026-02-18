@@ -23,7 +23,8 @@ export interface LoginRequestJson {
 export interface LoginResponseJson {
   success?: boolean;
   accessToken: string;
-  refreshToken: string;
+  /** P5.2: May be absent — backend strips it and puts in httpOnly cookie */
+  refreshToken?: string;
   requires2FA?: boolean;
 }
 
@@ -41,7 +42,7 @@ export class LoginRequestModel {
     public readonly username: string,
     public readonly password: string,
     public readonly deviceInfo?: string
-  ) {}
+  ) { }
 
   static fromJson(json: LoginRequestJson): LoginRequestModel {
     return new LoginRequestModel(json.username, json.password, json.deviceInfo);
@@ -62,15 +63,16 @@ export class LoginRequestModel {
 export class LoginResponseModel {
   constructor(
     public readonly accessToken: string,
-    public readonly refreshToken: string,
+    /** P5.2: Always empty string on client — refresh token is in httpOnly cookie */
+    public readonly refreshToken: string = "",
     public readonly success: boolean = true,
     public readonly requires2FA: boolean = false
-  ) {}
+  ) { }
 
   static fromJson(json: LoginResponseJson): LoginResponseModel {
     return new LoginResponseModel(
       json.accessToken,
-      json.refreshToken,
+      json.refreshToken ?? "", // P5.2: May be absent (stripped by backend)
       json.success ?? true,
       json.requires2FA ?? false
     );
@@ -80,13 +82,14 @@ export class LoginResponseModel {
     return {
       success: this.success,
       accessToken: this.accessToken,
-      refreshToken: this.refreshToken,
+      refreshToken: this.refreshToken || undefined,
       requires2FA: this.requires2FA,
     };
   }
 
+  /** P5.2: Only checks accessToken — refreshToken is in httpOnly cookie */
   get isSuccessful(): boolean {
-    return this.success && !!(this.accessToken && this.refreshToken);
+    return this.success && !!this.accessToken;
   }
 }
 
@@ -94,7 +97,7 @@ export class LoginResponseModel {
  * Refresh Token Request Model
  */
 export class RefreshTokenRequestModel {
-  constructor(public readonly refreshToken: string) {}
+  constructor(public readonly refreshToken: string) { }
 
   static fromJson(json: RefreshTokenRequestJson): RefreshTokenRequestModel {
     return new RefreshTokenRequestModel(json.refreshToken);

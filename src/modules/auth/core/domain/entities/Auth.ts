@@ -16,9 +16,11 @@ export interface LoginRequestData {
 export interface LoginResponseData {
   success: boolean;
   accessToken: string;
-  refreshToken: string;
+  /** P5.2: May be absent — refresh token is in httpOnly cookie */
+  refreshToken?: string;
 }
 
+/** @deprecated P5.2: Refresh tokens are in httpOnly cookies — not sent from client */
 export interface RefreshTokenRequestData {
   refreshToken: string;
 }
@@ -68,22 +70,25 @@ export class LoginRequest {
 export class LoginResponse {
   public readonly success: boolean;
   public readonly accessToken: string;
+  /** P5.2: Always empty string — refresh token is in httpOnly cookie */
   public readonly refreshToken: string;
 
   constructor(data: LoginResponseData) {
     this.success = data.success;
     this.accessToken = data.accessToken;
-    this.refreshToken = data.refreshToken;
+    this.refreshToken = data.refreshToken ?? "";
   }
 
   /**
    * Check if login was successful
+   * P5.2: Only checks accessToken — refreshToken is in httpOnly cookie
    */
   get isSuccessful(): boolean {
-    return this.success && !!(this.accessToken && this.refreshToken);
+    return this.success && !!this.accessToken;
   }
 }
 
+/** @deprecated P5.2: Refresh tokens are in httpOnly cookies — this class is kept for backward compat */
 export class RefreshTokenRequest {
   public readonly refreshToken: string;
 
@@ -92,7 +97,7 @@ export class RefreshTokenRequest {
   }
 
   /**
-   * Validate refresh token request
+   * @deprecated P5.2: Refresh tokens are in httpOnly cookies
    */
   get isValid(): boolean {
     return !!(this.refreshToken && this.refreshToken.trim().length > 0);

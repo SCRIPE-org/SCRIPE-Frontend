@@ -14,7 +14,6 @@ import { API_ENDPOINTS } from "@core/config/api-endpoints";
 import {
   LoginRequestModel,
   LoginResponseModel,
-  RefreshTokenRequestModel,
   type LoginResponseJson,
 } from "../models/AuthModel";
 import {
@@ -26,13 +25,15 @@ import {
 export interface IAuthService {
   login(request: LoginRequestModel): Promise<LoginResponseModel>;
   verify2FA(request: Verify2FARequestModel): Promise<Verify2FAResponseModel>;
-  logout(refreshToken: string): Promise<void>;
-  refreshToken(request: RefreshTokenRequestModel): Promise<LoginResponseModel>;
+  /** P5.2: No refreshToken param — backend reads from httpOnly cookie */
+  logout(): Promise<void>;
+  /** P5.2: No request param — backend reads refreshToken from httpOnly cookie */
+  refreshToken(): Promise<LoginResponseModel>;
   getMe<T>(): Promise<T>;
 }
 
 export class AuthService implements IAuthService {
-  constructor(private readonly api: IApiService) {}
+  constructor(private readonly api: IApiService) { }
 
   async login(request: LoginRequestModel): Promise<LoginResponseModel> {
     const json = await this.api.postPublic<LoginResponseJson>(
@@ -50,14 +51,24 @@ export class AuthService implements IAuthService {
     return Verify2FAResponseModel.fromJson(json);
   }
 
-  async logout(refreshToken: string): Promise<void> {
-    await this.api.post(API_ENDPOINTS.LOGOUT, { refreshToken });
+  /**
+   * P5.2: Logout — no refresh token needed.
+   * The httpOnly cookie is sent automatically via withCredentials.
+   * Backend CookieAuthMiddleware reads it from the cookie.
+   */
+  async logout(): Promise<void> {
+    await this.api.post(API_ENDPOINTS.LOGOUT, {});
   }
 
-  async refreshToken(request: RefreshTokenRequestModel): Promise<LoginResponseModel> {
+  /**
+   * P5.2: Refresh — no refresh token needed.
+   * The httpOnly cookie is sent automatically via withCredentials.
+   * Backend CookieAuthMiddleware injects it into the request body.
+   */
+  async refreshToken(): Promise<LoginResponseModel> {
     const json = await this.api.postPublic<LoginResponseJson>(
       API_ENDPOINTS.REFRESH,
-      request.toJson()
+      {}
     );
     return LoginResponseModel.fromJson(json);
   }

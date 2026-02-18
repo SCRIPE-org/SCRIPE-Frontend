@@ -16,7 +16,7 @@ import { LoginRequest, LoginResponse } from "../../domain/entities/Auth";
 import { User } from "../../domain/entities/User";
 import { AuthMapper } from "../mappers/AuthMapper";
 import { appLogger } from "@core/common/logger";
-import { LoginRequestModel, RefreshTokenRequestModel } from "../models/AuthModel";
+import { LoginRequestModel } from "../models/AuthModel";
 import { Verify2FARequestModel } from "../models/TwoFactorModels";
 import type { IAuthService } from "../services/AuthService";
 import type { IAuthRepository } from "../../domain/interfaces/IAuthRepository";
@@ -56,7 +56,7 @@ function clearAllLocalStorage(): void {
  * Uses AuthService for API calls (SOLID compliant).
  */
 export class AuthRepository implements IAuthRepository {
-  constructor(private readonly service: IAuthService) {}
+  constructor(private readonly service: IAuthService) { }
 
   async login(credentials: LoginRequest): Promise<User> {
     // Create request model from entity
@@ -75,9 +75,7 @@ export class AuthRepository implements IAuthRepository {
 
     if (responseModel.accessToken) {
       secureTokenService.setAccessToken(responseModel.accessToken);
-      if (responseModel.refreshToken) {
-        secureTokenService.setRefreshToken(responseModel.refreshToken);
-      }
+      // P5.2: refreshToken is now in httpOnly cookie (set by backend CookieAuthMiddleware)
       return this.getMe();
     }
     throw new Error("Login failed: No access token received.");
@@ -95,9 +93,7 @@ export class AuthRepository implements IAuthRepository {
 
     if (responseModel.accessToken) {
       secureTokenService.setAccessToken(responseModel.accessToken);
-      if (responseModel.refreshToken) {
-        secureTokenService.setRefreshToken(responseModel.refreshToken);
-      }
+      // P5.2: refreshToken is now in httpOnly cookie (set by backend CookieAuthMiddleware)
       return this.getMe();
     }
     throw new Error("2FA verification failed: No access token received.");
@@ -105,8 +101,8 @@ export class AuthRepository implements IAuthRepository {
 
   async logout(): Promise<void> {
     try {
-      const refreshToken = secureTokenService.getRefreshToken();
-      await this.service.logout(refreshToken || "");
+      // P5.2: No need to read/send refresh token — backend reads from httpOnly cookie
+      await this.service.logout();
     } catch (error) {
       appLogger.warn("Logout API call failed, clearing tokens locally:", error);
     } finally {
@@ -128,10 +124,15 @@ export class AuthRepository implements IAuthRepository {
     return secureTokenService.hasToken();
   }
 
-  async refreshToken(token: string): Promise<Result<LoginResponse, Error>> {
+  /**
+   * P5.2: Refresh token is handled by httpOnly cookies.
+   * This method now calls the refresh endpoint with an empty body.
+   * The backend CookieAuthMiddleware reads the refreshToken from the cookie
+   * and injects it into the request body automatically.
+   */
+  async refreshToken(): Promise<Result<LoginResponse, Error>> {
     try {
-      const requestModel = new RefreshTokenRequestModel(token);
-      const responseModel = await this.service.refreshToken(requestModel);
+      const responseModel = await this.service.refreshToken();
 
       if (responseModel.isSuccessful) {
         secureTokenService.setAccessToken(responseModel.accessToken);
@@ -150,8 +151,12 @@ export class AuthRepository implements IAuthRepository {
     return secureTokenService.hasToken();
   }
 
+  /**
+   * @deprecated P5.2: Refresh tokens are now in httpOnly cookies.
+   * Returns null — the backend reads it from the cookie automatically.
+   */
   getRefreshToken(): string | null {
-    return secureTokenService.getRefreshToken();
+    return null;
   }
 
   clearTokens(): void {

@@ -29,14 +29,12 @@ function createContainer(): AuthContainer {
   const authService = new AuthService(apiService);
   const authRepository = new AuthRepository(authService);
 
-  // Wire the token refresh handler into the BASE ApiService
-  // so ALL modules benefit from auto-refresh (not just Identity)
+  // P5.2: Wire the token refresh handler into the BASE ApiService.
+  // The refresh endpoint reads the refresh token from the httpOnly cookie
+  // automatically via CookieAuthMiddleware — no need to read/send it from JS.
   const baseApi = getBaseApiService();
   baseApi.setRefreshHandler(async () => {
-    const refreshToken = authRepository.getRefreshToken();
-    if (!refreshToken) return null;
-
-    const result = await authRepository.refreshToken(refreshToken);
+    const result = await authRepository.refreshToken();
     if (result.kind === "err") {
       authRepository.clearTokens();
       return null;
