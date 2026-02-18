@@ -31,7 +31,7 @@ import { useSettings } from "@core/providers/settings-provider";
 import { cn, getHoverEffectClasses } from "@core/common/utils";
 import type { PaginationInfo } from "@core/common/pagination";
 import { useI18n } from "@core/providers/i18n-provider";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, memo } from "react";
 import { appLogger } from "@core/common/logger";
 import { usePermission } from "@core/hooks/use-permission";
 import { usePermissions } from "@core/hooks/use-permissions";
@@ -318,7 +318,7 @@ interface GenericCrudViewProps<T> {
   onCreateClick?: () => void | Promise<void>;
 }
 
-export function GenericCrudView<T>(props: GenericCrudViewProps<T>) {
+function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
   const {
     title: propTitle,
     subtitle: propSubtitle,
@@ -844,3 +844,6 @@ export function GenericCrudView<T>(props: GenericCrudViewProps<T>) {
     </div>
   );
 }
+
+// P1.4: Memoize to prevent re-renders when parent state changes
+export const GenericCrudView = memo(GenericCrudViewInner) as typeof GenericCrudViewInner;

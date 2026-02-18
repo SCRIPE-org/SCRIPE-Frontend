@@ -1,6 +1,13 @@
 import { Metadata } from "next";
+import dynamic from "next/dynamic";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
-import { NotificationSenderView } from "@modules/system/messaging/notification-sender";
+
+const NotificationSenderView = dynamic(
+      () =>
+            import("@modules/system/messaging/notification-sender").then((m) => ({
+                  default: m.NotificationSenderView,
+            }))
+);
 
 export const metadata: Metadata = {
       title: "Notification Sender | Verified",

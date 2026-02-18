@@ -1,6 +1,10 @@
 import { Metadata } from "next";
+import dynamic from "next/dynamic";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
-import { SecurityDashboardView } from "@modules/system/security";
+
+const SecurityDashboardView = dynamic(
+  () => import("@modules/system/security").then((m) => ({ default: m.SecurityDashboardView }))
+);
 
 export const metadata: Metadata = {
   title: "Security Dashboard | Verified",

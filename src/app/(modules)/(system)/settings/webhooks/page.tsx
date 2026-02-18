@@ -1,6 +1,10 @@
 import { Metadata } from "next";
+import dynamic from "next/dynamic";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
-import { WebhooksView } from "@modules/system/webhooks";
+
+const WebhooksView = dynamic(
+      () => import("@modules/system/webhooks").then((m) => ({ default: m.WebhooksView }))
+);
 
 export const metadata: Metadata = {
       title: "Webhooks | Verified",

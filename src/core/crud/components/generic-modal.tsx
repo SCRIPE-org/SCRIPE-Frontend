@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { memo } from "react";
 import {
   PAGE_BLUR_Z_INDEX,
   PAGE_BLUR_PX,
@@ -34,7 +34,7 @@ interface GenericModalProps {
   contentClassName?: string; // Custom content classes
 }
 
-export function GenericModal({
+function GenericModalInner({
   open,
   onOpenChange,
   title,
@@ -136,7 +136,7 @@ export function GenericModal({
       (el as any).__prevAriaHidden = el.getAttribute("aria-hidden");
       try {
         (el as any).inert = true;
-      } catch {}
+      } catch { }
       el.setAttribute("aria-hidden", "true");
       disabledElements.push(el as any);
     });
@@ -151,7 +151,7 @@ export function GenericModal({
         else el.setAttribute("aria-hidden", prevHidden);
         try {
           (el as any).inert = (el as any).__prevInert;
-        } catch {}
+        } catch { }
         delete (el as any).__prevAriaHidden;
         delete (el as any).__prevInert;
       });
@@ -338,3 +338,6 @@ export function GenericModal({
     </Dialog>
   );
 }
+
+// P1.4: Memoize to prevent re-renders when parent state changes
+export const GenericModal = memo(GenericModalInner);

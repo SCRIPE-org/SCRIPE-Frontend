@@ -1,4 +1,11 @@
-import { ProfileSessionsView } from "@modules/profile/src/presentation/views/ProfileSessionsView";
+import dynamic from "next/dynamic";
+
+const ProfileSessionsView = dynamic(
+  () =>
+    import("@modules/profile/src/presentation/views/ProfileSessionsView").then((m) => ({
+      default: m.ProfileSessionsView,
+    }))
+);
 
 export const metadata = {
   title: "Sessions | Verified",

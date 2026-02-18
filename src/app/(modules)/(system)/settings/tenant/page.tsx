@@ -1,6 +1,10 @@
 import { Metadata } from "next";
+import dynamic from "next/dynamic";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
-import { TenantSettingsView } from "@modules/system/tenant-settings";
+
+const TenantSettingsView = dynamic(
+  () => import("@modules/system/tenant-settings").then((m) => ({ default: m.TenantSettingsView }))
+);
 
 export const metadata: Metadata = {
   title: "Tenant Settings | Verified",

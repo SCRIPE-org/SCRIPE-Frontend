@@ -1,6 +1,13 @@
 import { Metadata } from "next";
+import dynamic from "next/dynamic";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
-import { TemplateFormView } from "@modules/system/messaging/message-templates/src/presentation/views/TemplateFormView";
+
+const TemplateFormView = dynamic(
+      () =>
+            import(
+                  "@modules/system/messaging/message-templates/src/presentation/views/TemplateFormView"
+            ).then((m) => ({ default: m.TemplateFormView }))
+);
 
 export const metadata: Metadata = {
       title: "Edit Template | Verified",

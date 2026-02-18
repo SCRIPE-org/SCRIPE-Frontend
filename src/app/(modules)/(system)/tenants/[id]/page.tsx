@@ -1,6 +1,13 @@
 import { Metadata } from "next";
+import dynamic from "next/dynamic";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
-import { TenantDetailPage } from "@modules/system/tenants/src/presentation/views/TenantDetailPage";
+
+const TenantDetailPage = dynamic(
+  () =>
+    import("@modules/system/tenants/src/presentation/views/TenantDetailPage").then((m) => ({
+      default: m.TenantDetailPage,
+    }))
+);
 
 export const metadata: Metadata = {
   title: "Tenant Details | Verified",

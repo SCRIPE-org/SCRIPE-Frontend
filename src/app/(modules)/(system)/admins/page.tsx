@@ -1,6 +1,10 @@
 import { Metadata } from "next";
+import dynamic from "next/dynamic";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
-import { AdminsView } from "@modules/system/admin";
+
+const AdminsView = dynamic(
+  () => import("@modules/system/admin").then((m) => ({ default: m.AdminsView }))
+);
 
 export const metadata: Metadata = {
   title: "Admins | Verified",

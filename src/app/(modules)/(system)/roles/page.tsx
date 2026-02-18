@@ -1,6 +1,10 @@
 import { Metadata } from "next";
+import dynamic from "next/dynamic";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
-import { RolesView } from "@modules/system/roles";
+
+const RolesView = dynamic(
+  () => import("@modules/system/roles").then((m) => ({ default: m.RolesView }))
+);
 
 export const metadata: Metadata = {
   title: "Roles | Verified",

@@ -1,6 +1,10 @@
 import { Metadata } from "next";
+import dynamic from "next/dynamic";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
-import { MenusView } from "@modules/system/menus";
+
+const MenusView = dynamic(
+  () => import("@modules/system/menus").then((m) => ({ default: m.MenusView }))
+);
 
 export const metadata: Metadata = {
   title: "Menu Management | Verified",

@@ -1,6 +1,13 @@
 import { Metadata } from "next";
+import dynamic from "next/dynamic";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
-import { MessageTemplatesView } from "@modules/system/messaging/message-templates";
+
+const MessageTemplatesView = dynamic(
+      () =>
+            import("@modules/system/messaging/message-templates").then((m) => ({
+                  default: m.MessageTemplatesView,
+            }))
+);
 
 export const metadata: Metadata = {
       title: "Message Templates | Verified",

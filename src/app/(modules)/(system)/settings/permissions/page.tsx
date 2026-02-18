@@ -1,6 +1,10 @@
 import { Metadata } from "next";
+import dynamic from "next/dynamic";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
-import { PermissionsView } from "@modules/system/permissions";
+
+const PermissionsView = dynamic(
+  () => import("@modules/system/permissions").then((m) => ({ default: m.PermissionsView }))
+);
 
 export const metadata: Metadata = {
   title: "Permissions | Verified",

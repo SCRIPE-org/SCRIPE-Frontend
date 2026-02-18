@@ -1,6 +1,13 @@
 import { Metadata } from "next";
+import dynamic from "next/dynamic";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
-import { EmailComposerView } from "@modules/system/messaging/email-composer";
+
+const EmailComposerView = dynamic(
+      () =>
+            import("@modules/system/messaging/email-composer").then((m) => ({
+                  default: m.EmailComposerView,
+            }))
+);
 
 export const metadata: Metadata = {
       title: "Email Composer | Verified",

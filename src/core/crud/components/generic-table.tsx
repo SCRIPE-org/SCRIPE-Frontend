@@ -40,7 +40,7 @@
 "use client";
 
 import type React from "react";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, memo } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@core/ui/table";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
@@ -164,7 +164,7 @@ interface GenericTableProps<T> {
  * @returns JSX element representing the table
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function GenericTable<T extends Record<string, any>>({
+function GenericTableInner<T extends Record<string, any>>({
   data,
   columns,
   actions,
@@ -1596,3 +1596,7 @@ export function GenericTable<T extends Record<string, any>>({
     </div>
   );
 }
+
+// P1.4: Memoize to prevent re-renders when parent state changes
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const GenericTable = memo(GenericTableInner) as typeof GenericTableInner;
