@@ -12,6 +12,14 @@ import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { Skeleton } from "@core/ui/skeleton";
+import {
+      Table,
+      TableBody,
+      TableCell,
+      TableHead,
+      TableHeader,
+      TableRow,
+} from "@core/ui/table";
 import type { WebhookDeliveryLog } from "../../domain/entities/Webhook";
 import {
       CheckCircle2,
@@ -118,54 +126,54 @@ export function DeliveryLogTable({
 
                         {/* Table */}
                         {!isLoading && logs.length > 0 && (
-                              <div className="overflow-x-auto">
-                                    <table className="w-full">
-                                          <thead>
-                                                <tr className="border-t border-b bg-muted/30">
-                                                      <th className="text-xs font-medium text-muted-foreground text-left px-4 py-2.5 w-8" />
-                                                      <th className="text-xs font-medium text-muted-foreground text-left px-4 py-2.5">
+                              <div className="rounded-md border">
+                                    <Table>
+                                          <TableHeader>
+                                                <TableRow className="bg-muted/50 hover:bg-muted/50">
+                                                      <TableHead className="w-8" />
+                                                      <TableHead>
                                                             {t("webhooks.eventType") || "Event"}
-                                                      </th>
-                                                      <th className="text-xs font-medium text-muted-foreground text-left px-4 py-2.5">
+                                                      </TableHead>
+                                                      <TableHead>
                                                             {t("webhooks.statusLabel") || "Status"}
-                                                      </th>
-                                                      <th className="text-xs font-medium text-muted-foreground text-left px-4 py-2.5">
+                                                      </TableHead>
+                                                      <TableHead>
                                                             {t("webhooks.httpCode") || "HTTP"}
-                                                      </th>
-                                                      <th className="text-xs font-medium text-muted-foreground text-left px-4 py-2.5">
+                                                      </TableHead>
+                                                      <TableHead>
                                                             {t("webhooks.attempt") || "Attempt"}
-                                                      </th>
-                                                      <th className="text-xs font-medium text-muted-foreground text-left px-4 py-2.5">
+                                                      </TableHead>
+                                                      <TableHead>
                                                             {t("webhooks.latency") || "Latency"}
-                                                      </th>
-                                                      <th className="text-xs font-medium text-muted-foreground text-left px-4 py-2.5">
+                                                      </TableHead>
+                                                      <TableHead>
                                                             {t("webhooks.timestamp") || "Timestamp"}
-                                                      </th>
-                                                </tr>
-                                          </thead>
-                                          <tbody>
+                                                      </TableHead>
+                                                </TableRow>
+                                          </TableHeader>
+                                          <TableBody>
                                                 {logs.map((log) => (
                                                       <Fragment key={log.id}>
-                                                            <tr
-                                                                  className="border-b hover:bg-muted/20 transition-colors cursor-pointer"
+                                                            <TableRow
+                                                                  className="cursor-pointer hover:bg-muted/50"
                                                                   onClick={() => toggleExpand(log.id)}
                                                             >
-                                                                  <td className="px-4 py-3">
+                                                                  <TableCell>
                                                                         {expandedId === log.id ? (
                                                                               <ChevronUp className="h-4 w-4 text-muted-foreground" />
                                                                         ) : (
                                                                               <ChevronDown className="h-4 w-4 text-muted-foreground" />
                                                                         )}
-                                                                  </td>
-                                                                  <td className="px-4 py-3">
+                                                                  </TableCell>
+                                                                  <TableCell>
                                                                         <div className="flex items-center gap-1.5">
                                                                               <Zap className="h-3 w-3 text-amber-500 shrink-0" />
                                                                               <span className="text-sm font-mono">
                                                                                     {log.eventType}
                                                                               </span>
                                                                         </div>
-                                                                  </td>
-                                                                  <td className="px-4 py-3">
+                                                                  </TableCell>
+                                                                  <TableCell>
                                                                         {log.isSuccess ? (
                                                                               <Badge
                                                                                     variant="outline"
@@ -183,56 +191,56 @@ export function DeliveryLogTable({
                                                                                     {t("webhooks.status.failed") || "Failed"}
                                                                               </Badge>
                                                                         )}
-                                                                  </td>
-                                                                  <td className="px-4 py-3">
+                                                                  </TableCell>
+                                                                  <TableCell>
                                                                         <Badge
                                                                               variant="outline"
                                                                               className={`text-xs font-mono ${log.httpStatusCode >= 200 &&
-                                                                                          log.httpStatusCode < 300
-                                                                                          ? "text-emerald-700 dark:text-emerald-400"
-                                                                                          : log.httpStatusCode >= 400
-                                                                                                ? "text-red-700 dark:text-red-400"
-                                                                                                : "text-amber-700 dark:text-amber-400"
+                                                                                    log.httpStatusCode < 300
+                                                                                    ? "text-emerald-700 dark:text-emerald-400"
+                                                                                    : log.httpStatusCode >= 400
+                                                                                          ? "text-red-700 dark:text-red-400"
+                                                                                          : "text-amber-700 dark:text-amber-400"
                                                                                     }`}
                                                                         >
                                                                               {log.httpStatusCode}
                                                                         </Badge>
-                                                                  </td>
-                                                                  <td className="px-4 py-3 text-sm text-muted-foreground">
+                                                                  </TableCell>
+                                                                  <TableCell className="text-muted-foreground">
                                                                         {log.attemptNumber}
-                                                                  </td>
-                                                                  <td className="px-4 py-3">
+                                                                  </TableCell>
+                                                                  <TableCell>
                                                                         <span
-                                                                              className={`text-sm font-medium ${log.latencyMs < 500
-                                                                                          ? "text-emerald-600 dark:text-emerald-400"
-                                                                                          : log.latencyMs < 2000
-                                                                                                ? "text-amber-600 dark:text-amber-400"
-                                                                                                : "text-red-600 dark:text-red-400"
+                                                                              className={`font-medium ${log.latencyMs < 500
+                                                                                    ? "text-emerald-600 dark:text-emerald-400"
+                                                                                    : log.latencyMs < 2000
+                                                                                          ? "text-amber-600 dark:text-amber-400"
+                                                                                          : "text-red-600 dark:text-red-400"
                                                                                     }`}
                                                                         >
                                                                               {log.latencyMs.toFixed(0)}ms
                                                                         </span>
-                                                                  </td>
-                                                                  <td className="px-4 py-3 text-sm text-muted-foreground whitespace-nowrap">
+                                                                  </TableCell>
+                                                                  <TableCell className="text-muted-foreground whitespace-nowrap">
                                                                         {format(
                                                                               new Date(log.createdAt),
                                                                               "MMM d, HH:mm:ss"
                                                                         )}
-                                                                  </td>
-                                                            </tr>
+                                                                  </TableCell>
+                                                            </TableRow>
 
                                                             {/* Expanded details */}
                                                             {expandedId === log.id && (
-                                                                  <tr className="bg-muted/10">
-                                                                        <td colSpan={7} className="px-6 py-4">
-                                                                              <div className="space-y-3 text-sm">
+                                                                  <TableRow className="bg-muted/10 hover:bg-muted/10">
+                                                                        <TableCell colSpan={7} className="p-0">
+                                                                              <div className="p-6 space-y-3 border-t">
                                                                                     {/* Error message */}
                                                                                     {log.errorMessage && (
                                                                                           <div>
                                                                                                 <p className="text-xs font-medium text-red-600 dark:text-red-400 mb-1">
                                                                                                       {t("webhooks.errorMessage") || "Error"}
                                                                                                 </p>
-                                                                                                <pre className="bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg p-3 text-xs overflow-x-auto">
+                                                                                                <pre className="bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg p-3 text-xs overflow-y-auto max-h-40 whitespace-pre-wrap break-all">
                                                                                                       {log.errorMessage}
                                                                                                 </pre>
                                                                                           </div>
@@ -254,7 +262,7 @@ export function DeliveryLogTable({
                                                                                                 <p className="text-xs font-medium text-muted-foreground mb-1">
                                                                                                       {t("webhooks.payload") || "Payload"}
                                                                                                 </p>
-                                                                                                <pre className="bg-muted/50 border rounded-lg p-3 text-xs overflow-x-auto max-h-48">
+                                                                                                <pre className="bg-muted/50 border rounded-lg p-3 text-xs overflow-y-auto max-h-60 whitespace-pre-wrap break-all">
                                                                                                       {(() => {
                                                                                                             try {
                                                                                                                   return JSON.stringify(
@@ -276,19 +284,19 @@ export function DeliveryLogTable({
                                                                                                 <p className="text-xs font-medium text-muted-foreground mb-1">
                                                                                                       {t("webhooks.responseBody") || "Response Body"}
                                                                                                 </p>
-                                                                                                <pre className="bg-muted/50 border rounded-lg p-3 text-xs overflow-x-auto max-h-32">
+                                                                                                <pre className="bg-muted/50 border rounded-lg p-3 text-xs overflow-y-auto max-h-60 whitespace-pre-wrap break-all">
                                                                                                       {log.responseBody}
                                                                                                 </pre>
                                                                                           </div>
                                                                                     )}
                                                                               </div>
-                                                                        </td>
-                                                                  </tr>
+                                                                        </TableCell>
+                                                                  </TableRow>
                                                             )}
                                                       </Fragment>
                                                 ))}
-                                          </tbody>
-                                    </table>
+                                          </TableBody>
+                                    </Table>
                               </div>
                         )}
 

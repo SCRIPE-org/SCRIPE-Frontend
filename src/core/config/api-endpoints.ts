@@ -213,7 +213,7 @@ export const API_ENDPOINTS = {
     TOGGLE: (id: string) => `${V1}/webhooks/${id}/toggle`,
     ROTATE_SECRET: (id: string) => `${V1}/webhooks/${id}/rotate-secret`,
     TEST: (id: string) => `${V1}/webhooks/${id}/test`,
-    DELIVERY_LOGS: (id: string) => `${V1}/webhooks/${id}/deliveries`,
+    DELIVERY_LOGS: (id: string) => `${V1}/webhooks/${id}/logs`,
     EVENTS: `${V1}/webhooks/events`,
   },
 };
