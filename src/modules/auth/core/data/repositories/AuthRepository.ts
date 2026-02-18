@@ -16,6 +16,7 @@
  */
 import { secureTokenService } from "@core/common/secure-token-service";
 import { authBroadcast } from "@core/common/broadcast-auth";
+import { STORAGE_KEYS } from "@core/config/storage-keys";
 import { LoginRequest, LoginResponse } from "../../domain/entities/Auth";
 import { User } from "../../domain/entities/User";
 import { AuthMapper } from "../mappers/AuthMapper";
@@ -156,6 +157,10 @@ export class AuthRepository implements IAuthRepository {
 
   clearTokens(): void {
     clearAllLocalStorage();
+    // Also clear impersonation state on logout
+    if (typeof window !== "undefined") {
+      sessionStorage.removeItem(STORAGE_KEYS.IMPERSONATING);
+    }
   }
 
   /**
@@ -167,6 +172,10 @@ export class AuthRepository implements IAuthRepository {
 
     if (responseModel.accessToken) {
       secureTokenService.setAccessToken(responseModel.accessToken);
+      // Persist impersonation state so the UI banner survives page reload
+      if (typeof window !== "undefined") {
+        sessionStorage.setItem(STORAGE_KEYS.IMPERSONATING, "true");
+      }
       authBroadcast.broadcastImpersonationStart();
     } else {
       throw new Error("Impersonation failed: No access token received.");
@@ -182,11 +191,12 @@ export class AuthRepository implements IAuthRepository {
 
     if (responseModel.accessToken) {
       secureTokenService.setAccessToken(responseModel.accessToken);
-      authBroadcast.broadcastImpersonationStop();
-      // Clear legacy backup
+      // Clear impersonation state
       if (typeof window !== "undefined") {
+        sessionStorage.removeItem(STORAGE_KEYS.IMPERSONATING);
         sessionStorage.removeItem("admin_backup_token");
       }
+      authBroadcast.broadcastImpersonationStop();
     } else {
       throw new Error("Stop impersonation failed: No access token received.");
     }

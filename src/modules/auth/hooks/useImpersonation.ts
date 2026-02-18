@@ -4,19 +4,22 @@
  * Clean Architecture:
  * View → ViewModel → useImpersonation → AuthRepository → AuthService → API
  *
+ * Impersonation state is persisted in sessionStorage ("nexora_impersonating")
+ * so the header banner survives page reloads within the same tab.
+ *
  * Flow:
  * 1. startImpersonation(adminId) → repo.impersonate(adminId)
  *    → AuthService.impersonate() → POST /v1/auth/admin/impersonate/{id}
  *    → CookieAuthMiddleware sets httpOnly cookie for refresh token
- *    → AuthRepository stores access token
- *    → Page reload → refresh works via httpOnly cookie
+ *    → AuthRepository stores access token + sets sessionStorage flag
+ *    → Page reload → refresh works via httpOnly cookie → banner shows
  *
  * 2. stopImpersonation() → repo.stopImpersonation()
  *    → AuthService.stopImpersonation() → POST /v1/auth/admin/stop-impersonation
  *    → Backend reads ImpersonatorAdminId from current refresh token
  *    → Generates new tokens for original admin
  *    → CookieAuthMiddleware replaces httpOnly cookie
- *    → AuthRepository restores original admin session
+ *    → AuthRepository restores original admin session + clears sessionStorage flag
  */
 
 import { useState, useCallback } from "react";
@@ -24,12 +27,23 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { appLogger } from "@core/common/logger";
 import { getAuthContainer } from "@modules/auth/di";
+import { STORAGE_KEYS } from "@core/config/storage-keys";
+
+/**
+ * Check if we're currently impersonating (read from sessionStorage).
+ * This survives page reloads within the same tab but not new tabs.
+ */
+function getImpersonationState(): boolean {
+  if (typeof window === "undefined") return false;
+  return sessionStorage.getItem(STORAGE_KEYS.IMPERSONATING) === "true";
+}
 
 export function useImpersonation() {
   const { success, error: toastError } = useEnhancedToast();
   const queryClient = useQueryClient();
-  const [isImpersonating, setIsImpersonating] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  // Initialize from sessionStorage so impersonation state survives page reloads
+  const [isImpersonating, setIsImpersonating] = useState(getImpersonationState);
+  const [isImpersonationLoading, setIsImpersonationLoading] = useState(false);
 
   /**
    * Start impersonating another admin.
@@ -37,7 +51,7 @@ export function useImpersonation() {
    */
   const startImpersonation = useCallback(
     async (adminId: string) => {
-      setIsLoading(true);
+      setIsImpersonationLoading(true);
       try {
         const repo = getAuthContainer().authRepository;
         await repo.impersonate(adminId);
@@ -56,7 +70,7 @@ export function useImpersonation() {
           description: err instanceof Error ? err.message : "Unknown error",
         });
       } finally {
-        setIsLoading(false);
+        setIsImpersonationLoading(false);
       }
     },
     [queryClient, success, toastError]
@@ -67,7 +81,7 @@ export function useImpersonation() {
    * Uses AuthRepository → AuthService (clean architecture).
    */
   const stopImpersonation = useCallback(async () => {
-    setIsLoading(true);
+    setIsImpersonationLoading(true);
     try {
       const repo = getAuthContainer().authRepository;
       await repo.stopImpersonation();
@@ -86,13 +100,13 @@ export function useImpersonation() {
         description: err instanceof Error ? err.message : "Unknown error",
       });
     } finally {
-      setIsLoading(false);
+      setIsImpersonationLoading(false);
     }
   }, [queryClient, success, toastError]);
 
   return {
     isImpersonating,
-    isImpersonationLoading: isLoading,
+    isImpersonationLoading,
     startImpersonation,
     stopImpersonation,
   };

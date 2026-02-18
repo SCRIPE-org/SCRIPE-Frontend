@@ -31,6 +31,9 @@ export const STORAGE_KEYS = {
 
   // Dashboard & Settings
   DASHBOARD_SETTINGS: "dashboard-settings",
+
+  // Impersonation (sessionStorage — survives reload, not new tabs)
+  IMPERSONATING: "nexora_impersonating",
 } as const;
 
 /**
