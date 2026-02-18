@@ -87,8 +87,8 @@ export function TestPingButton({
                                                 <Badge
                                                       variant="outline"
                                                       className={`mt-0.5 font-mono text-xs ${testResult.statusCode >= 200 && testResult.statusCode < 300
-                                                                  ? "text-emerald-700 dark:text-emerald-400"
-                                                                  : "text-red-700 dark:text-red-400"
+                                                            ? "text-emerald-700 dark:text-emerald-400"
+                                                            : "text-red-700 dark:text-red-400"
                                                             }`}
                                                 >
                                                       {testResult.statusCode}
@@ -123,7 +123,7 @@ export function TestPingButton({
                                                 <p className="text-xs text-muted-foreground mb-1">
                                                       {t("webhooks.responseBody") || "Response Preview"}
                                                 </p>
-                                                <pre className="bg-muted/50 border rounded p-2 text-xs overflow-x-auto max-h-24">
+                                                <pre className="bg-muted/50 border rounded p-2 text-xs overflow-x-auto max-h-60 whitespace-pre-wrap break-all">
                                                       {testResult.responsePreview}
                                                 </pre>
                                           </div>
