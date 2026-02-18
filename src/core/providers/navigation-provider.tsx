@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { createContext, useContext, useState, useEffect, useCallback } from "react";
+import { createContext, useContext, useState, useEffect, useCallback, useMemo } from "react";
 import { usePathname } from "next/navigation";
 import { useAppStore } from "@core/store/useAppStore";
 import { useServices } from "@core/providers/service-provider";
@@ -312,17 +312,21 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
     [navigationData]
   );
 
+  // P0.4: Memoize context value to prevent unnecessary re-renders of all consumers
+  const contextValue = useMemo(
+    () => ({
+      navigationData,
+      isLoading,
+      refreshNavigation,
+      hasPageAccess,
+      getRoutes,
+      getPageActions,
+    }),
+    [navigationData, isLoading, refreshNavigation, hasPageAccess, getRoutes, getPageActions]
+  );
+
   return (
-    <NavigationContext.Provider
-      value={{
-        navigationData,
-        isLoading,
-        refreshNavigation,
-        hasPageAccess,
-        getRoutes,
-        getPageActions,
-      }}
-    >
+    <NavigationContext.Provider value={contextValue}>
       {children}
     </NavigationContext.Provider>
   );
