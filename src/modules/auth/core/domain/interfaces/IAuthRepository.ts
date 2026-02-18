@@ -11,4 +11,8 @@ export interface IAuthRepository {
   refreshToken(): Promise<Result<LoginResponse, Error>>;
   clearTokens(): void;
   isAuthenticated(): boolean;
+  /** Start impersonation — sets httpOnly cookie, returns access token */
+  impersonate(adminId: string): Promise<void>;
+  /** Stop impersonation — restores original admin session */
+  stopImpersonation(): Promise<void>;
 }

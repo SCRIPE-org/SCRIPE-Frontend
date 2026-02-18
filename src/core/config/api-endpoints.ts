@@ -18,6 +18,8 @@ export const API_ENDPOINTS = {
     LOGOUT: `${V1}/auth/admin/logout`,
     REFRESH: `${V1}/auth/admin/refresh`,
     ME: `${V1}/auth/admin/me`,
+    IMPERSONATE: (id: string) => `${V1}/auth/admin/impersonate/${id}`,
+    STOP_IMPERSONATION: `${V1}/auth/admin/stop-impersonation`,
     TWO_FA: {
       ENABLE: `${V1}/auth/admin/2fa/enable`,
       CONFIRM: `${V1}/auth/admin/2fa/confirm`,

@@ -30,6 +30,8 @@ export interface IAuthService {
   logout(): Promise<void>;
   refreshToken(): Promise<LoginResponseModel>;
   getMe<T>(): Promise<T>;
+  impersonate(adminId: string): Promise<LoginResponseModel>;
+  stopImpersonation(): Promise<LoginResponseModel>;
 }
 
 export class AuthService implements IAuthService {
@@ -73,5 +75,29 @@ export class AuthService implements IAuthService {
 
   async getMe<T>(): Promise<T> {
     return this.api.get<T>(API_ENDPOINTS.GET_ADMIN_ME);
+  }
+
+  /**
+   * Impersonate an admin — httpOnly cookie set by CookieAuthMiddleware.
+   * Returns access token (same shape as login response).
+   */
+  async impersonate(adminId: string): Promise<LoginResponseModel> {
+    const json = await this.api.post<LoginResponseJson>(
+      API_ENDPOINTS.AUTH.IMPERSONATE(adminId),
+      {}
+    );
+    return LoginResponseModel.fromJson(json);
+  }
+
+  /**
+   * Stop impersonation — httpOnly cookie carries the refresh token.
+   * Returns original admin's access token.
+   */
+  async stopImpersonation(): Promise<LoginResponseModel> {
+    const json = await this.api.post<LoginResponseJson>(
+      API_ENDPOINTS.AUTH.STOP_IMPERSONATION,
+      {}
+    );
+    return LoginResponseModel.fromJson(json);
   }
 }

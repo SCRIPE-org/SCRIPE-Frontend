@@ -157,4 +157,38 @@ export class AuthRepository implements IAuthRepository {
   clearTokens(): void {
     clearAllLocalStorage();
   }
+
+  /**
+   * Start impersonation — calls auth endpoint, sets access token.
+   * CookieAuthMiddleware handles the httpOnly refresh token cookie.
+   */
+  async impersonate(adminId: string): Promise<void> {
+    const responseModel = await this.service.impersonate(adminId);
+
+    if (responseModel.accessToken) {
+      secureTokenService.setAccessToken(responseModel.accessToken);
+      authBroadcast.broadcastImpersonationStart();
+    } else {
+      throw new Error("Impersonation failed: No access token received.");
+    }
+  }
+
+  /**
+   * Stop impersonation — restores the original admin session.
+   * CookieAuthMiddleware reads refresh token from cookie and replaces it.
+   */
+  async stopImpersonation(): Promise<void> {
+    const responseModel = await this.service.stopImpersonation();
+
+    if (responseModel.accessToken) {
+      secureTokenService.setAccessToken(responseModel.accessToken);
+      authBroadcast.broadcastImpersonationStop();
+      // Clear legacy backup
+      if (typeof window !== "undefined") {
+        sessionStorage.removeItem("admin_backup_token");
+      }
+    } else {
+      throw new Error("Stop impersonation failed: No access token received.");
+    }
+  }
 }

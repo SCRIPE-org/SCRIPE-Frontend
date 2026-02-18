@@ -211,7 +211,7 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
   });
 
   // Impersonation — the hook handles the API call and page reload
-  const { startImpersonation, isLoading: isImpersonationLoading } = useImpersonation();
+  const { startImpersonation, isImpersonationLoading } = useImpersonation();
   const handleImpersonate = useCallback(
     (id: string) => {
       startImpersonation(id);
