@@ -18,6 +18,10 @@ export class SecureTokenService {
   private static readonly REFRESH_TOKEN_KEY = "refreshToken";
   private static readonly TOKEN_EXPIRY_KEY = "tokenExpiry";
 
+  // P3.7: Cached access token — avoids localStorage reads on every API request
+  private static _cachedAccessToken: string | null = null;
+  private static _cacheInitialized = false;
+
   /**
    * Store access token securely
    */
@@ -30,6 +34,7 @@ export class SecureTokenService {
       }
 
       localStorage.setItem(this.ACCESS_TOKEN_KEY, token);
+      this._cachedAccessToken = token; // P3.7: Update cache
       return true;
     } catch (error) {
       appLogger.error("Failed to store access token:", error);
@@ -100,13 +105,27 @@ export class SecureTokenService {
 
   /**
    * Get access token securely
+   * P3.7: Uses module-level cache to avoid localStorage reads on every API request
    */
   static getAccessToken(): string | null {
     if (typeof window === "undefined") return null;
     try {
+      // P3.7: Return cached token if available
+      if (this._cacheInitialized && this._cachedAccessToken) {
+        // Still check expiry periodically
+        if (this.isTokenExpired()) {
+          this.clearTokens();
+          return null;
+        }
+        return this._cachedAccessToken;
+      }
+
+      // Cold start: read from localStorage and cache
       const token = localStorage.getItem(this.ACCESS_TOKEN_KEY);
+      this._cacheInitialized = true;
 
       if (!token) {
+        this._cachedAccessToken = null;
         return null;
       }
 
@@ -116,6 +135,7 @@ export class SecureTokenService {
         return null;
       }
 
+      this._cachedAccessToken = token;
       return token;
     } catch (error) {
       appLogger.error("Failed to retrieve access token:", error);
@@ -173,6 +193,9 @@ export class SecureTokenService {
       localStorage.removeItem(this.ACCESS_TOKEN_KEY);
       localStorage.removeItem(this.REFRESH_TOKEN_KEY);
       localStorage.removeItem(this.TOKEN_EXPIRY_KEY);
+      // P3.7: Invalidate cached token
+      this._cachedAccessToken = null;
+      this._cacheInitialized = false;
       return true;
     } catch (error) {
       appLogger.error("Failed to clear tokens:", error);

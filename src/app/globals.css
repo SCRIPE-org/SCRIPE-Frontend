@@ -1362,18 +1362,19 @@ html[data-bg-mode="custom"] body {
 }
 
 /* Make top-level layout wrapper divs transparent so body bg shows through */
-html[data-bg-mode="gradient"] body > div > div,
-html[data-bg-mode="custom"] body > div > div {
+html[data-bg-mode="gradient"] body>div>div,
+html[data-bg-mode="custom"] body>div>div {
   background-color: transparent !important;
 }
 
 /* Also handle deeper layout wrapper divs (some layouts nest an extra level) */
-html[data-bg-mode="gradient"] body > div > div > div.min-h-screen,
-html[data-bg-mode="custom"] body > div > div > div.min-h-screen {
+html[data-bg-mode="gradient"] body>div>div>div.min-h-screen,
+html[data-bg-mode="custom"] body>div>div>div.min-h-screen {
   background-color: transparent !important;
 }
 
 @layer utilities {
+
   /* Modal blur utilities - applied to ENTIRE layout (sidebars, headers, content) when modal is open */
   .modal-blurred-content {
     filter: blur(8px) brightness(0.7) !important;
@@ -1486,6 +1487,7 @@ html[data-bg-mode="custom"] body > div > div > div.min-h-screen {
 }
 
 @keyframes float {
+
   0%,
   100% {
     transform: translateY(0px);
@@ -1510,6 +1512,10 @@ html[data-bg-mode="custom"] body > div > div > div.min-h-screen {
 
 .animate-float {
   animation: float 3s ease-in-out infinite;
+  will-change: transform;
+  /* P4.6: GPU compositing hint */
+  contain: layout style;
+  /* P4.6: Limit layout recalc scope */
 }
 
 /* ========================================
@@ -1565,11 +1571,9 @@ html[data-bg-mode="custom"] body > div > div > div.min-h-screen {
    UTILITY CLASSES - BACKGROUND PATTERNS
    ======================================== */
 .bg-grid-pattern {
-  background-image: radial-gradient(
-    circle,
-    hsl(var(--muted-foreground) / 0.1) 1px,
-    transparent 1px
-  );
+  background-image: radial-gradient(circle,
+      hsl(var(--muted-foreground) / 0.1) 1px,
+      transparent 1px);
   background-size: 20px 20px;
 }
 
