@@ -1,8 +1,11 @@
 /**
  * Secure Token Service
  *
- * Manages access token storage with proper error handling,
- * validation, and security measures for localStorage operations.
+ * Manages access token storage IN-MEMORY ONLY for maximum security.
+ * The access token is NEVER persisted to localStorage or sessionStorage.
+ *
+ * On page reload, the token is gone — the app silently refreshes it
+ * via the httpOnly refresh token cookie (handled by CookieAuthMiddleware).
  *
  * Refresh tokens are managed exclusively by httpOnly cookies
  * set by the backend CookieAuthMiddleware — never stored client-side.
@@ -16,26 +19,26 @@ export interface TokenData {
 }
 
 export class SecureTokenService {
-  private static readonly ACCESS_TOKEN_KEY = "accessToken";
-  private static readonly TOKEN_EXPIRY_KEY = "tokenExpiry";
-
-  // P3.7: Cached access token — avoids localStorage reads on every API request
-  private static _cachedAccessToken: string | null = null;
-  private static _cacheInitialized = false;
+  // ─── In-Memory Token Storage ─────────────────────────────────────
+  // These variables are module-scoped — they persist for the lifetime of the
+  // JavaScript session (same as a BroadcastChannel participant lifetime).
+  // On page reload, they reset to null and the app must call /auth/refresh.
+  private static _accessToken: string | null = null;
+  private static _tokenExpiry: number | null = null;
 
   /**
-   * Store access token securely
+   * Store access token in memory.
+   * NEVER writes to localStorage or sessionStorage.
    */
   static setAccessToken(token: string): boolean {
-    if (typeof window === "undefined") return false;
     try {
       if (!token || typeof token !== "string") {
         appLogger.error("Invalid token provided");
         return false;
       }
 
-      localStorage.setItem(this.ACCESS_TOKEN_KEY, token);
-      this._cachedAccessToken = token; // P3.7: Update cache
+      this._accessToken = token;
+      appLogger.auth("Access token stored in memory");
       return true;
     } catch (error) {
       appLogger.error("Failed to store access token:", error);
@@ -44,17 +47,16 @@ export class SecureTokenService {
   }
 
   /**
-   * Store token expiry timestamp
+   * Store token expiry timestamp in memory.
    */
   static setTokenExpiry(expiresAt: number): boolean {
-    if (typeof window === "undefined") return false;
     try {
       if (!expiresAt || typeof expiresAt !== "number") {
         appLogger.error("Invalid expiry timestamp provided");
         return false;
       }
 
-      localStorage.setItem(this.TOKEN_EXPIRY_KEY, expiresAt.toString());
+      this._tokenExpiry = expiresAt;
       return true;
     } catch (error) {
       appLogger.error("Failed to store token expiry:", error);
@@ -66,7 +68,6 @@ export class SecureTokenService {
    * Store all token data at once (access token + expiry only)
    */
   static setTokens(tokenData: TokenData): boolean {
-    if (typeof window === "undefined") return false;
     try {
       const success = this.setAccessToken(tokenData.accessToken);
 
@@ -82,28 +83,12 @@ export class SecureTokenService {
   }
 
   /**
-   * Get access token securely
-   * P3.7: Uses module-level cache to avoid localStorage reads on every API request
+   * Get access token from memory.
+   * Returns null after page reload (caller must trigger refresh flow).
    */
   static getAccessToken(): string | null {
-    if (typeof window === "undefined") return null;
     try {
-      // P3.7: Return cached token if available
-      if (this._cacheInitialized && this._cachedAccessToken) {
-        // Still check expiry periodically
-        if (this.isTokenExpired()) {
-          this.clearTokens();
-          return null;
-        }
-        return this._cachedAccessToken;
-      }
-
-      // Cold start: read from localStorage and cache
-      const token = localStorage.getItem(this.ACCESS_TOKEN_KEY);
-      this._cacheInitialized = true;
-
-      if (!token) {
-        this._cachedAccessToken = null;
+      if (!this._accessToken) {
         return null;
       }
 
@@ -113,8 +98,7 @@ export class SecureTokenService {
         return null;
       }
 
-      this._cachedAccessToken = token;
-      return token;
+      return this._accessToken;
     } catch (error) {
       appLogger.error("Failed to retrieve access token:", error);
       return null;
@@ -122,27 +106,22 @@ export class SecureTokenService {
   }
 
   /**
-   * Check if token exists
+   * Check if token exists in memory.
    */
   static hasToken(): boolean {
-    return !!this.getAccessToken();
+    return !!this._accessToken && !this.isTokenExpired();
   }
 
   /**
-   * Check if token is expired
+   * Check if token is expired based on in-memory expiry.
    */
   static isTokenExpired(): boolean {
-    if (typeof window === "undefined") return false;
     try {
-      const expiryStr = localStorage.getItem(this.TOKEN_EXPIRY_KEY);
-      if (!expiryStr) {
+      if (!this._tokenExpiry) {
         return false; // No expiry set, assume valid
       }
 
-      const expiry = parseInt(expiryStr, 10);
-      const now = Date.now();
-
-      return now >= expiry;
+      return Date.now() >= this._tokenExpiry;
     } catch (error) {
       appLogger.error("Failed to check token expiry:", error);
       return true; // Assume expired if we can't check
@@ -150,19 +129,23 @@ export class SecureTokenService {
   }
 
   /**
-   * Clear all client-side tokens.
+   * Clear all in-memory tokens.
+   * Also removes any legacy localStorage keys for backward compatibility.
    * Refresh token cookie is cleared by the backend on logout.
    */
   static clearTokens(): boolean {
-    if (typeof window === "undefined") return false;
     try {
-      localStorage.removeItem(this.ACCESS_TOKEN_KEY);
-      localStorage.removeItem(this.TOKEN_EXPIRY_KEY);
-      // Clean up any legacy refresh token key that may have been stored previously
-      localStorage.removeItem("refreshToken");
-      // P3.7: Invalidate cached token
-      this._cachedAccessToken = null;
-      this._cacheInitialized = false;
+      // Clear in-memory state
+      this._accessToken = null;
+      this._tokenExpiry = null;
+
+      // Remove legacy localStorage keys (from before in-memory migration)
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("tokenExpiry");
+        localStorage.removeItem("refreshToken");
+      }
+
       return true;
     } catch (error) {
       appLogger.error("Failed to clear tokens:", error);
@@ -178,19 +161,11 @@ export class SecureTokenService {
       return { hasToken: false, isExpired: true };
     }
 
-    try {
-      const expiryStr = localStorage.getItem(this.TOKEN_EXPIRY_KEY);
-      const expiresAt = expiryStr ? parseInt(expiryStr, 10) : undefined;
-
-      return {
-        hasToken: this.hasToken(),
-        isExpired: this.isTokenExpired(),
-        expiresAt,
-      };
-    } catch (error) {
-      appLogger.error("Failed to get token info:", error);
-      return { hasToken: false, isExpired: true };
-    }
+    return {
+      hasToken: this.hasToken(),
+      isExpired: this.isTokenExpired(),
+      expiresAt: this._tokenExpiry ?? undefined,
+    };
   }
 
   /**

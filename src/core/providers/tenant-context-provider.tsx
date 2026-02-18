@@ -17,6 +17,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useCallback, useMemo, useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useServices } from "@core/providers/service-provider";
 import { usePermissions } from "@core/providers/permission-provider";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
@@ -75,6 +76,7 @@ interface TenantContextProviderProps {
 export function TenantContextProvider({ children }: TenantContextProviderProps) {
   const { hasPermission } = usePermissions();
   const { apiService } = useServices();
+  const queryClient = useQueryClient();
 
   // Context state
   const [currentTenant, setCurrentTenant] = useState<TenantInfo | null>(null);
@@ -118,6 +120,10 @@ export function TenantContextProvider({ children }: TenantContextProviderProps) 
       // Sync with API Service
       apiService.setTenantContext(tenant.id);
 
+      // CRITICAL: Invalidate ALL cached queries so they refetch with the new X-Tenant-Context header.
+      // Without this, TanStack Query serves stale data from the previous tenant scope.
+      queryClient.invalidateQueries();
+
       setBreadcrumbs((prev) => {
         // Add to breadcrumb trail
         const existingIndex = prev.findIndex((b) => b.id === tenant.id);
@@ -128,7 +134,7 @@ export function TenantContextProvider({ children }: TenantContextProviderProps) 
         return [...prev, { id: tenant.id, name: tenant.name }];
       });
     },
-    [canEnterTenantWorld, apiService]
+    [canEnterTenantWorld, apiService, queryClient]
   );
 
   const exitTenantWorld = useCallback(() => {
@@ -137,7 +143,10 @@ export function TenantContextProvider({ children }: TenantContextProviderProps) 
     // Sync with API Service
     apiService.setTenantContext(null);
     setBreadcrumbs([]);
-  }, [apiService]);
+
+    // CRITICAL: Invalidate ALL cached queries so they refetch without X-Tenant-Context.
+    queryClient.invalidateQueries();
+  }, [apiService, queryClient]);
 
   const navigateToBreadcrumb = useCallback(
     (tenantId: string) => {
@@ -158,9 +167,12 @@ export function TenantContextProvider({ children }: TenantContextProviderProps) 
         });
         // Sync with API Service
         apiService.setTenantContext(targetCrumb.id);
+
+        // Invalidate queries for new tenant context
+        queryClient.invalidateQueries();
       }
     },
-    [breadcrumbs, exitTenantWorld, apiService]
+    [breadcrumbs, exitTenantWorld, apiService, queryClient]
   );
 
   const value = useMemo(

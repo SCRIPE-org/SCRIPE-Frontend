@@ -15,6 +15,7 @@
  * @module auth/data
  */
 import { secureTokenService } from "@core/common/secure-token-service";
+import { authBroadcast } from "@core/common/broadcast-auth";
 import { LoginRequest, LoginResponse } from "../../domain/entities/Auth";
 import { User } from "../../domain/entities/User";
 import { AuthMapper } from "../mappers/AuthMapper";
@@ -46,10 +47,13 @@ function clearAllLocalStorage(): void {
     AUTH_STORAGE_KEYS_TO_CLEAR.forEach((key) => {
       localStorage.removeItem(key);
     });
-    // Clear SecureTokenService tokens
+    // Clear SecureTokenService tokens (in-memory + legacy localStorage keys)
     secureTokenService.clearTokens();
-    sessionStorage.clear();
-    appLogger.auth("Auth data and cache cleared");
+    // TARGETED sessionStorage cleanup — NEVER call sessionStorage.clear()!
+    // That would wipe tenant_context (drill-down state) which must survive auth events.
+    sessionStorage.removeItem("admin_backup_token");
+    sessionStorage.removeItem("lastAuthRefresh");
+    appLogger.auth("Auth data and cache cleared (drill-down state preserved)");
   }
 }
 
@@ -104,6 +108,8 @@ export class AuthRepository implements IAuthRepository {
       appLogger.warn("Logout API call failed, clearing tokens locally:", error);
     } finally {
       clearAllLocalStorage();
+      // Broadcast to all tabs so they logout too
+      authBroadcast.broadcastLogout();
     }
   }
 
@@ -132,6 +138,8 @@ export class AuthRepository implements IAuthRepository {
 
       if (responseModel.isSuccessful) {
         secureTokenService.setAccessToken(responseModel.accessToken);
+        // Broadcast to other tabs so they use the new token
+        authBroadcast.broadcastTokenRefreshed(responseModel.accessToken);
         const loginResponse = AuthMapper.loginResponseFromModel(responseModel);
         return Result.ok(loginResponse);
       }

@@ -13,6 +13,8 @@ import { AuthService } from "./core/data/services/AuthService";
 import { AuthRepository } from "./core/data/repositories/AuthRepository";
 import type { IAuthRepository } from "./core/domain/interfaces/IAuthRepository";
 import type { IAuthService } from "./core/data/services/AuthService";
+import { useAppStore } from "@core/store/useAppStore";
+import { authBroadcast } from "@core/common/broadcast-auth";
 
 export interface AuthContainer {
   authService: IAuthService;
@@ -40,6 +42,18 @@ function createContainer(): AuthContainer {
       return null;
     }
     return result.value.accessToken;
+  });
+
+  // Wire the logout handler called when auth is irrecoverably lost (401 after refresh fails).
+  // This avoids a circular dependency: ApiService → useAppStore (via require).
+  baseApi.setLogoutHandler(() => {
+    useAppStore.getState().logout();
+  });
+
+  // Register cross-tab broadcast listener.
+  // When another tab broadcasts "LOGOUT", this tab also logs out.
+  authBroadcast.onLogout(() => {
+    useAppStore.getState().logout();
   });
 
   return { authService, authRepository };

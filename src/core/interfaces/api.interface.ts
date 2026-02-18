@@ -101,6 +101,12 @@ export interface IApiService {
   setRefreshHandler(handler: () => Promise<string | null>): void;
 
   /**
+   * Set the logout handler called when auth is irrecoverably lost.
+   * This avoids circular dependency with the app store.
+   */
+  setLogoutHandler(handler: () => void): void;
+
+  /**
    * Set the tenant context for multi-tenant operations
    * @param tenantId - Tenant ID or null to clear
    */

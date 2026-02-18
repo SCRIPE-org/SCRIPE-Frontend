@@ -210,18 +210,14 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
     },
   });
 
-  // Impersonate mutation
-  const { startImpersonation } = useImpersonation();
-  const impersonateMutation = useMutation({
-    mutationFn: (id: string) => adminRepository.impersonate(id),
-    onSuccess: (data) => {
-      success({ title: "Impersonating...", description: "Redirecting to admin dashboard" });
-      startImpersonation(data.token);
+  // Impersonation — the hook handles the API call and page reload
+  const { startImpersonation, isLoading: isImpersonationLoading } = useImpersonation();
+  const handleImpersonate = useCallback(
+    (id: string) => {
+      startImpersonation(id);
     },
-    onError: (err: Error) => {
-      toastError({ title: t("common.error") || "Error", description: err.message });
-    },
-  });
+    [startImpersonation]
+  );
 
   // Transfer mutation
   const transferMutation = useMutation({
@@ -499,7 +495,7 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
     handleAssignRole,
     handleRemoveRole,
     handleResetPassword,
-    handleImpersonate: (id: string) => impersonateMutation.mutate(id),
+    handleImpersonate: (id: string) => startImpersonation(id),
     handleTransfer: (
       id: string,
       request: import("../../domain/entities/AdminRequests").TransferAdminRequest
@@ -514,7 +510,7 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
     isAssigningRole: assignRoleMutation.isPending,
     isRemovingRole: removeRoleMutation.isPending,
     isResettingPassword: resetPasswordMutation.isPending,
-    isImpersonating: impersonateMutation.isPending,
+    isImpersonating: isImpersonationLoading,
     isTransferring: transferMutation.isPending,
     isTransferringProtection: transferProtectionMutation.isPending,
     t,

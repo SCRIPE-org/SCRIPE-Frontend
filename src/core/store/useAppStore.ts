@@ -79,14 +79,11 @@ export const useAppStore = create<AppState>()(
         roles: state.roles,
       }),
       onRehydrateStorage: () => (state) => {
-        // After rehydration, validate that token still exists
-        // If store says authenticated but no token, reset auth state
-        if (state?.isAuthenticated && !secureTokenService.hasToken()) {
-          appLogger.debug("[AppStore] Token missing after rehydration, resetting auth state");
-          state.logout();
-        }
-        // Always mark hydration complete — even after logout
-        // Without this, the login page stays on the loading spinner forever
+        // With in-memory tokens, the access token is ALWAYS null after page reload.
+        // The persisted isAuthenticated is just a HINT — the route-guard will
+        // call /auth/refresh to validate the httpOnly cookie and get a new token.
+        // Do NOT call logout() here — that would clear the Zustand auth state
+        // before the route-guard has a chance to silently refresh.
         state?.setHasHydrated(true);
       },
     }

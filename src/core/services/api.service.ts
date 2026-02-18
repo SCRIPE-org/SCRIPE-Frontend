@@ -9,6 +9,7 @@ import axios, {
 import type { IApiService } from "../interfaces/api.interface";
 import { appLogger } from "@core/common/logger";
 import { secureTokenService } from "@core/common/secure-token-service";
+import { authBroadcast } from "@core/common/broadcast-auth";
 
 // P1.5: Cache language in module-level variable — avoids localStorage.getItem() on every request
 let cachedLanguage: string = typeof window !== "undefined" ? localStorage.getItem("language") || "en" : "en";
@@ -54,6 +55,10 @@ export class ApiService implements IApiService {
 
   // Tenant context for X-Tenant-Context header
   private tenantContextId: string | null = null;
+
+  // Logout handler — set externally to avoid circular dependency
+  // (ApiService cannot import useAppStore directly)
+  private logoutHandler: (() => void) | null = null;
 
   constructor(baseUrl: string = process.env.NEXT_PUBLIC_API_URL || "/api") {
     const normalizedBaseUrl = baseUrl.startsWith("http") ? baseUrl : `https://${baseUrl}`;
@@ -148,9 +153,11 @@ export class ApiService implements IApiService {
 
         // Handle 401 - attempt token refresh
         if (error.response?.status === 401 && !originalRequest._retry) {
+          // Issue #8: DI timing race — if no refresh handler is wired yet,
+          // just reject the promise instead of calling handleUnauthorized.
+          // The route-guard will handle session restore.
           if (!this.refreshHandler) {
-            appLogger.auth("No refresh handler set, redirecting to login");
-            this.handleUnauthorized();
+            appLogger.auth("No refresh handler set yet (DI timing race), rejecting request");
             return Promise.reject(error);
           }
 
@@ -349,13 +356,21 @@ export class ApiService implements IApiService {
   }
 
   /**
-   * Handle unauthorized - clear tokens and redirect
+   * Handle unauthorized - clear tokens and trigger store-based logout.
+   * Uses Zustand store instead of window.location.href to preserve SPA state
+   * and let RouteGuard handle the redirect.
    */
   private handleUnauthorized(): void {
     if (typeof window !== "undefined" && window.location.pathname !== "/login") {
-      appLogger.warn("Unauthorized - clearing tokens and redirecting");
+      appLogger.warn("Unauthorized - clearing tokens and triggering store logout");
       this.clearTokens();
-      window.location.href = "/login";
+      // Broadcast to other tabs so they also log out
+      authBroadcast.broadcastLogout();
+      // Use the externally-set logout handler (wired by ServiceProvider)
+      // This avoids circular dependency from require('@core/store/useAppStore')
+      if (this.logoutHandler) {
+        this.logoutHandler();
+      }
     }
   }
 
@@ -512,6 +527,16 @@ export class ApiService implements IApiService {
   setRefreshHandler(handler: () => Promise<string | null>): void {
     this.refreshHandler = handler;
     appLogger.auth("Refresh handler set");
+  }
+
+  /**
+   * Set the logout handler called when auth is irrecoverably lost.
+   * Wired by ServiceProvider to call useAppStore.getState().logout()
+   * without circular dependency.
+   */
+  setLogoutHandler(handler: () => void): void {
+    this.logoutHandler = handler;
+    appLogger.auth("Logout handler set");
   }
 
   // ============================================

@@ -35,8 +35,11 @@ export function LoginView() {
     vm.checkAndRedirect();
   }, [vm.hasHydrated, vm.checkAndRedirect]);
 
-  // Show loading spinner while redirecting or not hydrated
-  if (!vm.hasHydrated || vm.isRedirecting || (vm.isAuthenticated && !vm.isLoading)) {
+  // Show loading spinner while redirecting or not hydrated.
+  // IMPORTANT: With in-memory tokens, isAuthenticated from Zustand persist may be stale
+  // (true after page reload but token is gone). Only show redirect spinner when ACTIVELY
+  // redirecting (vm.isRedirecting is set by checkAndRedirect only when hasToken() is true).
+  if (!vm.hasHydrated || vm.isRedirecting) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-primary/20 via-background to-secondary/20">
         <div className="text-center">
