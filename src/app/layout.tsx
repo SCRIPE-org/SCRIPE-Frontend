@@ -47,6 +47,13 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ar" dir="rtl" suppressHydrationWarning>
+      <head>
+        {/* P1.11: Preconnect to shared API server (always the first API hit — auth, navigation).
+            In microservice mode, module-specific endpoints (NEXT_PUBLIC_{MODULE}_API_URL) 
+            connect lazily after route navigation, so preconnect for the shared base is sufficient. */}
+        <link rel="dns-prefetch" href={process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api"} />
+        <link rel="preconnect" href={process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api"} crossOrigin="anonymous" />
+      </head>
       <body className="font-cairo antialiased" suppressHydrationWarning>
         <AppProvider>{children}</AppProvider>
       </body>

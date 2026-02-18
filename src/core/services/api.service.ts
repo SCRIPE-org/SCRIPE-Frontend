@@ -10,6 +10,20 @@ import type { IApiService } from "../interfaces/api.interface";
 import { appLogger } from "@core/common/logger";
 import { secureTokenService } from "@core/common/secure-token-service";
 
+// P1.5: Cache language in module-level variable — avoids localStorage.getItem() on every request
+let cachedLanguage: string = typeof window !== "undefined" ? localStorage.getItem("language") || "en" : "en";
+if (typeof window !== "undefined") {
+  window.addEventListener("storage", (e) => {
+    if (e.key === "language" && e.newValue) cachedLanguage = e.newValue;
+  });
+  // Also intercept direct writes from same tab
+  const originalSetItem = localStorage.setItem;
+  localStorage.setItem = function (key: string, value: string) {
+    originalSetItem.call(this, key, value);
+    if (key === "language") cachedLanguage = value;
+  };
+}
+
 /**
  * API Service Implementation using Axios
  *
@@ -88,9 +102,8 @@ export class ApiService implements IApiService {
           appLogger.api(`Tenant context: ${this.tenantContextId}`);
         }
 
-        // Add Accept-Language header for backend localization
-        const language = typeof window !== "undefined" ? localStorage.getItem("language") || "en" : "en";
-        config.headers["Accept-Language"] = language;
+        // P1.5: Use cached language instead of reading localStorage per request
+        config.headers["Accept-Language"] = cachedLanguage;
 
         // Fix for 415 Unsupported Media Type with FormData
         if (config.data instanceof FormData) {
@@ -196,9 +209,8 @@ export class ApiService implements IApiService {
 
     // Public instance - log requests and add Accept-Language
     this.axiosPublic.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-      // Add Accept-Language header for backend localization
-      const language = typeof window !== "undefined" ? localStorage.getItem("language") || "en" : "en";
-      config.headers["Accept-Language"] = language;
+      // P1.5: Use cached language instead of reading localStorage per request
+      config.headers["Accept-Language"] = cachedLanguage;
 
       appLogger.api(`${config.method?.toUpperCase()} ${config.url} (public)`);
       return config;
