@@ -55,6 +55,30 @@ export function WebhooksView() {
                               ),
                         },
                         {
+                              key: "scope",
+                              label: t("webhooks.scope") || "Scope",
+                              render: (_val: unknown, item: WebhookSubscriptionListItem) => {
+                                    const scopeConfig: Record<string, { label: string; variant: "default" | "secondary" | "outline"; className: string }> = {
+                                          system: { label: "System", variant: "default", className: "bg-blue-600 hover:bg-blue-700 text-white" },
+                                          hierarchy: { label: "Hierarchy", variant: "default", className: "bg-purple-600 hover:bg-purple-700 text-white" },
+                                          tenant: { label: "Tenant", variant: "secondary", className: "" },
+                                    };
+                                    const cfg = scopeConfig[item.scope] ?? scopeConfig.tenant;
+                                    return (
+                                          <div className="flex flex-col gap-0.5">
+                                                <Badge variant={cfg.variant} className={`text-xs ${cfg.className}`}>
+                                                      {cfg.label}
+                                                </Badge>
+                                                {item.tenantName && (
+                                                      <span className="text-[10px] text-muted-foreground truncate max-w-[120px]" title={item.tenantName}>
+                                                            {item.tenantName}
+                                                      </span>
+                                                )}
+                                          </div>
+                                    );
+                              },
+                        },
+                        {
                               key: "description",
                               label: t("webhooks.description_field") || "Description",
                               render: (_val: unknown, item: WebhookSubscriptionListItem) => (

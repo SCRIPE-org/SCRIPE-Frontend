@@ -11,6 +11,10 @@
 
 export interface WebhookSubscriptionData {
       id: string;
+      scope: string;
+      tenantId: string | null;
+      tenantName: string | null;
+      includeChildren: boolean;
       url: string;
       description: string | null;
       events: string[];
@@ -39,6 +43,18 @@ export class WebhookSubscription {
 
       get id(): string {
             return this.data.id;
+      }
+      get scope(): string {
+            return this.data.scope;
+      }
+      get tenantId(): string | null {
+            return this.data.tenantId;
+      }
+      get tenantName(): string | null {
+            return this.data.tenantName;
+      }
+      get includeChildren(): boolean {
+            return this.data.includeChildren;
       }
       get url(): string {
             return this.data.url;
@@ -116,12 +132,25 @@ export class WebhookSubscription {
       get isRotatingSecret(): boolean {
             return this.hasPreviousSecret && this.previousSecretExpiresAt !== null;
       }
+
+      /** Human-readable scope label */
+      get scopeLabel(): string {
+            switch (this.scope) {
+                  case 'system': return 'System';
+                  case 'hierarchy': return 'Hierarchy';
+                  case 'tenant': return 'Tenant';
+                  default: return this.scope;
+            }
+      }
 }
 
 // ─── Subscription List Item ─────────────────────────────────────
 
 export interface WebhookSubscriptionListItemData {
       id: string;
+      scope: string;
+      tenantName: string | null;
+      includeChildren: boolean;
       url: string;
       description: string | null;
       events: string[];
@@ -143,6 +172,15 @@ export class WebhookSubscriptionListItem {
 
       get id(): string {
             return this.data.id;
+      }
+      get scope(): string {
+            return this.data.scope;
+      }
+      get tenantName(): string | null {
+            return this.data.tenantName;
+      }
+      get includeChildren(): boolean {
+            return this.data.includeChildren;
       }
       get url(): string {
             return this.data.url;
@@ -186,6 +224,16 @@ export class WebhookSubscriptionListItem {
 
       get isAutoDisabled(): boolean {
             return this.consecutiveFailures >= this.maxConsecutiveFailures;
+      }
+
+      /** Human-readable scope label */
+      get scopeLabel(): string {
+            switch (this.scope) {
+                  case 'system': return 'System';
+                  case 'hierarchy': return 'Hierarchy';
+                  case 'tenant': return 'Tenant';
+                  default: return this.scope;
+            }
       }
 }
 

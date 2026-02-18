@@ -3297,6 +3297,7 @@ export const ar = {
 
   // Common
   common: {
+    created: "تم الإنشاء",
     preview: "معاينة",
     all: "الكل",
     actions: "الإجراءات",
@@ -4262,6 +4263,11 @@ export const ar = {
     description: "إدارة اشتراكات الويب هوك ومراقبة تسليم الأحداث",
     // القائمة
     url: "رابط نقطة النهاية",
+    includeChildren:"يشمل الفروع",
+    includeChildrenPlaceholder:"يشمل الفروع",
+    includeChildrenDesc:"يشمل الفرع الحالي والفروع التي تحته",
+    scope:"النطاق",
+    scopePlaceholder:"النطاق",
     urlPlaceholder: "https://your-server.com/webhook",
     urlHttpsRequired: "يجب أن يستخدم الرابط HTTPS (http://localhost مسموح به للتطوير)",
     description_field: "الوصف",

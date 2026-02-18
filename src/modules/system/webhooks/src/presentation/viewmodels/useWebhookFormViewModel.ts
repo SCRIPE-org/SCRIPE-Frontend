@@ -40,6 +40,7 @@ export function useWebhookFormViewModel({
       const [url, setUrl] = useState("");
       const [description, setDescription] = useState("");
       const [selectedEvents, setSelectedEvents] = useState<string[]>([]);
+      const [includeChildren, setIncludeChildren] = useState(false);
       const [maxRetries, setMaxRetries] = useState(3);
       const [maxConsecutiveFailures, setMaxConsecutiveFailures] = useState(10);
 
@@ -49,6 +50,7 @@ export function useWebhookFormViewModel({
                   setUrl(webhook.url);
                   setDescription(webhook.description || "");
                   setSelectedEvents(webhook.events || []);
+                  setIncludeChildren(webhook.includeChildren);
                   setMaxRetries(webhook.maxRetries);
                   setMaxConsecutiveFailures(webhook.maxConsecutiveFailures);
             }
@@ -127,6 +129,7 @@ export function useWebhookFormViewModel({
                         url,
                         description: description || undefined,
                         events: selectedEvents,
+                        includeChildren,
                         maxRetries,
                         maxConsecutiveFailures,
                   });
@@ -135,6 +138,7 @@ export function useWebhookFormViewModel({
                         url: url || undefined,
                         description: description || undefined,
                         events: selectedEvents.length > 0 ? selectedEvents : undefined,
+                        includeChildren,
                         maxRetries,
                         maxConsecutiveFailures,
                   });
@@ -169,6 +173,8 @@ export function useWebhookFormViewModel({
             setMaxRetries,
             maxConsecutiveFailures,
             setMaxConsecutiveFailures,
+            includeChildren,
+            setIncludeChildren,
 
             // Event catalog
             availableEvents: availableEvents ?? [],

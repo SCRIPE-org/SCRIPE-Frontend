@@ -112,6 +112,27 @@ export function WebhookForm({
                                     />
                               </div>
 
+                              {/* ─── Include Children Toggle ──────────────────────── */}
+                              <div className="flex items-start gap-3 p-3 rounded-lg border bg-muted/30">
+                                    <Checkbox
+                                          id="include-children"
+                                          checked={vm.includeChildren}
+                                          onCheckedChange={(checked) =>
+                                                vm.setIncludeChildren(checked === true)
+                                          }
+                                          className="mt-0.5"
+                                    />
+                                    <div className="space-y-1">
+                                          <Label htmlFor="include-children" className="text-sm font-medium leading-none cursor-pointer">
+                                                {t("webhooks.includeChildren") || "Include Child Tenants"}
+                                          </Label>
+                                          <p className="text-xs text-muted-foreground">
+                                                {t("webhooks.includeChildrenDesc") ||
+                                                      "Receive events from all descendant tenants (hierarchy scope)"}
+                                          </p>
+                                    </div>
+                              </div>
+
                               {/* ─── Event Type Picker ────────────────────────────── */}
                               <div className="space-y-2">
                                     <div className="flex items-center justify-between">
@@ -161,8 +182,8 @@ export function WebhookForm({
                                                                               <Checkbox
                                                                                     checked={allSelected}
                                                                                     className={`ml-3 mt-1 ${someSelected && !allSelected
-                                                                                                ? "data-[state=unchecked]:bg-primary/20"
-                                                                                                : ""
+                                                                                          ? "data-[state=unchecked]:bg-primary/20"
+                                                                                          : ""
                                                                                           }`}
                                                                                     onCheckedChange={() =>
                                                                                           vm.selectAllInCategory(category)

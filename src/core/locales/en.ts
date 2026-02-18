@@ -3107,6 +3107,7 @@ export const en = {
   },
   // Common
   common: {
+    created: "Created",
     preview: "Preview",
     all: "All",
     actions: "Actions",
@@ -4413,6 +4414,11 @@ export const en = {
     // List
     url: "Endpoint URL",
     urlPlaceholder: "https://your-server.com/webhook",
+    includeChildren:"Include Children",
+    includeChildrenPlaceholder:"Include Children",
+    includeChildrenDesc:"Include Children",
+    scope:"Scope",
+    scopePlaceholder:"Scope",
     urlHttpsRequired: "URL must use HTTPS (http://localhost allowed for dev)",
     description_field: "Description",
     descriptionPlaceholder: "e.g. Production order notifications",
