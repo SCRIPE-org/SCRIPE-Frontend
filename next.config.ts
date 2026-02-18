@@ -41,6 +41,16 @@ const nextConfig: NextConfig = {
       "react-chartjs-2",
     ],
   },
-};
 
+  // P2.5: Enable gzip compression for Next.js responses
+  compress: true,
+
+  // P2.5: Modern image format support (served when browser supports them)
+  images: {
+    formats: ["image/avif", "image/webp"],
+  },
+
+  // Security: Hide X-Powered-By header
+  poweredByHeader: false,
+};
 export default nextConfig;

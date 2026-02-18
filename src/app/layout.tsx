@@ -46,7 +46,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ar" dir="rtl" suppressHydrationWarning>
+    // P2.2: lang/dir set dynamically by LanguageProvider via useEffect on <html>
+    <html suppressHydrationWarning>
       <head>
         {/* P1.11: Preconnect to shared API server (always the first API hit — auth, navigation).
             In microservice mode, module-specific endpoints (NEXT_PUBLIC_{MODULE}_API_URL) 
