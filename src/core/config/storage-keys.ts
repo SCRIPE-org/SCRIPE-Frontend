@@ -34,6 +34,8 @@ export const STORAGE_KEYS = {
 
   // Impersonation (sessionStorage — survives reload, not new tabs)
   IMPERSONATING: "nexora_impersonating",
+  admin_backup_token: "admin_backup_token",
+  lastAuthRefresh: "lastAuthRefresh",
 } as const;
 
 /**

@@ -60,9 +60,8 @@ export function useImpersonation() {
         success({ title: "Impersonation started", description: "You are now viewing as another admin." });
         appLogger.auth(`Impersonation started for admin: ${adminId}`);
 
-        // Full reload to re-fetch all data with new identity
-        await queryClient.invalidateQueries();
-        window.location.reload();
+        // Navigate to home with full reload — fresh data with new identity
+        window.location.href = "/";
       } catch (err) {
         appLogger.error("Impersonation failed:", err);
         toastError({
@@ -90,9 +89,8 @@ export function useImpersonation() {
       success({ title: "Impersonation ended", description: "Your original session has been restored." });
       appLogger.auth("Impersonation stopped, original admin restored");
 
-      // Full reload to re-fetch all data with original identity
-      await queryClient.invalidateQueries();
-      window.location.reload();
+      // Navigate to home with full reload — fresh data with original identity
+      window.location.href = "/";
     } catch (err) {
       appLogger.error("Stop impersonation failed:", err);
       toastError({

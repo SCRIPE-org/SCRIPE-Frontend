@@ -15,6 +15,7 @@ import { usePathname } from "next/navigation";
 import { useAppStore } from "@core/store/useAppStore";
 import { useServices } from "@core/providers/service-provider";
 import { appLogger } from "@core/common/logger";
+import { STORAGE_KEYS } from "../config/storage-keys";
 
 interface UseAuthRefreshOptions {
   /**
@@ -97,19 +98,19 @@ export function useAuthRefresh(options: UseAuthRefreshOptions = {}) {
       if (document.visibilityState === "visible") {
         // Only refresh if tab was hidden for more than 5 minutes
         // We track this via a stored timestamp
-        const lastRefresh = sessionStorage.getItem("lastAuthRefresh");
+        const lastRefresh = sessionStorage.getItem(STORAGE_KEYS.lastAuthRefresh);
         const now = Date.now();
 
         if (!lastRefresh || now - parseInt(lastRefresh, 10) > intervalMs) {
           refreshUserData();
-          sessionStorage.setItem("lastAuthRefresh", now.toString());
+          sessionStorage.setItem(STORAGE_KEYS.lastAuthRefresh, now.toString());
         }
       }
     };
 
     // Update timestamp on each refresh
     const updateTimestamp = () => {
-      sessionStorage.setItem("lastAuthRefresh", Date.now().toString());
+      sessionStorage.setItem(STORAGE_KEYS.lastAuthRefresh, Date.now().toString());
     };
 
     document.addEventListener("visibilitychange", handleVisibilityChange);

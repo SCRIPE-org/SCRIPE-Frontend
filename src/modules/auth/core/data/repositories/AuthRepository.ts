@@ -52,8 +52,8 @@ function clearAllLocalStorage(): void {
     secureTokenService.clearTokens();
     // TARGETED sessionStorage cleanup — NEVER call sessionStorage.clear()!
     // That would wipe tenant_context (drill-down state) which must survive auth events.
-    sessionStorage.removeItem("admin_backup_token");
-    sessionStorage.removeItem("lastAuthRefresh");
+    sessionStorage.removeItem(STORAGE_KEYS.admin_backup_token);
+    sessionStorage.removeItem(STORAGE_KEYS.lastAuthRefresh);
     appLogger.auth("Auth data and cache cleared (drill-down state preserved)");
   }
 }
@@ -175,6 +175,9 @@ export class AuthRepository implements IAuthRepository {
       // Persist impersonation state so the UI banner survives page reload
       if (typeof window !== "undefined") {
         sessionStorage.setItem(STORAGE_KEYS.IMPERSONATING, "true");
+        // Clear navigation cache so menu items reload with the impersonated identity
+        localStorage.removeItem(STORAGE_KEYS.NAVIGATION_CACHE);
+        localStorage.removeItem(STORAGE_KEYS.NAVIGATION_CACHE_EXPIRY);
       }
       authBroadcast.broadcastImpersonationStart();
     } else {
@@ -191,10 +194,12 @@ export class AuthRepository implements IAuthRepository {
 
     if (responseModel.accessToken) {
       secureTokenService.setAccessToken(responseModel.accessToken);
-      // Clear impersonation state
+      // Clear impersonation state + nav cache so original admin menus reload
       if (typeof window !== "undefined") {
         sessionStorage.removeItem(STORAGE_KEYS.IMPERSONATING);
-        sessionStorage.removeItem("admin_backup_token");
+        sessionStorage.removeItem(STORAGE_KEYS.admin_backup_token);
+        localStorage.removeItem(STORAGE_KEYS.NAVIGATION_CACHE);
+        localStorage.removeItem(STORAGE_KEYS.NAVIGATION_CACHE_EXPIRY);
       }
       authBroadcast.broadcastImpersonationStop();
     } else {

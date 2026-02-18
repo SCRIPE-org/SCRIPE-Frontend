@@ -133,6 +133,9 @@ export function TenantContextProvider({ children }: TenantContextProviderProps) 
         }
         return [...prev, { id: tenant.id, name: tenant.name }];
       });
+
+      // Navigate to home so the user sees the tenant's dashboard
+      window.location.href = "/";
     },
     [canEnterTenantWorld, apiService, queryClient]
   );
