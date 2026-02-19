@@ -105,6 +105,7 @@
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^5.0.0",
+    "@playwright/test": "^1.58.2",
     "@storybook/addon-a11y": "^10.2.3",
     "@storybook/addon-docs": "^10.2.3",
     "@storybook/addon-onboarding": "^10.2.3",
@@ -125,6 +126,7 @@
     "husky": "^9.1.7",
     "jsdom": "^27.4.0",
     "lint-staged": "^16.2.7",
+    "msw": "^2.12.10",
     "playwright": "^1.58.1",
     "postcss": "^8.4.31",
     "prettier": "^3.8.1",
