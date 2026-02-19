@@ -23,7 +23,7 @@ export interface ApiEndpoint {
   method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
   path: string;
   description: string;
-  auth: boolean;
+  auth: string;
   permission?: string;
 }
 
@@ -44,6 +44,20 @@ export interface StepItem {
   codeFilename?: string;
 }
 
+// ─── Comparison Types ──────────────────────────────────────────────
+export interface ComparisonColumn {
+  titleKey: string;
+  variant: "positive" | "negative" | "neutral";
+  items: string[];
+}
+
+// ─── Feature Grid Types ────────────────────────────────────────────
+export interface FeatureGridItem {
+  icon: string;
+  titleKey: string;
+  descriptionKey: string;
+}
+
 // ─── Section Types ─────────────────────────────────────────────────
 export type DocSectionType =
   | "heading"
@@ -56,7 +70,9 @@ export type DocSectionType =
   | "step-guide"
   | "table"
   | "list"
-  | "image";
+  | "image"
+  | "comparison"
+  | "feature-grid";
 
 export interface DocSectionBase {
   type: DocSectionType;
@@ -131,6 +147,17 @@ export interface ImageSection extends DocSectionBase {
   caption?: string;
 }
 
+export interface ComparisonSection extends DocSectionBase {
+  type: "comparison";
+  columns: ComparisonColumn[];
+}
+
+export interface FeatureGridSection extends DocSectionBase {
+  type: "feature-grid";
+  items: FeatureGridItem[];
+  columns?: 2 | 3 | 4;
+}
+
 export type DocSection =
   | HeadingSection
   | ParagraphSection
@@ -142,4 +169,6 @@ export type DocSection =
   | StepGuideSection
   | TableSection
   | ListSection
-  | ImageSection;
+  | ImageSection
+  | ComparisonSection
+  | FeatureGridSection;

@@ -1,10 +1,13 @@
 "use client";
 
 import { useDocsI18n } from "../../providers/DocsI18nProvider";
+import type { DocsMode } from "../../viewmodels/useDocsModeViewModel";
 
 interface DocsHeaderProps {
   onSearchOpen: () => void;
   onMobileMenuOpen: () => void;
+  docsMode: DocsMode;
+  onDocsModeChange: (mode: DocsMode) => void;
 }
 
 const SearchIcon = () => (
@@ -40,7 +43,7 @@ const MenuIcon = () => (
   </svg>
 );
 
-export function DocsHeader({ onSearchOpen, onMobileMenuOpen }: DocsHeaderProps) {
+export function DocsHeader({ onSearchOpen, onMobileMenuOpen, docsMode, onDocsModeChange }: DocsHeaderProps) {
   const { t } = useDocsI18n();
 
   return (
@@ -62,6 +65,24 @@ export function DocsHeader({ onSearchOpen, onMobileMenuOpen }: DocsHeaderProps) 
         <span>{t("common.search")}</span>
         <span className="docs-search-shortcut">{t("common.searchShortcut")}</span>
       </button>
+
+      {/* Mode Toggle */}
+      <div className="docs-mode-toggle">
+        <button
+          className="docs-mode-btn"
+          data-active={docsMode === "technical"}
+          onClick={() => onDocsModeChange("technical")}
+        >
+          {t("common.technical")}
+        </button>
+        <button
+          className="docs-mode-btn"
+          data-active={docsMode === "commercial"}
+          onClick={() => onDocsModeChange("commercial")}
+        >
+          {t("common.commercial")}
+        </button>
+      </div>
 
       {/* Actions */}
       <div className="docs-header-actions">

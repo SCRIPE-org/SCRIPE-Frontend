@@ -2,9 +2,9 @@
  * French locale for the Documentation Portal.
  * Contains all UI strings and content translations.
  */
-import type { DocTranslations } from "./doc.en";
+import type { PartialDocTranslations } from "./doc.en";
 
-export const docFr: DocTranslations = {
+export const docFr: PartialDocTranslations = {
   // ─── Common UI ──────────────────────────────────────────────
   common: {
     search: "Rechercher dans la doc...",

@@ -8,7 +8,7 @@
 
 import type React from "react";
 import { createContext, useContext, useState, useEffect, useCallback, useMemo } from "react";
-import { docEn, DocTranslations } from "../../locales/doc.en";
+import { docEn, type PartialDocTranslations } from "../../locales/doc.en";
 import { docAr } from "../../locales/doc.ar";
 import { docFr } from "../../locales/doc.fr";
 import { docRu } from "../../locales/doc.ru";
@@ -38,7 +38,7 @@ export const DOC_LANGUAGES: DocLanguageInfo[] = [
 ];
 
 // ─── Translations Map ──────────────────────────────────────────
-const translations: Record<DocLanguage, DocTranslations> = {
+const translations: Record<DocLanguage, PartialDocTranslations> = {
   en: docEn,
   ar: docAr,
   fr: docFr,
@@ -75,27 +75,35 @@ export function DocsI18nProvider({ children }: { children: React.ReactNode }) {
 
   const direction = currentLanguageInfo.direction;
 
-  // Translate function with dot-notation and interpolation
+  // Translate function with dot-notation, interpolation, and English fallback
   const t = useCallback(
     (key: string, params?: Record<string, any>): string => {
       const keys = key.split(".");
-      let value: any = translations[language];
 
-      for (const k of keys) {
-        if (value && typeof value === "object" && k in value) {
-          value = value[k];
-        } else {
-          return key;
-        }
-      }
+      // Try current language first, then fallback to English
+      const sources = language === "en" ? [docEn] : [translations[language], docEn];
 
-      if (typeof value === "string") {
-        if (params) {
-          return value.replace(/\{\{(\w+)\}\}/g, (match, paramKey) => {
-            return params[paramKey] !== undefined ? String(params[paramKey]) : match;
-          });
+      for (const source of sources) {
+        let value: any = source;
+        let found = true;
+
+        for (const k of keys) {
+          if (value && typeof value === "object" && k in value) {
+            value = value[k];
+          } else {
+            found = false;
+            break;
+          }
         }
-        return value;
+
+        if (found && typeof value === "string") {
+          if (params) {
+            return value.replace(/\{\{(\w+)\}\}/g, (match, paramKey) => {
+              return params[paramKey] !== undefined ? String(params[paramKey]) : match;
+            });
+          }
+          return value;
+        }
       }
 
       return key;
@@ -153,7 +161,7 @@ export function useDocsI18n(): DocsI18nContextType {
     return {
       language: "en",
       direction: "ltr",
-      setLanguage: () => {},
+      setLanguage: () => { },
       t: (key: string) => key,
       languages: DOC_LANGUAGES,
       currentLanguageInfo: DOC_LANGUAGES[0],

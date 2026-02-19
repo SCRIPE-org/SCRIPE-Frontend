@@ -2,9 +2,9 @@
  * Arabic locale for the Documentation Portal.
  * Full translation - RTL supported.
  */
-import type { DocTranslations } from "./doc.en";
+import type { PartialDocTranslations } from "./doc.en";
 
-export const docAr: DocTranslations = {
+export const docAr: PartialDocTranslations = {
   common: {
     search: "ابحث في الوثائق...",
     searchPlaceholder: "اكتب للبحث...",

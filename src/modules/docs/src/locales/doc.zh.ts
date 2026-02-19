@@ -1,9 +1,9 @@
 /**
  * Chinese (Simplified) locale for the Documentation Portal.
  */
-import type { DocTranslations } from "./doc.en";
+import type { PartialDocTranslations } from "./doc.en";
 
-export const docZh: DocTranslations = {
+export const docZh: PartialDocTranslations = {
   common: {
     search: "搜索文档...",
     searchPlaceholder: "输入关键词搜索...",

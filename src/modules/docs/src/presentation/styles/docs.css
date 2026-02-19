@@ -1091,6 +1091,181 @@
   font-family: monospace;
 }
 
+/* ─── Comparison Block ───────────────────────────────────────────── */
+.docs-comparison {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.docs-comparison-column {
+  border-radius: var(--radius);
+  border: 1px solid;
+  overflow: hidden;
+}
+
+.docs-comparison-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  border-bottom: 1px solid;
+}
+
+.docs-comparison-icon {
+  font-size: 1rem;
+}
+
+.docs-comparison-list {
+  list-style: none;
+  padding: 0.75rem 1rem;
+  margin: 0;
+}
+
+.docs-comparison-list li {
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  padding: 0.25rem 0;
+  color: hsl(var(--foreground) / 0.85);
+}
+
+.docs-comparison-list li::before {
+  margin-inline-end: 0.5rem;
+}
+
+.docs-comparison-positive {
+  border-color: hsl(142 71% 45% / 0.25);
+  background: hsl(142 71% 45% / 0.04);
+}
+
+.docs-comparison-positive .docs-comparison-header {
+  background: hsl(142 71% 45% / 0.08);
+  border-bottom-color: hsl(142 71% 45% / 0.15);
+  color: hsl(142 71% 45%);
+}
+
+.docs-comparison-positive .docs-comparison-list li::before {
+  content: "✓";
+  color: hsl(142 71% 45%);
+}
+
+.docs-comparison-negative {
+  border-color: hsl(0 84% 60% / 0.25);
+  background: hsl(0 84% 60% / 0.04);
+}
+
+.docs-comparison-negative .docs-comparison-header {
+  background: hsl(0 84% 60% / 0.08);
+  border-bottom-color: hsl(0 84% 60% / 0.15);
+  color: hsl(0 84% 60%);
+}
+
+.docs-comparison-negative .docs-comparison-list li::before {
+  content: "✗";
+  color: hsl(0 84% 60%);
+}
+
+.docs-comparison-neutral {
+  border-color: hsl(var(--border));
+  background: hsl(var(--muted) / 0.3);
+}
+
+.docs-comparison-neutral .docs-comparison-header {
+  background: hsl(var(--muted) / 0.5);
+  border-bottom-color: hsl(var(--border));
+  color: hsl(var(--foreground));
+}
+
+.docs-comparison-neutral .docs-comparison-list li::before {
+  content: "•";
+  color: hsl(var(--muted-foreground));
+}
+
+/* ─── Feature Grid ───────────────────────────────────────────────── */
+.docs-feature-grid {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.docs-feature-card {
+  padding: 1.25rem;
+  border-radius: var(--radius);
+  border: 1px solid hsl(var(--border));
+  background: hsl(var(--background));
+  transition: all 0.2s ease;
+}
+
+.docs-feature-card:hover {
+  border-color: hsl(var(--primary) / 0.3);
+  background: hsl(var(--primary) / 0.03);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px hsl(var(--primary) / 0.08);
+}
+
+.docs-feature-icon {
+  font-size: 1.5rem;
+  margin-bottom: 0.625rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: calc(var(--radius) * 0.75);
+  background: hsl(var(--primary) / 0.08);
+}
+
+.docs-feature-title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: hsl(var(--foreground));
+  margin: 0 0 0.375rem 0;
+}
+
+.docs-feature-description {
+  font-size: 0.8125rem;
+  color: hsl(var(--muted-foreground));
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* ─── Docs Mode Toggle ──────────────────────────────────────────── */
+.docs-mode-toggle {
+  display: flex;
+  align-items: center;
+  padding: 0.1875rem;
+  background: hsl(var(--muted));
+  border-radius: var(--radius);
+  border: 1px solid hsl(var(--border));
+  gap: 0;
+}
+
+.docs-mode-btn {
+  padding: 0.3125rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: none;
+  border-radius: calc(var(--radius) - 2px);
+  cursor: pointer;
+  transition: all 0.2s;
+  background: transparent;
+  color: hsl(var(--muted-foreground));
+  white-space: nowrap;
+}
+
+.docs-mode-btn:hover {
+  color: hsl(var(--foreground));
+}
+
+.docs-mode-btn[data-active="true"] {
+  background: hsl(var(--background));
+  color: hsl(var(--primary));
+  box-shadow: 0 1px 3px hsl(0 0% 0% / 0.1);
+  font-weight: 600;
+}
+
 /* ─── Animations ──────────────────────────────────────────────────────── */
 @keyframes docs-fade-in {
   from {

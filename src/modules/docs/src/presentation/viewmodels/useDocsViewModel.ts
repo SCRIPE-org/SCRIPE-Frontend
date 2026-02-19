@@ -6,19 +6,29 @@ import type { DocCategory } from "../../domain/entities/DocCategory";
 import type { HeadingSection } from "../../domain/entities/DocSection";
 import type { SearchResult } from "../../domain/interfaces/IDocsRepository";
 import type { DocPage } from "../../domain/entities/DocPage";
+import type { DocsMode } from "./useDocsModeViewModel";
 
 /**
  * Orchestrator ViewModel for a single docs page.
  * Composes all data needed by DocsPageView.
+ * Filters navigation by mode (technical vs commercial).
  */
-export function useDocsViewModel(slug: string) {
+export function useDocsViewModel(slug: string, mode: DocsMode = "technical") {
   const repo = docsContainer.docsRepository;
 
   // ─── Page Data ──────────────────────────────────────────────
   const page: DocPage | undefined = useMemo(() => repo.getPage(slug), [slug, repo]);
 
   // ─── Navigation ─────────────────────────────────────────────
-  const categories: DocCategory[] = useMemo(() => repo.getNavigation(), [repo]);
+  const allCategories: DocCategory[] = useMemo(() => repo.getNavigation(), [repo]);
+
+  // Filter categories by mode: commercial categories use 'commercial-' prefix
+  const categories: DocCategory[] = useMemo(() => {
+    return allCategories.filter((cat) => {
+      const isCommercial = cat.id.startsWith("commercial-");
+      return mode === "commercial" ? isCommercial : !isCommercial;
+    });
+  }, [allCategories, mode]);
 
   // ─── Category info for breadcrumb ───────────────────────────
   const categoryInfo = useMemo(() => {
@@ -27,8 +37,14 @@ export function useDocsViewModel(slug: string) {
         return { id: cat.id, titleKey: cat.titleKey };
       }
     }
+    // Fallback: check all categories (cross-mode)
+    for (const cat of allCategories) {
+      if (cat.findBySlug(slug)) {
+        return { id: cat.id, titleKey: cat.titleKey };
+      }
+    }
     return { id: "", titleKey: "" };
-  }, [categories, slug]);
+  }, [categories, allCategories, slug]);
 
   // ─── Headings for TOC ──────────────────────────────────────
   const headings: HeadingSection[] = useMemo(() => {

@@ -4,6 +4,7 @@ import { useDocsViewModel } from "../viewmodels/useDocsViewModel";
 import { useSidebarViewModel } from "../viewmodels/useSidebarViewModel";
 import { useSearchViewModel } from "../viewmodels/useSearchViewModel";
 import { useTocViewModel } from "../viewmodels/useTocViewModel";
+import { useDocsModeViewModel } from "../viewmodels/useDocsModeViewModel";
 import { useDocsI18n } from "../providers/DocsI18nProvider";
 
 // Layout components
@@ -36,7 +37,8 @@ interface DocsPageViewProps {
  */
 export function DocsPageView({ slug }: DocsPageViewProps) {
   const { t, direction } = useDocsI18n();
-  const vm = useDocsViewModel(slug);
+  const docsMode = useDocsModeViewModel();
+  const vm = useDocsViewModel(slug, docsMode.mode);
   const sidebar = useSidebarViewModel();
   const search = useSearchViewModel(vm.search);
   const toc = useTocViewModel(vm.headingIds);
@@ -44,7 +46,12 @@ export function DocsPageView({ slug }: DocsPageViewProps) {
   if (vm.isNotFound) {
     return (
       <div className="docs-root" dir={direction}>
-        <DocsHeader onSearchOpen={search.openSearch} onMobileMenuOpen={sidebar.openMobileMenu} />
+        <DocsHeader
+          onSearchOpen={search.openSearch}
+          onMobileMenuOpen={sidebar.openMobileMenu}
+          docsMode={docsMode.mode}
+          onDocsModeChange={docsMode.setMode}
+        />
         <div className="docs-wrapper">
           <DocsSidebar categories={vm.categories} activeSlug={slug} />
           <div className="docs-content-wrapper">
@@ -72,7 +79,12 @@ export function DocsPageView({ slug }: DocsPageViewProps) {
   return (
     <div className="docs-root" dir={direction}>
       <ReadingProgress />
-      <DocsHeader onSearchOpen={search.openSearch} onMobileMenuOpen={sidebar.openMobileMenu} />
+      <DocsHeader
+        onSearchOpen={search.openSearch}
+        onMobileMenuOpen={sidebar.openMobileMenu}
+        docsMode={docsMode.mode}
+        onDocsModeChange={docsMode.setMode}
+      />
 
       <div className="docs-wrapper">
         <DocsSidebar categories={vm.categories} activeSlug={slug} />

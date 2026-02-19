@@ -8,6 +8,8 @@ import { ApiTable } from "./ApiTable";
 import { InfoBlock } from "./InfoBlock";
 import { StepGuide } from "./StepGuide";
 import { TabGroup } from "./TabGroup";
+import { ComparisonBlock } from "./ComparisonBlock";
+import { FeatureGrid } from "./FeatureGrid";
 
 interface DocContentProps {
   sections: DocSection[];
@@ -152,6 +154,18 @@ export function DocContent({ sections }: DocContentProps) {
                   </figcaption>
                 )}
               </figure>
+            );
+
+          case "comparison":
+            return <ComparisonBlock key={key} columns={section.columns} />;
+
+          case "feature-grid":
+            return (
+              <FeatureGrid
+                key={key}
+                items={section.items}
+                columns={section.columns}
+              />
             );
 
           default:

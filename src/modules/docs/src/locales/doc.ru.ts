@@ -1,9 +1,9 @@
 /**
  * Russian locale for the Documentation Portal.
  */
-import type { DocTranslations } from "./doc.en";
+import type { PartialDocTranslations } from "./doc.en";
 
-export const docRu: DocTranslations = {
+export const docRu: PartialDocTranslations = {
   common: {
     search: "Поиск по документации...",
     searchPlaceholder: "Введите для поиска...",
