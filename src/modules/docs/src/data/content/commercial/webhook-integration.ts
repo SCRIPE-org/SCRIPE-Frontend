@@ -80,12 +80,12 @@ X-Webhook-Timestamp: 2026-02-20T12:00:00Z
       {
             type: "api-table",
             endpoints: [
-                  { method: "GET", path: "/api/webhooks", description: "List subscriptions", auth: "Required", permission: "Webhooks.View" },
-                  { method: "POST", path: "/api/webhooks", description: "Create subscription", auth: "Required", permission: "Webhooks.Create" },
-                  { method: "PUT", path: "/api/webhooks/{id}", description: "Update subscription", auth: "Required", permission: "Webhooks.Update" },
-                  { method: "DELETE", path: "/api/webhooks/{id}", description: "Delete subscription", auth: "Required", permission: "Webhooks.Delete" },
-                  { method: "POST", path: "/api/webhooks/{id}/test", description: "Send test event", auth: "Required", permission: "Webhooks.View" },
-                  { method: "GET", path: "/api/webhooks/{id}/logs", description: "View delivery logs", auth: "Required", permission: "Webhooks.View" },
+                  { method: "GET", path: "/api/webhooks", descriptionKey: "List subscriptions", auth: "Required", permission: "Webhooks.View" },
+                  { method: "POST", path: "/api/webhooks", descriptionKey: "Create subscription", auth: "Required", permission: "Webhooks.Create" },
+                  { method: "PUT", path: "/api/webhooks/{id}", descriptionKey: "Update subscription", auth: "Required", permission: "Webhooks.Update" },
+                  { method: "DELETE", path: "/api/webhooks/{id}", descriptionKey: "Delete subscription", auth: "Required", permission: "Webhooks.Delete" },
+                  { method: "POST", path: "/api/webhooks/{id}/test", descriptionKey: "Send test event", auth: "Required", permission: "Webhooks.View" },
+                  { method: "GET", path: "/api/webhooks/{id}/logs", descriptionKey: "View delivery logs", auth: "Required", permission: "Webhooks.View" },
             ],
       },
 ];

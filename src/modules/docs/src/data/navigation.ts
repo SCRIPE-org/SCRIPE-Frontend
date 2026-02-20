@@ -42,6 +42,10 @@ export const navigationData: DocCategoryData[] = [
       { id: "arch-solid", titleKey: "architecture.solidPattern.title", slug: "architecture/solid-pattern", order: 6 },
       { id: "arch-state", titleKey: "architecture.stateManagement.title", slug: "architecture/state-management", order: 7 },
       { id: "arch-data-flow", titleKey: "architecture.dataFlow.title", slug: "architecture/data-flow", order: 8 },
+      { id: "arch-domain-model", titleKey: "architecture.domainModel.title", slug: "architecture/domain-model", order: 9 },
+      { id: "arch-domain-events", titleKey: "architecture.domainEvents.title", slug: "architecture/domain-events", order: 10 },
+      { id: "arch-cqrs-pipeline", titleKey: "architecture.cqrsPipeline.title", slug: "architecture/cqrs-pipeline", order: 11 },
+      { id: "arch-di", titleKey: "architecture.dependencyInjection.title", slug: "architecture/dependency-injection", order: 12 },
     ],
   },
 
@@ -76,6 +80,11 @@ export const navigationData: DocCategoryData[] = [
     order: 4,
     items: [
       { id: "sec-overview", titleKey: "security.overview.title", slug: "security/overview", order: 1 },
+      { id: "sec-auth-deep", titleKey: "security.authDeep.title", slug: "security/authentication-deep", order: 2 },
+      { id: "sec-data-prot", titleKey: "security.dataProtection.title", slug: "security/data-protection", order: 3 },
+      { id: "sec-api", titleKey: "security.apiSecurity.title", slug: "security/api-security", order: 4 },
+      { id: "sec-middleware", titleKey: "security.middlewarePipeline.title", slug: "security/middleware-pipeline", order: 5 },
+      { id: "sec-audit", titleKey: "security.auditCompliance.title", slug: "security/audit-compliance", order: 6 },
     ],
   },
 
@@ -87,6 +96,55 @@ export const navigationData: DocCategoryData[] = [
     order: 5,
     items: [
       { id: "api-overview", titleKey: "apiReference.overview.title", slug: "api-reference/overview", order: 1 },
+      { id: "api-auth", titleKey: "apiReference.authenticationApi.title", slug: "api-reference/authentication-api", order: 2 },
+      { id: "api-user-auth", titleKey: "apiReference.userAuthApi.title", slug: "api-reference/user-auth-api", order: 3 },
+      { id: "api-admin", titleKey: "apiReference.adminApi.title", slug: "api-reference/admin-api", order: 4 },
+      { id: "api-tenant", titleKey: "apiReference.tenantApi.title", slug: "api-reference/tenant-api", order: 5 },
+      { id: "api-role-perm", titleKey: "apiReference.rolePermissionApi.title", slug: "api-reference/role-permission-api", order: 6 },
+      { id: "api-webhook-email", titleKey: "apiReference.webhookEmailApi.title", slug: "api-reference/webhook-email-api", order: 7 },
+      { id: "api-system", titleKey: "apiReference.systemApi.title", slug: "api-reference/system-api", order: 8 },
+    ],
+  },
+
+  // ─── Frontend Modules ────────────────────────────────────────
+  {
+    id: "frontend",
+    titleKey: "nav.frontend",
+    icon: "monitor",
+    order: 6,
+    items: [
+      { id: "fe-crud", titleKey: "frontend.crudSystem.title", slug: "frontend/crud-system", order: 1 },
+      { id: "fe-state", titleKey: "frontend.stateManagement.title", slug: "frontend/state-management", order: 2 },
+      { id: "fe-localization", titleKey: "frontend.localization.title", slug: "frontend/localization", order: 3 },
+      { id: "fe-forms", titleKey: "frontend.formValidation.title", slug: "frontend/form-validation", order: 4 },
+      { id: "fe-components", titleKey: "frontend.componentLibrary.title", slug: "frontend/component-library", order: 5 },
+      { id: "fe-realtime", titleKey: "frontend.realtime.title", slug: "frontend/realtime", order: 6 },
+    ],
+  },
+
+  // ─── Infrastructure ──────────────────────────────────────────
+  {
+    id: "infrastructure",
+    titleKey: "nav.infrastructure",
+    icon: "server",
+    order: 7,
+    items: [
+      { id: "infra-jobs", titleKey: "infrastructure.backgroundJobs.title", slug: "infrastructure/background-jobs", order: 1 },
+      { id: "infra-storage", titleKey: "infrastructure.fileStorage.title", slug: "infrastructure/file-storage", order: 2 },
+      { id: "infra-resilience", titleKey: "infrastructure.resilience.title", slug: "infrastructure/resilience", order: 3 },
+      { id: "infra-gateway", titleKey: "infrastructure.gatewayDeployment.title", slug: "infrastructure/gateway-deployment", order: 4 },
+    ],
+  },
+
+  // ─── Tutorials ───────────────────────────────────────────────
+  {
+    id: "tutorials",
+    titleKey: "nav.tutorials",
+    icon: "book-open",
+    order: 8,
+    items: [
+      { id: "tut-frontend", titleKey: "tutorials.addModule.title", slug: "tutorials/add-module", order: 1 },
+      { id: "tut-backend", titleKey: "tutorials.addBackendModule.title", slug: "tutorials/add-backend-module", order: 2 },
     ],
   },
 

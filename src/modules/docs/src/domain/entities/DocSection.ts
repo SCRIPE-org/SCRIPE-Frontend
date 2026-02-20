@@ -22,7 +22,7 @@ export interface FlowConnection {
 export interface ApiEndpoint {
   method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
   path: string;
-  description: string;
+  descriptionKey: string;
   auth: string;
   permission?: string;
 }

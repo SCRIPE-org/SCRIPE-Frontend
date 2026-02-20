@@ -70,11 +70,11 @@ const sections: DocSection[] = [
       {
             type: "api-table",
             endpoints: [
-                  { method: "GET", path: "/api/templates", description: "List all templates", auth: "Required", permission: "Templates.View" },
-                  { method: "GET", path: "/api/templates/{key}", description: "Get template by key", auth: "Required", permission: "Templates.View" },
-                  { method: "PUT", path: "/api/templates/{id}", description: "Update template content", auth: "Required", permission: "Templates.Update" },
-                  { method: "POST", path: "/api/templates/preview", description: "Preview rendered output", auth: "Required", permission: "Templates.View" },
-                  { method: "POST", path: "/api/templates/reset/{key}", description: "Reset to default", auth: "Required", permission: "Templates.Update" },
+                  { method: "GET", path: "/api/templates", descriptionKey: "List all templates", auth: "Required", permission: "Templates.View" },
+                  { method: "GET", path: "/api/templates/{key}", descriptionKey: "Get template by key", auth: "Required", permission: "Templates.View" },
+                  { method: "PUT", path: "/api/templates/{id}", descriptionKey: "Update template content", auth: "Required", permission: "Templates.Update" },
+                  { method: "POST", path: "/api/templates/preview", descriptionKey: "Preview rendered output", auth: "Required", permission: "Templates.View" },
+                  { method: "POST", path: "/api/templates/reset/{key}", descriptionKey: "Reset to default", auth: "Required", permission: "Templates.Update" },
             ],
       },
 ];

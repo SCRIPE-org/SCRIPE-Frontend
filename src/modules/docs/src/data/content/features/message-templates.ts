@@ -1,8 +1,8 @@
-import { registerPage } from "../../repositories/DocsRepository";
+﻿import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-      // ─── Template Architecture ──────────────────────────
+      // â”€â”€â”€ Template Architecture â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 2, titleKey: "features.messageTemplates.architectureTitle", id: "architecture" },
       { type: "paragraph", contentKey: "features.messageTemplates.architectureIntro" },
       {
@@ -30,7 +30,7 @@ const sections: DocSection[] = [
             ],
       },
 
-      // ─── Scriban Syntax ─────────────────────────────────
+      // â”€â”€â”€ Scriban Syntax â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 2, titleKey: "features.messageTemplates.syntaxTitle", id: "syntax" },
       {
             type: "code",
@@ -41,7 +41,7 @@ Hello {{ admin.name }},
 
 <!-- Conditional content -->
 {{ if admin.is_protected }}
-⚠️ You are the super admin for {{ tenant.name }}.
+âš ï¸ You are the super admin for {{ tenant.name }}.
 {{ end }}
 
 <!-- Loops -->
@@ -54,7 +54,7 @@ Created: {{ created_at | date.to_string "%B %d, %Y" }}
 Amount: {{ amount | math.format "0.00" }}`,
       },
 
-      // ─── Built-in Templates ─────────────────────────────
+      // â”€â”€â”€ Built-in Templates â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 2, titleKey: "features.messageTemplates.builtInTitle", id: "built-in" },
       {
             type: "table",
@@ -69,7 +69,7 @@ Amount: {{ amount | math.format "0.00" }}`,
             ],
       },
 
-      // ─── Template Entity ────────────────────────────────
+      // â”€â”€â”€ Template Entity â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 2, titleKey: "features.messageTemplates.entityTitle", id: "entity" },
       {
             type: "code",
@@ -99,7 +99,7 @@ Amount: {{ amount | math.format "0.00" }}`,
 }`,
       },
 
-      // ─── Template Renderer ──────────────────────────────
+      // â”€â”€â”€ Template Renderer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 2, titleKey: "features.messageTemplates.rendererTitle", id: "renderer" },
       {
             type: "code",
@@ -126,21 +126,21 @@ Amount: {{ amount | math.format "0.00" }}`,
 }`,
       },
 
-      // ─── Controller Endpoints ───────────────────────────
+      // â”€â”€â”€ Controller Endpoints â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 2, titleKey: "features.messageTemplates.endpointsTitle", id: "endpoints" },
       {
             type: "api-table",
             endpoints: [
-                  { method: "GET", path: "/message-templates", description: "List all templates", auth: "JWT", permission: "templates.view" },
-                  { method: "GET", path: "/message-templates/{id}", description: "Get template detail", auth: "JWT", permission: "templates.view" },
-                  { method: "POST", path: "/message-templates", description: "Create custom template", auth: "JWT", permission: "templates.create" },
-                  { method: "PUT", path: "/message-templates/{id}", description: "Update template", auth: "JWT", permission: "templates.edit" },
-                  { method: "DELETE", path: "/message-templates/{id}", description: "Delete (non-system only)", auth: "JWT", permission: "templates.delete" },
-                  { method: "POST", path: "/message-templates/{id}/preview", description: "Render with sample data", auth: "JWT", permission: "templates.view" },
+                  { method: "GET", path: "/message-templates", descriptionKey: "List all templates", auth: "JWT", permission: "templates.view" },
+                  { method: "GET", path: "/message-templates/{id}", descriptionKey: "Get template detail", auth: "JWT", permission: "templates.view" },
+                  { method: "POST", path: "/message-templates", descriptionKey: "Create custom template", auth: "JWT", permission: "templates.create" },
+                  { method: "PUT", path: "/message-templates/{id}", descriptionKey: "Update template", auth: "JWT", permission: "templates.edit" },
+                  { method: "DELETE", path: "/message-templates/{id}", descriptionKey: "Delete (non-system only)", auth: "JWT", permission: "templates.delete" },
+                  { method: "POST", path: "/message-templates/{id}/preview", descriptionKey: "Render with sample data", auth: "JWT", permission: "templates.view" },
             ],
       },
 
-      // ─── Preview Feature ────────────────────────────────
+      // â”€â”€â”€ Preview Feature â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 2, titleKey: "features.messageTemplates.previewTitle", id: "preview" },
       { type: "paragraph", contentKey: "features.messageTemplates.previewIntro" },
       {

@@ -1,10 +1,10 @@
-import { registerPage } from "../../repositories/DocsRepository";
+﻿import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
       { type: "paragraph", contentKey: "features.authentication.intro" },
 
-      // ─── Auth Flow ────────────────────────────────────────
+      // â”€â”€â”€ Auth Flow â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       {
             type: "heading", level: 2,
             titleKey: "features.authentication.flowTitle", id: "auth-flow",
@@ -34,7 +34,7 @@ const sections: DocSection[] = [
             ],
       },
 
-      // ─── JWT Config ───────────────────────────────────────
+      // â”€â”€â”€ JWT Config â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       {
             type: "heading", level: 2,
             titleKey: "features.authentication.jwtTitle", id: "jwt-config",
@@ -71,7 +71,7 @@ var token = new JwtSecurityToken(
             highlightLines: [3, 4, 5],
       },
 
-      // ─── Dual Auth ────────────────────────────────────────
+      // â”€â”€â”€ Dual Auth â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       {
             type: "heading", level: 2,
             titleKey: "features.authentication.dualAuthTitle", id: "dual-auth",
@@ -91,7 +91,7 @@ var token = new JwtSecurityToken(
             ],
       },
 
-      // ─── Admin Entity ─────────────────────────────────────
+      // â”€â”€â”€ Admin Entity â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       {
             type: "heading", level: 2,
             titleKey: "features.authentication.adminEntityTitle", id: "admin-entity",
@@ -103,7 +103,7 @@ var token = new JwtSecurityToken(
             rows: [
                   ["IsSuperAdmin", "bool", "System-level access, bypasses tenant scoping"],
                   ["IsProtected", "bool", "Cannot be deleted, deactivated, or demoted (Guardian enforced)"],
-                  ["IsLastSuperAdminInTenant", "bool (cached)", "Safety flag — blocks deletion/deactivation if true"],
+                  ["IsLastSuperAdminInTenant", "bool (cached)", "Safety flag â€” blocks deletion/deactivation if true"],
                   ["PasswordLastChanged", "DateTime?", "Checked against TenantSettings.PasswordExpiryDays for rotation enforcement"],
                   ["UsernameLastChanged", "DateTime?", "30-day cooldown on username changes"],
                   ["TwoFactorEnabled", "bool", "Whether 2FA is active for this admin"],
@@ -116,7 +116,7 @@ var token = new JwtSecurityToken(
             ],
       },
 
-      // ─── 2FA Deep ─────────────────────────────────────────
+      // â”€â”€â”€ 2FA Deep â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       {
             type: "heading", level: 2,
             titleKey: "features.authentication.twoFactorTitle", id: "two-factor",
@@ -130,7 +130,7 @@ var token = new JwtSecurityToken(
 if (admin.LastTwoFactorCodeUsed == code &&
     admin.LastTwoFactorCodeUsedAt?.AddMinutes(1) > DateTime.UtcNow)
 {
-    // Same code used within 1 minute — replay attack!
+    // Same code used within 1 minute â€” replay attack!
     return Result.Failure("2FA code already used");
 }
 
@@ -156,7 +156,7 @@ admin.LastTwoFactorCodeUsedAt = DateTime.UtcNow;`,
             highlightLines: [2, 3, 17, 25, 26],
       },
 
-      // ─── Password Policy ──────────────────────────────────
+      // â”€â”€â”€ Password Policy â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       {
             type: "heading", level: 2,
             titleKey: "features.authentication.passwordPolicyTitle", id: "password-policy",
@@ -177,7 +177,7 @@ admin.LastTwoFactorCodeUsedAt = DateTime.UtcNow;`,
             ],
       },
 
-      // ─── Admin Auth Endpoints ─────────────────────────────
+      // â”€â”€â”€ Admin Auth Endpoints â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       {
             type: "heading", level: 2,
             titleKey: "features.authentication.endpointsAdminTitle", id: "admin-auth-endpoints",
@@ -185,18 +185,18 @@ admin.LastTwoFactorCodeUsedAt = DateTime.UtcNow;`,
       {
             type: "api-table",
             endpoints: [
-                  { method: "POST", path: "/api/v1/admin-auth/login", description: "Username + password login", auth: "Public" },
-                  { method: "POST", path: "/api/v1/admin-auth/refresh", description: "Rotate refresh token", auth: "Refresh Token" },
-                  { method: "POST", path: "/api/v1/admin-auth/verify-2fa", description: "Verify TOTP code or backup code", auth: "2FA Token" },
-                  { method: "POST", path: "/api/v1/admin-auth/logout", description: "Revoke current refresh token", auth: "JWT" },
-                  { method: "GET", path: "/api/v1/admin-auth/me", description: "Current admin profile + roles", auth: "JWT" },
-                  { method: "POST", path: "/api/v1/admin-auth/enable-2fa", description: "Generate TOTP secret + QR code", auth: "JWT" },
-                  { method: "POST", path: "/api/v1/admin-auth/disable-2fa", description: "Disable 2FA (requires current code)", auth: "JWT" },
-                  { method: "POST", path: "/api/v1/admin-auth/regenerate-backup-codes", description: "Generate new set of backup codes", auth: "JWT" },
+                  { method: "POST", path: "/api/v1/admin-auth/login", descriptionKey: "Username + password login", auth: "Public" },
+                  { method: "POST", path: "/api/v1/admin-auth/refresh", descriptionKey: "Rotate refresh token", auth: "Refresh Token" },
+                  { method: "POST", path: "/api/v1/admin-auth/verify-2fa", descriptionKey: "Verify TOTP code or backup code", auth: "2FA Token" },
+                  { method: "POST", path: "/api/v1/admin-auth/logout", descriptionKey: "Revoke current refresh token", auth: "JWT" },
+                  { method: "GET", path: "/api/v1/admin-auth/me", descriptionKey: "Current admin profile + roles", auth: "JWT" },
+                  { method: "POST", path: "/api/v1/admin-auth/enable-2fa", descriptionKey: "Generate TOTP secret + QR code", auth: "JWT" },
+                  { method: "POST", path: "/api/v1/admin-auth/disable-2fa", descriptionKey: "Disable 2FA (requires current code)", auth: "JWT" },
+                  { method: "POST", path: "/api/v1/admin-auth/regenerate-backup-codes", descriptionKey: "Generate new set of backup codes", auth: "JWT" },
             ],
       },
 
-      // ─── User Auth Endpoints ──────────────────────────────
+      // â”€â”€â”€ User Auth Endpoints â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       {
             type: "heading", level: 2,
             titleKey: "features.authentication.endpointsUserTitle", id: "user-auth-endpoints",
@@ -204,19 +204,19 @@ admin.LastTwoFactorCodeUsedAt = DateTime.UtcNow;`,
       {
             type: "api-table",
             endpoints: [
-                  { method: "POST", path: "/api/v1/user-auth/register", description: "Self-registration", auth: "Public" },
-                  { method: "POST", path: "/api/v1/user-auth/login", description: "Email/phone + password login", auth: "Public" },
-                  { method: "POST", path: "/api/v1/user-auth/refresh", description: "Rotate refresh token", auth: "Refresh Token" },
-                  { method: "POST", path: "/api/v1/user-auth/logout", description: "Revoke current session", auth: "JWT" },
-                  { method: "GET", path: "/api/v1/user-auth/me", description: "Current user profile", auth: "JWT" },
-                  { method: "POST", path: "/api/v1/user-auth/verify-email", description: "Verify email via OTP", auth: "Public" },
-                  { method: "POST", path: "/api/v1/user-auth/verify-phone", description: "Verify phone via OTP", auth: "Public" },
-                  { method: "POST", path: "/api/v1/user-auth/forgot-password", description: "Send password reset OTP", auth: "Public" },
-                  { method: "POST", path: "/api/v1/user-auth/reset-password", description: "Reset password with OTP", auth: "Public" },
+                  { method: "POST", path: "/api/v1/user-auth/register", descriptionKey: "Self-registration", auth: "Public" },
+                  { method: "POST", path: "/api/v1/user-auth/login", descriptionKey: "Email/phone + password login", auth: "Public" },
+                  { method: "POST", path: "/api/v1/user-auth/refresh", descriptionKey: "Rotate refresh token", auth: "Refresh Token" },
+                  { method: "POST", path: "/api/v1/user-auth/logout", descriptionKey: "Revoke current session", auth: "JWT" },
+                  { method: "GET", path: "/api/v1/user-auth/me", descriptionKey: "Current user profile", auth: "JWT" },
+                  { method: "POST", path: "/api/v1/user-auth/verify-email", descriptionKey: "Verify email via OTP", auth: "Public" },
+                  { method: "POST", path: "/api/v1/user-auth/verify-phone", descriptionKey: "Verify phone via OTP", auth: "Public" },
+                  { method: "POST", path: "/api/v1/user-auth/forgot-password", descriptionKey: "Send password reset OTP", auth: "Public" },
+                  { method: "POST", path: "/api/v1/user-auth/reset-password", descriptionKey: "Reset password with OTP", auth: "Public" },
             ],
       },
 
-      // ─── Rate Limiting ────────────────────────────────────
+      // â”€â”€â”€ Rate Limiting â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       {
             type: "heading", level: 2,
             titleKey: "features.authentication.rateLimitingTitle", id: "rate-limiting",

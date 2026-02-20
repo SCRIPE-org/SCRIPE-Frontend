@@ -1,8 +1,8 @@
-import { registerPage } from "../../repositories/DocsRepository";
+﻿import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-      // ─── Architecture ───────────────────────────────────
+      // â”€â”€â”€ Architecture â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 2, titleKey: "features.menuSystem.architectureTitle", id: "architecture" },
       { type: "paragraph", contentKey: "features.menuSystem.architectureIntro" },
       {
@@ -26,7 +26,7 @@ const sections: DocSection[] = [
             ],
       },
 
-      // ─── MenuItem Entity ────────────────────────────────
+      // â”€â”€â”€ MenuItem Entity â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 2, titleKey: "features.menuSystem.entityTitle", id: "entity" },
       {
             type: "code",
@@ -51,10 +51,10 @@ const sections: DocSection[] = [
     
     public int Order { get; set; }             // Sort position within parent
     
-    public Guid? ParentMenuItemId { get; set; } // Self-referencing FK → tree
+    public Guid? ParentMenuItemId { get; set; } // Self-referencing FK â†’ tree
     
     [MaxLength(100)]
-    public string? Resource { get; set; }      // Permission resource e.g. "admins" → checks "admins.view"
+    public string? Resource { get; set; }      // Permission resource e.g. "admins" â†’ checks "admins.view"
     
     [MaxLength(2000)]
     public string? TenantScopeJson { get; set; } // null = all tenants, ["id1","id2"] = specific
@@ -69,25 +69,25 @@ const sections: DocSection[] = [
 }`,
       },
 
-      // ─── Controller Endpoints ───────────────────────────
+      // â”€â”€â”€ Controller Endpoints â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 2, titleKey: "features.menuSystem.endpointsTitle", id: "endpoints" },
       {
             type: "api-table",
             endpoints: [
-                  { method: "GET", path: "/menus", description: "Get ALL menu items as admin tree (includes inactive)", auth: "JWT", permission: "menus.view" },
-                  { method: "GET", path: "/menus/my", description: "Get filtered menu for current admin (based on permissions & tenant)", auth: "JWT" },
-                  { method: "GET", path: "/menus/my/overrides", description: "Get current admin's menu overrides", auth: "JWT" },
-                  { method: "POST", path: "/menus", description: "Create new menu item", auth: "JWT", permission: "menus.create" },
-                  { method: "PUT", path: "/menus/{id}", description: "Update menu item", auth: "JWT", permission: "menus.edit" },
-                  { method: "DELETE", path: "/menus/{id}", description: "Soft-delete menu item", auth: "JWT", permission: "menus.delete" },
-                  { method: "PUT", path: "/menus/reorder", description: "Drag-drop reorder (bulk update Order + ParentMenuItemId)", auth: "JWT", permission: "menus.edit" },
-                  { method: "PUT", path: "/menus/{id}/role-visibility", description: "Set which roles can see this item", auth: "JWT", permission: "menus.edit" },
-                  { method: "POST", path: "/menus/overrides", description: "Save personal/tenant override", auth: "JWT" },
-                  { method: "DELETE", path: "/menus/overrides/{id}", description: "Delete override", auth: "JWT" },
+                  { method: "GET", path: "/menus", descriptionKey: "Get ALL menu items as admin tree (includes inactive)", auth: "JWT", permission: "menus.view" },
+                  { method: "GET", path: "/menus/my", descriptionKey: "Get filtered menu for current admin (based on permissions & tenant)", auth: "JWT" },
+                  { method: "GET", path: "/menus/my/overrides", descriptionKey: "Get current admin's menu overrides", auth: "JWT" },
+                  { method: "POST", path: "/menus", descriptionKey: "Create new menu item", auth: "JWT", permission: "menus.create" },
+                  { method: "PUT", path: "/menus/{id}", descriptionKey: "Update menu item", auth: "JWT", permission: "menus.edit" },
+                  { method: "DELETE", path: "/menus/{id}", descriptionKey: "Soft-delete menu item", auth: "JWT", permission: "menus.delete" },
+                  { method: "PUT", path: "/menus/reorder", descriptionKey: "Drag-drop reorder (bulk update Order + ParentMenuItemId)", auth: "JWT", permission: "menus.edit" },
+                  { method: "PUT", path: "/menus/{id}/role-visibility", descriptionKey: "Set which roles can see this item", auth: "JWT", permission: "menus.edit" },
+                  { method: "POST", path: "/menus/overrides", descriptionKey: "Save personal/tenant override", auth: "JWT" },
+                  { method: "DELETE", path: "/menus/overrides/{id}", descriptionKey: "Delete override", auth: "JWT" },
             ],
       },
 
-      // ─── Filtering Pipeline ─────────────────────────────
+      // â”€â”€â”€ Filtering Pipeline â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 2, titleKey: "features.menuSystem.filteringTitle", id: "filtering" },
       { type: "paragraph", contentKey: "features.menuSystem.filteringIntro" },
       {
@@ -98,7 +98,7 @@ const sections: DocSection[] = [
                   { id: "all", label: "All MenuItems", type: "default" },
                   { id: "active", label: "Filter: IsDeleted = false", type: "info" },
                   { id: "tenant", label: "Filter: TenantScopeJson matches admin's tenant", type: "info" },
-                  { id: "perm", label: "Filter: Resource — admin has {resource}.view", type: "success" },
+                  { id: "perm", label: "Filter: Resource â€” admin has {resource}.view", type: "success" },
                   { id: "role", label: "Filter: RoleMenuItem IsVisible for admin's roles", type: "success" },
                   { id: "override", label: "Apply: TenantMenuOverride", type: "warning" },
                   { id: "tree", label: "Build: Tree structure", type: "primary" },
@@ -113,7 +113,7 @@ const sections: DocSection[] = [
             ],
       },
 
-      // ─── Override System ────────────────────────────────
+      // â”€â”€â”€ Override System â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 2, titleKey: "features.menuSystem.overrideTitle", id: "overrides" },
       {
             type: "table",
@@ -125,13 +125,13 @@ const sections: DocSection[] = [
       },
       { type: "paragraph", contentKey: "features.menuSystem.overrideNote" },
 
-      // ─── Drag-Drop Reorder ──────────────────────────────
+      // â”€â”€â”€ Drag-Drop Reorder â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 2, titleKey: "features.menuSystem.reorderTitle", id: "reorder" },
       {
             type: "code",
             language: "csharp",
             filename: "MenusController.cs",
-            code: `// PUT /menus/reorder — batch update
+            code: `// PUT /menus/reorder â€” batch update
 // Request body: [{ menuItemId, newOrder, newParentId }, ...]
 // Updates both Order AND ParentMenuItemId in a single transaction
 // Enables full tree restructuring via drag-drop UI`,

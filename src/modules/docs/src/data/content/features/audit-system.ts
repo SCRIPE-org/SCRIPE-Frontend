@@ -1,10 +1,10 @@
-import { registerPage } from "../../repositories/DocsRepository";
+﻿import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
       { type: "paragraph", contentKey: "features.auditSystem.intro" },
 
-      // ─── Architecture ─────────────────────────────────────
+      // â”€â”€â”€ Architecture â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       {
             type: "heading", level: 2,
             titleKey: "features.auditSystem.architectureTitle", id: "architecture",
@@ -32,7 +32,7 @@ const sections: DocSection[] = [
             ],
       },
 
-      // ─── Event Types ──────────────────────────────────────
+      // â”€â”€â”€ Event Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       {
             type: "heading", level: 2,
             titleKey: "features.auditSystem.eventTypesTitle", id: "event-types",
@@ -156,7 +156,7 @@ const sections: DocSection[] = [
             ],
       },
 
-      // ─── Guardian Events ──────────────────────────────────
+      // â”€â”€â”€ Guardian Events â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       {
             type: "heading", level: 2,
             titleKey: "features.auditSystem.guardianTitle", id: "guardian",
@@ -167,7 +167,7 @@ const sections: DocSection[] = [
             headers: ["Guardian Event", "Blocked Action", "Why It's Blocked"],
             rows: [
                   ["GuardianAdminDeleteBlocked", "Deleting last super admin", "Tenant would be orphaned with no admin access"],
-                  ["GuardianTransferBlocked", "Transferring last super admin out", "Same as above — no admin left in source tenant"],
+                  ["GuardianTransferBlocked", "Transferring last super admin out", "Same as above â€” no admin left in source tenant"],
                   ["GuardianDemoteBlocked", "Removing super admin role from last holder", "Tenant needs at least one super admin"],
                   ["GuardianDeactivateBlocked", "Deactivating last super admin", "All remaining admins need active super admin"],
                   ["GuardianRoleDeleteBlocked", "Deleting a system/super-admin role", "System roles are protected from deletion"],
@@ -181,7 +181,7 @@ const sections: DocSection[] = [
             contentKey: "features.auditSystem.guardianIntro",
       },
 
-      // ─── Service Methods ──────────────────────────────────
+      // â”€â”€â”€ Service Methods â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       {
             type: "heading", level: 2,
             titleKey: "features.auditSystem.serviceMethodsTitle", id: "service-methods",
@@ -213,7 +213,7 @@ const sections: DocSection[] = [
             highlightLines: [4, 7, 10, 14, 18],
       },
 
-      // ─── Real-Time Broadcasting ───────────────────────────
+      // â”€â”€â”€ Real-Time Broadcasting â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       {
             type: "heading", level: 2,
             titleKey: "features.auditSystem.realTimeTitle", id: "real-time",
@@ -222,7 +222,7 @@ const sections: DocSection[] = [
       {
             type: "code",
             language: "csharp",
-            filename: "AuditHub — SignalR Broadcasting",
+            filename: "AuditHub â€” SignalR Broadcasting",
             code: `// In AuditService.BroadcastAuditEventAsync:
 await _hubContext.Clients
     .Group($"tenant-{tenantId}")     // Tenant-scoped group
@@ -242,14 +242,14 @@ await _hubContext.Clients
             highlightLines: [3, 15],
       },
 
-      // ─── Export ───────────────────────────────────────────
+      // â”€â”€â”€ Export â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       {
             type: "heading", level: 2,
             titleKey: "features.auditSystem.exportTitle", id: "export",
       },
       { type: "paragraph", contentKey: "features.auditSystem.exportIntro" },
 
-      // ─── API Endpoints ────────────────────────────────────
+      // â”€â”€â”€ API Endpoints â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       {
             type: "heading", level: 2,
             titleKey: "features.auditSystem.endpointsTitle", id: "endpoints",
@@ -257,12 +257,12 @@ await _hubContext.Clients
       {
             type: "api-table",
             endpoints: [
-                  { method: "GET", path: "/api/v1/audit-logs", description: "Paginated list with filters (event type, date, admin, tenant)", auth: "audit.read" },
-                  { method: "GET", path: "/api/v1/audit-logs/{id}", description: "Single log detail with full metadata", auth: "audit.read" },
-                  { method: "GET", path: "/api/v1/audit-logs/stats", description: "Aggregate statistics by event type", auth: "audit.read" },
-                  { method: "GET", path: "/api/v1/audit-logs/export", description: "CSV/PDF export of filtered logs", auth: "audit.export" },
-                  { method: "GET", path: "/api/v1/audit-logs/event-types", description: "List all available event types", auth: "audit.read" },
-                  { method: "DELETE", path: "/api/v1/audit-logs/purge", description: "Purge logs older than retention period", auth: "audit.purge" },
+                  { method: "GET", path: "/api/v1/audit-logs", descriptionKey: "Paginated list with filters (event type, date, admin, tenant)", auth: "audit.read" },
+                  { method: "GET", path: "/api/v1/audit-logs/{id}", descriptionKey: "Single log detail with full metadata", auth: "audit.read" },
+                  { method: "GET", path: "/api/v1/audit-logs/stats", descriptionKey: "Aggregate statistics by event type", auth: "audit.read" },
+                  { method: "GET", path: "/api/v1/audit-logs/export", descriptionKey: "CSV/PDF export of filtered logs", auth: "audit.export" },
+                  { method: "GET", path: "/api/v1/audit-logs/event-types", descriptionKey: "List all available event types", auth: "audit.read" },
+                  { method: "DELETE", path: "/api/v1/audit-logs/purge", descriptionKey: "Purge logs older than retention period", auth: "audit.purge" },
             ],
       },
 

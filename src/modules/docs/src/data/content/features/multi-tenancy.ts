@@ -1,4 +1,4 @@
-import { registerPage } from "../../repositories/DocsRepository";
+﻿import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
@@ -33,7 +33,7 @@ const sections: DocSection[] = [
             ],
       },
 
-      // ─── Hierarchy ─────────────────────────────────────────
+      // â”€â”€â”€ Hierarchy â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       {
             type: "heading", level: 2,
             titleKey: "features.multiTenancy.hierarchyTitle", id: "hierarchy",
@@ -42,7 +42,7 @@ const sections: DocSection[] = [
       {
             type: "code",
             language: "csharp",
-            filename: "Tenant.cs — Hierarchy Fields",
+            filename: "Tenant.cs â€” Hierarchy Fields",
             code: `public class Tenant : AuditableEntity<Guid>
 {
     [Required] [MaxLength(200)]
@@ -51,7 +51,7 @@ const sections: DocSection[] = [
     [Required] [MaxLength(50)]
     public string Code { get; set; } = null!;
 
-    public Guid? ParentTenantId { get; set; }     // Self-ref FK → tree
+    public Guid? ParentTenantId { get; set; }     // Self-ref FK â†’ tree
 
     public int HierarchyLevel { get; set; }        // 0 = root, 1 = child, 2 = grandchild...
 
@@ -84,7 +84,7 @@ const sections: DocSection[] = [
             ],
       },
 
-      // ─── Tenant Features Grid ─────────────────────────────
+      // â”€â”€â”€ Tenant Features Grid â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       {
             type: "heading", level: 2,
             titleKey: "features.multiTenancy.featuresTitle", id: "features",
@@ -102,7 +102,7 @@ const sections: DocSection[] = [
             ],
       },
 
-      // ─── Tenant Settings ──────────────────────────────────
+      // â”€â”€â”€ Tenant Settings â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       {
             type: "heading", level: 2,
             titleKey: "features.multiTenancy.settingsTitle", id: "tenant-settings",
@@ -114,7 +114,7 @@ const sections: DocSection[] = [
                   {
                         label: "Quota Settings",
                         language: "csharp",
-                        code: `// TenantSettings.cs — Quota Group
+                        code: `// TenantSettings.cs â€” Quota Group
 public int MaxAdmins { get; set; } = -1;       // -1 = unlimited
 public int MaxRoles { get; set; } = -1;
 public int MaxSubTenants { get; set; } = -1;`,
@@ -122,7 +122,7 @@ public int MaxSubTenants { get; set; } = -1;`,
                   {
                         label: "Security Policy",
                         language: "csharp",
-                        code: `// TenantSettings.cs — Per-Tenant Password Policy
+                        code: `// TenantSettings.cs â€” Per-Tenant Password Policy
 public int MinPasswordLength { get; set; } = 8;
 public bool RequireUppercase { get; set; } = true;
 public bool RequireNumber { get; set; } = true;
@@ -139,14 +139,14 @@ public bool Require2FA { get; set; } = false;`,
                   {
                         label: "Audit Config",
                         language: "csharp",
-                        code: `// TenantSettings.cs — Audit Configuration
+                        code: `// TenantSettings.cs â€” Audit Configuration
 public int AuditRetentionDays { get; set; } = 365;  // 0 = forever
 public bool AuditEnabled { get; set; } = true;`,
                   },
                   {
                         label: "Branding",
                         language: "csharp",
-                        code: `// TenantSettings.cs — Custom Branding
+                        code: `// TenantSettings.cs â€” Custom Branding
 public string? LogoUrl { get; set; }           // Tenant logo path
 public string? PrimaryColor { get; set; }      // Hex color code
 public string? CompanyName { get; set; }       // Display name`,
@@ -154,7 +154,7 @@ public string? CompanyName { get; set; }       // Display name`,
             ],
       },
 
-      // ─── Auto-Role Creation ───────────────────────────────
+      // â”€â”€â”€ Auto-Role Creation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       {
             type: "heading", level: 2,
             titleKey: "features.multiTenancy.autoRoleTitle", id: "auto-role",
@@ -169,7 +169,7 @@ public string? CompanyName { get; set; }       // Display name`,
             ],
       },
 
-      // ─── Cascade Delete ───────────────────────────────────
+      // â”€â”€â”€ Cascade Delete â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       {
             type: "heading", level: 2,
             titleKey: "features.multiTenancy.cascadeDeleteTitle", id: "cascade-delete",
@@ -181,7 +181,7 @@ public string? CompanyName { get; set; }       // Display name`,
             contentKey: "features.multiTenancy.cascadeDeleteIntro",
       },
 
-      // ─── Permission Inheritance ───────────────────────────
+      // â”€â”€â”€ Permission Inheritance â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       {
             type: "heading", level: 2,
             titleKey: "features.multiTenancy.permissionInheritanceTitle", id: "permission-inheritance",
@@ -206,7 +206,7 @@ public string? CompanyName { get; set; }       // Display name`,
             ],
       },
 
-      // ─── CRUD Endpoints ───────────────────────────────────
+      // â”€â”€â”€ CRUD Endpoints â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       {
             type: "heading", level: 2,
             titleKey: "features.multiTenancy.endpointsCrudTitle", id: "crud-endpoints",
@@ -214,16 +214,16 @@ public string? CompanyName { get; set; }       // Display name`,
       {
             type: "api-table",
             endpoints: [
-                  { method: "GET", path: "/api/v1/tenants", description: "Paginated list with search, sorting", auth: "tenants.view" },
-                  { method: "GET", path: "/api/v1/tenants/{id}", description: "Full tenant detail with settings", auth: "tenants.view" },
-                  { method: "POST", path: "/api/v1/tenants", description: "Create tenant (auto-creates 2 roles)", auth: "tenants.create" },
-                  { method: "PUT", path: "/api/v1/tenants/{id}", description: "Update name, code, description", auth: "tenants.edit" },
-                  { method: "DELETE", path: "/api/v1/tenants/{id}", description: "Soft-delete (cascade requires tenants.cascade_delete)", auth: "tenants.delete" },
-                  { method: "PUT", path: "/api/v1/tenants/{id}/logo", description: "Upload tenant branding logo", auth: "tenants.edit" },
+                  { method: "GET", path: "/api/v1/tenants", descriptionKey: "Paginated list with search, sorting", auth: "tenants.view" },
+                  { method: "GET", path: "/api/v1/tenants/{id}", descriptionKey: "Full tenant detail with settings", auth: "tenants.view" },
+                  { method: "POST", path: "/api/v1/tenants", descriptionKey: "Create tenant (auto-creates 2 roles)", auth: "tenants.create" },
+                  { method: "PUT", path: "/api/v1/tenants/{id}", descriptionKey: "Update name, code, description", auth: "tenants.edit" },
+                  { method: "DELETE", path: "/api/v1/tenants/{id}", descriptionKey: "Soft-delete (cascade requires tenants.cascade_delete)", auth: "tenants.delete" },
+                  { method: "PUT", path: "/api/v1/tenants/{id}/logo", descriptionKey: "Upload tenant branding logo", auth: "tenants.edit" },
             ],
       },
 
-      // ─── Hierarchy Endpoints ──────────────────────────────
+      // â”€â”€â”€ Hierarchy Endpoints â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       {
             type: "heading", level: 2,
             titleKey: "features.multiTenancy.endpointsHierarchyTitle", id: "hierarchy-endpoints",
@@ -231,15 +231,15 @@ public string? CompanyName { get; set; }       // Display name`,
       {
             type: "api-table",
             endpoints: [
-                  { method: "GET", path: "/api/v1/tenants/hierarchy", description: "Full tree structure with levels", auth: "tenants.view" },
-                  { method: "GET", path: "/api/v1/tenants/my-children", description: "Direct children of current user's tenant", auth: "tenants.view" },
-                  { method: "GET", path: "/api/v1/tenants/my-tenant-and-children", description: "Current tenant + children (for admin transfer dialog)", auth: "JWT" },
-                  { method: "GET", path: "/api/v1/tenants/{id}/children", description: "Sub-tenants tab drill-down", auth: "tenants.view" },
-                  { method: "GET", path: "/api/v1/tenants/{id}/descendant-count", description: "Cascade delete warning count", auth: "tenants.delete" },
+                  { method: "GET", path: "/api/v1/tenants/hierarchy", descriptionKey: "Full tree structure with levels", auth: "tenants.view" },
+                  { method: "GET", path: "/api/v1/tenants/my-children", descriptionKey: "Direct children of current user's tenant", auth: "tenants.view" },
+                  { method: "GET", path: "/api/v1/tenants/my-tenant-and-children", descriptionKey: "Current tenant + children (for admin transfer dialog)", auth: "JWT" },
+                  { method: "GET", path: "/api/v1/tenants/{id}/children", descriptionKey: "Sub-tenants tab drill-down", auth: "tenants.view" },
+                  { method: "GET", path: "/api/v1/tenants/{id}/descendant-count", descriptionKey: "Cascade delete warning count", auth: "tenants.delete" },
             ],
       },
 
-      // ─── Settings Endpoints ───────────────────────────────
+      // â”€â”€â”€ Settings Endpoints â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       {
             type: "heading", level: 2,
             titleKey: "features.multiTenancy.endpointsSettingsTitle", id: "settings-endpoints",
@@ -247,15 +247,15 @@ public string? CompanyName { get; set; }       // Display name`,
       {
             type: "api-table",
             endpoints: [
-                  { method: "GET", path: "/api/v1/tenants/my-settings", description: "Get current user's tenant settings", auth: "JWT" },
-                  { method: "PUT", path: "/api/v1/tenants/my-settings", description: "Update own tenant settings", auth: "tenants.settings" },
-                  { method: "GET", path: "/api/v1/tenants/{id}/settings", description: "Admin view of any tenant's settings", auth: "tenants.view" },
-                  { method: "PUT", path: "/api/v1/tenants/{id}/settings", description: "Admin update of any tenant's settings", auth: "tenants.settings" },
-                  { method: "GET", path: "/api/v1/tenants/{id}/stats", description: "Dashboard KPI statistics per tenant", auth: "tenants.view" },
+                  { method: "GET", path: "/api/v1/tenants/my-settings", descriptionKey: "Get current user's tenant settings", auth: "JWT" },
+                  { method: "PUT", path: "/api/v1/tenants/my-settings", descriptionKey: "Update own tenant settings", auth: "tenants.settings" },
+                  { method: "GET", path: "/api/v1/tenants/{id}/settings", descriptionKey: "Admin view of any tenant's settings", auth: "tenants.view" },
+                  { method: "PUT", path: "/api/v1/tenants/{id}/settings", descriptionKey: "Admin update of any tenant's settings", auth: "tenants.settings" },
+                  { method: "GET", path: "/api/v1/tenants/{id}/stats", descriptionKey: "Dashboard KPI statistics per tenant", auth: "tenants.view" },
             ],
       },
 
-      // ─── Permission Endpoints ─────────────────────────────
+      // â”€â”€â”€ Permission Endpoints â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       {
             type: "heading", level: 2,
             titleKey: "features.multiTenancy.endpointsPermissionsTitle", id: "permission-endpoints",
@@ -263,13 +263,13 @@ public string? CompanyName { get; set; }       // Display name`,
       {
             type: "api-table",
             endpoints: [
-                  { method: "GET", path: "/api/v1/tenants/creation-permissions", description: "Available permissions for new tenant (filtered by parent)", auth: "tenants.create" },
-                  { method: "GET", path: "/api/v1/tenants/{id}/permissions", description: "Permission pool for role assignment", auth: "tenants.view" },
-                  { method: "PUT", path: "/api/v1/tenants/{id}/permissions", description: "Update tenant's permission pool", auth: "tenants.settings" },
+                  { method: "GET", path: "/api/v1/tenants/creation-permissions", descriptionKey: "Available permissions for new tenant (filtered by parent)", auth: "tenants.create" },
+                  { method: "GET", path: "/api/v1/tenants/{id}/permissions", descriptionKey: "Permission pool for role assignment", auth: "tenants.view" },
+                  { method: "PUT", path: "/api/v1/tenants/{id}/permissions", descriptionKey: "Update tenant's permission pool", auth: "tenants.settings" },
             ],
       },
 
-      // ─── Drill-Down Endpoints ─────────────────────────────
+      // â”€â”€â”€ Drill-Down Endpoints â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       {
             type: "heading", level: 2,
             titleKey: "features.multiTenancy.endpointsDrilldownTitle", id: "drilldown-endpoints",
@@ -277,8 +277,8 @@ public string? CompanyName { get; set; }       // Display name`,
       {
             type: "api-table",
             endpoints: [
-                  { method: "GET", path: "/api/v1/tenants/{id}/admins", description: "List admins in this tenant", auth: "tenants.view" },
-                  { method: "GET", path: "/api/v1/tenants/{id}/roles", description: "List roles in this tenant", auth: "tenants.view" },
+                  { method: "GET", path: "/api/v1/tenants/{id}/admins", descriptionKey: "List admins in this tenant", auth: "tenants.view" },
+                  { method: "GET", path: "/api/v1/tenants/{id}/roles", descriptionKey: "List roles in this tenant", auth: "tenants.view" },
             ],
       },
 

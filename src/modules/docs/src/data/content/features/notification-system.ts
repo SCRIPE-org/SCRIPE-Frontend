@@ -1,8 +1,8 @@
-import { registerPage } from "../../repositories/DocsRepository";
+﻿import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-      // ─── Architecture ───────────────────────────────────
+      // â”€â”€â”€ Architecture â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 2, titleKey: "features.notificationSystem.architectureTitle", id: "architecture" },
       { type: "paragraph", contentKey: "features.notificationSystem.architectureIntro" },
       {
@@ -24,7 +24,7 @@ const sections: DocSection[] = [
             ],
       },
 
-      // ─── NotificationHub ────────────────────────────────
+      // â”€â”€â”€ NotificationHub â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 2, titleKey: "features.notificationSystem.hubTitle", id: "hub" },
       { type: "paragraph", contentKey: "features.notificationSystem.hubIntro" },
       {
@@ -49,7 +49,7 @@ const sections: DocSection[] = [
 }`,
       },
 
-      // ─── Auto-Join Pattern ──────────────────────────────
+      // â”€â”€â”€ Auto-Join Pattern â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 3, titleKey: "features.notificationSystem.autoJoinTitle", id: "auto-join" },
       {
             type: "list",
@@ -57,11 +57,11 @@ const sections: DocSection[] = [
             items: [
                   "No client-side group management needed",
                   "Notifications are targeted to specific users",
-                  "User can have multiple connections (tabs) — all receive the notification",
+                  "User can have multiple connections (tabs) â€” all receive the notification",
             ],
       },
 
-      // ─── Hub Client Interface ───────────────────────────
+      // â”€â”€â”€ Hub Client Interface â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 2, titleKey: "features.notificationSystem.clientInterfaceTitle", id: "client-interface" },
       {
             type: "code",
@@ -74,7 +74,7 @@ const sections: DocSection[] = [
 }`,
       },
 
-      // ─── NotificationService Methods ────────────────────
+      // â”€â”€â”€ NotificationService Methods â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 2, titleKey: "features.notificationSystem.serviceTitle", id: "service" },
       {
             type: "table",
@@ -88,16 +88,16 @@ const sections: DocSection[] = [
             ],
       },
 
-      // ─── Controller Endpoints ───────────────────────────
+      // â”€â”€â”€ Controller Endpoints â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 2, titleKey: "features.notificationSystem.endpointsTitle", id: "endpoints" },
       {
             type: "api-table",
             endpoints: [
-                  { method: "GET", path: "/api/notifications", description: "List notifications (paginated)", auth: "JWT" },
-                  { method: "GET", path: "/api/notifications/unread-count", description: "Get unread count", auth: "JWT" },
-                  { method: "PUT", path: "/api/notifications/{id}/read", description: "Mark as read", auth: "JWT" },
-                  { method: "PUT", path: "/api/notifications/read-all", description: "Mark all as read", auth: "JWT" },
-                  { method: "DELETE", path: "/api/notifications/{id}", description: "Delete notification", auth: "JWT" },
+                  { method: "GET", path: "/api/notifications", descriptionKey: "List notifications (paginated)", auth: "JWT" },
+                  { method: "GET", path: "/api/notifications/unread-count", descriptionKey: "Get unread count", auth: "JWT" },
+                  { method: "PUT", path: "/api/notifications/{id}/read", descriptionKey: "Mark as read", auth: "JWT" },
+                  { method: "PUT", path: "/api/notifications/read-all", descriptionKey: "Mark all as read", auth: "JWT" },
+                  { method: "DELETE", path: "/api/notifications/{id}", descriptionKey: "Delete notification", auth: "JWT" },
             ],
       },
 ];

@@ -32,7 +32,7 @@ export function ApiTable({ endpoints }: ApiTableProps) {
               <td>
                 <code className="docs-api-path">{ep.path}</code>
               </td>
-              <td>{ep.description}</td>
+              <td>{t(ep.descriptionKey)}</td>
               <td>
                 <span className="docs-auth-badge" data-auth={ep.auth}>
                   {ep.auth ? <>🔒 {t("api.authRequired")}</> : <>🌐 {t("api.noAuth")}</>}

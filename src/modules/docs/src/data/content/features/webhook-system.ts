@@ -1,8 +1,8 @@
-import { registerPage } from "../../repositories/DocsRepository";
+﻿import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-      // ─── Architecture ───────────────────────────────────
+      // â”€â”€â”€ Architecture â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 2, titleKey: "features.webhookSystem.architectureTitle", id: "architecture" },
       { type: "paragraph", contentKey: "features.webhookSystem.architectureIntro" },
       {
@@ -12,7 +12,7 @@ const sections: DocSection[] = [
             nodes: [
                   { id: "event", label: "Domain Event", type: "default" },
                   { id: "whs", label: "WebhookService", type: "primary" },
-                  { id: "db", label: "Match event → active subscriptions", type: "info" },
+                  { id: "db", label: "Match event â†’ active subscriptions", type: "info" },
                   { id: "sign", label: "HMAC-SHA256 Sign Payload", type: "success" },
                   { id: "send", label: "HTTP POST to subscriber URL", type: "warning" },
                   { id: "log", label: "Log delivery attempt", type: "success" },
@@ -30,7 +30,7 @@ const sections: DocSection[] = [
             ],
       },
 
-      // ─── Entity ─────────────────────────────────────────
+      // â”€â”€â”€ Entity â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 2, titleKey: "features.webhookSystem.entityTitle", id: "entity" },
       {
             type: "code",
@@ -64,7 +64,7 @@ const sections: DocSection[] = [
             highlightLines: [10, 11, 16, 19, 20],
       },
 
-      // ─── HMAC Signing ───────────────────────────────────
+      // â”€â”€â”€ HMAC Signing â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 2, titleKey: "features.webhookSystem.hmacTitle", id: "hmac" },
       { type: "paragraph", contentKey: "features.webhookSystem.hmacIntro" },
       {
@@ -78,7 +78,7 @@ var signature = Convert.ToBase64String(hash);
 
 // HTTP Headers sent:
 // X-Webhook-Signature: {signature}
-// X-Webhook-Signature-Old: {signatureWithOldSecret}  ← During rotation
+// X-Webhook-Signature-Old: {signatureWithOldSecret}  â† During rotation
 // X-Webhook-Event: {eventType}
 // X-Webhook-Delivery-Id: {deliveryId}
 
@@ -91,7 +91,7 @@ bool isValid = computedSignature == request.Headers["X-Webhook-Signature"];`,
             highlightLines: [8, 9, 10],
       },
 
-      // ─── Secret Rotation ────────────────────────────────
+      // â”€â”€â”€ Secret Rotation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 2, titleKey: "features.webhookSystem.secretRotationTitle", id: "secret-rotation" },
       { type: "paragraph", contentKey: "features.webhookSystem.secretRotationIntro" },
       {
@@ -101,7 +101,7 @@ bool isValid = computedSignature == request.Headers["X-Webhook-Signature"];`,
             nodes: [
                   { id: "rotate", label: "POST /webhooks/{id}/rotate-secret", type: "primary" },
                   { id: "new", label: "New Secret generated", type: "success" },
-                  { id: "old", label: "Old Secret → PreviousSecret", type: "warning" },
+                  { id: "old", label: "Old Secret â†’ PreviousSecret", type: "warning" },
                   { id: "grace", label: "PreviousSecretExpiresAt = Now + 24h", type: "info" },
                   { id: "dual", label: "Dual-sign payloads (24h)", type: "default" },
                   { id: "expire", label: "PreviousSecret = null", type: "danger" },
@@ -115,7 +115,7 @@ bool isValid = computedSignature == request.Headers["X-Webhook-Signature"];`,
             ],
       },
 
-      // ─── Tenant Hierarchy ───────────────────────────────
+      // â”€â”€â”€ Tenant Hierarchy â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 2, titleKey: "features.webhookSystem.includeChildrenTitle", id: "include-children" },
       { type: "paragraph", contentKey: "features.webhookSystem.includeChildrenIntro" },
       {
@@ -127,7 +127,7 @@ bool isValid = computedSignature == request.Headers["X-Webhook-Signature"];`,
             ],
       },
 
-      // ─── Circuit Breaker ────────────────────────────────
+      // â”€â”€â”€ Circuit Breaker â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 2, titleKey: "features.webhookSystem.circuitBreakerTitle", id: "circuit-breaker" },
       { type: "paragraph", contentKey: "features.webhookSystem.circuitBreakerIntro" },
       {
@@ -151,7 +151,7 @@ bool isValid = computedSignature == request.Headers["X-Webhook-Signature"];`,
             ],
       },
 
-      // ─── Retry Policy ──────────────────────────────────
+      // â”€â”€â”€ Retry Policy â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 2, titleKey: "features.webhookSystem.retryTitle", id: "retry" },
       { type: "paragraph", contentKey: "features.webhookSystem.retryIntro" },
       {
@@ -166,7 +166,7 @@ bool isValid = computedSignature == request.Headers["X-Webhook-Signature"];`,
             ],
       },
 
-      // ─── Delivery Logs ─────────────────────────────────
+      // â”€â”€â”€ Delivery Logs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 2, titleKey: "features.webhookSystem.deliveryLogsTitle", id: "delivery-logs" },
       { type: "paragraph", contentKey: "features.webhookSystem.deliveryLogsIntro" },
       {
@@ -187,7 +187,7 @@ bool isValid = computedSignature == request.Headers["X-Webhook-Signature"];`,
             highlightLines: [5, 6, 9],
       },
 
-      // ─── Events ────────────────────────────────────────
+      // â”€â”€â”€ Events â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 2, titleKey: "features.webhookSystem.eventsTitle", id: "events" },
       {
             type: "table",
@@ -205,29 +205,29 @@ bool isValid = computedSignature == request.Headers["X-Webhook-Signature"];`,
             ],
       },
 
-      // ─── Subscription Management Endpoints ────────────
+      // â”€â”€â”€ Subscription Management Endpoints â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 2, titleKey: "features.webhookSystem.endpointsManagementTitle", id: "management-endpoints" },
       {
             type: "api-table",
             endpoints: [
-                  { method: "GET", path: "/api/v1/webhooks", description: "List subscriptions (tenant-scoped)", auth: "webhooks.view" },
-                  { method: "GET", path: "/api/v1/webhooks/{id}", description: "Get subscription detail", auth: "webhooks.view" },
-                  { method: "POST", path: "/api/v1/webhooks", description: "Create subscription (with IncludeChildren, MaxRetries, MaxConsecutiveFailures)", auth: "webhooks.create" },
-                  { method: "PUT", path: "/api/v1/webhooks/{id}", description: "Update subscription URL, events, settings", auth: "webhooks.edit" },
-                  { method: "DELETE", path: "/api/v1/webhooks/{id}", description: "Delete subscription", auth: "webhooks.delete" },
+                  { method: "GET", path: "/api/v1/webhooks", descriptionKey: "List subscriptions (tenant-scoped)", auth: "webhooks.view" },
+                  { method: "GET", path: "/api/v1/webhooks/{id}", descriptionKey: "Get subscription detail", auth: "webhooks.view" },
+                  { method: "POST", path: "/api/v1/webhooks", descriptionKey: "Create subscription (with IncludeChildren, MaxRetries, MaxConsecutiveFailures)", auth: "webhooks.create" },
+                  { method: "PUT", path: "/api/v1/webhooks/{id}", descriptionKey: "Update subscription URL, events, settings", auth: "webhooks.edit" },
+                  { method: "DELETE", path: "/api/v1/webhooks/{id}", descriptionKey: "Delete subscription", auth: "webhooks.delete" },
             ],
       },
 
-      // ─── Operations Endpoints ─────────────────────────
+      // â”€â”€â”€ Operations Endpoints â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 2, titleKey: "features.webhookSystem.endpointsOperationsTitle", id: "operations-endpoints" },
       {
             type: "api-table",
             endpoints: [
-                  { method: "POST", path: "/api/v1/webhooks/{id}/rotate-secret", description: "HMAC rotation with 24h grace period", auth: "webhooks.edit" },
-                  { method: "PUT", path: "/api/v1/webhooks/{id}/toggle", description: "Activate/deactivate subscription", auth: "webhooks.edit" },
-                  { method: "POST", path: "/api/v1/webhooks/{id}/test", description: "Send test ping payload", auth: "webhooks.edit" },
-                  { method: "GET", path: "/api/v1/webhooks/{id}/delivery-logs", description: "Paginated delivery history with status filter", auth: "webhooks.view" },
-                  { method: "GET", path: "/api/v1/webhooks/available-events", description: "Catalog of all subscribable event types", auth: "webhooks.view" },
+                  { method: "POST", path: "/api/v1/webhooks/{id}/rotate-secret", descriptionKey: "HMAC rotation with 24h grace period", auth: "webhooks.edit" },
+                  { method: "PUT", path: "/api/v1/webhooks/{id}/toggle", descriptionKey: "Activate/deactivate subscription", auth: "webhooks.edit" },
+                  { method: "POST", path: "/api/v1/webhooks/{id}/test", descriptionKey: "Send test ping payload", auth: "webhooks.edit" },
+                  { method: "GET", path: "/api/v1/webhooks/{id}/delivery-logs", descriptionKey: "Paginated delivery history with status filter", auth: "webhooks.view" },
+                  { method: "GET", path: "/api/v1/webhooks/available-events", descriptionKey: "Catalog of all subscribable event types", auth: "webhooks.view" },
             ],
       },
 ];

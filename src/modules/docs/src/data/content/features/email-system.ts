@@ -1,8 +1,8 @@
-import { registerPage } from "../../repositories/DocsRepository";
+﻿import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-      // ─── Pipeline Architecture ──────────────────────────
+      // â”€â”€â”€ Pipeline Architecture â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 2, titleKey: "features.emailSystem.pipelineTitle", id: "pipeline" },
       { type: "paragraph", contentKey: "features.emailSystem.pipelineIntro" },
       {
@@ -37,23 +37,23 @@ const sections: DocSection[] = [
             ],
       },
 
-      // ─── Controller Endpoints ───────────────────────────
+      // â”€â”€â”€ Controller Endpoints â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 2, titleKey: "features.emailSystem.endpointsTitle", id: "endpoints" },
       {
             type: "api-table",
             endpoints: [
-                  { method: "POST", path: "/emails/send", description: "Send manual email → queued", auth: "JWT", permission: "emails.create" },
-                  { method: "POST", path: "/emails/send-bulk", description: "Send to multiple recipients", auth: "JWT", permission: "emails.create" },
-                  { method: "GET", path: "/emails/search-recipients", description: "Autocomplete for admin/user selection", auth: "JWT", permission: "emails.view" },
-                  { method: "GET", path: "/emails/sent", description: "Paginated sent history (filter: status, date range, search)", auth: "JWT", permission: "emails.view" },
-                  { method: "GET", path: "/emails/{id}", description: "Single sent email detail", auth: "JWT", permission: "emails.view" },
-                  { method: "GET", path: "/emails/statistics", description: "Totals by status + time-based counts", auth: "JWT", permission: "emails.view" },
-                  { method: "POST", path: "/emails/{id}/resend", description: "Re-queue a failed/sent email", auth: "JWT", permission: "emails.create" },
-                  { method: "DELETE", path: "/emails/{id}", description: "Cancel pending email (soft-delete)", auth: "JWT", permission: "emails.create" },
+                  { method: "POST", path: "/emails/send", descriptionKey: "Send manual email â†’ queued", auth: "JWT", permission: "emails.create" },
+                  { method: "POST", path: "/emails/send-bulk", descriptionKey: "Send to multiple recipients", auth: "JWT", permission: "emails.create" },
+                  { method: "GET", path: "/emails/search-recipients", descriptionKey: "Autocomplete for admin/user selection", auth: "JWT", permission: "emails.view" },
+                  { method: "GET", path: "/emails/sent", descriptionKey: "Paginated sent history (filter: status, date range, search)", auth: "JWT", permission: "emails.view" },
+                  { method: "GET", path: "/emails/{id}", descriptionKey: "Single sent email detail", auth: "JWT", permission: "emails.view" },
+                  { method: "GET", path: "/emails/statistics", descriptionKey: "Totals by status + time-based counts", auth: "JWT", permission: "emails.view" },
+                  { method: "POST", path: "/emails/{id}/resend", descriptionKey: "Re-queue a failed/sent email", auth: "JWT", permission: "emails.create" },
+                  { method: "DELETE", path: "/emails/{id}", descriptionKey: "Cancel pending email (soft-delete)", auth: "JWT", permission: "emails.create" },
             ],
       },
 
-      // ─── Queue Implementations ──────────────────────────
+      // â”€â”€â”€ Queue Implementations â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 2, titleKey: "features.emailSystem.queueTitle", id: "queue" },
       { type: "heading", level: 3, titleKey: "features.emailSystem.inMemoryTitle", id: "in-memory" },
       {
@@ -74,11 +74,11 @@ var message = await _channel.Reader.ReadAsync(stoppingToken);`,
             type: "code",
             language: "csharp",
             filename: "HangfireEmailQueue.cs",
-            code: `// Enqueues as a Hangfire background job — survives app restarts
+            code: `// Enqueues as a Hangfire background job â€” survives app restarts
 BackgroundJob.Enqueue<IEmailSender>(sender => sender.SendEmailAsync(to, subject, body, ...));`,
       },
 
-      // ─── Sender Implementations ─────────────────────────
+      // â”€â”€â”€ Sender Implementations â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 2, titleKey: "features.emailSystem.sendersTitle", id: "senders" },
       {
             type: "table",
@@ -91,13 +91,13 @@ BackgroundJob.Enqueue<IEmailSender>(sender => sender.SendEmailAsync(to, subject,
       },
       { type: "info", variant: "note", contentKey: "features.emailSystem.senderNote" },
 
-      // ─── Background Worker Pattern ──────────────────────
+      // â”€â”€â”€ Background Worker Pattern â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 2, titleKey: "features.emailSystem.workerTitle", id: "worker" },
       {
             type: "code",
             language: "csharp",
             filename: "EmailQueueWorker.cs",
-            code: `// EmailQueueWorker — infinite loop processing
+            code: `// EmailQueueWorker â€” infinite loop processing
 protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 {
     while (!stoppingToken.IsCancellationRequested)
@@ -118,7 +118,7 @@ protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 }`,
       },
 
-      // ─── Error Handling ─────────────────────────────────
+      // â”€â”€â”€ Error Handling â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 2, titleKey: "features.emailSystem.errorTitle", id: "errors" },
       {
             type: "list",
@@ -131,7 +131,7 @@ protected override async Task ExecuteAsync(CancellationToken stoppingToken)
             ],
       },
 
-      // ─── HTML Sanitizer ─────────────────────────────────
+      // â”€â”€â”€ HTML Sanitizer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 2, titleKey: "features.emailSystem.sanitizerTitle", id: "sanitizer" },
       { type: "paragraph", contentKey: "features.emailSystem.sanitizerIntro" },
       {

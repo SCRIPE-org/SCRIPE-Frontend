@@ -1,8 +1,8 @@
-import { registerPage } from "../../repositories/DocsRepository";
+﻿import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-      // ─── Architecture ───────────────────────────────────
+      // â”€â”€â”€ Architecture â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 2, titleKey: "features.downloadExport.architectureTitle", id: "architecture" },
       { type: "paragraph", contentKey: "features.downloadExport.architectureIntro" },
       {
@@ -14,9 +14,9 @@ const sections: DocSection[] = [
                   { id: "session-create", label: "POST /api/downloads/session (Returns sessionId)", type: "default" },
                   { id: "session-get", label: "GET /api/downloads/session/{sessionId} (No Auth)", type: "warning" },
                   { id: "ds", label: "DownloadService", type: "primary" },
-                  { id: "cache", label: "Cache: ETag check → 304", type: "info" },
-                  { id: "range", label: "Range: partial → 206", type: "info" },
-                  { id: "stream", label: "FileStream: 64KB buffer → 200", type: "success" },
+                  { id: "cache", label: "Cache: ETag check â†’ 304", type: "info" },
+                  { id: "range", label: "Range: partial â†’ 206", type: "info" },
+                  { id: "stream", label: "FileStream: 64KB buffer â†’ 200", type: "success" },
             ],
             connections: [
                   { from: "auth", to: "ds" },
@@ -28,18 +28,18 @@ const sections: DocSection[] = [
             ],
       },
 
-      // ─── Controller Endpoints ───────────────────────────
+      // â”€â”€â”€ Controller Endpoints â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 2, titleKey: "features.downloadExport.endpointsTitle", id: "endpoints" },
       {
             type: "api-table",
             endpoints: [
-                  { method: "GET", path: "/api/downloads/{*filePath}", description: "Download file (supports Range headers)", auth: "JWT" },
-                  { method: "POST", path: "/api/downloads/session", description: "Create temp download URL", auth: "JWT" },
-                  { method: "GET", path: "/api/downloads/session/{sessionId}", description: "Download via session (no auth required)", auth: "Public" },
+                  { method: "GET", path: "/api/downloads/{*filePath}", descriptionKey: "Download file (supports Range headers)", auth: "JWT" },
+                  { method: "POST", path: "/api/downloads/session", descriptionKey: "Create temp download URL", auth: "JWT" },
+                  { method: "GET", path: "/api/downloads/session/{sessionId}", descriptionKey: "Download via session (no auth required)", auth: "Public" },
             ],
       },
 
-      // ─── Resumable Downloads ────────────────────────────
+      // â”€â”€â”€ Resumable Downloads â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 2, titleKey: "features.downloadExport.resumableTitle", id: "resumable" },
       { type: "paragraph", contentKey: "features.downloadExport.resumableIntro" },
       {
@@ -55,7 +55,7 @@ private (long? Start, long? End) ParseRangeHeader(long fileSize)
     long? start = string.IsNullOrEmpty(parts[0]) ? null : long.Parse(parts[0]);
     long? end = string.IsNullOrEmpty(parts[1]) ? null : long.Parse(parts[1]);
 
-    // Handle suffix range (last N bytes): "bytes=-500" → last 500 bytes
+    // Handle suffix range (last N bytes): "bytes=-500" â†’ last 500 bytes
     if (!start.HasValue && end.HasValue)
     {
         start = fileSize - end.Value;
@@ -74,7 +74,7 @@ Content-Range: bytes 1024-2048/10240
 Accept-Ranges: bytes`,
       },
 
-      // ─── ETag Caching ───────────────────────────────────
+      // â”€â”€â”€ ETag Caching â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 2, titleKey: "features.downloadExport.etagTitle", id: "etag" },
       {
             type: "code",
@@ -90,7 +90,7 @@ private static string GenerateETag(FileInfo fileInfo)
       },
       { type: "paragraph", contentKey: "features.downloadExport.etagNote" },
 
-      // ─── Session-Based Downloads ────────────────────────
+      // â”€â”€â”€ Session-Based Downloads â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 2, titleKey: "features.downloadExport.sessionTitle", id: "session" },
       { type: "paragraph", contentKey: "features.downloadExport.sessionIntro" },
       {
@@ -112,7 +112,7 @@ private static string GenerateETag(FileInfo fileInfo)
       },
       { type: "info", variant: "warning", contentKey: "features.downloadExport.sessionWarning" },
 
-      // ─── Path Traversal Prevention ──────────────────────
+      // â”€â”€â”€ Path Traversal Prevention â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 2, titleKey: "features.downloadExport.pathTraversalTitle", id: "path-traversal" },
       {
             type: "code",
@@ -126,7 +126,7 @@ private static string GenerateETag(FileInfo fileInfo)
       },
       { type: "paragraph", contentKey: "features.downloadExport.pathTraversalNote" },
 
-      // ─── FileStream Configuration ───────────────────────
+      // â”€â”€â”€ FileStream Configuration â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 2, titleKey: "features.downloadExport.streamConfigTitle", id: "stream-config" },
       {
             type: "code",
@@ -137,7 +137,7 @@ private static string GenerateETag(FileInfo fileInfo)
     FileMode.Open,
     FileAccess.Read,
     FileShare.Read,      // Allow concurrent reads
-    bufferSize: 64 * 1024, // 64KB buffer (4× default)
+    bufferSize: 64 * 1024, // 64KB buffer (4Ã— default)
     useAsync: true         // Async I/O for non-blocking reads
 );`,
       },

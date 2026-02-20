@@ -64,14 +64,14 @@ const sections: DocSection[] = [
       {
             type: "api-table",
             endpoints: [
-                  { method: "POST", path: "/api/auth/login", description: "Authenticate user", auth: "Public" },
-                  { method: "POST", path: "/api/auth/refresh", description: "Refresh access token", auth: "Required" },
-                  { method: "POST", path: "/api/auth/logout", description: "Invalidate session", auth: "Required" },
-                  { method: "POST", path: "/api/auth/2fa/enable", description: "Enable 2FA", auth: "Required" },
-                  { method: "POST", path: "/api/auth/2fa/verify", description: "Verify 2FA code", auth: "Required" },
-                  { method: "POST", path: "/api/auth/forgot-password", description: "Request password reset", auth: "Public" },
-                  { method: "POST", path: "/api/auth/reset-password", description: "Complete password reset", auth: "Public" },
-                  { method: "GET", path: "/api/auth/sessions", description: "List active sessions", auth: "Required" },
+                  { method: "POST", path: "/api/auth/login", descriptionKey: "Authenticate user", auth: "Public" },
+                  { method: "POST", path: "/api/auth/refresh", descriptionKey: "Refresh access token", auth: "Required" },
+                  { method: "POST", path: "/api/auth/logout", descriptionKey: "Invalidate session", auth: "Required" },
+                  { method: "POST", path: "/api/auth/2fa/enable", descriptionKey: "Enable 2FA", auth: "Required" },
+                  { method: "POST", path: "/api/auth/2fa/verify", descriptionKey: "Verify 2FA code", auth: "Required" },
+                  { method: "POST", path: "/api/auth/forgot-password", descriptionKey: "Request password reset", auth: "Public" },
+                  { method: "POST", path: "/api/auth/reset-password", descriptionKey: "Complete password reset", auth: "Public" },
+                  { method: "GET", path: "/api/auth/sessions", descriptionKey: "List active sessions", auth: "Required" },
             ],
       },
 ];

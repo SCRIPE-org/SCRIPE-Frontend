@@ -1,10 +1,10 @@
-import { registerPage } from "../../repositories/DocsRepository";
+﻿import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
       { type: "paragraph", contentKey: "features.rolePermissions.intro" },
 
-      // ─── Permission Hierarchy ─────────────────────────────
+      // â”€â”€â”€ Permission Hierarchy â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       {
             type: "heading", level: 2,
             titleKey: "features.rolePermissions.hierarchyTitle", id: "hierarchy",
@@ -26,7 +26,7 @@ const sections: DocSection[] = [
             ],
       },
 
-      // ─── Permission System ────────────────────────────────
+      // â”€â”€â”€ Permission System â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       {
             type: "heading", level: 2,
             titleKey: "features.rolePermissions.systemTitle", id: "permission-system",
@@ -49,7 +49,7 @@ const sections: DocSection[] = [
             ],
       },
 
-      // ─── Scope Override ───────────────────────────────────
+      // â”€â”€â”€ Scope Override â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       {
             type: "heading", level: 2,
             titleKey: "features.rolePermissions.scopeOverrideTitle", id: "scope-override",
@@ -58,7 +58,7 @@ const sections: DocSection[] = [
       {
             type: "code",
             language: "csharp",
-            filename: "RolePermission.cs — Scope Override & Restricted Fields",
+            filename: "RolePermission.cs â€” Scope Override & Restricted Fields",
             code: `public class RolePermission : AuditableEntity<Guid>
 {
     public Guid RoleId { get; set; }
@@ -95,7 +95,7 @@ const sections: DocSection[] = [
             contentKey: "features.rolePermissions.scopeOverrideIntro",
       },
 
-      // ─── Authorization Pipeline ───────────────────────────
+      // â”€â”€â”€ Authorization Pipeline â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       {
             type: "heading", level: 2,
             titleKey: "features.rolePermissions.authPipelineTitle", id: "auth-pipeline",
@@ -142,7 +142,7 @@ const sections: DocSection[] = [
             ],
       },
 
-      // ─── Restricted Fields ────────────────────────────────
+      // â”€â”€â”€ Restricted Fields â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       {
             type: "heading", level: 2,
             titleKey: "features.rolePermissions.restrictedFieldsTitle", id: "restricted-fields",
@@ -163,14 +163,14 @@ const sections: DocSection[] = [
   "id": "abc-123",
   "name": "John Doe",
   "email": "john@example.com",
-  "salary": null,       // ← Restricted
-  "ssn": null,          // ← Restricted
-  "bankAccount": null   // ← Restricted
+  "salary": null,       // â† Restricted
+  "ssn": null,          // â† Restricted
+  "bankAccount": null   // â† Restricted
 }`,
             highlightLines: [3, 4, 11, 12, 13],
       },
 
-      // ─── Clone Role ───────────────────────────────────────
+      // â”€â”€â”€ Clone Role â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       {
             type: "heading", level: 2,
             titleKey: "features.rolePermissions.cloneRoleTitle", id: "clone-role",
@@ -183,7 +183,7 @@ const sections: DocSection[] = [
             nodes: [
                   { id: "admin", label: "Admin (has 40 permissions)", type: "primary" },
                   { id: "source", label: "Source Role (has 60 permissions)", type: "info" },
-                  { id: "intersect", label: "Intersection: 40 ∩ 60 = 35", type: "warning" },
+                  { id: "intersect", label: "Intersection: 40 âˆ© 60 = 35", type: "warning" },
                   { id: "clone", label: "Cloned Role (gets 35 permissions)", type: "success" },
             ],
             connections: [
@@ -193,7 +193,7 @@ const sections: DocSection[] = [
             ],
       },
 
-      // ─── Role Properties ──────────────────────────────────
+      // â”€â”€â”€ Role Properties â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       {
             type: "heading", level: 2,
             titleKey: "features.rolePermissions.rolePropertiesTitle", id: "role-properties",
@@ -208,14 +208,14 @@ const sections: DocSection[] = [
                   ["TenantId", "Guid", "Scoped to a specific tenant"],
                   ["IsSystem", "bool", "Seeded role, cannot be modified"],
                   ["IsDeletable", "bool", "System roles are protected from deletion"],
-                  ["IsPermissionLocked", "bool", "Super admin roles — permissions cannot be changed"],
+                  ["IsPermissionLocked", "bool", "Super admin roles â€” permissions cannot be changed"],
                   ["IsTenantSuperAdmin", "bool", "Exactly one per tenant, gets all tenant permissions"],
                   ["IsDefaultRole", "bool", "Automatically assigned to new users/admins"],
                   ["Priority", "int", "Lower = higher priority. Controls role hierarchy."],
             ],
       },
 
-      // ─── Role CRUD Endpoints ──────────────────────────────
+      // â”€â”€â”€ Role CRUD Endpoints â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       {
             type: "heading", level: 2,
             titleKey: "features.rolePermissions.endpointsTitle", id: "endpoints",
@@ -223,20 +223,20 @@ const sections: DocSection[] = [
       {
             type: "api-table",
             endpoints: [
-                  { method: "GET", path: "/api/v1/roles", description: "List all roles (data-scope aware)", auth: "roles.view" },
-                  { method: "GET", path: "/api/v1/roles/{id}", description: "Get role with permissions", auth: "roles.view" },
-                  { method: "GET", path: "/api/v1/roles/{id}/admin-count", description: "Count admins with this role (delete warning)", auth: "roles.view" },
-                  { method: "GET", path: "/api/v1/roles/{id}/permissions", description: "Get role's assigned permissions with scopes", auth: "roles.view" },
-                  { method: "POST", path: "/api/v1/roles", description: "Create new role (with TenantId)", auth: "roles.create" },
-                  { method: "PUT", path: "/api/v1/roles/{id}", description: "Update role details", auth: "roles.edit" },
-                  { method: "DELETE", path: "/api/v1/roles/{id}", description: "Delete role (if IsDeletable)", auth: "roles.delete" },
-                  { method: "PUT", path: "/api/v1/roles/{id}/permissions", description: "Assign permissions with scope overrides", auth: "roles.assign" },
-                  { method: "DELETE", path: "/api/v1/roles/{id}/permissions/{permId}", description: "Remove single permission from role", auth: "roles.assign" },
-                  { method: "POST", path: "/api/v1/roles/{id}/clone", description: "Clone role (anti-escalation)", auth: "roles.create" },
+                  { method: "GET", path: "/api/v1/roles", descriptionKey: "List all roles (data-scope aware)", auth: "roles.view" },
+                  { method: "GET", path: "/api/v1/roles/{id}", descriptionKey: "Get role with permissions", auth: "roles.view" },
+                  { method: "GET", path: "/api/v1/roles/{id}/admin-count", descriptionKey: "Count admins with this role (delete warning)", auth: "roles.view" },
+                  { method: "GET", path: "/api/v1/roles/{id}/permissions", descriptionKey: "Get role's assigned permissions with scopes", auth: "roles.view" },
+                  { method: "POST", path: "/api/v1/roles", descriptionKey: "Create new role (with TenantId)", auth: "roles.create" },
+                  { method: "PUT", path: "/api/v1/roles/{id}", descriptionKey: "Update role details", auth: "roles.edit" },
+                  { method: "DELETE", path: "/api/v1/roles/{id}", descriptionKey: "Delete role (if IsDeletable)", auth: "roles.delete" },
+                  { method: "PUT", path: "/api/v1/roles/{id}/permissions", descriptionKey: "Assign permissions with scope overrides", auth: "roles.assign" },
+                  { method: "DELETE", path: "/api/v1/roles/{id}/permissions/{permId}", descriptionKey: "Remove single permission from role", auth: "roles.assign" },
+                  { method: "POST", path: "/api/v1/roles/{id}/clone", descriptionKey: "Clone role (anti-escalation)", auth: "roles.create" },
             ],
       },
 
-      // ─── My Tenant Endpoints ──────────────────────────────
+      // â”€â”€â”€ My Tenant Endpoints â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       {
             type: "heading", level: 2,
             titleKey: "features.rolePermissions.endpointsMyTenantTitle", id: "my-tenant-endpoints",
@@ -244,13 +244,13 @@ const sections: DocSection[] = [
       {
             type: "api-table",
             endpoints: [
-                  { method: "GET", path: "/api/v1/roles/my-tenant", description: "Roles in current user's tenant (from JWT)", auth: "roles.view" },
-                  { method: "GET", path: "/api/v1/roles/my-tenant/available-permissions", description: "Permissions available for role assignment (filtered by tenant pool)", auth: "roles.assign" },
-                  { method: "POST", path: "/api/v1/roles/my-tenant", description: "Create role for current tenant", auth: "roles.create" },
+                  { method: "GET", path: "/api/v1/roles/my-tenant", descriptionKey: "Roles in current user's tenant (from JWT)", auth: "roles.view" },
+                  { method: "GET", path: "/api/v1/roles/my-tenant/available-permissions", descriptionKey: "Permissions available for role assignment (filtered by tenant pool)", auth: "roles.assign" },
+                  { method: "POST", path: "/api/v1/roles/my-tenant", descriptionKey: "Create role for current tenant", auth: "roles.create" },
             ],
       },
 
-      // ─── Permission Endpoints ─────────────────────────────
+      // â”€â”€â”€ Permission Endpoints â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       {
             type: "heading", level: 2,
             titleKey: "features.rolePermissions.endpointsPermissionsTitle", id: "permission-endpoints",
@@ -258,9 +258,9 @@ const sections: DocSection[] = [
       {
             type: "api-table",
             endpoints: [
-                  { method: "GET", path: "/api/v1/permissions", description: "List all permissions grouped by category", auth: "roles.view" },
-                  { method: "GET", path: "/api/v1/permissions/categories", description: "Get permission category list", auth: "roles.view" },
-                  { method: "GET", path: "/api/v1/permissions/flat", description: "Flat list of all permissions", auth: "roles.view" },
+                  { method: "GET", path: "/api/v1/permissions", descriptionKey: "List all permissions grouped by category", auth: "roles.view" },
+                  { method: "GET", path: "/api/v1/permissions/categories", descriptionKey: "Get permission category list", auth: "roles.view" },
+                  { method: "GET", path: "/api/v1/permissions/flat", descriptionKey: "Flat list of all permissions", auth: "roles.view" },
             ],
       },
 

@@ -1,8 +1,8 @@
-import { registerPage } from "../../repositories/DocsRepository";
+﻿import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-      // ─── How Soft-Delete Works ──────────────────────────
+      // â”€â”€â”€ How Soft-Delete Works â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 2, titleKey: "features.recycleBin.softDeleteTitle", id: "soft-delete" },
       { type: "paragraph", contentKey: "features.recycleBin.softDeleteIntro" },
       {
@@ -35,7 +35,7 @@ const sections: DocSection[] = [
             ],
       },
 
-      // ─── IgnoreQueryFilters Pattern ─────────────────────
+      // â”€â”€â”€ IgnoreQueryFilters Pattern â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 2, titleKey: "features.recycleBin.ignoreFiltersTitle", id: "ignore-filters" },
       {
             type: "code",
@@ -44,15 +44,15 @@ const sections: DocSection[] = [
             code: `public async Task<List<Tenant>> GetDeletedTenantsAsync(CancellationToken ct)
 {
     return await _context.Tenants
-        .IgnoreQueryFilters()           // ← Bypass soft-delete AND tenant filters
-        .Where(t => t.IsDeleted)        // ← Only deleted ones
+        .IgnoreQueryFilters()           // â† Bypass soft-delete AND tenant filters
+        .Where(t => t.IsDeleted)        // â† Only deleted ones
         .OrderByDescending(t => t.DeletedAt)
         .ToListAsync(ct);
 }`,
       },
       { type: "info", variant: "warning", contentKey: "features.recycleBin.ignoreFiltersWarning" },
 
-      // ─── Cascade Restore ────────────────────────────────
+      // â”€â”€â”€ Cascade Restore â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 2, titleKey: "features.recycleBin.cascadeTitle", id: "cascade" },
       { type: "paragraph", contentKey: "features.recycleBin.cascadeIntro" },
       {
@@ -61,7 +61,7 @@ const sections: DocSection[] = [
             filename: "RecycleBinRepository.cs",
             code: `public async Task CascadeRestoreTenantChildrenAsync(Guid tenantId, CancellationToken ct)
 {
-    // Bulk restore admins — single SQL UPDATE, no entity loading
+    // Bulk restore admins â€” single SQL UPDATE, no entity loading
     await _context.Admins
         .IgnoreQueryFilters()
         .Where(a => a.TenantId == tenantId && a.IsDeleted)
@@ -83,7 +83,7 @@ const sections: DocSection[] = [
 }`,
       },
 
-      // ─── ExecuteUpdateAsync Comparison ──────────────────
+      // â”€â”€â”€ ExecuteUpdateAsync Comparison â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 3, titleKey: "features.recycleBin.executeUpdateTitle", id: "execute-update" },
       {
             type: "table",
@@ -98,27 +98,27 @@ const sections: DocSection[] = [
       },
       { type: "info", variant: "note", contentKey: "features.recycleBin.interceptorNote" },
 
-      // ─── Controller Endpoints ───────────────────────────
+      // â”€â”€â”€ Controller Endpoints â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 2, titleKey: "features.recycleBin.endpointsTitle", id: "endpoints" },
       {
             type: "api-table",
             endpoints: [
-                  { method: "GET", path: "/api/recycle-bin/tenants", description: "List deleted tenants", auth: "JWT", permission: "recycle-bin.view" },
-                  { method: "POST", path: "/api/recycle-bin/tenants/{id}/restore", description: "Restore tenant + cascade children", auth: "JWT", permission: "recycle-bin.restore" },
-                  { method: "DELETE", path: "/api/recycle-bin/tenants/{id}/purge", description: "Permanent hard delete", auth: "JWT", permission: "recycle-bin.purge" },
-                  { method: "GET", path: "/api/recycle-bin/admins", description: "List deleted admins", auth: "JWT", permission: "recycle-bin.view" },
-                  { method: "POST", path: "/api/recycle-bin/admins/{id}/restore", description: "Restore admin", auth: "JWT", permission: "recycle-bin.restore" },
+                  { method: "GET", path: "/api/recycle-bin/tenants", descriptionKey: "List deleted tenants", auth: "JWT", permission: "recycle-bin.view" },
+                  { method: "POST", path: "/api/recycle-bin/tenants/{id}/restore", descriptionKey: "Restore tenant + cascade children", auth: "JWT", permission: "recycle-bin.restore" },
+                  { method: "DELETE", path: "/api/recycle-bin/tenants/{id}/purge", descriptionKey: "Permanent hard delete", auth: "JWT", permission: "recycle-bin.purge" },
+                  { method: "GET", path: "/api/recycle-bin/admins", descriptionKey: "List deleted admins", auth: "JWT", permission: "recycle-bin.view" },
+                  { method: "POST", path: "/api/recycle-bin/admins/{id}/restore", descriptionKey: "Restore admin", auth: "JWT", permission: "recycle-bin.restore" },
             ],
       },
 
-      // ─── Purge vs Restore ───────────────────────────────
+      // â”€â”€â”€ Purge vs Restore â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 2, titleKey: "features.recycleBin.purgeVsRestoreTitle", id: "purge-vs-restore" },
       {
             type: "table",
             headers: ["Action", "Reversible?", "What Happens"],
             rows: [
                   ["Restore", "Yes (delete again)", "Sets IsDeleted = false, entity reappears"],
-                  ["Purge", "❌ No", "Hard DELETE FROM — data gone forever"],
+                  ["Purge", "âŒ No", "Hard DELETE FROM â€” data gone forever"],
             ],
       },
       { type: "info", variant: "danger", contentKey: "features.recycleBin.purgeWarning" },

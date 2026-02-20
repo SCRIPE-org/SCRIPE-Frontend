@@ -1,8 +1,8 @@
-import { registerPage } from "../../repositories/DocsRepository";
+﻿import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-      // ─── Admin vs User ──────────────────────────────────
+      // â”€â”€â”€ Admin vs User â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 2, titleKey: "features.userManagement.adminVsUserTitle", id: "admin-vs-user" },
       { type: "paragraph", contentKey: "features.userManagement.adminVsUserIntro" },
       {
@@ -20,71 +20,71 @@ const sections: DocSection[] = [
             ],
       },
 
-      // ─── AdminsController CRUD ──────────────────────────
+      // â”€â”€â”€ AdminsController CRUD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 2, titleKey: "features.userManagement.crudTitle", id: "crud" },
       {
             type: "api-table",
             endpoints: [
-                  { method: "GET", path: "/admins", description: "Paginated list (data-scope aware)", auth: "JWT", permission: "admins.view" },
-                  { method: "GET", path: "/admins/{id}", description: "Single admin detail", auth: "JWT", permission: "admins.view" },
-                  { method: "GET", path: "/admins/tenant/{tenantId}", description: "Admins by specific tenant", auth: "JWT", permission: "admins.view" },
-                  { method: "GET", path: "/admins/my-tenant", description: "Admins in caller's tenant", auth: "JWT", permission: "admins.view" },
-                  { method: "POST", path: "/admins", description: "Create with explicit TenantId", auth: "JWT", permission: "admins.create" },
-                  { method: "POST", path: "/admins/my-tenant", description: "Create for caller's tenant (from JWT)", auth: "JWT", permission: "admins.create" },
-                  { method: "PUT", path: "/admins/{id}", description: "Update admin", auth: "JWT", permission: "admins.edit" },
-                  { method: "DELETE", path: "/admins/{id}", description: "Soft delete admin", auth: "JWT", permission: "admins.delete" },
+                  { method: "GET", path: "/admins", descriptionKey: "Paginated list (data-scope aware)", auth: "JWT", permission: "admins.view" },
+                  { method: "GET", path: "/admins/{id}", descriptionKey: "Single admin detail", auth: "JWT", permission: "admins.view" },
+                  { method: "GET", path: "/admins/tenant/{tenantId}", descriptionKey: "Admins by specific tenant", auth: "JWT", permission: "admins.view" },
+                  { method: "GET", path: "/admins/my-tenant", descriptionKey: "Admins in caller's tenant", auth: "JWT", permission: "admins.view" },
+                  { method: "POST", path: "/admins", descriptionKey: "Create with explicit TenantId", auth: "JWT", permission: "admins.create" },
+                  { method: "POST", path: "/admins/my-tenant", descriptionKey: "Create for caller's tenant (from JWT)", auth: "JWT", permission: "admins.create" },
+                  { method: "PUT", path: "/admins/{id}", descriptionKey: "Update admin", auth: "JWT", permission: "admins.edit" },
+                  { method: "DELETE", path: "/admins/{id}", descriptionKey: "Soft delete admin", auth: "JWT", permission: "admins.delete" },
             ],
       },
 
-      // ─── Account Operations ─────────────────────────────
+      // â”€â”€â”€ Account Operations â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 2, titleKey: "features.userManagement.accountOpsTitle", id: "account-ops" },
       {
             type: "api-table",
             endpoints: [
-                  { method: "PUT", path: "/admins/{id}/active", description: "Activate/deactivate", auth: "JWT", permission: "admins.edit" },
-                  { method: "PUT", path: "/admins/{id}/change-password", description: "Change own password", auth: "JWT (Self only)" },
-                  { method: "PUT", path: "/admins/{id}/reset-password", description: "Super admin resets password", auth: "JWT", permission: "admins.edit" },
+                  { method: "PUT", path: "/admins/{id}/active", descriptionKey: "Activate/deactivate", auth: "JWT", permission: "admins.edit" },
+                  { method: "PUT", path: "/admins/{id}/change-password", descriptionKey: "Change own password", auth: "JWT (Self only)" },
+                  { method: "PUT", path: "/admins/{id}/reset-password", descriptionKey: "Super admin resets password", auth: "JWT", permission: "admins.edit" },
             ],
       },
 
-      // ─── Role Management ────────────────────────────────
+      // â”€â”€â”€ Role Management â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 2, titleKey: "features.userManagement.roleMgmtTitle", id: "role-mgmt" },
       {
             type: "api-table",
             endpoints: [
-                  { method: "GET", path: "/admins/{id}/roles", description: "Get assigned roles", auth: "JWT", permission: "admins.view" },
-                  { method: "POST", path: "/admins/{id}/roles/{roleId}", description: "Assign single role", auth: "JWT", permission: "admins.edit" },
-                  { method: "DELETE", path: "/admins/{id}/roles/{roleId}", description: "Remove single role", auth: "JWT", permission: "admins.edit" },
-                  { method: "PUT", path: "/admins/{id}/roles/sync", description: "Nuke & Pave — replace all roles", auth: "JWT", permission: "admins.edit" },
+                  { method: "GET", path: "/admins/{id}/roles", descriptionKey: "Get assigned roles", auth: "JWT", permission: "admins.view" },
+                  { method: "POST", path: "/admins/{id}/roles/{roleId}", descriptionKey: "Assign single role", auth: "JWT", permission: "admins.edit" },
+                  { method: "DELETE", path: "/admins/{id}/roles/{roleId}", descriptionKey: "Remove single role", auth: "JWT", permission: "admins.edit" },
+                  { method: "PUT", path: "/admins/{id}/roles/sync", descriptionKey: "Nuke & Pave â€” replace all roles", auth: "JWT", permission: "admins.edit" },
             ],
       },
 
-      // ─── Bulk Operations ────────────────────────────────
+      // â”€â”€â”€ Bulk Operations â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 2, titleKey: "features.userManagement.bulkOpsTitle", id: "bulk-ops" },
       {
             type: "api-table",
             endpoints: [
-                  { method: "POST", path: "/admins/bulk/activate", description: "Activate selected IDs", auth: "JWT", permission: "admins.edit" },
-                  { method: "POST", path: "/admins/bulk/deactivate", description: "Deactivate selected IDs", auth: "JWT", permission: "admins.edit" },
-                  { method: "POST", path: "/admins/bulk/delete", description: "Delete selected IDs", auth: "JWT", permission: "admins.delete" },
-                  { method: "POST", path: "/admins/bulk/activate-all", description: "Activate ALL matching filter", auth: "JWT", permission: "admins.edit" },
-                  { method: "POST", path: "/admins/bulk/deactivate-all", description: "Deactivate ALL matching filter", auth: "JWT", permission: "admins.edit" },
-                  { method: "POST", path: "/admins/bulk/delete-all", description: "Delete ALL matching filter", auth: "JWT", permission: "admins.delete" },
+                  { method: "POST", path: "/admins/bulk/activate", descriptionKey: "Activate selected IDs", auth: "JWT", permission: "admins.edit" },
+                  { method: "POST", path: "/admins/bulk/deactivate", descriptionKey: "Deactivate selected IDs", auth: "JWT", permission: "admins.edit" },
+                  { method: "POST", path: "/admins/bulk/delete", descriptionKey: "Delete selected IDs", auth: "JWT", permission: "admins.delete" },
+                  { method: "POST", path: "/admins/bulk/activate-all", descriptionKey: "Activate ALL matching filter", auth: "JWT", permission: "admins.edit" },
+                  { method: "POST", path: "/admins/bulk/deactivate-all", descriptionKey: "Deactivate ALL matching filter", auth: "JWT", permission: "admins.edit" },
+                  { method: "POST", path: "/admins/bulk/delete-all", descriptionKey: "Delete ALL matching filter", auth: "JWT", permission: "admins.delete" },
             ],
       },
 
-      // ─── Enterprise Operations ──────────────────────────
+      // â”€â”€â”€ Enterprise Operations â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 2, titleKey: "features.userManagement.enterpriseOpsTitle", id: "enterprise-ops" },
       {
             type: "api-table",
             endpoints: [
-                  { method: "POST", path: "/admins/{id}/impersonate", description: "Impersonate another admin", auth: "Super admin" },
-                  { method: "POST", path: "/admins/{id}/transfer", description: "Move admin to different tenant", auth: "Super admin" },
-                  { method: "POST", path: "/admins/{id}/transfer-protection", description: "Transfer 'protected' flag", auth: "Super admin" },
+                  { method: "POST", path: "/admins/{id}/impersonate", descriptionKey: "Impersonate another admin", auth: "Super admin" },
+                  { method: "POST", path: "/admins/{id}/transfer", descriptionKey: "Move admin to different tenant", auth: "Super admin" },
+                  { method: "POST", path: "/admins/{id}/transfer-protection", descriptionKey: "Transfer 'protected' flag", auth: "Super admin" },
             ],
       },
 
-      // ─── Protected Admin Rules ──────────────────────────
+      // â”€â”€â”€ Protected Admin Rules â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 2, titleKey: "features.userManagement.protectedTitle", id: "protected" },
       { type: "paragraph", contentKey: "features.userManagement.protectedIntro" },
       {
@@ -117,7 +117,7 @@ const sections: DocSection[] = [
             ],
       },
 
-      // ─── Nuke & Pave Pattern ────────────────────────────
+      // â”€â”€â”€ Nuke & Pave Pattern â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { type: "heading", level: 2, titleKey: "features.userManagement.nukePaveTitle", id: "nuke-pave" },
       {
             type: "code",
@@ -132,7 +132,7 @@ public async Task<IActionResult> SyncRoles(string id, [FromBody] SyncRolesComman
 {
     // Deletes all AdminRole entries for this admin
     // Re-creates entries for each role in the request
-    // Single transaction — no partial states
+    // Single transaction â€” no partial states
 }`,
       },
       { type: "info", variant: "tip", contentKey: "features.userManagement.nukePaveTip" },
