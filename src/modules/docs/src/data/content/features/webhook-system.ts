@@ -78,7 +78,7 @@ var signature = Convert.ToBase64String(hash);
 
 // HTTP Headers sent:
 // X-Webhook-Signature: {signature}
-// X-Webhook-Signature-Old: {signatureWithOldSecret}  â† During rotation
+// X-Webhook-Signature-Old: {signatureWithOldSecret} During rotation
 // X-Webhook-Event: {eventType}
 // X-Webhook-Delivery-Id: {deliveryId}
 

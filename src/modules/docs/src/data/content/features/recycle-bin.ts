@@ -44,8 +44,8 @@ const sections: DocSection[] = [
             code: `public async Task<List<Tenant>> GetDeletedTenantsAsync(CancellationToken ct)
 {
     return await _context.Tenants
-        .IgnoreQueryFilters()           // â† Bypass soft-delete AND tenant filters
-        .Where(t => t.IsDeleted)        // â† Only deleted ones
+        .IgnoreQueryFilters()           // Bypass soft-delete AND tenant filters
+        .Where(t => t.IsDeleted)        // Only deleted ones
         .OrderByDescending(t => t.DeletedAt)
         .ToListAsync(ct);
 }`,

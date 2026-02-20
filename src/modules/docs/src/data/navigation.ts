@@ -96,7 +96,7 @@ export const navigationData: DocCategoryData[] = [
     order: 5,
     items: [
       { id: "api-overview", titleKey: "apiReference.overview.title", slug: "api-reference/overview", order: 1 },
-      { id: "api-auth", titleKey: "apiReference.authenticationApi.title", slug: "api-reference/authentication-api", order: 2 },
+      { id: "api-auth", titleKey: "apiReference.authApi.title", slug: "api-reference/authentication-api", order: 2 },
       { id: "api-user-auth", titleKey: "apiReference.userAuthApi.title", slug: "api-reference/user-auth-api", order: 3 },
       { id: "api-admin", titleKey: "apiReference.adminApi.title", slug: "api-reference/admin-api", order: 4 },
       { id: "api-tenant", titleKey: "apiReference.tenantApi.title", slug: "api-reference/tenant-api", order: 5 },

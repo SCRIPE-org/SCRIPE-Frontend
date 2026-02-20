@@ -163,9 +163,9 @@ const sections: DocSection[] = [
   "id": "abc-123",
   "name": "John Doe",
   "email": "john@example.com",
-  "salary": null,       // â† Restricted
-  "ssn": null,          // â† Restricted
-  "bankAccount": null   // â† Restricted
+  "salary": null,       // Restricted
+  "ssn": null,          // Restricted
+  "bankAccount": null   // Restricted
 }`,
             highlightLines: [3, 4, 11, 12, 13],
       },

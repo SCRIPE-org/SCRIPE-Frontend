@@ -3,12 +3,12 @@
  * Contains all UI strings and content translations.
  */
 export const docEn = {
-  // â”€â”€â”€ Common UI â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // Common UI
   common: {
     contactSales: "Contact Sales",
     search: "Search docs...",
     searchPlaceholder: "Type to search...",
-    searchShortcut: "âŒ˜K",
+    searchShortcut: "⌘K",
     searchNoResults: "No results found",
     searchResultsTitle: "Search Results",
     copyCode: "Copy",
@@ -54,7 +54,7 @@ export const docEn = {
     permission: "Permission",
   },
 
-  // â”€â”€â”€ Navigation Categories â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // Navigation Categories
   nav: {
     getStarted: "Get Started",
     tutorials: "Tutorials",
@@ -76,9 +76,9 @@ export const docEn = {
     commercialSupport: "Support & Resources",
   },
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+
   //  GET STARTED
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+
 
   getStarted: {
     overview: {
@@ -337,6 +337,123 @@ export const docEn = {
       cachingFlowIntro: "The backend uses a two-level caching strategy: L1 (in-process IMemoryCache) and L2 (distributed Redis). The frontend uses TanStack Query's built-in cache with configurable staleTime.",
       cacheTip: "Set staleTime to 5 minutes for data that changes infrequently (roles, permissions). Use 0 for data that changes often (audit logs, notifications). Always invalidate related queries after successful mutations.",
     },
+
+    // ─── Domain Model Deep Dive ────────────────────────────────
+    domainModel: {
+      title: "Domain Model",
+      description: "Entity inheritance hierarchy, AuditableEntity, ITenantAwareEntity, soft-delete lifecycle, repository abstractions, and global query filters.",
+      intro: "NEXORA's domain model follows a strict inheritance hierarchy where all business entities inherit from AuditableEntity, which provides audit fields (CreatedBy, CreatedAt, ModifiedBy, ModifiedAt) and soft-delete support (IsDeleted, DeletedAt, DeletedBy). Tenant-scoped entities additionally implement ITenantAwareEntity for automatic row-level isolation.",
+      entityHierarchyTitle: "Entity Inheritance Hierarchy",
+      entityHierarchyIntro: "All domain entities follow a three-level inheritance chain: IEntity (marker interface) → Entity<TId> (identity + equality + domain events) → AuditableEntity (audit fields + soft-delete). Entities that belong to a specific tenant also implement the ITenantAwareEntity interface.",
+      ientityTitle: "IEntity Interface",
+      entityBaseTitle: "Entity<TId> Base Class",
+      entityBaseIntro: "The Entity<TId> base class provides identity equality (two entities are equal if they share the same Id), hash code generation, and domain event support. Every entity can raise domain events that are captured by the OutboxInterceptor and published asynchronously.",
+      entityDomainEventNote: "Domain events raised via RaiseDomainEvent() are collected by the OutboxInterceptor during SaveChanges and persisted in the same transaction. They are later published asynchronously by the OutboxProcessor background service.",
+      auditableEntityTitle: "AuditableEntity",
+      auditableEntityIntro: "AuditableEntity adds 7 audit and soft-delete fields to the base Entity. These fields are automatically populated by the AuditableEntityInterceptor during SaveChanges — you never set them manually in your code.",
+      tenantAwareTitle: "ITenantAwareEntity",
+      tenantAwareIntro: "Entities that implement ITenantAwareEntity are automatically scoped to the current tenant via EF Core global query filters. The TenantId is set by the TenantContextMiddleware when the entity is created, and all subsequent queries are automatically filtered by tenant.",
+      tenantIsolationWarning: "Never bypass tenant isolation without explicit authorization. Using IgnoreQueryFilters() removes ALL filters including tenant scoping. Always add a manual .Where(e => e.TenantId == tenantId) when bypassing filters.",
+      softDeleteTitle: "Soft-Delete Lifecycle",
+      softDeleteIntro: "All entities use soft-delete via the IsDeleted flag. When a DELETE endpoint is called, the AuditableEntityInterceptor converts the hard delete into a soft-delete by setting IsDeleted=true, DeletedAt, and DeletedBy. The entity remains in the database but is hidden from normal queries by the global query filter.",
+      repositoryTitle: "Repository Abstractions",
+      repositoryIntro: "NEXORA defines three repository interfaces in the Domain layer: IReadRepository<T> for queries, IWriteRepository<T> for mutations, and IRepository<T> that combines both with a SaveChangesAsync method. All repository implementations live in the Infrastructure layer.",
+      concreteEntitiesTitle: "Concrete Entity Registry",
+      queryFiltersTitle: "Global Query Filters",
+      queryFiltersIntro: "EF Core global query filters are applied to every entity that inherits from AuditableEntity (soft-delete filter) and implements ITenantAwareEntity (tenant isolation filter). These filters are registered once in OnModelCreating and apply to every LINQ query automatically.",
+      ignoreFiltersTip: "Use IgnoreQueryFilters() only in RecycleBin operations (to see soft-deleted items) and SuperAdmin cross-tenant queries. Always pair it with an explicit tenant filter to prevent data leaks.",
+      bestPracticesTitle: "Best Practices",
+      doTitle: "✅ DO",
+      dontTitle: "❌ DON'T",
+    },
+
+    // ─── Domain Events Deep Dive ───────────────────────────────
+    domainEvents: {
+      title: "Domain Events",
+      description: "IDomainEvent interface, outbox pattern, OutboxInterceptor, OutboxProcessor, and reliable event delivery.",
+      intro: "Domain events represent significant occurrences in the business domain. NEXORA uses the Outbox Pattern to guarantee reliable event delivery — events are persisted in the same database transaction as entity changes and published asynchronously by a background processor.",
+      interfaceTitle: "IDomainEvent Interface",
+      interfaceIntro: "All domain events implement the IDomainEvent interface, which inherits from MediatR's INotification. This enables in-process pub/sub where multiple handlers can subscribe to the same event type. Each event carries a unique EventId and OccurredAt timestamp.",
+      publishingTitle: "Publishing & Handling Flow",
+      publishingIntro: "Domain events follow a 6-step lifecycle: the entity raises an event via RaiseDomainEvent(), the OutboxInterceptor captures it during SaveChanges, the event is persisted as an OutboxMessage in the same transaction, the OutboxProcessor polls for unprocessed messages, deserializes the event, and publishes it via MediatR.",
+      publisherTitle: "IDomainEventPublisher",
+      outboxTitle: "Outbox Pattern",
+      outboxIntro: "The Outbox Pattern solves the dual-write problem: how to atomically update the database AND publish an event. By persisting events in the same transaction as entity changes, we guarantee that events are never lost — even if the application crashes immediately after SaveChanges.",
+      outboxWarning: "The Outbox Pattern provides at-least-once delivery, not exactly-once. Event handlers must be idempotent — they should produce the same result whether invoked once or multiple times with the same event.",
+      outboxMessageTitle: "OutboxMessage Entity",
+      outboxInterceptorTitle: "OutboxInterceptor",
+      outboxInterceptorIntro: "The OutboxInterceptor is an EF Core SaveChanges interceptor that runs BEFORE the transaction is committed. It collects all domain events from tracked entities, serializes them as OutboxMessage records, and adds them to the same database context — ensuring atomicity.",
+      outboxProcessorTitle: "OutboxProcessor",
+      outboxProcessorIntro: "The OutboxProcessor is a BackgroundService that polls the OutboxMessage table every 5 seconds for unprocessed messages. It processes them in batches of 20, deserializing each event and publishing it via MediatR. Failed events are retried with an incrementing RetryCount.",
+      outboxCleanupTitle: "Outbox Cleanup Job",
+      outboxCleanupIntro: "A Hangfire recurring job runs daily at 2:00 AM UTC to delete processed outbox messages older than 7 days. This prevents unbounded table growth while keeping recent messages for debugging.",
+      architectureSummaryTitle: "Outbox Architecture Summary",
+      customEventsTitle: "Creating Custom Domain Events",
+      customEventsIntro: "Follow these 3 steps to add a new domain event to NEXORA. The outbox infrastructure handles persistence and delivery automatically.",
+      step1Title: "1. Define the Event",
+      step1Content: "Create a record implementing IDomainEvent in the module's Domain/Events/ directory. Include all contextual data that handlers will need.",
+      step2Title: "2. Raise from Command Handler",
+      step2Content: "Call entity.RaiseDomainEvent(new YourEvent(...)) in the command handler, then call SaveChangesAsync. The OutboxInterceptor captures the event automatically.",
+      step3Title: "3. Create Event Handlers",
+      step3Content: "Implement INotificationHandler<DomainEventNotification> to react to the event. Multiple handlers can subscribe to the same event for different side-effects (email, audit, webhook, etc.).",
+      reliabilityTitle: "Reliability Guarantees",
+      withOutboxTitle: "✅ With Outbox Pattern",
+      withoutOutboxTitle: "❌ Without Outbox Pattern",
+    },
+
+    // ─── CQRS Pipeline Deep Dive ───────────────────────────────
+    cqrsPipeline: {
+      title: "CQRS Pipeline",
+      description: "MediatR pipeline behaviors — ValidationBehavior, LoggingBehavior, CachingBehavior, Result pattern, and full command/query map.",
+      intro: "Every command and query in NEXORA flows through a MediatR pipeline with 3 behaviors: ValidationBehavior (FluentValidation), LoggingBehavior (structured logging with timing), and CachingBehavior (ICacheable queries). This page dissects each behavior with source code, configuration, and the complete command/query catalog.",
+      overviewTitle: "Pipeline Overview",
+      overviewIntro: "The MediatR pipeline executes behaviors in registration order: Validation → Logging → Caching → Handler. Each behavior can short-circuit the pipeline (validation returns errors without hitting the handler, caching returns cached results without hitting the handler).",
+      separationTitle: "Command vs Query Separation",
+      separationIntro: "CQRS separates the application into two distinct paths: Commands (writes) mutate state and go through full validation + audit, while Queries (reads) are optimized for performance with caching and AsNoTracking.",
+      commandsTitle: "Commands (Write)",
+      queriesTitle: "Queries (Read)",
+      resultPatternTitle: "Result Pattern",
+      resultPatternIntro: "All handlers return Result<T> instead of throwing exceptions for expected failures. Result<T> is a discriminated union with IsSuccess/IsFailure, Value (on success), and AppError (on failure). This eliminates try-catch blocks in controllers and enables pattern matching.",
+      validationTitle: "ValidationBehavior",
+      validationIntro: "The ValidationBehavior is the first pipeline behavior. It collects all IValidator<TRequest> registered for the command, runs them, and throws ValidationException with structured field-level errors if validation fails — before the handler ever executes.",
+      validatorExampleTitle: "Validator Examples",
+      loggingTitle: "LoggingBehavior",
+      loggingIntro: "The LoggingBehavior logs every MediatR request with the user ID, tenant ID, request type, and execution time. Requests exceeding 500ms are logged as warnings for performance monitoring.",
+      cachingTitle: "CachingBehavior",
+      cachingIntro: "The CachingBehavior intercepts queries that implement the ICacheable interface. It checks the cache for existing results before executing the handler. On cache miss, it executes the handler and stores the result with a configurable duration (default: 5 minutes).",
+      commandMapTitle: "Command & Query Catalog",
+      commandMapIntro: "The following table lists every command, query, and validator registered in the system, organized by domain area. This is the complete CQRS surface area of NEXORA.",
+      registrationTitle: "Pipeline Registration",
+      registrationIntro: "Pipeline behaviors are registered in AddCoreApplication() in the order they should execute. All MediatR handlers and FluentValidation validators are auto-discovered from module assemblies.",
+      behaviorOrderTip: "Pipeline behavior registration order determines execution order. Validation MUST be first to reject invalid requests before logging or caching. Changing this order can lead to cached invalid data or missing audit logs.",
+    },
+
+    // ─── Dependency Injection Deep Dive ────────────────────────
+    dependencyInjection: {
+      title: "Dependency Injection",
+      description: "Program.cs registration flow, module DI pattern, service discovery, core + identity service maps, lifetime rules, and YARP gateway.",
+      intro: "NEXORA uses .NET's built-in Dependency Injection container with a structured registration pattern. Program.cs orchestrates all registrations: core infrastructure first, then modules conditionally based on MODULE_NAME, and finally the application layer with MediatR. This page documents every service registration, lifetime decision, and the module DI pattern.",
+      architectureTitle: "DI Registration Architecture",
+      architectureIntro: "Program.cs follows a strict 4-phase registration order: (1) Core Infrastructure — cache, blob storage, audit, etc. (2) CORS & Rate Limiting. (3) Modules — each module registers its own DbContext, repositories, and services. (4) Application Layer — MediatR, behaviors, validators.",
+      moduleRegTitle: "Module Registration Pattern",
+      moduleRegIntro: "Each module exposes an AddXxxModule() extension method that registers all its services. The MODULE_NAME environment variable controls which modules are loaded: empty = monolith (all modules), 'Identity' = only Identity module, 'Gateway' = API gateway mode.",
+      monolithNote: "In monolith mode (MODULE_NAME not set), ALL modules are loaded into a single process. In microservice mode, each module runs as an independent process with its own port. The same codebase supports both deployment models.",
+      controllerProviderTitle: "Module Controller Feature Provider",
+      controllerProviderIntro: "The ModuleControllerFeatureProvider filters which controllers are loaded at startup based on the MODULE_NAME. In monolith mode, all controllers are loaded. In microservice mode, only controllers tagged with the matching [BelongsToModule] attribute are loaded.",
+      serviceDiscoveryTitle: "Service Discovery",
+      serviceDiscoveryIntro: "In microservice mode, services need to discover each other's URLs. NEXORA uses configuration-based service discovery (from appsettings.json) to resolve service names to URLs.",
+      coreServicesTitle: "Core Infrastructure Services",
+      coreServicesIntro: "The following services are registered by AddCoreInfrastructure() and are available to all modules. They provide cross-cutting concerns like caching, file storage, auditing, email, webhooks, and data scoping.",
+      identityModuleTitle: "Identity Module Services",
+      identityModuleIntro: "The Identity module registers 24 repository interfaces and 10 service interfaces. All repositories are registered as Scoped (one instance per HTTP request) to match the DbContext lifetime.",
+      lifetimeTitle: "Service Lifetime Rules",
+      singletonTitle: "Singleton Lifetime",
+      scopedTitle: "Scoped Lifetime",
+      gatewayTitle: "YARP Gateway Configuration",
+      gatewayIntro: "When MODULE_NAME=Gateway, the application acts as a YARP reverse proxy. It routes requests to backend microservices based on URL path prefix matching. The gateway handles SSL termination, request buffering, and can be extended with custom middleware.",
+      bestPracticesTitle: "DI Best Practices",
+      captiveTip: "A captive dependency occurs when a Singleton service injects a Scoped service — the Scoped service becomes a de-facto Singleton, causing stale data and memory leaks. Use IServiceScopeFactory to create a new scope inside Singleton services when you need Scoped dependencies.",
+    },
   },
 
   // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
@@ -478,7 +595,7 @@ export const docEn = {
       retentionTip: "Audit logs are retained per-tenant via TenantSettings.AuditRetentionDays. Set to 0 for indefinite retention. A Hangfire background job automatically purges expired records.",
     },
 
-    // â”€â”€â”€ Notification System â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // Notification System
     notificationSystem: {
       title: "Notification System",
       description: "Real-time notification delivery via SignalR with auto-join groups, unread count tracking, and paginated history.",
@@ -492,7 +609,7 @@ export const docEn = {
       endpointsTitle: "Notification API Endpoints",
     },
 
-    // â”€â”€â”€ Email System â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // Email System
     emailSystem: {
       title: "Email System",
       description: "Pluggable email delivery pipeline with queue strategies, background processing, and HTML sanitization.",
@@ -509,7 +626,7 @@ export const docEn = {
       errorIntro: "Emails are sanitized before sending to prevent XSS via HTML email bodies. Failed sends are retried using Hangfire's built-in retry mechanism with exponential backoff.",
     },
 
-    // â”€â”€â”€ Webhook System â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // Webhook System
     webhookSystem: {
       title: "Webhook System",
       description: "Event-driven webhooks with HMAC rotation (24h grace), tenant hierarchy subscriptions, circuit breaker, and delivery logs.",
@@ -538,7 +655,7 @@ export const docEn = {
       endpointsOperationsTitle: "Operations & Monitoring",
     },
 
-    // â”€â”€â”€ Menu System â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // Menu System
     menuSystem: {
       title: "Menu System",
       description: "Dynamic menu tree with permission filtering, tenant scoping, role visibility, and drag-drop reordering.",
@@ -553,7 +670,7 @@ export const docEn = {
       reorderTitle: "Drag-Drop Reorder",
     },
 
-    // â”€â”€â”€ Recycle Bin â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // Recycle Bin
     recycleBin: {
       title: "Recycle Bin",
       description: "Soft-delete management with cascade restore, bulk operations, and permanent purge capabilities.",
@@ -570,7 +687,7 @@ export const docEn = {
       purgeWarning: "Purge is a destructive, irreversible operation. It permanently removes the record from the database using a hard DELETE. Use this only for GDPR compliance or when absolutely certain the data is no longer needed.",
     },
 
-    // â”€â”€â”€ User Management â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // User Management
     userManagement: {
       title: "User Management",
       description: "Complete admin/user lifecycle with 27 endpoints, bulk operations, impersonation, and protected admin rules.",
@@ -587,7 +704,7 @@ export const docEn = {
       nukePaveTip: "Use Nuke & Pave (PUT /admins/{id}/roles/sync) instead of individual add/remove when assigning roles from a UI checklist. It eliminates race conditions and ensures the database always matches the UI state exactly.",
     },
 
-    // â”€â”€â”€ File Upload â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // File Upload
     fileUpload: {
       title: "File Upload System",
       description: "Dual upload pipeline for images and documents with validation, processing, and tenant-scoped storage.",
@@ -601,7 +718,7 @@ export const docEn = {
       tenantScopedTitle: "Tenant-Scoped Storage",
     },
 
-    // â”€â”€â”€ Download & Export â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // Download & Export
     downloadExport: {
       title: "Download & Export System",
       description: "Authenticated and session-based downloads with Range support, ETag caching, and path traversal prevention.",
@@ -620,7 +737,7 @@ export const docEn = {
       streamConfigTitle: "FileStream Configuration",
     },
 
-    // â”€â”€â”€ Message Templates â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // Message Templates
     messageTemplates: {
       title: "Message Templates",
       description: "Scriban-powered bilingual message templates with preview, built-in templates, and placeholder schemas.",
@@ -636,12 +753,10 @@ export const docEn = {
     },
   },
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-  //  SECURITY
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // SECURITY
 
   security: {
-    // â”€â”€â”€ Overview â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // Overview 
     overview: {
       title: "Security Overview",
       description: "5-layer defense strategy, security features, CORS configuration, rate limiting, and password policies.",
@@ -667,7 +782,7 @@ export const docEn = {
       securityWarning: "Always review security settings before deploying to production. Change default secrets, configure CORS origins, and set appropriate rate limits. Enable 2FA for all admin accounts.",
     },
 
-    // â”€â”€â”€ Authentication Deep Dive â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // Authentication Deep Dive
     authDeep: {
       title: "Authentication Deep Dive",
       description: "JWT lifecycle, BCrypt hashing, account lockout, 2FA TOTP, external OAuth, OTP system, impersonation, and session management.",
@@ -693,7 +808,7 @@ export const docEn = {
       cookieAuthTip: "For maximum security, configure refresh tokens to be sent as HttpOnly, Secure, SameSite=Strict cookies. This prevents XSS attacks from accessing refresh tokens via JavaScript.",
     },
 
-    // â”€â”€â”€ Data Protection â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // Data Protection
     dataProtection: {
       title: "Data Protection",
       description: "Tenant isolation, data encryption at rest and in transit, restricted fields, ID encryption, and GDPR compliance.",
@@ -721,7 +836,7 @@ export const docEn = {
       bypassWarning: "IgnoreQueryFilters() bypasses ALL global query filters including tenant isolation. Always add explicit tenant filtering when using this method to prevent cross-tenant data leaks.",
     },
 
-    // â”€â”€â”€ API Security â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // API Security
     apiSecurity: {
       title: "API Security",
       description: "Rate limiting, CORS configuration, input validation, CSRF protection, security headers, and replay attack prevention.",
@@ -741,7 +856,7 @@ export const docEn = {
       replayIntro: "Short-lived access tokens (15 minutes), single-use refresh tokens with rotation, and TOTP time-step validation prevent replay attacks across all authentication flows.",
     },
 
-    // â”€â”€â”€ Middleware Pipeline â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // Middleware Pipeline
     middlewarePipeline: {
       title: "Middleware Pipeline",
       description: "11 middleware components in execution order â€” from exception handling through tenant context to field projection.",
@@ -771,7 +886,7 @@ export const docEn = {
       orderWarning: "Changing middleware registration order can cause cascading failures. Always test the full request pipeline after modifying middleware order.",
     },
 
-    // â”€â”€â”€ Audit & Compliance â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // Audit & Compliance 
     auditCompliance: {
       title: "Audit & Compliance",
       description: "Complete audit pipeline â€” interceptors, entity tracking, SignalR streaming, CSV/Excel/PDF export, and compliance features.",
@@ -801,253 +916,15 @@ export const docEn = {
     },
   },
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-  //  API REFERENCE
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // API REFERENCE
 
-  apiReference: {
-    // â”€â”€â”€ Overview â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    overview: {
-      title: "API Reference",
-      description: "Complete endpoint catalog with authentication requirements, response formats, and pagination.",
-      intro: "NEXORA exposes a RESTful API with JSON request/response bodies, Bearer JWT authentication, and consistent response envelopes. All endpoints are versioned under /api/v1/ and documented with Swagger/OpenAPI.",
-      baseInfoTitle: "Base Information",
-      authEndpointsTitle: "Authentication Endpoints",
-      adminEndpointsTitle: "Admin Management Endpoints",
-      userEndpointsTitle: "User Management Endpoints",
-      roleEndpointsTitle: "Role Endpoints",
-      tenantEndpointsTitle: "Tenant Endpoints",
-      otherEndpointsTitle: "Other Endpoints",
-      responseFormatTitle: "Response Envelope Format",
-      swaggerTip: "The full interactive API documentation is available at /swagger when the backend is running in development mode. It includes request/response schemas, parameter descriptions, and a 'Try it out' feature.",
-    },
+  // apiReference section is at the end of this file (complete version with all keys)
 
-    // â”€â”€â”€ Authentication API â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    authenticationApi: {
-      title: "Authentication API (Admin)",
-      description: "Admin authentication endpoints â€” login, refresh, logout, 2FA, profile management, and security logs.",
-    },
-    authApi: {
-      title: "Authentication API",
-      description: "Admin login, token refresh, logout, 2FA setup and verification, profile management, and security monitoring endpoints.",
-      intro: "The Admin Authentication API handles all authentication flows for admin users. It provides endpoints for credential-based login, token refresh, logout, two-factor authentication management, profile updates, and security monitoring.",
-      configTitle: "Base Configuration",
-      loginTitle: "Login",
-      loginDesc: "Authenticate admin with email/password. Returns JWT token pair or 2FA challenge.",
-      refreshTitle: "Token Refresh",
-      refreshDesc: "Exchange a valid refresh token for a new token pair. Old refresh token is revoked.",
-      logoutTitle: "Logout",
-      logoutDesc: "Revoke all refresh tokens for the authenticated admin.",
-      tfaTitle: "Two-Factor Authentication",
-      tfaIntro: "NEXORA supports TOTP-based 2FA compatible with any authenticator app (Google Authenticator, Authy, Microsoft Authenticator). The flow involves enabling 2FA, confirming with a code, and then verifying on each login.",
-      tfaEnableDesc: "Generate TOTP secret and QR code for setup.",
-      tfaConfirmDesc: "Confirm 2FA setup by entering the first TOTP code. Returns backup codes.",
-      tfaVerifyDesc: "Complete login by verifying TOTP code after password validation.",
-      tfaDisableDesc: "Disable 2FA for the authenticated admin.",
-      tfaBackupDesc: "Regenerate backup codes (invalidates old codes).",
-      profileTitle: "Profile Endpoints",
-      meDesc: "Get the authenticated admin's full profile, role, permissions, and tenant info.",
-      updateProfileDesc: "Update display name, phone number, and other profile fields.",
-      changePasswordDesc: "Change password (requires current password verification).",
-      uploadAvatarDesc: "Upload a new avatar image (JPEG/PNG, max 2MB, auto-resized).",
-      removeAvatarDesc: "Remove the current avatar and revert to default.",
-      securityTitle: "Admin Security Endpoints",
-      securityLogDesc: "View the authenticated admin's security event log (logins, password changes, 2FA events).",
-      sessionsDesc: "List all active sessions (refresh tokens) for the authenticated admin.",
-      revokeSessionDesc: "Revoke a specific session by its refresh token ID.",
-      securityTip: "Use the security log endpoints to build an admin activity dashboard. The log includes IP addresses, user agents, and geolocation data for each security event.",
-    },
 
-    // â”€â”€â”€ User Auth API â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    userAuthApi: {
-      title: "User Authentication API",
-      description: "User registration, email/phone verification, login, external OAuth, password reset, 2FA, and profile management.",
-      intro: "The User Authentication API handles self-service authentication for end-users. Unlike the Admin Auth API, it includes registration, email/phone verification, external OAuth login, and password reset flows.",
-      registrationTitle: "Registration",
-      registerDesc: "Register a new user account with email, password, and tenant. Sends verification email.",
-      loginTitle: "Login",
-      loginDesc: "Authenticate user with email/password. Returns JWT token pair or 2FA challenge.",
-      externalLoginTitle: "External Login (OAuth)",
-      externalLoginDesc: "Authenticate via Google, Facebook, Apple, or Microsoft OAuth. Creates or links account.",
-      verificationTitle: "Email & Phone Verification",
-      verifyEmailDesc: "Verify email address using the OTP code sent via email.",
-      verifyPhoneDesc: "Verify phone number using the OTP code sent via SMS.",
-      sendVerificationDesc: "Resend a verification OTP code to email or phone.",
-      passwordResetTitle: "Password Reset",
-      forgotPasswordDesc: "Send a password reset OTP to the user's verified email address.",
-      resetPasswordDesc: "Reset password using the OTP code received via email.",
-      tokenTitle: "Token Management",
-      refreshDesc: "Exchange a valid refresh token for a new token pair.",
-      logoutDesc: "Revoke all refresh tokens for the authenticated user.",
-      tfaTitle: "User Two-Factor Authentication",
-      tfaEnableDesc: "Generate TOTP secret and QR code for the user.",
-      tfaConfirmDesc: "Confirm 2FA setup with the first TOTP code.",
-      tfaVerifyDesc: "Complete 2FA login verification.",
-      tfaDisableDesc: "Disable 2FA for the user.",
-      tfaBackupDesc: "Regenerate backup codes.",
-      profileTitle: "User Profile",
-      meDesc: "Get the authenticated user's profile.",
-      updateProfileDesc: "Update user profile fields.",
-      changePasswordDesc: "Change password (requires current password).",
-    },
-
-    // â”€â”€â”€ Admin API â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    adminApi: {
-      title: "Admin Management API",
-      description: "Admin CRUD, bulk operations, role assignment, impersonation, account actions (block/activate/unlock).",
-      intro: "The Admin Management API provides full CRUD for admin accounts, bulk operations, role management, and enterprise features like impersonation. All endpoints require admin authentication and appropriate permissions.",
-      crudTitle: "Admin CRUD Endpoints",
-      listDesc: "List admins with pagination, search, and filtering. Supports sorting by any field.",
-      getByIdDesc: "Get a single admin's full details including roles and permissions.",
-      createDesc: "Create a new admin account with role assignment and optional 2FA enforcement.",
-      updateDesc: "Update admin profile fields (name, email, phone, etc.).",
-      deleteDesc: "Soft-delete an admin account. Protected admins cannot be deleted.",
-      actionsTitle: "Account Actions",
-      blockDesc: "Block an admin from logging in (sets IsBlocked = true).",
-      activateDesc: "Activate or deactivate an admin account.",
-      unlockDesc: "Unlock a locked account (reset failed login counter).",
-      roleTitle: "Role Management",
-      assignRoleDesc: "Assign a role to an admin.",
-      removeRoleDesc: "Remove a role from an admin.",
-      syncRolesDesc: "Sync all roles for an admin (nuke & pave pattern).",
-      impersonationTitle: "Impersonation",
-      impersonateDesc: "Start impersonating another admin (SuperAdmin only).",
-      stopImpersonateDesc: "Stop impersonation and restore original identity.",
-      bulkTitle: "Bulk Operations",
-      bulkIntro: "Bulk operations allow performing actions on multiple admins at once. All bulk operations are audited and require explicit confirmation.",
-      bulkDeleteDesc: "Soft-delete multiple admins by ID list.",
-      bulkDeleteAllDesc: "Soft-delete all admins matching a filter (excluding selected IDs).",
-      bulkActivateDesc: "Activate multiple admins by ID list.",
-      bulkDeactivateDesc: "Deactivate multiple admins by ID list.",
-    },
-
-    // â”€â”€â”€ Tenant API â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    tenantApi: {
-      title: "Tenant Management API",
-      description: "Tenant CRUD, hierarchy, settings, logo management, and permission scoping.",
-      intro: "The Tenant API manages multi-tenant operations including tenant CRUD, parent-child hierarchy, per-tenant settings, logo management, and permission scoping.",
-      crudTitle: "Tenant CRUD",
-      listDesc: "List all tenants with pagination, search, and hierarchy info.",
-      getByIdDesc: "Get tenant details including settings and child tenant count.",
-      createDesc: "Create a new tenant with optional parent and initial admin.",
-      updateDesc: "Update tenant details (name, domain, settings).",
-      deleteDesc: "Soft-delete a tenant and cascade to all child data.",
-      hierarchyTitle: "Hierarchy Operations",
-      childrenDesc: "List child tenants of a parent tenant.",
-      moveDesc: "Move a tenant to a different parent in the hierarchy.",
-      settingsTitle: "Tenant Settings",
-      getSettingsDesc: "Get the settings for a specific tenant.",
-      updateSettingsDesc: "Update tenant settings (features, limits, branding).",
-      logoTitle: "Logo Management",
-      uploadLogoDesc: "Upload a tenant logo (auto-resized, stored in tenant directory).",
-      removeLogoDesc: "Remove the tenant logo.",
-      permissionsTitle: "Tenant Permission Scoping",
-      getTenantPermsDesc: "List permissions available to a tenant.",
-      assignTenantPermsDesc: "Assign or restrict permissions for a tenant.",
-    },
-
-    // â”€â”€â”€ Role & Permission API â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    rolePermissionApi: {
-      title: "Role & Permission API",
-      description: "Role CRUD, permission assignment, restricted fields, and available permission listing.",
-      intro: "The Role & Permission API handles role management and permission assignment. Roles are tenant-scoped, and permissions are organized in categories with support for field-level restrictions.",
-      roleCrudTitle: "Role CRUD",
-      listRolesDesc: "List roles for the current tenant with permission counts.",
-      getRoleDesc: "Get role details including all assigned permissions and restricted fields.",
-      createRoleDesc: "Create a new role with initial permission assignment.",
-      updateRoleDesc: "Update role name and description.",
-      deleteRoleDesc: "Delete a role (fails if admins are assigned to it).",
-      permissionsTitle: "Permission Management",
-      assignPermsDesc: "Assign permissions to a role (nuke & pave).",
-      availablePermsDesc: "List all available permissions organized by category.",
-      restrictedFieldsTitle: "Restricted Fields",
-      getRestrictedDesc: "Get restricted fields configuration for a role.",
-      updateRestrictedDesc: "Update which entity fields are restricted for a role.",
-    },
-
-    // â”€â”€â”€ Webhook, Email & Notification API â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    webhookEmailApi: {
-      title: "Webhook, Email & Notification API",
-      description: "Webhook subscriptions, email sending, message templates, and notification management endpoints.",
-      intro: "These endpoints manage webhooks, emails, message templates, and notifications. All are tenant-scoped and require appropriate permissions.",
-      webhooksTitle: "Webhook Subscriptions",
-      webhooksIntro: "Webhook endpoints let tenants subscribe to events and receive real-time HTTP callbacks with HMAC-signed payloads.",
-      listWebhooksDesc: "List all webhook subscriptions for the current tenant.",
-      createWebhookDesc: "Create a new webhook subscription with event types and target URL.",
-      updateWebhookDesc: "Update a webhook subscription's URL, events, or secret.",
-      deleteWebhookDesc: "Delete a webhook subscription.",
-      testWebhookDesc: "Send a test event to a webhook URL to verify connectivity.",
-      emailsTitle: "Email Sending",
-      emailsIntro: "Email endpoints handle sending, scheduling, and monitoring email delivery through the configured SMTP provider.",
-      listEmailsDesc: "List sent emails with delivery status and metadata.",
-      sendEmailDesc: "Send an email using a message template or raw HTML.",
-      sendBulkDesc: "Send bulk emails to multiple recipients.",
-      cancelEmailDesc: "Cancel a scheduled email before it's sent.",
-      resendEmailDesc: "Resend a previously sent email.",
-      emailStatsDesc: "Get email delivery statistics (sent, failed, pending).",
-      searchRecipientsDesc: "Search for admins/users as email recipients.",
-      templatesTitle: "Message Templates",
-      templatesIntro: "Template endpoints manage Scriban-powered message templates for emails, notifications, and webhooks.",
-      listTemplatesDesc: "List all message templates with type and language.",
-      getTemplateDesc: "Get a template's full content and placeholder schema.",
-      createTemplateDesc: "Create a new message template.",
-      updateTemplateDesc: "Update template content and metadata.",
-      deleteTemplateDesc: "Delete a message template.",
-      previewTemplateDesc: "Preview a rendered template with sample data.",
-      renderTemplateDesc: "Render a template with actual data (for programmatic use).",
-      notificationsTitle: "Notifications",
-      notificationsIntro: "Notification endpoints manage in-app notifications displayed in the admin panel.",
-      listNotificationsDesc: "List notifications for the authenticated user.",
-      unreadCountDesc: "Get the unread notification count.",
-      markReadDesc: "Mark a notification as read.",
-      markAllReadDesc: "Mark all notifications as read.",
-      deleteNotifDesc: "Delete a notification.",
-      searchTargetsDesc: "Search for notification targets (admins/users).",
-      signalrTip: "Notifications are also pushed in real-time via the NotificationHub SignalR hub. Subscribe to 'ReceiveNotification' for instant updates.",
-    },
-
-    // â”€â”€â”€ System API â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    systemApi: {
-      title: "System API",
-      description: "Dashboard analytics, menu management, recycle bin, file uploads, and system health endpoints.",
-      intro: "The System API provides endpoints for dashboard analytics, menu management, recycle bin operations, file uploads/downloads, and system health monitoring.",
-      dashboardTitle: "Dashboard & Analytics",
-      dashboardIntro: "Dashboard endpoints provide aggregated statistics and analytics data for the admin panel.",
-      overviewStatsDesc: "Get overall system statistics (total admins, users, tenants, etc.).",
-      recentActivityDesc: "Get recent activity across all entities.",
-      exportOverviewDesc: "Export dashboard overview as PDF.",
-      exportAnalyticsDesc: "Export analytics data as Excel.",
-      menuTitle: "Menu Management",
-      menuIntro: "Menu endpoints manage the sidebar navigation tree with role-based visibility and tenant overrides.",
-      listMenusDesc: "List all menu items as a flat list.",
-      myMenuDesc: "Get the current admin's filtered menu tree.",
-      createMenuDesc: "Create a new menu item.",
-      updateMenuDesc: "Update a menu item's label, icon, or position.",
-      deleteMenuDesc: "Delete a menu item and its children.",
-      reorderMenuDesc: "Reorder menu items via drag-and-drop.",
-      recycleBinTitle: "Recycle Bin",
-      recycleBinIntro: "Recycle bin endpoints manage soft-deleted entities with restore and permanent purge capabilities.",
-      listDeletedDesc: "List soft-deleted entities with type filtering and pagination.",
-      restoreDesc: "Restore a soft-deleted entity (cascade restore for tenants).",
-      purgeDesc: "Permanently delete (purge) a soft-deleted entity.",
-      bulkRestoreDesc: "Restore multiple soft-deleted entities.",
-      bulkPurgeDesc: "Permanently delete multiple soft-deleted entities.",
-      uploadsTitle: "File Uploads",
-      uploadsIntro: "Upload endpoints handle file validation, processing, and storage.",
-      uploadImageDesc: "Upload an image with processing (resize, crop, format conversion).",
-      uploadFileDesc: "Upload a general file (document, attachment).",
-      deleteFileDesc: "Delete an uploaded file.",
-      healthTitle: "System Health",
-      healthDesc: "Check system health including database, storage, and external services.",
-    },
-  },
-
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
   //  FRONTEND MODULES
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
   frontend: {
-    // â”€â”€â”€ CRUD System â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // CRUD System 
     crudSystem: {
       title: "CRUD System",
       description: "useCrudViewModel hook, GenericCrudView, DataTable, column helpers, form system, and dialog management.",
@@ -1076,7 +953,7 @@ export const docEn = {
       extensionTip: "The CRUD system is designed for extension, not modification. Wrap GenericCrudView with custom sections (statistics, filters) instead of modifying its internals.",
     },
 
-    // â”€â”€â”€ State Management â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    //  State Management 
     stateManagement: {
       title: "State Management",
       description: "TanStack Query for server state, Zustand for global UI state, and local useState â€” when to use each.",
@@ -1092,7 +969,7 @@ export const docEn = {
       antiPatternsTitle: "Anti-Patterns",
     },
 
-    // â”€â”€â”€ Localization â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    //  Localization 
     localization: {
       title: "Localization (i18n)",
       description: "LanguageProvider, t() function, RTL support, dictionary structure, and adding new translation keys.",
@@ -1112,7 +989,7 @@ export const docEn = {
       noLocaleRoutes: "NEXORA does NOT use locale-based routing ([locale]/page.tsx). All localization is handled via the LanguageProvider context and localStorage, not file-based routing.",
     },
 
-    // â”€â”€â”€ Form Validation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    //  Form Validation 
     formValidation: {
       title: "Form Validation",
       description: "Zod schemas, React Hook Form integration, FluentValidation server-side, and error handling patterns.",
@@ -1125,7 +1002,7 @@ export const docEn = {
       serverErrorIntro: "When server-side FluentValidation rejects a request, the API returns structured error objects with field-level messages. The frontend maps these errors back to form fields using setError().",
     },
 
-    // â”€â”€â”€ Component Library â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    //  Component Library 
     componentLibrary: {
       title: "Component Library",
       description: "shadcn/ui foundation, cn() utility, GenericSelect, theme system, and component placement rules.",
@@ -1147,7 +1024,7 @@ export const docEn = {
       neverInApp: "NEVER place business components in src/app/. Only routing connectors (page.tsx, layout.tsx) belong there. All UI components go in @core/ui/ (shared) or @modules/{name}/components/ (module-specific).",
     },
 
-    // â”€â”€â”€ Real-Time (SignalR) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    //  Real-Time (SignalR) 
     realtime: {
       title: "Real-Time (SignalR)",
       description: "SignalR hubs (AuditHub, NotificationHub), React hooks, connection management, and tenant group scoping.",
@@ -1161,12 +1038,12 @@ export const docEn = {
     },
   },
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+
   //  INFRASTRUCTURE
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+
 
   infrastructure: {
-    // â”€â”€â”€ Background Jobs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // â”€â”€â”€ Background Jobs 
     backgroundJobs: {
       title: "Background Jobs",
       description: "Hangfire-powered job processing â€” recurring cleanup, outbox processor, token cleanup, and dashboard.",
@@ -1181,10 +1058,10 @@ export const docEn = {
       tenantWarning: "Background jobs run outside of HTTP request context, so there is no tenant context available. Jobs that process tenant-specific data must explicitly set the tenant scope for each operation.",
     },
 
-    // â”€â”€â”€ File Storage â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    //  File Storage 
     fileStorage: {
       title: "File Storage",
-      description: "Strategy pattern with 4 providers â€” Local, Azure Blob, AWS S3, MinIO â€” with tenant-scoped directories.",
+      description: "Strategy pattern with 4 providers (Local, Azure Blob, AWS S3, MinIO) with tenant-scoped directories.",
       intro: "NEXORA uses the Strategy pattern for file storage, allowing seamless switching between local filesystem, Azure Blob Storage, AWS S3, and MinIO. All storage is tenant-scoped with configurable directories.",
       architectureTitle: "Storage Architecture",
       providersTitle: "Storage Providers",
@@ -1193,7 +1070,7 @@ export const docEn = {
       configTitle: "Configuration",
     },
 
-    // â”€â”€â”€ Resilience â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    //  Resilience 
     resilience: {
       title: "Resilience Patterns",
       description: "Polly-based retry, circuit breaker, and timeout policies for HTTP clients and external services.",
@@ -1207,7 +1084,7 @@ export const docEn = {
       configTitle: "Configuration",
     },
 
-    // â”€â”€â”€ Gateway & Deployment â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    //  Gateway & Deployment 
     gatewayDeployment: {
       title: "Gateway & Deployment",
       description: "YARP reverse proxy gateway, module system, IIS deployment, and Kestrel configuration.",
@@ -1233,12 +1110,12 @@ export const docEn = {
     },
   },
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+
   //  TUTORIALS
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+
 
   tutorials: {
-    // â”€â”€â”€ Add Frontend Module â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // Add Frontend Module 
     addModule: {
       title: "Add a Frontend Module",
       description: "Step-by-step guide to creating a new frontend module following SOLID View/ViewModel pattern.",
@@ -1302,17 +1179,276 @@ export const docEn = {
     },
   },
 
-  //  ARCHITECTURE DEEP DIVE (additional keys for new pages)
+  // ═══════════════════════════════════════════════════════════
+  //  API REFERENCE
+  // ═══════════════════════════════════════════════════════════
+  apiReference: {
 
-  architectureDeepDive: {
-    // These keys are nested under `architecture` in the content files
-    // but adding them here for documentation purposes.
-    // The actual keys are in the `architecture` section above.
+    // ─── Overview ────────────────────────────────────────────
+    overview: {
+      title: "API Reference",
+      description: "Complete REST API documentation with endpoints, request/response examples, authentication, and rate limiting.",
+      intro: "The NEXORA API is a RESTful JSON API. All endpoints use JWT Bearer-token authentication (unless marked public), standard HTTP status codes, and a consistent envelope response format. Swagger UI is available at /swagger for interactive testing.",
+      baseInfoTitle: "Base Information",
+      authEndpointsTitle: "Authentication Endpoints",
+      adminEndpointsTitle: "Admin Management Endpoints",
+      userEndpointsTitle: "User Management Endpoints",
+      roleEndpointsTitle: "Role & Permission Endpoints",
+      tenantEndpointsTitle: "Tenant Management Endpoints",
+      otherEndpointsTitle: "Other Endpoints",
+      responseFormatTitle: "Response Format",
+      swaggerTip: "All API endpoints are also documented in the built-in Swagger UI at /swagger. You can authorize with a JWT token and try requests interactively.",
+    },
+
+    // ─── Authentication API (Admin) ──────────────────────────
+    authApi: {
+      title: "Authentication API (Admin)",
+      description: "Admin authentication endpoints — login, refresh, logout, 2FA, profile management, and security logs.",
+      intro: "The Authentication API handles admin-panel authentication for dashboard users. Unlike the User Auth API, it includes two-factor authentication management, admin profile endpoints, and security log access. All endpoints use the /api/v1/auth base path.",
+      configTitle: "Base Configuration",
+      loginTitle: "Login",
+      loginDesc: "Authenticate admin with email/password. Returns JWT access + refresh tokens.",
+      refreshTitle: "Refresh Token",
+      refreshDesc: "Exchange a valid refresh token for a new access + refresh token pair. Single-use rotation.",
+      logoutTitle: "Logout",
+      logoutDesc: "Revoke all refresh tokens for the authenticated user. Access token remains valid until expiry.",
+      tfaTitle: "Two-Factor Authentication",
+      tfaIntro: "NEXORA supports TOTP-based 2FA using authenticator apps (Google Authenticator, Authy, Microsoft Authenticator). Once enabled, login returns a session token instead of access tokens — the client must verify the TOTP code to complete authentication.",
+      tfaEnableDesc: "Generate a TOTP secret and QR code URI for setup in an authenticator app.",
+      tfaConfirmDesc: "Confirm 2FA setup by verifying the first TOTP code. Returns backup codes.",
+      tfaVerifyDesc: "Complete login by verifying the TOTP code with the 2FA session token.",
+      tfaDisableDesc: "Disable 2FA for the current admin account. Requires valid bearer token.",
+      tfaBackupDesc: "Regenerate a new set of 10 backup codes. Previous codes are invalidated.",
+      profileTitle: "Profile Management",
+      meDesc: "Get the full profile of the currently authenticated admin, including role, permissions, and tenant info.",
+      updateProfileDesc: "Update the current admin's name and phone number.",
+      changePasswordDesc: "Change password. Requires current password for verification.",
+      uploadAvatarDesc: "Upload a new avatar image (max 2 MB, jpg/png/webp).",
+      removeAvatarDesc: "Remove the current avatar and revert to the default.",
+      securityTitle: "Security Endpoints",
+      securityLogDesc: "View the admin's recent security events (logins, password changes, 2FA changes).",
+      sessionsDesc: "List all active sessions with device info, IP address, and last activity.",
+      revokeSessionDesc: "Revoke a specific session by ID, forcing re-authentication on that device.",
+      securityTip: "Security logs are retained for 90 days by default. Admins can only see their own security events; SuperAdmins can query the full audit log at /api/v1/audit.",
+    },
+
+    // ─── User Authentication API ─────────────────────────────
+    userAuthApi: {
+      title: "User Authentication API",
+      description: "User registration, email/phone verification, login, external OAuth, password reset, 2FA, and profile management.",
+      intro: "The User Authentication API handles self-service authentication for end-users. Unlike the Admin Auth API, it includes registration, email/phone verification, external OAuth login, and password reset flows.",
+      configTitle: "Base Configuration",
+      registerTitle: "Registration",
+      registerDesc: "Register a new user account with email, password, and tenant. Sends verification email.",
+      loginTitle: "Login",
+      loginDesc: "Authenticate user with email and password. Returns JWT access + refresh tokens.",
+      externalTitle: "External Authentication",
+      externalIntro: "NEXORA supports OAuth authentication via Google, Facebook, Apple, or Microsoft. The client obtains a provider token and sends it to the external-login endpoint. NEXORA validates the token, creates or links the account, and returns JWT tokens.",
+      externalLoginDesc: "Authenticate via Google, Facebook, Apple, or Microsoft OAuth. Creates or links account.",
+      verificationTitle: "Email & Phone Verification",
+      verifyEmailDesc: "Verify email address using a 6-digit OTP code sent to the user's email.",
+      verifyPhoneDesc: "Verify phone number using a 6-digit OTP code sent via SMS.",
+      sendVerificationDesc: "Send (or resend) a verification code to email or phone. Rate limited to 5/hour.",
+      passwordResetTitle: "Password Reset",
+      forgotPasswordDesc: "Request a password reset code. Always returns success to prevent email enumeration.",
+      resetPasswordDesc: "Reset password using the 6-digit code from forgot-password.",
+      tokenTitle: "Token Management",
+      refreshDesc: "Exchange a valid refresh token for a new token pair. Single-use rotation.",
+      logoutDesc: "Revoke all refresh tokens and end the session.",
+      tfaTitle: "User Two-Factor Authentication",
+      tfaEnableDesc: "Generate TOTP secret and QR code for authenticator app setup.",
+      tfaConfirmDesc: "Confirm 2FA by verifying the first TOTP code. Returns 10 backup codes.",
+      tfaVerifyDesc: "Complete login by verifying the TOTP code with the 2FA session token.",
+      tfaDisableDesc: "Disable 2FA for the current user. Requires valid bearer token.",
+      tfaBackupDesc: "Regenerate backup codes. All previous codes are invalidated.",
+      profileTitle: "User Profile",
+      meDesc: "Get the authenticated user's profile, including tenant and verification status.",
+      updateProfileDesc: "Update user name and phone number.",
+      changePasswordDesc: "Change password. Requires current password verification.",
+      summaryTitle: "Endpoint Summary",
+      diffNote: "The User Auth API (/user-auth) is separate from the Admin Auth API (/auth). Users authenticate at /user-auth/login, admins at /auth/login. Both issue JWT tokens in the same format but have different permission scopes and 2FA flows.",
+    },
+
+    // ─── Admin Management API ────────────────────────────────
+    adminApi: {
+      title: "Admin Management API",
+      description: "Full CRUD, account actions, bulk operations, impersonation, and query parameters for admin user management.",
+      intro: "The Admin Management API provides full lifecycle management for admin accounts within a tenant. All endpoints require Bearer token authentication and appropriate permissions from the admins.* permission group.",
+      crudTitle: "Admin CRUD Endpoints",
+      listDesc: "List admins with pagination, search, sorting, and role/status filters.",
+      getByIdDesc: "Get a single admin by ID, including role details and last login.",
+      createDesc: "Create a new admin account with email, role, and tenant assignment.",
+      updateDesc: "Update an admin's name, phone, role, or active status.",
+      deleteDesc: "Soft-delete an admin. Can be restored from the recycle bin.",
+      actionsTitle: "Account Actions",
+      activateDesc: "Activate a deactivated admin account.",
+      deactivateDesc: "Deactivate an admin account (prevents login).",
+      blockDesc: "Block an admin account (immediate lockout).",
+      unblockDesc: "Unblock a blocked admin account.",
+      unlockDesc: "Unlock a locked-out account (reset failed login attempts).",
+      resetPasswordDesc: "Force-reset an admin's password. Sends a new temporary password via email.",
+      bulkTitle: "Bulk Operations",
+      bulkIntro: "Bulk operations accept either an array of specific IDs or a filter object that matches all records meeting criteria. The bulk-delete-all variant uses the current filter context to select records, with an optional excludeIds array to protect specific accounts.",
+      bulkActivateDesc: "Activate multiple admin accounts by ID list.",
+      bulkDeactivateDesc: "Deactivate multiple admin accounts by ID list.",
+      bulkDeleteDesc: "Soft-delete multiple admins by ID list.",
+      bulkDeleteAllDesc: "Soft-delete all admins matching the current filter (with exclusions).",
+      impersonationTitle: "Impersonation",
+      impersonateDesc: "Start impersonating another admin. Receive their JWT with your audit trail attached.",
+      stopImpersonateDesc: "Stop impersonation and return to your original admin session.",
+      transferDesc: "Transfer SuperAdmin role to another admin. You lose SuperAdmin privileges.",
+      protectDesc: "Toggle protection flag on an admin account (protected accounts cannot be deleted).",
+      impersonationWarning: "Impersonation is a powerful feature restricted to SuperAdmins. All actions performed during impersonation are logged with both the impersonator's and the target's identity. The impersonation session is time-limited and automatically ends after 1 hour.",
+      queryParamsTitle: "Query Parameters",
+    },
+
+    // ─── Tenant Management API ───────────────────────────────
+    tenantApi: {
+      title: "Tenant Management API",
+      description: "Tenant CRUD, hierarchy management, settings, and logo upload for multi-tenant operations.",
+      intro: "The Tenant Management API provides full lifecycle management for tenants in the multi-tenant hierarchy. Parent tenants can manage their children, and each tenant has isolated settings, branding, and resource limits.",
+      crudTitle: "Tenant CRUD",
+      listDesc: "List all tenants visible to the current admin's scope, with pagination.",
+      getByIdDesc: "Get full tenant details including settings, statistics, and hierarchy info.",
+      createDesc: "Create a new child tenant under the current admin's tenant.",
+      updateDesc: "Update tenant name, slug, and basic information.",
+      deleteDesc: "Soft-delete a tenant. Active admins and users are deactivated.",
+      hierarchyTitle: "Hierarchy & Statistics",
+      hierarchyIntro: "Tenants form a tree hierarchy where parent tenants can see and manage their children. The hierarchy endpoint returns the full tree structure, while other endpoints provide tenant-specific statistics and resource listings.",
+      hierarchyDesc: "Get the full tenant hierarchy tree from the current admin's scope.",
+      childrenDesc: "List direct children of a specific tenant.",
+      myChildrenDesc: "List the current admin's tenant's direct children.",
+      statsDesc: "Get statistics for a tenant (admin count, user count, storage usage).",
+      adminsDesc: "List all admins belonging to a specific tenant.",
+      rolesDesc: "List all roles belonging to a specific tenant.",
+      permissionsDesc: "List all permissions available in a specific tenant's scope.",
+      settingsTitle: "Tenant Settings",
+      getSettingsDesc: "Get the full settings object for a tenant.",
+      updateSettingsDesc: "Update tenant settings (registration policy, language, limits, password policy).",
+      mySettingsDesc: "Update the current admin's own tenant settings (shortcut).",
+      uploadLogoDesc: "Upload a tenant logo (max 5 MB, jpg/png/svg/webp).",
+      settingsNote: "Tenant settings include password policies, registration controls, language defaults, and resource limits. Child tenants inherit parent settings by default but can override them.",
+    },
+
+    // ─── Role & Permission API ───────────────────────────────
+    rolePermissionApi: {
+      title: "Role & Permission API",
+      description: "Role CRUD, permission assignment, tenant-scoped roles, and permission catalog for RBAC management.",
+      intro: "The Role & Permission API manages the RBAC (Role-Based Access Control) system. Roles are tenant-scoped, meaning each tenant has its own set of roles. Permissions are seeded from the backend and are read-only. Roles compose permissions with optional field-level restrictions.",
+      rolesCrudTitle: "Role CRUD",
+      listRolesDesc: "List all roles in the current tenant with admin counts.",
+      getRoleDesc: "Get role details including permissions, menu items, and field restrictions.",
+      createRoleDesc: "Create a new custom role with permissions and menu visibility.",
+      updateRoleDesc: "Update role name, description, and menu visibility.",
+      deleteRoleDesc: "Delete a role. Fails if admins are still assigned to it.",
+      cloneRoleDesc: "Clone an existing role with all its permissions and menu items.",
+      assignTitle: "Permission Assignment",
+      assignPermDesc: "Replace all permissions for a role. Supports field-level restrictions per permission.",
+      getPermDesc: "Get the current permissions assigned to a role.",
+      syncScopesDesc: "Sync permission scopes and restricted fields from the parent tenant.",
+      tenantScopedTitle: "Tenant-Scoped Roles",
+      tenantScopedIntro: "Each tenant has its own set of roles that can only use permissions available in the tenant's scope. The available permissions are controlled by the parent tenant's role assignment. Admins can only see and assign permissions their tenant is allowed to use.",
+      myTenantRolesDesc: "List roles available in the current admin's tenant.",
+      availablePermDesc: "List permissions available for assignment in the current tenant's scope.",
+      permissionsTitle: "Permissions (Read-Only)",
+      permissionsIntro: "Permissions are seeded automatically from the backend. They cannot be created or modified through the API. Each permission belongs to a category and can have field-level restrictions when assigned to a role.",
+      listPermissionsDesc: "List all permissions grouped by category.",
+      myPermissionsDesc: "Get the current admin's effective permissions.",
+      getPermByIdDesc: "Get a single permission by ID with full details.",
+      categoriesDesc: "Get permission categories with all permissions in each.",
+      availableForTenantDesc: "List permissions available for a specific tenant (for tenant creation/editing).",
+      seededNote: "Permissions are seeded from backend code during application startup. Adding new endpoints with [RequirePermission] attributes automatically creates new permissions on next deploy.",
+    },
+
+    // ─── Webhook, Email & Notification API ───────────────────
+    webhookEmailApi: {
+      title: "Webhook, Email & Notification API",
+      description: "Webhook subscriptions, email sending/bulk, message templates, and real-time notifications with SignalR.",
+      intro: "The Webhook, Email & Notification API provides event-driven integrations, transactional email delivery, template management, and real-time in-app notifications. Webhooks use HMAC signature verification for security.",
+      webhooksTitle: "Webhooks",
+      webhooksIntro: "Webhooks allow external systems to subscribe to NEXORA events. When an event occurs (admin created, user registered, etc.), NEXORA sends an HTTP POST to the subscriber URL with a signed payload. Failed deliveries are retried up to 3 times with exponential backoff.",
+      listWebhooksDesc: "List all webhook subscriptions for the current tenant.",
+      createWebhookDesc: "Create a new webhook subscription with URL, events, and HMAC secret.",
+      updateWebhookDesc: "Update a webhook's URL, events, or active status.",
+      deleteWebhookDesc: "Delete a webhook subscription.",
+      testWebhookDesc: "Send a test event to the webhook URL to verify connectivity.",
+      emailTitle: "Email System",
+      emailIntro: "The email system supports individual and bulk email sending with template variable interpolation. Emails are queued via Hangfire and processed asynchronously. The system supports scheduling, cancellation, and resending of failed emails.",
+      listEmailsDesc: "List sent/queued/failed emails with pagination and status filters.",
+      sendEmailDesc: "Send a single email using a template with variable substitution.",
+      sendBulkDesc: "Send bulk emails to multiple recipients or a filtered group.",
+      cancelEmailDesc: "Cancel a queued (not yet sent) email.",
+      resendEmailDesc: "Resend a failed email.",
+      emailStatsDesc: "Get email statistics (sent, failed, queued, bounce rate).",
+      searchRecipientsDesc: "Search for valid email recipients (admins/users) by name or email.",
+      templatesTitle: "Message Templates",
+      templatesIntro: "Message templates use the Scriban engine (Liquid-compatible) for variable interpolation. Templates support HTML and plain-text bodies, with preview and render endpoints for testing before sending.",
+      listTemplatesDesc: "List all message templates with category and status filters.",
+      getTemplateDesc: "Get a single template with full body content and variable definitions.",
+      createTemplateDesc: "Create a new message template with HTML/text body and variables.",
+      updateTemplateDesc: "Update a template's content, subject, or variables.",
+      deleteTemplateDesc: "Delete a message template.",
+      previewTemplateDesc: "Preview a template with sample data (returns rendered HTML).",
+      renderTemplateDesc: "Render a template with provided variables (returns final HTML + text).",
+      notificationsTitle: "Notifications",
+      listNotificationsDesc: "List in-app notifications for the current user with pagination.",
+      unreadCountDesc: "Get the count of unread notifications.",
+      markReadDesc: "Mark a single notification as read.",
+      markAllReadDesc: "Mark all notifications as read.",
+      deleteNotifDesc: "Delete a notification.",
+      searchTargetsDesc: "Search for notification targets (users/admins) by name or email.",
+      signalrTip: "Real-time notifications are delivered via SignalR WebSocket at /hubs/notification. The client receives instant push notifications without polling. Connect with your JWT token for authenticated real-time updates.",
+    },
+
+    // ─── System API ──────────────────────────────────────────
+    systemApi: {
+      title: "System API",
+      description: "Dashboard analytics, menu management, recycle bin, file management, system settings, and health checks.",
+      intro: "The System API covers platform-level operations including dashboard analytics, dynamic menu management, soft-delete recycle bin, file uploads, system settings, and infrastructure health checks.",
+      dashboardTitle: "Dashboard Analytics",
+      dashboardIntro: "The dashboard endpoints provide real-time KPI summaries, login activity trends, security event monitoring, and audit event distribution. All data is tenant-scoped based on the authenticated admin's context.",
+      summaryDesc: "Get KPI summary with admin/user/tenant counts, today's logins, and storage usage.",
+      loginActivityDesc: "Get login activity over time (successful vs failed logins per day).",
+      recentChangesDesc: "Get recent entity changes across the system (creates, updates, deletes).",
+      eventDistDesc: "Get audit event type distribution for pie/bar charts.",
+      securityEventsDesc: "Get security events including brute-force attempts, locked accounts, and blocked IPs.",
+      blockedIpsDesc: "Get the top blocked IP addresses with attempt counts.",
+      dashboardExportTitle: "Dashboard Export",
+      exportOverviewDesc: "Export the overview dashboard as CSV, Excel, or PDF.",
+      exportAnalyticsDesc: "Export analytics data with optional chart images (PDF).",
+      exportSecurityDesc: "Export security event data for compliance reporting.",
+      menuTitle: "Menu Management",
+      listMenusDesc: "List all menu items in tree structure.",
+      myMenuDesc: "Get the personalized menu tree for the current admin (filtered by role visibility).",
+      createMenuDesc: "Create a new menu item with title, icon, path, and parent.",
+      updateMenuDesc: "Update a menu item's title, icon, path, or parent.",
+      deleteMenuDesc: "Delete a menu item and all its children.",
+      reorderMenuDesc: "Reorder menu items by providing an array of {id, order} pairs.",
+      roleVisibilityDesc: "Set which roles can see a specific menu item.",
+      tenantOverrideDesc: "Override a menu item's visibility or order for a specific tenant.",
+      myOverridesDesc: "Get the current tenant's menu overrides.",
+      recycleBinTitle: "Recycle Bin",
+      listDeletedDesc: "List soft-deleted entities with type, name, deleted date, and restore eligibility.",
+      restoreDesc: "Restore a soft-deleted entity back to active state.",
+      purgeDesc: "Permanently delete an entity from the recycle bin (irreversible).",
+      filesTitle: "File Management",
+      uploadDesc: "Upload a file (image, document). Returns file metadata with access URL.",
+      downloadDesc: "Download or stream a file by ID.",
+      deleteFileDesc: "Delete an uploaded file from storage.",
+      settingsTitle: "System Settings",
+      getSettingsDesc: "Get global system settings (email config, security policies, feature flags).",
+      updateSettingsDesc: "Update system settings. Changes take effect immediately.",
+      resetSettingsDesc: "Reset all settings to factory defaults.",
+      healthTitle: "Health Checks",
+      healthCheckDesc: "Liveness probe — checks if the API process is running and responsive.",
+      readinessDesc: "Readiness probe — checks database, cache, blob storage, and background jobs.",
+    },
   },
+
 };
 
 export type DocTranslations = typeof docEn;
 
-/** Loose type for non-English locales â€” allows partial and legacy keys */
+/** Loose type for non-English locales allows partial and legacy keys */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type PartialDocTranslations = Record<string, any>;
