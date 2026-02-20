@@ -4,7 +4,6 @@ import { useDocsViewModel } from "../viewmodels/useDocsViewModel";
 import { useSidebarViewModel } from "../viewmodels/useSidebarViewModel";
 import { useSearchViewModel } from "../viewmodels/useSearchViewModel";
 import { useTocViewModel } from "../viewmodels/useTocViewModel";
-import type { DocsMode } from "../viewmodels/useDocsModeViewModel";
 import { useDocsI18n } from "../providers/DocsI18nProvider";
 
 // Layout components
@@ -25,16 +24,12 @@ import { DocsSearch } from "../components/ui/DocsSearch";
 // ─── Props ────────────────────────────────────────────────────────
 interface TechnicalDocsViewProps {
       slug: string;
-      docsMode: {
-            mode: DocsMode;
-            setMode: (mode: DocsMode) => void;
-      };
 }
 
 // ─── View ─────────────────────────────────────────────────────────
-export function TechnicalDocsView({ slug, docsMode }: TechnicalDocsViewProps) {
+export function TechnicalDocsView({ slug }: TechnicalDocsViewProps) {
       const { t, direction } = useDocsI18n();
-      const vm = useDocsViewModel(slug, docsMode.mode);
+      const vm = useDocsViewModel(slug, "technical");
       const sidebar = useSidebarViewModel();
       const search = useSearchViewModel(vm.search);
       const toc = useTocViewModel(vm.headingIds);
@@ -45,8 +40,6 @@ export function TechnicalDocsView({ slug, docsMode }: TechnicalDocsViewProps) {
                         <DocsHeader
                               onSearchOpen={search.openSearch}
                               onMobileMenuOpen={sidebar.openMobileMenu}
-                              docsMode={docsMode.mode}
-                              onDocsModeChange={docsMode.setMode}
                         />
                         <div className="docs-wrapper">
                               <DocsSidebar categories={vm.categories} activeSlug={slug} />
@@ -78,8 +71,6 @@ export function TechnicalDocsView({ slug, docsMode }: TechnicalDocsViewProps) {
                   <DocsHeader
                         onSearchOpen={search.openSearch}
                         onMobileMenuOpen={sidebar.openMobileMenu}
-                        docsMode={docsMode.mode}
-                        onDocsModeChange={docsMode.setMode}
                   />
 
                   <div className="docs-wrapper">
@@ -105,6 +96,7 @@ export function TechnicalDocsView({ slug, docsMode }: TechnicalDocsViewProps) {
                                           prevTitleKey={vm.prevTitleKey}
                                           nextSlug={vm.nextSlug}
                                           nextTitleKey={vm.nextTitleKey}
+                                          basePath="/docs"
                                     />
                               </main>
 
@@ -124,6 +116,7 @@ export function TechnicalDocsView({ slug, docsMode }: TechnicalDocsViewProps) {
                         activeSlug={slug}
                         isOpen={sidebar.isMobileMenuOpen}
                         onClose={sidebar.closeMobileMenu}
+                        basePath="/docs"
                   />
             </div>
       );

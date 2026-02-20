@@ -4,7 +4,6 @@ import { useDocsViewModel } from "../viewmodels/useDocsViewModel";
 import { useSidebarViewModel } from "../viewmodels/useSidebarViewModel";
 import { useSearchViewModel } from "../viewmodels/useSearchViewModel";
 import { useTocViewModel } from "../viewmodels/useTocViewModel";
-import { useDocsModeViewModel } from "../viewmodels/useDocsModeViewModel";
 import { useDocsI18n } from "../providers/DocsI18nProvider";
 
 // Commercial layout components
@@ -19,9 +18,6 @@ import { DocsToc } from "../components/layout/DocsToc";
 import { ReadingProgress } from "../components/ui/ReadingProgress";
 import { DocsSearch } from "../components/ui/DocsSearch";
 
-// Content registration
-import "../../data/content/registry";
-
 // ─── Props ────────────────────────────────────────────────────────
 interface CommercialDocsViewProps {
       slug: string;
@@ -30,7 +26,6 @@ interface CommercialDocsViewProps {
 // ─── View ─────────────────────────────────────────────────────────
 export function CommercialDocsView({ slug }: CommercialDocsViewProps) {
       const { direction } = useDocsI18n();
-      const docsMode = useDocsModeViewModel();
       const vm = useDocsViewModel(slug, "commercial");
       const sidebar = useSidebarViewModel();
       const search = useSearchViewModel(vm.search);
@@ -43,15 +38,13 @@ export function CommercialDocsView({ slug }: CommercialDocsViewProps) {
                         <CommercialHeader
                               onSearchOpen={search.openSearch}
                               onMobileMenuOpen={sidebar.openMobileMenu}
-                              docsMode={docsMode.mode}
-                              onDocsModeChange={docsMode.setMode}
                         />
                         <div className="commercial-wrapper">
                               <CommercialSidebar categories={vm.categories} activeSlug={slug} />
                               <div className="commercial-main">
                                     <div className="commercial-404">
                                           <h1>404</h1>
-                                          <p>Page not found: /docs/{slug}</p>
+                                          <p>Page not found: /commercial/{slug.replace("commercial/", "")}</p>
                                     </div>
                               </div>
                         </div>
@@ -68,8 +61,6 @@ export function CommercialDocsView({ slug }: CommercialDocsViewProps) {
                   <CommercialHeader
                         onSearchOpen={search.openSearch}
                         onMobileMenuOpen={sidebar.openMobileMenu}
-                        docsMode={docsMode.mode}
-                        onDocsModeChange={docsMode.setMode}
                   />
 
                   <div className="commercial-wrapper">
@@ -88,6 +79,7 @@ export function CommercialDocsView({ slug }: CommercialDocsViewProps) {
                                     prevTitleKey={vm.prevTitleKey}
                                     nextSlug={vm.nextSlug}
                                     nextTitleKey={vm.nextTitleKey}
+                                    basePath="/commercial"
                               />
                         </div>
 
@@ -106,6 +98,7 @@ export function CommercialDocsView({ slug }: CommercialDocsViewProps) {
                         activeSlug={slug}
                         isOpen={sidebar.isMobileMenuOpen}
                         onClose={sidebar.closeMobileMenu}
+                        basePath="/commercial"
                   />
             </div>
       );

@@ -6,14 +6,13 @@ import type { DocCategory } from "../../domain/entities/DocCategory";
 import type { HeadingSection } from "../../domain/entities/DocSection";
 import type { SearchResult } from "../../domain/interfaces/IDocsRepository";
 import type { DocPage } from "../../domain/entities/DocPage";
-import type { DocsMode } from "./useDocsModeViewModel";
 
 /**
  * Orchestrator ViewModel for a single docs page.
- * Composes all data needed by DocsPageView.
+ * Composes all data needed by the active view.
  * Filters navigation by mode (technical vs commercial).
  */
-export function useDocsViewModel(slug: string, mode: DocsMode = "technical") {
+export function useDocsViewModel(slug: string, mode: "technical" | "commercial" = "technical") {
   const repo = docsContainer.docsRepository;
 
   // ─── Page Data ──────────────────────────────────────────────

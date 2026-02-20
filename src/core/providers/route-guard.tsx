@@ -34,10 +34,11 @@ const PUBLIC_PAGES = [
   "/profile/notifications",
   "/profile/settings",
   "/docs",
+  "/commercial",
 ];
 
 // Route prefixes that are always public (no auth checks at all)
-const PUBLIC_PREFIXES = ["/docs"];
+const PUBLIC_PREFIXES = ["/docs", "/commercial"];
 
 /** Check if a pathname is a public page (no auth required) */
 function isPublicPage(pathname: string): boolean {

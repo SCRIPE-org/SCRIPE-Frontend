@@ -1,6 +1,7 @@
 /**
  * Content Registry — Imports all content files to register them.
- * This file is imported by DocsPageView to ensure all pages are available.
+ * This file is imported by TechnicalPageConnector / CommercialPageConnector
+ * to ensure all pages are available.
  */
 
 // Get Started

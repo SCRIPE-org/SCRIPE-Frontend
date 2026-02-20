@@ -1,24 +1,18 @@
 "use client";
 
 import Link from "next/link";
+import { useState, useRef, useEffect } from "react";
+import { useTheme } from "next-themes";
 import { useDocsI18n } from "../../providers/DocsI18nProvider";
-import type { DocsMode } from "../../viewmodels/useDocsModeViewModel";
-
-// ─── Props ───────────────────────────────────────────────────────
-interface CommercialHeaderProps {
-      onSearchOpen: () => void;
-      onMobileMenuOpen: () => void;
-      docsMode: DocsMode;
-      onDocsModeChange: (mode: DocsMode) => void;
-}
 
 // ─── Component ───────────────────────────────────────────────────
 export function CommercialHeader({
       onSearchOpen,
       onMobileMenuOpen,
-      docsMode,
-      onDocsModeChange,
-}: CommercialHeaderProps) {
+}: {
+      onSearchOpen: () => void;
+      onMobileMenuOpen: () => void;
+}) {
       const { t } = useDocsI18n();
 
       return (
@@ -38,7 +32,7 @@ export function CommercialHeader({
                         </button>
 
                         {/* Logo + Brand */}
-                        <Link href="/docs/commercial/why-nexora-overview" className="commercial-header-brand">
+                        <Link href="/commercial" className="commercial-header-brand">
                               <div className="commercial-header-logo">
                                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                                           <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2" />
@@ -54,7 +48,7 @@ export function CommercialHeader({
                               </div>
                         </Link>
 
-                        {/* Center nav */}
+                        {/* Center — Search */}
                         <nav className="commercial-header-nav">
                               <button className="commercial-header-nav-link" onClick={onSearchOpen}>
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -67,17 +61,20 @@ export function CommercialHeader({
 
                         {/* Actions */}
                         <div className="commercial-header-actions">
+                              {/* Language switcher */}
+                              <CommercialLangSwitcher />
+
+                              {/* Theme toggle */}
+                              <CommercialThemeToggle />
+
                               {/* Switch to Technical */}
-                              <button
-                                    className="commercial-header-switch"
-                                    onClick={() => onDocsModeChange("technical")}
-                              >
+                              <Link href="/docs" className="commercial-header-switch">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                           <polyline points="16 18 22 12 16 6" />
                                           <polyline points="8 6 2 12 8 18" />
                                     </svg>
-                                    {t("common.technical")}
-                              </button>
+                                    {t("common.technicalDocs")}
+                              </Link>
 
                               {/* CTA */}
                               <a href="mailto:sales@nexora.io" className="commercial-header-cta">
@@ -86,5 +83,88 @@ export function CommercialHeader({
                         </div>
                   </div>
             </header>
+      );
+}
+
+// ─── Inline Language Switcher ──────────────────────────────────
+function CommercialLangSwitcher() {
+      const { language, setLanguage, languages, currentLanguageInfo, t } = useDocsI18n();
+      const [open, setOpen] = useState(false);
+      const ref = useRef<HTMLDivElement>(null);
+
+      useEffect(() => {
+            const handler = (e: MouseEvent) => {
+                  if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+            };
+            document.addEventListener("mousedown", handler);
+            return () => document.removeEventListener("mousedown", handler);
+      }, []);
+
+      return (
+            <div className="docs-lang-dropdown" ref={ref}>
+                  <button
+                        className="docs-lang-btn"
+                        onClick={() => setOpen(!open)}
+                        aria-label={t("common.language")}
+                  >
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <circle cx="12" cy="12" r="10" />
+                              <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
+                              <path d="M2 12h20" />
+                        </svg>
+                        <span>{currentLanguageInfo.code.toUpperCase()}</span>
+                  </button>
+
+                  {open && (
+                        <div className="docs-lang-menu">
+                              {languages.map((lang) => (
+                                    <button
+                                          key={lang.code}
+                                          className="docs-lang-option"
+                                          data-active={lang.code === language}
+                                          onClick={() => {
+                                                setLanguage(lang.code);
+                                                setOpen(false);
+                                          }}
+                                    >
+                                          <span>{lang.nativeLabel}</span>
+                                          {lang.code === language && (
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                      <polyline points="20 6 9 17 4 12" />
+                                                </svg>
+                                          )}
+                                    </button>
+                              ))}
+                        </div>
+                  )}
+            </div>
+      );
+}
+
+// ─── Inline Theme Toggle ───────────────────────────────────────
+function CommercialThemeToggle() {
+      const { theme, setTheme } = useTheme();
+      const isDark = theme === "dark";
+
+      return (
+            <button
+                  className="docs-theme-btn"
+                  onClick={() => setTheme(isDark ? "light" : "dark")}
+                  aria-label="Toggle theme"
+            >
+                  {isDark ? (
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <circle cx="12" cy="12" r="4" />
+                              <path d="M12 2v2" /><path d="M12 20v2" />
+                              <path d="m4.93 4.93 1.41 1.41" /><path d="m17.66 17.66 1.41 1.41" />
+                              <path d="M2 12h2" /><path d="M20 12h2" />
+                              <path d="m6.34 17.66-1.41 1.41" /><path d="m19.07 4.93-1.41 1.41" />
+                        </svg>
+                  ) : (
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+                        </svg>
+                  )}
+            </button>
       );
 }

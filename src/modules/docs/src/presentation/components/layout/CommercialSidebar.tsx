@@ -131,11 +131,13 @@ export function CommercialSidebar({ categories, activeSlug }: CommercialSidebarP
       const renderItem = (item: DocNavItem, color: string) => {
             if (!item.slug) return null;
             const isActive = item.slug === activeSlug;
+            // Strip "commercial/" prefix since route is /commercial/{slug}
+            const cleanSlug = item.slug.replace(/^commercial\//, "");
 
             return (
                   <Link
                         key={item.id}
-                        href={`/docs/${item.slug}`}
+                        href={`/commercial/${cleanSlug}`}
                         className="commercial-sidebar-item"
                         data-active={isActive}
                         style={isActive ? { "--item-accent": color } as React.CSSProperties : undefined}

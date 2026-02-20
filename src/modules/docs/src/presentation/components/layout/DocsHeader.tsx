@@ -1,13 +1,11 @@
 "use client";
 
+import Link from "next/link";
 import { useDocsI18n } from "../../providers/DocsI18nProvider";
-import type { DocsMode } from "../../viewmodels/useDocsModeViewModel";
 
 interface DocsHeaderProps {
   onSearchOpen: () => void;
   onMobileMenuOpen: () => void;
-  docsMode: DocsMode;
-  onDocsModeChange: (mode: DocsMode) => void;
 }
 
 const SearchIcon = () => (
@@ -43,7 +41,7 @@ const MenuIcon = () => (
   </svg>
 );
 
-export function DocsHeader({ onSearchOpen, onMobileMenuOpen, docsMode, onDocsModeChange }: DocsHeaderProps) {
+export function DocsHeader({ onSearchOpen, onMobileMenuOpen }: DocsHeaderProps) {
   const { t } = useDocsI18n();
 
   return (
@@ -66,26 +64,29 @@ export function DocsHeader({ onSearchOpen, onMobileMenuOpen, docsMode, onDocsMod
         <span className="docs-search-shortcut">{t("common.searchShortcut")}</span>
       </button>
 
-      {/* Mode Toggle */}
-      <div className="docs-mode-toggle">
-        <button
-          className="docs-mode-btn"
-          data-active={docsMode === "technical"}
-          onClick={() => onDocsModeChange("technical")}
-        >
-          {t("common.technical")}
-        </button>
-        <button
-          className="docs-mode-btn"
-          data-active={docsMode === "commercial"}
-          onClick={() => onDocsModeChange("commercial")}
-        >
-          {t("common.commercial")}
-        </button>
-      </div>
-
       {/* Actions */}
       <div className="docs-header-actions">
+        {/* Commercial Docs link */}
+        <Link href="/commercial" className="docs-commercial-link">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <rect width="16" height="20" x="4" y="2" rx="2" ry="2" />
+            <path d="M9 22v-4h6v4" />
+            <path d="M8 6h.01" /><path d="M16 6h.01" />
+            <path d="M8 10h.01" /><path d="M16 10h.01" />
+            <path d="M8 14h.01" /><path d="M16 14h.01" />
+          </svg>
+          {t("common.commercialDocs")}
+        </Link>
+
         <DocsLangSwitcherInline />
         <DocsThemeToggleInline />
       </div>

@@ -9,12 +9,18 @@ interface DocsMobileNavProps {
   activeSlug: string;
   isOpen: boolean;
   onClose: () => void;
+  basePath?: string;
 }
 
-export function DocsMobileNav({ categories, activeSlug, isOpen, onClose }: DocsMobileNavProps) {
+export function DocsMobileNav({ categories, activeSlug, isOpen, onClose, basePath = "/docs" }: DocsMobileNavProps) {
   const { t } = useDocsI18n();
 
   if (!isOpen) return null;
+
+  const resolveHref = (slug: string) => {
+    const cleanSlug = slug.replace(/^commercial\//, "");
+    return `${basePath}/${cleanSlug}`;
+  };
 
   const renderItem = (item: DocNavItem) => {
     if (!item.slug) return null;
@@ -22,7 +28,7 @@ export function DocsMobileNav({ categories, activeSlug, isOpen, onClose }: DocsM
     return (
       <Link
         key={item.id}
-        href={`/docs/${item.slug}`}
+        href={resolveHref(item.slug)}
         className="docs-sidebar-item"
         data-active={isActive}
         onClick={onClose}

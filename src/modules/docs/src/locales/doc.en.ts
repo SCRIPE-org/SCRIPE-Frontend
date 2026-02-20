@@ -31,6 +31,8 @@ export const docEn = {
     language: "Language",
     technical: "Technical",
     commercial: "Commercial",
+    technicalDocs: "Technical Docs",
+    commercialDocs: "Commercial Docs",
   },
 
   // ─── Info Blocks ────────────────────────────────────────────
@@ -670,6 +672,8 @@ export const docEn = {
       customersContent: "NEXORA is the perfect fit for B2B SaaS, enterprise internal tools, government platforms, fintech solutions, and healthcare systems that need multi-tenancy, compliance, and rapid scaling.",
     },
     competitiveAdvantages: {
+      nexoraApproach: "NEXORA Approach",
+      traditionalApproach: "Traditional Approach",
       title: "Competitive Advantages",
       description: "What makes NEXORA stand apart from traditional frameworks and competitors.",
       intro: "NEXORA isn't just another starter kit. It's a complete enterprise platform with features that would take 12-18 months and $200K+ to build from scratch.",

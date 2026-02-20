@@ -16,7 +16,8 @@ export { registerPage, registerPages } from "./src/data/repositories/DocsReposit
 // Presentation
 export { DocsI18nProvider, useDocsI18n } from "./src/presentation/providers/DocsI18nProvider";
 export type { DocLanguage, DocDirection } from "./src/presentation/providers/DocsI18nProvider";
-export { DocsPageView } from "./src/presentation/views/DocsPageView";
+export { TechnicalPageConnector } from "./src/presentation/views/TechnicalPageConnector";
+export { CommercialPageConnector } from "./src/presentation/views/CommercialPageConnector";
 
 // DI
 export { docsContainer } from "./di";

@@ -8,6 +8,7 @@ interface DocsPrevNextProps {
   prevTitleKey?: string;
   nextSlug?: string;
   nextTitleKey?: string;
+  basePath?: string;
 }
 
 export function DocsPrevNext({
@@ -15,21 +16,29 @@ export function DocsPrevNext({
   prevTitleKey,
   nextSlug,
   nextTitleKey,
+  basePath = "/docs",
 }: DocsPrevNextProps) {
   const { t } = useDocsI18n();
 
   if (!prevSlug && !nextSlug) return null;
 
+  // Strip "commercial/" prefix from slug if basePath is /commercial
+  // because commercial slugs are stored as "commercial/xxx" but route is /commercial/xxx
+  const resolveHref = (slug: string) => {
+    const cleanSlug = slug.replace(/^commercial\//, "");
+    return `${basePath}/${cleanSlug}`;
+  };
+
   return (
     <div className="docs-prev-next">
       {prevSlug && prevTitleKey && (
-        <Link href={`/docs/${prevSlug}`} className="docs-prev-next-link" data-type="prev">
+        <Link href={resolveHref(prevSlug)} className="docs-prev-next-link" data-type="prev">
           <span className="docs-prev-next-label">← {t("common.previous")}</span>
           <span className="docs-prev-next-title">{t(prevTitleKey)}</span>
         </Link>
       )}
       {nextSlug && nextTitleKey && (
-        <Link href={`/docs/${nextSlug}`} className="docs-prev-next-link" data-type="next">
+        <Link href={resolveHref(nextSlug)} className="docs-prev-next-link" data-type="next">
           <span className="docs-prev-next-label">{t("common.next")} →</span>
           <span className="docs-prev-next-title">{t(nextTitleKey)}</span>
         </Link>
