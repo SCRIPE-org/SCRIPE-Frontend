@@ -2,166 +2,135 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
+      { type: "paragraph", contentKey: "commercial.competitiveAdvantages.intro" },
+
+      // ─── Architecture Advantage ─────────────────────────────
+      { type: "heading", level: 2, titleKey: "commercial.competitiveAdvantages.architectureTitle", id: "architecture" },
+      { type: "paragraph", contentKey: "commercial.competitiveAdvantages.architectureContent" },
       {
-            type: "paragraph",
-            contentKey: "commercial.competitiveAdvantages.intro",
-      },
-      // ─── Advantage 1: Deployment Flexibility ────────────────────
-      {
-            type: "heading",
-            level: 2,
-            titleKey: "commercial.competitiveAdvantages.deploymentTitle",
-            id: "deployment-flexibility",
-      },
-      {
-            type: "paragraph",
-            contentKey: "commercial.competitiveAdvantages.deploymentIntro",
-      },
-      {
-            type: "table",
-            headers: ["Mode", "When to Use", "Infrastructure Complexity", "Scaling"],
-            rows: [
-                  ["Monolith", "< 100 concurrent users, single server", "Low (1 process)", "Vertical"],
-                  ["Gateway", "100-1000 users, need module isolation", "Medium (API gateway + services)", "Horizontal per-module"],
-                  ["Microservice", "1000+ users, independent module teams", "High (K8s, service mesh)", "Independent per-module"],
+            type: "comparison",
+            columns: [
+                  {
+                        titleKey: "commercial.competitiveAdvantages.nexoraApproach",
+                        variant: "positive",
+                        items: [
+                              "Modular Monolith → Gateway → Microservices evolution",
+                              "Single codebase, three deployment modes",
+                              "Module boundaries enforced at compile time",
+                              "Extract any module to separate service without rewrite",
+                              "Shared core infrastructure across all modules",
+                        ],
+                  },
+                  {
+                        titleKey: "commercial.competitiveAdvantages.traditionalApproach",
+                        variant: "negative",
+                        items: [
+                              "Choose monolith OR microservices upfront",
+                              "Rewrite required to change deployment model",
+                              "Spaghetti dependencies between services",
+                              "Each service reimplements shared concerns",
+                              "Inconsistent patterns across teams",
+                        ],
+                  },
             ],
       },
-      {
-            type: "code",
-            language: "json",
-            filename: "Switching Deployment Mode — One Config Change",
-            code: `// appsettings.json — that's literally it
-{ "DeploymentMode": "Monolith" }   // → All modules in one process
-{ "DeploymentMode": "Gateway" }    // → Modules behind API gateway
-{ "DeploymentMode": "Microservice" } // → Each module = separate service`,
-      },
-      {
-            type: "info",
-            variant: "tip",
-            contentKey: "commercial.competitiveAdvantages.deploymentTip",
-      },
-      // ─── Advantage 2: Database Freedom ─────────────────────────
-      {
-            type: "heading",
-            level: 2,
-            titleKey: "commercial.competitiveAdvantages.databaseTitle",
-            id: "database-freedom",
-      },
-      {
-            type: "paragraph",
-            contentKey: "commercial.competitiveAdvantages.databaseIntro",
-      },
+
+      // ─── Database Freedom ───────────────────────────────────
+      { type: "heading", level: 2, titleKey: "commercial.competitiveAdvantages.databaseTitle", id: "database-freedom" },
+      { type: "paragraph", contentKey: "commercial.competitiveAdvantages.databaseContent" },
       {
             type: "table",
-            headers: ["Feature", "SQL Server", "Oracle", "PostgreSQL"],
+            headers: ["Database", "Use Case", "Switch Effort"],
             rows: [
-                  ["Multi-tenancy query filters", "✅", "✅", "✅"],
-                  ["Soft-delete global filters", "✅", "✅", "✅"],
-                  ["Full-text search", "✅", "✅", "✅"],
-                  ["JSON column support", "✅", "✅", "✅"],
-                  ["EF Core migrations", "✅", "✅", "✅"],
-                  ["Bulk operations", "✅", "✅", "✅"],
-                  ["Health check probes", "✅", "✅", "✅"],
+                  ["SQL Server", "Enterprise Windows shops, Azure deployments", "Config change only"],
+                  ["PostgreSQL", "Cost-sensitive, open-source preference, Linux", "Config change only"],
+                  ["Oracle", "Banking, government, legacy integration", "Config change only"],
+                  ["SQLite", "Development, testing, edge deployments", "Config change only"],
             ],
       },
+
+      // ─── 8-Layer Security ───────────────────────────────────
+      { type: "heading", level: 2, titleKey: "commercial.competitiveAdvantages.securityTitle", id: "security" },
+      { type: "paragraph", contentKey: "commercial.competitiveAdvantages.securityContent" },
       {
-            type: "code",
-            language: "json",
-            filename: "Switching Databases",
-            code: `// appsettings.json
-{ "DatabaseProvider": "SqlServer", "ConnectionString": "..." }
-// Change to:
-{ "DatabaseProvider": "PostgreSQL", "ConnectionString": "..." }
-// Run migrations → done`,
+            type: "flowchart",
+            direction: "vertical",
+            title: "8-Layer Security Pipeline",
+            nodes: [
+                  { id: "l1", label: "Layer 1: TLS/HTTPS Transport", type: "default" },
+                  { id: "l2", label: "Layer 2: Rate Limiting & IP Filtering", type: "info" },
+                  { id: "l3", label: "Layer 3: JWT Authentication + 2FA", type: "primary" },
+                  { id: "l4", label: "Layer 4: RBAC Authorization", type: "primary" },
+                  { id: "l5", label: "Layer 5: CSRF Protection", type: "warning" },
+                  { id: "l6", label: "Layer 6: Anti-Replay (Nonce + Timestamp)", type: "warning" },
+                  { id: "l7", label: "Layer 7: Field-Level Projection", type: "success" },
+                  { id: "l8", label: "Layer 8: Comprehensive Audit Trail", type: "danger" },
+            ],
+            connections: [
+                  { from: "l1", to: "l2" }, { from: "l2", to: "l3" },
+                  { from: "l3", to: "l4" }, { from: "l4", to: "l5" },
+                  { from: "l5", to: "l6" }, { from: "l6", to: "l7" },
+                  { from: "l7", to: "l8" },
+            ],
       },
-      {
-            type: "info",
-            variant: "note",
-            contentKey: "commercial.competitiveAdvantages.databaseImpact",
-      },
-      // ─── Advantage 3: Multi-Tenancy ────────────────────────────
-      {
-            type: "heading",
-            level: 2,
-            titleKey: "commercial.competitiveAdvantages.multiTenancyTitle",
-            id: "enterprise-multi-tenancy",
-      },
-      {
-            type: "paragraph",
-            contentKey: "commercial.competitiveAdvantages.multiTenancyIntro",
-      },
-      {
-            type: "code",
-            language: "text",
-            filename: "Hierarchical Tenant Tree",
-            code: `ACME Corporation (Root Tenant)
-├── ACME Engineering (Child)
-│   ├── Software Division
-│   └── Hardware Division
-├── ACME Sales (Child)
-└── ACME HR (Child)`,
-      },
+
+      // ─── Multi-Tenancy ──────────────────────────────────────
+      { type: "heading", level: 2, titleKey: "commercial.competitiveAdvantages.tenancyTitle", id: "multi-tenancy" },
+      { type: "paragraph", contentKey: "commercial.competitiveAdvantages.tenancyContent" },
       {
             type: "feature-grid",
-            columns: 2,
+            columns: 3,
             items: [
-                  { icon: "database", titleKey: "commercial.competitiveAdvantages.mtIsolation", descriptionKey: "commercial.competitiveAdvantages.mtIsolationDesc" },
-                  { icon: "key", titleKey: "commercial.competitiveAdvantages.mtPermissions", descriptionKey: "commercial.competitiveAdvantages.mtPermissionsDesc" },
-                  { icon: "settings", titleKey: "commercial.competitiveAdvantages.mtSettings", descriptionKey: "commercial.competitiveAdvantages.mtSettingsDesc" },
-                  { icon: "palette", titleKey: "commercial.competitiveAdvantages.mtWhiteLabel", descriptionKey: "commercial.competitiveAdvantages.mtWhiteLabelDesc" },
+                  { icon: "shield", titleKey: "commercial.competitiveAdvantages.tenantIsolation", descriptionKey: "commercial.competitiveAdvantages.tenantIsolationDesc" },
+                  { icon: "building", titleKey: "commercial.competitiveAdvantages.tenantHierarchy", descriptionKey: "commercial.competitiveAdvantages.tenantHierarchyDesc" },
+                  { icon: "globe", titleKey: "commercial.competitiveAdvantages.tenantBranding", descriptionKey: "commercial.competitiveAdvantages.tenantBrandingDesc" },
             ],
       },
-      // ─── Advantage 4: Security ─────────────────────────────────
-      {
-            type: "heading",
-            level: 2,
-            titleKey: "commercial.competitiveAdvantages.securityTitle",
-            id: "8-layer-security",
-      },
+
+      // ─── Developer Productivity ─────────────────────────────
+      { type: "heading", level: 2, titleKey: "commercial.competitiveAdvantages.productivityTitle", id: "productivity" },
+      { type: "paragraph", contentKey: "commercial.competitiveAdvantages.productivityContent" },
       {
             type: "table",
-            headers: ["Layer", "Mechanism", "What It Prevents"],
+            headers: ["Capability", "Impact"],
             rows: [
-                  ["1", "HTTPS + HSTS", "Man-in-the-middle, SSL stripping"],
-                  ["2", "Rate Limiting", "DDoS, brute force"],
-                  ["3", "Authentication (JWT + OTP)", "Unauthorized access"],
-                  ["4", "Authorization (RBAC)", "Privilege escalation"],
-                  ["5", "CSRF Protection (double-submit cookie)", "Cross-site request forgery"],
-                  ["6", "Replay Protection (nonce + timestamp)", "Request replay attacks"],
-                  ["7", "Field Projection (per-role)", "Data leakage"],
-                  ["8", "Audit Trail (every request)", "Non-repudiation"],
+                  ["NEXORA CLI scaffolding", "Generate full module (domain + app + infra + frontend) in seconds"],
+                  ["SOLID View/ViewModel pattern", "Consistent architecture across all 50+ pages"],
+                  ["GenericCrudView + DataTable", "Build full CRUD UI in ~60 lines of code"],
+                  ["Standardized error handling", "Result<T> pattern eliminates try/catch boilerplate"],
+                  ["Auto-generated migrations", "Schema changes with zero manual SQL"],
+                  ["Hot reload (frontend + backend)", "See changes instantly during development"],
             ],
       },
-      // ─── Advantage 5: Real-Time ────────────────────────────────
-      {
-            type: "heading",
-            level: 2,
-            titleKey: "commercial.competitiveAdvantages.realTimeTitle",
-            id: "real-time-capabilities",
-      },
+
+      // ─── Competitive Comparison ─────────────────────────────
+      { type: "heading", level: 2, titleKey: "commercial.competitiveAdvantages.comparisonTitle", id: "comparison" },
       {
             type: "table",
-            headers: ["Feature", "Hub", "Use Case"],
+            headers: ["Capability", "NEXORA", "ABP Framework", "Custom Build"],
             rows: [
-                  ["Live Notifications", "NotificationHub", "Instant alerts for actions, approvals, system events"],
-                  ["Audit Streaming", "AuditHub", "Real-time monitoring of all system activity"],
-                  ["Dashboard Updates", "DashboardHub", "Live KPI and chart data refresh"],
+                  ["Deployment Modes", "3 (Mono/Gateway/Micro)", "2 (Mono/Micro)", "1 (chosen at start)"],
+                  ["Database Providers", "4 (SQL/Oracle/PG/SQLite)", "3 (SQL/PG/MySQL)", "1 (chosen at start)"],
+                  ["Security Layers", "8 built-in", "5 built-in", "Build from scratch"],
+                  ["Multi-Tenancy", "Hierarchical + white-label", "Basic tenant isolation", "Build from scratch"],
+                  ["RTL/Bilingual", "Full RTL + 7 languages", "Community i18n", "Build from scratch"],
+                  ["CLI Tooling", "Full scaffolding", "ABP CLI", "None"],
+                  ["Real-Time", "SignalR hub per feature", "Basic SignalR", "Build from scratch"],
+                  ["Audit Trail", "4-source pipeline", "Basic audit log", "Build from scratch"],
+                  ["Time to First Feature", "1 day", "1 week", "3-6 months"],
             ],
       },
-      {
-            type: "info",
-            variant: "note",
-            contentKey: "commercial.competitiveAdvantages.realTimeNote",
-      },
+
+      { type: "info", variant: "tip", contentKey: "commercial.competitiveAdvantages.evaluationTip" },
 ];
 
 registerPage({
       slug: "commercial/competitive-advantages",
       titleKey: "commercial.competitiveAdvantages.title",
       descriptionKey: "commercial.competitiveAdvantages.description",
-      category: "commercial-executive",
+      category: "commercial-why-nexora",
       order: 2,
       sections,
-      relatedSlugs: ["commercial/executive-summary", "commercial/deployment-modes", "commercial/security-overview"],
-      lastUpdated: "2026-02-19",
+      relatedSlugs: ["commercial/why-nexora-overview", "commercial/target-industries"],
+      lastUpdated: "2026-02-20",
 });

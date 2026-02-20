@@ -36,6 +36,7 @@ export const STORAGE_KEYS = {
   IMPERSONATING: "nexora_impersonating",
   admin_backup_token: "admin_backup_token",
   lastAuthRefresh: "lastAuthRefresh",
+  nexora_refresh_token: "nexora_refresh_token",
 } as const;
 
 /**
@@ -52,6 +53,7 @@ export const AUTH_STORAGE_KEYS_TO_CLEAR: readonly StorageKey[] = [
   STORAGE_KEYS.USER_DATA,
   STORAGE_KEYS.PERMISSIONS,
   STORAGE_KEYS.ROLES,
+  STORAGE_KEYS.nexora_refresh_token,
 ] as const;
 
 /**

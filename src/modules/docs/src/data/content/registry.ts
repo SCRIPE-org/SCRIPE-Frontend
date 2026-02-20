@@ -44,38 +44,62 @@ import "./api-reference/overview";
 //  COMMERCIAL DOCUMENTATION
 // ═══════════════════════════════════════════════════════════
 
-// Executive Summary
-import "./commercial/executive-summary";
+// Why NEXORA
+import "./commercial/why-nexora-overview";
 import "./commercial/competitive-advantages";
 import "./commercial/target-industries";
+import "./commercial/success-metrics";
 
 // Platform Overview
 import "./commercial/platform-architecture";
-import "./commercial/deployment-modes";
-import "./commercial/technology-stack";
 import "./commercial/module-catalog";
-
-// Security
-import "./commercial/security-overview";
-import "./commercial/auth-security";
-import "./commercial/data-protection";
+import "./commercial/technology-stack";
+import "./commercial/deployment-modes";
+import "./commercial/system-requirements";
 
 // Enterprise Features
-import "./commercial/enterprise-multi-tenancy";
+import "./commercial/multi-tenancy";
+import "./commercial/roles-permissions";
 import "./commercial/audit-compliance";
-import "./commercial/real-time";
-import "./commercial/localization";
-import "./commercial/dashboard-analytics";
+import "./commercial/real-time-capabilities";
+import "./commercial/localization-i18n";
+import "./commercial/message-templates";
+
+// Security & Compliance
+import "./commercial/security-overview";
+import "./commercial/authentication-security";
+import "./commercial/data-protection";
+import "./commercial/infrastructure-security";
+import "./commercial/compliance-readiness";
 
 // Technical Capabilities
-import "./commercial/performance";
+import "./commercial/performance-benchmarks";
 import "./commercial/database-support";
-import "./commercial/storage-options";
-import "./commercial/resilience";
-import "./commercial/observability";
+import "./commercial/storage-backends";
+import "./commercial/resilience-patterns";
+import "./commercial/observability-monitoring";
 
-// Integration & Deployment
-import "./commercial/rest-api";
+// Developer Experience
+import "./commercial/cli-tooling";
+import "./commercial/clean-architecture";
+import "./commercial/api-design";
+import "./commercial/testing-strategy";
+
+// Integration & APIs
+import "./commercial/rest-api-overview";
 import "./commercial/webhook-integration";
-import "./commercial/email-templates";
-import "./commercial/deployment-options";
+import "./commercial/email-integration";
+import "./commercial/ci-cd-pipeline";
+
+// Pricing & Licensing
+import "./commercial/licensing-model";
+import "./commercial/roi-analysis";
+import "./commercial/support-plans";
+import "./commercial/enterprise-addons";
+
+// Support & Resources
+import "./commercial/documentation-training";
+import "./commercial/getting-started-guide";
+import "./commercial/faq";
+import "./commercial/roadmap";
+

@@ -3,66 +3,85 @@ import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
       { type: "paragraph", contentKey: "commercial.dataProtection.intro" },
-      { type: "heading", level: 2, titleKey: "commercial.dataProtection.atRestTitle", id: "data-at-rest" },
+
+      { type: "heading", level: 2, titleKey: "commercial.dataProtection.encryptionTitle", id: "encryption" },
       {
             type: "table",
-            headers: ["Mechanism", "Implementation"],
+            headers: ["Layer", "Type", "Implementation"],
             rows: [
-                  ["Database encryption", "SQL Server TDE, Oracle TDE, PostgreSQL pgcrypto — no application changes needed"],
-                  ["Blob storage encryption", "Azure SSE, S3 SSE-S3, MinIO encryption-at-rest"],
-                  ["ID encryption", "AES-256-CBC for external-facing entity IDs (prevents enumeration)"],
-                  ["Password hashing", "BCrypt with configurable work factor"],
-                  ["Token storage", "Refresh tokens hashed before database storage"],
+                  ["Transport", "TLS 1.3", "All API requests encrypted in transit"],
+                  ["At Rest", "AES-256", "Database TDE (transparent data encryption)"],
+                  ["Field Level", "AES-256-CBC", "Sensitive fields encrypted individually"],
+                  ["ID Parameters", "AES encryption", "All entity IDs encrypted in URLs"],
+                  ["Tokens", "RS256", "JWT tokens with asymmetric signing"],
+                  ["Passwords", "Bcrypt", "One-way hashing with configurable work factor"],
             ],
       },
-      { type: "heading", level: 2, titleKey: "commercial.dataProtection.inTransitTitle", id: "data-in-transit" },
+
+      { type: "heading", level: 2, titleKey: "commercial.dataProtection.fieldProjectionTitle", id: "field-projection" },
+      { type: "paragraph", contentKey: "commercial.dataProtection.fieldProjectionContent" },
       {
-            type: "table",
-            headers: ["Mechanism", "Configuration"],
-            rows: [
-                  ["HTTPS", "Enforced — all HTTP requests redirect to HTTPS"],
-                  ["HSTS", "max-age=31536000; includeSubDomains — browsers remember HTTPS for 1 year"],
-                  ["TLS version", "1.2 minimum, 1.3 preferred"],
-                  ["WebSocket", "WSS (encrypted) for SignalR hubs"],
-                  ["Certificate pinning", "Supported via client configuration"],
-            ],
+            type: "code",
+            language: "json",
+            filename: "Field Projection Configuration",
+            code: `{
+  "role": "HR_Viewer",
+  "projections": {
+    "Employee": {
+      "hidden": ["salary", "ssn", "bankAccount", "medicalInfo"],
+      "masked": ["phone", "email"],
+      "readOnly": ["department", "position"]
+    }
+  }
+}
+
+// API Response for HR_Viewer role:
+{
+  "name": "John Doe",
+  "department": "Engineering",
+  "phone": "***-***-4567",     // Masked
+  "email": "j***@company.com"  // Masked
+  // salary, ssn, bankAccount, medicalInfo → not present
+}`,
       },
-      { type: "heading", level: 2, titleKey: "commercial.dataProtection.inProcessTitle", id: "data-in-processing" },
+
+      { type: "heading", level: 2, titleKey: "commercial.dataProtection.csrfTitle", id: "csrf" },
+      { type: "paragraph", contentKey: "commercial.dataProtection.csrfContent" },
+
+      { type: "heading", level: 2, titleKey: "commercial.dataProtection.replayTitle", id: "anti-replay" },
+      { type: "paragraph", contentKey: "commercial.dataProtection.replayContent" },
       {
-            type: "table",
-            headers: ["Mechanism", "What It Protects"],
-            rows: [
-                  ["Field projection", "Hides restricted fields (salary, ssn) based on admin's role"],
-                  ["Log redaction", "Strips password, token, secret, authorization from structured logs"],
-                  ["ID encryption", "Prevents entity enumeration in public-facing URLs"],
-                  ["Parameterized queries", "EF Core prevents SQL injection by default"],
-                  ["Input sanitization", "HTML sanitizer strips <script>, javascript:, event handlers from email bodies"],
-            ],
+            type: "code",
+            language: "text",
+            filename: "Anti-Replay Protection Flow",
+            code: `Client                         Server
+  │                               │
+  │  Generate Nonce + Timestamp   │
+  │  ──────────────────────────>  │
+  │                               │  1. Check timestamp within window
+  │                               │  2. Check nonce not seen before
+  │                               │  3. Store nonce in sliding window
+  │                               │  4. Process request
+  │  <──────────────────────────  │
+  │         Response              │
+  │                               │
+  │  Replay same request          │
+  │  ──────────────────────────>  │
+  │                               │  ✗ Nonce already used → 409 Conflict
+  │  <──────────────────────────  │
+  │     409 Conflict              │`,
       },
-      { type: "heading", level: 2, titleKey: "commercial.dataProtection.complianceTitle", id: "compliance-alignment" },
+
+      { type: "heading", level: 2, titleKey: "commercial.dataProtection.idEncTitle", id: "id-encryption" },
+      { type: "paragraph", contentKey: "commercial.dataProtection.idEncContent" },
       {
             type: "table",
-            headers: ["Standard", "NEXORA Capabilities"],
+            headers: ["Aspect", "Without ID Encryption", "With ID Encryption"],
             rows: [
-                  ["SOC 2 Type II", "Immutable audit trails, access controls, encryption at rest/transit, change management"],
-                  ["GDPR", "Data isolation (multi-tenancy), right to deletion (recycle bin → purge), consent tracking, data export"],
-                  ["ISO 27001", "Information security management via RBAC, audit logging, incident response (webhook events)"],
-                  ["PCI DSS", "Network segmentation (tenant isolation), encryption, access logging, secure coding practices"],
-                  ["HIPAA", "Access controls, audit trails, data encryption, minimum necessary (field projection)"],
-            ],
-      },
-      { type: "info", variant: "note", contentKey: "commercial.dataProtection.complianceNote" },
-      { type: "heading", level: 2, titleKey: "commercial.dataProtection.retentionTitle", id: "data-retention" },
-      {
-            type: "table",
-            headers: ["Data Type", "Default Retention", "Configurable"],
-            rows: [
-                  ["Audit logs", "90 days", "Yes — per tenant"],
-                  ["Soft-deleted entities", "30 days before auto-purge", "Yes — per tenant"],
-                  ["Sent email logs", "365 days", "Yes"],
-                  ["Download sessions", "1 hour", "Yes"],
-                  ["Replay nonces", "10 minutes", "Fixed (security)"],
-                  ["Refresh tokens", "7 days", "Yes"],
+                  ["URL example", "/api/users/42", "/api/users/aGVsbG8gd29ybGQ="],
+                  ["Parameter tampering", "Easy: change 42 to 43", "Impossible: encrypted"],
+                  ["Data enumeration", "Trivial: iterate 1, 2, 3...", "Prevented: non-sequential"],
+                  ["Information leakage", "Reveals total record count", "No count information"],
             ],
       },
 ];
@@ -74,6 +93,6 @@ registerPage({
       category: "commercial-security",
       order: 3,
       sections,
-      relatedSlugs: ["commercial/security-overview", "commercial/auth-security", "commercial/audit-compliance"],
-      lastUpdated: "2026-02-19",
+      relatedSlugs: ["commercial/security-overview", "commercial/infrastructure-security"],
+      lastUpdated: "2026-02-20",
 });

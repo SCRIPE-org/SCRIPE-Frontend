@@ -2,120 +2,118 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
+      { type: "paragraph", contentKey: "commercial.targetIndustries.intro" },
+
+      // ─── Enterprise SaaS ────────────────────────────────────
+      { type: "heading", level: 2, titleKey: "commercial.targetIndustries.saasTitle", id: "saas" },
+      { type: "paragraph", contentKey: "commercial.targetIndustries.saasContent" },
       {
-            type: "paragraph",
-            contentKey: "commercial.targetIndustries.intro",
+            type: "feature-grid",
+            columns: 2,
+            items: [
+                  { icon: "users", titleKey: "commercial.targetIndustries.saasMultiTenant", descriptionKey: "commercial.targetIndustries.saasMultiTenantDesc" },
+                  { icon: "zap", titleKey: "commercial.targetIndustries.saasScaling", descriptionKey: "commercial.targetIndustries.saasScalingDesc" },
+                  { icon: "globe", titleKey: "commercial.targetIndustries.saasWhiteLabel", descriptionKey: "commercial.targetIndustries.saasWhiteLabelDesc" },
+                  { icon: "bar-chart", titleKey: "commercial.targetIndustries.saasAnalytics", descriptionKey: "commercial.targetIndustries.saasAnalyticsDesc" },
+            ],
       },
-      // ─── Government ────────────────────────────────────────────
-      {
-            type: "heading",
-            level: 2,
-            titleKey: "commercial.targetIndustries.govTitle",
-            id: "government",
-      },
+
+      // ─── Government & Public Sector ─────────────────────────
+      { type: "heading", level: 2, titleKey: "commercial.targetIndustries.govTitle", id: "government" },
+      { type: "paragraph", contentKey: "commercial.targetIndustries.govContent" },
       {
             type: "table",
             headers: ["Requirement", "NEXORA Capability"],
             rows: [
-                  ["On-premise deployment", "Docker, IIS, bare metal — no cloud dependency"],
-                  ["Data sovereignty", "All data stays on-premise, no external calls"],
-                  ["Arabic + English", "Full RTL support, bilingual entities"],
-                  ["Audit compliance", "Every API request logged with user, IP, timestamp"],
-                  ["Role-based access", "8-layer security with field-level projection"],
+                  ["Data sovereignty", "On-premise deployment, no cloud dependency required"],
+                  ["Audit compliance", "4-source audit trail with real-time monitoring"],
+                  ["Role-based access", "Hierarchical RBAC with field-level restrictions"],
+                  ["Arabic/RTL support", "Full bilingual UI with RTL layout system"],
+                  ["Security certifications", "8-layer security pipeline, CSRF, anti-replay"],
+                  ["Multi-department isolation", "Hierarchical multi-tenancy per department"],
             ],
       },
+
+      // ─── Financial Services ─────────────────────────────────
+      { type: "heading", level: 2, titleKey: "commercial.targetIndustries.financeTitle", id: "finance" },
+      { type: "paragraph", contentKey: "commercial.targetIndustries.financeContent" },
       {
-            type: "info",
-            variant: "tip",
-            contentKey: "commercial.targetIndustries.govDeployment",
-      },
-      // ─── SaaS ──────────────────────────────────────────────────
-      {
-            type: "heading",
-            level: 2,
-            titleKey: "commercial.targetIndustries.saasTitle",
-            id: "saas-providers",
-      },
-      {
-            type: "table",
-            headers: ["Requirement", "NEXORA Capability"],
-            rows: [
-                  ["Tenant isolation", "Global query filters, separate data per tenant"],
-                  ["White-labeling", "Per-tenant logos, colors, subdomains"],
-                  ["Tier-based features", "TenantPermission controls feature availability"],
-                  ["Scalability", "Start monolith → scale to microservices"],
-                  ["API-first", "119 RESTful endpoints, webhook integration"],
+            type: "list",
+            variant: "unordered",
+            items: [
+                  "Comprehensive audit trail for regulatory compliance (SOX, PCI-DSS)",
+                  "Field-level security to protect sensitive financial data (salary, SSN)",
+                  "Anti-replay protection prevents duplicate transaction submissions",
+                  "Oracle database support for existing banking infrastructure",
+                  "Encrypted ID parameters prevent parameter tampering",
+                  "Session management with device tracking and forced logout",
             ],
       },
-      // ─── Enterprise ────────────────────────────────────────────
+
+      // ─── Healthcare ─────────────────────────────────────────
+      { type: "heading", level: 2, titleKey: "commercial.targetIndustries.healthcareTitle", id: "healthcare" },
+      { type: "paragraph", contentKey: "commercial.targetIndustries.healthcareContent" },
       {
-            type: "heading",
-            level: 2,
-            titleKey: "commercial.targetIndustries.enterpriseTitle",
-            id: "enterprise-conglomerates",
-      },
-      {
-            type: "table",
-            headers: ["Requirement", "NEXORA Capability"],
-            rows: [
-                  ["Organizational hierarchy", "Parent/child tenants with materialized path"],
-                  ["Subsidiary management", "Each subsidiary = tenant with own admins"],
-                  ["Centralized oversight", "Root tenant sees all descendants"],
-                  ["Per-subsidiary customization", "Own roles, permissions, settings, branding"],
-                  ["Cross-entity reporting", "Dashboard aggregation across tenant tree"],
+            type: "feature-grid",
+            columns: 2,
+            items: [
+                  { icon: "shield", titleKey: "commercial.targetIndustries.healthSecurity", descriptionKey: "commercial.targetIndustries.healthSecurityDesc" },
+                  { icon: "building", titleKey: "commercial.targetIndustries.healthMultiSite", descriptionKey: "commercial.targetIndustries.healthMultiSiteDesc" },
             ],
       },
-      // ─── Financial ─────────────────────────────────────────────
+
+      // ─── MENA Region ────────────────────────────────────────
+      { type: "heading", level: 2, titleKey: "commercial.targetIndustries.menaTitle", id: "mena" },
+      { type: "paragraph", contentKey: "commercial.targetIndustries.menaContent" },
       {
-            type: "heading",
-            level: 2,
-            titleKey: "commercial.targetIndustries.financialTitle",
-            id: "financial-services",
-      },
-      {
-            type: "table",
-            headers: ["Requirement", "NEXORA Capability"],
-            rows: [
-                  ["Regulatory compliance", "Immutable audit trails, data retention"],
-                  ["Encryption at rest", "Database-level encryption + AES ID encryption"],
-                  ["Session security", "JWT rotation, device fingerprinting, OTP"],
-                  ["Transaction integrity", "Saga orchestrator for multi-step operations"],
-                  ["High availability", "Health probes, circuit breakers, retry policies"],
+            type: "comparison",
+            columns: [
+                  {
+                        titleKey: "commercial.targetIndustries.menaBuiltIn",
+                        variant: "positive",
+                        items: [
+                              "Full RTL layout system — not an afterthought",
+                              "Arabic/English bilingual entities (nameEn + nameAr)",
+                              "Scriban templates with bilingual rendering",
+                              "Font loading optimized for Arabic (Noto Sans Arabic)",
+                              "Date/number formatting per locale",
+                        ],
+                  },
+                  {
+                        titleKey: "commercial.targetIndustries.menaCompetitor",
+                        variant: "negative",
+                        items: [
+                              "RTL added as CSS patch — layout breaks",
+                              "Single language entities, manual translation",
+                              "Email templates in one language only",
+                              "System fonts with broken Arabic rendering",
+                              "Western date/number formats hardcoded",
+                        ],
+                  },
             ],
       },
-      // ─── Regional Focus ────────────────────────────────────────
-      {
-            type: "heading",
-            level: 2,
-            titleKey: "commercial.targetIndustries.menaTitle",
-            id: "mena-region",
-      },
-      {
-            type: "table",
-            headers: ["Feature", "Detail"],
-            rows: [
-                  ["Arabic UI", "RTL layout, Cairo/Noto Kufi Arabic fonts"],
-                  ["Bilingual entities", "Every name stored in English AND Arabic"],
-                  ["Language switching", "Instant toggle, persisted to localStorage"],
-                  ["Direction-aware CSS", "Sidebars, breadcrumbs, tables adapt automatically"],
-                  ["Islamic calendar", "Extensible date formatting"],
-            ],
-      },
-      // ─── Deployment Sizes ──────────────────────────────────────
-      {
-            type: "heading",
-            level: 2,
-            titleKey: "commercial.targetIndustries.sizesTitle",
-            id: "deployment-sizes",
-      },
+
+      // ─── Education ──────────────────────────────────────────
+      { type: "heading", level: 2, titleKey: "commercial.targetIndustries.educationTitle", id: "education" },
+      { type: "paragraph", contentKey: "commercial.targetIndustries.educationContent" },
+
+      // ─── Retail & E-Commerce ────────────────────────────────
+      { type: "heading", level: 2, titleKey: "commercial.targetIndustries.retailTitle", id: "retail" },
+      { type: "paragraph", contentKey: "commercial.targetIndustries.retailContent" },
+
+      // ─── Industry Fit Matrix ────────────────────────────────
+      { type: "heading", level: 2, titleKey: "commercial.targetIndustries.matrixTitle", id: "fit-matrix" },
       {
             type: "table",
-            headers: ["Organization Size", "Users", "Recommended Mode", "Infrastructure"],
+            headers: ["Industry", "Key NEXORA Features Used", "Fit Score"],
             rows: [
-                  ["Startup (1-50 users)", "< 50", "Monolith", "Single server, PostgreSQL"],
-                  ["Mid-market (50-500)", "50-500", "Monolith or Gateway", "2-3 servers, SQL Server"],
-                  ["Enterprise (500-5000)", "500-5K", "Gateway", "Kubernetes, Redis, load balancer"],
-                  ["Large Enterprise (5000+)", "5K+", "Microservice", "Full K8s cluster, service mesh"],
+                  ["Enterprise SaaS", "Multi-tenancy, white-labeling, scalable deployment", "★★★★★"],
+                  ["Government", "Audit, RBAC, on-premise, Arabic RTL, security", "★★★★★"],
+                  ["Financial Services", "Audit, field security, Oracle, anti-replay", "★★★★★"],
+                  ["Healthcare", "Data isolation, audit compliance, role-based access", "★★★★☆"],
+                  ["Education", "Multi-tenant (schools/districts), real-time notifications", "★★★★☆"],
+                  ["Retail", "Multi-store tenancy, webhook integrations, file management", "★★★☆☆"],
+                  ["Startups", "Rapid scaffolding, CLI tooling, monolith-first scaling", "★★★★★"],
             ],
       },
 ];
@@ -124,9 +122,9 @@ registerPage({
       slug: "commercial/target-industries",
       titleKey: "commercial.targetIndustries.title",
       descriptionKey: "commercial.targetIndustries.description",
-      category: "commercial-executive",
+      category: "commercial-why-nexora",
       order: 3,
       sections,
-      relatedSlugs: ["commercial/executive-summary", "commercial/competitive-advantages", "commercial/deployment-modes"],
-      lastUpdated: "2026-02-19",
+      relatedSlugs: ["commercial/why-nexora-overview", "commercial/competitive-advantages"],
+      lastUpdated: "2026-02-20",
 });

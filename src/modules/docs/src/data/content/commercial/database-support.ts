@@ -3,78 +3,49 @@ import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
       { type: "paragraph", contentKey: "commercial.databaseSupport.intro" },
-      { type: "heading", level: 2, titleKey: "commercial.databaseSupport.supportedTitle", id: "supported-databases" },
+      { type: "heading", level: 2, titleKey: "commercial.databaseSupport.providersTitle", id: "providers" },
       {
-            type: "table", headers: ["Database", "Version", "License", "Best For"], rows: [
-                  ["SQL Server", "2019+", "Commercial", "Enterprise Windows environments, existing Microsoft stacks"],
-                  ["Oracle", "19c+", "Commercial", "Government, banking, legacy enterprise environments"],
-                  ["PostgreSQL", "14+", "MIT (Free)", "Cloud-native, cost-sensitive, open-source preference"],
+            type: "table",
+            headers: ["Database", "Use Case", "License", "Switch Effort"],
+            rows: [
+                  ["SQL Server 2022", "Enterprise Windows, Azure", "Commercial", "Config only"],
+                  ["PostgreSQL 16", "Open-source, Linux, cost-sensitive", "Free (MIT)", "Config only"],
+                  ["Oracle 21c", "Banking, government, legacy", "Commercial", "Config only"],
+                  ["SQLite", "Dev/test, edge, embedded", "Public domain", "Config only"],
             ],
       },
-      { type: "heading", level: 2, titleKey: "commercial.databaseSupport.parityTitle", id: "feature-parity" },
+      { type: "heading", level: 2, titleKey: "commercial.databaseSupport.switchTitle", id: "switch" },
+      { type: "paragraph", contentKey: "commercial.databaseSupport.switchContent" },
       {
-            type: "table", headers: ["Feature", "SQL Server", "Oracle", "PostgreSQL"], rows: [
-                  ["Multi-tenant query filters", "✅", "✅", "✅"],
-                  ["Soft-delete global filters", "✅", "✅", "✅"],
-                  ["EF Core migrations", "✅", "✅", "✅"],
-                  ["Connection pooling", "✅", "✅", "✅"],
-                  ["JSON column storage", "✅", "✅", "✅"],
-                  ["Full-text search", "✅", "✅", "✅"],
-                  ["Compiled queries", "✅", "✅", "✅"],
-                  ["Bulk operations", "✅", "✅", "✅"],
-                  ["Health check probes", "✅", "✅", "✅"],
-                  ["Transaction isolation", "✅", "✅", "✅"],
-                  ["Stored procedures", "✅", "✅", "✅"],
-                  ["Row-level security", "✅", "✅", "✅ (RLS)"],
-            ],
-      },
-      { type: "heading", level: 2, titleKey: "commercial.databaseSupport.switchingTitle", id: "switching-databases" },
-      {
-            type: "code", language: "json", filename: "SQL Server Configuration",
-            code: `{
+            type: "code",
+            language: "json",
+            filename: "Switch Database — Single Config Change",
+            code: `// appsettings.json — just change these two values
+{
   "DatabaseSettings": {
-    "Provider": "SqlServer",
-    "ConnectionString": "Server=.;Database=NEXORA;Trusted_Connection=true;"
+    "DBProvider": "postgresql",        // or "mssql", "oracle", "sqlite"
+    "ConnectionString": "Host=localhost;Database=nexora;Username=admin;Password=..."
   }
-}`,
+}
+
+// That's it. No code changes. No migration rewrites. No data layer rebuild.`,
       },
+      { type: "heading", level: 2, titleKey: "commercial.databaseSupport.featuresTitle", id: "features" },
       {
-            type: "code", language: "json", filename: "PostgreSQL Configuration",
-            code: `{
-  "DatabaseSettings": {
-    "Provider": "PostgreSQL",
-    "ConnectionString": "Host=localhost;Database=nexora;Username=admin;Password=secret"
-  }
-}`,
-      },
-      {
-            type: "code", language: "json", filename: "Oracle Configuration",
-            code: `{
-  "DatabaseSettings": {
-    "Provider": "Oracle",
-    "ConnectionString": "User Id=admin;Password=secret;Data Source=localhost:1521/NEXORA"
-  }
-}`,
-      },
-      { type: "heading", level: 2, titleKey: "commercial.databaseSupport.oracleTitle", id: "oracle-considerations" },
-      {
-            type: "table", headers: ["Consideration", "Detail"], rows: [
-                  ["Identifier length", "Oracle 12c limits to 30 characters — entity/column names kept short"],
-                  ["NVARCHAR(MAX)", "Mapped to NCLOB automatically"],
-                  ["Auto-increment", "Uses sequence + trigger (no IDENTITY keyword)"],
-                  ["Case sensitivity", "Oracle defaults to uppercase — handled by EF Core mapping"],
+            type: "table",
+            headers: ["Feature", "SQL Server", "PostgreSQL", "Oracle", "SQLite"],
+            rows: [
+                  ["Global query filters", "✓", "✓", "✓", "✓"],
+                  ["JSON columns", "✓", "✓", "✓", "✗"],
+                  ["Full-text search", "✓", "✓", "✓", "✗"],
+                  ["Bulk operations", "✓", "✓", "✓", "✓"],
+                  ["Migrations", "✓", "✓", "✓", "✓"],
+                  ["Connection pooling", "✓", "✓", "✓", "N/A"],
+                  ["Distributed transactions", "✓", "✓", "✓", "✗"],
             ],
       },
-      { type: "heading", level: 2, titleKey: "commercial.databaseSupport.securityTitle", id: "connection-security" },
-      {
-            type: "table", headers: ["Approach", "Example"], rows: [
-                  ["Environment variable", "DATABASE_CONNECTION=Server=..."],
-                  ["Azure Key Vault", "Fetched at startup"],
-                  ["User secrets (dev)", "dotnet user-secrets set"],
-                  ["Docker secrets", "Mounted as file"],
-            ],
-      },
-      { type: "info", variant: "warning", contentKey: "commercial.databaseSupport.securityWarning" },
+      { type: "heading", level: 2, titleKey: "commercial.databaseSupport.migrationTitle", id: "migration-strategy" },
+      { type: "paragraph", contentKey: "commercial.databaseSupport.migrationContent" },
 ];
 
 registerPage({
@@ -84,6 +55,6 @@ registerPage({
       category: "commercial-technical",
       order: 2,
       sections,
-      relatedSlugs: ["commercial/technology-stack", "commercial/performance", "commercial/storage-options"],
-      lastUpdated: "2026-02-19",
+      relatedSlugs: ["commercial/performance-benchmarks", "commercial/storage-backends"],
+      lastUpdated: "2026-02-20",
 });

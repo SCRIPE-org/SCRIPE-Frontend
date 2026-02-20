@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { STORAGE_KEYS } from "./core/config/storage-keys";
 
 /**
- * P5.5: Next.js Server-Side Route Guard Middleware
+ * Next.js Server-Side Route Guard Proxy
  *
- * Runs on the Edge Runtime BEFORE any page renders.
+ * Runs BEFORE any page renders.
  * Prevents unauthenticated users from accessing protected routes
  * at the server level — no HTML/JS leakage.
  *
@@ -24,9 +25,9 @@ const PUBLIC_PATHS = ["/login", "/register", "/forgot-password", "/verify-email"
 // Everything under (modules) is protected by the layout, but this adds server-level guard
 const PROTECTED_PREFIXES = ["/admin", "/profile", "/settings", "/recycle-bin"];
 
-const REFRESH_TOKEN_COOKIE = "nexora_refresh_token";
+const REFRESH_TOKEN_COOKIE = STORAGE_KEYS.nexora_refresh_token;
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
       const { pathname } = request.nextUrl;
 
       // Allow public paths

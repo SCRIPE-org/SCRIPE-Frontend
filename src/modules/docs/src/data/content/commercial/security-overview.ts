@@ -3,70 +3,71 @@ import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
       { type: "paragraph", contentKey: "commercial.securityOverview.intro" },
-      { type: "heading", level: 2, titleKey: "commercial.securityOverview.pipelineTitle", id: "security-pipeline" },
+
+      { type: "heading", level: 2, titleKey: "commercial.securityOverview.modelTitle", id: "security-model" },
+      { type: "paragraph", contentKey: "commercial.securityOverview.modelContent" },
       {
-            type: "table",
-            headers: ["Layer", "Mechanism", "What It Prevents"],
-            rows: [
-                  ["1", "HTTPS + HSTS (max-age=31536000)", "Man-in-the-middle, SSL stripping"],
-                  ["2", "Rate Limiting (100 req/min per IP)", "DDoS, brute force"],
-                  ["3", "Security Headers (CSP, X-Frame, Referrer)", "XSS, clickjacking, info leakage"],
-                  ["4", "Authentication (JWT + OTP)", "Unauthorized access"],
-                  ["5", "Authorization (RBAC, ~40 permissions)", "Privilege escalation"],
-                  ["6", "CSRF Protection (double-submit cookie)", "Cross-site request forgery"],
-                  ["7", "Replay Protection (nonce + timestamp)", "Request replay attacks"],
-                  ["8", "Field Projection (per-role filtering)", "Data leakage"],
+            type: "flowchart",
+            direction: "vertical",
+            title: "8-Layer Security Architecture",
+            nodes: [
+                  { id: "l1", label: "L1: TLS 1.3 Transport Encryption", type: "default" },
+                  { id: "l2", label: "L2: Rate Limiting & IP Filtering", type: "info" },
+                  { id: "l3", label: "L3: JWT Authentication + 2FA", type: "primary" },
+                  { id: "l4", label: "L4: RBAC + Field-Level Authorization", type: "primary" },
+                  { id: "l5", label: "L5: CSRF Token Validation", type: "warning" },
+                  { id: "l6", label: "L6: Anti-Replay (Nonce + Timestamp)", type: "warning" },
+                  { id: "l7", label: "L7: Response Field Projection", type: "success" },
+                  { id: "l8", label: "L8: Comprehensive Audit Trail", type: "danger" },
+            ],
+            connections: [
+                  { from: "l1", to: "l2" }, { from: "l2", to: "l3" },
+                  { from: "l3", to: "l4" }, { from: "l4", to: "l5" },
+                  { from: "l5", to: "l6" }, { from: "l6", to: "l7" },
+                  { from: "l7", to: "l8" },
             ],
       },
-      { type: "heading", level: 2, titleKey: "commercial.securityOverview.transportTitle", id: "transport-security" },
+
+      { type: "heading", level: 2, titleKey: "commercial.securityOverview.summaryTitle", id: "summary" },
       {
             type: "table",
-            headers: ["Mechanism", "Configuration"],
+            headers: ["Layer", "Purpose", "Technology"],
             rows: [
-                  ["HTTPS enforced", "HTTP requests redirect to HTTPS"],
-                  ["HSTS", "max-age=31536000; includeSubDomains (1 year)"],
-                  ["TLS 1.2+", "Older protocols disabled"],
+                  ["Transport", "Encrypt all data in transit", "TLS 1.3, HSTS preloading"],
+                  ["Rate Limiting", "Prevent brute force & DDoS", "ASP.NET Core Rate Limiting, sliding window"],
+                  ["Authentication", "Verify user identity", "JWT RS256, refresh tokens, 2FA TOTP"],
+                  ["Authorization", "Control resource access", "Policy-based RBAC, field projections"],
+                  ["CSRF Protection", "Prevent cross-site request forgery", "Double-submit cookie pattern"],
+                  ["Anti-Replay", "Prevent request replay attacks", "Nonce + timestamp + sliding window"],
+                  ["Field Projection", "Hide sensitive fields per role", "Custom middleware, per-entity config"],
+                  ["Audit Trail", "Record all security events", "4-source pipeline, SignalR streaming"],
             ],
       },
-      { type: "heading", level: 2, titleKey: "commercial.securityOverview.rateLimitTitle", id: "rate-limiting" },
+
+      { type: "heading", level: 2, titleKey: "commercial.securityOverview.headersTitle", id: "headers" },
       {
-            type: "table",
-            headers: ["Rule", "Limit", "Window"],
-            rows: [
-                  ["Global per-IP", "100 requests", "1 minute"],
-                  ["Auth endpoints", "10 requests", "1 minute"],
-                  ["Custom (configurable)", "Variable", "Variable"],
-            ],
+            type: "code",
+            language: "text",
+            filename: "Security Headers Applied to Every Response",
+            code: `X-Content-Type-Options: nosniff
+X-Frame-Options: DENY
+X-XSS-Protection: 1; mode=block
+Referrer-Policy: strict-origin-when-cross-origin
+Content-Security-Policy: default-src 'self'; script-src 'self'
+Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+Permissions-Policy: camera=(), microphone=(), geolocation=()`,
       },
-      { type: "heading", level: 2, titleKey: "commercial.securityOverview.headersTitle", id: "security-headers" },
+
+      { type: "heading", level: 2, titleKey: "commercial.securityOverview.complianceTitle", id: "compliance" },
       {
-            type: "table",
-            headers: ["Header", "Value", "Prevents"],
-            rows: [
-                  ["X-Content-Type-Options", "nosniff", "MIME type sniffing"],
-                  ["X-Frame-Options", "DENY", "Clickjacking"],
-                  ["Content-Security-Policy", "default-src 'self'", "XSS injection"],
-                  ["Referrer-Policy", "strict-origin-when-cross-origin", "Information leakage"],
-                  ["Permissions-Policy", "camera=(), microphone=()", "Feature abuse"],
+            type: "feature-grid",
+            columns: 3,
+            items: [
+                  { icon: "shield", titleKey: "commercial.securityOverview.sox", descriptionKey: "commercial.securityOverview.soxDesc" },
+                  { icon: "globe", titleKey: "commercial.securityOverview.gdpr", descriptionKey: "commercial.securityOverview.gdprDesc" },
+                  { icon: "building", titleKey: "commercial.securityOverview.soc2", descriptionKey: "commercial.securityOverview.soc2Desc" },
             ],
       },
-      { type: "heading", level: 2, titleKey: "commercial.securityOverview.auditTitle", id: "audit-trail" },
-      { type: "paragraph", contentKey: "commercial.securityOverview.auditIntro" },
-      {
-            type: "table",
-            headers: ["Field", "Example"],
-            rows: [
-                  ["Admin ID", "550e8400-e29b-41d4-..."],
-                  ["Action", "POST /api/admins"],
-                  ["IP Address", "192.168.1.100"],
-                  ["Timestamp", "2024-01-15T10:30:00Z"],
-                  ["Before/After", "Entity snapshot diff"],
-                  ["Status Code", "201 Created"],
-                  ["Duration", "45ms"],
-                  ["User Agent", "Mozilla/5.0..."],
-            ],
-      },
-      { type: "info", variant: "warning", contentKey: "commercial.securityOverview.auditImmutable" },
 ];
 
 registerPage({
@@ -76,6 +77,6 @@ registerPage({
       category: "commercial-security",
       order: 1,
       sections,
-      relatedSlugs: ["commercial/auth-security", "commercial/data-protection"],
-      lastUpdated: "2026-02-19",
+      relatedSlugs: ["commercial/authentication-security", "commercial/data-protection"],
+      lastUpdated: "2026-02-20",
 });
