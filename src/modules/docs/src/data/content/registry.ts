@@ -24,6 +24,15 @@ import "./features/authentication";
 import "./features/multi-tenancy";
 import "./features/role-permissions";
 import "./features/audit-system";
+import "./features/notification-system";
+import "./features/email-system";
+import "./features/webhook-system";
+import "./features/menu-system";
+import "./features/recycle-bin";
+import "./features/user-management";
+import "./features/file-upload";
+import "./features/download-export";
+import "./features/message-templates";
 
 // Security
 import "./security/overview";
