@@ -3,6 +3,8 @@ import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
       { type: "paragraph", contentKey: "commercial.resiliencePatterns.intro" },
+
+      // ─── Circuit Breaker ────────────────────────────────────────
       { type: "heading", level: 2, titleKey: "commercial.resiliencePatterns.circuitTitle", id: "circuit-breaker" },
       { type: "paragraph", contentKey: "commercial.resiliencePatterns.circuitContent" },
       {
@@ -21,6 +23,8 @@ const sections: DocSection[] = [
                   { from: "half", to: "open", label: "Failure" },
             ],
       },
+
+      // ─── Retry & Resilience Patterns ────────────────────────────
       { type: "heading", level: 2, titleKey: "commercial.resiliencePatterns.retryTitle", id: "retry" },
       {
             type: "table",
@@ -31,8 +35,38 @@ const sections: DocSection[] = [
                   ["Circuit breaker + retry", "Polly combined policies", "Database connections"],
                   ["Bulkhead isolation", "Semaphore-based limits", "Prevent cascade failures"],
                   ["Timeout", "Configurable per operation", "Long-running queries"],
+                  ["Fallback", "Default response on failure", "Degraded functionality"],
             ],
       },
+
+      // ─── Polly Configuration ────────────────────────────────────
+      { type: "heading", level: 2, titleKey: "commercial.resiliencePatterns.configTitle", id: "config" },
+      {
+            type: "code",
+            language: "csharp",
+            filename: "Resilience Pipeline Configuration",
+            code: `// Program.cs — Configure resilience for HTTP clients
+builder.Services
+    .AddHttpClient("ExternalApi")
+    .AddResilienceHandler("standard", builder =>
+    {
+        builder.AddRetry(new RetryStrategyOptions<HttpResponseMessage>
+        {
+            MaxRetryAttempts = 3,
+            BackoffType = DelayBackoffType.Exponential,
+            UseJitter = true
+        });
+        builder.AddCircuitBreaker(new CircuitBreakerStrategyOptions<HttpResponseMessage>
+        {
+            FailureRatio = 0.5,
+            SamplingDuration = TimeSpan.FromSeconds(30),
+            BreakDuration = TimeSpan.FromSeconds(15)
+        });
+        builder.AddTimeout(TimeSpan.FromSeconds(10));
+    });`,
+      },
+
+      // ─── Health Checks ──────────────────────────────────────────
       { type: "heading", level: 2, titleKey: "commercial.resiliencePatterns.healthTitle", id: "health-checks" },
       { type: "paragraph", contentKey: "commercial.resiliencePatterns.healthContent" },
       {
@@ -46,6 +80,23 @@ const sections: DocSection[] = [
                   ["Storage", "/health/storage", "File storage access"],
             ],
       },
+
+      // ─── Graceful Degradation ───────────────────────────────────
+      { type: "heading", level: 2, titleKey: "commercial.resiliencePatterns.degradationTitle", id: "degradation" },
+      { type: "paragraph", contentKey: "commercial.resiliencePatterns.degradationContent" },
+      {
+            type: "list",
+            variant: "unordered",
+            items: [
+                  "Cache serves stale data when database is temporarily unavailable",
+                  "Email queue stores messages for delivery when SMTP is down",
+                  "Background jobs retry with exponential backoff on transient failures",
+                  "Read-only mode when write replicas are unreachable",
+                  "Static fallback pages when application server is under maintenance",
+            ],
+      },
+
+      { type: "info", variant: "tip", contentKey: "commercial.resiliencePatterns.tip" },
 ];
 
 registerPage({

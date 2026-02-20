@@ -102,7 +102,7 @@ const sections: DocSection[] = [
             ],
       },
 
-      { type: "info", variant: "important", contentKey: "commercial.deploymentModes.keyPoint" },
+      { type: "info", variant: "warning", contentKey: "commercial.deploymentModes.keyPoint" },
 ];
 
 registerPage({

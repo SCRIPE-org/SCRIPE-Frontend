@@ -5,6 +5,7 @@
 export const docEn = {
   // ─── Common UI ──────────────────────────────────────────────
   common: {
+    contactSales: "Contact Sales",
     search: "Search docs...",
     searchPlaceholder: "Type to search...",
     searchShortcut: "⌘K",

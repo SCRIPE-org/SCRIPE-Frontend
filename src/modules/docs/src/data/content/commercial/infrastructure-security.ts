@@ -4,6 +4,7 @@ import type { DocSection } from "../../../domain/entities/DocSection";
 const sections: DocSection[] = [
       { type: "paragraph", contentKey: "commercial.infraSecurity.intro" },
 
+      // ─── CORS Configuration ─────────────────────────────────────
       { type: "heading", level: 2, titleKey: "commercial.infraSecurity.corsTitle", id: "cors" },
       { type: "paragraph", contentKey: "commercial.infraSecurity.corsContent" },
       {
@@ -18,6 +19,7 @@ const sections: DocSection[] = [
             ],
       },
 
+      // ─── Rate Limiting ──────────────────────────────────────────
       { type: "heading", level: 2, titleKey: "commercial.infraSecurity.rateLimitTitle", id: "rate-limiting" },
       { type: "paragraph", contentKey: "commercial.infraSecurity.rateLimitContent" },
       {
@@ -29,12 +31,27 @@ const sections: DocSection[] = [
                   ["General API", "100 requests", "Per minute", "Sliding window per user"],
                   ["File Upload", "10 requests", "Per minute", "Fixed window per user"],
                   ["Export/Download", "5 requests", "Per minute", "Token bucket per user"],
+                  ["Webhook outbound", "50 requests", "Per minute", "Per destination URL"],
             ],
       },
 
+      // ─── Content Security Policy ────────────────────────────────
       { type: "heading", level: 2, titleKey: "commercial.infraSecurity.cspTitle", id: "csp" },
       { type: "paragraph", contentKey: "commercial.infraSecurity.cspContent" },
+      {
+            type: "table",
+            headers: ["Header", "Value", "Purpose"],
+            rows: [
+                  ["Content-Security-Policy", "default-src 'self'; script-src 'self'", "Prevent XSS and code injection"],
+                  ["X-Content-Type-Options", "nosniff", "Prevent MIME type sniffing"],
+                  ["X-Frame-Options", "DENY", "Prevent clickjacking"],
+                  ["Strict-Transport-Security", "max-age=31536000; includeSubDomains", "Enforce HTTPS"],
+                  ["Referrer-Policy", "strict-origin-when-cross-origin", "Control referrer information"],
+                  ["Permissions-Policy", "camera=(), microphone=(), geolocation=()", "Restrict browser features"],
+            ],
+      },
 
+      // ─── Network Security ───────────────────────────────────────
       { type: "heading", level: 2, titleKey: "commercial.infraSecurity.networkTitle", id: "network" },
       {
             type: "feature-grid",
@@ -46,6 +63,23 @@ const sections: DocSection[] = [
                   { icon: "building", titleKey: "commercial.infraSecurity.networkSegment", descriptionKey: "commercial.infraSecurity.networkSegmentDesc" },
             ],
       },
+
+      // ─── Secrets Management ─────────────────────────────────────
+      { type: "heading", level: 2, titleKey: "commercial.infraSecurity.secretsTitle", id: "secrets" },
+      { type: "paragraph", contentKey: "commercial.infraSecurity.secretsContent" },
+      {
+            type: "list",
+            variant: "unordered",
+            items: [
+                  "Azure Key Vault integration for production secrets",
+                  "Environment variable injection via Docker/Kubernetes",
+                  "User Secrets for local development (dotnet user-secrets)",
+                  "Automatic secret rotation with zero-downtime key rollover",
+                  "No secrets in source code — all externalized configuration",
+            ],
+      },
+
+      { type: "info", variant: "warning", contentKey: "commercial.infraSecurity.warningNote" },
 ];
 
 registerPage({

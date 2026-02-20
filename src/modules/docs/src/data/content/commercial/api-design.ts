@@ -3,6 +3,8 @@ import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
       { type: "paragraph", contentKey: "commercial.apiDesign.intro" },
+
+      // ─── RESTful Conventions ────────────────────────────────────
       { type: "heading", level: 2, titleKey: "commercial.apiDesign.conventionsTitle", id: "conventions" },
       {
             type: "table",
@@ -15,8 +17,11 @@ const sections: DocSection[] = [
                   ["Sorting", "orderBy query param", "/api/employees?orderBy=name:asc"],
                   ["Search", "search query param", "/api/employees?search=john"],
                   ["Versioning", "URL prefix (future)", "/api/v1/employees"],
+                  ["Nesting", "Sub-resources", "/api/tenants/{id}/users"],
             ],
       },
+
+      // ─── Result Pattern ─────────────────────────────────────────
       { type: "heading", level: 2, titleKey: "commercial.apiDesign.resultTitle", id: "result-pattern" },
       { type: "paragraph", contentKey: "commercial.apiDesign.resultContent" },
       {
@@ -41,6 +46,27 @@ public async Task<Result<EmployeeDto>> Handle(CreateEmployeeCommand cmd)
 // Result.NotFound → 404 Not Found
 // Result.Forbidden → 403 Forbidden`,
       },
+
+      // ─── HTTP Status Codes ──────────────────────────────────────
+      { type: "heading", level: 2, titleKey: "commercial.apiDesign.statusCodesTitle", id: "status-codes" },
+      {
+            type: "table",
+            headers: ["Status Code", "Meaning", "When Used"],
+            rows: [
+                  ["200 OK", "Success", "GET, PUT, PATCH operations"],
+                  ["201 Created", "Resource created", "POST operations"],
+                  ["204 No Content", "Success, no body", "DELETE operations"],
+                  ["400 Bad Request", "Validation error", "Invalid input data"],
+                  ["401 Unauthorized", "Not authenticated", "Missing or invalid JWT"],
+                  ["403 Forbidden", "Not authorized", "Insufficient permissions"],
+                  ["404 Not Found", "Resource missing", "Non-existent entity"],
+                  ["409 Conflict", "Duplicate resource", "Unique constraint violation"],
+                  ["429 Too Many Requests", "Rate limited", "Exceeds rate limit"],
+                  ["500 Internal Error", "Server error", "Unhandled exceptions"],
+            ],
+      },
+
+      // ─── Error Response ─────────────────────────────────────────
       { type: "heading", level: 2, titleKey: "commercial.apiDesign.errorTitle", id: "error-handling" },
       {
             type: "code",
@@ -57,6 +83,25 @@ public async Task<Result<EmployeeDto>> Handle(CreateEmployeeCommand cmd)
   "traceId": "abc-123-def"
 }`,
       },
+
+      // ─── MediatR Pipeline ──────────────────────────────────────
+      { type: "heading", level: 2, titleKey: "commercial.apiDesign.pipelineTitle", id: "pipeline" },
+      { type: "paragraph", contentKey: "commercial.apiDesign.pipelineContent" },
+      {
+            type: "list",
+            variant: "ordered",
+            items: [
+                  "Request received → Controller forwards to MediatR",
+                  "ValidationBehavior → FluentValidation runs first",
+                  "AuthorizationBehavior → Permission checks",
+                  "TenantResolutionBehavior → Tenant context applied",
+                  "AuditBehavior → Audit entry created",
+                  "Handler execution → Business logic runs",
+                  "Response mapped → Result<T> → HTTP status code",
+            ],
+      },
+
+      // ─── Swagger ────────────────────────────────────────────────
       { type: "heading", level: 2, titleKey: "commercial.apiDesign.swaggerTitle", id: "swagger" },
       { type: "paragraph", contentKey: "commercial.apiDesign.swaggerContent" },
 ];

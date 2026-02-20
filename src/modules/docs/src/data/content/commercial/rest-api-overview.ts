@@ -3,6 +3,8 @@ import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
       { type: "paragraph", contentKey: "commercial.restApiOverview.intro" },
+
+      // ─── API Controllers ────────────────────────────────────────
       { type: "heading", level: 2, titleKey: "commercial.restApiOverview.controllersTitle", id: "controllers" },
       {
             type: "table",
@@ -20,8 +22,33 @@ const sections: DocSection[] = [
                   ["SettingsController", "4", "System settings, tenant settings"],
                   ["DashboardController", "3", "KPI data, chart data, summaries"],
                   ["WebhookController", "5", "Subscription management, event catalog"],
+                  ["RecycleBinController", "4", "Soft-deleted items, restore, purge"],
             ],
       },
+
+      // ─── Response Format ────────────────────────────────────────
+      { type: "heading", level: 2, titleKey: "commercial.restApiOverview.responseTitle", id: "response" },
+      { type: "paragraph", contentKey: "commercial.restApiOverview.responseContent" },
+      {
+            type: "code",
+            language: "json",
+            filename: "Standard API Response",
+            code: `// Success response
+{
+  "succeeded": true,
+  "data": { ... },
+  "message": "Operation completed successfully"
+}
+
+// Error response
+{
+  "succeeded": false,
+  "errors": ["Validation failed: Email is required"],
+  "errorCode": "VALIDATION_ERROR"
+}`,
+      },
+
+      // ─── Pagination ─────────────────────────────────────────────
       { type: "heading", level: 2, titleKey: "commercial.restApiOverview.paginationTitle", id: "pagination" },
       {
             type: "code",
@@ -39,6 +66,19 @@ const sections: DocSection[] = [
   }
 }`,
       },
+
+      // ─── Authentication ─────────────────────────────────────────
+      { type: "heading", level: 2, titleKey: "commercial.restApiOverview.authTitle", id: "authentication" },
+      { type: "paragraph", contentKey: "commercial.restApiOverview.authContent" },
+      {
+            type: "code",
+            language: "text",
+            filename: "Authentication Header",
+            code: `Authorization: Bearer eyJhbGciOiJIUzI1NiIs...
+X-Tenant-Id: 550e8400-e29b-41d4-a716-446655440000`,
+      },
+
+      // ─── Swagger / OpenAPI ──────────────────────────────────────
       { type: "heading", level: 2, titleKey: "commercial.restApiOverview.swaggerTitle", id: "swagger" },
       { type: "paragraph", contentKey: "commercial.restApiOverview.swaggerContent" },
       {

@@ -1,0 +1,112 @@
+"use client";
+
+import { useDocsViewModel } from "../viewmodels/useDocsViewModel";
+import { useSidebarViewModel } from "../viewmodels/useSidebarViewModel";
+import { useSearchViewModel } from "../viewmodels/useSearchViewModel";
+import { useTocViewModel } from "../viewmodels/useTocViewModel";
+import { useDocsModeViewModel } from "../viewmodels/useDocsModeViewModel";
+import { useDocsI18n } from "../providers/DocsI18nProvider";
+
+// Commercial layout components
+import { CommercialHeader } from "../components/layout/CommercialHeader";
+import { CommercialSidebar } from "../components/layout/CommercialSidebar";
+import { CommercialContent } from "../components/content/CommercialContent";
+
+// Shared components
+import { DocsPrevNext } from "../components/layout/DocsPrevNext";
+import { DocsMobileNav } from "../components/layout/DocsMobileNav";
+import { DocsToc } from "../components/layout/DocsToc";
+import { ReadingProgress } from "../components/ui/ReadingProgress";
+import { DocsSearch } from "../components/ui/DocsSearch";
+
+// Content registration
+import "../../data/content/registry";
+
+// ─── Props ────────────────────────────────────────────────────────
+interface CommercialDocsViewProps {
+      slug: string;
+}
+
+// ─── View ─────────────────────────────────────────────────────────
+export function CommercialDocsView({ slug }: CommercialDocsViewProps) {
+      const { direction } = useDocsI18n();
+      const docsMode = useDocsModeViewModel();
+      const vm = useDocsViewModel(slug, "commercial");
+      const sidebar = useSidebarViewModel();
+      const search = useSearchViewModel(vm.search);
+      const toc = useTocViewModel(vm.headingIds);
+
+      // ── 404 ──────────────────────────────────────────────────────────
+      if (vm.isNotFound) {
+            return (
+                  <div className="commercial-root" dir={direction}>
+                        <CommercialHeader
+                              onSearchOpen={search.openSearch}
+                              onMobileMenuOpen={sidebar.openMobileMenu}
+                              docsMode={docsMode.mode}
+                              onDocsModeChange={docsMode.setMode}
+                        />
+                        <div className="commercial-wrapper">
+                              <CommercialSidebar categories={vm.categories} activeSlug={slug} />
+                              <div className="commercial-main">
+                                    <div className="commercial-404">
+                                          <h1>404</h1>
+                                          <p>Page not found: /docs/{slug}</p>
+                                    </div>
+                              </div>
+                        </div>
+                  </div>
+            );
+      }
+
+      const page = vm.page!;
+
+      // ── Main layout ──────────────────────────────────────────────────
+      return (
+            <div className="commercial-root" dir={direction}>
+                  <ReadingProgress />
+                  <CommercialHeader
+                        onSearchOpen={search.openSearch}
+                        onMobileMenuOpen={sidebar.openMobileMenu}
+                        docsMode={docsMode.mode}
+                        onDocsModeChange={docsMode.setMode}
+                  />
+
+                  <div className="commercial-wrapper">
+                        <CommercialSidebar categories={vm.categories} activeSlug={slug} />
+
+                        <div className="commercial-main">
+                              <CommercialContent
+                                    sections={page.sections}
+                                    titleKey={page.titleKey}
+                                    descriptionKey={page.descriptionKey}
+                                    lastUpdated={page.lastUpdated}
+                              />
+
+                              <DocsPrevNext
+                                    prevSlug={vm.prevSlug}
+                                    prevTitleKey={vm.prevTitleKey}
+                                    nextSlug={vm.nextSlug}
+                                    nextTitleKey={vm.nextTitleKey}
+                              />
+                        </div>
+
+                        <DocsToc headings={vm.headings} activeId={toc.activeId} />
+                  </div>
+
+                  {/* Overlays */}
+                  <DocsSearch
+                        isOpen={search.isSearchOpen}
+                        onClose={search.closeSearch}
+                        onSearch={search.searchFn}
+                  />
+
+                  <DocsMobileNav
+                        categories={vm.categories}
+                        activeSlug={slug}
+                        isOpen={sidebar.isMobileMenuOpen}
+                        onClose={sidebar.closeMobileMenu}
+                  />
+            </div>
+      );
+}

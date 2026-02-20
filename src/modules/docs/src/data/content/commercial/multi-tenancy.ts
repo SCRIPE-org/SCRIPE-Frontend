@@ -70,11 +70,11 @@ const sections: DocSection[] = [
       {
             type: "api-table",
             endpoints: [
-                  { method: "GET", path: "/api/tenants", description: "List all tenants", auth: true, permission: "Tenants.View" },
-                  { method: "POST", path: "/api/tenants", description: "Create new tenant", auth: true, permission: "Tenants.Create" },
-                  { method: "PUT", path: "/api/tenants/{id}", description: "Update tenant settings", auth: true, permission: "Tenants.Update" },
-                  { method: "POST", path: "/api/tenants/{id}/activate", description: "Activate tenant", auth: true, permission: "Tenants.Update" },
-                  { method: "POST", path: "/api/tenants/{id}/deactivate", description: "Deactivate tenant", auth: true, permission: "Tenants.Update" },
+                  { method: "GET", path: "/api/tenants", description: "List all tenants", auth: "Required", permission: "Tenants.View" },
+                  { method: "POST", path: "/api/tenants", description: "Create new tenant", auth: "Required", permission: "Tenants.Create" },
+                  { method: "PUT", path: "/api/tenants/{id}", description: "Update tenant settings", auth: "Required", permission: "Tenants.Update" },
+                  { method: "POST", path: "/api/tenants/{id}/activate", description: "Activate tenant", auth: "Required", permission: "Tenants.Update" },
+                  { method: "POST", path: "/api/tenants/{id}/deactivate", description: "Deactivate tenant", auth: "Required", permission: "Tenants.Update" },
             ],
       },
 ];

@@ -3,7 +3,10 @@ import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
       { type: "paragraph", contentKey: "commercial.roiAnalysis.intro" },
+
+      // ─── Cost Comparison ────────────────────────────────────────
       { type: "heading", level: 2, titleKey: "commercial.roiAnalysis.costTitle", id: "cost-comparison" },
+      { type: "paragraph", contentKey: "commercial.roiAnalysis.costIntro" },
       {
             type: "table",
             headers: ["Component", "Build from Scratch", "With NEXORA", "Savings"],
@@ -19,6 +22,8 @@ const sections: DocSection[] = [
                   ["**Total Infrastructure**", "**$225K - $395K**", "**License cost**", "**$200K+**"],
             ],
       },
+
+      // ─── Time to Market ─────────────────────────────────────────
       { type: "heading", level: 2, titleKey: "commercial.roiAnalysis.timeTitle", id: "time-savings" },
       {
             type: "table",
@@ -31,6 +36,8 @@ const sections: DocSection[] = [
                   ["**Total to Production**", "**12-18 months**", "**3-6 months**"],
             ],
       },
+
+      // ─── Team Size ──────────────────────────────────────────────
       { type: "heading", level: 2, titleKey: "commercial.roiAnalysis.teamTitle", id: "team" },
       { type: "paragraph", contentKey: "commercial.roiAnalysis.teamContent" },
       {
@@ -45,6 +52,26 @@ const sections: DocSection[] = [
                   ["**Total Team Size**", "**8-11**", "**2-5**"],
             ],
       },
+
+      // ─── Ongoing Savings ────────────────────────────────────────
+      { type: "heading", level: 2, titleKey: "commercial.roiAnalysis.ongoingTitle", id: "ongoing" },
+      {
+            type: "table",
+            headers: ["Category", "Annual Cost Without", "Annual Cost With", "Annual Savings"],
+            rows: [
+                  ["Security patches & updates", "$30-50K", "Included", "$30-50K"],
+                  ["Infrastructure maintenance", "$40-60K", "Minimal", "$35-55K"],
+                  ["Compliance audit prep", "$20-40K", "$5-10K", "$15-30K"],
+                  ["Developer onboarding", "$10-20K per hire", "$2-5K per hire", "$8-15K per hire"],
+                  ["Bug fixes (infra)", "$20-30K", "Covered by support", "$20-30K"],
+            ],
+      },
+
+      // ─── Case Study ─────────────────────────────────────────────
+      { type: "heading", level: 2, titleKey: "commercial.roiAnalysis.caseStudyTitle", id: "case-study" },
+      { type: "paragraph", contentKey: "commercial.roiAnalysis.caseStudyContent" },
+
+      { type: "info", variant: "tip", contentKey: "commercial.roiAnalysis.tip" },
 ];
 
 registerPage({

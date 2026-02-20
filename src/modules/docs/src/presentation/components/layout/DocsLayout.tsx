@@ -4,6 +4,7 @@ import type React from "react";
 import { DocsI18nProvider } from "../../providers/DocsI18nProvider";
 import { ThemeProvider } from "@core/providers/theme-provider";
 import "../../styles/docs.css";
+import "../../styles/commercial.css";
 
 interface DocsLayoutProps {
   children: React.ReactNode;

@@ -3,6 +3,8 @@ import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
       { type: "paragraph", contentKey: "commercial.emailIntegration.intro" },
+
+      // ─── Email Delivery Pipeline ────────────────────────────────
       { type: "heading", level: 2, titleKey: "commercial.emailIntegration.pipelineTitle", id: "pipeline" },
       {
             type: "flowchart",
@@ -22,17 +24,37 @@ const sections: DocSection[] = [
                   { from: "send", to: "retry", label: "Failed" },
             ],
       },
+
+      // ─── Email Providers ────────────────────────────────────────
       { type: "heading", level: 2, titleKey: "commercial.emailIntegration.providersTitle", id: "providers" },
       {
             type: "table",
             headers: ["Provider", "Configuration", "Use Case"],
             rows: [
                   ["SMTP", "Host, port, credentials", "Self-hosted, on-premise"],
-                  ["SendGrid", "API key", "Cloud, high-volume"],
-                  ["Mailgun", "API key + domain", "Developer-friendly"],
-                  ["Custom", "Implement IEmailSender", "Any provider"],
+                  ["SendGrid", "API key", "Cloud, high-volume delivery"],
+                  ["Mailgun", "API key + domain", "Developer-friendly API"],
+                  ["Amazon SES", "Access key + region", "AWS infrastructure"],
+                  ["Custom", "Implement IEmailSender", "Any provider via adapter"],
             ],
       },
+
+      // ─── Template System ────────────────────────────────────────
+      { type: "heading", level: 2, titleKey: "commercial.emailIntegration.templatesTitle", id: "templates" },
+      { type: "paragraph", contentKey: "commercial.emailIntegration.templatesContent" },
+      {
+            type: "table",
+            headers: ["Feature", "Description"],
+            rows: [
+                  ["Scriban engine", "Full Liquid-compatible templating with loops, conditions, filters"],
+                  ["Bilingual", "Arabic and English templates with automatic language detection"],
+                  ["Placeholder validation", "Schema-validated variables prevent runtime template errors"],
+                  ["Live preview", "WYSIWYG editor with real-time rendering in the admin panel"],
+                  ["Version history", "Track template changes with rollback capability"],
+            ],
+      },
+
+      // ─── Features ───────────────────────────────────────────────
       { type: "heading", level: 2, titleKey: "commercial.emailIntegration.featuresTitle", id: "features" },
       {
             type: "feature-grid",
@@ -43,6 +65,30 @@ const sections: DocSection[] = [
                   { icon: "shield", titleKey: "commercial.emailIntegration.retryLogic", descriptionKey: "commercial.emailIntegration.retryLogicDesc" },
                   { icon: "bar-chart", titleKey: "commercial.emailIntegration.tracking", descriptionKey: "commercial.emailIntegration.trackingDesc" },
             ],
+      },
+
+      // ─── Configuration ──────────────────────────────────────────
+      { type: "heading", level: 2, titleKey: "commercial.emailIntegration.configTitle", id: "config" },
+      {
+            type: "code",
+            language: "json",
+            filename: "Email Configuration",
+            code: `{
+  "EmailSettings": {
+    "Provider": "smtp",
+    "FromEmail": "no-reply@nexora.io",
+    "FromName": "NEXORA Platform",
+    "Smtp": {
+      "Host": "smtp.office365.com",
+      "Port": 587,
+      "EnableSsl": true
+    },
+    "RetryPolicy": {
+      "MaxRetries": 3,
+      "BackoffSeconds": [30, 120, 600]
+    }
+  }
+}`,
       },
 ];
 
