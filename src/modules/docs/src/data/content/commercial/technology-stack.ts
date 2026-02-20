@@ -1,0 +1,127 @@
+import { registerPage } from "../../repositories/DocsRepository";
+import type { DocSection } from "../../../domain/entities/DocSection";
+
+const sections: DocSection[] = [
+      {
+            type: "paragraph",
+            contentKey: "commercial.technologyStack.intro",
+      },
+      {
+            type: "heading",
+            level: 2,
+            titleKey: "commercial.technologyStack.backendTitle",
+            id: "backend-stack",
+      },
+      {
+            type: "table",
+            headers: ["Layer", "Technology", "Version", "Purpose"],
+            rows: [
+                  ["Runtime", ".NET", "8.0 LTS", "Long-term support until Nov 2026"],
+                  ["Language", "C#", "12", "Primary types, raw string literals, pattern matching"],
+                  ["Framework", "ASP.NET Core", "8.0", "HTTP pipeline, middleware, DI container"],
+                  ["ORM", "Entity Framework Core", "8.0", "Database abstraction, migrations, query filters"],
+                  ["CQRS", "MediatR", "12.x", "Command/Query separation, pipeline behaviors"],
+                  ["Validation", "FluentValidation", "11.x", "Strongly-typed validation rules"],
+                  ["Real-Time", "SignalR", "8.0", "WebSocket hubs for notifications, audit streaming"],
+                  ["Auth", "JWT Bearer + OTP", "Custom", "Token-based auth with refresh rotation"],
+                  ["Caching", "IDistributedCache", "Redis / In-Memory", "Query caching, nonce storage, session management"],
+                  ["Resilience", "Polly", "8.x", "Retry, circuit breaker, timeout policies"],
+                  ["Scheduling", "Hangfire", "1.8.x", "Persistent background job processing"],
+                  ["Templates", "Scriban", "5.x", "Liquid-like email/message template rendering"],
+                  ["API Versioning", "Asp.Versioning", "8.x", "URL-segment versioning (/api/v1/)"],
+                  ["Health Checks", "AspNetCore.Diagnostics", "8.0", "Liveness and readiness probes"],
+                  ["Observability", "OpenTelemetry", "1.x", "Distributed tracing (Jaeger, Zipkin compatible)"],
+                  ["Logging", "Serilog", "3.x", "Structured JSON logging with enrichers"],
+            ],
+      },
+      {
+            type: "heading",
+            level: 2,
+            titleKey: "commercial.technologyStack.frontendTitle",
+            id: "frontend-stack",
+      },
+      {
+            type: "table",
+            headers: ["Layer", "Technology", "Version", "Purpose"],
+            rows: [
+                  ["Framework", "Next.js", "15", "App Router, SSR, static generation"],
+                  ["UI Library", "React", "19", "Component-based UI"],
+                  ["Language", "TypeScript", "5.x", "Type safety across entire frontend"],
+                  ["State (Server)", "TanStack Query", "5.x", "API data caching, mutations, invalidation"],
+                  ["State (Global)", "Zustand", "4.x", "Auth store, UI store with persistence"],
+                  ["Forms", "React Hook Form", "7.x", "Performant form handling"],
+                  ["Validation", "Zod", "3.x", "Schema-first validation (shared with entities)"],
+                  ["Components", "Shadcn/ui", "Latest", "Radix UI primitives with Tailwind styling"],
+                  ["Styling", "Tailwind CSS", "3.x", "Utility-first CSS with JIT compilation"],
+                  ["Charts", "Recharts", "2.x", "Dashboard charts and analytics"],
+                  ["Tables", "TanStack Table", "8.x", "Headless table with sorting, filtering, pagination"],
+                  ["Icons", "Lucide React", "Latest", "Consistent icon set"],
+                  ["Notifications", "Sonner", "1.x", "Toast notifications"],
+            ],
+      },
+      {
+            type: "heading",
+            level: 2,
+            titleKey: "commercial.technologyStack.databaseTitle",
+            id: "database-support",
+      },
+      {
+            type: "table",
+            headers: ["Database", "Version", "Use Case", "License"],
+            rows: [
+                  ["SQL Server", "2019+", "Enterprise Windows environments", "Commercial"],
+                  ["Oracle", "19c+", "Government, banking, legacy environments", "Commercial"],
+                  ["PostgreSQL", "14+", "Cloud-native, cost-sensitive, open-source preference", "Free (MIT)"],
+            ],
+      },
+      {
+            type: "heading",
+            level: 2,
+            titleKey: "commercial.technologyStack.infraTitle",
+            id: "infrastructure",
+      },
+      {
+            type: "table",
+            headers: ["Tool", "Purpose"],
+            rows: [
+                  ["Docker", "Containerized deployment"],
+                  ["Docker Compose", "Multi-container orchestration"],
+                  ["Kubernetes", "Production orchestration (microservice mode)"],
+                  ["YARP / Ocelot", "API gateway (gateway mode)"],
+                  ["Redis", "Distributed caching, distributed locking, replay nonces"],
+                  ["RabbitMQ", "Event bus (microservice mode)"],
+                  ["Nginx / IIS", "Reverse proxy / Windows hosting"],
+                  ["GitHub Actions", "CI/CD pipeline"],
+            ],
+      },
+      {
+            type: "heading",
+            level: 2,
+            titleKey: "commercial.technologyStack.whyTitle",
+            id: "why-these-choices",
+      },
+      {
+            type: "table",
+            headers: ["Decision", "Rationale"],
+            rows: [
+                  [".NET 8.0 (not Node.js)", "Superior performance, strong typing, mature enterprise ecosystem"],
+                  ["EF Core (not Dapper)", "Migrations, global query filters, multi-provider support"],
+                  ["MediatR (not direct repo calls)", "Pipeline behaviors for validation, caching, logging without code duplication"],
+                  ["Next.js (not plain React)", "SSR for SEO, App Router for file-based layouts, built-in optimization"],
+                  ["Zustand (not Redux)", "Minimal boilerplate, TypeScript-first, persist middleware"],
+                  ["TanStack Query (not useEffect)", "Automatic caching, background refetch, mutation invalidation"],
+                  ["Shadcn/ui (not Material UI)", "Copy-paste components, full customization, no black-box dependency"],
+            ],
+      },
+];
+
+registerPage({
+      slug: "commercial/technology-stack",
+      titleKey: "commercial.technologyStack.title",
+      descriptionKey: "commercial.technologyStack.description",
+      category: "commercial-platform",
+      order: 3,
+      sections,
+      relatedSlugs: ["commercial/platform-architecture", "commercial/database-support", "commercial/performance"],
+      lastUpdated: "2026-02-19",
+});
