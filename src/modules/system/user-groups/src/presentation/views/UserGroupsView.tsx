@@ -34,7 +34,7 @@ export function UserGroupsView() {
       const { t, language } = useI18n();
       const router = useRouter();
       const { vm, getConfigBase } = useUserGroupsViewModel();
-      const configBase = getConfigBase();
+      const configBase = getConfigBase(t);
 
       const config: CrudConfig<UserGroupListItem> = useMemo(
             () => ({

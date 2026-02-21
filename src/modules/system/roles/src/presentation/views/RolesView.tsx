@@ -6,6 +6,7 @@
  */
 "use client";
 
+import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useRolesViewModel } from "../viewmodels/useRolesViewModel";
@@ -14,10 +15,11 @@ import {
   type CrudConfig,
   type CrudColumn,
 } from "@core/crud/components/generic-crud-view";
-import { Shield, Pencil, Trash, Copy } from "lucide-react";
+import { Shield, Pencil, Trash, Copy, Users } from "lucide-react";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { usePermissions } from "@core/providers/permission-provider";
 import type { Role } from "../../domain/entities/Role";
+import { AssignToGroupDialog } from "@modules/system/user-groups/src/presentation/components/AssignToGroupDialog";
 
 export function RolesView() {
   const { t, language } = useI18n();
@@ -26,6 +28,15 @@ export function RolesView() {
 
   // Logic: Super Admins see System/Context (Auto-Scoped), Tenant Admins see My Tenant
   const viewModel = useRolesViewModel({ useMyTenant: !isSuperAdmin });
+
+  // Assign to Group dialog state
+  const [selectedRoleForGroup, setSelectedRoleForGroup] = useState<Role | null>(null);
+  const [assignToGroupOpen, setAssignToGroupOpen] = useState(false);
+
+  const handleOpenAssignToGroup = useCallback((role: Role) => {
+    setSelectedRoleForGroup(role);
+    setAssignToGroupOpen(true);
+  }, []);
 
   const columns: CrudColumn<Role>[] = [
     {
@@ -152,6 +163,12 @@ export function RolesView() {
         },
         requiredPermission: SYSTEM_PERMISSIONS.ROLES_CREATE,
       },
+      // Assign to Group
+      {
+        label: t("userGroups.assignToGroup") || "Assign to Group",
+        icon: <Users className="h-4 w-4" />,
+        onClick: (role) => handleOpenAssignToGroup(role),
+      },
       // Edit (Standard)
       {
         label: t("common.edit"),
@@ -170,5 +187,18 @@ export function RolesView() {
     itemTypeKey: "roles.roleDetails", // Used for delete confirmation ("Delete Role Details" -> "Delete Role")
   };
 
-  return <GenericCrudView viewModel={viewModel} config={config} />;
+  return (
+    <>
+      <GenericCrudView viewModel={viewModel} config={config} />
+
+      {/* Assign to Group Dialog */}
+      <AssignToGroupDialog
+        open={assignToGroupOpen}
+        onOpenChange={setAssignToGroupOpen}
+        mode="role"
+        roleId={selectedRoleForGroup?.id}
+        roleName={selectedRoleForGroup?.getLocalizedName(language)}
+      />
+    </>
+  );
 }

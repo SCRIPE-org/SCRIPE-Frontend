@@ -83,20 +83,20 @@ export function useUserGroupsViewModel() {
             }
       );
 
-      function getConfigBase() {
+      function getConfigBase(t: any) {
             return {
                   createFields: [
-                        { name: "nameEn", label: "Name (EN)", type: "text" as const, required: true },
-                        { name: "nameAr", label: "Name (AR)", type: "text" as const, required: true },
-                        { name: "code", label: "Code", type: "text" as const, required: true },
-                        { name: "descriptionEn", label: "Description (EN)", type: "textarea" as const },
-                        { name: "descriptionAr", label: "Description (AR)", type: "textarea" as const },
+                        { name: "nameEn", label: t("userGroups.nameEn") || "Name (EN)", placeholder: t("userGroups.nameEnPlaceholder"), type: "text" as const, required: true },
+                        { name: "nameAr", label: t("userGroups.nameAr") || "Name (AR)", placeholder: t("userGroups.nameArPlaceholder"), type: "text" as const, required: true },
+                        { name: "code", label: t("userGroups.code") || "Code", placeholder: t("userGroups.codePlaceholder"), description: t("userGroups.codeHint"), type: "text" as const, required: true },
+                        { name: "descriptionEn", label: t("userGroups.descriptionEn") || "Description (EN)", placeholder: t("userGroups.descEnPlaceholder"), type: "textarea" as const },
+                        { name: "descriptionAr", label: t("userGroups.descriptionAr") || "Description (AR)", placeholder: t("userGroups.descArPlaceholder"), type: "textarea" as const },
                   ],
                   editFields: [
-                        { name: "nameEn", label: "Name (EN)", type: "text" as const, required: true },
-                        { name: "nameAr", label: "Name (AR)", type: "text" as const, required: true },
-                        { name: "descriptionEn", label: "Description (EN)", type: "textarea" as const },
-                        { name: "descriptionAr", label: "Description (AR)", type: "textarea" as const },
+                        { name: "nameEn", label: t("userGroups.nameEn") || "Name (EN)", placeholder: t("userGroups.nameEnPlaceholder"), type: "text" as const, required: true },
+                        { name: "nameAr", label: t("userGroups.nameAr") || "Name (AR)", placeholder: t("userGroups.nameArPlaceholder"), type: "text" as const, required: true },
+                        { name: "descriptionEn", label: t("userGroups.descriptionEn") || "Description (EN)", placeholder: t("userGroups.descEnPlaceholder"), type: "textarea" as const },
+                        { name: "descriptionAr", label: t("userGroups.descriptionAr") || "Description (AR)", placeholder: t("userGroups.descArPlaceholder"), type: "textarea" as const },
                   ],
                   createInitialValues: {
                         nameEn: "",

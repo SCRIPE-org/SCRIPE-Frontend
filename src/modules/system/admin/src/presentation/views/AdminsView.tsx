@@ -29,11 +29,13 @@ import {
   ArrowRightLeft,
   ShieldAlert,
   Crown,
+  Users,
 } from "lucide-react";
 import { format } from "date-fns";
 import { ResetPasswordDialog } from "../components/AdminRoleDialogs";
 import { ManageRolesDialog } from "../components/ManageRolesDialog";
 import { AdminTransferDialog } from "../components/AdminTransferDialog";
+import { AssignToGroupDialog } from "@modules/system/user-groups/src/presentation/components/AssignToGroupDialog";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@core/ui/tooltip";
 
 interface AdminsViewProps {
@@ -73,6 +75,7 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
   const [selectedAdminForAction, setSelectedAdminForAction] = useState<Admin | null>(null);
   const [manageRolesDialogOpen, setManageRolesDialogOpen] = useState(false);
   const [resetPasswordDialogOpen, setResetPasswordDialogOpen] = useState(false);
+  const [assignToGroupDialogOpen, setAssignToGroupDialogOpen] = useState(false);
 
   // Dialog handlers
   const handleOpenManageRoles = useCallback((admin: Admin) => {
@@ -83,6 +86,11 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
   const handleOpenResetPassword = useCallback((admin: Admin) => {
     setSelectedAdminForAction(admin);
     setResetPasswordDialogOpen(true);
+  }, []);
+
+  const handleOpenAssignToGroup = useCallback((admin: Admin) => {
+    setSelectedAdminForAction(admin);
+    setAssignToGroupDialogOpen(true);
   }, []);
 
   const onResetPasswordSubmit = useCallback(
@@ -286,6 +294,13 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
             show: (item: Admin) => !item.hasGuardianProtection || currentUser?.id === item.id || !!tenantId,
           },
           {
+            label: tFn("userGroups.assignToGroup") || "Assign to Group",
+            onClick: (item: Admin) => handleOpenAssignToGroup(item),
+            variant: "ghost" as const,
+            icon: <Users className="h-4 w-4" />,
+            show: (item: Admin) => !item.hasGuardianProtection || !!tenantId,
+          },
+          {
             label: tFn("common.delete") || "Delete",
             onClick: (item: Admin) => handleDeleteFn?.(item),
             variant: "ghost" as const,
@@ -308,6 +323,7 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
       handleToggleActive,
       handleOpenManageRoles,
       handleOpenResetPassword,
+      handleOpenAssignToGroup,
       handleImpersonate,
       handleOpenTransfer,
       handleTransferProtection,
@@ -343,6 +359,15 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
         admin={selectedAdminForAction}
         onTransfer={onTransferSubmit}
         isTransferring={isTransferring}
+      />
+
+      {/* Assign to Group Dialog */}
+      <AssignToGroupDialog
+        open={assignToGroupDialogOpen}
+        onOpenChange={setAssignToGroupDialogOpen}
+        mode="admin"
+        adminId={selectedAdminForAction?.id}
+        adminName={selectedAdminForAction?.displayName}
       />
     </>
   );

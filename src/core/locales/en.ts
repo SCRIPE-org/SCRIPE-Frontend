@@ -614,11 +614,16 @@ export const en = {
     restrictions: "Restrictions",
     // Form fields
     nameEn: "Name (English)",
+    nameEnPlaceholder: "e.g. Administrators",
     nameAr: "Name (Arabic)",
+    nameArPlaceholder: "e.g. المشرفين",
     code: "Code",
+    codePlaceholder: "e.g. ADMINS",
     codeHint: "Unique identifier for this group. Cannot be changed later.",
     descriptionEn: "Description (English)",
+    descEnPlaceholder: "Provide a detailed description of this group's purpose...",
     descriptionAr: "Description (Arabic)",
+    descArPlaceholder: "وأضف وصفاً هنا...",
     // Detail page
     backToList: "Back to User Groups",
     notFound: "User group not found",
@@ -631,6 +636,10 @@ export const en = {
       removeMember: "Remove Member",
       removeConfirm: "Remove this admin from the group? They will lose inherited roles and restrictions.",
       searchAdmins: "Search admins...",
+      selectMembers: "Select Admins",
+      selectMembersPlaceholder: "Search and select admins...",
+      allAdminsAssigned: "All available admins are already members.",
+      addSelected: "Add Selected",
     },
     noMembers: "No members in this group yet.",
     // Roles tab
@@ -640,6 +649,12 @@ export const en = {
       setRoles: "Set Roles",
       setRolesDesc: "Select roles to assign to this group. Existing roles will be replaced.",
       searchRoles: "Search roles...",
+      manageRoles: "Manage Roles",
+      manageRolesDesc: "Select roles for this group. All members will inherit the selected roles.",
+      selectRoles: "Select Roles",
+      selectRolesPlaceholder: "Search and select roles...",
+      rolesHelp: "Saving replaces all current role assignments for this group.",
+      permissions: "permissions",
     },
     noRoles: "No roles assigned to this group yet.",
     // Restrictions tab
@@ -651,6 +666,11 @@ export const en = {
       permissionCode: "Permission Code",
       restrictedFields: "Restricted Fields",
       addRestriction: "Add Restriction",
+      manageRestrictions: "Manage Restrictions",
+      manageRestrictionsDesc: "Configure field-level restrictions for this group.",
+      addPermission: "Add Permission Code",
+      permissionPlaceholder: "e.g. admins.view",
+      fieldPlaceholder: "Add field name...",
     },
     noRestrictions: "No restrictions configured for this group.",
     // Messages
@@ -661,6 +681,12 @@ export const en = {
     memberRemoved: "Member removed from group",
     rolesUpdated: "Group roles updated successfully",
     restrictionsUpdated: "Group restrictions updated successfully",
+    // Cross-module
+    assignToGroup: "Assign to Group",
+    assignToGroupDesc: "Select a user group for",
+    selectGroup: "Select Group",
+    selectGroupPlaceholder: "Choose a user group...",
+    assignAction: "Assign",
   },
 
   // Role Detail View

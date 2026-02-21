@@ -626,6 +626,8 @@ export const ar = {
 
   // User Groups
   userGroups: {
+    noRoles: "لا توجد أدوار",
+    noRestrictions: "لا توجد قيود",
     title: "مجموعات المستخدمين",
     description: "إدارة مجموعات المستخدمين لتعيين الأدوار والقيود دفعة واحدة.",
     // List page
@@ -644,11 +646,16 @@ export const ar = {
     restrictions: "القيود",
     // Form fields
     nameEn: "الاسم (بالإنجليزية)",
+    nameEnPlaceholder: "مثال: Administrators",
     nameAr: "الاسم (بالعربية)",
+    nameArPlaceholder: "مثال: المشرفين",
     code: "الرمز",
+    codePlaceholder: "مثال: ADMINS",
     codeHint: "معرف فريد لهذه المجموعة. لا يمكن تغييره لاحقاً.",
     descriptionEn: "الوصف (بالإنجليزية)",
+    descEnPlaceholder: "قدم وصفاً للغرض من هذه المجموعة باللغة الإنجليزية...",
     descriptionAr: "الوصف (بالعربية)",
+    descArPlaceholder: "قدم وصفاً مفصلاً للغرض من هذه المجموعة...",
     // Detail page
     backToList: "العودة إلى مجموعات المستخدمين",
     notFound: "مجموعة المستخدمين غير موجودة",
@@ -661,6 +668,10 @@ export const ar = {
       removeMember: "إزالة العضو",
       removeConfirm: "إزالة هذا المشرف من المجموعة؟ سيفقدون الأدوار والقيود الموروثة.",
       searchAdmins: "البحث في المشرفين...",
+      selectMembers: "اختر المشرفين",
+      selectMembersPlaceholder: "ابحث واختر المشرفين...",
+      allAdminsAssigned: "جميع المشرفين المتاحين هم بالفعل أعضاء.",
+      addSelected: "إضافة المختارين",
     },
     noMembers: "لا يوجد أعضاء في هذه المجموعة بعد.",
     // Roles tab
@@ -669,6 +680,12 @@ export const ar = {
       description: "الأدوار المعينة لهذه المجموعة يرثها جميع الأعضاء.",
       setRoles: "تعيين الأدوار",
       setRolesDesc: "اختر الأدوار لتعيينها لهذه المجموعة.",
+      manageRoles: "إدارة الأدوار",
+      manageRolesDesc: "اختر الأدوار لهذه المجموعة. سيرث جميع الأعضاء الأدوار المحددة.",
+      selectRoles: "اختر الأدوار",
+      selectRolesPlaceholder: "ابحث واختر الأدوار...",
+      rolesHelp: "الحفظ يستبدل جميع الأدوار الحالية لهذه المجموعة.",
+      permissions: "صلاحيات",
     },
     // Restrictions tab
     restrictionsTab: {
@@ -683,6 +700,11 @@ export const ar = {
       fieldsPlaceholder: "اكتب واضغط Enter (مثال: salary, ssn)",
       noRestrictions: "لم يتم تكوين أي قيود.",
       noPermissionsSelected: "اختر صلاحية أولاً.",
+      manageRestrictions: "إدارة القيود",
+      manageRestrictionsDesc: "تكوين قيود الحقول لهذه المجموعة.",
+      addPermission: "إضافة رمز صلاحية",
+      permissionPlaceholder: "مثال: admins.view",
+      fieldPlaceholder: "أضف اسم حقل...",
     },
     // Actions
     saving: "جاري الحفظ...",
@@ -693,6 +715,12 @@ export const ar = {
     rolesUpdated: "تم تحديث أدوار المجموعة بنجاح",
     restrictionsUpdated: "تم تحديث قيود المجموعة بنجاح",
     failedToLoad: "فشل في تحميل تفاصيل مجموعة المستخدمين",
+    // Cross-module
+    assignToGroup: "تعيين إلى مجموعة",
+    assignToGroupDesc: "اختر مجموعة مستخدمين لـ",
+    selectGroup: "اختر المجموعة",
+    selectGroupPlaceholder: "اختر مجموعة مستخدمين...",
+    assignAction: "تعيين",
   },
 
   // Product

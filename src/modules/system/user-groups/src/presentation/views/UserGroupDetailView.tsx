@@ -3,9 +3,11 @@
  *
  * Shows full group detail with tabs for Members, Roles, and Restrictions.
  * Pure UI — all logic lives in useUserGroupDetailViewModel.
+ * Each tab has action buttons for adding/managing items.
  */
 "use client";
 
+import { useState } from "react";
 import { useUserGroupDetailViewModel } from "../viewmodels/useUserGroupDetailViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
@@ -14,11 +16,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
 import { Button } from "@core/ui/button";
 import {
       Users, Shield, Lock,
-      ArrowLeft, Trash2,
+      ArrowLeft, Trash2, Plus, Settings,
       Loader2,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
+import { AddMembersDialog } from "../components/AddMembersDialog";
+import { SetRolesDialog } from "../components/SetRolesDialog";
+import { SetRestrictionsDialog } from "../components/SetRestrictionsDialog";
 
 interface Props {
       groupId: string;
@@ -29,8 +34,15 @@ export function UserGroupDetailView({ groupId }: Props) {
       const router = useRouter();
       const {
             group, isLoading, error,
-            removeMember, isRemovingMember,
+            addMembers, removeMember, isAddingMembers, isRemovingMember,
+            setRoles, isSettingRoles,
+            setRestrictions, isSettingRestrictions,
       } = useUserGroupDetailViewModel(groupId);
+
+      // Dialog states
+      const [showAddMembers, setShowAddMembers] = useState(false);
+      const [showSetRoles, setShowSetRoles] = useState(false);
+      const [showSetRestrictions, setShowSetRestrictions] = useState(false);
 
       if (isLoading) {
             return (
@@ -44,11 +56,11 @@ export function UserGroupDetailView({ groupId }: Props) {
             return (
                   <div className="flex flex-col items-center justify-center h-64 gap-4">
                         <p className="text-muted-foreground">
-                              {t("common.notFound") || "User group not found"}
+                              {t("userGroups.notFound") || "User group not found"}
                         </p>
                         <Button variant="outline" onClick={() => router.push("/user-groups")}>
                               <ArrowLeft className="h-4 w-4 mr-2" />
-                              {t("common.back") || "Back to List"}
+                              {t("userGroups.backToList") || "Back to List"}
                         </Button>
                   </div>
             );
@@ -107,11 +119,21 @@ export function UserGroupDetailView({ groupId }: Props) {
                         {/* Members Tab */}
                         <TabsContent value="members">
                               <Card>
-                                    <CardHeader>
-                                          <CardTitle>{t("userGroups.membersTab.title") || "Group Members"}</CardTitle>
-                                          <CardDescription>
-                                                {t("userGroups.membersTab.description") || "Admins who belong to this group inherit its roles and restrictions."}
-                                          </CardDescription>
+                                    <CardHeader className="flex flex-row items-center justify-between">
+                                          <div>
+                                                <CardTitle>{t("userGroups.membersTab.title") || "Group Members"}</CardTitle>
+                                                <CardDescription>
+                                                      {t("userGroups.membersTab.description") || "Admins who belong to this group inherit its roles and restrictions."}
+                                                </CardDescription>
+                                          </div>
+                                          <Button
+                                                size="sm"
+                                                className="gap-2"
+                                                onClick={() => setShowAddMembers(true)}
+                                          >
+                                                <Plus className="h-4 w-4" />
+                                                {t("userGroups.membersTab.addMembers") || "Add Members"}
+                                          </Button>
                                     </CardHeader>
                                     <CardContent>
                                           {group.members.length === 0 ? (
@@ -136,7 +158,7 @@ export function UserGroupDetailView({ groupId }: Props) {
                                                                               <p className="text-xs text-muted-foreground">{member.username}</p>
                                                                         </div>
                                                                         <Badge variant={member.isActive ? "default" : "secondary"} className="text-xs">
-                                                                              {member.isActive ? "Active" : "Inactive"}
+                                                                              {member.isActive ? t("common.active") || "Active" : t("common.inactive") || "Inactive"}
                                                                         </Badge>
                                                                   </div>
                                                                   <Button
@@ -159,11 +181,21 @@ export function UserGroupDetailView({ groupId }: Props) {
                         {/* Roles Tab */}
                         <TabsContent value="roles">
                               <Card>
-                                    <CardHeader>
-                                          <CardTitle>{t("userGroups.rolesTab.title") || "Assigned Roles"}</CardTitle>
-                                          <CardDescription>
-                                                {t("userGroups.rolesTab.description") || "Roles assigned to this group are inherited by all members."}
-                                          </CardDescription>
+                                    <CardHeader className="flex flex-row items-center justify-between">
+                                          <div>
+                                                <CardTitle>{t("userGroups.rolesTab.title") || "Assigned Roles"}</CardTitle>
+                                                <CardDescription>
+                                                      {t("userGroups.rolesTab.description") || "Roles assigned to this group are inherited by all members."}
+                                                </CardDescription>
+                                          </div>
+                                          <Button
+                                                size="sm"
+                                                className="gap-2"
+                                                onClick={() => setShowSetRoles(true)}
+                                          >
+                                                <Settings className="h-4 w-4" />
+                                                {t("userGroups.rolesTab.manageRoles") || "Manage Roles"}
+                                          </Button>
                                     </CardHeader>
                                     <CardContent>
                                           {group.roles.length === 0 ? (
@@ -187,7 +219,7 @@ export function UserGroupDetailView({ groupId }: Props) {
                                                                         </div>
                                                                   </div>
                                                                   <Badge variant="outline" className="text-xs">
-                                                                        {role.permissionCount} permissions
+                                                                        {role.permissionCount} {t("userGroups.rolesTab.permissions") || "permissions"}
                                                                   </Badge>
                                                             </div>
                                                       ))}
@@ -200,11 +232,21 @@ export function UserGroupDetailView({ groupId }: Props) {
                         {/* Restrictions Tab */}
                         <TabsContent value="restrictions">
                               <Card>
-                                    <CardHeader>
-                                          <CardTitle>{t("userGroups.restrictionsTab.title") || "Field Restrictions"}</CardTitle>
-                                          <CardDescription>
-                                                {t("userGroups.restrictionsTab.description") || "Restricted fields apply additively to all group members."}
-                                          </CardDescription>
+                                    <CardHeader className="flex flex-row items-center justify-between">
+                                          <div>
+                                                <CardTitle>{t("userGroups.restrictionsTab.title") || "Field Restrictions"}</CardTitle>
+                                                <CardDescription>
+                                                      {t("userGroups.restrictionsTab.description") || "Restricted fields apply additively to all group members."}
+                                                </CardDescription>
+                                          </div>
+                                          <Button
+                                                size="sm"
+                                                className="gap-2"
+                                                onClick={() => setShowSetRestrictions(true)}
+                                          >
+                                                <Settings className="h-4 w-4" />
+                                                {t("userGroups.restrictionsTab.manageRestrictions") || "Manage Restrictions"}
+                                          </Button>
                                     </CardHeader>
                                     <CardContent>
                                           {group.restrictions.length === 0 ? (
@@ -236,6 +278,39 @@ export function UserGroupDetailView({ groupId }: Props) {
                               </Card>
                         </TabsContent>
                   </Tabs>
+
+                  {/* Dialogs */}
+                  <AddMembersDialog
+                        open={showAddMembers}
+                        onOpenChange={setShowAddMembers}
+                        groupId={groupId}
+                        existingMemberIds={group.members.map((m) => m.adminId)}
+                        onSubmit={(ids) => {
+                              addMembers(ids);
+                              setShowAddMembers(false);
+                        }}
+                        isSubmitting={isAddingMembers}
+                  />
+                  <SetRolesDialog
+                        open={showSetRoles}
+                        onOpenChange={setShowSetRoles}
+                        currentRoles={group.roles}
+                        onSubmit={(ids) => {
+                              setRoles(ids);
+                              setShowSetRoles(false);
+                        }}
+                        isSubmitting={isSettingRoles}
+                  />
+                  <SetRestrictionsDialog
+                        open={showSetRestrictions}
+                        onOpenChange={setShowSetRestrictions}
+                        currentRestrictions={group.restrictions}
+                        onSubmit={(restrictions) => {
+                              setRestrictions(restrictions);
+                              setShowSetRestrictions(false);
+                        }}
+                        isSubmitting={isSettingRestrictions}
+                  />
             </div>
       );
 }
