@@ -1,5 +1,6 @@
 import type React from "react";
 import type { Metadata } from "next";
+import Script from "next/script";
 import "./globals.css";
 import { AppProvider } from "@core/providers/app-provider";
 
@@ -49,26 +50,24 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     // P2.2: lang/dir set dynamically by LanguageProvider via useEffect on <html>
     <html suppressHydrationWarning>
       <head>
-        {/* P1.11: Preconnect to shared API server (always the first API hit — auth, navigation).
-            In microservice mode, module-specific endpoints (NEXT_PUBLIC_{MODULE}_API_URL) 
-            connect lazily after route navigation, so preconnect for the shared base is sufficient. */}
+        {/* P1.11: Preconnect to shared API server */}
         <link rel="dns-prefetch" href={process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api"} />
         <link rel="preconnect" href={process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api"} crossOrigin="anonymous" />
-        {/* P5.1: Register Service Worker for PWA offline support */}
-        <script
+      </head>
+      <body className="font-cairo antialiased" suppressHydrationWarning>
+        <AppProvider>{children}</AppProvider>
+        {/* P5.1: Service Worker — deferred to afterInteractive (no longer render-blocking) */}
+        <Script
+          id="sw-register"
+          strategy="afterInteractive"
           dangerouslySetInnerHTML={{
             __html: `
               if ('serviceWorker' in navigator && window.location.protocol === 'https:') {
-                window.addEventListener('load', function() {
-                  navigator.serviceWorker.register('/sw.js');
-                });
+                navigator.serviceWorker.register('/sw.js');
               }
             `,
           }}
         />
-      </head>
-      <body className="font-cairo antialiased" suppressHydrationWarning>
-        <AppProvider>{children}</AppProvider>
       </body>
     </html>
   );

@@ -1,20 +1,22 @@
 "use client";
 
 import type React from "react";
+import dynamic from "next/dynamic";
 import { ThemeProvider } from "@core/providers/theme-provider";
 import { I18nProvider } from "@core/providers/i18n-provider";
 import { ServiceProvider } from "@core/providers/service-provider";
-// import { AuthProvider } from "@core/providers/auth-provider"; // Removed
 import { SettingsProvider } from "@core/providers/settings-provider";
 import { NavigationProvider } from "@core/providers/navigation-provider";
 import { RouteGuard } from "@core/providers/route-guard";
 import { PermissionProvider } from "@core/providers/permission-provider";
 import { TenantContextProvider } from "@core/providers/tenant-context-provider";
 import { AuthRefreshProvider } from "@core/providers/auth-refresh-provider";
-import { SignalRProvider } from "@core/providers/signalr-provider";
-import { NotificationSignalRProvider } from "@core/providers/notification-provider";
 import { EnhancedToaster } from "@core/ui/enhanced-toaster";
 import { ErrorBoundary } from "@core/ui/error-boundary";
+
+// Lazy-load SignalR providers (~100KB @microsoft/signalr) — not needed for initial render
+const SignalRProvider = dynamic(() => import("@core/providers/signalr-provider").then(m => ({ default: m.SignalRProvider })), { ssr: false });
+const NotificationSignalRProvider = dynamic(() => import("@core/providers/notification-provider").then(m => ({ default: m.NotificationSignalRProvider })), { ssr: false });
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 

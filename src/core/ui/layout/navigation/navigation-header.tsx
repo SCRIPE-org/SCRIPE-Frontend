@@ -1,31 +1,28 @@
 ﻿"use client";
 
-import type React from "react";
+import dynamic from "next/dynamic";
 import {
   Search,
   Menu,
-  PanelLeftClose,
-  PanelLeftOpen,
-  ChevronLeft,
-  ChevronRight,
   Home,
 } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useAppStore } from "@core/store/useAppStore";
 import { useSettings } from "@core/providers/settings-provider";
 import { useTenantContext } from "@core/providers/tenant-context-provider";
-import { secureTokenService } from "@core/common/secure-token-service";
 import { useImpersonation } from "@modules/auth/hooks/useImpersonation";
 import { UserCheck } from "lucide-react";
 import { useLayoutStyles } from "../shared/use-layout-styles";
-import { useDynamicNavigation } from "@core/ui/navigation/dynamic-navigation";
 import { cn } from "@core/common/utils";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
-import { UserProfileDropdown } from "@core/ui/user-profile-dropdown";
-import { LanguageSwitcher, ThemeSwitcher } from "../common";
 import { useRouter } from "next/navigation";
-import { NotificationBell } from "@core/ui/notification";
+
+// Lazy-load secondary header components (dropdowns/popovers — not LCP-critical)
+const UserProfileDropdown = dynamic(() => import("@core/ui/user-profile-dropdown").then(m => ({ default: m.UserProfileDropdown })), { ssr: false });
+const NotificationBell = dynamic(() => import("@core/ui/notification").then(m => ({ default: m.NotificationBell })), { ssr: false });
+const ThemeSwitcher = dynamic(() => import("../common/theme-switcher").then(m => ({ default: m.ThemeSwitcher })), { ssr: false });
+const LanguageSwitcher = dynamic(() => import("../common/language-switcher").then(m => ({ default: m.LanguageSwitcher })), { ssr: false });
 
 interface NavigationHeaderProps {
   onMenuClick: () => void;
@@ -78,13 +75,13 @@ export function NavigationHeader({
           // Dynamic margins based on sidebar states
           direction === "rtl"
             ? cn(
-                isMobile ? "mr-0" : "mr-24", // Account for main sidebar on desktop (w-24 = 96px)
-                !isMobile && panelOpen && hasPanel && "mr-[352px]" // Total width when both sidebars open (96px + 256px)
-              )
+              isMobile ? "mr-0" : "mr-24", // Account for main sidebar on desktop (w-24 = 96px)
+              !isMobile && panelOpen && hasPanel && "mr-[352px]" // Total width when both sidebars open (96px + 256px)
+            )
             : cn(
-                isMobile ? "ml-0" : "ml-24", // Account for main sidebar on desktop (w-24 = 96px)
-                !isMobile && panelOpen && hasPanel && "ml-[352px]" // Total width when both sidebars open (96px + 256px)
-              )
+              isMobile ? "ml-0" : "ml-24", // Account for main sidebar on desktop (w-24 = 96px)
+              !isMobile && panelOpen && hasPanel && "ml-[352px]" // Total width when both sidebars open (96px + 256px)
+            )
         )}
       >
         {/* Left Section - Mobile Menu + Panel Toggle + Title */}
@@ -248,7 +245,7 @@ export function NavigationHeader({
             size="icon"
             onClick={() => router.push("/")}
             className="hover:bg-accent hover:text-accent-foreground"
-            // title={t("nav.home") || "Home"}
+          // title={t("nav.home") || "Home"}
           >
             <Home className="h-5 w-5" />
           </Button>
