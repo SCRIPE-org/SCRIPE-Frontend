@@ -61,35 +61,113 @@ export class DocsRepository implements IDocsRepository {
     return getCategories();
   }
 
-  search(query: string): SearchResult[] {
+  search(
+    query: string,
+    mode?: "technical" | "commercial",
+    t?: (key: string) => string
+  ): SearchResult[] {
     if (!query.trim()) return [];
 
     const lowerQuery = query.toLowerCase();
     const results: SearchResult[] = [];
 
     for (const [slug, page] of pageRegistry.entries()) {
+      // ── Mode isolation: skip pages not in the requested mode ──
+      if (mode) {
+        const isCommercial = page.category.startsWith("commercial");
+        if (mode === "commercial" && !isCommercial) continue;
+        if (mode === "technical" && isCommercial) continue;
+      }
+
       // Search in slug
       const slugMatch = slug.toLowerCase().includes(lowerQuery);
 
-      // Search in title key (we just match on the key parts as a heuristic)
-      const titleMatch = page.titleKey.toLowerCase().includes(lowerQuery);
+      // Search in title (resolved via t() if available, else key match)
+      const resolvedTitle = t ? t(page.titleKey) : page.titleKey;
+      const titleMatch = resolvedTitle.toLowerCase().includes(lowerQuery);
 
       // Search in section heading keys
-      const headingMatch = page.sections
-        .filter((s): s is Extract<typeof s, { type: "heading" }> => s.type === "heading")
-        .find((s) => s.titleKey.toLowerCase().includes(lowerQuery));
+      const headingSections = page.sections.filter(
+        (s): s is Extract<typeof s, { type: "heading" }> => s.type === "heading"
+      );
+      const headingMatch = headingSections.find((s) => {
+        const resolved = t ? t(s.titleKey) : s.titleKey;
+        return resolved.toLowerCase().includes(lowerQuery);
+      });
 
-      if (slugMatch || titleMatch || headingMatch) {
+      // ── Deep content search (when t() is available) ──
+      let contentMatch: { sectionId?: string; snippet?: string } | null = null;
+      if (t && !slugMatch && !titleMatch && !headingMatch) {
+        contentMatch = this._searchContent(page, lowerQuery, t);
+      }
+
+      if (slugMatch || titleMatch || headingMatch || contentMatch) {
         results.push({
           slug,
           titleKey: page.titleKey,
           category: page.category,
           matchedHeadingKey: headingMatch?.titleKey,
+          sectionId: contentMatch?.sectionId ?? headingMatch?.id,
+          snippet: contentMatch?.snippet,
         });
       }
     }
 
-    return results.slice(0, 20); // Limit results
+    return results.slice(0, 20);
+  }
+
+  /**
+   * Deep content search: resolves all contentKeys in a page via t()
+   * and searches for the query inside paragraphs, tables, code, etc.
+   */
+  private _searchContent(
+    page: DocPageData,
+    lowerQuery: string,
+    t: (key: string) => string
+  ): { sectionId?: string; snippet?: string } | null {
+    let lastSectionId: string | undefined;
+
+    for (const section of page.sections) {
+      // Track the current section ID for scroll targeting
+      if (section.type === "heading" && "id" in section) {
+        lastSectionId = (section as any).id;
+      }
+
+      // Resolve text based on section type
+      let text = "";
+      if (section.type === "paragraph" && "contentKey" in section) {
+        text = t((section as any).contentKey);
+      } else if (section.type === "info" && "contentKey" in section) {
+        text = t((section as any).contentKey);
+      } else if (section.type === "table" && "rows" in section) {
+        const rows = (section as any).rows as string[][];
+        text = rows.map((r: string[]) => r.join(" ")).join(" ");
+      } else if (section.type === "api-table" && "endpoints" in section) {
+        const eps = (section as any).endpoints as any[];
+        text = eps.map((ep: any) => `${ep.method} ${ep.path} ${t(ep.descriptionKey)}`).join(" ");
+      } else if (section.type === "code" && "code" in section) {
+        text = (section as any).code;
+      } else if (section.type === "feature-grid" && "features" in section) {
+        const feats = (section as any).features as any[];
+        text = feats.map((f: any) => `${t(f.titleKey)} ${t(f.descriptionKey)}`).join(" ");
+      }
+
+      if (text) {
+        const lowerText = text.toLowerCase();
+        const idx = lowerText.indexOf(lowerQuery);
+        if (idx !== -1) {
+          // Build snippet: ±50 chars around match
+          const start = Math.max(0, idx - 50);
+          const end = Math.min(text.length, idx + lowerQuery.length + 50);
+          const prefix = start > 0 ? "…" : "";
+          const suffix = end < text.length ? "…" : "";
+          const snippet = prefix + text.slice(start, end) + suffix;
+          return { sectionId: lastSectionId, snippet };
+        }
+      }
+    }
+
+    return null;
   }
 
   getAllSlugs(): string[] {

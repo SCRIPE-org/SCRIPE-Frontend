@@ -9,9 +9,16 @@ interface DocsSearchProps {
   isOpen: boolean;
   onClose: () => void;
   onSearch: (query: string) => SearchResult[];
+  /** Base path for navigation (e.g. "/docs" or "/commercial") */
+  basePath?: string;
 }
 
-export function DocsSearch({ isOpen, onClose, onSearch }: DocsSearchProps) {
+export function DocsSearch({
+  isOpen,
+  onClose,
+  onSearch,
+  basePath = "/docs",
+}: DocsSearchProps) {
   const { t } = useDocsI18n();
   const router = useRouter();
   const [query, setQuery] = useState("");
@@ -40,6 +47,16 @@ export function DocsSearch({ isOpen, onClose, onSearch }: DocsSearchProps) {
     }
   }, [query, onSearch]);
 
+  // Navigate to result
+  const navigateToResult = useCallback(
+    (result: SearchResult) => {
+      const hash = result.sectionId ? `#${result.sectionId}` : "";
+      router.push(`${basePath}/${result.slug}${hash}`);
+      onClose();
+    },
+    [basePath, router, onClose]
+  );
+
   // Keyboard navigation
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -51,13 +68,12 @@ export function DocsSearch({ isOpen, onClose, onSearch }: DocsSearchProps) {
         setSelectedIdx((prev) => Math.max(prev - 1, 0));
       } else if (e.key === "Enter" && results[selectedIdx]) {
         e.preventDefault();
-        router.push(`/docs/${results[selectedIdx].slug}`);
-        onClose();
+        navigateToResult(results[selectedIdx]);
       } else if (e.key === "Escape") {
         onClose();
       }
     },
-    [results, selectedIdx, router, onClose]
+    [results, selectedIdx, navigateToResult, onClose]
   );
 
   // Global Cmd+K
@@ -66,10 +82,6 @@ export function DocsSearch({ isOpen, onClose, onSearch }: DocsSearchProps) {
       if ((e.metaKey || e.ctrlKey) && e.code === "KeyK") {
         e.preventDefault();
         if (isOpen) onClose();
-        else {
-          // This won't actually open since state is in parent,
-          // but the parent handles this
-        }
       }
     };
     document.addEventListener("keydown", handler);
@@ -146,20 +158,24 @@ export function DocsSearch({ isOpen, onClose, onSearch }: DocsSearchProps) {
           )}
           {results.map((result, idx) => (
             <div
-              key={result.slug}
+              key={`${result.slug}-${result.sectionId || idx}`}
               className="docs-search-result"
               data-selected={idx === selectedIdx}
-              onClick={() => {
-                router.push(`/docs/${result.slug}`);
-                onClose();
-              }}
+              onClick={() => navigateToResult(result)}
               onMouseEnter={() => setSelectedIdx(idx)}
             >
-              <span className="docs-search-result-title">{t(result.titleKey)}</span>
+              <span className="docs-search-result-title">
+                {t(result.titleKey)}
+              </span>
               <span className="docs-search-result-category">
                 {result.category}
                 {result.matchedHeadingKey && ` → ${t(result.matchedHeadingKey)}`}
               </span>
+              {result.snippet && (
+                <span className="docs-search-snippet">
+                  {highlightSnippet(result.snippet, query)}
+                </span>
+              )}
             </div>
           ))}
         </div>
@@ -178,5 +194,30 @@ export function DocsSearch({ isOpen, onClose, onSearch }: DocsSearchProps) {
         </div>
       </div>
     </div>
+  );
+}
+
+/**
+ * Highlight the query match within a snippet.
+ */
+function highlightSnippet(
+  snippet: string,
+  query: string
+): React.ReactNode {
+  const lowerSnippet = snippet.toLowerCase();
+  const lowerQuery = query.toLowerCase();
+  const idx = lowerSnippet.indexOf(lowerQuery);
+  if (idx === -1) return snippet;
+
+  const before = snippet.slice(0, idx);
+  const match = snippet.slice(idx, idx + query.length);
+  const after = snippet.slice(idx + query.length);
+
+  return (
+    <>
+      {before}
+      <mark className="docs-search-highlight">{match}</mark>
+      {after}
+    </>
   );
 }

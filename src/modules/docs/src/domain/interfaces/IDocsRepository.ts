@@ -12,6 +12,10 @@ export interface SearchResult {
   category: string;
   /** Matched section heading key (if any) */
   matchedHeadingKey?: string;
+  /** Section ID to scroll to */
+  sectionId?: string;
+  /** Matched text snippet with context */
+  snippet?: string;
 }
 
 export interface IDocsRepository {
@@ -21,8 +25,12 @@ export interface IDocsRepository {
   /** Get all navigation categories (for sidebar) */
   getNavigation(): DocCategory[];
 
-  /** Search across all pages */
-  search(query: string): SearchResult[];
+  /** Search across pages filtered by mode */
+  search(
+    query: string,
+    mode?: "technical" | "commercial",
+    t?: (key: string) => string
+  ): SearchResult[];
 
   /** Get all page slugs (for static generation) */
   getAllSlugs(): string[];

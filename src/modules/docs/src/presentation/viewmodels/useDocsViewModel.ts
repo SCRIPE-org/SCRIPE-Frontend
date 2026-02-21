@@ -2,6 +2,7 @@
 
 import { useMemo, useCallback } from "react";
 import { docsContainer } from "../../../di";
+import { useDocsI18n } from "../providers/DocsI18nProvider";
 import type { DocCategory } from "../../domain/entities/DocCategory";
 import type { HeadingSection } from "../../domain/entities/DocSection";
 import type { SearchResult } from "../../domain/interfaces/IDocsRepository";
@@ -62,11 +63,12 @@ export function useDocsViewModel(slug: string, mode: "technical" | "commercial" 
   const nextPage = useMemo(() => (nextSlug ? repo.getPage(nextSlug) : undefined), [nextSlug, repo]);
 
   // ─── Search ────────────────────────────────────────────────
+  const { t } = useDocsI18n();
   const search = useCallback(
     (query: string): SearchResult[] => {
-      return repo.search(query);
+      return repo.search(query, mode, t);
     },
-    [repo]
+    [repo, mode, t]
   );
 
   return {

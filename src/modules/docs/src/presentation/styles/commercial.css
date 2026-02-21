@@ -515,6 +515,21 @@
 /* ═══════════════════════════════════════════════════════════════════
    RESPONSIVE
    ═══════════════════════════════════════════════════════════════════ */
+
+/* Large desktop: TOC visible (no change needed) */
+
+/* Tablet: hide TOC, expand content */
+@media (max-width: 1279px) {
+      .commercial-content-wrapper .docs-toc {
+            display: none;
+      }
+
+      .commercial-main {
+            max-width: none;
+      }
+}
+
+/* Tablet: hide sidebar, show hamburger */
 @media (max-width: 1024px) {
       .commercial-sidebar {
             display: none;
@@ -527,8 +542,13 @@
       .commercial-main {
             padding: 1.5rem 1.25rem 3rem;
       }
+
+      .commercial-header-cta {
+            display: none;
+      }
 }
 
+/* Mobile */
 @media (max-width: 768px) {
       .commercial-header-inner {
             padding: 0 0.75rem;
@@ -556,6 +576,22 @@
 
       .commercial-content-description {
             font-size: 0.9rem;
+      }
+
+      /* Search modal full-width on mobile */
+      .docs-search-modal {
+            margin: 0 0.75rem;
+      }
+}
+
+/* Small mobile */
+@media (max-width: 374px) {
+      .commercial-header-actions {
+            gap: 0.125rem;
+      }
+
+      .commercial-content-title {
+            font-size: 1.25rem;
       }
 }
 

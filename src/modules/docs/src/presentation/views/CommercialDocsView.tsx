@@ -93,6 +93,7 @@ export function CommercialDocsView({ slug }: CommercialDocsViewProps) {
                         isOpen={search.isSearchOpen}
                         onClose={search.closeSearch}
                         onSearch={search.searchFn}
+                        basePath="/commercial"
                   />
 
                   <DocsMobileNav
