@@ -74,7 +74,7 @@ var message = await _channel.Reader.ReadAsync(stoppingToken);`,
             type: "code",
             language: "csharp",
             filename: "HangfireEmailQueue.cs",
-            code: `// Enqueues as a Hangfire background job â€” survives app restarts
+            code: `// Enqueues as a Hangfire background job  survives app restarts
 BackgroundJob.Enqueue<IEmailSender>(sender => sender.SendEmailAsync(to, subject, body, ...));`,
       },
 
@@ -97,7 +97,7 @@ BackgroundJob.Enqueue<IEmailSender>(sender => sender.SendEmailAsync(to, subject,
             type: "code",
             language: "csharp",
             filename: "EmailQueueWorker.cs",
-            code: `// EmailQueueWorker â€” infinite loop processing
+            code: `// EmailQueueWorker  infinite loop processing
 protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 {
     while (!stoppingToken.IsCancellationRequested)

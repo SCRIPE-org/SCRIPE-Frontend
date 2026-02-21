@@ -25,7 +25,7 @@ interface CollapseHeaderLayoutProps {
 }
 
 /**
- * Collapse Header Layout â€” Auto-hiding header on scroll.
+ * Collapse Header Layout  Auto-hiding header on scroll.
  *
  * Structure:
  * - Horizontal top nav with links

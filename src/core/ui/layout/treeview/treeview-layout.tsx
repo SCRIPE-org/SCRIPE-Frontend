@@ -136,7 +136,7 @@ function TreeNode({
 }
 
 /**
- * Tree View Layout â€” IDE / file-explorer-style navigation.
+ * Tree View Layout  IDE / file-explorer-style navigation.
  *
  * Structure:
  * - Header bar with logo + actions

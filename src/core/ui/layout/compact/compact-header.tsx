@@ -16,10 +16,10 @@ interface CompactHeaderProps {
 }
 
 /**
- * Compact Header â€” Ultra-slim, 40px height.
+ * Compact Header  Ultra-slim, 40px height.
  *
  * Features:
- * - Only 40px tall â€” minimal chrome, maximum content
+ * - Only 40px tall  minimal chrome, maximum content
  * - Single-line breadcrumbs inline (no separate row)
  * - Small action buttons (h-7 w-7)
  * - No search bar in header (sidebar has its own density)
@@ -37,7 +37,7 @@ export function CompactHeader({ onMenuClick }: CompactHeaderProps) {
       )}
     >
       <div className="flex h-full items-center justify-between px-4">
-        {/* Left â€” Menu + Breadcrumbs inline */}
+        {/* Left  Menu + Breadcrumbs inline */}
         <div className="flex items-center gap-2">
           {settings.collapsibleSidebar && (
             <Button
@@ -57,7 +57,7 @@ export function CompactHeader({ onMenuClick }: CompactHeaderProps) {
           )}
         </div>
 
-        {/* Right â€” Compact actions */}
+        {/* Right  Compact actions */}
         <div className="flex items-center gap-1">
           <Button
             variant="ghost"

@@ -21,14 +21,14 @@ interface CommandLayoutProps {
 }
 
 /**
- * Command Layout â€” Inspired by Superhuman / Arc Browser / Raycast.
+ * Command Layout  Inspired by Superhuman / Arc Browser / Raycast.
  *
  * Zero-chrome UI. No sidebar. Content is king.
  * Navigation happens entirely via âŒ˜K command palette.
  *
  * Structure:
  * â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
- * â”‚ CONTEXT BAR (36px) â€” breadcrumbs + âŒ˜K   â”‚
+ * â”‚ CONTEXT BAR (36px)  breadcrumbs + âŒ˜K   â”‚
  * â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
  * â”‚                                          â”‚
  * â”‚          FULL-WIDTH CONTENT              â”‚

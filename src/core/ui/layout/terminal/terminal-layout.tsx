@@ -22,7 +22,7 @@ interface TerminalLayoutProps {
 }
 
 /**
- * Terminal / CLI Layout â€” Hacker-style monotone.
+ * Terminal / CLI Layout  Hacker-style monotone.
  *
  * Structure:
  * - Slim title bar (macOS-style traffic lights + title)
@@ -75,7 +75,7 @@ export function TerminalLayout({ children }: TerminalLayoutProps) {
         <div className="flex flex-1 items-center justify-center gap-2">
           <TerminalIcon className="h-3 w-3 text-[#8b949e]" />
           <span className="text-xs text-[#8b949e]">
-            {t("app.title")} â€” {t("layout.terminal") || "terminal"}
+            {t("app.title")}  {t("layout.terminal") || "terminal"}
           </span>
         </div>
         <div className="flex items-center gap-1">

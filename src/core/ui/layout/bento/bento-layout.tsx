@@ -25,7 +25,7 @@ interface BentoLayoutProps {
 }
 
 /**
- * Bento Grid Layout â€” Apple-style grid navigation.
+ * Bento Grid Layout  Apple-style grid navigation.
  *
  * Structure:
  * - Header with logo + actions

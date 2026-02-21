@@ -16,11 +16,11 @@ interface ElegantHeaderProps {
 }
 
 /**
- * Elegant Header â€” Frosted glass top bar.
+ * Elegant Header  Frosted glass top bar.
  *
  * Features:
  * - Translucent background with backdrop blur
- * - No hard border â€” uses shadow instead
+ * - No hard border  uses shadow instead
  * - Premium typography and spacing
  */
 export function ElegantHeader({ onMenuClick }: ElegantHeaderProps) {
@@ -39,7 +39,7 @@ export function ElegantHeader({ onMenuClick }: ElegantHeaderProps) {
       )}
     >
       <div className="flex h-14 items-center justify-between px-6">
-        {/* Left â€” Menu + Search */}
+        {/* Left  Menu + Search */}
         <div className="flex items-center gap-3">
           {settings.collapsibleSidebar && (
             <Button
@@ -64,7 +64,7 @@ export function ElegantHeader({ onMenuClick }: ElegantHeaderProps) {
           />
         </div>
 
-        {/* Right â€” Actions */}
+        {/* Right  Actions */}
         <div className="flex items-center gap-2">
           <Button
             variant="ghost"

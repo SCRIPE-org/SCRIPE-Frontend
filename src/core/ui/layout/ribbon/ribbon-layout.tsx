@@ -25,7 +25,7 @@ interface RibbonLayoutProps {
 }
 
 /**
- * Ribbon Layout â€” Microsoft Office-inspired tabbed toolbar.
+ * Ribbon Layout  Microsoft Office-inspired tabbed toolbar.
  *
  * Structure:
  * - Top header with logo + actions
@@ -166,7 +166,7 @@ export function RibbonLayout({ children }: RibbonLayoutProps) {
           })}
         </div>
 
-        {/* Ribbon panel â€” grouped action buttons for selected tab */}
+        {/* Ribbon panel  grouped action buttons for selected tab */}
         {currentTabItems.length > 0 && (
           <div className="hidden items-center gap-1 bg-muted/30 px-4 py-2 lg:flex">
             {currentTabItems.map((item) => {

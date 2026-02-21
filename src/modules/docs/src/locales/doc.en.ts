@@ -83,11 +83,11 @@ export const docEn = {
   getStarted: {
     overview: {
       title: "Overview",
-      description: "Introduction to the NEXORA Enterprise Platform â€” architecture, capabilities, and technology stack.",
-      intro: "NEXORA is a production-ready enterprise platform built with a Modular Monolith architecture. It provides everything you need to build scalable business applications â€” authentication, authorization, multi-tenancy, audit logging, real-time events, and a comprehensive admin panel â€” all out of the box. The platform runs as a single binary that can be deployed as a monolith or decomposed into microservices without code changes.",
+      description: "Introduction to the NEXORA Enterprise Platform  architecture, capabilities, and technology stack.",
+      intro: "NEXORA is a production-ready enterprise platform built with a Modular Monolith architecture. It provides everything you need to build scalable business applications  authentication, authorization, multi-tenancy, audit logging, real-time events, and a comprehensive admin panel  all out of the box. The platform runs as a single binary that can be deployed as a monolith or decomposed into microservices without code changes.",
       // Feature Grid
       featureModular: "Modular Monolith",
-      featureModularDesc: "Isolated modules with clean boundaries â€” develop, test, and deploy independently. Same binary, flexible deployment.",
+      featureModularDesc: "Isolated modules with clean boundaries  develop, test, and deploy independently. Same binary, flexible deployment.",
       featureCQRS: "CQRS + MediatR",
       featureCQRSDesc: "Command/Query separation with a 3-behavior pipeline: validation, audit, and performance monitoring.",
       featureSecurity: "Enterprise Security",
@@ -176,7 +176,7 @@ export const docEn = {
 
     projectStructure: {
       title: "Project Structure",
-      description: "Complete directory layout of the NEXORA monorepo â€” root, backend, frontend, and module anatomy.",
+      description: "Complete directory layout of the NEXORA monorepo  root, backend, frontend, and module anatomy.",
       intro: "NEXORA is organized as a Git submodule monorepo with three main parts: the root repository, backend submodule, and frontend submodule. Understanding this structure is essential for navigating the codebase.",
       // Sections
       rootTitle: "Root Monorepo",
@@ -220,13 +220,13 @@ export const docEn = {
       programCsTitle: "Program.cs Anatomy",
       programCsIntro: "Program.cs is the application's entry point and wiring center. It detects the deployment mode, registers services in a specific order, and builds the middleware pipeline. The file follows a clear 5-section structure.",
       middlewarePipelineTitle: "Middleware Pipeline",
-      middlewarePipelineIntro: "The middleware pipeline processes every HTTP request in a specific order. Each middleware can short-circuit the pipeline (e.g., rate limiter returns 429, auth returns 401). Order matters â€” changing it can break security.",
+      middlewarePipelineIntro: "The middleware pipeline processes every HTTP request in a specific order. Each middleware can short-circuit the pipeline (e.g., rate limiter returns 429, auth returns 401). Order matters  changing it can break security.",
       diMapTitle: "DI Service Map",
       diMapIntro: "The following table shows all major service interfaces, their implementations, lifetimes, and where they are registered. Understanding this map is essential for debugging and extending the system.",
       modulePatternTitle: "Module Registration Pattern",
       modulePatternIntro: "Every new module follows the same DI registration pattern. The AddXxxModule() extension method registers the module's DbContext, repositories, services, and module registration marker.",
       controllersTitle: "Controllers",
-      controllerTip: "All controllers inherit from a base ApiController that provides standardized Result<T> response mapping. Controllers should be thin â€” they only validate the request model and delegate to MediatR.",
+      controllerTip: "All controllers inherit from a base ApiController that provides standardized Result<T> response mapping. Controllers should be thin  they only validate the request model and delegate to MediatR.",
     },
 
     frontend: {
@@ -252,7 +252,7 @@ export const docEn = {
       description: "Command/Query Responsibility Segregation with MediatR pipeline, behaviors, validation, and caching.",
       intro: "NEXORA uses the CQRS (Command Query Responsibility Segregation) pattern to separate read and write operations. Commands mutate state and go through validation + audit behaviors. Queries read state and can leverage caching. MediatR acts as the mediator between controllers and handlers.",
       whatIsCqrsTitle: "What is CQRS?",
-      whatIsCqrsIntro: "CQRS separates your application into two sides: Commands (writes) and Queries (reads). Each side can be optimized independently â€” commands focus on data integrity and validation, while queries focus on performance and caching.",
+      whatIsCqrsIntro: "CQRS separates your application into two sides: Commands (writes) and Queries (reads). Each side can be optimized independently  commands focus on data integrity and validation, while queries focus on performance and caching.",
       commandSide: "Command Side (Write)",
       querySide: "Query Side (Read)",
       pipelineTitle: "MediatR Pipeline",
@@ -265,7 +265,7 @@ export const docEn = {
     modules: {
       title: "Module System",
       description: "Module isolation rules, backend/frontend templates, module registry, and cross-module communication.",
-      intro: "NEXORA uses a strict module system where each module is an isolated island with clear boundaries. Modules cannot import from each other â€” they communicate only through URLs, shared IDs, or the core event bus. This ensures independence, testability, and the ability to extract modules to separate repositories.",
+      intro: "NEXORA uses a strict module system where each module is an isolated island with clear boundaries. Modules cannot import from each other  they communicate only through URLs, shared IDs, or the core event bus. This ensures independence, testability, and the ability to extract modules to separate repositories.",
       isolationRulesTitle: "Module Isolation Rules",
       allowedImportsTitle: "âœ… Allowed Imports",
       forbiddenImportsTitle: "âŒ Forbidden Imports",
@@ -280,13 +280,13 @@ export const docEn = {
       pattern2Title: "Pattern 2: Shared IDs Only",
       pattern2Content: "Store only the foreign module's entity ID. Never embed the whole entity.",
       pattern3Title: "Pattern 3: Core Event Bus",
-      pattern3Content: "Publish and subscribe to events through a shared event bus in @core/. Future pattern â€” not yet implemented.",
+      pattern3Content: "Publish and subscribe to events through a shared event bus in @core/. Future pattern  not yet implemented.",
       boundaryWarning: "Module boundaries are absolute law. If you need to share code between modules, it MUST go in @core/. Any import from @modules/{other}/ is a violation and will be caught in code review.",
     },
 
     solidPattern: {
       title: "SOLID View/ViewModel",
-      description: "Page type scenarios â€” CRUD lists, dashboards, profiles, settings, wizards, and report builders.",
+      description: "Page type scenarios  CRUD lists, dashboards, profiles, settings, wizards, and report builders.",
       intro: "The SOLID View/ViewModel pattern is mandatory for all pages in src/modules/. This guide covers 7 page type scenarios with their exact directory structures, ViewModel patterns, and code examples.",
       principlesTitle: "SOLID Principles Applied",
       scenariosTitle: "Page Type Scenarios",
@@ -324,7 +324,7 @@ export const docEn = {
 
     dataFlow: {
       title: "Data Flow",
-      description: "End-to-end data flow diagrams â€” query, mutation, backend pipeline, error handling, and caching strategy.",
+      description: "End-to-end data flow diagrams  query, mutation, backend pipeline, error handling, and caching strategy.",
       intro: "Understanding how data flows through NEXORA is essential for debugging and extending the system. This page traces data from a button click in the UI all the way to the database and back.",
       queryFlowTitle: "Query Flow (Read)",
       queryFlowIntro: "When a user views data (e.g., opening the Users page), the flow starts at the View, goes through the ViewModel, TanStack Query, Repository, API Service, and finally the backend API.",
@@ -525,7 +525,7 @@ export const docEn = {
       cascadeDeleteIntro: "Deleting a tenant is a dangerous operation. The system provides a GET /tenants/{id}/descendant-count endpoint that returns the count of all descendants (sub-tenants, admins, users, roles) that would be affected. Cascade delete requires the special tenants.cascade_delete permission and is fully audited.",
       // Permission Inheritance
       permissionInheritanceTitle: "Permission Inheritance",
-      permissionInheritanceIntro: "When creating a child tenant, the parent can only grant permissions that it already has. This creates a cascading security model â€” a child tenant can never have more permissions than its parent. The GET /tenants/creation-permissions endpoint returns the available permission pool filtered by the current user's tenant.",
+      permissionInheritanceIntro: "When creating a child tenant, the parent can only grant permissions that it already has. This creates a cascading security model  a child tenant can never have more permissions than its parent. The GET /tenants/creation-permissions endpoint returns the available permission pool filtered by the current user's tenant.",
       endpointsTitle: "Tenant API Endpoints",
       // Endpoint groups
       endpointsCrudTitle: "CRUD Endpoints",
@@ -539,7 +539,7 @@ export const docEn = {
     rolePermissions: {
       title: "Roles & Permissions",
       description: "RBAC system with scope override, field-level restrictions, anti-escalation, and tenant-scoped roles.",
-      intro: "NEXORA implements a comprehensive RBAC (Role-Based Access Control) system with category-based permissions, scope overrides, field-level restrictions, and tenant scoping. Permissions are cached server-side for performance â€” changes take effect immediately without token refresh.",
+      intro: "NEXORA implements a comprehensive RBAC (Role-Based Access Control) system with category-based permissions, scope overrides, field-level restrictions, and tenant scoping. Permissions are cached server-side for performance  changes take effect immediately without token refresh.",
       hierarchyTitle: "Permission Hierarchy",
       systemTitle: "Permission System",
       systemIntro: "Permissions are organized into categories, each containing multiple granular permissions. The naming convention follows the pattern: {resource}.{action}.",
@@ -584,13 +584,13 @@ export const docEn = {
       guardianIntro: "Guardian events are audit records created when the system BLOCKS a dangerous operation. These are the safety net that prevents catastrophic actions like deleting the last super admin in a tenant.",
       // Service Methods
       serviceMethodsTitle: "AuditService Methods",
-      serviceMethodsIntro: "The IAuditService interface exposes 5 specialized logging methods, each capturing different metadata. All methods are async and fire-and-forget â€” they never block the main request pipeline.",
+      serviceMethodsIntro: "The IAuditService interface exposes 5 specialized logging methods, each capturing different metadata. All methods are async and fire-and-forget  they never block the main request pipeline.",
       // Real-Time
       realTimeTitle: "Real-Time Broadcasting",
       realTimeIntro: "Every audit event is broadcast in real-time via SignalR. Connected clients receive events scoped to their tenant, enabling live audit dashboards and instant security alerts. Events are sent to both the tenant group and a global group (for super admins).",
       // Export
       exportTitle: "Audit Export",
-      exportIntro: "The AuditExportService supports CSV and PDF export of filtered audit logs. Exports respect tenant scoping â€” admins can only export logs from their own tenant and child tenants.",
+      exportIntro: "The AuditExportService supports CSV and PDF export of filtered audit logs. Exports respect tenant scoping  admins can only export logs from their own tenant and child tenants.",
       endpointsTitle: "Audit API Endpoints",
       retentionTip: "Audit logs are retained per-tenant via TenantSettings.AuditRetentionDays. Set to 0 for indefinite retention. A Hangfire background job automatically purges expired records.",
     },
@@ -614,7 +614,7 @@ export const docEn = {
       title: "Email System",
       description: "Pluggable email delivery pipeline with queue strategies, background processing, and HTML sanitization.",
       architectureTitle: "Email Pipeline Architecture",
-      architectureIntro: "The Email System follows a pipeline architecture: Controller â†’ EmailService â†’ Queue â†’ Sender â†’ SMTP. The queue strategy is pluggable â€” InMemoryQueue for development and HangfireQueue for production.",
+      architectureIntro: "The Email System follows a pipeline architecture: Controller â†’ EmailService â†’ Queue â†’ Sender â†’ SMTP. The queue strategy is pluggable  InMemoryQueue for development and HangfireQueue for production.",
       endpointsTitle: "Email Controller Endpoints",
       queueTitle: "Queue Implementations",
       queueIntro: "The queue strategy determines how emails are processed. In development, emails are sent immediately via InMemoryQueue. In production, they are enqueued to Hangfire for reliable background processing.",
@@ -637,7 +637,7 @@ export const docEn = {
       hmacIntro: "Every webhook payload is signed with HMAC-SHA256 using the subscription's secret key. The receiver can verify the signature by computing the HMAC of the raw request body and comparing it to the X-Webhook-Signature header.",
       // Secret Rotation
       secretRotationTitle: "Secret Rotation (24h Grace Period)",
-      secretRotationIntro: "The RotateSecret endpoint generates a new HMAC secret while keeping the old one valid for 24 hours. This prevents missed deliveries during migration â€” the system signs payloads with the new secret and includes the old signature in X-Webhook-Signature-Old header.",
+      secretRotationIntro: "The RotateSecret endpoint generates a new HMAC secret while keeping the old one valid for 24 hours. This prevents missed deliveries during migration  the system signs payloads with the new secret and includes the old signature in X-Webhook-Signature-Old header.",
       // Tenant Hierarchy
       includeChildrenTitle: "Tenant Hierarchy Subscriptions",
       includeChildrenIntro: "When IncludeChildren is enabled on a subscription, the webhook receives events from the subscribing tenant AND all child tenants in the hierarchy. This is perfect for parent companies that need to monitor branch activity.",
@@ -679,7 +679,7 @@ export const docEn = {
       ignoreFiltersTitle: "IgnoreQueryFilters Pattern",
       ignoreFiltersWarning: "IgnoreQueryFilters() bypasses ALL global query filters, including the tenant filter. Always add an explicit .Where(t => t.TenantId == currentTenantId) when using this method to prevent cross-tenant data leaks.",
       cascadeTitle: "Cascade Restore",
-      cascadeIntro: "When restoring a tenant, all child entities (admins, users, roles, permissions) must also be restored. NEXORA uses ExecuteUpdateAsync for bulk restoration â€” a single SQL UPDATE statement instead of loading all entities into memory.",
+      cascadeIntro: "When restoring a tenant, all child entities (admins, users, roles, permissions) must also be restored. NEXORA uses ExecuteUpdateAsync for bulk restoration  a single SQL UPDATE statement instead of loading all entities into memory.",
       executeUpdateTitle: "ExecuteUpdateAsync vs Traditional EF",
       interceptorNote: "ExecuteUpdateAsync bypasses EF Core change tracker and interceptors. This means audit logs are NOT generated for bulk restore operations. A manual audit entry is created in the controller action instead.",
       endpointsTitle: "Recycle Bin Endpoints",
@@ -693,13 +693,13 @@ export const docEn = {
       description: "Complete admin/user lifecycle with 27 endpoints, bulk operations, impersonation, and protected admin rules.",
       adminVsUserTitle: "Admin vs User Model",
       adminVsUserIntro: "NEXORA separates admins and users as distinct entities. Admins manage the platform and have full RBAC with assigned roles. Users are end-users of the tenant's application with limited, self-service capabilities.",
-      crudTitle: "AdminsController â€” CRUD Endpoints",
+      crudTitle: "AdminsController  CRUD Endpoints",
       accountOpsTitle: "Account Operations",
       roleMgmtTitle: "Role Management Endpoints",
       bulkOpsTitle: "Bulk Operations",
       enterpriseOpsTitle: "Enterprise Operations",
       protectedTitle: "Protected Admin Rules",
-      protectedIntro: "Each tenant has exactly one protected admin â€” the super admin who created the tenant. The protected flag prevents accidental deletion or deactivation of the tenant's primary administrator.",
+      protectedIntro: "Each tenant has exactly one protected admin  the super admin who created the tenant. The protected flag prevents accidental deletion or deactivation of the tenant's primary administrator.",
       nukePaveTitle: "Nuke & Pave Pattern",
       nukePaveTip: "Use Nuke & Pave (PUT /admins/{id}/roles/sync) instead of individual add/remove when assigning roles from a UI checklist. It eliminates race conditions and ensures the database always matches the UI state exactly.",
     },
@@ -731,7 +731,7 @@ export const docEn = {
       etagNote: "ETags are generated from file path, size, and last modified time. When a client sends If-None-Match with a matching ETag, the server returns 304 Not Modified without transferring the file, saving bandwidth.",
       sessionTitle: "Session-Based Downloads",
       sessionIntro: "Session-based downloads allow sharing temporary download URLs without requiring authentication. A session is created with an expiration time, and the URL can be shared with external users.",
-      sessionWarning: "Download sessions expire after the configured duration (default: 1 hour). After expiration, the session URL returns 404. Sessions cannot be renewed â€” create a new session instead.",
+      sessionWarning: "Download sessions expire after the configured duration (default: 1 hour). After expiration, the session URL returns 404. Sessions cannot be renewed  create a new session instead.",
       pathTraversalTitle: "Path Traversal Prevention",
       pathTraversalNote: "All file paths are sanitized by removing '..' sequences and normalizing slashes. The resolved path is validated to ensure it stays within the configured storage directory, preventing directory traversal attacks.",
       streamConfigTitle: "FileStream Configuration",
@@ -786,12 +786,12 @@ export const docEn = {
     authDeep: {
       title: "Authentication Deep Dive",
       description: "JWT lifecycle, BCrypt hashing, account lockout, 2FA TOTP, external OAuth, OTP system, impersonation, and session management.",
-      intro: "This page dives deep into every authentication mechanism in NEXORA â€” from JWT token issuance and refresh rotation, through BCrypt password hashing and account lockout, to TOTP-based two-factor authentication, external OAuth providers, OTP codes, admin impersonation, and session management.",
+      intro: "This page dives deep into every authentication mechanism in NEXORA  from JWT token issuance and refresh rotation, through BCrypt password hashing and account lockout, to TOTP-based two-factor authentication, external OAuth providers, OTP codes, admin impersonation, and session management.",
       jwtLifecycleTitle: "JWT Token Lifecycle",
       jwtLifecycleIntro: "Access tokens are short-lived (15 minutes) JWT tokens signed with HMAC-SHA256. When an access token expires, the client uses the refresh token to obtain a new token pair. Refresh tokens are single-use and rotated on every use.",
       tokenStructureTitle: "JWT Token Structure",
       bcryptTitle: "BCrypt Password Hashing",
-      bcryptIntro: "Passwords are hashed using BCrypt with a configurable work factor (default: 12). BCrypt is intentionally slow to resist brute-force attacks â€” each hash takes ~250ms, making mass password cracking impractical.",
+      bcryptIntro: "Passwords are hashed using BCrypt with a configurable work factor (default: 12). BCrypt is intentionally slow to resist brute-force attacks  each hash takes ~250ms, making mass password cracking impractical.",
       lockoutTitle: "Account Lockout",
       lockoutIntro: "After 5 consecutive failed login attempts, the account is locked for 5 minutes. The counter resets on successful login. Admins can manually unlock accounts via the admin panel.",
       tfaTitle: "Two-Factor Authentication (TOTP)",
@@ -812,7 +812,7 @@ export const docEn = {
     dataProtection: {
       title: "Data Protection",
       description: "Tenant isolation, data encryption at rest and in transit, restricted fields, ID encryption, and GDPR compliance.",
-      intro: "NEXORA protects data at every layer â€” from network encryption (TLS 1.2+) and database encryption (TDE), through row-level tenant isolation and field-level access control, to GDPR-compliant data portability and right-to-delete mechanisms.",
+      intro: "NEXORA protects data at every layer  from network encryption (TLS 1.2+) and database encryption (TDE), through row-level tenant isolation and field-level access control, to GDPR-compliant data portability and right-to-delete mechanisms.",
       tenantIsolationTitle: "Tenant Data Isolation",
       tenantIsolationIntro: "Every query is automatically scoped to the current tenant via EF Core global query filters. The ITenantAwareEntity interface marks entities that must be tenant-scoped, and the TenantContextMiddleware extracts the tenant ID from the JWT token.",
       tenantScopingTitle: "Query Filter Scoping",
@@ -859,10 +859,10 @@ export const docEn = {
     // Middleware Pipeline
     middlewarePipeline: {
       title: "Middleware Pipeline",
-      description: "11 middleware components in execution order â€” from exception handling through tenant context to field projection.",
+      description: "11 middleware components in execution order  from exception handling through tenant context to field projection.",
       intro: "NEXORA's HTTP request pipeline consists of 11 middleware components executed in a specific order. Each middleware has a single responsibility and can short-circuit the pipeline on failure. Understanding the order is critical for debugging and extending the system.",
       overviewTitle: "Pipeline Overview",
-      overviewIntro: "Requests flow through the middleware pipeline from top to bottom. Each middleware can process the request, modify it, or short-circuit by returning a response directly. The order matters â€” tenant context must be established before any tenant-scoped operation.",
+      overviewIntro: "Requests flow through the middleware pipeline from top to bottom. Each middleware can process the request, modify it, or short-circuit by returning a response directly. The order matters  tenant context must be established before any tenant-scoped operation.",
       globalExceptionTitle: "1. Global Exception Handler",
       globalExceptionIntro: "Catches all unhandled exceptions and returns structured JSON error responses. In development, includes stack traces. In production, returns generic error messages to prevent information leakage.",
       correlationIdTitle: "2. Correlation ID",
@@ -881,7 +881,7 @@ export const docEn = {
       observabilityTitle: "Observability Middleware",
       observabilityIntro: "Collects request metrics (duration, status codes, error rates) and exposes them via a /metrics endpoint for Prometheus scraping. Includes distributed tracing with OpenTelemetry integration.",
       registrationTitle: "Middleware Registration Order",
-      registrationIntro: "The middleware registration order in Program.cs determines execution order. Changing the order can break functionality â€” for example, registering TenantContext before Authentication would fail because the JWT hasn't been validated yet.",
+      registrationIntro: "The middleware registration order in Program.cs determines execution order. Changing the order can break functionality  for example, registering TenantContext before Authentication would fail because the JWT hasn't been validated yet.",
       summaryTitle: "Middleware Summary",
       orderWarning: "Changing middleware registration order can cause cascading failures. Always test the full request pipeline after modifying middleware order.",
     },
@@ -889,7 +889,7 @@ export const docEn = {
     // Audit & Compliance 
     auditCompliance: {
       title: "Audit & Compliance",
-      description: "Complete audit pipeline â€” interceptors, entity tracking, SignalR streaming, CSV/Excel/PDF export, and compliance features.",
+      description: "Complete audit pipeline  interceptors, entity tracking, SignalR streaming, CSV/Excel/PDF export, and compliance features.",
       intro: "NEXORA provides a comprehensive audit system that tracks every data modification, API request, and security event. Audit logs are automatically generated by EF Core interceptors, streamed in real-time via SignalR, and exportable in CSV, Excel, and PDF formats.",
       architectureTitle: "Audit Architecture",
       architectureIntro: "The audit system consists of three layers: the AuditableEntityInterceptor captures entity changes during SaveChanges, the AuditBehavior in the MediatR pipeline logs command execution, and the RequestLoggingMiddleware records HTTP request metadata.",
@@ -956,11 +956,11 @@ export const docEn = {
     //  State Management 
     stateManagement: {
       title: "State Management",
-      description: "TanStack Query for server state, Zustand for global UI state, and local useState â€” when to use each.",
+      description: "TanStack Query for server state, Zustand for global UI state, and local useState  when to use each.",
       intro: "NEXORA uses three state management tools, each for a specific category: TanStack Query v5 for server/API data, Zustand for global UI state (auth, sidebar, theme), and React's useState for local component state.",
       categoriesTitle: "State Categories",
       tanstackTitle: "TanStack Query (Server State)",
-      tanstackIntro: "TanStack Query handles all API data â€” fetching, caching, background refetching, mutations, optimistic updates, and pagination. It's used exclusively in ViewModels, never in Views or Components.",
+      tanstackIntro: "TanStack Query handles all API data  fetching, caching, background refetching, mutations, optimistic updates, and pagination. It's used exclusively in ViewModels, never in Views or Components.",
       mutationsTitle: "Mutations & Cache Invalidation",
       zustandTitle: "Zustand (Global UI State)",
       zustandIntro: "Zustand stores manage UI state that needs to be shared across components: authentication state (useAuthStore), sidebar/theme (useUIStore), and toast notifications (useToastStore).",
@@ -1006,7 +1006,7 @@ export const docEn = {
     componentLibrary: {
       title: "Component Library",
       description: "shadcn/ui foundation, cn() utility, GenericSelect, theme system, and component placement rules.",
-      intro: "NEXORA's UI is built on shadcn/ui â€” a collection of accessible, customizable components. All shared components live in @core/ui/ and are extended with the cn() utility for conditional class merging.",
+      intro: "NEXORA's UI is built on shadcn/ui  a collection of accessible, customizable components. All shared components live in @core/ui/ and are extended with the cn() utility for conditional class merging.",
       shadcnTitle: "shadcn/ui Foundation",
       shadcnIntro: "shadcn/ui provides unstyled, accessible component primitives (Button, Input, Select, Dialog, etc.) that are installed directly into the project. This gives full control over styling and behavior.",
       categoriesTitle: "Component Categories",
@@ -1046,7 +1046,7 @@ export const docEn = {
     // â”€â”€â”€ Background Jobs 
     backgroundJobs: {
       title: "Background Jobs",
-      description: "Hangfire-powered job processing â€” recurring cleanup, outbox processor, token cleanup, and dashboard.",
+      description: "Hangfire-powered job processing  recurring cleanup, outbox processor, token cleanup, and dashboard.",
       intro: "NEXORA uses Hangfire for background job processing. Jobs include soft-delete cleanup, outbox event processing, token cleanup, audit log archiving, and tenant quota monitoring. The Hangfire Dashboard provides real-time job monitoring.",
       architectureTitle: "Hangfire Architecture",
       recurringTitle: "Recurring Jobs",
@@ -1074,7 +1074,7 @@ export const docEn = {
     resilience: {
       title: "Resilience Patterns",
       description: "Polly-based retry, circuit breaker, and timeout policies for HTTP clients and external services.",
-      intro: "NEXORA uses Polly resilience policies for all external HTTP calls and service integrations. The three core policies â€” retry with exponential backoff, circuit breaker, and timeout â€” protect against transient failures and cascading outages.",
+      intro: "NEXORA uses Polly resilience policies for all external HTTP calls and service integrations. The three core policies  retry with exponential backoff, circuit breaker, and timeout  protect against transient failures and cascading outages.",
       architectureTitle: "Resilience Architecture",
       retryTitle: "Retry Policy",
       circuitBreakerTitle: "Circuit Breaker",

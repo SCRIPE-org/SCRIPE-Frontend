@@ -21,7 +21,7 @@ interface ShelfLayoutProps {
 }
 
 /**
- * Shelf / Drawer Layout â€” Bottom drawer navigation that slides up.
+ * Shelf / Drawer Layout  Bottom drawer navigation that slides up.
  *
  * Structure:
  * - Header with logo + actions

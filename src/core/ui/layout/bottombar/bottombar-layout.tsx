@@ -25,7 +25,7 @@ interface BottomBarLayoutProps {
 }
 
 /**
- * Bottom Bar Layout â€” Mobile-first navigation at the bottom.
+ * Bottom Bar Layout  Mobile-first navigation at the bottom.
  *
  * Structure:
  * - Thin top header with logo + actions

@@ -22,7 +22,7 @@ interface MultiPanelLayoutProps {
 }
 
 /**
- * Multi-Panel Workbench Layout â€” IDE-style with left nav + content + right details.
+ * Multi-Panel Workbench Layout  IDE-style with left nav + content + right details.
  *
  * Structure:
  * - Header bar

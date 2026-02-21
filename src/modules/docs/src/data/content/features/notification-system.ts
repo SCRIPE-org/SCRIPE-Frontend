@@ -57,7 +57,7 @@ const sections: DocSection[] = [
             items: [
                   "No client-side group management needed",
                   "Notifications are targeted to specific users",
-                  "User can have multiple connections (tabs) â€” all receive the notification",
+                  "User can have multiple connections (tabs)  all receive the notification",
             ],
       },
 

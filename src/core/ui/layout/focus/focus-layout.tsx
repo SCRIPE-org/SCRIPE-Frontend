@@ -25,7 +25,7 @@ interface FocusLayoutProps {
 }
 
 /**
- * Focus Mode Layout â€” Distraction-free with toggle to minimal UI.
+ * Focus Mode Layout  Distraction-free with toggle to minimal UI.
  *
  * Structure:
  * - Ultra-minimal header (logo + focus toggle + profile)

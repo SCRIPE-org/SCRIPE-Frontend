@@ -103,7 +103,7 @@ var token = new JwtSecurityToken(
             rows: [
                   ["IsSuperAdmin", "bool", "System-level access, bypasses tenant scoping"],
                   ["IsProtected", "bool", "Cannot be deleted, deactivated, or demoted (Guardian enforced)"],
-                  ["IsLastSuperAdminInTenant", "bool (cached)", "Safety flag â€” blocks deletion/deactivation if true"],
+                  ["IsLastSuperAdminInTenant", "bool (cached)", "Safety flag  blocks deletion/deactivation if true"],
                   ["PasswordLastChanged", "DateTime?", "Checked against TenantSettings.PasswordExpiryDays for rotation enforcement"],
                   ["UsernameLastChanged", "DateTime?", "30-day cooldown on username changes"],
                   ["TwoFactorEnabled", "bool", "Whether 2FA is active for this admin"],
@@ -130,7 +130,7 @@ var token = new JwtSecurityToken(
 if (admin.LastTwoFactorCodeUsed == code &&
     admin.LastTwoFactorCodeUsedAt?.AddMinutes(1) > DateTime.UtcNow)
 {
-    // Same code used within 1 minute â€” replay attack!
+    // Same code used within 1 minute  replay attack!
     return Result.Failure("2FA code already used");
 }
 

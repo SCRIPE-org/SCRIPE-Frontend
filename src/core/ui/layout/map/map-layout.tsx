@@ -25,7 +25,7 @@ interface MapLayoutProps {
 }
 
 /**
- * Map-Centric Layout â€” Content/map takes full space, nav in floating sidebar.
+ * Map-Centric Layout  Content/map takes full space, nav in floating sidebar.
  *
  * Structure:
  * - Full-bleed content area (designed for maps / dashboards)

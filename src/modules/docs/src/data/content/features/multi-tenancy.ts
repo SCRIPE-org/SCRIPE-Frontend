@@ -42,7 +42,7 @@ const sections: DocSection[] = [
       {
             type: "code",
             language: "csharp",
-            filename: "Tenant.cs â€” Hierarchy Fields",
+            filename: "Tenant.cs  Hierarchy Fields",
             code: `public class Tenant : AuditableEntity<Guid>
 {
     [Required] [MaxLength(200)]
@@ -114,7 +114,7 @@ const sections: DocSection[] = [
                   {
                         label: "Quota Settings",
                         language: "csharp",
-                        code: `// TenantSettings.cs â€” Quota Group
+                        code: `// TenantSettings.cs  Quota Group
 public int MaxAdmins { get; set; } = -1;       // -1 = unlimited
 public int MaxRoles { get; set; } = -1;
 public int MaxSubTenants { get; set; } = -1;`,
@@ -122,7 +122,7 @@ public int MaxSubTenants { get; set; } = -1;`,
                   {
                         label: "Security Policy",
                         language: "csharp",
-                        code: `// TenantSettings.cs â€” Per-Tenant Password Policy
+                        code: `// TenantSettings.cs  Per-Tenant Password Policy
 public int MinPasswordLength { get; set; } = 8;
 public bool RequireUppercase { get; set; } = true;
 public bool RequireNumber { get; set; } = true;
@@ -139,14 +139,14 @@ public bool Require2FA { get; set; } = false;`,
                   {
                         label: "Audit Config",
                         language: "csharp",
-                        code: `// TenantSettings.cs â€” Audit Configuration
+                        code: `// TenantSettings.cs  Audit Configuration
 public int AuditRetentionDays { get; set; } = 365;  // 0 = forever
 public bool AuditEnabled { get; set; } = true;`,
                   },
                   {
                         label: "Branding",
                         language: "csharp",
-                        code: `// TenantSettings.cs â€” Custom Branding
+                        code: `// TenantSettings.cs  Custom Branding
 public string? LogoUrl { get; set; }           // Tenant logo path
 public string? PrimaryColor { get; set; }      // Hex color code
 public string? CompanyName { get; set; }       // Display name`,

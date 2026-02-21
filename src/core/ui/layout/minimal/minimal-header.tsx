@@ -17,10 +17,10 @@ import { MinimalDropdown } from "./minimal-dropdown";
 import { NavRenderer } from "@core/ui/layout/shared/nav-renderer";
 import { NotificationBell } from "@core/ui/notification";
 
-interface MinimalHeaderProps {}
+interface MinimalHeaderProps { }
 
 /**
- * Minimal Header â€” Full horizontal navigation bar.
+ * Minimal Header  Full horizontal navigation bar.
  *
  * Features:
  * - Logo on left
@@ -29,7 +29,7 @@ interface MinimalHeaderProps {}
  * - Search, lang, theme, profile on right
  * - Mobile: hamburger â†’ full-screen overlay menu
  */
-export function MinimalHeader({}: MinimalHeaderProps) {
+export function MinimalHeader({ }: MinimalHeaderProps) {
   const { t } = useI18n();
   const settings = useSettings();
   const pathname = usePathname();
@@ -45,7 +45,7 @@ export function MinimalHeader({}: MinimalHeaderProps) {
         )}
       >
         <div className="flex h-14 items-center justify-between px-6">
-          {/* Left â€” Logo + Nav */}
+          {/* Left  Logo + Nav */}
           <div className="flex items-center gap-6">
             {/* Logo */}
             <Link href="/" className="flex shrink-0 items-center gap-2.5">
@@ -85,7 +85,7 @@ export function MinimalHeader({}: MinimalHeaderProps) {
             </nav>
           </div>
 
-          {/* Right â€” Actions */}
+          {/* Right  Actions */}
           <div className="flex items-center gap-2">
             <HeaderSearch
               containerClassName="hidden md:block"

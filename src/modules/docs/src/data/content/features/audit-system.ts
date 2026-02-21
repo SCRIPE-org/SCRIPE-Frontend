@@ -167,7 +167,7 @@ const sections: DocSection[] = [
             headers: ["Guardian Event", "Blocked Action", "Why It's Blocked"],
             rows: [
                   ["GuardianAdminDeleteBlocked", "Deleting last super admin", "Tenant would be orphaned with no admin access"],
-                  ["GuardianTransferBlocked", "Transferring last super admin out", "Same as above â€” no admin left in source tenant"],
+                  ["GuardianTransferBlocked", "Transferring last super admin out", "Same as above  no admin left in source tenant"],
                   ["GuardianDemoteBlocked", "Removing super admin role from last holder", "Tenant needs at least one super admin"],
                   ["GuardianDeactivateBlocked", "Deactivating last super admin", "All remaining admins need active super admin"],
                   ["GuardianRoleDeleteBlocked", "Deleting a system/super-admin role", "System roles are protected from deletion"],
@@ -222,7 +222,7 @@ const sections: DocSection[] = [
       {
             type: "code",
             language: "csharp",
-            filename: "AuditHub â€” SignalR Broadcasting",
+            filename: "AuditHub  SignalR Broadcasting",
             code: `// In AuditService.BroadcastAuditEventAsync:
 await _hubContext.Clients
     .Group($"tenant-{tenantId}")     // Tenant-scoped group

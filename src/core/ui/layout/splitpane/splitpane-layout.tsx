@@ -22,7 +22,7 @@ interface SplitPaneLayoutProps {
 }
 
 /**
- * Split Pane / IDE Layout â€” Sidebar + content + resizable bottom panel.
+ * Split Pane / IDE Layout  Sidebar + content + resizable bottom panel.
  *
  * Structure:
  * - Header bar

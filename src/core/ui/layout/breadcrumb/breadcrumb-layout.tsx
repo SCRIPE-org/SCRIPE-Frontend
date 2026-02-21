@@ -25,7 +25,7 @@ interface BreadcrumbLayoutProps {
 }
 
 /**
- * Breadcrumb Layout â€” No sidebar, navigate entirely via breadcrumb trail.
+ * Breadcrumb Layout  No sidebar, navigate entirely via breadcrumb trail.
  *
  * Structure:
  * - Top bar with logo, breadcrumb trail, and actions

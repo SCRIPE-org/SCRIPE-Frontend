@@ -16,7 +16,7 @@ interface ModernHeaderProps {
 }
 
 /**
- * Modern Header â€” Slim, aware of rail width.
+ * Modern Header  Slim, aware of rail width.
  *
  * Similar to compact header but designed to sit beside the icon rail.
  * No sidebar toggle on desktop (the rail is always visible).
@@ -34,7 +34,7 @@ export function ModernHeader({ onMenuClick }: ModernHeaderProps) {
       )}
     >
       <div className="flex h-12 items-center justify-between px-5">
-        {/* Left â€” Mobile menu + breadcrumbs */}
+        {/* Left  Mobile menu + breadcrumbs */}
         <div className="flex items-center gap-2">
           <Button
             variant="ghost"
@@ -52,7 +52,7 @@ export function ModernHeader({ onMenuClick }: ModernHeaderProps) {
           )}
         </div>
 
-        {/* Center â€” Search (wider since we have space) */}
+        {/* Center  Search (wider since we have space) */}
         <HeaderSearch
           containerClassName="hidden md:block"
           inputClassName={cn(
@@ -63,7 +63,7 @@ export function ModernHeader({ onMenuClick }: ModernHeaderProps) {
           iconClassName="left-3 rtl:left-auto rtl:right-3 w-3.5 h-3.5"
         />
 
-        {/* Right â€” Actions */}
+        {/* Right  Actions */}
         <div className="flex items-center gap-1.5">
           <Button
             variant="ghost"

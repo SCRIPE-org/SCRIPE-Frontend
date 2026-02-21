@@ -26,7 +26,7 @@ interface KanbanLayoutProps {
 }
 
 /**
- * Kanban / Column Layout â€” Navigation as swimlane columns.
+ * Kanban / Column Layout  Navigation as swimlane columns.
  *
  * Structure:
  * - Header with logo + actions

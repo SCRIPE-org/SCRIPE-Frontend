@@ -55,7 +55,7 @@ const sections: DocSection[] = [
                   { method: "GET", path: "/admins/{id}/roles", descriptionKey: "Get assigned roles", auth: "JWT", permission: "admins.view" },
                   { method: "POST", path: "/admins/{id}/roles/{roleId}", descriptionKey: "Assign single role", auth: "JWT", permission: "admins.edit" },
                   { method: "DELETE", path: "/admins/{id}/roles/{roleId}", descriptionKey: "Remove single role", auth: "JWT", permission: "admins.edit" },
-                  { method: "PUT", path: "/admins/{id}/roles/sync", descriptionKey: "Nuke & Pave â€” replace all roles", auth: "JWT", permission: "admins.edit" },
+                  { method: "PUT", path: "/admins/{id}/roles/sync", descriptionKey: "Nuke & Pave  replace all roles", auth: "JWT", permission: "admins.edit" },
             ],
       },
 
@@ -132,7 +132,7 @@ public async Task<IActionResult> SyncRoles(string id, [FromBody] SyncRolesComman
 {
     // Deletes all AdminRole entries for this admin
     // Re-creates entries for each role in the request
-    // Single transaction â€” no partial states
+    // Single transaction  no partial states
 }`,
       },
       { type: "info", variant: "tip", contentKey: "features.userManagement.nukePaveTip" },

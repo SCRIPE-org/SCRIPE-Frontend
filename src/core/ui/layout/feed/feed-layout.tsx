@@ -26,7 +26,7 @@ interface FeedLayoutProps {
 }
 
 /**
- * Social Feed Layout â€” Three-column social media style.
+ * Social Feed Layout  Three-column social media style.
  *
  * Structure:
  * - Left: navigation sidebar

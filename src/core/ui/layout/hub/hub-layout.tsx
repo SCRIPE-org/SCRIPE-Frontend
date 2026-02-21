@@ -20,7 +20,7 @@ interface HubLayoutProps {
 }
 
 /**
- * Hub / Portal Layout â€” Card-grid as primary navigation.
+ * Hub / Portal Layout  Card-grid as primary navigation.
  *
  * Structure:
  * - Simple header bar

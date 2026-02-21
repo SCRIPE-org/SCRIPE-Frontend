@@ -25,7 +25,7 @@ interface MegaMenuLayoutProps {
 }
 
 /**
- * Mega Menu Layout â€” Enterprise-grade horizontal navigation.
+ * Mega Menu Layout  Enterprise-grade horizontal navigation.
  *
  * Structure:
  * - Horizontal top nav with module/group items

@@ -25,7 +25,7 @@ interface WizardLayoutProps {
 }
 
 /**
- * Wizard / Stepper Layout â€” Step-by-step navigation.
+ * Wizard / Stepper Layout  Step-by-step navigation.
  *
  * Structure:
  * - Header with logo + actions

@@ -58,7 +58,7 @@ const sections: DocSection[] = [
       {
             type: "code",
             language: "csharp",
-            filename: "RolePermission.cs â€” Scope Override & Restricted Fields",
+            filename: "RolePermission.cs  Scope Override & Restricted Fields",
             code: `public class RolePermission : AuditableEntity<Guid>
 {
     public Guid RoleId { get; set; }
@@ -208,7 +208,7 @@ const sections: DocSection[] = [
                   ["TenantId", "Guid", "Scoped to a specific tenant"],
                   ["IsSystem", "bool", "Seeded role, cannot be modified"],
                   ["IsDeletable", "bool", "System roles are protected from deletion"],
-                  ["IsPermissionLocked", "bool", "Super admin roles â€” permissions cannot be changed"],
+                  ["IsPermissionLocked", "bool", "Super admin roles  permissions cannot be changed"],
                   ["IsTenantSuperAdmin", "bool", "Exactly one per tenant, gets all tenant permissions"],
                   ["IsDefaultRole", "bool", "Automatically assigned to new users/admins"],
                   ["Priority", "int", "Lower = higher priority. Controls role hierarchy."],

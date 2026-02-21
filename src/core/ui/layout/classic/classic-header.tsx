@@ -16,10 +16,10 @@ interface ClassicHeaderProps {
 }
 
 /**
- * Classic Header â€” Slim and contextual.
+ * Classic Header  Slim and contextual.
  *
  * Features:
- * - Minimal height â€” just enough for breadcrumbs + actions
+ * - Minimal height  just enough for breadcrumbs + actions
  * - Search bar left, user actions right
  * - Breadcrumbs below (conditional)
  * - Sticky when enabled in settings
@@ -37,7 +37,7 @@ export function ClassicHeader({ onMenuClick }: ClassicHeaderProps) {
       )}
     >
       <div className="flex h-14 items-center justify-between px-6">
-        {/* Left â€” Menu + Search */}
+        {/* Left  Menu + Search */}
         <div className="flex items-center gap-3">
           {settings.collapsibleSidebar && (
             <Button
@@ -61,7 +61,7 @@ export function ClassicHeader({ onMenuClick }: ClassicHeaderProps) {
           />
         </div>
 
-        {/* Right â€” Actions */}
+        {/* Right  Actions */}
         <div className="flex items-center gap-2">
           <Button
             variant="ghost"

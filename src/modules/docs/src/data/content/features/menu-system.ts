@@ -98,7 +98,7 @@ const sections: DocSection[] = [
                   { id: "all", label: "All MenuItems", type: "default" },
                   { id: "active", label: "Filter: IsDeleted = false", type: "info" },
                   { id: "tenant", label: "Filter: TenantScopeJson matches admin's tenant", type: "info" },
-                  { id: "perm", label: "Filter: Resource â€” admin has {resource}.view", type: "success" },
+                  { id: "perm", label: "Filter: Resource  admin has {resource}.view", type: "success" },
                   { id: "role", label: "Filter: RoleMenuItem IsVisible for admin's roles", type: "success" },
                   { id: "override", label: "Apply: TenantMenuOverride", type: "warning" },
                   { id: "tree", label: "Build: Tree structure", type: "primary" },
@@ -131,7 +131,7 @@ const sections: DocSection[] = [
             type: "code",
             language: "csharp",
             filename: "MenusController.cs",
-            code: `// PUT /menus/reorder â€” batch update
+            code: `// PUT /menus/reorder  batch update
 // Request body: [{ menuItemId, newOrder, newParentId }, ...]
 // Updates both Order AND ParentMenuItemId in a single transaction
 // Enables full tree restructuring via drag-drop UI`,

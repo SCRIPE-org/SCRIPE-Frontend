@@ -61,7 +61,7 @@ const sections: DocSection[] = [
             filename: "RecycleBinRepository.cs",
             code: `public async Task CascadeRestoreTenantChildrenAsync(Guid tenantId, CancellationToken ct)
 {
-    // Bulk restore admins â€” single SQL UPDATE, no entity loading
+    // Bulk restore admins  single SQL UPDATE, no entity loading
     await _context.Admins
         .IgnoreQueryFilters()
         .Where(a => a.TenantId == tenantId && a.IsDeleted)
@@ -118,7 +118,7 @@ const sections: DocSection[] = [
             headers: ["Action", "Reversible?", "What Happens"],
             rows: [
                   ["Restore", "Yes (delete again)", "Sets IsDeleted = false, entity reappears"],
-                  ["Purge", "âŒ No", "Hard DELETE FROM â€” data gone forever"],
+                  ["Purge", "âŒ No", "Hard DELETE FROM  data gone forever"],
             ],
       },
       { type: "info", variant: "danger", contentKey: "features.recycleBin.purgeWarning" },

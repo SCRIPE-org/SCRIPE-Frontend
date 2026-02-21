@@ -22,13 +22,13 @@ interface OverlayLayoutProps {
 }
 
 /**
- * Overlay Layout â€” Fullscreen menu that takes over on open.
+ * Overlay Layout  Fullscreen menu that takes over on open.
  *
  * Structure:
  * - Minimal top header with logo + hamburger + actions
  * - Full-width content (zero chrome)
  * - Menu button opens a fullscreen overlay with large nav links
- * - Mobile: same experience â€” overlay IS the mobile pattern
+ * - Mobile: same experience  overlay IS the mobile pattern
  *
  * Inspired by Stripe, creative portfolios, luxury brands
  */

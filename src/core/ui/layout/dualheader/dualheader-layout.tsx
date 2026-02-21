@@ -25,7 +25,7 @@ interface DualHeaderLayoutProps {
 }
 
 /**
- * Dual Header Layout â€” Two-row header for modules + actions.
+ * Dual Header Layout  Two-row header for modules + actions.
  *
  * Structure:
  * - Primary header: logo + global actions

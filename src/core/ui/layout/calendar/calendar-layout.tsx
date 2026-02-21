@@ -25,7 +25,7 @@ interface CalendarLayoutProps {
 }
 
 /**
- * Calendar / Planner Layout â€” Date-centric navigation.
+ * Calendar / Planner Layout  Date-centric navigation.
  *
  * Structure:
  * - Header with date picker and actions

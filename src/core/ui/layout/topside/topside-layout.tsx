@@ -26,7 +26,7 @@ interface TopSideLayoutProps {
 }
 
 /**
- * Top+Side Combo Layout â€” Header with module tabs + sidebar for sub-items.
+ * Top+Side Combo Layout  Header with module tabs + sidebar for sub-items.
  *
  * Structure:
  * - Top header with logo + group tabs + actions

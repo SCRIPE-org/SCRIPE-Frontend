@@ -33,7 +33,7 @@ interface InboxLayoutProps {
 }
 
 /**
- * Inbox / Three-Column Layout â€” Email client-style.
+ * Inbox / Three-Column Layout  Email client-style.
  *
  * Structure:
  * - Header bar

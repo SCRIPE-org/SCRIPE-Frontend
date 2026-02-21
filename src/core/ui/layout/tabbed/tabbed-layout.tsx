@@ -25,13 +25,13 @@ interface TabbedLayoutProps {
 }
 
 /**
- * Tabbed Layout â€” Inspired by Google Cloud Console / Jira.
+ * Tabbed Layout  Inspired by Google Cloud Console / Jira.
  *
  * Structure:
  * â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
- * â”‚ HEADER (56px) â€” logo, search, profile    â”‚
+ * â”‚ HEADER (56px)  logo, search, profile    â”‚
  * â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
- * â”‚ TAB BAR (44px) â€” horizontal scrollable   â”‚
+ * â”‚ TAB BAR (44px)  horizontal scrollable   â”‚
  * â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
  * â”‚ SUB-NAV  â”‚                               â”‚
  * â”‚ (240px)  â”‚       MAIN CONTENT            â”‚
@@ -146,7 +146,7 @@ export function TabbedLayout({ children, sidebarOpen, onSidebarOpenChange }: Tab
           )}
         >
           <div className="p-3">
-            <NavRenderer variant="compact" items={activeTab!.children!} onNavigate={() => {}} />
+            <NavRenderer variant="compact" items={activeTab!.children!} onNavigate={() => { }} />
           </div>
           <div className="absolute inset-x-0 bottom-0 border-t border-border p-3">
             <LogoutButton />

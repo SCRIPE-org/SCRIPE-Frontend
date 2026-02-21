@@ -29,7 +29,7 @@ interface RetroLayoutProps {
 }
 
 /**
- * Retro Layout â€” Classic Desktop / Windows-inspired.
+ * Retro Layout  Classic Desktop / Windows-inspired.
  *
  * Structure:
  * - Navigation panel styled as a "window" with title bar + [â”€][â–¡][Ã—]

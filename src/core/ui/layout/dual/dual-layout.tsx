@@ -23,11 +23,11 @@ interface DualLayoutProps {
 }
 
 /**
- * Dual Layout â€” Inspired by Slack / Outlook / Teams.
+ * Dual Layout  Inspired by Slack / Outlook / Teams.
  *
  * Structure:
  * â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
- * â”‚ HEADER (56px) â€” logo, search, profile        â”‚
+ * â”‚ HEADER (56px)  logo, search, profile        â”‚
  * â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
  * â”‚ LEFT NAV â”‚             â”‚ DETAIL PANEL        â”‚
  * â”‚ (240px)  â”‚ MAIN CONTENTâ”‚ (320px, toggleable) â”‚
@@ -104,7 +104,7 @@ export function DualLayout({ children, sidebarOpen, onSidebarOpenChange }: DualL
           <UserCard size="sm" />
         </div>
         <div className="flex-1 overflow-y-auto p-3">
-          <NavRenderer variant="default" onNavigate={() => {}} />
+          <NavRenderer variant="default" onNavigate={() => { }} />
         </div>
         <div className="border-t border-sidebar-border p-3">
           <LogoutButton />

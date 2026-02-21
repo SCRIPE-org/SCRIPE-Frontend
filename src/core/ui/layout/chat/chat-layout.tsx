@@ -22,7 +22,7 @@ interface ChatLayoutProps {
 }
 
 /**
- * Chat-Centric Layout â€” Messaging app style.
+ * Chat-Centric Layout  Messaging app style.
  *
  * Structure:
  * - Left: channels/rooms sidebar (nav items as channels)

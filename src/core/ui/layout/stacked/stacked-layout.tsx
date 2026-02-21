@@ -21,14 +21,14 @@ interface StackedLayoutProps {
 }
 
 /**
- * Stacked Layout â€” Inspired by Notion / Apple Notes / Obsidian.
+ * Stacked Layout  Inspired by Notion / Apple Notes / Obsidian.
  *
  * Full-width content with an overlay drawer sidebar.
  * The drawer can be pinned to push content instead of overlaying.
  *
  * Structure (unpinned):
  * â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
- * â”‚ HEADER (56px) â€” â˜° toggle        â”‚
+ * â”‚ HEADER (56px)  â˜° toggle        â”‚
  * â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
  * â”‚                                  â”‚
  * â”‚      FULL-WIDTH CONTENT          â”‚  â† drawer overlays
@@ -37,7 +37,7 @@ interface StackedLayoutProps {
  *
  * Structure (pinned):
  * â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
- * â”‚ HEADER (56px) â€” â˜° toggle        â”‚
+ * â”‚ HEADER (56px)  â˜° toggle        â”‚
  * â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
  * â”‚ DRAWER   â”‚                       â”‚
  * â”‚ (300px)  â”‚  MAIN CONTENT         â”‚  â† content pushed
