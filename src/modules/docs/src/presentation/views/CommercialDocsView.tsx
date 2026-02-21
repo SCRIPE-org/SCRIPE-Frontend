@@ -66,24 +66,26 @@ export function CommercialDocsView({ slug }: CommercialDocsViewProps) {
                   <div className="commercial-wrapper">
                         <CommercialSidebar categories={vm.categories} activeSlug={slug} />
 
-                        <div className="commercial-main">
-                              <CommercialContent
-                                    sections={page.sections}
-                                    titleKey={page.titleKey}
-                                    descriptionKey={page.descriptionKey}
-                                    lastUpdated={page.lastUpdated}
-                              />
+                        <div className="commercial-content-wrapper">
+                              <div className="commercial-main">
+                                    <CommercialContent
+                                          sections={page.sections}
+                                          titleKey={page.titleKey}
+                                          descriptionKey={page.descriptionKey}
+                                          lastUpdated={page.lastUpdated}
+                                    />
 
-                              <DocsPrevNext
-                                    prevSlug={vm.prevSlug}
-                                    prevTitleKey={vm.prevTitleKey}
-                                    nextSlug={vm.nextSlug}
-                                    nextTitleKey={vm.nextTitleKey}
-                                    basePath="/commercial"
-                              />
+                                    <DocsPrevNext
+                                          prevSlug={vm.prevSlug}
+                                          prevTitleKey={vm.prevTitleKey}
+                                          nextSlug={vm.nextSlug}
+                                          nextTitleKey={vm.nextTitleKey}
+                                          basePath="/commercial"
+                                    />
+                              </div>
+
+                              <DocsToc headings={vm.headings} activeId={toc.activeId} />
                         </div>
-
-                        <DocsToc headings={vm.headings} activeId={toc.activeId} />
                   </div>
 
                   {/* Overlays */}

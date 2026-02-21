@@ -93,6 +93,7 @@ export class AuthMapper {
       permissions: json.permissions || [],
       isProtected: json.isProtected ?? false,
       tenantId: json.tenantId ?? null,
+      restrictedFields: json.restrictedFields ?? undefined,
     });
   }
 }

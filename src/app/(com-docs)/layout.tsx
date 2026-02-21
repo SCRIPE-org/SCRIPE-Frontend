@@ -14,5 +14,5 @@ export const metadata: Metadata = {
  * (ThemeProvider + DocsI18nProvider) as technical docs.
  */
 export default function CommercialDocsLayout({ children }: { children: React.ReactNode }) {
-      return <DocsLayout>{children}</DocsLayout>;
+      return <DocsLayout scope="commercial">{children}</DocsLayout>;
 }

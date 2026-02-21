@@ -35,6 +35,7 @@ import { useCallback, useMemo, memo } from "react";
 import { appLogger } from "@core/common/logger";
 import { usePermission } from "@core/hooks/use-permission";
 import { usePermissions } from "@core/hooks/use-permissions";
+import { useRestrictedFields } from "@core/hooks/use-restricted-fields";
 import type { PermissionCode } from "@core/common/types/permissions";
 
 /* ========================================
@@ -461,7 +462,37 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
   // Use config if provided, otherwise use direct props (backward compatibility)
   const title = config ? t(config.titleKey) : propTitle!;
   const subtitle = config ? config.customSubtitle || t(config.subtitleKey) : propSubtitle;
-  const columns = config ? config.columns : propColumns!;
+  const allColumns = config ? config.columns : propColumns!;
+
+  // === Layer 1: Explicit restricted fields from /me response ===
+  const restrictedFields = useRestrictedFields(config?.resource);
+
+  // === Layer 2: Detect columns with ALL null values in current data ===
+  // This catches FLS-nullified fields even if /me doesn't yet return restrictedFields
+  const nullColumns = useMemo(() => {
+    const items = viewModel?.items;
+    if (!items || items.length === 0) return new Set<string>();
+    const nullKeys = new Set<string>();
+    for (const col of allColumns) {
+      if (col.key === "_index" || col.key === "_actions") continue; // skip meta columns
+      const allNull = items.every((item: any) => {
+        const val = item?.[col.key];
+        return val === null || val === undefined;
+      });
+      if (allNull) nullKeys.add(col.key);
+    }
+    return nullKeys;
+  }, [allColumns, viewModel?.items]);
+
+  // Merge both layers to determine visible columns
+  const columns = useMemo(() =>
+    allColumns.filter(col => {
+      if (restrictedFields.includes(col.key)) return false;
+      if (nullColumns.has(col.key)) return false;
+      return true;
+    }),
+    [allColumns, restrictedFields, nullColumns]
+  );
 
   // Wrap actions to use the generic individual action handler
   const rawActions = config?.getActions

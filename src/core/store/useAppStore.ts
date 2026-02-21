@@ -20,6 +20,7 @@ interface AppState {
   isAuthenticated: boolean;
   permissions: PermissionCode[];
   roles: AdminRole[];
+  restrictedFields: Record<string, string[]>;
   setUser: (user: User | null) => void;
   setAuth: (user: User, permissions: PermissionCode[], roles: AdminRole[]) => void;
   logout: () => void;
@@ -44,6 +45,7 @@ export const useAppStore = create<AppState>()(
       isAuthenticated: false,
       permissions: [],
       roles: [],
+      restrictedFields: {},
       setUser: (user) => set({ user, isAuthenticated: !!user }),
       setAuth: (user, permissions, roles) =>
         set({
@@ -51,6 +53,7 @@ export const useAppStore = create<AppState>()(
           isAuthenticated: true,
           permissions,
           roles,
+          restrictedFields: user.restrictedFields ?? {},
         }),
       logout: () => {
         // Also clear tokens when logging out from store
@@ -60,6 +63,7 @@ export const useAppStore = create<AppState>()(
           isAuthenticated: false,
           permissions: [],
           roles: [],
+          restrictedFields: {},
         });
       },
 
@@ -77,6 +81,7 @@ export const useAppStore = create<AppState>()(
         isAuthenticated: state.isAuthenticated,
         permissions: state.permissions,
         roles: state.roles,
+        restrictedFields: state.restrictedFields,
       }),
       onRehydrateStorage: () => (state) => {
         // With in-memory tokens, the access token is ALWAYS null after page reload.

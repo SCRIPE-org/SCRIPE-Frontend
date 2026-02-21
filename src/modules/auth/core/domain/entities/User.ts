@@ -18,6 +18,7 @@ export interface UserData {
   permissions?: string[];
   isProtected?: boolean;
   tenantId?: string | null;
+  restrictedFields?: Record<string, string[]>;
 }
 
 export class User {
@@ -32,6 +33,7 @@ export class User {
   public readonly permissions?: string[];
   public readonly isProtected: boolean;
   public readonly tenantId?: string | null;
+  public readonly restrictedFields?: Record<string, string[]>;
 
   constructor(data: UserData) {
     this.id = data.id;
@@ -45,6 +47,7 @@ export class User {
     this.permissions = data.permissions;
     this.isProtected = data.isProtected ?? false;
     this.tenantId = data.tenantId ?? null;
+    this.restrictedFields = data.restrictedFields;
   }
 
   /**

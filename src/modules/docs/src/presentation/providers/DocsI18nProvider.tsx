@@ -4,10 +4,16 @@
  * DocsI18nProvider — Isolated i18n context for the documentation portal.
  * Completely separate from the main app's I18nProvider.
  * Supports 7 languages: en, ar, fr, ru, zh, es, de.
+ *
+ * Accepts a `scope` prop to load either technical or commercial translations.
+ * - "technical"  → uses doc.en.ts (+ doc.{lang}.ts)
+ * - "commercial" → merges doc.comm.en.ts on top (+ doc.comm.{lang}.ts)
  */
 
 import type React from "react";
 import { createContext, useContext, useState, useEffect, useCallback, useMemo } from "react";
+
+// ─── Tech Translations ────────────────────────────────────────
 import { docEn, type PartialDocTranslations } from "../../locales/doc.en";
 import { docAr } from "../../locales/doc.ar";
 import { docFr } from "../../locales/doc.fr";
@@ -16,9 +22,19 @@ import { docZh } from "../../locales/doc.zh";
 import { docEs } from "../../locales/doc.es";
 import { docDe } from "../../locales/doc.de";
 
+// ─── Commercial Translations ─────────────────────────────────
+import { docCommEn } from "../../locales/doc.comm.en";
+import { docCommAr } from "../../locales/doc.comm.ar";
+import { docCommFr } from "../../locales/doc.comm.fr";
+import { docCommRu } from "../../locales/doc.comm.ru";
+import { docCommZh } from "../../locales/doc.comm.zh";
+import { docCommEs } from "../../locales/doc.comm.es";
+import { docCommDe } from "../../locales/doc.comm.de";
+
 // ─── Types ─────────────────────────────────────────────────────
 export type DocLanguage = "en" | "ar" | "fr" | "ru" | "zh" | "es" | "de";
 export type DocDirection = "ltr" | "rtl";
+export type DocScope = "technical" | "commercial";
 
 export interface DocLanguageInfo {
   code: DocLanguage;
@@ -37,8 +53,8 @@ export const DOC_LANGUAGES: DocLanguageInfo[] = [
   { code: "de", label: "German", nativeLabel: "Deutsch", direction: "ltr" },
 ];
 
-// ─── Translations Map ──────────────────────────────────────────
-const translations: Record<DocLanguage, PartialDocTranslations> = {
+// ─── Translations Maps ─────────────────────────────────────────
+const techTranslations: Record<DocLanguage, PartialDocTranslations> = {
   en: docEn,
   ar: docAr,
   fr: docFr,
@@ -46,6 +62,16 @@ const translations: Record<DocLanguage, PartialDocTranslations> = {
   zh: docZh,
   es: docEs,
   de: docDe,
+};
+
+const commTranslations: Record<DocLanguage, PartialDocTranslations> = {
+  en: docCommEn,
+  ar: docCommAr,
+  fr: docCommFr,
+  ru: docCommRu,
+  zh: docCommZh,
+  es: docCommEs,
+  de: docCommDe,
 };
 
 // ─── Storage Key ───────────────────────────────────────────────
@@ -64,7 +90,13 @@ interface DocsI18nContextType {
 const DocsI18nContext = createContext<DocsI18nContextType | undefined>(undefined);
 
 // ─── Provider ──────────────────────────────────────────────────
-export function DocsI18nProvider({ children }: { children: React.ReactNode }) {
+export function DocsI18nProvider({
+  children,
+  scope = "technical",
+}: {
+  children: React.ReactNode;
+  scope?: DocScope;
+}) {
   const [language, setLanguageState] = useState<DocLanguage>("en");
   const [isHydrated, setIsHydrated] = useState(false);
 
@@ -75,13 +107,27 @@ export function DocsI18nProvider({ children }: { children: React.ReactNode }) {
 
   const direction = currentLanguageInfo.direction;
 
-  // Translate function with dot-notation, interpolation, and English fallback
+  // Translate function with dot-notation, interpolation, and English fallback.
+  // For commercial scope, checks: commLang → commEn → techLang → techEn
+  // For technical scope, checks: techLang → techEn
   const t = useCallback(
     (key: string, params?: Record<string, any>): string => {
       const keys = key.split(".");
 
-      // Try current language first, then fallback to English
-      const sources = language === "en" ? [docEn] : [translations[language], docEn];
+      // Build the lookup chain based on scope
+      const sources: PartialDocTranslations[] = [];
+
+      if (scope === "commercial") {
+        // Commercial: check commercial locale first, then commercial English, then tech locale, then tech English
+        if (language !== "en") sources.push(commTranslations[language]);
+        sources.push(commTranslations.en);
+        if (language !== "en") sources.push(techTranslations[language]);
+        sources.push(techTranslations.en);
+      } else {
+        // Technical: check tech locale, then tech English
+        if (language !== "en") sources.push(techTranslations[language]);
+        sources.push(techTranslations.en);
+      }
 
       for (const source of sources) {
         let value: any = source;
@@ -108,7 +154,7 @@ export function DocsI18nProvider({ children }: { children: React.ReactNode }) {
 
       return key;
     },
-    [language]
+    [language, scope]
   );
 
   const setLanguage = useCallback((lang: DocLanguage) => {
@@ -124,7 +170,7 @@ export function DocsI18nProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     try {
       const saved = localStorage.getItem(DOCS_LANG_KEY) as DocLanguage | null;
-      if (saved && translations[saved]) {
+      if (saved && techTranslations[saved]) {
         setLanguageState(saved);
       }
     } catch {
