@@ -5,18 +5,20 @@
  *
  * Composes security-related data from the dashboard repository.
  * Reuses existing dashboard endpoints for security events, blocked IPs, and login activity.
+ * All query keys include tenantId for tenant-aware caching.
  */
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useMemo } from "react";
 import { getSystemContainer } from "@modules/system/di";
 import { dashboardKeys } from "@modules/system/dashboard/src/presentation/viewmodels/useDashboardViewModel";
+import { useCurrentTenantId } from "@core/providers/tenant-context-provider";
 
 // ─── Threat Summary ViewModel ────────────────────────────────────────
-export function useThreatSummaryViewModel() {
+export function useThreatSummaryViewModel(tenantId: string | null) {
   const repo = getSystemContainer().dashboardRepository;
 
   const securityEvents = useQuery({
-    queryKey: dashboardKeys.securityEvents(7),
+    queryKey: dashboardKeys.securityEvents(7, tenantId),
     queryFn: () => repo.getSecurityEvents(7),
     staleTime: 60 * 1000,
     refetchOnWindowFocus: false,
@@ -40,11 +42,11 @@ export function useThreatSummaryViewModel() {
 }
 
 // ─── Failed Logins Heatmap ViewModel ─────────────────────────────────
-export function useFailedLoginsViewModel(days: number = 30) {
+export function useFailedLoginsViewModel(days: number = 30, tenantId: string | null = null) {
   const repo = getSystemContainer().dashboardRepository;
 
   const query = useQuery({
-    queryKey: dashboardKeys.loginActivity(days),
+    queryKey: dashboardKeys.loginActivity(days, tenantId),
     queryFn: () => repo.getLoginActivity(days),
     staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,
@@ -69,11 +71,11 @@ export function useFailedLoginsViewModel(days: number = 30) {
 }
 
 // ─── Blocked IPs ViewModel ───────────────────────────────────────────
-export function useBlockedIPsViewModel(days: number = 30, limit: number = 20) {
+export function useBlockedIPsViewModel(days: number = 30, limit: number = 20, tenantId: string | null = null) {
   const repo = getSystemContainer().dashboardRepository;
 
   return useQuery({
-    queryKey: dashboardKeys.topBlockedIPs(days, limit),
+    queryKey: dashboardKeys.topBlockedIPs(days, limit, tenantId),
     queryFn: () => repo.getTopBlockedIPs(days, limit),
     staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,
@@ -82,11 +84,11 @@ export function useBlockedIPsViewModel(days: number = 30, limit: number = 20) {
 }
 
 // ─── Security Timeline ViewModel ─────────────────────────────────────
-export function useSecurityTimelineViewModel(limit: number = 20) {
+export function useSecurityTimelineViewModel(limit: number = 20, tenantId: string | null = null) {
   const repo = getSystemContainer().dashboardRepository;
 
   return useQuery({
-    queryKey: dashboardKeys.recentChanges(limit),
+    queryKey: dashboardKeys.recentChanges(limit, tenantId),
     queryFn: () => repo.getRecentChanges(limit),
     staleTime: 30 * 1000,
     refetchOnWindowFocus: false,
@@ -96,10 +98,11 @@ export function useSecurityTimelineViewModel(limit: number = 20) {
 
 // ─── Orchestrator ────────────────────────────────────────────────────
 export function useSecurityDashboardViewModel() {
-  const threats = useThreatSummaryViewModel();
-  const failedLogins = useFailedLoginsViewModel(30);
-  const blockedIPs = useBlockedIPsViewModel(30, 20);
-  const timeline = useSecurityTimelineViewModel(20);
+  const tenantId = useCurrentTenantId();
+  const threats = useThreatSummaryViewModel(tenantId);
+  const failedLogins = useFailedLoginsViewModel(30, tenantId);
+  const blockedIPs = useBlockedIPsViewModel(30, 20, tenantId);
+  const timeline = useSecurityTimelineViewModel(20, tenantId);
 
   const isLoading = useMemo(
     () => threats.isLoading || failedLogins.isLoading,
@@ -123,3 +126,4 @@ export function useSecurityDashboardViewModel() {
     refetchAll,
   };
 }
+

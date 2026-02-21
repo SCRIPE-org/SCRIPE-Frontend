@@ -10,6 +10,7 @@ import type { IApiService } from "../interfaces/api.interface";
 import { appLogger } from "@core/common/logger";
 import { secureTokenService } from "@core/common/secure-token-service";
 import { authBroadcast } from "@core/common/broadcast-auth";
+import { STORAGE_KEYS } from "../config/storage-keys";
 
 // P1.5: Cache language in module-level variable — avoids localStorage.getItem() on every request
 let cachedLanguage: string = typeof window !== "undefined" ? localStorage.getItem("language") || "en" : "en";
@@ -54,7 +55,23 @@ export class ApiService implements IApiService {
   private readonly retryableStatusCodes = [500, 502, 503, 504];
 
   // Tenant context for X-Tenant-Context header
-  private tenantContextId: string | null = null;
+  // Eagerly read from sessionStorage so the header is set BEFORE any React effects run.
+  // Without this, TanStack Query fires dashboard queries during render (before useEffect),
+  // and they go out without the tenant context header.
+  private tenantContextId: string | null = (() => {
+    if (typeof window !== "undefined") {
+      try {
+        const saved = sessionStorage.getItem(STORAGE_KEYS.tenant_context);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed?.id) return parsed.id;
+        }
+      } catch {
+        // Ignore parse errors
+      }
+    }
+    return null;
+  })();
 
   // Logout handler — set externally to avoid circular dependency
   // (ApiService cannot import useAppStore directly)
@@ -218,7 +235,7 @@ export class ApiService implements IApiService {
             this.setTenantContext(null);
             // Also clear sessionStorage so drill-down doesn't persist on refresh
             if (typeof window !== "undefined") {
-              sessionStorage.removeItem("tenant_context");
+              sessionStorage.removeItem(STORAGE_KEYS.tenant_context);
             }
             // The error message will be shown to the user via the normal error flow
             return Promise.reject(

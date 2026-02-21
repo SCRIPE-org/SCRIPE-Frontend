@@ -17,6 +17,7 @@ import { useSignalR, type SignalRConnectionState } from "@core/hooks/useSignalR"
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { HUB_EVENTS, HUB_METHODS } from "@core/common/constants/signalr";
 import { auditKeys } from "./useAuditViewModel";
+import { useCurrentTenantId } from "@core/providers/tenant-context-provider";
 
 /** Lightweight audit event DTO matching backend AuditEventDto */
 export interface AuditEventMessage {
@@ -46,6 +47,7 @@ export function useAuditRealtime(): UseAuditRealtimeResult {
   const queryClient = useQueryClient();
   const { connection, connectionState } = useSignalR();
   const { info } = useEnhancedToast();
+  const tenantId = useCurrentTenantId();
 
   const [realtimeEventCount, setRealtimeEventCount] = useState(0);
   const [lastEvent, setLastEvent] = useState<AuditEventMessage | null>(null);
@@ -58,10 +60,10 @@ export function useAuditRealtime(): UseAuditRealtimeResult {
       setLastEvent(event);
 
       // Invalidate audit list query cache (triggers refetch)
-      queryClient.invalidateQueries({ queryKey: auditKeys.all });
+      queryClient.invalidateQueries({ queryKey: auditKeys.all(tenantId) });
 
       // Also invalidate dashboard queries so KPIs/charts refresh
-      queryClient.invalidateQueries({ queryKey: ["dashboard"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard", tenantId ?? "system"] });
 
       // Throttled toast notification
       const now = Date.now();
@@ -83,11 +85,11 @@ export function useAuditRealtime(): UseAuditRealtimeResult {
     if (!connection || connectionState !== "connected") return;
 
     connection.on(HUB_EVENTS.AUDIT_EVENT, handleAuditEvent);
-    connection.invoke(HUB_METHODS.JOIN_GLOBAL_GROUP).catch(() => {});
+    connection.invoke(HUB_METHODS.JOIN_GLOBAL_GROUP).catch(() => { });
 
     return () => {
       connection.off(HUB_EVENTS.AUDIT_EVENT, handleAuditEvent);
-      connection.invoke(HUB_METHODS.LEAVE_GLOBAL_GROUP).catch(() => {});
+      connection.invoke(HUB_METHODS.LEAVE_GLOBAL_GROUP).catch(() => { });
     };
   }, [connection, connectionState, handleAuditEvent]);
 

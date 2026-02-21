@@ -309,6 +309,7 @@ export function TenantsView() {
     <>
       <GenericTreeView
         viewModel={viewModel}
+        expandOnCardClick={true}
         title={t("tenant.title")}
         subtitle={t("tenant.description")}
         getId={(node) => node.id}

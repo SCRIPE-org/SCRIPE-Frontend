@@ -5,31 +5,41 @@
  *
  * Composes all section ViewModels for the dashboard page.
  * Follows SOLID pattern: each concern has its own hook.
+ *
+ * All query keys include tenantId so TanStack Query caches
+ * system-level and tenant-scoped data separately.
  */
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useMemo } from "react";
 import { getSystemContainer } from "@modules/system/di";
+import { useCurrentTenantId } from "@core/providers/tenant-context-provider";
 
 // ─── Query key factory ───────────────────────────────────────────────
+// Every key includes tenantId so caching is tenant-aware
 export const dashboardKeys = {
-  all: ["dashboard"] as const,
-  summary: () => [...dashboardKeys.all, "summary"] as const,
-  loginActivity: (days: number) => [...dashboardKeys.all, "login-activity", days] as const,
-  recentChanges: (limit: number) => [...dashboardKeys.all, "recent-changes", limit] as const,
-  eventDistribution: (days: number) => [...dashboardKeys.all, "event-distribution", days] as const,
-  securityEvents: (days: number) => [...dashboardKeys.all, "security-events", days] as const,
-  topBlockedIPs: (days: number, limit: number) =>
-    [...dashboardKeys.all, "blocked-ips", days, limit] as const,
+  all: (tenantId: string | null) => ["dashboard", tenantId ?? "system"] as const,
+  summary: (tenantId: string | null) =>
+    [...dashboardKeys.all(tenantId), "summary"] as const,
+  loginActivity: (days: number, tenantId: string | null) =>
+    [...dashboardKeys.all(tenantId), "login-activity", days] as const,
+  recentChanges: (limit: number, tenantId: string | null) =>
+    [...dashboardKeys.all(tenantId), "recent-changes", limit] as const,
+  eventDistribution: (days: number, tenantId: string | null) =>
+    [...dashboardKeys.all(tenantId), "event-distribution", days] as const,
+  securityEvents: (days: number, tenantId: string | null) =>
+    [...dashboardKeys.all(tenantId), "security-events", days] as const,
+  topBlockedIPs: (days: number, limit: number, tenantId: string | null) =>
+    [...dashboardKeys.all(tenantId), "blocked-ips", days, limit] as const,
 };
 
 // ─── Section Hooks ───────────────────────────────────────────────────
 
 /** KPI Summary Hook */
-export function useDashboardSummary() {
+export function useDashboardSummary(tenantId: string | null) {
   const repo = getSystemContainer().dashboardRepository;
 
   return useQuery({
-    queryKey: dashboardKeys.summary(),
+    queryKey: dashboardKeys.summary(tenantId),
     queryFn: () => repo.getSummary(),
     staleTime: 60 * 1000,
     refetchInterval: 60 * 1000,
@@ -39,11 +49,11 @@ export function useDashboardSummary() {
 }
 
 /** Login Activity Chart Hook */
-export function useLoginActivity(days: number = 30) {
+export function useLoginActivity(days: number = 30, tenantId: string | null = null) {
   const repo = getSystemContainer().dashboardRepository;
 
   return useQuery({
-    queryKey: dashboardKeys.loginActivity(days),
+    queryKey: dashboardKeys.loginActivity(days, tenantId),
     queryFn: () => repo.getLoginActivity(days),
     staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,
@@ -52,11 +62,11 @@ export function useLoginActivity(days: number = 30) {
 }
 
 /** Recent Changes Hook */
-export function useRecentChanges(limit: number = 10) {
+export function useRecentChanges(limit: number = 10, tenantId: string | null = null) {
   const repo = getSystemContainer().dashboardRepository;
 
   return useQuery({
-    queryKey: dashboardKeys.recentChanges(limit),
+    queryKey: dashboardKeys.recentChanges(limit, tenantId),
     queryFn: () => repo.getRecentChanges(limit),
     staleTime: 30 * 1000,
     refetchInterval: 30 * 1000,
@@ -66,11 +76,11 @@ export function useRecentChanges(limit: number = 10) {
 }
 
 /** Event Distribution Hook */
-export function useEventDistribution(days: number = 30) {
+export function useEventDistribution(days: number = 30, tenantId: string | null = null) {
   const repo = getSystemContainer().dashboardRepository;
 
   return useQuery({
-    queryKey: dashboardKeys.eventDistribution(days),
+    queryKey: dashboardKeys.eventDistribution(days, tenantId),
     queryFn: () => repo.getEventDistribution(days),
     staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,
@@ -79,11 +89,11 @@ export function useEventDistribution(days: number = 30) {
 }
 
 /** Security Events Hook */
-export function useSecurityEvents(days: number = 7, enabled = true) {
+export function useSecurityEvents(days: number = 7, enabled = true, tenantId: string | null = null) {
   const repo = getSystemContainer().dashboardRepository;
 
   return useQuery({
-    queryKey: dashboardKeys.securityEvents(days),
+    queryKey: dashboardKeys.securityEvents(days, tenantId),
     queryFn: () => repo.getSecurityEvents(days),
     enabled,
     staleTime: 60 * 1000,
@@ -94,11 +104,11 @@ export function useSecurityEvents(days: number = 7, enabled = true) {
 }
 
 /** Top Blocked IPs Hook */
-export function useTopBlockedIPs(days: number = 30, limit: number = 10, enabled = true) {
+export function useTopBlockedIPs(days: number = 30, limit: number = 10, enabled = true, tenantId: string | null = null) {
   const repo = getSystemContainer().dashboardRepository;
 
   return useQuery({
-    queryKey: dashboardKeys.topBlockedIPs(days, limit),
+    queryKey: dashboardKeys.topBlockedIPs(days, limit, tenantId),
     queryFn: () => repo.getTopBlockedIPs(days, limit),
     enabled,
     staleTime: 5 * 60 * 1000,
@@ -115,12 +125,13 @@ export function useTopBlockedIPs(days: number = 30, limit: number = 10, enabled 
  * @param hasSecurityPermission — set to false to disable security API calls
  */
 export function useDashboardViewModel(hasSecurityPermission = true) {
-  const summary = useDashboardSummary();
-  const loginActivity = useLoginActivity(30);
-  const recentChanges = useRecentChanges(10);
-  const eventDistribution = useEventDistribution(30);
-  const securityEvents = useSecurityEvents(7, hasSecurityPermission);
-  const topBlockedIPs = useTopBlockedIPs(30, 10, hasSecurityPermission);
+  const tenantId = useCurrentTenantId();
+  const summary = useDashboardSummary(tenantId);
+  const loginActivity = useLoginActivity(30, tenantId);
+  const recentChanges = useRecentChanges(10, tenantId);
+  const eventDistribution = useEventDistribution(30, tenantId);
+  const securityEvents = useSecurityEvents(7, hasSecurityPermission, tenantId);
+  const topBlockedIPs = useTopBlockedIPs(30, 10, hasSecurityPermission, tenantId);
 
   const isLoading = useMemo(
     () => summary.isLoading || loginActivity.isLoading || recentChanges.isLoading,
@@ -175,3 +186,4 @@ export function useDashboardViewModel(hasSecurityPermission = true) {
     refetchAll,
   };
 }
+

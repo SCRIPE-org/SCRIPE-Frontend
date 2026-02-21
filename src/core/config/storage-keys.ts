@@ -16,7 +16,7 @@
 export const STORAGE_KEYS = {
   // Auth tokens (managed by SecureTokenService — access token only, refresh is in httpOnly cookie)
   ACCESS_TOKEN: "verified_access_token",
-
+tenant_context:"tenant_context",
   // User data
   USER_DATA: "user-data",
   PERMISSIONS: "permissions",
@@ -54,6 +54,7 @@ export const AUTH_STORAGE_KEYS_TO_CLEAR: readonly StorageKey[] = [
   STORAGE_KEYS.PERMISSIONS,
   STORAGE_KEYS.ROLES,
   STORAGE_KEYS.nexora_refresh_token,
+  STORAGE_KEYS.tenant_context
 ] as const;
 
 /**

@@ -10,12 +10,16 @@ import { useQuery } from "@tanstack/react-query";
 import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import { getSystemContainer } from "@modules/system/di";
 import type { AuditLogFilterParams } from "@modules/system/dashboard/src/domain/interfaces/IDashboardRepository";
+import { useCurrentTenantId } from "@core/providers/tenant-context-provider";
 
 // ─── Query keys ──────────────────────────────────────────────────────
+// Include tenantId so TanStack Query caches per-tenant
 export const auditKeys = {
-  all: ["audit"] as const,
-  logs: (params: AuditLogFilterParams) => [...auditKeys.all, "logs", params] as const,
-  detail: (id: string) => [...auditKeys.all, "detail", id] as const,
+  all: (tenantId: string | null) => ["audit", tenantId ?? "system"] as const,
+  logs: (params: AuditLogFilterParams, tenantId: string | null) =>
+    [...auditKeys.all(tenantId), "logs", params] as const,
+  detail: (id: string, tenantId: string | null) =>
+    [...auditKeys.all(tenantId), "detail", id] as const,
 };
 
 // ─── Filter ViewModel ────────────────────────────────────────────────
@@ -122,11 +126,11 @@ export function useAuditFilterViewModel() {
 }
 
 // ─── Detail ViewModel ────────────────────────────────────────────────
-export function useAuditDetailViewModel(id: string | null) {
+export function useAuditDetailViewModel(id: string | null, tenantId: string | null) {
   const repo = getSystemContainer().dashboardRepository;
 
   return useQuery({
-    queryKey: auditKeys.detail(id ?? ""),
+    queryKey: auditKeys.detail(id ?? "", tenantId),
     queryFn: () => repo.getAuditLogDetail(id!),
     enabled: !!id,
     retry: 1,
@@ -136,11 +140,12 @@ export function useAuditDetailViewModel(id: string | null) {
 
 // ─── Orchestrator ────────────────────────────────────────────────────
 export function useAuditViewModel() {
+  const tenantId = useCurrentTenantId();
   const filterVM = useAuditFilterViewModel();
   const repo = getSystemContainer().dashboardRepository;
 
   const logsQuery = useQuery({
-    queryKey: auditKeys.logs(filterVM.apiParams),
+    queryKey: auditKeys.logs(filterVM.apiParams, tenantId),
     queryFn: () => repo.getAuditLogs(filterVM.apiParams),
     refetchOnWindowFocus: false,
     retry: 2,
@@ -148,7 +153,7 @@ export function useAuditViewModel() {
   });
 
   const [selectedLogId, setSelectedLogId] = useState<string | null>(null);
-  const detailQuery = useAuditDetailViewModel(selectedLogId);
+  const detailQuery = useAuditDetailViewModel(selectedLogId, tenantId);
 
   const openDetail = useCallback((id: string) => setSelectedLogId(id), []);
   const closeDetail = useCallback(() => setSelectedLogId(null), []);

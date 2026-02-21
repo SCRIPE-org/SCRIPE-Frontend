@@ -11,19 +11,22 @@ import { useMemo, useCallback } from "react";
 import { getSystemContainer } from "@modules/system/di";
 import { useAppStore } from "@core/store/useAppStore";
 import { useI18n } from "@core/providers/i18n-provider";
+import { useCurrentTenantId } from "@core/providers/tenant-context-provider";
 
 // ─── Query Keys ──────────────────────────────────────────────────────
+// Include tenantContextId so TanStack Query caches separately per tenant
 const overviewKeys = {
-  summary: ["overview", "summary"] as const,
-  recentActivity: ["overview", "recent-activity"] as const,
+  summary: (tenantId: string | null) => ["overview", "summary", tenantId ?? "system"] as const,
+  recentActivity: (tenantId: string | null) =>
+    ["overview", "recent-activity", tenantId ?? "system"] as const,
 };
 
 // ─── Sub-Hooks ───────────────────────────────────────────────────────
 
-function useOverviewSummary(enabled: boolean) {
+function useOverviewSummary(enabled: boolean, tenantId: string | null) {
   const repo = getSystemContainer().dashboardRepository;
   return useQuery({
-    queryKey: overviewKeys.summary,
+    queryKey: overviewKeys.summary(tenantId),
     queryFn: () => repo.getSummary(),
     enabled,
     staleTime: 60 * 1000,
@@ -32,10 +35,10 @@ function useOverviewSummary(enabled: boolean) {
   });
 }
 
-function useOverviewRecentActivity(limit = 5, enabled = true) {
+function useOverviewRecentActivity(limit = 5, enabled = true, tenantId: string | null) {
   const repo = getSystemContainer().dashboardRepository;
   return useQuery({
-    queryKey: overviewKeys.recentActivity,
+    queryKey: overviewKeys.recentActivity(tenantId),
     queryFn: () => repo.getRecentChanges(limit),
     enabled,
     staleTime: 30 * 1000,
@@ -72,8 +75,9 @@ function useGreeting() {
  * @param hasDashboardPermission — set to false to disable dashboard API calls
  */
 export function useOverviewViewModel(hasDashboardPermission = true) {
-  const summary = useOverviewSummary(hasDashboardPermission);
-  const recentActivity = useOverviewRecentActivity(5, hasDashboardPermission);
+  const tenantId = useCurrentTenantId();
+  const summary = useOverviewSummary(hasDashboardPermission, tenantId);
+  const recentActivity = useOverviewRecentActivity(5, hasDashboardPermission, tenantId);
   const { greeting, displayName } = useGreeting();
 
   const refetchAll = useCallback(() => {
