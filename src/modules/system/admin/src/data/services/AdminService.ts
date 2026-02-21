@@ -26,7 +26,7 @@ import type {
 } from "../../domain/interfaces/IAdminService";
 
 export class AdminService implements IAdminService {
-  constructor(private readonly api: IApiService) {}
+  constructor(private readonly api: IApiService) { }
 
   async getAll(params: ServiceAdminListParams): Promise<AdminListResult> {
     const url = buildUrl(API_ENDPOINTS.ADMINS.LIST, {
@@ -185,7 +185,7 @@ export class AdminService implements IAdminService {
     await this.api.post(API_ENDPOINTS.ADMINS.TRANSFER(id), json);
   }
 
-  async transferProtection(fromAdminId: string, targetAdminId: string): Promise<void> {
-    await this.api.post(API_ENDPOINTS.ADMINS.TRANSFER_PROTECTION(fromAdminId), { targetAdminId });
+  async transferProtection(targetAdminId: string): Promise<void> {
+    await this.api.post(API_ENDPOINTS.ADMINS.TRANSFER_PROTECTION, { targetAdminId });
   }
 }

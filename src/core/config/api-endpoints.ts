@@ -59,7 +59,7 @@ export const API_ENDPOINTS = {
     },
     IMPERSONATE: (id: string) => `${V1}/Admins/${id}/impersonate`,
     TRANSFER: (id: string) => `${V1}/Admins/${id}/transfer`,
-    TRANSFER_PROTECTION: (id: string) => `${V1}/Admins/${id}/transfer-protection`,
+    TRANSFER_PROTECTION: `${V1}/Admins/transfer-protection`,
     SYNC_ROLES: (id: string) => `${V1}/Admins/${id}/roles/sync`,
   },
 

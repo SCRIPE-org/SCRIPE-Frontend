@@ -242,8 +242,8 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
 
   // Transfer Protection mutation
   const transferProtectionMutation = useMutation({
-    mutationFn: ({ fromAdminId, targetAdminId }: { fromAdminId: string; targetAdminId: string }) =>
-      adminRepository.transferProtection(fromAdminId, { targetAdminId }),
+    mutationFn: ({ targetAdminId }: { targetAdminId: string }) =>
+      adminRepository.transferProtection({ targetAdminId }),
     onSuccess: async () => {
       // Refresh admin list
       queryClient.invalidateQueries({ queryKey: ["admins"] });
@@ -500,8 +500,8 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
       id: string,
       request: import("../../domain/entities/AdminRequests").TransferAdminRequest
     ) => transferMutation.mutate({ id, request }),
-    handleTransferProtection: (fromAdminId: string, targetAdminId: string) =>
-      transferProtectionMutation.mutate({ fromAdminId, targetAdminId }),
+    handleTransferProtection: (targetAdminId: string) =>
+      transferProtectionMutation.mutate({ targetAdminId }),
     handleBulkActivate: (ids: string[]) => bulkActivateMutation.mutate(ids),
     handleBulkDeactivate: (ids: string[]) => bulkDeactivateMutation.mutate(ids),
     handleBulkDelete: (ids: string[]) => bulkDeleteMutation.mutate(ids),

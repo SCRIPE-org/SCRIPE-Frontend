@@ -238,18 +238,18 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
             requiredPermission: SYSTEM_PERMISSIONS.ADMINS_TRANSFER,
             show: (item: Admin) => !item.hasGuardianProtection || currentUser?.id === item.id,
           },
-          // Transfer Protection: shown ONLY if the currently logged in user is the protected admin
+          // Transfer Protection: shown if the logged in user is the protected admin OR if viewing a specific tenant's admins (upper admin)
           ...(() => {
-            if (!isProtectedAdmin || !currentUser?.id) return [];
+            if (!isProtectedAdmin && !tenantId) return [];
             return [
               {
                 label: tFn("admin.transferProtection") || "Transfer Protection",
-                onClick: (item: Admin) => handleTransferProtection(currentUser.id, item.id),
+                onClick: (item: Admin) => handleTransferProtection(item.id),
                 variant: "ghost" as const,
                 icon: <ShieldCheck className="h-4 w-4" />,
                 requiredPermission: SYSTEM_PERMISSIONS.ADMINS_UPDATE,
                 // Only show for admins who are NOT the protected one and are editable
-                show: (item: Admin) => item.id !== currentUser.id && item.canModify,
+                show: (item: Admin) => item.id !== currentUser?.id && item.canModify,
                 confirmTitle: tFn("admin.transferProtection") || "Transfer Protection",
                 confirmDescription:
                   tFn("admin.transferProtectionDesc") ||

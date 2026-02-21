@@ -156,7 +156,7 @@ export interface IAdminRepository {
   transfer(id: string, request: TransferAdminRequest): Promise<void>;
 
   /**
-   * Transfer IsProtected flag from one admin to another
+   * Transfer IsProtected flag from the current protected admin to another
    */
-  transferProtection(fromAdminId: string, request: TransferProtectionRequest): Promise<void>;
+  transferProtection(request: TransferProtectionRequest): Promise<void>;
 }

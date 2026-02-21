@@ -176,7 +176,7 @@ export interface IAdminService {
   transfer(id: string, json: TransferAdminJson): Promise<void>;
 
   /**
-   * Transfer IsProtected flag from one admin to another
+   * Transfer IsProtected flag from the current protected admin to another
    */
-  transferProtection(fromAdminId: string, targetAdminId: string): Promise<void>;
+  transferProtection(targetAdminId: string): Promise<void>;
 }
