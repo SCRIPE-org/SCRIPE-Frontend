@@ -25,7 +25,7 @@ import { PermissionMapper } from "@modules/system/permissions/src/data/mappers/P
 import { appLogger } from "@core/common/logger";
 
 export class TenantRepository implements ITenantRepository {
-  constructor(private readonly service: ITenantService) {}
+  constructor(private readonly service: ITenantService) { }
 
   async getAll(params: TenantListParams): Promise<PagedResult<Tenant>> {
     const result = await this.service.getAll(params);
@@ -46,9 +46,17 @@ export class TenantRepository implements ITenantRepository {
     return TenantMapper.toTreeNodeList(models);
   }
 
-  async getMyChildren(): Promise<TenantTreeNode[]> {
-    const models = await this.service.getMyChildren();
-    return TenantMapper.toTreeNodeList(models);
+  async getMyChildren(params?: TenantListParams): Promise<PagedResult<TenantTreeNode>> {
+    const result = await this.service.getMyChildren(params);
+    return {
+      items: TenantMapper.toTreeNodeList(result.items),
+      totalCount: result.totalCount,
+      page: result.page,
+      pageSize: result.pageSize,
+      totalPages: result.totalPages,
+      hasNextPage: result.hasNextPage,
+      hasPreviousPage: result.hasPreviousPage,
+    };
   }
 
   async getChildren(parentId: string): Promise<TenantTreeNode[]> {

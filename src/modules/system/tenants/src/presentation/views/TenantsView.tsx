@@ -269,19 +269,19 @@ export function TenantsView() {
         show?: () => boolean;
         variant?: "default" | "destructive";
       }> = [
-        {
-          label: t("common.view") || "View",
-          onClick: () => router.push(`/tenants/${node.id}`),
-          icon: <Eye className="h-4 w-4" />,
-          show: () => canViewDetails,
-        },
-        {
-          label: t("tenant.enterTenantWorld"),
-          onClick: () => handleEnterTenantWorld(node),
-          icon: <LogIn className="h-4 w-4" />,
-          show: () => canEnterTenantWorld && hasDrillDown,
-        },
-      ];
+          {
+            label: t("common.view") || "View",
+            onClick: () => router.push(`/tenants/${node.id}`),
+            icon: <Eye className="h-4 w-4" />,
+            show: () => canViewDetails,
+          },
+          {
+            label: t("tenant.enterTenantWorld"),
+            onClick: () => handleEnterTenantWorld(node),
+            icon: <LogIn className="h-4 w-4" />,
+            show: () => canEnterTenantWorld && hasDrillDown,
+          },
+        ];
 
       // Add delete action (uses TenantDeleteDialog instead of built-in)
       if (canDelete) {
@@ -307,7 +307,7 @@ export function TenantsView() {
 
   return (
     <>
-      <GenericTreeView
+      <GenericTreeView<TenantTreeNode, CreateTenantRequest, UpdateTenantRequest>
         viewModel={viewModel}
         expandOnCardClick={true}
         title={t("tenant.title")}

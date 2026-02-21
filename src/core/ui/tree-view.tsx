@@ -1,7 +1,6 @@
 "use client";
 
-import type React from "react";
-import { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { cn } from "@core/common/utils";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";

@@ -30,15 +30,18 @@ export function createTenantTreeService(
         filteredTree = filterTree(tree, searchTerm);
       }
 
-      // For tree view, we return all data (no real pagination for tree)
-      // but we respect the interface contract
+      // Apply pagination locally since API returns full tree
+      const startIndex = (params.page - 1) * params.pageSize;
+      const endIndex = startIndex + params.pageSize;
+      const paginatedData = filteredTree.slice(startIndex, endIndex);
+
       return {
-        data: filteredTree,
+        data: paginatedData,
         pagination: {
-          itemsCount: countNodes(filteredTree),
+          itemsCount: filteredTree.length,
           pageSize: params.pageSize,
           page: params.page,
-          pagesCount: 1,
+          pagesCount: Math.max(1, Math.ceil(filteredTree.length / params.pageSize)),
         },
       };
     },
@@ -128,13 +131,18 @@ export function createChildrenTreeService(
         filteredTree = filterTree(children, searchTerm);
       }
 
+      // Apply pagination locally
+      const startIndex = (params.page - 1) * params.pageSize;
+      const endIndex = startIndex + params.pageSize;
+      const paginatedData = filteredTree.slice(startIndex, endIndex);
+
       return {
-        data: filteredTree,
+        data: paginatedData,
         pagination: {
-          itemsCount: countNodes(filteredTree),
+          itemsCount: filteredTree.length,
           pageSize: params.pageSize,
           page: params.page,
-          pagesCount: 1,
+          pagesCount: Math.max(1, Math.ceil(filteredTree.length / params.pageSize)),
         },
       };
     },
@@ -182,23 +190,20 @@ export function createMyChildrenTreeService(
 ): TreeService<TenantTreeNode, CreateTenantRequest, UpdateTenantRequest> {
   return {
     getWithChildren: async (params) => {
-      // Fetch ONLY my children
-      const children = await repository.getMyChildren();
-
-      // Apply search filter if provided
-      let filteredTree = children;
-      if (params.PageSearch) {
-        const searchTerm = params.PageSearch.toLowerCase();
-        filteredTree = filterTree(children, searchTerm);
-      }
+      // Fetch my children WITH pagination and search
+      const result = await repository.getMyChildren({
+        page: params.page,
+        pageSize: params.pageSize,
+        search: params.PageSearch,
+      });
 
       return {
-        data: filteredTree,
+        data: result.items,
         pagination: {
-          itemsCount: countNodes(filteredTree),
-          pageSize: params.pageSize,
-          page: params.page,
-          pagesCount: 1,
+          itemsCount: result.totalCount,
+          pageSize: result.pageSize,
+          page: result.page,
+          pagesCount: result.totalPages,
         },
       };
     },

@@ -32,13 +32,23 @@ export interface TenantListResult {
   hasPreviousPage: boolean;
 }
 
+export interface TenantTreeListResult {
+  items: TenantTreeNodeModel[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+}
+
 export interface ITenantService {
   getAll(params: ServiceTenantListParams): Promise<TenantListResult>;
   getTree(): Promise<TenantTreeNodeModel[]>;
   /**
    * Get MY children tenants (for /tenants page - shows only my direct children)
    */
-  getMyChildren(): Promise<TenantTreeNodeModel[]>;
+  getMyChildren(params?: ServiceTenantListParams): Promise<TenantTreeListResult>;
   /**
    * Get children of a specific tenant (for /tenants/{id}/children tab)
    */

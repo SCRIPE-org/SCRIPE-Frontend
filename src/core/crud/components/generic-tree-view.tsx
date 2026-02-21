@@ -1,18 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useMemo, useCallback } from "react";
+import React, { useEffect, useRef, useMemo, useCallback } from "react";
 import { TreeView } from "@core/ui/tree-view";
 import { Button } from "@core/ui/button";
 import { GenericForm } from "@core/ui/forms/generic-form";
 import { GenericModal } from "./generic-modal";
 import GenericSelect from "./generic-select";
 import {
-  Pagination as Pager,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
+  // Pagination imports removed in favor of direct standard UI buttons
 } from "@core/ui/pagination";
 import { Plus } from "lucide-react";
 import { cn } from "@core/common/utils";
@@ -101,7 +96,7 @@ export function GenericTreeView<T extends TreeNode, TCreate, TUpdate>({
   permissions,
   resource,
 }: GenericTreeViewProps<T, TCreate, TUpdate>) {
-  const { t } = useI18n();
+  const { t, direction } = useI18n();
 
   // Debounce mechanism to prevent rapid onOpenChange calls
   const lastOnOpenChangeRef = useRef<number>(0);
@@ -176,64 +171,140 @@ export function GenericTreeView<T extends TreeNode, TCreate, TUpdate>({
           {t("common.add")}
         </Button>
       )}
-      {/* Pagination controls */}
+      {/* Advanced Pagination Controls from GenericCrudView / GenericTable */}
       <div className="hidden items-center gap-2 md:flex">
-        <GenericSelect
-          type="single"
-          options={[10, 25, 50, 100].map((size) => ({
-            value: String(size),
-            label: String(size),
-          }))}
-          value={String(vm.pagination.pageSize)}
-          onValueChange={(v: string | string[]) =>
-            vm.changePageSize(Number(typeof v === "string" ? v : v[0]))
-          }
-          className="h-8 w-auto min-w-[100px] max-w-[120px] text-center font-medium"
-          allowClear={false}
-        />
+        {/* Page Size Selector */}
+        <div className="flex items-center gap-2 border-r pr-4 rtl:border-l rtl:border-r-0 rtl:pl-4 rtl:pr-0">
+          <span className="text-sm text-muted-foreground">{t("table.show")}:</span>
+          <GenericSelect
+            type="single"
+            options={[5, 10, 25, 50, 100].map((size) => ({
+              value: String(size),
+              label: String(size),
+            }))}
+            value={String(vm.pagination.pageSize)}
+            onValueChange={(v: string | string[]) =>
+              vm.changePageSize(Number(typeof v === "string" ? v : v[0]))
+            }
+            className="h-8 w-auto min-w-[70px] max-w-[90px] text-center font-medium"
+            allowClear={false}
+          />
+          <span className="text-sm text-muted-foreground">{t("table.perPage")}</span>
+        </div>
+
         {vm.pagination.pagesCount > 1 && (
-          <Pager>
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    vm.changePage(Math.max(1, vm.pagination.page - 1));
-                  }}
-                  className={vm.pagination.page === 1 ? "pointer-events-none opacity-50" : ""}
-                />
-              </PaginationItem>
-              {Array.from({ length: vm.pagination.pagesCount }, (_, i) => i + 1).map((page) => (
-                <PaginationItem key={page}>
-                  <PaginationLink
-                    href="#"
-                    isActive={page === vm.pagination.page}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      vm.changePage(page);
-                    }}
-                  >
-                    {page}
-                  </PaginationLink>
-                </PaginationItem>
-              ))}
-              <PaginationItem>
-                <PaginationNext
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    vm.changePage(Math.min(vm.pagination.pagesCount, vm.pagination.page + 1));
-                  }}
-                  className={
-                    vm.pagination.page === vm.pagination.pagesCount
-                      ? "pointer-events-none opacity-50"
-                      : ""
+          <div className="flex items-center gap-2">
+            {/* First Page */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => vm.changePage(1)}
+              disabled={vm.pagination.page === 1}
+              className={cn("h-8 w-8 p-0", direction === "rtl" && "rotate-180")}
+              title={t("table.firstPage") || "First Page"}
+            >
+              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+              </svg>
+            </Button>
+
+            {/* Previous Page */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => vm.changePage(Math.max(1, vm.pagination.page - 1))}
+              disabled={vm.pagination.page === 1}
+              className={cn("h-8 w-8 p-0", direction === "rtl" && "rotate-180")}
+              title={t("table.previousPage") || "Previous Page"}
+            >
+              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </Button>
+
+            {/* Page Numbers with Smart Truncation */}
+            <div className="flex items-center gap-1">
+              {(() => {
+                const current = vm.pagination.page;
+                const total = vm.pagination.pagesCount;
+                const pages: (number | string)[] = [];
+
+                if (total <= 7) {
+                  for (let i = 1; i <= total; i++) pages.push(i);
+                } else {
+                  if (current <= 4) {
+                    for (let i = 1; i <= 5; i++) pages.push(i);
+                    pages.push("...");
+                    pages.push(total);
+                  } else if (current >= total - 3) {
+                    pages.push(1);
+                    pages.push("...");
+                    for (let i = total - 4; i <= total; i++) pages.push(i);
+                  } else {
+                    pages.push(1);
+                    pages.push("...");
+                    for (let i = current - 1; i <= current + 1; i++) pages.push(i);
+                    pages.push("...");
+                    pages.push(total);
                   }
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pager>
+                }
+
+                return pages.map((page, index) => {
+                  if (page === "...") {
+                    return (
+                      <span key={`ellipsis-${index}`} className="px-2 py-1 text-muted-foreground">
+                        ...
+                      </span>
+                    );
+                  }
+                  const pageNum = page as number;
+                  const isActive = pageNum === current;
+                  return (
+                    <Button
+                      key={pageNum}
+                      variant={isActive ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => vm.changePage(pageNum)}
+                      className={cn(
+                        "h-8 w-8 p-0",
+                        isActive && "bg-primary text-primary-foreground shadow-sm"
+                      )}
+                    >
+                      {pageNum}
+                    </Button>
+                  );
+                });
+              })()}
+            </div>
+
+            {/* Next Page */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => vm.changePage(Math.min(vm.pagination.pagesCount, vm.pagination.page + 1))}
+              disabled={vm.pagination.page === vm.pagination.pagesCount}
+              className={cn("h-8 w-8 p-0", direction === "rtl" && "rotate-180")}
+              title={t("table.nextPage") || "Next Page"}
+            >
+              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </Button>
+
+            {/* Last Page */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => vm.changePage(vm.pagination.pagesCount)}
+              disabled={vm.pagination.page === vm.pagination.pagesCount}
+              className={cn("h-8 w-8 p-0", direction === "rtl" && "rotate-180")}
+              title={t("table.lastPage") || "Last Page"}
+            >
+              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+              </svg>
+            </Button>
+          </div>
         )}
       </div>
     </div>
@@ -264,52 +335,52 @@ export function GenericTreeView<T extends TreeNode, TCreate, TUpdate>({
           vm.config.selectable
             ? undefined
             : (n) => {
-                const actions = [];
-                // Add Child - requires create permission
-                if (effectivePermissions.canCreate) {
-                  actions.push({
-                    label: t("common.add_child") ?? "Add child",
-                    onClick: () => vm.openAddChild(n),
-                    disabled: vm.loading,
-                  });
-                }
-                // Edit - requires update permission
-                if (effectivePermissions.canUpdate) {
-                  actions.push({
-                    label: t("common.edit"),
-                    onClick: () => vm.openEdit(n),
-                    disabled: vm.loading,
-                  });
-                }
-                // Custom actions (added before Delete)
-                if (customActions) {
-                  const custom = customActions(n);
-                  custom.forEach((action) => {
-                    if (action.show && !action.show(n)) return;
-                    if (action.requiredPermission && !hasPermission(action.requiredPermission)) {
-                      return;
-                    }
-
-                    actions.push({
-                      label: action.label,
-                      onClick: action.onClick,
-                      variant: action.variant,
-                      icon: action.icon,
-                      disabled: action.disabled || vm.loading,
-                    });
-                  });
-                }
-                // Delete - requires delete permission (stays at bottom)
-                if (effectivePermissions.canDelete) {
-                  actions.push({
-                    label: t("common.delete"),
-                    onClick: () => vm.deleteItem(n),
-                    variant: "destructive" as const,
-                    disabled: vm.loading,
-                  });
-                }
-                return actions;
+              const actions = [];
+              // Add Child - requires create permission
+              if (effectivePermissions.canCreate) {
+                actions.push({
+                  label: t("common.add_child") ?? "Add child",
+                  onClick: () => vm.openAddChild(n),
+                  disabled: vm.loading,
+                });
               }
+              // Edit - requires update permission
+              if (effectivePermissions.canUpdate) {
+                actions.push({
+                  label: t("common.edit"),
+                  onClick: () => vm.openEdit(n),
+                  disabled: vm.loading,
+                });
+              }
+              // Custom actions (added before Delete)
+              if (customActions) {
+                const custom = customActions(n);
+                custom.forEach((action) => {
+                  if (action.show && !action.show(n)) return;
+                  if (action.requiredPermission && !hasPermission(action.requiredPermission)) {
+                    return;
+                  }
+
+                  actions.push({
+                    label: action.label,
+                    onClick: action.onClick,
+                    variant: action.variant,
+                    icon: action.icon,
+                    disabled: action.disabled || vm.loading,
+                  });
+                });
+              }
+              // Delete - requires delete permission (stays at bottom)
+              if (effectivePermissions.canDelete) {
+                actions.push({
+                  label: t("common.delete"),
+                  onClick: () => vm.deleteItem(n),
+                  variant: "destructive" as const,
+                  disabled: vm.loading,
+                });
+              }
+              return actions;
+            }
         }
         selectable={vm.config.selectable}
         selectedValues={vm.selectedValues}

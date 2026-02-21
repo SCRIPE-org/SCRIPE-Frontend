@@ -113,7 +113,7 @@ export function useTreeViewModel<T extends TreeNode, TCreate = any, TUpdate = an
 
   const [pagination, setPagination] = useState<PaginationInfo>({
     itemsCount: 0,
-    pageSize: 10,
+    pageSize: 5,
     page: 1,
     pagesCount: 1,
   });
@@ -189,6 +189,8 @@ export function useTreeViewModel<T extends TreeNode, TCreate = any, TUpdate = an
       setPagination((prev) => ({
         ...queryData.pagination,
         pageSize: prev.pageSize, // Keep user-selected page size
+        pagesCount: queryData.pagination.pagesCount || 1, // Clamp NaN/falsy
+        page: queryData.pagination.page || 1, // Clamp NaN/falsy
       }));
     }
   }, [queryData?.pagination]);

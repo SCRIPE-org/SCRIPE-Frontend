@@ -50,7 +50,7 @@ export interface ITenantRepository {
    * Get MY children tenants (for /tenants page)
    * Admin sees only their direct children, not their own tenant
    */
-  getMyChildren(): Promise<TenantTreeNode[]>;
+  getMyChildren(params?: TenantListParams): Promise<PagedResult<TenantTreeNode>>;
 
   /**
    * Get children of a specific tenant (for tenant detail children tab)

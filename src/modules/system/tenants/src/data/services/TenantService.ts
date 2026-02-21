@@ -21,6 +21,7 @@ import type {
   ITenantService,
   ServiceTenantListParams,
   TenantListResult,
+  TenantTreeListResult,
 } from "../../domain/interfaces/ITenantService";
 import type { TenantStats } from "../../domain/interfaces/ITenantRepository";
 import {
@@ -33,7 +34,7 @@ import type {
 } from "@modules/system/tenant-settings/src/data/models/TenantSettingsModel";
 
 export class TenantService implements ITenantService {
-  constructor(private readonly api: IApiService) {}
+  constructor(private readonly api: IApiService) { }
 
   async getAll(params: ServiceTenantListParams): Promise<TenantListResult> {
     const url = buildUrl(API_ENDPOINTS.TENANTS.LIST, {
@@ -48,7 +49,7 @@ export class TenantService implements ITenantService {
     return {
       items: response.items.map((json) => TenantModel.fromJson(json)),
       totalCount: response.totalCount,
-      page: response.page,
+      page: (response as any).pageNumber || response.page || 1,
       pageSize: response.pageSize,
       totalPages: response.totalPages,
       hasNextPage: response.hasNextPage,
@@ -61,9 +62,22 @@ export class TenantService implements ITenantService {
     return jsonList.map((json) => TenantTreeNodeModel.fromJson(json));
   }
 
-  async getMyChildren(): Promise<TenantTreeNodeModel[]> {
-    const jsonList = await this.api.get<TenantTreeNodeJson[]>(API_ENDPOINTS.TENANTS.MY_CHILDREN);
-    return jsonList.map((json) => TenantTreeNodeModel.fromJson(json));
+  async getMyChildren(params?: ServiceTenantListParams): Promise<TenantTreeListResult> {
+    const url = buildUrl(API_ENDPOINTS.TENANTS.MY_CHILDREN, {
+      page: params?.page,
+      pageSize: params?.pageSize,
+      search: params?.search,
+    });
+    const response = await this.api.get<TenantTreeListResult>(url);
+    return {
+      items: response.items.map((json: any) => TenantTreeNodeModel.fromJson(json)),
+      totalCount: response.totalCount,
+      page: (response as any).pageNumber || response.page || 1,
+      pageSize: response.pageSize,
+      totalPages: response.totalPages,
+      hasNextPage: response.hasNextPage,
+      hasPreviousPage: response.hasPreviousPage,
+    };
   }
 
   /**
