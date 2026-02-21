@@ -110,7 +110,7 @@ export function useRoleDetailViewModel() {
           newAssignments.set(code, {
             permissionId: rp.permissionId || rp.PermissionId || rp.id || rp.Id,
             scopeOverride: rp.scope || rp.ScopeOverride,
-            restrictedFields: rp.restrictedFields ? JSON.parse(rp.restrictedFields) : undefined,
+            restrictedFields: Array.isArray(rp.restrictedFields) ? rp.restrictedFields : undefined,
           });
         }
       });
@@ -171,11 +171,11 @@ export function useRoleDetailViewModel() {
 
     const filtered = searchQuery
       ? allPermissions.filter((p) => {
-          const name = p.getLocalizedName(language);
-          const code = p.code.toLowerCase();
-          const query = searchQuery.toLowerCase();
-          return name.toLowerCase().includes(query) || code.includes(query);
-        })
+        const name = p.getLocalizedName(language);
+        const code = p.code.toLowerCase();
+        const query = searchQuery.toLowerCase();
+        return name.toLowerCase().includes(query) || code.includes(query);
+      })
       : allPermissions;
 
     const grouped = filtered.reduce(
