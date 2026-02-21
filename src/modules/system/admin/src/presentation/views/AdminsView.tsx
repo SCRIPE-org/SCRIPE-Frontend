@@ -14,6 +14,7 @@ import type { AssignRoleRequest } from "../../domain/entities/AdminRequests";
 import { useAdminsViewModel } from "../viewmodels/useAdminsViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
 import { usePermissions } from "@core/providers/permission-provider";
+import { useAppStore } from "@core/store/useAppStore";
 
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { Badge } from "@core/ui/badge";
@@ -43,6 +44,7 @@ interface AdminsViewProps {
 export function AdminsView({ tenantId }: AdminsViewProps = {}) {
   const { t, language } = useI18n();
   const { isSuperAdmin } = usePermissions();
+  const currentUser = useAppStore((state) => state.user);
 
   // Use myTenantAdmins if not super admin (Tenant Admin mode)
   // Super Admins use the standard endpoint, which is now Context-Aware on the backend
@@ -203,6 +205,8 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
       permissions: configBase.permissions,
       deleteService: configBase.deleteService,
       getActions: (vmInstance: any, tFn: any, handleDeleteFn: any): CrudAction<Admin>[] => {
+        const isProtectedAdmin = currentUser?.isProtected;
+
         const actions: CrudAction<Admin>[] = [
           {
             label: tFn("common.view") || "View",
@@ -216,6 +220,7 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
             variant: "ghost" as const,
             icon: <Pencil className="h-4 w-4" />,
             requiredPermission: SYSTEM_PERMISSIONS.ADMINS_UPDATE,
+            show: (item: Admin) => !item.hasGuardianProtection || currentUser?.id === item.id,
           },
           {
             label: tFn("admin.impersonate") || "Impersonate",
@@ -223,6 +228,7 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
             variant: "ghost" as const,
             icon: <UserCheck className="h-4 w-4" />,
             requiredPermission: SYSTEM_PERMISSIONS.ADMINS_IMPERSONATE,
+            show: (item: Admin) => !item.hasGuardianProtection || currentUser?.id === item.id,
           },
           {
             label: tFn("admin.transfer") || "Transfer",
@@ -230,23 +236,20 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
             variant: "ghost" as const,
             icon: <ArrowRightLeft className="h-4 w-4" />,
             requiredPermission: SYSTEM_PERMISSIONS.ADMINS_TRANSFER,
+            show: (item: Admin) => !item.hasGuardianProtection || currentUser?.id === item.id,
           },
-          // Transfer Protection: shown when any admin in the list is protected
-          // Uses the protected admin's ID as source (not currentUser)
+          // Transfer Protection: shown ONLY if the currently logged in user is the protected admin
           ...(() => {
-            const protectedAdmin = (vmInstance.items as Admin[])?.find(
-              (a: Admin) => a.hasGuardianProtection
-            );
-            if (!protectedAdmin) return [];
+            if (!isProtectedAdmin || !currentUser?.id) return [];
             return [
               {
                 label: tFn("admin.transferProtection") || "Transfer Protection",
-                onClick: (item: Admin) => handleTransferProtection(protectedAdmin.id, item.id),
+                onClick: (item: Admin) => handleTransferProtection(currentUser.id, item.id),
                 variant: "ghost" as const,
                 icon: <ShieldCheck className="h-4 w-4" />,
                 requiredPermission: SYSTEM_PERMISSIONS.ADMINS_UPDATE,
-                // Only show for admins who are NOT the protected one
-                show: (item: Admin) => item.id !== protectedAdmin.id && item.canModify,
+                // Only show for admins who are NOT the protected one and are editable
+                show: (item: Admin) => item.id !== currentUser.id && item.canModify,
                 confirmTitle: tFn("admin.transferProtection") || "Transfer Protection",
                 confirmDescription:
                   tFn("admin.transferProtectionDesc") ||
@@ -262,8 +265,8 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
             variant: "ghost" as const,
             icon: <UserCheck className="h-4 w-4" />,
             requiredPermission: SYSTEM_PERMISSIONS.ADMINS_UPDATE,
-            disabled: (item: Admin) => item.hasGuardianProtection,
-            tooltip: tFn("guardian.protectedAdminTooltip") || "This admin is protected",
+            // Cannot toggle status if they are protected
+            show: (item: Admin) => !item.hasGuardianProtection,
           },
           {
             label: tFn("admin.role.manageTitle") || "Manage Roles",
@@ -271,6 +274,7 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
             variant: "ghost" as const,
             icon: <Shield className="h-4 w-4" />,
             requiredPermission: SYSTEM_PERMISSIONS.ADMINS_ASSIGN_ROLES,
+            show: (item: Admin) => !item.hasGuardianProtection || currentUser?.id === item.id,
           },
           {
             label: tFn("admin.resetPassword") || "Reset Password",
@@ -279,8 +283,7 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
             className: "text-orange-600 hover:text-orange-700",
             icon: <Settings className="h-4 w-4" />,
             requiredPermission: SYSTEM_PERMISSIONS.ADMINS_RESET_PASSWORD,
-            disabled: (item: Admin) => item.hasGuardianProtection,
-            tooltip: tFn("guardian.protectedAdminTooltip") || "This admin is protected",
+            show: (item: Admin) => !item.hasGuardianProtection || currentUser?.id === item.id,
           },
           {
             label: tFn("common.delete") || "Delete",
@@ -289,8 +292,8 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
             className: "text-red-600 hover:text-red-700",
             icon: <Trash2 className="h-4 w-4" />,
             requiredPermission: SYSTEM_PERMISSIONS.ADMINS_DELETE,
-            disabled: (item: Admin) => item.hasGuardianProtection,
-            tooltip: tFn("guardian.protectedAdminTooltip") || "This admin is protected",
+            // Cannot delete protected admin ever
+            show: (item: Admin) => !item.hasGuardianProtection,
           },
         ];
 
