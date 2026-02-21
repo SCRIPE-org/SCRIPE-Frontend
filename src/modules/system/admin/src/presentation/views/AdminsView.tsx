@@ -236,7 +236,7 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
             variant: "ghost" as const,
             icon: <ArrowRightLeft className="h-4 w-4" />,
             requiredPermission: SYSTEM_PERMISSIONS.ADMINS_TRANSFER,
-            show: (item: Admin) => !item.hasGuardianProtection || currentUser?.id === item.id || !!tenantId,
+            show: (item: Admin) => !item.hasGuardianProtection || currentUser?.id === item.id,
           },
           // Transfer Protection: shown if the logged in user is the protected admin OR if viewing a specific tenant's admins (upper admin)
           ...(() => {
