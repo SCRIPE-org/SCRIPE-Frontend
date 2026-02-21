@@ -22,6 +22,7 @@ import { MessageTemplateService } from "./messaging/message-templates/src/data/s
 import { EmailService } from "./messaging/email-composer/src/data/services/EmailService";
 import { NotificationSenderService } from "./messaging/notification-sender/src/data/services/NotificationSenderService";
 import { WebhookService } from "./webhooks/src/data/services/WebhookService";
+import { UserGroupService } from "./user-groups/src/data/services/UserGroupService";
 
 // Repositories
 import { AdminRepository } from "./admin/src/data/repositories/AdminRepository";
@@ -36,6 +37,7 @@ import { MessageTemplateRepository } from "./messaging/message-templates/src/dat
 import { EmailRepository } from "./messaging/email-composer/src/data/repositories/EmailRepository";
 import { NotificationSenderRepository } from "./messaging/notification-sender/src/data/repositories/NotificationSenderRepository";
 import { WebhookRepository } from "./webhooks/src/data/repositories/WebhookRepository";
+import { UserGroupRepository } from "./user-groups/src/data/repositories/UserGroupRepository";
 
 // Interfaces - Repositories
 import type { IAdminRepository } from "./admin/src/domain/interfaces/IAdminRepository";
@@ -51,6 +53,7 @@ import type { IMessageTemplateRepository } from "./messaging/message-templates/s
 import type { IEmailRepository } from "./messaging/email-composer/src/domain/interfaces/IEmailRepository";
 import type { INotificationSenderRepository } from "./messaging/notification-sender/src/domain/interfaces/INotificationSenderRepository";
 import type { IWebhookRepository } from "./webhooks/src/domain/interfaces/IWebhookRepository";
+import type { IUserGroupRepository } from "./user-groups/src/domain/interfaces/IUserGroupRepository";
 
 // Interfaces - Services (from domain/interfaces, NOT data/services)
 import type { IAdminService } from "./admin/src/domain/interfaces/IAdminService";
@@ -82,6 +85,8 @@ export interface SystemContainer {
   notificationSenderRepository: INotificationSenderRepository;
   // Webhooks
   webhookRepository: IWebhookRepository;
+  // User Groups
+  userGroupRepository: IUserGroupRepository;
 }
 
 let _container: SystemContainer | null = null;
@@ -104,6 +109,7 @@ export function getSystemContainer(): SystemContainer {
     const emailService = new EmailService(apiService);
     const notificationSenderService = new NotificationSenderService(apiService);
     const webhookService = new WebhookService(apiService);
+    const userGroupService = new UserGroupService(apiService);
 
     // Create Repositories (use Services)
     _container = {
@@ -129,6 +135,8 @@ export function getSystemContainer(): SystemContainer {
       notificationSenderRepository: new NotificationSenderRepository(notificationSenderService),
       // Webhooks
       webhookRepository: new WebhookRepository(webhookService),
+      // User Groups
+      userGroupRepository: new UserGroupRepository(userGroupService),
     };
   }
 
@@ -193,5 +201,9 @@ export const systemContainer = {
   // Webhooks
   get webhookRepository() {
     return getSystemContainer().webhookRepository;
+  },
+  // User Groups
+  get userGroupRepository() {
+    return getSystemContainer().userGroupRepository;
   },
 };

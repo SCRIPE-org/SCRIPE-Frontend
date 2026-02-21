@@ -563,6 +563,11 @@ export const docEn = {
       endpointsMyTenantTitle: "My Tenant Endpoints",
       endpointsPermissionsTitle: "Permission Endpoints",
       tenantScopingNote: "Roles are automatically scoped to the current user's tenant. A tenant admin can only see and manage roles within their own tenant. Super admins can see all roles across all tenants.",
+      // User Groups
+      userGroupsTitle: "User Groups",
+      userGroupsIntro: "User Groups enable batch assignment of roles and field-level restrictions to multiple administrators at once. Each group is tenant-scoped, contains members (admins), assigned roles, and per-permission field restrictions. When an admin logs in, roles and restrictions from all their groups are merged with direct role assignments to produce the final JWT claims.",
+      userGroupEndpointsTitle: "User Groups API Endpoints",
+      userGroupsNote: "User groups are additive — an admin's effective permissions are the UNION of their direct roles plus all group-inherited roles. Group restrictions are also merged additively. Removing an admin from a group immediately revokes the inherited roles and restrictions on next login.",
     },
 
     auditSystem: {
@@ -750,6 +755,30 @@ export const docEn = {
       endpointsTitle: "Template API Endpoints",
       previewTitle: "Preview Feature",
       previewIntro: "The preview endpoint renders a template with sample data, allowing admins to see exactly how the email or notification will look before sending. This is invaluable for testing templates and catching formatting issues.",
+    },
+
+    // User Groups
+    userGroups: {
+      title: "User Groups",
+      description: "Group-based role and restriction assignment with tenant scoping, member management, and additive merge at login.",
+      intro: "User Groups provide a scalable way to assign roles and field-level restrictions to large numbers of administrators. Instead of assigning roles individually to each admin, you create a group, add roles and restrictions to it, then add admins as members. All members automatically inherit the group's roles and restrictions on their next login.",
+      architectureTitle: "Architecture",
+      architectureIntro: "Each UserGroup belongs to a single tenant and contains three collections: Members (AdminUserGroup junction), Roles (UserGroupRole), and Restrictions (UserGroupRestriction). The group inherits from AuditableEntity for soft-delete support and implements ITenantAwareEntity for automatic tenant scoping.",
+      domainModelTitle: "Domain Model",
+      domainModelIntro: "The User Groups feature adds 4 entities to the Identity domain. UserGroup is the aggregate root. AdminUserGroup is the many-to-many junction between Admin and UserGroup. UserGroupRole assigns a role to all group members. UserGroupRestriction defines per-permission field restrictions.",
+      howItWorksTitle: "How It Works at Login",
+      howItWorksIntro: "When an admin logs in, the AdminSecurityService loads their direct roles AND all groups they belong to. For each group, it collects the group's roles and restrictions. The final set of permissions is the UNION of direct roles and all group-inherited roles. Restrictions are merged additively — if any source restricts a field, it is restricted in the effective claim set.",
+      mergeNote: "Group roles and restrictions are additive — they can only EXPAND an admin's effective restrictions, never remove direct role assignments. This matches the 'deny wins' security principle.",
+      memberManagementTitle: "Member Management",
+      memberManagementIntro: "Adding members is idempotent — posting an admin ID that is already a member silently succeeds. Removing a member removes the junction record; the admin retains all directly-assigned roles. The member list is queryable with admin metadata (name, email, status).",
+      roleAssignmentTitle: "Role Assignment",
+      roleAssignmentIntro: "Group roles use a nuke-and-pave pattern (PUT replaces all). This ensures the database always matches the UI state. Each role must belong to the same tenant as the group. Roles assigned via groups appear alongside directly-assigned roles in the admin's effective permission set.",
+      restrictionsTitle: "Field Restrictions",
+      restrictionsIntro: "Group restrictions follow the same model as role-level RestrictedFields. Each restriction targets a specific permission code and lists the fields to hide. At login, the system takes the UNION of all restricted fields across direct roles and all group memberships — if any source restricts 'salary', it's restricted regardless of other assignments.",
+      endpointsTitle: "API Endpoints (12)",
+      frontendTitle: "Frontend Module",
+      frontendIntro: "The frontend module follows the standard NEXORA module structure with domain, data, and presentation layers. The list page uses GenericCrudView for standard CRUD operations. The detail page provides 3 tabs for managing members, roles, and restrictions independently.",
+      securityNote: "User Groups are tenant-scoped. SuperAdmins see all groups across tenants. Tenant admins can only manage groups within their own tenant. All mutations are audited and require the user_groups.* permission set.",
     },
   },
 
@@ -1358,6 +1387,24 @@ export const docEn = {
       categoriesDesc: "Get permission categories with all permissions in each.",
       availableForTenantDesc: "List permissions available for a specific tenant (for tenant creation/editing).",
       seededNote: "Permissions are seeded from backend code during application startup. Adding new endpoints with [RequirePermission] attributes automatically creates new permissions on next deploy.",
+      // User Groups
+      userGroupsTitle: "User Groups",
+      userGroupsIntro: "User Groups enable batch assignment of roles and field-level restrictions to multiple admins. Groups are tenant-scoped. Members inherit the group's roles and restrictions on login. All mutations use the user_groups.* permission set.",
+      listGroupsDesc: "Paginated list of all user groups (SuperAdmin: cross-tenant).",
+      myTenantGroupsDesc: "List groups for the current user's tenant (from JWT).",
+      getGroupDesc: "Full group detail including members, roles, and restrictions.",
+      groupsByTenantDesc: "List groups for a specific tenant by ID.",
+      createGroupDesc: "Create a new user group (specify tenantId).",
+      createGroupMyTenantDesc: "Create a group for the current user's tenant (tenantId from JWT).",
+      updateGroupDesc: "Update group metadata (name, code, description, isActive).",
+      deleteGroupDesc: "Soft-delete a user group.",
+      groupMembersTitle: "Member Management",
+      addMembersDesc: "Add admins to a group. Idempotent — duplicates are silently ignored.",
+      removeMemberDesc: "Remove a single admin from a group. Admin keeps their direct roles.",
+      groupRolesRestrictionsTitle: "Roles & Restrictions Assignment",
+      setGroupRolesDesc: "Set roles for a group (nuke-and-pave). All members inherit these roles.",
+      setGroupRestrictionsDesc: "Set field restrictions per permission (nuke-and-pave). Merged with direct restrictions at login.",
+      groupsNote: "User groups are additive — an admin's effective permissions are the UNION of direct roles + all group-inherited roles. Restrictions are merged additively (deny wins). Changes take effect on next login.",
     },
 
     // ─── Webhook, Email & Notification API ───────────────────

@@ -16,6 +16,7 @@ const sections: DocSection[] = [
                   ["Role & Permissions", "Fine-grained access control", "RBAC, field-level restrictions, permission categories, role cloning"],
                   ["Audit System", "Comprehensive activity tracking", "4-source pipeline: API, entity changes, security events, business operations"],
                   ["Menu System", "Dynamic navigation management", "Self-referencing tree, per-tenant overrides, role-based visibility"],
+                  ["User Groups", "Batch role & restriction assignment", "Group-based RBAC, field-level restrictions, member management, tenant-scoped groups"],
             ],
       },
 

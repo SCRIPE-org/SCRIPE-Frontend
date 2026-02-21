@@ -37,6 +37,7 @@ const sections: DocSection[] = [
                   ["Audit", "View, Export, Delete", "Audit trail access"],
                   ["Settings", "View, Update", "System configuration"],
                   ["HR", "View, Create, Update, Delete, Export", "Human resources module"],
+                  ["User Groups", "View, Create, Update, Delete", "Group-based role and restriction batch assignment"],
                   ["Custom", "Dynamically registered per module", "Module-specific permissions"],
             ],
       },
@@ -66,6 +67,20 @@ const sections: DocSection[] = [
                   { icon: "users", titleKey: "commercial.rolesPermissions.roleCloning", descriptionKey: "commercial.rolesPermissions.roleCloningDesc" },
                   { icon: "building", titleKey: "commercial.rolesPermissions.tenantScoped", descriptionKey: "commercial.rolesPermissions.tenantScopedDesc" },
                   { icon: "zap", titleKey: "commercial.rolesPermissions.dynamicReg", descriptionKey: "commercial.rolesPermissions.dynamicRegDesc" },
+            ],
+      },
+
+      // ─── User Groups ──────────────────────────────────────────
+      { type: "heading", level: 2, titleKey: "commercial.rolesPermissions.userGroupsTitle", id: "user-groups" },
+      { type: "paragraph", contentKey: "commercial.rolesPermissions.userGroupsContent" },
+      {
+            type: "feature-grid",
+            columns: 2,
+            items: [
+                  { icon: "users", titleKey: "commercial.rolesPermissions.groupBatchAssign", descriptionKey: "commercial.rolesPermissions.groupBatchAssignDesc" },
+                  { icon: "shield", titleKey: "commercial.rolesPermissions.groupRestrictions", descriptionKey: "commercial.rolesPermissions.groupRestrictionsDesc" },
+                  { icon: "building", titleKey: "commercial.rolesPermissions.groupTenantScoped", descriptionKey: "commercial.rolesPermissions.groupTenantScopedDesc" },
+                  { icon: "zap", titleKey: "commercial.rolesPermissions.groupAdditiveMerge", descriptionKey: "commercial.rolesPermissions.groupAdditiveMergeDesc" },
             ],
       },
 ];

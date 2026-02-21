@@ -264,6 +264,71 @@ const sections: DocSection[] = [
             ],
       },
 
+      // ─── User Groups ────────────────────────────────────────
+      {
+            type: "heading", level: 2,
+            titleKey: "features.rolePermissions.userGroupsTitle", id: "user-groups",
+      },
+      { type: "paragraph", contentKey: "features.rolePermissions.userGroupsIntro" },
+      {
+            type: "table",
+            headers: ["Entity", "Purpose", "Key Fields"],
+            rows: [
+                  ["UserGroup", "Named container for batch assignments", "NameEn, NameAr, Code, TenantId, IsActive"],
+                  ["AdminUserGroup", "Many-to-many junction (Admin ↔ Group)", "AdminId, UserGroupId"],
+                  ["UserGroupRole", "Assigns Role to Group", "UserGroupId, RoleId"],
+                  ["UserGroupRestriction", "Field-level restriction per permission", "UserGroupId, PermissionCode, RestrictedFieldsJson"],
+            ],
+      },
+      {
+            type: "flowchart",
+            title: "Group Restriction Flow",
+            direction: "horizontal",
+            nodes: [
+                  { id: "login", label: "Admin Login" },
+                  { id: "direct", label: "Direct Roles" },
+                  { id: "groups", label: "Group Roles" },
+                  { id: "merge", label: "Merge All" },
+                  { id: "token", label: "JWT Token" },
+            ],
+            connections: [
+                  { from: "login", to: "direct", label: "AdminRoles" },
+                  { from: "login", to: "groups", label: "AdminUserGroups → GroupRoles" },
+                  { from: "direct", to: "merge" },
+                  { from: "groups", to: "merge" },
+                  { from: "merge", to: "token", label: "Union of all" },
+            ],
+      },
+
+      // ─── User Groups Endpoints ──────────────────────────────
+      {
+            type: "heading", level: 3,
+            titleKey: "features.rolePermissions.userGroupEndpointsTitle", id: "user-group-endpoints",
+      },
+      {
+            type: "api-table",
+            endpoints: [
+                  { method: "GET", path: "/api/v1/usergroups", descriptionKey: "Paginated list of all user groups (SuperAdmin)", auth: "user_groups.view" },
+                  { method: "GET", path: "/api/v1/usergroups/myTenantGroups", descriptionKey: "Groups for current user's tenant", auth: "user_groups.view" },
+                  { method: "GET", path: "/api/v1/usergroups/{id}", descriptionKey: "Full group detail with members, roles, restrictions", auth: "user_groups.view" },
+                  { method: "GET", path: "/api/v1/usergroups/byTenant/{tenantId}", descriptionKey: "Groups for a specific tenant", auth: "user_groups.view" },
+                  { method: "POST", path: "/api/v1/usergroups", descriptionKey: "Create group (specify tenant)", auth: "user_groups.create" },
+                  { method: "POST", path: "/api/v1/usergroups/createForMyTenant", descriptionKey: "Create group for JWT tenant", auth: "user_groups.create" },
+                  { method: "PUT", path: "/api/v1/usergroups/{id}", descriptionKey: "Update group metadata", auth: "user_groups.update" },
+                  { method: "DELETE", path: "/api/v1/usergroups/{id}", descriptionKey: "Soft-delete group", auth: "user_groups.delete" },
+                  { method: "POST", path: "/api/v1/usergroups/{id}/members", descriptionKey: "Add members (idempotent)", auth: "user_groups.update" },
+                  { method: "DELETE", path: "/api/v1/usergroups/{id}/members/{adminId}", descriptionKey: "Remove member", auth: "user_groups.update" },
+                  { method: "PUT", path: "/api/v1/usergroups/{id}/roles", descriptionKey: "Set roles (nuke-and-pave)", auth: "user_groups.update" },
+                  { method: "PUT", path: "/api/v1/usergroups/{id}/restrictions", descriptionKey: "Set restrictions (nuke-and-pave)", auth: "user_groups.update" },
+            ],
+      },
+
+      {
+            type: "info",
+            variant: "note",
+            contentKey: "features.rolePermissions.userGroupsNote",
+      },
+
       {
             type: "info",
             variant: "note",

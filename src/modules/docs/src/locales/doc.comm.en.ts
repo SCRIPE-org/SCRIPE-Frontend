@@ -722,6 +722,17 @@ export const docCommEn: Record<string, any> = {
       roleHierarchyDesc: "Prevent escalation of privilege by mathematically ensuring users cannot grant permissions they do not possess.",
       tenantScoped: "Tenant-Isolated Roles",
       tenantScopedDesc: "Role configurations belong exclusively to the Tenant. A 'Manager' in Tenant A has completely different bounds than a 'Manager' in Tenant B.",
+      // User Groups
+      userGroupsTitle: "Group-Based Batch Assignment",
+      userGroupsContent: "Stop assigning roles one admin at a time. NEXORA's User Groups feature allows you to create named groups, assign roles and field-level restrictions to the group, then add administrators as members. All members instantly inherit the group's permissions on their next login — with the full power of additive merge and field-level restriction propagation.",
+      groupBatchAssign: "Instant Batch Assignment",
+      groupBatchAssignDesc: "Assign complex role and restriction matrices to hundreds of administrators simultaneously via named group membership.",
+      groupRestrictions: "Group-Level Field Restrictions",
+      groupRestrictionsDesc: "Define per-permission field restrictions at the group level. Restrictions are additively merged with direct role restrictions at login.",
+      groupTenantScoped: "Tenant-Scoped Groups",
+      groupTenantScopedDesc: "Each group belongs to exactly one tenant. Tenant admins manage their own groups while SuperAdmins see all groups globally.",
+      groupAdditiveMerge: "Additive Security Merge",
+      groupAdditiveMergeDesc: "Group roles expand effective permissions. Group restrictions compound with direct restrictions — deny always wins.",
       title: "Granular Access Control",
     },
 

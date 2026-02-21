@@ -83,6 +83,7 @@ export const en = {
     menus: "Menu Management",
     tenant_settings: "My Tenant Settings",
     webhooks: "Webhooks",
+    userGroups: "User Groups",
   },
 
   // Tenants
@@ -591,6 +592,75 @@ export const en = {
     enterField: "e.g. Salary, SSN",
     noRestrictions: "No field restrictions",
     restrictionHint: "Specific API fields to hide from the user.",
+  },
+
+  // User Groups
+  userGroups: {
+    title: "User Groups",
+    description: "Manage user groups for batch role and restriction assignment.",
+    // List page
+    searchPlaceholder: "Search user groups...",
+    noGroupsFound: "No user groups found",
+    noGroupsDescription: "Create your first user group to get started.",
+    createGroup: "Create User Group",
+    createGroupDesc: "Add a new user group to organize administrators.",
+    editGroup: "Edit User Group",
+    deleteGroup: "Delete User Group",
+    deleteConfirmTitle: "Delete User Group",
+    deleteConfirmDesc: "This will permanently delete this group and remove all member assignments, role bindings, and restrictions.",
+    // List columns
+    members: "Members",
+    roles: "Roles",
+    restrictions: "Restrictions",
+    // Form fields
+    nameEn: "Name (English)",
+    nameAr: "Name (Arabic)",
+    code: "Code",
+    codeHint: "Unique identifier for this group. Cannot be changed later.",
+    descriptionEn: "Description (English)",
+    descriptionAr: "Description (Arabic)",
+    // Detail page
+    backToList: "Back to User Groups",
+    notFound: "User group not found",
+    // Members tab
+    membersTab: {
+      title: "Group Members",
+      description: "Admins who belong to this group inherit its roles and restrictions.",
+      addMembers: "Add Members",
+      addMembersDesc: "Select administrators to add to this group.",
+      removeMember: "Remove Member",
+      removeConfirm: "Remove this admin from the group? They will lose inherited roles and restrictions.",
+      searchAdmins: "Search admins...",
+    },
+    noMembers: "No members in this group yet.",
+    // Roles tab
+    rolesTab: {
+      title: "Assigned Roles",
+      description: "Roles assigned to this group are inherited by all members.",
+      setRoles: "Set Roles",
+      setRolesDesc: "Select roles to assign to this group. Existing roles will be replaced.",
+      searchRoles: "Search roles...",
+    },
+    noRoles: "No roles assigned to this group yet.",
+    // Restrictions tab
+    restrictionsTab: {
+      title: "Field Restrictions",
+      description: "Restricted fields apply additively to all group members.",
+      setRestrictions: "Set Restrictions",
+      setRestrictionsDesc: "Configure field-level restrictions for this group.",
+      permissionCode: "Permission Code",
+      restrictedFields: "Restricted Fields",
+      addRestriction: "Add Restriction",
+    },
+    noRestrictions: "No restrictions configured for this group.",
+    // Messages
+    createSuccess: "User group created successfully",
+    updateSuccess: "User group updated successfully",
+    deleteSuccess: "User group deleted successfully",
+    membersAdded: "Members added successfully",
+    memberRemoved: "Member removed from group",
+    rolesUpdated: "Group roles updated successfully",
+    restrictionsUpdated: "Group restrictions updated successfully",
   },
 
   // Role Detail View

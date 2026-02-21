@@ -218,6 +218,22 @@ export const API_ENDPOINTS = {
     DELIVERY_LOGS: (id: string) => `${V1}/webhooks/${id}/logs`,
     EVENTS: `${V1}/webhooks/events`,
   },
+
+  // ===== USER GROUPS =====
+  USER_GROUPS: {
+    LIST: `${V1}/UserGroups`,
+    MY_TENANT_GROUPS: `${V1}/UserGroups/myTenantGroups`,
+    BY_ID: (id: string) => `${V1}/UserGroups/${id}`,
+    BY_TENANT: (tenantId: string) => `${V1}/UserGroups/byTenant/${tenantId}`,
+    CREATE: `${V1}/UserGroups`,
+    CREATE_FOR_MY_TENANT: `${V1}/UserGroups/createForMyTenant`,
+    UPDATE: (id: string) => `${V1}/UserGroups/${id}`,
+    DELETE: (id: string) => `${V1}/UserGroups/${id}`,
+    ADD_MEMBERS: (id: string) => `${V1}/UserGroups/${id}/members`,
+    REMOVE_MEMBER: (id: string, adminId: string) => `${V1}/UserGroups/${id}/members/${adminId}`,
+    SET_ROLES: (id: string) => `${V1}/UserGroups/${id}/roles`,
+    SET_RESTRICTIONS: (id: string) => `${V1}/UserGroups/${id}/restrictions`,
+  },
 };
 
 /**
