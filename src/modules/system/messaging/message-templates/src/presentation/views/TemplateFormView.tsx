@@ -6,16 +6,19 @@ import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Textarea } from "@core/ui/textarea";
 import { Switch } from "@core/ui/switch";
-import { RichTextEditor } from "@core/ui/rich-text-editor/RichTextEditor";
 import { DEFAULT_VARIABLES } from "@core/ui/rich-text-editor/VariablePicker";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
 import { ArrowLeft, Save, Loader2, Settings, Palette, Braces, Eye } from "lucide-react";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
-import { PlaceholderSchemaBuilder } from "../components/PlaceholderSchemaBuilder";
-import { DesignVariablesPanel } from "../components/DesignVariablesPanel";
-import { TemplateLivePreview } from "../components/TemplateLivePreview";
+import dynamic from "next/dynamic";
+
+// Lazy-load heavy components (RichTextEditor ~150KB+ TipTap, sidebar panels)
+const RichTextEditor = dynamic(() => import("@core/ui/rich-text-editor/RichTextEditor").then(m => ({ default: m.RichTextEditor })), { ssr: false });
+const PlaceholderSchemaBuilder = dynamic(() => import("../components/PlaceholderSchemaBuilder").then(m => ({ default: m.PlaceholderSchemaBuilder })), { ssr: false });
+const DesignVariablesPanel = dynamic(() => import("../components/DesignVariablesPanel").then(m => ({ default: m.DesignVariablesPanel })), { ssr: false });
+const TemplateLivePreview = dynamic(() => import("../components/TemplateLivePreview").then(m => ({ default: m.TemplateLivePreview })), { ssr: false });
 
 export function TemplateFormView({ templateId: _templateId }: { templateId?: string } = {}) {
       const vm = useTemplateFormViewModel();

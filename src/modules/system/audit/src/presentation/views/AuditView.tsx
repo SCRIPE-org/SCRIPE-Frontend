@@ -8,17 +8,20 @@
  * SOLID: ~80 lines, zero logic — all delegated to ViewModels.
  */
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import { useAuditViewModel } from "../viewmodels/useAuditViewModel";
 import { useAuditRealtime } from "../viewmodels/useAuditRealtime";
 import { useI18n } from "@core/providers/i18n-provider";
 import { AuditFilterPanel } from "../components/AuditFilterPanel";
-import { AuditLogTable } from "../components/AuditLogTable";
-import { AuditDetailDialog } from "../components/AuditDetailDialog";
-import { AuditExportDialog } from "../components/AuditExportDialog";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { FileText, Radio, Download } from "lucide-react";
+
+// Lazy-load table and dialog components
+const AuditLogTable = dynamic(() => import("../components/AuditLogTable").then(m => ({ default: m.AuditLogTable })), { ssr: false });
+const AuditDetailDialog = dynamic(() => import("../components/AuditDetailDialog").then(m => ({ default: m.AuditDetailDialog })), { ssr: false });
+const AuditExportDialog = dynamic(() => import("../components/AuditExportDialog").then(m => ({ default: m.AuditExportDialog })), { ssr: false });
 
 const connectionColors = {
   connected: "bg-emerald-500",

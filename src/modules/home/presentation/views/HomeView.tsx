@@ -11,12 +11,15 @@
 import { useOverviewViewModel } from "../viewmodels/useOverviewViewModel";
 import { useOverviewRealtime } from "../viewmodels/useOverviewRealtime";
 import { WelcomeHeader } from "../components/WelcomeHeader";
-import { QuickStatsStrip } from "../components/QuickStatsStrip";
 import { QuickActionsGrid } from "../components/QuickActionsGrid";
-import { RecentActivityFeed } from "../components/RecentActivityFeed";
 import { MinimalWelcome } from "../components/MinimalWelcome";
 import { usePermission } from "@core/hooks/use-permission";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
+import dynamic from "next/dynamic";
+
+// Lazy-load below-fold components
+const QuickStatsStrip = dynamic(() => import("../components/QuickStatsStrip").then(m => ({ default: m.QuickStatsStrip })), { ssr: false });
+const RecentActivityFeed = dynamic(() => import("../components/RecentActivityFeed").then(m => ({ default: m.RecentActivityFeed })), { ssr: false });
 
 export function HomeView() {
   const hasDashboardPerm = usePermission(SYSTEM_PERMISSIONS.DASHBOARD_VIEW);

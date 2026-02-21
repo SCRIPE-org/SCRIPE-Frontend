@@ -11,22 +11,25 @@
  * Section-level guard: Security sections require SECURITY_VIEW
  */
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import { useDashboardViewModel } from "../viewmodels/useDashboardViewModel";
 import { useDashboardRealtime } from "../viewmodels/useDashboardRealtime";
 import { useI18n } from "@core/providers/i18n-provider";
 import { usePermission } from "@core/hooks/use-permission";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { KPICardsSection } from "../components/KPICardsSection";
-import { LoginActivityChart } from "../components/LoginActivityChart";
-import { EventDistributionChart } from "../components/EventDistributionChart";
-import { RecentChangesSection } from "../components/RecentChangesSection";
-import { SecurityEventsSection } from "../components/SecurityEventsSection";
-import { BlockedIPsSection } from "../components/BlockedIPsSection";
-import { ReportExportDialog } from "@core/ui/report-export-dialog";
 import { API_ENDPOINTS } from "@core/config/api-endpoints";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Radio, FileDown } from "lucide-react";
+
+// Lazy-load heavy chart/section components (not above-the-fold)
+const LoginActivityChart = dynamic(() => import("../components/LoginActivityChart").then(m => ({ default: m.LoginActivityChart })), { ssr: false });
+const EventDistributionChart = dynamic(() => import("../components/EventDistributionChart").then(m => ({ default: m.EventDistributionChart })), { ssr: false });
+const RecentChangesSection = dynamic(() => import("../components/RecentChangesSection").then(m => ({ default: m.RecentChangesSection })), { ssr: false });
+const SecurityEventsSection = dynamic(() => import("../components/SecurityEventsSection").then(m => ({ default: m.SecurityEventsSection })), { ssr: false });
+const BlockedIPsSection = dynamic(() => import("../components/BlockedIPsSection").then(m => ({ default: m.BlockedIPsSection })), { ssr: false });
+const ReportExportDialog = dynamic(() => import("@core/ui/report-export-dialog").then(m => ({ default: m.ReportExportDialog })), { ssr: false });
 
 const connectionColors = {
   connected: "bg-emerald-500",

@@ -6,16 +6,19 @@
  * Sections: Password Expiry Banner + Change Password + 2FA Status + Dialogs
  */
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useProfilePageViewModel } from "../viewmodels/useProfilePageViewModel";
 import { useSecurityViewModel } from "../viewmodels/useSecurityViewModel";
 import { PasswordExpiryBanner } from "../components/PasswordExpiryBanner";
 import { PasswordChangeForm } from "../components/PasswordChangeForm";
 import { TwoFactorStatus } from "../components/TwoFactorStatus";
-import { BackupCodesDialog } from "../components/BackupCodesDialog";
-import { TwoFactorSetupDialog } from "../components/TwoFactorSetupDialog";
-import { TwoFactorDisableDialog } from "../components/TwoFactorDisableDialog";
 import { Loader2 } from "lucide-react";
+
+// Lazy-load dialogs (only shown on click)
+const BackupCodesDialog = dynamic(() => import("../components/BackupCodesDialog").then(m => ({ default: m.BackupCodesDialog })), { ssr: false });
+const TwoFactorSetupDialog = dynamic(() => import("../components/TwoFactorSetupDialog").then(m => ({ default: m.TwoFactorSetupDialog })), { ssr: false });
+const TwoFactorDisableDialog = dynamic(() => import("../components/TwoFactorDisableDialog").then(m => ({ default: m.TwoFactorDisableDialog })), { ssr: false });
 
 export function ProfileSecurityView() {
   const { t } = useI18n();

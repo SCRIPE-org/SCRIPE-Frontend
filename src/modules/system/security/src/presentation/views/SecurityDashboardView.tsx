@@ -7,16 +7,19 @@
  * Includes export functionality with interval-based date selection.
  */
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import { useSecurityDashboardViewModel } from "../viewmodels/useSecurityDashboardViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
 import { ThreatSummaryCards } from "../components/ThreatSummaryCards";
-import { FailedLoginsHeatmap } from "../components/FailedLoginsHeatmap";
-import { BlockedIPsTable } from "../components/BlockedIPsTable";
-import { SecurityTimeline } from "../components/SecurityTimeline";
-import { ReportExportDialog } from "@core/ui/report-export-dialog";
 import { API_ENDPOINTS } from "@core/config/api-endpoints";
 import { Button } from "@core/ui/button";
 import { Shield, FileDown } from "lucide-react";
+
+// Lazy-load heavy sections (below-the-fold)
+const FailedLoginsHeatmap = dynamic(() => import("../components/FailedLoginsHeatmap").then(m => ({ default: m.FailedLoginsHeatmap })), { ssr: false });
+const BlockedIPsTable = dynamic(() => import("../components/BlockedIPsTable").then(m => ({ default: m.BlockedIPsTable })), { ssr: false });
+const SecurityTimeline = dynamic(() => import("../components/SecurityTimeline").then(m => ({ default: m.SecurityTimeline })), { ssr: false });
+const ReportExportDialog = dynamic(() => import("@core/ui/report-export-dialog").then(m => ({ default: m.ReportExportDialog })), { ssr: false });
 
 export function SecurityDashboardView() {
   const vm = useSecurityDashboardViewModel();

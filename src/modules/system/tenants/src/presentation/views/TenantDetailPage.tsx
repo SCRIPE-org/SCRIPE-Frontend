@@ -9,6 +9,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { useTenantContext } from "@core/providers/tenant-context-provider";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -18,10 +19,12 @@ import { Skeleton } from "@core/ui/skeleton";
 import { AlertTriangle } from "lucide-react";
 import { Button } from "@core/ui/button";
 import type { Tenant } from "../../domain/entities/Tenant";
-import { TenantHeader } from "../components/TenantHeader";
-import { TenantStats } from "../components/TenantStats";
-import { TenantTabs } from "../components/TenantTabs";
 import { appLogger } from "@/core/common/logger";
+
+// Lazy-load heavy sub-sections (below loading skeleton)
+const TenantHeader = dynamic(() => import("../components/TenantHeader").then(m => ({ default: m.TenantHeader })), { ssr: false });
+const TenantStats = dynamic(() => import("../components/TenantStats").then(m => ({ default: m.TenantStats })), { ssr: false });
+const TenantTabs = dynamic(() => import("../components/TenantTabs").then(m => ({ default: m.TenantTabs })), { ssr: false });
 
 interface TenantDetailPageProps {
   tenantId: string;

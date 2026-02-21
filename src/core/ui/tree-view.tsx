@@ -78,6 +78,46 @@ export interface TreeViewProps<T> {
   expandOnCardClick?: boolean; // New prop to enable/disable card click expansion
 }
 
+// Helper component to defer evaluating actions(node)
+function NodeActions<T>({
+  node,
+  actions,
+  direction,
+}: {
+  node: T;
+  actions: (node: T) => TreeAction[];
+  direction: string;
+}) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <DropdownMenu open={open} onOpenChange={setOpen}>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="icon" className="h-7 w-7">
+          <MoreHorizontal className="h-4 w-4" />
+        </Button>
+      </DropdownMenuTrigger>
+      {open && (
+        <DropdownMenuContent align={direction === "rtl" ? "start" : "end"}>
+          {actions(node).map((a, idx) => (
+            <DropdownMenuItem
+              key={idx}
+              onClick={a.onClick}
+              disabled={a.disabled}
+              className={cn(
+                a.variant === "destructive" && "text-destructive focus:text-destructive"
+              )}
+            >
+              {a.icon && <span className="mr-2 shrink-0 rtl:ml-2 rtl:mr-0">{a.icon}</span>}
+              {a.label}
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      )}
+    </DropdownMenu>
+  );
+}
+
 export function TreeView<T>({
   data,
   getId,
@@ -88,7 +128,7 @@ export function TreeView<T>({
   loading,
   toolbar,
   emptyMessage,
-  defaultExpanded = true,
+  defaultExpanded = false,
   onExpandChange,
   className,
   variant,
@@ -807,30 +847,7 @@ function TreeList<T>({
 
               {/* Actions */}
               {actions && (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-7 w-7">
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align={direction === "rtl" ? "start" : "end"}>
-                    {actions(node).map((a, idx) => (
-                      <DropdownMenuItem
-                        key={idx}
-                        onClick={a.onClick}
-                        disabled={a.disabled}
-                        className={cn(
-                          a.variant === "destructive" && "text-destructive focus:text-destructive"
-                        )}
-                      >
-                        {a.icon && (
-                          <span className="mr-2 shrink-0 rtl:ml-2 rtl:mr-0">{a.icon}</span>
-                        )}
-                        {a.label}
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                <NodeActions node={node} actions={actions} direction={direction} />
               )}
             </div>
 

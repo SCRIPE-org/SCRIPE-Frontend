@@ -7,15 +7,18 @@
  * Includes export functionality with interval-based date selection.
  */
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import { useTenantAnalyticsViewModel } from "../viewmodels/useTenantAnalyticsViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
 import { TenantMetricsCards } from "../components/TenantMetricsCards";
-import { AdminDistributionPie } from "../components/AdminDistributionPie";
-import { LoginComparisonChart } from "../components/LoginComparisonChart";
-import { ReportExportDialog } from "@core/ui/report-export-dialog";
 import { API_ENDPOINTS } from "@core/config/api-endpoints";
 import { Button } from "@core/ui/button";
 import { BarChart3, FileDown } from "lucide-react";
+
+// Lazy-load chart components (below-the-fold)
+const AdminDistributionPie = dynamic(() => import("../components/AdminDistributionPie").then(m => ({ default: m.AdminDistributionPie })), { ssr: false });
+const LoginComparisonChart = dynamic(() => import("../components/LoginComparisonChart").then(m => ({ default: m.LoginComparisonChart })), { ssr: false });
+const ReportExportDialog = dynamic(() => import("@core/ui/report-export-dialog").then(m => ({ default: m.ReportExportDialog })), { ssr: false });
 
 export function TenantAnalyticsView() {
   const vm = useTenantAnalyticsViewModel();
