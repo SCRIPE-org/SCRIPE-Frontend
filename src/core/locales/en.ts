@@ -3188,6 +3188,8 @@ export const en = {
   },
   // Common
   common: {
+    tenant: "Tenant",
+    name: "Name",
     created: "Created",
     preview: "Preview",
     all: "All",

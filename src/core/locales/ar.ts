@@ -86,6 +86,7 @@ export const ar = {
     menus: "إدارة القوائم",
     tenant_settings: "إعدادات المستأجر",
     webhooks: "الويب هوك",
+    userGroups: "مجموعات المستخدمين",
   },
 
   // Tenants - المستأجرون
@@ -621,6 +622,77 @@ export const ar = {
     permissionsSaved: "تم حفظ الصلاحيات بنجاح",
     fetchError: "فشل في جلب صلاحيات الدور",
     otherCategory: "أخرى",
+  },
+
+  // User Groups
+  userGroups: {
+    title: "مجموعات المستخدمين",
+    description: "إدارة مجموعات المستخدمين لتعيين الأدوار والقيود دفعة واحدة.",
+    // List page
+    searchPlaceholder: "البحث في مجموعات المستخدمين...",
+    noGroupsFound: "لا توجد مجموعات مستخدمين",
+    noGroupsDescription: "أنشئ أول مجموعة مستخدمين للبدء.",
+    createGroup: "إنشاء مجموعة مستخدمين",
+    createGroupDesc: "إضافة مجموعة مستخدمين جديدة لتنظيم المشرفين.",
+    editGroup: "تعديل مجموعة المستخدمين",
+    deleteGroup: "حذف مجموعة المستخدمين",
+    deleteConfirmTitle: "حذف مجموعة المستخدمين",
+    deleteConfirmDesc: "سيؤدي هذا إلى حذف هذه المجموعة نهائياً وإزالة جميع تعيينات الأعضاء والأدوار المخصصة والقيود.",
+    // List columns
+    members: "الأعضاء",
+    roles: "الأدوار",
+    restrictions: "القيود",
+    // Form fields
+    nameEn: "الاسم (بالإنجليزية)",
+    nameAr: "الاسم (بالعربية)",
+    code: "الرمز",
+    codeHint: "معرف فريد لهذه المجموعة. لا يمكن تغييره لاحقاً.",
+    descriptionEn: "الوصف (بالإنجليزية)",
+    descriptionAr: "الوصف (بالعربية)",
+    // Detail page
+    backToList: "العودة إلى مجموعات المستخدمين",
+    notFound: "مجموعة المستخدمين غير موجودة",
+    // Members tab
+    membersTab: {
+      title: "أعضاء المجموعة",
+      description: "المشرفون الذين ينتمون إلى هذه المجموعة يرثون أدوارها وقيودها.",
+      addMembers: "إضافة أعضاء",
+      addMembersDesc: "اختر المشرفين لإضافتهم إلى هذه المجموعة.",
+      removeMember: "إزالة العضو",
+      removeConfirm: "إزالة هذا المشرف من المجموعة؟ سيفقدون الأدوار والقيود الموروثة.",
+      searchAdmins: "البحث في المشرفين...",
+    },
+    noMembers: "لا يوجد أعضاء في هذه المجموعة بعد.",
+    // Roles tab
+    rolesTab: {
+      title: "الأدوار المعينة",
+      description: "الأدوار المعينة لهذه المجموعة يرثها جميع الأعضاء.",
+      setRoles: "تعيين الأدوار",
+      setRolesDesc: "اختر الأدوار لتعيينها لهذه المجموعة.",
+    },
+    // Restrictions tab
+    restrictionsTab: {
+      title: "قيود الحقول",
+      description: "تقييد الوصول إلى حقول محددة لأعضاء هذه المجموعة.",
+      setRestrictions: "تكوين القيود",
+      setRestrictionsDesc: "اختر الصلاحيات وحدد الحقول لتقييدها.",
+      addRestriction: "إضافة قيد",
+      permissionRule: "قاعدة الصلاحية",
+      selectPermission: "اختر الصلاحية...",
+      restrictedFields: "الحقول المقيدة",
+      fieldsPlaceholder: "اكتب واضغط Enter (مثال: salary, ssn)",
+      noRestrictions: "لم يتم تكوين أي قيود.",
+      noPermissionsSelected: "اختر صلاحية أولاً.",
+    },
+    // Actions
+    saving: "جاري الحفظ...",
+    deleting: "جاري الحذف...",
+    saveSuccess: "تم حفظ مجموعة المستخدمين بنجاح",
+    deleteSuccess: "تم حذف مجموعة المستخدمين بنجاح",
+    membersUpdated: "تم تحديث أعضاء المجموعة بنجاح",
+    rolesUpdated: "تم تحديث أدوار المجموعة بنجاح",
+    restrictionsUpdated: "تم تحديث قيود المجموعة بنجاح",
+    failedToLoad: "فشل في تحميل تفاصيل مجموعة المستخدمين",
   },
 
   // Product
@@ -3308,6 +3380,8 @@ export const ar = {
 
   // Common
   common: {
+    tenant: "المستأجر",
+    name: "الاسم",
     created: "تم الإنشاء",
     preview: "معاينة",
     all: "الكل",
