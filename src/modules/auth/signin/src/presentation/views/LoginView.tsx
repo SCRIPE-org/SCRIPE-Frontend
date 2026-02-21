@@ -6,13 +6,14 @@ import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { useI18n } from "@core/providers/i18n-provider";
-import { Eye, EyeOff, ArrowLeft, ShieldCheck, KeyRound } from "lucide-react";
+import { Eye, EyeOff, ArrowLeft, ShieldCheck, KeyRound, BookOpen } from "lucide-react";
 import { Logo } from "@core/ui/logo";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { LanguageSwitcher } from "@core/ui/layout/common/language-switcher";
 import { ThemeSwitcher } from "@core/ui/layout/common/theme-switcher";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@core/ui/input-otp";
 import { useLoginViewModel } from "../viewmodels/use-login-viewmodel";
+import Link from "next/link";
 
 export function LoginView() {
   const { t, language } = useI18n();
@@ -55,10 +56,20 @@ export function LoginView() {
       {/* Background Pattern */}
       <div className="bg-grid-pattern absolute inset-0 opacity-5"></div>
 
-      {/* Language and Theme Switchers */}
+      {/* Docs Link - Top Left */}
+      <div className="absolute left-4 top-4">
+        <Button variant="outline" className="glass bg-transparent gap-2 border-primary/20 hover:bg-primary/10" asChild>
+          <Link href="/docs">
+            <BookOpen className="h-4 w-4" />
+            <span className="hidden sm:inline-block">Docs</span>
+          </Link>
+        </Button>
+      </div>
+
+      {/* Language and Theme Switchers - Top Right */}
       <div className="absolute right-4 top-4 flex items-center gap-2">
-        <LanguageSwitcher buttonClassName="glass bg-transparent" />
-        <ThemeSwitcher buttonClassName="glass bg-transparent" />
+        <LanguageSwitcher buttonClassName="glass bg-transparent border-primary/20 hover:bg-primary/10" />
+        <ThemeSwitcher buttonClassName="glass bg-transparent border-primary/20 hover:bg-primary/10" />
       </div>
 
       <Card className="glass hover-lift animate-fade-in w-full max-w-md">
