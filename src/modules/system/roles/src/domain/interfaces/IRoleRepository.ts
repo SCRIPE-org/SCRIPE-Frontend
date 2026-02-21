@@ -100,4 +100,5 @@ export interface IRoleRepository {
    * Clone a role (copies permissions filtered to cloner's own permissions)
    */
   clone(roleId: string, request: CloneRoleRequest): Promise<string>;
+  bulkDelete(ids: string[]): Promise<number>;
 }

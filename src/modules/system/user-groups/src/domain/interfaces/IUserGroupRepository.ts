@@ -29,4 +29,7 @@ export interface IUserGroupRepository {
       removeMember(groupId: string, adminId: string): Promise<void>;
       setRoles(groupId: string, request: SetGroupRolesRequest): Promise<void>;
       setRestrictions(groupId: string, request: SetGroupRestrictionsRequest): Promise<void>;
+      bulkActivate(ids: string[]): Promise<number>;
+      bulkDeactivate(ids: string[]): Promise<number>;
+      bulkDelete(ids: string[]): Promise<number>;
 }

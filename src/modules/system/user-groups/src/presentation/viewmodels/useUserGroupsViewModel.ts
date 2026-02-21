@@ -33,18 +33,21 @@ export interface UserGroupListItem {
       createdAt: string;
 }
 
-export function useUserGroupsViewModel() {
+export function useUserGroupsViewModel(options?: { useMyTenant?: boolean; tenantId?: string }) {
       const repo = systemContainer.userGroupRepository;
+      const { useMyTenant, tenantId } = options || {};
 
       const vm = useCrudViewModel<UserGroupListItem, CreateUserGroupRequest, UpdateUserGroupRequest>(
-            [...userGroupKeys.all],
+            [...userGroupKeys.all, useMyTenant ? "my-tenant" : tenantId || "all"],
             {
                   getAll: async (params) => {
-                        const result = await repo.getAll({
+                        const payload = {
                               page: params.page ?? 1,
                               pageSize: params.pageSize ?? 10,
                               search: params.search as string | undefined,
-                        });
+                              tenantId,
+                        };
+                        const result = useMyTenant ? await repo.getMyTenantGroups(payload) : await repo.getAll(payload);
                         return {
                               items: result.items.map((g) => ({
                                     id: g.id,

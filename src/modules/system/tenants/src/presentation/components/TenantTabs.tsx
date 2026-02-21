@@ -18,6 +18,7 @@ import { cn } from "@core/common/utils";
 // Tab components (SOLID - each in separate file)
 import { TenantAdminsTab } from "./tabs/TenantAdminsTab";
 import { TenantRolesTab } from "./tabs/TenantRolesTab";
+import { TenantUserGroupsTab } from "./tabs/TenantUserGroupsTab";
 import { SubTenantsTab } from "./tabs/SubTenantsTab";
 import { TenantSettingsTab } from "./tabs/TenantSettingsTab";
 
@@ -44,6 +45,11 @@ export function TenantTabs({ tenantId, tenantName, tenantCode, parentTenantId }:
       icon: Shield,
     },
     {
+      value: "userGroups",
+      label: t("tenant.tabUserGroups") || "User Groups",
+      icon: Users,
+    },
+    {
       value: "subtenants",
       label: t("tenant.tabSubTenants") || "Sub-Tenants",
       icon: Building2,
@@ -60,7 +66,7 @@ export function TenantTabs({ tenantId, tenantName, tenantCode, parentTenantId }:
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         {/* Tab Navigation */}
         <CardHeader className="border-b pb-0">
-          <TabsList className="grid h-auto w-full grid-cols-4 bg-muted/30 p-1">
+          <TabsList className="grid h-auto w-full grid-cols-5 bg-muted/30 p-1">
             {tabs.map((tab) => (
               <TabsTrigger
                 key={tab.value}
@@ -90,6 +96,11 @@ export function TenantTabs({ tenantId, tenantName, tenantCode, parentTenantId }:
           {/* Roles Tab */}
           <TabsContent value="roles" className="m-0 p-6">
             <TenantRolesTab tenantId={tenantId} tenantName={tenantName} />
+          </TabsContent>
+
+          {/* User Groups Tab */}
+          <TabsContent value="userGroups" className="m-0 p-6">
+            <TenantUserGroupsTab tenantId={tenantId} tenantName={tenantName} />
           </TabsContent>
 
           {/* Sub-Tenants Tab */}

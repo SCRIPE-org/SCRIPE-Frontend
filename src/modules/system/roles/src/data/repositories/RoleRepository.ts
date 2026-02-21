@@ -118,6 +118,10 @@ export class RoleRepository implements IRoleRepository {
     return PermissionMapper.toEntityList(models);
   }
 
+  async bulkDelete(ids: string[]): Promise<number> {
+    return this.service.bulkDelete(ids);
+  }
+
   async getAdminCount(roleId: string): Promise<number> {
     return this.service.getAdminCount(roleId);
   }

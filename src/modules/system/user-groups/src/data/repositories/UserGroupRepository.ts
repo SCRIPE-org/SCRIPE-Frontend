@@ -91,4 +91,16 @@ export class UserGroupRepository implements IUserGroupRepository {
       async setRestrictions(groupId: string, request: SetGroupRestrictionsRequest): Promise<void> {
             await this.service.setRestrictions(groupId, request);
       }
+
+      async bulkActivate(ids: string[]): Promise<number> {
+            return this.service.bulkActivate(ids);
+      }
+
+      async bulkDeactivate(ids: string[]): Promise<number> {
+            return this.service.bulkDeactivate(ids);
+      }
+
+      async bulkDelete(ids: string[]): Promise<number> {
+            return this.service.bulkDelete(ids);
+      }
 }

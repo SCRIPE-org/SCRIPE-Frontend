@@ -290,6 +290,7 @@ export function UserGroupDetailView({ groupId }: Props) {
                               setShowAddMembers(false);
                         }}
                         isSubmitting={isAddingMembers}
+                        tenantId={group.tenantId || undefined}
                   />
                   <SetRolesDialog
                         open={showSetRoles}
@@ -300,6 +301,7 @@ export function UserGroupDetailView({ groupId }: Props) {
                               setShowSetRoles(false);
                         }}
                         isSubmitting={isSettingRoles}
+                        tenantId={group.tenantId || undefined}
                   />
                   <SetRestrictionsDialog
                         open={showSetRestrictions}

@@ -94,6 +94,10 @@ export const API_ENDPOINTS = {
     REMOVE_PERMISSION: (roleId: string, permissionId: string) =>
       `${V1}/Roles/${roleId}/permissions/${permissionId}`,
     CLONE: (id: string) => `${V1}/Roles/${id}/clone`,
+    BULK: {
+      DELETE: `${V1}/Roles/bulk/delete`,
+      DELETE_ALL: `${V1}/Roles/bulk/delete-all`,
+    },
   },
 
   // ===== PERMISSIONS =====
@@ -233,6 +237,14 @@ export const API_ENDPOINTS = {
     REMOVE_MEMBER: (id: string, adminId: string) => `${V1}/UserGroups/${id}/members/${adminId}`,
     SET_ROLES: (id: string) => `${V1}/UserGroups/${id}/roles`,
     SET_RESTRICTIONS: (id: string) => `${V1}/UserGroups/${id}/restrictions`,
+    BULK: {
+      ACTIVATE: `${V1}/UserGroups/bulk/activate`,
+      DEACTIVATE: `${V1}/UserGroups/bulk/deactivate`,
+      DELETE: `${V1}/UserGroups/bulk/delete`,
+      ACTIVATE_ALL: `${V1}/UserGroups/bulk/activate-all`,
+      DEACTIVATE_ALL: `${V1}/UserGroups/bulk/deactivate-all`,
+      DELETE_ALL: `${V1}/UserGroups/bulk/delete-all`,
+    },
   },
 };
 

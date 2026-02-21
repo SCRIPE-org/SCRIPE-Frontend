@@ -28,10 +28,15 @@ export function RolesView() {
 
   // Logic: Super Admins see System/Context (Auto-Scoped), Tenant Admins see My Tenant
   const viewModel = useRolesViewModel({ useMyTenant: !isSuperAdmin });
+  const { handleBulkDelete } = viewModel;
 
   // Assign to Group dialog state
   const [selectedRoleForGroup, setSelectedRoleForGroup] = useState<Role | null>(null);
   const [assignToGroupOpen, setAssignToGroupOpen] = useState(false);
+
+  // Bulk Assign to Group dialog state
+  const [selectedBulkRoleIds, setSelectedBulkRoleIds] = useState<string[]>([]);
+  const [bulkAssignToGroupOpen, setBulkAssignToGroupOpen] = useState(false);
 
   const handleOpenAssignToGroup = useCallback((role: Role) => {
     setSelectedRoleForGroup(role);
@@ -185,11 +190,45 @@ export function RolesView() {
     ],
     getItemDisplayName: (role) => role.getLocalizedName(language),
     itemTypeKey: "roles.roleDetails", // Used for delete confirmation ("Delete Role Details" -> "Delete Role")
+    enableBulkActions: true,
+    bulkActions: [
+      {
+        label: t("userGroups.assignToGroup") || "Assign to Group",
+        icon: <Users className="h-4 w-4" />,
+        onClick: async (ids: string[]) => {
+          setSelectedBulkRoleIds(ids);
+          setBulkAssignToGroupOpen(true);
+        },
+        variant: "outline" as const,
+      },
+      {
+        label: t("common.delete") || "Delete",
+        icon: <Trash className="h-4 w-4" />,
+        onClick: async (ids: string[]) => { await handleBulkDelete(ids); },
+        variant: "destructive" as const,
+        requiresConfirmation: true,
+      },
+    ],
   };
 
   return (
     <>
       <GenericCrudView viewModel={viewModel} config={config} />
+
+      {/* Bulk Assign to Group Dialog */}
+      {bulkAssignToGroupOpen && (
+        <AssignToGroupDialog
+          open={bulkAssignToGroupOpen}
+          onOpenChange={(open) => {
+            if (!open) {
+              setBulkAssignToGroupOpen(false);
+              setSelectedBulkRoleIds([]);
+            }
+          }}
+          mode="role"
+          roleIds={selectedBulkRoleIds}
+        />
+      )}
 
       {/* Assign to Group Dialog */}
       <AssignToGroupDialog

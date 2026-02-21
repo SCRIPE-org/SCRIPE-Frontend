@@ -376,20 +376,27 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
   // Generic bulk action handler
   const handleBulkAction = useCallback(
     async (action: BulkAction, selectedIds: string[]) => {
-      await deleteSystem.confirmDelete(
-        async () => {
-          await action.onClick(selectedIds);
-          await viewModel.refreshItems();
-        },
-        {
-          itemName: `${selectedIds.length} items`,
-          itemType: config?.itemTypeKey ? t(config.itemTypeKey) : "Items",
-          confirmTitle: action.confirmTitle || action.label,
-          confirmDescription:
-            action.confirmDescription ||
-            `Are you sure you want to ${action.label.toLowerCase()} ${selectedIds.length} items?`,
-        }
-      );
+      const execute = async () => {
+        await action.onClick(selectedIds);
+        viewModel.setSelectedItems([]);
+        await viewModel.refreshItems();
+      };
+
+      if (action.requiresConfirmation || action.confirmTitle || action.confirmDescription) {
+        await deleteSystem.confirmDelete(
+          execute,
+          {
+            itemName: `${selectedIds.length} items`,
+            itemType: config?.itemTypeKey ? t(config.itemTypeKey) : "Items",
+            confirmTitle: action.confirmTitle || action.label,
+            confirmDescription:
+              action.confirmDescription ||
+              `Are you sure you want to ${action.label.toLowerCase()} ${selectedIds.length} items?`,
+          }
+        );
+      } else {
+        await execute();
+      }
     },
     [deleteSystem, viewModel, config, t]
   );
@@ -397,19 +404,25 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
   // Generic custom action handler
   const handleCustomAction = useCallback(
     async (action: CustomAction) => {
-      await deleteSystem.confirmDelete(
-        async () => {
-          await action.onClick();
-          await viewModel.refreshItems();
-        },
-        {
-          itemName: "all items",
-          itemType: config?.itemTypeKey ? t(config.itemTypeKey) : "Items",
-          confirmTitle: action.confirmTitle || action.label,
-          confirmDescription:
-            action.confirmDescription || `Are you sure you want to ${action.label.toLowerCase()}?`,
-        }
-      );
+      const execute = async () => {
+        await action.onClick();
+        await viewModel.refreshItems();
+      };
+
+      if (action.confirmTitle || action.confirmDescription) {
+        await deleteSystem.confirmDelete(
+          execute,
+          {
+            itemName: "all items",
+            itemType: config?.itemTypeKey ? t(config.itemTypeKey) : "Items",
+            confirmTitle: action.confirmTitle || action.label,
+            confirmDescription:
+              action.confirmDescription || `Are you sure you want to ${action.label.toLowerCase()}?`,
+          }
+        );
+      } else {
+        await execute();
+      }
     },
     [deleteSystem, viewModel, config, t]
   );

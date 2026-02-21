@@ -54,4 +54,5 @@ export interface IRoleService {
     id: string,
     json: { nameEn: string; nameAr: string; descriptionEn?: string; descriptionAr?: string }
   ): Promise<{ id: string }>;
+  bulkDelete(ids: string[]): Promise<number>;
 }

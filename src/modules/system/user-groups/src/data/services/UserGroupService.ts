@@ -122,4 +122,22 @@ export class UserGroupService {
       async setRestrictions(groupId: string, request: SetGroupRestrictionsRequest): Promise<void> {
             await this.api.put(API_ENDPOINTS.USER_GROUPS.SET_RESTRICTIONS(groupId), request);
       }
+
+      async bulkActivate(ids: string[]): Promise<number> {
+            const response = await this.api.post<{ affectedRows?: number } | number>(API_ENDPOINTS.USER_GROUPS.BULK.ACTIVATE, { ids });
+            if (typeof response === "number") return response;
+            return response.affectedRows ?? ids.length;
+      }
+
+      async bulkDeactivate(ids: string[]): Promise<number> {
+            const response = await this.api.post<{ affectedRows?: number } | number>(API_ENDPOINTS.USER_GROUPS.BULK.DEACTIVATE, { ids });
+            if (typeof response === "number") return response;
+            return response.affectedRows ?? ids.length;
+      }
+
+      async bulkDelete(ids: string[]): Promise<number> {
+            const response = await this.api.post<{ affectedRows?: number } | number>(API_ENDPOINTS.USER_GROUPS.BULK.DELETE, { ids });
+            if (typeof response === "number") return response;
+            return response.affectedRows ?? ids.length;
+      }
 }

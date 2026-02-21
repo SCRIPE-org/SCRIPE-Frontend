@@ -54,16 +54,16 @@ export function useRolesViewModel(params: UseRolesViewModelParams = {}) {
       // Choose appropriate endpoint based on options
       const res = useMyTenant
         ? await roleRepository.getMyTenantRoles({
-            page: queryParams.page,
-            pageSize: queryParams.pageSize,
-            search: queryParams.search,
-          })
+          page: queryParams.page,
+          pageSize: queryParams.pageSize,
+          search: queryParams.search,
+        })
         : await roleRepository.getAll({
-            page: queryParams.page,
-            pageSize: queryParams.pageSize,
-            search: queryParams.search,
-            tenantId,
-          });
+          page: queryParams.page,
+          pageSize: queryParams.pageSize,
+          search: queryParams.search,
+          tenantId,
+        });
       return {
         items: res.items || [],
         pagination: {
@@ -183,6 +183,24 @@ export function useRolesViewModel(params: UseRolesViewModelParams = {}) {
     [cloneMutation]
   );
 
+  // Bulk Delete
+  const bulkDeleteMutation = useMutation({
+    mutationFn: (ids: string[]) => roleRepository.bulkDelete(ids),
+    onSuccess: (deletedCount) => {
+      queryClient.invalidateQueries({ queryKey });
+      success({
+        title: "Roles Deleted",
+        description: `${deletedCount} role(s) have been deleted successfully.`,
+      });
+    },
+    onError: (err: Error) => {
+      toastError({
+        title: "Bulk Delete Failed",
+        description: err.message || "Failed to delete selected roles.",
+      });
+    },
+  });
+
   // Return the vm directly plus any additional role-specific properties
   return {
     ...vm,
@@ -192,5 +210,7 @@ export function useRolesViewModel(params: UseRolesViewModelParams = {}) {
     isAssigningPermissions: assignPermissionsMutation.isPending,
     clone,
     isCloning: cloneMutation.isPending,
+    handleBulkDelete: (ids: string[]) => bulkDeleteMutation.mutateAsync(ids),
+    isBulkDeleting: bulkDeleteMutation.isPending,
   };
 }

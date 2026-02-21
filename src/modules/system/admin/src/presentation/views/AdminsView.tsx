@@ -67,6 +67,9 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
     isTransferring,
     handleTransferProtection,
     isTransferringProtection,
+    handleBulkActivate,
+    handleBulkDeactivate,
+    handleBulkDelete,
   } = useAdminsViewModel({ useMyTenant: !isSuperAdmin, tenantId });
 
   const configBase = getConfigBase();
@@ -76,6 +79,10 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
   const [manageRolesDialogOpen, setManageRolesDialogOpen] = useState(false);
   const [resetPasswordDialogOpen, setResetPasswordDialogOpen] = useState(false);
   const [assignToGroupDialogOpen, setAssignToGroupDialogOpen] = useState(false);
+
+  // Bulk state
+  const [selectedBulkAdminIds, setSelectedBulkAdminIds] = useState<string[]>([]);
+  const [bulkAssignToGroupDialogOpen, setBulkAssignToGroupDialogOpen] = useState(false);
 
   // Dialog handlers
   const handleOpenManageRoles = useCallback((admin: Admin) => {
@@ -209,7 +216,6 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
       createInitialValues: configBase.createInitialValues,
       editInitialValues: configBase.editInitialValues,
       getItemDisplayName: configBase.getItemDisplayName,
-      enableBulkActions: configBase.enableBulkActions,
       permissions: configBase.permissions,
       deleteService: configBase.deleteService,
       getActions: (vmInstance: any, tFn: any, handleDeleteFn: any): CrudAction<Admin>[] => {
@@ -314,6 +320,37 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
 
         return actions;
       },
+      enableBulkActions: true,
+      bulkActions: [
+        {
+          label: t("common.activate") || "Activate",
+          icon: <ShieldCheck className="h-4 w-4" />,
+          onClick: async (ids: string[]) => { await handleBulkActivate(ids); },
+          variant: "outline" as const,
+        },
+        {
+          label: t("common.deactivate") || "Deactivate",
+          icon: <ShieldAlert className="h-4 w-4" />,
+          onClick: async (ids: string[]) => { await handleBulkDeactivate(ids); },
+          variant: "outline" as const,
+        },
+        {
+          label: t("userGroups.assignToGroup") || "Assign to Group",
+          icon: <Users className="h-4 w-4" />,
+          onClick: async (ids: string[]) => {
+            setSelectedBulkAdminIds(ids);
+            setBulkAssignToGroupDialogOpen(true);
+          },
+          variant: "outline" as const,
+        },
+        {
+          label: t("common.delete") || "Delete",
+          icon: <Trash2 className="h-4 w-4" />,
+          onClick: async (ids: string[]) => { await handleBulkDelete(ids); },
+          variant: "destructive" as const,
+          requiresConfirmation: true,
+        },
+      ],
     }),
     [
       t,
@@ -328,6 +365,9 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
       handleOpenTransfer,
       handleTransferProtection,
       language,
+      handleBulkActivate,
+      handleBulkDeactivate,
+      handleBulkDelete,
     ]
   );
 
@@ -336,6 +376,23 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
   return (
     <>
       <GenericCrudView viewModel={vm} config={config} />
+
+      {/* Bulk Assign to Group Dialog */}
+      {bulkAssignToGroupDialogOpen && (
+        <AssignToGroupDialog
+          open={bulkAssignToGroupDialogOpen}
+          onOpenChange={(open) => {
+            if (!open) {
+              setBulkAssignToGroupDialogOpen(false);
+              setSelectedBulkAdminIds([]);
+            }
+          }}
+          adminIds={selectedBulkAdminIds}
+          mode="admin"
+          tenantId={tenantId}
+          useMyTenant={!isSuperAdmin && !tenantId}
+        />
+      )}
 
       {/* Role Management Dialog */}
       <ManageRolesDialog
@@ -368,6 +425,8 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
         mode="admin"
         adminId={selectedAdminForAction?.id}
         adminName={selectedAdminForAction?.displayName}
+        tenantId={selectedAdminForAction?.tenantId || tenantId}
+        useMyTenant={!isSuperAdmin && !tenantId && !selectedAdminForAction?.tenantId}
       />
     </>
   );

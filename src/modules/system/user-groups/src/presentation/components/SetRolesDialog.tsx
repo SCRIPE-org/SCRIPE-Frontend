@@ -23,20 +23,22 @@ interface SetRolesDialogProps {
       currentRoles: Array<{ roleId: string; nameEn: string; nameAr: string; code: string }>;
       onSubmit: (roleIds: string[]) => void;
       isSubmitting?: boolean;
+      tenantId?: string;
 }
 
 export function SetRolesDialog({
-      open, onOpenChange, currentRoles, onSubmit, isSubmitting
+      open, onOpenChange, currentRoles, onSubmit, isSubmitting, tenantId
 }: SetRolesDialogProps) {
       const { t, language } = useI18n();
       const [selectedRoleIds, setSelectedRoleIds] = useState<string[]>([]);
 
       // Fetch all available roles
       const { data: rolesData, isLoading } = useQuery({
-            queryKey: ["roles-for-group-assign"],
+            queryKey: ["roles-for-group-assign", tenantId],
             queryFn: () => systemContainer.roleRepository.getAll({
                   page: 1,
                   pageSize: 200,
+                  tenantId,
             }),
             enabled: open,
       });

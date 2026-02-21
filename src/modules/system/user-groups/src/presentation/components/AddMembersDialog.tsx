@@ -23,22 +23,29 @@ interface AddMembersDialogProps {
       existingMemberIds: string[];
       onSubmit: (adminIds: string[]) => void;
       isSubmitting?: boolean;
+      tenantId?: string;
 }
 
 export function AddMembersDialog({
-      open, onOpenChange, groupId, existingMemberIds, onSubmit, isSubmitting
+      open, onOpenChange, groupId, existingMemberIds, onSubmit, isSubmitting, tenantId
 }: AddMembersDialogProps) {
       const { t, language } = useI18n();
       const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
-      // Fetch all admins
+      // Fetch all admins (scoped to tenant if specified)
       const { data: adminsData, isLoading } = useQuery({
-            queryKey: ["admins-for-group", groupId],
-            queryFn: () => systemContainer.adminRepository.getAll({
-                  page: 1,
-                  pageSize: 200,
-                  isActive: true,
-            }),
+            queryKey: ["admins-for-group", groupId, tenantId],
+            queryFn: () => tenantId
+                  ? systemContainer.adminRepository.getByTenantId(tenantId, {
+                        page: 1,
+                        pageSize: 200,
+                        isActive: true,
+                  })
+                  : systemContainer.adminRepository.getAll({
+                        page: 1,
+                        pageSize: 200,
+                        isActive: true,
+                  }),
             enabled: open,
       });
 
