@@ -81,12 +81,16 @@ export function useRoleDetailViewModel() {
     queryKey: ["role", roleId],
     queryFn: () => roleRepository.getById(roleId),
     enabled: !!roleId,
+    staleTime: 0, // Always refetch on mount to avoid stale data after saves
+    gcTime: 0,
   });
 
   const { data: rolePermissions, isLoading: rolePermissionsLoading } = useQuery<any[]>({
     queryKey: ["rolePermissions", roleId],
     queryFn: () => roleRepository.getRolePermissions(roleId),
     enabled: !!roleId,
+    staleTime: 0,
+    gcTime: 0,
   });
 
   // Use roleRepository's available permissions (tenant-scoped)
@@ -151,7 +155,9 @@ export function useRoleDetailViewModel() {
       });
     },
     onSuccess: () => {
+      // Invalidate both role and permissions queries to ensure fresh data
       queryClient.invalidateQueries({ queryKey: ["rolePermissions", roleId] });
+      queryClient.invalidateQueries({ queryKey: ["role", roleId] });
       success({
         title: t("common.success"),
         description: t("roleDetail.permissionsSaved"),
