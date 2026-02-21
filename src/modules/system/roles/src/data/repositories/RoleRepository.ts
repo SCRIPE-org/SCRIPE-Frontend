@@ -27,7 +27,7 @@ import { PermissionMapper } from "@modules/system/permissions/src/data/mappers/P
 import { PermissionModel } from "@modules/system/permissions/src/data/models/PermissionModel";
 
 export class RoleRepository implements IRoleRepository {
-  constructor(private readonly service: IRoleService) {}
+  constructor(private readonly service: IRoleService) { }
 
   async getAll(params: RoleListParams): Promise<PagedResult<Role>> {
     const result = await this.service.getAll({
@@ -70,7 +70,12 @@ export class RoleRepository implements IRoleRepository {
 
   async create(request: CreateRoleRequest): Promise<string> {
     const model = RoleMapper.toCreateModel(request);
-    const response = await this.service.create(model.toJson());
+    const json = model.toJson();
+    // Ensure tenantId is always forwarded even if mapper doesn't include it
+    if (request.tenantId) {
+      (json as any).tenantId = request.tenantId;
+    }
+    const response = await this.service.create(json);
     return response.id;
   }
 

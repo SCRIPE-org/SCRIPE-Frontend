@@ -49,6 +49,7 @@ export interface CreateRoleJson {
   descriptionEn?: string;
   descriptionAr?: string;
   priority: number;
+  tenantId?: string;
   permissionIds?: string[];
 }
 
@@ -87,7 +88,7 @@ export class RoleModel {
     public readonly tenantId?: string,
     public readonly tenantName?: string,
     public readonly modifiedAt?: string
-  ) {}
+  ) { }
 
   static fromJson(json: RoleJson): RoleModel {
     return new RoleModel(
@@ -132,7 +133,7 @@ export class RolePermissionModel {
     public readonly permissionId: string,
     public readonly permissionCode: string,
     public readonly scope?: string
-  ) {}
+  ) { }
 
   static fromJson(json: RolePermissionJson): RolePermissionModel {
     return new RolePermissionModel(json.permissionId, json.permissionCode, json.scope);
@@ -155,8 +156,9 @@ export class CreateRoleModel {
     public readonly priority: number,
     public readonly descriptionEn?: string,
     public readonly descriptionAr?: string,
+    public readonly tenantId?: string,
     public readonly permissionIds?: string[]
-  ) {}
+  ) { }
 
   toJson(): CreateRoleJson {
     return {
@@ -166,6 +168,7 @@ export class CreateRoleModel {
       priority: this.priority,
       descriptionEn: this.descriptionEn,
       descriptionAr: this.descriptionAr,
+      tenantId: this.tenantId,
       permissionIds: this.permissionIds,
     };
   }
@@ -179,7 +182,7 @@ export class UpdateRoleModel {
     public readonly descriptionEn?: string,
     public readonly descriptionAr?: string,
     public readonly isActive?: boolean
-  ) {}
+  ) { }
 
   toJson(): UpdateRoleJson {
     return {
@@ -194,7 +197,7 @@ export class UpdateRoleModel {
 }
 
 export class AssignPermissionsModel {
-  constructor(public readonly permissions: PermissionAssignmentJson[]) {}
+  constructor(public readonly permissions: PermissionAssignmentJson[]) { }
 
   toJson(): AssignPermissionsJson {
     return {

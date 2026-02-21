@@ -89,7 +89,7 @@ export class RoleMapper {
       request.priority ?? 0,
       request.descriptionEn,
       request.descriptionAr,
-      undefined
+      request.tenantId
     );
   }
 
