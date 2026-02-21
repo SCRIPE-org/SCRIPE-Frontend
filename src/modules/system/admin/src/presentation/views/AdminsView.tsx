@@ -220,7 +220,7 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
             variant: "ghost" as const,
             icon: <Pencil className="h-4 w-4" />,
             requiredPermission: SYSTEM_PERMISSIONS.ADMINS_UPDATE,
-            show: (item: Admin) => !item.hasGuardianProtection || currentUser?.id === item.id,
+            show: (item: Admin) => !item.hasGuardianProtection || currentUser?.id === item.id || !!tenantId,
           },
           {
             label: tFn("admin.impersonate") || "Impersonate",
@@ -228,7 +228,7 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
             variant: "ghost" as const,
             icon: <UserCheck className="h-4 w-4" />,
             requiredPermission: SYSTEM_PERMISSIONS.ADMINS_IMPERSONATE,
-            show: (item: Admin) => !item.hasGuardianProtection || currentUser?.id === item.id,
+            show: (item: Admin) => !item.hasGuardianProtection || currentUser?.id === item.id || !!tenantId,
           },
           {
             label: tFn("admin.transfer") || "Transfer",
@@ -236,7 +236,7 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
             variant: "ghost" as const,
             icon: <ArrowRightLeft className="h-4 w-4" />,
             requiredPermission: SYSTEM_PERMISSIONS.ADMINS_TRANSFER,
-            show: (item: Admin) => !item.hasGuardianProtection || currentUser?.id === item.id,
+            show: (item: Admin) => !item.hasGuardianProtection || currentUser?.id === item.id || !!tenantId,
           },
           // Transfer Protection: shown if the logged in user is the protected admin OR if viewing a specific tenant's admins (upper admin)
           ...(() => {
@@ -265,7 +265,7 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
             variant: "ghost" as const,
             icon: <UserCheck className="h-4 w-4" />,
             requiredPermission: SYSTEM_PERMISSIONS.ADMINS_UPDATE,
-            // Cannot toggle status if they are protected
+            // Cannot toggle status if they are protected (even upper admin shouldn't deactivate the last super admin)
             show: (item: Admin) => !item.hasGuardianProtection,
           },
           {
@@ -274,7 +274,7 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
             variant: "ghost" as const,
             icon: <Shield className="h-4 w-4" />,
             requiredPermission: SYSTEM_PERMISSIONS.ADMINS_ASSIGN_ROLES,
-            show: (item: Admin) => !item.hasGuardianProtection || currentUser?.id === item.id,
+            show: (item: Admin) => !item.hasGuardianProtection || currentUser?.id === item.id || !!tenantId,
           },
           {
             label: tFn("admin.resetPassword") || "Reset Password",
@@ -283,7 +283,7 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
             className: "text-orange-600 hover:text-orange-700",
             icon: <Settings className="h-4 w-4" />,
             requiredPermission: SYSTEM_PERMISSIONS.ADMINS_RESET_PASSWORD,
-            show: (item: Admin) => !item.hasGuardianProtection || currentUser?.id === item.id,
+            show: (item: Admin) => !item.hasGuardianProtection || currentUser?.id === item.id || !!tenantId,
           },
           {
             label: tFn("common.delete") || "Delete",
