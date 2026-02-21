@@ -5,7 +5,7 @@
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const docCommEn: Record<string, any> = {
-    commercial: {
+  commercial: {
 
     // ─── Api Design ────────────────────────────────
     apiDesign: {
@@ -322,53 +322,79 @@ export const docCommEn: Record<string, any> = {
 
     // ─── Faq ────────────────────────────────
     faq: {
-      a1: "A 1",
-      a2: "A 2",
-      a3: "A 3",
-      a4: "A 4",
-      a5: "A 5",
-      a6: "A 6",
-      a7: "A 7",
-      a8: "A 8",
-      a9: "A 9",
-      aAuditLogs: "A Audit Logs",
-      aBreakingChanges: "A Breaking Changes",
-      aCanWeCustomize: "A Can We Customize",
-      aDataResidency: "A Data Residency",
-      aDatabaseSupport: "A Database Support",
-      aHowLongSetup: "A How Long Setup",
-      aMigrationHelp: "A Migration Help",
-      aSSOIntegration: "A S S O Integration",
-      aTrialPeriod: "A Trial Period",
-      aUpdateFrequency: "A Update Frequency",
-      aUpgradePath: "A Upgrade Path",
-      aWhatIndustries: "A What Industries",
-      contactNote: "Important: contact should be configured according to your environment requirements.",
+      // ── General ──
+      q1: "What is NEXORA?",
+      a1: "NEXORA is an enterprise-grade modular ERP platform built on .NET 9 and Next.js 15. It provides a production-ready foundation with Clean Architecture, multi-tenancy, role-based access control, real-time capabilities, and a growing catalog of business modules — all from a single codebase that supports monolith, gateway, and microservice deployments.",
+
+      q2: "Who is NEXORA designed for?",
+      a2: "NEXORA is built for development teams and organizations that need to launch enterprise applications quickly without sacrificing architectural quality. Whether you're a startup looking for a scalable foundation, a software house delivering client projects, or an enterprise modernizing legacy systems, NEXORA eliminates months of foundational boilerplate so you can focus on business logic.",
+
+      q3: "How is NEXORA different from other ERP platforms?",
+      a3: "Unlike traditional ERP systems that lock you into rigid workflows, NEXORA gives you full source code access with Clean Architecture principles. You get true module isolation (each module can be extracted to its own microservice), built-in multi-tenancy with row-level data isolation, 4 database providers, 7-language i18n with full RTL support, and enterprise security features like the 8-layer security model — all designed to be extended, not just configured.",
+
+      qWhatIndustries: "What industries is NEXORA suitable for?",
+      aWhatIndustries: "NEXORA is industry-agnostic by design. Its modular architecture allows you to build solutions for healthcare, finance, manufacturing, logistics, education, government, retail, real estate, and more. The core platform provides the common infrastructure (authentication, tenancy, audit, permissions), while business-specific modules can be added or custom-built following the established patterns.",
+
+      qHowLongSetup: "How long does it take to get started?",
+      aHowLongSetup: "You can have NEXORA running locally in under 15 minutes. Clone the repository, configure your database connection (SQL Server, Oracle, PostgreSQL, or SQLite), run the migrations, and start the development server. The nexora-cli tool further accelerates development by scaffolding new modules, entities, and boilerplate code in seconds. Most teams are productive within the first day.",
+
+      // ── Technical ──
+      q4: "What technology stack does NEXORA use?",
+      a4: "The backend is built on ASP.NET Core (.NET 9) with Entity Framework Core, MediatR (CQRS), and FluentValidation. The frontend uses Next.js 15 with TypeScript, TanStack Query, Zustand, and a custom design system built on Radix UI. Real-time features are powered by SignalR WebSockets, and the platform supports Docker containerization for deployment.",
+
+      q5: "Can NEXORA scale from monolith to microservices?",
+      a5: "Yes — this is a core design principle. NEXORA uses strict module boundaries with no cross-module imports. Each module follows Clean Architecture with its own domain, data, and presentation layers. You can start as a monolith for simplicity, move to a gateway topology to separate frontend/backend, and eventually extract individual modules into independent microservices — all without refactoring your code.",
+
+      q6: "What databases are supported?",
+      a6: "NEXORA supports 4 database providers through Entity Framework Core: SQL Server, Oracle, PostgreSQL, and SQLite. Switching providers requires only a configuration change — no code modifications needed. Each provider has its own migration set, and the platform handles provider-specific quirks (like Oracle's NCLOB vs. SQL Server's NVARCHAR(MAX)) transparently.",
+
+      qCanWeCustomize: "Can we customize and extend NEXORA's modules?",
+      aCanWeCustomize: "Absolutely. You receive full source code access, and every module follows the SOLID View/ViewModel pattern with clear separation of concerns. You can modify existing modules, extend them with new features, or build entirely new modules using the nexora-cli scaffolding tool. The Open/Closed principle ensures you can extend behavior through composition without modifying the core framework.",
+
+      qDatabaseSupport: "How does NEXORA handle database migrations across providers?",
+      aDatabaseSupport: "Each database provider has its own dedicated migration folder managed by EF Core. When you add or modify entities, you generate provider-specific migrations that account for each database's data types and constraints. The platform includes migration utilities and the CLI can scaffold migrations for all configured providers simultaneously, ensuring consistency across environments.",
+
+      // ── Licensing ──
+      q7: "What licensing options are available?",
+      a7: "NEXORA offers flexible licensing tiers designed to scale with your organization. Options include a Starter license for small teams and individual projects, a Professional license for growing companies with advanced features, and an Enterprise license with unlimited deployments, priority support, and custom SLAs. All licenses include full source code access and the right to use NEXORA in production.",
+
+      q8: "Is there a per-seat or per-user pricing model?",
+      a8: "No. NEXORA uses a per-project licensing model, not per-seat. This means your development team and end-users are unlimited. You pay for the license tier based on features and support level, not the number of developers or application users. This makes NEXORA particularly cost-effective for organizations with large teams or high user counts.",
+
+      q9: "Can we use NEXORA for multiple client projects?",
+      a9: "This depends on your license tier. The Starter license covers a single project, while Professional and Enterprise licenses support multiple deployments. The Enterprise tier provides unlimited project deployments, making it ideal for software houses and consulting firms that build solutions for multiple clients. Each deployment can be customized independently.",
+
+      qTrialPeriod: "Is there a trial or evaluation period?",
+      aTrialPeriod: "Yes. NEXORA offers a 30-day evaluation period with full access to the platform's features, documentation, and community support. During the trial, you can build a proof-of-concept, explore the architecture, and assess whether NEXORA fits your technical requirements. No credit card is required to start the evaluation.",
+
+      qUpgradePath: "What is the upgrade path between license tiers?",
+      aUpgradePath: "You can upgrade your license tier at any time by paying the difference between your current tier and the new one. Upgrades are immediate — you'll receive access to additional features, support channels, and deployment rights as soon as the upgrade is processed. There are no penalties or lock-in periods. Downgrades are handled at renewal time.",
+
+      // ── Security ──
+      qDataResidency: "How does NEXORA handle data residency requirements?",
+      aDataResidency: "NEXORA is self-hosted, meaning you have complete control over where your data resides. Deploy on your own infrastructure — on-premises, in your preferred cloud region (AWS, Azure, GCP), or in a private data center. The multi-tenancy system supports per-tenant configuration, so you can even host different tenants in different regions to comply with GDPR, HIPAA, or local data sovereignty regulations.",
+
+      qAuditLogs: "What audit capabilities does NEXORA provide?",
+      aAuditLogs: "NEXORA captures audit events from 4 sources: HTTP request logs (every API call with timing and response codes), entity change tracking (who changed what, when, with before/after snapshots), security events (login attempts, password changes, permission modifications), and business operation logs. All audit data is streamable in real-time via SignalR, exportable to CSV/Excel, and supports configurable retention policies.",
+
+      qSSOIntegration: "Does NEXORA support SSO and external identity providers?",
+      aSSOIntegration: "NEXORA includes a built-in JWT-based authentication system with support for two-factor authentication (2FA), session management, and configurable password policies. The architecture is designed to integrate with external identity providers (OAuth2, OIDC, SAML) through standard ASP.NET Core authentication middleware. Enterprise customers can also integrate with Active Directory, Azure AD, or Okta for single sign-on.",
+
+      // ── Support ──
+      qUpdateFrequency: "How frequently is NEXORA updated?",
+      aUpdateFrequency: "NEXORA follows a regular release cadence with minor updates every 2–4 weeks and major version releases aligned with .NET and Next.js version cycles. Each release includes detailed changelogs, migration guides, and backward-compatibility notes. Security patches are released as needed, typically within 48 hours of vulnerability disclosure. Enterprise customers receive early access to release candidates.",
+
+      qBreakingChanges: "How does NEXORA handle breaking changes?",
+      aBreakingChanges: "Breaking changes are minimized through NEXORA's adherence to the Open/Closed principle — new features are added via extension, not modification. When breaking changes are unavoidable (such as major framework upgrades), they are clearly documented with step-by-step migration guides, automated migration scripts where possible, and a deprecation period of at least one major version cycle. Enterprise customers receive dedicated migration assistance.",
+
+      qMigrationHelp: "Can we get help migrating from an existing system?",
+      aMigrationHelp: "Yes. Professional and Enterprise license holders have access to migration consulting services. The NEXORA team can assist with data migration planning, schema mapping, ETL scripts, and phased cutover strategies. For complex migrations, dedicated engineering support is available to accelerate the transition and minimize downtime. Community resources and migration guides are also available for self-service migrations.",
+
+      contactNote: "Have a question not covered here? Reach out to our team at support@nexora.dev or join the community Discord for real-time assistance.",
       description: "Frequently asked questions about NEXORA.",
       generalTitle: "General",
       intro: "Answers to the most commonly asked questions about NEXORA's architecture, licensing, deployment, and capabilities.",
       licensingTitle: "Licensing",
-      q1: "Q 1",
-      q2: "Q 2",
-      q3: "Q 3",
-      q4: "Q 4",
-      q5: "Q 5",
-      q6: "Q 6",
-      q7: "Q 7",
-      q8: "Q 8",
-      q9: "Q 9",
-      qAuditLogs: "Q Audit Logs",
-      qBreakingChanges: "Q Breaking Changes",
-      qCanWeCustomize: "Q Can We Customize",
-      qDataResidency: "Q Data Residency",
-      qDatabaseSupport: "Q Database Support",
-      qHowLongSetup: "Q How Long Setup",
-      qMigrationHelp: "Q Migration Help",
-      qSSOIntegration: "Q S S O Integration",
-      qTrialPeriod: "Q Trial Period",
-      qUpdateFrequency: "Q Update Frequency",
-      qUpgradePath: "Q Upgrade Path",
-      qWhatIndustries: "Q What Industries",
       securityTitle: "Security",
       supportTitle: "Support",
       technicalTitle: "Technical",
