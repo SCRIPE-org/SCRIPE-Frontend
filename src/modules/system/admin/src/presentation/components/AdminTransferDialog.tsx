@@ -115,13 +115,19 @@ export function AdminTransferDialog({
           query,
         });
 
-        const result = await systemContainer.roleRepository.getAll({
-          search: query,
-          page: 1,
-          pageSize: 20,
-          tenantId: searchTenantId,
-          strict: true, // Only get roles for this specific tenant (or specific system roles)
-        });
+        const result = searchTenantId
+          ? await systemContainer.roleRepository.getAll({
+            search: query,
+            page: 1,
+            pageSize: 20,
+            tenantId: searchTenantId,
+            strict: true,
+          })
+          : await systemContainer.roleRepository.getMyTenantRoles({
+            search: query,
+            page: 1,
+            pageSize: 20,
+          });
 
         return result.items.map((role) => ({
           value: role.id,

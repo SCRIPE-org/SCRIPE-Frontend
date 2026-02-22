@@ -336,13 +336,15 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
         // 3. undefined (system-level roles)
         const roleSearchTenantId = propTenantId ?? contextTenantId ?? undefined;
 
-        const result = await roleRepository.getAll({
-          search: query,
-          page: 1,
-          pageSize: 20,
-          tenantId: roleSearchTenantId,
-          strict: true, // Force strict filtering (Global context -> Global roles only)
-        });
+        const result = useMyTenant
+          ? await roleRepository.getMyTenantRoles({ search: query, page: 1, pageSize: 20 })
+          : await roleRepository.getAll({
+            search: query,
+            page: 1,
+            pageSize: 20,
+            tenantId: roleSearchTenantId,
+            strict: true, // Force strict filtering
+          });
 
         return (result.items || []).map((role) => ({
           value: role.id,

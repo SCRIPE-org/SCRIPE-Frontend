@@ -35,11 +35,17 @@ export function SetRolesDialog({
       // Fetch all available roles
       const { data: rolesData, isLoading } = useQuery({
             queryKey: ["roles-for-group-assign", tenantId],
-            queryFn: () => systemContainer.roleRepository.getAll({
-                  page: 1,
-                  pageSize: 200,
-                  tenantId,
-            }),
+            queryFn: () => tenantId
+                  ? systemContainer.roleRepository.getAll({
+                        page: 1,
+                        pageSize: 200,
+                        tenantId,
+                        strict: true,
+                  })
+                  : systemContainer.roleRepository.getMyTenantRoles({
+                        page: 1,
+                        pageSize: 200,
+                  }),
             enabled: open,
       });
 

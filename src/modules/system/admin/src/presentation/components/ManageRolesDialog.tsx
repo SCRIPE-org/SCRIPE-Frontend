@@ -47,12 +47,16 @@ export function ManageRolesDialog({ open, onOpenChange, admin, tenantId }: Manag
   // Fetch available roles for the VALID scope
   const { data: rolesData, isLoading: isLoadingRoles } = useQuery({
     queryKey: ["roles-for-manage", scopeTenantId],
-    queryFn: () =>
-      roleRepository.getAll({
+    queryFn: () => scopeTenantId
+      ? roleRepository.getAll({
         page: 1,
         pageSize: 100,
-        tenantId: scopeTenantId || undefined,
+        tenantId: scopeTenantId,
         strict: true,
+      })
+      : roleRepository.getMyTenantRoles({
+        page: 1,
+        pageSize: 100,
       }),
     enabled: open && !!admin,
   });
