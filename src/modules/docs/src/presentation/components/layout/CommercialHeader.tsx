@@ -47,7 +47,7 @@ export function CommercialHeader({
                                           <circle cx="11" cy="11" r="8" />
                                           <path d="m21 21-4.3-4.3" />
                                     </svg>
-                                    {t("common.search")}
+                                    <span className="commercial-hide-mobile">{t("common.search")}</span>
                               </button>
                         </nav>
 
@@ -65,7 +65,7 @@ export function CommercialHeader({
                                           <polyline points="16 18 22 12 16 6" />
                                           <polyline points="8 6 2 12 8 18" />
                                     </svg>
-                                    {t("common.technicalDocs")}
+                                    <span className="commercial-hide-mobile">{t("common.technicalDocs")}</span>
                               </Link>
 
                               {/* CTA */}

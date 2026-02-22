@@ -1543,6 +1543,11 @@
   .docs-content {
     padding: 1.5rem;
   }
+
+  .docs-feature-grid,
+  .docs-comparison {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
 }
 
 /* Mobile */
@@ -1553,10 +1558,23 @@
 
   .docs-search-trigger {
     max-width: none;
+    padding: 0.375rem;
   }
 
   .docs-search-shortcut {
     display: none;
+  }
+
+  .docs-hide-mobile {
+    display: none;
+  }
+
+  .docs-commercial-link {
+    padding: 0.375rem;
+  }
+
+  .docs-header-actions {
+    gap: 0.125rem;
   }
 
   .docs-content {
@@ -1579,6 +1597,11 @@
 
   .docs-h2 {
     font-size: 1.25rem;
+  }
+
+  .docs-feature-grid,
+  .docs-comparison {
+    grid-template-columns: 1fr !important;
   }
 
   .docs-prev-next {

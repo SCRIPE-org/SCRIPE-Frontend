@@ -60,7 +60,7 @@ export function DocsHeader({ onSearchOpen, onMobileMenuOpen }: DocsHeaderProps) 
       {/* Search Trigger */}
       <button className="docs-search-trigger" onClick={onSearchOpen}>
         <SearchIcon />
-        <span>{t("common.search")}</span>
+        <span className="docs-hide-mobile">{t("common.search")}</span>
         <span className="docs-search-shortcut">{t("common.searchShortcut")}</span>
       </button>
 
@@ -84,7 +84,7 @@ export function DocsHeader({ onSearchOpen, onMobileMenuOpen }: DocsHeaderProps) 
             <path d="M8 10h.01" /><path d="M16 10h.01" />
             <path d="M8 14h.01" /><path d="M16 14h.01" />
           </svg>
-          {t("common.commercialDocs")}
+          <span className="docs-hide-mobile">{t("common.commercialDocs")}</span>
         </Link>
 
         <DocsLangSwitcherInline />

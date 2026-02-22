@@ -25,7 +25,7 @@ const PUBLIC_PATHS = ["/login", "/register", "/forgot-password", "/verify-email"
 // Everything under (modules) is protected by the layout, but this adds server-level guard
 const PROTECTED_PREFIXES = ["/admin", "/profile", "/settings", "/recycle-bin"];
 
-const REFRESH_TOKEN_COOKIE = STORAGE_KEYS.nexora_refresh_token;
+const AUTH_STATE_COOKIE = STORAGE_KEYS.nexora_auth_state;
 
 export function proxy(request: NextRequest) {
       const { pathname } = request.nextUrl;
@@ -44,10 +44,10 @@ export function proxy(request: NextRequest) {
             return NextResponse.next();
       }
 
-      // Check for refresh token cookie as auth signal
-      const hasRefreshToken = request.cookies.has(REFRESH_TOKEN_COOKIE);
+      // Check for frontend auth state cookie as auth signal
+      const hasAuthState = request.cookies.has(AUTH_STATE_COOKIE);
 
-      if (!hasRefreshToken) {
+      if (!hasAuthState) {
             // Build login URL with redirect parameter
             const loginUrl = new URL("/login", request.url);
             loginUrl.searchParams.set("redirect", pathname);

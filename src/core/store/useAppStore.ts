@@ -47,15 +47,22 @@ export const useAppStore = create<AppState>()(
       roles: [],
       restrictedFields: {},
       setUser: (user) => set({ user, isAuthenticated: !!user }),
-      setAuth: (user, permissions, roles) =>
+      setAuth: (user, permissions, roles) => {
+        if (typeof document !== "undefined") {
+          document.cookie = "nexora_auth_state=true; path=/; max-age=2592000; samesite=Lax";
+        }
         set({
           user,
           isAuthenticated: true,
           permissions,
           roles,
           restrictedFields: user.restrictedFields ?? {},
-        }),
+        });
+      },
       logout: () => {
+        if (typeof document !== "undefined") {
+          document.cookie = "nexora_auth_state=; path=/; max-age=0; samesite=Lax";
+        }
         // Also clear tokens when logging out from store
         secureTokenService.clearTokens();
         set({
