@@ -84,6 +84,25 @@ services.AddMultiProviderDatabase<
 # [INFO] > dotnet ef database update --project "..." --context SqlServerIdentityDbContext`,
       },
 
+      // ─── Smart Force Removal ───────────────────────────
+      {
+            type: "heading", level: 3,
+            titleKey: "infrastructure.databaseMigrations.cliRemoveTitle", id: "cli-remove",
+      },
+      { type: "paragraph", contentKey: "infrastructure.databaseMigrations.cliRemoveContent" },
+      {
+            type: "code",
+            language: "bash",
+            filename: "nexora db remove-migration",
+            code: `$ nexora db remove-migration -m Identity
+
+# Output:
+# [INFO] Auto-detected active provider: Oracle
+# [INFO] Removing latest migration for active provider (Oracle)...
+# [INFO] Force removing latest migration for SqlServer...
+# [INFO] Force removing latest migration for PostgreSql...`,
+      },
+
       // ─── Adding a New Provider ──────────────────────────────────────
       {
             type: "heading", level: 2,

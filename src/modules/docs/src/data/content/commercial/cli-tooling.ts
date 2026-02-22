@@ -17,6 +17,7 @@ const sections: DocSection[] = [
                   ["nexora remove-module", "Clean removal of entire module", "nexora remove-module --name HR"],
                   ["nexora db add-migration", "Generate migrations for SQL Server, Oracle, & Postgres", "nexora db add-migration Initial -m HR"],
                   ["nexora db update", "Auto-detects DB Provider & updates", "nexora db update -m HR"],
+                  ["nexora db remove-migration", "Safely removes the latest migration across all providers", "nexora db remove-migration -m HR"],
                   ["nexora dev", "Run both backend + frontend", "nexora dev"],
                   ["nexora build", "Build both projects", "nexora build backend|frontend"],
                   ["nexora test", "Run test suite", "nexora test backend|frontend"],

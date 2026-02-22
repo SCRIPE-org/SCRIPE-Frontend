@@ -1155,6 +1155,8 @@ export const docEn = {
       cliWarning: "Important: Never manually edit the generated `ModelSnapshot` files. Always use the CLI to ensure consistency across the three supported dialects.",
       cliUpdateTitle: "Auto-Detecting Provider Updates",
       cliUpdateContent: "When applying migrations with `nexora db update`, the CLI automatically parses your backend `appsettings.json` to detect the currently active `DatabaseProvider`. It seamlessly executes the update against the correct database engine without requiring you to manually specify the provider flag. For edge cases, you can override this behavior using the `-p` parameter.",
+      cliRemoveTitle: "Smart Force Removal",
+      cliRemoveContent: "To rollback migrations safely and automatically across providers, use `nexora db remove-migration`. By parsing your active provider, the CLI safely reverts the migration logic and applies a standard removal check. Validated, it then aggressively cleans up inactive providers sequentially using aggressive force techniques, avoiding irrelevant connection timeouts and ensuring all branches are neatly reset simultaneously.",
       newProviderTitle: "Adding a New Database Engine",
       newProviderContent: "To introduce a new provider (e.g., SQLite for testing), follow the Clean Architecture extension pattern:",
       newProviderStep1: "Create a new sealed derived context (e.g., `SqliteIdentityDbContext`).",

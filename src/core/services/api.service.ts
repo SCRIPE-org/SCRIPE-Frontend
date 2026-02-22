@@ -127,20 +127,11 @@ export class ApiService implements IApiService {
         // P1.5: Use cached language instead of reading localStorage per request
         config.headers["Accept-Language"] = cachedLanguage;
 
-        // P6.1: CSRF double-submit cookie protection
         // P6.3: Request replay protection (timestamp + nonce)
         const isMutating = ["post", "put", "patch", "delete"].includes(
-          config.method ?? ""
+          (config.method ?? "").toLowerCase()
         );
         if (isMutating) {
-          // CSRF: read csrf_token cookie, send as header
-          const csrfMatch =
-            typeof document !== "undefined"
-              ? document.cookie.match(/csrf_token=([^;]+)/)
-              : null;
-          if (csrfMatch) {
-            config.headers["X-CSRF-Token"] = csrfMatch[1];
-          }
 
           // Replay protection: unique timestamp + nonce per request
           config.headers["X-Request-Timestamp"] = Date.now().toString();
