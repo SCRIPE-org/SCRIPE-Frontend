@@ -360,15 +360,16 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
     async (query: string): Promise<FieldOption[]> => {
       try {
         // For group search, use the most specific tenant context available
-        // to match how handleRoleSearch is structured.
         const groupSearchTenantId = propTenantId ?? contextTenantId ?? undefined;
 
-        const result = await systemContainer.userGroupRepository.getAll({
-          search: query,
-          page: 1,
-          pageSize: 20,
-          tenantId: groupSearchTenantId,
-        });
+        const result = useMyTenant
+          ? await systemContainer.userGroupRepository.getMyTenantGroups({ search: query, page: 1, pageSize: 20 })
+          : await systemContainer.userGroupRepository.getAll({
+            search: query,
+            page: 1,
+            pageSize: 20,
+            tenantId: groupSearchTenantId,
+          });
 
         return (result.items || []).map((g) => ({
           value: g.id,

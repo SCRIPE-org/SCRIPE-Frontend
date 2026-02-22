@@ -410,7 +410,7 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
           adminIds={selectedBulkAdminIds}
           mode="admin"
           tenantId={tenantId}
-          useMyTenant={!isSuperAdmin && !tenantId}
+          useMyTenant={true}
         />
       )}
 
@@ -446,7 +446,7 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
         adminId={selectedAdminForAction?.id}
         adminName={selectedAdminForAction?.displayName}
         tenantId={selectedAdminForAction?.tenantId || tenantId}
-        useMyTenant={!isSuperAdmin && !tenantId && !selectedAdminForAction?.tenantId}
+        useMyTenant={true}
       />
     </>
   );

@@ -77,7 +77,11 @@ export function useUserGroupsViewModel(options?: { useMyTenant?: boolean; tenant
                         };
                   },
                   create: async (data: CreateUserGroupRequest) => {
-                        const id = await repo.create(data);
+                        const id = tenantId
+                              ? await repo.create({ ...data, tenantId })
+                              : useMyTenant
+                                    ? await repo.createForMyTenant(data)
+                                    : await repo.create(data);
                         // Return a placeholder item — list will be refreshed
                         return { id } as any;
                   },

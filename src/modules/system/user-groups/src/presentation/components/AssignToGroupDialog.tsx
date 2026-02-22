@@ -85,8 +85,8 @@ export function AssignToGroupDialog({
                               ...baseParams,
                               tenantId,
                         });
-                  } else if (useMyTenant && currentUserTenantId) {
-                        // Tenant Admin: scope to their own tenant
+                  } else if (useMyTenant) {
+                        // Tenant Admin (or Super Admin targeting system groups)
                         result = await systemContainer.userGroupRepository.getMyTenantGroups(baseParams);
                   } else {
                         // Super Admin (no tenant) or no scoping: get all system-level groups

@@ -50,7 +50,7 @@ export function UserGroupsView() {
             setStatusDialog,
             confirmDelete,
             confirmStatus,
-      } = useUserGroupsViewModel();
+      } = useUserGroupsViewModel({ useMyTenant: true });
       const configBase = getConfigBase(t);
 
       const config: CrudConfig<UserGroupListItem> = useMemo(

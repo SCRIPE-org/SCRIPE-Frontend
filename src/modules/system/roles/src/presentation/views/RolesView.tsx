@@ -248,7 +248,7 @@ export function RolesView() {
           }}
           mode="role"
           roleIds={selectedBulkRoleIds}
-          useMyTenant={!isSuperAdmin}
+          useMyTenant={true}
         />
       )}
 
@@ -259,7 +259,7 @@ export function RolesView() {
         mode="role"
         roleId={selectedRoleForGroup?.id}
         roleName={selectedRoleForGroup?.getLocalizedName(language)}
-        useMyTenant={!isSuperAdmin}
+        useMyTenant={true}
       />
     </>
   );
