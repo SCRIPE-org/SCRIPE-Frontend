@@ -49,6 +49,46 @@ const sections: DocSection[] = [
                   { icon: "users", titleKey: "commercial.userGroups.fallbackSafety", descriptionKey: "commercial.userGroups.fallbackSafetyDesc" },
             ],
       },
+
+      { type: "heading", level: 2, titleKey: "commercial.userGroups.roiTitle", id: "roi-scale" },
+      { type: "paragraph", contentKey: "commercial.userGroups.roiContent" },
+      {
+            type: "comparison",
+            columns: [
+                  {
+                        titleKey: "Legacy 1:1 Provisioning",
+                        variant: "negative",
+                        items: [
+                              "1:1 Role assignments (O(N) complexity)",
+                              "Manual audits of 500+ individual staff profiles",
+                              "No atomic way to instantly suspend a compromised department",
+                              "Custom scripts needed to determine effective overlapping permissions"
+                        ]
+                  },
+                  {
+                        titleKey: "NEXORA Group Provisioning",
+                        variant: "positive",
+                        items: [
+                              "O(1) Role assignments via Group inheritance",
+                              "Audit a single group to secure 500+ staff members instantly",
+                              "One-click cascading suspension of entire organizational units",
+                              "Native zero-latency Additive Union calculation at login"
+                        ]
+                  }
+            ]
+      },
+
+      { type: "heading", level: 2, titleKey: "commercial.userGroups.complianceGridTitle", id: "compliance-governance" },
+      {
+            type: "feature-grid",
+            columns: 2,
+            items: [
+                  { icon: "activity", titleKey: "commercial.userGroups.auditTrackingTitle", descriptionKey: "commercial.userGroups.auditTrackingDesc" },
+                  { icon: "zap", titleKey: "commercial.userGroups.zeroLatencyTitle", descriptionKey: "commercial.userGroups.zeroLatencyDesc" },
+                  { icon: "lock", titleKey: "commercial.userGroups.tenantIsolationTitle", descriptionKey: "commercial.userGroups.tenantIsolationDesc" },
+                  { icon: "refresh-cw", titleKey: "commercial.userGroups.nukePaveTitle", descriptionKey: "commercial.userGroups.nukePaveDesc" },
+            ]
+      },
 ];
 
 registerPage({

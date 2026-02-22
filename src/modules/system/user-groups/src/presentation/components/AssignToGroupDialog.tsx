@@ -230,7 +230,7 @@ export function AssignToGroupDialog({
                                     placeholder={t("userGroups.selectGroupsPlaceholder") || "Choose user groups..."}
                                     type="multi"
                                     searchType="server"
-                                    onSearch={fetchGroups}
+                                    onServerSearch={fetchGroups}
                                     loading={isSearching}
                               />
                               {selectedGroupIds.length > 0 && (

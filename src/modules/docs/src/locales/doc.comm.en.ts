@@ -6,7 +6,6 @@
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const docCommEn: Record<string, any> = {
   commercial: {
-
     // ─── Api Design ────────────────────────────────
     apiDesign: {
       conventionsTitle: "Enterprise Conventions",
@@ -755,6 +754,17 @@ export const docCommEn: Record<string, any> = {
       rootProtectionDesc: "Massive bulk operations are dangerous. Our architecture natively immunizes 'Protected' root administrators. Even if a cascading delete hits the entire tenant, the original system owner remains completely untouched.",
       fallbackSafety: "Architectural Safety Nets",
       fallbackSafetyDesc: "NEXORA prevents you from leaving administrators completely orphaned. When a group is deleted, users are securely caught and reassigned an immutable 'System_default' role, ensuring they can still authenticate but possess zero destructive capabilities.",
+      roiTitle: "Enterprise ROI & Scale Unlocked",
+      roiContent: "Stop wasting expensive engineering cycles building custom provisioning pipelines. Implementing NEXORA's native User Groups saves months of architectural debt. Witness how transitioning from flat 1:1 role assignment drastically improves security posture and cuts IT operational drag by over 90%.",
+      complianceGridTitle: "Built for Organizational Governance",
+      auditTrackingTitle: "Granular Audit Trailing",
+      auditTrackingDesc: "Every modification—adding members, altering role schemas, adjusting restrictions—generates immutable, highly-detailed event logs instantly broadcast via SignalR.",
+      zeroLatencyTitle: "Zero-Latency Evaluation",
+      zeroLatencyDesc: "Groups, roles, and restrictions are pre-compiled and flattened directly into the JWT payload, yielding zero database lookups during runtime API authorization checks.",
+      tenantIsolationTitle: "Absolute Tenant Isolation",
+      tenantIsolationDesc: "User groups are strictly bounded to the ID of the resolving Tenant. Cross-tenant group pollution is architecturally impossible under EF Core's Global Query Filters.",
+      nukePaveTitle: "Destructive Synchronization",
+      nukePaveDesc: "Massive UI payload updates (like changing 50 roles) are handled using a hardened nuke-and-pave algorithm that strictly validates state before committing.",
     },
 
     // ─── Security Overview ────────────────────────────────
