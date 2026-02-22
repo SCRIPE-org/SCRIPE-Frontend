@@ -21,6 +21,7 @@ import { format } from "date-fns";
 import type { DeletedItem } from "../../domain/entities/DeletedItem";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { cn } from "@core/common/utils";
+import { CascadeRestoreDialog } from "../components/CascadeRestoreDialog";
 
 export function RecycleBinView() {
   const vm = useRecycleBinViewModel();
@@ -31,6 +32,7 @@ export function RecycleBinView() {
     { key: "admins", label: t("recycleBin.tabs.admins"), count: vm.tabCounts.admins },
     { key: "users", label: t("recycleBin.tabs.users"), count: vm.tabCounts.users },
     { key: "roles", label: t("recycleBin.tabs.roles"), count: vm.tabCounts.roles },
+    { key: "userGroups", label: t("recycleBin.tabs.userGroups") || "User Groups", count: vm.tabCounts.userGroups },
   ];
 
   // ============ Columns ============
@@ -205,7 +207,7 @@ export function RecycleBinView() {
   return (
     <div className="space-y-6" dir={direction}>
       {/* Tab Switcher — NOT inside GenericCrudView, just plain buttons */}
-      <div className="grid w-full grid-cols-4 gap-1 rounded-lg bg-muted p-1">
+      <div className="grid w-full grid-cols-5 gap-1 rounded-lg bg-muted p-1">
         {tabs.map((tab) => (
           <button
             key={tab.key}
@@ -240,6 +242,14 @@ export function RecycleBinView() {
 
       {/* Single GenericCrudView — data swaps, component stays mounted */}
       <GenericCrudView viewModel={crudVm} config={config} />
+
+      <CascadeRestoreDialog
+        open={vm.restoreDialog.open}
+        onOpenChange={(v) => vm.setRestoreDialog(s => ({ ...s, open: v }))}
+        onConfirm={vm.confirmRestore}
+        isPending={vm.restoreDialog.isPending}
+        itemName={vm.restoreDialog.ids.length > 1 ? `${vm.restoreDialog.ids.length} groups` : "the selected group"}
+      />
     </div>
   );
 }

@@ -59,6 +59,16 @@ export interface TenantUserGroupsViewModelResult {
 
       // Delete service
       deleteService: (id: string) => Promise<void>;
+
+      // Cascade Dialogs and actions
+      triggerDelete: (ids: string[]) => void;
+      triggerStatus: (ids: string[], isActive: boolean) => void;
+      deleteDialog: { open: boolean; ids: string[]; isPending: boolean };
+      setDeleteDialog: React.Dispatch<React.SetStateAction<{ open: boolean; ids: string[]; isPending: boolean }>>;
+      statusDialog: { open: boolean; ids: string[]; isActive: boolean; isPending: boolean };
+      setStatusDialog: React.Dispatch<React.SetStateAction<{ open: boolean; ids: string[]; isActive: boolean; isPending: boolean }>>;
+      confirmDelete: (cascadeAdmins: boolean) => Promise<void>;
+      confirmStatus: (cascadeAdmins: boolean) => Promise<void>;
 }
 
 export function useTenantUserGroupsViewModel({
@@ -69,7 +79,18 @@ export function useTenantUserGroupsViewModel({
       const router = useRouter();
 
       // Delegate to core user groups ViewModel - Dependency Inversion Principle
-      const { vm: groupsVm, getConfigBase } = useUserGroupsViewModel({ tenantId });
+      const {
+            vm: groupsVm,
+            getConfigBase,
+            triggerDelete,
+            triggerStatus,
+            deleteDialog,
+            setDeleteDialog,
+            statusDialog,
+            setStatusDialog,
+            confirmDelete,
+            confirmStatus,
+      } = useUserGroupsViewModel({ tenantId });
 
       // ─────────────────────────────────────────────────────────────────
       // Navigation Actions
@@ -145,5 +166,13 @@ export function useTenantUserGroupsViewModel({
             subtitle,
             tenantId,
             deleteService: configBase.deleteService,
+            triggerDelete,
+            triggerStatus,
+            deleteDialog,
+            setDeleteDialog,
+            statusDialog,
+            setStatusDialog,
+            confirmDelete,
+            confirmStatus,
       };
 }

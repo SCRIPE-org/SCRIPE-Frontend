@@ -24,12 +24,13 @@ export interface IUserGroupRepository {
       create(request: CreateUserGroupRequest): Promise<string>;
       createForMyTenant(request: Omit<CreateUserGroupRequest, "tenantId">): Promise<string>;
       update(id: string, request: UpdateUserGroupRequest): Promise<void>;
-      delete(id: string): Promise<void>;
+      delete(id: string, cascadeAdmins?: boolean): Promise<void>;
       addMembers(groupId: string, request: AddMembersRequest): Promise<void>;
       removeMember(groupId: string, adminId: string): Promise<void>;
       setRoles(groupId: string, request: SetGroupRolesRequest): Promise<void>;
       setRestrictions(groupId: string, request: SetGroupRestrictionsRequest): Promise<void>;
-      bulkActivate(ids: string[]): Promise<number>;
-      bulkDeactivate(ids: string[]): Promise<number>;
-      bulkDelete(ids: string[]): Promise<number>;
+      toggleStatus(id: string, isActive: boolean, cascadeAdmins?: boolean): Promise<void>;
+      bulkActivate(ids: string[], cascadeAdmins?: boolean): Promise<number>;
+      bulkDeactivate(ids: string[], cascadeAdmins?: boolean): Promise<number>;
+      bulkDelete(ids: string[], cascadeAdmins?: boolean): Promise<number>;
 }

@@ -14,6 +14,8 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { Badge } from "@core/ui/badge";
 import { Eye, Pencil, Trash2, Users, Shield, ShieldCheck, ShieldAlert, UserCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { CascadeDeleteDialog } from "../components/CascadeDeleteDialog";
+import { CascadeStatusDialog } from "../components/CascadeStatusDialog";
 
 interface UserGroupListItem {
       id: string;
@@ -40,6 +42,14 @@ export function UserGroupsView() {
             handleBulkActivate,
             handleBulkDeactivate,
             handleBulkDelete,
+            triggerDelete,
+            triggerStatus,
+            deleteDialog,
+            setDeleteDialog,
+            statusDialog,
+            setStatusDialog,
+            confirmDelete,
+            confirmStatus,
       } = useUserGroupsViewModel();
       const configBase = getConfigBase(t);
 
@@ -126,23 +136,18 @@ export function UserGroupsView() {
                         },
                         {
                               label: tFn("admin.toggleStatus") || "Toggle Status",
-                              onClick: (item: UserGroupListItem) => handleToggleActive(item.id, !item.isActive),
+                              onClick: (item: UserGroupListItem) => triggerStatus([item.id], !item.isActive),
                               variant: "ghost" as const,
                               icon: <UserCheck className="h-4 w-4" />,
                               requiredPermission: "user_groups.update",
                         },
                         {
                               label: tFn("common.delete") || "Delete",
-                              onClick: (item: UserGroupListItem) => handleDeleteFn?.(item),
+                              onClick: (item: UserGroupListItem) => triggerDelete([item.id]),
                               variant: "ghost" as const,
                               className: "text-red-600 hover:text-red-700",
                               icon: <Trash2 className="h-4 w-4" />,
                               requiredPermission: "user_groups.delete",
-                              confirmTitle: tFn("userGroups.deleteConfirmTitle") || "Delete User Group",
-                              confirmDescription:
-                                    tFn("userGroups.deleteConfirmDesc") ||
-                                    "This will permanently delete this group and remove all member assignments.",
-                              confirmVariant: "destructive" as const,
                         },
                   ],
                   enableBulkActions: true,
@@ -150,26 +155,46 @@ export function UserGroupsView() {
                         {
                               label: t("common.activate") || "Activate",
                               icon: <ShieldCheck className="h-4 w-4" />,
-                              onClick: async (ids: string[]) => { await handleBulkActivate(ids); },
+                              onClick: async (ids: string[]) => { triggerStatus(ids, true); },
                               variant: "outline" as const,
                         },
                         {
                               label: t("common.deactivate") || "Deactivate",
                               icon: <ShieldAlert className="h-4 w-4" />,
-                              onClick: async (ids: string[]) => { await handleBulkDeactivate(ids); },
+                              onClick: async (ids: string[]) => { triggerStatus(ids, false); },
                               variant: "outline" as const,
                         },
                         {
                               label: t("common.delete") || "Delete",
                               icon: <Trash2 className="h-4 w-4" />,
-                              onClick: async (ids: string[]) => { await handleBulkDelete(ids); },
+                              onClick: async (ids: string[]) => { triggerDelete(ids); },
                               variant: "destructive" as const,
-                              requiresConfirmation: true,
                         },
                   ],
             }),
-            [t, language, configBase, router, vm, handleToggleActive, handleBulkActivate, handleBulkDeactivate, handleBulkDelete]
+            [t, language, configBase, router, vm, triggerStatus, triggerDelete]
       );
 
-      return <GenericCrudView viewModel={vm} config={config} />;
+      return (
+            <>
+                  <GenericCrudView viewModel={vm} config={config} />
+
+                  <CascadeDeleteDialog
+                        open={deleteDialog.open}
+                        onOpenChange={(v) => setDeleteDialog(s => ({ ...s, open: v }))}
+                        onConfirm={confirmDelete}
+                        isPending={deleteDialog.isPending}
+                        itemName={deleteDialog.ids.length > 1 ? `${deleteDialog.ids.length} groups` : "the selected group"}
+                  />
+
+                  <CascadeStatusDialog
+                        open={statusDialog.open}
+                        onOpenChange={(v) => setStatusDialog(s => ({ ...s, open: v }))}
+                        onConfirm={confirmStatus}
+                        isPending={statusDialog.isPending}
+                        isActive={statusDialog.isActive}
+                        itemName={statusDialog.ids.length > 1 ? `${statusDialog.ids.length} groups` : "the selected group"}
+                  />
+            </>
+      );
 }

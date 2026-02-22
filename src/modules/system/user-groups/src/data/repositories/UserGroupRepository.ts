@@ -72,8 +72,12 @@ export class UserGroupRepository implements IUserGroupRepository {
             await this.service.update(id, request);
       }
 
-      async delete(id: string): Promise<void> {
-            await this.service.delete(id);
+      async delete(id: string, cascadeAdmins?: boolean): Promise<void> {
+            await this.service.delete(id, cascadeAdmins);
+      }
+
+      async toggleStatus(id: string, isActive: boolean, cascadeAdmins?: boolean): Promise<void> {
+            await this.service.toggleStatus(id, isActive, cascadeAdmins);
       }
 
       async addMembers(groupId: string, request: AddMembersRequest): Promise<void> {
@@ -92,15 +96,15 @@ export class UserGroupRepository implements IUserGroupRepository {
             await this.service.setRestrictions(groupId, request);
       }
 
-      async bulkActivate(ids: string[]): Promise<number> {
-            return this.service.bulkActivate(ids);
+      async bulkActivate(ids: string[], cascadeAdmins?: boolean): Promise<number> {
+            return this.service.bulkActivate(ids, cascadeAdmins);
       }
 
-      async bulkDeactivate(ids: string[]): Promise<number> {
-            return this.service.bulkDeactivate(ids);
+      async bulkDeactivate(ids: string[], cascadeAdmins?: boolean): Promise<number> {
+            return this.service.bulkDeactivate(ids, cascadeAdmins);
       }
 
-      async bulkDelete(ids: string[]): Promise<number> {
-            return this.service.bulkDelete(ids);
+      async bulkDelete(ids: string[], cascadeAdmins?: boolean): Promise<number> {
+            return this.service.bulkDelete(ids, cascadeAdmins);
       }
 }

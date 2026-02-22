@@ -17,6 +17,7 @@ export interface DeletedItemsGrouped {
   admins: DeletedItem[];
   users: DeletedItem[];
   roles: DeletedItem[];
+  userGroups: DeletedItem[];
   totalCount: number;
 }
 
@@ -32,11 +33,11 @@ export interface IRecycleBinRepository {
   /**
    * Restore a single deleted item
    */
-  restore(entityType: string, id: string): Promise<void>;
+  restore(entityType: string, id: string, restoreAdmins?: boolean): Promise<void>;
 
   /**
    * Bulk restore multiple deleted items
    * @returns Count of items successfully restored
    */
-  bulkRestore(items: { entityType: string; id: string }[]): Promise<number>;
+  bulkRestore(items: { entityType: string; id: string; restoreAdmins?: boolean }[]): Promise<number>;
 }

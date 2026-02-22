@@ -12,7 +12,7 @@ import type { UserGroupProps } from "../../domain/entities/UserGroup";
 import type { CreateUserGroupRequest, UpdateUserGroupRequest } from "../../domain/entities/UserGroupRequests";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 
 export const userGroupKeys = {
       all: ["user-groups"] as const,
@@ -90,6 +90,24 @@ export function useUserGroupsViewModel(options?: { useMyTenant?: boolean; tenant
                   },
             }
       );
+
+      // --- Cascade Dialog States ---
+      const [deleteDialog, setDeleteDialog] = useState<{ open: boolean; ids: string[]; isPending: boolean }>({
+            open: false,
+            ids: [],
+            isPending: false,
+      });
+
+      const [statusDialog, setStatusDialog] = useState<{ open: boolean; ids: string[]; isActive: boolean; isPending: boolean }>({
+            open: false,
+            ids: [],
+            isActive: false,
+            isPending: false,
+      });
+
+      const triggerDelete = (ids: string[]) => setDeleteDialog({ open: true, ids, isPending: false });
+      const triggerStatus = (ids: string[], isActive: boolean) => setStatusDialog({ open: true, ids, isActive, isPending: false });
+
 
       const handleRoleSearch = async (query: string) => {
             try {
@@ -174,35 +192,69 @@ export function useUserGroupsViewModel(options?: { useMyTenant?: boolean; tenant
       );
 
       const bulkActivateMutation = useMutation({
-            mutationFn: (ids: string[]) => repo.bulkActivate(ids),
+            mutationFn: ({ ids, cascadeAdmins }: { ids: string[]; cascadeAdmins: boolean }) => repo.bulkActivate(ids, cascadeAdmins),
             onSuccess: (count) => {
                   queryClient.invalidateQueries({ queryKey: userGroupKeys.all });
-                  success({ title: "Bulk Activated", description: `${count} groups activated.` });
+                  success({ title: "Activated", description: `${count} groups activated.` });
             },
       });
 
       const bulkDeactivateMutation = useMutation({
-            mutationFn: (ids: string[]) => repo.bulkDeactivate(ids),
+            mutationFn: ({ ids, cascadeAdmins }: { ids: string[]; cascadeAdmins: boolean }) => repo.bulkDeactivate(ids, cascadeAdmins),
             onSuccess: (count) => {
                   queryClient.invalidateQueries({ queryKey: userGroupKeys.all });
-                  success({ title: "Bulk Deactivated", description: `${count} groups deactivated.` });
+                  success({ title: "Deactivated", description: `${count} groups deactivated.` });
             },
       });
 
       const bulkDeleteMutation = useMutation({
-            mutationFn: (ids: string[]) => repo.bulkDelete(ids),
+            mutationFn: ({ ids, cascadeAdmins }: { ids: string[]; cascadeAdmins: boolean }) => repo.bulkDelete(ids, cascadeAdmins),
             onSuccess: (count) => {
                   queryClient.invalidateQueries({ queryKey: userGroupKeys.all });
-                  success({ title: "Bulk Deleted", description: `${count} groups deleted.` });
+                  success({ title: "Deleted", description: `${count} groups deleted.` });
             },
       });
+
+      const confirmDelete = async (cascadeAdmins: boolean) => {
+            setDeleteDialog((s) => ({ ...s, isPending: true }));
+            try {
+                  await bulkDeleteMutation.mutateAsync({ ids: deleteDialog.ids, cascadeAdmins });
+                  setDeleteDialog({ open: false, ids: [], isPending: false });
+            } catch (err: any) {
+                  toastError({ title: "Error", description: err.message });
+                  setDeleteDialog((s) => ({ ...s, isPending: false }));
+            }
+      };
+
+      const confirmStatus = async (cascadeAdmins: boolean) => {
+            setStatusDialog((s) => ({ ...s, isPending: true }));
+            try {
+                  if (statusDialog.isActive) {
+                        await bulkActivateMutation.mutateAsync({ ids: statusDialog.ids, cascadeAdmins });
+                  } else {
+                        await bulkDeactivateMutation.mutateAsync({ ids: statusDialog.ids, cascadeAdmins });
+                  }
+                  setStatusDialog({ open: false, ids: [], isActive: false, isPending: false });
+            } catch (err: any) {
+                  toastError({ title: "Error", description: err.message });
+                  setStatusDialog((s) => ({ ...s, isPending: false }));
+            }
+      };
 
       return {
             vm,
             getConfigBase,
-            handleToggleActive,
-            handleBulkActivate: (ids: string[]) => bulkActivateMutation.mutateAsync(ids),
-            handleBulkDeactivate: (ids: string[]) => bulkDeactivateMutation.mutateAsync(ids),
-            handleBulkDelete: (ids: string[]) => bulkDeleteMutation.mutateAsync(ids),
+            handleToggleActive, // Kept for backwards compatibility if needed, though replaced mostly by triggerStatus
+            handleBulkActivate: (ids: string[]) => triggerStatus(ids, true),
+            handleBulkDeactivate: (ids: string[]) => triggerStatus(ids, false),
+            handleBulkDelete: (ids: string[]) => triggerDelete(ids),
+            triggerDelete,
+            triggerStatus,
+            deleteDialog,
+            setDeleteDialog,
+            statusDialog,
+            setStatusDialog,
+            confirmDelete,
+            confirmStatus,
       };
 }

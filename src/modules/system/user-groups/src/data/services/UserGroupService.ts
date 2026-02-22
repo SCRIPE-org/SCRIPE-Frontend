@@ -103,8 +103,21 @@ export class UserGroupService {
             await this.api.put(API_ENDPOINTS.USER_GROUPS.UPDATE(id), request);
       }
 
-      async delete(id: string): Promise<void> {
-            await this.api.delete(API_ENDPOINTS.USER_GROUPS.DELETE(id));
+      async delete(id: string, cascadeAdmins?: boolean): Promise<void> {
+            const url = cascadeAdmins
+                  ? `${API_ENDPOINTS.USER_GROUPS.DELETE(id)}?cascadeAdmins=true`
+                  : API_ENDPOINTS.USER_GROUPS.DELETE(id);
+            await this.api.delete(url);
+      }
+
+      async toggleStatus(id: string, isActive: boolean, cascadeAdmins?: boolean): Promise<void> {
+            // Note: Single toggle is handled via Update endpoint in the backend for now, 
+            // but we can pass it as a special small payload or we might need to rely on the bulk endpoints
+            // Wait, looking at the UserGroupsController from earlier, there isn't a single toggle endpoint.
+            // The single toggle status was previously done via an implicit Bulk Update.
+            // So we'll hit the bulk endpoint passing this single ID
+            const url = isActive ? API_ENDPOINTS.USER_GROUPS.BULK.ACTIVATE : API_ENDPOINTS.USER_GROUPS.BULK.DEACTIVATE;
+            await this.api.post(url, { ids: [id], cascadeAdmins });
       }
 
       async addMembers(groupId: string, request: AddMembersRequest): Promise<void> {
@@ -123,20 +136,20 @@ export class UserGroupService {
             await this.api.put(API_ENDPOINTS.USER_GROUPS.SET_RESTRICTIONS(groupId), request);
       }
 
-      async bulkActivate(ids: string[]): Promise<number> {
-            const response = await this.api.post<{ affectedRows?: number } | number>(API_ENDPOINTS.USER_GROUPS.BULK.ACTIVATE, { ids });
+      async bulkActivate(ids: string[], cascadeAdmins?: boolean): Promise<number> {
+            const response = await this.api.post<{ affectedRows?: number } | number>(API_ENDPOINTS.USER_GROUPS.BULK.ACTIVATE, { ids, cascadeAdmins });
             if (typeof response === "number") return response;
             return response.affectedRows ?? ids.length;
       }
 
-      async bulkDeactivate(ids: string[]): Promise<number> {
-            const response = await this.api.post<{ affectedRows?: number } | number>(API_ENDPOINTS.USER_GROUPS.BULK.DEACTIVATE, { ids });
+      async bulkDeactivate(ids: string[], cascadeAdmins?: boolean): Promise<number> {
+            const response = await this.api.post<{ affectedRows?: number } | number>(API_ENDPOINTS.USER_GROUPS.BULK.DEACTIVATE, { ids, cascadeAdmins });
             if (typeof response === "number") return response;
             return response.affectedRows ?? ids.length;
       }
 
-      async bulkDelete(ids: string[]): Promise<number> {
-            const response = await this.api.post<{ affectedRows?: number } | number>(API_ENDPOINTS.USER_GROUPS.BULK.DELETE, { ids });
+      async bulkDelete(ids: string[], cascadeAdmins?: boolean): Promise<number> {
+            const response = await this.api.post<{ affectedRows?: number } | number>(API_ENDPOINTS.USER_GROUPS.BULK.DELETE, { ids, cascadeAdmins });
             if (typeof response === "number") return response;
             return response.affectedRows ?? ids.length;
       }

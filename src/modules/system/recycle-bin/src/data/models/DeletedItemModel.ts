@@ -30,6 +30,7 @@ export interface DeletedItemsResponseJson {
   admins: DeletedItemJson[];
   users: DeletedItemJson[];
   roles: DeletedItemJson[];
+  userGroups: DeletedItemJson[];
   totalCount: number;
 }
 
@@ -48,7 +49,7 @@ export class DeletedItemModel {
     public readonly tenantName?: string,
     public readonly deletedAt?: string,
     public readonly deletedByName?: string
-  ) {}
+  ) { }
 
   /**
    * Create DeletedItemModel from API JSON

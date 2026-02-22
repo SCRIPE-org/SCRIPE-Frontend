@@ -667,6 +667,23 @@ export const ar = {
     descEnPlaceholder: "قدم وصفاً للغرض من هذه المجموعة باللغة الإنجليزية...",
     descriptionAr: "الوصف (بالعربية)",
     descArPlaceholder: "قدم وصفاً مفصلاً للغرض من هذه المجموعة...",
+
+    // Cascade Delete Dialog
+    cascadeDeleteWarning: "تحذير: هذا الإجراء يمكن أن يؤثر على المشرفين المعينين.",
+    cascadeDeleteDesc: "إذا لم تقم بحذف المشرفين، فسيتم إزالتهم من هذه المجموعة. المشرفون الذين يبقون بدون أدوار أو مجموعات سيتم تعيين دور النظام الافتراضي لهم.",
+    alsoDeleteAdmins: "أيضًا حذف المشرفين المعينين",
+    alsoDeleteAdminsDesc: "ضع علامة هنا لحذف جميع المشرفين المعينين حاليًا لهذه المجموعة حذفًا مؤقتًا.",
+
+    // Cascade Status Dialog
+    cascadeStatusWarning: "تحذير: هذا الإجراء يمكن أن يؤثر على المشرفين المعينين.",
+    cascadeStatusDesc: "يمكنك اختياريًا تطبيق '{status}' على جميع المشرفين المعينين لهذه المجموعة أيضًا.",
+    alsoStatusAdmins: "تطبيق '{status}' على المشرفين المعينين",
+    alsoStatusAdminsDesc: "ضع علامة هنا لتطبيق هذا التغيير في الحالة على جميع المشرفين في المجموعة.",
+
+    // Cascade Restore Dialog
+    restoreAdminsTitle: "استعادة المشرفين المرتبطين",
+    restoreAdminsDesc: "ربما تحتوي مجموعة المستخدمين هذه على مسؤولين مرتبطين بها والذين تم حذفهم عند حذف المجموعة. يمكنك اختيار استعادتهم مع المجموعة.",
+    alsoRestoreAdmins: "أيضًا استعادة المشرفين المعينين",
     // Detail page
     backToList: "العودة إلى مجموعات المستخدمين",
     notFound: "مجموعة المستخدمين غير موجودة",
@@ -3427,6 +3444,9 @@ export const ar = {
 
   // Common
   common: {
+    deleteConfirm:"تأكيد الحذف",
+    deleteConfirmDesc:"هل أنت متأكد من رغبتك في حذف هذا العنصر؟",
+    statusConfirmDesc:"هل أنت متأكد من رغبتك في تغيير حالة هذا العنصر؟",
     tenant: "المستأجر",
     name: "الاسم",
     created: "تم الإنشاء",
@@ -4027,12 +4047,14 @@ export const ar = {
   // Recycle Bin
   recycleBin: {
     title: "سلة المحذوفات",
+    restoreConfirmDesc:"هل أنت متأكد من رغبتك في استعادة هذا العنصر؟",
     description: "عرض واستعادة العناصر المحذوفة مؤخراً قبل الحذف النهائي",
     tabs: {
       tenants: "المستأجرون",
       admins: "المشرفون",
       users: "المستخدمون",
       roles: "الأدوار",
+      userGroups: "مجموعات المستخدمين",
     },
     columns: {
       name: "الاسم",

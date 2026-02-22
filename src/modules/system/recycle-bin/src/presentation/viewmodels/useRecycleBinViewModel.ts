@@ -19,7 +19,7 @@ import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import type { DeletedItem } from "../../domain/entities/DeletedItem";
 import type { DeletedItemsGrouped } from "../../domain/interfaces/IRecycleBinRepository";
 
-export type TabType = "tenants" | "admins" | "users" | "roles";
+export type TabType = "tenants" | "admins" | "users" | "roles" | "userGroups";
 
 const RECYCLE_BIN_QUERY_KEY = ["recycle-bin"] as const;
 const DEFAULT_PAGE_SIZE = 10;
@@ -40,12 +40,21 @@ export function useRecycleBinViewModel() {
     admins: 1,
     users: 1,
     roles: 1,
+    userGroups: 1,
   });
 
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
 
   // Search state
   const [searchValue, setSearchValue] = useState("");
+
+  // Restore dialog state
+  const [restoreDialog, setRestoreDialog] = useState<{ open: boolean; entityType: string; ids: string[]; isPending: boolean }>({
+    open: false,
+    entityType: "",
+    ids: [],
+    isPending: false,
+  });
 
   // ============ Data Fetching ============
   const { data, isLoading, error } = useQuery<DeletedItemsGrouped>({
@@ -55,8 +64,8 @@ export function useRecycleBinViewModel() {
 
   // ============ Restore Mutation ============
   const restoreMutation = useMutation({
-    mutationFn: ({ entityType, id }: { entityType: string; id: string }) =>
-      recycleBinRepository.restore(entityType, id),
+    mutationFn: ({ entityType, id, restoreAdmins }: { entityType: string; id: string; restoreAdmins?: boolean }) =>
+      recycleBinRepository.restore(entityType, id, restoreAdmins),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [...RECYCLE_BIN_QUERY_KEY] });
       success({
@@ -74,7 +83,7 @@ export function useRecycleBinViewModel() {
 
   // ============ Bulk Restore Mutation ============
   const bulkRestoreMutation = useMutation({
-    mutationFn: (items: { entityType: string; id: string }[]) =>
+    mutationFn: (items: { entityType: string; id: string; restoreAdmins?: boolean }[]) =>
       recycleBinRepository.bulkRestore(items),
     onSuccess: (count) => {
       queryClient.invalidateQueries({ queryKey: [...RECYCLE_BIN_QUERY_KEY] });
@@ -100,6 +109,7 @@ export function useRecycleBinViewModel() {
       admins: data?.admins?.length ?? 0,
       users: data?.users?.length ?? 0,
       roles: data?.roles?.length ?? 0,
+      userGroups: data?.userGroups?.length ?? 0,
     }),
     [data]
   );
@@ -145,7 +155,7 @@ export function useRecycleBinViewModel() {
     (size: number) => {
       setPageSize(size);
       // Reset all tabs to page 1 when page size changes
-      setTabPages({ tenants: 1, admins: 1, users: 1, roles: 1 });
+      setTabPages({ tenants: 1, admins: 1, users: 1, roles: 1, userGroups: 1 });
     },
     []
   );
@@ -168,13 +178,25 @@ export function useRecycleBinViewModel() {
   const canRestore = permissions.has(SYSTEM_PERMISSIONS.RECYCLE_BIN_RESTORE);
 
   // ============ Handlers ============
-  const handleRestore = useCallback(
-    (entityType: string, id: string) => restoreMutation.mutate({ entityType, id }),
-    [restoreMutation]
-  );
 
-  const handleBulkRestore = useCallback(
-    (ids: string[]) => {
+  const triggerRestore = useCallback((entityType: string, id: string) => {
+    if (entityType.toLowerCase() === "usergroup" || entityType.toLowerCase() === "usergroups") {
+      setRestoreDialog({ open: true, entityType, ids: [id], isPending: false });
+    } else {
+      restoreMutation.mutate({ entityType, id });
+    }
+  }, [restoreMutation]);
+
+  const triggerBulkRestore = useCallback((ids: string[]) => {
+    if (ids.length === 0) return;
+
+    // Determine entity type from the first item (all selected items should be of the same type via the active tab)
+    const firstItem = allTabItems.find((ci) => ci.id === ids[0]);
+    if (!firstItem) return;
+
+    if (firstItem.entityType.toLowerCase() === "usergroup" || firstItem.entityType.toLowerCase() === "usergroups") {
+      setRestoreDialog({ open: true, entityType: firstItem.entityType, ids, isPending: false });
+    } else {
       const items = ids
         .map((id) => {
           const item = allTabItems.find((ci) => ci.id === id);
@@ -184,8 +206,33 @@ export function useRecycleBinViewModel() {
       if (items.length > 0) {
         bulkRestoreMutation.mutate(items);
       }
-    },
-    [allTabItems, bulkRestoreMutation]
+    }
+  }, [allTabItems, bulkRestoreMutation]);
+
+  const confirmRestore = useCallback(async (restoreAdmins: boolean) => {
+    setRestoreDialog(s => ({ ...s, isPending: true }));
+    try {
+      if (restoreDialog.ids.length === 1) {
+        await restoreMutation.mutateAsync({ entityType: restoreDialog.entityType, id: restoreDialog.ids[0], restoreAdmins });
+      } else {
+        const items = restoreDialog.ids.map(id => ({ entityType: restoreDialog.entityType, id, restoreAdmins }));
+        await bulkRestoreMutation.mutateAsync(items);
+      }
+      setRestoreDialog({ open: false, entityType: "", ids: [], isPending: false });
+    } catch (err: any) {
+      toastError({ title: t("common.error"), description: err.message });
+      setRestoreDialog(s => ({ ...s, isPending: false }));
+    }
+  }, [restoreDialog, restoreMutation, bulkRestoreMutation, toastError, t]);
+
+  const handleRestore = useCallback(
+    (entityType: string, id: string) => triggerRestore(entityType, id),
+    [triggerRestore]
+  );
+
+  const handleBulkRestore = useCallback(
+    (ids: string[]) => triggerBulkRestore(ids),
+    [triggerBulkRestore]
   );
 
   return {
@@ -220,6 +267,11 @@ export function useRecycleBinViewModel() {
     // Bulk Restore
     isBulkRestoring: bulkRestoreMutation.isPending,
     handleBulkRestore,
+
+    // Dialog state
+    restoreDialog,
+    setRestoreDialog,
+    confirmRestore,
 
     // Refresh
     refreshItems: () => queryClient.invalidateQueries({ queryKey: [...RECYCLE_BIN_QUERY_KEY] }),

@@ -635,6 +635,23 @@ export const en = {
     descEnPlaceholder: "Provide a detailed description of this group's purpose...",
     descriptionAr: "Description (Arabic)",
     descArPlaceholder: "وأضف وصفاً هنا...",
+
+    // Cascade Delete Dialog
+    cascadeDeleteWarning: "Warning: This action can affect assigned admins.",
+    cascadeDeleteDesc: "If you don't delete the admins, they will be removed from this group. Admins left with no roles or groups will be assigned a default system role.",
+    alsoDeleteAdmins: "Also delete assigned admins",
+    alsoDeleteAdminsDesc: "Check this to soft-delete all admins that are currently assigned to this group.",
+
+    // Cascade Status Dialog
+    cascadeStatusWarning: "Warning: This action can affect assigned admins.",
+    cascadeStatusDesc: "You can optionally {status} all admins assigned to this group as well.",
+    alsoStatusAdmins: "Also {status} assigned admins",
+    alsoStatusAdminsDesc: "Check this to cascade this status change to all admins in the group.",
+
+    // Cascade Restore Dialog
+    restoreAdminsTitle: "Restore Associated Admins",
+    restoreAdminsDesc: "This user group may have administrators associated with it that were deleted when the group was deleted. You can choose to restore them along with the group.",
+    alsoRestoreAdmins: "Also restore assigned admins",
     // Detail page
     backToList: "Back to User Groups",
     notFound: "User group not found",
@@ -4081,6 +4098,7 @@ export const en = {
       admins: "Admins",
       users: "Users",
       roles: "Roles",
+      userGroups: "User Groups",
     },
     columns: {
       name: "Name",

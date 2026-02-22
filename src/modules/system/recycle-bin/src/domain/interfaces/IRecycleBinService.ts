@@ -17,6 +17,7 @@ export interface DeletedItemsListResult {
   admins: DeletedItemModel[];
   users: DeletedItemModel[];
   roles: DeletedItemModel[];
+  userGroups: DeletedItemModel[];
   totalCount: number;
 }
 
@@ -32,10 +33,10 @@ export interface IRecycleBinService {
   /**
    * Restore a single deleted item
    */
-  restore(entityType: string, id: string): Promise<void>;
+  restore(entityType: string, id: string, restoreAdmins?: boolean): Promise<void>;
 
   /**
    * Bulk restore multiple deleted items
    */
-  bulkRestore(items: { entityType: string; id: string }[]): Promise<number>;
+  bulkRestore(items: { entityType: string; id: string; restoreAdmins?: boolean }[]): Promise<number>;
 }

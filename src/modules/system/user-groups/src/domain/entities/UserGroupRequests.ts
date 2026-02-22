@@ -33,3 +33,15 @@ export interface GroupRestrictionDto {
 export interface SetGroupRestrictionsRequest {
       restrictions: GroupRestrictionDto[];
 }
+
+export interface BulkUserGroupsActionRequest {
+      ids: string[];
+      cascadeAdmins?: boolean;
+}
+
+export interface BulkUserGroupsFilterRequest {
+      tenantId?: string;
+      search?: string;
+      isActive?: boolean;
+      cascadeAdmins?: boolean;
+}
