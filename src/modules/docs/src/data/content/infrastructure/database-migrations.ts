@@ -67,6 +67,23 @@ services.AddMultiProviderDatabase<
       },
       { type: "info", variant: "warning", contentKey: "infrastructure.databaseMigrations.cliWarning" },
 
+      // ─── Auto-Detecting Provider Updates ───────────────────────────
+      {
+            type: "heading", level: 3,
+            titleKey: "infrastructure.databaseMigrations.cliUpdateTitle", id: "cli-update",
+      },
+      { type: "paragraph", contentKey: "infrastructure.databaseMigrations.cliUpdateContent" },
+      {
+            type: "code",
+            language: "bash",
+            filename: "nexora db update",
+            code: `$ nexora db update -m Identity
+
+# Output:
+# [INFO] Auto-detected database provider: SqlServer from appsettings.json
+# [INFO] > dotnet ef database update --project "..." --context SqlServerIdentityDbContext`,
+      },
+
       // ─── Adding a New Provider ──────────────────────────────────────
       {
             type: "heading", level: 2,

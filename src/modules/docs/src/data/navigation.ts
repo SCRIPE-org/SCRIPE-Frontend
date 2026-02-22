@@ -135,6 +135,7 @@ export const navigationData: DocCategoryData[] = [
       { id: "infra-storage", titleKey: "infrastructure.fileStorage.title", slug: "infrastructure/file-storage", order: 2 },
       { id: "infra-resilience", titleKey: "infrastructure.resilience.title", slug: "infrastructure/resilience", order: 3 },
       { id: "infra-gateway", titleKey: "infrastructure.gatewayDeployment.title", slug: "infrastructure/gateway-deployment", order: 4 },
+      { id: "infra-migrations", titleKey: "infrastructure.databaseMigrations.title", slug: "infrastructure/database-migrations", order: 5 },
     ],
   },
 

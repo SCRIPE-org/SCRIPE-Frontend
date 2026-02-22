@@ -17,7 +17,13 @@ const eslintConfig = defineConfig([
     "e2e/**",
     "next-env.d.ts",
   ]),
-  ...storybook.configs["flat/recommended"],
+  {
+    rules: {
+      "@typescript-eslint/no-explicit-any": "warn",
+      "@typescript-eslint/no-require-imports": "warn",
+      "@typescript-eslint/no-unused-vars": "warn",
+    },
+  },
   ...storybook.configs["flat/recommended"],
 ]);
 

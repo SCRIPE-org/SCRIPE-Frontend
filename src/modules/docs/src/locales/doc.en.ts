@@ -1153,6 +1153,8 @@ export const docEn = {
       cliTitle: "Generating Multi-Provider Migrations",
       cliContent: "The `nexora-cli` eliminates the tedious process of maintaining parallel migrations. With a single command, the CLI spawns child processes that generate distinct, dialect-perfect migrations for all supported providers simultaneously.",
       cliWarning: "Important: Never manually edit the generated `ModelSnapshot` files. Always use the CLI to ensure consistency across the three supported dialects.",
+      cliUpdateTitle: "Auto-Detecting Provider Updates",
+      cliUpdateContent: "When applying migrations with `nexora db update`, the CLI automatically parses your backend `appsettings.json` to detect the currently active `DatabaseProvider`. It seamlessly executes the update against the correct database engine without requiring you to manually specify the provider flag. For edge cases, you can override this behavior using the `-p` parameter.",
       newProviderTitle: "Adding a New Database Engine",
       newProviderContent: "To introduce a new provider (e.g., SQLite for testing), follow the Clean Architecture extension pattern:",
       newProviderStep1: "Create a new sealed derived context (e.g., `SqliteIdentityDbContext`).",
