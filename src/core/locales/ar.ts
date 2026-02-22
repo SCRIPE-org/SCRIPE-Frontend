@@ -77,16 +77,24 @@ export const ar = {
     ticketFare: "أسعار التذاكر",
     role: "الأدوار",
     // New navigation keys
-    system: "النظام",
+    system: "إدارة النظام",
     admins: "المشرفون",
     roles: "الأدوار",
+    user_groups: "مجموعات المستخدمين",
     users: "المستخدمون",
     tenants: "المستأجرون",
     permissions: "الصلاحيات",
     menus: "إدارة القوائم",
     tenant_settings: "إعدادات المستأجر",
+    audit: "سجلات التدقيق",
+    "er-ps": "إدارة الصلاحيات",
     webhooks: "الويب هوك",
-    userGroups: "مجموعات المستخدمين",
+    security: "الأمان",
+    analytics: "التحليلات",
+    recycle_bin: "سلة المحذوفات",
+    notifications: "الإشعارات",
+    "message-templates": "قوالب الرسائل",
+    emails: "البريد الإلكتروني",
   },
 
   // Tenants - المستأجرون
@@ -3445,9 +3453,9 @@ export const ar = {
 
   // Common
   common: {
-    deleteConfirm:"تأكيد الحذف",
-    deleteConfirmDesc:"هل أنت متأكد من رغبتك في حذف هذا العنصر؟",
-    statusConfirmDesc:"هل أنت متأكد من رغبتك في تغيير حالة هذا العنصر؟",
+    deleteConfirm: "تأكيد الحذف",
+    deleteConfirmDesc: "هل أنت متأكد من رغبتك في حذف هذا العنصر؟",
+    statusConfirmDesc: "هل أنت متأكد من رغبتك في تغيير حالة هذا العنصر؟",
     tenant: "المستأجر",
     name: "الاسم",
     created: "تم الإنشاء",
@@ -4048,7 +4056,7 @@ export const ar = {
   // Recycle Bin
   recycleBin: {
     title: "سلة المحذوفات",
-    restoreConfirmDesc:"هل أنت متأكد من رغبتك في استعادة هذا العنصر؟",
+    restoreConfirmDesc: "هل أنت متأكد من رغبتك في استعادة هذا العنصر؟",
     description: "عرض واستعادة العناصر المحذوفة مؤخراً قبل الحذف النهائي",
     tabs: {
       tenants: "المستأجرون",

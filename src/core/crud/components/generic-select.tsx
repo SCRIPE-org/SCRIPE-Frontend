@@ -628,14 +628,14 @@ export const GenericSelect = React.forwardRef<HTMLDivElement, GenericSelectProps
           requestAnimationFrame(() => {
             try {
               triggerRef.current?.focus();
-            } catch {}
+            } catch { }
           });
         } else if (!isOpen && previouslyFocused && previouslyFocused.focus) {
           // Fallback: return to previously focused element
           requestAnimationFrame(() => {
             try {
               previouslyFocused.focus();
-            } catch {}
+            } catch { }
           });
         }
       };
@@ -733,7 +733,7 @@ export const GenericSelect = React.forwardRef<HTMLDivElement, GenericSelectProps
           if (triggerRef.current) {
             try {
               triggerRef.current.focus();
-            } catch {}
+            } catch { }
           }
         });
         // Don't reset server options when closing - keep them for next open
@@ -889,7 +889,7 @@ export const GenericSelect = React.forwardRef<HTMLDivElement, GenericSelectProps
                 // Safe assignment for forwarded ref
                 try {
                   (ref as any).current = containerRef.current;
-                } catch {}
+                } catch { }
               }
             }
           }}
@@ -919,14 +919,14 @@ export const GenericSelect = React.forwardRef<HTMLDivElement, GenericSelectProps
                 requestAnimationFrame(() => {
                   try {
                     searchInputRef.current?.focus({ preventScroll: true });
-                  } catch {}
+                  } catch { }
                 });
               } else {
                 setIsOpen(false);
                 requestAnimationFrame(() => {
                   try {
                     triggerRef.current?.focus();
-                  } catch {}
+                  } catch { }
                 });
               }
             }
@@ -1043,9 +1043,8 @@ export const GenericSelect = React.forwardRef<HTMLDivElement, GenericSelectProps
                 left: dropdownPosition.left,
                 width: dropdownPosition.width,
                 maxHeight: dropdownPosition.maxHeight,
-                transform: `translateZ(0) translateY(${
-                  animateOpen ? 0 : shouldShowAboveRef.current ? 6 : -6
-                }px)`,
+                transform: `translateZ(0) translateY(${animateOpen ? 0 : shouldShowAboveRef.current ? 6 : -6
+                  }px)`,
                 willChange: "transform, opacity", // Optimize for frequent position changes
                 opacity: animateOpen ? 1 : 0,
                 transition:
@@ -1088,14 +1087,14 @@ export const GenericSelect = React.forwardRef<HTMLDivElement, GenericSelectProps
                         // Explicitly focus the input to defeat any focus traps
                         try {
                           (e.currentTarget as HTMLInputElement).focus();
-                        } catch {}
+                        } catch { }
                       }}
                       onPointerDownCapture={(e) => e.stopPropagation()}
                       onPointerDown={(e) => {
                         e.stopPropagation();
                         try {
                           (e.currentTarget as HTMLInputElement).focus();
-                        } catch {}
+                        } catch { }
                       }}
                       onClick={(e) => e.stopPropagation()}
                       autoFocus
@@ -1137,9 +1136,8 @@ export const GenericSelect = React.forwardRef<HTMLDivElement, GenericSelectProps
               <div
                 className="scrollbar-thin scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent overflow-y-auto p-1"
                 style={{
-                  maxHeight: `calc(${dropdownPosition.maxHeight}px - ${
-                    isSearchable ? "84px" : "40px"
-                  })`,
+                  maxHeight: `calc(${dropdownPosition.maxHeight}px - ${isSearchable ? "84px" : "40px"
+                    })`,
                 }}
               >
                 {showLoading ? (
@@ -1158,9 +1156,9 @@ export const GenericSelect = React.forwardRef<HTMLDivElement, GenericSelectProps
                     // Check if selected - use uniqueKey if available for deduplication
                     const isSelected = option.uniqueKey
                       ? currentValues.some((v) => {
-                          const cachedOpt = allOptionsMap.get(v) || selectedOptionsCache.get(v);
-                          return cachedOpt?.uniqueKey === option.uniqueKey;
-                        })
+                        const cachedOpt = allOptionsMap.get(v) || selectedOptionsCache.get(v);
+                        return cachedOpt?.uniqueKey === option.uniqueKey;
+                      })
                       : currentValues.includes(option.value);
                     const hasChildren = option.children && option.children.length > 0;
                     const isExpanded = internalExpandedKeys.includes(option.value);
@@ -1179,9 +1177,9 @@ export const GenericSelect = React.forwardRef<HTMLDivElement, GenericSelectProps
                                 : "border border-border/50 bg-gradient-to-r from-muted/30 to-muted/50 hover:border-border/70 hover:from-muted/50 hover:to-muted/70"
                             : "hover:bg-accent hover:text-accent-foreground",
                           isSelected &&
-                            (isTreeSelect
-                              ? "border-primary/40 bg-primary/10 shadow-md ring-2 ring-primary/50"
-                              : "bg-accent text-accent-foreground"),
+                          (isTreeSelect
+                            ? "border-primary/40 bg-primary/10 shadow-md ring-2 ring-primary/50"
+                            : "bg-accent text-accent-foreground"),
                           option.disabled && "pointer-events-none opacity-50",
                           direction === "rtl" ? "text-right" : "text-left"
                         )}
@@ -1256,8 +1254,8 @@ export const GenericSelect = React.forwardRef<HTMLDivElement, GenericSelectProps
                               <div className="mt-1 text-xs text-muted-foreground/70 opacity-0 transition-opacity group-hover:opacity-100">
                                 {direction === "rtl"
                                   ? getNodePath(option.value, treeData || options)
-                                      .reverse()
-                                      .join(" ‹ ")
+                                    .reverse()
+                                    .join(" ‹ ")
                                   : getNodePath(option.value, treeData || options).join(" › ")}
                               </div>
                             )}

@@ -7,14 +7,17 @@
  */
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@core/ui/button";
 import { Label } from "@core/ui/label";
 import { Input } from "@core/ui/input";
 import { Badge } from "@core/ui/badge";
 import { GenericModal } from "@core/crud/components/generic-modal";
+import { GenericSelect } from "@core/crud/components/generic-select";
 import { Loader2, Lock, Plus, X, Trash2 } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
+import { systemContainer } from "@modules/system/di";
 
 interface Restriction {
       permissionCode: string;
@@ -27,16 +30,44 @@ interface SetRestrictionsDialogProps {
       currentRestrictions: Restriction[];
       onSubmit: (restrictions: Restriction[]) => void;
       isSubmitting?: boolean;
+      tenantId?: string;
 }
 
 export function SetRestrictionsDialog({
-      open, onOpenChange, currentRestrictions, onSubmit, isSubmitting
+      open, onOpenChange, currentRestrictions, onSubmit, isSubmitting, tenantId
 }: SetRestrictionsDialogProps) {
       const { t } = useI18n();
       const [restrictions, setRestrictions] = useState<Restriction[]>([]);
       const [newPermissionCode, setNewPermissionCode] = useState("");
       const [newField, setNewField] = useState("");
       const [activeRestrictionIndex, setActiveRestrictionIndex] = useState<number | null>(null);
+
+      // Fetch available permissions to distinct their resources
+      const { data: availablePermissions = [], isLoading: isLoadingPermissions } = useQuery({
+            queryKey: ["restrictions-available-permissions", tenantId],
+            queryFn: async () => {
+                  try {
+                        if (tenantId) {
+                              return await systemContainer.tenantService.getTenantPermissions(tenantId);
+                        } else {
+                              return await systemContainer.tenantService.getCreationPermissions();
+                        }
+                  } catch (e) {
+                        return [];
+                  }
+            },
+            enabled: open,
+            staleTime: 5 * 60 * 1000,
+      });
+
+      // Distinct resource options mapped with localized label
+      const resourceOptions = useMemo(() => {
+            const uniqueResources = Array.from(new Set(availablePermissions.map(p => p.resource).filter(Boolean)));
+            return uniqueResources.map(res => ({
+                  value: res,
+                  label: t(`nav.${res}`) || res.charAt(0).toUpperCase() + res.slice(1)
+            })).sort((a, b) => a.label.localeCompare(b.label));
+      }, [availablePermissions, t]);
 
       // Pre-fill from current
       useEffect(() => {
@@ -102,13 +133,16 @@ export function SetRestrictionsDialog({
                                     {t("userGroups.restrictionsTab.addPermission") || "Add Permission Code"}
                               </Label>
                               <div className="flex gap-2">
-                                    <Input
-                                          value={newPermissionCode}
-                                          onChange={(e) => setNewPermissionCode(e.target.value)}
-                                          placeholder={t("userGroups.restrictionsTab.permissionPlaceholder") || "e.g. admins.view"}
-                                          onKeyDown={(e) => e.key === "Enter" && addRestriction()}
-                                          className="font-mono text-sm"
-                                    />
+                                    <div className="flex-1">
+                                          <GenericSelect
+                                                value={newPermissionCode}
+                                                onValueChange={(val: string | string[]) => setNewPermissionCode(val as string)}
+                                                options={resourceOptions}
+                                                placeholder={t("userGroups.restrictionsTab.permissionPlaceholder") || "Select Resource..."}
+                                                loading={isLoadingPermissions}
+                                                searchable
+                                          />
+                                    </div>
                                     <Button
                                           variant="outline"
                                           size="sm"

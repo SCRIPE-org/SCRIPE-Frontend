@@ -312,6 +312,7 @@ export function UserGroupDetailView({ groupId }: Props) {
                               setShowSetRestrictions(false);
                         }}
                         isSubmitting={isSettingRestrictions}
+                        tenantId={group.tenantId || undefined}
                   />
             </div>
       );
