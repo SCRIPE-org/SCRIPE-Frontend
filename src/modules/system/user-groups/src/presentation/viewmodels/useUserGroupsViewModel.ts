@@ -86,9 +86,24 @@ export function useUserGroupsViewModel(options?: { useMyTenant?: boolean; tenant
             }
       );
 
+      const handleRoleSearch = async (query: string) => {
+            try {
+                  const result = useMyTenant
+                        ? await systemContainer.roleRepository.getMyTenantRoles({ search: query, page: 1, pageSize: 20 })
+                        : await systemContainer.roleRepository.getAll({ search: query, page: 1, pageSize: 20, tenantId });
+                  return (result.items || []).map((r) => ({
+                        value: r.id,
+                        label: r.nameEn || r.code,
+                  }));
+            } catch {
+                  return [];
+            }
+      };
+
       function getConfigBase(t: any) {
             return {
                   createFields: [
+                        { name: "roleIds", label: t("userGroups.roles") || "Roles", type: "multi-select" as const, placeholder: t("roles.selectPlaceholder") || "Select roles...", searchPlaceholder: t("roles.search") || "Search roles...", required: true, onServerSearch: handleRoleSearch, searchType: "server" as const, noResultsText: t("roles.noResults") || "No roles found" },
                         { name: "nameEn", label: t("userGroups.nameEn") || "Name (EN)", placeholder: t("userGroups.nameEnPlaceholder"), type: "text" as const, required: true },
                         { name: "nameAr", label: t("userGroups.nameAr") || "Name (AR)", placeholder: t("userGroups.nameArPlaceholder"), type: "text" as const, required: true },
                         { name: "code", label: t("userGroups.code") || "Code", placeholder: t("userGroups.codePlaceholder"), description: t("userGroups.codeHint"), type: "text" as const, required: true },
@@ -96,10 +111,12 @@ export function useUserGroupsViewModel(options?: { useMyTenant?: boolean; tenant
                         { name: "descriptionAr", label: t("userGroups.descriptionAr") || "Description (AR)", placeholder: t("userGroups.descArPlaceholder"), type: "textarea" as const },
                   ],
                   editFields: [
+                        { name: "roleIds", label: t("userGroups.roles") || "Roles", type: "multi-select" as const, placeholder: t("roles.selectPlaceholder") || "Select roles...", searchPlaceholder: t("roles.search") || "Search roles...", required: true, onServerSearch: handleRoleSearch, searchType: "server" as const, noResultsText: t("roles.noResults") || "No roles found" },
                         { name: "nameEn", label: t("userGroups.nameEn") || "Name (EN)", placeholder: t("userGroups.nameEnPlaceholder"), type: "text" as const, required: true },
                         { name: "nameAr", label: t("userGroups.nameAr") || "Name (AR)", placeholder: t("userGroups.nameArPlaceholder"), type: "text" as const, required: true },
                         { name: "descriptionEn", label: t("userGroups.descriptionEn") || "Description (EN)", placeholder: t("userGroups.descEnPlaceholder"), type: "textarea" as const },
                         { name: "descriptionAr", label: t("userGroups.descriptionAr") || "Description (AR)", placeholder: t("userGroups.descArPlaceholder"), type: "textarea" as const },
+                        { name: "isActive", label: t("common.status") || "Active", type: "switch" as const },
                   ],
                   createInitialValues: {
                         nameEn: "",
@@ -107,12 +124,16 @@ export function useUserGroupsViewModel(options?: { useMyTenant?: boolean; tenant
                         code: "",
                         descriptionEn: "",
                         descriptionAr: "",
+                        roleIds: [] as string[],
                   },
-                  editInitialValues: (item: UserGroupListItem) => ({
+                  editInitialValues: (item: any) => ({
+                        id: item.id,
                         nameEn: item.nameEn,
                         nameAr: item.nameAr,
                         descriptionEn: item.descriptionEn ?? "",
                         descriptionAr: item.descriptionAr ?? "",
+                        roleIds: item.roles?.map((r: any) => r.roleId) || [], // Assuming it will be mapped correctly if we fetch details
+                        isActive: item.isActive,
                   }),
                   getItemDisplayName: (item: UserGroupListItem) => item.nameEn || item.code,
                   deleteService: async (id: string) => {

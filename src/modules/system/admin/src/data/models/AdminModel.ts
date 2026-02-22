@@ -81,6 +81,7 @@ export interface CreateAdminJson {
   notes?: string;
   tenantId?: string;
   roleIds?: string[];
+  userGroupIds?: string[];
   forcePasswordChange?: boolean;
 }
 
@@ -242,7 +243,8 @@ export class CreateAdminModel {
     public readonly email?: string,
     public readonly notes?: string,
     public readonly tenantId?: string,
-    public readonly roleIds?: string[]
+    public readonly roleIds?: string[],
+    public readonly userGroupIds?: string[]
   ) { }
 
   toJson(): CreateAdminJson {
@@ -256,6 +258,7 @@ export class CreateAdminModel {
       notes: this.notes,
       tenantId: this.tenantId,
       roleIds: this.roleIds,
+      userGroupIds: this.userGroupIds,
     };
   }
 }

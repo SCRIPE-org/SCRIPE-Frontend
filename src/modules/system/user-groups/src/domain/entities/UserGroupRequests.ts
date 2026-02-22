@@ -4,6 +4,7 @@ export interface CreateUserGroupRequest {
       code: string;
       descriptionEn?: string;
       descriptionAr?: string;
+      roleIds: string[];
       tenantId?: string;
 }
 
@@ -12,6 +13,7 @@ export interface UpdateUserGroupRequest {
       nameAr: string;
       descriptionEn?: string;
       descriptionAr?: string;
+      roleIds: string[];
       isActive: boolean;
 }
 

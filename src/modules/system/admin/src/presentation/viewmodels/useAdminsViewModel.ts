@@ -355,6 +355,32 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
     [roleRepository, propTenantId, contextTenantId, language]
   );
 
+  // ============ Group Search for Create Form ============
+  const handleGroupSearch = useCallback(
+    async (query: string): Promise<FieldOption[]> => {
+      try {
+        // For group search, use the most specific tenant context available
+        // to match how handleRoleSearch is structured.
+        const groupSearchTenantId = propTenantId ?? contextTenantId ?? undefined;
+
+        const result = await systemContainer.userGroupRepository.getAll({
+          search: query,
+          page: 1,
+          pageSize: 20,
+          tenantId: groupSearchTenantId,
+        });
+
+        return (result.items || []).map((g) => ({
+          value: g.id,
+          label: language === "ar" ? g.nameAr : g.nameEn,
+        }));
+      } catch {
+        return [];
+      }
+    },
+    [useMyTenant, propTenantId, contextTenantId, language]
+  );
+
   // ============ Config Base (Fields, Actions, Initial Values) ============
   const getConfigBase = useCallback(
     (): Partial<CrudConfig<Admin>> => ({
@@ -365,10 +391,21 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
           type: "multi-select" as const,
           placeholder: t("admin.role.selectRolesPlaceholder") || "Select roles...",
           searchPlaceholder: t("admin.role.searchRoles") || "Search roles...",
-          required: true,
+          required: false, // Optional - validated by backend (at least one role OR group)
           onServerSearch: handleRoleSearch,
           searchType: "server" as const,
           noResultsText: t("roles.noRolesFound") || "No roles found",
+        },
+        {
+          name: "userGroupIds",
+          label: t("admin.groups") || "Groups",
+          type: "multi-select" as const,
+          placeholder: t("userGroups.selectPlaceholder") || "Select groups...",
+          searchPlaceholder: t("userGroups.search") || "Search groups...",
+          required: false, // Optional - validated by backend (at least one role OR group)
+          onServerSearch: handleGroupSearch,
+          searchType: "server" as const,
+          noResultsText: t("userGroups.emptyStateTitle") || "No groups found",
         },
         {
           name: "username",
@@ -454,7 +491,8 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
         { name: "id", type: "hidden" as const, required: true },
       ],
       createInitialValues: {
-        roleIds: [] as string[], // Required - must select at least one role
+        roleIds: [] as string[], // At least one role OR group required
+        userGroupIds: [] as string[], // At least one role OR group required
         username: "",
         password: "",
         firstName: "",

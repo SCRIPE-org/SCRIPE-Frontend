@@ -16,7 +16,8 @@ export interface CreateAdminRequest {
   phoneNumber?: string;
   email?: string;
   notes?: string;
-  roleIds: string[]; // Required - at least one role
+  roleIds?: string[]; // Optional - at least one role OR group required
+  userGroupIds?: string[]; // Optional - at least one role OR group required
   tenantId?: string;
 }
 

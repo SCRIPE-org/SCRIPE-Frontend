@@ -603,6 +603,8 @@ export const en = {
 
   // User Groups
   userGroups: {
+    search: "Search",
+    selectPlaceholder: "Select User Group",
     title: "User Groups",
     name: "Name",
     descriptionCol: "Description",

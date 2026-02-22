@@ -105,7 +105,8 @@ export class AdminMapper {
       request.email,
       request.notes,
       request.tenantId,
-      request.roleIds
+      request.roleIds,
+      request.userGroupIds
     );
   }
 

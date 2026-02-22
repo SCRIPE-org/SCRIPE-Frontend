@@ -633,6 +633,8 @@ export const ar = {
 
   // User Groups
   userGroups: {
+    selectPlaceholder: "اختر مجموعة مستخدم",
+    search: "بحث",
     noRoles: "لا توجد أدوار",
     noRestrictions: "لا توجد قيود",
     title: "مجموعات المستخدمين",
