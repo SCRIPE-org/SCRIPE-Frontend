@@ -10,6 +10,9 @@ import { useCrudViewModel } from "@core/crud/hooks/useCrudViewModel";
 import { systemContainer } from "@modules/system/di";
 import type { UserGroupProps } from "../../domain/entities/UserGroup";
 import type { CreateUserGroupRequest, UpdateUserGroupRequest } from "../../domain/entities/UserGroupRequests";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import { useCallback } from "react";
 
 export const userGroupKeys = {
       all: ["user-groups"] as const,
@@ -36,6 +39,8 @@ export interface UserGroupListItem {
 export function useUserGroupsViewModel(options?: { useMyTenant?: boolean; tenantId?: string }) {
       const repo = systemContainer.userGroupRepository;
       const { useMyTenant, tenantId } = options || {};
+      const queryClient = useQueryClient();
+      const { success, error: toastError } = useEnhancedToast();
 
       const vm = useCrudViewModel<UserGroupListItem, CreateUserGroupRequest, UpdateUserGroupRequest>(
             [...userGroupKeys.all, useMyTenant ? "my-tenant" : tenantId || "all"],
@@ -148,5 +153,56 @@ export function useUserGroupsViewModel(options?: { useMyTenant?: boolean; tenant
             };
       }
 
-      return { vm, getConfigBase };
+      const handleToggleActive = useCallback(
+            async (id: string, isActive: boolean) => {
+                  try {
+                        if (isActive) {
+                              await repo.bulkActivate([id]);
+                        } else {
+                              await repo.bulkDeactivate([id]);
+                        }
+                        queryClient.invalidateQueries({ queryKey: userGroupKeys.all });
+                        success({
+                              title: isActive ? "Group Activated" : "Group Deactivated",
+                              description: `User group has been ${isActive ? "activated" : "deactivated"}.`,
+                        });
+                  } catch (err: any) {
+                        toastError({ title: "Error", description: err.message });
+                  }
+            },
+            [repo, queryClient, success, toastError]
+      );
+
+      const bulkActivateMutation = useMutation({
+            mutationFn: (ids: string[]) => repo.bulkActivate(ids),
+            onSuccess: (count) => {
+                  queryClient.invalidateQueries({ queryKey: userGroupKeys.all });
+                  success({ title: "Bulk Activated", description: `${count} groups activated.` });
+            },
+      });
+
+      const bulkDeactivateMutation = useMutation({
+            mutationFn: (ids: string[]) => repo.bulkDeactivate(ids),
+            onSuccess: (count) => {
+                  queryClient.invalidateQueries({ queryKey: userGroupKeys.all });
+                  success({ title: "Bulk Deactivated", description: `${count} groups deactivated.` });
+            },
+      });
+
+      const bulkDeleteMutation = useMutation({
+            mutationFn: (ids: string[]) => repo.bulkDelete(ids),
+            onSuccess: (count) => {
+                  queryClient.invalidateQueries({ queryKey: userGroupKeys.all });
+                  success({ title: "Bulk Deleted", description: `${count} groups deleted.` });
+            },
+      });
+
+      return {
+            vm,
+            getConfigBase,
+            handleToggleActive,
+            handleBulkActivate: (ids: string[]) => bulkActivateMutation.mutateAsync(ids),
+            handleBulkDeactivate: (ids: string[]) => bulkDeactivateMutation.mutateAsync(ids),
+            handleBulkDelete: (ids: string[]) => bulkDeleteMutation.mutateAsync(ids),
+      };
 }

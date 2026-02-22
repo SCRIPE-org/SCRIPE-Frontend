@@ -12,7 +12,7 @@ import type { CrudConfig, CrudAction } from "@core/crud/components/generic-crud-
 import { useUserGroupsViewModel } from "../viewmodels/useUserGroupsViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Badge } from "@core/ui/badge";
-import { Eye, Pencil, Trash2, Users, Shield } from "lucide-react";
+import { Eye, Pencil, Trash2, Users, Shield, ShieldCheck, ShieldAlert, UserCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 interface UserGroupListItem {
@@ -33,7 +33,14 @@ interface UserGroupListItem {
 export function UserGroupsView() {
       const { t, language } = useI18n();
       const router = useRouter();
-      const { vm, getConfigBase } = useUserGroupsViewModel();
+      const {
+            vm,
+            getConfigBase,
+            handleToggleActive,
+            handleBulkActivate,
+            handleBulkDeactivate,
+            handleBulkDelete,
+      } = useUserGroupsViewModel();
       const configBase = getConfigBase(t);
 
       const config: CrudConfig<UserGroupListItem> = useMemo(
@@ -111,12 +118,26 @@ export function UserGroupsView() {
                               icon: <Eye className="h-4 w-4" />,
                         },
                         {
+                              label: tFn("common.edit") || "Edit",
+                              onClick: (item: UserGroupListItem) => vm.openEditModal(item),
+                              variant: "ghost" as const,
+                              icon: <Pencil className="h-4 w-4" />,
+                              requiredPermission: "user_groups.update",
+                        },
+                        {
+                              label: tFn("admin.toggleStatus") || "Toggle Status",
+                              onClick: (item: UserGroupListItem) => handleToggleActive(item.id, !item.isActive),
+                              variant: "ghost" as const,
+                              icon: <UserCheck className="h-4 w-4" />,
+                              requiredPermission: "user_groups.update",
+                        },
+                        {
                               label: tFn("common.delete") || "Delete",
                               onClick: (item: UserGroupListItem) => handleDeleteFn?.(item),
                               variant: "ghost" as const,
                               className: "text-red-600 hover:text-red-700",
                               icon: <Trash2 className="h-4 w-4" />,
-                              requiredPermission: "user_groups:delete",
+                              requiredPermission: "user_groups.delete",
                               confirmTitle: tFn("userGroups.deleteConfirmTitle") || "Delete User Group",
                               confirmDescription:
                                     tFn("userGroups.deleteConfirmDesc") ||
@@ -124,8 +145,30 @@ export function UserGroupsView() {
                               confirmVariant: "destructive" as const,
                         },
                   ],
+                  enableBulkActions: true,
+                  bulkActions: [
+                        {
+                              label: t("common.activate") || "Activate",
+                              icon: <ShieldCheck className="h-4 w-4" />,
+                              onClick: async (ids: string[]) => { await handleBulkActivate(ids); },
+                              variant: "outline" as const,
+                        },
+                        {
+                              label: t("common.deactivate") || "Deactivate",
+                              icon: <ShieldAlert className="h-4 w-4" />,
+                              onClick: async (ids: string[]) => { await handleBulkDeactivate(ids); },
+                              variant: "outline" as const,
+                        },
+                        {
+                              label: t("common.delete") || "Delete",
+                              icon: <Trash2 className="h-4 w-4" />,
+                              onClick: async (ids: string[]) => { await handleBulkDelete(ids); },
+                              variant: "destructive" as const,
+                              requiresConfirmation: true,
+                        },
+                  ],
             }),
-            [t, language, configBase, router]
+            [t, language, configBase, router, vm, handleToggleActive, handleBulkActivate, handleBulkDeactivate, handleBulkDelete]
       );
 
       return <GenericCrudView viewModel={vm} config={config} />;
