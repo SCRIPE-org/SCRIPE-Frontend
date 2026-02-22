@@ -10,7 +10,8 @@
  */
 "use client";
 
-import { Shield, Trash2, Pencil, Eye } from "lucide-react";
+import { useState, useCallback } from "react";
+import { Shield, Trash2, Pencil, Eye, Users } from "lucide-react";
 import { format } from "date-fns";
 
 // Generic CRUD imports
@@ -23,6 +24,7 @@ import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 // Role imports
 import { Role } from "@modules/system/roles/src/domain/entities/Role";
 import { RolePermissionsDialog } from "@modules/system/roles/src/presentation/components/RolePermissionsDialog";
+import { AssignToGroupDialog } from "@modules/system/user-groups/src/presentation/components/AssignToGroupDialog";
 import { useTenantRolesViewModel } from "../../viewmodels/useTenantRolesViewModel";
 
 // ViewModel - all logic lives here
@@ -44,6 +46,19 @@ export function TenantRolesTab({ tenantId, tenantName }: TenantRolesTabProps) {
   // All logic delegated to ViewModel
   const vm = useTenantRolesViewModel({ tenantId, tenantName });
 
+  // Assign to Group dialog state
+  const [selectedRoleForGroup, setSelectedRoleForGroup] = useState<Role | null>(null);
+  const [assignToGroupOpen, setAssignToGroupOpen] = useState(false);
+
+  // Bulk Assign to Group dialog state
+  const [selectedBulkRoleIds, setSelectedBulkRoleIds] = useState<string[]>([]);
+  const [bulkAssignToGroupOpen, setBulkAssignToGroupOpen] = useState(false);
+
+  const handleOpenAssignToGroup = useCallback((role: Role) => {
+    setSelectedRoleForGroup(role);
+    setAssignToGroupOpen(true);
+  }, []);
+
   // Build CrudConfig from ViewModel data
   const config: CrudConfig<Role> = {
     titleKey: "",
@@ -55,19 +70,36 @@ export function TenantRolesTab({ tenantId, tenantName }: TenantRolesTabProps) {
           ? (value: string) => <code className="rounded bg-muted px-2 py-0.5 text-xs">{value}</code>
           : col.key === "name"
             ? (_: unknown, role: Role) => (
-                <span className="font-medium">{role.getLocalizedName(language)}</span>
-              )
+              <span className="font-medium">{role.getLocalizedName(language)}</span>
+            )
             : col.key === "description"
               ? (_: unknown, role: Role) => (
-                  <span className="block max-w-[200px] truncate text-sm text-muted-foreground">
-                    {role.getLocalizedDescription(language)}
-                  </span>
-                )
+                <span className="block max-w-[200px] truncate text-sm text-muted-foreground">
+                  {role.getLocalizedDescription(language)}
+                </span>
+              )
               : col.key === "priority"
                 ? (value: number) => <Badge variant="outline">{value}</Badge>
-                : col.key === "createdAt"
-                  ? (value: string) => (value ? format(new Date(value), "MMM d, yyyy") : "-")
-                  : undefined,
+                : col.key === "groups"
+                  ? (_: unknown, role: Role) => {
+                    const groups = role.getLocalizedGroups(language);
+                    return (
+                      <div className="flex flex-wrap gap-1">
+                        {groups.length > 0 ? (
+                          groups.map((groupName, index) => (
+                            <Badge key={`${index}-${groupName}`} variant="secondary" className="text-xs">
+                              {groupName}
+                            </Badge>
+                          ))
+                        ) : (
+                          <span className="text-muted-foreground">-</span>
+                        )}
+                      </div>
+                    );
+                  }
+                  : col.key === "createdAt"
+                    ? (value: string) => (value ? format(new Date(value), "MMM d, yyyy") : "-")
+                    : undefined,
     })),
     createFields: vm.createFields,
     editFields: vm.editFields,
@@ -80,6 +112,18 @@ export function TenantRolesTab({ tenantId, tenantName }: TenantRolesTabProps) {
       canUpdate: "roles.update",
       canDelete: "roles.delete",
     },
+    enableBulkActions: true,
+    bulkActions: [
+      {
+        label: t("userGroups.assignToGroup") || "Assign to Group",
+        icon: <Users className="h-4 w-4" />,
+        onClick: async (ids: string[]) => {
+          setSelectedBulkRoleIds(ids);
+          setBulkAssignToGroupOpen(true);
+        },
+        variant: "outline" as const,
+      },
+    ],
     getActions: (vmInstance, tFn, handleDeleteFn): CrudAction<Role>[] => [
       {
         label: tFn("common.view") || "View",
@@ -99,6 +143,12 @@ export function TenantRolesTab({ tenantId, tenantName }: TenantRolesTabProps) {
         variant: "ghost",
         icon: <Shield className="h-4 w-4" />,
         requiredPermission: SYSTEM_PERMISSIONS.ROLES_UPDATE,
+      },
+      {
+        label: tFn("userGroups.assignToGroup") || "Assign to Group",
+        onClick: (item: Role) => handleOpenAssignToGroup(item),
+        variant: "ghost",
+        icon: <Users className="h-4 w-4" />,
       },
       {
         label: tFn("common.delete") || "Delete",
@@ -131,6 +181,32 @@ export function TenantRolesTab({ tenantId, tenantName }: TenantRolesTabProps) {
         onOpenChange={(open) => !open && vm.closePermissionsDialog()}
         role={vm.selectedRoleForPermissions}
         tenantId={vm.tenantId}
+      />
+
+      {/* Bulk Assign to Group Dialog */}
+      {bulkAssignToGroupOpen && (
+        <AssignToGroupDialog
+          open={bulkAssignToGroupOpen}
+          onOpenChange={(open) => {
+            if (!open) {
+              setBulkAssignToGroupOpen(false);
+              setSelectedBulkRoleIds([]);
+            }
+          }}
+          mode="role"
+          roleIds={selectedBulkRoleIds}
+          tenantId={tenantId}
+        />
+      )}
+
+      {/* Single Assign to Group Dialog */}
+      <AssignToGroupDialog
+        open={assignToGroupOpen}
+        onOpenChange={setAssignToGroupOpen}
+        mode="role"
+        roleId={selectedRoleForGroup?.id}
+        roleName={selectedRoleForGroup?.getLocalizedName(language)}
+        tenantId={tenantId}
       />
     </div>
   );

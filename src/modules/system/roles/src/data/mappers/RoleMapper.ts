@@ -40,6 +40,8 @@ export class RoleMapper {
       tenantId: model.tenantId,
       tenantName: model.tenantName,
       modifiedAt: model.modifiedAt,
+      groupNamesEn: model.groupNamesEn,
+      groupNamesAr: model.groupNamesAr,
     };
 
     return new Role(props);

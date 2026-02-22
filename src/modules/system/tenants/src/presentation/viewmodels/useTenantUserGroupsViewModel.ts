@@ -56,6 +56,9 @@ export interface TenantUserGroupsViewModelResult {
       title: string;
       subtitle: string;
       tenantId: string;
+
+      // Delete service
+      deleteService: (id: string) => Promise<void>;
 }
 
 export function useTenantUserGroupsViewModel({
@@ -141,5 +144,6 @@ export function useTenantUserGroupsViewModel({
             title,
             subtitle,
             tenantId,
+            deleteService: configBase.deleteService,
       };
 }

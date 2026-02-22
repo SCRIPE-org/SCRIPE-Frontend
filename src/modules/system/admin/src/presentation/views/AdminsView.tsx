@@ -196,6 +196,26 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
           },
         },
         {
+          key: "groups",
+          label: t("admin.groups") || "Groups",
+          render: (_val: unknown, admin: Admin) => {
+            const groups = admin.getLocalizedGroups(language);
+            return (
+              <div className="flex flex-wrap gap-1">
+                {groups.length > 0 ? (
+                  groups.map((groupName, index) => (
+                    <Badge key={`${index}-${groupName}`} variant="secondary" className="text-xs">
+                      {groupName}
+                    </Badge>
+                  ))
+                ) : (
+                  <span className="text-muted-foreground">-</span>
+                )}
+              </div>
+            );
+          },
+        },
+        {
           key: "isActive",
           label: t("admin.status") || "Status",
           render: (value: boolean) => (

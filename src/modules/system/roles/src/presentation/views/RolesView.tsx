@@ -16,6 +16,7 @@ import {
   type CrudColumn,
 } from "@core/crud/components/generic-crud-view";
 import { Shield, Pencil, Trash, Copy, Users } from "lucide-react";
+import { Badge } from "@core/ui/badge";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { usePermissions } from "@core/providers/permission-provider";
 import type { Role } from "../../domain/entities/Role";
@@ -63,6 +64,26 @@ export function RolesView() {
       label: t("roles.priority"),
       sortable: true,
       className: "w-24 text-center",
+    },
+    {
+      key: "groups",
+      label: t("roles.groups") || "Groups",
+      render: (_val: unknown, role: Role) => {
+        const groups = role.getLocalizedGroups(language);
+        return (
+          <div className="flex flex-wrap gap-1">
+            {groups.length > 0 ? (
+              groups.map((groupName, index) => (
+                <Badge key={`${index}-${groupName}`} variant="secondary" className="text-xs">
+                  {groupName}
+                </Badge>
+              ))
+            ) : (
+              <span className="text-muted-foreground">-</span>
+            )}
+          </div>
+        );
+      },
     },
   ];
 
@@ -227,6 +248,7 @@ export function RolesView() {
           }}
           mode="role"
           roleIds={selectedBulkRoleIds}
+          useMyTenant={!isSuperAdmin}
         />
       )}
 
@@ -237,6 +259,7 @@ export function RolesView() {
         mode="role"
         roleId={selectedRoleForGroup?.id}
         roleName={selectedRoleForGroup?.getLocalizedName(language)}
+        useMyTenant={!isSuperAdmin}
       />
     </>
   );

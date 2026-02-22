@@ -259,6 +259,10 @@ export function useTenantRolesViewModel({
         sortable: true,
       },
       {
+        key: "groups",
+        label: t("roles.groups") || "Groups",
+      },
+      {
         key: "createdAt",
         label: t("role.createdAt") || "Created",
       },

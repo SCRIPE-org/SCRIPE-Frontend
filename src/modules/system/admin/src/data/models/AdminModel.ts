@@ -50,6 +50,9 @@ export interface AdminJson {
   canModify?: boolean;
   /** Effective permissions calculated by backend */
   permissions?: string[];
+  /** Group names from user groups */
+  groupNamesEn?: string[];
+  groupNamesAr?: string[];
 }
 
 /**
@@ -153,7 +156,9 @@ export class AdminModel {
     public readonly tenantName?: string,
     public readonly isSuperAdmin?: boolean,
     public readonly canModify?: boolean,
-    public readonly permissions?: string[]
+    public readonly permissions?: string[],
+    public readonly groupNamesEn?: string[],
+    public readonly groupNamesAr?: string[]
   ) { }
 
   /**
@@ -178,7 +183,9 @@ export class AdminModel {
       json.tenantName,
       json.isSuperAdmin,
       json.canModify,
-      json.permissions
+      json.permissions,
+      json.groupNamesEn,
+      json.groupNamesAr
     );
   }
 
@@ -205,6 +212,8 @@ export class AdminModel {
       isSuperAdmin: this.isSuperAdmin,
       canModify: this.canModify,
       permissions: this.permissions,
+      groupNamesEn: this.groupNamesEn,
+      groupNamesAr: this.groupNamesAr,
     };
   }
 

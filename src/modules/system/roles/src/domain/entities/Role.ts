@@ -28,6 +28,8 @@ export interface RoleProps {
   tenantId?: string;
   tenantName?: string;
   modifiedAt?: string;
+  groupNamesEn?: string[];
+  groupNamesAr?: string[];
 }
 
 /**
@@ -147,6 +149,37 @@ export class Role {
    */
   toProps(): RoleProps {
     return { ...this.props };
+  }
+
+  // ===== Group Helpers =====
+
+  /** Whether role belongs to any user groups */
+  get hasGroups(): boolean {
+    return (this.props.groupNamesEn?.length ?? 0) > 0;
+  }
+
+  /** Get group names array for GenericCrudView auto-hide check */
+  get groups(): string[] {
+    return this.getLocalizedGroups("en");
+  }
+
+  /** Get localized group names as comma-separated string */
+  getLocalizedGroupNames(lang: string = "en"): string {
+    if (lang === "ar" && this.props.groupNamesAr?.length) {
+      return this.props.groupNamesAr.join(", ");
+    }
+    if (this.props.groupNamesEn?.length) {
+      return this.props.groupNamesEn.join(", ");
+    }
+    return "";
+  }
+
+  /** Get localized group names as array */
+  getLocalizedGroups(lang: string = "en"): string[] {
+    if (lang === "ar" && this.props.groupNamesAr?.length) {
+      return this.props.groupNamesAr;
+    }
+    return this.props.groupNamesEn ?? [];
   }
 }
 

@@ -43,6 +43,9 @@ export interface AdminData extends BaseEntity {
   isSuperAdmin?: boolean;
   /** Server-computed: Whether this admin can be modified (deleted, toggled, reset) */
   canModify?: boolean;
+  /** Group names from user groups (from list API) */
+  groupNamesEn?: string[];
+  groupNamesAr?: string[];
 }
 
 /**
@@ -197,5 +200,41 @@ export class Admin {
    */
   getRoleForTenant(tenantId?: string): AdminRoleData | undefined {
     return this.data.roles?.find((r) => r.tenantId === tenantId);
+  }
+
+  // ===== Group Helpers =====
+
+  /** Whether admin belongs to any user groups */
+  get hasGroups(): boolean {
+    return (this.data.groupNamesEn?.length ?? 0) > 0;
+  }
+
+  /** Get group names as comma-separated string */
+  get groupNames(): string {
+    return this.getLocalizedGroupNames("en");
+  }
+
+  /** Get group names array for GenericCrudView auto-hide check */
+  get groups(): string[] {
+    return this.getLocalizedGroups("en");
+  }
+
+  /** Get localized group names as comma-separated string */
+  getLocalizedGroupNames(lang: string = "en"): string {
+    if (lang === "ar" && this.data.groupNamesAr?.length) {
+      return this.data.groupNamesAr.join(", ");
+    }
+    if (this.data.groupNamesEn?.length) {
+      return this.data.groupNamesEn.join(", ");
+    }
+    return "";
+  }
+
+  /** Get localized group names as array */
+  getLocalizedGroups(lang: string = "en"): string[] {
+    if (lang === "ar" && this.data.groupNamesAr?.length) {
+      return this.data.groupNamesAr;
+    }
+    return this.data.groupNamesEn ?? [];
   }
 }

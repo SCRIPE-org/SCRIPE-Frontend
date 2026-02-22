@@ -30,6 +30,8 @@ export interface RoleJson {
   permissions?: RolePermissionJson[]; // Optional for list responses
   createdAt: string;
   modifiedAt?: string;
+  groupNamesEn?: string[];
+  groupNamesAr?: string[];
 }
 
 export interface RoleListResponseJson {
@@ -87,7 +89,9 @@ export class RoleModel {
     public readonly descriptionAr?: string,
     public readonly tenantId?: string,
     public readonly tenantName?: string,
-    public readonly modifiedAt?: string
+    public readonly modifiedAt?: string,
+    public readonly groupNamesEn?: string[],
+    public readonly groupNamesAr?: string[]
   ) { }
 
   static fromJson(json: RoleJson): RoleModel {
@@ -105,7 +109,9 @@ export class RoleModel {
       json.descriptionAr,
       json.tenantId,
       json.tenantName,
-      json.modifiedAt
+      json.modifiedAt,
+      json.groupNamesEn,
+      json.groupNamesAr
     );
   }
   toJson(): RoleJson {
@@ -124,6 +130,8 @@ export class RoleModel {
       permissions: this.permissions.map((p) => p.toJson()),
       createdAt: this.createdAt,
       modifiedAt: this.modifiedAt,
+      groupNamesEn: this.groupNamesEn,
+      groupNamesAr: this.groupNamesAr,
     };
   }
 }

@@ -173,10 +173,13 @@ export const en = {
     // Tabs
     tabAdmins: "Admins",
     tabRoles: "Roles",
+    tabUserGroups: "User Groups",
     tabSubTenants: "Sub-Tenants",
     tabSettings: "Settings",
     adminsDescription: "Manage administrators for this tenant",
     rolesDescription: "Manage roles for this tenant",
+    manageGroups: "Manage User Groups",
+    groupsDescription: "Manage user groups for {tenant}",
     subTenantsDescription: "Child tenants under this organization",
     // Settings
     settings: "Settings",
@@ -322,10 +325,12 @@ export const en = {
     username: "Username",
     name: "Name",
     roles: "Roles",
+    groups: "Groups",
     status: "Status",
     toggleStatus: "Toggle Status",
     createdAt: "Created At",
     noRoles: "No roles",
+    noGroups: "No groups",
     resetPassword: "Reset Password",
     password: "Password",
     firstName: "First Name",
@@ -436,6 +441,8 @@ export const en = {
     descriptionArPlaceholder: "وصف اختياري لهذا الدور...",
     priorityHint: "Lower numbers mean higher priority. Use 0 for the most powerful roles.",
     totalRoles: "{{count}} roles",
+    groups: "Groups",
+    noGroups: "No groups",
   },
 
   // Menu Management (Admin — Navigation Menu Items)
@@ -597,6 +604,8 @@ export const en = {
   // User Groups
   userGroups: {
     title: "User Groups",
+    name: "Name",
+    descriptionCol: "Description",
     description: "Manage user groups for batch role and restriction assignment.",
     // List page
     searchPlaceholder: "Search user groups...",
@@ -683,10 +692,18 @@ export const en = {
     restrictionsUpdated: "Group restrictions updated successfully",
     // Cross-module
     assignToGroup: "Assign to Group",
-    assignToGroupDesc: "Select a user group for",
+    assignToGroups: "Assign to Groups",
+    assignToGroupDesc: "Select user groups for",
+    assignBulkDesc: "Select user groups for",
     selectGroup: "Select Group",
+    selectGroups: "Select Groups",
     selectGroupPlaceholder: "Choose a user group...",
+    selectGroupsPlaceholder: "Choose user groups...",
+    selectedCount: "{{count}} group(s) selected",
+    multiAssignSuccess: "Successfully assigned {{admins}} item(s) to {{groups}} group(s)",
     assignAction: "Assign",
+    noGroups: "No groups assigned",
+    admins: "admin(s)",
   },
 
   // Role Detail View

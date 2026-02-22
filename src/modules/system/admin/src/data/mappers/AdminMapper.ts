@@ -42,6 +42,8 @@ export class AdminMapper {
       tenantName: model.tenantName,
       isSuperAdmin: model.isSuperAdmin,
       canModify: model.canModify,
+      groupNamesEn: model.groupNamesEn,
+      groupNamesAr: model.groupNamesAr,
     };
     return new Admin(data);
   }

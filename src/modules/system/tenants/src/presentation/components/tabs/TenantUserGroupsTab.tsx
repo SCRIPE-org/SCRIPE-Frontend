@@ -84,6 +84,7 @@ export function TenantUserGroupsTab({ tenantId, tenantName }: TenantUserGroupsTa
             createInitialValues: vm.createInitialValues,
             editInitialValues: vm.getEditInitialValues,
             getItemDisplayName: (item: UserGroupListItem) => language === "ar" ? item.nameAr : item.nameEn,
+            deleteService: vm.deleteService,
             permissions: {
                   canView: "user_groups.view",
                   canCreate: "user_groups.create",
