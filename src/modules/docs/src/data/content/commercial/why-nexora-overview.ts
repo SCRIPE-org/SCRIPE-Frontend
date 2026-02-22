@@ -13,14 +13,18 @@ const sections: DocSection[] = [
       { type: "paragraph", contentKey: "commercial.whyNexoraOverview.problemContent" },
       {
             type: "table",
-            headers: ["Challenge", "Traditional Approach", "The Real Cost"],
+            headers: [
+                  "commercial.whyNexoraOverview.tblCostHeader1",
+                  "commercial.whyNexoraOverview.tblCostHeader2",
+                  "commercial.whyNexoraOverview.tblCostHeader3"
+            ],
             rows: [
-                  ["Multi-tenant SaaS", "Build separate apps per tenant", "5× maintenance cost, feature drift across clients"],
-                  ["Enterprise scaling", "Jump to microservices early", "10× DevOps complexity, $50K+ monthly infra cost"],
-                  ["Database vendor lock-in", "Rewrite entire data layer", "6-12 months migration, high regression risk"],
-                  ["Security compliance", "Bolt-on security after launch", "Failed audits, breach liability, regulatory fines"],
-                  ["Bilingual operations (AR/EN)", "Add i18n as an afterthought", "Broken RTL layouts, inconsistent UX, costly redesigns"],
-                  ["Team onboarding", "Each dev learns their own patterns", "3-6 month ramp-up, inconsistent codebase"],
+                  ["commercial.whyNexoraOverview.tblCostR1C1", "commercial.whyNexoraOverview.tblCostR1C2", "commercial.whyNexoraOverview.tblCostR1C3"],
+                  ["commercial.whyNexoraOverview.tblCostR2C1", "commercial.whyNexoraOverview.tblCostR2C2", "commercial.whyNexoraOverview.tblCostR2C3"],
+                  ["commercial.whyNexoraOverview.tblCostR3C1", "commercial.whyNexoraOverview.tblCostR3C2", "commercial.whyNexoraOverview.tblCostR3C3"],
+                  ["commercial.whyNexoraOverview.tblCostR4C1", "commercial.whyNexoraOverview.tblCostR4C2", "commercial.whyNexoraOverview.tblCostR4C3"],
+                  ["commercial.whyNexoraOverview.tblCostR5C1", "commercial.whyNexoraOverview.tblCostR5C2", "commercial.whyNexoraOverview.tblCostR5C3"],
+                  ["commercial.whyNexoraOverview.tblCostR6C1", "commercial.whyNexoraOverview.tblCostR6C2", "commercial.whyNexoraOverview.tblCostR6C3"],
             ],
       },
 
@@ -57,19 +61,22 @@ const sections: DocSection[] = [
       { type: "heading", level: 2, titleKey: "commercial.whyNexoraOverview.glanceTitle", id: "at-a-glance" },
       {
             type: "table",
-            headers: ["Metric", "Value"],
+            headers: [
+                  "commercial.whyNexoraOverview.tblMetricsHeader1",
+                  "commercial.whyNexoraOverview.tblMetricsHeader2"
+            ],
             rows: [
-                  ["API Endpoints", "~119 across 18 controllers"],
-                  ["Security Layers", "8 (Transport → Audit Trail)"],
-                  ["Database Providers", "4 (SQL Server, Oracle, PostgreSQL, SQLite)"],
-                  ["Storage Backends", "4 (Local, Azure Blob, AWS S3, MinIO)"],
-                  ["Deployment Modes", "3 (Monolith, API Gateway, Microservices)"],
-                  ["Languages", "7 (EN, AR, FR, DE, ES, ZH, JA) + Full RTL"],
-                  ["Module Architecture", "Clean Architecture + DDD + CQRS"],
-                  ["Real-Time", "SignalR WebSockets (notifications, audit, dashboards)"],
-                  ["Template Engine", "Scriban (Liquid-like) with bilingual support"],
-                  ["Background Processing", "Channel-based queues + Hangfire"],
-                  ["CLI Tooling", "nexora-cli for module/entity scaffolding"],
+                  ["commercial.whyNexoraOverview.tblMetricsR1C1", "commercial.whyNexoraOverview.tblMetricsR1C2"],
+                  ["commercial.whyNexoraOverview.tblMetricsR2C1", "commercial.whyNexoraOverview.tblMetricsR2C2"],
+                  ["commercial.whyNexoraOverview.tblMetricsR3C1", "commercial.whyNexoraOverview.tblMetricsR3C2"],
+                  ["commercial.whyNexoraOverview.tblMetricsR4C1", "commercial.whyNexoraOverview.tblMetricsR4C2"],
+                  ["commercial.whyNexoraOverview.tblMetricsR5C1", "commercial.whyNexoraOverview.tblMetricsR5C2"],
+                  ["commercial.whyNexoraOverview.tblMetricsR6C1", "commercial.whyNexoraOverview.tblMetricsR6C2"],
+                  ["commercial.whyNexoraOverview.tblMetricsR7C1", "commercial.whyNexoraOverview.tblMetricsR7C2"],
+                  ["commercial.whyNexoraOverview.tblMetricsR8C1", "commercial.whyNexoraOverview.tblMetricsR8C2"],
+                  ["commercial.whyNexoraOverview.tblMetricsR9C1", "commercial.whyNexoraOverview.tblMetricsR9C2"],
+                  ["commercial.whyNexoraOverview.tblMetricsR10C1", "commercial.whyNexoraOverview.tblMetricsR10C2"],
+                  ["commercial.whyNexoraOverview.tblMetricsR11C1", "commercial.whyNexoraOverview.tblMetricsR11C2"],
             ],
       },
 
@@ -90,14 +97,18 @@ const sections: DocSection[] = [
       { type: "heading", level: 2, titleKey: "commercial.whyNexoraOverview.savingsTitle", id: "savings" },
       {
             type: "table",
-            headers: ["Without NEXORA", "With NEXORA", "Savings"],
+            headers: [
+                  "commercial.whyNexoraOverview.tblSavingsHeader1",
+                  "commercial.whyNexoraOverview.tblSavingsHeader2",
+                  "commercial.whyNexoraOverview.tblSavingsHeader3"
+            ],
             rows: [
-                  ["6 months to build auth + RBAC", "Day 1: Full auth, roles, permissions", "6 months saved"],
-                  ["Custom audit system build", "Day 1: 4-source audit pipeline", "3 months saved"],
-                  ["Multi-tenant architecture design", "Day 1: Row-level tenant isolation", "4 months saved"],
-                  ["Email/notification infrastructure", "Day 1: Queue-based email + SignalR", "2 months saved"],
-                  ["Database migration complexity", "Config change: switch providers", "Vendor freedom"],
-                  ["Security audit preparation", "Day 1: 8-layer security built-in", "Zero bolt-on fixes"],
+                  ["commercial.whyNexoraOverview.tblSavingsR1C1", "commercial.whyNexoraOverview.tblSavingsR1C2", "commercial.whyNexoraOverview.tblSavingsR1C3"],
+                  ["commercial.whyNexoraOverview.tblSavingsR2C1", "commercial.whyNexoraOverview.tblSavingsR2C2", "commercial.whyNexoraOverview.tblSavingsR2C3"],
+                  ["commercial.whyNexoraOverview.tblSavingsR3C1", "commercial.whyNexoraOverview.tblSavingsR3C2", "commercial.whyNexoraOverview.tblSavingsR3C3"],
+                  ["commercial.whyNexoraOverview.tblSavingsR4C1", "commercial.whyNexoraOverview.tblSavingsR4C2", "commercial.whyNexoraOverview.tblSavingsR4C3"],
+                  ["commercial.whyNexoraOverview.tblSavingsR5C1", "commercial.whyNexoraOverview.tblSavingsR5C2", "commercial.whyNexoraOverview.tblSavingsR5C3"],
+                  ["commercial.whyNexoraOverview.tblSavingsR6C1", "commercial.whyNexoraOverview.tblSavingsR6C2", "commercial.whyNexoraOverview.tblSavingsR6C3"],
             ],
       },
 

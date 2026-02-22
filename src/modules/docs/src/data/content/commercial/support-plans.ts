@@ -9,19 +9,25 @@ const sections: DocSection[] = [
       { type: "paragraph", contentKey: "commercial.supportPlans.tiersIntro" },
       {
             type: "table",
-            headers: ["Feature", "Community", "Standard", "Premium", "Enterprise"],
+            headers: [
+                  "commercial.supportPlans.tblTiersHeader1",
+                  "commercial.supportPlans.tblTiersHeader2",
+                  "commercial.supportPlans.tblTiersHeader3",
+                  "commercial.supportPlans.tblTiersHeader4",
+                  "commercial.supportPlans.tblTiersHeader5"
+            ],
             rows: [
-                  ["Response time", "Best effort", "24 hours", "4 hours", "1 hour"],
-                  ["Channel", "GitHub Issues", "Email", "Slack + Email", "Dedicated channel"],
-                  ["Coverage", "Mon-Fri", "Mon-Fri", "Mon-Sat", "24/7"],
-                  ["Bug fixes", "Next release", "Hotfix", "Hotfix", "Hotfix + patch"],
-                  ["Feature requests", "Backlog", "Prioritized", "Fast-tracked", "Custom development"],
-                  ["Training", "Docs only", "2 sessions", "Monthly sessions", "Custom program"],
-                  ["Deployment help", "Docs only", "1 session", "Unlimited", "On-site available"],
-                  ["Architecture review", "✗", "✗", "Quarterly", "Monthly"],
-                  ["Dedicated engineer", "✗", "✗", "✗", "1 FTE assigned"],
-                  ["Custom SLA", "✗", "✗", "Available", "Included"],
-                  ["Source code access", "Public repo", "Public repo", "Full source", "Full source + priority"],
+                  ["commercial.supportPlans.tblTiersR1C1", "commercial.supportPlans.tblTiersR1C2", "commercial.supportPlans.tblTiersR1C3", "commercial.supportPlans.tblTiersR1C4", "commercial.supportPlans.tblTiersR1C5"],
+                  ["commercial.supportPlans.tblTiersR2C1", "commercial.supportPlans.tblTiersR2C2", "commercial.supportPlans.tblTiersR2C3", "commercial.supportPlans.tblTiersR2C4", "commercial.supportPlans.tblTiersR2C5"],
+                  ["commercial.supportPlans.tblTiersR3C1", "commercial.supportPlans.tblTiersR3C2", "commercial.supportPlans.tblTiersR3C3", "commercial.supportPlans.tblTiersR3C4", "commercial.supportPlans.tblTiersR3C5"],
+                  ["commercial.supportPlans.tblTiersR4C1", "commercial.supportPlans.tblTiersR4C2", "commercial.supportPlans.tblTiersR4C3", "commercial.supportPlans.tblTiersR4C4", "commercial.supportPlans.tblTiersR4C5"],
+                  ["commercial.supportPlans.tblTiersR5C1", "commercial.supportPlans.tblTiersR5C2", "commercial.supportPlans.tblTiersR5C3", "commercial.supportPlans.tblTiersR5C4", "commercial.supportPlans.tblTiersR5C5"],
+                  ["commercial.supportPlans.tblTiersR6C1", "commercial.supportPlans.tblTiersR6C2", "commercial.supportPlans.tblTiersR6C3", "commercial.supportPlans.tblTiersR6C4", "commercial.supportPlans.tblTiersR6C5"],
+                  ["commercial.supportPlans.tblTiersR7C1", "commercial.supportPlans.tblTiersR7C2", "commercial.supportPlans.tblTiersR7C3", "commercial.supportPlans.tblTiersR7C4", "commercial.supportPlans.tblTiersR7C5"],
+                  ["commercial.supportPlans.tblTiersR8C1", "commercial.supportPlans.tblTiersR8C2", "commercial.supportPlans.tblTiersR8C3", "commercial.supportPlans.tblTiersR8C4", "commercial.supportPlans.tblTiersR8C5"],
+                  ["commercial.supportPlans.tblTiersR9C1", "commercial.supportPlans.tblTiersR9C2", "commercial.supportPlans.tblTiersR9C3", "commercial.supportPlans.tblTiersR9C4", "commercial.supportPlans.tblTiersR9C5"],
+                  ["commercial.supportPlans.tblTiersR10C1", "commercial.supportPlans.tblTiersR10C2", "commercial.supportPlans.tblTiersR10C3", "commercial.supportPlans.tblTiersR10C4", "commercial.supportPlans.tblTiersR10C5"],
+                  ["commercial.supportPlans.tblTiersR11C1", "commercial.supportPlans.tblTiersR11C2", "commercial.supportPlans.tblTiersR11C3", "commercial.supportPlans.tblTiersR11C4", "commercial.supportPlans.tblTiersR11C5"],
             ],
       },
 
@@ -30,13 +36,19 @@ const sections: DocSection[] = [
       { type: "paragraph", contentKey: "commercial.supportPlans.slaIntro" },
       {
             type: "table",
-            headers: ["Severity", "P1 (Critical)", "P2 (Major)", "P3 (Minor)", "P4 (Low)"],
+            headers: [
+                  "commercial.supportPlans.tblSlaHeader1",
+                  "commercial.supportPlans.tblSlaHeader2",
+                  "commercial.supportPlans.tblSlaHeader3",
+                  "commercial.supportPlans.tblSlaHeader4",
+                  "commercial.supportPlans.tblSlaHeader5"
+            ],
             rows: [
-                  ["Definition", "System down, no workaround", "Core feature broken", "Workaround exists", "Cosmetic / enhancement"],
-                  ["Enterprise response", "1 hour", "4 hours", "1 business day", "2 business days"],
-                  ["Premium response", "4 hours", "8 hours", "2 business days", "5 business days"],
-                  ["Standard response", "24 hours", "48 hours", "5 business days", "Next release"],
-                  ["Escalation path", "VP Engineering", "Team Lead", "Support Queue", "Backlog"],
+                  ["commercial.supportPlans.tblSlaR1C1", "commercial.supportPlans.tblSlaR1C2", "commercial.supportPlans.tblSlaR1C3", "commercial.supportPlans.tblSlaR1C4", "commercial.supportPlans.tblSlaR1C5"],
+                  ["commercial.supportPlans.tblSlaR2C1", "commercial.supportPlans.tblSlaR2C2", "commercial.supportPlans.tblSlaR2C3", "commercial.supportPlans.tblSlaR2C4", "commercial.supportPlans.tblSlaR2C5"],
+                  ["commercial.supportPlans.tblSlaR3C1", "commercial.supportPlans.tblSlaR3C2", "commercial.supportPlans.tblSlaR3C3", "commercial.supportPlans.tblSlaR3C4", "commercial.supportPlans.tblSlaR3C5"],
+                  ["commercial.supportPlans.tblSlaR4C1", "commercial.supportPlans.tblSlaR4C2", "commercial.supportPlans.tblSlaR4C3", "commercial.supportPlans.tblSlaR4C4", "commercial.supportPlans.tblSlaR4C5"],
+                  ["commercial.supportPlans.tblSlaR5C1", "commercial.supportPlans.tblSlaR5C2", "commercial.supportPlans.tblSlaR5C3", "commercial.supportPlans.tblSlaR5C4", "commercial.supportPlans.tblSlaR5C5"],
             ],
       },
 

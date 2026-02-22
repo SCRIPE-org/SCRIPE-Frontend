@@ -8,12 +8,16 @@ const sections: DocSection[] = [
       { type: "heading", level: 2, titleKey: "commercial.cleanArchitecture.layersTitle", id: "layers" },
       {
             type: "table",
-            headers: ["Layer", "Responsibility", "Dependencies"],
+            headers: [
+                  "commercial.cleanArchitecture.tblLayersHeader1",
+                  "commercial.cleanArchitecture.tblLayersHeader2",
+                  "commercial.cleanArchitecture.tblLayersHeader3"
+            ],
             rows: [
-                  ["Domain", "Entities, value objects, domain events, specifications", "None (pure C#)"],
-                  ["Application", "Commands, queries, validators, behaviors", "Domain only"],
-                  ["Infrastructure", "Repositories, EF Core, external services", "Domain + Application"],
-                  ["Presentation", "Controllers, middleware, API endpoints", "Application"],
+                  ["commercial.cleanArchitecture.tblLayersR1C1", "commercial.cleanArchitecture.tblLayersR1C2", "commercial.cleanArchitecture.tblLayersR1C3"],
+                  ["commercial.cleanArchitecture.tblLayersR2C1", "commercial.cleanArchitecture.tblLayersR2C2", "commercial.cleanArchitecture.tblLayersR2C3"],
+                  ["commercial.cleanArchitecture.tblLayersR3C1", "commercial.cleanArchitecture.tblLayersR3C2", "commercial.cleanArchitecture.tblLayersR3C3"],
+                  ["commercial.cleanArchitecture.tblLayersR4C1", "commercial.cleanArchitecture.tblLayersR4C2", "commercial.cleanArchitecture.tblLayersR4C3"],
             ],
       },
 
@@ -22,13 +26,17 @@ const sections: DocSection[] = [
       { type: "paragraph", contentKey: "commercial.cleanArchitecture.cqrsContent" },
       {
             type: "table",
-            headers: ["Component", "Purpose", "Example"],
+            headers: [
+                  "commercial.cleanArchitecture.tblCqrsHeader1",
+                  "commercial.cleanArchitecture.tblCqrsHeader2",
+                  "commercial.cleanArchitecture.tblCqrsHeader3"
+            ],
             rows: [
-                  ["Command", "Write operation (create, update, delete)", "CreateUserCommand"],
-                  ["Query", "Read operation (list, detail, search)", "GetUsersQuery"],
-                  ["Handler", "Business logic execution", "CreateUserCommandHandler"],
-                  ["Validator", "Input validation (FluentValidation)", "CreateUserValidator"],
-                  ["Behavior", "Cross-cutting (logging, validation, caching)", "ValidationBehavior<T>"],
+                  ["commercial.cleanArchitecture.tblCqrsR1C1", "commercial.cleanArchitecture.tblCqrsR1C2", "commercial.cleanArchitecture.tblCqrsR1C3"],
+                  ["commercial.cleanArchitecture.tblCqrsR2C1", "commercial.cleanArchitecture.tblCqrsR2C2", "commercial.cleanArchitecture.tblCqrsR2C3"],
+                  ["commercial.cleanArchitecture.tblCqrsR3C1", "commercial.cleanArchitecture.tblCqrsR3C2", "commercial.cleanArchitecture.tblCqrsR3C3"],
+                  ["commercial.cleanArchitecture.tblCqrsR4C1", "commercial.cleanArchitecture.tblCqrsR4C2", "commercial.cleanArchitecture.tblCqrsR4C3"],
+                  ["commercial.cleanArchitecture.tblCqrsR5C1", "commercial.cleanArchitecture.tblCqrsR5C2", "commercial.cleanArchitecture.tblCqrsR5C3"],
             ],
       },
 
@@ -82,13 +90,16 @@ export function useEmployeeListViewModel() {
       { type: "heading", level: 2, titleKey: "commercial.cleanArchitecture.benefitsTitle", id: "benefits" },
       {
             type: "table",
-            headers: ["Benefit", "Impact"],
+            headers: [
+                  "commercial.cleanArchitecture.tblBenHeader1",
+                  "commercial.cleanArchitecture.tblBenHeader2"
+            ],
             rows: [
-                  ["Testability", "Each layer testable in isolation, 80%+ coverage achievable"],
-                  ["Maintainability", "Changes to one layer don't cascade to others"],
-                  ["Scalability", "Easily extract modules to microservices"],
-                  ["Onboarding", "New developers understand structure immediately"],
-                  ["Flexibility", "Swap database, framework, or UI independently"],
+                  ["commercial.cleanArchitecture.tblBenR1C1", "commercial.cleanArchitecture.tblBenR1C2"],
+                  ["commercial.cleanArchitecture.tblBenR2C1", "commercial.cleanArchitecture.tblBenR2C2"],
+                  ["commercial.cleanArchitecture.tblBenR3C1", "commercial.cleanArchitecture.tblBenR3C2"],
+                  ["commercial.cleanArchitecture.tblBenR4C1", "commercial.cleanArchitecture.tblBenR4C2"],
+                  ["commercial.cleanArchitecture.tblBenR5C1", "commercial.cleanArchitecture.tblBenR5C2"],
             ],
       },
 ];

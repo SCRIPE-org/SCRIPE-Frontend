@@ -74,6 +74,7 @@ import "./infrastructure/background-jobs";
 import "./infrastructure/file-storage";
 import "./infrastructure/resilience";
 import "./infrastructure/gateway-deployment";
+import "./infrastructure/database-migrations";
 
 // Tutorials
 import "./tutorials/add-module";

@@ -8,16 +8,20 @@ const sections: DocSection[] = [
       { type: "heading", level: 2, titleKey: "commercial.systemRequirements.devTitle", id: "development" },
       {
             type: "table",
-            headers: ["Component", "Minimum", "Recommended"],
+            headers: [
+                  "commercial.systemRequirements.tblDevHeader1",
+                  "commercial.systemRequirements.tblDevHeader2",
+                  "commercial.systemRequirements.tblDevHeader3"
+            ],
             rows: [
-                  ["CPU", "4-core (Intel i5 / AMD Ryzen 5)", "8-core (Intel i7+ / AMD Ryzen 7+)"],
-                  ["RAM", "8 GB", "16 GB+"],
-                  ["Disk", "20 GB free (SSD)", "50 GB free (NVMe SSD)"],
-                  ["OS", "Windows 10/11, macOS 13+, Ubuntu 22.04+", "Windows 11, macOS 14+"],
-                  [".NET SDK", "10.0+", "Latest 10.x"],
-                  ["Node.js", "20 LTS", "22 LTS"],
-                  ["Docker", "24+ (optional)", "Latest stable"],
-                  ["IDE", "VS Code + extensions", "Rider / VS 2022 + VS Code"],
+                  ["commercial.systemRequirements.tblDevR1C1", "commercial.systemRequirements.tblDevR1C2", "commercial.systemRequirements.tblDevR1C3"],
+                  ["commercial.systemRequirements.tblDevR2C1", "commercial.systemRequirements.tblDevR2C2", "commercial.systemRequirements.tblDevR2C3"],
+                  ["commercial.systemRequirements.tblDevR3C1", "commercial.systemRequirements.tblDevR3C2", "commercial.systemRequirements.tblDevR3C3"],
+                  ["commercial.systemRequirements.tblDevR4C1", "commercial.systemRequirements.tblDevR4C2", "commercial.systemRequirements.tblDevR4C3"],
+                  ["commercial.systemRequirements.tblDevR5C1", "commercial.systemRequirements.tblDevR5C2", "commercial.systemRequirements.tblDevR5C3"],
+                  ["commercial.systemRequirements.tblDevR6C1", "commercial.systemRequirements.tblDevR6C2", "commercial.systemRequirements.tblDevR6C3"],
+                  ["commercial.systemRequirements.tblDevR7C1", "commercial.systemRequirements.tblDevR7C2", "commercial.systemRequirements.tblDevR7C3"],
+                  ["commercial.systemRequirements.tblDevR8C1", "commercial.systemRequirements.tblDevR8C2", "commercial.systemRequirements.tblDevR8C3"],
             ],
       },
 
@@ -25,15 +29,19 @@ const sections: DocSection[] = [
       { type: "heading", level: 2, titleKey: "commercial.systemRequirements.prodMonoTitle", id: "production-monolith" },
       {
             type: "table",
-            headers: ["Component", "Minimum", "Recommended (100+ users)"],
+            headers: [
+                  "commercial.systemRequirements.tblProdMonoHeader1",
+                  "commercial.systemRequirements.tblProdMonoHeader2",
+                  "commercial.systemRequirements.tblProdMonoHeader3"
+            ],
             rows: [
-                  ["CPU", "2 vCPUs", "4+ vCPUs"],
-                  ["RAM", "4 GB", "8-16 GB"],
-                  ["Disk", "40 GB SSD", "100 GB SSD"],
-                  ["Database", "Same server (small)", "Dedicated DB server"],
-                  ["Network", "100 Mbps", "1 Gbps"],
-                  ["OS", "Windows Server 2022 / Ubuntu 22.04", "Same"],
-                  ["SSL Certificate", "Required (Let's Encrypt)", "CA-signed certificate"],
+                  ["commercial.systemRequirements.tblProdMonoR1C1", "commercial.systemRequirements.tblProdMonoR1C2", "commercial.systemRequirements.tblProdMonoR1C3"],
+                  ["commercial.systemRequirements.tblProdMonoR2C1", "commercial.systemRequirements.tblProdMonoR2C2", "commercial.systemRequirements.tblProdMonoR2C3"],
+                  ["commercial.systemRequirements.tblProdMonoR3C1", "commercial.systemRequirements.tblProdMonoR3C2", "commercial.systemRequirements.tblProdMonoR3C3"],
+                  ["commercial.systemRequirements.tblProdMonoR4C1", "commercial.systemRequirements.tblProdMonoR4C2", "commercial.systemRequirements.tblProdMonoR4C3"],
+                  ["commercial.systemRequirements.tblProdMonoR5C1", "commercial.systemRequirements.tblProdMonoR5C2", "commercial.systemRequirements.tblProdMonoR5C3"],
+                  ["commercial.systemRequirements.tblProdMonoR6C1", "commercial.systemRequirements.tblProdMonoR6C2", "commercial.systemRequirements.tblProdMonoR6C3"],
+                  ["commercial.systemRequirements.tblProdMonoR7C1", "commercial.systemRequirements.tblProdMonoR7C2", "commercial.systemRequirements.tblProdMonoR7C3"],
             ],
       },
 
@@ -41,15 +49,19 @@ const sections: DocSection[] = [
       { type: "heading", level: 2, titleKey: "commercial.systemRequirements.prodMicroTitle", id: "production-micro" },
       {
             type: "table",
-            headers: ["Component", "Per Service", "Shared Services"],
+            headers: [
+                  "commercial.systemRequirements.tblProdMicroHeader1",
+                  "commercial.systemRequirements.tblProdMicroHeader2",
+                  "commercial.systemRequirements.tblProdMicroHeader3"
+            ],
             rows: [
-                  ["CPU per container", "1-2 vCPUs", "N/A"],
-                  ["RAM per container", "512 MB - 2 GB", "N/A"],
-                  ["Database", "Shared or dedicated", "Clustered (HA)"],
-                  ["Redis", "N/A", "2+ GB RAM, clustered"],
-                  ["Load Balancer", "N/A", "Application LB (YARP / Nginx)"],
-                  ["Container Orchestration", "N/A", "Docker Compose / Kubernetes"],
-                  ["Monitoring", "N/A", "Prometheus + Grafana / Application Insights"],
+                  ["commercial.systemRequirements.tblProdMicroR1C1", "commercial.systemRequirements.tblProdMicroR1C2", "commercial.systemRequirements.tblProdMicroR1C3"],
+                  ["commercial.systemRequirements.tblProdMicroR2C1", "commercial.systemRequirements.tblProdMicroR2C2", "commercial.systemRequirements.tblProdMicroR2C3"],
+                  ["commercial.systemRequirements.tblProdMicroR3C1", "commercial.systemRequirements.tblProdMicroR3C2", "commercial.systemRequirements.tblProdMicroR3C3"],
+                  ["commercial.systemRequirements.tblProdMicroR4C1", "commercial.systemRequirements.tblProdMicroR4C2", "commercial.systemRequirements.tblProdMicroR4C3"],
+                  ["commercial.systemRequirements.tblProdMicroR5C1", "commercial.systemRequirements.tblProdMicroR5C2", "commercial.systemRequirements.tblProdMicroR5C3"],
+                  ["commercial.systemRequirements.tblProdMicroR6C1", "commercial.systemRequirements.tblProdMicroR6C2", "commercial.systemRequirements.tblProdMicroR6C3"],
+                  ["commercial.systemRequirements.tblProdMicroR7C1", "commercial.systemRequirements.tblProdMicroR7C2", "commercial.systemRequirements.tblProdMicroR7C3"],
             ],
       },
 
@@ -57,12 +69,17 @@ const sections: DocSection[] = [
       { type: "heading", level: 2, titleKey: "commercial.systemRequirements.dbTitle", id: "database" },
       {
             type: "table",
-            headers: ["Database", "Min RAM", "Min Disk", "Notes"],
+            headers: [
+                  "commercial.systemRequirements.tblDbHeader1",
+                  "commercial.systemRequirements.tblDbHeader2",
+                  "commercial.systemRequirements.tblDbHeader3",
+                  "commercial.systemRequirements.tblDbHeader4"
+            ],
             rows: [
-                  ["SQL Server 2022", "4 GB", "50 GB", "Express edition free for < 10 GB data"],
-                  ["PostgreSQL 16", "2 GB", "30 GB", "Open-source, best cost-performance"],
-                  ["Oracle 21c", "8 GB", "100 GB", "Enterprise licensing required"],
-                  ["SQLite", "N/A", "1 GB", "Dev/test only, file-based"],
+                  ["commercial.systemRequirements.tblDbR1C1", "commercial.systemRequirements.tblDbR1C2", "commercial.systemRequirements.tblDbR1C3", "commercial.systemRequirements.tblDbR1C4"],
+                  ["commercial.systemRequirements.tblDbR2C1", "commercial.systemRequirements.tblDbR2C2", "commercial.systemRequirements.tblDbR2C3", "commercial.systemRequirements.tblDbR2C4"],
+                  ["commercial.systemRequirements.tblDbR3C1", "commercial.systemRequirements.tblDbR3C2", "commercial.systemRequirements.tblDbR3C3", "commercial.systemRequirements.tblDbR3C4"],
+                  ["commercial.systemRequirements.tblDbR4C1", "commercial.systemRequirements.tblDbR4C2", "commercial.systemRequirements.tblDbR4C3", "commercial.systemRequirements.tblDbR4C4"],
             ],
       },
 
@@ -72,13 +89,13 @@ const sections: DocSection[] = [
             type: "list",
             variant: "unordered",
             items: [
-                  "Port 443 (HTTPS) — Required for all production deployments",
-                  "Port 80 (HTTP) — Redirect to HTTPS only",
-                  "Port 5000/5001 — Kestrel backend (behind reverse proxy)",
-                  "Port 3000 — Next.js frontend (behind reverse proxy)",
-                  "Port 6379 — Redis (internal network only)",
-                  "Port 1433/5432/1521 — Database (internal network only)",
-                  "WebSocket support — Required for SignalR real-time features",
+                  "commercial.systemRequirements.lstNetI1",
+                  "commercial.systemRequirements.lstNetI2",
+                  "commercial.systemRequirements.lstNetI3",
+                  "commercial.systemRequirements.lstNetI4",
+                  "commercial.systemRequirements.lstNetI5",
+                  "commercial.systemRequirements.lstNetI6",
+                  "commercial.systemRequirements.lstNetI7",
             ],
       },
 

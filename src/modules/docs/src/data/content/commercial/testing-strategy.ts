@@ -54,11 +54,11 @@ public async Task CreateUser_WithValidData_ReturnsSuccess()
             type: "list",
             variant: "unordered",
             items: [
-                  "WebApplicationFactory for realistic HTTP pipeline testing",
-                  "TestContainers for disposable database instances",
-                  "Automatic test data seeding and cleanup",
-                  "Parallel test execution with isolated databases",
-                  "Authentication simulation with test JWT tokens",
+                  "commercial.testingStrategy.lstIntI1",
+                  "commercial.testingStrategy.lstIntI2",
+                  "commercial.testingStrategy.lstIntI3",
+                  "commercial.testingStrategy.lstIntI4",
+                  "commercial.testingStrategy.lstIntI5",
             ],
       },
 
@@ -70,14 +70,19 @@ public async Task CreateUser_WithValidData_ReturnsSuccess()
       { type: "heading", level: 2, titleKey: "commercial.testingStrategy.summaryTitle", id: "summary" },
       {
             type: "table",
-            headers: ["Test Type", "Framework", "Coverage Target", "Run Frequency"],
+            headers: [
+                  "commercial.testingStrategy.tblSumHeader1",
+                  "commercial.testingStrategy.tblSumHeader2",
+                  "commercial.testingStrategy.tblSumHeader3",
+                  "commercial.testingStrategy.tblSumHeader4"
+            ],
             rows: [
-                  ["Unit (Backend)", "xUnit + FluentAssertions", "Domain + Application layers", "Every commit"],
-                  ["Unit (Frontend)", "Vitest + Testing Library", "ViewModels + utilities", "Every commit"],
-                  ["Integration", "WebApplicationFactory", "API endpoints + database", "PR merges"],
-                  ["E2E", "Playwright", "Critical user flows", "Nightly / pre-release"],
-                  ["Static Analysis", "ESLint + TypeScript + Roslyn", "100% of codebase", "Every save"],
-                  ["Performance", "k6 / Artillery", "Load testing endpoints", "Pre-release"],
+                  ["commercial.testingStrategy.tblSumR1C1", "commercial.testingStrategy.tblSumR1C2", "commercial.testingStrategy.tblSumR1C3", "commercial.testingStrategy.tblSumR1C4"],
+                  ["commercial.testingStrategy.tblSumR2C1", "commercial.testingStrategy.tblSumR2C2", "commercial.testingStrategy.tblSumR2C3", "commercial.testingStrategy.tblSumR2C4"],
+                  ["commercial.testingStrategy.tblSumR3C1", "commercial.testingStrategy.tblSumR3C2", "commercial.testingStrategy.tblSumR3C3", "commercial.testingStrategy.tblSumR3C4"],
+                  ["commercial.testingStrategy.tblSumR4C1", "commercial.testingStrategy.tblSumR4C2", "commercial.testingStrategy.tblSumR4C3", "commercial.testingStrategy.tblSumR4C4"],
+                  ["commercial.testingStrategy.tblSumR5C1", "commercial.testingStrategy.tblSumR5C2", "commercial.testingStrategy.tblSumR5C3", "commercial.testingStrategy.tblSumR5C4"],
+                  ["commercial.testingStrategy.tblSumR6C1", "commercial.testingStrategy.tblSumR6C2", "commercial.testingStrategy.tblSumR6C3", "commercial.testingStrategy.tblSumR6C4"],
             ],
       },
 

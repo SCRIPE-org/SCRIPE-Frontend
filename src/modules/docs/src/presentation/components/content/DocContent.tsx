@@ -98,7 +98,7 @@ export function DocContent({ sections }: DocContentProps) {
                   <thead>
                     <tr>
                       {section.headers.map((h, i) => (
-                        <th key={i}>{h}</th>
+                        <th key={i}>{t(h)}</th>
                       ))}
                     </tr>
                   </thead>
@@ -106,7 +106,7 @@ export function DocContent({ sections }: DocContentProps) {
                     {section.rows.map((row, ri) => (
                       <tr key={ri}>
                         {row.map((cell, ci) => (
-                          <td key={ci}>{cell}</td>
+                          <td key={ci}>{t(cell)}</td>
                         ))}
                       </tr>
                     ))}
@@ -120,7 +120,7 @@ export function DocContent({ sections }: DocContentProps) {
               return (
                 <ol key={key} className="docs-list">
                   {section.items.map((item, i) => (
-                    <li key={i}>{item}</li>
+                    <li key={i}>{t(item)}</li>
                   ))}
                 </ol>
               );
@@ -128,7 +128,7 @@ export function DocContent({ sections }: DocContentProps) {
             return (
               <ul key={key} className="docs-list">
                 {section.items.map((item, i) => (
-                  <li key={i}>{item}</li>
+                  <li key={i}>{t(item)}</li>
                 ))}
               </ul>
             );

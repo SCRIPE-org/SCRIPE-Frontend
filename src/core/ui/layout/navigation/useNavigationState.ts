@@ -199,7 +199,7 @@ export function useNavigationState(navigation: NavigationItem[]): NavigationStat
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [hasChildren]);
 
   // ── Actions ──

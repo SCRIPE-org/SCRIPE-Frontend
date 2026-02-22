@@ -41,7 +41,7 @@ export function ComparisonBlock({ columns }: ComparisonBlockProps) {
                                     </div>
                                     <ul className="docs-comparison-list">
                                           {col.items.map((item, itemIdx) => (
-                                                <li key={itemIdx}>{item}</li>
+                                                <li key={itemIdx}>{t(item)}</li>
                                           ))}
                                     </ul>
                               </div>

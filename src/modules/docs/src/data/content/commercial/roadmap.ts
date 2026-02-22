@@ -8,18 +8,22 @@ const sections: DocSection[] = [
       { type: "heading", level: 2, titleKey: "commercial.roadmap.currentTitle", id: "current" },
       {
             type: "table",
-            headers: ["Feature", "Status", "Release"],
+            headers: [
+                  "commercial.roadmap.tblCurHeader1",
+                  "commercial.roadmap.tblCurHeader2",
+                  "commercial.roadmap.tblCurHeader3"
+            ],
             rows: [
-                  ["Multi-database support (4 providers)", "✓ Released", "v1.0"],
-                  ["8-layer security pipeline", "✓ Released", "v1.0"],
-                  ["NEXORA CLI scaffolding", "✓ Released", "v1.0"],
-                  ["Hierarchical multi-tenancy", "✓ Released", "v1.0"],
-                  ["SignalR real-time features", "✓ Released", "v1.0"],
-                  ["4-source audit pipeline", "✓ Released", "v1.0"],
-                  ["Bilingual template engine", "✓ Released", "v1.0"],
-                  ["File management (4 backends)", "✓ Released", "v1.0"],
-                  ["Interactive documentation portal", "✓ Released", "v1.0"],
-                  ["CQRS + MediatR pipeline", "✓ Released", "v1.0"],
+                  ["commercial.roadmap.tblCurR1C1", "commercial.roadmap.tblCurR1C2", "commercial.roadmap.tblCurR1C3"],
+                  ["commercial.roadmap.tblCurR2C1", "commercial.roadmap.tblCurR2C2", "commercial.roadmap.tblCurR2C3"],
+                  ["commercial.roadmap.tblCurR3C1", "commercial.roadmap.tblCurR3C2", "commercial.roadmap.tblCurR3C3"],
+                  ["commercial.roadmap.tblCurR4C1", "commercial.roadmap.tblCurR4C2", "commercial.roadmap.tblCurR4C3"],
+                  ["commercial.roadmap.tblCurR5C1", "commercial.roadmap.tblCurR5C2", "commercial.roadmap.tblCurR5C3"],
+                  ["commercial.roadmap.tblCurR6C1", "commercial.roadmap.tblCurR6C2", "commercial.roadmap.tblCurR6C3"],
+                  ["commercial.roadmap.tblCurR7C1", "commercial.roadmap.tblCurR7C2", "commercial.roadmap.tblCurR7C3"],
+                  ["commercial.roadmap.tblCurR8C1", "commercial.roadmap.tblCurR8C2", "commercial.roadmap.tblCurR8C3"],
+                  ["commercial.roadmap.tblCurR9C1", "commercial.roadmap.tblCurR9C2", "commercial.roadmap.tblCurR9C3"],
+                  ["commercial.roadmap.tblCurR10C1", "commercial.roadmap.tblCurR10C2", "commercial.roadmap.tblCurR10C3"],
             ],
       },
 
@@ -27,11 +31,15 @@ const sections: DocSection[] = [
       { type: "heading", level: 2, titleKey: "commercial.roadmap.inProgressTitle", id: "in-progress" },
       {
             type: "table",
-            headers: ["Feature", "Status", "Target"],
+            headers: [
+                  "commercial.roadmap.tblProgHeader1",
+                  "commercial.roadmap.tblProgHeader2",
+                  "commercial.roadmap.tblProgHeader3"
+            ],
             rows: [
-                  ["GraphQL API layer", "🔄 In development", "Q2 2026"],
-                  ["Event sourcing (optional)", "🔄 Design phase", "Q2 2026"],
-                  ["Advanced reporting engine", "🔄 Prototyping", "Q2 2026"],
+                  ["commercial.roadmap.tblProgR1C1", "commercial.roadmap.tblProgR1C2", "commercial.roadmap.tblProgR1C3"],
+                  ["commercial.roadmap.tblProgR2C1", "commercial.roadmap.tblProgR2C2", "commercial.roadmap.tblProgR2C3"],
+                  ["commercial.roadmap.tblProgR3C1", "commercial.roadmap.tblProgR3C2", "commercial.roadmap.tblProgR3C3"],
             ],
       },
 
@@ -39,14 +47,18 @@ const sections: DocSection[] = [
       { type: "heading", level: 2, titleKey: "commercial.roadmap.nextTitle", id: "upcoming" },
       {
             type: "table",
-            headers: ["Feature", "Status", "Target"],
+            headers: [
+                  "commercial.roadmap.tblNextHeader1",
+                  "commercial.roadmap.tblNextHeader2",
+                  "commercial.roadmap.tblNextHeader3"
+            ],
             rows: [
-                  ["Plugin marketplace", "📋 Backlog", "Q3 2026"],
-                  ["Mobile app (React Native)", "📋 Backlog", "Q3 2026"],
-                  ["AI-powered analytics", "📋 Backlog", "Q4 2026"],
-                  ["Workflow engine (BPMN)", "📋 Backlog", "Q4 2026"],
-                  ["Multi-region deployment", "📋 Backlog", "2027"],
-                  ["Kubernetes Helm charts", "📋 Backlog", "2027"],
+                  ["commercial.roadmap.tblNextR1C1", "commercial.roadmap.tblNextR1C2", "commercial.roadmap.tblNextR1C3"],
+                  ["commercial.roadmap.tblNextR2C1", "commercial.roadmap.tblNextR2C2", "commercial.roadmap.tblNextR2C3"],
+                  ["commercial.roadmap.tblNextR3C1", "commercial.roadmap.tblNextR3C2", "commercial.roadmap.tblNextR3C3"],
+                  ["commercial.roadmap.tblNextR4C1", "commercial.roadmap.tblNextR4C2", "commercial.roadmap.tblNextR4C3"],
+                  ["commercial.roadmap.tblNextR5C1", "commercial.roadmap.tblNextR5C2", "commercial.roadmap.tblNextR5C3"],
+                  ["commercial.roadmap.tblNextR6C1", "commercial.roadmap.tblNextR6C2", "commercial.roadmap.tblNextR6C3"],
             ],
       },
 
@@ -54,11 +66,15 @@ const sections: DocSection[] = [
       { type: "heading", level: 2, titleKey: "commercial.roadmap.cadenceTitle", id: "cadence" },
       {
             type: "table",
-            headers: ["Release Type", "Frequency", "Contents"],
+            headers: [
+                  "commercial.roadmap.tblCadHeader1",
+                  "commercial.roadmap.tblCadHeader2",
+                  "commercial.roadmap.tblCadHeader3"
+            ],
             rows: [
-                  ["Patch (x.x.1)", "As needed", "Bug fixes, security patches"],
-                  ["Minor (x.1.0)", "Monthly", "New features, improvements"],
-                  ["Major (2.0.0)", "Annual", "Breaking changes with migration guide"],
+                  ["commercial.roadmap.tblCadR1C1", "commercial.roadmap.tblCadR1C2", "commercial.roadmap.tblCadR1C3"],
+                  ["commercial.roadmap.tblCadR2C1", "commercial.roadmap.tblCadR2C2", "commercial.roadmap.tblCadR2C3"],
+                  ["commercial.roadmap.tblCadR3C1", "commercial.roadmap.tblCadR3C2", "commercial.roadmap.tblCadR3C3"],
             ],
       },
 

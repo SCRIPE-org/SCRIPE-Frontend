@@ -8,18 +8,23 @@ const sections: DocSection[] = [
       { type: "heading", level: 2, titleKey: "commercial.technologyStack.backendTitle", id: "backend" },
       {
             type: "table",
-            headers: ["Technology", "Version", "Purpose", "Why Chosen"],
+            headers: [
+                  "commercial.technologyStack.tblBackHeader1",
+                  "commercial.technologyStack.tblBackHeader2",
+                  "commercial.technologyStack.tblBackHeader3",
+                  "commercial.technologyStack.tblBackHeader4"
+            ],
             rows: [
-                  [".NET", "10 (LTS)", "Runtime & Framework", "Enterprise-grade, cross-platform, high performance"],
-                  ["ASP.NET Core", "10", "Web API framework", "Battle-tested, OpenAPI support, middleware pipeline"],
-                  ["EF Core", "10", "ORM & data access", "Multi-provider support, migrations, LINQ queries"],
-                  ["MediatR", "12+", "CQRS mediator", "Clean handler separation, pipeline behaviors"],
-                  ["FluentValidation", "11+", "Request validation", "Strongly-typed, testable validation rules"],
-                  ["SignalR", "10", "Real-time WebSockets", "Auto-reconnect, hub-per-feature, group management"],
-                  ["Hangfire", "1.8+", "Background job processing", "Dashboard, retry, scheduled jobs, persistence"],
-                  ["Scriban", "5+", "Template engine", "Liquid-compatible, fast, sandboxed execution"],
-                  ["Serilog", "4+", "Structured logging", "Multiple sinks, context enrichment, log levels"],
-                  ["Polly", "8+", "Resilience patterns", "Circuit breaker, retry, timeout, bulkhead"],
+                  ["commercial.technologyStack.tblBackR1C1", "commercial.technologyStack.tblBackR1C2", "commercial.technologyStack.tblBackR1C3", "commercial.technologyStack.tblBackR1C4"],
+                  ["commercial.technologyStack.tblBackR2C1", "commercial.technologyStack.tblBackR2C2", "commercial.technologyStack.tblBackR2C3", "commercial.technologyStack.tblBackR2C4"],
+                  ["commercial.technologyStack.tblBackR3C1", "commercial.technologyStack.tblBackR3C2", "commercial.technologyStack.tblBackR3C3", "commercial.technologyStack.tblBackR3C4"],
+                  ["commercial.technologyStack.tblBackR4C1", "commercial.technologyStack.tblBackR4C2", "commercial.technologyStack.tblBackR4C3", "commercial.technologyStack.tblBackR4C4"],
+                  ["commercial.technologyStack.tblBackR5C1", "commercial.technologyStack.tblBackR5C2", "commercial.technologyStack.tblBackR5C3", "commercial.technologyStack.tblBackR5C4"],
+                  ["commercial.technologyStack.tblBackR6C1", "commercial.technologyStack.tblBackR6C2", "commercial.technologyStack.tblBackR6C3", "commercial.technologyStack.tblBackR6C4"],
+                  ["commercial.technologyStack.tblBackR7C1", "commercial.technologyStack.tblBackR7C2", "commercial.technologyStack.tblBackR7C3", "commercial.technologyStack.tblBackR7C4"],
+                  ["commercial.technologyStack.tblBackR8C1", "commercial.technologyStack.tblBackR8C2", "commercial.technologyStack.tblBackR8C3", "commercial.technologyStack.tblBackR8C4"],
+                  ["commercial.technologyStack.tblBackR9C1", "commercial.technologyStack.tblBackR9C2", "commercial.technologyStack.tblBackR9C3", "commercial.technologyStack.tblBackR9C4"],
+                  ["commercial.technologyStack.tblBackR10C1", "commercial.technologyStack.tblBackR10C2", "commercial.technologyStack.tblBackR10C3", "commercial.technologyStack.tblBackR10C4"],
             ],
       },
 
@@ -27,17 +32,22 @@ const sections: DocSection[] = [
       { type: "heading", level: 2, titleKey: "commercial.technologyStack.frontendTitle", id: "frontend" },
       {
             type: "table",
-            headers: ["Technology", "Version", "Purpose", "Why Chosen"],
+            headers: [
+                  "commercial.technologyStack.tblFrontHeader1",
+                  "commercial.technologyStack.tblFrontHeader2",
+                  "commercial.technologyStack.tblFrontHeader3",
+                  "commercial.technologyStack.tblFrontHeader4"
+            ],
             rows: [
-                  ["Next.js", "16 (App Router)", "React framework", "SSR, file-based routing, middleware, streaming"],
-                  ["React", "19", "UI library", "Server components, concurrent features, hooks"],
-                  ["TypeScript", "5.8+", "Type safety", "Compile-time error detection, better DX"],
-                  ["TanStack Query", "v5", "Server state management", "Auto-caching, background refetch, optimistic updates"],
-                  ["Zustand", "5+", "Client state management", "Minimal boilerplate, no providers, persist middleware"],
-                  ["React Hook Form", "7+", "Form management", "Uncontrolled components, Zod integration"],
-                  ["Zod", "3+", "Schema validation", "TypeScript-first, domain entity schemas"],
-                  ["Recharts", "2+", "Charts & visualization", "React-native, composable, responsive"],
-                  ["Framer Motion", "11+", "Animations", "Declarative, gesture support, layout animations"],
+                  ["commercial.technologyStack.tblFrontR1C1", "commercial.technologyStack.tblFrontR1C2", "commercial.technologyStack.tblFrontR1C3", "commercial.technologyStack.tblFrontR1C4"],
+                  ["commercial.technologyStack.tblFrontR2C1", "commercial.technologyStack.tblFrontR2C2", "commercial.technologyStack.tblFrontR2C3", "commercial.technologyStack.tblFrontR2C4"],
+                  ["commercial.technologyStack.tblFrontR3C1", "commercial.technologyStack.tblFrontR3C2", "commercial.technologyStack.tblFrontR3C3", "commercial.technologyStack.tblFrontR3C4"],
+                  ["commercial.technologyStack.tblFrontR4C1", "commercial.technologyStack.tblFrontR4C2", "commercial.technologyStack.tblFrontR4C3", "commercial.technologyStack.tblFrontR4C4"],
+                  ["commercial.technologyStack.tblFrontR5C1", "commercial.technologyStack.tblFrontR5C2", "commercial.technologyStack.tblFrontR5C3", "commercial.technologyStack.tblFrontR5C4"],
+                  ["commercial.technologyStack.tblFrontR6C1", "commercial.technologyStack.tblFrontR6C2", "commercial.technologyStack.tblFrontR6C3", "commercial.technologyStack.tblFrontR6C4"],
+                  ["commercial.technologyStack.tblFrontR7C1", "commercial.technologyStack.tblFrontR7C2", "commercial.technologyStack.tblFrontR7C3", "commercial.technologyStack.tblFrontR7C4"],
+                  ["commercial.technologyStack.tblFrontR8C1", "commercial.technologyStack.tblFrontR8C2", "commercial.technologyStack.tblFrontR8C3", "commercial.technologyStack.tblFrontR8C4"],
+                  ["commercial.technologyStack.tblFrontR9C1", "commercial.technologyStack.tblFrontR9C2", "commercial.technologyStack.tblFrontR9C3", "commercial.technologyStack.tblFrontR9C4"],
             ],
       },
 
@@ -45,31 +55,57 @@ const sections: DocSection[] = [
       { type: "heading", level: 2, titleKey: "commercial.technologyStack.infraTitle", id: "infrastructure" },
       {
             type: "table",
-            headers: ["Technology", "Purpose", "Alternatives Supported"],
+            headers: [
+                  "commercial.technologyStack.tblInfraHeader1",
+                  "commercial.technologyStack.tblInfraHeader2",
+                  "commercial.technologyStack.tblInfraHeader3"
+            ],
             rows: [
-                  ["SQL Server", "Primary database", "PostgreSQL, Oracle, SQLite"],
-                  ["Redis", "Distributed caching", "In-memory cache fallback"],
-                  ["Azure Blob Storage", "File storage", "AWS S3, MinIO, Local disk"],
-                  ["Docker", "Containerization", "Direct deployment, IIS"],
-                  ["Nginx / IIS", "Reverse proxy", "Traefik, Caddy"],
-                  ["GitHub Actions", "CI/CD pipeline", "Azure DevOps, Jenkins"],
+                  ["commercial.technologyStack.tblInfraR1C1", "commercial.technologyStack.tblInfraR1C2", "commercial.technologyStack.tblInfraR1C3"],
+                  ["commercial.technologyStack.tblInfraR2C1", "commercial.technologyStack.tblInfraR2C2", "commercial.technologyStack.tblInfraR2C3"],
+                  ["commercial.technologyStack.tblInfraR3C1", "commercial.technologyStack.tblInfraR3C2", "commercial.technologyStack.tblInfraR3C3"],
+                  ["commercial.technologyStack.tblInfraR4C1", "commercial.technologyStack.tblInfraR4C2", "commercial.technologyStack.tblInfraR4C3"],
+                  ["commercial.technologyStack.tblInfraR5C1", "commercial.technologyStack.tblInfraR5C2", "commercial.technologyStack.tblInfraR5C3"],
+                  ["commercial.technologyStack.tblInfraR6C1", "commercial.technologyStack.tblInfraR6C2", "commercial.technologyStack.tblInfraR6C3"],
             ],
       },
+
+      // ─── Enterprise Multi-Database Auto-Adaptation ──────────
+      { type: "heading", level: 2, titleKey: "commercial.technologyStack.multiDbTitle", id: "multi-database" },
+      { type: "paragraph", contentKey: "commercial.technologyStack.multiDbContent" },
+      {
+            type: "table",
+            headers: [
+                  "commercial.technologyStack.tblMultiDbHeader1",
+                  "commercial.technologyStack.tblMultiDbHeader2",
+                  "commercial.technologyStack.tblMultiDbHeader3"
+            ],
+            rows: [
+                  ["commercial.technologyStack.tblMultiDbR1C1", "commercial.technologyStack.tblMultiDbR1C2", "commercial.technologyStack.tblMultiDbR1C3"],
+                  ["commercial.technologyStack.tblMultiDbR2C1", "commercial.technologyStack.tblMultiDbR2C2", "commercial.technologyStack.tblMultiDbR2C3"],
+                  ["commercial.technologyStack.tblMultiDbR3C1", "commercial.technologyStack.tblMultiDbR3C2", "commercial.technologyStack.tblMultiDbR3C3"],
+            ],
+      },
+
 
       // ─── Version Compatibility ──────────────────────────────
       { type: "heading", level: 2, titleKey: "commercial.technologyStack.compatibilityTitle", id: "compatibility" },
       {
             type: "table",
-            headers: ["Runtime", "Minimum Version", "Recommended"],
+            headers: [
+                  "commercial.technologyStack.tblCompHeader1",
+                  "commercial.technologyStack.tblCompHeader2",
+                  "commercial.technologyStack.tblCompHeader3"
+            ],
             rows: [
-                  [".NET SDK", "10.0", "10.0+ (latest LTS)"],
-                  ["Node.js", "20.x LTS", "22.x LTS"],
-                  ["npm", "10+", "10+ (bundled with Node)"],
-                  ["Docker", "24+", "Latest stable"],
-                  ["SQL Server", "2019+", "2022"],
-                  ["PostgreSQL", "14+", "16+"],
-                  ["Oracle", "19c+", "21c+"],
-                  ["Redis", "7+", "7.2+"],
+                  ["commercial.technologyStack.tblCompR1C1", "commercial.technologyStack.tblCompR1C2", "commercial.technologyStack.tblCompR1C3"],
+                  ["commercial.technologyStack.tblCompR2C1", "commercial.technologyStack.tblCompR2C2", "commercial.technologyStack.tblCompR2C3"],
+                  ["commercial.technologyStack.tblCompR3C1", "commercial.technologyStack.tblCompR3C2", "commercial.technologyStack.tblCompR3C3"],
+                  ["commercial.technologyStack.tblCompR4C1", "commercial.technologyStack.tblCompR4C2", "commercial.technologyStack.tblCompR4C3"],
+                  ["commercial.technologyStack.tblCompR5C1", "commercial.technologyStack.tblCompR5C2", "commercial.technologyStack.tblCompR5C3"],
+                  ["commercial.technologyStack.tblCompR6C1", "commercial.technologyStack.tblCompR6C2", "commercial.technologyStack.tblCompR6C3"],
+                  ["commercial.technologyStack.tblCompR7C1", "commercial.technologyStack.tblCompR7C2", "commercial.technologyStack.tblCompR7C3"],
+                  ["commercial.technologyStack.tblCompR8C1", "commercial.technologyStack.tblCompR8C2", "commercial.technologyStack.tblCompR8C3"],
             ],
       },
 

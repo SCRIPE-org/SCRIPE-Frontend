@@ -23,14 +23,18 @@ const sections: DocSection[] = [
       { type: "paragraph", contentKey: "commercial.enterpriseAddons.migrationIntro" },
       {
             type: "table",
-            headers: ["Service", "Description", "Deliverable"],
+            headers: [
+                  "commercial.enterpriseAddons.tblMigHeader1",
+                  "commercial.enterpriseAddons.tblMigHeader2",
+                  "commercial.enterpriseAddons.tblMigHeader3"
+            ],
             rows: [
-                  ["Legacy migration", "Migrate from existing system to NEXORA", "Data migration scripts, parallel run plan"],
-                  ["Architecture review", "Assess current system, design migration", "Architecture document, risk analysis"],
-                  ["Performance tuning", "Optimize for your specific workload", "Benchmarks, configuration recommendations"],
-                  ["Security hardening", "Additional security measures beyond defaults", "Security report, implementation"],
-                  ["Custom integrations", "Connect to your existing systems", "Integration adapters, documentation"],
-                  ["Data cleansing", "Clean and normalize legacy data before migration", "Data quality report, transformation scripts"],
+                  ["commercial.enterpriseAddons.tblMigR1C1", "commercial.enterpriseAddons.tblMigR1C2", "commercial.enterpriseAddons.tblMigR1C3"],
+                  ["commercial.enterpriseAddons.tblMigR2C1", "commercial.enterpriseAddons.tblMigR2C2", "commercial.enterpriseAddons.tblMigR2C3"],
+                  ["commercial.enterpriseAddons.tblMigR3C1", "commercial.enterpriseAddons.tblMigR3C2", "commercial.enterpriseAddons.tblMigR3C3"],
+                  ["commercial.enterpriseAddons.tblMigR4C1", "commercial.enterpriseAddons.tblMigR4C2", "commercial.enterpriseAddons.tblMigR4C3"],
+                  ["commercial.enterpriseAddons.tblMigR5C1", "commercial.enterpriseAddons.tblMigR5C2", "commercial.enterpriseAddons.tblMigR5C3"],
+                  ["commercial.enterpriseAddons.tblMigR6C1", "commercial.enterpriseAddons.tblMigR6C2", "commercial.enterpriseAddons.tblMigR6C3"],
             ],
       },
 
@@ -39,14 +43,18 @@ const sections: DocSection[] = [
       { type: "paragraph", contentKey: "commercial.enterpriseAddons.integrationContent" },
       {
             type: "table",
-            headers: ["Integration", "Type", "Complexity"],
+            headers: [
+                  "commercial.enterpriseAddons.tblIntHeader1",
+                  "commercial.enterpriseAddons.tblIntHeader2",
+                  "commercial.enterpriseAddons.tblIntHeader3"
+            ],
             rows: [
-                  ["SAP ERP", "Bidirectional sync", "High"],
-                  ["Salesforce CRM", "API integration", "Medium"],
-                  ["LDAP / Active Directory", "SSO + user sync", "Medium"],
-                  ["Custom ERP", "Data migration adapter", "High"],
-                  ["BI Tools (Power BI, Tableau)", "Read-only connector", "Low"],
-                  ["Payment gateways", "Transaction processing", "Medium"],
+                  ["commercial.enterpriseAddons.tblIntR1C1", "commercial.enterpriseAddons.tblIntR1C2", "commercial.enterpriseAddons.tblIntR1C3"],
+                  ["commercial.enterpriseAddons.tblIntR2C1", "commercial.enterpriseAddons.tblIntR2C2", "commercial.enterpriseAddons.tblIntR2C3"],
+                  ["commercial.enterpriseAddons.tblIntR3C1", "commercial.enterpriseAddons.tblIntR3C2", "commercial.enterpriseAddons.tblIntR3C3"],
+                  ["commercial.enterpriseAddons.tblIntR4C1", "commercial.enterpriseAddons.tblIntR4C2", "commercial.enterpriseAddons.tblIntR4C3"],
+                  ["commercial.enterpriseAddons.tblIntR5C1", "commercial.enterpriseAddons.tblIntR5C2", "commercial.enterpriseAddons.tblIntR5C3"],
+                  ["commercial.enterpriseAddons.tblIntR6C1", "commercial.enterpriseAddons.tblIntR6C2", "commercial.enterpriseAddons.tblIntR6C3"],
             ],
       },
 
@@ -68,13 +76,17 @@ const sections: DocSection[] = [
       { type: "paragraph", contentKey: "commercial.enterpriseAddons.pricingContent" },
       {
             type: "table",
-            headers: ["Addon", "Pricing Model", "Typical Range"],
+            headers: [
+                  "commercial.enterpriseAddons.tblPriceHeader1",
+                  "commercial.enterpriseAddons.tblPriceHeader2",
+                  "commercial.enterpriseAddons.tblPriceHeader3"
+            ],
             rows: [
-                  ["Custom module", "Fixed price", "Based on complexity assessment"],
-                  ["Migration", "Time & materials", "Scoped during discovery phase"],
-                  ["Integration", "Per connector", "Depends on system complexity"],
-                  ["Training", "Per session / package", "Flexible scheduling"],
-                  ["Security audit", "Fixed price", "Annual or one-time"],
+                  ["commercial.enterpriseAddons.tblPriceR1C1", "commercial.enterpriseAddons.tblPriceR1C2", "commercial.enterpriseAddons.tblPriceR1C3"],
+                  ["commercial.enterpriseAddons.tblPriceR2C1", "commercial.enterpriseAddons.tblPriceR2C2", "commercial.enterpriseAddons.tblPriceR2C3"],
+                  ["commercial.enterpriseAddons.tblPriceR3C1", "commercial.enterpriseAddons.tblPriceR3C2", "commercial.enterpriseAddons.tblPriceR3C3"],
+                  ["commercial.enterpriseAddons.tblPriceR4C1", "commercial.enterpriseAddons.tblPriceR4C2", "commercial.enterpriseAddons.tblPriceR4C3"],
+                  ["commercial.enterpriseAddons.tblPriceR5C1", "commercial.enterpriseAddons.tblPriceR5C2", "commercial.enterpriseAddons.tblPriceR5C3"],
             ],
       },
 

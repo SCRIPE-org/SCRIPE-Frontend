@@ -1598,5 +1598,5 @@ function GenericTableInner<T extends Record<string, any>>({
 }
 
 // P1.4: Memoize to prevent re-renders when parent state changes
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 export const GenericTable = memo(GenericTableInner) as typeof GenericTableInner;

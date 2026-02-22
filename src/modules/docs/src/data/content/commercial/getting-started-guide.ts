@@ -8,14 +8,18 @@ const sections: DocSection[] = [
       { type: "heading", level: 2, titleKey: "commercial.gettingStartedGuide.prereqTitle", id: "prerequisites" },
       {
             type: "table",
-            headers: ["Tool", "Version", "Purpose"],
+            headers: [
+                  "commercial.gettingStartedGuide.tblPrereqHeader1",
+                  "commercial.gettingStartedGuide.tblPrereqHeader2",
+                  "commercial.gettingStartedGuide.tblPrereqHeader3"
+            ],
             rows: [
-                  [".NET SDK", "10.0+", "Backend development"],
-                  ["Node.js", "20 LTS+", "Frontend development"],
-                  ["Git", "2.40+", "Version control + submodules"],
-                  ["IDE", "VS Code / Rider / VS 2022", "Code editing & debugging"],
-                  ["Docker (optional)", "24+", "Containerized development & deployment"],
-                  ["Database", "SQL Server / PostgreSQL / Oracle", "Data persistence (SQLite for dev)"],
+                  ["commercial.gettingStartedGuide.tblPrereqR1C1", "commercial.gettingStartedGuide.tblPrereqR1C2", "commercial.gettingStartedGuide.tblPrereqR1C3"],
+                  ["commercial.gettingStartedGuide.tblPrereqR2C1", "commercial.gettingStartedGuide.tblPrereqR2C2", "commercial.gettingStartedGuide.tblPrereqR2C3"],
+                  ["commercial.gettingStartedGuide.tblPrereqR3C1", "commercial.gettingStartedGuide.tblPrereqR3C2", "commercial.gettingStartedGuide.tblPrereqR3C3"],
+                  ["commercial.gettingStartedGuide.tblPrereqR4C1", "commercial.gettingStartedGuide.tblPrereqR4C2", "commercial.gettingStartedGuide.tblPrereqR4C3"],
+                  ["commercial.gettingStartedGuide.tblPrereqR5C1", "commercial.gettingStartedGuide.tblPrereqR5C2", "commercial.gettingStartedGuide.tblPrereqR5C3"],
+                  ["commercial.gettingStartedGuide.tblPrereqR6C1", "commercial.gettingStartedGuide.tblPrereqR6C2", "commercial.gettingStartedGuide.tblPrereqR6C3"],
             ],
       },
 
@@ -76,14 +80,17 @@ nexora dev
       { type: "heading", level: 2, titleKey: "commercial.gettingStartedGuide.credentialsTitle", id: "credentials" },
       {
             type: "table",
-            headers: ["Field", "Value"],
+            headers: [
+                  "commercial.gettingStartedGuide.tblCredHeader1",
+                  "commercial.gettingStartedGuide.tblCredHeader2"
+            ],
             rows: [
-                  ["Admin Email", "admin@nexora.io"],
-                  ["Password", "Admin@123"],
-                  ["Default Tenant", "Root Tenant"],
-                  ["API URL", "http://localhost:5000"],
-                  ["Frontend URL", "http://localhost:3000"],
-                  ["Swagger", "http://localhost:5000/swagger"],
+                  ["commercial.gettingStartedGuide.tblCredR1C1", "commercial.gettingStartedGuide.tblCredR1C2"],
+                  ["commercial.gettingStartedGuide.tblCredR2C1", "commercial.gettingStartedGuide.tblCredR2C2"],
+                  ["commercial.gettingStartedGuide.tblCredR3C1", "commercial.gettingStartedGuide.tblCredR3C2"],
+                  ["commercial.gettingStartedGuide.tblCredR4C1", "commercial.gettingStartedGuide.tblCredR4C2"],
+                  ["commercial.gettingStartedGuide.tblCredR5C1", "commercial.gettingStartedGuide.tblCredR5C2"],
+                  ["commercial.gettingStartedGuide.tblCredR6C1", "commercial.gettingStartedGuide.tblCredR6C2"],
             ],
       },
       { type: "info", variant: "warning", contentKey: "commercial.gettingStartedGuide.credentialsWarning" },
@@ -94,12 +101,12 @@ nexora dev
             type: "list",
             variant: "ordered",
             items: [
-                  "Configure your database provider in appsettings.json",
-                  "Set up email settings for notification delivery",
-                  "Create your first tenant via the admin panel",
-                  "Add custom roles and permissions",
-                  "Build your first business module with the CLI",
-                  "Explore the full technical documentation for deep dives",
+                  "commercial.gettingStartedGuide.lstNextI1",
+                  "commercial.gettingStartedGuide.lstNextI2",
+                  "commercial.gettingStartedGuide.lstNextI3",
+                  "commercial.gettingStartedGuide.lstNextI4",
+                  "commercial.gettingStartedGuide.lstNextI5",
+                  "commercial.gettingStartedGuide.lstNextI6",
             ],
       },
 ];

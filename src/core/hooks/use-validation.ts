@@ -93,7 +93,7 @@ export function useValidation<T extends Record<string, any>>(
   }, [values, validationRules]);
 
   // Set a single field value
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const setValue = useCallback(
     (field: keyof T, value: any) => {
       setValuesState((prev) => ({ ...prev, [field]: value }));

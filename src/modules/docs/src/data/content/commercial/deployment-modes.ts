@@ -8,15 +8,20 @@ const sections: DocSection[] = [
       { type: "heading", level: 2, titleKey: "commercial.deploymentModes.comparisonTitle", id: "comparison" },
       {
             type: "table",
-            headers: ["Aspect", "Monolith", "API Gateway", "Microservices"],
+            headers: [
+                  "commercial.deploymentModes.tblCompHeader1",
+                  "commercial.deploymentModes.tblCompHeader2",
+                  "commercial.deploymentModes.tblCompHeader3",
+                  "commercial.deploymentModes.tblCompHeader4"
+            ],
             rows: [
-                  ["Complexity", "★☆☆☆☆", "★★★☆☆", "★★★★★"],
-                  ["Team Size", "1-10 developers", "10-30 developers", "30+ developers"],
-                  ["Deploy Time", "< 5 minutes", "< 10 minutes", "Per-service CI/CD"],
-                  ["Infra Cost", "$50-200/mo", "$200-1000/mo", "$1000+/mo"],
-                  ["Scaling", "Vertical", "Module-level horizontal", "Per-service horizontal"],
-                  ["DevOps Skill", "Basic", "Moderate", "Advanced"],
-                  ["Best For", "MVP, small teams", "Growing companies", "Enterprise scale"],
+                  ["commercial.deploymentModes.tblCompR1C1", "commercial.deploymentModes.tblCompR1C2", "commercial.deploymentModes.tblCompR1C3", "commercial.deploymentModes.tblCompR1C4"],
+                  ["commercial.deploymentModes.tblCompR2C1", "commercial.deploymentModes.tblCompR2C2", "commercial.deploymentModes.tblCompR2C3", "commercial.deploymentModes.tblCompR2C4"],
+                  ["commercial.deploymentModes.tblCompR3C1", "commercial.deploymentModes.tblCompR3C2", "commercial.deploymentModes.tblCompR3C3", "commercial.deploymentModes.tblCompR3C4"],
+                  ["commercial.deploymentModes.tblCompR4C1", "commercial.deploymentModes.tblCompR4C2", "commercial.deploymentModes.tblCompR4C3", "commercial.deploymentModes.tblCompR4C4"],
+                  ["commercial.deploymentModes.tblCompR5C1", "commercial.deploymentModes.tblCompR5C2", "commercial.deploymentModes.tblCompR5C3", "commercial.deploymentModes.tblCompR5C4"],
+                  ["commercial.deploymentModes.tblCompR6C1", "commercial.deploymentModes.tblCompR6C2", "commercial.deploymentModes.tblCompR6C3", "commercial.deploymentModes.tblCompR6C4"],
+                  ["commercial.deploymentModes.tblCompR7C1", "commercial.deploymentModes.tblCompR7C2", "commercial.deploymentModes.tblCompR7C3", "commercial.deploymentModes.tblCompR7C4"],
             ],
       },
 

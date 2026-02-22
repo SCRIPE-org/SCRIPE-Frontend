@@ -1140,6 +1140,26 @@ export const docEn = {
       iisStep4Desc: "Set the application pool to 'No Managed Code' for ASP.NET Core out-of-process hosting.",
       kestrelTitle: "Kestrel Configuration",
     },
+
+    // ─── Database Migrations ────────────────────────────────
+    databaseMigrations: {
+      title: "Enterprise Database Migrations",
+      description: "Auto-adaptive EF Core multi-database architecture supporting SQL Server, Oracle, and PostgreSQL.",
+      intro: "NEXORA employs a highly sophisticated, multi-provider database architecture. Rather than relying on a single monolith `DbContext` that behaves erratically across different SQL dialects, the platform utilizes strictly typed **Derived DbContexts**. This completely isolates `ModelSnapshot` files per database provider, allowing infinite scalability without EF Core migration collisions.",
+      architectureTitle: "Derived DbContext Topology",
+      architectureContent: "At the core of a NEXORA module lies an abstract base DbContext (e.g., `IdentityDbContext`). This base class contains all `DbSet` properties and business-level schema configurations. We then generate sealed derived classes for each supported provider: `SqlServerIdentityDbContext`, `OracleIdentityDbContext`, and `PostgreSqlIdentityDbContext`.",
+      diTitle: "Runtime Provider Injection",
+      diContent: "Repositories exclusively reference the abstract base context, remaining completely agnostic to the underlying database engine. At initialization, the core infrastructure reads your `DatabaseProvider` flag from `appsettings.json` and dynamically registers the appropriate derived context via our proprietary `AddMultiProviderDatabase` extension.",
+      cliTitle: "Generating Multi-Provider Migrations",
+      cliContent: "The `nexora-cli` eliminates the tedious process of maintaining parallel migrations. With a single command, the CLI spawns child processes that generate distinct, dialect-perfect migrations for all supported providers simultaneously.",
+      cliWarning: "Important: Never manually edit the generated `ModelSnapshot` files. Always use the CLI to ensure consistency across the three supported dialects.",
+      newProviderTitle: "Adding a New Database Engine",
+      newProviderContent: "To introduce a new provider (e.g., SQLite for testing), follow the Clean Architecture extension pattern:",
+      newProviderStep1: "Create a new sealed derived context (e.g., `SqliteIdentityDbContext`).",
+      newProviderStep2: "Implement an `IDesignTimeDbContextFactory<T>` specifically for the new context.",
+      newProviderStep3: "Update `InfrastructureDI.cs` to include the new context in the provider registration array.",
+      newProviderStep4: "Execute `nexora db add-migration Initial -m Identity` to generate the initial snapshot.",
+    },
   },
 
 

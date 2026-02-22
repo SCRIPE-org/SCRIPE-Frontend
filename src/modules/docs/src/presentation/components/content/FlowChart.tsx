@@ -1,5 +1,6 @@
 "use client";
 
+import { useDocsI18n } from "../../providers/DocsI18nProvider";
 import type { FlowNode, FlowConnection } from "../../../domain/entities/DocSection";
 
 interface FlowChartProps {
@@ -14,12 +15,13 @@ interface FlowChartProps {
  * Renders nodes connected by arrows in vertical or horizontal direction.
  */
 export function FlowChart({ nodes, connections, direction = "vertical", title }: FlowChartProps) {
+  const { t } = useDocsI18n();
   // Build ordered sequence from connections
   const orderedNodes = getOrderedNodes(nodes, connections);
 
   return (
     <div className="docs-flowchart">
-      {title && <div className="docs-flowchart-title">{title}</div>}
+      {title && <div className="docs-flowchart-title">{t(title)}</div>}
 
       <div className={direction === "vertical" ? "docs-flow-vertical" : "docs-flow-horizontal"}>
         {orderedNodes.map((node, idx) => {
@@ -34,9 +36,9 @@ export function FlowChart({ nodes, connections, direction = "vertical", title }:
               <div
                 className="docs-flow-node"
                 data-type={node.type || "default"}
-                title={node.description}
+                title={node.description ? t(node.description) : undefined}
               >
-                {node.label}
+                {t(node.label)}
               </div>
 
               {conn &&
@@ -44,13 +46,13 @@ export function FlowChart({ nodes, connections, direction = "vertical", title }:
                 (direction === "vertical" ? (
                   <div className="docs-flow-connector docs-flow-connector-vertical">
                     <div className="docs-flow-connector-line" />
-                    {conn.label && <span className="docs-flow-connector-label">{conn.label}</span>}
+                    {conn.label && <span className="docs-flow-connector-label">{t(conn.label)}</span>}
                     <div className="docs-flow-connector-arrow" />
                   </div>
                 ) : (
                   <div className="docs-flow-connector docs-flow-connector-horizontal">
                     <div className="docs-flow-connector-h-line" />
-                    {conn.label && <span className="docs-flow-connector-label">{conn.label}</span>}
+                    {conn.label && <span className="docs-flow-connector-label">{t(conn.label)}</span>}
                     <div className="docs-flow-connector-h-arrow" />
                   </div>
                 ))}

@@ -9,17 +9,22 @@ const sections: DocSection[] = [
       { type: "paragraph", contentKey: "commercial.roiAnalysis.costIntro" },
       {
             type: "table",
-            headers: ["Component", "Build from Scratch", "With NEXORA", "Savings"],
+            headers: [
+                  "commercial.roiAnalysis.tblCostHeader1",
+                  "commercial.roiAnalysis.tblCostHeader2",
+                  "commercial.roiAnalysis.tblCostHeader3",
+                  "commercial.roiAnalysis.tblCostHeader4"
+            ],
             rows: [
-                  ["Authentication + RBAC", "$50,000 - $80,000", "$0 (included)", "$50-80K"],
-                  ["Multi-tenancy", "$60,000 - $120,000", "$0 (included)", "$60-120K"],
-                  ["Audit system", "$30,000 - $50,000", "$0 (included)", "$30-50K"],
-                  ["Email infrastructure", "$15,000 - $25,000", "$0 (included)", "$15-25K"],
-                  ["Real-time (WebSockets)", "$20,000 - $40,000", "$0 (included)", "$20-40K"],
-                  ["File management", "$15,000 - $20,000", "$0 (included)", "$15-20K"],
-                  ["i18n + RTL", "$25,000 - $40,000", "$0 (included)", "$25-40K"],
-                  ["CI/CD + DevOps setup", "$10,000 - $20,000", "$0 (included)", "$10-20K"],
-                  ["**Total Infrastructure**", "**$225K - $395K**", "**License cost**", "**$200K+**"],
+                  ["commercial.roiAnalysis.tblCostR1C1", "commercial.roiAnalysis.tblCostR1C2", "commercial.roiAnalysis.tblCostR1C3", "commercial.roiAnalysis.tblCostR1C4"],
+                  ["commercial.roiAnalysis.tblCostR2C1", "commercial.roiAnalysis.tblCostR2C2", "commercial.roiAnalysis.tblCostR2C3", "commercial.roiAnalysis.tblCostR2C4"],
+                  ["commercial.roiAnalysis.tblCostR3C1", "commercial.roiAnalysis.tblCostR3C2", "commercial.roiAnalysis.tblCostR3C3", "commercial.roiAnalysis.tblCostR3C4"],
+                  ["commercial.roiAnalysis.tblCostR4C1", "commercial.roiAnalysis.tblCostR4C2", "commercial.roiAnalysis.tblCostR4C3", "commercial.roiAnalysis.tblCostR4C4"],
+                  ["commercial.roiAnalysis.tblCostR5C1", "commercial.roiAnalysis.tblCostR5C2", "commercial.roiAnalysis.tblCostR5C3", "commercial.roiAnalysis.tblCostR5C4"],
+                  ["commercial.roiAnalysis.tblCostR6C1", "commercial.roiAnalysis.tblCostR6C2", "commercial.roiAnalysis.tblCostR6C3", "commercial.roiAnalysis.tblCostR6C4"],
+                  ["commercial.roiAnalysis.tblCostR7C1", "commercial.roiAnalysis.tblCostR7C2", "commercial.roiAnalysis.tblCostR7C3", "commercial.roiAnalysis.tblCostR7C4"],
+                  ["commercial.roiAnalysis.tblCostR8C1", "commercial.roiAnalysis.tblCostR8C2", "commercial.roiAnalysis.tblCostR8C3", "commercial.roiAnalysis.tblCostR8C4"],
+                  ["commercial.roiAnalysis.tblCostR9C1", "commercial.roiAnalysis.tblCostR9C2", "commercial.roiAnalysis.tblCostR9C3", "commercial.roiAnalysis.tblCostR9C4"],
             ],
       },
 
@@ -27,13 +32,17 @@ const sections: DocSection[] = [
       { type: "heading", level: 2, titleKey: "commercial.roiAnalysis.timeTitle", id: "time-savings" },
       {
             type: "table",
-            headers: ["Phase", "Without NEXORA", "With NEXORA"],
+            headers: [
+                  "commercial.roiAnalysis.tblTimeHeader1",
+                  "commercial.roiAnalysis.tblTimeHeader2",
+                  "commercial.roiAnalysis.tblTimeHeader3"
+            ],
             rows: [
-                  ["Infrastructure (auth, multi-tenant, audit)", "3-6 months", "0 (Day 1)"],
-                  ["First business module", "1-2 months", "1-2 weeks"],
-                  ["MVP launch", "6-12 months", "1-3 months"],
-                  ["Production readiness", "12-18 months", "3-6 months"],
-                  ["**Total to Production**", "**12-18 months**", "**3-6 months**"],
+                  ["commercial.roiAnalysis.tblTimeR1C1", "commercial.roiAnalysis.tblTimeR1C2", "commercial.roiAnalysis.tblTimeR1C3"],
+                  ["commercial.roiAnalysis.tblTimeR2C1", "commercial.roiAnalysis.tblTimeR2C2", "commercial.roiAnalysis.tblTimeR2C3"],
+                  ["commercial.roiAnalysis.tblTimeR3C1", "commercial.roiAnalysis.tblTimeR3C2", "commercial.roiAnalysis.tblTimeR3C3"],
+                  ["commercial.roiAnalysis.tblTimeR4C1", "commercial.roiAnalysis.tblTimeR4C2", "commercial.roiAnalysis.tblTimeR4C3"],
+                  ["commercial.roiAnalysis.tblTimeR5C1", "commercial.roiAnalysis.tblTimeR5C2", "commercial.roiAnalysis.tblTimeR5C3"],
             ],
       },
 
@@ -42,14 +51,18 @@ const sections: DocSection[] = [
       { type: "paragraph", contentKey: "commercial.roiAnalysis.teamContent" },
       {
             type: "table",
-            headers: ["Role", "Without NEXORA", "With NEXORA"],
+            headers: [
+                  "commercial.roiAnalysis.tblTeamHeader1",
+                  "commercial.roiAnalysis.tblTeamHeader2",
+                  "commercial.roiAnalysis.tblTeamHeader3"
+            ],
             rows: [
-                  ["Senior Backend Developer", "3-4", "1-2"],
-                  ["Senior Frontend Developer", "2-3", "1-2"],
-                  ["DevOps Engineer", "1-2", "0-1"],
-                  ["Security Specialist", "1", "0"],
-                  ["Infrastructure Architect", "1", "0"],
-                  ["**Total Team Size**", "**8-11**", "**2-5**"],
+                  ["commercial.roiAnalysis.tblTeamR1C1", "commercial.roiAnalysis.tblTeamR1C2", "commercial.roiAnalysis.tblTeamR1C3"],
+                  ["commercial.roiAnalysis.tblTeamR2C1", "commercial.roiAnalysis.tblTeamR2C2", "commercial.roiAnalysis.tblTeamR2C3"],
+                  ["commercial.roiAnalysis.tblTeamR3C1", "commercial.roiAnalysis.tblTeamR3C2", "commercial.roiAnalysis.tblTeamR3C3"],
+                  ["commercial.roiAnalysis.tblTeamR4C1", "commercial.roiAnalysis.tblTeamR4C2", "commercial.roiAnalysis.tblTeamR4C3"],
+                  ["commercial.roiAnalysis.tblTeamR5C1", "commercial.roiAnalysis.tblTeamR5C2", "commercial.roiAnalysis.tblTeamR5C3"],
+                  ["commercial.roiAnalysis.tblTeamR6C1", "commercial.roiAnalysis.tblTeamR6C2", "commercial.roiAnalysis.tblTeamR6C3"],
             ],
       },
 
@@ -57,13 +70,18 @@ const sections: DocSection[] = [
       { type: "heading", level: 2, titleKey: "commercial.roiAnalysis.ongoingTitle", id: "ongoing" },
       {
             type: "table",
-            headers: ["Category", "Annual Cost Without", "Annual Cost With", "Annual Savings"],
+            headers: [
+                  "commercial.roiAnalysis.tblOngoingHeader1",
+                  "commercial.roiAnalysis.tblOngoingHeader2",
+                  "commercial.roiAnalysis.tblOngoingHeader3",
+                  "commercial.roiAnalysis.tblOngoingHeader4"
+            ],
             rows: [
-                  ["Security patches & updates", "$30-50K", "Included", "$30-50K"],
-                  ["Infrastructure maintenance", "$40-60K", "Minimal", "$35-55K"],
-                  ["Compliance audit prep", "$20-40K", "$5-10K", "$15-30K"],
-                  ["Developer onboarding", "$10-20K per hire", "$2-5K per hire", "$8-15K per hire"],
-                  ["Bug fixes (infra)", "$20-30K", "Covered by support", "$20-30K"],
+                  ["commercial.roiAnalysis.tblOngoingR1C1", "commercial.roiAnalysis.tblOngoingR1C2", "commercial.roiAnalysis.tblOngoingR1C3", "commercial.roiAnalysis.tblOngoingR1C4"],
+                  ["commercial.roiAnalysis.tblOngoingR2C1", "commercial.roiAnalysis.tblOngoingR2C2", "commercial.roiAnalysis.tblOngoingR2C3", "commercial.roiAnalysis.tblOngoingR2C4"],
+                  ["commercial.roiAnalysis.tblOngoingR3C1", "commercial.roiAnalysis.tblOngoingR3C2", "commercial.roiAnalysis.tblOngoingR3C3", "commercial.roiAnalysis.tblOngoingR3C4"],
+                  ["commercial.roiAnalysis.tblOngoingR4C1", "commercial.roiAnalysis.tblOngoingR4C2", "commercial.roiAnalysis.tblOngoingR4C3", "commercial.roiAnalysis.tblOngoingR4C4"],
+                  ["commercial.roiAnalysis.tblOngoingR5C1", "commercial.roiAnalysis.tblOngoingR5C2", "commercial.roiAnalysis.tblOngoingR5C3", "commercial.roiAnalysis.tblOngoingR5C4"],
             ],
       },
 

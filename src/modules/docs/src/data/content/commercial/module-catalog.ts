@@ -9,14 +9,18 @@ const sections: DocSection[] = [
       { type: "paragraph", contentKey: "commercial.moduleCatalog.coreContent" },
       {
             type: "table",
-            headers: ["Module", "Description", "Key Capabilities"],
+            headers: [
+                  "commercial.moduleCatalog.tblCoreHeader1",
+                  "commercial.moduleCatalog.tblCoreHeader2",
+                  "commercial.moduleCatalog.tblCoreHeader3"
+            ],
             rows: [
-                  ["Identity & Auth", "Complete authentication and user management", "JWT, 2FA, session management, device tracking, social login"],
-                  ["Multi-Tenancy", "Tenant isolation and hierarchical organization", "Row-level isolation, parent/child tenants, per-tenant settings, white-labeling"],
-                  ["Role & Permissions", "Fine-grained access control", "RBAC, field-level restrictions, permission categories, role cloning"],
-                  ["Audit System", "Comprehensive activity tracking", "4-source pipeline: API, entity changes, security events, business operations"],
-                  ["Menu System", "Dynamic navigation management", "Self-referencing tree, per-tenant overrides, role-based visibility"],
-                  ["User Groups", "Batch role & restriction assignment", "Group-based RBAC, field-level restrictions, member management, tenant-scoped groups"],
+                  ["commercial.moduleCatalog.tblCoreR1C1", "commercial.moduleCatalog.tblCoreR1C2", "commercial.moduleCatalog.tblCoreR1C3"],
+                  ["commercial.moduleCatalog.tblCoreR2C1", "commercial.moduleCatalog.tblCoreR2C2", "commercial.moduleCatalog.tblCoreR2C3"],
+                  ["commercial.moduleCatalog.tblCoreR3C1", "commercial.moduleCatalog.tblCoreR3C2", "commercial.moduleCatalog.tblCoreR3C3"],
+                  ["commercial.moduleCatalog.tblCoreR4C1", "commercial.moduleCatalog.tblCoreR4C2", "commercial.moduleCatalog.tblCoreR4C3"],
+                  ["commercial.moduleCatalog.tblCoreR5C1", "commercial.moduleCatalog.tblCoreR5C2", "commercial.moduleCatalog.tblCoreR5C3"],
+                  ["commercial.moduleCatalog.tblCoreR6C1", "commercial.moduleCatalog.tblCoreR6C2", "commercial.moduleCatalog.tblCoreR6C3"],
             ],
       },
 
@@ -24,12 +28,16 @@ const sections: DocSection[] = [
       { type: "heading", level: 2, titleKey: "commercial.moduleCatalog.commTitle", id: "communication" },
       {
             type: "table",
-            headers: ["Module", "Description", "Key Capabilities"],
+            headers: [
+                  "commercial.moduleCatalog.tblCommHeader1",
+                  "commercial.moduleCatalog.tblCommHeader2",
+                  "commercial.moduleCatalog.tblCommHeader3"
+            ],
             rows: [
-                  ["Notifications", "Real-time push notifications", "SignalR WebSockets, auto-join by tenant, mark read/unread, bell UI"],
-                  ["Email System", "Transactional email pipeline", "Queue-based sending, Scriban templates, retry with backoff, SMTP/SendGrid"],
-                  ["Webhooks", "Event-driven integrations", "HMAC-SHA256 signed, exponential retry, subscription management, event catalog"],
-                  ["Message Templates", "Bilingual message rendering", "Scriban syntax, variable preview, 6 built-in templates, bilingual entity"],
+                  ["commercial.moduleCatalog.tblCommR1C1", "commercial.moduleCatalog.tblCommR1C2", "commercial.moduleCatalog.tblCommR1C3"],
+                  ["commercial.moduleCatalog.tblCommR2C1", "commercial.moduleCatalog.tblCommR2C2", "commercial.moduleCatalog.tblCommR2C3"],
+                  ["commercial.moduleCatalog.tblCommR3C1", "commercial.moduleCatalog.tblCommR3C2", "commercial.moduleCatalog.tblCommR3C3"],
+                  ["commercial.moduleCatalog.tblCommR4C1", "commercial.moduleCatalog.tblCommR4C2", "commercial.moduleCatalog.tblCommR4C3"],
             ],
       },
 
@@ -37,18 +45,23 @@ const sections: DocSection[] = [
       { type: "heading", level: 2, titleKey: "commercial.moduleCatalog.dataTitle", id: "data-management" },
       {
             type: "table",
-            headers: ["Module", "Description", "Key Capabilities"],
+            headers: [
+                  "commercial.moduleCatalog.tblDataHeader1",
+                  "commercial.moduleCatalog.tblDataHeader2",
+                  "commercial.moduleCatalog.tblDataHeader3"
+            ],
             rows: [
-                  ["File Upload", "Secure file handling", "Image processing pipeline, virus scan ready, tenant-scoped storage, 4 backends"],
-                  ["Download & Export", "Data export and file delivery", "Resumable downloads (Range), ETag caching, session-based, path traversal prevention"],
-                  ["Recycle Bin", "Soft-delete management", "Restore with dependencies, scheduled purge, cascade restore, per-entity policies"],
-                  ["User Management", "Administrative user operations", "27 endpoints, bulk ops, enterprise operations, protected admin rules"],
+                  ["commercial.moduleCatalog.tblDataR1C1", "commercial.moduleCatalog.tblDataR1C2", "commercial.moduleCatalog.tblDataR1C3"],
+                  ["commercial.moduleCatalog.tblDataR2C1", "commercial.moduleCatalog.tblDataR2C2", "commercial.moduleCatalog.tblDataR2C3"],
+                  ["commercial.moduleCatalog.tblDataR3C1", "commercial.moduleCatalog.tblDataR3C2", "commercial.moduleCatalog.tblDataR3C3"],
+                  ["commercial.moduleCatalog.tblDataR4C1", "commercial.moduleCatalog.tblDataR4C2", "commercial.moduleCatalog.tblDataR4C3"],
             ],
       },
 
       // ─── Business Modules ───────────────────────────────────
       { type: "heading", level: 2, titleKey: "commercial.moduleCatalog.businessTitle", id: "business" },
       { type: "paragraph", contentKey: "commercial.moduleCatalog.businessContent" },
+      { type: "info", variant: "tip", contentKey: "commercial.moduleCatalog.dbAgnosticTip" },
       {
             type: "feature-grid",
             columns: 3,

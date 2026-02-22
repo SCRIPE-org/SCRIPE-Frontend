@@ -31,13 +31,17 @@ const sections: DocSection[] = [
       { type: "paragraph", contentKey: "commercial.faq.aDatabaseSupport" },
       {
             type: "table",
-            headers: ["Database", "Status", "Notes"],
+            headers: [
+                  "commercial.faq.tblDbHeader1",
+                  "commercial.faq.tblDbHeader2",
+                  "commercial.faq.tblDbHeader3"
+            ],
             rows: [
-                  ["Oracle", "✅ Fully supported", "Primary target, production-ready"],
-                  ["PostgreSQL", "✅ Fully supported", "Complete EF Core provider"],
-                  ["SQL Server", "✅ Fully supported", "Full feature parity"],
-                  ["MySQL", "🔄 Planned", "Community request, on roadmap"],
-                  ["SQLite", "⚙️ Dev only", "For local development and testing"],
+                  ["commercial.faq.tblDbR1C1", "commercial.faq.tblDbR1C2", "commercial.faq.tblDbR1C3"],
+                  ["commercial.faq.tblDbR2C1", "commercial.faq.tblDbR2C2", "commercial.faq.tblDbR2C3"],
+                  ["commercial.faq.tblDbR3C1", "commercial.faq.tblDbR3C2", "commercial.faq.tblDbR3C3"],
+                  ["commercial.faq.tblDbR4C1", "commercial.faq.tblDbR4C2", "commercial.faq.tblDbR4C3"],
+                  ["commercial.faq.tblDbR5C1", "commercial.faq.tblDbR5C2", "commercial.faq.tblDbR5C3"],
             ],
       },
 

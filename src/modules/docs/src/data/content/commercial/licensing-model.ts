@@ -9,12 +9,16 @@ const sections: DocSection[] = [
       { type: "paragraph", contentKey: "commercial.licensingModel.typesIntro" },
       {
             type: "table",
-            headers: ["License", "Description", "Includes"],
+            headers: [
+                  "commercial.licensingModel.tblTypesHeader1",
+                  "commercial.licensingModel.tblTypesHeader2",
+                  "commercial.licensingModel.tblTypesHeader3"
+            ],
             rows: [
-                  ["Developer", "Single developer, unlimited projects", "Source code, updates for 1 year, community support"],
-                  ["Team", "Up to 10 developers, single organization", "Everything in Developer + priority email support"],
-                  ["Enterprise", "Unlimited developers, unlimited organizations", "Everything in Team + custom SLA, on-site training"],
-                  ["OEM", "Redistribute as part of your product", "Everything in Enterprise + white-label rights"],
+                  ["commercial.licensingModel.tblTypesR1C1", "commercial.licensingModel.tblTypesR1C2", "commercial.licensingModel.tblTypesR1C3"],
+                  ["commercial.licensingModel.tblTypesR2C1", "commercial.licensingModel.tblTypesR2C2", "commercial.licensingModel.tblTypesR2C3"],
+                  ["commercial.licensingModel.tblTypesR3C1", "commercial.licensingModel.tblTypesR3C2", "commercial.licensingModel.tblTypesR3C3"],
+                  ["commercial.licensingModel.tblTypesR4C1", "commercial.licensingModel.tblTypesR4C2", "commercial.licensingModel.tblTypesR4C3"],
             ],
       },
 
@@ -22,18 +26,24 @@ const sections: DocSection[] = [
       { type: "heading", level: 2, titleKey: "commercial.licensingModel.comparisonTitle", id: "comparison" },
       {
             type: "table",
-            headers: ["Feature", "Developer", "Team", "Enterprise", "OEM"],
+            headers: [
+                  "commercial.licensingModel.tblCompHeader1",
+                  "commercial.licensingModel.tblCompHeader2",
+                  "commercial.licensingModel.tblCompHeader3",
+                  "commercial.licensingModel.tblCompHeader4",
+                  "commercial.licensingModel.tblCompHeader5"
+            ],
             rows: [
-                  ["Source code access", "✓", "✓", "✓", "✓"],
-                  ["Commercial use", "✓", "✓", "✓", "✓"],
-                  ["Updates & patches", "1 year", "1 year", "Perpetual", "Perpetual"],
-                  ["Support channels", "Community", "Email (24h)", "Dedicated (4h)", "Custom SLA"],
-                  ["Custom development", "✗", "✗", "Available", "Included"],
-                  ["White-label rights", "✗", "✗", "✗", "✓"],
-                  ["Deployment assistance", "Docs only", "1 session", "Unlimited", "Unlimited"],
-                  ["Training", "Docs only", "2 sessions", "On-site", "Custom program"],
-                  ["SLA guarantee", "✗", "99.5%", "99.9%", "99.99%"],
-                  ["Tenant limit", "3", "Unlimited", "Unlimited", "Unlimited"],
+                  ["commercial.licensingModel.tblCompR1C1", "commercial.licensingModel.tblCompR1C2", "commercial.licensingModel.tblCompR1C3", "commercial.licensingModel.tblCompR1C4", "commercial.licensingModel.tblCompR1C5"],
+                  ["commercial.licensingModel.tblCompR2C1", "commercial.licensingModel.tblCompR2C2", "commercial.licensingModel.tblCompR2C3", "commercial.licensingModel.tblCompR2C4", "commercial.licensingModel.tblCompR2C5"],
+                  ["commercial.licensingModel.tblCompR3C1", "commercial.licensingModel.tblCompR3C2", "commercial.licensingModel.tblCompR3C3", "commercial.licensingModel.tblCompR3C4", "commercial.licensingModel.tblCompR3C5"],
+                  ["commercial.licensingModel.tblCompR4C1", "commercial.licensingModel.tblCompR4C2", "commercial.licensingModel.tblCompR4C3", "commercial.licensingModel.tblCompR4C4", "commercial.licensingModel.tblCompR4C5"],
+                  ["commercial.licensingModel.tblCompR5C1", "commercial.licensingModel.tblCompR5C2", "commercial.licensingModel.tblCompR5C3", "commercial.licensingModel.tblCompR5C4", "commercial.licensingModel.tblCompR5C5"],
+                  ["commercial.licensingModel.tblCompR6C1", "commercial.licensingModel.tblCompR6C2", "commercial.licensingModel.tblCompR6C3", "commercial.licensingModel.tblCompR6C4", "commercial.licensingModel.tblCompR6C5"],
+                  ["commercial.licensingModel.tblCompR7C1", "commercial.licensingModel.tblCompR7C2", "commercial.licensingModel.tblCompR7C3", "commercial.licensingModel.tblCompR7C4", "commercial.licensingModel.tblCompR7C5"],
+                  ["commercial.licensingModel.tblCompR8C1", "commercial.licensingModel.tblCompR8C2", "commercial.licensingModel.tblCompR8C3", "commercial.licensingModel.tblCompR8C4", "commercial.licensingModel.tblCompR8C5"],
+                  ["commercial.licensingModel.tblCompR9C1", "commercial.licensingModel.tblCompR9C2", "commercial.licensingModel.tblCompR9C3", "commercial.licensingModel.tblCompR9C4", "commercial.licensingModel.tblCompR9C5"],
+                  ["commercial.licensingModel.tblCompR10C1", "commercial.licensingModel.tblCompR10C2", "commercial.licensingModel.tblCompR10C3", "commercial.licensingModel.tblCompR10C4", "commercial.licensingModel.tblCompR10C5"],
             ],
       },
 
@@ -44,12 +54,12 @@ const sections: DocSection[] = [
             type: "list",
             variant: "unordered",
             items: [
-                  "Full source code for backend (.NET 10) and frontend (Next.js 16)",
-                  "No obfuscation, no compiled-only libraries",
-                  "Full Git history for understanding design decisions",
-                  "Freedom to modify, extend, and customize everything",
-                  "No runtime license checks or phone-home mechanisms",
-                  "Deploy anywhere without license server dependency",
+                  "commercial.licensingModel.lstSourceI1",
+                  "commercial.licensingModel.lstSourceI2",
+                  "commercial.licensingModel.lstSourceI3",
+                  "commercial.licensingModel.lstSourceI4",
+                  "commercial.licensingModel.lstSourceI5",
+                  "commercial.licensingModel.lstSourceI6",
             ],
       },
 
@@ -58,12 +68,16 @@ const sections: DocSection[] = [
       { type: "paragraph", contentKey: "commercial.licensingModel.renewalContent" },
       {
             type: "table",
-            headers: ["Action", "Process", "Timeline"],
+            headers: [
+                  "commercial.licensingModel.tblRenewHeader1",
+                  "commercial.licensingModel.tblRenewHeader2",
+                  "commercial.licensingModel.tblRenewHeader3"
+            ],
             rows: [
-                  ["Annual renewal", "Automatic or manual via portal", "30 days before expiry"],
-                  ["Tier upgrade", "Pro-rated credit applied", "Immediate activation"],
-                  ["Add developers", "Per-seat adjustment", "Same business day"],
-                  ["Volume discount", "25+ seats", "Contact sales for quote"],
+                  ["commercial.licensingModel.tblRenewR1C1", "commercial.licensingModel.tblRenewR1C2", "commercial.licensingModel.tblRenewR1C3"],
+                  ["commercial.licensingModel.tblRenewR2C1", "commercial.licensingModel.tblRenewR2C2", "commercial.licensingModel.tblRenewR2C3"],
+                  ["commercial.licensingModel.tblRenewR3C1", "commercial.licensingModel.tblRenewR3C2", "commercial.licensingModel.tblRenewR3C3"],
+                  ["commercial.licensingModel.tblRenewR4C1", "commercial.licensingModel.tblRenewR4C2", "commercial.licensingModel.tblRenewR4C3"],
             ],
       },
 
@@ -73,11 +87,11 @@ const sections: DocSection[] = [
             type: "list",
             variant: "unordered",
             items: [
-                  "Perpetual fallback license for the version at renewal expiry",
-                  "30-day money-back guarantee on first purchase",
-                  "No vendor lock-in — you own your data and customizations",
-                  "Transfer rights available for company acquisitions",
-                  "Educational and non-profit discounts available",
+                  "commercial.licensingModel.lstTermsI1",
+                  "commercial.licensingModel.lstTermsI2",
+                  "commercial.licensingModel.lstTermsI3",
+                  "commercial.licensingModel.lstTermsI4",
+                  "commercial.licensingModel.lstTermsI5",
             ],
       },
 

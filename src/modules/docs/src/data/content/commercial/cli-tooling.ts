@@ -15,6 +15,8 @@ const sections: DocSection[] = [
                   ["nexora new-command", "Generate CQRS command + handler", "nexora new-command --module HR --name CreateEmployee"],
                   ["nexora new-query", "Generate CQRS query + handler", "nexora new-query --module HR --name GetEmployees"],
                   ["nexora remove-module", "Clean removal of entire module", "nexora remove-module --name HR"],
+                  ["nexora db add-migration", "Generate migrations for SQL Server, Oracle, & Postgres", "nexora db add-migration Initial -m HR"],
+                  ["nexora db update", "Update DB to latest migration", "nexora db update -m HR -p sqlserver"],
                   ["nexora dev", "Run both backend + frontend", "nexora dev"],
                   ["nexora build", "Build both projects", "nexora build backend|frontend"],
                   ["nexora test", "Run test suite", "nexora test backend|frontend"],

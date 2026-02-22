@@ -8,16 +8,20 @@ const sections: DocSection[] = [
       { type: "heading", level: 2, titleKey: "commercial.successMetrics.scaleTitle", id: "platform-scale" },
       {
             type: "table",
-            headers: ["Metric", "Value", "Context"],
+            headers: [
+                  "commercial.successMetrics.tblScaleHeader1",
+                  "commercial.successMetrics.tblScaleHeader2",
+                  "commercial.successMetrics.tblScaleHeader3"
+            ],
             rows: [
-                  ["Total API Endpoints", "~119", "Across 18 REST controllers"],
-                  ["Backend Code Size", "~45,000 lines", "C# .NET 10, Clean Architecture"],
-                  ["Frontend Code Size", "~35,000 lines", "Next.js 16, TypeScript"],
-                  ["Modules", "15+", "Identity, HR, Inventory, Finance..."],
-                  ["Database Entities", "30+", "Domain-driven, fully auditable"],
-                  ["Security Layers", "8", "Transport through audit trail"],
-                  ["CLI Commands", "12+", "Module, entity, CQRS scaffolding"],
-                  ["Documentation Pages", "100+", "Technical + commercial"],
+                  ["commercial.successMetrics.tblScaleR1C1", "commercial.successMetrics.tblScaleR1C2", "commercial.successMetrics.tblScaleR1C3"],
+                  ["commercial.successMetrics.tblScaleR2C1", "commercial.successMetrics.tblScaleR2C2", "commercial.successMetrics.tblScaleR2C3"],
+                  ["commercial.successMetrics.tblScaleR3C1", "commercial.successMetrics.tblScaleR3C2", "commercial.successMetrics.tblScaleR3C3"],
+                  ["commercial.successMetrics.tblScaleR4C1", "commercial.successMetrics.tblScaleR4C2", "commercial.successMetrics.tblScaleR4C3"],
+                  ["commercial.successMetrics.tblScaleR5C1", "commercial.successMetrics.tblScaleR5C2", "commercial.successMetrics.tblScaleR5C3"],
+                  ["commercial.successMetrics.tblScaleR6C1", "commercial.successMetrics.tblScaleR6C2", "commercial.successMetrics.tblScaleR6C3"],
+                  ["commercial.successMetrics.tblScaleR7C1", "commercial.successMetrics.tblScaleR7C2", "commercial.successMetrics.tblScaleR7C3"],
+                  ["commercial.successMetrics.tblScaleR8C1", "commercial.successMetrics.tblScaleR8C2", "commercial.successMetrics.tblScaleR8C3"],
             ],
       },
 
@@ -26,16 +30,20 @@ const sections: DocSection[] = [
       { type: "paragraph", contentKey: "commercial.successMetrics.performanceContent" },
       {
             type: "table",
-            headers: ["Benchmark", "Target", "Achieved"],
+            headers: [
+                  "commercial.successMetrics.tblPerfHeader1",
+                  "commercial.successMetrics.tblPerfHeader2",
+                  "commercial.successMetrics.tblPerfHeader3"
+            ],
             rows: [
-                  ["API Response Time (p50)", "< 50ms", "~35ms average"],
-                  ["API Response Time (p99)", "< 200ms", "~150ms with caching"],
-                  ["Concurrent Users", "1,000+", "Per monolith instance"],
-                  ["Database Query Time", "< 20ms", "With EF Core optimized queries"],
-                  ["SignalR Message Delivery", "< 100ms", "Real-time push latency"],
-                  ["Cold Start Time", "< 3s", "Application startup"],
-                  ["Build Time (Backend)", "< 30s", "Incremental build"],
-                  ["Build Time (Frontend)", "< 15s", "Next.js turbopack"],
+                  ["commercial.successMetrics.tblPerfR1C1", "commercial.successMetrics.tblPerfR1C2", "commercial.successMetrics.tblPerfR1C3"],
+                  ["commercial.successMetrics.tblPerfR2C1", "commercial.successMetrics.tblPerfR2C2", "commercial.successMetrics.tblPerfR2C3"],
+                  ["commercial.successMetrics.tblPerfR3C1", "commercial.successMetrics.tblPerfR3C2", "commercial.successMetrics.tblPerfR3C3"],
+                  ["commercial.successMetrics.tblPerfR4C1", "commercial.successMetrics.tblPerfR4C2", "commercial.successMetrics.tblPerfR4C3"],
+                  ["commercial.successMetrics.tblPerfR5C1", "commercial.successMetrics.tblPerfR5C2", "commercial.successMetrics.tblPerfR5C3"],
+                  ["commercial.successMetrics.tblPerfR6C1", "commercial.successMetrics.tblPerfR6C2", "commercial.successMetrics.tblPerfR6C3"],
+                  ["commercial.successMetrics.tblPerfR7C1", "commercial.successMetrics.tblPerfR7C2", "commercial.successMetrics.tblPerfR7C3"],
+                  ["commercial.successMetrics.tblPerfR8C1", "commercial.successMetrics.tblPerfR8C2", "commercial.successMetrics.tblPerfR8C3"],
             ],
       },
 
@@ -44,16 +52,20 @@ const sections: DocSection[] = [
       { type: "paragraph", contentKey: "commercial.successMetrics.velocityContent" },
       {
             type: "table",
-            headers: ["Task", "Without NEXORA", "With NEXORA"],
+            headers: [
+                  "commercial.successMetrics.tblVelHeader1",
+                  "commercial.successMetrics.tblVelHeader2",
+                  "commercial.successMetrics.tblVelHeader3"
+            ],
             rows: [
-                  ["New module (full stack)", "2-4 weeks", "1 CLI command (< 1 min)"],
-                  ["Authentication system", "4-8 weeks", "Already built (Day 1)"],
-                  ["Multi-tenancy", "8-16 weeks", "Already built (Day 1)"],
-                  ["Audit system", "4-6 weeks", "Already built (Day 1)"],
-                  ["CRUD page (full stack)", "3-5 days", "2-4 hours"],
-                  ["Database provider switch", "3-6 months", "1 config change (5 min)"],
-                  ["Add new API endpoint", "Full day", "2-3 hours"],
-                  ["Security audit prep", "4-8 weeks", "Already compliant"],
+                  ["commercial.successMetrics.tblVelR1C1", "commercial.successMetrics.tblVelR1C2", "commercial.successMetrics.tblVelR1C3"],
+                  ["commercial.successMetrics.tblVelR2C1", "commercial.successMetrics.tblVelR2C2", "commercial.successMetrics.tblVelR2C3"],
+                  ["commercial.successMetrics.tblVelR3C1", "commercial.successMetrics.tblVelR3C2", "commercial.successMetrics.tblVelR3C3"],
+                  ["commercial.successMetrics.tblVelR4C1", "commercial.successMetrics.tblVelR4C2", "commercial.successMetrics.tblVelR4C3"],
+                  ["commercial.successMetrics.tblVelR5C1", "commercial.successMetrics.tblVelR5C2", "commercial.successMetrics.tblVelR5C3"],
+                  ["commercial.successMetrics.tblVelR6C1", "commercial.successMetrics.tblVelR6C2", "commercial.successMetrics.tblVelR6C3"],
+                  ["commercial.successMetrics.tblVelR7C1", "commercial.successMetrics.tblVelR7C2", "commercial.successMetrics.tblVelR7C3"],
+                  ["commercial.successMetrics.tblVelR8C1", "commercial.successMetrics.tblVelR8C2", "commercial.successMetrics.tblVelR8C3"],
             ],
       },
 
@@ -73,16 +85,20 @@ const sections: DocSection[] = [
       { type: "heading", level: 2, titleKey: "commercial.successMetrics.ecosystemTitle", id: "ecosystem" },
       {
             type: "table",
-            headers: ["Component", "Technology", "Maturity"],
+            headers: [
+                  "commercial.successMetrics.tblEcoHeader1",
+                  "commercial.successMetrics.tblEcoHeader2",
+                  "commercial.successMetrics.tblEcoHeader3"
+            ],
             rows: [
-                  ["Backend Framework", ".NET 10 (LTS)", "Production-ready"],
-                  ["Frontend Framework", "Next.js 16 (App Router)", "Production-ready"],
-                  ["ORM", "EF Core 10", "Production-ready"],
-                  ["State Management", "TanStack Query v5 + Zustand", "Production-ready"],
-                  ["Real-Time", "SignalR", "Production-ready"],
-                  ["Background Jobs", "Hangfire", "Production-ready"],
-                  ["Template Engine", "Scriban", "Production-ready"],
-                  ["Caching", "Redis + In-Memory", "Production-ready"],
+                  ["commercial.successMetrics.tblEcoR1C1", "commercial.successMetrics.tblEcoR1C2", "commercial.successMetrics.tblEcoR1C3"],
+                  ["commercial.successMetrics.tblEcoR2C1", "commercial.successMetrics.tblEcoR2C2", "commercial.successMetrics.tblEcoR2C3"],
+                  ["commercial.successMetrics.tblEcoR3C1", "commercial.successMetrics.tblEcoR3C2", "commercial.successMetrics.tblEcoR3C3"],
+                  ["commercial.successMetrics.tblEcoR4C1", "commercial.successMetrics.tblEcoR4C2", "commercial.successMetrics.tblEcoR4C3"],
+                  ["commercial.successMetrics.tblEcoR5C1", "commercial.successMetrics.tblEcoR5C2", "commercial.successMetrics.tblEcoR5C3"],
+                  ["commercial.successMetrics.tblEcoR6C1", "commercial.successMetrics.tblEcoR6C2", "commercial.successMetrics.tblEcoR6C3"],
+                  ["commercial.successMetrics.tblEcoR7C1", "commercial.successMetrics.tblEcoR7C2", "commercial.successMetrics.tblEcoR7C3"],
+                  ["commercial.successMetrics.tblEcoR8C1", "commercial.successMetrics.tblEcoR8C2", "commercial.successMetrics.tblEcoR8C3"],
             ],
       },
 ];
