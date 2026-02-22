@@ -59,6 +59,7 @@ export const navigationData: DocCategoryData[] = [
       { id: "feat-auth", titleKey: "features.authentication.title", slug: "features/authentication", order: 1 },
       { id: "feat-multi-tenancy", titleKey: "features.multiTenancy.title", slug: "features/multi-tenancy", order: 2 },
       { id: "feat-roles", titleKey: "features.rolePermissions.title", slug: "features/role-permissions", order: 3 },
+      { id: "feat-user-groups", titleKey: "features.userGroups.title", slug: "features/user-groups", order: 4 },
       { id: "feat-audit", titleKey: "features.auditSystem.title", slug: "features/audit-system", order: 4 },
       { id: "feat-notif", titleKey: "features.notificationSystem.title", slug: "features/notification-system", order: 5 },
       { id: "feat-email", titleKey: "features.emailSystem.title", slug: "features/email-system", order: 6 },
@@ -101,6 +102,7 @@ export const navigationData: DocCategoryData[] = [
       { id: "api-admin", titleKey: "apiReference.adminApi.title", slug: "api-reference/admin-api", order: 4 },
       { id: "api-tenant", titleKey: "apiReference.tenantApi.title", slug: "api-reference/tenant-api", order: 5 },
       { id: "api-role-perm", titleKey: "apiReference.rolePermissionApi.title", slug: "api-reference/role-permission-api", order: 6 },
+      { id: "api-user-groups", titleKey: "apiReference.userGroupsApi.title", slug: "api-reference/user-groups-api", order: 7 },
       { id: "api-webhook-email", titleKey: "apiReference.webhookEmailApi.title", slug: "api-reference/webhook-email-api", order: 7 },
       { id: "api-system", titleKey: "apiReference.systemApi.title", slug: "api-reference/system-api", order: 8 },
     ],
@@ -190,6 +192,7 @@ export const navigationData: DocCategoryData[] = [
     items: [
       { id: "comm-ent-multitenancy", titleKey: "commercial.multiTenancy.title", slug: "commercial/multi-tenancy", order: 1 },
       { id: "comm-ent-roles", titleKey: "commercial.rolesPermissions.title", slug: "commercial/roles-permissions", order: 2 },
+      { id: "comm-ent-groups", titleKey: "commercial.userGroups.title", slug: "commercial/user-groups", order: 3 },
       { id: "comm-ent-audit", titleKey: "commercial.auditCompliance.title", slug: "commercial/audit-compliance", order: 3 },
       { id: "comm-ent-realtime", titleKey: "commercial.realTimeCapabilities.title", slug: "commercial/real-time-capabilities", order: 4 },
       { id: "comm-ent-localization", titleKey: "commercial.localizationI18n.title", slug: "commercial/localization-i18n", order: 5 },

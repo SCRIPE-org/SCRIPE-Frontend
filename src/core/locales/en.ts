@@ -407,6 +407,7 @@ export const en = {
     title: "Roles",
     description: "Manage roles and their permissions.",
     name: "Name",
+    selectPlaceholder: "Select a role...",
     code: "Code",
     descriptionField: "Description",
     priority: "Priority",

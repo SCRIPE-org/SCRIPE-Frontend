@@ -138,6 +138,35 @@ const sections: DocSection[] = [
             highlightLines: [3, 4, 11],
       },
 
+      // ─── Cascade Operations ───────────────────────────────────
+      { type: "heading", level: 2, titleKey: "features.userGroups.cascadeTitle", id: "cascade-operations" },
+      { type: "paragraph", contentKey: "features.userGroups.cascadeIntro" },
+      {
+            type: "flowchart",
+            title: "Cascade Delete Logic with Root Immunity",
+            direction: "vertical",
+            nodes: [
+                  { id: "trigger", label: "Bulk Delete (Cascade = true)", type: "danger" },
+                  { id: "soft_del_group", label: "Soft Delete Selected UserGroups", type: "warning" },
+                  { id: "find_admins", label: "Retrieve Assigned Admins", type: "info" },
+                  { id: "is_protected", label: "Check: IsProtected Admin?", type: "primary" },
+                  { id: "immune", label: "Skip (Root Admin Immune)", type: "success" },
+                  { id: "soft_del_admin", label: "Soft Delete Admin", type: "danger" },
+            ],
+            connections: [
+                  { from: "trigger", to: "soft_del_group" },
+                  { from: "soft_del_group", to: "find_admins" },
+                  { from: "find_admins", to: "is_protected" },
+                  { from: "is_protected", to: "immune", label: "Yes (System Root)" },
+                  { from: "is_protected", to: "soft_del_admin", label: "No (Cascades)" },
+            ],
+      },
+      {
+            type: "info",
+            variant: "note",
+            contentKey: "features.userGroups.cascadeNote",
+      },
+
       // ─── API Endpoints ────────────────────────────────────────
       { type: "heading", level: 2, titleKey: "features.userGroups.endpointsTitle", id: "endpoints" },
       {
@@ -151,6 +180,9 @@ const sections: DocSection[] = [
                   { method: "POST", path: "/api/v1/usergroups/createForMyTenant", descriptionKey: "Create group for JWT tenant", auth: "user_groups.create" },
                   { method: "PUT", path: "/api/v1/usergroups/{id}", descriptionKey: "Update group metadata", auth: "user_groups.update" },
                   { method: "DELETE", path: "/api/v1/usergroups/{id}", descriptionKey: "Soft-delete group", auth: "user_groups.delete" },
+                  { method: "POST", path: "/api/v1/usergroups/bulk/activate", descriptionKey: "Bulk activate groups (supports Cascade Admins)", auth: "user_groups.update" },
+                  { method: "POST", path: "/api/v1/usergroups/bulk/deactivate", descriptionKey: "Bulk deactivate groups (supports Cascade Admins)", auth: "user_groups.update" },
+                  { method: "POST", path: "/api/v1/usergroups/bulk/delete", descriptionKey: "Bulk soft-delete groups (supports Cascade Admins)", auth: "user_groups.delete" },
                   { method: "POST", path: "/api/v1/usergroups/{id}/members", descriptionKey: "Add members (idempotent)", auth: "user_groups.update" },
                   { method: "DELETE", path: "/api/v1/usergroups/{id}/members/{adminId}", descriptionKey: "Remove member", auth: "user_groups.update" },
                   { method: "PUT", path: "/api/v1/usergroups/{id}/roles", descriptionKey: "Set roles (nuke-and-pave)", auth: "user_groups.update" },

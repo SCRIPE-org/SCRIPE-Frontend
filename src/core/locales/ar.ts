@@ -418,6 +418,7 @@ export const ar = {
 
   // Roles
   roles: {
+    selectPlaceholder: "اختر دوراً...",
     descriptionCol: "الوصف",
     title: "الأدوار",
     description: "إدارة الأدوار وصلاحياتها.",

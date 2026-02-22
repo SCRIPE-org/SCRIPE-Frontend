@@ -70,19 +70,7 @@ const sections: DocSection[] = [
             ],
       },
 
-      // ─── User Groups ──────────────────────────────────────────
-      { type: "heading", level: 2, titleKey: "commercial.rolesPermissions.userGroupsTitle", id: "user-groups" },
-      { type: "paragraph", contentKey: "commercial.rolesPermissions.userGroupsContent" },
-      {
-            type: "feature-grid",
-            columns: 2,
-            items: [
-                  { icon: "users", titleKey: "commercial.rolesPermissions.groupBatchAssign", descriptionKey: "commercial.rolesPermissions.groupBatchAssignDesc" },
-                  { icon: "shield", titleKey: "commercial.rolesPermissions.groupRestrictions", descriptionKey: "commercial.rolesPermissions.groupRestrictionsDesc" },
-                  { icon: "building", titleKey: "commercial.rolesPermissions.groupTenantScoped", descriptionKey: "commercial.rolesPermissions.groupTenantScopedDesc" },
-                  { icon: "zap", titleKey: "commercial.rolesPermissions.groupAdditiveMerge", descriptionKey: "commercial.rolesPermissions.groupAdditiveMergeDesc" },
-            ],
-      },
+
 ];
 
 registerPage({

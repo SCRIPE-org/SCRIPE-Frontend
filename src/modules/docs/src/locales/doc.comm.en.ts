@@ -736,6 +736,27 @@ export const docCommEn: Record<string, any> = {
       title: "Granular Access Control",
     },
 
+    // ─── User Groups ────────────────────────────────
+    userGroups: {
+      title: "Enterprise User Groups",
+      description: "Effortlessly manage thousands of administrators with hierarchical User Groups, additive security merging, and massive cascading operations.",
+      intro: "Assigning individual permissions to a fleet of 5,000 corporate users is an operational nightmare. NEXORA solves this with Enterprise User Groups. Define an organizational group once—assign its active roles, lock down its specific field restrictions, and drop users in. They instantly inherit an unbreakable, mathematically compiled security matrix on their next login.",
+      batchAssignTitle: "Instant Fleet Provisioning",
+      batchAssignContent: "Scale your workforce without scaling your IT overhead. Create a 'Finance Officers' group with Read/Write access to the ledgers, attach 50 new hires in a single bulk operation, and completely guarantee their identical security postures.",
+      additiveRestrictionsTitle: "Compound Field-Level Masking",
+      additiveRestrictionsContent: "Security is strictly additive and 'Deny' always wins. If an executive has direct access to view employee profiles, but is temporarily placed in the 'External Auditors' group that restricts viewing Social Security Numbers, the resulting API payload will seamlessly nullify the SSN fields. The frontend will render perfectly without crashing, and the data never leaves the server.",
+      cascadeTitle: "Massive Cascading Operations",
+      cascadeContent: "When an entire department is spun down or compromised, administrators don't have time to painstakingly deactivate users one by one. NEXORA User Groups support instantaneous, cascading bulk operations that aggressively propagate state changes to the associated administrators.",
+      cascadeDelete: "Cascading Soft-Deletions",
+      cascadeDeleteDesc: "Eliminate a User Group and optionally instantly soft-delete every single administrator exclusively reliant on that group.",
+      cascadeStatus: "Cascading Security Lockdowns",
+      cascadeStatusDesc: "Toggle a User Group's status to Inactive and optionally paralyze the login capabilities of all related members in milliseconds.",
+      rootProtection: "Protected Account Immunity",
+      rootProtectionDesc: "Massive bulk operations are dangerous. Our architecture natively immunizes 'Protected' root administrators. Even if a cascading delete hits the entire tenant, the original system owner remains completely untouched.",
+      fallbackSafety: "Architectural Safety Nets",
+      fallbackSafetyDesc: "NEXORA prevents you from leaving administrators completely orphaned. When a group is deleted, users are securely caught and reassigned an immutable 'System_default' role, ensuring they can still authenticate but possess zero destructive capabilities.",
+    },
+
     // ─── Security Overview ────────────────────────────────
     securityOverview: {
       complianceTitle: "Foundation for Compliance",
