@@ -455,9 +455,9 @@ export const docEn = {
     },
   },
 
-  
+
   //  FEATURES
-  
+
 
   features: {
     authentication: {
@@ -1162,6 +1162,58 @@ export const docEn = {
       newProviderStep2: "Implement an `IDesignTimeDbContextFactory<T>` specifically for the new context.",
       newProviderStep3: "Update `InfrastructureDI.cs` to include the new context in the provider registration array.",
       newProviderStep4: "Execute `nexora db add-migration Initial -m Identity` to generate the initial snapshot.",
+    },
+
+    // ─── NEXORA CLI ────────────────────────────────
+    nexoraCli: {
+      title: "NEXORA CLI Tooling",
+      description: "Massive productivity with 66 scaffolding templates, multi-database commands, and deep auto-wiring.",
+      intro: "The NEXORA CLI is a production-quality node-based scaffolding tool strictly engineered for the NEXORA modular monolith. It generates full-stack modules and CRUD features across the .NET backend and Next.js frontend, executing autonomous, surgical wiring connecting Solutions, Configurations, DI containers, Docker services, and permission constants.",
+
+      commandsTitle: "Core Scaffolding Commands",
+      commandsIntro: "There are vast arrays of CLI commands. At the heart are two fundamental scaffolders that deeply integrate all baseline requirements.",
+      newModuleTitle: "Module Scaffolding: new-module",
+      newModuleIntro: "Creates a complete, strongly-typed architecture pattern. It generates a 3-project DDD backend structure (Domain, Application, Infrastructure) and a unified frontend module directory.",
+      newFeatureTitle: "Feature Scaffolding: new-feature",
+      newFeatureIntro: "Generates expansive CRUD patterns. Employs an exact property DSL to weave out 26 distinct files across REST Controllers, CQRS MediatR, Solid Rect Components, TanStack Query models, and EF Core configurations.",
+
+      destructionTitle: "Destructive Tools",
+      destructionIntro: "Because the CLI wires deeply into the core fabric of NEXORA, it provides powerful destruction operations to execute perfect code rollback when testing layouts rapidly.",
+      bgJobsTitle: "Background Service Operations",
+      bgJobsIntro: "Immediately hook a module into the Hangfire background job engine using standalone initialization tooling.",
+
+      dslTitle: "Property DSL Syntax",
+      dslIntro: "The `--properties` (`-p`) parameter allows highly flexible Domain-Specific definitions mapped universally backwards and forwards across C# to TypeScript Types, culminating in SQL structures and validated Zod schemas.",
+      dslSyntaxInfo: "Syntax Rules: PropertyName:Type[:modifier1][:modifier2]",
+
+      templatesTitle: "66 Immutable Templates",
+      templatesIntro: "Instead of writing standard architectures by hand, the CLI enforces pure Clean Architecture through 66 precise Handlebars templates spanning 46 backend files and 20 frontend configurations, locking down quality.",
+
+      securityTitle: "Automated Defense in Depth",
+      securityIntro: "When generating REST API Controllers from the CLI, highly constrained security attributes are immediately bound directly onto the generated endpoints by default.",
+
+      autoWiringTitle: "Profound Auto-Wiring",
+      autoWiringIntro: "Generating code is trivial; safely embedding that code into a massive compiled ecosystem is the true engineering victory. The CLI performs autonomous modifications to all critical junctions including:",
+      wiringSln: ".sln injection (Guids and explicit pathways mapped across solution structures).",
+      wiringProgram: "Program.cs (Host registrations).",
+      wiringSettings: "appsettings.json (Database scaling connection string integrations).",
+      wiringDocker: "docker-compose.yml (Injects gateway microservices references).",
+      wiringPermissions: "permissions.ts (Next.js client-bound RBAC constant mapping arrays).",
+      wiringFrontendApp: "src/app/ (Next.js server-routing injection).",
+      wiringFrontEnv: ".env variables mapping proxy configurations cleanly.",
+      revertSafely: "Remove commands accurately reverse all mapped configurations without destructive breaking changes.",
+
+      dbSyncTitle: "Database & API Synchronization",
+      dbSyncIntro: "High tier commands handle parallel database architectures and frontend proxies seamlessly, closing the infrastructure loop entirely.",
+      dbCliCmd: "Intelligently executes `add-migration`, `update`, and `remove-migration` against SqlServer, Oracle, and PostgreSQL simultaneously, protecting consistency.",
+      syncApiCmd: "Consumes a remote Swagger/OpenAPI endpoint, parsing into pixel-perfect TypeScript Zod schemas, React controllers, and structured models instantly.",
+
+      configTitle: "CLI Project Configuration Mapping",
+      configIntro: "The NEXORA CLI parses `nexora.config.json` files walking rapidly up the filesystem to construct its universal path configurations binding to your mono-repo.",
+      namingTitle: "Intelligent Naming Mutations",
+      namingIntro: "Provide a singular PascalCase entity name and the CLI generates infinite pluralized, kebab-cased, and CONSTANT_MAPPED variations flawlessly across the stack.",
+      utilityTitle: "Ecosystem Utility Tools",
+      utilityIntro: "Control build pipelines, package installations, and live development servers spanning across Node.js and .NET instantly from a unified prompt.",
     },
   },
 

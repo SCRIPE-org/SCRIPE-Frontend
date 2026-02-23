@@ -75,6 +75,7 @@ import "./infrastructure/file-storage";
 import "./infrastructure/resilience";
 import "./infrastructure/gateway-deployment";
 import "./infrastructure/database-migrations";
+import "./infrastructure/nexora-cli";
 
 // Tutorials
 import "./tutorials/add-module";

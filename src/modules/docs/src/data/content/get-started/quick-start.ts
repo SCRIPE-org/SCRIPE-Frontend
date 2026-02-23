@@ -147,21 +147,23 @@ NEXT_PUBLIC_APP_NAME=NEXORA`,
             type: "code",
             language: "bash",
             filename: "NEXORA CLI Commands",
-            code: `# Generate a new backend module scaffold
-nexora generate module Inventory
+            code: `# Automatically create a 3-project backend module and frontend route
+nexora new-module Inventory
 
-# Generate a new entity within a module
-nexora generate entity Product --module Inventory
+# Scaffold 26 full-stack files (Controllers, Handlers, ViewModels, Zod schemas, Views)
+nexora new-feature Inventory Product -p "Name:string:required:max(100),Price:decimal:required,CategoryId:FK:Category:required"
 
-# Generate CQRS handler (command or query)
-nexora generate command CreateProduct --module Inventory
-nexora generate query GetProducts --module Inventory
+# Generate EF migrations across 3 Databases (SqlServer, Oracle, PostgreSql) simultaneously
+nexora db add-migration Initial -m Inventory
 
-# Run full test suite
-nexora test --all
+# Auto-detect your configured Database provider and update it
+nexora db update -m Inventory
 
-# Build for production
-nexora build --release`,
+# Auto-generate TypeScript models and API clients from Swagger
+nexora sync-api https://localhost:5001/swagger/v1/swagger.json -m inventory
+
+# Build the entire platform
+nexora build all`,
       },
 ];
 

@@ -136,6 +136,7 @@ export const navigationData: DocCategoryData[] = [
       { id: "infra-resilience", titleKey: "infrastructure.resilience.title", slug: "infrastructure/resilience", order: 3 },
       { id: "infra-gateway", titleKey: "infrastructure.gatewayDeployment.title", slug: "infrastructure/gateway-deployment", order: 4 },
       { id: "infra-migrations", titleKey: "infrastructure.databaseMigrations.title", slug: "infrastructure/database-migrations", order: 5 },
+      { id: "infra-nexora-cli", titleKey: "infrastructure.nexoraCli.title", slug: "infrastructure/nexora-cli", order: 6 },
     ],
   },
 
