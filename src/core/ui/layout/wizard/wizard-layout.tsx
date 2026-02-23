@@ -76,7 +76,7 @@ export function WizardLayout({ children }: WizardLayoutProps) {
       className={cn("flex min-h-screen flex-col bg-background", styles.getAnimationClass())}
       dir={direction}
     >
-      {/* â”€â”€ Header â”€â”€ */}
+      {/*  Header  */}
       <header
         className={cn(
           settings.stickyHeader ? "sticky top-0 z-30" : "relative",
@@ -106,7 +106,7 @@ export function WizardLayout({ children }: WizardLayoutProps) {
         </div>
       </header>
 
-      {/* â”€â”€ Stepper â”€â”€ */}
+      {/*  Stepper  */}
       <div className="scrollbar-none overflow-x-auto border-b border-border bg-card/50 px-4 py-3 lg:px-6">
         <div className="mx-auto flex min-w-max max-w-4xl items-center gap-2">
           {steps.map((step, i) => {
@@ -147,7 +147,7 @@ export function WizardLayout({ children }: WizardLayoutProps) {
         </div>
       </div>
 
-      {/* â”€â”€ Mobile Drawer â”€â”€ */}
+      {/*  Mobile Drawer  */}
       {mobileMenuOpen && (
         <>
           <div
@@ -180,7 +180,7 @@ export function WizardLayout({ children }: WizardLayoutProps) {
         </>
       )}
 
-      {/* â”€â”€ Content â”€â”€ */}
+      {/*  Content  */}
       <main className="flex-1 p-6">
         <div style={{ borderRadius: "var(--border-radius)" }}>{children}</div>
       </main>

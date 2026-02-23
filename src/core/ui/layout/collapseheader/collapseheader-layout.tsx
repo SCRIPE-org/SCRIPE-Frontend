@@ -81,7 +81,7 @@ export function CollapseHeaderLayout({ children }: CollapseHeaderLayoutProps) {
       className={cn("flex min-h-screen flex-col bg-background", styles.getAnimationClass())}
       dir={direction}
     >
-      {/* â”€â”€ Auto-hiding Header â”€â”€ */}
+      {/*  Auto-hiding Header  */}
       <header
         className={cn(
           "fixed inset-x-0 top-0 z-30",
@@ -137,7 +137,7 @@ export function CollapseHeaderLayout({ children }: CollapseHeaderLayoutProps) {
         </div>
       </header>
 
-      {/* â”€â”€ Mobile Drawer â”€â”€ */}
+      {/*  Mobile Drawer  */}
       {mobileMenuOpen && (
         <>
           <div
@@ -170,7 +170,7 @@ export function CollapseHeaderLayout({ children }: CollapseHeaderLayoutProps) {
         </>
       )}
 
-      {/* â”€â”€ Content â”€â”€ */}
+      {/*  Content  */}
       <main className="flex-1 p-6 pt-14">
         <div style={{ borderRadius: "var(--border-radius)" }}>{children}</div>
       </main>

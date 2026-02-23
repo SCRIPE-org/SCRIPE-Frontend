@@ -4,7 +4,7 @@ import type { DocSection } from "../../../domain/entities/DocSection";
 const sections: DocSection[] = [
       { type: "paragraph", contentKey: "features.auditSystem.intro" },
 
-      // â”€â”€â”€ Architecture â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Architecture €
       {
             type: "heading", level: 2,
             titleKey: "features.auditSystem.architectureTitle", id: "architecture",
@@ -32,7 +32,7 @@ const sections: DocSection[] = [
             ],
       },
 
-      // â”€â”€â”€ Event Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Event Types 
       {
             type: "heading", level: 2,
             titleKey: "features.auditSystem.eventTypesTitle", id: "event-types",
@@ -156,7 +156,7 @@ const sections: DocSection[] = [
             ],
       },
 
-      // â”€â”€â”€ Guardian Events â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Guardian Events 
       {
             type: "heading", level: 2,
             titleKey: "features.auditSystem.guardianTitle", id: "guardian",
@@ -181,7 +181,7 @@ const sections: DocSection[] = [
             contentKey: "features.auditSystem.guardianIntro",
       },
 
-      // â”€â”€â”€ Service Methods â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Service Methods 
       {
             type: "heading", level: 2,
             titleKey: "features.auditSystem.serviceMethodsTitle", id: "service-methods",
@@ -213,7 +213,7 @@ const sections: DocSection[] = [
             highlightLines: [4, 7, 10, 14, 18],
       },
 
-      // â”€â”€â”€ Real-Time Broadcasting â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Real-Time Broadcasting €
       {
             type: "heading", level: 2,
             titleKey: "features.auditSystem.realTimeTitle", id: "real-time",
@@ -242,14 +242,14 @@ await _hubContext.Clients
             highlightLines: [3, 15],
       },
 
-      // â”€â”€â”€ Export â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Export €
       {
             type: "heading", level: 2,
             titleKey: "features.auditSystem.exportTitle", id: "export",
       },
       { type: "paragraph", contentKey: "features.auditSystem.exportIntro" },
 
-      // â”€â”€â”€ API Endpoints â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € API Endpoints 
       {
             type: "heading", level: 2,
             titleKey: "features.auditSystem.endpointsTitle", id: "endpoints",

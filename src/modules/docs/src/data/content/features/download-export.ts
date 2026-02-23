@@ -2,7 +2,7 @@
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-      // â”€â”€â”€ Architecture â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Architecture €
       { type: "heading", level: 2, titleKey: "features.downloadExport.architectureTitle", id: "architecture" },
       { type: "paragraph", contentKey: "features.downloadExport.architectureIntro" },
       {
@@ -28,7 +28,7 @@ const sections: DocSection[] = [
             ],
       },
 
-      // â”€â”€â”€ Controller Endpoints â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Controller Endpoints €
       { type: "heading", level: 2, titleKey: "features.downloadExport.endpointsTitle", id: "endpoints" },
       {
             type: "api-table",
@@ -39,7 +39,7 @@ const sections: DocSection[] = [
             ],
       },
 
-      // â”€â”€â”€ Resumable Downloads â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Resumable Downloads 
       { type: "heading", level: 2, titleKey: "features.downloadExport.resumableTitle", id: "resumable" },
       { type: "paragraph", contentKey: "features.downloadExport.resumableIntro" },
       {
@@ -74,7 +74,7 @@ Content-Range: bytes 1024-2048/10240
 Accept-Ranges: bytes`,
       },
 
-      // â”€â”€â”€ ETag Caching â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € ETag Caching €
       { type: "heading", level: 2, titleKey: "features.downloadExport.etagTitle", id: "etag" },
       {
             type: "code",
@@ -90,7 +90,7 @@ private static string GenerateETag(FileInfo fileInfo)
       },
       { type: "paragraph", contentKey: "features.downloadExport.etagNote" },
 
-      // â”€â”€â”€ Session-Based Downloads â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Session-Based Downloads 
       { type: "heading", level: 2, titleKey: "features.downloadExport.sessionTitle", id: "session" },
       { type: "paragraph", contentKey: "features.downloadExport.sessionIntro" },
       {
@@ -112,7 +112,7 @@ private static string GenerateETag(FileInfo fileInfo)
       },
       { type: "info", variant: "warning", contentKey: "features.downloadExport.sessionWarning" },
 
-      // â”€â”€â”€ Path Traversal Prevention â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Path Traversal Prevention 
       { type: "heading", level: 2, titleKey: "features.downloadExport.pathTraversalTitle", id: "path-traversal" },
       {
             type: "code",
@@ -126,7 +126,7 @@ private static string GenerateETag(FileInfo fileInfo)
       },
       { type: "paragraph", contentKey: "features.downloadExport.pathTraversalNote" },
 
-      // â”€â”€â”€ FileStream Configuration â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € FileStream Configuration €
       { type: "heading", level: 2, titleKey: "features.downloadExport.streamConfigTitle", id: "stream-config" },
       {
             type: "code",

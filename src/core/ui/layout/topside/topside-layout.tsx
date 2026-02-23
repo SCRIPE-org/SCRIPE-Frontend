@@ -77,7 +77,7 @@ export function TopSideLayout({ children }: TopSideLayoutProps) {
       className={cn("flex min-h-screen flex-col bg-background", styles.getAnimationClass())}
       dir={direction}
     >
-      {/* â”€â”€ Header with Tabs â”€â”€ */}
+      {/*  Header with Tabs  */}
       <header
         className={cn(
           settings.stickyHeader ? "sticky top-0 z-30" : "relative",
@@ -155,7 +155,7 @@ export function TopSideLayout({ children }: TopSideLayoutProps) {
       </header>
 
       <div className="flex flex-1">
-        {/* â”€â”€ Left Sidebar (sub-items of active group) â”€â”€ */}
+        {/*  Left Sidebar (sub-items of active group)  */}
         {sidebarItems.length > 0 && (
           <aside
             className={cn(
@@ -192,7 +192,7 @@ export function TopSideLayout({ children }: TopSideLayoutProps) {
           </aside>
         )}
 
-        {/* â”€â”€ Mobile Drawer â”€â”€ */}
+        {/*  Mobile Drawer  */}
         {mobileMenuOpen && (
           <>
             <div
@@ -225,7 +225,7 @@ export function TopSideLayout({ children }: TopSideLayoutProps) {
           </>
         )}
 
-        {/* â”€â”€ Content â”€â”€ */}
+        {/*  Content  */}
         <main className="min-w-0 flex-1 p-6">
           <div style={{ borderRadius: "var(--border-radius)" }}>{children}</div>
         </main>

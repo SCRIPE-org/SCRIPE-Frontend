@@ -74,7 +74,7 @@ export function BentoLayout({ children }: BentoLayoutProps) {
       className={cn("flex min-h-screen flex-col bg-background", styles.getAnimationClass())}
       dir={direction}
     >
-      {/* â”€â”€ Header â”€â”€ */}
+      {/*  Header  */}
       <header
         className={cn(
           settings.stickyHeader ? "sticky top-0 z-30" : "relative",
@@ -104,7 +104,7 @@ export function BentoLayout({ children }: BentoLayoutProps) {
         </div>
       </header>
 
-      {/* â”€â”€ Bento Navigation Grid â”€â”€ */}
+      {/*  Bento Navigation Grid  */}
       <div className="border-b border-border/50 bg-muted/10 px-4 py-5 lg:px-6">
         <div className="mx-auto grid max-w-5xl auto-rows-[80px] grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
           {bentoItems.map((item) => {
@@ -154,7 +154,7 @@ export function BentoLayout({ children }: BentoLayoutProps) {
         </div>
       </div>
 
-      {/* â”€â”€ Mobile Drawer â”€â”€ */}
+      {/*  Mobile Drawer  */}
       {mobileMenuOpen && (
         <>
           <div
@@ -187,7 +187,7 @@ export function BentoLayout({ children }: BentoLayoutProps) {
         </>
       )}
 
-      {/* â”€â”€ Content â”€â”€ */}
+      {/*  Content  */}
       <main className="flex-1 p-6">
         <div className="mx-auto max-w-5xl" style={{ borderRadius: "var(--border-radius)" }}>
           {children}

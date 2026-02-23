@@ -77,7 +77,7 @@ export function CalendarLayout({ children }: CalendarLayoutProps) {
       className={cn("flex min-h-screen flex-col bg-background", styles.getAnimationClass())}
       dir={direction}
     >
-      {/* â”€â”€ Header â”€â”€ */}
+      {/*  Header  */}
       <header
         className={cn(
           settings.stickyHeader ? "sticky top-0 z-30" : "relative",
@@ -125,7 +125,7 @@ export function CalendarLayout({ children }: CalendarLayoutProps) {
       </header>
 
       <div className="flex flex-1">
-        {/* â”€â”€ Left Sidebar with mini calendar â”€â”€ */}
+        {/*  Left Sidebar with mini calendar  */}
         <aside
           className={cn("hidden w-56 shrink-0 flex-col lg:flex", "border-e border-border bg-card")}
         >
@@ -166,7 +166,7 @@ export function CalendarLayout({ children }: CalendarLayoutProps) {
           </div>
         </aside>
 
-        {/* â”€â”€ Mobile Drawer â”€â”€ */}
+        {/*  Mobile Drawer  */}
         {mobileMenuOpen && (
           <>
             <div
@@ -199,7 +199,7 @@ export function CalendarLayout({ children }: CalendarLayoutProps) {
           </>
         )}
 
-        {/* â”€â”€ Content â”€â”€ */}
+        {/*  Content  */}
         <main className="min-w-0 flex-1 overflow-y-auto p-4">
           <div style={{ borderRadius: "var(--border-radius)" }}>{children}</div>
         </main>

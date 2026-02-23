@@ -2,7 +2,7 @@
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-      // â”€â”€â”€ Pipeline Architecture â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Pipeline Architecture 
       { type: "heading", level: 2, titleKey: "features.emailSystem.pipelineTitle", id: "pipeline" },
       { type: "paragraph", contentKey: "features.emailSystem.pipelineIntro" },
       {
@@ -37,7 +37,7 @@ const sections: DocSection[] = [
             ],
       },
 
-      // â”€â”€â”€ Controller Endpoints â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Controller Endpoints €
       { type: "heading", level: 2, titleKey: "features.emailSystem.endpointsTitle", id: "endpoints" },
       {
             type: "api-table",
@@ -53,7 +53,7 @@ const sections: DocSection[] = [
             ],
       },
 
-      // â”€â”€â”€ Queue Implementations â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Queue Implementations 
       { type: "heading", level: 2, titleKey: "features.emailSystem.queueTitle", id: "queue" },
       { type: "heading", level: 3, titleKey: "features.emailSystem.inMemoryTitle", id: "in-memory" },
       {
@@ -78,7 +78,7 @@ var message = await _channel.Reader.ReadAsync(stoppingToken);`,
 BackgroundJob.Enqueue<IEmailSender>(sender => sender.SendEmailAsync(to, subject, body, ...));`,
       },
 
-      // â”€â”€â”€ Sender Implementations â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Sender Implementations €
       { type: "heading", level: 2, titleKey: "features.emailSystem.sendersTitle", id: "senders" },
       {
             type: "table",
@@ -91,7 +91,7 @@ BackgroundJob.Enqueue<IEmailSender>(sender => sender.SendEmailAsync(to, subject,
       },
       { type: "info", variant: "note", contentKey: "features.emailSystem.senderNote" },
 
-      // â”€â”€â”€ Background Worker Pattern â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Background Worker Pattern 
       { type: "heading", level: 2, titleKey: "features.emailSystem.workerTitle", id: "worker" },
       {
             type: "code",
@@ -118,7 +118,7 @@ protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 }`,
       },
 
-      // â”€â”€â”€ Error Handling â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Error Handling €
       { type: "heading", level: 2, titleKey: "features.emailSystem.errorTitle", id: "errors" },
       {
             type: "list",
@@ -131,7 +131,7 @@ protected override async Task ExecuteAsync(CancellationToken stoppingToken)
             ],
       },
 
-      // â”€â”€â”€ HTML Sanitizer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € HTML Sanitizer €
       { type: "heading", level: 2, titleKey: "features.emailSystem.sanitizerTitle", id: "sanitizer" },
       { type: "paragraph", contentKey: "features.emailSystem.sanitizerIntro" },
       {

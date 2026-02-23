@@ -4,7 +4,7 @@ import type { DocSection } from "../../../domain/entities/DocSection";
 const sections: DocSection[] = [
       { type: "paragraph", contentKey: "features.rolePermissions.intro" },
 
-      // â”€â”€â”€ Permission Hierarchy â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Permission Hierarchy €
       {
             type: "heading", level: 2,
             titleKey: "features.rolePermissions.hierarchyTitle", id: "hierarchy",
@@ -26,7 +26,7 @@ const sections: DocSection[] = [
             ],
       },
 
-      // â”€â”€â”€ Permission System â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Permission System 
       {
             type: "heading", level: 2,
             titleKey: "features.rolePermissions.systemTitle", id: "permission-system",
@@ -49,7 +49,7 @@ const sections: DocSection[] = [
             ],
       },
 
-      // â”€â”€â”€ Scope Override â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Scope Override €
       {
             type: "heading", level: 2,
             titleKey: "features.rolePermissions.scopeOverrideTitle", id: "scope-override",
@@ -95,7 +95,7 @@ const sections: DocSection[] = [
             contentKey: "features.rolePermissions.scopeOverrideIntro",
       },
 
-      // â”€â”€â”€ Authorization Pipeline â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Authorization Pipeline €
       {
             type: "heading", level: 2,
             titleKey: "features.rolePermissions.authPipelineTitle", id: "auth-pipeline",
@@ -142,7 +142,7 @@ const sections: DocSection[] = [
             ],
       },
 
-      // â”€â”€â”€ Restricted Fields â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Restricted Fields 
       {
             type: "heading", level: 2,
             titleKey: "features.rolePermissions.restrictedFieldsTitle", id: "restricted-fields",
@@ -170,7 +170,7 @@ const sections: DocSection[] = [
             highlightLines: [3, 4, 11, 12, 13],
       },
 
-      // â”€â”€â”€ Clone Role â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Clone Role €
       {
             type: "heading", level: 2,
             titleKey: "features.rolePermissions.cloneRoleTitle", id: "clone-role",
@@ -193,7 +193,7 @@ const sections: DocSection[] = [
             ],
       },
 
-      // â”€â”€â”€ Role Properties â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Role Properties 
       {
             type: "heading", level: 2,
             titleKey: "features.rolePermissions.rolePropertiesTitle", id: "role-properties",
@@ -215,7 +215,7 @@ const sections: DocSection[] = [
             ],
       },
 
-      // â”€â”€â”€ Role CRUD Endpoints â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Role CRUD Endpoints 
       {
             type: "heading", level: 2,
             titleKey: "features.rolePermissions.endpointsTitle", id: "endpoints",
@@ -236,7 +236,7 @@ const sections: DocSection[] = [
             ],
       },
 
-      // â”€â”€â”€ My Tenant Endpoints â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € My Tenant Endpoints 
       {
             type: "heading", level: 2,
             titleKey: "features.rolePermissions.endpointsMyTenantTitle", id: "my-tenant-endpoints",
@@ -250,7 +250,7 @@ const sections: DocSection[] = [
             ],
       },
 
-      // â”€â”€â”€ Permission Endpoints â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Permission Endpoints €
       {
             type: "heading", level: 2,
             titleKey: "features.rolePermissions.endpointsPermissionsTitle", id: "permission-endpoints",

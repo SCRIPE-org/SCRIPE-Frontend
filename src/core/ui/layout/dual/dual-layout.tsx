@@ -26,16 +26,16 @@ interface DualLayoutProps {
  * Dual Layout  Inspired by Slack / Outlook / Teams.
  *
  * Structure:
- * â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
- * â”‚ HEADER (56px)  logo, search, profile        â”‚
- * â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
- * â”‚ LEFT NAV â”‚             â”‚ DETAIL PANEL        â”‚
- * â”‚ (240px)  â”‚ MAIN CONTENTâ”‚ (320px, toggleable) â”‚
- * â”‚          â”‚             â”‚                     â”‚
- * â”‚          â”‚             â”‚                     â”‚
- * â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
- * â”‚ FOOTER (if enabled)                          â”‚
- * â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+ * 
+ * ‚ HEADER (56px)  logo, search, profile        ‚
+ * ¬€¬€¤
+ * ‚ LEFT NAV ‚             ‚ DETAIL PANEL        ‚
+ * ‚ (240px)  ‚ MAIN CONTENT‚ (320px, toggleable) ‚
+ * ‚          ‚             ‚                     ‚
+ * ‚          ‚             ‚                     ‚
+ * ´€´€¤
+ * ‚ FOOTER (if enabled)                          ‚
+ * ”˜
  */
 export function DualLayout({ children, sidebarOpen, onSidebarOpenChange }: DualLayoutProps) {
   const { t, direction } = useI18n();
@@ -44,7 +44,7 @@ export function DualLayout({ children, sidebarOpen, onSidebarOpenChange }: DualL
 
   return (
     <div className={cn("min-h-screen bg-background", direction === "rtl" ? "rtl" : "ltr")}>
-      {/* â”€â”€ HEADER â”€â”€ */}
+      {/*  HEADER  */}
       <header className="fixed inset-x-0 top-0 z-40 flex h-14 items-center border-b border-border bg-card px-4 backdrop-blur-sm lg:px-6">
         <div className="flex shrink-0 items-center gap-3">
           <Button
@@ -93,7 +93,7 @@ export function DualLayout({ children, sidebarOpen, onSidebarOpenChange }: DualL
         </div>
       </header>
 
-      {/* â”€â”€ LEFT SIDEBAR (desktop) â”€â”€ */}
+      {/*  LEFT SIDEBAR (desktop)  */}
       <aside
         className={cn(
           "fixed bottom-0 top-14 z-20 hidden w-72 flex-col overflow-y-auto border-e border-sidebar-border bg-sidebar lg:flex",
@@ -111,7 +111,7 @@ export function DualLayout({ children, sidebarOpen, onSidebarOpenChange }: DualL
         </div>
       </aside>
 
-      {/* â”€â”€ MOBILE SIDEBAR OVERLAY â”€â”€ */}
+      {/*  MOBILE SIDEBAR OVERLAY  */}
       {sidebarOpen && (
         <>
           <div
@@ -140,7 +140,7 @@ export function DualLayout({ children, sidebarOpen, onSidebarOpenChange }: DualL
         </>
       )}
 
-      {/* â”€â”€ DETAIL PANEL (desktop) â”€â”€ */}
+      {/*  DETAIL PANEL (desktop)  */}
       <aside
         className={cn(
           "fixed bottom-0 top-14 z-20 hidden w-80 overflow-y-auto border-s border-border bg-card transition-transform duration-300 lg:block",
@@ -162,7 +162,7 @@ export function DualLayout({ children, sidebarOpen, onSidebarOpenChange }: DualL
         </div>
       </aside>
 
-      {/* â”€â”€ MAIN CONTENT â”€â”€ */}
+      {/*  MAIN CONTENT  */}
       <main
         className={cn(
           "pt-14 transition-all duration-300",

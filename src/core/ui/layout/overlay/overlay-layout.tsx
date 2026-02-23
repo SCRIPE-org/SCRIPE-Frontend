@@ -77,7 +77,7 @@ export function OverlayLayout({ children }: OverlayLayoutProps) {
       className={cn("flex min-h-screen flex-col bg-background", styles.getAnimationClass())}
       dir={direction}
     >
-      {/* â”€â”€ Minimal Header â”€â”€ */}
+      {/*  Minimal Header  */}
       <header
         className={cn(
           settings.stickyHeader ? "sticky top-0 z-30" : "relative",
@@ -104,14 +104,14 @@ export function OverlayLayout({ children }: OverlayLayoutProps) {
         </div>
       </header>
 
-      {/* â”€â”€ Content â”€â”€ */}
+      {/*  Content  */}
       <main className="flex-1 p-6">
         <div style={{ borderRadius: "var(--border-radius)" }}>{children}</div>
       </main>
 
       {settings.showFooter && <Footer />}
 
-      {/* â”€â”€ Fullscreen Overlay Menu â”€â”€ */}
+      {/*  Fullscreen Overlay Menu  */}
       {menuOpen && (
         <div
           className={cn(

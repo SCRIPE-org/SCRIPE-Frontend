@@ -57,7 +57,7 @@ export function HubLayout({ children }: HubLayoutProps) {
       className={cn("flex min-h-screen flex-col bg-background", styles.getAnimationClass())}
       dir={direction}
     >
-      {/* â”€â”€ Header â”€â”€ */}
+      {/*  Header  */}
       <header
         className={cn(
           settings.stickyHeader ? "sticky top-0 z-30" : "relative",
@@ -77,7 +77,7 @@ export function HubLayout({ children }: HubLayoutProps) {
         </div>
       </header>
 
-      {/* â”€â”€ Hub Navigation Grid â”€â”€ */}
+      {/*  Hub Navigation Grid  */}
       <div className="border-b border-border/50 bg-muted/20 px-6 py-6">
         <div className="mx-auto max-w-5xl">
           <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
@@ -123,7 +123,7 @@ export function HubLayout({ children }: HubLayoutProps) {
         </div>
       </div>
 
-      {/* â”€â”€ Content â”€â”€ */}
+      {/*  Content  */}
       <main className="flex-1 p-6">
         <div className="mx-auto max-w-5xl" style={{ borderRadius: "var(--border-radius)" }}>
           {children}

@@ -45,7 +45,7 @@ export function SplitPaneLayout({ children }: SplitPaneLayoutProps) {
       className={cn("flex min-h-screen flex-col bg-background", styles.getAnimationClass())}
       dir={direction}
     >
-      {/* â”€â”€ Header â”€â”€ */}
+      {/*  Header  */}
       <header
         className={cn(
           settings.stickyHeader ? "sticky top-0 z-30" : "relative",
@@ -90,7 +90,7 @@ export function SplitPaneLayout({ children }: SplitPaneLayoutProps) {
       </header>
 
       <div className="flex flex-1 overflow-hidden">
-        {/* â”€â”€ Desktop Sidebar â”€â”€ */}
+        {/*  Desktop Sidebar  */}
         <aside
           className={cn("hidden w-60 shrink-0 flex-col lg:flex", "border-e border-border bg-card")}
         >
@@ -105,7 +105,7 @@ export function SplitPaneLayout({ children }: SplitPaneLayoutProps) {
           </div>
         </aside>
 
-        {/* â”€â”€ Mobile Drawer â”€â”€ */}
+        {/*  Mobile Drawer  */}
         {mobileMenuOpen && (
           <>
             <div
@@ -132,7 +132,7 @@ export function SplitPaneLayout({ children }: SplitPaneLayoutProps) {
           </>
         )}
 
-        {/* â”€â”€ Content + Bottom Panel â”€â”€ */}
+        {/*  Content + Bottom Panel  */}
         <div className="flex min-w-0 flex-1 flex-col">
           <main className="flex-1 overflow-y-auto p-6">
             <div style={{ borderRadius: "var(--border-radius)" }}>{children}</div>

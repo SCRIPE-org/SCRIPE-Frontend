@@ -2,7 +2,7 @@
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-      // â”€â”€â”€ Architecture â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Architecture €
       { type: "heading", level: 2, titleKey: "features.notificationSystem.architectureTitle", id: "architecture" },
       { type: "paragraph", contentKey: "features.notificationSystem.architectureIntro" },
       {
@@ -24,7 +24,7 @@ const sections: DocSection[] = [
             ],
       },
 
-      // â”€â”€â”€ NotificationHub â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € NotificationHub 
       { type: "heading", level: 2, titleKey: "features.notificationSystem.hubTitle", id: "hub" },
       { type: "paragraph", contentKey: "features.notificationSystem.hubIntro" },
       {
@@ -49,7 +49,7 @@ const sections: DocSection[] = [
 }`,
       },
 
-      // â”€â”€â”€ Auto-Join Pattern â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Auto-Join Pattern 
       { type: "heading", level: 3, titleKey: "features.notificationSystem.autoJoinTitle", id: "auto-join" },
       {
             type: "list",
@@ -61,7 +61,7 @@ const sections: DocSection[] = [
             ],
       },
 
-      // â”€â”€â”€ Hub Client Interface â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Hub Client Interface €
       { type: "heading", level: 2, titleKey: "features.notificationSystem.clientInterfaceTitle", id: "client-interface" },
       {
             type: "code",
@@ -74,7 +74,7 @@ const sections: DocSection[] = [
 }`,
       },
 
-      // â”€â”€â”€ NotificationService Methods â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € NotificationService Methods 
       { type: "heading", level: 2, titleKey: "features.notificationSystem.serviceTitle", id: "service" },
       {
             type: "table",
@@ -88,7 +88,7 @@ const sections: DocSection[] = [
             ],
       },
 
-      // â”€â”€â”€ Controller Endpoints â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Controller Endpoints €
       { type: "heading", level: 2, titleKey: "features.notificationSystem.endpointsTitle", id: "endpoints" },
       {
             type: "api-table",

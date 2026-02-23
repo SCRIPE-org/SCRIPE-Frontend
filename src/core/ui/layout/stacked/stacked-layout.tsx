@@ -27,24 +27,24 @@ interface StackedLayoutProps {
  * The drawer can be pinned to push content instead of overlaying.
  *
  * Structure (unpinned):
- * â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
- * â”‚ HEADER (56px)  â˜° toggle        â”‚
- * â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
- * â”‚                                  â”‚
- * â”‚      FULL-WIDTH CONTENT          â”‚  â† drawer overlays
- * â”‚                                  â”‚
- * â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+ * 
+ * ‚ HEADER (56px)  â˜° toggle        ‚
+ * ¤
+ * ‚                                  ‚
+ * ‚      FULL-WIDTH CONTENT          ‚  â† drawer overlays
+ * ‚                                  ‚
+ * ”˜
  *
  * Structure (pinned):
- * â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
- * â”‚ HEADER (56px)  â˜° toggle        â”‚
- * â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
- * â”‚ DRAWER   â”‚                       â”‚
- * â”‚ (300px)  â”‚  MAIN CONTENT         â”‚  â† content pushed
- * â”‚ pinned   â”‚                       â”‚
- * â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
- * â”‚ FOOTER                           â”‚
- * â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+ * 
+ * ‚ HEADER (56px)  â˜° toggle        ‚
+ * ¬€¤
+ * ‚ DRAWER   ‚                       ‚
+ * ‚ (300px)  ‚  MAIN CONTENT         ‚  â† content pushed
+ * ‚ pinned   ‚                       ‚
+ * ´€¤
+ * ‚ FOOTER                           ‚
+ * ”˜
  */
 export function StackedLayout({ children }: StackedLayoutProps) {
   const { t, direction } = useI18n();
@@ -77,7 +77,7 @@ export function StackedLayout({ children }: StackedLayoutProps) {
 
   return (
     <div className={cn("min-h-screen bg-background", direction === "rtl" ? "rtl" : "ltr")}>
-      {/* â”€â”€ EDGE HOVER TRIGGER â”€â”€ */}
+      {/*  EDGE HOVER TRIGGER  */}
       {!pinned && !drawerOpen && (
         <div
           ref={edgeRef}
@@ -90,7 +90,7 @@ export function StackedLayout({ children }: StackedLayoutProps) {
         />
       )}
 
-      {/* â”€â”€ HEADER â”€â”€ */}
+      {/*  HEADER  */}
       <header className="fixed inset-x-0 top-0 z-40 flex h-14 items-center border-b border-border bg-card px-4 backdrop-blur-sm lg:px-6">
         <div className="flex shrink-0 items-center gap-3">
           <Button variant="ghost" size="icon" onClick={() => setDrawerOpen(!drawerOpen)}>
@@ -120,7 +120,7 @@ export function StackedLayout({ children }: StackedLayoutProps) {
         </div>
       </header>
 
-      {/* â”€â”€ DRAWER OVERLAY (unpinned mode) â”€â”€ */}
+      {/*  DRAWER OVERLAY (unpinned mode)  */}
       {drawerOpen && !pinned && (
         <div
           className="fixed inset-0 z-30 bg-black/30 backdrop-blur-[2px]"
@@ -128,7 +128,7 @@ export function StackedLayout({ children }: StackedLayoutProps) {
         />
       )}
 
-      {/* â”€â”€ DRAWER SIDEBAR â”€â”€ */}
+      {/*  DRAWER SIDEBAR  */}
       <aside
         ref={drawerRef}
         className={cn(
@@ -185,7 +185,7 @@ export function StackedLayout({ children }: StackedLayoutProps) {
         </div>
       </aside>
 
-      {/* â”€â”€ MAIN CONTENT â”€â”€ */}
+      {/*  MAIN CONTENT  */}
       <main
         className={cn(
           "pt-14 transition-all duration-300",

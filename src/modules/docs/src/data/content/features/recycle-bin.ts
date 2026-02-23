@@ -2,7 +2,7 @@
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-      // â”€â”€â”€ How Soft-Delete Works â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € How Soft-Delete Works 
       { type: "heading", level: 2, titleKey: "features.recycleBin.softDeleteTitle", id: "soft-delete" },
       { type: "paragraph", contentKey: "features.recycleBin.softDeleteIntro" },
       {
@@ -35,7 +35,7 @@ const sections: DocSection[] = [
             ],
       },
 
-      // â”€â”€â”€ IgnoreQueryFilters Pattern â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € IgnoreQueryFilters Pattern €
       { type: "heading", level: 2, titleKey: "features.recycleBin.ignoreFiltersTitle", id: "ignore-filters" },
       {
             type: "code",
@@ -52,7 +52,7 @@ const sections: DocSection[] = [
       },
       { type: "info", variant: "warning", contentKey: "features.recycleBin.ignoreFiltersWarning" },
 
-      // â”€â”€â”€ Cascade Restore â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Cascade Restore 
       { type: "heading", level: 2, titleKey: "features.recycleBin.cascadeTitle", id: "cascade" },
       { type: "paragraph", contentKey: "features.recycleBin.cascadeIntro" },
       {
@@ -83,7 +83,7 @@ const sections: DocSection[] = [
 }`,
       },
 
-      // â”€â”€â”€ ExecuteUpdateAsync Comparison â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € ExecuteUpdateAsync Comparison 
       { type: "heading", level: 3, titleKey: "features.recycleBin.executeUpdateTitle", id: "execute-update" },
       {
             type: "table",
@@ -98,7 +98,7 @@ const sections: DocSection[] = [
       },
       { type: "info", variant: "note", contentKey: "features.recycleBin.interceptorNote" },
 
-      // â”€â”€â”€ Controller Endpoints â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Controller Endpoints €
       { type: "heading", level: 2, titleKey: "features.recycleBin.endpointsTitle", id: "endpoints" },
       {
             type: "api-table",
@@ -111,14 +111,14 @@ const sections: DocSection[] = [
             ],
       },
 
-      // â”€â”€â”€ Purge vs Restore â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Purge vs Restore €
       { type: "heading", level: 2, titleKey: "features.recycleBin.purgeVsRestoreTitle", id: "purge-vs-restore" },
       {
             type: "table",
             headers: ["Action", "Reversible?", "What Happens"],
             rows: [
                   ["Restore", "Yes (delete again)", "Sets IsDeleted = false, entity reappears"],
-                  ["Purge", "âŒ No", "Hard DELETE FROM  data gone forever"],
+                  ["Purge", " No", "Hard DELETE FROM  data gone forever"],
             ],
       },
       { type: "info", variant: "danger", contentKey: "features.recycleBin.purgeWarning" },

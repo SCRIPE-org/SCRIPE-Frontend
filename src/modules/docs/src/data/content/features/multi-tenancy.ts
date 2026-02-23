@@ -33,7 +33,7 @@ const sections: DocSection[] = [
             ],
       },
 
-      // â”€â”€â”€ Hierarchy â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Hierarchy €
       {
             type: "heading", level: 2,
             titleKey: "features.multiTenancy.hierarchyTitle", id: "hierarchy",
@@ -84,7 +84,7 @@ const sections: DocSection[] = [
             ],
       },
 
-      // â”€â”€â”€ Tenant Features Grid â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Tenant Features Grid €
       {
             type: "heading", level: 2,
             titleKey: "features.multiTenancy.featuresTitle", id: "features",
@@ -102,7 +102,7 @@ const sections: DocSection[] = [
             ],
       },
 
-      // â”€â”€â”€ Tenant Settings â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Tenant Settings 
       {
             type: "heading", level: 2,
             titleKey: "features.multiTenancy.settingsTitle", id: "tenant-settings",
@@ -154,7 +154,7 @@ public string? CompanyName { get; set; }       // Display name`,
             ],
       },
 
-      // â”€â”€â”€ Auto-Role Creation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Auto-Role Creation €
       {
             type: "heading", level: 2,
             titleKey: "features.multiTenancy.autoRoleTitle", id: "auto-role",
@@ -169,7 +169,7 @@ public string? CompanyName { get; set; }       // Display name`,
             ],
       },
 
-      // â”€â”€â”€ Cascade Delete â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Cascade Delete €
       {
             type: "heading", level: 2,
             titleKey: "features.multiTenancy.cascadeDeleteTitle", id: "cascade-delete",
@@ -181,7 +181,7 @@ public string? CompanyName { get; set; }       // Display name`,
             contentKey: "features.multiTenancy.cascadeDeleteIntro",
       },
 
-      // â”€â”€â”€ Permission Inheritance â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Permission Inheritance €
       {
             type: "heading", level: 2,
             titleKey: "features.multiTenancy.permissionInheritanceTitle", id: "permission-inheritance",
@@ -206,7 +206,7 @@ public string? CompanyName { get; set; }       // Display name`,
             ],
       },
 
-      // â”€â”€â”€ CRUD Endpoints â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € CRUD Endpoints €
       {
             type: "heading", level: 2,
             titleKey: "features.multiTenancy.endpointsCrudTitle", id: "crud-endpoints",
@@ -223,7 +223,7 @@ public string? CompanyName { get; set; }       // Display name`,
             ],
       },
 
-      // â”€â”€â”€ Hierarchy Endpoints â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Hierarchy Endpoints 
       {
             type: "heading", level: 2,
             titleKey: "features.multiTenancy.endpointsHierarchyTitle", id: "hierarchy-endpoints",
@@ -239,7 +239,7 @@ public string? CompanyName { get; set; }       // Display name`,
             ],
       },
 
-      // â”€â”€â”€ Settings Endpoints â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Settings Endpoints €
       {
             type: "heading", level: 2,
             titleKey: "features.multiTenancy.endpointsSettingsTitle", id: "settings-endpoints",
@@ -255,7 +255,7 @@ public string? CompanyName { get; set; }       // Display name`,
             ],
       },
 
-      // â”€â”€â”€ Permission Endpoints â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Permission Endpoints €
       {
             type: "heading", level: 2,
             titleKey: "features.multiTenancy.endpointsPermissionsTitle", id: "permission-endpoints",
@@ -269,7 +269,7 @@ public string? CompanyName { get; set; }       // Display name`,
             ],
       },
 
-      // â”€â”€â”€ Drill-Down Endpoints â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Drill-Down Endpoints €
       {
             type: "heading", level: 2,
             titleKey: "features.multiTenancy.endpointsDrilldownTitle", id: "drilldown-endpoints",

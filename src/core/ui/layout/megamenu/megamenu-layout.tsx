@@ -71,7 +71,7 @@ export function MegaMenuLayout({ children }: MegaMenuLayoutProps) {
       className={cn("flex min-h-screen flex-col bg-background", styles.getAnimationClass())}
       dir={direction}
     >
-      {/* â”€â”€ Top Header Bar â”€â”€ */}
+      {/*  Top Header Bar  */}
       <header
         ref={menuRef}
         className={cn(
@@ -155,7 +155,7 @@ export function MegaMenuLayout({ children }: MegaMenuLayoutProps) {
           </div>
         </div>
 
-        {/* â”€â”€ Mega Dropdown Panel (desktop) â”€â”€ */}
+        {/*  Mega Dropdown Panel (desktop)  */}
         {openMenu && (
           <div className="absolute inset-x-0 top-full z-50 border-b border-border bg-card shadow-xl">
             <div className="mx-auto max-w-5xl p-6">
@@ -208,7 +208,7 @@ export function MegaMenuLayout({ children }: MegaMenuLayoutProps) {
         )}
       </header>
 
-      {/* â”€â”€ Mobile Drawer â”€â”€ */}
+      {/*  Mobile Drawer  */}
       {mobileOpen && (
         <>
           <div
@@ -235,7 +235,7 @@ export function MegaMenuLayout({ children }: MegaMenuLayoutProps) {
         </>
       )}
 
-      {/* â”€â”€ Content â”€â”€ */}
+      {/*  Content  */}
       <main className="flex-1 p-6">
         <div
           style={{

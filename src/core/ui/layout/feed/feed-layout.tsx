@@ -61,7 +61,7 @@ export function FeedLayout({ children }: FeedLayoutProps) {
 
   return (
     <div className={cn("min-h-screen bg-background", styles.getAnimationClass())} dir={direction}>
-      {/* â”€â”€ Top Bar â”€â”€ */}
+      {/*  Top Bar  */}
       <header
         className={cn(
           settings.stickyHeader ? "sticky top-0 z-30" : "relative",
@@ -89,7 +89,7 @@ export function FeedLayout({ children }: FeedLayoutProps) {
       </header>
 
       <div className="mx-auto flex max-w-7xl">
-        {/* â”€â”€ Left: Navigation â”€â”€ */}
+        {/*  Left: Navigation  */}
         <aside className="sticky top-12 hidden h-[calc(100vh-3rem)] w-56 shrink-0 flex-col lg:flex">
           <ScrollArea className="flex-1 py-3">
             {navItems.map((item) => {
@@ -117,12 +117,12 @@ export function FeedLayout({ children }: FeedLayoutProps) {
           </div>
         </aside>
 
-        {/* â”€â”€ Center: Content Feed â”€â”€ */}
+        {/*  Center: Content Feed  */}
         <main className="min-h-screen min-w-0 flex-1 border-x border-border">
           <div className="p-4">{children}</div>
         </main>
 
-        {/* â”€â”€ Right: Trending / Widgets â”€â”€ */}
+        {/*  Right: Trending / Widgets  */}
         <aside className="sticky top-12 hidden h-[calc(100vh-3rem)] w-72 shrink-0 flex-col p-4 xl:flex">
           <div className="mb-4 rounded-2xl border border-border bg-card p-4">
             <h3 className="mb-3 flex items-center gap-2 text-sm font-bold text-foreground">
@@ -169,7 +169,7 @@ export function FeedLayout({ children }: FeedLayoutProps) {
         </aside>
       </div>
 
-      {/* â”€â”€ Mobile Drawer â”€â”€ */}
+      {/*  Mobile Drawer  */}
       {mobileMenuOpen && (
         <>
           <div

@@ -70,7 +70,7 @@ export function BottomBarLayout({ children }: BottomBarLayoutProps) {
       className={cn("flex min-h-screen flex-col bg-background", styles.getAnimationClass())}
       dir={direction}
     >
-      {/* â”€â”€ Top Header â”€â”€ */}
+      {/*  Top Header  */}
       <header
         className={cn(
           settings.stickyHeader ? "sticky top-0 z-30" : "relative",
@@ -92,7 +92,7 @@ export function BottomBarLayout({ children }: BottomBarLayoutProps) {
         </div>
       </header>
 
-      {/* â”€â”€ Content Area â”€â”€ */}
+      {/*  Content Area  */}
       <main className="flex-1 p-6 pb-20">
         <div
           style={{
@@ -105,7 +105,7 @@ export function BottomBarLayout({ children }: BottomBarLayoutProps) {
 
       {settings.showFooter && <Footer />}
 
-      {/* â”€â”€ "More" Overlay â”€â”€ */}
+      {/*  "More" Overlay  */}
       {moreOpen && (
         <>
           <div
@@ -150,7 +150,7 @@ export function BottomBarLayout({ children }: BottomBarLayoutProps) {
         </>
       )}
 
-      {/* â”€â”€ Bottom Navigation Bar â”€â”€ */}
+      {/*  Bottom Navigation Bar  */}
       <nav
         className={cn(
           "fixed inset-x-0 bottom-0 z-30",

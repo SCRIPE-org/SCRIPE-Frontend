@@ -64,7 +64,7 @@ export function TerminalLayout({ children }: TerminalLayoutProps) {
       )}
       dir={direction}
     >
-      {/* â”€â”€ Title Bar â”€â”€ */}
+      {/*  Title Bar  */}
       <div className="flex h-9 shrink-0 items-center border-b border-[#30363d] bg-[#161b22] px-3">
         {/* Traffic lights */}
         <div className="flex items-center gap-1.5">
@@ -93,7 +93,7 @@ export function TerminalLayout({ children }: TerminalLayoutProps) {
       </div>
 
       <div className="flex flex-1 overflow-hidden">
-        {/* â”€â”€ Desktop: Command Nav â”€â”€ */}
+        {/*  Desktop: Command Nav  */}
         <aside className="hidden w-52 shrink-0 flex-col border-e border-[#30363d] bg-[#0d1117] lg:flex">
           <div className="border-b border-[#30363d] px-3 py-2">
             <div className="flex items-center gap-1.5">
@@ -137,7 +137,7 @@ export function TerminalLayout({ children }: TerminalLayoutProps) {
           </div>
         </aside>
 
-        {/* â”€â”€ Mobile Nav Toggle â”€â”€ */}
+        {/*  Mobile Nav Toggle  */}
         <Button
           variant="ghost"
           size="icon"
@@ -147,7 +147,7 @@ export function TerminalLayout({ children }: TerminalLayoutProps) {
           <TerminalIcon className="h-4 w-4" />
         </Button>
 
-        {/* â”€â”€ Mobile Nav Sheet â”€â”€ */}
+        {/*  Mobile Nav Sheet  */}
         {navOpen && (
           <>
             <div
@@ -199,7 +199,7 @@ export function TerminalLayout({ children }: TerminalLayoutProps) {
           </>
         )}
 
-        {/* â”€â”€ Content â”€â”€ */}
+        {/*  Content  */}
         <main className="min-w-0 flex-1 overflow-y-auto p-6">
           <div style={{ borderRadius: "var(--border-radius)" }}>{children}</div>
         </main>

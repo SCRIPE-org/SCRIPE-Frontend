@@ -2,7 +2,7 @@
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-      // â”€â”€â”€ Architecture â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Architecture €
       { type: "heading", level: 2, titleKey: "features.webhookSystem.architectureTitle", id: "architecture" },
       { type: "paragraph", contentKey: "features.webhookSystem.architectureIntro" },
       {
@@ -30,7 +30,7 @@ const sections: DocSection[] = [
             ],
       },
 
-      // â”€â”€â”€ Entity â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Entity €
       { type: "heading", level: 2, titleKey: "features.webhookSystem.entityTitle", id: "entity" },
       {
             type: "code",
@@ -64,7 +64,7 @@ const sections: DocSection[] = [
             highlightLines: [10, 11, 16, 19, 20],
       },
 
-      // â”€â”€â”€ HMAC Signing â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € HMAC Signing €
       { type: "heading", level: 2, titleKey: "features.webhookSystem.hmacTitle", id: "hmac" },
       { type: "paragraph", contentKey: "features.webhookSystem.hmacIntro" },
       {
@@ -91,7 +91,7 @@ bool isValid = computedSignature == request.Headers["X-Webhook-Signature"];`,
             highlightLines: [8, 9, 10],
       },
 
-      // â”€â”€â”€ Secret Rotation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Secret Rotation 
       { type: "heading", level: 2, titleKey: "features.webhookSystem.secretRotationTitle", id: "secret-rotation" },
       { type: "paragraph", contentKey: "features.webhookSystem.secretRotationIntro" },
       {
@@ -115,7 +115,7 @@ bool isValid = computedSignature == request.Headers["X-Webhook-Signature"];`,
             ],
       },
 
-      // â”€â”€â”€ Tenant Hierarchy â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Tenant Hierarchy €
       { type: "heading", level: 2, titleKey: "features.webhookSystem.includeChildrenTitle", id: "include-children" },
       { type: "paragraph", contentKey: "features.webhookSystem.includeChildrenIntro" },
       {
@@ -127,7 +127,7 @@ bool isValid = computedSignature == request.Headers["X-Webhook-Signature"];`,
             ],
       },
 
-      // â”€â”€â”€ Circuit Breaker â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Circuit Breaker 
       { type: "heading", level: 2, titleKey: "features.webhookSystem.circuitBreakerTitle", id: "circuit-breaker" },
       { type: "paragraph", contentKey: "features.webhookSystem.circuitBreakerIntro" },
       {
@@ -151,7 +151,7 @@ bool isValid = computedSignature == request.Headers["X-Webhook-Signature"];`,
             ],
       },
 
-      // â”€â”€â”€ Retry Policy â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Retry Policy 
       { type: "heading", level: 2, titleKey: "features.webhookSystem.retryTitle", id: "retry" },
       { type: "paragraph", contentKey: "features.webhookSystem.retryIntro" },
       {
@@ -166,7 +166,7 @@ bool isValid = computedSignature == request.Headers["X-Webhook-Signature"];`,
             ],
       },
 
-      // â”€â”€â”€ Delivery Logs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Delivery Logs €
       { type: "heading", level: 2, titleKey: "features.webhookSystem.deliveryLogsTitle", id: "delivery-logs" },
       { type: "paragraph", contentKey: "features.webhookSystem.deliveryLogsIntro" },
       {
@@ -187,7 +187,7 @@ bool isValid = computedSignature == request.Headers["X-Webhook-Signature"];`,
             highlightLines: [5, 6, 9],
       },
 
-      // â”€â”€â”€ Events â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Events 
       { type: "heading", level: 2, titleKey: "features.webhookSystem.eventsTitle", id: "events" },
       {
             type: "table",
@@ -205,7 +205,7 @@ bool isValid = computedSignature == request.Headers["X-Webhook-Signature"];`,
             ],
       },
 
-      // â”€â”€â”€ Subscription Management Endpoints â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Subscription Management Endpoints 
       { type: "heading", level: 2, titleKey: "features.webhookSystem.endpointsManagementTitle", id: "management-endpoints" },
       {
             type: "api-table",
@@ -218,7 +218,7 @@ bool isValid = computedSignature == request.Headers["X-Webhook-Signature"];`,
             ],
       },
 
-      // â”€â”€â”€ Operations Endpoints â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Operations Endpoints €
       { type: "heading", level: 2, titleKey: "features.webhookSystem.endpointsOperationsTitle", id: "operations-endpoints" },
       {
             type: "api-table",

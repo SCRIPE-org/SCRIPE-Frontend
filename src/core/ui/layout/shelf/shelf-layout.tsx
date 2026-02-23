@@ -58,7 +58,7 @@ export function ShelfLayout({ children }: ShelfLayoutProps) {
       className={cn("flex min-h-screen flex-col bg-background", styles.getAnimationClass())}
       dir={direction}
     >
-      {/* â”€â”€ Header â”€â”€ */}
+      {/*  Header  */}
       <header
         className={cn(
           settings.stickyHeader ? "sticky top-0 z-30" : "relative",
@@ -80,19 +80,19 @@ export function ShelfLayout({ children }: ShelfLayoutProps) {
         </div>
       </header>
 
-      {/* â”€â”€ Content â”€â”€ */}
+      {/*  Content  */}
       <main className={cn("flex-1 p-6", expanded ? "pb-72" : "pb-24")}>
         <div style={{ borderRadius: "var(--border-radius)" }}>{children}</div>
       </main>
 
       {settings.showFooter && <Footer />}
 
-      {/* â”€â”€ Backdrop when expanded â”€â”€ */}
+      {/*  Backdrop when expanded  */}
       {expanded && (
         <div className="fixed inset-0 z-30 bg-black/20" onClick={() => setExpanded(false)} />
       )}
 
-      {/* â”€â”€ Bottom Shelf â”€â”€ */}
+      {/*  Bottom Shelf  */}
       <div
         className={cn(
           "fixed inset-x-0 bottom-0 z-40",
@@ -110,7 +110,7 @@ export function ShelfLayout({ children }: ShelfLayoutProps) {
         </button>
 
         {expanded ? (
-          /* â”€â”€ Expanded: full grid â”€â”€ */
+          /*  Expanded: full grid  */
           <div className="h-[calc(100%-24px)] overflow-y-auto px-4 pb-4">
             <p className="mb-3 px-1 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
               {t("layout.navigation") || "Navigation"}
@@ -143,7 +143,7 @@ export function ShelfLayout({ children }: ShelfLayoutProps) {
             </div>
           </div>
         ) : (
-          /* â”€â”€ Collapsed: icon row â”€â”€ */
+          /*  Collapsed: icon row  */
           <div className="flex h-[calc(100%-16px)] items-center justify-around px-2">
             {flatItems.slice(0, 5).map((item) => {
               const Icon = item.icon;

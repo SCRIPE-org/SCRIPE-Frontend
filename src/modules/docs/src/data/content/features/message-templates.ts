@@ -2,7 +2,7 @@
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-      // â”€â”€â”€ Template Architecture â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Template Architecture 
       { type: "heading", level: 2, titleKey: "features.messageTemplates.architectureTitle", id: "architecture" },
       { type: "paragraph", contentKey: "features.messageTemplates.architectureIntro" },
       {
@@ -30,7 +30,7 @@ const sections: DocSection[] = [
             ],
       },
 
-      // â”€â”€â”€ Scriban Syntax â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Scriban Syntax €
       { type: "heading", level: 2, titleKey: "features.messageTemplates.syntaxTitle", id: "syntax" },
       {
             type: "code",
@@ -54,7 +54,7 @@ Created: {{ created_at | date.to_string "%B %d, %Y" }}
 Amount: {{ amount | math.format "0.00" }}`,
       },
 
-      // â”€â”€â”€ Built-in Templates â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Built-in Templates €
       { type: "heading", level: 2, titleKey: "features.messageTemplates.builtInTitle", id: "built-in" },
       {
             type: "table",
@@ -69,7 +69,7 @@ Amount: {{ amount | math.format "0.00" }}`,
             ],
       },
 
-      // â”€â”€â”€ Template Entity â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Template Entity 
       { type: "heading", level: 2, titleKey: "features.messageTemplates.entityTitle", id: "entity" },
       {
             type: "code",
@@ -99,7 +99,7 @@ Amount: {{ amount | math.format "0.00" }}`,
 }`,
       },
 
-      // â”€â”€â”€ Template Renderer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Template Renderer 
       { type: "heading", level: 2, titleKey: "features.messageTemplates.rendererTitle", id: "renderer" },
       {
             type: "code",
@@ -126,7 +126,7 @@ Amount: {{ amount | math.format "0.00" }}`,
 }`,
       },
 
-      // â”€â”€â”€ Controller Endpoints â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Controller Endpoints €
       { type: "heading", level: 2, titleKey: "features.messageTemplates.endpointsTitle", id: "endpoints" },
       {
             type: "api-table",
@@ -140,7 +140,7 @@ Amount: {{ amount | math.format "0.00" }}`,
             ],
       },
 
-      // â”€â”€â”€ Preview Feature â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Preview Feature 
       { type: "heading", level: 2, titleKey: "features.messageTemplates.previewTitle", id: "preview" },
       { type: "paragraph", contentKey: "features.messageTemplates.previewIntro" },
       {

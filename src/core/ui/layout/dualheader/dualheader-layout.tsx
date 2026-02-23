@@ -63,7 +63,7 @@ export function DualHeaderLayout({ children }: DualHeaderLayoutProps) {
       className={cn("flex min-h-screen flex-col bg-background", styles.getAnimationClass())}
       dir={direction}
     >
-      {/* â”€â”€ Primary Header â”€â”€ */}
+      {/*  Primary Header  */}
       <header
         className={cn(
           settings.stickyHeader ? "sticky top-0 z-30" : "relative",
@@ -93,7 +93,7 @@ export function DualHeaderLayout({ children }: DualHeaderLayoutProps) {
           </div>
         </div>
 
-        {/* â”€â”€ Secondary Header (module tabs) â”€â”€ */}
+        {/*  Secondary Header (module tabs)  */}
         <div className="scrollbar-none flex items-center gap-1 overflow-x-auto border-t border-border/30 bg-muted/20 px-4 lg:px-6">
           {flatItems.map((item) => {
             const Icon = item.icon;
@@ -117,7 +117,7 @@ export function DualHeaderLayout({ children }: DualHeaderLayoutProps) {
         </div>
       </header>
 
-      {/* â”€â”€ Mobile Drawer â”€â”€ */}
+      {/*  Mobile Drawer  */}
       {mobileMenuOpen && (
         <>
           <div
@@ -150,7 +150,7 @@ export function DualHeaderLayout({ children }: DualHeaderLayoutProps) {
         </>
       )}
 
-      {/* â”€â”€ Content â”€â”€ */}
+      {/*  Content  */}
       <main className="flex-1 p-6">
         <div style={{ borderRadius: "var(--border-radius)" }}>{children}</div>
       </main>

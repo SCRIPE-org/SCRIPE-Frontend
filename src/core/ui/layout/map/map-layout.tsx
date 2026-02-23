@@ -49,10 +49,10 @@ export function MapLayout({ children }: MapLayoutProps) {
       className={cn("relative h-screen overflow-hidden bg-background", styles.getAnimationClass())}
       dir={direction}
     >
-      {/* â”€â”€ Full-bleed content â”€â”€ */}
+      {/*  Full-bleed content  */}
       <main className="absolute inset-0">{children}</main>
 
-      {/* â”€â”€ Floating header controls â”€â”€ */}
+      {/*  Floating header controls  */}
       <div className="pointer-events-none absolute inset-x-3 top-3 z-20 flex items-start justify-between">
         {/* Start side: logo + menu */}
         <div className="pointer-events-auto flex items-center gap-2">
@@ -81,7 +81,7 @@ export function MapLayout({ children }: MapLayoutProps) {
         </div>
       </div>
 
-      {/* â”€â”€ Sliding Panel â”€â”€ */}
+      {/*  Sliding Panel  */}
       {panelOpen && (
         <>
           <div className="absolute inset-0 z-20 bg-black/10" onClick={() => setPanelOpen(false)} />

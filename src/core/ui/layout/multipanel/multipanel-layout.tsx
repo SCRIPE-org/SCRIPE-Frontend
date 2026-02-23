@@ -45,7 +45,7 @@ export function MultiPanelLayout({ children }: MultiPanelLayoutProps) {
       className={cn("flex min-h-screen flex-col bg-background", styles.getAnimationClass())}
       dir={direction}
     >
-      {/* â”€â”€ Header â”€â”€ */}
+      {/*  Header  */}
       <header
         className={cn(
           settings.stickyHeader ? "sticky top-0 z-30" : "relative",
@@ -89,7 +89,7 @@ export function MultiPanelLayout({ children }: MultiPanelLayoutProps) {
       </header>
 
       <div className="flex flex-1 overflow-hidden">
-        {/* â”€â”€ Left Sidebar â”€â”€ */}
+        {/*  Left Sidebar  */}
         <aside
           className={cn("hidden w-56 shrink-0 flex-col lg:flex", "border-e border-border bg-card")}
         >
@@ -104,7 +104,7 @@ export function MultiPanelLayout({ children }: MultiPanelLayoutProps) {
           </div>
         </aside>
 
-        {/* â”€â”€ Mobile Drawer â”€â”€ */}
+        {/*  Mobile Drawer  */}
         {mobileMenuOpen && (
           <>
             <div
@@ -131,12 +131,12 @@ export function MultiPanelLayout({ children }: MultiPanelLayoutProps) {
           </>
         )}
 
-        {/* â”€â”€ Main Content â”€â”€ */}
+        {/*  Main Content  */}
         <main className="min-w-0 flex-1 overflow-y-auto p-6">
           <div style={{ borderRadius: "var(--border-radius)" }}>{children}</div>
         </main>
 
-        {/* â”€â”€ Right Inspector Panel â”€â”€ */}
+        {/*  Right Inspector Panel  */}
         {rightPanelOpen && (
           <aside
             className={cn(

@@ -101,7 +101,7 @@ export function ChatLayout({ children }: ChatLayoutProps) {
       className={cn("flex h-screen overflow-hidden bg-background", styles.getAnimationClass())}
       dir={direction}
     >
-      {/* â”€â”€ Desktop Sidebar â”€â”€ */}
+      {/*  Desktop Sidebar  */}
       <aside
         className={cn("hidden w-60 shrink-0 flex-col lg:flex", "border-e border-border bg-card")}
       >
@@ -116,7 +116,7 @@ export function ChatLayout({ children }: ChatLayoutProps) {
         </div>
       </aside>
 
-      {/* â”€â”€ Mobile Sidebar Overlay â”€â”€ */}
+      {/*  Mobile Sidebar Overlay  */}
       {sidebarOpen && (
         <>
           <div
@@ -141,7 +141,7 @@ export function ChatLayout({ children }: ChatLayoutProps) {
         </>
       )}
 
-      {/* â”€â”€ Content Area â”€â”€ */}
+      {/*  Content Area  */}
       <div className="flex min-w-0 flex-1 flex-col">
         {/* Chat header bar */}
         <div className="flex h-12 shrink-0 items-center justify-between border-b border-border bg-card/50 px-4">

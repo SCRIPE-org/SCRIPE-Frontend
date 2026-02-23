@@ -32,7 +32,7 @@ interface RetroLayoutProps {
  * Retro Layout  Classic Desktop / Windows-inspired.
  *
  * Structure:
- * - Navigation panel styled as a "window" with title bar + [â”€][â–¡][Ã—]
+ * - Navigation panel styled as a "window" with title bar + [€][â–¡][Ã—]
  * - Main content as another "window" with title bar
  * - Bottom taskbar with module icons
  * - Classic inset/outset borders, System-like UI
@@ -120,7 +120,7 @@ export function RetroLayout({ children }: RetroLayoutProps) {
         className="retro-layout flex flex-1 gap-2 p-2"
         style={{ backgroundColor: "var(--retro-bg)" }}
       >
-        {/* â”€â”€ Navigation Window â”€â”€ */}
+        {/*  Navigation Window  */}
         {sidebarOpen && !sidebarMinimized && (
           <>
             {/* Mobile overlay */}
@@ -189,7 +189,7 @@ export function RetroLayout({ children }: RetroLayoutProps) {
           </>
         )}
 
-        {/* â”€â”€ Content Window â”€â”€ */}
+        {/*  Content Window  */}
         <div className="flex min-w-0 flex-1 flex-col" style={{ boxShadow: "var(--retro-outset)" }}>
           {/* Title bar */}
           <div
@@ -246,7 +246,7 @@ export function RetroLayout({ children }: RetroLayoutProps) {
         </div>
       </div>
 
-      {/* â”€â”€ Bottom Taskbar â”€â”€ */}
+      {/*  Bottom Taskbar  */}
       <div
         className="flex h-10 shrink-0 items-center gap-1 px-1"
         style={{ boxShadow: "var(--retro-outset)", backgroundColor: "var(--retro-bg)" }}

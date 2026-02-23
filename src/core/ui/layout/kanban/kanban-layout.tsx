@@ -77,7 +77,7 @@ export function KanbanLayout({ children }: KanbanLayoutProps) {
       className={cn("flex min-h-screen flex-col bg-background", styles.getAnimationClass())}
       dir={direction}
     >
-      {/* â”€â”€ Header â”€â”€ */}
+      {/*  Header  */}
       <header
         className={cn(
           settings.stickyHeader ? "sticky top-0 z-30" : "relative",
@@ -107,7 +107,7 @@ export function KanbanLayout({ children }: KanbanLayoutProps) {
         </div>
       </header>
 
-      {/* â”€â”€ Kanban Board: Nav columns â”€â”€ */}
+      {/*  Kanban Board: Nav columns  */}
       <div className="scrollbar-none overflow-x-auto border-b border-border bg-muted/20">
         <div className="flex min-w-max gap-4 p-4">
           {columns.map((col) => (
@@ -154,7 +154,7 @@ export function KanbanLayout({ children }: KanbanLayoutProps) {
         </div>
       </div>
 
-      {/* â”€â”€ Mobile Drawer â”€â”€ */}
+      {/*  Mobile Drawer  */}
       {mobileMenuOpen && (
         <>
           <div
@@ -187,7 +187,7 @@ export function KanbanLayout({ children }: KanbanLayoutProps) {
         </>
       )}
 
-      {/* â”€â”€ Content â”€â”€ */}
+      {/*  Content  */}
       <main className="flex-1 p-6">
         <div style={{ borderRadius: "var(--border-radius)" }}>{children}</div>
       </main>

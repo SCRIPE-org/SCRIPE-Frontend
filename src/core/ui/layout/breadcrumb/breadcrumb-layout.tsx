@@ -80,7 +80,7 @@ export function BreadcrumbLayout({ children }: BreadcrumbLayoutProps) {
       className={cn("flex min-h-screen flex-col bg-background", styles.getAnimationClass())}
       dir={direction}
     >
-      {/* â”€â”€ Header with Breadcrumbs â”€â”€ */}
+      {/*  Header with Breadcrumbs  */}
       <header
         className={cn(
           settings.stickyHeader ? "sticky top-0 z-30" : "relative",
@@ -136,7 +136,7 @@ export function BreadcrumbLayout({ children }: BreadcrumbLayoutProps) {
         </div>
       </header>
 
-      {/* â”€â”€ Mobile Navigation Drawer â”€â”€ */}
+      {/*  Mobile Navigation Drawer  */}
       {mobileMenuOpen && (
         <>
           <div
@@ -169,7 +169,7 @@ export function BreadcrumbLayout({ children }: BreadcrumbLayoutProps) {
         </>
       )}
 
-      {/* â”€â”€ Content â”€â”€ */}
+      {/*  Content  */}
       <main className="flex-1 p-6">
         <div
           style={{

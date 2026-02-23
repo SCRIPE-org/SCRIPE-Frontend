@@ -50,7 +50,7 @@ export function FocusLayout({ children }: FocusLayoutProps) {
       className={cn("min-h-screen bg-background transition-all", styles.getAnimationClass())}
       dir={direction}
     >
-      {/* â”€â”€ Focus Mode Pill (shown when header is hidden) â”€â”€ */}
+      {/*  Focus Mode Pill (shown when header is hidden)  */}
       {focusMode && (
         <div
           className={cn(
@@ -80,7 +80,7 @@ export function FocusLayout({ children }: FocusLayoutProps) {
         </div>
       )}
 
-      {/* â”€â”€ Header (hidden in focus mode) â”€â”€ */}
+      {/*  Header (hidden in focus mode)  */}
       {!focusMode && (
         <header
           className={cn(
@@ -121,7 +121,7 @@ export function FocusLayout({ children }: FocusLayoutProps) {
         </header>
       )}
 
-      {/* â”€â”€ Sidebar Overlay â”€â”€ */}
+      {/*  Sidebar Overlay  */}
       {sidebarOpen && (
         <>
           <div className="fixed inset-0 z-30 bg-black/30" onClick={() => setSidebarOpen(false)} />
@@ -151,7 +151,7 @@ export function FocusLayout({ children }: FocusLayoutProps) {
         </>
       )}
 
-      {/* â”€â”€ Content â”€â”€ */}
+      {/*  Content  */}
       <main className={cn("flex-1 p-6", focusMode && "p-8 lg:p-12")}>
         <div
           className={cn(focusMode && "mx-auto max-w-4xl")}

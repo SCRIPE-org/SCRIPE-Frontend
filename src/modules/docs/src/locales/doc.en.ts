@@ -35,7 +35,7 @@ export const docEn = {
     commercialDocs: "Commercial Docs",
   },
 
-  // â”€â”€â”€ Info Blocks â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // € Info Blocks 
   info: {
     note: "Note",
     tip: "Tip",
@@ -43,7 +43,7 @@ export const docEn = {
     danger: "Danger",
   },
 
-  // â”€â”€â”€ API Table â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // € API Table 
   api: {
     method: "Method",
     endpoint: "Endpoint",
@@ -185,15 +185,14 @@ export const docEn = {
       moduleAnatomyTitle: "Module Anatomy",
       moduleAnatomyIntro: "Every frontend module follows an identical structure. This consistency makes it easy to navigate any module once you understand one. Each layer has strict responsibilities and import rules.",
       // Comparison
-      allowedImports: "âœ… Allowed Imports",
-      forbiddenImports: "âŒ Forbidden Imports",
+      allowedImports: " Allowed Imports",
+      forbiddenImports: " Forbidden Imports",
       boundaryWarning: "Module boundaries are absolute law. Modules CANNOT import from each other. If code needs to be shared, it must be moved to @core/. Cross-module data is passed only via route parameters (URL) or shared IDs.",
     },
   },
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+
   //  ARCHITECTURE
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
   architecture: {
     overview: {
@@ -207,8 +206,8 @@ export const docEn = {
       frontendArchIntro: "The frontend uses a SOLID View/ViewModel pattern where Views are pure UI (no state, no logic) and ViewModels contain all business logic. The connector pattern separates Next.js routing (Server Components) from application logic (Client Components).",
       moduleBoundariesTitle: "Module Boundaries",
       moduleBoundariesIntro: "Modules are isolated islands. They cannot import from each other. This enables independent development, isolated failures, and the ability to extract modules to separate repositories.",
-      withBoundaries: "âœ… With Module Boundaries",
-      withoutBoundaries: "âŒ Without Module Boundaries",
+      withBoundaries: " With Module Boundaries",
+      withoutBoundaries: " Without Module Boundaries",
       communicationPatternsTitle: "Cross-Module Communication",
       crossModuleNote: "The Event Bus pattern is planned for future releases. Currently, modules communicate exclusively through URL navigation and shared IDs.",
     },
@@ -236,8 +235,8 @@ export const docEn = {
       solidPatternTitle: "SOLID View/ViewModel Pattern",
       solidPatternIntro: "The SOLID pattern ensures each piece of the UI has a single responsibility. Views render JSX, ViewModels manage state and logic, and Components provide reusable UI sections.",
       viewRulesTitle: "View Rules",
-      viewDo: "âœ… View SHOULD",
-      viewDont: "âŒ View SHOULD NOT",
+      viewDo: " View SHOULD",
+      viewDont: " View SHOULD NOT",
       viewExampleTitle: "View Example",
       viewModelRulesTitle: "ViewModel Rules",
       viewModelRulesIntro: "ViewModels are React hooks that contain all business logic. They compose section-specific ViewModels (statistics, filters, table) and return typed interfaces consumed by Views.",
@@ -267,8 +266,8 @@ export const docEn = {
       description: "Module isolation rules, backend/frontend templates, module registry, and cross-module communication.",
       intro: "NEXORA uses a strict module system where each module is an isolated island with clear boundaries. Modules cannot import from each other  they communicate only through URLs, shared IDs, or the core event bus. This ensures independence, testability, and the ability to extract modules to separate repositories.",
       isolationRulesTitle: "Module Isolation Rules",
-      allowedImportsTitle: "âœ… Allowed Imports",
-      forbiddenImportsTitle: "âŒ Forbidden Imports",
+      allowedImportsTitle: " Allowed Imports",
+      forbiddenImportsTitle: " Forbidden Imports",
       backendModuleTitle: "Backend Module Template",
       backendModuleIntro: "Every backend module follows DDD (Domain-Driven Design) with three projects: Domain, Application, and Infrastructure. The Domain is pure C# with no external dependencies.",
       frontendModuleTitle: "Frontend Module Template",
@@ -315,8 +314,8 @@ export const docEn = {
       zustandTitle: "Zustand (Global UI State)",
       zustandIntro: "Use Zustand for global UI state that needs to be shared across components but doesn't come from the server. There are exactly 3 approved stores.",
       antiPatternsTitle: "Anti-Patterns",
-      doTitle: "âœ… DO",
-      dontTitle: "âŒ DON'T",
+      doTitle: " DO",
+      dontTitle: " DON'T",
       localizationTitle: "Localization (LanguageProvider)",
       localizationIntro: "Localization uses a custom LanguageProvider with localStorage persistence. It supports 7 languages, RTL/LTR auto-detection, and dot-notation translation keys with interpolation.",
       noLocaleFoldersWarning: "Do NOT use [locale] folders in src/app/! Localization is handled via LanguageProvider context, not file-based routing. No next-intl, no next-i18next, no URL-based language (/en/, /ar/).",
@@ -456,9 +455,9 @@ export const docEn = {
     },
   },
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  
   //  FEATURES
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  
 
   features: {
     authentication: {
@@ -1075,7 +1074,7 @@ export const docEn = {
 
 
   infrastructure: {
-    // â”€â”€â”€ Background Jobs 
+    // € Background Jobs 
     backgroundJobs: {
       title: "Background Jobs",
       description: "Hangfire-powered job processing  recurring cleanup, outbox processor, token cleanup, and dashboard.",
@@ -1199,10 +1198,10 @@ export const docEn = {
       viewModelTitle: "ViewModel",
       viewTitle: "View Component",
       routeTitle: "Route & Navigation",
-      checklist: "Before submitting, verify: âœ… Module follows SOLID pattern, âœ… View is under 60 lines, âœ… No cross-module imports, âœ… Translations added to dictionaries, âœ… Navigation entry added.",
+      checklist: "Before submitting, verify:  Module follows SOLID pattern,  View is under 60 lines,  No cross-module imports,  Translations added to dictionaries,  Navigation entry added.",
     },
 
-    // â”€â”€â”€ Add Backend Module â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // € Add Backend Module 
     addBackendModule: {
       title: "Add a Backend Module",
       description: "Step-by-step guide to creating a new backend module with Clean Architecture and CQRS.",

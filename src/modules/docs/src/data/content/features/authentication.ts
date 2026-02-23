@@ -4,7 +4,7 @@ import type { DocSection } from "../../../domain/entities/DocSection";
 const sections: DocSection[] = [
       { type: "paragraph", contentKey: "features.authentication.intro" },
 
-      // â”€â”€â”€ Auth Flow â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Auth Flow 
       {
             type: "heading", level: 2,
             titleKey: "features.authentication.flowTitle", id: "auth-flow",
@@ -34,7 +34,7 @@ const sections: DocSection[] = [
             ],
       },
 
-      // â”€â”€â”€ JWT Config â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € JWT Config €
       {
             type: "heading", level: 2,
             titleKey: "features.authentication.jwtTitle", id: "jwt-config",
@@ -71,7 +71,7 @@ var token = new JwtSecurityToken(
             highlightLines: [3, 4, 5],
       },
 
-      // â”€â”€â”€ Dual Auth â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Dual Auth 
       {
             type: "heading", level: 2,
             titleKey: "features.authentication.dualAuthTitle", id: "dual-auth",
@@ -91,7 +91,7 @@ var token = new JwtSecurityToken(
             ],
       },
 
-      // â”€â”€â”€ Admin Entity â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Admin Entity €
       {
             type: "heading", level: 2,
             titleKey: "features.authentication.adminEntityTitle", id: "admin-entity",
@@ -116,7 +116,7 @@ var token = new JwtSecurityToken(
             ],
       },
 
-      // â”€â”€â”€ 2FA Deep â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € 2FA Deep €
       {
             type: "heading", level: 2,
             titleKey: "features.authentication.twoFactorTitle", id: "two-factor",
@@ -156,7 +156,7 @@ admin.LastTwoFactorCodeUsedAt = DateTime.UtcNow;`,
             highlightLines: [2, 3, 17, 25, 26],
       },
 
-      // â”€â”€â”€ Password Policy â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Password Policy 
       {
             type: "heading", level: 2,
             titleKey: "features.authentication.passwordPolicyTitle", id: "password-policy",
@@ -177,7 +177,7 @@ admin.LastTwoFactorCodeUsedAt = DateTime.UtcNow;`,
             ],
       },
 
-      // â”€â”€â”€ Admin Auth Endpoints â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Admin Auth Endpoints €
       {
             type: "heading", level: 2,
             titleKey: "features.authentication.endpointsAdminTitle", id: "admin-auth-endpoints",
@@ -196,7 +196,7 @@ admin.LastTwoFactorCodeUsedAt = DateTime.UtcNow;`,
             ],
       },
 
-      // â”€â”€â”€ User Auth Endpoints â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € User Auth Endpoints 
       {
             type: "heading", level: 2,
             titleKey: "features.authentication.endpointsUserTitle", id: "user-auth-endpoints",
@@ -216,7 +216,7 @@ admin.LastTwoFactorCodeUsedAt = DateTime.UtcNow;`,
             ],
       },
 
-      // â”€â”€â”€ Rate Limiting â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Rate Limiting 
       {
             type: "heading", level: 2,
             titleKey: "features.authentication.rateLimitingTitle", id: "rate-limiting",

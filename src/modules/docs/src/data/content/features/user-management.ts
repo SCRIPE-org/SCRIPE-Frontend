@@ -2,7 +2,7 @@
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-      // â”€â”€â”€ Admin vs User â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Admin vs User 
       { type: "heading", level: 2, titleKey: "features.userManagement.adminVsUserTitle", id: "admin-vs-user" },
       { type: "paragraph", contentKey: "features.userManagement.adminVsUserIntro" },
       {
@@ -20,7 +20,7 @@ const sections: DocSection[] = [
             ],
       },
 
-      // â”€â”€â”€ AdminsController CRUD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € AdminsController CRUD 
       { type: "heading", level: 2, titleKey: "features.userManagement.crudTitle", id: "crud" },
       {
             type: "api-table",
@@ -36,7 +36,7 @@ const sections: DocSection[] = [
             ],
       },
 
-      // â”€â”€â”€ Account Operations â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Account Operations €
       { type: "heading", level: 2, titleKey: "features.userManagement.accountOpsTitle", id: "account-ops" },
       {
             type: "api-table",
@@ -47,7 +47,7 @@ const sections: DocSection[] = [
             ],
       },
 
-      // â”€â”€â”€ Role Management â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Role Management 
       { type: "heading", level: 2, titleKey: "features.userManagement.roleMgmtTitle", id: "role-mgmt" },
       {
             type: "api-table",
@@ -59,7 +59,7 @@ const sections: DocSection[] = [
             ],
       },
 
-      // â”€â”€â”€ Bulk Operations â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Bulk Operations 
       { type: "heading", level: 2, titleKey: "features.userManagement.bulkOpsTitle", id: "bulk-ops" },
       {
             type: "api-table",
@@ -73,7 +73,7 @@ const sections: DocSection[] = [
             ],
       },
 
-      // â”€â”€â”€ Enterprise Operations â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Enterprise Operations 
       { type: "heading", level: 2, titleKey: "features.userManagement.enterpriseOpsTitle", id: "enterprise-ops" },
       {
             type: "api-table",
@@ -84,7 +84,7 @@ const sections: DocSection[] = [
             ],
       },
 
-      // â”€â”€â”€ Protected Admin Rules â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Protected Admin Rules 
       { type: "heading", level: 2, titleKey: "features.userManagement.protectedTitle", id: "protected" },
       { type: "paragraph", contentKey: "features.userManagement.protectedIntro" },
       {
@@ -117,7 +117,7 @@ const sections: DocSection[] = [
             ],
       },
 
-      // â”€â”€â”€ Nuke & Pave Pattern â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // € Nuke & Pave Pattern 
       { type: "heading", level: 2, titleKey: "features.userManagement.nukePaveTitle", id: "nuke-pave" },
       {
             type: "code",
