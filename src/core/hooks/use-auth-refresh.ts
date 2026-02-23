@@ -42,7 +42,7 @@ export function useAuthRefresh(options: UseAuthRefreshOptions = {}) {
   const setAuth = useAppStore((state) => state.setAuth);
   const { authRepository } = useServices();
   const pathname = usePathname();
-  const isDocsRoute = pathname?.startsWith("/docs");
+  const isDocsRoute = pathname?.startsWith("/docs") || pathname?.startsWith("/commercial");
 
   const isRefreshing = useRef(false);
 

@@ -50,8 +50,10 @@ export function DocsSearch({
   // Navigate to result
   const navigateToResult = useCallback(
     (result: SearchResult) => {
+      // Strip "commercial/" prefix if present, as basePath handles the root
+      const cleanSlug = result.slug.replace(/^commercial\//, "");
       const hash = result.sectionId ? `#${result.sectionId}` : "";
-      router.push(`${basePath}/${result.slug}${hash}`);
+      router.push(`${basePath}/${cleanSlug}${hash}`);
       onClose();
     },
     [basePath, router, onClose]

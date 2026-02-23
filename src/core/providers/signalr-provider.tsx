@@ -62,7 +62,7 @@ export function SignalRProvider({ hubPath = HUB_PATHS.AUDIT, children }: SignalR
   const [connectionState, setConnectionState] = useState<SignalRConnectionState>("disconnected");
   const isAuthenticated = useAppStore((s) => s.isAuthenticated);
   const pathname = usePathname();
-  const isDocsRoute = pathname?.startsWith("/docs");
+  const isDocsRoute = pathname?.startsWith("/docs") || pathname?.startsWith("/commercial");
 
   // Ref to track the latest connection for cleanup (avoids stale closures)
   const connectionRef = useRef<HubConnection | null>(null);

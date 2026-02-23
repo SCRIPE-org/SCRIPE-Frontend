@@ -64,7 +64,7 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
   const user = useAppStore((state) => state.user);
   const { navigationService } = useServices();
   const pathname = usePathname();
-  const isDocsRoute = pathname?.startsWith("/docs");
+  const isDocsRoute = pathname?.startsWith("/docs") || pathname?.startsWith("/commercial");
 
   /**
    * Load navigation data from localStorage cache

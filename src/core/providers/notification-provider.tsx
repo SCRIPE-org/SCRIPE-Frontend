@@ -92,7 +92,7 @@ export function NotificationSignalRProvider({
 
       const isAuthenticated = useAppStore((s) => s.isAuthenticated);
       const pathname = usePathname();
-      const isDocsRoute = pathname?.startsWith("/docs");
+      const isDocsRoute = pathname?.startsWith("/docs") || pathname?.startsWith("/commercial");
 
       const connectionRef = useRef<HubConnection | null>(null);
       const isConnectingRef = useRef(false);
