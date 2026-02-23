@@ -7,13 +7,12 @@ const sections: DocSection[] = [
       // ─── Testing Pyramid ────────────────────────────────────────
       { type: "heading", level: 2, titleKey: "commercial.testingStrategy.pyramidTitle", id: "pyramid" },
       {
-            type: "table",
-            headers: ["commercial.testingStrategy.pyramidLvl", "commercial.testingStrategy.pyramidTech", "commercial.testingStrategy.pyramidScope"],
-            rows: [
-                  ["commercial.testingStrategy.pyrE2E", "commercial.testingStrategy.pyrE2ETech", "commercial.testingStrategy.pyrE2EScope"],
-                  ["commercial.testingStrategy.pyrInt", "commercial.testingStrategy.pyrIntTech", "commercial.testingStrategy.pyrIntScope"],
-                  ["commercial.testingStrategy.pyrUnit", "commercial.testingStrategy.pyrUnitTech", "commercial.testingStrategy.pyrUnitScope"],
-                  ["commercial.testingStrategy.pyrStatic", "commercial.testingStrategy.pyrStaticTech", "commercial.testingStrategy.pyrStaticScope"],
+            type: "step-guide",
+            steps: [
+                  { titleKey: "commercial.testingStrategy.pyrE2E", contentKey: "commercial.testingStrategy.pyrE2EScope" },
+                  { titleKey: "commercial.testingStrategy.pyrInt", contentKey: "commercial.testingStrategy.pyrIntScope" },
+                  { titleKey: "commercial.testingStrategy.pyrUnit", contentKey: "commercial.testingStrategy.pyrUnitScope" },
+                  { titleKey: "commercial.testingStrategy.pyrStatic", contentKey: "commercial.testingStrategy.pyrStaticScope" },
             ],
       },
 
