@@ -7,21 +7,14 @@ const sections: DocSection[] = [
       // ─── Testing Pyramid ────────────────────────────────────────
       { type: "heading", level: 2, titleKey: "commercial.testingStrategy.pyramidTitle", id: "pyramid" },
       {
-            type: "code",
-            language: "text",
-            filename: "Testing Pyramid",
-            code: `          ┌──────────┐
-          │   E2E    │  ← Playwright / Cypress
-          │  Tests   │
-        ┌─┴──────────┴─┐
-        │ Integration   │  ← WebApplicationFactory
-        │    Tests      │
-      ┌─┴──────────────┴─┐
-      │    Unit Tests     │  ← xUnit + Moq + FluentAssertions
-      │  (Domain + App)   │
-    ┌─┴──────────────────┴─┐
-    │   Static Analysis     │  ← TypeScript, ESLint, Roslyn
-    └───────────────────────┘`,
+            type: "table",
+            headers: ["commercial.testingStrategy.pyramidLvl", "commercial.testingStrategy.pyramidTech", "commercial.testingStrategy.pyramidScope"],
+            rows: [
+                  ["commercial.testingStrategy.pyrE2E", "commercial.testingStrategy.pyrE2ETech", "commercial.testingStrategy.pyrE2EScope"],
+                  ["commercial.testingStrategy.pyrInt", "commercial.testingStrategy.pyrIntTech", "commercial.testingStrategy.pyrIntScope"],
+                  ["commercial.testingStrategy.pyrUnit", "commercial.testingStrategy.pyrUnitTech", "commercial.testingStrategy.pyrUnitScope"],
+                  ["commercial.testingStrategy.pyrStatic", "commercial.testingStrategy.pyrStaticTech", "commercial.testingStrategy.pyrStaticScope"],
+            ],
       },
 
       // ─── Unit Testing ───────────────────────────────────────────
@@ -32,18 +25,27 @@ const sections: DocSection[] = [
             language: "csharp",
             filename: "Example Unit Test",
             code: `[Fact]
-public async Task CreateUser_WithValidData_ReturnsSuccess()
+public async Task Authenticate_WithValidCredentials_ReturnsCryptographicTokenAndTriggersAudit()
 {
     // Arrange
-    var command = new CreateUserCommand("john@example.com", "John Doe");
-    var handler = new CreateUserCommandHandler(_mockRepo.Object, _mockHasher.Object);
+    var command = new AuthenticateTenantCommand("admin@enterprise.com", "S3cureP@ssword!");
+    var handler = new AuthenticateTenantCommandHandler(
+        _mockTenantRepository.Object, 
+        _mockTokenGenerator.Object,
+        _mockAuditLogger.Object
+    );
 
     // Act
     var result = await handler.Handle(command, CancellationToken.None);
 
     // Assert
     result.IsSuccess.Should().BeTrue();
-    result.Value.Email.Should().Be("john@example.com");
+    result.Value.AccessToken.Should().NotBeNullOrWhiteSpace();
+    
+    // Mathematically certify that the Audit Trail was instantly invoked
+    _mockAuditLogger.Verify(a => a.LogSecurityEventAsync(
+        It.Is<SecurityEvent>(e => e.Type == SecurityEventType.TenantLoginSuccess)
+    ), Times.Once);
 }`,
       },
 

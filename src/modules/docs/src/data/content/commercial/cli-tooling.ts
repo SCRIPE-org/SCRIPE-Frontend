@@ -8,19 +8,14 @@ const sections: DocSection[] = [
       { type: "heading", level: 2, titleKey: "commercial.cliTooling.commandsTitle", id: "commands" },
       {
             type: "table",
-            headers: ["Command", "Description", "Example"],
+            headers: ["commercial.cliTooling.tblCmdHeader1", "commercial.cliTooling.tblCmdHeader2", "commercial.cliTooling.tblCmdHeader3"],
             rows: [
-                  ["nexora new-module", "Scaffold full-stack module", "nexora new-module --name HR"],
-                  ["nexora new-entity", "Create domain entity + config", "nexora new-entity --module HR --name Employee"],
-                  ["nexora new-command", "Generate CQRS command + handler", "nexora new-command --module HR --name CreateEmployee"],
-                  ["nexora new-query", "Generate CQRS query + handler", "nexora new-query --module HR --name GetEmployees"],
-                  ["nexora remove-module", "Clean removal of entire module", "nexora remove-module --name HR"],
-                  ["nexora db add-migration", "Generate migrations for SQL Server, Oracle, & Postgres", "nexora db add-migration Initial -m HR"],
-                  ["nexora db update", "Auto-detects DB Provider & updates", "nexora db update -m HR"],
-                  ["nexora db remove-migration", "Safely removes the latest migration across all providers", "nexora db remove-migration -m HR"],
-                  ["nexora dev", "Run both backend + frontend", "nexora dev"],
-                  ["nexora build", "Build both projects", "nexora build backend|frontend"],
-                  ["nexora test", "Run test suite", "nexora test backend|frontend"],
+                  ["Module", "commercial.cliTooling.descMod", "pnpm run cli module new HR"],
+                  ["Entity", "commercial.cliTooling.descEnt", "pnpm run cli entity new HR Employee"],
+                  ["Command", "commercial.cliTooling.descCmd", "pnpm run cli command new HR CreateEmployee"],
+                  ["Query", "commercial.cliTooling.descQry", "pnpm run cli query new HR GetEmployees"],
+                  ["Migration", "commercial.cliTooling.descMig", "pnpm run cli db migrations add HR Initial"],
+                  ["Dev", "commercial.cliTooling.descDev", "pnpm run dev"],
             ],
       },
 
@@ -28,50 +23,61 @@ const sections: DocSection[] = [
       { type: "heading", level: 2, titleKey: "commercial.cliTooling.scaffoldTitle", id: "scaffolding" },
       { type: "paragraph", contentKey: "commercial.cliTooling.scaffoldContent" },
       {
+            type: "step-guide",
+            steps: [
+                  { titleKey: "commercial.cliTooling.step1Title", contentKey: "commercial.cliTooling.step1Content" },
+                  { titleKey: "commercial.cliTooling.step2Title", contentKey: "commercial.cliTooling.step2Content" },
+                  { titleKey: "commercial.cliTooling.step3Title", contentKey: "commercial.cliTooling.step3Content" },
+                  { titleKey: "commercial.cliTooling.step4Title", contentKey: "commercial.cliTooling.step4Content" },
+            ],
+      },
+      {
             type: "code",
             language: "bash",
-            filename: "Full Module Scaffold Output",
-            code: `$ nexora new-module --name "ProjectManagement"
+            filename: "Continuous Deterministic Delivery (CDD)",
+            code: `$ pnpm run cli module new EnterpriseBilling
 
-✓ Created Backend Domain layer
-  → Entities/Project.cs
-  → Interfaces/IProjectRepository.cs
-  
-✓ Created Backend Application layer  
-  → Commands/CreateProject/CreateProjectCommand.cs
-  → Commands/CreateProject/CreateProjectHandler.cs
-  → Queries/GetProjects/GetProjectsQuery.cs
-  → Validators/CreateProjectValidator.cs
-  
-✓ Created Backend Infrastructure layer
-  → Repositories/ProjectRepository.cs
-  → EntityConfigurations/ProjectConfiguration.cs
-  → DependencyInjection.cs
-  → Seeder/ProjectPermissionSeeder.cs
+[SYS] Booting Deterministic Scaffolding Engine...
+[SYS] Compiling 66 Handlebars Execution Matrices...
 
-✓ Created Frontend module
-  → domain/entities/Project.ts
-  → data/repositories/ProjectRepository.ts
-  → presentation/views/ProjectListView.tsx
-  → presentation/viewmodels/useProjectViewModel.ts
-  → di.ts
+✓ Created Domain Layer [EnterpriseBilling.Domain]
+  → Aggregates/BillingAccount.cs
+  → ValueObjects/Currency.cs
+  → Events/InvoiceGeneratedDomainEvent.cs
   
-✓ Registered in module system
-✓ Added permissions to seeder
-✓ Ready to use — run 'nexora dev' to start`,
+✓ Created Application Layer [EnterpriseBilling.Application]
+  → Commands/GenerateInvoice/GenerateInvoiceCommand.cs
+  → Commands/GenerateInvoice/GenerateInvoiceValidator.cs (FluentValidation)
+  → Queries/GetAccountLedger/GetAccountLedgerQuery.cs
+  
+✓ Created Infrastructure Layer [EnterpriseBilling.Infrastructure]
+  → Persistence/BillingAccountConfiguration.cs (EF Core)
+  → Persistence/BillingAccountRepository.cs
+  → Security/BillingPermissionSeeder.cs (RBAC Injection)
+
+✓ Created Presentation Layer [EnterpriseBilling.Presentation]
+  → Controllers/BillingController.cs (JWT Secured)
+  
+✓ Created Next.js Frontend [EnterpriseBilling.UI]
+  → domain/entities/BillingAccount.ts (Zod Schema)
+  → presentation/viewmodels/useBillingViewModel.ts (TanStack Query)
+  → presentation/views/BillingDashboardView.tsx (Tailwind UI)
+  
+[VERIFY] Mathematical Clean Architecture Conformance: PASSED
+[READY] Successfully generated 18 immutable artifacts in 0.8s.`,
       },
 
       // ─── What Gets Generated ────────────────────────────────────
       { type: "heading", level: 2, titleKey: "commercial.cliTooling.generatedTitle", id: "generated" },
       {
             type: "table",
-            headers: ["Layer", "Files Generated", "Includes"],
+            headers: ["commercial.cliTooling.hdrLayer", "commercial.cliTooling.hdrFiles", "commercial.cliTooling.hdrIncs"],
             rows: [
-                  ["Domain", "2 files", "Entity class, repository interface"],
-                  ["Application", "4 files", "Create command + handler, list query + handler, validator"],
-                  ["Infrastructure", "4 files", "Repository impl, EF config, DI registration, permission seeder"],
-                  ["Frontend", "5 files", "Entity, repository, view, viewmodel, DI container"],
-                  ["Routing", "1 file", "Next.js page.tsx connector"],
+                  ["commercial.cliTooling.layerDomain", "commercial.cliTooling.layerDomainFiles", "commercial.cliTooling.layerDomainIncs"],
+                  ["commercial.cliTooling.layerApp", "commercial.cliTooling.layerAppFiles", "commercial.cliTooling.layerAppIncs"],
+                  ["commercial.cliTooling.layerInfra", "commercial.cliTooling.layerInfraFiles", "commercial.cliTooling.layerInfraIncs"],
+                  ["commercial.cliTooling.layerFront", "commercial.cliTooling.layerFrontFiles", "commercial.cliTooling.layerFrontIncs"],
+                  ["commercial.cliTooling.layerRoute", "commercial.cliTooling.layerRouteFiles", "commercial.cliTooling.layerRouteIncs"],
             ],
       },
 
@@ -82,11 +88,11 @@ const sections: DocSection[] = [
             type: "list",
             variant: "unordered",
             items: [
-                  "Templates are Scriban-based and fully customizable",
-                  "Add your own templates for custom file types",
-                  "Override default generation behavior per project",
-                  "Configure naming conventions and code style preferences",
-                  "Extend with custom CLI commands via plugin API",
+                  "commercial.cliTooling.itemHbs",
+                  "commercial.cliTooling.itemArch",
+                  "commercial.cliTooling.itemBoil",
+                  "commercial.cliTooling.itemSec",
+                  "commercial.cliTooling.itemConfig",
             ],
       },
 ];
