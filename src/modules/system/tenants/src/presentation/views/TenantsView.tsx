@@ -14,7 +14,7 @@
 
 import { useMemo, useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { GenericTreeView } from "@core/crud/components/generic-tree-view";
 import { useTreeViewModel } from "@core/hooks/use-tree-view-model";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -73,6 +73,17 @@ export function TenantsView() {
         ? createTenantTreeService(systemContainer.tenantRepository)
         : createMyChildrenTreeService(systemContainer.tenantRepository),
     [isSystemAdmin]
+  );
+
+  // Fetch available editions for the dropdown
+  const { data: availableEditionsData } = useQuery({
+    queryKey: ["editions", "available"],
+    queryFn: () => systemContainer.tenantRepository.getAvailableEditions(),
+  });
+
+  const availableEditions = useMemo(
+    () => availableEditionsData?.items ?? [],
+    [availableEditionsData]
   );
 
   // Server search for permissions - needs parentId to filter by parent's permissions
@@ -159,6 +170,17 @@ export function TenantsView() {
 
       if (!editing) {
         fields.push({
+          name: "editionId",
+          label: t("tenant.editionLabel") || "Subscription Plan",
+          type: "select",
+          placeholder: t("tenant.editionPlaceholder") || "Select a Plan",
+          required: false,
+          options: availableEditions.map((e) => ({ value: e.id, label: e.name })),
+        });
+      }
+
+      if (!editing) {
+        fields.push({
           name: "availablePermissionIds",
           label: t("tenant.selectPermissions"),
           type: "multi-select",
@@ -175,7 +197,7 @@ export function TenantsView() {
 
       return fields;
     },
-    [t, createPermissionSearch]
+    [t, createPermissionSearch, availableEditions]
   );
 
   // Tree view model
@@ -192,6 +214,7 @@ export function TenantsView() {
       isActive: item?.isActive ?? true,
       parentId: parent?.id || item?.parentId,
       availablePermissionIds: [] as string[],
+      editionId: "",
     }),
     createFormData: (values) =>
       ({
@@ -200,6 +223,7 @@ export function TenantsView() {
         description: values.description || undefined,
         parentId: values.parentId,
         availablePermissionIds: values.availablePermissionIds || [],
+        editionId: values.editionId || undefined,
       }) as CreateTenantRequest,
     updateFormData: (values) =>
       ({

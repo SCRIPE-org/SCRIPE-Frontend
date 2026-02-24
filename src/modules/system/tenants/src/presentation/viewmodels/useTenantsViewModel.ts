@@ -13,6 +13,7 @@ import type {
   CreateTenantRequest,
   UpdateTenantRequest,
 } from "../../domain/entities/TenantRequests";
+import type { EditionThinModel } from "../../data/models/TenantSubscription";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 
 interface UseTenantsViewModelParams {
@@ -60,14 +61,35 @@ export function useTenantsViewModel(params: UseTenantsViewModelParams = {}) {
     enabled: viewMode === "tree",
   });
 
+  // Fetch available editions for the dropdown
+  const {
+    data: availableEditionsData,
+    isLoading: isEditionsLoading,
+  } = useQuery({
+    queryKey: ["editions", "available"],
+    queryFn: () => tenantRepository.getAvailableEditions(),
+  });
+
+  const availableEditions = useMemo(() => availableEditionsData?.items ?? [], [availableEditionsData]);
+
   // Create tenant mutation
   const createMutation = useMutation({
-    mutationFn: (request: CreateTenantRequest) => tenantRepository.create(request),
+    mutationFn: async ({ request, editionId }: { request: CreateTenantRequest; editionId: string }) => {
+      // 1. Create the tenant
+      const newTenantId = await tenantRepository.create(request);
+
+      // 2. Assign the selected edition
+      if (editionId) {
+        await tenantRepository.assignEdition(newTenantId, editionId);
+      }
+
+      return newTenantId;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tenants"] });
       success({
         title: "Tenant Created",
-        description: "The tenant has been created successfully.",
+        description: "The tenant and subscription have been created successfully.",
       });
     },
     onError: (err: Error) => {
@@ -117,7 +139,7 @@ export function useTenantsViewModel(params: UseTenantsViewModelParams = {}) {
 
   // Handlers
   const handleCreate = useCallback(
-    (request: CreateTenantRequest) => createMutation.mutateAsync(request),
+    (request: CreateTenantRequest, editionId: string) => createMutation.mutateAsync({ request, editionId }),
     [createMutation]
   );
 
@@ -143,6 +165,7 @@ export function useTenantsViewModel(params: UseTenantsViewModelParams = {}) {
     // Data
     tenants: listData?.items ?? [],
     tree: treeData ?? [],
+    availableEditions,
     totalCount: listData?.totalCount ?? 0,
     totalPages: listData?.totalPages ?? 0,
     hasNextPage: listData?.hasNextPage ?? false,

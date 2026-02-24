@@ -16,6 +16,7 @@ import { useTenantSettingsViewModel } from "@modules/system/tenants/src/presenta
 import { TenantSettingsEditDialog } from "../TenantSettingsEditDialog";
 import { TenantPermissionsDialog } from "../TenantPermissionsDialog";
 import { Skeleton } from "@core/ui/skeleton";
+import { TenantSubscriptionCard } from "../cards/TenantSubscriptionCard";
 
 interface TenantSettingsTabProps {
   tenantId: string;
@@ -66,6 +67,9 @@ export function TenantSettingsTab({
       </div>
 
       <div className="grid gap-4">
+        {/* Subscription Plan Settings */}
+        <TenantSubscriptionCard tenantId={tenantId} />
+
         {/* Quota Settings */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -256,9 +260,9 @@ export function TenantSettingsTab({
                 <div className="text-sm text-muted-foreground">
                   {parentTenantId
                     ? t("tenant.permissionsLimitedByParent") ||
-                      "Permissions limited by parent tenant"
+                    "Permissions limited by parent tenant"
                     : t("tenant.selectPermissionsDesc") ||
-                      "Choose which permissions this tenant can use"}
+                    "Choose which permissions this tenant can use"}
                 </div>
               </div>
               <Button variant="outline" size="sm" onClick={() => vm.setPermissionsOpen(true)}>

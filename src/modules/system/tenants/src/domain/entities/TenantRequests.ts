@@ -17,6 +17,8 @@ export interface CreateTenantRequest {
   address?: string;
   /** Encrypted permission IDs to assign to this tenant */
   availablePermissionIds?: string[];
+  /** Edition ID to assign upon creation */
+  editionId?: string;
 }
 
 /**

@@ -23,6 +23,7 @@ import { TenantMapper } from "../mappers/TenantMapper";
 import type { Permission } from "@modules/system/permissions/src/domain/entities/Permission";
 import { PermissionMapper } from "@modules/system/permissions/src/data/mappers/PermissionMapper";
 import { appLogger } from "@core/common/logger";
+import type { EditionThinModel, SubscriptionModel, PagedEditionResult } from "../models/TenantSubscription";
 
 export class TenantRepository implements ITenantRepository {
   constructor(private readonly service: ITenantService) { }
@@ -148,5 +149,21 @@ export class TenantRepository implements ITenantRepository {
 
   setTenantContext(tenantId: string | null): void {
     this.service.setTenantContext(tenantId);
+  }
+
+  async getAvailableEditions(page?: number, pageSize?: number): Promise<PagedEditionResult> {
+    return this.service.getAvailableEditions(page, pageSize);
+  }
+
+  async assignEdition(tenantId: string, editionId: string): Promise<{ id: string }> {
+    return this.service.assignEdition(tenantId, editionId);
+  }
+
+  async changeEdition(tenantId: string, editionId: string): Promise<void> {
+    return this.service.changeEdition(tenantId, editionId);
+  }
+
+  async getTenantSubscriptions(tenantId: string): Promise<SubscriptionModel[]> {
+    return this.service.getTenantSubscriptions(tenantId);
   }
 }

@@ -32,6 +32,11 @@ import type {
   TenantSettingsModel,
   UpdateTenantSettingsRequest,
 } from "@modules/system/tenant-settings/src/data/models/TenantSettingsModel";
+import type {
+  EditionThinModel,
+  SubscriptionModel,
+  PagedEditionResult
+} from "../models/TenantSubscription";
 
 export class TenantService implements ITenantService {
   constructor(private readonly api: IApiService) { }
@@ -183,6 +188,34 @@ export class TenantService implements ITenantService {
       // Assuming ApiService supports a way to handle FormData implicitly or explicitly.
       // If strictly JSON, we might need a specific handling.
       // Standard axios/fetch handles FormData passed as body.
+    );
+  }
+
+  async getAvailableEditions(page: number = 1, pageSize: number = 100): Promise<PagedEditionResult> {
+    const url = buildUrl(API_ENDPOINTS.ENTITLEMENTS.EDITIONS.LIST, {
+      page,
+      pageSize,
+    });
+    return this.api.get<PagedEditionResult>(url);
+  }
+
+  async assignEdition(tenantId: string, editionId: string): Promise<{ id: string }> {
+    return this.api.post<{ id: string }>(
+      API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.ASSIGN(tenantId),
+      { editionId }
+    );
+  }
+
+  async changeEdition(tenantId: string, editionId: string): Promise<void> {
+    await this.api.put(
+      API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.CHANGE(tenantId),
+      { editionId }
+    );
+  }
+
+  async getTenantSubscriptions(tenantId: string): Promise<SubscriptionModel[]> {
+    return this.api.get<SubscriptionModel[]>(
+      API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.LIST_BY_TENANT(tenantId)
     );
   }
 }

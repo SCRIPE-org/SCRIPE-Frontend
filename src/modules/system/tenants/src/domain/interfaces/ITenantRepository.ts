@@ -11,6 +11,7 @@ import type {
 } from "../entities/TenantRequests";
 import type { PagedResult } from "@modules/system/core/domain/types";
 import type { Permission } from "@modules/system/permissions/src/domain/entities/Permission";
+import type { EditionThinModel, SubscriptionModel, PagedEditionResult } from "../../data/models/TenantSubscription";
 
 /**
  * Tenant list query parameters
@@ -135,4 +136,24 @@ export interface ITenantRepository {
    * @param tenantId - The tenant ID to set, or null to clear context
    */
   setTenantContext(tenantId: string | null): void;
+
+  /**
+   * Get available editions (plans) for assignment
+   */
+  getAvailableEditions(page?: number, pageSize?: number): Promise<PagedEditionResult>;
+
+  /**
+   * Assign a base edition (plan) to a newly created tenant
+   */
+  assignEdition(tenantId: string, editionId: string): Promise<{ id: string }>;
+
+  /**
+   * Change the base edition of an existing tenant
+   */
+  changeEdition(tenantId: string, editionId: string): Promise<void>;
+
+  /**
+   * Get all subscriptions for a tenant
+   */
+  getTenantSubscriptions(tenantId: string): Promise<SubscriptionModel[]>;
 }

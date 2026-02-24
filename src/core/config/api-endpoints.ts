@@ -239,6 +239,13 @@ export const API_ENDPOINTS = {
       UPDATE: (id: string) => `${V1}/editions/${id}`,
       DELETE: (id: string) => `${V1}/editions/${id}`,
     },
+    SUBSCRIPTIONS: {
+      ASSIGN: (tenantId: string) => `${V1}/tenants/${tenantId}/subscription`,
+      CHANGE: (tenantId: string) => `${V1}/tenants/${tenantId}/subscription`,
+      LIST_BY_TENANT: (tenantId: string) => `${V1}/tenants/${tenantId}/subscriptions`,
+      GET_BY_ID: (id: string) => `${V1}/subscriptions/${id}`,
+      REVOKE: (id: string) => `${V1}/subscriptions/${id}`,
+    },
   },
 
   // ===== USER GROUPS =====

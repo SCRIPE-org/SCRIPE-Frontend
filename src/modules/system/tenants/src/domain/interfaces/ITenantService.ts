@@ -14,6 +14,11 @@ import type { TenantModel, TenantTreeNodeModel } from "../../data/models/TenantM
 import type { CreateTenantJson, UpdateTenantJson } from "../../data/models/TenantModel";
 import type { TenantStats } from "./ITenantRepository";
 import type { PermissionModel } from "@modules/system/permissions/src/data/models/PermissionModel";
+import type {
+  EditionThinModel,
+  SubscriptionModel,
+  PagedEditionResult
+} from "../../data/models/TenantSubscription";
 
 export interface ServiceTenantListParams {
   page?: number;
@@ -111,4 +116,24 @@ export interface ITenantService {
    * @returns The uploaded logo URL
    */
   uploadLogo(tenantId: string, file: File): Promise<{ url: string }>;
+
+  /**
+   * Get available editions (plans) for assignment
+   */
+  getAvailableEditions(page?: number, pageSize?: number): Promise<PagedEditionResult>;
+
+  /**
+   * Assign a base edition (plan) to a newly created tenant
+   */
+  assignEdition(tenantId: string, editionId: string): Promise<{ id: string }>;
+
+  /**
+   * Change the base edition of an existing tenant
+   */
+  changeEdition(tenantId: string, editionId: string): Promise<void>;
+
+  /**
+   * Get all subscriptions for a tenant
+   */
+  getTenantSubscriptions(tenantId: string): Promise<SubscriptionModel[]>;
 }

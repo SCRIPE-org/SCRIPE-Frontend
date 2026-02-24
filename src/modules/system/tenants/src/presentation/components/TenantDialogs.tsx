@@ -11,6 +11,13 @@ import { Label } from "@core/ui/label";
 import { Textarea } from "@core/ui/textarea";
 import { Switch } from "@core/ui/switch";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@core/ui/select";
+import {
   Dialog,
   DialogContent,
   DialogHeader,
@@ -21,12 +28,14 @@ import {
 import { Loader2 } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { TenantTreeNode } from "../../domain/entities/Tenant";
+import type { EditionThinModel } from "../../data/models/TenantSubscription";
 
 // Form state types
 export interface CreateFormState {
   name: string;
   code: string;
   description: string;
+  editionId: string;
 }
 
 export interface EditFormState {
@@ -39,6 +48,7 @@ export const initialCreateForm: CreateFormState = {
   name: "",
   code: "",
   description: "",
+  editionId: "",
 };
 
 export const initialEditForm: EditFormState = {
@@ -56,6 +66,7 @@ interface CreateTenantDialogProps {
   setForm: React.Dispatch<React.SetStateAction<CreateFormState>>;
   onSubmit: () => void;
   isLoading: boolean;
+  availableEditions?: EditionThinModel[];
 }
 
 export function CreateTenantDialog({
@@ -66,6 +77,7 @@ export function CreateTenantDialog({
   setForm,
   onSubmit,
   isLoading,
+  availableEditions,
 }: CreateTenantDialogProps) {
   const { t } = useI18n();
 
@@ -112,12 +124,33 @@ export function CreateTenantDialog({
               rows={3}
             />
           </div>
+          <div className="space-y-2">
+            <Label htmlFor="create-edition">{t("tenant.editionLabel") || "Subscription Plan"} *</Label>
+            <Select
+              value={form.editionId}
+              onValueChange={(value) => setForm((prev) => ({ ...prev, editionId: value }))}
+            >
+              <SelectTrigger id="create-edition">
+                <SelectValue placeholder={t("tenant.editionPlaceholder") || "Select a plan"} />
+              </SelectTrigger>
+              <SelectContent>
+                {availableEditions?.map((edition: EditionThinModel) => (
+                  <SelectItem key={edition.id} value={edition.id}>
+                    {edition.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-muted-foreground">
+              {t("tenant.editionHelp") || "Assign an initial subscription plan to this tenant."}
+            </p>
+          </div>
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading}>
             {t("tenant.cancel")}
           </Button>
-          <Button onClick={onSubmit} disabled={!form.name || !form.code || isLoading}>
+          <Button onClick={onSubmit} disabled={!form.name || !form.code || !form.editionId || isLoading}>
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
