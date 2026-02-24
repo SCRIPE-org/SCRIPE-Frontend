@@ -3453,6 +3453,7 @@ export const ar = {
 
   // Common
   common: {
+    description: "الوصف",
     deleteConfirm: "تأكيد الحذف",
     deleteConfirmDesc: "هل أنت متأكد من رغبتك في حذف هذا العنصر؟",
     statusConfirmDesc: "هل أنت متأكد من رغبتك في تغيير حالة هذا العنصر؟",
@@ -4565,6 +4566,8 @@ export const ar = {
     },
     editions: {
       title: "الإصدارات",
+      editionName: "اسم الإصدار",
+      status: "الحالة",
       description: "إدارة خطط الاشتراك — تجميع الميزات في إصدارات مثل الأساسي والاحترافي والمؤسسي.",
       name: "اسم الإصدار",
       namePlaceholder: "مثال: الأساسي, الاحترافي, المؤسسي",
