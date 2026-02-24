@@ -4702,6 +4702,7 @@ export const en = {
       noFeatures: "No features found",
       systemBadge: "System",
       unlimited: "Unlimited",
+      moduleFeaturesLabel: "Manage features for the {{module}} module.",
     },
     editions: {
       title: "Editions",
@@ -4733,6 +4734,8 @@ export const en = {
       noFeatureValues: "No features configured yet.",
       setFeatureValue: "Set Value",
       featureUpdated: "Feature value updated",
+      manageFeatures: "Manage Features",
+      manageFeaturesDescription: "Manage features and limits for this subscription edition.",
       // Table
       noEditions: "No editions found",
       systemBadge: "System",

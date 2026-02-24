@@ -48,4 +48,8 @@ export class EditionService {
       async delete(id: string): Promise<void> {
             await this.api.delete(API_ENDPOINTS.ENTITLEMENTS.EDITIONS.DELETE(id));
       }
+
+      async setFeatureValue(editionId: string, featureId: string, value: string): Promise<void> {
+            await this.api.put(API_ENDPOINTS.ENTITLEMENTS.EDITIONS.SET_FEATURE(editionId, featureId), { value });
+      }
 }

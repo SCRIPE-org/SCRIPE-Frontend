@@ -46,4 +46,8 @@ export class EditionRepository implements IEditionRepository {
       async delete(id: string): Promise<void> {
             await this.service.delete(id);
       }
+
+      async setFeatureValue(editionId: string, featureId: string, value: string): Promise<void> {
+            await this.service.setFeatureValue(editionId, featureId, value);
+      }
 }

@@ -170,21 +170,6 @@ export function SubTenantsTab({ parentId, parentName, parentCode }: SubTenantsTa
           defaultValue: `${actualParentName} (${actualParentCode})`,
         });
 
-        // Permissions multi-select - filtered by direct parent's permissions
-        fields.push({
-          name: "availablePermissionIds",
-          label: t("tenant.selectPermissions"),
-          type: "multi-select",
-          placeholder: t("tenant.selectPermissionsDesc"),
-          searchPlaceholder: t("permission.searchPlaceholder") || "Search permissions...",
-          required: false,
-          searchType: "server",
-          // Pass the actual parent's ID to filter permissions correctly
-          onServerSearch: createPermissionSearch(actualParentId),
-          debounceMs: 300,
-          allowClear: true,
-          noResultsText: t("tenant.noPermissionsAvailable"),
-        });
       }
 
       return fields;
@@ -205,14 +190,12 @@ export function SubTenantsTab({ parentId, parentName, parentCode }: SubTenantsTa
       description: item?.description || "",
       isActive: item?.isActive ?? true,
       parentId: parent?.id || item?.parentId || parentId,
-      availablePermissionIds: [] as string[],
     }),
     createFormData: (values) => ({
       name: values.name,
       code: values.code,
       description: values.description || undefined,
       parentId: values.parentId || parentId,
-      availablePermissionIds: values.availablePermissionIds || [],
     }),
     updateFormData: (values) => ({
       name: values.name,

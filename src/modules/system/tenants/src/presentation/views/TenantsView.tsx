@@ -179,22 +179,6 @@ export function TenantsView() {
         });
       }
 
-      if (!editing) {
-        fields.push({
-          name: "availablePermissionIds",
-          label: t("tenant.selectPermissions"),
-          type: "multi-select",
-          placeholder: t("tenant.selectPermissionsDesc"),
-          searchPlaceholder: t("permission.searchPlaceholder") || "Search permissions...",
-          required: false,
-          searchType: "server",
-          onServerSearch: createPermissionSearch(parentForNew?.id),
-          debounceMs: 300,
-          allowClear: true,
-          noResultsText: t("tenant.noPermissionsAvailable"),
-        });
-      }
-
       return fields;
     },
     [t, createPermissionSearch, availableEditions]
@@ -213,7 +197,6 @@ export function TenantsView() {
       description: item?.description || "",
       isActive: item?.isActive ?? true,
       parentId: parent?.id || item?.parentId,
-      availablePermissionIds: [] as string[],
       editionId: "",
     }),
     createFormData: (values) =>
@@ -222,7 +205,6 @@ export function TenantsView() {
         code: values.code,
         description: values.description || undefined,
         parentId: values.parentId,
-        availablePermissionIds: values.availablePermissionIds || [],
         editionId: values.editionId || undefined,
       }) as CreateTenantRequest,
     updateFormData: (values) =>

@@ -58,5 +58,12 @@ export function useEditionsViewModel() {
             }
       );
 
-      return vm;
+      const router = require("next/navigation").useRouter();
+
+      return {
+            ...vm,
+            navigateToFeatures: (editionId: string) => {
+                  router.push(`/entitlements/editions/${editionId}`);
+            },
+      };
 }

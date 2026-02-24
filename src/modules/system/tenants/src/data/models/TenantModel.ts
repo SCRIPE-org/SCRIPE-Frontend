@@ -59,8 +59,8 @@ export interface CreateTenantJson {
   code: string;
   parentTenantId?: string;
   description?: string;
-  availablePermissionIds?: string[];
   address?: string;
+  editionId?: string;
 }
 
 export interface UpdateTenantJson {
@@ -88,7 +88,7 @@ export class TenantModel {
     public readonly modifiedAt?: string,
     public readonly children?: TenantModel[],
     public readonly address?: string
-  ) {}
+  ) { }
 
   static fromJson(json: TenantJson): TenantModel {
     return new TenantModel(
@@ -141,7 +141,7 @@ export class TenantTreeNodeModel {
     public readonly children: TenantTreeNodeModel[],
     public readonly description?: string,
     public readonly parentId?: string
-  ) {}
+  ) { }
 
   static fromJson(json: TenantTreeNodeJson): TenantTreeNodeModel {
     return new TenantTreeNodeModel(
@@ -176,9 +176,9 @@ export class CreateTenantModel {
     public readonly code: string,
     public readonly parentId?: string,
     public readonly description?: string,
-    public readonly availablePermissionIds?: string[],
-    public readonly address?: string
-  ) {}
+    public readonly address?: string,
+    public readonly editionId?: string
+  ) { }
 
   toJson(): CreateTenantJson {
     return {
@@ -186,8 +186,8 @@ export class CreateTenantModel {
       code: this.code,
       parentTenantId: this.parentId,
       description: this.description,
-      availablePermissionIds: this.availablePermissionIds,
       address: this.address,
+      editionId: this.editionId,
     };
   }
 }
@@ -198,7 +198,7 @@ export class UpdateTenantModel {
     public readonly description?: string,
     public readonly isActive?: boolean,
     public readonly address?: string
-  ) {}
+  ) { }
 
   toJson(): UpdateTenantJson {
     return {

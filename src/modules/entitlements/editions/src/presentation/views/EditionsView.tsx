@@ -12,7 +12,7 @@ import { useEditionsViewModel } from "../viewmodels/useEditionsViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { Edition } from "../../domain/entities/Edition";
 import { Badge } from "@core/ui/badge";
-import { Pencil, Trash2, Eye } from "lucide-react";
+import { Pencil, Trash2, Eye, Settings2 } from "lucide-react";
 import { format } from "date-fns";
 
 export function EditionsView() {
@@ -139,6 +139,12 @@ export function EditionsView() {
                               variant: "ghost" as const,
                               icon: <Pencil className="h-4 w-4" />,
                               show: (item: Edition) => !item.isSystem,
+                        },
+                        {
+                              label: tFn("entitlements.editions.manageFeatures") || "Manage Features",
+                              onClick: (item: Edition) => vmInstance.navigateToFeatures(item.id),
+                              variant: "ghost" as const,
+                              icon: <Settings2 className="h-4 w-4" />,
                         },
                         {
                               label: tFn("common.delete") || "Delete",

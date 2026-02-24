@@ -14,3 +14,7 @@ export interface UpdateEditionRequest {
       displayNameAr?: string;
       description?: string;
 }
+
+export interface SetEditionFeatureRequest {
+      value: string;
+}

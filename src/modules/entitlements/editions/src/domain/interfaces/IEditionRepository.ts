@@ -11,4 +11,5 @@ export interface IEditionRepository {
       create(request: CreateEditionRequest): Promise<string>;
       update(id: string, request: UpdateEditionRequest): Promise<void>;
       delete(id: string): Promise<void>;
+      setFeatureValue(editionId: string, featureId: string, value: string): Promise<void>;
 }

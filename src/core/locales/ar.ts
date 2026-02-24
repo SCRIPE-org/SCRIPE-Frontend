@@ -4565,6 +4565,7 @@ export const ar = {
       noFeatures: "لم يتم العثور على ميزات",
       systemBadge: "نظام",
       unlimited: "غير محدود",
+      moduleFeaturesLabel: "إدارة ميزات وحدة {{module}}.",
     },
     editions: {
       title: "الإصدارات",
@@ -4598,6 +4599,8 @@ export const ar = {
       noFeatureValues: "لم يتم تهيئة ميزات بعد.",
       setFeatureValue: "تعيين القيمة",
       featureUpdated: "تم تحديث قيمة الميزة",
+      manageFeatures: "إدارة الميزات",
+      manageFeaturesDescription: "إدارة الميزات والحدود لهذا الإصدار من الاشتراك.",
       // Table
       noEditions: "لم يتم العثور على إصدارات",
       systemBadge: "نظام",

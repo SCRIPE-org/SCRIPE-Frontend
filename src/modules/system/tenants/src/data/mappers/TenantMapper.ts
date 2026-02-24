@@ -87,8 +87,8 @@ export class TenantMapper {
       request.code,
       request.parentId,
       request.description,
-      request.availablePermissionIds,
-      request.address
+      request.address,
+      request.editionId
     );
   }
 
