@@ -3713,6 +3713,7 @@ export const ar = {
       loading: "جاري تحميل المحرر...",
     },
     features: {
+      featureName: "اسم الميزة",
       autoSave: "الحفظ التلقائي مفعل",
       spellCheck: "التحقق الإملائي مفعل",
       tables: "الجداول مفعلة",
@@ -4535,6 +4536,7 @@ export const ar = {
   entitlements: {
     features: {
       title: "الميزات",
+      featureName: "اسم الميزة",
       description: "إدارة كتالوج ميزات المنصة — تعريف القدرات التي يمكن للإصدارات تهيئتها.",
       name: "اسم الميزة",
       namePlaceholder: "مثال: Identity.MaxAdminsPerTenant",
