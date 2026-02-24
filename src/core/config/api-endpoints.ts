@@ -223,6 +223,24 @@ export const API_ENDPOINTS = {
     EVENTS: `${V1}/webhooks/events`,
   },
 
+  // ===== ENTITLEMENTS =====
+  ENTITLEMENTS: {
+    FEATURES: {
+      LIST: `${V1}/features`,
+      BY_ID: (id: string) => `${V1}/features/${id}`,
+      CREATE: `${V1}/features`,
+      UPDATE: (id: string) => `${V1}/features/${id}`,
+      DELETE: (id: string) => `${V1}/features/${id}`,
+    },
+    EDITIONS: {
+      LIST: `${V1}/editions`,
+      BY_ID: (id: string) => `${V1}/editions/${id}`,
+      CREATE: `${V1}/editions`,
+      UPDATE: (id: string) => `${V1}/editions/${id}`,
+      DELETE: (id: string) => `${V1}/editions/${id}`,
+    },
+  },
+
   // ===== USER GROUPS =====
   USER_GROUPS: {
     LIST: `${V1}/UserGroups`,

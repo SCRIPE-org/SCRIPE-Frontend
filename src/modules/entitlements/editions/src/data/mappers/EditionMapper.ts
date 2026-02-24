@@ -1,0 +1,48 @@
+/**
+ * Edition Mapper — Model ↔ Entity conversion
+ *
+ * Handles conversion between API DTOs (EditionModel) and
+ * domain entities (Edition), including bilingual display names
+ * and feature list mapping.
+ */
+import { Edition } from "../../domain/entities/Edition";
+import type { EditionData } from "../../domain/entities/Edition";
+import type { EditionModel } from "../services/EditionService";
+import type { CreateEditionRequest, UpdateEditionRequest } from "../../domain/entities/EditionRequests";
+
+export class EditionMapper {
+      static toEntity(model: EditionModel): Edition {
+            const data: EditionData = {
+                  id: model.id,
+                  name: model.name,
+                  displayNameEn: model.displayNameEn,
+                  displayNameAr: model.displayNameAr,
+                  description: model.description,
+                  isSystem: model.isSystem,
+                  isRetired: model.isRetired,
+                  createdByTenantId: model.createdByTenantId,
+                  features: model.features,
+                  createdAt: model.createdAt,
+                  modifiedAt: model.modifiedAt,
+            };
+            return new Edition(data);
+      }
+
+      static toCreateJson(request: CreateEditionRequest): Record<string, unknown> {
+            return {
+                  name: request.name,
+                  displayNameEn: request.displayNameEn,
+                  displayNameAr: request.displayNameAr,
+                  description: request.description,
+            };
+      }
+
+      static toUpdateJson(request: UpdateEditionRequest): Record<string, unknown> {
+            return {
+                  name: request.name,
+                  displayNameEn: request.displayNameEn,
+                  displayNameAr: request.displayNameAr,
+                  description: request.description,
+            };
+      }
+}

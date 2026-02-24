@@ -128,12 +128,27 @@ export class AuthRepository implements IAuthRepository {
     return secureTokenService.hasToken();
   }
 
+  private _refreshPromise: Promise<Result<LoginResponse, Error>> | null = null;
+
   /**
    * Refresh the access token via the backend.
    * The refresh token is sent automatically as an httpOnly cookie
    * (via withCredentials) — the backend CookieAuthMiddleware reads it.
    */
   async refreshToken(): Promise<Result<LoginResponse, Error>> {
+    if (this._refreshPromise) {
+      return this._refreshPromise;
+    }
+
+    this._refreshPromise = this._executeRefresh();
+    try {
+      return await this._refreshPromise;
+    } finally {
+      this._refreshPromise = null;
+    }
+  }
+
+  private async _executeRefresh(): Promise<Result<LoginResponse, Error>> {
     try {
       const responseModel = await this.service.refreshToken();
 
