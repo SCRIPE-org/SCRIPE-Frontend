@@ -128,6 +128,11 @@ export class AuthRepository implements IAuthRepository {
     return secureTokenService.hasToken();
   }
 
+  /**
+   * Refresh the access token via the backend.
+   * The refresh token is sent automatically as an httpOnly cookie
+   * (via withCredentials) — the backend CookieAuthMiddleware reads it.
+   */
   async refreshToken(): Promise<Result<LoginResponse, Error>> {
     try {
       const responseModel = await this.service.refreshToken();
