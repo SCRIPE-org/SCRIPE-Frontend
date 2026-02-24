@@ -26,12 +26,10 @@ export class EditionService {
 
       async getAll(params: PaginationParams & { includeRetired?: boolean }): Promise<PagedResult<EditionModel>> {
             return this.api.get<PagedResult<EditionModel>>(API_ENDPOINTS.ENTITLEMENTS.EDITIONS.LIST, {
-                  params: {
-                        page: params.page,
-                        pageSize: params.pageSize,
-                        search: params.search || undefined,
-                        includeRetired: params.includeRetired,
-                  },
+                  page: params.page,
+                  pageSize: params.pageSize,
+                  search: params.search || undefined,
+                  includeRetired: params.includeRetired,
             });
       }
 

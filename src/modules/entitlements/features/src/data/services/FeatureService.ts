@@ -13,11 +13,9 @@ export class FeatureService implements IFeatureService {
 
       async getAll(params: PaginationParams): Promise<PagedResult<FeatureModel>> {
             return this.api.get<PagedResult<FeatureModel>>(API_ENDPOINTS.ENTITLEMENTS.FEATURES.LIST, {
-                  params: {
-                        page: params.page,
-                        pageSize: params.pageSize,
-                        search: params.search || undefined,
-                  },
+                  page: params.page,
+                  pageSize: params.pageSize,
+                  search: params.search || undefined,
             });
       }
 
