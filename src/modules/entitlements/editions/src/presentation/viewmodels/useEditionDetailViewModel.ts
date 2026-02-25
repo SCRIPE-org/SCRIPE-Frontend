@@ -11,8 +11,8 @@ export interface EditionDetailViewModelResult {
       features: Feature[] | undefined;
       isLoading: boolean;
       error: Error | null;
-      setFeatureValue: (featureId: string, value: string) => void;
-      isSettingFeature: boolean;
+      saveAllFeatures: (updates: Record<string, string>) => void;
+      isSaving: boolean;
 }
 
 export function useEditionDetailViewModel(editionId: string): EditionDetailViewModelResult {
@@ -39,20 +39,25 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
             queryFn: () => featureRepository.getAll({ page: 1, pageSize: 1000 }),
       });
 
-      const setFeatureMutation = useMutation({
-            mutationFn: ({ featureId, value }: { featureId: string; value: string }) =>
-                  editionRepository.setFeatureValue(editionId, featureId, value),
+      const saveAllMutation = useMutation({
+            mutationFn: async (updates: Record<string, string>) => {
+                  const entries = Object.entries(updates);
+                  // Execute sequentially to prevent DB concurrency exceptions on the same entity
+                  for (const [featureId, value] of entries) {
+                        await editionRepository.setFeatureValue(editionId, featureId, value);
+                  }
+            },
             onSuccess: () => {
                   success({
-                        title: "Feature Updated",
-                        description: "The feature value has been updated successfully.",
+                        title: "Features Updated",
+                        description: "All feature modifications have been saved successfully.",
                   });
                   queryClient.invalidateQueries({ queryKey: ["entitlements", "editions", editionId] });
             },
             onError: (err) => {
                   toastError({
                         title: "Update Failed",
-                        description: err instanceof Error ? err.message : "Failed to update feature",
+                        description: err instanceof Error ? err.message : "Failed to update features",
                   });
             },
       });
@@ -62,8 +67,7 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
             features: featuresResult?.items,
             isLoading: isEditionLoading || isFeaturesLoading,
             error: (editionError as Error) || (featuresError as Error) || null,
-            setFeatureValue: (featureId: string, value: string) =>
-                  setFeatureMutation.mutate({ featureId, value }),
-            isSettingFeature: setFeatureMutation.isPending,
+            saveAllFeatures: (updates: Record<string, string>) => saveAllMutation.mutate(updates),
+            isSaving: saveAllMutation.isPending,
       };
 }

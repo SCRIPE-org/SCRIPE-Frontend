@@ -51,10 +51,27 @@ export function EditionDetailView({ editionId }: EditionDetailViewProps) {
             setLocalValues((prev) => ({ ...prev, [featureId]: value }));
       };
 
-      const handleSave = (featureId: string) => {
-            const value = localValues[featureId];
-            if (value !== undefined) {
-                  vm.setFeatureValue(featureId, value);
+      const actualUpdates = useMemo(() => {
+            const updates: Record<string, string> = {};
+            if (!edition || !vm.features) return updates;
+
+            for (const [featureId, value] of Object.entries(localValues)) {
+                  const editionFeature = edition.features?.find((f) => f.featureId === featureId);
+                  const defaultValue = vm.features.find(f => f.id === featureId)?.defaultValue ?? "";
+                  const originalValue = editionFeature ? editionFeature.value : defaultValue;
+
+                  if (value !== originalValue) {
+                        updates[featureId] = value;
+                  }
+            }
+            return updates;
+      }, [localValues, edition, vm.features]);
+
+      const hasUnsavedChanges = Object.keys(actualUpdates).length > 0;
+
+      const handleSaveAll = () => {
+            if (hasUnsavedChanges) {
+                  vm.saveAllFeatures(actualUpdates);
             }
       };
 
@@ -72,11 +89,23 @@ export function EditionDetailView({ editionId }: EditionDetailViewProps) {
 
       return (
             <div className="space-y-6">
-                  <div>
-                        <h1 className="text-3xl font-bold tracking-tight">{edition.getDisplayName(language)}</h1>
-                        <p className="text-muted-foreground">
-                              {edition.description || t("entitlements.editions.manageFeaturesDescription")}
-                        </p>
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div>
+                              <h1 className="text-3xl font-bold tracking-tight">{edition.getDisplayName(language)}</h1>
+                              <p className="text-muted-foreground">
+                                    {edition.description || t("entitlements.editions.manageFeaturesDescription")}
+                              </p>
+                        </div>
+                        {hasUnsavedChanges && (
+                              <Button
+                                    onClick={handleSaveAll}
+                                    disabled={vm.isSaving}
+                                    className="sm:w-auto w-full"
+                              >
+                                    <Save className="h-4 w-4 mr-2" />
+                                    {t("common.saveChanges") || "Save Changes"}
+                              </Button>
+                        )}
                   </div>
 
                   {Object.entries(featuresByModule).map(([moduleName, features]) => (
@@ -142,15 +171,6 @@ export function EditionDetailView({ editionId }: EditionDetailViewProps) {
                                                                         />
                                                                   )}
 
-                                                                  <Button
-                                                                        size="sm"
-                                                                        variant={isUnsaved ? "default" : "secondary"}
-                                                                        disabled={!isUnsaved || vm.isSettingFeature}
-                                                                        onClick={() => handleSave(feature.id)}
-                                                                  >
-                                                                        <Save className="h-4 w-4 mr-2" />
-                                                                        {t("common.save") || "Save"}
-                                                                  </Button>
                                                             </div>
                                                       </div>
                                                 );
