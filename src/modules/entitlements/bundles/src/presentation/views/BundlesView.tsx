@@ -12,12 +12,14 @@ import { useBundlesViewModel } from "../viewmodels/useBundlesViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { Bundle } from "../../domain/entities/Bundle";
 import { Badge } from "@core/ui/badge";
-import { Pencil, Trash2, Eye, ShieldCheck, Zap } from "lucide-react";
+import { Pencil, Trash2, Eye, ShieldCheck, Zap, Settings } from "lucide-react";
 import { format } from "date-fns";
+import { useRouter } from "next/navigation";
 
 export function BundlesView() {
       const { t, language } = useI18n();
       const vm = useBundlesViewModel();
+      const router = useRouter();
 
       const config: CrudConfig<Bundle> = useMemo(
             () => ({
@@ -128,6 +130,12 @@ export function BundlesView() {
                   getItemDisplayName: (bundle: Bundle) => bundle.getDisplayName(language),
                   deleteService: (id: string) => vm.deleteItem(id),
                   getActions: (vmInstance: any, tFn: any, handleDeleteFn: any): CrudAction<Bundle>[] => [
+                        {
+                              label: tFn("entitlements.bundles.manageRules") || "Manage Rules",
+                              onClick: (item: Bundle) => router.push(`/entitlements/bundles/${item.id}`),
+                              variant: "ghost" as const,
+                              icon: <Settings className="h-4 w-4" />,
+                        },
                         {
                               label: tFn("common.view") || "View",
                               onClick: (item: Bundle) => vmInstance.openViewModal(item),
