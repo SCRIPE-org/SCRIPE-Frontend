@@ -33,6 +33,27 @@ export function EditionDetailView({ editionId }: EditionDetailViewProps) {
             }, {} as Record<string, Feature[]>);
       }, [vm.features]);
 
+      const actualUpdates = useMemo(() => {
+            const updates: Record<string, string> = {};
+            if (!vm.edition || !vm.features) return updates;
+
+            for (const [featureId, value] of Object.entries(localValues)) {
+                  const featureRef = vm.features.find(f => f.id === featureId);
+                  if (!featureRef) continue;
+
+                  const editionFeature = vm.edition.features?.find((f) => f.featureName === featureRef.name);
+                  const defaultValue = featureRef.defaultValue ?? "";
+                  const originalValue = editionFeature ? editionFeature.value : defaultValue;
+
+                  if (value !== originalValue) {
+                        updates[featureId] = value;
+                  }
+            }
+            return updates;
+      }, [localValues, vm.edition, vm.features]);
+
+      const hasUnsavedChanges = Object.keys(actualUpdates).length > 0;
+
       if (vm.isLoading) {
             return <div className="p-8 text-center">{t("common.loading") || "Loading..."}</div>;
       }
@@ -51,40 +72,22 @@ export function EditionDetailView({ editionId }: EditionDetailViewProps) {
             setLocalValues((prev) => ({ ...prev, [featureId]: value }));
       };
 
-      const actualUpdates = useMemo(() => {
-            const updates: Record<string, string> = {};
-            if (!edition || !vm.features) return updates;
-
-            for (const [featureId, value] of Object.entries(localValues)) {
-                  const editionFeature = edition.features?.find((f) => f.featureId === featureId);
-                  const defaultValue = vm.features.find(f => f.id === featureId)?.defaultValue ?? "";
-                  const originalValue = editionFeature ? editionFeature.value : defaultValue;
-
-                  if (value !== originalValue) {
-                        updates[featureId] = value;
-                  }
-            }
-            return updates;
-      }, [localValues, edition, vm.features]);
-
-      const hasUnsavedChanges = Object.keys(actualUpdates).length > 0;
-
       const handleSaveAll = () => {
             if (hasUnsavedChanges) {
                   vm.saveAllFeatures(actualUpdates);
             }
       };
 
-      const getValue = (featureId: string, defaultValue: string) => {
+      const getValue = (featureId: string, featureName: string, defaultValue: string) => {
             if (localValues[featureId] !== undefined) {
                   return localValues[featureId];
             }
-            const editionFeature = edition.features?.find((f) => f.featureId === featureId);
+            const editionFeature = edition.features?.find((f) => f.featureName === featureName);
             return editionFeature ? editionFeature.value : defaultValue;
       };
 
-      const isOverridden = (featureId: string) => {
-            return edition.features?.some((f) => f.featureId === featureId) ?? false;
+      const isOverridden = (featureName: string) => {
+            return edition.features?.some((f) => f.featureName === featureName) ?? false;
       };
 
       return (
@@ -122,11 +125,11 @@ export function EditionDetailView({ editionId }: EditionDetailViewProps) {
                               <CardContent className="p-0">
                                     <div className="divide-y">
                                           {features.map((feature) => {
-                                                const currentValue = getValue(feature.id, feature.defaultValue);
-                                                const hasOverride = isOverridden(feature.id);
+                                                const currentValue = getValue(feature.id, feature.name, feature.defaultValue);
+                                                const hasOverride = isOverridden(feature.name);
                                                 const isUnsaved =
                                                       localValues[feature.id] !== undefined &&
-                                                      localValues[feature.id] !== (edition.features?.find((f) => f.featureId === feature.id)?.value ?? feature.defaultValue);
+                                                      localValues[feature.id] !== (edition.features?.find((f) => f.featureName === feature.name)?.value ?? feature.defaultValue);
 
                                                 return (
                                                       <div
