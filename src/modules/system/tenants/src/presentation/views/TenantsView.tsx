@@ -177,6 +177,28 @@ export function TenantsView() {
           required: false,
           options: availableEditions.map((e) => ({ value: e.id, label: e.name })),
         });
+
+        fields.push({
+          name: "subscriptionType",
+          label: t("tenant.subscriptionType") || "Subscription Type",
+          type: "select",
+          placeholder: "Select Type",
+          required: false,
+          options: [
+            { value: "Base", label: "Base (Permanent)" },
+            { value: "Trial", label: "Trial (Limited)" },
+          ],
+          defaultValue: "Base"
+        });
+
+        // Only explicitly ask for End Date if Trial is selected
+        fields.push({
+          name: "subscriptionEndDate",
+          label: t("tenant.trialEndDate") || "Trial End Date",
+          type: "date",
+          required: true,
+          isVisible: (formData) => formData.subscriptionType === "Trial"
+        });
       }
 
       return fields;
@@ -206,6 +228,8 @@ export function TenantsView() {
         description: values.description || undefined,
         parentId: values.parentId,
         editionId: values.editionId || undefined,
+        subscriptionType: values.subscriptionType || undefined,
+        subscriptionEndDate: values.subscriptionEndDate || undefined,
       }) as CreateTenantRequest,
     updateFormData: (values) =>
       ({
@@ -326,6 +350,12 @@ export function TenantsView() {
             <Badge variant={node.isActive ? "success" : "secondary"} className="ms-2">
               {node.isActive ? t("tenant.active") : t("tenant.inactive")}
             </Badge>
+            {node.editionName && (
+              <Badge variant="outline" className="ms-2">
+                {node.editionName}
+                {node.editionEndDate && new Date(node.editionEndDate) < new Date() ? ' (Expired)' : ''}
+              </Badge>
+            )}
           </>
         )}
         getChildren={(node) => node.children}

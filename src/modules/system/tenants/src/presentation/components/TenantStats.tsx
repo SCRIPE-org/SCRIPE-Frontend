@@ -15,6 +15,7 @@ import { Card, CardContent } from "@core/ui/card";
 import { Users, Shield, Building2, Key, Loader2 } from "lucide-react";
 import { cn } from "@core/common/utils";
 import { systemContainer } from "@modules/system/di";
+import { entitlementsContainer } from "@modules/entitlements/di";
 import type { TenantStats as TenantStatsType } from "../../domain/interfaces/ITenantRepository";
 import { appLogger } from "@/core/common/logger";
 
@@ -38,13 +39,26 @@ export function TenantStats({ tenantId, onTabChange }: TenantStatsProps) {
   const { data: stats, isLoading: loading } = useQuery({
     queryKey: ["tenant-stats", tenantId],
     queryFn: async () => {
-      const data = await systemContainer.tenantRepository.getStats(tenantId);
+      const [data, features] = await Promise.all([
+        systemContainer.tenantRepository.getStats(tenantId),
+        entitlementsContainer.featureRepository.getTenantResolvedFeatures(tenantId).catch(() => [])
+      ]);
+
+      const getLimit = (key: string) => {
+        const feature = features.find((f: any) => f.name === key);
+        if (!feature || feature.value === "-1") return "Unlimited";
+        return feature.value;
+      };
+
       return {
         adminsCount: data.adminsCount,
+        maxAdmins: getLimit("Identity.MaxAdminsPerTenant"),
         rolesCount: data.rolesCount,
+        maxRoles: getLimit("Identity.MaxRolesPerTenant"),
         subTenantsCount: data.subTenantsCount,
+        maxSubTenants: getLimit("Identity.MaxDirectChildren"),
         permissionsCount: data.permissionsCount,
-      } as Stats;
+      };
     },
     enabled: !!tenantId,
   });
@@ -54,6 +68,7 @@ export function TenantStats({ tenantId, onTabChange }: TenantStatsProps) {
       key: "admins",
       label: t("tenant.statsAdmins") || "Admins",
       value: stats?.adminsCount ?? 0,
+      limit: stats?.maxAdmins,
       icon: Users,
       color: "from-blue-500/20 to-blue-600/10",
       iconColor: "text-blue-500",
@@ -63,6 +78,7 @@ export function TenantStats({ tenantId, onTabChange }: TenantStatsProps) {
       key: "roles",
       label: t("tenant.statsRoles") || "Roles",
       value: stats?.rolesCount ?? 0,
+      limit: stats?.maxRoles,
       icon: Shield,
       color: "from-purple-500/20 to-purple-600/10",
       iconColor: "text-purple-500",
@@ -72,6 +88,7 @@ export function TenantStats({ tenantId, onTabChange }: TenantStatsProps) {
       key: "subtenants",
       label: t("tenant.statsSubTenants") || "Sub-Tenants",
       value: stats?.subTenantsCount ?? 0,
+      limit: stats?.maxSubTenants,
       icon: Building2,
       color: "from-emerald-500/20 to-emerald-600/10",
       iconColor: "text-emerald-500",
@@ -81,6 +98,7 @@ export function TenantStats({ tenantId, onTabChange }: TenantStatsProps) {
       key: "permissions",
       label: t("tenant.statsPermissions") || "Permissions",
       value: stats?.permissionsCount ?? 0,
+      limit: "Unlimited",
       icon: Key,
       color: "from-amber-500/20 to-amber-600/10",
       iconColor: "text-amber-500",
@@ -136,7 +154,12 @@ export function TenantStats({ tenantId, onTabChange }: TenantStatsProps) {
                 {loading ? (
                   <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
                 ) : (
-                  <AnimatedNumber value={stat.value} />
+                  <div className="flex items-baseline gap-1">
+                    <AnimatedNumber value={stat.value} />
+                    {stat.limit && (
+                      <span className="text-sm text-muted-foreground">/ {stat.limit}</span>
+                    )}
+                  </div>
                 )}
                 <p className="mt-1 text-sm text-muted-foreground">{stat.label}</p>
               </div>

@@ -11,4 +11,5 @@ export interface IFeatureRepository {
       create(request: CreateFeatureRequest): Promise<string>;
       update(id: string, request: UpdateFeatureRequest): Promise<void>;
       delete(id: string): Promise<void>;
+      getTenantResolvedFeatures(tenantId: string): Promise<any[]>;
 }

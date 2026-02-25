@@ -12,7 +12,7 @@ import { useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
 import { Card, CardContent, CardHeader } from "@core/ui/card";
-import { Users, Shield, Building2, Settings } from "lucide-react";
+import { Users, Shield, Building2, Settings, Crown } from "lucide-react";
 import { cn } from "@core/common/utils";
 
 // Tab components (SOLID - each in separate file)
@@ -21,6 +21,7 @@ import { TenantRolesTab } from "./tabs/TenantRolesTab";
 import { TenantUserGroupsTab } from "./tabs/TenantUserGroupsTab";
 import { SubTenantsTab } from "./tabs/SubTenantsTab";
 import { TenantSettingsTab } from "./tabs/TenantSettingsTab";
+import { TenantEntitlementsTab } from "./tabs/TenantEntitlementsTab";
 
 interface TenantTabsProps {
   tenantId: string;
@@ -31,9 +32,14 @@ interface TenantTabsProps {
 
 export function TenantTabs({ tenantId, tenantName, tenantCode, parentTenantId }: TenantTabsProps) {
   const { t, direction } = useI18n();
-  const [activeTab, setActiveTab] = useState("admins");
+  const [activeTab, setActiveTab] = useState("entitlements");
 
   const tabs = [
+    {
+      value: "entitlements",
+      label: t("tenant.tabEntitlements") || "Entitlements",
+      icon: Crown,
+    },
     {
       value: "admins",
       label: t("tenant.tabAdmins") || "Admins",
@@ -65,8 +71,8 @@ export function TenantTabs({ tenantId, tenantName, tenantCode, parentTenantId }:
     <Card className="border-border/50 shadow-lg" dir={direction}>
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         {/* Tab Navigation */}
-        <CardHeader className="border-b pb-0">
-          <TabsList className="grid h-auto w-full grid-cols-5 bg-muted/30 p-1">
+        <CardHeader className="border-b pb-0 overflow-x-auto">
+          <TabsList className="grid h-auto w-[800px] sm:w-full grid-cols-6 bg-muted/30 p-1">
             {tabs.map((tab) => (
               <TabsTrigger
                 key={tab.value}
@@ -88,6 +94,11 @@ export function TenantTabs({ tenantId, tenantName, tenantCode, parentTenantId }:
         </CardHeader>
 
         <CardContent className="p-0">
+          {/* Entitlements Tab */}
+          <TabsContent value="entitlements" className="m-0 p-6">
+            <TenantEntitlementsTab tenantId={tenantId} />
+          </TabsContent>
+
           {/* Admins Tab */}
           <TabsContent value="admins" className="m-0 p-6">
             <TenantAdminsTab tenantId={tenantId} tenantName={tenantName} />

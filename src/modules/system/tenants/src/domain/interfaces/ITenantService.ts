@@ -123,9 +123,9 @@ export interface ITenantService {
   getAvailableEditions(page?: number, pageSize?: number): Promise<PagedEditionResult>;
 
   /**
-   * Assign a base edition (plan) to a newly created tenant
+   * Assign a base/trial edition (plan) to a newly created tenant
    */
-  assignEdition(tenantId: string, editionId: string): Promise<{ id: string }>;
+  assignEdition(tenantId: string, editionId: string, type?: string, endDate?: string): Promise<{ id: string }>;
 
   /**
    * Change the base edition of an existing tenant

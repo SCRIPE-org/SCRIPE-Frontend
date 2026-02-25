@@ -34,4 +34,8 @@ export class FeatureService implements IFeatureService {
       async delete(id: string): Promise<void> {
             await this.api.delete(API_ENDPOINTS.ENTITLEMENTS.FEATURES.DELETE(id));
       }
+
+      async getTenantResolvedFeatures(tenantId: string): Promise<any[]> {
+            return this.api.get<any[]>(API_ENDPOINTS.ENTITLEMENTS.TENANT_FEATURES.RESOLVED(tenantId));
+      }
 }

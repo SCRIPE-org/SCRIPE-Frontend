@@ -199,10 +199,15 @@ export class TenantService implements ITenantService {
     return this.api.get<PagedEditionResult>(url);
   }
 
-  async assignEdition(tenantId: string, editionId: string): Promise<{ id: string }> {
+  async assignEdition(
+    tenantId: string,
+    editionId: string,
+    type?: string,
+    endDate?: string
+  ): Promise<{ id: string }> {
     return this.api.post<{ id: string }>(
       API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.ASSIGN(tenantId),
-      { editionId }
+      { editionId, type, endDate }
     );
   }
 

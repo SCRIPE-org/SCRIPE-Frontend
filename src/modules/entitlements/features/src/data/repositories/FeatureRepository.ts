@@ -43,4 +43,8 @@ export class FeatureRepository implements IFeatureRepository {
       async delete(id: string): Promise<void> {
             await this.service.delete(id);
       }
+
+      async getTenantResolvedFeatures(tenantId: string): Promise<any[]> {
+            return this.service.getTenantResolvedFeatures(tenantId);
+      }
 }

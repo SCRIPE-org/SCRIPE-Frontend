@@ -31,6 +31,8 @@ export interface TenantJson {
   childCount?: number;
   adminCount?: number;
   address?: string;
+  editionName?: string;
+  editionEndDate?: string;
 }
 
 export interface TenantTreeNodeJson {
@@ -41,6 +43,8 @@ export interface TenantTreeNodeJson {
   isActive: boolean;
   description?: string;
   parentId?: string;
+  editionName?: string;
+  editionEndDate?: string;
   children: TenantTreeNodeJson[];
 }
 
@@ -87,7 +91,9 @@ export class TenantModel {
     public readonly settings?: Record<string, unknown>,
     public readonly modifiedAt?: string,
     public readonly children?: TenantModel[],
-    public readonly address?: string
+    public readonly address?: string,
+    public readonly editionName?: string,
+    public readonly editionEndDate?: string
   ) { }
 
   static fromJson(json: TenantJson): TenantModel {
@@ -107,7 +113,9 @@ export class TenantModel {
       json.settings,
       json.modifiedAt,
       json.children?.map((c) => TenantModel.fromJson(c)),
-      json.address
+      json.address,
+      json.editionName,
+      json.editionEndDate
     );
   }
 
@@ -127,6 +135,8 @@ export class TenantModel {
       modifiedAt: this.modifiedAt,
       children: this.children?.map((c) => c.toJson()),
       address: this.address,
+      editionName: this.editionName,
+      editionEndDate: this.editionEndDate,
     };
   }
 }
@@ -140,7 +150,9 @@ export class TenantTreeNodeModel {
     public readonly isActive: boolean,
     public readonly children: TenantTreeNodeModel[],
     public readonly description?: string,
-    public readonly parentId?: string
+    public readonly parentId?: string,
+    public readonly editionName?: string,
+    public readonly editionEndDate?: string
   ) { }
 
   static fromJson(json: TenantTreeNodeJson): TenantTreeNodeModel {
@@ -152,7 +164,9 @@ export class TenantTreeNodeModel {
       json.isActive,
       json.children.map((c) => TenantTreeNodeModel.fromJson(c)),
       json.description,
-      json.parentId
+      json.parentId,
+      json.editionName,
+      json.editionEndDate
     );
   }
 
@@ -165,6 +179,8 @@ export class TenantTreeNodeModel {
       isActive: this.isActive,
       description: this.description,
       parentId: this.parentId,
+      editionName: this.editionName,
+      editionEndDate: this.editionEndDate,
       children: this.children.map((c) => c.toJson()),
     };
   }

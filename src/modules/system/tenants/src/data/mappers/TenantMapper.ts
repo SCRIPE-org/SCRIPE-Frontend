@@ -42,6 +42,8 @@ export class TenantMapper {
       description: model.description,
       settings: model.settings,
       modifiedAt: model.modifiedAt,
+      editionName: model.editionName,
+      editionEndDate: model.editionEndDate,
       children: model.children?.map((c) => TenantMapper.toEntity(c).toProps()),
     };
     return new Tenant(props);
@@ -59,6 +61,8 @@ export class TenantMapper {
       isActive: model.isActive,
       description: model.description,
       parentId: model.parentId,
+      editionName: model.editionName,
+      editionEndDate: model.editionEndDate,
       children: model.children.map((c) => TenantMapper.toTreeNode(c)),
     };
     return props as TenantTreeNode;

@@ -21,4 +21,5 @@ export interface IFeatureService {
       create(data: Record<string, unknown>): Promise<{ id: string }>;
       update(id: string, data: Record<string, unknown>): Promise<void>;
       delete(id: string): Promise<void>;
+      getTenantResolvedFeatures(tenantId: string): Promise<any[]>;
 }

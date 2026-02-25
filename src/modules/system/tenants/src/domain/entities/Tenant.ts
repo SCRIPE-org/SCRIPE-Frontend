@@ -22,6 +22,8 @@ export interface TenantProps {
   description?: string;
   settings?: Record<string, unknown>;
   modifiedAt?: string;
+  editionName?: string;
+  editionEndDate?: string;
   children?: TenantProps[];
 }
 
@@ -33,6 +35,8 @@ export interface TenantTreeNodeProps {
   isActive: boolean;
   description?: string;
   parentId?: string;
+  editionName?: string;
+  editionEndDate?: string;
   children: TenantTreeNodeProps[];
 }
 
@@ -96,6 +100,14 @@ export class Tenant {
     return this.props.modifiedAt;
   }
 
+  get editionName(): string | undefined {
+    return this.props.editionName;
+  }
+
+  get editionEndDate(): string | undefined {
+    return this.props.editionEndDate;
+  }
+
   // ===== Business Logic =====
 
   get hasChildren(): boolean {
@@ -125,7 +137,7 @@ export class Tenant {
 /**
  * Tenant tree node for hierarchical display
  */
-export interface TenantTreeNode extends TenantTreeNodeProps {}
+export interface TenantTreeNode extends TenantTreeNodeProps { }
 
 // Keep backward compatibility alias
 export type TenantData = TenantProps;

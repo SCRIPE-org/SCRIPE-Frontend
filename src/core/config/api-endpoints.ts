@@ -240,6 +240,9 @@ export const API_ENDPOINTS = {
       DELETE: (id: string) => `${V1}/editions/${id}`,
       SET_FEATURE: (editionId: string, featureId: string) => `${V1}/editions/${editionId}/features/${featureId}`,
     },
+    TENANT_FEATURES: {
+      RESOLVED: (tenantId: string) => `${V1}/tenants/${tenantId}/features/resolved`,
+    },
     SUBSCRIPTIONS: {
       ASSIGN: (tenantId: string) => `${V1}/tenants/${tenantId}/subscription`,
       CHANGE: (tenantId: string) => `${V1}/tenants/${tenantId}/subscription`,
