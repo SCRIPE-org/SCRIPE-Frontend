@@ -97,6 +97,14 @@ export const ar = {
     emails: "البريد الإلكتروني",
   },
 
+  // Subscriptions - الاشتراكات
+  subscription: {
+    lifetime: "مدى الحياة (دائم)",
+    monthly: "شهري",
+    yearly: "سنوي",
+    trial: "تجريبي (محدود)",
+  },
+
   // Tenants - المستأجرون
   tenant: {
     context: "سياق المستأجر",

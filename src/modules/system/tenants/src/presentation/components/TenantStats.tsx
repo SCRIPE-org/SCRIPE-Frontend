@@ -46,7 +46,7 @@ export function TenantStats({ tenantId, onTabChange }: TenantStatsProps) {
 
       const getLimit = (key: string) => {
         const feature = features.find((f: any) => f.name === key);
-        if (!feature || feature.value === "-1") return "Unlimited";
+        if (!feature || feature.value === "-1") return "∞";
         return feature.value;
       };
 
@@ -98,7 +98,7 @@ export function TenantStats({ tenantId, onTabChange }: TenantStatsProps) {
       key: "permissions",
       label: t("tenant.statsPermissions") || "Permissions",
       value: stats?.permissionsCount ?? 0,
-      limit: "Unlimited",
+      limit: "∞",
       icon: Key,
       color: "from-amber-500/20 to-amber-600/10",
       iconColor: "text-amber-500",

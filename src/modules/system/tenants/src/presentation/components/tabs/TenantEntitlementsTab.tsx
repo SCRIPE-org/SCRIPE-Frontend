@@ -67,7 +67,7 @@ export function TenantEntitlementsTab({ tenantId }: TenantEntitlementsTabProps) 
                                                 </Badge>
                                           ) : (
                                                 <Badge variant="outline" className="font-mono bg-muted/50">
-                                                      {feature.value === "-1" ? "Unlimited" : feature.value}
+                                                      {feature.value === "-1" ? "∞" : feature.value}
                                                 </Badge>
                                           )}
                                     </div>

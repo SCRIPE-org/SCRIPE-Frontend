@@ -185,10 +185,12 @@ export function TenantsView() {
           placeholder: "Select Type",
           required: false,
           options: [
-            { value: "Base", label: "Base (Permanent)" },
-            { value: "Trial", label: "Trial (Limited)" },
+            { value: "Lifetime", label: t("subscription.lifetime") || "Lifetime (Permanent)" },
+            { value: "Monthly", label: t("subscription.monthly") || "Monthly" },
+            { value: "Yearly", label: t("subscription.yearly") || "Yearly" },
+            { value: "Trial", label: t("subscription.trial") || "Trial (Limited)" },
           ],
-          defaultValue: "Base"
+          defaultValue: "Lifetime"
         });
 
         // Only explicitly ask for End Date if Trial is selected

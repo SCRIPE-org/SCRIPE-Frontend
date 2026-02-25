@@ -92,6 +92,14 @@ export const en = {
     emails: "Emails",
   },
 
+  // Subscriptions
+  subscription: {
+    lifetime: "Lifetime (Permanent)",
+    monthly: "Monthly",
+    yearly: "Yearly",
+    trial: "Trial (Limited)",
+  },
+
   // Tenants
   tenant: {
     deactivateTenant: "Deactivate Tenant",
