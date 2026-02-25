@@ -153,6 +153,16 @@ export const ar = {
     cancel: "إلغاء",
     save: "حفظ التغييرات",
     create: "إنشاء المستأجر",
+
+    // Subscriptions & Entitlements
+    editionLabel: "خطة الاشتراك",
+    editionPlaceholder: "اختر خطة الاشتراك...",
+    subscriptionType: "مدة الاشتراك",
+    tabEntitlements: "الاستحقاقات والميزات",
+    entitlementsTitle: "استحقاقات المستأجر",
+    entitlementsDescription: "الحدود والميزات المفعلة في خطة الاشتراك الحالية",
+    subscriptionOverview: "تفاصيل الاشتراك",
+
     // الرسائل
     createSuccess: "تم إنشاء المستأجر بنجاح",
     updateSuccess: "تم تحديث المستأجر بنجاح",

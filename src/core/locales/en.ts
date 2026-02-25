@@ -141,6 +141,16 @@ export const en = {
     cancel: "Cancel",
     save: "Save Changes",
     create: "Create Tenant",
+
+    // Subscriptions & Entitlements
+    editionLabel: "Subscription Plan",
+    editionPlaceholder: "Select a subscription plan...",
+    subscriptionType: "Duration",
+    tabEntitlements: "Entitlements",
+    entitlementsTitle: "Tenant Entitlements",
+    entitlementsDescription: "Limits and features enabled by the current subscription",
+    subscriptionOverview: "Subscription Overview",
+
     // Messages
     createSuccess: "Tenant created successfully",
     updateSuccess: "Tenant updated successfully",
