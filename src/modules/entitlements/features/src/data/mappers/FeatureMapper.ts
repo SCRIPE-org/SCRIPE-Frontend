@@ -11,6 +11,11 @@ export class FeatureMapper {
             const data: FeatureData = {
                   id: model.id,
                   name: model.name,
+                  displayNameEn: model.displayNameEn,
+                  displayNameAr: model.displayNameAr,
+                  category: model.category,
+                  sortOrder: model.sortOrder ?? 0,
+                  isVisibleInUI: model.isVisibleInUI ?? true,
                   valueType: model.valueType as FeatureValueType,
                   defaultValue: model.defaultValue,
                   module: model.module,

@@ -22,7 +22,7 @@ const VALUE_TYPE_COLORS: Record<string, "default" | "secondary" | "outline"> = {
 };
 
 export function FeaturesView() {
-      const { t } = useI18n();
+      const { t, language } = useI18n();
       const vm = useFeaturesViewModel();
 
       const config: CrudConfig<Feature> = useMemo(
@@ -33,8 +33,24 @@ export function FeaturesView() {
                   columns: [
                         {
                               key: "name",
-                              label: t("entitlements.features.featureName") || "Name",
+                              label: t("entitlements.features.featureName") || "Feature Key",
                               sortable: true,
+                        },
+                        {
+                              key: "displayName",
+                              label: t("entitlements.features.displayName") || "Display Name",
+                              render: (_val: unknown, feature: Feature) =>
+                                    feature.getDisplayName(language),
+                        },
+                        {
+                              key: "category",
+                              label: t("entitlements.features.category") || "Category",
+                              render: (_val: unknown, feature: Feature) =>
+                                    feature.category ? (
+                                          <Badge variant="secondary">{feature.category}</Badge>
+                                    ) : (
+                                          "-"
+                                    ),
                         },
                         {
                               key: "valueType",
@@ -130,7 +146,7 @@ export function FeaturesView() {
                         defaultValue: feature.defaultValue,
                         description: feature.description || "",
                   }),
-                  getItemDisplayName: (feature: Feature) => feature.name,
+                  getItemDisplayName: (feature: Feature) => feature.getDisplayName(language),
                   deleteService: (id: string) => vm.deleteItem(id),
                   getActions: (vmInstance: any, tFn: any, handleDeleteFn: any): CrudAction<Feature>[] => [
                         {
@@ -156,7 +172,7 @@ export function FeaturesView() {
                         },
                   ],
             }),
-            [t, vm]
+            [t, vm, language]
       );
 
       return <GenericCrudView viewModel={vm} config={config} />;

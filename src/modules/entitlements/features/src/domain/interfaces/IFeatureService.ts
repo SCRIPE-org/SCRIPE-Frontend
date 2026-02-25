@@ -6,6 +6,11 @@ import type { PagedResult, PaginationParams } from "@modules/system/core/domain/
 export interface FeatureModel {
       id: string;
       name: string;
+      displayNameEn?: string;
+      displayNameAr?: string;
+      category?: string;
+      sortOrder: number;
+      isVisibleInUI: boolean;
       valueType: string;
       defaultValue: string;
       module: string;
