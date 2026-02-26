@@ -120,7 +120,7 @@ export function TenantSettingsTab({
                 <label className="text-sm font-medium">
                   {t("tenant.passwordMinLength") || "Min Password Length"}
                 </label>
-                <div className="text-lg font-bold">{settings.passwordMinLength} characters</div>
+                <div className="text-lg font-bold">{settings.passwordMinLength} {t("tenant.characters") || "characters"}</div>
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-medium">

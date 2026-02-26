@@ -17,10 +17,6 @@ export interface CreateTenantRequest {
   address?: string;
   /** Edition ID to assign upon creation */
   editionId?: string;
-  /** Type of subscription (Base, Trial) */
-  subscriptionType?: string;
-  /** Optional end date (ISO string) for Trial/limited subscriptions */
-  subscriptionEndDate?: string;
 }
 
 /**

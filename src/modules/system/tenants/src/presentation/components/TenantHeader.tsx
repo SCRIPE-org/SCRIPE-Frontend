@@ -27,10 +27,11 @@ import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Textarea } from "@core/ui/textarea";
 import { Switch } from "@core/ui/switch";
-import { Building2, Pencil, Power, Trash2, Loader2, LogIn, Crown, CalendarClock, ArrowRight } from "lucide-react";
+import { Building2, Pencil, Power, Trash2, Loader2, LogIn } from "lucide-react";
 import { systemContainer } from "@modules/system/di";
 import type { Tenant } from "../../domain/entities/Tenant";
 import { TenantDeleteDialog } from "./TenantDeleteDialog";
+import { TenantSubscriptionCard } from "./cards/TenantSubscriptionCard";
 import { cn } from "@core/common/utils";
 import { appLogger } from "@/core/common/logger";
 
@@ -248,49 +249,9 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
             </div>
           </div>
 
-          {/* Subscription Card Section (Only if EditionName is present) */}
+          {/* Subscription Card Section */}
           <div className="mt-6 border-t border-border/50 pt-6">
-            <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-              {t("tenant.subscriptionOverview") || "Subscription Overview"}
-            </h3>
-            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-              <div className="flex items-center gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-amber-500/10 text-amber-500">
-                  <Crown className="h-6 w-6" />
-                </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <p className="text-lg font-semibold">
-                      {tenant.editionName || "Custom / Direct"}
-                    </p>
-                    <Badge variant="outline" className={cn(
-                      "border-amber-500/30",
-                      tenant.editionEndDate && new Date(tenant.editionEndDate) < new Date()
-                        ? "text-red-500 bg-red-500/10 hover:bg-red-500/20"
-                        : "text-amber-600 bg-amber-500/10 hover:bg-amber-500/20"
-                    )}>
-                      {tenant.editionEndDate && new Date(tenant.editionEndDate) < new Date() ? "Expired" : "Active"}
-                    </Badge>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
-                    <CalendarClock className="h-4 w-4" />
-                    {tenant.editionEndDate ? (
-                      <span>
-                        Expires on: <span className="font-medium text-foreground">{new Date(tenant.editionEndDate).toLocaleDateString()}</span>
-                      </span>
-                    ) : (
-                      <span>Lifetime Access</span>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {canUpdate && (
-                <Button variant="outline" className="shrink-0 w-full md:w-auto" onClick={() => window.location.href = `/settings/tenant`}>
-                  Change Plan <ArrowRight className="ms-2 h-4 w-4" />
-                </Button>
-              )}
-            </div>
+            <TenantSubscriptionCard tenantId={tenant.id} />
           </div>
         </div>
       </div>

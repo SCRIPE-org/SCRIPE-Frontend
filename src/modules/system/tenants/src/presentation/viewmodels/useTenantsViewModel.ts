@@ -6,6 +6,7 @@
 "use client";
 
 import { useMemo, useCallback } from "react";
+import { useI18n } from "@core/providers/i18n-provider";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { systemContainer } from "@modules/system/di";
 import type { Tenant, TenantTreeNode } from "../../domain/entities/Tenant";
@@ -26,6 +27,7 @@ interface UseTenantsViewModelParams {
 export function useTenantsViewModel(params: UseTenantsViewModelParams = {}) {
   const { page = 1, pageSize = 20, search, viewMode = "tree" } = params;
   const queryClient = useQueryClient();
+  const { t } = useI18n();
   const { success, error: toastError } = useEnhancedToast();
   const { tenantRepository } = systemContainer;
 
@@ -88,14 +90,14 @@ export function useTenantsViewModel(params: UseTenantsViewModelParams = {}) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tenants"] });
       success({
-        title: "Tenant Created",
-        description: "The tenant and subscription have been created successfully.",
+        title: t("tenant.created") || "Tenant Created",
+        description: t("tenant.createdDescription") || "The tenant and subscription have been created successfully.",
       });
     },
     onError: (err: Error) => {
       toastError({
-        title: "Create Failed",
-        description: err.message || "Failed to create tenant.",
+        title: t("common.error") || "Create Failed",
+        description: err.message || t("common.operationFailed") || "Failed to create tenant.",
       });
     },
   });
@@ -107,14 +109,14 @@ export function useTenantsViewModel(params: UseTenantsViewModelParams = {}) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tenants"] });
       success({
-        title: "Tenant Updated",
-        description: "The tenant has been updated successfully.",
+        title: t("tenant.updated") || "Tenant Updated",
+        description: t("tenant.updatedDescription") || "The tenant has been updated successfully.",
       });
     },
     onError: (err: Error) => {
       toastError({
-        title: "Update Failed",
-        description: err.message || "Failed to update tenant.",
+        title: t("common.error") || "Update Failed",
+        description: err.message || t("common.operationFailed") || "Failed to update tenant.",
       });
     },
   });
@@ -125,14 +127,14 @@ export function useTenantsViewModel(params: UseTenantsViewModelParams = {}) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tenants"] });
       success({
-        title: "Tenant Deleted",
-        description: "The tenant has been deleted successfully.",
+        title: t("tenant.deleted") || "Tenant Deleted",
+        description: t("tenant.deletedDescription") || "The tenant has been deleted successfully.",
       });
     },
     onError: (err: Error) => {
       toastError({
-        title: "Delete Failed",
-        description: err.message || "Failed to delete tenant.",
+        title: t("common.error") || "Delete Failed",
+        description: err.message || t("common.operationFailed") || "Failed to delete tenant.",
       });
     },
   });

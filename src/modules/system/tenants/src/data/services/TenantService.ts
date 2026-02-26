@@ -223,4 +223,10 @@ export class TenantService implements ITenantService {
       API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.LIST_BY_TENANT(tenantId)
     );
   }
+
+  async getResolvedFeatures(tenantId: string): Promise<Array<{ name: string; value: string }>> {
+    return this.api.get<Array<{ name: string; value: string }>>(
+      API_ENDPOINTS.ENTITLEMENTS.TENANT_FEATURES.RESOLVED(tenantId)
+    );
+  }
 }

@@ -8,9 +8,9 @@
  */
 "use client";
 
-import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTenantContext } from "@core/providers/tenant-context-provider";
 import { useI18n } from "@core/providers/i18n-provider";
 import { systemContainer } from "@modules/system/di";
@@ -18,8 +18,6 @@ import { PageBreadcrumbs } from "@core/ui/page-breadcrumbs";
 import { Skeleton } from "@core/ui/skeleton";
 import { AlertTriangle } from "lucide-react";
 import { Button } from "@core/ui/button";
-import type { Tenant } from "../../domain/entities/Tenant";
-import { appLogger } from "@/core/common/logger";
 
 // Lazy-load heavy sub-sections (below loading skeleton)
 const TenantHeader = dynamic(() => import("../components/TenantHeader").then(m => ({ default: m.TenantHeader })), { ssr: false });
@@ -33,49 +31,21 @@ interface TenantDetailPageProps {
 export function TenantDetailPage({ tenantId }: TenantDetailPageProps) {
   const router = useRouter();
   const { t, direction } = useI18n();
-  const { enterTenantWorld, exitTenantWorld, breadcrumbs } = useTenantContext();
-  const { tenantRepository } = systemContainer;
+  const { enterTenantWorld } = useTenantContext();
+  const queryClient = useQueryClient();
 
-  const [tenant, setTenant] = useState<Tenant | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  // Use TanStack Query for tenant data — enables proper cache invalidation
+  const {
+    data: tenant,
+    isLoading: loading,
+    error: queryError,
+  } = useQuery({
+    queryKey: ["tenant", tenantId],
+    queryFn: () => systemContainer.tenantRepository.getById(tenantId),
+    enabled: !!tenantId,
+  });
 
-  // Fetch tenant details on mount
-  useEffect(() => {
-    async function fetchTenant() {
-      try {
-        setLoading(true);
-        setError(null);
-        const result = await tenantRepository.getById(tenantId);
-        if (result) {
-          setTenant(result);
-          // DO NOT auto-enter tenant world here.
-          // "View Details" should be distinct from "Drill Down" (Context Switch).
-
-          // However, for API calls in the tabs to work without Drill Down,
-          // we might need to rely on the ID passed to components,
-          // NOT the global header which is for "Drill Down" mode.
-        } else {
-          setError(t("tenant.notFound") || "Tenant not found");
-        }
-      } catch (err) {
-        appLogger.error("Failed to fetch tenant:", err);
-        setError(t("common.errorLoading") || "Failed to load tenant");
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchTenant();
-
-    // Cleanup on unmount
-    return () => {
-      // No need to exit world if we didn't enter it automatically.
-      // If user manually enters, they should manually exit or navigate away.
-      // However, if we set any temporary context, clear it here.
-      // tenantRepository.setTenantContext(null);
-    };
-  }, [tenantId, enterTenantWorld, exitTenantWorld, tenantRepository, t]);
+  const error = queryError ? (queryError as Error).message : (!loading && !tenant ? (t("tenant.notFound") || "Tenant not found") : null);
 
   // Handle back navigation
   const handleBack = () => {
@@ -130,8 +100,8 @@ export function TenantDetailPage({ tenantId }: TenantDetailPageProps) {
       <TenantHeader
         tenant={tenant}
         onUpdate={() => {
-          // Refetch tenant after update
-          systemContainer.tenantRepository.getById(tenantId).then(setTenant);
+          // Invalidate the cache so TanStack Query refetches automatically
+          queryClient.invalidateQueries({ queryKey: ["tenant", tenantId] });
         }}
         onEnter={() => {
           enterTenantWorld({
@@ -156,3 +126,4 @@ export function TenantDetailPage({ tenantId }: TenantDetailPageProps) {
     </main>
   );
 }
+

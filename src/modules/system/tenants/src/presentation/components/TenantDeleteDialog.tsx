@@ -90,7 +90,7 @@ export function TenantDeleteDialog({
             <p className="text-sm font-medium text-yellow-800 dark:text-yellow-200">
               {t("tenant.hasDescendants") || `This tenant has ${descendantCount} descendant(s).`}
             </p>
-            <div className="mt-3 flex items-center space-x-2">
+            <div className="mt-3 flex items-center gap-2">
               <Checkbox
                 id="cascade"
                 checked={cascadeChildren}

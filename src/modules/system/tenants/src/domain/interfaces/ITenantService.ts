@@ -136,4 +136,10 @@ export interface ITenantService {
    * Get all subscriptions for a tenant
    */
   getTenantSubscriptions(tenantId: string): Promise<SubscriptionModel[]>;
+
+  /**
+   * Get resolved features (edition + overrides) for a tenant
+   * Used by TenantStats to show quota limits without cross-module import
+   */
+  getResolvedFeatures(tenantId: string): Promise<Array<{ name: string; value: string }>>;
 }

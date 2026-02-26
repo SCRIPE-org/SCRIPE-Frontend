@@ -166,4 +166,8 @@ export class TenantRepository implements ITenantRepository {
   async getTenantSubscriptions(tenantId: string): Promise<SubscriptionModel[]> {
     return this.service.getTenantSubscriptions(tenantId);
   }
+
+  async getResolvedFeatures(tenantId: string): Promise<Array<{ name: string; value: string }>> {
+    return this.service.getResolvedFeatures(tenantId);
+  }
 }

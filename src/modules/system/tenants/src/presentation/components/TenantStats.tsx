@@ -15,7 +15,6 @@ import { Card, CardContent } from "@core/ui/card";
 import { Users, Shield, Building2, Key, Loader2 } from "lucide-react";
 import { cn } from "@core/common/utils";
 import { systemContainer } from "@modules/system/di";
-import { entitlementsContainer } from "@modules/entitlements/di";
 import type { TenantStats as TenantStatsType } from "../../domain/interfaces/ITenantRepository";
 import { appLogger } from "@/core/common/logger";
 
@@ -41,7 +40,7 @@ export function TenantStats({ tenantId, onTabChange }: TenantStatsProps) {
     queryFn: async () => {
       const [data, features] = await Promise.all([
         systemContainer.tenantRepository.getStats(tenantId),
-        entitlementsContainer.featureRepository.getTenantResolvedFeatures(tenantId).catch(() => [])
+        systemContainer.tenantRepository.getResolvedFeatures(tenantId).catch(() => [])
       ]);
 
       const getLimit = (key: string) => {
@@ -52,11 +51,11 @@ export function TenantStats({ tenantId, onTabChange }: TenantStatsProps) {
 
       return {
         adminsCount: data.adminsCount,
-        maxAdmins: getLimit("Identity.MaxAdminsPerTenant"),
+        maxAdmins: getLimit("Identity.Admins.MaxPerTenant"),
         rolesCount: data.rolesCount,
-        maxRoles: getLimit("Identity.MaxRolesPerTenant"),
+        maxRoles: getLimit("Identity.Roles.MaxPerTenant"),
         subTenantsCount: data.subTenantsCount,
-        maxSubTenants: getLimit("Identity.MaxDirectChildren"),
+        maxSubTenants: getLimit("Tenancy.MaxDirectChildren"),
         permissionsCount: data.permissionsCount,
       };
     },

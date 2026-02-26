@@ -221,7 +221,7 @@ export function TenantSettingsEditDialog({
               <Input
                 value={formData.companyName || ""}
                 onChange={(e) => handleChange("companyName", e.target.value)}
-                placeholder="My Company"
+                placeholder={t("tenant.companyNamePlaceholder") || "My Company"}
               />
             </div>
             <div className="grid grid-cols-2 gap-4">

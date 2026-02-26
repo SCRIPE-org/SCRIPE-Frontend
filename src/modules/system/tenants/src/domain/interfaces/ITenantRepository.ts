@@ -156,4 +156,9 @@ export interface ITenantRepository {
    * Get all subscriptions for a tenant
    */
   getTenantSubscriptions(tenantId: string): Promise<SubscriptionModel[]>;
+
+  /**
+   * Get resolved features (edition + overrides) for a tenant
+   */
+  getResolvedFeatures(tenantId: string): Promise<Array<{ name: string; value: string }>>;
 }
