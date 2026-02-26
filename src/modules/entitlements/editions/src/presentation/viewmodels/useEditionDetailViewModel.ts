@@ -4,7 +4,7 @@ import { useState, useCallback, useMemo, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { entitlementsContainer } from "@modules/entitlements/di";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
-import type { Edition, EditionBundleDto } from "../../domain/entities/Edition";
+import type { Edition } from "../../domain/entities/Edition";
 import type { Feature } from "@modules/entitlements/features/src/domain/entities/Feature";
 
 // ── Disabled defaults ──
@@ -33,16 +33,7 @@ export interface EditionDetailViewModelResult {
       discardChanges: () => void;
       isSaving: boolean;
 
-      // ── Bundles ──
-      attachedBundles: EditionBundleDto[];
-      availableBundles: { id: string; name: string; displayNameEn?: string; displayNameAr?: string }[];
-      isLoadingBundles: boolean;
-      attachBundle: (bundleId: string) => void;
-      detachBundle: (bundleId: string) => void;
-      isAttaching: boolean;
-      isDetaching: boolean;
-
-      // ── Collapsible modules ──
+      // ── Module/Category grouping ──
       collapsedModules: Record<string, boolean>;
       toggleModule: (moduleName: string) => void;
       expandAll: () => void;
@@ -52,7 +43,7 @@ export interface EditionDetailViewModelResult {
 export function useEditionDetailViewModel(editionId: string): EditionDetailViewModelResult {
       const { success, error: toastError } = useEnhancedToast();
       const queryClient = useQueryClient();
-      const { editionRepository, featureRepository, bundleRepository } = entitlementsContainer;
+      const { editionRepository, featureRepository } = entitlementsContainer;
 
       // ── Queries ──
       const {
@@ -72,14 +63,6 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
       } = useQuery({
             queryKey: ["entitlements", "features", "all"],
             queryFn: () => featureRepository.getAll({ page: 1, pageSize: 1000 }),
-      });
-
-      const {
-            data: allBundlesResult,
-            isLoading: isLoadingBundles,
-      } = useQuery({
-            queryKey: ["entitlements", "bundles", "all-list"],
-            queryFn: () => bundleRepository.getAll({ page: 1, pageSize: 1000 }),
       });
 
       // ── Local pending feature values ──
@@ -171,51 +154,7 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
             }
       }, [edition, pendingValues, saveAllMutation]);
 
-      // ── Bundle mutations ──
-      const attachMutation = useMutation({
-            mutationFn: (bundleId: string) => editionRepository.attachBundle(editionId, bundleId),
-            onSuccess: () => {
-                  success({ title: "Bundle Attached", description: "Bundle has been attached to this edition." });
-                  queryClient.invalidateQueries({ queryKey: ["entitlements", "editions", editionId] });
-            },
-            onError: (err) => {
-                  toastError({
-                        title: "Attach Failed",
-                        description: err instanceof Error ? err.message : "Failed to attach bundle",
-                  });
-            },
-      });
-
-      const detachMutation = useMutation({
-            mutationFn: (bundleId: string) => editionRepository.detachBundle(editionId, bundleId),
-            onSuccess: () => {
-                  success({ title: "Bundle Detached", description: "Bundle has been detached from this edition." });
-                  queryClient.invalidateQueries({ queryKey: ["entitlements", "editions", editionId] });
-            },
-            onError: (err) => {
-                  toastError({
-                        title: "Detach Failed",
-                        description: err instanceof Error ? err.message : "Failed to detach bundle",
-                  });
-            },
-      });
-
-      // ── Available bundles (not yet attached) ──
-      const attachedBundles = edition?.bundles ?? [];
-      const attachedBundleIds = new Set(attachedBundles.map(b => b.bundleId));
-      const availableBundles = useMemo(() => {
-            if (!allBundlesResult?.items) return [];
-            return allBundlesResult.items
-                  .filter(b => !attachedBundleIds.has(b.id))
-                  .map(b => ({
-                        id: b.id,
-                        name: b.name,
-                        displayNameEn: b.displayNameEn,
-                        displayNameAr: b.displayNameAr,
-                  }));
-      }, [allBundlesResult, attachedBundleIds]);
-
-      // ── Collapsible modules ──
+      // ── Module/Category grouping ──
       const [collapsedModules, setCollapsedModules] = useState<Record<string, boolean>>({});
 
       const toggleModule = useCallback((moduleName: string) => {
@@ -265,14 +204,6 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
             saveAllFeatures,
             discardChanges,
             isSaving: saveAllMutation.isPending,
-
-            attachedBundles,
-            availableBundles,
-            isLoadingBundles,
-            attachBundle: (bundleId: string) => attachMutation.mutate(bundleId),
-            detachBundle: (bundleId: string) => detachMutation.mutate(bundleId),
-            isAttaching: attachMutation.isPending,
-            isDetaching: detachMutation.isPending,
 
             collapsedModules,
             toggleModule,

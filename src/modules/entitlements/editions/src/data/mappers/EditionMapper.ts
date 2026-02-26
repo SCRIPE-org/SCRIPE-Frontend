@@ -18,7 +18,6 @@ export class EditionMapper {
                   isRetired: model.isRetired,
                   createdByTenantId: model.createdByTenantId,
                   features: model.features,
-                  bundles: model.bundles,
                   createdAt: model.createdAt,
                   modifiedAt: model.modifiedAt,
             };

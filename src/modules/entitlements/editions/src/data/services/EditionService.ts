@@ -17,7 +17,6 @@ export interface EditionModel {
       isRetired: boolean;
       createdByTenantId?: string;
       features?: { featureId: string; featureName: string; value: string; valueType: string }[];
-      bundles?: { bundleId: string; bundleName: string; displayNameEn?: string; displayNameAr?: string; description?: string; permissionRuleCount: number; featureRuleCount: number }[];
       createdAt: string;
       modifiedAt?: string;
 }
@@ -53,12 +52,5 @@ export class EditionService {
       async setFeatureValue(editionId: string, featureId: string, value: string): Promise<void> {
             await this.api.put(API_ENDPOINTS.ENTITLEMENTS.EDITIONS.SET_FEATURE(editionId, featureId), { value });
       }
-
-      async attachBundle(editionId: string, bundleId: string): Promise<void> {
-            await this.api.post(API_ENDPOINTS.ENTITLEMENTS.EDITIONS.ATTACH_BUNDLE(editionId), { bundleId });
-      }
-
-      async detachBundle(editionId: string, bundleId: string): Promise<void> {
-            await this.api.delete(API_ENDPOINTS.ENTITLEMENTS.EDITIONS.DETACH_BUNDLE(editionId, bundleId));
-      }
 }
+

@@ -12,6 +12,4 @@ export interface IEditionRepository {
       update(id: string, request: UpdateEditionRequest): Promise<void>;
       delete(id: string): Promise<void>;
       setFeatureValue(editionId: string, featureId: string, value: string): Promise<void>;
-      attachBundle(editionId: string, bundleId: string): Promise<void>;
-      detachBundle(editionId: string, bundleId: string): Promise<void>;
 }

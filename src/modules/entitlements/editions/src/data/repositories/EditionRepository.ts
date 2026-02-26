@@ -47,12 +47,4 @@ export class EditionRepository implements IEditionRepository {
       async setFeatureValue(editionId: string, featureId: string, value: string): Promise<void> {
             await this.service.setFeatureValue(editionId, featureId, value);
       }
-
-      async attachBundle(editionId: string, bundleId: string): Promise<void> {
-            await this.service.attachBundle(editionId, bundleId);
-      }
-
-      async detachBundle(editionId: string, bundleId: string): Promise<void> {
-            await this.service.detachBundle(editionId, bundleId);
-      }
 }
