@@ -13,6 +13,8 @@ import { getModuleApiService } from "@core/services/api-factory";
 // Services
 import { FeatureService } from "./features/src/data/services/FeatureService";
 import { EditionService } from "./editions/src/data/services/EditionService";
+import { OverrideService } from "./overrides/src/data/services/OverrideService";
+import { SubscriptionService } from "./subscriptions/src/data/services/SubscriptionService";
 
 // Repositories
 import { FeatureRepository } from "./features/src/data/repositories/FeatureRepository";
@@ -25,6 +27,8 @@ import type { IEditionRepository } from "./editions/src/domain/interfaces/IEditi
 export interface EntitlementsContainer {
       featureRepository: IFeatureRepository;
       editionRepository: IEditionRepository;
+      overrideService: OverrideService;
+      subscriptionService: SubscriptionService;
 }
 
 let _container: EntitlementsContainer | null = null;
@@ -39,11 +43,15 @@ export function getEntitlementsContainer(): EntitlementsContainer {
             // Create Services
             const featureService = new FeatureService(apiService);
             const editionService = new EditionService(apiService);
+            const overrideService = new OverrideService(apiService);
+            const subscriptionService = new SubscriptionService(apiService);
 
             // Create Repositories
             _container = {
                   featureRepository: new FeatureRepository(featureService),
                   editionRepository: new EditionRepository(editionService),
+                  overrideService,
+                  subscriptionService,
             };
       }
 
@@ -60,4 +68,11 @@ export const entitlementsContainer = {
       get editionRepository() {
             return getEntitlementsContainer().editionRepository;
       },
+      get overrideService() {
+            return getEntitlementsContainer().overrideService;
+      },
+      get subscriptionService() {
+            return getEntitlementsContainer().subscriptionService;
+      },
 };
+

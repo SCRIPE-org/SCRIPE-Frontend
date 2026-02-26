@@ -4785,6 +4785,10 @@ export const en = {
       base: "Base",
       trial: "Trial",
       addOn: "Add-On",
+      lifetime: "Lifetime",
+      monthly: "Monthly",
+      yearly: "Yearly",
+      endDate: "End Date",
     },
     overrides: {
       title: "Feature Overrides",

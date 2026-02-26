@@ -241,7 +241,10 @@ export const API_ENDPOINTS = {
       SET_FEATURE: (editionId: string, featureId: string) => `${V1}/editions/${editionId}/features/${featureId}`,
     },
     TENANT_FEATURES: {
+      OVERRIDES: (tenantId: string) => `${V1}/tenants/${tenantId}/features/overrides`,
       RESOLVED: (tenantId: string) => `${V1}/tenants/${tenantId}/features/resolved`,
+      SET_OVERRIDE: (tenantId: string, featureId: string) => `${V1}/tenants/${tenantId}/features/${featureId}`,
+      REMOVE_OVERRIDE: (tenantId: string, featureId: string) => `${V1}/tenants/${tenantId}/features/${featureId}`,
     },
     SUBSCRIPTIONS: {
       ASSIGN: (tenantId: string) => `${V1}/tenants/${tenantId}/subscription`,
