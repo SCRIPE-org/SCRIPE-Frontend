@@ -37,6 +37,7 @@ export class Feature {
       get createdAt(): string { return this.data.createdAt; }
 
       getDisplayName(lang: string): string {
-            return lang === "ar" ? (this.displayNameAr ?? this.name) : (this.displayNameEn ?? this.name);
+            if (lang === "ar") return this.displayNameAr || this.displayNameEn || this.name;
+            return this.displayNameEn || this.name;
       }
 }

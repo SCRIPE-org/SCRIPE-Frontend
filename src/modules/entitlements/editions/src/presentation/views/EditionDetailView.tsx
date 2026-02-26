@@ -8,8 +8,9 @@ import { Switch } from "@core/ui/switch";
 import { Input } from "@core/ui/input";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
-import { Save } from "lucide-react";
+import { Save, ArrowLeft, Loader2 } from "lucide-react";
 import type { Feature } from "@modules/entitlements/features/src/domain/entities/Feature";
+import Link from "next/link";
 
 interface EditionDetailViewProps {
       editionId: string;
@@ -93,22 +94,40 @@ export function EditionDetailView({ editionId }: EditionDetailViewProps) {
       return (
             <div className="space-y-6">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                        <div>
-                              <h1 className="text-3xl font-bold tracking-tight">{edition.getDisplayName(language)}</h1>
-                              <p className="text-muted-foreground">
-                                    {edition.description || t("entitlements.editions.manageFeaturesDescription")}
-                              </p>
+                        <div className="flex items-start gap-3">
+                              <Link href="/entitlements/editions">
+                                    <Button variant="ghost" size="icon">
+                                          <ArrowLeft className="h-5 w-5" />
+                                    </Button>
+                              </Link>
+                              <div>
+                                    <h1 className="text-3xl font-bold tracking-tight">{edition.getDisplayName(language)}</h1>
+                                    <p className="text-muted-foreground">
+                                          {edition.description || t("entitlements.editions.manageFeaturesDescription")}
+                                    </p>
+                              </div>
                         </div>
-                        {hasUnsavedChanges && (
-                              <Button
-                                    onClick={handleSaveAll}
-                                    disabled={vm.isSaving}
-                                    className="sm:w-auto w-full"
-                              >
-                                    <Save className="h-4 w-4 mr-2" />
-                                    {t("common.saveChanges") || "Save Changes"}
-                              </Button>
-                        )}
+                        <div className="flex items-center gap-2">
+                              {hasUnsavedChanges && (
+                                    <Badge variant="outline" className="text-amber-600 border-amber-500/30">
+                                          {t("common.unsavedChanges") || "Unsaved changes"}
+                                    </Badge>
+                              )}
+                              {hasUnsavedChanges && (
+                                    <Button
+                                          onClick={handleSaveAll}
+                                          disabled={vm.isSaving}
+                                          className="sm:w-auto w-full gap-1 gradient-primary"
+                                    >
+                                          {vm.isSaving ? (
+                                                <Loader2 className="h-4 w-4 animate-spin" />
+                                          ) : (
+                                                <Save className="h-4 w-4" />
+                                          )}
+                                          {t("common.saveChanges") || "Save Changes"}
+                                    </Button>
+                              )}
+                        </div>
                   </div>
 
                   {Object.entries(featuresByModule).map(([moduleName, features]) => (
@@ -138,14 +157,20 @@ export function EditionDetailView({ editionId }: EditionDetailViewProps) {
                                                       >
                                                             <div className="space-y-1 max-w-[60%]">
                                                                   <div className="flex items-center gap-2">
-                                                                        <span className="font-medium">{feature.name}</span>
+                                                                        <span className="font-medium">{feature.getDisplayName(language)}</span>
                                                                         {hasOverride ? (
                                                                               <Badge variant="default" className="text-[10px] h-5">Custom</Badge>
                                                                         ) : (
                                                                               <Badge variant="outline" className="text-[10px] h-5">Default</Badge>
                                                                         )}
+                                                                        {isUnsaved && (
+                                                                              <Badge variant="outline" className="text-[10px] h-5 text-amber-600 border-amber-500/30">Modified</Badge>
+                                                                        )}
                                                                   </div>
-                                                                  <p className="text-sm text-muted-foreground">{feature.description}</p>
+                                                                  <p className="text-xs text-muted-foreground font-mono">{feature.name}</p>
+                                                                  {feature.description && (
+                                                                        <p className="text-sm text-muted-foreground">{feature.description}</p>
+                                                                  )}
                                                             </div>
 
                                                             <div className="flex items-center gap-3">

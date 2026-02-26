@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { entitlementsContainer } from "@modules/entitlements/di";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
@@ -24,6 +24,16 @@ export interface PermissionItem {
       displayOrder: number;
 }
 
+// Local rule shapes for batch state
+interface LocalPermRule {
+      permissionCode: string;
+      mode: string;
+}
+interface LocalFeatRule {
+      featureName: string;
+      value: string;
+}
+
 export interface BundleDetailViewModelResult {
       bundle: Bundle | undefined;
       isLoading: boolean;
@@ -34,16 +44,22 @@ export interface BundleDetailViewModelResult {
       allFeatures: Feature[];
       isLoadingPickers: boolean;
 
-      // Current bundle's rules (codes/names for quick lookup)
+      // Local (pending) state for batch save
+      pendingPermissions: LocalPermRule[];
+      pendingFeatures: LocalFeatRule[];
       assignedPermCodes: Set<string>;
       assignedFeatNames: Set<string>;
 
-      // Actions
+      // Actions — modify LOCAL state only (no API calls)
       togglePermission: (code: string, mode: string) => void;
       removePermission: (code: string) => void;
       addFeatureRule: (featureName: string, value: string) => void;
       removeFeatureRule: (featureName: string) => void;
 
+      // Batch save/discard
+      save: () => void;
+      discard: () => void;
+      isDirty: boolean;
       isSaving: boolean;
 }
 
@@ -82,31 +98,59 @@ export function useBundleDetailViewModel(bundleId: string): BundleDetailViewMode
             queryFn: () => entitlementsContainer.featureRepository.getAll({ page: 1, pageSize: 1000 }),
       });
 
-      // ── Derived sets for quick lookup ──
+      // ── LOCAL state for batch save ──
+      const [pendingPermissions, setPendingPermissions] = useState<LocalPermRule[]>([]);
+      const [pendingFeatures, setPendingFeatures] = useState<LocalFeatRule[]>([]);
+      const [serverPermissions, setServerPermissions] = useState<LocalPermRule[]>([]);
+      const [serverFeatures, setServerFeatures] = useState<LocalFeatRule[]>([]);
+
+      // Sync local state from server when bundle loads/changes
+      useEffect(() => {
+            if (bundle) {
+                  const perms = bundle.permissionRules.map(r => ({
+                        permissionCode: r.permissionCode,
+                        mode: r.mode,
+                  }));
+                  const feats = bundle.featureRules.map(r => ({
+                        featureName: r.featureName,
+                        value: r.value,
+                  }));
+                  setPendingPermissions(perms);
+                  setPendingFeatures(feats);
+                  setServerPermissions(perms);
+                  setServerFeatures(feats);
+            }
+      }, [bundle]);
+
+      // ── Derived sets for quick lookup (from LOCAL state) ──
       const assignedPermCodes = useMemo(() => {
-            const set = new Set<string>();
-            bundle?.permissionRules?.forEach(r => set.add(r.permissionCode));
-            return set;
-      }, [bundle?.permissionRules]);
+            return new Set(pendingPermissions.map(r => r.permissionCode));
+      }, [pendingPermissions]);
 
       const assignedFeatNames = useMemo(() => {
-            const set = new Set<string>();
-            bundle?.featureRules?.forEach(r => set.add(r.featureName));
-            return set;
-      }, [bundle?.featureRules]);
+            return new Set(pendingFeatures.map(r => r.featureName));
+      }, [pendingFeatures]);
 
-      // ── Mutation for updating rules ──
-      const updateMutation = useMutation({
-            mutationFn: async (data: {
-                  permissionRules: { permissionCode: string; mode: string }[];
-                  featureRules: { featureName: string; value: string }[];
-            }) => {
+      // ── isDirty: compare local vs server state ──
+      const isDirty = useMemo(() => {
+            const permsDirty =
+                  JSON.stringify([...pendingPermissions].sort((a, b) => a.permissionCode.localeCompare(b.permissionCode))) !==
+                  JSON.stringify([...serverPermissions].sort((a, b) => a.permissionCode.localeCompare(b.permissionCode)));
+            const featsDirty =
+                  JSON.stringify([...pendingFeatures].sort((a, b) => a.featureName.localeCompare(b.featureName))) !==
+                  JSON.stringify([...serverFeatures].sort((a, b) => a.featureName.localeCompare(b.featureName)));
+            return permsDirty || featsDirty;
+      }, [pendingPermissions, pendingFeatures, serverPermissions, serverFeatures]);
+
+      // ── Mutation for batch save ──
+      const saveMutation = useMutation({
+            mutationFn: async () => {
                   await bundleRepository.update(bundleId, {
                         displayNameEn: bundle?.displayNameEn || "",
                         displayNameAr: bundle?.displayNameAr || "",
                         description: bundle?.description || "",
-                        permissionRules: data.permissionRules,
-                        featureRules: data.featureRules,
+                        permissionRules: pendingPermissions,
+                        featureRules: pendingFeatures,
                   });
             },
             onSuccess: () => {
@@ -114,6 +158,9 @@ export function useBundleDetailViewModel(bundleId: string): BundleDetailViewMode
                         title: "Bundle Updated",
                         description: "Bundle rules have been saved successfully.",
                   });
+                  // Update server state to match what we just saved
+                  setServerPermissions([...pendingPermissions]);
+                  setServerFeatures([...pendingFeatures]);
                   queryClient.invalidateQueries({ queryKey: ["entitlements", "bundles", bundleId] });
                   queryClient.invalidateQueries({ queryKey: ["entitlements", "bundles"] });
             },
@@ -125,76 +172,41 @@ export function useBundleDetailViewModel(bundleId: string): BundleDetailViewMode
             },
       });
 
-      // ── Actions ──
+      // ── Actions — modify LOCAL state only ──
       const togglePermission = useCallback((code: string, mode: string) => {
-            if (!bundle) return;
-            const currentPerms = bundle.permissionRules.map(r => ({
-                  permissionCode: r.permissionCode,
-                  mode: r.mode,
-            }));
-            const currentFeats = bundle.featureRules.map(r => ({
-                  featureName: r.featureName,
-                  value: r.value,
-            }));
-
-            // If already assigned, remove it (toggle off)
-            if (assignedPermCodes.has(code)) {
-                  updateMutation.mutate({
-                        permissionRules: currentPerms.filter(r => r.permissionCode !== code),
-                        featureRules: currentFeats,
-                  });
-            } else {
-                  // Add new
-                  updateMutation.mutate({
-                        permissionRules: [...currentPerms, { permissionCode: code, mode }],
-                        featureRules: currentFeats,
-                  });
-            }
-      }, [bundle, assignedPermCodes, updateMutation]);
+            setPendingPermissions(prev => {
+                  const exists = prev.some(r => r.permissionCode === code);
+                  if (exists) {
+                        return prev.filter(r => r.permissionCode !== code);
+                  }
+                  return [...prev, { permissionCode: code, mode }];
+            });
+      }, []);
 
       const removePermission = useCallback((code: string) => {
-            if (!bundle) return;
-            updateMutation.mutate({
-                  permissionRules: bundle.permissionRules
-                        .filter(r => r.permissionCode !== code)
-                        .map(r => ({ permissionCode: r.permissionCode, mode: r.mode })),
-                  featureRules: bundle.featureRules.map(r => ({
-                        featureName: r.featureName,
-                        value: r.value,
-                  })),
-            });
-      }, [bundle, updateMutation]);
+            setPendingPermissions(prev => prev.filter(r => r.permissionCode !== code));
+      }, []);
 
       const addFeatureRule = useCallback((featureName: string, value: string) => {
-            if (!bundle) return;
-            if (assignedFeatNames.has(featureName)) return;
-            updateMutation.mutate({
-                  permissionRules: bundle.permissionRules.map(r => ({
-                        permissionCode: r.permissionCode,
-                        mode: r.mode,
-                  })),
-                  featureRules: [
-                        ...bundle.featureRules.map(r => ({
-                              featureName: r.featureName,
-                              value: r.value,
-                        })),
-                        { featureName, value },
-                  ],
+            setPendingFeatures(prev => {
+                  if (prev.some(r => r.featureName === featureName)) return prev;
+                  return [...prev, { featureName, value }];
             });
-      }, [bundle, assignedFeatNames, updateMutation]);
+      }, []);
 
       const removeFeatureRule = useCallback((featureName: string) => {
-            if (!bundle) return;
-            updateMutation.mutate({
-                  permissionRules: bundle.permissionRules.map(r => ({
-                        permissionCode: r.permissionCode,
-                        mode: r.mode,
-                  })),
-                  featureRules: bundle.featureRules
-                        .filter(r => r.featureName !== featureName)
-                        .map(r => ({ featureName: r.featureName, value: r.value })),
-            });
-      }, [bundle, updateMutation]);
+            setPendingFeatures(prev => prev.filter(r => r.featureName !== featureName));
+      }, []);
+
+      // ── Batch save / discard ──
+      const save = useCallback(() => {
+            saveMutation.mutate();
+      }, [saveMutation]);
+
+      const discard = useCallback(() => {
+            setPendingPermissions([...serverPermissions]);
+            setPendingFeatures([...serverFeatures]);
+      }, [serverPermissions, serverFeatures]);
 
       return {
             bundle,
@@ -203,12 +215,17 @@ export function useBundleDetailViewModel(bundleId: string): BundleDetailViewMode
             allPermissions: allPermissions ?? [],
             allFeatures: featuresResult?.items ?? [],
             isLoadingPickers: isPermissionsLoading || isFeaturesLoading,
+            pendingPermissions,
+            pendingFeatures,
             assignedPermCodes,
             assignedFeatNames,
             togglePermission,
             removePermission,
             addFeatureRule,
             removeFeatureRule,
-            isSaving: updateMutation.isPending,
+            save,
+            discard,
+            isDirty,
+            isSaving: saveMutation.isPending,
       };
 }

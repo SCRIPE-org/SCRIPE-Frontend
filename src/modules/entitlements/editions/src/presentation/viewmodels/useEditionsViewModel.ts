@@ -8,10 +8,12 @@ import { entitlementsContainer } from "@modules/entitlements/di";
 import type { Edition } from "../../domain/entities/Edition";
 import type { CreateEditionRequest, UpdateEditionRequest } from "../../domain/entities/EditionRequests";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import { useRouter } from "next/navigation";
 
 export function useEditionsViewModel() {
       const { success } = useEnhancedToast();
       const { editionRepository } = entitlementsContainer;
+      const router = useRouter();
 
       const vm = useCrudViewModel<Edition, CreateEditionRequest, UpdateEditionRequest>(
             ["entitlements", "editions"],
@@ -57,8 +59,6 @@ export function useEditionsViewModel() {
                   },
             }
       );
-
-      const router = require("next/navigation").useRouter();
 
       return {
             ...vm,

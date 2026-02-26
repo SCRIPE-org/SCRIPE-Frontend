@@ -19,7 +19,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
 import { Checkbox } from "@core/ui/checkbox";
 import {
       ArrowLeft, ShieldCheck, ShieldX, Zap, Trash2, Loader2,
-      Package, Lock, Search, Plus
+      Package, Lock, Search, Plus, Save, Undo2
 } from "lucide-react";
 import Link from "next/link";
 import {
@@ -147,21 +147,55 @@ export function BundleDetailView({ bundleId }: BundleDetailViewProps) {
                                           <Badge variant="outline">{bundle.scope}</Badge>
                                           <Badge variant="secondary" className="gap-1">
                                                 <ShieldCheck className="h-3 w-3" />
-                                                {bundle.permissionRuleCount} {t("entitlements.bundles.permissions") || "permissions"}
+                                                {vm.pendingPermissions.length} {t("entitlements.bundles.permissions") || "permissions"}
                                           </Badge>
                                           <Badge variant="secondary" className="gap-1">
                                                 <Zap className="h-3 w-3" />
-                                                {bundle.featureRuleCount} {t("entitlements.bundles.features") || "features"}
+                                                {vm.pendingFeatures.length} {t("entitlements.bundles.features") || "features"}
                                           </Badge>
+                                          {vm.isDirty && (
+                                                <Badge variant="outline" className="text-amber-600 border-amber-500/30">
+                                                      {t("common.unsavedChanges") || "Unsaved changes"}
+                                                </Badge>
+                                          )}
                                     </div>
                               </div>
                         </div>
-                        {vm.isSaving && (
-                              <Badge variant="outline" className="gap-1 animate-pulse">
-                                    <Loader2 className="h-3 w-3 animate-spin" />
-                                    {t("common.saving") || "Saving..."}
-                              </Badge>
-                        )}
+                        <div className="flex items-center gap-2">
+                              {vm.isDirty && !isReadOnly && (
+                                    <>
+                                          <Button
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={vm.discard}
+                                                disabled={vm.isSaving}
+                                                className="gap-1"
+                                          >
+                                                <Undo2 className="h-4 w-4" />
+                                                {t("common.discard") || "Discard"}
+                                          </Button>
+                                          <Button
+                                                size="sm"
+                                                onClick={vm.save}
+                                                disabled={vm.isSaving}
+                                                className="gap-1 gradient-primary"
+                                          >
+                                                {vm.isSaving ? (
+                                                      <Loader2 className="h-4 w-4 animate-spin" />
+                                                ) : (
+                                                      <Save className="h-4 w-4" />
+                                                )}
+                                                {t("common.save") || "Save"}
+                                          </Button>
+                                    </>
+                              )}
+                              {vm.isSaving && (
+                                    <Badge variant="outline" className="gap-1 animate-pulse">
+                                          <Loader2 className="h-3 w-3 animate-spin" />
+                                          {t("common.saving") || "Saving..."}
+                                    </Badge>
+                              )}
+                        </div>
                   </div>
 
                   {isReadOnly && (
@@ -176,12 +210,12 @@ export function BundleDetailView({ bundleId }: BundleDetailViewProps) {
                               <TabsTrigger value="permissions" className="gap-2">
                                     <ShieldCheck className="h-4 w-4" />
                                     {t("entitlements.bundles.permissionRules") || "Permission Rules"}
-                                    <Badge variant="secondary" className="text-xs">{bundle.permissionRuleCount}</Badge>
+                                    <Badge variant="secondary" className="text-xs">{vm.pendingPermissions.length}</Badge>
                               </TabsTrigger>
                               <TabsTrigger value="features" className="gap-2">
                                     <Zap className="h-4 w-4" />
                                     {t("entitlements.bundles.featureRules") || "Feature Rules"}
-                                    <Badge variant="secondary" className="text-xs">{bundle.featureRuleCount}</Badge>
+                                    <Badge variant="secondary" className="text-xs">{vm.pendingFeatures.length}</Badge>
                               </TabsTrigger>
                         </TabsList>
 
@@ -324,14 +358,14 @@ export function BundleDetailView({ bundleId }: BundleDetailViewProps) {
                                                 </div>
                                           )}
 
-                                          {/* Current feature rules */}
-                                          {bundle.featureRules.length === 0 ? (
+                                          {/* Current feature rules — from LOCAL pending state */}
+                                          {vm.pendingFeatures.length === 0 ? (
                                                 <div className="text-center py-8 text-muted-foreground">
                                                       {t("entitlements.bundles.noFeatRules") || "No feature rules defined yet."}
                                                 </div>
                                           ) : (
                                                 <div className="divide-y rounded-lg border">
-                                                      {bundle.featureRules.map((rule) => {
+                                                      {vm.pendingFeatures.map((rule) => {
                                                             const feat = vm.allFeatures.find(f => f.name === rule.featureName);
                                                             const featLabel = feat
                                                                   ? (language === "ar" ? (feat.displayNameAr || feat.name) : (feat.displayNameEn || feat.name))

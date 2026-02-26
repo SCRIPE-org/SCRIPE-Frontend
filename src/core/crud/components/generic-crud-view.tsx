@@ -211,10 +211,10 @@ export interface CrudConfig<TItem = any> {
    * ======================================== */
   /** Column definitions for the table */
   columns: CrudColumn<TItem>[];
-  /** Field definitions for create form */
-  createFields: FieldConfig[];
-  /** Field definitions for edit form */
-  editFields: FieldConfig[];
+  /** Field definitions for create form (omit for read-only views) */
+  createFields?: FieldConfig[];
+  /** Field definitions for edit form (omit for read-only views) */
+  editFields?: FieldConfig[];
   /** Initial values for create form */
   createInitialValues?: Record<string, any>;
   /** Function to get initial values for edit form */
@@ -801,7 +801,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
         )}-${config?.formKey || 0}`}
       >
         <GenericForm
-          fields={createFields}
+          fields={createFields || []}
           initialValues={config?.createInitialValues || {}}
           onSubmit={viewModel.createItem}
           onCancel={() => viewModel.setIsCreateModalOpen(false)}
@@ -823,7 +823,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
           }-${JSON.stringify(editFields?.map((f) => f.name).sort())}-${config?.formKey || 0}`}
       >
         <GenericForm
-          fields={editFields || createFields}
+          fields={editFields || createFields || []}
           onSubmit={(data) => {
             if (viewModel.editingItem) {
               return viewModel.updateItem(viewModel.editingItem.id, data);
@@ -853,7 +853,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
             <DialogTitle>{`${t("common.view")} ${title}`}</DialogTitle>
           </DialogHeader>
           <GenericForm
-            fields={editFields || createFields}
+            fields={editFields || createFields || []}
             initialValues={
               config?.editInitialValues && viewModel.viewItem
                 ? config.editInitialValues(viewModel.viewItem)
