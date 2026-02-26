@@ -139,7 +139,7 @@ export function EditionDetailView({ editionId }: EditionDetailViewProps) {
                         const isCollapsed = vm.collapsedModules[moduleName] ?? true;
                         const allFeatures = Object.values(categories).flat();
                         const enabledCount = allFeatures.filter(f => {
-                              const val = vm.getEffectiveValue(f.id, f);
+                              const val = vm.getEffectiveValue(f);
                               return val === "true" || (f.valueType === "Numeric" && parseInt(val) > 0);
                         }).length;
 
@@ -177,8 +177,8 @@ export function EditionDetailView({ editionId }: EditionDetailViewProps) {
                                                             )}
                                                             <div className="divide-y">
                                                                   {features.map(feature => {
-                                                                        const value = vm.getEffectiveValue(feature.id, feature);
-                                                                        const serverFeature = edition.features.find(ef => ef.featureId === feature.id);
+                                                                        const value = vm.getEffectiveValue(feature);
+                                                                        const serverFeature = edition.features.find(ef => ef.featureName === feature.name);
                                                                         const isModified = serverFeature ? serverFeature.value !== value : value !== getFeatureDisabledDefault(feature.valueType);
 
                                                                         return (
@@ -200,7 +200,7 @@ export function EditionDetailView({ editionId }: EditionDetailViewProps) {
                                                                                           <FeatureControl
                                                                                                 valueType={feature.valueType}
                                                                                                 value={value}
-                                                                                                onChange={(v) => vm.setLocalValue(feature.id, v)}
+                                                                                                onChange={(v) => vm.setLocalValue(feature.name, v)}
                                                                                           />
                                                                                     </div>
                                                                               </div>

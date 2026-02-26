@@ -3489,6 +3489,8 @@ export const ar = {
     deleteConfirmDesc: "هل أنت متأكد من رغبتك في حذف هذا العنصر؟",
     statusConfirmDesc: "هل أنت متأكد من رغبتك في تغيير حالة هذا العنصر؟",
     tenant: "المستأجر",
+    discard: "إلغاء",
+    unsavedChanges: "غير محفوظ",
     name: "الاسم",
     created: "تم الإنشاء",
     preview: "معاينة",

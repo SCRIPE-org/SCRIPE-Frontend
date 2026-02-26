@@ -23,9 +23,10 @@ export interface EditionDetailViewModelResult {
       error: Error | null;
 
       // ── Feature state (local pending changes) ──
-      pendingValues: Record<string, string>; // featureId -> value
-      getEffectiveValue: (featureId: string, feature: Feature) => string;
-      setLocalValue: (featureId: string, value: string) => void;
+      // All keyed by featureName (stable, unique, not encrypted)
+      pendingValues: Record<string, string>;
+      getEffectiveValue: (feature: Feature) => string;
+      setLocalValue: (featureName: string, value: string) => void;
       hasUnsavedChanges: boolean;
 
       // ── Save/Discard ──
@@ -65,60 +66,78 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
             queryFn: () => featureRepository.getAll({ page: 1, pageSize: 1000 }),
       });
 
-      // ── Local pending feature values ──
-      const [pendingValues, setPendingValues] = useState<Record<string, string>>({});
-
-      // Initialize pending values from edition features when edition loads
-      useEffect(() => {
+      // ── Server map: featureName → value (from edition features) ──
+      // Uses featureName as key because encrypted IDs are non-deterministic
+      // (same GUID encrypted twice gives different strings)
+      const serverValueMap = useMemo(() => {
+            const map: Record<string, string> = {};
             if (edition) {
-                  const initial: Record<string, string> = {};
                   for (const ef of edition.features) {
-                        initial[ef.featureId] = ef.value;
+                        map[ef.featureName] = ef.value;
                   }
-                  setPendingValues(initial);
             }
+            return map;
       }, [edition]);
 
-      // Get effective value for a feature: pending → edition → disabled default
-      const getEffectiveValue = useCallback((featureId: string, feature: Feature): string => {
-            if (pendingValues[featureId] !== undefined) return pendingValues[featureId];
+      // ── featureName → featureId lookup (from edition features, for save API) ──
+      const featureIdByName = useMemo(() => {
+            const map: Record<string, string> = {};
+            if (edition) {
+                  for (const ef of edition.features) {
+                        map[ef.featureName] = ef.featureId;
+                  }
+            }
+            return map;
+      }, [edition]);
+
+      // ── Local pending feature values (keyed by featureName) ──
+      const [pendingValues, setPendingValues] = useState<Record<string, string>>({});
+
+      // Sync pending values when edition data changes
+      const [lastEditionId, setLastEditionId] = useState<string | undefined>();
+      useEffect(() => {
+            if (edition && edition.id !== lastEditionId) {
+                  setPendingValues(serverValueMap);
+                  setLastEditionId(edition.id);
+            }
+      }, [edition, serverValueMap, lastEditionId]);
+
+      // Get effective value: pending → server → disabled default
+      const getEffectiveValue = useCallback((feature: Feature): string => {
+            const name = feature.name;
+            if (pendingValues[name] !== undefined) return pendingValues[name];
+            if (serverValueMap[name] !== undefined) return serverValueMap[name];
             return getDisabledDefault(feature.valueType);
-      }, [pendingValues]);
+      }, [pendingValues, serverValueMap]);
 
       // Set a local value (no API call)
-      const setLocalValue = useCallback((featureId: string, value: string) => {
-            setPendingValues(prev => ({ ...prev, [featureId]: value }));
+      const setLocalValue = useCallback((featureName: string, value: string) => {
+            setPendingValues(prev => ({ ...prev, [featureName]: value }));
       }, []);
 
       // Check for unsaved changes
       const hasUnsavedChanges = useMemo(() => {
             if (!edition) return false;
-            const serverMap: Record<string, string> = {};
-            for (const ef of edition.features) {
-                  serverMap[ef.featureId] = ef.value;
-            }
-            for (const [fId, val] of Object.entries(pendingValues)) {
-                  if (serverMap[fId] !== val) return true;
+            for (const [name, val] of Object.entries(pendingValues)) {
+                  if (serverValueMap[name] !== val) return true;
             }
             return false;
-      }, [edition, pendingValues]);
+      }, [edition, pendingValues, serverValueMap]);
 
       const discardChanges = useCallback(() => {
-            if (edition) {
-                  const initial: Record<string, string> = {};
-                  for (const ef of edition.features) {
-                        initial[ef.featureId] = ef.value;
-                  }
-                  setPendingValues(initial);
-            }
-      }, [edition]);
+            setPendingValues(serverValueMap);
+      }, [serverValueMap]);
 
       // ── Save all features mutation ──
       const saveAllMutation = useMutation({
             mutationFn: async (updates: Record<string, string>) => {
                   const entries = Object.entries(updates);
-                  for (const [featureId, value] of entries) {
-                        await editionRepository.setFeatureValue(editionId, featureId, value);
+                  for (const [featureName, value] of entries) {
+                        // Look up the featureId from the edition's feature list
+                        const fId = featureIdByName[featureName];
+                        if (fId) {
+                              await editionRepository.setFeatureValue(editionId, fId, value);
+                        }
                   }
             },
             onSuccess: () => {
@@ -138,21 +157,16 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
 
       const saveAllFeatures = useCallback(() => {
             if (!edition) return;
-            // Only send changed values
-            const serverMap: Record<string, string> = {};
-            for (const ef of edition.features) {
-                  serverMap[ef.featureId] = ef.value;
-            }
             const changes: Record<string, string> = {};
-            for (const [fId, val] of Object.entries(pendingValues)) {
-                  if (serverMap[fId] !== val) {
-                        changes[fId] = val;
+            for (const [name, val] of Object.entries(pendingValues)) {
+                  if (serverValueMap[name] !== val) {
+                        changes[name] = val;
                   }
             }
             if (Object.keys(changes).length > 0) {
                   saveAllMutation.mutate(changes);
             }
-      }, [edition, pendingValues, saveAllMutation]);
+      }, [edition, pendingValues, serverValueMap, saveAllMutation]);
 
       // ── Module/Category grouping ──
       const [collapsedModules, setCollapsedModules] = useState<Record<string, boolean>>({});
