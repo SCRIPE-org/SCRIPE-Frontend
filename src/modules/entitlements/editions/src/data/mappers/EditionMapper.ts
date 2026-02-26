@@ -1,9 +1,5 @@
 /**
  * Edition Mapper — Model ↔ Entity conversion
- *
- * Handles conversion between API DTOs (EditionModel) and
- * domain entities (Edition), including bilingual display names
- * and feature list mapping.
  */
 import { Edition } from "../../domain/entities/Edition";
 import type { EditionData } from "../../domain/entities/Edition";
@@ -22,6 +18,7 @@ export class EditionMapper {
                   isRetired: model.isRetired,
                   createdByTenantId: model.createdByTenantId,
                   features: model.features,
+                  bundles: model.bundles,
                   createdAt: model.createdAt,
                   modifiedAt: model.modifiedAt,
             };

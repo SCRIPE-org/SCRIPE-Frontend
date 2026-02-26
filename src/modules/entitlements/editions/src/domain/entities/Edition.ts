@@ -10,6 +10,16 @@ export interface EditionFeatureDto {
       valueType: string;
 }
 
+export interface EditionBundleDto {
+      bundleId: string;
+      bundleName: string;
+      displayNameEn?: string;
+      displayNameAr?: string;
+      description?: string;
+      permissionRuleCount: number;
+      featureRuleCount: number;
+}
+
 export interface EditionData extends BaseEntity {
       name: string;
       displayNameEn: string;
@@ -19,6 +29,7 @@ export interface EditionData extends BaseEntity {
       isRetired: boolean;
       createdByTenantId?: string;
       features?: EditionFeatureDto[];
+      bundles?: EditionBundleDto[];
 }
 
 export class Edition {
@@ -33,6 +44,7 @@ export class Edition {
       get isRetired(): boolean { return this.data.isRetired; }
       get createdAt(): string { return this.data.createdAt; }
       get features(): EditionFeatureDto[] { return this.data.features ?? []; }
+      get bundles(): EditionBundleDto[] { return this.data.bundles ?? []; }
 
       getDisplayName(lang: string): string {
             return lang === "ar" ? this.displayNameAr : this.displayNameEn;

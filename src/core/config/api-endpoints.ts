@@ -239,6 +239,8 @@ export const API_ENDPOINTS = {
       UPDATE: (id: string) => `${V1}/editions/${id}`,
       DELETE: (id: string) => `${V1}/editions/${id}`,
       SET_FEATURE: (editionId: string, featureId: string) => `${V1}/editions/${editionId}/features/${featureId}`,
+      ATTACH_BUNDLE: (editionId: string) => `${V1}/editions/${editionId}/bundles`,
+      DETACH_BUNDLE: (editionId: string, bundleId: string) => `${V1}/editions/${editionId}/bundles/${bundleId}`,
     },
     BUNDLES: {
       LIST: `${V1}/bundles`,
