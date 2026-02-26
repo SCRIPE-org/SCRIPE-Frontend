@@ -40,7 +40,7 @@ export function EditionsView() {
                               key: "features",
                               label: t("entitlements.editions.featureCount") || "Features",
                               render: (_val: unknown, edition: Edition) => (
-                                    <Badge variant="secondary">{edition.features.length}</Badge>
+                                    <Badge variant="secondary">{edition.featureCount}</Badge>
                               ),
                         },
                         {

@@ -18,6 +18,7 @@ export interface EditionData extends BaseEntity {
       isSystem: boolean;
       isRetired: boolean;
       createdByTenantId?: string;
+      featureCount?: number;
       features?: EditionFeatureDto[];
 }
 
@@ -33,6 +34,7 @@ export class Edition {
       get isRetired(): boolean { return this.data.isRetired; }
       get createdAt(): string { return this.data.createdAt; }
       get features(): EditionFeatureDto[] { return this.data.features ?? []; }
+      get featureCount(): number { return this.data.featureCount ?? this.features.length; }
 
       getDisplayName(lang: string): string {
             return lang === "ar" ? this.displayNameAr : this.displayNameEn;

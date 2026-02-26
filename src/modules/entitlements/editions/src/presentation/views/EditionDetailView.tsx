@@ -122,7 +122,14 @@ export function EditionDetailView({ editionId }: EditionDetailViewProps) {
                               <Zap className="h-5 w-5 text-primary" />
                               <h2 className="text-lg font-semibold">{t("entitlements.features.title") || "Features"}</h2>
                               <Badge variant="secondary" className="text-xs">
-                                    {vm.features?.length || 0}
+                                    {(() => {
+                                          const allFeats = vm.features || [];
+                                          const enabledTotal = allFeats.filter(f => {
+                                                const val = vm.getEffectiveValue(f);
+                                                return val === "true" || (f.valueType === "Numeric" && parseInt(val) > 0);
+                                          }).length;
+                                          return `${enabledTotal}/${allFeats.length}`;
+                                    })()}
                               </Badge>
                         </div>
                         <Button variant="ghost" size="sm" onClick={() => {

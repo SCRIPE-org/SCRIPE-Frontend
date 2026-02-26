@@ -17,6 +17,7 @@ export class EditionMapper {
                   isSystem: model.isSystem,
                   isRetired: model.isRetired,
                   createdByTenantId: model.createdByTenantId,
+                  featureCount: model.featureCount,
                   features: model.features,
                   createdAt: model.createdAt,
                   modifiedAt: model.modifiedAt,
