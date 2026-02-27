@@ -5,21 +5,66 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
-import { CreditCard, Pencil, Loader2 } from "lucide-react";
+import {
+      CreditCard, Pencil, Loader2, RefreshCw, Play, Pause, XCircle,
+      ArrowUpCircle, Calendar, Clock, AlertTriangle, Shield, RotateCcw,
+} from "lucide-react";
 import { useTenantSubscriptionViewModel } from "@modules/system/tenants/src/presentation/viewmodels/useTenantSubscriptionViewModel";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@core/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { Skeleton } from "@core/ui/skeleton";
+import { Textarea } from "@core/ui/textarea";
+import { Label } from "@core/ui/label";
+import type { SubscriptionType } from "../../../data/models/TenantSubscription";
 
 interface TenantSubscriptionCardProps {
       tenantId: string;
 }
 
+// ── Status & Type Helpers ──
+
+const STATUS_CONFIG: Record<string, { variant: "success" | "secondary" | "destructive" | "outline"; icon: typeof Clock }> = {
+      active: { variant: "success", icon: Play },
+      trialing: { variant: "outline", icon: Clock },
+      suspended: { variant: "destructive", icon: Pause },
+      canceled: { variant: "secondary", icon: XCircle },
+      expired: { variant: "destructive", icon: AlertTriangle },
+      pastdue: { variant: "destructive", icon: AlertTriangle },
+};
+
+const TYPE_LABELS: Record<string, string> = {
+      Lifetime: "Lifetime",
+      Monthly: "Monthly",
+      Yearly: "Yearly",
+      Trial: "Trial",
+      AddOn: "Add-On",
+};
+
+function formatDate(dateStr?: string) {
+      if (!dateStr) return "—";
+      return new Date(dateStr).toLocaleDateString(undefined, {
+            year: "numeric", month: "short", day: "numeric",
+      });
+}
+
+// ── Main Component ──
+
 export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps) {
       const { t } = useI18n();
       const vm = useTenantSubscriptionViewModel(tenantId);
-      const [editOpen, setEditOpen] = useState(false);
-      const [selectedEditionId, setSelectedEditionId] = useState<string>("");
+
+      // Dialog states
+      const [changePlanOpen, setChangePlanOpen] = useState(false);
+      const [renewOpen, setRenewOpen] = useState(false);
+      const [convertOpen, setConvertOpen] = useState(false);
+      const [suspendOpen, setSuspendOpen] = useState(false);
+      const [cancelOpen, setCancelOpen] = useState(false);
+
+      // Form states for dialogs
+      const [selectedEditionId, setSelectedEditionId] = useState("");
+      const [selectedType, setSelectedType] = useState<SubscriptionType>("Monthly");
+      const [suspendReason, setSuspendReason] = useState("");
+      const [cancelReason, setCancelReason] = useState("");
 
       if (vm.isLoading) {
             return (
@@ -35,22 +80,37 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
             );
       }
 
-      const { subscription, availableEditions } = vm;
+      const { subscription } = vm;
+      const statusKey = subscription?.status?.toLowerCase() ?? "";
+      const statusConfig = STATUS_CONFIG[statusKey] ?? STATUS_CONFIG.active;
+      const StatusIcon = statusConfig.icon;
 
-      const handleEditOpen = () => {
-            setSelectedEditionId(subscription?.editionId || "");
-            setEditOpen(true);
-      };
+      // ── No Subscription State ──
 
-      const handleSave = () => {
-            if (selectedEditionId) {
-                  vm.changeEdition(selectedEditionId);
-                  setEditOpen(false);
-            }
-      };
+      if (!subscription) {
+            return (
+                  <>
+                        <Card className="border-dashed">
+                              <CardContent className="flex flex-col items-center justify-center gap-3 py-10 text-center text-muted-foreground">
+                                    <div className="rounded-full bg-muted p-3">
+                                          <CreditCard className="h-6 w-6 opacity-50" />
+                                    </div>
+                                    <p className="text-sm">{t("tenant.noSubscription") || "No active subscription"}</p>
+                                    <Button variant="outline" size="sm" onClick={() => {
+                                          setSelectedEditionId("");
+                                          setSelectedType("Monthly");
+                                          setChangePlanOpen(true);
+                                    }}>
+                                          {t("tenant.assignPlan") || "Assign Plan"}
+                                    </Button>
+                              </CardContent>
+                        </Card>
+                        {renderChangePlanDialog()}
+                  </>
+            );
+      }
 
-      // Find current edition to display its name properly
-      const currentEdition = availableEditions.find(e => e.id === subscription?.editionId);
+      // ── Active Subscription Card ──
 
       return (
             <>
@@ -62,102 +122,389 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                           {t("tenant.subscriptionPlan") || "Subscription Plan"}
                                     </CardTitle>
                                     <CardDescription>
-                                          {t("tenant.subscriptionPlanDesc") || "Manage the active edition and subscription details for this tenant."}
+                                          {t("tenant.subscriptionPlanDesc") || "Manage edition and billing for this tenant."}
                                     </CardDescription>
                               </div>
-                              <Button variant="ghost" size="sm" onClick={handleEditOpen}>
-                                    <Pencil className="h-4 w-4" />
-                              </Button>
                         </CardHeader>
-                        <CardContent className="space-y-4 pt-4">
-                              {subscription ? (
-                                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-                                          <div className="space-y-2">
-                                                <label className="text-sm font-medium text-muted-foreground">{t("tenant.currentPlan") || "Current Plan"}</label>
-                                                <div className="text-lg font-bold">{subscription.editionName || currentEdition?.name || t("tenant.unknownPlan") || "Unknown"}</div>
-                                          </div>
-                                          <div className="space-y-2">
-                                                <label className="text-sm font-medium text-muted-foreground">{t("tenant.status") || "Status"}</label>
-                                                <div>
-                                                      <Badge variant={subscription.status.toLowerCase() === "active" ? "success" : "secondary"}>
-                                                            {subscription.status}
-                                                      </Badge>
-                                                </div>
-                                          </div>
-                                          <div className="space-y-2">
-                                                <label className="text-sm font-medium text-muted-foreground">{t("tenant.startDate") || "Start Date"}</label>
-                                                <div className="text-base font-medium">
-                                                      {new Date(subscription.startDate).toLocaleDateString()}
-                                                </div>
-                                          </div>
-                                          <div className="space-y-2">
-                                                <label className="text-sm font-medium text-muted-foreground">{t("tenant.endDate") || "End Date"}</label>
-                                                <div className="text-base font-medium">
-                                                      {subscription.endDate ? new Date(subscription.endDate).toLocaleDateString() : t("tenant.never") || "Never"}
-                                                </div>
-                                          </div>
+
+                        <CardContent className="space-y-4 pt-2">
+                              {/* ── Status Grid ── */}
+                              <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
+                                    {/* Edition Name */}
+                                    <div className="space-y-1">
+                                          <p className="text-xs font-medium text-muted-foreground">{t("tenant.currentPlan") || "Plan"}</p>
+                                          <p className="text-sm font-bold">{subscription.editionName || t("tenant.unknownPlan") || "Unknown"}</p>
                                     </div>
-                              ) : (
-                                    <div className="flex flex-col items-center justify-center space-y-3 py-6 text-center text-muted-foreground border border-dashed rounded-lg">
-                                          <CreditCard className="h-8 w-8 opacity-50" />
-                                          <p>{t("tenant.noSubscription") || "This tenant does not have an active subscription."}</p>
-                                          <Button variant="outline" size="sm" onClick={handleEditOpen}>
-                                                {t("tenant.assignPlan") || "Assign Plan"}
-                                          </Button>
+
+                                    {/* Type Badge */}
+                                    <div className="space-y-1">
+                                          <p className="text-xs font-medium text-muted-foreground">{t("tenant.billingCycle") || "Billing"}</p>
+                                          <Badge variant="outline" className="text-xs">
+                                                {TYPE_LABELS[subscription.type] || subscription.type}
+                                          </Badge>
+                                    </div>
+
+                                    {/* Status Badge */}
+                                    <div className="space-y-1">
+                                          <p className="text-xs font-medium text-muted-foreground">{t("tenant.status") || "Status"}</p>
+                                          <Badge variant={statusConfig.variant} className="text-xs gap-1">
+                                                <StatusIcon className="h-3 w-3" />
+                                                {subscription.status}
+                                          </Badge>
+                                    </div>
+
+                                    {/* Start Date */}
+                                    <div className="space-y-1">
+                                          <p className="text-xs font-medium text-muted-foreground">{t("tenant.startDate") || "Start"}</p>
+                                          <p className="text-sm font-medium flex items-center gap-1">
+                                                <Calendar className="h-3 w-3 text-muted-foreground" />
+                                                {formatDate(subscription.startDate)}
+                                          </p>
+                                    </div>
+
+                                    {/* End Date / Days Remaining */}
+                                    <div className="space-y-1">
+                                          <p className="text-xs font-medium text-muted-foreground">{t("tenant.endDate") || "Expires"}</p>
+                                          {subscription.endDate ? (
+                                                <div>
+                                                      <p className="text-sm font-medium">{formatDate(subscription.endDate)}</p>
+                                                      {vm.daysRemaining !== null && (
+                                                            <p className={`text-xs ${vm.daysRemaining <= 7 ? "text-destructive font-semibold" : "text-muted-foreground"}`}>
+                                                                  {vm.daysRemaining > 0
+                                                                        ? `${vm.daysRemaining} ${t("tenant.daysLeft") || "days left"}`
+                                                                        : t("tenant.expired") || "Expired"}
+                                                            </p>
+                                                      )}
+                                                </div>
+                                          ) : (
+                                                <p className="text-sm font-medium text-muted-foreground">{t("tenant.never") || "Never"}</p>
+                                          )}
+                                    </div>
+                              </div>
+
+                              {/* ── Expiration Warning ── */}
+                              {vm.daysRemaining !== null && vm.daysRemaining > 0 && vm.daysRemaining <= 7 && (
+                                    <div className="flex items-center gap-2 rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">
+                                          <AlertTriangle className="h-4 w-4 shrink-0" />
+                                          <span>{t("tenant.expiringWarning") || `Subscription expires in ${vm.daysRemaining} day(s). Consider renewing.`}</span>
                                     </div>
                               )}
+
+                              {/* ── Suspended Banner ── */}
+                              {vm.isSuspended && (
+                                    <div className="flex items-center gap-2 rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">
+                                          <Shield className="h-4 w-4 shrink-0" />
+                                          <span>{t("tenant.suspendedBanner") || "This subscription is suspended. The tenant cannot access the system."}</span>
+                                    </div>
+                              )}
+
+                              {/* ── Actions Row ── */}
+                              <div className="flex flex-wrap gap-2 border-t pt-3">
+                                    {/* Change Plan */}
+                                    <Button variant="outline" size="sm" onClick={() => {
+                                          setSelectedEditionId(subscription.editionId || "");
+                                          setSelectedType((subscription.type as SubscriptionType) || "Monthly");
+                                          setChangePlanOpen(true);
+                                    }}>
+                                          <Pencil className="mr-1.5 h-3.5 w-3.5" />
+                                          {t("tenant.changePlan") || "Change Plan"}
+                                    </Button>
+
+                                    {/* Renew */}
+                                    {vm.canRenew && (
+                                          <Button variant="outline" size="sm" onClick={() => {
+                                                setSelectedType((subscription.type as SubscriptionType) || "Monthly");
+                                                setRenewOpen(true);
+                                          }}>
+                                                <RefreshCw className="mr-1.5 h-3.5 w-3.5" />
+                                                {t("tenant.renew") || "Renew"}
+                                          </Button>
+                                    )}
+
+                                    {/* Convert Trial */}
+                                    {vm.canConvertTrial && (
+                                          <Button variant="default" size="sm" onClick={() => {
+                                                setSelectedType("Monthly");
+                                                setConvertOpen(true);
+                                          }}>
+                                                <ArrowUpCircle className="mr-1.5 h-3.5 w-3.5" />
+                                                {t("tenant.convertTrial") || "Convert to Paid"}
+                                          </Button>
+                                    )}
+
+                                    {/* Suspend */}
+                                    {vm.canSuspend && (
+                                          <Button variant="outline" size="sm" className="text-orange-600 hover:text-orange-700" onClick={() => {
+                                                setSuspendReason("");
+                                                setSuspendOpen(true);
+                                          }}>
+                                                <Pause className="mr-1.5 h-3.5 w-3.5" />
+                                                {t("tenant.suspend") || "Suspend"}
+                                          </Button>
+                                    )}
+
+                                    {/* Resume */}
+                                    {vm.canResume && (
+                                          <Button variant="default" size="sm" onClick={() => vm.resumeSubscription()} disabled={vm.isResuming}>
+                                                {vm.isResuming ? <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" /> : <Play className="mr-1.5 h-3.5 w-3.5" />}
+                                                {t("tenant.resume") || "Resume"}
+                                          </Button>
+                                    )}
+
+                                    {/* Cancel */}
+                                    {vm.canCancel && (
+                                          <Button variant="outline" size="sm" className="text-destructive hover:text-destructive" onClick={() => {
+                                                setCancelReason("");
+                                                setCancelOpen(true);
+                                          }}>
+                                                <XCircle className="mr-1.5 h-3.5 w-3.5" />
+                                                {t("tenant.cancel") || "Cancel"}
+                                          </Button>
+                                    )}
+
+                                    {/* Resync Permissions */}
+                                    <Button variant="ghost" size="sm" onClick={() => vm.resyncPermissions()} disabled={vm.isResyncing} title={t("tenant.resyncPermissions") || "Re-sync permissions from edition"}>
+                                          {vm.isResyncing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RotateCcw className="h-3.5 w-3.5" />}
+                                    </Button>
+                              </div>
                         </CardContent>
                   </Card>
 
-                  <Dialog open={editOpen} onOpenChange={setEditOpen}>
+                  {/* ── Dialogs ── */}
+                  {renderChangePlanDialog()}
+                  {renderRenewDialog()}
+                  {renderConvertDialog()}
+                  {renderSuspendDialog()}
+                  {renderCancelDialog()}
+            </>
+      );
+
+      // ═══════════════════════════════════════════════════════════════
+      // DIALOG RENDERERS
+      // ═══════════════════════════════════════════════════════════════
+
+      function renderChangePlanDialog() {
+            return (
+                  <Dialog open={changePlanOpen} onOpenChange={setChangePlanOpen}>
                         <DialogContent className="max-w-md">
                               <DialogHeader>
                                     <DialogTitle>{t("tenant.changeSubscriptionPlan") || "Change Subscription Plan"}</DialogTitle>
                                     <DialogDescription>
-                                          {t("tenant.changeSubscriptionPlanDesc") || "Select a new edition to assign to this tenant. This will take effect immediately."}
+                                          {t("tenant.changeSubscriptionPlanDesc") || "Select a new edition and billing cycle."}
                                     </DialogDescription>
                               </DialogHeader>
-
-                              <div className="space-y-4 py-4">
+                              <div className="space-y-4 py-2">
                                     <div className="space-y-2">
-                                          <label className="text-sm font-medium">{t("tenant.selectPlan") || "Select Plan"}</label>
+                                          <Label>{t("tenant.selectPlan") || "Edition"}</Label>
                                           <Select value={selectedEditionId} onValueChange={setSelectedEditionId}>
                                                 <SelectTrigger>
-                                                      <SelectValue placeholder={t("tenant.selectAPlan") || "Select a plan"} />
+                                                      <SelectValue placeholder={t("tenant.selectAPlan") || "Select an edition"} />
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                      {availableEditions.map((edition) => (
-                                                            <SelectItem key={edition.id} value={edition.id}>
-                                                                  {edition.name}
-                                                            </SelectItem>
+                                                      {vm.availableEditions.map((e) => (
+                                                            <SelectItem key={e.id} value={e.id}>{e.name}</SelectItem>
                                                       ))}
-                                                      {availableEditions.length === 0 && (
-                                                            <SelectItem value="empty" disabled>
-                                                                  {vm.isEditionsLoading ? (t("common.loading") || "Loading...") : (t("tenant.noEditionsAvailable") || "No editions available")}
-                                                            </SelectItem>
-                                                      )}
+                                                </SelectContent>
+                                          </Select>
+                                    </div>
+                                    <div className="space-y-2">
+                                          <Label>{t("tenant.billingCycle") || "Billing Cycle"}</Label>
+                                          <Select value={selectedType} onValueChange={(v) => setSelectedType(v as SubscriptionType)}>
+                                                <SelectTrigger>
+                                                      <SelectValue />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                      <SelectItem value="Monthly">{t("tenant.monthly") || "Monthly"}</SelectItem>
+                                                      <SelectItem value="Yearly">{t("tenant.yearly") || "Yearly"}</SelectItem>
+                                                      <SelectItem value="Lifetime">{t("tenant.lifetime") || "Lifetime"}</SelectItem>
+                                                      <SelectItem value="Trial">{t("tenant.trial") || "Trial (14 days)"}</SelectItem>
                                                 </SelectContent>
                                           </Select>
                                     </div>
                               </div>
-
                               <DialogFooter>
-                                    <Button variant="outline" onClick={() => setEditOpen(false)} disabled={vm.isChanging}>
+                                    <Button variant="outline" onClick={() => setChangePlanOpen(false)} disabled={vm.isChanging}>
                                           {t("common.cancel") || "Cancel"}
                                     </Button>
-                                    <Button onClick={handleSave} disabled={!selectedEditionId || vm.isChanging}>
-                                          {vm.isChanging ? (
-                                                <>
-                                                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                                      {t("common.saving") || "Saving..."}
-                                                </>
-                                          ) : (
-                                                t("common.save") || "Save"
-                                          )}
+                                    <Button onClick={() => {
+                                          if (selectedEditionId) {
+                                                vm.changeEdition(selectedEditionId, selectedType);
+                                                setChangePlanOpen(false);
+                                          }
+                                    }} disabled={!selectedEditionId || vm.isChanging}>
+                                          {vm.isChanging ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />{t("common.saving") || "Saving..."}</> : (t("common.save") || "Save")}
                                     </Button>
                               </DialogFooter>
                         </DialogContent>
                   </Dialog>
-            </>
-      );
+            );
+      }
+
+      function renderRenewDialog() {
+            return (
+                  <Dialog open={renewOpen} onOpenChange={setRenewOpen}>
+                        <DialogContent className="max-w-md">
+                              <DialogHeader>
+                                    <DialogTitle>{t("tenant.renewSubscription") || "Renew Subscription"}</DialogTitle>
+                                    <DialogDescription>
+                                          {t("tenant.renewDesc") || "Extend the subscription period. The new period will be added from the current end date."}
+                                    </DialogDescription>
+                              </DialogHeader>
+                              <div className="space-y-4 py-2">
+                                    {subscription && (
+                                          <div className="rounded-lg bg-muted/50 p-3 space-y-1">
+                                                <p className="text-xs text-muted-foreground">{t("tenant.currentEndDate") || "Current End Date"}</p>
+                                                <p className="text-sm font-medium">{subscription.endDate ? formatDate(subscription.endDate) : (t("tenant.never") || "Never (Lifetime)")}</p>
+                                          </div>
+                                    )}
+                                    <div className="space-y-2">
+                                          <Label>{t("tenant.extendBy") || "Extend By"}</Label>
+                                          <Select value={selectedType} onValueChange={(v) => setSelectedType(v as SubscriptionType)}>
+                                                <SelectTrigger>
+                                                      <SelectValue />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                      <SelectItem value="Monthly">{t("tenant.oneMonth") || "1 Month"}</SelectItem>
+                                                      <SelectItem value="Yearly">{t("tenant.oneYear") || "1 Year"}</SelectItem>
+                                                      <SelectItem value="Lifetime">{t("tenant.makeLifetime") || "Make Lifetime (no expiry)"}</SelectItem>
+                                                </SelectContent>
+                                          </Select>
+                                    </div>
+                              </div>
+                              <DialogFooter>
+                                    <Button variant="outline" onClick={() => setRenewOpen(false)} disabled={vm.isRenewing}>
+                                          {t("common.cancel") || "Cancel"}
+                                    </Button>
+                                    <Button onClick={() => { vm.renewSubscription(selectedType); setRenewOpen(false); }} disabled={vm.isRenewing}>
+                                          {vm.isRenewing ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />{t("common.saving") || "Saving..."}</> : (t("tenant.renew") || "Renew")}
+                                    </Button>
+                              </DialogFooter>
+                        </DialogContent>
+                  </Dialog>
+            );
+      }
+
+      function renderConvertDialog() {
+            return (
+                  <Dialog open={convertOpen} onOpenChange={setConvertOpen}>
+                        <DialogContent className="max-w-md">
+                              <DialogHeader>
+                                    <DialogTitle>{t("tenant.convertTrial") || "Convert Trial to Paid Plan"}</DialogTitle>
+                                    <DialogDescription>
+                                          {t("tenant.convertTrialDesc") || "Select a billing cycle for the paid plan. The new period starts from today."}
+                                    </DialogDescription>
+                              </DialogHeader>
+                              <div className="space-y-4 py-2">
+                                    <div className="flex items-center gap-2 rounded-lg border border-yellow-500/30 bg-yellow-500/5 p-3 text-sm text-yellow-700 dark:text-yellow-400">
+                                          <AlertTriangle className="h-4 w-4 shrink-0" />
+                                          <span>{t("tenant.trialOnceWarning") || "Trial can only be used once per edition. This action is irreversible."}</span>
+                                    </div>
+                                    <div className="space-y-2">
+                                          <Label>{t("tenant.selectBillingCycle") || "Billing Cycle"}</Label>
+                                          <Select value={selectedType} onValueChange={(v) => setSelectedType(v as SubscriptionType)}>
+                                                <SelectTrigger>
+                                                      <SelectValue />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                      <SelectItem value="Monthly">{t("tenant.monthly") || "Monthly"}</SelectItem>
+                                                      <SelectItem value="Yearly">{t("tenant.yearly") || "Yearly"}</SelectItem>
+                                                      <SelectItem value="Lifetime">{t("tenant.lifetime") || "Lifetime"}</SelectItem>
+                                                </SelectContent>
+                                          </Select>
+                                    </div>
+                              </div>
+                              <DialogFooter>
+                                    <Button variant="outline" onClick={() => setConvertOpen(false)} disabled={vm.isConverting}>
+                                          {t("common.cancel") || "Cancel"}
+                                    </Button>
+                                    <Button onClick={() => { vm.convertTrial(selectedType); setConvertOpen(false); }} disabled={vm.isConverting}>
+                                          {vm.isConverting ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />{t("common.saving") || "Converting..."}</> : (t("tenant.convertToPaid") || "Convert to Paid")}
+                                    </Button>
+                              </DialogFooter>
+                        </DialogContent>
+                  </Dialog>
+            );
+      }
+
+      function renderSuspendDialog() {
+            return (
+                  <Dialog open={suspendOpen} onOpenChange={setSuspendOpen}>
+                        <DialogContent className="max-w-md">
+                              <DialogHeader>
+                                    <DialogTitle className="text-destructive">{t("tenant.suspendSubscription") || "Suspend Subscription"}</DialogTitle>
+                                    <DialogDescription>
+                                          {t("tenant.suspendDesc") || "This tenant will lose access to the system while suspended. You can resume it later."}
+                                    </DialogDescription>
+                              </DialogHeader>
+                              <div className="space-y-4 py-2">
+                                    <div className="space-y-2">
+                                          <Label>{t("tenant.suspendReason") || "Reason for suspension"} *</Label>
+                                          <Textarea
+                                                value={suspendReason}
+                                                onChange={(e) => setSuspendReason(e.target.value)}
+                                                placeholder={t("tenant.suspendReasonPlaceholder") || "e.g. Payment fraud, Terms violation..."}
+                                                className="min-h-[80px]"
+                                          />
+                                    </div>
+                              </div>
+                              <DialogFooter>
+                                    <Button variant="outline" onClick={() => setSuspendOpen(false)} disabled={vm.isSuspending}>
+                                          {t("common.cancel") || "Cancel"}
+                                    </Button>
+                                    <Button variant="destructive" onClick={() => {
+                                          if (suspendReason.trim().length >= 3) {
+                                                vm.suspendSubscription(suspendReason.trim());
+                                                setSuspendOpen(false);
+                                          }
+                                    }} disabled={suspendReason.trim().length < 3 || vm.isSuspending}>
+                                          {vm.isSuspending ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /></> : <Pause className="mr-2 h-4 w-4" />}
+                                          {t("tenant.suspend") || "Suspend"}
+                                    </Button>
+                              </DialogFooter>
+                        </DialogContent>
+                  </Dialog>
+            );
+      }
+
+      function renderCancelDialog() {
+            return (
+                  <Dialog open={cancelOpen} onOpenChange={setCancelOpen}>
+                        <DialogContent className="max-w-md">
+                              <DialogHeader>
+                                    <DialogTitle className="text-destructive">{t("tenant.cancelSubscription") || "Cancel Subscription"}</DialogTitle>
+                                    <DialogDescription>
+                                          {t("tenant.cancelDesc") || "This will permanently end the subscription. The tenant will lose all edition features and permissions."}
+                                    </DialogDescription>
+                              </DialogHeader>
+                              <div className="space-y-4 py-2">
+                                    <div className="flex items-center gap-2 rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">
+                                          <AlertTriangle className="h-4 w-4 shrink-0" />
+                                          <span>{t("tenant.cancelWarning") || "This action cannot be undone. All features and permissions will be removed."}</span>
+                                    </div>
+                                    <div className="space-y-2">
+                                          <Label>{t("tenant.cancelReason") || "Reason (optional)"}</Label>
+                                          <Textarea
+                                                value={cancelReason}
+                                                onChange={(e) => setCancelReason(e.target.value)}
+                                                placeholder={t("tenant.cancelReasonPlaceholder") || "Why are you canceling this subscription?"}
+                                                className="min-h-[80px]"
+                                          />
+                                    </div>
+                              </div>
+                              <DialogFooter>
+                                    <Button variant="outline" onClick={() => setCancelOpen(false)} disabled={vm.isCanceling}>
+                                          {t("common.cancel") || "Keep Subscription"}
+                                    </Button>
+                                    <Button variant="destructive" onClick={() => {
+                                          vm.cancelSubscription(cancelReason.trim() || undefined);
+                                          setCancelOpen(false);
+                                    }} disabled={vm.isCanceling}>
+                                          {vm.isCanceling ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /></> : <XCircle className="mr-2 h-4 w-4" />}
+                                          {t("tenant.confirmCancel") || "Cancel Subscription"}
+                                    </Button>
+                              </DialogFooter>
+                        </DialogContent>
+                  </Dialog>
+            );
+      }
 }

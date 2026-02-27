@@ -249,6 +249,12 @@ export const API_ENDPOINTS = {
     SUBSCRIPTIONS: {
       ASSIGN: (tenantId: string) => `${V1}/tenants/${tenantId}/subscription`,
       CHANGE: (tenantId: string) => `${V1}/tenants/${tenantId}/subscription`,
+      RENEW: (tenantId: string) => `${V1}/tenants/${tenantId}/subscription/renew`,
+      CONVERT: (tenantId: string) => `${V1}/tenants/${tenantId}/subscription/convert`,
+      SUSPEND: (tenantId: string) => `${V1}/tenants/${tenantId}/subscription/suspend`,
+      RESUME: (tenantId: string) => `${V1}/tenants/${tenantId}/subscription/resume`,
+      CANCEL: (tenantId: string) => `${V1}/tenants/${tenantId}/subscription/cancel`,
+      RESYNC: (tenantId: string) => `${V1}/tenants/${tenantId}/subscription/resync`,
       LIST_BY_TENANT: (tenantId: string) => `${V1}/tenants/${tenantId}/subscriptions`,
       GET_BY_ID: (id: string) => `${V1}/subscriptions/${id}`,
       REVOKE: (id: string) => `${V1}/subscriptions/${id}`,

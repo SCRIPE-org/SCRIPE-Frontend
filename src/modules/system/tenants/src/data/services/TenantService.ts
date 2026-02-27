@@ -211,10 +211,52 @@ export class TenantService implements ITenantService {
     );
   }
 
-  async changeEdition(tenantId: string, editionId: string): Promise<void> {
+  async changeEdition(tenantId: string, editionId: string, type: string = "Lifetime"): Promise<void> {
     await this.api.put(
       API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.CHANGE(tenantId),
-      { editionId }
+      { editionId, type }
+    );
+  }
+
+  async renewSubscription(tenantId: string, type: string): Promise<void> {
+    await this.api.post(
+      API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.RENEW(tenantId),
+      { type }
+    );
+  }
+
+  async convertTrial(tenantId: string, type: string): Promise<void> {
+    await this.api.post(
+      API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.CONVERT(tenantId),
+      { type }
+    );
+  }
+
+  async suspendSubscription(tenantId: string, reason: string): Promise<void> {
+    await this.api.post(
+      API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.SUSPEND(tenantId),
+      { reason }
+    );
+  }
+
+  async resumeSubscription(tenantId: string): Promise<void> {
+    await this.api.post(
+      API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.RESUME(tenantId),
+      {}
+    );
+  }
+
+  async cancelSubscription(tenantId: string, reason?: string): Promise<void> {
+    await this.api.post(
+      API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.CANCEL(tenantId),
+      { reason }
+    );
+  }
+
+  async resyncPermissions(tenantId: string): Promise<void> {
+    await this.api.post(
+      API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.RESYNC(tenantId),
+      {}
     );
   }
 
@@ -230,3 +272,4 @@ export class TenantService implements ITenantService {
     );
   }
 }
+

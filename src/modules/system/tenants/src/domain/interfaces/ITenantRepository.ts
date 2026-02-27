@@ -150,7 +150,25 @@ export interface ITenantRepository {
   /**
    * Change the base edition of an existing tenant
    */
-  changeEdition(tenantId: string, editionId: string): Promise<void>;
+  changeEdition(tenantId: string, editionId: string, type?: string): Promise<void>;
+
+  /** Renew (extend) the current subscription period */
+  renewSubscription(tenantId: string, type: string): Promise<void>;
+
+  /** Convert a trial subscription to a real plan */
+  convertTrial(tenantId: string, type: string): Promise<void>;
+
+  /** Suspend a subscription (admin action for rules violation) */
+  suspendSubscription(tenantId: string, reason: string): Promise<void>;
+
+  /** Resume a previously suspended subscription */
+  resumeSubscription(tenantId: string): Promise<void>;
+
+  /** Cancel a subscription permanently */
+  cancelSubscription(tenantId: string, reason?: string): Promise<void>;
+
+  /** Re-sync tenant permissions from current edition (data backfill) */
+  resyncPermissions(tenantId: string): Promise<void>;
 
   /**
    * Get all subscriptions for a tenant
