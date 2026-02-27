@@ -341,6 +341,32 @@ export const en = {
     // Banners
     expiringWarning: "Subscription expires soon. Consider renewing.",
     suspendedBanner: "This subscription is suspended. The tenant cannot access the system.",
+    pastDueBanner: "Payment past due — subscription at risk. Renew to avoid suspension.",
+    canceledBanner: "Subscription has been canceled.",
+    expiredBanner: "Subscription has expired.",
+    reassignPlan: "Reassign Plan",
+    // Fallback
+    fallbackInfo: "On expiry",
+    fullSuspendMode: "full suspend mode",
+    downgradeToFallback: "Downgrade to fallback plan",
+    downgradeDesc: "Tenant will be moved to the fallback plan and remain active.",
+    fullSuspendDesc: "Tenant will be fully suspended and all admins deactivated.",
+    downgradeKeepActive: "Tenant will keep active on the fallback plan with reduced features.",
+    cancelDowngradeDesc: "Tenant will be moved to the fallback plan and remain active.",
+    cancelPermanentDesc: "Subscription will be permanently canceled and all admins deactivated.",
+    cancelDowngradeKeepActive: "Tenant will keep active on the fallback plan with reduced features.",
+    downgrade: "Downgrade",
+    // Admin warnings
+    suspendAdminWarning: "All tenant administrators will be deactivated and unable to access the system until the subscription is resumed.",
+    cancelAdminWarning: "All tenant administrators will be permanently deactivated. This action cannot be undone.",
+    resumeSubscription: "Resume Subscription",
+    resumeDesc: "Resume the suspended subscription and restore tenant access.",
+    resumeAdminWarning: "All previously deactivated administrators will be re-activated and regain access to the system.",
+    confirmResume: "Resume Subscription",
+    // Tree badges
+    suspended: "Suspended",
+    expiringSoon: "Expiring Soon",
+    trialEndDate: "Trial End Date",
   },
 
   // Tenant Settings Page (/settings/tenant)

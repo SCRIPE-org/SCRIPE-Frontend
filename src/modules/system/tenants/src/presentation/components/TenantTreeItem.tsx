@@ -29,6 +29,8 @@ import {
   ChevronDown,
   LogIn,
   Pause,
+  AlertTriangle,
+  XCircle,
 } from "lucide-react";
 import { cn } from "@core/common/utils";
 
@@ -53,13 +55,26 @@ export function TenantTreeItem({
   const { t } = useI18n();
   const hasChildren = node.children && node.children.length > 0;
 
+  // Derive subscription status from editionEndDate
+  const isExpired = node.editionEndDate
+    ? new Date(node.editionEndDate) < new Date()
+    : false;
+  const isExpiringSoon = !isExpired && node.editionEndDate
+    ? (() => {
+      const diff = Math.ceil(
+        (new Date(node.editionEndDate!).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+      );
+      return diff >= 0 && diff <= 7;
+    })()
+    : false;
+
   return (
     <div>
       <div
         className={cn(
           "group flex items-center gap-2 rounded-md px-3 py-2 hover:bg-muted/50",
           depth > 0 && "ml-6",
-          node.isSuspended && "opacity-60"
+          (node.isSuspended || isExpired) && "opacity-60"
         )}
       >
         {/* Expand/Collapse */}
@@ -85,6 +100,20 @@ export function TenantTreeItem({
           <Badge variant="destructive" className="gap-1 text-xs">
             <Pause className="h-3 w-3" />
             {t("tenant.suspended") || "Suspended"}
+          </Badge>
+        )}
+
+        {isExpired && !node.isSuspended && (
+          <Badge variant="destructive" className="gap-1 text-xs">
+            <XCircle className="h-3 w-3" />
+            {t("tenant.expired") || "Expired"}
+          </Badge>
+        )}
+
+        {isExpiringSoon && !node.isSuspended && (
+          <Badge variant="outline" className="gap-1 text-xs border-amber-500/50 text-amber-600 dark:text-amber-400">
+            <AlertTriangle className="h-3 w-3" />
+            {t("tenant.expiringSoon") || "Expiring Soon"}
           </Badge>
         )}
 

@@ -8,6 +8,7 @@ import { Badge } from "@core/ui/badge";
 import {
       CreditCard, Pencil, Loader2, RefreshCw, Play, Pause, XCircle,
       ArrowUpCircle, Calendar, Clock, AlertTriangle, Shield, RotateCcw,
+      ArrowDownCircle,
 } from "lucide-react";
 import { useTenantSubscriptionViewModel } from "@modules/system/tenants/src/presentation/viewmodels/useTenantSubscriptionViewModel";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@core/ui/dialog";
@@ -16,6 +17,7 @@ import type { GenericSelectOption } from "@core/crud/components/generic-select";
 import { Skeleton } from "@core/ui/skeleton";
 import { Textarea } from "@core/ui/textarea";
 import { Label } from "@core/ui/label";
+import { Switch } from "@core/ui/switch";
 import type { SubscriptionType } from "../../../data/models/TenantSubscription";
 
 interface TenantSubscriptionCardProps {
@@ -88,6 +90,8 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
       const [selectedType, setSelectedType] = useState<SubscriptionType>("Monthly");
       const [suspendReason, setSuspendReason] = useState("");
       const [cancelReason, setCancelReason] = useState("");
+      const [useFallbackOnSuspend, setUseFallbackOnSuspend] = useState(true);
+      const [useFallbackOnCancel, setUseFallbackOnCancel] = useState(true);
 
       // Edition options for GenericSelect
       const editionOptions: GenericSelectOption[] = (vm.availableEditions || []).map((e) => ({
@@ -224,6 +228,70 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                     <div className="flex items-center gap-2 rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">
                                           <Shield className="h-4 w-4 shrink-0" />
                                           <span>{t("tenant.suspendedBanner") || "This subscription is suspended. The tenant cannot access the system."}</span>
+                                    </div>
+                              )}
+
+                              {/* ── Past Due Banner ── */}
+                              {vm.isPastDue && (
+                                    <div className="flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/5 p-3 text-sm text-amber-700 dark:text-amber-400">
+                                          <AlertTriangle className="h-4 w-4 shrink-0" />
+                                          <span>{t("tenant.pastDueBanner") || "Payment past due — subscription at risk. Renew to avoid suspension."}</span>
+                                    </div>
+                              )}
+
+                              {/* ── Canceled Banner ── */}
+                              {vm.isCanceled && (
+                                    <div className="flex items-center justify-between gap-2 rounded-lg border border-muted bg-muted/30 p-3 text-sm">
+                                          <div className="flex items-center gap-2 text-muted-foreground">
+                                                <XCircle className="h-4 w-4 shrink-0" />
+                                                <span>{t("tenant.canceledBanner") || "Subscription has been canceled."}</span>
+                                          </div>
+                                          {vm.canReassign && (
+                                                <Button variant="outline" size="sm" onClick={() => {
+                                                      setSelectedEditionId("");
+                                                      setSelectedType("Monthly");
+                                                      setChangePlanOpen(true);
+                                                }}>
+                                                      <ArrowUpCircle className="mr-1.5 h-3.5 w-3.5" />
+                                                      {t("tenant.reassignPlan") || "Reassign Plan"}
+                                                </Button>
+                                          )}
+                                    </div>
+                              )}
+
+                              {/* ── Expired Banner ── */}
+                              {vm.isExpired && (
+                                    <div className="flex items-center justify-between gap-2 rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm">
+                                          <div className="flex items-center gap-2 text-destructive">
+                                                <AlertTriangle className="h-4 w-4 shrink-0" />
+                                                <span>{t("tenant.expiredBanner") || "Subscription has expired."}</span>
+                                          </div>
+                                          {vm.canReassign && (
+                                                <Button variant="outline" size="sm" onClick={() => {
+                                                      setSelectedEditionId("");
+                                                      setSelectedType("Monthly");
+                                                      setChangePlanOpen(true);
+                                                }}>
+                                                      <ArrowUpCircle className="mr-1.5 h-3.5 w-3.5" />
+                                                      {t("tenant.reassignPlan") || "Reassign Plan"}
+                                                </Button>
+                                          )}
+                                    </div>
+                              )}
+
+                              {/* ── Fallback Info Badge ── */}
+                              {vm.hasFallback && !vm.isCanceled && !vm.isExpired && (
+                                    <div className="flex items-center gap-2 rounded-lg border border-blue-500/30 bg-blue-500/5 p-3 text-sm text-blue-700 dark:text-blue-400">
+                                          <ArrowDownCircle className="h-4 w-4 shrink-0" />
+                                          <span>
+                                                {t("tenant.fallbackInfo") || "On expiry"}{" → "}
+                                                <strong>{vm.fallbackEditionName}</strong>
+                                                {vm.expiryBehavior === "Suspend" && (
+                                                      <span className="ml-1 text-muted-foreground text-xs">
+                                                            ({t("tenant.fullSuspendMode") || "full suspend mode"})
+                                                      </span>
+                                                )}
+                                          </span>
                                     </div>
                               )}
 
@@ -450,11 +518,40 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                     </DialogDescription>
                               </DialogHeader>
                               <div className="space-y-4 py-2">
+                                    {/* Fallback toggle */}
+                                    {vm.hasFallback && (
+                                          <div className="rounded-lg border p-3 space-y-3">
+                                                <div className="flex items-center justify-between">
+                                                      <div className="space-y-0.5">
+                                                            <Label className="text-sm font-medium">
+                                                                  {t("tenant.downgradeToFallback") || `Downgrade to ${vm.fallbackEditionName}`}
+                                                            </Label>
+                                                            <p className="text-xs text-muted-foreground">
+                                                                  {useFallbackOnSuspend
+                                                                        ? (t("tenant.downgradeDesc") || `Tenant will be moved to the ${vm.fallbackEditionName} plan and remain active.`)
+                                                                        : (t("tenant.fullSuspendDesc") || "Tenant will be fully suspended and all admins deactivated.")
+                                                                  }
+                                                            </p>
+                                                      </div>
+                                                      <Switch
+                                                            checked={useFallbackOnSuspend}
+                                                            onCheckedChange={setUseFallbackOnSuspend}
+                                                      />
+                                                </div>
+                                          </div>
+                                    )}
                                     {/* Admin deactivation warning */}
-                                    <div className="flex items-center gap-2 rounded-lg border border-orange-500/30 bg-orange-500/5 p-3 text-sm text-orange-700 dark:text-orange-400">
-                                          <AlertTriangle className="h-4 w-4 shrink-0" />
-                                          <span>{t("tenant.suspendAdminWarning") || "All tenant administrators will be deactivated and unable to access the system until the subscription is resumed."}</span>
-                                    </div>
+                                    {!useFallbackOnSuspend || !vm.hasFallback ? (
+                                          <div className="flex items-center gap-2 rounded-lg border border-orange-500/30 bg-orange-500/5 p-3 text-sm text-orange-700 dark:text-orange-400">
+                                                <AlertTriangle className="h-4 w-4 shrink-0" />
+                                                <span>{t("tenant.suspendAdminWarning") || "All tenant administrators will be deactivated and unable to access the system until the subscription is resumed."}</span>
+                                          </div>
+                                    ) : (
+                                          <div className="flex items-center gap-2 rounded-lg border border-blue-500/30 bg-blue-500/5 p-3 text-sm text-blue-700 dark:text-blue-400">
+                                                <ArrowDownCircle className="h-4 w-4 shrink-0" />
+                                                <span>{t("tenant.downgradeKeepActive") || `Tenant will keep active on ${vm.fallbackEditionName} with reduced features.`}</span>
+                                          </div>
+                                    )}
                                     <div className="space-y-2">
                                           <Label>{t("tenant.suspendReason") || "Reason for suspension"} *</Label>
                                           <Textarea
@@ -471,12 +568,15 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                     </Button>
                                     <Button variant="destructive" onClick={() => {
                                           if (suspendReason.trim().length >= 3) {
-                                                vm.suspendSubscription(suspendReason.trim());
+                                                vm.suspendSubscription(suspendReason.trim(), vm.hasFallback ? useFallbackOnSuspend : undefined);
                                                 setSuspendOpen(false);
                                           }
                                     }} disabled={suspendReason.trim().length < 3 || vm.isSuspending}>
                                           {vm.isSuspending ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /></> : <Pause className="mr-2 h-4 w-4" />}
-                                          {t("tenant.suspend") || "Suspend"}
+                                          {useFallbackOnSuspend && vm.hasFallback
+                                                ? (t("tenant.downgrade") || "Downgrade")
+                                                : (t("tenant.suspend") || "Suspend")
+                                          }
                                     </Button>
                               </DialogFooter>
                         </DialogContent>
@@ -495,11 +595,40 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                     </DialogDescription>
                               </DialogHeader>
                               <div className="space-y-4 py-2">
+                                    {/* Fallback toggle */}
+                                    {vm.hasFallback && (
+                                          <div className="rounded-lg border p-3 space-y-3">
+                                                <div className="flex items-center justify-between">
+                                                      <div className="space-y-0.5">
+                                                            <Label className="text-sm font-medium">
+                                                                  {t("tenant.downgradeToFallback") || `Downgrade to ${vm.fallbackEditionName}`}
+                                                            </Label>
+                                                            <p className="text-xs text-muted-foreground">
+                                                                  {useFallbackOnCancel
+                                                                        ? (t("tenant.cancelDowngradeDesc") || `Tenant will be moved to ${vm.fallbackEditionName} and remain active.`)
+                                                                        : (t("tenant.cancelPermanentDesc") || "Subscription will be permanently canceled and all admins deactivated.")
+                                                                  }
+                                                            </p>
+                                                      </div>
+                                                      <Switch
+                                                            checked={useFallbackOnCancel}
+                                                            onCheckedChange={setUseFallbackOnCancel}
+                                                      />
+                                                </div>
+                                          </div>
+                                    )}
                                     {/* Admin deactivation warning */}
-                                    <div className="flex items-center gap-2 rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">
-                                          <AlertTriangle className="h-4 w-4 shrink-0" />
-                                          <span>{t("tenant.cancelAdminWarning") || "All tenant administrators will be permanently deactivated. This action cannot be undone."}</span>
-                                    </div>
+                                    {!useFallbackOnCancel || !vm.hasFallback ? (
+                                          <div className="flex items-center gap-2 rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">
+                                                <AlertTriangle className="h-4 w-4 shrink-0" />
+                                                <span>{t("tenant.cancelAdminWarning") || "All tenant administrators will be permanently deactivated. This action cannot be undone."}</span>
+                                          </div>
+                                    ) : (
+                                          <div className="flex items-center gap-2 rounded-lg border border-blue-500/30 bg-blue-500/5 p-3 text-sm text-blue-700 dark:text-blue-400">
+                                                <ArrowDownCircle className="h-4 w-4 shrink-0" />
+                                                <span>{t("tenant.cancelDowngradeKeepActive") || `Tenant will keep active on ${vm.fallbackEditionName} with reduced features.`}</span>
+                                          </div>
+                                    )}
                                     <div className="space-y-2">
                                           <Label>{t("tenant.cancelReason") || "Reason (optional)"}</Label>
                                           <Textarea
@@ -515,11 +644,14 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                           {t("common.cancel") || "Keep Subscription"}
                                     </Button>
                                     <Button variant="destructive" onClick={() => {
-                                          vm.cancelSubscription(cancelReason.trim() || undefined);
+                                          vm.cancelSubscription(cancelReason.trim() || undefined, vm.hasFallback ? useFallbackOnCancel : undefined);
                                           setCancelOpen(false);
                                     }} disabled={vm.isCanceling}>
                                           {vm.isCanceling ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /></> : <XCircle className="mr-2 h-4 w-4" />}
-                                          {t("tenant.confirmCancel") || "Cancel Subscription"}
+                                          {useFallbackOnCancel && vm.hasFallback
+                                                ? (t("tenant.downgrade") || "Downgrade")
+                                                : (t("tenant.confirmCancel") || "Cancel Subscription")
+                                          }
                                     </Button>
                               </DialogFooter>
                         </DialogContent>
