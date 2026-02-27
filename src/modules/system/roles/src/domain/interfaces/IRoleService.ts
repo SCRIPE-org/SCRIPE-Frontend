@@ -49,6 +49,7 @@ export interface IRoleService {
   assignPermissions(roleId: string, json: AssignPermissionsJson): Promise<void>;
   removePermission(roleId: string, permissionId: string): Promise<void>;
   getRolePermissions(roleId: string): Promise<RoleJson["permissions"]>;
+  getTenantPermissions(tenantId: string): Promise<PermissionModel[]>;
   getAdminCount(roleId: string): Promise<number>;
   clone(
     id: string,

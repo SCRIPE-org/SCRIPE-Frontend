@@ -7,6 +7,7 @@
 
 export type SubscriptionType = "Lifetime" | "Monthly" | "Yearly" | "Trial" | "AddOn";
 export type SubscriptionStatus = "Active" | "Trialing" | "PastDue" | "Suspended" | "Canceled" | "Expired";
+export type ExpiryBehavior = "Fallback" | "Suspend";
 
 export interface EditionThinModel {
       id: string;
@@ -28,6 +29,8 @@ export interface SubscriptionModel {
       endDate?: string;
       trialEndsAt?: string;
       gracePeriodEndsAt?: string;
+      expiryBehavior?: ExpiryBehavior;
+      fallbackEditionName?: string;
       createdAt: string;
 }
 
@@ -46,6 +49,7 @@ export interface PagedEditionResult {
 export interface ChangeEditionPayload {
       editionId: string;
       type: SubscriptionType;
+      expiryBehavior?: ExpiryBehavior;
 }
 
 export interface RenewPayload {
@@ -58,8 +62,11 @@ export interface ConvertTrialPayload {
 
 export interface SuspendPayload {
       reason: string;
+      useFallback?: boolean;
 }
 
 export interface CancelPayload {
       reason?: string;
+      useFallback?: boolean;
 }
+

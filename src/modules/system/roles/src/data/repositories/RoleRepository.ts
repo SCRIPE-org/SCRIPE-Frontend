@@ -118,6 +118,11 @@ export class RoleRepository implements IRoleRepository {
     return PermissionMapper.toEntityList(models);
   }
 
+  async getTenantAvailablePermissions(tenantId: string): Promise<Permission[]> {
+    const models = await this.service.getTenantPermissions(tenantId);
+    return PermissionMapper.toEntityList(models);
+  }
+
   async bulkDelete(ids: string[]): Promise<number> {
     return this.service.bulkDelete(ids);
   }

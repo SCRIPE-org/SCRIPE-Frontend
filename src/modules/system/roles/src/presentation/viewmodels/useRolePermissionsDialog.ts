@@ -4,6 +4,9 @@
  * Encapsulates all logic for managing role permissions.
  * Following SOLID pattern - single responsibility for permissions logic.
  *
+ * Clean Architecture: ViewModel → Repository → Service → API
+ * No direct API calls or inline DTOs.
+ *
  * @module roles/presentation/viewmodels
  */
 "use client";
@@ -12,36 +15,19 @@ import { useState, useEffect, useMemo, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@core/hooks/use-toast";
 import { useI18n } from "@core/providers/i18n-provider";
-import { getCoreContainer } from "@core/di";
 import { systemContainer } from "@modules/system/di";
 import type { Role } from "../../domain/entities/Role";
-
-// Types matching actual API responses
-export interface TenantPermission {
-  id: string;
-  resource: string;
-  action: string;
-  code: string;
-  defaultScope: string;
-  description?: string;
-  nameEn?: string;
-  nameAr?: string;
-}
-
-export interface RolePermission {
-  permissionId: string;
-  permissionCode: string;
-  description?: string;
-  scope?: string;
-  restrictedFields?: string; // JSON string from backend
-}
-
-export interface GroupedPermissions {
-  [resource: string]: TenantPermission[];
-}
-
+import type { Permission } from "@modules/system/permissions/src/domain/entities/Permission";
 import type { PermissionAssignmentJson } from "../../data/models/RoleModel";
 import { PermissionScopes } from "../../data/models/RoleModel";
+
+// ── Grouped permissions by resource ──
+
+export interface GroupedPermissions {
+  [resource: string]: Permission[];
+}
+
+// ── Props & Result interfaces ──
 
 export interface UseRolePermissionsDialogProps {
   open: boolean;
@@ -76,7 +62,7 @@ export interface UseRolePermissionsDialogResult {
   isSaving: boolean;
 
   // Helpers
-  getName: (p: TenantPermission) => string;
+  getName: (p: Permission) => string;
   isChecked: (code: string) => boolean;
   getGroupStats: (codes: string[]) => {
     count: number;
@@ -117,43 +103,17 @@ export function useRolePermissionsDialog({
     }
   }, [open, role?.id]);
 
-  // Fetch tenant's available permissions (with fallback for empty results)
+  // ── Fetch tenant's available permissions via Repository (clean architecture) ──
   const { data: tenantPermissions = [], isLoading: loadingTenant } = useQuery({
-    queryKey: ["tenant-permissions-raw", tenantId],
-    queryFn: async () => {
-      const api = getCoreContainer().apiService;
-      // First, try to get tenant's assigned permissions
-      const permissions = await api.get<TenantPermission[]>(`/Tenants/${tenantId}/permissions`);
-
-      // If the tenant has no permissions assigned (e.g. not synced from edition),
-      // fall back to creation permissions scoped to this tenant's parent
-      if (!permissions || permissions.length === 0) {
-        try {
-          const creationPerms = await systemContainer.tenantService.getCreationPermissions(tenantId);
-          return creationPerms.map((p: any) => ({
-            id: p.id,
-            resource: p.resource,
-            action: p.action,
-            code: p.code || p.permissionCode || `${p.resource}.${p.action}`,
-            defaultScope: p.defaultScope || "own_tenant",
-            description: p.description,
-            nameEn: p.nameEn,
-            nameAr: p.nameAr,
-          }));
-        } catch {
-          return [];
-        }
-      }
-
-      return permissions;
-    },
+    queryKey: ["tenant-permissions", tenantId],
+    queryFn: () => systemContainer.roleRepository.getTenantAvailablePermissions(tenantId),
     enabled: open && !!tenantId,
   });
 
-  // Fetch role's current permissions
+  // ── Fetch role's current permissions via Repository ──
   const { data: rolePermissions = [], isLoading: loadingRole } = useQuery({
     queryKey: ["role-permissions", role?.id],
-    queryFn: async (): Promise<RolePermission[]> => {
+    queryFn: async () => {
       if (!role) return [];
       return systemContainer.roleRepository.getRolePermissions(role.id);
     },
@@ -175,7 +135,7 @@ export function useRolePermissionsDialog({
       const newAssignments = new Map<string, PermissionAssignmentJson>();
       const groupsWithSelection = new Set<string>();
 
-      rolePermissions.forEach((rp) => {
+      rolePermissions.forEach((rp: any) => {
         if (validCodes.has(rp.permissionCode)) {
           newAssignments.set(rp.permissionCode, {
             permissionId: rp.permissionId,
@@ -207,8 +167,6 @@ export function useRolePermissionsDialog({
     mutationFn: async () => {
       if (!role) throw new Error("No role selected");
 
-      // Assignments map already contains corect JSON objects including config
-      // Force structure to ensure keys are present (map undefined to null)
       const permissions = Array.from(assignments.values()).map((a) => ({
         permissionId: a.permissionId,
         scopeOverride: a.scopeOverride ?? null,
@@ -246,7 +204,6 @@ export function useRolePermissionsDialog({
         if (permission) {
           next.set(code, {
             permissionId: permission.id,
-            // Use explicit constant for Tenant scope
             scopeOverride: PermissionScopes.OwnTenant,
             restrictedFields: [],
           });
@@ -289,12 +246,10 @@ export function useRolePermissionsDialog({
   };
 
   const bulkUpdateScope = (scope: string) => {
-    // "default" maps to undefined/null to remove override
     const scopeValue = scope === PermissionScopes.Default ? undefined : scope;
 
     setAssignments((prev) => {
       const next = new Map(prev);
-      // Update all SELECTED permissions
       Array.from(next.keys()).forEach((key) => {
         const current = next.get(key)!;
         next.set(key, { ...current, scopeOverride: scopeValue });
@@ -308,7 +263,7 @@ export function useRolePermissionsDialog({
     const searchLower = search.toLowerCase();
     const filtered = tenantPermissions.filter((p) => {
       if (!search) return true;
-      const name = (language === "ar" ? p.nameAr : p.nameEn) || p.description || p.code;
+      const name = p.getLocalizedName(language);
       return name.toLowerCase().includes(searchLower) || p.code.toLowerCase().includes(searchLower);
     });
 
@@ -320,8 +275,7 @@ export function useRolePermissionsDialog({
   }, [tenantPermissions, search, language]);
 
   // Helpers
-  const getName = (p: TenantPermission) =>
-    (language === "ar" ? p.nameAr : p.nameEn) || p.description || p.code;
+  const getName = (p: Permission) => p.getLocalizedName(language);
 
   const isChecked = (code: string) => assignments.has(code);
 

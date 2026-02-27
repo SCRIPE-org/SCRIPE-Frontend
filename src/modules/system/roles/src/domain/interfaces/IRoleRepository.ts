@@ -92,6 +92,12 @@ export interface IRoleRepository {
   getMyTenantAvailablePermissions(category?: string): Promise<Permission[]>;
 
   /**
+   * Get available permissions for a specific tenant (for role permissions dialog)
+   * Falls back to creation-permissions if tenant has no assigned permissions
+   */
+  getTenantAvailablePermissions(tenantId: string): Promise<Permission[]>;
+
+  /**
    * Get count of admins assigned to this role
    */
   getAdminCount(roleId: string): Promise<number>;

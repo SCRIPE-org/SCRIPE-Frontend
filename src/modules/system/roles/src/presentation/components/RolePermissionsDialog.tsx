@@ -30,10 +30,8 @@ import {
 } from "lucide-react";
 import { cn } from "@core/common/utils";
 import type { Role } from "../../domain/entities/Role";
-import {
-  useRolePermissionsDialog,
-  type TenantPermission,
-} from "../viewmodels/useRolePermissionsDialog";
+import { useRolePermissionsDialog } from "../viewmodels/useRolePermissionsDialog";
+import type { Permission } from "@modules/system/permissions/src/domain/entities/Permission";
 import { PermissionConfigDialog } from "./PermissionConfigDialog";
 import { BulkScopeSelect } from "./BulkScopeSelect";
 import type { PermissionAssignmentJson } from "../../data/models/RoleModel";
@@ -203,7 +201,7 @@ function PermissionGroups({ vm }: PermissionGroupsProps) {
 
 interface PermissionGroupProps {
   resource: string;
-  permissions: TenantPermission[];
+  permissions: Permission[];
   vm: ReturnType<typeof useRolePermissionsDialog>;
 }
 
@@ -256,7 +254,7 @@ function PermissionGroup({ resource, permissions, vm }: PermissionGroupProps) {
 }
 
 interface PermissionItemProps {
-  permission: TenantPermission;
+  permission: Permission;
   vm: ReturnType<typeof useRolePermissionsDialog>;
 }
 

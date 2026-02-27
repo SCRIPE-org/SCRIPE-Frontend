@@ -102,6 +102,20 @@ export class RoleService implements IRoleService {
     return this.api.get<RoleJson["permissions"]>(API_ENDPOINTS.ROLES.PERMISSIONS(roleId));
   }
 
+  async getTenantPermissions(tenantId: string): Promise<PermissionModel[]> {
+    // Get permissions assigned to this specific tenant
+    const response = await this.api.get<any[]>(API_ENDPOINTS.TENANTS.PERMISSIONS(tenantId));
+
+    // If tenant has no assigned permissions, fall back to creation-permissions
+    if (!response || response.length === 0) {
+      const url = buildUrl(API_ENDPOINTS.TENANTS.CREATION_PERMISSIONS, { parentId: tenantId });
+      const fallback = await this.api.get<any[]>(url);
+      return (fallback ?? []).map((p) => PermissionModel.fromJson(p));
+    }
+
+    return response.map((p) => PermissionModel.fromJson(p));
+  }
+
   async getMyTenantAvailablePermissions(category?: string): Promise<PermissionModel[]> {
     const params = new URLSearchParams();
     if (category) params.set("category", category);

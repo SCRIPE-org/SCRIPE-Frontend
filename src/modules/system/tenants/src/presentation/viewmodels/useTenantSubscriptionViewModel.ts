@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@core/hooks/use-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 import { systemContainer } from "@modules/system/di";
-import type { SubscriptionModel, EditionThinModel, SubscriptionType } from "../../data/models/TenantSubscription";
+import type { SubscriptionModel, EditionThinModel, SubscriptionType, ExpiryBehavior } from "../../data/models/TenantSubscription";
 
 // ── Result Interface ──
 
@@ -22,6 +22,7 @@ export interface UseTenantSubscriptionViewModelResult {
       isSuspended: boolean;
       isExpired: boolean;
       isCanceled: boolean;
+      isPastDue: boolean;
       isActive: boolean;
       daysRemaining: number | null;
       canRenew: boolean;
@@ -29,6 +30,10 @@ export interface UseTenantSubscriptionViewModelResult {
       canSuspend: boolean;
       canResume: boolean;
       canCancel: boolean;
+      canReassign: boolean;
+      fallbackEditionName: string | null;
+      expiryBehavior: ExpiryBehavior | null;
+      hasFallback: boolean;
 
       // Mutations
       changeEdition: (editionId: string, type: SubscriptionType) => void;
@@ -40,13 +45,13 @@ export interface UseTenantSubscriptionViewModelResult {
       convertTrial: (type: SubscriptionType) => void;
       isConverting: boolean;
 
-      suspendSubscription: (reason: string) => void;
+      suspendSubscription: (reason: string, useFallback?: boolean) => void;
       isSuspending: boolean;
 
       resumeSubscription: () => void;
       isResuming: boolean;
 
-      cancelSubscription: (reason?: string) => void;
+      cancelSubscription: (reason?: string, useFallback?: boolean) => void;
       isCanceling: boolean;
 
       resyncPermissions: () => void;
@@ -93,6 +98,7 @@ export function useTenantSubscriptionViewModel(tenantId: string): UseTenantSubsc
       const isSuspended = status === "suspended";
       const isExpired = status === "expired";
       const isCanceled = status === "canceled";
+      const isPastDue = status === "pastdue";
       const isActive = status === "active" || isTrialing;
 
       const daysRemaining = (() => {
@@ -103,11 +109,18 @@ export function useTenantSubscriptionViewModel(tenantId: string): UseTenantSubsc
             return diff;
       })();
 
-      const canRenew = isActive && !isTrialing && subscription?.type !== "Lifetime";
+      // ── Computed: action availability per status ──
+      const canRenew = (isActive || isPastDue) && !isTrialing && subscription?.type !== "Lifetime";
       const canConvertTrial = isTrialing;
-      const canSuspend = isActive;
+      const canSuspend = isActive || isPastDue;
       const canResume = isSuspended;
-      const canCancel = isActive || isSuspended;
+      const canCancel = isActive || isSuspended || isPastDue;
+      const canReassign = isCanceled || isExpired; // Show Assign button for terminated subscriptions
+
+      // ── Computed: fallback plan info ──
+      const fallbackEditionName = subscription?.fallbackEditionName ?? null;
+      const expiryBehavior: ExpiryBehavior | null = subscription?.expiryBehavior ?? null;
+      const hasFallback = !!fallbackEditionName;
 
       // ── Helper: invalidate + toast ──
 
@@ -156,8 +169,8 @@ export function useTenantSubscriptionViewModel(tenantId: string): UseTenantSubsc
       });
 
       const suspendMutation = useMutation({
-            mutationFn: async (reason: string) => {
-                  await systemContainer.tenantRepository.suspendSubscription(tenantId, reason);
+            mutationFn: async ({ reason, useFallback }: { reason: string; useFallback?: boolean }) => {
+                  await systemContainer.tenantRepository.suspendSubscription(tenantId, reason, useFallback);
             },
             onSuccess: () => { successToast(t("tenant.subscriptionSuspended") || "Subscription suspended"); invalidateAll(); },
             onError: errorToast,
@@ -172,8 +185,8 @@ export function useTenantSubscriptionViewModel(tenantId: string): UseTenantSubsc
       });
 
       const cancelMutation = useMutation({
-            mutationFn: async (reason?: string) => {
-                  await systemContainer.tenantRepository.cancelSubscription(tenantId, reason);
+            mutationFn: async ({ reason, useFallback }: { reason?: string; useFallback?: boolean }) => {
+                  await systemContainer.tenantRepository.cancelSubscription(tenantId, reason, useFallback);
             },
             onSuccess: () => { successToast(t("tenant.subscriptionCanceled") || "Subscription canceled"); invalidateAll(); },
             onError: errorToast,
@@ -197,9 +210,10 @@ export function useTenantSubscriptionViewModel(tenantId: string): UseTenantSubsc
             availableEditions: availableEditionsData?.items ?? [],
             isEditionsLoading,
 
-            isTrialing, isSuspended, isExpired, isCanceled, isActive,
+            isTrialing, isSuspended, isExpired, isCanceled, isPastDue, isActive,
             daysRemaining,
-            canRenew, canConvertTrial, canSuspend, canResume, canCancel,
+            canRenew, canConvertTrial, canSuspend, canResume, canCancel, canReassign,
+            fallbackEditionName, expiryBehavior, hasFallback,
 
             changeEdition: (editionId, type) => changeMutation.mutate({ editionId, type }),
             isChanging: changeMutation.isPending,
@@ -210,13 +224,13 @@ export function useTenantSubscriptionViewModel(tenantId: string): UseTenantSubsc
             convertTrial: convertMutation.mutate,
             isConverting: convertMutation.isPending,
 
-            suspendSubscription: suspendMutation.mutate,
+            suspendSubscription: (reason: string, useFallback?: boolean) => suspendMutation.mutate({ reason, useFallback }),
             isSuspending: suspendMutation.isPending,
 
             resumeSubscription: () => resumeMutation.mutate(),
             isResuming: resumeMutation.isPending,
 
-            cancelSubscription: cancelMutation.mutate,
+            cancelSubscription: (reason?: string, useFallback?: boolean) => cancelMutation.mutate({ reason, useFallback }),
             isCanceling: cancelMutation.isPending,
 
             resyncPermissions: () => resyncMutation.mutate(),
