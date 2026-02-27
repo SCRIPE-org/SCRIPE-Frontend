@@ -744,6 +744,8 @@ export const en = {
 
   // User Groups
   userGroups: {
+    emptyStateTitle: "No User Groups",
+    emptyStateDescription: "Create your first user group to get started.",
     search: "Search",
     selectPlaceholder: "Select User Group",
     title: "User Groups",

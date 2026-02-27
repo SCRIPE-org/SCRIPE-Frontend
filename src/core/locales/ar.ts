@@ -776,6 +776,8 @@ export const ar = {
 
   // User Groups
   userGroups: {
+    emptyStateTitle: "لا توجد مجموعات مستخدمين",
+    emptyStateDescription: "أنشئ أول مجموعة مستخدمين للبدء.",
     selectPlaceholder: "اختر مجموعة مستخدم",
     search: "بحث",
     noRoles: "لا توجد أدوار",
