@@ -20,6 +20,8 @@ export interface EditionData extends BaseEntity {
       createdByTenantId?: string;
       featureCount?: number;
       features?: EditionFeatureDto[];
+      fallbackEditionId?: string;
+      fallbackEditionName?: string;
 }
 
 export class Edition {
@@ -35,6 +37,8 @@ export class Edition {
       get createdAt(): string { return this.data.createdAt; }
       get features(): EditionFeatureDto[] { return this.data.features ?? []; }
       get featureCount(): number { return this.data.featureCount ?? this.features.length; }
+      get fallbackEditionId(): string | undefined { return this.data.fallbackEditionId; }
+      get fallbackEditionName(): string | undefined { return this.data.fallbackEditionName; }
 
       getDisplayName(lang: string): string {
             return lang === "ar" ? this.displayNameAr : this.displayNameEn;

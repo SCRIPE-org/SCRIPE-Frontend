@@ -218,39 +218,44 @@ export class TenantService implements ITenantService {
     );
   }
 
-  async renewSubscription(tenantId: string, type: string): Promise<void> {
-    await this.api.post(
+  async renewSubscription(tenantId: string, type: string): Promise<string> {
+    const res = await this.api.post<{ message: string }>(
       API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.RENEW(tenantId),
       { type }
     );
+    return res?.message || "";
   }
 
-  async convertTrial(tenantId: string, type: string): Promise<void> {
-    await this.api.post(
+  async convertTrial(tenantId: string, type: string): Promise<string> {
+    const res = await this.api.post<{ message: string }>(
       API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.CONVERT(tenantId),
       { type }
     );
+    return res?.message || "";
   }
 
-  async suspendSubscription(tenantId: string, reason: string, useFallback?: boolean): Promise<void> {
-    await this.api.post(
+  async suspendSubscription(tenantId: string, reason: string, useFallback?: boolean): Promise<string> {
+    const res = await this.api.post<{ message: string }>(
       API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.SUSPEND(tenantId),
       { reason, useFallback: useFallback ?? false }
     );
+    return res?.message || "";
   }
 
-  async resumeSubscription(tenantId: string): Promise<void> {
-    await this.api.post(
+  async resumeSubscription(tenantId: string): Promise<string> {
+    const res = await this.api.post<{ message: string }>(
       API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.RESUME(tenantId),
       {}
     );
+    return res?.message || "";
   }
 
-  async cancelSubscription(tenantId: string, reason?: string, useFallback?: boolean): Promise<void> {
-    await this.api.post(
+  async cancelSubscription(tenantId: string, reason?: string, useFallback?: boolean): Promise<string> {
+    const res = await this.api.post<{ message: string }>(
       API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.CANCEL(tenantId),
       { reason, useFallback: useFallback ?? false }
     );
+    return res?.message || "";
   }
 
   async resyncPermissions(tenantId: string): Promise<void> {

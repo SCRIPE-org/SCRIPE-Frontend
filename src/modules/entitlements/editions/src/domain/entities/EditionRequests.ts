@@ -6,6 +6,7 @@ export interface CreateEditionRequest {
       displayNameEn: string;
       displayNameAr: string;
       description?: string;
+      fallbackEditionId?: string;
 }
 
 export interface UpdateEditionRequest {
@@ -13,6 +14,7 @@ export interface UpdateEditionRequest {
       displayNameEn?: string;
       displayNameAr?: string;
       description?: string;
+      fallbackEditionId?: string;
 }
 
 export interface SetEditionFeatureRequest {

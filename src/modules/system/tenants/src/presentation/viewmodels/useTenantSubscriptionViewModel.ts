@@ -154,41 +154,41 @@ export function useTenantSubscriptionViewModel(tenantId: string): UseTenantSubsc
 
       const renewMutation = useMutation({
             mutationFn: async (type: string) => {
-                  await systemContainer.tenantRepository.renewSubscription(tenantId, type);
+                  return await systemContainer.tenantRepository.renewSubscription(tenantId, type);
             },
-            onSuccess: () => { successToast(t("tenant.subscriptionRenewed") || "Subscription renewed successfully"); invalidateAll(); },
+            onSuccess: (msg) => { successToast(msg || t("tenant.subscriptionRenewed") || "Subscription renewed successfully"); invalidateAll(); },
             onError: errorToast,
       });
 
       const convertMutation = useMutation({
             mutationFn: async (type: string) => {
-                  await systemContainer.tenantRepository.convertTrial(tenantId, type);
+                  return await systemContainer.tenantRepository.convertTrial(tenantId, type);
             },
-            onSuccess: () => { successToast(t("tenant.trialConverted") || "Trial converted to paid plan"); invalidateAll(); },
+            onSuccess: (msg) => { successToast(msg || t("tenant.trialConverted") || "Trial converted to paid plan"); invalidateAll(); },
             onError: errorToast,
       });
 
       const suspendMutation = useMutation({
             mutationFn: async ({ reason, useFallback }: { reason: string; useFallback?: boolean }) => {
-                  await systemContainer.tenantRepository.suspendSubscription(tenantId, reason, useFallback);
+                  return await systemContainer.tenantRepository.suspendSubscription(tenantId, reason, useFallback);
             },
-            onSuccess: () => { successToast(t("tenant.subscriptionSuspended") || "Subscription suspended"); invalidateAll(); },
+            onSuccess: (msg) => { successToast(msg || t("tenant.subscriptionSuspended") || "Subscription suspended"); invalidateAll(); },
             onError: errorToast,
       });
 
       const resumeMutation = useMutation({
             mutationFn: async () => {
-                  await systemContainer.tenantRepository.resumeSubscription(tenantId);
+                  return await systemContainer.tenantRepository.resumeSubscription(tenantId);
             },
-            onSuccess: () => { successToast(t("tenant.subscriptionResumed") || "Subscription resumed"); invalidateAll(); },
+            onSuccess: (msg) => { successToast(msg || t("tenant.subscriptionResumed") || "Subscription resumed"); invalidateAll(); },
             onError: errorToast,
       });
 
       const cancelMutation = useMutation({
             mutationFn: async ({ reason, useFallback }: { reason?: string; useFallback?: boolean }) => {
-                  await systemContainer.tenantRepository.cancelSubscription(tenantId, reason, useFallback);
+                  return await systemContainer.tenantRepository.cancelSubscription(tenantId, reason, useFallback);
             },
-            onSuccess: () => { successToast(t("tenant.subscriptionCanceled") || "Subscription canceled"); invalidateAll(); },
+            onSuccess: (msg) => { successToast(msg || t("tenant.subscriptionCanceled") || "Subscription canceled"); invalidateAll(); },
             onError: errorToast,
       });
 

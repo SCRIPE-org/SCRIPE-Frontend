@@ -19,6 +19,8 @@ export class EditionMapper {
                   createdByTenantId: model.createdByTenantId,
                   featureCount: model.featureCount,
                   features: model.features,
+                  fallbackEditionId: model.fallbackEditionId,
+                  fallbackEditionName: model.fallbackEditionName,
                   createdAt: model.createdAt,
                   modifiedAt: model.modifiedAt,
             };
@@ -31,6 +33,7 @@ export class EditionMapper {
                   displayNameEn: request.displayNameEn,
                   displayNameAr: request.displayNameAr,
                   description: request.description,
+                  fallbackEditionId: request.fallbackEditionId || null,
             };
       }
 
@@ -40,6 +43,7 @@ export class EditionMapper {
                   displayNameEn: request.displayNameEn,
                   displayNameAr: request.displayNameAr,
                   description: request.description,
+                  fallbackEditionId: request.fallbackEditionId || null,
             };
       }
 }

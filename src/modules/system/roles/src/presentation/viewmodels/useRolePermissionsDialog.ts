@@ -140,10 +140,10 @@ export function useRolePermissionsDialog({
           newAssignments.set(rp.permissionCode, {
             permissionId: rp.permissionId,
             scopeOverride: rp.scope,
-            restrictedFields:
-              rp.restrictedFields && rp.restrictedFields !== "null" && rp.restrictedFields !== ""
-                ? JSON.parse(rp.restrictedFields)
-                : [],
+            restrictedFields: (() => {
+              if (!rp.restrictedFields || rp.restrictedFields === "null" || rp.restrictedFields === "") return [];
+              try { return JSON.parse(rp.restrictedFields); } catch { return []; }
+            })(),
           });
 
           // Find generic resource group

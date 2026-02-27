@@ -3381,6 +3381,7 @@ export const en = {
   },
   // Common
   common: {
+    none: "None",
     tenant: "Tenant",
     name: "Name",
     created: "Created",
@@ -4867,6 +4868,10 @@ export const en = {
       noEditions: "No editions found",
       systemBadge: "System",
       retiredBadge: "Retired",
+      editionName: "Edition Name",
+      fallbackEdition: "Fallback Edition",
+      fallbackPlaceholder: "Select fallback plan (optional)",
+      descriptionPlaceholder: "Brief description of this edition...",
     },
     subscriptions: {
       title: "Subscriptions",

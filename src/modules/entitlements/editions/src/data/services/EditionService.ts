@@ -18,6 +18,8 @@ export interface EditionModel {
       createdByTenantId?: string;
       featureCount?: number;
       features?: { featureId: string; featureName: string; value: string; valueType: string }[];
+      fallbackEditionId?: string;
+      fallbackEditionName?: string;
       createdAt: string;
       modifiedAt?: string;
 }

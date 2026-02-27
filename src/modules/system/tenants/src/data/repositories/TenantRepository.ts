@@ -163,23 +163,23 @@ export class TenantRepository implements ITenantRepository {
     return this.service.changeEdition(tenantId, editionId, type);
   }
 
-  async renewSubscription(tenantId: string, type: string): Promise<void> {
+  async renewSubscription(tenantId: string, type: string): Promise<string> {
     return this.service.renewSubscription(tenantId, type);
   }
 
-  async convertTrial(tenantId: string, type: string): Promise<void> {
+  async convertTrial(tenantId: string, type: string): Promise<string> {
     return this.service.convertTrial(tenantId, type);
   }
 
-  async suspendSubscription(tenantId: string, reason: string, useFallback?: boolean): Promise<void> {
+  async suspendSubscription(tenantId: string, reason: string, useFallback?: boolean): Promise<string> {
     return this.service.suspendSubscription(tenantId, reason, useFallback);
   }
 
-  async resumeSubscription(tenantId: string): Promise<void> {
+  async resumeSubscription(tenantId: string): Promise<string> {
     return this.service.resumeSubscription(tenantId);
   }
 
-  async cancelSubscription(tenantId: string, reason?: string, useFallback?: boolean): Promise<void> {
+  async cancelSubscription(tenantId: string, reason?: string, useFallback?: boolean): Promise<string> {
     return this.service.cancelSubscription(tenantId, reason, useFallback);
   }
 

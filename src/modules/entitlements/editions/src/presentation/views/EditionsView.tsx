@@ -64,6 +64,15 @@ export function EditionsView() {
                               ),
                         },
                         {
+                              key: "fallbackEditionName",
+                              label: t("entitlements.editions.fallbackEdition") || "Fallback Edition",
+                              render: (value: string) => value ? (
+                                    <Badge variant="outline">{value}</Badge>
+                              ) : (
+                                    <span className="text-muted-foreground">—</span>
+                              ),
+                        },
+                        {
                               key: "createdAt",
                               label: t("common.createdAt") || "Created",
                               render: (value: string) =>
@@ -83,17 +92,30 @@ export function EditionsView() {
                               label: t("entitlements.editions.displayNameEn") || "Display Name (EN)",
                               type: "text" as const,
                               required: true,
+                              placeholder: "e.g. Enterprise Plan",
                         },
                         {
                               name: "displayNameAr",
                               label: t("entitlements.editions.displayNameAr") || "Display Name (AR)",
                               type: "text" as const,
                               required: true,
+                              placeholder: "مثال: خطة المؤسسة",
                         },
                         {
                               name: "description",
                               label: t("common.description") || "Description",
                               type: "textarea" as const,
+                              placeholder: t("entitlements.editions.descriptionPlaceholder") || "Brief description of this edition...",
+                        },
+                        {
+                              name: "fallbackEditionId",
+                              label: t("entitlements.editions.fallbackEdition") || "Fallback Edition",
+                              type: "select" as const,
+                              placeholder: t("entitlements.editions.fallbackPlaceholder") || "Select fallback plan (optional)",
+                              options: [
+                                    { value: "", label: t("common.none") || "None" },
+                                    ...(vm.items || []).map((e: Edition) => ({ value: e.id, label: e.getDisplayName(language) })),
+                              ],
                         },
                   ],
                   editFields: [
@@ -101,21 +123,35 @@ export function EditionsView() {
                               name: "name",
                               label: t("entitlements.editions.editionName") || "Edition Name",
                               type: "text" as const,
+                              placeholder: "e.g. Enterprise",
                         },
                         {
                               name: "displayNameEn",
                               label: t("entitlements.editions.displayNameEn") || "Display Name (EN)",
                               type: "text" as const,
+                              placeholder: "e.g. Enterprise Plan",
                         },
                         {
                               name: "displayNameAr",
                               label: t("entitlements.editions.displayNameAr") || "Display Name (AR)",
                               type: "text" as const,
+                              placeholder: "مثال: خطة المؤسسة",
                         },
                         {
                               name: "description",
                               label: t("common.description") || "Description",
                               type: "textarea" as const,
+                              placeholder: t("entitlements.editions.descriptionPlaceholder") || "Brief description of this edition...",
+                        },
+                        {
+                              name: "fallbackEditionId",
+                              label: t("entitlements.editions.fallbackEdition") || "Fallback Edition",
+                              type: "select" as const,
+                              placeholder: t("entitlements.editions.fallbackPlaceholder") || "Select fallback plan (optional)",
+                              options: [
+                                    { value: "", label: t("common.none") || "None" },
+                                    ...(vm.items || []).map((e: Edition) => ({ value: e.id, label: e.getDisplayName(language) })),
+                              ],
                         },
                   ],
                   editInitialValues: (edition: Edition) => ({
@@ -123,6 +159,7 @@ export function EditionsView() {
                         displayNameEn: edition.displayNameEn,
                         displayNameAr: edition.displayNameAr,
                         description: edition.description || "",
+                        fallbackEditionId: edition.fallbackEditionId || "",
                   }),
                   getItemDisplayName: (edition: Edition) => edition.getDisplayName(language),
                   deleteService: (id: string) => vm.deleteItem(id),

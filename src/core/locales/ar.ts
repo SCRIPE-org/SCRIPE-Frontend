@@ -3578,6 +3578,7 @@ export const ar = {
   // Common
   common: {
     description: "الوصف",
+    none: "لا يوجد",
     deleteConfirm: "تأكيد الحذف",
     results: "النتائج",
     deleteConfirmDesc: "هل أنت متأكد من رغبتك في حذف هذا العنصر؟",
@@ -4734,6 +4735,9 @@ export const ar = {
       noEditions: "لم يتم العثور على إصدارات",
       systemBadge: "نظام",
       retiredBadge: "متقاعد",
+      fallbackEdition: "الإصدار الاحتياطي",
+      fallbackPlaceholder: "اختر خطة احتياطية (اختياري)",
+      descriptionPlaceholder: "وصف مختصر لهذا الإصدار...",
     },
     subscriptions: {
       title: "الاشتراكات",

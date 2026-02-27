@@ -153,19 +153,19 @@ export interface ITenantRepository {
   changeEdition(tenantId: string, editionId: string, type?: string): Promise<void>;
 
   /** Renew (extend) the current subscription period */
-  renewSubscription(tenantId: string, type: string): Promise<void>;
+  renewSubscription(tenantId: string, type: string): Promise<string>;
 
   /** Convert a trial subscription to a real plan */
-  convertTrial(tenantId: string, type: string): Promise<void>;
+  convertTrial(tenantId: string, type: string): Promise<string>;
 
   /** Suspend a subscription (admin action for rules violation) */
-  suspendSubscription(tenantId: string, reason: string, useFallback?: boolean): Promise<void>;
+  suspendSubscription(tenantId: string, reason: string, useFallback?: boolean): Promise<string>;
 
   /** Resume a previously suspended subscription */
-  resumeSubscription(tenantId: string): Promise<void>;
+  resumeSubscription(tenantId: string): Promise<string>;
 
   /** Cancel a subscription permanently */
-  cancelSubscription(tenantId: string, reason?: string, useFallback?: boolean): Promise<void>;
+  cancelSubscription(tenantId: string, reason?: string, useFallback?: boolean): Promise<string>;
 
   /** Re-sync tenant permissions from current edition (data backfill) */
   resyncPermissions(tenantId: string): Promise<void>;
