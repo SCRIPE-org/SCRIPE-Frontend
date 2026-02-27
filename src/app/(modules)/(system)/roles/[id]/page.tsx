@@ -7,7 +7,7 @@ const RoleDetailView = dynamic(
 );
 
 export const metadata: Metadata = {
-  title: "Role Details | Verified",
+  title: "Role Details | NEXORA",
   description: "View and manage role permissions and settings",
 };
 

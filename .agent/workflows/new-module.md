@@ -242,7 +242,7 @@ import { Metadata } from 'next';
 import { RFQListView } from '@modules/rfq/src/presentation/views/RFQListView';
 
 export const metadata: Metadata = {
-  title: 'RFQs | Verified',
+  title: 'RFQs | NEXORA',
   description: 'Manage Request for Quotations',
 };
 

@@ -7,7 +7,7 @@ const PermissionsView = dynamic(
 );
 
 export const metadata: Metadata = {
-  title: "Permissions | Verified",
+  title: "Permissions | NEXORA",
   description: "View and manage system-wide permission definitions",
 };
 

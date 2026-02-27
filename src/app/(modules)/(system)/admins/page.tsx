@@ -7,7 +7,7 @@ const AdminsView = dynamic(
 );
 
 export const metadata: Metadata = {
-  title: "Admins | Verified",
+  title: "Admins | NEXORA",
   description: "Manage system administrators and their access levels",
 };
 

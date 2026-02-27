@@ -7,7 +7,7 @@ const OverridesView = dynamic(
 );
 
 export const metadata: Metadata = {
-      title: "Feature Overrides | Verified",
+      title: "Feature Overrides | NEXORA",
       description: "Manage per-tenant feature value overrides",
 };
 

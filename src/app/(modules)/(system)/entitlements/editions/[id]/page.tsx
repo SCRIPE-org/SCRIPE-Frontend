@@ -7,7 +7,7 @@ const EditionDetailView = dynamic(
 );
 
 export const metadata: Metadata = {
-      title: "Edition Features | Verified",
+      title: "Edition Features | NEXORA",
       description: "Manage features and limits for this subscription edition",
 };
 

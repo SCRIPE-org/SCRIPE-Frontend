@@ -7,7 +7,7 @@ const TenantSettingsView = dynamic(
 );
 
 export const metadata: Metadata = {
-  title: "Tenant Settings | Verified",
+  title: "Tenant Settings | NEXORA",
   description: "Configure your organization tenant settings and preferences",
 };
 

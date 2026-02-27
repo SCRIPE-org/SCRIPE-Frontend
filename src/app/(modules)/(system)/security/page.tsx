@@ -7,7 +7,7 @@ const SecurityDashboardView = dynamic(
 );
 
 export const metadata: Metadata = {
-  title: "Security Dashboard | Verified",
+  title: "Security Dashboard | NEXORA",
   description: "Monitor security threats, failed logins, and blocked IPs",
 };
 

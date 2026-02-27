@@ -7,7 +7,7 @@ const MenusView = dynamic(
 );
 
 export const metadata: Metadata = {
-  title: "Menu Management | Verified",
+  title: "Menu Management | NEXORA",
   description: "Configure sidebar navigation menus and their ordering",
 };
 

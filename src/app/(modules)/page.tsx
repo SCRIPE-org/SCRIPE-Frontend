@@ -7,7 +7,7 @@ const HomeView = dynamic(
 );
 
 export const metadata: Metadata = {
-  title: "Overview | Verified",
+  title: "Overview | NEXORA",
   description: "System overview with quick stats, navigation, and recent activity",
 };
 

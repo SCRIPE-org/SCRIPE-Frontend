@@ -6,7 +6,7 @@ const RecycleBinView = dynamic(
 );
 
 export const metadata: Metadata = {
-  title: "Recycle Bin | Verified",
+  title: "Recycle Bin | NEXORA",
   description: "View and restore recently deleted items",
 };
 

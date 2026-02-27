@@ -10,7 +10,7 @@ const NotificationSenderView = dynamic(
 );
 
 export const metadata: Metadata = {
-      title: "Notification Sender | Verified",
+      title: "Notification Sender | NEXORA",
       description: "Send push notifications to admins, roles, or tenants",
 };
 

@@ -8,7 +8,7 @@ const ProfileSessionsView = dynamic(
 );
 
 export const metadata = {
-  title: "Sessions | Verified",
+  title: "Sessions | NEXORA",
   description: "Manage your active login sessions",
 };
 

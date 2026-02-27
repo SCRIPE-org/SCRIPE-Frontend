@@ -8,7 +8,7 @@ const ProfileActivityView = dynamic(
 );
 
 export const metadata = {
-  title: "Activity Log | Verified",
+  title: "Activity Log | NEXORA",
   description: "Review your security activity log",
 };
 

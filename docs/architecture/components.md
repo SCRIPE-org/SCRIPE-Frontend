@@ -82,7 +82,7 @@ import { Metadata } from 'next';
 import { EmployeeListView } from '@modules/hr/src/presentation/views/EmployeeListView';
 
 export const metadata: Metadata = {
-  title: 'Employees | Verified',
+  title: 'Employees | NEXORA',
   description: 'Manage your organization employees',
 };
 

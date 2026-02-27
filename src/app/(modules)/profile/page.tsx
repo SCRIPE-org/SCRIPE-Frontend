@@ -8,7 +8,7 @@ const ProfileGeneralView = dynamic(
 );
 
 export const metadata = {
-  title: "Profile | Verified",
+  title: "Profile | NEXORA",
   description: "Manage your profile settings",
 };
 

@@ -8,7 +8,7 @@ const ProfileSecurityView = dynamic(
 );
 
 export const metadata = {
-  title: "Security | Verified",
+  title: "Security | NEXORA",
   description: "Manage your password and two-factor authentication",
 };
 
