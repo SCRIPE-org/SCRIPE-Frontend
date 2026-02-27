@@ -31,6 +31,10 @@ export interface SubscriptionModel {
       gracePeriodEndsAt?: string;
       expiryBehavior?: ExpiryBehavior;
       fallbackEditionName?: string;
+      isDowngraded: boolean;
+      downgradedFromEditionName?: string;
+      downgradedFromType?: string;
+      downgradedAt?: string;
       createdAt: string;
 }
 
@@ -68,5 +72,9 @@ export interface SuspendPayload {
 export interface CancelPayload {
       reason?: string;
       useFallback?: boolean;
+}
+
+export interface ResumePayload {
+      type?: SubscriptionType;
 }
 

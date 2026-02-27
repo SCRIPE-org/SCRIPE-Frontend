@@ -25,6 +25,10 @@ export interface UseTenantSubscriptionViewModelResult {
       isCanceled: boolean;
       isPastDue: boolean;
       isActive: boolean;
+      isDowngraded: boolean;
+      downgradedFromEditionName: string | null;
+      downgradedFromType: string | null;
+      downgradedAt: string | null;
       daysRemaining: number | null;
       canRenew: boolean;
       canConvertTrial: boolean;
@@ -49,7 +53,7 @@ export interface UseTenantSubscriptionViewModelResult {
       suspendSubscription: (reason: string, useFallback?: boolean) => void;
       isSuspending: boolean;
 
-      resumeSubscription: () => void;
+      resumeSubscription: (type?: SubscriptionType) => void;
       isResuming: boolean;
 
       cancelSubscription: (reason?: string, useFallback?: boolean) => void;
@@ -111,10 +115,15 @@ export function useTenantSubscriptionViewModel(tenantId: string): UseTenantSubsc
       })();
 
       // ── Computed: action availability per status ──
-      const canRenew = (isActive || isPastDue) && !isTrialing && subscription?.type !== "Lifetime";
+      const isDowngraded = subscription?.isDowngraded ?? false;
+      const downgradedFromEditionName = subscription?.downgradedFromEditionName ?? null;
+      const downgradedFromType = subscription?.downgradedFromType ?? null;
+      const downgradedAt = subscription?.downgradedAt ?? null;
+
+      const canRenew = (isActive || isPastDue) && !isTrialing && subscription?.type !== "Lifetime" && !isDowngraded;
       const canConvertTrial = isTrialing;
       const canSuspend = isActive || isPastDue;
-      const canResume = isSuspended;
+      const canResume = isSuspended || isDowngraded;
       const canCancel = isActive || isSuspended || isPastDue;
       const canReassign = isCanceled || isExpired; // Show Assign button for terminated subscriptions
 
@@ -181,8 +190,8 @@ export function useTenantSubscriptionViewModel(tenantId: string): UseTenantSubsc
       });
 
       const resumeMutation = useMutation({
-            mutationFn: async () => {
-                  return await systemContainer.tenantRepository.resumeSubscription(tenantId);
+            mutationFn: async (type?: string) => {
+                  return await systemContainer.tenantRepository.resumeSubscription(tenantId, type);
             },
             onSuccess: (msg) => { successToast(msg || t("tenant.subscriptionResumed") || "Subscription resumed"); invalidateAll(); },
             onError: errorToast,
@@ -215,6 +224,7 @@ export function useTenantSubscriptionViewModel(tenantId: string): UseTenantSubsc
             isEditionsLoading,
 
             isTrialing, isSuspended, isExpired, isCanceled, isPastDue, isActive,
+            isDowngraded, downgradedFromEditionName, downgradedFromType, downgradedAt,
             daysRemaining,
             canRenew, canConvertTrial, canSuspend, canResume, canCancel, canReassign,
             fallbackEditionName, expiryBehavior, hasFallback,
@@ -231,7 +241,7 @@ export function useTenantSubscriptionViewModel(tenantId: string): UseTenantSubsc
             suspendSubscription: (reason: string, useFallback?: boolean) => suspendMutation.mutate({ reason, useFallback }),
             isSuspending: suspendMutation.isPending,
 
-            resumeSubscription: () => resumeMutation.mutate(),
+            resumeSubscription: (type?: SubscriptionType) => resumeMutation.mutate(type),
             isResuming: resumeMutation.isPending,
 
             cancelSubscription: (reason?: string, useFallback?: boolean) => cancelMutation.mutate({ reason, useFallback }),

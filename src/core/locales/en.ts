@@ -367,6 +367,16 @@ export const en = {
     resumeDesc: "Resume the suspended subscription and restore tenant access.",
     resumeAdminWarning: "All previously deactivated administrators will be re-activated and regain access to the system.",
     confirmResume: "Resume Subscription",
+    // Downgrade / Restore
+    downgradedBanner: "Downgraded from",
+    restoreOriginalPlan: "Restore Original Plan",
+    restoreDesc: "Restore to the original plan with a new billing period.",
+    originalPlan: "Original Plan",
+    downgradedOn: "Downgraded on",
+    chooseBillingCycle: "You may choose a different billing cycle.",
+    restoreInfo: "A new billing period will start from today. Permissions will be restored to the original plan.",
+    confirmRestore: "Restore Plan",
+    subscriptionRestored: "Subscription restored to the original plan",
     // Tree badges
     suspended: "Suspended",
     expiringSoon: "Expiring Soon",

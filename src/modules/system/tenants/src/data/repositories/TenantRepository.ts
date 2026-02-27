@@ -175,8 +175,8 @@ export class TenantRepository implements ITenantRepository {
     return this.service.suspendSubscription(tenantId, reason, useFallback);
   }
 
-  async resumeSubscription(tenantId: string): Promise<string> {
-    return this.service.resumeSubscription(tenantId);
+  async resumeSubscription(tenantId: string, type?: string): Promise<string> {
+    return this.service.resumeSubscription(tenantId, type);
   }
 
   async cancelSubscription(tenantId: string, reason?: string, useFallback?: boolean): Promise<string> {

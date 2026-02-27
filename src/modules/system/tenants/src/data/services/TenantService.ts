@@ -242,10 +242,10 @@ export class TenantService implements ITenantService {
     return res?.message || "";
   }
 
-  async resumeSubscription(tenantId: string): Promise<string> {
+  async resumeSubscription(tenantId: string, type?: string): Promise<string> {
     const res = await this.api.post<{ message: string }>(
       API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.RESUME(tenantId),
-      {}
+      type ? { type } : {}
     );
     return res?.message || "";
   }

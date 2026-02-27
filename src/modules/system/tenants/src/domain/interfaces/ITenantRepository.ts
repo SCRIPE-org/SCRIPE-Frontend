@@ -162,7 +162,7 @@ export interface ITenantRepository {
   suspendSubscription(tenantId: string, reason: string, useFallback?: boolean): Promise<string>;
 
   /** Resume a previously suspended subscription */
-  resumeSubscription(tenantId: string): Promise<string>;
+  resumeSubscription(tenantId: string, type?: string): Promise<string>;
 
   /** Cancel a subscription permanently */
   cancelSubscription(tenantId: string, reason?: string, useFallback?: boolean): Promise<string>;

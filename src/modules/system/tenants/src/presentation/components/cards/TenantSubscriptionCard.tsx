@@ -92,6 +92,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
       const [cancelReason, setCancelReason] = useState("");
       const [useFallbackOnSuspend, setUseFallbackOnSuspend] = useState(true);
       const [useFallbackOnCancel, setUseFallbackOnCancel] = useState(true);
+      const [restoreType, setRestoreType] = useState<SubscriptionType>("Monthly");
 
       // Edition options for GenericSelect
       const editionOptions: GenericSelectOption[] = (vm.availableEditions || []).map((e) => ({
@@ -231,6 +232,30 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                     </div>
                               )}
 
+                              {/* ── Downgraded Banner ── */}
+                              {vm.isDowngraded && (
+                                    <div className="flex items-center justify-between gap-2 rounded-lg border border-amber-500/30 bg-amber-500/5 p-3 text-sm text-amber-700 dark:text-amber-400">
+                                          <div className="flex items-center gap-2">
+                                                <ArrowDownCircle className="h-4 w-4 shrink-0" />
+                                                <span>
+                                                      {t("tenant.downgradedBanner") || "Downgraded from"}{" "}
+                                                      <strong>{vm.downgradedFromEditionName}</strong>
+                                                      {" ("}{vm.downgradedFromType}{")"}
+                                                      {vm.downgradedAt && (
+                                                            <> — {new Date(vm.downgradedAt).toLocaleDateString()}</>
+                                                      )}
+                                                </span>
+                                          </div>
+                                          <Button variant="outline" size="sm" onClick={() => {
+                                                setRestoreType((vm.downgradedFromType as SubscriptionType) || "Monthly");
+                                                setResumeOpen(true);
+                                          }}>
+                                                <RotateCcw className="mr-1.5 h-3.5 w-3.5" />
+                                                {t("tenant.restoreOriginalPlan") || "Restore Original Plan"}
+                                          </Button>
+                                    </div>
+                              )}
+
                               {/* ── Past Due Banner ── */}
                               {vm.isPastDue && (
                                     <div className="flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/5 p-3 text-sm text-amber-700 dark:text-amber-400">
@@ -342,11 +367,18 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                           </Button>
                                     )}
 
-                                    {/* Resume — now opens confirmation dialog */}
+                                    {/* Resume / Restore — dynamic label */}
                                     {vm.canResume && (
-                                          <Button variant="default" size="sm" onClick={() => setResumeOpen(true)}>
-                                                <Play className="mr-1.5 h-3.5 w-3.5" />
-                                                {t("tenant.resume") || "Resume"}
+                                          <Button variant="default" size="sm" onClick={() => {
+                                                if (vm.isDowngraded) {
+                                                      setRestoreType((vm.downgradedFromType as SubscriptionType) || "Monthly");
+                                                }
+                                                setResumeOpen(true);
+                                          }}>
+                                                {vm.isDowngraded
+                                                      ? <><RotateCcw className="mr-1.5 h-3.5 w-3.5" />{t("tenant.restoreOriginalPlan") || "Restore Original Plan"}</>
+                                                      : <><Play className="mr-1.5 h-3.5 w-3.5" />{t("tenant.resume") || "Resume"}</>
+                                                }
                                           </Button>
                                     )}
 
@@ -662,34 +694,94 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
       }
 
       function renderResumeDialog() {
+            const isRestore = vm.isDowngraded;
             return (
                   <Dialog open={resumeOpen} onOpenChange={setResumeOpen}>
                         <DialogContent className="max-w-md">
                               <DialogHeader>
-                                    <DialogTitle>{t("tenant.resumeSubscription") || "Resume Subscription"}</DialogTitle>
+                                    <DialogTitle>
+                                          {isRestore
+                                                ? (t("tenant.restoreOriginalPlan") || "Restore Original Plan")
+                                                : (t("tenant.resumeSubscription") || "Resume Subscription")
+                                          }
+                                    </DialogTitle>
                                     <DialogDescription>
-                                          {t("tenant.resumeDesc") || "Resume the suspended subscription and restore tenant access."}
+                                          {isRestore
+                                                ? (t("tenant.restoreDesc") || "Restore to the original plan with a new billing period.")
+                                                : (t("tenant.resumeDesc") || "Resume the suspended subscription and restore tenant access.")
+                                          }
                                     </DialogDescription>
                               </DialogHeader>
                               <div className="space-y-4 py-2">
-                                    <div className="flex items-center gap-2 rounded-lg border border-blue-500/30 bg-blue-500/5 p-3 text-sm text-blue-700 dark:text-blue-400">
-                                          <Play className="h-4 w-4 shrink-0" />
-                                          <span>{t("tenant.resumeAdminWarning") || "All previously deactivated administrators will be re-activated and regain access to the system."}</span>
-                                    </div>
-                                    {subscription && (
-                                          <div className="rounded-lg bg-muted/50 p-3 space-y-1">
-                                                <p className="text-xs text-muted-foreground">{t("tenant.currentPlan") || "Plan"}</p>
-                                                <p className="text-sm font-medium">{subscription.editionName} — {TYPE_LABELS[subscription.type] || subscription.type}</p>
-                                          </div>
+                                    {isRestore ? (
+                                          /* ── RESTORE FROM DOWNGRADE ── */
+                                          <>
+                                                {/* Original Plan Info */}
+                                                <div className="rounded-lg bg-muted/50 p-3 space-y-1">
+                                                      <p className="text-xs text-muted-foreground">{t("tenant.originalPlan") || "Original Plan"}</p>
+                                                      <p className="text-sm font-medium">
+                                                            {vm.downgradedFromEditionName} — {TYPE_LABELS[vm.downgradedFromType || ""] || vm.downgradedFromType}
+                                                      </p>
+                                                      {vm.downgradedAt && (
+                                                            <p className="text-xs text-muted-foreground">
+                                                                  {t("tenant.downgradedOn") || "Downgraded on"}: {new Date(vm.downgradedAt).toLocaleDateString()}
+                                                            </p>
+                                                      )}
+                                                </div>
+
+                                                {/* Billing Cycle Chooser */}
+                                                <div className="space-y-2">
+                                                      <Label>{t("tenant.billingCycle") || "Billing Cycle"}</Label>
+                                                      <GenericSelect
+                                                            value={restoreType}
+                                                            onValueChange={(v: string) => setRestoreType(v as SubscriptionType)}
+                                                            options={CONVERT_OPTIONS}
+                                                            placeholder={t("tenant.selectBillingCycle") || "Select billing cycle"}
+                                                      />
+                                                      <p className="text-xs text-muted-foreground">
+                                                            {t("tenant.chooseBillingCycle") || "You may choose a different billing cycle."}
+                                                      </p>
+                                                </div>
+
+                                                {/* Info Banner */}
+                                                <div className="flex items-center gap-2 rounded-lg border border-blue-500/30 bg-blue-500/5 p-3 text-sm text-blue-700 dark:text-blue-400">
+                                                      <RotateCcw className="h-4 w-4 shrink-0" />
+                                                      <span>{t("tenant.restoreInfo") || "A new billing period will start from today. Permissions will be restored to the original plan."}</span>
+                                                </div>
+                                          </>
+                                    ) : (
+                                          /* ── RESUME FROM SUSPEND ── */
+                                          <>
+                                                <div className="flex items-center gap-2 rounded-lg border border-blue-500/30 bg-blue-500/5 p-3 text-sm text-blue-700 dark:text-blue-400">
+                                                      <Play className="h-4 w-4 shrink-0" />
+                                                      <span>{t("tenant.resumeAdminWarning") || "All previously deactivated administrators will be re-activated and regain access to the system."}</span>
+                                                </div>
+                                                {subscription && (
+                                                      <div className="rounded-lg bg-muted/50 p-3 space-y-1">
+                                                            <p className="text-xs text-muted-foreground">{t("tenant.currentPlan") || "Plan"}</p>
+                                                            <p className="text-sm font-medium">{subscription.editionName} — {TYPE_LABELS[subscription.type] || subscription.type}</p>
+                                                      </div>
+                                                )}
+                                          </>
                                     )}
                               </div>
                               <DialogFooter>
                                     <Button variant="outline" onClick={() => setResumeOpen(false)} disabled={vm.isResuming}>
                                           {t("common.cancel") || "Cancel"}
                                     </Button>
-                                    <Button onClick={() => { vm.resumeSubscription(); setResumeOpen(false); }} disabled={vm.isResuming}>
-                                          {vm.isResuming ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Play className="mr-2 h-4 w-4" />}
-                                          {t("tenant.confirmResume") || "Resume Subscription"}
+                                    <Button onClick={() => {
+                                          if (isRestore) {
+                                                vm.resumeSubscription(restoreType);
+                                          } else {
+                                                vm.resumeSubscription();
+                                          }
+                                          setResumeOpen(false);
+                                    }} disabled={vm.isResuming}>
+                                          {vm.isResuming ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : isRestore ? <RotateCcw className="mr-2 h-4 w-4" /> : <Play className="mr-2 h-4 w-4" />}
+                                          {isRestore
+                                                ? (t("tenant.confirmRestore") || "Restore Plan")
+                                                : (t("tenant.confirmResume") || "Resume Subscription")
+                                          }
                                     </Button>
                               </DialogFooter>
                         </DialogContent>
