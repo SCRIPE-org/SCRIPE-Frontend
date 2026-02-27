@@ -1,10 +1,11 @@
 "use client";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useToast } from "@core/hooks/use-toast";
+import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 import { systemContainer } from "@modules/system/di";
 import type { SubscriptionModel, EditionThinModel, SubscriptionType, ExpiryBehavior } from "../../data/models/TenantSubscription";
+import { appLogger } from "@/core/common/logger";
 
 // ── Result Interface ──
 
@@ -62,7 +63,7 @@ export interface UseTenantSubscriptionViewModelResult {
 
 export function useTenantSubscriptionViewModel(tenantId: string): UseTenantSubscriptionViewModelResult {
       const { t } = useI18n();
-      const { toast } = useToast();
+      const { success, error: enhancedErrorToast } = useEnhancedToast();
       const queryClient = useQueryClient();
 
       const queryKey = ["tenant-subscriptions", tenantId];
@@ -131,14 +132,13 @@ export function useTenantSubscriptionViewModel(tenantId: string): UseTenantSubsc
       };
 
       const successToast = (desc: string) => {
-            toast({ title: t("common.success") || "Success", description: desc });
+            success({ title: t("common.success") || "Success", description: desc });
       };
 
       const errorToast = (err: Error) => {
-            toast({
+            enhancedErrorToast({
                   title: t("common.error") || "Error",
                   description: err.message || "Operation failed",
-                  variant: "destructive",
             });
       };
 
@@ -156,7 +156,11 @@ export function useTenantSubscriptionViewModel(tenantId: string): UseTenantSubsc
             mutationFn: async (type: string) => {
                   return await systemContainer.tenantRepository.renewSubscription(tenantId, type);
             },
-            onSuccess: (msg) => { successToast(msg || t("tenant.subscriptionRenewed") || "Subscription renewed successfully"); invalidateAll(); },
+            onSuccess: (msg) => {
+                  appLogger.debug("renewMutation.onSuccess fired! msg:", msg);
+                  successToast(msg || t("tenant.subscriptionRenewed") || "Subscription renewed successfully");
+                  invalidateAll();
+            },
             onError: errorToast,
       });
 
