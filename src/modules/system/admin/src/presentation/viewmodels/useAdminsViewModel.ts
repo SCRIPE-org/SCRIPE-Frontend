@@ -25,6 +25,7 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { secureTokenService } from "@core/common/secure-token-service";
 import { useCurrentTenantId } from "@core/providers/tenant-context-provider";
 import { useImpersonation } from "@modules/auth/hooks/useImpersonation";
+import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 
 /**
  * useAdminsViewModel hook options
@@ -335,8 +336,9 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
         // 2. Context tenantId (from drill-down)
         // 3. undefined (system-level roles)
         const roleSearchTenantId = propTenantId ?? contextTenantId ?? undefined;
+        const isExplicitTenant = !!propTenantId;
 
-        const result = useMyTenant
+        const result = (useMyTenant && !isExplicitTenant)
           ? await roleRepository.getMyTenantRoles({ search: query, page: 1, pageSize: 20 })
           : await roleRepository.getAll({
             search: query,
@@ -363,8 +365,9 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
       try {
         // For group search, use the most specific tenant context available
         const groupSearchTenantId = propTenantId ?? contextTenantId ?? undefined;
+        const isExplicitTenant = !!propTenantId;
 
-        const result = useMyTenant
+        const result = (useMyTenant && !isExplicitTenant)
           ? await systemContainer.userGroupRepository.getMyTenantGroups({ search: query, page: 1, pageSize: 20 })
           : await systemContainer.userGroupRepository.getAll({
             search: query,
@@ -398,6 +401,7 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
           onServerSearch: handleRoleSearch,
           searchType: "server" as const,
           noResultsText: t("roles.noRolesFound") || "No roles found",
+          requiredPermission: SYSTEM_PERMISSIONS.ADMINS_ASSIGN_ROLES,
         },
         {
           name: "userGroupIds",
@@ -409,6 +413,7 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
           onServerSearch: handleGroupSearch,
           searchType: "server" as const,
           noResultsText: t("userGroups.emptyStateTitle") || "No groups found",
+          requiredPermission: SYSTEM_PERMISSIONS.USER_GROUPS_VIEW,
         },
         {
           name: "username",
@@ -490,6 +495,7 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
           name: "isActive",
           label: t("admin.isActive") || "Active",
           type: "switch" as const,
+          requiredPermission: SYSTEM_PERMISSIONS.ADMINS_UPDATE,
         },
         { name: "id", type: "hidden" as const, required: true },
       ],
@@ -520,9 +526,9 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
         await adminRepository.delete(id);
       },
       permissions: {
-        canCreate: "admins:create",
-        canUpdate: "admins:update",
-        canDelete: "admins:delete",
+        canCreate: SYSTEM_PERMISSIONS.ADMINS_CREATE,
+        canUpdate: SYSTEM_PERMISSIONS.ADMINS_UPDATE,
+        canDelete: SYSTEM_PERMISSIONS.ADMINS_DELETE,
       },
     }),
     [t, adminRepository]

@@ -143,6 +143,12 @@ export const SYSTEM_PERMISSIONS = {
   ROLES_MANAGE_PERMISSIONS: "roles.manage_permissions",
   ROLES_CLONE: "roles.clone",
 
+  // User Groups
+  USER_GROUPS_VIEW: "user_groups.view",
+  USER_GROUPS_CREATE: "user_groups.create",
+  USER_GROUPS_UPDATE: "user_groups.update",
+  USER_GROUPS_DELETE: "user_groups.delete",
+
   // Permissions
   PERMISSIONS_VIEW: "permissions.view",
   PERMISSIONS_CREATE: "permissions.create",

@@ -324,6 +324,7 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
             onClick: (item: Admin) => handleOpenAssignToGroup(item),
             variant: "ghost" as const,
             icon: <Users className="h-4 w-4" />,
+            requiredPermission: SYSTEM_PERMISSIONS.USER_GROUPS_VIEW,
             show: (item: Admin) => !item.hasGuardianProtection || !!tenantId,
           },
           {
@@ -362,6 +363,7 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
             setBulkAssignToGroupDialogOpen(true);
           },
           variant: "outline" as const,
+          requiredPermission: SYSTEM_PERMISSIONS.USER_GROUPS_VIEW,
         },
         {
           label: t("common.delete") || "Delete",

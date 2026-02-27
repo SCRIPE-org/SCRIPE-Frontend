@@ -120,6 +120,8 @@ export interface BulkAction {
   maxItems?: number;
   /** Whether the action requires confirmation */
   requiresConfirmation?: boolean;
+  /** Permission required to show this action */
+  requiredPermission?: PermissionCode;
 }
 
 /**
@@ -146,6 +148,8 @@ export interface CustomAction {
   tooltip?: string;
   /** Loading state for async actions */
   loading?: boolean;
+  /** Permission required to show this action */
+  requiredPermission?: PermissionCode;
 }
 
 /**
@@ -687,42 +691,46 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
           {subtitle && <p className="text-muted-foreground">{subtitle}</p>}
         </div>
         <div className="flex flex-col gap-2 sm:flex-row">
-          {config?.customActions?.map((action, index) => (
-            <Button
-              key={index}
-              onClick={action.onClick}
-              variant={action.variant || "default"}
-              size={getButtonSize()}
-              className={cn("flex-1 sm:flex-none", action.className)}
-              disabled={action.disabled}
-            >
-              {action.icon && <span className="mr-2">{action.icon}</span>}
-              {action.label}
-            </Button>
-          ))}
+          {config?.customActions
+            ?.filter((action) => !action.requiredPermission || hasPermission(action.requiredPermission))
+            .map((action, index) => (
+              <Button
+                key={index}
+                onClick={action.onClick}
+                variant={action.variant || "default"}
+                size={getButtonSize()}
+                className={cn("flex-1 sm:flex-none", action.className)}
+                disabled={action.disabled}
+              >
+                {action.icon && <span className="mr-2">{action.icon}</span>}
+                {action.label}
+              </Button>
+            ))}
           {config?.enableBulkActions === true && viewModel.selectedItems.length > 0 && (
             <div className="mt-2 flex flex-col gap-2 sm:mt-0 sm:flex-row">
-              {config?.bulkActions?.map((action, index) => {
-                const meetsMin =
-                  !action.minItems || viewModel.selectedItems.length >= action.minItems;
-                const meetsMax =
-                  !action.maxItems || viewModel.selectedItems.length <= action.maxItems;
-                const enabled = meetsMin && meetsMax;
+              {config?.bulkActions
+                ?.filter((action) => !action.requiredPermission || hasPermission(action.requiredPermission))
+                .map((action, index) => {
+                  const meetsMin =
+                    !action.minItems || viewModel.selectedItems.length >= action.minItems;
+                  const meetsMax =
+                    !action.maxItems || viewModel.selectedItems.length <= action.maxItems;
+                  const enabled = meetsMin && meetsMax;
 
-                return (
-                  <Button
-                    key={index}
-                    onClick={() => handleBulkAction(action, viewModel.selectedItems)}
-                    variant={action.variant || "outline"}
-                    size={getButtonSize()}
-                    className="flex-1 sm:flex-none"
-                    disabled={!enabled}
-                  >
-                    {action.icon && <span className="mr-2">{action.icon}</span>}
-                    {action.label.replace("{count}", viewModel.selectedItems.length.toString())}
-                  </Button>
-                );
-              })}
+                  return (
+                    <Button
+                      key={index}
+                      onClick={() => handleBulkAction(action, viewModel.selectedItems)}
+                      variant={action.variant || "outline"}
+                      size={getButtonSize()}
+                      className="flex-1 sm:flex-none"
+                      disabled={!enabled}
+                    >
+                      {action.icon && <span className="mr-2">{action.icon}</span>}
+                      {action.label.replace("{count}", viewModel.selectedItems.length.toString())}
+                    </Button>
+                  );
+                })}
               <Button
                 onClick={() => viewModel.setSelectedItems([])}
                 variant="outline"

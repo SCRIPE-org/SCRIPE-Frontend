@@ -56,6 +56,8 @@ import { DatePicker } from "@core/ui/date-picker";
 import { RichTextEditor } from "@core/ui/rich-text-editor";
 import { ImageUploader } from "@core/ui/image-uploader";
 import { PasswordInput } from "@core/ui/password-input";
+import { usePermissions } from "@core/providers/permission-provider";
+import type { PermissionCode } from "@core/common/types/permissions";
 
 /**
  * Field option for select, radio, and other choice-based inputs
@@ -81,34 +83,34 @@ export interface FieldConfig {
   name: string;
   label?: string; // Optional for hidden fields
   type:
-    | "text"
-    | "password"
-    | "email"
-    | "number"
-    | "tel"
-    | "url"
-    | "textarea"
-    | "richtext"
-    | "select"
-    | "searchable-select"
-    | "server-select"
-    | "multi-select"
-    | "tree"
-    | "switch"
-    | "checkbox"
-    | "radio"
-    | "slider"
-    | "range"
-    | "hidden"
-    | "date"
-    | "datetime"
-    | "datetime-local"
-    | "time"
-    | "month"
-    | "week"
-    | "color"
-    | "file"
-    | "image";
+  | "text"
+  | "password"
+  | "email"
+  | "number"
+  | "tel"
+  | "url"
+  | "textarea"
+  | "richtext"
+  | "select"
+  | "searchable-select"
+  | "server-select"
+  | "multi-select"
+  | "tree"
+  | "switch"
+  | "checkbox"
+  | "radio"
+  | "slider"
+  | "range"
+  | "hidden"
+  | "date"
+  | "datetime"
+  | "datetime-local"
+  | "time"
+  | "month"
+  | "week"
+  | "color"
+  | "file"
+  | "image";
   placeholder?: string;
   searchPlaceholder?: string; // For searchable selects
   required?: boolean;
@@ -145,6 +147,9 @@ export interface FieldConfig {
   pattern?: string; // For text inputs
   minLength?: number; // For text inputs
   maxLength?: number; // For text inputs
+  // Permissions
+  requiredPermission?: PermissionCode;
+  requiredPermissions?: PermissionCode[];
 }
 
 /**
@@ -186,6 +191,7 @@ export function GenericForm({
 }: GenericFormProps) {
   const settings = useSettings();
   const { t, direction } = useI18n();
+  const { hasPermission, hasAnyPermission } = usePermissions();
 
   // Helper function to initialize form data with default values
   const initializeFormData = React.useCallback(
@@ -473,7 +479,14 @@ export function GenericForm({
     >
       <form onSubmit={handleSubmit} className={getFormSpacing()}>
         {fields
-          .filter((field) => !field.isVisible || field.isVisible(formData))
+          .filter((field) => {
+            // Check visibility function
+            if (field.isVisible && !field.isVisible(formData)) return false;
+            // Check permissions
+            if (field.requiredPermission && !hasPermission(field.requiredPermission)) return false;
+            if (field.requiredPermissions && field.requiredPermissions.length > 0 && !hasAnyPermission(field.requiredPermissions)) return false;
+            return true;
+          })
           .map((field) =>
             field.type === "hidden" ? (
               <input
@@ -531,12 +544,12 @@ export function GenericForm({
                     onServerSearch={
                       field.onServerSearch
                         ? async (query: string) => {
-                            const results = await field.onServerSearch!(query);
-                            return results.map((r) => ({
-                              value: r.value,
-                              label: r.label,
-                            }));
-                          }
+                          const results = await field.onServerSearch!(query);
+                          return results.map((r) => ({
+                            value: r.value,
+                            label: r.label,
+                          }));
+                        }
                         : undefined
                     }
                     searchEndpoint={field.searchEndpoint}
@@ -567,13 +580,13 @@ export function GenericForm({
                     onServerSearch={
                       field.onServerSearch
                         ? async (query: string) => {
-                            const results = await field.onServerSearch!(query);
-                            return results.map((r) => ({
-                              value: r.value,
-                              label: r.label,
-                              uniqueKey: r.uniqueKey,
-                            }));
-                          }
+                          const results = await field.onServerSearch!(query);
+                          return results.map((r) => ({
+                            value: r.value,
+                            label: r.label,
+                            uniqueKey: r.uniqueKey,
+                          }));
+                        }
                         : undefined
                     }
                     searchEndpoint={field.searchEndpoint}
