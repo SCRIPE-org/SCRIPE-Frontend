@@ -24,8 +24,8 @@ export interface UseTenantSettingsViewModelResult {
   error: Error | null;
 
   // Edit Dialog State
-  editSection: "quotas" | "security" | "audit" | "branding" | null;
-  setEditSection: (section: "quotas" | "security" | "audit" | "branding" | null) => void;
+  editSection: "security" | "audit" | "branding" | null;
+  setEditSection: (section: "security" | "audit" | "branding" | null) => void;
 
   // Update Actions
   updateSettings: (data: UpdateTenantSettingsRequest) => void;
@@ -42,7 +42,7 @@ export function useTenantSettingsViewModel(tenantId: string): UseTenantSettingsV
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [editSection, setEditSection] = useState<
-    "quotas" | "security" | "audit" | "branding" | null
+    "security" | "audit" | "branding" | null
   >(null);
   const [permissionsOpen, setPermissionsOpen] = useState(false);
 

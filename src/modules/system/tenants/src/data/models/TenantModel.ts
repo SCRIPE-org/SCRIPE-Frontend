@@ -41,6 +41,7 @@ export interface TenantTreeNodeJson {
   code: string;
   level: number;
   isActive: boolean;
+  isSuspended?: boolean;
   description?: string;
   parentId?: string;
   editionName?: string;
@@ -152,7 +153,8 @@ export class TenantTreeNodeModel {
     public readonly description?: string,
     public readonly parentId?: string,
     public readonly editionName?: string,
-    public readonly editionEndDate?: string
+    public readonly editionEndDate?: string,
+    public readonly isSuspended?: boolean
   ) { }
 
   static fromJson(json: TenantTreeNodeJson): TenantTreeNodeModel {
@@ -162,11 +164,12 @@ export class TenantTreeNodeModel {
       json.code,
       json.level,
       json.isActive,
-      json.children.map((c) => TenantTreeNodeModel.fromJson(c)),
+      (json.children || []).map((c) => TenantTreeNodeModel.fromJson(c)),
       json.description,
       json.parentId,
       json.editionName,
-      json.editionEndDate
+      json.editionEndDate,
+      json.isSuspended
     );
   }
 
@@ -177,6 +180,7 @@ export class TenantTreeNodeModel {
       code: this.code,
       level: this.level,
       isActive: this.isActive,
+      isSuspended: this.isSuspended,
       description: this.description,
       parentId: this.parentId,
       editionName: this.editionName,

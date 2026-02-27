@@ -228,7 +228,7 @@ function AssignDialog({
                                     </Select>
                               </div>
 
-                              {vm.subscriptionType === "Trial" && (
+                              {vm.subscriptionType !== "Lifetime" && (
                                     <div className="space-y-2">
                                           <Label>{t("entitlements.subscriptions.endDate") || "End Date"}</Label>
                                           <Input
@@ -237,7 +237,11 @@ function AssignDialog({
                                                 onChange={(e) => vm.setEndDate(e.target.value)}
                                           />
                                           <p className="text-xs text-muted-foreground">
-                                                {t("entitlements.subscriptions.trialEndDateHint") || "Leave empty for default 14-day trial"}
+                                                {vm.subscriptionType === "Trial"
+                                                      ? (t("entitlements.subscriptions.trialEndDateHint") || "Default: 14 days from today")
+                                                      : vm.subscriptionType === "Monthly"
+                                                            ? (t("entitlements.subscriptions.monthlyEndDateHint") || "Default: 30 days from today")
+                                                            : (t("entitlements.subscriptions.yearlyEndDateHint") || "Default: 365 days from today")}
                                           </p>
                                     </div>
                               )}

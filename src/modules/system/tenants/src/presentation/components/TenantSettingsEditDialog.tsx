@@ -25,7 +25,7 @@ import { appLogger } from "@/core/common/logger";
 interface TenantSettingsEditDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  initialSection: "quotas" | "security" | "audit" | "branding" | null;
+  initialSection: "security" | "audit" | "branding" | null;
   settings: TenantSettingsModel;
   onSave: (data: UpdateTenantSettingsRequest) => void;
   isSaving: boolean;
@@ -42,7 +42,7 @@ export function TenantSettingsEditDialog({
   onUploadLogo,
 }: TenantSettingsEditDialogProps) {
   const { t, direction } = useI18n();
-  const [activeTab, setActiveTab] = useState(initialSection || "quotas");
+  const [activeTab, setActiveTab] = useState(initialSection || "security");
   const [formData, setFormData] = useState<TenantSettingsModel>({ ...settings });
 
   // Update local state when settings change or dialog opens
@@ -61,17 +61,14 @@ export function TenantSettingsEditDialog({
     // Construct request payload based on active tab ONLY (Granular updates)
     const request: UpdateTenantSettingsRequest = {};
 
-    if (activeTab === "quotas") {
-      request.maxAdmins = formData.maxAdmins;
-      request.maxRoles = formData.maxRoles;
-      request.maxSubTenants = formData.maxSubTenants;
-    } else if (activeTab === "security") {
+    if (activeTab === "security") {
       request.passwordMinLength = formData.passwordMinLength;
       request.passwordRequireUppercase = formData.passwordRequireUppercase;
       request.passwordRequireNumber = formData.passwordRequireNumber;
       request.passwordRequireSpecial = formData.passwordRequireSpecial;
       request.loginLockoutThreshold = formData.loginLockoutThreshold;
       request.loginLockoutMinutes = formData.loginLockoutMinutes;
+      request.passwordExpiryDays = formData.passwordExpiryDays;
       request.require2FA = formData.require2FA;
     } else if (activeTab === "audit") {
       request.auditRetentionDays = formData.auditRetentionDays;
@@ -96,51 +93,11 @@ export function TenantSettingsEditDialog({
         </DialogHeader>
 
         <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)} className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="quotas">{t("tenant.quotas") || "Quotas"}</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="security">{t("tenant.security") || "Security"}</TabsTrigger>
             <TabsTrigger value="audit">{t("tenant.audit") || "Audit"}</TabsTrigger>
             <TabsTrigger value="branding">{t("tenant.branding") || "Branding"}</TabsTrigger>
           </TabsList>
-
-          {/* QUOTAS TAB */}
-          <TabsContent value="quotas" className="space-y-4 py-4">
-            <div className="grid grid-cols-3 gap-4">
-              <div className="space-y-2">
-                <Label>{t("tenant.maxAdmins") || "Max Admins"}</Label>
-                <Input
-                  type="number"
-                  value={formData.maxAdmins}
-                  onChange={(e) => handleChange("maxAdmins", parseInt(e.target.value))}
-                />
-                <p className="text-xs text-muted-foreground">
-                  {t("tenant.unlimitedHelp") || "-1 for unlimited"}
-                </p>
-              </div>
-              <div className="space-y-2">
-                <Label>{t("tenant.maxRoles") || "Max Roles"}</Label>
-                <Input
-                  type="number"
-                  value={formData.maxRoles}
-                  onChange={(e) => handleChange("maxRoles", parseInt(e.target.value))}
-                />
-                <p className="text-xs text-muted-foreground">
-                  {t("tenant.unlimitedHelp") || "-1 for unlimited"}
-                </p>
-              </div>
-              <div className="space-y-2">
-                <Label>{t("tenant.maxSubTenants") || "Max Sub-Tenants"}</Label>
-                <Input
-                  type="number"
-                  value={formData.maxSubTenants}
-                  onChange={(e) => handleChange("maxSubTenants", parseInt(e.target.value))}
-                />
-                <p className="text-xs text-muted-foreground">
-                  {t("tenant.unlimitedHelp") || "-1 for unlimited"}
-                </p>
-              </div>
-            </div>
-          </TabsContent>
 
           {/* SECURITY TAB */}
           <TabsContent value="security" className="space-y-4 py-4">
@@ -159,6 +116,26 @@ export function TenantSettingsEditDialog({
                   type="number"
                   value={formData.loginLockoutThreshold}
                   onChange={(e) => handleChange("loginLockoutThreshold", parseInt(e.target.value))}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>{t("tenant.passwordExpiryDays") || "Password Expiry (days)"}</Label>
+                <Input
+                  type="number"
+                  value={formData.passwordExpiryDays ?? ""}
+                  onChange={(e) => handleChange("passwordExpiryDays", e.target.value ? parseInt(e.target.value) : undefined)}
+                  placeholder={t("tenant.neverExpires") || "Leave empty for never"}
+                />
+                <p className="text-xs text-muted-foreground">
+                  {t("tenant.passwordExpiryHelp") || "Empty = never expires"}
+                </p>
+              </div>
+              <div className="space-y-2">
+                <Label>{t("tenant.lockoutDuration") || "Lockout Duration (min)"}</Label>
+                <Input
+                  type="number"
+                  value={formData.loginLockoutMinutes}
+                  onChange={(e) => handleChange("loginLockoutMinutes", parseInt(e.target.value))}
                 />
               </div>
             </div>

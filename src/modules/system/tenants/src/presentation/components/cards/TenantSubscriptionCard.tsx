@@ -11,7 +11,8 @@ import {
 } from "lucide-react";
 import { useTenantSubscriptionViewModel } from "@modules/system/tenants/src/presentation/viewmodels/useTenantSubscriptionViewModel";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@core/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
+import { GenericSelect } from "@core/crud/components/generic-select";
+import type { GenericSelectOption } from "@core/crud/components/generic-select";
 import { Skeleton } from "@core/ui/skeleton";
 import { Textarea } from "@core/ui/textarea";
 import { Label } from "@core/ui/label";
@@ -47,6 +48,27 @@ function formatDate(dateStr?: string) {
       });
 }
 
+// ── Billing Cycle Options ──
+
+const BILLING_CYCLE_OPTIONS: GenericSelectOption[] = [
+      { value: "Monthly", label: "Monthly" },
+      { value: "Yearly", label: "Yearly" },
+      { value: "Lifetime", label: "Lifetime" },
+      { value: "Trial", label: "Trial (14 days)" },
+];
+
+const RENEW_OPTIONS: GenericSelectOption[] = [
+      { value: "Monthly", label: "1 Month" },
+      { value: "Yearly", label: "1 Year" },
+      { value: "Lifetime", label: "Make Lifetime (no expiry)" },
+];
+
+const CONVERT_OPTIONS: GenericSelectOption[] = [
+      { value: "Monthly", label: "Monthly" },
+      { value: "Yearly", label: "Yearly" },
+      { value: "Lifetime", label: "Lifetime" },
+];
+
 // ── Main Component ──
 
 export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps) {
@@ -59,12 +81,19 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
       const [convertOpen, setConvertOpen] = useState(false);
       const [suspendOpen, setSuspendOpen] = useState(false);
       const [cancelOpen, setCancelOpen] = useState(false);
+      const [resumeOpen, setResumeOpen] = useState(false);
 
       // Form states for dialogs
       const [selectedEditionId, setSelectedEditionId] = useState("");
       const [selectedType, setSelectedType] = useState<SubscriptionType>("Monthly");
       const [suspendReason, setSuspendReason] = useState("");
       const [cancelReason, setCancelReason] = useState("");
+
+      // Edition options for GenericSelect
+      const editionOptions: GenericSelectOption[] = (vm.availableEditions || []).map((e) => ({
+            value: e.id,
+            label: e.name || e.displayNameEn || e.id,
+      }));
 
       if (vm.isLoading) {
             return (
@@ -210,7 +239,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                           {t("tenant.changePlan") || "Change Plan"}
                                     </Button>
 
-                                    {/* Renew */}
+                                    {/* Renew — hidden for Lifetime */}
                                     {vm.canRenew && (
                                           <Button variant="outline" size="sm" onClick={() => {
                                                 setSelectedType((subscription.type as SubscriptionType) || "Monthly");
@@ -243,10 +272,10 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                           </Button>
                                     )}
 
-                                    {/* Resume */}
+                                    {/* Resume — now opens confirmation dialog */}
                                     {vm.canResume && (
-                                          <Button variant="default" size="sm" onClick={() => vm.resumeSubscription()} disabled={vm.isResuming}>
-                                                {vm.isResuming ? <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" /> : <Play className="mr-1.5 h-3.5 w-3.5" />}
+                                          <Button variant="default" size="sm" onClick={() => setResumeOpen(true)}>
+                                                <Play className="mr-1.5 h-3.5 w-3.5" />
                                                 {t("tenant.resume") || "Resume"}
                                           </Button>
                                     )}
@@ -276,6 +305,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                   {renderConvertDialog()}
                   {renderSuspendDialog()}
                   {renderCancelDialog()}
+                  {renderResumeDialog()}
             </>
       );
 
@@ -296,30 +326,21 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                               <div className="space-y-4 py-2">
                                     <div className="space-y-2">
                                           <Label>{t("tenant.selectPlan") || "Edition"}</Label>
-                                          <Select value={selectedEditionId} onValueChange={setSelectedEditionId}>
-                                                <SelectTrigger>
-                                                      <SelectValue placeholder={t("tenant.selectAPlan") || "Select an edition"} />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                      {vm.availableEditions.map((e) => (
-                                                            <SelectItem key={e.id} value={e.id}>{e.name}</SelectItem>
-                                                      ))}
-                                                </SelectContent>
-                                          </Select>
+                                          <GenericSelect
+                                                options={editionOptions}
+                                                value={selectedEditionId}
+                                                onValueChange={(v: string | string[]) => setSelectedEditionId(v as string)}
+                                                placeholder={t("tenant.selectAPlan") || "Select an edition"}
+                                          />
                                     </div>
                                     <div className="space-y-2">
                                           <Label>{t("tenant.billingCycle") || "Billing Cycle"}</Label>
-                                          <Select value={selectedType} onValueChange={(v) => setSelectedType(v as SubscriptionType)}>
-                                                <SelectTrigger>
-                                                      <SelectValue />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                      <SelectItem value="Monthly">{t("tenant.monthly") || "Monthly"}</SelectItem>
-                                                      <SelectItem value="Yearly">{t("tenant.yearly") || "Yearly"}</SelectItem>
-                                                      <SelectItem value="Lifetime">{t("tenant.lifetime") || "Lifetime"}</SelectItem>
-                                                      <SelectItem value="Trial">{t("tenant.trial") || "Trial (14 days)"}</SelectItem>
-                                                </SelectContent>
-                                          </Select>
+                                          <GenericSelect
+                                                options={BILLING_CYCLE_OPTIONS}
+                                                value={selectedType}
+                                                onValueChange={(v: string | string[]) => setSelectedType(v as SubscriptionType)}
+                                                placeholder={t("tenant.selectBillingCycle") || "Select billing cycle"}
+                                          />
                                     </div>
                               </div>
                               <DialogFooter>
@@ -359,16 +380,12 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                     )}
                                     <div className="space-y-2">
                                           <Label>{t("tenant.extendBy") || "Extend By"}</Label>
-                                          <Select value={selectedType} onValueChange={(v) => setSelectedType(v as SubscriptionType)}>
-                                                <SelectTrigger>
-                                                      <SelectValue />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                      <SelectItem value="Monthly">{t("tenant.oneMonth") || "1 Month"}</SelectItem>
-                                                      <SelectItem value="Yearly">{t("tenant.oneYear") || "1 Year"}</SelectItem>
-                                                      <SelectItem value="Lifetime">{t("tenant.makeLifetime") || "Make Lifetime (no expiry)"}</SelectItem>
-                                                </SelectContent>
-                                          </Select>
+                                          <GenericSelect
+                                                options={RENEW_OPTIONS}
+                                                value={selectedType}
+                                                onValueChange={(v: string | string[]) => setSelectedType(v as SubscriptionType)}
+                                                placeholder={t("tenant.selectRenewalPeriod") || "Select renewal period"}
+                                          />
                                     </div>
                               </div>
                               <DialogFooter>
@@ -401,16 +418,12 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                     </div>
                                     <div className="space-y-2">
                                           <Label>{t("tenant.selectBillingCycle") || "Billing Cycle"}</Label>
-                                          <Select value={selectedType} onValueChange={(v) => setSelectedType(v as SubscriptionType)}>
-                                                <SelectTrigger>
-                                                      <SelectValue />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                      <SelectItem value="Monthly">{t("tenant.monthly") || "Monthly"}</SelectItem>
-                                                      <SelectItem value="Yearly">{t("tenant.yearly") || "Yearly"}</SelectItem>
-                                                      <SelectItem value="Lifetime">{t("tenant.lifetime") || "Lifetime"}</SelectItem>
-                                                </SelectContent>
-                                          </Select>
+                                          <GenericSelect
+                                                options={CONVERT_OPTIONS}
+                                                value={selectedType}
+                                                onValueChange={(v: string | string[]) => setSelectedType(v as SubscriptionType)}
+                                                placeholder={t("tenant.selectBillingCycle") || "Select billing cycle"}
+                                          />
                                     </div>
                               </div>
                               <DialogFooter>
@@ -437,6 +450,11 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                     </DialogDescription>
                               </DialogHeader>
                               <div className="space-y-4 py-2">
+                                    {/* Admin deactivation warning */}
+                                    <div className="flex items-center gap-2 rounded-lg border border-orange-500/30 bg-orange-500/5 p-3 text-sm text-orange-700 dark:text-orange-400">
+                                          <AlertTriangle className="h-4 w-4 shrink-0" />
+                                          <span>{t("tenant.suspendAdminWarning") || "All tenant administrators will be deactivated and unable to access the system until the subscription is resumed."}</span>
+                                    </div>
                                     <div className="space-y-2">
                                           <Label>{t("tenant.suspendReason") || "Reason for suspension"} *</Label>
                                           <Textarea
@@ -477,9 +495,10 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                     </DialogDescription>
                               </DialogHeader>
                               <div className="space-y-4 py-2">
+                                    {/* Admin deactivation warning */}
                                     <div className="flex items-center gap-2 rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">
                                           <AlertTriangle className="h-4 w-4 shrink-0" />
-                                          <span>{t("tenant.cancelWarning") || "This action cannot be undone. All features and permissions will be removed."}</span>
+                                          <span>{t("tenant.cancelAdminWarning") || "All tenant administrators will be permanently deactivated. This action cannot be undone."}</span>
                                     </div>
                                     <div className="space-y-2">
                                           <Label>{t("tenant.cancelReason") || "Reason (optional)"}</Label>
@@ -501,6 +520,42 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                     }} disabled={vm.isCanceling}>
                                           {vm.isCanceling ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /></> : <XCircle className="mr-2 h-4 w-4" />}
                                           {t("tenant.confirmCancel") || "Cancel Subscription"}
+                                    </Button>
+                              </DialogFooter>
+                        </DialogContent>
+                  </Dialog>
+            );
+      }
+
+      function renderResumeDialog() {
+            return (
+                  <Dialog open={resumeOpen} onOpenChange={setResumeOpen}>
+                        <DialogContent className="max-w-md">
+                              <DialogHeader>
+                                    <DialogTitle>{t("tenant.resumeSubscription") || "Resume Subscription"}</DialogTitle>
+                                    <DialogDescription>
+                                          {t("tenant.resumeDesc") || "Resume the suspended subscription and restore tenant access."}
+                                    </DialogDescription>
+                              </DialogHeader>
+                              <div className="space-y-4 py-2">
+                                    <div className="flex items-center gap-2 rounded-lg border border-blue-500/30 bg-blue-500/5 p-3 text-sm text-blue-700 dark:text-blue-400">
+                                          <Play className="h-4 w-4 shrink-0" />
+                                          <span>{t("tenant.resumeAdminWarning") || "All previously deactivated administrators will be re-activated and regain access to the system."}</span>
+                                    </div>
+                                    {subscription && (
+                                          <div className="rounded-lg bg-muted/50 p-3 space-y-1">
+                                                <p className="text-xs text-muted-foreground">{t("tenant.currentPlan") || "Plan"}</p>
+                                                <p className="text-sm font-medium">{subscription.editionName} — {TYPE_LABELS[subscription.type] || subscription.type}</p>
+                                          </div>
+                                    )}
+                              </div>
+                              <DialogFooter>
+                                    <Button variant="outline" onClick={() => setResumeOpen(false)} disabled={vm.isResuming}>
+                                          {t("common.cancel") || "Cancel"}
+                                    </Button>
+                                    <Button onClick={() => { vm.resumeSubscription(); setResumeOpen(false); }} disabled={vm.isResuming}>
+                                          {vm.isResuming ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Play className="mr-2 h-4 w-4" />}
+                                          {t("tenant.confirmResume") || "Resume Subscription"}
                                     </Button>
                               </DialogFooter>
                         </DialogContent>

@@ -126,10 +126,10 @@ export function useRolePermissionsDialog({
       const permissions = await api.get<TenantPermission[]>(`/Tenants/${tenantId}/permissions`);
 
       // If the tenant has no permissions assigned (e.g. not synced from edition),
-      // fall back to creation permissions which lists ALL available permissions
+      // fall back to creation permissions scoped to this tenant's parent
       if (!permissions || permissions.length === 0) {
         try {
-          const creationPerms = await systemContainer.tenantService.getCreationPermissions();
+          const creationPerms = await systemContainer.tenantService.getCreationPermissions(tenantId);
           return creationPerms.map((p: any) => ({
             id: p.id,
             resource: p.resource,

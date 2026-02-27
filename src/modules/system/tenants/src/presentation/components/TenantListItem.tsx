@@ -18,7 +18,7 @@ import { PermissionGate } from "@core/providers/permission-provider";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Tenant } from "../../domain/entities/Tenant";
-import { MoreHorizontal, Pencil, Trash2, Building2 } from "lucide-react";
+import { MoreHorizontal, Pencil, Trash2, Building2, Pause } from "lucide-react";
 
 interface TenantListItemProps {
   tenant: Tenant;

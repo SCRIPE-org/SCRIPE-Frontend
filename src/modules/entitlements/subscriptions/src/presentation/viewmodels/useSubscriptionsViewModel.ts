@@ -11,7 +11,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { entitlementsContainer } from "@modules/entitlements/di";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 
 export function useSubscriptionsViewModel(tenantId: string) {
       const { subscriptionRepository } = entitlementsContainer;
@@ -53,6 +53,29 @@ export function useSubscriptionsViewModel(tenantId: string) {
             setSubscriptionType("Lifetime");
             setEndDate("");
       }, []);
+
+      // ─── Auto-calculate endDate on type change ────────
+      useEffect(() => {
+            const now = new Date();
+            switch (subscriptionType) {
+                  case "Monthly":
+                        now.setDate(now.getDate() + 30);
+                        setEndDate(now.toISOString().split("T")[0]);
+                        break;
+                  case "Yearly":
+                        now.setDate(now.getDate() + 365);
+                        setEndDate(now.toISOString().split("T")[0]);
+                        break;
+                  case "Trial":
+                        now.setDate(now.getDate() + 14);
+                        setEndDate(now.toISOString().split("T")[0]);
+                        break;
+                  case "Lifetime":
+                  default:
+                        setEndDate("");
+                        break;
+            }
+      }, [subscriptionType]);
 
       // ─── Assign mutation ────────────────────────────────
       const assignMutation = useMutation({

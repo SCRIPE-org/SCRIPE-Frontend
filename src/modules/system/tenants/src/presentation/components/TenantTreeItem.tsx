@@ -28,6 +28,7 @@ import {
   ChevronRight,
   ChevronDown,
   LogIn,
+  Pause,
 } from "lucide-react";
 import { cn } from "@core/common/utils";
 
@@ -57,7 +58,8 @@ export function TenantTreeItem({
       <div
         className={cn(
           "group flex items-center gap-2 rounded-md px-3 py-2 hover:bg-muted/50",
-          depth > 0 && "ml-6"
+          depth > 0 && "ml-6",
+          node.isSuspended && "opacity-60"
         )}
       >
         {/* Expand/Collapse */}
@@ -78,6 +80,13 @@ export function TenantTreeItem({
           <span className="truncate font-medium">{node.name}</span>
           <span className="ml-2 text-xs text-muted-foreground">({node.code})</span>
         </div>
+
+        {node.isSuspended && (
+          <Badge variant="destructive" className="gap-1 text-xs">
+            <Pause className="h-3 w-3" />
+            {t("tenant.suspended") || "Suspended"}
+          </Badge>
+        )}
 
         <Badge variant={node.isActive ? "success" : "secondary"}>
           {node.isActive ? t("tenant.active") : t("tenant.inactive")}

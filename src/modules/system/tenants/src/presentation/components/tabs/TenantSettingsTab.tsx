@@ -1,7 +1,8 @@
 /**
  * Tenant Settings Tab Component
  *
- * Displays and manages tenant settings including quotas, security, and permissions.
+ * Displays and manages tenant's OWN settings: Security, Branding, Audit.
+ * Quotas and subscription plan are managed in the Entitlements tab.
  *
  * @module tenants
  */
@@ -11,11 +12,10 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
-import { Users, Shield, Settings, Pencil, Lock } from "lucide-react";
+import { Shield, Settings, Pencil } from "lucide-react";
 import { useTenantSettingsViewModel } from "@modules/system/tenants/src/presentation/viewmodels/useTenantSettingsViewModel";
 import { TenantSettingsEditDialog } from "../TenantSettingsEditDialog";
 import { Skeleton } from "@core/ui/skeleton";
-import { TenantSubscriptionCard } from "../cards/TenantSubscriptionCard";
 
 interface TenantSettingsTabProps {
   tenantId: string;
@@ -66,35 +66,6 @@ export function TenantSettingsTab({
       </div>
 
       <div className="grid gap-4">
-        {/* Subscription Plan Settings */}
-        <TenantSubscriptionCard tenantId={tenantId} />
-
-        {/* Quota Settings — Read-only, enforced by edition */}
-        <Card>
-          <CardHeader className="pb-2">
-            <div className="space-y-1">
-              <CardTitle className="flex items-center gap-2 text-base">
-                <Users className="h-4 w-4" />
-                {t("tenant.settingsQuotas") || "Resource Quotas"}
-              </CardTitle>
-              <CardDescription className="flex items-center gap-1.5">
-                <Lock className="h-3 w-3" />
-                {t("tenant.quotasEnforcedByEdition") || "Enforced by your subscription plan — cannot be modified"}
-              </CardDescription>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-4 pt-4">
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-              <QuotaItem label={t("tenant.maxAdmins") || "Max Admins"} value={settings.maxAdmins} />
-              <QuotaItem label={t("tenant.maxRoles") || "Max Roles"} value={settings.maxRoles} />
-              <QuotaItem
-                label={t("tenant.maxSubTenants") || "Max Sub-Tenants"}
-                value={settings.maxSubTenants}
-              />
-            </div>
-          </CardContent>
-        </Card>
-
         {/* Security Settings */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -112,7 +83,7 @@ export function TenantSettingsTab({
             </Button>
           </CardHeader>
           <CardContent className="space-y-4 pt-4">
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
               <div className="space-y-2">
                 <label className="text-sm font-medium">
                   {t("tenant.passwordMinLength") || "Min Password Length"}
@@ -125,6 +96,24 @@ export function TenantSettingsTab({
                 </label>
                 <div className="text-lg font-bold">
                   {settings.loginLockoutThreshold} {t("tenant.attempts") || "attempts"}
+                </div>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">
+                  {t("tenant.passwordExpiryDays") || "Password Expiry"}
+                </label>
+                <div className="text-lg font-bold">
+                  {settings.passwordExpiryDays
+                    ? `${settings.passwordExpiryDays} ${t("tenant.days") || "days"}`
+                    : t("tenant.never") || "Never"}
+                </div>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">
+                  {t("tenant.lockoutDuration") || "Lockout Duration"}
+                </label>
+                <div className="text-lg font-bold">
+                  {settings.loginLockoutMinutes} {t("tenant.minutes") || "min"}
                 </div>
               </div>
             </div>
@@ -242,21 +231,6 @@ export function TenantSettingsTab({
         isSaving={vm.isUpdating}
         onUploadLogo={vm.uploadLogo}
       />
-    </div>
-  );
-}
-
-function QuotaItem({ label, value }: { label: string; value: number }) {
-  const { t } = useI18n();
-  return (
-    <div className="space-y-2">
-      <label className="text-sm font-medium">{label}</label>
-      <div className="text-2xl font-bold text-primary">{value === -1 ? "∞" : value}</div>
-      <p className="text-xs text-muted-foreground">
-        {value === -1
-          ? t("tenant.unlimited") || "Unlimited"
-          : t("tenant.maximumLimit") || "Maximum limit"}
-      </p>
     </div>
   );
 }

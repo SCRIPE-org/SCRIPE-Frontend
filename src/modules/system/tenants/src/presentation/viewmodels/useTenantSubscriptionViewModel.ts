@@ -103,7 +103,7 @@ export function useTenantSubscriptionViewModel(tenantId: string): UseTenantSubsc
             return diff;
       })();
 
-      const canRenew = isActive && !isTrialing;
+      const canRenew = isActive && !isTrialing && subscription?.type !== "Lifetime";
       const canConvertTrial = isTrialing;
       const canSuspend = isActive;
       const canResume = isSuspended;

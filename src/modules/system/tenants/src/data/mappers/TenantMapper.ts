@@ -59,6 +59,7 @@ export class TenantMapper {
       code: model.code,
       level: model.level,
       isActive: model.isActive,
+      isSuspended: model.isSuspended,
       description: model.description,
       parentId: model.parentId,
       editionName: model.editionName,
