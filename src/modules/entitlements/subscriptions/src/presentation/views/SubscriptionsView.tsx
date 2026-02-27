@@ -2,17 +2,19 @@
  * Subscriptions View
  *
  * Tenant-scoped view showing subscription history with assign/change/revoke actions.
+ * Uses GenericCrudView with CrudConfig for the table.
+ * Follows EditionsView pattern: columns defined in View (since ViewModel is .ts).
  */
 "use client";
 
+import { useMemo } from "react";
+import { GenericCrudView } from "@core/crud/components/generic-crud-view";
+import type { CrudConfig, CrudAction, CustomAction } from "@core/crud/components/generic-crud-view";
 import { useSubscriptionsViewModel } from "../viewmodels/useSubscriptionsViewModel";
 import { useEditionsViewModel } from "@modules/entitlements/editions/src/presentation/viewmodels/useEditionsViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
-import {
-      Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
-} from "@core/ui/table";
 import {
       Dialog, DialogContent, DialogDescription, DialogFooter,
       DialogHeader, DialogTitle,
@@ -22,13 +24,13 @@ import {
 } from "@core/ui/select";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
 import { Loader2, Plus, RefreshCw, XCircle } from "lucide-react";
 import { format } from "date-fns";
+import type { SubscriptionListItem } from "../../domain/entities/Subscription";
 
-interface SubscriptionsViewProps {
-      tenantId: string;
-}
+/* ============================================
+ * BADGE VARIANT MAPS
+ * ============================================ */
 
 const STATUS_VARIANTS: Record<string, "default" | "secondary" | "outline" | "destructive"> = {
       Active: "default",
@@ -44,214 +46,272 @@ const TYPE_VARIANTS: Record<string, "default" | "secondary" | "outline"> = {
       Trial: "outline",
 };
 
-export function SubscriptionsView({ tenantId }: SubscriptionsViewProps) {
-      const { t } = useI18n();
+/* ============================================
+ * VIEWMODEL ADAPTER
+ * ============================================ */
+
+/** Adapts our custom ViewModel to the GenericCrudView viewModel shape */
+function useSubscriptionsCrudAdapter(tenantId: string) {
       const vm = useSubscriptionsViewModel(tenantId);
+
+      return {
+            // Spread ViewModel first (all dialog state, form state, etc.)
+            ...vm,
+
+            // Override with GenericCrudView-specific fields
+            loading: vm.isLoading,
+            error: vm.error ? (vm.error as Error).message : null,
+            refresh: () => { /* handled by query invalidation */ },
+            refreshItems: () => { /* handled by query invalidation */ },
+            selectedItems: [] as string[],
+            setSelectedItems: () => { },
+            searchValue: "",
+            handleSearchChange: () => { },
+            isCreateModalOpen: false,
+            setIsCreateModalOpen: () => { },
+      };
+}
+
+/* ============================================
+ * VIEW
+ * ============================================ */
+
+interface SubscriptionsViewProps {
+      tenantId: string;
+}
+
+export function SubscriptionsView({ tenantId }: SubscriptionsViewProps) {
+      const { t, language } = useI18n();
+      const vm = useSubscriptionsCrudAdapter(tenantId);
       const editionsVm = useEditionsViewModel();
 
-      if (vm.isLoading) {
-            return (
-                  <div className="flex items-center justify-center py-16">
-                        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-                  </div>
-            );
-      }
+      const config: CrudConfig<SubscriptionListItem> = useMemo(
+            () => ({
+                  titleKey: "entitlements.subscriptions.title",
+                  subtitleKey: "entitlements.subscriptions.description",
+                  hideAddButton: true,
 
-      const activeSubscription = vm.subscriptions.find((s) => s.status === "Active" || s.status === "Trialing");
+                  columns: [
+                        {
+                              key: "editionName",
+                              label: t("entitlements.editions.editionName"),
+                              sortable: false,
+                        },
+                        {
+                              key: "type",
+                              label: t("tenant.subscriptionType"),
+                              render: (value: string) => (
+                                    <Badge variant={TYPE_VARIANTS[value] ?? "outline"}>
+                                          {t(`entitlements.subscriptions.${value.toLowerCase()}`) || value}
+                                    </Badge>
+                              ),
+                        },
+                        {
+                              key: "status",
+                              label: t("common.status"),
+                              render: (value: string) => (
+                                    <Badge variant={STATUS_VARIANTS[value] ?? "outline"}>
+                                          {t(`entitlements.subscriptions.${value.toLowerCase()}`) || value}
+                                    </Badge>
+                              ),
+                        },
+                        {
+                              key: "startDate",
+                              label: t("common.createdAt"),
+                              render: (value: string) =>
+                                    value ? format(new Date(value), "MMM d, yyyy") : "-",
+                              hideOnMobile: true,
+                        },
+                  ],
 
+                  getActions: (): CrudAction<SubscriptionListItem>[] => [
+                        {
+                              label: t("entitlements.subscriptions.revoke"),
+                              icon: <XCircle className="h-4 w-4" />,
+                              variant: "ghost",
+                              className: "text-destructive",
+                              onClick: (item: SubscriptionListItem) => vm.revokeSubscription(item.id),
+                              show: (item: SubscriptionListItem) =>
+                                    item.status === "Active" || item.status === "Trialing",
+                              loading: vm.isRevoking,
+                              confirmTitle: t("entitlements.subscriptions.revoke"),
+                              confirmDescription:
+                                    t("entitlements.subscriptions.revokeDesc") ||
+                                    "Are you sure you want to revoke this subscription?",
+                              confirmVariant: "destructive",
+                        },
+                  ],
+
+                  customActions: (() => {
+                        const actions: CustomAction[] = [];
+                        if (vm.hasActiveSubscription) {
+                              actions.push({
+                                    label: t("entitlements.subscriptions.change"),
+                                    icon: <RefreshCw className="h-4 w-4" />,
+                                    variant: "outline",
+                                    onClick: async () => vm.setShowChangeDialog(true),
+                              });
+                        } else {
+                              actions.push({
+                                    label: t("entitlements.subscriptions.assign"),
+                                    icon: <Plus className="h-4 w-4" />,
+                                    variant: "default",
+                                    onClick: async () => vm.setShowAssignDialog(true),
+                              });
+                        }
+                        return actions;
+                  })(),
+
+                  customFooterContent: (
+                        <>
+                              <AssignDialog vm={vm} editionsVm={editionsVm} t={t} />
+                              <ChangeDialog vm={vm} editionsVm={editionsVm} t={t} />
+                        </>
+                  ),
+            }),
+            [t, vm, editionsVm, language]
+      );
+
+      return <GenericCrudView viewModel={vm} config={config} />;
+}
+
+/* ============================================
+ * ASSIGN DIALOG
+ * ============================================ */
+
+function AssignDialog({
+      vm,
+      editionsVm,
+      t,
+}: {
+      vm: ReturnType<typeof useSubscriptionsCrudAdapter>;
+      editionsVm: ReturnType<typeof useEditionsViewModel>;
+      t: (key: string, params?: Record<string, any>) => string;
+}) {
       return (
-            <div className="space-y-6">
-                  <div className="flex items-center justify-between">
-                        <div>
-                              <h2 className="text-2xl font-bold tracking-tight">{t("entitlements.subscriptions.title")}</h2>
-                              <p className="text-muted-foreground">{t("entitlements.subscriptions.description")}</p>
-                        </div>
-                        <div className="flex gap-2">
-                              {activeSubscription && (
-                                    <Button
-                                          variant="outline"
-                                          onClick={() => vm.setShowChangeDialog(true)}
-                                    >
-                                          <RefreshCw className="h-4 w-4 mr-2" />
-                                          {t("entitlements.subscriptions.change")}
-                                    </Button>
-                              )}
-                              {!activeSubscription && (
-                                    <Button onClick={() => vm.setShowAssignDialog(true)}>
-                                          <Plus className="h-4 w-4 mr-2" />
-                                          {t("entitlements.subscriptions.assign")}
-                                    </Button>
-                              )}
-                        </div>
-                  </div>
+            <Dialog open={vm.showAssignDialog} onOpenChange={vm.setShowAssignDialog}>
+                  <DialogContent>
+                        <DialogHeader>
+                              <DialogTitle>{t("entitlements.subscriptions.assign")}</DialogTitle>
+                              <DialogDescription>{t("entitlements.subscriptions.assignDesc")}</DialogDescription>
+                        </DialogHeader>
 
-                  <Card>
-                        <CardHeader>
-                              <CardTitle>{t("entitlements.subscriptions.title")}</CardTitle>
-                              <CardDescription>{t("entitlements.subscriptions.description")}</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                              {vm.subscriptions.length === 0 ? (
-                                    <p className="text-center text-muted-foreground py-8">
-                                          {t("entitlements.subscriptions.noSubscriptions")}
-                                    </p>
-                              ) : (
-                                    <Table>
-                                          <TableHeader>
-                                                <TableRow>
-                                                      <TableHead>{t("entitlements.editions.editionName")}</TableHead>
-                                                      <TableHead>{t("tenants.subscriptionType")}</TableHead>
-                                                      <TableHead>{t("common.status")}</TableHead>
-                                                      <TableHead>{t("common.createdAt")}</TableHead>
-                                                      <TableHead className="text-right">{t("common.actions")}</TableHead>
-                                                </TableRow>
-                                          </TableHeader>
-                                          <TableBody>
-                                                {vm.subscriptions.map((sub) => (
-                                                      <TableRow key={sub.id}>
-                                                            <TableCell className="font-medium">{sub.editionName}</TableCell>
-                                                            <TableCell>
-                                                                  <Badge variant={TYPE_VARIANTS[sub.type] ?? "outline"}>
-                                                                        {t(`entitlements.subscriptions.${sub.type.toLowerCase()}`) || sub.type}
-                                                                  </Badge>
-                                                            </TableCell>
-                                                            <TableCell>
-                                                                  <Badge variant={STATUS_VARIANTS[sub.status] ?? "outline"}>
-                                                                        {t(`entitlements.subscriptions.${sub.status.toLowerCase()}`) || sub.status}
-                                                                  </Badge>
-                                                            </TableCell>
-                                                            <TableCell className="text-sm">
-                                                                  {format(new Date(sub.startDate), "MMM d, yyyy")}
-                                                            </TableCell>
-                                                            <TableCell className="text-right">
-                                                                  {(sub.status === "Active" || sub.status === "Trialing") && (
-                                                                        <Button
-                                                                              variant="ghost"
-                                                                              size="sm"
-                                                                              className="text-destructive"
-                                                                              onClick={() => vm.revokeSubscription(sub.id)}
-                                                                              disabled={vm.isRevoking}
-                                                                        >
-                                                                              <XCircle className="h-4 w-4 mr-1" />
-                                                                              {t("entitlements.subscriptions.revoke")}
-                                                                        </Button>
-                                                                  )}
-                                                            </TableCell>
-                                                      </TableRow>
+                        <div className="space-y-4 py-4">
+                              <div className="space-y-2">
+                                    <Label>{t("entitlements.editions.editionName")}</Label>
+                                    <Select value={vm.selectedEditionId} onValueChange={vm.setSelectedEditionId}>
+                                          <SelectTrigger>
+                                                <SelectValue placeholder={t("entitlements.editions.editionName")} />
+                                          </SelectTrigger>
+                                          <SelectContent>
+                                                {(editionsVm.items ?? []).map((ed) => (
+                                                      <SelectItem key={ed.id} value={ed.id}>
+                                                            {ed.displayNameEn || ed.name}
+                                                      </SelectItem>
                                                 ))}
-                                          </TableBody>
-                                    </Table>
+                                          </SelectContent>
+                                    </Select>
+                              </div>
+
+                              <div className="space-y-2">
+                                    <Label>{t("tenant.subscriptionType")}</Label>
+                                    <Select value={vm.subscriptionType} onValueChange={vm.setSubscriptionType}>
+                                          <SelectTrigger>
+                                                <SelectValue />
+                                          </SelectTrigger>
+                                          <SelectContent>
+                                                <SelectItem value="Lifetime">{t("entitlements.subscriptions.lifetime")}</SelectItem>
+                                                <SelectItem value="Trial">{t("entitlements.subscriptions.trial")}</SelectItem>
+                                                <SelectItem value="Monthly">{t("entitlements.subscriptions.monthly")}</SelectItem>
+                                                <SelectItem value="Yearly">{t("entitlements.subscriptions.yearly")}</SelectItem>
+                                          </SelectContent>
+                                    </Select>
+                              </div>
+
+                              {vm.subscriptionType === "Trial" && (
+                                    <div className="space-y-2">
+                                          <Label>{t("entitlements.subscriptions.endDate") || "End Date"}</Label>
+                                          <Input
+                                                type="date"
+                                                value={vm.endDate}
+                                                onChange={(e) => vm.setEndDate(e.target.value)}
+                                          />
+                                          <p className="text-xs text-muted-foreground">
+                                                {t("entitlements.subscriptions.trialEndDateHint") || "Leave empty for default 14-day trial"}
+                                          </p>
+                                    </div>
                               )}
-                        </CardContent>
-                  </Card>
+                        </div>
 
-                  {/* Assign Edition Dialog */}
-                  <Dialog open={vm.showAssignDialog} onOpenChange={vm.setShowAssignDialog}>
-                        <DialogContent>
-                              <DialogHeader>
-                                    <DialogTitle>{t("entitlements.subscriptions.assign")}</DialogTitle>
-                                    <DialogDescription>{t("entitlements.subscriptions.assignDesc")}</DialogDescription>
-                              </DialogHeader>
+                        <DialogFooter>
+                              <Button variant="outline" onClick={() => vm.setShowAssignDialog(false)}>
+                                    {t("common.cancel")}
+                              </Button>
+                              <Button
+                                    onClick={vm.submitAssign}
+                                    disabled={!vm.selectedEditionId || vm.isAssigning}
+                              >
+                                    {vm.isAssigning && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
+                                    {t("entitlements.subscriptions.assign")}
+                              </Button>
+                        </DialogFooter>
+                  </DialogContent>
+            </Dialog>
+      );
+}
 
-                              <div className="space-y-4 py-4">
-                                    <div className="space-y-2">
-                                          <Label>{t("entitlements.editions.editionName")}</Label>
-                                          <Select value={vm.selectedEditionId} onValueChange={vm.setSelectedEditionId}>
-                                                <SelectTrigger>
-                                                      <SelectValue placeholder={t("entitlements.editions.editionName")} />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                      {(editionsVm.items ?? []).map((ed) => (
-                                                            <SelectItem key={ed.id} value={ed.id}>
-                                                                  {ed.displayNameEn || ed.name}
-                                                            </SelectItem>
-                                                      ))}
-                                                </SelectContent>
-                                          </Select>
-                                    </div>
+/* ============================================
+ * CHANGE DIALOG
+ * ============================================ */
 
-                                    <div className="space-y-2">
-                                          <Label>{t("tenants.subscriptionType")}</Label>
-                                          <Select value={vm.subscriptionType} onValueChange={vm.setSubscriptionType}>
-                                                <SelectTrigger>
-                                                      <SelectValue />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                      <SelectItem value="Lifetime">{t("entitlements.subscriptions.base")}</SelectItem>
-                                                      <SelectItem value="Trial">{t("entitlements.subscriptions.trial")}</SelectItem>
-                                                      <SelectItem value="Monthly">{t("entitlements.subscriptions.base")}</SelectItem>
-                                                      <SelectItem value="Yearly">{t("entitlements.subscriptions.base")}</SelectItem>
-                                                </SelectContent>
-                                          </Select>
-                                    </div>
+function ChangeDialog({
+      vm,
+      editionsVm,
+      t,
+}: {
+      vm: ReturnType<typeof useSubscriptionsCrudAdapter>;
+      editionsVm: ReturnType<typeof useEditionsViewModel>;
+      t: (key: string, params?: Record<string, any>) => string;
+}) {
+      return (
+            <Dialog open={vm.showChangeDialog} onOpenChange={vm.setShowChangeDialog}>
+                  <DialogContent>
+                        <DialogHeader>
+                              <DialogTitle>{t("entitlements.subscriptions.change")}</DialogTitle>
+                              <DialogDescription>{t("entitlements.subscriptions.changeDesc")}</DialogDescription>
+                        </DialogHeader>
 
-                                    {(vm.subscriptionType === "Trial" || vm.subscriptionType === "Monthly" || vm.subscriptionType === "Yearly") && (
-                                          <div className="space-y-2">
-                                                <Label>{t("common.selectDate")}</Label>
-                                                <Input
-                                                      type="date"
-                                                      value={vm.endDate}
-                                                      onChange={(e) => vm.setEndDate(e.target.value)}
-                                                />
-                                          </div>
-                                    )}
+                        <div className="space-y-4 py-4">
+                              <div className="space-y-2">
+                                    <Label>{t("entitlements.editions.editionName")}</Label>
+                                    <Select value={vm.selectedEditionId} onValueChange={vm.setSelectedEditionId}>
+                                          <SelectTrigger>
+                                                <SelectValue placeholder={t("entitlements.editions.editionName")} />
+                                          </SelectTrigger>
+                                          <SelectContent>
+                                                {(editionsVm.items ?? []).map((ed) => (
+                                                      <SelectItem key={ed.id} value={ed.id}>
+                                                            {ed.displayNameEn || ed.name}
+                                                      </SelectItem>
+                                                ))}
+                                          </SelectContent>
+                                    </Select>
                               </div>
+                        </div>
 
-                              <DialogFooter>
-                                    <Button variant="outline" onClick={() => vm.setShowAssignDialog(false)}>
-                                          {t("common.cancel")}
-                                    </Button>
-                                    <Button
-                                          onClick={vm.submitAssign}
-                                          disabled={!vm.selectedEditionId || vm.isAssigning}
-                                    >
-                                          {vm.isAssigning && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
-                                          {t("entitlements.subscriptions.assign")}
-                                    </Button>
-                              </DialogFooter>
-                        </DialogContent>
-                  </Dialog>
-
-                  {/* Change Edition Dialog */}
-                  <Dialog open={vm.showChangeDialog} onOpenChange={vm.setShowChangeDialog}>
-                        <DialogContent>
-                              <DialogHeader>
-                                    <DialogTitle>{t("entitlements.subscriptions.change")}</DialogTitle>
-                                    <DialogDescription>{t("entitlements.subscriptions.changeDesc")}</DialogDescription>
-                              </DialogHeader>
-
-                              <div className="space-y-4 py-4">
-                                    <div className="space-y-2">
-                                          <Label>{t("entitlements.editions.editionName")}</Label>
-                                          <Select value={vm.selectedEditionId} onValueChange={vm.setSelectedEditionId}>
-                                                <SelectTrigger>
-                                                      <SelectValue placeholder={t("entitlements.editions.editionName")} />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                      {(editionsVm.items ?? []).map((ed) => (
-                                                            <SelectItem key={ed.id} value={ed.id}>
-                                                                  {ed.displayNameEn || ed.name}
-                                                            </SelectItem>
-                                                      ))}
-                                                </SelectContent>
-                                          </Select>
-                                    </div>
-                              </div>
-
-                              <DialogFooter>
-                                    <Button variant="outline" onClick={() => vm.setShowChangeDialog(false)}>
-                                          {t("common.cancel")}
-                                    </Button>
-                                    <Button
-                                          onClick={vm.submitChange}
-                                          disabled={!vm.selectedEditionId || vm.isChanging}
-                                    >
-                                          {vm.isChanging && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
-                                          {t("entitlements.subscriptions.change")}
-                                    </Button>
-                              </DialogFooter>
-                        </DialogContent>
-                  </Dialog>
-            </div>
+                        <DialogFooter>
+                              <Button variant="outline" onClick={() => vm.setShowChangeDialog(false)}>
+                                    {t("common.cancel")}
+                              </Button>
+                              <Button
+                                    onClick={vm.submitChange}
+                                    disabled={!vm.selectedEditionId || vm.isChanging}
+                              >
+                                    {vm.isChanging && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
+                                    {t("entitlements.subscriptions.change")}
+                              </Button>
+                        </DialogFooter>
+                  </DialogContent>
+            </Dialog>
       );
 }

@@ -6,7 +6,7 @@
  * Clean Architecture Pattern:
  * - Services wrap IApiService (API calls only)
  * - Repositories use Services and map Models → Entities
- * - ViewModels use Repositories
+ * - ViewModels use Repositories (never Services directly)
  */
 import { getModuleApiService } from "@core/services/api-factory";
 
@@ -19,16 +19,20 @@ import { SubscriptionService } from "./subscriptions/src/data/services/Subscript
 // Repositories
 import { FeatureRepository } from "./features/src/data/repositories/FeatureRepository";
 import { EditionRepository } from "./editions/src/data/repositories/EditionRepository";
+import { OverrideRepository } from "./overrides/src/data/repositories/OverrideRepository";
+import { SubscriptionRepository } from "./subscriptions/src/data/repositories/SubscriptionRepository";
 
 // Interfaces
 import type { IFeatureRepository } from "./features/src/domain/interfaces/IFeatureRepository";
 import type { IEditionRepository } from "./editions/src/domain/interfaces/IEditionRepository";
+import type { IOverrideRepository } from "./overrides/src/domain/interfaces/IOverrideRepository";
+import type { ISubscriptionRepository } from "./subscriptions/src/domain/interfaces/ISubscriptionRepository";
 
 export interface EntitlementsContainer {
       featureRepository: IFeatureRepository;
       editionRepository: IEditionRepository;
-      overrideService: OverrideService;
-      subscriptionService: SubscriptionService;
+      overrideRepository: IOverrideRepository;
+      subscriptionRepository: ISubscriptionRepository;
 }
 
 let _container: EntitlementsContainer | null = null;
@@ -46,12 +50,12 @@ export function getEntitlementsContainer(): EntitlementsContainer {
             const overrideService = new OverrideService(apiService);
             const subscriptionService = new SubscriptionService(apiService);
 
-            // Create Repositories
+            // Create Repositories (Service → Repository mapping)
             _container = {
                   featureRepository: new FeatureRepository(featureService),
                   editionRepository: new EditionRepository(editionService),
-                  overrideService,
-                  subscriptionService,
+                  overrideRepository: new OverrideRepository(overrideService),
+                  subscriptionRepository: new SubscriptionRepository(subscriptionService),
             };
       }
 
@@ -68,11 +72,10 @@ export const entitlementsContainer = {
       get editionRepository() {
             return getEntitlementsContainer().editionRepository;
       },
-      get overrideService() {
-            return getEntitlementsContainer().overrideService;
+      get overrideRepository() {
+            return getEntitlementsContainer().overrideRepository;
       },
-      get subscriptionService() {
-            return getEntitlementsContainer().subscriptionService;
+      get subscriptionRepository() {
+            return getEntitlementsContainer().subscriptionRepository;
       },
 };
-

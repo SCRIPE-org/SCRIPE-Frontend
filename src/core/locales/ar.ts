@@ -108,6 +108,7 @@ export const ar = {
   // Tenants - المستأجرون
   tenant: {
     context: "سياق المستأجر",
+    subscriptionType: "نوع الاشتراك",
     require2FA: "التحقق من الهوية بخطوتين",
     settingsAudit: "إعدادات التدقيق",
     deactivateTenant: "إلغاء نشاط المستأجر",
@@ -157,7 +158,6 @@ export const ar = {
     // Subscriptions & Entitlements
     editionLabel: "خطة الاشتراك",
     editionPlaceholder: "اختر خطة الاشتراك...",
-    subscriptionType: "مدة الاشتراك",
     tabEntitlements: "الاستحقاقات والميزات",
     entitlementsTitle: "استحقاقات المستأجر",
     entitlementsDescription: "الحدود والميزات المفعلة في خطة الاشتراك الحالية",
@@ -3548,6 +3548,7 @@ export const ar = {
   common: {
     description: "الوصف",
     deleteConfirm: "تأكيد الحذف",
+    results: "النتائج",
     deleteConfirmDesc: "هل أنت متأكد من رغبتك في حذف هذا العنصر؟",
     statusConfirmDesc: "هل أنت متأكد من رغبتك في تغيير حالة هذا العنصر؟",
     tenant: "المستأجر",
@@ -4706,6 +4707,9 @@ export const ar = {
     subscriptions: {
       title: "الاشتراكات",
       description: "إدارة اشتراكات إصدارات المستأجرين.",
+      lifetime: "مدى الحياة",
+      monthly: "شهري",
+      yearly: "سنوي",
       assign: "تعيين إصدار",
       assignDesc: "تعيين خطة اشتراك لمستأجر.",
       change: "تغيير الإصدار",

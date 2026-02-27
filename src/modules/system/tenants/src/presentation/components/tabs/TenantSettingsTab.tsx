@@ -11,10 +11,9 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
-import { Users, Shield, Settings, Pencil, Loader2 } from "lucide-react";
+import { Users, Shield, Settings, Pencil, Lock } from "lucide-react";
 import { useTenantSettingsViewModel } from "@modules/system/tenants/src/presentation/viewmodels/useTenantSettingsViewModel";
 import { TenantSettingsEditDialog } from "../TenantSettingsEditDialog";
-import { TenantPermissionsDialog } from "../TenantPermissionsDialog";
 import { Skeleton } from "@core/ui/skeleton";
 import { TenantSubscriptionCard } from "../cards/TenantSubscriptionCard";
 
@@ -70,21 +69,19 @@ export function TenantSettingsTab({
         {/* Subscription Plan Settings */}
         <TenantSubscriptionCard tenantId={tenantId} />
 
-        {/* Quota Settings */}
+        {/* Quota Settings — Read-only, enforced by edition */}
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="pb-2">
             <div className="space-y-1">
               <CardTitle className="flex items-center gap-2 text-base">
                 <Users className="h-4 w-4" />
                 {t("tenant.settingsQuotas") || "Resource Quotas"}
               </CardTitle>
-              <CardDescription>
-                {t("tenant.settingsQuotasDesc") || "Set limits for admins, roles, and sub-tenants"}
+              <CardDescription className="flex items-center gap-1.5">
+                <Lock className="h-3 w-3" />
+                {t("tenant.quotasEnforcedByEdition") || "Enforced by your subscription plan — cannot be modified"}
               </CardDescription>
             </div>
-            <Button variant="ghost" size="sm" onClick={() => vm.setEditSection("quotas")}>
-              <Pencil className="h-4 w-4" />
-            </Button>
           </CardHeader>
           <CardContent className="space-y-4 pt-4">
             <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
@@ -234,43 +231,6 @@ export function TenantSettingsTab({
           </CardContent>
         </Card>
 
-        {/* Permissions Settings */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <div className="space-y-1">
-              <CardTitle className="flex items-center gap-2 text-base">
-                <Shield className="h-4 w-4" />
-                {t("tenant.settingsPermissions") || "Permissions"}
-              </CardTitle>
-              <CardDescription>
-                {t("tenant.settingsPermissionsDesc") ||
-                  "Manage which permissions are available to this tenant"}
-              </CardDescription>
-            </div>
-            <Button variant="ghost" size="sm" onClick={() => vm.setPermissionsOpen(true)}>
-              <Pencil className="h-4 w-4" />
-            </Button>
-          </CardHeader>
-          <CardContent className="space-y-4 pt-4">
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <div className="font-medium">
-                  {t("tenant.managePermissions") || "Manage Permissions"}
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  {parentTenantId
-                    ? t("tenant.permissionsLimitedByParent") ||
-                    "Permissions limited by parent tenant"
-                    : t("tenant.selectPermissionsDesc") ||
-                    "Choose which permissions this tenant can use"}
-                </div>
-              </div>
-              <Button variant="outline" size="sm" onClick={() => vm.setPermissionsOpen(true)}>
-                {t("tenant.managePermissions") || "Manage Permissions"}
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
       </div>
 
       <TenantSettingsEditDialog
@@ -281,14 +241,6 @@ export function TenantSettingsTab({
         onSave={vm.updateSettings}
         isSaving={vm.isUpdating}
         onUploadLogo={vm.uploadLogo}
-      />
-
-      <TenantPermissionsDialog
-        open={vm.permissionsOpen}
-        onOpenChange={vm.setPermissionsOpen}
-        tenantId={tenantId}
-        tenantName={tenantName}
-        parentTenantId={parentTenantId}
       />
     </div>
   );

@@ -11,14 +11,18 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { Shield, Trash2, Pencil, Eye, Users } from "lucide-react";
+import { Shield, Trash2, Pencil, Eye, Users, RefreshCw } from "lucide-react";
 import { format } from "date-fns";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { systemContainer } from "@modules/system/di";
 
 // Generic CRUD imports
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
 import type { CrudConfig, CrudAction } from "@core/crud/components/generic-crud-view";
 import { Badge } from "@core/ui/badge";
+import { Button } from "@core/ui/button";
 import { useI18n } from "@core/providers/i18n-provider";
+import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 
 // Role imports
@@ -58,6 +62,21 @@ export function TenantRolesTab({ tenantId, tenantName }: TenantRolesTabProps) {
     setSelectedRoleForGroup(role);
     setAssignToGroupOpen(true);
   }, []);
+
+  // Resync permissions from edition
+  const queryClient = useQueryClient();
+  const { success: toastSuccess, error: toastError } = useEnhancedToast();
+  const resyncMutation = useMutation({
+    mutationFn: () => systemContainer.tenantService.resyncPermissions(tenantId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tenant-permissions-raw", tenantId] });
+      queryClient.invalidateQueries({ queryKey: ["tenant-current-permissions-service", tenantId] });
+      toastSuccess({ title: t("tenant.permissionsResynced") || "Permissions resynced from edition" });
+    },
+    onError: (err: Error) => {
+      toastError({ title: t("common.error"), description: err.message });
+    },
+  });
 
   // Build CrudConfig from ViewModel data
   const config: CrudConfig<Role> = {
@@ -168,6 +187,15 @@ export function TenantRolesTab({ tenantId, tenantName }: TenantRolesTabProps) {
           <h3 className="text-lg font-semibold">{vm.title}</h3>
           <p className="text-sm text-muted-foreground">{vm.subtitle}</p>
         </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => resyncMutation.mutate()}
+          disabled={resyncMutation.isPending}
+        >
+          <RefreshCw className={`h-4 w-4 me-2 ${resyncMutation.isPending ? "animate-spin" : ""}`} />
+          {t("tenant.resyncPermissions") || "Resync Permissions"}
+        </Button>
       </div>
 
       {/* Roles Table */}

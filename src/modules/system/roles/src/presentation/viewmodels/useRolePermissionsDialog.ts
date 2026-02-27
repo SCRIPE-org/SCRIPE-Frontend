@@ -117,11 +117,36 @@ export function useRolePermissionsDialog({
     }
   }, [open, role?.id]);
 
-  // Fetch tenant's available permissions
+  // Fetch tenant's available permissions (with fallback for empty results)
   const { data: tenantPermissions = [], isLoading: loadingTenant } = useQuery({
     queryKey: ["tenant-permissions-raw", tenantId],
-    queryFn: () =>
-      getCoreContainer().apiService.get<TenantPermission[]>(`/Tenants/${tenantId}/permissions`),
+    queryFn: async () => {
+      const api = getCoreContainer().apiService;
+      // First, try to get tenant's assigned permissions
+      const permissions = await api.get<TenantPermission[]>(`/Tenants/${tenantId}/permissions`);
+
+      // If the tenant has no permissions assigned (e.g. not synced from edition),
+      // fall back to creation permissions which lists ALL available permissions
+      if (!permissions || permissions.length === 0) {
+        try {
+          const creationPerms = await systemContainer.tenantService.getCreationPermissions();
+          return creationPerms.map((p: any) => ({
+            id: p.id,
+            resource: p.resource,
+            action: p.action,
+            code: p.code || p.permissionCode || `${p.resource}.${p.action}`,
+            defaultScope: p.defaultScope || "own_tenant",
+            description: p.description,
+            nameEn: p.nameEn,
+            nameAr: p.nameAr,
+          }));
+        } catch {
+          return [];
+        }
+      }
+
+      return permissions;
+    },
     enabled: open && !!tenantId,
   });
 
