@@ -107,6 +107,9 @@ export const ar = {
 
   // Tenants - المستأجرون
   tenant: {
+    lockoutDuration: "مدة الحظر",
+    minutes: "دقائق",
+    passwordExpiryDays: "أيام انتهاء صلاحية كلمة المرور",
     context: "سياق المستأجر",
     subscriptionType: "نوع الاشتراك",
     require2FA: "التحقق من الهوية بخطوتين",
@@ -356,6 +359,7 @@ export const ar = {
     reassignPlan: "إعادة تعيين الخطة",
     // الخطة الاحتياطية
     fallbackInfo: "عند الانتهاء",
+    fallbackOnAction: "عند الإلغاء/التعليق",
     fullSuspendMode: "وضع التعليق الكامل",
     downgradeToFallback: "تخفيض إلى الخطة الاحتياطية",
     downgradeDesc: "سيتم نقل المستأجر إلى الخطة الاحتياطية وسيبقى نشطاً.",
@@ -545,6 +549,7 @@ export const ar = {
 
   // Roles
   roles: {
+    search: "بحث",
     selectPlaceholder: "اختر دوراً...",
     descriptionCol: "الوصف",
     title: "الأدوار",

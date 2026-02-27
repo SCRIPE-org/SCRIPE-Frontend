@@ -284,7 +284,9 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                     <div className="flex items-center gap-2 rounded-lg border border-blue-500/30 bg-blue-500/5 p-3 text-sm text-blue-700 dark:text-blue-400">
                                           <ArrowDownCircle className="h-4 w-4 shrink-0" />
                                           <span>
-                                                {t("tenant.fallbackInfo") || "On expiry"}{" → "}
+                                                {vm.subscription?.type === "Lifetime"
+                                                      ? (t("tenant.fallbackOnAction") || "On cancel/suspend")
+                                                      : (t("tenant.fallbackInfo") || "On expiry")}{" → "}
                                                 <strong>{vm.fallbackEditionName}</strong>
                                                 {vm.expiryBehavior === "Suspend" && (
                                                       <span className="ml-1 text-muted-foreground text-xs">

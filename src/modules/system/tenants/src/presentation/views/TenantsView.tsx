@@ -35,7 +35,7 @@ import type {
   UpdateTenantRequest,
 } from "../../domain/entities/TenantRequests";
 import { Badge } from "@core/ui/badge";
-import { LogIn, Eye, Trash2 } from "lucide-react";
+import { LogIn, Eye, Trash2, XCircle, AlertTriangle } from "lucide-react";
 import type { FieldConfig, FieldOption } from "@core/ui/forms/generic-form";
 import { appLogger } from "@core/common/logger";
 
@@ -345,21 +345,46 @@ export function TenantsView() {
         title={t("tenant.title")}
         subtitle={t("tenant.description")}
         getId={(node) => node.id}
-        getLabel={(node) => (
-          <>
-            {node.name}
-            <span className="ms-2 text-xs text-muted-foreground">({node.code})</span>
-            <Badge variant={node.isActive ? "success" : "secondary"} className="ms-2">
-              {node.isActive ? t("tenant.active") : t("tenant.inactive")}
-            </Badge>
-            {node.editionName && (
-              <Badge variant="outline" className="ms-2">
-                {node.editionName}
-                {node.editionEndDate && new Date(node.editionEndDate) < new Date() ? ' (Expired)' : ''}
+        getLabel={(node) => {
+          const isExpired = node.editionEndDate
+            ? new Date(node.editionEndDate) < new Date()
+            : false;
+          const isExpiringSoon = !isExpired && node.editionEndDate
+            ? Math.ceil((new Date(node.editionEndDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)) <= 7 &&
+            Math.ceil((new Date(node.editionEndDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)) >= 0
+            : false;
+          return (
+            <>
+              {node.name}
+              <span className="ms-2 text-xs text-muted-foreground">({node.code})</span>
+              <Badge variant={node.isActive ? "success" : "secondary"} className="ms-2">
+                {node.isActive ? t("tenant.active") : t("tenant.inactive")}
               </Badge>
-            )}
-          </>
-        )}
+              {node.isSuspended && (
+                <Badge variant="destructive" className="ms-2">
+                  {t("tenant.suspended") || "Suspended"}
+                </Badge>
+              )}
+              {isExpired && !node.isSuspended && (
+                <Badge variant="destructive" className="ms-2 gap-1">
+                  <XCircle className="h-3 w-3" />
+                  {t("tenant.expired") || "Expired"}
+                </Badge>
+              )}
+              {isExpiringSoon && !node.isSuspended && (
+                <Badge variant="outline" className="ms-2 gap-1 border-amber-500/50 text-amber-600 dark:text-amber-400">
+                  <AlertTriangle className="h-3 w-3" />
+                  {t("tenant.expiringSoon") || "Expiring Soon"}
+                </Badge>
+              )}
+              {node.editionName && (
+                <Badge variant="outline" className="ms-2">
+                  {node.editionName}
+                </Badge>
+              )}
+            </>
+          );
+        }}
         getChildren={(node) => node.children}
         renderFormFields={getFormFields}
         resource="tenants"

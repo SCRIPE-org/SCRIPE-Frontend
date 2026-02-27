@@ -17,6 +17,10 @@ export interface CreateTenantRequest {
   address?: string;
   /** Edition ID to assign upon creation */
   editionId?: string;
+  /** Subscription type: Lifetime, Monthly, Yearly, Trial */
+  subscriptionType?: string;
+  /** End date for Trial subscriptions */
+  subscriptionEndDate?: string;
 }
 
 /**

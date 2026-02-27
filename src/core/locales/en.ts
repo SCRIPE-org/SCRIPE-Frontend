@@ -102,6 +102,9 @@ export const en = {
 
   // Tenants
   tenant: {
+    lockoutDuration: "Lockout Duration",
+    minutes: "Minutes",
+    passwordExpiryDays: "Password Expiry Days",
     deactivateTenant: "Deactivate Tenant",
     activateTenant: "Activate Tenant",
     deactivateConfirmation: "Are you sure you want to deactivate this tenant?",
@@ -347,6 +350,7 @@ export const en = {
     reassignPlan: "Reassign Plan",
     // Fallback
     fallbackInfo: "On expiry",
+    fallbackOnAction: "On cancel/suspend",
     fullSuspendMode: "full suspend mode",
     downgradeToFallback: "Downgrade to fallback plan",
     downgradeDesc: "Tenant will be moved to the fallback plan and remain active.",
@@ -529,6 +533,7 @@ export const en = {
 
   // Roles
   roles: {
+    search: "Search",
     title: "Roles",
     description: "Manage roles and their permissions.",
     name: "Name",
