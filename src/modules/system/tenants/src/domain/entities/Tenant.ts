@@ -34,6 +34,8 @@ export interface TenantTreeNodeProps {
   level: number;
   isActive: boolean;
   isSuspended?: boolean;
+  suspensionType?: string;
+  suspensionReason?: string;
   description?: string;
   parentId?: string;
   editionName?: string;

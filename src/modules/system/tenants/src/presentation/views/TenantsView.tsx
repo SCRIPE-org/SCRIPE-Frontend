@@ -35,7 +35,7 @@ import type {
   UpdateTenantRequest,
 } from "../../domain/entities/TenantRequests";
 import { Badge } from "@core/ui/badge";
-import { LogIn, Eye, Trash2, XCircle, AlertTriangle } from "lucide-react";
+import { LogIn, Eye, Trash2, XCircle, AlertTriangle, Pause, Ban } from "lucide-react";
 import type { FieldConfig, FieldOption } from "@core/ui/forms/generic-form";
 import { appLogger } from "@core/common/logger";
 
@@ -360,11 +360,17 @@ export function TenantsView() {
               <Badge variant={node.isActive ? "success" : "secondary"} className="ms-2">
                 {node.isActive ? t("tenant.active") : t("tenant.inactive")}
               </Badge>
-              {node.isSuspended && (
-                <Badge variant="destructive" className="ms-2">
+              {node.isSuspended && node.suspensionType === "Canceled" ? (
+                <Badge variant="destructive" className="ms-2 gap-1" title={node.suspensionReason}>
+                  <Ban className="h-3 w-3" />
+                  {t("tenant.canceled") || "Canceled"}
+                </Badge>
+              ) : node.isSuspended ? (
+                <Badge variant="outline" className="ms-2 gap-1 border-amber-500/50 bg-amber-500/10 text-amber-600 dark:text-amber-400" title={node.suspensionReason}>
+                  <Pause className="h-3 w-3" />
                   {t("tenant.suspended") || "Suspended"}
                 </Badge>
-              )}
+              ) : null}
               {isExpired && !node.isSuspended && (
                 <Badge variant="destructive" className="ms-2 gap-1">
                   <XCircle className="h-3 w-3" />

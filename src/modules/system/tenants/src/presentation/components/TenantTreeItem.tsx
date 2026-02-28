@@ -31,6 +31,7 @@ import {
   Pause,
   AlertTriangle,
   XCircle,
+  Ban,
 } from "lucide-react";
 import { cn } from "@core/common/utils";
 
@@ -96,12 +97,17 @@ export function TenantTreeItem({
           <span className="ml-2 text-xs text-muted-foreground">({node.code})</span>
         </div>
 
-        {node.isSuspended && (
-          <Badge variant="destructive" className="gap-1 text-xs">
+        {node.isSuspended && node.suspensionType === "Canceled" ? (
+          <Badge variant="destructive" className="gap-1 text-xs" title={node.suspensionReason}>
+            <Ban className="h-3 w-3" />
+            {t("tenant.canceled") || "Canceled"}
+          </Badge>
+        ) : node.isSuspended ? (
+          <Badge variant="outline" className="gap-1 text-xs border-amber-500/50 bg-amber-500/10 text-amber-600 dark:text-amber-400" title={node.suspensionReason}>
             <Pause className="h-3 w-3" />
             {t("tenant.suspended") || "Suspended"}
           </Badge>
-        )}
+        ) : null}
 
         {isExpired && !node.isSuspended && (
           <Badge variant="destructive" className="gap-1 text-xs">
