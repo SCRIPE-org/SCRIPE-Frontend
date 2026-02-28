@@ -379,6 +379,7 @@ export const en = {
     subscriptionRestored: "Subscription restored to the original plan",
     // Tree badges
     suspended: "Suspended",
+    canceled: "Canceled",
     expiringSoon: "Expiring Soon",
     trialEndDate: "Trial End Date",
   },

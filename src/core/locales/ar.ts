@@ -388,6 +388,7 @@ export const ar = {
     subscriptionRestored: "تمت استعادة الاشتراك إلى الخطة الأصلية",
     // شارات الشجرة
     suspended: "معلّق",
+    canceled: "ملغى",
     expiringSoon: "ينتهي قريباً",
     trialEndDate: "تاريخ انتهاء التجربة",
   },
