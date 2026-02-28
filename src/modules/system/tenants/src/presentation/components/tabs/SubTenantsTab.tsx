@@ -1,32 +1,39 @@
 /**
  * Sub-Tenants Tab Component
  *
- * Manages child tenants using GenericTreeView.
- * Features:
- * - Permission picker filtered by parent tenant's available permissions
- * - Parent tenant display when creating branches
- * - "Enter Tenant Details" navigation for infinite nesting
+ * Uses the TenantNodeCard accordion design for child tenants.
+ * Compact mode: no View Details/Enter World actions.
  *
  * @module tenants
  */
 "use client";
 
-import { useMemo, useCallback } from "react";
+import React, { useMemo, useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
+import { usePermissions } from "@core/hooks/use-permissions";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
-import { Badge } from "@core/ui/badge";
-import { LogIn, Eye } from "lucide-react";
+import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import { cn } from "@core/common/utils";
+import { Button } from "@core/ui/button";
+import { Skeleton } from "@core/ui/skeleton";
+import { Building2, Plus, Inbox } from "lucide-react";
 
-// Generic CRUD imports
-import { GenericTreeView } from "@core/crud/components/generic-tree-view";
-import { useTreeViewModel } from "@core/hooks/use-tree-view-model";
-import type { FieldConfig, FieldOption } from "@core/ui/forms/generic-form";
-
-// Tenant imports
 import { systemContainer } from "@modules/system/di";
-import { createChildrenTreeService } from "../../../data/services/TenantTreeService";
-import type { TenantTreeNode } from "../../../domain/entities/Tenant";
+import { TenantNodeCard } from "../TenantNodeCard";
+import { TenantDeleteDialog } from "../TenantDeleteDialog";
+import {
+  CreateTenantDialog,
+  EditTenantDialog,
+  type CreateFormState,
+  type EditFormState,
+  initialCreateForm,
+  initialEditForm,
+} from "../TenantDialogs";
+
+import type { TenantTreeNode, Tenant } from "../../../domain/entities/Tenant";
+import { appLogger } from "@core/common/logger";
 
 interface SubTenantsTabProps {
   parentId: string;
@@ -34,207 +41,271 @@ interface SubTenantsTabProps {
   parentCode: string;
 }
 
-export function SubTenantsTab({ parentId, parentName, parentCode }: SubTenantsTabProps) {
-  const { t, language } = useI18n();
-  const router = useRouter();
+export function SubTenantsTab({
+  parentId,
+  parentName,
+  parentCode,
+}: SubTenantsTabProps) {
+  const { t, direction } = useI18n();
+  const queryClient = useQueryClient();
+  const { success: toastSuccess, error: toastError } = useEnhancedToast();
+  const { hasPermission } = usePermissions();
+  const canCreate = hasPermission(SYSTEM_PERMISSIONS.TENANTS_CREATE);
 
-  // Create tree service filtered by parent - shows only children of this tenant
-  const treeService = useMemo(
-    () => createChildrenTreeService(systemContainer.tenantRepository, parentId),
-    [parentId]
-  );
+  // State
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [createForm, setCreateForm] = useState<CreateFormState>(initialCreateForm);
+  const [parentForCreate, setParentForCreate] = useState<TenantTreeNode | null>(null);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [editForm, setEditForm] = useState<EditFormState>(initialEditForm);
+  const [editingNode, setEditingNode] = useState<TenantTreeNode | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [tenantToDelete, setTenantToDelete] = useState<Tenant | null>(null);
+  const [isCreating, setIsCreating] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
-  // Server search for permissions - needs parentId to filter by parent's permissions
-  // Returns a function factory that creates a search callback with the parent context
-  const createPermissionSearch = useCallback(
-    (forParentId?: string) =>
-      async (query: string): Promise<FieldOption[]> => {
-        try {
-          // Use tenantRepository.getCreationPermissions to get ONLY parent's permissions
-          // This ensures child can only have subset of parent's permissions
-          let permissions =
-            await systemContainer.tenantRepository.getCreationPermissions(forParentId);
-
-          // Client-side filter if there's a search query
-          if (query) {
-            const lowerQuery = query.toLowerCase();
-            permissions = permissions.filter(
-              (p) =>
-                p.getLocalizedName(language).toLowerCase().includes(lowerQuery) ||
-                p.code.toLowerCase().includes(lowerQuery)
-            );
-          }
-
-          return permissions.map((p) => {
-            const stableCode = p.code || `${p.resource}.${p.action}`;
-            return {
-              value: p.id,
-              label: `${p.getLocalizedName(language)} (${stableCode})`,
-              uniqueKey: stableCode,
-            };
-          });
-        } catch {
-          return [];
-        }
-      },
-    [language]
-  );
-
-  // Handler for entering tenant world - navigates to detail page
-  const handleEnterTenantWorld = useCallback(
-    (node: TenantTreeNode) => {
-      router.push(`/tenants/${node.id}`);
-    },
-    [router]
-  );
-
-  // Custom actions for tenant nodes
-  const customActions = useMemo(() => {
-    return (node: TenantTreeNode) => [
-      {
-        label: t("common.view") || "View",
-        onClick: () => router.push(`/tenants/${node.id}`),
-        icon: <Eye className="h-4 w-4" />,
-      },
-      {
-        label: t("tenant.enterTenantWorld") || "Enter Tenant Details",
-        onClick: () => handleEnterTenantWorld(node),
-        icon: <LogIn className="h-4 w-4" />,
-        requiredPermission: SYSTEM_PERMISSIONS.TENANTS_VIEW_DETAILS,
-      },
-    ];
-  }, [t, handleEnterTenantWorld]);
-
-  // Form fields configuration function
-  const getFormFields = useCallback(
-    (
-      formValues: Record<string, unknown>,
-      setFormValues: (values: Record<string, unknown>) => void,
-      editing: TenantTreeNode | null,
-      parentForNew: TenantTreeNode | null
-    ): FieldConfig[] => {
-      const fields: FieldConfig[] = [
-        {
-          name: "name",
-          label: t("tenant.name"),
-          type: "text",
-          placeholder: t("tenant.namePlaceholder"),
-          required: true,
-        },
-      ];
-
-      // Only show code field for new tenants
-      if (!editing) {
-        fields.push({
-          name: "code",
-          label: t("tenant.code"),
-          type: "text",
-          placeholder: t("tenant.codePlaceholder"),
-          required: true,
-        });
-      }
-
-      fields.push({
-        name: "description",
-        label: t("tenant.descriptionLabel"),
-        type: "textarea",
-        placeholder: t("tenant.descriptionPlaceholder"),
-        required: false,
-      });
-
-      // Show active toggle only when editing
-      if (editing) {
-        fields.push({
-          name: "isActive",
-          label: t("tenant.activeStatus"),
-          type: "switch",
-          placeholder: "",
-          required: false,
-        });
-      }
-
-      // Show parent tenant info when creating (read-only display)
-      if (!editing) {
-        // Determine the actual parent: either a node in the tree or the detail page's tenant
-        const actualParentName = parentForNew?.name || parentName;
-        const actualParentCode = parentForNew?.code || parentCode;
-        const actualParentId = parentForNew?.id || parentId;
-
-        fields.push({
-          name: "parentDisplay",
-          label: t("tenant.parentTenant") || "Parent Tenant",
-          type: "text",
-          placeholder: "",
-          required: false,
-          disabled: true,
-          defaultValue: `${actualParentName} (${actualParentCode})`,
-        });
-
-      }
-
-      return fields;
-    },
-    [t, createPermissionSearch, parentId, parentName, parentCode]
-  );
-
-  // Tree view model with full form support
-  const viewModel = useTreeViewModel(treeService, {
-    queryKey: ["tenants", "tree", parentId],
-    itemTypeName: t("tenant.title"),
-    itemTypeNamePlural: "tenants",
-    getItemDisplayName: (node) => node.name,
-    getFormFieldName: (node) => node.name,
-    getInitialFormValues: (item, parent) => ({
-      name: item?.name || "",
-      code: item?.code || "",
-      description: item?.description || "",
-      isActive: item?.isActive ?? true,
-      parentId: parent?.id || item?.parentId || parentId,
-    }),
-    createFormData: (values) => ({
-      name: values.name,
-      code: values.code,
-      description: values.description || undefined,
-      parentId: values.parentId || parentId,
-    }),
-    updateFormData: (values) => ({
-      name: values.name,
-      description: values.description || undefined,
-      isActive: values.isActive,
-    }),
+  // Fetch children
+  const {
+    data: children,
+    isLoading,
+  } = useQuery({
+    queryKey: ["tenants", "children", parentId],
+    queryFn: () => systemContainer.tenantRepository.getChildren(parentId),
+    enabled: !!parentId,
   });
 
+  // Fetch editions
+  const { data: editionsData } = useQuery({
+    queryKey: ["editions", "available"],
+    queryFn: () => systemContainer.tenantRepository.getAvailableEditions(),
+  });
+
+  const availableEditions = useMemo(
+    () => editionsData?.items ?? [],
+    [editionsData]
+  );
+
+  const childNodes = useMemo(() => children ?? [], [children]);
+
+  // Handlers
+  const handleOpenCreate = useCallback(
+    (parent?: TenantTreeNode) => {
+      setCreateForm(initialCreateForm);
+      // If creating from a child node, use that as parent; otherwise use this tab's parent
+      setParentForCreate(
+        parent ?? ({ id: parentId, name: parentName, code: parentCode } as TenantTreeNode)
+      );
+      setCreateDialogOpen(true);
+    },
+    [parentId, parentName, parentCode]
+  );
+
+  const handleCreateSubmit = useCallback(async () => {
+    if (!createForm.name || !createForm.code) return;
+    setIsCreating(true);
+    try {
+      const newId = await systemContainer.tenantRepository.create({
+        name: createForm.name,
+        code: createForm.code,
+        description: createForm.description || undefined,
+        parentId: parentForCreate?.id || parentId,
+      });
+
+      if (createForm.editionId) {
+        await systemContainer.tenantRepository.assignEdition(
+          newId,
+          createForm.editionId
+        );
+      }
+
+      queryClient.invalidateQueries({ queryKey: ["tenants"] });
+      toastSuccess({
+        title: t("tenant.created"),
+        description: t("tenant.createdDescription"),
+      });
+      setCreateDialogOpen(false);
+    } catch (err) {
+      appLogger.error("Failed to create tenant:", err);
+      toastError({
+        title: t("common.error"),
+        description:
+          err instanceof Error ? err.message : "Failed to create tenant.",
+      });
+    } finally {
+      setIsCreating(false);
+    }
+  }, [
+    createForm,
+    parentForCreate,
+    parentId,
+    queryClient,
+    t,
+    toastSuccess,
+    toastError,
+  ]);
+
+  const handleOpenEdit = useCallback((node: TenantTreeNode) => {
+    setEditForm({
+      name: node.name,
+      description: node.description || "",
+      isActive: node.isActive,
+    });
+    setEditingNode(node);
+    setEditDialogOpen(true);
+  }, []);
+
+  const handleEditSubmit = useCallback(async () => {
+    if (!editingNode || !editForm.name) return;
+    setIsSaving(true);
+    try {
+      await systemContainer.tenantRepository.update(editingNode.id, {
+        name: editForm.name,
+        description: editForm.description || undefined,
+        isActive: editForm.isActive,
+      });
+      queryClient.invalidateQueries({ queryKey: ["tenants"] });
+      toastSuccess({
+        title: t("tenant.updated"),
+        description: t("tenant.updatedDescription"),
+      });
+      setEditDialogOpen(false);
+    } catch (err) {
+      appLogger.error("Failed to update tenant:", err);
+      toastError({
+        title: t("common.error"),
+        description:
+          err instanceof Error ? err.message : "Failed to update tenant.",
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  }, [editingNode, editForm, queryClient, t, toastSuccess, toastError]);
+
+  const handleOpenDelete = useCallback((node: TenantTreeNode) => {
+    setTenantToDelete({ id: node.id, name: node.name } as Tenant);
+    setDeleteDialogOpen(true);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(
+    async (cascadeChildren: boolean) => {
+      if (!tenantToDelete) return;
+      setIsDeleting(true);
+      try {
+        await systemContainer.tenantRepository.delete(tenantToDelete.id, {
+          cascadeChildren,
+        });
+        queryClient.invalidateQueries({ queryKey: ["tenants"] });
+        toastSuccess({ title: t("tenant.deleteSuccess") });
+        setDeleteDialogOpen(false);
+        setTenantToDelete(null);
+      } catch (err) {
+        appLogger.error("Failed to delete tenant:", err);
+        toastError({
+          title: t("common.error"),
+          description:
+            err instanceof Error ? err.message : "Failed to delete tenant.",
+        });
+      } finally {
+        setIsDeleting(false);
+      }
+    },
+    [tenantToDelete, queryClient, t, toastSuccess, toastError]
+  );
+
+  if (isLoading) {
+    return (
+      <div className="space-y-3">
+        {Array.from({ length: 2 }).map((_, i) => (
+          <Skeleton key={i} className="h-16 w-full rounded-xl" />
+        ))}
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" dir={direction}>
+      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-semibold">{t("tenant.manageSubTenants")}</h3>
+          <h3 className="text-lg font-semibold">
+            {t("tenant.manageSubTenants")}
+          </h3>
           <p className="text-sm text-muted-foreground">
-            {t("tenant.subTenantsDescription") || `Child tenants under ${parentName}`}
+            {t("tenant.subTenantsDescription")}
           </p>
         </div>
+        {canCreate && (
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => handleOpenCreate()}
+            className="gap-2"
+          >
+            <Plus className="h-4 w-4" />
+            {t("tenant.addChild")}
+          </Button>
+        )}
       </div>
-      <div className="rounded-lg border p-4">
-        <GenericTreeView
-          viewModel={viewModel}
-          title=""
-          subtitle=""
-          getId={(node) => node.id}
-          getLabel={(node) => (
-            <>
-              {node.name}
-              <span className="ms-2 text-xs text-muted-foreground">({node.code})</span>
-              <Badge variant={node.isActive ? "success" : "secondary"} className="ms-2">
-                {node.isActive ? t("tenant.active") : t("tenant.inactive")}
-              </Badge>
-            </>
-          )}
-          getChildren={(node) => node.children}
-          renderFormFields={getFormFields}
-          resource="tenants"
-          customActions={customActions}
-        />
-      </div>
+
+      {/* Children cards */}
+      {childNodes.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-12 text-center rounded-xl border border-dashed border-border/50">
+          <div className="rounded-full bg-muted/50 p-3 mb-3">
+            <Inbox className="h-8 w-8 text-muted-foreground" />
+          </div>
+          <p className="text-sm font-medium">
+            {t("tenant.noTenantsFound")}
+          </p>
+          <p className="text-xs text-muted-foreground mt-1">
+            {t("tenant.noTenantsDescription")}
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-0">
+          {childNodes.map((node) => (
+            <TenantNodeCard
+              key={node.id}
+              node={node}
+              level={0}
+              onEdit={handleOpenEdit}
+              onDelete={handleOpenDelete}
+              onCreateChild={handleOpenCreate}
+              compact
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Dialogs */}
+      <CreateTenantDialog
+        open={createDialogOpen}
+        onOpenChange={setCreateDialogOpen}
+        parentTenant={parentForCreate}
+        form={createForm}
+        setForm={setCreateForm}
+        onSubmit={handleCreateSubmit}
+        isLoading={isCreating}
+        availableEditions={availableEditions}
+      />
+
+      <EditTenantDialog
+        open={editDialogOpen}
+        onOpenChange={setEditDialogOpen}
+        tenantName={editingNode?.name || ""}
+        form={editForm}
+        setForm={setEditForm}
+        onSubmit={handleEditSubmit}
+        isLoading={isSaving}
+      />
+
+      <TenantDeleteDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        tenant={tenantToDelete}
+        onConfirm={handleDeleteConfirm}
+        isDeleting={isDeleting}
+      />
     </div>
   );
 }

@@ -1,265 +1,237 @@
 /**
- * Tenants View (Refactored)
+ * TenantsView — Expandable Accordion Design
  *
- * Uses GenericTreeView for tenant hierarchy management.
- * Clicking "Enter Tenant" navigates to the full detail page.
- * Supports permission assignment during tenant creation via repository.
- * Delete uses TenantDeleteDialog with cascade support.
+ * Premium tenant management page with:
+ * - Stats pills header with search
+ * - Expandable accordion cards with color-coded status borders
+ * - Recursive nested children hierarchy
+ * - On-demand stats fetching when expanded
+ * - Full RTL/LTR support
+ * - Create/Edit/Delete dialogs with edition selection
  *
- * Clean Architecture: View calls ViewModel, ViewModel calls Repository
+ * Clean Architecture: View → ViewModel → Repository
  *
  * @module tenants
  */
 "use client";
 
-import { useMemo, useCallback, useState } from "react";
+import React, { useMemo, useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { GenericTreeView } from "@core/crud/components/generic-tree-view";
-import { useTreeViewModel } from "@core/hooks/use-tree-view-model";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useTenantContext } from "@core/providers/tenant-context-provider";
 import { usePermissions } from "@core/hooks/use-permissions";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { useAppStore } from "@core/store/useAppStore";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import { cn } from "@core/common/utils";
+import { Skeleton } from "@core/ui/skeleton";
+import { Building2, Inbox } from "lucide-react";
+
+// Module imports
 import { systemContainer } from "@modules/system/di";
-import {
-  createTenantTreeService,
-  createMyChildrenTreeService,
-} from "../../data/services/TenantTreeService";
+import { TenantNodeCard } from "../components/TenantNodeCard";
+import { TenantListHeader } from "../components/TenantListHeader";
 import { TenantDeleteDialog } from "../components/TenantDeleteDialog";
+import {
+  CreateTenantDialog,
+  EditTenantDialog,
+  type CreateFormState,
+  type EditFormState,
+  initialCreateForm,
+  initialEditForm,
+} from "../components/TenantDialogs";
+
 import type { TenantTreeNode, Tenant } from "../../domain/entities/Tenant";
-import type {
-  CreateTenantRequest,
-  UpdateTenantRequest,
-} from "../../domain/entities/TenantRequests";
-import { Badge } from "@core/ui/badge";
-import { LogIn, Eye, Trash2, XCircle, AlertTriangle, Pause, Ban } from "lucide-react";
-import type { FieldConfig, FieldOption } from "@core/ui/forms/generic-form";
+import type { EditionThinModel } from "../../data/models/TenantSubscription";
 import { appLogger } from "@core/common/logger";
 
 // ============================================
-// TenantsView Component
+// Helpers
+// ============================================
+
+/** Recursively filter tree nodes by search query */
+function filterTree(
+  nodes: TenantTreeNode[],
+  query: string
+): TenantTreeNode[] {
+  if (!query.trim()) return nodes;
+  const lowerQuery = query.toLowerCase();
+
+  return nodes.reduce<TenantTreeNode[]>((acc, node) => {
+    const matchesSelf =
+      node.name.toLowerCase().includes(lowerQuery) ||
+      node.code.toLowerCase().includes(lowerQuery);
+
+    const filteredChildren = filterTree(node.children || [], query);
+
+    if (matchesSelf || filteredChildren.length > 0) {
+      acc.push({
+        ...node,
+        children: matchesSelf ? node.children : filteredChildren,
+      });
+    }
+
+    return acc;
+  }, []);
+}
+
+// ============================================
+// Component
 // ============================================
 
 export function TenantsView() {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { t, language } = useI18n();
-  const { canEnterTenantWorld, enterTenantWorld } = useTenantContext();
+  const { t, language, direction } = useI18n();
   const { hasPermission } = usePermissions();
   const { success: toastSuccess, error: toastError } = useEnhancedToast();
   const user = useAppStore((state) => state.user);
 
-  // Delete dialog state
+  // State
+  const [search, setSearch] = useState("");
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [createForm, setCreateForm] = useState<CreateFormState>(initialCreateForm);
+  const [parentForCreate, setParentForCreate] = useState<TenantTreeNode | null>(null);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [editForm, setEditForm] = useState<EditFormState>(initialEditForm);
+  const [editingNode, setEditingNode] = useState<TenantTreeNode | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [tenantToDelete, setTenantToDelete] = useState<Tenant | null>(null);
+  const [isCreating, setIsCreating] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  // System admins (with 'super' or 'system' in adminTypeName) see full tree
-  // Tenant admins see only their children
+  // System admin check
   const isSystemAdmin = useMemo(() => {
     const adminType = user?.adminTypeName?.toLowerCase() || "";
     return adminType.includes("super") || adminType.includes("system");
   }, [user]);
 
-  // Create tree service based on user type:
-  // - System admin: Full tree (getTree)
-  // - Tenant admin: My children only (getMyChildren)
-  const treeService = useMemo(
-    () =>
+  // Fetch tree data
+  const {
+    data: treeData,
+    isLoading,
+  } = useQuery({
+    queryKey: ["tenants", "tree"],
+    queryFn: () =>
       isSystemAdmin
-        ? createTenantTreeService(systemContainer.tenantRepository)
-        : createMyChildrenTreeService(systemContainer.tenantRepository),
-    [isSystemAdmin]
-  );
+        ? systemContainer.tenantRepository.getTree()
+        : systemContainer.tenantRepository
+          .getMyChildren()
+          .then((res) => res.items),
+  });
 
-  // Fetch available editions for the dropdown
-  const { data: availableEditionsData } = useQuery({
+  // Fetch available editions
+  const { data: editionsData } = useQuery({
     queryKey: ["editions", "available"],
     queryFn: () => systemContainer.tenantRepository.getAvailableEditions(),
   });
 
   const availableEditions = useMemo(
-    () => availableEditionsData?.items ?? [],
-    [availableEditionsData]
+    () => editionsData?.items ?? [],
+    [editionsData]
   );
 
-  // Server search for permissions - needs parentId to filter by parent's permissions
-  const createPermissionSearch = useCallback(
-    (parentId?: string) =>
-      async (query: string): Promise<FieldOption[]> => {
-        try {
-          const permissions = await systemContainer.tenantRepository.getCreationPermissions(
-            parentId,
-            query
-          );
-          return permissions.map((p) => {
-            const stableCode = p.code || `${p.resource}.${p.action}`;
-            return {
-              value: p.id,
-              label: `${p.getLocalizedName(language)} (${stableCode})`,
-              uniqueKey: stableCode,
-            };
-          });
-        } catch {
-          return [];
-        }
-      },
-    [language]
+  const tree = useMemo(() => treeData ?? [], [treeData]);
+
+  // Filtered tree for search
+  const filteredTree = useMemo(
+    () => filterTree(tree, search),
+    [tree, search]
   );
 
-  // Form fields configuration function
-  const getFormFields = useCallback(
-    (
-      formValues: Record<string, unknown>,
-      setFormValues: (values: Record<string, unknown>) => void,
-      editing: TenantTreeNode | null,
-      parentForNew: TenantTreeNode | null
-    ): FieldConfig[] => {
-      const fields: FieldConfig[] = [
-        {
-          name: "name",
-          label: t("tenant.name"),
-          type: "text",
-          placeholder: t("tenant.namePlaceholder"),
-          required: true,
-        },
-      ];
+  // Permission checks
+  const canCreate = hasPermission(SYSTEM_PERMISSIONS.TENANTS_CREATE);
 
-      if (!editing) {
-        fields.push({
-          name: "code",
-          label: t("tenant.code"),
-          type: "text",
-          placeholder: t("tenant.codePlaceholder"),
-          required: true,
-        });
-      }
+  // ── Handlers ──
 
-      fields.push({
-        name: "description",
-        label: t("tenant.descriptionLabel"),
-        type: "textarea",
-        placeholder: t("tenant.descriptionPlaceholder"),
-        required: false,
+  const handleOpenCreate = useCallback(
+    (parent?: TenantTreeNode) => {
+      setCreateForm(initialCreateForm);
+      setParentForCreate(parent ?? null);
+      setCreateDialogOpen(true);
+    },
+    []
+  );
+
+  const handleCreateSubmit = useCallback(async () => {
+    if (!createForm.name || !createForm.code) return;
+    setIsCreating(true);
+    try {
+      // Create tenant
+      const newId = await systemContainer.tenantRepository.create({
+        name: createForm.name,
+        code: createForm.code,
+        description: createForm.description || undefined,
+        parentId: parentForCreate?.id,
       });
 
-      if (editing) {
-        fields.push({
-          name: "isActive",
-          label: t("tenant.activeStatus"),
-          type: "switch",
-          placeholder: "",
-          required: false,
-        });
+      // Assign edition if selected
+      if (createForm.editionId) {
+        await systemContainer.tenantRepository.assignEdition(
+          newId,
+          createForm.editionId
+        );
       }
 
-      if (!editing && parentForNew) {
-        fields.push({
-          name: "parentDisplay",
-          label: t("tenant.parentTenant") || "Parent Tenant",
-          type: "text",
-          placeholder: "",
-          required: false,
-          disabled: true,
-          defaultValue: `${parentForNew.name} (${parentForNew.code})`,
-        });
-      }
-
-      if (!editing) {
-        fields.push({
-          name: "editionId",
-          label: t("tenant.editionLabel") || "Subscription Plan",
-          type: "select",
-          placeholder: t("tenant.editionPlaceholder") || "Select a Plan",
-          required: false,
-          options: availableEditions.map((e) => ({ value: e.id, label: e.name })),
-        });
-
-        fields.push({
-          name: "subscriptionType",
-          label: t("tenant.subscriptionType") || "Subscription Type",
-          type: "select",
-          placeholder: "Select Type",
-          required: false,
-          options: [
-            { value: "Lifetime", label: t("subscription.lifetime") || "Lifetime (Permanent)" },
-            { value: "Monthly", label: t("subscription.monthly") || "Monthly" },
-            { value: "Yearly", label: t("subscription.yearly") || "Yearly" },
-            { value: "Trial", label: t("subscription.trial") || "Trial (Limited)" },
-          ],
-          defaultValue: "Lifetime"
-        });
-
-        // Only explicitly ask for End Date if Trial is selected
-        fields.push({
-          name: "subscriptionEndDate",
-          label: t("tenant.trialEndDate") || "Trial End Date",
-          type: "date",
-          required: true,
-          isVisible: (formData) => formData.subscriptionType === "Trial"
-        });
-      }
-
-      return fields;
-    },
-    [t, createPermissionSearch, availableEditions]
-  );
-
-  // Tree view model
-  const viewModel = useTreeViewModel(treeService, {
-    queryKey: ["tenants", "tree"],
-    itemTypeName: t("tenant.title"),
-    itemTypeNamePlural: "tenants",
-    getItemDisplayName: (node) => node.name,
-    getFormFieldName: (node) => node.name,
-    getInitialFormValues: (item, parent) => ({
-      name: item?.name || "",
-      code: item?.code || "",
-      description: item?.description || "",
-      isActive: item?.isActive ?? true,
-      parentId: parent?.id || item?.parentId,
-      editionId: "",
-    }),
-    createFormData: (values) =>
-      ({
-        name: values.name,
-        code: values.code,
-        description: values.description || undefined,
-        parentId: values.parentId,
-        editionId: values.editionId || undefined,
-        subscriptionType: values.subscriptionType || undefined,
-        subscriptionEndDate: values.subscriptionEndDate || undefined,
-      }) as CreateTenantRequest,
-    updateFormData: (values) =>
-      ({
-        name: values.name,
-        description: values.description || undefined,
-        isActive: values.isActive,
-      }) as UpdateTenantRequest,
-  });
-
-  // Handler for entering tenant world
-  const handleEnterTenantWorld = useCallback(
-    (node: TenantTreeNode) => {
-      enterTenantWorld({
-        id: node.id,
-        name: node.name,
-        parentId: node.parentId,
+      queryClient.invalidateQueries({ queryKey: ["tenants"] });
+      toastSuccess({
+        title: t("tenant.created"),
+        description: t("tenant.createdDescription"),
       });
-      router.push("/");
-    },
-    [enterTenantWorld, router]
-  );
+      setCreateDialogOpen(false);
+    } catch (err) {
+      appLogger.error("Failed to create tenant:", err);
+      toastError({
+        title: t("common.error"),
+        description:
+          err instanceof Error ? err.message : "Failed to create tenant.",
+      });
+    } finally {
+      setIsCreating(false);
+    }
+  }, [createForm, parentForCreate, queryClient, t, toastSuccess, toastError]);
 
-  // Custom delete handler using TenantDeleteDialog
-  const handleOpenDeleteDialog = useCallback((node: TenantTreeNode) => {
-    setTenantToDelete({
-      id: node.id,
+  const handleOpenEdit = useCallback((node: TenantTreeNode) => {
+    setEditForm({
       name: node.name,
-    } as Tenant);
+      description: node.description || "",
+      isActive: node.isActive,
+    });
+    setEditingNode(node);
+    setEditDialogOpen(true);
+  }, []);
+
+  const handleEditSubmit = useCallback(async () => {
+    if (!editingNode || !editForm.name) return;
+    setIsSaving(true);
+    try {
+      await systemContainer.tenantRepository.update(editingNode.id, {
+        name: editForm.name,
+        description: editForm.description || undefined,
+        isActive: editForm.isActive,
+      });
+      queryClient.invalidateQueries({ queryKey: ["tenants"] });
+      toastSuccess({
+        title: t("tenant.updated"),
+        description: t("tenant.updatedDescription"),
+      });
+      setEditDialogOpen(false);
+    } catch (err) {
+      appLogger.error("Failed to update tenant:", err);
+      toastError({
+        title: t("common.error"),
+        description:
+          err instanceof Error ? err.message : "Failed to update tenant.",
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  }, [editingNode, editForm, queryClient, t, toastSuccess, toastError]);
+
+  const handleOpenDelete = useCallback((node: TenantTreeNode) => {
+    setTenantToDelete({ id: node.id, name: node.name } as Tenant);
     setDeleteDialogOpen(true);
   }, []);
 
@@ -268,18 +240,21 @@ export function TenantsView() {
       if (!tenantToDelete) return;
       setIsDeleting(true);
       try {
-        await systemContainer.tenantRepository.delete(tenantToDelete.id, { cascadeChildren });
+        await systemContainer.tenantRepository.delete(tenantToDelete.id, {
+          cascadeChildren,
+        });
         queryClient.invalidateQueries({ queryKey: ["tenants"] });
         toastSuccess({
-          title: t("tenant.deleteSuccess") || "Tenant deleted successfully",
+          title: t("tenant.deleteSuccess"),
         });
         setDeleteDialogOpen(false);
         setTenantToDelete(null);
       } catch (err) {
         appLogger.error("Failed to delete tenant:", err);
         toastError({
-          title: t("common.error") || "Error",
-          description: err instanceof Error ? err.message : "Failed to delete tenant.",
+          title: t("common.error"),
+          description:
+            err instanceof Error ? err.message : "Failed to delete tenant.",
         });
       } finally {
         setIsDeleting(false);
@@ -288,117 +263,97 @@ export function TenantsView() {
     [tenantToDelete, queryClient, t, toastSuccess, toastError]
   );
 
-  // Custom actions for tenant nodes
-  const customActions = useMemo(() => {
-    const hasDrillDown = hasPermission(SYSTEM_PERMISSIONS.TENANTS_DRILL_DOWN);
-    const canViewDetails = hasPermission(SYSTEM_PERMISSIONS.TENANTS_VIEW_DETAILS);
-    const canDelete = hasPermission(SYSTEM_PERMISSIONS.TENANTS_DELETE);
-    return (node: TenantTreeNode) => {
-      const actions: Array<{
-        label: string;
-        onClick: () => void;
-        icon?: React.ReactNode;
-        show?: () => boolean;
-        variant?: "default" | "destructive";
-      }> = [
-          {
-            label: t("common.view") || "View",
-            onClick: () => router.push(`/tenants/${node.id}`),
-            icon: <Eye className="h-4 w-4" />,
-            show: () => canViewDetails,
-          },
-          {
-            label: t("tenant.enterTenantWorld"),
-            onClick: () => handleEnterTenantWorld(node),
-            icon: <LogIn className="h-4 w-4" />,
-            show: () => canEnterTenantWorld && hasDrillDown,
-          },
-        ];
+  // ── Render ──
 
-      // Add delete action (uses TenantDeleteDialog instead of built-in)
-      if (canDelete) {
-        actions.push({
-          label: t("common.delete") || "Delete",
-          onClick: () => handleOpenDeleteDialog(node),
-          icon: <Trash2 className="h-4 w-4" />,
-          show: () => true,
-          variant: "destructive",
-        });
-      }
-
-      return actions;
-    };
-  }, [
-    canEnterTenantWorld,
-    hasPermission,
-    t,
-    handleEnterTenantWorld,
-    handleOpenDeleteDialog,
-    router,
-  ]);
+  if (isLoading) {
+    return (
+      <div className="space-y-4" dir={direction}>
+        <div className="flex items-start justify-between">
+          <div>
+            <Skeleton className="h-8 w-48" />
+            <Skeleton className="h-4 w-72 mt-2" />
+          </div>
+          <Skeleton className="h-10 w-32" />
+        </div>
+        <div className="flex gap-2">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Skeleton key={i} className="h-8 w-24 rounded-full" />
+          ))}
+        </div>
+        {Array.from({ length: 3 }).map((_, i) => (
+          <Skeleton key={i} className="h-20 w-full rounded-xl" />
+        ))}
+      </div>
+    );
+  }
 
   return (
-    <>
-      <GenericTreeView<TenantTreeNode, CreateTenantRequest, UpdateTenantRequest>
-        viewModel={viewModel}
-        expandOnCardClick={true}
-        title={t("tenant.title")}
-        subtitle={t("tenant.description")}
-        getId={(node) => node.id}
-        getLabel={(node) => {
-          const isExpired = node.editionEndDate
-            ? new Date(node.editionEndDate) < new Date()
-            : false;
-          const isExpiringSoon = !isExpired && node.editionEndDate
-            ? Math.ceil((new Date(node.editionEndDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)) <= 7 &&
-            Math.ceil((new Date(node.editionEndDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)) >= 0
-            : false;
-          return (
-            <>
-              {node.name}
-              <span className="ms-2 text-xs text-muted-foreground">({node.code})</span>
-              <Badge variant={node.isActive ? "success" : "secondary"} className="ms-2">
-                {node.isActive ? t("tenant.active") : t("tenant.inactive")}
-              </Badge>
-              {node.isSuspended && node.suspensionType === "Canceled" ? (
-                <Badge variant="destructive" className="ms-2 gap-1" title={node.suspensionReason}>
-                  <Ban className="h-3 w-3" />
-                  {t("tenant.canceled") || "Canceled"}
-                </Badge>
-              ) : node.isSuspended ? (
-                <Badge variant="outline" className="ms-2 gap-1 border-amber-500/50 bg-amber-500/10 text-amber-600 dark:text-amber-400" title={node.suspensionReason}>
-                  <Pause className="h-3 w-3" />
-                  {t("tenant.suspended") || "Suspended"}
-                </Badge>
-              ) : null}
-              {isExpired && !node.isSuspended && (
-                <Badge variant="destructive" className="ms-2 gap-1">
-                  <XCircle className="h-3 w-3" />
-                  {t("tenant.expired") || "Expired"}
-                </Badge>
-              )}
-              {isExpiringSoon && !node.isSuspended && (
-                <Badge variant="outline" className="ms-2 gap-1 border-amber-500/50 text-amber-600 dark:text-amber-400">
-                  <AlertTriangle className="h-3 w-3" />
-                  {t("tenant.expiringSoon") || "Expiring Soon"}
-                </Badge>
-              )}
-              {node.editionName && (
-                <Badge variant="outline" className="ms-2">
-                  {node.editionName}
-                </Badge>
-              )}
-            </>
-          );
-        }}
-        getChildren={(node) => node.children}
-        renderFormFields={getFormFields}
-        resource="tenants"
-        permissions={{ canDelete: false }}
-        customActions={customActions}
+    <div className="space-y-4" dir={direction}>
+      {/* Header with stats + search */}
+      <TenantListHeader
+        tree={tree}
+        search={search}
+        onSearchChange={setSearch}
+        onAdd={() => handleOpenCreate()}
+        canCreate={canCreate}
       />
 
-      {/* Custom delete dialog with cascade support */}
+      {/* Tenant cards */}
+      {filteredTree.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-16 text-center">
+          <div className="rounded-full bg-muted/50 p-4 mb-4">
+            <Inbox className="h-10 w-10 text-muted-foreground" />
+          </div>
+          <h3 className="text-lg font-semibold">
+            {search
+              ? t("tenant.noTenantsFound")
+              : t("tenant.noTenantsFound")}
+          </h3>
+          <p className="text-sm text-muted-foreground mt-1 max-w-sm">
+            {search
+              ? t("tenant.searchPlaceholder")
+              : t("tenant.noTenantsDescription")}
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-0">
+          {filteredTree.map((node) => (
+            <TenantNodeCard
+              key={node.id}
+              node={node}
+              level={0}
+              onEdit={handleOpenEdit}
+              onDelete={handleOpenDelete}
+              onCreateChild={handleOpenCreate}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Create Dialog */}
+      <CreateTenantDialog
+        open={createDialogOpen}
+        onOpenChange={setCreateDialogOpen}
+        parentTenant={parentForCreate}
+        form={createForm}
+        setForm={setCreateForm}
+        onSubmit={handleCreateSubmit}
+        isLoading={isCreating}
+        availableEditions={availableEditions}
+      />
+
+      {/* Edit Dialog */}
+      <EditTenantDialog
+        open={editDialogOpen}
+        onOpenChange={setEditDialogOpen}
+        tenantName={editingNode?.name || ""}
+        form={editForm}
+        setForm={setEditForm}
+        onSubmit={handleEditSubmit}
+        isLoading={isSaving}
+      />
+
+      {/* Delete Dialog */}
       <TenantDeleteDialog
         open={deleteDialogOpen}
         onOpenChange={setDeleteDialogOpen}
@@ -406,6 +361,6 @@ export function TenantsView() {
         onConfirm={handleDeleteConfirm}
         isDeleting={isDeleting}
       />
-    </>
+    </div>
   );
 }
