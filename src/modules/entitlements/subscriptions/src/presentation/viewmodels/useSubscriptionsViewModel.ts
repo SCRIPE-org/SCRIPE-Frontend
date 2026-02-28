@@ -1,8 +1,8 @@
 /**
  * Subscriptions ViewModel
  *
- * Manages tenant edition subscriptions: listing, assigning, changing, revoking.
- * Uses repository (not service directly) per clean architecture.
+ * Manages tenant edition subscriptions — full lifecycle:
+ * assign, change, renew, convert-trial, suspend, resume, cancel, revoke, resync.
  * Pure .ts — no JSX. Returns typed interface for View.
  */
 "use client";
@@ -22,9 +22,19 @@ export function useSubscriptionsViewModel(tenantId: string) {
       // ─── Dialog state ───────────────────────────────────
       const [showAssignDialog, setShowAssignDialog] = useState(false);
       const [showChangeDialog, setShowChangeDialog] = useState(false);
+      const [showSuspendDialog, setShowSuspendDialog] = useState(false);
+      const [showCancelDialog, setShowCancelDialog] = useState(false);
+      const [showConvertDialog, setShowConvertDialog] = useState(false);
+
+      // ─── Form state ─────────────────────────────────────
       const [selectedEditionId, setSelectedEditionId] = useState("");
       const [subscriptionType, setSubscriptionType] = useState("Lifetime");
       const [endDate, setEndDate] = useState("");
+      const [expiryBehavior, setExpiryBehavior] = useState("Fallback");
+      const [suspendReason, setSuspendReason] = useState("");
+      const [cancelReason, setCancelReason] = useState("");
+      const [useFallback, setUseFallback] = useState(false);
+      const [convertType, setConvertType] = useState("Monthly");
 
       // ─── Query keys ─────────────────────────────────────
       const queryKey = ["entitlements", "subscriptions", tenantId];
@@ -40,6 +50,9 @@ export function useSubscriptionsViewModel(tenantId: string) {
       const activeSubscription = items.find(
             (s) => s.status === "Active" || s.status === "Trialing"
       );
+      const suspendedSubscription = items.find((s) => s.status === "Suspended");
+      const isTrialing = activeSubscription?.status === "Trialing";
+      const isDowngraded = activeSubscription?.isDowngraded ?? false;
 
       // ─── Invalidation helper ────────────────────────────
       const invalidate = useCallback(
@@ -52,6 +65,11 @@ export function useSubscriptionsViewModel(tenantId: string) {
             setSelectedEditionId("");
             setSubscriptionType("Lifetime");
             setEndDate("");
+            setExpiryBehavior("Fallback");
+            setSuspendReason("");
+            setCancelReason("");
+            setUseFallback(false);
+            setConvertType("Monthly");
       }, []);
 
       // ─── Auto-calculate endDate on type change ────────
@@ -77,53 +95,89 @@ export function useSubscriptionsViewModel(tenantId: string) {
             }
       }, [subscriptionType]);
 
-      // ─── Assign mutation ────────────────────────────────
-      const assignMutation = useMutation({
-            mutationFn: (params: { editionId: string; type: string; endDate?: string }) =>
+      // ─── Mutation helper ─────────────────────────────────
+      const makeMutation = <T,>(
+            mutationFn: (params: T) => Promise<unknown>,
+            successKey: string,
+            descKey: string,
+            onDone?: () => void
+      ) =>
+            useMutation({
+                  mutationFn,
+                  onSuccess: () => {
+                        invalidate();
+                        success({ title: t(successKey), description: t(descKey) });
+                        onDone?.();
+                        resetForm();
+                  },
+                  onError: (err: Error) =>
+                        showError({ title: t("common.error"), description: err.message }),
+            });
+
+      // ─── Mutations ──────────────────────────────────────
+
+      const assignMutation = makeMutation(
+            (params: { editionId: string; type: string; endDate?: string; expiryBehavior?: string }) =>
                   subscriptionRepository.assign(tenantId, params),
-            onSuccess: () => {
-                  invalidate();
-                  success({
-                        title: t("entitlements.subscriptions.assigned"),
-                        description: t("entitlements.subscriptions.assignedDesc"),
-                  });
-                  setShowAssignDialog(false);
-                  resetForm();
-            },
-            onError: (err: Error) =>
-                  showError({ title: t("common.error"), description: err.message }),
-      });
+            "entitlements.subscriptions.assigned",
+            "entitlements.subscriptions.assignedDesc",
+            () => setShowAssignDialog(false)
+      );
 
-      // ─── Change mutation ────────────────────────────────
-      const changeMutation = useMutation({
-            mutationFn: (editionId: string) =>
-                  subscriptionRepository.change(tenantId, editionId),
-            onSuccess: () => {
-                  invalidate();
-                  success({
-                        title: t("entitlements.subscriptions.changed"),
-                        description: t("entitlements.subscriptions.changedDesc"),
-                  });
-                  setShowChangeDialog(false);
-                  resetForm();
-            },
-            onError: (err: Error) =>
-                  showError({ title: t("common.error"), description: err.message }),
-      });
+      const changeMutation = makeMutation(
+            (params: { editionId: string; type: string }) =>
+                  subscriptionRepository.change(tenantId, params),
+            "entitlements.subscriptions.changed",
+            "entitlements.subscriptions.changedDesc",
+            () => setShowChangeDialog(false)
+      );
 
-      // ─── Revoke mutation ────────────────────────────────
-      const revokeMutation = useMutation({
-            mutationFn: (id: string) => subscriptionRepository.revoke(id),
-            onSuccess: () => {
-                  invalidate();
-                  success({
-                        title: t("entitlements.subscriptions.revoked"),
-                        description: t("entitlements.subscriptions.revokedDesc"),
-                  });
-            },
-            onError: (err: Error) =>
-                  showError({ title: t("common.error"), description: err.message }),
-      });
+      const renewMutation = makeMutation(
+            (type: string) => subscriptionRepository.renew(tenantId, type),
+            "entitlements.subscriptions.renewed",
+            "entitlements.subscriptions.renewedDesc"
+      );
+
+      const convertMutation = makeMutation(
+            (type: string) => subscriptionRepository.convertTrial(tenantId, type),
+            "entitlements.subscriptions.converted",
+            "entitlements.subscriptions.convertedDesc",
+            () => setShowConvertDialog(false)
+      );
+
+      const suspendMutation = makeMutation(
+            (params: { reason: string; useFallback: boolean }) =>
+                  subscriptionRepository.suspend(tenantId, params.reason, params.useFallback),
+            "entitlements.subscriptions.suspended",
+            "entitlements.subscriptions.suspendedDesc",
+            () => setShowSuspendDialog(false)
+      );
+
+      const resumeMutation = makeMutation(
+            (type?: string) => subscriptionRepository.resume(tenantId, type),
+            "entitlements.subscriptions.resumed",
+            "entitlements.subscriptions.resumedDesc"
+      );
+
+      const cancelMutation = makeMutation(
+            (params: { reason?: string; useFallback: boolean }) =>
+                  subscriptionRepository.cancel(tenantId, params.reason, params.useFallback),
+            "entitlements.subscriptions.canceled",
+            "entitlements.subscriptions.canceledDesc",
+            () => setShowCancelDialog(false)
+      );
+
+      const resyncMutation = makeMutation(
+            () => subscriptionRepository.resync(tenantId),
+            "entitlements.subscriptions.resynced",
+            "entitlements.subscriptions.resyncedDesc"
+      );
+
+      const revokeMutation = makeMutation(
+            (id: string) => subscriptionRepository.revoke(id),
+            "entitlements.subscriptions.revoked",
+            "entitlements.subscriptions.revokedDesc"
+      );
 
       // ─── Submit helpers ─────────────────────────────────
       const submitAssign = useCallback(() => {
@@ -131,12 +185,25 @@ export function useSubscriptionsViewModel(tenantId: string) {
                   editionId: selectedEditionId,
                   type: subscriptionType,
                   endDate: endDate || undefined,
+                  expiryBehavior,
             });
-      }, [assignMutation, selectedEditionId, subscriptionType, endDate]);
+      }, [assignMutation, selectedEditionId, subscriptionType, endDate, expiryBehavior]);
 
       const submitChange = useCallback(() => {
-            changeMutation.mutate(selectedEditionId);
-      }, [changeMutation, selectedEditionId]);
+            changeMutation.mutate({ editionId: selectedEditionId, type: subscriptionType });
+      }, [changeMutation, selectedEditionId, subscriptionType]);
+
+      const submitSuspend = useCallback(() => {
+            suspendMutation.mutate({ reason: suspendReason, useFallback });
+      }, [suspendMutation, suspendReason, useFallback]);
+
+      const submitCancel = useCallback(() => {
+            cancelMutation.mutate({ reason: cancelReason, useFallback });
+      }, [cancelMutation, cancelReason, useFallback]);
+
+      const submitConvert = useCallback(() => {
+            convertMutation.mutate(convertType);
+      }, [convertMutation, convertType]);
 
       // ─── Public interface ───────────────────────────────
       return {
@@ -145,29 +212,60 @@ export function useSubscriptionsViewModel(tenantId: string) {
             isLoading: subscriptionsQuery.isLoading,
             error: subscriptionsQuery.error,
             hasActiveSubscription: !!activeSubscription,
+            hasSuspendedSubscription: !!suspendedSubscription,
+            isTrialing,
+            isDowngraded,
+            activeSubscription,
 
             // Assign dialog
-            showAssignDialog,
-            setShowAssignDialog,
+            showAssignDialog, setShowAssignDialog,
             submitAssign,
             isAssigning: assignMutation.isPending,
 
             // Change dialog
-            showChangeDialog,
-            setShowChangeDialog,
+            showChangeDialog, setShowChangeDialog,
             submitChange,
             isChanging: changeMutation.isPending,
+
+            // Suspend dialog
+            showSuspendDialog, setShowSuspendDialog,
+            submitSuspend,
+            isSuspending: suspendMutation.isPending,
+            suspendReason, setSuspendReason,
+
+            // Cancel dialog
+            showCancelDialog, setShowCancelDialog,
+            submitCancel,
+            isCanceling: cancelMutation.isPending,
+            cancelReason, setCancelReason,
+
+            // Convert trial dialog
+            showConvertDialog, setShowConvertDialog,
+            submitConvert,
+            isConverting: convertMutation.isPending,
+            convertType, setConvertType,
+
+            // Resume (no dialog — direct action)
+            resumeSubscription: () => resumeMutation.mutate(undefined),
+            isResuming: resumeMutation.isPending,
+
+            // Renew (direct action)
+            renewSubscription: (type: string) => renewMutation.mutate(type),
+            isRenewing: renewMutation.isPending,
+
+            // Resync (direct action)
+            resyncPermissions: () => resyncMutation.mutate(undefined as never),
+            isResyncing: resyncMutation.isPending,
 
             // Revoke
             revokeSubscription: revokeMutation.mutate,
             isRevoking: revokeMutation.isPending,
 
-            // Form state
-            selectedEditionId,
-            setSelectedEditionId,
-            subscriptionType,
-            setSubscriptionType,
-            endDate,
-            setEndDate,
+            // Shared form state
+            selectedEditionId, setSelectedEditionId,
+            subscriptionType, setSubscriptionType,
+            endDate, setEndDate,
+            expiryBehavior, setExpiryBehavior,
+            useFallback, setUseFallback,
       };
 }

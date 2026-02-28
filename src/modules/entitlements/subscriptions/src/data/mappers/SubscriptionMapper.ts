@@ -1,7 +1,5 @@
 /**
  * Subscription Mapper — Model ↔ Entity conversion
- *
- * Maps SubscriptionService DTOs to domain entities.
  */
 import type { Subscription, SubscriptionListItem } from "../../domain/entities/Subscription";
 import type {
@@ -20,6 +18,14 @@ export class SubscriptionMapper {
                   status: model.status,
                   startDate: model.startDate,
                   endDate: model.endDate,
+                  trialEndsAt: model.trialEndsAt,
+                  gracePeriodEndsAt: model.gracePeriodEndsAt,
+                  expiryBehavior: model.expiryBehavior,
+                  fallbackEditionName: model.fallbackEditionName,
+                  isDowngraded: model.isDowngraded,
+                  downgradedFromEditionName: model.downgradedFromEditionName,
+                  downgradedFromType: model.downgradedFromType,
+                  downgradedAt: model.downgradedAt,
                   createdAt: model.createdAt,
                   modifiedAt: model.modifiedAt,
             };
@@ -34,6 +40,13 @@ export class SubscriptionMapper {
                   type: model.type,
                   status: model.status,
                   startDate: model.startDate,
+                  endDate: model.endDate,
+                  expiryBehavior: model.expiryBehavior,
+                  fallbackEditionName: model.fallbackEditionName,
+                  isDowngraded: model.isDowngraded,
+                  downgradedFromEditionName: model.downgradedFromEditionName,
+                  downgradedFromType: model.downgradedFromType,
+                  downgradedAt: model.downgradedAt,
                   createdAt: model.createdAt,
             };
       }

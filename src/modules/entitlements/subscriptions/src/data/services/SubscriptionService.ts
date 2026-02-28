@@ -13,6 +13,14 @@ export interface SubscriptionModel {
       status: string;
       startDate: string;
       endDate?: string;
+      trialEndsAt?: string;
+      gracePeriodEndsAt?: string;
+      expiryBehavior: string;
+      fallbackEditionName?: string;
+      isDowngraded: boolean;
+      downgradedFromEditionName?: string;
+      downgradedFromType?: string;
+      downgradedAt?: string;
       createdAt: string;
       modifiedAt?: string;
 }
@@ -25,11 +33,20 @@ export interface SubscriptionListModel {
       type: string;
       status: string;
       startDate: string;
+      endDate?: string;
+      expiryBehavior: string;
+      fallbackEditionName?: string;
+      isDowngraded: boolean;
+      downgradedFromEditionName?: string;
+      downgradedFromType?: string;
+      downgradedAt?: string;
       createdAt: string;
 }
 
 export class SubscriptionService {
       constructor(private readonly api: IApiService) { }
+
+      // ── Queries ──
 
       async getByTenant(tenantId: string): Promise<SubscriptionListModel[]> {
             return this.api.get<SubscriptionListModel[]>(
@@ -43,9 +60,11 @@ export class SubscriptionService {
             );
       }
 
+      // ── Lifecycle Actions ──
+
       async assign(
             tenantId: string,
-            data: { editionId: string; type: string; endDate?: string }
+            data: { editionId: string; type: string; endDate?: string; expiryBehavior?: string }
       ): Promise<{ id: string }> {
             return this.api.post<{ id: string }>(
                   API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.ASSIGN(tenantId),
@@ -53,10 +72,55 @@ export class SubscriptionService {
             );
       }
 
-      async change(tenantId: string, editionId: string): Promise<void> {
+      async change(
+            tenantId: string,
+            data: { editionId: string; type: string }
+      ): Promise<void> {
             await this.api.put(
                   API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.CHANGE(tenantId),
-                  { editionId }
+                  data
+            );
+      }
+
+      async renew(tenantId: string, type: string): Promise<void> {
+            await this.api.post(
+                  API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.RENEW(tenantId),
+                  { type }
+            );
+      }
+
+      async convertTrial(tenantId: string, type: string): Promise<void> {
+            await this.api.post(
+                  API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.CONVERT(tenantId),
+                  { type }
+            );
+      }
+
+      async suspend(tenantId: string, reason: string, useFallback: boolean = false): Promise<void> {
+            await this.api.post(
+                  API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.SUSPEND(tenantId),
+                  { reason, useFallback }
+            );
+      }
+
+      async resume(tenantId: string, type?: string): Promise<void> {
+            await this.api.post(
+                  API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.RESUME(tenantId),
+                  type ? { type } : {}
+            );
+      }
+
+      async cancel(tenantId: string, reason?: string, useFallback: boolean = false): Promise<void> {
+            await this.api.post(
+                  API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.CANCEL(tenantId),
+                  { reason, useFallback }
+            );
+      }
+
+      async resync(tenantId: string): Promise<void> {
+            await this.api.post(
+                  API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.RESYNC(tenantId),
+                  {}
             );
       }
 
