@@ -4756,6 +4756,7 @@ export const ar = {
       title: "الاشتراكات",
       description: "إدارة اشتراكات إصدارات المستأجرين.",
       lifetime: "مدى الحياة",
+      suspended: "موقوف",
       monthly: "شهري",
       yearly: "سنوي",
       assign: "تعيين إصدار",
