@@ -56,8 +56,15 @@ export function useSubscriptionsViewModel(tenantId: string) {
 
       // ─── Invalidation helper ────────────────────────────
       const invalidate = useCallback(
-            () => queryClient.invalidateQueries({ queryKey }),
-            [queryClient, queryKey]
+            () => {
+                  queryClient.invalidateQueries({ queryKey });
+                  // Cross-invalidate: refresh tenant detail page and subscription card
+                  queryClient.invalidateQueries({ queryKey: ["tenant-subscriptions", tenantId] });
+                  queryClient.invalidateQueries({ queryKey: ["tenant", tenantId] });
+                  queryClient.invalidateQueries({ queryKey: ["tenant-entitlements", tenantId] });
+                  queryClient.invalidateQueries({ queryKey: ["tenants"] });
+            },
+            [queryClient, queryKey, tenantId]
       );
 
       // ─── Reset form ─────────────────────────────────────

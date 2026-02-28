@@ -8,7 +8,6 @@ import { Loader2, CheckCircle2, Crown, Shield, Settings2 } from "lucide-react";
 import { Badge } from "@core/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
 import { cn } from "@core/common/utils";
-import { TenantSubscriptionCard } from "../cards/TenantSubscriptionCard";
 
 interface TenantEntitlementsTabProps {
       tenantId: string;
@@ -16,7 +15,7 @@ interface TenantEntitlementsTabProps {
 
 export function TenantEntitlementsTab({ tenantId }: TenantEntitlementsTabProps) {
       const { t, language, direction } = useI18n();
-      const [activeSubTab, setActiveSubTab] = useState("features");
+      const [activeSubTab, setActiveSubTab] = useState("subscriptions");
 
       return (
             <div className="space-y-6" dir={direction}>
@@ -26,9 +25,6 @@ export function TenantEntitlementsTab({ tenantId }: TenantEntitlementsTabProps) 
                               {t("tenant.entitlementsDescription")}
                         </p>
                   </div>
-
-                  {/* Subscription Plan Card — moved from Settings tab */}
-                  <TenantSubscriptionCard tenantId={tenantId} />
 
                   <Tabs value={activeSubTab} onValueChange={setActiveSubTab}>
                         <TabsList className="grid w-full grid-cols-3 bg-muted/30 p-1">
