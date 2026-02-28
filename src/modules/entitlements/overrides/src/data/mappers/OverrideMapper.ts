@@ -27,7 +27,9 @@ export class OverrideMapper {
       static toResolvedEntity(model: ResolvedFeatureModel): ResolvedFeature {
             return {
                   featureId: model.featureId,
-                  name: model.name,
+                  key: model.key,
+                  nameEn: model.nameEn,
+                  nameAr: model.nameAr,
                   valueType: model.valueType,
                   effectiveValue: model.effectiveValue,
                   source: model.source,

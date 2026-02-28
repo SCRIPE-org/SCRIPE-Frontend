@@ -4675,6 +4675,7 @@ export const ar = {
   // ===== الاستحقاقات =====
   entitlements: {
     features: {
+      featureKey: "مفتاح الميزة",
       title: "الميزات",
       featureName: "مفتاح الميزة",
       displayName: "الاسم المعروض",

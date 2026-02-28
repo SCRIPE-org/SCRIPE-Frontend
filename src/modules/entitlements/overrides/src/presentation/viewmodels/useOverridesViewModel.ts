@@ -22,7 +22,8 @@ export function useOverridesViewModel(tenantId: string) {
       const { success, error: showError } = useEnhancedToast();
       const { t } = useI18n();
 
-      // ─── Pagination state ──────────────────────────────
+      // ─── Pagination & Search state ───────────────────────
+      const [resolvedSearch, setResolvedSearch] = useState("");
       const [resolvedPage, setResolvedPage] = useState(1);
       const [overridesPage, setOverridesPage] = useState(1);
 
@@ -57,15 +58,26 @@ export function useOverridesViewModel(tenantId: string) {
       const overrides = overridesQuery.data ?? [];
       const resolvedFeatures = resolvedQuery.data ?? [];
 
-      // ─── Paginated data ────────────────────────────────
-      const resolvedTotalPages = Math.max(1, Math.ceil(resolvedFeatures.length / ITEMS_PER_PAGE));
+      // ─── Filtered & Paginated data ─────────────────────
+      const filteredResolved = useMemo(() => {
+            if (!resolvedSearch) return resolvedFeatures;
+            const searchLower = resolvedSearch.toLowerCase();
+            return resolvedFeatures.filter(
+                  (f) =>
+                        f.key.toLowerCase().includes(searchLower) ||
+                        f.nameEn.toLowerCase().includes(searchLower) ||
+                        f.nameAr.toLowerCase().includes(searchLower)
+            );
+      }, [resolvedFeatures, resolvedSearch]);
+
+      const resolvedTotalPages = Math.max(1, Math.ceil(filteredResolved.length / ITEMS_PER_PAGE));
       const safeResolvedPage = Math.min(resolvedPage, resolvedTotalPages);
       const paginatedResolved = useMemo(
-            () => resolvedFeatures.slice(
+            () => filteredResolved.slice(
                   (safeResolvedPage - 1) * ITEMS_PER_PAGE,
                   safeResolvedPage * ITEMS_PER_PAGE
             ),
-            [resolvedFeatures, safeResolvedPage]
+            [filteredResolved, safeResolvedPage]
       );
 
       const overridesTotalPages = Math.max(1, Math.ceil(overrides.length / ITEMS_PER_PAGE));
@@ -158,6 +170,8 @@ export function useOverridesViewModel(tenantId: string) {
             resolvedPage: safeResolvedPage,
             resolvedTotalPages,
             setResolvedPage,
+            resolvedSearch,
+            setResolvedSearch,
 
             // Set override dialog
             editingFeature,

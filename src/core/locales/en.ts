@@ -4810,6 +4810,7 @@ export const en = {
   // ===== ENTITLEMENTS =====
   entitlements: {
     features: {
+      featureKey: "Feature Key",
       title: "Features",
       description: "Manage the platform feature catalog — define capabilities that editions can configure.",
       name: "Feature Name",

@@ -18,7 +18,9 @@ export interface FeatureOverrideModel {
 
 export interface ResolvedFeatureModel {
       featureId: string;
-      name: string;
+      key: string;
+      nameEn: string;
+      nameAr: string;
       valueType: string;
       effectiveValue: string;
       source: "Default" | "Edition" | "Override";

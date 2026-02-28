@@ -104,21 +104,36 @@ type VM = ReturnType<typeof useOverridesViewModel>;
 type TFn = (key: string, params?: Record<string, any>) => string;
 
 function ResolvedFeaturesCard({ vm, t }: { vm: VM; t: TFn }) {
+      const { language } = useI18n();
+
       return (
             <Card>
-                  <CardHeader>
-                        <CardTitle>{t("entitlements.overrides.resolvedFeatures")}</CardTitle>
-                        <CardDescription>{t("entitlements.overrides.resolvedDesc")}</CardDescription>
+                  <CardHeader className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                        <div>
+                              <CardTitle>{t("entitlements.overrides.resolvedFeatures")}</CardTitle>
+                              <CardDescription>{t("entitlements.overrides.resolvedDesc")}</CardDescription>
+                        </div>
+                        <Input
+                              placeholder={t("common.search") || "Search features..."}
+                              className="max-w-xs"
+                              value={vm.resolvedSearch}
+                              onChange={(e) => vm.setResolvedSearch(e.target.value)}
+                        />
                   </CardHeader>
                   <CardContent>
-                        {vm.resolvedFeatures.length === 0 ? (
-                              <p className="text-center text-muted-foreground py-8">{t("common.noResults")}</p>
+                        {vm.paginatedResolved.length === 0 ? (
+                              <p className="text-center text-muted-foreground py-8">
+                                    {vm.resolvedFeatures.length === 0
+                                          ? t("common.noResults")
+                                          : t("common.noResultsForSearch") || "No features match your search."}
+                              </p>
                         ) : (
                               <>
                                     <Table>
                                           <TableHeader>
                                                 <TableRow>
                                                       <TableHead>{t("entitlements.features.featureName")}</TableHead>
+                                                      <TableHead>{t("entitlements.features.featureKey") || "Key"}</TableHead>
                                                       <TableHead>{t("entitlements.features.valueType")}</TableHead>
                                                       <TableHead>{t("entitlements.features.defaultValue")}</TableHead>
                                                       <TableHead>{t("entitlements.overrides.source")}</TableHead>
@@ -128,8 +143,11 @@ function ResolvedFeaturesCard({ vm, t }: { vm: VM; t: TFn }) {
                                           <TableBody>
                                                 {vm.paginatedResolved.map((f) => (
                                                       <TableRow key={f.featureId}>
+                                                            <TableCell className="font-medium">
+                                                                  {language === "ar" ? f.nameAr : f.nameEn}
+                                                            </TableCell>
                                                             <TableCell>
-                                                                  <span className="font-mono text-xs">{f.name}</span>
+                                                                  <span className="font-mono text-xs">{f.key}</span>
                                                             </TableCell>
                                                             <TableCell>
                                                                   <Badge variant="outline">{f.valueType}</Badge>
@@ -153,7 +171,7 @@ function ResolvedFeaturesCard({ vm, t }: { vm: VM; t: TFn }) {
                                                                         variant="ghost"
                                                                         size="sm"
                                                                         onClick={() =>
-                                                                              vm.openSetOverride(f.featureId, f.name, f.valueType, f.effectiveValue)
+                                                                              vm.openSetOverride(f.featureId, f.key, f.valueType, f.effectiveValue)
                                                                         }
                                                                   >
                                                                         <Pencil className="h-4 w-4 mr-1" />
