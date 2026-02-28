@@ -1,8 +1,9 @@
 /**
- * Tenant Tabs Component
+ * Tenant Tabs Component — Redesigned
  *
- * Orchestrator for tabbed navigation managing tenant resources.
- * Each tab is a separate component following SOLID principles.
+ * Pill-style tab navigation with icons.
+ * Orchestrates 6 tab panels following SOLID principles.
+ * Full RTL/LTR support.
  *
  * @module tenants
  */
@@ -11,11 +12,10 @@
 import { useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
-import { Card, CardContent, CardHeader } from "@core/ui/card";
-import { Users, Shield, Building2, Settings, Crown } from "lucide-react";
+import { Users, Shield, Building2, Settings, Crown, UsersRound } from "lucide-react";
 import { cn } from "@core/common/utils";
 
-// Tab components (SOLID - each in separate file)
+// Tab components
 import { TenantAdminsTab } from "./tabs/TenantAdminsTab";
 import { TenantRolesTab } from "./tabs/TenantRolesTab";
 import { TenantUserGroupsTab } from "./tabs/TenantUserGroupsTab";
@@ -53,7 +53,7 @@ export function TenantTabs({ tenantId, tenantName, tenantCode, parentTenantId }:
     {
       value: "userGroups",
       label: t("tenant.tabUserGroups") || "User Groups",
-      icon: Users,
+      icon: UsersRound,
     },
     {
       value: "subtenants",
@@ -68,67 +68,73 @@ export function TenantTabs({ tenantId, tenantName, tenantCode, parentTenantId }:
   ];
 
   return (
-    <Card className="border-border/50 shadow-lg" dir={direction}>
+    <div
+      dir={direction}
+      className="rounded-2xl border border-border/50 bg-card shadow-xl shadow-primary/5 overflow-hidden"
+    >
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         {/* Tab Navigation */}
-        <CardHeader className="border-b pb-0 overflow-x-auto">
-          <TabsList className="grid h-auto w-[800px] sm:w-full grid-cols-6 bg-muted/30 p-1">
+        <div className="border-b border-border/50 bg-muted/20 px-2 pt-2 overflow-x-auto">
+          <TabsList className="flex h-auto w-max min-w-full bg-transparent gap-1 p-0">
             {tabs.map((tab) => (
               <TabsTrigger
                 key={tab.value}
                 value={tab.value}
                 className={cn(
-                  "flex items-center gap-2 py-3",
+                  "flex items-center gap-2 px-4 py-2.5 rounded-t-lg",
+                  "text-sm font-medium",
+                  "transition-all duration-200",
+                  // Inactive style
+                  "text-muted-foreground",
+                  "hover:text-foreground hover:bg-muted/50",
+                  // Active style — pill effect
                   "data-[state=active]:bg-background",
+                  "data-[state=active]:text-primary",
                   "data-[state=active]:shadow-sm",
-                  "data-[state=active]:border-b-2",
-                  "data-[state=active]:border-b-primary",
-                  "transition-all duration-200"
+                  "data-[state=active]:border",
+                  "data-[state=active]:border-border/50",
+                  "data-[state=active]:border-b-transparent",
+                  "data-[state=active]:-mb-px"
                 )}
               >
                 <tab.icon className="h-4 w-4" />
-                <span className="hidden sm:inline">{tab.label}</span>
+                <span className="hidden sm:inline whitespace-nowrap">{tab.label}</span>
               </TabsTrigger>
             ))}
           </TabsList>
-        </CardHeader>
+        </div>
 
-        <CardContent className="p-0">
-          {/* Entitlements Tab */}
-          <TabsContent value="entitlements" className="m-0 p-6">
+        {/* Tab Content */}
+        <div className="p-6">
+          <TabsContent value="entitlements" className="m-0">
             <TenantEntitlementsTab tenantId={tenantId} />
           </TabsContent>
 
-          {/* Admins Tab */}
-          <TabsContent value="admins" className="m-0 p-6">
+          <TabsContent value="admins" className="m-0">
             <TenantAdminsTab tenantId={tenantId} tenantName={tenantName} />
           </TabsContent>
 
-          {/* Roles Tab */}
-          <TabsContent value="roles" className="m-0 p-6">
+          <TabsContent value="roles" className="m-0">
             <TenantRolesTab tenantId={tenantId} tenantName={tenantName} />
           </TabsContent>
 
-          {/* User Groups Tab */}
-          <TabsContent value="userGroups" className="m-0 p-6">
+          <TabsContent value="userGroups" className="m-0">
             <TenantUserGroupsTab tenantId={tenantId} tenantName={tenantName} />
           </TabsContent>
 
-          {/* Sub-Tenants Tab */}
-          <TabsContent value="subtenants" className="m-0 p-6">
+          <TabsContent value="subtenants" className="m-0">
             <SubTenantsTab parentId={tenantId} parentName={tenantName} parentCode={tenantCode} />
           </TabsContent>
 
-          {/* Settings Tab */}
-          <TabsContent value="settings" className="m-0 p-6">
+          <TabsContent value="settings" className="m-0">
             <TenantSettingsTab
               tenantId={tenantId}
               tenantName={tenantName}
               parentTenantId={parentTenantId}
             />
           </TabsContent>
-        </CardContent>
+        </div>
       </Tabs>
-    </Card>
+    </div>
   );
 }

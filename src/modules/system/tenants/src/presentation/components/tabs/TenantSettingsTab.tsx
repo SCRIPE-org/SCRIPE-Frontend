@@ -1,21 +1,35 @@
 /**
- * Tenant Settings Tab Component
+ * Tenant Settings Tab — Redesigned
  *
- * Displays and manages tenant's OWN settings: Security, Branding, Audit.
- * Quotas and subscription plan are managed in the Entitlements tab.
+ * Premium category cards with colored top border accents:
+ * - Security (amber) — password policies, lockout, 2FA
+ * - Branding (purple) — logo, color, company name
+ * - Audit (emerald) — logging and retention
+ *
+ * Full RTL/LTR support.
  *
  * @module tenants
  */
 "use client";
 
 import { useI18n } from "@core/providers/i18n-provider";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
-import { Shield, Settings, Pencil } from "lucide-react";
+import {
+  Shield,
+  Palette,
+  ClipboardList,
+  Pencil,
+  Lock,
+  Check,
+  X,
+  Timer,
+  KeyRound,
+} from "lucide-react";
 import { useTenantSettingsViewModel } from "@modules/system/tenants/src/presentation/viewmodels/useTenantSettingsViewModel";
 import { TenantSettingsEditDialog } from "../TenantSettingsEditDialog";
 import { Skeleton } from "@core/ui/skeleton";
+import { cn } from "@core/common/utils";
 
 interface TenantSettingsTabProps {
   tenantId: string;
@@ -29,23 +43,22 @@ export function TenantSettingsTab({
   parentTenantId,
 }: TenantSettingsTabProps) {
   const { t, direction } = useI18n();
+  const isRtl = direction === "rtl";
   const vm = useTenantSettingsViewModel(tenantId);
 
   if (vm.isLoading) {
     return (
-      <div className="space-y-6">
-        <Skeleton className="h-8 w-48" />
-        <div className="grid gap-4">
-          <Skeleton className="h-64 w-full" />
-          <Skeleton className="h-64 w-full" />
-        </div>
+      <div className="space-y-4">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <Skeleton key={i} className="h-48 w-full rounded-xl" />
+        ))}
       </div>
     );
   }
 
   if (vm.error) {
     return (
-      <div className="rounded-md bg-destructive/10 p-4 text-destructive">
+      <div className="rounded-xl bg-destructive/10 p-4 text-destructive border border-destructive/30">
         Error loading settings: {vm.error.message}
       </div>
     );
@@ -55,173 +68,220 @@ export function TenantSettingsTab({
   if (!settings) return null;
 
   return (
-    <div className="space-y-6" dir={direction}>
-      <div className="flex items-center justify-between">
-        <div>
-          <h3 className="text-lg font-semibold">{t("tenant.settings") || "Settings"}</h3>
-          <p className="text-sm text-muted-foreground">
-            {t("tenant.settingsDescription") || `Configuration options for ${tenantName}`}
-          </p>
-        </div>
+    <div className="space-y-4" dir={direction}>
+      {/* Section header */}
+      <div>
+        <h3 className="text-lg font-semibold">{t("tenant.settings") || "Settings"}</h3>
+        <p className="text-sm text-muted-foreground">
+          {t("tenant.settingsDescription") || `Configuration for ${tenantName}`}
+        </p>
       </div>
 
-      <div className="grid gap-4">
-        {/* Security Settings */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <div className="space-y-1">
-              <CardTitle className="flex items-center gap-2 text-base">
-                <Shield className="h-4 w-4" />
-                {t("tenant.settingsSecurity") || "Security Settings"}
-              </CardTitle>
-              <CardDescription>
-                {t("tenant.settingsSecurityDesc") || "Password policies and login security"}
-              </CardDescription>
+      {/* ── Security Card ── */}
+      <div className="rounded-xl border border-border/50 bg-card overflow-hidden">
+        <div className="h-1 bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500" />
+        <div className="p-5">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-500/10">
+                <Shield className="h-4 w-4 text-amber-500" />
+              </div>
+              <div>
+                <h4 className="font-semibold text-sm">
+                  {t("tenant.settingsSecurity") || "Security Settings"}
+                </h4>
+                <p className="text-xs text-muted-foreground">
+                  {t("tenant.settingsSecurityDesc") || "Password policies and login security"}
+                </p>
+              </div>
             </div>
             <Button variant="ghost" size="sm" onClick={() => vm.setEditSection("security")}>
               <Pencil className="h-4 w-4" />
             </Button>
-          </CardHeader>
-          <CardContent className="space-y-4 pt-4">
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium">
-                  {t("tenant.passwordMinLength") || "Min Password Length"}
-                </label>
-                <div className="text-lg font-bold">{settings.passwordMinLength} {t("tenant.characters") || "characters"}</div>
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">
-                  {t("tenant.lockoutThreshold") || "Lockout Threshold"}
-                </label>
-                <div className="text-lg font-bold">
-                  {settings.loginLockoutThreshold} {t("tenant.attempts") || "attempts"}
-                </div>
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">
-                  {t("tenant.passwordExpiryDays") || "Password Expiry"}
-                </label>
-                <div className="text-lg font-bold">
-                  {settings.passwordExpiryDays
-                    ? `${settings.passwordExpiryDays} ${t("tenant.days") || "days"}`
-                    : t("tenant.never") || "Never"}
-                </div>
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">
-                  {t("tenant.lockoutDuration") || "Lockout Duration"}
-                </label>
-                <div className="text-lg font-bold">
-                  {settings.loginLockoutMinutes} {t("tenant.minutes") || "min"}
-                </div>
-              </div>
-            </div>
-            <div className="flex flex-wrap gap-2 pt-2">
-              <RequirementBadge
-                satisfied={settings.passwordRequireUppercase}
-                label={t("tenant.requireUppercase") || "Uppercase"}
-              />
-              <RequirementBadge
-                satisfied={settings.passwordRequireNumber}
-                label={t("tenant.requireNumber") || "Number"}
-              />
-              <RequirementBadge
-                satisfied={settings.passwordRequireSpecial}
-                label={t("tenant.requireSpecial") || "Special Char"}
-              />
-              <RequirementBadge
-                satisfied={settings.require2FA}
-                label={t("tenant.require2FA") || "2FA Required"}
-              />
-            </div>
-          </CardContent>
-        </Card>
+          </div>
 
-        {/* Branding Settings */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <div className="space-y-1">
-              <CardTitle className="flex items-center gap-2 text-base">
-                <Settings className="h-4 w-4" />
-                {t("tenant.settingsBranding") || "Branding"}
-              </CardTitle>
-              <CardDescription>
-                {t("tenant.settingsBrandingDesc") || "Customize tenant appearance and branding"}
-              </CardDescription>
+          {/* Security grid */}
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <div className="rounded-lg border border-border/50 bg-muted/20 p-3">
+              <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-1">
+                <Lock className="h-3 w-3" />
+                {t("tenant.passwordMinLength") || "Min Length"}
+              </div>
+              <p className="text-lg font-bold">{settings.passwordMinLength}</p>
+              <p className="text-xs text-muted-foreground">{t("tenant.characters") || "chars"}</p>
+            </div>
+            <div className="rounded-lg border border-border/50 bg-muted/20 p-3">
+              <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-1">
+                <KeyRound className="h-3 w-3" />
+                {t("tenant.lockoutThreshold") || "Lockout"}
+              </div>
+              <p className="text-lg font-bold">{settings.loginLockoutThreshold}</p>
+              <p className="text-xs text-muted-foreground">{t("tenant.attempts") || "attempts"}</p>
+            </div>
+            <div className="rounded-lg border border-border/50 bg-muted/20 p-3">
+              <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-1">
+                <Timer className="h-3 w-3" />
+                {t("tenant.lockoutDuration") || "Duration"}
+              </div>
+              <p className="text-lg font-bold">{settings.loginLockoutMinutes}</p>
+              <p className="text-xs text-muted-foreground">{t("tenant.minutes") || "min"}</p>
+            </div>
+            <div className="rounded-lg border border-border/50 bg-muted/20 p-3">
+              <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-1">
+                <Timer className="h-3 w-3" />
+                {t("tenant.passwordExpiryDays") || "Expiry"}
+              </div>
+              <p className="text-lg font-bold">
+                {settings.passwordExpiryDays || "∞"}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                {settings.passwordExpiryDays
+                  ? t("tenant.days") || "days"
+                  : t("tenant.never") || "never"}
+              </p>
+            </div>
+          </div>
+
+          {/* Requirement badges */}
+          <div className="flex flex-wrap gap-2 mt-3">
+            <RequirementBadge
+              satisfied={settings.passwordRequireUppercase}
+              label={t("tenant.requireUppercase") || "Uppercase"}
+            />
+            <RequirementBadge
+              satisfied={settings.passwordRequireNumber}
+              label={t("tenant.requireNumber") || "Number"}
+            />
+            <RequirementBadge
+              satisfied={settings.passwordRequireSpecial}
+              label={t("tenant.requireSpecial") || "Special Char"}
+            />
+            <RequirementBadge
+              satisfied={settings.require2FA}
+              label={t("tenant.require2FA") || "2FA Required"}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* ── Branding Card ── */}
+      <div className="rounded-xl border border-border/50 bg-card overflow-hidden">
+        <div className="h-1 bg-gradient-to-r from-purple-500 via-purple-400 to-purple-500" />
+        <div className="p-5">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-500/10">
+                <Palette className="h-4 w-4 text-purple-500" />
+              </div>
+              <div>
+                <h4 className="font-semibold text-sm">
+                  {t("tenant.settingsBranding") || "Branding"}
+                </h4>
+                <p className="text-xs text-muted-foreground">
+                  {t("tenant.settingsBrandingDesc") || "Customize appearance and branding"}
+                </p>
+              </div>
             </div>
             <Button variant="ghost" size="sm" onClick={() => vm.setEditSection("branding")}>
               <Pencil className="h-4 w-4" />
             </Button>
-          </CardHeader>
-          <CardContent className="space-y-4 pt-4">
-            <div className="flex items-center gap-6">
-              {settings.logoUrl ? (
-                <img
-                  src={
-                    settings.logoUrl.startsWith("http")
-                      ? settings.logoUrl
-                      : `${process.env.NEXT_PUBLIC_File_URL || ""}${settings.logoUrl}`
-                  }
-                  alt={t("tenant.logo")}
-                  className="h-16 w-16 rounded border object-contain p-1"
-                />
-              ) : (
-                <div className="flex h-16 w-16 items-center justify-center rounded bg-muted text-xs text-muted-foreground">
-                  {t("tenant.noLogo") || "No Logo"}
-                </div>
-              )}
-              <div>
-                <div className="text-lg font-medium">
-                  {settings.companyName || t("tenant.noCompanyName") || "No Company Name"}
-                </div>
-                <div className="mt-1 flex items-center gap-2">
-                  <div
-                    className="h-4 w-4 rounded-full border"
-                    style={{ backgroundColor: settings.primaryColor || "#000000" }}
-                  />
-                  <span className="text-sm text-muted-foreground">
-                    {settings.primaryColor || t("tenant.defaultColor") || "Default Color"}
+          </div>
+
+          <div className="flex items-center gap-6">
+            {/* Logo */}
+            {settings.logoUrl ? (
+              <img
+                src={
+                  settings.logoUrl.startsWith("http")
+                    ? settings.logoUrl
+                    : `${process.env.NEXT_PUBLIC_File_URL || ""}${settings.logoUrl}`
+                }
+                alt={t("tenant.logoPreview")}
+                className="h-16 w-16 rounded-xl border border-border/50 object-contain p-1.5 bg-muted/20"
+              />
+            ) : (
+              <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-muted/30 border border-dashed border-border/50 text-xs text-muted-foreground">
+                {t("tenant.noLogo") || "No Logo"}
+              </div>
+            )}
+            <div className="space-y-1.5">
+              <p className="font-semibold">
+                {settings.companyName || (
+                  <span className="text-muted-foreground italic">
+                    {t("tenant.noCompanyName") || "No Company Name"}
                   </span>
-                </div>
+                )}
+              </p>
+              <div className="flex items-center gap-2">
+                <div
+                  className="h-5 w-5 rounded-full border border-border/50 shadow-sm"
+                  style={{ backgroundColor: settings.primaryColor || "#000000" }}
+                />
+                <span className="text-sm text-muted-foreground font-mono">
+                  {settings.primaryColor || t("tenant.defaultColor") || "#000000"}
+                </span>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
+      </div>
 
-        {/* Audit Settings */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <div className="space-y-1">
-              <CardTitle className="flex items-center gap-2 text-base">
-                <Shield className="h-4 w-4" />
-                {t("tenant.settingsAudit") || "Audit & Logs"}
-              </CardTitle>
+      {/* ── Audit Card ── */}
+      <div className="rounded-xl border border-border/50 bg-card overflow-hidden">
+        <div className="h-1 bg-gradient-to-r from-emerald-500 via-emerald-400 to-emerald-500" />
+        <div className="p-5">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/10">
+                <ClipboardList className="h-4 w-4 text-emerald-500" />
+              </div>
+              <div>
+                <h4 className="font-semibold text-sm">
+                  {t("tenant.settingsAudit") || "Audit & Logs"}
+                </h4>
+              </div>
             </div>
             <Button variant="ghost" size="sm" onClick={() => vm.setEditSection("audit")}>
               <Pencil className="h-4 w-4" />
             </Button>
-          </CardHeader>
-          <CardContent className="space-y-4 pt-4">
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <div className="font-medium">{t("tenant.auditEnabled") || "Audit Logging"}</div>
-                <div className="text-sm text-muted-foreground">
-                  {t("tenant.retentionLabel", { days: settings.auditRetentionDays }) ||
-                    `Retention: ${settings.auditRetentionDays} days`}
-                </div>
-              </div>
-              <Badge variant={settings.auditEnabled ? "default" : "secondary"}>
-                {settings.auditEnabled
-                  ? t("tenant.enabled") || "Enabled"
-                  : t("tenant.disabled") || "Disabled"}
-              </Badge>
-            </div>
-          </CardContent>
-        </Card>
+          </div>
 
+          <div className="flex items-center justify-between rounded-lg border border-border/50 bg-muted/20 p-3">
+            <div>
+              <p className="font-medium text-sm">
+                {t("tenant.auditEnabled") || "Audit Logging"}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                {t("tenant.retentionLabel", { days: settings.auditRetentionDays }) ||
+                  `Retention: ${settings.auditRetentionDays} days`}
+              </p>
+            </div>
+            <Badge
+              variant={settings.auditEnabled ? "default" : "secondary"}
+              className={cn(
+                "gap-1",
+                settings.auditEnabled
+                  ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/30"
+                  : ""
+              )}
+            >
+              {settings.auditEnabled ? (
+                <>
+                  <Check className="h-3 w-3" />
+                  {t("tenant.enabled") || "Enabled"}
+                </>
+              ) : (
+                <>
+                  <X className="h-3 w-3" />
+                  {t("tenant.disabled") || "Disabled"}
+                </>
+              )}
+            </Badge>
+          </div>
+        </div>
       </div>
 
+      {/* Settings Edit Dialog (unchanged) */}
       <TenantSettingsEditDialog
         open={!!vm.editSection}
         onOpenChange={(open) => !open && vm.setEditSection(null)}
@@ -235,12 +295,23 @@ export function TenantSettingsTab({
   );
 }
 
+// ── Requirement Badge helper ──
 function RequirementBadge({ satisfied, label }: { satisfied: boolean; label: string }) {
   return (
-    <Badge variant="outline" className={`flex items-center gap-1 ${!satisfied && "opacity-50"}`}>
-      <span className={satisfied ? "text-green-500" : "text-muted-foreground"}>
-        {satisfied ? "✓" : "○"}
-      </span>
+    <Badge
+      variant="outline"
+      className={cn(
+        "gap-1 text-xs",
+        satisfied
+          ? "border-emerald-500/30 bg-emerald-500/5 text-emerald-500"
+          : "opacity-50"
+      )}
+    >
+      {satisfied ? (
+        <Check className="h-3 w-3 text-emerald-500" />
+      ) : (
+        <X className="h-3 w-3 text-muted-foreground" />
+      )}
       {label}
     </Badge>
   );

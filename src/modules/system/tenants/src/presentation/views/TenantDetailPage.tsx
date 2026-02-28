@@ -61,16 +61,16 @@ export function TenantDetailPage({ tenantId }: TenantDetailPageProps) {
   // Loading state
   if (loading) {
     return (
-      <div className="space-y-6 p-6" dir={direction}>
+      <div className="space-y-6" dir={direction}>
         <Skeleton className="h-8 w-48" />
-        <Skeleton className="h-40 w-full rounded-xl" />
+        <Skeleton className="h-48 w-full rounded-2xl" />
         <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-          <Skeleton className="h-24 rounded-lg" />
-          <Skeleton className="h-24 rounded-lg" />
-          <Skeleton className="h-24 rounded-lg" />
-          <Skeleton className="h-24 rounded-lg" />
+          <Skeleton className="h-24 rounded-xl" />
+          <Skeleton className="h-24 rounded-xl" />
+          <Skeleton className="h-24 rounded-xl" />
+          <Skeleton className="h-24 rounded-xl" />
         </div>
-        <Skeleton className="h-96 w-full rounded-xl" />
+        <Skeleton className="h-96 w-full rounded-2xl" />
       </div>
     );
   }
