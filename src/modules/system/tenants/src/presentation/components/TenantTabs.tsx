@@ -1,9 +1,9 @@
 /**
- * Tenant Tabs Component — Redesigned
+ * Tenant Tabs Component — Deep Redesign
  *
- * Pill-style tab navigation with icons.
- * Orchestrates 6 tab panels following SOLID principles.
- * Full RTL/LTR support.
+ * Premium segment-style tab navigation with glow effects.
+ * No scrollbar — uses horizontal scroll-snap with hidden scrollbar.
+ * Each tab has icon + label with animated active indicator.
  *
  * @module tenants
  */
@@ -32,6 +32,7 @@ interface TenantTabsProps {
 
 export function TenantTabs({ tenantId, tenantName, tenantCode, parentTenantId }: TenantTabsProps) {
   const { t, direction } = useI18n();
+  const isRtl = direction === "rtl";
   const [activeTab, setActiveTab] = useState("entitlements");
 
   const tabs = [
@@ -39,100 +40,129 @@ export function TenantTabs({ tenantId, tenantName, tenantCode, parentTenantId }:
       value: "entitlements",
       label: t("tenant.tabEntitlements") || "Entitlements",
       icon: Crown,
+      color: "text-amber-500",
+      activeBg: "bg-amber-500/10",
     },
     {
       value: "admins",
       label: t("tenant.tabAdmins") || "Admins",
       icon: Users,
+      color: "text-blue-500",
+      activeBg: "bg-blue-500/10",
     },
     {
       value: "roles",
       label: t("tenant.tabRoles") || "Roles",
       icon: Shield,
+      color: "text-violet-500",
+      activeBg: "bg-violet-500/10",
     },
     {
       value: "userGroups",
       label: t("tenant.tabUserGroups") || "User Groups",
       icon: UsersRound,
+      color: "text-teal-500",
+      activeBg: "bg-teal-500/10",
     },
     {
       value: "subtenants",
       label: t("tenant.tabSubTenants") || "Sub-Tenants",
       icon: Building2,
+      color: "text-emerald-500",
+      activeBg: "bg-emerald-500/10",
     },
     {
       value: "settings",
       label: t("tenant.tabSettings") || "Settings",
       icon: Settings,
+      color: "text-slate-400",
+      activeBg: "bg-slate-500/10",
     },
   ];
 
   return (
-    <div
-      dir={direction}
-      className="rounded-2xl border border-border/50 bg-card shadow-xl shadow-primary/5 overflow-hidden"
-    >
+    <div dir={direction}>
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        {/* Tab Navigation */}
-        <div className="border-b border-border/50 bg-muted/20 px-2 pt-2 overflow-x-auto">
-          <TabsList className="flex h-auto w-max min-w-full bg-transparent gap-1 p-0">
-            {tabs.map((tab) => (
-              <TabsTrigger
+        {/* ── Tab Navigation ── */}
+        <div
+          className={cn(
+            "flex overflow-x-auto scrollbar-none",
+            "gap-1 pb-3",
+            // Hide scrollbar cross-browser
+            "[&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+          )}
+        >
+          {tabs.map((tab) => {
+            const isActive = activeTab === tab.value;
+            return (
+              <button
                 key={tab.value}
-                value={tab.value}
+                onClick={() => setActiveTab(tab.value)}
                 className={cn(
-                  "flex items-center gap-2 px-4 py-2.5 rounded-t-lg",
+                  "group flex items-center gap-2 whitespace-nowrap rounded-xl px-4 py-2.5",
                   "text-sm font-medium",
-                  "transition-all duration-200",
-                  // Inactive style
-                  "text-muted-foreground",
-                  "hover:text-foreground hover:bg-muted/50",
-                  // Active style — pill effect
-                  "data-[state=active]:bg-background",
-                  "data-[state=active]:text-primary",
-                  "data-[state=active]:shadow-sm",
-                  "data-[state=active]:border",
-                  "data-[state=active]:border-border/50",
-                  "data-[state=active]:border-b-transparent",
-                  "data-[state=active]:-mb-px"
+                  "transition-all duration-300",
+                  "border",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+                  isActive
+                    ? cn(
+                      "bg-card border-border/80 shadow-md",
+                      tab.activeBg,
+                      tab.color
+                    )
+                    : cn(
+                      "border-transparent text-muted-foreground",
+                      "hover:bg-muted/50 hover:text-foreground hover:border-border/30"
+                    )
                 )}
               >
-                <tab.icon className="h-4 w-4" />
-                <span className="hidden sm:inline whitespace-nowrap">{tab.label}</span>
-              </TabsTrigger>
-            ))}
-          </TabsList>
+                <tab.icon
+                  className={cn(
+                    "h-4 w-4 transition-transform duration-300",
+                    isActive && "scale-110"
+                  )}
+                />
+                <span>{tab.label}</span>
+              </button>
+            );
+          })}
         </div>
 
-        {/* Tab Content */}
-        <div className="p-6">
-          <TabsContent value="entitlements" className="m-0">
-            <TenantEntitlementsTab tenantId={tenantId} />
-          </TabsContent>
+        {/* ── Tab Content ── */}
+        <div className={cn(
+          "rounded-2xl border border-border/50 bg-card",
+          "shadow-xl shadow-primary/5",
+          "overflow-hidden"
+        )}>
+          <div className="p-6">
+            <TabsContent value="entitlements" className="m-0" forceMount={activeTab === "entitlements" ? undefined : undefined}>
+              <TenantEntitlementsTab tenantId={tenantId} />
+            </TabsContent>
 
-          <TabsContent value="admins" className="m-0">
-            <TenantAdminsTab tenantId={tenantId} tenantName={tenantName} />
-          </TabsContent>
+            <TabsContent value="admins" className="m-0">
+              <TenantAdminsTab tenantId={tenantId} tenantName={tenantName} />
+            </TabsContent>
 
-          <TabsContent value="roles" className="m-0">
-            <TenantRolesTab tenantId={tenantId} tenantName={tenantName} />
-          </TabsContent>
+            <TabsContent value="roles" className="m-0">
+              <TenantRolesTab tenantId={tenantId} tenantName={tenantName} />
+            </TabsContent>
 
-          <TabsContent value="userGroups" className="m-0">
-            <TenantUserGroupsTab tenantId={tenantId} tenantName={tenantName} />
-          </TabsContent>
+            <TabsContent value="userGroups" className="m-0">
+              <TenantUserGroupsTab tenantId={tenantId} tenantName={tenantName} />
+            </TabsContent>
 
-          <TabsContent value="subtenants" className="m-0">
-            <SubTenantsTab parentId={tenantId} parentName={tenantName} parentCode={tenantCode} />
-          </TabsContent>
+            <TabsContent value="subtenants" className="m-0">
+              <SubTenantsTab parentId={tenantId} parentName={tenantName} parentCode={tenantCode} />
+            </TabsContent>
 
-          <TabsContent value="settings" className="m-0">
-            <TenantSettingsTab
-              tenantId={tenantId}
-              tenantName={tenantName}
-              parentTenantId={parentTenantId}
-            />
-          </TabsContent>
+            <TabsContent value="settings" className="m-0">
+              <TenantSettingsTab
+                tenantId={tenantId}
+                tenantName={tenantName}
+                parentTenantId={parentTenantId}
+              />
+            </TabsContent>
+          </div>
         </div>
       </Tabs>
     </div>
