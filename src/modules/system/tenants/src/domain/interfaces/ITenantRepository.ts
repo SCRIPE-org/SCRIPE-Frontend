@@ -140,7 +140,7 @@ export interface ITenantRepository {
   /**
    * Get available editions (plans) for assignment
    */
-  getAvailableEditions(page?: number, pageSize?: number): Promise<PagedEditionResult>;
+  getAvailableEditions(page?: number, pageSize?: number, search?: string): Promise<PagedEditionResult>;
 
   /**
    * Assign a base edition (plan) to a newly created tenant

@@ -75,16 +75,15 @@ export function SubTenantsTab({
     enabled: !!parentId,
   });
 
-  // Fetch editions
-  const { data: editionsData } = useQuery({
-    queryKey: ["editions", "available"],
-    queryFn: () => systemContainer.tenantRepository.getAvailableEditions(),
-  });
-
-  const availableEditions = useMemo(
-    () => editionsData?.items ?? [],
-    [editionsData]
-  );
+  const handleSearchEditions = useCallback(async (query: string) => {
+    try {
+      const res = await systemContainer.tenantRepository.getAvailableEditions(1, 10, query);
+      return res.items.map((ed) => ({ value: ed.id, label: ed.name }));
+    } catch (err) {
+      appLogger.error("Failed to search editions:", err);
+      return [];
+    }
+  }, []);
 
   const childNodes = useMemo(() => children ?? [], [children]);
 
@@ -286,7 +285,7 @@ export function SubTenantsTab({
         setForm={setCreateForm}
         onSubmit={handleCreateSubmit}
         isLoading={isCreating}
-        availableEditions={availableEditions}
+        onSearchEditions={handleSearchEditions}
       />
 
       <EditTenantDialog

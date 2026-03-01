@@ -191,10 +191,11 @@ export class TenantService implements ITenantService {
     );
   }
 
-  async getAvailableEditions(page: number = 1, pageSize: number = 100): Promise<PagedEditionResult> {
+  async getAvailableEditions(page: number = 1, pageSize: number = 100, search?: string): Promise<PagedEditionResult> {
     const url = buildUrl(API_ENDPOINTS.ENTITLEMENTS.EDITIONS.LIST, {
       page,
       pageSize,
+      search,
     });
     return this.api.get<PagedEditionResult>(url);
   }

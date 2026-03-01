@@ -1,36 +1,22 @@
 /**
  * TenantDialogs Component
  *
- * All dialogs for tenant CRUD operations with i18n support.
+ * All dialogs for tenant CRUD operations.
+ * Uses GenericModal and GenericForm for consistent UI and robust form state.
  */
 "use client";
 
-import { Button } from "@core/ui/button";
-import { Input } from "@core/ui/input";
-import { Label } from "@core/ui/label";
-import { Textarea } from "@core/ui/textarea";
-import { Switch } from "@core/ui/switch";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@core/ui/select";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@core/ui/dialog";
-import { Loader2 } from "lucide-react";
+import { useMemo } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
+import { GenericModal } from "@core/crud/components/generic-modal";
+import { GenericForm, type FieldConfig } from "@core/ui/forms/generic-form";
 import type { TenantTreeNode } from "../../domain/entities/Tenant";
 import type { EditionThinModel } from "../../data/models/TenantSubscription";
 
-// Form state types
+// ==========================================
+// Form State Types
+// ==========================================
+
 export interface CreateFormState {
   name: string;
   code: string;
@@ -57,16 +43,19 @@ export const initialEditForm: EditFormState = {
   isActive: true,
 };
 
-// Create Dialog
+// ==========================================
+// Create Tenant Dialog (GenericForm)
+// ==========================================
+
 interface CreateTenantDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   parentTenant: TenantTreeNode | null;
-  form: CreateFormState;
+  form: CreateFormState; // Kept for backwards compat signature, but GenericForm handles state internally
   setForm: React.Dispatch<React.SetStateAction<CreateFormState>>;
-  onSubmit: () => void;
+  onSubmit: (data?: any) => void; // Using GenericForm onSubmit which passes data
   isLoading: boolean;
-  availableEditions?: EditionThinModel[];
+  onSearchEditions: (query: string) => Promise<{ value: string; label: string }[]>;
 }
 
 export function CreateTenantDialog({
@@ -77,96 +66,91 @@ export function CreateTenantDialog({
   setForm,
   onSubmit,
   isLoading,
-  availableEditions,
+  onSearchEditions,
 }: CreateTenantDialogProps) {
   const { t } = useI18n();
 
+  const title = parentTenant ? t("tenant.createChild") : t("tenant.createTenant");
+  const description = parentTenant
+    ? `${t("tenant.createChildDescription")} "${parentTenant.name}".`
+    : t("tenant.createDescription");
+
+  const fields: FieldConfig[] = useMemo(
+    () => [
+      {
+        name: "name",
+        label: t("tenant.name"),
+        type: "text",
+        required: true,
+        placeholder: t("tenant.namePlaceholder"),
+      },
+      {
+        name: "code",
+        label: t("tenant.code"),
+        type: "text",
+        required: true,
+        placeholder: t("tenant.codePlaceholder"),
+        onChange: (val: string, formData) => ({
+          ...formData,
+          code: val.toUpperCase(),
+        }),
+      },
+      {
+        name: "description",
+        label: t("tenant.descriptionLabel"),
+        type: "textarea",
+        placeholder: t("tenant.descriptionPlaceholder"),
+      },
+      {
+        name: "editionId",
+        label: t("tenant.editionLabel") || "Subscription Plan",
+        type: "server-select",
+        required: true,
+        placeholder: t("tenant.editionPlaceholder") || "Select a plan...",
+        searchPlaceholder: t("common.search") || "Search...",
+        searchType: "server",
+        onServerSearch: onSearchEditions,
+      },
+    ],
+    [t, onSearchEditions]
+  );
+
+  const handleSubmit = async (data: Record<string, any>) => {
+    // Update the external form state before submitting so the parent has access to it
+    setForm({
+      name: data.name,
+      code: data.code,
+      description: data.description || "",
+      editionId: data.editionId,
+    });
+    // Call original submit
+    onSubmit();
+  };
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
-          <DialogTitle>
-            {parentTenant ? t("tenant.createChild") : t("tenant.createTenant")}
-          </DialogTitle>
-          <DialogDescription>
-            {parentTenant
-              ? `${t("tenant.createChildDescription")} "${parentTenant.name}".`
-              : t("tenant.createDescription")}
-          </DialogDescription>
-        </DialogHeader>
-        <div className="space-y-4 py-4">
-          <div className="space-y-2">
-            <Label htmlFor="create-name">{t("tenant.name")} *</Label>
-            <Input
-              id="create-name"
-              placeholder={t("tenant.namePlaceholder")}
-              value={form.name}
-              onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="create-code">{t("tenant.code")} *</Label>
-            <Input
-              id="create-code"
-              placeholder={t("tenant.codePlaceholder")}
-              value={form.code}
-              onChange={(e) => setForm((prev) => ({ ...prev, code: e.target.value.toUpperCase() }))}
-            />
-            <p className="text-xs text-muted-foreground">{t("tenant.codeHelp")}</p>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="create-description">{t("tenant.descriptionLabel")}</Label>
-            <Textarea
-              id="create-description"
-              placeholder={t("tenant.descriptionPlaceholder")}
-              value={form.description}
-              onChange={(e) => setForm((prev) => ({ ...prev, description: e.target.value }))}
-              rows={3}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="create-edition">{t("tenant.editionLabel") || "Subscription Plan"} *</Label>
-            <Select
-              value={form.editionId}
-              onValueChange={(value) => setForm((prev) => ({ ...prev, editionId: value }))}
-            >
-              <SelectTrigger id="create-edition">
-                <SelectValue placeholder={t("tenant.editionPlaceholder") || "Select a plan"} />
-              </SelectTrigger>
-              <SelectContent>
-                {availableEditions?.map((edition: EditionThinModel) => (
-                  <SelectItem key={edition.id} value={edition.id}>
-                    {edition.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <p className="text-xs text-muted-foreground">
-              {t("tenant.editionHelp") || "Assign an initial subscription plan to this tenant."}
-            </p>
-          </div>
-        </div>
-        <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading}>
-            {t("tenant.cancel")}
-          </Button>
-          <Button onClick={onSubmit} disabled={!form.name || !form.code || !form.editionId || isLoading}>
-            {isLoading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                {t("tenant.creating")}
-              </>
-            ) : (
-              t("tenant.create")
-            )}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+    <GenericModal
+      open={open}
+      onOpenChange={onOpenChange}
+      title={title}
+      description={description}
+      size="md"
+      formKey="create-tenant-form"
+    >
+      <GenericForm
+        key={`create-tenant-${open}`}
+        fields={fields}
+        initialValues={form}
+        onSubmit={handleSubmit}
+        onCancel={() => onOpenChange(false)}
+      />
+    </GenericModal>
   );
 }
 
-// Edit Dialog
+// ==========================================
+// Edit Tenant Dialog (GenericForm)
+// ==========================================
+
 interface EditTenantDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -188,110 +172,58 @@ export function EditTenantDialog({
 }: EditTenantDialogProps) {
   const { t } = useI18n();
 
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
-          <DialogTitle>{t("tenant.editTenant")}</DialogTitle>
-          <DialogDescription>
-            {t("tenant.editDescription")} &quot;{tenantName}&quot;.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="space-y-4 py-4">
-          <div className="space-y-2">
-            <Label htmlFor="edit-name">{t("tenant.name")} *</Label>
-            <Input
-              id="edit-name"
-              placeholder={t("tenant.namePlaceholder")}
-              value={form.name}
-              onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="edit-description">{t("tenant.descriptionLabel")}</Label>
-            <Textarea
-              id="edit-description"
-              placeholder={t("tenant.descriptionPlaceholder")}
-              value={form.description}
-              onChange={(e) => setForm((prev) => ({ ...prev, description: e.target.value }))}
-              rows={3}
-            />
-          </div>
-          <div className="flex items-center justify-between">
-            <div className="space-y-0.5">
-              <Label htmlFor="edit-active">{t("tenant.activeStatus")}</Label>
-              <p className="text-xs text-muted-foreground">{t("tenant.activeHelp")}</p>
-            </div>
-            <Switch
-              id="edit-active"
-              checked={form.isActive}
-              onCheckedChange={(checked) => setForm((prev) => ({ ...prev, isActive: checked }))}
-            />
-          </div>
-        </div>
-        <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading}>
-            {t("tenant.cancel")}
-          </Button>
-          <Button onClick={onSubmit} disabled={!form.name || isLoading}>
-            {isLoading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                {t("tenant.saving")}
-              </>
-            ) : (
-              t("tenant.save")
-            )}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+  const title = t("tenant.editTenant");
+  const description = `${t("tenant.editDescription")} "${tenantName}".`;
+
+  const fields: FieldConfig[] = useMemo(
+    () => [
+      {
+        name: "name",
+        label: t("tenant.name"),
+        type: "text",
+        required: true,
+        placeholder: t("tenant.namePlaceholder"),
+      },
+      {
+        name: "description",
+        label: t("tenant.descriptionLabel"),
+        type: "textarea",
+        placeholder: t("tenant.descriptionPlaceholder"),
+      },
+      {
+        name: "isActive",
+        label: t("tenant.activeStatus"),
+        type: "switch",
+      },
+    ],
+    [t]
   );
-}
 
-// Delete Dialog
-interface DeleteTenantDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  tenantName: string;
-  onConfirm: () => void;
-  isLoading: boolean;
-}
-
-export function DeleteTenantDialog({
-  open,
-  onOpenChange,
-  tenantName,
-  onConfirm,
-  isLoading,
-}: DeleteTenantDialogProps) {
-  const { t } = useI18n();
+  const handleSubmit = async (data: Record<string, any>) => {
+    setForm({
+      name: data.name,
+      description: data.description || "",
+      isActive: data.isActive,
+    });
+    onSubmit();
+  };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-sm">
-        <DialogHeader>
-          <DialogTitle>{t("tenant.deleteTenant")}</DialogTitle>
-          <DialogDescription>
-            {t("tenant.deleteConfirm")} &quot;{tenantName}&quot;? {t("tenant.deleteWarning")}
-          </DialogDescription>
-        </DialogHeader>
-        <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
-            {t("tenant.cancel")}
-          </Button>
-          <Button variant="destructive" onClick={onConfirm} disabled={isLoading}>
-            {isLoading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                {t("tenant.deleting")}
-              </>
-            ) : (
-              t("tenant.delete")
-            )}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+    <GenericModal
+      open={open}
+      onOpenChange={onOpenChange}
+      title={title}
+      description={description}
+      size="md"
+      formKey={`edit-tenant-form-${tenantName}`}
+    >
+      <GenericForm
+        key={`edit-tenant-${open}`}
+        fields={fields}
+        initialValues={form}
+        onSubmit={handleSubmit}
+        onCancel={() => onOpenChange(false)}
+      />
+    </GenericModal>
   );
 }

@@ -122,16 +122,17 @@ export function TenantsView() {
           .then((res) => res.items),
   });
 
-  // Fetch available editions
-  const { data: editionsData } = useQuery({
-    queryKey: ["editions", "available"],
-    queryFn: () => systemContainer.tenantRepository.getAvailableEditions(),
-  });
-
-  const availableEditions = useMemo(
-    () => editionsData?.items ?? [],
-    [editionsData]
-  );
+  // ── Handlers ──
+  const handleSearchEditions = useCallback(async (query: string) => {
+    try {
+      // Fetch specifically page 1, size 10, with the search query
+      const res = await systemContainer.tenantRepository.getAvailableEditions(1, 10, query);
+      return res.items.map((ed) => ({ value: ed.id, label: ed.name }));
+    } catch (err) {
+      appLogger.error("Failed to search editions:", err);
+      return [];
+    }
+  }, []);
 
   const tree = useMemo(() => treeData ?? [], [treeData]);
 
@@ -156,6 +157,8 @@ export function TenantsView() {
   );
 
   const handleCreateSubmit = useCallback(async () => {
+    // The GenericForm passes data to onSubmit, but we also save it to createForm state
+    // inside the Dialog component. So we just use createForm here.
     if (!createForm.name || !createForm.code) return;
     setIsCreating(true);
     try {
@@ -204,6 +207,7 @@ export function TenantsView() {
   }, []);
 
   const handleEditSubmit = useCallback(async () => {
+    // Same as create, the Dialog component updates editForm before calling this
     if (!editingNode || !editForm.name) return;
     setIsSaving(true);
     try {
@@ -339,7 +343,7 @@ export function TenantsView() {
         setForm={setCreateForm}
         onSubmit={handleCreateSubmit}
         isLoading={isCreating}
-        availableEditions={availableEditions}
+        onSearchEditions={handleSearchEditions}
       />
 
       {/* Edit Dialog */}
