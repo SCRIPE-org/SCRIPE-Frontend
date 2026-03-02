@@ -77,6 +77,8 @@ export const docZh: PartialDocTranslations = {
             commercialIntegration: "集成与 API",
             commercialPricing: "定价与授权",
             commercialSupport: "支持与资源",
+            commercialModules: "模块",
+            commercialEntitlements: "权益",
       },
 
       // 🚀 GET STARTED

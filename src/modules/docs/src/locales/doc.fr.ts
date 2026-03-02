@@ -78,6 +78,8 @@ export const docFr: PartialDocTranslations = {
             commercialIntegration: "Intégration & APIs",
             commercialPricing: "Prix & Licences",
             commercialSupport: "Support & Ressources",
+            commercialModules: "Modules",
+            commercialEntitlements: "Droits",
       },
 
       // 🚀 GET STARTED

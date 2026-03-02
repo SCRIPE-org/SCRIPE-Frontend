@@ -61,7 +61,7 @@ export const docRu: PartialDocTranslations = {
             tutorials: "Руководства",
             architecture: "Архитектура",
             modules: "Модули",
-  entitlements: "Права доступа",
+            entitlements: "Права доступа",
             features: "Возможности",
             frontend: "Frontend-модули",
             security: "Безопасность",
@@ -77,6 +77,8 @@ export const docRu: PartialDocTranslations = {
             commercialIntegration: "Интеграция и API",
             commercialPricing: "Цены и лицензирование",
             commercialSupport: "Поддержка и ресурсы",
+            commercialModules: "Модули",
+            commercialEntitlements: "Права доступа",
       },
 
       // 🚀 GET STARTED

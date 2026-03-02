@@ -78,6 +78,8 @@ export const docEs: PartialDocTranslations = {
             commercialIntegration: "Integración y APIs",
             commercialPricing: "Precios y Licencias",
             commercialSupport: "Soporte y Recursos",
+            commercialModules: "Módulos",
+            commercialEntitlements: "Derechos",
       },
 
       // 🚀 GET STARTED

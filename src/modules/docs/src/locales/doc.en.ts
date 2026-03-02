@@ -76,6 +76,8 @@ export const docEn = {
     commercialIntegration: "Integration & APIs",
     commercialPricing: "Pricing & Licensing",
     commercialSupport: "Support & Resources",
+    commercialModules: "Modules",
+    commercialEntitlements: "Entitlements",
   },
 
 

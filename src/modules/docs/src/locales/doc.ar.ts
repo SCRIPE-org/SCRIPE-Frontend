@@ -78,6 +78,8 @@ export const docAr: PartialDocTranslations = {
             commercialIntegration: "التكامل وواجهات API",
             commercialPricing: "التسعير والترخيص",
             commercialSupport: "الدعم والموارد",
+            commercialModules: "الوحدات",
+            commercialEntitlements: "الصلاحيات",
       },
 
       // 🚀 GET STARTED

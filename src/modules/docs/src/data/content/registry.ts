@@ -152,3 +152,9 @@ import "./commercial/getting-started-guide";
 import "./commercial/faq";
 import "./commercial/roadmap";
 
+// Modules (Commercial Entitlements)
+import "./commercial/entitlements-overview";
+import "./commercial/entitlements-editions";
+import "./commercial/entitlements-subscriptions";
+import "./commercial/entitlements-features";
+import "./commercial/entitlements-overrides";
