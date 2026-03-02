@@ -246,6 +246,19 @@ const icons: Record<string, React.ReactNode> = {
       <line x1="12" x2="20" y1="19" y2="19" />
     </svg>
   ),
+  package: (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="m7.5 4.27 9 5.15" />
+      <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" />
+      <path d="m3.3 7 8.7 5 8.7-5" />
+      <path d="M12 22V12" />
+    </svg>
+  ),
+  key: (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="m21 2-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0 3 3L22 7l-3-3m-3.5 3.5L19 4" />
+    </svg>
+  ),
 };
 
 const ChevronRight = () => (
@@ -262,6 +275,20 @@ const ChevronRight = () => (
     <path d="m9 18 6-6-6-6" />
   </svg>
 );
+
+// ─── Helper: count total visible leaf items (recursive) ──────
+function countLeafItems(items: DocNavItem[]): number {
+  let count = 0;
+  for (const item of items) {
+    if (item.children && item.children.length > 0) {
+      count += 1; // sub-group header itself
+      count += item.children.length;
+    } else {
+      count += 1;
+    }
+  }
+  return count;
+}
 
 interface DocsSidebarProps {
   categories: DocCategory[];
@@ -281,7 +308,22 @@ export function DocsSidebar({ categories, activeSlug }: DocsSidebarProps) {
     return initial;
   });
 
-  // Auto-expand the category containing the active slug on navigation
+  // Track which sub-groups are expanded
+  const [subExpanded, setSubExpanded] = useState<Record<string, boolean>>(() => {
+    const initial: Record<string, boolean> = {};
+    for (const cat of categories) {
+      for (const item of cat.items) {
+        if (item.children) {
+          const childSlugs = item.children.map((c) => c.slug).filter(Boolean);
+          const hasActive = childSlugs.includes(activeSlug);
+          initial[item.id] = hasActive;
+        }
+      }
+    }
+    return initial;
+  });
+
+  // Auto-expand the category and sub-group containing the active slug
   useEffect(() => {
     setExpanded((prev) => {
       const next = { ...prev };
@@ -292,13 +334,71 @@ export function DocsSidebar({ categories, activeSlug }: DocsSidebarProps) {
       }
       return next;
     });
+    setSubExpanded((prev) => {
+      const next = { ...prev };
+      for (const cat of categories) {
+        for (const item of cat.items) {
+          if (item.children) {
+            const childSlugs = item.children.map((c) => c.slug).filter(Boolean);
+            if (childSlugs.includes(activeSlug)) {
+              next[item.id] = true;
+            }
+          }
+        }
+      }
+      return next;
+    });
   }, [activeSlug, categories]);
 
   const toggleCategory = useCallback((catId: string) => {
     setExpanded((prev) => ({ ...prev, [catId]: !prev[catId] }));
   }, []);
 
+  const toggleSubGroup = useCallback((subId: string) => {
+    setSubExpanded((prev) => ({ ...prev, [subId]: !prev[subId] }));
+  }, []);
+
   const renderItem = (item: DocNavItem) => {
+    // ─── Sub-group with children ─────────────────────────────
+    if (item.children && item.children.length > 0) {
+      const isSubOpen = subExpanded[item.id] ?? false;
+      return (
+        <div key={item.id} className="docs-sidebar-subgroup">
+          <button
+            className="docs-sidebar-subgroup-btn"
+            onClick={() => toggleSubGroup(item.id)}
+            data-expanded={isSubOpen}
+          >
+            {item.icon ? icons[item.icon] || null : null}
+            <span style={{ flex: 1 }}>{t(item.titleKey)}</span>
+            <ChevronRight />
+          </button>
+          <div
+            className="docs-sidebar-subgroup-items"
+            style={{
+              maxHeight: isSubOpen ? `${item.children.length * 36}px` : "0px",
+            }}
+          >
+            {item.children.map((child) => {
+              if (!child.slug) return null;
+              const isActive = child.slug === activeSlug;
+              return (
+                <Link
+                  key={child.id}
+                  href={`/docs/${child.slug}`}
+                  className="docs-sidebar-item docs-sidebar-item--nested"
+                  data-active={isActive}
+                >
+                  {t(child.titleKey)}
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      );
+    }
+
+    // ─── Regular leaf item ────────────────────────────────────
     if (!item.slug) return null;
     const isActive = item.slug === activeSlug;
 
@@ -316,28 +416,31 @@ export function DocsSidebar({ categories, activeSlug }: DocsSidebarProps) {
 
   return (
     <aside className="docs-sidebar">
-      {categories.map((cat) => (
-        <div key={cat.id} className="docs-sidebar-category">
-          <button
-            className="docs-sidebar-category-btn"
-            onClick={() => toggleCategory(cat.id)}
-            data-expanded={expanded[cat.id]}
-          >
-            {icons[cat.icon] || null}
-            <span style={{ flex: 1 }}>{t(cat.titleKey)}</span>
-            <ChevronRight />
-          </button>
+      {categories.map((cat) => {
+        const totalItems = countLeafItems(cat.items);
+        return (
+          <div key={cat.id} className="docs-sidebar-category">
+            <button
+              className="docs-sidebar-category-btn"
+              onClick={() => toggleCategory(cat.id)}
+              data-expanded={expanded[cat.id]}
+            >
+              {icons[cat.icon] || null}
+              <span style={{ flex: 1 }}>{t(cat.titleKey)}</span>
+              <ChevronRight />
+            </button>
 
-          <div
-            className="docs-sidebar-items"
-            style={{
-              maxHeight: expanded[cat.id] ? `${cat.items.length * 36}px` : "0px",
-            }}
-          >
-            {cat.items.map(renderItem)}
+            <div
+              className="docs-sidebar-items"
+              style={{
+                maxHeight: expanded[cat.id] ? `${totalItems * 36 + 100}px` : "0px",
+              }}
+            >
+              {cat.items.map(renderItem)}
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </aside>
   );
 }

@@ -21,6 +21,7 @@ const sections: DocSection[] = [
                   ["commercial.moduleCatalog.tblCoreR4C1", "commercial.moduleCatalog.tblCoreR4C2", "commercial.moduleCatalog.tblCoreR4C3"],
                   ["commercial.moduleCatalog.tblCoreR5C1", "commercial.moduleCatalog.tblCoreR5C2", "commercial.moduleCatalog.tblCoreR5C3"],
                   ["commercial.moduleCatalog.tblCoreR6C1", "commercial.moduleCatalog.tblCoreR6C2", "commercial.moduleCatalog.tblCoreR6C3"],
+                  ["commercial.moduleCatalog.tblCoreR7C1", "commercial.moduleCatalog.tblCoreR7C2", "commercial.moduleCatalog.tblCoreR7C3"],
             ],
       },
 

@@ -594,6 +594,16 @@ export const docCommDe: Record<string, any> = {
                   tblPriceR5C1: "Sicherheits-Audit",
                   tblPriceR5C2: "Festpreis",
                   tblPriceR5C3: "Jährlich oder einmalig",
+                  entitlementsTitle: "Berechtigungen & Planverwaltung",
+                  entitlementsIntro: "Verwandeln Sie Ihre Plattform mit dem integrierten Berechtigungsmodul von NEXORA in ein echtes SaaS-Kraftpaket. Definieren Sie Editionen (Pläne), verwalten Sie Abonnement-Lebenszyklen und passen Sie den Funktionszugriff pro Mandant an — alles automatisch auf der CQRS-Pipeline-Ebene durchgesetzt.",
+                  entReseller: "Eingrenzung von Reseller-Editionen",
+                  entResellerDesc: "Reseller-Mandanten können eigene Retail-Editionen für ihre Unter-Mandanten erstellen, was ein White-Label-Planmanagement mit vollständiger Isolation von anderen Resellern ermöglicht.",
+                  entVersioning: "Versionierte Editions-Rollouts",
+                  entVersioningDesc: "Erstellen Sie Editionsversionen mit Funktions-Snapshots und stellen Sie Änderungen über sofortige, Canary- oder geplante Rollout-Strategien bereit — ohne bestehende abonnierte Mandanten zu stören.",
+                  entOverrides: "Granulare mandantenspezifische Überschreibungen",
+                  entOverridesDesc: "Passen Sie Funktionswerte für einzelne Mandanten unabhängig von ihrem abonnierten Plan an. Perfekt für maßgeschneiderte Enterprise-Deals, Werbeangebote und Beta-Tests.",
+                  entQuota: "Automatische Kontingentdurchsetzung",
+                  entQuotaDesc: "Numerische Funktionen mit QuotaCounter-Entitäten werden automatisch über die FeatureCheckBehavior-Pipeline durchgesetzt. Keine manuellen Prüfungen erforderlich — Befehle werden abgelehnt, wenn Kontingente überschritten sind.",
             },
 
             // ─── Faq ────────────────────────────────
@@ -787,6 +797,17 @@ export const docCommDe: Record<string, any> = {
 
             // ─── Licensing Model ────────────────────────────────
             licensingModel: {
+                  entitlementsTitle: "Berechtigungsgesteuerte Plan-Differenzierung",
+                  entitlementsIntro: "NEXORAs integriertes Berechtigungsmodul steuert die eigentliche Plan-Differenzierung hinter jeder Lizenzstufe. Editionen definieren, welche Funktionen jeder Plan enthält, Abonnements verknüpfen Mandanten mit Plänen und Überschreibungen ermöglichen maßgeschneiderte Deals — alles automatisch auf API-Ebene durchgesetzt.",
+                  entEditions: "Editionsbasierte Funktionsbündelung",
+                  entEditionsDesc: "Definieren Sie benannte Pläne (Basic, Pro, Enterprise), die boolesche, numerische und String-Funktionswerte bündeln. Die abonnierte Edition jedes Mandanten bestimmt automatisch seinen Funktionszugriff.",
+                  entSubscriptions: "Vollständiger Abonnement-Lebenszyklus",
+                  entSubscriptionsDesc: "Weisen Sie Mandantenabonnements zu, stufen Sie sie hoch oder herunter, sperren und verlängern Sie sie mit vollständiger Audit-Verfolgung. Unterstützt Testversionen, Add-ons und automatisches Ablaufverhalten.",
+                  entOverrides: "Mandantenspezifische Überschreibungen",
+                  entOverridesDesc: "Passen Sie Funktionswerte für einzelne Mandanten unabhängig von ihrem Plan an. Perfekt für Enterprise-Deals, Werbeaktionen oder Beta-Tests — mit vollständigen Audit-Trails.",
+                  entVersioning: "Versions- & Rollout-Kontrolle",
+                  entVersioningDesc: "Erstellen Sie Editionsversionen mit Funktions-Snapshots und stellen Sie sie über sofortige, Canary- oder geplante Rollout-Strategien bereit, ohne bestehende Mandanten zu stören.",
+                  entitlementsTip: "Das Berechtigungsmodul integriert sich direkt in die MediatR-Pipeline — Befehle, die IRequireFeature implementieren, werden automatisch durch die aufgelösten Funktionswerte des Mandanten überwacht. Keine benutzerdefinierte Middleware erforderlich.",
                   comparisonTitle: "Vergleich der Lizenzstufen",
                   description: "Transparente, vorhersehbare und skalierbare Lizenzstrukturen, entwickelt für technische Gründer und massive Unternehmenseinheiten gleichermaßen.",
                   intro: "Im Gegensatz zu SaaS-Modellen, die Ihr Wachstum mit nutzungsabhängigen Rechnungen (per-seat) bestrafen, bietet NEXORA absolute finanzielle Vorhersehbarkeit. Sie erwerben dauerhafte Rechte am architektonischen Kern-IP, sodass Sie unendlich aufbauen und skalieren können.",
@@ -1007,6 +1028,9 @@ export const docCommDe: Record<string, any> = {
 
             // ─── Module Catalog ────────────────────────────────
             moduleCatalog: {
+                  tblCoreR7C1: "Berechtigungen",
+                  tblCoreR7C2: "Editionsbasiertes Feature-Gating & Planverwaltung",
+                  tblCoreR7C3: "Funktionen, Editionen, Abonnements, Überschreibungen, Kontingentdurchsetzung, versionierte Rollouts, Reseller-Eingrenzung",
                   businessContent: "NEXORA ist keine leere Hülle; es ist vom ersten Tag an ein funktionierendes Enterprise-Ökosystem. Nutzen Sie unsere bestehenden Geschäftsmodule – wie Benutzerverwaltung, Audit-Logging und Benachrichtigungen – als sofortige Startpunkte oder klonen Sie diese, um proprietäre Funktionen schnell aufzubauen.",
                   businessTitle: "Beschleunigte Geschäftslogik",
                   commTitle: "Kommunikation & Webhooks",
@@ -1085,6 +1109,8 @@ export const docCommDe: Record<string, any> = {
 
             // ─── Multi Tenancy ────────────────────────────────
             multiTenancy: {
+                  settEntitlements: "Editionsbasierte Planverwaltung",
+                  settEntitlementsDesc: "Weisen Sie Mandanten über das Berechtigungsmodul Editionen (Plänen) zu, mit mandantenspezifischen Funktions-Überschreibungen, Abonnement-Lebenszyklusverwaltung und automatischer Kontingentdurchsetzung.",
                   architectureContent: "Wir haben den riskanten 'Shared-Database, Soft-Delete'-Ansatz aufgegeben. NEXORA implementiert strikte, auf Diskriminatoren basierende Mandantenfähigkeit auf Zeilenebene, die durch die Global Query Filters von Entity Framework physisch erzwungen wird. Entwickler können buchstäblich nicht die Daten eines anderen Mandanten abfragen, was die verheerendste Klasse von SaaS-Schwachstellen eliminiert.",
                   architectureTitle: "Mathematisch nachweisbare Isolierung",
                   description: "Mandantenfähigkeit (Multi-Tenancy) auf militärischem Niveau mit strikter Isolierung auf Zeilenebene, unendlicher hierarchischer Vererbung und massiven Konfigurationsüberschreibungen pro Mandant.",
@@ -1185,6 +1211,18 @@ export const docCommDe: Record<string, any> = {
 
             // ─── Rest Api Overview ────────────────────────────────
             restApiOverview: {
+                  tblCtrlR14C1: "EditionsController",
+                  tblCtrlR14C2: "11",
+                  tblCtrlR14C3: "Edition CRUD, Funktionen, Versionierung, Rollout",
+                  tblCtrlR15C1: "FeaturesController",
+                  tblCtrlR15C2: "5",
+                  tblCtrlR15C3: "Feature CRUD, Wertetypen, Systemfunktionen",
+                  tblCtrlR16C1: "SubscriptionsController",
+                  tblCtrlR16C2: "12",
+                  tblCtrlR16C3: "Zuweisen, Hochstufen, Herabstufen, Lebenszyklus, Auswirkungsanalyse",
+                  tblCtrlR17C1: "TenantFeaturesController",
+                  tblCtrlR17C2: "4",
+                  tblCtrlR17C3: "Mandantenspezifische Überschreibungen, aufgelöste Funktionen",
                   authContent: "Jeder einzelne Controller ist standardmäßig gesperrt. NEXORA verwendet eine robuste JWT-Token-Validierung, die präzise, granulare Berechtigungen und validierte Mandanten-Claims (Tenant Claims) erfordert, bevor ein einziges Byte JSON zurückgegeben wird.",
                   authTitle: "Strikte kryptographische Autorisierung",
                   controllersTitle: "Strikte Controller-Topographie",

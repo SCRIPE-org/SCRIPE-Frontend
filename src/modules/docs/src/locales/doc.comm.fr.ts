@@ -594,6 +594,16 @@ export const docCommFr: Record<string, any> = {
                   tblPriceR5C1: "Audit de sécurité",
                   tblPriceR5C2: "Prix fixe",
                   tblPriceR5C3: "Annuel ou ponctuel",
+                  entitlementsTitle: "Droits et Gestion des Plans",
+                  entitlementsIntro: "Transformez votre plateforme en un véritable moteur SaaS avec le module de Droits intégré de NEXORA. Définissez des éditions (plans), gérez les cycles de vie des abonnements et personnalisez l'accès aux fonctionnalités par locataire — le tout appliqué automatiquement au niveau du pipeline CQRS.",
+                  entReseller: "Portée des Éditions Revendeur",
+                  entResellerDesc: "Les locataires revendeurs peuvent créer leurs propres éditions de détail pour leurs sous-locataires, permettant une gestion des plans en marque blanche avec une isolation complète des autres revendeurs.",
+                  entVersioning: "Déploiements d'Éditions Versionnées",
+                  entVersioningDesc: "Créez des versions d'édition avec des instantanés de fonctionnalités et déployez les changements via des stratégies de déploiement immédiat, canary ou planifié — sans perturber les locataires abonnés existants.",
+                  entOverrides: "Surcharges Granulaires par Locataire",
+                  entOverridesDesc: "Personnalisez les valeurs des fonctionnalités pour des locataires individuels, indépendamment de leur plan souscrit. Parfait pour les accords d'entreprise sur mesure, les offres promotionnelles et les tests bêta.",
+                  entQuota: "Application Automatique des Quotas",
+                  entQuotaDesc: "Les fonctionnalités numériques avec des entités QuotaCounter sont automatiquement appliquées via le pipeline FeatureCheckBehavior. Aucune vérification manuelle n'est nécessaire — les commandes sont rejetées lorsque les quotas sont dépassés.",
             },
 
             // ─── Faq ────────────────────────────────
@@ -787,6 +797,17 @@ export const docCommFr: Record<string, any> = {
 
             // ─── Licensing Model ────────────────────────────────
             licensingModel: {
+                  entitlementsTitle: "Différenciation des Plans Propulsée par les Droits",
+                  entitlementsIntro: "Le module de Droits intégré de NEXORA gère la véritable différenciation des plans derrière chaque niveau de licence. Les éditions définissent les fonctionnalités incluses dans chaque plan, les abonnements lient les locataires aux plans, et les surcharges permettent des accords sur mesure — le tout appliqué automatiquement au niveau de l'API.",
+                  entEditions: "Regroupement de Fonctionnalités Basé sur les Éditions",
+                  entEditionsDesc: "Définissez des plans nommés (Basic, Pro, Enterprise) qui regroupent des valeurs de fonctionnalités booléennes, numériques et textuelles. L'édition souscrite par chaque locataire détermine automatiquement son accès aux fonctionnalités.",
+                  entSubscriptions: "Cycle de Vie Complet de l'Abonnement",
+                  entSubscriptionsDesc: "Attribuez, mettez à niveau, rétrogradez, suspendez et renouvelez les abonnements des locataires avec un suivi d'audit complet. Prend en charge les essais, les modules complémentaires et le comportement d'expiration automatique.",
+                  entOverrides: "Surcharges par Locataire",
+                  entOverridesDesc: "Personnalisez les valeurs des fonctionnalités pour des locataires individuels, indépendamment de leur plan. Parfait pour les accords d'entreprise, les promotions ou les tests bêta — avec des pistes d'audit complètes.",
+                  entVersioning: "Contrôle des Versions et Déploiements",
+                  entVersioningDesc: "Créez des versions d'édition avec des instantanés de fonctionnalités et déployez-les via des stratégies de déploiement immédiat, canary ou planifié sans interrompre les locataires existants.",
+                  entitlementsTip: "Le module des Droits s'intègre directement dans le pipeline MediatR — les commandes implémentant IRequireFeature sont automatiquement contrôlées par les valeurs de fonctionnalités résolues du locataire. Aucun middleware personnalisé n'est nécessaire.",
                   comparisonTitle: "Comparaison des Niveaux de Licence",
                   description: "Des structures de licences transparentes, prévisibles et évolutives, conçues aussi bien pour les fondateurs techniques que pour les grandes entités corporatives.",
                   intro: "Contrairement aux modèles SaaS qui pénalisent votre croissance avec une facturation par poste (per-seat), NEXORA offre une prévisibilité fiscale absolue. Vous achetez des droits perpétuels sur la propriété intellectuelle de l'architecture de base, vous permettant de construire et d'évoluer à l'infini.",
@@ -1007,6 +1028,9 @@ export const docCommFr: Record<string, any> = {
 
             // ─── Module Catalog ────────────────────────────────
             moduleCatalog: {
+                  tblCoreR7C1: "Droits",
+                  tblCoreR7C2: "Contrôle d'accès aux fonctionnalités basé sur les éditions et gestion des plans",
+                  tblCoreR7C3: "Fonctionnalités, éditions, abonnements, surcharges, application des quotas, déploiements versionnés, portée revendeur",
                   businessContent: "NEXORA n'est pas une coquille vide ; c'est un écosystème d'entreprise fonctionnel dès le premier jour. Utilisez nos modules métier existants — tels que la gestion des utilisateurs, les journaux d'audit et les notifications — comme points de départ immédiats, ou clonez-les pour construire rapidement des fonctionnalités propriétaires.",
                   businessTitle: "Logique Métier Accélérée",
                   commTitle: "Communication & Webhooks",
@@ -1085,6 +1109,8 @@ export const docCommFr: Record<string, any> = {
 
             // ─── Multi Tenancy ────────────────────────────────
             multiTenancy: {
+                  settEntitlements: "Gestion des Plans Basée sur les Éditions",
+                  settEntitlementsDesc: "Attribuez des locataires à des éditions (plans) via le module des Droits, avec des surcharges de fonctionnalités par locataire, une gestion du cycle de vie des abonnements et une application automatique des quotas.",
                   architectureContent: "Nous avons abandonné l'approche risquée 'base de données partagée, soft-delete'. NEXORA implémente une multi-location (multi-tenancy) stricte basée sur un discriminateur au niveau des lignes, imposée physiquement par les filtres de requêtes globaux d'Entity Framework. Les développeurs ne peuvent littéralement pas interroger les données d'un autre locataire, éliminant ainsi la classe la plus dévastatrice de vulnérabilités SaaS.",
                   architectureTitle: "Isolation Mathématiquement Prouvable",
                   description: "Architecture multi-tenant d'entreprise de niveau militaire offrant une isolation stricte des lignes, un héritage hiérarchique infini et des surcharges de configuration massives par locataire.",
@@ -1185,6 +1211,18 @@ export const docCommFr: Record<string, any> = {
 
             // ─── Rest Api Overview ────────────────────────────────
             restApiOverview: {
+                  tblCtrlR14C1: "EditionsController",
+                  tblCtrlR14C2: "11",
+                  tblCtrlR14C3: "CRUD des éditions, fonctionnalités, versionnage, déploiement",
+                  tblCtrlR15C1: "FeaturesController",
+                  tblCtrlR15C2: "5",
+                  tblCtrlR15C3: "CRUD des fonctionnalités, types de valeurs, fonctionnalités système",
+                  tblCtrlR16C1: "SubscriptionsController",
+                  tblCtrlR16C2: "12",
+                  tblCtrlR16C3: "Attribuer, mettre à niveau, rétrograder, cycle de vie, analyse d'impact",
+                  tblCtrlR17C1: "TenantFeaturesController",
+                  tblCtrlR17C2: "4",
+                  tblCtrlR17C3: "Surcharges par locataire, fonctionnalités résolues",
                   authContent: "Absolument chaque contrôleur est verrouillé par défaut. NEXORA utilise une validation robuste des jetons JWT, exigeant des autorisations précises et granulaires ainsi que des revendications (claims) de locataire validées avant qu'un seul octet de JSON ne soit retourné.",
                   authTitle: "Autorisation Cryptographique Stricte",
                   controllersTitle: "Topologie Stricte des Contrôleurs",

@@ -90,6 +90,20 @@ const sections: DocSection[] = [
             ],
       },
 
+      // ─── Entitlements & Plan Management ────────────────────────
+      { type: "heading", level: 2, titleKey: "commercial.enterpriseAddons.entitlementsTitle", id: "entitlements" },
+      { type: "paragraph", contentKey: "commercial.enterpriseAddons.entitlementsIntro" },
+      {
+            type: "feature-grid",
+            columns: 2,
+            items: [
+                  { icon: "layers", titleKey: "commercial.enterpriseAddons.entReseller", descriptionKey: "commercial.enterpriseAddons.entResellerDesc" },
+                  { icon: "git-branch", titleKey: "commercial.enterpriseAddons.entVersioning", descriptionKey: "commercial.enterpriseAddons.entVersioningDesc" },
+                  { icon: "sliders", titleKey: "commercial.enterpriseAddons.entOverrides", descriptionKey: "commercial.enterpriseAddons.entOverridesDesc" },
+                  { icon: "bar-chart", titleKey: "commercial.enterpriseAddons.entQuota", descriptionKey: "commercial.enterpriseAddons.entQuotaDesc" },
+            ],
+      },
+
       { type: "info", variant: "tip", contentKey: "commercial.enterpriseAddons.contactNote" },
 ];
 

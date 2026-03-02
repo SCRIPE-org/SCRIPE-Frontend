@@ -42,6 +42,13 @@ import "./features/file-upload";
 import "./features/download-export";
 import "./features/message-templates";
 
+// Modules (Entitlements)
+import "./modules/entitlements-overview";
+import "./modules/editions";
+import "./modules/subscriptions";
+import "./modules/features";
+import "./modules/overrides";
+
 // Security
 import "./security/overview";
 import "./security/authentication-deep";

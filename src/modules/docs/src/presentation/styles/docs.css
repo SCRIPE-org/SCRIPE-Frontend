@@ -249,6 +249,67 @@
   font-weight: 500;
 }
 
+/* ─── Sidebar Sub-Groups (nested categories) ─────────────────────────── */
+.docs-sidebar-subgroup {
+  margin-bottom: 0.125rem;
+}
+
+.docs-sidebar-subgroup-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.375rem 1rem 0.375rem 2rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: hsl(var(--muted-foreground));
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  transition: color 0.15s;
+  text-align: start;
+  letter-spacing: 0.01em;
+}
+
+[dir="rtl"] .docs-sidebar-subgroup-btn {
+  padding: 0.375rem 2rem 0.375rem 1rem;
+}
+
+.docs-sidebar-subgroup-btn:hover {
+  color: hsl(var(--primary));
+}
+
+.docs-sidebar-subgroup-btn svg {
+  flex-shrink: 0;
+  transition: transform 0.2s;
+}
+
+.docs-sidebar-subgroup-btn svg:last-child {
+  margin-inline-start: auto;
+}
+
+.docs-sidebar-subgroup-btn[data-expanded="true"] svg:last-child {
+  transform: rotate(90deg);
+}
+
+[dir="rtl"] .docs-sidebar-subgroup-btn[data-expanded="true"] svg:last-child {
+  transform: rotate(-90deg);
+}
+
+.docs-sidebar-subgroup-items {
+  overflow: hidden;
+  transition: max-height 0.25s ease-in-out;
+}
+
+.docs-sidebar-item--nested {
+  padding-inline-start: 3.25rem;
+}
+
+[dir="rtl"] .docs-sidebar-item--nested {
+  padding-inline-start: 1rem;
+  padding-inline-end: 3.25rem;
+}
+
 /* ─── Content Area ────────────────────────────────────────────────────── */
 .docs-content-wrapper {
   flex: 1;

@@ -152,6 +152,32 @@ export const navigationData: DocCategoryData[] = [
     ],
   },
 
+  // ─── Modules (Business Modules) ──────────────────────────────
+  {
+    id: "modules",
+    titleKey: "nav.modules",
+    icon: "package",
+    order: 9,
+    items: [
+      {
+        id: "mod-entitlements",
+        titleKey: "nav.entitlements",
+        icon: "key",
+        order: 1,
+        children: [
+          { id: "mod-ent-overview", titleKey: "modules.entitlementsOverview.title", slug: "modules/entitlements-overview", order: 1 },
+          { id: "mod-ent-editions", titleKey: "modules.editions.title", slug: "modules/editions", order: 2 },
+          { id: "mod-ent-subscriptions", titleKey: "modules.subscriptions.title", slug: "modules/subscriptions", order: 3 },
+          { id: "mod-ent-features", titleKey: "modules.features.title", slug: "modules/features", order: 4 },
+          { id: "mod-ent-overrides", titleKey: "modules.overrides.title", slug: "modules/overrides", order: 5 },
+        ],
+      },
+      // Future modules:
+      // { id: "mod-inventory", titleKey: "nav.inventory", order: 2, children: [...] },
+      // { id: "mod-crm", titleKey: "nav.crm", order: 3, children: [...] },
+    ],
+  },
+
   // ═══════════════════════════════════════════════════════════
   //  COMMERCIAL DOCUMENTATION
   // ═══════════════════════════════════════════════════════════
@@ -285,6 +311,31 @@ export const navigationData: DocCategoryData[] = [
       { id: "comm-sup-start", titleKey: "commercial.gettingStartedGuide.title", slug: "commercial/getting-started-guide", order: 2 },
       { id: "comm-sup-faq", titleKey: "commercial.faq.title", slug: "commercial/faq", order: 3 },
       { id: "comm-sup-roadmap", titleKey: "commercial.roadmap.title", slug: "commercial/roadmap", order: 4 },
+    ],
+  },
+
+  // ─── Modules (Commercial) ──────────────────────────────────
+  {
+    id: "commercial-modules",
+    titleKey: "nav.commercialModules",
+    icon: "package",
+    order: 19,
+    items: [
+      {
+        id: "comm-mod-entitlements",
+        titleKey: "nav.commercialEntitlements",
+        icon: "key",
+        order: 1,
+        children: [
+          { id: "comm-mod-ent-overview", titleKey: "commercial.entOverview.title", slug: "commercial/entitlements-overview", order: 1 },
+          { id: "comm-mod-ent-editions", titleKey: "commercial.entEditions.title", slug: "commercial/entitlements-editions", order: 2 },
+          { id: "comm-mod-ent-subscriptions", titleKey: "commercial.entSubscriptions.title", slug: "commercial/entitlements-subscriptions", order: 3 },
+          { id: "comm-mod-ent-features", titleKey: "commercial.entFeatures.title", slug: "commercial/entitlements-features", order: 4 },
+          { id: "comm-mod-ent-overrides", titleKey: "commercial.entOverrides.title", slug: "commercial/entitlements-overrides", order: 5 },
+        ],
+      },
+      // Future commercial modules:
+      // { id: "comm-mod-inventory", titleKey: "nav.commercialInventory", order: 2, children: [...] },
     ],
   },
 ];

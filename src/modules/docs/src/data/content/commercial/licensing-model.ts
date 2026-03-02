@@ -95,6 +95,21 @@ const sections: DocSection[] = [
             ],
       },
 
+      // ─── Entitlements-Powered Plan Differentiation ──────────────
+      { type: "heading", level: 2, titleKey: "commercial.licensingModel.entitlementsTitle", id: "entitlements-integration" },
+      { type: "paragraph", contentKey: "commercial.licensingModel.entitlementsIntro" },
+      {
+            type: "feature-grid",
+            columns: 2,
+            items: [
+                  { icon: "layers", titleKey: "commercial.licensingModel.entEditions", descriptionKey: "commercial.licensingModel.entEditionsDesc" },
+                  { icon: "refresh-cw", titleKey: "commercial.licensingModel.entSubscriptions", descriptionKey: "commercial.licensingModel.entSubscriptionsDesc" },
+                  { icon: "sliders", titleKey: "commercial.licensingModel.entOverrides", descriptionKey: "commercial.licensingModel.entOverridesDesc" },
+                  { icon: "git-branch", titleKey: "commercial.licensingModel.entVersioning", descriptionKey: "commercial.licensingModel.entVersioningDesc" },
+            ],
+      },
+      { type: "info", variant: "tip", contentKey: "commercial.licensingModel.entitlementsTip" },
+
       { type: "info", variant: "tip", contentKey: "commercial.licensingModel.trialTip" },
 ];
 

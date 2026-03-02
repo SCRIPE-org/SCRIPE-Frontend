@@ -503,6 +503,16 @@ export const docCommZh: Record<string, any> = {
 
             // ─── Enterprise Addons ────────────────────────────────
             enterpriseAddons: {
+                  entitlementsTitle: "权益与计划管理",
+                  entitlementsIntro: "利用 NEXORA 内置的权益模块，将您的平台转化为真正的 SaaS 强力引擎。定义版本（计划）、管理订阅生命周期，并自定义每个租户的功能访问权限 —— 所有这些都在 CQRS 管道级别自动强制执行。",
+                  entReseller: "经销商版本隔离",
+                  entResellerDesc: "经销商租户可以为其子租户创建自己的零售版本，从而实现白标 (white-label) 计划管理，并与其他经销商完全隔离。",
+                  entVersioning: "版本化的发布控制",
+                  entVersioningDesc: "创建带有功能快照的发布版本，并通过立即、灰度 (canary) 或计划发布策略部署更改 —— 而不会中断现有已订阅租户的服务。",
+                  entOverrides: "细粒度的租户覆盖",
+                  entOverridesDesc: "无论租户订阅了什么计划，都可以为单个租户自定义功能值。非常适合定制的企业级交易、促销优惠和 Beta 测试。",
+                  entQuota: "自动配额执行",
+                  entQuotaDesc: "带有 QuotaCounter 实体的数字功能将通过 FeatureCheckBehavior 管道自动执行。无需手动检查 —— 当超出配额时，命令将被拒绝。",
                   contactNote: "需要此处未列出的附加组件？我们的企业解决方案团队随时可以快速开发专业集成的原型。",
                   customContent: "有非常具体的监管要求吗？NEXORA 工程团队可以作为您自己团队的延伸，直接在您的租户层级中快速交付量身定制的模块。",
                   customDev: "定制模块工程开发",
@@ -787,6 +797,17 @@ export const docCommZh: Record<string, any> = {
 
             // ─── Licensing Model ────────────────────────────────
             licensingModel: {
+                  entitlementsTitle: "基于权益的计划差异化",
+                  entitlementsIntro: "NEXORA 内置的权益模块为每个许可证层级背后的实际计划差异化提供动力。版本定义了每个计划包含的功能，订阅将租户与计划联系起来，而覆盖则支持自定义交易 —— 所有这些都在 API 级别自动强制执行。",
+                  entEditions: "基于版本的功能捆绑",
+                  entEditionsDesc: "定义命名的计划（基础版、专业版、企业版），用于捆绑布尔、数字和字符串功能值。每个租户订阅的版本将自动决定其功能访问权限。",
+                  entSubscriptions: "完整的订阅生命周期",
+                  entSubscriptionsDesc: "分配、升级、降级、挂起和续订租户订阅，并具有完整的审计跟踪。支持试用、附加组件和自动过期行为。",
+                  entOverrides: "基于租户的覆盖",
+                  entOverridesDesc: "无论租户的计划如何，都可以为单个租户自定义功能值。非常适合企业交易、促销或 Beta 测试 —— 并具有完整的审计跟踪。",
+                  entVersioning: "版本与发布控制",
+                  entVersioningDesc: "创建带有功能快照的发布版本，并通过立即、灰度 (canary) 或计划发布策略进行部署，而不会中断现有租户的服务。",
+                  entitlementsTip: "权益模块直接集成到 MediatR 管道中 —— 实现 IRequireFeature 的命令会自动受到租户已解析功能值的门控保护。无需自定义中间件。",
                   comparisonTitle: "许可证层级对比",
                   description: "为技术创始人以及庞大的企业实体量身设计的透明、可预测和可扩展的许可结构。",
                   intro: "与 SaaS 模型使用按席位 (per-seat) 计费来惩罚您的业务增长不同，NEXORA 提供了绝对的财务可预测性。您购买的是核心架构知识产权的永久权利，使您可以不受限制地构建和扩展。",
@@ -1007,6 +1028,9 @@ export const docCommZh: Record<string, any> = {
 
             // ─── Module Catalog ────────────────────────────────
             moduleCatalog: {
+                  tblCoreR7C1: "权益",
+                  tblCoreR7C2: "基于版本的功能门控与计划管理",
+                  tblCoreR7C3: "功能、版本、订阅、覆盖、配额执行、版本化发布、经销商隔离",
                   businessContent: "NEXORA 不是一个空壳；它从第一天起就是一个运转中的企业生态系统。使用我们现有的业务模块（如用户管理、审计日志和通知）作为直接起点，或者克隆它们以快速构建专有功能。",
                   businessTitle: "加速的业务逻辑",
                   commTitle: "通信与 Webhooks",
@@ -1085,6 +1109,8 @@ export const docCommZh: Record<string, any> = {
 
             // ─── Multi Tenancy ────────────────────────────────
             multiTenancy: {
+                  settEntitlements: "基于版本的计划管理",
+                  settEntitlementsDesc: "通过权益模块将租户分配到版本（计划），支持基于租户的功能覆盖、订阅生命周期管理以及自动配额执行。",
                   architectureContent: "我们摒弃了危险的“共享数据库、软删除”方法。NEXORA 实现了严格的、基于鉴别器 (discriminator) 的行级租户系统，由 Entity Framework 的全局查询过滤器在物理上强制执行。开发人员实际上无法查询另一个租户的数据，从根本上消除了 SaaS 中最具破坏性的一类漏洞。",
                   architectureTitle: "数学上可证明的隔离",
                   description: "军用级的企业多租户系统，具有严格的行级隔离、无限的层级继承以及海量的按租户配置覆盖。",
@@ -1185,6 +1211,18 @@ export const docCommZh: Record<string, any> = {
 
             // ─── Rest Api Overview ────────────────────────────────
             restApiOverview: {
+                  tblCtrlR14C1: "EditionsController",
+                  tblCtrlR14C2: "11",
+                  tblCtrlR14C3: "版本 CRUD、功能、版本控制、发布",
+                  tblCtrlR15C1: "FeaturesController",
+                  tblCtrlR15C2: "5",
+                  tblCtrlR15C3: "功能 CRUD、值类型、系统功能",
+                  tblCtrlR16C1: "SubscriptionsController",
+                  tblCtrlR16C2: "12",
+                  tblCtrlR16C3: "分配、升级、降级、生命周期、影响分析",
+                  tblCtrlR17C1: "TenantFeaturesController",
+                  tblCtrlR17C2: "4",
+                  tblCtrlR17C3: "基于租户的覆盖、已解析功能",
                   authContent: "每一个控制器在默认情况下都是被锁定的。NEXORA 采用强健的 JWT 令牌验证，在返回哪怕一个字节的 JSON 数据之前，都需要精确的细粒度权限和经过验证的租户声明 (claims)。",
                   authTitle: "严格的加密授权",
                   controllersTitle: "严谨的控制器拓扑",

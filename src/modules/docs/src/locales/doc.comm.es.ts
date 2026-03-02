@@ -594,6 +594,16 @@ export const docCommEs: Record<string, any> = {
                   tblPriceR5C1: "Auditoría de seguridad",
                   tblPriceR5C2: "Precio fijo",
                   tblPriceR5C3: "Anual o por única vez",
+                  entitlementsTitle: "Derechos y Gestión de Planes",
+                  entitlementsIntro: "Transforme su plataforma en una verdadera potencia SaaS con el módulo de Derechos integrado de NEXORA. Defina ediciones (planes), gestione los ciclos de vida de las suscripciones y personalice el acceso a las funciones por inquilino, todo aplicado automáticamente a nivel de la pipeline CQRS.",
+                  entReseller: "Alcance de Ediciones para Revendedores",
+                  entResellerDesc: "Los inquilinos revendedores pueden crear sus propias ediciones minoristas para sus inquilinos secundarios, lo que permite la gestión de planes de marca blanca con aislamiento total de otros revendedores.",
+                  entVersioning: "Implementaciones de Ediciones Versionadas",
+                  entVersioningDesc: "Cree versiones de edición con instantáneas de funciones e implemente cambios a través de estrategias de implementación inmediata, canary o programada, sin interrumpir a los inquilinos suscritos existentes.",
+                  entOverrides: "Sobreescrituras Granulares por Inquilino",
+                  entOverridesDesc: "Personalice los valores de las funciones para inquilinos individuales independientemente de su plan suscrito. Perfecto para acuerdos empresariales personalizados, ofertas promocionales y pruebas beta.",
+                  entQuota: "Aplicación Automática de Cuotas",
+                  entQuotaDesc: "Las funciones numéricas con entidades QuotaCounter se aplican automáticamente a través de la pipeline FeatureCheckBehavior. No se necesitan comprobaciones manuales: los comandos se rechazan cuando se exceden las cuotas.",
             },
 
             // ─── Faq ────────────────────────────────
@@ -787,6 +797,17 @@ export const docCommEs: Record<string, any> = {
 
             // ─── Licensing Model ────────────────────────────────
             licensingModel: {
+                  entitlementsTitle: "Diferenciación de Planes Impulsada por Derechos",
+                  entitlementsIntro: "El módulo de Derechos integrado de NEXORA impulsa la diferenciación real de planes detrás de cada nivel de licencia. Las ediciones definen qué funciones incluye cada plan, las suscripciones vinculan a los inquilinos con los planes y las sobreescrituras permiten acuerdos personalizados, todo aplicado automáticamente a nivel de API.",
+                  entEditions: "Agrupación de Funciones Basada en Ediciones",
+                  entEditionsDesc: "Defina planes con nombre (Básico, Pro, Enterprise) que agrupan valores de funciones booleanos, numéricos y de cadena. La edición suscrita de cada inquilino determina automáticamente su acceso a las funciones.",
+                  entSubscriptions: "Ciclo de Vida Completo de la Suscripción",
+                  entSubscriptionsDesc: "Asigne, mejore, baje de plan, suspenda y renueve las suscripciones de los inquilinos con un seguimiento de auditoría completo. Admite pruebas, complementos y comportamiento de expiración automático.",
+                  entOverrides: "Sobreescrituras por Inquilino",
+                  entOverridesDesc: "Personalice los valores de las funciones para inquilinos individuales independientemente de su plan. Perfecto para acuerdos empresariales, promociones o pruebas beta, con registros de auditoría completos.",
+                  entVersioning: "Control de Versiones e Implementación",
+                  entVersioningDesc: "Cree versiones de edición con instantáneas de funciones e impleméntelas mediante estrategias de implementación inmediata, canary o programada sin interrumpir a los inquilinos existentes.",
+                  entitlementsTip: "El módulo de Derechos se integra directamente en la pipeline de MediatR: los comandos que implementan IRequireFeature son controlados automáticamente por los valores de las funciones resueltas del inquilino. No se necesita middleware personalizado.",
                   comparisonTitle: "Comparación de Niveles de Licencia",
                   description: "Estructuras de licencias transparentes, predecibles y escalables diseñadas tanto para fundadores técnicos como para entidades corporativas masivas.",
                   intro: "A diferencia de los modelos SaaS que penalizan su crecimiento con facturación por puesto (per-seat), NEXORA proporciona previsibilidad fiscal absoluta. Está adquiriendo derechos perpetuos sobre la propiedad intelectual de la arquitectura central, lo que le permite construir y escalar infinitamente.",
@@ -1007,6 +1028,9 @@ export const docCommEs: Record<string, any> = {
 
             // ─── Module Catalog ────────────────────────────────
             moduleCatalog: {
+                  tblCoreR7C1: "Derechos",
+                  tblCoreR7C2: "Control de acceso a funciones basado en ediciones y gestión de planes",
+                  tblCoreR7C3: "Funciones, ediciones, suscripciones, sobreescrituras, aplicación de cuotas, implementaciones versionadas, alcance de revendedores",
                   businessContent: "NEXORA no es un cascarón vacío; es un ecosistema empresarial en funcionamiento desde el primer día. Utilice nuestros módulos de negocio existentes —como Gestión de Usuarios, Registro de Auditoría y Notificaciones— como puntos de partida inmediatos, o clónelos para construir características propietarias rápidamente.",
                   businessTitle: "Lógica de Negocio Acelerada",
                   commTitle: "Comunicación y Webhooks",
@@ -1085,6 +1109,8 @@ export const docCommEs: Record<string, any> = {
 
             // ─── Multi Tenancy ────────────────────────────────
             multiTenancy: {
+                  settEntitlements: "Gestión de Planes Basada en Ediciones",
+                  settEntitlementsDesc: "Asigne inquilinos a ediciones (planes) a través del módulo de Derechos, con sobreescrituras de funciones por inquilino, gestión del ciclo de vida de la suscripción y aplicación automática de cuotas.",
                   architectureContent: "Abandonamos el arriesgado enfoque de 'base de datos compartida y eliminación suave'. NEXORA implementa una estricta multitenencia de nivel de fila basada en discriminadores, aplicada físicamente por los filtros de consulta globales de Entity Framework. Literalmente, los desarrolladores no pueden consultar los datos de otro inquilino, eliminando la clase más devastadora de vulnerabilidades SaaS.",
                   architectureTitle: "Aislamiento Matemáticamente Demostrable",
                   description: "Multitenencia empresarial de grado militar con estricto aislamiento a nivel de fila, herencia jerárquica infinita y anulaciones masivas de configuración por inquilino.",
@@ -1185,6 +1211,18 @@ export const docCommEs: Record<string, any> = {
 
             // ─── Rest Api Overview ────────────────────────────────
             restApiOverview: {
+                  tblCtrlR14C1: "EditionsController",
+                  tblCtrlR14C2: "11",
+                  tblCtrlR14C3: "CRUD de ediciones, funciones, versionado, implementación",
+                  tblCtrlR15C1: "FeaturesController",
+                  tblCtrlR15C2: "5",
+                  tblCtrlR15C3: "CRUD de funciones, tipos de valor, funciones del sistema",
+                  tblCtrlR16C1: "SubscriptionsController",
+                  tblCtrlR16C2: "12",
+                  tblCtrlR16C3: "Asignar, mejorar (upgrade), bajar de plan (downgrade), ciclo de vida, análisis de impacto",
+                  tblCtrlR17C1: "TenantFeaturesController",
+                  tblCtrlR17C2: "4",
+                  tblCtrlR17C3: "Sobreescrituras por inquilino, funciones resueltas",
                   authContent: "Cada controlador está bloqueado de forma predeterminada. NEXORA utiliza una sólida validación de tokens JWT, exigiendo permisos precisos granulares y claims de inquilino validados antes de que se devuelva un solo byte de JSON.",
                   authTitle: "Autorización Criptográfica Estricta",
                   controllersTitle: "Topología Estricta de Controladores",

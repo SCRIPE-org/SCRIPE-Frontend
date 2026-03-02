@@ -27,6 +27,10 @@ const sections: DocSection[] = [
                   ["commercial.restApiOverview.tblCtrlR11C1", "commercial.restApiOverview.tblCtrlR11C2", "commercial.restApiOverview.tblCtrlR11C3"],
                   ["commercial.restApiOverview.tblCtrlR12C1", "commercial.restApiOverview.tblCtrlR12C2", "commercial.restApiOverview.tblCtrlR12C3"],
                   ["commercial.restApiOverview.tblCtrlR13C1", "commercial.restApiOverview.tblCtrlR13C2", "commercial.restApiOverview.tblCtrlR13C3"],
+                  ["commercial.restApiOverview.tblCtrlR14C1", "commercial.restApiOverview.tblCtrlR14C2", "commercial.restApiOverview.tblCtrlR14C3"],
+                  ["commercial.restApiOverview.tblCtrlR15C1", "commercial.restApiOverview.tblCtrlR15C2", "commercial.restApiOverview.tblCtrlR15C3"],
+                  ["commercial.restApiOverview.tblCtrlR16C1", "commercial.restApiOverview.tblCtrlR16C2", "commercial.restApiOverview.tblCtrlR16C3"],
+                  ["commercial.restApiOverview.tblCtrlR17C1", "commercial.restApiOverview.tblCtrlR17C2", "commercial.restApiOverview.tblCtrlR17C3"],
             ],
       },
 

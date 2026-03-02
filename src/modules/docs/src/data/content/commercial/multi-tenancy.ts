@@ -48,6 +48,7 @@ const sections: DocSection[] = [
                   { icon: "globe", titleKey: "commercial.multiTenancy.settBranding", descriptionKey: "commercial.multiTenancy.settBrandingDesc" },
                   { icon: "shield", titleKey: "commercial.multiTenancy.settSecurity", descriptionKey: "commercial.multiTenancy.settSecurityDesc" },
                   { icon: "zap", titleKey: "commercial.multiTenancy.settFeatures", descriptionKey: "commercial.multiTenancy.settFeaturesDesc" },
+                  { icon: "key", titleKey: "commercial.multiTenancy.settEntitlements", descriptionKey: "commercial.multiTenancy.settEntitlementsDesc" },
             ],
       },
 
