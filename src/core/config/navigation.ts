@@ -37,6 +37,12 @@ import {
   Key,
   Menu,
   Building2,
+  Crown,
+  ToggleRight,
+  Mail,
+  Bell,
+  Webhook,
+  Trash2,
   type LucideIcon,
 } from "lucide-react";
 
@@ -84,6 +90,12 @@ export const iconMap: Record<string, LucideIcon> = {
   Key: Key,
   Menu: Menu,
   Building2: Building2,
+  Crown: Crown,
+  ToggleRight: ToggleRight,
+  Mail: Mail,
+  Bell: Bell,
+  Webhook: Webhook,
+  Trash2: Trash2,
 };
 
 /**
