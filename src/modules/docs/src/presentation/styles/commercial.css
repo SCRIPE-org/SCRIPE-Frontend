@@ -416,6 +416,81 @@
       white-space: nowrap;
 }
 
+/* Sub-groups */
+.commercial-sidebar-subgroup {
+      margin-bottom: 0.125rem;
+}
+
+.commercial-sidebar-subgroup-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      width: 100%;
+      padding: 0.4rem 0.75rem;
+      border: none;
+      background: transparent;
+      color: var(--commercial-text-muted);
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-align: left;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+}
+
+.commercial-sidebar-subgroup-btn:hover {
+      color: var(--commercial-text);
+      background: var(--commercial-surface-hover);
+}
+
+.commercial-sidebar-subgroup-btn[data-expanded="true"] {
+      color: var(--cat-accent, var(--commercial-gradient-start));
+}
+
+.commercial-sidebar-subgroup-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.375rem;
+      height: 1.375rem;
+      border-radius: 0.25rem;
+      background: var(--commercial-surface-hover);
+      color: var(--cat-accent, var(--commercial-text-muted));
+      flex-shrink: 0;
+      transition: all 0.15s;
+}
+
+.commercial-sidebar-subgroup-btn[data-expanded="true"] .commercial-sidebar-subgroup-icon {
+      background: hsl(var(--primary) / 0.1);
+      color: var(--cat-accent, var(--commercial-gradient-start));
+}
+
+.commercial-sidebar-subgroup-title {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+}
+
+.commercial-sidebar-subgroup-btn .commercial-sidebar-chevron {
+      transform: rotate(-90deg);
+}
+
+.commercial-sidebar-subgroup-btn[data-expanded="true"] .commercial-sidebar-chevron {
+      transform: rotate(0deg);
+}
+
+.commercial-sidebar-subgroup-items {
+      padding: 0.125rem 0 0.25rem 1rem;
+      animation: commercial-slide-down 0.15s ease-out;
+}
+
+.commercial-sidebar-item--nested {
+      padding-left: 0.5rem;
+}
+
 /* CTA */
 .commercial-sidebar-cta {
       padding: 0.75rem 1rem;
@@ -609,6 +684,16 @@
 [dir="rtl"] .commercial-sidebar-items {
       padding-left: 0;
       padding-right: 2.5rem;
+}
+
+[dir="rtl"] .commercial-sidebar-subgroup-items {
+      padding-left: 0;
+      padding-right: 1rem;
+}
+
+[dir="rtl"] .commercial-sidebar-item--nested {
+      padding-left: 0.75rem;
+      padding-right: 0.5rem;
 }
 
 [dir="rtl"] .commercial-header-nav {
