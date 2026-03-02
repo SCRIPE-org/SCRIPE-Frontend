@@ -2,8 +2,9 @@
  * Edition Mapper — Model ↔ Entity conversion
  */
 import { Edition } from "../../domain/entities/Edition";
+import { EditionVersion } from "../../domain/entities/EditionVersion";
 import type { EditionData } from "../../domain/entities/Edition";
-import type { EditionModel } from "../services/EditionService";
+import type { EditionModel, EditionVersionModel } from "../services/EditionService";
 import type { CreateEditionRequest, UpdateEditionRequest } from "../../domain/entities/EditionRequests";
 
 export class EditionMapper {
@@ -26,6 +27,10 @@ export class EditionMapper {
                   modifiedAt: model.modifiedAt,
             };
             return new Edition(data);
+      }
+
+      static toVersionEntity(model: EditionVersionModel): EditionVersion {
+            return new EditionVersion(model);
       }
 
       static toCreateJson(request: CreateEditionRequest): Record<string, unknown> {

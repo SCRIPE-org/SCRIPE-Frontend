@@ -3,6 +3,7 @@
  */
 import type { IEditionRepository } from "../../domain/interfaces/IEditionRepository";
 import { Edition } from "../../domain/entities/Edition";
+import type { EditionVersion } from "../../domain/entities/EditionVersion";
 import { EditionMapper } from "../mappers/EditionMapper";
 import type { CreateEditionRequest, UpdateEditionRequest } from "../../domain/entities/EditionRequests";
 import type { EditionService } from "../services/EditionService";
@@ -46,5 +47,24 @@ export class EditionRepository implements IEditionRepository {
 
       async setFeatureValue(editionId: string, featureId: string, value: string): Promise<void> {
             await this.service.setFeatureValue(editionId, featureId, value);
+      }
+
+      // ── Versioning ──
+      async getVersions(editionId: string): Promise<EditionVersion[]> {
+            const models = await this.service.getVersions(editionId);
+            return models.map((m) => EditionMapper.toVersionEntity(m));
+      }
+
+      async createVersion(editionId: string, changeNotes?: string): Promise<string> {
+            const response = await this.service.createVersion(editionId, changeNotes);
+            return response.id;
+      }
+
+      async publishVersion(editionId: string, versionId: string, data: { rolloutStrategy: string; scheduledAt?: string; canaryPercentage?: number }): Promise<void> {
+            await this.service.publishVersion(editionId, versionId, data);
+      }
+
+      async cancelVersion(editionId: string, versionId: string): Promise<void> {
+            await this.service.cancelVersion(editionId, versionId);
       }
 }

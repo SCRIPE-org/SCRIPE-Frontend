@@ -4932,6 +4932,17 @@ export const en = {
           Scheduled: "Scheduled",
           Staged: "Staged (Canary)",
         },
+        strategy: "Strategy",
+        scheduledAt: "Schedule At",
+        canaryPercent: "Canary %",
+        canaryHint: "(1-99% of tenants)",
+        publishNow: "Publish Version",
+        strategyHints: {
+          Immediate: "Apply feature changes to all tenants immediately.",
+          AtRenewal: "Apply when each tenant's subscription renews.",
+          Scheduled: "Apply at the scheduled date and time.",
+          Staged: "Gradually roll out to a percentage of tenants first.",
+        },
       },
     },
     subscriptions: {

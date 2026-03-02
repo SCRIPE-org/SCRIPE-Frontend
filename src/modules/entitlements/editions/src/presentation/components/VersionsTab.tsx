@@ -1,17 +1,16 @@
 /**
  * Edition Versions Tab — Version history with create/publish/cancel actions
+ * Pure UI matching SOLID ViewModel architecture rules
  */
 "use client";
 
-import { useState, useCallback } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { entitlementsContainer } from "@modules/entitlements/di";
-import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
-import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
+import { Card, CardContent } from "@core/ui/card";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { Input } from "@core/ui/input";
+import { Label } from "@core/ui/label";
+import { DatePicker } from "@core/ui/date-picker";
 import {
       Select,
       SelectContent,
@@ -21,9 +20,9 @@ import {
 } from "@core/ui/select";
 import {
       Loader2, Plus, Rocket, XCircle, Clock, CheckCircle2, AlertCircle,
-      GitBranch, ChevronDown, ChevronRight
+      GitBranch, Calendar, Percent
 } from "lucide-react";
-import type { EditionVersionModel } from "../../data/services/EditionService";
+import { useVersionsViewModel } from "../viewmodels/useVersionsViewModel";
 
 interface VersionsTabProps {
       editionId: string;
@@ -48,57 +47,9 @@ const STATUS_ICONS: Record<string, React.ReactNode> = {
 
 export function VersionsTab({ editionId }: VersionsTabProps) {
       const { t } = useI18n();
-      const { success, error: toastError } = useEnhancedToast();
-      const queryClient = useQueryClient();
-      const { editionService } = entitlementsContainer;
+      const vm = useVersionsViewModel(editionId);
 
-      const [showCreateForm, setShowCreateForm] = useState(false);
-      const [changeNotes, setChangeNotes] = useState("");
-      const [publishVersionId, setPublishVersionId] = useState<string | null>(null);
-      const [rolloutStrategy, setRolloutStrategy] = useState("Immediate");
-
-      // ── Fetch versions ──
-      const { data: versions, isLoading } = useQuery({
-            queryKey: ["entitlements", "editions", editionId, "versions"],
-            queryFn: () => editionService.getVersions(editionId),
-            enabled: !!editionId,
-      });
-
-      // ── Create version mutation ──
-      const createMutation = useMutation({
-            mutationFn: () => editionService.createVersion(editionId, changeNotes || undefined),
-            onSuccess: () => {
-                  success({ title: t("entitlements.editions.versions.created") || "Version Created", description: t("entitlements.editions.versions.createdDesc") || "Feature snapshot saved as a new draft version." });
-                  queryClient.invalidateQueries({ queryKey: ["entitlements", "editions", editionId, "versions"] });
-                  setShowCreateForm(false);
-                  setChangeNotes("");
-            },
-            onError: (err) => toastError({ title: "Error", description: err instanceof Error ? err.message : "Failed to create version" }),
-      });
-
-      // ── Publish version mutation ──
-      const publishMutation = useMutation({
-            mutationFn: (versionId: string) => editionService.publishVersion(editionId, versionId, { rolloutStrategy }),
-            onSuccess: () => {
-                  success({ title: t("entitlements.editions.versions.published") || "Version Published", description: t("entitlements.editions.versions.publishedDesc") || "Rollout started." });
-                  queryClient.invalidateQueries({ queryKey: ["entitlements", "editions", editionId, "versions"] });
-                  queryClient.invalidateQueries({ queryKey: ["entitlements", "editions", editionId] });
-                  setPublishVersionId(null);
-            },
-            onError: (err) => toastError({ title: "Error", description: err instanceof Error ? err.message : "Failed to publish version" }),
-      });
-
-      // ── Cancel version mutation ──
-      const cancelMutation = useMutation({
-            mutationFn: (versionId: string) => editionService.cancelVersion(editionId, versionId),
-            onSuccess: () => {
-                  success({ title: t("entitlements.editions.versions.canceled") || "Version Canceled" });
-                  queryClient.invalidateQueries({ queryKey: ["entitlements", "editions", editionId, "versions"] });
-            },
-            onError: (err) => toastError({ title: "Error", description: err instanceof Error ? err.message : "Failed to cancel version" }),
-      });
-
-      if (isLoading) {
+      if (vm.isLoading) {
             return (
                   <div className="flex items-center justify-center py-12">
                         <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
@@ -114,12 +65,12 @@ export function VersionsTab({ editionId }: VersionsTabProps) {
                               <GitBranch className="h-5 w-5 text-primary" />
                               <h2 className="text-lg font-semibold">{t("entitlements.editions.versions.title") || "Version History"}</h2>
                               <Badge variant="secondary" className="text-xs">
-                                    {versions?.length ?? 0}
+                                    {vm.versions.length}
                               </Badge>
                         </div>
                         <Button
                               size="sm"
-                              onClick={() => setShowCreateForm(!showCreateForm)}
+                              onClick={() => vm.setShowCreateForm(!vm.showCreateForm)}
                               className="gap-1 gradient-primary"
                         >
                               <Plus className="h-4 w-4" />
@@ -128,7 +79,7 @@ export function VersionsTab({ editionId }: VersionsTabProps) {
                   </div>
 
                   {/* ── Create Form ── */}
-                  {showCreateForm && (
+                  {vm.showCreateForm && (
                         <Card className="border-dashed border-primary/40">
                               <CardContent className="pt-4 space-y-3">
                                     <p className="text-sm text-muted-foreground">
@@ -136,15 +87,15 @@ export function VersionsTab({ editionId }: VersionsTabProps) {
                                     </p>
                                     <Input
                                           placeholder={t("entitlements.editions.versions.changeNotesPlaceholder") || "What changed in this version..."}
-                                          value={changeNotes}
-                                          onChange={(e) => setChangeNotes(e.target.value)}
+                                          value={vm.changeNotes}
+                                          onChange={(e) => vm.setChangeNotes(e.target.value)}
                                     />
                                     <div className="flex gap-2">
-                                          <Button size="sm" onClick={() => createMutation.mutate()} disabled={createMutation.isPending} className="gap-1">
-                                                {createMutation.isPending && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+                                          <Button size="sm" onClick={() => vm.createMutation.mutate()} disabled={vm.createMutation.isPending} className="gap-1">
+                                                {vm.createMutation.isPending && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
                                                 {t("entitlements.editions.versions.snapshot") || "Snapshot Features"}
                                           </Button>
-                                          <Button size="sm" variant="ghost" onClick={() => setShowCreateForm(false)}>
+                                          <Button size="sm" variant="ghost" onClick={() => vm.setShowCreateForm(false)}>
                                                 {t("common.cancel") || "Cancel"}
                                           </Button>
                                     </div>
@@ -153,7 +104,7 @@ export function VersionsTab({ editionId }: VersionsTabProps) {
                   )}
 
                   {/* ── Version List ── */}
-                  {(!versions || versions.length === 0) ? (
+                  {vm.versions.length === 0 ? (
                         <Card>
                               <CardContent className="py-8 text-center text-muted-foreground">
                                     <GitBranch className="h-8 w-8 mx-auto mb-2 opacity-30" />
@@ -162,9 +113,10 @@ export function VersionsTab({ editionId }: VersionsTabProps) {
                         </Card>
                   ) : (
                         <div className="space-y-2">
-                              {versions.map((v) => (
+                              {vm.versions.map((v) => (
                                     <Card key={v.id} className="overflow-hidden">
-                                          <CardContent className="py-3 px-4">
+                                          <CardContent className="py-3 px-4 space-y-2">
+                                                {/* ── Version Row ── */}
                                                 <div className="flex items-center justify-between">
                                                       <div className="flex items-center gap-3">
                                                             <Badge variant="outline" className="font-mono text-xs">
@@ -191,44 +143,114 @@ export function VersionsTab({ editionId }: VersionsTabProps) {
                                                             </span>
 
                                                             {/* Publish button (Draft only) */}
-                                                            {v.status === "Draft" && (
-                                                                  publishVersionId === v.id ? (
-                                                                        <div className="flex items-center gap-2">
-                                                                              <Select value={rolloutStrategy} onValueChange={setRolloutStrategy}>
-                                                                                    <SelectTrigger className="w-[150px] h-8 text-xs">
-                                                                                          <SelectValue />
-                                                                                    </SelectTrigger>
-                                                                                    <SelectContent>
-                                                                                          {["Immediate", "AtRenewal", "Scheduled", "Staged"].map(s => (
-                                                                                                <SelectItem key={s} value={s}>{t(`entitlements.editions.versions.strategies.${s}`) || s}</SelectItem>
-                                                                                          ))}
-                                                                                    </SelectContent>
-                                                                              </Select>
-                                                                              <Button size="sm" variant="default" className="h-8 text-xs gap-1" onClick={() => publishMutation.mutate(v.id)} disabled={publishMutation.isPending}>
-                                                                                    {publishMutation.isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : <Rocket className="h-3 w-3" />}
-                                                                                    {t("entitlements.editions.versions.publish") || "Go"}
-                                                                              </Button>
-                                                                              <Button size="sm" variant="ghost" className="h-8 text-xs" onClick={() => setPublishVersionId(null)}>
-                                                                                    {t("common.cancel") || "Cancel"}
-                                                                              </Button>
-                                                                        </div>
-                                                                  ) : (
-                                                                        <Button size="sm" variant="outline" className="h-8 text-xs gap-1" onClick={() => setPublishVersionId(v.id)}>
-                                                                              <Rocket className="h-3 w-3" />
-                                                                              {t("entitlements.editions.versions.publish") || "Publish"}
-                                                                        </Button>
-                                                                  )
+                                                            {v.status === "Draft" && vm.publishVersionId !== v.id && (
+                                                                  <Button size="sm" variant="outline" className="h-8 text-xs gap-1" onClick={() => vm.setPublishVersionId(v.id)}>
+                                                                        <Rocket className="h-3 w-3" />
+                                                                        {t("entitlements.editions.versions.publish") || "Publish"}
+                                                                  </Button>
                                                             )}
 
                                                             {/* Cancel button (Pending/Rolling only) */}
                                                             {(v.status === "Pending" || v.status === "Rolling") && (
-                                                                  <Button size="sm" variant="destructive" className="h-8 text-xs gap-1" onClick={() => cancelMutation.mutate(v.id)} disabled={cancelMutation.isPending}>
-                                                                        {cancelMutation.isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : <XCircle className="h-3 w-3" />}
+                                                                  <Button size="sm" variant="destructive" className="h-8 text-xs gap-1" onClick={() => vm.cancelMutation.mutate(v.id)} disabled={vm.cancelMutation.isPending}>
+                                                                        {vm.cancelMutation.isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : <XCircle className="h-3 w-3" />}
                                                                         {t("common.cancel") || "Cancel"}
                                                                   </Button>
                                                             )}
                                                       </div>
                                                 </div>
+
+                                                {/* ── Publish Form (expanded for Draft versions) ── */}
+                                                {v.status === "Draft" && vm.publishVersionId === v.id && (
+                                                      <div className="border-t pt-3 mt-1 space-y-3">
+                                                            {/* Strategy Selector */}
+                                                            <div className="flex items-center gap-3">
+                                                                  <Label className="text-xs font-medium min-w-[80px]">
+                                                                        {t("entitlements.editions.versions.strategy") || "Strategy"}
+                                                                  </Label>
+                                                                  <Select value={vm.rolloutStrategy} onValueChange={vm.setRolloutStrategy}>
+                                                                        <SelectTrigger className="w-[200px] h-8 text-xs">
+                                                                              <SelectValue />
+                                                                        </SelectTrigger>
+                                                                        <SelectContent>
+                                                                              {["Immediate", "AtRenewal", "Scheduled", "Staged"].map(s => (
+                                                                                    <SelectItem key={s} value={s}>
+                                                                                          {t(`entitlements.editions.versions.strategies.${s}`) || s}
+                                                                                    </SelectItem>
+                                                                              ))}
+                                                                        </SelectContent>
+                                                                  </Select>
+                                                            </div>
+
+                                                            {/* Scheduled: DatePicker (Custom UI Component) */}
+                                                            {vm.rolloutStrategy === "Scheduled" && (
+                                                                  <div className="flex items-center gap-3">
+                                                                        <Label className="text-xs font-medium min-w-[80px] flex items-center gap-1">
+                                                                              <Calendar className="h-3.5 w-3.5" />
+                                                                              {t("entitlements.editions.versions.scheduledAt") || "Schedule At"}
+                                                                        </Label>
+                                                                        <div className="w-[300px]">
+                                                                              <DatePicker
+                                                                                    type="datetime-local"
+                                                                                    value={vm.scheduledAt}
+                                                                                    onChange={(val) => vm.setScheduledAt(val)}
+                                                                                    placeholder={t("entitlements.editions.versions.scheduledAt") || "Select Date & Time"}
+                                                                              />
+                                                                        </div>
+                                                                  </div>
+                                                            )}
+
+                                                            {/* Staged: Canary percentage */}
+                                                            {vm.rolloutStrategy === "Staged" && (
+                                                                  <div className="flex items-center gap-3">
+                                                                        <Label className="text-xs font-medium min-w-[80px] flex items-center gap-1">
+                                                                              <Percent className="h-3.5 w-3.5" />
+                                                                              {t("entitlements.editions.versions.canaryPercent") || "Canary %"}
+                                                                        </Label>
+                                                                        <Input
+                                                                              type="number"
+                                                                              className="w-[100px] h-8 text-xs"
+                                                                              value={vm.canaryPercentage}
+                                                                              onChange={(e) => vm.setCanaryPercentage(Number(e.target.value))}
+                                                                              min={1}
+                                                                              max={99}
+                                                                        />
+                                                                        <span className="text-xs text-muted-foreground">
+                                                                              {t("entitlements.editions.versions.canaryHint") || "(1-99% of tenants)"}
+                                                                        </span>
+                                                                  </div>
+                                                            )}
+
+                                                            {/* Strategy description */}
+                                                            <p className="text-xs text-muted-foreground italic">
+                                                                  {vm.rolloutStrategy === "Immediate" && (t("entitlements.editions.versions.strategyHints.Immediate") || "Apply feature changes to all tenants immediately.")}
+                                                                  {vm.rolloutStrategy === "AtRenewal" && (t("entitlements.editions.versions.strategyHints.AtRenewal") || "Apply when each tenant's subscription renews.")}
+                                                                  {vm.rolloutStrategy === "Scheduled" && (t("entitlements.editions.versions.strategyHints.Scheduled") || "Apply at the scheduled date and time.")}
+                                                                  {vm.rolloutStrategy === "Staged" && (t("entitlements.editions.versions.strategyHints.Staged") || "Gradually roll out to a percentage of tenants first.")}
+                                                            </p>
+
+                                                            {/* Action buttons */}
+                                                            <div className="flex gap-2">
+                                                                  <Button
+                                                                        size="sm"
+                                                                        className="h-8 text-xs gap-1 opacity-90 hover:opacity-100 bg-emerald-600 hover:bg-emerald-700 text-white"
+                                                                        onClick={() => vm.publishMutation.mutate(v.id)}
+                                                                        disabled={vm.publishMutation.isPending || !vm.canPublish}
+                                                                  >
+                                                                        {vm.publishMutation.isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : <Rocket className="h-3 w-3" />}
+                                                                        {t("entitlements.editions.versions.publishNow") || "Publish Version"}
+                                                                  </Button>
+                                                                  <Button size="sm" variant="ghost" className="h-8 text-xs" onClick={() => {
+                                                                        vm.setPublishVersionId(null);
+                                                                        vm.setRolloutStrategy("Immediate");
+                                                                        vm.setScheduledAt("");
+                                                                        vm.setCanaryPercentage(10);
+                                                                  }}>
+                                                                        {t("common.cancel") || "Cancel"}
+                                                                  </Button>
+                                                            </div>
+                                                      </div>
+                                                )}
                                           </CardContent>
                                     </Card>
                               ))}

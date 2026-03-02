@@ -83,5 +83,6 @@ export interface EditionVersionModel {
       status: string;
       scheduledAt?: string;
       completedAt?: string;
+      canaryPercentage?: number;
       createdAt: string;
 }

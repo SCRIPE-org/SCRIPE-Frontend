@@ -4798,6 +4798,17 @@ export const ar = {
           Scheduled: "مجدول",
           Staged: "مرحلي (كناري)",
         },
+        strategy: "الاستراتيجية",
+        scheduledAt: "الموعد المحدد",
+        canaryPercent: "نسبة كناري %",
+        canaryHint: "(1-99% من المستأجرين)",
+        publishNow: "نشر الإصدار",
+        strategyHints: {
+          Immediate: "تطبيق تغييرات الميزات على جميع المستأجرين فوراً.",
+          AtRenewal: "تطبيق عند تجديد اشتراك كل مستأجر.",
+          Scheduled: "تطبيق في الموعد والتاريخ المحدد.",
+          Staged: "نشر تدريجي لنسبة من المستأجرين أولاً.",
+        },
       },
     },
     subscriptions: {
