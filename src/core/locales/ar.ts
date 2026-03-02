@@ -4758,6 +4758,47 @@ export const ar = {
       fallbackEdition: "الإصدار الاحتياطي",
       fallbackPlaceholder: "اختر خطة احتياطية (اختياري)",
       descriptionPlaceholder: "وصف مختصر لهذا الإصدار...",
+      // Overflow Policy
+      overflowPolicy: "سياسة تجاوز التخفيض",
+      overflowPolicyDesc: "ماذا يحدث عند تجاوز موارد المستأجر للحدود بعد التخفيض إلى هذا الإصدار.",
+      overflowPolicies: {
+        Block: "حظر (رفض التغيير)",
+        GracefulFreeze: "تجميد تدريجي (للقراءة فقط)",
+        SoftDeactivate: "تعطيل ناعم (LIFO)",
+      },
+      overflowPolicyHints: {
+        Block: "يجب على المدير إزالة الموارد الزائدة يدوياً قبل التخفيض.",
+        GracefulFreeze: "تصبح الموارد الزائدة للقراءة فقط حتى إزالتها.",
+        SoftDeactivate: "يتم تعطيل الموارد الزائدة الأحدث إنشاءً تلقائياً.",
+      },
+      // Versioning
+      versions: {
+        title: "سجل الإصدارات",
+        create: "إنشاء إصدار",
+        createDesc: "حفظ لقطة من قيم الميزات الحالية كإصدار مسودة جديد.",
+        changeNotesPlaceholder: "ما الذي تغير في هذا الإصدار...",
+        snapshot: "لقطة الميزات",
+        publish: "نشر",
+        published: "تم نشر الإصدار",
+        publishedDesc: "بدأ النشر بنجاح.",
+        created: "تم إنشاء الإصدار",
+        createdDesc: "تم حفظ لقطة الميزات كإصدار مسودة جديد.",
+        canceled: "تم إلغاء الإصدار",
+        empty: "لا توجد إصدارات بعد. أنشئ واحدة لبدء تتبع تغييرات الإصدار.",
+        statuses: {
+          Draft: "مسودة",
+          Pending: "معلق",
+          Rolling: "جارٍ النشر",
+          Completed: "مكتمل",
+          Canceled: "ملغي",
+        },
+        strategies: {
+          Immediate: "فوري",
+          AtRenewal: "عند التجديد",
+          Scheduled: "مجدول",
+          Staged: "مرحلي (كناري)",
+        },
+      },
     },
     subscriptions: {
       title: "الاشتراكات",

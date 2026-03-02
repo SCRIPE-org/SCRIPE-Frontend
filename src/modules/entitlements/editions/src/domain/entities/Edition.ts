@@ -22,6 +22,7 @@ export interface EditionData extends BaseEntity {
       features?: EditionFeatureDto[];
       fallbackEditionId?: string;
       fallbackEditionName?: string;
+      overflowPolicy?: string;
 }
 
 export class Edition {
@@ -39,6 +40,7 @@ export class Edition {
       get featureCount(): number { return this.data.featureCount ?? this.features.length; }
       get fallbackEditionId(): string | undefined { return this.data.fallbackEditionId; }
       get fallbackEditionName(): string | undefined { return this.data.fallbackEditionName; }
+      get overflowPolicy(): string { return this.data.overflowPolicy ?? 'Block'; }
 
       getDisplayName(lang: string): string {
             return lang === "ar" ? this.displayNameAr : this.displayNameEn;

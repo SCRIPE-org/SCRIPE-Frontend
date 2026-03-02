@@ -20,6 +20,7 @@ export interface EditionModel {
       features?: { featureId: string; featureName: string; value: string; valueType: string }[];
       fallbackEditionId?: string;
       fallbackEditionName?: string;
+      overflowPolicy?: string;
       createdAt: string;
       modifiedAt?: string;
 }
@@ -55,5 +56,32 @@ export class EditionService {
       async setFeatureValue(editionId: string, featureId: string, value: string): Promise<void> {
             await this.api.put(API_ENDPOINTS.ENTITLEMENTS.EDITIONS.SET_FEATURE(editionId, featureId), { value });
       }
+
+      // ── Versioning ──
+      async getVersions(editionId: string): Promise<EditionVersionModel[]> {
+            return this.api.get<EditionVersionModel[]>(API_ENDPOINTS.ENTITLEMENTS.EDITIONS.VERSIONS(editionId));
+      }
+
+      async createVersion(editionId: string, changeNotes?: string): Promise<{ id: string }> {
+            return this.api.post<{ id: string }>(API_ENDPOINTS.ENTITLEMENTS.EDITIONS.CREATE_VERSION(editionId), { changeNotes });
+      }
+
+      async publishVersion(editionId: string, versionId: string, data: { rolloutStrategy: string; scheduledAt?: string; canaryPercentage?: number }): Promise<void> {
+            await this.api.post(API_ENDPOINTS.ENTITLEMENTS.EDITIONS.PUBLISH_VERSION(editionId, versionId), data);
+      }
+
+      async cancelVersion(editionId: string, versionId: string): Promise<void> {
+            await this.api.post(API_ENDPOINTS.ENTITLEMENTS.EDITIONS.CANCEL_VERSION(editionId, versionId), {});
+      }
 }
 
+export interface EditionVersionModel {
+      id: string;
+      versionNumber: number;
+      changeNotes?: string;
+      rolloutStrategy: string;
+      status: string;
+      scheduledAt?: string;
+      completedAt?: string;
+      createdAt: string;
+}

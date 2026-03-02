@@ -4892,6 +4892,47 @@ export const en = {
       fallbackEdition: "Fallback Edition",
       fallbackPlaceholder: "Select fallback plan (optional)",
       descriptionPlaceholder: "Brief description of this edition...",
+      // Overflow Policy
+      overflowPolicy: "Downgrade Overflow Policy",
+      overflowPolicyDesc: "What happens when a tenant's resources exceed limits after downgrading to this edition.",
+      overflowPolicies: {
+        Block: "Block (Reject Change)",
+        GracefulFreeze: "Graceful Freeze (Read-Only)",
+        SoftDeactivate: "Soft Deactivate (LIFO)",
+      },
+      overflowPolicyHints: {
+        Block: "The admin must manually remove excess resources before downgrading.",
+        GracefulFreeze: "Excess resources become read-only until removed.",
+        SoftDeactivate: "Most recently created excess resources are auto-deactivated.",
+      },
+      // Versioning
+      versions: {
+        title: "Version History",
+        create: "Create Version",
+        createDesc: "Snapshot the current feature values into a new draft version.",
+        changeNotesPlaceholder: "What changed in this version...",
+        snapshot: "Snapshot Features",
+        publish: "Publish",
+        published: "Version Published",
+        publishedDesc: "Rollout started successfully.",
+        created: "Version Created",
+        createdDesc: "Feature snapshot saved as a new draft version.",
+        canceled: "Version Canceled",
+        empty: "No versions yet. Create one to start tracking edition changes.",
+        statuses: {
+          Draft: "Draft",
+          Pending: "Pending",
+          Rolling: "Rolling Out",
+          Completed: "Completed",
+          Canceled: "Canceled",
+        },
+        strategies: {
+          Immediate: "Immediate",
+          AtRenewal: "At Renewal",
+          Scheduled: "Scheduled",
+          Staged: "Staged (Canary)",
+        },
+      },
     },
     subscriptions: {
       title: "Subscriptions",

@@ -39,6 +39,11 @@ export interface EditionDetailViewModelResult {
       toggleModule: (moduleName: string) => void;
       expandAll: () => void;
       collapseAll: () => void;
+
+      // ── Overflow Policy ──
+      overflowPolicy: string;
+      updateOverflowPolicy: (policy: string) => void;
+      isUpdatingOverflowPolicy: boolean;
 }
 
 export function useEditionDetailViewModel(editionId: string): EditionDetailViewModelResult {
@@ -204,6 +209,37 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
             });
       }, []);
 
+      // ── Overflow Policy ──
+      const overflowPolicyMutation = useMutation({
+            mutationFn: async (policy: string) => {
+                  if (!edition) return;
+                  await editionRepository.update(editionId, {
+                        name: edition.name,
+                        displayNameEn: edition.displayNameEn,
+                        displayNameAr: edition.displayNameAr,
+                        description: edition.description,
+                        overflowPolicy: policy,
+                  });
+            },
+            onSuccess: () => {
+                  success({
+                        title: "Overflow Policy Updated",
+                        description: "The downgrade overflow policy has been saved.",
+                  });
+                  queryClient.invalidateQueries({ queryKey: ["entitlements", "editions", editionId] });
+            },
+            onError: (err) => {
+                  toastError({
+                        title: "Update Failed",
+                        description: err instanceof Error ? err.message : "Failed to update overflow policy",
+                  });
+            },
+      });
+
+      const updateOverflowPolicy = useCallback((policy: string) => {
+            overflowPolicyMutation.mutate(policy);
+      }, [overflowPolicyMutation]);
+
       return {
             edition,
             features: featuresResult?.items,
@@ -223,5 +259,9 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
             toggleModule,
             expandAll,
             collapseAll,
+
+            overflowPolicy: edition?.overflowPolicy ?? 'Block',
+            updateOverflowPolicy,
+            isUpdatingOverflowPolicy: overflowPolicyMutation.isPending,
       };
 }

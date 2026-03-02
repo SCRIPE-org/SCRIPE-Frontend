@@ -239,6 +239,10 @@ export const API_ENDPOINTS = {
       UPDATE: (id: string) => `${V1}/editions/${id}`,
       DELETE: (id: string) => `${V1}/editions/${id}`,
       SET_FEATURE: (editionId: string, featureId: string) => `${V1}/editions/${editionId}/features/${featureId}`,
+      VERSIONS: (editionId: string) => `${V1}/editions/${editionId}/versions`,
+      CREATE_VERSION: (editionId: string) => `${V1}/editions/${editionId}/versions`,
+      PUBLISH_VERSION: (editionId: string, versionId: string) => `${V1}/editions/${editionId}/versions/${versionId}/publish`,
+      CANCEL_VERSION: (editionId: string, versionId: string) => `${V1}/editions/${editionId}/versions/${versionId}/cancel`,
     },
     TENANT_FEATURES: {
       OVERRIDES: (tenantId: string) => `${V1}/tenants/${tenantId}/features/overrides`,

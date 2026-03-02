@@ -33,6 +33,7 @@ export interface EntitlementsContainer {
       editionRepository: IEditionRepository;
       overrideRepository: IOverrideRepository;
       subscriptionRepository: ISubscriptionRepository;
+      editionService: EditionService;
 }
 
 let _container: EntitlementsContainer | null = null;
@@ -56,6 +57,7 @@ export function getEntitlementsContainer(): EntitlementsContainer {
                   editionRepository: new EditionRepository(editionService),
                   overrideRepository: new OverrideRepository(overrideService),
                   subscriptionRepository: new SubscriptionRepository(subscriptionService),
+                  editionService,
             };
       }
 
@@ -77,5 +79,8 @@ export const entitlementsContainer = {
       },
       get subscriptionRepository() {
             return getEntitlementsContainer().subscriptionRepository;
+      },
+      get editionService() {
+            return getEntitlementsContainer().editionService;
       },
 };

@@ -21,6 +21,7 @@ export class EditionMapper {
                   features: model.features,
                   fallbackEditionId: model.fallbackEditionId,
                   fallbackEditionName: model.fallbackEditionName,
+                  overflowPolicy: model.overflowPolicy,
                   createdAt: model.createdAt,
                   modifiedAt: model.modifiedAt,
             };
@@ -44,6 +45,7 @@ export class EditionMapper {
                   displayNameAr: request.displayNameAr,
                   description: request.description,
                   fallbackEditionId: request.fallbackEditionId || null,
+                  overflowPolicy: request.overflowPolicy || 'Block',
             };
       }
 }

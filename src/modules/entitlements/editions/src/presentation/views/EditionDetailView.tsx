@@ -27,6 +27,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import type { Feature } from "@modules/entitlements/features/src/domain/entities/Feature";
+import { VersionsTab } from "../components/VersionsTab";
 
 interface EditionDetailViewProps {
       editionId: string;
@@ -122,6 +123,38 @@ export function EditionDetailView({ editionId }: EditionDetailViewProps) {
                               )}
                         </div>
                   </div>
+
+                  {/* ── Overflow Policy Card ── */}
+                  <Card>
+                        <CardHeader className="py-3">
+                              <CardTitle className="text-base">{t("entitlements.editions.overflowPolicy") || "Downgrade Overflow Policy"}</CardTitle>
+                              <p className="text-xs text-muted-foreground">{t("entitlements.editions.overflowPolicyDesc") || "What happens when resources exceed limits after downgrading."}</p>
+                        </CardHeader>
+                        <CardContent className="pt-0 pb-4">
+                              <div className="flex items-center gap-4">
+                                    <Select
+                                          value={vm.overflowPolicy}
+                                          onValueChange={vm.updateOverflowPolicy}
+                                          disabled={vm.isUpdatingOverflowPolicy}
+                                    >
+                                          <SelectTrigger className="w-[280px]">
+                                                <SelectValue />
+                                          </SelectTrigger>
+                                          <SelectContent>
+                                                {(["Block", "GracefulFreeze", "SoftDeactivate"] as const).map((policy) => (
+                                                      <SelectItem key={policy} value={policy}>
+                                                            {t(`entitlements.editions.overflowPolicies.${policy}`) || policy}
+                                                      </SelectItem>
+                                                ))}
+                                          </SelectContent>
+                                    </Select>
+                                    {vm.isUpdatingOverflowPolicy && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />}
+                              </div>
+                              <p className="text-xs text-muted-foreground mt-2">
+                                    {t(`entitlements.editions.overflowPolicyHints.${vm.overflowPolicy}`) || ""}
+                              </p>
+                        </CardContent>
+                  </Card>
 
                   {/* ── Feature count + Expand/Collapse ── */}
                   <div className="flex items-center justify-between">
@@ -229,6 +262,9 @@ export function EditionDetailView({ editionId }: EditionDetailViewProps) {
                               </Card>
                         );
                   })}
+
+                  {/* ── Version History Tab ── */}
+                  <VersionsTab editionId={editionId} />
             </div>
       );
 }

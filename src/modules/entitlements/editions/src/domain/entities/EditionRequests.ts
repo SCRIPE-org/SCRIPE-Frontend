@@ -15,6 +15,7 @@ export interface UpdateEditionRequest {
       displayNameAr?: string;
       description?: string;
       fallbackEditionId?: string;
+      overflowPolicy?: string;
 }
 
 export interface SetEditionFeatureRequest {
