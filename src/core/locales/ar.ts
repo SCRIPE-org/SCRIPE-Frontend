@@ -3596,6 +3596,8 @@ export const ar = {
 
   // Common
   common: {
+    time: "الوقت",
+    ok: "تأكيد",
     description: "الوصف",
     none: "لا يوجد",
     deleteConfirm: "تأكيد الحذف",
@@ -3603,7 +3605,7 @@ export const ar = {
     deleteConfirmDesc: "هل أنت متأكد من رغبتك في حذف هذا العنصر؟",
     statusConfirmDesc: "هل أنت متأكد من رغبتك في تغيير حالة هذا العنصر؟",
     tenant: "المستأجر",
-    discard: "إلغاء",
+    discard: "تجاهل",
     unsavedChanges: "غير محفوظ",
     name: "الاسم",
     created: "تم الإنشاء",
@@ -3664,6 +3666,7 @@ export const ar = {
     saveChanges: "حفظ التغييرات",
     saving: "جاري الحفظ...",
     cancel: "إلغاء",
+    modified: "معدّل",
     delete: "حذف",
     edit: "تعديل",
     view: "عرض",
@@ -4782,7 +4785,7 @@ export const ar = {
         published: "تم نشر الإصدار",
         publishedDesc: "بدأ النشر بنجاح.",
         created: "تم إنشاء الإصدار",
-        createdDesc: "تم حفظ لقطة الميزات كإصدار مسودة جديد.",
+        createdDesc: "تم حفظ تغييرات الميزات كإصدار مسودة جديد. انشره لتطبيقه على المستأجرين.",
         canceled: "تم إلغاء الإصدار",
         empty: "لا توجد إصدارات بعد. أنشئ واحدة لبدء تتبع تغييرات الإصدار.",
         statuses: {
@@ -4810,6 +4813,20 @@ export const ar = {
           Staged: "نشر تدريجي لنسبة من المستأجرين أولاً.",
         },
       },
+      // Action Bar
+      pendingChanges: "لديك تغييرات غير محفوظة",
+      pendingChangesCount: "{{count}} ميزة معدّلة",
+      saveAsVersion: "حفظ كإصدار",
+      saveAsVersionDesc: "إنشاء إصدار مسودة بتغييراتك. يمكنك مراجعته ونشره لاحقاً باستراتيجية نشر.",
+      directApply: "تطبيق الآن",
+      directApplyDesc: "تطبيق التغييرات فوراً على الإصدار ومزامنة جميع المستأجرين المتأثرين. لن يتم إنشاء سجل إصدار.",
+      directApplyConfirmTitle: "تطبيق التغييرات الآن؟",
+      directApplyConfirmDesc: "سيتم تحديث ميزات الإصدار فوراً ومزامنة جميع صلاحيات المستأجرين المتأثرين. لن يتم إنشاء سجل إصدار.",
+      applyNow: "نعم، طبّق الآن",
+      versionNotesLabel: "ملاحظات التغيير",
+      createAndPublish: "إنشاء إصدار",
+      changesApplied: "تم تطبيق التغييرات",
+      changesAppliedDesc: "تم تحديث الميزات ومزامنة جميع المستأجرين المتأثرين.",
     },
     subscriptions: {
       title: "الاشتراكات",

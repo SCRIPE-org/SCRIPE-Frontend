@@ -60,48 +60,13 @@ export function VersionsTab({ editionId }: VersionsTabProps) {
       return (
             <div className="space-y-4">
                   {/* ── Header ── */}
-                  <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                              <GitBranch className="h-5 w-5 text-primary" />
-                              <h2 className="text-lg font-semibold">{t("entitlements.editions.versions.title") || "Version History"}</h2>
-                              <Badge variant="secondary" className="text-xs">
-                                    {vm.versions.length}
-                              </Badge>
-                        </div>
-                        <Button
-                              size="sm"
-                              onClick={() => vm.setShowCreateForm(!vm.showCreateForm)}
-                              className="gap-1 gradient-primary"
-                        >
-                              <Plus className="h-4 w-4" />
-                              {t("entitlements.editions.versions.create") || "Create Version"}
-                        </Button>
+                  <div className="flex items-center gap-2">
+                        <GitBranch className="h-5 w-5 text-primary" />
+                        <h2 className="text-lg font-semibold">{t("entitlements.editions.versions.title")}</h2>
+                        <Badge variant="secondary" className="text-xs">
+                              {vm.versions.length}
+                        </Badge>
                   </div>
-
-                  {/* ── Create Form ── */}
-                  {vm.showCreateForm && (
-                        <Card className="border-dashed border-primary/40">
-                              <CardContent className="pt-4 space-y-3">
-                                    <p className="text-sm text-muted-foreground">
-                                          {t("entitlements.editions.versions.createDesc") || "Snapshot the current feature values into a new draft version."}
-                                    </p>
-                                    <Input
-                                          placeholder={t("entitlements.editions.versions.changeNotesPlaceholder") || "What changed in this version..."}
-                                          value={vm.changeNotes}
-                                          onChange={(e) => vm.setChangeNotes(e.target.value)}
-                                    />
-                                    <div className="flex gap-2">
-                                          <Button size="sm" onClick={() => vm.createMutation.mutate()} disabled={vm.createMutation.isPending} className="gap-1">
-                                                {vm.createMutation.isPending && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
-                                                {t("entitlements.editions.versions.snapshot") || "Snapshot Features"}
-                                          </Button>
-                                          <Button size="sm" variant="ghost" onClick={() => vm.setShowCreateForm(false)}>
-                                                {t("common.cancel") || "Cancel"}
-                                          </Button>
-                                    </div>
-                              </CardContent>
-                        </Card>
-                  )}
 
                   {/* ── Version List ── */}
                   {vm.versions.length === 0 ? (
@@ -189,14 +154,14 @@ export function VersionsTab({ editionId }: VersionsTabProps) {
                                                                               <Calendar className="h-3.5 w-3.5" />
                                                                               {t("entitlements.editions.versions.scheduledAt") || "Schedule At"}
                                                                         </Label>
-                                                                        <div className="w-[300px]">
-                                                                              <DatePicker
-                                                                                    type="datetime-local"
-                                                                                    value={vm.scheduledAt}
-                                                                                    onChange={(val) => vm.setScheduledAt(val)}
-                                                                                    placeholder={t("entitlements.editions.versions.scheduledAt") || "Select Date & Time"}
-                                                                              />
-                                                                        </div>
+                                                                        <DatePicker
+                                                                              id="version-scheduled-at"
+                                                                              type="datetime-local"
+                                                                              value={vm.scheduledAt}
+                                                                              onChange={(val) => vm.setScheduledAt(val)}
+                                                                              placeholder={t("entitlements.editions.versions.scheduledAt") || "Select Date & Time"}
+                                                                              className="w-[280px]"
+                                                                        />
                                                                   </div>
                                                             )}
 

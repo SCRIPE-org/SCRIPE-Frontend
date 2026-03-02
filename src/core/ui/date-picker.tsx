@@ -20,17 +20,9 @@ interface DatePickerProps {
   type?: "date" | "datetime-local";
 }
 
-interface Viewport {
-  width: number;
-  height: number;
-  scrollX: number;
-  scrollY: number;
-}
-
 interface PositionCalcParams {
   triggerRect: DOMRect;
   calendarRect?: DOMRect;
-  calendarHeight?: number;
   calendarContent?: HTMLElement | null;
 }
 
@@ -44,41 +36,16 @@ interface PositionResult {
 
 // Constants
 const MIN_CALENDAR_WIDTH = 320;
-const MIN_CALENDAR_HEIGHT = 300;
-const MAX_CALENDAR_HEIGHT = 400;
-const BOTTOM_MARGIN_NEAR_EDGE = 50;
-const BOTTOM_MARGIN_NORMAL = 10;
-const TOP_MARGIN = 10;
-const NEAR_BOTTOM_THRESHOLD = 0.8;
+const ESTIMATED_CALENDAR_HEIGHT = 520; // header + calendar grid + time picker + action buttons
+const EDGE_PADDING = 8;
 
-// Helper: Calculate accurate viewport dimensions
-function getViewport(): { viewport: Viewport; actualHeight: number } {
-  const visualViewport = (window as any).visualViewport;
-  const viewport: Viewport = {
-    width: visualViewport?.width || window.innerWidth,
-    height: visualViewport?.height || window.innerHeight,
-    scrollX: window.scrollX || visualViewport?.offsetLeft || 0,
-    scrollY: window.scrollY || visualViewport?.offsetTop || 0,
-  };
-  const docElement = document.documentElement;
-  const actualHeight = Math.min(viewport.height, docElement.clientHeight || window.innerHeight);
-  return { viewport, actualHeight };
-}
 
-// Helper: Calculate calendar position
 function calculateCalendarPosition(params: PositionCalcParams): PositionResult {
-  const {
-    triggerRect,
-    calendarRect,
-    calendarHeight = MAX_CALENDAR_HEIGHT,
-    calendarContent,
-  } = params;
-  const { viewport, actualHeight } = getViewport();
+  const { triggerRect, calendarRect, calendarContent } = params;
+  const viewportWidth = window.innerWidth;
+  const viewportHeight = window.innerHeight;
 
-  const isNearBottom = triggerRect.bottom > actualHeight * NEAR_BOTTOM_THRESHOLD;
-  const bottomMargin = isNearBottom ? BOTTOM_MARGIN_NEAR_EDGE : BOTTOM_MARGIN_NORMAL;
-
-  // Calculate natural width
+  // Natural width
   let naturalWidth = MIN_CALENDAR_WIDTH;
   if (calendarContent) {
     const contentRect = calendarContent.getBoundingClientRect();
@@ -89,74 +56,40 @@ function calculateCalendarPosition(params: PositionCalcParams): PositionResult {
     triggerRect.width >= MIN_CALENDAR_WIDTH ? triggerRect.width : MIN_CALENDAR_WIDTH
   );
 
-  // Calculate available space
-  const spaceBelow = actualHeight - triggerRect.bottom - 1;
-  const spaceAbove = triggerRect.top - 1;
-  const estimatedHeight = calendarRect?.height || calendarHeight;
+  // Use actual rendered height if available, otherwise estimate
+  const estimatedHeight = calendarRect?.height || ESTIMATED_CALENDAR_HEIGHT;
 
-  // Determine if should show above
-  const hasEnoughSpaceBelow = spaceBelow >= estimatedHeight + bottomMargin;
-  const hasEnoughSpaceAbove = spaceAbove >= estimatedHeight + TOP_MARGIN;
-  const shouldShowAbove =
-    !hasEnoughSpaceBelow && (hasEnoughSpaceAbove || spaceAbove > spaceBelow + 30);
+  // Available space above and below (viewport-relative)
+  const spaceBelow = viewportHeight - triggerRect.bottom;
+  const spaceAbove = triggerRect.top;
 
-  // Calculate vertical position
+  // Flip above if not enough room below and more room above
+  const shouldShowAbove = spaceBelow < estimatedHeight && spaceAbove > spaceBelow;
+
+  // Calculate vertical position (viewport-relative for position:fixed)
   let top: number;
-  let maxHeight: number;
-
   if (shouldShowAbove) {
-    const availableAbove = Math.max(0, spaceAbove - TOP_MARGIN);
-    maxHeight = Math.min(MAX_CALENDAR_HEIGHT, availableAbove);
-    maxHeight = Math.max(maxHeight, MIN_CALENDAR_HEIGHT);
-    const calendarTop = triggerRect.top + viewport.scrollY - estimatedHeight - 1;
-    const safeTop = viewport.scrollY + TOP_MARGIN;
-    top = Math.max(calendarTop, safeTop);
+    top = triggerRect.top - estimatedHeight - 1;
+    top = Math.max(top, EDGE_PADDING);
   } else {
-    const availableBelow = Math.max(0, spaceBelow - bottomMargin);
-    maxHeight = Math.min(MAX_CALENDAR_HEIGHT, availableBelow);
-    maxHeight = Math.max(maxHeight, MIN_CALENDAR_HEIGHT);
-    const calendarBottom = triggerRect.bottom + viewport.scrollY + estimatedHeight;
-    const safeBottom = actualHeight + viewport.scrollY - bottomMargin;
-
-    if (calendarBottom > safeBottom) {
-      // Force open above
-      const availableAbove = Math.max(0, spaceAbove - TOP_MARGIN);
-      maxHeight = Math.min(MAX_CALENDAR_HEIGHT, availableAbove);
-      maxHeight = Math.max(maxHeight, MIN_CALENDAR_HEIGHT);
-      const calendarTop = triggerRect.top + viewport.scrollY - estimatedHeight - 1;
-      const safeTop = viewport.scrollY + TOP_MARGIN;
-      top = Math.max(calendarTop, safeTop);
-      return {
-        top,
-        left: 0,
-        width: preferredWidth,
-        maxHeight,
-        shouldShowAbove: true,
-      };
-    } else {
-      top = triggerRect.bottom + viewport.scrollY + 1;
-    }
+    top = triggerRect.bottom + 1;
   }
 
-  // Calculate horizontal position
-  let left = triggerRect.left + viewport.scrollX;
-  const rightEdge = viewport.scrollX + viewport.width;
-  const calendarRightEdge = left + preferredWidth;
-
-  if (calendarRightEdge > rightEdge) {
-    const rightAlignLeft = triggerRect.right + viewport.scrollX - preferredWidth;
-    const leftEdge = viewport.scrollX + 8;
-    left = rightAlignLeft >= leftEdge ? rightAlignLeft : leftEdge;
+  // Calculate horizontal position (viewport-relative)
+  let left = triggerRect.left;
+  if (left + preferredWidth > viewportWidth) {
+    const rightAlignLeft = triggerRect.right - preferredWidth;
+    left = Math.max(rightAlignLeft, EDGE_PADDING);
   }
-  if (left < viewport.scrollX) {
-    left = viewport.scrollX + 8;
+  if (left < 0) {
+    left = EDGE_PADDING;
   }
 
   return {
-    top: Math.max(top, viewport.scrollY + 1),
+    top,
     left,
     width: preferredWidth,
-    maxHeight: Math.floor(maxHeight),
+    maxHeight: Math.max(spaceBelow, spaceAbove) - EDGE_PADDING,
     shouldShowAbove,
   };
 }
@@ -191,7 +124,7 @@ export function DatePicker({
     top: 0,
     left: 0,
     width: 0,
-    maxHeight: MAX_CALENDAR_HEIGHT,
+    maxHeight: ESTIMATED_CALENDAR_HEIGHT,
     placement: "bottom-start",
   });
   const containerRef = useRef<HTMLDivElement>(null);
@@ -237,7 +170,7 @@ export function DatePicker({
 
       setCalendarPosition({
         top: position.top,
-        left: rect.left + window.scrollX,
+        left: position.left,
         width: position.width,
         maxHeight: position.maxHeight,
         placement: position.shouldShowAbove ? "top-start" : "bottom-start",
@@ -650,7 +583,7 @@ export function DatePicker({
           labelPosition,
           "top-1/2 -translate-y-1/2 text-muted-foreground/70 text-sm font-medium bg-gradient-to-r from-background to-background px-2 rounded",
           (isFocused || showCalendar) &&
-            "top-0 text-xs text-primary font-semibold scale-90 -translate-y-1/2"
+          "top-0 text-xs text-primary font-semibold scale-90 -translate-y-1/2"
         );
       case "minimal":
         return cn(
@@ -676,9 +609,8 @@ export function DatePicker({
 
   const ariaLabel = useMemo(() => {
     if (value) {
-      return `${
-        placeholder || t("common.selectDate") || "Select date"
-      }: ${formatDisplayValue(value)}`;
+      return `${placeholder || t("common.selectDate") || "Select date"
+        }: ${formatDisplayValue(value)}`;
     }
     return placeholder || t("common.selectDate") || "Select date";
   }, [value, placeholder, formatDisplayValue, t]);
@@ -759,18 +691,16 @@ export function DatePicker({
             aria-modal="true"
             aria-label={t("common.calendarDialog") || "Calendar"}
             className={cn(
-              "pointer-events-auto fixed z-[2147483647] shadow-lg",
+              "pointer-events-auto fixed z-[2147483647] bg-background rounded-lg border shadow-lg",
               shouldShowAboveRef.current ? "rounded-b-none border-b-0" : "rounded-t-none border-t-0"
             )}
             style={{
               top: `${calendarPosition.top}px`,
               left: `${calendarPosition.left}px`,
               width: `${calendarPosition.width}px`,
-              maxHeight: `${calendarPosition.maxHeight}px`,
               pointerEvents: "auto",
-              transform: `translateZ(0) translateY(${
-                animateOpen ? 0 : shouldShowAboveRef.current ? 6 : -6
-              }px)`,
+              transform: `translateZ(0) translateY(${animateOpen ? 0 : shouldShowAboveRef.current ? 6 : -6
+                }px)`,
               willChange: "transform, opacity",
               opacity: animateOpen ? 1 : 0,
               transition:
@@ -798,18 +728,29 @@ export function DatePicker({
           onMeasure={() => {
             if (!containerRef.current || !calendarRef.current) return;
 
-            // Measure natural width with temporary constraints removed
+            // Temporarily remove constraints to measure natural size
             const calendarContent = calendarRef.current.querySelector(
               "[data-calendar-content]"
             ) as HTMLElement;
             const originalWidth = calendarRef.current.style.width;
             const originalMinWidth = calendarRef.current.style.minWidth;
+            const originalMaxHeight = calendarRef.current.style.maxHeight;
+            const originalOverflow = calendarRef.current.style.overflow;
             calendarRef.current.style.width = "auto";
             calendarRef.current.style.minWidth = `${MIN_CALENDAR_WIDTH}px`;
+            calendarRef.current.style.maxHeight = "none";
+            calendarRef.current.style.overflow = "visible";
             void calendarRef.current.offsetWidth; // Force reflow
 
             const triggerRect = containerRef.current.getBoundingClientRect();
+            // Use scrollHeight for true natural height (not clipped by viewport)
+            const naturalHeight = calendarRef.current.scrollHeight;
             const calendarRect = calendarRef.current.getBoundingClientRect();
+            // Override height with natural scrollHeight
+            const fullRect = {
+              ...calendarRect,
+              height: naturalHeight,
+            } as DOMRect;
 
             let naturalWidth = MIN_CALENDAR_WIDTH;
             if (calendarContent) {
@@ -827,12 +768,15 @@ export function DatePicker({
               );
             }
 
+            // Restore original constraints
             calendarRef.current.style.width = originalWidth;
             calendarRef.current.style.minWidth = originalMinWidth;
+            calendarRef.current.style.maxHeight = originalMaxHeight;
+            calendarRef.current.style.overflow = originalOverflow;
 
             const position = calculateCalendarPosition({
               triggerRect,
-              calendarRect,
+              calendarRect: fullRect,
               calendarContent,
             });
 

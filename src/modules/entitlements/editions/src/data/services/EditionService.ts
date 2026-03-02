@@ -62,8 +62,8 @@ export class EditionService {
             return this.api.get<EditionVersionModel[]>(API_ENDPOINTS.ENTITLEMENTS.EDITIONS.VERSIONS(editionId));
       }
 
-      async createVersion(editionId: string, changeNotes?: string): Promise<{ id: string }> {
-            return this.api.post<{ id: string }>(API_ENDPOINTS.ENTITLEMENTS.EDITIONS.CREATE_VERSION(editionId), { changeNotes });
+      async createVersion(editionId: string, changeNotes?: string, featureValues?: Record<string, string>): Promise<{ id: string }> {
+            return this.api.post<{ id: string }>(API_ENDPOINTS.ENTITLEMENTS.EDITIONS.CREATE_VERSION(editionId), { changeNotes, featureValues });
       }
 
       async publishVersion(editionId: string, versionId: string, data: { rolloutStrategy: string; scheduledAt?: string; canaryPercentage?: number }): Promise<void> {
@@ -72,6 +72,10 @@ export class EditionService {
 
       async cancelVersion(editionId: string, versionId: string): Promise<void> {
             await this.api.post(API_ENDPOINTS.ENTITLEMENTS.EDITIONS.CANCEL_VERSION(editionId, versionId), {});
+      }
+
+      async directApplyFeatures(editionId: string, featureValues: Record<string, string>): Promise<void> {
+            await this.api.post(API_ENDPOINTS.ENTITLEMENTS.EDITIONS.DIRECT_APPLY_FEATURES(editionId), { featureValues });
       }
 }
 

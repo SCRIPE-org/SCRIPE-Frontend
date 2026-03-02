@@ -55,8 +55,8 @@ export class EditionRepository implements IEditionRepository {
             return models.map((m) => EditionMapper.toVersionEntity(m));
       }
 
-      async createVersion(editionId: string, changeNotes?: string): Promise<string> {
-            const response = await this.service.createVersion(editionId, changeNotes);
+      async createVersion(editionId: string, changeNotes?: string, featureValues?: Record<string, string>): Promise<string> {
+            const response = await this.service.createVersion(editionId, changeNotes, featureValues);
             return response.id;
       }
 
@@ -66,5 +66,9 @@ export class EditionRepository implements IEditionRepository {
 
       async cancelVersion(editionId: string, versionId: string): Promise<void> {
             await this.service.cancelVersion(editionId, versionId);
+      }
+
+      async directApplyFeatures(editionId: string, featureValues: Record<string, string>): Promise<void> {
+            await this.service.directApplyFeatures(editionId, featureValues);
       }
 }

@@ -23,16 +23,21 @@ export interface EditionDetailViewModelResult {
       error: Error | null;
 
       // ── Feature state (local pending changes) ──
-      // All keyed by featureName (stable, unique, not encrypted)
       pendingValues: Record<string, string>;
       getEffectiveValue: (feature: Feature) => string;
       setLocalValue: (featureName: string, value: string) => void;
       hasUnsavedChanges: boolean;
 
-      // ── Save/Discard ──
-      saveAllFeatures: () => void;
+      // ── Version-based apply ──
+      createVersionWithChanges: (changeNotes?: string) => void;
+      isCreatingVersion: boolean;
+
+      // ── Direct apply ──
+      directApplyChanges: () => void;
+      isDirectApplying: boolean;
+
+      // ── Discard ──
       discardChanges: () => void;
-      isSaving: boolean;
 
       // ── Module/Category grouping ──
       collapsedModules: Record<string, boolean>;
@@ -40,10 +45,10 @@ export interface EditionDetailViewModelResult {
       expandAll: () => void;
       collapseAll: () => void;
 
-      // ── Overflow Policy ──
+      // ── Overflow Policy (local, not auto-saved) ──
       overflowPolicy: string;
-      updateOverflowPolicy: (policy: string) => void;
-      isUpdatingOverflowPolicy: boolean;
+      setOverflowPolicy: (policy: string) => void;
+      overflowPolicyChanged: boolean;
 }
 
 export function useEditionDetailViewModel(editionId: string): EditionDetailViewModelResult {
@@ -72,24 +77,11 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
       });
 
       // ── Server map: featureName → value (from edition features) ──
-      // Uses featureName as key because encrypted IDs are non-deterministic
-      // (same GUID encrypted twice gives different strings)
       const serverValueMap = useMemo(() => {
             const map: Record<string, string> = {};
             if (edition) {
                   for (const ef of edition.features) {
                         map[ef.featureName] = ef.value;
-                  }
-            }
-            return map;
-      }, [edition]);
-
-      // ── featureName → featureId lookup (from edition features, for save API) ──
-      const featureIdByName = useMemo(() => {
-            const map: Record<string, string> = {};
-            if (edition) {
-                  for (const ef of edition.features) {
-                        map[ef.featureName] = ef.featureId;
                   }
             }
             return map;
@@ -120,9 +112,10 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
             setPendingValues(prev => ({ ...prev, [featureName]: value }));
       }, []);
 
-      // Check for unsaved changes
+      // Check for unsaved changes (features + overflow policy)
       const hasUnsavedChanges = useMemo(() => {
             if (!edition) return false;
+            // Check feature changes
             for (const [name, val] of Object.entries(pendingValues)) {
                   if (serverValueMap[name] !== val) return true;
             }
@@ -131,47 +124,83 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
 
       const discardChanges = useCallback(() => {
             setPendingValues(serverValueMap);
-      }, [serverValueMap]);
+            if (edition) {
+                  setLocalOverflowPolicy(edition.overflowPolicy ?? "Block");
+            }
+      }, [serverValueMap, edition]);
 
-      // ── Save all features mutation ──
-      const saveAllMutation = useMutation({
-            mutationFn: async (updates: Record<string, string>) => {
-                  const entries = Object.entries(updates);
-                  for (const [featureName, value] of entries) {
-                        // Look up the featureId from the edition's feature list
-                        const fId = featureIdByName[featureName];
-                        if (fId) {
-                              await editionRepository.setFeatureValue(editionId, fId, value);
-                        }
-                  }
-            },
-            onSuccess: () => {
-                  success({
-                        title: "Features Updated",
-                        description: "All feature modifications have been saved successfully.",
-                  });
-                  queryClient.invalidateQueries({ queryKey: ["entitlements", "editions", editionId] });
-            },
-            onError: (err) => {
-                  toastError({
-                        title: "Update Failed",
-                        description: err instanceof Error ? err.message : "Failed to update features",
-                  });
-            },
-      });
-
-      const saveAllFeatures = useCallback(() => {
-            if (!edition) return;
+      // ── Build the changed feature map (featureName → newValue) ──
+      const getChangedFeatures = useCallback((): Record<string, string> => {
             const changes: Record<string, string> = {};
             for (const [name, val] of Object.entries(pendingValues)) {
                   if (serverValueMap[name] !== val) {
                         changes[name] = val;
                   }
             }
-            if (Object.keys(changes).length > 0) {
-                  saveAllMutation.mutate(changes);
-            }
-      }, [edition, pendingValues, serverValueMap, saveAllMutation]);
+            return changes;
+      }, [pendingValues, serverValueMap]);
+
+      // ── Create Version with pending changes ──
+      const createVersionMutation = useMutation({
+            mutationFn: async ({ changeNotes }: { changeNotes?: string }) => {
+                  // Send ALL pending feature values (full snapshot), not just changed ones
+                  return editionRepository.createVersion(editionId, changeNotes, pendingValues);
+            },
+            onSuccess: () => {
+                  success({
+                        title: "Version Created",
+                        description: "Feature changes captured in a new draft version. Publish it to apply.",
+                  });
+                  queryClient.invalidateQueries({ queryKey: ["entitlements", "editions", editionId, "versions"] });
+            },
+            onError: (err) => {
+                  toastError({
+                        title: "Version Creation Failed",
+                        description: err instanceof Error ? err.message : "Failed to create version",
+                  });
+            },
+      });
+
+      const createVersionWithChanges = useCallback((changeNotes?: string) => {
+            createVersionMutation.mutate({ changeNotes });
+      }, [createVersionMutation]);
+
+      // ── Direct Apply (save features immediately + sync tenants) ──
+      const directApplyMutation = useMutation({
+            mutationFn: async () => {
+                  const changes = getChangedFeatures();
+                  if (Object.keys(changes).length === 0) return;
+                  // Also update overflow policy if changed
+                  if (localOverflowPolicy !== (edition?.overflowPolicy ?? "Block")) {
+                        await editionRepository.update(editionId, {
+                              name: edition!.name,
+                              displayNameEn: edition!.displayNameEn,
+                              displayNameAr: edition!.displayNameAr,
+                              description: edition!.description,
+                              overflowPolicy: localOverflowPolicy,
+                        });
+                  }
+                  await editionRepository.directApplyFeatures(editionId, changes);
+            },
+            onSuccess: () => {
+                  success({
+                        title: "Changes Applied",
+                        description: "Features updated and all affected tenants synced.",
+                  });
+                  queryClient.invalidateQueries({ queryKey: ["entitlements", "editions", editionId] });
+                  queryClient.invalidateQueries({ queryKey: ["entitlements", "editions", editionId, "versions"] });
+            },
+            onError: (err) => {
+                  toastError({
+                        title: "Apply Failed",
+                        description: err instanceof Error ? err.message : "Failed to apply changes",
+                  });
+            },
+      });
+
+      const directApplyChanges = useCallback(() => {
+            directApplyMutation.mutate();
+      }, [directApplyMutation]);
 
       // ── Module/Category grouping ──
       const [collapsedModules, setCollapsedModules] = useState<Record<string, boolean>>({});
@@ -209,36 +238,23 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
             });
       }, []);
 
-      // ── Overflow Policy ──
-      const overflowPolicyMutation = useMutation({
-            mutationFn: async (policy: string) => {
-                  if (!edition) return;
-                  await editionRepository.update(editionId, {
-                        name: edition.name,
-                        displayNameEn: edition.displayNameEn,
-                        displayNameAr: edition.displayNameAr,
-                        description: edition.description,
-                        overflowPolicy: policy,
-                  });
-            },
-            onSuccess: () => {
-                  success({
-                        title: "Overflow Policy Updated",
-                        description: "The downgrade overflow policy has been saved.",
-                  });
-                  queryClient.invalidateQueries({ queryKey: ["entitlements", "editions", editionId] });
-            },
-            onError: (err) => {
-                  toastError({
-                        title: "Update Failed",
-                        description: err instanceof Error ? err.message : "Failed to update overflow policy",
-                  });
-            },
-      });
+      // ── Overflow Policy (local state — not auto-saved) ──
+      const [localOverflowPolicy, setLocalOverflowPolicy] = useState("Block");
 
-      const updateOverflowPolicy = useCallback((policy: string) => {
-            overflowPolicyMutation.mutate(policy);
-      }, [overflowPolicyMutation]);
+      // Sync overflow policy from server
+      useEffect(() => {
+            if (edition) {
+                  setLocalOverflowPolicy(edition.overflowPolicy ?? "Block");
+            }
+      }, [edition]);
+
+      const overflowPolicyChanged = useMemo(() => {
+            if (!edition) return false;
+            return localOverflowPolicy !== (edition.overflowPolicy ?? "Block");
+      }, [localOverflowPolicy, edition]);
+
+      // Combined unsaved — features or overflow policy
+      const combinedHasUnsavedChanges = hasUnsavedChanges || overflowPolicyChanged;
 
       return {
             edition,
@@ -249,19 +265,23 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
             pendingValues,
             getEffectiveValue,
             setLocalValue,
-            hasUnsavedChanges,
+            hasUnsavedChanges: combinedHasUnsavedChanges,
 
-            saveAllFeatures,
+            createVersionWithChanges,
+            isCreatingVersion: createVersionMutation.isPending,
+
+            directApplyChanges,
+            isDirectApplying: directApplyMutation.isPending,
+
             discardChanges,
-            isSaving: saveAllMutation.isPending,
 
             collapsedModules,
             toggleModule,
             expandAll,
             collapseAll,
 
-            overflowPolicy: edition?.overflowPolicy ?? 'Block',
-            updateOverflowPolicy,
-            isUpdatingOverflowPolicy: overflowPolicyMutation.isPending,
+            overflowPolicy: localOverflowPolicy,
+            setOverflowPolicy: setLocalOverflowPolicy,
+            overflowPolicyChanged,
       };
 }

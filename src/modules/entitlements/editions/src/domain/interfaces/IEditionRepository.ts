@@ -16,7 +16,10 @@ export interface IEditionRepository {
 
       // ── Versioning ──
       getVersions(editionId: string): Promise<EditionVersion[]>;
-      createVersion(editionId: string, changeNotes?: string): Promise<string>;
+      createVersion(editionId: string, changeNotes?: string, featureValues?: Record<string, string>): Promise<string>;
       publishVersion(editionId: string, versionId: string, data: { rolloutStrategy: string; scheduledAt?: string; canaryPercentage?: number }): Promise<void>;
       cancelVersion(editionId: string, versionId: string): Promise<void>;
+
+      // ── Direct Apply ──
+      directApplyFeatures(editionId: string, featureValues: Record<string, string>): Promise<void>;
 }
