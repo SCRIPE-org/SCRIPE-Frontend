@@ -49,20 +49,6 @@ export const navigationData: DocCategoryData[] = [
     ],
   },
 
-  // ─── Modules ───────────────────────────────────────────────
-  {
-    id: "modules",
-    titleKey: "nav.modules",
-    icon: "package",
-    order: 3,
-    items: [
-      { id: "mod-identity", titleKey: "modules.identity.title", slug: "modules/identity", order: 1 },
-      { id: "mod-entitlements", titleKey: "modules.entitlements.title", slug: "modules/entitlements", order: 2 },
-      { id: "mod-communication", titleKey: "modules.communication.title", slug: "modules/communication", order: 3 },
-      { id: "mod-media", titleKey: "modules.media.title", slug: "modules/media", order: 4 },
-    ],
-  },
-
   // ─── Features ──────────────────────────────────────────────
   {
     id: "features",

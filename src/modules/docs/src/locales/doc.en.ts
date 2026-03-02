@@ -74,7 +74,6 @@ export const docEn = {
     commercialIntegration: "Integration & APIs",
     commercialPricing: "Pricing & Licensing",
     commercialSupport: "Support & Resources",
-    modules: "Modules",
   },
 
 
@@ -1582,66 +1581,6 @@ export const docEn = {
       updateSettingsDesc: "Update system settings. Changes take effect immediately.",
       resetSettingsDesc: "Reset all settings to factory defaults.",
       readinessDesc: "Readiness probe — checks database, cache, blob storage, and background jobs.",
-    },
-  },
-
-  // ═══════════════════════════════════════════════════════════
-  //  MODULES
-  // ═══════════════════════════════════════════════════════════
-
-  modules: {
-    identity: {
-      title: "Identity Module",
-      description: "Authentication, authorization, multi-tenancy, and access control.",
-      intro: "The Identity module is the security backbone of NEXORA. It handles authentication (JWT + 2FA), role-based authorization (RBAC + ABAC + GBAC), hierarchical multi-tenant management with materialized paths, and comprehensive access control with permission caching.",
-      architectureTitle: "Architecture",
-      architectureDesc: "The Identity module follows Clean Architecture with three layers: Domain (pure entities and interfaces), Application (CQRS commands/queries via MediatR), and Infrastructure (EF Core repositories, services, background jobs).",
-      multiTenancyTitle: "Multi-Tenancy",
-      multiTenancyDesc: "Tenants form a hierarchical tree with materialized paths (HierarchyPath) for O(1) ancestor checks. The BFS cascade propagates permissions through the tree, while the Guardian Service enforces 9 safety rules. Parent suspend/cancel automatically cascades to all descendants.",
-      authTitle: "Authentication & Security",
-      authDesc: "JWT-based authentication with 15-minute access tokens and 7-day rotating refresh tokens. Supports TOTP-based 2FA with backup codes and anti-replay protection. Per-tenant password policies enforce complexity, expiry, and lockout.",
-      authzTitle: "Authorization (RBAC + ABAC + GBAC)",
-      authzDesc: "Unified access control combining Role-Based (RBAC), Attribute-Based (ABAC), and Group-Based (GBAC) models. ABAC extensions via ScopeOverride and RestrictedFieldsJson on RolePermission. Permissions are cached in-memory with O(1) HashSet lookup.",
-      entitiesTitle: "Domain Entities",
-    },
-
-    entitlements: {
-      title: "Entitlements Module",
-      description: "Editions, features, subscriptions, trials, quotas, and the retail model.",
-      intro: "The Entitlements module is the commercial engine of NEXORA. It manages edition-based subscription plans with 61 auto-seeded features across 3 layers (module access, feature toggles, quotas), 8 subscription lifecycle handlers, edition versioning with 4 rollout strategies, trial management, pooled quotas, and overflow policies.",
-      featureModelTitle: "3-Layer Feature Model",
-      featureModelDesc: "Features are organized into 3 layers: Layer 1 (Module Access) controls entire module visibility via boolean flags. Layer 2 (Feature Toggles) provides granular sub-feature control. Layer 3 (Quotas & Limits) enforces numeric resource limits per tenant or across the tenant tree.",
-      editionsTitle: "Editions",
-      editionsDesc: "Editions are subscription plans that define what features and quotas a tenant gets. They support tenant-scoped visibility (system + retail), the Iron Law (child ≤ parent), overflow policies (Block, GracefulFreeze, SoftDeactivate), and versioning with 4 rollout strategies.",
-      subscriptionsTitle: "Subscription Lifecycle",
-      subscriptionsDesc: "8 lifecycle handlers manage the complete subscription journey: Assign, Change, Renew, Convert (trial → paid), Suspend (cascades to children), Resume (with auto-restore), Cancel (cascades to children), and Revoke (force by system admin).",
-      trialsTitle: "Trial System",
-      trialsDesc: "Trials allow tenants to try plans before committing. Features include TrialSnapshot (pre-trial resource recording), abuse prevention (trial-once-per-edition, cooldown, payment required), 6-stage notification timeline, and auto-restore on subscribe.",
-      quotasTitle: "Quotas & Pooled Resources",
-      quotasDesc: "The quota system enforces limits at per-tenant and cross-tree (pooled) levels. QuotaCounter entities use atomic reservation to prevent race conditions. AdminPoolMode supports 3 modes: shared, separate, and per_child.",
-      quotaNote: "A value of -1 means unlimited — no limit is enforced. In the hierarchy, unlimited always beats any finite number, so child editions cannot set -1 if the parent has a finite limit.",
-    },
-
-    communication: {
-      title: "Communication Module",
-      description: "Email, real-time notifications, and webhook integrations.",
-      intro: "The Communication module handles all outbound messaging — templated emails via SMTP/SendGrid, real-time notifications via SignalR, and configurable webhook subscriptions with HMAC-SHA256 signing, retry policies, and delivery logs.",
-      emailTitle: "Email System",
-      emailDesc: "Templated email sending with Handlebars-based variable interpolation. Supports multiple providers (SMTP, SendGrid, Mailgun), localized templates (EN/AR), and is used by the trial notification timeline for the 6-stage email pipeline.",
-      notificationsTitle: "Notification System",
-      notificationsDesc: "Real-time push notifications via SignalR hub. Features an in-app notification center with read/unread tracking and support for System, Subscription, Security, and Alert notification types.",
-      webhooksTitle: "Webhook System",
-      webhooksDesc: "Event-driven webhook subscriptions per tenant. Subscribe to domain events (TenantCreated, AdminCreated, etc.) with HMAC-SHA256 payload signing, exponential backoff retry, circuit breaker auto-disable, and full delivery logs.",
-    },
-
-    media: {
-      title: "Media Module",
-      description: "File upload, download, storage management, and export.",
-      intro: "The Media module handles file upload with streaming, validation, and auto-generated thumbnails. Supports multi-backend storage (Local, AWS S3, Azure Blob), streaming downloads with resumable Range headers, and CSV/Excel/PDF export generation.",
-      uploadTitle: "File Upload",
-      uploadDesc: "Multi-part streaming upload with file type whitelist and max size enforcement. Auto-generates thumbnails for image files. All files are tenant-scoped for complete isolation.",
-      storageTitle: "Storage Backends",
-      storageDesc: "Pluggable storage backends configured via appsettings.json. Local filesystem for development, AWS S3 and Azure Blob Storage for production. Each backend implements the IFileStorageProvider interface.",
     },
   },
 };

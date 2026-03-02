@@ -77,12 +77,6 @@ import "./infrastructure/gateway-deployment";
 import "./infrastructure/database-migrations";
 import "./infrastructure/nexora-cli";
 
-// Modules
-import "./modules/identity";
-import "./modules/entitlements";
-import "./modules/communication";
-import "./modules/media";
-
 // Tutorials
 import "./tutorials/add-module";
 import "./tutorials/add-backend-module";
