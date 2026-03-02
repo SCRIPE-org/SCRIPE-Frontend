@@ -76,13 +76,13 @@ export function useTenantsViewModel(params: UseTenantsViewModelParams = {}) {
 
   // Create tenant mutation
   const createMutation = useMutation({
-    mutationFn: async ({ request, editionId }: { request: CreateTenantRequest; editionId: string }) => {
+    mutationFn: async ({ request, editionId, subscriptionType }: { request: CreateTenantRequest; editionId: string; subscriptionType?: string }) => {
       // 1. Create the tenant
       const newTenantId = await tenantRepository.create(request);
 
-      // 2. Assign the selected edition
+      // 2. Assign the selected edition with subscription type
       if (editionId) {
-        await tenantRepository.assignEdition(newTenantId, editionId);
+        await tenantRepository.assignEdition(newTenantId, editionId, subscriptionType);
       }
 
       return newTenantId;
@@ -141,7 +141,7 @@ export function useTenantsViewModel(params: UseTenantsViewModelParams = {}) {
 
   // Handlers
   const handleCreate = useCallback(
-    (request: CreateTenantRequest, editionId: string) => createMutation.mutateAsync({ request, editionId }),
+    (request: CreateTenantRequest, editionId: string, subscriptionType?: string) => createMutation.mutateAsync({ request, editionId, subscriptionType }),
     [createMutation]
   );
 

@@ -148,7 +148,13 @@ export const en = {
     // Subscriptions & Entitlements
     editionLabel: "Subscription Plan",
     editionPlaceholder: "Select a subscription plan...",
-    subscriptionType: "Duration",
+    subscriptionType: "Subscription Duration",
+    subscriptionTypes: {
+      lifetime: "Lifetime",
+      monthly: "Monthly",
+      yearly: "Yearly",
+      trial: "Trial (14 days)",
+    },
     tabEntitlements: "Entitlements",
     entitlementsTitle: "Tenant Entitlements",
     entitlementsDescription: "Limits and features enabled by the current subscription",

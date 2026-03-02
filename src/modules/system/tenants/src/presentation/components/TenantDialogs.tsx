@@ -22,6 +22,7 @@ export interface CreateFormState {
   code: string;
   description: string;
   editionId: string;
+  subscriptionType: string;
 }
 
 export interface EditFormState {
@@ -35,6 +36,7 @@ export const initialCreateForm: CreateFormState = {
   code: "",
   description: "",
   editionId: "",
+  subscriptionType: "Lifetime",
 };
 
 export const initialEditForm: EditFormState = {
@@ -53,7 +55,7 @@ interface CreateTenantDialogProps {
   parentTenant: TenantTreeNode | null;
   form: CreateFormState; // Kept for backwards compat signature, but GenericForm handles state internally
   setForm: React.Dispatch<React.SetStateAction<CreateFormState>>;
-  onSubmit: (data?: any) => void; // Using GenericForm onSubmit which passes data
+  onSubmit: (data?: any) => Promise<void> | void; // Using GenericForm onSubmit which passes data
   isLoading: boolean;
   onSearchEditions: (query: string) => Promise<{ value: string; label: string }[]>;
 }
@@ -111,6 +113,18 @@ export function CreateTenantDialog({
         searchType: "server",
         onServerSearch: onSearchEditions,
       },
+      {
+        name: "subscriptionType",
+        label: t("tenant.subscriptionType") || "Subscription Duration",
+        type: "select",
+        required: true,
+        options: [
+          { value: "Lifetime", label: t("tenant.subscriptionTypes.lifetime") || "Lifetime" },
+          { value: "Monthly", label: t("tenant.subscriptionTypes.monthly") || "Monthly" },
+          { value: "Yearly", label: t("tenant.subscriptionTypes.yearly") || "Yearly" },
+          { value: "Trial", label: t("tenant.subscriptionTypes.trial") || "Trial (14 days)" },
+        ],
+      },
     ],
     [t, onSearchEditions]
   );
@@ -122,9 +136,10 @@ export function CreateTenantDialog({
       code: data.code,
       description: data.description || "",
       editionId: data.editionId,
+      subscriptionType: data.subscriptionType || "Lifetime",
     });
     // Call original submit
-    onSubmit();
+    await onSubmit();
   };
 
   return (
@@ -157,7 +172,7 @@ interface EditTenantDialogProps {
   tenantName: string;
   form: EditFormState;
   setForm: React.Dispatch<React.SetStateAction<EditFormState>>;
-  onSubmit: () => void;
+  onSubmit: () => Promise<void> | void;
   isLoading: boolean;
 }
 
@@ -205,7 +220,7 @@ export function EditTenantDialog({
       description: data.description || "",
       isActive: data.isActive,
     });
-    onSubmit();
+    await onSubmit();
   };
 
   return (

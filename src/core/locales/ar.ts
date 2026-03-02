@@ -164,6 +164,12 @@ export const ar = {
     tabEntitlements: "الاستحقاقات والميزات",
     entitlementsTitle: "استحقاقات المستأجر",
     entitlementsDescription: "الحدود والميزات المفعلة في خطة الاشتراك الحالية",
+    subscriptionTypes: {
+      lifetime: "مدى الحياة",
+      monthly: "شهري",
+      yearly: "سنوي",
+      trial: "تجريبي (14 يوم)",
+    },
     subscriptionOverview: "تفاصيل الاشتراك",
 
     // الرسائل

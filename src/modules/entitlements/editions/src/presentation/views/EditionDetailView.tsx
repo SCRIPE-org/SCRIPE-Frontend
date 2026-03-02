@@ -15,6 +15,13 @@ import { Input } from "@core/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { Switch } from "@core/ui/switch";
 import {
+      Select,
+      SelectContent,
+      SelectItem,
+      SelectTrigger,
+      SelectValue,
+} from "@core/ui/select";
+import {
       Save, ArrowLeft, Loader2, Undo2, ChevronDown, ChevronRight,
       Zap, ChevronsUpDown
 } from "lucide-react";
@@ -208,6 +215,7 @@ export function EditionDetailView({ editionId }: EditionDetailViewProps) {
                                                                                                 valueType={feature.valueType}
                                                                                                 value={value}
                                                                                                 onChange={(v) => vm.setLocalValue(feature.name, v)}
+                                                                                                featureName={feature.name}
                                                                                           />
                                                                                     </div>
                                                                               </div>
@@ -234,16 +242,46 @@ function getFeatureDisabledDefault(valueType: string): string {
       }
 }
 
+// ── Known enum features with allowed values ──
+const ENUM_FEATURE_OPTIONS: Record<string, { value: string; label: string }[]> = {
+      "Identity.AdminPoolMode": [
+            { value: "shared", label: "Shared Pool" },
+            { value: "separate", label: "Separate (Parent Independent)" },
+            { value: "per_child", label: "Per Child (No Pool)" },
+      ],
+};
+
 // ── Feature Control Component ──
 function FeatureControl({
       valueType,
       value,
       onChange,
+      featureName,
 }: {
       valueType: string;
       value: string;
       onChange: (value: string) => void;
+      featureName?: string;
 }) {
+      // Check if this is a known enum feature
+      const enumOptions = featureName ? ENUM_FEATURE_OPTIONS[featureName] : undefined;
+      if (enumOptions) {
+            return (
+                  <Select value={value} onValueChange={onChange}>
+                        <SelectTrigger className="w-44 h-8">
+                              <SelectValue placeholder="Select..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                              {enumOptions.map((opt) => (
+                                    <SelectItem key={opt.value} value={opt.value}>
+                                          {opt.label}
+                                    </SelectItem>
+                              ))}
+                        </SelectContent>
+                  </Select>
+            );
+      }
+
       if (valueType === "Boolean") {
             return (
                   <Switch
