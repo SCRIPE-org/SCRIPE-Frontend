@@ -1,10 +1,11 @@
 /**
  * Subscription Mapper — Model ↔ Entity conversion
  */
-import type { Subscription, SubscriptionListItem } from "../../domain/entities/Subscription";
+import type { Subscription, SubscriptionListItem, GlobalSubscriptionItem } from "../../domain/entities/Subscription";
 import type {
       SubscriptionModel,
       SubscriptionListModel,
+      GlobalSubscriptionModel,
 } from "../services/SubscriptionService";
 
 export class SubscriptionMapper {
@@ -59,6 +60,27 @@ export class SubscriptionMapper {
                   currency: model.currency,
                   totalAmount: model.totalAmount,
                   totalAmountUsd: model.totalAmountUsd,
+            };
+      }
+
+      static toGlobalItem(model: GlobalSubscriptionModel): GlobalSubscriptionItem {
+            return {
+                  id: model.id,
+                  tenantId: model.tenantId,
+                  editionId: model.editionId,
+                  editionName: model.editionName,
+                  type: model.type,
+                  status: model.status,
+                  startDate: model.startDate,
+                  endDate: model.endDate,
+                  expiryBehavior: model.expiryBehavior,
+                  isDowngraded: model.isDowngraded,
+                  createdAt: model.createdAt,
+                  currency: model.currency,
+                  totalAmount: model.totalAmount,
+                  totalAmountUsd: model.totalAmountUsd,
+                  baseAmount: model.baseAmount,
+                  adjustmentAmount: model.adjustmentAmount,
             };
       }
 }

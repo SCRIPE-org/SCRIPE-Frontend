@@ -1,10 +1,11 @@
 /**
  * Subscription Repository Interface
  */
-import type { Subscription, SubscriptionListItem } from "../entities/Subscription";
+import type { Subscription, SubscriptionListItem, GlobalSubscriptionItem } from "../entities/Subscription";
 
 export interface ISubscriptionRepository {
       // Queries
+      getAll(): Promise<GlobalSubscriptionItem[]>;
       getByTenant(tenantId: string): Promise<SubscriptionListItem[]>;
       getById(id: string): Promise<Subscription>;
 

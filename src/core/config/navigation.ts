@@ -43,6 +43,9 @@ import {
   Bell,
   Webhook,
   Trash2,
+  DollarSign,
+  CreditCard,
+  Layers,
   type LucideIcon,
 } from "lucide-react";
 
@@ -96,6 +99,9 @@ export const iconMap: Record<string, LucideIcon> = {
   Bell: Bell,
   Webhook: Webhook,
   Trash2: Trash2,
+  DollarSign: DollarSign,
+  CreditCard: CreditCard,
+  Layers: Layers,
 };
 
 /**

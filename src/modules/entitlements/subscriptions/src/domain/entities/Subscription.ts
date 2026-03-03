@@ -50,3 +50,22 @@ export interface SubscriptionListItem {
       totalAmount?: number;
       totalAmountUsd?: number;
 }
+
+export interface GlobalSubscriptionItem {
+      id: string;
+      tenantId: string;
+      editionId: string;
+      editionName: string;
+      type: string;
+      status: string;
+      startDate: string;
+      endDate?: string;
+      expiryBehavior: string;
+      isDowngraded: boolean;
+      createdAt: string;
+      currency: string;
+      totalAmount: number;
+      totalAmountUsd: number;
+      baseAmount: number;
+      adjustmentAmount: number;
+}

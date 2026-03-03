@@ -54,10 +54,35 @@ export interface SubscriptionListModel {
       totalAmountUsd?: number;
 }
 
+export interface GlobalSubscriptionModel {
+      id: string;
+      tenantId: string;
+      editionId: string;
+      editionName: string;
+      type: string;
+      status: string;
+      startDate: string;
+      endDate?: string;
+      expiryBehavior: string;
+      isDowngraded: boolean;
+      createdAt: string;
+      currency: string;
+      totalAmount: number;
+      totalAmountUsd: number;
+      baseAmount: number;
+      adjustmentAmount: number;
+}
+
 export class SubscriptionService {
       constructor(private readonly api: IApiService) { }
 
       // ── Queries ──
+
+      async getAll(): Promise<GlobalSubscriptionModel[]> {
+            return this.api.get<GlobalSubscriptionModel[]>(
+                  API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.LIST_ALL
+            );
+      }
 
       async getByTenant(tenantId: string): Promise<SubscriptionListModel[]> {
             return this.api.get<SubscriptionListModel[]>(

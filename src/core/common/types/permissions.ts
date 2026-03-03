@@ -209,6 +209,24 @@ export const SYSTEM_PERMISSIONS = {
   // Recycle Bin
   RECYCLE_BIN_VIEW: "recycle_bin.view",
   RECYCLE_BIN_RESTORE: "recycle_bin.restore",
+
+  // Editions
+  EDITIONS_VIEW: "editions.view",
+  EDITIONS_CREATE: "editions.create",
+  EDITIONS_UPDATE: "editions.update",
+  EDITIONS_DELETE: "editions.delete",
+  EDITIONS_ASSIGN: "editions.assign",
+
+  // Features
+  FEATURES_VIEW: "features.view",
+  FEATURES_CREATE: "features.create",
+  FEATURES_UPDATE: "features.update",
+  FEATURES_DELETE: "features.delete",
+  FEATURES_OVERRIDE: "features.override",
+
+  // Subscriptions
+  SUBSCRIPTIONS_VIEW: "subscriptions.view",
+  SUBSCRIPTIONS_ASSIGN: "subscriptions.assign",
 } as const;
 
 /**
@@ -240,4 +258,9 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
 
   // Recycle Bin
   "/recycle-bin": [SYSTEM_PERMISSIONS.RECYCLE_BIN_VIEW],
+
+  // Entitlements
+  "/entitlements/editions": [SYSTEM_PERMISSIONS.EDITIONS_VIEW],
+  "/entitlements/features": [SYSTEM_PERMISSIONS.FEATURES_VIEW],
+  "/entitlements/subscriptions": [SYSTEM_PERMISSIONS.SUBSCRIPTIONS_VIEW],
 };

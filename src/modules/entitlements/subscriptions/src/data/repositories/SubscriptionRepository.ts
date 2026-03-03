@@ -2,12 +2,17 @@
  * Subscription Repository — uses Service + Mapper
  */
 import type { ISubscriptionRepository } from "../../domain/interfaces/ISubscriptionRepository";
-import type { Subscription, SubscriptionListItem } from "../../domain/entities/Subscription";
+import type { Subscription, SubscriptionListItem, GlobalSubscriptionItem } from "../../domain/entities/Subscription";
 import { SubscriptionService } from "../services/SubscriptionService";
 import { SubscriptionMapper } from "../mappers/SubscriptionMapper";
 
 export class SubscriptionRepository implements ISubscriptionRepository {
       constructor(private readonly service: SubscriptionService) { }
+
+      async getAll(): Promise<GlobalSubscriptionItem[]> {
+            const models = await this.service.getAll();
+            return models.map(SubscriptionMapper.toGlobalItem);
+      }
 
       async getByTenant(tenantId: string): Promise<SubscriptionListItem[]> {
             const models = await this.service.getByTenant(tenantId);

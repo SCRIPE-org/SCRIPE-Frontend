@@ -254,6 +254,7 @@ export const API_ENDPOINTS = {
       REMOVE_OVERRIDE: (tenantId: string, featureId: string) => `${V1}/tenants/${tenantId}/features/${featureId}`,
     },
     SUBSCRIPTIONS: {
+      LIST_ALL: `${V1}/subscriptions`,
       ASSIGN: (tenantId: string) => `${V1}/tenants/${tenantId}/subscription`,
       CHANGE: (tenantId: string) => `${V1}/tenants/${tenantId}/subscription`,
       RENEW: (tenantId: string) => `${V1}/tenants/${tenantId}/subscription/renew`,
