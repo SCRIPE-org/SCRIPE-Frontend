@@ -11,7 +11,8 @@ import {
       ArrowDownCircle, DollarSign, Globe,
 } from "lucide-react";
 import { useTenantSubscriptionViewModel } from "@modules/system/tenants/src/presentation/viewmodels/useTenantSubscriptionViewModel";
-import { SUPPORTED_CURRENCIES, formatPrice } from "@modules/entitlements/editions/src/domain/entities/EditionPricing";
+import { SUPPORTED_CURRENCIES } from "@modules/entitlements/editions/src/domain/entities/EditionPricing";
+import { useConvertedAmount } from "@core/hooks/useConvertedAmount";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@core/ui/dialog";
 import { GenericSelect } from "@core/crud/components/generic-select";
 import type { GenericSelectOption } from "@core/crud/components/generic-select";
@@ -77,6 +78,7 @@ const CONVERT_OPTIONS: GenericSelectOption[] = [
 export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps) {
       const { t } = useI18n();
       const vm = useTenantSubscriptionViewModel(tenantId);
+      const { formatDisplay } = useConvertedAmount();
 
       // Dialog states
       const [changePlanOpen, setChangePlanOpen] = useState(false);
@@ -239,14 +241,14 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                                 <div className="space-y-1">
                                                       <p className="text-xs font-medium text-muted-foreground">{t("tenant.totalAmount") || "Total"}</p>
                                                       <p className="text-sm font-bold text-emerald-600 dark:text-emerald-400">
-                                                            {formatPrice(subscription.totalAmount, subscription.currency)}
+                                                            {formatDisplay(subscription.totalAmount, subscription.currency)}
                                                       </p>
                                                 </div>
                                                 {subscription.baseAmount != null && subscription.baseAmount !== subscription.totalAmount && (
                                                       <div className="space-y-1">
                                                             <p className="text-xs font-medium text-muted-foreground">{t("tenant.baseAmount") || "Base"}</p>
                                                             <p className="text-sm font-medium">
-                                                                  {formatPrice(subscription.baseAmount, subscription.currency)}
+                                                                  {formatDisplay(subscription.baseAmount, subscription.currency)}
                                                             </p>
                                                       </div>
                                                 )}
@@ -553,7 +555,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                                             {t("tenant.totalAmount") || "Total Amount"}
                                                       </span>
                                                       <span className="text-lg font-bold text-emerald-600 dark:text-emerald-400">
-                                                            {formatPrice(previewAmount, subscription?.currency || "USD")}
+                                                            {formatDisplay(previewAmount, subscription?.currency || "USD")}
                                                       </span>
                                                 </div>
                                           </div>

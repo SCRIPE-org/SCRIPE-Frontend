@@ -22,6 +22,7 @@ import { API_ENDPOINTS } from "@core/config/api-endpoints";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Radio, FileDown } from "lucide-react";
+import { CurrencyDisplayToggle } from "@core/ui/currency-display-toggle";
 
 // Lazy-load heavy chart/section components (not above-the-fold)
 const LoginActivityChart = dynamic(() => import("../components/LoginActivityChart").then(m => ({ default: m.LoginActivityChart })), { ssr: false });
@@ -54,6 +55,7 @@ export function DashboardView() {
           <p className="text-muted-foreground">{t("dashboard.subtitle")}</p>
         </div>
         <div className="flex items-center gap-2">
+          <CurrencyDisplayToggle />
           <Button
             variant="outline"
             size="sm"

@@ -12,6 +12,8 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { Skeleton } from "@core/ui/skeleton";
 import { Users, ShieldCheck, Building2, KeyRound, LogIn, ShieldAlert, DollarSign, CreditCard, Clock } from "lucide-react";
+import { useConvertedAmount } from "@core/hooks/useConvertedAmount";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@core/ui/tooltip";
 
 interface Props {
   data?: DashboardSummary;
@@ -109,6 +111,7 @@ export const KPICardsSection = memo(function KPICardsSection({
   onRetry,
 }: Props) {
   const { t } = useI18n();
+  const { formatDisplay, getConversionTooltip, isConverting } = useConvertedAmount();
 
   if (isLoading) {
     return (
@@ -171,9 +174,15 @@ export const KPICardsSection = memo(function KPICardsSection({
             <CardContent>
               <div className="text-2xl font-bold tabular-nums">
                 {kpi.format === "currency"
-                  ? new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(Number(value))
+                  ? formatDisplay(Number(value), "USD")
                   : Number(value).toLocaleString()}
               </div>
+              {kpi.format === "currency" && isConverting && (() => {
+                const tip = getConversionTooltip(Number(value), "USD");
+                return tip ? (
+                  <p className="mt-0.5 text-[10px] text-muted-foreground/60 italic">{tip}</p>
+                ) : null;
+              })()}
               {secondary !== undefined && kpi.secondaryLabel && (
                 <p className="mt-1 text-xs tabular-nums text-muted-foreground">
                   {secondary} {t(kpi.secondaryLabel)}

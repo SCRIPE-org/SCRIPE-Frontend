@@ -4995,4 +4995,15 @@ export const ar = {
     },
   },
 
+  // تفضيلات عرض العملة
+  currency: {
+    displayToggle: "عملة العرض",
+    toggleDesc: "اختر كيفية عرض المبالغ",
+    native: "الأصلية",
+    justThisTime: "هذه المرة فقط",
+    alwaysUse: "استخدام العملة المحددة دائمًا",
+    resetToNative: "إعادة للأصلية",
+    convertedFrom: "محوّل من {{from}}",
+  },
+
 };

@@ -20,6 +20,7 @@ import { Skeleton } from "@core/ui/skeleton";
 import { AlertTriangle } from "lucide-react";
 import { Button } from "@core/ui/button";
 import { cn } from "@core/common/utils";
+import { CurrencyDisplayToggle } from "@core/ui/currency-display-toggle";
 
 // Lazy-load heavy sub-sections
 const TenantHeader = dynamic(
@@ -128,8 +129,11 @@ export function TenantDetailPage({ tenantId }: TenantDetailPageProps) {
 
   return (
     <main className="min-h-screen space-y-5" dir={direction}>
-      {/* Breadcrumbs */}
-      <PageBreadcrumbs segments={breadcrumbSegments} />
+      {/* Breadcrumbs + Currency Toggle */}
+      <div className="flex items-center justify-between">
+        <PageBreadcrumbs segments={breadcrumbSegments} />
+        <CurrencyDisplayToggle />
+      </div>
 
       {/* Hero Header: tenant info, status banners, actions, subscription bar */}
       <TenantHeader

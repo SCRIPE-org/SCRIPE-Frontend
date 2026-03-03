@@ -409,6 +409,17 @@ export const en = {
     confirmDowngrade: "Confirm Downgrade",
   },
 
+  // Currency Display Preferences
+  currency: {
+    displayToggle: "Display Currency",
+    toggleDesc: "Choose how amounts are displayed",
+    native: "Native (original)",
+    justThisTime: "Just this time",
+    alwaysUse: "Always use selected currency",
+    resetToNative: "Reset to native",
+    convertedFrom: "Converted from {{from}}",
+  },
+
   // Tenant Settings Page (/settings/tenant)
   tenantSettings: {
     title: "My Tenant Settings",
