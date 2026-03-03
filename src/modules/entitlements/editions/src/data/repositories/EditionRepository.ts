@@ -4,6 +4,7 @@
 import type { IEditionRepository } from "../../domain/interfaces/IEditionRepository";
 import { Edition } from "../../domain/entities/Edition";
 import type { EditionVersion } from "../../domain/entities/EditionVersion";
+import type { EditionPriceListResponse, SetEditionPricesRequest } from "../../domain/entities/EditionPricing";
 import { EditionMapper } from "../mappers/EditionMapper";
 import type { CreateEditionRequest, UpdateEditionRequest } from "../../domain/entities/EditionRequests";
 import type { EditionService } from "../services/EditionService";
@@ -71,4 +72,14 @@ export class EditionRepository implements IEditionRepository {
       async directApplyFeatures(editionId: string, featureValues: Record<string, string>): Promise<void> {
             await this.service.directApplyFeatures(editionId, featureValues);
       }
+
+      // ── Pricing ──
+      async getEditionPrices(editionId: string): Promise<EditionPriceListResponse> {
+            return this.service.getEditionPrices(editionId);
+      }
+
+      async setEditionPrices(editionId: string, request: SetEditionPricesRequest): Promise<void> {
+            await this.service.setEditionPrices(editionId, request.prices);
+      }
 }
+

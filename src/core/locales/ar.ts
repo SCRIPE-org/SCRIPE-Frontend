@@ -4931,6 +4931,27 @@ export const ar = {
       stage: "المرحلة",
       sentAt: "أُرسل في",
     },
+    // ── التسعير ──
+    pricing: {
+      title: "التسعير",
+      description: "إعدادات التسعير متعدد العملات",
+      price: "السعر",
+      amount: "المبلغ",
+      currency: "العملة",
+      monthly: "شهري",
+      yearly: "سنوي",
+      addCurrency: "إضافة عملة",
+      addCurrencyDesc: "اختر عملة لإضافة تسعير لها. سيتم تهيئة الأسعار الشهرية والسنوية.",
+      selectCurrency: "اختر العملة...",
+      removeCurrency: "إزالة العملة",
+      noPrices: "لم يتم تهيئة التسعير",
+      noPricesDesc: "أضف عملتك الأولى لبدء تهيئة تسعير هذا الإصدار.",
+      saveSuccess: "تم حفظ التسعير بنجاح",
+      deleteConfirm: "هل أنت متأكد من إزالة هذه العملة؟",
+      unsavedChanges: "تغييرات التسعير غير محفوظة",
+      unsavedChangesDesc: "احفظ لتطبيق تغييرات التسعير.",
+      managePricing: "إدارة التسعير",
+    },
   },
 
 };

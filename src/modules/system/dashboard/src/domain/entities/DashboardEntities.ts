@@ -16,6 +16,10 @@ export interface DashboardSummary {
   totalRoles: number;
   loginsToday: number;
   failedLogins24h: number;
+  // Subscription KPIs
+  totalMrrUsd: number;
+  totalActiveSubscriptions: number;
+  trialSubscriptions: number;
 }
 
 /** Chart data point for login activity */

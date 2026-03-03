@@ -28,6 +28,13 @@ export class SubscriptionMapper {
                   downgradedAt: model.downgradedAt,
                   createdAt: model.createdAt,
                   modifiedAt: model.modifiedAt,
+                  // Pricing
+                  currency: model.currency,
+                  baseAmount: model.baseAmount,
+                  adjustmentAmount: model.adjustmentAmount,
+                  totalAmount: model.totalAmount,
+                  totalAmountUsd: model.totalAmountUsd,
+                  exchangeRateToUsd: model.exchangeRateToUsd,
             };
       }
 
@@ -48,6 +55,10 @@ export class SubscriptionMapper {
                   downgradedFromType: model.downgradedFromType,
                   downgradedAt: model.downgradedAt,
                   createdAt: model.createdAt,
+                  // Pricing
+                  currency: model.currency,
+                  totalAmount: model.totalAmount,
+                  totalAmountUsd: model.totalAmountUsd,
             };
       }
 }

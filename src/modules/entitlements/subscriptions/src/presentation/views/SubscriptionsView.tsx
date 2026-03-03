@@ -127,6 +127,28 @@ export function SubscriptionsView({ tenantId }: SubscriptionsViewProps) {
                               ),
                         },
                         {
+                              key: "totalAmount",
+                              label: t("entitlements.pricing.amount") || "Amount",
+                              render: (_value: unknown, item: SubscriptionListItem) => {
+                                    if (!item.totalAmount || !item.currency) {
+                                          return <span className="text-muted-foreground">—</span>;
+                                    }
+                                    const formatted = new Intl.NumberFormat("en-US", {
+                                          style: "currency",
+                                          currency: item.currency,
+                                          minimumFractionDigits: 2,
+                                    }).format(item.totalAmount);
+                                    return (
+                                          <div className="flex items-center gap-1.5">
+                                                <span className="tabular-nums text-sm font-medium">{formatted}</span>
+                                                <Badge variant="outline" className="text-[10px] px-1 py-0 h-4">
+                                                      {item.currency}
+                                                </Badge>
+                                          </div>
+                                    );
+                              },
+                        },
+                        {
                               key: "endDate",
                               label: t("entitlements.subscriptions.endDate") || "End Date",
                               render: (value?: string) =>

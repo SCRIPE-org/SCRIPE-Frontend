@@ -23,6 +23,7 @@ export class EditionMapper {
                   fallbackEditionId: model.fallbackEditionId,
                   fallbackEditionName: model.fallbackEditionName,
                   overflowPolicy: model.overflowPolicy,
+                  baseMonthlyPriceUsd: model.baseMonthlyPriceUsd,
                   createdAt: model.createdAt,
                   modifiedAt: model.modifiedAt,
             };

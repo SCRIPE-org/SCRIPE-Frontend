@@ -11,7 +11,7 @@ import type { DashboardSummary } from "../../domain/entities/DashboardEntities";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { Skeleton } from "@core/ui/skeleton";
-import { Users, ShieldCheck, Building2, KeyRound, LogIn, ShieldAlert } from "lucide-react";
+import { Users, ShieldCheck, Building2, KeyRound, LogIn, ShieldAlert, DollarSign, CreditCard, Clock } from "lucide-react";
 
 interface Props {
   data?: DashboardSummary;
@@ -28,6 +28,7 @@ interface KpiItem {
   labelKey: string;
   secondaryKey?: keyof DashboardSummary;
   secondaryLabel?: string;
+  format?: "currency";
 }
 
 const kpiConfig: KpiItem[] = [
@@ -77,6 +78,28 @@ const kpiConfig: KpiItem[] = [
     bgColor: "bg-red-500/10",
     labelKey: "dashboard.kpi.failedLogins",
   },
+  {
+    key: "totalMrrUsd",
+    icon: DollarSign,
+    color: "text-emerald-600",
+    bgColor: "bg-emerald-600/10",
+    labelKey: "dashboard.kpi.totalMrr",
+    format: "currency",
+  },
+  {
+    key: "totalActiveSubscriptions",
+    icon: CreditCard,
+    color: "text-blue-600",
+    bgColor: "bg-blue-600/10",
+    labelKey: "dashboard.kpi.activeSubscriptions",
+  },
+  {
+    key: "trialSubscriptions",
+    icon: Clock,
+    color: "text-amber-600",
+    bgColor: "bg-amber-600/10",
+    labelKey: "dashboard.kpi.trialSubscriptions",
+  },
 ];
 
 export const KPICardsSection = memo(function KPICardsSection({
@@ -90,7 +113,7 @@ export const KPICardsSection = memo(function KPICardsSection({
   if (isLoading) {
     return (
       <div
-        className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6"
+        className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
         role="status"
         aria-label={t("common.loading")}
       >
@@ -124,7 +147,7 @@ export const KPICardsSection = memo(function KPICardsSection({
   }
 
   return (
-    <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6" aria-live="polite">
+    <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5" aria-live="polite">
       {kpiConfig.map((kpi) => {
         const Icon = kpi.icon;
         const value = data?.[kpi.key] ?? 0;
@@ -146,7 +169,11 @@ export const KPICardsSection = memo(function KPICardsSection({
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold tabular-nums">{value.toLocaleString()}</div>
+              <div className="text-2xl font-bold tabular-nums">
+                {kpi.format === "currency"
+                  ? new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(Number(value))
+                  : Number(value).toLocaleString()}
+              </div>
               {secondary !== undefined && kpi.secondaryLabel && (
                 <p className="mt-1 text-xs tabular-nums text-muted-foreground">
                   {secondary} {t(kpi.secondaryLabel)}

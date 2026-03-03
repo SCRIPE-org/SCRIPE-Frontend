@@ -44,6 +44,27 @@ export function EditionsView() {
                               ),
                         },
                         {
+                              key: "baseMonthlyPriceUsd",
+                              label: t("entitlements.pricing.price") || "Price",
+                              render: (_val: unknown, edition: Edition) => {
+                                    const price = edition.baseMonthlyPriceUsd;
+                                    if (price == null || price === 0) {
+                                          return <span className="text-muted-foreground">—</span>;
+                                    }
+                                    const formatted = new Intl.NumberFormat("en-US", {
+                                          style: "currency",
+                                          currency: "USD",
+                                          minimumFractionDigits: 0,
+                                    }).format(price);
+                                    return (
+                                          <span className="tabular-nums text-sm font-medium text-emerald-600 dark:text-emerald-400">
+                                                {formatted}
+                                                <span className="text-muted-foreground text-xs">/mo</span>
+                                          </span>
+                                    );
+                              },
+                        },
+                        {
                               key: "isRetired",
                               label: t("entitlements.editions.status") || "Status",
                               render: (_val: unknown, edition: Edition) => (
@@ -52,24 +73,6 @@ export function EditionsView() {
                                                 ? t("entitlements.editions.retired") || "Retired"
                                                 : t("common.active") || "Active"}
                                     </Badge>
-                              ),
-                        },
-                        {
-                              key: "isSystem",
-                              label: t("entitlements.editions.isSystem") || "System",
-                              render: (value: boolean) => (
-                                    <Badge variant={value ? "default" : "outline"}>
-                                          {value ? t("common.yes") || "Yes" : t("common.no") || "No"}
-                                    </Badge>
-                              ),
-                        },
-                        {
-                              key: "fallbackEditionName",
-                              label: t("entitlements.editions.fallbackEdition") || "Fallback Edition",
-                              render: (value: string) => value ? (
-                                    <Badge variant="outline">{value}</Badge>
-                              ) : (
-                                    <span className="text-muted-foreground">—</span>
                               ),
                         },
                         {

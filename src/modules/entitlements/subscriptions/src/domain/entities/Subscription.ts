@@ -20,6 +20,13 @@ export interface Subscription {
       downgradedAt?: string;
       createdAt: string;
       modifiedAt?: string;
+      // ── Pricing ──
+      currency?: string;
+      baseAmount?: number;
+      adjustmentAmount?: number;
+      totalAmount?: number;
+      totalAmountUsd?: number;
+      exchangeRateToUsd?: number;
 }
 
 export interface SubscriptionListItem {
@@ -38,4 +45,8 @@ export interface SubscriptionListItem {
       downgradedFromType?: string;
       downgradedAt?: string;
       createdAt: string;
+      // ── Pricing ──
+      currency?: string;
+      totalAmount?: number;
+      totalAmountUsd?: number;
 }

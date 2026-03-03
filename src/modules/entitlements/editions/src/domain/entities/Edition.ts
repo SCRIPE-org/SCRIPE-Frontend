@@ -23,6 +23,7 @@ export interface EditionData extends BaseEntity {
       fallbackEditionId?: string;
       fallbackEditionName?: string;
       overflowPolicy?: string;
+      baseMonthlyPriceUsd?: number;
 }
 
 export class Edition {
@@ -41,6 +42,7 @@ export class Edition {
       get fallbackEditionId(): string | undefined { return this.data.fallbackEditionId; }
       get fallbackEditionName(): string | undefined { return this.data.fallbackEditionName; }
       get overflowPolicy(): string { return this.data.overflowPolicy ?? 'Block'; }
+      get baseMonthlyPriceUsd(): number | undefined { return this.data.baseMonthlyPriceUsd; }
 
       getDisplayName(lang: string): string {
             return lang === "ar" ? this.displayNameAr : this.displayNameEn;

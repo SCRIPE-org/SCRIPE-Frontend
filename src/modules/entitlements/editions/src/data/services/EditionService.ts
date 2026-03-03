@@ -21,6 +21,7 @@ export interface EditionModel {
       fallbackEditionId?: string;
       fallbackEditionName?: string;
       overflowPolicy?: string;
+      baseMonthlyPriceUsd?: number;
       createdAt: string;
       modifiedAt?: string;
 }
@@ -76,6 +77,15 @@ export class EditionService {
 
       async directApplyFeatures(editionId: string, featureValues: Record<string, string>): Promise<void> {
             await this.api.post(API_ENDPOINTS.ENTITLEMENTS.EDITIONS.DIRECT_APPLY_FEATURES(editionId), { featureValues });
+      }
+
+      // ── Pricing ──
+      async getEditionPrices(editionId: string): Promise<{ editionId: string; prices: Array<{ currency: string; billingCycle: string; amount: number }> }> {
+            return this.api.get(API_ENDPOINTS.ENTITLEMENTS.EDITIONS.PRICES(editionId));
+      }
+
+      async setEditionPrices(editionId: string, prices: Array<{ currency: string; billingCycle: string; amount: number }>): Promise<void> {
+            await this.api.put(API_ENDPOINTS.ENTITLEMENTS.EDITIONS.SET_PRICES(editionId), { prices });
       }
 }
 
