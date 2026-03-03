@@ -81,5 +81,9 @@ export class EditionRepository implements IEditionRepository {
       async setEditionPrices(editionId: string, request: SetEditionPricesRequest): Promise<void> {
             await this.service.setEditionPrices(editionId, request.prices);
       }
+
+      async getExchangeRates(baseCurrency: string = "USD"): Promise<Record<string, number>> {
+            return this.service.getExchangeRates(baseCurrency);
+      }
 }
 

@@ -87,6 +87,11 @@ export class EditionService {
       async setEditionPrices(editionId: string, prices: Array<{ currency: string; billingCycle: string; amount: number }>): Promise<void> {
             await this.api.put(API_ENDPOINTS.ENTITLEMENTS.EDITIONS.SET_PRICES(editionId), { prices });
       }
+
+      // ── Currency Exchange Rates ──
+      async getExchangeRates(baseCurrency: string = "USD"): Promise<Record<string, number>> {
+            return this.api.get<Record<string, number>>(API_ENDPOINTS.ENTITLEMENTS.CURRENCY.RATES(baseCurrency));
+      }
 }
 
 export interface EditionVersionModel {

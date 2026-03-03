@@ -1,9 +1,10 @@
 /**
- * Pricing Tab — Multi-Currency Pricing Management
+ * Pricing Tab — Redesigned with Hybrid Pricing Model
  *
- * Premium UI for managing edition pricing across multiple currencies.
- * Features inline editing, add/remove currencies, yearly savings badges,
- * and a sticky save bar matching the existing EditionDetailView pattern.
+ * 3-Section Layout:
+ * 1. Base Pricing (USD) — Always visible, anchor currency
+ * 2. Currency Overrides — Optional, with auto-suggest from exchange rates
+ * 3. Live Preview — Shows what tenants would actually pay
  */
 "use client";
 
@@ -19,16 +20,13 @@ import {
       Dialog, DialogContent, DialogDescription, DialogFooter,
       DialogHeader, DialogTitle,
 } from "@core/ui/dialog";
-import {
-      Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
-} from "@core/ui/select";
+import GenericSelect from "@core/crud/components/generic-select";
 import {
       DollarSign, Plus, Trash2, Loader2, Undo2, Save,
-      TrendingDown, Coins, AlertCircle,
+      TrendingDown, Coins, AlertCircle, Info, ChevronDown,
+      Globe, Zap,
 } from "lucide-react";
-import {
-      SUPPORTED_CURRENCIES, getCurrencyInfo, formatPrice,
-} from "../../domain/entities/EditionPricing";
+import { getCurrencyInfo, formatPrice, SUPPORTED_CURRENCIES } from "../../domain/entities/EditionPricing";
 
 interface PricingTabProps {
       editionId: string;
@@ -39,15 +37,11 @@ export const PricingTab = memo(function PricingTab({ editionId }: PricingTabProp
       const vm = useEditionPricingViewModel(editionId);
       const [showAddDialog, setShowAddDialog] = useState(false);
       const [selectedCurrency, setSelectedCurrency] = useState("");
-
-      // Available currencies = all supported - already used
-      const availableCurrencies = SUPPORTED_CURRENCIES.filter(
-            (c) => !vm.usedCurrencies.includes(c.code)
-      );
+      const [showPreview, setShowPreview] = useState(false);
 
       const handleAddCurrency = () => {
             if (selectedCurrency) {
-                  vm.addCurrency(selectedCurrency);
+                  vm.addOverride(selectedCurrency);
                   setSelectedCurrency("");
                   setShowAddDialog(false);
             }
@@ -56,24 +50,24 @@ export const PricingTab = memo(function PricingTab({ editionId }: PricingTabProp
       // ── Loading ──
       if (vm.isLoading) {
             return (
-                  <Card>
-                        <CardHeader className="pb-3">
-                              <div className="flex items-center gap-2">
-                                    <Skeleton className="h-5 w-5 rounded" />
-                                    <Skeleton className="h-5 w-32" />
-                              </div>
-                        </CardHeader>
-                        <CardContent className="space-y-3">
-                              {[1, 2, 3].map((i) => (
-                                    <div key={i} className="flex items-center gap-4">
-                                          <Skeleton className="h-8 w-24" />
-                                          <Skeleton className="h-8 flex-1" />
-                                          <Skeleton className="h-8 flex-1" />
-                                          <Skeleton className="h-8 w-8" />
+                  <div className="space-y-4">
+                        <Card>
+                              <CardHeader className="pb-3">
+                                    <div className="flex items-center gap-2">
+                                          <Skeleton className="h-5 w-5 rounded" />
+                                          <Skeleton className="h-5 w-32" />
                                     </div>
-                              ))}
-                        </CardContent>
-                  </Card>
+                              </CardHeader>
+                              <CardContent className="space-y-3">
+                                    {[1, 2].map((i) => (
+                                          <div key={i} className="flex items-center gap-4">
+                                                <Skeleton className="h-8 w-24" />
+                                                <Skeleton className="h-8 flex-1" />
+                                          </div>
+                                    ))}
+                              </CardContent>
+                        </Card>
+                  </div>
             );
       }
 
@@ -89,153 +83,334 @@ export const PricingTab = memo(function PricingTab({ editionId }: PricingTabProp
             );
       }
 
+      const usdSavings = vm.yearlySavingsPercent("USD");
+
       return (
             <>
-                  <Card className="overflow-hidden">
-                        <CardHeader className="py-3">
-                              <div className="flex items-center justify-between">
+                  <div className="space-y-4">
+                        {/* ═══════════════════════════════════════════════════ */}
+                        {/* SECTION 1: BASE PRICING (USD)                     */}
+                        {/* ═══════════════════════════════════════════════════ */}
+                        <Card className="overflow-hidden">
+                              <CardHeader className="py-3">
                                     <div className="flex items-center gap-2">
                                           <div className="rounded-lg p-1.5 bg-emerald-500/10">
-                                                <Coins className="h-4 w-4 text-emerald-500" />
+                                                <DollarSign className="h-4 w-4 text-emerald-500" />
                                           </div>
                                           <CardTitle className="text-sm font-medium">
-                                                {t("entitlements.pricing.title") || "Multi-Currency Pricing"}
+                                                {t("entitlements.pricing.basePricing") || "Base Pricing (USD)"}
                                           </CardTitle>
-                                          {vm.prices.length > 0 && (
-                                                <Badge variant="secondary" className="text-xs">
-                                                      {vm.prices.length} {vm.prices.length === 1 ? "currency" : "currencies"}
-                                                </Badge>
-                                          )}
+                                          <Badge variant="secondary" className="text-[10px]">
+                                                {t("entitlements.pricing.required") || "Required"}
+                                          </Badge>
                                     </div>
-                                    <Button
-                                          size="sm"
-                                          variant="outline"
-                                          onClick={() => setShowAddDialog(true)}
-                                          disabled={availableCurrencies.length === 0}
-                                          className="gap-1.5"
-                                    >
-                                          <Plus className="h-3.5 w-3.5" />
-                                          {t("entitlements.pricing.addCurrency") || "Add Currency"}
-                                    </Button>
-                              </div>
-                        </CardHeader>
-
-                        <CardContent className="pt-0">
-                              {vm.prices.length === 0 ? (
-                                    /* ── Empty State ── */
-                                    <div className="flex flex-col items-center justify-center py-12 text-center">
-                                          <div className="rounded-full bg-muted/50 p-4 mb-4">
-                                                <DollarSign className="h-8 w-8 text-muted-foreground/50" />
+                              </CardHeader>
+                              <CardContent className="pt-0 space-y-3">
+                                    {/* Monthly */}
+                                    <div className="flex items-center gap-3">
+                                          <span className="text-sm text-muted-foreground w-20 shrink-0">
+                                                {t("entitlements.pricing.monthly") || "Monthly"}
+                                          </span>
+                                          <div className="relative flex-1 max-w-xs">
+                                                <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-muted-foreground font-medium">$</span>
+                                                <Input
+                                                      type="number"
+                                                      value={vm.usdMonthly || ""}
+                                                      onChange={(e) => vm.setUsdMonthly(parseFloat(e.target.value) || 0)}
+                                                      className="h-9 pl-7 text-right tabular-nums text-sm"
+                                                      min={0}
+                                                      step="0.01"
+                                                      placeholder="0.00"
+                                                />
                                           </div>
-                                          <h3 className="font-medium text-sm mb-1">
-                                                {t("entitlements.pricing.noPrices") || "No Pricing Configured"}
-                                          </h3>
-                                          <p className="text-xs text-muted-foreground max-w-xs mb-4">
-                                                {t("entitlements.pricing.noPricesDesc") ||
-                                                      "Add your first currency to start configuring pricing for this edition."}
+                                          <span className="text-xs text-muted-foreground">/mo</span>
+                                    </div>
+
+                                    {/* Yearly */}
+                                    <div className="flex items-center gap-3">
+                                          <span className="text-sm text-muted-foreground w-20 shrink-0">
+                                                {t("entitlements.pricing.yearly") || "Yearly"}
+                                          </span>
+                                          <div className="relative flex-1 max-w-xs">
+                                                <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-muted-foreground font-medium">$</span>
+                                                <Input
+                                                      type="number"
+                                                      value={vm.usdYearly || ""}
+                                                      onChange={(e) => vm.setUsdYearly(parseFloat(e.target.value) || 0)}
+                                                      className="h-9 pl-7 text-right tabular-nums text-sm"
+                                                      min={0}
+                                                      step="0.01"
+                                                      placeholder="0.00"
+                                                />
+                                          </div>
+                                          <div className="flex items-center gap-1.5">
+                                                <span className="text-xs text-muted-foreground">/yr</span>
+                                                {usdSavings > 0 && (
+                                                      <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 bg-emerald-500/5">
+                                                            <TrendingDown className="h-2.5 w-2.5 me-0.5" />
+                                                            {t("entitlements.pricing.save") || "Save"} {usdSavings}%
+                                                      </Badge>
+                                                )}
+                                          </div>
+                                    </div>
+
+                                    {/* Dynamic Yearly Discount */}
+                                    {vm.usdMonthly > 0 && (
+                                          <div className="rounded-lg bg-muted/30 border p-3 mt-1 space-y-2">
+                                                <div className="flex items-center justify-between">
+                                                      <span className="text-xs font-medium text-muted-foreground">
+                                                            {t("entitlements.pricing.yearlyDiscount")}
+                                                      </span>
+                                                      <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5 tabular-nums">
+                                                            {vm.yearlyDiscountPercent}%
+                                                      </Badge>
+                                                </div>
+                                                <div className="flex items-center gap-3">
+                                                      <input
+                                                            type="range"
+                                                            min={0}
+                                                            max={50}
+                                                            step={1}
+                                                            value={vm.yearlyDiscountPercent}
+                                                            onChange={(e) => vm.setYearlyDiscountPercent(parseInt(e.target.value))}
+                                                            className="flex-1 h-1.5 accent-emerald-500 cursor-pointer"
+                                                      />
+                                                      <div className="flex items-center gap-1.5">
+                                                            <span className="text-xs text-muted-foreground tabular-nums whitespace-nowrap">
+                                                                  {t("entitlements.pricing.suggested")}: ${vm.suggestedYearly.toLocaleString()}/yr
+                                                            </span>
+                                                            <Button
+                                                                  variant="ghost"
+                                                                  size="sm"
+                                                                  className="h-6 px-2 text-[10px] text-emerald-600 hover:text-emerald-700 hover:bg-emerald-500/10"
+                                                                  onClick={vm.applyDiscountToYearly}
+                                                            >
+                                                                  <Zap className="h-2.5 w-2.5 me-0.5" />
+                                                                  {t("entitlements.pricing.applyDiscount")}
+                                                            </Button>
+                                                      </div>
+                                                </div>
+                                          </div>
+                                    )}
+
+                                    {/* Info banner */}
+                                    <div className="flex items-start gap-2 rounded-lg bg-blue-500/5 border border-blue-500/10 p-2.5 mt-2">
+                                          <Info className="h-3.5 w-3.5 text-blue-500 mt-0.5 shrink-0" />
+                                          <p className="text-[11px] text-blue-600 dark:text-blue-400 leading-relaxed">
+                                                {t("entitlements.pricing.autoConvertInfo") || "Currencies without explicit overrides will auto-convert from USD at live exchange rates."}
                                           </p>
+                                    </div>
+                              </CardContent>
+                        </Card>
+
+                        {/* ═══════════════════════════════════════════════════ */}
+                        {/* SECTION 2: CURRENCY OVERRIDES                     */}
+                        {/* ═══════════════════════════════════════════════════ */}
+                        <Card className="overflow-hidden">
+                              <CardHeader className="py-3">
+                                    <div className="flex items-center justify-between">
+                                          <div className="flex items-center gap-2">
+                                                <div className="rounded-lg p-1.5 bg-violet-500/10">
+                                                      <Globe className="h-4 w-4 text-violet-500" />
+                                                </div>
+                                                <CardTitle className="text-sm font-medium">
+                                                      {t("entitlements.pricing.currencyOverrides") || "Currency Overrides"}
+                                                </CardTitle>
+                                                {vm.overrides.length > 0 && (
+                                                      <Badge variant="outline" className="text-[10px]">
+                                                            {vm.overrides.length}
+                                                      </Badge>
+                                                )}
+                                                <Badge variant="secondary" className="text-[10px]">
+                                                      {t("entitlements.pricing.optional") || "Optional"}
+                                                </Badge>
+                                          </div>
                                           <Button
                                                 size="sm"
+                                                variant="outline"
                                                 onClick={() => setShowAddDialog(true)}
-                                                className="gradient-primary gap-1.5"
+                                                disabled={vm.availableCurrencies.length === 0}
+                                                className="gap-1.5"
                                           >
                                                 <Plus className="h-3.5 w-3.5" />
-                                                {t("entitlements.pricing.addCurrency") || "Add Currency"}
+                                                {t("entitlements.pricing.addOverride") || "Add Override"}
                                           </Button>
                                     </div>
-                              ) : (
-                                    /* ── Pricing Table ── */
-                                    <div className="border rounded-lg overflow-hidden">
-                                          {/* Table Header */}
-                                          <div className="grid grid-cols-[140px_1fr_1fr_60px] gap-3 px-4 py-2.5 bg-muted/30 border-b text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                                                <span>{t("entitlements.pricing.currency") || "Currency"}</span>
-                                                <span>{t("entitlements.pricing.monthly") || "Monthly"}</span>
-                                                <span>{t("entitlements.pricing.yearly") || "Yearly"}</span>
-                                                <span />
+                              </CardHeader>
+
+                              <CardContent className="pt-0">
+                                    {vm.overrides.length === 0 ? (
+                                          <div className="flex flex-col items-center justify-center py-8 text-center">
+                                                <div className="rounded-full bg-muted/50 p-3 mb-3">
+                                                      <Globe className="h-6 w-6 text-muted-foreground/50" />
+                                                </div>
+                                                <p className="text-xs text-muted-foreground max-w-xs">
+                                                      {t("entitlements.pricing.noOverridesDesc") ||
+                                                            "All currencies will auto-convert from USD. Add overrides for specific markets where you want fixed pricing."}
+                                                </p>
                                           </div>
+                                    ) : (
+                                          <div className="border rounded-lg overflow-hidden">
+                                                {/* Table Header */}
+                                                <div className="grid grid-cols-[140px_1fr_1fr_60px] gap-3 px-4 py-2.5 bg-muted/30 border-b text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                                                      <span>{t("entitlements.pricing.currency") || "Currency"}</span>
+                                                      <span>{t("entitlements.pricing.monthly") || "Monthly"}</span>
+                                                      <span>{t("entitlements.pricing.yearly") || "Yearly"}</span>
+                                                      <span />
+                                                </div>
 
-                                          {/* Table Rows */}
-                                          <div className="divide-y">
-                                                {vm.prices.map((row) => {
-                                                      const info = getCurrencyInfo(row.currency);
-                                                      const savings = vm.yearlySavingsPercent(row.currency);
+                                                {/* Override Rows */}
+                                                <div className="divide-y">
+                                                      {vm.overrides.map((row) => {
+                                                            const info = getCurrencyInfo(row.currency);
+                                                            const savings = vm.yearlySavingsPercent(row.currency);
 
-                                                      return (
-                                                            <div
-                                                                  key={row.currency}
-                                                                  className="grid grid-cols-[140px_1fr_1fr_60px] gap-3 px-4 py-3 items-center group hover:bg-accent/30 transition-colors"
-                                                            >
-                                                                  {/* Currency Label */}
-                                                                  <div className="flex items-center gap-2">
-                                                                        <span className="text-lg leading-none">{info?.flag || "💱"}</span>
-                                                                        <div>
-                                                                              <span className="text-sm font-semibold">{row.currency}</span>
-                                                                              <p className="text-[10px] text-muted-foreground leading-tight">{info?.name}</p>
+                                                            return (
+                                                                  <div
+                                                                        key={row.currency}
+                                                                        className="grid grid-cols-[140px_1fr_1fr_60px] gap-3 px-4 py-3 items-center group hover:bg-accent/30 transition-colors"
+                                                                  >
+                                                                        {/* Currency Label */}
+                                                                        <div className="flex items-center gap-2">
+                                                                              <span className="text-lg leading-none">{info?.flag || "💱"}</span>
+                                                                              <div>
+                                                                                    <span className="text-sm font-semibold">{row.currency}</span>
+                                                                                    <p className="text-[10px] text-muted-foreground leading-tight">{info?.name}</p>
+                                                                              </div>
                                                                         </div>
-                                                                  </div>
 
-                                                                  {/* Monthly Price Input */}
-                                                                  <div className="relative">
-                                                                        <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-muted-foreground font-medium">
-                                                                              {info?.symbol || "$"}
-                                                                        </span>
-                                                                        <Input
-                                                                              type="number"
-                                                                              value={row.monthlyAmount || ""}
-                                                                              onChange={(e) => vm.updatePrice(row.currency, "monthly", parseFloat(e.target.value) || 0)}
-                                                                              className="h-8 pl-8 text-right tabular-nums text-sm"
-                                                                              min={0}
-                                                                              step="0.01"
-                                                                              placeholder="0.00"
-                                                                        />
-                                                                  </div>
-
-                                                                  {/* Yearly Price Input + Savings Badge */}
-                                                                  <div className="flex items-center gap-2">
-                                                                        <div className="relative flex-1">
+                                                                        {/* Monthly Price */}
+                                                                        <div className="relative">
                                                                               <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-muted-foreground font-medium">
                                                                                     {info?.symbol || "$"}
                                                                               </span>
                                                                               <Input
                                                                                     type="number"
-                                                                                    value={row.yearlyAmount || ""}
-                                                                                    onChange={(e) => vm.updatePrice(row.currency, "yearly", parseFloat(e.target.value) || 0)}
+                                                                                    value={row.monthlyAmount || ""}
+                                                                                    onChange={(e) => vm.updateOverride(row.currency, "monthly", parseFloat(e.target.value) || 0)}
                                                                                     className="h-8 pl-8 text-right tabular-nums text-sm"
                                                                                     min={0}
                                                                                     step="0.01"
                                                                                     placeholder="0.00"
                                                                               />
                                                                         </div>
-                                                                        {savings > 0 && (
-                                                                              <Badge
-                                                                                    variant="outline"
-                                                                                    className="text-[10px] px-1.5 py-0 h-5 shrink-0 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 bg-emerald-500/5"
-                                                                              >
-                                                                                    <TrendingDown className="h-2.5 w-2.5 me-0.5" />
-                                                                                    {savings}%
-                                                                              </Badge>
-                                                                        )}
-                                                                  </div>
 
-                                                                  {/* Delete */}
-                                                                  <div className="flex justify-center">
-                                                                        <Button
-                                                                              variant="ghost"
-                                                                              size="icon"
-                                                                              className="h-7 w-7 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
-                                                                              onClick={() => vm.removeCurrency(row.currency)}
-                                                                        >
-                                                                              <Trash2 className="h-3.5 w-3.5" />
-                                                                        </Button>
+                                                                        {/* Yearly Price + Savings */}
+                                                                        <div className="flex items-center gap-2">
+                                                                              <div className="relative flex-1">
+                                                                                    <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-muted-foreground font-medium">
+                                                                                          {info?.symbol || "$"}
+                                                                                    </span>
+                                                                                    <Input
+                                                                                          type="number"
+                                                                                          value={row.yearlyAmount || ""}
+                                                                                          onChange={(e) => vm.updateOverride(row.currency, "yearly", parseFloat(e.target.value) || 0)}
+                                                                                          className="h-8 pl-8 text-right tabular-nums text-sm"
+                                                                                          min={0}
+                                                                                          step="0.01"
+                                                                                          placeholder="0.00"
+                                                                                    />
+                                                                              </div>
+                                                                              {savings > 0 && (
+                                                                                    <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5 shrink-0 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 bg-emerald-500/5">
+                                                                                          <TrendingDown className="h-2.5 w-2.5 me-0.5" />
+                                                                                          {savings}%
+                                                                                    </Badge>
+                                                                              )}
+                                                                        </div>
+
+                                                                        {/* Delete */}
+                                                                        <div className="flex justify-center">
+                                                                              <Button
+                                                                                    variant="ghost"
+                                                                                    size="icon"
+                                                                                    className="h-7 w-7 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+                                                                                    onClick={() => vm.removeOverride(row.currency)}
+                                                                              >
+                                                                                    <Trash2 className="h-3.5 w-3.5" />
+                                                                              </Button>
+                                                                        </div>
                                                                   </div>
-                                                            </div>
-                                                      );
-                                                })}
+                                                            );
+                                                      })}
+                                                </div>
                                           </div>
-                                    </div>
-                              )}
-                        </CardContent>
-                  </Card>
+                                    )}
+                              </CardContent>
+                        </Card>
+
+                        {/* ═══════════════════════════════════════════════════ */}
+                        {/* SECTION 3: LIVE PREVIEW (Collapsible)              */}
+                        {/* ═══════════════════════════════════════════════════ */}
+                        {vm.usdMonthly > 0 && (
+                              <Card className="overflow-hidden">
+                                    <CardHeader className="py-3 cursor-pointer" onClick={() => setShowPreview(!showPreview)}>
+                                          <div className="flex items-center justify-between">
+                                                <div className="flex items-center gap-2">
+                                                      <div className="rounded-lg p-1.5 bg-amber-500/10">
+                                                            <Coins className="h-4 w-4 text-amber-500" />
+                                                      </div>
+                                                      <CardTitle className="text-sm font-medium">
+                                                            {t("entitlements.pricing.livePreview") || "Live Preview"}
+                                                      </CardTitle>
+                                                      <Badge variant="outline" className="text-[10px]">
+                                                            {vm.preview.length} {t("entitlements.pricing.currencies") || "currencies"}
+                                                      </Badge>
+                                                      {vm.ratesLoading && (
+                                                            <Loader2 className="h-3 w-3 animate-spin text-muted-foreground" />
+                                                      )}
+                                                </div>
+                                                <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform ${showPreview ? "rotate-180" : ""}`} />
+                                          </div>
+                                    </CardHeader>
+
+                                    {showPreview && (
+                                          <CardContent className="pt-0">
+                                                <p className="text-[11px] text-muted-foreground mb-3">
+                                                      {t("entitlements.pricing.previewDesc") || "What tenants will actually pay in each currency."}
+                                                </p>
+                                                <div className="border rounded-lg overflow-hidden">
+                                                      <div className="grid grid-cols-[110px_1fr_1fr_80px] gap-3 px-4 py-2 bg-muted/30 border-b text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                                                            <span>{t("entitlements.pricing.currency") || "Currency"}</span>
+                                                            <span>{t("entitlements.pricing.monthly") || "Monthly"}</span>
+                                                            <span>{t("entitlements.pricing.yearly") || "Yearly"}</span>
+                                                            <span>{t("entitlements.pricing.source") || "Source"}</span>
+                                                      </div>
+                                                      <div className="divide-y max-h-[300px] overflow-y-auto">
+                                                            {vm.preview.map((row) => {
+                                                                  const info = getCurrencyInfo(row.currency);
+                                                                  return (
+                                                                        <div
+                                                                              key={row.currency}
+                                                                              className="grid grid-cols-[110px_1fr_1fr_80px] gap-3 px-4 py-2.5 items-center text-sm"
+                                                                        >
+                                                                              <div className="flex items-center gap-1.5">
+                                                                                    <span className="text-base">{info?.flag || "💱"}</span>
+                                                                                    <span className="font-medium text-xs">{row.currency}</span>
+                                                                              </div>
+                                                                              <span className="tabular-nums text-xs">{formatPrice(row.monthlyAmount, row.currency)}</span>
+                                                                              <span className="tabular-nums text-xs">{formatPrice(row.yearlyAmount, row.currency)}</span>
+                                                                              <Badge
+                                                                                    variant={row.source === "explicit" ? "default" : "outline"}
+                                                                                    className={`text-[9px] px-1.5 py-0 h-4 ${row.source === "auto"
+                                                                                          ? "text-blue-600 dark:text-blue-400 border-blue-500/30 bg-blue-500/5"
+                                                                                          : ""
+                                                                                          }`}
+                                                                              >
+                                                                                    {row.source === "explicit"
+                                                                                          ? (t("entitlements.pricing.explicit") || "Fixed")
+                                                                                          : (t("entitlements.pricing.autoConverted") || "Auto")}
+                                                                              </Badge>
+                                                                        </div>
+                                                                  );
+                                                            })}
+                                                      </div>
+                                                </div>
+                                          </CardContent>
+                                    )}
+                              </Card>
+                        )}
+                  </div>
 
                   {/* ═══════ STICKY SAVE BAR ═══════ */}
                   {vm.isDirty && (
@@ -255,21 +430,11 @@ export const PricingTab = memo(function PricingTab({ editionId }: PricingTabProp
                                                       </div>
                                                 </div>
                                                 <div className="flex items-center gap-2 shrink-0">
-                                                      <Button
-                                                            variant="ghost"
-                                                            size="sm"
-                                                            onClick={vm.discard}
-                                                            disabled={vm.isSaving}
-                                                      >
+                                                      <Button variant="ghost" size="sm" onClick={vm.discard} disabled={vm.isSaving}>
                                                             <Undo2 className="h-4 w-4 me-1" />
                                                             {t("common.discard") || "Discard"}
                                                       </Button>
-                                                      <Button
-                                                            size="sm"
-                                                            onClick={vm.save}
-                                                            disabled={vm.isSaving}
-                                                            className="gradient-primary"
-                                                      >
+                                                      <Button size="sm" onClick={vm.save} disabled={vm.isSaving} className="gradient-primary">
                                                             {vm.isSaving ? (
                                                                   <Loader2 className="h-4 w-4 animate-spin me-1" />
                                                             ) : (
@@ -284,37 +449,32 @@ export const PricingTab = memo(function PricingTab({ editionId }: PricingTabProp
                         </div>
                   )}
 
-                  {/* ═══════ ADD CURRENCY DIALOG ═══════ */}
+                  {/* ═══════ ADD CURRENCY OVERRIDE DIALOG ═══════ */}
                   <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
                         <DialogContent className="sm:max-w-md">
                               <DialogHeader>
                                     <DialogTitle className="flex items-center gap-2">
                                           <Plus className="h-5 w-5 text-primary" />
-                                          {t("entitlements.pricing.addCurrency") || "Add Currency"}
+                                          {t("entitlements.pricing.addOverride") || "Add Currency Override"}
                                     </DialogTitle>
                                     <DialogDescription>
-                                          {t("entitlements.pricing.addCurrencyDesc") ||
-                                                "Select a currency to add pricing for. Both monthly and yearly prices will be configured."}
+                                          {t("entitlements.pricing.addOverrideDesc") ||
+                                                "Select a currency to set fixed pricing for. Prices will be auto-suggested from the current exchange rate."}
                                     </DialogDescription>
                               </DialogHeader>
 
                               <div className="py-3">
-                                    <Select value={selectedCurrency} onValueChange={setSelectedCurrency}>
-                                          <SelectTrigger>
-                                                <SelectValue placeholder={t("entitlements.pricing.selectCurrency") || "Select currency..."} />
-                                          </SelectTrigger>
-                                          <SelectContent>
-                                                {availableCurrencies.map((c) => (
-                                                      <SelectItem key={c.code} value={c.code}>
-                                                            <span className="flex items-center gap-2">
-                                                                  <span>{c.flag}</span>
-                                                                  <span className="font-medium">{c.code}</span>
-                                                                  <span className="text-muted-foreground">— {c.name}</span>
-                                                            </span>
-                                                      </SelectItem>
-                                                ))}
-                                          </SelectContent>
-                                    </Select>
+                                    <GenericSelect
+                                          type="searchable"
+                                          options={vm.availableCurrencies.map((c) => ({
+                                                value: c.code,
+                                                label: `${c.flag} ${c.code} — ${c.name}`,
+                                          }))}
+                                          value={selectedCurrency}
+                                          onValueChange={(value: string | string[]) => setSelectedCurrency(typeof value === "string" ? value : value[0] || "")}
+                                          placeholder={t("entitlements.pricing.selectCurrency") || "Search currency..."}
+                                          searchPlaceholder={t("entitlements.pricing.searchCurrency") || "Search..."}
+                                    />
                               </div>
 
                               <DialogFooter>

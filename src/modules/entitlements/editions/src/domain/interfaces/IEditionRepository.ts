@@ -27,5 +27,6 @@ export interface IEditionRepository {
       // ── Pricing ──
       getEditionPrices(editionId: string): Promise<EditionPriceListResponse>;
       setEditionPrices(editionId: string, request: SetEditionPricesRequest): Promise<void>;
+      getExchangeRates(baseCurrency?: string): Promise<Record<string, number>>;
 }
 

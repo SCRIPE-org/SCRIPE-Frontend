@@ -266,6 +266,11 @@ export const API_ENDPOINTS = {
       GET_BY_ID: (id: string) => `${V1}/subscriptions/${id}`,
       REVOKE: (id: string) => `${V1}/subscriptions/${id}`,
     },
+    CURRENCY: {
+      RATES: (baseCurrency: string = "USD") => `${V1}/currency/rates?baseCurrency=${baseCurrency}`,
+      SUPPORTED: `${V1}/currency/supported`,
+      REFRESH: `${V1}/currency/rates/refresh`,
+    },
   },
 
   // ===== USER GROUPS =====
