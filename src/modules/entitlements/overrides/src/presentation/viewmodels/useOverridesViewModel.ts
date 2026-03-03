@@ -37,6 +37,11 @@ export function useOverridesViewModel(tenantId: string) {
       const [overrideValue, setOverrideValue] = useState("");
       const [overrideReason, setOverrideReason] = useState("");
 
+      // ─── Cost dialog state ──────────────────────────────
+      const [costOverrideId, setCostOverrideId] = useState<string | null>(null);
+      const [costAmount, setCostAmount] = useState("");
+      const [costReason, setCostReason] = useState("");
+
       // ─── Query keys ────────────────────────────────────
       const overridesKey = ["entitlements", "overrides", tenantId];
       const resolvedKey = ["entitlements", "resolved", tenantId];
@@ -132,6 +137,39 @@ export function useOverridesViewModel(tenantId: string) {
                   showError({ title: t("common.error"), description: err.message }),
       });
 
+      // ─── Set override cost mutation ──────────────────────
+      const setCostMutation = useMutation({
+            mutationFn: (params: { overrideId: string; amountUsd: number; reason?: string }) =>
+                  overrideRepository.setOverrideCost(params.overrideId, params.amountUsd, params.reason),
+            onSuccess: () => {
+                  invalidate();
+                  success({
+                        title: t("entitlements.overrides.costSet"),
+                        description: t("entitlements.overrides.costSetDesc"),
+                  });
+                  setCostOverrideId(null);
+                  setCostAmount("");
+                  setCostReason("");
+            },
+            onError: (err: Error) =>
+                  showError({ title: t("common.error"), description: err.message }),
+      });
+
+      // ─── Remove override cost mutation ───────────────────
+      const removeCostMutation = useMutation({
+            mutationFn: (overrideId: string) =>
+                  overrideRepository.removeOverrideCost(overrideId),
+            onSuccess: () => {
+                  invalidate();
+                  success({
+                        title: t("entitlements.overrides.costRemoved"),
+                        description: t("entitlements.overrides.costRemovedDesc"),
+                  });
+            },
+            onError: (err: Error) =>
+                  showError({ title: t("common.error"), description: err.message }),
+      });
+
       // ─── Dialog actions ────────────────────────────────
       const openSetOverride = useCallback(
             (featureId: string, featureName: string, valueType: string, currentValue: string) => {
@@ -187,5 +225,29 @@ export function useOverridesViewModel(tenantId: string) {
             // Remove override
             removeOverride: removeOverrideMutation.mutate,
             isRemoving: removeOverrideMutation.isPending,
+
+            // Cost adjustment
+            costOverrideId,
+            costAmount,
+            costReason,
+            setCostAmount,
+            setCostReason,
+            openCostDialog: (overrideId: string) => {
+                  setCostOverrideId(overrideId);
+                  setCostAmount("");
+                  setCostReason("");
+            },
+            closeCostDialog: () => setCostOverrideId(null),
+            submitCost: () => {
+                  if (!costOverrideId || !costAmount) return;
+                  setCostMutation.mutate({
+                        overrideId: costOverrideId,
+                        amountUsd: parseFloat(costAmount),
+                        reason: costReason || undefined,
+                  });
+            },
+            isSavingCost: setCostMutation.isPending,
+            removeCost: removeCostMutation.mutate,
+            isRemovingCost: removeCostMutation.isPending,
       };
 }

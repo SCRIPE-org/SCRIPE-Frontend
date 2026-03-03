@@ -34,4 +34,12 @@ export class OverrideRepository implements IOverrideRepository {
       async removeOverride(tenantId: string, featureId: string): Promise<void> {
             await this.service.removeOverride(tenantId, featureId);
       }
+
+      async setOverrideCost(overrideId: string, amountUsd: number, reason?: string): Promise<void> {
+            await this.service.setOverrideCost(overrideId, amountUsd, reason);
+      }
+
+      async removeOverrideCost(overrideId: string): Promise<void> {
+            await this.service.removeOverrideCost(overrideId);
+      }
 }

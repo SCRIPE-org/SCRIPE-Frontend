@@ -11,7 +11,7 @@ import type {
 } from "../entities/TenantRequests";
 import type { PagedResult } from "@modules/system/core/domain/types";
 import type { Permission } from "@modules/system/permissions/src/domain/entities/Permission";
-import type { EditionThinModel, SubscriptionModel, PagedEditionResult } from "../../data/models/TenantSubscription";
+import type { EditionThinModel, SubscriptionModel, PagedEditionResult, DowngradeImpactReport } from "../../data/models/TenantSubscription";
 
 /**
  * Tenant list query parameters
@@ -145,7 +145,7 @@ export interface ITenantRepository {
   /**
    * Assign a base edition (plan) to a newly created tenant
    */
-  assignEdition(tenantId: string, editionId: string, type?: string, endDate?: string): Promise<{ id: string }>;
+  assignEdition(tenantId: string, editionId: string, type?: string, endDate?: string, currency?: string): Promise<{ id: string }>;
 
   /**
    * Change the base edition of an existing tenant
@@ -179,4 +179,13 @@ export interface ITenantRepository {
    * Get resolved features (edition + overrides) for a tenant
    */
   getResolvedFeatures(tenantId: string): Promise<Array<{ name: string; value: string }>>;
+
+  /** Change the billing currency of the active subscription */
+  changeCurrency(tenantId: string, currency: string): Promise<string>;
+
+  /** Preview downgrade impact before changing edition */
+  getDowngradeImpact(tenantId: string, targetEditionId: string): Promise<DowngradeImpactReport>;
+
+  /** Preview resolved price for an edition + currency + type combo */
+  previewPrice(editionId: string, currency: string, type: string): Promise<number>;
 }

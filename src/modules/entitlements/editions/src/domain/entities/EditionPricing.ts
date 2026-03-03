@@ -39,6 +39,7 @@ export const SUPPORTED_CURRENCIES = [
 export const BILLING_CYCLES = [
       { value: "Monthly", label: "Monthly" },
       { value: "Yearly", label: "Yearly" },
+      { value: "Lifetime", label: "Lifetime" },
 ] as const;
 
 /** Helper: get currency metadata by code */

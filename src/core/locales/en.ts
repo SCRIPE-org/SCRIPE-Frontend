@@ -388,6 +388,25 @@ export const en = {
     canceled: "Canceled",
     expiringSoon: "Expiring Soon",
     trialEndDate: "Trial End Date",
+    // Pricing & Currency (Phase 2)
+    billingCurrency: "Billing Currency",
+    totalAmount: "Total Amount",
+    baseAmount: "Base Amount",
+    exchangeRate: "Exchange Rate",
+    changeCurrency: "Change Currency",
+    changeCurrencyDesc: "Change the billing currency for this subscription. Pricing will be recalculated using current exchange rates.",
+    changeCurrencyInfo: "The subscription amount will be recalculated using the current exchange rate. No other subscription details will change.",
+    currentCurrency: "Current Currency",
+    newCurrency: "New Currency",
+    selectCurrency: "Select currency",
+    currencyChanged: "Billing currency changed successfully",
+    selectRenewalPeriod: "Select renewal period",
+    // Phase 3: Downgrade Impact & Price Preview
+    checkingImpact: "Checking impact...",
+    downgradeWarning: "Resource limits will be exceeded",
+    overflow: "over",
+    overflowInfo: "Excess resources will need to be removed or the system will auto-adjust.",
+    confirmDowngrade: "Confirm Downgrade",
   },
 
   // Tenant Settings Page (/settings/tenant)
@@ -5030,6 +5049,16 @@ export const en = {
       sourceDefault: "Default",
       sourceEdition: "Edition",
       sourceOverride: "Override",
+      // Phase 3: Cost adjustment
+      setCost: "Set Cost Adjustment",
+      setCostDesc: "Assign a monthly USD cost for this override.",
+      costAmount: "Amount (USD)",
+      costReason: "Reason (optional)",
+      costReasonPlaceholder: "e.g. Extra admin seats surcharge",
+      costSet: "Cost Saved",
+      costSetDesc: "The cost adjustment has been saved.",
+      costRemoved: "Cost Removed",
+      costRemovedDesc: "The cost adjustment has been removed.",
     },
     // ── Pooled Quotas & Admin Pool Mode ──
     pooledQuotas: {
@@ -5103,6 +5132,9 @@ export const en = {
       discountPercent: "Discount %",
       applyDiscount: "Apply Discount",
       suggested: "Suggested",
+      lifetime: "Lifetime",
+      oneTime: "One-time",
+      billingCurrency: "Billing Currency",
     },
   },
 

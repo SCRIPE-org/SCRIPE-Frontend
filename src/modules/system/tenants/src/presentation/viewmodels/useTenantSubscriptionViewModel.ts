@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 import { systemContainer } from "@modules/system/di";
-import type { SubscriptionModel, EditionThinModel, SubscriptionType, ExpiryBehavior } from "../../data/models/TenantSubscription";
+import type { SubscriptionModel, EditionThinModel, SubscriptionType, ExpiryBehavior, DowngradeImpactReport } from "../../data/models/TenantSubscription";
 import { appLogger } from "@/core/common/logger";
 
 // ── Result Interface ──
@@ -61,6 +61,12 @@ export interface UseTenantSubscriptionViewModelResult {
 
       resyncPermissions: () => void;
       isResyncing: boolean;
+
+      changeCurrency: (currency: string) => void;
+      isChangingCurrency: boolean;
+
+      getDowngradeImpact: (targetEditionId: string) => Promise<DowngradeImpactReport>;
+      previewPrice: (editionId: string, currency: string, type: string) => Promise<number>;
 }
 
 // ── ViewModel ──
@@ -213,6 +219,14 @@ export function useTenantSubscriptionViewModel(tenantId: string): UseTenantSubsc
             onError: errorToast,
       });
 
+      const changeCurrencyMutation = useMutation({
+            mutationFn: async (currency: string) => {
+                  return await systemContainer.tenantRepository.changeCurrency(tenantId, currency);
+            },
+            onSuccess: (msg) => { successToast(msg || t("tenant.currencyChanged") || "Billing currency changed"); invalidateAll(); },
+            onError: errorToast,
+      });
+
       // ── Return ──
 
       return {
@@ -249,5 +263,13 @@ export function useTenantSubscriptionViewModel(tenantId: string): UseTenantSubsc
 
             resyncPermissions: () => resyncMutation.mutate(),
             isResyncing: resyncMutation.isPending,
+
+            changeCurrency: changeCurrencyMutation.mutate,
+            isChangingCurrency: changeCurrencyMutation.isPending,
+
+            getDowngradeImpact: (targetEditionId: string) =>
+                  systemContainer.tenantRepository.getDowngradeImpact(tenantId, targetEditionId),
+            previewPrice: (editionId: string, currency: string, type: string) =>
+                  systemContainer.tenantRepository.previewPrice(editionId, currency, type),
       };
 }

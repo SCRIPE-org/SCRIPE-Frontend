@@ -26,7 +26,8 @@ import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Switch } from "@core/ui/switch";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
-import { Loader2, Trash2, Pencil, Shield, Layers } from "lucide-react";
+import { Loader2, Trash2, Pencil, Shield, Layers, DollarSign } from "lucide-react";
+import { Textarea } from "@core/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
 import { format } from "date-fns";
 
@@ -92,6 +93,7 @@ export function OverridesView({ tenantId }: OverridesViewProps) {
                   </Tabs>
 
                   <SetOverrideDialog vm={vm} t={t} />
+                  <CostDialog vm={vm} t={t} />
             </div>
       );
 }
@@ -262,6 +264,14 @@ function CurrentOverridesCard({ vm, t }: { vm: VM; t: TFn }) {
                                                                         <Button
                                                                               variant="ghost"
                                                                               size="sm"
+                                                                              title={t("entitlements.overrides.setCost") || "Set Cost"}
+                                                                              onClick={() => vm.openCostDialog(o.id)}
+                                                                        >
+                                                                              <DollarSign className="h-4 w-4" />
+                                                                        </Button>
+                                                                        <Button
+                                                                              variant="ghost"
+                                                                              size="sm"
                                                                               className="text-destructive"
                                                                               onClick={() => vm.removeOverride(o.featureId)}
                                                                               disabled={vm.isRemoving}
@@ -348,6 +358,61 @@ function SetOverrideDialog({ vm, t }: { vm: VM; t: TFn }) {
                               <Button onClick={vm.submitOverride} disabled={vm.isSaving}>
                                     {vm.isSaving && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
                                     {t("common.save")}
+                              </Button>
+                        </DialogFooter>
+                  </DialogContent>
+            </Dialog>
+      );
+}
+
+/* ============================================
+ * COST ADJUSTMENT DIALOG
+ * ============================================ */
+
+function CostDialog({ vm, t }: { vm: VM; t: TFn }) {
+      return (
+            <Dialog open={!!vm.costOverrideId} onOpenChange={(open) => { if (!open) vm.closeCostDialog(); }}>
+                  <DialogContent className="max-w-sm">
+                        <DialogHeader>
+                              <DialogTitle>{t("entitlements.overrides.setCost") || "Set Cost Adjustment"}</DialogTitle>
+                              <DialogDescription>
+                                    {t("entitlements.overrides.setCostDesc") || "Assign a monthly USD cost for this override."}
+                              </DialogDescription>
+                        </DialogHeader>
+                        <div className="space-y-4 py-2">
+                              <div className="space-y-2">
+                                    <Label>{t("entitlements.overrides.costAmount") || "Amount (USD)"}</Label>
+                                    <Input
+                                          type="number"
+                                          min="0"
+                                          step="0.01"
+                                          value={vm.costAmount}
+                                          onChange={(e) => vm.setCostAmount(e.target.value)}
+                                          placeholder="0.00"
+                                    />
+                              </div>
+                              <div className="space-y-2">
+                                    <Label>{t("entitlements.overrides.costReason") || "Reason (optional)"}</Label>
+                                    <Textarea
+                                          value={vm.costReason}
+                                          onChange={(e) => vm.setCostReason(e.target.value)}
+                                          placeholder={t("entitlements.overrides.costReasonPlaceholder") || "e.g. Extra admin seats surcharge"}
+                                          rows={2}
+                                    />
+                              </div>
+                        </div>
+                        <DialogFooter>
+                              <Button variant="outline" onClick={() => vm.closeCostDialog()} disabled={vm.isSavingCost}>
+                                    {t("common.cancel") || "Cancel"}
+                              </Button>
+                              <Button
+                                    onClick={() => vm.submitCost()}
+                                    disabled={!vm.costAmount || vm.isSavingCost}
+                              >
+                                    {vm.isSavingCost
+                                          ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />{t("common.saving") || "Saving..."}</>
+                                          : (t("common.save") || "Save")
+                                    }
                               </Button>
                         </DialogFooter>
                   </DialogContent>

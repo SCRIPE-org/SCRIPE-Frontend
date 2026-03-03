@@ -35,7 +35,8 @@ import type {
 import type {
   EditionThinModel,
   SubscriptionModel,
-  PagedEditionResult
+  PagedEditionResult,
+  DowngradeImpactReport,
 } from "../models/TenantSubscription";
 
 export class TenantService implements ITenantService {
@@ -204,18 +205,19 @@ export class TenantService implements ITenantService {
     tenantId: string,
     editionId: string,
     type?: string,
-    endDate?: string
+    endDate?: string,
+    currency?: string
   ): Promise<{ id: string }> {
     return this.api.post<{ id: string }>(
       API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.ASSIGN(tenantId),
-      { editionId, type, endDate }
+      { editionId, type, endDate, currency: currency || "USD" }
     );
   }
 
-  async changeEdition(tenantId: string, editionId: string, type: string = "Lifetime"): Promise<void> {
+  async changeEdition(tenantId: string, editionId: string, type: string = "Lifetime", currency?: string): Promise<void> {
     await this.api.put(
       API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.CHANGE(tenantId),
-      { editionId, type }
+      { editionId, type, currency }
     );
   }
 
@@ -275,6 +277,26 @@ export class TenantService implements ITenantService {
   async getResolvedFeatures(tenantId: string): Promise<Array<{ name: string; value: string }>> {
     return this.api.get<Array<{ name: string; value: string }>>(
       API_ENDPOINTS.ENTITLEMENTS.TENANT_FEATURES.RESOLVED(tenantId)
+    );
+  }
+
+  async changeCurrency(tenantId: string, currency: string): Promise<string> {
+    const res = await this.api.post<{ message: string }>(
+      API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.CHANGE_CURRENCY(tenantId),
+      { currency }
+    );
+    return res?.message || "";
+  }
+
+  async getDowngradeImpact(tenantId: string, targetEditionId: string): Promise<DowngradeImpactReport> {
+    return this.api.get<DowngradeImpactReport>(
+      API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.DOWNGRADE_IMPACT(tenantId, targetEditionId)
+    );
+  }
+
+  async previewPrice(editionId: string, currency: string, type: string): Promise<number> {
+    return this.api.get<number>(
+      API_ENDPOINTS.ENTITLEMENTS.PRICING.PREVIEW(editionId, currency, type)
     );
   }
 }

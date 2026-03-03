@@ -265,11 +265,19 @@ export const API_ENDPOINTS = {
       LIST_BY_TENANT: (tenantId: string) => `${V1}/tenants/${tenantId}/subscriptions`,
       GET_BY_ID: (id: string) => `${V1}/subscriptions/${id}`,
       REVOKE: (id: string) => `${V1}/subscriptions/${id}`,
+      CHANGE_CURRENCY: (tenantId: string) => `${V1}/tenants/${tenantId}/subscription/change-currency`,
+      DOWNGRADE_IMPACT: (tenantId: string, targetEditionId: string) => `${V1}/tenants/${tenantId}/subscription/downgrade-impact?targetEditionId=${targetEditionId}`,
+    },
+    PRICING: {
+      PREVIEW: (editionId: string, currency: string, type: string) => `${V1}/editions/${editionId}/prices/preview?currency=${currency}&type=${type}`,
+      OVERRIDE_COST_SET: (overrideId: string) => `${V1}/overrides/${overrideId}/cost`,
+      OVERRIDE_COST_REMOVE: (overrideId: string) => `${V1}/overrides/${overrideId}/cost`,
     },
     CURRENCY: {
       RATES: (baseCurrency: string = "USD") => `${V1}/currency/rates?baseCurrency=${baseCurrency}`,
       SUPPORTED: `${V1}/currency/supported`,
       REFRESH: `${V1}/currency/rates/refresh`,
+      LAST_UPDATED: `${V1}/currency/rates/last-updated`,
     },
   },
 

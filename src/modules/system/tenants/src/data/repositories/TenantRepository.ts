@@ -23,7 +23,7 @@ import { TenantMapper } from "../mappers/TenantMapper";
 import type { Permission } from "@modules/system/permissions/src/domain/entities/Permission";
 import { PermissionMapper } from "@modules/system/permissions/src/data/mappers/PermissionMapper";
 import { appLogger } from "@core/common/logger";
-import type { EditionThinModel, SubscriptionModel, PagedEditionResult } from "../models/TenantSubscription";
+import type { EditionThinModel, SubscriptionModel, PagedEditionResult, DowngradeImpactReport } from "../models/TenantSubscription";
 
 export class TenantRepository implements ITenantRepository {
   constructor(private readonly service: ITenantService) { }
@@ -155,8 +155,8 @@ export class TenantRepository implements ITenantRepository {
     return this.service.getAvailableEditions(page, pageSize, search);
   }
 
-  async assignEdition(tenantId: string, editionId: string, type?: string, endDate?: string): Promise<{ id: string }> {
-    return this.service.assignEdition(tenantId, editionId, type, endDate);
+  async assignEdition(tenantId: string, editionId: string, type?: string, endDate?: string, currency?: string): Promise<{ id: string }> {
+    return this.service.assignEdition(tenantId, editionId, type, endDate, currency);
   }
 
   async changeEdition(tenantId: string, editionId: string, type: string = "Lifetime"): Promise<void> {
@@ -193,5 +193,17 @@ export class TenantRepository implements ITenantRepository {
 
   async getResolvedFeatures(tenantId: string): Promise<Array<{ name: string; value: string }>> {
     return this.service.getResolvedFeatures(tenantId);
+  }
+
+  async changeCurrency(tenantId: string, currency: string): Promise<string> {
+    return this.service.changeCurrency(tenantId, currency);
+  }
+
+  async getDowngradeImpact(tenantId: string, targetEditionId: string): Promise<DowngradeImpactReport> {
+    return this.service.getDowngradeImpact(tenantId, targetEditionId);
+  }
+
+  async previewPrice(editionId: string, currency: string, type: string): Promise<number> {
+    return this.service.previewPrice(editionId, currency, type);
   }
 }

@@ -175,7 +175,9 @@ export function TenantsView() {
         await systemContainer.tenantRepository.assignEdition(
           newId,
           createForm.editionId,
-          createForm.subscriptionType || "Lifetime"
+          createForm.subscriptionType || "Lifetime",
+          undefined,
+          createForm.currency || "USD"
         );
       }
 

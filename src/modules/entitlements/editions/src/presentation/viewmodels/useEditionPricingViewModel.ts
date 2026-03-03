@@ -21,12 +21,14 @@ interface PriceRow {
       currency: string;
       monthlyAmount: number;
       yearlyAmount: number;
+      lifetimeAmount: number;
 }
 
 interface PreviewRow {
       currency: string;
       monthlyAmount: number;
       yearlyAmount: number;
+      lifetimeAmount: number;
       source: "explicit" | "auto";
       rate?: number;
 }
@@ -35,8 +37,10 @@ export interface EditionPricingViewModelResult {
       // ── USD Base ──
       usdMonthly: number;
       usdYearly: number;
+      usdLifetime: number;
       setUsdMonthly: (v: number) => void;
       setUsdYearly: (v: number) => void;
+      setUsdLifetime: (v: number) => void;
       suggestedYearly: number;
       yearlyDiscountPercent: number;
       setYearlyDiscountPercent: (v: number) => void;
@@ -88,7 +92,7 @@ export function useEditionPricingViewModel(editionId: string): EditionPricingVie
 
       // ── Parse server data into USD base + overrides ──
       const serverData = useMemo(() => {
-            const usd: PriceRow = { currency: "USD", monthlyAmount: 0, yearlyAmount: 0 };
+            const usd: PriceRow = { currency: "USD", monthlyAmount: 0, yearlyAmount: 0, lifetimeAmount: 0 };
             const others: PriceRow[] = [];
 
             if (priceData?.prices) {
@@ -96,14 +100,16 @@ export function useEditionPricingViewModel(editionId: string): EditionPricingVie
                         if (p.currency === "USD") {
                               if (p.billingCycle === "Monthly") usd.monthlyAmount = p.amount;
                               if (p.billingCycle === "Yearly") usd.yearlyAmount = p.amount;
+                              if (p.billingCycle === "Lifetime") usd.lifetimeAmount = p.amount;
                         } else {
                               let row = others.find((o) => o.currency === p.currency);
                               if (!row) {
-                                    row = { currency: p.currency, monthlyAmount: 0, yearlyAmount: 0 };
+                                    row = { currency: p.currency, monthlyAmount: 0, yearlyAmount: 0, lifetimeAmount: 0 };
                                     others.push(row);
                               }
                               if (p.billingCycle === "Monthly") row.monthlyAmount = p.amount;
                               if (p.billingCycle === "Yearly") row.yearlyAmount = p.amount;
+                              if (p.billingCycle === "Lifetime") row.lifetimeAmount = p.amount;
                         }
                   }
             }
@@ -115,6 +121,7 @@ export function useEditionPricingViewModel(editionId: string): EditionPricingVie
       const [yearlyDiscountPercent, setYearlyDiscountPercent] = useState(20);
       const [localUsdMonthly, setLocalUsdMonthly] = useState<number | null>(null);
       const [localUsdYearly, setLocalUsdYearly] = useState<number | null>(null);
+      const [localUsdLifetime, setLocalUsdLifetime] = useState<number | null>(null);
       const [localOverrides, setLocalOverrides] = useState<Map<string, PriceRow> | null>(null);
       const [removedOverrides, setRemovedOverrides] = useState<Set<string>>(new Set());
       const [addedOverrides, setAddedOverrides] = useState<Map<string, PriceRow>>(new Map());
@@ -122,11 +129,13 @@ export function useEditionPricingViewModel(editionId: string): EditionPricingVie
       // ── Effective USD values ──
       const usdMonthly = localUsdMonthly ?? serverData.usd.monthlyAmount;
       const usdYearly = localUsdYearly ?? serverData.usd.yearlyAmount;
+      const usdLifetime = localUsdLifetime ?? serverData.usd.lifetimeAmount;
       const suggestedYearly = Math.round(usdMonthly * 12 * (1 - yearlyDiscountPercent / 100) * 100) / 100;
 
       // ── Set handlers ──
       const setUsdMonthly = useCallback((v: number) => setLocalUsdMonthly(v), []);
       const setUsdYearly = useCallback((v: number) => setLocalUsdYearly(v), []);
+      const setUsdLifetime = useCallback((v: number) => setLocalUsdLifetime(v), []);
       const applyDiscountToYearly = useCallback(() => {
             setLocalUsdYearly(suggestedYearly);
       }, [suggestedYearly]);
@@ -181,6 +190,7 @@ export function useEditionPricingViewModel(editionId: string): EditionPricingVie
                               currency: currencyCode,
                               monthlyAmount: suggestedMonthly,
                               yearlyAmount: suggestedYearly,
+                              lifetimeAmount: Math.round(usdLifetime * rate * 100) / 100,
                         });
                         return next;
                   });
@@ -252,6 +262,7 @@ export function useEditionPricingViewModel(editionId: string): EditionPricingVie
                   currency: "USD",
                   monthlyAmount: usdMonthly,
                   yearlyAmount: usdYearly,
+                  lifetimeAmount: usdLifetime,
                   source: "explicit",
             });
 
@@ -265,6 +276,7 @@ export function useEditionPricingViewModel(editionId: string): EditionPricingVie
                               currency: curr.code,
                               monthlyAmount: override.monthlyAmount,
                               yearlyAmount: override.yearlyAmount,
+                              lifetimeAmount: override.lifetimeAmount,
                               source: "explicit",
                         });
                   } else if (exchangeRates?.[curr.code] && usdMonthly > 0) {
@@ -273,6 +285,7 @@ export function useEditionPricingViewModel(editionId: string): EditionPricingVie
                               currency: curr.code,
                               monthlyAmount: Math.round(usdMonthly * rate * 100) / 100,
                               yearlyAmount: Math.round(usdYearly * rate * 100) / 100,
+                              lifetimeAmount: Math.round(usdLifetime * rate * 100) / 100,
                               source: "auto",
                               rate,
                         });
@@ -280,17 +293,18 @@ export function useEditionPricingViewModel(editionId: string): EditionPricingVie
             }
 
             return rows;
-      }, [usdMonthly, usdYearly, overrides, exchangeRates]);
+      }, [usdMonthly, usdYearly, usdLifetime, overrides, exchangeRates]);
 
       // ── Dirty tracking ──
       const isDirty = useMemo(() => {
             if (localUsdMonthly !== null && localUsdMonthly !== serverData.usd.monthlyAmount) return true;
             if (localUsdYearly !== null && localUsdYearly !== serverData.usd.yearlyAmount) return true;
+            if (localUsdLifetime !== null && localUsdLifetime !== serverData.usd.lifetimeAmount) return true;
             if (removedOverrides.size > 0) return true;
             if (addedOverrides.size > 0) return true;
             if (localOverrides && localOverrides.size > 0) return true;
             return false;
-      }, [localUsdMonthly, localUsdYearly, removedOverrides, addedOverrides, localOverrides, serverData]);
+      }, [localUsdMonthly, localUsdYearly, localUsdLifetime, removedOverrides, addedOverrides, localOverrides, serverData]);
 
       // ── Yearly savings ──
       const yearlySavingsPercent = useCallback(
@@ -319,6 +333,7 @@ export function useEditionPricingViewModel(editionId: string): EditionPricingVie
       const discard = useCallback(() => {
             setLocalUsdMonthly(null);
             setLocalUsdYearly(null);
+            setLocalUsdLifetime(null);
             setLocalOverrides(null);
             setRemovedOverrides(new Set());
             setAddedOverrides(new Map());
@@ -332,11 +347,17 @@ export function useEditionPricingViewModel(editionId: string): EditionPricingVie
                   // USD base prices
                   flatPrices.push({ currency: "USD", billingCycle: "Monthly", amount: usdMonthly });
                   flatPrices.push({ currency: "USD", billingCycle: "Yearly", amount: usdYearly });
+                  if (usdLifetime > 0) {
+                        flatPrices.push({ currency: "USD", billingCycle: "Lifetime", amount: usdLifetime });
+                  }
 
                   // Override prices
                   for (const row of overrides) {
                         flatPrices.push({ currency: row.currency, billingCycle: "Monthly", amount: row.monthlyAmount });
                         flatPrices.push({ currency: row.currency, billingCycle: "Yearly", amount: row.yearlyAmount });
+                        if (row.lifetimeAmount > 0) {
+                              flatPrices.push({ currency: row.currency, billingCycle: "Lifetime", amount: row.lifetimeAmount });
+                        }
                   }
 
                   await editionRepository.setEditionPrices(editionId, { prices: flatPrices });
@@ -361,11 +382,13 @@ export function useEditionPricingViewModel(editionId: string): EditionPricingVie
       return {
             usdMonthly,
             usdYearly,
+            usdLifetime,
             setUsdMonthly,
             yearlyDiscountPercent,
             setYearlyDiscountPercent,
             applyDiscountToYearly,
             setUsdYearly,
+            setUsdLifetime,
             suggestedYearly,
             overrides,
             addOverride,

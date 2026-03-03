@@ -107,6 +107,7 @@ export const ar = {
 
   // Tenants - المستأجرون
   tenant: {
+    billingCurrency: "عملة الفوترة",
     lockoutDuration: "مدة الحظر",
     minutes: "دقائق",
     passwordExpiryDays: "أيام انتهاء صلاحية كلمة المرور",
@@ -397,6 +398,18 @@ export const ar = {
     canceled: "ملغى",
     expiringSoon: "ينتهي قريباً",
     trialEndDate: "تاريخ انتهاء التجربة",
+    // التسعير والعملة
+    totalAmount: "المبلغ الإجمالي",
+    baseAmount: "المبلغ الأساسي",
+    exchangeRate: "سعر الصرف",
+    changeCurrency: "تغيير العملة",
+    changeCurrencyDesc: "تغيير عملة الفوترة لهذا الاشتراك. سيتم إعادة حساب التسعير باستخدام أسعار الصرف الحالية.",
+    changeCurrencyInfo: "سيتم إعادة حساب مبلغ الاشتراك باستخدام سعر الصرف الحالي. لن تتغير أي تفاصيل أخرى.",
+    currentCurrency: "العملة الحالية",
+    newCurrency: "العملة الجديدة",
+    selectCurrency: "اختر العملة",
+    currencyChanged: "تم تغيير عملة الفوترة بنجاح",
+    selectRenewalPeriod: "اختر فترة التجديد",
   },
 
   // إعدادات المستأجر (/settings/tenant)
@@ -4893,6 +4906,16 @@ export const ar = {
       sourceDefault: "افتراضي",
       sourceEdition: "إصدار",
       sourceOverride: "تجاوز",
+      // المرحلة 3: تعديل التكلفة
+      setCost: "تعيين تعديل التكلفة",
+      setCostDesc: "تعيين تكلفة شهرية بالدولار لهذا التجاوز.",
+      costAmount: "المبلغ (دولار)",
+      costReason: "السبب (اختياري)",
+      costReasonPlaceholder: "مثال: رسوم مقاعد المشرفين الإضافية",
+      costSet: "تم حفظ التكلفة",
+      costSetDesc: "تم حفظ تعديل التكلفة.",
+      costRemoved: "تم إزالة التكلفة",
+      costRemovedDesc: "تم إزالة تعديل التكلفة.",
     },
     // ── الحصص المجمّعة ووضع مجموعة المشرفين ──
     pooledQuotas: {
@@ -4966,6 +4989,9 @@ export const ar = {
       discountPercent: "نسبة الخصم",
       applyDiscount: "تطبيق الخصم",
       suggested: "مقترح",
+      lifetime: "مدى الحياة",
+      oneTime: "دفعة واحدة",
+      billingCurrency: "عملة الفوترة",
     },
   },
 

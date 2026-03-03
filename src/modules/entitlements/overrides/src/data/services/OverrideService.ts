@@ -57,4 +57,17 @@ export class OverrideService {
                   API_ENDPOINTS.ENTITLEMENTS.TENANT_FEATURES.REMOVE_OVERRIDE(tenantId, featureId)
             );
       }
+
+      async setOverrideCost(overrideId: string, amountUsd: number, reason?: string): Promise<void> {
+            await this.api.put(
+                  API_ENDPOINTS.ENTITLEMENTS.PRICING.OVERRIDE_COST_SET(overrideId),
+                  { amountUsd, reason }
+            );
+      }
+
+      async removeOverrideCost(overrideId: string): Promise<void> {
+            await this.api.delete(
+                  API_ENDPOINTS.ENTITLEMENTS.PRICING.OVERRIDE_COST_REMOVE(overrideId)
+            );
+      }
 }

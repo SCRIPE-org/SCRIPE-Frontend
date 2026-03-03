@@ -23,6 +23,7 @@ export interface CreateFormState {
   description: string;
   editionId: string;
   subscriptionType: string;
+  currency: string;
 }
 
 export interface EditFormState {
@@ -37,6 +38,7 @@ export const initialCreateForm: CreateFormState = {
   description: "",
   editionId: "",
   subscriptionType: "Lifetime",
+  currency: "USD",
 };
 
 export const initialEditForm: EditFormState = {
@@ -125,20 +127,39 @@ export function CreateTenantDialog({
           { value: "Trial", label: t("tenant.subscriptionTypes.trial") || "Trial (14 days)" },
         ],
       },
+      {
+        name: "currency",
+        label: t("tenant.billingCurrency") || "Billing Currency",
+        type: "select",
+        required: true,
+        options: [
+          { value: "USD", label: "🇺🇸 USD — US Dollar" },
+          { value: "EUR", label: "🇪🇺 EUR — Euro" },
+          { value: "GBP", label: "🇬🇧 GBP — British Pound" },
+          { value: "SAR", label: "🇸🇦 SAR — Saudi Riyal" },
+          { value: "AED", label: "🇦🇪 AED — UAE Dirham" },
+          { value: "EGP", label: "🇪🇬 EGP — Egyptian Pound" },
+          { value: "KWD", label: "🇰🇼 KWD — Kuwaiti Dinar" },
+          { value: "QAR", label: "🇶🇦 QAR — Qatari Riyal" },
+          { value: "TRY", label: "🇹🇷 TRY — Turkish Lira" },
+          { value: "INR", label: "🇮🇳 INR — Indian Rupee" },
+          { value: "JPY", label: "🇯🇵 JPY — Japanese Yen" },
+          { value: "CAD", label: "🇨🇦 CAD — Canadian Dollar" },
+        ],
+      },
     ],
     [t, onSearchEditions]
   );
 
   const handleSubmit = async (data: Record<string, any>) => {
-    // Update the external form state before submitting so the parent has access to it
     setForm({
       name: data.name,
       code: data.code,
       description: data.description || "",
       editionId: data.editionId,
       subscriptionType: data.subscriptionType || "Lifetime",
+      currency: data.currency || "USD",
     });
-    // Call original submit
     await onSubmit();
   };
 

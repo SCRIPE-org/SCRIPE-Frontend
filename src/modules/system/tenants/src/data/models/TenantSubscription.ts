@@ -36,6 +36,13 @@ export interface SubscriptionModel {
       downgradedFromType?: string;
       downgradedAt?: string;
       createdAt: string;
+      // Pricing fields from backend
+      currency?: string;
+      baseAmount?: number;
+      adjustmentAmount?: number;
+      totalAmount?: number;
+      totalAmountUsd?: number;
+      exchangeRateToUsd?: number;
 }
 
 export interface PagedEditionResult {
@@ -76,5 +83,32 @@ export interface CancelPayload {
 
 export interface ResumePayload {
       type?: SubscriptionType;
+}
+
+export interface ChangeCurrencyPayload {
+      currency: string;
+}
+
+// ── Downgrade Impact ──
+
+export interface ResourceOverflow {
+      resourceType: string;
+      featureName: string;
+      currentCount: number;
+      newLimit: number;
+      overflowCount: number;
+}
+
+export interface DowngradeImpactReport {
+      hasOverflow: boolean;
+      overflows: ResourceOverflow[];
+}
+
+// ── Price Preview ──
+
+export interface PricePreviewResult {
+      amount: number;
+      currency: string;
+      billingCycle: string;
 }
 

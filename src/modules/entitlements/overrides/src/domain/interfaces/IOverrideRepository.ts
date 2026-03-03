@@ -14,4 +14,6 @@ export interface IOverrideRepository {
             data: { value: string; reason?: string }
       ): Promise<string>;
       removeOverride(tenantId: string, featureId: string): Promise<void>;
+      setOverrideCost(overrideId: string, amountUsd: number, reason?: string): Promise<void>;
+      removeOverrideCost(overrideId: string): Promise<void>;
 }

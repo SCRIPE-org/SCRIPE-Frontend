@@ -200,6 +200,28 @@ export const PricingTab = memo(function PricingTab({ editionId }: PricingTabProp
                                                 {t("entitlements.pricing.autoConvertInfo") || "Currencies without explicit overrides will auto-convert from USD at live exchange rates."}
                                           </p>
                                     </div>
+
+                                    {/* Lifetime (one-time) */}
+                                    <div className="flex items-center gap-3 pt-3 mt-3 border-t border-dashed border-border/50">
+                                          <span className="text-sm text-muted-foreground w-20 shrink-0">
+                                                {t("entitlements.pricing.lifetime")}
+                                          </span>
+                                          <div className="relative flex-1 max-w-xs">
+                                                <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-muted-foreground font-medium">$</span>
+                                                <Input
+                                                      type="number"
+                                                      value={vm.usdLifetime || ""}
+                                                      onChange={(e) => vm.setUsdLifetime(parseFloat(e.target.value) || 0)}
+                                                      className="h-9 pl-7 text-right tabular-nums text-sm"
+                                                      min={0}
+                                                      step="0.01"
+                                                      placeholder="0.00"
+                                                />
+                                          </div>
+                                          <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5 text-purple-600 dark:text-purple-400 border-purple-500/30 bg-purple-500/5">
+                                                {t("entitlements.pricing.oneTime")}
+                                          </Badge>
+                                    </div>
                               </CardContent>
                         </Card>
 

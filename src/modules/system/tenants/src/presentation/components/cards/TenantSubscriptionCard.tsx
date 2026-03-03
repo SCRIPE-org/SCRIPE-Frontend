@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
 import { Button } from "@core/ui/button";
@@ -8,9 +8,10 @@ import { Badge } from "@core/ui/badge";
 import {
       CreditCard, Pencil, Loader2, RefreshCw, Play, Pause, XCircle,
       ArrowUpCircle, Calendar, Clock, AlertTriangle, Shield, RotateCcw,
-      ArrowDownCircle,
+      ArrowDownCircle, DollarSign, Globe,
 } from "lucide-react";
 import { useTenantSubscriptionViewModel } from "@modules/system/tenants/src/presentation/viewmodels/useTenantSubscriptionViewModel";
+import { SUPPORTED_CURRENCIES, formatPrice } from "@modules/entitlements/editions/src/domain/entities/EditionPricing";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@core/ui/dialog";
 import { GenericSelect } from "@core/crud/components/generic-select";
 import type { GenericSelectOption } from "@core/crud/components/generic-select";
@@ -18,7 +19,7 @@ import { Skeleton } from "@core/ui/skeleton";
 import { Textarea } from "@core/ui/textarea";
 import { Label } from "@core/ui/label";
 import { Switch } from "@core/ui/switch";
-import type { SubscriptionType } from "../../../data/models/TenantSubscription";
+import type { SubscriptionType, DowngradeImpactReport } from "../../../data/models/TenantSubscription";
 
 interface TenantSubscriptionCardProps {
       tenantId: string;
@@ -84,6 +85,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
       const [suspendOpen, setSuspendOpen] = useState(false);
       const [cancelOpen, setCancelOpen] = useState(false);
       const [resumeOpen, setResumeOpen] = useState(false);
+      const [changeCurrencyOpen, setChangeCurrencyOpen] = useState(false);
 
       // Form states for dialogs
       const [selectedEditionId, setSelectedEditionId] = useState("");
@@ -93,6 +95,13 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
       const [useFallbackOnSuspend, setUseFallbackOnSuspend] = useState(true);
       const [useFallbackOnCancel, setUseFallbackOnCancel] = useState(true);
       const [restoreType, setRestoreType] = useState<SubscriptionType>("Monthly");
+      const [selectedCurrency, setSelectedCurrency] = useState("");
+
+      // Downgrade impact + price preview state
+      const [impactReport, setImpactReport] = useState<DowngradeImpactReport | null>(null);
+      const [isLoadingImpact, setIsLoadingImpact] = useState(false);
+      const [previewAmount, setPreviewAmount] = useState<number | null>(null);
+      const [isLoadingPrice, setIsLoadingPrice] = useState(false);
 
       // Edition options for GenericSelect
       const editionOptions: GenericSelectOption[] = (vm.availableEditions || []).map((e) => ({
@@ -215,6 +224,43 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                           )}
                                     </div>
                               </div>
+
+                              {/* ── Pricing Info ── */}
+                              {subscription.currency && subscription.totalAmount != null && (
+                                    <div className="rounded-lg border border-border/50 bg-muted/30 p-3">
+                                          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+                                                <div className="space-y-1">
+                                                      <p className="text-xs font-medium text-muted-foreground">{t("tenant.billingCurrency") || "Currency"}</p>
+                                                      <div className="flex items-center gap-1.5">
+                                                            <span className="text-sm">{SUPPORTED_CURRENCIES.find(c => c.code === subscription.currency)?.flag || "🌍"}</span>
+                                                            <span className="text-sm font-bold">{subscription.currency}</span>
+                                                      </div>
+                                                </div>
+                                                <div className="space-y-1">
+                                                      <p className="text-xs font-medium text-muted-foreground">{t("tenant.totalAmount") || "Total"}</p>
+                                                      <p className="text-sm font-bold text-emerald-600 dark:text-emerald-400">
+                                                            {formatPrice(subscription.totalAmount, subscription.currency)}
+                                                      </p>
+                                                </div>
+                                                {subscription.baseAmount != null && subscription.baseAmount !== subscription.totalAmount && (
+                                                      <div className="space-y-1">
+                                                            <p className="text-xs font-medium text-muted-foreground">{t("tenant.baseAmount") || "Base"}</p>
+                                                            <p className="text-sm font-medium">
+                                                                  {formatPrice(subscription.baseAmount, subscription.currency)}
+                                                            </p>
+                                                      </div>
+                                                )}
+                                                {subscription.currency !== "USD" && subscription.exchangeRateToUsd && (
+                                                      <div className="space-y-1">
+                                                            <p className="text-xs font-medium text-muted-foreground">{t("tenant.exchangeRate") || "Rate"}</p>
+                                                            <p className="text-xs font-mono text-muted-foreground">
+                                                                  1 {subscription.currency} = {subscription.exchangeRateToUsd.toFixed(4)} USD
+                                                            </p>
+                                                      </div>
+                                                )}
+                                          </div>
+                                    </div>
+                              )}
 
                               {/* ── Expiration Warning ── */}
                               {vm.daysRemaining !== null && vm.daysRemaining > 0 && vm.daysRemaining <= 7 && (
@@ -397,6 +443,17 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                     <Button variant="ghost" size="sm" onClick={() => vm.resyncPermissions()} disabled={vm.isResyncing} title={t("tenant.resyncPermissions") || "Re-sync permissions from edition"}>
                                           {vm.isResyncing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RotateCcw className="h-3.5 w-3.5" />}
                                     </Button>
+
+                                    {/* Change Currency */}
+                                    {vm.isActive && (
+                                          <Button variant="outline" size="sm" onClick={() => {
+                                                setSelectedCurrency(subscription.currency || "USD");
+                                                setChangeCurrencyOpen(true);
+                                          }}>
+                                                <Globe className="mr-1.5 h-3.5 w-3.5" />
+                                                {t("tenant.changeCurrency") || "Currency"}
+                                          </Button>
+                                    )}
                               </div>
                         </CardContent>
                   </Card>
@@ -408,6 +465,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                   {renderSuspendDialog()}
                   {renderCancelDialog()}
                   {renderResumeDialog()}
+                  {renderChangeCurrencyDialog()}
             </>
       );
 
@@ -416,8 +474,35 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
       // ═══════════════════════════════════════════════════════════════
 
       function renderChangePlanDialog() {
+            // Fetch downgrade impact when edition changes
+            const fetchImpact = useCallback(async (editionId: string) => {
+                  if (!editionId || !subscription) { setImpactReport(null); return; }
+                  if (editionId === subscription.editionId) { setImpactReport(null); return; }
+                  setIsLoadingImpact(true);
+                  try {
+                        const report = await vm.getDowngradeImpact(editionId);
+                        setImpactReport(report);
+                  } catch { setImpactReport(null); }
+                  setIsLoadingImpact(false);
+            }, [subscription, vm]);
+
+            // Fetch price preview when edition + type changes
+            const fetchPrice = useCallback(async (editionId: string, type: string) => {
+                  if (!editionId) { setPreviewAmount(null); return; }
+                  const currency = subscription?.currency || "USD";
+                  setIsLoadingPrice(true);
+                  try {
+                        const amount = await vm.previewPrice(editionId, currency, type);
+                        setPreviewAmount(amount);
+                  } catch { setPreviewAmount(null); }
+                  setIsLoadingPrice(false);
+            }, [subscription, vm]);
+
             return (
-                  <Dialog open={changePlanOpen} onOpenChange={setChangePlanOpen}>
+                  <Dialog open={changePlanOpen} onOpenChange={(open) => {
+                        setChangePlanOpen(open);
+                        if (!open) { setImpactReport(null); setPreviewAmount(null); }
+                  }}>
                         <DialogContent className="max-w-md">
                               <DialogHeader>
                                     <DialogTitle>{t("tenant.changeSubscriptionPlan") || "Change Subscription Plan"}</DialogTitle>
@@ -431,7 +516,12 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                           <GenericSelect
                                                 options={editionOptions}
                                                 value={selectedEditionId}
-                                                onValueChange={(v: string | string[]) => setSelectedEditionId(v as string)}
+                                                onValueChange={(v: string | string[]) => {
+                                                      const id = v as string;
+                                                      setSelectedEditionId(id);
+                                                      fetchImpact(id);
+                                                      fetchPrice(id, selectedType);
+                                                }}
                                                 placeholder={t("tenant.selectAPlan") || "Select an edition"}
                                           />
                                     </div>
@@ -440,22 +530,91 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                           <GenericSelect
                                                 options={BILLING_CYCLE_OPTIONS}
                                                 value={selectedType}
-                                                onValueChange={(v: string | string[]) => setSelectedType(v as SubscriptionType)}
+                                                onValueChange={(v: string | string[]) => {
+                                                      const type = v as SubscriptionType;
+                                                      setSelectedType(type);
+                                                      fetchPrice(selectedEditionId, type);
+                                                }}
                                                 placeholder={t("tenant.selectBillingCycle") || "Select billing cycle"}
                                           />
                                     </div>
+
+                                    {/* ── Price Preview ── */}
+                                    {isLoadingPrice && (
+                                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                                {t("common.loading") || "Loading..."}
+                                          </div>
+                                    )}
+                                    {!isLoadingPrice && previewAmount !== null && previewAmount > 0 && (
+                                          <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/5 p-3">
+                                                <div className="flex items-center justify-between">
+                                                      <span className="text-xs font-medium text-muted-foreground">
+                                                            {t("tenant.totalAmount") || "Total Amount"}
+                                                      </span>
+                                                      <span className="text-lg font-bold text-emerald-600 dark:text-emerald-400">
+                                                            {formatPrice(previewAmount, subscription?.currency || "USD")}
+                                                      </span>
+                                                </div>
+                                          </div>
+                                    )}
+
+                                    {/* ── Downgrade Impact Warning ── */}
+                                    {isLoadingImpact && (
+                                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                                {t("tenant.checkingImpact") || "Checking impact..."}
+                                          </div>
+                                    )}
+                                    {!isLoadingImpact && impactReport?.hasOverflow && (
+                                          <div className="space-y-2 rounded-lg border border-destructive/30 bg-destructive/5 p-3">
+                                                <div className="flex items-center gap-2 text-sm font-semibold text-destructive">
+                                                      <AlertTriangle className="h-4 w-4 shrink-0" />
+                                                      {t("tenant.downgradeWarning") || "Resource limits will be exceeded"}
+                                                </div>
+                                                <div className="space-y-1">
+                                                      {impactReport.overflows.map((o, i) => (
+                                                            <div key={i} className="flex items-center justify-between text-xs">
+                                                                  <span className="text-muted-foreground">
+                                                                        {o.resourceType}
+                                                                  </span>
+                                                                  <span className="font-mono text-destructive">
+                                                                        {o.currentCount} / {o.newLimit === -1 ? "∞" : o.newLimit}
+                                                                        <span className="ml-1 text-destructive font-semibold">
+                                                                              (+{o.overflowCount} {t("tenant.overflow") || "over"})
+                                                                        </span>
+                                                                  </span>
+                                                            </div>
+                                                      ))}
+                                                </div>
+                                                <p className="text-xs text-muted-foreground">
+                                                      {t("tenant.overflowInfo") || "Excess resources will need to be removed or the system will auto-adjust."}
+                                                </p>
+                                          </div>
+                                    )}
                               </div>
                               <DialogFooter>
                                     <Button variant="outline" onClick={() => setChangePlanOpen(false)} disabled={vm.isChanging}>
                                           {t("common.cancel") || "Cancel"}
                                     </Button>
-                                    <Button onClick={() => {
-                                          if (selectedEditionId) {
-                                                vm.changeEdition(selectedEditionId, selectedType);
-                                                setChangePlanOpen(false);
+                                    <Button
+                                          variant={impactReport?.hasOverflow ? "destructive" : "default"}
+                                          onClick={() => {
+                                                if (selectedEditionId) {
+                                                      vm.changeEdition(selectedEditionId, selectedType);
+                                                      setChangePlanOpen(false);
+                                                      setImpactReport(null);
+                                                      setPreviewAmount(null);
+                                                }
+                                          }}
+                                          disabled={!selectedEditionId || vm.isChanging}
+                                    >
+                                          {vm.isChanging
+                                                ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />{t("common.saving") || "Saving..."}</>
+                                                : impactReport?.hasOverflow
+                                                      ? (t("tenant.confirmDowngrade") || "Confirm Downgrade")
+                                                      : (t("common.save") || "Save")
                                           }
-                                    }} disabled={!selectedEditionId || vm.isChanging}>
-                                          {vm.isChanging ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />{t("common.saving") || "Saving..."}</> : (t("common.save") || "Save")}
                                     </Button>
                               </DialogFooter>
                         </DialogContent>
@@ -781,6 +940,66 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                           {isRestore
                                                 ? (t("tenant.confirmRestore") || "Restore Plan")
                                                 : (t("tenant.confirmResume") || "Resume Subscription")
+                                          }
+                                    </Button>
+                              </DialogFooter>
+                        </DialogContent>
+                  </Dialog>
+            );
+      }
+
+      function renderChangeCurrencyDialog() {
+            const currencyOptions: GenericSelectOption[] = SUPPORTED_CURRENCIES.map(c => ({
+                  value: c.code,
+                  label: `${c.flag} ${c.code} — ${c.name}`,
+            }));
+
+            return (
+                  <Dialog open={changeCurrencyOpen} onOpenChange={setChangeCurrencyOpen}>
+                        <DialogContent className="max-w-md">
+                              <DialogHeader>
+                                    <DialogTitle>{t("tenant.changeCurrency") || "Change Billing Currency"}</DialogTitle>
+                                    <DialogDescription>
+                                          {t("tenant.changeCurrencyDesc") || "Change the billing currency for this subscription. Pricing will be recalculated using current exchange rates."}
+                                    </DialogDescription>
+                              </DialogHeader>
+                              <div className="space-y-4 py-2">
+                                    {subscription && subscription.currency && (
+                                          <div className="rounded-lg bg-muted/50 p-3 space-y-1">
+                                                <p className="text-xs text-muted-foreground">{t("tenant.currentCurrency") || "Current Currency"}</p>
+                                                <p className="text-sm font-medium">
+                                                      {SUPPORTED_CURRENCIES.find(c => c.code === subscription.currency)?.flag || "🌍"}{" "}
+                                                      {subscription.currency}
+                                                </p>
+                                          </div>
+                                    )}
+                                    <div className="space-y-2">
+                                          <Label>{t("tenant.newCurrency") || "New Currency"}</Label>
+                                          <GenericSelect
+                                                options={currencyOptions}
+                                                value={selectedCurrency}
+                                                onValueChange={(v: string | string[]) => setSelectedCurrency(v as string)}
+                                                placeholder={t("tenant.selectCurrency") || "Select currency"}
+                                          />
+                                    </div>
+                                    <div className="flex items-center gap-2 rounded-lg border border-blue-500/30 bg-blue-500/5 p-3 text-sm text-blue-700 dark:text-blue-400">
+                                          <DollarSign className="h-4 w-4 shrink-0" />
+                                          <span>{t("tenant.changeCurrencyInfo") || "The subscription amount will be recalculated using the current exchange rate. No other subscription details will change."}</span>
+                                    </div>
+                              </div>
+                              <DialogFooter>
+                                    <Button variant="outline" onClick={() => setChangeCurrencyOpen(false)} disabled={vm.isChangingCurrency}>
+                                          {t("common.cancel") || "Cancel"}
+                                    </Button>
+                                    <Button onClick={() => {
+                                          if (selectedCurrency && selectedCurrency !== subscription?.currency) {
+                                                vm.changeCurrency(selectedCurrency);
+                                                setChangeCurrencyOpen(false);
+                                          }
+                                    }} disabled={!selectedCurrency || selectedCurrency === subscription?.currency || vm.isChangingCurrency}>
+                                          {vm.isChangingCurrency
+                                                ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />{t("common.saving") || "Saving..."}</>
+                                                : <><Globe className="mr-2 h-4 w-4" />{t("tenant.changeCurrency") || "Change Currency"}</>
                                           }
                                     </Button>
                               </DialogFooter>

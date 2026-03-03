@@ -114,7 +114,10 @@ export function SubTenantsTab({
       if (createForm.editionId) {
         await systemContainer.tenantRepository.assignEdition(
           newId,
-          createForm.editionId
+          createForm.editionId,
+          createForm.subscriptionType || "Lifetime",
+          undefined,
+          createForm.currency || "USD"
         );
       }
 

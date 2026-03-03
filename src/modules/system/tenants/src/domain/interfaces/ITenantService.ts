@@ -17,7 +17,8 @@ import type { PermissionModel } from "@modules/system/permissions/src/data/model
 import type {
   EditionThinModel,
   SubscriptionModel,
-  PagedEditionResult
+  PagedEditionResult,
+  DowngradeImpactReport,
 } from "../../data/models/TenantSubscription";
 
 export interface ServiceTenantListParams {
@@ -125,7 +126,7 @@ export interface ITenantService {
   /**
    * Assign a base/trial edition (plan) to a newly created tenant
    */
-  assignEdition(tenantId: string, editionId: string, type?: string, endDate?: string): Promise<{ id: string }>;
+  assignEdition(tenantId: string, editionId: string, type?: string, endDate?: string, currency?: string): Promise<{ id: string }>;
 
   /**
    * Change the base edition of an existing tenant
@@ -160,4 +161,13 @@ export interface ITenantService {
    * Used by TenantStats to show quota limits without cross-module import
    */
   getResolvedFeatures(tenantId: string): Promise<Array<{ name: string; value: string }>>;
+
+  /** Change the billing currency of the active subscription */
+  changeCurrency(tenantId: string, currency: string): Promise<string>;
+
+  /** Preview downgrade impact before changing edition */
+  getDowngradeImpact(tenantId: string, targetEditionId: string): Promise<DowngradeImpactReport>;
+
+  /** Preview resolved price for an edition + currency + type combo */
+  previewPrice(editionId: string, currency: string, type: string): Promise<number>;
 }
