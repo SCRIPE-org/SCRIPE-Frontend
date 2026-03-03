@@ -58,9 +58,13 @@ services.AddMultiProviderDatabase<
             type: "code",
             language: "bash",
             filename: "nexora db add-migration",
-            code: `$ nexora db add-migration Initial -m Identity
+            code: `# All 3 providers at once (default)
+$ nexora db add-migration Initial -m Identity
 
-# Behind the scenes, the CLI executes:
+# Target a specific provider with -p
+$ nexora db add-migration Initial -m Identity -p SqlServer
+
+# Behind the scenes (all providers), the CLI executes:
 # dotnet ef migrations add Initial -c SqlServerIdentityDbContext -o Migrations/SqlServer
 # dotnet ef migrations add Initial -c OracleIdentityDbContext -o Migrations/Oracle
 # dotnet ef migrations add Initial -c PostgreSqlIdentityDbContext -o Migrations/PostgreSql`,
@@ -77,7 +81,11 @@ services.AddMultiProviderDatabase<
             type: "code",
             language: "bash",
             filename: "nexora db update",
-            code: `$ nexora db update -m Identity
+            code: `# Auto-detect provider from appsettings.json
+$ nexora db update -m Identity
+
+# Override with a specific provider
+$ nexora db update -m Identity -p Oracle
 
 # Output:
 # [INFO] Auto-detected database provider: SqlServer from appsettings.json
@@ -94,9 +102,13 @@ services.AddMultiProviderDatabase<
             type: "code",
             language: "bash",
             filename: "nexora db remove-migration",
-            code: `$ nexora db remove-migration -m Identity
+            code: `# Remove from all 3 providers (active first, then force for others)
+$ nexora db remove-migration -m Identity
 
-# Output:
+# Remove from a specific provider only (auto-applies --force if non-active)
+$ nexora db remove-migration -m Identity -p SqlServer
+
+# Output (all providers):
 # [INFO] Auto-detected active provider: Oracle
 # [INFO] Removing latest migration for active provider (Oracle)...
 # [INFO] Force removing latest migration for SqlServer...
@@ -141,5 +153,5 @@ registerPage({
       order: 1,
       sections,
       relatedSlugs: ["architecture/dependency-injection", "commercial/cli-tooling", "architecture/modules"],
-      lastUpdated: "2026-02-22",
+      lastUpdated: "2026-03-03",
 });

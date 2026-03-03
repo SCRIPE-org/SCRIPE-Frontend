@@ -1410,7 +1410,7 @@ export const docEn = {
 
       dbSyncTitle: "Database & API Synchronization",
       dbSyncIntro: "High tier commands handle parallel database architectures and frontend proxies seamlessly, closing the infrastructure loop entirely.",
-      dbCliCmd: "Intelligently executes `add-migration`, `update`, and `remove-migration` against SqlServer, Oracle, and PostgreSQL simultaneously, protecting consistency.",
+      dbCliCmd: "Intelligently executes `add-migration`, `update`, and `remove-migration` against SqlServer, Oracle, and PostgreSQL — either all providers simultaneously or a specific one with the `-p` flag.",
       syncApiCmd: "Consumes a remote Swagger/OpenAPI endpoint, parsing into pixel-perfect TypeScript Zod schemas, React controllers, and structured models instantly.",
 
       configTitle: "CLI Project Configuration Mapping",

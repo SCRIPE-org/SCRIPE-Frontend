@@ -297,12 +297,24 @@ $ nexora remove-bg-service Products`,
       {
             type: "code",
             language: "bash",
-            filename: "Synchronization Commands",
-            code: `# Automatically apply EF Migrations across exactly your configured backend provider
-$ nexora db update -m CRM -p oracle
+            filename: "Database Migration Commands",
+            code: `# Generate migration for all 3 providers (SqlServer, Oracle, PostgreSql)
+$ nexora db add-migration Initial -m CRM
 
-# Aggressive and safe simultaneous database rollback across all 3 providers
+# Generate migration for a specific provider only
+$ nexora db add-migration Initial -m CRM -p SqlServer
+
+# Apply migrations (auto-detects provider from appsettings.json)
+$ nexora db update -m CRM
+
+# Override provider for update
+$ nexora db update -m CRM -p Oracle
+
+# Remove last migration from all 3 providers
 $ nexora db remove-migration -m CRM
+
+# Remove last migration from a specific provider only
+$ nexora db remove-migration -m CRM -p SqlServer
 
 # Rebuild frontend schemas to mirror live Backend structure
 $ nexora sync-api https://localhost:5001/swagger/v1/swagger.json -m crm`,
@@ -409,5 +421,6 @@ registerPage({
       order: 2,
       sections,
       relatedSlugs: ["infrastructure/database-migrations", "commercial/cli-tooling"],
-      lastUpdated: "2026-02-23",
+      lastUpdated: "2026-03-03",
 });
+
