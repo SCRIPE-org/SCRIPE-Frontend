@@ -7,7 +7,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useSubscriptionsOverviewViewModel } from "../viewmodels/useSubscriptionsOverviewViewModel";
+import { SubscriptionsExportDialog } from "../components/SubscriptionsExportDialog";
 import { CurrencyDisplayToggle } from "@core/ui/currency-display-toggle";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
@@ -31,6 +33,7 @@ import {
       Search,
       ArrowRight,
       TrendingUp,
+      FileDown,
 } from "lucide-react";
 
 const STATUS_COLORS: Record<string, string> = {
@@ -51,6 +54,7 @@ const TYPE_COLORS: Record<string, string> = {
 export function SubscriptionsOverviewView() {
       const router = useRouter();
       const vm = useSubscriptionsOverviewViewModel();
+      const [exportOpen, setExportOpen] = useState(false);
 
       // ── Loading ──
       if (vm.isLoading) {
@@ -86,6 +90,10 @@ export function SubscriptionsOverviewView() {
                         </div>
                         <div className="flex items-center gap-2">
                               <CurrencyDisplayToggle />
+                              <Button variant="outline" size="sm" onClick={() => setExportOpen(true)} className="gap-1.5">
+                                    <FileDown className="h-3.5 w-3.5" />
+                                    {vm.t("entitlements.subscriptions.export.button") || "Export"}
+                              </Button>
                               <Button variant="outline" size="sm" onClick={() => vm.refetch()} className="gap-1.5">
                                     <RefreshCw className="h-3.5 w-3.5" />
                                     {vm.t("common.refresh") || "Refresh"}
@@ -296,6 +304,16 @@ export function SubscriptionsOverviewView() {
                               {vm.t("entitlements.subscriptions.totalMrr") || "Total MRR"}: {vm.formatDisplay(vm.kpis.totalMrr, "USD")}
                         </span>
                   </div>
+
+                  {/* ── Export Dialog ── */}
+                  <SubscriptionsExportDialog
+                        open={exportOpen}
+                        onClose={() => setExportOpen(false)}
+                        subscriptions={vm.subscriptions}
+                        statusFilter={vm.statusFilter}
+                        typeFilter={vm.typeFilter}
+                        totalCount={vm.kpis.totalCount}
+                  />
             </div>
       );
 }

@@ -5052,6 +5052,16 @@ export const en = {
       mrrContribution: "MRR (USD)",
       startDate: "Start Date",
       totalMrr: "Total MRR",
+      // ── Export ──
+      export: {
+        title: "Export Subscriptions",
+        description: "Download subscription data in your preferred format.",
+        records: "Records to export",
+        button: "Export",
+        success: "Export downloaded successfully!",
+        generating: "Generating...",
+        download: "Download",
+      },
     },
     overrides: {
       title: "Feature Overrides",

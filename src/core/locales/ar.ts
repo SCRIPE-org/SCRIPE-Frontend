@@ -1036,6 +1036,7 @@ export const ar = {
       loginsToday: "تسجيلات الدخول اليوم",
       failedLogins: "تسجيلات الدخول الفاشلة (24 ساعة)",
       active: "نشط",
+      totalMrr: "إجمالي الإيرادات الشهرية",
     },
     loginActivity: {
       title: "نشاط تسجيل الدخول",
@@ -4898,6 +4899,16 @@ export const ar = {
       mrrContribution: "الإيرادات الشهرية (دولار)",
       startDate: "تاريخ البدء",
       totalMrr: "إجمالي الإيرادات الشهرية",
+      // ── التصدير ──
+      export: {
+        title: "تصدير الاشتراكات",
+        description: "تحميل بيانات الاشتراكات بالتنسيق المفضل لديك.",
+        records: "السجلات للتصدير",
+        button: "تصدير",
+        success: "تم تحميل التصدير بنجاح!",
+        generating: "جاري الإنشاء...",
+        download: "تحميل",
+      },
     },
     overrides: {
       title: "تجاوزات الميزات",
