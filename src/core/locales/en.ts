@@ -410,6 +410,34 @@ export const en = {
     overflow: "over",
     overflowInfo: "Excess resources will need to be removed or the system will auto-adjust.",
     confirmDowngrade: "Confirm Downgrade",
+    // ── Localized Type / Status / Renew Labels ──
+    typeLabel: {
+      lifetime: "Lifetime",
+      monthly: "Monthly",
+      yearly: "Yearly",
+      trial: "Trial",
+      addon: "Add-On",
+    },
+    statusLabel: {
+      active: "Active",
+      trialing: "Trialing",
+      suspended: "Suspended",
+      canceled: "Canceled",
+      expired: "Expired",
+      pastdue: "Past Due",
+    },
+    renewLabel: {
+      oneMonth: "1 Month",
+      oneYear: "1 Year",
+      lifetime: "Make Lifetime (no expiry)",
+    },
+    promoCode: "Promo Code",
+    promoCodePlaceholder: "Enter promo code (optional)",
+    promoCodeValidating: "Validating...",
+    promoCodeValid: "Promo code applied!",
+    promoCodeInvalid: "Invalid or expired promo code",
+    discount: "Discount",
+    suspendReasonMinLength: "Reason must be at least 3 characters",
   },
 
   // Currency Display Preferences
@@ -4890,6 +4918,10 @@ export const en = {
       systemBadge: "System",
       unlimited: "Unlimited",
       moduleFeaturesLabel: "Manage features for the {{module}} module.",
+      // Pool mode options (Identity.AdminPoolMode)
+      sharedPool: "Shared Pool",
+      separatePool: "Separate (Parent Independent)",
+      perChildPool: "Per Child (No Pool)",
     },
     editions: {
       title: "Editions",

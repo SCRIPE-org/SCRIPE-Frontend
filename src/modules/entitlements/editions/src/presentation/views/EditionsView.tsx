@@ -184,7 +184,7 @@ export function EditionsView() {
                               placeholder: "0",
                         },
                   ],
-                  editFields: [
+                  editFields: (editingItem: Edition) => [
                         {
                               name: "name",
                               label: t("entitlements.editions.editionName") || "Edition Name",
@@ -216,7 +216,7 @@ export function EditionsView() {
                               placeholder: t("entitlements.editions.fallbackPlaceholder") || "Select fallback plan (optional)",
                               options: [
                                     { value: "", label: t("common.none") || "None" },
-                                    ...(vm.items || []).map((e: Edition) => ({ value: e.id, label: e.getDisplayName(language) })),
+                                    ...(vm.items || []).filter((e: Edition) => e.id !== editingItem?.id).map((e: Edition) => ({ value: e.id, label: e.getDisplayName(language) })),
                               ],
                         },
                         // ── Billing Controls ──

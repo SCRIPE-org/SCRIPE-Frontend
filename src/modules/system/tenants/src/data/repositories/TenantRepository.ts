@@ -155,12 +155,12 @@ export class TenantRepository implements ITenantRepository {
     return this.service.getAvailableEditions(page, pageSize, search);
   }
 
-  async assignEdition(tenantId: string, editionId: string, type?: string, endDate?: string, currency?: string): Promise<{ id: string }> {
-    return this.service.assignEdition(tenantId, editionId, type, endDate, currency);
+  async assignEdition(tenantId: string, editionId: string, type?: string, endDate?: string, currency?: string, promoCode?: string): Promise<{ id: string }> {
+    return this.service.assignEdition(tenantId, editionId, type, endDate, currency, promoCode);
   }
 
-  async changeEdition(tenantId: string, editionId: string, type: string = "Lifetime"): Promise<void> {
-    return this.service.changeEdition(tenantId, editionId, type);
+  async changeEdition(tenantId: string, editionId: string, type: string = "Lifetime", currency?: string, promoCode?: string): Promise<void> {
+    return this.service.changeEdition(tenantId, editionId, type, currency, promoCode);
   }
 
   async renewSubscription(tenantId: string, type: string): Promise<string> {

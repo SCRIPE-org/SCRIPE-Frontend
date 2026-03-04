@@ -63,6 +63,7 @@ export interface SubscriptionListModel {
 export interface GlobalSubscriptionModel {
       id: string;
       tenantId: string;
+      tenantName: string;
       editionId: string;
       editionName: string;
       type: string;

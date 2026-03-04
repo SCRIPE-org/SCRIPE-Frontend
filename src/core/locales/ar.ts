@@ -413,6 +413,34 @@ export const ar = {
     selectCurrency: "اختر العملة",
     currencyChanged: "تم تغيير عملة الفوترة بنجاح",
     selectRenewalPeriod: "اختر فترة التجديد",
+    // ── تسميات النوع / الحالة / التجديد المترجمة ──
+    typeLabel: {
+      lifetime: "مدى الحياة",
+      monthly: "شهري",
+      yearly: "سنوي",
+      trial: "تجريبي",
+      addon: "إضافة",
+    },
+    statusLabel: {
+      active: "نشط",
+      trialing: "فترة تجريبية",
+      suspended: "معلّق",
+      canceled: "ملغى",
+      expired: "منتهي",
+      pastdue: "متأخر الدفع",
+    },
+    renewLabel: {
+      oneMonth: "شهر واحد",
+      oneYear: "سنة واحدة",
+      lifetime: "جعله مدى الحياة (بدون انتهاء)",
+    },
+    promoCode: "كود العرض",
+    promoCodePlaceholder: "أدخل كود العرض (اختياري)",
+    promoCodeValidating: "جاري التحقق...",
+    promoCodeValid: "تم تطبيق كود العرض!",
+    promoCodeInvalid: "كود العرض غير صالح أو منتهي",
+    discount: "خصم",
+    suspendReasonMinLength: "يجب أن يكون السبب 3 أحرف على الأقل",
   },
 
   // إعدادات المستأجر (/settings/tenant)
@@ -4738,6 +4766,10 @@ export const ar = {
       systemBadge: "نظام",
       unlimited: "غير محدود",
       moduleFeaturesLabel: "إدارة ميزات وحدة {{module}}.",
+      // خيارات وضع المجمع (Identity.AdminPoolMode)
+      sharedPool: "مجمع مشترك",
+      separatePool: "منفصل (مستقل عن الأب)",
+      perChildPool: "لكل فرع (بدون مجمع)",
     },
     editions: {
       title: "الإصدارات",

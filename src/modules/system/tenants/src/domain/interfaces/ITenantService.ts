@@ -126,12 +126,12 @@ export interface ITenantService {
   /**
    * Assign a base/trial edition (plan) to a newly created tenant
    */
-  assignEdition(tenantId: string, editionId: string, type?: string, endDate?: string, currency?: string): Promise<{ id: string }>;
+  assignEdition(tenantId: string, editionId: string, type?: string, endDate?: string, currency?: string, promoCode?: string): Promise<{ id: string }>;
 
   /**
    * Change the base edition of an existing tenant
    */
-  changeEdition(tenantId: string, editionId: string, type?: string): Promise<void>;
+  changeEdition(tenantId: string, editionId: string, type?: string, currency?: string, promoCode?: string): Promise<void>;
 
   /** Renew (extend) the current subscription period */
   renewSubscription(tenantId: string, type: string): Promise<string>;

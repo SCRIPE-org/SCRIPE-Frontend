@@ -6,8 +6,9 @@
  */
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState, useCallback } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
+import { SUPPORTED_CURRENCIES } from "@core/constants/currencies";
 import { GenericModal } from "@core/crud/components/generic-modal";
 import { GenericForm, type FieldConfig } from "@core/ui/forms/generic-form";
 import type { TenantTreeNode } from "../../domain/entities/Tenant";
@@ -24,6 +25,7 @@ export interface CreateFormState {
   editionId: string;
   subscriptionType: string;
   currency: string;
+  promoCode: string;
 }
 
 export interface EditFormState {
@@ -39,6 +41,7 @@ export const initialCreateForm: CreateFormState = {
   editionId: "",
   subscriptionType: "Lifetime",
   currency: "USD",
+  promoCode: "",
 };
 
 export const initialEditForm: EditFormState = {
@@ -75,6 +78,10 @@ export function CreateTenantDialog({
   cachedEditions = [],
 }: CreateTenantDialogProps) {
   const { t } = useI18n();
+
+  // Track selected edition locally to compute subscriptionType options
+  // without calling parent setState during render
+  const [selectedEditionId, setSelectedEditionId] = useState(form.editionId);
 
   const title = parentTenant ? t("tenant.createChild") : t("tenant.createTenant");
   const description = parentTenant
@@ -117,9 +124,14 @@ export function CreateTenantDialog({
         searchType: "server",
         onServerSearch: onSearchEditions,
         onChange: (value: string) => {
-          // Sync editionId to parent state so subscriptionType options recompute
-          setForm((prev) => ({ ...prev, editionId: value, subscriptionType: "" }));
-          // Return object to also reset subscriptionType in GenericForm's internal state
+          // Deferred state update to avoid setState during render
+          // MUST update both: setForm (so initialValues.editionId is correct when
+          // GenericForm's useEffect re-inits) and setSelectedEditionId (for options)
+          setTimeout(() => {
+            setSelectedEditionId(value);
+            setForm((prev) => ({ ...prev, editionId: value, subscriptionType: "" }));
+          }, 0);
+          // Return object to reset subscriptionType in GenericForm's internal state
           return { editionId: value, subscriptionType: "" };
         },
       },
@@ -128,8 +140,9 @@ export function CreateTenantDialog({
         label: t("tenant.subscriptionType") || "Subscription Duration",
         type: "select",
         required: true,
+        isVisible: (formData: Record<string, any>) => !!formData.editionId,
         options: (() => {
-          const selectedEd = cachedEditions.find((ed) => ed.id === form.editionId);
+          const selectedEd = cachedEditions.find((ed) => ed.id === selectedEditionId);
           const opts: { value: string; label: string }[] = [];
           if (selectedEd?.allowLifetime !== false)
             opts.push({ value: "Lifetime", label: t("tenant.subscriptionTypes.lifetime") || "Lifetime" });
@@ -147,23 +160,21 @@ export function CreateTenantDialog({
         label: t("tenant.billingCurrency") || "Billing Currency",
         type: "select",
         required: true,
-        options: [
-          { value: "USD", label: "🇺🇸 USD — US Dollar" },
-          { value: "EUR", label: "🇪🇺 EUR — Euro" },
-          { value: "GBP", label: "🇬🇧 GBP — British Pound" },
-          { value: "SAR", label: "🇸🇦 SAR — Saudi Riyal" },
-          { value: "AED", label: "🇦🇪 AED — UAE Dirham" },
-          { value: "EGP", label: "🇪🇬 EGP — Egyptian Pound" },
-          { value: "KWD", label: "🇰🇼 KWD — Kuwaiti Dinar" },
-          { value: "QAR", label: "🇶🇦 QAR — Qatari Riyal" },
-          { value: "TRY", label: "🇹🇷 TRY — Turkish Lira" },
-          { value: "INR", label: "🇮🇳 INR — Indian Rupee" },
-          { value: "JPY", label: "🇯🇵 JPY — Japanese Yen" },
-          { value: "CAD", label: "🇨🇦 CAD — Canadian Dollar" },
-        ],
+        isVisible: (formData: Record<string, any>) => !!formData.editionId && !!formData.subscriptionType,
+        options: SUPPORTED_CURRENCIES.map((c) => ({
+          value: c.code,
+          label: `${c.flag} ${c.code} — ${c.name}`,
+        })),
+      },
+      {
+        name: "promoCode",
+        label: t("tenant.promoCode") || "Promo Code",
+        type: "text",
+        isVisible: (formData: Record<string, any>) => !!formData.editionId && !!formData.subscriptionType,
+        placeholder: t("tenant.promoCodePlaceholder") || "Enter promo code (optional)",
       },
     ],
-    [t, onSearchEditions, form.editionId, cachedEditions, setForm]
+    [t, onSearchEditions, selectedEditionId, cachedEditions]
   );
 
   const handleSubmit = async (data: Record<string, any>) => {
@@ -174,6 +185,7 @@ export function CreateTenantDialog({
       editionId: data.editionId,
       subscriptionType: data.subscriptionType || "Lifetime",
       currency: data.currency || "USD",
+      promoCode: data.promoCode || "",
     });
     await onSubmit();
   };

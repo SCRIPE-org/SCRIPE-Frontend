@@ -11,12 +11,13 @@ import {
       ArrowDownCircle, DollarSign, Globe,
 } from "lucide-react";
 import { useTenantSubscriptionViewModel } from "@modules/system/tenants/src/presentation/viewmodels/useTenantSubscriptionViewModel";
-import { SUPPORTED_CURRENCIES } from "@modules/entitlements/editions/src/domain/entities/EditionPricing";
+import { SUPPORTED_CURRENCIES } from "@core/constants/currencies";
 import { useConvertedAmount } from "@core/hooks/useConvertedAmount";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@core/ui/dialog";
 import { GenericSelect } from "@core/crud/components/generic-select";
 import type { GenericSelectOption } from "@core/crud/components/generic-select";
 import { Skeleton } from "@core/ui/skeleton";
+import { Input } from "@core/ui/input";
 import { Textarea } from "@core/ui/textarea";
 import { Label } from "@core/ui/label";
 import { Switch } from "@core/ui/switch";
@@ -37,13 +38,28 @@ const STATUS_CONFIG: Record<string, { variant: "success" | "secondary" | "destru
       pastdue: { variant: "destructive", icon: AlertTriangle },
 };
 
-const TYPE_LABELS: Record<string, string> = {
-      Lifetime: "Lifetime",
-      Monthly: "Monthly",
-      Yearly: "Yearly",
-      Trial: "Trial",
-      AddOn: "Add-On",
-};
+function getTypeLabel(type: string, t: (key: string) => string): string {
+      const map: Record<string, string> = {
+            Lifetime: t("tenant.typeLabel.lifetime") || "Lifetime",
+            Monthly: t("tenant.typeLabel.monthly") || "Monthly",
+            Yearly: t("tenant.typeLabel.yearly") || "Yearly",
+            Trial: t("tenant.typeLabel.trial") || "Trial",
+            AddOn: t("tenant.typeLabel.addon") || "Add-On",
+      };
+      return map[type] || type;
+}
+
+function getStatusLabel(status: string, t: (key: string) => string): string {
+      const map: Record<string, string> = {
+            Active: t("tenant.statusLabel.active") || "Active",
+            Trialing: t("tenant.statusLabel.trialing") || "Trialing",
+            Suspended: t("tenant.statusLabel.suspended") || "Suspended",
+            Canceled: t("tenant.statusLabel.canceled") || "Canceled",
+            Expired: t("tenant.statusLabel.expired") || "Expired",
+            PastDue: t("tenant.statusLabel.pastdue") || "Past Due",
+      };
+      return map[status] || status;
+}
 
 function formatDate(dateStr?: string) {
       if (!dateStr) return "—";
@@ -52,26 +68,34 @@ function formatDate(dateStr?: string) {
       });
 }
 
-// ── Billing Cycle Options ──
+// ── Billing Cycle Options (dynamically filtered by edition capabilities) ──
 
-const BILLING_CYCLE_OPTIONS: GenericSelectOption[] = [
-      { value: "Monthly", label: "Monthly" },
-      { value: "Yearly", label: "Yearly" },
-      { value: "Lifetime", label: "Lifetime" },
-      { value: "Trial", label: "Trial (14 days)" },
-];
+import type { EditionThinModel } from "../../../data/models/TenantSubscription";
 
-const RENEW_OPTIONS: GenericSelectOption[] = [
-      { value: "Monthly", label: "1 Month" },
-      { value: "Yearly", label: "1 Year" },
-      { value: "Lifetime", label: "Make Lifetime (no expiry)" },
-];
+function getBillingCycleOptions(t: (key: string) => string, edition?: EditionThinModel | null): GenericSelectOption[] {
+      const opts: GenericSelectOption[] = [];
+      if (!edition || edition.allowMonthly !== false) opts.push({ value: "Monthly", label: t("tenant.typeLabel.monthly") || "Monthly" });
+      if (!edition || edition.allowYearly !== false) opts.push({ value: "Yearly", label: t("tenant.typeLabel.yearly") || "Yearly" });
+      if (!edition || edition.allowLifetime !== false) opts.push({ value: "Lifetime", label: t("tenant.typeLabel.lifetime") || "Lifetime" });
+      if (!edition || edition.allowTrial !== false) opts.push({ value: "Trial", label: t("tenant.typeLabel.trial") || "Trial" });
+      return opts;
+}
 
-const CONVERT_OPTIONS: GenericSelectOption[] = [
-      { value: "Monthly", label: "Monthly" },
-      { value: "Yearly", label: "Yearly" },
-      { value: "Lifetime", label: "Lifetime" },
-];
+function getRenewOptions(t: (key: string) => string, edition?: EditionThinModel | null): GenericSelectOption[] {
+      const opts: GenericSelectOption[] = [];
+      if (!edition || edition.allowMonthly !== false) opts.push({ value: "Monthly", label: t("tenant.renewLabel.oneMonth") || "1 Month" });
+      if (!edition || edition.allowYearly !== false) opts.push({ value: "Yearly", label: t("tenant.renewLabel.oneYear") || "1 Year" });
+      if (!edition || edition.allowLifetime !== false) opts.push({ value: "Lifetime", label: t("tenant.renewLabel.lifetime") || "Make Lifetime (no expiry)" });
+      return opts;
+}
+
+function getConvertOptions(t: (key: string) => string, edition?: EditionThinModel | null): GenericSelectOption[] {
+      const opts: GenericSelectOption[] = [];
+      if (!edition || edition.allowMonthly !== false) opts.push({ value: "Monthly", label: t("tenant.typeLabel.monthly") || "Monthly" });
+      if (!edition || edition.allowYearly !== false) opts.push({ value: "Yearly", label: t("tenant.typeLabel.yearly") || "Yearly" });
+      if (!edition || edition.allowLifetime !== false) opts.push({ value: "Lifetime", label: t("tenant.typeLabel.lifetime") || "Lifetime" });
+      return opts;
+}
 
 // ── Main Component ──
 
@@ -98,6 +122,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
       const [useFallbackOnCancel, setUseFallbackOnCancel] = useState(true);
       const [restoreType, setRestoreType] = useState<SubscriptionType>("Monthly");
       const [selectedCurrency, setSelectedCurrency] = useState("");
+      const [promoCode, setPromoCode] = useState("");
 
       // Downgrade impact + price preview state
       const [impactReport, setImpactReport] = useState<DowngradeImpactReport | null>(null);
@@ -110,6 +135,10 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
             value: e.id,
             label: e.name || e.displayNameEn || e.id,
       }));
+
+      // Find current and selected editions for dynamic filtering
+      const currentEdition = (vm.availableEditions || []).find((e) => e.id === vm.subscription?.editionId) || null;
+      const selectedEdition = (vm.availableEditions || []).find((e) => e.id === selectedEditionId) || currentEdition;
 
       if (vm.isLoading) {
             return (
@@ -185,7 +214,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                     <div className="space-y-1">
                                           <p className="text-xs font-medium text-muted-foreground">{t("tenant.billingCycle") || "Billing"}</p>
                                           <Badge variant="outline" className="text-xs">
-                                                {TYPE_LABELS[subscription.type] || subscription.type}
+                                                {getTypeLabel(subscription.type, t)}
                                           </Badge>
                                     </div>
 
@@ -194,7 +223,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                           <p className="text-xs font-medium text-muted-foreground">{t("tenant.status") || "Status"}</p>
                                           <Badge variant={statusConfig.variant} className="text-xs gap-1">
                                                 <StatusIcon className="h-3 w-3" />
-                                                {subscription.status}
+                                                {getStatusLabel(subscription.status, t)}
                                           </Badge>
                                     </div>
 
@@ -257,6 +286,22 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                                             <p className="text-xs font-medium text-muted-foreground">{t("tenant.exchangeRate") || "Rate"}</p>
                                                             <p className="text-xs font-mono text-muted-foreground">
                                                                   1 {subscription.currency} = {subscription.exchangeRateToUsd.toFixed(4)} USD
+                                                            </p>
+                                                      </div>
+                                                )}
+                                                {subscription.appliedPromoCode && (
+                                                      <div className="space-y-1">
+                                                            <p className="text-xs font-medium text-muted-foreground">{t("tenant.promoCode") || "Promo Code"}</p>
+                                                            <Badge variant="secondary" className="bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400">
+                                                                  🏷️ {subscription.appliedPromoCode}
+                                                            </Badge>
+                                                      </div>
+                                                )}
+                                                {subscription.promotionDiscount != null && subscription.promotionDiscount > 0 && (
+                                                      <div className="space-y-1">
+                                                            <p className="text-xs font-medium text-muted-foreground">{t("tenant.discount") || "Discount"}</p>
+                                                            <p className="text-sm font-bold text-emerald-600 dark:text-emerald-400">
+                                                                  −{formatDisplay(subscription.promotionDiscount, subscription.currency)}
                                                             </p>
                                                       </div>
                                                 )}
@@ -477,7 +522,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
 
       function renderChangePlanDialog() {
             // Fetch downgrade impact when edition changes
-            const fetchImpact = useCallback(async (editionId: string) => {
+            const fetchImpact = async (editionId: string) => {
                   if (!editionId || !subscription) { setImpactReport(null); return; }
                   if (editionId === subscription.editionId) { setImpactReport(null); return; }
                   setIsLoadingImpact(true);
@@ -486,10 +531,10 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                         setImpactReport(report);
                   } catch { setImpactReport(null); }
                   setIsLoadingImpact(false);
-            }, [subscription, vm]);
+            };
 
             // Fetch price preview when edition + type changes
-            const fetchPrice = useCallback(async (editionId: string, type: string) => {
+            const fetchPrice = async (editionId: string, type: string) => {
                   if (!editionId) { setPreviewAmount(null); return; }
                   const currency = subscription?.currency || "USD";
                   setIsLoadingPrice(true);
@@ -498,7 +543,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                         setPreviewAmount(amount);
                   } catch { setPreviewAmount(null); }
                   setIsLoadingPrice(false);
-            }, [subscription, vm]);
+            };
 
             return (
                   <Dialog open={changePlanOpen} onOpenChange={(open) => {
@@ -527,72 +572,86 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                                 placeholder={t("tenant.selectAPlan") || "Select an edition"}
                                           />
                                     </div>
-                                    <div className="space-y-2">
-                                          <Label>{t("tenant.billingCycle") || "Billing Cycle"}</Label>
-                                          <GenericSelect
-                                                options={BILLING_CYCLE_OPTIONS}
-                                                value={selectedType}
-                                                onValueChange={(v: string | string[]) => {
-                                                      const type = v as SubscriptionType;
-                                                      setSelectedType(type);
-                                                      fetchPrice(selectedEditionId, type);
-                                                }}
-                                                placeholder={t("tenant.selectBillingCycle") || "Select billing cycle"}
-                                          />
-                                    </div>
-
-                                    {/* ── Price Preview ── */}
-                                    {isLoadingPrice && (
-                                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                                <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                                                {t("common.loading") || "Loading..."}
-                                          </div>
-                                    )}
-                                    {!isLoadingPrice && previewAmount !== null && previewAmount > 0 && (
-                                          <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/5 p-3">
-                                                <div className="flex items-center justify-between">
-                                                      <span className="text-xs font-medium text-muted-foreground">
-                                                            {t("tenant.totalAmount") || "Total Amount"}
-                                                      </span>
-                                                      <span className="text-lg font-bold text-emerald-600 dark:text-emerald-400">
-                                                            {formatDisplay(previewAmount, subscription?.currency || "USD")}
-                                                      </span>
+                                    {selectedEditionId && (
+                                          <>
+                                                <div className="space-y-2">
+                                                      <Label>{t("tenant.billingCycle") || "Billing Cycle"}</Label>
+                                                      <GenericSelect
+                                                            options={getBillingCycleOptions(t, selectedEdition)}
+                                                            value={selectedType}
+                                                            onValueChange={(v: string | string[]) => {
+                                                                  const type = v as SubscriptionType;
+                                                                  setSelectedType(type);
+                                                                  fetchPrice(selectedEditionId, type);
+                                                            }}
+                                                            placeholder={t("tenant.selectBillingCycle") || "Select billing cycle"}
+                                                      />
                                                 </div>
-                                          </div>
-                                    )}
 
-                                    {/* ── Downgrade Impact Warning ── */}
-                                    {isLoadingImpact && (
-                                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                                <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                                                {t("tenant.checkingImpact") || "Checking impact..."}
-                                          </div>
-                                    )}
-                                    {!isLoadingImpact && impactReport?.hasOverflow && (
-                                          <div className="space-y-2 rounded-lg border border-destructive/30 bg-destructive/5 p-3">
-                                                <div className="flex items-center gap-2 text-sm font-semibold text-destructive">
-                                                      <AlertTriangle className="h-4 w-4 shrink-0" />
-                                                      {t("tenant.downgradeWarning") || "Resource limits will be exceeded"}
+                                                {/* ── Promo Code ── */}
+                                                <div className="space-y-2">
+                                                      <Label>{t("tenant.promoCode") || "Promo Code"}</Label>
+                                                      <Input
+                                                            value={promoCode}
+                                                            onChange={(e) => setPromoCode(e.target.value)}
+                                                            placeholder={t("tenant.promoCodePlaceholder") || "Enter promo code (optional)"}
+                                                      />
                                                 </div>
-                                                <div className="space-y-1">
-                                                      {impactReport.overflows.map((o, i) => (
-                                                            <div key={i} className="flex items-center justify-between text-xs">
-                                                                  <span className="text-muted-foreground">
-                                                                        {o.resourceType}
+
+                                                {/* ── Price Preview ── */}
+                                                {isLoadingPrice && (
+                                                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                                            {t("common.loading") || "Loading..."}
+                                                      </div>
+                                                )}
+                                                {!isLoadingPrice && previewAmount !== null && previewAmount > 0 && (
+                                                      <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/5 p-3">
+                                                            <div className="flex items-center justify-between">
+                                                                  <span className="text-xs font-medium text-muted-foreground">
+                                                                        {t("tenant.totalAmount") || "Total Amount"}
                                                                   </span>
-                                                                  <span className="font-mono text-destructive">
-                                                                        {o.currentCount} / {o.newLimit === -1 ? "∞" : o.newLimit}
-                                                                        <span className="ml-1 text-destructive font-semibold">
-                                                                              (+{o.overflowCount} {t("tenant.overflow") || "over"})
-                                                                        </span>
+                                                                  <span className="text-lg font-bold text-emerald-600 dark:text-emerald-400">
+                                                                        {formatDisplay(previewAmount, subscription?.currency || "USD")}
                                                                   </span>
                                                             </div>
-                                                      ))}
-                                                </div>
-                                                <p className="text-xs text-muted-foreground">
-                                                      {t("tenant.overflowInfo") || "Excess resources will need to be removed or the system will auto-adjust."}
-                                                </p>
-                                          </div>
+                                                      </div>
+                                                )}
+
+                                                {/* ── Downgrade Impact Warning ── */}
+                                                {isLoadingImpact && (
+                                                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                                            {t("tenant.checkingImpact") || "Checking impact..."}
+                                                      </div>
+                                                )}
+                                                {!isLoadingImpact && impactReport?.hasOverflow && (
+                                                      <div className="space-y-2 rounded-lg border border-destructive/30 bg-destructive/5 p-3">
+                                                            <div className="flex items-center gap-2 text-sm font-semibold text-destructive">
+                                                                  <AlertTriangle className="h-4 w-4 shrink-0" />
+                                                                  {t("tenant.downgradeWarning") || "Resource limits will be exceeded"}
+                                                            </div>
+                                                            <div className="space-y-1">
+                                                                  {impactReport.overflows.map((o, i) => (
+                                                                        <div key={i} className="flex items-center justify-between text-xs">
+                                                                              <span className="text-muted-foreground">
+                                                                                    {o.resourceType}
+                                                                              </span>
+                                                                              <span className="font-mono text-destructive">
+                                                                                    {o.currentCount} / {o.newLimit === -1 ? "∞" : o.newLimit}
+                                                                                    <span className="ml-1 text-destructive font-semibold">
+                                                                                          (+{o.overflowCount} {t("tenant.overflow") || "over"})
+                                                                                    </span>
+                                                                              </span>
+                                                                        </div>
+                                                                  ))}
+                                                            </div>
+                                                            <p className="text-xs text-muted-foreground">
+                                                                  {t("tenant.overflowInfo") || "Excess resources will need to be removed or the system will auto-adjust."}
+                                                            </p>
+                                                      </div>
+                                                )}
+                                          </>
                                     )}
                               </div>
                               <DialogFooter>
@@ -603,10 +662,11 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                           variant={impactReport?.hasOverflow ? "destructive" : "default"}
                                           onClick={() => {
                                                 if (selectedEditionId) {
-                                                      vm.changeEdition(selectedEditionId, selectedType);
+                                                      vm.changeEdition(selectedEditionId, selectedType, subscription?.currency, promoCode.trim() || undefined);
                                                       setChangePlanOpen(false);
                                                       setImpactReport(null);
                                                       setPreviewAmount(null);
+                                                      setPromoCode("");
                                                 }
                                           }}
                                           disabled={!selectedEditionId || vm.isChanging}
@@ -644,7 +704,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                     <div className="space-y-2">
                                           <Label>{t("tenant.extendBy") || "Extend By"}</Label>
                                           <GenericSelect
-                                                options={RENEW_OPTIONS}
+                                                options={getRenewOptions(t, currentEdition)}
                                                 value={selectedType}
                                                 onValueChange={(v: string | string[]) => setSelectedType(v as SubscriptionType)}
                                                 placeholder={t("tenant.selectRenewalPeriod") || "Select renewal period"}
@@ -682,7 +742,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                     <div className="space-y-2">
                                           <Label>{t("tenant.selectBillingCycle") || "Billing Cycle"}</Label>
                                           <GenericSelect
-                                                options={CONVERT_OPTIONS}
+                                                options={getConvertOptions(t, currentEdition)}
                                                 value={selectedType}
                                                 onValueChange={(v: string | string[]) => setSelectedType(v as SubscriptionType)}
                                                 placeholder={t("tenant.selectBillingCycle") || "Select billing cycle"}
@@ -755,6 +815,9 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                                 placeholder={t("tenant.suspendReasonPlaceholder") || "e.g. Payment fraud, Terms violation..."}
                                                 className="min-h-[80px]"
                                           />
+                                          {suspendReason.length > 0 && suspendReason.trim().length < 3 && (
+                                                <p className="text-xs text-destructive">{t("tenant.suspendReasonMinLength") || "Reason must be at least 3 characters"}</p>
+                                          )}
                                     </div>
                               </div>
                               <DialogFooter>
@@ -881,7 +944,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                                 <div className="rounded-lg bg-muted/50 p-3 space-y-1">
                                                       <p className="text-xs text-muted-foreground">{t("tenant.originalPlan") || "Original Plan"}</p>
                                                       <p className="text-sm font-medium">
-                                                            {vm.downgradedFromEditionName} — {TYPE_LABELS[vm.downgradedFromType || ""] || vm.downgradedFromType}
+                                                            {vm.downgradedFromEditionName} — {getTypeLabel(vm.downgradedFromType || "", t)}
                                                       </p>
                                                       {vm.downgradedAt && (
                                                             <p className="text-xs text-muted-foreground">
@@ -896,7 +959,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                                       <GenericSelect
                                                             value={restoreType}
                                                             onValueChange={(v: string) => setRestoreType(v as SubscriptionType)}
-                                                            options={CONVERT_OPTIONS}
+                                                            options={getConvertOptions(t, currentEdition)}
                                                             placeholder={t("tenant.selectBillingCycle") || "Select billing cycle"}
                                                       />
                                                       <p className="text-xs text-muted-foreground">
@@ -920,7 +983,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                                 {subscription && (
                                                       <div className="rounded-lg bg-muted/50 p-3 space-y-1">
                                                             <p className="text-xs text-muted-foreground">{t("tenant.currentPlan") || "Plan"}</p>
-                                                            <p className="text-sm font-medium">{subscription.editionName} — {TYPE_LABELS[subscription.type] || subscription.type}</p>
+                                                            <p className="text-sm font-medium">{subscription.editionName} — {getTypeLabel(subscription.type, t)}</p>
                                                       </div>
                                                 )}
                                           </>

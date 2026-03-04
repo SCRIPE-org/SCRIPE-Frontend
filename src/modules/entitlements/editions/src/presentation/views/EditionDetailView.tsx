@@ -335,6 +335,7 @@ export function EditionDetailView({ editionId }: EditionDetailViewProps) {
                                                                                                             value={value}
                                                                                                             onChange={(v) => vm.setLocalValue(feature.name, v)}
                                                                                                             featureName={feature.name}
+                                                                                                            t={t}
                                                                                                       />
                                                                                                 </div>
                                                                                           </div>
@@ -512,13 +513,15 @@ function getFeatureDisabledDefault(valueType: string): string {
 }
 
 // ── Known enum features with allowed values ──
-const ENUM_FEATURE_OPTIONS: Record<string, { value: string; label: string }[]> = {
-      "Identity.AdminPoolMode": [
-            { value: "shared", label: "Shared Pool" },
-            { value: "separate", label: "Separate (Parent Independent)" },
-            { value: "per_child", label: "Per Child (No Pool)" },
-      ],
-};
+function getEnumFeatureOptions(t: (key: string) => string): Record<string, { value: string; label: string }[]> {
+      return {
+            "Identity.AdminPoolMode": [
+                  { value: "shared", label: t("entitlements.features.sharedPool") || "Shared Pool" },
+                  { value: "separate", label: t("entitlements.features.separatePool") || "Separate (Parent Independent)" },
+                  { value: "per_child", label: t("entitlements.features.perChildPool") || "Per Child (No Pool)" },
+            ],
+      };
+}
 
 // ── Feature Control Component ──
 function FeatureControl({
@@ -526,13 +529,15 @@ function FeatureControl({
       value,
       onChange,
       featureName,
+      t,
 }: {
       valueType: string;
       value: string;
       onChange: (value: string) => void;
       featureName?: string;
+      t: (key: string) => string;
 }) {
-      const enumOptions = featureName ? ENUM_FEATURE_OPTIONS[featureName] : undefined;
+      const enumOptions = featureName ? getEnumFeatureOptions(t)[featureName] : undefined;
       if (enumOptions) {
             return (
                   <Select value={value} onValueChange={onChange}>

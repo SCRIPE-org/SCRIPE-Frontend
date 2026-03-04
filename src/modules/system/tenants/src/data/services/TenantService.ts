@@ -206,18 +206,19 @@ export class TenantService implements ITenantService {
     editionId: string,
     type?: string,
     endDate?: string,
-    currency?: string
+    currency?: string,
+    promoCode?: string
   ): Promise<{ id: string }> {
     return this.api.post<{ id: string }>(
       API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.ASSIGN(tenantId),
-      { editionId, type, endDate, currency: currency || "USD" }
+      { editionId, type, endDate, currency: currency || "USD", promoCode }
     );
   }
 
-  async changeEdition(tenantId: string, editionId: string, type: string = "Lifetime", currency?: string): Promise<void> {
+  async changeEdition(tenantId: string, editionId: string, type: string = "Lifetime", currency?: string, promoCode?: string): Promise<void> {
     await this.api.put(
       API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.CHANGE(tenantId),
-      { editionId, type, currency }
+      { editionId, type, currency, promoCode }
     );
   }
 

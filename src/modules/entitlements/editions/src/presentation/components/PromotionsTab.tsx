@@ -7,6 +7,7 @@
 "use client";
 
 import { usePromotionsViewModel } from "../viewmodels/usePromotionsViewModel";
+import { SUPPORTED_CURRENCIES } from "../../domain/entities/EditionPricing";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
@@ -172,7 +173,7 @@ export function PromotionsTab({ editionId, allowMonthly = true, allowYearly = tr
                                                             <Label>{t("entitlements.promotions.currency") || "Currency"}</Label>
                                                             <GenericSelect
                                                                   type="single"
-                                                                  options={["USD", "EUR", "GBP", "SAR", "AED", "EGP"].map((c) => ({ value: c, label: c }))}
+                                                                  options={SUPPORTED_CURRENCIES.map((c) => ({ value: c.code, label: `${c.flag} ${c.code} — ${c.name}` }))}
                                                                   value={vm.form.discountCurrency}
                                                                   onValueChange={(v: string | string[]) => vm.setField("discountCurrency", typeof v === "string" ? v : v[0])}
                                                             />

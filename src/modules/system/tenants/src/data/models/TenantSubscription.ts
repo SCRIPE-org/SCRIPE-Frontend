@@ -41,13 +41,15 @@ export interface SubscriptionModel {
       downgradedFromType?: string;
       downgradedAt?: string;
       createdAt: string;
-      // Pricing fields from backend
       currency?: string;
       baseAmount?: number;
       adjustmentAmount?: number;
       totalAmount?: number;
       totalAmountUsd?: number;
       exchangeRateToUsd?: number;
+      // ── Promotion ──
+      appliedPromoCode?: string;
+      promotionDiscount?: number;
 }
 
 export interface PagedEditionResult {
@@ -66,6 +68,8 @@ export interface ChangeEditionPayload {
       editionId: string;
       type: SubscriptionType;
       expiryBehavior?: ExpiryBehavior;
+      currency?: string;
+      promoCode?: string;
 }
 
 export interface RenewPayload {

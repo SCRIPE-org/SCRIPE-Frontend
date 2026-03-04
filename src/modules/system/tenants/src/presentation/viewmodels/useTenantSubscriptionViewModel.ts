@@ -41,7 +41,7 @@ export interface UseTenantSubscriptionViewModelResult {
       hasFallback: boolean;
 
       // Mutations
-      changeEdition: (editionId: string, type: SubscriptionType) => void;
+      changeEdition: (editionId: string, type: SubscriptionType, currency?: string, promoCode?: string) => void;
       isChanging: boolean;
 
       renewSubscription: (type: SubscriptionType) => void;
@@ -160,8 +160,8 @@ export function useTenantSubscriptionViewModel(tenantId: string): UseTenantSubsc
       // ── Mutations ──
 
       const changeMutation = useMutation({
-            mutationFn: async ({ editionId, type }: { editionId: string; type: string }) => {
-                  await systemContainer.tenantRepository.changeEdition(tenantId, editionId, type);
+            mutationFn: async ({ editionId, type, currency, promoCode }: { editionId: string; type: string; currency?: string; promoCode?: string }) => {
+                  await systemContainer.tenantRepository.changeEdition(tenantId, editionId, type, currency, promoCode);
             },
             onSuccess: () => { successToast(t("tenant.subscriptionUpdated") || "Plan changed successfully"); invalidateAll(); },
             onError: errorToast,
@@ -243,7 +243,7 @@ export function useTenantSubscriptionViewModel(tenantId: string): UseTenantSubsc
             canRenew, canConvertTrial, canSuspend, canResume, canCancel, canReassign,
             fallbackEditionName, expiryBehavior, hasFallback,
 
-            changeEdition: (editionId, type) => changeMutation.mutate({ editionId, type }),
+            changeEdition: (editionId: string, type: SubscriptionType, currency?: string, promoCode?: string) => changeMutation.mutate({ editionId, type, currency, promoCode }),
             isChanging: changeMutation.isPending,
 
             renewSubscription: renewMutation.mutate,

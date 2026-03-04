@@ -169,30 +169,48 @@ export function SubscriptionsOverviewView() {
                               />
                         </div>
                         <div className="flex items-center gap-2">
-                              {["all", "Active", "Trialing", "Suspended", "Canceled"].map((status) => (
-                                    <Button
-                                          key={status}
-                                          variant={vm.statusFilter === status ? "default" : "outline"}
-                                          size="sm"
-                                          onClick={() => vm.setStatusFilter(status)}
-                                          className="text-xs"
-                                    >
-                                          {status === "all" ? (vm.t("common.all") || "All") : status}
-                                    </Button>
-                              ))}
+                              {["all", "Active", "Trialing", "Suspended", "Canceled"].map((status) => {
+                                    const statusLabels: Record<string, string> = {
+                                          all: vm.t("common.all") || "All",
+                                          Active: vm.t("tenant.statusLabel.active") || "Active",
+                                          Trialing: vm.t("tenant.statusLabel.trialing") || "Trialing",
+                                          Suspended: vm.t("tenant.statusLabel.suspended") || "Suspended",
+                                          Canceled: vm.t("tenant.statusLabel.canceled") || "Canceled",
+                                    };
+                                    return (
+                                          <Button
+                                                key={status}
+                                                variant={vm.statusFilter === status ? "default" : "outline"}
+                                                size="sm"
+                                                onClick={() => vm.setStatusFilter(status)}
+                                                className="text-xs"
+                                          >
+                                                {statusLabels[status] || status}
+                                          </Button>
+                                    );
+                              })}
                         </div>
                         <div className="flex items-center gap-2">
-                              {["all", "Monthly", "Yearly", "Lifetime", "Trial"].map((type) => (
-                                    <Button
-                                          key={type}
-                                          variant={vm.typeFilter === type ? "default" : "outline"}
-                                          size="sm"
-                                          onClick={() => vm.setTypeFilter(type)}
-                                          className="text-xs"
-                                    >
-                                          {type === "all" ? (vm.t("common.all") || "All") : type}
-                                    </Button>
-                              ))}
+                              {["all", "Monthly", "Yearly", "Lifetime", "Trial"].map((type) => {
+                                    const typeLabels: Record<string, string> = {
+                                          all: vm.t("common.all") || "All",
+                                          Monthly: vm.t("tenant.typeLabel.monthly") || "Monthly",
+                                          Yearly: vm.t("tenant.typeLabel.yearly") || "Yearly",
+                                          Lifetime: vm.t("tenant.typeLabel.lifetime") || "Lifetime",
+                                          Trial: vm.t("tenant.typeLabel.trial") || "Trial",
+                                    };
+                                    return (
+                                          <Button
+                                                key={type}
+                                                variant={vm.typeFilter === type ? "default" : "outline"}
+                                                size="sm"
+                                                onClick={() => vm.setTypeFilter(type)}
+                                                className="text-xs"
+                                          >
+                                                {typeLabels[type] || type}
+                                          </Button>
+                                    );
+                              })}
                         </div>
                   </div>
 
@@ -203,10 +221,12 @@ export function SubscriptionsOverviewView() {
                                     <TableHeader>
                                           <TableRow className="hover:bg-transparent">
                                                 <TableHead className="w-[50px]">#</TableHead>
+                                                <TableHead>{vm.t("common.tenant") || "Tenant"}</TableHead>
                                                 <TableHead>{vm.t("entitlements.subscriptions.edition") || "Edition"}</TableHead>
                                                 <TableHead>{vm.t("common.status") || "Status"}</TableHead>
                                                 <TableHead>{vm.t("entitlements.subscriptions.type") || "Type"}</TableHead>
                                                 <TableHead>{vm.t("entitlements.subscriptions.amount") || "Amount"}</TableHead>
+                                                <TableHead>{vm.t("tenant.promoCode") || "Promo"}</TableHead>
                                                 <TableHead>{vm.t("entitlements.subscriptions.mrrContribution") || "MRR (USD)"}</TableHead>
                                                 <TableHead>{vm.t("entitlements.subscriptions.startDate") || "Start Date"}</TableHead>
                                                 <TableHead>{vm.t("entitlements.subscriptions.endDate") || "End Date"}</TableHead>
@@ -216,7 +236,7 @@ export function SubscriptionsOverviewView() {
                                     <TableBody>
                                           {vm.subscriptions.length === 0 ? (
                                                 <TableRow>
-                                                      <TableCell colSpan={9} className="h-24 text-center text-muted-foreground">
+                                                      <TableCell colSpan={11} className="h-24 text-center text-muted-foreground">
                                                             {vm.t("common.noResults") || "No subscriptions found"}
                                                       </TableCell>
                                                 </TableRow>
@@ -237,25 +257,42 @@ export function SubscriptionsOverviewView() {
                                                                         {idx + 1}
                                                                   </TableCell>
                                                                   <TableCell>
+                                                                        <span className="font-medium text-sm">{sub.tenantName}</span>
+                                                                  </TableCell>
+                                                                  <TableCell>
                                                                         <div className="flex flex-col">
                                                                               <span className="font-medium">{sub.editionName}</span>
                                                                               {sub.isDowngraded && (
-                                                                                    <span className="text-[10px] text-amber-600">Downgraded</span>
+                                                                                    <span className="text-[10px] text-amber-600">{vm.t("tenant.downgrade") || "Downgraded"}</span>
                                                                               )}
                                                                         </div>
                                                                   </TableCell>
                                                                   <TableCell>
                                                                         <Badge variant="secondary" className={STATUS_COLORS[sub.status] || ""}>
-                                                                              {sub.status}
+                                                                              {vm.t(`tenant.statusLabel.${sub.status.toLowerCase()}`) || sub.status}
                                                                         </Badge>
                                                                   </TableCell>
                                                                   <TableCell>
                                                                         <Badge variant="secondary" className={TYPE_COLORS[sub.type] || ""}>
-                                                                              {sub.type}
+                                                                              {vm.t(`tenant.typeLabel.${sub.type.toLowerCase()}`) || sub.type}
                                                                         </Badge>
                                                                   </TableCell>
                                                                   <TableCell className="tabular-nums font-medium">
                                                                         {vm.formatDisplay(sub.totalAmount, sub.currency)}
+                                                                  </TableCell>
+                                                                  <TableCell className="text-xs">
+                                                                        {sub.appliedPromoCode ? (
+                                                                              <div className="flex flex-col gap-0.5">
+                                                                                    <Badge variant="secondary" className="bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400 text-[10px] w-fit">
+                                                                                          🏷️ {sub.appliedPromoCode}
+                                                                                    </Badge>
+                                                                                    {sub.promotionDiscount != null && sub.promotionDiscount > 0 && (
+                                                                                          <span className="text-[10px] text-emerald-600">−{vm.formatDisplay(sub.promotionDiscount, sub.currency)}</span>
+                                                                                    )}
+                                                                              </div>
+                                                                        ) : (
+                                                                              <span className="text-muted-foreground">—</span>
+                                                                        )}
                                                                   </TableCell>
                                                                   <TableCell className="tabular-nums text-muted-foreground">
                                                                         {vm.formatDisplay(mrr, "USD")}

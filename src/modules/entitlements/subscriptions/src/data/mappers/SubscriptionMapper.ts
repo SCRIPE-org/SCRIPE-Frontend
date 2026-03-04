@@ -73,6 +73,7 @@ export class SubscriptionMapper {
             return {
                   id: model.id,
                   tenantId: model.tenantId,
+                  tenantName: model.tenantName,
                   editionId: model.editionId,
                   editionName: model.editionName,
                   type: model.type,

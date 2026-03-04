@@ -217,8 +217,8 @@ export interface CrudConfig<TItem = any> {
   columns: CrudColumn<TItem>[];
   /** Field definitions for create form (omit for read-only views) */
   createFields?: FieldConfig[];
-  /** Field definitions for edit form (omit for read-only views) */
-  editFields?: FieldConfig[];
+  /** Field definitions for edit form (omit for read-only views). Can be a function that receives the editing item to generate dynamic fields. */
+  editFields?: FieldConfig[] | ((item: TItem) => FieldConfig[]);
   /** Initial values for create form */
   createInitialValues?: Record<string, any>;
   /** Function to get initial values for edit form */
@@ -304,7 +304,7 @@ interface GenericCrudViewProps<T> {
   columns?: any[];
   actions?: any[];
   createFields?: FieldConfig[];
-  editFields?: FieldConfig[];
+  editFields?: FieldConfig[] | ((item: any) => FieldConfig[]);
   viewModel: any;
   pagination?: PaginationInfo & {
     onPageChange: (page: number) => void;
@@ -535,7 +535,15 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
       }));
 
   const createFields = config ? config.createFields : propCreateFields!;
-  const editFields = config ? config.editFields : propEditFields || propCreateFields!;
+  // Support dynamic editFields: if it's a function, resolve it with the current editing item
+  const resolveEditFields = useCallback((editingItem: any): FieldConfig[] => {
+    const raw = config ? config.editFields : propEditFields || propCreateFields;
+    if (typeof raw === 'function') {
+      return raw(editingItem);
+    }
+    return (raw || createFields || []) as FieldConfig[];
+  }, [config, propEditFields, propCreateFields, createFields]);
+  const editFields = resolveEditFields(viewModel.editingItem);
 
   // Auto-generate pagination and search for config-based usage
   const pagination =

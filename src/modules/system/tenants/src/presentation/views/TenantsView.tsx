@@ -185,7 +185,8 @@ export function TenantsView() {
           createForm.editionId,
           createForm.subscriptionType || "Lifetime",
           undefined,
-          createForm.currency || "USD"
+          createForm.currency || "USD",
+          createForm.promoCode || undefined
         );
       }
 
