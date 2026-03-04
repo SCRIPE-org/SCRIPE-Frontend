@@ -116,6 +116,12 @@ export function CreateTenantDialog({
         searchPlaceholder: t("common.search") || "Search...",
         searchType: "server",
         onServerSearch: onSearchEditions,
+        onChange: (value: string) => {
+          // Sync editionId to parent state so subscriptionType options recompute
+          setForm((prev) => ({ ...prev, editionId: value, subscriptionType: "" }));
+          // Return object to also reset subscriptionType in GenericForm's internal state
+          return { editionId: value, subscriptionType: "" };
+        },
       },
       {
         name: "subscriptionType",
@@ -125,13 +131,13 @@ export function CreateTenantDialog({
         options: (() => {
           const selectedEd = cachedEditions.find((ed) => ed.id === form.editionId);
           const opts: { value: string; label: string }[] = [];
-          if (!selectedEd || selectedEd.allowLifetime !== false)
+          if (selectedEd?.allowLifetime !== false)
             opts.push({ value: "Lifetime", label: t("tenant.subscriptionTypes.lifetime") || "Lifetime" });
-          if (!selectedEd || selectedEd.allowMonthly !== false)
+          if (selectedEd?.allowMonthly !== false)
             opts.push({ value: "Monthly", label: t("tenant.subscriptionTypes.monthly") || "Monthly" });
-          if (!selectedEd || selectedEd.allowYearly !== false)
+          if (selectedEd?.allowYearly !== false)
             opts.push({ value: "Yearly", label: t("tenant.subscriptionTypes.yearly") || "Yearly" });
-          if (!selectedEd || selectedEd.allowTrial !== false)
+          if (selectedEd?.allowTrial !== false)
             opts.push({ value: "Trial", label: t("tenant.subscriptionTypes.trial") || "Trial (14 days)" });
           return opts;
         })(),
@@ -157,7 +163,7 @@ export function CreateTenantDialog({
         ],
       },
     ],
-    [t, onSearchEditions, form.editionId, cachedEditions]
+    [t, onSearchEditions, form.editionId, cachedEditions, setForm]
   );
 
   const handleSubmit = async (data: Record<string, any>) => {

@@ -64,11 +64,13 @@ export interface EditionPricingViewModelResult {
       error: Error | null;
       isDirty: boolean;
       isSaving: boolean;
+      isCreatingVersion: boolean;
       ratesLoading: boolean;
 
       // ── Actions ──
       save: () => void;
       discard: () => void;
+      createVersionWithPricing: (changeNotes?: string) => void;
 }
 
 export function useEditionPricingViewModel(editionId: string): EditionPricingViewModelResult {
@@ -379,6 +381,56 @@ export function useEditionPricingViewModel(editionId: string): EditionPricingVie
             },
       });
 
+      // ── Build pricing snapshot for version creation ──
+      const buildPricingSnapshot = useCallback((): Array<{ currency: string; billingCycle: string; amount: number }> => {
+            const snapshot: Array<{ currency: string; billingCycle: string; amount: number }> = [];
+
+            // USD base prices
+            snapshot.push({ currency: "USD", billingCycle: "Monthly", amount: usdMonthly });
+            snapshot.push({ currency: "USD", billingCycle: "Yearly", amount: usdYearly });
+            if (usdLifetime > 0) {
+                  snapshot.push({ currency: "USD", billingCycle: "Lifetime", amount: usdLifetime });
+            }
+
+            // Override prices
+            for (const row of overrides) {
+                  snapshot.push({ currency: row.currency, billingCycle: "Monthly", amount: row.monthlyAmount });
+                  snapshot.push({ currency: row.currency, billingCycle: "Yearly", amount: row.yearlyAmount });
+                  if (row.lifetimeAmount > 0) {
+                        snapshot.push({ currency: row.currency, billingCycle: "Lifetime", amount: row.lifetimeAmount });
+                  }
+            }
+
+            return snapshot;
+      }, [usdMonthly, usdYearly, usdLifetime, overrides]);
+
+      // ── Save as Version ──
+      const { mutate: createVersionWithPricing, isPending: isCreatingVersion } = useMutation({
+            mutationFn: async ({ changeNotes }: { changeNotes?: string }) => {
+                  const pricingSnapshot = buildPricingSnapshot();
+                  return editionRepository.createVersion(editionId, changeNotes, undefined, pricingSnapshot);
+            },
+            onSuccess: () => {
+                  queryClient.invalidateQueries({ queryKey: ["entitlements", "editions", editionId, "versions"] });
+                  queryClient.invalidateQueries({ queryKey: ["entitlements", "editions", editionId, "prices"] });
+                  discard();
+                  success({
+                        title: "Pricing Version Created",
+                        description: "Pricing changes saved as a new version. Existing subscribers keep their current pricing.",
+                  });
+            },
+            onError: (err: Error) => {
+                  showError({
+                        title: "Version Creation Failed",
+                        description: err.message,
+                  });
+            },
+      });
+
+      const handleCreateVersion = useCallback((changeNotes?: string) => {
+            createVersionWithPricing({ changeNotes });
+      }, [createVersionWithPricing]);
+
       return {
             usdMonthly,
             usdYearly,
@@ -401,8 +453,10 @@ export function useEditionPricingViewModel(editionId: string): EditionPricingVie
             error: pricesError as Error | null,
             isDirty,
             isSaving,
+            isCreatingVersion,
             ratesLoading,
             save,
             discard,
+            createVersionWithPricing: handleCreateVersion,
       };
 }

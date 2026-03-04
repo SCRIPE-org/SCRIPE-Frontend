@@ -16,13 +16,14 @@ import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Badge } from "@core/ui/badge";
 import { Skeleton } from "@core/ui/skeleton";
+import { Textarea } from "@core/ui/textarea";
 import {
       Dialog, DialogContent, DialogDescription, DialogFooter,
       DialogHeader, DialogTitle,
 } from "@core/ui/dialog";
 import GenericSelect from "@core/crud/components/generic-select";
 import {
-      DollarSign, Plus, Trash2, Loader2, Undo2, Save,
+      DollarSign, Plus, Trash2, Loader2, Undo2, GitBranch, Bolt,
       TrendingDown, Coins, AlertCircle, Info, ChevronDown,
       Globe, Zap,
 } from "lucide-react";
@@ -41,6 +42,11 @@ export const PricingTab = memo(function PricingTab({ editionId, allowMonthly = t
       const [showAddDialog, setShowAddDialog] = useState(false);
       const [selectedCurrency, setSelectedCurrency] = useState("");
       const [showPreview, setShowPreview] = useState(false);
+      const [showVersionDialog, setShowVersionDialog] = useState(false);
+      const [versionNotes, setVersionNotes] = useState("");
+      const [showApplyDialog, setShowApplyDialog] = useState(false);
+
+      const isBusy = vm.isSaving || vm.isCreatingVersion;
 
       const handleAddCurrency = () => {
             if (selectedCurrency) {
@@ -468,22 +474,45 @@ export const PricingTab = memo(function PricingTab({ editionId, allowMonthly = t
                                                                   {t("entitlements.pricing.unsavedChanges") || "Unsaved pricing changes"}
                                                             </p>
                                                             <p className="text-xs text-muted-foreground">
-                                                                  {t("entitlements.pricing.unsavedChangesDesc") || "Save to apply your pricing changes."}
+                                                                  {t("entitlements.pricing.versionHint") || "Save as version to grandfather existing subscribers, or apply now to update immediately."}
                                                             </p>
                                                       </div>
                                                 </div>
                                                 <div className="flex items-center gap-2 shrink-0">
-                                                      <Button variant="ghost" size="sm" onClick={vm.discard} disabled={vm.isSaving}>
+                                                      {/* Discard */}
+                                                      <Button variant="ghost" size="sm" onClick={vm.discard} disabled={isBusy}>
                                                             <Undo2 className="h-4 w-4 me-1" />
                                                             {t("common.discard") || "Discard"}
                                                       </Button>
-                                                      <Button size="sm" onClick={vm.save} disabled={vm.isSaving} className="gradient-primary">
+
+                                                      {/* Apply Now (secondary) */}
+                                                      <Button
+                                                            variant="outline"
+                                                            size="sm"
+                                                            onClick={() => setShowApplyDialog(true)}
+                                                            disabled={isBusy}
+                                                      >
                                                             {vm.isSaving ? (
                                                                   <Loader2 className="h-4 w-4 animate-spin me-1" />
                                                             ) : (
-                                                                  <Save className="h-4 w-4 me-1" />
+                                                                  <Bolt className="h-4 w-4 me-1" />
                                                             )}
-                                                            {t("common.save") || "Save"}
+                                                            {t("entitlements.editions.directApply") || "Apply Now"}
+                                                      </Button>
+
+                                                      {/* Save as Version (primary) */}
+                                                      <Button
+                                                            size="sm"
+                                                            onClick={() => setShowVersionDialog(true)}
+                                                            disabled={isBusy}
+                                                            className="gradient-primary"
+                                                      >
+                                                            {vm.isCreatingVersion ? (
+                                                                  <Loader2 className="h-4 w-4 animate-spin me-1" />
+                                                            ) : (
+                                                                  <GitBranch className="h-4 w-4 me-1" />
+                                                            )}
+                                                            {t("entitlements.editions.saveAsVersion") || "Save as Version"}
                                                       </Button>
                                                 </div>
                                           </div>
@@ -531,6 +560,92 @@ export const PricingTab = memo(function PricingTab({ editionId, allowMonthly = t
                                     >
                                           <Plus className="h-4 w-4 me-1" />
                                           {t("common.add") || "Add"}
+                                    </Button>
+                              </DialogFooter>
+                        </DialogContent>
+                  </Dialog>
+
+                  {/* ═══════ SAVE AS VERSION DIALOG ═══════ */}
+                  <Dialog open={showVersionDialog} onOpenChange={setShowVersionDialog}>
+                        <DialogContent className="sm:max-w-md">
+                              <DialogHeader>
+                                    <DialogTitle className="flex items-center gap-2">
+                                          <GitBranch className="h-5 w-5 text-primary" />
+                                          {t("entitlements.editions.saveAsVersion") || "Save as Version"}
+                                    </DialogTitle>
+                                    <DialogDescription>
+                                          {t("entitlements.pricing.saveAsVersionDesc") || "Save pricing changes as a new version. Existing subscribers will keep their current pricing until renewal."}
+                                    </DialogDescription>
+                              </DialogHeader>
+                              <div className="space-y-3 py-2">
+                                    <div className="space-y-1.5">
+                                          <label className="text-sm font-medium">
+                                                {t("entitlements.editions.versionNotesLabel") || "Version Notes"}
+                                          </label>
+                                          <Textarea
+                                                placeholder={t("entitlements.editions.versions.changeNotesPlaceholder") || "Describe pricing changes..."}
+                                                value={versionNotes}
+                                                onChange={(e) => setVersionNotes(e.target.value)}
+                                                className="min-h-[80px] resize-none"
+                                          />
+                                    </div>
+                                    <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/50 rounded-md p-2.5">
+                                          <DollarSign className="h-3.5 w-3.5 shrink-0" />
+                                          <span>{t("entitlements.pricing.versionChangesIncluded") || "Pricing changes will be included in this version."}</span>
+                                    </div>
+                              </div>
+                              <DialogFooter>
+                                    <Button variant="ghost" onClick={() => setShowVersionDialog(false)}>
+                                          {t("common.cancel") || "Cancel"}
+                                    </Button>
+                                    <Button
+                                          onClick={() => {
+                                                vm.createVersionWithPricing(versionNotes || undefined);
+                                                setShowVersionDialog(false);
+                                                setVersionNotes("");
+                                          }}
+                                          disabled={isBusy}
+                                          className="gradient-primary"
+                                    >
+                                          {vm.isCreatingVersion && <Loader2 className="h-4 w-4 animate-spin me-1" />}
+                                          <GitBranch className="h-4 w-4 me-1" />
+                                          {t("entitlements.editions.createAndPublish") || "Create Version"}
+                                    </Button>
+                              </DialogFooter>
+                        </DialogContent>
+                  </Dialog>
+
+                  {/* ═══════ APPLY NOW CONFIRMATION DIALOG ═══════ */}
+                  <Dialog open={showApplyDialog} onOpenChange={setShowApplyDialog}>
+                        <DialogContent className="sm:max-w-md">
+                              <DialogHeader>
+                                    <DialogTitle className="flex items-center gap-2 text-amber-600 dark:text-amber-400">
+                                          <Bolt className="h-5 w-5" />
+                                          {t("entitlements.pricing.applyNowTitle") || "Apply Pricing Immediately?"}
+                                    </DialogTitle>
+                                    <DialogDescription>
+                                          {t("entitlements.pricing.applyNowDesc") || "This will update pricing for all new subscriptions immediately. Existing subscribers are not affected until their next renewal."}
+                                    </DialogDescription>
+                              </DialogHeader>
+                              <div className="flex items-center gap-2 text-xs text-muted-foreground bg-amber-500/5 border border-amber-500/20 rounded-md p-2.5">
+                                    <Bolt className="h-3.5 w-3.5 text-amber-500 shrink-0" />
+                                    <span>{t("entitlements.pricing.applyWarning") || "New pricing will take effect immediately for all new subscriptions."}</span>
+                              </div>
+                              <DialogFooter>
+                                    <Button variant="ghost" onClick={() => setShowApplyDialog(false)}>
+                                          {t("common.cancel") || "Cancel"}
+                                    </Button>
+                                    <Button
+                                          variant="destructive"
+                                          onClick={() => {
+                                                vm.save();
+                                                setShowApplyDialog(false);
+                                          }}
+                                          disabled={isBusy}
+                                    >
+                                          {vm.isSaving && <Loader2 className="h-4 w-4 animate-spin me-1" />}
+                                          <Bolt className="h-4 w-4 me-1" />
+                                          {t("entitlements.editions.applyNow") || "Apply Now"}
                                     </Button>
                               </DialogFooter>
                         </DialogContent>
