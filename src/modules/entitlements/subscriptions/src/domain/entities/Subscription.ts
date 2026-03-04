@@ -50,6 +50,8 @@ export interface SubscriptionListItem {
       createdAt: string;
       // ── Pricing ──
       currency?: string;
+      baseAmount?: number;
+      adjustmentAmount?: number;
       totalAmount?: number;
       totalAmountUsd?: number;
       // ── Promotion ──

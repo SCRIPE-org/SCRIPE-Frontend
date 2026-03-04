@@ -33,6 +33,7 @@ import {
 } from "../TenantDialogs";
 
 import type { TenantTreeNode, Tenant } from "../../../domain/entities/Tenant";
+import type { EditionThinModel } from "../../../data/models/TenantSubscription";
 import { appLogger } from "@core/common/logger";
 
 interface SubTenantsTabProps {
@@ -64,6 +65,7 @@ export function SubTenantsTab({
   const [isCreating, setIsCreating] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [cachedEditions, setCachedEditions] = useState<EditionThinModel[]>([]);
 
   // Fetch children
   const {
@@ -78,6 +80,13 @@ export function SubTenantsTab({
   const handleSearchEditions = useCallback(async (query: string) => {
     try {
       const res = await systemContainer.tenantRepository.getAvailableEditions(1, 10, query);
+      setCachedEditions((prev) => {
+        const merged = [...prev];
+        for (const ed of res.items) {
+          if (!merged.find((e) => e.id === ed.id)) merged.push(ed);
+        }
+        return merged;
+      });
       return res.items.map((ed) => ({ value: ed.id, label: ed.name }));
     } catch (err) {
       appLogger.error("Failed to search editions:", err);
@@ -289,6 +298,7 @@ export function SubTenantsTab({
         onSubmit={handleCreateSubmit}
         isLoading={isCreating}
         onSearchEditions={handleSearchEditions}
+        cachedEditions={cachedEditions}
       />
 
       <EditTenantDialog

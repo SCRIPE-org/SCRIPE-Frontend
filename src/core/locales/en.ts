@@ -5276,6 +5276,16 @@ export const en = {
       unlimited: "Leave empty for unlimited",
       expired: "Expired",
       limitReached: "Limit Reached",
+      // Duration Presets
+      duration: "Discount Duration",
+      forever: "Forever",
+      oneMonth: "1 Month",
+      threeMonths: "3 Months",
+      sixMonths: "6 Months",
+      oneYear: "1 Year",
+      twoYears: "2 Years",
+      custom: "Custom...",
+      customDays: "Enter days...",
     },
   },
 

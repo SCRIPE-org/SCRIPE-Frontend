@@ -30,9 +30,12 @@ import { getCurrencyInfo, formatPrice, SUPPORTED_CURRENCIES } from "../../domain
 
 interface PricingTabProps {
       editionId: string;
+      allowMonthly?: boolean;
+      allowYearly?: boolean;
+      allowLifetime?: boolean;
 }
 
-export const PricingTab = memo(function PricingTab({ editionId }: PricingTabProps) {
+export const PricingTab = memo(function PricingTab({ editionId, allowMonthly = true, allowYearly = true, allowLifetime = true }: PricingTabProps) {
       const { t } = useI18n();
       const vm = useEditionPricingViewModel(editionId);
       const [showAddDialog, setShowAddDialog] = useState(false);
@@ -107,7 +110,7 @@ export const PricingTab = memo(function PricingTab({ editionId }: PricingTabProp
                               </CardHeader>
                               <CardContent className="pt-0 space-y-3">
                                     {/* Monthly */}
-                                    <div className="flex items-center gap-3">
+                                    <div className={`flex items-center gap-3 ${!allowMonthly ? "opacity-40 pointer-events-none" : ""}`}>
                                           <span className="text-sm text-muted-foreground w-20 shrink-0">
                                                 {t("entitlements.pricing.monthly") || "Monthly"}
                                           </span>
@@ -121,13 +124,19 @@ export const PricingTab = memo(function PricingTab({ editionId }: PricingTabProp
                                                       min={0}
                                                       step="0.01"
                                                       placeholder="0.00"
+                                                      disabled={!allowMonthly}
                                                 />
                                           </div>
                                           <span className="text-xs text-muted-foreground">/mo</span>
+                                          {!allowMonthly && (
+                                                <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5 text-muted-foreground border-muted">
+                                                      {t("common.disabled") || "Disabled"}
+                                                </Badge>
+                                          )}
                                     </div>
 
                                     {/* Yearly */}
-                                    <div className="flex items-center gap-3">
+                                    <div className={`flex items-center gap-3 ${!allowYearly ? "opacity-40 pointer-events-none" : ""}`}>
                                           <span className="text-sm text-muted-foreground w-20 shrink-0">
                                                 {t("entitlements.pricing.yearly") || "Yearly"}
                                           </span>
@@ -141,11 +150,16 @@ export const PricingTab = memo(function PricingTab({ editionId }: PricingTabProp
                                                       min={0}
                                                       step="0.01"
                                                       placeholder="0.00"
+                                                      disabled={!allowYearly}
                                                 />
                                           </div>
                                           <div className="flex items-center gap-1.5">
                                                 <span className="text-xs text-muted-foreground">/yr</span>
-                                                {usdSavings > 0 && (
+                                                {!allowYearly ? (
+                                                      <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5 text-muted-foreground border-muted">
+                                                            {t("common.disabled") || "Disabled"}
+                                                      </Badge>
+                                                ) : usdSavings > 0 && (
                                                       <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 bg-emerald-500/5">
                                                             <TrendingDown className="h-2.5 w-2.5 me-0.5" />
                                                             {t("entitlements.pricing.save") || "Save"} {usdSavings}%
@@ -155,7 +169,7 @@ export const PricingTab = memo(function PricingTab({ editionId }: PricingTabProp
                                     </div>
 
                                     {/* Dynamic Yearly Discount */}
-                                    {vm.usdMonthly > 0 && (
+                                    {allowYearly && vm.usdMonthly > 0 && (
                                           <div className="rounded-lg bg-muted/30 border p-3 mt-1 space-y-2">
                                                 <div className="flex items-center justify-between">
                                                       <span className="text-xs font-medium text-muted-foreground">
@@ -202,7 +216,7 @@ export const PricingTab = memo(function PricingTab({ editionId }: PricingTabProp
                                     </div>
 
                                     {/* Lifetime (one-time) */}
-                                    <div className="flex items-center gap-3 pt-3 mt-3 border-t border-dashed border-border/50">
+                                    <div className={`flex items-center gap-3 pt-3 mt-3 border-t border-dashed border-border/50 ${!allowLifetime ? "opacity-40 pointer-events-none" : ""}`}>
                                           <span className="text-sm text-muted-foreground w-20 shrink-0">
                                                 {t("entitlements.pricing.lifetime")}
                                           </span>
@@ -216,11 +230,18 @@ export const PricingTab = memo(function PricingTab({ editionId }: PricingTabProp
                                                       min={0}
                                                       step="0.01"
                                                       placeholder="0.00"
+                                                      disabled={!allowLifetime}
                                                 />
                                           </div>
-                                          <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5 text-purple-600 dark:text-purple-400 border-purple-500/30 bg-purple-500/5">
-                                                {t("entitlements.pricing.oneTime")}
-                                          </Badge>
+                                          {!allowLifetime ? (
+                                                <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5 text-muted-foreground border-muted">
+                                                      {t("common.disabled") || "Disabled"}
+                                                </Badge>
+                                          ) : (
+                                                <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5 text-purple-600 dark:text-purple-400 border-purple-500/30 bg-purple-500/5">
+                                                      {t("entitlements.pricing.oneTime")}
+                                                </Badge>
+                                          )}
                                     </div>
                               </CardContent>
                         </Card>

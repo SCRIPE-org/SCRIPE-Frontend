@@ -120,6 +120,69 @@ export function EditionsView() {
                                     ...(vm.items || []).map((e: Edition) => ({ value: e.id, label: e.getDisplayName(language) })),
                               ],
                         },
+                        // ── Billing Controls ──
+                        {
+                              name: "allowMonthly",
+                              label: t("entitlements.editions.allowMonthly") || "Allow Monthly Billing",
+                              type: "switch" as const,
+                              defaultValue: true,
+                        },
+                        {
+                              name: "allowYearly",
+                              label: t("entitlements.editions.allowYearly") || "Allow Yearly Billing",
+                              type: "switch" as const,
+                              defaultValue: true,
+                        },
+                        {
+                              name: "allowLifetime",
+                              label: t("entitlements.editions.allowLifetime") || "Allow Lifetime (One-Time)",
+                              type: "switch" as const,
+                              defaultValue: true,
+                        },
+                        {
+                              name: "allowTrial",
+                              label: t("entitlements.editions.allowTrial") || "Allow Trial Period",
+                              type: "switch" as const,
+                              defaultValue: true,
+                        },
+                        // ── Trial Configuration (visible only when allowTrial=true) ──
+                        {
+                              name: "trialDurationDays",
+                              label: t("entitlements.editions.trialDurationDays") || "Trial Duration (Days)",
+                              type: "number" as const,
+                              min: 1,
+                              max: 730,
+                              defaultValue: 14,
+                              placeholder: "14",
+                              isVisible: (formData: Record<string, any>) => formData.allowTrial !== false,
+                        },
+                        {
+                              name: "trialIsFree",
+                              label: t("entitlements.editions.trialIsFree") || "Free Trial (No Charge)",
+                              type: "switch" as const,
+                              defaultValue: true,
+                              isVisible: (formData: Record<string, any>) => formData.allowTrial !== false,
+                        },
+                        {
+                              name: "trialDiscountPercent",
+                              label: t("entitlements.editions.trialDiscountPercent") || "Trial Discount (%)",
+                              type: "slider" as const,
+                              min: 0,
+                              max: 100,
+                              step: 5,
+                              defaultValue: 100,
+                              isVisible: (formData: Record<string, any>) => formData.allowTrial !== false && formData.trialIsFree === false,
+                        },
+                        // ── Grace Period ──
+                        {
+                              name: "gracePeriodDays",
+                              label: t("entitlements.editions.gracePeriodDays") || "Grace Period (Days)",
+                              type: "number" as const,
+                              min: 0,
+                              max: 365,
+                              defaultValue: 0,
+                              placeholder: "0",
+                        },
                   ],
                   editFields: [
                         {
@@ -156,6 +219,61 @@ export function EditionsView() {
                                     ...(vm.items || []).map((e: Edition) => ({ value: e.id, label: e.getDisplayName(language) })),
                               ],
                         },
+                        // ── Billing Controls ──
+                        {
+                              name: "allowMonthly",
+                              label: t("entitlements.editions.allowMonthly") || "Allow Monthly Billing",
+                              type: "switch" as const,
+                        },
+                        {
+                              name: "allowYearly",
+                              label: t("entitlements.editions.allowYearly") || "Allow Yearly Billing",
+                              type: "switch" as const,
+                        },
+                        {
+                              name: "allowLifetime",
+                              label: t("entitlements.editions.allowLifetime") || "Allow Lifetime (One-Time)",
+                              type: "switch" as const,
+                        },
+                        {
+                              name: "allowTrial",
+                              label: t("entitlements.editions.allowTrial") || "Allow Trial Period",
+                              type: "switch" as const,
+                        },
+                        // ── Trial Configuration ──
+                        {
+                              name: "trialDurationDays",
+                              label: t("entitlements.editions.trialDurationDays") || "Trial Duration (Days)",
+                              type: "number" as const,
+                              min: 1,
+                              max: 730,
+                              placeholder: "14",
+                              isVisible: (formData: Record<string, any>) => formData.allowTrial !== false,
+                        },
+                        {
+                              name: "trialIsFree",
+                              label: t("entitlements.editions.trialIsFree") || "Free Trial (No Charge)",
+                              type: "switch" as const,
+                              isVisible: (formData: Record<string, any>) => formData.allowTrial !== false,
+                        },
+                        {
+                              name: "trialDiscountPercent",
+                              label: t("entitlements.editions.trialDiscount") || "Trial Discount (%)",
+                              type: "slider" as const,
+                              min: 0,
+                              max: 100,
+                              step: 5,
+                              isVisible: (formData: Record<string, any>) => formData.allowTrial !== false && formData.trialIsFree === false,
+                        },
+                        // ── Grace Period ──
+                        {
+                              name: "gracePeriodDays",
+                              label: t("entitlements.editions.gracePeriod") || "Grace Period (Days)",
+                              type: "number" as const,
+                              min: 0,
+                              max: 365,
+                              placeholder: "0",
+                        },
                   ],
                   editInitialValues: (edition: Edition) => ({
                         name: edition.name,
@@ -163,6 +281,15 @@ export function EditionsView() {
                         displayNameAr: edition.displayNameAr,
                         description: edition.description || "",
                         fallbackEditionId: edition.fallbackEditionId || "",
+                        // ── Billing Controls ──
+                        allowMonthly: edition.allowMonthly,
+                        allowYearly: edition.allowYearly,
+                        allowLifetime: edition.allowLifetime,
+                        allowTrial: edition.allowTrial,
+                        trialDurationDays: edition.trialDurationDays,
+                        trialIsFree: edition.trialIsFree,
+                        trialDiscountPercent: edition.trialDiscountPercent,
+                        gracePeriodDays: edition.gracePeriodDays,
                   }),
                   getItemDisplayName: (edition: Edition) => edition.getDisplayName(language),
                   deleteService: (id: string) => vm.deleteItem(id),

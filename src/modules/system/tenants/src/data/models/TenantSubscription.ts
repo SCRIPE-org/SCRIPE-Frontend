@@ -16,6 +16,11 @@ export interface EditionThinModel {
       displayNameAr: string;
       isSystem: boolean;
       isRetired: boolean;
+      // ── Billing Controls ──
+      allowMonthly?: boolean;
+      allowYearly?: boolean;
+      allowLifetime?: boolean;
+      allowTrial?: boolean;
 }
 
 export interface SubscriptionModel {

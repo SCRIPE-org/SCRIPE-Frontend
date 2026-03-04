@@ -101,6 +101,7 @@ export function TenantsView() {
   const [isCreating, setIsCreating] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [cachedEditions, setCachedEditions] = useState<EditionThinModel[]>([]);
 
   // System admin check
   const isSystemAdmin = useMemo(() => {
@@ -125,8 +126,15 @@ export function TenantsView() {
   // ── Handlers ──
   const handleSearchEditions = useCallback(async (query: string) => {
     try {
-      // Fetch specifically page 1, size 10, with the search query
       const res = await systemContainer.tenantRepository.getAvailableEditions(1, 10, query);
+      // Cache editions with billing controls for dynamic plan type filtering
+      setCachedEditions((prev) => {
+        const merged = [...prev];
+        for (const ed of res.items) {
+          if (!merged.find((e) => e.id === ed.id)) merged.push(ed);
+        }
+        return merged;
+      });
       return res.items.map((ed) => ({ value: ed.id, label: ed.name }));
     } catch (err) {
       appLogger.error("Failed to search editions:", err);
@@ -347,6 +355,7 @@ export function TenantsView() {
         onSubmit={handleCreateSubmit}
         isLoading={isCreating}
         onSearchEditions={handleSearchEditions}
+        cachedEditions={cachedEditions}
       />
 
       {/* Edit Dialog */}

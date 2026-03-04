@@ -11,6 +11,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
+import { DatePicker } from "@core/ui/date-picker";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { Switch } from "@core/ui/switch";
 import { Label } from "@core/ui/label";
@@ -22,13 +23,7 @@ import {
       DialogHeader,
       DialogTitle,
 } from "@core/ui/dialog";
-import {
-      Select,
-      SelectContent,
-      SelectItem,
-      SelectTrigger,
-      SelectValue,
-} from "@core/ui/select";
+import GenericSelect from "@core/crud/components/generic-select";
 import {
       Tag, Plus, Loader2, Pencil, Trash2, Clock, Users,
       Percent, DollarSign, CalendarDays, Hash, ShieldCheck,
@@ -37,9 +32,12 @@ import type { EditionPromotion } from "../../domain/entities/EditionPromotion";
 
 interface PromotionsTabProps {
       editionId: string;
+      allowMonthly?: boolean;
+      allowYearly?: boolean;
+      allowLifetime?: boolean;
 }
 
-export function PromotionsTab({ editionId }: PromotionsTabProps) {
+export function PromotionsTab({ editionId, allowMonthly = true, allowYearly = true, allowLifetime = true }: PromotionsTabProps) {
       const { t, direction } = useI18n();
       const vm = usePromotionsViewModel(editionId);
 
@@ -100,7 +98,7 @@ export function PromotionsTab({ editionId }: PromotionsTabProps) {
 
                   {/* Create / Edit Dialog */}
                   <Dialog open={vm.showDialog} onOpenChange={(open) => !open && vm.closeDialog()}>
-                        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+                        <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
                               <DialogHeader>
                                     <DialogTitle className="flex items-center gap-2">
                                           <Tag className="h-5 w-5 text-primary" />
@@ -142,20 +140,15 @@ export function PromotionsTab({ editionId }: PromotionsTabProps) {
                                                 <div className="grid grid-cols-2 gap-3">
                                                       <div className="space-y-1.5">
                                                             <Label>{t("entitlements.promotions.discountType") || "Discount Type"}</Label>
-                                                            <Select
+                                                            <GenericSelect
+                                                                  type="single"
+                                                                  options={[
+                                                                        { value: "Percentage", label: t("entitlements.promotions.percentage") || "Percentage" },
+                                                                        { value: "FixedAmount", label: t("entitlements.promotions.fixedAmount") || "Fixed Amount" },
+                                                                  ]}
                                                                   value={vm.form.type}
-                                                                  onValueChange={(v) => vm.setField("type", v as "Percentage" | "FixedAmount")}
-                                                            >
-                                                                  <SelectTrigger><SelectValue /></SelectTrigger>
-                                                                  <SelectContent>
-                                                                        <SelectItem value="Percentage">
-                                                                              {t("entitlements.promotions.percentage") || "Percentage"}
-                                                                        </SelectItem>
-                                                                        <SelectItem value="FixedAmount">
-                                                                              {t("entitlements.promotions.fixedAmount") || "Fixed Amount"}
-                                                                        </SelectItem>
-                                                                  </SelectContent>
-                                                            </Select>
+                                                                  onValueChange={(v: string | string[]) => vm.setField("type", (typeof v === "string" ? v : v[0]) as "Percentage" | "FixedAmount")}
+                                                            />
                                                       </div>
                                                       <div className="space-y-1.5">
                                                             <Label>
@@ -177,29 +170,32 @@ export function PromotionsTab({ editionId }: PromotionsTabProps) {
                                                 {vm.form.type === "FixedAmount" && (
                                                       <div className="space-y-1.5">
                                                             <Label>{t("entitlements.promotions.currency") || "Currency"}</Label>
-                                                            <Select value={vm.form.discountCurrency} onValueChange={(v) => vm.setField("discountCurrency", v)}>
-                                                                  <SelectTrigger><SelectValue /></SelectTrigger>
-                                                                  <SelectContent>
-                                                                        {["USD", "EUR", "GBP", "SAR", "AED", "EGP"].map((c) => (
-                                                                              <SelectItem key={c} value={c}>{c}</SelectItem>
-                                                                        ))}
-                                                                  </SelectContent>
-                                                            </Select>
+                                                            <GenericSelect
+                                                                  type="single"
+                                                                  options={["USD", "EUR", "GBP", "SAR", "AED", "EGP"].map((c) => ({ value: c, label: c }))}
+                                                                  value={vm.form.discountCurrency}
+                                                                  onValueChange={(v: string | string[]) => vm.setField("discountCurrency", typeof v === "string" ? v : v[0])}
+                                                            />
                                                       </div>
                                                 )}
 
                                                 {/* Applicable Cycle */}
                                                 <div className="space-y-1.5">
                                                       <Label>{t("entitlements.promotions.applicableCycle") || "Applicable Billing Cycle"}</Label>
-                                                      <Select value={vm.form.applicableCycle || "any"} onValueChange={(v) => vm.setField("applicableCycle", v === "any" ? "" : v)}>
-                                                            <SelectTrigger><SelectValue /></SelectTrigger>
-                                                            <SelectContent>
-                                                                  <SelectItem value="any">{t("common.any") || "Any Cycle"}</SelectItem>
-                                                                  <SelectItem value="Monthly">{t("entitlements.promotions.monthly") || "Monthly"}</SelectItem>
-                                                                  <SelectItem value="Yearly">{t("entitlements.promotions.yearly") || "Yearly"}</SelectItem>
-                                                                  <SelectItem value="Lifetime">{t("entitlements.promotions.lifetime") || "Lifetime"}</SelectItem>
-                                                            </SelectContent>
-                                                      </Select>
+                                                      <GenericSelect
+                                                            type="single"
+                                                            options={[
+                                                                  { value: "any", label: t("common.any") || "Any Cycle" },
+                                                                  ...(allowMonthly ? [{ value: "Monthly", label: t("entitlements.promotions.monthly") || "Monthly" }] : []),
+                                                                  ...(allowYearly ? [{ value: "Yearly", label: t("entitlements.promotions.yearly") || "Yearly" }] : []),
+                                                                  ...(allowLifetime ? [{ value: "Lifetime", label: t("entitlements.promotions.lifetime") || "Lifetime" }] : []),
+                                                            ]}
+                                                            value={vm.form.applicableCycle || "any"}
+                                                            onValueChange={(v: string | string[]) => {
+                                                                  const val = typeof v === "string" ? v : v[0];
+                                                                  vm.setField("applicableCycle", val === "any" ? "" : val);
+                                                            }}
+                                                      />
                                                 </div>
 
                                                 {/* Promo Code */}
@@ -224,13 +220,45 @@ export function PromotionsTab({ editionId }: PromotionsTabProps) {
                                                 {/* Duration + First Time Only */}
                                                 <div className="grid grid-cols-2 gap-3">
                                                       <div className="space-y-1.5">
-                                                            <Label>{t("entitlements.promotions.durationDays") || "Duration (Days)"}</Label>
-                                                            <Input
-                                                                  type="number"
-                                                                  min={1}
-                                                                  value={vm.form.durationDays || ""}
-                                                                  onChange={(e) => vm.setField("durationDays", parseInt(e.target.value) || 0)}
+                                                            <Label>{t("entitlements.promotions.duration") || "Discount Duration"}</Label>
+                                                            <GenericSelect
+                                                                  type="single"
+                                                                  options={[
+                                                                        { value: "forever", label: t("entitlements.promotions.forever") || "Forever" },
+                                                                        { value: "30", label: t("entitlements.promotions.oneMonth") || "1 Month" },
+                                                                        { value: "90", label: t("entitlements.promotions.threeMonths") || "3 Months" },
+                                                                        { value: "180", label: t("entitlements.promotions.sixMonths") || "6 Months" },
+                                                                        { value: "365", label: t("entitlements.promotions.oneYear") || "1 Year" },
+                                                                        { value: "730", label: t("entitlements.promotions.twoYears") || "2 Years" },
+                                                                        { value: "custom", label: t("entitlements.promotions.custom") || "Custom..." },
+                                                                  ]}
+                                                                  value={
+                                                                        vm.form.durationDays === 0 ? "forever"
+                                                                              : vm.form.durationDays === 30 ? "30"
+                                                                                    : vm.form.durationDays === 90 ? "90"
+                                                                                          : vm.form.durationDays === 180 ? "180"
+                                                                                                : vm.form.durationDays === 365 ? "365"
+                                                                                                      : vm.form.durationDays === 730 ? "730"
+                                                                                                            : "custom"
+                                                                  }
+                                                                  onValueChange={(v: string | string[]) => {
+                                                                        const val = typeof v === "string" ? v : v[0];
+                                                                        if (val === "forever") vm.setField("durationDays", 0);
+                                                                        else if (val === "custom") { /* keep current value */ }
+                                                                        else vm.setField("durationDays", parseInt(val));
+                                                                  }}
                                                             />
+                                                            {/* Custom days input — shown when duration doesn't match a preset */}
+                                                            {![0, 30, 90, 180, 365, 730].includes(vm.form.durationDays) && (
+                                                                  <Input
+                                                                        type="number"
+                                                                        min={1}
+                                                                        value={vm.form.durationDays || ""}
+                                                                        onChange={(e) => vm.setField("durationDays", parseInt(e.target.value) || 0)}
+                                                                        placeholder={t("entitlements.promotions.customDays") || "Enter days..."}
+                                                                        className="mt-1.5"
+                                                                  />
+                                                            )}
                                                       </div>
                                                       <div className="flex items-end pb-2">
                                                             <div className="flex items-center gap-2">
@@ -251,18 +279,18 @@ export function PromotionsTab({ editionId }: PromotionsTabProps) {
                                     <div className="grid grid-cols-2 gap-3">
                                           <div className="space-y-1.5">
                                                 <Label>{t("entitlements.promotions.validFrom") || "Valid From"}</Label>
-                                                <Input
-                                                      type="date"
+                                                <DatePicker
                                                       value={vm.form.validFrom}
-                                                      onChange={(e) => vm.setField("validFrom", e.target.value)}
+                                                      onChange={(v) => vm.setField("validFrom", v)}
+                                                      placeholder={t("entitlements.promotions.validFrom") || "Valid From"}
                                                 />
                                           </div>
                                           <div className="space-y-1.5">
                                                 <Label>{t("entitlements.promotions.validUntil") || "Valid Until"}</Label>
-                                                <Input
-                                                      type="date"
+                                                <DatePicker
                                                       value={vm.form.validUntil}
-                                                      onChange={(e) => vm.setField("validUntil", e.target.value)}
+                                                      onChange={(v) => vm.setField("validUntil", v)}
+                                                      placeholder={t("entitlements.promotions.validUntil") || "Valid Until"}
                                                 />
                                           </div>
                                     </div>
@@ -367,7 +395,13 @@ function PromotionCard({
 
                                           <span className="flex items-center gap-1">
                                                 <Clock className="h-3 w-3" />
-                                                {promo.durationDays}d
+                                                {promo.durationDays === 0 ? (t("entitlements.promotions.forever") || "Forever")
+                                                      : promo.durationDays === 30 ? (t("entitlements.promotions.oneMonth") || "1 Month")
+                                                            : promo.durationDays === 90 ? (t("entitlements.promotions.threeMonths") || "3 Months")
+                                                                  : promo.durationDays === 180 ? (t("entitlements.promotions.sixMonths") || "6 Months")
+                                                                        : promo.durationDays === 365 ? (t("entitlements.promotions.oneYear") || "1 Year")
+                                                                              : promo.durationDays === 730 ? (t("entitlements.promotions.twoYears") || "2 Years")
+                                                                                    : `${promo.durationDays}d`}
                                           </span>
 
                                           <span className="flex items-center gap-1">

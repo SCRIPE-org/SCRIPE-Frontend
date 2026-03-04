@@ -22,6 +22,7 @@ import {
       Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@core/ui/select";
 import { Input } from "@core/ui/input";
+import { DatePicker } from "@core/ui/date-picker";
 import { Label } from "@core/ui/label";
 import { Checkbox } from "@core/ui/checkbox";
 import { Textarea } from "@core/ui/textarea";
@@ -138,12 +139,24 @@ export function SubscriptionsView({ tenantId }: SubscriptionsViewProps) {
                                           currency: item.currency,
                                           minimumFractionDigits: 2,
                                     }).format(item.totalAmount);
+                                    const hasDiscount = item.promotionDiscount != null && item.promotionDiscount > 0;
                                     return (
-                                          <div className="flex items-center gap-1.5">
-                                                <span className="tabular-nums text-sm font-medium">{formatted}</span>
-                                                <Badge variant="outline" className="text-[10px] px-1 py-0 h-4">
-                                                      {item.currency}
-                                                </Badge>
+                                          <div className="flex flex-col">
+                                                <div className="flex items-center gap-1.5">
+                                                      <span className="tabular-nums text-sm font-medium">{formatted}</span>
+                                                      <Badge variant="outline" className="text-[10px] px-1 py-0 h-4">
+                                                            {item.currency}
+                                                      </Badge>
+                                                </div>
+                                                {hasDiscount && item.baseAmount != null && (
+                                                      <span className="text-[10px] text-muted-foreground">
+                                                            <span className="line-through">
+                                                                  {new Intl.NumberFormat("en-US", { style: "currency", currency: item.currency, minimumFractionDigits: 2 }).format(item.baseAmount)}
+                                                            </span>
+                                                            {" "}
+                                                            <span className="text-green-600">-{new Intl.NumberFormat("en-US", { style: "currency", currency: item.currency, minimumFractionDigits: 2 }).format(item.promotionDiscount!)}</span>
+                                                      </span>
+                                                )}
                                           </div>
                                     );
                               },
@@ -282,7 +295,7 @@ export function SubscriptionsView({ tenantId }: SubscriptionsViewProps) {
                               <ChangeDialog vm={vm} editionsVm={editionsVm} t={t} />
                               <SuspendDialog vm={vm} t={t} />
                               <CancelDialog vm={vm} t={t} />
-                              <ConvertDialog vm={vm} t={t} />
+                              <ConvertDialog vm={vm} editionsVm={editionsVm} t={t} />
                         </>
                   ),
             }),
@@ -331,25 +344,42 @@ function AssignDialog({
                                     </Select>
                               </div>
 
-                              {/* Type */}
+                              {/* Type — filtered by selected edition billing controls */}
                               <div className="space-y-2">
                                     <Label>{t("tenant.subscriptionType")}</Label>
-                                    <Select value={vm.subscriptionType} onValueChange={vm.setSubscriptionType}>
-                                          <SelectTrigger><SelectValue /></SelectTrigger>
-                                          <SelectContent>
-                                                <SelectItem value="Lifetime">{t("entitlements.subscriptions.lifetime")}</SelectItem>
-                                                <SelectItem value="Trial">{t("entitlements.subscriptions.trial")}</SelectItem>
-                                                <SelectItem value="Monthly">{t("entitlements.subscriptions.monthly")}</SelectItem>
-                                                <SelectItem value="Yearly">{t("entitlements.subscriptions.yearly")}</SelectItem>
-                                          </SelectContent>
-                                    </Select>
+                                    {(() => {
+                                          const selectedEd = (editionsVm.items ?? []).find((ed) => ed.id === vm.selectedEditionId);
+                                          return (
+                                                <Select value={vm.subscriptionType} onValueChange={vm.setSubscriptionType}>
+                                                      <SelectTrigger><SelectValue /></SelectTrigger>
+                                                      <SelectContent>
+                                                            {(!selectedEd || selectedEd.data.allowLifetime) && (
+                                                                  <SelectItem value="Lifetime">{t("entitlements.subscriptions.lifetime")}</SelectItem>
+                                                            )}
+                                                            {(!selectedEd || selectedEd.data.allowTrial) && (
+                                                                  <SelectItem value="Trial">{t("entitlements.subscriptions.trial")}</SelectItem>
+                                                            )}
+                                                            {(!selectedEd || selectedEd.data.allowMonthly) && (
+                                                                  <SelectItem value="Monthly">{t("entitlements.subscriptions.monthly")}</SelectItem>
+                                                            )}
+                                                            {(!selectedEd || selectedEd.data.allowYearly) && (
+                                                                  <SelectItem value="Yearly">{t("entitlements.subscriptions.yearly")}</SelectItem>
+                                                            )}
+                                                      </SelectContent>
+                                                </Select>
+                                          );
+                                    })()}
                               </div>
 
                               {/* End Date */}
                               {vm.subscriptionType !== "Lifetime" && (
                                     <div className="space-y-2">
                                           <Label>{t("entitlements.subscriptions.endDate") || "End Date"}</Label>
-                                          <Input type="date" value={vm.endDate} onChange={(e) => vm.setEndDate(e.target.value)} />
+                                          <DatePicker
+                                                value={vm.endDate}
+                                                onChange={(v) => vm.setEndDate(v)}
+                                                placeholder={t("entitlements.subscriptions.endDate") || "End Date"}
+                                          />
                                     </div>
                               )}
 
@@ -452,18 +482,31 @@ function ChangeDialog({
                                     </Select>
                               </div>
 
-                              {/* Type */}
+                              {/* Type — filtered by selected edition billing controls */}
                               <div className="space-y-2">
                                     <Label>{t("tenant.subscriptionType")}</Label>
-                                    <Select value={vm.subscriptionType} onValueChange={vm.setSubscriptionType}>
-                                          <SelectTrigger><SelectValue /></SelectTrigger>
-                                          <SelectContent>
-                                                <SelectItem value="Lifetime">{t("entitlements.subscriptions.lifetime")}</SelectItem>
-                                                <SelectItem value="Trial">{t("entitlements.subscriptions.trial")}</SelectItem>
-                                                <SelectItem value="Monthly">{t("entitlements.subscriptions.monthly")}</SelectItem>
-                                                <SelectItem value="Yearly">{t("entitlements.subscriptions.yearly")}</SelectItem>
-                                          </SelectContent>
-                                    </Select>
+                                    {(() => {
+                                          const selectedEd = (editionsVm.items ?? []).find((ed) => ed.id === vm.selectedEditionId);
+                                          return (
+                                                <Select value={vm.subscriptionType} onValueChange={vm.setSubscriptionType}>
+                                                      <SelectTrigger><SelectValue /></SelectTrigger>
+                                                      <SelectContent>
+                                                            {(!selectedEd || selectedEd.data.allowLifetime) && (
+                                                                  <SelectItem value="Lifetime">{t("entitlements.subscriptions.lifetime")}</SelectItem>
+                                                            )}
+                                                            {(!selectedEd || selectedEd.data.allowTrial) && (
+                                                                  <SelectItem value="Trial">{t("entitlements.subscriptions.trial")}</SelectItem>
+                                                            )}
+                                                            {(!selectedEd || selectedEd.data.allowMonthly) && (
+                                                                  <SelectItem value="Monthly">{t("entitlements.subscriptions.monthly")}</SelectItem>
+                                                            )}
+                                                            {(!selectedEd || selectedEd.data.allowYearly) && (
+                                                                  <SelectItem value="Yearly">{t("entitlements.subscriptions.yearly")}</SelectItem>
+                                                            )}
+                                                      </SelectContent>
+                                                </Select>
+                                          );
+                                    })()}
                               </div>
 
                               {/* Promo Code */}
@@ -638,9 +681,11 @@ function CancelDialog({
 
 function ConvertDialog({
       vm,
+      editionsVm,
       t,
 }: {
       vm: ReturnType<typeof useSubscriptionsCrudAdapter>;
+      editionsVm: ReturnType<typeof useEditionsViewModel>;
       t: (key: string, params?: Record<string, any>) => string;
 }) {
       return (
@@ -656,14 +701,31 @@ function ConvertDialog({
                         <div className="space-y-4 py-4">
                               <div className="space-y-2">
                                     <Label>{t("tenant.subscriptionType")}</Label>
-                                    <Select value={vm.convertType} onValueChange={vm.setConvertType}>
-                                          <SelectTrigger><SelectValue /></SelectTrigger>
-                                          <SelectContent>
-                                                <SelectItem value="Monthly">{t("entitlements.subscriptions.monthly")}</SelectItem>
-                                                <SelectItem value="Yearly">{t("entitlements.subscriptions.yearly")}</SelectItem>
-                                                <SelectItem value="Lifetime">{t("entitlements.subscriptions.lifetime")}</SelectItem>
-                                          </SelectContent>
-                                    </Select>
+                                    {(() => {
+                                          // Get the current subscription's edition billing controls
+                                          const activeSubEditionId = vm.items?.find(
+                                                (s: SubscriptionListItem) => s.status === "Active" || s.status === "Trialing"
+                                          )?.editionId;
+                                          const selectedEd = activeSubEditionId
+                                                ? (editionsVm.items ?? []).find((ed) => ed.id === activeSubEditionId)
+                                                : null;
+                                          return (
+                                                <Select value={vm.convertType} onValueChange={vm.setConvertType}>
+                                                      <SelectTrigger><SelectValue /></SelectTrigger>
+                                                      <SelectContent>
+                                                            {(!selectedEd || selectedEd.data.allowMonthly) && (
+                                                                  <SelectItem value="Monthly">{t("entitlements.subscriptions.monthly")}</SelectItem>
+                                                            )}
+                                                            {(!selectedEd || selectedEd.data.allowYearly) && (
+                                                                  <SelectItem value="Yearly">{t("entitlements.subscriptions.yearly")}</SelectItem>
+                                                            )}
+                                                            {(!selectedEd || selectedEd.data.allowLifetime) && (
+                                                                  <SelectItem value="Lifetime">{t("entitlements.subscriptions.lifetime")}</SelectItem>
+                                                            )}
+                                                      </SelectContent>
+                                                </Select>
+                                          );
+                                    })()}
                               </div>
                         </div>
 

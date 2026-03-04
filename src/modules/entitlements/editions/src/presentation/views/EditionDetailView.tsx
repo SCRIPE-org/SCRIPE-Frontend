@@ -175,11 +175,21 @@ export function EditionDetailView({ editionId }: EditionDetailViewProps) {
 
                   {/* ─────── TAB CONTENT ─────── */}
                   {activeTab === "pricing" && (
-                        <PricingTab editionId={editionId} />
+                        <PricingTab
+                              editionId={editionId}
+                              allowMonthly={edition.allowMonthly}
+                              allowYearly={edition.allowYearly}
+                              allowLifetime={edition.allowLifetime}
+                        />
                   )}
 
                   {activeTab === "promotions" && (
-                        <PromotionsTab editionId={editionId} />
+                        <PromotionsTab
+                              editionId={editionId}
+                              allowMonthly={edition.allowMonthly}
+                              allowYearly={edition.allowYearly}
+                              allowLifetime={edition.allowLifetime}
+                        />
                   )}
 
                   {activeTab === "versions" && (

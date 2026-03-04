@@ -3613,6 +3613,8 @@ export const ar = {
 
   // Common
   common: {
+    value: "القيمة",
+    any: "أي",
     time: "الوقت",
     ok: "تأكيد",
     description: "الوصف",
@@ -4750,6 +4752,7 @@ export const ar = {
       isRetired: "متقاعد",
       showRetired: "إظهار المتقاعدين",
       featureCount: "الميزات",
+      gracePeriod: "فترة السماح",
       // CRUD
       create: "إنشاء إصدار",
       createDesc: "تعريف خطة اشتراك جديدة مع تهيئة الميزات.",
@@ -5123,6 +5126,16 @@ export const ar = {
       unlimited: "اتركه فارغاً لاستخدام غير محدود",
       expired: "منتهي الصلاحية",
       limitReached: "تم بلوغ الحد",
+      // Duration Presets
+      duration: "مدة الخصم",
+      forever: "للأبد",
+      oneMonth: "شهر واحد",
+      threeMonths: "3 أشهر",
+      sixMonths: "6 أشهر",
+      oneYear: "سنة واحدة",
+      twoYears: "سنتان",
+      custom: "مخصص...",
+      customDays: "أدخل عدد الأيام...",
     },
   },
 

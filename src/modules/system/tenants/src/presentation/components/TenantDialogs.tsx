@@ -60,6 +60,7 @@ interface CreateTenantDialogProps {
   onSubmit: (data?: any) => Promise<void> | void; // Using GenericForm onSubmit which passes data
   isLoading: boolean;
   onSearchEditions: (query: string) => Promise<{ value: string; label: string }[]>;
+  cachedEditions?: EditionThinModel[];
 }
 
 export function CreateTenantDialog({
@@ -71,6 +72,7 @@ export function CreateTenantDialog({
   onSubmit,
   isLoading,
   onSearchEditions,
+  cachedEditions = [],
 }: CreateTenantDialogProps) {
   const { t } = useI18n();
 
@@ -120,12 +122,19 @@ export function CreateTenantDialog({
         label: t("tenant.subscriptionType") || "Subscription Duration",
         type: "select",
         required: true,
-        options: [
-          { value: "Lifetime", label: t("tenant.subscriptionTypes.lifetime") || "Lifetime" },
-          { value: "Monthly", label: t("tenant.subscriptionTypes.monthly") || "Monthly" },
-          { value: "Yearly", label: t("tenant.subscriptionTypes.yearly") || "Yearly" },
-          { value: "Trial", label: t("tenant.subscriptionTypes.trial") || "Trial (14 days)" },
-        ],
+        options: (() => {
+          const selectedEd = cachedEditions.find((ed) => ed.id === form.editionId);
+          const opts: { value: string; label: string }[] = [];
+          if (!selectedEd || selectedEd.allowLifetime !== false)
+            opts.push({ value: "Lifetime", label: t("tenant.subscriptionTypes.lifetime") || "Lifetime" });
+          if (!selectedEd || selectedEd.allowMonthly !== false)
+            opts.push({ value: "Monthly", label: t("tenant.subscriptionTypes.monthly") || "Monthly" });
+          if (!selectedEd || selectedEd.allowYearly !== false)
+            opts.push({ value: "Yearly", label: t("tenant.subscriptionTypes.yearly") || "Yearly" });
+          if (!selectedEd || selectedEd.allowTrial !== false)
+            opts.push({ value: "Trial", label: t("tenant.subscriptionTypes.trial") || "Trial (14 days)" });
+          return opts;
+        })(),
       },
       {
         name: "currency",
@@ -148,7 +157,7 @@ export function CreateTenantDialog({
         ],
       },
     ],
-    [t, onSearchEditions]
+    [t, onSearchEditions, form.editionId, cachedEditions]
   );
 
   const handleSubmit = async (data: Record<string, any>) => {
