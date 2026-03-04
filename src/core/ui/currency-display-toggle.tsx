@@ -4,11 +4,12 @@
  * Dropdown to switch the global display currency.
  * Three modes: Native (original), Session (just this time), Always (persisted).
  *
- * Placed in dashboard/tenant page headers.
+ * Uses static approximate display rates (NOT for financial transactions).
+ * These rates are for admin dashboard preview only.
  */
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useCurrencyPreference, type CurrencyDisplayMode } from "@core/store/useCurrencyPreference";
 import { useConvertedAmount } from "@core/hooks/useConvertedAmount";
@@ -19,9 +20,8 @@ import {
       PopoverTrigger,
 } from "@core/ui/popover";
 import { Separator } from "@core/ui/separator";
-import { Check, Globe, RotateCcw, Loader2 } from "lucide-react";
+import { Check, Globe, RotateCcw } from "lucide-react";
 import { cn } from "@core/common/utils";
-import { API_ENDPOINTS } from "@core/config/api-endpoints";
 
 /** Display currencies — the most commonly used for display */
 const DISPLAY_CURRENCIES = [
@@ -35,6 +35,29 @@ const DISPLAY_CURRENCIES = [
       { code: "INR", flag: "🇮🇳", name: "Indian Rupee" },
 ] as const;
 
+/**
+ * Static approximate exchange rates relative to USD.
+ * These are for DISPLAY PREVIEW only — not for billing or financial calculations.
+ * Updated periodically; the backend handles actual billing conversions.
+ */
+const STATIC_DISPLAY_RATES: Record<string, number> = {
+      USD: 1,
+      EUR: 0.92,
+      GBP: 0.79,
+      SAR: 3.75,
+      AED: 3.67,
+      EGP: 50.5,
+      TRY: 32.5,
+      INR: 83.5,
+      KWD: 0.31,
+      QAR: 3.64,
+      BHD: 0.38,
+      OMR: 0.39,
+      JOD: 0.71,
+      CAD: 1.36,
+      AUD: 1.53,
+};
+
 interface CurrencyDisplayToggleProps {
       className?: string;
 }
@@ -45,46 +68,24 @@ export function CurrencyDisplayToggle({ className }: CurrencyDisplayToggleProps)
             displayCurrency,
             displayMode,
             exchangeRates,
-            isLoadingRates,
             setDisplayCurrency,
             resetToNative,
             setRates,
-            setLoadingRates,
       } = useCurrencyPreference();
 
       const { isConverting } = useConvertedAmount();
       const [alwaysChecked, setAlwaysChecked] = useState(displayMode === "always");
       const [open, setOpen] = useState(false);
 
-      // Fetch exchange rates on first open (if not already cached)
-      useEffect(() => {
-            if (!open || exchangeRates || isLoadingRates) return;
-
-            let cancelled = false;
-            setLoadingRates(true);
-
-            // Use the API service from the window if available, or fetch directly
-            fetch(API_ENDPOINTS.ENTITLEMENTS.CURRENCY.RATES("USD"), {
-                  credentials: "include",
-                  headers: {
-                        "Authorization": `Bearer ${getAccessToken()}`,
-                        "Content-Type": "application/json",
-                  },
-            })
-                  .then((res) => res.json())
-                  .then((rates) => {
-                        if (!cancelled && rates && typeof rates === "object") {
-                              setRates(rates, "USD");
-                        }
-                  })
-                  .catch(() => {
-                        if (!cancelled) setLoadingRates(false);
-                  });
-
-            return () => { cancelled = true; };
-      }, [open, exchangeRates, isLoadingRates, setRates, setLoadingRates]);
+      // Load static rates on first open (if not already cached)
+      function ensureRates() {
+            if (!exchangeRates) {
+                  setRates(STATIC_DISPLAY_RATES, "USD");
+            }
+      }
 
       function handleSelectCurrency(code: string) {
+            ensureRates();
             const mode: "session" | "always" = alwaysChecked ? "always" : "session";
             setDisplayCurrency(code, mode);
             setOpen(false);
@@ -99,7 +100,7 @@ export function CurrencyDisplayToggle({ className }: CurrencyDisplayToggleProps)
       const currentFlag = DISPLAY_CURRENCIES.find((c) => c.code === displayCurrency)?.flag || "💱";
 
       return (
-            <Popover open={open} onOpenChange={setOpen}>
+            <Popover open={open} onOpenChange={(o) => { setOpen(o); if (o) ensureRates(); }}>
                   <PopoverTrigger asChild>
                         <Button
                               variant="outline"
@@ -118,7 +119,7 @@ export function CurrencyDisplayToggle({ className }: CurrencyDisplayToggleProps)
                                     {t("currency.displayToggle") || "Display Currency"}
                               </p>
                               <p className="text-xs text-muted-foreground">
-                                    {t("currency.toggleDesc") || "Choose how amounts are displayed"}
+                                    {t("currency.toggleDesc") || "Preview amounts in another currency"}
                               </p>
                         </div>
 
@@ -141,19 +142,12 @@ export function CurrencyDisplayToggle({ className }: CurrencyDisplayToggleProps)
 
                         {/* Currency list */}
                         <div className="max-h-48 overflow-y-auto">
-                              {isLoadingRates && (
-                                    <div className="flex items-center justify-center gap-2 py-4 text-xs text-muted-foreground">
-                                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                                          {t("common.loading") || "Loading rates..."}
-                                    </div>
-                              )}
                               {DISPLAY_CURRENCIES.map((c) => (
                                     <button
                                           key={c.code}
                                           type="button"
                                           className="flex w-full items-center gap-2 px-3 py-1.5 text-sm hover:bg-accent transition-colors"
                                           onClick={() => handleSelectCurrency(c.code)}
-                                          disabled={isLoadingRates && !exchangeRates}
                                     >
                                           <span className="h-4 w-4 flex items-center justify-center">
                                                 {displayMode !== "native" && displayCurrency === c.code && (
@@ -177,7 +171,6 @@ export function CurrencyDisplayToggle({ className }: CurrencyDisplayToggleProps)
                                           checked={alwaysChecked}
                                           onChange={(e) => {
                                                 setAlwaysChecked(e.target.checked);
-                                                // If already selecting a currency, update the mode
                                                 if (isConverting) {
                                                       setDisplayCurrency(displayCurrency, e.target.checked ? "always" : "session");
                                                 }
@@ -190,7 +183,14 @@ export function CurrencyDisplayToggle({ className }: CurrencyDisplayToggleProps)
                               </label>
                         </div>
 
-                        {/* Reset button (only shown when converting) */}
+                        {/* Approximate rates disclaimer */}
+                        <div className="px-3 pb-2">
+                              <p className="text-[10px] text-muted-foreground/60 italic">
+                                    {t("currency.approximateDisclaimer") || "≈ Approximate rates for preview only"}
+                              </p>
+                        </div>
+
+                        {/* Reset button */}
                         {isConverting && (
                               <>
                                     <Separator />
@@ -207,15 +207,4 @@ export function CurrencyDisplayToggle({ className }: CurrencyDisplayToggleProps)
                   </PopoverContent>
             </Popover>
       );
-}
-
-/** Helper to get access token from the secure token service */
-function getAccessToken(): string {
-      try {
-            // Access the in-memory token service
-            const { secureTokenService } = require("@core/common/secure-token-service");
-            return secureTokenService.getAccessToken() || "";
-      } catch {
-            return "";
-      }
 }
