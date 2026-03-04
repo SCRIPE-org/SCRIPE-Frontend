@@ -1,8 +1,8 @@
 /**
  * SubscriptionsExportDialog
  *
- * Professional export modal matching the audit export pattern.
- * Format selection (CSV, Excel, PDF), filter summary, and download trigger.
+ * Professional export modal with format selection and currency selector.
+ * Calls backend API for server-side file generation (ClosedXML for Excel).
  *
  * SOLID: Pure UI — delegates all logic to useExportSubscriptions hook.
  */
@@ -11,7 +11,6 @@
 import { useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useExportSubscriptions, type ExportFormat } from "../viewmodels/useExportSubscriptions";
-import type { GlobalSubscriptionItem } from "../../domain/entities/Subscription";
 import {
       Dialog,
       DialogContent,
@@ -22,6 +21,9 @@ import {
 } from "@core/ui/dialog";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
+import { Label } from "@core/ui/label";
+import GenericSelect from "@core/crud/components/generic-select";
+import type { GenericSelectOption } from "@core/crud/components/generic-select";
 import {
       FileSpreadsheet,
       FileText,
@@ -34,7 +36,6 @@ import {
 interface SubscriptionsExportDialogProps {
       open: boolean;
       onClose: () => void;
-      subscriptions: GlobalSubscriptionItem[];
       statusFilter: string;
       typeFilter: string;
       totalCount: number;
@@ -76,10 +77,21 @@ const FORMAT_OPTIONS: FormatOption[] = [
       },
 ];
 
+const CURRENCY_OPTIONS: GenericSelectOption[] = [
+      { value: "_native", label: "🌐  Original currency (as stored)" },
+      { value: "USD", label: "🇺🇸  USD — US Dollar" },
+      { value: "EUR", label: "🇪🇺  EUR — Euro" },
+      { value: "GBP", label: "🇬🇧  GBP — British Pound" },
+      { value: "SAR", label: "🇸🇦  SAR — Saudi Riyal" },
+      { value: "AED", label: "🇦🇪  AED — UAE Dirham" },
+      { value: "EGP", label: "🇪🇬  EGP — Egyptian Pound" },
+      { value: "TRY", label: "🇹🇷  TRY — Turkish Lira" },
+      { value: "INR", label: "🇮🇳  INR — Indian Rupee" },
+];
+
 export function SubscriptionsExportDialog({
       open,
       onClose,
-      subscriptions,
       statusFilter,
       typeFilter,
       totalCount,
@@ -87,6 +99,7 @@ export function SubscriptionsExportDialog({
       const { t } = useI18n();
       const { exportSubscriptions, isExporting, error } = useExportSubscriptions();
       const [selectedFormat, setSelectedFormat] = useState<ExportFormat>("excel");
+      const [selectedCurrency, setSelectedCurrency] = useState("_native");
       const [success, setSuccess] = useState(false);
 
       const handleExport = async () => {
@@ -94,7 +107,9 @@ export function SubscriptionsExportDialog({
             try {
                   await exportSubscriptions({
                         format: selectedFormat,
-                        subscriptions,
+                        statusFilter,
+                        typeFilter,
+                        displayCurrency: selectedCurrency === "_native" ? undefined : selectedCurrency,
                   });
                   setSuccess(true);
                   setTimeout(() => {
@@ -138,7 +153,7 @@ export function SubscriptionsExportDialog({
                                     {t("entitlements.subscriptions.export.records") || "Records to export"}
                               </span>
                               <Badge variant="secondary" className="font-mono">
-                                    {subscriptions.length} / {totalCount}
+                                    {totalCount}
                               </Badge>
                         </div>
 
@@ -149,7 +164,10 @@ export function SubscriptionsExportDialog({
                                           key={opt.value}
                                           onClick={() => setSelectedFormat(opt.value)}
                                           disabled={isExporting}
-                                          className={`flex flex-col items-center gap-2 rounded-lg border-2 p-4 transition-all hover:shadow-md ${selectedFormat === opt.value ? opt.borderActive : "border-border hover:border-muted-foreground/30"} ${isExporting ? "cursor-not-allowed opacity-50" : "cursor-pointer"} `}
+                                          className={`flex flex-col items-center gap-2 rounded-lg border-2 p-4 transition-all hover:shadow-md ${selectedFormat === opt.value
+                                                ? opt.borderActive
+                                                : "border-border hover:border-muted-foreground/30"
+                                                } ${isExporting ? "cursor-not-allowed opacity-50" : "cursor-pointer"}`}
                                     >
                                           <span className={opt.color}>{opt.icon}</span>
                                           <span className="text-sm font-semibold">{opt.label}</span>
@@ -158,6 +176,22 @@ export function SubscriptionsExportDialog({
                                           </span>
                                     </button>
                               ))}
+                        </div>
+
+                        {/* Currency Selector — GenericSelect from @core/crud */}
+                        <div className="space-y-2">
+                              <Label className="text-xs font-medium text-muted-foreground">
+                                    {t("entitlements.subscriptions.export.currency") || "Display Currency"}
+                              </Label>
+                              <GenericSelect
+                                    options={CURRENCY_OPTIONS}
+                                    value={selectedCurrency}
+                                    onValueChange={(v: string | string[]) => setSelectedCurrency(v as string)}
+                                    placeholder={t("entitlements.subscriptions.export.currencyPlaceholder") || "Select currency"}
+                              />
+                              <p className="text-[10px] text-muted-foreground/60 italic">
+                                    {t("entitlements.subscriptions.export.currencyHint") || "Amounts will be shown in the selected currency where applicable"}
+                              </p>
                         </div>
 
                         {/* Active Filters Summary */}
@@ -196,7 +230,7 @@ export function SubscriptionsExportDialog({
                               <Button variant="outline" onClick={onClose} disabled={isExporting}>
                                     {t("common.cancel") || "Cancel"}
                               </Button>
-                              <Button onClick={handleExport} disabled={isExporting || subscriptions.length === 0}>
+                              <Button onClick={handleExport} disabled={isExporting}>
                                     {isExporting ? (
                                           <>
                                                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />

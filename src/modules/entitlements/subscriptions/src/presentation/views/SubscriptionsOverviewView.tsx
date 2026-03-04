@@ -346,7 +346,6 @@ export function SubscriptionsOverviewView() {
                   <SubscriptionsExportDialog
                         open={exportOpen}
                         onClose={() => setExportOpen(false)}
-                        subscriptions={vm.subscriptions}
                         statusFilter={vm.statusFilter}
                         typeFilter={vm.typeFilter}
                         totalCount={vm.kpis.totalCount}

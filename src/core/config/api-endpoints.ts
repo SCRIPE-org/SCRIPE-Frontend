@@ -274,6 +274,13 @@ export const API_ENDPOINTS = {
       REVOKE: (id: string) => `${V1}/subscriptions/${id}`,
       CHANGE_CURRENCY: (tenantId: string) => `${V1}/tenants/${tenantId}/subscription/change-currency`,
       DOWNGRADE_IMPACT: (tenantId: string, targetEditionId: string) => `${V1}/tenants/${tenantId}/subscription/downgrade-impact?targetEditionId=${targetEditionId}`,
+      EXPORT: (format: string, status?: string, type?: string, currency?: string) => {
+        const params = new URLSearchParams({ format });
+        if (status && status !== "all") params.set("status", status);
+        if (type && type !== "all") params.set("type", type);
+        if (currency) params.set("currency", currency);
+        return `${V1}/subscriptions/export?${params.toString()}`;
+      },
     },
     PRICING: {
       PREVIEW: (editionId: string, currency: string, type: string) => `${V1}/editions/${editionId}/prices/preview?currency=${currency}&type=${type}`,
