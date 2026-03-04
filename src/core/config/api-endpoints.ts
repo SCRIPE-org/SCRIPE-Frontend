@@ -246,6 +246,12 @@ export const API_ENDPOINTS = {
       DIRECT_APPLY_FEATURES: (editionId: string) => `${V1}/editions/${editionId}/features/apply`,
       PRICES: (editionId: string) => `${V1}/editions/${editionId}/prices`,
       SET_PRICES: (editionId: string) => `${V1}/editions/${editionId}/prices`,
+      // ── Promotions ──
+      PROMOTIONS: (editionId: string) => `${V1}/editions/${editionId}/promotions`,
+      CREATE_PROMOTION: (editionId: string) => `${V1}/editions/${editionId}/promotions`,
+      UPDATE_PROMOTION: (editionId: string, promoId: string) => `${V1}/editions/${editionId}/promotions/${promoId}`,
+      DELETE_PROMOTION: (editionId: string, promoId: string) => `${V1}/editions/${editionId}/promotions/${promoId}`,
+      VALIDATE_PROMO_CODE: (editionId: string) => `${V1}/editions/${editionId}/promotions/validate-code`,
     },
     TENANT_FEATURES: {
       OVERRIDES: (tenantId: string) => `${V1}/tenants/${tenantId}/features/overrides`,

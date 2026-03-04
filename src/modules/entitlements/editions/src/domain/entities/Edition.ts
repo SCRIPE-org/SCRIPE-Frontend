@@ -24,6 +24,15 @@ export interface EditionData extends BaseEntity {
       fallbackEditionName?: string;
       overflowPolicy?: string;
       baseMonthlyPriceUsd?: number;
+      // ── Billing Controls ──
+      allowMonthly: boolean;
+      allowYearly: boolean;
+      allowLifetime: boolean;
+      allowTrial: boolean;
+      trialDurationDays: number;
+      trialIsFree: boolean;
+      trialDiscountPercent: number;
+      gracePeriodDays: number;
 }
 
 export class Edition {
@@ -43,6 +52,15 @@ export class Edition {
       get fallbackEditionName(): string | undefined { return this.data.fallbackEditionName; }
       get overflowPolicy(): string { return this.data.overflowPolicy ?? 'Block'; }
       get baseMonthlyPriceUsd(): number | undefined { return this.data.baseMonthlyPriceUsd; }
+      // ── Billing Controls ──
+      get allowMonthly(): boolean { return this.data.allowMonthly; }
+      get allowYearly(): boolean { return this.data.allowYearly; }
+      get allowLifetime(): boolean { return this.data.allowLifetime; }
+      get allowTrial(): boolean { return this.data.allowTrial; }
+      get trialDurationDays(): number { return this.data.trialDurationDays; }
+      get trialIsFree(): boolean { return this.data.trialIsFree; }
+      get trialDiscountPercent(): number { return this.data.trialDiscountPercent; }
+      get gracePeriodDays(): number { return this.data.gracePeriodDays; }
 
       getDisplayName(lang: string): string {
             return lang === "ar" ? this.displayNameAr : this.displayNameEn;

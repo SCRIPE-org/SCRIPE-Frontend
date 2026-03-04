@@ -27,6 +27,9 @@ export interface Subscription {
       totalAmount?: number;
       totalAmountUsd?: number;
       exchangeRateToUsd?: number;
+      // ── Promotion ──
+      appliedPromoCode?: string;
+      promotionDiscount?: number;
 }
 
 export interface SubscriptionListItem {
@@ -49,6 +52,9 @@ export interface SubscriptionListItem {
       currency?: string;
       totalAmount?: number;
       totalAmountUsd?: number;
+      // ── Promotion ──
+      appliedPromoCode?: string;
+      promotionDiscount?: number;
 }
 
 export interface GlobalSubscriptionItem {
@@ -68,4 +74,7 @@ export interface GlobalSubscriptionItem {
       totalAmountUsd: number;
       baseAmount: number;
       adjustmentAmount: number;
+      // ── Promotion ──
+      appliedPromoCode?: string;
+      promotionDiscount?: number;
 }

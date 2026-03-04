@@ -56,8 +56,8 @@ export class EditionRepository implements IEditionRepository {
             return models.map((m) => EditionMapper.toVersionEntity(m));
       }
 
-      async createVersion(editionId: string, changeNotes?: string, featureValues?: Record<string, string>): Promise<string> {
-            const response = await this.service.createVersion(editionId, changeNotes, featureValues);
+      async createVersion(editionId: string, changeNotes?: string, featureValues?: Record<string, string>, pricingSnapshot?: Array<{ currency: string; billingCycle: string; amount: number }>): Promise<string> {
+            const response = await this.service.createVersion(editionId, changeNotes, featureValues, pricingSnapshot);
             return response.id;
       }
 

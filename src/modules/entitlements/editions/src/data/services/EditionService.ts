@@ -6,6 +6,7 @@
 import type { IApiService } from "@core/interfaces/api.interface";
 import type { PagedResult, PaginationParams } from "@modules/system/core/domain/types";
 import { API_ENDPOINTS } from "@core/config/api-endpoints";
+import type { EditionPromotionData, CreatePromotionRequest, UpdatePromotionRequest, PromoCodeValidationResult } from "../../domain/entities/EditionPromotion";
 
 export interface EditionModel {
       id: string;
@@ -22,6 +23,15 @@ export interface EditionModel {
       fallbackEditionName?: string;
       overflowPolicy?: string;
       baseMonthlyPriceUsd?: number;
+      // ── Billing Controls ──
+      allowMonthly: boolean;
+      allowYearly: boolean;
+      allowLifetime: boolean;
+      allowTrial: boolean;
+      trialDurationDays: number;
+      trialIsFree: boolean;
+      trialDiscountPercent: number;
+      gracePeriodDays: number;
       createdAt: string;
       modifiedAt?: string;
 }
@@ -63,8 +73,8 @@ export class EditionService {
             return this.api.get<EditionVersionModel[]>(API_ENDPOINTS.ENTITLEMENTS.EDITIONS.VERSIONS(editionId));
       }
 
-      async createVersion(editionId: string, changeNotes?: string, featureValues?: Record<string, string>): Promise<{ id: string }> {
-            return this.api.post<{ id: string }>(API_ENDPOINTS.ENTITLEMENTS.EDITIONS.CREATE_VERSION(editionId), { changeNotes, featureValues });
+      async createVersion(editionId: string, changeNotes?: string, featureValues?: Record<string, string>, pricingSnapshot?: Array<{ currency: string; billingCycle: string; amount: number }>): Promise<{ id: string }> {
+            return this.api.post<{ id: string }>(API_ENDPOINTS.ENTITLEMENTS.EDITIONS.CREATE_VERSION(editionId), { changeNotes, featureValues, pricingSnapshot });
       }
 
       async publishVersion(editionId: string, versionId: string, data: { rolloutStrategy: string; scheduledAt?: string; canaryPercentage?: number }): Promise<void> {
@@ -92,6 +102,27 @@ export class EditionService {
       async getExchangeRates(baseCurrency: string = "USD"): Promise<Record<string, number>> {
             return this.api.get<Record<string, number>>(API_ENDPOINTS.ENTITLEMENTS.CURRENCY.RATES(baseCurrency));
       }
+
+      // ── Promotions ──
+      async getPromotions(editionId: string): Promise<EditionPromotionData[]> {
+            return this.api.get<EditionPromotionData[]>(API_ENDPOINTS.ENTITLEMENTS.EDITIONS.PROMOTIONS(editionId));
+      }
+
+      async createPromotion(editionId: string, data: CreatePromotionRequest): Promise<{ id: string }> {
+            return this.api.post<{ id: string }>(API_ENDPOINTS.ENTITLEMENTS.EDITIONS.CREATE_PROMOTION(editionId), data);
+      }
+
+      async updatePromotion(editionId: string, promoId: string, data: UpdatePromotionRequest): Promise<void> {
+            await this.api.put(API_ENDPOINTS.ENTITLEMENTS.EDITIONS.UPDATE_PROMOTION(editionId, promoId), data);
+      }
+
+      async deletePromotion(editionId: string, promoId: string): Promise<void> {
+            await this.api.delete(API_ENDPOINTS.ENTITLEMENTS.EDITIONS.DELETE_PROMOTION(editionId, promoId));
+      }
+
+      async validatePromoCode(editionId: string, promoCode: string): Promise<PromoCodeValidationResult> {
+            return this.api.post<PromoCodeValidationResult>(API_ENDPOINTS.ENTITLEMENTS.EDITIONS.VALIDATE_PROMO_CODE(editionId), { promoCode });
+      }
 }
 
 export interface EditionVersionModel {
@@ -103,5 +134,6 @@ export interface EditionVersionModel {
       scheduledAt?: string;
       completedAt?: string;
       canaryPercentage?: number;
+      pricingSnapshotJson?: string;
       createdAt: string;
 }

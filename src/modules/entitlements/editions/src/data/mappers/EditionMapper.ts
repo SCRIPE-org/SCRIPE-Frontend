@@ -24,6 +24,15 @@ export class EditionMapper {
                   fallbackEditionName: model.fallbackEditionName,
                   overflowPolicy: model.overflowPolicy,
                   baseMonthlyPriceUsd: model.baseMonthlyPriceUsd,
+                  // ── Billing Controls ──
+                  allowMonthly: model.allowMonthly,
+                  allowYearly: model.allowYearly,
+                  allowLifetime: model.allowLifetime,
+                  allowTrial: model.allowTrial,
+                  trialDurationDays: model.trialDurationDays,
+                  trialIsFree: model.trialIsFree,
+                  trialDiscountPercent: model.trialDiscountPercent,
+                  gracePeriodDays: model.gracePeriodDays,
                   createdAt: model.createdAt,
                   modifiedAt: model.modifiedAt,
             };
@@ -41,11 +50,20 @@ export class EditionMapper {
                   displayNameAr: request.displayNameAr,
                   description: request.description,
                   fallbackEditionId: request.fallbackEditionId || null,
+                  // ── Billing Controls ──
+                  allowMonthly: request.allowMonthly ?? true,
+                  allowYearly: request.allowYearly ?? true,
+                  allowLifetime: request.allowLifetime ?? true,
+                  allowTrial: request.allowTrial ?? true,
+                  trialDurationDays: request.trialDurationDays ?? 14,
+                  trialIsFree: request.trialIsFree ?? true,
+                  trialDiscountPercent: request.trialDiscountPercent ?? 100,
+                  gracePeriodDays: request.gracePeriodDays ?? 0,
             };
       }
 
       static toUpdateJson(request: UpdateEditionRequest): Record<string, unknown> {
-            return {
+            const json: Record<string, unknown> = {
                   name: request.name,
                   displayNameEn: request.displayNameEn,
                   displayNameAr: request.displayNameAr,
@@ -53,5 +71,15 @@ export class EditionMapper {
                   fallbackEditionId: request.fallbackEditionId || null,
                   overflowPolicy: request.overflowPolicy || 'Block',
             };
+            // ── Billing Controls (only send if defined) ──
+            if (request.allowMonthly !== undefined) json.allowMonthly = request.allowMonthly;
+            if (request.allowYearly !== undefined) json.allowYearly = request.allowYearly;
+            if (request.allowLifetime !== undefined) json.allowLifetime = request.allowLifetime;
+            if (request.allowTrial !== undefined) json.allowTrial = request.allowTrial;
+            if (request.trialDurationDays !== undefined) json.trialDurationDays = request.trialDurationDays;
+            if (request.trialIsFree !== undefined) json.trialIsFree = request.trialIsFree;
+            if (request.trialDiscountPercent !== undefined) json.trialDiscountPercent = request.trialDiscountPercent;
+            if (request.gracePeriodDays !== undefined) json.gracePeriodDays = request.gracePeriodDays;
+            return json;
       }
 }

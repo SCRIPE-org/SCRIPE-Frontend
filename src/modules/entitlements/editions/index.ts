@@ -7,3 +7,5 @@ export { Edition } from "./src/domain/entities/Edition";
 export type { EditionData, EditionFeatureDto } from "./src/domain/entities/Edition";
 export type { CreateEditionRequest, UpdateEditionRequest } from "./src/domain/entities/EditionRequests";
 export type { IEditionRepository } from "./src/domain/interfaces/IEditionRepository";
+export { EditionPromotion } from "./src/domain/entities/EditionPromotion";
+export type { EditionPromotionData, CreatePromotionRequest, UpdatePromotionRequest, PromoCodeValidationResult } from "./src/domain/entities/EditionPromotion";

@@ -36,6 +36,9 @@ export class SubscriptionMapper {
                   totalAmount: model.totalAmount,
                   totalAmountUsd: model.totalAmountUsd,
                   exchangeRateToUsd: model.exchangeRateToUsd,
+                  // Promotion
+                  appliedPromoCode: model.appliedPromoCode,
+                  promotionDiscount: model.promotionDiscount,
             };
       }
 
@@ -60,6 +63,9 @@ export class SubscriptionMapper {
                   currency: model.currency,
                   totalAmount: model.totalAmount,
                   totalAmountUsd: model.totalAmountUsd,
+                  // Promotion
+                  appliedPromoCode: model.appliedPromoCode,
+                  promotionDiscount: model.promotionDiscount,
             };
       }
 
@@ -81,6 +87,9 @@ export class SubscriptionMapper {
                   totalAmountUsd: model.totalAmountUsd,
                   baseAmount: model.baseAmount,
                   adjustmentAmount: model.adjustmentAmount,
+                  // Promotion
+                  appliedPromoCode: model.appliedPromoCode,
+                  promotionDiscount: model.promotionDiscount,
             };
       }
 }

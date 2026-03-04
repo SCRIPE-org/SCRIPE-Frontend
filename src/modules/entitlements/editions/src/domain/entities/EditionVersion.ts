@@ -1,3 +1,9 @@
+export interface PricingSnapshotItem {
+      currency: string;
+      billingCycle: string;
+      amount: number;
+}
+
 export interface EditionVersionModel {
       id: string;
       versionNumber: number;
@@ -7,6 +13,7 @@ export interface EditionVersionModel {
       scheduledAt?: string;
       completedAt?: string;
       canaryPercentage?: number;
+      pricingSnapshotJson?: string;
       createdAt: string;
 }
 
@@ -22,4 +29,11 @@ export class EditionVersion {
       get completedAt(): string | undefined { return this.data.completedAt; }
       get canaryPercentage(): number | undefined { return this.data.canaryPercentage; }
       get createdAt(): string { return this.data.createdAt; }
+
+      get pricingSnapshot(): PricingSnapshotItem[] | null {
+            if (!this.data.pricingSnapshotJson) return null;
+            try { return JSON.parse(this.data.pricingSnapshotJson); }
+            catch { return null; }
+      }
+      get hasPricingChanges(): boolean { return !!this.data.pricingSnapshotJson; }
 }

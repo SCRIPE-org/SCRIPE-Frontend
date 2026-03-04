@@ -30,6 +30,9 @@ export interface SubscriptionModel {
       totalAmount?: number;
       totalAmountUsd?: number;
       exchangeRateToUsd?: number;
+      // ── Promotion ──
+      appliedPromoCode?: string;
+      promotionDiscount?: number;
 }
 
 export interface SubscriptionListModel {
@@ -52,6 +55,9 @@ export interface SubscriptionListModel {
       currency?: string;
       totalAmount?: number;
       totalAmountUsd?: number;
+      // ── Promotion ──
+      appliedPromoCode?: string;
+      promotionDiscount?: number;
 }
 
 export interface GlobalSubscriptionModel {
@@ -71,6 +77,9 @@ export interface GlobalSubscriptionModel {
       totalAmountUsd: number;
       baseAmount: number;
       adjustmentAmount: number;
+      // ── Promotion ──
+      appliedPromoCode?: string;
+      promotionDiscount?: number;
 }
 
 export class SubscriptionService {
@@ -100,7 +109,7 @@ export class SubscriptionService {
 
       async assign(
             tenantId: string,
-            data: { editionId: string; type: string; endDate?: string; expiryBehavior?: string }
+            data: { editionId: string; type: string; endDate?: string; expiryBehavior?: string; currency?: string; promoCode?: string }
       ): Promise<{ id: string }> {
             return this.api.post<{ id: string }>(
                   API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.ASSIGN(tenantId),
@@ -110,7 +119,7 @@ export class SubscriptionService {
 
       async change(
             tenantId: string,
-            data: { editionId: string; type: string }
+            data: { editionId: string; type: string; currency?: string; promoCode?: string }
       ): Promise<void> {
             await this.api.put(
                   API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.CHANGE(tenantId),
