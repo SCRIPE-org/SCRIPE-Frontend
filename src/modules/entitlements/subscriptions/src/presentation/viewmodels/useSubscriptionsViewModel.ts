@@ -35,6 +35,8 @@ export function useSubscriptionsViewModel(tenantId: string) {
       const [cancelReason, setCancelReason] = useState("");
       const [useFallback, setUseFallback] = useState(false);
       const [convertType, setConvertType] = useState("Monthly");
+      const [promoCode, setPromoCode] = useState("");
+      const [currency, setCurrency] = useState("USD");
 
       // ─── Query keys ─────────────────────────────────────
       const queryKey = ["entitlements", "subscriptions", tenantId];
@@ -77,6 +79,8 @@ export function useSubscriptionsViewModel(tenantId: string) {
             setCancelReason("");
             setUseFallback(false);
             setConvertType("Monthly");
+            setPromoCode("");
+            setCurrency("USD");
       }, []);
 
       // ─── Auto-calculate endDate on type change ────────
@@ -124,7 +128,7 @@ export function useSubscriptionsViewModel(tenantId: string) {
       // ─── Mutations ──────────────────────────────────────
 
       const assignMutation = makeMutation(
-            (params: { editionId: string; type: string; endDate?: string; expiryBehavior?: string }) =>
+            (params: { editionId: string; type: string; endDate?: string; expiryBehavior?: string; promoCode?: string; currency?: string }) =>
                   subscriptionRepository.assign(tenantId, params),
             "entitlements.subscriptions.assigned",
             "entitlements.subscriptions.assignedDesc",
@@ -132,7 +136,7 @@ export function useSubscriptionsViewModel(tenantId: string) {
       );
 
       const changeMutation = makeMutation(
-            (params: { editionId: string; type: string }) =>
+            (params: { editionId: string; type: string; promoCode?: string; currency?: string }) =>
                   subscriptionRepository.change(tenantId, params),
             "entitlements.subscriptions.changed",
             "entitlements.subscriptions.changedDesc",
@@ -193,12 +197,19 @@ export function useSubscriptionsViewModel(tenantId: string) {
                   type: subscriptionType,
                   endDate: endDate || undefined,
                   expiryBehavior,
+                  promoCode: promoCode || undefined,
+                  currency: currency || undefined,
             });
-      }, [assignMutation, selectedEditionId, subscriptionType, endDate, expiryBehavior]);
+      }, [assignMutation, selectedEditionId, subscriptionType, endDate, expiryBehavior, promoCode, currency]);
 
       const submitChange = useCallback(() => {
-            changeMutation.mutate({ editionId: selectedEditionId, type: subscriptionType });
-      }, [changeMutation, selectedEditionId, subscriptionType]);
+            changeMutation.mutate({
+                  editionId: selectedEditionId,
+                  type: subscriptionType,
+                  promoCode: promoCode || undefined,
+                  currency: currency || undefined,
+            });
+      }, [changeMutation, selectedEditionId, subscriptionType, promoCode, currency]);
 
       const submitSuspend = useCallback(() => {
             suspendMutation.mutate({ reason: suspendReason, useFallback });
@@ -274,5 +285,7 @@ export function useSubscriptionsViewModel(tenantId: string) {
             endDate, setEndDate,
             expiryBehavior, setExpiryBehavior,
             useFallback, setUseFallback,
+            promoCode, setPromoCode,
+            currency, setCurrency,
       };
 }

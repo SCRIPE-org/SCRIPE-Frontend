@@ -37,12 +37,13 @@ import {
 } from "@core/ui/dialog";
 import {
       ArrowLeft, Loader2, Undo2, ChevronDown, ChevronRight,
-      Zap, ChevronsUpDown, GitBranch, Bolt, Shield, DollarSign,
+      Zap, ChevronsUpDown, GitBranch, Bolt, Shield, DollarSign, Tag,
 } from "lucide-react";
 import Link from "next/link";
 import type { Feature } from "@modules/entitlements/features/src/domain/entities/Feature";
 import { VersionsTab } from "../components/VersionsTab";
 import { PricingTab } from "../components/PricingTab";
+import { PromotionsTab } from "../components/PromotionsTab";
 
 interface EditionDetailViewProps {
       editionId: string;
@@ -53,7 +54,7 @@ export function EditionDetailView({ editionId }: EditionDetailViewProps) {
       const vm = useEditionDetailViewModel(editionId);
 
       // ── Tabs ──
-      const [activeTab, setActiveTab] = useState<"features" | "pricing" | "versions">("features");
+      const [activeTab, setActiveTab] = useState<"features" | "pricing" | "versions" | "promotions">("features");
 
       // ── Dialogs ──
       const [showVersionDialog, setShowVersionDialog] = useState(false);
@@ -155,6 +156,7 @@ export function EditionDetailView({ editionId }: EditionDetailViewProps) {
                         {([
                               { id: "features" as const, label: t("entitlements.features.title") || "Features", icon: <Zap className="h-3.5 w-3.5" /> },
                               { id: "pricing" as const, label: t("entitlements.pricing.title") || "Pricing", icon: <DollarSign className="h-3.5 w-3.5" /> },
+                              { id: "promotions" as const, label: t("entitlements.promotions.title") || "Promotions", icon: <Tag className="h-3.5 w-3.5" /> },
                               { id: "versions" as const, label: t("entitlements.editions.versions.title") || "Versions", icon: <GitBranch className="h-3.5 w-3.5" /> },
                         ]).map((tab) => (
                               <button
@@ -174,6 +176,10 @@ export function EditionDetailView({ editionId }: EditionDetailViewProps) {
                   {/* ─────── TAB CONTENT ─────── */}
                   {activeTab === "pricing" && (
                         <PricingTab editionId={editionId} />
+                  )}
+
+                  {activeTab === "promotions" && (
+                        <PromotionsTab editionId={editionId} />
                   )}
 
                   {activeTab === "versions" && (

@@ -85,5 +85,27 @@ export class EditionRepository implements IEditionRepository {
       async getExchangeRates(baseCurrency: string = "USD"): Promise<Record<string, number>> {
             return this.service.getExchangeRates(baseCurrency);
       }
+
+      // ── Promotions ──
+      async getPromotions(editionId: string) {
+            return this.service.getPromotions(editionId);
+      }
+
+      async createPromotion(editionId: string, data: Parameters<typeof this.service.createPromotion>[1]) {
+            const response = await this.service.createPromotion(editionId, data);
+            return response.id;
+      }
+
+      async updatePromotion(editionId: string, promoId: string, data: Parameters<typeof this.service.updatePromotion>[2]) {
+            await this.service.updatePromotion(editionId, promoId, data);
+      }
+
+      async deletePromotion(editionId: string, promoId: string) {
+            await this.service.deletePromotion(editionId, promoId);
+      }
+
+      async validatePromoCode(editionId: string, promoCode: string) {
+            return this.service.validatePromoCode(editionId, promoCode);
+      }
 }
 

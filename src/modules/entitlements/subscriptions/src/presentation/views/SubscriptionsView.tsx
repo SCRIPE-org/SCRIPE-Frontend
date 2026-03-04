@@ -27,7 +27,7 @@ import { Checkbox } from "@core/ui/checkbox";
 import { Textarea } from "@core/ui/textarea";
 import {
       Loader2, Plus, RefreshCw, XCircle, PauseCircle, PlayCircle,
-      Ban, ArrowRightLeft, RotateCcw, Shield,
+      Ban, ArrowRightLeft, RotateCcw, Shield, Tag,
 } from "lucide-react";
 import { format } from "date-fns";
 import type { SubscriptionListItem } from "../../domain/entities/Subscription";
@@ -163,6 +163,27 @@ export function SubscriptionsView({ tenantId }: SubscriptionsViewProps) {
                                           {value === "Fallback" ? "↓ Fallback" : "⏸ Suspend"}
                                     </Badge>
                               ),
+                              hideOnMobile: true,
+                        },
+                        {
+                              key: "appliedPromoCode",
+                              label: t("entitlements.promotions.promoCode") || "Promo",
+                              render: (_value: unknown, item: SubscriptionListItem) => {
+                                    if (!item.appliedPromoCode) {
+                                          return <span className="text-muted-foreground">—</span>;
+                                    }
+                                    return (
+                                          <div className="flex items-center gap-1.5">
+                                                <Badge variant="outline" className="text-[10px] border-primary/30 text-primary">
+                                                      <Tag className="h-3 w-3 me-0.5" />
+                                                      {item.appliedPromoCode}
+                                                </Badge>
+                                                {item.promotionDiscount != null && item.promotionDiscount > 0 && (
+                                                      <span className="text-[10px] text-green-600">-{item.promotionDiscount}%</span>
+                                                )}
+                                          </div>
+                                    );
+                              },
                               hideOnMobile: true,
                         },
                         {
@@ -349,6 +370,33 @@ function AssignDialog({
                                           </Select>
                                     </div>
                               )}
+
+                              {/* Promo Code */}
+                              <div className="space-y-2">
+                                    <Label className="flex items-center gap-1.5">
+                                          <Tag className="h-3.5 w-3.5 text-primary" />
+                                          {t("entitlements.promotions.promoCode") || "Promo Code"}
+                                    </Label>
+                                    <Input
+                                          value={vm.promoCode}
+                                          onChange={(e) => vm.setPromoCode(e.target.value.toUpperCase())}
+                                          placeholder={t("entitlements.promotions.promoCodePlaceholder") || "Enter promo code (optional)"}
+                                          className="font-mono uppercase"
+                                    />
+                              </div>
+
+                              {/* Currency */}
+                              <div className="space-y-2">
+                                    <Label>{t("entitlements.promotions.currency") || "Currency"}</Label>
+                                    <Select value={vm.currency} onValueChange={vm.setCurrency}>
+                                          <SelectTrigger><SelectValue /></SelectTrigger>
+                                          <SelectContent>
+                                                {["USD", "EUR", "GBP", "SAR", "AED", "EGP"].map((c) => (
+                                                      <SelectItem key={c} value={c}>{c}</SelectItem>
+                                                ))}
+                                          </SelectContent>
+                                    </Select>
+                              </div>
                         </div>
 
                         <DialogFooter>
@@ -414,6 +462,33 @@ function ChangeDialog({
                                                 <SelectItem value="Trial">{t("entitlements.subscriptions.trial")}</SelectItem>
                                                 <SelectItem value="Monthly">{t("entitlements.subscriptions.monthly")}</SelectItem>
                                                 <SelectItem value="Yearly">{t("entitlements.subscriptions.yearly")}</SelectItem>
+                                          </SelectContent>
+                                    </Select>
+                              </div>
+
+                              {/* Promo Code */}
+                              <div className="space-y-2">
+                                    <Label className="flex items-center gap-1.5">
+                                          <Tag className="h-3.5 w-3.5 text-primary" />
+                                          {t("entitlements.promotions.promoCode") || "Promo Code"}
+                                    </Label>
+                                    <Input
+                                          value={vm.promoCode}
+                                          onChange={(e) => vm.setPromoCode(e.target.value.toUpperCase())}
+                                          placeholder={t("entitlements.promotions.promoCodePlaceholder") || "Enter promo code (optional)"}
+                                          className="font-mono uppercase"
+                                    />
+                              </div>
+
+                              {/* Currency */}
+                              <div className="space-y-2">
+                                    <Label>{t("entitlements.promotions.currency") || "Currency"}</Label>
+                                    <Select value={vm.currency} onValueChange={vm.setCurrency}>
+                                          <SelectTrigger><SelectValue /></SelectTrigger>
+                                          <SelectContent>
+                                                {["USD", "EUR", "GBP", "SAR", "AED", "EGP"].map((c) => (
+                                                      <SelectItem key={c} value={c}>{c}</SelectItem>
+                                                ))}
                                           </SelectContent>
                                     </Select>
                               </div>

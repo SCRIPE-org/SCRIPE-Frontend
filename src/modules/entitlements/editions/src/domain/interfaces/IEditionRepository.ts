@@ -5,6 +5,7 @@ import type { Edition } from "../entities/Edition";
 import type { EditionVersion } from "../entities/EditionVersion";
 import type { EditionPriceItem, EditionPriceListResponse, SetEditionPricesRequest } from "../entities/EditionPricing";
 import type { CreateEditionRequest, UpdateEditionRequest } from "../entities/EditionRequests";
+import type { EditionPromotionData, CreatePromotionRequest, UpdatePromotionRequest, PromoCodeValidationResult } from "../entities/EditionPromotion";
 import type { PagedResult, PaginationParams } from "@modules/system/core/domain/types";
 
 export interface IEditionRepository {
@@ -28,5 +29,12 @@ export interface IEditionRepository {
       getEditionPrices(editionId: string): Promise<EditionPriceListResponse>;
       setEditionPrices(editionId: string, request: SetEditionPricesRequest): Promise<void>;
       getExchangeRates(baseCurrency?: string): Promise<Record<string, number>>;
+
+      // ── Promotions ──
+      getPromotions(editionId: string): Promise<EditionPromotionData[]>;
+      createPromotion(editionId: string, data: CreatePromotionRequest): Promise<string>;
+      updatePromotion(editionId: string, promoId: string, data: UpdatePromotionRequest): Promise<void>;
+      deletePromotion(editionId: string, promoId: string): Promise<void>;
+      validatePromoCode(editionId: string, promoCode: string): Promise<PromoCodeValidationResult>;
 }
 
