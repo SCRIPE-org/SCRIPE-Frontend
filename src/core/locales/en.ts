@@ -449,6 +449,10 @@ export const en = {
     alwaysUse: "Always use selected currency",
     resetToNative: "Reset to native",
     convertedFrom: "Converted from {{from}}",
+    approximateDisclaimer: "≈ Approximate rates for preview only",
+    liveRates: "✓ Live rates from server",
+    fallbackRates: "⚠ Using cached rates (offline)",
+    refreshRates: "Refresh rates",
   },
 
   // Tenant Settings Page (/settings/tenant)
@@ -5164,6 +5168,10 @@ export const en = {
         success: "Export downloaded successfully!",
         generating: "Generating...",
         download: "Download",
+        currency: "Display Currency",
+        currencyPlaceholder: "Select currency",
+        currencyHint: "Amounts will be shown in the selected currency where applicable",
+        appliedFilters: "Applied Filters",
       },
     },
     overrides: {

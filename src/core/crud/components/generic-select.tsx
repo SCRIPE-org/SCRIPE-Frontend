@@ -838,8 +838,13 @@ export const GenericSelect = React.forwardRef<HTMLDivElement, GenericSelectProps
         }
       };
 
-      const handleWindowScroll = () => {
+      const handleWindowScroll = (event: Event) => {
         if (isOpen && containerRef.current) {
+          // Ignore scroll events from inside the dropdown itself
+          if (dropdownRef.current && dropdownRef.current.contains(event.target as Node)) {
+            return;
+          }
+
           // Check if field is starting to hide (more sensitive detection)
           const rect = containerRef.current.getBoundingClientRect();
           const threshold = 10; // Close when field is 10px from edge
@@ -1135,9 +1140,15 @@ export const GenericSelect = React.forwardRef<HTMLDivElement, GenericSelectProps
               {/* Options list with dynamic scrollable height */}
               <div
                 className="scrollbar-thin scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent overflow-y-auto p-1"
+                onWheel={(e) => {
+                  // Prevent wheel events from propagating to the dialog,
+                  // which would otherwise capture them and block scrolling.
+                  e.stopPropagation();
+                }}
                 style={{
                   maxHeight: `calc(${dropdownPosition.maxHeight}px - ${isSearchable ? "84px" : "40px"
                     })`,
+                  overscrollBehavior: "contain",
                 }}
               >
                 {showLoading ? (

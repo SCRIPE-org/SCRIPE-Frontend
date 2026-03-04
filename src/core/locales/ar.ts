@@ -5014,6 +5014,10 @@ export const ar = {
         success: "تم تحميل التصدير بنجاح!",
         generating: "جاري الإنشاء...",
         download: "تحميل",
+        currency: "عملة العرض",
+        currencyPlaceholder: "اختر العملة",
+        currencyHint: "سيتم عرض المبالغ بالعملة المحددة حيثما أمكن",
+        appliedFilters: "الفلاتر المطبّقة",
       },
     },
     overrides: {
@@ -5180,6 +5184,10 @@ export const ar = {
     alwaysUse: "استخدام العملة المحددة دائمًا",
     resetToNative: "إعادة للأصلية",
     convertedFrom: "محوّل من {{from}}",
+    approximateDisclaimer: "≈ أسعار تقريبية للعرض فقط",
+    liveRates: "✓ أسعار مباشرة من الخادم",
+    fallbackRates: "⚠ استخدام أسعار محفوظة (غير متصل)",
+    refreshRates: "تحديث الأسعار",
   },
 
 };

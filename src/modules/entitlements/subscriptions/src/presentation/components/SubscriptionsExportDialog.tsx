@@ -188,6 +188,9 @@ export function SubscriptionsExportDialog({
                                     value={selectedCurrency}
                                     onValueChange={(v: string | string[]) => setSelectedCurrency(v as string)}
                                     placeholder={t("entitlements.subscriptions.export.currencyPlaceholder") || "Select currency"}
+                                    searchable
+                                    searchType="client"
+                                    searchPlaceholder={t("common.search") || "Search..."}
                               />
                               <p className="text-[10px] text-muted-foreground/60 italic">
                                     {t("entitlements.subscriptions.export.currencyHint") || "Amounts will be shown in the selected currency where applicable"}

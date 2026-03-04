@@ -4,13 +4,17 @@
  * Calls the backend export API to generate professional Excel/CSV/PDF files.
  * The backend uses ClosedXML for real .xlsx files.
  *
+ * Follows the exact same pattern as @core/hooks/use-export-report.ts:
+ *  - Uses getCoreContainer().apiService.getAuthToken() for auth
+ *  - Prepends NEXT_PUBLIC_API_URL to construct the full backend URL
+ *
  * SOLID: Single responsibility — export logic only.
  */
 "use client";
 
 import { useState, useCallback } from "react";
+import { getCoreContainer } from "@core/di";
 import { API_ENDPOINTS } from "@core/config/api-endpoints";
-import { secureTokenService } from "@core/common/secure-token-service";
 
 export type ExportFormat = "csv" | "excel" | "pdf";
 
@@ -37,25 +41,31 @@ export function useExportSubscriptions(): UseExportSubscriptionsResult {
                   setError(null);
 
                   try {
-                        const url = API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.EXPORT(
+                        // ── Auth token from core DI container (architecture pattern) ──
+                        const token = getCoreContainer().apiService.getAuthToken();
+                        const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "";
+
+                        // ── Build the endpoint path ──
+                        const endpointPath = API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.EXPORT(
                               format,
                               statusFilter,
                               typeFilter,
                               displayCurrency
                         );
 
-                        const token = secureTokenService.getAccessToken();
-                        const response = await fetch(url, {
+                        // ── Full URL = backend base + endpoint path ──
+                        const fullUrl = `${apiUrl}${endpointPath}`;
+
+                        const response = await fetch(fullUrl, {
                               method: "GET",
-                              credentials: "include",
                               headers: {
                                     ...(token ? { Authorization: `Bearer ${token}` } : {}),
                               },
                         });
 
                         if (!response.ok) {
-                              const errorData = await response.json().catch(() => null);
-                              throw new Error(errorData?.error || `Export failed (${response.status})`);
+                              const errorBody = await response.text();
+                              throw new Error(errorBody || `Export failed (${response.status})`);
                         }
 
                         // For PDF (HTML), open in new tab for browser print
@@ -76,21 +86,22 @@ export function useExportSubscriptions(): UseExportSubscriptionsResult {
 
                         // Parse filename from Content-Disposition header if available
                         if (contentDisposition) {
-                              const match = contentDisposition.match(/filename[^;=\n]*=["']?([^"';\n]*)["']?/);
-                              if (match?.[1]) filename = match[1];
+                              const match = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+                              if (match?.[1]) filename = match[1].replace(/['"']*/g, "");
                         }
 
-                        const url2 = URL.createObjectURL(blob);
+                        const blobUrl = URL.createObjectURL(blob);
                         const a = document.createElement("a");
-                        a.href = url2;
+                        a.href = blobUrl;
                         a.download = filename;
                         document.body.appendChild(a);
                         a.click();
                         document.body.removeChild(a);
-                        URL.revokeObjectURL(url2);
+                        URL.revokeObjectURL(blobUrl);
                   } catch (err) {
                         const message = err instanceof Error ? err.message : "Export failed";
                         setError(message);
+                        throw err;
                   } finally {
                         setIsExporting(false);
                   }

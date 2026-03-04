@@ -4,15 +4,17 @@
  * Dropdown to switch the global display currency.
  * Three modes: Native (original), Session (just this time), Always (persisted).
  *
- * Uses static approximate display rates (NOT for financial transactions).
- * These rates are for admin dashboard preview only.
+ * Fetches live exchange rates from backend GET /v1/currency/rates.
+ * Rates are cached in Zustand store after first fetch.
  */
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useCurrencyPreference, type CurrencyDisplayMode } from "@core/store/useCurrencyPreference";
 import { useConvertedAmount } from "@core/hooks/useConvertedAmount";
+import { getCoreContainer } from "@core/di";
+import { API_ENDPOINTS } from "@core/config/api-endpoints";
 import { Button } from "@core/ui/button";
 import {
       Popover,
@@ -20,7 +22,7 @@ import {
       PopoverTrigger,
 } from "@core/ui/popover";
 import { Separator } from "@core/ui/separator";
-import { Check, Globe, RotateCcw } from "lucide-react";
+import { Check, Globe, RotateCcw, Loader2, RefreshCcw } from "lucide-react";
 import { cn } from "@core/common/utils";
 
 /** Display currencies — the most commonly used for display */
@@ -36,11 +38,10 @@ const DISPLAY_CURRENCIES = [
 ] as const;
 
 /**
- * Static approximate exchange rates relative to USD.
- * These are for DISPLAY PREVIEW only — not for billing or financial calculations.
- * Updated periodically; the backend handles actual billing conversions.
+ * Fallback rates used ONLY if the backend API is unreachable.
+ * These are never shown as the primary source — backend is always tried first.
  */
-const STATIC_DISPLAY_RATES: Record<string, number> = {
+const FALLBACK_RATES: Record<string, number> = {
       USD: 1,
       EUR: 0.92,
       GBP: 0.79,
@@ -49,13 +50,6 @@ const STATIC_DISPLAY_RATES: Record<string, number> = {
       EGP: 50.5,
       TRY: 32.5,
       INR: 83.5,
-      KWD: 0.31,
-      QAR: 3.64,
-      BHD: 0.38,
-      OMR: 0.39,
-      JOD: 0.71,
-      CAD: 1.36,
-      AUD: 1.53,
 };
 
 interface CurrencyDisplayToggleProps {
@@ -71,21 +65,61 @@ export function CurrencyDisplayToggle({ className }: CurrencyDisplayToggleProps)
             setDisplayCurrency,
             resetToNative,
             setRates,
+            setLoadingRates,
+            isLoadingRates,
       } = useCurrencyPreference();
 
       const { isConverting } = useConvertedAmount();
       const [alwaysChecked, setAlwaysChecked] = useState(displayMode === "always");
       const [open, setOpen] = useState(false);
+      const [fetchError, setFetchError] = useState(false);
 
-      // Load static rates on first open (if not already cached)
-      function ensureRates() {
-            if (!exchangeRates) {
-                  setRates(STATIC_DISPLAY_RATES, "USD");
-            }
-      }
+      // ── Fetch rates from backend API ──────────────────────────────
+      const fetchRatesFromBackend = useCallback(
+            async (force = false) => {
+                  // Skip if already loaded and not forcing refresh
+                  if (exchangeRates && !force) return;
+
+                  setLoadingRates(true);
+                  setFetchError(false);
+
+                  try {
+                        const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "";
+                        const url = API_ENDPOINTS.ENTITLEMENTS.CURRENCY.RATES("USD");
+                        const token = getCoreContainer().apiService.getAuthToken();
+                        const response = await fetch(`${apiUrl}${url}`, {
+                              method: "GET",
+                              credentials: "include",
+                              headers: {
+                                    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+                              },
+                        });
+
+                        if (!response.ok) {
+                              throw new Error(`Failed to fetch rates: ${response.status}`);
+                        }
+
+                        const data = await response.json();
+
+                        // Backend returns { USD: 1, EUR: 0.92, ... } as decimals
+                        const rates: Record<string, number> = {};
+                        for (const [key, value] of Object.entries(data)) {
+                              rates[key] = Number(value);
+                        }
+
+                        setRates(rates, "USD");
+                  } catch {
+                        // Fallback to static rates if backend is unreachable
+                        setFetchError(true);
+                        if (!exchangeRates) {
+                              setRates(FALLBACK_RATES, "USD");
+                        }
+                  }
+            },
+            [exchangeRates, setLoadingRates, setRates]
+      );
 
       function handleSelectCurrency(code: string) {
-            ensureRates();
             const mode: "session" | "always" = alwaysChecked ? "always" : "session";
             setDisplayCurrency(code, mode);
             setOpen(false);
@@ -100,7 +134,13 @@ export function CurrencyDisplayToggle({ className }: CurrencyDisplayToggleProps)
       const currentFlag = DISPLAY_CURRENCIES.find((c) => c.code === displayCurrency)?.flag || "💱";
 
       return (
-            <Popover open={open} onOpenChange={(o) => { setOpen(o); if (o) ensureRates(); }}>
+            <Popover
+                  open={open}
+                  onOpenChange={(o) => {
+                        setOpen(o);
+                        if (o) fetchRatesFromBackend();
+                  }}
+            >
                   <PopoverTrigger asChild>
                         <Button
                               variant="outline"
@@ -140,26 +180,36 @@ export function CurrencyDisplayToggle({ className }: CurrencyDisplayToggleProps)
 
                         <Separator />
 
+                        {/* Loading state */}
+                        {isLoadingRates && (
+                              <div className="flex items-center justify-center gap-2 py-3 text-xs text-muted-foreground">
+                                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                    {t("common.loading") || "Loading..."}
+                              </div>
+                        )}
+
                         {/* Currency list */}
-                        <div className="max-h-48 overflow-y-auto">
-                              {DISPLAY_CURRENCIES.map((c) => (
-                                    <button
-                                          key={c.code}
-                                          type="button"
-                                          className="flex w-full items-center gap-2 px-3 py-1.5 text-sm hover:bg-accent transition-colors"
-                                          onClick={() => handleSelectCurrency(c.code)}
-                                    >
-                                          <span className="h-4 w-4 flex items-center justify-center">
-                                                {displayMode !== "native" && displayCurrency === c.code && (
-                                                      <Check className="h-3.5 w-3.5 text-primary" />
-                                                )}
-                                          </span>
-                                          <span>{c.flag}</span>
-                                          <span className="flex-1 text-left">{c.code}</span>
-                                          <span className="text-xs text-muted-foreground">{c.name}</span>
-                                    </button>
-                              ))}
-                        </div>
+                        {!isLoadingRates && (
+                              <div className="max-h-48 overflow-y-auto">
+                                    {DISPLAY_CURRENCIES.map((c) => (
+                                          <button
+                                                key={c.code}
+                                                type="button"
+                                                className="flex w-full items-center gap-2 px-3 py-1.5 text-sm hover:bg-accent transition-colors"
+                                                onClick={() => handleSelectCurrency(c.code)}
+                                          >
+                                                <span className="h-4 w-4 flex items-center justify-center">
+                                                      {displayMode !== "native" && displayCurrency === c.code && (
+                                                            <Check className="h-3.5 w-3.5 text-primary" />
+                                                      )}
+                                                </span>
+                                                <span>{c.flag}</span>
+                                                <span className="flex-1 text-left">{c.code}</span>
+                                                <span className="text-xs text-muted-foreground">{c.name}</span>
+                                          </button>
+                                    ))}
+                              </div>
+                        )}
 
                         <Separator />
 
@@ -183,11 +233,21 @@ export function CurrencyDisplayToggle({ className }: CurrencyDisplayToggleProps)
                               </label>
                         </div>
 
-                        {/* Approximate rates disclaimer */}
-                        <div className="px-3 pb-2">
+                        {/* Rates source info */}
+                        <div className="px-3 pb-2 flex items-center justify-between">
                               <p className="text-[10px] text-muted-foreground/60 italic">
-                                    {t("currency.approximateDisclaimer") || "≈ Approximate rates for preview only"}
+                                    {fetchError
+                                          ? (t("currency.fallbackRates") || "⚠ Using cached rates (offline)")
+                                          : (t("currency.liveRates") || "✓ Live rates from server")}
                               </p>
+                              <button
+                                    type="button"
+                                    onClick={() => fetchRatesFromBackend(true)}
+                                    className="text-muted-foreground/50 hover:text-muted-foreground transition-colors"
+                                    title={t("currency.refreshRates") || "Refresh rates"}
+                              >
+                                    <RefreshCcw className="h-3 w-3" />
+                              </button>
                         </div>
 
                         {/* Reset button */}
