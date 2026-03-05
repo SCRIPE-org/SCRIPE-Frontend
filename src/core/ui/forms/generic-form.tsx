@@ -226,18 +226,19 @@ export function GenericForm({
   const [loading, setLoading] = useState(false);
 
   // Re-initialize form data when fields change (for dynamic forms)
+  // IMPORTANT: Only populate values for NEW fields that don't exist in the current
+  // form data. Never overwrite existing user-typed values with initialValues.
   React.useEffect(() => {
     setFormData((prevData) => {
-      const newData = initializeFormData(fields, initialValues);
-      // Preserve existing form values that are not being overridden
       const preservedData = { ...prevData };
       fields.forEach((field) => {
-        // Only override if the field has a new default value or initial value
-        if (field.defaultValue !== undefined && prevData[field.name] === undefined) {
-          preservedData[field.name] = field.defaultValue;
-        }
-        if (initialValues[field.name] !== undefined) {
-          preservedData[field.name] = initialValues[field.name];
+        // Only set default/initial value if this field has NO value yet
+        if (preservedData[field.name] === undefined) {
+          if (field.defaultValue !== undefined) {
+            preservedData[field.name] = field.defaultValue;
+          } else if (initialValues[field.name] !== undefined) {
+            preservedData[field.name] = initialValues[field.name];
+          }
         }
       });
       return preservedData;

@@ -142,26 +142,48 @@ export function SubTenantsTab({
     [parentId, parentName, parentCode]
   );
 
-  const handleCreateSubmit = useCallback(async () => {
-    if (!createForm.name || !createForm.code) return;
+  const handleCreateSubmit = useCallback(async (formData?: any) => {
+    // Use the passed data directly — NOT createForm state (which may be stale due to React batching)
+    const data = formData || createForm;
+    if (!data.name || !data.code) return;
     setIsCreating(true);
     try {
+      // ── Step 1: Pre-validate promo code BEFORE creating tenant ──
+      if (data.editionId && data.promoCode) {
+        const validation = await systemContainer.tenantRepository.validatePromoCode(
+          data.editionId,
+          data.promoCode
+        );
+        if (!validation.isValid) {
+          const errorCode = validation.errorCode || "UNKNOWN";
+          const localizedMessage = t(`tenant.promoCodeError.${errorCode}`) || validation.errorMessage || t("tenant.promoCodeError.UNKNOWN");
+          toastError({
+            title: t("tenant.invalidPromoCode") || "Invalid Promo Code",
+            description: localizedMessage,
+          });
+          setIsCreating(false);
+          return;
+        }
+      }
+
+      // ── Step 2: Create tenant (only after validation passes) ──
       const newId = await systemContainer.tenantRepository.create({
-        name: createForm.name,
-        code: createForm.code,
-        description: createForm.description || undefined,
+        name: data.name,
+        code: data.code,
+        description: data.description || undefined,
         parentId: parentForCreate?.id || parentId,
       });
 
-      if (createForm.editionId) {
+      // ── Step 3: Assign edition if selected ──
+      if (data.editionId) {
         await systemContainer.tenantRepository.assignEdition(
           newId,
-          createForm.editionId,
-          createForm.subscriptionType || "Lifetime",
+          data.editionId,
+          data.subscriptionType || "Lifetime",
           undefined,
-          createForm.currency || "USD",
-          createForm.promotionId && createForm.promoCode ? createForm.promoCode : undefined,
-          createForm.promotionId || undefined
+          data.currency || "USD",
+          data.promotionId && data.promoCode ? data.promoCode : undefined,
+          data.promotionId || undefined
         );
       }
 

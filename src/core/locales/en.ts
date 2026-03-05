@@ -436,6 +436,15 @@ export const en = {
     promoCodeValidating: "Validating...",
     promoCodeValid: "Promo code applied!",
     promoCodeInvalid: "Invalid or expired promo code",
+    // ── Promo Code Validation Error Codes (from backend) ──
+    invalidPromoCode: "Invalid Promo Code",
+    promoCodeError: {
+      PROMO_INVALID: "The promo code you entered is incorrect. Please check and try again.",
+      PROMO_NOT_STARTED: "This promotion has not started yet. Please try again later.",
+      PROMO_EXPIRED: "This promo code has expired and can no longer be used.",
+      PROMO_LIMIT_REACHED: "This promo code has reached its maximum redemption limit.",
+      UNKNOWN: "The promo code could not be validated. Please try again.",
+    },
     discount: "Discount",
     suspendReasonMinLength: "Reason must be at least 3 characters",
   },

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
 import { Button } from "@core/ui/button";
@@ -11,6 +12,7 @@ import {
       ArrowDownCircle, DollarSign, Globe,
 } from "lucide-react";
 import { useTenantSubscriptionViewModel } from "@modules/system/tenants/src/presentation/viewmodels/useTenantSubscriptionViewModel";
+import { systemContainer } from "@modules/system/di";
 import { SUPPORTED_CURRENCIES } from "@core/constants/currencies";
 import { useConvertedAmount } from "@core/hooks/useConvertedAmount";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@core/ui/dialog";
@@ -123,12 +125,40 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
       const [restoreType, setRestoreType] = useState<SubscriptionType>("Monthly");
       const [selectedCurrency, setSelectedCurrency] = useState("");
       const [promoCode, setPromoCode] = useState("");
+      const [selectedPromotionId, setSelectedPromotionId] = useState("");
 
       // Downgrade impact + price preview state
       const [impactReport, setImpactReport] = useState<DowngradeImpactReport | null>(null);
       const [isLoadingImpact, setIsLoadingImpact] = useState(false);
       const [previewAmount, setPreviewAmount] = useState<number | null>(null);
       const [isLoadingPrice, setIsLoadingPrice] = useState(false);
+
+      // ── Promotion picker data for Change Plan dialog ──
+      const { data: changePlanPromotionsRaw = [], isLoading: isLoadingChangePlanPromos } = useQuery({
+            queryKey: ["entitlements", "editions", selectedEditionId, "promotions", "changePlan"],
+            queryFn: () => systemContainer.tenantRepository.getEditionPromotions(selectedEditionId),
+            enabled: !!selectedEditionId && changePlanOpen,
+      });
+
+      const changePlanPromotions = useMemo(() => {
+            return (changePlanPromotionsRaw as any[]).filter((p) => {
+                  if (!p.isActive) return false;
+                  if (p.validUntil && new Date(p.validUntil) < new Date()) return false;
+                  if (p.validFrom && new Date(p.validFrom) > new Date()) return false;
+                  if (p.maxRedemptions != null && p.currentRedemptions >= p.maxRedemptions) return false;
+                  if (p.applicableCycle && selectedType) {
+                        const cycleMap: Record<string, string> = { Monthly: "Monthly", Yearly: "Yearly", Lifetime: "Lifetime" };
+                        if (p.applicableCycle !== cycleMap[selectedType]) return false;
+                  }
+                  return true;
+            }).map((p: any) => ({
+                  id: p.id,
+                  name: p.name,
+                  type: p.type,
+                  discountValue: p.discountValue,
+                  requiresCode: p.requiresCode,
+            }));
+      }, [changePlanPromotionsRaw, selectedType]);
 
       // Edition options for GenericSelect
       const editionOptions: GenericSelectOption[] = (vm.availableEditions || []).map((e) => ({
@@ -289,11 +319,11 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                                             </p>
                                                       </div>
                                                 )}
-                                                {subscription.appliedPromoCode && (
+                                                {subscription.appliedPromotionName && (
                                                       <div className="space-y-1">
-                                                            <p className="text-xs font-medium text-muted-foreground">{t("tenant.promoCode") || "Promo Code"}</p>
+                                                            <p className="text-xs font-medium text-muted-foreground">{t("tenant.appliedPromotion") || "Applied Promotion"}</p>
                                                             <Badge variant="secondary" className="bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400">
-                                                                  🏷️ {subscription.appliedPromoCode}
+                                                                  🏷️ {subscription.appliedPromotionName}
                                                             </Badge>
                                                       </div>
                                                 )}
@@ -548,7 +578,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
             return (
                   <Dialog open={changePlanOpen} onOpenChange={(open) => {
                         setChangePlanOpen(open);
-                        if (!open) { setImpactReport(null); setPreviewAmount(null); }
+                        if (!open) { setImpactReport(null); setPreviewAmount(null); setSelectedPromotionId(""); setPromoCode(""); }
                   }}>
                         <DialogContent className="max-w-md">
                               <DialogHeader>
@@ -588,15 +618,49 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                                       />
                                                 </div>
 
-                                                {/* ── Promo Code ── */}
-                                                <div className="space-y-2">
-                                                      <Label>{t("tenant.promoCode") || "Promo Code"}</Label>
-                                                      <Input
-                                                            value={promoCode}
-                                                            onChange={(e) => setPromoCode(e.target.value)}
-                                                            placeholder={t("tenant.promoCodePlaceholder") || "Enter promo code (optional)"}
-                                                      />
-                                                </div>
+                                                {/* ── Promotion Picker ── */}
+                                                {changePlanPromotions.length > 0 && (
+                                                      <div className="space-y-2">
+                                                            <Label>{t("tenant.selectPromotion") || "Promotion (optional)"}</Label>
+                                                            <GenericSelect
+                                                                  options={[
+                                                                        { value: "", label: t("tenant.noPromotion") || "No promotion" },
+                                                                        ...changePlanPromotions.map((p) => ({
+                                                                              value: p.id,
+                                                                              label: `${p.name} (${p.type === "Percentage" ? `${p.discountValue}%` : `${p.discountValue}`} off)`,
+                                                                        })),
+                                                                  ]}
+                                                                  value={selectedPromotionId}
+                                                                  onValueChange={(v: string | string[]) => {
+                                                                        setSelectedPromotionId(v as string);
+                                                                        if (!v) setPromoCode("");
+                                                                  }}
+                                                                  placeholder={t("tenant.selectPromotion") || "Select a promotion"}
+                                                            />
+                                                      </div>
+                                                )}
+                                                {/* ── Promo Code (only for code-required promotions) ── */}
+                                                {selectedPromotionId && changePlanPromotions.find((p) => p.id === selectedPromotionId)?.requiresCode && (
+                                                      <div className="space-y-2">
+                                                            <Label>{t("tenant.promoCode") || "Promo Code"}</Label>
+                                                            <Input
+                                                                  value={promoCode}
+                                                                  onChange={(e) => setPromoCode(e.target.value)}
+                                                                  placeholder={t("tenant.promoCodePlaceholder") || "Enter promo code"}
+                                                            />
+                                                      </div>
+                                                )}
+                                                {/* No promotions but allow raw promo code entry */}
+                                                {changePlanPromotions.length === 0 && !isLoadingChangePlanPromos && selectedEditionId && (
+                                                      <div className="space-y-2">
+                                                            <Label>{t("tenant.promoCode") || "Promo Code"}</Label>
+                                                            <Input
+                                                                  value={promoCode}
+                                                                  onChange={(e) => setPromoCode(e.target.value)}
+                                                                  placeholder={t("tenant.promoCodePlaceholder") || "Enter promo code (optional)"}
+                                                            />
+                                                      </div>
+                                                )}
 
                                                 {/* ── Price Preview ── */}
                                                 {isLoadingPrice && (
@@ -662,11 +726,12 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                           variant={impactReport?.hasOverflow ? "destructive" : "default"}
                                           onClick={() => {
                                                 if (selectedEditionId) {
-                                                      vm.changeEdition(selectedEditionId, selectedType, subscription?.currency, promoCode.trim() || undefined);
+                                                      vm.changeEdition(selectedEditionId, selectedType, subscription?.currency, promoCode.trim() || undefined, selectedPromotionId || undefined);
                                                       setChangePlanOpen(false);
                                                       setImpactReport(null);
                                                       setPreviewAmount(null);
                                                       setPromoCode("");
+                                                      setSelectedPromotionId("");
                                                 }
                                           }}
                                           disabled={!selectedEditionId || vm.isChanging}

@@ -129,9 +129,14 @@ export interface ITenantService {
   getEditionPromotions(editionId: string): Promise<Array<{
     id: string; name: string; type: string; discountValue: number;
     discountCurrency?: string; applicableCycle?: string; requiresCode: boolean;
-    promoCode?: string; isActive: boolean; validFrom?: string; validUntil?: string;
+    isActive: boolean; validFrom?: string; validUntil?: string;
     maxRedemptions?: number; currentRedemptions: number; firstTimeOnly: boolean;
   }>>;
+
+  /**
+   * Validate a promo code for a specific edition (backend validates the secret)
+   */
+  validatePromoCode(editionId: string, promoCode: string): Promise<{ isValid: boolean; errorCode?: string; errorMessage?: string; promotionName?: string; discountType?: string; discountValue?: number }>;
 
   /**
    * Assign a base/trial edition (plan) to a newly created tenant

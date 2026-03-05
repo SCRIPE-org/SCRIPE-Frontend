@@ -159,6 +159,10 @@ export class TenantRepository implements ITenantRepository {
     return this.service.getEditionPromotions(editionId);
   }
 
+  async validatePromoCode(editionId: string, promoCode: string) {
+    return this.service.validatePromoCode(editionId, promoCode);
+  }
+
   async assignEdition(tenantId: string, editionId: string, type?: string, endDate?: string, currency?: string, promoCode?: string, promotionId?: string): Promise<{ id: string }> {
     return this.service.assignEdition(tenantId, editionId, type, endDate, currency, promoCode, promotionId);
   }

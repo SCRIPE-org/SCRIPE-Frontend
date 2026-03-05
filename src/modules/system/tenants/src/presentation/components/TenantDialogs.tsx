@@ -164,12 +164,22 @@ export function CreateTenantDialog({
         searchPlaceholder: t("common.search") || "Search...",
         searchType: "server",
         onServerSearch: onSearchEditions,
-        onChange: (value: string) => {
+        onChange: (value: string, formData: Record<string, any>) => {
           setTimeout(() => {
             setSelectedEditionId(value);
             setSelectedPromotionId("");
             onEditionChange(value);
-            setForm((prev) => ({ ...prev, editionId: value, subscriptionType: "", promotionId: "", promoCode: "" }));
+            // Preserve ALL current user input (name, code, etc.) from formData
+            setForm({
+              name: formData.name || "",
+              code: formData.code || "",
+              description: formData.description || "",
+              editionId: value,
+              subscriptionType: "",
+              currency: formData.currency || "USD",
+              promotionId: "",
+              promoCode: "",
+            });
           }, 0);
           return { editionId: value, subscriptionType: "", promotionId: "", promoCode: "" };
         },
@@ -193,11 +203,21 @@ export function CreateTenantDialog({
             opts.push({ value: "Trial", label: t("tenant.subscriptionTypes.trial") || "Trial (14 days)" });
           return opts;
         })(),
-        onChange: (value: string) => {
+        onChange: (value: string, formData: Record<string, any>) => {
           setTimeout(() => {
             setSelectedPromotionId("");
             onSubscriptionTypeChange(value);
-            setForm((prev) => ({ ...prev, subscriptionType: value, promotionId: "", promoCode: "" }));
+            // Preserve ALL current user input from formData
+            setForm({
+              name: formData.name || "",
+              code: formData.code || "",
+              description: formData.description || "",
+              editionId: formData.editionId || "",
+              subscriptionType: value,
+              currency: formData.currency || "USD",
+              promotionId: "",
+              promoCode: "",
+            });
           }, 0);
           return { subscriptionType: value, promotionId: "", promoCode: "" };
         },
@@ -227,11 +247,21 @@ export function CreateTenantDialog({
             label: `${p.name} — ${p.type === "Percentage" ? `${p.discountValue}% off` : `$${p.discountValue} off`}${p.requiresCode ? " (Code)" : ""}`,
           })),
         ],
-        onChange: (value: string) => {
+        onChange: (value: string, formData: Record<string, any>) => {
           const actualValue = value === "__none__" ? "" : value;
           setTimeout(() => {
             setSelectedPromotionId(actualValue);
-            setForm((prev) => ({ ...prev, promotionId: actualValue, promoCode: "" }));
+            // Preserve ALL current user input from formData
+            setForm({
+              name: formData.name || "",
+              code: formData.code || "",
+              description: formData.description || "",
+              editionId: formData.editionId || "",
+              subscriptionType: formData.subscriptionType || "",
+              currency: formData.currency || "USD",
+              promotionId: actualValue,
+              promoCode: "",
+            });
           }, 0);
           return { promotionId: value, promoCode: "" };
         },
@@ -254,7 +284,7 @@ export function CreateTenantDialog({
 
   const handleSubmit = async (data: Record<string, any>) => {
     const promoId = data.promotionId === "__none__" ? "" : (data.promotionId || "");
-    setForm({
+    const resolvedData: CreateFormState = {
       name: data.name,
       code: data.code,
       description: data.description || "",
@@ -263,8 +293,9 @@ export function CreateTenantDialog({
       currency: data.currency || "USD",
       promotionId: promoId,
       promoCode: data.promoCode || "",
-    });
-    await onSubmit();
+    };
+    setForm(resolvedData);
+    await onSubmit(resolvedData);
   };
 
   return (

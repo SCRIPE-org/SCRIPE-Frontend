@@ -41,7 +41,7 @@ export interface UseTenantSubscriptionViewModelResult {
       hasFallback: boolean;
 
       // Mutations
-      changeEdition: (editionId: string, type: SubscriptionType, currency?: string, promoCode?: string) => void;
+      changeEdition: (editionId: string, type: SubscriptionType, currency?: string, promoCode?: string, promotionId?: string) => void;
       isChanging: boolean;
 
       renewSubscription: (type: SubscriptionType) => void;
@@ -160,8 +160,8 @@ export function useTenantSubscriptionViewModel(tenantId: string): UseTenantSubsc
       // ── Mutations ──
 
       const changeMutation = useMutation({
-            mutationFn: async ({ editionId, type, currency, promoCode }: { editionId: string; type: string; currency?: string; promoCode?: string }) => {
-                  await systemContainer.tenantRepository.changeEdition(tenantId, editionId, type, currency, promoCode);
+            mutationFn: async ({ editionId, type, currency, promoCode, promotionId }: { editionId: string; type: string; currency?: string; promoCode?: string; promotionId?: string }) => {
+                  await systemContainer.tenantRepository.changeEdition(tenantId, editionId, type, currency, promoCode, promotionId);
             },
             onSuccess: () => { successToast(t("tenant.subscriptionUpdated") || "Plan changed successfully"); invalidateAll(); },
             onError: errorToast,
@@ -243,7 +243,7 @@ export function useTenantSubscriptionViewModel(tenantId: string): UseTenantSubsc
             canRenew, canConvertTrial, canSuspend, canResume, canCancel, canReassign,
             fallbackEditionName, expiryBehavior, hasFallback,
 
-            changeEdition: (editionId: string, type: SubscriptionType, currency?: string, promoCode?: string) => changeMutation.mutate({ editionId, type, currency, promoCode }),
+            changeEdition: (editionId: string, type: SubscriptionType, currency?: string, promoCode?: string, promotionId?: string) => changeMutation.mutate({ editionId, type, currency, promoCode, promotionId }),
             isChanging: changeMutation.isPending,
 
             renewSubscription: renewMutation.mutate,

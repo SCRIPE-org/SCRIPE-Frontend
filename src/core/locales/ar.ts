@@ -112,6 +112,8 @@ export const ar = {
   tenant: {
     billingCurrency: "عملة الفوترة",
     lockoutDuration: "مدة الحظر",
+    selectPromotion: "اختر العرض الترويجي",
+    noPermission: "لا يوجد صلاحية",
     minutes: "دقائق",
     passwordExpiryDays: "أيام انتهاء صلاحية كلمة المرور",
     context: "سياق المستأجر",
@@ -439,6 +441,15 @@ export const ar = {
     promoCodeValidating: "جاري التحقق...",
     promoCodeValid: "تم تطبيق كود العرض!",
     promoCodeInvalid: "كود العرض غير صالح أو منتهي",
+    // ── Promo Code Validation Error Codes (from backend) ──
+    invalidPromoCode: "كود عرض غير صالح",
+    promoCodeError: {
+      PROMO_INVALID: "كود العرض الذي أدخلته غير صحيح. يرجى التحقق والمحاولة مرة أخرى.",
+      PROMO_NOT_STARTED: "هذا العرض الترويجي لم يبدأ بعد. يرجى المحاولة لاحقاً.",
+      PROMO_EXPIRED: "انتهت صلاحية كود العرض هذا ولم يعد قابلاً للاستخدام.",
+      PROMO_LIMIT_REACHED: "وصل كود العرض هذا إلى الحد الأقصى لعدد مرات الاستخدام.",
+      UNKNOWN: "تعذر التحقق من كود العرض. يرجى المحاولة مرة أخرى.",
+    },
     discount: "خصم",
     suspendReasonMinLength: "يجب أن يكون السبب 3 أحرف على الأقل",
   },

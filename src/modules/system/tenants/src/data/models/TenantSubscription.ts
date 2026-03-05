@@ -48,7 +48,7 @@ export interface SubscriptionModel {
       totalAmountUsd?: number;
       exchangeRateToUsd?: number;
       // ── Promotion ──
-      appliedPromoCode?: string;
+      appliedPromotionName?: string;
       promotionDiscount?: number;
 }
 
@@ -70,6 +70,7 @@ export interface ChangeEditionPayload {
       expiryBehavior?: ExpiryBehavior;
       currency?: string;
       promoCode?: string;
+      promotionId?: string;
 }
 
 export interface RenewPayload {
