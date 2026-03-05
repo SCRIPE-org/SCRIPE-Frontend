@@ -1,8 +1,12 @@
 /**
  * SubscriptionsExportDialog
  *
- * Professional export modal with format selection and currency selector.
- * Calls backend API for server-side file generation (ClosedXML for Excel).
+ * Professional export modal with comprehensive filters:
+ *  - Format selection (CSV / Excel / PDF)
+ *  - Currency selector
+ *  - Date range (presets + custom)
+ *  - Expiring soon (in N days)
+ *  - Edition filter
  *
  * SOLID: Pure UI — delegates all logic to useExportSubscriptions hook.
  */
@@ -22,6 +26,7 @@ import {
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { Label } from "@core/ui/label";
+import { Input } from "@core/ui/input";
 import GenericSelect from "@core/crud/components/generic-select";
 import type { GenericSelectOption } from "@core/crud/components/generic-select";
 import {
@@ -31,7 +36,11 @@ import {
       Loader2,
       CheckCircle,
       AlertCircle,
+      Calendar,
+      Clock,
 } from "lucide-react";
+
+// ── Types ────────────────────────────────────────────────
 
 interface SubscriptionsExportDialogProps {
       open: boolean;
@@ -49,6 +58,10 @@ interface FormatOption {
       color: string;
       borderActive: string;
 }
+
+type DatePreset = "all" | "last7" | "last30" | "last90" | "lastYear" | "custom";
+
+// ── Constants ────────────────────────────────────────────
 
 const FORMAT_OPTIONS: FormatOption[] = [
       {
@@ -89,6 +102,51 @@ const CURRENCY_OPTIONS: GenericSelectOption[] = [
       { value: "INR", label: "🇮🇳  INR — Indian Rupee" },
 ];
 
+const DATE_PRESET_OPTIONS: GenericSelectOption[] = [
+      { value: "all", label: "📅  All time" },
+      { value: "last7", label: "📅  Last 7 days" },
+      { value: "last30", label: "📅  Last 30 days" },
+      { value: "last90", label: "📅  Last 90 days (Quarter)" },
+      { value: "lastYear", label: "📅  Last 12 months" },
+      { value: "custom", label: "📅  Custom range..." },
+];
+
+const EXPIRING_OPTIONS: GenericSelectOption[] = [
+      { value: "0", label: "⏰  No filter" },
+      { value: "5", label: "🔴  Expiring in 5 days" },
+      { value: "7", label: "🔴  Expiring in 7 days" },
+      { value: "14", label: "🟡  Expiring in 14 days" },
+      { value: "30", label: "🟡  Expiring in 30 days" },
+      { value: "60", label: "🟢  Expiring in 60 days" },
+      { value: "90", label: "🟢  Expiring in 90 days" },
+];
+
+// ── Helpers ──────────────────────────────────────────────
+
+function getDateRange(preset: DatePreset): { from?: string; to?: string } {
+      if (preset === "all" || preset === "custom") return {};
+      const now = new Date();
+      const to = now.toISOString().split("T")[0];
+      const from = new Date(now);
+      switch (preset) {
+            case "last7":
+                  from.setDate(from.getDate() - 7);
+                  break;
+            case "last30":
+                  from.setDate(from.getDate() - 30);
+                  break;
+            case "last90":
+                  from.setDate(from.getDate() - 90);
+                  break;
+            case "lastYear":
+                  from.setFullYear(from.getFullYear() - 1);
+                  break;
+      }
+      return { from: from.toISOString().split("T")[0], to };
+}
+
+// ── Component ────────────────────────────────────────────
+
 export function SubscriptionsExportDialog({
       open,
       onClose,
@@ -100,16 +158,35 @@ export function SubscriptionsExportDialog({
       const { exportSubscriptions, isExporting, error } = useExportSubscriptions();
       const [selectedFormat, setSelectedFormat] = useState<ExportFormat>("excel");
       const [selectedCurrency, setSelectedCurrency] = useState("_native");
+      const [datePreset, setDatePreset] = useState<DatePreset>("all");
+      const [customDateFrom, setCustomDateFrom] = useState("");
+      const [customDateTo, setCustomDateTo] = useState("");
+      const [expiringInDays, setExpiringInDays] = useState("0");
       const [success, setSuccess] = useState(false);
 
       const handleExport = async () => {
             setSuccess(false);
             try {
+                  // Compute date range
+                  let dateFrom: string | undefined;
+                  let dateTo: string | undefined;
+                  if (datePreset === "custom") {
+                        dateFrom = customDateFrom || undefined;
+                        dateTo = customDateTo || undefined;
+                  } else {
+                        const range = getDateRange(datePreset);
+                        dateFrom = range.from;
+                        dateTo = range.to;
+                  }
+
                   await exportSubscriptions({
                         format: selectedFormat,
                         statusFilter,
                         typeFilter,
                         displayCurrency: selectedCurrency === "_native" ? undefined : selectedCurrency,
+                        dateFrom,
+                        dateTo,
+                        expiringInDays: parseInt(expiringInDays) || undefined,
                   });
                   setSuccess(true);
                   setTimeout(() => {
@@ -132,10 +209,21 @@ export function SubscriptionsExportDialog({
       const activeFilters: string[] = [];
       if (statusFilter !== "all") activeFilters.push(`Status: ${statusFilter}`);
       if (typeFilter !== "all") activeFilters.push(`Type: ${typeFilter}`);
+      if (datePreset !== "all") {
+            if (datePreset === "custom") {
+                  if (customDateFrom || customDateTo)
+                        activeFilters.push(`Date: ${customDateFrom || "..."} → ${customDateTo || "..."}`);
+            } else {
+                  const label = DATE_PRESET_OPTIONS.find((o) => o.value === datePreset)?.label || datePreset;
+                  activeFilters.push(label.replace("📅  ", ""));
+            }
+      }
+      if (parseInt(expiringInDays) > 0)
+            activeFilters.push(`Expiring ≤ ${expiringInDays}d`);
 
       return (
             <Dialog open={open} onOpenChange={handleOpenChange}>
-                  <DialogContent className="sm:max-w-md">
+                  <DialogContent className="sm:max-w-lg">
                         <DialogHeader>
                               <DialogTitle className="flex items-center gap-2">
                                     <FileDown className="h-5 w-5" />
@@ -143,7 +231,7 @@ export function SubscriptionsExportDialog({
                               </DialogTitle>
                               <DialogDescription>
                                     {t("entitlements.subscriptions.export.description") ||
-                                          "Download subscription data in your preferred format."}
+                                          "Generate comprehensive subscription analytics reports."}
                               </DialogDescription>
                         </DialogHeader>
 
@@ -158,13 +246,13 @@ export function SubscriptionsExportDialog({
                         </div>
 
                         {/* Format Cards */}
-                        <div className="grid grid-cols-3 gap-3 py-2">
+                        <div className="grid grid-cols-3 gap-3">
                               {FORMAT_OPTIONS.map((opt) => (
                                     <button
                                           key={opt.value}
                                           onClick={() => setSelectedFormat(opt.value)}
                                           disabled={isExporting}
-                                          className={`flex flex-col items-center gap-2 rounded-lg border-2 p-4 transition-all hover:shadow-md ${selectedFormat === opt.value
+                                          className={`flex flex-col items-center gap-1.5 rounded-lg border-2 p-3 transition-all hover:shadow-md ${selectedFormat === opt.value
                                                 ? opt.borderActive
                                                 : "border-border hover:border-muted-foreground/30"
                                                 } ${isExporting ? "cursor-not-allowed opacity-50" : "cursor-pointer"}`}
@@ -178,8 +266,69 @@ export function SubscriptionsExportDialog({
                               ))}
                         </div>
 
-                        {/* Currency Selector — GenericSelect from @core/crud */}
-                        <div className="space-y-2">
+                        {/* Filters Grid — 2 columns */}
+                        <div className="grid grid-cols-2 gap-3">
+                              {/* Date Range */}
+                              <div className="space-y-1.5">
+                                    <Label className="flex items-center gap-1 text-xs font-medium text-muted-foreground">
+                                          <Calendar className="h-3 w-3" />
+                                          Date Range
+                                    </Label>
+                                    <GenericSelect
+                                          options={DATE_PRESET_OPTIONS}
+                                          value={datePreset}
+                                          onValueChange={(v: string | string[]) => setDatePreset(v as DatePreset)}
+                                          placeholder="Select range"
+                                          searchable
+                                          searchType="client"
+                                          searchPlaceholder="Search..."
+                                    />
+                              </div>
+
+                              {/* Expiring Soon */}
+                              <div className="space-y-1.5">
+                                    <Label className="flex items-center gap-1 text-xs font-medium text-muted-foreground">
+                                          <Clock className="h-3 w-3" />
+                                          Expiring Soon
+                                    </Label>
+                                    <GenericSelect
+                                          options={EXPIRING_OPTIONS}
+                                          value={expiringInDays}
+                                          onValueChange={(v: string | string[]) => setExpiringInDays(v as string)}
+                                          placeholder="No filter"
+                                          searchable
+                                          searchType="client"
+                                          searchPlaceholder="Search..."
+                                    />
+                              </div>
+                        </div>
+
+                        {/* Custom Date Range (only when "custom" is selected) */}
+                        {datePreset === "custom" && (
+                              <div className="grid grid-cols-2 gap-3">
+                                    <div className="space-y-1">
+                                          <Label className="text-[10px] text-muted-foreground">From</Label>
+                                          <Input
+                                                type="date"
+                                                value={customDateFrom}
+                                                onChange={(e) => setCustomDateFrom(e.target.value)}
+                                                className="h-9 text-sm"
+                                          />
+                                    </div>
+                                    <div className="space-y-1">
+                                          <Label className="text-[10px] text-muted-foreground">To</Label>
+                                          <Input
+                                                type="date"
+                                                value={customDateTo}
+                                                onChange={(e) => setCustomDateTo(e.target.value)}
+                                                className="h-9 text-sm"
+                                          />
+                                    </div>
+                              </div>
+                        )}
+
+                        {/* Currency Selector */}
+                        <div className="space-y-1.5">
                               <Label className="text-xs font-medium text-muted-foreground">
                                     {t("entitlements.subscriptions.export.currency") || "Display Currency"}
                               </Label>

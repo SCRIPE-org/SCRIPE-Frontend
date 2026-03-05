@@ -2,12 +2,16 @@
  * Subscription Repository Interface
  */
 import type { Subscription, SubscriptionListItem, GlobalSubscriptionItem } from "../entities/Subscription";
+import type { ExportParams, ExportFileResult } from "../entities/SubscriptionExport";
 
 export interface ISubscriptionRepository {
       // Queries
       getAll(): Promise<GlobalSubscriptionItem[]>;
       getByTenant(tenantId: string): Promise<SubscriptionListItem[]>;
       getById(id: string): Promise<Subscription>;
+
+      // Export
+      exportSubscriptions(params: ExportParams): Promise<ExportFileResult>;
 
       // Lifecycle
       assign(tenantId: string, data: { editionId: string; type: string; endDate?: string; expiryBehavior?: string }): Promise<string>;

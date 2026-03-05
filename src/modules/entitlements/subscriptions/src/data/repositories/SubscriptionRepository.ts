@@ -1,13 +1,19 @@
 /**
  * Subscription Repository — uses Service + Mapper
+ *
+ * All API calls go through the Service layer.
+ * Repository orchestrates Service + Mapper and returns domain entities.
  */
 import type { ISubscriptionRepository } from "../../domain/interfaces/ISubscriptionRepository";
 import type { Subscription, SubscriptionListItem, GlobalSubscriptionItem } from "../../domain/entities/Subscription";
+import type { ExportParams, ExportFileResult } from "../../domain/entities/SubscriptionExport";
 import { SubscriptionService } from "../services/SubscriptionService";
 import { SubscriptionMapper } from "../mappers/SubscriptionMapper";
 
 export class SubscriptionRepository implements ISubscriptionRepository {
       constructor(private readonly service: SubscriptionService) { }
+
+      // ── Queries ──
 
       async getAll(): Promise<GlobalSubscriptionItem[]> {
             const models = await this.service.getAll();
@@ -23,6 +29,14 @@ export class SubscriptionRepository implements ISubscriptionRepository {
             const model = await this.service.getById(id);
             return SubscriptionMapper.toEntity(model);
       }
+
+      // ── Export ──
+
+      async exportSubscriptions(params: ExportParams): Promise<ExportFileResult> {
+            return this.service.exportSubscriptions(params);
+      }
+
+      // ── Lifecycle ──
 
       async assign(
             tenantId: string,

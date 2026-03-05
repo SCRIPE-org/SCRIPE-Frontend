@@ -175,4 +175,57 @@ export class SubscriptionService {
                   API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.REVOKE(id)
             );
       }
+
+      // ── Export (blob download — IApiService only handles JSON) ──
+
+      async exportSubscriptions(params: {
+            format: string;
+            statusFilter?: string;
+            typeFilter?: string;
+            displayCurrency?: string;
+            dateFrom?: string;
+            dateTo?: string;
+            expiringInDays?: number;
+            editionFilter?: string;
+      }): Promise<{ blob: Blob; filename: string }> {
+            const token = this.api.getAuthToken();
+            const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "";
+
+            const endpointPath = API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.EXPORT(
+                  params.format,
+                  params.statusFilter,
+                  params.typeFilter,
+                  params.displayCurrency,
+                  params.dateFrom,
+                  params.dateTo,
+                  params.expiringInDays,
+                  params.editionFilter
+            );
+
+            const fullUrl = `${apiUrl}${endpointPath}`;
+
+            const response = await fetch(fullUrl, {
+                  method: "GET",
+                  headers: {
+                        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+                  },
+            });
+
+            if (!response.ok) {
+                  const errorBody = await response.text();
+                  throw new Error(errorBody || `Export failed (${response.status})`);
+            }
+
+            const blob = await response.blob();
+            const contentDisposition = response.headers.get("content-disposition");
+            const ext = params.format === "excel" ? "xlsx" : params.format === "csv" ? "csv" : "pdf";
+            let filename = `subscriptions-export.${ext}`;
+
+            if (contentDisposition) {
+                  const match = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+                  if (match?.[1]) filename = match[1].replace(/['"']*/g, "");
+            }
+
+            return { blob, filename };
+      }
 }

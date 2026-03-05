@@ -1,32 +1,34 @@
 /**
  * useExportSubscriptions Hook
  *
- * Calls the backend export API to generate professional Excel/CSV/PDF files.
- * The backend uses ClosedXML for real .xlsx files.
+ * State management ONLY — delegates all data operations to the Repository
+ * via the parent-level Entitlements DI container.
  *
- * Follows the exact same pattern as @core/hooks/use-export-report.ts:
- *  - Uses getCoreContainer().apiService.getAuthToken() for auth
- *  - Prepends NEXT_PUBLIC_API_URL to construct the full backend URL
+ * Architecture: ViewModel → entitlementsContainer → SubscriptionRepository → Service → API
  *
- * SOLID: Single responsibility — export logic only.
+ * SOLID: Single responsibility — export state management only.
  */
 "use client";
 
 import { useState, useCallback } from "react";
-import { getCoreContainer } from "@core/di";
-import { API_ENDPOINTS } from "@core/config/api-endpoints";
+import { entitlementsContainer } from "@modules/entitlements/di";
+import type { ExportFormat, ExportParams } from "../../domain/entities/SubscriptionExport";
 
-export type ExportFormat = "csv" | "excel" | "pdf";
+export type { ExportFormat };
 
-interface ExportParams {
+interface ExportOptions {
       format: ExportFormat;
       statusFilter?: string;
       typeFilter?: string;
       displayCurrency?: string;
+      dateFrom?: string;
+      dateTo?: string;
+      expiringInDays?: number;
+      editionFilter?: string;
 }
 
 interface UseExportSubscriptionsResult {
-      exportSubscriptions: (params: ExportParams) => Promise<void>;
+      exportSubscriptions: (params: ExportOptions) => Promise<void>;
       isExporting: boolean;
       error: string | null;
 }
@@ -36,51 +38,27 @@ export function useExportSubscriptions(): UseExportSubscriptionsResult {
       const [error, setError] = useState<string | null>(null);
 
       const exportSubscriptions = useCallback(
-            async ({ format, statusFilter, typeFilter, displayCurrency }: ExportParams) => {
+            async (params: ExportOptions) => {
                   setIsExporting(true);
                   setError(null);
 
                   try {
-                        // ── Auth token from core DI container (architecture pattern) ──
-                        const token = getCoreContainer().apiService.getAuthToken();
-                        const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "";
+                        // ── All data operations via Entitlements DI Container ──
+                        const exportParams: ExportParams = {
+                              format: params.format,
+                              statusFilter: params.statusFilter,
+                              typeFilter: params.typeFilter,
+                              displayCurrency: params.displayCurrency,
+                              dateFrom: params.dateFrom,
+                              dateTo: params.dateTo,
+                              expiringInDays: params.expiringInDays,
+                              editionFilter: params.editionFilter,
+                        };
 
-                        // ── Build the endpoint path ──
-                        const endpointPath = API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.EXPORT(
-                              format,
-                              statusFilter,
-                              typeFilter,
-                              displayCurrency
-                        );
+                        const { blob, filename } =
+                              await entitlementsContainer.subscriptionRepository.exportSubscriptions(exportParams);
 
-                        // ── Full URL = backend base + endpoint path ──
-                        const fullUrl = `${apiUrl}${endpointPath}`;
-
-                        const response = await fetch(fullUrl, {
-                              method: "GET",
-                              headers: {
-                                    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-                              },
-                        });
-
-                        if (!response.ok) {
-                              const errorBody = await response.text();
-                              throw new Error(errorBody || `Export failed (${response.status})`);
-                        }
-
-                        // Download as file for all formats (PDF is now a real binary from QuestPDF)
-                        const blob = await response.blob();
-                        const contentDisposition = response.headers.get("content-disposition");
-                        const ext = format === "excel" ? "xlsx" : format === "csv" ? "csv" : "pdf";
-                        let filename = `subscriptions-export.${ext}`;
-
-
-                        // Parse filename from Content-Disposition header if available
-                        if (contentDisposition) {
-                              const match = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
-                              if (match?.[1]) filename = match[1].replace(/['"']*/g, "");
-                        }
-
+                        // ── Trigger browser download (pure UI concern) ──
                         const blobUrl = URL.createObjectURL(blob);
                         const a = document.createElement("a");
                         a.href = blobUrl;
