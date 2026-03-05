@@ -1570,8 +1570,8 @@ export const docDe: PartialDocTranslations = {
             // ─── Subscriptions ─────────────────────────────────────────
             subscriptions: {
                   title: "Abonnements",
-                  description: "Mandanten-zu-Editions-Bindung mit vollständiger Lebenszyklusverwaltung, Testversionen, Herabstufungen und Ablaufverhalten.",
-                  intro: "Abonnements verknüpfen Mandanten mit Editionen (Plänen). Jeder Mandant hat ein Basisabonnement, das seine Edition bestimmt, und optional Zusatzabonnements für zusätzliche Fähigkeiten. Das Abonnementsystem verwaltet den gesamten Lebenszyklus von der Zuweisung über Verlängerung, Herabstufung, Sperrung bis hin zur Kündigung.",
+                  description: "Mandanten-zu-Editions-Bindung mit vollständiger Lebenszyklusverwaltung, Mehrwährungs-Preisgestaltung, Werbeaktionen, Testversionen, Herabstufungen, Ablaufverhalten und erweiterten Analyse-Exporten.",
+                  intro: "Abonnements verknüpfen Mandanten mit Editionen (Plänen). Jeder Mandant hat ein Basisabonnement, das seine Edition bestimmt, und optional Zusatzabonnements für zusätzliche Fähigkeiten. Das Abonnementsystem verwaltet den gesamten Lebenszyklus von der Zuweisung über Verlängerung, Herabstufung, Sperrung bis hin zur Kündigung — mit integrierter Mehrwährungs-Preisgestaltung und Verfolgung von Werberabatten.",
                   entityTitle: "Abonnement-Entität",
                   entityIntro: "Eine TenantSubscription bindet einen Mandanten an eine Edition mit Lebenszyklusverfolgung. Sie unterstützt mehrere Abonnementtypen und -status für ein umfassendes Lebenszyklusmanagement.",
                   typesTitle: "Abonnementtypen",
@@ -1583,14 +1583,39 @@ export const docDe: PartialDocTranslations = {
                   downgradeWarning: "Beim Downgrade bestimmt die Überlaufrichtlinie (OverflowPolicy) der Zieledition, was mit Ressourcen geschieht, die die neuen Limits überschreiten. Verwenden Sie immer den Downgrade Impact-Endpunkt, um die Auswirkungen vorab anzuzeigen, bevor Sie Änderungen vornehmen.",
                   expiryTitle: "Ablaufverhalten",
                   expiryIntro: "Wenn ein Abonnement abläuft, bestimmt die Einstellung ExpiryBehavior, was als Nächstes passiert:",
+                  // ── Preisgestaltung ──
+                  pricingTitle: "Mehrwährungs-Preisgestaltung",
+                  pricingIntro: "Jedes Abonnement trägt vollständige Preis-Metadaten: Währung (ISO-Code), Basisbetrag, Anpassungsbetrag, Gesamtbetrag, WechselkursZuUsd und GesamtbetragUsd. Dies ermöglicht eine präzise Umsatzverfolgung über 9+ unterstützte Währungen (USD, EUR, GBP, SAR, AED, EGP, TRY, INR und mehr).",
+                  exchangeRateTitle: "USD-Normalisierung",
+                  exchangeRateIntro: "Alle Beträge werden über ExchangeRateToUsd für konsistente MRR/ARR-Berichte auf USD normalisiert. Das Feld TotalAmountUsd wird zum Abonnementzeitpunkt berechnet und für historische Genauigkeit gespeichert — Wechselkursschwankungen ändern vergangene Aufzeichnungen nicht rückwirkend.",
+                  // ── Werbeaktionen ──
+                  promotionsTitle: "Werberabatte",
+                  promotionsIntro: "Abonnements unterstützen Promo-Codes über das Feld AppliedPromoCode. Bei Anwendung einer gültigen Werbeaktion wird ein PromotionDiscount-Prozentsatz aufgezeichnet und der Anpassungsbetrag spiegelt den auf den Basisbetrag angewandten Rabatt wider. Promotionen werden pro Abonnement für Audits und Analysen verfolgt.",
+                  // ── Export ──
+                  exportTitle: "Erweiterter Export & Berichterstattung",
+                  exportIntro: "Das Abonnement-Exportsystem generiert umfassende Berichte in den Formaten CSV, Excel (XLSX) und PDF. Jeder Bericht enthält ein Deckblatt mit Filter-Metadaten, farbcodierte Datentabellen und statistische Zusammenfassungen.",
+                  exportFiltersTitle: "Export-Filter",
+                  exportFiltersIntro: "Berichte unterstützen erweiterte Filterung für gezielte Analysen:",
+                  exportFilterDate: "Datumsbereich — Filterung nach Abonnement-Erstellungsdatum (letzte 7/30/90 Tage, letztes Jahr oder benutzerdefinierter Bereich)",
+                  exportFilterExpiring: "Bald ablaufend — Abonnements finden, die innerhalb von 5/7/14/30/60/90 Tagen ablaufen",
+                  exportFilterStatus: "Status — Aktiv, Gesperrt, Gekündigt, Abgelaufen",
+                  exportFilterEdition: "Edition — Filterung nach spezifischem Plan/Edition",
+                  exportFilterCurrency: "Währung — Beträge in ausgewählter Währung anzeigen",
+                  exportDaysLeftTitle: "Tage bis zum Ablauf",
+                  exportDaysLeftIntro: "Berichte enthalten eine berechnete 'Verbleibende Tage'-Spalte mit bedingter Farbcodierung: Rot (≤7 Tage), Gelb (≤30 Tage), Grün (>30 Tage). Dies ermöglicht die sofortige Identifizierung von Abonnements, die eine Verlängerung benötigen.",
+                  exportFormatsTitle: "Exportformat-Details",
+                  exportFormatCsv: "CSV — leichtgewichtig, in jedes Tabellenkalkulationsprogramm oder BI-Tool importierbar",
+                  exportFormatExcel: "XLSX — professionelle Excel-Arbeitsmappe mit gestalteten Kopfzeilen, Filter-Metadatenblatt, bedingter Formatierung und automatisch dimensionierten Spalten (ClosedXML)",
+                  exportFormatPdf: "PDF — druckfertiges Dokument mit markengebundenem Deckblatt, statistischer Zusammenfassung und paginierten Datentabellen (QuestPDF)",
+                  // ── Endpunkte ──
                   impactTitle: "Downgrade-Auswirkungsanalyse",
                   impactIntro: "Bevor Sie die Edition eines Mandanten ändern, verwenden Sie den Downgrade Impact-Endpunkt, um in einer Vorschau zu sehen, welche Ressourcen überlaufen würden. Die Antwort listet jede Funktion auf, die die Limits der neuen Edition überschreiten würde, zusammen mit der aktuellen Nutzung vs. neuem Limit.",
                   endpointsTitle: "API-Endpunkte",
-                  endpointsIntro: "Der Abonnements-Controller bietet 12 Endpunkte, die den gesamten Abonnement-Lebenszyklus abdecken:",
+                  endpointsIntro: "Der Abonnements-Controller bietet 13 Endpunkte, die den gesamten Abonnement-Lebenszyklus abdecken:",
                   operationsTitle: "Abonnement-Operationen",
                   operationsIntro: "Das Abonnementmodul unterstützt ein umfassendes Set von Lebenszyklus-Operationen. Jede Operation überführt das Abonnement in einen neuen Zustand mit vollständiger Audit-Verfolgung.",
                   assignTitle: "Abonnement zuweisen",
-                  assignIntro: "Erstellen Sie ein neues Abonnement, das einen Mandanten mit einer Edition verknüpft. Wenn der Mandant bereits ein aktives Abonnement hat, wird das vorherige automatisch gekündigt.",
+                  assignIntro: "Erstellen Sie ein neues Abonnement, das einen Mandanten mit einer Edition verknüpft. Wenn der Mandant bereits ein aktives Abonnement hat, wird das vorherige automatisch gekündigt. Unterstützt optionale Parameter für Währung, Promo-Code und Ablaufverhalten.",
                   upgradeTitle: "Upgrade & Downgrade",
                   upgradeIntro: "Mandanten können zwischen Editionen wechseln. Upgrades werden sofort angewendet, wobei die Funktionen der neuen Edition sofort wirksam werden. Downgrades prüfen zuerst die OverflowPolicy, um Ressourcen zu handhaben, die neue Limits überschreiten.",
                   trialTitle: "Testversions-Konvertierung",
@@ -1598,7 +1623,7 @@ export const docDe: PartialDocTranslations = {
                   "ep": {
                         "list": "Alle Abonnements auflisten (paginiert, filterbar nach Status/Typ/Mandant)",
                         "get": "Abonnementdetails nach ID abrufen",
-                        "assign": "Ein neues Abonnement erstellen (Mandant einer Edition zuweisen)",
+                        "assign": "Ein neues Abonnement erstellen (Mandant einer Edition mit Währung/Promo zuweisen)",
                         "upgrade": "Auf eine höhere Edition hochstufen",
                         "downgrade": "Auf eine niedrigere Edition herabstufen (prüft OverflowPolicy)",
                         "impact": "Downgrade-Auswirkungen vor der Ausführung in der Vorschau anzeigen",
@@ -1606,7 +1631,8 @@ export const docDe: PartialDocTranslations = {
                         "resume": "Ein gesperrtes Abonnement fortsetzen",
                         "cancel": "Abonnement dauerhaft kündigen",
                         "renew": "Ein ablaufendes Abonnement verlängern",
-                        "tenantActive": "Das aktive Abonnement für einen bestimmten Mandanten abrufen"
+                        "tenantActive": "Das aktive Abonnement für einen bestimmten Mandanten abrufen",
+                        "export": "Abonnements als CSV, Excel oder PDF mit erweiterten Filtern exportieren"
                   },
             },
 

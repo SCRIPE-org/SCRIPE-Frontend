@@ -1570,8 +1570,8 @@ export const docFr: PartialDocTranslations = {
             // ─── Subscriptions ─────────────────────────────────────────
             subscriptions: {
                   title: "Abonnements",
-                  description: "Liaison locataire-édition avec gestion complète du cycle de vie, essais, rétrogradations (downgrades) et comportement d'expiration.",
-                  intro: "Les abonnements lient les locataires aux éditions (plans). Chaque locataire a un abonnement de base qui détermine son édition, et éventuellement des abonnements complémentaires pour des capacités supplémentaires. Le système d'abonnement gère l'ensemble du cycle de vie, de l'attribution au renouvellement, en passant par la rétrogradation, la suspension et l'annulation.",
+                  description: "Liaison locataire-édition avec gestion complète du cycle de vie, tarification multi-devises, promotions, essais, rétrogradations (downgrades), comportement d'expiration et export analytique avancé.",
+                  intro: "Les abonnements lient les locataires aux éditions (plans). Chaque locataire a un abonnement de base qui détermine son édition, et éventuellement des abonnements complémentaires pour des capacités supplémentaires. Le système d'abonnement gère l'ensemble du cycle de vie, de l'attribution au renouvellement, en passant par la rétrogradation, la suspension et l'annulation — avec une tarification multi-devises intégrée et un suivi des remises promotionnelles.",
                   entityTitle: "Entité Abonnement",
                   entityIntro: "Une TenantSubscription (Abonnement Locataire) lie un locataire à une édition avec un suivi du cycle de vie. Elle prend en charge plusieurs types et statuts d'abonnement pour une gestion complète du cycle de vie.",
                   typesTitle: "Types d'Abonnements",
@@ -1583,14 +1583,39 @@ export const docFr: PartialDocTranslations = {
                   downgradeWarning: "Lors d'une rétrogradation, la Politique de Dépassement (OverflowPolicy) de l'édition cible détermine ce qu'il advient des ressources qui dépassent les nouvelles limites. Utilisez toujours l'endpoint d'Impact de Rétrogradation pour prévisualiser les effets avant d'effectuer des changements.",
                   expiryTitle: "Comportement d'Expiration",
                   expiryIntro: "Lorsqu'un abonnement expire, le paramètre ExpiryBehavior détermine ce qui se passe ensuite :",
+                  // ── Tarification ──
+                  pricingTitle: "Tarification Multi-Devises",
+                  pricingIntro: "Chaque abonnement porte des métadonnées de tarification complètes : Devise (code ISO), MontantDeBase, MontantAjustement, MontantTotal, TauxDeChangeEnUsd et MontantTotalUsd. Cela permet un suivi précis des revenus à travers 9+ devises prises en charge (USD, EUR, GBP, SAR, AED, EGP, TRY, INR, et plus).",
+                  exchangeRateTitle: "Normalisation en USD",
+                  exchangeRateIntro: "Tous les montants sont normalisés en USD via ExchangeRateToUsd pour des rapports MRR/ARR cohérents. Le champ TotalAmountUsd est calculé au moment de l'abonnement et stocké pour une précision historique — les fluctuations de taux de change ne modifient pas rétroactivement les enregistrements passés.",
+                  // ── Promotions ──
+                  promotionsTitle: "Remises Promotionnelles",
+                  promotionsIntro: "Les abonnements prennent en charge les codes promo via le champ AppliedPromoCode. Lorsqu'une promotion valide est appliquée, un pourcentage PromotionDiscount est enregistré et le MontantAjustement reflète la remise appliquée au MontantDeBase. Les promotions sont suivies par abonnement pour l'audit et l'analyse.",
+                  // ── Export ──
+                  exportTitle: "Export et Reporting Avancés",
+                  exportIntro: "Le système d'export des abonnements génère des rapports complets aux formats CSV, Excel (XLSX) et PDF. Chaque rapport comprend une page de couverture avec les métadonnées de filtrage, des tableaux de données colorés et des résumés statistiques.",
+                  exportFiltersTitle: "Filtres d'Export",
+                  exportFiltersIntro: "Les rapports prennent en charge des filtres avancés pour des analyses ciblées :",
+                  exportFilterDate: "Plage de dates — filtrer par date de création de l'abonnement (7/30/90 derniers jours, dernière année ou plage personnalisée)",
+                  exportFilterExpiring: "Expire bientôt — trouver les abonnements expirant dans 5/7/14/30/60/90 jours",
+                  exportFilterStatus: "Statut — Actif, Suspendu, Annulé, Expiré",
+                  exportFilterEdition: "Édition — filtrer par plan/édition spécifique",
+                  exportFilterCurrency: "Devise — afficher les montants dans la devise sélectionnée",
+                  exportDaysLeftTitle: "Jours Restants Avant Expiration",
+                  exportDaysLeftIntro: "Les rapports incluent une colonne 'Jours Restants' calculée avec un codage couleur conditionnel : rouge (≤7 jours), jaune (≤30 jours), vert (>30 jours). Cela permet d'identifier en un coup d'œil les abonnements nécessitant une attention de renouvellement.",
+                  exportFormatsTitle: "Détails des Formats d'Export",
+                  exportFormatCsv: "CSV — léger, importable dans tout tableur ou outil BI",
+                  exportFormatExcel: "XLSX — classeur Excel professionnel avec en-têtes stylisés, feuille de métadonnées de filtre, mise en forme conditionnelle et colonnes à taille automatique (ClosedXML)",
+                  exportFormatPdf: "PDF — document prêt à imprimer avec page de couverture associée à la marque, résumé statistique et tableaux de données paginés (QuestPDF)",
+                  // ── Endpoints ──
                   impactTitle: "Analyse d'Impact de la Rétrogradation",
                   impactIntro: "Avant de modifier l'édition d'un locataire, utilisez l'endpoint d'Impact de Rétrogradation pour prévisualiser quelles ressources seraient en dépassement. La réponse liste chaque fonctionnalité qui dépasserait les limites de la nouvelle édition, ainsi que l'utilisation actuelle par rapport à la nouvelle limite.",
                   endpointsTitle: "Points de terminaison API (Endpoints)",
-                  endpointsIntro: "Le contrôleur des Abonnements fournit 12 endpoints couvrant l'ensemble du cycle de vie de l'abonnement :",
+                  endpointsIntro: "Le contrôleur des Abonnements fournit 13 endpoints couvrant l'ensemble du cycle de vie de l'abonnement :",
                   operationsTitle: "Opérations sur les Abonnements",
                   operationsIntro: "Le module d'abonnement prend en charge un ensemble complet d'opérations de cycle de vie. Chaque opération fait passer l'abonnement à un nouvel état avec un suivi d'audit complet.",
                   assignTitle: "Attribuer un Abonnement",
-                  assignIntro: "Créer un nouvel abonnement liant un locataire à une édition. Si le locataire a déjà un abonnement actif, le précédent est automatiquement annulé.",
+                  assignIntro: "Créer un nouvel abonnement liant un locataire à une édition. Si le locataire a déjà un abonnement actif, le précédent est automatiquement annulé. Prend en charge les paramètres optionnels de devise, code promo et comportement d'expiration.",
                   upgradeTitle: "Mise à niveau (Upgrade) & Rétrogradation (Downgrade)",
                   upgradeIntro: "Les locataires peuvent passer d'une édition à l'autre. Les mises à niveau s'appliquent immédiatement et les fonctionnalités de la nouvelle édition prennent effet sur-le-champ. Les rétrogradations vérifient d'abord la OverflowPolicy pour gérer les ressources qui dépassent les nouvelles limites.",
                   trialTitle: "Conversion d'Essai",
@@ -1598,7 +1623,7 @@ export const docFr: PartialDocTranslations = {
                   "ep": {
                         "list": "Lister tous les abonnements (paginé, filtrable par statut/type/locataire)",
                         "get": "Obtenir les détails de l'abonnement par ID",
-                        "assign": "Créer un nouvel abonnement (attribuer un locataire à une édition)",
+                        "assign": "Créer un nouvel abonnement (attribuer un locataire à une édition avec devise/promo)",
                         "upgrade": "Mettre à niveau vers une édition supérieure",
                         "downgrade": "Rétrograder vers une édition inférieure (vérifie la OverflowPolicy)",
                         "impact": "Prévisualiser l'impact de la rétrogradation avant exécution",
@@ -1606,7 +1631,8 @@ export const docFr: PartialDocTranslations = {
                         "resume": "Reprendre un abonnement suspendu",
                         "cancel": "Annuler définitivement l'abonnement",
                         "renew": "Renouveler un abonnement arrivant à expiration",
-                        "tenantActive": "Obtenir l'abonnement actif pour un locataire spécifique"
+                        "tenantActive": "Obtenir l'abonnement actif pour un locataire spécifique",
+                        "export": "Exporter les abonnements en CSV, Excel ou PDF avec des filtres avancés"
                   },
             },
 

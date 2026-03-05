@@ -1570,8 +1570,8 @@ export const docEs: PartialDocTranslations = {
             // ─── Subscriptions ─────────────────────────────────────────
             subscriptions: {
                   title: "Suscripciones",
-                  description: "Vinculación de inquilinos a ediciones con gestión completa del ciclo de vida, pruebas, descensos de plan (downgrades) y comportamiento de expiración.",
-                  intro: "Las suscripciones vinculan a los inquilinos con las ediciones (planes). Cada inquilino tiene una suscripción base que determina su edición y, opcionalmente, suscripciones complementarias para capacidades adicionales. El sistema de suscripción maneja todo el ciclo de vida, desde la asignación hasta la renovación, el descenso de plan, la suspensión y la cancelación.",
+                  description: "Vinculación de inquilinos a ediciones con gestión completa del ciclo de vida, precios multidivisa, promociones, pruebas, descensos de plan (downgrades), comportamiento de expiración y exportación analítica avanzada.",
+                  intro: "Las suscripciones vinculan a los inquilinos con las ediciones (planes). Cada inquilino tiene una suscripción base que determina su edición y, opcionalmente, suscripciones complementarias para capacidades adicionales. El sistema de suscripción maneja todo el ciclo de vida, desde la asignación hasta la renovación, el descenso de plan, la suspensión y la cancelación — con precios multidivisa integrados y seguimiento de descuentos promocionales.",
                   entityTitle: "Entidad de Suscripción",
                   entityIntro: "Una TenantSubscription vincula a un inquilino a una edición con seguimiento del ciclo de vida. Admite múltiples tipos de suscripción y estados para una gestión completa del ciclo de vida.",
                   typesTitle: "Tipos de Suscripción",
@@ -1583,14 +1583,39 @@ export const docEs: PartialDocTranslations = {
                   downgradeWarning: "Al bajar de plan, la Política de Desbordamiento de la edición de destino determina qué sucede con los recursos que exceden los nuevos límites. Utilice siempre el endpoint de Impacto del Downgrade para previsualizar los efectos antes de realizar cambios.",
                   expiryTitle: "Comportamiento de Expiración",
                   expiryIntro: "Cuando expira una suscripción, la configuración ExpiryBehavior determina qué sucede a continuación:",
+                  // ── Precios ──
+                  pricingTitle: "Precios Multidivisa",
+                  pricingIntro: "Cada suscripción lleva metadatos completos de precios: Moneda (código ISO), MontoBase, MontoAjuste, MontoTotal, TipoDeCambioAUsd y MontoTotalUsd. Esto permite un seguimiento preciso de los ingresos en más de 9 monedas compatibles (USD, EUR, GBP, SAR, AED, EGP, TRY, INR y más).",
+                  exchangeRateTitle: "Normalización en USD",
+                  exchangeRateIntro: "Todos los montos se normalizan a USD a través de ExchangeRateToUsd para informes MRR/ARR consistentes. El campo TotalAmountUsd se calcula en el momento de la suscripción y se almacena para precisión histórica — las fluctuaciones del tipo de cambio no modifican retroactivamente los registros anteriores.",
+                  // ── Promociones ──
+                  promotionsTitle: "Descuentos Promocionales",
+                  promotionsIntro: "Las suscripciones admiten códigos promocionales a través del campo AppliedPromoCode. Cuando se aplica una promoción válida, se registra un porcentaje PromotionDiscount y el MontoAjuste refleja el descuento aplicado al MontoBase. Las promociones se rastrean por suscripción para auditoría y análisis.",
+                  // ── Exportación ──
+                  exportTitle: "Exportación y Reportes Avanzados",
+                  exportIntro: "El sistema de exportación de suscripciones genera informes completos en formatos CSV, Excel (XLSX) y PDF. Cada informe incluye una página de portada con metadatos de filtro, tablas de datos con código de colores y resúmenes estadísticos.",
+                  exportFiltersTitle: "Filtros de Exportación",
+                  exportFiltersIntro: "Los informes admiten filtros avanzados para análisis específicos:",
+                  exportFilterDate: "Rango de fechas — filtrar por fecha de creación de suscripción (últimos 7/30/90 días, último año o rango personalizado)",
+                  exportFilterExpiring: "Expira pronto — encontrar suscripciones que expiran dentro de 5/7/14/30/60/90 días",
+                  exportFilterStatus: "Estado — Activo, Suspendido, Cancelado, Expirado",
+                  exportFilterEdition: "Edición — filtrar por plan/edición específica",
+                  exportFilterCurrency: "Moneda — mostrar montos en la moneda seleccionada",
+                  exportDaysLeftTitle: "Días Restantes para la Expiración",
+                  exportDaysLeftIntro: "Los informes incluyen una columna 'Días Restantes' calculada con codificación de colores condicional: rojo (≤7 días), amarillo (≤30 días), verde (>30 días). Esto permite identificar de un vistazo las suscripciones que requieren atención de renovación.",
+                  exportFormatsTitle: "Detalles de Formatos de Exportación",
+                  exportFormatCsv: "CSV — ligero, importable en cualquier hoja de cálculo o herramienta BI",
+                  exportFormatExcel: "XLSX — libro de Excel profesional con encabezados estilizados, hoja de metadatos de filtro, formato condicional y columnas de tamaño automático (ClosedXML)",
+                  exportFormatPdf: "PDF — documento listo para imprimir con página de portada con marca, resumen estadístico y tablas de datos paginadas (QuestPDF)",
+                  // ── Endpoints ──
                   impactTitle: "Análisis de Impacto del Downgrade",
                   impactIntro: "Antes de cambiar la edición de un inquilino, utilice el endpoint de Impacto del Downgrade para previsualizar qué recursos se desbordarían. La respuesta enumera cada función que excedería los límites de la nueva edición, junto con el uso actual frente al nuevo límite.",
                   endpointsTitle: "Puntos de Conexión API (Endpoints)",
-                  endpointsIntro: "El controlador de Suscripciones proporciona 12 endpoints que cubren todo el ciclo de vida de la suscripción:",
+                  endpointsIntro: "El controlador de Suscripciones proporciona 13 endpoints que cubren todo el ciclo de vida de la suscripción:",
                   operationsTitle: "Operaciones de Suscripción",
                   operationsIntro: "El módulo de suscripción admite un conjunto completo de operaciones de ciclo de vida. Cada operación hace que la suscripción pase a un nuevo estado con un seguimiento de auditoría completo.",
                   assignTitle: "Asignar Suscripción",
-                  assignIntro: "Crear una nueva suscripción vinculando a un inquilino a una edición. Si el inquilino ya tiene una suscripción activa, la anterior se cancela automáticamente.",
+                  assignIntro: "Crear una nueva suscripción vinculando a un inquilino a una edición. Si el inquilino ya tiene una suscripción activa, la anterior se cancela automáticamente. Admite parámetros opcionales de moneda, código promocional y comportamiento de expiración.",
                   upgradeTitle: "Mejora (Upgrade) y Descenso (Downgrade)",
                   upgradeIntro: "Los inquilinos pueden moverse entre ediciones. Los Upgrades se aplican de inmediato y las funciones de la nueva edición entran en vigencia al instante. Los Downgrades verifican primero la OverflowPolicy para manejar los recursos que exceden los nuevos límites.",
                   trialTitle: "Conversión de Prueba (Trial)",
@@ -1598,7 +1623,7 @@ export const docEs: PartialDocTranslations = {
                   "ep": {
                         "list": "Listar todas las suscripciones (paginado, filtrable por estado/tipo/inquilino)",
                         "get": "Obtener detalles de la suscripción por ID",
-                        "assign": "Crear una nueva suscripción (asignar inquilino a edición)",
+                        "assign": "Crear una nueva suscripción (asignar inquilino a edición con moneda/promo)",
                         "upgrade": "Mejorar a una edición superior (Upgrade)",
                         "downgrade": "Bajar a una edición inferior (Downgrade) (verifica OverflowPolicy)",
                         "impact": "Previsualizar el impacto del downgrade antes de ejecutarlo",
@@ -1606,7 +1631,8 @@ export const docEs: PartialDocTranslations = {
                         "resume": "Reanudar una suscripción suspendida",
                         "cancel": "Cancelar suscripción permanentemente",
                         "renew": "Renovar una suscripción a punto de expirar",
-                        "tenantActive": "Obtener la suscripción activa para un inquilino específico"
+                        "tenantActive": "Obtener la suscripción activa para un inquilino específico",
+                        "export": "Exportar suscripciones como CSV, Excel o PDF con filtros avanzados"
                   },
             },
 

@@ -872,8 +872,8 @@ export const docEn = {
     // ─── Subscriptions ─────────────────────────────────────────
     subscriptions: {
       title: "Subscriptions",
-      description: "Tenant-to-edition binding with full lifecycle management, trials, downgrades, and expiry behavior.",
-      intro: "Subscriptions link tenants to editions (plans). Each tenant has a base subscription that determines their edition, and optionally add-on subscriptions for extra capabilities. The subscription system handles the full lifecycle from assignment through renewal, downgrade, suspension, and cancellation.",
+      description: "Tenant-to-edition binding with full lifecycle management, multi-currency pricing, promotions, trials, downgrades, expiry behavior, and advanced analytics export.",
+      intro: "Subscriptions link tenants to editions (plans). Each tenant has a base subscription that determines their edition, and optionally add-on subscriptions for extra capabilities. The subscription system handles the full lifecycle from assignment through renewal, downgrade, suspension, and cancellation — complete with multi-currency pricing and promotional discount support.",
       entityTitle: "Subscription Entity",
       entityIntro: "A TenantSubscription binds a tenant to an edition with lifecycle tracking. It supports multiple subscription types and statuses for comprehensive lifecycle management.",
       typesTitle: "Subscription Types",
@@ -885,14 +885,39 @@ export const docEn = {
       downgradeWarning: "When downgrading, the OverflowPolicy of the target edition determines what happens to resources that exceed the new limits. Always use the Downgrade Impact endpoint to preview the effects before making changes.",
       expiryTitle: "Expiry Behavior",
       expiryIntro: "When a subscription expires, the ExpiryBehavior setting determines what happens next:",
+      // ── Pricing ──
+      pricingTitle: "Multi-Currency Pricing",
+      pricingIntro: "Each subscription carries full pricing metadata: Currency (ISO code), BaseAmount, AdjustmentAmount, TotalAmount, ExchangeRateToUsd, and TotalAmountUsd. This enables accurate revenue tracking across 9+ supported currencies (USD, EUR, GBP, SAR, AED, EGP, TRY, INR, and more).",
+      exchangeRateTitle: "USD Normalization",
+      exchangeRateIntro: "All amounts are normalized to USD via ExchangeRateToUsd for consistent MRR/ARR reporting. The TotalAmountUsd field is computed at subscription time and stored for historical accuracy — exchange rate fluctuations do not retroactively change past records.",
+      // ── Promotions ──
+      promotionsTitle: "Promotional Discounts",
+      promotionsIntro: "Subscriptions support promo codes via the AppliedPromoCode field. When a valid promotion is applied, a PromotionDiscount percentage is recorded and the AdjustmentAmount reflects the discount applied to the BaseAmount. Promotions are tracked per-subscription for audit and analytics.",
+      // ── Export ──
+      exportTitle: "Advanced Export & Reporting",
+      exportIntro: "The subscription export system generates comprehensive reports in CSV, Excel (XLSX), and PDF formats. Each report includes a cover page with filter metadata, color-coded data tables, and statistical summaries.",
+      exportFiltersTitle: "Export Filters",
+      exportFiltersIntro: "Reports support advanced filtering for targeted analytics:",
+      exportFilterDate: "Date Range — filter by subscription creation date (last 7/30/90 days, last year, or custom range)",
+      exportFilterExpiring: "Expiring Soon — find subscriptions expiring within 5/7/14/30/60/90 days",
+      exportFilterStatus: "Status — Active, Suspended, Cancelled, Expired",
+      exportFilterEdition: "Edition — filter by specific plan/edition",
+      exportFilterCurrency: "Currency — display amounts in selected currency",
+      exportDaysLeftTitle: "Days Until Expiry",
+      exportDaysLeftIntro: "Reports include a computed 'Days Left' column with conditional color coding: red (≤7 days), yellow (≤30 days), green (>30 days). This enables at-a-glance identification of subscriptions requiring renewal attention.",
+      exportFormatsTitle: "Export Format Details",
+      exportFormatCsv: "CSV — lightweight, importable into any spreadsheet or BI tool",
+      exportFormatExcel: "XLSX — professional Excel workbook with styled headers, filter metadata sheet, conditional formatting, and auto-sized columns (ClosedXML)",
+      exportFormatPdf: "PDF — print-ready document with branded cover page, statistical summary, and paginated data tables (QuestPDF)",
+      // ── Endpoints ──
       impactTitle: "Downgrade Impact Analysis",
       impactIntro: "Before changing a tenant's edition, use the Downgrade Impact endpoint to preview which resources would overflow. The response lists every feature that would exceed the new edition's limits, along with the current usage vs. new limit.",
       endpointsTitle: "API Endpoints",
-      endpointsIntro: "The Subscriptions controller provides 12 endpoints covering the full subscription lifecycle:",
+      endpointsIntro: "The Subscriptions controller provides 13 endpoints covering the full subscription lifecycle:",
       operationsTitle: "Subscription Operations",
       operationsIntro: "The subscription module supports a comprehensive set of lifecycle operations. Each operation transitions the subscription to a new state with full audit tracking.",
       assignTitle: "Assign Subscription",
-      assignIntro: "Create a new subscription linking a tenant to an edition. If the tenant already has an active subscription, the previous one is automatically cancelled.",
+      assignIntro: "Create a new subscription linking a tenant to an edition. If the tenant already has an active subscription, the previous one is automatically cancelled. Supports optional currency, promo code, and expiry behavior parameters.",
       upgradeTitle: "Upgrade & Downgrade",
       upgradeIntro: "Tenants can move between editions. Upgrades apply immediately with the new edition's features taking effect right away. Downgrades check the OverflowPolicy first to handle resources that exceed new limits.",
       trialTitle: "Trial Conversion",
@@ -900,7 +925,7 @@ export const docEn = {
       "ep": {
         "list": "List all subscriptions (paginated, filterable by status/type/tenant)",
         "get": "Get subscription details by ID",
-        "assign": "Create a new subscription (assign tenant to edition)",
+        "assign": "Create a new subscription (assign tenant to edition with currency/promo)",
         "upgrade": "Upgrade to a higher edition",
         "downgrade": "Downgrade to a lower edition (checks OverflowPolicy)",
         "impact": "Preview downgrade impact before executing",
@@ -908,7 +933,8 @@ export const docEn = {
         "resume": "Resume a suspended subscription",
         "cancel": "Cancel subscription permanently",
         "renew": "Renew an expiring subscription",
-        "tenantActive": "Get the active subscription for a specific tenant"
+        "tenantActive": "Get the active subscription for a specific tenant",
+        "export": "Export subscriptions as CSV, Excel, or PDF with advanced filters"
       },
     },
 
