@@ -3,16 +3,30 @@
  *
  * All dialogs for tenant CRUD operations.
  * Uses GenericModal and GenericForm for consistent UI and robust form state.
+ *
+ * PURE UI — no data fetching. All data is received via props from the View.
  */
 "use client";
 
-import { useMemo, useState, useCallback } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { SUPPORTED_CURRENCIES } from "@core/constants/currencies";
 import { GenericModal } from "@core/crud/components/generic-modal";
 import { GenericForm, type FieldConfig } from "@core/ui/forms/generic-form";
 import type { TenantTreeNode } from "../../domain/entities/Tenant";
 import type { EditionThinModel } from "../../data/models/TenantSubscription";
+
+// ==========================================
+// Promotion type (local — avoids cross-module imports)
+// ==========================================
+
+export interface PromotionOption {
+  id: string;
+  name: string;
+  type: string;
+  discountValue: number;
+  requiresCode: boolean;
+}
 
 // ==========================================
 // Form State Types
@@ -25,6 +39,7 @@ export interface CreateFormState {
   editionId: string;
   subscriptionType: string;
   currency: string;
+  promotionId: string;
   promoCode: string;
 }
 
@@ -41,6 +56,7 @@ export const initialCreateForm: CreateFormState = {
   editionId: "",
   subscriptionType: "Lifetime",
   currency: "USD",
+  promotionId: "",
   promoCode: "",
 };
 
@@ -51,19 +67,24 @@ export const initialEditForm: EditFormState = {
 };
 
 // ==========================================
-// Create Tenant Dialog (GenericForm)
+// Create Tenant Dialog (GenericForm — Pure UI)
 // ==========================================
 
 interface CreateTenantDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   parentTenant: TenantTreeNode | null;
-  form: CreateFormState; // Kept for backwards compat signature, but GenericForm handles state internally
+  form: CreateFormState;
   setForm: React.Dispatch<React.SetStateAction<CreateFormState>>;
-  onSubmit: (data?: any) => Promise<void> | void; // Using GenericForm onSubmit which passes data
+  onSubmit: (data?: any) => Promise<void> | void;
   isLoading: boolean;
   onSearchEditions: (query: string) => Promise<{ value: string; label: string }[]>;
   cachedEditions?: EditionThinModel[];
+  // ── Promotion data from View ──
+  availablePromotions: PromotionOption[];
+  isLoadingPromotions: boolean;
+  onEditionChange: (editionId: string) => void;
+  onSubscriptionTypeChange: (type: string) => void;
 }
 
 export function CreateTenantDialog({
@@ -76,12 +97,32 @@ export function CreateTenantDialog({
   isLoading,
   onSearchEditions,
   cachedEditions = [],
+  availablePromotions,
+  isLoadingPromotions,
+  onEditionChange,
+  onSubscriptionTypeChange,
 }: CreateTenantDialogProps) {
   const { t } = useI18n();
 
   // Track selected edition locally to compute subscriptionType options
-  // without calling parent setState during render
   const [selectedEditionId, setSelectedEditionId] = useState(form.editionId);
+  const [selectedPromotionId, setSelectedPromotionId] = useState("");
+
+  // Reset local state when dialog opens
+  useEffect(() => {
+    if (open) {
+      setSelectedEditionId(form.editionId);
+      setSelectedPromotionId("");
+    }
+  }, [open]);
+
+  // Determine if selected promotion requires a code
+  const selectedPromo = useMemo(() => {
+    if (!selectedPromotionId) return null;
+    return availablePromotions.find((p) => p.id === selectedPromotionId) ?? null;
+  }, [selectedPromotionId, availablePromotions]);
+
+  const requiresPromoCode = selectedPromo?.requiresCode ?? false;
 
   const title = parentTenant ? t("tenant.createChild") : t("tenant.createTenant");
   const description = parentTenant
@@ -103,7 +144,7 @@ export function CreateTenantDialog({
         type: "text",
         required: true,
         placeholder: t("tenant.codePlaceholder"),
-        onChange: (val: string, formData) => ({
+        onChange: (val: string, formData: Record<string, any>) => ({
           ...formData,
           code: val.toUpperCase(),
         }),
@@ -124,15 +165,13 @@ export function CreateTenantDialog({
         searchType: "server",
         onServerSearch: onSearchEditions,
         onChange: (value: string) => {
-          // Deferred state update to avoid setState during render
-          // MUST update both: setForm (so initialValues.editionId is correct when
-          // GenericForm's useEffect re-inits) and setSelectedEditionId (for options)
           setTimeout(() => {
             setSelectedEditionId(value);
-            setForm((prev) => ({ ...prev, editionId: value, subscriptionType: "" }));
+            setSelectedPromotionId("");
+            onEditionChange(value);
+            setForm((prev) => ({ ...prev, editionId: value, subscriptionType: "", promotionId: "", promoCode: "" }));
           }, 0);
-          // Return object to reset subscriptionType in GenericForm's internal state
-          return { editionId: value, subscriptionType: "" };
+          return { editionId: value, subscriptionType: "", promotionId: "", promoCode: "" };
         },
       },
       {
@@ -154,6 +193,14 @@ export function CreateTenantDialog({
             opts.push({ value: "Trial", label: t("tenant.subscriptionTypes.trial") || "Trial (14 days)" });
           return opts;
         })(),
+        onChange: (value: string) => {
+          setTimeout(() => {
+            setSelectedPromotionId("");
+            onSubscriptionTypeChange(value);
+            setForm((prev) => ({ ...prev, subscriptionType: value, promotionId: "", promoCode: "" }));
+          }, 0);
+          return { subscriptionType: value, promotionId: "", promoCode: "" };
+        },
       },
       {
         name: "currency",
@@ -166,18 +213,47 @@ export function CreateTenantDialog({
           label: `${c.flag} ${c.code} — ${c.name}`,
         })),
       },
+      // ── Promotion Picker (select dropdown — data from View) ──
+      {
+        name: "promotionId",
+        label: t("entitlements.promotions.title") || "Promotion",
+        type: "select",
+        loading: isLoadingPromotions,
+        isVisible: (formData: Record<string, any>) => !!formData.editionId && !!formData.subscriptionType,
+        options: [
+          { value: "__none__", label: t("entitlements.promotions.noPromotion") || "No promotion" },
+          ...availablePromotions.map((p) => ({
+            value: p.id,
+            label: `${p.name} — ${p.type === "Percentage" ? `${p.discountValue}% off` : `$${p.discountValue} off`}${p.requiresCode ? " (Code)" : ""}`,
+          })),
+        ],
+        onChange: (value: string) => {
+          const actualValue = value === "__none__" ? "" : value;
+          setTimeout(() => {
+            setSelectedPromotionId(actualValue);
+            setForm((prev) => ({ ...prev, promotionId: actualValue, promoCode: "" }));
+          }, 0);
+          return { promotionId: value, promoCode: "" };
+        },
+      },
+      // ── Conditional Promo Code input ──
       {
         name: "promoCode",
         label: t("tenant.promoCode") || "Promo Code",
         type: "text",
-        isVisible: (formData: Record<string, any>) => !!formData.editionId && !!formData.subscriptionType,
-        placeholder: t("tenant.promoCodePlaceholder") || "Enter promo code (optional)",
+        isVisible: () => requiresPromoCode,
+        placeholder: t("tenant.promoCodePlaceholder") || "Enter promo code",
+        onChange: (val: string, formData: Record<string, any>) => ({
+          ...formData,
+          promoCode: val.toUpperCase(),
+        }),
       },
     ],
-    [t, onSearchEditions, selectedEditionId, cachedEditions]
+    [t, onSearchEditions, selectedEditionId, cachedEditions, availablePromotions, requiresPromoCode, isLoadingPromotions, onEditionChange, onSubscriptionTypeChange]
   );
 
   const handleSubmit = async (data: Record<string, any>) => {
+    const promoId = data.promotionId === "__none__" ? "" : (data.promotionId || "");
     setForm({
       name: data.name,
       code: data.code,
@@ -185,6 +261,7 @@ export function CreateTenantDialog({
       editionId: data.editionId,
       subscriptionType: data.subscriptionType || "Lifetime",
       currency: data.currency || "USD",
+      promotionId: promoId,
       promoCode: data.promoCode || "",
     });
     await onSubmit();
@@ -211,7 +288,7 @@ export function CreateTenantDialog({
 }
 
 // ==========================================
-// Edit Tenant Dialog (GenericForm)
+// Edit Tenant Dialog (GenericForm — Pure UI)
 // ==========================================
 
 interface EditTenantDialogProps {

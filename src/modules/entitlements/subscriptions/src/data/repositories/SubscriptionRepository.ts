@@ -40,13 +40,13 @@ export class SubscriptionRepository implements ISubscriptionRepository {
 
       async assign(
             tenantId: string,
-            data: { editionId: string; type: string; endDate?: string; expiryBehavior?: string }
+            data: { editionId: string; type: string; endDate?: string; expiryBehavior?: string; promoCode?: string; currency?: string; promotionId?: string }
       ): Promise<string> {
             const result = await this.service.assign(tenantId, data);
             return result.id;
       }
 
-      async change(tenantId: string, data: { editionId: string; type: string }): Promise<void> {
+      async change(tenantId: string, data: { editionId: string; type: string; promoCode?: string; currency?: string; promotionId?: string }): Promise<void> {
             await this.service.change(tenantId, data);
       }
 

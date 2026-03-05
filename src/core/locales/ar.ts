@@ -4854,6 +4854,7 @@ export const ar = {
       // Promotions
       promotions: {
         title: "العروض الترويجية",
+        noPromotion: "لا يوجد عرض ترويجي",
         create: "إنشاء عرض",
         edit: "تعديل العرض",
         delete: "حذف العرض",
@@ -5158,6 +5159,7 @@ export const ar = {
     // ── العروض الترويجية ──
     promotions: {
       title: "العروض الترويجية",
+      noPromotion: "لا يوجد عرض ترويجي",
       create: "إنشاء عرض",
       edit: "تعديل العرض",
       createDesc: "إنشاء عرض خصم لهذا الإصدار.",

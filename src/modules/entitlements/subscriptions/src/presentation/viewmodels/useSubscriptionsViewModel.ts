@@ -11,10 +11,11 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { entitlementsContainer } from "@modules/entitlements/di";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
+import type { EditionPromotionData } from "@modules/entitlements/editions/src/domain/entities/EditionPromotion";
 
 export function useSubscriptionsViewModel(tenantId: string) {
-      const { subscriptionRepository } = entitlementsContainer;
+      const { subscriptionRepository, editionRepository } = entitlementsContainer;
       const queryClient = useQueryClient();
       const { success, error: showError } = useEnhancedToast();
       const { t } = useI18n();
@@ -37,6 +38,7 @@ export function useSubscriptionsViewModel(tenantId: string) {
       const [convertType, setConvertType] = useState("Monthly");
       const [promoCode, setPromoCode] = useState("");
       const [currency, setCurrency] = useState("USD");
+      const [selectedPromotionId, setSelectedPromotionId] = useState<string | null>(null);
 
       // ─── Query keys ─────────────────────────────────────
       const queryKey = ["entitlements", "subscriptions", tenantId];
@@ -81,6 +83,7 @@ export function useSubscriptionsViewModel(tenantId: string) {
             setConvertType("Monthly");
             setPromoCode("");
             setCurrency("USD");
+            setSelectedPromotionId(null);
       }, []);
 
       // ─── Auto-calculate endDate on type change ────────
@@ -125,10 +128,52 @@ export function useSubscriptionsViewModel(tenantId: string) {
                         showError({ title: t("common.error"), description: err.message }),
             });
 
+      // ── Fetch promotions for selected edition ───────────────────
+      const promotionsQuery = useQuery({
+            queryKey: ["entitlements", "editions", selectedEditionId, "promotions"],
+            queryFn: () => editionRepository.getPromotions(selectedEditionId),
+            enabled: !!selectedEditionId,
+      });
+
+      const allPromotions: EditionPromotionData[] = promotionsQuery.data ?? [];
+
+      // Filter promotions by billing cycle and active status
+      const availablePromotions = useMemo((): EditionPromotionData[] => {
+            return allPromotions.filter((p) => {
+                  if (!p.isActive) return false;
+                  // Check expiry
+                  if (p.validUntil && new Date(p.validUntil) < new Date()) return false;
+                  // Check not started
+                  if (p.validFrom && new Date(p.validFrom) > new Date()) return false;
+                  // Check redemption limit
+                  if (p.maxRedemptions != null && p.currentRedemptions >= p.maxRedemptions) return false;
+                  // Filter by applicable billing cycle
+                  if (p.applicableCycle) {
+                        if (p.applicableCycle !== subscriptionType) return false;
+                  }
+                  return true;
+            });
+      }, [allPromotions, subscriptionType]);
+
+      // Get the selected promotion object
+      const selectedPromotion = useMemo(() => {
+            if (!selectedPromotionId) return null;
+            return availablePromotions.find((p) => p.id === selectedPromotionId) ?? null;
+      }, [selectedPromotionId, availablePromotions]);
+
+      // Does the selected promotion require a code?
+      const requiresPromoCode = selectedPromotion?.requiresCode ?? false;
+
+      // Reset promotion when edition or subscription type changes
+      useEffect(() => {
+            setSelectedPromotionId(null);
+            setPromoCode("");
+      }, [selectedEditionId, subscriptionType]);
+
       // ─── Mutations ──────────────────────────────────────
 
       const assignMutation = makeMutation(
-            (params: { editionId: string; type: string; endDate?: string; expiryBehavior?: string; promoCode?: string; currency?: string }) =>
+            (params: { editionId: string; type: string; endDate?: string; expiryBehavior?: string; promoCode?: string; currency?: string; promotionId?: string }) =>
                   subscriptionRepository.assign(tenantId, params),
             "entitlements.subscriptions.assigned",
             "entitlements.subscriptions.assignedDesc",
@@ -136,7 +181,7 @@ export function useSubscriptionsViewModel(tenantId: string) {
       );
 
       const changeMutation = makeMutation(
-            (params: { editionId: string; type: string; promoCode?: string; currency?: string }) =>
+            (params: { editionId: string; type: string; promoCode?: string; currency?: string; promotionId?: string }) =>
                   subscriptionRepository.change(tenantId, params),
             "entitlements.subscriptions.changed",
             "entitlements.subscriptions.changedDesc",
@@ -197,19 +242,21 @@ export function useSubscriptionsViewModel(tenantId: string) {
                   type: subscriptionType,
                   endDate: endDate || undefined,
                   expiryBehavior,
-                  promoCode: promoCode || undefined,
+                  promoCode: requiresPromoCode ? (promoCode || undefined) : undefined,
                   currency: currency || undefined,
+                  promotionId: selectedPromotionId || undefined,
             });
-      }, [assignMutation, selectedEditionId, subscriptionType, endDate, expiryBehavior, promoCode, currency]);
+      }, [assignMutation, selectedEditionId, subscriptionType, endDate, expiryBehavior, promoCode, currency, selectedPromotionId, requiresPromoCode]);
 
       const submitChange = useCallback(() => {
             changeMutation.mutate({
                   editionId: selectedEditionId,
                   type: subscriptionType,
-                  promoCode: promoCode || undefined,
+                  promoCode: requiresPromoCode ? (promoCode || undefined) : undefined,
                   currency: currency || undefined,
+                  promotionId: selectedPromotionId || undefined,
             });
-      }, [changeMutation, selectedEditionId, subscriptionType, promoCode, currency]);
+      }, [changeMutation, selectedEditionId, subscriptionType, promoCode, currency, selectedPromotionId, requiresPromoCode]);
 
       const submitSuspend = useCallback(() => {
             suspendMutation.mutate({ reason: suspendReason, useFallback });
@@ -287,5 +334,12 @@ export function useSubscriptionsViewModel(tenantId: string) {
             useFallback, setUseFallback,
             promoCode, setPromoCode,
             currency, setCurrency,
+
+            // Smart promotion picker
+            availablePromotions,
+            selectedPromotionId, setSelectedPromotionId,
+            selectedPromotion,
+            requiresPromoCode,
+            isLoadingPromotions: promotionsQuery.isLoading,
       };
 }

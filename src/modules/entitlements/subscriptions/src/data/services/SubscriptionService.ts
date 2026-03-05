@@ -110,7 +110,7 @@ export class SubscriptionService {
 
       async assign(
             tenantId: string,
-            data: { editionId: string; type: string; endDate?: string; expiryBehavior?: string; currency?: string; promoCode?: string }
+            data: { editionId: string; type: string; endDate?: string; expiryBehavior?: string; currency?: string; promoCode?: string; promotionId?: string }
       ): Promise<{ id: string }> {
             return this.api.post<{ id: string }>(
                   API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.ASSIGN(tenantId),
@@ -120,7 +120,7 @@ export class SubscriptionService {
 
       async change(
             tenantId: string,
-            data: { editionId: string; type: string; currency?: string; promoCode?: string }
+            data: { editionId: string; type: string; currency?: string; promoCode?: string; promotionId?: string }
       ): Promise<void> {
             await this.api.put(
                   API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.CHANGE(tenantId),

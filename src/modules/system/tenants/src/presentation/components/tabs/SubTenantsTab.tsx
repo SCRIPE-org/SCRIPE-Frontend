@@ -28,6 +28,7 @@ import {
   EditTenantDialog,
   type CreateFormState,
   type EditFormState,
+  type PromotionOption,
   initialCreateForm,
   initialEditForm,
 } from "../TenantDialogs";
@@ -67,6 +68,10 @@ export function SubTenantsTab({
   const [isDeleting, setIsDeleting] = useState(false);
   const [cachedEditions, setCachedEditions] = useState<EditionThinModel[]>([]);
 
+  // ── Promotion picker state (View owns the data) ──
+  const [promoEditionId, setPromoEditionId] = useState("");
+  const [promoSubType, setPromoSubType] = useState("");
+
   // Fetch children
   const {
     data: children,
@@ -96,14 +101,42 @@ export function SubTenantsTab({
 
   const childNodes = useMemo(() => children ?? [], [children]);
 
+  // ── Fetch promotions for selected edition (View owns the data) ──
+  const { data: promotionsRaw = [], isLoading: isLoadingPromotions } = useQuery({
+    queryKey: ["entitlements", "editions", promoEditionId, "promotions"],
+    queryFn: () => systemContainer.tenantRepository.getEditionPromotions(promoEditionId),
+    enabled: !!promoEditionId && createDialogOpen,
+  });
+
+  const availablePromotions = useMemo((): PromotionOption[] => {
+    return (promotionsRaw as any[]).filter((p) => {
+      if (!p.isActive) return false;
+      if (p.validUntil && new Date(p.validUntil) < new Date()) return false;
+      if (p.validFrom && new Date(p.validFrom) > new Date()) return false;
+      if (p.maxRedemptions != null && p.currentRedemptions >= p.maxRedemptions) return false;
+      if (p.applicableCycle && promoSubType) {
+        const cycleMap: Record<string, string> = { Monthly: "Monthly", Yearly: "Yearly", Lifetime: "Lifetime" };
+        if (p.applicableCycle !== cycleMap[promoSubType]) return false;
+      }
+      return true;
+    }).map((p) => ({
+      id: p.id,
+      name: p.name,
+      type: p.type,
+      discountValue: p.discountValue,
+      requiresCode: p.requiresCode,
+    }));
+  }, [promotionsRaw, promoSubType]);
+
   // Handlers
   const handleOpenCreate = useCallback(
     (parent?: TenantTreeNode) => {
       setCreateForm(initialCreateForm);
-      // If creating from a child node, use that as parent; otherwise use this tab's parent
       setParentForCreate(
         parent ?? ({ id: parentId, name: parentName, code: parentCode } as TenantTreeNode)
       );
+      setPromoEditionId("");
+      setPromoSubType("");
       setCreateDialogOpen(true);
     },
     [parentId, parentName, parentCode]
@@ -126,7 +159,9 @@ export function SubTenantsTab({
           createForm.editionId,
           createForm.subscriptionType || "Lifetime",
           undefined,
-          createForm.currency || "USD"
+          createForm.currency || "USD",
+          createForm.promotionId && createForm.promoCode ? createForm.promoCode : undefined,
+          createForm.promotionId || undefined
         );
       }
 
@@ -299,6 +334,10 @@ export function SubTenantsTab({
         isLoading={isCreating}
         onSearchEditions={handleSearchEditions}
         cachedEditions={cachedEditions}
+        availablePromotions={availablePromotions}
+        isLoadingPromotions={isLoadingPromotions}
+        onEditionChange={setPromoEditionId}
+        onSubscriptionTypeChange={setPromoSubType}
       />
 
       <EditTenantDialog

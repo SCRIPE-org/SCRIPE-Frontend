@@ -124,14 +124,24 @@ export interface ITenantService {
   getAvailableEditions(page?: number, pageSize?: number, search?: string): Promise<PagedEditionResult>;
 
   /**
+   * Get available promotions for a specific edition
+   */
+  getEditionPromotions(editionId: string): Promise<Array<{
+    id: string; name: string; type: string; discountValue: number;
+    discountCurrency?: string; applicableCycle?: string; requiresCode: boolean;
+    promoCode?: string; isActive: boolean; validFrom?: string; validUntil?: string;
+    maxRedemptions?: number; currentRedemptions: number; firstTimeOnly: boolean;
+  }>>;
+
+  /**
    * Assign a base/trial edition (plan) to a newly created tenant
    */
-  assignEdition(tenantId: string, editionId: string, type?: string, endDate?: string, currency?: string, promoCode?: string): Promise<{ id: string }>;
+  assignEdition(tenantId: string, editionId: string, type?: string, endDate?: string, currency?: string, promoCode?: string, promotionId?: string): Promise<{ id: string }>;
 
   /**
    * Change the base edition of an existing tenant
    */
-  changeEdition(tenantId: string, editionId: string, type?: string, currency?: string, promoCode?: string): Promise<void>;
+  changeEdition(tenantId: string, editionId: string, type?: string, currency?: string, promoCode?: string, promotionId?: string): Promise<void>;
 
   /** Renew (extend) the current subscription period */
   renewSubscription(tenantId: string, type: string): Promise<string>;

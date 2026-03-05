@@ -140,16 +140,30 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
             return changes;
       }, [pendingValues, serverValueMap]);
 
-      // ── Create Version with pending changes ──
+      // ── Create Version with pending changes + pricing snapshot ──
       const createVersionMutation = useMutation({
             mutationFn: async ({ changeNotes }: { changeNotes?: string }) => {
-                  // Send ALL pending feature values (full snapshot), not just changed ones
-                  return editionRepository.createVersion(editionId, changeNotes, pendingValues);
+                  // Fetch current pricing to include in the version snapshot
+                  let pricingSnapshot: Array<{ currency: string; billingCycle: string; amount: number }> | undefined;
+                  try {
+                        const priceData = await editionRepository.getEditionPrices(editionId);
+                        if (priceData?.prices && priceData.prices.length > 0) {
+                              pricingSnapshot = priceData.prices.map((p: { currency: string; billingCycle: string; amount: number }) => ({
+                                    currency: p.currency,
+                                    billingCycle: p.billingCycle,
+                                    amount: p.amount,
+                              }));
+                        }
+                  } catch {
+                        // If pricing fetch fails, still create version with just features
+                  }
+                  // Send ALL pending feature values (full snapshot) + pricing snapshot
+                  return editionRepository.createVersion(editionId, changeNotes, pendingValues, pricingSnapshot);
             },
             onSuccess: () => {
                   success({
                         title: "Version Created",
-                        description: "Feature changes captured in a new draft version. Publish it to apply.",
+                        description: "Feature and pricing changes captured in a new draft version. Publish it to apply.",
                   });
                   queryClient.invalidateQueries({ queryKey: ["entitlements", "editions", editionId, "versions"] });
             },

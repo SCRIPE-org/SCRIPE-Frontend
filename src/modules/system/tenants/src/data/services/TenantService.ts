@@ -201,24 +201,34 @@ export class TenantService implements ITenantService {
     return this.api.get<PagedEditionResult>(url);
   }
 
+  async getEditionPromotions(editionId: string): Promise<Array<{
+    id: string; name: string; type: string; discountValue: number;
+    discountCurrency?: string; applicableCycle?: string; requiresCode: boolean;
+    promoCode?: string; isActive: boolean; validFrom?: string; validUntil?: string;
+    maxRedemptions?: number; currentRedemptions: number; firstTimeOnly: boolean;
+  }>> {
+    return this.api.get(API_ENDPOINTS.ENTITLEMENTS.EDITIONS.PROMOTIONS(editionId));
+  }
+
   async assignEdition(
     tenantId: string,
     editionId: string,
     type?: string,
     endDate?: string,
     currency?: string,
-    promoCode?: string
+    promoCode?: string,
+    promotionId?: string
   ): Promise<{ id: string }> {
     return this.api.post<{ id: string }>(
       API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.ASSIGN(tenantId),
-      { editionId, type, endDate, currency: currency || "USD", promoCode }
+      { editionId, type, endDate, currency: currency || "USD", promoCode, promotionId }
     );
   }
 
-  async changeEdition(tenantId: string, editionId: string, type: string = "Lifetime", currency?: string, promoCode?: string): Promise<void> {
+  async changeEdition(tenantId: string, editionId: string, type: string = "Lifetime", currency?: string, promoCode?: string, promotionId?: string): Promise<void> {
     await this.api.put(
       API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.CHANGE(tenantId),
-      { editionId, type, currency, promoCode }
+      { editionId, type, currency, promoCode, promotionId }
     );
   }
 

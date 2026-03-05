@@ -401,19 +401,86 @@ function AssignDialog({
                                     </div>
                               )}
 
-                              {/* Promo Code */}
-                              <div className="space-y-2">
-                                    <Label className="flex items-center gap-1.5">
-                                          <Tag className="h-3.5 w-3.5 text-primary" />
-                                          {t("entitlements.promotions.promoCode") || "Promo Code"}
-                                    </Label>
-                                    <Input
-                                          value={vm.promoCode}
-                                          onChange={(e) => vm.setPromoCode(e.target.value.toUpperCase())}
-                                          placeholder={t("entitlements.promotions.promoCodePlaceholder") || "Enter promo code (optional)"}
-                                          className="font-mono uppercase"
-                                    />
-                              </div>
+                              {/* Promotion Picker */}
+                              {vm.selectedEditionId && (
+                                    <div className="space-y-3">
+                                          <div className="space-y-2">
+                                                <Label className="flex items-center gap-1.5">
+                                                      <Tag className="h-3.5 w-3.5 text-primary" />
+                                                      {t("entitlements.promotions.title") || "Promotion"}
+                                                </Label>
+                                                {vm.isLoadingPromotions ? (
+                                                      <div className="flex items-center gap-2 text-sm text-muted-foreground py-2">
+                                                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                                            {t("common.loading") || "Loading promotions..."}
+                                                      </div>
+                                                ) : vm.availablePromotions.length === 0 ? (
+                                                      <p className="text-sm text-muted-foreground py-1">
+                                                            {t("entitlements.promotions.noPromotionsAvailable") || "No promotions available for this plan"}
+                                                      </p>
+                                                ) : (
+                                                      <Select
+                                                            value={vm.selectedPromotionId ?? "__none__"}
+                                                            onValueChange={(v) => vm.setSelectedPromotionId(v === "__none__" ? null : v)}
+                                                      >
+                                                            <SelectTrigger>
+                                                                  <SelectValue placeholder={t("entitlements.promotions.selectPromotion") || "No promotion"} />
+                                                            </SelectTrigger>
+                                                            <SelectContent>
+                                                                  <SelectItem value="__none__">
+                                                                        {t("entitlements.promotions.noPromotion") || "No promotion"}
+                                                                  </SelectItem>
+                                                                  {vm.availablePromotions.map((promo) => (
+                                                                        <SelectItem key={promo.id} value={promo.id}>
+                                                                              <span className="flex items-center gap-2">
+                                                                                    {promo.name}
+                                                                                    <Badge variant="outline" className="text-[10px] px-1 py-0">
+                                                                                          {promo.type === "Percentage" ? `${promo.discountValue}% off` : `$${promo.discountValue} off`}
+                                                                                    </Badge>
+                                                                                    {promo.requiresCode && (
+                                                                                          <Badge variant="secondary" className="text-[10px] px-1 py-0">Code</Badge>
+                                                                                    )}
+                                                                              </span>
+                                                                        </SelectItem>
+                                                                  ))}
+                                                            </SelectContent>
+                                                      </Select>
+                                                )}
+                                          </div>
+
+                                          {/* Conditional promo code input */}
+                                          {vm.requiresPromoCode && vm.selectedPromotion && (
+                                                <div className="space-y-2">
+                                                      <Label className="text-sm">
+                                                            {t("entitlements.promotions.promoCode") || "Promo Code"}
+                                                      </Label>
+                                                      <Input
+                                                            value={vm.promoCode}
+                                                            onChange={(e) => vm.setPromoCode(e.target.value.toUpperCase())}
+                                                            placeholder={t("entitlements.promotions.enterCode") || "Enter the promo code"}
+                                                            className="font-mono uppercase"
+                                                      />
+                                                </div>
+                                          )}
+
+                                          {/* Discount preview */}
+                                          {vm.selectedPromotion && (
+                                                <div className="flex items-center gap-2 rounded-md bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 p-2">
+                                                      <Tag className="h-4 w-4 text-green-600" />
+                                                      <span className="text-sm text-green-700 dark:text-green-400">
+                                                            {vm.selectedPromotion.name} —{" "}
+                                                            {vm.selectedPromotion.type === "Percentage"
+                                                                  ? `${vm.selectedPromotion.discountValue}% off`
+                                                                  : `$${vm.selectedPromotion.discountValue} off`
+                                                            }
+                                                            {!vm.selectedPromotion.requiresCode && (
+                                                                  <span className="text-xs opacity-75 ms-1">(auto-applied)</span>
+                                                            )}
+                                                      </span>
+                                                </div>
+                                          )}
+                                    </div>
+                              )}
 
                               {/* Currency */}
                               <div className="space-y-2">
@@ -509,19 +576,86 @@ function ChangeDialog({
                                     })()}
                               </div>
 
-                              {/* Promo Code */}
-                              <div className="space-y-2">
-                                    <Label className="flex items-center gap-1.5">
-                                          <Tag className="h-3.5 w-3.5 text-primary" />
-                                          {t("entitlements.promotions.promoCode") || "Promo Code"}
-                                    </Label>
-                                    <Input
-                                          value={vm.promoCode}
-                                          onChange={(e) => vm.setPromoCode(e.target.value.toUpperCase())}
-                                          placeholder={t("entitlements.promotions.promoCodePlaceholder") || "Enter promo code (optional)"}
-                                          className="font-mono uppercase"
-                                    />
-                              </div>
+                              {/* Promotion Picker */}
+                              {vm.selectedEditionId && (
+                                    <div className="space-y-3">
+                                          <div className="space-y-2">
+                                                <Label className="flex items-center gap-1.5">
+                                                      <Tag className="h-3.5 w-3.5 text-primary" />
+                                                      {t("entitlements.promotions.title") || "Promotion"}
+                                                </Label>
+                                                {vm.isLoadingPromotions ? (
+                                                      <div className="flex items-center gap-2 text-sm text-muted-foreground py-2">
+                                                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                                            {t("common.loading") || "Loading promotions..."}
+                                                      </div>
+                                                ) : vm.availablePromotions.length === 0 ? (
+                                                      <p className="text-sm text-muted-foreground py-1">
+                                                            {t("entitlements.promotions.noPromotionsAvailable") || "No promotions available for this plan"}
+                                                      </p>
+                                                ) : (
+                                                      <Select
+                                                            value={vm.selectedPromotionId ?? "__none__"}
+                                                            onValueChange={(v) => vm.setSelectedPromotionId(v === "__none__" ? null : v)}
+                                                      >
+                                                            <SelectTrigger>
+                                                                  <SelectValue placeholder={t("entitlements.promotions.selectPromotion") || "No promotion"} />
+                                                            </SelectTrigger>
+                                                            <SelectContent>
+                                                                  <SelectItem value="__none__">
+                                                                        {t("entitlements.promotions.noPromotion") || "No promotion"}
+                                                                  </SelectItem>
+                                                                  {vm.availablePromotions.map((promo) => (
+                                                                        <SelectItem key={promo.id} value={promo.id}>
+                                                                              <span className="flex items-center gap-2">
+                                                                                    {promo.name}
+                                                                                    <Badge variant="outline" className="text-[10px] px-1 py-0">
+                                                                                          {promo.type === "Percentage" ? `${promo.discountValue}% off` : `$${promo.discountValue} off`}
+                                                                                    </Badge>
+                                                                                    {promo.requiresCode && (
+                                                                                          <Badge variant="secondary" className="text-[10px] px-1 py-0">Code</Badge>
+                                                                                    )}
+                                                                              </span>
+                                                                        </SelectItem>
+                                                                  ))}
+                                                            </SelectContent>
+                                                      </Select>
+                                                )}
+                                          </div>
+
+                                          {/* Conditional promo code input */}
+                                          {vm.requiresPromoCode && vm.selectedPromotion && (
+                                                <div className="space-y-2">
+                                                      <Label className="text-sm">
+                                                            {t("entitlements.promotions.promoCode") || "Promo Code"}
+                                                      </Label>
+                                                      <Input
+                                                            value={vm.promoCode}
+                                                            onChange={(e) => vm.setPromoCode(e.target.value.toUpperCase())}
+                                                            placeholder={t("entitlements.promotions.enterCode") || "Enter the promo code"}
+                                                            className="font-mono uppercase"
+                                                      />
+                                                </div>
+                                          )}
+
+                                          {/* Discount preview */}
+                                          {vm.selectedPromotion && (
+                                                <div className="flex items-center gap-2 rounded-md bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 p-2">
+                                                      <Tag className="h-4 w-4 text-green-600" />
+                                                      <span className="text-sm text-green-700 dark:text-green-400">
+                                                            {vm.selectedPromotion.name} —{" "}
+                                                            {vm.selectedPromotion.type === "Percentage"
+                                                                  ? `${vm.selectedPromotion.discountValue}% off`
+                                                                  : `$${vm.selectedPromotion.discountValue} off`
+                                                            }
+                                                            {!vm.selectedPromotion.requiresCode && (
+                                                                  <span className="text-xs opacity-75 ms-1">(auto-applied)</span>
+                                                            )}
+                                                      </span>
+                                                </div>
+                                          )}
+                                    </div>
+                              )}
 
                               {/* Currency */}
                               <div className="space-y-2">

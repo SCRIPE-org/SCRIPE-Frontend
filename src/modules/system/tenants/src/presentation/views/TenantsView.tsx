@@ -38,6 +38,7 @@ import {
   EditTenantDialog,
   type CreateFormState,
   type EditFormState,
+  type PromotionOption,
   initialCreateForm,
   initialEditForm,
 } from "../components/TenantDialogs";
@@ -103,6 +104,10 @@ export function TenantsView() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [cachedEditions, setCachedEditions] = useState<EditionThinModel[]>([]);
 
+  // ── Promotion picker state (View owns the data) ──
+  const [promoEditionId, setPromoEditionId] = useState("");
+  const [promoSubType, setPromoSubType] = useState("");
+
   // System admin check
   const isSystemAdmin = useMemo(() => {
     const adminType = user?.adminTypeName?.toLowerCase() || "";
@@ -150,6 +155,34 @@ export function TenantsView() {
     [tree, search]
   );
 
+  // ── Fetch promotions for selected edition (View owns the data) ──
+  const { data: promotionsRaw = [], isLoading: isLoadingPromotions } = useQuery({
+    queryKey: ["entitlements", "editions", promoEditionId, "promotions"],
+    queryFn: () => systemContainer.tenantRepository.getEditionPromotions(promoEditionId),
+    enabled: !!promoEditionId && createDialogOpen,
+  });
+
+  // Filter promotions by billing cycle and active status
+  const availablePromotions = useMemo((): PromotionOption[] => {
+    return (promotionsRaw as any[]).filter((p) => {
+      if (!p.isActive) return false;
+      if (p.validUntil && new Date(p.validUntil) < new Date()) return false;
+      if (p.validFrom && new Date(p.validFrom) > new Date()) return false;
+      if (p.maxRedemptions != null && p.currentRedemptions >= p.maxRedemptions) return false;
+      if (p.applicableCycle && promoSubType) {
+        const cycleMap: Record<string, string> = { Monthly: "Monthly", Yearly: "Yearly", Lifetime: "Lifetime" };
+        if (p.applicableCycle !== cycleMap[promoSubType]) return false;
+      }
+      return true;
+    }).map((p) => ({
+      id: p.id,
+      name: p.name,
+      type: p.type,
+      discountValue: p.discountValue,
+      requiresCode: p.requiresCode,
+    }));
+  }, [promotionsRaw, promoSubType]);
+
   // Permission checks
   const canCreate = hasPermission(SYSTEM_PERMISSIONS.TENANTS_CREATE);
 
@@ -159,6 +192,8 @@ export function TenantsView() {
     (parent?: TenantTreeNode) => {
       setCreateForm(initialCreateForm);
       setParentForCreate(parent ?? null);
+      setPromoEditionId("");
+      setPromoSubType("");
       setCreateDialogOpen(true);
     },
     []
@@ -186,7 +221,8 @@ export function TenantsView() {
           createForm.subscriptionType || "Lifetime",
           undefined,
           createForm.currency || "USD",
-          createForm.promoCode || undefined
+          createForm.promotionId && createForm.promoCode ? createForm.promoCode : undefined,
+          createForm.promotionId || undefined
         );
       }
 
@@ -357,6 +393,10 @@ export function TenantsView() {
         isLoading={isCreating}
         onSearchEditions={handleSearchEditions}
         cachedEditions={cachedEditions}
+        availablePromotions={availablePromotions}
+        isLoadingPromotions={isLoadingPromotions}
+        onEditionChange={setPromoEditionId}
+        onSubscriptionTypeChange={setPromoSubType}
       />
 
       {/* Edit Dialog */}
