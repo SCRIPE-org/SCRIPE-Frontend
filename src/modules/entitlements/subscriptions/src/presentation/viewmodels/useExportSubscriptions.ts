@@ -68,21 +68,12 @@ export function useExportSubscriptions(): UseExportSubscriptionsResult {
                               throw new Error(errorBody || `Export failed (${response.status})`);
                         }
 
-                        // For PDF (HTML), open in new tab for browser print
-                        if (format === "pdf") {
-                              const html = await response.text();
-                              const printWindow = window.open("", "_blank");
-                              if (printWindow) {
-                                    printWindow.document.write(html);
-                                    printWindow.document.close();
-                              }
-                              return;
-                        }
-
-                        // For Excel/CSV, download as file
+                        // Download as file for all formats (PDF is now a real binary from QuestPDF)
                         const blob = await response.blob();
                         const contentDisposition = response.headers.get("content-disposition");
-                        let filename = `subscriptions-export.${format === "excel" ? "xlsx" : "csv"}`;
+                        const ext = format === "excel" ? "xlsx" : format === "csv" ? "csv" : "pdf";
+                        let filename = `subscriptions-export.${ext}`;
+
 
                         // Parse filename from Content-Disposition header if available
                         if (contentDisposition) {
