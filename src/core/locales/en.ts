@@ -5162,7 +5162,7 @@ export const en = {
       // ── Export ──
       export: {
         title: "Export Subscriptions",
-        description: "Download subscription data in your preferred format.",
+        description: "Generate comprehensive subscription analytics reports.",
         records: "Records to export",
         button: "Export",
         success: "Export downloaded successfully!",
@@ -5172,6 +5172,32 @@ export const en = {
         currencyPlaceholder: "Select currency",
         currencyHint: "Amounts will be shown in the selected currency where applicable",
         appliedFilters: "Applied Filters",
+        // Format
+        formatCsv: "CSV",
+        formatCsvDesc: "Comma-separated values",
+        formatXlsx: "XLSX",
+        formatXlsxDesc: "Microsoft Excel",
+        formatPdf: "PDF",
+        formatPdfDesc: "Print-ready document",
+        // Date range
+        dateRange: "Date Range",
+        allTime: "All time",
+        last7Days: "Last 7 days",
+        last30Days: "Last 30 days",
+        last90Days: "Last 90 days (Quarter)",
+        lastYear: "Last 12 months",
+        customRange: "Custom range...",
+        dateFrom: "From",
+        dateTo: "To",
+        // Expiring soon
+        expiringSoon: "Expiring Soon",
+        expiringNoFilter: "No filter",
+        expiringIn5Days: "Expiring in 5 days",
+        expiringIn7Days: "Expiring in 7 days",
+        expiringIn14Days: "Expiring in 14 days",
+        expiringIn30Days: "Expiring in 30 days",
+        expiringIn60Days: "Expiring in 60 days",
+        expiringIn90Days: "Expiring in 90 days",
       },
     },
     overrides: {

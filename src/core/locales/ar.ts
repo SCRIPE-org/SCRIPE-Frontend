@@ -3641,6 +3641,8 @@ export const ar = {
 
   // Common
   common: {
+    from: "من",
+    to: "إلى",
     value: "القيمة",
     any: "أي",
     time: "الوقت",
@@ -5008,7 +5010,7 @@ export const ar = {
       // ── التصدير ──
       export: {
         title: "تصدير الاشتراكات",
-        description: "تحميل بيانات الاشتراكات بالتنسيق المفضل لديك.",
+        description: "إنشاء تقارير تحليلية شاملة للاشتراكات.",
         records: "السجلات للتصدير",
         button: "تصدير",
         success: "تم تحميل التصدير بنجاح!",
@@ -5018,6 +5020,32 @@ export const ar = {
         currencyPlaceholder: "اختر العملة",
         currencyHint: "سيتم عرض المبالغ بالعملة المحددة حيثما أمكن",
         appliedFilters: "الفلاتر المطبّقة",
+        // التنسيق
+        formatCsv: "CSV",
+        formatCsvDesc: "قيم مفصولة بفواصل",
+        formatXlsx: "XLSX",
+        formatXlsxDesc: "مايكروسوفت إكسل",
+        formatPdf: "PDF",
+        formatPdfDesc: "مستند جاهز للطباعة",
+        // النطاق الزمني
+        dateRange: "النطاق الزمني",
+        allTime: "كل الأوقات",
+        last7Days: "آخر 7 أيام",
+        last30Days: "آخر 30 يوماً",
+        last90Days: "آخر 90 يوماً (ربع سنة)",
+        lastYear: "آخر 12 شهراً",
+        customRange: "نطاق مخصص...",
+        dateFrom: "من",
+        dateTo: "إلى",
+        // الاشتراكات المنتهية قريباً
+        expiringSoon: "تنتهي قريباً",
+        expiringNoFilter: "بدون فلتر",
+        expiringIn5Days: "تنتهي خلال 5 أيام",
+        expiringIn7Days: "تنتهي خلال 7 أيام",
+        expiringIn14Days: "تنتهي خلال 14 يوماً",
+        expiringIn30Days: "تنتهي خلال 30 يوماً",
+        expiringIn60Days: "تنتهي خلال 60 يوماً",
+        expiringIn90Days: "تنتهي خلال 90 يوماً",
       },
     },
     overrides: {

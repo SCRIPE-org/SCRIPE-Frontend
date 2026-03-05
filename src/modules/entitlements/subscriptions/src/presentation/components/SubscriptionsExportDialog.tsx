@@ -1,12 +1,8 @@
 /**
  * SubscriptionsExportDialog
  *
- * Professional export modal with comprehensive filters:
- *  - Format selection (CSV / Excel / PDF)
- *  - Currency selector
- *  - Date range (presets + custom)
- *  - Expiring soon (in N days)
- *  - Edition filter
+ * Uses GenericModal (which sets modal={false} to fix select focus issues).
+ * All text is fully localized via t() function.
  *
  * SOLID: Pure UI — delegates all logic to useExportSubscriptions hook.
  */
@@ -15,14 +11,7 @@
 import { useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useExportSubscriptions, type ExportFormat } from "../viewmodels/useExportSubscriptions";
-import {
-      Dialog,
-      DialogContent,
-      DialogHeader,
-      DialogTitle,
-      DialogDescription,
-      DialogFooter,
-} from "@core/ui/dialog";
+import { GenericModal } from "@core/crud/components/generic-modal";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { Label } from "@core/ui/label";
@@ -50,76 +39,7 @@ interface SubscriptionsExportDialogProps {
       totalCount: number;
 }
 
-interface FormatOption {
-      value: ExportFormat;
-      icon: React.ReactNode;
-      label: string;
-      description: string;
-      color: string;
-      borderActive: string;
-}
-
 type DatePreset = "all" | "last7" | "last30" | "last90" | "lastYear" | "custom";
-
-// ── Constants ────────────────────────────────────────────
-
-const FORMAT_OPTIONS: FormatOption[] = [
-      {
-            value: "csv",
-            icon: <FileText className="h-8 w-8" />,
-            label: "CSV",
-            description: "Comma-separated values",
-            color: "text-emerald-500",
-            borderActive: "border-emerald-500 bg-emerald-500/10",
-      },
-      {
-            value: "excel",
-            icon: <FileSpreadsheet className="h-8 w-8" />,
-            label: "XLSX",
-            description: "Microsoft Excel",
-            color: "text-blue-500",
-            borderActive: "border-blue-500 bg-blue-500/10",
-      },
-      {
-            value: "pdf",
-            icon: <FileDown className="h-8 w-8" />,
-            label: "PDF",
-            description: "Print-ready document",
-            color: "text-red-500",
-            borderActive: "border-red-500 bg-red-500/10",
-      },
-];
-
-const CURRENCY_OPTIONS: GenericSelectOption[] = [
-      { value: "_native", label: "🌐  Original currency (as stored)" },
-      { value: "USD", label: "🇺🇸  USD — US Dollar" },
-      { value: "EUR", label: "🇪🇺  EUR — Euro" },
-      { value: "GBP", label: "🇬🇧  GBP — British Pound" },
-      { value: "SAR", label: "🇸🇦  SAR — Saudi Riyal" },
-      { value: "AED", label: "🇦🇪  AED — UAE Dirham" },
-      { value: "EGP", label: "🇪🇬  EGP — Egyptian Pound" },
-      { value: "TRY", label: "🇹🇷  TRY — Turkish Lira" },
-      { value: "INR", label: "🇮🇳  INR — Indian Rupee" },
-];
-
-const DATE_PRESET_OPTIONS: GenericSelectOption[] = [
-      { value: "all", label: "📅  All time" },
-      { value: "last7", label: "📅  Last 7 days" },
-      { value: "last30", label: "📅  Last 30 days" },
-      { value: "last90", label: "📅  Last 90 days (Quarter)" },
-      { value: "lastYear", label: "📅  Last 12 months" },
-      { value: "custom", label: "📅  Custom range..." },
-];
-
-const EXPIRING_OPTIONS: GenericSelectOption[] = [
-      { value: "0", label: "⏰  No filter" },
-      { value: "5", label: "🔴  Expiring in 5 days" },
-      { value: "7", label: "🔴  Expiring in 7 days" },
-      { value: "14", label: "🟡  Expiring in 14 days" },
-      { value: "30", label: "🟡  Expiring in 30 days" },
-      { value: "60", label: "🟢  Expiring in 60 days" },
-      { value: "90", label: "🟢  Expiring in 90 days" },
-];
 
 // ── Helpers ──────────────────────────────────────────────
 
@@ -164,10 +84,71 @@ export function SubscriptionsExportDialog({
       const [expiringInDays, setExpiringInDays] = useState("0");
       const [success, setSuccess] = useState(false);
 
+      // ── Translated options (rebuilt each render for language switch) ──
+
+      const te = (key: string) => t(`entitlements.subscriptions.export.${key}`);
+
+      const FORMAT_OPTIONS: { value: ExportFormat; icon: React.ReactNode; label: string; description: string; color: string; borderActive: string }[] = [
+            {
+                  value: "csv",
+                  icon: <FileText className="h-8 w-8" />,
+                  label: te("formatCsv"),
+                  description: te("formatCsvDesc"),
+                  color: "text-emerald-500",
+                  borderActive: "border-emerald-500 bg-emerald-500/10",
+            },
+            {
+                  value: "excel",
+                  icon: <FileSpreadsheet className="h-8 w-8" />,
+                  label: te("formatXlsx"),
+                  description: te("formatXlsxDesc"),
+                  color: "text-blue-500",
+                  borderActive: "border-blue-500 bg-blue-500/10",
+            },
+            {
+                  value: "pdf",
+                  icon: <FileDown className="h-8 w-8" />,
+                  label: te("formatPdf"),
+                  description: te("formatPdfDesc"),
+                  color: "text-red-500",
+                  borderActive: "border-red-500 bg-red-500/10",
+            },
+      ];
+
+      const CURRENCY_OPTIONS: GenericSelectOption[] = [
+            { value: "_native", label: `🌐  ${te("currencyHint").split(".")[0]}` },
+            { value: "USD", label: "🇺🇸  USD — US Dollar" },
+            { value: "EUR", label: "🇪🇺  EUR — Euro" },
+            { value: "GBP", label: "🇬🇧  GBP — British Pound" },
+            { value: "SAR", label: "🇸🇦  SAR — Saudi Riyal" },
+            { value: "AED", label: "🇦🇪  AED — UAE Dirham" },
+            { value: "EGP", label: "🇪🇬  EGP — Egyptian Pound" },
+            { value: "TRY", label: "🇹🇷  TRY — Turkish Lira" },
+            { value: "INR", label: "🇮🇳  INR — Indian Rupee" },
+      ];
+
+      const DATE_PRESET_OPTIONS: GenericSelectOption[] = [
+            { value: "all", label: `📅  ${te("allTime")}` },
+            { value: "last7", label: `📅  ${te("last7Days")}` },
+            { value: "last30", label: `📅  ${te("last30Days")}` },
+            { value: "last90", label: `📅  ${te("last90Days")}` },
+            { value: "lastYear", label: `📅  ${te("lastYear")}` },
+            { value: "custom", label: `📅  ${te("customRange")}` },
+      ];
+
+      const EXPIRING_OPTIONS: GenericSelectOption[] = [
+            { value: "0", label: `⏰  ${te("expiringNoFilter")}` },
+            { value: "5", label: `🔴  ${te("expiringIn5Days")}` },
+            { value: "7", label: `🔴  ${te("expiringIn7Days")}` },
+            { value: "14", label: `🟡  ${te("expiringIn14Days")}` },
+            { value: "30", label: `🟡  ${te("expiringIn30Days")}` },
+            { value: "60", label: `🟢  ${te("expiringIn60Days")}` },
+            { value: "90", label: `🟢  ${te("expiringIn90Days")}` },
+      ];
+
       const handleExport = async () => {
             setSuccess(false);
             try {
-                  // Compute date range
                   let dateFrom: string | undefined;
                   let dateTo: string | undefined;
                   if (datePreset === "custom") {
@@ -207,42 +188,35 @@ export function SubscriptionsExportDialog({
 
       // Active filter summary
       const activeFilters: string[] = [];
-      if (statusFilter !== "all") activeFilters.push(`Status: ${statusFilter}`);
-      if (typeFilter !== "all") activeFilters.push(`Type: ${typeFilter}`);
+      if (statusFilter !== "all") activeFilters.push(`${t("common.status")}: ${statusFilter}`);
+      if (typeFilter !== "all") activeFilters.push(`${t("common.type")}: ${typeFilter}`);
       if (datePreset !== "all") {
             if (datePreset === "custom") {
                   if (customDateFrom || customDateTo)
-                        activeFilters.push(`Date: ${customDateFrom || "..."} → ${customDateTo || "..."}`);
+                        activeFilters.push(`${te("dateRange")}: ${customDateFrom || "..."} → ${customDateTo || "..."}`);
             } else {
-                  const label = DATE_PRESET_OPTIONS.find((o) => o.value === datePreset)?.label || datePreset;
-                  activeFilters.push(label.replace("📅  ", ""));
+                  const opt = DATE_PRESET_OPTIONS.find((o) => o.value === datePreset);
+                  if (opt) activeFilters.push(opt.label.replace(/📅\s+/, ""));
             }
       }
-      if (parseInt(expiringInDays) > 0)
-            activeFilters.push(`Expiring ≤ ${expiringInDays}d`);
+      if (parseInt(expiringInDays) > 0) {
+            const opt = EXPIRING_OPTIONS.find((o) => o.value === expiringInDays);
+            if (opt) activeFilters.push(opt.label.replace(/[🔴🟡🟢⏰]\s+/, ""));
+      }
 
       return (
-            <Dialog open={open} onOpenChange={handleOpenChange}>
-                  <DialogContent className="sm:max-w-lg">
-                        <DialogHeader>
-                              <DialogTitle className="flex items-center gap-2">
-                                    <FileDown className="h-5 w-5" />
-                                    {t("entitlements.subscriptions.export.title") || "Export Subscriptions"}
-                              </DialogTitle>
-                              <DialogDescription>
-                                    {t("entitlements.subscriptions.export.description") ||
-                                          "Generate comprehensive subscription analytics reports."}
-                              </DialogDescription>
-                        </DialogHeader>
-
+            <GenericModal
+                  open={open}
+                  onOpenChange={handleOpenChange}
+                  title={te("title")}
+                  description={te("description")}
+                  size="lg"
+            >
+                  <div className="space-y-4">
                         {/* Record Count */}
                         <div className="flex items-center justify-between rounded-md bg-muted/50 px-3 py-2 text-sm">
-                              <span className="text-muted-foreground">
-                                    {t("entitlements.subscriptions.export.records") || "Records to export"}
-                              </span>
-                              <Badge variant="secondary" className="font-mono">
-                                    {totalCount}
-                              </Badge>
+                              <span className="text-muted-foreground">{te("records")}</span>
+                              <Badge variant="secondary" className="font-mono">{totalCount}</Badge>
                         </div>
 
                         {/* Format Cards */}
@@ -272,16 +246,16 @@ export function SubscriptionsExportDialog({
                               <div className="space-y-1.5">
                                     <Label className="flex items-center gap-1 text-xs font-medium text-muted-foreground">
                                           <Calendar className="h-3 w-3" />
-                                          Date Range
+                                          {te("dateRange")}
                                     </Label>
                                     <GenericSelect
                                           options={DATE_PRESET_OPTIONS}
                                           value={datePreset}
                                           onValueChange={(v: string | string[]) => setDatePreset(v as DatePreset)}
-                                          placeholder="Select range"
+                                          placeholder={te("dateRange")}
                                           searchable
                                           searchType="client"
-                                          searchPlaceholder="Search..."
+                                          searchPlaceholder={t("common.search")}
                                     />
                               </div>
 
@@ -289,25 +263,25 @@ export function SubscriptionsExportDialog({
                               <div className="space-y-1.5">
                                     <Label className="flex items-center gap-1 text-xs font-medium text-muted-foreground">
                                           <Clock className="h-3 w-3" />
-                                          Expiring Soon
+                                          {te("expiringSoon")}
                                     </Label>
                                     <GenericSelect
                                           options={EXPIRING_OPTIONS}
                                           value={expiringInDays}
                                           onValueChange={(v: string | string[]) => setExpiringInDays(v as string)}
-                                          placeholder="No filter"
+                                          placeholder={te("expiringNoFilter")}
                                           searchable
                                           searchType="client"
-                                          searchPlaceholder="Search..."
+                                          searchPlaceholder={t("common.search")}
                                     />
                               </div>
                         </div>
 
-                        {/* Custom Date Range (only when "custom" is selected) */}
+                        {/* Custom Date Range */}
                         {datePreset === "custom" && (
                               <div className="grid grid-cols-2 gap-3">
                                     <div className="space-y-1">
-                                          <Label className="text-[10px] text-muted-foreground">From</Label>
+                                          <Label className="text-[10px] text-muted-foreground">{te("dateFrom")}</Label>
                                           <Input
                                                 type="date"
                                                 value={customDateFrom}
@@ -316,7 +290,7 @@ export function SubscriptionsExportDialog({
                                           />
                                     </div>
                                     <div className="space-y-1">
-                                          <Label className="text-[10px] text-muted-foreground">To</Label>
+                                          <Label className="text-[10px] text-muted-foreground">{te("dateTo")}</Label>
                                           <Input
                                                 type="date"
                                                 value={customDateTo}
@@ -329,34 +303,26 @@ export function SubscriptionsExportDialog({
 
                         {/* Currency Selector */}
                         <div className="space-y-1.5">
-                              <Label className="text-xs font-medium text-muted-foreground">
-                                    {t("entitlements.subscriptions.export.currency") || "Display Currency"}
-                              </Label>
+                              <Label className="text-xs font-medium text-muted-foreground">{te("currency")}</Label>
                               <GenericSelect
                                     options={CURRENCY_OPTIONS}
                                     value={selectedCurrency}
                                     onValueChange={(v: string | string[]) => setSelectedCurrency(v as string)}
-                                    placeholder={t("entitlements.subscriptions.export.currencyPlaceholder") || "Select currency"}
+                                    placeholder={te("currencyPlaceholder")}
                                     searchable
                                     searchType="client"
-                                    searchPlaceholder={t("common.search") || "Search..."}
+                                    searchPlaceholder={t("common.search")}
                               />
-                              <p className="text-[10px] text-muted-foreground/60 italic">
-                                    {t("entitlements.subscriptions.export.currencyHint") || "Amounts will be shown in the selected currency where applicable"}
-                              </p>
+                              <p className="text-[10px] text-muted-foreground/60 italic">{te("currencyHint")}</p>
                         </div>
 
                         {/* Active Filters Summary */}
                         {activeFilters.length > 0 && (
                               <div className="space-y-1.5 rounded-md bg-muted/50 p-3">
-                                    <p className="text-xs font-medium text-muted-foreground">
-                                          {t("audit.export.appliedFilters") || "Applied Filters"}
-                                    </p>
+                                    <p className="text-xs font-medium text-muted-foreground">{te("appliedFilters")}</p>
                                     <div className="flex flex-wrap gap-1.5">
                                           {activeFilters.map((f, i) => (
-                                                <Badge key={i} variant="secondary" className="text-[10px]">
-                                                      {f}
-                                                </Badge>
+                                                <Badge key={i} variant="secondary" className="text-[10px]">{f}</Badge>
                                           ))}
                                     </div>
                               </div>
@@ -374,29 +340,30 @@ export function SubscriptionsExportDialog({
                         {success && (
                               <div className="flex items-center gap-2 rounded-md bg-emerald-500/10 p-3 text-sm text-emerald-600">
                                     <CheckCircle className="h-4 w-4 shrink-0" />
-                                    {t("entitlements.subscriptions.export.success") || "Export downloaded successfully!"}
+                                    {te("success")}
                               </div>
                         )}
 
-                        <DialogFooter>
+                        {/* Footer */}
+                        <div className="flex justify-end gap-2 pt-2 border-t">
                               <Button variant="outline" onClick={onClose} disabled={isExporting}>
-                                    {t("common.cancel") || "Cancel"}
+                                    {t("common.cancel")}
                               </Button>
                               <Button onClick={handleExport} disabled={isExporting}>
                                     {isExporting ? (
                                           <>
                                                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                                {t("entitlements.subscriptions.export.generating") || "Generating..."}
+                                                {te("generating")}
                                           </>
                                     ) : (
                                           <>
                                                 <FileDown className="mr-2 h-4 w-4" />
-                                                {t("entitlements.subscriptions.export.download") || "Download"}
+                                                {te("download")}
                                           </>
                                     )}
                               </Button>
-                        </DialogFooter>
-                  </DialogContent>
-            </Dialog>
+                        </div>
+                  </div>
+            </GenericModal>
       );
 }
