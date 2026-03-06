@@ -32,6 +32,11 @@ export interface IPermissionRepository {
   getMyPermissions(params?: PermissionListParams): Promise<Permission[]>;
 
   /**
+   * Get permissions assigned to a specific tenant
+   */
+  getForTenant(tenantId: string, params?: PermissionListParams): Promise<Permission[]>;
+
+  /**
    * Get permission by ID
    */
   getById(id: string): Promise<Permission>;

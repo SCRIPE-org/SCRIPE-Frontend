@@ -1,7 +1,9 @@
 /**
  * Permissions ViewModel
  *
- * Provides data and operations for the permissions management view.
+ * Context-aware: system admin sees full catalog, tenant admin / drill-down see
+ * only the permissions assigned to that tenant (via TenantPermission table).
+ *
  * SOLID: All state logic lives here, View is pure UI.
  */
 "use client";
@@ -10,6 +12,8 @@ import { useState, useMemo, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { systemContainer } from "@modules/system/di";
 import { useDebounce } from "@core/hooks/use-validation";
+import { useAppStore } from "@core/store/useAppStore";
+import { useTenantContext } from "@core/providers/tenant-context-provider";
 import type { Permission, PermissionCategoryGroup } from "../../domain/entities/Permission";
 import type {
   CreatePermissionRequest,
@@ -22,6 +26,17 @@ export function usePermissionsViewModel() {
   const { success, error: toastError } = useEnhancedToast();
   const { permissionRepository } = systemContainer;
 
+  // ── Context detection (same pattern as features/editions) ──
+  const userTenantId = useAppStore((s) => s.user?.tenantId);
+  const { currentTenant, isInTenantWorld } = useTenantContext();
+
+  // System catalog mode: system admin (tenantId == null) with no drill-down
+  const isSystemCatalogMode = !userTenantId && !isInTenantWorld;
+
+  // Effective tenant ID for scoped queries
+  // Drill-down uses currentTenant.id, tenant admin uses their own tenantId
+  const effectiveTenantId = isInTenantWorld ? currentTenant?.id : userTenantId;
+
   // === FILTER STATE (owned by ViewModel, not View) ===
   const [searchInput, setSearchInput] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<string | undefined>();
@@ -31,25 +46,32 @@ export function usePermissionsViewModel() {
   const category = categoryFilter;
   const search = debouncedSearch;
 
-  // Query key
-  const queryKey = useMemo(() => ["permissions", { category, search }], [category, search]);
-
-  // Fetch permissions
-  const {
-    data: permissions,
-    isLoading,
-    isError,
-    error,
-    refetch,
-  } = useQuery({
-    queryKey,
+  // ── CATALOG MODE: Full permissions catalog (system admin, no drill-down) ──
+  const catalogQuery = useQuery({
+    queryKey: ["permissions", "catalog", { category, search }],
     queryFn: () => permissionRepository.getAll({ category, search }),
+    enabled: isSystemCatalogMode,
   });
 
-  // Fetch categories
+  // ── TENANT MODE: Tenant's assigned permissions ──
+  const tenantQuery = useQuery({
+    queryKey: ["permissions", "tenant", effectiveTenantId, { search }],
+    queryFn: () => permissionRepository.getForTenant(effectiveTenantId!, { search }),
+    enabled: !isSystemCatalogMode && !!effectiveTenantId,
+  });
+
+  // Resolved data
+  const permissions = isSystemCatalogMode ? catalogQuery.data : tenantQuery.data;
+  const isLoading = isSystemCatalogMode ? catalogQuery.isLoading : tenantQuery.isLoading;
+  const isError = isSystemCatalogMode ? catalogQuery.isError : tenantQuery.isError;
+  const error = isSystemCatalogMode ? catalogQuery.error : tenantQuery.error;
+  const refetch = isSystemCatalogMode ? catalogQuery.refetch : tenantQuery.refetch;
+
+  // Fetch categories (only in catalog mode — tenant mode shows all returned)
   const { data: categories } = useQuery({
     queryKey: ["permissions", "categories"],
     queryFn: () => permissionRepository.getCategories(),
+    enabled: isSystemCatalogMode,
   });
 
   // Group permissions by category
@@ -149,6 +171,7 @@ export function usePermissionsViewModel() {
     groupedPermissions,
     categories: categories ?? [],
     totalCount: permissions?.length ?? 0,
+    isSystemCatalogMode,
 
     // Filter state (View binds to these, no useState in View)
     filter: {

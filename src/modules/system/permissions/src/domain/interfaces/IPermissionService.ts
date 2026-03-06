@@ -13,6 +13,7 @@ import type { PermissionListParams } from "./IPermissionRepository";
 export interface IPermissionService {
   getAll(params?: PermissionListParams): Promise<PermissionModel[]>;
   getMyPermissions(params?: PermissionListParams): Promise<PermissionModel[]>;
+  getForTenant(tenantId: string, params?: PermissionListParams): Promise<PermissionModel[]>;
   getById(id: string): Promise<PermissionModel>;
   getCategories(): Promise<string[]>;
   create(json: CreatePermissionJson): Promise<{ id: string }>;

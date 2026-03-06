@@ -23,7 +23,7 @@ import type { IPermissionService } from "../../domain/interfaces/IPermissionServ
 import type { PermissionListParams } from "../../domain/interfaces/IPermissionRepository";
 
 export class PermissionService implements IPermissionService {
-  constructor(private readonly api: IApiService) {}
+  constructor(private readonly api: IApiService) { }
 
   async getAll(params?: PermissionListParams): Promise<PermissionModel[]> {
     const url = buildUrl(API_ENDPOINTS.PERMISSIONS.LIST, {
@@ -37,6 +37,14 @@ export class PermissionService implements IPermissionService {
   async getMyPermissions(params?: PermissionListParams): Promise<PermissionModel[]> {
     const url = buildUrl(API_ENDPOINTS.PERMISSIONS.MY, {
       category: params?.category,
+      search: params?.search,
+    });
+    const jsonList = await this.api.get<PermissionJson[]>(url);
+    return jsonList.map((json) => PermissionModel.fromJson(json));
+  }
+
+  async getForTenant(tenantId: string, params?: PermissionListParams): Promise<PermissionModel[]> {
+    const url = buildUrl(API_ENDPOINTS.TENANTS.PERMISSIONS(tenantId), {
       search: params?.search,
     });
     const jsonList = await this.api.get<PermissionJson[]>(url);
