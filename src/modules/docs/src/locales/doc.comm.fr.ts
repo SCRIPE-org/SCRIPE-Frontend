@@ -604,6 +604,8 @@ export const docCommFr: Record<string, any> = {
                   entOverridesDesc: "Personnalisez les valeurs des fonctionnalités pour des locataires individuels, indépendamment de leur plan souscrit. Parfait pour les accords d'entreprise sur mesure, les offres promotionnelles et les tests bêta.",
                   entQuota: "Application Automatique des Quotas",
                   entQuotaDesc: "Les fonctionnalités numériques avec des entités QuotaCounter sont automatiquement appliquées via le pipeline FeatureCheckBehavior. Aucune vérification manuelle n'est nécessaire — les commandes sont rejetées lorsque les quotas sont dépassés.",
+                  entContextAware: "Portée Administrative Contextuelle",
+                  entContextAwareDesc: "Les pages de fonctionnalités, d'éditions et de permissions s'adaptent automatiquement au contexte de l'administrateur. Les administrateurs système voient le catalogue complet avec les opérations CRUD ; les administrateurs de locataires ne voient que leurs données effectives ; les sessions de navigation descendante (drill-down) se limitent au locataire concerné — le tout piloté par le backend, sans filtrage côté client.",
             },
 
             // ─── Faq ────────────────────────────────

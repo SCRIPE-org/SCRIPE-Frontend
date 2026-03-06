@@ -606,6 +606,8 @@ export const docCommEn: Record<string, any> = {
       entOverridesDesc: "Customize feature values for individual tenants regardless of their subscribed plan. Perfect for custom enterprise deals, promotional offers, and beta testing.",
       entQuota: "Automatic Quota Enforcement",
       entQuotaDesc: "Numeric features with QuotaCounter entities are automatically enforced via the FeatureCheckBehavior pipeline. No manual checks needed — commands are rejected when quotas are exceeded.",
+      entContextAware: "Context-Aware Admin Scoping",
+      entContextAwareDesc: "Features, editions, and permissions pages automatically adapt to the admin's context. System admins see the full catalog with CRUD; tenant admins see only their effective data; drill-down sessions scope to the drilled-down tenant — all driven by the backend, not client-side filtering.",
     },
 
     // ─── Faq ────────────────────────────────

@@ -513,6 +513,8 @@ export const docCommZh: Record<string, any> = {
                   entOverridesDesc: "无论租户订阅了什么计划，都可以为单个租户自定义功能值。非常适合定制的企业级交易、促销优惠和 Beta 测试。",
                   entQuota: "自动配额执行",
                   entQuotaDesc: "带有 QuotaCounter 实体的数字功能将通过 FeatureCheckBehavior 管道自动执行。无需手动检查 —— 当超出配额时，命令将被拒绝。",
+                  entContextAware: "上下文感知的管理范围",
+                  entContextAwareDesc: "功能、版本和权限页面会自动适应管理员的上下文。系统管理员可以看到完整的目录并拥有 CRUD 操作权限；租户管理员仅能看到其生效数据；深入查看 (drill-down) 会话会限定到所选定的租户 —— 所有这些都由后端驱动，而非客户端过滤。",
                   contactNote: "需要此处未列出的附加组件？我们的企业解决方案团队随时可以快速开发专业集成的原型。",
                   customContent: "有非常具体的监管要求吗？NEXORA 工程团队可以作为您自己团队的延伸，直接在您的租户层级中快速交付量身定制的模块。",
                   customDev: "定制模块工程开发",

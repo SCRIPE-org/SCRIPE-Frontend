@@ -604,6 +604,8 @@ export const docCommEs: Record<string, any> = {
                   entOverridesDesc: "Personalice los valores de las funciones para inquilinos individuales independientemente de su plan suscrito. Perfecto para acuerdos empresariales personalizados, ofertas promocionales y pruebas beta.",
                   entQuota: "Aplicación Automática de Cuotas",
                   entQuotaDesc: "Las funciones numéricas con entidades QuotaCounter se aplican automáticamente a través de la pipeline FeatureCheckBehavior. No se necesitan comprobaciones manuales: los comandos se rechazan cuando se exceden las cuotas.",
+                  entContextAware: "Alcance de Administración Consciente del Contexto",
+                  entContextAwareDesc: "Las páginas de funciones, ediciones y permisos se adaptan automáticamente al contexto del administrador. Los administradores del sistema ven el catálogo completo con CRUD; los administradores de inquilinos ven solo sus datos efectivos; las sesiones de exploración detallada (drill-down) se limitan al inquilino explorado — todo impulsado por el backend, no por filtrado del lado del cliente.",
             },
 
             // ─── Faq ────────────────────────────────

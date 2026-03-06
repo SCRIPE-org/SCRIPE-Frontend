@@ -604,6 +604,8 @@ export const docCommDe: Record<string, any> = {
                   entOverridesDesc: "Passen Sie Funktionswerte für einzelne Mandanten unabhängig von ihrem abonnierten Plan an. Perfekt für maßgeschneiderte Enterprise-Deals, Werbeangebote und Beta-Tests.",
                   entQuota: "Automatische Kontingentdurchsetzung",
                   entQuotaDesc: "Numerische Funktionen mit QuotaCounter-Entitäten werden automatisch über die FeatureCheckBehavior-Pipeline durchgesetzt. Keine manuellen Prüfungen erforderlich — Befehle werden abgelehnt, wenn Kontingente überschritten sind.",
+                  entContextAware: "Kontextbewusster Admin-Bereich",
+                  entContextAwareDesc: "Die Seiten für Funktionen, Editionen und Berechtigungen passen sich automatisch an den Kontext des Administrators an. Systemadministratoren sehen den vollständigen Katalog mit CRUD; Mandantenadministratoren sehen nur ihre effektiven Daten; Drill-Down-Sitzungen beschränken sich auf den untersuchten Mandanten — alles vom Backend gesteuert, nicht durch clientseitige Filterung.",
             },
 
             // ─── Faq ────────────────────────────────

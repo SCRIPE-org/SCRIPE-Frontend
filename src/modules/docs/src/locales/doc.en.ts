@@ -830,6 +830,8 @@ export const docEn = {
       comparisonIntro: "The following table shows the difference in capabilities when the Entitlements module is enabled versus running without it:",
       gettingStartedTitle: "Getting Started",
       gettingStartedIntro: "Follow these 5 steps to set up the Entitlements system for your platform. Each step builds on the previous one:",
+      contextAwareTitle: "Context-Aware Scoping",
+      contextAwareIntro: "All entitlements pages (Features, Editions, Permissions) are context-aware. The frontend detects whether the user is a system admin (tenantId is null), tenant admin, or in drill-down mode, and calls different backend endpoints accordingly. System admins see the full catalog with CRUD; tenant admins see only their effective data in read-only mode.",
     },
 
     // ─── Editions ──────────────────────────────────────────────
@@ -854,7 +856,9 @@ export const docEn = {
       endpointsIntro: "The Editions controller exposes 11 endpoints for managing editions, their features, and version lifecycle:",
       scopingTitle: "System vs Retail Editions",
       scopingIntro: "NEXORA supports two types of editions: System editions created by platform admins visible to all tenants, and Retail editions created by reseller tenants for their child tenants only.",
-      scopingNote: "Tenant administrators only see system editions plus their own retail editions. This ensures edition isolation between reseller tenants.",
+      scopingNote: "Tenant administrators only see system editions plus their own retail editions. During drill-down, the system admin sees only the drilled-down tenant's visible editions (system + that tenant's retail). This ensures edition isolation between reseller tenants.",
+      drillDownTitle: "Drill-Down Behavior",
+      drillDownIntro: "When a system admin drills down into a tenant, the editions list is automatically scoped to show only editions visible to that tenant. The backend uses the X-Tenant-Context header to filter: system editions + retail editions created by the drilled-down tenant. The frontend hides CRUD actions in drill-down mode.",
       featuresTip: "Features not explicitly set in an edition fall back to Feature.DefaultValue. You only need to configure features that differ from the global default.",
       endpointsList: "List all editions (paginated, filterable)",
       endpointsGet: "Get edition details by ID",
@@ -964,6 +968,8 @@ export const docEn = {
       cacheNote: "The cache is automatically invalidated when: (1) an edition's features are modified, (2) a subscription is assigned/changed, (3) an override is set/removed. No manual cache busting is needed.",
       patternTitle: "IRequireFeature Pattern",
       patternIntro: "To gate any CQRS command behind a feature check, simply implement the IRequireFeature marker interface. The FeatureCheckBehavior automatically intercepts the request, resolves the tenant's feature value, and rejects if disabled or over quota.",
+      contextAwareTitle: "Context-Aware Feature Display",
+      contextAwareIntro: "The features list page is context-aware. System admins see the full feature catalog with CRUD operations. Tenant admins and drill-down sessions see only the tenant's effective features (resolved from their edition + overrides) in read-only mode. All scoping is backend-driven via GET /features (catalog) vs GET /features/effective (tenant-scoped).",
       ep: {
         list: "List all features (paginated, filterable by category/type)",
         get: "Get feature details by ID",
