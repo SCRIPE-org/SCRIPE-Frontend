@@ -4,6 +4,7 @@
 import type { IFeatureRepository } from "../../domain/interfaces/IFeatureRepository";
 import type { IFeatureService } from "../../domain/interfaces/IFeatureService";
 import { Feature } from "../../domain/entities/Feature";
+import { TenantEffectiveFeature } from "../../domain/entities/TenantEffectiveFeature";
 import { FeatureMapper } from "../mappers/FeatureMapper";
 import type { CreateFeatureRequest, UpdateFeatureRequest } from "../../domain/entities/FeatureRequests";
 import type { PagedResult, PaginationParams } from "@modules/system/core/domain/types";
@@ -46,5 +47,10 @@ export class FeatureRepository implements IFeatureRepository {
 
       async getTenantResolvedFeatures(tenantId: string): Promise<any[]> {
             return this.service.getTenantResolvedFeatures(tenantId);
+      }
+
+      async getEffective(tenantId?: string): Promise<TenantEffectiveFeature[]> {
+            const models = await this.service.getEffective(tenantId);
+            return models.map((m) => new TenantEffectiveFeature(m));
       }
 }

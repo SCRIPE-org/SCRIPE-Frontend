@@ -4790,8 +4790,16 @@ export const ar = {
       sharedPool: "مجمع مشترك",
       separatePool: "منفصل (مستقل عن الأب)",
       perChildPool: "لكل فرع (بدون مجمع)",
+      // الميزات الفعلية (عرض المستأجر)
+      effectiveTitle: "ميزاتي",
+      effectiveDescription: "الميزات المحسوبة من إصدار اشتراكك وأي تجاوزات مطبقة.",
+      editionValue: "قيمة الإصدار",
+      overrideValue: "التجاوز",
+      effectiveValue: "القيمة الفعلية",
+      featureCount: "ميزات",
     },
     editions: {
+      displayName: "الاسم المعروض",
       title: "الإصدارات",
       editionName: "اسم الإصدار",
       status: "الحالة",
@@ -5069,7 +5077,7 @@ export const ar = {
     },
     overrides: {
       title: "تجاوزات الميزات",
-      totalCost:"القيمة الاجمالية للميزات الزائدة",
+      totalCost: "القيمة الاجمالية للميزات الزائدة",
       description: "تجاوزات قيم الميزات لكل مستأجر للصفقات المخصصة.",
       set: "تعيين تجاوز",
       setDesc: "تعيين قيمة ميزة مخصصة لهذا المستأجر.",

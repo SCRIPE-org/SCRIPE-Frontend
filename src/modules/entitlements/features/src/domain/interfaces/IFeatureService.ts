@@ -20,6 +20,20 @@ export interface FeatureModel {
       modifiedAt?: string;
 }
 
+export interface TenantEffectiveFeatureModel {
+      featureId: string;
+      name: string;
+      displayNameEn?: string;
+      displayNameAr?: string;
+      valueType: string;
+      editionValue: string;
+      overrideValue?: string | null;
+      effectiveValue: string;
+      category?: string;
+      module?: string;
+      hasOverride: boolean;
+}
+
 export interface IFeatureService {
       getAll(params: PaginationParams): Promise<PagedResult<FeatureModel>>;
       getById(id: string): Promise<FeatureModel>;
@@ -27,4 +41,5 @@ export interface IFeatureService {
       update(id: string, data: Record<string, unknown>): Promise<void>;
       delete(id: string): Promise<void>;
       getTenantResolvedFeatures(tenantId: string): Promise<any[]>;
+      getEffective(tenantId?: string): Promise<TenantEffectiveFeatureModel[]>;
 }

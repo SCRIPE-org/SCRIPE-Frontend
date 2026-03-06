@@ -4,7 +4,7 @@
  * Uses centralized API_ENDPOINTS for all endpoint paths.
  */
 import type { IApiService } from "@core/interfaces/api.interface";
-import type { IFeatureService, FeatureModel } from "../../domain/interfaces/IFeatureService";
+import type { IFeatureService, FeatureModel, TenantEffectiveFeatureModel } from "../../domain/interfaces/IFeatureService";
 import type { PagedResult, PaginationParams } from "@modules/system/core/domain/types";
 import { API_ENDPOINTS } from "@core/config/api-endpoints";
 
@@ -37,5 +37,14 @@ export class FeatureService implements IFeatureService {
 
       async getTenantResolvedFeatures(tenantId: string): Promise<any[]> {
             return this.api.get<any[]>(API_ENDPOINTS.ENTITLEMENTS.TENANT_FEATURES.RESOLVED(tenantId));
+      }
+
+      async getEffective(tenantId?: string): Promise<TenantEffectiveFeatureModel[]> {
+            const params: Record<string, string> = {};
+            if (tenantId) params.tenantId = tenantId;
+            return this.api.get<TenantEffectiveFeatureModel[]>(
+                  API_ENDPOINTS.ENTITLEMENTS.FEATURES.EFFECTIVE,
+                  params
+            );
       }
 }

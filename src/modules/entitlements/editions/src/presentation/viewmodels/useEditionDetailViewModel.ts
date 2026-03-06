@@ -4,8 +4,9 @@ import { useState, useCallback, useMemo, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { entitlementsContainer } from "@modules/entitlements/di";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import { useAppStore } from "@core/store/useAppStore";
 import type { Edition } from "../../domain/entities/Edition";
-import type { Feature } from "@modules/entitlements/features/src/domain/entities/Feature";
+import { Feature } from "@modules/entitlements/features/src/domain/entities/Feature";
 
 // ── Disabled defaults ──
 function getDisabledDefault(valueType: string): string {
@@ -49,12 +50,21 @@ export interface EditionDetailViewModelResult {
       overflowPolicy: string;
       setOverflowPolicy: (policy: string) => void;
       overflowPolicyChanged: boolean;
+
+      // ── Context info ──
+      isSystemAdmin: boolean;
+      /** For tenant admins: maps featureName → tenant's effective value (cap) */
+      tenantEffectiveCaps: Record<string, string>;
 }
 
 export function useEditionDetailViewModel(editionId: string): EditionDetailViewModelResult {
       const { success, error: toastError } = useEnhancedToast();
       const queryClient = useQueryClient();
       const { editionRepository, featureRepository } = entitlementsContainer;
+
+      // ── System admin detection (tenantId == null) ──
+      const userTenantId = useAppStore((s) => s.user?.tenantId);
+      const isSystemAdmin = !userTenantId;
 
       // ── Queries ──
       const {
@@ -67,14 +77,58 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
             enabled: !!editionId,
       });
 
+      // System admin: fetch ALL features from catalog
       const {
-            data: featuresResult,
-            isLoading: isFeaturesLoading,
-            error: featuresError,
+            data: catalogResult,
+            isLoading: isCatalogLoading,
+            error: catalogError,
       } = useQuery({
             queryKey: ["entitlements", "features", "all"],
             queryFn: () => featureRepository.getAll({ page: 1, pageSize: 1000 }),
+            enabled: isSystemAdmin,
       });
+
+      // Tenant admin: fetch only their effective features
+      const {
+            data: effectiveFeatures,
+            isLoading: isEffectiveLoading,
+            error: effectiveError,
+      } = useQuery({
+            queryKey: ["entitlements", "effective-features", "for-edition"],
+            queryFn: () => featureRepository.getEffective(),
+            enabled: !isSystemAdmin,
+      });
+
+      // ── Map effective features to Feature-compatible objects ──
+      const { mappedFeatures, tenantEffectiveCaps } = useMemo(() => {
+            if (isSystemAdmin || !effectiveFeatures) {
+                  return { mappedFeatures: undefined, tenantEffectiveCaps: {} as Record<string, string> };
+            }
+            const caps: Record<string, string> = {};
+            const features: Feature[] = effectiveFeatures.map((ef) => {
+                  caps[ef.name] = ef.effectiveValue;
+                  return new Feature({
+                        id: ef.featureId,
+                        name: ef.name,
+                        displayNameEn: ef.displayNameEn,
+                        displayNameAr: ef.displayNameAr,
+                        category: ef.category,
+                        sortOrder: 0,
+                        isVisibleInUI: true,
+                        valueType: ef.valueType as "Boolean" | "Numeric" | "String",
+                        defaultValue: ef.effectiveValue,
+                        module: ef.module || "Other",
+                        isSystem: false,
+                        createdAt: "",
+                  });
+            });
+            return { mappedFeatures: features, tenantEffectiveCaps: caps };
+      }, [isSystemAdmin, effectiveFeatures]);
+
+      // ── Resolved features list ──
+      const resolvedFeatures = isSystemAdmin ? catalogResult?.items : mappedFeatures;
+      const isFeaturesLoading = isSystemAdmin ? isCatalogLoading : isEffectiveLoading;
+      const featuresError = isSystemAdmin ? catalogError : effectiveError;
 
       // ── Server map: featureName → value (from edition features) ──
       const serverValueMap = useMemo(() => {
@@ -228,13 +282,13 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
 
       // Auto-collapse all modules on first load
       useEffect(() => {
-            if (featuresResult?.items) {
-                  const modules = new Set(featuresResult.items.map(f => f.module));
+            if (resolvedFeatures) {
+                  const modules = new Set(resolvedFeatures.map((f: Feature) => f.module));
                   const collapsed: Record<string, boolean> = {};
-                  modules.forEach(m => { collapsed[m] = true; });
+                  modules.forEach((m: string) => { collapsed[m] = true; });
                   setCollapsedModules(collapsed);
             }
-      }, [featuresResult]);
+      }, [resolvedFeatures]);
 
       const expandAll = useCallback(() => {
             setCollapsedModules(prev => {
@@ -272,7 +326,7 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
 
       return {
             edition,
-            features: featuresResult?.items,
+            features: resolvedFeatures,
             isLoading: isEditionLoading || isFeaturesLoading,
             error: (editionError as Error) || (featuresError as Error) || null,
 
@@ -297,5 +351,8 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
             overflowPolicy: localOverflowPolicy,
             setOverflowPolicy: setLocalOverflowPolicy,
             overflowPolicyChanged,
+
+            isSystemAdmin,
+            tenantEffectiveCaps,
       };
 }

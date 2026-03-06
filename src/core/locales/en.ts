@@ -4953,9 +4953,17 @@ export const en = {
       sharedPool: "Shared Pool",
       separatePool: "Separate (Parent Independent)",
       perChildPool: "Per Child (No Pool)",
+      // Effective Features (tenant view)
+      effectiveTitle: "My Features",
+      effectiveDescription: "Features resolved from your subscription edition and any overrides.",
+      editionValue: "Edition Value",
+      overrideValue: "Override",
+      effectiveValue: "Effective",
+      featureCount: "features",
     },
     editions: {
       title: "Editions",
+      displayName: "Display Name",
       description: "Manage subscription plans — bundle features into editions like Basic, Pro, Enterprise.",
       name: "Edition Name",
       namePlaceholder: "e.g. Basic, Professional, Enterprise",
@@ -5257,7 +5265,7 @@ export const en = {
       costSetDesc: "The cost adjustment has been saved.",
       costRemoved: "Cost Removed",
       costRemovedDesc: "The cost adjustment has been removed.",
-      totalCost:"Total Cost"
+      totalCost: "Total Cost"
     },
     // ── Pooled Quotas & Admin Pool Mode ──
     pooledQuotas: {

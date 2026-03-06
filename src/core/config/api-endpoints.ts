@@ -227,6 +227,7 @@ export const API_ENDPOINTS = {
   ENTITLEMENTS: {
     FEATURES: {
       LIST: `${V1}/features`,
+      EFFECTIVE: `${V1}/features/effective`,
       BY_ID: (id: string) => `${V1}/features/${id}`,
       CREATE: `${V1}/features`,
       UPDATE: (id: string) => `${V1}/features/${id}`,
