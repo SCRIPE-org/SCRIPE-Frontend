@@ -36,6 +36,10 @@ export class SubscriptionRepository implements ISubscriptionRepository {
             return this.service.exportSubscriptions(params);
       }
 
+      async downloadReceipt(tenantId: string): Promise<ExportFileResult> {
+            return this.service.downloadReceipt(tenantId);
+      }
+
       // ── Lifecycle ──
 
       async assign(

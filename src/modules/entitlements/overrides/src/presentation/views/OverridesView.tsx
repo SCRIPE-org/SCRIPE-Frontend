@@ -202,11 +202,24 @@ function ResolvedFeaturesCard({ vm, t }: { vm: VM; t: TFn }) {
  * ============================================ */
 
 function CurrentOverridesCard({ vm, t }: { vm: VM; t: TFn }) {
+      const totalCostUsd = vm.overrides.reduce((sum, o) => sum + (o.costAmountUsd ?? 0), 0);
+
       return (
             <Card>
-                  <CardHeader>
-                        <CardTitle>{t("entitlements.overrides.title")}</CardTitle>
-                        <CardDescription>{t("entitlements.overrides.description")}</CardDescription>
+                  <CardHeader className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                        <div>
+                              <CardTitle>{t("entitlements.overrides.title")}</CardTitle>
+                              <CardDescription>{t("entitlements.overrides.description")}</CardDescription>
+                        </div>
+                        {totalCostUsd > 0 && (
+                              <div className="flex items-center gap-2 rounded-lg border border-emerald-500/30 bg-emerald-500/5 px-3 py-2">
+                                    <DollarSign className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                                    <div className="text-sm">
+                                          <span className="text-muted-foreground">{t("entitlements.overrides.totalCost") || "Total Override Cost"}:</span>{" "}
+                                          <span className="font-bold text-emerald-600 dark:text-emerald-400">${totalCostUsd.toFixed(2)} USD</span>
+                                    </div>
+                              </div>
+                        )}
                   </CardHeader>
                   <CardContent>
                         {vm.overrides.length === 0 ? (
@@ -223,6 +236,7 @@ function CurrentOverridesCard({ vm, t }: { vm: VM; t: TFn }) {
                                                       <TableHead>{t("entitlements.features.defaultValue")}</TableHead>
                                                       <TableHead>{t("entitlements.overrides.reason")}</TableHead>
                                                       <TableHead>{t("common.createdAt")}</TableHead>
+                                                      <TableHead>{t("entitlements.overrides.costAmount") || "Cost (USD)"}</TableHead>
                                                       <TableHead className="text-right">{t("common.actions")}</TableHead>
                                                 </TableRow>
                                           </TableHeader>
@@ -249,6 +263,22 @@ function CurrentOverridesCard({ vm, t }: { vm: VM; t: TFn }) {
                                                             </TableCell>
                                                             <TableCell className="text-sm">
                                                                   {format(new Date(o.createdAt), "MMM d, yyyy")}
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                  {o.costAmountUsd != null && o.costAmountUsd > 0 ? (
+                                                                        <div>
+                                                                              <span className="font-bold text-emerald-600 dark:text-emerald-400">
+                                                                                    ${o.costAmountUsd.toFixed(2)}
+                                                                              </span>
+                                                                              {o.costReason && (
+                                                                                    <p className="text-xs text-muted-foreground mt-0.5 max-w-[120px] truncate" title={o.costReason}>
+                                                                                          {o.costReason}
+                                                                                    </p>
+                                                                              )}
+                                                                        </div>
+                                                                  ) : (
+                                                                        <span className="text-muted-foreground text-xs">—</span>
+                                                                  )}
                                                             </TableCell>
                                                             <TableCell className="text-right">
                                                                   <div className="flex gap-1 justify-end">

@@ -294,6 +294,7 @@ export const API_ENDPOINTS = {
         if (edition && edition !== "all") params.set("edition", edition);
         return `${V1}/subscriptions/export?${params.toString()}`;
       },
+      RECEIPT: (tenantId: string) => `${V1}/tenants/${tenantId}/subscription/receipt`,
     },
     PRICING: {
       PREVIEW: (editionId: string, currency: string, type: string) => `${V1}/editions/${editionId}/prices/preview?currency=${currency}&type=${type}`,

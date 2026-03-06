@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 import { systemContainer } from "@modules/system/di";
+import { entitlementsContainer } from "@modules/entitlements/di";
 import type { SubscriptionModel, EditionThinModel, SubscriptionType, ExpiryBehavior, DowngradeImpactReport } from "../../data/models/TenantSubscription";
 import { appLogger } from "@/core/common/logger";
 
@@ -67,6 +68,10 @@ export interface UseTenantSubscriptionViewModelResult {
 
       getDowngradeImpact: (targetEditionId: string) => Promise<DowngradeImpactReport>;
       previewPrice: (editionId: string, currency: string, type: string) => Promise<number>;
+
+      // Receipt
+      downloadReceipt: () => void;
+      isDownloadingReceipt: boolean;
 }
 
 // ── ViewModel ──
@@ -227,6 +232,22 @@ export function useTenantSubscriptionViewModel(tenantId: string): UseTenantSubsc
             onError: errorToast,
       });
 
+      const receiptMutation = useMutation({
+            mutationFn: async () => {
+                  const { blob, filename } = await entitlementsContainer.subscriptionRepository.downloadReceipt(tenantId);
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement("a");
+                  a.href = url;
+                  a.download = filename;
+                  document.body.appendChild(a);
+                  a.click();
+                  a.remove();
+                  URL.revokeObjectURL(url);
+            },
+            onSuccess: () => { successToast(t("tenant.receiptDownloaded") || "Receipt downloaded successfully"); },
+            onError: errorToast,
+      });
+
       // ── Return ──
 
       return {
@@ -271,5 +292,8 @@ export function useTenantSubscriptionViewModel(tenantId: string): UseTenantSubsc
                   systemContainer.tenantRepository.getDowngradeImpact(tenantId, targetEditionId),
             previewPrice: (editionId: string, currency: string, type: string) =>
                   systemContainer.tenantRepository.previewPrice(editionId, currency, type),
+
+            downloadReceipt: () => receiptMutation.mutate(),
+            isDownloadingReceipt: receiptMutation.isPending,
       };
 }

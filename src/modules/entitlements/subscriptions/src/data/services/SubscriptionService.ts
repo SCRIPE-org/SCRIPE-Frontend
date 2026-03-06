@@ -228,4 +228,37 @@ export class SubscriptionService {
 
             return { blob, filename };
       }
+
+      // ── Receipt (blob download — backend-generated PDF) ──
+
+      async downloadReceipt(tenantId: string): Promise<{ blob: Blob; filename: string }> {
+            const token = this.api.getAuthToken();
+            const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "";
+
+            const endpointPath = API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.RECEIPT(tenantId);
+            const fullUrl = `${apiUrl}${endpointPath}`;
+
+            const response = await fetch(fullUrl, {
+                  method: "GET",
+                  headers: {
+                        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+                  },
+            });
+
+            if (!response.ok) {
+                  const errorBody = await response.text();
+                  throw new Error(errorBody || `Receipt download failed (${response.status})`);
+            }
+
+            const blob = await response.blob();
+            const contentDisposition = response.headers.get("content-disposition");
+            let filename = `subscription-receipt.pdf`;
+
+            if (contentDisposition) {
+                  const match = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+                  if (match?.[1]) filename = match[1].replace(/['"']*/g, "");
+            }
+
+            return { blob, filename };
+      }
 }

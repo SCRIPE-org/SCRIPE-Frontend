@@ -350,6 +350,8 @@ export const en = {
     subscriptionResumed: "Subscription resumed",
     subscriptionCanceled: "Subscription canceled",
     permissionsResynced: "Permissions re-synced from edition",
+    downloadReceipt: "Receipt",
+    receiptDownloaded: "Receipt downloaded successfully",
     // Banners
     expiringWarning: "Subscription expires soon. Consider renewing.",
     suspendedBanner: "This subscription is suspended. The tenant cannot access the system.",
@@ -5255,6 +5257,7 @@ export const en = {
       costSetDesc: "The cost adjustment has been saved.",
       costRemoved: "Cost Removed",
       costRemovedDesc: "The cost adjustment has been removed.",
+      totalCost:"Total Cost"
     },
     // ── Pooled Quotas & Admin Pool Mode ──
     pooledQuotas: {

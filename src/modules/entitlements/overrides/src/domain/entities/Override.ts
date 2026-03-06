@@ -11,6 +11,8 @@ export interface FeatureOverride {
       reason?: string;
       createdAt: string;
       modifiedAt?: string;
+      costAmountUsd?: number;
+      costReason?: string;
 }
 
 export interface ResolvedFeature {

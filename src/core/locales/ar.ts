@@ -110,6 +110,8 @@ export const ar = {
 
   // Tenants - المستأجرون
   tenant: {
+    downloadReceipt: "تحميل الفاتورة",
+    receiptDownloaded: "تم تحميل الفاتورة",
     refundOption: "خيار الاسترداد",
     noRefund: "لا يوجد استرداد",
     fullRefund: "استرداد كامل",
@@ -5067,6 +5069,7 @@ export const ar = {
     },
     overrides: {
       title: "تجاوزات الميزات",
+      totalCost:"القيمة الاجمالية للميزات الزائدة",
       description: "تجاوزات قيم الميزات لكل مستأجر للصفقات المخصصة.",
       set: "تعيين تجاوز",
       setDesc: "تعيين قيمة ميزة مخصصة لهذا المستأجر.",

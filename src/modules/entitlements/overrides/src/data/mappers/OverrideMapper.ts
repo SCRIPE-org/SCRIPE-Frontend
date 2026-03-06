@@ -21,6 +21,8 @@ export class OverrideMapper {
                   reason: model.reason,
                   createdAt: model.createdAt,
                   modifiedAt: model.modifiedAt,
+                  costAmountUsd: model.costAmountUsd,
+                  costReason: model.costReason,
             };
       }
 

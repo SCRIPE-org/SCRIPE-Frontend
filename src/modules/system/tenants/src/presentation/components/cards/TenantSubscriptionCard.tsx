@@ -9,7 +9,7 @@ import { Badge } from "@core/ui/badge";
 import {
       CreditCard, Pencil, Loader2, RefreshCw, Play, Pause, XCircle,
       ArrowUpCircle, Calendar, Clock, AlertTriangle, Shield, RotateCcw,
-      ArrowDownCircle, DollarSign, Globe,
+      ArrowDownCircle, DollarSign, Globe, FileDown,
 } from "lucide-react";
 import { useTenantSubscriptionViewModel } from "@modules/system/tenants/src/presentation/viewmodels/useTenantSubscriptionViewModel";
 import { systemContainer } from "@modules/system/di";
@@ -291,7 +291,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
 
                               {/* ── Pricing Info ── */}
                               {subscription.currency && subscription.totalAmount != null && (
-                                    <div className="rounded-lg border border-border/50 bg-muted/30 p-3">
+                                    <div className="rounded-lg border border-border/50 bg-muted/30 p-3 space-y-3">
                                           <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
                                                 <div className="space-y-1">
                                                       <p className="text-xs font-medium text-muted-foreground">{t("tenant.billingCurrency") || "Currency"}</p>
@@ -301,16 +301,16 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                                       </div>
                                                 </div>
                                                 <div className="space-y-1">
-                                                      <p className="text-xs font-medium text-muted-foreground">{t("tenant.totalAmount") || "Total"}</p>
-                                                      <p className="text-sm font-bold text-emerald-600 dark:text-emerald-400">
-                                                            {formatDisplay(subscription.totalAmount, subscription.currency)}
+                                                      <p className="text-xs font-medium text-muted-foreground">{t("tenant.baseAmount") || "Plan Price"}</p>
+                                                      <p className="text-sm font-medium">
+                                                            {formatDisplay(subscription.baseAmount ?? subscription.totalAmount, subscription.currency)}
                                                       </p>
                                                 </div>
-                                                {subscription.baseAmount != null && subscription.baseAmount !== subscription.totalAmount && (
+                                                {(subscription.adjustmentAmount ?? 0) > 0 && (
                                                       <div className="space-y-1">
-                                                            <p className="text-xs font-medium text-muted-foreground">{t("tenant.baseAmount") || "Base"}</p>
-                                                            <p className="text-sm font-medium">
-                                                                  {formatDisplay(subscription.baseAmount, subscription.currency)}
+                                                            <p className="text-xs font-medium text-muted-foreground">{t("entitlements.overrides.totalCost") || "Override Costs"}</p>
+                                                            <p className="text-sm font-bold text-emerald-600 dark:text-emerald-400">
+                                                                  +{formatDisplay(subscription.adjustmentAmount!, subscription.currency)}
                                                             </p>
                                                       </div>
                                                 )}
@@ -324,21 +324,28 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                                 )}
                                                 {subscription.appliedPromotionName && (
                                                       <div className="space-y-1">
-                                                            <p className="text-xs font-medium text-muted-foreground">{t("tenant.appliedPromotion") || "Applied Promotion"}</p>
+                                                            <p className="text-xs font-medium text-muted-foreground">{t("tenant.appliedPromotion") || "Promotion"}</p>
                                                             <Badge variant="secondary" className="bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400">
                                                                   🏷️ {subscription.appliedPromotionName}
+                                                                  {subscription.promotionDiscount != null && subscription.promotionDiscount > 0 && (
+                                                                        <span className="ml-1">
+                                                                              (−{formatDisplay(subscription.promotionDiscount, subscription.currency)})
+                                                                        </span>
+                                                                  )}
                                                             </Badge>
                                                       </div>
                                                 )}
-                                                {subscription.promotionDiscount != null && subscription.promotionDiscount > 0 && (
-                                                      <div className="space-y-1">
-                                                            <p className="text-xs font-medium text-muted-foreground">{t("tenant.discount") || "Discount"}</p>
-                                                            <p className="text-sm font-bold text-emerald-600 dark:text-emerald-400">
-                                                                  −{formatDisplay(subscription.promotionDiscount, subscription.currency)}
-                                                            </p>
-                                                      </div>
-                                                )}
                                           </div>
+
+                                          {/* Grand Total Bar — only when there are adjustments */}
+                                          {(subscription.adjustmentAmount ?? 0) > 0 && (
+                                                <div className="flex items-center justify-between rounded-md border border-primary/20 bg-primary/5 px-3 py-2">
+                                                      <span className="text-xs font-medium text-muted-foreground">{t("tenant.grandTotal") || "Grand Total"}</span>
+                                                      <span className="text-sm font-bold text-primary">
+                                                            {formatDisplay(subscription.totalAmount, subscription.currency)}
+                                                      </span>
+                                                </div>
+                                          )}
                                     </div>
                               )}
 
@@ -534,6 +541,20 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                                 {t("tenant.changeCurrency") || "Currency"}
                                           </Button>
                                     )}
+
+                                    {/* Download Receipt */}
+                                    <Button
+                                          variant="outline"
+                                          size="sm"
+                                          onClick={() => vm.downloadReceipt()}
+                                          disabled={vm.isDownloadingReceipt}
+                                    >
+                                          {vm.isDownloadingReceipt
+                                                ? <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+                                                : <FileDown className="mr-1.5 h-3.5 w-3.5" />
+                                          }
+                                          {t("tenant.downloadReceipt") || "Receipt"}
+                                    </Button>
                               </div>
                         </CardContent>
                   </Card>
