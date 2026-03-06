@@ -97,8 +97,8 @@ export const docEs: PartialDocTranslations = {
                   featureSecurityDesc: "Motor unificado de Control de Acceso Basado en Políticas (PBAC) que une RBAC, GBAC y ABAC. Incluye 2FA, restricciones a nivel de campo, limitación de tasa (rate limiting), gestión de sesiones y pistas de auditoría inmutables.",
                   featureMultiTenant: "Multitenencia (Multi-Tenancy)",
                   featureMultiTenantDesc: "Aislamiento de inquilinos (tenants) a nivel de fila con filtros de consulta globales de EF Core. Configuraciones por inquilino, personalización de marca y alcance de datos.",
-                  featureMultiDB: "Multibase de Datos",
-                  featureMultiDBDesc: "Cambia entre SQL Server, PostgreSQL, Oracle o SQLite con un solo cambio de configuración.",
+                  featureMultiDB: "Base de Datos Flexible",
+                  featureMultiDBDesc: "Cambie entre SQL Server, PostgreSQL u Oracle. Ejecute todos los módulos en una sola base de datos compartida (modo Single) o asigne a cada módulo su propia base de datos (modo Multi) — controlado por una única opción de configuración.",
                   featureDeployment: "Despliegue Flexible",
                   featureDeploymentDesc: "Despliega como monolito, microservicios o híbrido a través de una única variable de entorno MODULE_NAME.",
                   // Architecture
@@ -126,7 +126,7 @@ export const docEs: PartialDocTranslations = {
                   requiredToolsTitle: "Herramientas Requeridas",
                   // Database
                   databaseTitle: "Soporte de Bases de Datos",
-                  databaseIntro: "NEXORA soporta cuatro proveedores de bases de datos de forma nativa. Elige el que mejor se adapte a tu infraestructura. El proveedor se configura a través de la opción DatabaseProvider en appsettings.json.",
+                  databaseIntro: "NEXORA soporta tres proveedores de bases de datos de forma nativa: SQL Server, PostgreSQL y Oracle. El proveedor se configura a través de Database.Provider en appsettings.json. Además, la configuración Database.Mode controla el aislamiento de la base de datos: 'Single' coloca todas las tablas de los módulos en una base de datos compartida, mientras que 'Multi' (predeterminado) permite que cada módulo tenga su propia base de datos con cadenas de conexión separadas.",
                   databaseTip: "Para desarrollo local, SQL Server con Docker es la configuración más rápida. Usa el archivo Docker Compose a continuación para levantar SQL Server y Redis en segundos.",
                   // Environment Setup
                   envSetupTitle: "Configuración del Entorno",

@@ -153,7 +153,7 @@ export const docCommEn: Record<string, any> = {
       architectureContent: "We refuse to compromise. NEXORA strictly adheres to Domain-Driven Design (DDD) and Clean Architecture principles. Unlike flat MVC templates that buckle under enterprise scale, our architecture guarantees that presentation and infrastructure never leak into your core business logic.",
       architectureTitle: "Uncompromising Architecture",
       comparisonTitle: "The NEXORA Paradigm",
-      databaseContent: "Locking into a single vendor is a massive liability. With NEXORA, you can seamlessly migrate between SQL Server, Oracle, PostgreSQL, and SQLite with a single configuration flag—without rewriting a solitary line of data access code.",
+      databaseContent: "Locking into a single vendor is a massive liability. With NEXORA, you can seamlessly migrate between SQL Server, Oracle, and PostgreSQL with a single configuration flag. Additionally, the Database.Mode toggle lets you consolidate all modules into one shared database (Single mode) or isolate each module into its own database (Multi mode)—without rewriting a solitary line of data access code.",
       databaseTitle: "Zero Database Lock-in",
       description: "Architected for visionary enterprises to dominate their markets through uncompromising design, military-grade security, and frictionless scalability.",
       evaluationTip: "Important: Conduct a proof-of-concept. NEXORA's 30-day trial allows your lead engineers to validate our architectural claims directly against your hardest technical challenges.",
@@ -375,7 +375,7 @@ export const docCommEn: Record<string, any> = {
     databaseSupport: {
       description: "Seamlessly deploy NEXORA on SQL Server, PostgreSQL, Oracle, or SQLite without rewriting a single query.",
       featuresTitle: "Provider-Independent Capabilities",
-      intro: "NEXORA uses Entity Framework Core to completely abstract database interactions. Choose the relational engine that fits your licensing budget, high-availability requirements, or corporate mandates.",
+      intro: "NEXORA uses Entity Framework Core to completely abstract database interactions. Choose the relational engine that fits your licensing budget, high-availability requirements, or corporate mandates. The Database.Mode setting ('Single' or 'Multi') controls whether all modules share one database or each gets its own—configurable with zero code changes.",
       mig1Content: "Forget manual SQL scripts. NEXORA utilizes EF Core Code-First Migrations, automatically generating specific syntax for your chosen provider.",
       mig1Title: "Automated Multi-Schema Generatiom",
       mig2Content: "Deploy schema changes confidently across development, staging, and production environments using our deterministically isolated migration bundles.",
@@ -389,7 +389,7 @@ export const docCommEn: Record<string, any> = {
       perfTitle: "Optimized Query Compilation",
       providersIntro: "NEXORA treats the database as an interchangeable persistence layer. Our repository pattern cleanly isolates provider-specific logic.",
       providersTitle: "Agnostic Deployment Engines",
-      switchContent: "Switch databases via a single line in appsettings.json. No vendor lock-in. Move from SQLite in local development, to PostgreSQL for staging, to an Oracle RAC for your massive production rollout seamlessly.",
+      switchContent: "Switch database providers via a single line in appsettings.json. Toggle between Single-database mode (all modules share one DB) and Multi-database mode (each module gets its own DB) with the Database.Mode setting. Move from a single PostgreSQL instance in development to isolated Oracle RAC databases per module in production—seamlessly.",
       switchTitle: "Frictionless Provider Switching",
       tip: "Tip: For microservice deployments, consider utilizing different database providers for different bounded contexts based on their unique performance profiles.",
       title: "Database Agnosticism",
@@ -636,7 +636,7 @@ export const docCommEn: Record<string, any> = {
       a5: "Yes — this is a core design principle. NEXORA uses strict module boundaries with no cross-module imports. Each module follows Clean Architecture with its own domain, data, and presentation layers. You can start as a monolith for simplicity, move to a gateway topology to separate frontend/backend, and eventually extract individual modules into independent microservices — all without refactoring your code.",
 
       q6: "What databases are supported?",
-      a6: "NEXORA supports 4 database providers through Entity Framework Core: SQL Server, Oracle, PostgreSQL, and SQLite. Switching providers requires only a configuration change — no code modifications needed. Each provider has its own migration set, and the platform handles provider-specific quirks (like Oracle's NCLOB vs. SQL Server's NVARCHAR(MAX)) transparently.",
+      a6: "NEXORA supports 3 database providers through Entity Framework Core: SQL Server, Oracle, and PostgreSQL. Switching providers requires only a configuration change. Additionally, the Database.Mode setting controls database isolation: 'Single' mode puts all module tables in one shared database, while 'Multi' mode (default) allows each module to have its own database with separate connection strings and even different providers. Each provider has its own migration set, and the platform handles provider-specific quirks transparently.",
 
       qCanWeCustomize: "Can we customize and extend NEXORA's modules?",
       aCanWeCustomize: "Absolutely. You receive full source code access, and every module follows the SOLID View/ViewModel pattern with clear separation of concerns. You can modify existing modules, extend them with new features, or build entirely new modules using the nexora-cli scaffolding tool. The Open/Closed principle ensures you can extend behavior through composition without modifying the core framework.",

@@ -97,8 +97,8 @@ export const docDe: PartialDocTranslations = {
                   featureSecurityDesc: "Einheitliche richtlinienbasierte Zugriffskontrolle (PBAC), die RBAC, GBAC und ABAC vereint. Inklusive 2FA, Einschränkungen auf Feldebene, Rate Limiting, Sitzungsmanagement und unveränderlichen Audit-Trails.",
                   featureMultiTenant: "Mandantenfähigkeit",
                   featureMultiTenantDesc: "Mandantenisolierung auf Zeilenebene mit globalen Abfragefiltern von EF Core. Mandantenspezifische Einstellungen, Branding und Datenbereiche.",
-                  featureMultiDB: "Multi-Database",
-                  featureMultiDBDesc: "Wechseln Sie zwischen SQL Server, PostgreSQL, Oracle oder SQLite mit einer einzigen Konfigurationsänderung.",
+                  featureMultiDB: "Flexible Datenbank",
+                  featureMultiDBDesc: "Wechseln Sie zwischen SQL Server, PostgreSQL oder Oracle. Betreiben Sie alle Module in einer gemeinsamen Datenbank (Single-Modus) oder geben Sie jedem Modul eine eigene Datenbank (Multi-Modus) — gesteuert über eine einzige Konfigurationsoption.",
                   featureDeployment: "Flexibles Deployment",
                   featureDeploymentDesc: "Bereitstellung als Monolith, Microservices oder Hybrid über eine einzige Umgebungsvariable (MODULE_NAME).",
                   // Architecture
@@ -126,7 +126,7 @@ export const docDe: PartialDocTranslations = {
                   requiredToolsTitle: "Erforderliche Tools",
                   // Database
                   databaseTitle: "Datenbankunterstützung",
-                  databaseIntro: "NEXORA unterstützt standardmäßig vier Datenbankanbieter. Wählen Sie denjenigen, der am besten zu Ihrer Infrastruktur passt. Der Datenbankanbieter wird über die Einstellung DatabaseProvider in der appsettings.json konfiguriert.",
+                  databaseIntro: "NEXORA unterstützt standardmäßig drei Datenbankanbieter: SQL Server, PostgreSQL und Oracle. Der Anbieter wird über Database.Provider in der appsettings.json konfiguriert. Zusätzlich steuert die Einstellung Database.Mode die Datenbankisolierung: 'Single' legt alle Modultabellen in eine gemeinsame Datenbank, während 'Multi' (Standard) jedem Modul eine eigene Datenbank mit separaten Verbindungszeichenfolgen ermöglicht.",
                   databaseTip: "Für die lokale Entwicklung ist SQL Server mit Docker das schnellste Setup. Verwenden Sie die untenstehende Docker Compose-Datei, um SQL Server und Redis in Sekundenschnelle zu starten.",
                   // Environment Setup
                   envSetupTitle: "Umgebung einrichten",

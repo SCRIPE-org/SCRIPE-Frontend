@@ -96,8 +96,8 @@ export const docZh: PartialDocTranslations = {
                   featureSecurityDesc: "统一的基于策略的访问控制 (PBAC) 引擎，结合了 RBAC、GBAC 和 ABAC。包含 2FA、字段级限制、限流、会话管理和不可变的审计追踪。",
                   featureMultiTenant: "多租户 (Multi-Tenancy)",
                   featureMultiTenantDesc: "使用 EF Core 全局查询过滤器实现行级租户隔离。每个租户具有独立的设置、品牌定制和数据作用域。",
-                  featureMultiDB: "多数据库支持",
-                  featureMultiDBDesc: "只需更改一次配置，即可在 SQL Server、PostgreSQL、Oracle 或 SQLite 之间切换。",
+                  featureMultiDB: "灵活数据库",
+                  featureMultiDBDesc: "在 SQL Server、PostgreSQL 或 Oracle 之间切换。将所有模块运行在一个共享数据库中（Single 模式）或为每个模块分配独立数据库（Multi 模式）——通过单一配置选项控制。",
                   featureDeployment: "灵活部署",
                   featureDeploymentDesc: "通过单一的 MODULE_NAME 环境变量，可部署为单体、微服务或混合架构。",
                   // Architecture
@@ -125,7 +125,7 @@ export const docZh: PartialDocTranslations = {
                   requiredToolsTitle: "必备工具",
                   // Database
                   databaseTitle: "数据库支持",
-                  databaseIntro: "NEXORA 开箱即支持四种数据库提供程序。选择最适合您基础设施的数据库。数据库提供程序通过 appsettings.json 中的 DatabaseProvider 设置进行配置。",
+                  databaseIntro: "NEXORA 开箱即支持三种数据库提供程序：SQL Server、PostgreSQL 和 Oracle。通过 appsettings.json 中的 Database.Provider 设置配置提供程序。此外，Database.Mode 设置控制数据库隔离：'Single' 将所有模块表放在一个共享数据库中，而 'Multi'（默认）允许每个模块拥有独立的数据库和单独的连接字符串。",
                   databaseTip: "对于本地开发，使用 Docker 运行 SQL Server 是最快的设置方式。使用下方的 Docker Compose 文件，可在几秒钟内启动 SQL Server 和 Redis。",
                   // Environment Setup
                   envSetupTitle: "环境设置",

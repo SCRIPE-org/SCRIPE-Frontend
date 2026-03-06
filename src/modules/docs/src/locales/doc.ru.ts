@@ -96,8 +96,8 @@ export const docRu: PartialDocTranslations = {
                   featureSecurityDesc: "Единый механизм контроля доступа на основе политик (PBAC), объединяющий RBAC, GBAC и ABAC. Включает 2FA, ограничения на уровне полей, лимитирование запросов (rate limiting) и неизменяемые журналы аудита.",
                   featureMultiTenant: "Мультитенантность",
                   featureMultiTenantDesc: "Изоляция данных тенантов на уровне строк с помощью глобальных фильтров запросов EF Core. Настройки для каждого тенанта, брендирование и области видимости данных.",
-                  featureMultiDB: "Поддержка различных БД",
-                  featureMultiDBDesc: "Переключение между SQL Server, PostgreSQL, Oracle или SQLite одним изменением конфигурации.",
+                  featureMultiDB: "Гибкая база данных",
+                  featureMultiDBDesc: "Переключайтесь между SQL Server, PostgreSQL или Oracle. Запускайте все модули в одной общей базе данных (режим Single) или предоставьте каждому модулю собственную базу данных (режим Multi) — управляется одним параметром конфигурации.",
                   featureDeployment: "Гибкое развертывание",
                   featureDeploymentDesc: "Развертывание в виде монолита, микросервисов или гибридной архитектуры через одну переменную среды MODULE_NAME.",
                   // Architecture
@@ -125,7 +125,7 @@ export const docRu: PartialDocTranslations = {
                   requiredToolsTitle: "Необходимые инструменты",
                   // Database
                   databaseTitle: "Поддержка баз данных",
-                  databaseIntro: "NEXORA «из коробки» поддерживает четыре провайдера баз данных. Выберите тот, который лучше всего подходит для вашей инфраструктуры. Провайдер базы данных настраивается через параметр DatabaseProvider в appsettings.json.",
+                  databaseIntro: "NEXORA «из коробки» поддерживает три провайдера баз данных: SQL Server, PostgreSQL и Oracle. Провайдер настраивается через Database.Provider в appsettings.json. Кроме того, параметр Database.Mode управляет изоляцией баз данных: 'Single' размещает все таблицы модулей в одной общей базе, а 'Multi' (по умолчанию) позволяет каждому модулю иметь собственную базу данных с отдельными строками подключения.",
                   databaseTip: "Для локальной разработки SQL Server с Docker — самая быстрая настройка. Используйте файл Docker Compose ниже, чтобы развернуть SQL Server и Redis за считанные секунды.",
                   // Environment Setup
                   envSetupTitle: "Настройка среды",

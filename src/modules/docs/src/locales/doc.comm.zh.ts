@@ -151,7 +151,7 @@ export const docCommZh: Record<string, any> = {
                   architectureContent: "我们拒绝妥协。NEXORA 严格遵循领域驱动设计 (DDD) 和整洁架构 (Clean Architecture) 原则。与在企业规模下容易崩溃的扁平 MVC 模板不同，我们的架构保证了表现层和基础设施层永远不会泄漏到您的核心业务逻辑中。",
                   architectureTitle: "毫不妥协的架构",
                   comparisonTitle: "NEXORA 范式",
-                  databaseContent: "锁定在单一供应商是一个巨大的隐患。使用 NEXORA，您只需一个配置标志即可在 SQL Server、Oracle、PostgreSQL 和 SQLite 之间无缝迁移——而无需重写任何一行数据访问代码。",
+                  databaseContent: "锁定在单一供应商是一个巨大的隐患。使用 NEXORA，您只需一个配置标志即可在 SQL Server、Oracle 和 PostgreSQL 之间无缝迁移。此外，Database.Mode 切换开关允许您将所有模块合并到一个共享数据库中（Single 模式）或将每个模块隔离到其自己的数据库中（Multi 模式）——而无需重写任何一行数据访问代码。",
                   databaseTitle: "零数据库锁定",
                   description: "专为有远见的企业设计，通过毫不妥协的设计、军用级的安全性和无摩擦的扩展性来主导其市场。",
                   evaluationTip: "重要提示：进行概念验证 (PoC)。NEXORA 的 30 天试用版允许您的首席工程师直接针对您最困难的技术挑战验证我们的架构声明。",
@@ -373,7 +373,7 @@ export const docCommZh: Record<string, any> = {
             databaseSupport: {
                   description: "在不重写任何一行查询的情况下，将 NEXORA 无缝部署到 SQL Server、PostgreSQL、Oracle 或 SQLite 上。",
                   featuresTitle: "独立于提供商的功能",
-                  intro: "NEXORA 使用 Entity Framework Core 完全抽象了数据库交互。选择符合您许可预算、高可用性要求或公司规定的关系型引擎。",
+                  intro: "NEXORA 使用 Entity Framework Core 完全抽象了数据库交互。选择符合您许可预算、高可用性要求或公司规定的关系型引擎。Database.Mode 设置（'Single' 或 'Multi'）控制所有模块是共享一个数据库还是每个模块拥有自己的数据库——无需任何代码更改即可配置。",
                   mig1Content: "忘记手动编写的 SQL 脚本吧。NEXORA 利用 EF Core Code-First 迁移功能，自动为所选提供商生成特定语法。",
                   mig1Title: "自动化多模式生成",
                   mig2Content: "使用我们确定性隔离的迁移包，在开发、准生产和生产环境中自信地部署数据库架构更改。",
@@ -387,7 +387,7 @@ export const docCommZh: Record<string, any> = {
                   perfTitle: "优化的查询编译",
                   providersIntro: "NEXORA 将数据库视为可互换的持久层。我们的仓储模式 (Repository pattern) 干净地隔离了特定于提供商的逻辑。",
                   providersTitle: "与部署环境无关的引擎",
-                  switchContent: "只需通过 appsettings.json 中的一行代码即可切换数据库。没有供应商锁定。从本地开发中的 SQLite 顺利过渡到准生产环境的 PostgreSQL，再到用于大规模生产发布的 Oracle RAC。",
+                  switchContent: "通过 appsettings.json 中的一行配置即可切换数据库提供程序。使用 Database.Mode 设置在单数据库模式（所有模块共享一个数据库）和多数据库模式（每个模块拥有自己的数据库）之间切换。从开发环境中的单个 PostgreSQL 实例无缝过渡到生产环境中每个模块独立的 Oracle RAC 数据库。",
                   switchTitle: "无摩擦的提供商切换",
                   tip: "提示：对于微服务部署，请考虑根据其独特的性能特征，为不同的限界上下文使用不同的数据库提供商。",
                   title: "数据库平台无关性",
@@ -634,7 +634,7 @@ export const docCommZh: Record<string, any> = {
                   a5: "是的——这是核心设计原则。NEXORA 使用严格的模块边界，没有跨模块的直接导入。每个模块都遵循整洁架构，拥有自己的领域层、数据层和表现层。为了简单起见，您可以从单体架构开始，随时转移到网关拓扑以分离前端/后端，并最终将各个模块提取到独立的微服务中——这一切都无需重构您的代码。",
 
                   q6: "支持哪些数据库？",
-                  a6: "NEXORA 通过 Entity Framework Core 支持 4 种数据库提供商：SQL Server、Oracle、PostgreSQL 和 SQLite。切换提供商仅需要更改配置——无需修改代码。每个提供商都有自己的迁移集，平台会透明地处理特定提供商的差异（例如 Oracle 的 NCLOB 与 SQL Server 的 NVARCHAR(MAX)）。",
+                  a6: "NEXORA 通过 Entity Framework Core 支持 3 种数据库提供程序：SQL Server、Oracle 和 PostgreSQL。切换提供程序只需更改配置。此外，Database.Mode 设置控制数据库隔离：'Single' 模式将所有模块表放在一个共享数据库中，而 'Multi' 模式（默认）允许每个模块拥有自己的数据库，并具有单独的连接字符串甚至不同的提供程序。每个提供程序都有自己的迁移集，平台透明地处理提供程序特定的差异。",
 
                   qCanWeCustomize: "我们可以定制和扩展 NEXORA 的模块吗？",
                   aCanWeCustomize: "绝对可以。您将获得完整的源代码访问权限，并且每个模块都遵循 SOLID View/ViewModel 模式，具有清晰的关注点分离。您可以修改现有模块，利用新功能扩展它们，或者使用 nexora-cli 脚手架工具构建全新的模块。开闭原则 (Open/Closed) 确保您可以通过组合扩展行为，而无需修改核心框架。",

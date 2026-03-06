@@ -98,8 +98,8 @@ export const docEn = {
       featureSecurityDesc: "Unified Policy-Based Access Control (PBAC) engine uniting Role-Based (RBAC), Group-Based (GBAC), and Attribute-Based (ABAC) Access Control. Includes 2FA, Field-Level Restrictions, Rate Limiting, Session Management, and immutable Audit Trails.",
       featureMultiTenant: "Multi-Tenancy",
       featureMultiTenantDesc: "Row-level tenant isolation with EF Core global query filters. Per-tenant settings, branding, and data scoping.",
-      featureMultiDB: "Multi-Database",
-      featureMultiDBDesc: "Switch between SQL Server, PostgreSQL, Oracle, or SQLite with a single configuration change.",
+      featureMultiDB: "Flexible Database",
+      featureMultiDBDesc: "Switch between SQL Server, PostgreSQL, or Oracle. Run all modules in a single shared database (Single mode) or give each module its own database (Multi mode) — controlled by a single config toggle.",
       featureDeployment: "Flexible Deployment",
       featureDeploymentDesc: "Deploy as monolith, microservices, or hybrid via a single MODULE_NAME environment variable.",
       // Architecture
@@ -127,7 +127,7 @@ export const docEn = {
       requiredToolsTitle: "Required Tools",
       // Database
       databaseTitle: "Database Support",
-      databaseIntro: "NEXORA supports four database providers out of the box. Choose the one that best fits your infrastructure. The database provider is configured via the DatabaseProvider setting in appsettings.json.",
+      databaseIntro: "NEXORA supports three database providers out of the box: SQL Server, PostgreSQL, and Oracle. The provider is configured via Database.Provider in appsettings.json. Additionally, the Database.Mode setting controls database isolation: 'Single' puts all module tables in one shared database, while 'Multi' (default) allows each module to have its own database with separate connection strings.",
       databaseTip: "For local development, SQL Server with Docker is the fastest setup. Use the Docker Compose file below to spin up SQL Server and Redis in seconds.",
       // Environment Setup
       envSetupTitle: "Environment Setup",

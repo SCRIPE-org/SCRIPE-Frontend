@@ -151,7 +151,7 @@ export const docCommDe: Record<string, any> = {
                   architectureContent: "Wir verweigern jegliche Kompromisse. NEXORA hält sich strikt an Domain-Driven Design (DDD) und Clean Architecture-Prinzipien. Im Gegensatz zu flachen MVC-Vorlagen, die unter Enterprise-Skalierung einknicken, garantiert unsere Architektur, dass Präsentation und Infrastruktur niemals in Ihre Kern-Geschäftslogik durchsickern.",
                   architectureTitle: "Kompromisslose Architektur",
                   comparisonTitle: "Das NEXORA-Paradigma",
-                  databaseContent: "Sich an einen einzigen Anbieter zu binden, ist ein massives Risiko. Mit NEXORA können Sie nahtlos zwischen SQL Server, Oracle, PostgreSQL und SQLite mit einem einzigen Konfigurations-Flag migrieren – ohne eine einzige Zeile Datenzugriffscode neu zu schreiben.",
+                  databaseContent: "Sich an einen einzigen Anbieter zu binden, ist ein massives Risiko. Mit NEXORA können Sie nahtlos zwischen SQL Server, Oracle und PostgreSQL mit einem einzigen Konfigurations-Flag migrieren. Zusätzlich ermöglicht Ihnen der Database.Mode-Umschalter, alle Module in einer gemeinsamen Datenbank zu konsolidieren (Single-Modus) oder jedes Modul in eine eigene Datenbank zu isolieren (Multi-Modus) – ohne eine einzige Zeile Datenzugriffscode neu zu schreiben.",
                   databaseTitle: "Kein Vendor-Lock-in bei Datenbanken",
                   description: "Entwickelt für visionäre Unternehmen, um ihre Märkte durch kompromissloses Design, militärische Sicherheit und reibungslose Skalierbarkeit zu dominieren.",
                   evaluationTip: "Wichtig: Führen Sie einen Proof-of-Concept durch. Die 30-tägige Testversion von NEXORA ermöglicht es Ihren leitenden Ingenieuren, unsere architektonischen Behauptungen direkt anhand Ihrer schwierigsten technischen Herausforderungen zu validieren.",
@@ -373,7 +373,7 @@ export const docCommDe: Record<string, any> = {
             databaseSupport: {
                   description: "Stellen Sie NEXORA nahtlos auf SQL Server, PostgreSQL, Oracle oder SQLite bereit, ohne eine einzige Abfrage neu zu schreiben.",
                   featuresTitle: "Provider-unabhängige Fähigkeiten",
-                  intro: "NEXORA nutzt Entity Framework Core, um Datenbankinteraktionen vollständig zu abstrahieren. Wählen Sie die relationale Engine, die zu Ihrem Lizenzbudget, Ihren High-Availability-Anforderungen oder Ihren Unternehmensvorgaben passt.",
+                  intro: "NEXORA nutzt Entity Framework Core, um Datenbankinteraktionen vollständig zu abstrahieren. Wählen Sie die relationale Engine, die zu Ihrem Lizenzbudget, Ihren High-Availability-Anforderungen oder Ihren Unternehmensvorgaben passt. Die Einstellung Database.Mode ('Single' oder 'Multi') steuert, ob alle Module eine gemeinsame Datenbank nutzen oder jedes seine eigene erhält — konfigurierbar ohne Code-Änderungen.",
                   mig1Content: "Vergessen Sie manuelle SQL-Skripte. NEXORA nutzt EF Core Code-First Migrations und generiert automatisch spezifische Syntax für Ihren gewählten Provider.",
                   mig1Title: "Automatisierte Multi-Schema-Generierung",
                   mig2Content: "Stellen Sie Schemaänderungen sicher über Entwicklungs-, Staging- und Produktionsumgebungen hinweg bereit, indem Sie unsere deterministisch isolierten Migrations-Bundles verwenden.",
@@ -387,7 +387,7 @@ export const docCommDe: Record<string, any> = {
                   perfTitle: "Optimierte Abfragekompilierung",
                   providersIntro: "NEXORA behandelt die Datenbank als austauschbare Persistenzschicht. Unser Repository-Pattern isoliert providerspezifische Logik sauber.",
                   providersTitle: "Agnostische Deployment-Engines",
-                  switchContent: "Wechseln Sie die Datenbank über eine einzige Zeile in der appsettings.json. Kein Vendor-Lock-in. Wechseln Sie nahtlos von SQLite in der lokalen Entwicklung über PostgreSQL fürs Staging bis hin zu einem Oracle RAC für Ihren massiven Produktions-Rollout.",
+                  switchContent: "Wechseln Sie den Datenbankanbieter über eine einzige Zeile in der appsettings.json. Schalten Sie zwischen Single-Datenbank-Modus (alle Module teilen eine DB) und Multi-Datenbank-Modus (jedes Modul hat seine eigene DB) mit der Database.Mode-Einstellung um. Wechseln Sie nahtlos von einer einzelnen PostgreSQL-Instanz in der Entwicklung zu isolierten Oracle-RAC-Datenbanken pro Modul in der Produktion.",
                   switchTitle: "Reibungsloser Providerwechsel",
                   tip: "Tipp: Bei Microservice-Deployments sollten Sie erwägen, je nach den spezifischen Leistungsprofilen unterschiedliche Datenbankanbieter für verschiedene Bounded Contexts zu verwenden.",
                   title: "Datenbank-Agnostizismus",
@@ -634,7 +634,7 @@ export const docCommDe: Record<string, any> = {
                   a5: "Ja – das ist ein zentrales Designprinzip. NEXORA verwendet strikte Modulgrenzen ohne modulübergreifende Imports. Jedes Modul folgt der Clean Architecture mit eigenen Domain-, Daten- und Präsentationsschichten. Sie können der Einfachheit halber als Monolith beginnen, zu einer Gateway-Topologie wechseln, um Frontend/Backend zu trennen, und schließlich einzelne Module zu unabhängigen Microservices extrahieren – alles ohne Refactoring Ihres Codes.",
 
                   q6: "Welche Datenbanken werden unterstützt?",
-                  a6: "NEXORA unterstützt 4 Datenbankanbieter durch Entity Framework Core: SQL Server, Oracle, PostgreSQL und SQLite. Ein Anbieterwechsel erfordert lediglich eine Konfigurationsänderung – keine Codeanpassungen nötig. Jeder Anbieter verfügt über einen eigenen Migrationssatz, und die Plattform verarbeitet providerspezifische Eigenheiten (wie Oracle's NCLOB vs. SQL Server's NVARCHAR(MAX)) transparent.",
+                  a6: "NEXORA unterstützt 3 Datenbankanbieter durch Entity Framework Core: SQL Server, Oracle und PostgreSQL. Ein Anbieterwechsel erfordert lediglich eine Konfigurationsänderung. Zusätzlich steuert die Database.Mode-Einstellung die Datenbankisolierung: Der 'Single'-Modus legt alle Modultabellen in eine gemeinsame Datenbank, während der 'Multi'-Modus (Standard) jedem Modul eine eigene Datenbank mit separaten Verbindungszeichenfolgen und sogar unterschiedlichen Anbietern ermöglicht. Jeder Anbieter verfügt über einen eigenen Migrationssatz, und die Plattform verarbeitet providerspezifische Eigenheiten transparent.",
 
                   qCanWeCustomize: "Können wir die Module von NEXORA anpassen und erweitern?",
                   aCanWeCustomize: "Absolut. Sie erhalten vollen Zugriff auf den Quellcode, und jedes Modul folgt dem SOLID View/ViewModel-Muster mit klarer Trennung von Verantwortlichkeiten. Sie können bestehende Module ändern, um neue Funktionen erweitern oder völlig neue Module mithilfe des nexora-cli Scaffolding-Tools erstellen. Das Open/Closed-Prinzip stellt sicher, dass Sie das Verhalten durch Komposition erweitern können, ohne das Kern-Framework zu modifizieren.",

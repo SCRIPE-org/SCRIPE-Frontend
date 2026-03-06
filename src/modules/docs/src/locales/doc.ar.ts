@@ -97,8 +97,8 @@ export const docAr: PartialDocTranslations = {
                   featureSecurityDesc: "محرك موحد للتحكم في الوصول المبني على السياسات (PBAC) يجمع بين (RBAC) و(GBAC) و(ABAC). يتضمن مصادقة ثنائية (2FA)، قيود على مستوى الحقول، تقييد الطلبات، إدارة الجلسات، وسجلات تدقيق غير قابلة للتغيير.",
                   featureMultiTenant: "تعدد المستأجرين (Multi-Tenancy)",
                   featureMultiTenantDesc: "عزل البيانات على مستوى الصفوف باستخدام فلاتر الاستعلام العامة في EF Core. إعدادات لكل مستأجر، وتخصيص العلامة التجارية، ونطاق البيانات.",
-                  featureMultiDB: "قواعد بيانات متعددة",
-                  featureMultiDBDesc: "التبديل بين SQL Server أو PostgreSQL أو Oracle أو SQLite بتغيير بسيط في الإعدادات.",
+                  featureMultiDB: "قاعدة بيانات مرنة",
+                  featureMultiDBDesc: "التبديل بين SQL Server أو PostgreSQL أو Oracle. تشغيل جميع الوحدات في قاعدة بيانات مشتركة واحدة (وضع Single) أو منح كل وحدة قاعدة بياناتها الخاصة (وضع Multi) — يتم التحكم بذلك عبر خيار تكوين واحد.",
                   featureDeployment: "نشر مرن",
                   featureDeploymentDesc: "انشر كنظام متجانس، أو خدمات مصغرة، أو هجين عبر متغير بيئة واحد MODULE_NAME.",
                   // Architecture
@@ -126,7 +126,7 @@ export const docAr: PartialDocTranslations = {
                   requiredToolsTitle: "الأدوات المطلوبة",
                   // Database
                   databaseTitle: "دعم قواعد البيانات",
-                  databaseIntro: "تدعم NEXORA أربع مزودات لقواعد البيانات بشكل افتراضي. اختر ما يناسب بنيتك التحتية. يتم تكوين مزود قاعدة البيانات عبر إعداد DatabaseProvider في ملف appsettings.json.",
+                  databaseIntro: "تدعم NEXORA ثلاث مزودات لقواعد البيانات بشكل افتراضي: SQL Server و PostgreSQL و Oracle. يتم تكوين المزود عبر إعداد Database.Provider في ملف appsettings.json. بالإضافة إلى ذلك، يتحكم إعداد Database.Mode في عزل قاعدة البيانات: القيمة 'Single' تضع جميع جداول الوحدات في قاعدة بيانات مشتركة واحدة، بينما القيمة 'Multi' (الافتراضية) تسمح لكل وحدة بامتلاك قاعدة بياناتها الخاصة مع سلاسل اتصال منفصلة.",
                   databaseTip: "للتطوير المحلي، استخدام SQL Server مع Docker هو الإعداد الأسرع. استخدم ملف Docker Compose أدناه لتشغيل SQL Server و Redis في ثوانٍ.",
                   // Environment Setup
                   envSetupTitle: "إعداد البيئة",
