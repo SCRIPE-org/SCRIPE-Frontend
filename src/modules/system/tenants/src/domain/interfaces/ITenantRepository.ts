@@ -174,13 +174,13 @@ export interface ITenantRepository {
   convertTrial(tenantId: string, type: string): Promise<string>;
 
   /** Suspend a subscription (admin action for rules violation) */
-  suspendSubscription(tenantId: string, reason: string, useFallback?: boolean): Promise<string>;
+  suspendSubscription(tenantId: string, reason: string, useFallback?: boolean, refundType?: string): Promise<string>;
 
   /** Resume a previously suspended subscription */
   resumeSubscription(tenantId: string, type?: string): Promise<string>;
 
   /** Cancel a subscription permanently */
-  cancelSubscription(tenantId: string, reason?: string, useFallback?: boolean): Promise<string>;
+  cancelSubscription(tenantId: string, reason?: string, useFallback?: boolean, refundType?: string): Promise<string>;
 
   /** Re-sync tenant permissions from current edition (data backfill) */
   resyncPermissions(tenantId: string): Promise<void>;

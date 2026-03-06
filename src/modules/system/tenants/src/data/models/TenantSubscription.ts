@@ -8,6 +8,7 @@
 export type SubscriptionType = "Lifetime" | "Monthly" | "Yearly" | "Trial" | "AddOn";
 export type SubscriptionStatus = "Active" | "Trialing" | "PastDue" | "Suspended" | "Canceled" | "Expired";
 export type ExpiryBehavior = "Fallback" | "Suspend";
+export type RefundType = "None" | "Full" | "ProRata";
 
 export interface EditionThinModel {
       id: string;
@@ -50,6 +51,11 @@ export interface SubscriptionModel {
       // ── Promotion ──
       appliedPromotionName?: string;
       promotionDiscount?: number;
+      // ── Refund ──
+      refundType?: string;
+      refundAmount?: number;
+      refundedAt?: string;
+      refundReason?: string;
 }
 
 export interface PagedEditionResult {
@@ -84,11 +90,13 @@ export interface ConvertTrialPayload {
 export interface SuspendPayload {
       reason: string;
       useFallback?: boolean;
+      refundType?: RefundType;
 }
 
 export interface CancelPayload {
       reason?: string;
       useFallback?: boolean;
+      refundType?: RefundType;
 }
 
 export interface ResumePayload {

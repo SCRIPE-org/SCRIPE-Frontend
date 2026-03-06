@@ -447,6 +447,22 @@ export const en = {
     },
     discount: "Discount",
     suspendReasonMinLength: "Reason must be at least 3 characters",
+    // ── Refund ──
+    refundOption: "Refund Option",
+    noRefund: "No Refund",
+    noRefundDesc: "No money will be returned to the tenant.",
+    fullRefund: "Full Refund",
+    fullRefundDesc: "Return the full subscription amount.",
+    proRataRefund: "Pro-Rata Refund",
+    proRataRefundDesc: "Return money proportional to remaining unused days.",
+    refundAmount: "Refund Amount",
+    refundedAt: "Refunded At",
+    refundReason: "Refund Reason",
+    refundTypeLabel: {
+      None: "No Refund",
+      Full: "Full Refund",
+      ProRata: "Pro-Rata",
+    },
   },
 
   // Currency Display Preferences

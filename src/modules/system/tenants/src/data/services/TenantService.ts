@@ -252,10 +252,10 @@ export class TenantService implements ITenantService {
     return res?.message || "";
   }
 
-  async suspendSubscription(tenantId: string, reason: string, useFallback?: boolean): Promise<string> {
+  async suspendSubscription(tenantId: string, reason: string, useFallback?: boolean, refundType?: string): Promise<string> {
     const res = await this.api.post<{ message: string }>(
       API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.SUSPEND(tenantId),
-      { reason, useFallback: useFallback ?? false }
+      { reason, useFallback: useFallback ?? false, refundType: refundType ?? "None" }
     );
     return res?.message || "";
   }
@@ -268,10 +268,10 @@ export class TenantService implements ITenantService {
     return res?.message || "";
   }
 
-  async cancelSubscription(tenantId: string, reason?: string, useFallback?: boolean): Promise<string> {
+  async cancelSubscription(tenantId: string, reason?: string, useFallback?: boolean, refundType?: string): Promise<string> {
     const res = await this.api.post<{ message: string }>(
       API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.CANCEL(tenantId),
-      { reason, useFallback: useFallback ?? false }
+      { reason, useFallback: useFallback ?? false, refundType: refundType ?? "None" }
     );
     return res?.message || "";
   }

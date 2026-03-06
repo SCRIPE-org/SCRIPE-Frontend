@@ -110,9 +110,14 @@ export const ar = {
 
   // Tenants - المستأجرون
   tenant: {
+    refundOption: "خيار الاسترداد",
+    noRefund: "لا يوجد استرداد",
+    fullRefund: "استرداد كامل",
+    proRataRefund: "استرداد جزئي",
     billingCurrency: "عملة الفوترة",
     lockoutDuration: "مدة الحظر",
     selectPromotion: "اختر العرض الترويجي",
+    appliedPromotion: "العرض الترويجي المطبق",
     noPermission: "لا يوجد صلاحية",
     minutes: "دقائق",
     passwordExpiryDays: "أيام انتهاء صلاحية كلمة المرور",

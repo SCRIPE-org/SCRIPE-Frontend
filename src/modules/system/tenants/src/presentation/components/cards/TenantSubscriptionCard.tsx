@@ -23,6 +23,7 @@ import { Input } from "@core/ui/input";
 import { Textarea } from "@core/ui/textarea";
 import { Label } from "@core/ui/label";
 import { Switch } from "@core/ui/switch";
+import { RadioGroup, RadioGroupItem } from "@core/ui/radio-group";
 import type { SubscriptionType, DowngradeImpactReport } from "../../../data/models/TenantSubscription";
 
 interface TenantSubscriptionCardProps {
@@ -126,6 +127,8 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
       const [selectedCurrency, setSelectedCurrency] = useState("");
       const [promoCode, setPromoCode] = useState("");
       const [selectedPromotionId, setSelectedPromotionId] = useState("");
+      const [suspendRefundType, setSuspendRefundType] = useState<string>("None");
+      const [cancelRefundType, setCancelRefundType] = useState<string>("None");
 
       // Downgrade impact + price preview state
       const [impactReport, setImpactReport] = useState<DowngradeImpactReport | null>(null);
@@ -884,6 +887,53 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                                 <p className="text-xs text-destructive">{t("tenant.suspendReasonMinLength") || "Reason must be at least 3 characters"}</p>
                                           )}
                                     </div>
+
+                                    {/* ── Refund Options ── */}
+                                    <div className="rounded-lg border p-3 space-y-3">
+                                          <Label className="text-sm font-medium">
+                                                {t("tenant.refundOption") || "Refund Option"}
+                                          </Label>
+                                          <RadioGroup value={suspendRefundType} onValueChange={setSuspendRefundType} className="space-y-2">
+                                                <div className="flex items-start gap-3 rounded-md border p-3 cursor-pointer hover:bg-muted/50" onClick={() => setSuspendRefundType("None")}>
+                                                      <RadioGroupItem value="None" id="suspend-refund-none" className="mt-0.5" />
+                                                      <div>
+                                                            <Label htmlFor="suspend-refund-none" className="font-medium cursor-pointer">
+                                                                  {t("tenant.noRefund") || "No Refund"}
+                                                            </Label>
+                                                            <p className="text-xs text-muted-foreground">
+                                                                  {t("tenant.noRefundDesc") || "No money will be returned to the tenant."}
+                                                            </p>
+                                                      </div>
+                                                </div>
+                                                <div className="flex items-start gap-3 rounded-md border p-3 cursor-pointer hover:bg-muted/50" onClick={() => setSuspendRefundType("Full")}>
+                                                      <RadioGroupItem value="Full" id="suspend-refund-full" className="mt-0.5" />
+                                                      <div>
+                                                            <Label htmlFor="suspend-refund-full" className="font-medium cursor-pointer">
+                                                                  {t("tenant.fullRefund") || "Full Refund"}
+                                                            </Label>
+                                                            <p className="text-xs text-muted-foreground">
+                                                                  {t("tenant.fullRefundDesc") || "Return the full subscription amount."}
+                                                                  {subscription?.totalAmount != null && subscription.totalAmount > 0 && (
+                                                                        <span className="ml-1 font-semibold text-emerald-600 dark:text-emerald-400">
+                                                                              ({formatDisplay(subscription.totalAmount, subscription?.currency || "USD")})
+                                                                        </span>
+                                                                  )}
+                                                            </p>
+                                                      </div>
+                                                </div>
+                                                <div className="flex items-start gap-3 rounded-md border p-3 cursor-pointer hover:bg-muted/50" onClick={() => setSuspendRefundType("ProRata")}>
+                                                      <RadioGroupItem value="ProRata" id="suspend-refund-prorata" className="mt-0.5" />
+                                                      <div>
+                                                            <Label htmlFor="suspend-refund-prorata" className="font-medium cursor-pointer">
+                                                                  {t("tenant.proRataRefund") || "Pro-Rata Refund"}
+                                                            </Label>
+                                                            <p className="text-xs text-muted-foreground">
+                                                                  {t("tenant.proRataRefundDesc") || "Return money proportional to remaining unused days."}
+                                                            </p>
+                                                      </div>
+                                                </div>
+                                          </RadioGroup>
+                                    </div>
                               </div>
                               <DialogFooter>
                                     <Button variant="outline" onClick={() => setSuspendOpen(false)} disabled={vm.isSuspending}>
@@ -891,7 +941,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                     </Button>
                                     <Button variant="destructive" onClick={() => {
                                           if (suspendReason.trim().length >= 3) {
-                                                vm.suspendSubscription(suspendReason.trim(), vm.hasFallback ? useFallbackOnSuspend : undefined);
+                                                vm.suspendSubscription(suspendReason.trim(), vm.hasFallback ? useFallbackOnSuspend : undefined, suspendRefundType);
                                                 setSuspendOpen(false);
                                           }
                                     }} disabled={suspendReason.trim().length < 3 || vm.isSuspending}>
@@ -961,13 +1011,60 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                                 className="min-h-[80px]"
                                           />
                                     </div>
+
+                                    {/* ── Refund Options ── */}
+                                    <div className="rounded-lg border p-3 space-y-3">
+                                          <Label className="text-sm font-medium">
+                                                {t("tenant.refundOption") || "Refund Option"}
+                                          </Label>
+                                          <RadioGroup value={cancelRefundType} onValueChange={setCancelRefundType} className="space-y-2">
+                                                <div className="flex items-start gap-3 rounded-md border p-3 cursor-pointer hover:bg-muted/50" onClick={() => setCancelRefundType("None")}>
+                                                      <RadioGroupItem value="None" id="cancel-refund-none" className="mt-0.5" />
+                                                      <div>
+                                                            <Label htmlFor="cancel-refund-none" className="font-medium cursor-pointer">
+                                                                  {t("tenant.noRefund") || "No Refund"}
+                                                            </Label>
+                                                            <p className="text-xs text-muted-foreground">
+                                                                  {t("tenant.noRefundDesc") || "No money will be returned to the tenant."}
+                                                            </p>
+                                                      </div>
+                                                </div>
+                                                <div className="flex items-start gap-3 rounded-md border p-3 cursor-pointer hover:bg-muted/50" onClick={() => setCancelRefundType("Full")}>
+                                                      <RadioGroupItem value="Full" id="cancel-refund-full" className="mt-0.5" />
+                                                      <div>
+                                                            <Label htmlFor="cancel-refund-full" className="font-medium cursor-pointer">
+                                                                  {t("tenant.fullRefund") || "Full Refund"}
+                                                            </Label>
+                                                            <p className="text-xs text-muted-foreground">
+                                                                  {t("tenant.fullRefundDesc") || "Return the full subscription amount."}
+                                                                  {subscription?.totalAmount != null && subscription.totalAmount > 0 && (
+                                                                        <span className="ml-1 font-semibold text-emerald-600 dark:text-emerald-400">
+                                                                              ({formatDisplay(subscription.totalAmount, subscription?.currency || "USD")})
+                                                                        </span>
+                                                                  )}
+                                                            </p>
+                                                      </div>
+                                                </div>
+                                                <div className="flex items-start gap-3 rounded-md border p-3 cursor-pointer hover:bg-muted/50" onClick={() => setCancelRefundType("ProRata")}>
+                                                      <RadioGroupItem value="ProRata" id="cancel-refund-prorata" className="mt-0.5" />
+                                                      <div>
+                                                            <Label htmlFor="cancel-refund-prorata" className="font-medium cursor-pointer">
+                                                                  {t("tenant.proRataRefund") || "Pro-Rata Refund"}
+                                                            </Label>
+                                                            <p className="text-xs text-muted-foreground">
+                                                                  {t("tenant.proRataRefundDesc") || "Return money proportional to remaining unused days."}
+                                                            </p>
+                                                      </div>
+                                                </div>
+                                          </RadioGroup>
+                                    </div>
                               </div>
                               <DialogFooter>
                                     <Button variant="outline" onClick={() => setCancelOpen(false)} disabled={vm.isCanceling}>
                                           {t("common.cancel") || "Keep Subscription"}
                                     </Button>
                                     <Button variant="destructive" onClick={() => {
-                                          vm.cancelSubscription(cancelReason.trim() || undefined, vm.hasFallback ? useFallbackOnCancel : undefined);
+                                          vm.cancelSubscription(cancelReason.trim() || undefined, vm.hasFallback ? useFallbackOnCancel : undefined, cancelRefundType);
                                           setCancelOpen(false);
                                     }} disabled={vm.isCanceling}>
                                           {vm.isCanceling ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /></> : <XCircle className="mr-2 h-4 w-4" />}
