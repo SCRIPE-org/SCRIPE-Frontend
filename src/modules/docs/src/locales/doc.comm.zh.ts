@@ -1507,6 +1507,23 @@ export const docCommZh: Record<string, any> = {
                   title: "零信任安全态势",
             },
 
+            // ─── SSO Enterprise ────────────────────────────────
+            ssoEnterprise: {
+                  title: "企业单点登录 (Enterprise SSO)",
+                  description: "集中账户访问权限。将企业目录原生对接至 NEXORA 的多租户认证体系，实现零门槛接驳。",
+                  intro: "企业级安全需要集中化的信任。NEXORA 的 SSO 服务让您的租户可以放心地将身份验证工作交由他们原有的身份提供商 (IdP) 完成，与此同时依然维系绝对的租户隔离和完备的权限控制。",
+                  oidcTitle: "全生态 OIDC 兼容",
+                  oidcContent: "即插即用 Azure Active Directory (Entra ID)、Okta、Auth0、Google Workspace 乃至任何兼容 OpenID Connect 的平台。复杂的密码学交换我们包办，留给用户的仅仅是“一键登录”。",
+                  oauthAppsTitle: "第三方 OAuth 应用网关",
+                  oauthAppsContent: "释放生态潜能。允许企业合作伙伴通过注册无限量的 OAuth 应用 (Web/Desktop/SPA) 接入您的平台，程序化授予接口权限并精准掌控令牌注销机制。",
+                  tenantIsolationTitle: "专有租户身份引擎",
+                  tenantIsolationContent: "每一个 SSO 的配置都被严格锁定在其拥有者的租户内部。在同一个平台上，A 公司可以通过它专属的 Entra ID 登录，而 B 公司则走它的 Okta——彼此数据永远不可见、不可跨越。",
+                  pkceSecurityTitle: "PKCE 防御机制",
+                  pkceSecurityContent: "坚决摒弃脆弱过时的协议流。不管是网页应用还是原生移动端，NEXORA 强制每笔 OAuth 交互必须携带 PKCE (Proof Key for Code Exchange) 防护，100% 免疫授权码拦截攻击。",
+                  linkingTitle: "无痕身份同步",
+                  linkingContent: "告别繁琐的邮件邀请函。一旦员工通过企业 SSO 完成初次验证，系统会在后台悄无声息地进行邮箱印证，并将其与既有的 NEXORA 管理权与本地 RBAC（基于角色的权限控制）合二为一。",
+            },
+
             // ─── Storage Backends ────────────────────────────────
             storageBackends: {
                   configTitle: "动态提供商配置",

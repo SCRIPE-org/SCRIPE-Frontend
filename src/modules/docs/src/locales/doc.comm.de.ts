@@ -1507,6 +1507,23 @@ export const docCommDe: Record<string, any> = {
                   title: "Zero-Trust-Sicherheitshaltung",
             },
 
+            // ─── SSO Enterprise ────────────────────────────────
+            ssoEnterprise: {
+                  title: "Enterprise Single Sign-On (SSO)",
+                  description: "Zentralisieren Sie den Identitätszugriff. Verbinden Sie Unternehmensverzeichnisse nahtlos mit der Multi-Tenant-Authentifizierung von NEXORA.",
+                  intro: "Sicherheit auf Unternehmensebene erfordert zentralisiertes Vertrauen. NEXORA SSO ermöglicht es Ihren Kunden, Authentifizierungsabläufe an ihre bestehenden Identitätsanbieter (IdPs) zu delegieren und dabei unsere strikte Multi-Tenant-Isolierung und Rollenzuweisung beizubehalten.",
+                  oidcTitle: "Universelle OIDC-Integration",
+                  oidcContent: "Verbinden Sie nahtlos mit Azure Active Directory (Entra ID), Okta, Auth0, Google Workspace oder jedem standardkonformen OpenID Connect-Anbieter. Wir übernehmen den kryptografischen Handshake; Ihre Benutzer erhalten den Ein-Klick-Zugang, den sie erwarten.",
+                  oauthAppsTitle: "OAuth-Brokerage für Drittanbieter",
+                  oauthAppsContent: "Ermöglichen Sie es dem Software-Ökosystem Ihrer Kunden, sicher mit NEXORA zu integrieren. Registrieren Sie unbegrenzt viele OAuth-Web-, Desktop- oder SPA-Anwendungen und verwalten Sie Scopes und Lebenszyklen von Zugriffstoken programmatisch.",
+                  tenantIsolationTitle: "Mandantenspezifische Identitätsdienste",
+                  tenantIsolationContent: "NEXORA bindet SSO-Konfigurationen strikt an die Mandantengrenze. Tenant A kann sich per Entra ID authentifizieren, während Tenant B Okta nutzt – auf demselben System, mit null Gefahr von Cross-Pollination der Identitäten.",
+                  pkceSecurityTitle: "Proof Key for Code Exchange (PKCE)",
+                  pkceSecurityContent: "Wir verweigern verletzliche Legacy-Flows. Alle OAuth-Abläufe in NEXORA erzwingen PKCE und gewährleisten damit absolute Immunität gegen Auth-Code-Interception, selbst bei nativen mobilen Clients oder SPA-Frameworks.",
+                  linkingTitle: "Automatische Identitätsverknüpfung",
+                  linkingContent: "Keine manuellen Einladungen mehr. Wenn sich Mitarbeiter über Unternehmens-SSO anmelden, referenziert NEXORA automatisch E-Mail-Adressen und verknüpft föderierte IDs nahtlos mit lokalen Administratorprofilen und RBAC-Rollen.",
+            },
+
             // ─── Storage Backends ────────────────────────────────
             storageBackends: {
                   configTitle: "Dynamische Provider-Konfiguration",

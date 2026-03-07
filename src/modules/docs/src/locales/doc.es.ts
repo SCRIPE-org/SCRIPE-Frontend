@@ -745,6 +745,30 @@ export const docEs: PartialDocTranslations = {
                   frontendIntro: "Sigue la estructura de Listados de NEXORA más un formulario de detalle dividido en tres pestañas reactivas.",
                   securityNote: "SuperAdmins gestionan esto globalmente, Tenant-Admins solo ven sus grupos locales. Operación altamente controlada y auditada.",
             },
+
+            ssoOauth: {
+                  title: "SSO y OAuth",
+                  description: "Autenticación Multi-OIDC Identity Provider, aplicaciones OAuth y flujo PKCE.",
+                  intro: "NEXORA ofrece capacidades de Single Sign-On (SSO) de nivel empresarial, permitiendo a los inquilinos autenticarse contra sus proveedores de identidad (IdP) OIDC preferidos y registrar aplicaciones OAuth para terceros.",
+                  architectureTitle: "Arquitectura de Identidad",
+                  architectureIntro: "El sistema está diseñado para admitir un número infinito de Proveedores de Identidad por inquilino, manteniendo el aislamiento estricto de los datos y asegurando el flujo más seguro a través de PKCE.",
+                  domainModelTitle: "Modelo de Dominio",
+                  domainModelIntro: "Entidades principales que manejan la gestión de proveedores de identidad y el registro de aplicaciones OAuth.",
+                  idpEntityTitle: "Entidad IdentityProvider",
+                  idpEntityIntro: "Almacena la configuración para proveedores OIDC externos (e.g. Entra ID, Okta, Google). Si el ID del inquilino (TenantId) está vacío, el proveedor es aplicable a todo el sistema.",
+                  oauthAppEntityTitle: "Entidad OAuthApplication",
+                  oauthAppEntityIntro: "Permite a sistemas de terceros autenticarse contra NEXORA. Configurable como cliente Público (e.g. SPAs) o Confidencial.",
+                  pkceTitle: "Flujo de Seguridad PKCE",
+                  pkceIntro: "NEXORA asegura que todos los flujos de inicio de sesión OAuth y OIDC estén protegidos bajo PKCE (Proof Key for Code Exchange) para prevenir intercepciones de token. Los secretos de cliente nunca se exponen al frontend.",
+                  tenantScopingTitle: "Aislamiento por Inquilino",
+                  tenantScopingIntro: "Dedicado a la seguridad B2B, los inquilinos gestionan sus propios proveedores de manera aislada en su panel de configuración.",
+                  endpointsTitle: "Endpoints de la API",
+                  endpointsIntro: "Controladores que gestionan el ciclo de vida del IdP y de las solicitudes estandarizadas de OIDC.",
+                  endpointsMgmtTitle: "Endpoints de Gestión de SSO",
+                  endpointsOidcTitle: "Endpoints del Servidor OIDC",
+                  endpointsMgmtDesc: "Rutas CRUD para proveedores de identidad y aplicaciones OAuth.",
+                  endpointsOidcDesc: "Rutas estándar orientadas hacia adelante (Discovery, Authorize, Token, Userinfo) para interacciones de inicio de sesión.",
+            },
       },
 
       // 🛡️ SECURITY
@@ -798,6 +822,22 @@ export const docEs: PartialDocTranslations = {
                   sessionTitle: "Gestión de Sesiones",
                   sessionIntro: "Modelo sin estado (Stateless), donde el acceso vive en la memoria y el token de refresco en la Base de Datos o Cookie Segura.",
                   cookieAuthTip: "Para el máximo nivel de seguridad, los JWT de actualización (refresh) deben enviarse a través de cookies HttpOnly y SameSite=Strict en el frontend.",
+            },
+
+            sso: {
+                  title: "Single Sign-On (SSO)",
+                  description: "Autenticación OIDC, vinculación de identidad externa y aplicaciones OAuth.",
+                  intro: "El sistema NEXORA soporta autenticación mediante proveedores externos basándose en el protocolo OIDC, y el suministro de credenciales a través de Aplicaciones OAuth. El sistema es consciente del inquilino, con un enfoque contundente en la seguridad PKCE.",
+                  architectureTitle: "Arquitectura de Autenticación OIDC / OAuth",
+                  endpointsTitle: "Endpoints y Flujo Operacional",
+                  flowIntro: "El proceso de autenticación SSO requiere un flujo de múltiples pasos para garantizar una seguridad extrema:",
+                  authEndpointTitle: "1. Endpoint de Autorización",
+                  authEndpointDesc: "Redirige a la página de inicio de sesión del IdP externo. Incluye verificación PKCE y paso de token de estado.",
+                  callbackEndpointTitle: "2. Endpoint de Retorno (Callback)",
+                  callbackEndpointDesc: "Recibe al usuario después de una autenticación exitosa e intercambia el código de autorización por tokens de seguridad, ejecutado enteramente del lado del servidor sin intervención del navegador.",
+                  linkingTitle: "Vinculación y Manejo de Identidades",
+                  linkingIntro: "Cuando el usuario completa el inicio de sesión, el correo electrónico se verifica con la base de datos de usuarios existentes. Si es su primer inicio de sesión, el registro OIDC se vincula de manera opaca al registro interno de NEXORA, evitando conflictos de duplicidad.",
+                  pkceWarning: "Soporte para flujos implícitos (Implicit flow) obsoleto de OAuth eliminado. Se exige PKCE obligatorio en todas las variantes.",
             },
 
             dataProtection: {

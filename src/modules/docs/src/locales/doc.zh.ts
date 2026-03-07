@@ -744,6 +744,30 @@ export const docZh: PartialDocTranslations = {
                   frontendIntro: "详情页分为 3 个标签页独立管理成员、角色和权限限制。",
                   securityNote: "操作受限，超级管理员可以跨租户查看组，租户管理员仅限本地。",
             },
+
+            ssoOauth: {
+                  title: "SSO 与 OAuth",
+                  description: "通过多元化 OIDC 身份提供商认证、OAuth 应用集成及 PKCE 授权码流程。",
+                  intro: "NEXORA 提供企业级单点登录 (SSO) 能力，允许租户通过他们首选的 OIDC 提供商进行身份验证，并注册第三方 OAuth 应用程序。",
+                  architectureTitle: "身份架构",
+                  architectureIntro: "系统专为每个租户支持无限制配置身份提供商 (IdP) 而设计，并通过 PKCE 流程保持严格的数据隔离与极致的安全性。",
+                  domainModelTitle: "领域模型",
+                  domainModelIntro: "配置身份提供商与注册 OAuth 应用程序的核心实体。",
+                  idpEntityTitle: "IdentityProvider (身份提供商) 实体",
+                  idpEntityIntro: "存储外部 OIDC 提供商（如 Entra ID、Okta、Google）的配置。如果 TenantId 为空，则该提供商在全局适用。",
+                  oauthAppEntityTitle: "OAuthApplication (应用) 实体",
+                  oauthAppEntityIntro: "允许第三方系统授权并接入 NEXORA。可以配置为公共客户端 (如 SPA) 或机密客户端。",
+                  pkceTitle: "PKCE 安全流程",
+                  pkceIntro: "所有在 NEXORA 内部的 OAuth 和 OIDC 登录流程都受到 PKCE (Proof Key for Code Exchange) 的严格保护，以防止授权码被拦截窃取。客户端密钥绝不会暴露到前端。",
+                  tenantScopingTitle: "租户隔离限制",
+                  tenantScopingIntro: "遵循严格的 B2B 安全策略，租户管理员可完全独立地管理本租户专用的提供商。",
+                  endpointsTitle: "API 端点",
+                  endpointsIntro: "用于管理 IdP 生命周期和标准 OIDC 请求路径的控制器集群。",
+                  endpointsMgmtTitle: "SSO 管理端点",
+                  endpointsOidcTitle: "OIDC 服务端点",
+                  endpointsMgmtDesc: "身份提供商与 OAuth 应用的 CRUD 操作。",
+                  endpointsOidcDesc: "用于身份交互验证的标准核心 OIDC 路由规范 (Discovery, Authorize, Token, Userinfo)。",
+            },
       },
 
       // 🛡️ SECURITY
@@ -797,6 +821,22 @@ export const docZh: PartialDocTranslations = {
                   sessionTitle: "会话管理",
                   sessionIntro: "采用无状态 JWT 机制，不在服务器内存中保留用户会话，提高了并发性能。",
                   cookieAuthTip: "为获得最佳安全性，请配置通过 HttpOnly 且 SameSite=Strict 的 Cookie 来传输 Refresh Token。",
+            },
+
+            sso: {
+                  title: "单点登录 (SSO)",
+                  description: "OIDC 身份验证，外部身份绑定及 OAuth 应用集成。",
+                  intro: "NEXORA 系统支持基于 OIDC 协议的外部提供商进行身份验证，并通过 OAuth 应用安全下发凭证。系统完美融合了租户隔离机制与严格的 PKCE 安全保护。",
+                  architectureTitle: "OIDC / OAuth 验证架构",
+                  endpointsTitle: "端点与流程 (Flows)",
+                  flowIntro: "SSO 登录环节包含一个提供最高安全保障的多步握手流程：",
+                  authEndpointTitle: "1. 授权端点 (Authorize)",
+                  authEndpointDesc: "将用户重定向至外部 IdP 的登录页。在此步骤系统将注入 PKCE 验证码与防伪装态 (State) 参数。",
+                  callbackEndpointTitle: "2. 回调端点 (Callback)",
+                  callbackEndpointDesc: "在用户成功验证后接收其返回，并在服务端静默使用授权码对换 Token，全程无需浏览器干预。",
+                  linkingTitle: "身份绑定处理机制",
+                  linkingIntro: "在成功登录后，系统会自动侦测数据库比对邮箱。如果是该用户的首次登录，其 OIDC 身份记录将瞬间融合并绑定到内部 NEXORA 账户，从而杜绝数据重复割裂。",
+                  pkceWarning: "隐式 (Implicit) OAuth 流已被废弃剔除。PKCE 协议现在已强制应用在任何形式的授权机制中。",
             },
 
             dataProtection: {

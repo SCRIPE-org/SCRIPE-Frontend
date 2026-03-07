@@ -46,6 +46,8 @@ import {
   DollarSign,
   CreditCard,
   Layers,
+  Fingerprint,
+  KeyRound,
   type LucideIcon,
 } from "lucide-react";
 
@@ -102,6 +104,8 @@ export const iconMap: Record<string, LucideIcon> = {
   DollarSign: DollarSign,
   CreditCard: CreditCard,
   Layers: Layers,
+  Fingerprint: Fingerprint,
+  KeyRound: KeyRound,
 };
 
 /**

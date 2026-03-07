@@ -1507,6 +1507,23 @@ export const docCommFr: Record<string, any> = {
                   title: "Posture de Sécurité Zero-Trust",
             },
 
+            // ─── SSO Enterprise ────────────────────────────────
+            ssoEnterprise: {
+                  title: "Authentification Unique d'Entreprise (SSO)",
+                  description: "Centralisez l'accès des identités. Connectez vos annuaires d'entreprise directement avec l'authentification multi-locataire de NEXORA, sans la moindre friction.",
+                  intro: "La sécurité à l'échelle de l'entreprise exige une confiance centralisée. L'authentification SSO de NEXORA permet à vos clients de déléguer les flux d'authentification à leurs Fournisseurs d'Identité (IdPs) existants, tout en conservant secrètement notre isolation stricte multi-locataires et nos attributions de rôles.",
+                  oidcTitle: "Intégration OIDC Universelle",
+                  oidcContent: "Connectez-vous harmonieusement à Azure Active Directory (Entra ID), Okta, Auth0, Google Workspace ou à tout autre fournisseur supportant OpenID Connect (OIDC). Nous gérons les échanges cryptographiques ; vos utilisateurs bénéficient de l'accès en 1-clic qu'ils espèrent.",
+                  oauthAppsTitle: "Passerelle pour Applications OAuth Tierces",
+                  oauthAppsContent: "Donnez à l'écosystème logiciel de vos clients le pouvoir de s'intégrer en toute sécurité avec NEXORA. Enregistrez un nombre illimité d'applications OAuth Web, Bureau (Desktop) ou SPA (Single Page Application), et gérez de façon programmatique les portées (scopes) de droits ainsi que le cycle de vie des jetons d'accès.",
+                  tenantIsolationTitle: "Services d'Identité Spécifiques aux Locataires",
+                  tenantIsolationContent: "NEXORA lie strictement chaque configuration SSO à sa frontière de locataire dédiée. Le Locataire A peut s'authentifier par Entra ID tandis que le Locataire B passe par Okta — sur un seul et unique système, avec zéro risque de contamination croisée des identités.",
+                  pkceSecurityTitle: "Proof Key for Code Exchange (PKCE)",
+                  pkceSecurityContent: "Nous jetons et récusons entièrement les flux d'authentification obsolètes et vulnérables. La totalité des transactions OAuth de NEXORA imposent le protocole de vérification PKCE, assurant une immunité absolue contre les interceptions de codes d'autorisation, même pour les clients natifs mobiles ou les frameworks JavaScript en SPA.",
+                  linkingTitle: "Liaisons et Couplages d'Identités Automatisés",
+                  linkingContent: "Fini les invitations envoyées manuellement et laborieusement par e-mail. Lorsque vos collaborateurs se connectent via leur SSO d'entreprise, NEXORA audite instantanément les adresses e-mail de retour pour les coupler délicatement aux profils et rôles RBAC d'administration locale, de façon totalement fuyante et sans friction.",
+            },
+
             // ─── Storage Backends ────────────────────────────────
             storageBackends: {
                   configTitle: "Configuration Dynamique des Fournisseurs",

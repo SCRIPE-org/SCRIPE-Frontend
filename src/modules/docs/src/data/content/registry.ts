@@ -41,6 +41,7 @@ import "./features/user-management";
 import "./features/file-upload";
 import "./features/download-export";
 import "./features/message-templates";
+import "./features/sso-oauth";
 
 // Modules (Entitlements)
 import "./modules/entitlements-overview";
@@ -56,6 +57,7 @@ import "./security/data-protection";
 import "./security/api-security";
 import "./security/middleware-pipeline";
 import "./security/audit-compliance";
+import "./security/sso-identity-providers";
 
 // API Reference
 import "./api-reference/overview";
@@ -120,6 +122,7 @@ import "./commercial/authentication-security";
 import "./commercial/data-protection";
 import "./commercial/infrastructure-security";
 import "./commercial/compliance-readiness";
+import "./commercial/sso-enterprise";
 
 // Technical Capabilities
 import "./commercial/performance-benchmarks";

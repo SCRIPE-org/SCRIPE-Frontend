@@ -1507,6 +1507,23 @@ export const docCommEs: Record<string, any> = {
                   title: "Postura de Seguridad Zero-Trust",
             },
 
+            // ─── SSO Enterprise ────────────────────────────────
+            ssoEnterprise: {
+                  title: "Enterprise Single Sign-On (SSO)",
+                  description: "Centralice el acceso de identidad. Conecte los directorios corporativos directamente con la autenticación multi-inquilino de NEXORA sin fricción.",
+                  intro: "La seguridad a escala empresarial exige confianza centralizada. NEXORA SSO permite a sus clientes delegar los flujos de autenticación a sus Proveedores de Identidad (IdPs) existentes, al mismo tiempo que mantiene nuestro estricto aislamiento multi-inquilino y asignación de roles.",
+                  oidcTitle: "Integración Universal OIDC",
+                  oidcContent: "Conéctese perfectamente con Azure Active Directory (Entra ID), Okta, Auth0, Google Workspace o cualquier proveedor compatible con OpenID Connect. Nosotros manejamos el intercambio criptográfico; sus usuarios obtienen el acceso de un solo clic que esperan.",
+                  oauthAppsTitle: "Corretaje de Aplicaciones OAuth de Terceros",
+                  oauthAppsContent: "Capacite el ecosistema de software de sus clientes para integrarse de forma segura con NEXORA. Registre aplicaciones OAuth web, de escritorio o SPA ilimitadas, y gestione los alcances (scopes) y el ciclo de vida de los tokens de acceso mediante programación.",
+                  tenantIsolationTitle: "Servicios de Identidad Específicos por Inquilino",
+                  tenantIsolationContent: "NEXORA vincula estrictamente las configuraciones SSO al límite del inquilino. El Inquilino A puede autenticarse mediante Entra ID mientras el Inquilino B usa Okta — en el mismo sistema, con cero riesgo de polinización cruzada de identidades.",
+                  pkceSecurityTitle: "Proof Key for Code Exchange (PKCE)",
+                  pkceSecurityContent: "Rechazamos flujos heredados vulnerables. Todas las transacciones OAuth en NEXORA exigen PKCE, asegurando inmunidad absoluta contra la intercepción de códigos de autorización, incluso en clientes móviles nativos o frameworks SPA.",
+                  linkingTitle: "Vinculación Automática de Identidad",
+                  linkingContent: "Se acabaron las invitaciones manuales. Cuando los empleados inician sesión mediante el SSO corporativo, NEXORA verifica automáticamente los correos electrónicos y vincula las identificaciones federadas a los perfiles de administrador locales y a las funciones RBAC sin fricciones.",
+            },
+
             // ─── Storage Backends ────────────────────────────────
             storageBackends: {
                   configTitle: "Configuración Dinámica de Proveedores",

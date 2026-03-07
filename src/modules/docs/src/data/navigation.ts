@@ -70,6 +70,7 @@ export const navigationData: DocCategoryData[] = [
       { id: "feat-upload", titleKey: "features.fileUpload.title", slug: "features/file-upload", order: 11 },
       { id: "feat-download", titleKey: "features.downloadExport.title", slug: "features/download-export", order: 12 },
       { id: "feat-templates", titleKey: "features.messageTemplates.title", slug: "features/message-templates", order: 13 },
+      { id: "feat-sso", titleKey: "features.ssoOauth.title", slug: "features/sso-oauth", order: 14 },
     ],
   },
 
@@ -86,6 +87,7 @@ export const navigationData: DocCategoryData[] = [
       { id: "sec-api", titleKey: "security.apiSecurity.title", slug: "security/api-security", order: 4 },
       { id: "sec-middleware", titleKey: "security.middlewarePipeline.title", slug: "security/middleware-pipeline", order: 5 },
       { id: "sec-audit", titleKey: "security.auditCompliance.title", slug: "security/audit-compliance", order: 6 },
+      { id: "sec-sso", titleKey: "security.sso.title", slug: "security/sso-identity-providers", order: 7 },
     ],
   },
 
@@ -240,6 +242,7 @@ export const navigationData: DocCategoryData[] = [
       { id: "comm-sec-data", titleKey: "commercial.dataProtection.title", slug: "commercial/data-protection", order: 3 },
       { id: "comm-sec-infra", titleKey: "commercial.infraSecurity.title", slug: "commercial/infrastructure-security", order: 4 },
       { id: "comm-sec-compliance", titleKey: "commercial.complianceReadiness.title", slug: "commercial/compliance-readiness", order: 5 },
+      { id: "comm-sec-sso", titleKey: "commercial.ssoEnterprise.title", slug: "commercial/sso-enterprise", order: 6 },
     ],
   },
 
