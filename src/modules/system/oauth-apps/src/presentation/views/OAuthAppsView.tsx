@@ -7,6 +7,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
 import type { CrudConfig, CrudAction } from "@core/crud/components/generic-crud-view";
 import type { OAuthAppListItem } from "../../domain/entities/OAuthApp";
@@ -36,6 +37,7 @@ import {
 
 export function OAuthAppsView() {
       const { t } = useI18n();
+      const router = useRouter();
       const {
             vm,
             getConfigBase,
@@ -182,13 +184,10 @@ export function OAuthAppsView() {
                               ),
                         },
                   ],
-                  createFields: configBase.createFields || [],
-                  editFields: configBase.editFields || [],
-                  createInitialValues: configBase.createInitialValues,
-                  editInitialValues: configBase.editInitialValues,
                   getItemDisplayName: configBase.getItemDisplayName,
                   deleteService: configBase.deleteService,
                   permissions: configBase.permissions,
+                  onCreateClick: () => router.push("/settings/oauth-apps/create"),
                   getActions: (
                         _vmInstance: any,
                         tFn: any,
@@ -208,7 +207,8 @@ export function OAuthAppsView() {
                               },
                               {
                                     label: tFn("common.edit") || "Edit",
-                                    onClick: (item: OAuthAppListItem) => _vmInstance?.openEdit?.(item),
+                                    onClick: (item: OAuthAppListItem) =>
+                                          router.push(`/settings/oauth-apps/${item.id}`),
                                     variant: "ghost" as const,
                                     icon: <Pencil className="h-4 w-4" />,
                                     requiredPermission: "oauth_apps:update",
@@ -226,7 +226,7 @@ export function OAuthAppsView() {
                               },
                         ],
             }),
-            [t, configBase, handleRegenerateSecret, isRegenerating, regeneratingId],
+            [t, configBase, handleRegenerateSecret, isRegenerating, regeneratingId, router],
       );
 
       return (

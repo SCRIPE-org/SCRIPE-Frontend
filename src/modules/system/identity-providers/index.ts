@@ -17,3 +17,4 @@ export type { IIdentityProviderRepository } from "./src/domain/interfaces/IIdent
 
 // Views (for page.tsx connectors)
 export { IdentityProvidersView } from "./src/presentation/views/IdentityProvidersView";
+export { IdentityProviderDetailView } from "./src/presentation/views/IdentityProviderDetailView";

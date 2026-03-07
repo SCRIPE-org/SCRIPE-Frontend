@@ -7,6 +7,7 @@
 "use client";
 
 import { useMemo } from "react";
+import { useRouter } from "next/navigation";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
 import type { CrudConfig, CrudAction } from "@core/crud/components/generic-crud-view";
 import type { IdentityProviderListItem } from "../../domain/entities/IdentityProvider";
@@ -27,6 +28,7 @@ import { Button } from "@core/ui/button";
 
 export function IdentityProvidersView() {
       const { t } = useI18n();
+      const router = useRouter();
       const { vm, getConfigBase, handleTestConnection, isTesting, testingId } =
             useIdentityProvidersViewModel();
       const configBase = getConfigBase();
@@ -132,8 +134,8 @@ export function IdentityProvidersView() {
                                     <Badge
                                           variant={item.isActive ? "default" : "secondary"}
                                           className={`text-xs ${item.isActive
-                                                      ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400"
-                                                      : "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400"
+                                                ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400"
+                                                : "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400"
                                                 }`}
                                     >
                                           {item.isActive
@@ -177,13 +179,10 @@ export function IdentityProvidersView() {
                               ),
                         },
                   ],
-                  createFields: configBase.createFields || [],
-                  editFields: configBase.editFields || [],
-                  createInitialValues: configBase.createInitialValues,
-                  editInitialValues: configBase.editInitialValues,
                   getItemDisplayName: configBase.getItemDisplayName,
                   deleteService: configBase.deleteService,
                   permissions: configBase.permissions,
+                  onCreateClick: () => router.push("/settings/identity-providers/create"),
                   getActions: (
                         _vmInstance: any,
                         tFn: any,
@@ -192,7 +191,7 @@ export function IdentityProvidersView() {
                               {
                                     label: tFn("common.edit") || "Edit",
                                     onClick: (item: IdentityProviderListItem) =>
-                                          _vmInstance?.openEdit?.(item),
+                                          router.push(`/settings/identity-providers/${item.id}`),
                                     variant: "ghost" as const,
                                     icon: <Pencil className="h-4 w-4" />,
                                     requiredPermission: "identity_providers:update",
@@ -215,7 +214,7 @@ export function IdentityProvidersView() {
                               },
                         ],
             }),
-            [t, configBase, handleTestConnection, isTesting, testingId],
+            [t, configBase, handleTestConnection, isTesting, testingId, router],
       );
 
       return <GenericCrudView viewModel={vm} config={config} />;
