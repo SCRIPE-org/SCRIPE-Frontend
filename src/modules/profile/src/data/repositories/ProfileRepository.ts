@@ -19,11 +19,14 @@ import type {
   ActiveSessionDto,
   SecurityLogEntryDto,
   Enable2FAResultDto,
+  LinkExternalLoginDto,
+  ExternalLoginDto,
 } from "../models/ProfileModels";
 import { ProfileMapper } from "../mappers/ProfileMapper";
+import type { ExternalLogin } from "../../domain/entities/ExternalLogin";
 
 export class ProfileRepository implements IProfileRepository {
-  constructor(private readonly api: IApiService) {}
+  constructor(private readonly api: IApiService) { }
 
   // ── Profile ──────────────────────────────────────────
 
@@ -117,5 +120,24 @@ export class ProfileRepository implements IProfileRepository {
     });
     const dtos = await this.api.get<SecurityLogEntryDto[]>(url);
     return ProfileMapper.toSecurityLog(dtos);
+  }
+
+  // ── External Logins ──────────────────────────────────
+
+  async getExternalLogins(): Promise<ExternalLogin[]> {
+    const dtos = await this.api.get<ExternalLoginDto[]>(API_ENDPOINTS.PROFILE.EXTERNAL_LOGINS);
+    return ProfileMapper.toExternalLogins(dtos);
+  }
+
+  async linkExternalLogin(data: LinkExternalLoginDto): Promise<ExternalLogin> {
+    const dto = await this.api.post<ExternalLoginDto>(
+      API_ENDPOINTS.PROFILE.LINK_EXTERNAL_LOGIN,
+      data
+    );
+    return ProfileMapper.toExternalLogin(dto);
+  }
+
+  async unlinkExternalLogin(externalLoginId: string): Promise<void> {
+    await this.api.delete(API_ENDPOINTS.PROFILE.UNLINK_EXTERNAL_LOGIN(externalLoginId));
   }
 }

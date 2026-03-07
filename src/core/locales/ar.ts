@@ -57,6 +57,17 @@ export const ar = {
     },
   },
 
+  // SSO / تسجيلات الدخول الخارجية (الملف الشخصي)
+  sso: {
+    externalLogins: "تسجيلات الدخول الخارجية",
+    externalLoginsDescription: "اربط حسابات خارجية لتسجيل الدخول بأمان بدون كلمة مرور.",
+    noExternalLoginsLinked: "لا توجد حسابات خارجية مرتبطة.",
+    linkExternalAccount: "ربط حساب جديد",
+    accountUnlinked: "تم إلغاء ربط الحساب الخارجي بنجاح.",
+    unlinkError: "فشل في إلغاء ربط الحساب الخارجي. يرجى المحاولة مرة أخرى.",
+    accountLinkedSuccess: "تم ربط الحساب الخارجي بنجاح!",
+  },
+
   // Not Authorized Page
   notAuthorized: {
     title: "تم رفض الوصول",

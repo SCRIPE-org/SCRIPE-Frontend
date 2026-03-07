@@ -238,7 +238,9 @@ export class ApiService implements IApiService {
         // Log other errors
         const message = this.extractErrorMessage(error);
         appLogger.error(`API Error: ${message}`);
-        return Promise.reject(new Error(message));
+        const errObj = new Error(message) as any;
+        errObj.details = error.response?.data;
+        return Promise.reject(errObj);
       }
     );
 
@@ -259,7 +261,9 @@ export class ApiService implements IApiService {
       (error: AxiosError) => {
         const message = this.extractErrorMessage(error);
         appLogger.error(`API Error: ${message}`);
-        return Promise.reject(new Error(message));
+        const errObj = new Error(message) as any;
+        errObj.details = error.response?.data;
+        return Promise.reject(errObj);
       }
     );
   }

@@ -7,6 +7,8 @@
 import type { AdminProfile } from "../entities/AdminProfile";
 import type { ActiveSession } from "../entities/ActiveSession";
 import type { SecurityLogEntry } from "../entities/SecurityLogEntry";
+import type { ExternalLogin } from "../entities/ExternalLogin";
+import type { LinkExternalLoginDto } from "../../data/models/ProfileModels";
 
 export interface UpdateProfileRequest {
   firstName: string;
@@ -51,4 +53,9 @@ export interface IProfileRepository {
 
   // Security Log
   getSecurityLog(page?: number, pageSize?: number): Promise<SecurityLogEntry[]>;
+
+  // External Logins
+  getExternalLogins(): Promise<ExternalLogin[]>;
+  linkExternalLogin(data: LinkExternalLoginDto): Promise<ExternalLogin>;
+  unlinkExternalLogin(externalLoginId: string): Promise<void>;
 }

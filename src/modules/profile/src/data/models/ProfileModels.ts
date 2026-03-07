@@ -43,6 +43,16 @@ export interface SecurityLogEntryDto {
   details: string | null;
 }
 
+export interface ExternalLoginDto {
+  id: string;
+  providerName: string;
+  providerKey: string;
+  email: string | null;
+  displayName: string | null;
+  linkedAt: string;
+  lastUsedAt: string | null;
+}
+
 // ===== Request DTOs =====
 
 export interface UpdateProfileDto {
@@ -75,4 +85,12 @@ export interface Confirm2FADto {
 
 export interface Disable2FADto {
   password: string;
+}
+
+export interface LinkExternalLoginDto {
+  identityProviderId: string;
+  providerName: string;
+  providerKey: string;
+  email: string | null;
+  displayName: string | null;
 }

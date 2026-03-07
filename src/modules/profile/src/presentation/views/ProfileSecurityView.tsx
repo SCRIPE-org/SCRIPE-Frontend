@@ -13,6 +13,7 @@ import { useSecurityViewModel } from "../viewmodels/useSecurityViewModel";
 import { PasswordExpiryBanner } from "../components/PasswordExpiryBanner";
 import { PasswordChangeForm } from "../components/PasswordChangeForm";
 import { TwoFactorStatus } from "../components/TwoFactorStatus";
+import { ExternalLoginsSection } from "../components/ExternalLoginsSection";
 import { Loader2 } from "lucide-react";
 
 // Lazy-load dialogs (only shown on click)
@@ -87,6 +88,17 @@ export function ProfileSecurityView() {
           onDisable={() => security.setShowDisableDialog(true)}
           isEnabling={security.isEnabling2FA}
         />
+      </section>
+
+      {/* External Logins Section */}
+      <section className="space-y-4 rounded-xl border border-border/40 bg-card/50 p-6">
+        <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+          {t("sso.externalLogins")}
+        </h3>
+        <p className="text-xs text-muted-foreground mb-4">
+          {t("sso.externalLoginsDescription")}
+        </p>
+        <ExternalLoginsSection />
       </section>
 
       {/* Backup Codes Dialog */}

@@ -7,10 +7,12 @@
 import type { AdminProfile } from "../../domain/entities/AdminProfile";
 import type { ActiveSession } from "../../domain/entities/ActiveSession";
 import type { SecurityLogEntry } from "../../domain/entities/SecurityLogEntry";
+import type { ExternalLogin } from "../../domain/entities/ExternalLogin";
 import type {
   AdminProfileDto,
   ActiveSessionDto,
   SecurityLogEntryDto,
+  ExternalLoginDto,
 } from "../models/ProfileModels";
 
 export const ProfileMapper = {
@@ -62,5 +64,21 @@ export const ProfileMapper = {
 
   toSecurityLog(dtos: SecurityLogEntryDto[]): SecurityLogEntry[] {
     return dtos.map(ProfileMapper.toSecurityLogEntry);
+  },
+
+  toExternalLogin(dto: ExternalLoginDto): ExternalLogin {
+    return {
+      id: dto.id,
+      providerName: dto.providerName,
+      providerKey: dto.providerKey,
+      email: dto.email,
+      displayName: dto.displayName,
+      linkedAt: new Date(dto.linkedAt),
+      lastUsedAt: dto.lastUsedAt ? new Date(dto.lastUsedAt) : null,
+    };
+  },
+
+  toExternalLogins(dtos: ExternalLoginDto[]): ExternalLogin[] {
+    return dtos.map(ProfileMapper.toExternalLogin);
   },
 };

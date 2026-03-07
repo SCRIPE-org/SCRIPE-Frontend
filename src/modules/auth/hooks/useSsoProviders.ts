@@ -56,6 +56,8 @@ export interface SsoNoLinkedAccountError {
       providerName: string;
       email: string;
       name: string;
+      providerKey: string;
+      identityProviderId: string;
 }
 
 // ─── Session Storage Keys ─────────────────────────────────

@@ -55,6 +55,17 @@ export const en = {
     },
   },
 
+  // SSO / External Logins (Profile Section)
+  sso: {
+    externalLogins: "External Logins",
+    externalLoginsDescription: "Link third-party accounts to sign in securely without a password.",
+    noExternalLoginsLinked: "You have no external accounts linked.",
+    linkExternalAccount: "Link New Account",
+    accountUnlinked: "External account unlinked successfully.",
+    unlinkError: "Failed to unlink external account. Please try again.",
+    accountLinkedSuccess: "External account linked successfully!",
+  },
+
   // Not Authorized Page
   notAuthorized: {
     title: "Access Denied",

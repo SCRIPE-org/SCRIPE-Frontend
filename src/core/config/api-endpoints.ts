@@ -79,6 +79,9 @@ export const API_ENDPOINTS = {
     REVOKE_ALL_SESSIONS: `${V1}/auth/admin/sessions/revoke-all`,
     BACKUP_CODES_REGENERATE: `${V1}/auth/admin/2fa/backup-codes/regenerate`,
     SECURITY_LOG: `${V1}/auth/admin/security-log`,
+    EXTERNAL_LOGINS: `${V1}/auth/admin/external-logins`,
+    LINK_EXTERNAL_LOGIN: `${V1}/auth/admin/external-logins/link`,
+    UNLINK_EXTERNAL_LOGIN: (id: string) => `${V1}/auth/admin/external-logins/${id}`,
   },
 
   // Legacy profile endpoints

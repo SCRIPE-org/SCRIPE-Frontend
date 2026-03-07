@@ -23,6 +23,8 @@ import { AlertTriangle, ArrowLeft, ShieldAlert, UserX } from "lucide-react";
 import Link from "next/link";
 import { completeSsoCallback } from "../../../../hooks/useSsoProviders";
 import { appLogger } from "@/core/common/logger";
+import { getModuleApiService } from "@core/services/api-factory";
+import { API_ENDPOINTS } from "@core/config/api-endpoints";
 
 type CallbackState = "processing" | "success" | "error" | "no_linked_account";
 
@@ -103,6 +105,34 @@ export function SsoCallbackView() {
                               err instanceof Error &&
                               err.message.includes("no_linked_account")
                         ) {
+                              const errObj = err as any;
+                              const details = errObj.details || {};
+                              const isAuthenticated = useAppStore.getState().isAuthenticated;
+                              const isLinkingSession = sessionStorage.getItem("sso_linking") === "true";
+
+                              if (isAuthenticated || isLinkingSession) {
+                                    sessionStorage.removeItem("sso_linking");
+                                    try {
+                                          const api = getModuleApiService("IDENTITY");
+                                          await api.post(
+                                                API_ENDPOINTS.PROFILE.LINK_EXTERNAL_LOGIN,
+                                                {
+                                                      identityProviderId: details.identityProviderId,
+                                                      providerName: details.providerName || details.provider,
+                                                      providerKey: details.providerKey || details.subject,
+                                                      email: details.email,
+                                                      displayName: details.name,
+                                                }
+                                          );
+                                          operationSuccess(t("sso.accountLinkedSuccess"));
+                                          router.replace("/profile/security");
+                                          return;
+                                    } catch (linkErr) {
+                                          appLogger.error("Auto-link failed:", linkErr);
+                                          // Fall through to error state
+                                    }
+                              }
+
                               setState("no_linked_account");
                               setErrorInfo({
                                     title: t("auth.sso.noLinkedAccount"),
