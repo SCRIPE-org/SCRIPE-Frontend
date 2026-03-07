@@ -39,6 +39,22 @@ export const ar = {
       copyright: "جميع الحقوق محفوظة.",
       docs: "التوثيق",
     },
+    sso: {
+      orContinueWith: "أو تابع عبر",
+      signInWith: "تسجيل الدخول عبر",
+      signingIn: "جاري تسجيل الدخول...",
+      callbackProcessing: "إتمام تسجيل الدخول",
+      callbackProcessingDesc: "جاري التحقق من هويتك مع المزود...",
+      callbackError: "فشل تسجيل الدخول",
+      callbackErrorGeneric: "حدث خطأ غير متوقع أثناء تسجيل الدخول عبر SSO. يرجى المحاولة مرة أخرى.",
+      missingParams: "رابط غير صالح — رمز التفويض أو معامل الحالة مفقود.",
+      unsupportedAccountType: "نوع الحساب هذا غير مدعوم لتسجيل دخول المشرفين.",
+      noLinkedAccount: "الحساب غير مرتبط",
+      noLinkedAccountDesc: "لا يوجد حساب مشرف مرتبط بهذه الهوية الخارجية. يرجى تسجيل الدخول ببيانات الاعتماد أولاً، ثم ربط حسابك الخارجي من الملف الشخصي ← إعدادات الأمان.",
+      loginSuccess: "تم تسجيل الدخول بنجاح",
+      redirecting: "جاري التحويل إلى لوحة التحكم...",
+      backToLogin: "العودة لتسجيل الدخول",
+    },
   },
 
   // Not Authorized Page
@@ -4747,6 +4763,83 @@ export const ar = {
     requestUrl: "رابط الطلب",
     payload: "الحمولة",
     responseBody: "نص الاستجابة",
+  },
+
+  // ===== موفرو الهوية (SSO) =====
+  identityProviders: {
+    title: "موفرو الهوية",
+    description: "إعداد موفري الهوية الخارجيين (OIDC، OAuth2، SAML) لتسجيل الدخول الموحد",
+    // الحقول
+    name: "اسم الموفر",
+    namePlaceholder: "مثال: Azure AD للشركة",
+    slug: "المعرّف",
+    slugPlaceholder: "مثال: azure-ad",
+    protocol: "البروتوكول",
+    authority: "رابط السلطة",
+    clientId: "معرّف العميل",
+    clientIdPlaceholder: "OAuth2 client_id",
+    clientSecret: "سر العميل",
+    clientSecretPlaceholder: "OAuth2 client_secret",
+    scopes: "النطاقات",
+    scope: "النطاق",
+    enabledForAdmins: "تفعيل للمشرفين",
+    enabledForUsers: "تفعيل للمستخدمين",
+    buttonColor: "لون الزر",
+    buttonLabel: "نص الزر",
+    buttonLabelPlaceholder: "تسجيل الدخول عبر ...",
+    // الإجراءات
+    test: "اختبار",
+    testConnection: "اختبار الاتصال",
+    // رسائل التنبيه
+    created: "تم إنشاء الموفر",
+    createdDesc: "تم إنشاء موفر الهوية بنجاح.",
+    updated: "تم تحديث الموفر",
+    updatedDesc: "تم تحديث موفر الهوية بنجاح.",
+    deleted: "تم حذف الموفر",
+    deletedDesc: "تم حذف موفر الهوية.",
+    testSuccess: "الاتصال ناجح",
+    testFailed: "فشل الاتصال",
+    // تأكيد الحذف
+    deleteConfirmTitle: "حذف موفر الهوية",
+    deleteConfirmDesc: "سيتم حذف موفر الهوية نهائياً. سيفقد المستخدمون المرتبطون به إمكانية تسجيل الدخول الموحد.",
+  },
+
+  // ===== تطبيقات OAuth (خادم OIDC) =====
+  oauthApps: {
+    title: "تطبيقات OAuth",
+    description: "إدارة التطبيقات الخارجية التي تعتمد على NEXORA للمصادقة (خادم OIDC)",
+    // الحقول
+    displayName: "اسم التطبيق",
+    displayNamePlaceholder: "مثال: تطبيق الجوال",
+    clientId: "معرّف العميل",
+    clientType: "نوع العميل",
+    redirectUris: "روابط إعادة التوجيه",
+    allowedScopes: "النطاقات المسموحة",
+    scopes: "النطاقات",
+    allowedGrantTypes: "أنواع المنح",
+    requirePkce: "إلزامية PKCE",
+    requireConsent: "إلزامية شاشة الموافقة",
+    descriptionLabel: "الوصف",
+    descriptionPlaceholder: "ما الذي يفعله هذا التطبيق؟",
+    // رسائل التنبيه
+    created: "تم إنشاء التطبيق",
+    createdDesc: "تم إنشاء تطبيق OAuth بنجاح.",
+    updated: "تم تحديث التطبيق",
+    updatedDesc: "تم تحديث تطبيق OAuth بنجاح.",
+    deleted: "تم حذف التطبيق",
+    deletedDesc: "تم حذف تطبيق OAuth.",
+    secretRegenerated: "تم تجديد السر",
+    secretRegeneratedDesc: "انسخ السر الجديد الآن — لن يظهر مرة أخرى.",
+    // الإجراءات
+    regenerateSecret: "تجديد السر",
+    // حوار السر
+    newSecret: "سر العميل الجديد",
+    secretWarning: "انسخ هذا السر الآن. لن يتم عرضه مرة أخرى.",
+    // التأكيدات
+    regenerateConfirmTitle: "تجديد سر العميل",
+    regenerateConfirmDesc: "سيتم إبطال السر الحالي. جميع التطبيقات التي تستخدمه ستتوقف عن العمل.",
+    deleteConfirmTitle: "حذف تطبيق OAuth",
+    deleteConfirmDesc: "سيتم حذف هذا التطبيق نهائياً. سيتم إبطال جميع جلسات المصادقة.",
   },
 
   // ===== الاستحقاقات =====

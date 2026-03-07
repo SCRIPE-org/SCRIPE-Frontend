@@ -23,6 +23,8 @@ import { EmailService } from "./messaging/email-composer/src/data/services/Email
 import { NotificationSenderService } from "./messaging/notification-sender/src/data/services/NotificationSenderService";
 import { WebhookService } from "./webhooks/src/data/services/WebhookService";
 import { UserGroupService } from "./user-groups/src/data/services/UserGroupService";
+import { IdentityProviderService } from "./identity-providers/src/data/services/IdentityProviderService";
+import { OAuthAppService } from "./oauth-apps/src/data/services/OAuthAppService";
 
 // Repositories
 import { AdminRepository } from "./admin/src/data/repositories/AdminRepository";
@@ -38,6 +40,8 @@ import { EmailRepository } from "./messaging/email-composer/src/data/repositorie
 import { NotificationSenderRepository } from "./messaging/notification-sender/src/data/repositories/NotificationSenderRepository";
 import { WebhookRepository } from "./webhooks/src/data/repositories/WebhookRepository";
 import { UserGroupRepository } from "./user-groups/src/data/repositories/UserGroupRepository";
+import { IdentityProviderRepository } from "./identity-providers/src/data/repositories/IdentityProviderRepository";
+import { OAuthAppRepository } from "./oauth-apps/src/data/repositories/OAuthAppRepository";
 
 // Interfaces - Repositories
 import type { IAdminRepository } from "./admin/src/domain/interfaces/IAdminRepository";
@@ -54,6 +58,8 @@ import type { IEmailRepository } from "./messaging/email-composer/src/domain/int
 import type { INotificationSenderRepository } from "./messaging/notification-sender/src/domain/interfaces/INotificationSenderRepository";
 import type { IWebhookRepository } from "./webhooks/src/domain/interfaces/IWebhookRepository";
 import type { IUserGroupRepository } from "./user-groups/src/domain/interfaces/IUserGroupRepository";
+import type { IIdentityProviderRepository } from "./identity-providers/src/domain/interfaces/IIdentityProviderRepository";
+import type { IOAuthAppRepository } from "./oauth-apps/src/domain/interfaces/IOAuthAppRepository";
 
 // Interfaces - Services (from domain/interfaces, NOT data/services)
 import type { IAdminService } from "./admin/src/domain/interfaces/IAdminService";
@@ -87,6 +93,9 @@ export interface SystemContainer {
   webhookRepository: IWebhookRepository;
   // User Groups
   userGroupRepository: IUserGroupRepository;
+  // Unified Identity System
+  identityProviderRepository: IIdentityProviderRepository;
+  oauthAppRepository: IOAuthAppRepository;
 }
 
 let _container: SystemContainer | null = null;
@@ -110,6 +119,8 @@ export function getSystemContainer(): SystemContainer {
     const notificationSenderService = new NotificationSenderService(apiService);
     const webhookService = new WebhookService(apiService);
     const userGroupService = new UserGroupService(apiService);
+    const identityProviderService = new IdentityProviderService(apiService);
+    const oauthAppService = new OAuthAppService(apiService);
 
     // Create Repositories (use Services)
     _container = {
@@ -137,6 +148,9 @@ export function getSystemContainer(): SystemContainer {
       webhookRepository: new WebhookRepository(webhookService),
       // User Groups
       userGroupRepository: new UserGroupRepository(userGroupService),
+      // Unified Identity System
+      identityProviderRepository: new IdentityProviderRepository(identityProviderService),
+      oauthAppRepository: new OAuthAppRepository(oauthAppService),
     };
   }
 
@@ -205,5 +219,12 @@ export const systemContainer = {
   // User Groups
   get userGroupRepository() {
     return getSystemContainer().userGroupRepository;
+  },
+  // Unified Identity System
+  get identityProviderRepository() {
+    return getSystemContainer().identityProviderRepository;
+  },
+  get oauthAppRepository() {
+    return getSystemContainer().oauthAppRepository;
   },
 };

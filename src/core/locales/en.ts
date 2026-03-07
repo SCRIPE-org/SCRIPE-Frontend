@@ -37,6 +37,22 @@ export const en = {
       copyright: "All rights reserved.",
       docs: "Documentation",
     },
+    sso: {
+      orContinueWith: "or continue with",
+      signInWith: "Sign in with",
+      signingIn: "Signing in...",
+      callbackProcessing: "Completing Sign-In",
+      callbackProcessingDesc: "Verifying your identity with the provider...",
+      callbackError: "Sign-In Failed",
+      callbackErrorGeneric: "An unexpected error occurred during SSO login. Please try again.",
+      missingParams: "Invalid callback — missing authorization code or state parameter.",
+      unsupportedAccountType: "This account type is not supported for admin login.",
+      noLinkedAccount: "Account Not Linked",
+      noLinkedAccountDesc: "No admin account is linked to this external identity. Please sign in with your credentials first, then link your external account in Profile → Security settings.",
+      loginSuccess: "Sign-In Successful",
+      redirecting: "Redirecting to dashboard...",
+      backToLogin: "Back to Sign In",
+    },
   },
 
   // Not Authorized Page
@@ -4910,6 +4926,83 @@ export const en = {
     requestUrl: "Request URL",
     payload: "Payload",
     responseBody: "Response Body",
+  },
+
+  // ===== IDENTITY PROVIDERS (SSO) =====
+  identityProviders: {
+    title: "Identity Providers",
+    description: "Configure external SSO identity providers (OIDC, OAuth2, SAML)",
+    // Fields
+    name: "Provider Name",
+    namePlaceholder: "e.g. Corporate Azure AD",
+    slug: "Slug",
+    slugPlaceholder: "e.g. azure-ad",
+    protocol: "Protocol",
+    authority: "Authority URL",
+    clientId: "Client ID",
+    clientIdPlaceholder: "OAuth2 client_id",
+    clientSecret: "Client Secret",
+    clientSecretPlaceholder: "OAuth2 client_secret",
+    scopes: "Scopes",
+    scope: "Scope",
+    enabledForAdmins: "Enable for Admins",
+    enabledForUsers: "Enable for Users",
+    buttonColor: "Button Color",
+    buttonLabel: "Button Label",
+    buttonLabelPlaceholder: "Sign in with ...",
+    // Actions
+    test: "Test",
+    testConnection: "Test Connection",
+    // Toast messages
+    created: "Provider Created",
+    createdDesc: "Identity provider created successfully.",
+    updated: "Provider Updated",
+    updatedDesc: "Identity provider updated successfully.",
+    deleted: "Provider Deleted",
+    deletedDesc: "Identity provider deleted.",
+    testSuccess: "Connection Successful",
+    testFailed: "Connection Failed",
+    // Delete confirmation
+    deleteConfirmTitle: "Delete Identity Provider",
+    deleteConfirmDesc: "This will permanently remove this identity provider. Users linked via this provider will lose SSO access.",
+  },
+
+  // ===== OAUTH APPLICATIONS (OIDC Server) =====
+  oauthApps: {
+    title: "OAuth Applications",
+    description: "Manage third-party applications that authenticate via NEXORA (OIDC Server)",
+    // Fields
+    displayName: "Application Name",
+    displayNamePlaceholder: "e.g. Mobile App",
+    clientId: "Client ID",
+    clientType: "Client Type",
+    redirectUris: "Redirect URIs",
+    allowedScopes: "Allowed Scopes",
+    scopes: "Scopes",
+    allowedGrantTypes: "Grant Types",
+    requirePkce: "Require PKCE",
+    requireConsent: "Require Consent Screen",
+    descriptionLabel: "Description",
+    descriptionPlaceholder: "What does this app do?",
+    // Toast messages
+    created: "Application Created",
+    createdDesc: "OAuth application created successfully.",
+    updated: "Application Updated",
+    updatedDesc: "OAuth application updated successfully.",
+    deleted: "Application Deleted",
+    deletedDesc: "OAuth application deleted.",
+    secretRegenerated: "Secret Regenerated",
+    secretRegeneratedDesc: "Copy the new secret now — it won't be shown again.",
+    // Actions
+    regenerateSecret: "Regenerate Secret",
+    // Secret dialog
+    newSecret: "New Client Secret",
+    secretWarning: "Copy this secret now. It will NOT be shown again.",
+    // Confirmations
+    regenerateConfirmTitle: "Regenerate Client Secret",
+    regenerateConfirmDesc: "The current secret will be invalidated. All applications using the old secret will stop working.",
+    deleteConfirmTitle: "Delete OAuth Application",
+    deleteConfirmDesc: "This will permanently remove this application. All authenticated sessions will be invalidated.",
   },
 
   // ===== ENTITLEMENTS =====

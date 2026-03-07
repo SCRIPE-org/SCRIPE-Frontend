@@ -20,12 +20,15 @@ import { useLoginViewModel } from "../viewmodels/use-login-viewmodel";
 import { LoginBranding } from "../components/LoginBranding";
 import { CredentialsForm } from "../components/CredentialsForm";
 import { TwoFactorForm } from "../components/TwoFactorForm";
+import { SsoProviderButtons } from "../components/SsoProviderButtons";
+import { useSsoProviders } from "../../../../hooks/useSsoProviders";
 
 export function LoginView() {
   const vm = useLoginViewModel();
   const { t, language, direction } = useI18n();
   const isRTL = language === "ar";
   const hasCheckedAuth = useRef(false);
+  const sso = useSsoProviders();
 
   useEffect(() => {
     if (hasCheckedAuth.current || !vm.hasHydrated) return;
@@ -93,18 +96,29 @@ export function LoginView() {
 
           {/* Active Form */}
           {vm.loginStep === "credentials" ? (
-            <CredentialsForm
-              formData={vm.formData}
-              showPassword={vm.showPassword}
-              isLoading={vm.isLoading}
-              isFormValid={vm.isFormValid}
-              error={vm.error}
-              isRTL={isRTL}
-              updateField={vm.updateField}
-              togglePasswordVisibility={vm.togglePasswordVisibility}
-              handleLogin={vm.handleLogin}
-              t={t}
-            />
+            <>
+              <CredentialsForm
+                formData={vm.formData}
+                showPassword={vm.showPassword}
+                isLoading={vm.isLoading}
+                isFormValid={vm.isFormValid}
+                error={vm.error}
+                isRTL={isRTL}
+                updateField={vm.updateField}
+                togglePasswordVisibility={vm.togglePasswordVisibility}
+                handleLogin={vm.handleLogin}
+                t={t}
+              />
+
+              {/* SSO Provider Buttons */}
+              <SsoProviderButtons
+                providers={sso.providers}
+                isLoading={sso.isLoading}
+                error={sso.error}
+                onProviderClick={sso.initiateSsoLogin}
+                t={t}
+              />
+            </>
           ) : (
             <TwoFactorForm
               twoFactorCode={vm.twoFactorCode}

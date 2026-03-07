@@ -1,0 +1,88 @@
+/**
+ * OAuth Application Mapper
+ *
+ * Converts between OAuth App Models (DTOs) and Entities (Domain).
+ *
+ * @module oauth-apps/data
+ */
+import {
+      OAuthApp,
+      OAuthAppListItem,
+      RegenerateSecretResult,
+      type OAuthAppData,
+      type OAuthAppListItemData,
+      type CreateOAuthAppRequest,
+      type UpdateOAuthAppRequest,
+} from "../../domain/entities/OAuthApp";
+import {
+      OAuthAppModel,
+      OAuthAppListItemModel,
+      type OAuthAppJson,
+      type OAuthAppListItemJson,
+      type RegenerateSecretResultJson,
+} from "../models/OAuthAppModel";
+
+export class OAuthAppMapper {
+      static toEntity(model: OAuthAppModel): OAuthApp {
+            const data: OAuthAppData = {
+                  id: model.id,
+                  displayName: model.displayName,
+                  clientId: model.clientId,
+                  clientType: model.clientType,
+                  redirectUrisJson: model.redirectUrisJson,
+                  postLogoutRedirectUrisJson: model.postLogoutRedirectUrisJson,
+                  allowedScopes: model.allowedScopes,
+                  allowedGrantTypes: model.allowedGrantTypes,
+                  tenantId: model.tenantId,
+                  requireConsent: model.requireConsent,
+                  requirePkce: model.requirePkce,
+                  logoUri: model.logoUri,
+                  description: model.description,
+                  accessTokenLifetimeMinutes: model.accessTokenLifetimeMinutes,
+                  refreshTokenLifetimeDays: model.refreshTokenLifetimeDays,
+                  isActive: model.isActive,
+                  createdAt: model.createdAt,
+                  modifiedAt: model.modifiedAt,
+            };
+            return new OAuthApp(data);
+      }
+
+      static fromJsonToEntity(json: OAuthAppJson): OAuthApp {
+            const model = OAuthAppModel.fromJson(json);
+            return OAuthAppMapper.toEntity(model);
+      }
+
+      static toListItemEntity(model: OAuthAppListItemModel): OAuthAppListItem {
+            const data: OAuthAppListItemData = {
+                  id: model.id,
+                  displayName: model.displayName,
+                  clientId: model.clientId,
+                  clientType: model.clientType,
+                  allowedScopes: model.allowedScopes,
+                  allowedGrantTypes: model.allowedGrantTypes,
+                  isActive: model.isActive,
+                  requirePkce: model.requirePkce,
+                  logoUri: model.logoUri,
+                  description: model.description,
+                  createdAt: model.createdAt,
+            };
+            return new OAuthAppListItem(data);
+      }
+
+      static fromListItemJsonToEntity(json: OAuthAppListItemJson): OAuthAppListItem {
+            const model = OAuthAppListItemModel.fromJson(json);
+            return OAuthAppMapper.toListItemEntity(model);
+      }
+
+      static toRegenerateSecretEntity(json: RegenerateSecretResultJson): RegenerateSecretResult {
+            return new RegenerateSecretResult(json.clientId, json.newClientSecret);
+      }
+
+      static toCreateJson(request: CreateOAuthAppRequest) {
+            return { ...request };
+      }
+
+      static toUpdateJson(request: UpdateOAuthAppRequest) {
+            return { ...request };
+      }
+}

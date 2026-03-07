@@ -26,6 +26,11 @@ export const API_ENDPOINTS = {
       VERIFY: `${V1}/auth/admin/2fa/verify`,
       DISABLE: `${V1}/auth/admin/2fa/disable`,
     },
+    OIDC: {
+      ADMIN_PROVIDERS: `${V1}/auth/oidc/providers/admin`,
+      CHALLENGE: `${V1}/auth/oidc/challenge`,
+      CALLBACK: `${V1}/auth/oidc/callback`,
+    },
   },
 
   // Legacy auth endpoints (for backward compatibility)
@@ -332,6 +337,26 @@ export const API_ENDPOINTS = {
       DEACTIVATE_ALL: `${V1}/UserGroups/bulk/deactivate-all`,
       DELETE_ALL: `${V1}/UserGroups/bulk/delete-all`,
     },
+  },
+
+  // ===== IDENTITY PROVIDERS (SSO / OIDC Client) =====
+  IDENTITY_PROVIDERS: {
+    LIST: `${V1}/identity-providers`,
+    BY_ID: (id: string) => `${V1}/identity-providers/${id}`,
+    CREATE: `${V1}/identity-providers`,
+    UPDATE: (id: string) => `${V1}/identity-providers/${id}`,
+    DELETE: (id: string) => `${V1}/identity-providers/${id}`,
+    TEST: (id: string) => `${V1}/identity-providers/${id}/test`,
+  },
+
+  // ===== OAUTH APPLICATIONS (OIDC Server) =====
+  OAUTH_APPS: {
+    LIST: `${V1}/oauth-applications`,
+    BY_ID: (id: string) => `${V1}/oauth-applications/${id}`,
+    CREATE: `${V1}/oauth-applications`,
+    UPDATE: (id: string) => `${V1}/oauth-applications/${id}`,
+    DELETE: (id: string) => `${V1}/oauth-applications/${id}`,
+    REGENERATE_SECRET: (id: string) => `${V1}/oauth-applications/${id}/regenerate-secret`,
   },
 };
 
