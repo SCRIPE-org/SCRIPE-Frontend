@@ -25,6 +25,7 @@ import { completeSsoCallback } from "../../../../hooks/useSsoProviders";
 import { appLogger } from "@/core/common/logger";
 import { getModuleApiService } from "@core/services/api-factory";
 import { API_ENDPOINTS } from "@core/config/api-endpoints";
+import { secureTokenService } from "@core/common/secure-token-service";
 
 type CallbackState = "processing" | "success" | "error" | "no_linked_account";
 
@@ -70,9 +71,10 @@ export function SsoCallbackView() {
                         const result = await completeSsoCallback(code!, stateParam!);
 
                         // SSO callback returned linked account — complete login
-                        // The callback returns adminId/userId, we need to do the actual login
-                        // via the auth repository using the SSO token exchange
-                        if (result.type === "admin" && result.adminId) {
+                        // The callback returns accessToken, we need to save it and fetch User via auth repository
+                        if (result.type === "admin" && result.accessToken) {
+                              secureTokenService.setAccessToken(result.accessToken);
+
                               // Fetch admin profile to complete login
                               const user = await authRepository.getMe();
                               setAuth(user, user.permissions || [], []);

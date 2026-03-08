@@ -43,8 +43,9 @@ interface ChallengeResult {
 /** Callback result from POST /auth/oidc/callback */
 export interface SsoCallbackResult {
       type: "admin" | "user";
-      adminId?: string;
-      userId?: string;
+      accessToken?: string;
+      refreshToken?: string;
+      expiresAt?: string;
       providerName: string;
       email: string;
 }
