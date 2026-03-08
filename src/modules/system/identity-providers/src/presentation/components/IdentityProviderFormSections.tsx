@@ -23,6 +23,7 @@ import {
       Shield,
       FileJson,
       Fingerprint,
+      Link2,
 } from "lucide-react";
 
 // ─── Props ──────────────────────────────────────────────────────
@@ -346,8 +347,59 @@ export function Oauth2ConfigSection({ form, updateField }: FormSectionProps) {
       );
 }
 
+// ─── Explicit Endpoints Section (Optional) ──────────────────────
+export function ExplicitEndpointsSection({ form, updateField }: FormSectionProps) {
+      const { t } = useI18n();
+
+      return (
+            <Card>
+                  <CardHeader>
+                        <CardTitle className="flex items-center gap-2 text-lg">
+                              <Link2 className="h-5 w-5 text-teal-500" />
+                              {t("identityProviders.endpointsSection") || "Explicit Endpoints"}
+                        </CardTitle>
+                        <CardDescription>
+                              {t("identityProviders.endpointsSectionDesc") || "Optional endpoints (overrides discovery)"}
+                        </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                        <div className="space-y-2">
+                              <Label htmlFor="idp-auth-end">{t("identityProviders.authorizationEndpoint") || "Authorization Endpoint"}</Label>
+                              <Input
+                                    id="idp-auth-end"
+                                    value={form.authorizationEndpoint ?? ""}
+                                    onChange={(e) => updateField("authorizationEndpoint", e.target.value)}
+                                    placeholder="https://idp.example.com/authorize"
+                                    className="font-mono text-sm"
+                              />
+                        </div>
+                        <div className="space-y-2">
+                              <Label htmlFor="idp-token-end">{t("identityProviders.tokenEndpoint") || "Token Endpoint"}</Label>
+                              <Input
+                                    id="idp-token-end"
+                                    value={form.tokenEndpoint ?? ""}
+                                    onChange={(e) => updateField("tokenEndpoint", e.target.value)}
+                                    placeholder="https://idp.example.com/token"
+                                    className="font-mono text-sm"
+                              />
+                        </div>
+                        <div className="space-y-2">
+                              <Label htmlFor="idp-user-end">{t("identityProviders.userInformationEndpoint") || "User Info Endpoint"}</Label>
+                              <Input
+                                    id="idp-user-end"
+                                    value={form.userInformationEndpoint ?? ""}
+                                    onChange={(e) => updateField("userInformationEndpoint", e.target.value)}
+                                    placeholder="https://idp.example.com/userinfo"
+                                    className="font-mono text-sm"
+                              />
+                        </div>
+                  </CardContent>
+            </Card>
+      );
+}
+
 // ─── SAML Configuration Section ─────────────────────────────────
-export function SamlConfigSection() {
+export function SamlConfigSection({ form, updateField }: FormSectionProps) {
       const { t } = useI18n();
 
       return (
@@ -358,20 +410,39 @@ export function SamlConfigSection() {
                               {t("identityProviders.samlSection") || "SAML Configuration"}
                         </CardTitle>
                         <CardDescription>
-                              {t("identityProviders.samlSectionDesc") || "SAML 2.0 connection settings"}
+                              {t("identityProviders.samlSectionDesc") || "Configure SAML IdP details"}
                         </CardDescription>
                   </CardHeader>
-                  <CardContent>
-                        <div className="flex flex-col items-center justify-center p-8 text-center bg-muted/30 rounded-lg border border-dashed">
-                              <div className="h-12 w-12 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center mb-4">
-                                    <Globe className="h-6 w-6 text-orange-600 dark:text-orange-400" />
-                              </div>
-                              <h3 className="text-base font-semibold mb-2">
-                                    {t("identityProviders.samlComingSoon") || "SAML support is coming soon"}
-                              </h3>
-                              <p className="text-sm text-muted-foreground max-w-sm">
-                                    {t("identityProviders.samlComingSoonDesc") || "Integration with SAML 2.0 Identity Providers (like Okta, ADFS) is currently under development and will be available in a future update."}
-                              </p>
+                  <CardContent className="space-y-4">
+                        <div className="space-y-2">
+                              <Label htmlFor="saml-entity-id">{t("identityProviders.samlIdpEntityId") || "IdP Entity ID"}</Label>
+                              <Input
+                                    id="saml-entity-id"
+                                    value={form.samlIdpEntityId ?? ""}
+                                    onChange={(e) => updateField("samlIdpEntityId", e.target.value)}
+                                    placeholder="https://idp.example.com/metadata"
+                                    className="font-mono text-sm"
+                              />
+                        </div>
+                        <div className="space-y-2">
+                              <Label htmlFor="saml-sso-url">{t("identityProviders.samlSsoUrl") || "Single Sign-On Service URL"}</Label>
+                              <Input
+                                    id="saml-sso-url"
+                                    value={form.samlSsoUrl ?? ""}
+                                    onChange={(e) => updateField("samlSsoUrl", e.target.value)}
+                                    placeholder="https://idp.example.com/sso"
+                                    className="font-mono text-sm"
+                              />
+                        </div>
+                        <div className="space-y-2">
+                              <Label htmlFor="saml-cert">{t("identityProviders.samlCertificate") || "IdP Public Certificate (Base64/PEM)"}</Label>
+                              <Textarea
+                                    id="saml-cert"
+                                    value={form.samlCertificate ?? ""}
+                                    onChange={(e) => updateField("samlCertificate", e.target.value)}
+                                    placeholder={t("identityProviders.samlCertificatePlaceholder") || "-----BEGIN CERTIFICATE-----\n...\n-----END CERTIFICATE-----"}
+                                    className="font-mono text-sm min-h-[120px]"
+                              />
                         </div>
                   </CardContent>
             </Card>

@@ -40,6 +40,10 @@ export interface OAuthAppFormState {
 
       // Branding
       logoUri: string;
+
+      // SAML Configuration (Optional)
+      samlAcsUrl?: string;
+      samlSpEntityId?: string;
 }
 
 const DEFAULT_STATE: OAuthAppFormState = {
@@ -56,6 +60,8 @@ const DEFAULT_STATE: OAuthAppFormState = {
       accessTokenLifetimeMinutes: 60,
       refreshTokenLifetimeDays: 14,
       logoUri: "",
+      samlAcsUrl: "",
+      samlSpEntityId: "",
 };
 
 // ─── Hook ─────────────────────────────────────────────────────────
@@ -105,6 +111,8 @@ export function useOAuthAppDetailViewModel(appId?: string) {
                         accessTokenLifetimeMinutes: app.accessTokenLifetimeMinutes,
                         refreshTokenLifetimeDays: app.refreshTokenLifetimeDays,
                         logoUri: app.logoUri ?? "",
+                        samlAcsUrl: app.samlAcsUrl ?? "",
+                        samlSpEntityId: app.samlSpEntityId ?? "",
                   });
                   setIsDirty(false);
             }
@@ -190,6 +198,8 @@ export function useOAuthAppDetailViewModel(appId?: string) {
                               description: form.description || undefined,
                               accessTokenLifetimeMinutes: form.accessTokenLifetimeMinutes,
                               refreshTokenLifetimeDays: form.refreshTokenLifetimeDays,
+                              samlAcsUrl: form.samlAcsUrl || undefined,
+                              samlSpEntityId: form.samlSpEntityId || undefined,
                         });
                         return result;
                   } else {
@@ -205,6 +215,8 @@ export function useOAuthAppDetailViewModel(appId?: string) {
                               description: form.description || undefined,
                               accessTokenLifetimeMinutes: form.accessTokenLifetimeMinutes,
                               refreshTokenLifetimeDays: form.refreshTokenLifetimeDays,
+                              samlAcsUrl: form.samlAcsUrl || undefined,
+                              samlSpEntityId: form.samlSpEntityId || undefined,
                         });
                         return null;
                   }

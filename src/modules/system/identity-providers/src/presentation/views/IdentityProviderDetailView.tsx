@@ -12,6 +12,7 @@ import {
       OidcConfigSection,
       Oauth2ConfigSection,
       SamlConfigSection,
+      ExplicitEndpointsSection,
       AppearanceSection,
       AccessControlSection,
       ClaimMappingsSection,
@@ -166,8 +167,9 @@ export function IdentityProviderDetailView({ providerId }: Props) {
 
                               {vm.form.protocol === "oidc" && <OidcConfigSection {...sectionProps} />}
                               {vm.form.protocol === "oauth2" && <Oauth2ConfigSection {...sectionProps} />}
-                              {vm.form.protocol === "saml" && <SamlConfigSection />}
+                              {vm.form.protocol === "saml" && <SamlConfigSection {...sectionProps} />}
 
+                              {vm.form.protocol !== "saml" && <ExplicitEndpointsSection {...sectionProps} />}
                               {vm.form.protocol !== "saml" && <ClaimMappingsSection {...sectionProps} />}
                         </div>
                         <div className="space-y-6">

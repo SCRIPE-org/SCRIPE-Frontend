@@ -21,6 +21,8 @@ export interface OAuthAppData {
       requireConsent: boolean;
       requirePkce: boolean;
       logoUri: string | null;
+      samlAcsUrl: string | null;
+      samlSpEntityId: string | null;
       description: string | null;
       accessTokenLifetimeMinutes: number;
       refreshTokenLifetimeDays: number;
@@ -47,6 +49,8 @@ export class OAuthApp {
       get requireConsent(): boolean { return this.data.requireConsent; }
       get requirePkce(): boolean { return this.data.requirePkce; }
       get logoUri(): string | null { return this.data.logoUri; }
+      get samlAcsUrl(): string | null { return this.data.samlAcsUrl; }
+      get samlSpEntityId(): string | null { return this.data.samlSpEntityId; }
       get description(): string | null { return this.data.description; }
       get accessTokenLifetimeMinutes(): number { return this.data.accessTokenLifetimeMinutes; }
       get refreshTokenLifetimeDays(): number { return this.data.refreshTokenLifetimeDays; }
@@ -144,6 +148,8 @@ export interface CreateOAuthAppRequest {
       requireConsent?: boolean;
       requirePkce?: boolean;
       logoUri?: string;
+      samlAcsUrl?: string;
+      samlSpEntityId?: string;
       description?: string;
       accessTokenLifetimeMinutes?: number;
       refreshTokenLifetimeDays?: number;
@@ -158,6 +164,8 @@ export interface UpdateOAuthAppRequest {
       requireConsent?: boolean;
       requirePkce?: boolean;
       logoUri?: string;
+      samlAcsUrl?: string;
+      samlSpEntityId?: string;
       description?: string;
       accessTokenLifetimeMinutes?: number;
       refreshTokenLifetimeDays?: number;

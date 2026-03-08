@@ -16,9 +16,15 @@ export interface IdentityProviderJson {
       protocol: string;
       tenantId: string | null;
       authority: string | null;
+      authorizationEndpoint: string | null;
+      tokenEndpoint: string | null;
+      userInformationEndpoint: string | null;
       clientId: string | null;
       scopes: string | null;
       redirectUri: string | null;
+      samlIdpEntityId: string | null;
+      samlSsoUrl: string | null;
+      samlCertificate: string | null;
       claimMappingJson: string | null;
       enabledForAdmins: boolean;
       enabledForUsers: boolean;
@@ -62,10 +68,16 @@ export interface CreateIdentityProviderJson {
       slug: string;
       protocol: string;
       authority?: string;
+      authorizationEndpoint?: string;
+      tokenEndpoint?: string;
+      userInformationEndpoint?: string;
       clientId?: string;
       clientSecret?: string;
       scopes?: string;
       redirectUri?: string;
+      samlIdpEntityId?: string;
+      samlSsoUrl?: string;
+      samlCertificate?: string;
       claimMappingJson?: string;
       enabledForAdmins: boolean;
       enabledForUsers: boolean;
@@ -80,10 +92,16 @@ export interface UpdateIdentityProviderJson {
       slug?: string;
       protocol?: string;
       authority?: string;
+      authorizationEndpoint?: string;
+      tokenEndpoint?: string;
+      userInformationEndpoint?: string;
       clientId?: string;
       clientSecret?: string;
       scopes?: string;
       redirectUri?: string;
+      samlIdpEntityId?: string;
+      samlSsoUrl?: string;
+      samlCertificate?: string;
       claimMappingJson?: string;
       enabledForAdmins?: boolean;
       enabledForUsers?: boolean;
@@ -103,9 +121,15 @@ export class IdentityProviderModel {
             public readonly protocol: string,
             public readonly tenantId: string | null,
             public readonly authority: string | null,
+            public readonly authorizationEndpoint: string | null,
+            public readonly tokenEndpoint: string | null,
+            public readonly userInformationEndpoint: string | null,
             public readonly clientId: string | null,
             public readonly scopes: string | null,
             public readonly redirectUri: string | null,
+            public readonly samlIdpEntityId: string | null,
+            public readonly samlSsoUrl: string | null,
+            public readonly samlCertificate: string | null,
             public readonly claimMappingJson: string | null,
             public readonly enabledForAdmins: boolean,
             public readonly enabledForUsers: boolean,
@@ -121,8 +145,10 @@ export class IdentityProviderModel {
       static fromJson(json: IdentityProviderJson): IdentityProviderModel {
             return new IdentityProviderModel(
                   json.id, json.name, json.slug, json.protocol,
-                  json.tenantId, json.authority, json.clientId,
-                  json.scopes, json.redirectUri, json.claimMappingJson,
+                  json.tenantId, json.authority, json.authorizationEndpoint,
+                  json.tokenEndpoint, json.userInformationEndpoint, json.clientId,
+                  json.scopes, json.redirectUri, json.samlIdpEntityId,
+                  json.samlSsoUrl, json.samlCertificate, json.claimMappingJson,
                   json.enabledForAdmins, json.enabledForUsers,
                   json.iconUrl, json.buttonColor, json.buttonLabel,
                   json.displayOrder, json.isActive,

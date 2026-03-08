@@ -461,3 +461,48 @@ export function BrandingSection({ form, updateField }: FormSectionProps) {
             </Card>
       );
 }
+
+// ─── SAML Section (Optional SP Config) ──────────────────────────
+export function SamlSection({ form, updateField }: FormSectionProps) {
+      const { t } = useI18n();
+
+      return (
+            <Card>
+                  <CardHeader>
+                        <CardTitle className="flex items-center gap-2 text-lg">
+                              <ShieldCheck className="h-5 w-5 text-indigo-500" />
+                              {t("oauthApps.samlSection") || "SAML Configuration"}
+                        </CardTitle>
+                        <CardDescription>
+                              {t("oauthApps.samlSectionDesc") || "Optional: Configure SAML 2.0 properties if this is a SAML Service Provider."}
+                        </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                        {/* ACS URL */}
+                        <div className="space-y-2">
+                              <Label htmlFor="saml-acs-url">{t("oauthApps.samlAcsUrl") || "Assertion Consumer Service (ACS) URL"}</Label>
+                              <Input
+                                    id="saml-acs-url"
+                                    value={form.samlAcsUrl ?? ""}
+                                    onChange={(e) => updateField("samlAcsUrl", e.target.value)}
+                                    placeholder="https://sp.example.com/saml/acs"
+                                    className="font-mono text-sm"
+                              />
+                        </div>
+
+                        {/* SP Entity ID */}
+                        <div className="space-y-2">
+                              <Label htmlFor="saml-sp-entity-id">{t("oauthApps.samlSpEntityId") || "SP Entity ID"}</Label>
+                              <Input
+                                    id="saml-sp-entity-id"
+                                    value={form.samlSpEntityId ?? ""}
+                                    onChange={(e) => updateField("samlSpEntityId", e.target.value)}
+                                    placeholder="https://sp.example.com/saml/metadata"
+                                    className="font-mono text-sm"
+                              />
+                        </div>
+                  </CardContent>
+            </Card>
+      );
+}
+

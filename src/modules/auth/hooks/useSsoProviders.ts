@@ -112,9 +112,11 @@ export function useSsoProviders() {
             setError(null);
             try {
                   const api = getModuleApiService("IDENTITY");
+                  const redirectUri = typeof window !== 'undefined' ? `${window.location.origin}/sso/callback` : undefined;
+
                   const challenge = await api.post<ChallengeResult>(
                         API_ENDPOINTS.AUTH.OIDC.CHALLENGE,
-                        { providerId }
+                        { providerId, redirectUri }
                   );
 
                   // Store PKCE state in sessionStorage for the callback page
@@ -170,6 +172,7 @@ export async function completeSsoCallback(
       }
 
       const api = getModuleApiService("IDENTITY");
+      const redirectUri = typeof window !== 'undefined' ? `${window.location.origin}/sso/callback` : undefined;
 
       const response = await api.post<SsoCallbackResult>(
             API_ENDPOINTS.AUTH.OIDC.CALLBACK,
@@ -178,6 +181,7 @@ export async function completeSsoCallback(
                   code,
                   codeVerifier,
                   state,
+                  redirectUri
             }
       );
 

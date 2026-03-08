@@ -41,6 +41,16 @@ export interface IdentityProviderFormState {
 
       // Claim Mappings
       claimMappingJson: string;
+
+      // Explicit Endpoints (Optional)
+      authorizationEndpoint?: string;
+      tokenEndpoint?: string;
+      userInformationEndpoint?: string;
+
+      // SAML Configuration (Optional)
+      samlIdpEntityId?: string;
+      samlSsoUrl?: string;
+      samlCertificate?: string;
 }
 
 const DEFAULT_STATE: IdentityProviderFormState = {
@@ -60,6 +70,12 @@ const DEFAULT_STATE: IdentityProviderFormState = {
       enabledForAdmins: false,
       enabledForUsers: true,
       claimMappingJson: "{}",
+      authorizationEndpoint: "",
+      tokenEndpoint: "",
+      userInformationEndpoint: "",
+      samlIdpEntityId: "",
+      samlSsoUrl: "",
+      samlCertificate: "",
 };
 
 // ─── Hook ─────────────────────────────────────────────────────────
@@ -106,6 +122,12 @@ export function useIdentityProviderDetailViewModel(providerId?: string) {
                         enabledForAdmins: provider.enabledForAdmins,
                         enabledForUsers: provider.enabledForUsers,
                         claimMappingJson: provider.claimMappingJson ?? "{}",
+                        authorizationEndpoint: provider.authorizationEndpoint ?? "",
+                        tokenEndpoint: provider.tokenEndpoint ?? "",
+                        userInformationEndpoint: provider.userInformationEndpoint ?? "",
+                        samlIdpEntityId: provider.samlIdpEntityId ?? "",
+                        samlSsoUrl: provider.samlSsoUrl ?? "",
+                        samlCertificate: provider.samlCertificate ?? "",
                   });
                   setIsDirty(false);
             }
@@ -142,6 +164,12 @@ export function useIdentityProviderDetailViewModel(providerId?: string) {
                         buttonColor: form.buttonColor || undefined,
                         buttonLabel: form.buttonLabel || undefined,
                         displayOrder: form.displayOrder,
+                        authorizationEndpoint: form.authorizationEndpoint || undefined,
+                        tokenEndpoint: form.tokenEndpoint || undefined,
+                        userInformationEndpoint: form.userInformationEndpoint || undefined,
+                        samlIdpEntityId: form.samlIdpEntityId || undefined,
+                        samlSsoUrl: form.samlSsoUrl || undefined,
+                        samlCertificate: form.samlCertificate || undefined,
                   };
 
                   if (isCreateMode) {

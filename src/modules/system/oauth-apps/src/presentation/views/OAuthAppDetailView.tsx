@@ -15,6 +15,7 @@ import {
       SecuritySection,
       TokenConfigSection,
       BrandingSection,
+      SamlSection,
 } from "../components/OAuthAppFormSections";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
@@ -202,6 +203,7 @@ export function OAuthAppDetailView({ appId }: Props) {
                               <GeneralSection {...sectionProps} />
                               <EndpointsSection {...sectionProps} />
                               <ScopesGrantsSection {...sectionProps} />
+                              <SamlSection {...sectionProps} />
                         </div>
                         <div className="space-y-6">
                               {/* Client Credentials (edit mode only) */}

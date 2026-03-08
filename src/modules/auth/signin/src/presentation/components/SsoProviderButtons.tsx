@@ -12,6 +12,7 @@
 import { Loader2 } from "lucide-react";
 import { Button } from "@core/ui/button";
 import type { SsoProvider } from "../../../../hooks/useSsoProviders";
+import { resolveFileUrl } from "@core/common/utils";
 
 interface SsoProviderButtonsProps {
       providers: SsoProvider[];
@@ -100,7 +101,7 @@ export function SsoProviderButtons({
                                                 {/* Icon */}
                                                 {provider.iconUrl ? (
                                                       <img
-                                                            src={provider.iconUrl}
+                                                            src={resolveFileUrl(provider.iconUrl)}
                                                             alt=""
                                                             className="h-5 w-5 object-contain"
                                                             onError={(e) => {

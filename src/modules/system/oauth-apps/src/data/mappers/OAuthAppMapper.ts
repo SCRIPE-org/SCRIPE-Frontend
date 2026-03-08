@@ -38,6 +38,8 @@ export class OAuthAppMapper {
                   requireConsent: model.requireConsent,
                   requirePkce: model.requirePkce,
                   logoUri: resolveFileUrl(model.logoUri),
+                  samlAcsUrl: model.samlAcsUrl,
+                  samlSpEntityId: model.samlSpEntityId,
                   description: model.description,
                   accessTokenLifetimeMinutes: model.accessTokenLifetimeMinutes,
                   refreshTokenLifetimeDays: model.refreshTokenLifetimeDays,

@@ -21,6 +21,8 @@ export interface OAuthAppJson {
       requireConsent: boolean;
       requirePkce: boolean;
       logoUri: string | null;
+      samlAcsUrl: string | null;
+      samlSpEntityId: string | null;
       description: string | null;
       accessTokenLifetimeMinutes: number;
       refreshTokenLifetimeDays: number;
@@ -63,6 +65,8 @@ export interface CreateOAuthAppJson {
       requireConsent?: boolean;
       requirePkce?: boolean;
       logoUri?: string;
+      samlAcsUrl?: string;
+      samlSpEntityId?: string;
       description?: string;
       accessTokenLifetimeMinutes?: number;
       refreshTokenLifetimeDays?: number;
@@ -77,6 +81,8 @@ export interface UpdateOAuthAppJson {
       requireConsent?: boolean;
       requirePkce?: boolean;
       logoUri?: string;
+      samlAcsUrl?: string;
+      samlSpEntityId?: string;
       description?: string;
       accessTokenLifetimeMinutes?: number;
       refreshTokenLifetimeDays?: number;
@@ -98,6 +104,8 @@ export class OAuthAppModel {
             public readonly requireConsent: boolean,
             public readonly requirePkce: boolean,
             public readonly logoUri: string | null,
+            public readonly samlAcsUrl: string | null,
+            public readonly samlSpEntityId: string | null,
             public readonly description: string | null,
             public readonly accessTokenLifetimeMinutes: number,
             public readonly refreshTokenLifetimeDays: number,
@@ -112,7 +120,7 @@ export class OAuthAppModel {
                   json.redirectUrisJson, json.postLogoutRedirectUrisJson,
                   json.allowedScopes, json.allowedGrantTypes,
                   json.tenantId, json.requireConsent, json.requirePkce,
-                  json.logoUri, json.description,
+                  json.logoUri, json.samlAcsUrl, json.samlSpEntityId, json.description,
                   json.accessTokenLifetimeMinutes, json.refreshTokenLifetimeDays,
                   json.isActive, json.createdAt, json.modifiedAt,
             );

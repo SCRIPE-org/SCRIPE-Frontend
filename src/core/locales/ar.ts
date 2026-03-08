@@ -4881,6 +4881,15 @@ export const ar = {
     deleteButton: "حذف الموفر",
     deleteConfirmTitle: "حذف موفر الهوية",
     deleteConfirmDesc: "سيتم حذف موفر الهوية نهائياً. سيفقد المستخدمون المرتبطون به إمكانية تسجيل الدخول الموحد. لا يمكن التراجع عن هذا الإجراء.",
+    endpointsSection: "نقاط النهاية الصريحة",
+    endpointsSectionDesc: "اختياري (تتجاوز الاكتشاف التلقائي)",
+    authorizationEndpoint: "نقطة نهاية المصادقة (اختياري)",
+    tokenEndpoint: "نقطة نهاية الرمز (اختياري)",
+    userInformationEndpoint: "نقطة نهاية معلومات المستخدم (اختياري)",
+    samlIdpEntityId: "معرف كيان موفر الهوية (IdP Entity ID)",
+    samlSsoUrl: "رابط خدمة تسجيل الدخول الموحد (SSO)",
+    samlCertificate: "الشهادة العامة لموفر الهوية (Base64/PEM)",
+    samlCertificatePlaceholder: "-----BEGIN CERTIFICATE-----\nMIIDdDCCAlygAwIBAgIGAX...\n-----END CERTIFICATE-----",
   },
 
   // ===== تطبيقات OAuth (خادم OIDC) =====
@@ -4978,6 +4987,8 @@ export const ar = {
     deleteButton: "حذف التطبيق",
     deleteConfirmTitle: "حذف تطبيق OAuth",
     deleteConfirmDesc: "سيتم حذف هذا التطبيق نهائياً. سيتم إبطال جميع جلسات المصادقة.",
+    samlSection: "SAML إعدادات",
+    samlSectionDesc: "SAML 2.0 إعدادات الاتصال",
   },
 
   // ===== الاستحقاقات =====
@@ -5477,5 +5488,5 @@ export const ar = {
     fallbackRates: "⚠ استخدام أسعار محفوظة (غير متصل)",
     refreshRates: "تحديث الأسعار",
   },
-
 };
+

@@ -15,9 +15,15 @@ export interface IdentityProviderData {
       protocol: string;
       tenantId: string | null;
       authority: string | null;
+      authorizationEndpoint: string | null;
+      tokenEndpoint: string | null;
+      userInformationEndpoint: string | null;
       clientId: string | null;
       scopes: string | null;
       redirectUri: string | null;
+      samlIdpEntityId: string | null;
+      samlSsoUrl: string | null;
+      samlCertificate: string | null;
       claimMappingJson: string | null;
       enabledForAdmins: boolean;
       enabledForUsers: boolean;
@@ -42,9 +48,15 @@ export class IdentityProvider {
       get protocol(): string { return this.data.protocol; }
       get tenantId(): string | null { return this.data.tenantId; }
       get authority(): string | null { return this.data.authority; }
+      get authorizationEndpoint(): string | null { return this.data.authorizationEndpoint; }
+      get tokenEndpoint(): string | null { return this.data.tokenEndpoint; }
+      get userInformationEndpoint(): string | null { return this.data.userInformationEndpoint; }
       get clientId(): string | null { return this.data.clientId; }
       get scopes(): string | null { return this.data.scopes; }
       get redirectUri(): string | null { return this.data.redirectUri; }
+      get samlIdpEntityId(): string | null { return this.data.samlIdpEntityId; }
+      get samlSsoUrl(): string | null { return this.data.samlSsoUrl; }
+      get samlCertificate(): string | null { return this.data.samlCertificate; }
       get claimMappingJson(): string | null { return this.data.claimMappingJson; }
       get enabledForAdmins(): boolean { return this.data.enabledForAdmins; }
       get enabledForUsers(): boolean { return this.data.enabledForUsers; }
@@ -160,10 +172,16 @@ export interface CreateIdentityProviderRequest {
       slug: string;
       protocol: string;
       authority?: string;
+      authorizationEndpoint?: string;
+      tokenEndpoint?: string;
+      userInformationEndpoint?: string;
       clientId?: string;
       clientSecret?: string;
       scopes?: string;
       redirectUri?: string;
+      samlIdpEntityId?: string;
+      samlSsoUrl?: string;
+      samlCertificate?: string;
       claimMappingJson?: string;
       enabledForAdmins: boolean;
       enabledForUsers: boolean;
@@ -178,10 +196,16 @@ export interface UpdateIdentityProviderRequest {
       slug?: string;
       protocol?: string;
       authority?: string;
+      authorizationEndpoint?: string;
+      tokenEndpoint?: string;
+      userInformationEndpoint?: string;
       clientId?: string;
       clientSecret?: string;
       scopes?: string;
       redirectUri?: string;
+      samlIdpEntityId?: string;
+      samlSsoUrl?: string;
+      samlCertificate?: string;
       claimMappingJson?: string;
       enabledForAdmins?: boolean;
       enabledForUsers?: boolean;

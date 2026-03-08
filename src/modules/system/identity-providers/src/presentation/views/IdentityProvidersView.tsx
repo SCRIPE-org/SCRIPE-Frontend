@@ -194,7 +194,6 @@ export function IdentityProvidersView() {
                                           router.push(`/settings/identity-providers/${item.id}`),
                                     variant: "ghost" as const,
                                     icon: <Pencil className="h-4 w-4" />,
-                                    requiredPermission: "identity_providers:update",
                               },
                               {
                                     label: tFn("common.delete") || "Delete",
@@ -203,7 +202,6 @@ export function IdentityProvidersView() {
                                     variant: "ghost" as const,
                                     className: "text-red-600 hover:text-red-700",
                                     icon: <Trash2 className="h-4 w-4" />,
-                                    requiredPermission: "identity_providers:delete",
                                     confirmTitle:
                                           tFn("identityProviders.deleteConfirmTitle") ||
                                           "Delete Identity Provider",

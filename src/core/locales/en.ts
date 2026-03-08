@@ -5045,6 +5045,16 @@ export const en = {
     deleteButton: "Delete Provider",
     deleteConfirmTitle: "Delete Identity Provider",
     deleteConfirmDesc: "This will permanently remove this identity provider. Users linked via this provider will lose SSO access. This action cannot be undone.",
+    endpointsSection: "Explicit Endpoints",
+    endpointsSectionDesc: "Optional endpoints (overrides discovery)",
+
+    authorizationEndpoint: "Authorization Endpoint (Optional)",
+    tokenEndpoint: "Token Endpoint (Optional)",
+    userInformationEndpoint: "User Info Endpoint (Optional)",
+    samlIdpEntityId: "IdP Entity ID",
+    samlSsoUrl: "Single Sign-On Service URL",
+    samlCertificate: "IdP Public Certificate (Base64/PEM)",
+    samlCertificatePlaceholder: "-----BEGIN CERTIFICATE-----\nMIIDdDCCAlygAwIBAgIGAX...\n-----END CERTIFICATE-----",
   },
 
   // ===== OAUTH APPLICATIONS (OIDC Server) =====
@@ -5142,6 +5152,11 @@ export const en = {
     deleteButton: "Delete Application",
     deleteConfirmTitle: "Delete OAuth Application",
     deleteConfirmDesc: "This will permanently remove this application. All authenticated sessions will be invalidated.",
+
+    samlSection: "SAML Configuration",
+    samlSectionDesc: "Optional: Configure SAML 2.0 properties if this is a SAML Service Provider.",
+    samlAcsUrl: "Assertion Consumer Service (ACS) URL",
+    samlSpEntityId: "SP Entity ID",
   },
 
   // ===== ENTITLEMENTS =====
@@ -5622,5 +5637,4 @@ export const en = {
       customDays: "Enter days...",
     },
   },
-
 };
