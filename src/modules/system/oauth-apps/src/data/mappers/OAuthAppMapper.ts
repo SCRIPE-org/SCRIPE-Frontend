@@ -21,6 +21,7 @@ import {
       type OAuthAppListItemJson,
       type RegenerateSecretResultJson,
 } from "../models/OAuthAppModel";
+import { resolveFileUrl, unresolveFileUrl } from "@core/common/utils";
 
 export class OAuthAppMapper {
       static toEntity(model: OAuthAppModel): OAuthApp {
@@ -36,7 +37,7 @@ export class OAuthAppMapper {
                   tenantId: model.tenantId,
                   requireConsent: model.requireConsent,
                   requirePkce: model.requirePkce,
-                  logoUri: model.logoUri,
+                  logoUri: resolveFileUrl(model.logoUri),
                   description: model.description,
                   accessTokenLifetimeMinutes: model.accessTokenLifetimeMinutes,
                   refreshTokenLifetimeDays: model.refreshTokenLifetimeDays,
@@ -62,7 +63,7 @@ export class OAuthAppMapper {
                   allowedGrantTypes: model.allowedGrantTypes,
                   isActive: model.isActive,
                   requirePkce: model.requirePkce,
-                  logoUri: model.logoUri,
+                  logoUri: resolveFileUrl(model.logoUri),
                   description: model.description,
                   createdAt: model.createdAt,
             };
@@ -79,10 +80,16 @@ export class OAuthAppMapper {
       }
 
       static toCreateJson(request: CreateOAuthAppRequest) {
-            return { ...request };
+            return {
+                  ...request,
+                  logoUri: unresolveFileUrl(request.logoUri),
+            };
       }
 
       static toUpdateJson(request: UpdateOAuthAppRequest) {
-            return { ...request };
+            return {
+                  ...request,
+                  logoUri: unresolveFileUrl(request.logoUri),
+            };
       }
 }

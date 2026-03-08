@@ -15,6 +15,7 @@ import { Textarea } from "@core/ui/textarea";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
+import { ImageUploadField } from "@core/ui/image-upload-field";
 import GenericSelect from "@core/crud/components/generic-select";
 import {
       Settings2,
@@ -25,7 +26,6 @@ import {
       Plus,
       X,
       Tag,
-      Eye,
 } from "lucide-react";
 
 // ─── Props ──────────────────────────────────────────────────────
@@ -451,30 +451,12 @@ export function BrandingSection({ form, updateField }: FormSectionProps) {
                         </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-3">
-                        <div className="space-y-2">
-                              <Label htmlFor="oauth-logo">{t("oauthApps.logoUri") || "Logo URI"}</Label>
-                              <Input
-                                    id="oauth-logo"
-                                    value={form.logoUri}
-                                    onChange={(e) => updateField("logoUri", e.target.value)}
-                                    placeholder="https://example.com/logo.png"
-                                    className="font-mono text-sm"
-                              />
-                        </div>
-                        {form.logoUri && (
-                              <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 border">
-                                    <Eye className="h-4 w-4 text-muted-foreground shrink-0" />
-                                    <span className="text-xs text-muted-foreground">{t("oauthApps.preview") || "Preview"}:</span>
-                                    <img
-                                          src={form.logoUri}
-                                          alt="App logo preview"
-                                          className="h-10 w-10 rounded-lg object-contain border"
-                                          onError={(e) => {
-                                                (e.target as HTMLImageElement).style.display = "none";
-                                          }}
-                                    />
-                              </div>
-                        )}
+                        <ImageUploadField
+                              label={t("oauthApps.logoUri") || "Application Logo"}
+                              description={t("oauthApps.brandingSectionDesc") || "Application logo shown on consent screen"}
+                              value={form.logoUri}
+                              onChange={(url) => updateField("logoUri", url)}
+                        />
                   </CardContent>
             </Card>
       );

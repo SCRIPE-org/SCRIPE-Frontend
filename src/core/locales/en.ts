@@ -4945,6 +4945,23 @@ export const en = {
     responseBody: "Response Body",
   },
 
+  // ===== IMAGE UPLOAD COMPONENT =====
+  imageUpload: {
+    uploadTab: "Upload",
+    urlTab: "URL",
+    dragDrop: "Drop an image here or click to browse",
+    maxSize: "Max",
+    uploading: "Uploading...",
+    uploadFailed: "Upload failed. Please try again.",
+    invalidType: "Invalid file type",
+    tooLarge: "File exceeds {{max}} MB limit",
+    invalidUrl: "Please enter a valid URL starting with http:// or https://",
+    urlPlaceholder: "https://example.com/logo.png",
+    urlHelp: "Paste a direct link to an image. Best for well-known provider logos.",
+    apply: "Apply",
+    remove: "Remove",
+  },
+
   // ===== IDENTITY PROVIDERS (SSO) =====
   identityProviders: {
     title: "Identity Providers",
@@ -4985,7 +5002,8 @@ export const en = {
     buttonColor: "Button Color",
     buttonLabel: "Button Label",
     buttonLabelPlaceholder: "Sign in with ...",
-    iconUrl: "Icon URL",
+    iconUrl: "Provider Icon",
+    iconUrlHelp: "Upload a logo or paste a URL for the login button icon",
     preview: "Preview",
     buttonPreview: "Login Button Preview",
     // Section titles

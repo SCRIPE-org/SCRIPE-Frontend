@@ -4781,6 +4781,23 @@ export const ar = {
     responseBody: "نص الاستجابة",
   },
 
+  // ===== مكون رفع الصور =====
+  imageUpload: {
+    uploadTab: "رفع",
+    urlTab: "رابط",
+    dragDrop: "أسقط صورة هنا أو انقر للاستعراض",
+    maxSize: "الحد الأقصى",
+    uploading: "جارٍ الرفع...",
+    uploadFailed: "فشل الرفع. يرجى المحاولة مرة أخرى.",
+    invalidType: "نوع ملف غير صالح",
+    tooLarge: "الملف يتجاوز حد {{max}} ميجابايت",
+    invalidUrl: "يرجى إدخال رابط صالح يبدأ بـ http:// أو https://",
+    urlPlaceholder: "https://example.com/logo.png",
+    urlHelp: "الصق رابطاً مباشراً لصورة. مناسب لشعارات الموفرين المعروفين.",
+    apply: "تطبيق",
+    remove: "إزالة",
+  },
+
   // ===== موفرو الهوية (SSO) =====
   identityProviders: {
     title: "موفرو الهوية",
@@ -4821,7 +4838,8 @@ export const ar = {
     buttonColor: "لون الزر",
     buttonLabel: "نص الزر",
     buttonLabelPlaceholder: "تسجيل الدخول عبر ...",
-    iconUrl: "رابط الأيقونة",
+    iconUrl: "أيقونة الموفر",
+    iconUrlHelp: "ارفع شعاراً أو الصق رابطاً لأيقونة زر تسجيل الدخول",
     preview: "معاينة",
     buttonPreview: "معاينة زر تسجيل الدخول",
     // عناوين الأقسام

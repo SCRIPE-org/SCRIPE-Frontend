@@ -128,6 +128,36 @@ export function debounce<T extends (...args: any[]) => any>(
 }
 
 /**
+ * Resolve a file URL from the server.
+ *
+ * - If the value is empty/null → returns empty string
+ * - If the value is already an absolute URL (http/https) → returns as-is
+ * - Otherwise → prefixes with NEXT_PUBLIC_File_URL (server-hosted file)
+ *
+ * Use this in mappers/repositories to resolve file paths from the API.
+ */
+const FILE_URL_BASE = process.env.NEXT_PUBLIC_File_URL || "";
+
+export function resolveFileUrl(value: string | null | undefined): string {
+  if (!value) return "";
+  if (/^https?:\/\//i.test(value)) return value;
+  return `${FILE_URL_BASE}${value}`;
+}
+
+/**
+ * Strip the server URL from a resolved file URL before sending to the backend.
+ *
+ * Use this in mappers (toCreateJson/toUpdateJson) to convert full URLs back to relative paths.
+ */
+export function unresolveFileUrl(value: string | null | undefined): string {
+  if (!value) return "";
+  if (FILE_URL_BASE && value.startsWith(FILE_URL_BASE)) {
+    return value.replace(FILE_URL_BASE, "");
+  }
+  return value;
+}
+
+/**
  * Generate hover effect classes based on type and intensity
  */
 export function getHoverEffectClasses(

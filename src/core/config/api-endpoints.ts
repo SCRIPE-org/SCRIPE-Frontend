@@ -361,6 +361,11 @@ export const API_ENDPOINTS = {
     DELETE: (id: string) => `${V1}/oauth-applications/${id}`,
     REGENERATE_SECRET: (id: string) => `${V1}/oauth-applications/${id}/regenerate-secret`,
   },
+
+  // ===== GENERIC UPLOADS =====
+  UPLOADS: {
+    IMAGE: `${V1}/uploads/image`,
+  },
 };
 
 /**

@@ -14,6 +14,7 @@ import { Switch } from "@core/ui/switch";
 import { Textarea } from "@core/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
+import { ImageUploadField } from "@core/ui/image-upload-field";
 import GenericSelect from "@core/crud/components/generic-select";
 import {
       Settings2,
@@ -22,7 +23,6 @@ import {
       Shield,
       FileJson,
       Fingerprint,
-      Eye,
 } from "lucide-react";
 
 // ─── Props ──────────────────────────────────────────────────────
@@ -262,30 +262,14 @@ export function AppearanceSection({ form, updateField }: FormSectionProps) {
                   </CardHeader>
                   <CardContent className="space-y-5">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                              {/* Icon URL */}
+                              {/* Icon */}
                               <div className="space-y-2">
-                                    <Label htmlFor="idp-icon">{t("identityProviders.iconUrl") || "Icon URL"}</Label>
-                                    <Input
-                                          id="idp-icon"
+                                    <ImageUploadField
+                                          label={t("identityProviders.iconUrl") || "Provider Icon"}
+                                          description={t("identityProviders.iconUrlHelp") || "Upload a logo or paste a URL for the login button icon"}
                                           value={form.iconUrl}
-                                          onChange={(e) => updateField("iconUrl", e.target.value)}
-                                          placeholder="https://example.com/icon.svg"
-                                          className="font-mono text-sm"
+                                          onChange={(url) => updateField("iconUrl", url)}
                                     />
-                                    {form.iconUrl && (
-                                          <div className="flex items-center gap-2 p-2 rounded-md bg-muted/50 border">
-                                                <Eye className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-                                                <span className="text-xs text-muted-foreground">{t("identityProviders.preview") || "Preview"}:</span>
-                                                <img
-                                                      src={form.iconUrl}
-                                                      alt="Icon preview"
-                                                      className="h-6 w-6 rounded object-contain"
-                                                      onError={(e) => {
-                                                            (e.target as HTMLImageElement).style.display = "none";
-                                                      }}
-                                                />
-                                          </div>
-                                    )}
                               </div>
 
                               {/* Button Color */}

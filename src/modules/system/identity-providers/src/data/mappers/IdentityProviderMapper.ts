@@ -21,6 +21,7 @@ import {
       type IdentityProviderListItemJson,
       type TestConnectionResultJson,
 } from "../models/IdentityProviderModel";
+import { resolveFileUrl, unresolveFileUrl } from "@core/common/utils";
 
 export class IdentityProviderMapper {
       static toEntity(model: IdentityProviderModel): IdentityProvider {
@@ -37,7 +38,7 @@ export class IdentityProviderMapper {
                   claimMappingJson: model.claimMappingJson,
                   enabledForAdmins: model.enabledForAdmins,
                   enabledForUsers: model.enabledForUsers,
-                  iconUrl: model.iconUrl,
+                  iconUrl: resolveFileUrl(model.iconUrl),
                   buttonColor: model.buttonColor,
                   buttonLabel: model.buttonLabel,
                   displayOrder: model.displayOrder,
@@ -63,7 +64,7 @@ export class IdentityProviderMapper {
                   enabledForUsers: model.enabledForUsers,
                   isActive: model.isActive,
                   displayOrder: model.displayOrder,
-                  iconUrl: model.iconUrl,
+                  iconUrl: resolveFileUrl(model.iconUrl),
                   buttonColor: model.buttonColor,
                   createdAt: model.createdAt,
             };
@@ -85,10 +86,16 @@ export class IdentityProviderMapper {
       }
 
       static toCreateJson(request: CreateIdentityProviderRequest) {
-            return { ...request };
+            return {
+                  ...request,
+                  iconUrl: unresolveFileUrl(request.iconUrl),
+            };
       }
 
       static toUpdateJson(request: UpdateIdentityProviderRequest) {
-            return { ...request };
+            return {
+                  ...request,
+                  iconUrl: unresolveFileUrl(request.iconUrl),
+            };
       }
 }
