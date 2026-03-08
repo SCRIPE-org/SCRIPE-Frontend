@@ -245,6 +245,139 @@ export function OidcConfigSection({ form, updateField }: FormSectionProps) {
       );
 }
 
+// ─── OAuth 2.0 Configuration Section ────────────────────────────
+export function Oauth2ConfigSection({ form, updateField }: FormSectionProps) {
+      const { t } = useI18n();
+
+      return (
+            <Card>
+                  <CardHeader>
+                        <CardTitle className="flex items-center gap-2 text-lg">
+                              <Globe className="h-5 w-5 text-indigo-500" />
+                              {t("identityProviders.oauth2Section") || "OAuth 2.0 Configuration"}
+                        </CardTitle>
+                        <CardDescription>
+                              {t("identityProviders.oauth2SectionDesc") || "OAuth 2.0 connection settings"}
+                        </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                        {/* Authority URL */}
+                        <div className="space-y-2">
+                              <Label htmlFor="oauth2-authority">
+                                    {t("identityProviders.authority") || "Authority URL"}
+                              </Label>
+                              <Input
+                                    id="oauth2-authority"
+                                    value={form.authority}
+                                    onChange={(e) => updateField("authority", e.target.value)}
+                                    placeholder="https://accounts.google.com"
+                                    className="font-mono text-sm"
+                              />
+                              <p className="text-xs text-muted-foreground">
+                                    {t("identityProviders.authorityHelp") || "The OAuth 2.0 issuer or authorization endpoint base URL"}
+                              </p>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              {/* Client ID */}
+                              <div className="space-y-2">
+                                    <Label htmlFor="oauth2-clientId">
+                                          {t("identityProviders.clientId") || "Client ID"}
+                                    </Label>
+                                    <Input
+                                          id="oauth2-clientId"
+                                          value={form.clientId}
+                                          onChange={(e) => updateField("clientId", e.target.value)}
+                                          placeholder={t("identityProviders.clientIdPlaceholder") || "OAuth2 client_id"}
+                                          className="font-mono text-sm"
+                                    />
+                              </div>
+
+                              {/* Client Secret */}
+                              <div className="space-y-2">
+                                    <Label htmlFor="oauth2-clientSecret">
+                                          {t("identityProviders.clientSecret") || "Client Secret"}
+                                    </Label>
+                                    <Input
+                                          id="oauth2-clientSecret"
+                                          type="password"
+                                          value={form.clientSecret}
+                                          onChange={(e) => updateField("clientSecret", e.target.value)}
+                                          placeholder={t("identityProviders.clientSecretPlaceholder") || "Leave blank to keep existing"}
+                                    />
+                              </div>
+                        </div>
+
+                        {/* Scopes */}
+                        <div className="space-y-2">
+                              <Label htmlFor="oauth2-scopes">
+                                    {t("identityProviders.scopes") || "Scopes"}
+                              </Label>
+                              <Input
+                                    id="oauth2-scopes"
+                                    value={form.scopes}
+                                    onChange={(e) => updateField("scopes", e.target.value)}
+                                    placeholder="email profile"
+                                    className="font-mono text-sm"
+                              />
+                              <p className="text-xs text-muted-foreground">
+                                    {t("identityProviders.scopesHelp") || "Space-separated list of scopes to request"}
+                              </p>
+                        </div>
+
+                        {/* Redirect URI */}
+                        <div className="space-y-2">
+                              <Label htmlFor="oauth2-redirect">
+                                    {t("identityProviders.redirectUri") || "Redirect URI"}
+                              </Label>
+                              <Input
+                                    id="oauth2-redirect"
+                                    value={form.redirectUri}
+                                    onChange={(e) => updateField("redirectUri", e.target.value)}
+                                    placeholder={t("identityProviders.redirectUriPlaceholder") || "Auto-generated if blank"}
+                                    className="font-mono text-sm"
+                              />
+                              <p className="text-xs text-muted-foreground">
+                                    {t("identityProviders.redirectUriHelp") || "Leave empty to use the default NEXORA callback URL"}
+                              </p>
+                        </div>
+                  </CardContent>
+            </Card>
+      );
+}
+
+// ─── SAML Configuration Section ─────────────────────────────────
+export function SamlConfigSection() {
+      const { t } = useI18n();
+
+      return (
+            <Card>
+                  <CardHeader>
+                        <CardTitle className="flex items-center gap-2 text-lg">
+                              <Globe className="h-5 w-5 text-orange-500" />
+                              {t("identityProviders.samlSection") || "SAML Configuration"}
+                        </CardTitle>
+                        <CardDescription>
+                              {t("identityProviders.samlSectionDesc") || "SAML 2.0 connection settings"}
+                        </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                        <div className="flex flex-col items-center justify-center p-8 text-center bg-muted/30 rounded-lg border border-dashed">
+                              <div className="h-12 w-12 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center mb-4">
+                                    <Globe className="h-6 w-6 text-orange-600 dark:text-orange-400" />
+                              </div>
+                              <h3 className="text-base font-semibold mb-2">
+                                    {t("identityProviders.samlComingSoon") || "SAML support is coming soon"}
+                              </h3>
+                              <p className="text-sm text-muted-foreground max-w-sm">
+                                    {t("identityProviders.samlComingSoonDesc") || "Integration with SAML 2.0 Identity Providers (like Okta, ADFS) is currently under development and will be available in a future update."}
+                              </p>
+                        </div>
+                  </CardContent>
+            </Card>
+      );
+}
+
 // ─── Appearance Section ─────────────────────────────────────────
 export function AppearanceSection({ form, updateField }: FormSectionProps) {
       const { t } = useI18n();

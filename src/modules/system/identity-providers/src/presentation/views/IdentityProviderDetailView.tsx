@@ -10,6 +10,8 @@ import { useIdentityProviderDetailViewModel } from "../viewmodels/useIdentityPro
 import {
       GeneralSection,
       OidcConfigSection,
+      Oauth2ConfigSection,
+      SamlConfigSection,
       AppearanceSection,
       AccessControlSection,
       ClaimMappingsSection,
@@ -161,8 +163,12 @@ export function IdentityProviderDetailView({ providerId }: Props) {
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         <div className="space-y-6">
                               <GeneralSection {...sectionProps} />
-                              <OidcConfigSection {...sectionProps} />
-                              <ClaimMappingsSection {...sectionProps} />
+
+                              {vm.form.protocol === "oidc" && <OidcConfigSection {...sectionProps} />}
+                              {vm.form.protocol === "oauth2" && <Oauth2ConfigSection {...sectionProps} />}
+                              {vm.form.protocol === "saml" && <SamlConfigSection />}
+
+                              {vm.form.protocol !== "saml" && <ClaimMappingsSection {...sectionProps} />}
                         </div>
                         <div className="space-y-6">
                               <AppearanceSection {...sectionProps} />
