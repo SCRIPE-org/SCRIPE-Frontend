@@ -501,6 +501,21 @@ export function SamlSection({ form, updateField }: FormSectionProps) {
                                     className="font-mono text-sm"
                               />
                         </div>
+
+                        {/* SP Certificate */}
+                        <div className="space-y-2">
+                              <Label htmlFor="saml-sp-cert">{t("oauthApps.samlSpCertificate") || "SP Certificate (X.509 PEM)"}</Label>
+                              <Textarea
+                                    id="saml-sp-cert"
+                                    value={form.samlSpCertificate ?? ""}
+                                    onChange={(e) => updateField("samlSpCertificate", e.target.value)}
+                                    placeholder={"-----BEGIN CERTIFICATE-----\n...\n-----END CERTIFICATE-----"}
+                                    className="font-mono text-xs min-h-[100px] resize-y"
+                              />
+                              <p className="text-xs text-muted-foreground">
+                                    {t("oauthApps.samlSpCertificateHelp") || "Optional: Public X.509 certificate for validating signed SAML requests from this SP."}
+                              </p>
+                        </div>
                   </CardContent>
             </Card>
       );

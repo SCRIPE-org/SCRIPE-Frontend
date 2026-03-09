@@ -11,7 +11,9 @@
 export interface OAuthAppData {
       id: string;
       displayName: string;
+      protocol: string;
       clientId: string;
+      hasClientSecret: boolean;
       clientType: string;
       redirectUrisJson: string;
       postLogoutRedirectUrisJson: string;
@@ -23,6 +25,7 @@ export interface OAuthAppData {
       logoUri: string | null;
       samlAcsUrl: string | null;
       samlSpEntityId: string | null;
+      samlSpCertificate: string | null;
       description: string | null;
       accessTokenLifetimeMinutes: number;
       refreshTokenLifetimeDays: number;
@@ -39,7 +42,9 @@ export class OAuthApp {
 
       get id(): string { return this.data.id; }
       get displayName(): string { return this.data.displayName; }
+      get protocol(): string { return this.data.protocol; }
       get clientId(): string { return this.data.clientId; }
+      get hasClientSecret(): boolean { return this.data.hasClientSecret; }
       get clientType(): string { return this.data.clientType; }
       get redirectUrisJson(): string { return this.data.redirectUrisJson; }
       get postLogoutRedirectUrisJson(): string { return this.data.postLogoutRedirectUrisJson; }
@@ -51,6 +56,7 @@ export class OAuthApp {
       get logoUri(): string | null { return this.data.logoUri; }
       get samlAcsUrl(): string | null { return this.data.samlAcsUrl; }
       get samlSpEntityId(): string | null { return this.data.samlSpEntityId; }
+      get samlSpCertificate(): string | null { return this.data.samlSpCertificate; }
       get description(): string | null { return this.data.description; }
       get accessTokenLifetimeMinutes(): number { return this.data.accessTokenLifetimeMinutes; }
       get refreshTokenLifetimeDays(): number { return this.data.refreshTokenLifetimeDays; }
@@ -84,6 +90,7 @@ export class OAuthApp {
 export interface OAuthAppListItemData {
       id: string;
       displayName: string;
+      protocol: string;
       clientId: string;
       clientType: string;
       allowedScopes: string;
@@ -103,6 +110,7 @@ export class OAuthAppListItem {
 
       get id(): string { return this.data.id; }
       get displayName(): string { return this.data.displayName; }
+      get protocol(): string { return this.data.protocol; }
       get clientId(): string { return this.data.clientId; }
       get clientType(): string { return this.data.clientType; }
       get allowedScopes(): string { return this.data.allowedScopes; }
@@ -158,6 +166,7 @@ export interface CreateOAuthAppRequest {
       logoUri?: string;
       samlAcsUrl?: string;
       samlSpEntityId?: string;
+      samlSpCertificate?: string;
       description?: string;
       accessTokenLifetimeMinutes?: number;
       refreshTokenLifetimeDays?: number;
@@ -174,6 +183,7 @@ export interface UpdateOAuthAppRequest {
       logoUri?: string;
       samlAcsUrl?: string;
       samlSpEntityId?: string;
+      samlSpCertificate?: string;
       description?: string;
       accessTokenLifetimeMinutes?: number;
       refreshTokenLifetimeDays?: number;

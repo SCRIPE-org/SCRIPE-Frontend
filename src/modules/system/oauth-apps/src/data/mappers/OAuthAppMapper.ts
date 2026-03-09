@@ -30,7 +30,9 @@ export class OAuthAppMapper {
             const data: OAuthAppData = {
                   id: model.id,
                   displayName: model.displayName,
+                  protocol: model.protocol,
                   clientId: model.clientId,
+                  hasClientSecret: model.hasClientSecret,
                   clientType: model.clientType,
                   redirectUrisJson: model.redirectUrisJson,
                   postLogoutRedirectUrisJson: model.postLogoutRedirectUrisJson,
@@ -42,6 +44,7 @@ export class OAuthAppMapper {
                   logoUri: resolveFileUrl(model.logoUri),
                   samlAcsUrl: model.samlAcsUrl,
                   samlSpEntityId: model.samlSpEntityId,
+                  samlSpCertificate: model.samlSpCertificate,
                   description: model.description,
                   accessTokenLifetimeMinutes: model.accessTokenLifetimeMinutes,
                   refreshTokenLifetimeDays: model.refreshTokenLifetimeDays,
@@ -61,6 +64,7 @@ export class OAuthAppMapper {
             const data: OAuthAppListItemData = {
                   id: model.id,
                   displayName: model.displayName,
+                  protocol: model.protocol,
                   clientId: model.clientId,
                   clientType: model.clientType,
                   allowedScopes: model.allowedScopes,
@@ -88,15 +92,25 @@ export class OAuthAppMapper {
       }
 
       static toCreateJson(request: CreateOAuthAppRequest) {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const { redirectUris, postLogoutRedirectUris, ...rest } = request;
             return {
-                  ...request,
+                  ...rest,
+                  // Backend expects JSON-serialized strings, not raw arrays
+                  redirectUrisJson: JSON.stringify(redirectUris ?? []),
+                  postLogoutRedirectUrisJson: JSON.stringify(postLogoutRedirectUris ?? []),
                   logoUri: unresolveFileUrl(request.logoUri),
             };
       }
 
       static toUpdateJson(request: UpdateOAuthAppRequest) {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const { redirectUris, postLogoutRedirectUris, ...rest } = request;
             return {
-                  ...request,
+                  ...rest,
+                  // Backend expects JSON-serialized strings, not raw arrays
+                  ...(redirectUris !== undefined && { redirectUrisJson: JSON.stringify(redirectUris) }),
+                  ...(postLogoutRedirectUris !== undefined && { postLogoutRedirectUrisJson: JSON.stringify(postLogoutRedirectUris) }),
                   logoUri: unresolveFileUrl(request.logoUri),
             };
       }

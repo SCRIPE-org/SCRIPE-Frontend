@@ -15,7 +15,7 @@ export interface ServiceIdentityProviderListParams {
 export interface IIdentityProviderService {
       getAll(params: ServiceIdentityProviderListParams): Promise<IdentityProviderListResponseJson>;
       getById(id: string): Promise<IdentityProviderJson>;
-      create(data: CreateIdentityProviderJson): Promise<IdentityProviderJson>;
+      create(data: CreateIdentityProviderJson): Promise<{ id: string }>;
       update(id: string, data: UpdateIdentityProviderJson): Promise<void>;
       remove(id: string): Promise<void>;
       testConnection(id: string): Promise<TestConnectionResultJson>;

@@ -44,6 +44,7 @@ export interface OAuthAppFormState {
       // SAML Configuration (Optional)
       samlAcsUrl?: string;
       samlSpEntityId?: string;
+      samlSpCertificate?: string;
 }
 
 const DEFAULT_STATE: OAuthAppFormState = {
@@ -62,6 +63,7 @@ const DEFAULT_STATE: OAuthAppFormState = {
       logoUri: "",
       samlAcsUrl: "",
       samlSpEntityId: "",
+      samlSpCertificate: "",
 };
 
 // ─── Hook ─────────────────────────────────────────────────────────
@@ -78,10 +80,12 @@ export function useOAuthAppDetailViewModel(appId?: string) {
       const [isDirty, setIsDirty] = useState(false);
 
       // Track generated secret (one-time display)
-      const [generatedSecret, setGeneratedSecret] = useState<{
+      interface GeneratedSecret {
+            id?: string;
             clientId: string;
             secret: string;
-      } | null>(null);
+      }
+      const [generatedSecret, setGeneratedSecret] = useState<GeneratedSecret | null>(null);
 
       // ─── Fetch existing app ───────────────────────
       const {
@@ -113,6 +117,7 @@ export function useOAuthAppDetailViewModel(appId?: string) {
                         logoUri: app.logoUri ?? "",
                         samlAcsUrl: app.samlAcsUrl ?? "",
                         samlSpEntityId: app.samlSpEntityId ?? "",
+                        samlSpCertificate: app.samlSpCertificate ?? "",
                   });
                   setIsDirty(false);
             }
@@ -200,6 +205,7 @@ export function useOAuthAppDetailViewModel(appId?: string) {
                               refreshTokenLifetimeDays: form.refreshTokenLifetimeDays,
                               samlAcsUrl: form.samlAcsUrl || undefined,
                               samlSpEntityId: form.samlSpEntityId || undefined,
+                              samlSpCertificate: form.samlSpCertificate || undefined,
                         });
                         return result;
                   } else {
@@ -217,6 +223,7 @@ export function useOAuthAppDetailViewModel(appId?: string) {
                               refreshTokenLifetimeDays: form.refreshTokenLifetimeDays,
                               samlAcsUrl: form.samlAcsUrl || undefined,
                               samlSpEntityId: form.samlSpEntityId || undefined,
+                              samlSpCertificate: form.samlSpCertificate || undefined,
                         });
                         return null;
                   }
@@ -233,6 +240,7 @@ export function useOAuthAppDetailViewModel(appId?: string) {
                         // If a secret was generated (confidential client), show the dialog instead of navigating away immediately
                         if (result.clientSecret) {
                               setGeneratedSecret({
+                                    id: result.id,
                                     clientId: result.clientId,
                                     secret: result.clientSecret,
                               });

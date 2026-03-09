@@ -352,7 +352,7 @@ export const API_ENDPOINTS = {
     CREATE: `${V1}/identity-providers`,
     UPDATE: (id: string) => `${V1}/identity-providers/${id}`,
     DELETE: (id: string) => `${V1}/identity-providers/${id}`,
-    TEST: (id: string) => `${V1}/identity-providers/${id}/test`,
+    TEST: (id: string) => `${V1}/identity-providers/${id}/test-connection`,
   },
 
   // ===== OAUTH APPLICATIONS (OIDC Server) =====

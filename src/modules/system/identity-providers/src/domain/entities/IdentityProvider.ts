@@ -19,6 +19,7 @@ export interface IdentityProviderData {
       tokenEndpoint: string | null;
       userInformationEndpoint: string | null;
       clientId: string | null;
+      hasClientSecret: boolean;
       scopes: string | null;
       redirectUri: string | null;
       samlIdpEntityId: string | null;
@@ -52,6 +53,7 @@ export class IdentityProvider {
       get tokenEndpoint(): string | null { return this.data.tokenEndpoint; }
       get userInformationEndpoint(): string | null { return this.data.userInformationEndpoint; }
       get clientId(): string | null { return this.data.clientId; }
+      get hasClientSecret(): boolean { return this.data.hasClientSecret; }
       get scopes(): string | null { return this.data.scopes; }
       get redirectUri(): string | null { return this.data.redirectUri; }
       get samlIdpEntityId(): string | null { return this.data.samlIdpEntityId; }

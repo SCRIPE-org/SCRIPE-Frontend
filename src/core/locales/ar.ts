@@ -4898,6 +4898,8 @@ export const ar = {
     description: "إدارة التطبيقات الخارجية التي تعتمد على NEXORA للمصادقة (خادم OIDC)",
     // عناوين الصفحة التفصيلية
     createTitle: "تطبيق OAuth جديد",
+    samlAcsUrl: "رابط خدمة المصادقة (ACS)",
+    samlSpEntityId: "معرف كيان موفر الخدمة (SP Entity ID)",
     editTitle: "تعديل التطبيق",
     createButton: "إنشاء تطبيق",
     // الحقول

@@ -35,7 +35,7 @@ export class IdentityProviderService implements IIdentityProviderService {
             return this.api.get(API_ENDPOINTS.IDENTITY_PROVIDERS.BY_ID(id));
       }
 
-      async create(data: CreateIdentityProviderJson): Promise<IdentityProviderJson> {
+      async create(data: CreateIdentityProviderJson): Promise<{ id: string }> {
             return this.api.post(API_ENDPOINTS.IDENTITY_PROVIDERS.CREATE, data);
       }
 

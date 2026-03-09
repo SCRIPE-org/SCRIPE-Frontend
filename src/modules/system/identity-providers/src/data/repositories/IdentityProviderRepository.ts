@@ -37,10 +37,9 @@ export class IdentityProviderRepository implements IIdentityProviderRepository {
             return IdentityProviderMapper.fromJsonToEntity(json);
       }
 
-      async create(data: CreateIdentityProviderRequest): Promise<IdentityProvider> {
+      async create(data: CreateIdentityProviderRequest): Promise<{ id: string }> {
             const createJson = IdentityProviderMapper.toCreateJson(data);
-            const json = await this.service.create(createJson);
-            return IdentityProviderMapper.fromJsonToEntity(json);
+            return this.service.create(createJson);
       }
 
       async update(id: string, data: UpdateIdentityProviderRequest): Promise<void> {

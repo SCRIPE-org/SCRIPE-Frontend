@@ -36,6 +36,7 @@ export class IdentityProviderMapper {
                   tokenEndpoint: model.tokenEndpoint,
                   userInformationEndpoint: model.userInformationEndpoint,
                   clientId: model.clientId,
+                  hasClientSecret: model.hasClientSecret,
                   scopes: model.scopes,
                   redirectUri: model.redirectUri,
                   samlIdpEntityId: model.samlIdpEntityId,

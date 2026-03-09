@@ -11,7 +11,9 @@
 export interface OAuthAppJson {
       id: string;
       displayName: string;
+      protocol: string;
       clientId: string;
+      hasClientSecret: boolean;
       clientType: string;
       redirectUrisJson: string;
       postLogoutRedirectUrisJson: string;
@@ -23,6 +25,7 @@ export interface OAuthAppJson {
       logoUri: string | null;
       samlAcsUrl: string | null;
       samlSpEntityId: string | null;
+      samlSpCertificate: string | null;
       description: string | null;
       accessTokenLifetimeMinutes: number;
       refreshTokenLifetimeDays: number;
@@ -34,6 +37,7 @@ export interface OAuthAppJson {
 export interface OAuthAppListItemJson {
       id: string;
       displayName: string;
+      protocol: string;
       clientId: string;
       clientType: string;
       allowedScopes: string;
@@ -64,8 +68,8 @@ export interface CreateOAuthAppResponseJson {
 export interface CreateOAuthAppJson {
       displayName: string;
       clientType: string;
-      redirectUris: string[];
-      postLogoutRedirectUris?: string[];
+      redirectUrisJson: string;
+      postLogoutRedirectUrisJson?: string;
       allowedScopes?: string;
       allowedGrantTypes?: string;
       requireConsent?: boolean;
@@ -73,6 +77,7 @@ export interface CreateOAuthAppJson {
       logoUri?: string;
       samlAcsUrl?: string;
       samlSpEntityId?: string;
+      samlSpCertificate?: string;
       description?: string;
       accessTokenLifetimeMinutes?: number;
       refreshTokenLifetimeDays?: number;
@@ -80,8 +85,8 @@ export interface CreateOAuthAppJson {
 
 export interface UpdateOAuthAppJson {
       displayName?: string;
-      redirectUris?: string[];
-      postLogoutRedirectUris?: string[];
+      redirectUrisJson?: string;
+      postLogoutRedirectUrisJson?: string;
       allowedScopes?: string;
       allowedGrantTypes?: string;
       requireConsent?: boolean;
@@ -89,6 +94,7 @@ export interface UpdateOAuthAppJson {
       logoUri?: string;
       samlAcsUrl?: string;
       samlSpEntityId?: string;
+      samlSpCertificate?: string;
       description?: string;
       accessTokenLifetimeMinutes?: number;
       refreshTokenLifetimeDays?: number;
@@ -100,7 +106,9 @@ export class OAuthAppModel {
       constructor(
             public readonly id: string,
             public readonly displayName: string,
+            public readonly protocol: string,
             public readonly clientId: string,
+            public readonly hasClientSecret: boolean,
             public readonly clientType: string,
             public readonly redirectUrisJson: string,
             public readonly postLogoutRedirectUrisJson: string,
@@ -112,6 +120,7 @@ export class OAuthAppModel {
             public readonly logoUri: string | null,
             public readonly samlAcsUrl: string | null,
             public readonly samlSpEntityId: string | null,
+            public readonly samlSpCertificate: string | null,
             public readonly description: string | null,
             public readonly accessTokenLifetimeMinutes: number,
             public readonly refreshTokenLifetimeDays: number,
@@ -122,11 +131,13 @@ export class OAuthAppModel {
 
       static fromJson(json: OAuthAppJson): OAuthAppModel {
             return new OAuthAppModel(
-                  json.id, json.displayName, json.clientId, json.clientType,
+                  json.id, json.displayName, json.protocol, json.clientId,
+                  json.hasClientSecret, json.clientType,
                   json.redirectUrisJson, json.postLogoutRedirectUrisJson,
                   json.allowedScopes, json.allowedGrantTypes,
                   json.tenantId, json.requireConsent, json.requirePkce,
-                  json.logoUri, json.samlAcsUrl, json.samlSpEntityId, json.description,
+                  json.logoUri, json.samlAcsUrl, json.samlSpEntityId,
+                  json.samlSpCertificate, json.description,
                   json.accessTokenLifetimeMinutes, json.refreshTokenLifetimeDays,
                   json.isActive, json.createdAt, json.modifiedAt,
             );
@@ -137,6 +148,7 @@ export class OAuthAppListItemModel {
       constructor(
             public readonly id: string,
             public readonly displayName: string,
+            public readonly protocol: string,
             public readonly clientId: string,
             public readonly clientType: string,
             public readonly allowedScopes: string,
@@ -150,7 +162,7 @@ export class OAuthAppListItemModel {
 
       static fromJson(json: OAuthAppListItemJson): OAuthAppListItemModel {
             return new OAuthAppListItemModel(
-                  json.id, json.displayName, json.clientId, json.clientType,
+                  json.id, json.displayName, json.protocol, json.clientId, json.clientType,
                   json.allowedScopes, json.allowedGrantTypes,
                   json.isActive, json.requirePkce,
                   json.logoUri, json.description, json.createdAt,

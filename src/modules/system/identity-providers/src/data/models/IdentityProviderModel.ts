@@ -20,6 +20,7 @@ export interface IdentityProviderJson {
       tokenEndpoint: string | null;
       userInformationEndpoint: string | null;
       clientId: string | null;
+      hasClientSecret: boolean;
       scopes: string | null;
       redirectUri: string | null;
       samlIdpEntityId: string | null;
@@ -125,6 +126,7 @@ export class IdentityProviderModel {
             public readonly tokenEndpoint: string | null,
             public readonly userInformationEndpoint: string | null,
             public readonly clientId: string | null,
+            public readonly hasClientSecret: boolean,
             public readonly scopes: string | null,
             public readonly redirectUri: string | null,
             public readonly samlIdpEntityId: string | null,
@@ -147,7 +149,7 @@ export class IdentityProviderModel {
                   json.id, json.name, json.slug, json.protocol,
                   json.tenantId, json.authority, json.authorizationEndpoint,
                   json.tokenEndpoint, json.userInformationEndpoint, json.clientId,
-                  json.scopes, json.redirectUri, json.samlIdpEntityId,
+                  json.hasClientSecret, json.scopes, json.redirectUri, json.samlIdpEntityId,
                   json.samlSsoUrl, json.samlCertificate, json.claimMappingJson,
                   json.enabledForAdmins, json.enabledForUsers,
                   json.iconUrl, json.buttonColor, json.buttonLabel,

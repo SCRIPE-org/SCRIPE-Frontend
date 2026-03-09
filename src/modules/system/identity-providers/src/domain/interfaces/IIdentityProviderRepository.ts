@@ -15,7 +15,7 @@ export interface IIdentityProviderRepository {
 
       getById(id: string): Promise<IdentityProvider>;
 
-      create(data: CreateIdentityProviderRequest): Promise<IdentityProvider>;
+      create(data: CreateIdentityProviderRequest): Promise<{ id: string }>;
 
       update(id: string, data: UpdateIdentityProviderRequest): Promise<void>;
 
