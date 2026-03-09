@@ -2,6 +2,7 @@ import type {
       OAuthApp,
       OAuthAppListItem,
       RegenerateSecretResult,
+      CreateOAuthAppResponse,
       CreateOAuthAppRequest,
       UpdateOAuthAppRequest,
 } from "../entities/OAuthApp";
@@ -15,7 +16,7 @@ export interface IOAuthAppRepository {
 
       getById(id: string): Promise<OAuthApp>;
 
-      create(data: CreateOAuthAppRequest): Promise<OAuthApp>;
+      create(data: CreateOAuthAppRequest): Promise<CreateOAuthAppResponse>;
 
       update(id: string, data: UpdateOAuthAppRequest): Promise<void>;
 

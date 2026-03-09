@@ -55,6 +55,12 @@ export interface RegenerateSecretResultJson {
       newClientSecret: string;
 }
 
+export interface CreateOAuthAppResponseJson {
+      id: string;
+      clientId: string;
+      clientSecret: string | null;
+}
+
 export interface CreateOAuthAppJson {
       displayName: string;
       clientType: string;

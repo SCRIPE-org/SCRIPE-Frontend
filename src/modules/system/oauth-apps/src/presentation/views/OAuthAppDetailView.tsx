@@ -172,8 +172,8 @@ export function OAuthAppDetailView({ appId }: Props) {
                                           <KeyRound className="h-4 w-4" />
                                           {t("oauthApps.newSecretGenerated") || "New Secret Generated"}
                                     </h3>
-                                    <Button variant="ghost" size="sm" onClick={vm.clearGeneratedSecret}>
-                                          {t("common.dismiss") || "Dismiss"}
+                                    <Button variant="outline" size="sm" onClick={() => vm.clearGeneratedSecret(vm.isCreateMode && vm.generatedSecret ? vm.generatedSecret.clientId : undefined)} className="bg-white/50 hover:bg-white dark:bg-black/20 dark:hover:bg-black/40">
+                                          {vm.isCreateMode ? (t("common.continue") || "Continue to Application") : (t("common.dismiss") || "Dismiss")}
                                     </Button>
                               </div>
                               <p className="text-xs text-green-700 dark:text-green-400/80">

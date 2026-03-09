@@ -15,6 +15,7 @@ import type {
       OAuthAppJson,
       OAuthAppListResponseJson,
       CreateOAuthAppJson,
+      CreateOAuthAppResponseJson,
       UpdateOAuthAppJson,
       RegenerateSecretResultJson,
 } from "../models/OAuthAppModel";
@@ -34,7 +35,7 @@ export class OAuthAppService implements IOAuthAppService {
             return this.api.get(API_ENDPOINTS.OAUTH_APPS.BY_ID(id));
       }
 
-      async create(data: CreateOAuthAppJson): Promise<OAuthAppJson> {
+      async create(data: CreateOAuthAppJson): Promise<CreateOAuthAppResponseJson> {
             return this.api.post(API_ENDPOINTS.OAUTH_APPS.CREATE, data);
       }
 

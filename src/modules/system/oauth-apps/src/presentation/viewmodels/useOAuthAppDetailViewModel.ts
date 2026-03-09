@@ -229,7 +229,17 @@ export function useOAuthAppDetailViewModel(appId?: string) {
                               title: t("oauthApps.created") || "Application Created",
                               description: t("oauthApps.createdDesc") || "OAuth application created successfully.",
                         });
-                        router.push(`/settings/oauth-apps/${result.id}`);
+
+                        // If a secret was generated (confidential client), show the dialog instead of navigating away immediately
+                        if (result.clientSecret) {
+                              setGeneratedSecret({
+                                    clientId: result.clientId,
+                                    secret: result.clientSecret,
+                              });
+                              // Navigation happens in the clearGeneratedSecret callback in the view
+                        } else {
+                              router.push(`/settings/oauth-apps/${result.id}`);
+                        }
                   } else {
                         success({
                               title: t("oauthApps.updated") || "Application Updated",
@@ -336,7 +346,12 @@ export function useOAuthAppDetailViewModel(appId?: string) {
             regenerateSecret: () => regenerateSecretMutation.mutate(),
             isRegenerating: regenerateSecretMutation.isPending,
             generatedSecret,
-            clearGeneratedSecret: () => setGeneratedSecret(null),
+            clearGeneratedSecret: (redirectId?: string) => {
+                  setGeneratedSecret(null);
+                  if (redirectId) {
+                        router.push(`/settings/oauth-apps/${redirectId}`);
+                  }
+            },
             deleteApp: () => deleteMutation.mutate(),
             isDeleting: deleteMutation.isPending,
 

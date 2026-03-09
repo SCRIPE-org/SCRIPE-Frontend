@@ -9,6 +9,7 @@ import {
       OAuthApp,
       OAuthAppListItem,
       RegenerateSecretResult,
+      CreateOAuthAppResponse,
       type OAuthAppData,
       type OAuthAppListItemData,
       type CreateOAuthAppRequest,
@@ -20,6 +21,7 @@ import {
       type OAuthAppJson,
       type OAuthAppListItemJson,
       type RegenerateSecretResultJson,
+      type CreateOAuthAppResponseJson,
 } from "../models/OAuthAppModel";
 import { resolveFileUrl, unresolveFileUrl } from "@core/common/utils";
 
@@ -79,6 +81,10 @@ export class OAuthAppMapper {
 
       static toRegenerateSecretEntity(json: RegenerateSecretResultJson): RegenerateSecretResult {
             return new RegenerateSecretResult(json.clientId, json.newClientSecret);
+      }
+
+      static toCreateResponseEntity(json: CreateOAuthAppResponseJson): CreateOAuthAppResponse {
+            return new CreateOAuthAppResponse(json.id, json.clientId, json.clientSecret);
       }
 
       static toCreateJson(request: CreateOAuthAppRequest) {

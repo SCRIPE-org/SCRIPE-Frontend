@@ -120,12 +120,20 @@ export class OAuthAppListItem {
       get scopeCount(): number { return this.allowedScopes.split(" ").filter(Boolean).length; }
 }
 
-// ─── Regenerate Secret Result ───────────────────────────────────
-
 export class RegenerateSecretResult {
       constructor(
             public readonly clientId: string,
             public readonly newClientSecret: string,
+      ) { }
+}
+
+// ─── Create Response ────────────────────────────────────────────
+
+export class CreateOAuthAppResponse {
+      constructor(
+            public readonly id: string,
+            public readonly clientId: string,
+            public readonly clientSecret: string | null,
       ) { }
 }
 

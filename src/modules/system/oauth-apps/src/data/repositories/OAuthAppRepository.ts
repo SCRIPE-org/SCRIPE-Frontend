@@ -12,6 +12,7 @@ import type {
       OAuthApp,
       OAuthAppListItem,
       RegenerateSecretResult,
+      CreateOAuthAppResponse,
       CreateOAuthAppRequest,
       UpdateOAuthAppRequest,
 } from "../../domain/entities/OAuthApp";
@@ -37,10 +38,10 @@ export class OAuthAppRepository implements IOAuthAppRepository {
             return OAuthAppMapper.fromJsonToEntity(json);
       }
 
-      async create(data: CreateOAuthAppRequest): Promise<OAuthApp> {
+      async create(data: CreateOAuthAppRequest): Promise<CreateOAuthAppResponse> {
             const createJson = OAuthAppMapper.toCreateJson(data);
             const json = await this.service.create(createJson);
-            return OAuthAppMapper.fromJsonToEntity(json);
+            return OAuthAppMapper.toCreateResponseEntity(json);
       }
 
       async update(id: string, data: UpdateOAuthAppRequest): Promise<void> {
