@@ -5488,5 +5488,28 @@ export const ar = {
     fallbackRates: "⚠ استخدام أسعار محفوظة (غير متصل)",
     refreshRates: "تحديث الأسعار",
   },
+
+  // OAuth & SSO Consent
+  oauth: {
+    consentTitle: "تفويض التطبيق",
+    isRequestingAccess: "يطلب الوصول إلى حسابك على NEXORA.",
+    willBeAbleTo: "سيكون هذا التطبيق قادرًا على:",
+    scopes: {
+      openid: "التحقق من هويتك",
+      profile: "عرض بيانات ملفك الشخصي الأساسية",
+      email: "عرض عنوان بريدك الإلكتروني",
+      offline_access: "الحفاظ على الوصول في حالة عدم تسجيل الدخول",
+    },
+    defaultScope: "الوصول إلى بيانات {{scope}} الخاصة بك",
+    signedInAs: "تم تسجيل الدخول باسم",
+    notYou: "لست أنت؟",
+    switchAccount: "تبديل الحساب",
+    allowAccess: "السماح بالوصول",
+    cancelAndReturn: "إلغاء والعودة",
+    invalidRequestTitle: "طلب تفويض غير صالح",
+    invalidRequestDesc: "يفتقر طلب التطبيق إلى المعلمات الأساسية المطلوبة (client_id أو redirect_uri).",
+    backToDashboard: "العودة إلى لوحة القيادة",
+    sessionExpired: "انتهت صلاحية جلستك. يرجى تسجيل الدخول مرة أخرى.",
+  },
 };
 

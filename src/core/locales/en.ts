@@ -5637,4 +5637,27 @@ export const en = {
       customDays: "Enter days...",
     },
   },
+
+  // OAuth & SSO Consent
+  oauth: {
+    consentTitle: "Authorize App",
+    isRequestingAccess: "is requesting access to your NEXORA account.",
+    willBeAbleTo: "This application will be able to:",
+    scopes: {
+      openid: "Verify your identity",
+      profile: "View your basic profile data",
+      email: "View your email address",
+      offline_access: "Maintain access when you are not present",
+    },
+    defaultScope: "Access your {{scope}} data",
+    signedInAs: "Signed in as",
+    notYou: "Not you?",
+    switchAccount: "Switch account",
+    allowAccess: "Allow Access",
+    cancelAndReturn: "Cancel & Return",
+    invalidRequestTitle: "Invalid Authorization Request",
+    invalidRequestDesc: "The application request is missing required core parameters (client_id or redirect_uri).",
+    backToDashboard: "Back to Dashboard",
+    sessionExpired: "Your session has expired. Please log in again.",
+  },
 };

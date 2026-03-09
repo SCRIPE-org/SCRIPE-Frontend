@@ -97,7 +97,7 @@ export function ExternalLoginsSection() {
                                           {unlinkedProviders.map((provider) => (
                                                 <DropdownMenuItem
                                                       key={provider.id}
-                                                      onClick={() => handleLink(provider.id)}
+                                                      onClick={() => handleLink(provider.id, provider.protocol)}
                                                       className="cursor-pointer font-medium p-3"
                                                 >
                                                       {provider.iconUrl ? (

@@ -31,6 +31,9 @@ export const API_ENDPOINTS = {
       CHALLENGE: `${V1}/auth/oidc/challenge`,
       CALLBACK: `${V1}/auth/oidc/callback`,
     },
+    SAML: {
+      LOGIN: `${V1}/auth/saml/login`,
+    },
   },
 
   // Legacy auth endpoints (for backward compatibility)

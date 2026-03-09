@@ -18,7 +18,7 @@ interface SsoProviderButtonsProps {
       providers: SsoProvider[];
       isLoading: boolean;
       error: string | null;
-      onProviderClick: (providerId: string) => void;
+      onProviderClick: (providerId: string, protocol?: string) => void;
       t: (key: string) => string;
 }
 
@@ -96,7 +96,7 @@ export function SsoProviderButtons({
                                                             }
                                                             : undefined
                                                 }
-                                                onClick={() => onProviderClick(provider.id)}
+                                                onClick={() => onProviderClick(provider.id, provider.protocol)}
                                           >
                                                 {/* Icon */}
                                                 {provider.iconUrl ? (

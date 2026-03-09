@@ -1,0 +1,217 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+import { useI18n } from "@core/providers/i18n-provider";
+import { useAppStore } from "@core/store/useAppStore";
+import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import { Button } from "@core/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@core/ui/card";
+import { ShieldCheck, ArrowLeft, Loader2, CheckCircle2 } from "lucide-react";
+import Link from "next/link";
+import { secureTokenService } from "@core/common/secure-token-service";
+import { appLogger } from "@core/common/logger";
+
+/**
+ * OAuthConsentView — SPA Consent Screen for OIDC Provider flows
+ * 
+ * Third-party apps redirect to `/authorize?client_id=...&response_type=code...`.
+ * Since Next.js is an SPA without backend cookies, OpenIddict cannot authenticate the user seamlessly.
+ * Here, we intercept the request, ask the user for consent, and if approved,
+ * we generate an HTML Form POST containing the required parameters PLUS our JWT `access_token`.
+ * We post this directly to the .NET OpenIddict backend `/connect/authorize`, which
+ * validates the token, accepts the consent, and securely redirects the browser back to the 3rd party app!
+ */
+export function OAuthConsentView() {
+      const searchParams = useSearchParams();
+      const router = useRouter();
+      const { t, direction } = useI18n();
+      const { operationError } = useEnhancedToast();
+
+      const isAuthenticated = useAppStore((state) => state.isAuthenticated);
+      const user = useAppStore((state) => state.user);
+
+      const [isApproving, setIsApproving] = useState(false);
+      const [isDenying, setIsDenying] = useState(false);
+
+      const clientId = searchParams.get("client_id");
+      const redirectUri = searchParams.get("redirect_uri");
+      const scope = searchParams.get("scope");
+      const state = searchParams.get("state");
+
+      // If user is not logged in, redirect to login, preserving the authorize URL so they return here
+      useEffect(() => {
+            if (!isAuthenticated) {
+                  const currentParams = searchParams.toString();
+                  const redirectPath = encodeURIComponent(`/authorize?${currentParams}`);
+                  router.replace(`/login?redirect=${redirectPath}`);
+            }
+      }, [isAuthenticated, router, searchParams]);
+
+      const handleApprove = () => {
+            setIsApproving(true);
+            try {
+                  const accessToken = secureTokenService.getAccessToken();
+                  if (!accessToken) {
+                        throw new Error(t("oauth.sessionExpired"));
+                  }
+
+                  // Build the URL to the backend OpenIddict OIDC server endpoint
+                  const backendUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+                  const actionUrl = `${backendUrl}/connect/authorize`;
+
+                  // Create a hidden form dynamically to POST to the OpenIddict endpoint
+                  const form = document.createElement("form");
+                  form.method = "POST";
+                  form.action = actionUrl;
+                  form.style.display = "none";
+
+                  // Add all original OIDC parameters so OpenIddict can parse them
+                  searchParams.forEach((value, key) => {
+                        const input = document.createElement("input");
+                        input.type = "hidden";
+                        input.name = key;
+                        input.value = value;
+                        form.appendChild(input);
+                  });
+
+                  // INJECT our SPA JWT Token to securely authenticate the OpenIddict request!
+                  const tokenInput = document.createElement("input");
+                  tokenInput.type = "hidden";
+                  tokenInput.name = "access_token";
+                  tokenInput.value = accessToken;
+                  form.appendChild(tokenInput);
+
+                  document.body.appendChild(form);
+
+                  // Submit immediately — this navigates the user away to the API, 
+                  // which will then issue a 302 HTTP Redirect back to the 3rd Party App.
+                  form.submit();
+
+            } catch (err) {
+                  setIsApproving(false);
+                  appLogger.error("Approval failed:", err);
+                  operationError(err instanceof Error ? err.message : t("auth.sso.callbackErrorGeneric"));
+            }
+      };
+
+      const handleDeny = () => {
+            setIsDenying(true);
+            // If denied, we must redirect back to the client application with an access_denied error
+            if (redirectUri) {
+                  const url = new URL(redirectUri);
+                  url.searchParams.append("error", "access_denied");
+                  url.searchParams.append("error_description", "The user denied access to your application.");
+                  if (state) {
+                        url.searchParams.append("state", state);
+                  }
+                  window.location.href = url.toString();
+            } else {
+                  // Fallback if no redirect URI (Should be validated by OpenIddict but good for safety)
+                  router.push("/");
+            }
+      };
+
+      if (!isAuthenticated || !user) {
+            return (
+                  <div className="flex min-h-screen items-center justify-center p-6">
+                        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                  </div>
+            );
+      }
+
+      if (!clientId || !redirectUri) {
+            return (
+                  <div className="flex min-h-screen items-center justify-center bg-background p-6" dir={direction}>
+                        <Card className="w-full max-w-md shadow-xl border-destructive">
+                              <CardHeader className="text-center pb-2">
+                                    <ShieldCheck className="w-12 h-12 mx-auto text-destructive mb-4" />
+                                    <CardTitle>{t("oauth.invalidRequestTitle")}</CardTitle>
+                              </CardHeader>
+                              <CardContent className="text-center text-muted-foreground pb-6">
+                                    <p>{t("oauth.invalidRequestDesc")}</p>
+                              </CardContent>
+                              <CardFooter>
+                                    <Button className="w-full" variant="outline" asChild>
+                                          <Link href="/"><ArrowLeft className="mr-2 w-4 h-4" /> {t("oauth.backToDashboard")}</Link>
+                                    </Button>
+                              </CardFooter>
+                        </Card>
+                  </div>
+            );
+      }
+
+      // Format requested scopes for display
+      const requestedScopes = scope ? scope.split(" ") : ["openid", "profile"];
+      const appName = clientId; // In a production app you could look up the Display Name via API
+
+      return (
+            <div className="flex min-h-screen items-center justify-center bg-background/95 p-6" dir={direction}>
+                  <Card className="w-full max-w-md shadow-xl ring-1 ring-border/50">
+                        <CardHeader className="text-center pb-6">
+                              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 mb-4 ring-8 ring-primary/5">
+                                    <ShieldCheck className="h-8 w-8 text-primary" />
+                              </div>
+                              <CardTitle className="text-2xl font-bold tracking-tight">{t("oauth.consentTitle")}</CardTitle>
+                              <CardDescription className="text-base mt-2">
+                                    <strong className="text-foreground">{appName}</strong> {t("oauth.isRequestingAccess")}
+                              </CardDescription>
+                        </CardHeader>
+
+                        <CardContent className="space-y-6">
+                              <div className="rounded-xl border bg-card p-4 shadow-sm">
+                                    <h4 className="text-sm font-semibold text-foreground mb-3 uppercase tracking-wider text-muted-foreground">
+                                          {t("oauth.willBeAbleTo")}
+                                    </h4>
+                                    <ul className="space-y-3">
+                                          {requestedScopes.map((s) => (
+                                                <li key={s} className="flex items-start gap-3">
+                                                      <CheckCircle2 className="h-5 w-5 text-emerald-500 shrink-0" />
+                                                      <div>
+                                                            <p className="text-sm font-medium text-foreground leading-none">
+                                                                  {s === "openid" ? t("oauth.scopes.openid") :
+                                                                        s === "profile" ? t("oauth.scopes.profile") :
+                                                                              s === "email" ? t("oauth.scopes.email") :
+                                                                                    s === "offline_access" ? t("oauth.scopes.offline_access") :
+                                                                                          t("oauth.defaultScope", { scope: s })}
+                                                            </p>
+                                                      </div>
+                                                </li>
+                                          ))}
+                                    </ul>
+                              </div>
+
+                              <div className="text-center text-sm text-muted-foreground">
+                                    <p>
+                                          {t("oauth.signedInAs")} <strong className="text-foreground">{user?.displayName || user?.username}</strong>.
+                                          <br />
+                                          {t("oauth.notYou")} <Link href="/login" className="text-primary hover:underline font-medium">{t("oauth.switchAccount")}</Link>
+                                    </p>
+                              </div>
+                        </CardContent>
+
+                        <CardFooter className="flex flex-col gap-3 pt-6 border-t bg-muted/20">
+                              <Button
+                                    className="w-full h-12 text-base font-medium shadow-sm transition-all hover:bg-primary/90"
+                                    onClick={handleApprove}
+                                    disabled={isApproving || isDenying}
+                              >
+                                    {isApproving ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : null}
+                                    {t("oauth.allowAccess")}
+                              </Button>
+                              <Button
+                                    variant="outline"
+                                    className="w-full h-12 text-base font-medium"
+                                    onClick={handleDeny}
+                                    disabled={isApproving || isDenying}
+                              >
+                                    {isDenying ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : null}
+                                    {t("oauth.cancelAndReturn")}
+                              </Button>
+                        </CardFooter>
+                  </Card>
+            </div>
+      );
+}
+
+export default OAuthConsentView;

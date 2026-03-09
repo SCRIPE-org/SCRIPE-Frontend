@@ -109,12 +109,38 @@ export function useSsoProviders() {
       }, []);
 
       // Initiate SSO login — creates challenge, stores PKCE, redirects
-      const initiateSsoLogin = useCallback(async (providerId: string) => {
+      const initiateSsoLogin = useCallback(async (providerId: string, protocol?: string) => {
             setError(null);
             try {
-                  const api = getModuleApiService("IDENTITY");
                   const redirectUri = typeof window !== 'undefined' ? `${window.location.origin}/sso/callback` : undefined;
 
+                  // 1. If SAML Protocol: Direct browser navigation to bypass CORS entirely
+                  if (protocol?.toLowerCase() === "saml") {
+                        const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
+                        // Usually the backend endpoint URL without /api/ is needed, or if the React app
+                        // proxies it, use the relative path
+                        // Next.js rewrites absolute /api/ requests to the backend.
+                        // However, window.location.href to an /api/ path will go to Next.js first, which proxies it.
+                        // Or if we need absolute URL to backend: it's better to use relative if proxy exists
+
+                        // We will build the url with query params
+                        let samlUrl = `${API_ENDPOINTS.AUTH.SAML.LOGIN}?providerId=${encodeURIComponent(providerId)}`;
+
+                        // Note: For SAML, the callback is usually configured in the IdP, 
+                        // but we can pass our frontend /sso/saml/callback as a relayState / redirectUri
+                        const samlCallback = typeof window !== 'undefined' ? `${window.location.origin}/sso/saml/callback` : undefined;
+                        if (samlCallback) {
+                              samlUrl += `&redirectUri=${encodeURIComponent(samlCallback)}`;
+                        }
+
+                        // Use NEXT_PUBLIC_API_URL directly from env for hard redirects, because we need to leave the SPA
+                        const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+                        window.location.href = `${backendUrl}${samlUrl}`;
+                        return;
+                  }
+
+                  // 2. If OIDC Protocol: Standard AJAX challenge to generate PKCE and Authorize URL
+                  const api = getModuleApiService("IDENTITY");
                   const challenge = await api.post<ChallengeResult>(
                         API_ENDPOINTS.AUTH.OIDC.CHALLENGE,
                         { providerId, redirectUri }

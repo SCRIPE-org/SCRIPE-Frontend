@@ -47,9 +47,9 @@ export function useExternalLoginsViewModel() {
 
       // 3. Link Action 
       // We use special session storage state to tell the callback it's a "Link" flow
-      const handleLink = (providerId: string) => {
+      const handleLink = (providerId: string, protocol: string) => {
             sessionStorage.setItem("sso_linking", "true");
-            initiateSsoLogin(providerId);
+            initiateSsoLogin(providerId, protocol);
       };
 
       return {
