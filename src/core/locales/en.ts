@@ -2,13 +2,13 @@ export const en = {
   // Authentication
   auth: {
     login: "Login",
-    username: "Username",
+    username: "Username or Email",
     password: "Password",
     loginButton: "Sign In",
     loginError: "Invalid username or password",
     welcome: "NEXORA",
     pleaseLogin: "Please sign in to continue",
-    usernamePlaceholder: "superadmin",
+    usernamePlaceholder: "name@company.com or username",
     connectionError: "Server connection error. Please try again.",
     redirecting: "Redirecting...",
     welcomeBack: "Welcome back!",

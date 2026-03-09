@@ -4,13 +4,13 @@ export const ar = {
   // Authentication
   auth: {
     login: "تسجيل الدخول",
-    username: "اسم المستخدم",
+    username: "اسم المستخدم أو البريد الإلكتروني",
     password: "كلمة المرور",
     loginButton: "دخول",
     loginError: "خطأ في اسم المستخدم أو كلمة المرور",
     welcome: "NEXORA",
     pleaseLogin: "يرجى تسجيل الدخول للمتابعة",
-    usernamePlaceholder: "المشرف العام",
+    usernamePlaceholder: "name@company.com أو اسم المستخدم",
     connectionError: "خطأ في الاتصال بالخادم. يرجى المحاولة مرة أخرى.",
     redirecting: "جاري التحويل...",
     welcomeBack: "أهلاً بعودتك!",
