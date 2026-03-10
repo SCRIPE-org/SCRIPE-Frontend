@@ -79,14 +79,6 @@ export function OAuthConsentView() {
                               }
                         } catch (err) {
                               appLogger.error("[OAuthConsent] Silent refresh failed:", err);
-                              // If refresh failed, attempt to log out from the backend to clear any lingering session
-                              try {
-                                    const backendUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-                                    const baseHost = backendUrl.replace(/\/api$/, "");
-                                    await fetch(`${baseHost}/api/v1/auth/logout`, { method: "POST", credentials: "include" });
-                              } catch (logoutError) {
-                                    appLogger.error("[OAuthConsent] Failed to explicitly log out after silent refresh failure:", logoutError);
-                              }
                         }
                         // Refresh failed → session truly expired
                         appLogger.debug("[OAuthConsent] Refresh failed. Redirecting to login.");
@@ -214,14 +206,6 @@ export function OAuthConsentView() {
       const displayName = searchParams.get("display_name");
       const appName = displayName || clientId;
 
-      // Ensure form parameters are correctly mapped for the POST request
-      const formParams = Array.from(searchParams.entries()).map(([key, value]) => ({
-            name: key,
-            value: value,
-      }));
-      // The authorization endpoint path
-      const authorizeUrl = "/connect/authorize";
-
       return (
             <div className="flex min-h-screen items-center justify-center bg-background/95 p-6" dir={direction}>
                   <Card className="w-full max-w-md shadow-xl ring-1 ring-border/50">
@@ -282,31 +266,14 @@ export function OAuthConsentView() {
                         </CardContent>
 
                         <CardFooter className="flex flex-col gap-3 pt-6 border-t bg-muted/20">
-                              <form
-                                    method="POST"
-                                    action={authorizeUrl}
-                                    className="w-full"
-                                    onSubmit={(e) => {
-                                          if (isApproving || isDenying) {
-                                                e.preventDefault();
-                                                return;
-                                          }
-                                          // Set loading state AFTER form submission has begun
-                                          setIsApproving(true);
-                                    }}
+                              <Button
+                                    className="w-full h-12 text-base font-medium shadow-sm transition-all hover:bg-primary/90"
+                                    onClick={handleApprove}
+                                    disabled={isApproving || isDenying}
                               >
-                                    {formParams.map((p) => (
-                                          <input key={p.name} type="hidden" name={p.name} value={p.value} />
-                                    ))}
-                                    <Button
-                                          type="submit"
-                                          className="w-full h-12 text-base font-medium shadow-sm transition-all hover:bg-primary/90"
-                                          disabled={isApproving || isDenying}
-                                    >
-                                          {isApproving ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : null}
-                                          {t("oauth.allowAccess")}
-                                    </Button>
-                              </form>
+                                    {isApproving ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : null}
+                                    {t("oauth.allowAccess")}
+                              </Button>
                               <Button
                                     variant="outline"
                                     className="w-full h-12 text-base font-medium"
