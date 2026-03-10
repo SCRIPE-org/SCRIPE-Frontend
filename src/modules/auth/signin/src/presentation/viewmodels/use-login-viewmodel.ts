@@ -67,6 +67,15 @@ export function useLoginViewModel() {
     setShowPassword((prev) => !prev);
   }, []);
 
+  // Helper to handle external vs internal redirects
+  const handleRedirect = useCallback((path: string) => {
+    if (path.startsWith("http://") || path.startsWith("https://")) {
+      window.location.href = path;
+    } else {
+      router.replace(path);
+    }
+  }, [router]);
+
   // Check if user should be redirected (stable function - no deps that change)
   const checkAndRedirect = useCallback(() => {
     // Only proceed if store has hydrated
@@ -76,17 +85,17 @@ export function useLoginViewModel() {
     if (isRedirecting || hasTriggeredRedirect.current) return false;
 
     // Check BOTH conditions: store says authenticated AND actual token exists
-    const hasToken = secureTokenService.hasToken();
+    const hasToken = !!secureTokenService.getAccessToken();
 
     if (isAuthenticated && hasToken) {
       hasTriggeredRedirect.current = true;
       setIsRedirecting(true);
-      router.replace(redirectPath);
+      handleRedirect(redirectPath);
       return true;
     }
 
     return false;
-  }, [hasHydrated, isAuthenticated, isRedirecting, router]);
+  }, [hasHydrated, isAuthenticated, isRedirecting, redirectPath, handleRedirect]);
 
   // Login submission handler
   const handleLogin = useCallback(async () => {
@@ -109,12 +118,14 @@ export function useLoginViewModel() {
 
       // After successful login, redirect
       setIsRedirecting(true);
-      hasTriggeredRedirect.current = true;
+      if (!hasTriggeredRedirect.current) {
+        hasTriggeredRedirect.current = true;
 
-      // Small delay to ensure state is updated
-      setTimeout(() => {
-        router.replace(redirectPath);
-      }, 100);
+        // Small delay to ensure state is updated
+        setTimeout(() => {
+          handleRedirect(redirectPath);
+        }, 100);
+      }
     } catch (err: unknown) {
       // If 2FA is required, transition to the 2FA step
       if (err instanceof TwoFactorRequiredError) {
@@ -126,7 +137,7 @@ export function useLoginViewModel() {
       const errorMessage = err instanceof Error ? err.message : "Login failed";
       setError(errorMessage);
     }
-  }, [formData, loginMutation, router, t]);
+  }, [formData, loginMutation, handleRedirect, redirectPath, t]);
 
   // 2FA code verification handler
   const handleVerify2FA = useCallback(async () => {
