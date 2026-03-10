@@ -21,9 +21,9 @@ export interface ISubscriptionRepository {
       change(tenantId: string, data: { editionId: string; type: string; promoCode?: string; currency?: string; promotionId?: string }): Promise<void>;
       renew(tenantId: string, type: string): Promise<void>;
       convertTrial(tenantId: string, type: string): Promise<void>;
-      suspend(tenantId: string, reason: string, useFallback?: boolean): Promise<void>;
+      suspend(tenantId: string, reason: string, useFallback?: boolean, refundType?: string, customRefundAmount?: number): Promise<void>;
       resume(tenantId: string, type?: string): Promise<void>;
-      cancel(tenantId: string, reason?: string, useFallback?: boolean): Promise<void>;
+      cancel(tenantId: string, reason?: string, useFallback?: boolean, refundType?: string, customRefundAmount?: number): Promise<void>;
       resync(tenantId: string): Promise<void>;
       revoke(id: string): Promise<void>;
 }

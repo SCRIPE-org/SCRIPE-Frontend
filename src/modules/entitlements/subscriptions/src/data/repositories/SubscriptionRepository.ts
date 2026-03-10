@@ -62,16 +62,16 @@ export class SubscriptionRepository implements ISubscriptionRepository {
             await this.service.convertTrial(tenantId, type);
       }
 
-      async suspend(tenantId: string, reason: string, useFallback?: boolean): Promise<void> {
-            await this.service.suspend(tenantId, reason, useFallback);
+      async suspend(tenantId: string, reason: string, useFallback?: boolean, refundType?: string, customRefundAmount?: number): Promise<void> {
+            await this.service.suspend(tenantId, reason, useFallback, refundType, customRefundAmount);
       }
 
       async resume(tenantId: string, type?: string): Promise<void> {
             await this.service.resume(tenantId, type);
       }
 
-      async cancel(tenantId: string, reason?: string, useFallback?: boolean): Promise<void> {
-            await this.service.cancel(tenantId, reason, useFallback);
+      async cancel(tenantId: string, reason?: string, useFallback?: boolean, refundType?: string, customRefundAmount?: number): Promise<void> {
+            await this.service.cancel(tenantId, reason, useFallback, refundType, customRefundAmount);
       }
 
       async resync(tenantId: string): Promise<void> {

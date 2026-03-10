@@ -3521,6 +3521,7 @@ export const en = {
   // Common
   common: {
     none: "None",
+    continue: "Continue",
     time: "Time",
     tenant: "Tenant",
     name: "Name",
@@ -5060,6 +5061,8 @@ export const en = {
 
   // ===== OAUTH APPLICATIONS (OIDC Server) =====
   oauthApps: {
+    samlSpCertificateHelp: "The SP certificate is used to sign SAML requests to NEXORA. It is required for SAML authentication.",
+    samlSpCertificate: "SP Certificate",
     title: "OAuth Applications",
     description: "Manage third-party applications that authenticate via NEXORA (OIDC Server)",
     // Detail page titles

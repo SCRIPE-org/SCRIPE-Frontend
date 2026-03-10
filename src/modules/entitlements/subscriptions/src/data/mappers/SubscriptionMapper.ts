@@ -39,6 +39,11 @@ export class SubscriptionMapper {
                   // Promotion
                   appliedPromoCode: model.appliedPromoCode,
                   promotionDiscount: model.promotionDiscount,
+                  // Refund
+                  refundType: model.refundType,
+                  refundAmount: model.refundAmount,
+                  refundedAt: model.refundedAt,
+                  refundReason: model.refundReason,
             };
       }
 
@@ -66,6 +71,11 @@ export class SubscriptionMapper {
                   // Promotion
                   appliedPromoCode: model.appliedPromoCode,
                   promotionDiscount: model.promotionDiscount,
+                  // Refund
+                  refundType: model.refundType,
+                  refundAmount: model.refundAmount,
+                  refundedAt: model.refundedAt,
+                  refundReason: model.refundReason,
             };
       }
 

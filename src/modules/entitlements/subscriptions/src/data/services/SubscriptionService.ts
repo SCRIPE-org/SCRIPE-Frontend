@@ -33,6 +33,11 @@ export interface SubscriptionModel {
       // ── Promotion ──
       appliedPromoCode?: string;
       promotionDiscount?: number;
+      // ── Refund ──
+      refundType?: string;
+      refundAmount?: number;
+      refundedAt?: string;
+      refundReason?: string;
 }
 
 export interface SubscriptionListModel {
@@ -58,6 +63,11 @@ export interface SubscriptionListModel {
       // ── Promotion ──
       appliedPromoCode?: string;
       promotionDiscount?: number;
+      // ── Refund ──
+      refundType?: string;
+      refundAmount?: number;
+      refundedAt?: string;
+      refundReason?: string;
 }
 
 export interface GlobalSubscriptionModel {
@@ -142,10 +152,10 @@ export class SubscriptionService {
             );
       }
 
-      async suspend(tenantId: string, reason: string, useFallback: boolean = false): Promise<void> {
+      async suspend(tenantId: string, reason: string, useFallback: boolean = false, refundType: string = "None", customRefundAmount?: number): Promise<void> {
             await this.api.post(
                   API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.SUSPEND(tenantId),
-                  { reason, useFallback }
+                  { reason, useFallback, refundType, customRefundAmount }
             );
       }
 
@@ -156,10 +166,10 @@ export class SubscriptionService {
             );
       }
 
-      async cancel(tenantId: string, reason?: string, useFallback: boolean = false): Promise<void> {
+      async cancel(tenantId: string, reason?: string, useFallback: boolean = false, refundType: string = "None", customRefundAmount?: number): Promise<void> {
             await this.api.post(
                   API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.CANCEL(tenantId),
-                  { reason, useFallback }
+                  { reason, useFallback, refundType, customRefundAmount }
             );
       }
 

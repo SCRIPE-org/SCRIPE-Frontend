@@ -1114,6 +1114,8 @@ export const ar = {
       totalTenants: "إجمالي المستأجرين",
       totalRoles: "إجمالي الأدوار",
       loginsToday: "تسجيلات الدخول اليوم",
+      activeSubscriptions: "الاشتراكات النشطة",
+      trialSubscriptions: "الاشتراكات التجريبية",
       failedLogins: "تسجيلات الدخول الفاشلة (24 ساعة)",
       active: "نشط",
       totalMrr: "إجمالي الإيرادات الشهرية",
@@ -3691,6 +3693,7 @@ export const ar = {
   // Common
   common: {
     from: "من",
+    continue: "تواصل",
     total: "المجموع",
     to: "إلى",
     value: "القيمة",
@@ -4899,6 +4902,8 @@ export const ar = {
 
   // ===== تطبيقات OAuth (خادم OIDC) =====
   oauthApps: {
+    samlSpCertificate: "الشهادة العامة لموفر الخدمة",
+    samlSpCertificateHelp: "الشهادة العامة لموفر الخدمة (Base64/PEM)",
     title: "تطبيقات OAuth",
     description: "إدارة التطبيقات الخارجية التي تعتمد على NEXORA للمصادقة (خادم OIDC)",
     // عناوين الصفحة التفصيلية

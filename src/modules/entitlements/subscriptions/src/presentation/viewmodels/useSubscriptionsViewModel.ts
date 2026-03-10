@@ -39,6 +39,8 @@ export function useSubscriptionsViewModel(tenantId: string) {
       const [promoCode, setPromoCode] = useState("");
       const [currency, setCurrency] = useState("USD");
       const [selectedPromotionId, setSelectedPromotionId] = useState<string | null>(null);
+      const [refundType, setRefundType] = useState("None");
+      const [customRefundAmount, setCustomRefundAmount] = useState<string>("");
 
       // ─── Query keys ─────────────────────────────────────
       const queryKey = ["entitlements", "subscriptions", tenantId];
@@ -84,6 +86,8 @@ export function useSubscriptionsViewModel(tenantId: string) {
             setPromoCode("");
             setCurrency("USD");
             setSelectedPromotionId(null);
+            setRefundType("None");
+            setCustomRefundAmount("");
       }, []);
 
       // ─── Auto-calculate endDate on type change ────────
@@ -202,8 +206,8 @@ export function useSubscriptionsViewModel(tenantId: string) {
       );
 
       const suspendMutation = makeMutation(
-            (params: { reason: string; useFallback: boolean }) =>
-                  subscriptionRepository.suspend(tenantId, params.reason, params.useFallback),
+            (params: { reason: string; useFallback: boolean; refundType: string; customRefundAmount?: number }) =>
+                  subscriptionRepository.suspend(tenantId, params.reason, params.useFallback, params.refundType, params.customRefundAmount),
             "entitlements.subscriptions.suspended",
             "entitlements.subscriptions.suspendedDesc",
             () => setShowSuspendDialog(false)
@@ -216,8 +220,8 @@ export function useSubscriptionsViewModel(tenantId: string) {
       );
 
       const cancelMutation = makeMutation(
-            (params: { reason?: string; useFallback: boolean }) =>
-                  subscriptionRepository.cancel(tenantId, params.reason, params.useFallback),
+            (params: { reason?: string; useFallback: boolean; refundType: string; customRefundAmount?: number }) =>
+                  subscriptionRepository.cancel(tenantId, params.reason, params.useFallback, params.refundType, params.customRefundAmount),
             "entitlements.subscriptions.canceled",
             "entitlements.subscriptions.canceledDesc",
             () => setShowCancelDialog(false)
@@ -259,12 +263,14 @@ export function useSubscriptionsViewModel(tenantId: string) {
       }, [changeMutation, selectedEditionId, subscriptionType, promoCode, currency, selectedPromotionId, requiresPromoCode]);
 
       const submitSuspend = useCallback(() => {
-            suspendMutation.mutate({ reason: suspendReason, useFallback });
-      }, [suspendMutation, suspendReason, useFallback]);
+            const parsed = customRefundAmount ? parseFloat(customRefundAmount) : undefined;
+            suspendMutation.mutate({ reason: suspendReason, useFallback, refundType, customRefundAmount: parsed && parsed > 0 ? parsed : undefined });
+      }, [suspendMutation, suspendReason, useFallback, refundType, customRefundAmount]);
 
       const submitCancel = useCallback(() => {
-            cancelMutation.mutate({ reason: cancelReason, useFallback });
-      }, [cancelMutation, cancelReason, useFallback]);
+            const parsed = customRefundAmount ? parseFloat(customRefundAmount) : undefined;
+            cancelMutation.mutate({ reason: cancelReason, useFallback, refundType, customRefundAmount: parsed && parsed > 0 ? parsed : undefined });
+      }, [cancelMutation, cancelReason, useFallback, refundType, customRefundAmount]);
 
       const submitConvert = useCallback(() => {
             convertMutation.mutate(convertType);
@@ -341,5 +347,9 @@ export function useSubscriptionsViewModel(tenantId: string) {
             selectedPromotion,
             requiresPromoCode,
             isLoadingPromotions: promotionsQuery.isLoading,
+
+            // Refund options (for suspend/cancel)
+            refundType, setRefundType,
+            customRefundAmount, setCustomRefundAmount,
       };
 }

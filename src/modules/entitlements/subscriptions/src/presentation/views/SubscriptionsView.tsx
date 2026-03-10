@@ -26,9 +26,10 @@ import { DatePicker } from "@core/ui/date-picker";
 import { Label } from "@core/ui/label";
 import { Checkbox } from "@core/ui/checkbox";
 import { Textarea } from "@core/ui/textarea";
+import { RadioGroup, RadioGroupItem } from "@core/ui/radio-group";
 import {
       Loader2, Plus, RefreshCw, XCircle, PauseCircle, PlayCircle,
-      Ban, ArrowRightLeft, RotateCcw, Shield, Tag,
+      Ban, ArrowRightLeft, RotateCcw, Shield, Tag, DollarSign,
 } from "lucide-react";
 import { format } from "date-fns";
 import type { SubscriptionListItem } from "../../domain/entities/Subscription";
@@ -727,6 +728,55 @@ function SuspendDialog({
                                           {t("entitlements.subscriptions.useFallback") || "Downgrade to fallback edition instead of full suspend"}
                                     </Label>
                               </div>
+
+                              {/* ── Refund Options ── */}
+                              <div className="space-y-2">
+                                    <Label className="flex items-center gap-1.5">
+                                          <DollarSign className="h-3.5 w-3.5 text-primary" />
+                                          {t("entitlements.subscriptions.refundType") || "Refund"}
+                                    </Label>
+                                    <RadioGroup value={vm.refundType} onValueChange={vm.setRefundType}>
+                                          <div className="flex items-center space-x-2">
+                                                <RadioGroupItem value="None" id="suspend-refund-none" />
+                                                <Label htmlFor="suspend-refund-none" className="text-sm font-normal">
+                                                      {t("entitlements.subscriptions.noRefund") || "No Refund"}
+                                                </Label>
+                                          </div>
+                                          <div className="flex items-center space-x-2">
+                                                <RadioGroupItem value="Full" id="suspend-refund-full" />
+                                                <Label htmlFor="suspend-refund-full" className="text-sm font-normal">
+                                                      {t("entitlements.subscriptions.fullRefund") || "Full Refund"}
+                                                </Label>
+                                          </div>
+                                          <div className="flex items-center space-x-2">
+                                                <RadioGroupItem value="ProRata" id="suspend-refund-prorata" />
+                                                <Label htmlFor="suspend-refund-prorata" className="text-sm font-normal">
+                                                      {t("entitlements.subscriptions.proRataRefund") || "Pro-rata Refund (remaining time)"}
+                                                </Label>
+                                          </div>
+                                    </RadioGroup>
+                              </div>
+
+                              {/* Custom amount — only visible for ProRata */}
+                              {vm.refundType === "ProRata" && (
+                                    <div className="space-y-2">
+                                          <Label className="text-sm">
+                                                {t("entitlements.subscriptions.customRefundAmount") || "Custom Amount (optional — leave empty for auto-calculate)"}
+                                          </Label>
+                                          <Input
+                                                type="number"
+                                                min="0"
+                                                step="0.01"
+                                                value={vm.customRefundAmount}
+                                                onChange={(e) => vm.setCustomRefundAmount(e.target.value)}
+                                                placeholder={t("entitlements.subscriptions.customAmountPlaceholder") || "e.g., 50.00"}
+                                                className="font-mono"
+                                          />
+                                          <p className="text-xs text-muted-foreground">
+                                                {t("entitlements.subscriptions.customAmountHint") || "If empty, the system auto-calculates based on remaining subscription time."}
+                                          </p>
+                                    </div>
+                              )}
                         </div>
 
                         <DialogFooter>
@@ -789,6 +839,55 @@ function CancelDialog({
                                           {t("entitlements.subscriptions.useFallback") || "Downgrade to fallback edition instead of full cancel"}
                                     </Label>
                               </div>
+
+                              {/* ── Refund Options ── */}
+                              <div className="space-y-2">
+                                    <Label className="flex items-center gap-1.5">
+                                          <DollarSign className="h-3.5 w-3.5 text-primary" />
+                                          {t("entitlements.subscriptions.refundType") || "Refund"}
+                                    </Label>
+                                    <RadioGroup value={vm.refundType} onValueChange={vm.setRefundType}>
+                                          <div className="flex items-center space-x-2">
+                                                <RadioGroupItem value="None" id="cancel-refund-none" />
+                                                <Label htmlFor="cancel-refund-none" className="text-sm font-normal">
+                                                      {t("entitlements.subscriptions.noRefund") || "No Refund"}
+                                                </Label>
+                                          </div>
+                                          <div className="flex items-center space-x-2">
+                                                <RadioGroupItem value="Full" id="cancel-refund-full" />
+                                                <Label htmlFor="cancel-refund-full" className="text-sm font-normal">
+                                                      {t("entitlements.subscriptions.fullRefund") || "Full Refund (includes override adjustments)"}
+                                                </Label>
+                                          </div>
+                                          <div className="flex items-center space-x-2">
+                                                <RadioGroupItem value="ProRata" id="cancel-refund-prorata" />
+                                                <Label htmlFor="cancel-refund-prorata" className="text-sm font-normal">
+                                                      {t("entitlements.subscriptions.proRataRefund") || "Pro-rata Refund (remaining time)"}
+                                                </Label>
+                                          </div>
+                                    </RadioGroup>
+                              </div>
+
+                              {/* Custom amount — only visible for ProRata */}
+                              {vm.refundType === "ProRata" && (
+                                    <div className="space-y-2">
+                                          <Label className="text-sm">
+                                                {t("entitlements.subscriptions.customRefundAmount") || "Custom Amount (optional — leave empty for auto-calculate)"}
+                                          </Label>
+                                          <Input
+                                                type="number"
+                                                min="0"
+                                                step="0.01"
+                                                value={vm.customRefundAmount}
+                                                onChange={(e) => vm.setCustomRefundAmount(e.target.value)}
+                                                placeholder={t("entitlements.subscriptions.customAmountPlaceholder") || "e.g., 50.00"}
+                                                className="font-mono"
+                                          />
+                                          <p className="text-xs text-muted-foreground">
+                                                {t("entitlements.subscriptions.customAmountHint") || "If empty, the system auto-calculates based on remaining subscription time."}
+                                          </p>
+                                    </div>
+                              )}
                         </div>
 
                         <DialogFooter>

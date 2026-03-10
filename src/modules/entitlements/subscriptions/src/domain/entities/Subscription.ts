@@ -30,6 +30,11 @@ export interface Subscription {
       // ── Promotion ──
       appliedPromoCode?: string;
       promotionDiscount?: number;
+      // ── Refund ──
+      refundType?: string;
+      refundAmount?: number;
+      refundedAt?: string;
+      refundReason?: string;
 }
 
 export interface SubscriptionListItem {
@@ -57,6 +62,11 @@ export interface SubscriptionListItem {
       // ── Promotion ──
       appliedPromoCode?: string;
       promotionDiscount?: number;
+      // ── Refund ──
+      refundType?: string;
+      refundAmount?: number;
+      refundedAt?: string;
+      refundReason?: string;
 }
 
 export interface GlobalSubscriptionItem {
