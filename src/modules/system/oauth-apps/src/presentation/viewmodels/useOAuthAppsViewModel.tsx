@@ -14,6 +14,12 @@ import type { CrudConfig } from "@core/crud/components/generic-crud-view";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import type { OAuthAppListItem } from "../../domain/entities/OAuthApp";
+import { useRouter } from "next/navigation";
+import { Badge } from "@core/ui/badge";
+import { Button } from "@core/ui/button";
+import { AppWindow, Loader2, KeyRound, Pencil, Trash2, Check, Copy, Lock, Unlock } from "lucide-react";
+import { format } from "date-fns";
+import type { CrudAction } from "@core/crud/components/generic-crud-view";
 
 export const oauthAppKeys = {
       all: ["oauth-apps"] as const,
@@ -33,6 +39,14 @@ export function useOAuthAppsViewModel() {
             clientId: string;
             secret: string;
       } | null>(null);
+
+      const [copiedField, setCopiedField] = useState<string | null>(null);
+
+      const copyToClipboard = async (text: string, field: string) => {
+            await navigator.clipboard.writeText(text);
+            setCopiedField(field);
+            setTimeout(() => setCopiedField(null), 2000);
+      };
 
       // ============ Core CRUD ViewModel ============
       const vm = useCrudViewModel<OAuthAppListItem, any, any>(
@@ -227,10 +241,165 @@ export function useOAuthAppsViewModel() {
             [t, oauthAppRepository],
       );
 
+      // ============ List Grid Config ============
+      const router = useRouter();
+      const configBase = getConfigBase();
+      const handleRegenerateSecret = (id: string) => regenerateSecretMutation.mutate(id);
+
+      const config: CrudConfig<OAuthAppListItem> = {
+            titleKey: "oauthApps.title",
+            subtitleKey: "oauthApps.description",
+            resource: "oauth_apps",
+            columns: [
+                  {
+                        key: "displayName",
+                        label: t("oauthApps.displayName") || "Application",
+                        sortable: true,
+                        render: (_val: unknown, item: OAuthAppListItem) => (
+                              <div className="flex items-center gap-2">
+                                    {item.logoUri ? (
+                                          <img
+                                                src={item.logoUri}
+                                                alt={item.displayName}
+                                                className="h-5 w-5 rounded object-contain"
+                                          />
+                                    ) : (
+                                          <AppWindow className="h-4 w-4 text-muted-foreground" />
+                                    )}
+                                    <div className="flex flex-col">
+                                          <span className="text-sm font-medium">{item.displayName}</span>
+                                          {item.description && (
+                                                <span className="text-xs text-muted-foreground truncate max-w-[200px]">
+                                                      {item.description}
+                                                </span>
+                                          )}
+                                    </div>
+                              </div>
+                        ),
+                  },
+                  {
+                        key: "clientId",
+                        label: t("oauthApps.clientId") || "Client ID",
+                        render: (_val: unknown, item: OAuthAppListItem) => (
+                              <div className="flex items-center gap-1.5">
+                                    <code className="text-xs font-mono bg-muted/50 px-1.5 py-0.5 rounded truncate max-w-[140px]" title={item.clientId}>
+                                          {item.clientId}
+                                    </code>
+                                    <Button
+                                          variant="ghost"
+                                          size="icon"
+                                          className="h-6 w-6"
+                                          onClick={(e) => {
+                                                e.stopPropagation();
+                                                copyToClipboard(item.clientId, `clientId-${item.id}`);
+                                          }}
+                                    >
+                                          {copiedField === `clientId-${item.id}` ? (
+                                                <Check className="h-3 w-3 text-emerald-500" />
+                                          ) : (
+                                                <Copy className="h-3 w-3 text-muted-foreground" />
+                                          )}
+                                    </Button>
+                              </div>
+                        ),
+                  },
+                  {
+                        key: "clientType",
+                        label: t("oauthApps.clientType") || "Type",
+                        render: (_val: unknown, item: OAuthAppListItem) => (
+                              <Badge variant="outline" className="text-xs font-mono">
+                                    {item.clientType === "confidential" ? "Confidential" : "Public"}
+                              </Badge>
+                        ),
+                  },
+                  {
+                        key: "requirePkce",
+                        label: "PKCE",
+                        render: (_val: unknown, item: OAuthAppListItem) => (
+                              <Badge
+                                    variant={item.requirePkce ? "default" : "secondary"}
+                                    className={`text-xs ${item.requirePkce
+                                          ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400"
+                                          : "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400"
+                                          }`}
+                              >
+                                    {item.requirePkce ? "On" : "Off"}
+                              </Badge>
+                        ),
+                  },
+                  {
+                        key: "isActive",
+                        label: t("common.status") || "Status",
+                        render: (_val: unknown, item: OAuthAppListItem) => (
+                              <Badge
+                                    variant={item.isActive ? "default" : "secondary"}
+                                    className={`text-xs ${item.isActive
+                                          ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400"
+                                          : "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400"
+                                          }`}
+                              >
+                                    {item.isActive ? t("common.active") || "Active" : t("common.inactive") || "Inactive"}
+                              </Badge>
+                        ),
+                  },
+                  {
+                        key: "createdAt",
+                        label: t("common.createdAt") || "Created",
+                        render: (_val: unknown, item: OAuthAppListItem) => (
+                              <span className="text-sm text-muted-foreground">
+                                    {item.createdAt ? format(new Date(item.createdAt), "MMM d, yyyy") : "—"}
+                              </span>
+                        ),
+                  },
+            ],
+            getItemDisplayName: configBase.getItemDisplayName,
+            deleteService: configBase.deleteService,
+            permissions: configBase.permissions,
+            onCreateClick: () => router.push("/settings/oauth-apps/create"),
+            getActions: (
+                  _vmInstance: any,
+                  tFn: any,
+                  handleDeleteFn: any,
+            ): CrudAction<OAuthAppListItem>[] => [
+                        {
+                              label: tFn("oauthApps.regenerateSecret") || "Regenerate Secret",
+                              onClick: (item: OAuthAppListItem) => handleRegenerateSecret(item.id),
+                              variant: "ghost" as const,
+                              icon: regenerateSecretMutation.isPending
+                                    ? <Loader2 className="h-4 w-4 animate-spin" />
+                                    : <KeyRound className="h-4 w-4" />,
+                              requiredPermission: "oauth_apps.update",
+                              confirmTitle: tFn("oauthApps.regenerateConfirmTitle") || "Regenerate Client Secret",
+                              confirmDescription: tFn("oauthApps.regenerateConfirmDesc") || "The current secret will be invalidated. All applications using the old secret will stop working.",
+                              confirmVariant: "destructive" as const,
+                        },
+                        {
+                              label: tFn("common.edit") || "Edit",
+                              onClick: (item: OAuthAppListItem) =>
+                                    router.push(`/settings/oauth-apps/${item.id}`),
+                              variant: "ghost" as const,
+                              icon: <Pencil className="h-4 w-4" />,
+                              requiredPermission: "oauth_apps.update",
+                        },
+                        {
+                              label: tFn("common.delete") || "Delete",
+                              onClick: (item: OAuthAppListItem) => handleDeleteFn?.(item),
+                              variant: "ghost" as const,
+                              className: "text-red-600 hover:text-red-700",
+                              icon: <Trash2 className="h-4 w-4" />,
+                              requiredPermission: "oauth_apps.delete",
+                              confirmTitle: tFn("oauthApps.deleteConfirmTitle") || "Delete OAuth Application",
+                              confirmDescription: tFn("oauthApps.deleteConfirmDesc") || "This will permanently remove this application. All authenticated sessions will be invalidated.",
+                              confirmVariant: "destructive" as const,
+                        },
+                  ],
+      };
+
+
       return {
             vm,
-            getConfigBase,
-            handleRegenerateSecret: (id: string) => regenerateSecretMutation.mutate(id),
+            config,
+            handleRegenerateSecret,
             isRegenerating: regenerateSecretMutation.isPending,
             regeneratingId: regenerateSecretMutation.variables,
             generatedSecret,
