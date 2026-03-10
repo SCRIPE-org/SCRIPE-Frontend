@@ -137,6 +137,10 @@ export const ar = {
 
   // Tenants - المستأجرون
   tenant: {
+    grandTotal: "المجموع الكلي",
+    noRefundDesc: "لا يوجد استرداد",
+    fullRefundDesc: "استرداد كامل",
+    proRataRefundDesc: "استرداد جزئي",
     downloadReceipt: "تحميل الفاتورة",
     receiptDownloaded: "تم تحميل الفاتورة",
     refundOption: "خيار الاسترداد",

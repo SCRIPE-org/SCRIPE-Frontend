@@ -134,6 +134,7 @@ export const en = {
   tenant: {
     lockoutDuration: "Lockout Duration",
     minutes: "Minutes",
+    grandTotal:"Grand Total",
     passwordExpiryDays: "Password Expiry Days",
     deactivateTenant: "Deactivate Tenant",
     activateTenant: "Activate Tenant",
