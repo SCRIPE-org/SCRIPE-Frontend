@@ -99,7 +99,10 @@ export function useOverridesViewModel(tenantId: string) {
       const invalidate = useCallback(() => {
             queryClient.invalidateQueries({ queryKey: overridesKey });
             queryClient.invalidateQueries({ queryKey: resolvedKey });
-      }, [queryClient, overridesKey, resolvedKey]);
+            queryClient.invalidateQueries({ queryKey: ["tenant-subscriptions", tenantId] });
+            queryClient.invalidateQueries({ queryKey: ["tenants"] });
+            queryClient.invalidateQueries({ queryKey: ["tenant", tenantId] });
+      }, [queryClient, overridesKey, resolvedKey, tenantId]);
 
       // ─── Set override mutation ─────────────────────────
       const setOverrideMutation = useMutation({

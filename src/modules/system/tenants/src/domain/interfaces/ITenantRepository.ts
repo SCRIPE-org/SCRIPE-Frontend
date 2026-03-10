@@ -193,7 +193,7 @@ export interface ITenantRepository {
   /**
    * Get resolved features (edition + overrides) for a tenant
    */
-  getResolvedFeatures(tenantId: string): Promise<Array<{ name: string; value: string }>>;
+  getResolvedFeatures(tenantId: string): Promise<Array<{ featureId: string; key: string; nameEn: string; nameAr: string; effectiveValue: string; valueType: string; source: string }>>;
 
   /** Change the billing currency of the active subscription */
   changeCurrency(tenantId: string, currency: string): Promise<string>;

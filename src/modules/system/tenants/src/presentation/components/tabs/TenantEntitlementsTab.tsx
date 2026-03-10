@@ -122,11 +122,11 @@ function FeaturesGrid({ tenantId }: { tenantId: string }) {
             const q = search.toLowerCase();
             return features.filter((f: any) => {
                   const displayName =
-                        (language === "ar" ? f.displayNameAr : f.displayNameEn) ||
-                        f.name?.split(".").pop() ||
-                        f.name;
+                        (language === "ar" ? f.nameAr : f.nameEn) ||
+                        f.key?.split(".").pop() ||
+                        f.key;
                   return (
-                        f.name?.toLowerCase().includes(q) || displayName?.toLowerCase().includes(q)
+                        f.key?.toLowerCase().includes(q) || displayName?.toLowerCase().includes(q)
                   );
             });
       }, [features, search, language]);
@@ -190,14 +190,14 @@ function FeaturesGrid({ tenantId }: { tenantId: string }) {
                   <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                         {paginated.map((feature: any) => {
                               const displayName =
-                                    (language === "ar" ? feature.displayNameAr : feature.displayNameEn) ||
-                                    feature.name?.split(".").pop() ||
-                                    feature.name;
-                              const moduleName = feature.name?.split(".")[0] || "";
+                                    (language === "ar" ? feature.nameAr : feature.nameEn) ||
+                                    feature.key?.split(".").pop() ||
+                                    feature.key;
+                              const moduleName = feature.key?.split(".")[0] || "";
 
                               return (
                                     <div
-                                          key={feature.featureId || feature.name}
+                                          key={feature.featureId || feature.key}
                                           className={cn(
                                                 "flex items-start gap-3 rounded-xl border border-border/50 bg-card p-4",
                                                 "transition-all duration-200 hover:border-border hover:shadow-sm"
@@ -207,7 +207,7 @@ function FeaturesGrid({ tenantId }: { tenantId: string }) {
                                                 <CheckCircle2 className="h-4 w-4 text-primary" />
                                           </div>
                                           <div className="flex-1 min-w-0">
-                                                <h4 className="font-medium text-sm truncate" title={feature.name}>
+                                                <h4 className="font-medium text-sm truncate" title={feature.key}>
                                                       {displayName}
                                                 </h4>
                                                 <p className="text-[10px] text-muted-foreground uppercase mt-0.5 tracking-wider">
@@ -217,16 +217,16 @@ function FeaturesGrid({ tenantId }: { tenantId: string }) {
                                           <div className="shrink-0">
                                                 {feature.valueType === "Boolean" ? (
                                                       <Badge
-                                                            variant={feature.value === "true" ? "success" : "secondary"}
+                                                            variant={feature.effectiveValue === "true" ? "success" : "secondary"}
                                                             className="text-xs"
                                                       >
-                                                            {feature.value === "true"
+                                                            {feature.effectiveValue === "true"
                                                                   ? t("tenant.enabled") || "Enabled"
                                                                   : t("tenant.disabled") || "Disabled"}
                                                       </Badge>
                                                 ) : (
                                                       <Badge variant="outline" className="font-mono text-xs bg-muted/50">
-                                                            {feature.value === "-1" ? "∞" : feature.value}
+                                                            {feature.effectiveValue === "-1" ? "∞" : feature.effectiveValue}
                                                       </Badge>
                                                 )}
                                           </div>

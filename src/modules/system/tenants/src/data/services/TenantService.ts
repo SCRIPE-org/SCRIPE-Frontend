@@ -289,8 +289,8 @@ export class TenantService implements ITenantService {
     );
   }
 
-  async getResolvedFeatures(tenantId: string): Promise<Array<{ name: string; value: string }>> {
-    return this.api.get<Array<{ name: string; value: string }>>(
+  async getResolvedFeatures(tenantId: string): Promise<Array<{ featureId: string; key: string; nameEn: string; nameAr: string; effectiveValue: string; valueType: string; source: string }>> {
+    return this.api.get<Array<{ featureId: string; key: string; nameEn: string; nameAr: string; effectiveValue: string; valueType: string; source: string }>>(
       API_ENDPOINTS.ENTITLEMENTS.TENANT_FEATURES.RESOLVED(tenantId)
     );
   }
