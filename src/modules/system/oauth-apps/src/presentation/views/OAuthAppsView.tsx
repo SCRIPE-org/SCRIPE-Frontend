@@ -200,7 +200,7 @@ export function OAuthAppsView() {
                                     icon: isRegenerating
                                           ? <Loader2 className="h-4 w-4 animate-spin" />
                                           : <KeyRound className="h-4 w-4" />,
-                                    requiredPermission: "oauth_apps:update",
+                                    requiredPermission: "oauth_apps.update",
                                     confirmTitle: tFn("oauthApps.regenerateConfirmTitle") || "Regenerate Client Secret",
                                     confirmDescription: tFn("oauthApps.regenerateConfirmDesc") || "The current secret will be invalidated. All applications using the old secret will stop working.",
                                     confirmVariant: "destructive" as const,
@@ -211,7 +211,7 @@ export function OAuthAppsView() {
                                           router.push(`/settings/oauth-apps/${item.id}`),
                                     variant: "ghost" as const,
                                     icon: <Pencil className="h-4 w-4" />,
-                                    requiredPermission: "oauth_apps:update",
+                                    requiredPermission: "oauth_apps.update",
                               },
                               {
                                     label: tFn("common.delete") || "Delete",
@@ -219,7 +219,7 @@ export function OAuthAppsView() {
                                     variant: "ghost" as const,
                                     className: "text-red-600 hover:text-red-700",
                                     icon: <Trash2 className="h-4 w-4" />,
-                                    requiredPermission: "oauth_apps:delete",
+                                    requiredPermission: "oauth_apps.delete",
                                     confirmTitle: tFn("oauthApps.deleteConfirmTitle") || "Delete OAuth Application",
                                     confirmDescription: tFn("oauthApps.deleteConfirmDesc") || "This will permanently remove this application. All authenticated sessions will be invalidated.",
                                     confirmVariant: "destructive" as const,

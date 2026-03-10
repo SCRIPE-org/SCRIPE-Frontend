@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useAppStore } from "@core/store/useAppStore";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import { useServices } from "@core/providers/service-provider";
 import { Button } from "@core/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@core/ui/card";
 import { ShieldCheck, ArrowLeft, Loader2, CheckCircle2 } from "lucide-react";
@@ -15,38 +16,84 @@ import { appLogger } from "@core/common/logger";
 /**
  * OAuthConsentView — SPA Consent Screen for OIDC Provider flows
  * 
- * Third-party apps redirect to `/authorize?client_id=...&response_type=code...`.
- * Since Next.js is an SPA without backend cookies, OpenIddict cannot authenticate the user seamlessly.
- * Here, we intercept the request, ask the user for consent, and if approved,
- * we generate an HTML Form POST containing the required parameters PLUS our JWT `access_token`.
- * We post this directly to the .NET OpenIddict backend `/connect/authorize`, which
- * validates the token, accepts the consent, and securely redirects the browser back to the 3rd party app!
+ * Flow:
+ * 1. Backend /connect/authorize redirects here (302 full-page nav)
+ * 2. In-memory access token is LOST (full-page nav clears JS memory)
+ * 3. We silently refresh the token via httpOnly refresh cookie 
+ * 4. User sees the consent screen and clicks Allow
+ * 5. We POST a hidden form to /connect/authorize with the fresh JWT
+ * 6. Backend validates, issues auth code, redirects to client app
  */
 export function OAuthConsentView() {
       const searchParams = useSearchParams();
       const router = useRouter();
       const { t, direction } = useI18n();
       const { operationError } = useEnhancedToast();
+      const { authRepository } = useServices();
 
       const isAuthenticated = useAppStore((state) => state.isAuthenticated);
+      const setAuth = useAppStore((state) => state.setAuth);
+      const logout = useAppStore((state) => state.logout);
       const user = useAppStore((state) => state.user);
+      const hasHydrated = useAppStore((state) => state._hasHydrated);
 
       const [isApproving, setIsApproving] = useState(false);
       const [isDenying, setIsDenying] = useState(false);
+      const [isRestoringSession, setIsRestoringSession] = useState(true); // Start as loading
+      const hasAttemptedRefresh = useRef(false);
 
       const clientId = searchParams.get("client_id");
       const redirectUri = searchParams.get("redirect_uri");
       const scope = searchParams.get("scope");
       const state = searchParams.get("state");
 
-      // If user is not logged in, redirect to login, preserving the authorize URL so they return here
+      // ─── Step 1: Restore the in-memory access token ───
+      // After a full-page redirect from the backend, the in-memory token is GONE.
+      // We must silently refresh using the httpOnly refresh token cookie.
       useEffect(() => {
-            if (!isAuthenticated) {
+            if (!hasHydrated) return;
+            if (hasAttemptedRefresh.current) return;
+            hasAttemptedRefresh.current = true;
+
+            const restoreSession = async () => {
+                  // Case A: Token already in memory (user navigated from within the SPA)
+                  if (secureTokenService.hasToken()) {
+                        appLogger.debug("[OAuthConsent] Token already in memory, ready.");
+                        setIsRestoringSession(false);
+                        return;
+                  }
+
+                  // Case B: Store says authenticated but no token (full-page redirect scenario)
+                  if (isAuthenticated) {
+                        appLogger.debug("[OAuthConsent] No token in memory. Attempting silent refresh...");
+                        try {
+                              const result = await authRepository.refreshToken();
+                              if (result.kind === "ok") {
+                                    const me = await authRepository.getMe();
+                                    if (me) {
+                                          setAuth(me, me.permissions || [], []);
+                                          appLogger.debug("[OAuthConsent] Token restored successfully via silent refresh.");
+                                          setIsRestoringSession(false);
+                                          return;
+                                    }
+                              }
+                        } catch (err) {
+                              appLogger.error("[OAuthConsent] Silent refresh failed:", err);
+                        }
+                        // Refresh failed → session truly expired
+                        appLogger.debug("[OAuthConsent] Refresh failed. Redirecting to login.");
+                  }
+
+                  // Case C: Not authenticated at all → redirect to login with return URL
                   const currentParams = searchParams.toString();
                   const redirectPath = encodeURIComponent(`/authorize?${currentParams}`);
+                  secureTokenService.clearTokens();
+                  logout();
                   router.replace(`/login?redirect=${redirectPath}`);
-            }
-      }, [isAuthenticated, router, searchParams]);
+            };
+
+            restoreSession();
+      }, [hasHydrated, isAuthenticated, authRepository, setAuth, logout, router, searchParams]);
 
       const handleApprove = () => {
             setIsApproving(true);
@@ -58,7 +105,9 @@ export function OAuthConsentView() {
 
                   // Build the URL to the backend OpenIddict OIDC server endpoint
                   const backendUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-                  const actionUrl = `${backendUrl}/connect/authorize`;
+                  // OpenIddict endpoints are at the root, not under /api
+                  const baseHost = backendUrl.replace(/\/api$/, "");
+                  const actionUrl = `${baseHost}/connect/authorize`;
 
                   // Create a hidden form dynamically to POST to the OpenIddict endpoint
                   const form = document.createElement("form");
@@ -66,13 +115,20 @@ export function OAuthConsentView() {
                   form.action = actionUrl;
                   form.style.display = "none";
 
-                  // Add all original OIDC parameters so OpenIddict can parse them
+                  // Add only standard OIDC parameters (filter out display_name and other non-OIDC params)
+                  const oidcParams = new Set([
+                        "client_id", "redirect_uri", "response_type", "scope", "state",
+                        "code_challenge", "code_challenge_method", "nonce", "response_mode",
+                        "prompt", "login_hint", "acr_values"
+                  ]);
                   searchParams.forEach((value, key) => {
-                        const input = document.createElement("input");
-                        input.type = "hidden";
-                        input.name = key;
-                        input.value = value;
-                        form.appendChild(input);
+                        if (oidcParams.has(key)) {
+                              const input = document.createElement("input");
+                              input.type = "hidden";
+                              input.name = key;
+                              input.value = value;
+                              form.appendChild(input);
+                        }
                   });
 
                   // INJECT our SPA JWT Token to securely authenticate the OpenIddict request!
@@ -107,15 +163,19 @@ export function OAuthConsentView() {
                   }
                   window.location.href = url.toString();
             } else {
-                  // Fallback if no redirect URI (Should be validated by OpenIddict but good for safety)
+                  // Fallback if no redirect URI
                   router.push("/");
             }
       };
 
-      if (!isAuthenticated || !user) {
+      // Loading: waiting for hydration or token restoration
+      if (!hasHydrated || isRestoringSession) {
             return (
                   <div className="flex min-h-screen items-center justify-center p-6">
-                        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                        <div className="text-center">
+                              <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto mb-4" />
+                              <p className="text-sm text-muted-foreground">{t("common.loading")}</p>
+                        </div>
                   </div>
             );
       }
@@ -143,7 +203,8 @@ export function OAuthConsentView() {
 
       // Format requested scopes for display
       const requestedScopes = scope ? scope.split(" ") : ["openid", "profile"];
-      const appName = clientId; // In a production app you could look up the Display Name via API
+      const displayName = searchParams.get("display_name");
+      const appName = displayName || clientId;
 
       return (
             <div className="flex min-h-screen items-center justify-center bg-background/95 p-6" dir={direction}>
@@ -185,7 +246,21 @@ export function OAuthConsentView() {
                                     <p>
                                           {t("oauth.signedInAs")} <strong className="text-foreground">{user?.displayName || user?.username}</strong>.
                                           <br />
-                                          {t("oauth.notYou")} <Link href="/login" className="text-primary hover:underline font-medium">{t("oauth.switchAccount")}</Link>
+                                          {t("oauth.notYou")}{" "}
+                                          <button
+                                                type="button"
+                                                className="text-primary hover:underline font-medium"
+                                                onClick={() => {
+                                                      // Log out and redirect to login, preserving the OAuth params
+                                                      const currentParams = searchParams.toString();
+                                                      const redirectPath = encodeURIComponent(`/authorize?${currentParams}`);
+                                                      secureTokenService.clearTokens();
+                                                      logout();
+                                                      router.replace(`/login?redirect=${redirectPath}`);
+                                                }}
+                                          >
+                                                {t("oauth.switchAccount")}
+                                          </button>
                                     </p>
                               </div>
                         </CardContent>
@@ -213,5 +288,3 @@ export function OAuthConsentView() {
             </div>
       );
 }
-
-export default OAuthConsentView;

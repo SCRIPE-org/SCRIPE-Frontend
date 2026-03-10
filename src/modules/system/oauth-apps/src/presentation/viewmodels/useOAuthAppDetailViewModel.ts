@@ -54,7 +54,7 @@ const DEFAULT_STATE: OAuthAppFormState = {
       isActive: true,
       redirectUris: [""],
       postLogoutRedirectUris: [],
-      allowedScopes: "openid profile email",
+      allowedScopes: "openid profile email roles",
       allowedGrantTypes: "authorization_code",
       requirePkce: true,
       requireConsent: true,
@@ -321,7 +321,7 @@ export function useOAuthAppDetailViewModel(appId?: string) {
       );
 
       const standardGrantTypes = useMemo(
-            () => ["authorization_code", "refresh_token", "client_credentials", "implicit", "device_code"],
+            () => ["authorization_code", "refresh_token", "client_credentials"],
             [],
       );
 

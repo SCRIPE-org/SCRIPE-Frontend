@@ -35,6 +35,9 @@ const PUBLIC_PAGES = [
   "/profile/settings",
   "/docs",
   "/commercial",
+  "/oauth/callback",
+  "/oauth/test",
+  "/authorize",
 ];
 
 // Route prefixes that are always public (no auth checks at all)

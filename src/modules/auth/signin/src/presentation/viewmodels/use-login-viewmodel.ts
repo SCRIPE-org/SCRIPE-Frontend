@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useAuthLogin } from "../../../../hooks/useAuthLogin";
 import { useAppStore } from "@core/store/useAppStore";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -41,6 +41,8 @@ export function useLoginViewModel() {
   const hasHydrated = useAppStore((state) => state._hasHydrated);
   const { t } = useI18n();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectPath = searchParams.get("redirect") || "/";
 
   // Services for 2FA verification (same flow as login success)
   const { authRepository } = useServices();
@@ -79,7 +81,7 @@ export function useLoginViewModel() {
     if (isAuthenticated && hasToken) {
       hasTriggeredRedirect.current = true;
       setIsRedirecting(true);
-      router.replace("/");
+      router.replace(redirectPath);
       return true;
     }
 
@@ -111,7 +113,7 @@ export function useLoginViewModel() {
 
       // Small delay to ensure state is updated
       setTimeout(() => {
-        router.replace("/");
+        router.replace(redirectPath);
       }, 100);
     } catch (err: unknown) {
       // If 2FA is required, transition to the 2FA step
@@ -159,7 +161,7 @@ export function useLoginViewModel() {
       setIsRedirecting(true);
       hasTriggeredRedirect.current = true;
       setTimeout(() => {
-        router.replace("/");
+        router.replace(redirectPath);
       }, 100);
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : t("auth.twoFactor.invalidCode");

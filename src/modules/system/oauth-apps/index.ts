@@ -18,3 +18,4 @@ export type { IOAuthAppRepository } from "./src/domain/interfaces/IOAuthAppRepos
 // Views (for page.tsx connectors)
 export { OAuthAppsView } from "./src/presentation/views/OAuthAppsView";
 export { OAuthAppDetailView } from "./src/presentation/views/OAuthAppDetailView";
+export { OAuthConsentView } from "./src/presentation/views/OAuthConsentView";

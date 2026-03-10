@@ -1,4 +1,4 @@
-import OAuthConsentView from "@/modules/auth/signin/src/presentation/views/OAuthConsentView";
+import { OAuthConsentView } from "@modules/system/oauth-apps";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {

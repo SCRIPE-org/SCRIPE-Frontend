@@ -200,7 +200,7 @@ export function useOAuthAppsViewModel() {
                         displayName: "",
                         clientType: "confidential",
                         redirectUris: "",
-                        allowedScopes: "openid profile email",
+                        allowedScopes: "openid profile email roles",
                         allowedGrantTypes: "authorization_code",
                         requirePkce: true,
                         requireConsent: true,
@@ -219,9 +219,9 @@ export function useOAuthAppsViewModel() {
                         await oauthAppRepository.remove(id);
                   },
                   permissions: {
-                        canCreate: "oauth_apps:create",
-                        canUpdate: "oauth_apps:update",
-                        canDelete: "oauth_apps:delete",
+                        canCreate: "oauth_apps.create",
+                        canUpdate: "oauth_apps.update",
+                        canDelete: "oauth_apps.delete",
                   },
             }),
             [t, oauthAppRepository],
