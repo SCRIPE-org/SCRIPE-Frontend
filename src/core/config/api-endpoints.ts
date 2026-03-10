@@ -30,6 +30,7 @@ export const API_ENDPOINTS = {
       ADMIN_PROVIDERS: `${V1}/auth/oidc/providers/admin`,
       CHALLENGE: `${V1}/auth/oidc/challenge`,
       CALLBACK: `${V1}/auth/oidc/callback`,
+      AUTHORIZE: `/connect/authorize`,
     },
     SAML: {
       LOGIN: `${V1}/auth/saml/login`,

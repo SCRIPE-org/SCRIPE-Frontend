@@ -16,7 +16,13 @@
 export const STORAGE_KEYS = {
   // Auth tokens (managed by SecureTokenService — access token only, refresh is in httpOnly cookie)
   ACCESS_TOKEN: "verified_access_token",
+
+  // Auth state & context
   tenant_context: "tenant_context",
+  nexora_auth_state: "nexora_auth_state",
+  nexora_refresh_token: "nexora_refresh_token",
+  lastAuthRefresh: "lastAuthRefresh",
+
   // User data
   USER_DATA: "user-data",
   PERMISSIONS: "permissions",
@@ -35,9 +41,6 @@ export const STORAGE_KEYS = {
   // Impersonation (sessionStorage — survives reload, not new tabs)
   IMPERSONATING: "nexora_impersonating",
   admin_backup_token: "admin_backup_token",
-  lastAuthRefresh: "lastAuthRefresh",
-  nexora_refresh_token: "nexora_refresh_token",
-  nexora_auth_state: "nexora_auth_state",
 } as const;
 
 /**

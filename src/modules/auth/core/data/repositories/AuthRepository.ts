@@ -206,4 +206,12 @@ export class AuthRepository implements IAuthRepository {
       throw new Error("Stop impersonation failed: No access token received.");
     }
   }
+
+  /**
+   * Abstract the OIDC Consent form parameters generation out of the Presentation layer.
+   * Delegates entirely to the AuthService.
+   */
+  buildOidcConsentForm(searchParams: URLSearchParams, accessToken: string): { action: string; params: Record<string, string> } {
+    return this.service.buildOidcConsentForm(searchParams, accessToken);
+  }
 }

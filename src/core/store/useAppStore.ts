@@ -3,6 +3,7 @@ import { persist } from "zustand/middleware";
 import { User } from "@modules/auth/core/domain/entities/User";
 import { PermissionCode, AdminRole } from "@core/common/types/permissions";
 import { secureTokenService } from "@core/common/secure-token-service";
+import { STORAGE_KEYS } from "@core/config/storage-keys";
 import { appLogger } from "../common/logger";
 
 interface AppState {
@@ -47,9 +48,10 @@ export const useAppStore = create<AppState>()(
       roles: [],
       restrictedFields: {},
       setUser: (user) => set({ user, isAuthenticated: !!user }),
+      // ... existing code in setAuth ...
       setAuth: (user, permissions, roles) => {
         if (typeof document !== "undefined") {
-          document.cookie = "nexora_auth_state=true; path=/; max-age=2592000; samesite=Lax";
+          document.cookie = `${STORAGE_KEYS.nexora_auth_state}=true; path=/; max-age=2592000; samesite=Lax`;
         }
         set({
           user,
@@ -61,7 +63,7 @@ export const useAppStore = create<AppState>()(
       },
       logout: () => {
         if (typeof document !== "undefined") {
-          document.cookie = "nexora_auth_state=; path=/; max-age=0; samesite=Lax";
+          document.cookie = `${STORAGE_KEYS.nexora_auth_state}=; path=/; max-age=0; samesite=Lax`;
         }
         // Also clear tokens when logging out from store
         secureTokenService.clearTokens();

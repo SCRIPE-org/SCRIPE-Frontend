@@ -23,6 +23,7 @@ import {
 } from "../models/TwoFactorModels";
 import type { IApiService } from "@core/interfaces/api.interface";
 import { API_ENDPOINTS } from "@core/config/api-endpoints";
+import { ALLOWED_OIDC_PARAMS } from "@core/config/oidc-keys";
 
 export interface IAuthService {
   login(request: LoginRequestModel): Promise<LoginResponseModel>;
@@ -32,6 +33,7 @@ export interface IAuthService {
   getMe<T>(): Promise<T>;
   impersonate(adminId: string): Promise<LoginResponseModel>;
   stopImpersonation(): Promise<LoginResponseModel>;
+  buildOidcConsentForm(searchParams: URLSearchParams, accessToken: string): { action: string; params: Record<string, string> };
 }
 
 export class AuthService implements IAuthService {
@@ -99,5 +101,26 @@ export class AuthService implements IAuthService {
       {}
     );
     return LoginResponseModel.fromJson(json);
+  }
+
+  /**
+   * Constructs the HTML Form action URL and whitelist of hidden input parameters
+   * required to securely POST the OIDC consent back to the backend.
+   */
+  buildOidcConsentForm(searchParams: URLSearchParams, accessToken: string): { action: string; params: Record<string, string> } {
+    const backendUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+    const baseHost = backendUrl.replace(/\/api$/, "");
+    const action = `${baseHost}${API_ENDPOINTS.AUTH.OIDC.AUTHORIZE}`;
+
+    const params: Record<string, string> = {};
+    searchParams.forEach((value, key) => {
+      if (ALLOWED_OIDC_PARAMS.includes(key as any)) {
+        params[key] = value;
+      }
+    });
+
+    params["access_token"] = accessToken;
+
+    return { action, params };
   }
 }

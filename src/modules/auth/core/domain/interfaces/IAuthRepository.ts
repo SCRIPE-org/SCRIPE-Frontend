@@ -15,4 +15,6 @@ export interface IAuthRepository {
   impersonate(adminId: string): Promise<void>;
   /** Stop impersonation — restores original admin session */
   stopImpersonation(): Promise<void>;
+  /** Abstract the OIDC Consent form parameters generation out of the Presentation layer */
+  buildOidcConsentForm(searchParams: URLSearchParams, accessToken: string): { action: string; params: Record<string, string> };
 }
