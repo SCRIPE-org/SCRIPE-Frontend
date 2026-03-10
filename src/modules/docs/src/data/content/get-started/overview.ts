@@ -17,6 +17,7 @@ const sections: DocSection[] = [
                   { icon: "users", titleKey: "getStarted.overview.featureMultiTenant", descriptionKey: "getStarted.overview.featureMultiTenantDesc" },
                   { icon: "database", titleKey: "getStarted.overview.featureMultiDB", descriptionKey: "getStarted.overview.featureMultiDBDesc" },
                   { icon: "rocket", titleKey: "getStarted.overview.featureDeployment", descriptionKey: "getStarted.overview.featureDeploymentDesc" },
+                  { icon: "key", titleKey: "getStarted.overview.featureSSO", descriptionKey: "getStarted.overview.featureSSODesc" },
             ],
       },
       {
