@@ -3691,6 +3691,7 @@ export const ar = {
   // Common
   common: {
     from: "من",
+    total: "المجموع",
     to: "إلى",
     value: "القيمة",
     any: "أي",
