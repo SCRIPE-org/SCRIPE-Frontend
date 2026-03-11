@@ -51,6 +51,7 @@ export function useSubscriptionsOverviewViewModel() {
                   trialCount: trial.length,
                   renewalCount: upcoming.length,
                   totalCount: subscriptions.length,
+                  totalRefunded: subscriptions.reduce((sum, s) => sum + (s.refundAmount ?? 0), 0),
             };
       }, [subscriptions]);
 
