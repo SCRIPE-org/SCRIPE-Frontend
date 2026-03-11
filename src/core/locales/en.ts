@@ -135,6 +135,9 @@ export const en = {
     lockoutDuration: "Lockout Duration",
     minutes: "Minutes",
     grandTotal:"Grand Total",
+    fullRefundIssued: "Full refund issued",
+    previousPlan: "Previous Plan",
+    refundReason: "Refund Reason",
     passwordExpiryDays: "Password Expiry Days",
     deactivateTenant: "Deactivate Tenant",
     activateTenant: "Activate Tenant",
@@ -487,7 +490,6 @@ export const en = {
     proRataRefundDesc: "Return money proportional to remaining unused days.",
     refundAmount: "Refund Amount",
     refundedAt: "Refunded At",
-    refundReason: "Refund Reason",
     refundTypeLabel: {
       None: "No Refund",
       Full: "Full Refund",

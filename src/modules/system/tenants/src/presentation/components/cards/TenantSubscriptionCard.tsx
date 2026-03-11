@@ -154,6 +154,22 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
             setCancelCustomAmount("");
       };
 
+      // ── Find the subscription that was directly canceled as part of the current downgrade ──
+      const previousRefundedSub = useMemo(() => {
+            if (!vm.subscriptionHistory || vm.subscriptionHistory.length < 2 || !vm.isDowngraded) return null;
+            const currentStart = vm.subscription?.startDate ? new Date(vm.subscription.startDate).getTime() : 0;
+            // Find the most recently canceled subscription that was replaced by the current downgrade
+            // It must have been canceled AROUND the time the current sub started (within 1 minute)
+            return vm.subscriptionHistory.find(
+                  (s) => {
+                        if (s.status?.toLowerCase() !== "canceled" || s.id === vm.subscription?.id) return false;
+                        const endTime = s.endDate ? new Date(s.endDate).getTime() : 0;
+                        // Must have been canceled within 1 minute of the current sub's start (same operation)
+                        return Math.abs(endTime - currentStart) < 60000;
+                  }
+            ) ?? null;
+      }, [vm.subscriptionHistory, vm.isDowngraded, vm.subscription?.startDate, vm.subscription?.id]);
+
       // ── Promotion picker data for Change Plan dialog ──
       const { data: changePlanPromotionsRaw = [], isLoading: isLoadingChangePlanPromos } = useQuery({
             queryKey: ["entitlements", "editions", selectedEditionId, "promotions", "changePlan"],
@@ -404,6 +420,72 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                                 <RotateCcw className="mr-1.5 h-3.5 w-3.5" />
                                                 {t("tenant.restoreOriginalPlan") || "Restore Original Plan"}
                                           </Button>
+                                    </div>
+                              )}
+
+                              {/* ── Refund Info Banner (from the subscription canceled in this downgrade) ── */}
+                              {previousRefundedSub && previousRefundedSub.refundType && previousRefundedSub.refundType !== "None" && (previousRefundedSub.refundAmount ?? 0) > 0 && (
+                                    <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/5 p-3 space-y-1">
+                                          <div className="flex items-center gap-2 text-sm font-medium text-emerald-700 dark:text-emerald-400">
+                                                <DollarSign className="h-4 w-4 shrink-0" />
+                                                <span>
+                                                      {previousRefundedSub.refundType === "Full"
+                                                            ? (t("tenant.fullRefundIssued") || "Full refund issued")
+                                                            : (t("tenant.partialRefundIssued") || "Partial refund issued")}
+                                                      {previousRefundedSub.refundAmount != null && (
+                                                            <span className="ml-1 font-bold">
+                                                                  {formatDisplay(previousRefundedSub.refundAmount, previousRefundedSub.currency || "USD")}
+                                                            </span>
+                                                      )}
+                                                      {previousRefundedSub.refundedAt && (
+                                                            <span className="ml-1 text-xs text-muted-foreground">
+                                                                  — {new Date(previousRefundedSub.refundedAt).toLocaleDateString()}
+                                                            </span>
+                                                      )}
+                                                </span>
+                                          </div>
+                                          {previousRefundedSub.refundReason && (
+                                                <p className="text-xs text-muted-foreground pl-6">
+                                                      {t("tenant.refundReason") || "Reason"}: {previousRefundedSub.refundReason}
+                                                </p>
+                                          )}
+                                          <p className="text-xs text-muted-foreground pl-6">
+                                                {t("tenant.previousPlan") || "Previous plan"}: {previousRefundedSub.editionName} ({previousRefundedSub.type})
+                                                {previousRefundedSub.totalAmount != null && (
+                                                      <span className="ml-1">
+                                                            — {formatDisplay(previousRefundedSub.totalAmount, previousRefundedSub.currency || "USD")}
+                                                      </span>
+                                                )}
+                                          </p>
+                                    </div>
+                              )}
+
+                              {/* ── Current Subscription Refund Info ── */}
+                              {subscription.refundType && subscription.refundType !== "None" && (subscription.refundAmount ?? 0) > 0 && (
+                                    <div className="rounded-lg border border-orange-500/30 bg-orange-500/5 p-3">
+                                          <div className="flex items-center gap-2 text-sm font-medium text-orange-700 dark:text-orange-400">
+                                                <DollarSign className="h-4 w-4 shrink-0" />
+                                                <span>
+                                                      {subscription.refundType === "Full"
+                                                            ? (t("tenant.fullRefundApplied") || "Full refund applied")
+                                                            : (t("tenant.partialRefundApplied") || "Partial refund applied")}
+                                                      {subscription.refundAmount != null && (
+                                                            <span className="ml-1 font-bold">
+                                                                  {formatDisplay(subscription.refundAmount, subscription.currency || "USD")}
+                                                            </span>
+                                                      )}
+                                                      {subscription.refundedAt && (
+                                                            <span className="ml-1 text-xs text-muted-foreground">
+                                                                  — {new Date(subscription.refundedAt).toLocaleDateString()}
+                                                            </span>
+                                                      )}
+                                                </span>
+                                          </div>
+                                          {subscription.refundReason && (
+                                                <p className="text-xs text-muted-foreground pl-6">
+                                                      {t("tenant.refundReason") || "Reason"}: {subscription.refundReason}
+                                                </p>
+                                          )}
                                     </div>
                               )}
 

@@ -139,6 +139,9 @@ export const ar = {
   tenant: {
     grandTotal: "المجموع الكلي",
     noRefundDesc: "لا يوجد استرداد",
+    fullRefundIssued: "تم إصدار استرداد كامل",
+    previousPlan: "الخطة السابقة",
+    refundReason: "سبب الاسترداد",
     fullRefundDesc: "استرداد كامل",
     proRataRefundDesc: "استرداد جزئي",
     downloadReceipt: "تحميل الفاتورة",
