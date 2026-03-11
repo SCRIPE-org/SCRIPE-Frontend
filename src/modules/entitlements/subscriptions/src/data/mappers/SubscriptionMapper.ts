@@ -99,8 +99,13 @@ export class SubscriptionMapper {
                   baseAmount: model.baseAmount,
                   adjustmentAmount: model.adjustmentAmount,
                   // Promotion
-                  appliedPromoCode: model.appliedPromoCode,
+                  appliedPromoCode: model.appliedPromotionName,
                   promotionDiscount: model.promotionDiscount,
+                  // Refund
+                  refundType: model.refundType,
+                  refundAmount: model.refundAmount,
+                  refundedAt: model.refundedAt,
+                  refundReason: model.refundReason,
             };
       }
 }

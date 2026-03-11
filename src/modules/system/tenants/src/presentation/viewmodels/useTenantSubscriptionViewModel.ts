@@ -51,13 +51,13 @@ export interface UseTenantSubscriptionViewModelResult {
       convertTrial: (type: SubscriptionType) => void;
       isConverting: boolean;
 
-      suspendSubscription: (reason: string, useFallback?: boolean, refundType?: string) => void;
+      suspendSubscription: (reason: string, useFallback?: boolean, refundType?: string, customRefundAmount?: number) => void;
       isSuspending: boolean;
 
       resumeSubscription: (type?: SubscriptionType) => void;
       isResuming: boolean;
 
-      cancelSubscription: (reason?: string, useFallback?: boolean, refundType?: string) => void;
+      cancelSubscription: (reason?: string, useFallback?: boolean, refundType?: string, customRefundAmount?: number) => void;
       isCanceling: boolean;
 
       resyncPermissions: () => void;
@@ -193,8 +193,8 @@ export function useTenantSubscriptionViewModel(tenantId: string): UseTenantSubsc
       });
 
       const suspendMutation = useMutation({
-            mutationFn: async ({ reason, useFallback, refundType }: { reason: string; useFallback?: boolean; refundType?: string }) => {
-                  return await systemContainer.tenantRepository.suspendSubscription(tenantId, reason, useFallback, refundType);
+            mutationFn: async ({ reason, useFallback, refundType, customRefundAmount }: { reason: string; useFallback?: boolean; refundType?: string; customRefundAmount?: number }) => {
+                  return await systemContainer.tenantRepository.suspendSubscription(tenantId, reason, useFallback, refundType, customRefundAmount);
             },
             onSuccess: (msg) => { successToast(msg || t("tenant.subscriptionSuspended") || "Subscription suspended"); invalidateAll(); },
             onError: errorToast,
@@ -209,8 +209,8 @@ export function useTenantSubscriptionViewModel(tenantId: string): UseTenantSubsc
       });
 
       const cancelMutation = useMutation({
-            mutationFn: async ({ reason, useFallback, refundType }: { reason?: string; useFallback?: boolean; refundType?: string }) => {
-                  return await systemContainer.tenantRepository.cancelSubscription(tenantId, reason, useFallback, refundType);
+            mutationFn: async ({ reason, useFallback, refundType, customRefundAmount }: { reason?: string; useFallback?: boolean; refundType?: string; customRefundAmount?: number }) => {
+                  return await systemContainer.tenantRepository.cancelSubscription(tenantId, reason, useFallback, refundType, customRefundAmount);
             },
             onSuccess: (msg) => { successToast(msg || t("tenant.subscriptionCanceled") || "Subscription canceled"); invalidateAll(); },
             onError: errorToast,
@@ -273,13 +273,13 @@ export function useTenantSubscriptionViewModel(tenantId: string): UseTenantSubsc
             convertTrial: convertMutation.mutate,
             isConverting: convertMutation.isPending,
 
-            suspendSubscription: (reason: string, useFallback?: boolean, refundType?: string) => suspendMutation.mutate({ reason, useFallback, refundType }),
+            suspendSubscription: (reason: string, useFallback?: boolean, refundType?: string, customRefundAmount?: number) => suspendMutation.mutate({ reason, useFallback, refundType, customRefundAmount }),
             isSuspending: suspendMutation.isPending,
 
             resumeSubscription: (type?: SubscriptionType) => resumeMutation.mutate(type),
             isResuming: resumeMutation.isPending,
 
-            cancelSubscription: (reason?: string, useFallback?: boolean, refundType?: string) => cancelMutation.mutate({ reason, useFallback, refundType }),
+            cancelSubscription: (reason?: string, useFallback?: boolean, refundType?: string, customRefundAmount?: number) => cancelMutation.mutate({ reason, useFallback, refundType, customRefundAmount }),
             isCanceling: cancelMutation.isPending,
 
             resyncPermissions: () => resyncMutation.mutate(),

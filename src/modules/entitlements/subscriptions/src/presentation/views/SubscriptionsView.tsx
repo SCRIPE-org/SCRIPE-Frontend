@@ -201,6 +201,32 @@ export function SubscriptionsView({ tenantId }: SubscriptionsViewProps) {
                               hideOnMobile: true,
                         },
                         {
+                              key: "refundType",
+                              label: t("entitlements.subscriptions.refundType") || "Refund",
+                              render: (_value: unknown, item: SubscriptionListItem) => {
+                                    if (!item.refundType || item.refundType === "None") {
+                                          return <span className="text-muted-foreground">—</span>;
+                                    }
+                                    const variant = item.refundType === "Full" ? "destructive" as const : "secondary" as const;
+                                    return (
+                                          <div className="flex flex-col gap-0.5">
+                                                <Badge variant={variant} className="text-[10px] px-1.5 py-0">
+                                                      <DollarSign className="h-3 w-3 me-0.5" />
+                                                      {item.refundType === "Full"
+                                                            ? (t("entitlements.subscriptions.fullRefund") || "Full Refund")
+                                                            : (t("entitlements.subscriptions.proRataRefund") || "Pro-Rata")}
+                                                </Badge>
+                                                {item.refundAmount != null && item.refundAmount > 0 && item.currency && (
+                                                      <span className="text-[10px] text-muted-foreground tabular-nums">
+                                                            {new Intl.NumberFormat("en-US", { style: "currency", currency: item.currency, minimumFractionDigits: 2 }).format(item.refundAmount)}
+                                                      </span>
+                                                )}
+                                          </div>
+                                    );
+                              },
+                              hideOnMobile: true,
+                        },
+                        {
                               key: "startDate",
                               label: t("common.createdAt"),
                               render: (value: string) =>
@@ -856,7 +882,7 @@ function CancelDialog({
                                           <div className="flex items-center space-x-2">
                                                 <RadioGroupItem value="Full" id="cancel-refund-full" />
                                                 <Label htmlFor="cancel-refund-full" className="text-sm font-normal">
-                                                      {t("entitlements.subscriptions.fullRefund") || "Full Refund (includes override adjustments)"}
+                                                      {t("entitlements.subscriptions.fullRefund") || "Full Refund"}
                                                 </Label>
                                           </div>
                                           <div className="flex items-center space-x-2">

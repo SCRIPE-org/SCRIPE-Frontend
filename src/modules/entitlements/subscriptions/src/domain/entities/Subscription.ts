@@ -90,4 +90,9 @@ export interface GlobalSubscriptionItem {
       // ── Promotion ──
       appliedPromoCode?: string;
       promotionDiscount?: number;
+      // ── Refund ──
+      refundType?: string;
+      refundAmount?: number;
+      refundedAt?: string;
+      refundReason?: string;
 }

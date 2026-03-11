@@ -89,8 +89,13 @@ export interface GlobalSubscriptionModel {
       baseAmount: number;
       adjustmentAmount: number;
       // ── Promotion ──
-      appliedPromoCode?: string;
+      appliedPromotionName?: string;
       promotionDiscount?: number;
+      // ── Refund ──
+      refundType?: string;
+      refundAmount?: number;
+      refundedAt?: string;
+      refundReason?: string;
 }
 
 export class SubscriptionService {

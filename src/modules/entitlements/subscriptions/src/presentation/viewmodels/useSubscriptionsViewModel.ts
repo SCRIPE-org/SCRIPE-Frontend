@@ -299,13 +299,21 @@ export function useSubscriptionsViewModel(tenantId: string) {
             isChanging: changeMutation.isPending,
 
             // Suspend dialog
-            showSuspendDialog, setShowSuspendDialog,
+            showSuspendDialog,
+            setShowSuspendDialog: (open: boolean) => {
+                  setShowSuspendDialog(open);
+                  if (!open) resetForm(); // Reset shared state on dialog close
+            },
             submitSuspend,
             isSuspending: suspendMutation.isPending,
             suspendReason, setSuspendReason,
 
             // Cancel dialog
-            showCancelDialog, setShowCancelDialog,
+            showCancelDialog,
+            setShowCancelDialog: (open: boolean) => {
+                  setShowCancelDialog(open);
+                  if (!open) resetForm(); // Reset shared state on dialog close
+            },
             submitCancel,
             isCanceling: cancelMutation.isPending,
             cancelReason, setCancelReason,

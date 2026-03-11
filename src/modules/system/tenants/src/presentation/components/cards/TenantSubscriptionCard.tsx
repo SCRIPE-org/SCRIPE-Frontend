@@ -129,12 +129,30 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
       const [selectedPromotionId, setSelectedPromotionId] = useState("");
       const [suspendRefundType, setSuspendRefundType] = useState<string>("None");
       const [cancelRefundType, setCancelRefundType] = useState<string>("None");
+      const [suspendCustomAmount, setSuspendCustomAmount] = useState("");
+      const [cancelCustomAmount, setCancelCustomAmount] = useState("");
 
       // Downgrade impact + price preview state
       const [impactReport, setImpactReport] = useState<DowngradeImpactReport | null>(null);
       const [isLoadingImpact, setIsLoadingImpact] = useState(false);
       const [previewAmount, setPreviewAmount] = useState<number | null>(null);
       const [isLoadingPrice, setIsLoadingPrice] = useState(false);
+
+      const closeSuspendDialog = () => {
+            setSuspendOpen(false);
+            setSuspendReason("");
+            setUseFallbackOnSuspend(true);
+            setSuspendRefundType("None");
+            setSuspendCustomAmount("");
+      };
+
+      const closeCancelDialog = () => {
+            setCancelOpen(false);
+            setCancelReason("");
+            setUseFallbackOnCancel(true);
+            setCancelRefundType("None");
+            setCancelCustomAmount("");
+      };
 
       // ── Promotion picker data for Change Plan dialog ──
       const { data: changePlanPromotionsRaw = [], isLoading: isLoadingChangePlanPromos } = useQuery({
@@ -853,7 +871,10 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
 
       function renderSuspendDialog() {
             return (
-                  <Dialog open={suspendOpen} onOpenChange={setSuspendOpen}>
+                  <Dialog open={suspendOpen} onOpenChange={(open) => {
+                        if (!open) closeSuspendDialog();
+                        else setSuspendOpen(true);
+                  }}>
                         <DialogContent className="max-w-md">
                               <DialogHeader>
                                     <DialogTitle className="text-destructive">{t("tenant.suspendSubscription") || "Suspend Subscription"}</DialogTitle>
@@ -953,17 +974,39 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                                             </p>
                                                       </div>
                                                 </div>
+                                                <div className="flex items-start gap-3 rounded-md border p-3 cursor-pointer hover:bg-muted/50" onClick={() => setSuspendRefundType("Custom")}>
+                                                      <RadioGroupItem value="Custom" id="suspend-refund-custom" className="mt-0.5" />
+                                                      <div className="flex-1">
+                                                            <Label htmlFor="suspend-refund-custom" className="font-medium cursor-pointer">
+                                                                  {t("tenant.customRefund") || "Custom Amount"}
+                                                            </Label>
+                                                            <p className="text-xs text-muted-foreground">
+                                                                  {t("tenant.customRefundDesc") || "Specify a custom refund amount."}
+                                                            </p>
+                                                            {suspendRefundType === "Custom" && (
+                                                                  <Input
+                                                                        type="number"
+                                                                        min="0"
+                                                                        step="0.01"
+                                                                        value={suspendCustomAmount}
+                                                                        onChange={(e) => setSuspendCustomAmount(e.target.value)}
+                                                                        placeholder={t("tenant.customAmountPlaceholder") || "e.g., 50.00"}
+                                                                        className="mt-2 font-mono max-w-[200px]"
+                                                                  />
+                                                            )}
+                                                      </div>
+                                                </div>
                                           </RadioGroup>
                                     </div>
                               </div>
                               <DialogFooter>
-                                    <Button variant="outline" onClick={() => setSuspendOpen(false)} disabled={vm.isSuspending}>
+                                    <Button variant="outline" onClick={closeSuspendDialog} disabled={vm.isSuspending}>
                                           {t("common.cancel") || "Cancel"}
                                     </Button>
                                     <Button variant="destructive" onClick={() => {
                                           if (suspendReason.trim().length >= 3) {
-                                                vm.suspendSubscription(suspendReason.trim(), vm.hasFallback ? useFallbackOnSuspend : undefined, suspendRefundType);
-                                                setSuspendOpen(false);
+                                                vm.suspendSubscription(suspendReason.trim(), vm.hasFallback ? useFallbackOnSuspend : undefined, suspendRefundType === "Custom" ? "ProRata" : suspendRefundType, suspendRefundType === "Custom" && suspendCustomAmount ? parseFloat(suspendCustomAmount) : undefined);
+                                                closeSuspendDialog();
                                           }
                                     }} disabled={suspendReason.trim().length < 3 || vm.isSuspending}>
                                           {vm.isSuspending ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /></> : <Pause className="mr-2 h-4 w-4" />}
@@ -980,7 +1023,10 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
 
       function renderCancelDialog() {
             return (
-                  <Dialog open={cancelOpen} onOpenChange={setCancelOpen}>
+                  <Dialog open={cancelOpen} onOpenChange={(open) => {
+                        if (!open) closeCancelDialog();
+                        else setCancelOpen(true);
+                  }}>
                         <DialogContent className="max-w-md">
                               <DialogHeader>
                                     <DialogTitle className="text-destructive">{t("tenant.cancelSubscription") || "Cancel Subscription"}</DialogTitle>
@@ -1077,16 +1123,38 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                                             </p>
                                                       </div>
                                                 </div>
+                                                <div className="flex items-start gap-3 rounded-md border p-3 cursor-pointer hover:bg-muted/50" onClick={() => setCancelRefundType("Custom")}>
+                                                      <RadioGroupItem value="Custom" id="cancel-refund-custom" className="mt-0.5" />
+                                                      <div className="flex-1">
+                                                            <Label htmlFor="cancel-refund-custom" className="font-medium cursor-pointer">
+                                                                  {t("tenant.customRefund") || "Custom Amount"}
+                                                            </Label>
+                                                            <p className="text-xs text-muted-foreground">
+                                                                  {t("tenant.customRefundDesc") || "Specify a custom refund amount."}
+                                                            </p>
+                                                            {cancelRefundType === "Custom" && (
+                                                                  <Input
+                                                                        type="number"
+                                                                        min="0"
+                                                                        step="0.01"
+                                                                        value={cancelCustomAmount}
+                                                                        onChange={(e) => setCancelCustomAmount(e.target.value)}
+                                                                        placeholder={t("tenant.customAmountPlaceholder") || "e.g., 50.00"}
+                                                                        className="mt-2 font-mono max-w-[200px]"
+                                                                  />
+                                                            )}
+                                                      </div>
+                                                </div>
                                           </RadioGroup>
                                     </div>
                               </div>
                               <DialogFooter>
-                                    <Button variant="outline" onClick={() => setCancelOpen(false)} disabled={vm.isCanceling}>
+                                    <Button variant="outline" onClick={closeCancelDialog} disabled={vm.isCanceling}>
                                           {t("common.cancel") || "Keep Subscription"}
                                     </Button>
                                     <Button variant="destructive" onClick={() => {
-                                          vm.cancelSubscription(cancelReason.trim() || undefined, vm.hasFallback ? useFallbackOnCancel : undefined, cancelRefundType);
-                                          setCancelOpen(false);
+                                          vm.cancelSubscription(cancelReason.trim() || undefined, vm.hasFallback ? useFallbackOnCancel : undefined, cancelRefundType === "Custom" ? "ProRata" : cancelRefundType, cancelRefundType === "Custom" && cancelCustomAmount ? parseFloat(cancelCustomAmount) : undefined);
+                                          closeCancelDialog();
                                     }} disabled={vm.isCanceling}>
                                           {vm.isCanceling ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /></> : <XCircle className="mr-2 h-4 w-4" />}
                                           {useFallbackOnCancel && vm.hasFallback

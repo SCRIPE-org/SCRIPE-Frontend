@@ -91,12 +91,14 @@ export interface SuspendPayload {
       reason: string;
       useFallback?: boolean;
       refundType?: RefundType;
+      customRefundAmount?: number;
 }
 
 export interface CancelPayload {
       reason?: string;
       useFallback?: boolean;
       refundType?: RefundType;
+      customRefundAmount?: number;
 }
 
 export interface ResumePayload {
