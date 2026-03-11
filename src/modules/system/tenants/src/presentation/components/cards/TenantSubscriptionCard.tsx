@@ -1087,7 +1087,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                     </Button>
                                     <Button variant="destructive" onClick={() => {
                                           if (suspendReason.trim().length >= 3) {
-                                                vm.suspendSubscription(suspendReason.trim(), vm.hasFallback ? useFallbackOnSuspend : undefined, suspendRefundType === "Custom" ? "ProRata" : suspendRefundType, suspendRefundType === "Custom" && suspendCustomAmount ? parseFloat(suspendCustomAmount) : undefined);
+                                                vm.suspendSubscription(suspendReason.trim(), vm.hasFallback ? useFallbackOnSuspend : undefined, suspendRefundType === "Custom" ? "ProRata" : suspendRefundType, suspendRefundType === "Custom" && suspendCustomAmount ? parseFloat(suspendCustomAmount.replace(/[^0-9.]/g, '')) : undefined);
                                                 closeSuspendDialog();
                                           }
                                     }} disabled={suspendReason.trim().length < 3 || vm.isSuspending}>
@@ -1235,7 +1235,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                           {t("common.cancel") || "Keep Subscription"}
                                     </Button>
                                     <Button variant="destructive" onClick={() => {
-                                          vm.cancelSubscription(cancelReason.trim() || undefined, vm.hasFallback ? useFallbackOnCancel : undefined, cancelRefundType === "Custom" ? "ProRata" : cancelRefundType, cancelRefundType === "Custom" && cancelCustomAmount ? parseFloat(cancelCustomAmount) : undefined);
+                                          vm.cancelSubscription(cancelReason.trim() || undefined, vm.hasFallback ? useFallbackOnCancel : undefined, cancelRefundType === "Custom" ? "ProRata" : cancelRefundType, cancelRefundType === "Custom" && cancelCustomAmount ? parseFloat(cancelCustomAmount.replace(/[^0-9.]/g, '')) : undefined);
                                           closeCancelDialog();
                                     }} disabled={vm.isCanceling}>
                                           {vm.isCanceling ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /></> : <XCircle className="mr-2 h-4 w-4" />}

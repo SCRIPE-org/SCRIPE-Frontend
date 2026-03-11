@@ -137,6 +137,8 @@ export const ar = {
 
   // Tenants - المستأجرون
   tenant: {
+    partialRefundIssued: "تم إصدار استرداد جزئي",
+    partialRefundApplied: "تم تطبيق استرداد جزئي",
     grandTotal: "المجموع الكلي",
     noRefundDesc: "لا يوجد استرداد",
     fullRefundIssued: "تم إصدار استرداد كامل",
@@ -1125,6 +1127,31 @@ export const ar = {
       failedLogins: "تسجيلات الدخول الفاشلة (24 ساعة)",
       active: "نشط",
       totalMrr: "إجمالي الإيرادات الشهرية",
+      mrrDesc: "الإيرادات المتكررة الشهرية النشطة",
+      totalRevenue: "إجمالي الإيرادات",
+      revenueDesc: "إجمالي المبالغ المفوترة",
+      totalRefunded: "إجمالي المسترد",
+      refundedDesc: "عبر جميع الاشتراكات",
+      netRevenue: "صافي الإيرادات",
+      netRevenueDesc: "الإيرادات ناقص المبالغ المستردة",
+      activeDesc: "المستأجرون الدافعون",
+      trialDesc: "في فترة تجريبية",
+      suspendedCount: "معلق",
+      suspendedDesc: "متوقفة مؤقتاً",
+      canceledCount: "ملغي",
+      canceledDesc: "اشتراكات منتهية",
+    },
+    chart: {
+      statusDist: "توزيع الحالات",
+      typeDist: "توزيع الأنواع",
+      revenueByEdition: "الإيرادات حسب الإصدار",
+    },
+    renewal: {
+      tomorrow: "يتجدد غداً",
+      daysLeft: "أيام متبقية",
+    },
+    footer: {
+      promoDiscount: "خصومات العروض",
     },
     loginActivity: {
       title: "نشاط تسجيل الدخول",
@@ -5288,6 +5315,7 @@ export const ar = {
       trialCount: "الاشتراكات التجريبية",
       renewalCount: "التجديدات القادمة",
       next30Days: "الـ 30 يوماً القادمة",
+      upcomingRenewals: "التجديدات القادمة",
       edition: "الإصدار",
       type: "النوع",
       amount: "المبلغ",

@@ -1,8 +1,11 @@
 /**
- * Subscriptions Overview View — Global
+ * Subscriptions Overview View — Global Dashboard
  *
- * Displays all active subscriptions across all tenants
- * with KPI cards, filters, and a data table.
+ * Comprehensive subscription dashboard with:
+ * - 8 KPI cards (financial + counts)
+ * - Distribution charts (status, type, revenue by edition)
+ * - Upcoming renewals timeline
+ * - Filterable data table
  */
 "use client";
 
@@ -34,6 +37,12 @@ import {
       ArrowRight,
       TrendingUp,
       FileDown,
+      AlertTriangle,
+      XCircle,
+      Pause,
+      BarChart3,
+      CalendarClock,
+      Tag,
 } from "lucide-react";
 
 const STATUS_COLORS: Record<string, string> = {
@@ -67,8 +76,13 @@ export function SubscriptionsOverviewView() {
                               </div>
                         </div>
                         <div className="grid gap-4 md:grid-cols-4">
-                              {Array.from({ length: 4 }).map((_, i) => (
+                              {Array.from({ length: 8 }).map((_, i) => (
                                     <Skeleton key={i} className="h-24 rounded-xl" />
+                              ))}
+                        </div>
+                        <div className="grid gap-4 md:grid-cols-3">
+                              {Array.from({ length: 3 }).map((_, i) => (
+                                    <Skeleton key={i} className="h-64 rounded-xl" />
                               ))}
                         </div>
                         <Skeleton className="h-96 rounded-xl" />
@@ -101,9 +115,13 @@ export function SubscriptionsOverviewView() {
                         </div>
                   </div>
 
-                  {/* ── KPI Cards ── */}
+                  {/* ══════════════════════════════════════════════════ */}
+                  {/* ROW 1: Financial KPI Cards                        */}
+                  {/* ══════════════════════════════════════════════════ */}
                   <div className="grid gap-4 md:grid-cols-4">
-                        <Card className="border-emerald-200/50 dark:border-emerald-800/30">
+                        {/* MRR */}
+                        <Card className="relative overflow-hidden border-emerald-200/50 dark:border-emerald-800/30">
+                              <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-emerald-500/10 to-transparent rounded-bl-full" />
                               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                                     <CardTitle className="text-sm font-medium text-muted-foreground">
                                           {vm.t("dashboard.kpi.totalMrr") || "Monthly Recurring Revenue"}
@@ -111,58 +129,365 @@ export function SubscriptionsOverviewView() {
                                     <DollarSign className="h-4 w-4 text-emerald-600" />
                               </CardHeader>
                               <CardContent>
-                                    <div className="text-2xl font-bold tabular-nums">
+                                    <div className="text-2xl font-bold tabular-nums text-emerald-700 dark:text-emerald-400">
                                           {vm.formatDisplay(vm.kpis.totalMrr, "USD")}
                                     </div>
+                                    <p className="text-xs text-muted-foreground mt-1">
+                                          {vm.t("dashboard.kpi.mrrDesc") || "Active recurring revenue per month"}
+                                    </p>
                               </CardContent>
                         </Card>
 
-                        <Card>
+                        {/* Total Revenue */}
+                        <Card className="relative overflow-hidden border-blue-200/50 dark:border-blue-800/30">
+                              <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-blue-500/10 to-transparent rounded-bl-full" />
                               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                                     <CardTitle className="text-sm font-medium text-muted-foreground">
-                                          {vm.t("entitlements.subscriptions.activeCount") || "Active Subscriptions"}
+                                          {vm.t("dashboard.kpi.totalRevenue") || "Total Revenue"}
                                     </CardTitle>
-                                    <CreditCard className="h-4 w-4 text-primary" />
+                                    <TrendingUp className="h-4 w-4 text-blue-600" />
                               </CardHeader>
                               <CardContent>
-                                    <div className="text-2xl font-bold tabular-nums">{vm.kpis.activeCount}</div>
+                                    <div className="text-2xl font-bold tabular-nums text-blue-700 dark:text-blue-400">
+                                          {vm.formatDisplay(vm.kpis.totalRevenue, "USD")}
+                                    </div>
+                                    <p className="text-xs text-muted-foreground mt-1">
+                                          {vm.t("dashboard.kpi.revenueDesc") || "Active + Trialing + Suspended"}
+                                    </p>
                               </CardContent>
                         </Card>
 
-                        <Card>
+                        {/* Total Refunded */}
+                        <Card className="relative overflow-hidden border-red-200/50 dark:border-red-800/30">
+                              <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-red-500/10 to-transparent rounded-bl-full" />
                               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                                     <CardTitle className="text-sm font-medium text-muted-foreground">
-                                          {vm.t("entitlements.subscriptions.trialCount") || "Trial Subscriptions"}
+                                          {vm.t("dashboard.kpi.totalRefunded") || "Total Refunded"}
                                     </CardTitle>
-                                    <Clock className="h-4 w-4 text-blue-500" />
+                                    <XCircle className="h-4 w-4 text-red-500" />
                               </CardHeader>
                               <CardContent>
-                                    <div className="text-2xl font-bold tabular-nums">{vm.kpis.trialCount}</div>
+                                    <div className="text-2xl font-bold tabular-nums text-red-600 dark:text-red-400">
+                                          {vm.formatDisplay(vm.kpis.totalRefunded, "USD")}
+                                    </div>
+                                    <p className="text-xs text-muted-foreground mt-1">
+                                          {vm.t("dashboard.kpi.refundedDesc") || "Across all subscriptions"}
+                                    </p>
                               </CardContent>
                         </Card>
 
-                        <Card>
+                        {/* Net Revenue */}
+                        <Card className="relative overflow-hidden border-violet-200/50 dark:border-violet-800/30">
+                              <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-violet-500/10 to-transparent rounded-bl-full" />
                               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                                     <CardTitle className="text-sm font-medium text-muted-foreground">
-                                          {vm.t("entitlements.subscriptions.renewalCount") || "Upcoming Renewals"}
+                                          {vm.t("dashboard.kpi.netRevenue") || "Net Revenue"}
                                     </CardTitle>
-                                    <TrendingUp className="h-4 w-4 text-amber-500" />
+                                    <BarChart3 className="h-4 w-4 text-violet-600" />
                               </CardHeader>
                               <CardContent>
-                                    <div className="text-2xl font-bold tabular-nums">{vm.kpis.renewalCount}</div>
-                                    <p className="text-xs text-muted-foreground mt-0.5">
-                                          {vm.t("entitlements.subscriptions.next30Days") || "Next 30 days"}
+                                    <div className="text-2xl font-bold tabular-nums text-violet-700 dark:text-violet-400">
+                                          {vm.formatDisplay(vm.kpis.netRevenue, "USD")}
+                                    </div>
+                                    <p className="text-xs text-muted-foreground mt-1">
+                                          {vm.t("dashboard.kpi.netRevenueDesc") || "Revenue minus refunds"}
                                     </p>
                               </CardContent>
                         </Card>
                   </div>
 
-                  {/* ── Filters ── */}
+                  {/* ══════════════════════════════════════════════════ */}
+                  {/* ROW 2: Count KPI Cards                            */}
+                  {/* ══════════════════════════════════════════════════ */}
+                  <div className="grid gap-4 md:grid-cols-4">
+                        {/* Active */}
+                        <Card className="group cursor-pointer transition-all hover:shadow-md hover:border-emerald-300 dark:hover:border-emerald-700"
+                              onClick={() => vm.setStatusFilter("Active")}>
+                              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                    <CardTitle className="text-sm font-medium text-muted-foreground">
+                                          {vm.t("entitlements.subscriptions.activeCount") || "Active"}
+                                    </CardTitle>
+                                    <CreditCard className="h-4 w-4 text-emerald-500" />
+                              </CardHeader>
+                              <CardContent>
+                                    <div className="text-2xl font-bold tabular-nums">{vm.kpis.activeCount}</div>
+                                    <p className="text-xs text-muted-foreground mt-1">
+                                          {vm.t("dashboard.kpi.activeDesc") || "Paying tenants"}
+                                    </p>
+                              </CardContent>
+                        </Card>
+
+                        {/* Trialing */}
+                        <Card className="group cursor-pointer transition-all hover:shadow-md hover:border-blue-300 dark:hover:border-blue-700"
+                              onClick={() => vm.setStatusFilter("Trialing")}>
+                              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                    <CardTitle className="text-sm font-medium text-muted-foreground">
+                                          {vm.t("entitlements.subscriptions.trialCount") || "Trialing"}
+                                    </CardTitle>
+                                    <Clock className="h-4 w-4 text-blue-500" />
+                              </CardHeader>
+                              <CardContent>
+                                    <div className="text-2xl font-bold tabular-nums">{vm.kpis.trialCount}</div>
+                                    <p className="text-xs text-muted-foreground mt-1">
+                                          {vm.t("dashboard.kpi.trialDesc") || "In trial period"}
+                                    </p>
+                              </CardContent>
+                        </Card>
+
+                        {/* Suspended */}
+                        <Card className="group cursor-pointer transition-all hover:shadow-md hover:border-amber-300 dark:hover:border-amber-700"
+                              onClick={() => vm.setStatusFilter("Suspended")}>
+                              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                    <CardTitle className="text-sm font-medium text-muted-foreground">
+                                          {vm.t("dashboard.kpi.suspendedCount") || "Suspended"}
+                                    </CardTitle>
+                                    <Pause className="h-4 w-4 text-amber-500" />
+                              </CardHeader>
+                              <CardContent>
+                                    <div className="text-2xl font-bold tabular-nums">{vm.kpis.suspendedCount}</div>
+                                    <p className="text-xs text-muted-foreground mt-1">
+                                          {vm.t("dashboard.kpi.suspendedDesc") || "Temporarily paused"}
+                                    </p>
+                              </CardContent>
+                        </Card>
+
+                        {/* Canceled */}
+                        <Card className="group cursor-pointer transition-all hover:shadow-md hover:border-red-300 dark:hover:border-red-700"
+                              onClick={() => vm.setStatusFilter("Canceled")}>
+                              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                    <CardTitle className="text-sm font-medium text-muted-foreground">
+                                          {vm.t("dashboard.kpi.canceledCount") || "Canceled"}
+                                    </CardTitle>
+                                    <XCircle className="h-4 w-4 text-red-500" />
+                              </CardHeader>
+                              <CardContent>
+                                    <div className="text-2xl font-bold tabular-nums">{vm.kpis.canceledCount}</div>
+                                    <p className="text-xs text-muted-foreground mt-1">
+                                          {vm.t("dashboard.kpi.canceledDesc") || "Ended subscriptions"}
+                                    </p>
+                              </CardContent>
+                        </Card>
+                  </div>
+
+                  {/* ══════════════════════════════════════════════════ */}
+                  {/* ROW 3: Charts                                     */}
+                  {/* ══════════════════════════════════════════════════ */}
+                  <div className="grid gap-4 md:grid-cols-3">
+                        {/* Status Distribution — Doughnut */}
+                        <Card>
+                              <CardHeader className="pb-3">
+                                    <CardTitle className="text-sm font-medium flex items-center gap-2">
+                                          <Users className="h-4 w-4 text-muted-foreground" />
+                                          {vm.t("dashboard.chart.statusDist") || "Status Distribution"}
+                                    </CardTitle>
+                              </CardHeader>
+                              <CardContent>
+                                    <div className="flex items-center gap-6">
+                                          {/* Doughnut */}
+                                          <div className="relative shrink-0">
+                                                <div
+                                                      className="w-32 h-32 rounded-full"
+                                                      style={{
+                                                            background: vm.statusDistribution.length > 0
+                                                                  ? `conic-gradient(${vm.statusDistribution
+                                                                        .reduce<{ segments: string[]; offset: number }>((acc, item) => {
+                                                                              const end = acc.offset + item.percentage;
+                                                                              acc.segments.push(`${item.color} ${acc.offset}% ${end}%`);
+                                                                              acc.offset = end;
+                                                                              return acc;
+                                                                        }, { segments: [], offset: 0 })
+                                                                        .segments.join(", ")})`
+                                                                  : "#e5e7eb",
+                                                      }}
+                                                >
+                                                      <div className="absolute inset-3 bg-card rounded-full flex items-center justify-center">
+                                                            <div className="text-center">
+                                                                  <div className="text-lg font-bold tabular-nums">{vm.kpis.totalCount}</div>
+                                                                  <div className="text-[10px] text-muted-foreground">{vm.t("common.total") || "Total"}</div>
+                                                            </div>
+                                                      </div>
+                                                </div>
+                                          </div>
+                                          {/* Legend */}
+                                          <div className="flex-1 space-y-2">
+                                                {vm.statusDistribution.map(item => (
+                                                      <div key={item.status} className="flex items-center justify-between text-sm">
+                                                            <div className="flex items-center gap-2">
+                                                                  <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: item.color }} />
+                                                                  <span className="text-muted-foreground">
+                                                                        {vm.t(`tenant.statusLabel.${item.status.toLowerCase()}`) || item.status}
+                                                                  </span>
+                                                            </div>
+                                                            <div className="flex items-center gap-2 tabular-nums">
+                                                                  <span className="font-medium">{item.count}</span>
+                                                                  <span className="text-[10px] text-muted-foreground w-12 text-right">{item.percentage}%</span>
+                                                            </div>
+                                                      </div>
+                                                ))}
+                                          </div>
+                                    </div>
+                              </CardContent>
+                        </Card>
+
+                        {/* Type Distribution — Doughnut */}
+                        <Card>
+                              <CardHeader className="pb-3">
+                                    <CardTitle className="text-sm font-medium flex items-center gap-2">
+                                          <CreditCard className="h-4 w-4 text-muted-foreground" />
+                                          {vm.t("dashboard.chart.typeDist") || "Type Distribution"}
+                                    </CardTitle>
+                              </CardHeader>
+                              <CardContent>
+                                    <div className="flex items-center gap-6">
+                                          {/* Doughnut */}
+                                          <div className="relative shrink-0">
+                                                <div
+                                                      className="w-32 h-32 rounded-full"
+                                                      style={{
+                                                            background: vm.typeDistribution.length > 0
+                                                                  ? `conic-gradient(${vm.typeDistribution
+                                                                        .reduce<{ segments: string[]; offset: number }>((acc, item) => {
+                                                                              const end = acc.offset + item.percentage;
+                                                                              acc.segments.push(`${item.color} ${acc.offset}% ${end}%`);
+                                                                              acc.offset = end;
+                                                                              return acc;
+                                                                        }, { segments: [], offset: 0 })
+                                                                        .segments.join(", ")})`
+                                                                  : "#e5e7eb",
+                                                      }}
+                                                >
+                                                      <div className="absolute inset-3 bg-card rounded-full flex items-center justify-center">
+                                                            <div className="text-center">
+                                                                  <div className="text-lg font-bold tabular-nums">{vm.kpis.totalCount}</div>
+                                                                  <div className="text-[10px] text-muted-foreground">{vm.t("common.total") || "Total"}</div>
+                                                            </div>
+                                                      </div>
+                                                </div>
+                                          </div>
+                                          {/* Legend */}
+                                          <div className="flex-1 space-y-2">
+                                                {vm.typeDistribution.map(item => (
+                                                      <div key={item.type} className="flex items-center justify-between text-sm">
+                                                            <div className="flex items-center gap-2">
+                                                                  <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: item.color }} />
+                                                                  <span className="text-muted-foreground">
+                                                                        {vm.t(`tenant.typeLabel.${item.type.toLowerCase()}`) || item.type}
+                                                                  </span>
+                                                            </div>
+                                                            <div className="flex items-center gap-2 tabular-nums">
+                                                                  <span className="font-medium">{item.count}</span>
+                                                                  <span className="text-[10px] text-muted-foreground w-12 text-right">{item.percentage}%</span>
+                                                            </div>
+                                                      </div>
+                                                ))}
+                                          </div>
+                                    </div>
+                              </CardContent>
+                        </Card>
+
+                        {/* Revenue by Edition — Horizontal Bar */}
+                        <Card>
+                              <CardHeader className="pb-3">
+                                    <CardTitle className="text-sm font-medium flex items-center gap-2">
+                                          <BarChart3 className="h-4 w-4 text-muted-foreground" />
+                                          {vm.t("dashboard.chart.revenueByEdition") || "Revenue by Edition"}
+                                    </CardTitle>
+                              </CardHeader>
+                              <CardContent>
+                                    {vm.revenueByEdition.length === 0 ? (
+                                          <div className="flex items-center justify-center h-36 text-sm text-muted-foreground">
+                                                {vm.t("common.noData") || "No revenue data"}
+                                          </div>
+                                    ) : (
+                                          <div className="space-y-3">
+                                                {vm.revenueByEdition.map(item => (
+                                                      <div key={item.edition} className="space-y-1.5">
+                                                            <div className="flex items-center justify-between text-sm">
+                                                                  <span className="font-medium truncate max-w-[140px]">{item.edition}</span>
+                                                                  <span className="tabular-nums text-muted-foreground">
+                                                                        {vm.formatDisplay(item.revenue, "USD")}
+                                                                  </span>
+                                                            </div>
+                                                            <div className="h-2 rounded-full bg-muted overflow-hidden">
+                                                                  <div
+                                                                        className="h-full rounded-full transition-all duration-700 ease-out"
+                                                                        style={{
+                                                                              width: `${item.percentage}%`,
+                                                                              backgroundColor: item.color,
+                                                                        }}
+                                                                  />
+                                                            </div>
+                                                      </div>
+                                                ))}
+                                          </div>
+                                    )}
+                              </CardContent>
+                        </Card>
+                  </div>
+
+                  {/* ══════════════════════════════════════════════════ */}
+                  {/* ROW 4: Upcoming Renewals                          */}
+                  {/* ══════════════════════════════════════════════════ */}
+                  {vm.upcomingRenewals.length > 0 && (
+                        <Card className="border-amber-200/50 dark:border-amber-800/30">
+                              <CardHeader className="pb-3">
+                                    <CardTitle className="text-sm font-medium flex items-center gap-2">
+                                          <CalendarClock className="h-4 w-4 text-amber-500" />
+                                          {vm.t("entitlements.subscriptions.upcomingRenewals") || "Upcoming Renewals"}
+                                          <Badge variant="secondary" className="ml-auto text-[10px] bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-400">
+                                                {vm.upcomingRenewals.length}
+                                          </Badge>
+                                    </CardTitle>
+                              </CardHeader>
+                              <CardContent className="p-0">
+                                    <div className="divide-y">
+                                          {vm.upcomingRenewals.slice(0, 5).map(sub => (
+                                                <div
+                                                      key={sub.id}
+                                                      className="flex items-center justify-between px-6 py-3 hover:bg-muted/50 cursor-pointer transition-colors"
+                                                      onClick={() => router.push(`/tenants/${sub.tenantId}`)}
+                                                >
+                                                      <div className="flex items-center gap-3">
+                                                            <div className={`w-2 h-2 rounded-full ${sub.daysLeft <= 7 ? "bg-red-500 animate-pulse" : sub.daysLeft <= 14 ? "bg-amber-500" : "bg-emerald-500"}`} />
+                                                            <div>
+                                                                  <span className="text-sm font-medium">{sub.tenantName}</span>
+                                                                  <div className="flex items-center gap-2 mt-0.5">
+                                                                        <span className="text-xs text-muted-foreground">{sub.editionName}</span>
+                                                                        <Badge variant="secondary" className={`${TYPE_COLORS[sub.type] || ""} text-[9px] h-4`}>
+                                                                              {vm.t(`tenant.typeLabel.${sub.type.toLowerCase()}`) || sub.type}
+                                                                        </Badge>
+                                                                  </div>
+                                                            </div>
+                                                      </div>
+                                                      <div className="flex items-center gap-4">
+                                                            <div className="text-right">
+                                                                  <div className="text-sm font-medium tabular-nums">
+                                                                        {vm.formatDisplay(sub.totalAmount, sub.currency)}
+                                                                  </div>
+                                                                  <div className={`text-xs tabular-nums ${sub.daysLeft <= 7 ? "text-red-500 font-medium" : "text-muted-foreground"}`}>
+                                                                        {sub.daysLeft === 1
+                                                                              ? (vm.t("dashboard.renewal.tomorrow") || "Renews tomorrow")
+                                                                              : `${sub.daysLeft} ${vm.t("dashboard.renewal.daysLeft") || "days left"}`
+                                                                        }
+                                                                  </div>
+                                                            </div>
+                                                            <ArrowRight className="h-3.5 w-3.5 text-muted-foreground" />
+                                                      </div>
+                                                </div>
+                                          ))}
+                                    </div>
+                              </CardContent>
+                        </Card>
+                  )}
+
+                  {/* ══════════════════════════════════════════════════ */}
+                  {/* ROW 5: Filters + Table                            */}
+                  {/* ══════════════════════════════════════════════════ */}
                   <div className="flex flex-wrap items-center gap-3">
                         <div className="relative flex-1 min-w-[200px] max-w-sm">
                               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                               <Input
-                                    placeholder={vm.t("common.search") || "Search by edition..."}
+                                    placeholder={vm.t("common.search") || "Search by tenant or edition..."}
                                     value={vm.search}
                                     onChange={(e) => vm.setSearch(e.target.value)}
                                     className="pl-9"
@@ -214,7 +539,7 @@ export function SubscriptionsOverviewView() {
                         </div>
                   </div>
 
-                  {/* ── Table ── */}
+                  {/* ── Data Table ── */}
                   <Card>
                         <CardContent className="p-0">
                               <Table>
@@ -337,9 +662,17 @@ export function SubscriptionsOverviewView() {
                         <span>
                               {vm.subscriptions.length} of {vm.kpis.totalCount} {vm.t("common.total") || "total"}
                         </span>
-                        <span>
-                              {vm.t("entitlements.subscriptions.totalMrr") || "Total MRR"}: {vm.formatDisplay(vm.kpis.totalMrr, "USD")}
-                        </span>
+                        <div className="flex items-center gap-4">
+                              {vm.kpis.totalPromoDiscount > 0 && (
+                                    <span className="flex items-center gap-1">
+                                          <Tag className="h-3 w-3" />
+                                          {vm.t("dashboard.footer.promoDiscount") || "Promo discounts"}: {vm.formatDisplay(vm.kpis.totalPromoDiscount, "USD")}
+                                    </span>
+                              )}
+                              <span>
+                                    {vm.t("entitlements.subscriptions.totalMrr") || "Total MRR"}: {vm.formatDisplay(vm.kpis.totalMrr, "USD")}
+                              </span>
+                        </div>
                   </div>
 
                   {/* ── Export Dialog ── */}

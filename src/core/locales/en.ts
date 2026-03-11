@@ -132,6 +132,8 @@ export const en = {
 
   // Tenants
   tenant: {
+    partialRefundIssued: "Partial refund issued",
+    partialRefundApplied: "Partial refund applied",
     lockoutDuration: "Lockout Duration",
     minutes: "Minutes",
     grandTotal:"Grand Total",
@@ -4149,8 +4151,33 @@ export const en = {
       failedLogins: "Failed Logins (24h)",
       active: "active",
       totalMrr: "Monthly Revenue",
+      mrrDesc: "Active recurring revenue per month",
       activeSubscriptions: "Active Subscriptions",
       trialSubscriptions: "Trial Subscriptions",
+      totalRevenue: "Total Revenue",
+      revenueDesc: "Gross total ever billed",
+      totalRefunded: "Total Refunded",
+      refundedDesc: "Across all subscriptions",
+      netRevenue: "Net Revenue",
+      netRevenueDesc: "Revenue minus refunds",
+      activeDesc: "Paying tenants",
+      trialDesc: "In trial period",
+      suspendedCount: "Suspended",
+      suspendedDesc: "Temporarily paused",
+      canceledCount: "Canceled",
+      canceledDesc: "Ended subscriptions",
+    },
+    chart: {
+      statusDist: "Status Distribution",
+      typeDist: "Type Distribution",
+      revenueByEdition: "Revenue by Edition",
+    },
+    renewal: {
+      tomorrow: "Renews tomorrow",
+      daysLeft: "days left",
+    },
+    footer: {
+      promoDiscount: "Promo discounts",
     },
     loginActivity: {
       title: "Login Activity",
@@ -5441,6 +5468,7 @@ export const en = {
       trialCount: "Trial Subscriptions",
       renewalCount: "Upcoming Renewals",
       next30Days: "Next 30 days",
+      upcomingRenewals: "Upcoming Renewals",
       edition: "Edition",
       type: "Type",
       amount: "Amount",

@@ -96,6 +96,7 @@ export class SubscriptionMapper {
                   currency: model.currency,
                   totalAmount: model.totalAmount,
                   totalAmountUsd: model.totalAmountUsd,
+                  exchangeRateToUsd: model.exchangeRateToUsd,
                   baseAmount: model.baseAmount,
                   adjustmentAmount: model.adjustmentAmount,
                   // Promotion

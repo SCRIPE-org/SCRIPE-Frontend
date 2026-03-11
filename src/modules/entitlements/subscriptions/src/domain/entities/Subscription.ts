@@ -87,6 +87,7 @@ export interface GlobalSubscriptionItem {
       totalAmountUsd: number;
       baseAmount: number;
       adjustmentAmount: number;
+      exchangeRateToUsd: number;
       // ── Promotion ──
       appliedPromoCode?: string;
       promotionDiscount?: number;

@@ -263,12 +263,12 @@ export function useSubscriptionsViewModel(tenantId: string) {
       }, [changeMutation, selectedEditionId, subscriptionType, promoCode, currency, selectedPromotionId, requiresPromoCode]);
 
       const submitSuspend = useCallback(() => {
-            const parsed = customRefundAmount ? parseFloat(customRefundAmount) : undefined;
+            const parsed = customRefundAmount ? parseFloat(customRefundAmount.replace(/[^0-9.]/g, '')) : undefined;
             suspendMutation.mutate({ reason: suspendReason, useFallback, refundType, customRefundAmount: parsed && parsed > 0 ? parsed : undefined });
       }, [suspendMutation, suspendReason, useFallback, refundType, customRefundAmount]);
 
       const submitCancel = useCallback(() => {
-            const parsed = customRefundAmount ? parseFloat(customRefundAmount) : undefined;
+            const parsed = customRefundAmount ? parseFloat(customRefundAmount.replace(/[^0-9.]/g, '')) : undefined;
             cancelMutation.mutate({ reason: cancelReason, useFallback, refundType, customRefundAmount: parsed && parsed > 0 ? parsed : undefined });
       }, [cancelMutation, cancelReason, useFallback, refundType, customRefundAmount]);
 
