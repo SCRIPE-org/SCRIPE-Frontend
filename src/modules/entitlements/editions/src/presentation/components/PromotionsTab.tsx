@@ -30,6 +30,7 @@ import {
       Percent, DollarSign, CalendarDays, Hash, ShieldCheck,
 } from "lucide-react";
 import type { EditionPromotion } from "../../domain/entities/EditionPromotion";
+import { parseLocalizedNumber } from "@core/utils/number-parser";
 
 interface PromotionsTabProps {
       editionId: string;
@@ -162,7 +163,7 @@ export function PromotionsTab({ editionId, allowMonthly = true, allowYearly = tr
                                                                   min={0}
                                                                   max={vm.form.type === "Percentage" ? 100 : undefined}
                                                                   value={vm.form.discountValue || ""}
-                                                                  onChange={(e) => vm.setField("discountValue", parseFloat(e.target.value) || 0)}
+                                                                  onChange={(e) => vm.setField("discountValue", parseLocalizedNumber(e.target.value) ?? 0)}
                                                             />
                                                       </div>
                                                 </div>

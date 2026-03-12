@@ -126,7 +126,7 @@ export function useTenantSubscriptionViewModel(tenantId: string): UseTenantSubsc
       })();
 
       // ── Computed: action availability per status ──
-      const isDowngraded = subscription?.isDowngraded ?? false;
+      const isDowngraded = (subscription?.isDowngraded ?? false) && isActive;
       const downgradedFromEditionName = subscription?.downgradedFromEditionName ?? null;
       const downgradedFromType = subscription?.downgradedFromType ?? null;
       const downgradedAt = subscription?.downgradedAt ?? null;

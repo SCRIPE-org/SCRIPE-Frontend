@@ -12,6 +12,7 @@ import { entitlementsContainer } from "@modules/entitlements/di";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useState, useCallback, useEffect, useMemo } from "react";
+import { parseLocalizedNumber } from "@core/utils/number-parser";
 import type { EditionPromotionData } from "@modules/entitlements/editions/src/domain/entities/EditionPromotion";
 
 export function useSubscriptionsViewModel(tenantId: string) {
@@ -263,12 +264,12 @@ export function useSubscriptionsViewModel(tenantId: string) {
       }, [changeMutation, selectedEditionId, subscriptionType, promoCode, currency, selectedPromotionId, requiresPromoCode]);
 
       const submitSuspend = useCallback(() => {
-            const parsed = customRefundAmount ? parseFloat(customRefundAmount.replace(/[^0-9.]/g, '')) : undefined;
+            const parsed = customRefundAmount ? parseLocalizedNumber(customRefundAmount) : undefined;
             suspendMutation.mutate({ reason: suspendReason, useFallback, refundType, customRefundAmount: parsed && parsed > 0 ? parsed : undefined });
       }, [suspendMutation, suspendReason, useFallback, refundType, customRefundAmount]);
 
       const submitCancel = useCallback(() => {
-            const parsed = customRefundAmount ? parseFloat(customRefundAmount.replace(/[^0-9.]/g, '')) : undefined;
+            const parsed = customRefundAmount ? parseLocalizedNumber(customRefundAmount) : undefined;
             cancelMutation.mutate({ reason: cancelReason, useFallback, refundType, customRefundAmount: parsed && parsed > 0 ? parsed : undefined });
       }, [cancelMutation, cancelReason, useFallback, refundType, customRefundAmount]);
 

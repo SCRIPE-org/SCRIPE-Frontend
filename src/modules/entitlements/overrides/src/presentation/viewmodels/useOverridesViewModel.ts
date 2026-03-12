@@ -13,6 +13,7 @@ import { entitlementsContainer } from "@modules/entitlements/di";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useState, useCallback, useMemo } from "react";
+import { parseLocalizedNumber } from "@core/utils/number-parser";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -245,7 +246,7 @@ export function useOverridesViewModel(tenantId: string) {
                   if (!costOverrideId || !costAmount) return;
                   setCostMutation.mutate({
                         overrideId: costOverrideId,
-                        amountUsd: parseFloat(costAmount),
+                        amountUsd: parseLocalizedNumber(costAmount) ?? 0,
                         reason: costReason || undefined,
                   });
             },

@@ -28,6 +28,7 @@ import {
       Globe, Zap,
 } from "lucide-react";
 import { getCurrencyInfo, formatPrice, SUPPORTED_CURRENCIES } from "../../domain/entities/EditionPricing";
+import { parseLocalizedNumber } from "@core/utils/number-parser";
 
 interface PricingTabProps {
       editionId: string;
@@ -125,7 +126,7 @@ export const PricingTab = memo(function PricingTab({ editionId, allowMonthly = t
                                                 <Input
                                                       type="number"
                                                       value={vm.usdMonthly || ""}
-                                                      onChange={(e) => vm.setUsdMonthly(parseFloat(e.target.value) || 0)}
+                                                      onChange={(e) => vm.setUsdMonthly(parseLocalizedNumber(e.target.value) ?? 0)}
                                                       className="h-9 pl-7 text-right tabular-nums text-sm"
                                                       min={0}
                                                       step="0.01"
@@ -151,7 +152,7 @@ export const PricingTab = memo(function PricingTab({ editionId, allowMonthly = t
                                                 <Input
                                                       type="number"
                                                       value={vm.usdYearly || ""}
-                                                      onChange={(e) => vm.setUsdYearly(parseFloat(e.target.value) || 0)}
+                                                      onChange={(e) => vm.setUsdYearly(parseLocalizedNumber(e.target.value) ?? 0)}
                                                       className="h-9 pl-7 text-right tabular-nums text-sm"
                                                       min={0}
                                                       step="0.01"
@@ -231,7 +232,7 @@ export const PricingTab = memo(function PricingTab({ editionId, allowMonthly = t
                                                 <Input
                                                       type="number"
                                                       value={vm.usdLifetime || ""}
-                                                      onChange={(e) => vm.setUsdLifetime(parseFloat(e.target.value) || 0)}
+                                                      onChange={(e) => vm.setUsdLifetime(parseLocalizedNumber(e.target.value) ?? 0)}
                                                       className="h-9 pl-7 text-right tabular-nums text-sm"
                                                       min={0}
                                                       step="0.01"
@@ -336,7 +337,7 @@ export const PricingTab = memo(function PricingTab({ editionId, allowMonthly = t
                                                                               <Input
                                                                                     type="number"
                                                                                     value={row.monthlyAmount || ""}
-                                                                                    onChange={(e) => vm.updateOverride(row.currency, "monthly", parseFloat(e.target.value) || 0)}
+                                                                                    onChange={(e) => vm.updateOverride(row.currency, "monthly", parseLocalizedNumber(e.target.value) ?? 0)}
                                                                                     className="h-8 pl-8 text-right tabular-nums text-sm"
                                                                                     min={0}
                                                                                     step="0.01"
@@ -353,7 +354,7 @@ export const PricingTab = memo(function PricingTab({ editionId, allowMonthly = t
                                                                                     <Input
                                                                                           type="number"
                                                                                           value={row.yearlyAmount || ""}
-                                                                                          onChange={(e) => vm.updateOverride(row.currency, "yearly", parseFloat(e.target.value) || 0)}
+                                                                                          onChange={(e) => vm.updateOverride(row.currency, "yearly", parseLocalizedNumber(e.target.value) ?? 0)}
                                                                                           className="h-8 pl-8 text-right tabular-nums text-sm"
                                                                                           min={0}
                                                                                           step="0.01"

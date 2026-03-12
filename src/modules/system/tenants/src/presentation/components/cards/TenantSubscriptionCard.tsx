@@ -17,6 +17,7 @@ import { SUPPORTED_CURRENCIES } from "@core/constants/currencies";
 import { useConvertedAmount } from "@core/hooks/useConvertedAmount";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@core/ui/dialog";
 import { GenericSelect } from "@core/crud/components/generic-select";
+import { parseLocalizedNumber } from "@core/utils/number-parser";
 import type { GenericSelectOption } from "@core/crud/components/generic-select";
 import { Skeleton } from "@core/ui/skeleton";
 import { Input } from "@core/ui/input";
@@ -1066,15 +1067,23 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                                                   {t("tenant.customRefundDesc") || "Specify a custom refund amount."}
                                                             </p>
                                                             {suspendRefundType === "Custom" && (
-                                                                  <Input
-                                                                        type="number"
-                                                                        min="0"
-                                                                        step="0.01"
-                                                                        value={suspendCustomAmount}
-                                                                        onChange={(e) => setSuspendCustomAmount(e.target.value)}
-                                                                        placeholder={t("tenant.customAmountPlaceholder") || "e.g., 50.00"}
-                                                                        className="mt-2 font-mono max-w-[200px]"
-                                                                  />
+                                                                  <div className="mt-2">
+                                                                        <div className="flex items-center gap-2">
+                                                                              <Input
+                                                                                    type="text"
+                                                                                    value={suspendCustomAmount}
+                                                                                    onChange={(e) => setSuspendCustomAmount(e.target.value)}
+                                                                                    placeholder={t("tenant.customAmountPlaceholder") || "e.g., 50.00"}
+                                                                                    className="font-mono max-w-[200px]"
+                                                                              />
+                                                                              <span className="text-sm font-medium text-muted-foreground">{subscription?.currency || "USD"}</span>
+                                                                        </div>
+                                                                        {suspendCustomAmount && !isNaN(parseLocalizedNumber(suspendCustomAmount) ?? NaN) && subscription?.exchangeRateToUsd && subscription.currency !== "USD" && (
+                                                                              <p className="text-xs text-muted-foreground mt-1">
+                                                                                    ≈ {formatDisplay((parseLocalizedNumber(suspendCustomAmount) ?? 0) * subscription.exchangeRateToUsd, "USD")}
+                                                                              </p>
+                                                                        )}
+                                                                  </div>
                                                             )}
                                                       </div>
                                                 </div>
@@ -1087,7 +1096,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                     </Button>
                                     <Button variant="destructive" onClick={() => {
                                           if (suspendReason.trim().length >= 3) {
-                                                vm.suspendSubscription(suspendReason.trim(), vm.hasFallback ? useFallbackOnSuspend : undefined, suspendRefundType === "Custom" ? "ProRata" : suspendRefundType, suspendRefundType === "Custom" && suspendCustomAmount ? parseFloat(suspendCustomAmount.replace(/[^0-9.]/g, '')) : undefined);
+                                                vm.suspendSubscription(suspendReason.trim(), vm.hasFallback ? useFallbackOnSuspend : undefined, suspendRefundType === "Custom" ? "ProRata" : suspendRefundType, suspendRefundType === "Custom" && suspendCustomAmount ? parseLocalizedNumber(suspendCustomAmount) : undefined);
                                                 closeSuspendDialog();
                                           }
                                     }} disabled={suspendReason.trim().length < 3 || vm.isSuspending}>
@@ -1215,15 +1224,23 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                                                   {t("tenant.customRefundDesc") || "Specify a custom refund amount."}
                                                             </p>
                                                             {cancelRefundType === "Custom" && (
-                                                                  <Input
-                                                                        type="number"
-                                                                        min="0"
-                                                                        step="0.01"
-                                                                        value={cancelCustomAmount}
-                                                                        onChange={(e) => setCancelCustomAmount(e.target.value)}
-                                                                        placeholder={t("tenant.customAmountPlaceholder") || "e.g., 50.00"}
-                                                                        className="mt-2 font-mono max-w-[200px]"
-                                                                  />
+                                                                  <div className="mt-2">
+                                                                        <div className="flex items-center gap-2">
+                                                                              <Input
+                                                                                    type="text"
+                                                                                    value={cancelCustomAmount}
+                                                                                    onChange={(e) => setCancelCustomAmount(e.target.value)}
+                                                                                    placeholder={t("tenant.customAmountPlaceholder") || "e.g., 50.00"}
+                                                                                    className="font-mono max-w-[200px]"
+                                                                              />
+                                                                              <span className="text-sm font-medium text-muted-foreground">{subscription?.currency || "USD"}</span>
+                                                                        </div>
+                                                                        {cancelCustomAmount && !isNaN(parseLocalizedNumber(cancelCustomAmount) ?? NaN) && subscription?.exchangeRateToUsd && subscription.currency !== "USD" && (
+                                                                              <p className="text-xs text-muted-foreground mt-1">
+                                                                                    ≈ {formatDisplay((parseLocalizedNumber(cancelCustomAmount) ?? 0) * subscription.exchangeRateToUsd, "USD")}
+                                                                              </p>
+                                                                        )}
+                                                                  </div>
                                                             )}
                                                       </div>
                                                 </div>
@@ -1235,7 +1252,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                           {t("common.cancel") || "Keep Subscription"}
                                     </Button>
                                     <Button variant="destructive" onClick={() => {
-                                          vm.cancelSubscription(cancelReason.trim() || undefined, vm.hasFallback ? useFallbackOnCancel : undefined, cancelRefundType === "Custom" ? "ProRata" : cancelRefundType, cancelRefundType === "Custom" && cancelCustomAmount ? parseFloat(cancelCustomAmount.replace(/[^0-9.]/g, '')) : undefined);
+                                          vm.cancelSubscription(cancelReason.trim() || undefined, vm.hasFallback ? useFallbackOnCancel : undefined, cancelRefundType === "Custom" ? "ProRata" : cancelRefundType, cancelRefundType === "Custom" && cancelCustomAmount ? parseLocalizedNumber(cancelCustomAmount) : undefined);
                                           closeCancelDialog();
                                     }} disabled={vm.isCanceling}>
                                           {vm.isCanceling ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /></> : <XCircle className="mr-2 h-4 w-4" />}
