@@ -258,6 +258,81 @@ const sections: DocSection[] = [
             ],
       },
 
+      // ─── Renewal — New Row Pattern (B2) ────────────────────────
+      {
+            type: "heading",
+            level: 2,
+            titleKey: "modules.subscriptions.renewalTitle",
+            id: "renewal-new-row",
+      },
+      {
+            type: "paragraph",
+            contentKey: "modules.subscriptions.renewalIntro",
+      },
+      {
+            type: "heading",
+            level: 3,
+            titleKey: "modules.subscriptions.renewalAuditTitle",
+            id: "revenue-audit-trail",
+      },
+      {
+            type: "paragraph",
+            contentKey: "modules.subscriptions.renewalAuditIntro",
+      },
+
+      // ─── Promotion Expiry Tracking (A1) ────────────────────────
+      {
+            type: "heading",
+            level: 2,
+            titleKey: "modules.subscriptions.promoExpiryTitle",
+            id: "promo-expiry",
+      },
+      {
+            type: "paragraph",
+            contentKey: "modules.subscriptions.promoExpiryIntro",
+      },
+
+      // ─── Optimistic Concurrency (E1) ───────────────────────────
+      {
+            type: "heading",
+            level: 2,
+            titleKey: "modules.subscriptions.concurrencyTitle",
+            id: "concurrency",
+      },
+      {
+            type: "paragraph",
+            contentKey: "modules.subscriptions.concurrencyIntro",
+      },
+
+      // ─── Input Validation (G1) ─────────────────────────────────
+      {
+            type: "heading",
+            level: 2,
+            titleKey: "modules.subscriptions.validationTitle",
+            id: "validation",
+      },
+      {
+            type: "paragraph",
+            contentKey: "modules.subscriptions.validationIntro",
+      },
+
+      // ─── Cross-Module Integration (H1) ─────────────────────────
+      {
+            type: "heading",
+            level: 2,
+            titleKey: "modules.subscriptions.crossModuleTitle",
+            id: "cross-module",
+      },
+      {
+            type: "paragraph",
+            contentKey: "modules.subscriptions.crossModuleIntro",
+      },
+      {
+            type: "info",
+            variant: "tip",
+            contentKey: "modules.subscriptions.crossModuleReasons",
+      },
+
       // ─── API Endpoints ────────────────────────────────────────
       {
             type: "heading",

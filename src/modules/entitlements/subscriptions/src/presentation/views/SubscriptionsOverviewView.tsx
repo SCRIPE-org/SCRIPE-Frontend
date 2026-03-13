@@ -50,6 +50,7 @@ const STATUS_COLORS: Record<string, string> = {
       Trialing: "bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-400",
       Suspended: "bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-400",
       Canceled: "bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-400",
+      Expired: "bg-gray-100 text-gray-700 dark:bg-gray-950 dark:text-gray-400", // FE3
       GracePeriod: "bg-orange-100 text-orange-700 dark:bg-orange-950 dark:text-orange-400",
 };
 
@@ -138,12 +139,12 @@ export function SubscriptionsOverviewView() {
                               </CardContent>
                         </Card>
 
-                        {/* Total Revenue */}
+                        {/* Gross Revenue */}
                         <Card className="relative overflow-hidden border-blue-200/50 dark:border-blue-800/30">
                               <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-blue-500/10 to-transparent rounded-bl-full" />
                               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                                     <CardTitle className="text-sm font-medium text-muted-foreground">
-                                          {vm.t("dashboard.kpi.totalRevenue") || "Total Revenue"}
+                                          {vm.t("dashboard.kpi.totalRevenue") || "Gross Revenue"}
                                     </CardTitle>
                                     <TrendingUp className="h-4 w-4 text-blue-600" />
                               </CardHeader>
@@ -568,9 +569,11 @@ export function SubscriptionsOverviewView() {
                                           ) : (
                                                 vm.subscriptions.map((sub, idx) => {
                                                       const mrr =
-                                                            sub.type === "Lifetime" ? 0
-                                                                  : sub.type === "Yearly" ? sub.totalAmountUsd / 12
-                                                                        : sub.totalAmountUsd;
+                                                            // FE2: only calculate MRR for active subscriptions
+                                                            (sub.status === "Canceled" || sub.status === "Expired") ? 0
+                                                                  : sub.type === "Lifetime" ? 0
+                                                                        : sub.type === "Yearly" ? sub.totalAmountUsd / 12
+                                                                              : sub.totalAmountUsd;
 
                                                       return (
                                                             <TableRow

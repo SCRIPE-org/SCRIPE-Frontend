@@ -76,6 +76,20 @@ const sections: DocSection[] = [
             ],
       },
 
+      // ─── Enterprise Subscription Management ──────────────────
+      { type: "heading", level: 2, titleKey: "commercial.entSubscriptions.enterpriseTitle", id: "enterprise-management" },
+      {
+            type: "feature-grid",
+            columns: 2,
+            items: [
+                  { icon: "file-text", titleKey: "commercial.entSubscriptions.renewalTitle", descriptionKey: "commercial.entSubscriptions.renewalDesc" },
+                  { icon: "clock", titleKey: "commercial.entSubscriptions.promoExpiryTitle", descriptionKey: "commercial.entSubscriptions.promoExpiryDesc" },
+                  { icon: "shield", titleKey: "commercial.entSubscriptions.concurrencyTitle", descriptionKey: "commercial.entSubscriptions.concurrencyDesc" },
+                  { icon: "check-circle", titleKey: "commercial.entSubscriptions.validationTitle", descriptionKey: "commercial.entSubscriptions.validationDesc" },
+                  { icon: "link", titleKey: "commercial.entSubscriptions.crossModuleTitle", descriptionKey: "commercial.entSubscriptions.crossModuleDesc" },
+            ],
+      },
+
       // ─── API Endpoints ──────────────────────────────────────
       { type: "heading", level: 2, titleKey: "commercial.entSubscriptions.apiTitle", id: "api" },
       {

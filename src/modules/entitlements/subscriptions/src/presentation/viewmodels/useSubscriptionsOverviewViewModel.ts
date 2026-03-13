@@ -86,7 +86,7 @@ export function useSubscriptionsOverviewViewModel() {
                   return sum + s.totalAmountUsd;
             }, 0);
 
-            // Total Revenue = ALL subscriptions (gross billing — total ever invoiced)
+            // Gross Revenue = ALL subscriptions (gross billing — total ever invoiced)
             // Cancel with No Refund: money stays in revenue ✓
             // Cancel with Full Refund: money stays in gross, netRevenue decreases ✓
             const totalRevenue = subscriptions

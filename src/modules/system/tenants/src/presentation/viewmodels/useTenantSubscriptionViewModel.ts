@@ -133,7 +133,7 @@ export function useTenantSubscriptionViewModel(tenantId: string): UseTenantSubsc
 
       const canRenew = (isActive || isPastDue) && !isTrialing && subscription?.type !== "Lifetime" && !isDowngraded;
       const canConvertTrial = isTrialing;
-      const canSuspend = isActive || isPastDue;
+      const canSuspend = (isActive && !isTrialing) || isPastDue; // FE5: exclude Trialing (backend rejects)
       const canResume = isSuspended || isDowngraded;
       const canCancel = isActive || isSuspended || isPastDue;
       const canReassign = isCanceled || isExpired; // Show Assign button for terminated subscriptions

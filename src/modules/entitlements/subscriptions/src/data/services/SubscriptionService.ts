@@ -58,8 +58,11 @@ export interface SubscriptionListModel {
       createdAt: string;
       // ── Pricing ──
       currency?: string;
+      baseAmount?: number;        // FE4: added to match backend DTO
+      adjustmentAmount?: number;  // FE4: added to match backend DTO
       totalAmount?: number;
       totalAmountUsd?: number;
+      exchangeRateToUsd?: number; // FE4/C4: added to match backend DTO
       // ── Promotion ──
       appliedPromoCode?: string;
       promotionDiscount?: number;
@@ -136,7 +139,7 @@ export class SubscriptionService {
 
       async change(
             tenantId: string,
-            data: { editionId: string; type: string; currency?: string; promoCode?: string; promotionId?: string }
+            data: { editionId: string; type: string; expiryBehavior?: string; currency?: string; promoCode?: string; promotionId?: string }
       ): Promise<void> {
             await this.api.put(
                   API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.CHANGE(tenantId),

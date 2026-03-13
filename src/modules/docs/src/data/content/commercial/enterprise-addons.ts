@@ -101,6 +101,13 @@ const sections: DocSection[] = [
                   { icon: "git-branch", titleKey: "commercial.enterpriseAddons.entVersioning", descriptionKey: "commercial.enterpriseAddons.entVersioningDesc" },
                   { icon: "sliders", titleKey: "commercial.enterpriseAddons.entOverrides", descriptionKey: "commercial.enterpriseAddons.entOverridesDesc" },
                   { icon: "bar-chart", titleKey: "commercial.enterpriseAddons.entQuota", descriptionKey: "commercial.enterpriseAddons.entQuotaDesc" },
+                  { icon: "eye", titleKey: "commercial.enterpriseAddons.entContextAware", descriptionKey: "commercial.enterpriseAddons.entContextAwareDesc" },
+                  { icon: "refresh-cw", titleKey: "commercial.enterpriseAddons.entLifecycleTitle", descriptionKey: "commercial.enterpriseAddons.entLifecycleContent" },
+                  { icon: "file-text", titleKey: "commercial.enterpriseAddons.entRenewalAudit", descriptionKey: "commercial.enterpriseAddons.entRenewalAuditDesc" },
+                  { icon: "clock", titleKey: "commercial.enterpriseAddons.entPromoExpiry", descriptionKey: "commercial.enterpriseAddons.entPromoExpiryDesc" },
+                  { icon: "shield", titleKey: "commercial.enterpriseAddons.entConcurrency", descriptionKey: "commercial.enterpriseAddons.entConcurrencyDesc" },
+                  { icon: "check-circle", titleKey: "commercial.enterpriseAddons.entValidation", descriptionKey: "commercial.enterpriseAddons.entValidationDesc" },
+                  { icon: "link", titleKey: "commercial.enterpriseAddons.entCrossModule", descriptionKey: "commercial.enterpriseAddons.entCrossModuleDesc" },
             ],
       },
 

@@ -341,11 +341,19 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                                             {formatDisplay(subscription.baseAmount ?? subscription.totalAmount, subscription.currency)}
                                                       </p>
                                                 </div>
-                                                {(subscription.adjustmentAmount ?? 0) > 0 && (
+                                                {(subscription.adjustmentAmount ?? 0) !== 0 && (
                                                       <div className="space-y-1">
-                                                            <p className="text-xs font-medium text-muted-foreground">{t("entitlements.overrides.totalCost") || "Override Costs"}</p>
-                                                            <p className="text-sm font-bold text-emerald-600 dark:text-emerald-400">
-                                                                  +{formatDisplay(subscription.adjustmentAmount!, subscription.currency)}
+                                                            <p className="text-xs font-medium text-muted-foreground">
+                                                                  {(subscription.adjustmentAmount ?? 0) < 0
+                                                                        ? (t("entitlements.overrides.discount") || "Override Discount")
+                                                                        : (t("entitlements.overrides.totalCost") || "Override Costs")}
+                                                            </p>
+                                                            <p className={`text-sm font-bold ${
+                                                                  (subscription.adjustmentAmount ?? 0) < 0
+                                                                        ? "text-emerald-600 dark:text-emerald-400"
+                                                                        : "text-amber-600 dark:text-amber-400"
+                                                            }`}>
+                                                                  {(subscription.adjustmentAmount ?? 0) > 0 ? "+" : ""}{formatDisplay(subscription.adjustmentAmount!, subscription.currency)}
                                                             </p>
                                                       </div>
                                                 )}
@@ -373,7 +381,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                           </div>
 
                                           {/* Grand Total Bar — only when there are adjustments */}
-                                          {(subscription.adjustmentAmount ?? 0) > 0 && (
+                                          {(subscription.adjustmentAmount ?? 0) !== 0 && (
                                                 <div className="flex items-center justify-between rounded-md border border-primary/20 bg-primary/5 px-3 py-2">
                                                       <span className="text-xs font-medium text-muted-foreground">{t("tenant.grandTotal") || "Grand Total"}</span>
                                                       <span className="text-sm font-bold text-primary">

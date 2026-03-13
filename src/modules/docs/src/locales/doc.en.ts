@@ -1,4 +1,4 @@
-﻿/**
+/**
  * English locale for the Documentation Portal.
  * Contains all UI strings and content translations.
  */
@@ -950,6 +950,24 @@ export const docEn = {
       exportFormatCsv: "CSV — lightweight, importable into any spreadsheet or BI tool",
       exportFormatExcel: "XLSX — professional Excel workbook with styled headers, filter metadata sheet, conditional formatting, and auto-sized columns (ClosedXML)",
       exportFormatPdf: "PDF — print-ready document with branded cover page, statistical summary, and paginated data tables (QuestPDF)",
+      // ── Renewal New Row (B2) ──
+      renewalTitle: "Renewal — New Row Pattern (B2)",
+      renewalIntro: "Renewals create a NEW TenantSubscription row instead of overwriting the existing record in-place (Stripe pattern). The old subscription is marked Expired (IsActive=false), while a new row is created with a fresh Id, StartDate=UtcNow, recalculated pricing, and carried-forward promotion details. This preserves a complete revenue audit trail per billing cycle.",
+      renewalAuditTitle: "Revenue Audit Trail",
+      renewalAuditIntro: "Each billing cycle produces its own immutable database row with locked-in pricing at the time of renewal. This enables precise financial reporting: MRR trends, churn analysis by period, and refund tracking per cycle — never losing historical pricing data.",
+      // ── Promotion Expiry (A1) ──
+      promoExpiryTitle: "Promotion Expiry Tracking (A1)",
+      promoExpiryIntro: "When a promotion with DurationDays > 0 is applied, the system calculates a PromotionExpiresAt timestamp. On each renewal, the handler checks if UtcNow > PromotionExpiresAt — if the promo has expired, the discount is stripped and NOT carried forward to the new subscription row. Null PromotionExpiresAt means the promotion lasts forever.",
+      // ── Concurrency (E1) ──
+      concurrencyTitle: "Optimistic Concurrency (E1)",
+      concurrencyIntro: "Each TenantSubscription has a ConcurrencyStamp (Guid) marked with [ConcurrencyCheck]. The stamp is refreshed (Guid.NewGuid()) on every write operation. This prevents race conditions — for example, a concurrent cancel + reconciliation job — by throwing DbUpdateConcurrencyException on mid-air collisions.",
+      // ── FluentValidation (G1) ──
+      validationTitle: "Input Validation (G1)",
+      validationIntro: "All 8 subscription commands have dedicated FluentValidation validators in SubscriptionCommandValidators.cs. Validators inject ILocalizer for localized error messages (EN + AR). Business rules include: cannot renew as Trial, cannot convert to Trial, positive refund amounts, string length limits, and required field checks. Validation runs in the MediatR pipeline before the handler executes.",
+      // ── Cross-Module (H1) ──
+      crossModuleTitle: "Cross-Module Integration (H1)",
+      crossModuleIntro: "Subscription lifecycle events publish domain events consumed by the Identity module. When a subscription is suspended, all tenant admins are deactivated with DeactivationReason='SubscriptionSuspended'. On resume, only admins with that specific reason are reactivated — manually-deactivated admins stay off. Expiry cascades deactivation to all descendant tenants.",
+      crossModuleReasons: "Three deactivation reasons: 'Manual' (admin manually deactivated — never auto-reactivated), 'SubscriptionSuspended' (reactivated on resume), 'SubscriptionExpired' (deactivated on expiry).",
       // ── Endpoints ──
       impactTitle: "Downgrade Impact Analysis",
       impactIntro: "Before changing a tenant's edition, use the Downgrade Impact endpoint to preview which resources would overflow. The response lists every feature that would exceed the new edition's limits, along with the current usage vs. new limit.",
