@@ -104,12 +104,13 @@ export function RouteGuard({ children }: RouteGuardProps) {
         return;
       }
 
+      const isAuthPage = pathname === "/login" || pathname === "/authorize" || pathname.startsWith("/sso");
+      const hasToken = secureTokenService.hasToken();
+
       // ─── Redirect authenticated users AWAY from auth pages ───
       // If user is already logged in and tries to visit /login (via URL bar,
       // browser back button, or bookmark), redirect to dashboard.
-      // Uses router.replace to remove /login from browser history stack.
-      const isAuthPage = pathname === "/login" || pathname === "/authorize" || pathname.startsWith("/sso");
-      if (isAuthPage && secureTokenService.hasToken() && isAuthenticated) {
+      if (isAuthPage && hasToken && isAuthenticated) {
         appLogger.debug("[RouteGuard] Authenticated user on auth page, redirecting to dashboard");
         hasRedirected.current = true;
         router.replace("/");
@@ -118,16 +119,22 @@ export function RouteGuard({ children }: RouteGuardProps) {
 
       // Check if this is a public page FIRST - always allow
       if (isPublicPage(pathname)) {
-        setIsChecking(false);
-        return;
+        // BUT if it's an auth page, and the store says we're authenticated, but we lack an in-memory token
+        // (which happens on a hard browser reload), we must bypass this early return.
+        // This allows we to hit Case 2 below, which will attempt a silent refresh.
+        // If refresh succeeds, user is redirected to /. If it fails, they stay on the login page.
+        const needsSilentRefreshOnAuthPage = isAuthPage && !hasToken && isAuthenticated;
+        
+        if (!needsSilentRefreshOnAuthPage) {
+          setIsChecking(false);
+          return;
+        }
       }
 
       // Prevent redirect loops
       if (hasRedirected.current) {
         return;
       }
-
-      const hasToken = secureTokenService.hasToken();
 
       // ─── Case 1: Has in-memory token AND authenticated → normal RBAC flow ───
       if (hasToken && isAuthenticated) {
@@ -178,7 +185,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
             if (user) {
               setAuth(user, user.permissions || [], []);
               isRefreshing.current = false;
-              // Token is now in memory. Next render cycle will hit Case 1.
+              // Token is now in memory. Next render cycle will hit Case 1 or Auth Page Redirect.
               return;
             }
           }
@@ -189,20 +196,31 @@ export function RouteGuard({ children }: RouteGuardProps) {
         isRefreshing.current = false;
         // Refresh failed → session is truly expired
         appLogger.debug("[RouteGuard] Session expired, redirecting to login");
-        hasRedirected.current = true;
         forceLogout();
         logout();
-        router.push("/login");
+        
+        if (!isAuthPage) {
+          hasRedirected.current = true;
+          router.push("/login");
+        } else {
+          // Already on auth page, just stop checking so it renders the form
+          setIsChecking(false);
+        }
         return;
       }
 
       // ─── Case 3: No token AND not authenticated → redirect to login ───
       if (!hasToken && !isAuthenticated) {
         appLogger.debug("[RouteGuard] Not authenticated, redirecting to login");
-        hasRedirected.current = true;
         forceLogout();
         logout();
-        router.push("/login");
+        
+        if (!isAuthPage) {
+          hasRedirected.current = true;
+          router.push("/login");
+        } else {
+          setIsChecking(false);
+        }
         return;
       }
 
