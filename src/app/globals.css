@@ -1757,3 +1757,24 @@ html[data-compact-mode="true"] {
   background: var(--tree-line-color);
   opacity: 0.3;
 }
+
+/* ========================================
+   TENANT CONTEXT BANNER — GLOBAL OFFSET
+   ========================================
+   When the tenant drilldown or impersonation banner
+   is active, <html data-tenant-banner> is set and
+   --tenant-banner-height holds the banner's px height.
+   Fixed headers + sidebars shift down automatically. */
+:root {
+  --tenant-banner-height: 0px;
+}
+
+/* Offset ALL fixed headers that sit at top:0 */
+html[data-tenant-banner] header {
+  top: var(--tenant-banner-height) !important;
+}
+
+/* Offset ALL fixed sidebars (inset-y-0 → top:0;bottom:0) */
+html[data-tenant-banner] aside.navigation-main-sidebar {
+  top: var(--tenant-banner-height) !important;
+}

@@ -312,9 +312,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   return (
     <>
       <TenantContextBanner />
-      <div className="pt-16">
-        {renderLayout()}
-      </div>
+      {renderLayout()}
     </>
   );
 }

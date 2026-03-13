@@ -104,6 +104,18 @@ export function RouteGuard({ children }: RouteGuardProps) {
         return;
       }
 
+      // ─── Redirect authenticated users AWAY from auth pages ───
+      // If user is already logged in and tries to visit /login (via URL bar,
+      // browser back button, or bookmark), redirect to dashboard.
+      // Uses router.replace to remove /login from browser history stack.
+      const isAuthPage = pathname === "/login" || pathname === "/authorize" || pathname.startsWith("/sso");
+      if (isAuthPage && secureTokenService.hasToken() && isAuthenticated) {
+        appLogger.debug("[RouteGuard] Authenticated user on auth page, redirecting to dashboard");
+        hasRedirected.current = true;
+        router.replace("/");
+        return;
+      }
+
       // Check if this is a public page FIRST - always allow
       if (isPublicPage(pathname)) {
         setIsChecking(false);
