@@ -41,7 +41,7 @@ const PUBLIC_PAGES = [
 ];
 
 // Route prefixes that are always public (no auth checks at all)
-const PUBLIC_PREFIXES = ["/docs", "/commercial"];
+const PUBLIC_PREFIXES = ["/docs", "/commercial", "/sso"];
 
 /** Check if a pathname is a public page (no auth required) */
 function isPublicPage(pathname: string): boolean {
