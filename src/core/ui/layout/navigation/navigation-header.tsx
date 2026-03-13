@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import dynamic from "next/dynamic";
 import {
@@ -9,9 +9,6 @@ import {
 import { useI18n } from "@core/providers/i18n-provider";
 import { useAppStore } from "@core/store/useAppStore";
 import { useSettings } from "@core/providers/settings-provider";
-import { useTenantContext } from "@core/providers/tenant-context-provider";
-import { useImpersonation } from "@modules/auth/hooks/useImpersonation";
-import { UserCheck } from "lucide-react";
 import { useLayoutStyles } from "../shared/use-layout-styles";
 import { cn } from "@core/common/utils";
 import { Button } from "@core/ui/button";
@@ -47,11 +44,6 @@ export function NavigationHeader({
   const { getAnimationClass } = useLayoutStyles();
   const animationClass = getAnimationClass();
   const router = useRouter();
-
-  // Get state from stores
-  const { currentTenant, exitTenantWorld } = useTenantContext();
-  const { isImpersonating, stopImpersonation } = useImpersonation();
-  const activeTenantId = currentTenant?.id;
 
   return (
     <header
@@ -161,70 +153,33 @@ export function NavigationHeader({
           </div>
         </div>
 
-        {/* Center Section - Search or Banners */}
+        {/* Center Section - Search */}
         <div className="mx-8 hidden min-w-0 max-w-md flex-1 md:block">
-          {isImpersonating ? (
-            <div className="flex items-center justify-center rounded-md border border-red-200 bg-red-100 px-4 py-2 text-red-700 dark:border-red-800 dark:bg-red-900/30 dark:text-red-300">
-              <UserCheck className="mr-2 h-4 w-4" />
-              <span className="mr-4 text-sm font-medium">
-                {t("admin.impersonating") || "Impersonating User"}
-              </span>
-              <Button
-                variant="destructive"
-                size="sm"
-                className="h-7 text-xs"
-                onClick={stopImpersonation}
-              >
-                {t("common.stop") || "Stop"}
-              </Button>
-            </div>
-          ) : activeTenantId && currentTenant ? (
-            <div className="flex items-center justify-center rounded-md border border-blue-200 bg-blue-100 px-4 py-2 text-blue-700 dark:border-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
-              <div className="mr-4 flex flex-col items-start">
-                <span className="text-xs font-semibold uppercase opacity-70">
-                  {t("tenant.context") || "Tenant Context"}
-                </span>
-                <span className="text-sm font-bold">{currentTenant.name}</span>
-              </div>
-              <Button
-                variant="outline"
-                size="sm"
-                className="h-7 border-blue-300 text-xs hover:bg-blue-200 dark:border-blue-700 dark:hover:bg-blue-800"
-                onClick={() => {
-                  exitTenantWorld();
-                  router.push("/tenants");
-                }}
-              >
-                {t("common.exit") || "Exit"}
-              </Button>
-            </div>
-          ) : (
-            <div className="relative">
-              <Search
-                className={cn(
-                  "absolute top-1/2 h-4 w-4 -translate-y-1/2 transform text-muted-foreground",
-                  direction === "rtl" ? "right-3" : "left-3"
-                )}
-              />
-              <Input
-                type="search"
-                placeholder={t("layout.search_placeholder") || "Search here..."}
-                className={cn(
-                  "w-full border-border bg-transparent transition-all duration-200",
-                  "focus:border-primary focus:bg-transparent focus:ring-primary/20",
-                  direction === "rtl" ? "pl-12 pr-10" : "pl-10 pr-12"
-                )}
-              />
-              <kbd
-                className={cn(
-                  "pointer-events-none absolute top-1/2 inline-flex h-5 -translate-y-1/2 transform select-none items-center gap-1 rounded border border-border bg-muted px-1.5 font-mono text-xs text-muted-foreground",
-                  direction === "rtl" ? "left-3" : "right-3"
-                )}
-              >
-                /
-              </kbd>
-            </div>
-          )}
+          <div className="relative">
+            <Search
+              className={cn(
+                "absolute top-1/2 h-4 w-4 -translate-y-1/2 transform text-muted-foreground",
+                direction === "rtl" ? "right-3" : "left-3"
+              )}
+            />
+            <Input
+              type="search"
+              placeholder={t("layout.search_placeholder") || "Search here..."}
+              className={cn(
+                "w-full border-border bg-transparent transition-all duration-200",
+                "focus:border-primary focus:bg-transparent focus:ring-primary/20",
+                direction === "rtl" ? "pl-12 pr-10" : "pl-10 pr-12"
+              )}
+            />
+            <kbd
+              className={cn(
+                "pointer-events-none absolute top-1/2 inline-flex h-5 -translate-y-1/2 transform select-none items-center gap-1 rounded border border-border bg-muted px-1.5 font-mono text-xs text-muted-foreground",
+                direction === "rtl" ? "left-3" : "right-3"
+              )}
+            >
+              /
+            </kbd>
+          </div>
         </div>
 
         {/* Right Section - Theme, Language, Profile */}

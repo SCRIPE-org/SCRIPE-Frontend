@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSettings } from "@core/providers/settings-provider";
+import { TenantContextBanner } from "@core/ui/layout/shared/tenant-context-banner";
 
 // Default layout — statically imported (always needed, no lazy-load delay)
 import { NavigationLayout } from "@core/ui/layout/navigation/navigation-layout";
@@ -98,6 +99,9 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [collapsibleSidebar]);
+
+  // ── Compute layout content (rendered below the tenant banner) ──
+  const renderLayout = () => {
 
   // ── Layouts that manage their own sidebar ──
 
@@ -302,5 +306,15 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     <NavigationLayout sidebarOpen={sidebarOpen} onSidebarOpenChange={setSidebarOpen}>
       {children}
     </NavigationLayout>
+  );
+  }; // end renderLayout
+
+  return (
+    <>
+      <TenantContextBanner />
+      <div className="pt-16">
+        {renderLayout()}
+      </div>
+    </>
   );
 }

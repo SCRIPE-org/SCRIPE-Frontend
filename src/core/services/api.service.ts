@@ -12,6 +12,16 @@ import { secureTokenService } from "@core/common/secure-token-service";
 import { authBroadcast } from "@core/common/broadcast-auth";
 import { STORAGE_KEYS } from "../config/storage-keys";
 
+/**
+ * S0.15: Read a cookie value by name.
+ * Used by CSRF double-submit cookie pattern to read XSRF-TOKEN.
+ */
+function getCookieValue(name: string): string | null {
+  if (typeof document === "undefined") return null;
+  const match = document.cookie.match(new RegExp(`(?:^|;\\s*)${name}=([^;]*)`));
+  return match ? decodeURIComponent(match[1]) : null;
+}
+
 // P1.5: Cache language in module-level variable — avoids localStorage.getItem() on every request
 let cachedLanguage: string = typeof window !== "undefined" ? localStorage.getItem("language") || "en" : "en";
 if (typeof window !== "undefined") {
@@ -136,6 +146,13 @@ export class ApiService implements IApiService {
           // Replay protection: unique timestamp + nonce per request
           config.headers["X-Request-Timestamp"] = Date.now().toString();
           config.headers["X-Request-Nonce"] = crypto.randomUUID();
+
+          // S0.15: CSRF protection — double-submit cookie pattern
+          // Read XSRF-TOKEN cookie and send as X-CSRF-Token header
+          const csrfToken = getCookieValue("XSRF-TOKEN");
+          if (csrfToken) {
+            config.headers["X-CSRF-Token"] = csrfToken;
+          }
         }
 
         // Fix for 415 Unsupported Media Type with FormData
