@@ -13,6 +13,25 @@ import { authBroadcast } from "@core/common/broadcast-auth";
 import { STORAGE_KEYS } from "../config/storage-keys";
 
 /**
+ * Generate a UUID v4 string.
+ * Uses crypto.randomUUID() when available (secure contexts / HTTPS),
+ * falls back to crypto.getRandomValues() (available in ALL contexts).
+ * Both paths are cryptographically secure.
+ */
+function generateUUID(): string {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID();
+  }
+  // Fallback: manual UUID v4 via crypto.getRandomValues()
+  const bytes = new Uint8Array(16);
+  crypto.getRandomValues(bytes);
+  bytes[6] = (bytes[6] & 0x0f) | 0x40; // version 4
+  bytes[8] = (bytes[8] & 0x3f) | 0x80; // variant 10
+  const hex = Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
+  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
+}
+
+/**
  * S0.15: Read a cookie value by name.
  * Used by CSRF double-submit cookie pattern to read XSRF-TOKEN.
  */
@@ -145,7 +164,7 @@ export class ApiService implements IApiService {
 
           // Replay protection: unique timestamp + nonce per request
           config.headers["X-Request-Timestamp"] = Date.now().toString();
-          config.headers["X-Request-Nonce"] = crypto.randomUUID();
+          config.headers["X-Request-Nonce"] = generateUUID();
 
           // S0.15: CSRF protection — double-submit cookie pattern
           // Read XSRF-TOKEN cookie and send as X-CSRF-Token header

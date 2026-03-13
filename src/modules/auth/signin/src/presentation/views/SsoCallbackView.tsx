@@ -103,12 +103,15 @@ export function SsoCallbackView() {
                         }
                   } catch (err: unknown) {
                         // Check for "no_linked_account" error
-                        if (
-                              err instanceof Error &&
-                              err.message.includes("no_linked_account")
-                        ) {
-                              const errObj = err as any;
-                              const details = errObj.details || {};
+                        // The API service sets err.details = response.data, and
+                        // err.message = data.message (localized). The error CODE is in data.error.
+                        const errAny = err as any;
+                        const isNoLinkedAccount =
+                              (err instanceof Error && err.message.includes("no_linked_account")) ||
+                              errAny?.details?.error === "no_linked_account";
+
+                        if (isNoLinkedAccount) {
+                              const details = errAny.details || {};
                               const isAuthenticated = useAppStore.getState().isAuthenticated;
                               const isLinkingSession = sessionStorage.getItem("sso_linking") === "true";
 

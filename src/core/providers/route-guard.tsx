@@ -104,7 +104,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
         return;
       }
 
-      const isAuthPage = pathname === "/login" || pathname === "/authorize" || pathname.startsWith("/sso");
+      const isAuthPage = pathname === "/login" || pathname.startsWith("/sso");
       const hasToken = secureTokenService.hasToken();
 
       // ─── Redirect authenticated users AWAY from auth pages ───
@@ -196,13 +196,15 @@ export function RouteGuard({ children }: RouteGuardProps) {
         isRefreshing.current = false;
         // Refresh failed → session is truly expired
         appLogger.debug("[RouteGuard] Session expired, redirecting to login");
-        forceLogout();
-        logout();
         
-        if (!isAuthPage) {
+        if (!isAuthPage && !hasRedirected.current) {
           hasRedirected.current = true;
+          forceLogout();
+          logout();
           router.push("/login");
-        } else {
+        } else if (isAuthPage) {
+          forceLogout();
+          logout();
           // Already on auth page, just stop checking so it renders the form
           setIsChecking(false);
         }
@@ -211,14 +213,12 @@ export function RouteGuard({ children }: RouteGuardProps) {
 
       // ─── Case 3: No token AND not authenticated → redirect to login ───
       if (!hasToken && !isAuthenticated) {
-        appLogger.debug("[RouteGuard] Not authenticated, redirecting to login");
-        forceLogout();
-        logout();
-        
-        if (!isAuthPage) {
+        if (!isAuthPage && !hasRedirected.current) {
+          appLogger.debug("[RouteGuard] Not authenticated, redirecting to login");
           hasRedirected.current = true;
+          forceLogout();
           router.push("/login");
-        } else {
+        } else if (isAuthPage) {
           setIsChecking(false);
         }
         return;

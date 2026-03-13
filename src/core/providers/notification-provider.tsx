@@ -191,7 +191,7 @@ export function NotificationSignalRProvider({
       useEffect(() => {
             if (isDocsRoute) return;
 
-            if (isAuthenticated) {
+            if (isAuthenticated && secureTokenService.hasToken()) {
                   console.log("[NotifHub] isAuthenticated=true, calling connect()");
                   connect();
             } else {
