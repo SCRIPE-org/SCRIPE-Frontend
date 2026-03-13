@@ -137,38 +137,47 @@ policy.WithOrigins(allowedOrigins)
             language: "csharp",
             filename: "CsrfMiddleware.cs",
             code: `/// <summary>
-/// Double-submit cookie pattern for CSRF protection.
-/// Client must send X-CSRF-Token header matching the csrf-token cookie.
-/// Applied to state-changing methods (POST, PUT, PATCH, DELETE).
+/// S0.15: Double-submit cookie pattern for CSRF protection.
+/// Cookie: XSRF-TOKEN (NOT httpOnly — frontend JS reads it)
+/// Header: X-CSRF-Token (frontend sends cookie value as header)
+/// Uses CryptographicOperations.FixedTimeEquals for timing-attack safety.
 /// </summary>
 public class CsrfMiddleware
 {
-    private static readonly HashSet<string> SafeMethods = new()
-        { "GET", "HEAD", "OPTIONS", "TRACE" };
-
     public async Task InvokeAsync(HttpContext context)
     {
-        if (!SafeMethods.Contains(context.Request.Method))
+        // Skip safe methods, unauthenticated, SignalR/OIDC/SAML
+        if (SafeMethod || !Authenticated || ExcludedPath)
         {
-            var cookieToken = context.Request.Cookies["csrf-token"];
-            var headerToken = context.Request.Headers["X-CSRF-Token"]
-                .FirstOrDefault();
-
-            if (string.IsNullOrEmpty(cookieToken) ||
-                cookieToken != headerToken)
-            {
-                context.Response.StatusCode = 403;
-                await context.Response.WriteAsJsonAsync(new
-                {
-                    error = "CSRF token validation failed"
-                });
-                return;
-            }
+            EnsureCsrfCookie(context);
+            await _next(context);
+            return;
         }
+
+        var cookieToken = context.Request.Cookies["XSRF-TOKEN"];
+        var headerToken = context.Request.Headers["X-CSRF-Token"]
+            .FirstOrDefault();
+
+        if (string.IsNullOrEmpty(cookieToken) ||
+            string.IsNullOrEmpty(headerToken))
+        {
+            // 403 CSRF_VALIDATION_FAILED
+            return;
+        }
+
+        // Constant-time comparison — prevents timing attacks
+        if (!CryptographicOperations.FixedTimeEquals(
+            Encoding.UTF8.GetBytes(cookieToken),
+            Encoding.UTF8.GetBytes(headerToken)))
+        {
+            // 403 CSRF_TOKEN_MISMATCH
+            return;
+        }
+
         await _next(context);
     }
 }`,
-            highlightLines: [13, 19, 20],
+            highlightLines: [19, 20, 32, 33, 34],
       },
 
       // ─── Replay Protection ────────────────────────────────────
@@ -182,39 +191,47 @@ public class CsrfMiddleware
             language: "csharp",
             filename: "ReplayProtectionMiddleware.cs",
             code: `/// <summary>
-/// Prevents request replay attacks using nonce-based validation.
-/// Each request must include a unique X-Request-Nonce header.
-/// Nonces are stored in cache and rejected if reused within 5 minutes.
+/// P6.3: Request replay protection — MANDATORY on all authenticated mutations.
+/// Frontend must send X-Request-Timestamp (epoch ms) + X-Request-Nonce (UUID).
+/// Missing headers → 400 MISSING_REPLAY_HEADERS (no gradual rollout).
+/// SignalR /hubs/ paths are excluded (library can't inject headers).
 /// </summary>
 public class ReplayProtectionMiddleware
 {
     public async Task InvokeAsync(HttpContext context, ICacheService cache)
     {
-        var nonce = context.Request.Headers["X-Request-Nonce"].FirstOrDefault();
+        // Skip safe methods, /hubs/ paths, unauthenticated
+        var timestamp = context.Request.Headers["X-Request-Timestamp"];
+        var nonce = context.Request.Headers["X-Request-Nonce"];
 
-        if (!string.IsNullOrEmpty(nonce))
+        // MANDATORY — reject if missing
+        if (string.IsNullOrEmpty(timestamp) || string.IsNullOrEmpty(nonce))
         {
-            var cacheKey = $"nonce:{nonce}";
-            var exists = await cache.GetAsync<bool>(cacheKey);
-
-            if (exists)
-            {
-                context.Response.StatusCode = 409;
-                await context.Response.WriteAsJsonAsync(new
-                {
-                    error = "Request nonce already used (replay detected)"
-                });
-                return;
-            }
-
-            // Store nonce for 5 minutes to prevent reuse
-            await cache.SetAsync(cacheKey, true, TimeSpan.FromMinutes(5));
+            // 400 MISSING_REPLAY_HEADERS
+            return;
         }
 
+        // Validate timestamp freshness (±5 min clock skew)
+        var drift = DateTimeOffset.UtcNow - requestTime;
+        if (drift > TimeSpan.FromMinutes(5))
+        {
+            // 400 STALE_REQUEST
+            return;
+        }
+
+        // Validate nonce uniqueness (cache TTL = 10 min)
+        var exists = await cache.GetAsync<string>($"replay-nonce:{nonce}");
+        if (exists is not null)
+        {
+            // 409 REQUEST_REPLAY_DETECTED
+            return;
+        }
+
+        await cache.SetAsync(cacheKey, "1", TimeSpan.FromMinutes(10));
         await _next(context);
     }
 }`,
-            highlightLines: [10, 16, 17, 27],
+            highlightLines: [4, 16, 17, 24, 25, 32, 33],
       },
 
       // ─── Input Validation ─────────────────────────────────────
@@ -233,6 +250,7 @@ public class ReplayProtectionMiddleware
                   ["File Upload Attacks", "Type, size, dimension validation", "ImageService + FileService validate all uploads"],
                   ["Mass Assignment", "DTO binding — no direct entity binding", "Only explicitly mapped fields are accepted"],
                   ["JSON Injection", "System.Text.Json (safe by default)", "No Newtonsoft JsonConvert with TypeNameHandling"],
+                  ["Backend Input Sanitization", "InputSanitizationMiddleware", "Strips HTML tags from ALL JSON string values on POST/PUT/PATCH/DELETE"],
                   ["Header Injection", "ASP.NET Core built-in protection", "Framework sanitizes response headers"],
                   ["Request Smuggling", "Kestrel strict parsing", "Rejects ambiguous Content-Length/Transfer-Encoding"],
             ],
@@ -299,5 +317,5 @@ registerPage({
       order: 4,
       sections,
       relatedSlugs: ["security/overview", "security/authentication-deep", "security/middleware-pipeline"],
-      lastUpdated: "2026-02-20",
+      lastUpdated: "2026-03-13",
 });

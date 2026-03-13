@@ -90,5 +90,5 @@ registerPage({
       order: 4,
       sections,
       relatedSlugs: ["commercial/data-protection", "commercial/compliance-readiness"],
-      lastUpdated: "2026-02-20",
+      lastUpdated: "2026-03-13",
 });

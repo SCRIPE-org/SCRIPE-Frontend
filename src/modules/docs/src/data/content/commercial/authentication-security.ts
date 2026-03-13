@@ -84,5 +84,5 @@ registerPage({
       order: 2,
       sections,
       relatedSlugs: ["commercial/security-overview", "commercial/data-protection"],
-      lastUpdated: "2026-02-20",
+      lastUpdated: "2026-03-13",
 });
