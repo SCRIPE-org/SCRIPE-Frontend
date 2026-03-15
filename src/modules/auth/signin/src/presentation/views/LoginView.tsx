@@ -4,6 +4,8 @@
  * Left panel: Minimal branding area with custom grid, uses bg-muted.
  * Right panel: Clean solid form area, uses bg-background.
  * Ensures flawless rendering in both Light and Dark themes.
+ *
+ * Supports white-label tenant branding when accessed via a tenant subdomain.
  */
 "use client";
 
@@ -22,19 +24,55 @@ import { CredentialsForm } from "../components/CredentialsForm";
 import { TwoFactorForm } from "../components/TwoFactorForm";
 import { SsoProviderButtons } from "../components/SsoProviderButtons";
 import { useSsoProviders } from "../../../../hooks/useSsoProviders";
+import { useTenantResolution } from "../../../../hooks/useTenantResolution";
 
 export function LoginView() {
   const vm = useLoginViewModel();
   const { t, language, direction } = useI18n();
   const isRTL = language === "ar";
   const hasCheckedAuth = useRef(false);
-  const sso = useSsoProviders();
+
+  // Pre-auth domain resolution for white-label branding
+  const { tenantId, branding, isResolved, isLoading: isTenantLoading } = useTenantResolution();
+
+  // Pass resolved tenant context to SSO providers
+  const sso = useSsoProviders({
+    tenantId,
+    mode: branding?.identityProviderMode ?? "inherit",
+  });
+
+  // Derive branding values
+  const logoSrc = branding?.logoUrl || "/app-logo.png";
+  const logoAlt = branding?.companyName ?? branding?.name ?? "NEXORA";
+  const companyName = branding?.companyName ?? branding?.name ?? "NEXORA";
 
   useEffect(() => {
     if (hasCheckedAuth.current || !vm.hasHydrated) return;
     hasCheckedAuth.current = true;
     vm.checkAndRedirect();
   }, [vm.hasHydrated, vm.checkAndRedirect]);
+
+  // Dynamic document title
+  useEffect(() => {
+    if (typeof document !== "undefined") {
+      document.title = isResolved
+        ? `Login — ${companyName}`
+        : "Login — NEXORA";
+    }
+  }, [isResolved, companyName]);
+
+  // Dynamic favicon swap
+  useEffect(() => {
+    if (typeof document === "undefined" || !branding?.faviconUrl) return;
+
+    let link = document.querySelector<HTMLLinkElement>("link[rel~='icon']");
+    if (!link) {
+      link = document.createElement("link");
+      link.rel = "icon";
+      document.head.appendChild(link);
+    }
+    link.href = branding.faviconUrl;
+  }, [branding?.faviconUrl]);
 
   if (!vm.hasHydrated || vm.isRedirecting) {
     return (
@@ -47,7 +85,7 @@ export function LoginView() {
   return (
     <div className="flex min-h-screen w-full bg-background font-sans selection:bg-primary/20" dir={direction}>
       {/* ── Left Branded Panel ── */}
-      <LoginBranding t={t} />
+      <LoginBranding t={t} branding={branding} />
 
       {/* ── Right Form Panel ── */}
       <div className="relative flex w-full flex-col items-center justify-center px-6 py-12 lg:w-1/2 xl:w-[45%]">
@@ -75,10 +113,10 @@ export function LoginView() {
         {/* Form Container */}
         <div className="w-full max-w-[380px]">
 
-          {/* Mobile Logo (hidden on large screens) */}
+          {/* Mobile Logo (hidden on large screens) — uses tenant logo when available */}
           <div className="mb-12 flex lg:hidden flex-col items-center gap-4">
             <div className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-3xl bg-background border border-border shadow-sm">
-              <img src="/app-logo.png" alt="NEXORA Logo" className="h-full w-full object-cover" onError={(e) => { e.currentTarget.style.display = "none"; }} />
+              <img src={logoSrc} alt={`${logoAlt} Logo`} className="h-full w-full object-cover" onError={(e) => { e.currentTarget.style.display = "none"; }} />
             </div>
           </div>
 
@@ -137,7 +175,7 @@ export function LoginView() {
           {/* Mobile Footer (hidden on desktop, branding handles it) */}
           <div className="mt-12 text-center lg:hidden">
             <p className="text-[11px] font-medium text-muted-foreground/50">
-              © {new Date().getFullYear()} NEXORA — {t("auth.branding.copyright")}
+              © {new Date().getFullYear()} {companyName} — {t("auth.branding.copyright")}
             </p>
           </div>
         </div>

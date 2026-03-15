@@ -16,7 +16,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { API_ENDPOINTS } from "@core/config/api-endpoints";
+import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
 import { getModuleApiService } from "@core/services/api-factory";
 
 // ─── Types ────────────────────────────────────────────────
@@ -71,21 +71,34 @@ const SSO_KEYS = {
 
 // ─── Hook ─────────────────────────────────────────────────
 
-export function useSsoProviders() {
+interface UseSsoProvidersOptions {
+      /** Encrypted tenant ID from domain resolution (optional) */
+      tenantId?: string | null;
+      /** IdP visibility mode: "inherit" or "custom" (default: "inherit") */
+      mode?: string;
+}
+
+export function useSsoProviders(options: UseSsoProvidersOptions = {}) {
+      const { tenantId, mode = "inherit" } = options;
       const [providers, setProviders] = useState<SsoProvider[]>([]);
       const [isLoading, setIsLoading] = useState(true);
       const [error, setError] = useState<string | null>(null);
 
-      // Fetch providers on mount
+      // Fetch providers on mount (or when tenantId/mode changes)
       useEffect(() => {
             let cancelled = false;
 
             async function fetchProviders() {
                   try {
                         const api = getModuleApiService("IDENTITY");
-                        const data = await api.get<SsoProvider[]>(
-                              API_ENDPOINTS.AUTH.OIDC.ADMIN_PROVIDERS
+                        const url = buildUrl(
+                              API_ENDPOINTS.AUTH.OIDC.ADMIN_PROVIDERS,
+                              {
+                                    tenantId: tenantId ?? undefined,
+                                    mode: tenantId ? mode : undefined,
+                              }
                         );
+                        const data = await api.get<SsoProvider[]>(url);
 
                         if (!cancelled) {
                               setProviders(
@@ -106,7 +119,7 @@ export function useSsoProviders() {
             return () => {
                   cancelled = true;
             };
-      }, []);
+      }, [tenantId, mode]);
 
       // Initiate SSO login — creates challenge, stores PKCE, redirects
       const initiateSsoLogin = useCallback(async (providerId: string, protocol?: string) => {

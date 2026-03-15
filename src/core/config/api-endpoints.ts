@@ -127,6 +127,7 @@ export const API_ENDPOINTS = {
   TENANTS: {
     LIST: `${V1}/Tenants`,
     TREE: `${V1}/Tenants/tree`,
+    RESOLVE: `${V1}/Tenants/resolve`,
     MY_CHILDREN: `${V1}/Tenants/myChildren`,
     MY_TENANT_AND_CHILDREN: `${V1}/Tenants/myTenantAndChildren`,
     CHILDREN: (parentId: string) => `${V1}/Tenants/${parentId}/children`,
@@ -139,6 +140,11 @@ export const API_ENDPOINTS = {
     SETTINGS: (id: string) => `${V1}/Tenants/${id}/settings`,
     MY_SETTINGS: `${V1}/Tenants/my/settings`,
     PERMISSIONS: (id: string) => `${V1}/Tenants/${id}/permissions`,
+    // ── Domain Management ──
+    DOMAINS: (id: string) => `${V1}/Tenants/${id}/domains`,
+    DOMAIN_BY_ID: (id: string, domainId: string) => `${V1}/Tenants/${id}/domains/${domainId}`,
+    DOMAIN_PRIMARY: (id: string, domainId: string) => `${V1}/Tenants/${id}/domains/${domainId}/primary`,
+    DOMAIN_VERIFY: (id: string, domainId: string) => `${V1}/Tenants/${id}/domains/${domainId}/verify`,
   },
 
   // ===== MENUS =====

@@ -157,7 +157,7 @@ function ResolvedFeaturesCard({ vm, t }: { vm: VM; t: TFn }) {
                                                             <TableCell>
                                                                   {f.valueType === "Boolean" ? (
                                                                         <Badge variant={f.effectiveValue === "true" ? "default" : "secondary"}>
-                                                                              {f.effectiveValue === "true" ? t("tenant.enabled") : t("tenants.disabled")}
+                                                                              {f.effectiveValue === "true" ? t("tenant.enabled") : t("tenant.disabled")}
                                                                         </Badge>
                                                                   ) : (
                                                                         <span className="font-semibold">{f.effectiveValue}</span>
@@ -252,7 +252,7 @@ function CurrentOverridesCard({ vm, t }: { vm: VM; t: TFn }) {
                                                             <TableCell>
                                                                   {o.valueType === "Boolean" ? (
                                                                         <Badge variant={o.value === "true" ? "default" : "secondary"}>
-                                                                              {o.value === "true" ? t("tenant.enabled") : t("tenants.disabled")}
+                                                                              {o.value === "true" ? t("tenant.enabled") : t("tenant.disabled")}
                                                                         </Badge>
                                                                   ) : (
                                                                         <span className="font-semibold">{o.value}</span>
@@ -359,7 +359,7 @@ function SetOverrideDialog({ vm, t }: { vm: VM; t: TFn }) {
                                                       }
                                                 />
                                                 <span className="text-sm">
-                                                      {vm.overrideValue === "true" ? t("tenant.enabled") : t("tenants.disabled")}
+                                                      {vm.overrideValue === "true" ? t("tenant.enabled") : t("tenant.disabled")}
                                                 </span>
                                           </div>
                                     ) : (

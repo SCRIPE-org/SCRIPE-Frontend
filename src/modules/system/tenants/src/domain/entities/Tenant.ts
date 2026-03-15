@@ -24,6 +24,8 @@ export interface TenantProps {
   modifiedAt?: string;
   editionName?: string;
   editionEndDate?: string;
+  primaryDomain?: string;
+  domainCount?: number;
   children?: TenantProps[];
 }
 
@@ -109,6 +111,14 @@ export class Tenant {
 
   get editionEndDate(): string | undefined {
     return this.props.editionEndDate;
+  }
+
+  get primaryDomain(): string | undefined {
+    return this.props.primaryDomain;
+  }
+
+  get domainCount(): number {
+    return this.props.domainCount ?? 0;
   }
 
   // ===== Business Logic =====

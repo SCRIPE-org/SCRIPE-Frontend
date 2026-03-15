@@ -33,6 +33,8 @@ export interface TenantJson {
   address?: string;
   editionName?: string;
   editionEndDate?: string;
+  primaryDomain?: string;
+  domainCount?: number;
 }
 
 export interface TenantTreeNodeJson {
@@ -96,7 +98,9 @@ export class TenantModel {
     public readonly children?: TenantModel[],
     public readonly address?: string,
     public readonly editionName?: string,
-    public readonly editionEndDate?: string
+    public readonly editionEndDate?: string,
+    public readonly primaryDomain?: string,
+    public readonly domainCount?: number
   ) { }
 
   static fromJson(json: TenantJson): TenantModel {
@@ -118,7 +122,9 @@ export class TenantModel {
       json.children?.map((c) => TenantModel.fromJson(c)),
       json.address,
       json.editionName,
-      json.editionEndDate
+      json.editionEndDate,
+      json.primaryDomain,
+      json.domainCount
     );
   }
 
@@ -140,6 +146,8 @@ export class TenantModel {
       address: this.address,
       editionName: this.editionName,
       editionEndDate: this.editionEndDate,
+      primaryDomain: this.primaryDomain,
+      domainCount: this.domainCount,
     };
   }
 }

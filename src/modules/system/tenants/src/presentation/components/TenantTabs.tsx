@@ -12,7 +12,7 @@
 import { useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
-import { Users, Shield, Building2, Settings, Crown, UsersRound } from "lucide-react";
+import { Users, Shield, Building2, Settings, Crown, UsersRound, Globe } from "lucide-react";
 import { cn } from "@core/common/utils";
 
 // Tab components
@@ -22,6 +22,7 @@ import { TenantUserGroupsTab } from "./tabs/TenantUserGroupsTab";
 import { SubTenantsTab } from "./tabs/SubTenantsTab";
 import { TenantSettingsTab } from "./tabs/TenantSettingsTab";
 import { TenantEntitlementsTab } from "./tabs/TenantEntitlementsTab";
+import { TenantDomainsTab } from "./tabs/TenantDomainsTab";
 
 interface TenantTabsProps {
   tenantId: string;
@@ -77,6 +78,13 @@ export function TenantTabs({ tenantId, tenantName, tenantCode, parentTenantId }:
       icon: Settings,
       color: "text-slate-400",
       activeBg: "bg-slate-500/10",
+    },
+    {
+      value: "domains",
+      label: t("tenant.tabDomains") || "Domains",
+      icon: Globe,
+      color: "text-cyan-500",
+      activeBg: "bg-cyan-500/10",
     },
   ];
 
@@ -161,6 +169,10 @@ export function TenantTabs({ tenantId, tenantName, tenantCode, parentTenantId }:
                 tenantName={tenantName}
                 parentTenantId={parentTenantId}
               />
+            </TabsContent>
+
+            <TabsContent value="domains" className="m-0">
+              <TenantDomainsTab tenantId={tenantId} tenantName={tenantName} />
             </TabsContent>
           </div>
         </div>
