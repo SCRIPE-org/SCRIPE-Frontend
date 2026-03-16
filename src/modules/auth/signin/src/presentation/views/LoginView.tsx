@@ -18,6 +18,7 @@ import { LanguageSwitcher } from "@core/ui/layout/common/language-switcher";
 import { ThemeSwitcher } from "@core/ui/layout/common/theme-switcher";
 import Link from "next/link";
 import { BRAND } from "@core/config/branding";
+import { resolveFileUrl } from "@core/common/utils";
 
 import { useLoginViewModel } from "../viewmodels/use-login-viewmodel";
 import { LoginBranding } from "../components/LoginBranding";
@@ -43,7 +44,7 @@ export function LoginView() {
   });
 
   // Derive branding values
-  const logoSrc = branding?.logoUrl || "/app-logo.png";
+  const logoSrc = branding?.logoUrl ? resolveFileUrl(branding.logoUrl) : "/app-logo.png";
   const logoAlt = branding?.companyName ?? branding?.name ?? BRAND.name;
   const companyName = branding?.companyName ?? branding?.name ?? BRAND.name;
 
@@ -119,13 +120,14 @@ export function LoginView() {
             <div className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-3xl bg-background border border-border shadow-sm">
               <img src={logoSrc} alt={`${logoAlt} Logo`} className="h-full w-full object-cover" onError={(e) => { e.currentTarget.style.display = "none"; }} />
             </div>
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">{companyName}</h1>
           </div>
 
           {/* Desktop Heading (hidden on mobile, branding handles it) */}
           {vm.loginStep === "credentials" && (
             <div className="mb-10 text-center lg:text-start hidden lg:block">
               <h2 className="text-3xl font-semibold tracking-tight text-foreground">
-                {t("auth.welcome")}
+                {companyName}
               </h2>
               <p className="mt-2 text-[15px] text-muted-foreground">
                 {t("auth.pleaseLogin")}

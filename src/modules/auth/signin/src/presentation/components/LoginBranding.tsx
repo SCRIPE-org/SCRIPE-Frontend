@@ -2,6 +2,7 @@
 
 import type { TenantBranding } from "@modules/auth/hooks/useTenantResolution";
 import { BRAND } from "@core/config/branding";
+import { resolveFileUrl } from "@core/common/utils";
 
 interface LoginBrandingProps {
       t: (key: string) => string;
@@ -21,7 +22,7 @@ export function LoginBranding({ t, branding }: LoginBrandingProps) {
       ];
 
       // Resolve branding values with fallbacks
-      const logoSrc = branding?.logoUrl || "/app-logo.png";
+      const logoSrc = branding?.logoUrl ? resolveFileUrl(branding.logoUrl) : "/app-logo.png";
       const logoAlt = branding?.companyName ?? branding?.name ?? BRAND.name;
       const headline = branding?.loginHeadline || t("auth.branding.headline");
       const subtitle = branding?.loginSubtitle || t("auth.branding.subtitle");
