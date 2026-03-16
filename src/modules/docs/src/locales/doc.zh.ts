@@ -523,6 +523,19 @@ export const docZh: PartialDocTranslations = {
                   endpointsPermissionsTitle: "权限端点",
                   endpointsDrilldownTitle: "下钻分析端点",
                   logoTip: "租户的 Logo 会通过静态文件中间件在 /storage/tenants/{tenantId}/logo.{ext} 提供。",
+                  // Domain Management
+                  domainTitle: "域名管理",
+                  domainIntro: "每个租户可以拥有多个域名——一个在创建租户时自动生成的子域名，以及管理员添加的可选自定义域名。系统支持通过 DNS 进行域名验证，以证明自定义域名的所有权后才激活。所有域名相关配置完全外部化到 appsettings.json 中，实现无缝品牌重塑和多部署设置。",
+                  domainTypesTitle: "域名类型",
+                  domainArchTitle: "域名解析架构",
+                  domainArchIntro: "当请求到达时，系统通过在 TenantDomain 表中查找主机名来解析租户。自动生成的域名（例如 sofa.nexora.com）始终已验证并立即解析。自定义域名必须先通过 DNS 验证。在未配置 DNS 的开发环境中，可使用 ?code= 查询参数作为回退机制。",
+                  domainDnsTitle: "DNS 验证流程",
+                  domainDnsIntro: "自定义域名需要 DNS 验证以证明所有权。当管理员添加自定义域名时，系统会生成唯一的验证令牌。管理员随后配置两条 DNS 记录：一条 CNAME 记录将域名指向平台的 CnameTarget，以及一条 TXT 记录位于 {VerificationPrefix}.{domain}，包含验证令牌。配置完成后，点击'验证'会触发 DNS 查询以确认两条记录均存在。",
+                  domainDnsNote: "DNS 验证目前是 UI 驱动的流程，管理员点击'验证'来触发检查。后端已预留接口，可与完整的 DNS 解析集成。自动生成的域名完全跳过验证——它们始终受信任。",
+                  domainConfigTitle: "可配置的平台域名",
+                  domainConfigIntro: "每个域名相关的值都可通过 appsettings.json 中的 Tenancy 部分进行配置。这意味着您可以对整个平台进行品牌重塑——更改基础域名、CNAME 目标、验证前缀和令牌前缀——只需编辑一个配置块。无需修改代码。后端通过 IOptions<T> 注入 TenancySettings，前端从 GET /domains API 响应中获取 CNAME 目标和验证前缀。",
+                  domainConfigTip: "若要部署到完全不同的域名（例如 myplatform.io 而不是 nexora.com），只需更新 appsettings.json 中的 4 个值。所有自动生成的子域名、DNS 指令和验证令牌将自动使用新值。",
+                  domainEndpointsTitle: "域名 API 端点",
             },
 
             rolePermissions: {

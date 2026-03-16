@@ -524,6 +524,19 @@ export const docFr: PartialDocTranslations = {
                   endpointsPermissionsTitle: "Endpoints de Permissions",
                   endpointsDrilldownTitle: "Endpoints d'Analyse (Drill-Down)",
                   logoTip: "Les logos des locataires sont servis via le middleware de fichiers statiques sur /storage/tenants/{tenantId}/logo.{ext}.",
+                  // Domain Management
+                  domainTitle: "Gestion des Domaines",
+                  domainIntro: "Chaque locataire peut avoir plusieurs domaines — un sous-domaine généré automatiquement lors de la création du locataire, plus des domaines personnalisés optionnels ajoutés par les administrateurs. Le système prend en charge la vérification de domaine basée sur DNS pour prouver la propriété des domaines personnalisés avant qu'ils ne deviennent actifs. Toute la configuration liée aux domaines est entièrement externalisée dans appsettings.json, permettant un rebranding transparent et des configurations multi-déploiement.",
+                  domainTypesTitle: "Types de Domaines",
+                  domainArchTitle: "Architecture de Résolution de Domaines",
+                  domainArchIntro: "Lorsqu'une requête arrive, le système résout le locataire en recherchant le nom d'hôte dans la table TenantDomain. Les domaines générés automatiquement (ex. sofa.nexora.com) sont toujours vérifiés et résolus immédiatement. Les domaines personnalisés doivent d'abord passer la vérification DNS. Un mécanisme de repli utilisant le paramètre de requête ?code= est disponible pour les environnements de développement où le DNS n'est pas configuré.",
+                  domainDnsTitle: "Flux de Vérification DNS",
+                  domainDnsIntro: "Les domaines personnalisés nécessitent une vérification DNS pour prouver la propriété. Lorsqu'un administrateur ajoute un domaine personnalisé, le système génère un jeton de vérification unique. L'administrateur configure ensuite deux enregistrements DNS : un enregistrement CNAME pointant le domaine vers le CnameTarget de la plateforme, et un enregistrement TXT à {VerificationPrefix}.{domain} contenant le jeton de vérification. Une fois configuré, cliquer sur 'Vérifier' déclenche une requête DNS pour confirmer la présence des deux enregistrements.",
+                  domainDnsNote: "La vérification DNS est actuellement un processus piloté par l'interface utilisateur où l'administrateur clique sur 'Vérifier' pour déclencher la vérification. Le backend est prêt pour l'intégration complète de la résolution DNS. Les domaines générés automatiquement ignorent complètement la vérification — ils sont toujours fiables.",
+                  domainConfigTitle: "Domaine de Plateforme Configurable",
+                  domainConfigIntro: "Chaque valeur liée aux domaines est configurable via la section Tenancy dans appsettings.json. Cela signifie que vous pouvez renommer entièrement la plateforme — en changeant le domaine de base, la cible CNAME, le préfixe de vérification et le préfixe de jeton — en éditant un seul bloc de configuration. Aucun changement de code requis. Le backend injecte TenancySettings via IOptions<T>, et le frontend reçoit la cible CNAME et le préfixe de vérification de la réponse API GET /domains.",
+                  domainConfigTip: "Pour déployer sur un domaine complètement différent (ex. myplatform.io au lieu de nexora.com), mettez simplement à jour les 4 valeurs dans appsettings.json. Tous les sous-domaines générés automatiquement, les instructions DNS et les jetons de vérification utiliseront automatiquement les nouvelles valeurs.",
+                  domainEndpointsTitle: "Points d'Accès API de Domaines",
             },
 
             rolePermissions: {

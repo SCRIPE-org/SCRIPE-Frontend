@@ -524,6 +524,19 @@ export const docDe: PartialDocTranslations = {
                   endpointsPermissionsTitle: "Berechtigungs-Endpunkte",
                   endpointsDrilldownTitle: "Drilldown-Endpunkte",
                   logoTip: "Mandantenlogos werden über eine Static File Middleware bereitgestellt.",
+                  // Domain Management
+                  domainTitle: "Domain-Verwaltung",
+                  domainIntro: "Jeder Mandant kann mehrere Domains besitzen — eine automatisch generierte Subdomain, die bei der Erstellung des Mandanten erstellt wird, sowie optionale benutzerdefinierte Domains, die von Administratoren hinzugefügt werden. Das System unterstützt DNS-basierte Domain-Verifizierung, um den Besitz benutzerdefinierter Domains nachzuweisen, bevor sie aktiv werden. Alle domainbezogenen Konfigurationen sind vollständig in appsettings.json ausgelagert, was nahtloses Rebranding und Multi-Deployment-Setups ermöglicht.",
+                  domainTypesTitle: "Domain-Typen",
+                  domainArchTitle: "Domain-Auflösungsarchitektur",
+                  domainArchIntro: "Wenn eine Anfrage eingeht, löst das System den Mandanten auf, indem es den Hostnamen in der TenantDomain-Tabelle nachschlägt. Automatisch generierte Domains (z.B. sofa.nexora.com) sind immer verifiziert und werden sofort aufgelöst. Benutzerdefinierte Domains müssen zuerst die DNS-Verifizierung bestehen. Ein Fallback-Mechanismus mit dem ?code=-Abfrageparameter steht für Entwicklungsumgebungen zur Verfügung, in denen kein DNS konfiguriert ist.",
+                  domainDnsTitle: "DNS-Verifizierungsablauf",
+                  domainDnsIntro: "Benutzerdefinierte Domains erfordern eine DNS-Verifizierung zum Eigentumsnachweis. Wenn ein Admin eine benutzerdefinierte Domain hinzufügt, generiert das System einen eindeutigen Verifizierungstoken. Der Admin konfiguriert dann zwei DNS-Einträge: einen CNAME-Eintrag, der die Domain auf das CnameTarget der Plattform verweist, und einen TXT-Eintrag bei {VerificationPrefix}.{domain} mit dem Verifizierungstoken. Nach der Konfiguration löst ein Klick auf 'Verifizieren' eine DNS-Abfrage aus, um beide Einträge zu bestätigen.",
+                  domainDnsNote: "Die DNS-Verifizierung ist derzeit ein UI-gesteuerter Prozess, bei dem der Admin auf 'Verifizieren' klickt, um die Prüfung auszulösen. Das Backend-Platzhalter ist bereit für die vollständige DNS-Auflösungsintegration. Automatisch generierte Domains überspringen die Verifizierung vollständig — sie sind immer vertrauenswürdig.",
+                  domainConfigTitle: "Konfigurierbarer Plattform-Domain",
+                  domainConfigIntro: "Jeder domainbezogene Wert ist über den Tenancy-Abschnitt in appsettings.json konfigurierbar. Das bedeutet, dass Sie die gesamte Plattform umbenennen können — Basis-Domain, CNAME-Ziel, Verifizierungspräfix und Token-Präfix ändern — indem Sie einen einzigen Konfigurationsblock bearbeiten. Keine Code-Änderungen erforderlich. Das Backend injiziert TenancySettings über IOptions<T>, und das Frontend erhält das CNAME-Ziel und das Verifizierungspräfix aus der GET /domains API-Antwort.",
+                  domainConfigTip: "Um auf einer völlig anderen Domain bereitzustellen (z.B. myplatform.io statt nexora.com), aktualisieren Sie einfach die 4 Werte in appsettings.json. Alle automatisch generierten Subdomains, DNS-Anweisungen und Verifizierungstokens verwenden automatisch die neuen Werte.",
+                  domainEndpointsTitle: "Domain-API-Endpunkte",
             },
 
             rolePermissions: {

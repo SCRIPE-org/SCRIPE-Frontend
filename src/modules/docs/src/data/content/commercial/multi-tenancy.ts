@@ -78,6 +78,61 @@ const sections: DocSection[] = [
                   { method: "POST", path: "/api/tenants/{id}/deactivate", descriptionKey: "Deactivate tenant", auth: "Required", permission: "Tenants.Update" },
             ],
       },
+
+      // ═ Custom Domain Management ═
+      { type: "heading", level: 2, titleKey: "commercial.multiTenancy.domainTitle", id: "custom-domains" },
+      { type: "paragraph", contentKey: "commercial.multiTenancy.domainIntro" },
+      {
+            type: "feature-grid",
+            columns: 3,
+            items: [
+                  { icon: "globe", titleKey: "commercial.multiTenancy.domainAutoSub", descriptionKey: "commercial.multiTenancy.domainAutoSubDesc" },
+                  { icon: "link", titleKey: "commercial.multiTenancy.domainCustom", descriptionKey: "commercial.multiTenancy.domainCustomDesc" },
+                  { icon: "shield", titleKey: "commercial.multiTenancy.domainDns", descriptionKey: "commercial.multiTenancy.domainDnsDesc" },
+                  { icon: "settings", titleKey: "commercial.multiTenancy.domainConfig", descriptionKey: "commercial.multiTenancy.domainConfigDesc" },
+                  { icon: "zap", titleKey: "commercial.multiTenancy.domainPrimary", descriptionKey: "commercial.multiTenancy.domainPrimaryDesc" },
+                  { icon: "key", titleKey: "commercial.multiTenancy.domainRebrand", descriptionKey: "commercial.multiTenancy.domainRebrandDesc" },
+            ],
+      },
+
+      // White-Label Domain Architecture
+      { type: "heading", level: 3, titleKey: "commercial.multiTenancy.domainWhiteLabelTitle", id: "white-label-domains" },
+      { type: "paragraph", contentKey: "commercial.multiTenancy.domainWhiteLabelContent" },
+      {
+            type: "flowchart",
+            title: "Custom Domain Setup",
+            direction: "vertical",
+            nodes: [
+                  { id: "add", label: "Tenant Admin adds custom domain", type: "default" },
+                  { id: "verify", label: "DNS Verification (CNAME + TXT)", type: "primary" },
+                  { id: "active", label: "Domain Active & Verified ✓", type: "success" },
+                  { id: "primary", label: "Set as Primary Domain", type: "info" },
+            ],
+            connections: [
+                  { from: "add", to: "verify" },
+                  { from: "verify", to: "active" },
+                  { from: "active", to: "primary" },
+            ],
+      },
+
+      // Domain API Endpoints
+      { type: "heading", level: 3, titleKey: "commercial.multiTenancy.domainApiTitle", id: "domain-api" },
+      {
+            type: "api-table",
+            endpoints: [
+                  { method: "GET", path: "/api/v1/tenants/{id}/domains", descriptionKey: "List all tenant domains with DNS config metadata", auth: "Required", permission: "Tenants.View" },
+                  { method: "POST", path: "/api/v1/tenants/{id}/domains", descriptionKey: "Add custom domain with auto verification token", auth: "Required", permission: "Tenants.Update" },
+                  { method: "POST", path: "/api/v1/tenants/{id}/domains/{domainId}/verify", descriptionKey: "Trigger DNS verification check", auth: "Required", permission: "Tenants.Update" },
+                  { method: "PUT", path: "/api/v1/tenants/{id}/domains/{domainId}/set-primary", descriptionKey: "Set domain as primary for the tenant", auth: "Required", permission: "Tenants.Update" },
+                  { method: "DELETE", path: "/api/v1/tenants/{id}/domains/{domainId}", descriptionKey: "Remove custom domain (auto domains protected)", auth: "Required", permission: "Tenants.Update" },
+            ],
+      },
+
+      {
+            type: "info",
+            variant: "tip",
+            contentKey: "commercial.multiTenancy.domainTip",
+      },
 ];
 
 registerPage({
@@ -88,5 +143,6 @@ registerPage({
       order: 1,
       sections,
       relatedSlugs: ["commercial/roles-permissions", "commercial/audit-compliance"],
-      lastUpdated: "2026-02-20",
+      lastUpdated: "2026-03-16",
 });
+

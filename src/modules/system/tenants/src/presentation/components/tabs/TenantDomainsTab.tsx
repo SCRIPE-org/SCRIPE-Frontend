@@ -57,6 +57,8 @@ export function TenantDomainsTab({ tenantId, tenantName }: TenantDomainsTabProps
   const { t, direction } = useI18n();
   const isRtl = direction === "rtl";
   const [domains, setDomains] = useState<TenantDomain[]>([]);
+  const [cnameTarget, setCnameTarget] = useState("");
+  const [verifyPrefix, setVerifyPrefix] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [newDomain, setNewDomain] = useState("");
@@ -70,8 +72,10 @@ export function TenantDomainsTab({ tenantId, tenantName }: TenantDomainsTabProps
   const fetchDomains = useCallback(async () => {
     try {
       setIsLoading(true);
-      const data = await api.get<TenantDomain[]>(API_ENDPOINTS.TENANTS.DOMAINS(tenantId));
-      setDomains(data || []);
+      const response = await api.get<{ domains: TenantDomain[]; cnameTarget: string; verificationPrefix: string }>(API_ENDPOINTS.TENANTS.DOMAINS(tenantId));
+      setDomains(response?.domains || []);
+      if (response?.cnameTarget) setCnameTarget(response.cnameTarget);
+      if (response?.verificationPrefix) setVerifyPrefix(response.verificationPrefix);
       setError(null);
     } catch {
       setError(t("tenant.domainsLoadFailed"));
@@ -226,6 +230,8 @@ export function TenantDomainsTab({ tenantId, tenantName }: TenantDomainsTabProps
               domain={d}
               isRtl={isRtl}
               t={t}
+              cnameTarget={cnameTarget}
+              verifyPrefix={verifyPrefix}
               onVerify={handleVerify}
               onSetPrimary={handleSetPrimary}
               onRemove={handleRemove}
@@ -257,6 +263,8 @@ export function TenantDomainsTab({ tenantId, tenantName }: TenantDomainsTabProps
               domain={d}
               isRtl={isRtl}
               t={t}
+              cnameTarget={cnameTarget}
+              verifyPrefix={verifyPrefix}
               onVerify={handleVerify}
               onSetPrimary={handleSetPrimary}
               onRemove={handleRemove}
@@ -275,13 +283,15 @@ interface DomainCardProps {
   domain: TenantDomain;
   isRtl: boolean;
   t: (key: string, args?: Record<string, unknown>) => string;
+  cnameTarget: string;
+  verifyPrefix: string;
   onVerify: (id: string) => void;
   onSetPrimary: (id: string) => void;
   onRemove: (id: string) => void;
   onCopy: (text: string) => void;
 }
 
-function DomainCard({ domain, isRtl, t, onVerify, onSetPrimary, onRemove, onCopy }: DomainCardProps) {
+function DomainCard({ domain, isRtl, t, cnameTarget, verifyPrefix, onVerify, onSetPrimary, onRemove, onCopy }: DomainCardProps) {
   return (
     <div
       className={cn(
@@ -394,7 +404,7 @@ function DomainCard({ domain, isRtl, t, onVerify, onSetPrimary, onRemove, onCopy
             <p className="text-muted-foreground font-medium">{t("tenant.domainsDnsStep1")}</p>
             <div className="flex items-center gap-2 bg-muted/50 rounded p-2 font-mono text-[11px]">
               <span className="flex-1 truncate">
-                {domain.domain} → CNAME → {t("tenant.domainsCnameTarget")}
+                {domain.domain} → CNAME → {cnameTarget}
               </span>
               <Button
                 variant="ghost"
@@ -412,13 +422,13 @@ function DomainCard({ domain, isRtl, t, onVerify, onSetPrimary, onRemove, onCopy
             <p className="text-muted-foreground font-medium">{t("tenant.domainsDnsStep2")}</p>
             <div className="flex items-center gap-2 bg-muted/50 rounded p-2 font-mono text-[11px]">
               <span className="flex-1 truncate">
-                _nexora-verify.{domain.domain} → {domain.verificationToken}
+                {verifyPrefix}.{domain.domain} → {domain.verificationToken}
               </span>
               <Button
                 variant="ghost"
                 size="sm"
                 className="h-5 w-5 p-0"
-                onClick={() => onCopy(`_nexora-verify.${domain.domain}`)}
+                onClick={() => onCopy(`${verifyPrefix}.${domain.domain}`)}
               >
                 <Copy className="h-3 w-3" />
               </Button>

@@ -543,6 +543,19 @@ export const docEn = {
       endpointsPermissionsTitle: "Permission Endpoints",
       endpointsDrilldownTitle: "Drill-Down Endpoints",
       logoTip: "Tenant logos are served via a static file middleware at /storage/tenants/{tenantId}/logo.{ext}. The frontend uses absolute URLs for logo display.",
+      // Domain Management
+      domainTitle: "Domain Management",
+      domainIntro: "Each tenant can have multiple domains — one auto-generated subdomain created at tenant creation, plus optional custom domains added by administrators. The system supports DNS-based domain verification to prove ownership of custom domains before they become active. All domain-related configuration is fully externalized to appsettings.json, enabling seamless rebranding and multi-deployment setups.",
+      domainTypesTitle: "Domain Types",
+      domainArchTitle: "Domain Resolution Architecture",
+      domainArchIntro: "When a request arrives, the system resolves the tenant by looking up the hostname in the TenantDomain table. Auto-generated domains (e.g. sofa.nexora.com) are always verified and resolve immediately. Custom domains must pass DNS verification first. A fallback mechanism using the ?code= query parameter is available for development environments where DNS is not configured.",
+      domainDnsTitle: "DNS Verification Flow",
+      domainDnsIntro: "Custom domains require DNS verification to prove ownership. When an admin adds a custom domain, the system generates a unique verification token. The admin then configures two DNS records: a CNAME record pointing the domain to the platform's CnameTarget, and a TXT record at {VerificationPrefix}.{domain} containing the verification token. Once configured, clicking 'Verify' triggers a DNS lookup to confirm both records are present.",
+      domainDnsNote: "DNS verification is currently a UI-driven process where the admin clicks 'Verify' to trigger the check. The backend placeholder is ready for full DNS resolution integration. Auto-generated domains skip verification entirely — they are always trusted.",
+      domainConfigTitle: "Configurable Platform Domain",
+      domainConfigIntro: "Every domain-related value is configurable via the Tenancy section in appsettings.json. This means you can rebrand the entire platform — changing the base domain, CNAME target, verification prefix, and token prefix — by editing a single configuration block. Zero code changes required. The backend injects TenancySettings via IOptions<T>, and the frontend receives the CNAME target and verification prefix from the GET /domains API response.",
+      domainConfigTip: "To deploy on a completely different domain (e.g. myplatform.io instead of nexora.com), simply update the 4 values in appsettings.json. All auto-generated subdomains, DNS instructions, and verification tokens will automatically use the new values.",
+      domainEndpointsTitle: "Domain API Endpoints",
     },
 
     rolePermissions: {

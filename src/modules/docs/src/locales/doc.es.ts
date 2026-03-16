@@ -524,6 +524,19 @@ export const docEs: PartialDocTranslations = {
                   endpointsPermissionsTitle: "Endpoints de Permisos",
                   endpointsDrilldownTitle: "Endpoints de Desglose (Drill-Down)",
                   logoTip: "Los logos de los inquilinos se sirven a través del middleware de archivos estáticos en /storage/tenants/{tenantId}/logo.{ext}.",
+                  // Domain Management
+                  domainTitle: "Gestión de Dominios",
+                  domainIntro: "Cada inquilino puede tener múltiples dominios — un subdominio generado automáticamente al crear el inquilino, además de dominios personalizados opcionales agregados por los administradores. El sistema soporta verificación de dominio basada en DNS para probar la propiedad de dominios personalizados antes de que se activen. Toda la configuración relacionada con dominios está completamente externalizada en appsettings.json, permitiendo rebranding sin fricciones y configuraciones de multi-despliegue.",
+                  domainTypesTitle: "Tipos de Dominio",
+                  domainArchTitle: "Arquitectura de Resolución de Dominios",
+                  domainArchIntro: "Cuando llega una solicitud, el sistema resuelve el inquilino buscando el nombre de host en la tabla TenantDomain. Los dominios generados automáticamente (ej. sofa.nexora.com) siempre están verificados y se resuelven inmediatamente. Los dominios personalizados deben pasar la verificación DNS primero. Un mecanismo de respaldo usando el parámetro de consulta ?code= está disponible para entornos de desarrollo donde DNS no está configurado.",
+                  domainDnsTitle: "Flujo de Verificación DNS",
+                  domainDnsIntro: "Los dominios personalizados requieren verificación DNS para probar la propiedad. Cuando un administrador agrega un dominio personalizado, el sistema genera un token de verificación único. El administrador configura dos registros DNS: un registro CNAME apuntando el dominio al CnameTarget de la plataforma, y un registro TXT en {VerificationPrefix}.{domain} conteniendo el token de verificación. Una vez configurado, hacer clic en 'Verificar' activa una consulta DNS para confirmar que ambos registros están presentes.",
+                  domainDnsNote: "La verificación DNS es actualmente un proceso dirigido por la interfaz de usuario donde el administrador hace clic en 'Verificar' para activar la comprobación. El backend está listo para la integración completa de resolución DNS. Los dominios generados automáticamente omiten la verificación por completo — siempre son de confianza.",
+                  domainConfigTitle: "Dominio de Plataforma Configurable",
+                  domainConfigIntro: "Cada valor relacionado con dominios es configurable a través de la sección Tenancy en appsettings.json. Esto significa que puede cambiar la marca de toda la plataforma — cambiando el dominio base, el destino CNAME, el prefijo de verificación y el prefijo de token — editando un solo bloque de configuración. Cero cambios de código requeridos. El backend inyecta TenancySettings a través de IOptions<T>, y el frontend recibe el destino CNAME y el prefijo de verificación de la respuesta API GET /domains.",
+                  domainConfigTip: "Para desplegar en un dominio completamente diferente (ej. myplatform.io en lugar de nexora.com), simplemente actualice los 4 valores en appsettings.json. Todos los subdominios generados automáticamente, instrucciones DNS y tokens de verificación usarán automáticamente los nuevos valores.",
+                  domainEndpointsTitle: "Endpoints de API de Dominios",
             },
 
             rolePermissions: {

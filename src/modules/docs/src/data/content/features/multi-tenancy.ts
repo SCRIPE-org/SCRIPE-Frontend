@@ -1,4 +1,4 @@
-﻿import { registerPage } from "../../repositories/DocsRepository";
+import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
@@ -287,6 +287,156 @@ public string? CompanyName { get; set; }       // Display name`,
             variant: "tip",
             contentKey: "features.multiTenancy.logoTip",
       },
+
+      // ═ Domain Management ═
+      {
+            type: "heading", level: 2,
+            titleKey: "features.multiTenancy.domainTitle", id: "domain-management",
+      },
+      { type: "paragraph", contentKey: "features.multiTenancy.domainIntro" },
+
+      // Domain Types
+      {
+            type: "heading", level: 3,
+            titleKey: "features.multiTenancy.domainTypesTitle", id: "domain-types",
+      },
+      {
+            type: "table",
+            headers: ["Type", "Created By", "Example", "Deletable", "Auto-Verified"],
+            rows: [
+                  ["auto", "System (on tenant creation)", "{code}.{PlatformDomain}", "No", "Yes"],
+                  ["custom", "Admin (via API/UI)", "app.acme.com", "Yes", "No — requires DNS verification"],
+            ],
+      },
+
+      // Architecture Flow
+      {
+            type: "heading", level: 3,
+            titleKey: "features.multiTenancy.domainArchTitle", id: "domain-architecture",
+      },
+      { type: "paragraph", contentKey: "features.multiTenancy.domainArchIntro" },
+      {
+            type: "flowchart",
+            title: "Domain Resolution Flow",
+            direction: "vertical",
+            nodes: [
+                  { id: "req", label: "Incoming Request", type: "default" },
+                  { id: "host", label: "Extract Host Header / ?domain=", type: "primary" },
+                  { id: "lookup", label: "Lookup TenantDomain by FQDN", type: "warning" },
+                  { id: "found", label: "Domain Found & Verified?", type: "info" },
+                  { id: "resolve", label: "Resolve Tenant → Set TenantId", type: "success" },
+                  { id: "fallback", label: "Fallback: ?code=CODE", type: "danger" },
+            ],
+            connections: [
+                  { from: "req", to: "host" },
+                  { from: "host", to: "lookup" },
+                  { from: "lookup", to: "found" },
+                  { from: "found", to: "resolve", label: "Yes" },
+                  { from: "found", to: "fallback", label: "No" },
+            ],
+      },
+
+      // DNS Verification
+      {
+            type: "heading", level: 3,
+            titleKey: "features.multiTenancy.domainDnsTitle", id: "dns-verification",
+      },
+      { type: "paragraph", contentKey: "features.multiTenancy.domainDnsIntro" },
+      {
+            type: "flowchart",
+            title: "Custom Domain Verification Flow",
+            direction: "vertical",
+            nodes: [
+                  { id: "add", label: "Admin adds custom domain", type: "default" },
+                  { id: "token", label: "System generates verification token", type: "primary" },
+                  { id: "dns", label: "Admin configures DNS records", type: "warning" },
+                  { id: "cname", label: "CNAME: domain → {CnameTarget}", type: "info" },
+                  { id: "txt", label: "TXT: {VerificationPrefix}.{domain}", type: "info" },
+                  { id: "verify", label: "Click 'Verify' → DNS lookup", type: "success" },
+            ],
+            connections: [
+                  { from: "add", to: "token" },
+                  { from: "token", to: "dns" },
+                  { from: "dns", to: "cname" },
+                  { from: "dns", to: "txt" },
+                  { from: "cname", to: "verify" },
+                  { from: "txt", to: "verify" },
+            ],
+      },
+      {
+            type: "info",
+            variant: "note",
+            contentKey: "features.multiTenancy.domainDnsNote",
+      },
+
+      // Configurable Platform Domain
+      {
+            type: "heading", level: 3,
+            titleKey: "features.multiTenancy.domainConfigTitle", id: "configurable-domain",
+      },
+      { type: "paragraph", contentKey: "features.multiTenancy.domainConfigIntro" },
+      {
+            type: "code",
+            language: "json",
+            filename: "appsettings.json — Tenancy Section",
+            code: `// All domain-related values are configurable — zero hardcoded strings.
+// Change these when rebranding or deploying to a different domain.
+{
+  "Tenancy": {
+    "PlatformDomain": "nexora.com",       // Auto-subdomains: {code}.nexora.com
+    "CnameTarget": "app.nexora.com",      // DNS instruction: CNAME → this
+    "VerificationPrefix": "_nexora-verify",// TXT record: _nexora-verify.{domain}
+    "TokenPrefix": "nxr_"                 // Token format: nxr_base64...
+  }
+}`,
+            highlightLines: [4, 5, 6, 7],
+      },
+      {
+            type: "code",
+            language: "csharp",
+            filename: "TenancySettings.cs — Configuration POCO",
+            code: `public sealed class TenancySettings
+{
+    public const string SectionName = "Tenancy";
+
+    public string PlatformDomain { get; init; } = "nexora.com";
+    public string CnameTarget { get; init; } = "app.nexora.com";
+    public string VerificationPrefix { get; init; } = "_nexora-verify";
+    public string TokenPrefix { get; init; } = "nxr_";
+}`,
+            highlightLines: [5, 6, 7, 8],
+      },
+      {
+            type: "table",
+            headers: ["Setting", "Purpose", "Default", "Example Override"],
+            rows: [
+                  ["PlatformDomain", "Base domain for auto-generated tenant subdomains", "nexora.com", "myapp.io"],
+                  ["CnameTarget", "Target shown in DNS CNAME instructions", "app.nexora.com", "app.myapp.io"],
+                  ["VerificationPrefix", "TXT record hostname prefix for domain ownership verification", "_nexora-verify", "_myapp-verify"],
+                  ["TokenPrefix", "Prefix for verification token strings", "nxr_", "ma_"],
+            ],
+      },
+      {
+            type: "info",
+            variant: "tip",
+            contentKey: "features.multiTenancy.domainConfigTip",
+      },
+
+      // Domain API Endpoints
+      {
+            type: "heading", level: 3,
+            titleKey: "features.multiTenancy.domainEndpointsTitle", id: "domain-endpoints",
+      },
+      {
+            type: "api-table",
+            endpoints: [
+                  { method: "GET", path: "/api/v1/tenants/{id}/domains", descriptionKey: "List all domains + cnameTarget + verificationPrefix", auth: "tenants.view" },
+                  { method: "POST", path: "/api/v1/tenants/{id}/domains", descriptionKey: "Add custom domain (requires feature: Tenancy.CustomDomain.Enabled)", auth: "tenants.update" },
+                  { method: "DELETE", path: "/api/v1/tenants/{id}/domains/{domainId}", descriptionKey: "Remove custom domain (auto domains cannot be removed)", auth: "tenants.update" },
+                  { method: "POST", path: "/api/v1/tenants/{id}/domains/{domainId}/verify", descriptionKey: "Trigger DNS verification for a custom domain", auth: "tenants.update" },
+                  { method: "PUT", path: "/api/v1/tenants/{id}/domains/{domainId}/set-primary", descriptionKey: "Set a domain as the tenant's primary domain", auth: "tenants.update" },
+            ],
+      },
 ];
 
 registerPage({
@@ -297,5 +447,6 @@ registerPage({
       order: 2,
       sections,
       relatedSlugs: ["features/authentication", "features/role-permissions"],
-      lastUpdated: "2026-02-20",
+      lastUpdated: "2026-03-16",
 });
+
