@@ -8,6 +8,7 @@ import { Logo } from "@core/ui/logo";
 import { NavRenderer } from "./nav-renderer";
 import { UserCard } from "./user-card";
 import { LogoutButton } from "./logout-button";
+import { useBrandedAppName } from "@core/hooks/use-branded-app-name";
 
 interface SidebarProps {
   open: boolean;
@@ -22,6 +23,7 @@ interface SidebarProps {
  */
 export function Sidebar({ open, onOpenChange, isModern = false }: SidebarProps) {
   const { t, direction } = useI18n();
+  const appName = useBrandedAppName();
 
   return (
     <>
@@ -39,7 +41,7 @@ export function Sidebar({ open, onOpenChange, isModern = false }: SidebarProps) 
               <Logo size="sm" className="text-primary-foreground" />
             </div>
             <div className={cn(isModern && "sidebar-text")}>
-              <h1 className="text-lg font-bold text-sidebar-foreground">{t("app.title")}</h1>
+              <h1 className="text-lg font-bold text-sidebar-foreground">{appName}</h1>
               <p className="flex items-center text-xs text-sidebar-foreground/60">
                 <Logo size="xs" className="me-1" />
                 {isModern ? t("app.modern") : t("app.default")}

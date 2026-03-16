@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import type React from "react";
 import { useState, useMemo } from "react";
@@ -27,6 +27,7 @@ import { UserProfileDropdown } from "@core/ui/user-profile-dropdown";
 import { Footer } from "@core/ui/layout/shared/footer";
 import { cn } from "@core/common/utils";
 import { NotificationBell } from "@core/ui/notification";
+import { useBrandedAppName } from "@core/hooks/use-branded-app-name";
 
 interface InboxLayoutProps {
   children: React.ReactNode;
@@ -46,6 +47,7 @@ interface InboxLayoutProps {
  */
 export function InboxLayout({ children }: InboxLayoutProps) {
   const { direction, t } = useI18n();
+  const appName = useBrandedAppName();
   const settings = useSettings();
   const styles = useLayoutStyles();
   const pathname = usePathname();
@@ -107,7 +109,7 @@ export function InboxLayout({ children }: InboxLayoutProps) {
           </Button>
           <Logo size="sm" />
           <span className="hidden text-sm font-semibold text-foreground sm:block">
-            {t("app.title")}
+            {appName}
           </span>
         </div>
         <div className="flex items-center gap-2">

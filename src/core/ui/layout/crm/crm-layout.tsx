@@ -20,6 +20,7 @@ import { UserCard } from "@core/ui/layout/shared/user-card";
 import { LogoutButton } from "@core/ui/layout/shared/logout-button";
 import { cn } from "@core/common/utils";
 import { NotificationBell } from "@core/ui/notification";
+import { useBrandedAppName } from "@core/hooks/use-branded-app-name";
 
 interface CRMLayoutProps {
   children: React.ReactNode;
@@ -39,6 +40,7 @@ interface CRMLayoutProps {
  */
 export function CRMLayout({ children }: CRMLayoutProps) {
   const { direction, t } = useI18n();
+  const appName = useBrandedAppName();
   const settings = useSettings();
   const styles = useLayoutStyles();
   const pathname = usePathname();
@@ -71,7 +73,7 @@ export function CRMLayout({ children }: CRMLayoutProps) {
             </Button>
             <Logo size="sm" />
             <span className="hidden text-sm font-bold text-foreground md:block">
-              {t("app.title")}
+              {appName}
             </span>
           </div>
 

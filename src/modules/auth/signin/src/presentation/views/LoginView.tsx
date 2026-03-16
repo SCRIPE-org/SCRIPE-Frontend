@@ -27,6 +27,7 @@ import { TwoFactorForm } from "../components/TwoFactorForm";
 import { SsoProviderButtons } from "../components/SsoProviderButtons";
 import { useSsoProviders } from "../../../../hooks/useSsoProviders";
 import { useTenantResolution } from "../../../../hooks/useTenantResolution";
+import { TenantSuspendedView, TenantNotFoundView } from "./TenantStatusView";
 
 export function LoginView() {
   const vm = useLoginViewModel();
@@ -54,6 +55,13 @@ export function LoginView() {
     vm.checkAndRedirect();
   }, [vm.hasHydrated, vm.checkAndRedirect]);
 
+  // Wire resolved tenant ID into the login viewmodel for tenant-scoped login
+  useEffect(() => {
+    if (tenantId) {
+      vm.setTenantId(tenantId);
+    }
+  }, [tenantId, vm.setTenantId]);
+
   // Dynamic document title
   useEffect(() => {
     if (typeof document !== "undefined") {
@@ -76,12 +84,49 @@ export function LoginView() {
     link.href = branding.faviconUrl;
   }, [branding?.faviconUrl]);
 
-  if (!vm.hasHydrated || vm.isRedirecting) {
+  // ── Determine if we expect a tenant domain ──
+  const isTenantExpected = typeof window !== "undefined" && (
+    new URLSearchParams(window.location.search).get("_tenant") !== null ||
+    (!window.location.hostname.startsWith("localhost") &&
+     !window.location.hostname.startsWith("127.") &&
+     !window.location.hostname.startsWith("0.0.0.0") &&
+     window.location.hostname !== "[::1]")
+  );
+
+  // ── Premium loading gate ──
+  // When we expect a tenant, hold the entire UI until branding resolves.
+  // This prevents the "flash of default branding" (NEXORA → SYAF).
+  // Like Shopify, Vercel, Slack: never show another brand during loading.
+  if (!vm.hasHydrated || vm.isRedirecting || (isTenantExpected && isTenantLoading)) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
-        <LoadingSpinner size="md" showText={false} />
+        <div className="flex flex-col items-center gap-6">
+          {/* Subtle pulsing dot loader — brand-neutral */}
+          <div className="flex items-center gap-2">
+            <div className="h-2 w-2 animate-pulse rounded-full bg-muted-foreground/40" style={{ animationDelay: "0ms" }} />
+            <div className="h-2 w-2 animate-pulse rounded-full bg-muted-foreground/40" style={{ animationDelay: "150ms" }} />
+            <div className="h-2 w-2 animate-pulse rounded-full bg-muted-foreground/40" style={{ animationDelay: "300ms" }} />
+          </div>
+        </div>
       </div>
     );
+  }
+
+  // ── Tenant status routing ──
+  // Suspended or canceled tenant → branded status page
+  if (branding?.status === "suspended" || branding?.status === "canceled") {
+    return <TenantSuspendedView branding={branding} />;
+  }
+
+  // Non-existent tenant domain (resolved but no branding, and we expected a tenant)
+  // Only show not-found when we're on a tenant subdomain that didn't resolve
+  if (!isTenantLoading && !isResolved && typeof window !== "undefined") {
+    const hostname = window.location.hostname;
+    const devCode = new URLSearchParams(window.location.search).get("_tenant");
+    const isTenantExpected = devCode !== null || (!hostname.startsWith("localhost") && !hostname.startsWith("127."));
+    if (isTenantExpected) {
+      return <TenantNotFoundView />;
+    }
   }
 
   return (

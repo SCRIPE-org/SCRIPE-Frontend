@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSettings } from "@core/providers/settings-provider";
+import { TenantBrandingProvider } from "@core/providers/tenant-branding-provider";
 import { TenantContextBanner } from "@core/ui/layout/shared/tenant-context-banner";
 
 // Default layout — statically imported (always needed, no lazy-load delay)
@@ -310,9 +311,9 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   }; // end renderLayout
 
   return (
-    <>
+    <TenantBrandingProvider>
       <TenantContextBanner />
       {renderLayout()}
-    </>
+    </TenantBrandingProvider>
   );
 }

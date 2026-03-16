@@ -8,6 +8,7 @@ import { Logo } from "@core/ui/logo";
 import { NavRenderer } from "@core/ui/layout/shared/nav-renderer";
 import { UserCard } from "@core/ui/layout/shared/user-card";
 import { LogoutButton } from "@core/ui/layout/shared/logout-button";
+import { useBrandedAppName } from "@core/hooks/use-branded-app-name";
 
 interface ElegantSidebarProps {
   open: boolean;
@@ -28,6 +29,7 @@ interface ElegantSidebarProps {
  */
 export function ElegantSidebar({ open, onOpenChange }: ElegantSidebarProps) {
   const { t, direction } = useI18n();
+  const appName = useBrandedAppName();
 
   return (
     <aside
@@ -66,7 +68,7 @@ export function ElegantSidebar({ open, onOpenChange }: ElegantSidebarProps) {
           </div>
           <div>
             <h1 className="text-sm font-semibold tracking-wide text-sidebar-foreground">
-              {t("app.title")}
+              {appName}
             </h1>
             <p className="text-[10px] uppercase tracking-wider text-sidebar-foreground/40">
               {t("app.version")}

@@ -13,6 +13,7 @@ import { validateForm, VALIDATION_SETS } from "@core/common/validation";
 export interface LoginRequestData {
   username: string;
   password: string;
+  tenantId?: string;
   deviceInfo?: string;
 }
 
@@ -42,11 +43,13 @@ function getDeviceInfo(): string {
 export class LoginRequest {
   public readonly username: string;
   public readonly password: string;
+  public readonly tenantId?: string;
   public readonly deviceInfo: string;
 
   constructor(data: LoginRequestData) {
     this.username = data.username;
     this.password = data.password;
+    this.tenantId = data.tenantId;
     // Auto-populate device info if not provided
     this.deviceInfo = data.deviceInfo || getDeviceInfo();
   }

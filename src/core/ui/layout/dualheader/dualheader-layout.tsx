@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import type React from "react";
 import { useState, useMemo } from "react";
@@ -19,6 +19,7 @@ import { UserCard } from "@core/ui/layout/shared/user-card";
 import { LogoutButton } from "@core/ui/layout/shared/logout-button";
 import { cn } from "@core/common/utils";
 import { NotificationBell } from "@core/ui/notification";
+import { useBrandedAppName } from "@core/hooks/use-branded-app-name";
 
 interface DualHeaderLayoutProps {
   children: React.ReactNode;
@@ -37,6 +38,7 @@ interface DualHeaderLayoutProps {
  */
 export function DualHeaderLayout({ children }: DualHeaderLayoutProps) {
   const { direction, t } = useI18n();
+  const appName = useBrandedAppName();
   const settings = useSettings();
   const styles = useLayoutStyles();
   const pathname = usePathname();
@@ -82,7 +84,7 @@ export function DualHeaderLayout({ children }: DualHeaderLayoutProps) {
             </Button>
             <Logo size="sm" />
             <span className="hidden text-sm font-bold text-foreground md:block">
-              {t("app.title")}
+              {appName}
             </span>
           </div>
           <div className="flex items-center gap-2">

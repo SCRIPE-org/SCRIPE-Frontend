@@ -21,6 +21,7 @@
 export interface LoginRequestJson {
   username: string;
   password: string;
+  tenantId?: string;
   deviceInfo?: string;
 }
 
@@ -39,17 +40,19 @@ export class LoginRequestModel {
   constructor(
     public readonly username: string,
     public readonly password: string,
+    public readonly tenantId?: string,
     public readonly deviceInfo?: string
   ) { }
 
   static fromJson(json: LoginRequestJson): LoginRequestModel {
-    return new LoginRequestModel(json.username, json.password, json.deviceInfo);
+    return new LoginRequestModel(json.username, json.password, json.tenantId, json.deviceInfo);
   }
 
   toJson(): LoginRequestJson {
     return {
       username: this.username,
       password: this.password,
+      tenantId: this.tenantId,
       deviceInfo: this.deviceInfo,
     };
   }

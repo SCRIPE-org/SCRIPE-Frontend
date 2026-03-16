@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import type React from "react";
 import { useMemo } from "react";
@@ -14,6 +14,7 @@ import { UserProfileDropdown } from "@core/ui/user-profile-dropdown";
 import { Footer } from "@core/ui/layout/shared/footer";
 import { cn } from "@core/common/utils";
 import { NotificationBell } from "@core/ui/notification";
+import { useBrandedAppName } from "@core/hooks/use-branded-app-name";
 
 interface HubLayoutProps {
   children: React.ReactNode;
@@ -31,6 +32,7 @@ interface HubLayoutProps {
  */
 export function HubLayout({ children }: HubLayoutProps) {
   const { direction, t } = useI18n();
+  const appName = useBrandedAppName();
   const settings = useSettings();
   const styles = useLayoutStyles();
   const pathname = usePathname();
@@ -67,7 +69,7 @@ export function HubLayout({ children }: HubLayoutProps) {
       >
         <div className="flex items-center gap-3">
           <Logo size="sm" />
-          <h1 className="text-sm font-bold text-foreground">{t("app.title")}</h1>
+          <h1 className="text-sm font-bold text-foreground">{appName}</h1>
         </div>
         <div className="flex items-center gap-2">
           <LanguageSwitcher />

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import type React from "react";
 import { useState, useMemo } from "react";
@@ -19,6 +19,7 @@ import { UserCard } from "@core/ui/layout/shared/user-card";
 import { LogoutButton } from "@core/ui/layout/shared/logout-button";
 import { cn } from "@core/common/utils";
 import { NotificationBell } from "@core/ui/notification";
+import { useBrandedAppName } from "@core/hooks/use-branded-app-name";
 
 interface MapLayoutProps {
   children: React.ReactNode;
@@ -37,6 +38,7 @@ interface MapLayoutProps {
  */
 export function MapLayout({ children }: MapLayoutProps) {
   const { direction, t } = useI18n();
+  const appName = useBrandedAppName();
   const settings = useSettings();
   const styles = useLayoutStyles();
   const pathname = usePathname();
@@ -66,7 +68,7 @@ export function MapLayout({ children }: MapLayoutProps) {
           </Button>
           <div className="hidden items-center gap-2 rounded-lg border border-border bg-card/90 px-3 py-2 shadow-lg backdrop-blur-xl sm:flex">
             <Logo size="sm" />
-            <span className="text-sm font-bold text-foreground">{t("app.title")}</span>
+            <span className="text-sm font-bold text-foreground">{appName}</span>
           </div>
         </div>
 

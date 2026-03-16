@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import type React from "react";
 import { useState, useMemo } from "react";
@@ -16,6 +16,7 @@ import { UserProfileDropdown } from "@core/ui/user-profile-dropdown";
 import { Footer } from "@core/ui/layout/shared/footer";
 import { cn } from "@core/common/utils";
 import { NotificationBell } from "@core/ui/notification";
+import { useBrandedAppName } from "@core/hooks/use-branded-app-name";
 
 interface OverlayLayoutProps {
   children: React.ReactNode;
@@ -34,6 +35,7 @@ interface OverlayLayoutProps {
  */
 export function OverlayLayout({ children }: OverlayLayoutProps) {
   const { direction, t } = useI18n();
+  const appName = useBrandedAppName();
   const settings = useSettings();
   const styles = useLayoutStyles();
   const pathname = usePathname();
@@ -88,7 +90,7 @@ export function OverlayLayout({ children }: OverlayLayoutProps) {
         <div className="flex items-center gap-3">
           <Logo size="sm" />
           <span className="hidden text-sm font-bold text-foreground sm:block">
-            {t("app.title")}
+            {appName}
           </span>
         </div>
 
@@ -126,7 +128,7 @@ export function OverlayLayout({ children }: OverlayLayoutProps) {
           <div className="flex h-14 items-center justify-between border-b border-border/30 px-6">
             <div className="flex items-center gap-3">
               <Logo size="sm" />
-              <span className="text-sm font-bold text-foreground">{t("app.title")}</span>
+              <span className="text-sm font-bold text-foreground">{appName}</span>
             </div>
             <Button
               variant="ghost"

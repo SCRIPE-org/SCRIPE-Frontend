@@ -8,6 +8,7 @@ import { Logo } from "@core/ui/logo";
 import { NavRenderer } from "@core/ui/layout/shared/nav-renderer";
 import { UserCard } from "@core/ui/layout/shared/user-card";
 import { LogoutButton } from "@core/ui/layout/shared/logout-button";
+import { useBrandedAppName } from "@core/hooks/use-branded-app-name";
 
 interface CompactSidebarProps {
   open: boolean;
@@ -26,6 +27,7 @@ interface CompactSidebarProps {
  */
 export function CompactSidebar({ open, onOpenChange }: CompactSidebarProps) {
   const { t, direction } = useI18n();
+  const appName = useBrandedAppName();
 
   return (
     <aside
@@ -48,7 +50,7 @@ export function CompactSidebar({ open, onOpenChange }: CompactSidebarProps) {
           <div className="flex h-7 w-7 items-center justify-center rounded-md bg-primary">
             <Logo size="xs" className="text-primary-foreground" />
           </div>
-          <h1 className="truncate text-xs font-bold text-sidebar-foreground">{t("app.title")}</h1>
+          <h1 className="truncate text-xs font-bold text-sidebar-foreground">{appName}</h1>
         </div>
 
         <Button

@@ -11,6 +11,7 @@ import { NavRenderer } from "@core/ui/layout/shared/nav-renderer";
 import { UserCard } from "@core/ui/layout/shared/user-card";
 import { LogoutButton } from "@core/ui/layout/shared/logout-button";
 import { useDynamicNavigation } from "@core/ui/navigation/dynamic-navigation";
+import { useBrandedAppName } from "@core/hooks/use-branded-app-name";
 
 interface ClassicSidebarProps {
   open: boolean;
@@ -30,6 +31,7 @@ interface ClassicSidebarProps {
  */
 export function ClassicSidebar({ open, onOpenChange, collapsible }: ClassicSidebarProps) {
   const { t, direction } = useI18n();
+  const appName = useBrandedAppName();
   const [searchQuery, setSearchQuery] = useState("");
   const allItems = useDynamicNavigation();
 
@@ -80,7 +82,7 @@ export function ClassicSidebar({ open, onOpenChange, collapsible }: ClassicSideb
             </div>
             <div>
               <h1 className="text-sm font-bold leading-tight text-sidebar-foreground">
-                {t("app.title")}
+                {appName}
               </h1>
               <p className="text-[10px] leading-tight text-sidebar-foreground/50">
                 {t("app.version")}

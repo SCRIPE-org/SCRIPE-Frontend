@@ -30,6 +30,8 @@ export interface TenantBranding {
       loginHeadline: string | null;
       loginSubtitle: string | null;
       identityProviderMode: string; // "inherit" | "custom"
+      status: string | null;        // "suspended" | "canceled" | null (active)
+      statusReason: string | null;  // reason for suspension/cancellation
 }
 
 /** Hook return value */

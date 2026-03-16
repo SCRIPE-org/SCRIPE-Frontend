@@ -15,11 +15,11 @@ export function useAuthLogin() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ username, password }: { username: string; password: string }) => {
-      const request = AuthMapper.loginRequestFromJson({ username, password });
+    mutationFn: async ({ username, password, tenantId, tenantCode }: { username: string; password: string; tenantId?: string; tenantCode?: string }) => {
+      const request = AuthMapper.loginRequestFromJson({ username, password, tenantId });
       return authRepository.login(request);
     },
-    onSuccess: async (user) => {
+    onSuccess: async (user, variables) => {
       // 1. Set user in store with permissions and roles
       // This triggers isAuthenticated = true and populates permissions
       setAuth(
@@ -28,17 +28,22 @@ export function useAuthLogin() {
         [] // Roles - can be populated if needed
       );
 
-      // 2. Show success toast
+      // 2. Persist tenant code for tenant-aware logout redirect
+      if (variables.tenantCode) {
+        useAppStore.getState().setTenantCode(variables.tenantCode);
+      }
+
+      // 3. Show success toast
       operationSuccess("Login successful!");
 
-      // 3. Fetch navigation data immediately after login (force refresh)
+      // 4. Fetch navigation data immediately after login (force refresh)
       try {
         await refreshNavigation(false, true); // skipLoading=false, forceRefresh=true
       } catch (error) {
         appLogger.error("Failed to fetch navigation after login:", error);
       }
 
-      // 4. Invalidate any cached queries to ensure fresh data on protected pages
+      // 5. Invalidate any cached queries to ensure fresh data on protected pages
       queryClient.invalidateQueries();
     },
     onError: (error: Error) => {

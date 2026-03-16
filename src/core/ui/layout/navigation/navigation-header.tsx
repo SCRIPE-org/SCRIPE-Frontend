@@ -14,6 +14,7 @@ import { cn } from "@core/common/utils";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { useRouter } from "next/navigation";
+import { useBrandedAppName } from "@core/hooks/use-branded-app-name";
 
 // Lazy-load secondary header components (dropdowns/popovers — not LCP-critical)
 const UserProfileDropdown = dynamic(() => import("@core/ui/user-profile-dropdown").then(m => ({ default: m.UserProfileDropdown })), { ssr: false });
@@ -39,6 +40,7 @@ export function NavigationHeader({
   isMobile,
 }: NavigationHeaderProps) {
   const { language, direction, t } = useI18n();
+  const appName = useBrandedAppName();
   const user = useAppStore((state) => state.user);
   const { colorTheme, cardStyle } = useSettings();
   const { getAnimationClass } = useLayoutStyles();
@@ -148,7 +150,7 @@ export function NavigationHeader({
           {/* App Title */}
           <div className="flex items-center">
             <h1 className="bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-lg font-semibold text-transparent">
-              {t("app.title")}
+              {appName}
             </h1>
           </div>
         </div>

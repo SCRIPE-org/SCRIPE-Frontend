@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import type React from "react";
 import { useState, useMemo } from "react";
@@ -16,6 +16,7 @@ import { LanguageSwitcher, ThemeSwitcher } from "@core/ui/layout/common";
 import { UserProfileDropdown } from "@core/ui/user-profile-dropdown";
 import { cn } from "@core/common/utils";
 import { NotificationBell } from "@core/ui/notification";
+import { useBrandedAppName } from "@core/hooks/use-branded-app-name";
 
 interface TerminalLayoutProps {
   children: React.ReactNode;
@@ -35,6 +36,7 @@ interface TerminalLayoutProps {
  */
 export function TerminalLayout({ children }: TerminalLayoutProps) {
   const { direction, t } = useI18n();
+  const appName = useBrandedAppName();
   const settings = useSettings();
   const styles = useLayoutStyles();
   const pathname = usePathname();
@@ -75,7 +77,7 @@ export function TerminalLayout({ children }: TerminalLayoutProps) {
         <div className="flex flex-1 items-center justify-center gap-2">
           <TerminalIcon className="h-3 w-3 text-[#8b949e]" />
           <span className="text-xs text-[#8b949e]">
-            {t("app.title")}  {t("layout.terminal") || "terminal"}
+            {appName}  {t("layout.terminal") || "terminal"}
           </span>
         </div>
         <div className="flex items-center gap-1">
@@ -97,7 +99,7 @@ export function TerminalLayout({ children }: TerminalLayoutProps) {
         <aside className="hidden w-52 shrink-0 flex-col border-e border-[#30363d] bg-[#0d1117] lg:flex">
           <div className="border-b border-[#30363d] px-3 py-2">
             <div className="flex items-center gap-1.5">
-              <span className="text-xs text-[#27c93f]">â–¶</span>
+              <span className="text-xs text-[#27c93f]">▶</span>
               <span className="text-xs text-[#8b949e]">~/navigation</span>
             </div>
           </div>

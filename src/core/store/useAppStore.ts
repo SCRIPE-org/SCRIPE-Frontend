@@ -26,6 +26,10 @@ interface AppState {
   setAuth: (user: User, permissions: PermissionCode[], roles: AdminRole[]) => void;
   logout: () => void;
 
+  // Tenant context (for tenant-aware logout redirect)
+  tenantCode: string | null;
+  setTenantCode: (code: string | null) => void;
+
   // Hydration State
   _hasHydrated: boolean;
   setHasHydrated: (state: boolean) => void;
@@ -73,8 +77,13 @@ export const useAppStore = create<AppState>()(
           permissions: [],
           roles: [],
           restrictedFields: {},
+          tenantCode: null,
         });
       },
+
+      // Tenant context
+      tenantCode: null,
+      setTenantCode: (code) => set({ tenantCode: code }),
 
       // Hydration State
       _hasHydrated: false,
@@ -91,6 +100,7 @@ export const useAppStore = create<AppState>()(
         permissions: state.permissions,
         roles: state.roles,
         restrictedFields: state.restrictedFields,
+        tenantCode: state.tenantCode,
       }),
       onRehydrateStorage: () => (state) => {
         // With in-memory tokens, the access token is ALWAYS null after page reload.

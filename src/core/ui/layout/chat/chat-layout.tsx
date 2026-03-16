@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import type React from "react";
 import { useState, useMemo } from "react";
@@ -16,6 +16,7 @@ import { LanguageSwitcher, ThemeSwitcher } from "@core/ui/layout/common";
 import { UserProfileDropdown } from "@core/ui/user-profile-dropdown";
 import { cn } from "@core/common/utils";
 import { NotificationBell } from "@core/ui/notification";
+import { useBrandedAppName } from "@core/hooks/use-branded-app-name";
 
 interface ChatLayoutProps {
   children: React.ReactNode;
@@ -34,6 +35,7 @@ interface ChatLayoutProps {
  */
 export function ChatLayout({ children }: ChatLayoutProps) {
   const { direction, t } = useI18n();
+  const appName = useBrandedAppName();
   const settings = useSettings();
   const styles = useLayoutStyles();
   const pathname = usePathname();
@@ -107,7 +109,7 @@ export function ChatLayout({ children }: ChatLayoutProps) {
       >
         <div className="flex items-center gap-2 border-b border-border px-3 py-3">
           <Logo size="sm" />
-          <span className="truncate text-sm font-bold text-foreground">{t("app.title")}</span>
+          <span className="truncate text-sm font-bold text-foreground">{appName}</span>
         </div>
         {ChannelList}
         <div className="border-t border-border p-2">

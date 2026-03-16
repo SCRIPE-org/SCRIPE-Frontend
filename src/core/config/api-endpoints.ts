@@ -139,6 +139,7 @@ export const API_ENDPOINTS = {
     CREATION_PERMISSIONS: `${V1}/Tenants/creation-permissions`,
     SETTINGS: (id: string) => `${V1}/Tenants/${id}/settings`,
     MY_SETTINGS: `${V1}/Tenants/my/settings`,
+    MY_BRANDING: `${V1}/Tenants/my/branding`,
     PERMISSIONS: (id: string) => `${V1}/Tenants/${id}/permissions`,
     // ── Domain Management ──
     DOMAINS: (id: string) => `${V1}/Tenants/${id}/domains`,

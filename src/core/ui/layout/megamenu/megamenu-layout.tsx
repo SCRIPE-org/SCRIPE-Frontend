@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import type React from "react";
 import { useState, useMemo, useRef, useEffect } from "react";
@@ -19,6 +19,7 @@ import { UserCard } from "@core/ui/layout/shared/user-card";
 import { LogoutButton } from "@core/ui/layout/shared/logout-button";
 import { cn } from "@core/common/utils";
 import { NotificationBell } from "@core/ui/notification";
+import { useBrandedAppName } from "@core/hooks/use-branded-app-name";
 
 interface MegaMenuLayoutProps {
   children: React.ReactNode;
@@ -29,14 +30,15 @@ interface MegaMenuLayoutProps {
  *
  * Structure:
  * - Horizontal top nav with module/group items
- * - Hover/click on item â†’ mega dropdown panel with multi-column links
+ * - Hover/click on item → mega dropdown panel with multi-column links
  * - Full-width content below
- * - Mobile: hamburger â†’ accordion-style expandable sections
+ * - Mobile: hamburger → accordion-style expandable sections
  *
  * Inspired by Salesforce, SAP Fiori, enterprise portals
  */
 export function MegaMenuLayout({ children }: MegaMenuLayoutProps) {
   const { direction, t } = useI18n();
+  const appName = useBrandedAppName();
   const settings = useSettings();
   const styles = useLayoutStyles();
   const pathname = usePathname();
@@ -84,7 +86,7 @@ export function MegaMenuLayout({ children }: MegaMenuLayoutProps) {
           <div className="flex items-center gap-4">
             <Logo size="sm" />
             <span className="hidden text-sm font-bold text-foreground md:block">
-              {t("app.title")}
+              {appName}
             </span>
           </div>
 

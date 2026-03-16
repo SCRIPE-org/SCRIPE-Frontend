@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { Menu, X, Home } from "lucide-react";
@@ -16,6 +16,7 @@ import { isNavigationItemActive } from "@core/config/navigation";
 import { MinimalDropdown } from "./minimal-dropdown";
 import { NavRenderer } from "@core/ui/layout/shared/nav-renderer";
 import { NotificationBell } from "@core/ui/notification";
+import { useBrandedAppName } from "@core/hooks/use-branded-app-name";
 
 interface MinimalHeaderProps { }
 
@@ -27,10 +28,11 @@ interface MinimalHeaderProps { }
  * - Horizontal nav items with dropdown menus for those with children
  * - Simple text links for items without children
  * - Search, lang, theme, profile on right
- * - Mobile: hamburger â†’ full-screen overlay menu
+ * - Mobile: hamburger → full-screen overlay menu
  */
 export function MinimalHeader({ }: MinimalHeaderProps) {
   const { t } = useI18n();
+  const appName = useBrandedAppName();
   const settings = useSettings();
   const pathname = usePathname();
   const navigation = useDynamicNavigation();
@@ -53,7 +55,7 @@ export function MinimalHeader({ }: MinimalHeaderProps) {
                 <Logo size="sm" className="text-primary-foreground" />
               </div>
               <span className="hidden text-sm font-bold text-foreground sm:block">
-                {t("app.title")}
+                {appName}
               </span>
             </Link>
 
@@ -122,7 +124,7 @@ export function MinimalHeader({ }: MinimalHeaderProps) {
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
                 <Logo size="sm" className="text-primary-foreground" />
               </div>
-              <span className="text-sm font-bold">{t("app.title")}</span>
+              <span className="text-sm font-bold">{appName}</span>
             </Link>
             <Button
               variant="ghost"

@@ -1,5 +1,7 @@
 "use client";
 
+import { useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
 import { Button } from "@core/ui/button";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -15,17 +17,32 @@ interface LogoutButtonProps {
 }
 
 /**
- * Shared logout button that uses `useAppStore.logout()` directly.
+ * Shared logout button with tenant-aware redirect.
+ * Reads tenantCode from the store before clearing auth state,
+ * then redirects to the correct tenant login page.
  * No `@modules/auth` import — no module boundary violation.
  */
 export function LogoutButton({ iconOnly = false, className, textClassName }: LogoutButtonProps) {
   const { t } = useI18n();
   const logout = useAppStore((state) => state.logout);
+  const router = useRouter();
+
+  const handleLogout = useCallback(() => {
+    // Capture tenant code BEFORE logout clears it
+    const tenantCode = useAppStore.getState().tenantCode;
+    logout();
+    // Redirect to tenant-aware login page
+    if (tenantCode) {
+      router.push(`/login?_tenant=${tenantCode}`);
+    } else {
+      router.push("/login");
+    }
+  }, [logout, router]);
 
   return (
     <Button
       variant="ghost"
-      onClick={logout}
+      onClick={handleLogout}
       className={cn(
         "w-full justify-start gap-3 text-sidebar-foreground/70",
         "h-auto rounded-lg px-3 py-2 hover:bg-destructive/10 hover:text-destructive",

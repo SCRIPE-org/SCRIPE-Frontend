@@ -67,7 +67,12 @@ export class AuthRepository implements IAuthRepository {
   constructor(private readonly service: IAuthService) { }
 
   async login(credentials: LoginRequest): Promise<User> {
-    const requestModel = new LoginRequestModel(credentials.username, credentials.password);
+    const requestModel = new LoginRequestModel(
+      credentials.username,
+      credentials.password,
+      credentials.tenantId,
+      credentials.deviceInfo
+    );
     const responseModel = await this.service.login(requestModel);
 
     appLogger.auth("Login response received");

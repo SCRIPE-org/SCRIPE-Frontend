@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import type React from "react";
 import { useState, useMemo } from "react";
@@ -19,6 +19,7 @@ import { UserCard } from "@core/ui/layout/shared/user-card";
 import { LogoutButton } from "@core/ui/layout/shared/logout-button";
 import { cn } from "@core/common/utils";
 import { NotificationBell } from "@core/ui/notification";
+import { useBrandedAppName } from "@core/hooks/use-branded-app-name";
 
 interface BottomBarLayoutProps {
   children: React.ReactNode;
@@ -37,6 +38,7 @@ interface BottomBarLayoutProps {
  */
 export function BottomBarLayout({ children }: BottomBarLayoutProps) {
   const { direction, t } = useI18n();
+  const appName = useBrandedAppName();
   const settings = useSettings();
   const styles = useLayoutStyles();
   const pathname = usePathname();
@@ -81,7 +83,7 @@ export function BottomBarLayout({ children }: BottomBarLayoutProps) {
         <div className="flex items-center gap-3">
           <Logo size="sm" />
           <h1 className="hidden text-sm font-semibold text-foreground sm:block">
-            {t("app.title")}
+            {appName}
           </h1>
         </div>
         <div className="flex items-center gap-2">

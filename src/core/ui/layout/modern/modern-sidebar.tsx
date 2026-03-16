@@ -14,6 +14,7 @@ import { LogoutButton } from "@core/ui/layout/shared/logout-button";
 import { useDynamicNavigation } from "@core/ui/navigation/dynamic-navigation";
 import { isNavigationItemActive } from "@core/config/navigation";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@core/ui/tooltip";
+import { useBrandedAppName } from "@core/hooks/use-branded-app-name";
 
 interface ModernSidebarProps {
   open: boolean;
@@ -42,6 +43,7 @@ export function ModernSidebar({
   onPinnedChange,
 }: ModernSidebarProps) {
   const { t, direction } = useI18n();
+  const appName = useBrandedAppName();
   const pathname = usePathname();
   const navigation = useDynamicNavigation();
 
@@ -150,7 +152,7 @@ export function ModernSidebar({
         >
           {/* Panel header */}
           <div className="flex shrink-0 items-center justify-between border-b border-sidebar-border/20 px-3 py-3.5">
-            <h2 className="truncate text-xs font-bold text-sidebar-foreground">{t("app.title")}</h2>
+            <h2 className="truncate text-xs font-bold text-sidebar-foreground">{appName}</h2>
             <div className="flex items-center gap-1">
               {/* Pin toggle */}
               <Button

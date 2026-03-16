@@ -35,6 +35,7 @@ export function useLoginViewModel() {
   const [twoFactorCode, setTwoFactorCode] = useState("");
   const [useBackupCode, setUseBackupCode] = useState(false);
   const [isVerifying2FA, setIsVerifying2FA] = useState(false);
+  const [tenantId, setTenantId] = useState<string | undefined>(undefined);
 
   const loginMutation = useAuthLogin();
   const isAuthenticated = useAppStore((state) => state.isAuthenticated);
@@ -111,9 +112,16 @@ export function useLoginViewModel() {
     setError("");
 
     try {
+      // Extract tenant code from URL for tenant-aware logout redirect
+      const devTenantCode = typeof window !== "undefined"
+        ? new URLSearchParams(window.location.search).get("_tenant") ?? undefined
+        : undefined;
+
       await loginMutation.mutateAsync({
         username: formData.username,
         password: formData.password,
+        tenantId,
+        tenantCode: devTenantCode,
       });
 
       // After successful login, redirect
@@ -137,7 +145,7 @@ export function useLoginViewModel() {
       const errorMessage = err instanceof Error ? err.message : "Login failed";
       setError(errorMessage);
     }
-  }, [formData, loginMutation, handleRedirect, redirectPath, t]);
+  }, [formData, loginMutation, handleRedirect, redirectPath, t, tenantId]);
 
   // 2FA code verification handler
   const handleVerify2FA = useCallback(async () => {
@@ -252,6 +260,7 @@ export function useLoginViewModel() {
     toggleBackupCode,
     checkAndRedirect,
     resetForm,
+    setTenantId,
 
     // Computed
     isFormValid: isFormValid(validateForm(formData, VALIDATION_SETS.LOGIN_FORM)),
