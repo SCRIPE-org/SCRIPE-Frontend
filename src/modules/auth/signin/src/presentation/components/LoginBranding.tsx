@@ -1,6 +1,7 @@
 "use client";
 
 import type { TenantBranding } from "@modules/auth/hooks/useTenantResolution";
+import { BRAND } from "@core/config/branding";
 
 interface LoginBrandingProps {
       t: (key: string) => string;
@@ -10,7 +11,7 @@ interface LoginBrandingProps {
 /**
  * LoginBranding — Ultra-premium, theme-adaptive minimalist corporate panel.
  * When tenant branding is provided, displays tenant-specific logo, headline,
- * subtitle, and company name. Falls back to NEXORA defaults otherwise.
+ * subtitle, and company name. Falls back to platform defaults otherwise.
  */
 export function LoginBranding({ t, branding }: LoginBrandingProps) {
       const features = [
@@ -21,10 +22,10 @@ export function LoginBranding({ t, branding }: LoginBrandingProps) {
 
       // Resolve branding values with fallbacks
       const logoSrc = branding?.logoUrl || "/app-logo.png";
-      const logoAlt = branding?.companyName ?? branding?.name ?? "NEXORA";
+      const logoAlt = branding?.companyName ?? branding?.name ?? BRAND.name;
       const headline = branding?.loginHeadline || t("auth.branding.headline");
       const subtitle = branding?.loginSubtitle || t("auth.branding.subtitle");
-      const companyName = branding?.companyName ?? branding?.name ?? "NEXORA";
+      const companyName = branding?.companyName ?? branding?.name ?? BRAND.name;
 
       return (
             <div className="relative hidden w-full lg:flex lg:w-1/2 xl:w-[55%] flex-col justify-between overflow-hidden bg-muted/40 p-12 lg:p-16 xl:p-24 border-r border-border">
@@ -81,7 +82,7 @@ export function LoginBranding({ t, branding }: LoginBrandingProps) {
                               {subtitle}
                         </p>
 
-                        {/* Show feature cards only when using default NEXORA branding */}
+                        {/* Show feature cards only when using default platform branding */}
                         {!branding && (
                               <div className="mt-16 grid gap-10">
                                     {features.map((f, i) => (

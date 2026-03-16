@@ -24,6 +24,7 @@
 
 import { secureTokenService } from "./secure-token-service";
 import { appLogger } from "./logger";
+import { BRAND } from "@core/config/branding";
 
 type AuthBroadcastEvent =
       | { type: "LOGOUT" }
@@ -42,7 +43,7 @@ class AuthBroadcastService {
       constructor() {
             if (typeof window !== "undefined" && typeof BroadcastChannel !== "undefined") {
                   try {
-                        this.channel = new BroadcastChannel("nexora_auth");
+                        this.channel = new BroadcastChannel(BRAND.authChannel);
                         this.channel.onmessage = (event: MessageEvent<AuthBroadcastEvent>) => {
                               this.handleMessage(event.data);
                         };

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
 import { useTheme } from "next-themes";
 import { useDocsI18n } from "../../providers/DocsI18nProvider";
+import { BRAND } from "@core/config/branding";
 
 // ─── Component ───────────────────────────────────────────────────
 export function CommercialHeader({
@@ -33,9 +34,9 @@ export function CommercialHeader({
 
                         {/* Logo + Brand */}
                         <Link href="/commercial" className="commercial-header-brand">
-                              <img src="/app-logo.png" alt="Nexora" className="commercial-header-logo-img" />
+                              <img src="/app-logo.png" alt={BRAND.namePascal} className="commercial-header-logo-img" />
                               <div className="commercial-header-brand-text">
-                                    <span className="commercial-header-brand-name">NEXORA</span>
+                                    <span className="commercial-header-brand-name">{BRAND.nameUpper}</span>
                                     <span className="commercial-header-brand-tag">{t("common.commercial")}</span>
                               </div>
                         </Link>

@@ -17,6 +17,7 @@ import { BookOpen } from "lucide-react";
 import { LanguageSwitcher } from "@core/ui/layout/common/language-switcher";
 import { ThemeSwitcher } from "@core/ui/layout/common/theme-switcher";
 import Link from "next/link";
+import { BRAND } from "@core/config/branding";
 
 import { useLoginViewModel } from "../viewmodels/use-login-viewmodel";
 import { LoginBranding } from "../components/LoginBranding";
@@ -43,8 +44,8 @@ export function LoginView() {
 
   // Derive branding values
   const logoSrc = branding?.logoUrl || "/app-logo.png";
-  const logoAlt = branding?.companyName ?? branding?.name ?? "NEXORA";
-  const companyName = branding?.companyName ?? branding?.name ?? "NEXORA";
+  const logoAlt = branding?.companyName ?? branding?.name ?? BRAND.name;
+  const companyName = branding?.companyName ?? branding?.name ?? BRAND.name;
 
   useEffect(() => {
     if (hasCheckedAuth.current || !vm.hasHydrated) return;
@@ -57,7 +58,7 @@ export function LoginView() {
     if (typeof document !== "undefined") {
       document.title = isResolved
         ? `Login — ${companyName}`
-        : "Login — NEXORA";
+        : `Login — ${BRAND.name}`;
     }
   }, [isResolved, companyName]);
 

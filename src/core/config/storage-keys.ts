@@ -7,8 +7,11 @@
  * - Enable easy key management
  * - Provide single source of truth
  *
+ * Cookie/auth keys are derived from branding.ts for easy rebranding.
+ *
  * @module core/config
  */
+import { BRAND } from "./branding";
 
 /**
  * Authentication related storage keys
@@ -17,10 +20,10 @@ export const STORAGE_KEYS = {
   // Auth tokens (managed by SecureTokenService — access token only, refresh is in httpOnly cookie)
   ACCESS_TOKEN: "verified_access_token",
 
-  // Auth state & context
+  // Auth state & context (derived from BRAND config for easy rebranding)
   tenant_context: "tenant_context",
-  nexora_auth_state: "nexora_auth_state",
-  nexora_refresh_token: "nexora_refresh_token",
+  nexora_auth_state: BRAND.cookies.authState,
+  nexora_refresh_token: BRAND.cookies.refreshToken,
   lastAuthRefresh: "lastAuthRefresh",
 
   // User data
@@ -39,7 +42,7 @@ export const STORAGE_KEYS = {
   DASHBOARD_SETTINGS: "dashboard-settings",
 
   // Impersonation (sessionStorage — survives reload, not new tabs)
-  IMPERSONATING: "nexora_impersonating",
+  IMPERSONATING: BRAND.impersonatingKey,
   admin_backup_token: "admin_backup_token",
 } as const;
 

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useDocsI18n } from "../../providers/DocsI18nProvider";
+import { BRAND } from "@core/config/branding";
 
 interface DocsHeaderProps {
   onSearchOpen: () => void;
@@ -53,8 +54,8 @@ export function DocsHeader({ onSearchOpen, onMobileMenuOpen }: DocsHeaderProps) 
 
       {/* Logo */}
       <a href="/docs" className="docs-header-logo">
-        <img src="/app-logo.png" alt="Nexora" className="docs-header-logo-img" />
-        <span>NEXORA</span>
+        <img src="/app-logo.png" alt={BRAND.namePascal} className="docs-header-logo-img" />
+        <span>{BRAND.nameUpper}</span>
       </a>
 
       {/* Search Trigger */}
