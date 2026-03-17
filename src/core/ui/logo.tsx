@@ -4,8 +4,8 @@ import React from "react";
 import Link from "next/link";
 import { Sparkles, Shield } from "lucide-react";
 import { useSettings } from "@core/providers/settings-provider";
+import { useTenantBranding } from "@core/providers/tenant-branding-provider";
 import { cn } from "@core/common/utils";
-import Image from "next/image";
 
 interface LogoProps {
   className?: string;
@@ -16,6 +16,7 @@ interface LogoProps {
 
 export function Logo({ className, showText = true, size = "md", animation = "none" }: LogoProps) {
   const settings = useSettings();
+  const { logoUrl: tenantLogoUrl } = useTenantBranding();
 
   if (!settings.showLogo) {
     return null;
@@ -60,11 +61,14 @@ export function Logo({ className, showText = true, size = "md", animation = "non
       case "image":
         return (
           <div className={cn(sizeClasses[settings.logoSize], "relative")}>
-            <Image
-              src={"/app-logo.png"}
+            {/* Use native <img> — tenant logos are on dynamic external domains */}
+            <img
+              src={tenantLogoUrl}
               alt="Logo"
-              fill
-              className={cn("object-contain", animationClasses[settings.logoAnimation])}
+              className={cn(
+                "h-full w-full object-contain",
+                animationClasses[settings.logoAnimation]
+              )}
               onError={(e) => {
                 // Fallback to sparkles icon if image fails to load
                 e.currentTarget.style.display = "none";

@@ -27,6 +27,10 @@ export interface TenantSettingsModel {
   // Branding
   logoUrl: string | null;
   primaryColor: string | null;
+  secondaryColor: string | null;
+  faviconUrl: string | null;
+  loginHeadline: string | null;
+  loginSubtitle: string | null;
   companyName: string | null;
 }
 
@@ -46,5 +50,9 @@ export interface UpdateTenantSettingsRequest {
   auditRetentionDays?: number;
   logoUrl?: string | null;
   primaryColor?: string | null;
+  secondaryColor?: string | null;
+  faviconUrl?: string | null;
+  loginHeadline?: string | null;
+  loginSubtitle?: string | null;
   companyName?: string | null;
 }

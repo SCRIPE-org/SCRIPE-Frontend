@@ -76,6 +76,10 @@ export function TenantSettingsEditDialog({
     } else if (activeTab === "branding") {
       request.companyName = formData.companyName;
       request.primaryColor = formData.primaryColor;
+      request.secondaryColor = formData.secondaryColor;
+      request.faviconUrl = formData.faviconUrl;
+      request.loginHeadline = formData.loginHeadline;
+      request.loginSubtitle = formData.loginSubtitle;
       request.logoUrl = formData.logoUrl;
     }
 
@@ -219,6 +223,24 @@ export function TenantSettingsEditDialog({
                 </div>
               </div>
               <div className="space-y-2">
+                <Label>{t("tenant.secondaryColor") || "Secondary Color"}</Label>
+                <div className="flex gap-2">
+                  <Input
+                    type="color"
+                    value={formData.secondaryColor || "#6366f1"}
+                    onChange={(e) => handleChange("secondaryColor", e.target.value)}
+                    className="h-10 w-12 p-1"
+                  />
+                  <Input
+                    value={formData.secondaryColor || ""}
+                    onChange={(e) => handleChange("secondaryColor", e.target.value)}
+                    placeholder="#6366f1"
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
                 <Label>{t("tenant.logoUrl") || "Logo"}</Label>
                 <div className="flex flex-col gap-4">
                   <div className="flex items-center gap-4">
@@ -240,6 +262,35 @@ export function TenantSettingsEditDialog({
                     />
                   </div>
                 </div>
+              </div>
+              <div className="space-y-2">
+                <Label>{t("tenant.faviconUrl") || "Favicon URL"}</Label>
+                <Input
+                  value={formData.faviconUrl || ""}
+                  onChange={(e) => handleChange("faviconUrl", e.target.value)}
+                  placeholder="/uploads/tenants/favicon.ico"
+                />
+                <p className="text-xs text-muted-foreground">
+                  {t("tenant.faviconUrlHelp") || "Browser tab icon"}
+                </p>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>{t("tenant.loginHeadline") || "Login Headline"}</Label>
+                <Input
+                  value={formData.loginHeadline || ""}
+                  onChange={(e) => handleChange("loginHeadline", e.target.value)}
+                  placeholder={t("tenant.loginHeadlinePlaceholder") || "Welcome to Our Platform"}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>{t("tenant.loginSubtitle") || "Login Subtitle"}</Label>
+                <Input
+                  value={formData.loginSubtitle || ""}
+                  onChange={(e) => handleChange("loginSubtitle", e.target.value)}
+                  placeholder={t("tenant.loginSubtitlePlaceholder") || "Manage your business efficiently"}
+                />
               </div>
             </div>
             {formData.logoUrl && (

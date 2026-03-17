@@ -59,6 +59,14 @@ export interface TenantBrandingSettings {
   logoUrl?: string;
   /** Primary theme color */
   primaryColor?: string;
+  /** Secondary theme color */
+  secondaryColor?: string;
+  /** Favicon URL for browser tab */
+  faviconUrl?: string;
+  /** Custom headline on login page */
+  loginHeadline?: string;
+  /** Custom subtitle on login page */
+  loginSubtitle?: string;
   /** Company display name */
   companyName?: string;
 }
@@ -99,6 +107,10 @@ export const DEFAULT_TENANT_SETTINGS: TenantSettings = {
   branding: {
     logoUrl: undefined,
     primaryColor: undefined,
+    secondaryColor: undefined,
+    faviconUrl: undefined,
+    loginHeadline: undefined,
+    loginSubtitle: undefined,
     companyName: undefined,
   },
 };

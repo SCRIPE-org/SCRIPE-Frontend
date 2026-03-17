@@ -28,6 +28,10 @@ export interface TenantSettings {
   // Branding
   logoUrl: string | null;
   primaryColor: string | null;
+  secondaryColor: string | null;
+  faviconUrl: string | null;
+  loginHeadline: string | null;
+  loginSubtitle: string | null;
   companyName: string | null;
 }
 
@@ -47,5 +51,9 @@ export const DEFAULT_TENANT_SETTINGS: TenantSettings = {
   auditRetentionDays: 90,
   logoUrl: null,
   primaryColor: null,
+  secondaryColor: null,
+  faviconUrl: null,
+  loginHeadline: null,
+  loginSubtitle: null,
   companyName: null,
 };

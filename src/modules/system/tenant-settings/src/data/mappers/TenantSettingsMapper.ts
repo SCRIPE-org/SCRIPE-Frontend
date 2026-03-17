@@ -29,6 +29,10 @@ export const TenantSettingsMapper = {
       auditRetentionDays: model.auditRetentionDays,
       logoUrl: model.logoUrl,
       primaryColor: model.primaryColor,
+      secondaryColor: model.secondaryColor,
+      faviconUrl: model.faviconUrl,
+      loginHeadline: model.loginHeadline,
+      loginSubtitle: model.loginSubtitle,
       companyName: model.companyName,
     };
   },
@@ -53,6 +57,10 @@ export const TenantSettingsMapper = {
       auditRetentionDays: entity.auditRetentionDays,
       logoUrl: entity.logoUrl,
       primaryColor: entity.primaryColor,
+      secondaryColor: entity.secondaryColor,
+      faviconUrl: entity.faviconUrl,
+      loginHeadline: entity.loginHeadline,
+      loginSubtitle: entity.loginSubtitle,
       companyName: entity.companyName,
     };
   },

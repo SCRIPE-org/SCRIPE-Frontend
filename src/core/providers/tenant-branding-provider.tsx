@@ -107,16 +107,50 @@ export function TenantBrandingProvider({ children }: TenantBrandingProviderProps
       // Build the context value with fallbacks
       const appName = branding?.companyName ?? branding?.name ?? BRAND.name;
       const logoUrl = branding?.logoUrl ? resolveFileUrl(branding.logoUrl) : "/app-logo.png";
+      const faviconUrl = branding?.faviconUrl ? resolveFileUrl(branding.faviconUrl) : null;
       const companyName = branding?.companyName ?? branding?.name ?? BRAND.name;
+      const primaryColor = branding?.primaryColor ?? null;
+      const isTenantContext = branding !== null;
+
+      // ── Gap 2: Swap browser favicon when tenant branding is available ──
+      useEffect(() => {
+            if (typeof document === "undefined" || !faviconUrl) return;
+            let link = document.querySelector("link[rel~='icon']") as HTMLLinkElement | null;
+            if (!link) {
+                  link = document.createElement("link");
+                  link.rel = "icon";
+                  document.head.appendChild(link);
+            }
+            link.href = faviconUrl;
+      }, [faviconUrl]);
+
+      // ── Gap 2b: Update document title with tenant name ──
+      useEffect(() => {
+            if (typeof document === "undefined" || !isTenantContext) return;
+            const originalTitle = document.title;
+            // Only override the base title, let page-specific titles append
+            document.title = document.title.replace(BRAND.name, appName);
+            return () => { document.title = originalTitle; };
+      }, [appName, isTenantContext]);
+
+      // ── Gap 3: Inject tenant primary color as CSS variable ──
+      useEffect(() => {
+            if (typeof document === "undefined") return;
+            const root = document.documentElement;
+            if (primaryColor) {
+                  root.style.setProperty("--tenant-primary", primaryColor);
+            }
+            return () => { root.style.removeProperty("--tenant-primary"); };
+      }, [primaryColor]);
 
       const value: TenantBrandingContextValue = {
             appName,
             logoUrl,
-            faviconUrl: branding?.faviconUrl ? resolveFileUrl(branding.faviconUrl) : null,
+            faviconUrl,
             companyName,
-            primaryColor: branding?.primaryColor ?? null,
+            primaryColor,
             isLoading,
-            isTenantContext: branding !== null,
+            isTenantContext,
       };
 
       return (

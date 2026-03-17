@@ -212,16 +212,51 @@ export function TenantSettingsTab({
                   </span>
                 )}
               </p>
-              <div className="flex items-center gap-2">
-                <div
-                  className="h-5 w-5 rounded-full border border-border/50 shadow-sm"
-                  style={{ backgroundColor: settings.primaryColor || "#000000" }}
-                />
-                <span className="text-sm text-muted-foreground font-mono">
-                  {settings.primaryColor || t("tenant.defaultColor") || "#000000"}
-                </span>
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-1.5">
+                  <div
+                    className="h-5 w-5 rounded-full border border-border/50 shadow-sm"
+                    style={{ backgroundColor: settings.primaryColor || "#000000" }}
+                  />
+                  <span className="text-xs text-muted-foreground font-mono">
+                    {settings.primaryColor || "#000000"}
+                  </span>
+                </div>
+                {settings.secondaryColor && (
+                  <div className="flex items-center gap-1.5">
+                    <div
+                      className="h-5 w-5 rounded-full border border-border/50 shadow-sm"
+                      style={{ backgroundColor: settings.secondaryColor }}
+                    />
+                    <span className="text-xs text-muted-foreground font-mono">
+                      {settings.secondaryColor}
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
+          </div>
+
+          {/* Additional branding details */}
+          <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
+            {settings.faviconUrl && (
+              <div className="rounded-lg border border-border/50 bg-muted/20 p-2">
+                <p className="text-xs text-muted-foreground">{t("tenant.favicon") || "Favicon"}</p>
+                <p className="text-sm font-medium truncate">{settings.faviconUrl}</p>
+              </div>
+            )}
+            {settings.loginHeadline && (
+              <div className="rounded-lg border border-border/50 bg-muted/20 p-2">
+                <p className="text-xs text-muted-foreground">{t("tenant.loginHeadline") || "Login Headline"}</p>
+                <p className="text-sm font-medium truncate">{settings.loginHeadline}</p>
+              </div>
+            )}
+            {settings.loginSubtitle && (
+              <div className="rounded-lg border border-border/50 bg-muted/20 p-2">
+                <p className="text-xs text-muted-foreground">{t("tenant.loginSubtitle") || "Login Subtitle"}</p>
+                <p className="text-sm font-medium truncate">{settings.loginSubtitle}</p>
+              </div>
+            )}
           </div>
         </div>
       </div>
