@@ -2,33 +2,25 @@
  * Branding Section Component
  *
  * Section for tenant branding settings (company name, logo, colors, login page).
- * Supports dual mode for logo/favicon: file upload OR manual URL entry.
+ * Uses ImageUploadField for logo/favicon with drag-drop, upload, and URL support.
  * Pure UI - receives all data and handlers from parent view via props.
  */
 "use client";
 
-import { useState, useRef } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
-import { Button } from "@core/ui/button";
-import { Palette, Upload, Link2, Image as ImageIcon } from "lucide-react";
+import { Palette } from "lucide-react";
+import { ImageUploadField } from "@core/ui/image-upload-field";
 import type { TenantSettings } from "../../domain/entities/TenantSettings";
-import { resolveFileUrl } from "@core/common/utils";
 
 interface BrandingSectionProps {
   settings: TenantSettings;
   updateField: <K extends keyof TenantSettings>(field: K, value: TenantSettings[K]) => void;
   t: (key: string) => string;
-  onUploadLogo?: (file: File) => Promise<string>;
 }
 
-export function BrandingSection({ settings, updateField, t, onUploadLogo }: BrandingSectionProps) {
-  const [logoMode, setLogoMode] = useState<"upload" | "url">(settings.logoUrl ? "url" : "upload");
-  const [faviconMode, setFaviconMode] = useState<"upload" | "url">(settings.faviconUrl ? "url" : "upload");
-  const logoInputRef = useRef<HTMLInputElement>(null);
-  const faviconInputRef = useRef<HTMLInputElement>(null);
-
+export function BrandingSection({ settings, updateField, t }: BrandingSectionProps) {
   return (
     <Card>
       <CardHeader>
@@ -50,75 +42,15 @@ export function BrandingSection({ settings, updateField, t, onUploadLogo }: Bran
           <p className="text-xs text-muted-foreground">{t("tenantSettings.companyNameHelp")}</p>
         </div>
 
-        {/* Row 2: Logo — Dual Mode (Upload / URL) */}
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <Label>{t("tenantSettings.logoUrl")}</Label>
-            <div className="flex items-center gap-1 rounded-lg border bg-muted/30 p-0.5">
-              <Button
-                type="button"
-                variant={logoMode === "upload" ? "default" : "ghost"}
-                size="sm"
-                className="h-7 gap-1.5 px-2.5 text-xs"
-                onClick={() => setLogoMode("upload")}
-              >
-                <Upload className="h-3 w-3" />
-                {t("tenantSettings.uploadFile")}
-              </Button>
-              <Button
-                type="button"
-                variant={logoMode === "url" ? "default" : "ghost"}
-                size="sm"
-                className="h-7 gap-1.5 px-2.5 text-xs"
-                onClick={() => setLogoMode("url")}
-              >
-                <Link2 className="h-3 w-3" />
-                {t("tenantSettings.orEnterUrl")}
-              </Button>
-            </div>
-          </div>
-          <div className="flex items-start gap-4">
-            <div className="flex-1">
-              {logoMode === "upload" ? (
-                <Input
-                  ref={logoInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={async (e) => {
-                    const file = e.target.files?.[0];
-                    if (file && onUploadLogo) {
-                      try {
-                        const url = await onUploadLogo(file);
-                        updateField("logoUrl", url);
-                      } catch {
-                        // Error handled by parent
-                      }
-                    }
-                  }}
-                  disabled={!onUploadLogo}
-                />
-              ) : (
-                <Input
-                  value={settings.logoUrl ?? ""}
-                  onChange={(e) => updateField("logoUrl", e.target.value || null)}
-                  placeholder="/uploads/tenants/logo.png"
-                />
-              )}
-              <p className="mt-1.5 text-xs text-muted-foreground">{t("tenantSettings.logoUrlHelp")}</p>
-            </div>
-            {/* Logo preview */}
-            {settings.logoUrl && (
-              <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg border bg-muted/20 p-1">
-                <img
-                  src={settings.logoUrl.startsWith("http") ? settings.logoUrl : resolveFileUrl(settings.logoUrl)}
-                  alt={t("tenantSettings.logoUrl")}
-                  className="max-h-full max-w-full object-contain"
-                  onError={(e) => { e.currentTarget.style.display = "none"; }}
-                />
-              </div>
-            )}
-          </div>
-        </div>
+        {/* Row 2: Logo — ImageUploadField (drag-drop + URL) */}
+        <ImageUploadField
+          value={settings.logoUrl ?? ""}
+          onChange={(url) => updateField("logoUrl", url || null)}
+          label={t("tenantSettings.logoUrl")}
+          description={t("tenantSettings.logoUrlHelp")}
+          maxSizeBytes={2 * 1024 * 1024}
+          accept="image/png,image/jpeg,image/webp,image/svg+xml"
+        />
 
         {/* Row 3: Primary Color + Secondary Color */}
         <div className="grid gap-6 md:grid-cols-2">
@@ -160,60 +92,15 @@ export function BrandingSection({ settings, updateField, t, onUploadLogo }: Bran
           </div>
         </div>
 
-        {/* Row 4: Favicon — Dual Mode (Upload / URL) */}
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <Label>{t("tenantSettings.faviconUrl")}</Label>
-            <div className="flex items-center gap-1 rounded-lg border bg-muted/30 p-0.5">
-              <Button
-                type="button"
-                variant={faviconMode === "upload" ? "default" : "ghost"}
-                size="sm"
-                className="h-7 gap-1.5 px-2.5 text-xs"
-                onClick={() => setFaviconMode("upload")}
-              >
-                <Upload className="h-3 w-3" />
-                {t("tenantSettings.uploadFile")}
-              </Button>
-              <Button
-                type="button"
-                variant={faviconMode === "url" ? "default" : "ghost"}
-                size="sm"
-                className="h-7 gap-1.5 px-2.5 text-xs"
-                onClick={() => setFaviconMode("url")}
-              >
-                <Link2 className="h-3 w-3" />
-                {t("tenantSettings.orEnterUrl")}
-              </Button>
-            </div>
-          </div>
-          {faviconMode === "upload" ? (
-            <Input
-              ref={faviconInputRef}
-              type="file"
-              accept="image/x-icon,image/png,image/svg+xml"
-              onChange={async (e) => {
-                const file = e.target.files?.[0];
-                if (file && onUploadLogo) {
-                  try {
-                    const url = await onUploadLogo(file);
-                    updateField("faviconUrl", url);
-                  } catch {
-                    // Error handled by parent
-                  }
-                }
-              }}
-              disabled={!onUploadLogo}
-            />
-          ) : (
-            <Input
-              value={settings.faviconUrl ?? ""}
-              onChange={(e) => updateField("faviconUrl", e.target.value || null)}
-              placeholder="/uploads/tenants/favicon.ico"
-            />
-          )}
-          <p className="text-xs text-muted-foreground">{t("tenantSettings.faviconUrlHelp")}</p>
-        </div>
+        {/* Row 4: Favicon — ImageUploadField (drag-drop + URL) */}
+        <ImageUploadField
+          value={settings.faviconUrl ?? ""}
+          onChange={(url) => updateField("faviconUrl", url || null)}
+          label={t("tenantSettings.faviconUrl")}
+          description={t("tenantSettings.faviconUrlHelp")}
+          maxSizeBytes={512 * 1024}
+          accept="image/x-icon,image/png,image/svg+xml,image/webp"
+        />
 
         {/* Row 5: Login Headline + Login Subtitle */}
         <div className="grid gap-6 md:grid-cols-2">

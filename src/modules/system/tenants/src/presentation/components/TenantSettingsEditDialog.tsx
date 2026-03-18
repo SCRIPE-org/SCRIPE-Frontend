@@ -20,7 +20,7 @@ import type {
   UpdateTenantSettingsRequest,
 } from "@modules/system/tenant-settings/src/data/models/TenantSettingsModel";
 import { Loader2 } from "lucide-react";
-import { appLogger } from "@/core/common/logger";
+import { ImageUploadField } from "@core/ui/image-upload-field";
 
 interface TenantSettingsEditDialogProps {
   open: boolean;
@@ -29,7 +29,6 @@ interface TenantSettingsEditDialogProps {
   settings: TenantSettingsModel;
   onSave: (data: UpdateTenantSettingsRequest) => void;
   isSaving: boolean;
-  onUploadLogo?: (file: File) => Promise<string>;
 }
 
 export function TenantSettingsEditDialog({
@@ -39,7 +38,6 @@ export function TenantSettingsEditDialog({
   settings,
   onSave,
   isSaving,
-  onUploadLogo,
 }: TenantSettingsEditDialogProps) {
   const { t, direction } = useI18n();
   const [activeTab, setActiveTab] = useState(initialSection || "security");
@@ -240,40 +238,21 @@ export function TenantSettingsEditDialog({
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>{t("tenant.logoUrl") || "Logo"}</Label>
-                <div className="flex flex-col gap-4">
-                  <div className="flex items-center gap-4">
-                    <Input
-                      type="file"
-                      accept="image/*"
-                      onChange={async (e) => {
-                        const file = e.target.files?.[0];
-                        if (file && onUploadLogo) {
-                          try {
-                            const url = await onUploadLogo(file);
-                            handleChange("logoUrl", url);
-                          } catch (error) {
-                            appLogger.error("Upload failed", error);
-                          }
-                        }
-                      }}
-                      disabled={!onUploadLogo}
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label>{t("tenant.faviconUrl") || "Favicon URL"}</Label>
-                <Input
-                  value={formData.faviconUrl || ""}
-                  onChange={(e) => handleChange("faviconUrl", e.target.value)}
-                  placeholder="/uploads/tenants/favicon.ico"
-                />
-                <p className="text-xs text-muted-foreground">
-                  {t("tenant.faviconUrlHelp") || "Browser tab icon"}
-                </p>
-              </div>
+              <ImageUploadField
+                value={formData.logoUrl || ""}
+                onChange={(url) => handleChange("logoUrl", url)}
+                label={t("tenant.logoUrl") || "Logo"}
+                maxSizeBytes={2 * 1024 * 1024}
+                accept="image/png,image/jpeg,image/webp,image/svg+xml"
+              />
+              <ImageUploadField
+                value={formData.faviconUrl || ""}
+                onChange={(url) => handleChange("faviconUrl", url)}
+                label={t("tenant.faviconUrl") || "Favicon"}
+                description={t("tenant.faviconUrlHelp") || "Browser tab icon"}
+                maxSizeBytes={512 * 1024}
+                accept="image/x-icon,image/png,image/svg+xml,image/webp"
+              />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
@@ -293,19 +272,6 @@ export function TenantSettingsEditDialog({
                 />
               </div>
             </div>
-            {formData.logoUrl && (
-              <div className="mt-4 flex justify-center rounded border bg-muted/20 p-4">
-                <img
-                  src={
-                    formData.logoUrl.startsWith("http")
-                      ? formData.logoUrl
-                      : `${process.env.NEXT_PUBLIC_File_URL || ""}${formData.logoUrl}`
-                  }
-                  alt={t("tenant.logoPreview") || "Logo Preview"}
-                  className="max-h-24 object-contain"
-                />
-              </div>
-            )}
           </TabsContent>
         </Tabs>
 

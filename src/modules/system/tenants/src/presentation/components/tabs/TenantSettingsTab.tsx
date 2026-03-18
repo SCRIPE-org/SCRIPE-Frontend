@@ -242,7 +242,14 @@ export function TenantSettingsTab({
             {settings.faviconUrl && (
               <div className="rounded-lg border border-border/50 bg-muted/20 p-2">
                 <p className="text-xs text-muted-foreground">{t("tenant.favicon") || "Favicon"}</p>
-                <p className="text-sm font-medium truncate">{settings.faviconUrl}</p>
+                <div className="mt-1">
+                  <img
+                    src={settings.faviconUrl.startsWith("http") ? settings.faviconUrl : `${process.env.NEXT_PUBLIC_File_URL || ""}${settings.faviconUrl}`}
+                    alt="Favicon"
+                    className="h-8 w-8 object-contain"
+                    onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                  />
+                </div>
               </div>
             )}
             {settings.loginHeadline && (
@@ -324,7 +331,6 @@ export function TenantSettingsTab({
         settings={settings}
         onSave={vm.updateSettings}
         isSaving={vm.isUpdating}
-        onUploadLogo={vm.uploadLogo}
       />
     </div>
   );
