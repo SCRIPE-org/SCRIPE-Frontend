@@ -25,6 +25,14 @@ export interface TenantBrandingData {
       faviconUrl: string | null;
       primaryColor: string | null;
       secondaryColor: string | null;
+      // Customization system (login-relevant, safe for pre-auth)
+      loginBrandingJson: string | null;
+      loginTextOverridesJson: string | null;
+      customFeaturesJson: string | null;
+      slotConfigJson: string | null;
+      termsOfServiceUrl: string | null;
+      privacyPolicyUrl: string | null;
+      isSafeMode: boolean;
 }
 
 export interface TenantBrandingContextValue {

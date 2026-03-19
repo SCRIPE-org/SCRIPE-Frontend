@@ -72,6 +72,38 @@ export interface TenantBrandingSettings {
 }
 
 /**
+ * Customization system settings - advanced login/dashboard customization
+ */
+export interface TenantCustomizationSettings {
+  /** Consolidated login branding JSON blob */
+  loginBrandingJson?: string;
+  /** Dashboard theme JSON blob */
+  dashboardThemeJson?: string;
+  /** Allowed layout slugs JSON */
+  allowedLayoutsJson?: string;
+  /** Whether admins can override dashboard theme */
+  allowAdminThemeOverride: boolean;
+  /** Path whitelist for admin overrides */
+  allowedAdminSettingsJson?: string;
+  /** Unpublished draft branding JSON */
+  draftBrandingJson?: string;
+  /** Login text overrides JSON */
+  loginTextOverridesJson?: string;
+  /** Custom feature cards JSON */
+  customFeaturesJson?: string;
+  /** Slot configuration JSON (block/widget assignments) */
+  slotConfigJson?: string;
+  /** Terms of Service URL */
+  termsOfServiceUrl?: string;
+  /** Privacy Policy URL */
+  privacyPolicyUrl?: string;
+  /** Optimistic concurrency version */
+  settingsVersion: number;
+  /** Emergency safe mode flag */
+  isSafeMode: boolean;
+}
+
+/**
  * Complete tenant settings
  */
 export interface TenantSettings {
@@ -79,6 +111,7 @@ export interface TenantSettings {
   security: TenantSecuritySettings;
   audit: TenantAuditSettings;
   branding: TenantBrandingSettings;
+  customization: TenantCustomizationSettings;
 }
 
 /**
@@ -112,5 +145,20 @@ export const DEFAULT_TENANT_SETTINGS: TenantSettings = {
     loginHeadline: undefined,
     loginSubtitle: undefined,
     companyName: undefined,
+  },
+  customization: {
+    loginBrandingJson: undefined,
+    dashboardThemeJson: undefined,
+    allowedLayoutsJson: undefined,
+    allowAdminThemeOverride: false,
+    allowedAdminSettingsJson: undefined,
+    draftBrandingJson: undefined,
+    loginTextOverridesJson: undefined,
+    customFeaturesJson: undefined,
+    slotConfigJson: undefined,
+    termsOfServiceUrl: undefined,
+    privacyPolicyUrl: undefined,
+    settingsVersion: 0,
+    isSafeMode: false,
   },
 };

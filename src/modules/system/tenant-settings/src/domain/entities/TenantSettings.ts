@@ -33,6 +33,21 @@ export interface TenantSettings {
   loginHeadline: string | null;
   loginSubtitle: string | null;
   companyName: string | null;
+
+  // Customization System
+  loginBrandingJson: string | null;
+  dashboardThemeJson: string | null;
+  allowedLayoutsJson: string | null;
+  allowAdminThemeOverride: boolean;
+  allowedAdminSettingsJson: string | null;
+  draftBrandingJson: string | null;
+  loginTextOverridesJson: string | null;
+  customFeaturesJson: string | null;
+  slotConfigJson: string | null;
+  termsOfServiceUrl: string | null;
+  privacyPolicyUrl: string | null;
+  settingsVersion: number;
+  isSafeMode: boolean;
 }
 
 export const DEFAULT_TENANT_SETTINGS: TenantSettings = {
@@ -56,4 +71,18 @@ export const DEFAULT_TENANT_SETTINGS: TenantSettings = {
   loginHeadline: null,
   loginSubtitle: null,
   companyName: null,
+  // Customization System
+  loginBrandingJson: null,
+  dashboardThemeJson: null,
+  allowedLayoutsJson: null,
+  allowAdminThemeOverride: false,
+  allowedAdminSettingsJson: null,
+  draftBrandingJson: null,
+  loginTextOverridesJson: null,
+  customFeaturesJson: null,
+  slotConfigJson: null,
+  termsOfServiceUrl: null,
+  privacyPolicyUrl: null,
+  settingsVersion: 0,
+  isSafeMode: false,
 };

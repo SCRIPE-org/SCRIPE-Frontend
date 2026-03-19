@@ -34,6 +34,20 @@ export const TenantSettingsMapper = {
       loginHeadline: model.loginHeadline,
       loginSubtitle: model.loginSubtitle,
       companyName: model.companyName,
+      // Customization System
+      loginBrandingJson: model.loginBrandingJson,
+      dashboardThemeJson: model.dashboardThemeJson,
+      allowedLayoutsJson: model.allowedLayoutsJson,
+      allowAdminThemeOverride: model.allowAdminThemeOverride,
+      allowedAdminSettingsJson: model.allowedAdminSettingsJson,
+      draftBrandingJson: model.draftBrandingJson,
+      loginTextOverridesJson: model.loginTextOverridesJson,
+      customFeaturesJson: model.customFeaturesJson,
+      slotConfigJson: model.slotConfigJson,
+      termsOfServiceUrl: model.termsOfServiceUrl,
+      privacyPolicyUrl: model.privacyPolicyUrl,
+      settingsVersion: model.settingsVersion,
+      isSafeMode: model.isSafeMode,
     };
   },
 
@@ -62,6 +76,18 @@ export const TenantSettingsMapper = {
       loginHeadline: entity.loginHeadline,
       loginSubtitle: entity.loginSubtitle,
       companyName: entity.companyName,
+      // Customization System
+      loginBrandingJson: entity.loginBrandingJson,
+      dashboardThemeJson: entity.dashboardThemeJson,
+      allowedLayoutsJson: entity.allowedLayoutsJson,
+      allowAdminThemeOverride: entity.allowAdminThemeOverride,
+      allowedAdminSettingsJson: entity.allowedAdminSettingsJson,
+      draftBrandingJson: entity.draftBrandingJson,
+      loginTextOverridesJson: entity.loginTextOverridesJson,
+      customFeaturesJson: entity.customFeaturesJson,
+      slotConfigJson: entity.slotConfigJson,
+      termsOfServiceUrl: entity.termsOfServiceUrl,
+      privacyPolicyUrl: entity.privacyPolicyUrl,
     };
   },
 };
