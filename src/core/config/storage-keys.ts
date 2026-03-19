@@ -44,6 +44,11 @@ export const STORAGE_KEYS = {
   // Impersonation (sessionStorage — survives reload, not new tabs)
   IMPERSONATING: BRAND.impersonatingKey,
   admin_backup_token: "admin_backup_token",
+
+  // Admin preferences — tenant defaults (fallback when primary keys are missing)
+  PREF_THEME: "nexora_pref_theme",
+  PREF_LANG: "nexora_pref_lang",
+  PREF_SIDEBAR_COLLAPSED: "nexora_pref_sidebar_collapsed",
 } as const;
 
 /**

@@ -109,6 +109,20 @@ export const useAppStore = create<AppState>()(
         // Do NOT call logout() here — that would clear the Zustand auth state
         // before the route-guard has a chance to silently refresh.
         state?.setHasHydrated(true);
+
+        // Sidebar pref fallback: if no persisted sidebar state, check tenant pref
+        if (typeof window !== "undefined") {
+          try {
+            const stored = localStorage.getItem("app-storage");
+            const hasPersisted = stored && JSON.parse(stored).state?.sidebarOpen !== undefined;
+            if (!hasPersisted) {
+              const prefCollapsed = localStorage.getItem(STORAGE_KEYS.PREF_SIDEBAR_COLLAPSED);
+              if (prefCollapsed !== null) {
+                state?.setSidebarOpen(prefCollapsed !== "true");
+              }
+            }
+          } catch { /* ignore parse errors */ }
+        }
       },
     }
   )

@@ -15,6 +15,7 @@
 import { useState, useEffect } from "react";
 import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
 import { getModuleApiService } from "@core/services/api-factory";
+import { STORAGE_KEYS } from "@core/config/storage-keys";
 
 // ─── Types ────────────────────────────────────────────────
 
@@ -32,6 +33,11 @@ export interface TenantBranding {
       identityProviderMode: string; // "inherit" | "custom"
       status: string | null;        // "suspended" | "canceled" | null (active)
       statusReason: string | null;  // reason for suspension/cancellation
+      // Customization system (login rendering engine)
+      loginBrandingJson: string | null;
+      slotConfigJson: string | null;
+      dashboardThemeJson: string | null;
+      isSafeMode: boolean;
 }
 
 /** Hook return value */
@@ -105,6 +111,33 @@ export function useTenantResolution(): TenantResolutionResult {
                         if (!cancelled && data) {
                               setTenantId(data.tenantId);
                               setBranding(data);
+
+                              // ── Pre-auth prefs sync: write nexora_pref_* from DashboardThemeJson ──
+                              if (data.dashboardThemeJson) {
+                                    try {
+                                          const prefs = JSON.parse(data.dashboardThemeJson);
+                                          if (prefs.theme) localStorage.setItem(STORAGE_KEYS.PREF_THEME, prefs.theme);
+                                          if (prefs.language) localStorage.setItem(STORAGE_KEYS.PREF_LANG, prefs.language);
+                                          if (prefs.sidebarCollapsed !== undefined)
+                                                localStorage.setItem(STORAGE_KEYS.PREF_SIDEBAR_COLLAPSED, String(prefs.sidebarCollapsed));
+
+                                          // Apply theme immediately if no manual override
+                                          if (!localStorage.getItem("theme") && prefs.theme) {
+                                                localStorage.setItem("theme", prefs.theme);
+                                                document.documentElement.classList.remove("light", "dark");
+                                                if (prefs.theme !== "system") {
+                                                      document.documentElement.classList.add(prefs.theme);
+                                                }
+                                          }
+
+                                          // Apply language immediately if no manual override
+                                          if (!localStorage.getItem(STORAGE_KEYS.LANGUAGE) && prefs.language) {
+                                                localStorage.setItem(STORAGE_KEYS.LANGUAGE, prefs.language);
+                                                document.documentElement.setAttribute("dir", prefs.language === "ar" ? "rtl" : "ltr");
+                                                document.documentElement.setAttribute("lang", prefs.language);
+                                          }
+                                    } catch { /* invalid JSON — skip */ }
+                              }
                         }
                   } catch {
                         // Domain doesn't resolve → use default branding (not an error)

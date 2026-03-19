@@ -140,6 +140,14 @@ export const API_ENDPOINTS = {
     SETTINGS: (id: string) => `${V1}/Tenants/${id}/settings`,
     MY_SETTINGS: `${V1}/Tenants/my/settings`,
     MY_BRANDING: `${V1}/Tenants/my/branding`,
+    // ── Customization System ──
+    PUBLISH_BRANDING: `${V1}/Tenants/my/settings/publish`,
+    DISCARD_DRAFT: `${V1}/Tenants/my/settings/draft`,
+    ROLLBACK: (targetVersion: number) => `${V1}/Tenants/my/settings/rollback/${targetVersion}`,
+    AUDIT_LOG: `${V1}/Tenants/my/settings/audit-log`,
+    SYSTEM_SETTINGS: `${V1}/Tenants/system/settings`,
+    ADMIN_PREFERENCES: `${V1}/Tenants/admins/my/settings`,
+    SAFE_MODE: (id: string) => `${V1}/Tenants/${id}/safe-mode`,
     PERMISSIONS: (id: string) => `${V1}/Tenants/${id}/permissions`,
     // ── Domain Management ──
     DOMAINS: (id: string) => `${V1}/Tenants/${id}/domains`,

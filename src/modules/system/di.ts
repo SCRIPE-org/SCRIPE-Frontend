@@ -16,6 +16,7 @@ import { PermissionService } from "./permissions/src/data/services/PermissionSer
 import { RoleService } from "./roles/src/data/services/RoleService";
 import { TenantService } from "./tenants/src/data/services/TenantService";
 import { TenantSettingsService } from "./tenant-settings/src/data/services/TenantSettingsService";
+import { CustomizationService } from "./tenant-settings/src/data/services/CustomizationService";
 import { DashboardService } from "./dashboard/src/data/services/DashboardService";
 import { RecycleBinService } from "./recycle-bin/src/data/services/RecycleBinService";
 import { MessageTemplateService } from "./messaging/message-templates/src/data/services/MessageTemplateService";
@@ -75,6 +76,7 @@ export interface SystemContainer {
   roleService: IRoleService;
   tenantService: ITenantService;
   tenantSettingsService: ITenantSettingsService;
+  customizationService: CustomizationService;
   // Repositories
   adminRepository: IAdminRepository;
   roleRepository: IRoleRepository;
@@ -113,6 +115,7 @@ export function getSystemContainer(): SystemContainer {
     const roleService = new RoleService(apiService);
     const tenantService = new TenantService(apiService);
     const tenantSettingsService = new TenantSettingsService(apiService);
+    const customizationService = new CustomizationService(apiService);
     const recycleBinService = new RecycleBinService(apiService);
     const messageTemplateService = new MessageTemplateService(apiService);
     const emailService = new EmailService(apiService);
@@ -130,6 +133,7 @@ export function getSystemContainer(): SystemContainer {
       roleService,
       tenantService,
       tenantSettingsService,
+      customizationService,
       // Repositories
       adminRepository: new AdminRepository(adminService),
       roleRepository: new RoleRepository(roleService),
@@ -173,6 +177,9 @@ export const systemContainer = {
   },
   get tenantSettingsService() {
     return getSystemContainer().tenantSettingsService;
+  },
+  get customizationService() {
+    return getSystemContainer().customizationService;
   },
   // Repositories
   get adminRepository() {

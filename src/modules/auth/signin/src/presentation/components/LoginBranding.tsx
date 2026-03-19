@@ -3,18 +3,24 @@
 import type { TenantBranding } from "@modules/auth/hooks/useTenantResolution";
 import { BRAND } from "@core/config/branding";
 import { resolveFileUrl } from "@core/common/utils";
+import { SlotRenderer } from "./SlotRenderer";
+import type { SlotConfig } from "../../types/login-branding-types";
 
 interface LoginBrandingProps {
       t: (key: string) => string;
       branding?: TenantBranding | null;
+      slotConfig?: SlotConfig;
+      position?: "left" | "right";
 }
 
 /**
- * LoginBranding — Ultra-premium, theme-adaptive minimalist corporate panel.
- * When tenant branding is provided, displays tenant-specific logo, headline,
- * subtitle, and company name. Falls back to platform defaults otherwise.
+ * LoginBranding — Tenant-branded side panel with slot-based content blocks.
+ *
+ * When custom blocks are provided via SlotConfig, renders them.
+ * Otherwise falls back to default feature cards (platform branding).
+ * Supports left/right positioning for split-left / split-right layouts.
  */
-export function LoginBranding({ t, branding }: LoginBrandingProps) {
+export function LoginBranding({ t, branding, slotConfig, position = "left" }: LoginBrandingProps) {
       const features = [
             { icon: "🛡️", label: t("auth.branding.featureSecurity"), desc: "Military-grade end-to-end encryption" },
             { icon: "🏢", label: t("auth.branding.featureMultiTenant"), desc: "Complete architectural data isolation" },
@@ -28,11 +34,19 @@ export function LoginBranding({ t, branding }: LoginBrandingProps) {
       const subtitle = branding?.loginSubtitle || t("auth.branding.subtitle");
       const companyName = branding?.companyName ?? branding?.name ?? BRAND.name;
 
+      // Check if we have custom slot content
+      const hasCustomSidebarContent = slotConfig?.slots?.["login.sidebar.content"]?.length;
+      const hasCustomSidebarTop = slotConfig?.slots?.["login.sidebar.top"]?.length;
+      const hasCustomSidebarBottom = slotConfig?.slots?.["login.sidebar.bottom"]?.length;
+      const hasAnySlotContent = hasCustomSidebarContent || hasCustomSidebarTop || hasCustomSidebarBottom;
+
+      // Border direction based on panel position
+      const borderClass = position === "right" ? "border-l border-border" : "border-r border-border";
+
       return (
-            <div className="relative hidden w-full lg:flex lg:w-1/2 xl:w-[55%] flex-col justify-between overflow-hidden bg-muted/40 p-12 lg:p-16 xl:p-24 border-r border-border">
+            <div className={`relative hidden w-full lg:flex lg:w-1/2 xl:w-[55%] flex-col justify-between overflow-hidden bg-[var(--login-surface,hsl(var(--muted)/0.4))] p-12 lg:p-16 xl:p-24 ${borderClass}`}>
 
                   {/* ── Theme-Adaptive Background Patterns ── */}
-                  {/* Primary gradient — uses tenant primary color via CSS var if available */}
                   <div
                         className="pointer-events-none absolute -left-1/4 -top-1/4 h-[800px] w-[800px] rounded-full blur-[120px]"
                         style={{
@@ -45,7 +59,6 @@ export function LoginBranding({ t, branding }: LoginBrandingProps) {
                               <div className="h-full w-full rounded-full bg-primary/5" />
                         )}
                   </div>
-                  {/* Secondary gradient — uses tenant secondary color via CSS var if available */}
                   <div
                         className="pointer-events-none absolute -bottom-1/4 -right-1/4 h-[800px] w-[800px] rounded-full blur-[120px]"
                         style={{
@@ -62,50 +75,68 @@ export function LoginBranding({ t, branding }: LoginBrandingProps) {
                   {/* Subtle Grid overlay */}
                   <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,hsl(var(--border))_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border))_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-30" />
 
-                  {/* ── Top Header ── */}
-                  <div className="relative z-10 flex items-center gap-4">
-                        <div className="flex h-20 w-20 overflow-hidden items-center justify-center rounded-2xl bg-background border border-border shadow-sm">
-                              <img
-                                    src={logoSrc}
-                                    alt={`${logoAlt} Logo`}
-                                    className="h-full w-full object-cover"
-                                    onError={(e) => { e.currentTarget.style.display = "none"; }}
-                              />
+                  {/* ── Top: Logo + Sidebar Top Slot ── */}
+                  <div className="relative z-10 space-y-6">
+                        <div className="flex items-center gap-4">
+                              <div className="flex h-20 w-20 overflow-hidden items-center justify-center rounded-2xl bg-[var(--login-surface,hsl(var(--background)))] border border-[var(--login-accent,hsl(var(--border)))] shadow-sm">
+                                    <img
+                                          src={logoSrc}
+                                          alt={`${logoAlt} Logo`}
+                                          className="h-full w-full object-cover"
+                                          onError={(e) => { e.currentTarget.style.display = "none"; }}
+                                    />
+                              </div>
                         </div>
+                        {slotConfig && (
+                              <SlotRenderer slotId="login.sidebar.top" slotConfig={slotConfig} />
+                        )}
                   </div>
 
-                  {/* ── Main Content ── */}
-                  <div className="relative z-10 my-auto max-w-xl py-20">
-                        <h1 className="text-4xl font-semibold tracking-tight text-foreground lg:text-5xl xl:text-6xl leading-[1.12]">
+                  {/* ── Main Content: Headline + Slot Content or Features ── */}
+                  <div className="relative z-10 my-auto max-w-xl py-12">
+                        <h1 className="text-4xl font-semibold tracking-tight text-[var(--login-text,hsl(var(--foreground)))] lg:text-5xl xl:text-6xl leading-[1.12]"
+                            style={{ fontFamily: "var(--login-font-heading, inherit)" }}
+                        >
                               {headline}
                         </h1>
-                        <p className="mt-6 text-lg leading-relaxed text-muted-foreground font-light max-w-lg">
+                        <p className="mt-6 text-lg leading-relaxed text-[var(--login-text-muted,hsl(var(--muted-foreground)))] font-light max-w-lg"
+                           style={{ fontFamily: "var(--login-font-body, inherit)" }}
+                        >
                               {subtitle}
                         </p>
 
-                        {/* Show feature cards only when using default platform branding */}
-                        {!branding && (
+                        {/* Custom slot content OR default feature cards */}
+                        {hasAnySlotContent && slotConfig ? (
+                              <div className="mt-12">
+                                    <SlotRenderer slotId="login.sidebar.content" slotConfig={slotConfig} />
+                              </div>
+                        ) : !branding ? (
                               <div className="mt-16 grid gap-10">
                                     {features.map((f, i) => (
                                           <div key={i} className="flex items-start gap-5 group">
-                                                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-border bg-background shadow-sm transition-colors group-hover:bg-muted/50">
+                                                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-[var(--login-accent,hsl(var(--border)))] bg-[var(--login-surface,hsl(var(--background)))] shadow-sm transition-colors group-hover:bg-muted/50">
                                                       <span className="text-xl">{f.icon}</span>
                                                 </div>
                                                 <div className="pt-1">
-                                                      <h3 className="text-base font-medium text-foreground">{f.label}</h3>
-                                                      <p className="mt-1.5 text-sm text-muted-foreground font-light">{f.desc}</p>
+                                                      <h3 className="text-base font-medium text-[var(--login-text,hsl(var(--foreground)))]">{f.label}</h3>
+                                                      <p className="mt-1.5 text-sm text-[var(--login-text-muted,hsl(var(--muted-foreground)))] font-light">{f.desc}</p>
                                                 </div>
                                           </div>
                                     ))}
                               </div>
-                        )}
+                        ) : null}
                   </div>
 
-                  {/* ── Footer ── */}
-                  <div className="relative z-10 flex items-center gap-4 text-sm font-medium text-muted-foreground">
-                        <span>© {new Date().getFullYear()} {companyName}</span>
-                        <span className="h-1 w-1 rounded-full bg-border" />
-                        <span className="uppercase tracking-widest text-xs opacity-80">{t("auth.branding.trust")}</span>
+                  {/* ── Footer + Sidebar Bottom Slot ── */}
+                  <div className="relative z-10 space-y-4">
+                        {slotConfig && (
+                              <SlotRenderer slotId="login.sidebar.bottom" slotConfig={slotConfig} />
+                        )}
+                        <div className="flex items-center gap-4 text-sm font-medium text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">
+                              <span>© {new Date().getFullYear()} {companyName}</span>
+                              <span className="h-1 w-1 rounded-full bg-[var(--login-accent,hsl(var(--border)))]" />
+                              <span className="uppercase tracking-widest text-xs opacity-80">{t("auth.branding.trust")}</span>
+                        </div>
                   </div>
             </div>
       );

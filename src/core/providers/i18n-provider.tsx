@@ -77,8 +77,14 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
     if (savedLanguage && (savedLanguage === "en" || savedLanguage === "ar")) {
       handleSetLanguage(savedLanguage);
     } else {
-      // Set Arabic as default
-      handleSetLanguage("ar");
+      // Fallback: check tenant admin pref (set by admin in customization settings)
+      const tenantPrefLang = localStorage.getItem(STORAGE_KEYS.PREF_LANG) as Language;
+      if (tenantPrefLang && (tenantPrefLang === "en" || tenantPrefLang === "ar")) {
+        handleSetLanguage(tenantPrefLang);
+      } else {
+        // Platform default (English — tenant can override via DashboardThemeJson)
+        handleSetLanguage("en");
+      }
     }
   }, []);
 

@@ -4,6 +4,7 @@ import { useTenantSettingsViewModel } from "../viewmodels/useTenantSettingsViewM
 import { QuotasSection } from "../components/QuotasSection";
 import { SecuritySection } from "../components/SecuritySection";
 import { BrandingSection } from "../components/BrandingSection";
+import { CustomizationSection } from "../components/CustomizationSection";
 import { Button } from "@core/ui/button";
 import { Skeleton } from "@core/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@core/ui/alert";
@@ -70,6 +71,7 @@ export function TenantSettingsView() {
       <QuotasSection settings={vm.settings} updateField={vm.updateField} t={vm.t} />
       <SecuritySection settings={vm.settings} updateField={vm.updateField} t={vm.t} />
       <BrandingSection settings={vm.settings} updateField={vm.updateField} t={vm.t} />
+      <CustomizationSection settings={vm.settings} t={vm.t} />
       <SaveActions vm={vm} />
     </div>
   );

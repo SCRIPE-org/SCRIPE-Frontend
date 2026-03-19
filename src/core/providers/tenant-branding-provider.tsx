@@ -14,6 +14,9 @@ import { getModuleApiService } from "@core/services/api-factory";
 import { resolveFileUrl } from "@core/common/utils";
 import { BRAND } from "@core/config/branding";
 import { useAppStore } from "@core/store/useAppStore";
+import { STORAGE_KEYS } from "@core/config/storage-keys";
+import { useTheme } from "next-themes";
+import { useI18n } from "@core/providers/i18n-provider";
 
 // ─── Types ────────────────────────────────────────────────
 
@@ -30,6 +33,7 @@ export interface TenantBrandingData {
       loginTextOverridesJson: string | null;
       customFeaturesJson: string | null;
       slotConfigJson: string | null;
+      dashboardThemeJson: string | null;
       termsOfServiceUrl: string | null;
       privacyPolicyUrl: string | null;
       isSafeMode: boolean;
@@ -79,6 +83,9 @@ interface TenantBrandingProviderProps {
 export function TenantBrandingProvider({ children }: TenantBrandingProviderProps) {
       const isAuthenticated = useAppStore((s) => s.isAuthenticated);
       const user = useAppStore((s) => s.user);
+      const setSidebarOpen = useAppStore((s) => s.setSidebarOpen);
+      const { setTheme } = useTheme();
+      const { setLanguage } = useI18n();
       const [branding, setBranding] = useState<TenantBrandingData | null>(null);
       const [isLoading, setIsLoading] = useState(true);
 
@@ -136,7 +143,6 @@ export function TenantBrandingProvider({ children }: TenantBrandingProviderProps
       useEffect(() => {
             if (typeof document === "undefined" || !isTenantContext) return;
             const originalTitle = document.title;
-            // Only override the base title, let page-specific titles append
             document.title = document.title.replace(BRAND.name, appName);
             return () => { document.title = originalTitle; };
       }, [appName, isTenantContext]);
@@ -150,6 +156,50 @@ export function TenantBrandingProvider({ children }: TenantBrandingProviderProps
             }
             return () => { root.style.removeProperty("--tenant-primary"); };
       }, [primaryColor]);
+
+      // ══════════════════════════════════════════════════════════
+      // GLOBAL PREFS SYNC — Parse DashboardThemeJson, sync to localStorage,
+      // and apply as defaults when no manual override exists.
+      //
+      // DashboardThemeJson format: { "theme": "light", "language": "ar", "sidebarCollapsed": true }
+      //
+      // Priority: manual (localStorage.theme) > tenant pref (nexora_pref_*) > platform default
+      // ══════════════════════════════════════════════════════════
+      useEffect(() => {
+            if (typeof window === "undefined" || !branding?.dashboardThemeJson) return;
+
+            try {
+                  const prefs = JSON.parse(branding.dashboardThemeJson);
+
+                  // 1. Always write tenant pref keys (so they're available as fallback)
+                  if (prefs.theme) localStorage.setItem(STORAGE_KEYS.PREF_THEME, prefs.theme);
+                  if (prefs.language) localStorage.setItem(STORAGE_KEYS.PREF_LANG, prefs.language);
+                  if (prefs.sidebarCollapsed !== undefined)
+                        localStorage.setItem(STORAGE_KEYS.PREF_SIDEBAR_COLLAPSED, String(prefs.sidebarCollapsed));
+
+                  // 2. Apply as defaults ONLY when no manual override exists
+                  // Theme: if no "theme" in localStorage (first visit or cleared)
+                  const currentTheme = localStorage.getItem("theme");
+                  if (!currentTheme && prefs.theme) {
+                        setTheme(prefs.theme);
+                  }
+
+                  // Language: if no "language" in localStorage (first visit or cleared)
+                  const currentLang = localStorage.getItem(STORAGE_KEYS.LANGUAGE);
+                  if (!currentLang && prefs.language) {
+                        setLanguage(prefs.language as "en" | "ar");
+                  }
+
+                  // Sidebar: check app-storage for explicit sidebar state
+                  try {
+                        const stored = localStorage.getItem("app-storage");
+                        const hasSidebar = stored && JSON.parse(stored).state?.sidebarOpen !== undefined;
+                        if (!hasSidebar && prefs.sidebarCollapsed !== undefined) {
+                              setSidebarOpen(!prefs.sidebarCollapsed);
+                        }
+                  } catch { /* ignore */ }
+            } catch { /* invalid JSON — skip */ }
+      }, [branding?.dashboardThemeJson, setTheme, setLanguage, setSidebarOpen]);
 
       const value: TenantBrandingContextValue = {
             appName,
