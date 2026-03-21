@@ -27,7 +27,8 @@ export function CredentialsForm({
       return (
             <form
                   onSubmit={(e) => { e.preventDefault(); if (!isLoading && isFormValid) handleLogin(); }}
-                  className="space-y-6"
+                  className="flex flex-col"
+                  style={{ gap: "var(--login-element-gap, 24px)", fontFamily: "var(--login-font-body, inherit)" }}
             >
                   {/* Error Alert */}
                   {error && (
@@ -47,7 +48,8 @@ export function CredentialsForm({
                               value={formData.username}
                               onChange={(e) => updateField("username", e.target.value)}
                               required
-                              className="h-12 w-full rounded-xl border-border bg-background px-4 text-base text-foreground placeholder:text-muted-foreground/50 focus-visible:ring-1 focus-visible:ring-primary focus-visible:border-primary transition-all shadow-sm"
+                              className="w-full border-border bg-background px-4 text-base text-foreground placeholder:text-muted-foreground/50 focus-visible:ring-1 focus-visible:ring-primary focus-visible:border-primary transition-all shadow-sm"
+                              style={{ height: "var(--login-input-height, 48px)", borderRadius: "var(--login-radius-button, 12px)" }}
                               placeholder={t("auth.usernamePlaceholder")}
                               disabled={isLoading}
                               autoComplete="username"
@@ -66,14 +68,16 @@ export function CredentialsForm({
                                     value={formData.password}
                                     onChange={(e) => updateField("password", e.target.value)}
                                     required
-                                    className="h-12 w-full rounded-xl border-border bg-background px-4 pr-12 text-base text-foreground placeholder:text-muted-foreground/50 focus-visible:ring-1 focus-visible:ring-primary focus-visible:border-primary transition-all shadow-sm [&::-ms-reveal]:hidden"
+                                    className="w-full border-border bg-background px-4 pr-12 text-base text-foreground placeholder:text-muted-foreground/50 focus-visible:ring-1 focus-visible:ring-primary focus-visible:border-primary transition-all shadow-sm [&::-ms-reveal]:hidden"
+                                    style={{ height: "var(--login-input-height, 48px)", borderRadius: "var(--login-radius-button, 12px)" }}
                                     placeholder="••••••••"
                                     disabled={isLoading}
                                     autoComplete="current-password"
                               />
                               <button
                                     type="button"
-                                    className={`absolute ${isRTL ? "left-0" : "right-0"} top-0 flex h-12 w-12 items-center justify-center text-muted-foreground hover:text-foreground transition-colors focus:outline-none`}
+                                    className={`absolute ${isRTL ? "left-0" : "right-0"} top-0 flex w-12 items-center justify-center text-muted-foreground hover:text-foreground transition-colors focus:outline-none`}
+                              style={{ height: "var(--login-input-height, 48px)" }}
                                     onClick={togglePasswordVisibility}
                                     disabled={isLoading}
                                     tabIndex={-1}
@@ -88,7 +92,8 @@ export function CredentialsForm({
                         <Button
                               type="submit"
                               disabled={isLoading || !isFormValid}
-                              className="flex h-12 w-full justify-center items-center rounded-xl bg-primary text-[15px] font-medium text-primary-foreground shadow-sm transition-all hover:bg-primary/90 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none"
+                              className="flex w-full justify-center items-center bg-primary text-[15px] font-medium text-primary-foreground shadow-sm transition-all hover:bg-primary/90 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none"
+                              style={{ height: "var(--login-input-height, 48px)", borderRadius: "var(--login-radius-button, 12px)" }}
                         >
                               {isLoading ? (
                                     <><LoadingSpinner size="sm" showText={false} className="ltr:mr-2 rtl:ml-2" /> {t("common.loading")}</>

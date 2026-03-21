@@ -44,7 +44,14 @@ export function LoginBranding({ t, branding, slotConfig, position = "left" }: Lo
       const borderClass = position === "right" ? "border-l border-border" : "border-r border-border";
 
       return (
-            <div className={`relative hidden w-full lg:flex lg:w-1/2 xl:w-[55%] flex-col justify-between overflow-hidden bg-[var(--login-surface,hsl(var(--muted)/0.4))] p-12 lg:p-16 xl:p-24 ${borderClass}`}>
+            <div
+                  className={`relative hidden w-full lg:flex lg:w-1/2 xl:w-[55%] flex-col justify-between overflow-hidden bg-[var(--login-surface,hsl(var(--muted)/0.4))] p-12 lg:p-16 xl:p-24 ${borderClass}`}
+                  style={{
+                        backgroundImage: "var(--login-bg-image, none)",
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                  }}
+            >
 
                   {/* ── Theme-Adaptive Background Patterns ── */}
                   <div
@@ -94,8 +101,8 @@ export function LoginBranding({ t, branding, slotConfig, position = "left" }: Lo
 
                   {/* ── Main Content: Headline + Slot Content or Features ── */}
                   <div className="relative z-10 my-auto max-w-xl py-12">
-                        <h1 className="text-4xl font-semibold tracking-tight text-[var(--login-text,hsl(var(--foreground)))] lg:text-5xl xl:text-6xl leading-[1.12]"
-                            style={{ fontFamily: "var(--login-font-heading, inherit)" }}
+                        <h1 className="tracking-tight text-[var(--login-text,hsl(var(--foreground)))] leading-[1.12]"
+                            style={{ fontFamily: "var(--login-font-heading, inherit)", fontSize: "var(--login-size-headline, 3rem)", fontWeight: "var(--login-weight-heading, 600)" }}
                         >
                               {headline}
                         </h1>

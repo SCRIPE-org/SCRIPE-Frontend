@@ -180,6 +180,8 @@ export function useCustomizationViewModel() {
       localStorage.setItem(STORAGE_KEYS.PREF_THEME, prefsForm.theme);
       localStorage.setItem(STORAGE_KEYS.PREF_LANG, prefsForm.language);
       localStorage.setItem(STORAGE_KEYS.PREF_SIDEBAR_COLLAPSED, String(prefsForm.sidebarCollapsed));
+      // Also write full DashboardThemeJson for settings-provider Layer 3 merge
+      localStorage.setItem(STORAGE_KEYS.PREF_DASHBOARD_SETTINGS, JSON.stringify(prefsForm));
 
       // 2. Apply immediately to UI
       setTheme(prefsForm.theme);

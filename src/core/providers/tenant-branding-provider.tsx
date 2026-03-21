@@ -161,9 +161,14 @@ export function TenantBrandingProvider({ children }: TenantBrandingProviderProps
       // GLOBAL PREFS SYNC — Parse DashboardThemeJson, sync to localStorage,
       // and apply as defaults when no manual override exists.
       //
-      // DashboardThemeJson format: { "theme": "light", "language": "ar", "sidebarCollapsed": true }
+      // DashboardThemeJson contains two categories:
+      //   1. Basic prefs: { theme, language, sidebarCollapsed }
+      //   2. Dashboard appearance: { colorTheme, layoutTemplate, cardStyle, ... }
       //
-      // Priority: manual (localStorage.theme) > tenant pref (nexora_pref_*) > platform default
+      // Priority (4-layer merge per analysis Section 9):
+      //   Layer 1: Platform defaults (hardcoded defaultSettings)
+      //   Layer 3: Tenant defaults (DashboardThemeJson → nexora_pref_dashboard_settings)
+      //   Layer 4: Admin overrides (localStorage dashboard-settings)
       // ══════════════════════════════════════════════════════════
       useEffect(() => {
             if (typeof window === "undefined" || !branding?.dashboardThemeJson) return;
@@ -171,26 +176,26 @@ export function TenantBrandingProvider({ children }: TenantBrandingProviderProps
             try {
                   const prefs = JSON.parse(branding.dashboardThemeJson);
 
-                  // 1. Always write tenant pref keys (so they're available as fallback)
+                  // 1. Write basic pref keys (backward compat for theme/i18n/sidebar providers)
                   if (prefs.theme) localStorage.setItem(STORAGE_KEYS.PREF_THEME, prefs.theme);
                   if (prefs.language) localStorage.setItem(STORAGE_KEYS.PREF_LANG, prefs.language);
                   if (prefs.sidebarCollapsed !== undefined)
                         localStorage.setItem(STORAGE_KEYS.PREF_SIDEBAR_COLLAPSED, String(prefs.sidebarCollapsed));
 
-                  // 2. Apply as defaults ONLY when no manual override exists
-                  // Theme: if no "theme" in localStorage (first visit or cleared)
+                  // 2. Write the FULL DashboardThemeJson as tenant defaults for settings-provider (Layer 3)
+                  localStorage.setItem(STORAGE_KEYS.PREF_DASHBOARD_SETTINGS, branding.dashboardThemeJson);
+
+                  // 3. Apply basic prefs as defaults ONLY when no manual override exists
                   const currentTheme = localStorage.getItem("theme");
                   if (!currentTheme && prefs.theme) {
                         setTheme(prefs.theme);
                   }
 
-                  // Language: if no "language" in localStorage (first visit or cleared)
                   const currentLang = localStorage.getItem(STORAGE_KEYS.LANGUAGE);
                   if (!currentLang && prefs.language) {
                         setLanguage(prefs.language as "en" | "ar");
                   }
 
-                  // Sidebar: check app-storage for explicit sidebar state
                   try {
                         const stored = localStorage.getItem("app-storage");
                         const hasSidebar = stored && JSON.parse(stored).state?.sidebarOpen !== undefined;

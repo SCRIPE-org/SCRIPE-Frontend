@@ -18,7 +18,10 @@ import {
   ChevronRight,
   CheckCircle2,
   Info,
+  Paintbrush,
+  ExternalLink,
 } from "lucide-react";
+import Link from "next/link";
 import type { TenantSettings } from "../../domain/entities/TenantSettings";
 
 interface CustomizationSectionProps {
@@ -37,6 +40,28 @@ export function CustomizationSection({ settings, t }: CustomizationSectionProps)
 
   return (
     <div className="space-y-6">
+      {/* ── Launch Customizer Studio ────────────── */}
+      <Card className="border-primary/20 bg-primary/5">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Paintbrush className="h-5 w-5 text-primary" />
+            {c("studioTitle")}
+          </CardTitle>
+          <CardDescription>
+            {c("layoutDescription")}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Button asChild className="gap-2">
+            <Link href="/customizer">
+              <Paintbrush className="h-4 w-4" />
+              {c("studioTitle")}
+              <ExternalLink className="h-3.5 w-3.5 ml-1" />
+            </Link>
+          </Button>
+        </CardContent>
+      </Card>
+
       {/* ── Version History (Audit Log) ────────────── */}
       <Card>
         <CardHeader>

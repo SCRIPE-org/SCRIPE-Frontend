@@ -762,14 +762,35 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   const [settings, setSettings] = useState<Settings>(defaultSettings);
   const [isHydrated, setIsHydrated] = useState(false);
 
-  // Load settings from localStorage on mount
+  // Load settings with 3-layer merge (per analysis Section 9):
+  //   Layer 1: Platform defaults (defaultSettings — hardcoded above)
+  //   Layer 3: Tenant defaults (PREF_DASHBOARD_SETTINGS — synced from DashboardThemeJson by TenantBrandingProvider)
+  //   Layer 4: Admin overrides (DASHBOARD_SETTINGS — per-browser localStorage)
   useEffect(() => {
     try {
-      const savedSettings = localStorage.getItem(STORAGE_KEYS.DASHBOARD_SETTINGS);
-      if (savedSettings) {
-        const parsed = JSON.parse(savedSettings);
-        setSettings({ ...defaultSettings, ...parsed });
+      // Layer 3: Tenant defaults (from DashboardThemeJson via TenantBrandingProvider)
+      let tenantDefaults: Partial<Settings> = {};
+      const tenantSettingsRaw = localStorage.getItem(STORAGE_KEYS.PREF_DASHBOARD_SETTINGS);
+      if (tenantSettingsRaw) {
+        try {
+          const parsed = JSON.parse(tenantSettingsRaw);
+          // Extract only valid Settings keys (ignore basic prefs like theme/language/sidebarCollapsed)
+          const { theme, language, sidebarCollapsed, _schemaVersion, ...dashboardSettings } = parsed;
+          tenantDefaults = dashboardSettings;
+        } catch { /* invalid tenant JSON — skip */ }
       }
+
+      // Layer 4: Admin overrides (per-browser)
+      let adminOverrides: Partial<Settings> = {};
+      const adminSettingsRaw = localStorage.getItem(STORAGE_KEYS.DASHBOARD_SETTINGS);
+      if (adminSettingsRaw) {
+        try {
+          adminOverrides = JSON.parse(adminSettingsRaw);
+        } catch { /* invalid admin JSON — skip */ }
+      }
+
+      // Merge: Layer 1 → Layer 3 → Layer 4
+      setSettings({ ...defaultSettings, ...tenantDefaults, ...adminOverrides });
     } catch (error) {
       appLogger.error("Failed to load settings:", error);
     } finally {

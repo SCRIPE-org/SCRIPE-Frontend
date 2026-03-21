@@ -6,6 +6,8 @@
  *
  * If isSafeMode is true, ALL customization is bypassed (§16, §29).
  * Login pages are server-authoritative — no client cache trust (§20).
+ *
+ * Enhanced: injects custom CSS <style> tag, handles bg.gradient override
  */
 "use client";
 
@@ -68,16 +70,67 @@ export function useLoginBrandingTokens({
       root.style.setProperty("--login-bg-image", `url(${config.tokens["bg.image"]})`);
       tokensSet.push("--login-bg-image");
     }
+
+    // Handle gradient — overrides solid bg color
     if (config.tokens["bg.gradient"]) {
       root.style.setProperty("--login-bg-gradient", config.tokens["bg.gradient"]);
+      // Also set --login-bg to the gradient so layouts automatically pick it up
+      root.style.setProperty("--login-bg", config.tokens["bg.gradient"]);
       tokensSet.push("--login-bg-gradient");
     }
+
+    // ─── Load Google Fonts runtime ───
+    const fontsToLoad = new Set<string>();
+    const fontTokens = ["font.heading", "font.body", "font.bodyAr"] as const;
+    for (const tokenKey of fontTokens) {
+      const fontName = config.tokens[tokenKey];
+      if (fontName && fontName !== "system-ui" && fontName !== "inherit") {
+        fontsToLoad.add(fontName);
+      }
+    }
+
+    const fontLinkIds: string[] = [];
+    fontsToLoad.forEach((fontName) => {
+      const linkId = `studio-font-${fontName.replace(/\s+/g, "-").toLowerCase()}`;
+      if (!document.getElementById(linkId)) {
+        const link = document.createElement("link");
+        link.id = linkId;
+        link.rel = "stylesheet";
+        link.href = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(fontName)}:wght@300;400;500;600;700;800;900&display=swap`;
+        document.head.appendChild(link);
+      }
+      fontLinkIds.push(linkId);
+    });
 
     // Cleanup: remove all CSS vars on unmount
     return () => {
       tokensSet.forEach((v) => root.style.removeProperty(v));
+      fontLinkIds.forEach((id) => document.getElementById(id)?.remove());
     };
   }, [config.tokens, isSafeMode]);
+
+  // Inject custom CSS as <style> tag
+  useEffect(() => {
+    if (typeof document === "undefined" || isSafeMode) return;
+
+    // Parse raw JSON to get customCss
+    let customCss = "";
+    try {
+      const raw = loginBrandingJson ? JSON.parse(loginBrandingJson) : {};
+      customCss = raw.customCss || "";
+    } catch { /* ignore parse errors */ }
+
+    if (!customCss) return;
+
+    const styleEl = document.createElement("style");
+    styleEl.setAttribute("data-studio-custom-css", "true");
+    styleEl.textContent = customCss;
+    document.head.appendChild(styleEl);
+
+    return () => {
+      styleEl.remove();
+    };
+  }, [loginBrandingJson, isSafeMode]);
 
   return {
     layout: config.layout,

@@ -120,6 +120,8 @@ export function useTenantResolution(): TenantResolutionResult {
                                           if (prefs.language) localStorage.setItem(STORAGE_KEYS.PREF_LANG, prefs.language);
                                           if (prefs.sidebarCollapsed !== undefined)
                                                 localStorage.setItem(STORAGE_KEYS.PREF_SIDEBAR_COLLAPSED, String(prefs.sidebarCollapsed));
+                                          // Full dashboard settings for settings-provider Layer 3
+                                          localStorage.setItem(STORAGE_KEYS.PREF_DASHBOARD_SETTINGS, data.dashboardThemeJson);
 
                                           // Apply theme immediately if no manual override
                                           if (!localStorage.getItem("theme") && prefs.theme) {

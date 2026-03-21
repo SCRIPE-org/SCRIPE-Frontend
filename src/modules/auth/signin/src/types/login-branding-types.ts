@@ -7,13 +7,30 @@
  * Based on: customization_system_analysis.md §10, §11, §12
  */
 
-// ─── Login Layout ──────────────────────────────────────
+// ─── Login Layout (22 unique layouts) ──────────────────
 export type LoginLayout =
-  | "split-right"   // Branding left, form right (default)
-  | "split-left"    // Branding right, form left
-  | "centered"      // Full-width, form centered with branding above
-  | "branded-full"  // Full-screen branding bg, form card overlay
-  | "minimal";      // No branding panel, clean centered form
+  | "split-right"      // Branding left, form right (default)
+  | "split-left"       // Branding right, form left
+  | "centered"         // Animated gradient ring card, centered
+  | "branded-full"     // Full-screen bg, frosted glass card
+  | "minimal"          // Clean modern, dot-pattern bg, strong shadow
+  | "overlay"          // True glassmorphism over bg image
+  | "magazine"         // Editorial hero text, gradient fade, 60/40
+  | "stacked"          // Wave SVG divider, banner top, form below
+  | "sidebar-compact"  // 200px sidebar with icons + labels
+  | "asymmetric"       // Diagonal clip-path, overlapping content
+  | "floating"         // Floating card with gradient border + dot-grid
+  | "immersive"        // Full-bleed cinematic hero, no card
+  | "split-diagonal"   // Diagonal SVG clip separating brand/form
+  | "carousel"         // Auto-rotating testimonials branding panel
+  | "glass-morphism"   // Extreme glass: thick blur, luminous border
+  | "gradient-wave"    // Animated SVG wave between sections
+  | "spotlight"        // Dark bg with radial glow behind form
+  | "dual-panel"       // Three zones: header + features left + form right
+  | "corner-card"      // Small form bottom-right, large brand hero
+  | "vertical-split"   // Top half branding, bottom half form
+  | "fullscreen-form"  // Full-screen form, zero distraction
+  | "mosaic";          // CSS grid mosaic bg, form card centered
 
 // ─── Design Tokens ─────────────────────────────────────
 export interface LoginDesignTokens {
@@ -21,19 +38,34 @@ export interface LoginDesignTokens {
   "color.background"?: string;
   "color.surface"?: string;
   "color.primary"?: string;
+  "color.secondary"?: string;
   "color.accent"?: string;
   "color.text"?: string;
   "color.textMuted"?: string;
+  "color.border"?: string;
+  "color.error"?: string;
+  "color.success"?: string;
   // Typography tokens
   "font.heading"?: string;
   "font.body"?: string;
+  "font.bodyAr"?: string;
   "font.size.headline"?: string;
   "font.size.subtitle"?: string;
+  "font.weight.heading"?: string;
+  "font.weight.body"?: string;
+  "font.lineHeight"?: string;
+  "font.letterSpacing"?: string;
   // Spacing / appearance tokens
   "radius.card"?: string;
   "radius.button"?: string;
   "shadow.card"?: string;
-  "overlay.opacity"?: string; // For branded-full layout bg overlay (min 0.4 per §27)
+  "overlay.opacity"?: string;
+  "overlay.color"?: string;
+  "overlay.blur"?: string;
+  "spacing.formWidth"?: string;
+  "spacing.cardPadding"?: string;
+  "spacing.elementGap"?: string;
+  "spacing.inputHeight"?: string;
   // Background
   "bg.image"?: string;
   "bg.gradient"?: string;
@@ -44,17 +76,32 @@ export const TOKEN_TO_CSS_VAR: Record<string, string> = {
   "color.background": "--login-bg",
   "color.surface": "--login-surface",
   "color.primary": "--login-primary",
+  "color.secondary": "--login-secondary",
   "color.accent": "--login-accent",
   "color.text": "--login-text",
   "color.textMuted": "--login-text-muted",
+  "color.border": "--login-border",
+  "color.error": "--login-error",
+  "color.success": "--login-success",
   "font.heading": "--login-font-heading",
   "font.body": "--login-font-body",
+  "font.bodyAr": "--login-font-body-ar",
   "font.size.headline": "--login-size-headline",
   "font.size.subtitle": "--login-size-subtitle",
+  "font.weight.heading": "--login-weight-heading",
+  "font.weight.body": "--login-weight-body",
+  "font.lineHeight": "--login-line-height",
+  "font.letterSpacing": "--login-letter-spacing",
   "radius.card": "--login-radius-card",
   "radius.button": "--login-radius-button",
   "shadow.card": "--login-shadow-card",
   "overlay.opacity": "--login-overlay-opacity",
+  "overlay.color": "--login-overlay-color",
+  "overlay.blur": "--login-overlay-blur",
+  "spacing.formWidth": "--login-form-width",
+  "spacing.cardPadding": "--login-card-padding",
+  "spacing.elementGap": "--login-element-gap",
+  "spacing.inputHeight": "--login-input-height",
 };
 
 // ─── Content Blocks (§12) ──────────────────────────────
@@ -172,5 +219,9 @@ export function parseSlotConfig(json: string | null | undefined): SlotConfig {
 
 function isValidLayout(layout: unknown): layout is LoginLayout {
   return typeof layout === "string" &&
-    ["split-right", "split-left", "centered", "branded-full", "minimal"].includes(layout);
+    ["split-right", "split-left", "centered", "branded-full", "minimal",
+     "overlay", "magazine", "stacked", "sidebar-compact", "asymmetric",
+     "floating", "immersive", "split-diagonal", "carousel", "glass-morphism",
+     "gradient-wave", "spotlight", "dual-panel", "corner-card",
+     "vertical-split", "fullscreen-form", "mosaic"].includes(layout);
 }

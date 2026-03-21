@@ -49,6 +49,8 @@ export const STORAGE_KEYS = {
   PREF_THEME: "nexora_pref_theme",
   PREF_LANG: "nexora_pref_lang",
   PREF_SIDEBAR_COLLAPSED: "nexora_pref_sidebar_collapsed",
+  // Tenant default dashboard settings (Layer 3 — synced from DashboardThemeJson)
+  PREF_DASHBOARD_SETTINGS: "nexora_pref_dashboard_settings",
 } as const;
 
 /**
