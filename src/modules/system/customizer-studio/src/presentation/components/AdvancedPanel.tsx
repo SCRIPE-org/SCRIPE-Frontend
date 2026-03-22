@@ -129,8 +129,35 @@ export function AdvancedPanel({ t, draft, updateDraft }: AdvancedPanelProps) {
               ["--login-radius-button", "Button border radius"],
               ["--login-shadow-card", "Card box shadow"],
             ]} />
+            <div className="space-y-1 pt-1">
+              <p className="text-[10px] font-semibold text-foreground">🎯 CSS Class Hooks</p>
+              <div className="grid grid-cols-2 gap-x-3 gap-y-0.5 text-[9px]">
+                {[
+                  [".login-page", "Page wrapper"],
+                  [".login-form-wrapper", "Form container"],
+                  [".login-form", "<form> tag"],
+                  [".login-input", "Input fields"],
+                  [".login-button", "Submit button"],
+                  [".login-card", "Card/surface"],
+                  [".login-heading", "Headings (h1/h2)"],
+                  [".login-subtitle", "Subtitle text"],
+                  [".login-logo", "Logo box"],
+                  [".login-footer", "Copyright area"],
+                  [".login-sso", "SSO buttons"],
+                  [".login-overlay", "Overlay layer"],
+                  [".login-divider", "Divider line"],
+                  [".login-label", "Form labels"],
+                  [".dark", "Dark theme"],
+                ].map(([cls, desc]) => (
+                  <div key={cls} className="flex items-baseline gap-1">
+                    <code className="text-[8px] bg-muted px-0.5 rounded font-mono text-primary shrink-0">{cls}</code>
+                    <span className="text-muted-foreground truncate">{desc}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
             <p className="text-[9px] text-muted-foreground/60 pt-1">
-              💡 In dark mode, all variables are automatically overridden via <code className="text-[9px] bg-muted px-1 rounded">.dark {'{ }'}</code> CSS. You can target dark mode with <code className="text-[9px] bg-muted px-1 rounded">.dark selector</code>.
+              💡 Use <code className="text-[9px] bg-muted px-1 rounded">!important</code> to override inline styles. Target dark mode with <code className="text-[9px] bg-muted px-1 rounded">.dark .login-form</code> etc.
             </p>
           </div>
         </details>

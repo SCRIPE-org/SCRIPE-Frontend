@@ -158,6 +158,81 @@ export function useLoginBrandingTokens({
       cssBlocks.push(`.dark {\n${darkRules.join("\n")}\n}`);
     }
 
+    // ─── Base Stylesheet: .login-* class definitions ───
+    // These use CSS vars so custom CSS can override naturally (no !important needed)
+    cssBlocks.push(`/* ═══ Login Base Stylesheet ═══ */
+.login-page {
+  font-family: var(--login-font-body, inherit);
+  line-height: var(--login-line-height, 1.5);
+  letter-spacing: var(--login-letter-spacing, 0px);
+}
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--login-element-gap, 16px);
+}
+.login-input {
+  height: var(--login-input-height, 44px);
+  border-radius: var(--login-radius-button, 8px);
+  border-color: var(--login-border, hsl(var(--border)));
+}
+.login-button {
+  height: var(--login-input-height, 44px);
+  background-color: var(--login-primary, hsl(var(--primary)));
+  border-radius: var(--login-radius-button, 8px);
+  color: white;
+  width: 100%;
+  font-weight: 600;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+}
+.login-button:hover {
+  opacity: 0.9;
+  filter: brightness(1.05);
+}
+.login-card {
+  border-radius: var(--login-radius-card, 16px);
+  padding: var(--login-card-padding, 32px);
+  box-shadow: var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.25));
+  background-color: var(--login-surface, hsl(var(--background)));
+}
+.login-heading {
+  font-family: var(--login-font-heading, inherit);
+  font-weight: var(--login-weight-heading, 600);
+  color: var(--login-text, hsl(var(--foreground)));
+}
+.login-subtitle {
+  font-size: var(--login-size-subtitle, 0.875rem);
+  color: var(--login-text-muted, hsl(var(--muted-foreground)));
+}
+.login-logo {
+  overflow: hidden;
+  border-radius: var(--login-radius-card, 0.75rem);
+}
+.login-footer {
+  text-align: center;
+  margin-top: 2rem;
+  color: var(--login-text-muted, hsl(var(--muted-foreground)));
+  font-size: 11px;
+  opacity: 0.6;
+}
+.login-sso button {
+  border-radius: var(--login-radius-button, 8px);
+}
+.login-overlay {
+  position: absolute;
+  inset: 0;
+  background-color: var(--login-overlay-color, #000000);
+  opacity: var(--login-overlay-opacity, 0.5);
+  backdrop-filter: blur(var(--login-overlay-blur, 0px));
+}
+.login-divider {
+  border-color: var(--login-border, hsl(var(--border)));
+}
+.login-label {
+  color: var(--login-text, hsl(var(--foreground)));
+}`);
+
     if (cssBlocks.length === 0) return;
 
     const styleEl = document.createElement("style");
@@ -195,11 +270,10 @@ export function useLoginBrandingTokens({
     };
   }, [config.tokens, isSafeMode]);
 
-  // Inject custom CSS as <style> tag
+  // ─── Inject custom CSS (LAST — highest cascade priority) ───
   useEffect(() => {
     if (typeof document === "undefined" || isSafeMode) return;
 
-    // Parse raw JSON to get customCss
     let customCss = "";
     try {
       const raw = loginBrandingJson ? JSON.parse(loginBrandingJson) : {};
@@ -208,8 +282,12 @@ export function useLoginBrandingTokens({
 
     if (!customCss) return;
 
+    // Remove old custom CSS first
+    document.querySelector("[data-studio-custom-css]")?.remove();
+
     const styleEl = document.createElement("style");
     styleEl.setAttribute("data-studio-custom-css", "true");
+    // Inject AFTER everything else for highest priority
     styleEl.textContent = customCss;
     document.head.appendChild(styleEl);
 
