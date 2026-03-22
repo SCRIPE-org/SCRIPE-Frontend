@@ -72,7 +72,7 @@ export interface StudioDraft {
   faviconUrl: string;
   copyrightText: string;
 
-  // Colors
+  // Colors (light / unified — these serve as the default/light palette)
   primaryColor: string;
   secondaryColor: string;
   bgColor: string;
@@ -82,6 +82,20 @@ export interface StudioDraft {
   borderColor: string;
   errorColor: string;
   successColor: string;
+
+  // Theme mode: 'unified' = same colors for both, 'split' = separate light/dark
+  themeMode: "unified" | "split";
+
+  // Dark palette (used when themeMode === 'split')
+  darkPrimaryColor: string;
+  darkSecondaryColor: string;
+  darkBgColor: string;
+  darkSurfaceColor: string;
+  darkTextColor: string;
+  darkMutedColor: string;
+  darkBorderColor: string;
+  darkErrorColor: string;
+  darkSuccessColor: string;
 
   // Typography
   fontFamily: string;
@@ -94,7 +108,7 @@ export interface StudioDraft {
   letterSpacing: number;
   headingFont: string; // Separate heading font (defaults to fontFamily)
 
-  // Background
+  // Background (light / unified)
   bgType: "solid" | "gradient" | "image";
   bgGradientDirection: string;
   bgGradientFrom: string;
@@ -104,6 +118,43 @@ export interface StudioDraft {
   bgOverlayColor: string;
   bgOverlayOpacity: number;
   bgBlur: number;
+
+  // Background dark (used when themeMode === 'split')
+  darkBgType: "solid" | "gradient" | "image";
+  darkBgGradientDirection: string;
+  darkBgGradientFrom: string;
+  darkBgGradientTo: string;
+  darkBgImageUrl: string;
+  darkBgOverlayEnabled: boolean;
+  darkBgOverlayColor: string;
+  darkBgOverlayOpacity: number;
+  darkBgBlur: number;
+
+  // Split layout panel backgrounds
+  // 'unified' = same bg for both panels, 'independent' = separate controls
+  splitBgMode: "unified" | "independent";
+  // Branding panel overrides — LIGHT (used when splitBgMode === 'independent')
+  panelBgType: "solid" | "gradient" | "image";
+  panelBgColor: string;
+  panelBgGradientDirection: string;
+  panelBgGradientFrom: string;
+  panelBgGradientTo: string;
+  panelBgImageUrl: string;
+  panelBgOverlayEnabled: boolean;
+  panelBgOverlayColor: string;
+  panelBgOverlayOpacity: number;
+  panelBgBlur: number;
+  // Branding panel overrides — DARK (used when splitBgMode === 'independent')
+  darkPanelBgType: "solid" | "gradient" | "image";
+  darkPanelBgColor: string;
+  darkPanelBgGradientDirection: string;
+  darkPanelBgGradientFrom: string;
+  darkPanelBgGradientTo: string;
+  darkPanelBgImageUrl: string;
+  darkPanelBgOverlayEnabled: boolean;
+  darkPanelBgOverlayColor: string;
+  darkPanelBgOverlayOpacity: number;
+  darkPanelBgBlur: number;
 
   // Spacing & Shape
   borderRadius: number;
@@ -132,13 +183,23 @@ export const DEFAULT_DRAFT: StudioDraft = {
   copyrightText: "",
   primaryColor: "#3b82f6",
   secondaryColor: "#64748b",
-  bgColor: "#0f172a",
-  surfaceColor: "#1e293b",
-  textColor: "#f8fafc",
-  mutedColor: "#94a3b8",
-  borderColor: "#334155",
+  bgColor: "#ffffff",
+  surfaceColor: "#f8fafc",
+  textColor: "#0f172a",
+  mutedColor: "#64748b",
+  borderColor: "#e2e8f0",
   errorColor: "#ef4444",
   successColor: "#22c55e",
+  themeMode: "unified",
+  darkPrimaryColor: "#3b82f6",
+  darkSecondaryColor: "#64748b",
+  darkBgColor: "#0f172a",
+  darkSurfaceColor: "#1e293b",
+  darkTextColor: "#f8fafc",
+  darkMutedColor: "#94a3b8",
+  darkBorderColor: "#334155",
+  darkErrorColor: "#ef4444",
+  darkSuccessColor: "#22c55e",
   fontFamily: "Inter",
   fontFamilyAr: "Cairo",
   headingFont: "",
@@ -157,6 +218,39 @@ export const DEFAULT_DRAFT: StudioDraft = {
   bgOverlayColor: "#000000",
   bgOverlayOpacity: 0.5,
   bgBlur: 0,
+  // Dark background defaults
+  darkBgType: "solid",
+  darkBgGradientDirection: "to bottom right",
+  darkBgGradientFrom: "#0f172a",
+  darkBgGradientTo: "#1e293b",
+  darkBgImageUrl: "",
+  darkBgOverlayEnabled: false,
+  darkBgOverlayColor: "#000000",
+  darkBgOverlayOpacity: 0.5,
+  darkBgBlur: 0,
+  // Split panel defaults — LIGHT
+  splitBgMode: "unified",
+  panelBgType: "solid",
+  panelBgColor: "#f1f5f9",
+  panelBgGradientDirection: "to bottom right",
+  panelBgGradientFrom: "#e2e8f0",
+  panelBgGradientTo: "#f8fafc",
+  panelBgImageUrl: "",
+  panelBgOverlayEnabled: false,
+  panelBgOverlayColor: "#000000",
+  panelBgOverlayOpacity: 0.5,
+  panelBgBlur: 0,
+  // Split panel defaults — DARK
+  darkPanelBgType: "solid",
+  darkPanelBgColor: "#1e293b",
+  darkPanelBgGradientDirection: "to bottom right",
+  darkPanelBgGradientFrom: "#1e293b",
+  darkPanelBgGradientTo: "#0f172a",
+  darkPanelBgImageUrl: "",
+  darkPanelBgOverlayEnabled: false,
+  darkPanelBgOverlayColor: "#000000",
+  darkPanelBgOverlayOpacity: 0.5,
+  darkPanelBgBlur: 0,
   borderRadius: 12,
   formWidth: 380,
   cardPadding: 32,
@@ -179,7 +273,7 @@ export const DEVICE_DIMENSIONS: Record<DeviceSize, { width: number; height: numb
 };
 
 // ── Panel Identifiers ──────────────────────────────────
-export type StudioPanel = "layout" | "branding" | "colors" | "typography" | "background" | "spacing" | "blocks" | "advanced";
+export type StudioPanel = "layout" | "branding" | "appearance" | "typography" | "spacing" | "blocks" | "advanced";
 
 // ── Font Options (English) ─────────────────────────────
 export const FONT_OPTIONS_EN = [
@@ -202,27 +296,59 @@ export const FONT_OPTIONS_AR = [
 export const COLOR_PRESETS: { labelKey: string; colors: Partial<StudioDraft> }[] = [
   {
     labelKey: "studio.preset.proDark",
-    colors: { primaryColor: "#3b82f6", bgColor: "#0f172a", surfaceColor: "#1e293b", textColor: "#f8fafc", mutedColor: "#94a3b8", borderColor: "#334155" },
+    colors: {
+      // Light palette
+      primaryColor: "#3b82f6", secondaryColor: "#64748b", bgColor: "#ffffff", surfaceColor: "#f8fafc",
+      textColor: "#0f172a", mutedColor: "#64748b", borderColor: "#e2e8f0",
+      // Dark palette
+      darkPrimaryColor: "#3b82f6", darkSecondaryColor: "#94a3b8", darkBgColor: "#0f172a", darkSurfaceColor: "#1e293b",
+      darkTextColor: "#f8fafc", darkMutedColor: "#94a3b8", darkBorderColor: "#334155",
+    },
   },
   {
     labelKey: "studio.preset.oceanBlue",
-    colors: { primaryColor: "#0ea5e9", bgColor: "#0c1222", surfaceColor: "#172038", textColor: "#e2e8f0", mutedColor: "#64748b", borderColor: "#1e3a5a" },
+    colors: {
+      primaryColor: "#0ea5e9", secondaryColor: "#38bdf8", bgColor: "#f0f9ff", surfaceColor: "#e0f2fe",
+      textColor: "#0c4a6e", mutedColor: "#64748b", borderColor: "#bae6fd",
+      darkPrimaryColor: "#0ea5e9", darkSecondaryColor: "#38bdf8", darkBgColor: "#0c1222", darkSurfaceColor: "#172038",
+      darkTextColor: "#e2e8f0", darkMutedColor: "#64748b", darkBorderColor: "#1e3a5a",
+    },
   },
   {
     labelKey: "studio.preset.forestGreen",
-    colors: { primaryColor: "#10b981", bgColor: "#0a1f15", surfaceColor: "#132f21", textColor: "#ecfdf5", mutedColor: "#6ee7b7", borderColor: "#1a4732" },
+    colors: {
+      primaryColor: "#10b981", secondaryColor: "#34d399", bgColor: "#f0fdf4", surfaceColor: "#dcfce7",
+      textColor: "#14532d", mutedColor: "#6b7280", borderColor: "#bbf7d0",
+      darkPrimaryColor: "#10b981", darkSecondaryColor: "#6ee7b7", darkBgColor: "#0a1f15", darkSurfaceColor: "#132f21",
+      darkTextColor: "#ecfdf5", darkMutedColor: "#6ee7b7", darkBorderColor: "#1a4732",
+    },
   },
   {
     labelKey: "studio.preset.sunsetWarm",
-    colors: { primaryColor: "#f59e0b", bgColor: "#1c1008", surfaceColor: "#2a1b0f", textColor: "#fef3c7", mutedColor: "#d97706", borderColor: "#451a03" },
+    colors: {
+      primaryColor: "#f59e0b", secondaryColor: "#fbbf24", bgColor: "#fffbeb", surfaceColor: "#fef3c7",
+      textColor: "#78350f", mutedColor: "#92400e", borderColor: "#fde68a",
+      darkPrimaryColor: "#f59e0b", darkSecondaryColor: "#fbbf24", darkBgColor: "#1c1008", darkSurfaceColor: "#2a1b0f",
+      darkTextColor: "#fef3c7", darkMutedColor: "#d97706", darkBorderColor: "#451a03",
+    },
   },
   {
     labelKey: "studio.preset.monochrome",
-    colors: { primaryColor: "#a1a1aa", bgColor: "#09090b", surfaceColor: "#18181b", textColor: "#fafafa", mutedColor: "#71717a", borderColor: "#27272a" },
+    colors: {
+      primaryColor: "#71717a", secondaryColor: "#a1a1aa", bgColor: "#fafafa", surfaceColor: "#f4f4f5",
+      textColor: "#18181b", mutedColor: "#71717a", borderColor: "#e4e4e7",
+      darkPrimaryColor: "#a1a1aa", darkSecondaryColor: "#71717a", darkBgColor: "#09090b", darkSurfaceColor: "#18181b",
+      darkTextColor: "#fafafa", darkMutedColor: "#71717a", darkBorderColor: "#27272a",
+    },
   },
   {
     labelKey: "studio.preset.purpleNight",
-    colors: { primaryColor: "#8b5cf6", bgColor: "#0f0720", surfaceColor: "#1a0e38", textColor: "#f5f3ff", mutedColor: "#a78bfa", borderColor: "#2e1f5e" },
+    colors: {
+      primaryColor: "#8b5cf6", secondaryColor: "#a78bfa", bgColor: "#faf5ff", surfaceColor: "#f3e8ff",
+      textColor: "#3b0764", mutedColor: "#7c3aed", borderColor: "#e9d5ff",
+      darkPrimaryColor: "#8b5cf6", darkSecondaryColor: "#a78bfa", darkBgColor: "#0f0720", darkSurfaceColor: "#1a0e38",
+      darkTextColor: "#f5f3ff", darkMutedColor: "#a78bfa", darkBorderColor: "#2e1f5e",
+    },
   },
 ];
 
@@ -252,6 +378,7 @@ export function useStudioViewModel() {
   // ── State ──
   const [draft, setDraft] = useState<StudioDraft>(DEFAULT_DRAFT);
   const [isDirty, setIsDirty] = useState(false);
+  const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
   const [deviceSize, setDeviceSize] = useState<DeviceSize>("desktop");
   const [activePanel, setActivePanel] = useState<StudioPanel>("layout");
   const autoSaveTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
@@ -287,6 +414,16 @@ export function useStudioViewModel() {
         borderColor: tokens["color.border"] || DEFAULT_DRAFT.borderColor,
         errorColor: tokens["color.error"] || DEFAULT_DRAFT.errorColor,
         successColor: tokens["color.success"] || DEFAULT_DRAFT.successColor,
+        themeMode: source.themeMode || "unified",
+        darkPrimaryColor: tokens["dark.color.primary"] || DEFAULT_DRAFT.darkPrimaryColor,
+        darkSecondaryColor: tokens["dark.color.secondary"] || DEFAULT_DRAFT.darkSecondaryColor,
+        darkBgColor: tokens["dark.color.background"] || DEFAULT_DRAFT.darkBgColor,
+        darkSurfaceColor: tokens["dark.color.surface"] || DEFAULT_DRAFT.darkSurfaceColor,
+        darkTextColor: tokens["dark.color.text"] || DEFAULT_DRAFT.darkTextColor,
+        darkMutedColor: tokens["dark.color.textMuted"] || DEFAULT_DRAFT.darkMutedColor,
+        darkBorderColor: tokens["dark.color.border"] || DEFAULT_DRAFT.darkBorderColor,
+        darkErrorColor: tokens["dark.color.error"] || DEFAULT_DRAFT.darkErrorColor,
+        darkSuccessColor: tokens["dark.color.success"] || DEFAULT_DRAFT.darkSuccessColor,
         // Typography
         fontFamily: tokens["font.body"] || DEFAULT_DRAFT.fontFamily,
         fontFamilyAr: tokens["font.bodyAr"] || DEFAULT_DRAFT.fontFamilyAr,
@@ -307,6 +444,39 @@ export function useStudioViewModel() {
         bgOverlayColor: source.bgOverlayColor || DEFAULT_DRAFT.bgOverlayColor,
         bgOverlayOpacity: parseFloat(tokens["overlay.opacity"] || "") || DEFAULT_DRAFT.bgOverlayOpacity,
         bgBlur: parseInt(source.bgBlur || "") || DEFAULT_DRAFT.bgBlur,
+        // Dark background
+        darkBgType: source.darkBgType || DEFAULT_DRAFT.darkBgType,
+        darkBgGradientDirection: source.darkBgGradientDirection || DEFAULT_DRAFT.darkBgGradientDirection,
+        darkBgGradientFrom: source.darkBgGradientFrom || DEFAULT_DRAFT.darkBgGradientFrom,
+        darkBgGradientTo: source.darkBgGradientTo || DEFAULT_DRAFT.darkBgGradientTo,
+        darkBgImageUrl: tokens["dark.bg.image"] || source.darkBgImageUrl || "",
+        darkBgOverlayEnabled: source.darkBgOverlayEnabled ?? false,
+        darkBgOverlayColor: source.darkBgOverlayColor || DEFAULT_DRAFT.darkBgOverlayColor,
+        darkBgOverlayOpacity: parseFloat(tokens["dark.overlay.opacity"] || "") || DEFAULT_DRAFT.darkBgOverlayOpacity,
+        darkBgBlur: parseInt(source.darkBgBlur || "") || DEFAULT_DRAFT.darkBgBlur,
+        // Split panel bg — LIGHT
+        splitBgMode: source.splitBgMode || DEFAULT_DRAFT.splitBgMode,
+        panelBgType: source.panelBgType || DEFAULT_DRAFT.panelBgType,
+        panelBgColor: tokens["panel.color.background"] || source.panelBgColor || DEFAULT_DRAFT.panelBgColor,
+        panelBgGradientDirection: source.panelBgGradientDirection || DEFAULT_DRAFT.panelBgGradientDirection,
+        panelBgGradientFrom: source.panelBgGradientFrom || DEFAULT_DRAFT.panelBgGradientFrom,
+        panelBgGradientTo: source.panelBgGradientTo || DEFAULT_DRAFT.panelBgGradientTo,
+        panelBgImageUrl: tokens["panel.bg.image"] || source.panelBgImageUrl || "",
+        panelBgOverlayEnabled: source.panelBgOverlayEnabled ?? false,
+        panelBgOverlayColor: source.panelBgOverlayColor || DEFAULT_DRAFT.panelBgOverlayColor,
+        panelBgOverlayOpacity: parseFloat(source.panelBgOverlayOpacity || "") || DEFAULT_DRAFT.panelBgOverlayOpacity,
+        panelBgBlur: parseInt(source.panelBgBlur || "") || DEFAULT_DRAFT.panelBgBlur,
+        // Split panel bg — DARK
+        darkPanelBgType: source.darkPanelBgType || DEFAULT_DRAFT.darkPanelBgType,
+        darkPanelBgColor: tokens["dark.panel.color.background"] || source.darkPanelBgColor || DEFAULT_DRAFT.darkPanelBgColor,
+        darkPanelBgGradientDirection: source.darkPanelBgGradientDirection || DEFAULT_DRAFT.darkPanelBgGradientDirection,
+        darkPanelBgGradientFrom: source.darkPanelBgGradientFrom || DEFAULT_DRAFT.darkPanelBgGradientFrom,
+        darkPanelBgGradientTo: source.darkPanelBgGradientTo || DEFAULT_DRAFT.darkPanelBgGradientTo,
+        darkPanelBgImageUrl: tokens["dark.panel.bg.image"] || source.darkPanelBgImageUrl || "",
+        darkPanelBgOverlayEnabled: source.darkPanelBgOverlayEnabled ?? false,
+        darkPanelBgOverlayColor: source.darkPanelBgOverlayColor || DEFAULT_DRAFT.darkPanelBgOverlayColor,
+        darkPanelBgOverlayOpacity: parseFloat(source.darkPanelBgOverlayOpacity || "") || DEFAULT_DRAFT.darkPanelBgOverlayOpacity,
+        darkPanelBgBlur: parseInt(source.darkPanelBgBlur || "") || DEFAULT_DRAFT.darkPanelBgBlur,
         // Spacing
         borderRadius: parseInt(tokens["radius.card"] || "") || DEFAULT_DRAFT.borderRadius,
         formWidth: parseInt(source.formWidth || "") || DEFAULT_DRAFT.formWidth,
@@ -402,6 +572,23 @@ export function useStudioViewModel() {
       bgOverlayEnabled: draft.bgOverlayEnabled,
       bgOverlayColor: draft.bgOverlayColor,
       bgBlur: draft.bgBlur,
+      // Dark bg passthrough
+      darkBgType: draft.darkBgType,
+      darkBgGradientDirection: draft.darkBgGradientDirection,
+      darkBgGradientFrom: draft.darkBgGradientFrom,
+      darkBgGradientTo: draft.darkBgGradientTo,
+      darkBgOverlayEnabled: draft.darkBgOverlayEnabled,
+      darkBgOverlayColor: draft.darkBgOverlayColor,
+      darkBgBlur: draft.darkBgBlur,
+      // Split panel passthrough
+      splitBgMode: draft.splitBgMode,
+      panelBgType: draft.panelBgType,
+      panelBgGradientDirection: draft.panelBgGradientDirection,
+      panelBgGradientFrom: draft.panelBgGradientFrom,
+      panelBgGradientTo: draft.panelBgGradientTo,
+      panelBgOverlayEnabled: draft.panelBgOverlayEnabled,
+      panelBgOverlayColor: draft.panelBgOverlayColor,
+      panelBgBlur: draft.panelBgBlur,
       formWidth: draft.formWidth,
       cardPadding: draft.cardPadding,
       elementGap: draft.elementGap,
@@ -409,6 +596,7 @@ export function useStudioViewModel() {
       btnSize: draft.btnSize,
       customCss: draft.customCss,
       safeMode: draft.safeMode,
+      themeMode: draft.themeMode,
       tokens: {
         "color.primary": draft.primaryColor,
         "color.secondary": draft.secondaryColor,
@@ -419,6 +607,44 @@ export function useStudioViewModel() {
         "color.border": draft.borderColor,
         "color.error": draft.errorColor,
         "color.success": draft.successColor,
+        // Dark tokens — always emitted (both palettes always available)
+        "dark.color.primary": draft.darkPrimaryColor,
+        "dark.color.secondary": draft.darkSecondaryColor,
+        "dark.color.background": draft.darkBgColor,
+        "dark.color.surface": draft.darkSurfaceColor,
+        "dark.color.text": draft.darkTextColor,
+        "dark.color.textMuted": draft.darkMutedColor,
+        "dark.color.border": draft.darkBorderColor,
+        "dark.color.error": draft.darkErrorColor,
+        "dark.color.success": draft.darkSuccessColor,
+        // Dark background tokens
+        "dark.bg.image": draft.darkBgImageUrl,
+        "dark.bg.gradient": draft.darkBgType === "gradient"
+          ? `linear-gradient(${draft.darkBgGradientDirection}, ${draft.darkBgGradientFrom}, ${draft.darkBgGradientTo})`
+          : "",
+        "dark.overlay.opacity": `${draft.darkBgOverlayOpacity}`,
+        "dark.overlay.color": draft.darkBgOverlayColor || "rgba(0,0,0,0.5)",
+        "dark.overlay.blur": `${draft.darkBgBlur}px`,
+        // Panel tokens — LIGHT (for split layouts with independent panel bg)
+        ...(draft.splitBgMode === "independent" ? {
+          "panel.color.background": draft.panelBgColor,
+          "panel.bg.image": draft.panelBgImageUrl,
+          "panel.bg.gradient": draft.panelBgType === "gradient"
+            ? `linear-gradient(${draft.panelBgGradientDirection}, ${draft.panelBgGradientFrom}, ${draft.panelBgGradientTo})`
+            : "",
+          "panel.overlay.opacity": `${draft.panelBgOverlayOpacity}`,
+          "panel.overlay.color": draft.panelBgOverlayColor || "rgba(0,0,0,0.5)",
+          "panel.overlay.blur": `${draft.panelBgBlur}px`,
+          // Panel tokens — DARK
+          "dark.panel.color.background": draft.darkPanelBgColor,
+          "dark.panel.bg.image": draft.darkPanelBgImageUrl,
+          "dark.panel.bg.gradient": draft.darkPanelBgType === "gradient"
+            ? `linear-gradient(${draft.darkPanelBgGradientDirection}, ${draft.darkPanelBgGradientFrom}, ${draft.darkPanelBgGradientTo})`
+            : "",
+          "dark.panel.overlay.opacity": `${draft.darkPanelBgOverlayOpacity}`,
+          "dark.panel.overlay.color": draft.darkPanelBgOverlayColor || "rgba(0,0,0,0.5)",
+          "dark.panel.overlay.blur": `${draft.darkPanelBgBlur}px`,
+        } : {}),
         "font.body": draft.fontFamily,
         "font.bodyAr": draft.fontFamilyAr,
         "font.heading": draft.headingFont || draft.fontFamily,
@@ -462,6 +688,7 @@ export function useStudioViewModel() {
         await customizationService.saveTenantDisplayPrefs(
           JSON.stringify({ draftBrandingJson: draftJson })
         );
+        setLastSavedAt(new Date());
       } catch {
         // Silent fail — draft save is non-critical
       }
@@ -485,6 +712,7 @@ export function useStudioViewModel() {
     onSuccess: () => {
       toast({ title: t("studio.publishSuccess"), variant: "default" });
       setIsDirty(false);
+      setLastSavedAt(new Date());
       queryClient.invalidateQueries({ queryKey: ["tenantSettings"] });
       queryClient.invalidateQueries({ queryKey: ["studio-branding"] });
       queryClient.invalidateQueries({ queryKey: ["customization"] });
@@ -496,6 +724,23 @@ export function useStudioViewModel() {
         description: error.message,
         variant: "destructive",
       });
+    },
+  });
+
+  // ── Explicit Save Draft ──
+  const saveDraftMutation = useMutation({
+    mutationFn: async () => {
+      const draftJson = buildDraftJson();
+      await customizationService.saveTenantDisplayPrefs(
+        JSON.stringify({ draftBrandingJson: draftJson })
+      );
+    },
+    onSuccess: () => {
+      toast({ title: t("studio.draftSaved") || "Draft saved", variant: "default" });
+      setLastSavedAt(new Date());
+    },
+    onError: (error: Error) => {
+      toast({ title: t("studio.draftSaveFailed") || "Failed to save draft", description: error.message, variant: "destructive" });
     },
   });
 
@@ -537,6 +782,7 @@ export function useStudioViewModel() {
     // Draft state
     draft,
     isDirty,
+    lastSavedAt,
     updateDraft,
     batchUpdateDraft,
     buildDraftJson,
@@ -555,9 +801,12 @@ export function useStudioViewModel() {
     // Actions
     publish: () => publishMutation.mutate(),
     isPublishing: publishMutation.isPending,
+    saveDraft: () => saveDraftMutation.mutate(),
+    isSavingDraft: saveDraftMutation.isPending,
     discard: () => discardMutation.mutate(),
     isDiscarding: discardMutation.isPending,
-    // Loading
+    // Loading & context
     isLoading: brandingQuery.isLoading,
+    isTenantContext: branding !== null,
   };
 }

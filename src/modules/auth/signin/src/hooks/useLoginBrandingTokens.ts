@@ -2,12 +2,15 @@
  * useLoginBrandingTokens — CSS Token Injection for Login Page
  *
  * Parses LoginBrandingJson, injects CSS custom properties via
- * useEffect, and returns layout + blocks for the LoginView.
+ * <style> tags (NOT inline styles — so .dark {} can properly override :root {}).
  *
  * If isSafeMode is true, ALL customization is bypassed (§16, §29).
  * Login pages are server-authoritative — no client cache trust (§20).
  *
- * Enhanced: injects custom CSS <style> tag, handles bg.gradient override
+ * CRITICAL FIX: Previously set light CSS vars as inline styles on <html>
+ * which has higher specificity than ANY CSS rule. This meant .dark {}
+ * could NEVER override the light values. Now ALL vars are in a <style>
+ * tag so :root {} and .dark {} have correct cascading behavior.
  */
 "use client";
 
@@ -50,40 +53,123 @@ export function useLoginBrandingTokens({
     [slotConfigJson, isSafeMode]
   );
 
-  // Inject CSS custom properties from design tokens
+  // ══════════════════════════════════════════════════════════════
+  // SINGLE useEffect: Build ALL CSS (:root + .dark) in ONE <style> tag
+  // This ensures .dark {} can properly override :root {} via CSS cascade
+  // ══════════════════════════════════════════════════════════════
   useEffect(() => {
     if (typeof document === "undefined" || isSafeMode) return;
 
-    const root = document.documentElement;
-    const tokensSet: string[] = [];
+    const tokens = config.tokens;
 
-    for (const [tokenKey, value] of Object.entries(config.tokens)) {
+    // ─── :root {} rules (light / unified values) ───
+    const rootRules: string[] = [];
+
+    // Map known tokens to CSS vars
+    for (const [tokenKey, value] of Object.entries(tokens)) {
       const cssVar = TOKEN_TO_CSS_VAR[tokenKey];
       if (cssVar && value) {
-        root.style.setProperty(cssVar, value);
-        tokensSet.push(cssVar);
+        rootRules.push(`  ${cssVar}: ${value};`);
       }
     }
 
-    // Handle background image as special token
-    if (config.tokens["bg.image"]) {
-      root.style.setProperty("--login-bg-image", `url(${config.tokens["bg.image"]})`);
-      tokensSet.push("--login-bg-image");
+    // Background image as special token
+    if (tokens["bg.image"]) {
+      rootRules.push(`  --login-bg-image: url(${tokens["bg.image"]});`);
     }
 
-    // Handle gradient — overrides solid bg color
-    if (config.tokens["bg.gradient"]) {
-      root.style.setProperty("--login-bg-gradient", config.tokens["bg.gradient"]);
-      // Also set --login-bg to the gradient so layouts automatically pick it up
-      root.style.setProperty("--login-bg", config.tokens["bg.gradient"]);
-      tokensSet.push("--login-bg-gradient");
+    // Gradient overrides solid bg color
+    if (tokens["bg.gradient"]) {
+      rootRules.push(`  --login-bg-gradient: ${tokens["bg.gradient"]};`);
+      rootRules.push(`  --login-bg: ${tokens["bg.gradient"]};`);
     }
+
+    // Panel bg image (for split layouts with independent panel bg)
+    if (tokens["panel.bg.image"]) {
+      rootRules.push(`  --login-panel-bg-image: url(${tokens["panel.bg.image"]});`);
+    }
+
+    // Panel gradient overrides panel solid bg
+    if (tokens["panel.bg.gradient"]) {
+      rootRules.push(`  --login-panel-bg-gradient: ${tokens["panel.bg.gradient"]};`);
+      rootRules.push(`  --login-panel-bg: ${tokens["panel.bg.gradient"]};`);
+    }
+
+    // ─── .dark {} rules (dark overrides) ───
+    const darkRules: string[] = [];
+
+    // Dark color map
+    const darkColorMap: Record<string, string> = {
+      "dark.color.primary": "--login-primary",
+      "dark.color.secondary": "--login-secondary",
+      "dark.color.background": "--login-bg",
+      "dark.color.surface": "--login-surface",
+      "dark.color.text": "--login-text",
+      "dark.color.textMuted": "--login-text-muted",
+      "dark.color.border": "--login-border",
+      "dark.color.error": "--login-error",
+      "dark.color.success": "--login-success",
+      "dark.overlay.opacity": "--login-overlay-opacity",
+      "dark.overlay.color": "--login-overlay-color",
+      "dark.overlay.blur": "--login-overlay-blur",
+    };
+
+    for (const [tokenKey, cssVar] of Object.entries(darkColorMap)) {
+      const value = tokens[tokenKey];
+      if (value) darkRules.push(`  ${cssVar}: ${value};`);
+    }
+
+    // Dark bg gradient
+    if (tokens["dark.bg.gradient"]) {
+      darkRules.push(`  --login-bg: ${tokens["dark.bg.gradient"]};`);
+      darkRules.push(`  --login-bg-gradient: ${tokens["dark.bg.gradient"]};`);
+    }
+
+    // Dark bg image
+    if (tokens["dark.bg.image"]) {
+      darkRules.push(`  --login-bg-image: url(${tokens["dark.bg.image"]});`);
+    }
+
+    // Dark panel overrides
+    const darkPanelMap: Record<string, string> = {
+      "dark.panel.color.background": "--login-panel-bg",
+      "dark.panel.overlay.opacity": "--login-panel-overlay-opacity",
+      "dark.panel.overlay.color": "--login-panel-overlay-color",
+      "dark.panel.overlay.blur": "--login-panel-overlay-blur",
+    };
+
+    for (const [tokenKey, cssVar] of Object.entries(darkPanelMap)) {
+      const value = tokens[tokenKey];
+      if (value) darkRules.push(`  ${cssVar}: ${value};`);
+    }
+    if (tokens["dark.panel.bg.gradient"]) {
+      darkRules.push(`  --login-panel-bg: ${tokens["dark.panel.bg.gradient"]};`);
+    }
+    if (tokens["dark.panel.bg.image"]) {
+      darkRules.push(`  --login-panel-bg-image: url(${tokens["dark.panel.bg.image"]});`);
+    }
+
+    // ─── Build final CSS ───
+    const cssBlocks: string[] = [];
+    if (rootRules.length > 0) {
+      cssBlocks.push(`:root {\n${rootRules.join("\n")}\n}`);
+    }
+    if (darkRules.length > 0) {
+      cssBlocks.push(`.dark {\n${darkRules.join("\n")}\n}`);
+    }
+
+    if (cssBlocks.length === 0) return;
+
+    const styleEl = document.createElement("style");
+    styleEl.setAttribute("data-studio-tokens", "true");
+    styleEl.textContent = cssBlocks.join("\n\n");
+    document.head.appendChild(styleEl);
 
     // ─── Load Google Fonts runtime ───
     const fontsToLoad = new Set<string>();
     const fontTokens = ["font.heading", "font.body", "font.bodyAr"] as const;
     for (const tokenKey of fontTokens) {
-      const fontName = config.tokens[tokenKey];
+      const fontName = tokens[tokenKey];
       if (fontName && fontName !== "system-ui" && fontName !== "inherit") {
         fontsToLoad.add(fontName);
       }
@@ -102,9 +188,9 @@ export function useLoginBrandingTokens({
       fontLinkIds.push(linkId);
     });
 
-    // Cleanup: remove all CSS vars on unmount
+    // Cleanup on unmount or config change
     return () => {
-      tokensSet.forEach((v) => root.style.removeProperty(v));
+      styleEl.remove();
       fontLinkIds.forEach((id) => document.getElementById(id)?.remove());
     };
   }, [config.tokens, isSafeMode]);

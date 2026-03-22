@@ -5854,16 +5854,27 @@ export const en = {
     discardFailed: "Failed to discard draft",
     versionConflict: "Version conflict — please reload and try again",
 
+    saveDraft: "Save Draft",
+    saved: "Saved",
+    draftSaved: "Draft saved",
+    draftSaveFailed: "Failed to save draft",
+    noTenantTitle: "Tenant Required",
+    noTenantDesc: "Please select a tenant to customize their login page. The customizer works with tenant-specific branding settings.",
+
     // Tabs
     tab: {
       layout: "Layout",
       branding: "Branding",
-      colors: "Colors",
+      appearance: "Appearance",
       typography: "Typography",
-      background: "Background",
       spacing: "Spacing & Shape",
       blocks: "Content Blocks",
       advanced: "Advanced",
+    },
+
+    appearance: {
+      lightTheme: "Light Theme",
+      darkTheme: "Dark Theme",
     },
 
     // Device
@@ -5940,6 +5951,13 @@ export const en = {
 
     // Colors
     colors: {
+      themeMode: "Theme Mode",
+      unified: "Unified",
+      split: "Light / Dark",
+      unifiedDesc: "Same palette for light and dark themes",
+      splitDesc: "Separate palettes for each theme",
+      lightPalette: "☀️ Light Palette",
+      darkPalette: "🌙 Dark Palette",
       presets: "Color Presets",
       custom: "Custom Colors",
       primary: "Primary",
@@ -5991,6 +6009,16 @@ export const en = {
       overlayColor: "Overlay Color",
       overlayOpacity: "Overlay Opacity",
       blur: "Blur Amount",
+      themeTarget: "Theme-Specific Backgrounds",
+      themeTargetDesc: "You have split theme mode enabled. Configure separate backgrounds for light and dark themes below.",
+      lightBg: "☀️ Light Background",
+      darkBg: "🌙 Dark Background",
+      panelBg: "Panel Backgrounds",
+      panelSame: "Same",
+      panelIndependent: "Independent",
+      panelSameDesc: "Both panels share the same background",
+      panelIndependentDesc: "Set a different background for the branding panel",
+      brandingPanel: "Branding Panel Background",
     },
 
     // Spacing

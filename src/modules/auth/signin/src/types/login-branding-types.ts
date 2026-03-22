@@ -45,6 +45,16 @@ export interface LoginDesignTokens {
   "color.border"?: string;
   "color.error"?: string;
   "color.success"?: string;
+  // Dark color tokens
+  "dark.color.primary"?: string;
+  "dark.color.secondary"?: string;
+  "dark.color.background"?: string;
+  "dark.color.surface"?: string;
+  "dark.color.text"?: string;
+  "dark.color.textMuted"?: string;
+  "dark.color.border"?: string;
+  "dark.color.error"?: string;
+  "dark.color.success"?: string;
   // Typography tokens
   "font.heading"?: string;
   "font.body"?: string;
@@ -69,6 +79,21 @@ export interface LoginDesignTokens {
   // Background
   "bg.image"?: string;
   "bg.gradient"?: string;
+  // Dark background
+  "dark.bg.image"?: string;
+  "dark.bg.gradient"?: string;
+  "dark.overlay.opacity"?: string;
+  "dark.overlay.color"?: string;
+  "dark.overlay.blur"?: string;
+  // Panel background (for split layouts)
+  "panel.color.background"?: string;
+  "panel.bg.image"?: string;
+  "panel.bg.gradient"?: string;
+  "panel.overlay.opacity"?: string;
+  "panel.overlay.color"?: string;
+  "panel.overlay.blur"?: string;
+  // Allow arbitrary keys for forward compatibility
+  [key: string]: string | undefined;
 }
 
 // CSS variable mapping (semantic → CSS custom property)
@@ -102,6 +127,15 @@ export const TOKEN_TO_CSS_VAR: Record<string, string> = {
   "spacing.cardPadding": "--login-card-padding",
   "spacing.elementGap": "--login-element-gap",
   "spacing.inputHeight": "--login-input-height",
+  // Dark theme background/overlay tokens
+  "dark.overlay.opacity": "--login-dark-overlay-opacity",
+  "dark.overlay.color": "--login-dark-overlay-color",
+  "dark.overlay.blur": "--login-dark-overlay-blur",
+  // Panel-specific tokens (for split layouts with independent panel bg)
+  "panel.color.background": "--login-panel-bg",
+  "panel.overlay.opacity": "--login-panel-overlay-opacity",
+  "panel.overlay.color": "--login-panel-overlay-color",
+  "panel.overlay.blur": "--login-panel-overlay-blur",
 };
 
 // ─── Content Blocks (§12) ──────────────────────────────

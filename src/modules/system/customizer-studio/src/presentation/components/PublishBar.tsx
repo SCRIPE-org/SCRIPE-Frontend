@@ -5,7 +5,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, Monitor, Tablet, Smartphone, Upload, RotateCcw, Loader2, Circle } from "lucide-react";
+import { ArrowLeft, Monitor, Tablet, Smartphone, Upload, RotateCcw, Loader2, Circle, Save, Check } from "lucide-react";
 import { cn } from "@/core/common/utils";
 import type { DeviceSize } from "../viewmodels/useStudioViewModel";
 
@@ -14,10 +14,13 @@ interface PublishBarProps {
   isDirty: boolean;
   isPublishing: boolean;
   isDiscarding: boolean;
+  isSavingDraft: boolean;
+  lastSavedAt: Date | null;
   deviceSize: DeviceSize;
   setDeviceSize: (size: DeviceSize) => void;
   onPublish: () => void;
   onDiscard: () => void;
+  onSaveDraft: () => void;
 }
 
 const DEVICES: { id: DeviceSize; icon: typeof Monitor; labelKey: string }[] = [
@@ -26,7 +29,11 @@ const DEVICES: { id: DeviceSize; icon: typeof Monitor; labelKey: string }[] = [
   { id: "mobile", icon: Smartphone, labelKey: "studio.device.mobile" },
 ];
 
-export function PublishBar({ t, isDirty, isPublishing, isDiscarding, deviceSize, setDeviceSize, onPublish, onDiscard }: PublishBarProps) {
+export function PublishBar({ t, isDirty, isPublishing, isDiscarding, isSavingDraft, lastSavedAt, deviceSize, setDeviceSize, onPublish, onDiscard, onSaveDraft }: PublishBarProps) {
+  const formatTime = (date: Date) => {
+    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  };
+
   return (
     <div className="flex h-12 items-center justify-between border-b border-border bg-background px-4">
       {/* Left: Back + Title */}
@@ -42,14 +49,21 @@ export function PublishBar({ t, isDirty, isPublishing, isDiscarding, deviceSize,
         <h1 className="text-sm font-semibold text-foreground">{t("studio.title")}</h1>
 
         {/* Draft status indicator */}
-        {isDirty && (
+        {isDirty ? (
           <div className="flex items-center gap-1.5 rounded-full bg-amber-500/10 px-2.5 py-0.5">
             <Circle className="h-1.5 w-1.5 fill-amber-500 text-amber-500" />
             <span className="text-[10px] font-medium text-amber-600 dark:text-amber-400">
               {t("studio.unsavedChanges")}
             </span>
           </div>
-        )}
+        ) : lastSavedAt ? (
+          <div className="flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-0.5">
+            <Check className="h-2.5 w-2.5 text-emerald-500" />
+            <span className="text-[10px] font-medium text-emerald-600 dark:text-emerald-400">
+              {t("studio.saved") || "Saved"} {formatTime(lastSavedAt)}
+            </span>
+          </div>
+        ) : null}
       </div>
 
       {/* Center: Device Toggle */}
@@ -79,14 +93,24 @@ export function PublishBar({ t, isDirty, isPublishing, isDiscarding, deviceSize,
       {/* Right: Publish/Discard */}
       <div className="flex items-center gap-2">
         {isDirty && (
-          <button
-            onClick={onDiscard}
-            disabled={isDiscarding}
-            className="flex h-8 items-center gap-1.5 rounded-lg border border-border px-3 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors disabled:opacity-50"
-          >
-            {isDiscarding ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RotateCcw className="h-3.5 w-3.5" />}
-            {t("studio.discard")}
-          </button>
+          <>
+            <button
+              onClick={onSaveDraft}
+              disabled={isSavingDraft}
+              className="flex h-8 items-center gap-1.5 rounded-lg border border-primary/30 bg-primary/5 px-3 text-xs font-medium text-primary hover:bg-primary/10 transition-colors disabled:opacity-50"
+            >
+              {isSavingDraft ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
+              {t("studio.saveDraft") || "Save Draft"}
+            </button>
+            <button
+              onClick={onDiscard}
+              disabled={isDiscarding}
+              className="flex h-8 items-center gap-1.5 rounded-lg border border-border px-3 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors disabled:opacity-50"
+            >
+              {isDiscarding ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RotateCcw className="h-3.5 w-3.5" />}
+              {t("studio.discard")}
+            </button>
+          </>
         )}
         <button
           onClick={onPublish}

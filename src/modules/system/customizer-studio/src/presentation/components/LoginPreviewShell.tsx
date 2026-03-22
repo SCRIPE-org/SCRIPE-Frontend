@@ -30,8 +30,28 @@ import { useLoginBrandingTokens } from "@modules/auth/signin/src/hooks/useLoginB
 import { LoginBranding } from "@modules/auth/signin/src/presentation/components/LoginBranding";
 import { SlotRenderer } from "@modules/auth/signin/src/presentation/components/SlotRenderer";
 
+import { useTheme } from "next-themes";
+
 export function LoginPreviewShell() {
   const { t, language, direction } = useI18n();
+  const { setTheme } = useTheme();
+
+  // Force light mode on mount — preview should start light, user can toggle via ThemeSwitcher
+  useEffect(() => {
+    setTheme("light");
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Listen for theme commands from studio parent
+  useEffect(() => {
+    const handler = (e: MessageEvent) => {
+      if (e.origin !== window.location.origin) return;
+      if (e.data?.type === "NEXORA_STUDIO_SET_THEME") {
+        setTheme(e.data.theme);
+      }
+    };
+    window.addEventListener("message", handler);
+    return () => window.removeEventListener("message", handler);
+  }, [setTheme]);
 
   // Draft overrides from studio via postMessage
   const [draftOverrides, setDraftOverrides] = useState<{
@@ -210,20 +230,24 @@ export function LoginPreviewShell() {
   const footerSlot = <SlotRenderer slotId="login.footer" slotConfig={slotConfig} className="mt-6" />;
 
   // ── Common styles ──
-  // NOTE: We use inline `background` (not Tailwind bg-[]) because `background`
-  // shorthand accepts BOTH solid colors AND linear-gradient(), while Tailwind's
-  // bg-[] compiles to `background-color` which CANNOT render gradients.
-  const bgStyle = "selection:bg-primary/20"; // keep only selection highlight
+  // NOTE: We use a SINGLE layered `background` (CSS multiple backgrounds) so that:
+  //   - `--login-bg-image` (image) renders ON TOP
+  //   - `--login-bg` (solid or gradient) renders UNDERNEATH
+  // Previously, separate `backgroundImage: none` was OVERRIDING the gradient.
+  const bgStyle = "selection:bg-primary/20";
   const wrapperStyle: React.CSSProperties = {
-    background: "var(--login-bg, hsl(var(--background)))",
-    backgroundImage: "var(--login-bg-image, none)",
-    backgroundSize: "cover",
-    backgroundPosition: "center",
+    background: "var(--login-bg-image, none) center/cover no-repeat, var(--login-bg, hsl(var(--background)))",
     fontFamily: direction === "rtl"
       ? "var(--login-font-body-ar, var(--login-font-body, inherit))"
       : "var(--login-font-body, inherit)",
     lineHeight: "var(--login-line-height, 1.5)",
     letterSpacing: "var(--login-letter-spacing, 0px)",
+  };
+
+  // For split layouts: image shows in branding panel only, not on the wrapper
+  const splitWrapperStyle: React.CSSProperties = {
+    ...wrapperStyle,
+    background: "var(--login-bg, hsl(var(--background)))",
   };
 
   // ═══════════════════════════════════════════════════
@@ -233,7 +257,7 @@ export function LoginPreviewShell() {
   switch (layout) {
     case "split-left":
       return (
-        <div className={`flex min-h-screen w-full ${bgStyle} selection:bg-primary/20`} dir={direction} style={wrapperStyle}>
+        <div className={`flex min-h-screen w-full ${bgStyle} selection:bg-primary/20`} dir={direction} style={splitWrapperStyle}>
           <div className="relative flex w-full flex-col items-center justify-center px-6 py-12 lg:w-1/2 xl:w-[45%]">
             {topActions}
             <MobileLogo logoSrc={logoUrl} logoAlt={companyName} companyName={companyName} />
@@ -268,9 +292,9 @@ export function LoginPreviewShell() {
         <div
           className={`relative flex min-h-screen w-full items-center justify-center ${bgStyle} selection:bg-primary/20`}
           dir={direction}
-          style={{ ...wrapperStyle, backgroundImage: "var(--login-bg-image, none)", backgroundSize: "cover", backgroundPosition: "center" }}
+          style={wrapperStyle}
         >
-          <div className="absolute inset-0 bg-black" style={{ opacity: "var(--login-overlay-opacity, 0.5)" }} />
+          <div className="absolute inset-0" style={{ backgroundColor: "var(--login-overlay-color, #000000)", opacity: "var(--login-overlay-opacity, 0.5)", backdropFilter: "blur(var(--login-overlay-blur, 0px))" }} />
           {topActions}
           <div className="relative z-10 w-full max-w-[480px] border border-[var(--login-border,hsl(var(--border)))]/50 backdrop-blur-xl mx-4" style={{ borderRadius: "var(--login-radius-card, 16px)", padding: "var(--login-card-padding, 32px)", boxShadow: "var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.25))", backgroundColor: "color-mix(in srgb, var(--login-surface, hsl(var(--background))) 95%, transparent)" }}>
             <div className="mb-8 flex flex-col items-center gap-3 text-center">
@@ -305,11 +329,11 @@ export function LoginPreviewShell() {
         <div
           className={`relative flex min-h-screen w-full items-center justify-center ${bgStyle} selection:bg-primary/20`}
           dir={direction}
-          style={{ ...wrapperStyle, backgroundImage: "var(--login-bg-image, none)", backgroundSize: "cover", backgroundPosition: "center" }}
+          style={wrapperStyle}
         >
-          <div className="absolute inset-0 backdrop-blur-md" style={{ backgroundColor: "var(--login-bg, hsl(var(--background)))", opacity: 0.7 }} />
+          <div className="absolute inset-0" style={{ backgroundColor: "var(--login-overlay-color, hsl(var(--background)))", opacity: "var(--login-overlay-opacity, 0.7)", backdropFilter: "blur(var(--login-overlay-blur, 6px))" }} />
           {topActions}
-          <div className="relative z-10 w-full max-w-[420px] border border-[var(--login-accent,hsl(var(--border)))]/30 backdrop-blur-2xl mx-4" style={{ borderRadius: "var(--login-radius-card, 24px)", padding: "var(--login-card-padding, 32px)", boxShadow: "var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.25))", backgroundColor: "color-mix(in srgb, var(--login-surface, hsl(var(--background))) 85%, transparent)" }}>
+          <div className="relative z-10 w-full border border-[var(--login-accent,hsl(var(--border)))]/30 backdrop-blur-2xl mx-4" style={{ maxWidth: "var(--login-form-width, 420px)", borderRadius: "var(--login-radius-card, 24px)", padding: "var(--login-card-padding, 32px)", boxShadow: "var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.25))", backgroundColor: "color-mix(in srgb, var(--login-surface, hsl(var(--background))) 85%, transparent)" }}>
             <div className="pointer-events-none absolute -inset-px bg-gradient-to-b from-[var(--login-primary,hsl(var(--primary)))]/20 via-transparent to-[var(--login-primary,hsl(var(--primary)))]/10" style={{ borderRadius: "var(--login-radius-card, 24px)" }} />
             <div className="relative z-10">
               <div className="mb-8 flex flex-col items-center gap-3 text-center">
@@ -376,7 +400,7 @@ export function LoginPreviewShell() {
 
     case "sidebar-compact":
       return (
-        <div className={`flex min-h-screen w-full ${bgStyle} selection:bg-primary/20`} dir={direction} style={wrapperStyle}>
+        <div className={`flex min-h-screen w-full ${bgStyle} selection:bg-primary/20`} dir={direction} style={splitWrapperStyle}>
           <div className="hidden lg:flex w-20 flex-col items-center justify-between py-8 bg-[var(--login-surface,hsl(var(--muted)/0.4))] border-e border-border">
             <LogoBox logoSrc={logoUrl} logoAlt={companyName} size="sm" />
             <p className="text-[9px] text-muted-foreground/40 [writing-mode:vertical-lr] rotate-180">© {new Date().getFullYear()} {companyName}</p>
@@ -394,7 +418,7 @@ export function LoginPreviewShell() {
 
     case "asymmetric":
       return (
-        <div className={`flex min-h-screen w-full ${bgStyle} selection:bg-primary/20`} dir={direction} style={wrapperStyle}>
+        <div className={`flex min-h-screen w-full ${bgStyle} selection:bg-primary/20`} dir={direction} style={splitWrapperStyle}>
           <div className="hidden lg:flex lg:w-[60%] relative overflow-hidden">
             <LoginBranding t={t} branding={brandingForPanel} slotConfig={slotConfig} position="left" />
             <div className="absolute inset-y-0 end-0 w-1 bg-gradient-to-b from-transparent via-[var(--login-primary,hsl(var(--primary)))] to-transparent" />
@@ -415,7 +439,7 @@ export function LoginPreviewShell() {
         <div className={`relative flex min-h-screen w-full items-center justify-center ${bgStyle} selection:bg-primary/20`} dir={direction} style={wrapperStyle}>
           <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,hsl(var(--border))_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border))_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-20" />
           {topActions}
-          <div className="relative z-10 w-full max-w-[440px] border border-[var(--login-border,hsl(var(--border)))] mx-4" style={{ borderRadius: "var(--login-radius-card, 16px)", padding: "var(--login-card-padding, 32px)", boxShadow: "var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.25))", backgroundColor: "var(--login-surface, hsl(var(--background)))" }}>
+          <div className="relative z-10 w-full border border-[var(--login-border,hsl(var(--border)))] mx-4" style={{ maxWidth: "var(--login-form-width, 440px)", borderRadius: "var(--login-radius-card, 16px)", padding: "var(--login-card-padding, 32px)", boxShadow: "var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.25))", backgroundColor: "var(--login-surface, hsl(var(--background)))" }}>
             <div className="mb-8 flex flex-col items-center gap-3 text-center">
               <LogoBox logoSrc={logoUrl} logoAlt={companyName} />
               <h1 className="tracking-tight text-[var(--login-text,hsl(var(--foreground)))]" style={{ fontFamily: "var(--login-font-heading, inherit)", fontSize: "var(--login-size-headline, 1.5rem)", fontWeight: "var(--login-weight-heading, 600)" }}>{companyName}</h1>
@@ -432,9 +456,9 @@ export function LoginPreviewShell() {
         <div
           className={`relative flex min-h-screen w-full ${bgStyle} selection:bg-primary/20`}
           dir={direction}
-          style={{ ...wrapperStyle, backgroundImage: "var(--login-bg-image, none)", backgroundSize: "cover", backgroundPosition: "center" }}
+          style={wrapperStyle}
         >
-          <div className="absolute inset-0 bg-gradient-to-br from-[var(--login-bg,hsl(var(--background)))]/80 via-[var(--login-bg,hsl(var(--background)))]/40 to-[var(--login-bg,hsl(var(--background)))]/80" />
+          <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom right, var(--login-overlay-color, hsl(var(--background)))/0.8, transparent/0.4, var(--login-overlay-color, hsl(var(--background)))/0.8)", opacity: "var(--login-overlay-opacity, 0.7)", backdropFilter: "blur(var(--login-overlay-blur, 0px))" }} />
           {topActions}
           <div className="relative z-10 hidden lg:flex lg:w-3/5 flex-col justify-center px-16 xl:px-24">
             <h1 className="text-7xl tracking-tighter leading-[0.95] text-[var(--login-text,hsl(var(--foreground)))]" style={{ fontFamily: "var(--login-font-heading, inherit)", fontWeight: "var(--login-weight-heading, 900)" }}>
@@ -455,7 +479,7 @@ export function LoginPreviewShell() {
 
     case "split-diagonal":
       return (
-        <div className={`relative flex min-h-screen w-full ${bgStyle} selection:bg-primary/20`} dir={direction} style={wrapperStyle}>
+        <div className={`relative flex min-h-screen w-full ${bgStyle} selection:bg-primary/20`} dir={direction} style={splitWrapperStyle}>
           <div className="hidden lg:block absolute inset-0 w-[55%]" style={{ clipPath: "polygon(0 0, 100% 0, 75% 100%, 0 100%)", backgroundColor: "var(--login-surface, hsl(var(--muted)/0.4))" }}>
             <LoginBranding t={t} branding={brandingForPanel} slotConfig={slotConfig} position="left" />
           </div>
@@ -472,7 +496,7 @@ export function LoginPreviewShell() {
 
     case "carousel":
       return (
-        <div className={`flex min-h-screen w-full ${bgStyle} selection:bg-primary/20`} dir={direction} style={wrapperStyle}>
+        <div className={`flex min-h-screen w-full ${bgStyle} selection:bg-primary/20`} dir={direction} style={splitWrapperStyle}>
           <div className="relative hidden lg:flex lg:w-1/2 xl:w-[55%] flex-col justify-center overflow-hidden bg-[var(--login-surface,hsl(var(--muted)/0.4))] border-e border-border p-16">
             <div className="mb-8"><LogoBox logoSrc={logoUrl} logoAlt={companyName} /></div>
             <h2 className="text-4xl tracking-tight text-[var(--login-text,hsl(var(--foreground)))]" style={{ fontFamily: "var(--login-font-heading, inherit)", fontWeight: "var(--login-weight-heading, 700)" }}>{headline}</h2>
@@ -493,13 +517,13 @@ export function LoginPreviewShell() {
 
     case "glass-morphism":
       return (
-        <div className={`relative flex min-h-screen w-full items-center justify-center ${bgStyle} selection:bg-primary/20`} dir={direction} style={{ ...wrapperStyle, backgroundImage: "var(--login-bg-image, none)", backgroundSize: "cover", backgroundPosition: "center" }}>
-          <div className="absolute inset-0 backdrop-blur-sm" style={{ backgroundColor: "var(--login-bg, hsl(var(--background)))", opacity: 0.5 }} />
+        <div className={`relative flex min-h-screen w-full items-center justify-center ${bgStyle} selection:bg-primary/20`} dir={direction} style={wrapperStyle}>
+          <div className="absolute inset-0" style={{ backgroundColor: "var(--login-overlay-color, hsl(var(--background)))", opacity: "var(--login-overlay-opacity, 0.5)", backdropFilter: "blur(var(--login-overlay-blur, 2px))" }} />
           <div className="pointer-events-none absolute top-1/4 start-1/4 h-64 w-64 rounded-full bg-[var(--login-primary,hsl(var(--primary)))]/20 blur-[100px]" />
           <div className="pointer-events-none absolute bottom-1/4 end-1/4 h-48 w-48 rounded-full bg-[var(--login-primary,hsl(var(--primary)))]/15 blur-[80px]" />
           {topActions}
-          <div className="relative z-10 w-full max-w-[440px] mx-4">
-            <div className="border border-[var(--login-accent,hsl(var(--border)))]/20 backdrop-blur-3xl" style={{ borderRadius: "var(--login-radius-card, 24px)", padding: "var(--login-card-padding, 40px)", boxShadow: "var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.25))", backgroundColor: "color-mix(in srgb, var(--login-surface, hsl(var(--background))) 70%, transparent)" }}>
+          <div className="relative z-10 w-full mx-4" style={{ maxWidth: "var(--login-form-width, 440px)" }}>
+            <div className="border border-[var(--login-accent,hsl(var(--border)))]/20 backdrop-blur-3xl" style={{ maxWidth: "var(--login-form-width, 440px)", borderRadius: "var(--login-radius-card, 24px)", padding: "var(--login-card-padding, 40px)", boxShadow: "var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.25))", backgroundColor: "color-mix(in srgb, var(--login-surface, hsl(var(--background))) 70%, transparent)" }}>
               <div className="pointer-events-none absolute -inset-px bg-gradient-to-br from-[var(--login-primary,hsl(var(--primary)))]/30 via-transparent to-[var(--login-primary,hsl(var(--primary)))]/15" style={{ borderRadius: "var(--login-radius-card, 24px)" }} />
               <div className="relative z-10">
                 <div className="mb-8 flex flex-col items-center gap-3 text-center">
@@ -539,7 +563,7 @@ export function LoginPreviewShell() {
         <div className={`relative flex min-h-screen w-full items-center justify-center ${bgStyle} selection:bg-primary/20`} dir={direction} style={wrapperStyle}>
           <div className="pointer-events-none absolute inset-0" style={{ background: `radial-gradient(ellipse 50% 60% at 50% 50%, var(--login-primary, hsl(var(--primary)))/0.12 0%, transparent 70%)` }} />
           {topActions}
-          <div className="relative z-10 w-full max-w-[420px] border border-[var(--login-accent,hsl(var(--border)))] mx-4" style={{ borderRadius: "var(--login-radius-card, 16px)", padding: "var(--login-card-padding, 32px)", boxShadow: "var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.25))", backgroundColor: "var(--login-surface, hsl(var(--background)))" }}>
+          <div className="relative z-10 w-full border border-[var(--login-accent,hsl(var(--border)))] mx-4" style={{ maxWidth: "var(--login-form-width, 420px)", borderRadius: "var(--login-radius-card, 16px)", padding: "var(--login-card-padding, 32px)", boxShadow: "var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.25))", backgroundColor: "var(--login-surface, hsl(var(--background)))" }}>
             <div className="mb-8 flex flex-col items-center gap-3 text-center">
               <LogoBox logoSrc={logoUrl} logoAlt={companyName} />
               <h1 className="tracking-tight text-[var(--login-text,hsl(var(--foreground)))]" style={{ fontFamily: "var(--login-font-heading, inherit)", fontSize: "var(--login-size-headline, 1.5rem)", fontWeight: "var(--login-weight-heading, 600)" }}>{companyName}</h1>
@@ -553,7 +577,7 @@ export function LoginPreviewShell() {
 
     case "dual-panel":
       return (
-        <div className={`flex min-h-screen w-full flex-col ${bgStyle} selection:bg-primary/20`} dir={direction} style={wrapperStyle}>
+        <div className={`flex min-h-screen w-full flex-col ${bgStyle} selection:bg-primary/20`} dir={direction} style={splitWrapperStyle}>
           <div className="flex items-center justify-between border-b border-border px-8 py-4" style={{ backgroundColor: "var(--login-surface, hsl(var(--muted)/0.4))" }}>
             <div className="flex items-center gap-3">
               <LogoBox logoSrc={logoUrl} logoAlt={companyName} size="sm" />
@@ -578,8 +602,8 @@ export function LoginPreviewShell() {
 
     case "corner-card":
       return (
-        <div className={`relative flex min-h-screen w-full ${bgStyle} selection:bg-primary/20`} dir={direction} style={{ ...wrapperStyle, backgroundImage: "var(--login-bg-image, none)", backgroundSize: "cover", backgroundPosition: "center" }}>
-          <div className="absolute inset-0" style={{ backgroundColor: "var(--login-bg, hsl(var(--background)))", opacity: 0.6 }} />
+        <div className={`relative flex min-h-screen w-full ${bgStyle} selection:bg-primary/20`} dir={direction} style={wrapperStyle}>
+          <div className="absolute inset-0" style={{ backgroundColor: "var(--login-overlay-color, hsl(var(--background)))", opacity: "var(--login-overlay-opacity, 0.6)", backdropFilter: "blur(var(--login-overlay-blur, 0px))" }} />
           {topActions}
           <div className="relative z-10 hidden lg:flex flex-1 flex-col justify-center px-16 xl:px-24">
             <h1 className="text-6xl tracking-tighter text-[var(--login-text,hsl(var(--foreground)))]" style={{ fontFamily: "var(--login-font-heading, inherit)", fontWeight: "var(--login-weight-heading, 900)" }}>{headline}</h1>
@@ -587,7 +611,7 @@ export function LoginPreviewShell() {
             <SlotRenderer slotId="login.sidebar.content" slotConfig={slotConfig} className="mt-8" />
           </div>
           <div className="relative z-10 flex w-full lg:w-auto items-end justify-center lg:justify-end p-6 lg:p-10">
-            <div className="w-full max-w-[400px] border border-[var(--login-accent,hsl(var(--border)))]" style={{ borderRadius: "var(--login-radius-card, 16px)", padding: "var(--login-card-padding, 32px)", boxShadow: "var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.25))", backgroundColor: "var(--login-surface, hsl(var(--background)))" }}>
+            <div className="w-full border border-[var(--login-accent,hsl(var(--border)))]" style={{ maxWidth: "var(--login-form-width, 400px)", borderRadius: "var(--login-radius-card, 16px)", padding: "var(--login-card-padding, 32px)", boxShadow: "var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.25))", backgroundColor: "var(--login-surface, hsl(var(--background)))" }}>
               <div className="mb-6 flex items-center gap-3">
                 <LogoBox logoSrc={logoUrl} logoAlt={companyName} size="sm" />
                 <span className="text-sm font-semibold text-[var(--login-text,hsl(var(--foreground)))]">{companyName}</span>
@@ -624,7 +648,7 @@ export function LoginPreviewShell() {
         <div className={`relative flex min-h-screen w-full items-center justify-center ${bgStyle} selection:bg-primary/20`} dir={direction} style={wrapperStyle}>
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle,var(--login-accent,hsl(var(--border)))_1px,transparent_1px)] bg-[size:24px_24px] opacity-[0.07]" />
           {topActions}
-          <div className="relative z-10 w-full max-w-[400px] px-6">
+          <div className="relative z-10 w-full px-6" style={{ maxWidth: "var(--login-form-width, 400px)" }}>
             <div className="mb-12 flex flex-col items-center gap-3 text-center">
               <LogoBox logoSrc={logoUrl} logoAlt={companyName} />
               <h1 className="tracking-tight text-[var(--login-text,hsl(var(--foreground)))]" style={{ fontFamily: "var(--login-font-heading, inherit)", fontSize: "var(--login-size-headline, 1.5rem)", fontWeight: "var(--login-weight-heading, 600)" }}>{companyName}</h1>
@@ -643,7 +667,7 @@ export function LoginPreviewShell() {
             {Array.from({ length: 24 }).map((_, i) => (<div key={i} className="rounded-lg bg-[var(--login-primary,hsl(var(--primary)))]" style={{ opacity: 0.3 + (i % 5) * 0.15 }} />))}
           </div>
           {topActions}
-          <div className="relative z-10 w-full max-w-[440px] border border-[var(--login-accent,hsl(var(--border)))] mx-4" style={{ borderRadius: "var(--login-radius-card, 16px)", padding: "var(--login-card-padding, 32px)", boxShadow: "var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.25))", backgroundColor: "var(--login-surface, hsl(var(--background)))" }}>
+          <div className="relative z-10 w-full border border-[var(--login-accent,hsl(var(--border)))] mx-4" style={{ maxWidth: "var(--login-form-width, 440px)", borderRadius: "var(--login-radius-card, 16px)", padding: "var(--login-card-padding, 32px)", boxShadow: "var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.25))", backgroundColor: "var(--login-surface, hsl(var(--background)))" }}>
             <div className="mb-8 flex flex-col items-center gap-3 text-center">
               <LogoBox logoSrc={logoUrl} logoAlt={companyName} />
               <h1 className="tracking-tight text-[var(--login-text,hsl(var(--foreground)))]" style={{ fontFamily: "var(--login-font-heading, inherit)", fontSize: "var(--login-size-headline, 1.5rem)", fontWeight: "var(--login-weight-heading, 600)" }}>{companyName}</h1>
@@ -659,7 +683,7 @@ export function LoginPreviewShell() {
     case "split-right":
     default:
       return (
-        <div className={`flex min-h-screen w-full ${bgStyle} selection:bg-primary/20`} dir={direction} style={wrapperStyle}>
+        <div className={`flex min-h-screen w-full ${bgStyle} selection:bg-primary/20`} dir={direction} style={splitWrapperStyle}>
           <LoginBranding t={t} branding={brandingForPanel} slotConfig={slotConfig} position="left" />
           <div className="relative flex w-full flex-col items-center justify-center px-6 py-12 lg:w-1/2 xl:w-[45%]">
             {topActions}

@@ -265,13 +265,10 @@ export function LoginView() {
   // 12 LAYOUT VARIANTS
   // ═══════════════════════════════════════════════════
 
-  // Common wrapper style — uses `background` shorthand for gradient support
+  // Common wrapper style — single layered background for gradient support
   const bgStyle = "selection:bg-primary/20";
   const wrapperStyle: React.CSSProperties = {
-    background: "var(--login-bg, hsl(var(--background)))",
-    backgroundImage: "var(--login-bg-image, none)",
-    backgroundSize: "cover",
-    backgroundPosition: "center",
+    background: "var(--login-bg-image, none) center/cover no-repeat, var(--login-bg, hsl(var(--background)))",
     fontFamily: direction === "rtl"
       ? "var(--login-font-body-ar, var(--login-font-body, inherit))"
       : "var(--login-font-body, inherit)",
@@ -279,11 +276,17 @@ export function LoginView() {
     letterSpacing: "var(--login-letter-spacing, 0px)",
   };
 
+  // Split layouts: bg-image shows in branding panel only
+  const splitWrapperStyle: React.CSSProperties = {
+    ...wrapperStyle,
+    background: "var(--login-bg, hsl(var(--background)))",
+  };
+
   switch (layout) {
     // ── SPLIT-LEFT: Branding right, form left ──────
     case "split-left":
       return (
-        <div className={`flex min-h-screen w-full ${bgStyle} selection:bg-primary/20`} dir={direction} style={wrapperStyle}>
+        <div className={`flex min-h-screen w-full ${bgStyle} selection:bg-primary/20`} dir={direction} style={splitWrapperStyle}>
           <div className="relative flex w-full flex-col items-center justify-center px-6 py-12 lg:w-1/2 xl:w-[45%]">
             {topActions}
             <MobileLogo logoSrc={logoSrc} logoAlt={logoAlt} companyName={companyName} />
@@ -327,16 +330,11 @@ export function LoginView() {
         <div
           className={`relative flex min-h-screen w-full items-center justify-center ${bgStyle} selection:bg-primary/20`}
           dir={direction}
-          style={{
-            ...wrapperStyle,
-            backgroundImage: "var(--login-bg-image, none)",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
+          style={wrapperStyle}
         >
-          <div className="absolute inset-0 bg-black" style={{ opacity: "var(--login-overlay-opacity, 0.5)" }} />
+          <div className="absolute inset-0" style={{ backgroundColor: "var(--login-overlay-color, #000000)", opacity: "var(--login-overlay-opacity, 0.5)", backdropFilter: "blur(var(--login-overlay-blur, 0px))" }} />
           {topActions}
-          <div className="relative z-10 w-full max-w-[480px] border border-[var(--login-border,hsl(var(--border)))]/50 backdrop-blur-xl mx-4" style={{ borderRadius: "var(--login-radius-card, 16px)", padding: "var(--login-card-padding, 32px)", boxShadow: "var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.25))", backgroundColor: "color-mix(in srgb, var(--login-surface, hsl(var(--background))) 95%, transparent)" }}>
+          <div className="relative z-10 w-full border border-[var(--login-border,hsl(var(--border)))]/50 backdrop-blur-xl mx-4" style={{ maxWidth: "var(--login-form-width, 480px)", borderRadius: "var(--login-radius-card, 16px)", padding: "var(--login-card-padding, 32px)", boxShadow: "var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.25))", backgroundColor: "color-mix(in srgb, var(--login-surface, hsl(var(--background))) 95%, transparent)" }}>
             <div className="mb-8 flex flex-col items-center gap-3 text-center">
               <div className="flex h-16 w-16 items-center justify-center overflow-hidden bg-background border border-border shadow-sm" style={{ borderRadius: "var(--login-radius-card, 12px)" }}>
                 <img src={logoSrc} alt={`${logoAlt} Logo`} className="h-full w-full object-cover" onError={(e) => { e.currentTarget.style.display = "none"; }} />
@@ -355,7 +353,7 @@ export function LoginView() {
       return (
         <div className={`flex min-h-screen w-full flex-col items-center justify-center ${bgStyle} selection:bg-primary/20`} dir={direction} style={wrapperStyle}>
           {topActions}
-          <div className="w-full max-w-[380px] px-6">
+          <div className="w-full px-6" style={{ maxWidth: "var(--login-form-width, 380px)" }}>
             <div className="mb-10 flex flex-col items-center gap-3 text-center">
               <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl bg-background border border-border shadow-sm">
                 <img src={logoSrc} alt={`${logoAlt} Logo`} className="h-full w-full object-cover" onError={(e) => { e.currentTarget.style.display = "none"; }} />
@@ -378,11 +376,11 @@ export function LoginView() {
         <div
           className={`relative flex min-h-screen w-full items-center justify-center ${bgStyle} selection:bg-primary/20`}
           dir={direction}
-          style={{ ...wrapperStyle, backgroundImage: "var(--login-bg-image, none)", backgroundSize: "cover", backgroundPosition: "center" }}
+          style={wrapperStyle}
         >
-          <div className="absolute inset-0 backdrop-blur-md" style={{ backgroundColor: "var(--login-bg, hsl(var(--background)))", opacity: 0.7 }} />
+          <div className="absolute inset-0" style={{ backgroundColor: "var(--login-overlay-color, hsl(var(--background)))", opacity: "var(--login-overlay-opacity, 0.7)", backdropFilter: "blur(var(--login-overlay-blur, 6px))" }} />
           {topActions}
-          <div className="relative z-10 w-full max-w-[420px] rounded-3xl border border-[var(--login-accent,hsl(var(--border)))]/30 p-8 shadow-2xl backdrop-blur-2xl mx-4" style={{ backgroundColor: "color-mix(in srgb, var(--login-surface, hsl(var(--background))) 85%, transparent)" }}>
+          <div className="relative z-10 w-full border border-[var(--login-accent,hsl(var(--border)))]/30 shadow-2xl backdrop-blur-2xl mx-4" style={{ maxWidth: "var(--login-form-width, 420px)", padding: "var(--login-card-padding, 32px)", borderRadius: "var(--login-radius-card, 24px)", boxShadow: "var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.25))", backgroundColor: "color-mix(in srgb, var(--login-surface, hsl(var(--background))) 85%, transparent)" }}>
             {/* Luminous border glow */}
             <div className="pointer-events-none absolute -inset-px rounded-3xl bg-gradient-to-b from-[var(--login-primary,hsl(var(--primary)))]/20 via-transparent to-[var(--login-primary,hsl(var(--primary)))]/10" />
             <div className="relative z-10">
@@ -459,7 +457,7 @@ export function LoginView() {
     // ── SIDEBAR-COMPACT (Narrow brand bar + form) ──
     case "sidebar-compact":
       return (
-        <div className={`flex min-h-screen w-full ${bgStyle} selection:bg-primary/20`} dir={direction} style={wrapperStyle}>
+        <div className={`flex min-h-screen w-full ${bgStyle} selection:bg-primary/20`} dir={direction} style={splitWrapperStyle}>
           {/* Narrow brand strip */}
           <div className="hidden lg:flex w-20 flex-col items-center justify-between py-8 bg-[var(--login-surface,hsl(var(--muted)/0.4))] border-e border-border">
             <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-xl bg-background border border-border shadow-sm">
@@ -482,7 +480,7 @@ export function LoginView() {
     // ── ASYMMETRIC (60/40 split with accent divider) ──
     case "asymmetric":
       return (
-        <div className={`flex min-h-screen w-full ${bgStyle} selection:bg-primary/20`} dir={direction} style={wrapperStyle}>
+        <div className={`flex min-h-screen w-full ${bgStyle} selection:bg-primary/20`} dir={direction} style={splitWrapperStyle}>
           <div className="hidden lg:flex lg:w-[60%] relative overflow-hidden">
             <LoginBranding t={t} branding={branding} slotConfig={slotConfig} position="left" />
             {/* Accent divider */}
@@ -506,7 +504,7 @@ export function LoginView() {
           {/* Pattern background */}
           <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,hsl(var(--border))_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border))_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-20" />
           {topActions}
-          <div className="relative z-10 w-full max-w-[440px] rounded-2xl border border-border bg-[var(--login-surface,hsl(var(--background)))] p-8 shadow-2xl mx-4">
+          <div className="relative z-10 w-full border border-border mx-4" style={{ maxWidth: "var(--login-form-width, 440px)", borderRadius: "var(--login-radius-card, 16px)", padding: "var(--login-card-padding, 32px)", boxShadow: "var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.25))", backgroundColor: "var(--login-surface, hsl(var(--background)))" }}>
             <div className="mb-8 flex flex-col items-center gap-3 text-center">
               <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl bg-background border border-border shadow-sm">
                 <img src={logoSrc} alt={`${logoAlt} Logo`} className="h-full w-full object-cover" onError={(e) => { e.currentTarget.style.display = "none"; }} />
@@ -526,9 +524,9 @@ export function LoginView() {
         <div
           className={`relative flex min-h-screen w-full ${bgStyle} font-sans selection:bg-primary/20`}
           dir={direction}
-          style={{ backgroundImage: "var(--login-bg-image, none)", backgroundSize: "cover", backgroundPosition: "center" }}
+          style={wrapperStyle}
         >
-          <div className="absolute inset-0 bg-gradient-to-br from-[var(--login-bg,hsl(var(--background)))]/80 via-[var(--login-bg,hsl(var(--background)))]/40 to-[var(--login-bg,hsl(var(--background)))]/80" />
+          <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom right, var(--login-overlay-color, hsl(var(--background)))/0.8, transparent/0.4, var(--login-overlay-color, hsl(var(--background)))/0.8)", opacity: "var(--login-overlay-opacity, 0.7)", backdropFilter: "blur(var(--login-overlay-blur, 0px))" }} />
           {topActions}
           {/* Left: Big cinematic headline */}
           <div className="relative z-10 hidden lg:flex lg:w-3/5 flex-col justify-center px-16 xl:px-24">
@@ -554,7 +552,7 @@ export function LoginView() {
     // ── SPLIT-DIAGONAL (Diagonal clip separating brand/form) ──
     case "split-diagonal":
       return (
-        <div className={`relative flex min-h-screen w-full ${bgStyle} selection:bg-primary/20`} dir={direction} style={wrapperStyle}>
+        <div className={`relative flex min-h-screen w-full ${bgStyle} selection:bg-primary/20`} dir={direction} style={splitWrapperStyle}>
           <div className="hidden lg:block absolute inset-0 w-[55%]" style={{ clipPath: "polygon(0 0, 100% 0, 75% 100%, 0 100%)", backgroundColor: "var(--login-surface, hsl(var(--muted)/0.4))" }}>
             <LoginBranding t={t} branding={branding} slotConfig={slotConfig} position="left" />
           </div>
@@ -572,7 +570,7 @@ export function LoginView() {
     // ── CAROUSEL (Auto-rotating testimonials branding panel) ──
     case "carousel":
       return (
-        <div className={`flex min-h-screen w-full ${bgStyle} selection:bg-primary/20`} dir={direction} style={wrapperStyle}>
+        <div className={`flex min-h-screen w-full ${bgStyle} selection:bg-primary/20`} dir={direction} style={splitWrapperStyle}>
           <div className="relative hidden lg:flex lg:w-1/2 xl:w-[55%] flex-col justify-center overflow-hidden bg-[var(--login-surface,hsl(var(--muted)/0.4))] border-e border-border p-16">
             <div className="mb-8">
               <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-xl bg-background border border-border shadow-sm">
@@ -601,14 +599,14 @@ export function LoginView() {
     case "glass-morphism":
       return (
         <div className={`relative flex min-h-screen w-full items-center justify-center ${bgStyle} selection:bg-primary/20`} dir={direction}
-          style={{ ...wrapperStyle, backgroundImage: "var(--login-bg-image, none)", backgroundSize: "cover", backgroundPosition: "center" }}>
-          <div className="absolute inset-0 backdrop-blur-sm" style={{ backgroundColor: "var(--login-bg, hsl(var(--background)))", opacity: 0.5 }} />
+          style={wrapperStyle}>
+          <div className="absolute inset-0" style={{ backgroundColor: "var(--login-overlay-color, hsl(var(--background)))", opacity: "var(--login-overlay-opacity, 0.5)", backdropFilter: "blur(var(--login-overlay-blur, 2px))" }} />
           {/* Ambient glow orbs */}
           <div className="pointer-events-none absolute top-1/4 start-1/4 h-64 w-64 rounded-full bg-[var(--login-primary,hsl(var(--primary)))]/20 blur-[100px]" />
           <div className="pointer-events-none absolute bottom-1/4 end-1/4 h-48 w-48 rounded-full bg-[var(--login-primary,hsl(var(--primary)))]/15 blur-[80px]" />
           {topActions}
-          <div className="relative z-10 w-full max-w-[440px] mx-4">
-            <div className="rounded-3xl border border-[var(--login-accent,hsl(var(--border)))]/20 p-10 shadow-2xl backdrop-blur-3xl" style={{ backgroundColor: "color-mix(in srgb, var(--login-surface, hsl(var(--background))) 70%, transparent)" }}>
+          <div className="relative z-10 w-full mx-4" style={{ maxWidth: "var(--login-form-width, 440px)" }}>
+            <div className="border border-[var(--login-accent,hsl(var(--border)))]/20 shadow-2xl backdrop-blur-3xl" style={{ borderRadius: "var(--login-radius-card, 24px)", padding: "var(--login-card-padding, 40px)", backgroundColor: "color-mix(in srgb, var(--login-surface, hsl(var(--background))) 70%, transparent)" }}>
               <div className="pointer-events-none absolute -inset-px rounded-3xl bg-gradient-to-br from-[var(--login-primary,hsl(var(--primary)))]/30 via-transparent to-[var(--login-primary,hsl(var(--primary)))]/15" />
               <div className="relative z-10">
                 <div className="mb-8 flex flex-col items-center gap-3 text-center">
@@ -658,7 +656,7 @@ export function LoginView() {
           {/* Radial spotlight glow */}
           <div className="pointer-events-none absolute inset-0" style={{ background: `radial-gradient(ellipse 50% 60% at 50% 50%, var(--login-primary, hsl(var(--primary)))/0.12 0%, transparent 70%)` }} />
           {topActions}
-          <div className="relative z-10 w-full max-w-[420px] rounded-2xl border border-[var(--login-accent,hsl(var(--border)))] bg-[var(--login-surface,hsl(var(--background)))] p-8 shadow-2xl mx-4">
+          <div className="relative z-10 w-full border border-[var(--login-accent,hsl(var(--border)))] mx-4" style={{ maxWidth: "var(--login-form-width, 420px)", borderRadius: "var(--login-radius-card, 16px)", padding: "var(--login-card-padding, 32px)", boxShadow: "var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.25))", backgroundColor: "var(--login-surface, hsl(var(--background)))" }}>
             <div className="mb-8 flex flex-col items-center gap-3 text-center">
               <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl bg-background border border-border shadow-sm">
                 <img src={logoSrc} alt={`${logoAlt} Logo`} className="h-full w-full object-cover" onError={(e) => { e.currentTarget.style.display = "none"; }} />
@@ -675,7 +673,7 @@ export function LoginView() {
     // ── DUAL-PANEL (Header + features left + form right) ──
     case "dual-panel":
       return (
-        <div className={`flex min-h-screen w-full flex-col ${bgStyle} selection:bg-primary/20`} dir={direction} style={wrapperStyle}>
+        <div className={`flex min-h-screen w-full flex-col ${bgStyle} selection:bg-primary/20`} dir={direction} style={splitWrapperStyle}>
           {/* Top header bar */}
           <div className="flex items-center justify-between border-b border-border px-8 py-4" style={{ backgroundColor: "var(--login-surface, hsl(var(--muted)/0.4))" }}>
             <div className="flex items-center gap-3">
@@ -703,8 +701,8 @@ export function LoginView() {
     // ── CORNER-CARD (Small form bottom-right, large brand hero) ──
     case "corner-card":
       return (
-        <div className={`relative flex min-h-screen w-full ${bgStyle} selection:bg-primary/20`} dir={direction} style={{ ...wrapperStyle, backgroundImage: "var(--login-bg-image, none)", backgroundSize: "cover", backgroundPosition: "center" }}>
-          <div className="absolute inset-0" style={{ backgroundColor: "var(--login-bg, hsl(var(--background)))", opacity: 0.6 }} />
+        <div className={`relative flex min-h-screen w-full ${bgStyle} selection:bg-primary/20`} dir={direction} style={wrapperStyle}>
+          <div className="absolute inset-0" style={{ backgroundColor: "var(--login-overlay-color, hsl(var(--background)))", opacity: "var(--login-overlay-opacity, 0.6)", backdropFilter: "blur(var(--login-overlay-blur, 0px))" }} />
           {topActions}
           {/* Hero branding area */}
           <div className="relative z-10 hidden lg:flex flex-1 flex-col justify-center px-16 xl:px-24">
@@ -714,7 +712,7 @@ export function LoginView() {
           </div>
           {/* Corner card */}
           <div className="relative z-10 flex w-full lg:w-auto items-end lg:items-end justify-center lg:justify-end p-6 lg:p-10">
-            <div className="w-full max-w-[400px] rounded-2xl border border-[var(--login-accent,hsl(var(--border)))] bg-[var(--login-surface,hsl(var(--background)))] p-8 shadow-2xl">
+            <div className="w-full border border-[var(--login-accent,hsl(var(--border)))]" style={{ maxWidth: "var(--login-form-width, 400px)", borderRadius: "var(--login-radius-card, 16px)", padding: "var(--login-card-padding, 32px)", boxShadow: "var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.25))", backgroundColor: "var(--login-surface, hsl(var(--background)))" }}>
               <div className="mb-6 flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-lg bg-background border border-border"><img src={logoSrc} alt={`${logoAlt} Logo`} className="h-full w-full object-cover" onError={(e) => { e.currentTarget.style.display = "none"; }} /></div>
                 <span className="text-sm font-semibold text-[var(--login-text,hsl(var(--foreground)))]">{companyName}</span>
@@ -755,7 +753,7 @@ export function LoginView() {
           {/* Subtle animated dot pattern */}
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle,var(--login-accent,hsl(var(--border)))_1px,transparent_1px)] bg-[size:24px_24px] opacity-[0.07]" />
           {topActions}
-          <div className="relative z-10 w-full max-w-[400px] px-6">
+          <div className="relative z-10 w-full px-6" style={{ maxWidth: "var(--login-form-width, 400px)" }}>
             <div className="mb-12 flex flex-col items-center gap-3 text-center">
               <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-xl bg-background border border-border shadow-sm"><img src={logoSrc} alt={`${logoAlt} Logo`} className="h-full w-full object-cover" onError={(e) => { e.currentTarget.style.display = "none"; }} /></div>
               <h1 className="tracking-tight text-[var(--login-text,hsl(var(--foreground)))]" style={{ fontFamily: "var(--login-font-heading, inherit)", fontSize: "var(--login-size-headline, 1.5rem)", fontWeight: "var(--login-weight-heading, 600)" }}>{companyName}</h1>
@@ -776,7 +774,7 @@ export function LoginView() {
             {Array.from({ length: 24 }).map((_, i) => (<div key={i} className="rounded-lg bg-[var(--login-primary,hsl(var(--primary)))]" style={{ opacity: 0.3 + (i % 5) * 0.15 }} />))}
           </div>
           {topActions}
-          <div className="relative z-10 w-full max-w-[440px] border border-[var(--login-accent,hsl(var(--border)))] mx-4" style={{ borderRadius: "var(--login-radius-card, 16px)", padding: "var(--login-card-padding, 32px)", boxShadow: "var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.25))", backgroundColor: "var(--login-surface, hsl(var(--background)))" }}>
+          <div className="relative z-10 w-full border border-[var(--login-accent,hsl(var(--border)))] mx-4" style={{ maxWidth: "var(--login-form-width, 440px)", borderRadius: "var(--login-radius-card, 16px)", padding: "var(--login-card-padding, 32px)", boxShadow: "var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.25))", backgroundColor: "var(--login-surface, hsl(var(--background)))" }}>
             <div className="mb-8 flex flex-col items-center gap-3 text-center">
               <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl bg-background border border-border shadow-sm"><img src={logoSrc} alt={`${logoAlt} Logo`} className="h-full w-full object-cover" onError={(e) => { e.currentTarget.style.display = "none"; }} /></div>
               <h1 className="tracking-tight text-[var(--login-text,hsl(var(--foreground)))]" style={{ fontFamily: "var(--login-font-heading, inherit)", fontSize: "var(--login-size-headline, 1.5rem)", fontWeight: "var(--login-weight-heading, 600)" }}>{companyName}</h1>
@@ -792,7 +790,7 @@ export function LoginView() {
     case "split-right":
     default:
       return (
-        <div className={`flex min-h-screen w-full ${bgStyle} selection:bg-primary/20`} dir={direction} style={wrapperStyle}>
+        <div className={`flex min-h-screen w-full ${bgStyle} selection:bg-primary/20`} dir={direction} style={splitWrapperStyle}>
           <LoginBranding t={t} branding={branding} slotConfig={slotConfig} position="left" />
           <div className="relative flex w-full flex-col items-center justify-center px-6 py-12 lg:w-1/2 xl:w-[45%]">
             {topActions}

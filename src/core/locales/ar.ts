@@ -5716,16 +5716,26 @@ export const ar = {
     discardSuccess: "تم تجاهل المسودة. تمت العودة إلى الإعدادات المباشرة.",
     discardFailed: "فشل في تجاهل المسودة",
     versionConflict: "تعارض في الإصدار — يرجى إعادة التحميل والمحاولة مرة أخرى",
+    saveDraft: "حفظ المسودة",
+    saved: "تم الحفظ",
+    draftSaved: "تم حفظ المسودة",
+    draftSaveFailed: "فشل في حفظ المسودة",
+    noTenantTitle: "يلزم اختيار مستأجر",
+    noTenantDesc: "يرجى اختيار مستأجر لتخصيص صفحة تسجيل الدخول الخاصة به. يعمل المخصص مع إعدادات العلامة التجارية الخاصة بالمستأجر.",
 
     tab: {
       layout: "التخطيط",
       branding: "العلامة التجارية",
-      colors: "الألوان",
+      appearance: "المظهر",
       typography: "الخطوط",
-      background: "الخلفية",
       spacing: "التباعد والشكل",
       blocks: "كتل المحتوى",
       advanced: "متقدم",
+    },
+
+    appearance: {
+      lightTheme: "السمة الفاتحة",
+      darkTheme: "السمة الداكنة",
     },
 
     device: {
@@ -5798,6 +5808,13 @@ export const ar = {
     },
 
     colors: {
+      themeMode: "وضع السمة",
+      unified: "موحد",
+      split: "فاتح / داكن",
+      unifiedDesc: "مخطط ألوان واحد للسمة الفاتحة والداكنة",
+      splitDesc: "مخططات ألوان منفصلة لكل سمة",
+      lightPalette: "☀️ المخطط الفاتح",
+      darkPalette: "🌙 المخطط الداكن",
       presets: "أنماط ألوان جاهزة",
       custom: "ألوان مخصصة",
       primary: "الأساسي",
@@ -5822,6 +5839,7 @@ export const ar = {
 
     typography: {
       fontFamily: "عائلة الخط",
+      headingFont: "خط العنوان",
       fontFamilyEn: "خط الإنجليزية",
       fontFamilyAr: "خط العربية",
       preview: "الثعلب البني السريع يقفز فوق الكلب الكسول",
@@ -5846,6 +5864,16 @@ export const ar = {
       overlayColor: "لون الطبقة",
       overlayOpacity: "شفافية الطبقة",
       blur: "مقدار الضبابية",
+      themeTarget: "خلفيات حسب السمة",
+      themeTargetDesc: "وضع السمة المنفصل مفعّل. قم بتهيئة خلفيات مختلفة للسمة الفاتحة والداكنة أدناه.",
+      lightBg: "☀️ الخلفية الفاتحة",
+      darkBg: "🌙 الخلفية الداكنة",
+      panelBg: "خلفيات اللوحات",
+      panelSame: "موحد",
+      panelIndependent: "مستقل",
+      panelSameDesc: "كلتا اللوحتين تشتركان في نفس الخلفية",
+      panelIndependentDesc: "تعيين خلفية مختلفة للوحة العلامة التجارية",
+      brandingPanel: "خلفية لوحة العلامة التجارية",
     },
 
     spacing: {

@@ -4,7 +4,7 @@
  */
 "use client";
 
-import { Layout, Palette, Type, Image, Settings2, Layers, Blocks, Paintbrush } from "lucide-react";
+import { Layout, Palette, Type, Settings2, Layers, Blocks, Paintbrush } from "lucide-react";
 import { cn } from "@/core/common/utils";
 import { LayoutPanel } from "./LayoutPanel";
 import { BrandingPanel } from "./BrandingPanel";
@@ -30,9 +30,8 @@ interface StudioSidebarProps {
 const TABS: { id: StudioPanel; icon: typeof Layout; labelKey: string }[] = [
   { id: "layout", icon: Layout, labelKey: "studio.tab.layout" },
   { id: "branding", icon: Paintbrush, labelKey: "studio.tab.branding" },
-  { id: "colors", icon: Palette, labelKey: "studio.tab.colors" },
+  { id: "appearance", icon: Palette, labelKey: "studio.tab.appearance" },
   { id: "typography", icon: Type, labelKey: "studio.tab.typography" },
-  { id: "background", icon: Image, labelKey: "studio.tab.background" },
   { id: "spacing", icon: Settings2, labelKey: "studio.tab.spacing" },
   { id: "blocks", icon: Blocks, labelKey: "studio.tab.blocks" },
   { id: "advanced", icon: Layers, labelKey: "studio.tab.advanced" },
@@ -95,7 +94,7 @@ export function StudioSidebar(props: StudioSidebarProps) {
               updateDraft={updateDraft}
             />
           )}
-          {(activePanel === "colors" || activePanel === "typography" || activePanel === "background" || activePanel === "spacing") && (
+          {(activePanel === "appearance" || activePanel === "typography" || activePanel === "spacing") && (
             <StylePanel
               t={t}
               activeSection={activePanel}

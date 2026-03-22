@@ -13,9 +13,11 @@ import { useStudioBridge } from "../../hooks/useStudioBridge";
 import { PublishBar } from "../components/PublishBar";
 import { StudioSidebar } from "../components/StudioSidebar";
 import { StudioPreview } from "../components/StudioPreview";
-import { Loader2 } from "lucide-react";
+import { Loader2, Building2 } from "lucide-react";
+import { useI18n } from "@core/providers/i18n-provider";
 
 export function CustomizerStudioView() {
+  const { t } = useI18n();
   const vm = useStudioViewModel();
   const bridge = useStudioBridge();
 
@@ -36,13 +38,31 @@ export function CustomizerStudioView() {
     }
   }, [vm.isDirty, bridge.isPreviewReady, bridge.resetPreview]);
 
-  // Loading state
+  // Loading state — waiting for branding query to resolve
   if (vm.isLoading) {
     return (
       <div className="flex h-screen w-full items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-3">
           <Loader2 className="h-6 w-6 animate-spin text-primary" />
-          <p className="text-sm text-muted-foreground">{vm.t("studio.loading")}</p>
+          <p className="text-sm text-muted-foreground">{t("studio.loading") || "Loading..."}</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Superadmin guard — requires tenant context
+  // brandingQuery returned null → no tenant → show guard
+  if (!vm.isTenantContext) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center bg-background">
+        <div className="flex flex-col items-center gap-4 max-w-md text-center px-6">
+          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">
+            <Building2 className="h-8 w-8 text-primary" />
+          </div>
+          <h2 className="text-xl font-semibold">{t("studio.noTenantTitle") || "Tenant Required"}</h2>
+          <p className="text-muted-foreground text-sm leading-relaxed">
+            {t("studio.noTenantDesc") || "The login customizer is tenant-specific. Please select a tenant first to customize their login page."}
+          </p>
         </div>
       </div>
     );
@@ -56,10 +76,13 @@ export function CustomizerStudioView() {
         isDirty={vm.isDirty}
         isPublishing={vm.isPublishing}
         isDiscarding={vm.isDiscarding}
+        isSavingDraft={vm.isSavingDraft}
+        lastSavedAt={vm.lastSavedAt}
         deviceSize={vm.deviceSize}
         setDeviceSize={vm.setDeviceSize}
         onPublish={vm.publish}
         onDiscard={vm.discard}
+        onSaveDraft={vm.saveDraft}
       />
 
       {/* Main Content */}

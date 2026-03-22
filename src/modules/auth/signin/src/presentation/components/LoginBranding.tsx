@@ -45,9 +45,10 @@ export function LoginBranding({ t, branding, slotConfig, position = "left" }: Lo
 
       return (
             <div
-                  className={`relative hidden w-full lg:flex lg:w-1/2 xl:w-[55%] flex-col justify-between overflow-hidden bg-[var(--login-surface,hsl(var(--muted)/0.4))] p-12 lg:p-16 xl:p-24 ${borderClass}`}
+                  className={`relative hidden w-full lg:flex lg:w-1/2 xl:w-[55%] flex-col justify-between overflow-hidden p-12 lg:p-16 xl:p-24 ${borderClass}`}
                   style={{
-                        backgroundImage: "var(--login-bg-image, none)",
+                        backgroundColor: "var(--login-panel-bg, var(--login-surface, hsl(var(--muted) / 0.4)))",
+                        backgroundImage: "var(--login-panel-bg-image, var(--login-bg-image, none))",
                         backgroundSize: "cover",
                         backgroundPosition: "center",
                   }}
