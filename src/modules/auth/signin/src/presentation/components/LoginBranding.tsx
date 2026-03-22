@@ -141,7 +141,7 @@ export function LoginBranding({ t, branding, slotConfig, position = "left" }: Lo
                               <SlotRenderer slotId="login.sidebar.bottom" slotConfig={slotConfig} />
                         )}
                         <div className="flex items-center gap-4 text-sm font-medium text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">
-                              <span>© {new Date().getFullYear()} {companyName}</span>
+                              <span>{(branding as any)?.copyrightText || `© ${new Date().getFullYear()} ${companyName}`}</span>
                               <span className="h-1 w-1 rounded-full bg-[var(--login-accent,hsl(var(--border)))]" />
                               <span className="uppercase tracking-widest text-xs opacity-80">{t("auth.branding.trust")}</span>
                         </div>

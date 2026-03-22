@@ -96,6 +96,7 @@ export function LoginPreviewShell() {
   const companyName = (rawParsed.companyName as string) || BRAND.name;
   const headline = (rawParsed.headline as string) || t("auth.branding.headline");
   const subtitle = (rawParsed.subtitle as string) || t("auth.branding.subtitle");
+  const copyrightText = (rawParsed.copyrightText as string) || "";
 
   // Build "branding" object for LoginBranding component
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -105,6 +106,7 @@ export function LoginPreviewShell() {
     name: companyName,
     loginHeadline: headline,
     loginSubtitle: subtitle,
+    copyrightText,
     primaryColor: null,
     secondaryColor: null,
   } as any;
