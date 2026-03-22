@@ -5805,6 +5805,7 @@ export const ar = {
       faviconDesc: "ارفع أو أدخل رابط أيقونتك (ICO, PNG, SVG — حد 512 كيلوبايت)",
       copyright: "نص حقوق النشر",
       copyrightPlaceholder: "© 2026 شركتك",
+      noPanelNote: "العنوان الرئيسي والفرعي متاحان فقط لتخطيطات التقسيم التي تحتوي على لوحة علامة تجارية منفصلة. قم بالتبديل إلى تخطيط تقسيم لتخصيصها.",
     },
 
     colors: {
@@ -5943,6 +5944,7 @@ export const ar = {
     advanced: {
       customCss: "CSS مخصص",
       customCssDesc: "أضف CSS مخصص لضبط تصميم صفحة تسجيل الدخول.",
+      cssVarRef: "متغيرات CSS المتاحة",
       safeMode: "الوضع الآمن",
       safeModeDesc: "يعود إلى الأنماط الافتراضية إذا تسبب CSS المخصص في كسر الصفحة",
       accessibility: "فحص إمكانية الوصول",

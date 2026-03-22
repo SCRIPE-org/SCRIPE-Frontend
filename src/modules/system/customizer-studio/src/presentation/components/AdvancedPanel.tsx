@@ -31,11 +31,109 @@ export function AdvancedPanel({ t, draft, updateDraft }: AdvancedPanelProps) {
         <textarea
           value={draft.customCss}
           onChange={(e) => updateDraft("customCss", e.target.value)}
-          placeholder={`.login-form {\n  /* your custom styles */\n}`}
-          rows={8}
+          placeholder={`/* ═══ Custom CSS Examples ═══ */
+
+/* Gradient glow button */
+.login-button, button[type="submit"] {
+  background: linear-gradient(135deg, #667eea, #764ba2) !important;
+  border: none !important;
+  box-shadow: 0 4px 20px rgba(102,126,234,0.4);
+  transition: all 0.3s ease;
+}
+.login-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(102,126,234,0.6);
+}
+
+/* Glassmorphism form card */
+.login-form {
+  backdrop-filter: blur(16px);
+  background: rgba(255,255,255,0.08) !important;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 16px;
+  padding: 24px;
+}
+
+/* Neon input glow on focus */
+.login-input:focus {
+  border-color: #00f0ff !important;
+  box-shadow: 0 0 10px rgba(0,240,255,0.3),
+              0 0 40px rgba(0,240,255,0.1) !important;
+}
+
+/* Animated gradient page background */
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.login-page {
+  background: linear-gradient(-45deg,
+    #ee7752, #e73c7e, #23a6d5, #23d5ab) !important;
+  background-size: 400% 400% !important;
+  animation: gradientShift 8s ease infinite;
+}
+
+/* Dark mode overrides */
+.dark .login-input {
+  background: rgba(255,255,255,0.05) !important;
+}`}
+          rows={10}
           className="w-full rounded-md border border-input bg-muted/30 px-3 py-2 font-mono text-xs text-foreground placeholder:text-muted-foreground/40 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/20 resize-y"
           spellCheck={false}
         />
+
+        {/* CSS Variable Reference */}
+        <details className="rounded-lg border border-border/60 bg-muted/20">
+          <summary className="cursor-pointer px-3 py-2 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider hover:text-foreground transition-colors">
+            📋 {t("studio.advanced.cssVarRef") || "Available CSS Variables"}
+          </summary>
+          <div className="px-3 pb-3 space-y-2">
+            <CssVarGroup title="🎨 Colors" vars={[
+              ["--login-primary", "Primary color"],
+              ["--login-secondary", "Secondary color"],
+              ["--login-bg", "Page background"],
+              ["--login-surface", "Card/surface background"],
+              ["--login-text", "Main text color"],
+              ["--login-text-muted", "Muted text color"],
+              ["--login-border", "Border color"],
+              ["--login-error", "Error color"],
+              ["--login-success", "Success color"],
+            ]} />
+            <CssVarGroup title="🖼️ Background" vars={[
+              ["--login-bg-image", "Background image"],
+              ["--login-bg-gradient", "Background gradient"],
+              ["--login-overlay-opacity", "Overlay opacity (0-1)"],
+              ["--login-overlay-color", "Overlay color"],
+              ["--login-overlay-blur", "Overlay blur (px)"],
+            ]} />
+            <CssVarGroup title="📐 Layout" vars={[
+              ["--login-panel-bg", "Branding panel bg (split layouts)"],
+              ["--login-panel-bg-image", "Panel bg image"],
+              ["--login-form-width", "Form max width (px)"],
+              ["--login-card-padding", "Card padding (px)"],
+              ["--login-element-gap", "Element spacing (px)"],
+              ["--login-input-height", "Input height (px)"],
+            ]} />
+            <CssVarGroup title="✏️ Typography" vars={[
+              ["--login-font-heading", "Heading font family"],
+              ["--login-font-body", "Body font family"],
+              ["--login-font-body-ar", "Arabic body font"],
+              ["--login-size-headline", "Headline size (px)"],
+              ["--login-size-subtitle", "Subtitle size (px)"],
+              ["--login-weight-heading", "Heading weight"],
+              ["--login-weight-body", "Body weight"],
+            ]} />
+            <CssVarGroup title="🔲 Shape" vars={[
+              ["--login-radius-card", "Card border radius"],
+              ["--login-radius-button", "Button border radius"],
+              ["--login-shadow-card", "Card box shadow"],
+            ]} />
+            <p className="text-[9px] text-muted-foreground/60 pt-1">
+              💡 In dark mode, all variables are automatically overridden via <code className="text-[9px] bg-muted px-1 rounded">.dark {'{ }'}</code> CSS. You can target dark mode with <code className="text-[9px] bg-muted px-1 rounded">.dark selector</code>.
+            </p>
+          </div>
+        </details>
       </div>
 
       {/* Safe Mode — Core Switch */}
@@ -130,6 +228,23 @@ export function AdvancedPanel({ t, draft, updateDraft }: AdvancedPanelProps) {
             />
           </label>
         </div>
+      </div>
+    </div>
+  );
+}
+
+// ── CSS Variable Group (for reference table) ──
+function CssVarGroup({ title, vars }: { title: string; vars: [string, string][] }) {
+  return (
+    <div>
+      <p className="text-[10px] font-semibold text-muted-foreground mb-1">{title}</p>
+      <div className="space-y-0.5">
+        {vars.map(([varName, desc]) => (
+          <div key={varName} className="flex items-center justify-between">
+            <code className="text-[9px] font-mono text-primary/80 bg-muted px-1 rounded">{varName}</code>
+            <span className="text-[9px] text-muted-foreground/60">{desc}</span>
+          </div>
+        ))}
       </div>
     </div>
   );

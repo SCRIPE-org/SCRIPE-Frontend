@@ -115,10 +115,10 @@ export function LoginPreviewShell() {
   const [showPassword, setShowPassword] = useState(false);
 
   const formContent = (
-    <div className="w-full" style={{ maxWidth: "var(--login-form-width, 380px)", fontFamily: direction === "rtl" ? "var(--login-font-body-ar, var(--login-font-body, inherit))" : "var(--login-font-body, inherit)" }}>
+    <div className="login-form-wrapper w-full" style={{ maxWidth: "var(--login-form-width, 380px)", fontFamily: direction === "rtl" ? "var(--login-font-body-ar, var(--login-font-body, inherit))" : "var(--login-font-body, inherit)" }}>
       {/* Slot: form.above */}
       <SlotRenderer slotId="login.form.above" slotConfig={slotConfig} className="mb-4" />
-      <form onSubmit={(e) => e.preventDefault()} className="flex flex-col" style={{ gap: "var(--login-element-gap, 16px)" }}>
+      <form onSubmit={(e) => e.preventDefault()} className="login-form flex flex-col" style={{ gap: "var(--login-element-gap, 16px)" }}>
         {/* Username */}
         <div className="space-y-2">
           <Label htmlFor="preview-username" className="text-sm font-medium text-[var(--login-text,hsl(var(--foreground)))]">
@@ -129,7 +129,7 @@ export function LoginPreviewShell() {
             <Input
               id="preview-username"
               placeholder={t("auth.usernamePlaceholder")}
-              className="ps-9"
+              className="login-input ps-9"
               readOnly
               style={{
                 height: "var(--login-input-height, 44px)",
@@ -151,7 +151,7 @@ export function LoginPreviewShell() {
               id="preview-password"
               type={showPassword ? "text" : "password"}
               placeholder="••••••••"
-              className="ps-9 pe-9"
+              className="login-input ps-9 pe-9"
               readOnly
               style={{
                 height: "var(--login-input-height, 44px)",
@@ -171,8 +171,8 @@ export function LoginPreviewShell() {
 
         {/* Login Button */}
         <Button
-          type="button"
-          className="w-full text-sm font-semibold"
+          type="submit"
+          className="login-button w-full text-sm font-semibold"
           style={{
             height: "var(--login-input-height, 44px)",
             backgroundColor: "var(--login-primary, hsl(var(--primary)))",
@@ -220,11 +220,11 @@ export function LoginPreviewShell() {
     </div>
   );
 
-  // ── Footer ──
+  // ── Footer (copyright — shown in ALL layouts) ──
   const footer = (
-    <div className="text-center lg:hidden mt-12">
-      <p className="text-[11px] font-medium text-muted-foreground/50">
-        © {new Date().getFullYear()} {companyName} — {t("auth.branding.copyright")}
+    <div className="login-footer text-center mt-8">
+      <p className="text-[11px] font-medium text-[var(--login-text-muted,hsl(var(--muted-foreground))/50)]">
+        {copyrightText || `© ${new Date().getFullYear()} ${companyName}`}
       </p>
     </div>
   );
@@ -274,7 +274,7 @@ export function LoginPreviewShell() {
 
     case "centered":
       return (
-        <div className={`flex min-h-screen w-full flex-col items-center ${bgStyle} selection:bg-primary/20`} dir={direction} style={wrapperStyle}>
+        <div className={`login-page flex min-h-screen w-full flex-col items-center ${bgStyle} selection:bg-primary/20`} dir={direction} style={wrapperStyle}>
           {topActions}
           <div className="flex flex-1 flex-col items-center justify-center px-6 py-24 w-full max-w-lg">
             <div className="mb-10 flex flex-col items-center gap-4 text-center">
@@ -284,6 +284,7 @@ export function LoginPreviewShell() {
             </div>
             <SlotRenderer slotId="login.sidebar.content" slotConfig={slotConfig} className="mb-8 w-full" />
             {formContent}
+            {footer}
             {footerSlot}
           </div>
         </div>
@@ -292,7 +293,7 @@ export function LoginPreviewShell() {
     case "branded-full":
       return (
         <div
-          className={`relative flex min-h-screen w-full items-center justify-center ${bgStyle} selection:bg-primary/20`}
+          className={`login-page relative flex min-h-screen w-full items-center justify-center ${bgStyle} selection:bg-primary/20`}
           dir={direction}
           style={wrapperStyle}
         >
@@ -305,6 +306,7 @@ export function LoginPreviewShell() {
             </div>
             <SlotRenderer slotId="login.form.above" slotConfig={slotConfig} className="mb-4" />
             {formContent}
+            {footer}
             {footerSlot}
           </div>
         </div>
@@ -312,7 +314,7 @@ export function LoginPreviewShell() {
 
     case "minimal":
       return (
-        <div className={`flex min-h-screen w-full flex-col items-center justify-center ${bgStyle} selection:bg-primary/20`} dir={direction} style={wrapperStyle}>
+        <div className={`login-page flex min-h-screen w-full flex-col items-center justify-center ${bgStyle} selection:bg-primary/20`} dir={direction} style={wrapperStyle}>
           {topActions}
           <div className="w-full max-w-[380px] px-6">
             <div className="mb-10 flex flex-col items-center gap-3 text-center">
@@ -321,6 +323,7 @@ export function LoginPreviewShell() {
               <p className="text-[var(--login-text-muted,hsl(var(--muted-foreground)))]" style={{ fontSize: "var(--login-size-subtitle, 0.875rem)" }}>{t("auth.pleaseLogin")}</p>
             </div>
             {formContent}
+            {footer}
             {footerSlot}
           </div>
         </div>

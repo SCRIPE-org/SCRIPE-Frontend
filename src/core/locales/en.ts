@@ -5947,6 +5947,7 @@ export const en = {
       faviconDesc: "Upload or enter a URL for your favicon (ICO, PNG, SVG — max 512 KB)",
       copyright: "Copyright Text",
       copyrightPlaceholder: "© 2026 Your Company",
+      noPanelNote: "Headline and subtitle are only available for split layouts that have a separate branding panel. Switch to a split layout to customize these.",
     },
 
     // Colors
@@ -5986,6 +5987,7 @@ export const en = {
       fontFamily: "Font Family",
       fontFamilyEn: "English Font",
       fontFamilyAr: "Arabic Font",
+      headingFont: "Heading Font",
       preview: "The quick brown fox jumps over the lazy dog",
       headingSize: "Heading Size",
       bodySize: "Body Size",
@@ -6091,7 +6093,8 @@ export const en = {
     // Advanced
     advanced: {
       customCss: "Custom CSS",
-      customCssDesc: "Add custom CSS to fine-tune the login page design. Use .login-form, .brand-panel etc. as selectors.",
+      customCssDesc: "Add custom CSS to fine-tune the login page design. Use CSS variables or any selector.",
+      cssVarRef: "Available CSS Variables",
       safeMode: "Safe Mode",
       safeModeDesc: "Falls back to default styles if custom CSS breaks the page",
       accessibility: "Accessibility Check",
