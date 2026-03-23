@@ -2,7 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState, useEffect, useRef } from "react";
-import { useToast } from "@core/hooks/use-toast";
+import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useTheme } from "next-themes";
 import { useAppStore } from "@core/store/useAppStore";
@@ -64,7 +64,7 @@ function parsePrefsJson(json: string | null | undefined): PrefsForm {
  */
 export function useCustomizationViewModel() {
   const { t, setLanguage } = useI18n();
-  const { toast } = useToast();
+  const { success: toastSuccess, error: toastError } = useEnhancedToast();
   const queryClient = useQueryClient();
   const { setTheme } = useTheme();
   const setSidebarOpen = useAppStore((s) => s.setSidebarOpen);
@@ -130,12 +130,12 @@ export function useCustomizationViewModel() {
     mutationFn: (expectedVersion: number) =>
       customizationService.publishBranding({ expectedVersion }),
     onSuccess: () => {
-      toast({ title: t("tenantSettings.customization.publishSuccess"), variant: "default" });
+      toastSuccess({ title: t("tenantSettings.customization.publishSuccess") || "Published successfully" });
       queryClient.invalidateQueries({ queryKey: ["tenantSettings"] });
       queryClient.invalidateQueries({ queryKey: customizationKeys.all });
     },
     onError: (error: Error) => {
-      toast({ title: t("tenantSettings.customization.publishFailed"), description: error.message, variant: "destructive" });
+      toastError({ title: t("tenantSettings.customization.publishFailed") || "Publish failed", description: error.message });
     },
   });
 
@@ -143,12 +143,12 @@ export function useCustomizationViewModel() {
   const discardMutation = useMutation({
     mutationFn: () => customizationService.discardDraft(),
     onSuccess: () => {
-      toast({ title: t("tenantSettings.customization.discardSuccess"), variant: "default" });
+      toastSuccess({ title: t("tenantSettings.customization.discardSuccess") || "Draft discarded" });
       queryClient.invalidateQueries({ queryKey: ["tenantSettings"] });
       queryClient.invalidateQueries({ queryKey: customizationKeys.all });
     },
     onError: (error: Error) => {
-      toast({ title: t("tenantSettings.customization.discardFailed"), description: error.message, variant: "destructive" });
+      toastError({ title: t("tenantSettings.customization.discardFailed") || "Discard failed", description: error.message });
     },
   });
 
@@ -157,12 +157,12 @@ export function useCustomizationViewModel() {
     mutationFn: (targetVersion: number) =>
       customizationService.rollback(targetVersion),
     onSuccess: () => {
-      toast({ title: t("tenantSettings.customization.rollbackSuccess"), variant: "default" });
+      toastSuccess({ title: t("tenantSettings.customization.rollbackSuccess") || "Rollback successful" });
       queryClient.invalidateQueries({ queryKey: ["tenantSettings"] });
       queryClient.invalidateQueries({ queryKey: customizationKeys.all });
     },
     onError: (error: Error) => {
-      toast({ title: t("tenantSettings.customization.rollbackFailed"), description: error.message, variant: "destructive" });
+      toastError({ title: t("tenantSettings.customization.rollbackFailed") || "Rollback failed", description: error.message });
     },
   });
 
@@ -174,7 +174,7 @@ export function useCustomizationViewModel() {
       return;
     },
     onSuccess: () => {
-      toast({ title: t("tenantSettings.customization.prefsSaved"), variant: "default" });
+      toastSuccess({ title: t("tenantSettings.customization.prefsSaved") || "Preferences saved" });
 
       // 1. Write nexora_pref_* keys (tenant fallback defaults)
       localStorage.setItem(STORAGE_KEYS.PREF_THEME, prefsForm.theme);
@@ -197,7 +197,7 @@ export function useCustomizationViewModel() {
       successTimerRef.current = setTimeout(() => setIsSaveSuccess(false), 2500);
     },
     onError: (error: Error) => {
-      toast({ title: t("tenantSettings.customization.prefsFailed"), description: error.message, variant: "destructive" });
+      toastError({ title: t("tenantSettings.customization.prefsFailed") || "Failed to save preferences", description: error.message });
     },
   });
 

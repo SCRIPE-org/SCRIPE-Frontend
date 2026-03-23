@@ -63,26 +63,17 @@ export function CustomizerStudioView() {
     );
   }
 
-  // Superadmin guard — requires tenant context (but drilldown mode bypasses this)
-  if (!vm.isTenantContext) {
-    return (
-      <div className="flex h-screen w-full items-center justify-center bg-background">
-        <div className="flex flex-col items-center gap-4 max-w-md text-center px-6">
-          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">
-            <Building2 className="h-8 w-8 text-primary" />
-          </div>
-          <h2 className="text-xl font-semibold">{t("studio.noTenantTitle") || "Tenant Required"}</h2>
-          <p className="text-muted-foreground text-sm leading-relaxed">
-            {t("studio.noTenantDesc") || "The login customizer is tenant-specific. Please select a tenant first to customize their login page."}
-          </p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-background">
-      {/* Drilldown Banner */}
+      {/* System Defaults Banner */}
+      {vm.mode === "system" && (
+        <div className="flex items-center gap-2 bg-violet-600 px-4 py-2 text-white text-sm font-medium">
+          <Building2 className="h-4 w-4" />
+          <span>{t("studio.systemDefaultsBanner") || "Editing System Defaults — applied to all tenants without custom branding"}</span>
+        </div>
+      )}
+
+      {/* Tenant Drilldown Banner */}
       {vm.mode === "tenant" && vm.targetTenantName && (
         <div className="flex items-center gap-2 bg-cyan-600 px-4 py-2 text-white text-sm font-medium">
           <Building2 className="h-4 w-4" />

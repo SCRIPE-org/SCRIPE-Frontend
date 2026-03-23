@@ -179,12 +179,12 @@ export function useLoginBrandingTokens({
     // These use CSS vars so custom CSS can override naturally (no !important needed)
     cssBlocks.push(`/* ═══ Login Base Stylesheet ═══ */
 .login-page {
-  font-family: var(--login-font-body, inherit);
+  font-family: var(--login-font-body, inherit) !important;
   line-height: var(--login-line-height, 1.5) !important;
   letter-spacing: var(--login-letter-spacing, 0px) !important;
 }
-.login-page[dir="rtl"] {
-  font-family: var(--login-font-body-ar), var(--login-font-body), sans-serif;
+[dir="rtl"] .login-page {
+  font-family: var(--login-font-body-ar, var(--login-font-body, inherit)) !important;
 }
 .login-page * {
   line-height: inherit;
@@ -230,8 +230,8 @@ export function useLoginBrandingTokens({
   font-weight: var(--login-weight-heading, 600) !important;
   color: var(--login-text, hsl(var(--foreground)));
 }
-.login-page[dir="rtl"] .login-heading {
-  font-family: var(--login-font-body-ar), var(--login-font-heading), sans-serif;
+[dir="rtl"] .login-page .login-heading {
+  font-family: var(--login-font-body-ar, var(--login-font-heading, inherit)) !important;
 }
 .login-page .login-subtitle {
   font-size: var(--login-size-subtitle, 0.875rem) !important;

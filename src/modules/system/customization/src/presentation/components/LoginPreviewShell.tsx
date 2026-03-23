@@ -184,7 +184,7 @@ export function LoginPreviewShell() {
       {/* Mock SSO buttons */}
       <div className="mt-6 space-y-3">
         <div className="login-divider relative"><div className="absolute inset-0 flex items-center"><div className="w-full border-t border-[var(--login-border,hsl(var(--border)))]" />
-          </div>
+        </div>
           <div className="relative flex justify-center text-xs">
             <span className="bg-[var(--login-surface,hsl(var(--background)))] px-2 text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">
               {t("auth.orContinueWith")}
@@ -220,7 +220,7 @@ export function LoginPreviewShell() {
   const footer = (
     <div className="login-footer text-center mt-8">
       <p className="text-[11px] font-medium text-[var(--login-text-muted,hsl(var(--muted-foreground))/50)]">
-        {copyrightText || `Â© ${new Date().getFullYear()} ${companyName}`}
+        {copyrightText || `© ${new Date().getFullYear()} ${companyName}`}
       </p>
     </div>
   );
@@ -250,23 +250,23 @@ export function LoginPreviewShell() {
   const splitWrapperStyle: React.CSSProperties = isUnifiedBg
     ? { ...wrapperStyle }  // unified — full bg on wrapper
     : {
-        // separated — no bg image on wrapper, just spacing (font handled by .login-page CSS class)
-        lineHeight: wrapperStyle.lineHeight,
-        letterSpacing: wrapperStyle.letterSpacing,
-        backgroundColor: "hsl(var(--background))",
-      };
+      // separated — no bg image on wrapper, just spacing (font handled by .login-page CSS class)
+      lineHeight: wrapperStyle.lineHeight,
+      letterSpacing: wrapperStyle.letterSpacing,
+      backgroundColor: "hsl(var(--background))",
+    };
 
   // Form-side style: in separated mode, applies the page bg controls to JUST the form section.
   // In unified mode, form side is transparent (wrapper bg shows through).
   const formSideStyle: React.CSSProperties = isUnifiedBg
     ? {}  // transparent — wrapper bg shows through
     : {
-        backgroundImage: "var(--login-bg-image, none)",
-        backgroundSize: "var(--login-bg-image-fit, cover)",
-        backgroundPosition: "var(--login-bg-image-position, center)",
-        backgroundRepeat: "no-repeat",
-        backgroundColor: "var(--login-bg, hsl(var(--background)))",
-      };
+      backgroundImage: "var(--login-bg-image, none)",
+      backgroundSize: "var(--login-bg-image-fit, cover)",
+      backgroundPosition: "var(--login-bg-image-position, center)",
+      backgroundRepeat: "no-repeat",
+      backgroundColor: "var(--login-bg, hsl(var(--background)))",
+    };
 
   // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
   // 22 LAYOUT VARIANTS (same as LoginView)

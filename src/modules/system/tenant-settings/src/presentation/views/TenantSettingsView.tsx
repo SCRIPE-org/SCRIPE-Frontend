@@ -8,38 +8,29 @@ import { CustomizationSection } from "../components/CustomizationSection";
 import { Button } from "@core/ui/button";
 import { Skeleton } from "@core/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@core/ui/alert";
-import { AlertCircle, Save, Loader2 } from "lucide-react";
+import { AlertCircle, Save, Loader2, Building2 } from "lucide-react";
 
 /**
- * TenantSettingsView - Pure UI component for My Tenant Settings page
+ * TenantSettingsView - Pure UI component for Settings page
  *
  * Follows SOLID View/ViewModel pattern:
  * - View is ~60 lines max (pure composition)
  * - All logic lives in viewmodel
  * - Section components handle specific concerns
+ *
+ * Modes (backend-driven):
+ * - "my"     → Tenant admin editing own settings
+ * - "system" → System admin editing platform defaults
+ * - "tenant" → System admin drilldown into a tenant
  */
 export function TenantSettingsView() {
   const vm = useTenantSettingsViewModel();
-
-  // System admin message
-  if (vm.isSystemAdmin) {
-    return (
-      <div className="space-y-6">
-        <PageHeader t={vm.t} />
-        <Alert variant="default">
-          <AlertCircle className="h-4 w-4" />
-          <AlertTitle>{vm.t("tenantSettings.title")}</AlertTitle>
-          <AlertDescription>{vm.t("tenantSettings.systemAdminMessage")}</AlertDescription>
-        </Alert>
-      </div>
-    );
-  }
 
   // Loading state
   if (vm.isLoading) {
     return (
       <div className="space-y-6">
-        <PageHeader t={vm.t} />
+        <PageHeader t={vm.t} mode={vm.mode} />
         <div className="space-y-6">
           <Skeleton className="h-[200px] w-full" />
           <Skeleton className="h-[300px] w-full" />
@@ -53,7 +44,7 @@ export function TenantSettingsView() {
   if (vm.isError) {
     return (
       <div className="space-y-6">
-        <PageHeader t={vm.t} />
+        <PageHeader t={vm.t} mode={vm.mode} />
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>{vm.t("common.error")}</AlertTitle>
@@ -67,9 +58,23 @@ export function TenantSettingsView() {
 
   return (
     <div className="space-y-6">
-      <PageHeader t={vm.t} />
-      <QuotasSection settings={vm.settings} updateField={vm.updateField} t={vm.t} />
-      <SecuritySection settings={vm.settings} updateField={vm.updateField} t={vm.t} />
+      {/* System Defaults Banner */}
+      {vm.mode === "system" && (
+        <div className="flex items-center gap-2 rounded-lg bg-violet-600 px-4 py-2.5 text-white text-sm font-medium">
+          <Building2 className="h-4 w-4 shrink-0" />
+          <span>{vm.t("tenantSettings.systemBanner") || "Editing System Defaults — these apply to all tenants without custom settings"}</span>
+        </div>
+      )}
+
+      <PageHeader t={vm.t} mode={vm.mode} />
+
+      {/* Show Quotas & Security only for tenant contexts, not system defaults */}
+      {vm.mode !== "system" && (
+        <>
+          <QuotasSection settings={vm.settings} updateField={vm.updateField} t={vm.t} />
+          <SecuritySection settings={vm.settings} updateField={vm.updateField} t={vm.t} />
+        </>
+      )}
       <BrandingSection settings={vm.settings} updateField={vm.updateField} t={vm.t} />
       <CustomizationSection settings={vm.settings} t={vm.t} />
       <SaveActions vm={vm} />
@@ -79,11 +84,18 @@ export function TenantSettingsView() {
 
 // Small helper components to keep main view clean
 
-function PageHeader({ t }: { t: (key: string) => string }) {
+function PageHeader({ t, mode }: { t: (key: string) => string; mode: 'my' | 'system' | 'tenant' }) {
+  const title = mode === "system"
+    ? (t("tenantSettings.systemTitle") || "System Settings")
+    : (t("tenantSettings.title") || "Tenant Settings");
+  const description = mode === "system"
+    ? (t("tenantSettings.systemDescription") || "Platform-wide defaults inherited by all tenants")
+    : (t("tenantSettings.description") || "Manage your tenant settings");
+
   return (
     <div>
-      <h1 className="text-3xl font-bold tracking-tight">{t("tenantSettings.title")}</h1>
-      <p className="text-muted-foreground">{t("tenantSettings.description")}</p>
+      <h1 className="text-3xl font-bold tracking-tight">{title}</h1>
+      <p className="text-muted-foreground">{description}</p>
     </div>
   );
 }
@@ -112,3 +124,4 @@ function SaveActions({ vm }: { vm: ReturnType<typeof useTenantSettingsViewModel>
     </div>
   );
 }
+

@@ -16,7 +16,7 @@
 
 import { useState, useCallback, useEffect, useRef, useMemo } from "react";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
-import { useToast } from "@core/hooks/use-toast";
+import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 import { type TenantBrandingData } from "@core/providers/tenant-branding-provider";
 import { systemContainer } from "@modules/system/di";
@@ -156,16 +156,15 @@ export interface StudioViewModelOptions {
 
 export function useStudioViewModel(options?: StudioViewModelOptions) {
   const { t } = useI18n();
-  const { toast } = useToast();
+  const { success: toastSuccess, error: toastError } = useEnhancedToast();
   const queryClient = useQueryClient();
   const repository = systemContainer.customizationRepository;
 
   const targetTenantId = options?.targetTenantId;
-  const mode = targetTenantId ? 'tenant' as const : 'my' as const;
 
   // ── Fetch raw branding data via Repository ──
   const brandingQuery = useQuery<TenantBrandingData | null>({
-    queryKey: ["studio-branding", mode, targetTenantId],
+    queryKey: ["studio-branding", targetTenantId ?? "self"],
     queryFn: async () => {
       try {
         if (targetTenantId) {
@@ -184,6 +183,13 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
   });
 
   const branding = brandingQuery.data;
+
+  // Mode is backend-driven: "my" | "system" | "tenant"
+  const mode: 'my' | 'system' | 'tenant' = targetTenantId
+    ? 'tenant'
+    : (branding as any)?.mode === 'system'
+      ? 'system'
+      : 'my';
 
   // ── State ──
   const [draft, setDraft] = useState<StudioDraft>(DEFAULT_DRAFT);
@@ -548,7 +554,7 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
       }
     },
     onSuccess: () => {
-      toast({ title: t("studio.publishSuccess"), variant: "default" });
+      toastSuccess({ title: t("studio.publishSuccess") || "Published successfully" });
       setIsDirty(false);
       setLastSavedAt(new Date());
       queryClient.invalidateQueries({ queryKey: ["tenantSettings"] });
@@ -557,10 +563,9 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
     },
     onError: (error: Error) => {
       const isConflict = error.message?.includes("409") || error.message?.includes("conflict");
-      toast({
-        title: isConflict ? t("studio.versionConflict") : t("studio.publishFailed"),
+      toastError({
+        title: isConflict ? t("studio.versionConflict") : (t("studio.publishFailed") || "Publish failed"),
         description: error.message,
-        variant: "destructive",
       });
     },
   });
@@ -576,11 +581,11 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
       }
     },
     onSuccess: () => {
-      toast({ title: t("studio.draftSaved") || "Draft saved", variant: "default" });
+      toastSuccess({ title: t("studio.draftSaved") || "Draft saved" });
       setLastSavedAt(new Date());
     },
     onError: (error: Error) => {
-      toast({ title: t("studio.draftSaveFailed") || "Failed to save draft", description: error.message, variant: "destructive" });
+      toastError({ title: t("studio.draftSaveFailed") || "Failed to save draft", description: error.message });
     },
   });
 
@@ -588,7 +593,7 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
   const discardMutation = useMutation({
     mutationFn: () => repository.discardDraft(),
     onSuccess: () => {
-      toast({ title: t("studio.discardSuccess"), variant: "default" });
+      toastSuccess({ title: t("studio.discardSuccess") || "Draft discarded" });
       setIsDirty(false);
       if (branding?.loginBrandingJson) {
         try {
@@ -613,7 +618,7 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
       queryClient.invalidateQueries({ queryKey: ["customization"] });
     },
     onError: (error: Error) => {
-      toast({ title: t("studio.discardFailed"), description: error.message, variant: "destructive" });
+      toastError({ title: t("studio.discardFailed") || "Discard failed", description: error.message });
     },
   });
 
@@ -647,7 +652,7 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
     isDiscarding: discardMutation.isPending,
     // Loading & context
     isLoading: brandingQuery.isLoading,
-    isTenantContext: branding !== null || !!targetTenantId,
+    isTenantContext: true, // Backend always returns data (system defaults for system admin)
     // Drilldown metadata
     mode,
     targetTenantId,

@@ -62,6 +62,31 @@ export function CustomizationSection({ settings, t }: CustomizationSectionProps)
         </CardContent>
       </Card>
 
+      {/* ── Unpublished Draft Indicator ────────────── */}
+      {settings.draftBrandingJson && (
+        <Card className="border-amber-500/30 bg-amber-500/5">
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-amber-600 dark:text-amber-400">
+              <Paintbrush className="h-5 w-5" />
+              {c("draftPending") || "Unpublished Draft"}
+            </CardTitle>
+            <CardDescription>
+              {c("draftPendingDesc") || "You have unsaved changes in the Customizer Studio that haven't been published yet."}
+              {" · "}{c("currentVersion") || "Current version"}: <Badge variant="outline">v{settings.settingsVersion}</Badge>
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button asChild variant="outline" size="sm" className="gap-2 border-amber-500/30 text-amber-600 hover:bg-amber-500/10 dark:text-amber-400">
+              <Link href="/customizer">
+                <Paintbrush className="h-4 w-4" />
+                {c("reviewDraft") || "Review & Publish Draft"}
+                <ExternalLink className="h-3.5 w-3.5 ml-1" />
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
       {/* ── Version History (Audit Log) ────────────── */}
       <Card>
         <CardHeader>

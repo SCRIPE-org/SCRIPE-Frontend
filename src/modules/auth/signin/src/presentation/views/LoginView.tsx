@@ -37,12 +37,28 @@ import { useLoginBrandingTokens } from "../../hooks/useLoginBrandingTokens";
 
 export function LoginView() {
   const vm = useLoginViewModel();
-  const { t, language, direction } = useI18n();
+  const { t, language, direction, setLanguage } = useI18n();
   const isRTL = language === "ar";
   const hasCheckedAuth = useRef(false);
 
   // Pre-auth domain resolution for white-label branding
   const { tenantId, branding, isResolved, isLoading: isTenantLoading } = useTenantResolution();
+
+  // ── Sync resolved language with i18n provider ──
+  // The resolve hook writes language to localStorage, but i18n provider reads
+  // localStorage only once on mount. This effect pushes the resolved language
+  // into the i18n React state so UI renders in the correct language.
+  useEffect(() => {
+    if (!branding?.dashboardThemeJson) return;
+    try {
+      const prefs = JSON.parse(branding.dashboardThemeJson);
+      if (prefs.language && (prefs.language === "ar" || prefs.language === "en")) {
+        if (prefs.language !== language) {
+          setLanguage(prefs.language);
+        }
+      }
+    } catch { /* skip invalid JSON */ }
+  }, [branding?.dashboardThemeJson, language, setLanguage]);
 
   // ── Studio Preview Mode (§22) ──
   // When ?_preview=true, listen for postMessage draft updates from the studio
@@ -129,17 +145,9 @@ export function LoginView() {
     link.href = branding.faviconUrl;
   }, [branding?.faviconUrl]);
 
-  // ── Determine if we expect a tenant domain ──
-  const isTenantExpected = typeof window !== "undefined" && (
-    new URLSearchParams(window.location.search).get("_tenant") !== null ||
-    (!window.location.hostname.startsWith("localhost") &&
-     !window.location.hostname.startsWith("127.") &&
-     !window.location.hostname.startsWith("0.0.0.0") &&
-     window.location.hostname !== "[::1]")
-  );
-
   // ── Premium loading gate (skip in preview mode) ──
-  if (!isPreviewMode && (!vm.hasHydrated || vm.isRedirecting || (isTenantExpected && isTenantLoading))) {
+  // Always wait for branding resolution before first paint to prevent FOUC
+  if (!isPreviewMode && (!vm.hasHydrated || vm.isRedirecting || isTenantLoading)) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-6">

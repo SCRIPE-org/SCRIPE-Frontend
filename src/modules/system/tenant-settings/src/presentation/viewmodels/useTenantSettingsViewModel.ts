@@ -48,6 +48,13 @@ export function useTenantSettingsViewModel() {
   // Initialize form when data loads
   const effectiveSettings = formData ?? settings ?? DEFAULT_TENANT_SETTINGS;
 
+  // Mode is backend-driven: "my" | "system" | "tenant"
+  const mode: 'my' | 'system' | 'tenant' = (settings as any)?.mode === 'system'
+    ? 'system'
+    : (settings as any)?.mode === 'tenant'
+      ? 'tenant'
+      : 'my';
+
   // Update field helper
   const updateField = <K extends keyof TenantSettings>(field: K, value: TenantSettings[K]) => {
     setFormData((prev) => ({
@@ -96,16 +103,13 @@ export function useTenantSettingsViewModel() {
     setFormData(null);
   };
 
-  // Check if system admin (no tenant)
-  const isSystemAdmin = isError && error?.message?.includes("System administrators");
-
   return {
     // State
     settings: effectiveSettings,
     isLoading,
     isError,
     error,
-    isSystemAdmin,
+    mode,
 
     // Form state
     hasChanges,
@@ -120,3 +124,4 @@ export function useTenantSettingsViewModel() {
     t,
   };
 }
+
