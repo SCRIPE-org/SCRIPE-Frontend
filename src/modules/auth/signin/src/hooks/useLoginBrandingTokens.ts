@@ -73,9 +73,20 @@ export function useLoginBrandingTokens({
       }
     }
 
+    // Split bg mode (unified vs independent — used by LoginBranding for transparency)
+    if (tokens["split.bg.mode"]) {
+      rootRules.push(`  --login-split-bg-mode: ${tokens["split.bg.mode"]};`);
+    }
+
     // Background image as special token
     if (tokens["bg.image"]) {
       rootRules.push(`  --login-bg-image: url(${tokens["bg.image"]});`);
+    }
+    if (tokens["bg.image.fit"]) {
+      rootRules.push(`  --login-bg-image-fit: ${tokens["bg.image.fit"]};`);
+    }
+    if (tokens["bg.image.position"]) {
+      rootRules.push(`  --login-bg-image-position: ${tokens["bg.image.position"]};`);
     }
 
     // Gradient overrides solid bg color
@@ -87,6 +98,12 @@ export function useLoginBrandingTokens({
     // Panel bg image (for split layouts with independent panel bg)
     if (tokens["panel.bg.image"]) {
       rootRules.push(`  --login-panel-bg-image: url(${tokens["panel.bg.image"]});`);
+    }
+    if (tokens["panel.bg.image.fit"]) {
+      rootRules.push(`  --login-panel-bg-image-fit: ${tokens["panel.bg.image.fit"]};`);
+    }
+    if (tokens["panel.bg.image.position"]) {
+      rootRules.push(`  --login-panel-bg-image-position: ${tokens["panel.bg.image.position"]};`);
     }
 
     // Panel gradient overrides panel solid bg
@@ -163,8 +180,15 @@ export function useLoginBrandingTokens({
     cssBlocks.push(`/* ═══ Login Base Stylesheet ═══ */
 .login-page {
   font-family: var(--login-font-body, inherit);
-  line-height: var(--login-line-height, 1.5);
-  letter-spacing: var(--login-letter-spacing, 0px);
+  line-height: var(--login-line-height, 1.5) !important;
+  letter-spacing: var(--login-letter-spacing, 0px) !important;
+}
+.login-page[dir="rtl"] {
+  font-family: var(--login-font-body-ar), var(--login-font-body), sans-serif;
+}
+.login-page * {
+  line-height: inherit;
+  letter-spacing: inherit;
 }
 .login-form {
   display: flex;
@@ -196,13 +220,17 @@ export function useLoginBrandingTokens({
   box-shadow: var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.25));
   background-color: var(--login-surface, hsl(var(--background)));
 }
-.login-heading {
+.login-page .login-heading {
   font-family: var(--login-font-heading, inherit);
-  font-weight: var(--login-weight-heading, 600);
+  font-size: var(--login-size-headline, 1.875rem) !important;
+  font-weight: var(--login-weight-heading, 600) !important;
   color: var(--login-text, hsl(var(--foreground)));
 }
-.login-subtitle {
-  font-size: var(--login-size-subtitle, 0.875rem);
+.login-page[dir="rtl"] .login-heading {
+  font-family: var(--login-font-body-ar), var(--login-font-heading), sans-serif;
+}
+.login-page .login-subtitle {
+  font-size: var(--login-size-subtitle, 0.875rem) !important;
   color: var(--login-text-muted, hsl(var(--muted-foreground)));
 }
 .login-logo {

@@ -5875,6 +5875,18 @@ export const ar = {
       panelSameDesc: "كلتا اللوحتين تشتركان في نفس الخلفية",
       panelIndependentDesc: "تعيين خلفية مختلفة للوحة العلامة التجارية",
       brandingPanel: "خلفية لوحة العلامة التجارية",
+      imageFit: "ملاءمة الصورة",
+      imagePosition: "موضع الصورة",
+      fitCover: "تغطية",
+      fitContain: "احتواء",
+      fitFill: "تمديد",
+      fitNone: "بدون",
+      fitScaleDown: "تصغير",
+      fullPage: "خلفية الصفحة الكاملة",
+      formSide: "جانب النموذج",
+      heroSection: "القسم الرئيسي",
+      formArea: "منطقة النموذج",
+      sectionCount: "أقسام",
     },
 
     spacing: {

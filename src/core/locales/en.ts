@@ -6021,6 +6021,18 @@ export const en = {
       panelSameDesc: "Both panels share the same background",
       panelIndependentDesc: "Set a different background for the branding panel",
       brandingPanel: "Branding Panel Background",
+      imageFit: "Image Fit",
+      imagePosition: "Image Position",
+      fitCover: "Cover",
+      fitContain: "Contain",
+      fitFill: "Fill",
+      fitNone: "None",
+      fitScaleDown: "Scale",
+      fullPage: "Full Page Background",
+      formSide: "Form Side",
+      heroSection: "Hero Section",
+      formArea: "Form Area",
+      sectionCount: "Sections",
     },
 
     // Spacing

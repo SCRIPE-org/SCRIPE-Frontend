@@ -114,6 +114,8 @@ export interface StudioDraft {
   bgGradientFrom: string;
   bgGradientTo: string;
   bgImageUrl: string;
+  bgImageFit: "cover" | "contain" | "fill" | "none" | "scale-down";
+  bgImagePosition: string;
   bgOverlayEnabled: boolean;
   bgOverlayColor: string;
   bgOverlayOpacity: number;
@@ -125,6 +127,8 @@ export interface StudioDraft {
   darkBgGradientFrom: string;
   darkBgGradientTo: string;
   darkBgImageUrl: string;
+  darkBgImageFit: "cover" | "contain" | "fill" | "none" | "scale-down";
+  darkBgImagePosition: string;
   darkBgOverlayEnabled: boolean;
   darkBgOverlayColor: string;
   darkBgOverlayOpacity: number;
@@ -140,6 +144,8 @@ export interface StudioDraft {
   panelBgGradientFrom: string;
   panelBgGradientTo: string;
   panelBgImageUrl: string;
+  panelBgImageFit: "cover" | "contain" | "fill" | "none" | "scale-down";
+  panelBgImagePosition: string;
   panelBgOverlayEnabled: boolean;
   panelBgOverlayColor: string;
   panelBgOverlayOpacity: number;
@@ -151,6 +157,8 @@ export interface StudioDraft {
   darkPanelBgGradientFrom: string;
   darkPanelBgGradientTo: string;
   darkPanelBgImageUrl: string;
+  darkPanelBgImageFit: "cover" | "contain" | "fill" | "none" | "scale-down";
+  darkPanelBgImagePosition: string;
   darkPanelBgOverlayEnabled: boolean;
   darkPanelBgOverlayColor: string;
   darkPanelBgOverlayOpacity: number;
@@ -214,6 +222,8 @@ export const DEFAULT_DRAFT: StudioDraft = {
   bgGradientFrom: "#0f172a",
   bgGradientTo: "#1e293b",
   bgImageUrl: "",
+  bgImageFit: "cover",
+  bgImagePosition: "center",
   bgOverlayEnabled: false,
   bgOverlayColor: "#000000",
   bgOverlayOpacity: 0.5,
@@ -224,6 +234,8 @@ export const DEFAULT_DRAFT: StudioDraft = {
   darkBgGradientFrom: "#0f172a",
   darkBgGradientTo: "#1e293b",
   darkBgImageUrl: "",
+  darkBgImageFit: "cover",
+  darkBgImagePosition: "center",
   darkBgOverlayEnabled: false,
   darkBgOverlayColor: "#000000",
   darkBgOverlayOpacity: 0.5,
@@ -236,6 +248,8 @@ export const DEFAULT_DRAFT: StudioDraft = {
   panelBgGradientFrom: "#e2e8f0",
   panelBgGradientTo: "#f8fafc",
   panelBgImageUrl: "",
+  panelBgImageFit: "cover",
+  panelBgImagePosition: "center",
   panelBgOverlayEnabled: false,
   panelBgOverlayColor: "#000000",
   panelBgOverlayOpacity: 0.5,
@@ -247,6 +261,8 @@ export const DEFAULT_DRAFT: StudioDraft = {
   darkPanelBgGradientFrom: "#1e293b",
   darkPanelBgGradientTo: "#0f172a",
   darkPanelBgImageUrl: "",
+  darkPanelBgImageFit: "cover",
+  darkPanelBgImagePosition: "center",
   darkPanelBgOverlayEnabled: false,
   darkPanelBgOverlayColor: "#000000",
   darkPanelBgOverlayOpacity: 0.5,
@@ -440,6 +456,8 @@ export function useStudioViewModel() {
         bgGradientFrom: source.bgGradientFrom || DEFAULT_DRAFT.bgGradientFrom,
         bgGradientTo: source.bgGradientTo || DEFAULT_DRAFT.bgGradientTo,
         bgImageUrl: tokens["bg.image"] || "",
+        bgImageFit: source.bgImageFit || DEFAULT_DRAFT.bgImageFit,
+        bgImagePosition: source.bgImagePosition || DEFAULT_DRAFT.bgImagePosition,
         bgOverlayEnabled: source.bgOverlayEnabled ?? false,
         bgOverlayColor: source.bgOverlayColor || DEFAULT_DRAFT.bgOverlayColor,
         bgOverlayOpacity: parseFloat(tokens["overlay.opacity"] || "") || DEFAULT_DRAFT.bgOverlayOpacity,
@@ -450,6 +468,8 @@ export function useStudioViewModel() {
         darkBgGradientFrom: source.darkBgGradientFrom || DEFAULT_DRAFT.darkBgGradientFrom,
         darkBgGradientTo: source.darkBgGradientTo || DEFAULT_DRAFT.darkBgGradientTo,
         darkBgImageUrl: tokens["dark.bg.image"] || source.darkBgImageUrl || "",
+        darkBgImageFit: source.darkBgImageFit || DEFAULT_DRAFT.darkBgImageFit,
+        darkBgImagePosition: source.darkBgImagePosition || DEFAULT_DRAFT.darkBgImagePosition,
         darkBgOverlayEnabled: source.darkBgOverlayEnabled ?? false,
         darkBgOverlayColor: source.darkBgOverlayColor || DEFAULT_DRAFT.darkBgOverlayColor,
         darkBgOverlayOpacity: parseFloat(tokens["dark.overlay.opacity"] || "") || DEFAULT_DRAFT.darkBgOverlayOpacity,
@@ -462,6 +482,8 @@ export function useStudioViewModel() {
         panelBgGradientFrom: source.panelBgGradientFrom || DEFAULT_DRAFT.panelBgGradientFrom,
         panelBgGradientTo: source.panelBgGradientTo || DEFAULT_DRAFT.panelBgGradientTo,
         panelBgImageUrl: tokens["panel.bg.image"] || source.panelBgImageUrl || "",
+        panelBgImageFit: source.panelBgImageFit || DEFAULT_DRAFT.panelBgImageFit,
+        panelBgImagePosition: source.panelBgImagePosition || DEFAULT_DRAFT.panelBgImagePosition,
         panelBgOverlayEnabled: source.panelBgOverlayEnabled ?? false,
         panelBgOverlayColor: source.panelBgOverlayColor || DEFAULT_DRAFT.panelBgOverlayColor,
         panelBgOverlayOpacity: parseFloat(source.panelBgOverlayOpacity || "") || DEFAULT_DRAFT.panelBgOverlayOpacity,
@@ -473,6 +495,8 @@ export function useStudioViewModel() {
         darkPanelBgGradientFrom: source.darkPanelBgGradientFrom || DEFAULT_DRAFT.darkPanelBgGradientFrom,
         darkPanelBgGradientTo: source.darkPanelBgGradientTo || DEFAULT_DRAFT.darkPanelBgGradientTo,
         darkPanelBgImageUrl: tokens["dark.panel.bg.image"] || source.darkPanelBgImageUrl || "",
+        darkPanelBgImageFit: source.darkPanelBgImageFit || DEFAULT_DRAFT.darkPanelBgImageFit,
+        darkPanelBgImagePosition: source.darkPanelBgImagePosition || DEFAULT_DRAFT.darkPanelBgImagePosition,
         darkPanelBgOverlayEnabled: source.darkPanelBgOverlayEnabled ?? false,
         darkPanelBgOverlayColor: source.darkPanelBgOverlayColor || DEFAULT_DRAFT.darkPanelBgOverlayColor,
         darkPanelBgOverlayOpacity: parseFloat(source.darkPanelBgOverlayOpacity || "") || DEFAULT_DRAFT.darkPanelBgOverlayOpacity,
@@ -617,8 +641,10 @@ export function useStudioViewModel() {
         "dark.color.border": draft.darkBorderColor,
         "dark.color.error": draft.darkErrorColor,
         "dark.color.success": draft.darkSuccessColor,
-        // Dark background tokens
-        "dark.bg.image": draft.darkBgImageUrl,
+        // Dark background tokens (image inherits from light, overlay/color independent)
+        "dark.bg.image": draft.darkBgImageUrl || draft.bgImageUrl,
+        "dark.bg.image.fit": ({ cover: "cover", contain: "contain", fill: "100% 100%", none: "auto", "scale-down": "contain" } as Record<string, string>)[draft.darkBgImageUrl ? draft.darkBgImageFit : draft.bgImageFit] || "cover",
+        "dark.bg.image.position": draft.darkBgImageUrl ? draft.darkBgImagePosition : draft.bgImagePosition,
         "dark.bg.gradient": draft.darkBgType === "gradient"
           ? `linear-gradient(${draft.darkBgGradientDirection}, ${draft.darkBgGradientFrom}, ${draft.darkBgGradientTo})`
           : "",
@@ -629,15 +655,19 @@ export function useStudioViewModel() {
         ...(draft.splitBgMode === "independent" ? {
           "panel.color.background": draft.panelBgColor,
           "panel.bg.image": draft.panelBgImageUrl,
+          "panel.bg.image.fit": ({ cover: "cover", contain: "contain", fill: "100% 100%", none: "auto", "scale-down": "contain" } as Record<string, string>)[draft.panelBgImageFit] || "cover",
+          "panel.bg.image.position": draft.panelBgImagePosition,
           "panel.bg.gradient": draft.panelBgType === "gradient"
             ? `linear-gradient(${draft.panelBgGradientDirection}, ${draft.panelBgGradientFrom}, ${draft.panelBgGradientTo})`
             : "",
           "panel.overlay.opacity": `${draft.panelBgOverlayOpacity}`,
           "panel.overlay.color": draft.panelBgOverlayColor || "rgba(0,0,0,0.5)",
           "panel.overlay.blur": `${draft.panelBgBlur}px`,
-          // Panel tokens — DARK
+          // Panel tokens — DARK (image inherits from light panel)
           "dark.panel.color.background": draft.darkPanelBgColor,
-          "dark.panel.bg.image": draft.darkPanelBgImageUrl,
+          "dark.panel.bg.image": draft.darkPanelBgImageUrl || draft.panelBgImageUrl,
+          "dark.panel.bg.image.fit": ({ cover: "cover", contain: "contain", fill: "100% 100%", none: "auto", "scale-down": "contain" } as Record<string, string>)[draft.darkPanelBgImageUrl ? draft.darkPanelBgImageFit : draft.panelBgImageFit] || "cover",
+          "dark.panel.bg.image.position": draft.darkPanelBgImageUrl ? draft.darkPanelBgImagePosition : draft.panelBgImagePosition,
           "dark.panel.bg.gradient": draft.darkPanelBgType === "gradient"
             ? `linear-gradient(${draft.darkPanelBgGradientDirection}, ${draft.darkPanelBgGradientFrom}, ${draft.darkPanelBgGradientTo})`
             : "",
@@ -664,7 +694,10 @@ export function useStudioViewModel() {
         "spacing.cardPadding": `${draft.cardPadding}px`,
         "spacing.elementGap": `${draft.elementGap}px`,
         "spacing.inputHeight": `${draft.inputHeight}px`,
+        "split.bg.mode": draft.splitBgMode,
         "bg.image": draft.bgImageUrl,
+        "bg.image.fit": ({ cover: "cover", contain: "contain", fill: "100% 100%", none: "auto", "scale-down": "contain" } as Record<string, string>)[draft.bgImageFit] || "cover",
+        "bg.image.position": draft.bgImagePosition,
         "bg.gradient": draft.bgType === "gradient"
           ? `linear-gradient(${draft.bgGradientDirection}, ${draft.bgGradientFrom}, ${draft.bgGradientTo})`
           : "",

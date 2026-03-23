@@ -11,6 +11,7 @@ interface LoginBrandingProps {
       branding?: TenantBranding | null;
       slotConfig?: SlotConfig;
       position?: "left" | "right";
+      transparent?: boolean;
 }
 
 /**
@@ -20,7 +21,7 @@ interface LoginBrandingProps {
  * Otherwise falls back to default feature cards (platform branding).
  * Supports left/right positioning for split-left / split-right layouts.
  */
-export function LoginBranding({ t, branding, slotConfig, position = "left" }: LoginBrandingProps) {
+export function LoginBranding({ t, branding, slotConfig, position = "left", transparent = false }: LoginBrandingProps) {
       const features = [
             { icon: "🛡️", label: t("auth.branding.featureSecurity"), desc: "Military-grade end-to-end encryption" },
             { icon: "🏢", label: t("auth.branding.featureMultiTenant"), desc: "Complete architectural data isolation" },
@@ -46,12 +47,16 @@ export function LoginBranding({ t, branding, slotConfig, position = "left" }: Lo
       return (
             <div
                   className={`relative hidden w-full lg:flex lg:w-1/2 xl:w-[55%] flex-col justify-between overflow-hidden p-12 lg:p-16 xl:p-24 ${borderClass}`}
-                  style={{
-                        backgroundColor: "var(--login-panel-bg, var(--login-surface, hsl(var(--muted) / 0.4)))",
-                        backgroundImage: "var(--login-panel-bg-image, var(--login-bg-image, none))",
-                        backgroundSize: "cover",
-                        backgroundPosition: "center",
-                  }}
+                  style={transparent ? {
+                  backgroundColor: "transparent",
+                  backgroundImage: "none",
+            } : {
+                  backgroundColor: "var(--login-panel-bg, var(--login-surface, hsl(var(--muted) / 0.4)))",
+                  backgroundImage: "var(--login-panel-bg-image, var(--login-bg-image, none))",
+                  backgroundSize: "var(--login-panel-bg-image-fit, var(--login-bg-image-fit, cover))",
+                  backgroundPosition: "var(--login-panel-bg-image-position, var(--login-bg-image-position, center))",
+                  backgroundRepeat: "no-repeat",
+            }}
             >
 
                   {/* ── Theme-Adaptive Background Patterns ── */}
@@ -102,13 +107,12 @@ export function LoginBranding({ t, branding, slotConfig, position = "left" }: Lo
 
                   {/* ── Main Content: Headline + Slot Content or Features ── */}
                   <div className="relative z-10 my-auto max-w-xl py-12">
-                        <h1 className="tracking-tight text-[var(--login-text,hsl(var(--foreground)))] leading-[1.12]"
-                            style={{ fontFamily: "var(--login-font-heading, inherit)", fontSize: "var(--login-size-headline, 3rem)", fontWeight: "var(--login-weight-heading, 600)" }}
+                        <h1 className="login-heading tracking-tight text-[var(--login-text,hsl(var(--foreground)))] leading-[1.12]"
+                            style={{ fontSize: "var(--login-size-headline, 3rem)" }}
                         >
                               {headline}
                         </h1>
-                        <p className="mt-6 text-lg leading-relaxed text-[var(--login-text-muted,hsl(var(--muted-foreground)))] font-light max-w-lg"
-                           style={{ fontFamily: "var(--login-font-body, inherit)" }}
+                        <p className="login-subtitle mt-6 leading-relaxed text-[var(--login-text-muted,hsl(var(--muted-foreground)))] max-w-lg"
                         >
                               {subtitle}
                         </p>

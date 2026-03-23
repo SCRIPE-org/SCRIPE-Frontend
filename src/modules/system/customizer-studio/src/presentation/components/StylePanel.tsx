@@ -42,11 +42,33 @@ const GRADIENT_DIRECTIONS = [
   { value: "to top left",     label: "↖" },
 ];
 
-const SPLIT_LAYOUTS = [
-  "split-right", "split-left", "asymmetric", "sidebar-compact",
-  "magazine", "stacked", "dual-panel", "vertical-split",
-  "split-diagonal", "carousel",
-];
+// ── Layout Section Map: how many visual bg sections each layout has ──
+const LAYOUT_SECTION_MAP: Record<string, { sections: 1 | 2; labels?: [string, string] }> = {
+  // 1-section layouts — single page background
+  "centered":        { sections: 1 },
+  "minimal":         { sections: 1 },
+  "fullscreen-form": { sections: 1 },
+  "floating":        { sections: 1 },
+  "spotlight":       { sections: 1 },
+  "glass-morphism":  { sections: 1 },
+  "mosaic":          { sections: 1 },
+  "overlay":         { sections: 1 },
+  "branded-full":    { sections: 1 },
+  // 2-section layouts — split/stacked with independent areas
+  "split-right":     { sections: 2, labels: ["formSide", "brandingPanel"] },
+  "split-left":      { sections: 2, labels: ["formSide", "brandingPanel"] },
+  "asymmetric":      { sections: 2, labels: ["formSide", "brandingPanel"] },
+  "sidebar-compact": { sections: 2, labels: ["formSide", "brandingPanel"] },
+  "carousel":        { sections: 2, labels: ["formSide", "brandingPanel"] },
+  "dual-panel":      { sections: 2, labels: ["formSide", "brandingPanel"] },
+  "split-diagonal":  { sections: 2, labels: ["formSide", "brandingPanel"] },
+  "stacked":         { sections: 2, labels: ["heroSection", "formArea"] },
+  "vertical-split":  { sections: 2, labels: ["heroSection", "formArea"] },
+  "gradient-wave":   { sections: 2, labels: ["heroSection", "formArea"] },
+  "magazine":        { sections: 2, labels: ["heroSection", "formArea"] },
+  "immersive":       { sections: 2, labels: ["heroSection", "formArea"] },
+  "corner-card":     { sections: 2, labels: ["heroSection", "formArea"] },
+};
 
 export function StylePanel({ t, activeSection, draft, updateDraft, batchUpdateDraft }: StylePanelProps) {
 
@@ -54,7 +76,10 @@ export function StylePanel({ t, activeSection, draft, updateDraft, batchUpdateDr
   // APPEARANCE (merged Colors + Background)
   // ══════════════════════════════════════════════════════
   if (activeSection === "appearance") {
-    const isSplitLayout = SPLIT_LAYOUTS.includes(draft.layout);
+    const layoutInfo = LAYOUT_SECTION_MAP[draft.layout] || { sections: 1 };
+    const sectionCount = layoutInfo.sections;
+    const isMultiSection = sectionCount > 1;
+    const sectionLabels = layoutInfo.labels || ["formSide", "brandingPanel"];
 
     const lightPresetKeys: (keyof StudioDraft)[] = [
       "primaryColor", "secondaryColor", "bgColor", "surfaceColor",
@@ -76,7 +101,7 @@ export function StylePanel({ t, activeSection, draft, updateDraft, batchUpdateDr
     // ── Reusable BgControls ──
     const BgControls = ({
       prefix, bgType, bgColor, bgGradientDirection, bgGradientFrom, bgGradientTo,
-      bgImageUrl, bgOverlayEnabled, bgOverlayColor, bgOverlayOpacity, bgBlur,
+      bgImageUrl, bgImageFit, bgImagePosition, bgOverlayEnabled, bgOverlayColor, bgOverlayOpacity, bgBlur, hideImage,
     }: {
       prefix: string;
       bgType: "solid" | "gradient" | "image";
@@ -85,10 +110,13 @@ export function StylePanel({ t, activeSection, draft, updateDraft, batchUpdateDr
       bgGradientFrom: string;
       bgGradientTo: string;
       bgImageUrl: string;
+      bgImageFit: "cover" | "contain" | "fill" | "none" | "scale-down";
+      bgImagePosition: string;
       bgOverlayEnabled: boolean;
       bgOverlayColor: string;
       bgOverlayOpacity: number;
       bgBlur: number;
+      hideImage?: boolean;
     }) => {
       // Map field names to draft keys using the prefix
       const f = (field: string): keyof StudioDraft => {
@@ -99,10 +127,30 @@ export function StylePanel({ t, activeSection, draft, updateDraft, batchUpdateDr
         return `${prefix}${stripped}` as keyof StudioDraft;
       };
 
+      const IMAGE_FIT_OPTIONS = [
+        { value: "cover" as const, label: t("studio.background.fitCover") || "Cover" },
+        { value: "contain" as const, label: t("studio.background.fitContain") || "Contain" },
+        { value: "fill" as const, label: t("studio.background.fitFill") || "Fill" },
+        { value: "none" as const, label: t("studio.background.fitNone") || "None" },
+        { value: "scale-down" as const, label: t("studio.background.fitScaleDown") || "Scale" },
+      ];
+
+      const IMAGE_POSITION_OPTIONS = [
+        { value: "top left",     label: "↖" },
+        { value: "top center",   label: "↑" },
+        { value: "top right",    label: "↗" },
+        { value: "center left",  label: "←" },
+        { value: "center",       label: "●" },
+        { value: "center right", label: "→" },
+        { value: "bottom left",  label: "↙" },
+        { value: "bottom center",label: "↓" },
+        { value: "bottom right", label: "↘" },
+      ];
+
       return (
         <div className="space-y-3">
           <div className="grid grid-cols-3 gap-1.5">
-            {(["solid", "gradient", "image"] as const).map((type) => (
+            {(hideImage ? ["solid", "gradient"] as const : ["solid", "gradient", "image"] as const).map((type) => (
               <button key={type} onClick={() => updateDraft(f("bgType"), type as any)}
                 className={`h-7 rounded-md border text-[10px] font-medium transition-all ${
                   bgType === type
@@ -141,13 +189,51 @@ export function StylePanel({ t, activeSection, draft, updateDraft, batchUpdateDr
           )}
 
           {bgType === "image" && (
-            <ImageUploadField
-              value={bgImageUrl}
-              onChange={(v) => updateDraft(f("bgImageUrl"), v as any)}
-              label={t("studio.background.imageUrl") || "Background Image"}
-              maxSizeBytes={5 * 1024 * 1024}
-              accept="image/png,image/jpeg,image/webp,image/gif"
-            />
+            <>
+              <ImageUploadField
+                value={bgImageUrl}
+                onChange={(v) => updateDraft(f("bgImageUrl"), v as any)}
+                label={t("studio.background.imageUrl") || "Background Image"}
+                maxSizeBytes={5 * 1024 * 1024}
+                accept="image/png,image/jpeg,image/webp,image/gif"
+              />
+
+              {/* ── Image Fit ── */}
+              <div className="space-y-1.5">
+                <span className="text-[10px] font-medium text-muted-foreground">{t("studio.background.imageFit") || "Image Fit"}</span>
+                <div className="grid grid-cols-5 gap-1">
+                  {IMAGE_FIT_OPTIONS.map((opt) => (
+                    <button key={opt.value} onClick={() => updateDraft(f("bgImageFit"), opt.value as any)}
+                      className={`h-6 rounded-md border text-[9px] font-medium transition-all ${
+                        bgImageFit === opt.value
+                          ? "border-primary bg-primary/10 text-primary"
+                          : "border-border text-muted-foreground hover:border-primary/30"
+                      }`}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* ── Image Position ── */}
+              <div className="space-y-1.5">
+                <span className="text-[10px] font-medium text-muted-foreground">{t("studio.background.imagePosition") || "Image Position"}</span>
+                <div className="grid grid-cols-3 gap-1 w-24">
+                  {IMAGE_POSITION_OPTIONS.map((opt) => (
+                    <button key={opt.value} onClick={() => updateDraft(f("bgImagePosition"), opt.value as any)}
+                      className={`h-6 w-8 rounded-md border text-[9px] transition-all ${
+                        bgImagePosition === opt.value
+                          ? "border-primary bg-primary/10 text-primary"
+                          : "border-border text-muted-foreground hover:border-primary/30"
+                      }`}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </>
           )}
 
           <div className="flex items-center justify-between">
@@ -186,14 +272,25 @@ export function StylePanel({ t, activeSection, draft, updateDraft, batchUpdateDr
       </div>
     );
 
+    // ── Section label helper ──
+    const sectionLabel = (idx: 0 | 1) => {
+      const key = sectionLabels[idx];
+      return t(`studio.background.${key}`) || key;
+    };
+
     return (
       <div className="space-y-5">
-        {/* ─── SECTION MODE (split layouts only) ─── */}
-        {isSplitLayout && (
+        {/* ─── SECTION MODE (multi-section layouts only) ─── */}
+        {isMultiSection && (
           <div className="space-y-2 rounded-lg border border-border/60 bg-muted/20 p-3">
-            <h4 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
-              📐 {t("studio.background.panelBg")}
-            </h4>
+            <div className="flex items-center justify-between">
+              <h4 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+                📐 {t("studio.background.panelBg")}
+              </h4>
+              <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[9px] font-bold text-primary">
+                {sectionCount} {t("studio.background.sectionCount")}
+              </span>
+            </div>
             <div className="grid grid-cols-2 gap-1.5">
               {(["unified", "independent"] as const).map((mode) => (
                 <button key={mode} onClick={() => updateDraft("splitBgMode", mode)}
@@ -208,7 +305,9 @@ export function StylePanel({ t, activeSection, draft, updateDraft, batchUpdateDr
               ))}
             </div>
             <p className="text-[10px] text-muted-foreground">
-              {draft.splitBgMode === "unified" ? t("studio.background.panelSameDesc") : t("studio.background.panelIndependentDesc")}
+              {draft.splitBgMode === "unified"
+                ? t("studio.background.panelSameDesc")
+                : `${sectionLabel(0)} + ${sectionLabel(1)} — ${t("studio.background.panelIndependentDesc")}`}
             </p>
           </div>
         )}
@@ -225,12 +324,17 @@ export function StylePanel({ t, activeSection, draft, updateDraft, batchUpdateDr
             <PresetDots mode="light" onApply={(c) => applyPreset(c, lightPresetKeys)} />
           </div>
 
-          {/* Light Page Background */}
+          {/* Light Page Background — shows as "Full Page" if unified/1-section, as section label if separated */}
           <div className="space-y-2 border-t border-border/40 pt-3">
-            <h5 className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">🖼️ {t("studio.background.type")}</h5>
+            <h5 className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
+              {isMultiSection && draft.splitBgMode === "independent"
+                ? `🔲 ${sectionLabel(0)}`
+                : `🌐 ${t("studio.background.fullPage")}`}
+            </h5>
             <BgControls prefix="" bgType={draft.bgType} bgColor={draft.bgColor}
               bgGradientDirection={draft.bgGradientDirection} bgGradientFrom={draft.bgGradientFrom} bgGradientTo={draft.bgGradientTo}
-              bgImageUrl={draft.bgImageUrl} bgOverlayEnabled={draft.bgOverlayEnabled} bgOverlayColor={draft.bgOverlayColor}
+              bgImageUrl={draft.bgImageUrl} bgImageFit={draft.bgImageFit} bgImagePosition={draft.bgImagePosition}
+              bgOverlayEnabled={draft.bgOverlayEnabled} bgOverlayColor={draft.bgOverlayColor}
               bgOverlayOpacity={draft.bgOverlayOpacity} bgBlur={draft.bgBlur} />
           </div>
 
@@ -247,13 +351,14 @@ export function StylePanel({ t, activeSection, draft, updateDraft, batchUpdateDr
             <ColorInput label={t("studio.colors.success")} value={draft.successColor} onChange={(v) => updateDraft("successColor", v)} />
           </div>
 
-          {/* Light Panel Bg (split + independent) */}
-          {isSplitLayout && draft.splitBgMode === "independent" && (
+          {/* Light Section 2 Bg (multi-section + independent only) */}
+          {isMultiSection && draft.splitBgMode === "independent" && (
             <div className="space-y-2 border-t border-border/40 pt-3">
-              <h5 className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">📐 {t("studio.background.brandingPanel")}</h5>
+              <h5 className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">🖼️ {sectionLabel(1)}</h5>
               <BgControls prefix="panelBg" bgType={draft.panelBgType} bgColor={draft.panelBgColor}
                 bgGradientDirection={draft.panelBgGradientDirection} bgGradientFrom={draft.panelBgGradientFrom} bgGradientTo={draft.panelBgGradientTo}
-                bgImageUrl={draft.panelBgImageUrl} bgOverlayEnabled={draft.panelBgOverlayEnabled} bgOverlayColor={draft.panelBgOverlayColor}
+                bgImageUrl={draft.panelBgImageUrl} bgImageFit={draft.panelBgImageFit} bgImagePosition={draft.panelBgImagePosition}
+                bgOverlayEnabled={draft.panelBgOverlayEnabled} bgOverlayColor={draft.panelBgOverlayColor}
                 bgOverlayOpacity={draft.panelBgOverlayOpacity} bgBlur={draft.panelBgBlur} />
             </div>
           )}
@@ -273,11 +378,16 @@ export function StylePanel({ t, activeSection, draft, updateDraft, batchUpdateDr
 
           {/* Dark Page Background */}
           <div className="space-y-2 border-t border-border/40 pt-3">
-            <h5 className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">🖼️ {t("studio.background.type")}</h5>
+            <h5 className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
+              {isMultiSection && draft.splitBgMode === "independent"
+                ? `🔲 ${sectionLabel(0)}`
+                : `🌐 ${t("studio.background.fullPage")}`}
+            </h5>
             <BgControls prefix="darkBg" bgType={draft.darkBgType} bgColor={draft.darkBgColor}
               bgGradientDirection={draft.darkBgGradientDirection} bgGradientFrom={draft.darkBgGradientFrom} bgGradientTo={draft.darkBgGradientTo}
-              bgImageUrl={draft.darkBgImageUrl} bgOverlayEnabled={draft.darkBgOverlayEnabled} bgOverlayColor={draft.darkBgOverlayColor}
-              bgOverlayOpacity={draft.darkBgOverlayOpacity} bgBlur={draft.darkBgBlur} />
+              bgImageUrl={draft.darkBgImageUrl} bgImageFit={draft.darkBgImageFit} bgImagePosition={draft.darkBgImagePosition}
+              bgOverlayEnabled={draft.darkBgOverlayEnabled} bgOverlayColor={draft.darkBgOverlayColor}
+              bgOverlayOpacity={draft.darkBgOverlayOpacity} bgBlur={draft.darkBgBlur} hideImage />
           </div>
 
           {/* Dark Color Palette */}
@@ -293,14 +403,15 @@ export function StylePanel({ t, activeSection, draft, updateDraft, batchUpdateDr
             <ColorInput label={t("studio.colors.success")} value={draft.darkSuccessColor} onChange={(v) => updateDraft("darkSuccessColor", v)} />
           </div>
 
-          {/* Dark Panel Bg (split + independent) */}
-          {isSplitLayout && draft.splitBgMode === "independent" && (
+          {/* Dark Section 2 Bg (multi-section + independent only) */}
+          {isMultiSection && draft.splitBgMode === "independent" && (
             <div className="space-y-2 border-t border-border/40 pt-3">
-              <h5 className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">📐 {t("studio.background.brandingPanel")}</h5>
+              <h5 className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">🖼️ {sectionLabel(1)}</h5>
               <BgControls prefix="darkPanelBg" bgType={draft.darkPanelBgType} bgColor={draft.darkPanelBgColor}
                 bgGradientDirection={draft.darkPanelBgGradientDirection} bgGradientFrom={draft.darkPanelBgGradientFrom} bgGradientTo={draft.darkPanelBgGradientTo}
-                bgImageUrl={draft.darkPanelBgImageUrl} bgOverlayEnabled={draft.darkPanelBgOverlayEnabled} bgOverlayColor={draft.darkPanelBgOverlayColor}
-                bgOverlayOpacity={draft.darkPanelBgOverlayOpacity} bgBlur={draft.darkPanelBgBlur} />
+                bgImageUrl={draft.darkPanelBgImageUrl} bgImageFit={draft.darkPanelBgImageFit} bgImagePosition={draft.darkPanelBgImagePosition}
+                bgOverlayEnabled={draft.darkPanelBgOverlayEnabled} bgOverlayColor={draft.darkPanelBgOverlayColor}
+                bgOverlayOpacity={draft.darkPanelBgOverlayOpacity} bgBlur={draft.darkPanelBgBlur} hideImage />
             </div>
           )}
         </div>
