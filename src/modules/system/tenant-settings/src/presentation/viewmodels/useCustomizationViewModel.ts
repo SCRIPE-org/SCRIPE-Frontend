@@ -10,9 +10,9 @@ import { STORAGE_KEYS } from "@core/config/storage-keys";
 import { useTenantBranding } from "@core/providers/tenant-branding-provider";
 import { systemContainer } from "@modules/system/di";
 import type {
-  AuditLogPagedResult,
-  SystemSettingsResponse,
-} from "../../data/services/CustomizationService";
+  AuditLogPagedResultJson as AuditLogPagedResult,
+} from "@modules/system/customization/src/data/models/BrandingModel";
+import type { SystemSettingsJson as SystemSettingsResponse } from "@modules/system/customization/src/data/models/SystemSettingsModel";
 
 // Query keys
 export const customizationKeys = {

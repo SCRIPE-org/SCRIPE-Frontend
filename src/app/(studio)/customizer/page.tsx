@@ -3,7 +3,7 @@ import dynamic from "next/dynamic";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
 
 const CustomizerStudioView = dynamic(
-  () => import("@modules/system/customizer-studio/src/presentation/views/CustomizerStudioView").then((m) => ({ default: m.CustomizerStudioView }))
+  () => import("@modules/system/customization/src/presentation/views/CustomizerStudioView").then((m) => ({ default: m.CustomizerStudioView }))
 );
 
 export const metadata: Metadata = {

@@ -1,7 +1,8 @@
 /**
  * useStudioViewModel — Complete state management for the Ultimate Customizer Studio
  *
- * Per analysis §22-23:
+ * Clean Architecture: ViewModel → Repository (domain interface) → Service → API
+ *
  * - All changes are DRAFT only (no live mutation)
  * - Auto-saves draft to DraftBrandingJson every 5s
  * - Publish: copies draft → live, increments version
@@ -17,9 +18,7 @@ import { useState, useCallback, useEffect, useRef, useMemo } from "react";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { useToast } from "@core/hooks/use-toast";
 import { useI18n } from "@core/providers/i18n-provider";
-import { useTenantBranding, type TenantBrandingData } from "@core/providers/tenant-branding-provider";
-import { API_ENDPOINTS } from "@core/config/api-endpoints";
-import { getModuleApiService } from "@core/services/api-factory";
+import { type TenantBrandingData } from "@core/providers/tenant-branding-provider";
 import { systemContainer } from "@modules/system/di";
 import type {
   LoginLayout,
@@ -27,6 +26,13 @@ import type {
   ContentBlock,
   SlotConfig,
 } from "@modules/auth/signin/src/types/login-branding-types";
+import {
+  type StudioDraftProps as StudioDraft,
+  DEFAULT_DRAFT,
+  DEVICE_DIMENSIONS,
+  type DeviceSize,
+  type StudioPanel,
+} from "../../domain/entities/StudioDraft";
 
 // ── All 22 Layouts ─────────────────────────────────────
 export const ALL_LAYOUTS: {
@@ -59,237 +65,9 @@ export const ALL_LAYOUTS: {
   { id: "mosaic",          labelKey: "studio.layout.mosaic",         descKey: "studio.layout.mosaicDesc",         thumbnail: "▩" },
 ];
 
-// ── Extended Draft Shape ───────────────────────────────
-export interface StudioDraft {
-  // Layout
-  layout: LoginLayout;
-
-  // Branding
-  headline: string;
-  subtitle: string;
-  companyName: string;
-  logoUrl: string;
-  faviconUrl: string;
-  copyrightText: string;
-
-  // Colors (light / unified — these serve as the default/light palette)
-  primaryColor: string;
-  secondaryColor: string;
-  bgColor: string;
-  surfaceColor: string;
-  textColor: string;
-  mutedColor: string;
-  borderColor: string;
-  errorColor: string;
-  successColor: string;
-
-  // Theme mode: 'unified' = same colors for both, 'split' = separate light/dark
-  themeMode: "unified" | "split";
-
-  // Dark palette (used when themeMode === 'split')
-  darkPrimaryColor: string;
-  darkSecondaryColor: string;
-  darkBgColor: string;
-  darkSurfaceColor: string;
-  darkTextColor: string;
-  darkMutedColor: string;
-  darkBorderColor: string;
-  darkErrorColor: string;
-  darkSuccessColor: string;
-
-  // Typography
-  fontFamily: string;
-  fontFamilyAr: string;
-  headingSize: number;
-  bodySize: number;
-  headingWeight: number;
-  bodyWeight: number;
-  lineHeight: number;
-  letterSpacing: number;
-  headingFont: string; // Separate heading font (defaults to fontFamily)
-
-  // Background (light / unified)
-  bgType: "solid" | "gradient" | "image";
-  bgGradientDirection: string;
-  bgGradientFrom: string;
-  bgGradientTo: string;
-  bgImageUrl: string;
-  bgImageFit: "cover" | "contain" | "fill" | "none" | "scale-down";
-  bgImagePosition: string;
-  bgOverlayEnabled: boolean;
-  bgOverlayColor: string;
-  bgOverlayOpacity: number;
-  bgBlur: number;
-
-  // Background dark (used when themeMode === 'split')
-  darkBgType: "solid" | "gradient" | "image";
-  darkBgGradientDirection: string;
-  darkBgGradientFrom: string;
-  darkBgGradientTo: string;
-  darkBgImageUrl: string;
-  darkBgImageFit: "cover" | "contain" | "fill" | "none" | "scale-down";
-  darkBgImagePosition: string;
-  darkBgOverlayEnabled: boolean;
-  darkBgOverlayColor: string;
-  darkBgOverlayOpacity: number;
-  darkBgBlur: number;
-
-  // Split layout panel backgrounds
-  // 'unified' = same bg for both panels, 'independent' = separate controls
-  splitBgMode: "unified" | "independent";
-  // Branding panel overrides — LIGHT (used when splitBgMode === 'independent')
-  panelBgType: "solid" | "gradient" | "image";
-  panelBgColor: string;
-  panelBgGradientDirection: string;
-  panelBgGradientFrom: string;
-  panelBgGradientTo: string;
-  panelBgImageUrl: string;
-  panelBgImageFit: "cover" | "contain" | "fill" | "none" | "scale-down";
-  panelBgImagePosition: string;
-  panelBgOverlayEnabled: boolean;
-  panelBgOverlayColor: string;
-  panelBgOverlayOpacity: number;
-  panelBgBlur: number;
-  // Branding panel overrides — DARK (used when splitBgMode === 'independent')
-  darkPanelBgType: "solid" | "gradient" | "image";
-  darkPanelBgColor: string;
-  darkPanelBgGradientDirection: string;
-  darkPanelBgGradientFrom: string;
-  darkPanelBgGradientTo: string;
-  darkPanelBgImageUrl: string;
-  darkPanelBgImageFit: "cover" | "contain" | "fill" | "none" | "scale-down";
-  darkPanelBgImagePosition: string;
-  darkPanelBgOverlayEnabled: boolean;
-  darkPanelBgOverlayColor: string;
-  darkPanelBgOverlayOpacity: number;
-  darkPanelBgBlur: number;
-
-  // Spacing & Shape
-  borderRadius: number;
-  formWidth: number;
-  cardPadding: number;
-  elementGap: number;
-  inputHeight: number;
-  btnRadius: number;
-  btnSize: "sm" | "md" | "lg";
-
-  // Slot content
-  slotConfig: SlotConfig;
-
-  // Advanced
-  customCss: string;
-  safeMode: boolean;
-}
-
-export const DEFAULT_DRAFT: StudioDraft = {
-  layout: "split-right",
-  headline: "",
-  subtitle: "",
-  companyName: "",
-  logoUrl: "",
-  faviconUrl: "",
-  copyrightText: "",
-  primaryColor: "#3b82f6",
-  secondaryColor: "#64748b",
-  bgColor: "#ffffff",
-  surfaceColor: "#f8fafc",
-  textColor: "#0f172a",
-  mutedColor: "#64748b",
-  borderColor: "#e2e8f0",
-  errorColor: "#ef4444",
-  successColor: "#22c55e",
-  themeMode: "unified",
-  darkPrimaryColor: "#3b82f6",
-  darkSecondaryColor: "#64748b",
-  darkBgColor: "#0f172a",
-  darkSurfaceColor: "#1e293b",
-  darkTextColor: "#f8fafc",
-  darkMutedColor: "#94a3b8",
-  darkBorderColor: "#334155",
-  darkErrorColor: "#ef4444",
-  darkSuccessColor: "#22c55e",
-  fontFamily: "Inter",
-  fontFamilyAr: "Cairo",
-  headingFont: "",
-  headingSize: 32,
-  bodySize: 14,
-  headingWeight: 600,
-  bodyWeight: 400,
-  lineHeight: 1.5,
-  letterSpacing: 0,
-  bgType: "solid",
-  bgGradientDirection: "to bottom right",
-  bgGradientFrom: "#0f172a",
-  bgGradientTo: "#1e293b",
-  bgImageUrl: "",
-  bgImageFit: "cover",
-  bgImagePosition: "center",
-  bgOverlayEnabled: false,
-  bgOverlayColor: "#000000",
-  bgOverlayOpacity: 0.5,
-  bgBlur: 0,
-  // Dark background defaults
-  darkBgType: "solid",
-  darkBgGradientDirection: "to bottom right",
-  darkBgGradientFrom: "#0f172a",
-  darkBgGradientTo: "#1e293b",
-  darkBgImageUrl: "",
-  darkBgImageFit: "cover",
-  darkBgImagePosition: "center",
-  darkBgOverlayEnabled: false,
-  darkBgOverlayColor: "#000000",
-  darkBgOverlayOpacity: 0.5,
-  darkBgBlur: 0,
-  // Split panel defaults — LIGHT
-  splitBgMode: "unified",
-  panelBgType: "solid",
-  panelBgColor: "#f1f5f9",
-  panelBgGradientDirection: "to bottom right",
-  panelBgGradientFrom: "#e2e8f0",
-  panelBgGradientTo: "#f8fafc",
-  panelBgImageUrl: "",
-  panelBgImageFit: "cover",
-  panelBgImagePosition: "center",
-  panelBgOverlayEnabled: false,
-  panelBgOverlayColor: "#000000",
-  panelBgOverlayOpacity: 0.5,
-  panelBgBlur: 0,
-  // Split panel defaults — DARK
-  darkPanelBgType: "solid",
-  darkPanelBgColor: "#1e293b",
-  darkPanelBgGradientDirection: "to bottom right",
-  darkPanelBgGradientFrom: "#1e293b",
-  darkPanelBgGradientTo: "#0f172a",
-  darkPanelBgImageUrl: "",
-  darkPanelBgImageFit: "cover",
-  darkPanelBgImagePosition: "center",
-  darkPanelBgOverlayEnabled: false,
-  darkPanelBgOverlayColor: "#000000",
-  darkPanelBgOverlayOpacity: 0.5,
-  darkPanelBgBlur: 0,
-  borderRadius: 12,
-  formWidth: 380,
-  cardPadding: 32,
-  elementGap: 24,
-  inputHeight: 44,
-  btnRadius: 8,
-  btnSize: "md",
-  slotConfig: { _schemaVersion: 1, slots: {} },
-  customCss: "",
-  safeMode: false,
-};
-
-// ── Device Sizes ───────────────────────────────────────
-export type DeviceSize = "desktop" | "tablet" | "mobile";
-
-export const DEVICE_DIMENSIONS: Record<DeviceSize, { width: number; height: number }> = {
-  desktop: { width: 1280, height: 800 },
-  tablet: { width: 768, height: 1024 },
-  mobile: { width: 375, height: 812 },
-};
-
-// ── Panel Identifiers ──────────────────────────────────
-export type StudioPanel = "layout" | "branding" | "appearance" | "typography" | "spacing" | "blocks" | "advanced";
+// Re-export domain types so existing component imports still work
+export type { StudioDraft, DeviceSize, StudioPanel };
+export { DEFAULT_DRAFT, DEVICE_DIMENSIONS };
 
 // ── Font Options (English) ─────────────────────────────
 export const FONT_OPTIONS_EN = [
@@ -380,24 +158,24 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
   const { t } = useI18n();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const customizationService = systemContainer.customizationService;
+  const repository = systemContainer.customizationRepository;
 
   const targetTenantId = options?.targetTenantId;
   const mode = targetTenantId ? 'tenant' as const : 'my' as const;
 
-  // ── Fetch raw branding data ──
+  // ── Fetch raw branding data via Repository ──
   const brandingQuery = useQuery<TenantBrandingData | null>({
     queryKey: ["studio-branding", mode, targetTenantId],
     queryFn: async () => {
       try {
         if (targetTenantId) {
-          // Drilldown mode: fetch specific tenant's settings
-          const data = await customizationService.getTenantSettingsById(targetTenantId);
-          return data as unknown as TenantBrandingData;
+          // Drilldown mode: fetch via repository
+          const entity = await repository.getTenantBrandingById(targetTenantId);
+          return entity.toProps() as unknown as TenantBrandingData;
         }
-        // My tenant mode
-        const api = getModuleApiService("IDENTITY");
-        return await api.get<TenantBrandingData>(API_ENDPOINTS.TENANTS.MY_BRANDING);
+        // My tenant mode via repository
+        const entity = await repository.getMyBranding();
+        return entity.toProps() as unknown as TenantBrandingData;
       } catch {
         return null;
       }
@@ -735,13 +513,11 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
       try {
         const draftJson = buildDraftJson();
         if (targetTenantId) {
-          // Drilldown: save draft to specific tenant
-          await customizationService.saveTenantSettingsById(targetTenantId, { draftBrandingJson: draftJson });
+          // Drilldown: save draft to specific tenant via repository
+          await repository.updateTenantSettingsById(targetTenantId, { draftBrandingJson: draftJson });
         } else {
-          // My tenant
-          await customizationService.saveTenantDisplayPrefs(
-            JSON.stringify({ draftBrandingJson: draftJson })
-          );
+          // My tenant via repository
+          await repository.updateMySettings({ draftBrandingJson: draftJson });
         }
         setLastSavedAt(new Date());
       } catch {
@@ -752,25 +528,23 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
     return () => {
       if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current);
     };
-  }, [isDirty, draft, branding, buildDraftJson, customizationService]);
+  }, [isDirty, draft, branding, buildDraftJson, repository]);
 
   // ── Publish ──
   const publishMutation = useMutation({
     mutationFn: async () => {
       const draftJson = buildDraftJson();
       if (targetTenantId) {
-        // Drilldown: save draft then publish to specific tenant
-        await customizationService.saveTenantSettingsById(targetTenantId, {
+        // Drilldown: save draft then publish to specific tenant via repository
+        await repository.updateTenantSettingsById(targetTenantId, {
           draftBrandingJson: draftJson,
           loginBrandingJson: draftJson, // Publish = copy draft to live
         });
       } else {
-        // My tenant
-        await customizationService.saveTenantDisplayPrefs(
-          JSON.stringify({ draftBrandingJson: draftJson })
-        );
+        // My tenant via repository
+        await repository.updateMySettings({ draftBrandingJson: draftJson });
         const currentVersion = (branding as any)?.settingsVersion ?? 0;
-        await customizationService.publishBranding({ expectedVersion: currentVersion });
+        await repository.publishBranding(currentVersion);
       }
     },
     onSuccess: () => {
@@ -796,11 +570,9 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
     mutationFn: async () => {
       const draftJson = buildDraftJson();
       if (targetTenantId) {
-        await customizationService.saveTenantSettingsById(targetTenantId, { draftBrandingJson: draftJson });
+        await repository.updateTenantSettingsById(targetTenantId, { draftBrandingJson: draftJson });
       } else {
-        await customizationService.saveTenantDisplayPrefs(
-          JSON.stringify({ draftBrandingJson: draftJson })
-        );
+        await repository.updateMySettings({ draftBrandingJson: draftJson });
       }
     },
     onSuccess: () => {
@@ -814,7 +586,7 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
 
   // ── Discard ──
   const discardMutation = useMutation({
-    mutationFn: () => customizationService.discardDraft(),
+    mutationFn: () => repository.discardDraft(),
     onSuccess: () => {
       toast({ title: t("studio.discardSuccess"), variant: "default" });
       setIsDirty(false);

@@ -13,7 +13,7 @@
 import { useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { useStudioViewModel } from "../viewmodels/useStudioViewModel";
-import { useStudioBridge } from "../../hooks/useStudioBridge";
+import { useStudioBridge } from "../hooks/useStudioBridge";
 import { PublishBar } from "../components/PublishBar";
 import { StudioSidebar } from "../components/StudioSidebar";
 import { StudioPreview } from "../components/StudioPreview";
