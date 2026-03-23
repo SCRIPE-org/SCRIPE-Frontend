@@ -190,34 +190,38 @@ export function useLoginBrandingTokens({
   line-height: inherit;
   letter-spacing: inherit;
 }
-.login-form {
+.login-form-wrapper {
+  max-width: var(--login-form-width, 380px) !important;
+  width: 100%;
+}
+.login-page .login-form {
   display: flex;
   flex-direction: column;
-  gap: var(--login-element-gap, 16px);
+  gap: var(--login-element-gap, 16px) !important;
 }
-.login-input {
-  height: var(--login-input-height, 44px);
-  border-radius: var(--login-radius-button, 8px);
+.login-page .login-input {
+  height: var(--login-input-height, 44px) !important;
+  border-radius: var(--login-radius-button, 8px) !important;
   border-color: var(--login-border, hsl(var(--border)));
 }
-.login-button {
-  height: var(--login-input-height, 44px);
+.login-page .login-button {
+  height: var(--login-input-height, 44px) !important;
   background-color: var(--login-primary, hsl(var(--primary)));
-  border-radius: var(--login-radius-button, 8px);
+  border-radius: var(--login-radius-button, 8px) !important;
   color: white;
   width: 100%;
   font-weight: 600;
   font-size: 0.875rem;
   transition: all 0.2s ease;
 }
-.login-button:hover {
+.login-page .login-button:hover {
   opacity: 0.9;
   filter: brightness(1.05);
 }
-.login-card {
-  border-radius: var(--login-radius-card, 16px);
-  padding: var(--login-card-padding, 32px);
-  box-shadow: var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.25));
+.login-page .login-card {
+  border-radius: var(--login-radius-card, 16px) !important;
+  padding: var(--login-card-padding, 32px) !important;
+  box-shadow: var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.25)) !important;
   background-color: var(--login-surface, hsl(var(--background)));
 }
 .login-page .login-heading {
@@ -244,8 +248,8 @@ export function useLoginBrandingTokens({
   font-size: 11px;
   opacity: 0.6;
 }
-.login-sso button {
-  border-radius: var(--login-radius-button, 8px);
+.login-page .login-sso button {
+  border-radius: var(--login-radius-button, 8px) !important;
 }
 .login-overlay {
   position: absolute;

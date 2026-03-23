@@ -4,10 +4,14 @@
  * Split-pane: left = 8-tab control sidebar, right = sandboxed iframe preview
  * All changes are draft. Preview updates via postMessage. No live mutation.
  * Localized via t(). Security: sandbox iframe, origin-validated postMessage.
+ *
+ * Supports drilldown mode: ?tenantId=xxx&tenantName=xxx
+ * Super admin can customize a specific tenant's login page.
  */
 "use client";
 
 import { useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { useStudioViewModel } from "../viewmodels/useStudioViewModel";
 import { useStudioBridge } from "../../hooks/useStudioBridge";
 import { PublishBar } from "../components/PublishBar";
@@ -18,7 +22,16 @@ import { useI18n } from "@core/providers/i18n-provider";
 
 export function CustomizerStudioView() {
   const { t } = useI18n();
-  const vm = useStudioViewModel();
+  const searchParams = useSearchParams();
+
+  // Drilldown: read target tenant from URL params
+  const targetTenantId = searchParams?.get("tenantId") || undefined;
+  const targetTenantName = searchParams?.get("tenantName") || undefined;
+
+  const vm = useStudioViewModel({
+    targetTenantId,
+    targetTenantName,
+  });
   const bridge = useStudioBridge();
 
   // Send draft to iframe whenever draft changes
@@ -50,8 +63,7 @@ export function CustomizerStudioView() {
     );
   }
 
-  // Superadmin guard — requires tenant context
-  // brandingQuery returned null → no tenant → show guard
+  // Superadmin guard — requires tenant context (but drilldown mode bypasses this)
   if (!vm.isTenantContext) {
     return (
       <div className="flex h-screen w-full items-center justify-center bg-background">
@@ -70,6 +82,14 @@ export function CustomizerStudioView() {
 
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-background">
+      {/* Drilldown Banner */}
+      {vm.mode === "tenant" && vm.targetTenantName && (
+        <div className="flex items-center gap-2 bg-cyan-600 px-4 py-2 text-white text-sm font-medium">
+          <Building2 className="h-4 w-4" />
+          <span>{t("studio.customizingTenant") || "Customizing:"} {vm.targetTenantName}</span>
+        </div>
+      )}
+
       {/* Top Bar */}
       <PublishBar
         t={vm.t}

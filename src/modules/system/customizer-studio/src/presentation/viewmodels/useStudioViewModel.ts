@@ -369,17 +369,33 @@ export const COLOR_PRESETS: { labelKey: string; colors: Partial<StudioDraft> }[]
 ];
 
 // ── Hook ───────────────────────────────────────────────
-export function useStudioViewModel() {
+export interface StudioViewModelOptions {
+  /** Encrypted tenant ID for drilldown mode (super admin customizing a specific tenant) */
+  targetTenantId?: string;
+  /** Tenant name for drilldown banner */
+  targetTenantName?: string;
+}
+
+export function useStudioViewModel(options?: StudioViewModelOptions) {
   const { t } = useI18n();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const customizationService = systemContainer.customizationService;
 
+  const targetTenantId = options?.targetTenantId;
+  const mode = targetTenantId ? 'tenant' as const : 'my' as const;
+
   // ── Fetch raw branding data ──
   const brandingQuery = useQuery<TenantBrandingData | null>({
-    queryKey: ["studio-branding"],
+    queryKey: ["studio-branding", mode, targetTenantId],
     queryFn: async () => {
       try {
+        if (targetTenantId) {
+          // Drilldown mode: fetch specific tenant's settings
+          const data = await customizationService.getTenantSettingsById(targetTenantId);
+          return data as unknown as TenantBrandingData;
+        }
+        // My tenant mode
         const api = getModuleApiService("IDENTITY");
         return await api.get<TenantBrandingData>(API_ENDPOINTS.TENANTS.MY_BRANDING);
       } catch {
@@ -718,9 +734,15 @@ export function useStudioViewModel() {
     autoSaveTimerRef.current = setTimeout(async () => {
       try {
         const draftJson = buildDraftJson();
-        await customizationService.saveTenantDisplayPrefs(
-          JSON.stringify({ draftBrandingJson: draftJson })
-        );
+        if (targetTenantId) {
+          // Drilldown: save draft to specific tenant
+          await customizationService.saveTenantSettingsById(targetTenantId, { draftBrandingJson: draftJson });
+        } else {
+          // My tenant
+          await customizationService.saveTenantDisplayPrefs(
+            JSON.stringify({ draftBrandingJson: draftJson })
+          );
+        }
         setLastSavedAt(new Date());
       } catch {
         // Silent fail — draft save is non-critical
@@ -736,11 +758,20 @@ export function useStudioViewModel() {
   const publishMutation = useMutation({
     mutationFn: async () => {
       const draftJson = buildDraftJson();
-      await customizationService.saveTenantDisplayPrefs(
-        JSON.stringify({ draftBrandingJson: draftJson })
-      );
-      const currentVersion = (branding as any)?.settingsVersion ?? 0;
-      await customizationService.publishBranding({ expectedVersion: currentVersion });
+      if (targetTenantId) {
+        // Drilldown: save draft then publish to specific tenant
+        await customizationService.saveTenantSettingsById(targetTenantId, {
+          draftBrandingJson: draftJson,
+          loginBrandingJson: draftJson, // Publish = copy draft to live
+        });
+      } else {
+        // My tenant
+        await customizationService.saveTenantDisplayPrefs(
+          JSON.stringify({ draftBrandingJson: draftJson })
+        );
+        const currentVersion = (branding as any)?.settingsVersion ?? 0;
+        await customizationService.publishBranding({ expectedVersion: currentVersion });
+      }
     },
     onSuccess: () => {
       toast({ title: t("studio.publishSuccess"), variant: "default" });
@@ -764,9 +795,13 @@ export function useStudioViewModel() {
   const saveDraftMutation = useMutation({
     mutationFn: async () => {
       const draftJson = buildDraftJson();
-      await customizationService.saveTenantDisplayPrefs(
-        JSON.stringify({ draftBrandingJson: draftJson })
-      );
+      if (targetTenantId) {
+        await customizationService.saveTenantSettingsById(targetTenantId, { draftBrandingJson: draftJson });
+      } else {
+        await customizationService.saveTenantDisplayPrefs(
+          JSON.stringify({ draftBrandingJson: draftJson })
+        );
+      }
     },
     onSuccess: () => {
       toast({ title: t("studio.draftSaved") || "Draft saved", variant: "default" });
@@ -840,6 +875,10 @@ export function useStudioViewModel() {
     isDiscarding: discardMutation.isPending,
     // Loading & context
     isLoading: brandingQuery.isLoading,
-    isTenantContext: branding !== null,
+    isTenantContext: branding !== null || !!targetTenantId,
+    // Drilldown metadata
+    mode,
+    targetTenantId,
+    targetTenantName: options?.targetTenantName,
   };
 }
