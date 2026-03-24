@@ -78,10 +78,8 @@ export function useLoginBrandingTokens({
       rootRules.push(`  --login-split-bg-mode: ${tokens["split.bg.mode"]};`);
     }
 
-    // Background image as special token
-    if (tokens["bg.image"]) {
-      rootRules.push(`  --login-bg-image: url(${tokens["bg.image"]});`);
-    }
+    // Background image — ALWAYS emit (use 'none' when cleared so preview updates immediately)
+    rootRules.push(`  --login-bg-image: ${tokens["bg.image"] ? `url(${tokens["bg.image"]})` : "none"};`);
     if (tokens["bg.image.fit"]) {
       rootRules.push(`  --login-bg-image-fit: ${tokens["bg.image.fit"]};`);
     }
@@ -95,10 +93,8 @@ export function useLoginBrandingTokens({
       rootRules.push(`  --login-bg: ${tokens["bg.gradient"]};`);
     }
 
-    // Panel bg image (for split layouts with independent panel bg)
-    if (tokens["panel.bg.image"]) {
-      rootRules.push(`  --login-panel-bg-image: url(${tokens["panel.bg.image"]});`);
-    }
+    // Panel bg image — ALWAYS emit
+    rootRules.push(`  --login-panel-bg-image: ${tokens["panel.bg.image"] ? `url(${tokens["panel.bg.image"]})` : "none"};`);
     if (tokens["panel.bg.image.fit"]) {
       rootRules.push(`  --login-panel-bg-image-fit: ${tokens["panel.bg.image.fit"]};`);
     }
@@ -142,10 +138,8 @@ export function useLoginBrandingTokens({
       darkRules.push(`  --login-bg-gradient: ${tokens["dark.bg.gradient"]};`);
     }
 
-    // Dark bg image
-    if (tokens["dark.bg.image"]) {
-      darkRules.push(`  --login-bg-image: url(${tokens["dark.bg.image"]});`);
-    }
+    // Dark bg image — ALWAYS emit
+    darkRules.push(`  --login-bg-image: ${tokens["dark.bg.image"] ? `url(${tokens["dark.bg.image"]})` : "none"};`);
 
     // Dark panel overrides
     const darkPanelMap: Record<string, string> = {
@@ -162,9 +156,7 @@ export function useLoginBrandingTokens({
     if (tokens["dark.panel.bg.gradient"]) {
       darkRules.push(`  --login-panel-bg: ${tokens["dark.panel.bg.gradient"]};`);
     }
-    if (tokens["dark.panel.bg.image"]) {
-      darkRules.push(`  --login-panel-bg-image: url(${tokens["dark.panel.bg.image"]});`);
-    }
+    darkRules.push(`  --login-panel-bg-image: ${tokens["dark.panel.bg.image"] ? `url(${tokens["dark.panel.bg.image"]})` : "none"};`);
 
     // ─── Build final CSS ───
     const cssBlocks: string[] = [];
