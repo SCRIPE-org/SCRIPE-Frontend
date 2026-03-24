@@ -322,9 +322,8 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
     try {
       const newDraft = buildDraftFromBranding(branding, true);
       setDraft(newDraft);
-
-      const hasDraft = !!(branding as any).draftBrandingJson;
-      if (hasDraft) setIsDirty(true);
+      // NOTE: Do NOT setIsDirty here. The draft is already persisted server-side.
+      // Auto-save should only fire when the USER actually makes changes.
     } catch { /* invalid JSON — use defaults */ }
   }, [branding, buildDraftFromBranding]);
 
@@ -449,10 +448,10 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
         "dark.color.border": draft.darkBorderColor,
         "dark.color.error": draft.darkErrorColor,
         "dark.color.success": draft.darkSuccessColor,
-        // Dark background tokens (image inherits from light, overlay/color independent)
-        "dark.bg.image": draft.darkBgImageUrl || draft.bgImageUrl,
-        "dark.bg.image.fit": ({ cover: "cover", contain: "contain", fill: "100% 100%", none: "auto", "scale-down": "contain" } as Record<string, string>)[draft.darkBgImageUrl ? draft.darkBgImageFit : draft.bgImageFit] || "cover",
-        "dark.bg.image.position": draft.darkBgImageUrl ? draft.darkBgImagePosition : draft.bgImagePosition,
+        // Dark background tokens — fully independent (no inherit from light)
+        "dark.bg.image": draft.darkBgImageUrl,
+        "dark.bg.image.fit": ({ cover: "cover", contain: "contain", fill: "100% 100%", none: "auto", "scale-down": "contain" } as Record<string, string>)[draft.darkBgImageFit] || "cover",
+        "dark.bg.image.position": draft.darkBgImagePosition,
         "dark.bg.gradient": draft.darkBgType === "gradient"
           ? `linear-gradient(${draft.darkBgGradientDirection}, ${draft.darkBgGradientFrom}, ${draft.darkBgGradientTo})`
           : "",
@@ -471,11 +470,11 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
           "panel.overlay.opacity": `${draft.panelBgOverlayOpacity}`,
           "panel.overlay.color": draft.panelBgOverlayColor || "rgba(0,0,0,0.5)",
           "panel.overlay.blur": `${draft.panelBgBlur}px`,
-          // Panel tokens — DARK (image inherits from light panel)
+          // Panel tokens — DARK (fully independent, no inherit from light panel)
           "dark.panel.color.background": draft.darkPanelBgColor,
-          "dark.panel.bg.image": draft.darkPanelBgImageUrl || draft.panelBgImageUrl,
-          "dark.panel.bg.image.fit": ({ cover: "cover", contain: "contain", fill: "100% 100%", none: "auto", "scale-down": "contain" } as Record<string, string>)[draft.darkPanelBgImageUrl ? draft.darkPanelBgImageFit : draft.panelBgImageFit] || "cover",
-          "dark.panel.bg.image.position": draft.darkPanelBgImageUrl ? draft.darkPanelBgImagePosition : draft.panelBgImagePosition,
+          "dark.panel.bg.image": draft.darkPanelBgImageUrl,
+          "dark.panel.bg.image.fit": ({ cover: "cover", contain: "contain", fill: "100% 100%", none: "auto", "scale-down": "contain" } as Record<string, string>)[draft.darkPanelBgImageFit] || "cover",
+          "dark.panel.bg.image.position": draft.darkPanelBgImagePosition,
           "dark.panel.bg.gradient": draft.darkPanelBgType === "gradient"
             ? `linear-gradient(${draft.darkPanelBgGradientDirection}, ${draft.darkPanelBgGradientFrom}, ${draft.darkPanelBgGradientTo})`
             : "",

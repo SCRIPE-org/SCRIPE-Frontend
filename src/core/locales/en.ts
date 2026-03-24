@@ -6038,6 +6038,7 @@ export const en = {
       heroSection: "Hero Section",
       formArea: "Form Area",
       sectionCount: "Sections",
+      useLight: "Use light image",
     },
 
     // Spacing

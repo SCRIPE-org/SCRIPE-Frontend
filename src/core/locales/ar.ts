@@ -5892,6 +5892,7 @@ export const ar = {
       heroSection: "القسم الرئيسي",
       formArea: "منطقة النموذج",
       sectionCount: "أقسام",
+      useLight: "استخدام صورة الوضع الفاتح",
     },
 
     spacing: {

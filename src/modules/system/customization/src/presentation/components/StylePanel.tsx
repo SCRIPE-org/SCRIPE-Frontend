@@ -102,6 +102,7 @@ export function StylePanel({ t, activeSection, draft, updateDraft, batchUpdateDr
     const BgControls = ({
       prefix, bgType, bgColor, bgGradientDirection, bgGradientFrom, bgGradientTo,
       bgImageUrl, bgImageFit, bgImagePosition, bgOverlayEnabled, bgOverlayColor, bgOverlayOpacity, bgBlur, hideImage,
+      copyFromLightUrl,
     }: {
       prefix: string;
       bgType: "solid" | "gradient" | "image";
@@ -117,6 +118,8 @@ export function StylePanel({ t, activeSection, draft, updateDraft, batchUpdateDr
       bgOverlayOpacity: number;
       bgBlur: number;
       hideImage?: boolean;
+      /** If provided, shows a "Use light image" button that copies this URL */
+      copyFromLightUrl?: string;
     }) => {
       // Map field names to draft keys using the prefix
       const f = (field: string): keyof StudioDraft => {
@@ -190,6 +193,15 @@ export function StylePanel({ t, activeSection, draft, updateDraft, batchUpdateDr
 
           {bgType === "image" && (
             <>
+              {/* Copy from light button (dark sections only) */}
+              {copyFromLightUrl && (
+                <button
+                  onClick={() => updateDraft(f("bgImageUrl"), copyFromLightUrl as any)}
+                  className="w-full h-7 rounded-md border border-amber-500/40 bg-amber-500/10 text-[10px] font-medium text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 transition-all flex items-center justify-center gap-1.5"
+                >
+                  ☀️ {t("studio.background.useLight") || "Use light image"}
+                </button>
+              )}
               <ImageUploadField
                 value={bgImageUrl}
                 onChange={(v) => updateDraft(f("bgImageUrl"), v as any)}
@@ -387,7 +399,8 @@ export function StylePanel({ t, activeSection, draft, updateDraft, batchUpdateDr
               bgGradientDirection={draft.darkBgGradientDirection} bgGradientFrom={draft.darkBgGradientFrom} bgGradientTo={draft.darkBgGradientTo}
               bgImageUrl={draft.darkBgImageUrl} bgImageFit={draft.darkBgImageFit} bgImagePosition={draft.darkBgImagePosition}
               bgOverlayEnabled={draft.darkBgOverlayEnabled} bgOverlayColor={draft.darkBgOverlayColor}
-              bgOverlayOpacity={draft.darkBgOverlayOpacity} bgBlur={draft.darkBgBlur} hideImage />
+              bgOverlayOpacity={draft.darkBgOverlayOpacity} bgBlur={draft.darkBgBlur}
+              copyFromLightUrl={draft.bgImageUrl || undefined} />
           </div>
 
           {/* Dark Color Palette */}
@@ -411,7 +424,8 @@ export function StylePanel({ t, activeSection, draft, updateDraft, batchUpdateDr
                 bgGradientDirection={draft.darkPanelBgGradientDirection} bgGradientFrom={draft.darkPanelBgGradientFrom} bgGradientTo={draft.darkPanelBgGradientTo}
                 bgImageUrl={draft.darkPanelBgImageUrl} bgImageFit={draft.darkPanelBgImageFit} bgImagePosition={draft.darkPanelBgImagePosition}
                 bgOverlayEnabled={draft.darkPanelBgOverlayEnabled} bgOverlayColor={draft.darkPanelBgOverlayColor}
-                bgOverlayOpacity={draft.darkPanelBgOverlayOpacity} bgBlur={draft.darkPanelBgBlur} hideImage />
+                bgOverlayOpacity={draft.darkPanelBgOverlayOpacity} bgBlur={draft.darkPanelBgBlur}
+                copyFromLightUrl={draft.panelBgImageUrl || undefined} />
             </div>
           )}
         </div>

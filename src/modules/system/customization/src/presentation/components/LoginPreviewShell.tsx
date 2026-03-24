@@ -233,39 +233,31 @@ export function LoginPreviewShell() {
   //   - `--login-bg` (solid or gradient) renders UNDERNEATH
   // Previously, separate `backgroundImage: none` was OVERRIDING the gradient.
   const bgStyle = "selection:bg-primary/20";
+  // NOTE: CSS `background` shorthand RESETS all sub-properties (backgroundImage, backgroundSize, etc.)
+  // So we MUST use a single `background` shorthand with CSS multiple backgrounds:
+  //   Layer 1 (on top): image
+  //   Layer 2 (behind): solid color or gradient
+  // This matches LoginView.tsx's approach.
   const wrapperStyle: React.CSSProperties = {
-    backgroundImage: "var(--login-bg-image, none)",
-    backgroundSize: "var(--login-bg-image-fit, cover)",
-    backgroundPosition: "var(--login-bg-image-position, center)",
-    backgroundRepeat: "no-repeat",
-    backgroundColor: "var(--login-bg, hsl(var(--background)))",
-    // fontFamily handled by .login-page CSS class (with RTL combined font stack)
+    background: `var(--login-bg-image, none) var(--login-bg-image-position, center) / var(--login-bg-image-fit, cover) no-repeat, var(--login-bg, hsl(var(--background)))`,
     lineHeight: "var(--login-line-height, 1.5)",
     letterSpacing: "var(--login-letter-spacing, 0px)",
   };
 
   // For split layouts: depends on unified vs separated mode.
-  // UNIFIED: wrapper gets the full bg image spanning both sections; branding panel is transparent.
-  // SEPARATED: wrapper has NO bg image; each section div gets its own bg independently.
   const splitWrapperStyle: React.CSSProperties = isUnifiedBg
-    ? { ...wrapperStyle }  // unified — full bg on wrapper
+    ? { ...wrapperStyle }
     : {
-      // separated — no bg image on wrapper, just spacing (font handled by .login-page CSS class)
       lineHeight: wrapperStyle.lineHeight,
       letterSpacing: wrapperStyle.letterSpacing,
-      backgroundColor: "hsl(var(--background))",
+      background: "hsl(var(--background))",
     };
 
   // Form-side style: in separated mode, applies the page bg controls to JUST the form section.
-  // In unified mode, form side is transparent (wrapper bg shows through).
   const formSideStyle: React.CSSProperties = isUnifiedBg
-    ? {}  // transparent — wrapper bg shows through
+    ? {}
     : {
-      backgroundImage: "var(--login-bg-image, none)",
-      backgroundSize: "var(--login-bg-image-fit, cover)",
-      backgroundPosition: "var(--login-bg-image-position, center)",
-      backgroundRepeat: "no-repeat",
-      backgroundColor: "var(--login-bg, hsl(var(--background)))",
+      background: `var(--login-bg-image, none) var(--login-bg-image-position, center) / var(--login-bg-image-fit, cover) no-repeat, var(--login-bg, hsl(var(--background)))`,
     };
 
   // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•

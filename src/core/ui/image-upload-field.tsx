@@ -126,7 +126,10 @@ export function ImageUploadField({
                         API_ENDPOINTS.UPLOADS.IMAGE,
                         formData
                   );
-                  onChange(resolveFileUrl(result.url));
+                  // Append cache-buster so browser fetches the new image (not a stale cached one)
+                  const resolved = resolveFileUrl(result.url);
+                  const cacheBusted = resolved.includes("?") ? `${resolved}&v=${Date.now()}` : `${resolved}?v=${Date.now()}`;
+                  onChange(cacheBusted);
                   setPreviewUrl(null); // Clear preview, use the resolved value
             } catch (err: any) {
                   setError(err?.message || t("imageUpload.uploadFailed") || "Upload failed");
