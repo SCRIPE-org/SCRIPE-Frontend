@@ -108,10 +108,33 @@ export function useLoginBrandingTokens({
       rootRules.push(`  --login-panel-bg: ${tokens["panel.bg.gradient"]};`);
     }
 
+    // Light overlay CSS vars — ALWAYS emit when token has a value
+    // (cannot use truthiness: "0" is falsy but is a valid opacity!)
+    if (tokens["overlay.opacity"] != null && tokens["overlay.opacity"] !== "") {
+      rootRules.push(`  --login-overlay-opacity: ${tokens["overlay.opacity"]};`);
+    }
+    if (tokens["overlay.color"] != null && tokens["overlay.color"] !== "") {
+      rootRules.push(`  --login-overlay-color: ${tokens["overlay.color"]};`);
+    }
+    if (tokens["overlay.blur"] != null && tokens["overlay.blur"] !== "") {
+      rootRules.push(`  --login-overlay-blur: ${tokens["overlay.blur"]};`);
+    }
+
+    // Light panel overlay CSS vars
+    if (tokens["panel.overlay.opacity"] != null && tokens["panel.overlay.opacity"] !== "") {
+      rootRules.push(`  --login-panel-overlay-opacity: ${tokens["panel.overlay.opacity"]};`);
+    }
+    if (tokens["panel.overlay.color"] != null && tokens["panel.overlay.color"] !== "") {
+      rootRules.push(`  --login-panel-overlay-color: ${tokens["panel.overlay.color"]};`);
+    }
+    if (tokens["panel.overlay.blur"] != null && tokens["panel.overlay.blur"] !== "") {
+      rootRules.push(`  --login-panel-overlay-blur: ${tokens["panel.overlay.blur"]};`);
+    }
+
     // ─── .dark {} rules (dark overrides) ───
     const darkRules: string[] = [];
 
-    // Dark color map
+    // Dark color map (colors only — overlay vars handled separately below)
     const darkColorMap: Record<string, string> = {
       "dark.color.primary": "--login-primary",
       "dark.color.secondary": "--login-secondary",
@@ -122,14 +145,22 @@ export function useLoginBrandingTokens({
       "dark.color.border": "--login-border",
       "dark.color.error": "--login-error",
       "dark.color.success": "--login-success",
-      "dark.overlay.opacity": "--login-overlay-opacity",
-      "dark.overlay.color": "--login-overlay-color",
-      "dark.overlay.blur": "--login-overlay-blur",
     };
 
     for (const [tokenKey, cssVar] of Object.entries(darkColorMap)) {
       const value = tokens[tokenKey];
       if (value) darkRules.push(`  ${cssVar}: ${value};`);
+    }
+
+    // Dark overlay CSS vars — use != null check (not truthiness, "0" is valid)
+    if (tokens["dark.overlay.opacity"] != null && tokens["dark.overlay.opacity"] !== "") {
+      darkRules.push(`  --login-overlay-opacity: ${tokens["dark.overlay.opacity"]};`);
+    }
+    if (tokens["dark.overlay.color"] != null && tokens["dark.overlay.color"] !== "") {
+      darkRules.push(`  --login-overlay-color: ${tokens["dark.overlay.color"]};`);
+    }
+    if (tokens["dark.overlay.blur"] != null && tokens["dark.overlay.blur"] !== "") {
+      darkRules.push(`  --login-overlay-blur: ${tokens["dark.overlay.blur"]};`);
     }
 
     // Dark bg gradient
@@ -142,16 +173,24 @@ export function useLoginBrandingTokens({
     darkRules.push(`  --login-bg-image: ${tokens["dark.bg.image"] ? `url(${tokens["dark.bg.image"]})` : "none"};`);
 
     // Dark panel overrides
-    const darkPanelMap: Record<string, string> = {
+    const darkPanelColorMap: Record<string, string> = {
       "dark.panel.color.background": "--login-panel-bg",
-      "dark.panel.overlay.opacity": "--login-panel-overlay-opacity",
-      "dark.panel.overlay.color": "--login-panel-overlay-color",
-      "dark.panel.overlay.blur": "--login-panel-overlay-blur",
     };
 
-    for (const [tokenKey, cssVar] of Object.entries(darkPanelMap)) {
+    for (const [tokenKey, cssVar] of Object.entries(darkPanelColorMap)) {
       const value = tokens[tokenKey];
       if (value) darkRules.push(`  ${cssVar}: ${value};`);
+    }
+
+    // Dark panel overlay CSS vars — use != null check (not truthiness, "0" is valid)
+    if (tokens["dark.panel.overlay.opacity"] != null && tokens["dark.panel.overlay.opacity"] !== "") {
+      darkRules.push(`  --login-panel-overlay-opacity: ${tokens["dark.panel.overlay.opacity"]};`);
+    }
+    if (tokens["dark.panel.overlay.color"] != null && tokens["dark.panel.overlay.color"] !== "") {
+      darkRules.push(`  --login-panel-overlay-color: ${tokens["dark.panel.overlay.color"]};`);
+    }
+    if (tokens["dark.panel.overlay.blur"] != null && tokens["dark.panel.overlay.blur"] !== "") {
+      darkRules.push(`  --login-panel-overlay-blur: ${tokens["dark.panel.overlay.blur"]};`);
     }
     if (tokens["dark.panel.bg.gradient"]) {
       darkRules.push(`  --login-panel-bg: ${tokens["dark.panel.bg.gradient"]};`);

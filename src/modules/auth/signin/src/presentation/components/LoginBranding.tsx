@@ -59,6 +59,16 @@ export function LoginBranding({ t, branding, slotConfig, position = "left", tran
             }}
             >
 
+                  {/* ── Panel Overlay (blur + color tint) ── */}
+                  {!transparent && (
+                        <div className="login-panel-overlay" style={{
+                              position: "absolute", inset: 0, zIndex: 1, pointerEvents: "none",
+                              backgroundColor: "var(--login-panel-overlay-color, rgba(0,0,0,0.5))",
+                              opacity: "var(--login-panel-overlay-opacity, 0)",
+                              backdropFilter: "blur(var(--login-panel-overlay-blur, 0px))",
+                        }} />
+                  )}
+
                   {/* ── Theme-Adaptive Background Patterns ── */}
                   <div
                         className="pointer-events-none absolute -left-1/4 -top-1/4 h-[800px] w-[800px] rounded-full blur-[120px]"

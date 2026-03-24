@@ -30,6 +30,7 @@ import {
 import { secureTokenService } from "@core/common/secure-token-service";
 import { useAppStore } from "@core/store/useAppStore";
 import { HUB_EVENTS, HUB_PATHS } from "@core/common/constants/signalr";
+import { appLogger } from "../common/logger";
 
 // ─── Types ───────────────────────────────────────────────────────────
 
@@ -108,13 +109,13 @@ export function NotificationSignalRProvider({
                   connectionRef.current?.state === HubConnectionState.Connecting ||
                   connectionRef.current?.state === HubConnectionState.Reconnecting
             ) {
-                  console.log("[NotifHub] Skipped — already connected or connecting");
+                  appLogger.debug("[NotifHub] Skipped — already connected or connecting");
                   return;
             }
 
             const token = secureTokenService.getAccessToken();
             if (!token) {
-                  console.warn("[NotifHub] No access token — cannot connect");
+                  appLogger.warn("[NotifHub] No access token — cannot connect");
                   return;
             }
 
@@ -122,7 +123,7 @@ export function NotificationSignalRProvider({
                   isConnectingRef.current = true;
                   setConnectionState("connecting");
 
-                  console.log("[NotifHub] Connecting to", hubUrl, "...");
+                  appLogger.debug("[NotifHub] Connecting to", hubUrl, "...");
 
                   const conn = new HubConnectionBuilder()
                         .withUrl(hubUrl, {
@@ -142,28 +143,28 @@ export function NotificationSignalRProvider({
 
                   // Register event handlers BEFORE start()
                   conn.on(HUB_EVENTS.UNREAD_COUNT_UPDATED, (count: number) => {
-                        console.log("[NotifHub] ⚡ UnreadCountUpdated →", count);
+                        appLogger.debug("[NotifHub] ⚡ UnreadCountUpdated →", count);
                         setUnreadCount(count);
                   });
 
                   conn.on(
                         HUB_EVENTS.RECEIVE_NOTIFICATION,
                         (dto: NotificationPushPayload) => {
-                              console.log("[NotifHub] 📬 ReceiveNotification →", dto.title);
+                              appLogger.debug("[NotifHub] 📬 ReceiveNotification →", dto.title);
                               setLatestNotification(dto);
                         }
                   );
 
                   conn.onreconnecting(() => {
-                        console.log("[NotifHub] 🔄 Reconnecting...");
+                        appLogger.debug("[NotifHub] 🔄 Reconnecting...");
                         setConnectionState("reconnecting");
                   });
                   conn.onreconnected(() => {
-                        console.log("[NotifHub] ✅ Reconnected");
+                        appLogger.debug("[NotifHub] ✅ Reconnected");
                         setConnectionState("connected");
                   });
                   conn.onclose((err) => {
-                        console.log("[NotifHub] 🔌 Closed", err?.message ?? "");
+                        appLogger.debug("[NotifHub] 🔌 Closed", err?.message ?? "");
                         setConnectionState("disconnected");
                         setConnection(null);
                         connectionRef.current = null;
@@ -176,7 +177,7 @@ export function NotificationSignalRProvider({
                   setConnectionState("connected");
                   isConnectingRef.current = false;
 
-                  console.log("[NotifHub] ✅ Connected to", hubUrl);
+                  appLogger.debug("[NotifHub] ✅ Connected to", hubUrl);
             } catch (err) {
                   console.error("[NotifHub] ❌ Connection FAILED:", err);
                   setConnectionState("disconnected");
@@ -192,10 +193,10 @@ export function NotificationSignalRProvider({
             if (isDocsRoute) return;
 
             if (isAuthenticated && secureTokenService.hasToken()) {
-                  console.log("[NotifHub] isAuthenticated=true, calling connect()");
+                  appLogger.debug("[NotifHub] isAuthenticated=true, calling connect()");
                   connect();
             } else {
-                  console.log("[NotifHub] isAuthenticated=false, tearing down");
+                  appLogger.debug("[NotifHub] isAuthenticated=false, tearing down");
                   connectionRef.current?.stop();
                   connectionRef.current = null;
                   setConnection(null);

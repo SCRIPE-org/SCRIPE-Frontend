@@ -70,6 +70,194 @@ const LAYOUT_SECTION_MAP: Record<string, { sections: 1 | 2; labels?: [string, st
   "corner-card":     { sections: 2, labels: ["heroSection", "formArea"] },
 };
 
+// ═══════════════════════════════════════════════════
+// BgControls — extracted as a stable module-level component
+// (defining it inside the render function created a new component identity
+//  on every re-render, causing React to unmount/remount all inputs → focus loss)
+// ═══════════════════════════════════════════════════
+
+const IMAGE_FIT_OPTIONS = [
+  { value: "cover" as const, label: "Cover" },
+  { value: "contain" as const, label: "Contain" },
+  { value: "fill" as const, label: "Fill" },
+  { value: "none" as const, label: "None" },
+  { value: "scale-down" as const, label: "Scale" },
+];
+
+const IMAGE_POSITION_OPTIONS = [
+  { value: "top left",     label: "↖" },
+  { value: "top center",   label: "↑" },
+  { value: "top right",    label: "↗" },
+  { value: "center left",  label: "←" },
+  { value: "center",       label: "●" },
+  { value: "center right", label: "→" },
+  { value: "bottom left",  label: "↙" },
+  { value: "bottom center",label: "↓" },
+  { value: "bottom right", label: "↘" },
+];
+
+interface BgControlsProps {
+  prefix: string;
+  bgType: "solid" | "gradient" | "image";
+  bgColor: string;
+  bgGradientDirection: string;
+  bgGradientFrom: string;
+  bgGradientTo: string;
+  bgImageUrl: string;
+  bgImageFit: "cover" | "contain" | "fill" | "none" | "scale-down";
+  bgImagePosition: string;
+  bgOverlayEnabled: boolean;
+  bgOverlayColor: string;
+  bgOverlayOpacity: number;
+  bgBlur: number;
+  hideImage?: boolean;
+  copyFromLightUrl?: string;
+  t: (key: string) => string;
+  updateDraft: <K extends keyof StudioDraft>(field: K, value: StudioDraft[K]) => void;
+}
+
+function BgControls({
+  prefix, bgType, bgColor, bgGradientDirection, bgGradientFrom, bgGradientTo,
+  bgImageUrl, bgImageFit, bgImagePosition, bgOverlayEnabled, bgOverlayColor, bgOverlayOpacity, bgBlur, hideImage,
+  copyFromLightUrl, t, updateDraft,
+}: BgControlsProps) {
+  const f = (field: string): keyof StudioDraft => {
+    if (prefix === "") return field as keyof StudioDraft;
+    const stripped = field.startsWith("bg") ? field.slice(2) : field;
+    return `${prefix}${stripped}` as keyof StudioDraft;
+  };
+
+  return (
+    <div className="space-y-3">
+      <div className="grid grid-cols-3 gap-1.5">
+        {(hideImage ? ["solid", "gradient"] as const : ["solid", "gradient", "image"] as const).map((type) => (
+          <button key={type} onClick={() => updateDraft(f("bgType"), type as any)}
+            className={`h-7 rounded-md border text-[10px] font-medium transition-all ${
+              bgType === type
+                ? "border-primary bg-primary/10 text-primary"
+                : "border-border text-muted-foreground hover:border-primary/30"
+            }`}
+          >
+            {t(`studio.background.${type}`)}
+          </button>
+        ))}
+      </div>
+
+      {bgType === "solid" && (
+        <ColorInput label={t("studio.colors.background")} value={bgColor} onChange={(v) => updateDraft(f("bgColor"), v as any)} />
+      )}
+
+      {bgType === "gradient" && (
+        <div className="space-y-2">
+          <div className="grid grid-cols-4 gap-1">
+            {GRADIENT_DIRECTIONS.map((dir) => (
+              <button key={dir.value} onClick={() => updateDraft(f("bgGradientDirection"), dir.value as any)}
+                className={`h-6 rounded-md border text-[10px] transition-all ${
+                  bgGradientDirection === dir.value
+                    ? "border-primary bg-primary/10 text-primary"
+                    : "border-border text-muted-foreground hover:border-primary/30"
+                }`}
+              >
+                {dir.label}
+              </button>
+            ))}
+          </div>
+          <ColorInput label={t("studio.background.from")} value={bgGradientFrom} onChange={(v) => updateDraft(f("bgGradientFrom"), v as any)} />
+          <ColorInput label={t("studio.background.to")} value={bgGradientTo} onChange={(v) => updateDraft(f("bgGradientTo"), v as any)} />
+          <div className="h-8 w-full rounded-lg border border-border" style={{ background: `linear-gradient(${bgGradientDirection}, ${bgGradientFrom}, ${bgGradientTo})` }} />
+        </div>
+      )}
+
+      {bgType === "image" && (
+        <>
+          {copyFromLightUrl && (
+            <button
+              onClick={() => updateDraft(f("bgImageUrl"), copyFromLightUrl as any)}
+              className="w-full h-7 rounded-md border border-amber-500/40 bg-amber-500/10 text-[10px] font-medium text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 transition-all flex items-center justify-center gap-1.5"
+            >
+              ☀️ {t("studio.background.useLight") || "Use light image"}
+            </button>
+          )}
+          <ImageUploadField
+            value={bgImageUrl}
+            onChange={(v) => updateDraft(f("bgImageUrl"), v as any)}
+            label={t("studio.background.imageUrl") || "Background Image"}
+            maxSizeBytes={5 * 1024 * 1024}
+            accept="image/png,image/jpeg,image/webp,image/gif"
+          />
+          <div className="space-y-1.5">
+            <span className="text-[10px] font-medium text-muted-foreground">{t("studio.background.imageFit") || "Image Fit"}</span>
+            <div className="grid grid-cols-5 gap-1">
+              {IMAGE_FIT_OPTIONS.map((opt) => (
+                <button key={opt.value} onClick={() => updateDraft(f("bgImageFit"), opt.value as any)}
+                  className={`h-6 rounded-md border text-[9px] font-medium transition-all ${
+                    bgImageFit === opt.value
+                      ? "border-primary bg-primary/10 text-primary"
+                      : "border-border text-muted-foreground hover:border-primary/30"
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="space-y-1.5">
+            <span className="text-[10px] font-medium text-muted-foreground">{t("studio.background.imagePosition") || "Image Position"}</span>
+            <div className="grid grid-cols-3 gap-1 w-24">
+              {IMAGE_POSITION_OPTIONS.map((opt) => (
+                <button key={opt.value} onClick={() => updateDraft(f("bgImagePosition"), opt.value as any)}
+                  className={`h-6 w-8 rounded-md border text-[9px] transition-all ${
+                    bgImagePosition === opt.value
+                      ? "border-primary bg-primary/10 text-primary"
+                      : "border-border text-muted-foreground hover:border-primary/30"
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
+
+      <div className="flex items-center justify-between">
+        <span className="text-[10px] font-medium text-muted-foreground">{t("studio.background.overlay")}</span>
+        <Switch checked={bgOverlayEnabled} onCheckedChange={(v) => updateDraft(f("bgOverlayEnabled"), v as any)} />
+      </div>
+      {bgOverlayEnabled && (
+        <>
+          <ColorInput label={t("studio.background.overlayColor")} value={bgOverlayColor} onChange={(v) => updateDraft(f("bgOverlayColor"), v as any)} />
+          <SliderInput label={t("studio.background.overlayOpacity")} value={bgOverlayOpacity} min={0} max={1} step={0.05} unit="" onChange={(v) => updateDraft(f("bgOverlayOpacity"), v as any)} />
+        </>
+      )}
+      <SliderInput label={t("studio.background.blur")} value={bgBlur} min={0} max={20} onChange={(v) => updateDraft(f("bgBlur"), v as any)} />
+    </div>
+  );
+}
+
+// ── PresetDots — also extracted as a stable component ──
+function PresetDots({ mode, onApply, t }: { mode: "light" | "dark"; onApply: (c: Partial<StudioDraft>) => void; t: (key: string) => string }) {
+  return (
+    <div className="grid grid-cols-3 gap-1.5">
+      {COLOR_PRESETS.map((preset, i) => {
+        const dots = mode === "light"
+          ? [preset.colors.primaryColor, preset.colors.bgColor, preset.colors.surfaceColor]
+          : [preset.colors.darkPrimaryColor, preset.colors.darkBgColor, preset.colors.darkSurfaceColor];
+        return (
+          <button key={i} onClick={() => onApply(preset.colors)}
+            className="flex flex-col items-center gap-1 rounded-lg border border-border p-1.5 hover:border-primary/30 hover:bg-muted/30 transition-all"
+          >
+            <div className="flex gap-0.5">
+              {dots.map((c, ci) => <div key={ci} className="h-3 w-3 rounded-full border border-border" style={{ backgroundColor: c }} />)}
+            </div>
+            <span className="text-[9px] text-muted-foreground">{t(preset.labelKey)}</span>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 export function StylePanel({ t, activeSection, draft, updateDraft, batchUpdateDraft }: StylePanelProps) {
 
   // ══════════════════════════════════════════════════════
@@ -98,191 +286,6 @@ export function StylePanel({ t, activeSection, draft, updateDraft, batchUpdateDr
       batchUpdateDraft(filtered);
     };
 
-    // ── Reusable BgControls ──
-    const BgControls = ({
-      prefix, bgType, bgColor, bgGradientDirection, bgGradientFrom, bgGradientTo,
-      bgImageUrl, bgImageFit, bgImagePosition, bgOverlayEnabled, bgOverlayColor, bgOverlayOpacity, bgBlur, hideImage,
-      copyFromLightUrl,
-    }: {
-      prefix: string;
-      bgType: "solid" | "gradient" | "image";
-      bgColor: string;
-      bgGradientDirection: string;
-      bgGradientFrom: string;
-      bgGradientTo: string;
-      bgImageUrl: string;
-      bgImageFit: "cover" | "contain" | "fill" | "none" | "scale-down";
-      bgImagePosition: string;
-      bgOverlayEnabled: boolean;
-      bgOverlayColor: string;
-      bgOverlayOpacity: number;
-      bgBlur: number;
-      hideImage?: boolean;
-      /** If provided, shows a "Use light image" button that copies this URL */
-      copyFromLightUrl?: string;
-    }) => {
-      // Map field names to draft keys using the prefix
-      const f = (field: string): keyof StudioDraft => {
-        if (prefix === "") return field as keyof StudioDraft;
-        // field comes as "bgType", "bgColor", "bgGradientFrom", etc.
-        // Strip "bg" prefix, then prepend our prefix
-        const stripped = field.startsWith("bg") ? field.slice(2) : field;
-        return `${prefix}${stripped}` as keyof StudioDraft;
-      };
-
-      const IMAGE_FIT_OPTIONS = [
-        { value: "cover" as const, label: t("studio.background.fitCover") || "Cover" },
-        { value: "contain" as const, label: t("studio.background.fitContain") || "Contain" },
-        { value: "fill" as const, label: t("studio.background.fitFill") || "Fill" },
-        { value: "none" as const, label: t("studio.background.fitNone") || "None" },
-        { value: "scale-down" as const, label: t("studio.background.fitScaleDown") || "Scale" },
-      ];
-
-      const IMAGE_POSITION_OPTIONS = [
-        { value: "top left",     label: "↖" },
-        { value: "top center",   label: "↑" },
-        { value: "top right",    label: "↗" },
-        { value: "center left",  label: "←" },
-        { value: "center",       label: "●" },
-        { value: "center right", label: "→" },
-        { value: "bottom left",  label: "↙" },
-        { value: "bottom center",label: "↓" },
-        { value: "bottom right", label: "↘" },
-      ];
-
-      return (
-        <div className="space-y-3">
-          <div className="grid grid-cols-3 gap-1.5">
-            {(hideImage ? ["solid", "gradient"] as const : ["solid", "gradient", "image"] as const).map((type) => (
-              <button key={type} onClick={() => updateDraft(f("bgType"), type as any)}
-                className={`h-7 rounded-md border text-[10px] font-medium transition-all ${
-                  bgType === type
-                    ? "border-primary bg-primary/10 text-primary"
-                    : "border-border text-muted-foreground hover:border-primary/30"
-                }`}
-              >
-                {t(`studio.background.${type}`)}
-              </button>
-            ))}
-          </div>
-
-          {bgType === "solid" && (
-            <ColorInput label={t("studio.colors.background")} value={bgColor} onChange={(v) => updateDraft(f("bgColor"), v as any)} />
-          )}
-
-          {bgType === "gradient" && (
-            <div className="space-y-2">
-              <div className="grid grid-cols-4 gap-1">
-                {GRADIENT_DIRECTIONS.map((dir) => (
-                  <button key={dir.value} onClick={() => updateDraft(f("bgGradientDirection"), dir.value as any)}
-                    className={`h-6 rounded-md border text-[10px] transition-all ${
-                      bgGradientDirection === dir.value
-                        ? "border-primary bg-primary/10 text-primary"
-                        : "border-border text-muted-foreground hover:border-primary/30"
-                    }`}
-                  >
-                    {dir.label}
-                  </button>
-                ))}
-              </div>
-              <ColorInput label={t("studio.background.from")} value={bgGradientFrom} onChange={(v) => updateDraft(f("bgGradientFrom"), v as any)} />
-              <ColorInput label={t("studio.background.to")} value={bgGradientTo} onChange={(v) => updateDraft(f("bgGradientTo"), v as any)} />
-              <div className="h-8 w-full rounded-lg border border-border" style={{ background: `linear-gradient(${bgGradientDirection}, ${bgGradientFrom}, ${bgGradientTo})` }} />
-            </div>
-          )}
-
-          {bgType === "image" && (
-            <>
-              {/* Copy from light button (dark sections only) */}
-              {copyFromLightUrl && (
-                <button
-                  onClick={() => updateDraft(f("bgImageUrl"), copyFromLightUrl as any)}
-                  className="w-full h-7 rounded-md border border-amber-500/40 bg-amber-500/10 text-[10px] font-medium text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 transition-all flex items-center justify-center gap-1.5"
-                >
-                  ☀️ {t("studio.background.useLight") || "Use light image"}
-                </button>
-              )}
-              <ImageUploadField
-                value={bgImageUrl}
-                onChange={(v) => updateDraft(f("bgImageUrl"), v as any)}
-                label={t("studio.background.imageUrl") || "Background Image"}
-                maxSizeBytes={5 * 1024 * 1024}
-                accept="image/png,image/jpeg,image/webp,image/gif"
-              />
-
-              {/* ── Image Fit ── */}
-              <div className="space-y-1.5">
-                <span className="text-[10px] font-medium text-muted-foreground">{t("studio.background.imageFit") || "Image Fit"}</span>
-                <div className="grid grid-cols-5 gap-1">
-                  {IMAGE_FIT_OPTIONS.map((opt) => (
-                    <button key={opt.value} onClick={() => updateDraft(f("bgImageFit"), opt.value as any)}
-                      className={`h-6 rounded-md border text-[9px] font-medium transition-all ${
-                        bgImageFit === opt.value
-                          ? "border-primary bg-primary/10 text-primary"
-                          : "border-border text-muted-foreground hover:border-primary/30"
-                      }`}
-                    >
-                      {opt.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* ── Image Position ── */}
-              <div className="space-y-1.5">
-                <span className="text-[10px] font-medium text-muted-foreground">{t("studio.background.imagePosition") || "Image Position"}</span>
-                <div className="grid grid-cols-3 gap-1 w-24">
-                  {IMAGE_POSITION_OPTIONS.map((opt) => (
-                    <button key={opt.value} onClick={() => updateDraft(f("bgImagePosition"), opt.value as any)}
-                      className={`h-6 w-8 rounded-md border text-[9px] transition-all ${
-                        bgImagePosition === opt.value
-                          ? "border-primary bg-primary/10 text-primary"
-                          : "border-border text-muted-foreground hover:border-primary/30"
-                      }`}
-                    >
-                      {opt.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </>
-          )}
-
-          <div className="flex items-center justify-between">
-            <span className="text-[10px] font-medium text-muted-foreground">{t("studio.background.overlay")}</span>
-            <Switch checked={bgOverlayEnabled} onCheckedChange={(v) => updateDraft(f("bgOverlayEnabled"), v as any)} />
-          </div>
-          {bgOverlayEnabled && (
-            <>
-              <ColorInput label={t("studio.background.overlayColor")} value={bgOverlayColor} onChange={(v) => updateDraft(f("bgOverlayColor"), v as any)} />
-              <SliderInput label={t("studio.background.overlayOpacity")} value={bgOverlayOpacity} min={0} max={1} step={0.05} unit="" onChange={(v) => updateDraft(f("bgOverlayOpacity"), v as any)} />
-            </>
-          )}
-          <SliderInput label={t("studio.background.blur")} value={bgBlur} min={0} max={20} onChange={(v) => updateDraft(f("bgBlur"), v as any)} />
-        </div>
-      );
-    };
-
-    // ── Preset Dots ──
-    const PresetDots = ({ mode, onApply }: { mode: "light" | "dark"; onApply: (c: Partial<StudioDraft>) => void }) => (
-      <div className="grid grid-cols-3 gap-1.5">
-        {COLOR_PRESETS.map((preset, i) => {
-          const dots = mode === "light"
-            ? [preset.colors.primaryColor, preset.colors.bgColor, preset.colors.surfaceColor]
-            : [preset.colors.darkPrimaryColor, preset.colors.darkBgColor, preset.colors.darkSurfaceColor];
-          return (
-            <button key={i} onClick={() => onApply(preset.colors)}
-              className="flex flex-col items-center gap-1 rounded-lg border border-border p-1.5 hover:border-primary/30 hover:bg-muted/30 transition-all"
-            >
-              <div className="flex gap-0.5">
-                {dots.map((c, ci) => <div key={ci} className="h-3 w-3 rounded-full border border-border" style={{ backgroundColor: c }} />)}
-              </div>
-              <span className="text-[9px] text-muted-foreground">{t(preset.labelKey)}</span>
-            </button>
-          );
-        })}
-      </div>
-    );
 
     // ── Section label helper ──
     const sectionLabel = (idx: 0 | 1) => {
@@ -333,7 +336,7 @@ export function StylePanel({ t, activeSection, draft, updateDraft, batchUpdateDr
           {/* Light Presets */}
           <div className="space-y-1.5">
             <h5 className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">{t("studio.colors.presets")}</h5>
-            <PresetDots mode="light" onApply={(c) => applyPreset(c, lightPresetKeys)} />
+            <PresetDots mode="light" onApply={(c) => applyPreset(c, lightPresetKeys)} t={t} />
           </div>
 
           {/* Light Page Background — shows as "Full Page" if unified/1-section, as section label if separated */}
@@ -347,7 +350,7 @@ export function StylePanel({ t, activeSection, draft, updateDraft, batchUpdateDr
               bgGradientDirection={draft.bgGradientDirection} bgGradientFrom={draft.bgGradientFrom} bgGradientTo={draft.bgGradientTo}
               bgImageUrl={draft.bgImageUrl} bgImageFit={draft.bgImageFit} bgImagePosition={draft.bgImagePosition}
               bgOverlayEnabled={draft.bgOverlayEnabled} bgOverlayColor={draft.bgOverlayColor}
-              bgOverlayOpacity={draft.bgOverlayOpacity} bgBlur={draft.bgBlur} />
+              bgOverlayOpacity={draft.bgOverlayOpacity} bgBlur={draft.bgBlur} t={t} updateDraft={updateDraft} />
           </div>
 
           {/* Light Color Palette */}
@@ -371,7 +374,7 @@ export function StylePanel({ t, activeSection, draft, updateDraft, batchUpdateDr
                 bgGradientDirection={draft.panelBgGradientDirection} bgGradientFrom={draft.panelBgGradientFrom} bgGradientTo={draft.panelBgGradientTo}
                 bgImageUrl={draft.panelBgImageUrl} bgImageFit={draft.panelBgImageFit} bgImagePosition={draft.panelBgImagePosition}
                 bgOverlayEnabled={draft.panelBgOverlayEnabled} bgOverlayColor={draft.panelBgOverlayColor}
-                bgOverlayOpacity={draft.panelBgOverlayOpacity} bgBlur={draft.panelBgBlur} />
+                bgOverlayOpacity={draft.panelBgOverlayOpacity} bgBlur={draft.panelBgBlur} t={t} updateDraft={updateDraft} />
             </div>
           )}
         </div>
@@ -385,7 +388,7 @@ export function StylePanel({ t, activeSection, draft, updateDraft, batchUpdateDr
           {/* Dark Presets */}
           <div className="space-y-1.5">
             <h5 className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">{t("studio.colors.presets")}</h5>
-            <PresetDots mode="dark" onApply={(c) => applyPreset(c, darkPresetKeys)} />
+            <PresetDots mode="dark" onApply={(c) => applyPreset(c, darkPresetKeys)} t={t} />
           </div>
 
           {/* Dark Page Background */}
@@ -400,7 +403,7 @@ export function StylePanel({ t, activeSection, draft, updateDraft, batchUpdateDr
               bgImageUrl={draft.darkBgImageUrl} bgImageFit={draft.darkBgImageFit} bgImagePosition={draft.darkBgImagePosition}
               bgOverlayEnabled={draft.darkBgOverlayEnabled} bgOverlayColor={draft.darkBgOverlayColor}
               bgOverlayOpacity={draft.darkBgOverlayOpacity} bgBlur={draft.darkBgBlur}
-              copyFromLightUrl={draft.bgImageUrl || undefined} />
+              copyFromLightUrl={draft.bgImageUrl || undefined} t={t} updateDraft={updateDraft} />
           </div>
 
           {/* Dark Color Palette */}
@@ -425,7 +428,7 @@ export function StylePanel({ t, activeSection, draft, updateDraft, batchUpdateDr
                 bgImageUrl={draft.darkPanelBgImageUrl} bgImageFit={draft.darkPanelBgImageFit} bgImagePosition={draft.darkPanelBgImagePosition}
                 bgOverlayEnabled={draft.darkPanelBgOverlayEnabled} bgOverlayColor={draft.darkPanelBgOverlayColor}
                 bgOverlayOpacity={draft.darkPanelBgOverlayOpacity} bgBlur={draft.darkPanelBgBlur}
-                copyFromLightUrl={draft.panelBgImageUrl || undefined} />
+                copyFromLightUrl={draft.panelBgImageUrl || undefined} t={t} updateDraft={updateDraft} />
             </div>
           )}
         </div>

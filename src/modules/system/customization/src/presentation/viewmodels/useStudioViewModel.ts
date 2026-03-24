@@ -455,9 +455,9 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
         "dark.bg.gradient": draft.darkBgType === "gradient"
           ? `linear-gradient(${draft.darkBgGradientDirection}, ${draft.darkBgGradientFrom}, ${draft.darkBgGradientTo})`
           : "",
-        "dark.overlay.opacity": `${draft.darkBgOverlayOpacity}`,
+        "dark.overlay.opacity": draft.darkBgOverlayEnabled ? `${draft.darkBgOverlayOpacity}` : "0",
         "dark.overlay.color": draft.darkBgOverlayColor || "rgba(0,0,0,0.5)",
-        "dark.overlay.blur": `${draft.darkBgBlur}px`,
+        "dark.overlay.blur": draft.darkBgOverlayEnabled ? `${draft.darkBgBlur}px` : "0px",
         // Panel tokens — LIGHT (for split layouts with independent panel bg)
         ...(draft.splitBgMode === "independent" ? {
           "panel.color.background": draft.panelBgColor,
@@ -467,9 +467,9 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
           "panel.bg.gradient": draft.panelBgType === "gradient"
             ? `linear-gradient(${draft.panelBgGradientDirection}, ${draft.panelBgGradientFrom}, ${draft.panelBgGradientTo})`
             : "",
-          "panel.overlay.opacity": `${draft.panelBgOverlayOpacity}`,
+          "panel.overlay.opacity": draft.panelBgOverlayEnabled ? `${draft.panelBgOverlayOpacity}` : "0",
           "panel.overlay.color": draft.panelBgOverlayColor || "rgba(0,0,0,0.5)",
-          "panel.overlay.blur": `${draft.panelBgBlur}px`,
+          "panel.overlay.blur": draft.panelBgOverlayEnabled ? `${draft.panelBgBlur}px` : "0px",
           // Panel tokens — DARK (fully independent, no inherit from light panel)
           "dark.panel.color.background": draft.darkPanelBgColor,
           "dark.panel.bg.image": draft.darkPanelBgImageUrl,
@@ -478,9 +478,9 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
           "dark.panel.bg.gradient": draft.darkPanelBgType === "gradient"
             ? `linear-gradient(${draft.darkPanelBgGradientDirection}, ${draft.darkPanelBgGradientFrom}, ${draft.darkPanelBgGradientTo})`
             : "",
-          "dark.panel.overlay.opacity": `${draft.darkPanelBgOverlayOpacity}`,
+          "dark.panel.overlay.opacity": draft.darkPanelBgOverlayEnabled ? `${draft.darkPanelBgOverlayOpacity}` : "0",
           "dark.panel.overlay.color": draft.darkPanelBgOverlayColor || "rgba(0,0,0,0.5)",
-          "dark.panel.overlay.blur": `${draft.darkPanelBgBlur}px`,
+          "dark.panel.overlay.blur": draft.darkPanelBgOverlayEnabled ? `${draft.darkPanelBgBlur}px` : "0px",
         } : {}),
         "font.body": draft.fontFamily,
         "font.bodyAr": draft.fontFamilyAr,
@@ -494,9 +494,9 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
         "radius.card": `${draft.borderRadius}px`,
         "radius.button": `${draft.btnRadius}px`,
         "shadow.card": `0 ${Math.min(draft.borderRadius, 25)}px ${draft.borderRadius * 2}px rgba(0,0,0,0.1)`,
-        "overlay.opacity": `${draft.bgOverlayOpacity}`,
+        "overlay.opacity": draft.bgOverlayEnabled ? `${draft.bgOverlayOpacity}` : "0",
         "overlay.color": draft.bgOverlayColor || "rgba(0,0,0,0.5)",
-        "overlay.blur": `${draft.bgBlur}px`,
+        "overlay.blur": draft.bgOverlayEnabled ? `${draft.bgBlur}px` : "0px",
         "spacing.formWidth": `${draft.formWidth}px`,
         "spacing.cardPadding": `${draft.cardPadding}px`,
         "spacing.elementGap": `${draft.elementGap}px`,

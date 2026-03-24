@@ -263,12 +263,23 @@ export function LoginPreviewShell() {
   // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
   // 22 LAYOUT VARIANTS (same as LoginView)
   // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // Reusable overlay div — sits on top of background, under content.
+  // Uses CSS vars set by the token system; opacity=0 when overlay is disabled.
+  const overlayDiv = (
+    <div className="login-overlay" style={{
+      position: "absolute", inset: 0, zIndex: 1, pointerEvents: "none",
+      backgroundColor: "var(--login-overlay-color, rgba(0,0,0,0.5))",
+      opacity: "var(--login-overlay-opacity, 0)",
+      backdropFilter: "blur(var(--login-overlay-blur, 0px))",
+    }} />
+  );
 
   switch (layout) {
     case "split-left":
       return (
         <div className={`login-page flex min-h-screen w-full ${bgStyle} selection:bg-primary/20`} dir={direction} style={splitWrapperStyle}>
-          <div className="relative flex w-full flex-col items-center justify-center px-6 py-12 lg:w-1/2 xl:w-[45%]" style={formSideStyle}>
+          <div className="relative z-10 flex w-full flex-col items-center justify-center px-6 py-12 lg:w-1/2 xl:w-[45%]" style={formSideStyle}>
+            {overlayDiv}
             {topActions}
             <MobileLogo logoSrc={logoUrl} logoAlt={companyName} companyName={companyName} />
             <DesktopHeading companyName={companyName} t={t} />
@@ -282,18 +293,21 @@ export function LoginPreviewShell() {
 
     case "centered":
       return (
-        <div className={`login-page flex min-h-screen w-full flex-col items-center ${bgStyle} selection:bg-primary/20`} dir={direction} style={wrapperStyle}>
-          {topActions}
-          <div className="flex flex-1 flex-col items-center justify-center px-6 py-24 w-full max-w-lg">
-            <div className="mb-10 flex flex-col items-center gap-4 text-center">
-              <LogoBox logoSrc={logoUrl} logoAlt={companyName} />
-              <h1 className="login-heading tracking-tight text-[var(--login-text,hsl(var(--foreground)))]" style={{ fontFamily: "var(--login-font-heading, inherit)", fontSize: "var(--login-size-headline, 1.875rem)", fontWeight: "var(--login-weight-heading, 600)" }}>{companyName}</h1>
-              <p className="login-subtitle text-[var(--login-text-muted,hsl(var(--muted-foreground)))]" style={{ fontSize: "var(--login-size-subtitle, 0.875rem)" }}>{t("auth.pleaseLogin")}</p>
+        <div className={`login-page relative flex min-h-screen w-full flex-col items-center ${bgStyle} selection:bg-primary/20`} dir={direction} style={wrapperStyle}>
+          {overlayDiv}
+          <div className="relative z-10 w-full flex flex-1 flex-col items-center">
+            {topActions}
+            <div className="flex flex-1 flex-col items-center justify-center px-6 py-24 w-full max-w-lg">
+              <div className="mb-10 flex flex-col items-center gap-4 text-center">
+                <LogoBox logoSrc={logoUrl} logoAlt={companyName} />
+                <h1 className="login-heading tracking-tight text-[var(--login-text,hsl(var(--foreground)))]" style={{ fontFamily: "var(--login-font-heading, inherit)", fontSize: "var(--login-size-headline, 1.875rem)", fontWeight: "var(--login-weight-heading, 600)" }}>{companyName}</h1>
+                <p className="login-subtitle text-[var(--login-text-muted,hsl(var(--muted-foreground)))]" style={{ fontSize: "var(--login-size-subtitle, 0.875rem)" }}>{t("auth.pleaseLogin")}</p>
+              </div>
+              <SlotRenderer slotId="login.sidebar.content" slotConfig={slotConfig} className="mb-8 w-full" />
+              {formContent}
+              {footer}
+              {footerSlot}
             </div>
-            <SlotRenderer slotId="login.sidebar.content" slotConfig={slotConfig} className="mb-8 w-full" />
-            {formContent}
-            {footer}
-            {footerSlot}
           </div>
         </div>
       );
@@ -305,7 +319,7 @@ export function LoginPreviewShell() {
           dir={direction}
           style={wrapperStyle}
         >
-          <div className="login-overlay absolute inset-0" style={{ backgroundColor: "var(--login-overlay-color, #000000)", opacity: "var(--login-overlay-opacity, 0.5)", backdropFilter: "blur(var(--login-overlay-blur, 0px))" }} />
+          {overlayDiv}
           {topActions}
           <div className="login-card relative z-10 w-full max-w-[480px] border border-[var(--login-border,hsl(var(--border)))]/50 backdrop-blur-xl mx-4" style={{ borderRadius: "var(--login-radius-card, 16px)", padding: "var(--login-card-padding, 32px)", boxShadow: "var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.25))", backgroundColor: "color-mix(in srgb, var(--login-surface, hsl(var(--background))) 95%, transparent)" }}>
             <div className="mb-8 flex flex-col items-center gap-3 text-center">
@@ -622,7 +636,7 @@ export function LoginPreviewShell() {
     case "corner-card":
       return (
         <div className={`login-page relative flex min-h-screen w-full ${bgStyle} selection:bg-primary/20`} dir={direction} style={wrapperStyle}>
-          <div className="login-overlay absolute inset-0" style={{ backgroundColor: "var(--login-overlay-color, hsl(var(--background)))", opacity: "var(--login-overlay-opacity, 0.6)", backdropFilter: "blur(var(--login-overlay-blur, 0px))" }} />
+          {overlayDiv}
           {topActions}
           <div className="relative z-10 hidden lg:flex flex-1 flex-col justify-center px-16 xl:px-24">
             <h1 className="login-heading text-6xl tracking-tighter text-[var(--login-text,hsl(var(--foreground)))]" style={{ fontFamily: "var(--login-font-heading, inherit)", fontWeight: "var(--login-weight-heading, 900)" }}>{headline}</h1>
@@ -707,7 +721,8 @@ export function LoginPreviewShell() {
       return (
         <div className={`login-page flex min-h-screen w-full ${bgStyle} selection:bg-primary/20`} dir={direction} style={splitWrapperStyle}>
           <LoginBranding t={t} branding={brandingForPanel} slotConfig={slotConfig} position="left" transparent={isUnifiedBg} />
-          <div className="relative flex w-full flex-col items-center justify-center px-6 py-12 lg:w-1/2 xl:w-[45%]" style={formSideStyle}>
+          <div className="relative z-10 flex w-full flex-col items-center justify-center px-6 py-12 lg:w-1/2 xl:w-[45%]" style={formSideStyle}>
+            {overlayDiv}
             {topActions}
             <MobileLogo logoSrc={logoUrl} logoAlt={companyName} companyName={companyName} />
             <DesktopHeading companyName={companyName} t={t} />
