@@ -2641,5 +2641,27 @@ export const docCommFr: Record<string, any> = {
                   apiTitle: "Points de terminaison API (Endpoints)",
                   tip: "Les surcharges sont l'outil le plus puissant de votre arsenal de vente. Elles permettent à votre équipe commerciale de conclure des accords d'entreprise en quelques minutes — pas en sprints de développement.",
             },
+
+            // ─── Login Customizer ────────────────────────────────
+            loginCustomizer: {
+                  title: "Personnalisateur de Page de Connexion",
+                  description: "Transformez votre expérience de connexion avec un studio visuel zéro-code — 14 mises en page premium, aperçu en temps réel et workflows de sécurité de niveau entreprise.",
+                  intro: "Les premières impressions définissent la confiance. Le Studio Personnalisateur de Connexion de NEXORA permet aux administrateurs de locataires de concevoir des expériences de connexion impressionnantes et alignées sur la marque via un éditeur visuel intuitif — aucun développeur requis. Avec 14 mises en page prêtes pour la production, un aperçu en temps réel dans un environnement isolé et un workflow sécurisé brouillon-publication, votre organisation peut maintenir une cohérence de marque parfaite sur chaque locataire.",
+                  brandTitle: "Contrôle Total de l'Identité de Marque",
+                  brandContent: "Prenez le contrôle total de l'identité visuelle de votre page de connexion. Téléchargez les logos d'entreprise, configurez les systèmes de couleurs avec aperçu en direct, sélectionnez parmi les polices Google premium et appliquez des traitements de fond sophistiqués incluant dégradés, images téléchargées et effets de superposition. Chaque modification se reflète instantanément dans l'aperçu isolé — zéro risque pour votre page de production.",
+                  studioTitle: "Studio de Personnalisation Visuelle",
+                  studioContent: "Le Studio Personnalisateur offre un environnement de conception professionnel avec une interface à panneaux divisés. Le panneau gauche propose des sections de configuration par onglets pour l'Apparence, les Couleurs, la Typographie, l'Arrière-plan et la Superposition. Le panneau droit affiche un aperçu en direct de la page de connexion dans un iframe isolé avec des bascules d'appareils pour bureau, tablette et mobile. Les modifications se mettent à jour en temps réel via l'injection de variables CSS — ce que vous voyez est exactement ce que vos utilisateurs vivront.",
+                  layoutsTitle: "14 Mises en Page Premium de Connexion",
+                  layoutsContent: "Choisissez parmi 14 mises en page de connexion méticuleusement conçues pour chaque esthétique de marque. Les mises en page divisées (6 options) présentent un panneau de marque dédié à côté du formulaire de connexion — parfait pour l'identité d'entreprise. Les mises en page pleine page (8 options) offrent des expériences immersives et modernes avec des arrière-plans plein écran, des effets de glassmorphisme et des placements de cartes élégants. Chaque mise en page prend en charge des contrôles indépendants d'arrière-plan, de superposition et de thème.",
+                  themeTitle: "Thème Intelligent Clair/Sombre",
+                  themeContent: "Offrez des expériences utilisateur optimales dans toutes les conditions d'éclairage avec une architecture de thème intelligent clair/sombre. Configurez des schémas de couleurs indépendants, des fonds de formulaire, des couleurs de texte et des effets de superposition pour chaque mode. Le système émet des ensembles séparés de variables CSS garantissant zéro compromis visuel dans les deux thèmes.",
+                  safetyTitle: "Workflow de Sécurité de Niveau Entreprise",
+                  safetyContent: "Les pages de connexion d'entreprise exigent une fiabilité sans temps d'arrêt. Le Personnalisateur de NEXORA implémente un workflow rigoureux Brouillon → Aperçu → Publication soutenu par un contrôle de concurrence optimiste. Chaque version publiée crée un instantané immuable pour un retour en arrière instantané. Le Mode Sans Échec offre un contournement d'urgence en un clic qui restaure les paramètres par défaut de la plateforme.",
+                  tenantTitle: "Isolation de Marque Multi-Locataires",
+                  tenantContent: "Chaque locataire opère dans un périmètre de marque complètement isolé. La connexion corporate premium du Locataire A n'a aucune visibilité sur la configuration du Locataire B. Les paramètres sont cryptographiquement liés au JWT du locataire, empêchant toute fuite de données inter-locataires.",
+                  zeroCodeTitle: "Personnalisation Véritablement Zéro-Code",
+                  zeroCodeContent: "Éliminez le goulot d'étranglement du développement entièrement. Les administrateurs de locataires peuvent concevoir, prévisualiser et déployer des expériences de connexion personnalisées en minutes — pas en sprints d'ingénierie. Le studio visuel gère toute la complexité derrière les tokens de design et les pipelines de variables CSS.",
+                  zeroCodeTip: "Un super-pouvoir SaaS B2B : Vos clients peuvent personnaliser entièrement leurs pages de connexion eux-mêmes. Un administrateur de locataire peut se connecter au Panneau d'Administration, ouvrir le Studio Personnalisateur, concevoir son expérience de connexion parfaite et publier — le tout en moins de 10 minutes. Zéro implication de l'ingénierie.",
+            },
       },
 };

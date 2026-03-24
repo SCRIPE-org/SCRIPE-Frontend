@@ -2641,5 +2641,27 @@ export const docCommEs: Record<string, any> = {
                   apiTitle: "Puntos de Conexión API (Endpoints)",
                   tip: "Las sobreescrituras son la herramienta más poderosa de su arsenal de ventas. Permiten a su equipo de ventas cerrar acuerdos empresariales en minutos, no en sprints de ingeniería.",
             },
+
+            // ─── Login Customizer ────────────────────────────────
+            loginCustomizer: {
+                  title: "Personalizador de Página de Inicio de Sesión",
+                  description: "Transforme su experiencia de inicio de sesión con un estudio visual sin código — 14 diseños premium, vista previa en tiempo real y flujos de trabajo de seguridad de nivel empresarial.",
+                  intro: "Las primeras impresiones definen la confianza. El Estudio Personalizador de Inicio de Sesión de NEXORA empodera a los administradores de inquilinos para crear experiencias de inicio de sesión impresionantes y alineadas con la marca a través de un editor visual intuitivo — sin necesidad de desarrolladores. Con 14 diseños listos para producción, vista previa en tiempo real en entorno aislado y un flujo de trabajo seguro de borrador-publicación, su organización puede mantener una consistencia de marca perfecta en cada inquilino.",
+                  brandTitle: "Control Total de Identidad de Marca",
+                  brandContent: "Tome el control total de la identidad visual de su página de inicio de sesión. Cargue logotipos corporativos, configure sistemas de colores con vista previa en vivo, seleccione de fuentes Google premium y aplique tratamientos de fondo sofisticados que incluyen degradados, imágenes cargadas y efectos de superposición. Cada cambio se refleja instantáneamente en la vista previa aislada — cero riesgo para su página de producción.",
+                  studioTitle: "Estudio de Personalización Visual",
+                  studioContent: "El Estudio Personalizador proporciona un entorno de diseño profesional con una interfaz de panel dividido. El panel izquierdo ofrece secciones de configuración con pestañas para Apariencia, Colores, Tipografía, Fondo y Superposición. El panel derecho renderiza una vista previa en vivo de la página de inicio de sesión en un iframe aislado con controles de dispositivo para escritorio, tableta y móvil. Los cambios se actualizan en tiempo real mediante inyección de variables CSS — lo que ve es exactamente lo que experimentarán sus usuarios.",
+                  layoutsTitle: "14 Diseños Premium de Inicio de Sesión",
+                  layoutsContent: "Elija entre 14 diseños de inicio de sesión meticulosamente elaborados para cada estética de marca. Los diseños divididos (6 opciones) presentan un panel de marca dedicado junto al formulario de inicio de sesión — perfecto para la identidad corporativa. Los diseños de página completa (8 opciones) ofrecen experiencias inmersivas y modernas con fondos de pantalla completa, efectos de glassmorfismo y colocaciones de tarjetas elegantes. Cada diseño soporta controles independientes de fondo, superposición y tema.",
+                  themeTitle: "Tema Inteligente Claro/Oscuro",
+                  themeContent: "Ofrezca experiencias de usuario óptimas en todas las condiciones de iluminación con arquitectura inteligente de temas claro/oscuro. Configure esquemas de colores independientes, fondos de formulario, colores de texto y efectos de superposición para cada modo. El sistema emite conjuntos separados de variables CSS asegurando cero compromisos visuales en cualquier tema.",
+                  safetyTitle: "Flujo de Trabajo de Seguridad Empresarial",
+                  safetyContent: "Las páginas de inicio de sesión empresariales exigen fiabilidad sin tiempo de inactividad. El Personalizador de NEXORA implementa un riguroso flujo de trabajo Borrador → Vista Previa → Publicar respaldado por control de concurrencia optimista. Cada versión publicada crea una instantánea inmutable para reversión instantánea. El Modo Seguro proporciona una evasión de emergencia con un solo clic que restaura los valores predeterminados de la plataforma.",
+                  tenantTitle: "Aislamiento de Marca Multi-Inquilino",
+                  tenantContent: "Cada inquilino opera en un ámbito de marca completamente aislado. El inicio de sesión corporativo premium del Inquilino A tiene cero visibilidad de la configuración del Inquilino B. Los ajustes están criptográficamente vinculados al JWT del inquilino, previniendo cualquier filtración de datos entre inquilinos.",
+                  zeroCodeTitle: "Personalización Verdaderamente Sin Código",
+                  zeroCodeContent: "Elimine el cuello de botella del desarrollo por completo. Los administradores de inquilinos pueden diseñar, previsualizar e implementar experiencias de inicio de sesión personalizadas en minutos — no en sprints de ingeniería. El estudio visual maneja toda la complejidad detrás de tokens de diseño y pipelines de variables CSS.",
+                  zeroCodeTip: "Un superpoder de SaaS B2B: Sus clientes pueden personalizar completamente sus páginas de inicio de sesión. Un administrador de inquilino puede iniciar sesión en el Panel de Administración, abrir el Estudio Personalizador, diseñar su experiencia perfecta y publicar — todo en menos de 10 minutos. Cero participación de ingeniería.",
+            },
       },
 };

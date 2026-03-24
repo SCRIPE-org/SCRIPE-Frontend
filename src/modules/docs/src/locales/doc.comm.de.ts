@@ -2641,5 +2641,27 @@ export const docCommDe: Record<string, any> = {
                   apiTitle: "API-Endpunkte",
                   tip: "Überschreibungen sind das stärkste Werkzeug in Ihrem Vertriebsarsenal. Sie ermöglichen es Ihrem Vertriebsteam, Enterprise-Deals in Minuten abzuschließen — nicht in Engineering-Sprints.",
             },
+
+            // ─── Login Customizer ────────────────────────────────
+            loginCustomizer: {
+                  title: "Login-Seiten-Customizer",
+                  description: "Verwandeln Sie Ihr Login-Erlebnis mit einem Zero-Code Visual Studio — 14 Premium-Layouts, Echtzeit-Vorschau und Enterprise-Grade-Sicherheitsworkflows.",
+                  intro: "Erste Eindrücke definieren Vertrauen. Das Login Customizer Studio von NEXORA befähigt Mandanten-Administratoren, beeindruckende, markengerechte Login-Erlebnisse durch einen intuitiven visuellen Editor zu gestalten — keine Entwickler erforderlich. Mit 14 produktionsreifen Layouts, Echtzeit-Sandboxed-Vorschau und einem sicheren Entwurf-Veröffentlichungs-Workflow kann Ihre Organisation eine pixelgenaue Markenkonsistenz über jeden Mandanten hinweg aufrechterhalten.",
+                  brandTitle: "Vollständige Markenidentitätskontrolle",
+                  brandContent: "Übernehmen Sie die vollständige Kontrolle über die visuelle Identität Ihrer Login-Seite. Laden Sie Firmenlogos hoch, konfigurieren Sie Farbsysteme mit Live-Vorschau, wählen Sie aus Premium Google Fonts und wenden Sie anspruchsvolle Hintergrundbehandlungen mit Verläufen, hochgeladenen Bildern und Overlay-Effekten an. Jede Änderung wird sofort in der Sandbox-Vorschau reflektiert — null Risiko für Ihre Produktions-Login-Seite.",
+                  studioTitle: "Visuelles Customization Studio",
+                  studioContent: "Das Customizer Studio bietet eine professionelle Designumgebung mit einer geteilten Benutzeroberfläche. Das linke Panel bietet tabbasierte Konfigurationsabschnitte für Erscheinungsbild, Farben, Typografie, Hintergrund und Overlay. Das rechte Panel rendert eine Live-Login-Seitenvorschau in einem sandboxed iFrame mit Geräteumschaltern für Desktop-, Tablet- und Mobile-Breakpoints. Änderungen aktualisieren sich in Echtzeit über CSS-Variablen-Injektion — was Sie sehen, ist genau das, was Ihre Benutzer erleben werden.",
+                  layoutsTitle: "14 Premium Login-Layouts",
+                  layoutsContent: "Wählen Sie aus 14 sorgfältig gestalteten Login-Layouts für jede Markenästhetik. Split-Layouts (6 Optionen) bieten ein dediziertes Branding-Panel neben dem Login-Formular — perfekt für Corporate Identity. Ganzseitige Layouts (8 Optionen) liefern immersive, moderne Erlebnisse mit Vollbild-Hintergründen, Glasmorphismus-Effekten und eleganten Kartenplatzierungen. Jedes Layout unterstützt unabhängige Hintergrund-, Overlay- und Theme-Steuerungen.",
+                  themeTitle: "Intelligentes Hell/Dunkel-Theme",
+                  themeContent: "Liefern Sie optimale Benutzererlebnisse unter allen Lichtbedingungen mit intelligenter Hell/Dunkel-Theme-Architektur. Konfigurieren Sie unabhängige Farbschemata, Formularhintergründe, Textfarben und Overlay-Effekte für jeden Modus. Das System gibt separate CSS-Variablen-Sets aus, die null visuelle Kompromisse in beiden Themes gewährleisten.",
+                  safetyTitle: "Enterprise-Grade Sicherheitsworkflow",
+                  safetyContent: "Enterprise-Login-Seiten erfordern Null-Ausfallzeit-Zuverlässigkeit. NEXORAs Customizer implementiert einen rigorosen Entwurf → Vorschau → Veröffentlichungs-Workflow mit optimistischer Nebenläufigkeitskontrolle. Jede veröffentlichte Version erstellt einen unveränderlichen Snapshot für sofortiges Rollback. Der Safe Mode bietet eine Ein-Klick-Notfallumgehung, die Plattform-Standardwerte wiederherstellt.",
+                  tenantTitle: "Multi-Mandanten-Markenisolierung",
+                  tenantContent: "Jeder Mandant arbeitet in einem vollständig isolierten Branding-Bereich. Das Premium-Corporate-Login von Mandant A hat null Einblick in die Konfiguration von Mandant B. Einstellungen sind kryptografisch an das JWT des Mandanten gebunden, was jeglichen mandantenübergreifenden Datenleck verhindert.",
+                  zeroCodeTitle: "Echte Zero-Code-Anpassung",
+                  zeroCodeContent: "Eliminieren Sie den Entwicklungsengpass vollständig. Mandanten-Administratoren können benutzerdefinierte Login-Erlebnisse in Minuten entwerfen, in der Vorschau ansehen und bereitstellen — nicht in Engineering-Sprints. Das Visual Studio übernimmt die gesamte Komplexität hinter Design-Tokens und CSS-Variablen-Pipelines.",
+                  zeroCodeTip: "Eine B2B-SaaS-Superkraft: Ihre Kunden können ihre Login-Seiten vollständig selbst branden. Ein Mandanten-Admin kann sich im Admin-Panel anmelden, das Customizer Studio öffnen, sein perfektes Login-Erlebnis gestalten und veröffentlichen — alles in unter 10 Minuten. Null Engineering-Aufwand.",
+            },
       },
 };
