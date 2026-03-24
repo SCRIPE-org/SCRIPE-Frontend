@@ -42,6 +42,7 @@ import "./features/file-upload";
 import "./features/download-export";
 import "./features/message-templates";
 import "./features/sso-oauth";
+import "./features/login-customizer";
 
 // Modules (Entitlements)
 import "./modules/entitlements-overview";
@@ -115,6 +116,7 @@ import "./commercial/audit-compliance";
 import "./commercial/real-time-capabilities";
 import "./commercial/localization-i18n";
 import "./commercial/message-templates";
+import "./commercial/login-customizer";
 
 // Security & Compliance
 import "./commercial/security-overview";

@@ -2663,5 +2663,27 @@ export const docCommEn: Record<string, any> = {
       apiTitle: "API Endpoints",
       tip: "Overrides are the most powerful tool in your sales arsenal. They let your sales team close enterprise deals in minutes — not engineering sprints.",
     },
+
+    // ─── Login Customizer ────────────────────────────────
+    loginCustomizer: {
+      title: "Login Page Customizer",
+      description: "Transform your login experience with a zero-code visual studio — 14 premium layouts, real-time preview, and enterprise-grade safety workflows.",
+      intro: "First impressions define trust. NEXORA's Login Customizer Studio empowers tenant administrators to craft stunning, brand-aligned login experiences through an intuitive visual editor — no developers required. With 14 production-ready layouts, real-time sandboxed preview, and a safe draft-publish workflow, your organization can maintain pixel-perfect brand consistency across every tenant.",
+      brandTitle: "Complete Brand Identity Control",
+      brandContent: "Take full ownership of your login page's visual identity. Upload corporate logos, configure color systems with live preview, select from premium Google Fonts, and apply sophisticated background treatments including gradients, uploaded images, and overlay effects. Every change is instantly reflected in the sandboxed preview — zero risk to your production login.",
+      studioTitle: "Visual Customization Studio",
+      studioContent: "The Customizer Studio provides a professional-grade design environment with a split-pane interface. The left panel offers tabbed configuration sections for Appearance, Colors, Typography, Background, and Overlay. The right panel renders a live login page preview in a sandboxed iframe with device toggles for desktop, tablet, and mobile breakpoints. Changes update in real-time via CSS variable injection — what you see is exactly what your users will experience.",
+      layoutsTitle: "14 Premium Login Layouts",
+      layoutsContent: "Choose from 14 meticulously crafted login layouts designed for every brand aesthetic. Split layouts (6 options) feature a dedicated branding panel alongside the login form — perfect for corporate identity with logo, headline, and feature highlights. Full-page layouts (8 options) deliver immersive, modern experiences with full-viewport backgrounds, glass-morphism effects, and elegant card placements. Every layout supports independent background, overlay, and theme controls.",
+      themeTitle: "Intelligent Light/Dark Theme",
+      themeContent: "Deliver optimal user experiences across all lighting conditions with intelligent light/dark theme architecture. Configure independent color schemes, form backgrounds, text colors, and overlay effects for each mode. The system emits separate CSS variable sets ensuring zero visual compromise in either theme. Users experience seamless transitions that respect their system preferences.",
+      safetyTitle: "Enterprise-Grade Safety Workflow",
+      safetyContent: "Enterprise login pages demand zero-downtime reliability. NEXORA's Customizer implements a rigorous Draft → Preview → Publish workflow backed by optimistic concurrency control. Every published version creates an immutable snapshot for instant rollback. Safe Mode provides a one-click emergency bypass that restores platform defaults. Every change is captured in the audit trail with full before/after snapshots.",
+      tenantTitle: "Multi-Tenant Brand Isolation",
+      tenantContent: "Each tenant operates in a completely isolated branding realm. Tenant A's premium corporate login has zero visibility into Tenant B's configuration. Settings are cryptographically scoped to the tenant's JWT, preventing any cross-tenant data leakage. SuperAdmins can manage and preview any tenant's branding through the 'Enter Tenant World' capability without affecting production.",
+      zeroCodeTitle: "True Zero-Code Customization",
+      zeroCodeContent: "Eliminate the development bottleneck entirely. Tenant administrators can design, preview, and deploy custom login experiences in minutes — not engineering sprints. The visual studio handles all complexity behind design tokens and CSS variable pipelines. No HTML, no CSS, no JavaScript knowledge required. Changes are validated, sandboxed, and reversible by design.",
+      zeroCodeTip: "A B2B SaaS super-power: Your customers can fully brand their login pages themselves. A tenant admin can log into the Admin Panel, open the Customizer Studio, design their perfect login experience, and publish — all in under 10 minutes. Zero engineering involvement.",
+    },
   },
 };

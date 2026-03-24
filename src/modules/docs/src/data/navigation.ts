@@ -71,6 +71,7 @@ export const navigationData: DocCategoryData[] = [
       { id: "feat-download", titleKey: "features.downloadExport.title", slug: "features/download-export", order: 12 },
       { id: "feat-templates", titleKey: "features.messageTemplates.title", slug: "features/message-templates", order: 13 },
       { id: "feat-sso", titleKey: "features.ssoOauth.title", slug: "features/sso-oauth", order: 14 },
+      { id: "feat-login-customizer", titleKey: "features.loginCustomizer.title", slug: "features/login-customizer", order: 15 },
     ],
   },
 
@@ -227,6 +228,7 @@ export const navigationData: DocCategoryData[] = [
       { id: "comm-ent-realtime", titleKey: "commercial.realTimeCapabilities.title", slug: "commercial/real-time-capabilities", order: 4 },
       { id: "comm-ent-localization", titleKey: "commercial.localizationI18n.title", slug: "commercial/localization-i18n", order: 5 },
       { id: "comm-ent-templates", titleKey: "commercial.messageTemplates.title", slug: "commercial/message-templates", order: 6 },
+      { id: "comm-ent-login-customizer", titleKey: "commercial.loginCustomizer.title", slug: "commercial/login-customizer", order: 7 },
     ],
   },
 
