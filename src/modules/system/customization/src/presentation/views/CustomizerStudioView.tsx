@@ -19,6 +19,7 @@ import { StudioSidebar } from "../components/StudioSidebar";
 import { StudioPreview } from "../components/StudioPreview";
 import { Loader2, Building2 } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
+import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
 
 export function CustomizerStudioView() {
   const { t } = useI18n();
@@ -44,12 +45,9 @@ export function CustomizerStudioView() {
     });
   }, [vm.draft, bridge.sendDraft, vm.buildDraftJson, vm.buildSlotConfigJson]);
 
-  // Reset preview when discarding
-  useEffect(() => {
-    if (!vm.isDirty && bridge.isPreviewReady) {
-      bridge.resetPreview();
-    }
-  }, [vm.isDirty, bridge.isPreviewReady, bridge.resetPreview]);
+  // Note: No resetPreview effect needed — the discard mutation resets draft state
+  // to live branding, which triggers the draft sync effect above to send the
+  // correct config to the iframe automatically.
 
   // Loading state — waiting for branding query to resolve
   if (vm.isLoading) {
@@ -121,6 +119,20 @@ export function CustomizerStudioView() {
           onIframeLoad={bridge.handleIframeLoad}
         />
       </div>
+
+      {/* Discard Confirmation Dialog */}
+      <ConfirmationDialog
+        open={vm.showDiscardConfirm}
+        onOpenChange={(open) => !open && vm.cancelDiscard()}
+        variant="warning"
+        title={t("studio.discardConfirmTitle")}
+        description={t("studio.discardConfirmDesc")}
+        confirmText={t("studio.discardConfirmAction")}
+        cancelText={t("common.cancel")}
+        onConfirm={vm.confirmDiscard}
+        onCancel={vm.cancelDiscard}
+        isLoading={vm.isDiscarding}
+      />
     </div>
   );
 }

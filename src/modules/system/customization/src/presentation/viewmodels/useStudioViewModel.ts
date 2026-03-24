@@ -197,128 +197,136 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
   const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
   const [deviceSize, setDeviceSize] = useState<DeviceSize>("desktop");
   const [activePanel, setActivePanel] = useState<StudioPanel>("layout");
+  const [showDiscardConfirm, setShowDiscardConfirm] = useState(false);
   const autoSaveTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+
+  // ── Build draft from branding data (reused by init + discard) ──
+  const buildDraftFromBranding = useCallback((brandingData: TenantBrandingData, useDraft = true): StudioDraft => {
+    const live = brandingData.loginBrandingJson ? JSON.parse(brandingData.loginBrandingJson) : {};
+    const draftJson = useDraft && (brandingData as any).draftBrandingJson
+      ? JSON.parse((brandingData as any).draftBrandingJson) : null;
+
+    const source = draftJson || live;
+    const tokens = source.tokens || {};
+    const slotRaw = brandingData.slotConfigJson || (brandingData as any).slotConfigJson;
+
+    return {
+      layout: source.layout || "split-right",
+      headline: source.headline || "",
+      subtitle: source.subtitle || "",
+      companyName: source.companyName || brandingData.companyName || "",
+      logoUrl: source.logoUrl || brandingData.logoUrl || "",
+      faviconUrl: source.faviconUrl || (brandingData as any).faviconUrl || "",
+      copyrightText: source.copyrightText || "",
+      // Colors
+      primaryColor: tokens["color.primary"] || brandingData.primaryColor || DEFAULT_DRAFT.primaryColor,
+      secondaryColor: tokens["color.secondary"] || brandingData.secondaryColor || DEFAULT_DRAFT.secondaryColor,
+      bgColor: tokens["color.background"] || DEFAULT_DRAFT.bgColor,
+      surfaceColor: tokens["color.surface"] || DEFAULT_DRAFT.surfaceColor,
+      textColor: tokens["color.text"] || DEFAULT_DRAFT.textColor,
+      mutedColor: tokens["color.textMuted"] || DEFAULT_DRAFT.mutedColor,
+      borderColor: tokens["color.border"] || DEFAULT_DRAFT.borderColor,
+      errorColor: tokens["color.error"] || DEFAULT_DRAFT.errorColor,
+      successColor: tokens["color.success"] || DEFAULT_DRAFT.successColor,
+      themeMode: source.themeMode || "unified",
+      darkPrimaryColor: tokens["dark.color.primary"] || DEFAULT_DRAFT.darkPrimaryColor,
+      darkSecondaryColor: tokens["dark.color.secondary"] || DEFAULT_DRAFT.darkSecondaryColor,
+      darkBgColor: tokens["dark.color.background"] || DEFAULT_DRAFT.darkBgColor,
+      darkSurfaceColor: tokens["dark.color.surface"] || DEFAULT_DRAFT.darkSurfaceColor,
+      darkTextColor: tokens["dark.color.text"] || DEFAULT_DRAFT.darkTextColor,
+      darkMutedColor: tokens["dark.color.textMuted"] || DEFAULT_DRAFT.darkMutedColor,
+      darkBorderColor: tokens["dark.color.border"] || DEFAULT_DRAFT.darkBorderColor,
+      darkErrorColor: tokens["dark.color.error"] || DEFAULT_DRAFT.darkErrorColor,
+      darkSuccessColor: tokens["dark.color.success"] || DEFAULT_DRAFT.darkSuccessColor,
+      // Typography
+      fontFamily: tokens["font.body"] || DEFAULT_DRAFT.fontFamily,
+      fontFamilyAr: tokens["font.bodyAr"] || DEFAULT_DRAFT.fontFamilyAr,
+      headingFont: tokens["font.heading"] || "",
+      headingSize: parseInt(tokens["font.size.headline"] || "") || DEFAULT_DRAFT.headingSize,
+      bodySize: parseInt(tokens["font.size.subtitle"] || "") || DEFAULT_DRAFT.bodySize,
+      headingWeight: parseInt(tokens["font.weight.heading"] || "") || DEFAULT_DRAFT.headingWeight,
+      bodyWeight: parseInt(tokens["font.weight.body"] || "") || DEFAULT_DRAFT.bodyWeight,
+      lineHeight: parseFloat(tokens["font.lineHeight"] || "") || DEFAULT_DRAFT.lineHeight,
+      letterSpacing: parseFloat(tokens["font.letterSpacing"] || "") || DEFAULT_DRAFT.letterSpacing,
+      // Background
+      bgType: source.bgType || "solid",
+      bgGradientDirection: source.bgGradientDirection || DEFAULT_DRAFT.bgGradientDirection,
+      bgGradientFrom: source.bgGradientFrom || DEFAULT_DRAFT.bgGradientFrom,
+      bgGradientTo: source.bgGradientTo || DEFAULT_DRAFT.bgGradientTo,
+      bgImageUrl: tokens["bg.image"] || "",
+      bgImageFit: source.bgImageFit || DEFAULT_DRAFT.bgImageFit,
+      bgImagePosition: source.bgImagePosition || DEFAULT_DRAFT.bgImagePosition,
+      bgOverlayEnabled: source.bgOverlayEnabled ?? false,
+      bgOverlayColor: source.bgOverlayColor || DEFAULT_DRAFT.bgOverlayColor,
+      bgOverlayOpacity: parseFloat(tokens["overlay.opacity"] || "") || DEFAULT_DRAFT.bgOverlayOpacity,
+      bgBlur: parseInt(source.bgBlur || "") || DEFAULT_DRAFT.bgBlur,
+      // Dark background
+      darkBgType: source.darkBgType || DEFAULT_DRAFT.darkBgType,
+      darkBgGradientDirection: source.darkBgGradientDirection || DEFAULT_DRAFT.darkBgGradientDirection,
+      darkBgGradientFrom: source.darkBgGradientFrom || DEFAULT_DRAFT.darkBgGradientFrom,
+      darkBgGradientTo: source.darkBgGradientTo || DEFAULT_DRAFT.darkBgGradientTo,
+      darkBgImageUrl: tokens["dark.bg.image"] || source.darkBgImageUrl || "",
+      darkBgImageFit: source.darkBgImageFit || DEFAULT_DRAFT.darkBgImageFit,
+      darkBgImagePosition: source.darkBgImagePosition || DEFAULT_DRAFT.darkBgImagePosition,
+      darkBgOverlayEnabled: source.darkBgOverlayEnabled ?? false,
+      darkBgOverlayColor: source.darkBgOverlayColor || DEFAULT_DRAFT.darkBgOverlayColor,
+      darkBgOverlayOpacity: parseFloat(tokens["dark.overlay.opacity"] || "") || DEFAULT_DRAFT.darkBgOverlayOpacity,
+      darkBgBlur: parseInt(source.darkBgBlur || "") || DEFAULT_DRAFT.darkBgBlur,
+      // Split panel bg — LIGHT
+      splitBgMode: source.splitBgMode || DEFAULT_DRAFT.splitBgMode,
+      panelBgType: source.panelBgType || DEFAULT_DRAFT.panelBgType,
+      panelBgColor: tokens["panel.color.background"] || source.panelBgColor || DEFAULT_DRAFT.panelBgColor,
+      panelBgGradientDirection: source.panelBgGradientDirection || DEFAULT_DRAFT.panelBgGradientDirection,
+      panelBgGradientFrom: source.panelBgGradientFrom || DEFAULT_DRAFT.panelBgGradientFrom,
+      panelBgGradientTo: source.panelBgGradientTo || DEFAULT_DRAFT.panelBgGradientTo,
+      panelBgImageUrl: tokens["panel.bg.image"] || source.panelBgImageUrl || "",
+      panelBgImageFit: source.panelBgImageFit || DEFAULT_DRAFT.panelBgImageFit,
+      panelBgImagePosition: source.panelBgImagePosition || DEFAULT_DRAFT.panelBgImagePosition,
+      panelBgOverlayEnabled: source.panelBgOverlayEnabled ?? false,
+      panelBgOverlayColor: source.panelBgOverlayColor || DEFAULT_DRAFT.panelBgOverlayColor,
+      panelBgOverlayOpacity: parseFloat(source.panelBgOverlayOpacity || "") || DEFAULT_DRAFT.panelBgOverlayOpacity,
+      panelBgBlur: parseInt(source.panelBgBlur || "") || DEFAULT_DRAFT.panelBgBlur,
+      // Split panel bg — DARK
+      darkPanelBgType: source.darkPanelBgType || DEFAULT_DRAFT.darkPanelBgType,
+      darkPanelBgColor: tokens["dark.panel.color.background"] || source.darkPanelBgColor || DEFAULT_DRAFT.darkPanelBgColor,
+      darkPanelBgGradientDirection: source.darkPanelBgGradientDirection || DEFAULT_DRAFT.darkPanelBgGradientDirection,
+      darkPanelBgGradientFrom: source.darkPanelBgGradientFrom || DEFAULT_DRAFT.darkPanelBgGradientFrom,
+      darkPanelBgGradientTo: source.darkPanelBgGradientTo || DEFAULT_DRAFT.darkPanelBgGradientTo,
+      darkPanelBgImageUrl: tokens["dark.panel.bg.image"] || source.darkPanelBgImageUrl || "",
+      darkPanelBgImageFit: source.darkPanelBgImageFit || DEFAULT_DRAFT.darkPanelBgImageFit,
+      darkPanelBgImagePosition: source.darkPanelBgImagePosition || DEFAULT_DRAFT.darkPanelBgImagePosition,
+      darkPanelBgOverlayEnabled: source.darkPanelBgOverlayEnabled ?? false,
+      darkPanelBgOverlayColor: source.darkPanelBgOverlayColor || DEFAULT_DRAFT.darkPanelBgOverlayColor,
+      darkPanelBgOverlayOpacity: parseFloat(source.darkPanelBgOverlayOpacity || "") || DEFAULT_DRAFT.darkPanelBgOverlayOpacity,
+      darkPanelBgBlur: parseInt(source.darkPanelBgBlur || "") || DEFAULT_DRAFT.darkPanelBgBlur,
+      // Spacing
+      borderRadius: parseInt(tokens["radius.card"] || "") || DEFAULT_DRAFT.borderRadius,
+      formWidth: parseInt(source.formWidth || "") || DEFAULT_DRAFT.formWidth,
+      cardPadding: parseInt(source.cardPadding || "") || DEFAULT_DRAFT.cardPadding,
+      elementGap: parseInt(source.elementGap || "") || DEFAULT_DRAFT.elementGap,
+      inputHeight: parseInt(source.inputHeight || "") || DEFAULT_DRAFT.inputHeight,
+      btnRadius: parseInt(tokens["radius.button"] || "") || DEFAULT_DRAFT.btnRadius,
+      btnSize: source.btnSize || DEFAULT_DRAFT.btnSize,
+      // Slots
+      slotConfig: slotRaw ? JSON.parse(slotRaw) : { _schemaVersion: 1, slots: {} },
+      // Advanced
+      customCss: source.customCss || "",
+      safeMode: (brandingData as any).isSafeMode ?? false,
+    };
+  }, []);
 
   // ── Initialize draft from live settings ──
   useEffect(() => {
     if (!branding) return;
 
     try {
-      const live = branding.loginBrandingJson ? JSON.parse(branding.loginBrandingJson) : {};
-      const draftJson = (branding as any).draftBrandingJson
-        ? JSON.parse((branding as any).draftBrandingJson) : null;
+      const newDraft = buildDraftFromBranding(branding, true);
+      setDraft(newDraft);
 
-      const source = draftJson || live;
-      const tokens = source.tokens || {};
-      const slotRaw = branding.slotConfigJson || (branding as any).slotConfigJson;
-
-      setDraft({
-        layout: source.layout || "split-right",
-        headline: source.headline || "",
-        subtitle: source.subtitle || "",
-        companyName: source.companyName || branding.companyName || "",
-        logoUrl: source.logoUrl || branding.logoUrl || "",
-        faviconUrl: source.faviconUrl || (branding as any).faviconUrl || "",
-        copyrightText: source.copyrightText || "",
-        // Colors
-        primaryColor: tokens["color.primary"] || branding.primaryColor || DEFAULT_DRAFT.primaryColor,
-        secondaryColor: tokens["color.secondary"] || branding.secondaryColor || DEFAULT_DRAFT.secondaryColor,
-        bgColor: tokens["color.background"] || DEFAULT_DRAFT.bgColor,
-        surfaceColor: tokens["color.surface"] || DEFAULT_DRAFT.surfaceColor,
-        textColor: tokens["color.text"] || DEFAULT_DRAFT.textColor,
-        mutedColor: tokens["color.textMuted"] || DEFAULT_DRAFT.mutedColor,
-        borderColor: tokens["color.border"] || DEFAULT_DRAFT.borderColor,
-        errorColor: tokens["color.error"] || DEFAULT_DRAFT.errorColor,
-        successColor: tokens["color.success"] || DEFAULT_DRAFT.successColor,
-        themeMode: source.themeMode || "unified",
-        darkPrimaryColor: tokens["dark.color.primary"] || DEFAULT_DRAFT.darkPrimaryColor,
-        darkSecondaryColor: tokens["dark.color.secondary"] || DEFAULT_DRAFT.darkSecondaryColor,
-        darkBgColor: tokens["dark.color.background"] || DEFAULT_DRAFT.darkBgColor,
-        darkSurfaceColor: tokens["dark.color.surface"] || DEFAULT_DRAFT.darkSurfaceColor,
-        darkTextColor: tokens["dark.color.text"] || DEFAULT_DRAFT.darkTextColor,
-        darkMutedColor: tokens["dark.color.textMuted"] || DEFAULT_DRAFT.darkMutedColor,
-        darkBorderColor: tokens["dark.color.border"] || DEFAULT_DRAFT.darkBorderColor,
-        darkErrorColor: tokens["dark.color.error"] || DEFAULT_DRAFT.darkErrorColor,
-        darkSuccessColor: tokens["dark.color.success"] || DEFAULT_DRAFT.darkSuccessColor,
-        // Typography
-        fontFamily: tokens["font.body"] || DEFAULT_DRAFT.fontFamily,
-        fontFamilyAr: tokens["font.bodyAr"] || DEFAULT_DRAFT.fontFamilyAr,
-        headingFont: tokens["font.heading"] || "",
-        headingSize: parseInt(tokens["font.size.headline"] || "") || DEFAULT_DRAFT.headingSize,
-        bodySize: parseInt(tokens["font.size.subtitle"] || "") || DEFAULT_DRAFT.bodySize,
-        headingWeight: parseInt(tokens["font.weight.heading"] || "") || DEFAULT_DRAFT.headingWeight,
-        bodyWeight: parseInt(tokens["font.weight.body"] || "") || DEFAULT_DRAFT.bodyWeight,
-        lineHeight: parseFloat(tokens["font.lineHeight"] || "") || DEFAULT_DRAFT.lineHeight,
-        letterSpacing: parseFloat(tokens["font.letterSpacing"] || "") || DEFAULT_DRAFT.letterSpacing,
-        // Background
-        bgType: source.bgType || "solid",
-        bgGradientDirection: source.bgGradientDirection || DEFAULT_DRAFT.bgGradientDirection,
-        bgGradientFrom: source.bgGradientFrom || DEFAULT_DRAFT.bgGradientFrom,
-        bgGradientTo: source.bgGradientTo || DEFAULT_DRAFT.bgGradientTo,
-        bgImageUrl: tokens["bg.image"] || "",
-        bgImageFit: source.bgImageFit || DEFAULT_DRAFT.bgImageFit,
-        bgImagePosition: source.bgImagePosition || DEFAULT_DRAFT.bgImagePosition,
-        bgOverlayEnabled: source.bgOverlayEnabled ?? false,
-        bgOverlayColor: source.bgOverlayColor || DEFAULT_DRAFT.bgOverlayColor,
-        bgOverlayOpacity: parseFloat(tokens["overlay.opacity"] || "") || DEFAULT_DRAFT.bgOverlayOpacity,
-        bgBlur: parseInt(source.bgBlur || "") || DEFAULT_DRAFT.bgBlur,
-        // Dark background
-        darkBgType: source.darkBgType || DEFAULT_DRAFT.darkBgType,
-        darkBgGradientDirection: source.darkBgGradientDirection || DEFAULT_DRAFT.darkBgGradientDirection,
-        darkBgGradientFrom: source.darkBgGradientFrom || DEFAULT_DRAFT.darkBgGradientFrom,
-        darkBgGradientTo: source.darkBgGradientTo || DEFAULT_DRAFT.darkBgGradientTo,
-        darkBgImageUrl: tokens["dark.bg.image"] || source.darkBgImageUrl || "",
-        darkBgImageFit: source.darkBgImageFit || DEFAULT_DRAFT.darkBgImageFit,
-        darkBgImagePosition: source.darkBgImagePosition || DEFAULT_DRAFT.darkBgImagePosition,
-        darkBgOverlayEnabled: source.darkBgOverlayEnabled ?? false,
-        darkBgOverlayColor: source.darkBgOverlayColor || DEFAULT_DRAFT.darkBgOverlayColor,
-        darkBgOverlayOpacity: parseFloat(tokens["dark.overlay.opacity"] || "") || DEFAULT_DRAFT.darkBgOverlayOpacity,
-        darkBgBlur: parseInt(source.darkBgBlur || "") || DEFAULT_DRAFT.darkBgBlur,
-        // Split panel bg — LIGHT
-        splitBgMode: source.splitBgMode || DEFAULT_DRAFT.splitBgMode,
-        panelBgType: source.panelBgType || DEFAULT_DRAFT.panelBgType,
-        panelBgColor: tokens["panel.color.background"] || source.panelBgColor || DEFAULT_DRAFT.panelBgColor,
-        panelBgGradientDirection: source.panelBgGradientDirection || DEFAULT_DRAFT.panelBgGradientDirection,
-        panelBgGradientFrom: source.panelBgGradientFrom || DEFAULT_DRAFT.panelBgGradientFrom,
-        panelBgGradientTo: source.panelBgGradientTo || DEFAULT_DRAFT.panelBgGradientTo,
-        panelBgImageUrl: tokens["panel.bg.image"] || source.panelBgImageUrl || "",
-        panelBgImageFit: source.panelBgImageFit || DEFAULT_DRAFT.panelBgImageFit,
-        panelBgImagePosition: source.panelBgImagePosition || DEFAULT_DRAFT.panelBgImagePosition,
-        panelBgOverlayEnabled: source.panelBgOverlayEnabled ?? false,
-        panelBgOverlayColor: source.panelBgOverlayColor || DEFAULT_DRAFT.panelBgOverlayColor,
-        panelBgOverlayOpacity: parseFloat(source.panelBgOverlayOpacity || "") || DEFAULT_DRAFT.panelBgOverlayOpacity,
-        panelBgBlur: parseInt(source.panelBgBlur || "") || DEFAULT_DRAFT.panelBgBlur,
-        // Split panel bg — DARK
-        darkPanelBgType: source.darkPanelBgType || DEFAULT_DRAFT.darkPanelBgType,
-        darkPanelBgColor: tokens["dark.panel.color.background"] || source.darkPanelBgColor || DEFAULT_DRAFT.darkPanelBgColor,
-        darkPanelBgGradientDirection: source.darkPanelBgGradientDirection || DEFAULT_DRAFT.darkPanelBgGradientDirection,
-        darkPanelBgGradientFrom: source.darkPanelBgGradientFrom || DEFAULT_DRAFT.darkPanelBgGradientFrom,
-        darkPanelBgGradientTo: source.darkPanelBgGradientTo || DEFAULT_DRAFT.darkPanelBgGradientTo,
-        darkPanelBgImageUrl: tokens["dark.panel.bg.image"] || source.darkPanelBgImageUrl || "",
-        darkPanelBgImageFit: source.darkPanelBgImageFit || DEFAULT_DRAFT.darkPanelBgImageFit,
-        darkPanelBgImagePosition: source.darkPanelBgImagePosition || DEFAULT_DRAFT.darkPanelBgImagePosition,
-        darkPanelBgOverlayEnabled: source.darkPanelBgOverlayEnabled ?? false,
-        darkPanelBgOverlayColor: source.darkPanelBgOverlayColor || DEFAULT_DRAFT.darkPanelBgOverlayColor,
-        darkPanelBgOverlayOpacity: parseFloat(source.darkPanelBgOverlayOpacity || "") || DEFAULT_DRAFT.darkPanelBgOverlayOpacity,
-        darkPanelBgBlur: parseInt(source.darkPanelBgBlur || "") || DEFAULT_DRAFT.darkPanelBgBlur,
-        // Spacing
-        borderRadius: parseInt(tokens["radius.card"] || "") || DEFAULT_DRAFT.borderRadius,
-        formWidth: parseInt(source.formWidth || "") || DEFAULT_DRAFT.formWidth,
-        cardPadding: parseInt(source.cardPadding || "") || DEFAULT_DRAFT.cardPadding,
-        elementGap: parseInt(source.elementGap || "") || DEFAULT_DRAFT.elementGap,
-        inputHeight: parseInt(source.inputHeight || "") || DEFAULT_DRAFT.inputHeight,
-        btnRadius: parseInt(tokens["radius.button"] || "") || DEFAULT_DRAFT.btnRadius,
-        btnSize: source.btnSize || DEFAULT_DRAFT.btnSize,
-        // Slots
-        slotConfig: slotRaw ? JSON.parse(slotRaw) : { _schemaVersion: 1, slots: {} },
-        // Advanced
-        customCss: source.customCss || "",
-        safeMode: (branding as any).isSafeMode ?? false,
-      });
-
-      if (draftJson) setIsDirty(true);
+      const hasDraft = !!(branding as any).draftBrandingJson;
+      if (hasDraft) setIsDirty(true);
     } catch { /* invalid JSON — use defaults */ }
-  }, [branding]);
+  }, [branding, buildDraftFromBranding]);
 
   // ── Update any draft field ──
   const updateDraft = useCallback(<K extends keyof StudioDraft>(field: K, value: StudioDraft[K]) => {
@@ -589,26 +597,18 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
     },
   });
 
-  // ── Discard ──
+  // ── Discard (with confirmation) ──
   const discardMutation = useMutation({
     mutationFn: () => repository.discardDraft(),
     onSuccess: () => {
       toastSuccess({ title: t("studio.discardSuccess") || "Draft discarded" });
       setIsDirty(false);
-      if (branding?.loginBrandingJson) {
+      setShowDiscardConfirm(false);
+      // Restore to currently published design (all fields, not just a few)
+      if (branding) {
         try {
-          const live = JSON.parse(branding.loginBrandingJson);
-          const tokens = live.tokens || {};
-          setDraft({
-            ...DEFAULT_DRAFT,
-            layout: live.layout || "split-right",
-            headline: live.headline || "",
-            subtitle: live.subtitle || "",
-            companyName: live.companyName || branding.companyName || "",
-            logoUrl: live.logoUrl || branding.logoUrl || "",
-            primaryColor: tokens["color.primary"] || branding.primaryColor || DEFAULT_DRAFT.primaryColor,
-            secondaryColor: tokens["color.secondary"] || branding.secondaryColor || DEFAULT_DRAFT.secondaryColor,
-          });
+          const restored = buildDraftFromBranding(branding, false); // false = use live only, skip draft
+          setDraft(restored);
         } catch { setDraft(DEFAULT_DRAFT); }
       } else {
         setDraft(DEFAULT_DRAFT);
@@ -618,9 +618,15 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
       queryClient.invalidateQueries({ queryKey: ["customization"] });
     },
     onError: (error: Error) => {
+      setShowDiscardConfirm(false);
       toastError({ title: t("studio.discardFailed") || "Discard failed", description: error.message });
     },
   });
+
+  // Confirmation handlers for discard
+  const requestDiscard = useCallback(() => setShowDiscardConfirm(true), []);
+  const cancelDiscard = useCallback(() => setShowDiscardConfirm(false), []);
+  const confirmDiscard = useCallback(() => discardMutation.mutate(), [discardMutation]);
 
   return {
     t,
@@ -648,7 +654,10 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
     isPublishing: publishMutation.isPending,
     saveDraft: () => saveDraftMutation.mutate(),
     isSavingDraft: saveDraftMutation.isPending,
-    discard: () => discardMutation.mutate(),
+    discard: requestDiscard,
+    confirmDiscard,
+    cancelDiscard,
+    showDiscardConfirm,
     isDiscarding: discardMutation.isPending,
     // Loading & context
     isLoading: brandingQuery.isLoading,

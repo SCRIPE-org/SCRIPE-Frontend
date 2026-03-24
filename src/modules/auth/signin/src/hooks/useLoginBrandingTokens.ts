@@ -175,6 +175,73 @@ export function useLoginBrandingTokens({
       cssBlocks.push(`.dark {\n${darkRules.join("\n")}\n}`);
     }
 
+    // ─── Bridge: Map --login-* tokens → shadcn CSS vars scoped to .login-page ───
+    // CRITICAL: shadcn CSS vars use HSL channel format (e.g. "222 47% 11%")
+    // and are consumed via hsl(var(--primary)). Tokens store hex values (#f59e0b),
+    // so we MUST convert hex → HSL channels before injecting.
+    const hexToHslValues = (hex: string): string | null => {
+      if (!hex || !hex.startsWith("#")) return null;
+      const r = parseInt(hex.slice(1, 3), 16) / 255;
+      const g = parseInt(hex.slice(3, 5), 16) / 255;
+      const b = parseInt(hex.slice(5, 7), 16) / 255;
+      const max = Math.max(r, g, b), min = Math.min(r, g, b);
+      const l = (max + min) / 2;
+      if (max === min) return `0 0% ${Math.round(l * 100)}%`;
+      const d = max - min;
+      const s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+      let h = 0;
+      if (max === r) h = ((g - b) / d + (g < b ? 6 : 0)) * 60;
+      else if (max === g) h = ((b - r) / d + 2) * 60;
+      else h = ((r - g) / d + 4) * 60;
+      return `${Math.round(h)} ${Math.round(s * 100)}% ${Math.round(l * 100)}%`;
+    };
+
+    const bridgeRules: string[] = [];
+    const darkBridgeRules: string[] = [];
+
+    // Helper: push HSL-converted value
+    const pushHsl = (arr: string[], varName: string, hex: string | undefined) => {
+      if (!hex) return;
+      const hsl = hexToHslValues(hex);
+      if (hsl) arr.push(`  ${varName}: ${hsl};`);
+    };
+
+    // Light mode bridge
+    pushHsl(bridgeRules, "--primary", tokens["color.primary"]);
+    pushHsl(bridgeRules, "--secondary", tokens["color.secondary"]);
+    pushHsl(bridgeRules, "--background", tokens["color.background"]);
+    pushHsl(bridgeRules, "--card", tokens["color.surface"]);
+    pushHsl(bridgeRules, "--foreground", tokens["color.text"]);
+    pushHsl(bridgeRules, "--card-foreground", tokens["color.text"]);
+    pushHsl(bridgeRules, "--muted-foreground", tokens["color.textMuted"]);
+    pushHsl(bridgeRules, "--border", tokens["color.border"]);
+    pushHsl(bridgeRules, "--input", tokens["color.border"]);
+    pushHsl(bridgeRules, "--destructive", tokens["color.error"]);
+    pushHsl(bridgeRules, "--accent", tokens["color.accent"]);
+    pushHsl(bridgeRules, "--ring", tokens["color.primary"]);
+    // Primary foreground (white for contrast on colored buttons)
+    if (tokens["color.primary"]) bridgeRules.push(`  --primary-foreground: 0 0% 100%;`);
+
+    // Dark mode bridge
+    pushHsl(darkBridgeRules, "--primary", tokens["dark.color.primary"]);
+    pushHsl(darkBridgeRules, "--secondary", tokens["dark.color.secondary"]);
+    pushHsl(darkBridgeRules, "--background", tokens["dark.color.background"]);
+    pushHsl(darkBridgeRules, "--card", tokens["dark.color.surface"]);
+    pushHsl(darkBridgeRules, "--foreground", tokens["dark.color.text"]);
+    pushHsl(darkBridgeRules, "--card-foreground", tokens["dark.color.text"]);
+    pushHsl(darkBridgeRules, "--muted-foreground", tokens["dark.color.textMuted"]);
+    pushHsl(darkBridgeRules, "--border", tokens["dark.color.border"]);
+    pushHsl(darkBridgeRules, "--input", tokens["dark.color.border"]);
+    pushHsl(darkBridgeRules, "--destructive", tokens["dark.color.error"]);
+    pushHsl(darkBridgeRules, "--ring", tokens["dark.color.primary"]);
+    if (tokens["dark.color.primary"]) darkBridgeRules.push(`  --primary-foreground: 0 0% 100%;`);
+
+    if (bridgeRules.length > 0) {
+      cssBlocks.push(`.login-page {\n${bridgeRules.join("\n")}\n}`);
+    }
+    if (darkBridgeRules.length > 0) {
+      cssBlocks.push(`.dark .login-page {\n${darkBridgeRules.join("\n")}\n}`);
+    }
     // ─── Base Stylesheet: .login-* class definitions ───
     // These use CSS vars so custom CSS can override naturally (no !important needed)
     cssBlocks.push(`/* ═══ Login Base Stylesheet ═══ */

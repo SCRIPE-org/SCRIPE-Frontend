@@ -110,6 +110,9 @@ export function useTenantResolution(): TenantResolutionResult {
                               setBranding(data);
 
                               // ── Pre-auth prefs sync: write nexora_pref_* from DashboardThemeJson ──
+                              // Only writes reference keys (nexora_pref_*) — NOT the active "theme"/"language" keys.
+                              // The active keys are set by LoginView's one-time initial sync effect,
+                              // so manual changes from the language/theme switcher are NOT overridden.
                               if (data.dashboardThemeJson) {
                                     try {
                                           const prefs = JSON.parse(data.dashboardThemeJson);
@@ -119,26 +122,6 @@ export function useTenantResolution(): TenantResolutionResult {
                                                 localStorage.setItem(STORAGE_KEYS.PREF_SIDEBAR_COLLAPSED, String(prefs.sidebarCollapsed));
                                           // Full dashboard settings for settings-provider Layer 3
                                           localStorage.setItem(STORAGE_KEYS.PREF_DASHBOARD_SETTINGS, data.dashboardThemeJson);
-
-                                          // Apply theme immediately from system/tenant defaults
-                                          if (prefs.theme) {
-                                                localStorage.setItem("theme", prefs.theme);
-                                                document.documentElement.classList.remove("light", "dark");
-                                                if (prefs.theme === "system") {
-                                                      // Apply system preference
-                                                      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-                                                      document.documentElement.classList.add(prefersDark ? "dark" : "light");
-                                                } else {
-                                                      document.documentElement.classList.add(prefs.theme);
-                                                }
-                                          }
-
-                                          // Apply language immediately from system/tenant defaults
-                                          if (prefs.language) {
-                                                localStorage.setItem(STORAGE_KEYS.LANGUAGE, prefs.language);
-                                                document.documentElement.setAttribute("dir", prefs.language === "ar" ? "rtl" : "ltr");
-                                                document.documentElement.setAttribute("lang", prefs.language);
-                                          }
                                     } catch { /* invalid JSON — skip */ }
                               }
                         }

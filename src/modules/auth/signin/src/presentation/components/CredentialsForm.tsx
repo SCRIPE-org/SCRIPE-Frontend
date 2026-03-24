@@ -28,7 +28,7 @@ export function CredentialsForm({
             <form
                   onSubmit={(e) => { e.preventDefault(); if (!isLoading && isFormValid) handleLogin(); }}
                   className="flex flex-col"
-                  style={{ gap: "var(--login-element-gap, 24px)", fontFamily: "var(--login-font-body, inherit)" }}
+                  style={{ gap: "var(--login-element-gap, 24px)" }}
             >
                   {/* Error Alert */}
                   {error && (

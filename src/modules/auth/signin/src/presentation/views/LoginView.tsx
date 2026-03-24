@@ -44,21 +44,20 @@ export function LoginView() {
   // Pre-auth domain resolution for white-label branding
   const { tenantId, branding, isResolved, isLoading: isTenantLoading } = useTenantResolution();
 
-  // ── Sync resolved language with i18n provider ──
-  // The resolve hook writes language to localStorage, but i18n provider reads
-  // localStorage only once on mount. This effect pushes the resolved language
-  // into the i18n React state so UI renders in the correct language.
+  // ── One-time sync: apply resolved preferences only on initial load ──
+  // After this initial sync, user's manual language/theme switches take precedence.
+  const hasAppliedInitialPrefs = useRef(false);
   useEffect(() => {
+    if (hasAppliedInitialPrefs.current) return; // Already applied — respect manual changes
     if (!branding?.dashboardThemeJson) return;
     try {
       const prefs = JSON.parse(branding.dashboardThemeJson);
       if (prefs.language && (prefs.language === "ar" || prefs.language === "en")) {
-        if (prefs.language !== language) {
-          setLanguage(prefs.language);
-        }
+        setLanguage(prefs.language);
       }
+      hasAppliedInitialPrefs.current = true;
     } catch { /* skip invalid JSON */ }
-  }, [branding?.dashboardThemeJson, language, setLanguage]);
+  }, [branding?.dashboardThemeJson]);
 
   // ── Studio Preview Mode (§22) ──
   // When ?_preview=true, listen for postMessage draft updates from the studio
@@ -282,10 +281,15 @@ export function LoginView() {
     letterSpacing: "var(--login-letter-spacing, 0px)",
   };
 
-  // Split layouts: bg-image shows in branding panel only
+  // Split layouts: outer wrapper uses solid bg, each side manages its own
   const splitWrapperStyle: React.CSSProperties = {
     ...wrapperStyle,
-    background: "var(--login-bg, hsl(var(--background)))",
+    background: "none",
+  };
+
+  // Form side in split layouts: show bg-image + solid fallback
+  const formSideBgStyle: React.CSSProperties = {
+    background: "var(--login-bg-image, none) var(--login-bg-image-position, center)/var(--login-bg-image-fit, cover) no-repeat, var(--login-bg, hsl(var(--background)))",
   };
 
   switch (layout) {
@@ -293,7 +297,7 @@ export function LoginView() {
     case "split-left":
       return (
         <div className={`flex min-h-screen w-full ${bgStyle} login-page selection:bg-primary/20`} dir={direction} style={splitWrapperStyle}>
-          <div className="relative flex w-full flex-col items-center justify-center px-6 py-12 lg:w-1/2 xl:w-[45%]">
+          <div className="relative flex w-full flex-col items-center justify-center px-6 py-12 lg:w-1/2 xl:w-[45%]" style={formSideBgStyle}>
             {topActions}
             <MobileLogo logoSrc={logoSrc} logoAlt={logoAlt} companyName={companyName} />
             {vm.loginStep === "credentials" && (
@@ -797,7 +801,7 @@ export function LoginView() {
       return (
         <div className={`flex min-h-screen w-full ${bgStyle} login-page selection:bg-primary/20`} dir={direction} style={splitWrapperStyle}>
           <LoginBranding t={t} branding={branding} slotConfig={slotConfig} position="left" />
-          <div className="relative flex w-full flex-col items-center justify-center px-6 py-12 lg:w-1/2 xl:w-[45%]">
+          <div className="relative flex w-full flex-col items-center justify-center px-6 py-12 lg:w-1/2 xl:w-[45%]" style={formSideBgStyle}>
             {topActions}
             <MobileLogo logoSrc={logoSrc} logoAlt={logoAlt} companyName={companyName} />
             {vm.loginStep === "credentials" && (

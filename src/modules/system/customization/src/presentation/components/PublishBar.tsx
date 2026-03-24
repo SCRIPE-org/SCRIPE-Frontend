@@ -39,9 +39,9 @@ export function PublishBar({ t, isDirty, isPublishing, isDiscarding, isSavingDra
       {/* Left: Back + Title */}
       <div className="flex items-center gap-3">
         <Link
-          href="/settings"
+          href="/"
           className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
-          title={t("studio.backToSettings")}
+          title={t("studio.backToApp")}
         >
           <ArrowLeft className="h-4 w-4" />
         </Link>

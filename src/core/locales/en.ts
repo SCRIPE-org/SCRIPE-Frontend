@@ -5846,6 +5846,7 @@ export const en = {
     title: "Login Customizer Studio",
     loading: "Loading studio...",
     backToSettings: "Back to Settings",
+    backToApp: "Back to App",
     unsavedChanges: "Unsaved changes",
     publish: "Publish",
     discard: "Discard",
@@ -5853,6 +5854,9 @@ export const en = {
     publishFailed: "Failed to publish changes",
     discardSuccess: "Draft discarded. Reverted to live settings.",
     discardFailed: "Failed to discard draft",
+    discardConfirmTitle: "Discard changes?",
+    discardConfirmDesc: "All unsaved changes will be lost and the design will revert to the last published version. This action cannot be undone.",
+    discardConfirmAction: "Discard changes",
     versionConflict: "Version conflict — please reload and try again",
 
     saveDraft: "Save Draft",
