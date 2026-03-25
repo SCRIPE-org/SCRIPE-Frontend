@@ -18,21 +18,29 @@ interface CredentialsFormProps {
       togglePasswordVisibility: () => void;
       handleLogin: () => void;
       t: (key: string) => string;
+      errorAnnounce?: boolean;
 }
 
 export function CredentialsForm({
       formData, showPassword, isLoading, isFormValid, error, isRTL,
-      updateField, togglePasswordVisibility, handleLogin, t,
+      updateField, togglePasswordVisibility, handleLogin, t, errorAnnounce = true,
 }: CredentialsFormProps) {
       return (
             <form
                   onSubmit={(e) => { e.preventDefault(); if (!isLoading && isFormValid) handleLogin(); }}
                   className="flex flex-col"
                   style={{ gap: "var(--login-element-gap, 24px)" }}
+                  role="form"
+                  aria-label={t("auth.loginFormAriaLabel")}
             >
                   {/* Error Alert */}
                   {error && (
-                        <div className="rounded-xl border border-destructive/20 bg-destructive/10 p-4">
+                        <div
+                              id="login-error"
+                              className="rounded-xl border border-destructive/20 bg-destructive/10 p-4"
+                              role="alert"
+                              {...(errorAnnounce ? { "aria-live": "assertive" as const, "aria-atomic": "true" } : {})}
+                        >
                               <p className="text-sm font-medium text-destructive">{error}</p>
                         </div>
                   )}
@@ -48,6 +56,8 @@ export function CredentialsForm({
                               value={formData.username}
                               onChange={(e) => updateField("username", e.target.value)}
                               required
+                              aria-invalid={!!error || undefined}
+                              aria-describedby={error ? "login-error" : undefined}
                               className="w-full border-border bg-background px-4 text-base text-foreground placeholder:text-muted-foreground/50 focus-visible:ring-1 focus-visible:ring-primary focus-visible:border-primary transition-all shadow-sm"
                               style={{ height: "var(--login-input-height, 48px)", borderRadius: "var(--login-radius-button, 12px)" }}
                               placeholder={t("auth.usernamePlaceholder")}
@@ -68,6 +78,8 @@ export function CredentialsForm({
                                     value={formData.password}
                                     onChange={(e) => updateField("password", e.target.value)}
                                     required
+                                    aria-invalid={!!error || undefined}
+                                    aria-describedby={error ? "login-error" : undefined}
                                     className="w-full border-border bg-background px-4 pr-12 text-base text-foreground placeholder:text-muted-foreground/50 focus-visible:ring-1 focus-visible:ring-primary focus-visible:border-primary transition-all shadow-sm [&::-ms-reveal]:hidden"
                                     style={{ height: "var(--login-input-height, 48px)", borderRadius: "var(--login-radius-button, 12px)" }}
                                     placeholder="••••••••"
@@ -81,6 +93,7 @@ export function CredentialsForm({
                                     onClick={togglePasswordVisibility}
                                     disabled={isLoading}
                                     tabIndex={-1}
+                                    aria-label={showPassword ? t("auth.hidePassword") : t("auth.showPassword")}
                               >
                                     {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                               </button>

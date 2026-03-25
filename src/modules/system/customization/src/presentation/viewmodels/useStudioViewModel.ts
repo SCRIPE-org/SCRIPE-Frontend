@@ -312,6 +312,47 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
       // Advanced
       customCss: source.customCss || "",
       safeMode: (brandingData as any).isSafeMode ?? false,
+      // Accessibility
+      // Focus & Keyboard
+      a11yFocusRingEnabled: source.a11yFocusRingEnabled ?? tokens["a11y.focusRing.enabled"] !== "false",
+      a11yFocusRingColor: source.a11yFocusRingColor || tokens["a11y.focusRing.color"] || DEFAULT_DRAFT.a11yFocusRingColor,
+      a11yFocusRingWidth: parseInt(tokens["a11y.focusRing.width"] || "") || source.a11yFocusRingWidth || DEFAULT_DRAFT.a11yFocusRingWidth,
+      a11yFocusRingStyle: source.a11yFocusRingStyle || DEFAULT_DRAFT.a11yFocusRingStyle,
+      a11ySkipLinkEnabled: source.a11ySkipLinkEnabled ?? tokens["a11y.skipLink.enabled"] !== "false",
+      a11yHighlightFocus: source.a11yHighlightFocus ?? tokens["a11y.highlightFocus"] === "true",
+      // Screen Reader
+      a11yAriaLandmarks: source.a11yAriaLandmarks ?? tokens["a11y.ariaLandmarks"] !== "false",
+      a11yFormLabelsVisible: source.a11yFormLabelsVisible ?? tokens["a11y.formLabels.visible"] !== "false",
+      a11yErrorAnnounce: source.a11yErrorAnnounce ?? tokens["a11y.errorAnnounce"] !== "false",
+      a11yPageTitle: source.a11yPageTitle || tokens["a11y.pageTitle"] || "",
+      // Contrast & Colors
+      a11yHighContrastMode: source.a11yHighContrastMode ?? tokens["a11y.highContrast"] === "true",
+      a11yContrastPreset: source.a11yContrastPreset || (tokens["a11y.contrastPreset"] as any) || DEFAULT_DRAFT.a11yContrastPreset,
+      a11ySaturation: parseInt(tokens["a11y.saturation"] || "") || (source.a11ySaturation ?? DEFAULT_DRAFT.a11ySaturation),
+      a11yHighlightLinks: source.a11yHighlightLinks ?? tokens["a11y.highlightLinks"] === "true",
+      // Typography & Readability
+      a11yMinFontSize: parseInt(tokens["a11y.minFontSize"] || "") || source.a11yMinFontSize || DEFAULT_DRAFT.a11yMinFontSize,
+      a11yContentScaling: parseInt(tokens["a11y.contentScaling"] || "") || (source.a11yContentScaling ?? DEFAULT_DRAFT.a11yContentScaling),
+      a11yLineHeight: parseFloat(tokens["a11y.lineHeight"] || "") || (source.a11yLineHeight ?? DEFAULT_DRAFT.a11yLineHeight),
+      a11yLetterSpacing: parseFloat(tokens["a11y.letterSpacing"] || "") || (source.a11yLetterSpacing ?? DEFAULT_DRAFT.a11yLetterSpacing),
+      a11yWordSpacing: parseFloat(tokens["a11y.wordSpacing"] || "") || (source.a11yWordSpacing ?? DEFAULT_DRAFT.a11yWordSpacing),
+      a11yDyslexicFont: source.a11yDyslexicFont ?? tokens["a11y.dyslexicFont"] === "true",
+      a11yTextAlign: source.a11yTextAlign || (tokens["a11y.textAlign"] as any) || DEFAULT_DRAFT.a11yTextAlign,
+      // Cursor & Reading Aids
+      a11yCursorSize: source.a11yCursorSize || (tokens["a11y.cursorSize"] as any) || DEFAULT_DRAFT.a11yCursorSize,
+      a11yReadingGuide: source.a11yReadingGuide ?? tokens["a11y.readingGuide"] === "true",
+      a11yReadingMask: source.a11yReadingMask ?? tokens["a11y.readingMask"] === "true",
+      // Motion & Animation
+      a11yReducedMotion: source.a11yReducedMotion || DEFAULT_DRAFT.a11yReducedMotion,
+      a11yAnimationDuration: parseInt(tokens["a11y.animationDuration"] || "") || source.a11yAnimationDuration || DEFAULT_DRAFT.a11yAnimationDuration,
+      a11yAutoplayDisabled: source.a11yAutoplayDisabled ?? tokens["a11y.autoplayDisabled"] === "true",
+      a11yPauseAnimations: source.a11yPauseAnimations ?? tokens["a11y.pauseAnimations"] === "true",
+      // Content & Media
+      a11yHideImages: source.a11yHideImages ?? tokens["a11y.hideImages"] === "true",
+      a11yTooltips: source.a11yTooltips ?? tokens["a11y.tooltips"] === "true",
+      // Touch & Target Size
+      a11yLargeTargets: source.a11yLargeTargets ?? tokens["a11y.largeTargets"] === "true",
+      a11yForcedColorsSupport: source.a11yForcedColorsSupport ?? tokens["a11y.forcedColors"] !== "false",
     };
   }, []);
 
@@ -508,6 +549,47 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
         "bg.gradient": draft.bgType === "gradient"
           ? `linear-gradient(${draft.bgGradientDirection}, ${draft.bgGradientFrom}, ${draft.bgGradientTo})`
           : "",
+        // ── Accessibility tokens ──
+        // Focus & Keyboard
+        "a11y.focusRing.enabled": `${draft.a11yFocusRingEnabled}`,
+        "a11y.focusRing.color": draft.a11yFocusRingColor || draft.primaryColor,
+        "a11y.focusRing.width": `${draft.a11yFocusRingWidth}px`,
+        "a11y.focusRing.style": draft.a11yFocusRingStyle,
+        "a11y.skipLink.enabled": `${draft.a11ySkipLinkEnabled}`,
+        "a11y.highlightFocus": `${draft.a11yHighlightFocus}`,
+        // Screen Reader
+        "a11y.ariaLandmarks": `${draft.a11yAriaLandmarks}`,
+        "a11y.formLabels.visible": `${draft.a11yFormLabelsVisible}`,
+        "a11y.errorAnnounce": `${draft.a11yErrorAnnounce}`,
+        "a11y.pageTitle": draft.a11yPageTitle,
+        // Contrast & Colors
+        "a11y.highContrast": `${draft.a11yHighContrastMode}`,
+        "a11y.contrastPreset": draft.a11yContrastPreset,
+        "a11y.saturation": `${draft.a11ySaturation}`,
+        "a11y.highlightLinks": `${draft.a11yHighlightLinks}`,
+        // Typography & Readability
+        "a11y.minFontSize": `${draft.a11yMinFontSize}`,
+        "a11y.contentScaling": `${draft.a11yContentScaling}`,
+        "a11y.lineHeight": `${draft.a11yLineHeight}`,
+        "a11y.letterSpacing": `${draft.a11yLetterSpacing}`,
+        "a11y.wordSpacing": `${draft.a11yWordSpacing}`,
+        "a11y.dyslexicFont": `${draft.a11yDyslexicFont}`,
+        "a11y.textAlign": draft.a11yTextAlign,
+        // Cursor & Reading Aids
+        "a11y.cursorSize": draft.a11yCursorSize,
+        "a11y.readingGuide": `${draft.a11yReadingGuide}`,
+        "a11y.readingMask": `${draft.a11yReadingMask}`,
+        // Motion & Animation
+        "a11y.reducedMotion": draft.a11yReducedMotion,
+        "a11y.animationDuration": `${draft.a11yAnimationDuration}`,
+        "a11y.autoplayDisabled": `${draft.a11yAutoplayDisabled}`,
+        "a11y.pauseAnimations": `${draft.a11yPauseAnimations}`,
+        // Content & Media
+        "a11y.hideImages": `${draft.a11yHideImages}`,
+        "a11y.tooltips": `${draft.a11yTooltips}`,
+        // Touch & Target Size
+        "a11y.largeTargets": `${draft.a11yLargeTargets}`,
+        "a11y.forcedColors": `${draft.a11yForcedColorsSupport}`,
       },
     });
   }, [draft]);

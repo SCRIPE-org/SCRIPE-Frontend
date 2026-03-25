@@ -17,7 +17,7 @@
  */
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
@@ -74,11 +74,49 @@ export function LoginPreviewShell() {
   }, []);
 
   // Inject CSS tokens from draft
-  const { layout, config, slotConfig } = useLoginBrandingTokens({
+  const { layout, config, slotConfig, a11y } = useLoginBrandingTokens({
     loginBrandingJson: draftOverrides?.loginBrandingJson ?? null,
     slotConfigJson: draftOverrides?.slotConfigJson ?? null,
     isSafeMode: false,
   });
+
+  // ── A11y: Reading Guide & Reading Mask (mouse tracking) ──
+  const mouseYRef = useRef(0);
+  const readingGuideRef = useRef<HTMLDivElement | null>(null);
+  const readingMaskTopRef = useRef<HTMLDivElement | null>(null);
+  const readingMaskBottomRef = useRef<HTMLDivElement | null>(null);
+
+  const onMouseMove = useCallback((e: MouseEvent) => {
+    mouseYRef.current = e.clientY;
+    if (readingGuideRef.current) {
+      readingGuideRef.current.style.top = `${e.clientY - 6}px`;
+    }
+    if (readingMaskTopRef.current && readingMaskBottomRef.current) {
+      readingMaskTopRef.current.style.height = `${Math.max(0, e.clientY - 40)}px`;
+      readingMaskBottomRef.current.style.top = `${e.clientY + 40}px`;
+      readingMaskBottomRef.current.style.height = `${Math.max(0, window.innerHeight - e.clientY - 40)}px`;
+    }
+  }, []);
+
+  useEffect(() => {
+    if (a11y.readingGuide || a11y.readingMask) {
+      document.addEventListener("mousemove", onMouseMove);
+      return () => document.removeEventListener("mousemove", onMouseMove);
+    }
+  }, [a11y.readingGuide, a11y.readingMask, onMouseMove]);
+
+  // Count active accessibility features for badge
+  const activeA11yCount = [
+    a11y.focusRingEnabled, a11y.skipLinkEnabled, a11y.highlightFocus,
+    a11y.ariaLandmarks, a11y.formLabelsVisible, a11y.errorAnnounce,
+    a11y.highContrastMode, a11y.contrastPreset !== "normal", a11y.saturation !== 100,
+    a11y.highlightLinks, a11y.minFontSize > 14, a11y.contentScaling !== 100,
+    a11y.lineHeight > 0, a11y.letterSpacing > 0, a11y.wordSpacing > 0,
+    a11y.dyslexicFont, a11y.textAlign !== "inherit",
+    a11y.cursorSize !== "default", a11y.readingGuide, a11y.readingMask,
+    a11y.reducedMotion === "always", a11y.pauseAnimations, a11y.autoplayDisabled,
+    a11y.hideImages, a11y.tooltips, a11y.largeTargets,
+  ].filter(Boolean).length;
 
   // Derive branding from raw JSON (LoginBrandingConfig only has layout/tokens)
   const rawJson = draftOverrides?.loginBrandingJson;
@@ -274,9 +312,62 @@ export function LoginPreviewShell() {
     }} />
   );
 
+  // ── A11y: Floating badge via DOM injection (avoids touching 22 layouts) ──
+  useEffect(() => {
+    if (activeA11yCount <= 0) return;
+    const badge = document.createElement("div");
+    badge.id = "a11y-active-badge";
+    Object.assign(badge.style, {
+      position: "fixed", bottom: "16px", right: "16px", zIndex: "99999",
+      display: "flex", alignItems: "center", gap: "6px",
+      padding: "6px 12px", borderRadius: "20px",
+      background: "rgba(59,130,246,0.9)", color: "#fff",
+      fontSize: "11px", fontWeight: "600", backdropFilter: "blur(8px)",
+      boxShadow: "0 4px 16px rgba(0,0,0,0.2)", pointerEvents: "none",
+    });
+    badge.innerHTML = `<span style="font-size:14px">♿</span><span>${activeA11yCount} active</span>`;
+    document.body.appendChild(badge);
+    return () => { badge.remove(); };
+  }, [activeA11yCount]);
+
+  // ── A11y: Reading guide + mask containers (position:fixed, rendered once) ──
+  const a11yFixedElements = (
+    <>
+      {a11y.readingGuide && (
+        <div
+          ref={readingGuideRef}
+          className="login-a11y-reading-guide"
+          style={{ position: "fixed", left: 0, right: 0, top: -20, height: 12, pointerEvents: "none", zIndex: 99999 }}
+        />
+      )}
+      {a11y.readingMask && (
+        <>
+          <div
+            ref={readingMaskTopRef}
+            className="login-a11y-reading-mask-top"
+            style={{ position: "fixed", left: 0, right: 0, top: 0, height: 0, pointerEvents: "none", zIndex: 99998 }}
+          />
+          <div
+            ref={readingMaskBottomRef}
+            className="login-a11y-reading-mask-bottom"
+            style={{ position: "fixed", left: 0, right: 0, bottom: 0, height: "100vh", pointerEvents: "none", zIndex: 99998 }}
+          />
+        </>
+      )}
+    </>
+  );
+
+  // Render a11y fixed overlays via a portal-like pattern (outside layouts)
+  const wrapWithA11y = (layoutContent: React.ReactNode) => (
+    <>
+      {a11yFixedElements}
+      {layoutContent}
+    </>
+  );
+
   switch (layout) {
     case "split-left":
-      return (
+      return wrapWithA11y(
         <div className={`login-page flex min-h-screen w-full ${bgStyle} selection:bg-primary/20`} dir={direction} style={splitWrapperStyle}>
           <div className="relative z-10 flex w-full flex-col items-center justify-center px-6 py-12 lg:w-1/2 xl:w-[45%]" style={formSideStyle}>
             {overlayDiv}

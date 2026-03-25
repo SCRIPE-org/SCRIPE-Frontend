@@ -127,6 +127,48 @@ export interface StudioDraftProps {
   // Advanced
   customCss: string;
   safeMode: boolean;
+
+  // ── Accessibility Settings ─────────────────────────
+  // Focus & Keyboard
+  a11yFocusRingEnabled: boolean;
+  a11yFocusRingColor: string;
+  a11yFocusRingWidth: number;
+  a11yFocusRingStyle: "solid" | "dashed" | "double";
+  a11ySkipLinkEnabled: boolean;
+  a11yHighlightFocus: boolean;
+  // Screen Reader
+  a11yAriaLandmarks: boolean;
+  a11yFormLabelsVisible: boolean;
+  a11yErrorAnnounce: boolean;
+  a11yPageTitle: string;
+  // Contrast & Colors
+  a11yHighContrastMode: boolean;
+  a11yContrastPreset: "normal" | "dark" | "light" | "inverted" | "monochrome";
+  a11ySaturation: number;
+  a11yHighlightLinks: boolean;
+  // Typography & Readability
+  a11yMinFontSize: number;
+  a11yContentScaling: number;
+  a11yLineHeight: number;
+  a11yLetterSpacing: number;
+  a11yWordSpacing: number;
+  a11yDyslexicFont: boolean;
+  a11yTextAlign: "inherit" | "left" | "center" | "right";
+  // Cursor & Reading Aids
+  a11yCursorSize: "default" | "large" | "xlarge";
+  a11yReadingGuide: boolean;
+  a11yReadingMask: boolean;
+  // Motion & Animation
+  a11yReducedMotion: "auto" | "always" | "never";
+  a11yAnimationDuration: number;
+  a11yAutoplayDisabled: boolean;
+  a11yPauseAnimations: boolean;
+  // Content & Media
+  a11yHideImages: boolean;
+  a11yTooltips: boolean;
+  // Touch & Target Size
+  a11yLargeTargets: boolean;
+  a11yForcedColorsSupport: boolean;
 }
 
 // ── Default Draft ─────────────────────────────────────
@@ -223,6 +265,47 @@ export const DEFAULT_DRAFT: StudioDraftProps = {
   slotConfig: { _schemaVersion: 1, slots: {} },
   customCss: "",
   safeMode: false,
+  // ── Accessibility defaults (WCAG AA best practices out-of-the-box) ──
+  // Focus & Keyboard
+  a11yFocusRingEnabled: true,
+  a11yFocusRingColor: "",
+  a11yFocusRingWidth: 2,
+  a11yFocusRingStyle: "solid",
+  a11ySkipLinkEnabled: true,
+  a11yHighlightFocus: false,
+  // Screen Reader
+  a11yAriaLandmarks: true,
+  a11yFormLabelsVisible: true,
+  a11yErrorAnnounce: true,
+  a11yPageTitle: "",
+  // Contrast & Colors
+  a11yHighContrastMode: false,
+  a11yContrastPreset: "normal",
+  a11ySaturation: 100,
+  a11yHighlightLinks: false,
+  // Typography & Readability
+  a11yMinFontSize: 14,
+  a11yContentScaling: 100,
+  a11yLineHeight: 0,       // 0 = inherit (no override)
+  a11yLetterSpacing: 0,    // 0 = inherit
+  a11yWordSpacing: 0,      // 0 = inherit
+  a11yDyslexicFont: false,
+  a11yTextAlign: "inherit",
+  // Cursor & Reading Aids
+  a11yCursorSize: "default",
+  a11yReadingGuide: false,
+  a11yReadingMask: false,
+  // Motion & Animation
+  a11yReducedMotion: "auto",
+  a11yAnimationDuration: 300,
+  a11yAutoplayDisabled: false,
+  a11yPauseAnimations: false,
+  // Content & Media
+  a11yHideImages: false,
+  a11yTooltips: false,
+  // Touch & Target Size
+  a11yLargeTargets: false,
+  a11yForcedColorsSupport: true,
 };
 
 // ── Device Sizes ──────────────────────────────────────
@@ -235,4 +318,4 @@ export const DEVICE_DIMENSIONS: Record<DeviceSize, { width: number; height: numb
 };
 
 // ── Panel Identifiers ─────────────────────────────────
-export type StudioPanel = "layout" | "branding" | "appearance" | "typography" | "spacing" | "blocks" | "advanced";
+export type StudioPanel = "layout" | "branding" | "appearance" | "typography" | "spacing" | "blocks" | "advanced" | "accessibility";

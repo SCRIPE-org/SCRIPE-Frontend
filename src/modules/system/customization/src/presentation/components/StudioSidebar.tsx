@@ -4,7 +4,7 @@
  */
 "use client";
 
-import { Layout, Palette, Type, Settings2, Layers, Blocks, Paintbrush } from "lucide-react";
+import { Layout, Palette, Type, Settings2, Layers, Blocks, Paintbrush, ScanEye } from "lucide-react";
 import { cn } from "@/core/common/utils";
 import { LayoutPanel } from "./LayoutPanel";
 import { BrandingPanel } from "./BrandingPanel";
@@ -13,6 +13,7 @@ import type { StudioDraft, StudioPanel, DeviceSize } from "../viewmodels/useStud
 import type { LoginSlotId, ContentBlock } from "@modules/auth/signin/src/types/login-branding-types";
 import { StylePanel } from "./StylePanel";
 import { AdvancedPanel } from "./AdvancedPanel";
+import { AccessibilityPanel } from "./AccessibilityPanel";
 
 interface StudioSidebarProps {
   t: (key: string) => string;
@@ -35,6 +36,7 @@ const TABS: { id: StudioPanel; icon: typeof Layout; labelKey: string }[] = [
   { id: "spacing", icon: Settings2, labelKey: "studio.tab.spacing" },
   { id: "blocks", icon: Blocks, labelKey: "studio.tab.blocks" },
   { id: "advanced", icon: Layers, labelKey: "studio.tab.advanced" },
+  { id: "accessibility", icon: ScanEye, labelKey: "studio.tab.accessibility" },
 ];
 
 export function StudioSidebar(props: StudioSidebarProps) {
@@ -118,6 +120,14 @@ export function StudioSidebar(props: StudioSidebarProps) {
               t={t}
               draft={draft}
               updateDraft={updateDraft}
+            />
+          )}
+          {activePanel === "accessibility" && (
+            <AccessibilityPanel
+              t={t}
+              draft={draft}
+              updateDraft={updateDraft}
+              batchUpdateDraft={batchUpdateDraft}
             />
           )}
         </div>

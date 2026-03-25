@@ -89,9 +89,9 @@ export function LoginView() {
     return () => window.removeEventListener("message", handler);
   }, [isPreviewMode]);
 
-  // Login rendering engine — CSS token injection + layout
+  // Login rendering engine — CSS token injection + layout + accessibility
   // In preview mode, draft overrides take priority over live settings
-  const { layout, slotConfig } = useLoginBrandingTokens({
+  const { layout, slotConfig, a11y } = useLoginBrandingTokens({
     loginBrandingJson: previewOverrides?.loginBrandingJson ?? branding?.loginBrandingJson ?? null,
     slotConfigJson: previewOverrides?.slotConfigJson ?? branding?.slotConfigJson ?? null,
     isSafeMode: branding?.isSafeMode ?? false,
@@ -122,14 +122,18 @@ export function LoginView() {
     }
   }, [tenantId, vm.setTenantId]);
 
-  // Dynamic document title
+  // Dynamic document title — a11y page title override takes priority
   useEffect(() => {
     if (typeof document !== "undefined") {
-      document.title = isResolved
-        ? `Login — ${companyName}`
-        : `Login — ${BRAND.name}`;
+      if (a11y.pageTitle) {
+        document.title = a11y.pageTitle;
+      } else {
+        document.title = isResolved
+          ? `Login — ${companyName}`
+          : `Login — ${BRAND.name}`;
+      }
     }
-  }, [isResolved, companyName]);
+  }, [isResolved, companyName, a11y.pageTitle]);
 
   // Dynamic favicon swap
   useEffect(() => {
@@ -180,10 +184,15 @@ export function LoginView() {
 
   // ── Form content (shared across all layouts) ──
   const formContent = (
-    <div className="w-full" style={{ maxWidth: "var(--login-form-width, 380px)" }}>
+    <div
+      id="login-main-content"
+      className="w-full"
+      style={{ maxWidth: "var(--login-form-width, 380px)" }}
+      {...(a11y.ariaLandmarks ? { role: "main", "aria-label": t("auth.loginFormAriaLabel") } : {})}
+    >
       {/* Safe Mode Banner */}
       {safeModeActive && (
-        <div className="mb-6 flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-600 dark:text-amber-400">
+        <div className="mb-6 flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-600 dark:text-amber-400" role="alert">
           <AlertTriangle className="h-4 w-4 shrink-0" />
           {t("auth.branding.safeModeActive")}
         </div>
@@ -205,6 +214,7 @@ export function LoginView() {
             togglePasswordVisibility={vm.togglePasswordVisibility}
             handleLogin={vm.handleLogin}
             t={t}
+            errorAnnounce={a11y.errorAnnounce}
           />
           <SsoProviderButtons
             providers={sso.providers}
@@ -234,26 +244,36 @@ export function LoginView() {
     </div>
   );
 
-  // ── Top Actions Bar (shared) ──
+  // ── Skip-to-Content Link (accessibility) ──
+  const skipLink = a11y.skipLinkEnabled ? (
+    <a href="#login-main-content" className="login-skip-link">
+      {t("auth.a11y.skipToContent")}
+    </a>
+  ) : null;
+
+  // ── Top Actions Bar (shared — includes skipLink so it propagates to all layouts) ──
   const topActions = (
-    <div className="absolute left-8 right-8 top-8 flex items-center justify-between lg:justify-end gap-5 z-20">
-      <Button variant="ghost" size="sm" className="hidden lg:flex gap-1.5 text-sm font-medium text-muted-foreground hover:bg-muted/50 hover:text-foreground transition-colors" asChild>
-        <Link href="/docs">
-          <BookOpen className="h-4 w-4" />
-          {t("auth.branding.docs")}
-        </Link>
-      </Button>
-      <div className="hidden lg:block h-4 w-px bg-border" />
-      <div className="flex w-full lg:w-auto items-center justify-between lg:justify-start gap-1">
-        <Button variant="ghost" size="sm" className="flex lg:hidden gap-1.5 text-sm font-medium text-muted-foreground hover:bg-muted/50 hover:text-foreground transition-colors" asChild>
-          <Link href="/docs"><BookOpen className="h-4 w-4" />{t("auth.branding.docs")}</Link>
+    <>
+      {skipLink}
+      <div className="absolute left-8 right-8 top-8 flex items-center justify-between lg:justify-end gap-5 z-20" {...(a11y.ariaLandmarks ? { role: "navigation", "aria-label": t("auth.a11y.topActionsLabel") } : {})}>
+        <Button variant="ghost" size="sm" className="hidden lg:flex gap-1.5 text-sm font-medium text-muted-foreground hover:bg-muted/50 hover:text-foreground transition-colors" asChild>
+          <Link href="/docs">
+            <BookOpen className="h-4 w-4" />
+            {t("auth.branding.docs")}
+          </Link>
         </Button>
-        <div className="flex gap-1">
-          <LanguageSwitcher />
-          <ThemeSwitcher />
+        <div className="hidden lg:block h-4 w-px bg-border" />
+        <div className="flex w-full lg:w-auto items-center justify-between lg:justify-start gap-1">
+          <Button variant="ghost" size="sm" className="flex lg:hidden gap-1.5 text-sm font-medium text-muted-foreground hover:bg-muted/50 hover:text-foreground transition-colors" asChild>
+            <Link href="/docs"><BookOpen className="h-4 w-4" />{t("auth.branding.docs")}</Link>
+          </Button>
+          <div className="flex gap-1">
+            <LanguageSwitcher />
+            <ThemeSwitcher />
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 
   // ── Footer (shared) ──

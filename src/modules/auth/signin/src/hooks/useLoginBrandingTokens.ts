@@ -24,16 +24,107 @@ import {
   type LoginLayout,
 } from "../types/login-branding-types";
 
+// ─── Accessibility config parsed from tokens ───
+export interface AccessibilityConfig {
+  // Focus & Keyboard
+  focusRingEnabled: boolean;
+  focusRingColor: string;
+  focusRingWidth: number;
+  focusRingStyle: string;
+  skipLinkEnabled: boolean;
+  highlightFocus: boolean;
+  // Screen Reader
+  ariaLandmarks: boolean;
+  formLabelsVisible: boolean;
+  errorAnnounce: boolean;
+  pageTitle: string;
+  // Contrast & Colors
+  highContrastMode: boolean;
+  contrastPreset: string;
+  saturation: number;
+  highlightLinks: boolean;
+  // Typography & Readability
+  minFontSize: number;
+  contentScaling: number;
+  lineHeight: number;
+  letterSpacing: number;
+  wordSpacing: number;
+  dyslexicFont: boolean;
+  textAlign: string;
+  // Cursor & Reading Aids
+  cursorSize: string;
+  readingGuide: boolean;
+  readingMask: boolean;
+  // Motion & Animation
+  reducedMotion: string;
+  animationDuration: number;
+  autoplayDisabled: boolean;
+  pauseAnimations: boolean;
+  // Content & Media
+  hideImages: boolean;
+  tooltips: boolean;
+  // Touch & Target Size
+  largeTargets: boolean;
+  forcedColorsSupport: boolean;
+}
+
 interface LoginBrandingTokensResult {
   layout: LoginLayout;
   config: LoginBrandingConfig;
   slotConfig: SlotConfig;
+  a11y: AccessibilityConfig;
 }
 
 interface LoginBrandingTokensInput {
   loginBrandingJson: string | null | undefined;
   slotConfigJson: string | null | undefined;
   isSafeMode: boolean;
+}
+
+// ─── Parse a11y config from tokens (safe defaults) ───
+function parseA11yConfig(tokens: Record<string, string | undefined>): AccessibilityConfig {
+  return {
+    // Focus & Keyboard
+    focusRingEnabled: tokens["a11y.focusRing.enabled"] !== "false",
+    focusRingColor: tokens["a11y.focusRing.color"] || "",
+    focusRingWidth: parseInt(tokens["a11y.focusRing.width"] || "3"),
+    focusRingStyle: tokens["a11y.focusRing.style"] || "solid",
+    skipLinkEnabled: tokens["a11y.skipLink.enabled"] !== "false",
+    highlightFocus: tokens["a11y.highlightFocus"] === "true",
+    // Screen Reader
+    ariaLandmarks: tokens["a11y.ariaLandmarks"] !== "false",
+    formLabelsVisible: tokens["a11y.formLabels.visible"] !== "false",
+    errorAnnounce: tokens["a11y.errorAnnounce"] !== "false",
+    pageTitle: tokens["a11y.pageTitle"] || "",
+    // Contrast & Colors
+    highContrastMode: tokens["a11y.highContrast"] === "true",
+    contrastPreset: tokens["a11y.contrastPreset"] || "normal",
+    saturation: parseInt(tokens["a11y.saturation"] || "100"),
+    highlightLinks: tokens["a11y.highlightLinks"] === "true",
+    // Typography & Readability
+    minFontSize: parseInt(tokens["a11y.minFontSize"] || "14"),
+    contentScaling: parseInt(tokens["a11y.contentScaling"] || "100"),
+    lineHeight: parseFloat(tokens["a11y.lineHeight"] || "0"),
+    letterSpacing: parseFloat(tokens["a11y.letterSpacing"] || "0"),
+    wordSpacing: parseFloat(tokens["a11y.wordSpacing"] || "0"),
+    dyslexicFont: tokens["a11y.dyslexicFont"] === "true",
+    textAlign: tokens["a11y.textAlign"] || "inherit",
+    // Cursor & Reading Aids
+    cursorSize: tokens["a11y.cursorSize"] || "default",
+    readingGuide: tokens["a11y.readingGuide"] === "true",
+    readingMask: tokens["a11y.readingMask"] === "true",
+    // Motion & Animation
+    reducedMotion: tokens["a11y.reducedMotion"] || "system",
+    animationDuration: parseInt(tokens["a11y.animationDuration"] || "200"),
+    autoplayDisabled: tokens["a11y.autoplayDisabled"] === "true",
+    pauseAnimations: tokens["a11y.pauseAnimations"] === "true",
+    // Content & Media 
+    hideImages: tokens["a11y.hideImages"] === "true",
+    tooltips: tokens["a11y.tooltips"] === "true",
+    // Touch & Target Size
+    largeTargets: tokens["a11y.largeTargets"] === "true",
+    forcedColorsSupport: tokens["a11y.forcedColors"] !== "false",
+  };
 }
 
 export function useLoginBrandingTokens({
@@ -363,6 +454,455 @@ export function useLoginBrandingTokens({
   color: var(--login-text, hsl(var(--foreground)));
 }`);
 
+    // ═══════════════════════════════════════════════════════════════
+    // ACCESSIBILITY CSS — Reads a11y.* tokens and injects real CSS
+    // ═══════════════════════════════════════════════════════════════
+    const a11yCss: string[] = [];
+
+    // ── 1. Focus Ring ──
+    const focusEnabled = tokens["a11y.focusRing.enabled"] !== "false";
+    const focusColor = tokens["a11y.focusRing.color"] || tokens["color.primary"] || "hsl(var(--primary))";
+    const focusWidth = tokens["a11y.focusRing.width"] || "3px";
+    const focusStyle = tokens["a11y.focusRing.style"] || "solid";
+    if (focusEnabled) {
+      a11yCss.push(`/* ═══ Accessibility: Focus Ring ═══ */
+.login-page :focus-visible {
+  outline: ${focusWidth} ${focusStyle} ${focusColor} !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.4) !important;
+}
+.login-page input:focus-visible,
+.login-page button:focus-visible,
+.login-page a:focus-visible,
+.login-page select:focus-visible,
+.login-page [tabindex]:focus-visible {
+  outline: ${focusWidth} ${focusStyle} ${focusColor} !important;
+  outline-offset: 2px !important;
+}`);
+    } else {
+      // When disabled, suppress outlines (user chose to handle focus differently)
+      a11yCss.push(`/* Focus Ring Disabled */
+.login-page :focus-visible {
+  outline: none !important;
+}`);
+    }
+
+    // ── 2. Skip Link ──
+    const skipEnabled = tokens["a11y.skipLink.enabled"] !== "false";
+    if (skipEnabled) {
+      a11yCss.push(`/* ═══ Accessibility: Skip Link ═══ */
+.login-skip-link {
+  position: absolute;
+  top: -100px;
+  left: 16px;
+  z-index: 9999;
+  padding: 12px 24px;
+  background: ${focusColor};
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 0 0 8px 8px;
+  text-decoration: none;
+  transition: top 0.15s ease-in-out;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+.login-skip-link:focus {
+  top: 0 !important;
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+[dir="rtl"] .login-skip-link {
+  left: auto;
+  right: 16px;
+}`);
+    }
+
+    // ── 3. High Contrast Mode ──
+    const highContrast = tokens["a11y.highContrast"] === "true";
+    if (highContrast) {
+      a11yCss.push(`/* ═══ Accessibility: High Contrast Mode ═══ */
+.login-page {
+  --login-text: #000000 !important;
+  --login-text-muted: #1a1a1a !important;
+  --login-border: #000000 !important;
+}
+.login-page input,
+.login-page button,
+.login-page a {
+  border-width: 2px !important;
+}
+.login-page .login-heading,
+.login-page .login-subtitle,
+.login-page .login-label,
+.login-page label {
+  font-weight: 700 !important;
+}
+.dark .login-page {
+  --login-text: #ffffff !important;
+  --login-text-muted: #e5e5e5 !important;
+  --login-border: #ffffff !important;
+}`);
+    }
+
+    // ── 4. Minimum Font Size ──
+    const minFontSize = parseInt(tokens["a11y.minFontSize"] || "14");
+    if (minFontSize > 12) {
+      a11yCss.push(`/* ═══ Accessibility: Min Font Size (${minFontSize}px) ═══ */
+.login-page {
+  font-size: max(${minFontSize}px, 1rem) !important;
+}
+.login-page input,
+.login-page button,
+.login-page label,
+.login-page p,
+.login-page span,
+.login-page a {
+  font-size: max(inherit, ${minFontSize}px) !important;
+}
+.login-page .login-subtitle,
+.login-page .login-footer {
+  font-size: max(${minFontSize - 2}px, 0.75rem) !important;
+}`);
+    }
+
+    // ── 5. Reduced Motion ──
+    const reducedMotion = tokens["a11y.reducedMotion"] || "system";
+    const animDuration = tokens["a11y.animationDuration"] || "200";
+    if (reducedMotion === "always") {
+      a11yCss.push(`/* ═══ Accessibility: Reduced Motion (forced) ═══ */
+.login-page,
+.login-page * {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}`);
+    } else if (reducedMotion === "system") {
+      a11yCss.push(`/* ═══ Accessibility: Reduced Motion (system preference) ═══ */
+@media (prefers-reduced-motion: reduce) {
+  .login-page,
+  .login-page * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}`);
+    }
+    // For "never" — no override, full animations with custom duration
+    if (reducedMotion === "never") {
+      a11yCss.push(`/* ═══ Accessibility: Custom Animation Duration ═══ */
+.login-page .login-button,
+.login-page a,
+.login-page input {
+  transition-duration: ${animDuration}ms !important;
+}`);
+    }
+
+    // ── 6. Forced Colors Support ──
+    const forcedColors = tokens["a11y.forcedColors"] !== "false";
+    if (forcedColors) {
+      a11yCss.push(`/* ═══ Accessibility: Forced Colors (Windows High Contrast) ═══ */
+@media (forced-colors: active) {
+  .login-page input {
+    border: 2px solid ButtonText !important;
+  }
+  .login-page button[type="submit"] {
+    background: ButtonFace !important;
+    color: ButtonText !important;
+    border: 2px solid ButtonText !important;
+    forced-color-adjust: none;
+  }
+  .login-page a {
+    color: LinkText !important;
+    text-decoration: underline !important;
+  }
+  .login-page .login-heading,
+  .login-page label {
+    color: CanvasText !important;
+  }
+  .login-skip-link:focus {
+    background: Highlight !important;
+    color: HighlightText !important;
+  }
+}`);
+    }
+
+    // ── 7. Contrast Preset ──
+    const contrastPreset = tokens["a11y.contrastPreset"] || "normal";
+    if (contrastPreset === "dark") {
+      a11yCss.push(`/* ═══ Accessibility: Dark Contrast Preset ═══ */
+.login-page {
+  --login-bg: #1a1a1a !important;
+  --login-surface: #2a2a2a !important;
+  --login-text: #ffffff !important;
+  --login-text-muted: #cccccc !important;
+  --login-border: #555555 !important;
+}
+.login-page .login-card { background-color: #2a2a2a !important; }`);
+    } else if (contrastPreset === "light") {
+      a11yCss.push(`/* ═══ Accessibility: Light Contrast Preset ═══ */
+.login-page {
+  --login-bg: #ffffff !important;
+  --login-surface: #f8f8f8 !important;
+  --login-text: #000000 !important;
+  --login-text-muted: #333333 !important;
+  --login-border: #cccccc !important;
+}
+.login-page .login-card { background-color: #f8f8f8 !important; }`);
+    } else if (contrastPreset === "inverted") {
+      a11yCss.push(`/* ═══ Accessibility: Inverted Colors Preset ═══ */
+.login-page { filter: invert(1) hue-rotate(180deg) !important; }
+.login-page img,
+.login-page .login-logo { filter: invert(1) hue-rotate(180deg) !important; }`);
+    } else if (contrastPreset === "monochrome") {
+      a11yCss.push(`/* ═══ Accessibility: Monochrome Preset ═══ */
+.login-page { filter: grayscale(1) !important; }`);
+    }
+
+    // ── 8. Saturation Control ──
+    const saturation = parseInt(tokens["a11y.saturation"] || "100");
+    if (saturation !== 100) {
+      a11yCss.push(`/* ═══ Accessibility: Saturation ${saturation}% ═══ */
+.login-page { filter: saturate(${saturation / 100}) !important; }`);
+    }
+
+    // ── 9. Highlight Links ──
+    const highlightLinks = tokens["a11y.highlightLinks"] === "true";
+    if (highlightLinks) {
+      a11yCss.push(`/* ═══ Accessibility: Highlight Links ═══ */
+.login-page a {
+  text-decoration: underline !important;
+  text-decoration-thickness: 2px !important;
+  text-underline-offset: 3px !important;
+  outline: 2px solid currentColor !important;
+  outline-offset: 2px !important;
+  border-radius: 2px !important;
+}`);
+    }
+
+    // ── 10. Highlight Focus/Hover ──
+    const highlightFocusHover = tokens["a11y.highlightFocus"] === "true";
+    if (highlightFocusHover) {
+      a11yCss.push(`/* ═══ Accessibility: Highlight Focus/Hover ═══ */
+.login-page *:hover {
+  outline: 2px dashed ${focusColor} !important;
+  outline-offset: 2px !important;
+}
+.login-page *:focus-within {
+  background-color: color-mix(in srgb, ${focusColor} 8%, transparent) !important;
+}`);
+    }
+
+    // ── 11. Content Scaling ──
+    const contentScaling = parseInt(tokens["a11y.contentScaling"] || "100");
+    if (contentScaling !== 100) {
+      const scale = contentScaling / 100;
+      a11yCss.push(`/* ═══ Accessibility: Content Scaling ${contentScaling}% ═══ */
+.login-page .login-form-wrapper {
+  transform: scale(${scale}) !important;
+  transform-origin: top center !important;
+}`);
+    }
+
+    // ── 12. Line Height Override ──
+    const a11yLineHeight = parseFloat(tokens["a11y.lineHeight"] || "0");
+    if (a11yLineHeight > 0) {
+      a11yCss.push(`/* ═══ Accessibility: Line Height ${a11yLineHeight} ═══ */
+.login-page,
+.login-page * {
+  line-height: ${a11yLineHeight} !important;
+}`);
+    }
+
+    // ── 13. Letter Spacing Override ──
+    const a11yLetterSpacing = parseFloat(tokens["a11y.letterSpacing"] || "0");
+    if (a11yLetterSpacing > 0) {
+      a11yCss.push(`/* ═══ Accessibility: Letter Spacing ${a11yLetterSpacing}px ═══ */
+.login-page,
+.login-page * {
+  letter-spacing: ${a11yLetterSpacing}px !important;
+}`);
+    }
+
+    // ── 14. Word Spacing Override ──
+    const a11yWordSpacing = parseFloat(tokens["a11y.wordSpacing"] || "0");
+    if (a11yWordSpacing > 0) {
+      a11yCss.push(`/* ═══ Accessibility: Word Spacing ${a11yWordSpacing}px ═══ */
+.login-page,
+.login-page * {
+  word-spacing: ${a11yWordSpacing}px !important;
+}`);
+    }
+
+    // ── 15. Dyslexia-Friendly Font ──
+    const dyslexicFont = tokens["a11y.dyslexicFont"] === "true";
+    if (dyslexicFont) {
+      a11yCss.push(`/* ═══ Accessibility: Dyslexia-Friendly Font ═══ */
+@font-face {
+  font-family: 'OpenDyslexic';
+  src: url('https://cdn.jsdelivr.net/npm/open-dyslexic@1.0.3/woff/OpenDyslexic-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'OpenDyslexic';
+  src: url('https://cdn.jsdelivr.net/npm/open-dyslexic@1.0.3/woff/OpenDyslexic-Bold.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+.login-page,
+.login-page * {
+  font-family: 'OpenDyslexic', sans-serif !important;
+}`);
+    }
+
+    // ── 16. Text Alignment Override ──
+    const textAlign = tokens["a11y.textAlign"] || "inherit";
+    if (textAlign !== "inherit") {
+      a11yCss.push(`/* ═══ Accessibility: Text Align ${textAlign} ═══ */
+.login-page p,
+.login-page label,
+.login-page span,
+.login-page .login-heading,
+.login-page .login-subtitle,
+.login-page .login-footer {
+  text-align: ${textAlign} !important;
+}`);
+    }
+
+    // ── 17. Big Cursor ──
+    const cursorSize = tokens["a11y.cursorSize"] || "default";
+    if (cursorSize !== "default") {
+      const cursorScale = cursorSize === "xlarge" ? 3 : 2;
+      a11yCss.push(`/* ═══ Accessibility: Big Cursor (${cursorSize}) ═══ */
+.login-page {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='${cursorScale * 16}' height='${cursorScale * 16}' viewBox='0 0 32 32'%3E%3Cpath d='M4 4l20 8-8 4-4 8z' fill='%23000' stroke='%23fff' stroke-width='2'/%3E%3C/svg%3E") 0 0, auto !important;
+}
+.login-page a,
+.login-page button,
+.login-page [role="button"],
+.login-page input[type="submit"] {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='${cursorScale * 16}' height='${cursorScale * 16}' viewBox='0 0 32 32'%3E%3Cpath d='M10 2v20l5-5h10z' fill='%23000' stroke='%23fff' stroke-width='2'/%3E%3C/svg%3E") ${cursorScale * 5} 0, pointer !important;
+}`);
+    }
+
+    // ── 18. Reading Guide ──
+    const readingGuide = tokens["a11y.readingGuide"] === "true";
+    if (readingGuide) {
+      a11yCss.push(`/* ═══ Accessibility: Reading Guide ═══ */
+.login-a11y-reading-guide {
+  position: fixed;
+  left: 0;
+  right: 0;
+  height: 12px;
+  background: linear-gradient(to bottom,
+    transparent 0%,
+    ${focusColor}40 40%,
+    ${focusColor}80 50%,
+    ${focusColor}40 60%,
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: 99999;
+  transition: top 0.05s linear;
+}`);
+    }
+
+    // ── 19. Reading Mask ──
+    const readingMask = tokens["a11y.readingMask"] === "true";
+    if (readingMask) {
+      a11yCss.push(`/* ═══ Accessibility: Reading Mask ═══ */
+.login-a11y-reading-mask-top,
+.login-a11y-reading-mask-bottom {
+  position: fixed;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  pointer-events: none;
+  z-index: 99998;
+  transition: all 0.05s linear;
+}
+.login-a11y-reading-mask-top { top: 0; }
+.login-a11y-reading-mask-bottom { bottom: 0; }`);
+    }
+
+    // ── 20. Pause All Animations ──
+    const pauseAnims = tokens["a11y.pauseAnimations"] === "true";
+    if (pauseAnims) {
+      a11yCss.push(`/* ═══ Accessibility: Pause All Animations ═══ */
+.login-page,
+.login-page * {
+  animation-play-state: paused !important;
+  animation-duration: 0s !important;
+  transition-duration: 0s !important;
+  transition-delay: 0s !important;
+}`);
+    }
+
+    // ── 21. Hide Decorative Images ──
+    const hideImages = tokens["a11y.hideImages"] === "true";
+    if (hideImages) {
+      a11yCss.push(`/* ═══ Accessibility: Hide Decorative Images ═══ */
+.login-page {
+  background-image: none !important;
+}
+.login-page [class*="bg-"] {
+  background-image: none !important;
+}
+.login-page .login-logo img {
+  filter: grayscale(1) opacity(0.3) !important;
+}
+.login-page .login-overlay {
+  backdrop-filter: none !important;
+}`);
+    }
+
+    // ── 22. Enhanced Tooltips ──
+    const tooltips = tokens["a11y.tooltips"] === "true";
+    if (tooltips) {
+      a11yCss.push(`/* ═══ Accessibility: Enhanced Tooltips ═══ */
+.login-page [title]:hover::after {
+  content: attr(title);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 6px 12px;
+  background: var(--login-text, #000);
+  color: var(--login-bg, #fff);
+  font-size: 13px;
+  border-radius: 6px;
+  white-space: nowrap;
+  z-index: 99999;
+  pointer-events: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+.login-page [title] { position: relative; }`);
+    }
+
+    // ── 23. Large Click Targets ──
+    const largeTargets = tokens["a11y.largeTargets"] === "true";
+    if (largeTargets) {
+      a11yCss.push(`/* ═══ Accessibility: Large Click Targets (≥44×44px) ═══ */
+.login-page input,
+.login-page button,
+.login-page select,
+.login-page a,
+.login-page [role="button"] {
+  min-height: 44px !important;
+  min-width: 44px !important;
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
+}`);
+    }
+
+    if (a11yCss.length > 0) {
+      cssBlocks.push(a11yCss.join("\n\n"));
+    }
+
     if (cssBlocks.length === 0) return;
 
     const styleEl = document.createElement("style");
@@ -426,9 +966,16 @@ export function useLoginBrandingTokens({
     };
   }, [loginBrandingJson, isSafeMode]);
 
+  // ─── Parse accessibility config for DOM rendering ───
+  const a11y = useMemo(
+    () => isSafeMode ? parseA11yConfig({}) : parseA11yConfig(config.tokens),
+    [config.tokens, isSafeMode]
+  );
+
   return {
     layout: config.layout,
     config,
     slotConfig,
+    a11y,
   };
 }
