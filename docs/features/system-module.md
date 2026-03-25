@@ -17,6 +17,7 @@ modules/system/
 ├── admin/              # Admin management CRUD
 ├── analytics/          # Analytics dashboard (charts, trends)
 ├── audit/              # Audit log viewer
+├── customization/      # Login Customizer Studio (branding, tokens, accessibility)
 ├── dashboard/          # Main dashboard (KPIs, charts)
 ├── menus/              # Menu management (tree, drag-drop)
 ├── messaging/          # Email composer, templates, notifications
