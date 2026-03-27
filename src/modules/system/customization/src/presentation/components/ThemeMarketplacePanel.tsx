@@ -27,8 +27,8 @@ import {
   THEME_SORT_OPTIONS,
   EDITION_LABELS,
   EDITION_COLORS,
+  type ThemeCardDto,
 } from "../../data/models/ThemeMarketplaceTypes";
-import type { ThemeCard as ThemeCardEntity } from "../../domain/entities/ThemeCard";
 import { useThemeMarketplace } from "../hooks/useThemeMarketplace";
 
 interface ThemeMarketplacePanelProps {
@@ -271,7 +271,7 @@ export function ThemeMarketplacePanel({ t, onApplySuccess }: ThemeMarketplacePan
 // ── Theme Card Component ──────────────────────────────────────
 
 interface ThemeCardProps {
-  theme: ThemeCardEntity;
+  theme: ThemeCardDto;
   viewMode: "grid" | "list";
   isTogglingFavorite: boolean;
   isApplying: boolean;
@@ -459,3 +459,4 @@ function ThemeCard({
     </div>
   );
 }
+
