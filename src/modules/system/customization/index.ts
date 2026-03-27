@@ -30,3 +30,5 @@ export { BrandingMapper } from "./src/data/mappers/BrandingMapper";
 
 // Presentation
 export { CustomizerStudioView } from "./src/presentation/views/CustomizerStudioView";
+export { ThemeMarketplacePanel } from "./src/presentation/components/ThemeMarketplacePanel";
+export { useThemeMarketplace } from "./src/presentation/hooks/useThemeMarketplace";

@@ -156,6 +156,22 @@ export const API_ENDPOINTS = {
     DOMAIN_VERIFY: (id: string, domainId: string) => `${V1}/Tenants/${id}/domains/${domainId}/verify`,
   },
 
+  // ===== THEME MARKETPLACE =====
+  THEMES: {
+    LIST: `${V1}/Themes`,
+    FEATURED: `${V1}/Themes/featured`,
+    FAVORITES: `${V1}/Themes/favorites`,
+    BY_SLUG: (slug: string) => `${V1}/Themes/${slug}`,
+    APPLY: (slug: string) => `${V1}/Themes/${slug}/apply`,
+    FAVORITE: (slug: string) => `${V1}/Themes/${slug}/favorite`,
+    CREATE: `${V1}/Themes`,
+    UPDATE: (slug: string) => `${V1}/Themes/${slug}`,
+    DELETE: (slug: string) => `${V1}/Themes/${slug}`,
+    DEPRECATE: (slug: string) => `${V1}/Themes/${slug}/deprecate`,
+    DUPLICATE: (slug: string) => `${V1}/Themes/${slug}/duplicate`,
+    REORDER: `${V1}/Themes/reorder`,
+  },
+
   // ===== MENUS =====
   MENUS: {
     MY: `${V1}/Menus/my`,

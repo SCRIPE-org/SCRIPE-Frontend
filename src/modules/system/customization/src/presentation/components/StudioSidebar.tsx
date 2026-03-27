@@ -1,10 +1,10 @@
 /**
- * StudioSidebar — 8-tab sidebar for the Ultimate Customizer Studio
+ * StudioSidebar — 9-tab sidebar for the Ultimate Customizer Studio
  * All labels localized via t()
  */
 "use client";
 
-import { Layout, Palette, Type, Settings2, Layers, Blocks, Paintbrush, ScanEye } from "lucide-react";
+import { Layout, Palette, Type, Settings2, Layers, Blocks, Paintbrush, ScanEye, Store } from "lucide-react";
 import { cn } from "@/core/common/utils";
 import { LayoutPanel } from "./LayoutPanel";
 import { BrandingPanel } from "./BrandingPanel";
@@ -14,6 +14,7 @@ import type { LoginSlotId, ContentBlock } from "@modules/auth/signin/src/types/l
 import { StylePanel } from "./StylePanel";
 import { AdvancedPanel } from "./AdvancedPanel";
 import { AccessibilityPanel } from "./AccessibilityPanel";
+import { ThemeMarketplacePanel } from "./ThemeMarketplacePanel";
 
 interface StudioSidebarProps {
   t: (key: string) => string;
@@ -37,6 +38,7 @@ const TABS: { id: StudioPanel; icon: typeof Layout; labelKey: string }[] = [
   { id: "blocks", icon: Blocks, labelKey: "studio.tab.blocks" },
   { id: "advanced", icon: Layers, labelKey: "studio.tab.advanced" },
   { id: "accessibility", icon: ScanEye, labelKey: "studio.tab.accessibility" },
+  { id: "themes", icon: Store, labelKey: "studio.tab.themes" },
 ];
 
 export function StudioSidebar(props: StudioSidebarProps) {
@@ -129,6 +131,9 @@ export function StudioSidebar(props: StudioSidebarProps) {
               updateDraft={updateDraft}
               batchUpdateDraft={batchUpdateDraft}
             />
+          )}
+          {activePanel === "themes" && (
+            <ThemeMarketplacePanel t={t} />
           )}
         </div>
       </div>

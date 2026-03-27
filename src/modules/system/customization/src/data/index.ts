@@ -1,5 +1,8 @@
 export { CustomizationService } from "./services/CustomizationService";
 export { CustomizationRepository } from "./repositories/CustomizationRepository";
+export { ThemeMarketplaceService } from "./services/ThemeMarketplaceService";
+export { ThemeMarketplaceRepository } from "./repositories/ThemeMarketplaceRepository";
+export { ThemeMarketplaceMapper } from "./mappers/ThemeMarketplaceMapper";
 export { BrandingMapper } from "./mappers/BrandingMapper";
 export { BrandingModel, AuditLogEntryModel } from "./models/BrandingModel";
 export type { BrandingResponseJson, AuditLogEntryJson, AuditLogPagedResultJson, PublishBrandingRequestJson } from "./models/BrandingModel";

@@ -18,6 +18,8 @@ import { TenantService } from "./tenants/src/data/services/TenantService";
 import { TenantSettingsService } from "./tenant-settings/src/data/services/TenantSettingsService";
 import { CustomizationService } from "./customization/src/data/services/CustomizationService";
 import { CustomizationRepository } from "./customization/src/data/repositories/CustomizationRepository";
+import { ThemeMarketplaceService } from "./customization/src/data/services/ThemeMarketplaceService";
+import { ThemeMarketplaceRepository } from "./customization/src/data/repositories/ThemeMarketplaceRepository";
 import { DashboardService } from "./dashboard/src/data/services/DashboardService";
 import { RecycleBinService } from "./recycle-bin/src/data/services/RecycleBinService";
 import { MessageTemplateService } from "./messaging/message-templates/src/data/services/MessageTemplateService";
@@ -64,6 +66,7 @@ import type { IIdentityProviderRepository } from "./identity-providers/src/domai
 import type { IOAuthAppRepository } from "./oauth-apps/src/domain/interfaces/IOAuthAppRepository";
 import type { ICustomizationRepository } from "./customization/src/domain/interfaces/ICustomizationRepository";
 import type { ICustomizationService } from "./customization/src/domain/interfaces/ICustomizationService";
+import type { IThemeMarketplaceRepository } from "./customization/src/domain/interfaces/IThemeMarketplaceRepository";
 
 // Interfaces - Services (from domain/interfaces, NOT data/services)
 import type { IAdminService } from "./admin/src/domain/interfaces/IAdminService";
@@ -102,6 +105,7 @@ export interface SystemContainer {
   // Unified Identity System
   identityProviderRepository: IIdentityProviderRepository;
   oauthAppRepository: IOAuthAppRepository;
+  themeMarketplaceRepository: IThemeMarketplaceRepository;
 }
 
 let _container: SystemContainer | null = null;
@@ -128,6 +132,7 @@ export function getSystemContainer(): SystemContainer {
     const userGroupService = new UserGroupService(apiService);
     const identityProviderService = new IdentityProviderService(apiService);
     const oauthAppService = new OAuthAppService(apiService);
+    const themeMarketplaceService = new ThemeMarketplaceService(apiService);
 
     // Create Repositories (use Services)
     _container = {
@@ -160,6 +165,7 @@ export function getSystemContainer(): SystemContainer {
       // Unified Identity System
       identityProviderRepository: new IdentityProviderRepository(identityProviderService),
       oauthAppRepository: new OAuthAppRepository(oauthAppService),
+      themeMarketplaceRepository: new ThemeMarketplaceRepository(themeMarketplaceService),
     };
   }
 
@@ -241,5 +247,8 @@ export const systemContainer = {
   },
   get oauthAppRepository() {
     return getSystemContainer().oauthAppRepository;
+  },
+  get themeMarketplaceRepository() {
+    return getSystemContainer().themeMarketplaceRepository;
   },
 };
