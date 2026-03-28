@@ -4,7 +4,7 @@
  */
 "use client";
 
-import { Layout, Palette, Type, Settings2, Layers, Blocks, Paintbrush, ScanEye, Store, FileText } from "lucide-react";
+import { Layout, Palette, Type, Settings2, Layers, Blocks, Paintbrush, ScanEye, Store } from "lucide-react";
 import { cn } from "@/core/common/utils";
 import { LayoutPanel } from "./LayoutPanel";
 import { BrandingPanel } from "./BrandingPanel";
@@ -15,7 +15,7 @@ import { StylePanel } from "./StylePanel";
 import { AdvancedPanel } from "./AdvancedPanel";
 import { AccessibilityPanel } from "./AccessibilityPanel";
 import { ThemeMarketplacePanel } from "./ThemeMarketplacePanel";
-import { MultiPagePanel } from "./MultiPagePanel";
+
 
 interface StudioSidebarProps {
   t: (key: string) => string;
@@ -28,6 +28,10 @@ interface StudioSidebarProps {
   removeBlock: (slotId: LoginSlotId, index: number) => void;
   moveBlock: (slotId: LoginSlotId, fromIndex: number, direction: "up" | "down") => void;
   updateBlock: (slotId: LoginSlotId, index: number, block: ContentBlock) => void;
+  // Theme marketplace callbacks
+  onThemeApplied?: () => void;
+  onPreviewTheme?: (themeDataJson: string) => void;
+  onExitPreview?: () => void;
 }
 
 const TABS: { id: StudioPanel; icon: typeof Layout; labelKey: string }[] = [
@@ -40,7 +44,6 @@ const TABS: { id: StudioPanel; icon: typeof Layout; labelKey: string }[] = [
   { id: "advanced", icon: Layers, labelKey: "studio.tab.advanced" },
   { id: "accessibility", icon: ScanEye, labelKey: "studio.tab.accessibility" },
   { id: "themes", icon: Store, labelKey: "studio.tab.themes" },
-  { id: "pages", icon: FileText, labelKey: "studio.tab.pages" },
 ];
 
 export function StudioSidebar(props: StudioSidebarProps) {
@@ -135,11 +138,14 @@ export function StudioSidebar(props: StudioSidebarProps) {
             />
           )}
           {activePanel === "themes" && (
-            <ThemeMarketplacePanel t={t} />
+            <ThemeMarketplacePanel
+              t={t}
+              onApplySuccess={props.onThemeApplied}
+              onPreviewTheme={props.onPreviewTheme}
+              onExitPreview={props.onExitPreview}
+            />
           )}
-          {activePanel === "pages" && (
-            <MultiPagePanel t={t} />
-          )}
+
         </div>
       </div>
     </div>

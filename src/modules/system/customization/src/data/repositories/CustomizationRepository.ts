@@ -39,6 +39,10 @@ export class CustomizationRepository implements ICustomizationRepository {
     await this.service.discardDraft();
   }
 
+  async resetBranding(type: "Published" | "GlobalDefault" | "FactoryDefault"): Promise<void> {
+    await this.service.resetBranding(type);
+  }
+
   async rollback(targetVersion: number): Promise<void> {
     await this.service.rollback(targetVersion);
   }

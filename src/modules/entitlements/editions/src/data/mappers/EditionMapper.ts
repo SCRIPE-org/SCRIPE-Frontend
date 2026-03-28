@@ -17,6 +17,7 @@ export class EditionMapper {
                   description: model.description,
                   isSystem: model.isSystem,
                   isRetired: model.isRetired,
+                  tierLevel: model.tierLevel ?? 0,
                   createdByTenantId: model.createdByTenantId,
                   featureCount: model.featureCount,
                   features: model.features,
@@ -50,6 +51,7 @@ export class EditionMapper {
                   displayNameAr: request.displayNameAr,
                   description: request.description,
                   fallbackEditionId: request.fallbackEditionId || null,
+                  tierLevel: request.tierLevel ?? 0,
                   // ── Billing Controls ──
                   allowMonthly: request.allowMonthly ?? true,
                   allowYearly: request.allowYearly ?? true,
@@ -70,6 +72,7 @@ export class EditionMapper {
                   description: request.description,
                   fallbackEditionId: request.fallbackEditionId || null,
                   overflowPolicy: request.overflowPolicy || 'Block',
+                  tierLevel: request.tierLevel,
             };
             // ── Billing Controls (only send if defined) ──
             if (request.allowMonthly !== undefined) json.allowMonthly = request.allowMonthly;

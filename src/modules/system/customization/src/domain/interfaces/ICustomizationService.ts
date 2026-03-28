@@ -15,6 +15,7 @@ export interface ICustomizationService {
   updateMySettings(data: Record<string, unknown>): Promise<void>;
   publishBranding(request: { expectedVersion: number }): Promise<void>;
   discardDraft(): Promise<void>;
+  resetBranding(type: "Published" | "GlobalDefault" | "FactoryDefault"): Promise<void>;
   rollback(targetVersion: number): Promise<void>;
 
   // ── Tenant Display Prefs (DashboardThemeJson) ──

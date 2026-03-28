@@ -1,7 +1,7 @@
 /**
  * CustomizerStudioView — Main studio layout (Ultimate Redesign)
  *
- * Split-pane: left = 8-tab control sidebar, right = sandboxed iframe preview
+ * Split-pane: left = 9-tab control sidebar, right = sandboxed iframe preview
  * All changes are draft. Preview updates via postMessage. No live mutation.
  * Localized via t(). Security: sandbox iframe, origin-validated postMessage.
  *
@@ -45,10 +45,6 @@ export function CustomizerStudioView() {
     });
   }, [vm.draft, bridge.sendDraft, vm.buildDraftJson, vm.buildSlotConfigJson]);
 
-  // Note: No resetPreview effect needed — the discard mutation resets draft state
-  // to live branding, which triggers the draft sync effect above to send the
-  // correct config to the iframe automatically.
-
   // Loading state — waiting for branding query to resolve
   if (vm.isLoading) {
     return (
@@ -86,12 +82,17 @@ export function CustomizerStudioView() {
         isPublishing={vm.isPublishing}
         isDiscarding={vm.isDiscarding}
         isSavingDraft={vm.isSavingDraft}
+        isResetting={vm.isResetting}
+        isPreviewingTheme={vm.isPreviewingTheme}
         lastSavedAt={vm.lastSavedAt}
         deviceSize={vm.deviceSize}
         setDeviceSize={vm.setDeviceSize}
         onPublish={vm.publish}
         onDiscard={vm.discard}
         onSaveDraft={vm.saveDraft}
+        onReset={vm.resetBranding}
+        onExitPreview={vm.exitThemePreview}
+        onRefresh={vm.refreshDraft}
       />
 
       {/* Main Content */}
@@ -108,6 +109,9 @@ export function CustomizerStudioView() {
           removeBlock={vm.removeBlock}
           moveBlock={vm.moveBlock}
           updateBlock={vm.updateBlock}
+          onThemeApplied={() => vm.refreshDraft()}
+          onPreviewTheme={(json) => vm.previewTheme(json)}
+          onExitPreview={() => vm.exitThemePreview()}
         />
 
         {/* Right: Preview */}

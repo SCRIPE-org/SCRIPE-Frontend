@@ -16,6 +16,7 @@ export interface EditionModel {
       description?: string;
       isSystem: boolean;
       isRetired: boolean;
+      tierLevel: number;
       createdByTenantId?: string;
       featureCount?: number;
       features?: { featureId: string; featureName: string; value: string; valueType: string }[];

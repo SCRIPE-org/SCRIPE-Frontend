@@ -5,6 +5,7 @@ import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Eye, EyeOff } from "lucide-react";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
+import Link from "next/link";
 import type { LoginFormData } from "../viewmodels/use-login-viewmodel";
 
 interface CredentialsFormProps {
@@ -98,6 +99,17 @@ export function CredentialsForm({
                                     {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                               </button>
                         </div>
+                  </div>
+
+                  {/* Forgot Password Link */}
+                  <div className="flex justify-end -mt-2">
+                        <Link
+                              href="/forgot-password"
+                              className="text-xs font-medium text-primary hover:text-primary/80 transition-colors"
+                              tabIndex={0}
+                        >
+                              {t("auth.forgotPassword") || "Forgot password?"}
+                        </Link>
                   </div>
 
                   {/* Semantic CTA Button */}

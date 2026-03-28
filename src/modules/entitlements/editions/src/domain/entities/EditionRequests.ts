@@ -7,6 +7,7 @@ export interface CreateEditionRequest {
       displayNameAr: string;
       description?: string;
       fallbackEditionId?: string;
+      tierLevel?: number;
       // ── Billing Controls ──
       allowMonthly?: boolean;
       allowYearly?: boolean;
@@ -25,6 +26,7 @@ export interface UpdateEditionRequest {
       description?: string;
       fallbackEditionId?: string;
       overflowPolicy?: string;
+      tierLevel?: number;
       // ── Billing Controls ──
       allowMonthly?: boolean;
       allowYearly?: boolean;

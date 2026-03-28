@@ -57,6 +57,29 @@ export const ar = {
       redirecting: "جاري التحويل إلى لوحة التحكم...",
       backToLogin: "العودة لتسجيل الدخول",
     },
+    // استعادة كلمة المرور
+    forgotPassword: "نسيت كلمة المرور؟",
+    forgotPasswordDesc: "أدخل بريدك الإلكتروني وسنرسل لك تعليمات إعادة تعيين كلمة المرور.",
+    email: "البريد الإلكتروني",
+    emailPlaceholder: "you@example.com",
+    sendResetLink: "إرسال تعليمات الاستعادة",
+    checkYourEmail: "تحقق من بريدك الإلكتروني",
+    resetLinkSent: "إذا كان هناك حساب مرتبط بهذا البريد الإلكتروني، فقد أرسلنا تعليمات إعادة تعيين كلمة المرور. يرجى التحقق من صندوق الوارد والبريد غير المرغوب فيه.",
+    tryAnotherEmail: "جرب بريداً إلكترونياً آخر",
+    backToLogin: "العودة لتسجيل الدخول",
+    adminResetNotice: "إذا لم تكن خدمة الاستعادة الذاتية متاحة، اتصل بمدير النظام لإعادة تعيين كلمة المرور.",
+    resetPassword: "إعادة تعيين كلمة المرور",
+    resetPasswordDesc: "أدخل كلمة المرور الجديدة أدناه.",
+    newPassword: "كلمة المرور الجديدة",
+    newPasswordPlaceholder: "أدخل كلمة المرور الجديدة",
+    confirmPassword: "تأكيد كلمة المرور",
+    confirmPasswordPlaceholder: "أعد إدخال كلمة المرور الجديدة",
+    passwordUpdated: "تم تحديث كلمة المرور",
+    passwordUpdatedDesc: "تم إعادة تعيين كلمة المرور بنجاح. يمكنك الآن تسجيل الدخول بكلمة المرور الجديدة.",
+    goToLogin: "الذهاب لتسجيل الدخول",
+    invalidResetLink: "رابط غير صالح أو منتهي الصلاحية",
+    invalidResetLinkDesc: "رابط إعادة تعيين كلمة المرور غير صالح أو منتهي الصلاحية. يرجى طلب رابط جديد.",
+    requestNewLink: "طلب رابط جديد",
     // إمكانية الوصول
     loginFormAriaLabel: "نموذج تسجيل الدخول",
     showPassword: "إظهار كلمة المرور",
@@ -5736,6 +5759,52 @@ export const ar = {
     noTenantTitle: "يلزم اختيار مستأجر",
     noTenantDesc: "يرجى اختيار مستأجر لتخصيص صفحة تسجيل الدخول الخاصة به. يعمل المخصص مع إعدادات العلامة التجارية الخاصة بالمستأجر.",
 
+    // معاينة
+    previewMode: "معاينة السمة",
+    exitPreview: "خروج",
+
+    // إعادة التعيين
+    reset: "إعادة التعيين",
+    resetSuccess: "تمت إعادة تعيين العلامة التجارية بنجاح",
+    resetFailed: "فشل في إعادة تعيين العلامة التجارية",
+    "reset.published": "العودة إلى المنشور",
+    "reset.publishedDesc": "إعادة المسودة إلى التصميم الحالي المنشور",
+    "reset.globalDefault": "الإعدادات العامة",
+    "reset.globalDefaultDesc": "استخدام العلامة التجارية الافتراضية للمنصة",
+    "reset.factoryDefault": "إعادة ضبط المصنع",
+    "reset.factoryDefaultDesc": "إعادة التعيين إلى سمة NEXORA الافتراضية",
+
+    // تحديث
+    refresh: "تحديث من الخادم",
+
+    // شعارات النظام / الاستعراض
+    systemDefaultsBanner: "تعديل الإعدادات الافتراضية — يُطبّق على جميع المستأجرين بدون علامة تجارية مخصصة",
+    customizingTenant: "تخصيص:",
+
+    // سوق السمات
+    marketplace: {
+      title: "معرض السمات",
+      browse: "تصفح",
+      favorites: "المفضلة",
+      featured: "مميزة",
+      search: "ابحث عن سمات...",
+      noResults: "لم يتم العثور على سمات",
+      apply: "تطبيق السمة",
+      applied: "مُطبّق",
+      preview: "معاينة",
+      favorite: "مفضلة",
+      unfavorite: "إزالة من المفضلة",
+      free: "مجاني",
+      included: "مشمول",
+      upgrade: "ترقية",
+      buy: "شراء",
+      purchased: "تم الشراء",
+      locked: "مقفل",
+      previewAny: "انقر للمعاينة — يتطلب التطبيق الوصول",
+      byAuthor: "بواسطة",
+      usageCount: "مستخدم بواسطة {{count}} مستأجرين",
+    },
+
     tab: {
       layout: "التخطيط",
       branding: "العلامة التجارية",
@@ -5745,6 +5814,7 @@ export const ar = {
       blocks: "كتل المحتوى",
       advanced: "متقدم",
       accessibility: "إمكانية الوصول",
+      themes: "السمات",
     },
 
     // ── فاحص إمكانية الوصول ──

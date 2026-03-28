@@ -39,6 +39,10 @@ export class CustomizationService implements ICustomizationService {
     await this.apiService.post(API_ENDPOINTS.TENANTS.ROLLBACK(targetVersion), {});
   }
 
+  async resetBranding(type: "Published" | "GlobalDefault" | "FactoryDefault"): Promise<void> {
+    await this.apiService.post(API_ENDPOINTS.TENANTS.RESET_BRANDING, { type });
+  }
+
   // ── Tenant Display Prefs (DashboardThemeJson) ──
 
   async saveTenantDisplayPrefs(dashboardThemeJson: string): Promise<void> {

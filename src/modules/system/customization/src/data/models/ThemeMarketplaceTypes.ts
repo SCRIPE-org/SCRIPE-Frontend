@@ -2,10 +2,14 @@
  * Theme Marketplace Types
  *
  * TypeScript types matching the backend DTOs exactly.
- * All enrichment (IsFavorited, IsApplied, IsAvailable) is computed server-side.
+ * Uses hybrid pricing model: Free / EditionGated / StandaloneOnly.
+ * All enrichment (IsAvailable, IsPurchased, IsIncluded) is computed server-side.
  *
  * @module customization/data
  */
+
+/** Pricing model for themes */
+export type ThemePricingType = "Free" | "EditionGated" | "StandaloneOnly";
 
 /** Gallery card — lightweight for grid rendering */
 export interface ThemeCardDto {
@@ -19,7 +23,6 @@ export interface ThemeCardDto {
   accentColor?: string;
   tags?: string[];
   isFree: boolean;
-  requiredEdition?: string;
   isSystem: boolean;
   isFeatured: boolean;
   isNew: boolean;
@@ -32,10 +35,19 @@ export interface ThemeCardDto {
   version?: string;
   publishedAt?: string;
   deprecationNotice?: string;
-  // Server-side enrichment
+  // ── Pricing fields ──
+  pricingType: ThemePricingType;
+  minTierLevel: number;
+  isAlsoBuyable: boolean;
+  price?: number;
+  priceCurrency?: string;
+  // ── Server-side enrichment ──
   isFavorited: boolean;
   isApplied: boolean;
   isAvailable: boolean;
+  isPurchased: boolean;
+  isIncluded: boolean;
+  isBuyable: boolean;
 }
 
 /** Full detail — includes ThemeDataJson for live preview */
@@ -87,16 +99,55 @@ export const THEME_SORT_OPTIONS = [
   { value: "likes", label: "Most Liked" },
 ] as const;
 
-export const EDITION_LABELS: Record<string, string> = {
-  free: "Free",
-  starter: "Starter",
-  professional: "Pro",
-  enterprise: "Enterprise",
+/** Pricing badge configuration */
+export const PRICING_BADGES: Record<
+  ThemePricingType,
+  { label: string; color: string; icon: string }
+> = {
+  Free: {
+    label: "Free",
+    color: "bg-emerald-500/10 text-emerald-600",
+    icon: "sparkles",
+  },
+  EditionGated: {
+    label: "Included",
+    color: "bg-blue-500/10 text-blue-600",
+    icon: "crown",
+  },
+  StandaloneOnly: {
+    label: "Premium",
+    color: "bg-violet-500/10 text-violet-600",
+    icon: "shopping-cart",
+  },
 };
 
-export const EDITION_COLORS: Record<string, string> = {
-  free: "bg-emerald-500/10 text-emerald-600",
-  starter: "bg-blue-500/10 text-blue-600",
-  professional: "bg-violet-500/10 text-violet-600",
-  enterprise: "bg-amber-500/10 text-amber-600",
-};
+/** Get the display badge for a theme based on its access status */
+export function getThemeBadge(theme: ThemeCardDto): {
+  label: string;
+  color: string;
+  variant: "free" | "included" | "locked" | "purchased" | "buyable";
+} {
+  if (theme.pricingType === "Free") {
+    return { label: "✨ Free", color: "bg-emerald-500/10 text-emerald-600", variant: "free" };
+  }
+
+  if (theme.isPurchased) {
+    return { label: "✅ Purchased", color: "bg-green-500/10 text-green-600", variant: "purchased" };
+  }
+
+  if (theme.isIncluded) {
+    return { label: "✅ Included", color: "bg-blue-500/10 text-blue-600", variant: "included" };
+  }
+
+  if (theme.pricingType === "StandaloneOnly") {
+    const priceLabel = theme.price ? `$${theme.price.toFixed(2)}` : "Premium";
+    return { label: `💰 ${priceLabel}`, color: "bg-violet-500/10 text-violet-600", variant: "buyable" };
+  }
+
+  // EditionGated but not included — locked
+  if (theme.isBuyable && theme.price) {
+    return { label: `🔒 Upgrade or $${theme.price.toFixed(2)}`, color: "bg-amber-500/10 text-amber-600", variant: "locked" };
+  }
+
+  return { label: "🔒 Upgrade to unlock", color: "bg-amber-500/10 text-amber-600", variant: "locked" };
+}

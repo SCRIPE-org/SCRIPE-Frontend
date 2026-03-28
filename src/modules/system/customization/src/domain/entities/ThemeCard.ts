@@ -2,10 +2,13 @@
  * ThemeCard — Domain entity for theme gallery card
  *
  * Rich domain model with computed properties.
+ * Uses hybrid pricing model: Free / EditionGated / StandaloneOnly.
  * Created by ThemeMarketplaceMapper from DTO.
  *
  * @module customization/domain
  */
+
+import type { ThemePricingType } from "../../data/models/ThemeMarketplaceTypes";
 
 export interface ThemeCardData {
   id: string;
@@ -18,7 +21,6 @@ export interface ThemeCardData {
   accentColor: string;
   tags: string[];
   isFree: boolean;
-  requiredEdition: string;
   isSystem: boolean;
   isFeatured: boolean;
   isNew: boolean;
@@ -31,9 +33,19 @@ export interface ThemeCardData {
   version: string;
   publishedAt: string;
   deprecationNotice: string;
+  // Pricing
+  pricingType: ThemePricingType;
+  minTierLevel: number;
+  isAlsoBuyable: boolean;
+  price: number;
+  priceCurrency: string;
+  // Access status
   isFavorited: boolean;
   isApplied: boolean;
   isAvailable: boolean;
+  isPurchased: boolean;
+  isIncluded: boolean;
+  isBuyable: boolean;
 }
 
 export class ThemeCard {
@@ -49,7 +61,6 @@ export class ThemeCard {
   get accentColor() { return this.data.accentColor; }
   get tags() { return this.data.tags; }
   get isFree() { return this.data.isFree; }
-  get requiredEdition() { return this.data.requiredEdition; }
   get isSystem() { return this.data.isSystem; }
   get isFeatured() { return this.data.isFeatured; }
   get isNew() { return this.data.isNew; }
@@ -62,9 +73,19 @@ export class ThemeCard {
   get version() { return this.data.version; }
   get publishedAt() { return this.data.publishedAt; }
   get deprecationNotice() { return this.data.deprecationNotice; }
+  // Pricing
+  get pricingType() { return this.data.pricingType; }
+  get minTierLevel() { return this.data.minTierLevel; }
+  get isAlsoBuyable() { return this.data.isAlsoBuyable; }
+  get price() { return this.data.price; }
+  get priceCurrency() { return this.data.priceCurrency; }
+  // Access status
   get isFavorited() { return this.data.isFavorited; }
   get isApplied() { return this.data.isApplied; }
   get isAvailable() { return this.data.isAvailable; }
+  get isPurchased() { return this.data.isPurchased; }
+  get isIncluded() { return this.data.isIncluded; }
+  get isBuyable() { return this.data.isBuyable; }
 
   /** Is this theme deprecated? */
   get isDeprecated() { return !!this.data.deprecationNotice; }

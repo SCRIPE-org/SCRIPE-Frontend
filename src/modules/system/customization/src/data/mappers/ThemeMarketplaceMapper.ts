@@ -2,6 +2,7 @@
  * Theme Marketplace Mapper
  *
  * Converts between data models (DTOs) and domain entities.
+ * Uses hybrid pricing model: Free / EditionGated / StandaloneOnly.
  *
  * @module customization/data
  */
@@ -23,7 +24,6 @@ export class ThemeMarketplaceMapper {
       accentColor: dto.accentColor ?? "",
       tags: dto.tags ?? [],
       isFree: dto.isFree,
-      requiredEdition: dto.requiredEdition ?? "",
       isSystem: dto.isSystem,
       isFeatured: dto.isFeatured,
       isNew: dto.isNew,
@@ -36,9 +36,19 @@ export class ThemeMarketplaceMapper {
       version: dto.version ?? "",
       publishedAt: dto.publishedAt ?? "",
       deprecationNotice: dto.deprecationNotice ?? "",
+      // Pricing
+      pricingType: dto.pricingType ?? "Free",
+      minTierLevel: dto.minTierLevel ?? 0,
+      isAlsoBuyable: dto.isAlsoBuyable ?? false,
+      price: dto.price ?? 0,
+      priceCurrency: dto.priceCurrency ?? "USD",
+      // Access status
       isFavorited: dto.isFavorited,
       isApplied: dto.isApplied,
       isAvailable: dto.isAvailable,
+      isPurchased: dto.isPurchased ?? false,
+      isIncluded: dto.isIncluded ?? false,
+      isBuyable: dto.isBuyable ?? false,
     };
     return new ThemeCard(data);
   }
@@ -57,7 +67,6 @@ export class ThemeMarketplaceMapper {
       accentColor: dto.accentColor ?? "",
       tags: dto.tags ?? [],
       isFree: dto.isFree,
-      requiredEdition: dto.requiredEdition ?? "",
       isSystem: dto.isSystem,
       isFeatured: dto.isFeatured,
       isNew: dto.isNew,
@@ -70,9 +79,19 @@ export class ThemeMarketplaceMapper {
       version: dto.version ?? "",
       publishedAt: dto.publishedAt ?? "",
       deprecationNotice: dto.deprecationNotice ?? "",
+      // Pricing
+      pricingType: dto.pricingType ?? "Free",
+      minTierLevel: dto.minTierLevel ?? 0,
+      isAlsoBuyable: dto.isAlsoBuyable ?? false,
+      price: dto.price ?? 0,
+      priceCurrency: dto.priceCurrency ?? "USD",
+      // Access status
       isFavorited: dto.isFavorited,
       isApplied: dto.isApplied,
       isAvailable: dto.isAvailable,
+      isPurchased: dto.isPurchased ?? false,
+      isIncluded: dto.isIncluded ?? false,
+      isBuyable: dto.isBuyable ?? false,
       // Detail-specific fields
       longDescription: dto.longDescription ?? "",
       previewImageUrl: dto.previewImageUrl ?? "",

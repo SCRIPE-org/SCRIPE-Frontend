@@ -17,6 +17,7 @@ export interface EditionData extends BaseEntity {
       description?: string;
       isSystem: boolean;
       isRetired: boolean;
+      tierLevel: number;
       createdByTenantId?: string;
       featureCount?: number;
       features?: EditionFeatureDto[];
@@ -45,6 +46,7 @@ export class Edition {
       get description(): string | undefined { return this.data.description; }
       get isSystem(): boolean { return this.data.isSystem; }
       get isRetired(): boolean { return this.data.isRetired; }
+      get tierLevel(): number { return this.data.tierLevel; }
       get createdAt(): string { return this.data.createdAt; }
       get features(): EditionFeatureDto[] { return this.data.features ?? []; }
       get featureCount(): number { return this.data.featureCount ?? this.features.length; }

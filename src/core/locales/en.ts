@@ -55,6 +55,29 @@ export const en = {
       redirecting: "Redirecting to dashboard...",
       backToLogin: "Back to Sign In",
     },
+    // Password Reset
+    forgotPassword: "Forgot Password?",
+    forgotPasswordDesc: "Enter your email and we'll send you instructions to reset your password.",
+    email: "Email",
+    emailPlaceholder: "you@example.com",
+    sendResetLink: "Send Reset Instructions",
+    checkYourEmail: "Check your email",
+    resetLinkSent: "If an account exists with that email, we've sent password reset instructions. Please check your inbox and spam folder.",
+    tryAnotherEmail: "Try another email",
+    backToLogin: "Back to login",
+    adminResetNotice: "If self-service reset isn't available, contact your system administrator to reset your password.",
+    resetPassword: "Reset Password",
+    resetPasswordDesc: "Enter your new password below.",
+    newPassword: "New Password",
+    newPasswordPlaceholder: "Enter new password",
+    confirmPassword: "Confirm Password",
+    confirmPasswordPlaceholder: "Re-enter new password",
+    passwordUpdated: "Password Updated",
+    passwordUpdatedDesc: "Your password has been successfully reset. You can now sign in with your new password.",
+    goToLogin: "Go to Login",
+    invalidResetLink: "Invalid or Expired Link",
+    invalidResetLinkDesc: "This password reset link is invalid or has expired. Please request a new one.",
+    requestNewLink: "Request New Link",
     // Accessibility
     loginFormAriaLabel: "Login form",
     showPassword: "Show password",
@@ -5874,6 +5897,52 @@ export const en = {
     noTenantTitle: "Tenant Required",
     noTenantDesc: "Please select a tenant to customize their login page. The customizer works with tenant-specific branding settings.",
 
+    // Preview
+    previewMode: "Theme Preview",
+    exitPreview: "Exit Preview",
+
+    // Reset
+    reset: "Reset",
+    resetSuccess: "Branding reset successfully",
+    resetFailed: "Failed to reset branding",
+    "reset.published": "Revert to Published",
+    "reset.publishedDesc": "Reset draft to current live design",
+    "reset.globalDefault": "System Defaults",
+    "reset.globalDefaultDesc": "Use platform-wide default branding",
+    "reset.factoryDefault": "Factory Reset",
+    "reset.factoryDefaultDesc": "Reset to NEXORA default theme",
+
+    // Refresh
+    refresh: "Refresh from server",
+
+    // System / Drilldown banners
+    systemDefaultsBanner: "Editing System Defaults — applied to all tenants without custom branding",
+    customizingTenant: "Customizing:",
+
+    // Theme Marketplace
+    marketplace: {
+      title: "Theme Gallery",
+      browse: "Browse",
+      favorites: "Favorites",
+      featured: "Featured",
+      search: "Search themes...",
+      noResults: "No themes found",
+      apply: "Apply Theme",
+      applied: "Applied",
+      preview: "Preview",
+      favorite: "Favorite",
+      unfavorite: "Unfavorite",
+      free: "Free",
+      included: "Included",
+      upgrade: "Upgrade",
+      buy: "Buy",
+      purchased: "Purchased",
+      locked: "Locked",
+      previewAny: "Tap to preview — apply requires access",
+      byAuthor: "by",
+      usageCount: "Used by {{count}} tenants",
+    },
+
     // Tabs
     tab: {
       layout: "Layout",
@@ -5884,6 +5953,7 @@ export const en = {
       blocks: "Content Blocks",
       advanced: "Advanced",
       accessibility: "Accessibility",
+      themes: "Themes",
     },
 
     // ── Accessibility Checker ──

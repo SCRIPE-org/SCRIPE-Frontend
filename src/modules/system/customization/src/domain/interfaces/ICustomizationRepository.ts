@@ -26,6 +26,9 @@ export interface ICustomizationRepository {
   /** Discard unpublished draft */
   discardDraft(): Promise<void>;
 
+  /** Reset draft branding to a known baseline */
+  resetBranding(type: "Published" | "GlobalDefault" | "FactoryDefault"): Promise<void>;
+
   /** Rollback to a specific version */
   rollback(targetVersion: number): Promise<void>;
 

@@ -256,6 +256,9 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   // Tenant settings
   "/settings/tenant": [SYSTEM_PERMISSIONS.TENANT_SETTINGS_VIEW],
 
+  // Customizer Studio (uses tenant_settings permission)
+  "/customizer": [SYSTEM_PERMISSIONS.TENANT_SETTINGS_VIEW],
+
   // Recycle Bin
   "/recycle-bin": [SYSTEM_PERMISSIONS.RECYCLE_BIN_VIEW],
 

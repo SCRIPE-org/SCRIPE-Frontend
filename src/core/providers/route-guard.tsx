@@ -20,6 +20,8 @@ interface RouteGuardProps {
 // Define public pages that don't require authentication or authorization
 const PUBLIC_PAGES = [
   "/login",
+  "/forgot-password",
+  "/reset-password",
   "/not-authorized",
   "/not-found",
   "/global-error",
@@ -105,7 +107,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
         return;
       }
 
-      const isAuthPage = pathname === "/login" || pathname.startsWith("/sso");
+      const isAuthPage = pathname === "/login" || pathname === "/forgot-password" || pathname === "/reset-password" || pathname.startsWith("/sso");
       const hasToken = secureTokenService.hasToken();
 
       // ─── Redirect authenticated users AWAY from auth pages ───

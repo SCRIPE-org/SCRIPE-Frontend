@@ -709,6 +709,82 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
   const cancelDiscard = useCallback(() => setShowDiscardConfirm(false), []);
   const confirmDiscard = useCallback(() => discardMutation.mutate(), [discardMutation]);
 
+  // ── Theme Preview (Preview any theme without applying it) ──
+  const savedDraftRef = useRef<StudioDraft | null>(null);
+  const [isPreviewingTheme, setIsPreviewingTheme] = useState(false);
+
+  const previewTheme = useCallback((themeDataJson: string) => {
+    // Save current draft so we can restore it
+    if (!savedDraftRef.current) {
+      savedDraftRef.current = draft;
+    }
+    try {
+      const parsed = JSON.parse(themeDataJson);
+      // Build a temporary draft from the theme data
+      const tokens = parsed.tokens || {};
+      const tempDraft: StudioDraft = {
+        ...DEFAULT_DRAFT,
+        layout: parsed.layout || DEFAULT_DRAFT.layout,
+        headline: parsed.headline || "",
+        subtitle: parsed.subtitle || "",
+        companyName: parsed.companyName || draft.companyName,
+        logoUrl: parsed.logoUrl || draft.logoUrl,
+        faviconUrl: parsed.faviconUrl || draft.faviconUrl,
+        copyrightText: parsed.copyrightText || draft.copyrightText,
+        primaryColor: tokens["color.primary"] || DEFAULT_DRAFT.primaryColor,
+        secondaryColor: tokens["color.secondary"] || DEFAULT_DRAFT.secondaryColor,
+        bgColor: tokens["color.background"] || DEFAULT_DRAFT.bgColor,
+        surfaceColor: tokens["color.surface"] || DEFAULT_DRAFT.surfaceColor,
+        textColor: tokens["color.text"] || DEFAULT_DRAFT.textColor,
+        mutedColor: tokens["color.textMuted"] || DEFAULT_DRAFT.mutedColor,
+        borderColor: tokens["color.border"] || DEFAULT_DRAFT.borderColor,
+        fontFamily: tokens["font.body"] || DEFAULT_DRAFT.fontFamily,
+        fontFamilyAr: tokens["font.bodyAr"] || DEFAULT_DRAFT.fontFamilyAr,
+        borderRadius: parseInt(tokens["radius.card"] || "") || DEFAULT_DRAFT.borderRadius,
+        btnRadius: parseInt(tokens["radius.button"] || "") || DEFAULT_DRAFT.btnRadius,
+        bgType: parsed.bgType || DEFAULT_DRAFT.bgType,
+        bgImageUrl: tokens["bg.image"] || "",
+        customCss: parsed.customCss || "",
+        slotConfig: draft.slotConfig, // Keep current slots
+      };
+      setDraft(tempDraft);
+      setIsPreviewingTheme(true);
+    } catch { /* invalid JSON */ }
+  }, [draft]);
+
+  const exitThemePreview = useCallback(() => {
+    if (savedDraftRef.current) {
+      setDraft(savedDraftRef.current);
+      savedDraftRef.current = null;
+    }
+    setIsPreviewingTheme(false);
+  }, []);
+
+  // ── Reset Branding ──
+  const resetMutation = useMutation({
+    mutationFn: async (resetType: "Published" | "GlobalDefault" | "FactoryDefault") => {
+      await repository.resetBranding(resetType);
+    },
+    onSuccess: () => {
+      toastSuccess({ title: t("studio.resetSuccess") || "Branding reset successfully" });
+      setIsDirty(false);
+      setIsPreviewingTheme(false);
+      savedDraftRef.current = null;
+      queryClient.invalidateQueries({ queryKey: ["studio-branding"] });
+      queryClient.invalidateQueries({ queryKey: ["customization"] });
+    },
+    onError: (error: Error) => {
+      toastError({ title: t("studio.resetFailed") || "Reset failed", description: error.message });
+    },
+  });
+
+  // ── Refresh draft from server ──
+  const refreshDraft = useCallback(async () => {
+    await queryClient.invalidateQueries({ queryKey: ["studio-branding"] });
+    setIsPreviewingTheme(false);
+    savedDraftRef.current = null;
+  }, [queryClient]);
+
   return {
     t,
     // Draft state
@@ -740,6 +816,15 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
     cancelDiscard,
     showDiscardConfirm,
     isDiscarding: discardMutation.isPending,
+    // Theme Preview
+    previewTheme,
+    exitThemePreview,
+    isPreviewingTheme,
+    // Reset Branding
+    resetBranding: (type: "Published" | "GlobalDefault" | "FactoryDefault") => resetMutation.mutate(type),
+    isResetting: resetMutation.isPending,
+    // Refresh
+    refreshDraft,
     // Loading & context
     isLoading: brandingQuery.isLoading,
     isTenantContext: true, // Backend always returns data (system defaults for system admin)

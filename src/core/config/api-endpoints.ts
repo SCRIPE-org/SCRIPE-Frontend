@@ -145,6 +145,7 @@ export const API_ENDPOINTS = {
     DISCARD_DRAFT: `${V1}/Tenants/my/settings/draft`,
     ROLLBACK: (targetVersion: number) => `${V1}/Tenants/my/settings/rollback/${targetVersion}`,
     AUDIT_LOG: `${V1}/Tenants/my/settings/audit-log`,
+    RESET_BRANDING: `${V1}/Tenants/my/settings/reset`,
     SYSTEM_SETTINGS: `${V1}/Tenants/system/settings`,
     ADMIN_PREFERENCES: `${V1}/Tenants/admins/my/settings`,
     SAFE_MODE: (id: string) => `${V1}/Tenants/${id}/safe-mode`,
