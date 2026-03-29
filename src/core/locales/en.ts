@@ -5902,16 +5902,17 @@ export const en = {
     exitPreview: "Exit Preview",
 
     // Reset
-    reset: "Reset",
+    reset: {
+      title: "Reset",
+      published: "Revert to Published",
+      publishedDesc: "Reset draft to current live design",
+      globalDefault: "System Defaults",
+      globalDefaultDesc: "Use platform-wide default branding",
+      factoryDefault: "Factory Reset",
+      factoryDefaultDesc: "Reset to NEXORA default theme",
+    },
     resetSuccess: "Branding reset successfully",
     resetFailed: "Failed to reset branding",
-    "reset.published": "Revert to Published",
-    "reset.publishedDesc": "Reset draft to current live design",
-    "reset.globalDefault": "System Defaults",
-    "reset.globalDefaultDesc": "Use platform-wide default branding",
-    "reset.factoryDefault": "Factory Reset",
-    "reset.factoryDefaultDesc": "Reset to NEXORA default theme",
-
     // Refresh
     refresh: "Refresh from server",
 

@@ -156,7 +156,7 @@ export function PublishBar({
               onClick={() => setShowResetMenu(!showResetMenu)}
               disabled={isResetting}
               className="flex h-8 items-center gap-1 rounded-lg border border-border px-2.5 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors disabled:opacity-50"
-              title={t("studio.reset") || "Reset"}
+              title={t("studio.reset.title") || "Reset"}
             >
               {isResetting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RotateCcw className="h-3.5 w-3.5" />}
               <ChevronDown className="h-3 w-3" />

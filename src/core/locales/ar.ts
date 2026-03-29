@@ -5764,15 +5764,18 @@ export const ar = {
     exitPreview: "خروج",
 
     // إعادة التعيين
-    reset: "إعادة التعيين",
+    reset: {
+      title: "إعادة التعيين",
+      published: "العودة إلى المنشور",
+      publishedDesc: "إعادة المسودة إلى التصميم الحالي المنشور",
+      globalDefault: "الإعدادات العامة",
+      globalDefaultDesc: "استخدام العلامة التجارية الافتراضية للمنصة",
+      factoryDefault: "إعادة ضبط المصنع",
+      factoryDefaultDesc: "إعادة التعيين إلى سمة NEXORA الافتراضية",
+    },
     resetSuccess: "تمت إعادة تعيين العلامة التجارية بنجاح",
     resetFailed: "فشل في إعادة تعيين العلامة التجارية",
-    "reset.published": "العودة إلى المنشور",
-    "reset.publishedDesc": "إعادة المسودة إلى التصميم الحالي المنشور",
-    "reset.globalDefault": "الإعدادات العامة",
-    "reset.globalDefaultDesc": "استخدام العلامة التجارية الافتراضية للمنصة",
-    "reset.factoryDefault": "إعادة ضبط المصنع",
-    "reset.factoryDefaultDesc": "إعادة التعيين إلى سمة NEXORA الافتراضية",
+
 
     // تحديث
     refresh: "تحديث من الخادم",

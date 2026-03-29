@@ -169,8 +169,17 @@ export function useThemeMarketplace(): UseThemeMarketplaceReturn {
       await loadThemes();
       return true;
     } catch (err: any) {
-      const message = err?.message || "Failed to apply theme";
-      toast({ title: message, variant: "destructive" });
+      const message = err?.message || err?.response?.data?.error || "Failed to apply theme";
+      // Detect system admin without tenant context
+      if (message.includes("System admins") || message.includes("target tenant") || message.includes("drilldown")) {
+        toast({
+          title: "No tenant selected",
+          description: "System admins must enter a tenant (via Tenant World) before applying themes. Go to Tenants → Enter Tenant → then open the Customizer.",
+          variant: "destructive",
+        });
+      } else {
+        toast({ title: message, variant: "destructive" });
+      }
       return false;
     } finally {
       setIsApplying(false);

@@ -16,7 +16,7 @@
  */
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Search, Heart, Grid3X3, List, Filter, Sparkles, Download,
   Lock, Star, ChevronLeft, ChevronRight, Loader2, Check,
@@ -48,6 +48,13 @@ export function ThemeMarketplacePanel({
   const [previewingSlug, setPreviewingSlug] = useState<string | null>(null);
 
   const totalPages = Math.ceil(mp.totalCount / mp.pageSize);
+
+  // When selectedTheme loads with data and we're actively previewing, forward to parent
+  useEffect(() => {
+    if (previewingSlug && mp.selectedTheme?.slug === previewingSlug && mp.selectedTheme.themeDataJson) {
+      onPreviewTheme?.(mp.selectedTheme.themeDataJson);
+    }
+  }, [mp.selectedTheme, previewingSlug, onPreviewTheme]);
 
   const handleApply = async (slug: string, merge: boolean = false) => {
     const success = await mp.applyTheme(slug, merge);

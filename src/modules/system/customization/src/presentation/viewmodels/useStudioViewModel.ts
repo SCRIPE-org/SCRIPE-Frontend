@@ -720,8 +720,15 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
     }
     try {
       const parsed = JSON.parse(themeDataJson);
-      // Build a temporary draft from the theme data
+
+      // Support BOTH formats:
+      //   1. Seeder format:  { colors: { primary, background, ... }, typography: { fontFamily }, spacing: { borderRadius } }
+      //   2. Tokens format:  { tokens: { "color.primary", "font.body", "radius.card" } }
       const tokens = parsed.tokens || {};
+      const colors = parsed.colors || {};
+      const typography = parsed.typography || {};
+      const spacing = parsed.spacing || {};
+
       const tempDraft: StudioDraft = {
         ...DEFAULT_DRAFT,
         layout: parsed.layout || DEFAULT_DRAFT.layout,
@@ -731,17 +738,28 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
         logoUrl: parsed.logoUrl || draft.logoUrl,
         faviconUrl: parsed.faviconUrl || draft.faviconUrl,
         copyrightText: parsed.copyrightText || draft.copyrightText,
-        primaryColor: tokens["color.primary"] || DEFAULT_DRAFT.primaryColor,
-        secondaryColor: tokens["color.secondary"] || DEFAULT_DRAFT.secondaryColor,
-        bgColor: tokens["color.background"] || DEFAULT_DRAFT.bgColor,
-        surfaceColor: tokens["color.surface"] || DEFAULT_DRAFT.surfaceColor,
-        textColor: tokens["color.text"] || DEFAULT_DRAFT.textColor,
-        mutedColor: tokens["color.textMuted"] || DEFAULT_DRAFT.mutedColor,
-        borderColor: tokens["color.border"] || DEFAULT_DRAFT.borderColor,
-        fontFamily: tokens["font.body"] || DEFAULT_DRAFT.fontFamily,
+        // Colors — try tokens first, then seeder colors object, then defaults
+        primaryColor: tokens["color.primary"] || colors.primary || DEFAULT_DRAFT.primaryColor,
+        secondaryColor: tokens["color.secondary"] || colors.secondary || DEFAULT_DRAFT.secondaryColor,
+        bgColor: tokens["color.background"] || colors.background || DEFAULT_DRAFT.bgColor,
+        surfaceColor: tokens["color.surface"] || colors.surface || DEFAULT_DRAFT.surfaceColor,
+        textColor: tokens["color.text"] || colors.text || DEFAULT_DRAFT.textColor,
+        mutedColor: tokens["color.textMuted"] || colors.muted || DEFAULT_DRAFT.mutedColor,
+        borderColor: tokens["color.border"] || colors.border || DEFAULT_DRAFT.borderColor,
+        errorColor: tokens["color.error"] || colors.error || DEFAULT_DRAFT.errorColor,
+        successColor: tokens["color.success"] || colors.success || DEFAULT_DRAFT.successColor,
+        // Typography — try tokens first, then seeder typography object
+        fontFamily: tokens["font.body"] || typography.fontFamily || DEFAULT_DRAFT.fontFamily,
         fontFamilyAr: tokens["font.bodyAr"] || DEFAULT_DRAFT.fontFamilyAr,
-        borderRadius: parseInt(tokens["radius.card"] || "") || DEFAULT_DRAFT.borderRadius,
-        btnRadius: parseInt(tokens["radius.button"] || "") || DEFAULT_DRAFT.btnRadius,
+        headingFont: tokens["font.heading"] || typography.headingFont || "",
+        headingSize: parseInt(tokens["font.size.headline"] || "") || typography.headingSize || DEFAULT_DRAFT.headingSize,
+        bodySize: parseInt(tokens["font.size.subtitle"] || "") || typography.bodySize || DEFAULT_DRAFT.bodySize,
+        // Spacing — try tokens first, then seeder spacing object
+        borderRadius: parseInt(tokens["radius.card"] || "") || spacing.borderRadius || DEFAULT_DRAFT.borderRadius,
+        btnRadius: parseInt(tokens["radius.button"] || "") || spacing.btnRadius || DEFAULT_DRAFT.btnRadius,
+        formWidth: parseInt(tokens["spacing.formWidth"] || "") || spacing.formWidth || DEFAULT_DRAFT.formWidth,
+        cardPadding: parseInt(tokens["spacing.cardPadding"] || "") || spacing.cardPadding || DEFAULT_DRAFT.cardPadding,
+        // Background
         bgType: parsed.bgType || DEFAULT_DRAFT.bgType,
         bgImageUrl: tokens["bg.image"] || "",
         customCss: parsed.customCss || "",
