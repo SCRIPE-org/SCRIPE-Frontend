@@ -5808,6 +5808,213 @@ export const ar = {
       usageCount: "مستخدم بواسطة {{count}} مستأجرين",
     },
 
+    // إدارة السمات (صفحة المشرف)
+    themeManagement: {
+      title: "إدارة سوق السمات",
+      subtitle: "إدارة وإنشاء وتنظيم سمات صفحة تسجيل الدخول للسوق.",
+      // الأعمدة
+      columns: {
+        theme: "السمة",
+        category: "الفئة",
+        tier: "المستوى",
+        features: "الميزات",
+        usage: "الاستخدام",
+        type: "النوع",
+      },
+      // شارات المستوى
+      tier: {
+        free: "مجاني",
+        premium: "مميز",
+        starter: "مبتدئ",
+        pro: "احترافي",
+        enterprise: "مؤسسي",
+        tierN: "المستوى {{n}}",
+      },
+      // شارات الميزات
+      features: {
+        dark: "داكن",
+        a11y: "وصول",
+        blocks: "كتل",
+      },
+      // شارات النوع
+      type: {
+        system: "نظامي",
+        custom: "مخصص",
+      },
+      // شارات الحالة
+      new: "جديد",
+      deprecated: "متوقف",
+      noDescription: "بدون وصف",
+      uncategorized: "غير مصنف",
+      // الإجراءات
+      actions: {
+        preview: "معاينة في الاستوديو",
+        duplicate: "تكرار",
+        toggleFavorite: "تبديل المفضلة",
+        deprecate: "إيقاف",
+      },
+      // مربعات التأكيد
+      confirm: {
+        deprecateTitle: "إيقاف السمة",
+        deprecateDescription: "هل أنت متأكد من إيقاف هذه السمة؟ ستبقى مرئية لكن لن يمكن تطبيقها بعد الآن.",
+        deleteTitle: "حذف السمة",
+        deleteDescription: "هل أنت متأكد من حذف هذه السمة؟ لا يمكن التراجع عن هذا الإجراء.",
+      },
+      // الإحصائيات
+      stats: {
+        total: "إجمالي السمات",
+        free: "مجانية",
+        featured: "مميزة",
+        system: "نظامية",
+        deprecated: "متوقفة",
+      },
+      // رسائل التنبيه
+      toast: {
+        deleted: "تم حذف السمة",
+        deletedDesc: "تم إزالة السمة من السوق.",
+        duplicated: "تم تكرار السمة",
+        duplicatedDesc: "تم إنشاء \"{{name}}\" كنسخة.",
+        duplicateFailed: "فشل التكرار",
+        deprecated: "تم إيقاف السمة",
+        deprecatedDesc: "تم تعليم السمة كمتوقفة.",
+        deprecateFailed: "فشل الإيقاف",
+      },
+      copySuffix: "(نسخة)",
+      defaultDeprecationNotice: "تم إيقاف هذه السمة. يرجى اختيار بديل.",
+    },
+
+    // معرض السمات (صفحة كاملة)
+    gallery: {
+      heroTitle: "معرض السمات",
+      heroSubtitle: "اكتشف سمات مذهلة لصفحة تسجيل الدخول. معاينة فورية وتطبيق بنقرة واحدة.",
+      searchPlaceholder: "ابحث بالاسم أو الفئة أو الوسم...",
+      resultsCount: "{{count}} سمة",
+      noResults: "لا توجد سمات تطابق الفلاتر.",
+      noResultsHint: "حاول تعديل الفلاتر أو مصطلح البحث.",
+      clearFilters: "مسح جميع الفلاتر",
+      browseAll: "تصفح الكل",
+      categories: {
+        all: "الكل",
+        corporate: "مؤسسي",
+        creative: "إبداعي",
+        minimal: "بسيط",
+        industry: "صناعي",
+        dark: "داكن",
+        colorful: "ملوّن",
+      },
+      sort: {
+        popular: "الأكثر شيوعاً",
+        newest: "الأحدث",
+        trending: "الأكثر رواجاً",
+        nameAsc: "الاسم (أ-ي)",
+        nameDesc: "الاسم (ي-أ)",
+      },
+      filters: {
+        title: "الفلاتر",
+        freeOnly: "مجاني فقط",
+        darkMode: "الوضع الداكن",
+        accessible: "ذوي الاحتياجات",
+        contentBlocks: "كتل المحتوى",
+        layout: "التخطيط",
+        tier: "المستوى",
+        allTiers: "جميع المستويات",
+        allLayouts: "جميع التخطيطات",
+      },
+      card: {
+        preview: "معاينة",
+        exitPreview: "خروج من المعاينة",
+        apply: "تطبيق",
+        applied: "مُطبّق",
+        applyToDraft: "تطبيق على المسودة؟",
+        replace: "استبدال",
+        merge: "دمج",
+        upgrade: "ترقية",
+        buy: "شراء",
+        locked: "مقفل",
+        featured: "مميز",
+        new: "جديد",
+        byAuthor: "بواسطة {{author}}",
+        uses: "{{count}} استخدام",
+      },
+      compare: {
+        title: "مقارنة السمات",
+        select: "اختر سمتين للمقارنة",
+        compareButton: "مقارنة",
+        side: "السمة {{n}}",
+        selectTheme: "اختر سمة",
+        colors: "الألوان",
+        typography: "الخطوط",
+        spacing: "التباعد",
+        features: "الميزات",
+        exitCompare: "خروج من المقارنة",
+      },
+      emptyFavorites: "لا توجد سمات مفضلة بعد",
+      emptyFavoritesHint: "اضغط على القلب لحفظ السمات هنا.",
+      browseThemes: "تصفح السمات",
+    },
+
+    // تفاصيل السمة (M7)
+    themeDetail: {
+      preview: {
+        title: "معاينة مباشرة",
+        desktop: "سطح المكتب",
+        tablet: "الجهاز اللوحي",
+        mobile: "الهاتف",
+        lightMode: "فاتح",
+        darkMode: "داكن",
+      },
+      tabs: {
+        overview: "نظرة عامة",
+        screenshots: "لقطات الشاشة",
+        specs: "المواصفات",
+      },
+      info: {
+        category: "الفئة",
+        version: "الإصدار",
+        author: "المؤلف",
+        published: "تاريخ النشر",
+        lastUpdated: "آخر تحديث",
+        compatibleLayouts: "التخطيطات المتوافقة",
+        industry: "القطاع",
+      },
+      features: {
+        darkMode: "الوضع الداكن",
+        accessibility: "إمكانية الوصول",
+        contentBlocks: "كتل المحتوى",
+        gradientBg: "خلفية متدرجة",
+        customCss: "CSS مخصص",
+        rtlSupport: "دعم RTL",
+      },
+      specs: {
+        colorPalette: "لوحة الألوان",
+        lightColors: "فاتح",
+        darkColors: "داكن",
+        typography: "الخطوط",
+        headingFont: "خط العنوان",
+        bodyFont: "خط النص",
+        headingSize: "حجم العنوان",
+        bodySize: "حجم النص",
+        spacing: "التباعد",
+        borderRadius: "انحناء الحدود",
+        buttonRadius: "انحناء الزر",
+        formWidth: "عرض النموذج",
+        inputHeight: "ارتفاع الحقل",
+      },
+      stats: {
+        uses: "الاستخدامات",
+        favorites: "المفضلة",
+        rating: "التقييم",
+      },
+      actions: {
+        tryInStudio: "تجربة في الاستوديو",
+        applyToDraft: "تطبيق على المسودة",
+        favorite: "إضافة للمفضلة",
+        unfavorite: "إزالة من المفضلة",
+        close: "إغلاق",
+      },
+      noScreenshots: "لا تتوفر لقطات شاشة لهذه السمة.",
+    },
+
     tab: {
       layout: "التخطيط",
       branding: "العلامة التجارية",
@@ -5818,6 +6025,26 @@ export const ar = {
       advanced: "متقدم",
       accessibility: "إمكانية الوصول",
       themes: "السمات",
+    },
+
+    // تبويبات صفحات المصادقة (العلامة متعددة الصفحات)
+    pages: {
+      label: "الصفحة",
+    },
+    page: {
+      login: "تسجيل الدخول",
+      forgotPassword: "نسيت كلمة المرور",
+      resetPassword: "إعادة تعيين كلمة المرور",
+      register: "التسجيل",
+      verifyEmail: "تأكيد البريد",
+      mfa: "المصادقة الثنائية",
+    },
+    pageContent: "محتوى الصفحة",
+    fields: {
+      headline: "العنوان الرئيسي",
+      headlinePlaceholder: "عنوان الصفحة...",
+      subtitle: "العنوان الفرعي",
+      subtitlePlaceholder: "العنوان الفرعي للصفحة...",
     },
 
     // ── فاحص إمكانية الوصول ──

@@ -16,6 +16,7 @@ import type {
 import type {
   IThemeMarketplaceService,
   ThemeListParams,
+  UpsertThemePayload,
 } from "../../domain/interfaces/IThemeMarketplaceService";
 
 export class ThemeMarketplaceService implements IThemeMarketplaceService {
@@ -59,5 +60,37 @@ export class ThemeMarketplaceService implements IThemeMarketplaceService {
 
   async toggleFavorite(slug: string): Promise<void> {
     await this.api.post(API_ENDPOINTS.THEMES.FAVORITE(slug), {});
+  }
+
+  // ─── CRUD (system admin) ──────────────────────────────
+
+  async create(data: UpsertThemePayload): Promise<ThemeDetailDto> {
+    return this.api.post<ThemeDetailDto>(API_ENDPOINTS.THEMES.CREATE, data);
+  }
+
+  async update(slug: string, data: UpsertThemePayload): Promise<void> {
+    await this.api.put(API_ENDPOINTS.THEMES.UPDATE(slug), data);
+  }
+
+  async delete(slug: string): Promise<void> {
+    await this.api.delete(API_ENDPOINTS.THEMES.DELETE(slug));
+  }
+
+  async duplicate(slug: string, newSlug: string, newName: string): Promise<ThemeDetailDto> {
+    return this.api.post<ThemeDetailDto>(API_ENDPOINTS.THEMES.DUPLICATE(slug), {
+      newSlug,
+      newName,
+    });
+  }
+
+  async deprecate(slug: string, notice?: string, replacedBySlug?: string): Promise<void> {
+    await this.api.post(API_ENDPOINTS.THEMES.DEPRECATE(slug), {
+      deprecationNotice: notice,
+      replacedBySlug,
+    });
+  }
+
+  async reorder(slugToDisplayOrder: Record<string, number>): Promise<void> {
+    await this.api.put(API_ENDPOINTS.THEMES.REORDER, { slugToDisplayOrder });
   }
 }

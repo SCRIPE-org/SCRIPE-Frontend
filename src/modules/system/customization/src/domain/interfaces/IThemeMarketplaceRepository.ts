@@ -9,6 +9,7 @@
 import type { ThemeCard } from "../entities/ThemeCard";
 import type { ThemeDetail } from "../entities/ThemeDetail";
 import type { ThemeFilterState } from "../../data/models/ThemeMarketplaceTypes";
+import type { UpsertThemePayload } from "./IThemeMarketplaceService";
 
 export interface ThemeListResult {
   items: ThemeCard[];
@@ -37,4 +38,24 @@ export interface IThemeMarketplaceRepository {
 
   /** Toggle favorite for a theme */
   toggleFavorite(slug: string): Promise<void>;
+
+  // ─── CRUD (system admin) ──────────────────────────────
+
+  /** Create a new theme */
+  create(data: UpsertThemePayload): Promise<ThemeDetail>;
+
+  /** Update an existing theme */
+  update(slug: string, data: UpsertThemePayload): Promise<void>;
+
+  /** Delete (soft-delete) a theme */
+  delete(slug: string): Promise<void>;
+
+  /** Duplicate a theme */
+  duplicate(slug: string, newSlug: string, newName: string): Promise<ThemeDetail>;
+
+  /** Deprecate a theme */
+  deprecate(slug: string, notice?: string, replacedBySlug?: string): Promise<void>;
+
+  /** Bulk reorder themes */
+  reorder(slugToDisplayOrder: Record<string, number>): Promise<void>;
 }

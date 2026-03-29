@@ -9,7 +9,7 @@ import { cn } from "@/core/common/utils";
 import { LayoutPanel } from "./LayoutPanel";
 import { BrandingPanel } from "./BrandingPanel";
 import { BlockPanel } from "./BlockPanel";
-import type { StudioDraft, StudioPanel, DeviceSize } from "../viewmodels/useStudioViewModel";
+import type { StudioDraft, StudioPanel, AuthPageId, AuthPageOverride } from "../viewmodels/useStudioViewModel";
 import type { LoginSlotId, ContentBlock } from "@modules/auth/signin/src/types/login-branding-types";
 import { StylePanel } from "./StylePanel";
 import { AdvancedPanel } from "./AdvancedPanel";
@@ -32,6 +32,10 @@ interface StudioSidebarProps {
   onThemeApplied?: () => void;
   onPreviewTheme?: (themeDataJson: string) => void;
   onExitPreview?: () => void;
+  // Multi-page branding
+  activeAuthPage: AuthPageId;
+  getPageOverride: (pageId: AuthPageId) => AuthPageOverride;
+  setPageOverride: (pageId: AuthPageId, field: keyof AuthPageOverride, value: string) => void;
 }
 
 const TABS: { id: StudioPanel; icon: typeof Layout; labelKey: string }[] = [
@@ -47,7 +51,13 @@ const TABS: { id: StudioPanel; icon: typeof Layout; labelKey: string }[] = [
 ];
 
 export function StudioSidebar(props: StudioSidebarProps) {
-  const { t, activePanel, setActivePanel, draft, updateDraft, batchUpdateDraft, addBlock, removeBlock, moveBlock, updateBlock } = props;
+  const {
+    t, activePanel, setActivePanel, draft, updateDraft, batchUpdateDraft,
+    addBlock, removeBlock, moveBlock, updateBlock,
+    activeAuthPage, getPageOverride, setPageOverride,
+  } = props;
+
+  const currentPageOverride = getPageOverride(activeAuthPage);
 
   return (
     <div className="flex h-full border-e border-border bg-background">
@@ -92,8 +102,11 @@ export function StudioSidebar(props: StudioSidebarProps) {
           {activePanel === "layout" && (
             <LayoutPanel
               t={t}
-              selectedLayout={draft.layout}
-              onSelectLayout={(layout) => updateDraft("layout", layout)}
+              selectedLayout={currentPageOverride.layout}
+              onSelectLayout={(layout) => setPageOverride(activeAuthPage, "layout", layout)}
+              activeAuthPage={activeAuthPage}
+              pageOverride={currentPageOverride}
+              onUpdatePageField={(field, value) => setPageOverride(activeAuthPage, field, value)}
             />
           )}
           {activePanel === "branding" && (

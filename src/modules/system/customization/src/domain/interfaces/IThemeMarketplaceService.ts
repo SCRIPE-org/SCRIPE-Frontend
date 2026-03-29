@@ -26,6 +26,41 @@ export interface ThemeListParams {
   tags?: string;
 }
 
+/** Shape sent to POST /api/themes and PUT /api/themes/:slug */
+export interface UpsertThemePayload {
+  name: string;
+  slug: string;
+  description?: string;
+  longDescription?: string;
+  authorName?: string;
+  version?: string;
+  category?: string;
+  targetIndustry?: string;
+  tags?: string[];
+  previewImageUrl?: string;
+  previewDarkImageUrl?: string;
+  thumbnailImageUrl?: string;
+  screenshots?: string[];
+  accentColor?: string;
+  themeDataJson?: string;
+  themeSchemaVersion?: number;
+  isFree?: boolean;
+  pricingType?: string;
+  minTierLevel?: number;
+  isAlsoBuyable?: boolean;
+  price?: number;
+  priceCurrency?: string;
+  displayOrder?: number;
+  isFeatured?: boolean;
+  featuredUntil?: string;
+  isNew?: boolean;
+  compatibleLayouts?: string;
+  hasDarkMode?: boolean;
+  hasAccessibilityPreset?: boolean;
+  hasContentBlocks?: boolean;
+  isSystem?: boolean;
+}
+
 export interface IThemeMarketplaceService {
   /** Get paginated themes with filters */
   getThemes(params: ThemeListParams): Promise<ThemePagedResult>;
@@ -44,4 +79,23 @@ export interface IThemeMarketplaceService {
 
   /** Toggle favorite for a theme */
   toggleFavorite(slug: string): Promise<void>;
+
+  // ─── CRUD (system admin) ──────────────────────────────
+  /** Create a new theme */
+  create(data: UpsertThemePayload): Promise<ThemeDetailDto>;
+
+  /** Update an existing theme */
+  update(slug: string, data: UpsertThemePayload): Promise<void>;
+
+  /** Delete (soft-delete) a theme */
+  delete(slug: string): Promise<void>;
+
+  /** Duplicate a theme */
+  duplicate(slug: string, newSlug: string, newName: string): Promise<ThemeDetailDto>;
+
+  /** Deprecate a theme */
+  deprecate(slug: string, notice?: string, replacedBySlug?: string): Promise<void>;
+
+  /** Bulk reorder themes */
+  reorder(slugToDisplayOrder: Record<string, number>): Promise<void>;
 }

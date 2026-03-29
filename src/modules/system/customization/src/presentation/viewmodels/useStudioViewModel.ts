@@ -32,6 +32,10 @@ import {
   DEVICE_DIMENSIONS,
   type DeviceSize,
   type StudioPanel,
+  type AuthPageId,
+  type AuthPageOverride,
+  type AuthPageOverrides,
+  DEFAULT_PAGE_OVERRIDES,
 } from "../../domain/entities/StudioDraft";
 
 // ── All 22 Layouts ─────────────────────────────────────
@@ -66,8 +70,8 @@ export const ALL_LAYOUTS: {
 ];
 
 // Re-export domain types so existing component imports still work
-export type { StudioDraft, DeviceSize, StudioPanel };
-export { DEFAULT_DRAFT, DEVICE_DIMENSIONS };
+export type { StudioDraft, DeviceSize, StudioPanel, AuthPageId, AuthPageOverride, AuthPageOverrides };
+export { DEFAULT_DRAFT, DEVICE_DIMENSIONS, DEFAULT_PAGE_OVERRIDES };
 
 // ── Font Options (English) ─────────────────────────────
 export const FONT_OPTIONS_EN = [
@@ -198,6 +202,7 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
   const [deviceSize, setDeviceSize] = useState<DeviceSize>("desktop");
   const [activePanel, setActivePanel] = useState<StudioPanel>("layout");
   const [showDiscardConfirm, setShowDiscardConfirm] = useState(false);
+  const [activeAuthPage, setActiveAuthPage] = useState<AuthPageId>("login");
   const autoSaveTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   // ── Build draft from branding data (reused by init + discard) ──
@@ -312,6 +317,8 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
       // Advanced
       customCss: source.customCss || "",
       safeMode: (brandingData as any).isSafeMode ?? false,
+      // Multi-Page Branding
+      pageOverrides: source.pages || {},
       // Accessibility
       // Focus & Keyboard
       a11yFocusRingEnabled: source.a11yFocusRingEnabled ?? tokens["a11y.focusRing.enabled"] !== "false",
@@ -377,6 +384,42 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
   // ── Batch update (for color presets) ──
   const batchUpdateDraft = useCallback((updates: Partial<StudioDraft>) => {
     setDraft(prev => ({ ...prev, ...updates }));
+    setIsDirty(true);
+  }, []);
+
+  // ── Per-page override helpers ──
+  const getPageOverride = useCallback((pageId: AuthPageId): AuthPageOverride => {
+    const override = draft.pageOverrides[pageId];
+    if (override) return override;
+    // For login, derive from global draft fields (backward compat)
+    if (pageId === "login") {
+      return { layout: draft.layout, headline: draft.headline, subtitle: draft.subtitle };
+    }
+    return DEFAULT_PAGE_OVERRIDES[pageId];
+  }, [draft]);
+
+  const setPageOverride = useCallback((pageId: AuthPageId, field: keyof AuthPageOverride, value: string) => {
+    setDraft(prev => {
+      const currentOverride = prev.pageOverrides[pageId] || (
+        pageId === "login"
+          ? { layout: prev.layout, headline: prev.headline, subtitle: prev.subtitle }
+          : DEFAULT_PAGE_OVERRIDES[pageId]
+      );
+      const newOverride = { ...currentOverride, [field]: value };
+      const newOverrides = { ...prev.pageOverrides, [pageId]: newOverride };
+
+      // For login page, also sync global layout/headline/subtitle for backward compatibility
+      if (pageId === "login") {
+        return {
+          ...prev,
+          layout: newOverride.layout as StudioDraft["layout"],
+          headline: newOverride.headline,
+          subtitle: newOverride.subtitle,
+          pageOverrides: newOverrides,
+        };
+      }
+      return { ...prev, pageOverrides: newOverrides };
+    });
     setIsDirty(true);
   }, []);
 
@@ -469,6 +512,8 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
       customCss: draft.customCss,
       safeMode: draft.safeMode,
       themeMode: draft.themeMode,
+      // Multi-page branding — per-page layout/headline/subtitle
+      pages: Object.keys(draft.pageOverrides).length > 0 ? draft.pageOverrides : undefined,
       tokens: {
         "color.primary": draft.primaryColor,
         "color.secondary": draft.secondaryColor,
@@ -729,6 +774,10 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
       const typography = parsed.typography || {};
       const spacing = parsed.spacing || {};
 
+      // Helper to parse int from token string like "12px" -> 12
+      const tInt = (key: string, fb?: number) => parseInt(tokens[key] || "") || fb || 0;
+      const tFloat = (key: string, fb?: number) => parseFloat(tokens[key] || "") || fb || 0;
+
       const tempDraft: StudioDraft = {
         ...DEFAULT_DRAFT,
         layout: parsed.layout || DEFAULT_DRAFT.layout,
@@ -738,7 +787,11 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
         logoUrl: parsed.logoUrl || draft.logoUrl,
         faviconUrl: parsed.faviconUrl || draft.faviconUrl,
         copyrightText: parsed.copyrightText || draft.copyrightText,
-        // Colors — try tokens first, then seeder colors object, then defaults
+
+        // ── Theme Mode ──
+        themeMode: parsed.themeMode || DEFAULT_DRAFT.themeMode,
+
+        // ── Light Palette — tokens first, then seeder colors, then defaults ──
         primaryColor: tokens["color.primary"] || colors.primary || DEFAULT_DRAFT.primaryColor,
         secondaryColor: tokens["color.secondary"] || colors.secondary || DEFAULT_DRAFT.secondaryColor,
         bgColor: tokens["color.background"] || colors.background || DEFAULT_DRAFT.bgColor,
@@ -748,22 +801,67 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
         borderColor: tokens["color.border"] || colors.border || DEFAULT_DRAFT.borderColor,
         errorColor: tokens["color.error"] || colors.error || DEFAULT_DRAFT.errorColor,
         successColor: tokens["color.success"] || colors.success || DEFAULT_DRAFT.successColor,
-        // Typography — try tokens first, then seeder typography object
+
+        // ── Dark Palette ──
+        darkPrimaryColor: tokens["dark.color.primary"] || DEFAULT_DRAFT.darkPrimaryColor,
+        darkSecondaryColor: tokens["dark.color.secondary"] || DEFAULT_DRAFT.darkSecondaryColor,
+        darkBgColor: tokens["dark.color.background"] || DEFAULT_DRAFT.darkBgColor,
+        darkSurfaceColor: tokens["dark.color.surface"] || DEFAULT_DRAFT.darkSurfaceColor,
+        darkTextColor: tokens["dark.color.text"] || DEFAULT_DRAFT.darkTextColor,
+        darkMutedColor: tokens["dark.color.textMuted"] || DEFAULT_DRAFT.darkMutedColor,
+        darkBorderColor: tokens["dark.color.border"] || DEFAULT_DRAFT.darkBorderColor,
+        darkErrorColor: tokens["dark.color.error"] || DEFAULT_DRAFT.darkErrorColor,
+        darkSuccessColor: tokens["dark.color.success"] || DEFAULT_DRAFT.darkSuccessColor,
+
+        // ── Typography — tokens first, then seeder typography object ──
         fontFamily: tokens["font.body"] || typography.fontFamily || DEFAULT_DRAFT.fontFamily,
         fontFamilyAr: tokens["font.bodyAr"] || DEFAULT_DRAFT.fontFamilyAr,
         headingFont: tokens["font.heading"] || typography.headingFont || "",
-        headingSize: parseInt(tokens["font.size.headline"] || "") || typography.headingSize || DEFAULT_DRAFT.headingSize,
-        bodySize: parseInt(tokens["font.size.subtitle"] || "") || typography.bodySize || DEFAULT_DRAFT.bodySize,
-        // Spacing — try tokens first, then seeder spacing object
-        borderRadius: parseInt(tokens["radius.card"] || "") || spacing.borderRadius || DEFAULT_DRAFT.borderRadius,
-        btnRadius: parseInt(tokens["radius.button"] || "") || spacing.btnRadius || DEFAULT_DRAFT.btnRadius,
-        formWidth: parseInt(tokens["spacing.formWidth"] || "") || spacing.formWidth || DEFAULT_DRAFT.formWidth,
-        cardPadding: parseInt(tokens["spacing.cardPadding"] || "") || spacing.cardPadding || DEFAULT_DRAFT.cardPadding,
-        // Background
+        headingSize: tInt("font.size.headline", typography.headingSize || DEFAULT_DRAFT.headingSize),
+        bodySize: tInt("font.size.subtitle", typography.bodySize || DEFAULT_DRAFT.bodySize),
+        headingWeight: tInt("font.weight.heading", DEFAULT_DRAFT.headingWeight),
+        bodyWeight: tInt("font.weight.body", DEFAULT_DRAFT.bodyWeight),
+        lineHeight: tFloat("font.lineHeight", DEFAULT_DRAFT.lineHeight),
+        letterSpacing: tFloat("font.letterSpacing", DEFAULT_DRAFT.letterSpacing),
+
+        // ── Spacing — tokens first, then seeder spacing object ──
+        borderRadius: tInt("radius.card", spacing.borderRadius || DEFAULT_DRAFT.borderRadius),
+        btnRadius: tInt("radius.button", spacing.btnRadius || DEFAULT_DRAFT.btnRadius),
+        formWidth: tInt("spacing.formWidth", spacing.formWidth || DEFAULT_DRAFT.formWidth),
+        cardPadding: tInt("spacing.cardPadding", spacing.cardPadding || DEFAULT_DRAFT.cardPadding),
+        elementGap: tInt("spacing.elementGap", DEFAULT_DRAFT.elementGap),
+        inputHeight: tInt("spacing.inputHeight", DEFAULT_DRAFT.inputHeight),
+        btnSize: parsed.btnSize || DEFAULT_DRAFT.btnSize,
+
+        // ── Background ──
         bgType: parsed.bgType || DEFAULT_DRAFT.bgType,
+        bgGradientDirection: parsed.bgGradientDirection || DEFAULT_DRAFT.bgGradientDirection,
+        bgGradientFrom: parsed.bgGradientFrom || DEFAULT_DRAFT.bgGradientFrom,
+        bgGradientTo: parsed.bgGradientTo || DEFAULT_DRAFT.bgGradientTo,
         bgImageUrl: tokens["bg.image"] || "",
+        bgOverlayEnabled: parsed.bgOverlayEnabled ?? DEFAULT_DRAFT.bgOverlayEnabled,
+        bgOverlayColor: parsed.bgOverlayColor || DEFAULT_DRAFT.bgOverlayColor,
+        bgOverlayOpacity: tFloat("overlay.opacity", DEFAULT_DRAFT.bgOverlayOpacity),
+        bgBlur: typeof parsed.bgBlur === "number" ? parsed.bgBlur : DEFAULT_DRAFT.bgBlur,
+
+        // ── Dark Background ──
+        darkBgType: parsed.darkBgType || DEFAULT_DRAFT.darkBgType,
+        darkBgGradientDirection: parsed.darkBgGradientDirection || DEFAULT_DRAFT.darkBgGradientDirection,
+        darkBgGradientFrom: parsed.darkBgGradientFrom || DEFAULT_DRAFT.darkBgGradientFrom,
+        darkBgGradientTo: parsed.darkBgGradientTo || DEFAULT_DRAFT.darkBgGradientTo,
+        darkBgImageUrl: tokens["dark.bg.image"] || "",
+        darkBgOverlayEnabled: parsed.darkBgOverlayEnabled ?? DEFAULT_DRAFT.darkBgOverlayEnabled,
+        darkBgOverlayColor: parsed.darkBgOverlayColor || DEFAULT_DRAFT.darkBgOverlayColor,
+        darkBgOverlayOpacity: tFloat("dark.overlay.opacity", DEFAULT_DRAFT.darkBgOverlayOpacity),
+        darkBgBlur: typeof parsed.darkBgBlur === "number" ? parsed.darkBgBlur : DEFAULT_DRAFT.darkBgBlur,
+
+        // ── Custom CSS ──
         customCss: parsed.customCss || "",
-        slotConfig: draft.slotConfig, // Keep current slots
+
+        // ── Keep current slots, safe mode & page overrides ──
+        slotConfig: draft.slotConfig,
+        safeMode: draft.safeMode,
+        pageOverrides: draft.pageOverrides,
       };
       setDraft(tempDraft);
       setIsPreviewingTheme(true);
@@ -824,6 +922,11 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
     // Panels
     activePanel,
     setActivePanel,
+    // Multi-page branding
+    activeAuthPage,
+    setActiveAuthPage,
+    getPageOverride,
+    setPageOverride,
     // Actions
     publish: () => publishMutation.mutate(),
     isPublishing: publishMutation.isPending,

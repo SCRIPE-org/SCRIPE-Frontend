@@ -15,7 +15,10 @@ import type {
   IThemeMarketplaceRepository,
   ThemeListResult,
 } from "../../domain/interfaces/IThemeMarketplaceRepository";
-import type { IThemeMarketplaceService } from "../../domain/interfaces/IThemeMarketplaceService";
+import type {
+  IThemeMarketplaceService,
+  UpsertThemePayload,
+} from "../../domain/interfaces/IThemeMarketplaceService";
 import type { ThemeCard } from "../../domain/entities/ThemeCard";
 import type { ThemeDetail } from "../../domain/entities/ThemeDetail";
 import type { ThemeFilterState } from "../models/ThemeMarketplaceTypes";
@@ -75,5 +78,33 @@ export class ThemeMarketplaceRepository implements IThemeMarketplaceRepository {
 
   async toggleFavorite(slug: string): Promise<void> {
     await this.service.toggleFavorite(slug);
+  }
+
+  // ─── CRUD (system admin) ──────────────────────────────
+
+  async create(data: UpsertThemePayload): Promise<ThemeDetail> {
+    const dto = await this.service.create(data);
+    return ThemeMarketplaceMapper.toDetailEntity(dto);
+  }
+
+  async update(slug: string, data: UpsertThemePayload): Promise<void> {
+    await this.service.update(slug, data);
+  }
+
+  async delete(slug: string): Promise<void> {
+    await this.service.delete(slug);
+  }
+
+  async duplicate(slug: string, newSlug: string, newName: string): Promise<ThemeDetail> {
+    const dto = await this.service.duplicate(slug, newSlug, newName);
+    return ThemeMarketplaceMapper.toDetailEntity(dto);
+  }
+
+  async deprecate(slug: string, notice?: string, replacedBySlug?: string): Promise<void> {
+    await this.service.deprecate(slug, notice, replacedBySlug);
+  }
+
+  async reorder(slugToDisplayOrder: Record<string, number>): Promise<void> {
+    await this.service.reorder(slugToDisplayOrder);
   }
 }

@@ -1,5 +1,6 @@
 /**
  * LayoutPanel — 22 login layout selector with visual thumbnails
+ * Now page-aware: each auth page can have its own layout, headline, subtitle.
  */
 "use client";
 
@@ -7,11 +8,18 @@ import { CheckCircle } from "lucide-react";
 import { cn } from "@/core/common/utils";
 import { ALL_LAYOUTS } from "../viewmodels/useStudioViewModel";
 import type { LoginLayout } from "@modules/auth/signin/src/types/login-branding-types";
+import type { AuthPageId, AuthPageOverride } from "../../domain/entities/StudioDraft";
+import { Input } from "@core/ui/input";
+import { Label } from "@core/ui/label";
 
 interface LayoutPanelProps {
   t: (key: string) => string;
   selectedLayout: LoginLayout;
   onSelectLayout: (layout: LoginLayout) => void;
+  // Multi-page branding
+  activeAuthPage?: AuthPageId;
+  pageOverride?: AuthPageOverride;
+  onUpdatePageField?: (field: keyof AuthPageOverride, value: string) => void;
 }
 
 // Mini visual previews for each layout
@@ -252,9 +260,46 @@ const LAYOUT_THUMBNAILS: Record<LoginLayout, React.ReactNode> = {
   ),
 };
 
-export function LayoutPanel({ t, selectedLayout, onSelectLayout }: LayoutPanelProps) {
+export function LayoutPanel({ t, selectedLayout, onSelectLayout, activeAuthPage, pageOverride, onUpdatePageField }: LayoutPanelProps) {
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
+      {/* Page context indicator */}
+      {activeAuthPage && activeAuthPage !== "login" && (
+        <div className="flex items-center gap-2 rounded-lg border border-blue-500/20 bg-blue-500/5 px-3 py-2">
+          <div className="h-1.5 w-1.5 rounded-full bg-blue-500" />
+          <span className="text-xs text-blue-600 dark:text-blue-400">
+            {t(`studio.page.${activeAuthPage === "forgot-password" ? "forgotPassword" : activeAuthPage === "reset-password" ? "resetPassword" : activeAuthPage === "verify-email" ? "verifyEmail" : activeAuthPage}`) || activeAuthPage}
+          </span>
+        </div>
+      )}
+
+      {/* Per-page headline & subtitle */}
+      {pageOverride && onUpdatePageField && (
+        <div className="space-y-3 rounded-lg border border-border bg-muted/20 p-3">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+            {t("studio.pageContent") || "Page Content"}
+          </p>
+          <div className="space-y-1.5">
+            <Label className="text-xs">{t("studio.fields.headline") || "Headline"}</Label>
+            <Input
+              value={pageOverride.headline}
+              onChange={(e) => onUpdatePageField("headline", e.target.value)}
+              placeholder={t("studio.fields.headlinePlaceholder") || "Page headline..."}
+              className="h-8 text-xs"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label className="text-xs">{t("studio.fields.subtitle") || "Subtitle"}</Label>
+            <Input
+              value={pageOverride.subtitle}
+              onChange={(e) => onUpdatePageField("subtitle", e.target.value)}
+              placeholder={t("studio.fields.subtitlePlaceholder") || "Page subtitle..."}
+              className="h-8 text-xs"
+            />
+          </div>
+        </div>
+      )}
+
       <p className="text-xs text-muted-foreground">
         {t("studio.layout.description")}
       </p>

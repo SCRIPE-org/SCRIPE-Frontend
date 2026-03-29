@@ -17,6 +17,7 @@ import { useStudioBridge } from "../hooks/useStudioBridge";
 import { PublishBar } from "../components/PublishBar";
 import { StudioSidebar } from "../components/StudioSidebar";
 import { StudioPreview } from "../components/StudioPreview";
+import { AuthPageTabs } from "../components/AuthPageTabs";
 import { Loader2, Building2 } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
@@ -75,6 +76,13 @@ export function CustomizerStudioView() {
         </div>
       )}
 
+      {/* Auth Page Tabs — switch between Login / Forgot / Reset / Register / Verify / MFA */}
+      <AuthPageTabs
+        t={vm.t}
+        activePageId={vm.activeAuthPage}
+        onPageChange={vm.setActiveAuthPage}
+      />
+
       {/* Top Bar */}
       <PublishBar
         t={vm.t}
@@ -112,6 +120,9 @@ export function CustomizerStudioView() {
           onThemeApplied={() => vm.refreshDraft()}
           onPreviewTheme={(json) => vm.previewTheme(json)}
           onExitPreview={() => vm.exitThemePreview()}
+          activeAuthPage={vm.activeAuthPage}
+          getPageOverride={vm.getPageOverride}
+          setPageOverride={vm.setPageOverride}
         />
 
         {/* Right: Preview */}

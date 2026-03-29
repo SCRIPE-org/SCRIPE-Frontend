@@ -5944,6 +5944,227 @@ export const en = {
       usageCount: "Used by {{count}} tenants",
     },
 
+    // Theme Management (Admin Page)
+    themeManagement: {
+      title: "Theme Marketplace Management",
+      subtitle: "Manage, create, and organize login page themes for the marketplace.",
+      // Columns
+      columns: {
+        theme: "Theme",
+        category: "Category",
+        tier: "Tier",
+        features: "Features",
+        usage: "Usage",
+        type: "Type",
+      },
+      // Tier badges
+      tier: {
+        free: "Free",
+        premium: "Premium",
+        starter: "Starter",
+        pro: "Pro",
+        enterprise: "Enterprise",
+        tierN: "Tier {{n}}",
+      },
+      // Feature badges
+      features: {
+        dark: "Dark",
+        a11y: "A11y",
+        blocks: "Blocks",
+      },
+      // Type badges
+      type: {
+        system: "System",
+        custom: "Custom",
+      },
+      // Status badges
+      new: "NEW",
+      deprecated: "DEPRECATED",
+      noDescription: "No description",
+      uncategorized: "Uncategorized",
+      // Actions
+      actions: {
+        preview: "Preview in Studio",
+        duplicate: "Duplicate",
+        toggleFavorite: "Toggle Favorite",
+        deprecate: "Deprecate",
+      },
+      // Confirmation dialogs
+      confirm: {
+        deprecateTitle: "Deprecate Theme",
+        deprecateDescription: "Are you sure you want to deprecate this theme? It will remain visible but cannot be newly applied.",
+        deleteTitle: "Delete Theme",
+        deleteDescription: "Are you sure you want to delete this theme? This cannot be undone.",
+      },
+      // Statistics
+      stats: {
+        total: "Total Themes",
+        free: "Free",
+        featured: "Featured",
+        system: "System",
+        deprecated: "Deprecated",
+      },
+      // Toast messages
+      toast: {
+        deleted: "Theme Deleted",
+        deletedDesc: "The theme has been removed from the marketplace.",
+        duplicated: "Theme Duplicated",
+        duplicatedDesc: "Created \"{{name}}\" as a copy.",
+        duplicateFailed: "Duplication Failed",
+        deprecated: "Theme Deprecated",
+        deprecatedDesc: "Theme has been marked as deprecated.",
+        deprecateFailed: "Deprecation Failed",
+      },
+      copySuffix: "(Copy)",
+      defaultDeprecationNotice: "This theme has been deprecated. Please choose an alternative.",
+    },
+
+    // Theme Gallery (Full-Page, end-user facing)
+    gallery: {
+      heroTitle: "Theme Gallery",
+      heroSubtitle: "Discover stunning login page themes. Preview any theme instantly, apply with one click.",
+      searchPlaceholder: "Search by name, category, or tag...",
+      resultsCount: "{{count}} themes found",
+      noResults: "No themes match your filters.",
+      noResultsHint: "Try adjusting your filters or search term.",
+      clearFilters: "Clear all filters",
+      browseAll: "Browse All",
+      // Category tabs
+      categories: {
+        all: "All",
+        corporate: "Corporate",
+        creative: "Creative",
+        minimal: "Minimal",
+        industry: "Industry",
+        dark: "Dark",
+        colorful: "Colorful",
+      },
+      // Sort options
+      sort: {
+        popular: "Most Popular",
+        newest: "Newest",
+        trending: "Trending",
+        nameAsc: "Name (A-Z)",
+        nameDesc: "Name (Z-A)",
+      },
+      // Filter bar labels
+      filters: {
+        title: "Filters",
+        freeOnly: "Free Only",
+        darkMode: "Dark Mode",
+        accessible: "Accessible",
+        contentBlocks: "Content Blocks",
+        layout: "Layout",
+        tier: "Tier",
+        allTiers: "All Tiers",
+        allLayouts: "All Layouts",
+      },
+      // Card actions
+      card: {
+        preview: "Preview",
+        exitPreview: "Exit Preview",
+        apply: "Apply",
+        applied: "Applied",
+        applyToDraft: "Apply to Draft?",
+        replace: "Replace",
+        merge: "Merge",
+        upgrade: "Upgrade",
+        buy: "Buy",
+        locked: "Locked",
+        featured: "Featured",
+        new: "New",
+        byAuthor: "by {{author}}",
+        uses: "{{count}} uses",
+      },
+      // Comparison mode
+      compare: {
+        title: "Compare Themes",
+        select: "Select 2 themes to compare",
+        compareButton: "Compare",
+        side: "Theme {{n}}",
+        selectTheme: "Select a theme",
+        colors: "Colors",
+        typography: "Typography",
+        spacing: "Spacing",
+        features: "Features",
+        exitCompare: "Exit Comparison",
+      },
+      // Empty favorites
+      emptyFavorites: "No favorite themes yet",
+      emptyFavoritesHint: "Heart themes you like to save them here.",
+      browseThemes: "Browse Themes",
+    },
+
+    // Theme Detail Modal (M7)
+    themeDetail: {
+      // Preview controls
+      preview: {
+        title: "Live Preview",
+        desktop: "Desktop",
+        tablet: "Tablet",
+        mobile: "Mobile",
+        lightMode: "Light",
+        darkMode: "Dark",
+      },
+      // Tabs
+      tabs: {
+        overview: "Overview",
+        screenshots: "Screenshots",
+        specs: "Specifications",
+      },
+      // Info
+      info: {
+        category: "Category",
+        version: "Version",
+        author: "Author",
+        published: "Published",
+        lastUpdated: "Last Updated",
+        compatibleLayouts: "Compatible Layouts",
+        industry: "Industry",
+      },
+      // Feature badges
+      features: {
+        darkMode: "Dark Mode",
+        accessibility: "Accessibility",
+        contentBlocks: "Content Blocks",
+        gradientBg: "Gradient Background",
+        customCss: "Custom CSS",
+        rtlSupport: "RTL Support",
+      },
+      // Specs section
+      specs: {
+        colorPalette: "Color Palette",
+        lightColors: "Light",
+        darkColors: "Dark",
+        typography: "Typography",
+        headingFont: "Heading Font",
+        bodyFont: "Body Font",
+        headingSize: "Heading Size",
+        bodySize: "Body Size",
+        spacing: "Spacing",
+        borderRadius: "Border Radius",
+        buttonRadius: "Button Radius",
+        formWidth: "Form Width",
+        inputHeight: "Input Height",
+      },
+      // Stats
+      stats: {
+        uses: "Uses",
+        favorites: "Favorites",
+        rating: "Rating",
+      },
+      // Actions
+      actions: {
+        tryInStudio: "Try in Studio",
+        applyToDraft: "Apply to Draft",
+        favorite: "Favorite",
+        unfavorite: "Unfavorite",
+        close: "Close",
+      },
+      // No screenshots
+      noScreenshots: "No screenshots available for this theme.",
+    },
+
     // Tabs
     tab: {
       layout: "Layout",
@@ -5955,6 +6176,26 @@ export const en = {
       advanced: "Advanced",
       accessibility: "Accessibility",
       themes: "Themes",
+    },
+
+    // Auth Page Tabs (Multi-Page Branding)
+    pages: {
+      label: "Page",
+    },
+    page: {
+      login: "Login",
+      forgotPassword: "Forgot Password",
+      resetPassword: "Reset Password",
+      register: "Register",
+      verifyEmail: "Verify Email",
+      mfa: "MFA",
+    },
+    pageContent: "Page Content",
+    fields: {
+      headline: "Headline",
+      headlinePlaceholder: "Page headline...",
+      subtitle: "Subtitle",
+      subtitlePlaceholder: "Page subtitle...",
     },
 
     // ── Accessibility Checker ──

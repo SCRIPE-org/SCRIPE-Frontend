@@ -7,4 +7,9 @@ export {
   DEVICE_DIMENSIONS,
   type DeviceSize,
   type StudioPanel,
+  type AuthPageId,
+  type AuthPageOverride,
+  type AuthPageOverrides,
+  AUTH_PAGES,
+  DEFAULT_PAGE_OVERRIDES,
 } from "./StudioDraft";

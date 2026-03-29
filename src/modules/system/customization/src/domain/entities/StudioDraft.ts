@@ -8,6 +8,37 @@
  */
 import type { LoginLayout, SlotConfig } from "@modules/auth/signin/src/types/login-branding-types";
 
+// ── Auth Page Identifiers ─────────────────────────────
+export type AuthPageId = "login" | "forgot-password" | "reset-password" | "register" | "verify-email" | "mfa";
+
+export const AUTH_PAGES: { id: AuthPageId; labelKey: string; icon: string }[] = [
+  { id: "login",           labelKey: "studio.page.login",         icon: "LogIn" },
+  { id: "forgot-password", labelKey: "studio.page.forgotPassword", icon: "KeyRound" },
+  { id: "reset-password",  labelKey: "studio.page.resetPassword",  icon: "RotateCcw" },
+  { id: "register",        labelKey: "studio.page.register",       icon: "UserPlus" },
+  { id: "verify-email",    labelKey: "studio.page.verifyEmail",    icon: "MailCheck" },
+  { id: "mfa",             labelKey: "studio.page.mfa",            icon: "ShieldCheck" },
+];
+
+// ── Per-Page Override — each page can customize layout + content ──
+export interface AuthPageOverride {
+  layout: LoginLayout;
+  headline: string;
+  subtitle: string;
+}
+
+export type AuthPageOverrides = Partial<Record<AuthPageId, AuthPageOverride>>;
+
+// Default per-page values (login inherits from global draft)
+export const DEFAULT_PAGE_OVERRIDES: Record<AuthPageId, AuthPageOverride> = {
+  "login":           { layout: "split-right", headline: "", subtitle: "" },
+  "forgot-password": { layout: "centered",    headline: "", subtitle: "" },
+  "reset-password":  { layout: "centered",    headline: "", subtitle: "" },
+  "register":        { layout: "split-left",  headline: "", subtitle: "" },
+  "verify-email":    { layout: "minimal",     headline: "", subtitle: "" },
+  "mfa":             { layout: "minimal",     headline: "", subtitle: "" },
+};
+
 // ── Draft Shape ───────────────────────────────────────
 export interface StudioDraftProps {
   // Layout
@@ -169,6 +200,9 @@ export interface StudioDraftProps {
   // Touch & Target Size
   a11yLargeTargets: boolean;
   a11yForcedColorsSupport: boolean;
+
+  // ── Multi-Page Branding ─────────────────────────────
+  pageOverrides: AuthPageOverrides;
 }
 
 // ── Default Draft ─────────────────────────────────────
@@ -306,6 +340,8 @@ export const DEFAULT_DRAFT: StudioDraftProps = {
   // Touch & Target Size
   a11yLargeTargets: false,
   a11yForcedColorsSupport: true,
+  // Multi-Page Branding
+  pageOverrides: {},
 };
 
 // ── Device Sizes ──────────────────────────────────────
