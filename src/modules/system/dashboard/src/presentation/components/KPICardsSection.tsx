@@ -20,6 +20,10 @@ interface Props {
   isLoading: boolean;
   error?: Error | null;
   onRetry?: () => void;
+  // M9: Theme props
+  cardClasses?: string;
+  gridClasses?: string;
+  chartPalette?: string[];
 }
 
 interface KpiItem {
@@ -109,14 +113,17 @@ export const KPICardsSection = memo(function KPICardsSection({
   isLoading,
   error,
   onRetry,
+  cardClasses,
+  gridClasses,
 }: Props) {
+  const gridClass = gridClasses || "grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5";
   const { t } = useI18n();
   const { formatDisplay, getConversionTooltip, isConverting } = useConvertedAmount();
 
   if (isLoading) {
     return (
       <div
-        className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
+        className={gridClass}
         role="status"
         aria-label={t("common.loading")}
       >
@@ -150,7 +157,7 @@ export const KPICardsSection = memo(function KPICardsSection({
   }
 
   return (
-    <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5" aria-live="polite">
+    <div className={gridClass} aria-live="polite">
       {kpiConfig.map((kpi) => {
         const Icon = kpi.icon;
         const value = data?.[kpi.key] ?? 0;
@@ -159,7 +166,7 @@ export const KPICardsSection = memo(function KPICardsSection({
         return (
           <Card
             key={kpi.key}
-            className="group relative overflow-hidden transition-shadow hover:shadow-md"
+            className={`group relative overflow-hidden transition-shadow hover:shadow-md ${cardClasses || ""}`}
           >
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">

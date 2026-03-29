@@ -52,6 +52,7 @@ export function LoginPreviewShell() {
   const [draftOverrides, setDraftOverrides] = useState<{
     loginBrandingJson?: string;
     slotConfigJson?: string;
+    activeAuthPage?: string;
   } | null>(null);
 
   // Listen for postMessage from studio parent
@@ -127,9 +128,14 @@ export function LoginPreviewShell() {
 
   const logoUrl = (rawParsed.logoUrl as string) || "/app-logo.png";
   const companyName = (rawParsed.companyName as string) || BRAND.name;
-  const headline = (rawParsed.headline as string) || t("auth.branding.headline");
-  const subtitle = (rawParsed.subtitle as string) || t("auth.branding.subtitle");
   const copyrightText = (rawParsed.copyrightText as string) || "";
+
+  // Resolve page-specific overrides (M8) — per-page headline/subtitle
+  const activePageId = draftOverrides?.activeAuthPage || "login";
+  const pagesObj = (rawParsed.pages as Record<string, Record<string, string>>) || {};
+  const pageOverride = pagesObj[activePageId] || {};
+  const headline = pageOverride.headline || (rawParsed.headline as string) || t("auth.branding.headline");
+  const subtitle = pageOverride.subtitle || (rawParsed.subtitle as string) || t("auth.branding.subtitle");
 
   // Build "branding" object for LoginBranding component
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

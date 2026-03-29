@@ -227,6 +227,53 @@ export const SYSTEM_PERMISSIONS = {
   // Subscriptions
   SUBSCRIPTIONS_VIEW: "subscriptions.view",
   SUBSCRIPTIONS_ASSIGN: "subscriptions.assign",
+
+  // Notifications
+  NOTIFICATIONS_VIEW: "notifications.view",
+  NOTIFICATIONS_CREATE: "notifications.create",
+  NOTIFICATIONS_UPDATE: "notifications.update",
+  NOTIFICATIONS_DELETE: "notifications.delete",
+
+  // Message Templates
+  MESSAGE_TEMPLATES_VIEW: "message-templates.view",
+  MESSAGE_TEMPLATES_CREATE: "message-templates.create",
+  MESSAGE_TEMPLATES_UPDATE: "message-templates.update",
+  MESSAGE_TEMPLATES_DELETE: "message-templates.delete",
+
+  // Emails
+  EMAILS_VIEW: "emails.view",
+  EMAILS_CREATE: "emails.create",
+
+  // Webhooks
+  WEBHOOKS_VIEW: "webhooks.view",
+  WEBHOOKS_CREATE: "webhooks.create",
+  WEBHOOKS_UPDATE: "webhooks.update",
+  WEBHOOKS_DELETE: "webhooks.delete",
+
+  // Identity Providers
+  IDENTITY_PROVIDERS_VIEW: "identity_providers.view",
+  IDENTITY_PROVIDERS_CREATE: "identity_providers.create",
+  IDENTITY_PROVIDERS_UPDATE: "identity_providers.update",
+  IDENTITY_PROVIDERS_DELETE: "identity_providers.delete",
+
+  // OAuth Applications
+  OAUTH_APPS_VIEW: "oauth_apps.view",
+  OAUTH_APPS_CREATE: "oauth_apps.create",
+  OAUTH_APPS_UPDATE: "oauth_apps.update",
+  OAUTH_APPS_DELETE: "oauth_apps.delete",
+
+  // Bundles
+  BUNDLES_VIEW: "bundles.view",
+  BUNDLES_VIEW_DETAILS: "bundles.view_details",
+  BUNDLES_CREATE: "bundles.create",
+  BUNDLES_UPDATE: "bundles.update",
+  BUNDLES_DELETE: "bundles.delete",
+
+  // Themes (Marketplace Management)
+  THEMES_VIEW: "themes.view",
+  THEMES_CREATE: "themes.create",
+  THEMES_UPDATE: "themes.update",
+  THEMES_DELETE: "themes.delete",
 } as const;
 
 /**
@@ -266,4 +313,24 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/entitlements/editions": [SYSTEM_PERMISSIONS.EDITIONS_VIEW],
   "/entitlements/features": [SYSTEM_PERMISSIONS.FEATURES_VIEW],
   "/entitlements/subscriptions": [SYSTEM_PERMISSIONS.SUBSCRIPTIONS_VIEW],
+  "/entitlements/overrides": [SYSTEM_PERMISSIONS.FEATURES_OVERRIDE],
+
+  // User Groups
+  "/user-groups": [SYSTEM_PERMISSIONS.USER_GROUPS_VIEW],
+
+  // Messaging
+  "/messaging/email-composer": [SYSTEM_PERMISSIONS.EMAILS_VIEW],
+  "/messaging/notifications": [SYSTEM_PERMISSIONS.NOTIFICATIONS_VIEW],
+  "/messaging/templates": [SYSTEM_PERMISSIONS.MESSAGE_TEMPLATES_VIEW],
+
+  // Webhooks
+  "/settings/webhooks": [SYSTEM_PERMISSIONS.WEBHOOKS_VIEW],
+
+  // Identity Providers & OAuth
+  "/settings/identity-providers": [SYSTEM_PERMISSIONS.IDENTITY_PROVIDERS_VIEW],
+  "/settings/oauth-apps": [SYSTEM_PERMISSIONS.OAUTH_APPS_VIEW],
+
+  // Theme Management
+  "/settings/themes": [SYSTEM_PERMISSIONS.THEMES_VIEW],
+  "/settings/themes/gallery": [SYSTEM_PERMISSIONS.THEMES_VIEW],
 };

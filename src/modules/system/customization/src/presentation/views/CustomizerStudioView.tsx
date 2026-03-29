@@ -43,8 +43,9 @@ export function CustomizerStudioView() {
     bridge.sendDraft({
       loginBrandingJson: draftJson,
       slotConfigJson: slotJson,
+      activeAuthPage: vm.activeAuthPage,
     });
-  }, [vm.draft, bridge.sendDraft, vm.buildDraftJson, vm.buildSlotConfigJson]);
+  }, [vm.draft, vm.activeAuthPage, bridge.sendDraft, vm.buildDraftJson, vm.buildSlotConfigJson]);
 
   // Loading state — waiting for branding query to resolve
   if (vm.isLoading) {

@@ -107,7 +107,8 @@ export const iconMap: Record<string, LucideIcon> = {
   Layers: Layers,
   Fingerprint: Fingerprint,
   KeyRound: KeyRound,
-  Paintbrush: Paintbrush
+  Paintbrush: Paintbrush,
+  Palette: Palette,
 };
 
 /**

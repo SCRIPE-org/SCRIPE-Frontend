@@ -19,6 +19,7 @@ export const STUDIO_MSG = {
 export interface StudioDraftPayload {
   loginBrandingJson?: string;
   slotConfigJson?: string;
+  activeAuthPage?: string;
 }
 
 // ── Hook ───────────────────────────────────────────────
