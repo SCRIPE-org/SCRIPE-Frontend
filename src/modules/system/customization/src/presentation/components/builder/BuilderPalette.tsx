@@ -14,6 +14,7 @@ import {
   ImageIcon, MousePointerClick, Minus, PanelBottom, Copyright,
   Code, Video, GripVertical, Lock, Check,
 } from "lucide-react";
+import { useI18n } from "@core/providers/i18n-provider";
 import { COMPONENT_CATALOG, hasSingletonComponent } from "../../../domain/entities/CanvasComponent";
 import type { CanvasComponent, CanvasComponentType } from "../../../domain/entities/CanvasComponent";
 
@@ -24,7 +25,6 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
 };
 
 interface BuilderPaletteProps {
-  t: (key: string) => string;
   components: CanvasComponent[];
   onQuickAdd: (type: CanvasComponentType) => void;
 }
@@ -38,7 +38,6 @@ function DraggablePaletteItem({
   required,
   requiredEdition,
   isUsed,
-  t,
   onQuickAdd,
 }: {
   type: CanvasComponentType;
@@ -49,9 +48,9 @@ function DraggablePaletteItem({
   required: boolean;
   requiredEdition: string | null;
   isUsed: boolean;
-  t: (key: string) => string;
   onQuickAdd: (type: CanvasComponentType) => void;
 }) {
+  const { t } = useI18n();
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: `palette-${type}`,
     data: { type, source: 'palette' },
@@ -102,7 +101,8 @@ function DraggablePaletteItem({
   );
 }
 
-export function BuilderPalette({ t, components, onQuickAdd }: BuilderPaletteProps) {
+export function BuilderPalette({ components, onQuickAdd }: BuilderPaletteProps) {
+  const { t } = useI18n();
   return (
     <div className="space-y-1.5">
       <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-2">
@@ -117,7 +117,6 @@ export function BuilderPalette({ t, components, onQuickAdd }: BuilderPaletteProp
             key={entry.type}
             {...entry}
             isUsed={hasSingletonComponent(components, entry.type)}
-            t={t}
             onQuickAdd={onQuickAdd}
           />
         ))}

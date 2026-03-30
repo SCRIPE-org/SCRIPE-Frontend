@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Theme Management View
  *
  * Admin page for managing marketplace themes.
@@ -48,14 +48,12 @@ const T = "studio.themeManagement";
 function TierBadge({
   isFree,
   pricingType,
-  minTierLevel,
-  t,
-}: {
+  minTierLevel, }: {
   isFree: boolean;
   pricingType: string;
   minTierLevel: number;
-  t: (key: string, params?: Record<string, any>) => string;
 }) {
+  const { t } = useI18n();
   if (isFree) {
     return (
       <Badge
@@ -97,12 +95,10 @@ function TierBadge({
 
 /** Feature badges */
 function FeatureBadges({
-  theme,
-  t,
-}: {
+  theme, }: {
   theme: ThemeCard;
-  t: (key: string) => string;
 }) {
+  const { t } = useI18n();
   return (
     <div className="flex flex-wrap gap-1">
       {theme.hasDarkMode && (
@@ -221,7 +217,6 @@ export function ThemeManagementView() {
               isFree={item.isFree}
               pricingType={item.pricingType}
               minTierLevel={item.minTierLevel}
-              t={t}
             />
           ),
         },
@@ -229,7 +224,7 @@ export function ThemeManagementView() {
           key: "features",
           label: t(`${T}.columns.features`),
           render: (_val: unknown, item: ThemeCard) => (
-            <FeatureBadges theme={item} t={t} />
+            <FeatureBadges theme={item} />
           ),
         },
         {
@@ -389,6 +384,7 @@ function StatCard({
   color: string;
   bgColor: string;
 }) {
+  const { t } = useI18n();
   return (
     <div className="rounded-xl border border-border/50 bg-card p-4 flex items-center gap-3 shadow-sm transition-all hover:shadow-md">
       <div

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Theme Gallery View — Full-Page Theme Browsing Experience
  *
  * Rich gallery for tenant admins to browse, preview, and apply themes.
@@ -282,7 +282,6 @@ export function ThemeGalleryView() {
               isPreviewing={vm.previewSlug === theme.slug}
               isConfirmingApply={confirmApplySlug === theme.slug}
               isApplying={vm.isApplying && confirmApplySlug === theme.slug}
-              t={t}
               onPreview={() =>
                 vm.setPreviewSlug(vm.previewSlug === theme.slug ? null : theme.slug)
               }
@@ -372,7 +371,6 @@ interface GalleryThemeCardProps {
   isPreviewing: boolean;
   isConfirmingApply: boolean;
   isApplying: boolean;
-  t: (key: string, params?: Record<string, any>) => string;
   onPreview: () => void;
   onOpenDetail: () => void;
   onToggleFavorite: () => void;
@@ -382,9 +380,9 @@ interface GalleryThemeCardProps {
 }
 
 function GalleryThemeCard({
-  theme, isPreviewing, isConfirmingApply, isApplying, t,
-  onPreview, onOpenDetail, onToggleFavorite, onApplyClick, onApplyConfirm, onApplyCancel,
+  theme, isPreviewing, isConfirmingApply, isApplying, onPreview, onOpenDetail, onToggleFavorite, onApplyClick, onApplyConfirm, onApplyCancel,
 }: GalleryThemeCardProps) {
+  const { t } = useI18n();
   const accentColor = theme.accentColor || "#6b7280";
 
   return (
@@ -503,7 +501,7 @@ function GalleryThemeCard({
               </p>
             )}
           </div>
-          <PricingBadge theme={theme} t={t} />
+          <PricingBadge theme={theme} />
         </div>
 
         {/* Description */}
@@ -619,12 +617,10 @@ function GalleryThemeCard({
 // ── Pricing Badge ─────────────────────────────────────────────
 
 function PricingBadge({
-  theme,
-  t,
-}: {
+  theme, }: {
   theme: ThemeCard;
-  t: (key: string) => string;
 }) {
+  const { t } = useI18n();
   if (theme.isFree) {
     return (
       <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20 text-[10px] font-semibold shrink-0">

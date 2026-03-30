@@ -3,11 +3,11 @@
 import type { TenantBranding } from "@modules/auth/signin/src/presentation/viewmodels/useTenantResolution";
 import { BRAND } from "@core/config/branding";
 import { resolveFileUrl } from "@core/common/utils";
+import { useI18n } from "@core/providers/i18n-provider";
 import { SlotRenderer } from "./SlotRenderer";
 import type { SlotConfig } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
 
-interface LoginBrandingProps {
-      t: (key: string) => string;
+export interface LoginBrandingProps {
       branding?: TenantBranding | null;
       slotConfig?: SlotConfig;
       position?: "left" | "right";
@@ -21,7 +21,8 @@ interface LoginBrandingProps {
  * Otherwise falls back to default feature cards (platform branding).
  * Supports left/right positioning for split-left / split-right layouts.
  */
-export function LoginBranding({ t, branding, slotConfig, position = "left", transparent = false }: LoginBrandingProps) {
+export function LoginBranding({ branding, slotConfig, position = "left", transparent = false }: LoginBrandingProps) {
+      const { t } = useI18n();
       const features = [
             { icon: "🛡️", label: t("auth.branding.featureSecurity"), desc: "Military-grade end-to-end encryption" },
             { icon: "🏢", label: t("auth.branding.featureMultiTenant"), desc: "Complete architectural data isolation" },

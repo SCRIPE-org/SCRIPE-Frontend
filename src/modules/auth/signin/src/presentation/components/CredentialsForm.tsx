@@ -1,4 +1,5 @@
-"use client";
+﻿"use client";
+import { useI18n } from "@core/providers/i18n-provider";
 
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
@@ -18,14 +19,14 @@ interface CredentialsFormProps {
       updateField: (field: keyof LoginFormData, value: string) => void;
       togglePasswordVisibility: () => void;
       handleLogin: () => void;
-      t: (key: string) => string;
       errorAnnounce?: boolean;
 }
 
 export function CredentialsForm({
       formData, showPassword, isLoading, isFormValid, error, isRTL,
-      updateField, togglePasswordVisibility, handleLogin, t, errorAnnounce = true,
+      updateField, togglePasswordVisibility, handleLogin, errorAnnounce = true,
 }: CredentialsFormProps) {
+  const { t } = useI18n();
       return (
             <form
                   onSubmit={(e) => { e.preventDefault(); if (!isLoading && isFormValid) handleLogin(); }}

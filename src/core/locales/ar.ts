@@ -1,4 +1,4 @@
-import { title } from "process";
+﻿import { title } from "process";
 
 export const ar = {
   // Authentication
@@ -6669,6 +6669,10 @@ export const ar = {
       visibility: "تبديل الرؤية",
       fromTemplate: "البدء من قالب",
       saveTemplate: "حفظ كقالب",
+       saveTemplateDesc: "حفظ تخطيط اللوحة الحالي كقالب قابل لإعادة الاستخدام.",
+      templateName: "اسم القالب",
+      templateNamePlaceholder: "القالب المخصص",
+      validationWarnings: "تحذيرات التخطيط",
       requiredComponent: "هذا المكون مطلوب ولا يمكن إزالته",
       enterpriseOnly: "يتطلب الإصدار المؤسسي",
     },

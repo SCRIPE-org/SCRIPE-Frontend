@@ -1,4 +1,4 @@
-/**
+﻿/**
  * LoginView — 5-Layout Customizable Login Page
  *
  * Renders tenant-branded login using the Login Rendering Engine (Phase 5).
@@ -213,7 +213,6 @@ export function LoginView() {
             updateField={vm.updateField}
             togglePasswordVisibility={vm.togglePasswordVisibility}
             handleLogin={vm.handleLogin}
-            t={t}
             errorAnnounce={a11y.errorAnnounce}
           />
           <SsoProviderButtons
@@ -221,7 +220,6 @@ export function LoginView() {
             isLoading={sso.isLoading}
             error={sso.error}
             onProviderClick={sso.initiateSsoLogin}
-            t={t}
           />
         </>
       ) : (
@@ -235,7 +233,6 @@ export function LoginView() {
           handleVerify2FA={vm.handleVerify2FA}
           toggleBackupCode={vm.toggleBackupCode}
           goBackToCredentials={vm.goBackToCredentials}
-          t={t}
         />
       )}
 
@@ -321,13 +318,13 @@ export function LoginView() {
             {topActions}
             <MobileLogo logoSrc={logoSrc} logoAlt={logoAlt} companyName={companyName} />
             {vm.loginStep === "credentials" && (
-              <DesktopHeading companyName={companyName} t={t} />
+              <DesktopHeading companyName={companyName} />
             )}
             {formContent}
             {footer}
             {footerSlot}
           </div>
-          <LoginBranding t={t} branding={branding} slotConfig={slotConfig} position="right" />
+          <LoginBranding branding={branding} slotConfig={slotConfig} position="right" />
         </div>
       );
 
@@ -448,7 +445,7 @@ export function LoginView() {
           <div className="relative flex w-full lg:w-2/5 flex-col items-center justify-center px-6 py-12">
             {topActions}
             <MobileLogo logoSrc={logoSrc} logoAlt={logoAlt} companyName={companyName} />
-            {vm.loginStep === "credentials" && <DesktopHeading companyName={companyName} t={t} />}
+            {vm.loginStep === "credentials" && <DesktopHeading companyName={companyName} />}
             {formContent}
             {footer}
             {footerSlot}
@@ -498,7 +495,7 @@ export function LoginView() {
           <div className="relative flex flex-1 flex-col items-center justify-center px-6 py-12">
             {topActions}
             <MobileLogo logoSrc={logoSrc} logoAlt={logoAlt} companyName={companyName} />
-            {vm.loginStep === "credentials" && <DesktopHeading companyName={companyName} t={t} />}
+            {vm.loginStep === "credentials" && <DesktopHeading companyName={companyName} />}
             {formContent}
             {footer}
             {footerSlot}
@@ -511,14 +508,14 @@ export function LoginView() {
       return (
         <div className={`flex min-h-screen w-full ${bgStyle} login-page selection:bg-primary/20`} dir={direction} style={splitWrapperStyle}>
           <div className="hidden lg:flex lg:w-[60%] relative overflow-hidden">
-            <LoginBranding t={t} branding={branding} slotConfig={slotConfig} position="left" />
+            <LoginBranding branding={branding} slotConfig={slotConfig} position="left" />
             {/* Accent divider */}
             <div className="absolute inset-y-0 end-0 w-1 bg-gradient-to-b from-transparent via-[var(--login-primary,hsl(var(--primary)))] to-transparent" />
           </div>
           <div className="relative flex w-full lg:w-[40%] flex-col items-center justify-center px-6 py-12">
             {topActions}
             <MobileLogo logoSrc={logoSrc} logoAlt={logoAlt} companyName={companyName} />
-            {vm.loginStep === "credentials" && <DesktopHeading companyName={companyName} t={t} />}
+            {vm.loginStep === "credentials" && <DesktopHeading companyName={companyName} />}
             {formContent}
             {footer}
             {footerSlot}
@@ -570,7 +567,7 @@ export function LoginView() {
           {/* Right: Form directly on surface (no card) */}
           <div className="relative z-10 flex w-full lg:w-2/5 flex-col items-center justify-center px-8 py-12">
             <MobileLogo logoSrc={logoSrc} logoAlt={logoAlt} companyName={companyName} />
-            {vm.loginStep === "credentials" && <DesktopHeading companyName={companyName} t={t} />}
+            {vm.loginStep === "credentials" && <DesktopHeading companyName={companyName} />}
             {formContent}
             {footer}
             {footerSlot}
@@ -583,12 +580,12 @@ export function LoginView() {
       return (
         <div className={`relative flex min-h-screen w-full ${bgStyle} login-page selection:bg-primary/20`} dir={direction} style={splitWrapperStyle}>
           <div className="hidden lg:block absolute inset-0 w-[55%]" style={{ clipPath: "polygon(0 0, 100% 0, 75% 100%, 0 100%)", backgroundColor: "var(--login-surface, hsl(var(--muted)/0.4))" }}>
-            <LoginBranding t={t} branding={branding} slotConfig={slotConfig} position="left" />
+            <LoginBranding branding={branding} slotConfig={slotConfig} position="left" />
           </div>
           <div className="relative z-10 flex w-full lg:ms-auto lg:w-[50%] flex-col items-center justify-center px-6 py-12">
             {topActions}
             <MobileLogo logoSrc={logoSrc} logoAlt={logoAlt} companyName={companyName} />
-            {vm.loginStep === "credentials" && <DesktopHeading companyName={companyName} t={t} />}
+            {vm.loginStep === "credentials" && <DesktopHeading companyName={companyName} />}
             {formContent}
             {footer}
             {footerSlot}
@@ -616,7 +613,7 @@ export function LoginView() {
           <div className="relative flex w-full lg:w-1/2 xl:w-[45%] flex-col items-center justify-center px-6 py-12">
             {topActions}
             <MobileLogo logoSrc={logoSrc} logoAlt={logoAlt} companyName={companyName} />
-            {vm.loginStep === "credentials" && <DesktopHeading companyName={companyName} t={t} />}
+            {vm.loginStep === "credentials" && <DesktopHeading companyName={companyName} />}
             {formContent}
             {footer}
             {footerSlot}
@@ -820,12 +817,12 @@ export function LoginView() {
     default:
       return (
         <div className={`flex min-h-screen w-full ${bgStyle} login-page selection:bg-primary/20`} dir={direction} style={splitWrapperStyle}>
-          <LoginBranding t={t} branding={branding} slotConfig={slotConfig} position="left" />
+          <LoginBranding branding={branding} slotConfig={slotConfig} position="left" />
           <div className="relative flex w-full flex-col items-center justify-center px-6 py-12 lg:w-1/2 xl:w-[45%]" style={formSideBgStyle}>
             {topActions}
             <MobileLogo logoSrc={logoSrc} logoAlt={logoAlt} companyName={companyName} />
             {vm.loginStep === "credentials" && (
-              <DesktopHeading companyName={companyName} t={t} />
+              <DesktopHeading companyName={companyName} />
             )}
             {formContent}
             {footer}
@@ -848,7 +845,8 @@ function MobileLogo({ logoSrc, logoAlt, companyName }: { logoSrc: string; logoAl
   );
 }
 
-function DesktopHeading({ companyName, t }: { companyName: string; t: (key: string) => string }) {
+function DesktopHeading({ companyName }: { companyName: string }) {
+  const { t } = useI18n();
   return (
     <div className="mb-10 text-center lg:text-start hidden lg:block w-full" style={{ maxWidth: "var(--login-form-width, 380px)" }}>
       <h2 className="login-heading tracking-tight text-[var(--login-text,hsl(var(--foreground)))]" style={{ fontSize: "var(--login-size-headline, 30px)" }}>{companyName}</h2>

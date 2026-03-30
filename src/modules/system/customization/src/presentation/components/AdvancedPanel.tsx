@@ -1,4 +1,4 @@
-/**
+﻿/**
  * AdvancedPanel — Custom CSS, safe mode (core Switch), accessibility, RTL.
  * All labels localized via t()
  */
@@ -7,14 +7,15 @@
 import { Code, Shield, Languages, Accessibility } from "lucide-react";
 import { Switch } from "@core/ui/switch";
 import type { StudioDraft } from "../viewmodels/useStudioViewModel";
+import { useI18n } from "@core/providers/i18n-provider";
 
 interface AdvancedPanelProps {
-  t: (key: string) => string;
   draft: StudioDraft;
   updateDraft: <K extends keyof StudioDraft>(field: K, value: StudioDraft[K]) => void;
 }
 
-export function AdvancedPanel({ t, draft, updateDraft }: AdvancedPanelProps) {
+export function AdvancedPanel({ draft, updateDraft }: AdvancedPanelProps) {
+  const { t } = useI18n();
   return (
     <div className="space-y-5">
       {/* Custom CSS */}

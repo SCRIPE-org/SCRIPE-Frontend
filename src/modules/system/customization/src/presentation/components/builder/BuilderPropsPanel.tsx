@@ -13,9 +13,9 @@ import { Button } from "@core/ui/button";
 import { Trash2, Eye, EyeOff, Copy, ArrowUp, ArrowDown } from "lucide-react";
 import type { CanvasComponent, CanvasComponentType, GridAlignment } from "../../../domain/entities/CanvasComponent";
 import { COMPONENT_CATALOG } from "../../../domain/entities/CanvasComponent";
+import { useI18n } from "@core/providers/i18n-provider";
 
 interface BuilderPropsPanelProps {
-  t: (key: string) => string;
   component: CanvasComponent;
   onUpdate: (id: string, updates: Partial<CanvasComponent>) => void;
   onUpdateProps: (id: string, props: Record<string, unknown>) => void;
@@ -38,9 +38,9 @@ function parseGridSpan(span: string): [number, number] {
   return [1, 2];
 }
 
-export function BuilderPropsPanel({
-  t, component, onUpdate, onUpdateProps, onRemove, onDuplicate, onToggleVisibility, onReorderZ,
+export function BuilderPropsPanel({ component, onUpdate, onUpdateProps, onRemove, onDuplicate, onToggleVisibility, onReorderZ,
 }: BuilderPropsPanelProps) {
+  const { t } = useI18n();
   const catalog = COMPONENT_CATALOG.find(c => c.type === component.type);
   const [colStart, colEnd] = parseGridSpan(component.gridColumn);
   const [rowStart, rowEnd] = parseGridSpan(component.gridRow);
@@ -188,9 +188,7 @@ export function BuilderPropsPanel({
         <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
           {t('studio.builder.props.componentSettings') || 'Settings'}
         </p>
-        <ComponentSpecificProps
-          t={t}
-          type={component.type}
+        <ComponentSpecificProps type={component.type}
           props={component.props}
           onUpdateProps={(newProps) => onUpdateProps(component.id, newProps)}
         />
@@ -200,17 +198,15 @@ export function BuilderPropsPanel({
 }
 
 /** Render props editor based on component type */
-function ComponentSpecificProps({
-  t,
-  type,
+function ComponentSpecificProps({ type,
   props,
   onUpdateProps,
 }: {
-  t: (key: string) => string;
   type: CanvasComponentType;
   props: Record<string, unknown>;
   onUpdateProps: (props: Record<string, unknown>) => void;
 }) {
+  const { t } = useI18n();
   switch (type) {
     case 'logo':
       return (

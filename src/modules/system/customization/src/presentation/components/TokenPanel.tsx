@@ -1,4 +1,4 @@
-/**
+﻿/**
  * TokenPanel — Design token editor (colors, typography, spacing)
  *
  * Per analysis §10: Semantic tokens → Component tokens → CSS Variables
@@ -8,9 +8,9 @@
 
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
+import { useI18n } from "@core/providers/i18n-provider";
 
 interface TokenPanelProps {
-  t: (key: string) => string;
   tokens: Record<string, string>;
   updateToken: (key: string, value: string) => void;
 }
@@ -50,7 +50,8 @@ const TOKEN_GROUPS: TokenGroup[] = [
   },
 ];
 
-export function TokenPanel({ t, tokens, updateToken }: TokenPanelProps) {
+export function TokenPanel({ tokens, updateToken }: TokenPanelProps) {
+  const { t } = useI18n();
   return (
     <div className="space-y-6 p-4">
       <div>

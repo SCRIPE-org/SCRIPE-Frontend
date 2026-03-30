@@ -79,14 +79,12 @@ export function CustomizerStudioView() {
 
       {/* Auth Page Tabs — switch between Login / Forgot / Reset / Register / Verify / MFA */}
       <AuthPageTabs
-        t={vm.t}
         activePageId={vm.activeAuthPage}
         onPageChange={vm.setActiveAuthPage}
       />
 
       {/* Top Bar */}
       <PublishBar
-        t={vm.t}
         isDirty={vm.isDirty}
         isPublishing={vm.isPublishing}
         isDiscarding={vm.isDiscarding}
@@ -108,7 +106,6 @@ export function CustomizerStudioView() {
       <div className="flex flex-1 overflow-hidden">
         {/* Left: Control Panels */}
         <StudioSidebar
-          t={vm.t}
           activePanel={vm.activePanel}
           setActivePanel={vm.setActivePanel}
           draft={vm.draft}

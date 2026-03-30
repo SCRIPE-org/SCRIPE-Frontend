@@ -1,4 +1,4 @@
-/**
+﻿/**
  * DashboardStudioPanel — Slide-over settings panel for dashboard theming (M9)
  *
  * Controls:
@@ -11,6 +11,7 @@
  * All changes are reflected instantly via draft state in useDashboardTheme.
  */
 "use client";
+import { useI18n } from "@core/providers/i18n-provider";
 
 import React from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetFooter } from "@core/ui/sheet";
@@ -39,7 +40,6 @@ interface Props {
   onDiscard: () => void;
   onReset: () => void;
   isSaving: boolean;
-  t: (key: string) => string;
 }
 
 // ── Reusable option buttons ──
@@ -74,6 +74,7 @@ function OptionPicker<T extends string>({
 
 // ── Section wrapper ──
 function StudioSection({ icon: Icon, title, children }: { icon: React.ElementType; title: string; children: React.ReactNode }) {
+  const { t } = useI18n();
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-2 text-sm font-semibold">
@@ -93,9 +94,8 @@ export function DashboardStudioPanel({
   onSave,
   onDiscard,
   onReset,
-  isSaving,
-  t,
-}: Props) {
+  isSaving, }: Props) {
+  const { t } = useI18n();
   return (
     <Sheet open={open} onOpenChange={(v) => !v && onClose()}>
       <SheetContent side="right" className="w-[400px] sm:w-[420px] p-0 flex flex-col">

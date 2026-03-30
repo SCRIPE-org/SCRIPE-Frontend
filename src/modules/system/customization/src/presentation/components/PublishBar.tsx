@@ -1,4 +1,4 @@
-/**
+﻿/**
  * PublishBar — Top bar with back button, draft status, device toggle,
  * reset dropdown, publish/discard actions.
  * All labels localized via t()
@@ -14,9 +14,9 @@ import {
 } from "lucide-react";
 import { cn } from "@/core/common/utils";
 import type { DeviceSize } from "../viewmodels/useStudioViewModel";
+import { useI18n } from "@core/providers/i18n-provider";
 
 interface PublishBarProps {
-  t: (key: string) => string;
   isDirty: boolean;
   isPublishing: boolean;
   isDiscarding: boolean;
@@ -40,11 +40,11 @@ const DEVICES: { id: DeviceSize; icon: typeof Monitor; labelKey: string }[] = [
   { id: "mobile", icon: Smartphone, labelKey: "studio.device.mobile" },
 ];
 
-export function PublishBar({
-  t, isDirty, isPublishing, isDiscarding, isSavingDraft,
+export function PublishBar({ isDirty, isPublishing, isDiscarding, isSavingDraft,
   isResetting, isPreviewingTheme, lastSavedAt, deviceSize, setDeviceSize,
   onPublish, onDiscard, onSaveDraft, onReset, onExitPreview, onRefresh,
 }: PublishBarProps) {
+  const { t } = useI18n();
   const [showResetMenu, setShowResetMenu] = useState(false);
   const resetMenuRef = useRef<HTMLDivElement>(null);
 

@@ -1,4 +1,5 @@
-"use client";
+﻿"use client";
+import { useI18n } from "@core/providers/i18n-provider";
 
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
@@ -17,13 +18,12 @@ interface TwoFactorFormProps {
       handleVerify2FA: () => void;
       toggleBackupCode: () => void;
       goBackToCredentials: () => void;
-      t: (key: string) => string;
 }
 
 export function TwoFactorForm({
       twoFactorCode, setTwoFactorCode, useBackupCode, isVerifying2FA,
-      error, isRTL, handleVerify2FA, toggleBackupCode, goBackToCredentials, t,
-}: TwoFactorFormProps) {
+      error, isRTL, handleVerify2FA, toggleBackupCode, goBackToCredentials, }: TwoFactorFormProps) {
+  const { t } = useI18n();
       return (
             <div className="space-y-7">
                   {/* Icon & Title */}

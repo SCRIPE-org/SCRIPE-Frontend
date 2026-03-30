@@ -1,4 +1,4 @@
-/**
+﻿/**
  * ThemeMarketplacePanel — Studio sidebar panel for browsing and applying themes
  *
  * Features:
@@ -28,17 +28,17 @@ import { THEME_CATEGORIES, THEME_SORT_OPTIONS } from "../../domain/types/ThemeTy
 import type { ThemeCardDto } from "../../domain/types/ThemeServiceTypes";
 import { getThemeBadge } from "../../domain/types/ThemeServiceTypes";
 import { useThemeMarketplace } from "../hooks/useThemeMarketplace";
+import { useI18n } from "@core/providers/i18n-provider";
 
 interface ThemeMarketplacePanelProps {
-  t: (key: string) => string;
   onApplySuccess?: () => void;
   onPreviewTheme?: (themeDataJson: string) => void;
   onExitPreview?: () => void;
 }
 
-export function ThemeMarketplacePanel({
-  t, onApplySuccess, onPreviewTheme, onExitPreview,
+export function ThemeMarketplacePanel({ onApplySuccess, onPreviewTheme, onExitPreview,
 }: ThemeMarketplacePanelProps) {
+  const { t } = useI18n();
   const mp = useThemeMarketplace();
   const [showFilters, setShowFilters] = useState(false);
   const [confirmApply, setConfirmApply] = useState<string | null>(null);

@@ -5,6 +5,8 @@
  */
 "use client";
 
+import { useI18n } from "@core/providers/i18n-provider";
+
 import { ColorInput } from "./ColorInput";
 import { SliderInput } from "./SliderInput";
 import { Switch } from "@core/ui/switch";
@@ -24,7 +26,6 @@ import {
 } from "../viewmodels/useStudioViewModel";
 
 interface StylePanelProps {
-  t: (key: string) => string;
   activeSection: StudioPanel;
   draft: StudioDraft;
   updateDraft: <K extends keyof StudioDraft>(field: K, value: StudioDraft[K]) => void;
@@ -112,15 +113,15 @@ interface BgControlsProps {
   bgBlur: number;
   hideImage?: boolean;
   copyFromLightUrl?: string;
-  t: (key: string) => string;
   updateDraft: <K extends keyof StudioDraft>(field: K, value: StudioDraft[K]) => void;
 }
 
 function BgControls({
   prefix, bgType, bgColor, bgGradientDirection, bgGradientFrom, bgGradientTo,
   bgImageUrl, bgImageFit, bgImagePosition, bgOverlayEnabled, bgOverlayColor, bgOverlayOpacity, bgBlur, hideImage,
-  copyFromLightUrl, t, updateDraft,
+  copyFromLightUrl, updateDraft,
 }: BgControlsProps) {
+  const { t } = useI18n();
   const f = (field: string): keyof StudioDraft => {
     if (prefix === "") return field as keyof StudioDraft;
     const stripped = field.startsWith("bg") ? field.slice(2) : field;
@@ -236,7 +237,8 @@ function BgControls({
 }
 
 // ── PresetDots — also extracted as a stable component ──
-function PresetDots({ mode, onApply, t }: { mode: "light" | "dark"; onApply: (c: Partial<StudioDraft>) => void; t: (key: string) => string }) {
+function PresetDots({ mode, onApply }: { mode: "light" | "dark"; onApply: (c: Partial<StudioDraft>) => void }) {
+  const { t } = useI18n();
   return (
     <div className="grid grid-cols-3 gap-1.5">
       {COLOR_PRESETS.map((preset, i) => {
@@ -258,7 +260,8 @@ function PresetDots({ mode, onApply, t }: { mode: "light" | "dark"; onApply: (c:
   );
 }
 
-export function StylePanel({ t, activeSection, draft, updateDraft, batchUpdateDraft }: StylePanelProps) {
+export function StylePanel({ activeSection, draft, updateDraft, batchUpdateDraft }: StylePanelProps) {
+  const { t } = useI18n();
 
   // ══════════════════════════════════════════════════════
   // APPEARANCE (merged Colors + Background)
@@ -336,7 +339,7 @@ export function StylePanel({ t, activeSection, draft, updateDraft, batchUpdateDr
           {/* Light Presets */}
           <div className="space-y-1.5">
             <h5 className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">{t("studio.colors.presets")}</h5>
-            <PresetDots mode="light" onApply={(c) => applyPreset(c, lightPresetKeys)} t={t} />
+            <PresetDots mode="light" onApply={(c) => applyPreset(c, lightPresetKeys)} />
           </div>
 
           {/* Light Page Background — shows as "Full Page" if unified/1-section, as section label if separated */}
@@ -350,7 +353,7 @@ export function StylePanel({ t, activeSection, draft, updateDraft, batchUpdateDr
               bgGradientDirection={draft.bgGradientDirection} bgGradientFrom={draft.bgGradientFrom} bgGradientTo={draft.bgGradientTo}
               bgImageUrl={draft.bgImageUrl} bgImageFit={draft.bgImageFit} bgImagePosition={draft.bgImagePosition}
               bgOverlayEnabled={draft.bgOverlayEnabled} bgOverlayColor={draft.bgOverlayColor}
-              bgOverlayOpacity={draft.bgOverlayOpacity} bgBlur={draft.bgBlur} t={t} updateDraft={updateDraft} />
+              bgOverlayOpacity={draft.bgOverlayOpacity} bgBlur={draft.bgBlur} updateDraft={updateDraft} />
           </div>
 
           {/* Light Color Palette */}
@@ -374,7 +377,7 @@ export function StylePanel({ t, activeSection, draft, updateDraft, batchUpdateDr
                 bgGradientDirection={draft.panelBgGradientDirection} bgGradientFrom={draft.panelBgGradientFrom} bgGradientTo={draft.panelBgGradientTo}
                 bgImageUrl={draft.panelBgImageUrl} bgImageFit={draft.panelBgImageFit} bgImagePosition={draft.panelBgImagePosition}
                 bgOverlayEnabled={draft.panelBgOverlayEnabled} bgOverlayColor={draft.panelBgOverlayColor}
-                bgOverlayOpacity={draft.panelBgOverlayOpacity} bgBlur={draft.panelBgBlur} t={t} updateDraft={updateDraft} />
+                bgOverlayOpacity={draft.panelBgOverlayOpacity} bgBlur={draft.panelBgBlur} updateDraft={updateDraft} />
             </div>
           )}
         </div>
@@ -388,7 +391,7 @@ export function StylePanel({ t, activeSection, draft, updateDraft, batchUpdateDr
           {/* Dark Presets */}
           <div className="space-y-1.5">
             <h5 className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">{t("studio.colors.presets")}</h5>
-            <PresetDots mode="dark" onApply={(c) => applyPreset(c, darkPresetKeys)} t={t} />
+            <PresetDots mode="dark" onApply={(c) => applyPreset(c, darkPresetKeys)} />
           </div>
 
           {/* Dark Page Background */}
@@ -403,7 +406,7 @@ export function StylePanel({ t, activeSection, draft, updateDraft, batchUpdateDr
               bgImageUrl={draft.darkBgImageUrl} bgImageFit={draft.darkBgImageFit} bgImagePosition={draft.darkBgImagePosition}
               bgOverlayEnabled={draft.darkBgOverlayEnabled} bgOverlayColor={draft.darkBgOverlayColor}
               bgOverlayOpacity={draft.darkBgOverlayOpacity} bgBlur={draft.darkBgBlur}
-              copyFromLightUrl={draft.bgImageUrl || undefined} t={t} updateDraft={updateDraft} />
+              copyFromLightUrl={draft.bgImageUrl || undefined} updateDraft={updateDraft} />
           </div>
 
           {/* Dark Color Palette */}
@@ -428,7 +431,7 @@ export function StylePanel({ t, activeSection, draft, updateDraft, batchUpdateDr
                 bgImageUrl={draft.darkPanelBgImageUrl} bgImageFit={draft.darkPanelBgImageFit} bgImagePosition={draft.darkPanelBgImagePosition}
                 bgOverlayEnabled={draft.darkPanelBgOverlayEnabled} bgOverlayColor={draft.darkPanelBgOverlayColor}
                 bgOverlayOpacity={draft.darkPanelBgOverlayOpacity} bgBlur={draft.darkPanelBgBlur}
-                copyFromLightUrl={draft.panelBgImageUrl || undefined} t={t} updateDraft={updateDraft} />
+                copyFromLightUrl={draft.panelBgImageUrl || undefined} updateDraft={updateDraft} />
             </div>
           )}
         </div>

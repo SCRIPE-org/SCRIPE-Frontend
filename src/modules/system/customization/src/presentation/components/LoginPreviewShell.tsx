@@ -34,7 +34,8 @@ import { CanvasRenderer } from "./builder/CanvasRenderer";
 import { useTheme } from "next-themes";
 
 export function LoginPreviewShell() {
-  const { t, language, direction } = useI18n();
+  const { t } = useI18n();
+  const { language, direction } = useI18n();
   const { setTheme } = useTheme();
 
   // Listen for theme commands from studio parent
@@ -392,12 +393,12 @@ export function LoginPreviewShell() {
             {overlayDiv}
             {topActions}
             <MobileLogo logoSrc={logoUrl} logoAlt={companyName} companyName={companyName} />
-            <DesktopHeading companyName={companyName} t={t} />
+            <DesktopHeading companyName={companyName} />
             {formContent}
             {footer}
             {footerSlot}
           </div>
-          <LoginBranding t={t} branding={brandingForPanel} slotConfig={slotConfig} position="right" transparent={isUnifiedBg} />
+          <LoginBranding branding={brandingForPanel} slotConfig={slotConfig} position="right" transparent={isUnifiedBg} />
         </div>
       );
 
@@ -505,7 +506,7 @@ export function LoginPreviewShell() {
           <div className="relative flex w-full lg:w-2/5 flex-col items-center justify-center px-6 py-12" style={formSideStyle}>
             {topActions}
             <MobileLogo logoSrc={logoUrl} logoAlt={companyName} companyName={companyName} />
-            <DesktopHeading companyName={companyName} t={t} />
+            <DesktopHeading companyName={companyName} />
             {formContent}
             {footer}
             {footerSlot}
@@ -546,7 +547,7 @@ export function LoginPreviewShell() {
           <div className="relative flex flex-1 flex-col items-center justify-center px-6 py-12" style={formSideStyle}>
             {topActions}
             <MobileLogo logoSrc={logoUrl} logoAlt={companyName} companyName={companyName} />
-            <DesktopHeading companyName={companyName} t={t} />
+            <DesktopHeading companyName={companyName} />
             {formContent}
             {footer}
             {footerSlot}
@@ -558,13 +559,13 @@ export function LoginPreviewShell() {
       return (
         <div className={`login-page flex min-h-screen w-full ${bgStyle} selection:bg-primary/20`} dir={direction} style={splitWrapperStyle}>
           <div className="hidden lg:flex lg:w-[60%] relative overflow-hidden">
-            <LoginBranding t={t} branding={brandingForPanel} slotConfig={slotConfig} position="left" transparent={isUnifiedBg} />
+            <LoginBranding branding={brandingForPanel} slotConfig={slotConfig} position="left" transparent={isUnifiedBg} />
             <div className="absolute inset-y-0 end-0 w-1 bg-gradient-to-b from-transparent via-[var(--login-primary,hsl(var(--primary)))] to-transparent" />
           </div>
           <div className="relative flex w-full lg:w-[40%] flex-col items-center justify-center px-6 py-12" style={formSideStyle}>
             {topActions}
             <MobileLogo logoSrc={logoUrl} logoAlt={companyName} companyName={companyName} />
-            <DesktopHeading companyName={companyName} t={t} />
+            <DesktopHeading companyName={companyName} />
             {formContent}
             {footer}
             {footerSlot}
@@ -608,7 +609,7 @@ export function LoginPreviewShell() {
           </div>
           <div className="relative z-10 flex w-full lg:w-2/5 flex-col items-center justify-center px-8 py-12">
             <MobileLogo logoSrc={logoUrl} logoAlt={companyName} companyName={companyName} />
-            <DesktopHeading companyName={companyName} t={t} />
+            <DesktopHeading companyName={companyName} />
             {formContent}
             {footer}
             {footerSlot}
@@ -620,12 +621,12 @@ export function LoginPreviewShell() {
       return (
         <div className={`login-page relative flex min-h-screen w-full ${bgStyle} selection:bg-primary/20`} dir={direction} style={splitWrapperStyle}>
           <div className="hidden lg:block absolute inset-0 w-[55%]" style={{ clipPath: "polygon(0 0, 100% 0, 75% 100%, 0 100%)", backgroundColor: "var(--login-surface, hsl(var(--muted)/0.4))" }}>
-            <LoginBranding t={t} branding={brandingForPanel} slotConfig={slotConfig} position="left" />
+            <LoginBranding branding={brandingForPanel} slotConfig={slotConfig} position="left" />
           </div>
           <div className="relative z-10 flex w-full lg:ms-auto lg:w-[50%] flex-col items-center justify-center px-6 py-12" style={formSideStyle}>
             {topActions}
             <MobileLogo logoSrc={logoUrl} logoAlt={companyName} companyName={companyName} />
-            <DesktopHeading companyName={companyName} t={t} />
+            <DesktopHeading companyName={companyName} />
             {formContent}
             {footer}
             {footerSlot}
@@ -646,7 +647,7 @@ export function LoginPreviewShell() {
           <div className="relative flex w-full lg:w-1/2 xl:w-[45%] flex-col items-center justify-center px-6 py-12" style={formSideStyle}>
             {topActions}
             <MobileLogo logoSrc={logoUrl} logoAlt={companyName} companyName={companyName} />
-            <DesktopHeading companyName={companyName} t={t} />
+            <DesktopHeading companyName={companyName} />
             {formContent}
             {footer}
             {footerSlot}
@@ -830,12 +831,12 @@ export function LoginPreviewShell() {
     default:
       return (
         <div className={`login-page flex min-h-screen w-full ${bgStyle} selection:bg-primary/20`} dir={direction} style={splitWrapperStyle}>
-          <LoginBranding t={t} branding={brandingForPanel} slotConfig={slotConfig} position="left" transparent={isUnifiedBg} />
+          <LoginBranding branding={brandingForPanel} slotConfig={slotConfig} position="left" transparent={isUnifiedBg} />
           <div className="relative z-10 flex w-full flex-col items-center justify-center px-6 py-12 lg:w-1/2 xl:w-[45%]" style={formSideStyle}>
             {overlayDiv}
             {topActions}
             <MobileLogo logoSrc={logoUrl} logoAlt={companyName} companyName={companyName} />
-            <DesktopHeading companyName={companyName} t={t} />
+            <DesktopHeading companyName={companyName} />
             {formContent}
             {footer}
             {footerSlot}
@@ -848,6 +849,7 @@ export function LoginPreviewShell() {
 // â”€â”€ Shared sub-components â”€â”€
 
 function MobileLogo({ logoSrc, logoAlt, companyName }: { logoSrc: string; logoAlt: string; companyName: string }) {
+  const { t } = useI18n();
   return (
     <div className="mb-12 flex lg:hidden flex-col items-center gap-4">
       <LogoBox logoSrc={logoSrc} logoAlt={logoAlt} size="lg" />
@@ -863,7 +865,8 @@ function MobileLogo({ logoSrc, logoAlt, companyName }: { logoSrc: string; logoAl
   );
 }
 
-function DesktopHeading({ companyName, t }: { companyName: string; t: (key: string) => string }) {
+function DesktopHeading({ companyName }: { companyName: string }) {
+  const { t } = useI18n();
   return (
     <div className="mb-10 text-center lg:text-start hidden lg:block w-full" style={{ maxWidth: "var(--login-form-width, 380px)" }}>
       <h2
@@ -880,6 +883,7 @@ function DesktopHeading({ companyName, t }: { companyName: string; t: (key: stri
 }
 
 function LogoBox({ logoSrc, logoAlt, size = "md" }: { logoSrc: string; logoAlt: string; size?: "sm" | "md" | "lg" }) {
+  const { t } = useI18n();
   const sizeClasses = size === "lg" ? "h-24 w-24" : size === "sm" ? "h-12 w-12" : "h-16 w-16";
   return (
     <div

@@ -17,6 +17,7 @@ import {
   ImageIcon, MousePointerClick, Minus, PanelBottom, Copyright,
   Code, Video, GripVertical, Eye, EyeOff,
 } from "lucide-react";
+import { useI18n } from "@core/providers/i18n-provider";
 import type { CanvasComponent } from "../../../domain/entities/CanvasComponent";
 import { CANVAS_GRID_COLUMNS, COMPONENT_CATALOG } from "../../../domain/entities/CanvasComponent";
 import { GridOverlay } from "./GridOverlay";
@@ -28,7 +29,6 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
 };
 
 interface BuilderCanvasProps {
-  t: (key: string) => string;
   components: CanvasComponent[];
   selectedComponentId: string | null;
   canvasGridRows: number;
@@ -40,13 +40,12 @@ function CanvasComponentCard({
   component,
   isSelected,
   onSelect,
-  t,
 }: {
   component: CanvasComponent;
   isSelected: boolean;
   onSelect: () => void;
-  t: (key: string) => string;
 }) {
+  const { t } = useI18n();
   const catalog = COMPONENT_CATALOG.find(c => c.type === component.type);
   const Icon = ICON_MAP[catalog?.icon || 'Image'] || Image;
 
@@ -103,8 +102,9 @@ function CanvasComponentCard({
 }
 
 export function BuilderCanvas({
-  t, components, selectedComponentId, canvasGridRows, snapToGrid, onSelectComponent,
+  components, selectedComponentId, canvasGridRows, snapToGrid, onSelectComponent,
 }: BuilderCanvasProps) {
+  const { t } = useI18n();
   const { setNodeRef, isOver } = useDroppable({ id: 'builder-canvas' });
 
   return (
@@ -139,7 +139,7 @@ export function BuilderCanvas({
               component={comp}
               isSelected={selectedComponentId === comp.id}
               onSelect={() => onSelectComponent(comp.id)}
-              t={t}
+
             />
           ))}
       </div>

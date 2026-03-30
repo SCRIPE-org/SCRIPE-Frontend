@@ -1,4 +1,4 @@
-/**
+﻿/**
  * LayoutPanel — 22 login layout selector with visual thumbnails
  * Now page-aware: each auth page can have its own layout, headline, subtitle.
  */
@@ -11,9 +11,9 @@ import type { LoginLayout } from "@modules/auth/core/domain/entities/LoginBrandi
 import type { AuthPageId, AuthPageOverride } from "../../domain/entities/StudioDraft";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
+import { useI18n } from "@core/providers/i18n-provider";
 
 interface LayoutPanelProps {
-  t: (key: string) => string;
   selectedLayout: LoginLayout;
   onSelectLayout: (layout: LoginLayout) => void;
   // Multi-page branding
@@ -263,7 +263,8 @@ const LAYOUT_THUMBNAILS: Record<LoginLayout, React.ReactNode> = {
   ),
 };
 
-export function LayoutPanel({ t, selectedLayout, onSelectLayout, activeAuthPage, pageOverride, onUpdatePageField, canvasMode, onCanvasModeChange }: LayoutPanelProps) {
+export function LayoutPanel({ selectedLayout, onSelectLayout, activeAuthPage, pageOverride, onUpdatePageField, canvasMode, onCanvasModeChange }: LayoutPanelProps) {
+  const { t } = useI18n();
   return (
     <div className="space-y-4">
       {/* Mode Toggle: Presets / Builder */}

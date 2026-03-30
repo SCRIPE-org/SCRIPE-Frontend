@@ -9,6 +9,8 @@
  */
 "use client";
 
+import { useI18n } from "@core/providers/i18n-provider";
+
 import { useState } from "react";
 import {
   CheckCircle2, AlertTriangle, XCircle, Info, Eye, Target, Layers, Zap,
@@ -32,7 +34,6 @@ import {
 } from "../hooks/useAccessibilityChecker";
 
 interface AccessibilityPanelProps {
-  t: (key: string) => string;
   draft: StudioDraft;
   updateDraft: <K extends keyof StudioDraft>(field: K, value: StudioDraft[K]) => void;
   batchUpdateDraft: (updates: Partial<StudioDraft>) => void;
@@ -55,6 +56,7 @@ function Section({
   defaultOpen?: boolean;
   children: React.ReactNode;
 }) {
+  const { t } = useI18n();
   const [open, setOpen] = useState(defaultOpen);
   const Arrow = open ? ChevronDown : ChevronRight;
 
@@ -88,6 +90,7 @@ function SettingRow({
   description?: string;
   children: React.ReactNode;
 }) {
+  const { t } = useI18n();
   return (
     <div className="flex items-center justify-between gap-3">
       <div className="min-w-0 flex-1">
@@ -126,6 +129,7 @@ const CATEGORY_CONFIG: Record<
 // ── Color Swatch ──────────────────────────────────────
 
 function ColorSwatch({ color }: { color: string }) {
+  const { t } = useI18n();
   return (
     <span
       className="inline-block h-4 w-4 shrink-0 rounded border border-border shadow-sm"
@@ -138,14 +142,12 @@ function ColorSwatch({ color }: { color: string }) {
 // ── Audit Check Item ──────────────────────────────────
 
 function CheckItem({
-  check,
-  t,
-  onFix,
+  check, onFix,
 }: {
   check: AccessibilityCheck;
-  t: (key: string) => string;
   onFix?: () => void;
 }) {
+  const { t } = useI18n();
   const severity = SEVERITY_CONFIG[check.severity];
   const Icon = severity.icon;
 
@@ -195,15 +197,13 @@ function CheckItem({
 
 function CategorySection({
   category,
-  checks,
-  t,
-  onFixCheck,
+  checks, onFixCheck,
 }: {
   category: CheckCategory;
   checks: AccessibilityCheck[];
-  t: (key: string) => string;
   onFixCheck: (fix: Partial<StudioDraft>) => void;
 }) {
+  const { t } = useI18n();
   if (checks.length === 0) return null;
 
   const config = CATEGORY_CONFIG[category];
@@ -221,9 +221,7 @@ function CategorySection({
         {checks.map((check) => (
           <CheckItem
             key={check.id}
-            check={check}
-            t={t}
-            onFix={check.autoFix ? () => onFixCheck(check.autoFix!) : undefined}
+            check={check} onFix={check.autoFix ? () => onFixCheck(check.autoFix!) : undefined}
           />
         ))}
       </div>
@@ -242,6 +240,7 @@ function SummaryBadge({
   severity: CheckSeverity;
   label: string;
 }) {
+  const { t } = useI18n();
   const config = SEVERITY_CONFIG[severity];
   const Icon = config.icon;
   if (count === 0) return null;
@@ -258,7 +257,8 @@ function SummaryBadge({
 
 // ── Main Panel ────────────────────────────────────────
 
-export function AccessibilityPanel({ t, draft, updateDraft, batchUpdateDraft }: AccessibilityPanelProps) {
+export function AccessibilityPanel({ draft, updateDraft, batchUpdateDraft }: AccessibilityPanelProps) {
+  const { t } = useI18n();
   const { summary, byCategory } = useAccessibilityChecker(draft);
 
   const scorePercent =
@@ -706,9 +706,7 @@ export function AccessibilityPanel({ t, draft, updateDraft, batchUpdateDraft }: 
             <CategorySection
               key={category}
               category={category}
-              checks={byCategory[category]}
-              t={t}
-              onFixCheck={handleAutoFix}
+              checks={byCategory[category]} onFixCheck={handleAutoFix}
             />
           )
         )}

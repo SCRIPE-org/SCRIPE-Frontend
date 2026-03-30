@@ -1,4 +1,4 @@
-/**
+﻿/**
  * SsoProviderButtons — Enterprise SSO Login Buttons
  *
  * Renders available SSO identity provider buttons below the credentials form.
@@ -8,6 +8,7 @@
  * @module auth/signin/components
  */
 "use client";
+import { useI18n } from "@core/providers/i18n-provider";
 
 import { Loader2 } from "lucide-react";
 import { Button } from "@core/ui/button";
@@ -19,7 +20,6 @@ interface SsoProviderButtonsProps {
       isLoading: boolean;
       error: string | null;
       onProviderClick: (providerId: string, protocol?: string) => void;
-      t: (key: string) => string;
 }
 
 /** Protocol → default icon map */
@@ -33,9 +33,8 @@ export function SsoProviderButtons({
       providers,
       isLoading,
       error,
-      onProviderClick,
-      t,
-}: SsoProviderButtonsProps) {
+      onProviderClick, }: SsoProviderButtonsProps) {
+  const { t } = useI18n();
       // Don't render anything if no providers and not loading
       if (!isLoading && providers.length === 0) return null;
 

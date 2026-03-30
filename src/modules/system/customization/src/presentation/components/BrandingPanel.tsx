@@ -1,4 +1,4 @@
-/**
+﻿/**
  * BrandingPanel — Logo (ImageUploadField), company name, headline, subtitle, favicon, copyright
  * LAYOUT-AWARE: Shows only relevant fields for the current layout.
  * - Split layouts: headline, subtitle (rendered in LoginBranding panel)
@@ -12,9 +12,9 @@ import { ImageUploadField } from "@core/ui/image-upload-field";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import type { StudioDraft } from "../viewmodels/useStudioViewModel";
+import { useI18n } from "@core/providers/i18n-provider";
 
 interface BrandingPanelProps {
-  t: (key: string) => string;
   draft: StudioDraft;
   updateDraft: <K extends keyof StudioDraft>(field: K, value: StudioDraft[K]) => void;
 }
@@ -25,7 +25,8 @@ const SPLIT_LAYOUTS = [
   "split-diagonal", "carousel",
 ];
 
-export function BrandingPanel({ t, draft, updateDraft }: BrandingPanelProps) {
+export function BrandingPanel({ draft, updateDraft }: BrandingPanelProps) {
+  const { t } = useI18n();
   const hasBrandingPanel = SPLIT_LAYOUTS.includes(draft.layout);
 
   return (

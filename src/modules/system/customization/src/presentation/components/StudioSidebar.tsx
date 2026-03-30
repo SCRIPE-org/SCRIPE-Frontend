@@ -1,4 +1,4 @@
-/**
+﻿/**
  * StudioSidebar — 9-tab sidebar for the Ultimate Customizer Studio
  * All labels localized via t()
  */
@@ -16,10 +16,10 @@ import { AdvancedPanel } from "./AdvancedPanel";
 import { AccessibilityPanel } from "./AccessibilityPanel";
 import { ThemeMarketplacePanel } from "./ThemeMarketplacePanel";
 import { BuilderPanel } from "./builder/BuilderPanel";
+import { useI18n } from "@core/providers/i18n-provider";
 
 
 interface StudioSidebarProps {
-  t: (key: string) => string;
   activePanel: StudioPanel;
   setActivePanel: (panel: StudioPanel) => void;
   draft: StudioDraft;
@@ -53,8 +53,8 @@ const TABS: { id: StudioPanel; icon: typeof Layout; labelKey: string }[] = [
 ];
 
 export function StudioSidebar(props: StudioSidebarProps) {
-  const {
-    t, activePanel, setActivePanel, draft, updateDraft, batchUpdateDraft,
+  const { t } = useI18n();
+  const { activePanel, setActivePanel, draft, updateDraft, batchUpdateDraft,
     addBlock, removeBlock, moveBlock, updateBlock,
     activeAuthPage, getPageOverride, setPageOverride,
   } = props;
@@ -102,9 +102,7 @@ export function StudioSidebar(props: StudioSidebarProps) {
         {/* Active Panel */}
         <div className="p-4">
           {activePanel === "layout" && (
-            <LayoutPanel
-              t={t}
-              selectedLayout={currentPageOverride.layout}
+            <LayoutPanel selectedLayout={currentPageOverride.layout}
               onSelectLayout={(layout) => setPageOverride(activeAuthPage, "layout", layout)}
               activeAuthPage={activeAuthPage}
               pageOverride={currentPageOverride}
@@ -114,25 +112,19 @@ export function StudioSidebar(props: StudioSidebarProps) {
             />
           )}
           {activePanel === "branding" && (
-            <BrandingPanel
-              t={t}
-              draft={draft}
+            <BrandingPanel draft={draft}
               updateDraft={updateDraft}
             />
           )}
           {(activePanel === "appearance" || activePanel === "typography" || activePanel === "spacing") && (
-            <StylePanel
-              t={t}
-              activeSection={activePanel}
+            <StylePanel activeSection={activePanel}
               draft={draft}
               updateDraft={updateDraft}
               batchUpdateDraft={batchUpdateDraft}
             />
           )}
           {activePanel === "blocks" && (
-            <BlockPanel
-              t={t}
-              draft={draft}
+            <BlockPanel draft={draft}
               addBlock={addBlock}
               removeBlock={removeBlock}
               moveBlock={moveBlock}
@@ -140,30 +132,24 @@ export function StudioSidebar(props: StudioSidebarProps) {
             />
           )}
           {activePanel === "advanced" && (
-            <AdvancedPanel
-              t={t}
-              draft={draft}
+            <AdvancedPanel draft={draft}
               updateDraft={updateDraft}
             />
           )}
           {activePanel === "accessibility" && (
-            <AccessibilityPanel
-              t={t}
-              draft={draft}
+            <AccessibilityPanel draft={draft}
               updateDraft={updateDraft}
               batchUpdateDraft={batchUpdateDraft}
             />
           )}
           {activePanel === "themes" && (
-            <ThemeMarketplacePanel
-              t={t}
-              onApplySuccess={props.onThemeApplied}
+            <ThemeMarketplacePanel onApplySuccess={props.onThemeApplied}
               onPreviewTheme={props.onPreviewTheme}
               onExitPreview={props.onExitPreview}
             />
           )}
           {activePanel === "builder" && (
-            <BuilderPanel t={t} draft={draft} updateDraft={updateDraft} />
+            <BuilderPanel draft={draft} updateDraft={updateDraft} />
           )}
 
         </div>

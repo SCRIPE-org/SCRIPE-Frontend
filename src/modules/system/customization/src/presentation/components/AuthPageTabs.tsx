@@ -1,4 +1,4 @@
-/**
+﻿/**
  * AuthPageTabs — Horizontal tab strip for selecting the auth page to customize.
  *
  * Displays 6 tabs: Login, Forgot Password, Reset Password, Register, Verify Email, MFA.
@@ -10,6 +10,7 @@
 import { LogIn, KeyRound, RotateCcw, UserPlus, MailCheck, ShieldCheck } from "lucide-react";
 import { cn } from "@/core/common/utils";
 import { AUTH_PAGES, type AuthPageId } from "../../domain/entities/StudioDraft";
+import { useI18n } from "@core/providers/i18n-provider";
 
 const ICON_MAP: Record<string, React.ElementType> = {
   LogIn,
@@ -21,12 +22,12 @@ const ICON_MAP: Record<string, React.ElementType> = {
 };
 
 interface AuthPageTabsProps {
-  t: (key: string) => string;
   activePageId: AuthPageId;
   onPageChange: (pageId: AuthPageId) => void;
 }
 
-export function AuthPageTabs({ t, activePageId, onPageChange }: AuthPageTabsProps) {
+export function AuthPageTabs({ activePageId, onPageChange }: AuthPageTabsProps) {
+  const { t } = useI18n();
   return (
     <div className="flex items-center gap-1 border-b border-border bg-muted/30 px-4 py-1.5 overflow-x-auto scrollbar-none">
       <span className="shrink-0 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/60 me-2">

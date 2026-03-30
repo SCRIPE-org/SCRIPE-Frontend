@@ -1,4 +1,4 @@
-/**
+﻿/**
  * BlockPanel — Full-featured slot/block editor (21 block types)
  * HTML5 drag-drop reorder, inline editing, slot-layout filtering,
  * maxItems enforcement, block duplication. Labels localized via t()
@@ -18,9 +18,9 @@ import { Button } from "@core/ui/button";
 import type { StudioDraft } from "../viewmodels/useStudioViewModel";
 import type { LoginSlotId, LoginLayout, ContentBlock, BlockType } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
 import { InlineEditor } from "./BlockEditors";
+import { useI18n } from "@core/providers/i18n-provider";
 
 interface BlockPanelProps {
-  t: (key: string) => string;
   draft: StudioDraft;
   addBlock: (slotId: LoginSlotId, block: ContentBlock) => void;
   removeBlock: (slotId: LoginSlotId, index: number) => void;
@@ -95,7 +95,8 @@ function createDefaultBlock(type: BlockType): ContentBlock {
   }
 }
 
-export function BlockPanel({ t, draft, addBlock, removeBlock, moveBlock, updateBlock }: BlockPanelProps) {
+export function BlockPanel({ draft, addBlock, removeBlock, moveBlock, updateBlock }: BlockPanelProps) {
+  const { t } = useI18n();
   const [expandedSlot, setExpandedSlot] = useState<LoginSlotId | null>(null);
   const [addingToSlot, setAddingToSlot] = useState<LoginSlotId | null>(null);
   const [editingBlock, setEditingBlock] = useState<{ slotId: LoginSlotId; index: number } | null>(null);
@@ -167,7 +168,7 @@ export function BlockPanel({ t, draft, addBlock, removeBlock, moveBlock, updateB
                         </div>
                         {isEditing && (
                           <div className="border-t border-border/50 px-2 py-2 space-y-2">
-                            <InlineEditor t={t} block={block} onChange={(updated) => updateBlock(slot.id, i, updated)} />
+                            <InlineEditor block={block} onChange={(updated) => updateBlock(slot.id, i, updated)} />
                           </div>
                         )}
                       </div>
