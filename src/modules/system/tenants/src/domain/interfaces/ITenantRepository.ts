@@ -11,7 +11,7 @@ import type {
 } from "../entities/TenantRequests";
 import type { PagedResult } from "@modules/system/core/domain/types";
 import type { Permission } from "@modules/system/permissions/src/domain/entities/Permission";
-import type { EditionThinModel, SubscriptionModel, PagedEditionResult, DowngradeImpactReport } from "../../data/models/TenantSubscription";
+import type { EditionThinModel, SubscriptionModel, PagedEditionResult, DowngradeImpactReport } from "../types/SubscriptionTypes";
 import type { TenantDomainJson } from "./ITenantService";
 
 /** Domain-level alias for tenant domain data */

@@ -24,12 +24,9 @@ import {
   ShoppingCart, RotateCcw,
 } from "lucide-react";
 import { cn } from "@/core/common/utils";
-import {
-  THEME_CATEGORIES,
-  THEME_SORT_OPTIONS,
-  getThemeBadge,
-  type ThemeCardDto,
-} from "../../data/models/ThemeMarketplaceTypes";
+import { THEME_CATEGORIES, THEME_SORT_OPTIONS } from "../../domain/types/ThemeTypes";
+import type { ThemeCardDto } from "../../domain/types/ThemeServiceTypes";
+import { getThemeBadge } from "../../data/models/ThemeMarketplaceTypes";
 import { useThemeMarketplace } from "../hooks/useThemeMarketplace";
 
 interface ThemeMarketplacePanelProps {

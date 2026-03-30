@@ -6,8 +6,8 @@
  *
  * @module permissions/domain
  */
-import type { PermissionModel } from "../../data/models/PermissionModel";
-import type { CreatePermissionJson, UpdatePermissionJson } from "../../data/models/PermissionModel";
+import type { PermissionModel } from "../types/PermissionModelTypes";
+import type { CreatePermissionJson, UpdatePermissionJson } from "../types/PermissionModelTypes";
 import type { PermissionListParams } from "./IPermissionRepository";
 
 export interface IPermissionService {

@@ -14,7 +14,7 @@ import type {
   CreateTenantRequest,
   UpdateTenantRequest,
 } from "../../domain/entities/TenantRequests";
-import type { EditionThinModel } from "../../data/models/TenantSubscription";
+import type { EditionThinModel } from "../../domain/types/SubscriptionTypes";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 
 interface UseTenantsViewModelParams {

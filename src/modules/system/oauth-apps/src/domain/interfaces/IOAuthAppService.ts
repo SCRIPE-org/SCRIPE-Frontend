@@ -5,7 +5,7 @@ import type {
       CreateOAuthAppResponseJson,
       UpdateOAuthAppJson,
       RegenerateSecretResultJson,
-} from "../../data/models/OAuthAppModel";
+} from "../types/OAuthAppTypes";
 
 export interface ServiceOAuthAppListParams {
       page?: number;

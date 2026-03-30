@@ -8,7 +8,7 @@ import type { AdminProfile } from "../entities/AdminProfile";
 import type { ActiveSession } from "../entities/ActiveSession";
 import type { SecurityLogEntry } from "../entities/SecurityLogEntry";
 import type { ExternalLogin } from "../entities/ExternalLogin";
-import type { LinkExternalLoginDto } from "../../data/models/ProfileModels";
+import type { LinkExternalLoginDto } from "../types/ProfileTypes";
 
 export interface UpdateProfileRequest {
   firstName: string;

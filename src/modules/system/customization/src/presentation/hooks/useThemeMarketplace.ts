@@ -15,7 +15,7 @@ import { useState, useCallback, useEffect, useRef } from "react";
 import { systemContainer } from "@modules/system/di";
 import type { ThemeCard } from "../../domain/entities/ThemeCard";
 import type { ThemeDetail } from "../../domain/entities/ThemeDetail";
-import type { ThemeFilterState } from "../../data/models/ThemeMarketplaceTypes";
+import type { ThemeFilterState } from "../../domain/types/ThemeTypes";
 import { useToast } from "@core/ui/use-toast";
 
 interface UseThemeMarketplaceReturn {

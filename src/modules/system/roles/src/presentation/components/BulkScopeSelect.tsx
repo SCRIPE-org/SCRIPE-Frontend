@@ -10,7 +10,7 @@
 
 import { GenericSelect } from "@core/crud/components/generic-select";
 import { useI18n } from "@core/providers/i18n-provider";
-import { PermissionScopes } from "../../data/models/RoleModel";
+import { PermissionScopes } from "../../domain/types/PermissionTypes";
 
 interface BulkScopeSelectProps {
   value: string;

@@ -1,10 +1,12 @@
 /**
  * Menu Repository Implementation
  *
- * Implements IMenuRepository using the API service.
+ * Implements IMenuRepository using MenuService for HTTP operations.
+ * Handles data mapping and local caching concerns.
+ *
+ * @module menus/data
  */
-import type { IApiService } from "@core/interfaces/api.interface";
-import { API_ENDPOINTS } from "@core/config/api-endpoints";
+import type { IMenuService } from "../../domain/interfaces/IMenuService";
 import type { IMenuRepository } from "../../domain/interfaces/IMenuRepository";
 import { MenuItem, type MenuItemData, type MenuTreeNode } from "../../domain/entities/MenuItem";
 import type {
@@ -16,10 +18,10 @@ import type {
 } from "../../domain/entities/MenuItemRequests";
 
 export class MenuRepository implements IMenuRepository {
-  constructor(private readonly api: IApiService) { }
+  constructor(private readonly service: IMenuService) {}
 
   async getAll(): Promise<MenuTreeNode[]> {
-    return await this.api.get<MenuTreeNode[]>(API_ENDPOINTS.MENUS.LIST);
+    return await this.service.getAll();
   }
 
   async getById(id: string): Promise<MenuItem> {
@@ -32,35 +34,35 @@ export class MenuRepository implements IMenuRepository {
   }
 
   async create(request: CreateMenuItemRequest): Promise<string> {
-    const response = await this.api.post<{ id: string }>(API_ENDPOINTS.MENUS.CREATE, request);
+    const response = await this.service.create(request);
     return response.id;
   }
 
   async update(id: string, request: UpdateMenuItemRequest): Promise<void> {
-    await this.api.put(API_ENDPOINTS.MENUS.UPDATE(id), request);
+    await this.service.update(id, request);
   }
 
   async delete(id: string): Promise<void> {
-    await this.api.delete(API_ENDPOINTS.MENUS.DELETE(id));
+    await this.service.delete(id);
   }
 
   async reorder(request: ReorderMenuItemsRequest): Promise<void> {
-    await this.api.put(API_ENDPOINTS.MENUS.REORDER, request);
+    await this.service.reorder(request);
   }
 
   async setRoleVisibility(request: SetRoleMenuVisibilityRequest): Promise<void> {
-    await this.api.put(API_ENDPOINTS.MENUS.ROLE_VISIBILITY, request);
+    await this.service.setRoleVisibility(request);
   }
 
   async saveOverride(request: SaveMenuOverrideRequest): Promise<string> {
-    const response = await this.api.post<{ id: string }>(API_ENDPOINTS.MENUS.OVERRIDES, request);
+    const response = await this.service.saveOverride(request);
     // Clear navigation cache so sidebar picks up new overrides
     this.invalidateNavigationCache();
     return response.id;
   }
 
   async deleteOverride(id: string): Promise<void> {
-    await this.api.delete(API_ENDPOINTS.MENUS.DELETE_OVERRIDE(id));
+    await this.service.deleteOverride(id);
     // Clear navigation cache so sidebar picks up removed overrides
     this.invalidateNavigationCache();
   }

@@ -19,7 +19,7 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { systemContainer } from "@modules/system/di";
 import type { Permission } from "@modules/system/permissions/src/domain/entities/Permission";
 import type { Role } from "../../domain/entities/Role";
-import type { PermissionAssignmentJson } from "../../data/models/RoleModel";
+import type { PermissionAssignmentJson } from "../../domain/types/PermissionTypes";
 
 // === Types ===
 export interface PermissionCategory {

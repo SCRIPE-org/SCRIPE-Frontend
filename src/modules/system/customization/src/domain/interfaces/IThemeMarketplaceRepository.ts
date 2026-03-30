@@ -8,7 +8,7 @@
  */
 import type { ThemeCard } from "../entities/ThemeCard";
 import type { ThemeDetail } from "../entities/ThemeDetail";
-import type { ThemeFilterState } from "../../data/models/ThemeMarketplaceTypes";
+import type { ThemeFilterState } from "../types/ThemeTypes";
 import type { UpsertThemePayload } from "./IThemeMarketplaceService";
 
 export interface ThemeListResult {

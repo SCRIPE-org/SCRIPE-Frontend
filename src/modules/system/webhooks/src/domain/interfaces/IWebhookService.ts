@@ -18,7 +18,7 @@ import type {
       WebhookTestResultJson,
       CreateWebhookJson,
       UpdateWebhookJson,
-} from "../../data/models/WebhookModel";
+} from "../types/WebhookTypes";
 
 /**
  * Webhook list query parameters

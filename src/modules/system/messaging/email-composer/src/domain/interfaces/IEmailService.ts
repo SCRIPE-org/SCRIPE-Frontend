@@ -13,7 +13,7 @@ import type {
       EmailTemplateListResponseJson,
       SendManualEmailJson,
       AttachmentUploadResultJson,
-} from "../../data/models/EmailModel";
+} from "../types/EmailTypes";
 
 export interface ServiceSentHistoryParams {
       page: number;

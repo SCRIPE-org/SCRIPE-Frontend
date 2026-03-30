@@ -15,7 +15,7 @@ import { systemContainer } from "@modules/system/di";
 import type {
   TenantSettingsModel,
   UpdateTenantSettingsRequest,
-} from "@modules/system/tenant-settings/src/data/models/TenantSettingsModel";
+} from "@modules/system/tenant-settings/src/domain/types/SettingsTypes";
 import { useState } from "react";
 
 export interface UseTenantSettingsViewModelResult {

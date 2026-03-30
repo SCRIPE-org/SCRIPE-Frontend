@@ -34,7 +34,7 @@ import {
 } from "../TenantDialogs";
 
 import type { TenantTreeNode, Tenant } from "../../../domain/entities/Tenant";
-import type { EditionThinModel } from "../../../data/models/TenantSubscription";
+import type { EditionThinModel } from "../../../domain/types/SubscriptionTypes";
 import { appLogger } from "@core/common/logger";
 
 interface SubTenantsTabProps {

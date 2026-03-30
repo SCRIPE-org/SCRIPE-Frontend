@@ -13,7 +13,7 @@ import type {
       UpdateMessageTemplateJson,
       PreviewTemplateJson,
       PreviewTemplateResponseJson,
-} from "../../data/models/MessageTemplateModel";
+} from "../types/MessageTemplateTypes";
 
 export interface ServiceTemplateListParams {
       page: number;

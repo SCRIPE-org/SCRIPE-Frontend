@@ -9,17 +9,17 @@
 import type {
   TenantSettingsModel,
   UpdateTenantSettingsRequest,
-} from "@modules/system/tenant-settings/src/data/models/TenantSettingsModel";
-import type { TenantModel, TenantTreeNodeModel } from "../../data/models/TenantModel";
-import type { CreateTenantJson, UpdateTenantJson } from "../../data/models/TenantModel";
+} from "@modules/system/tenant-settings/src/domain/types/SettingsTypes";
+import type { TenantModel, TenantTreeNodeModel } from "../types/TenantModelTypes";
+import type { CreateTenantJson, UpdateTenantJson } from "../types/TenantModelTypes";
 import type { TenantStats } from "./ITenantRepository";
-import type { PermissionModel } from "@modules/system/permissions/src/data/models/PermissionModel";
+import type { PermissionModel } from "@modules/system/permissions/src/domain/types/PermissionModelTypes";
 import type {
   EditionThinModel,
   SubscriptionModel,
   PagedEditionResult,
   DowngradeImpactReport,
-} from "../../data/models/TenantSubscription";
+} from "../types/SubscriptionTypes";
 
 /** Tenant domain record from the API */
 export interface TenantDomainJson {

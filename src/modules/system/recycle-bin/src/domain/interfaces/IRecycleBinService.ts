@@ -7,7 +7,7 @@
  *
  * @module recycle-bin/domain
  */
-import type { DeletedItemModel } from "../../data/models/DeletedItemModel";
+import type { DeletedItemModel } from "../types/RecycleBinTypes";
 
 /**
  * Grouped deleted items result from API (via Service)

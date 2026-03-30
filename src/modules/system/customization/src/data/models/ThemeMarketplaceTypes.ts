@@ -72,33 +72,10 @@ export interface ThemePagedResult {
   pageSize: number;
 }
 
-/** Marketplace filter state */
-export interface ThemeFilterState {
-  search: string;
-  category: string;
-  sortBy: string;
-  isFree?: boolean;
-  hasDarkMode?: boolean;
-  hasAccessibility?: boolean;
-  isFeatured?: boolean;
-  tags?: string[];
-}
-
-/** Categories and sort options for the UI */
-export const THEME_CATEGORIES = [
-  { value: "", label: "All Categories" },
-  { value: "corporate", label: "Corporate" },
-  { value: "creative", label: "Creative" },
-  { value: "minimal", label: "Minimal" },
-] as const;
-
-export const THEME_SORT_OPTIONS = [
-  { value: "popular", label: "Most Popular" },
-  { value: "newest", label: "Newest First" },
-  { value: "name", label: "A → Z" },
-  { value: "usage", label: "Most Used" },
-  { value: "likes", label: "Most Liked" },
-] as const;
+/** Re-export from domain types — single source of truth */
+import { THEME_CATEGORIES, THEME_SORT_OPTIONS } from "../../domain/types/ThemeTypes";
+export type { ThemeFilterState } from "../../domain/types/ThemeTypes";
+export { THEME_CATEGORIES, THEME_SORT_OPTIONS };
 
 /** Pricing badge configuration */
 export const PRICING_BADGES: Record<

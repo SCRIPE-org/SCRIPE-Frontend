@@ -29,6 +29,7 @@ import { WebhookService } from "./webhooks/src/data/services/WebhookService";
 import { UserGroupService } from "./user-groups/src/data/services/UserGroupService";
 import { IdentityProviderService } from "./identity-providers/src/data/services/IdentityProviderService";
 import { OAuthAppService } from "./oauth-apps/src/data/services/OAuthAppService";
+import { MenuService } from "./menus/src/data/services/MenuService";
 
 // Repositories
 import { AdminRepository } from "./admin/src/data/repositories/AdminRepository";
@@ -148,7 +149,7 @@ export function getSystemContainer(): SystemContainer {
       roleRepository: new RoleRepository(roleService),
       permissionRepository: new PermissionRepository(permissionService),
       tenantRepository: new TenantRepository(tenantService),
-      menuRepository: new MenuRepository(apiService), // TODO: Add MenuService
+      menuRepository: new MenuRepository(new MenuService(apiService)),
       tenantSettingsRepository: new TenantSettingsRepository(tenantSettingsService),
       customizationRepository: new CustomizationRepository(customizationService),
       dashboardRepository: new DashboardRepository(new DashboardService(apiService)),

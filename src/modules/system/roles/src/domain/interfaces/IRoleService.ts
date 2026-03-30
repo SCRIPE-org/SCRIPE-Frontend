@@ -6,14 +6,14 @@
  *
  * @module roles/domain
  */
-import type { RoleModel } from "../../data/models/RoleModel";
+import type { RoleModel } from "../types/RoleModelTypes";
 import type {
   RoleJson,
   CreateRoleJson,
   UpdateRoleJson,
   AssignPermissionsJson,
-} from "../../data/models/RoleModel";
-import type { PermissionModel } from "@modules/system/permissions/src/data/models/PermissionModel";
+} from "../types/RoleModelTypes";
+import type { PermissionModel } from "@modules/system/permissions/src/domain/types/PermissionModelTypes";
 import type { MyTenantRoleListParams } from "./IRoleRepository";
 
 export interface ServiceRoleListParams {

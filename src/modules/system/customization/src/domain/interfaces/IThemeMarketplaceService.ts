@@ -11,7 +11,7 @@ import type {
   ThemeCardDto,
   ThemeDetailDto,
   ThemePagedResult,
-} from "../../data/models/ThemeMarketplaceTypes";
+} from "../types/ThemeServiceTypes";
 
 export interface ThemeListParams {
   page: number;

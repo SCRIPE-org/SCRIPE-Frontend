@@ -18,8 +18,8 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { systemContainer } from "@modules/system/di";
 import type { Role } from "../../domain/entities/Role";
 import type { Permission } from "@modules/system/permissions/src/domain/entities/Permission";
-import type { PermissionAssignmentJson } from "../../data/models/RoleModel";
-import { PermissionScopes } from "../../data/models/RoleModel";
+import type { PermissionAssignmentJson } from "../../domain/types/PermissionTypes";
+import { PermissionScopes } from "../../domain/types/PermissionTypes";
 
 // ── Grouped permissions by resource ──
 

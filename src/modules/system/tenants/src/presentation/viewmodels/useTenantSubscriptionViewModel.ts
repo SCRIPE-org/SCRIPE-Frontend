@@ -5,7 +5,7 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 import { systemContainer } from "@modules/system/di";
 import { entitlementsContainer } from "@modules/entitlements/di";
-import type { SubscriptionModel, EditionThinModel, SubscriptionType, ExpiryBehavior, DowngradeImpactReport } from "../../data/models/TenantSubscription";
+import type { SubscriptionModel, EditionThinModel, SubscriptionType, ExpiryBehavior, DowngradeImpactReport } from "../../domain/types/SubscriptionTypes";
 import { appLogger } from "@/core/common/logger";
 
 // ── Result Interface ──

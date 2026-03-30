@@ -9,7 +9,7 @@
 import type {
   TenantSettingsModel,
   UpdateTenantSettingsRequest,
-} from "../../data/models/TenantSettingsModel";
+} from "../types/SettingsTypes";
 
 export interface ITenantSettingsService {
   /**

@@ -16,7 +16,7 @@ import type {
   BulkAdminsFilterJson,
   TransferAdminJson,
   SyncRoleAssignmentJson,
-} from "../../data/models/AdminModel";
+} from "../types/AdminTypes";
 
 /**
  * Admin list query parameters

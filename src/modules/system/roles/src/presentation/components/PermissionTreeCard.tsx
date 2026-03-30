@@ -14,7 +14,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { BulkScopeSelect } from "./BulkScopeSelect";
 import { PermissionCategoryRow, PermissionTreeSkeleton } from "./index";
 import type { PermissionTreeProps } from "../viewmodels/useRoleDetailViewModel";
-import type { PermissionAssignmentJson } from "../../data/models/RoleModel";
+import type { PermissionAssignmentJson } from "../../domain/types/PermissionTypes";
 
 // Category Icons mapping
 const CATEGORY_ICONS: Record<string, React.ReactNode> = {

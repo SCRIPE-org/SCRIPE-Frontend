@@ -6,8 +6,8 @@
  *
  * @module auth/core/domain
  */
-import type { LoginRequestModel, LoginResponseModel } from "../../data/models/AuthModel";
-import type { Verify2FARequestModel, Verify2FAResponseModel } from "../../data/models/TwoFactorModels";
+import type { LoginRequestModel, LoginResponseModel } from "../types/AuthTypes";
+import type { Verify2FARequestModel, Verify2FAResponseModel } from "../types/AuthTypes";
 
 export interface IAuthService {
   login(request: LoginRequestModel): Promise<LoginResponseModel>;

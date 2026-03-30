@@ -9,7 +9,7 @@
 import type {
       NotificationTargetJson,
       SendNotificationJson,
-} from "../../data/models/NotificationModel";
+} from "../types/NotificationTypes";
 
 export interface INotificationSenderService {
       searchTargets(query: string): Promise<NotificationTargetJson[]>;

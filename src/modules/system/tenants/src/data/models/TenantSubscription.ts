@@ -1,134 +1,75 @@
 /**
- * Tenant Subscription Models
+ * Tenant Subscription Models (Data Layer)
  *
- * Simplified models for the Tenant module to interact with Entitlements
- * without creating circular module dependencies.
+ * Re-exports domain types + contains request DTOs specific to the data layer.
+ *
+ * @module tenants/data
  */
 
-export type SubscriptionType = "Lifetime" | "Monthly" | "Yearly" | "Trial" | "AddOn";
-export type SubscriptionStatus = "Active" | "Trialing" | "PastDue" | "Suspended" | "Canceled" | "Expired";
-export type ExpiryBehavior = "Fallback" | "Suspend";
-export type RefundType = "None" | "Full" | "ProRata";
+// ── Re-export domain types (single source of truth) ──────
+import type {
+  SubscriptionType,
+  ExpiryBehavior,
+  RefundType,
+} from "../../domain/types/SubscriptionTypes";
 
-export interface EditionThinModel {
-      id: string;
-      name: string;
-      displayNameEn: string;
-      displayNameAr: string;
-      isSystem: boolean;
-      isRetired: boolean;
-      // ── Billing Controls ──
-      allowMonthly?: boolean;
-      allowYearly?: boolean;
-      allowLifetime?: boolean;
-      allowTrial?: boolean;
-}
+export type {
+  SubscriptionType,
+  SubscriptionStatus,
+  ExpiryBehavior,
+  RefundType,
+  EditionThinModel,
+  SubscriptionModel,
+  PagedEditionResult,
+  ResourceOverflow,
+  DowngradeImpactReport,
+} from "../../domain/types/SubscriptionTypes";
 
-export interface SubscriptionModel {
-      id: string;
-      tenantId: string;
-      editionId: string;
-      editionName: string;
-      type: string;
-      status: string;
-      startDate: string;
-      endDate?: string;
-      trialEndsAt?: string;
-      gracePeriodEndsAt?: string;
-      expiryBehavior?: ExpiryBehavior;
-      fallbackEditionName?: string;
-      isDowngraded: boolean;
-      downgradedFromEditionName?: string;
-      downgradedFromType?: string;
-      downgradedAt?: string;
-      createdAt: string;
-      currency?: string;
-      baseAmount?: number;
-      adjustmentAmount?: number;
-      totalAmount?: number;
-      totalAmountUsd?: number;
-      exchangeRateToUsd?: number;
-      // ── Promotion ──
-      appliedPromotionName?: string;
-      promotionDiscount?: number;
-      // ── Refund ──
-      refundType?: string;
-      refundAmount?: number;
-      refundedAt?: string;
-      refundReason?: string;
-}
-
-export interface PagedEditionResult {
-      items: EditionThinModel[];
-      totalCount: number;
-      page: number;
-      pageSize: number;
-      totalPages: number;
-      hasNextPage: boolean;
-      hasPreviousPage: boolean;
-}
-
-// ── Request DTOs ──
+// ── Request DTOs (data-layer only) ───────────────────────
 
 export interface ChangeEditionPayload {
-      editionId: string;
-      type: SubscriptionType;
-      expiryBehavior?: ExpiryBehavior;
-      currency?: string;
-      promoCode?: string;
-      promotionId?: string;
+  editionId: string;
+  type: SubscriptionType;
+  expiryBehavior?: ExpiryBehavior;
+  currency?: string;
+  promoCode?: string;
+  promotionId?: string;
 }
 
 export interface RenewPayload {
-      type: SubscriptionType;
+  type: SubscriptionType;
 }
 
 export interface ConvertTrialPayload {
-      type: SubscriptionType;
+  type: SubscriptionType;
 }
 
 export interface SuspendPayload {
-      reason: string;
-      useFallback?: boolean;
-      refundType?: RefundType;
-      customRefundAmount?: number;
+  reason: string;
+  useFallback?: boolean;
+  refundType?: RefundType;
+  customRefundAmount?: number;
 }
 
 export interface CancelPayload {
-      reason?: string;
-      useFallback?: boolean;
-      refundType?: RefundType;
-      customRefundAmount?: number;
+  reason?: string;
+  useFallback?: boolean;
+  refundType?: RefundType;
+  customRefundAmount?: number;
 }
 
 export interface ResumePayload {
-      type?: SubscriptionType;
+  type?: SubscriptionType;
 }
 
 export interface ChangeCurrencyPayload {
-      currency: string;
+  currency: string;
 }
 
-// ── Downgrade Impact ──
-
-export interface ResourceOverflow {
-      resourceType: string;
-      featureName: string;
-      currentCount: number;
-      newLimit: number;
-      overflowCount: number;
-}
-
-export interface DowngradeImpactReport {
-      hasOverflow: boolean;
-      overflows: ResourceOverflow[];
-}
-
-// ── Price Preview ──
+// ── Price Preview ────────────────────────────────────────
 
 export interface PricePreviewResult {
-      amount: number;
-      currency: string;
-      billingCycle: string;
+  amount: number;
+  currency: string;
+  billingCycle: string;
 }
-

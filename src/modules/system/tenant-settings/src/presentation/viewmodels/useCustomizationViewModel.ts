@@ -11,8 +11,8 @@ import { useTenantBranding } from "@core/providers/tenant-branding-provider";
 import { systemContainer } from "@modules/system/di";
 import type {
   AuditLogPagedResultJson as AuditLogPagedResult,
-} from "@modules/system/customization/src/data/models/BrandingModel";
-import type { SystemSettingsJson as SystemSettingsResponse } from "@modules/system/customization/src/data/models/SystemSettingsModel";
+} from "@modules/system/customization/src/domain/types/CustomizationServiceTypes";
+import type { SystemSettingsJson as SystemSettingsResponse } from "@modules/system/customization/src/domain/types/CustomizationServiceTypes";
 
 // Query keys
 export const customizationKeys = {

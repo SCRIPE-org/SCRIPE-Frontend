@@ -4,7 +4,7 @@ import type {
       CreateIdentityProviderJson,
       UpdateIdentityProviderJson,
       TestConnectionResultJson,
-} from "../../data/models/IdentityProviderModel";
+} from "../types/IdentityProviderTypes";
 
 export interface ServiceIdentityProviderListParams {
       page?: number;

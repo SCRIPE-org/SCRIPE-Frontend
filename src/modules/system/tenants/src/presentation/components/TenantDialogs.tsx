@@ -14,7 +14,7 @@ import { SUPPORTED_CURRENCIES } from "@core/constants/currencies";
 import { GenericModal } from "@core/crud/components/generic-modal";
 import { GenericForm, type FieldConfig } from "@core/ui/forms/generic-form";
 import type { TenantTreeNode } from "../../domain/entities/Tenant";
-import type { EditionThinModel } from "../../data/models/TenantSubscription";
+import type { EditionThinModel } from "../../domain/types/SubscriptionTypes";
 
 // ==========================================
 // Promotion type (local — avoids cross-module imports)

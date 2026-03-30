@@ -25,7 +25,7 @@ import { Textarea } from "@core/ui/textarea";
 import { Label } from "@core/ui/label";
 import { Switch } from "@core/ui/switch";
 import { RadioGroup, RadioGroupItem } from "@core/ui/radio-group";
-import type { SubscriptionType, DowngradeImpactReport } from "../../../data/models/TenantSubscription";
+import type { SubscriptionType, DowngradeImpactReport } from "../../../domain/types/SubscriptionTypes";
 
 interface TenantSubscriptionCardProps {
       tenantId: string;
@@ -74,7 +74,7 @@ function formatDate(dateStr?: string) {
 
 // ── Billing Cycle Options (dynamically filtered by edition capabilities) ──
 
-import type { EditionThinModel } from "../../../data/models/TenantSubscription";
+import type { EditionThinModel } from "../../../domain/types/SubscriptionTypes";
 
 function getBillingCycleOptions(t: (key: string) => string, edition?: EditionThinModel | null): GenericSelectOption[] {
       const opts: GenericSelectOption[] = [];
