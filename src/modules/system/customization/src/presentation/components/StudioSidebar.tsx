@@ -4,7 +4,7 @@
  */
 "use client";
 
-import { Layout, Palette, Type, Settings2, Layers, Blocks, Paintbrush, ScanEye, Store } from "lucide-react";
+import { Layout, Palette, Type, Settings2, Layers, Blocks, Paintbrush, ScanEye, Store, LayoutGrid } from "lucide-react";
 import { cn } from "@/core/common/utils";
 import { LayoutPanel } from "./LayoutPanel";
 import { BrandingPanel } from "./BrandingPanel";
@@ -15,6 +15,7 @@ import { StylePanel } from "./StylePanel";
 import { AdvancedPanel } from "./AdvancedPanel";
 import { AccessibilityPanel } from "./AccessibilityPanel";
 import { ThemeMarketplacePanel } from "./ThemeMarketplacePanel";
+import { BuilderPanel } from "./builder/BuilderPanel";
 
 
 interface StudioSidebarProps {
@@ -40,6 +41,7 @@ interface StudioSidebarProps {
 
 const TABS: { id: StudioPanel; icon: typeof Layout; labelKey: string }[] = [
   { id: "layout", icon: Layout, labelKey: "studio.tab.layout" },
+  { id: "builder", icon: LayoutGrid, labelKey: "studio.tab.builder" },
   { id: "branding", icon: Paintbrush, labelKey: "studio.tab.branding" },
   { id: "appearance", icon: Palette, labelKey: "studio.tab.appearance" },
   { id: "typography", icon: Type, labelKey: "studio.tab.typography" },
@@ -107,6 +109,8 @@ export function StudioSidebar(props: StudioSidebarProps) {
               activeAuthPage={activeAuthPage}
               pageOverride={currentPageOverride}
               onUpdatePageField={(field, value) => setPageOverride(activeAuthPage, field, value)}
+              canvasMode={draft.canvasMode}
+              onCanvasModeChange={(mode) => updateDraft('canvasMode', mode)}
             />
           )}
           {activePanel === "branding" && (
@@ -157,6 +161,9 @@ export function StudioSidebar(props: StudioSidebarProps) {
               onPreviewTheme={props.onPreviewTheme}
               onExitPreview={props.onExitPreview}
             />
+          )}
+          {activePanel === "builder" && (
+            <BuilderPanel t={t} draft={draft} updateDraft={updateDraft} />
           )}
 
         </div>

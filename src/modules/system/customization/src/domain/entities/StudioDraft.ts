@@ -7,6 +7,8 @@
  * @module customization/domain
  */
 import type { LoginLayout, SlotConfig } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
+import type { CanvasComponent, CanvasMode, CanvasBackground } from "./CanvasComponent";
+import { DEFAULT_CANVAS_COMPONENTS, DEFAULT_CANVAS_GRID_ROWS, DEFAULT_CANVAS_BACKGROUND } from "./CanvasComponent";
 
 // ── Auth Page Identifiers ─────────────────────────────
 export type AuthPageId = "login" | "forgot-password" | "reset-password" | "register" | "verify-email" | "mfa";
@@ -203,6 +205,16 @@ export interface StudioDraftProps {
 
   // ── Multi-Page Branding ─────────────────────────────
   pageOverrides: AuthPageOverrides;
+
+  // ── Page Builder (M10) ─────────────────────────────
+  /** 'layout' = 22 preset layouts, 'builder' = drag-and-drop canvas */
+  canvasMode: CanvasMode;
+  /** Components placed on the builder canvas */
+  canvasComponents: CanvasComponent[];
+  /** Number of rows in the builder grid */
+  canvasGridRows: number;
+  /** Canvas background — defaults to inheriting from studio tokens */
+  canvasBackground: CanvasBackground;
 }
 
 // ── Default Draft ─────────────────────────────────────
@@ -342,6 +354,11 @@ export const DEFAULT_DRAFT: StudioDraftProps = {
   a11yForcedColorsSupport: true,
   // Multi-Page Branding
   pageOverrides: {},
+  // Page Builder (M10)
+  canvasMode: 'layout',
+  canvasComponents: DEFAULT_CANVAS_COMPONENTS,
+  canvasGridRows: DEFAULT_CANVAS_GRID_ROWS,
+  canvasBackground: DEFAULT_CANVAS_BACKGROUND,
 };
 
 // ── Device Sizes ──────────────────────────────────────
@@ -354,4 +371,4 @@ export const DEVICE_DIMENSIONS: Record<DeviceSize, { width: number; height: numb
 };
 
 // ── Panel Identifiers ─────────────────────────────────
-export type StudioPanel = "layout" | "branding" | "appearance" | "typography" | "spacing" | "blocks" | "advanced" | "accessibility" | "themes";
+export type StudioPanel = "layout" | "branding" | "appearance" | "typography" | "spacing" | "blocks" | "advanced" | "accessibility" | "themes" | "builder";

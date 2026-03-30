@@ -29,6 +29,7 @@ import { BRAND } from "@core/config/branding";
 import { useLoginBrandingTokens } from "@modules/auth/signin/src/presentation/viewmodels/useLoginBrandingTokens";
 import { LoginBranding } from "@modules/auth/signin/src/presentation/components/LoginBranding";
 import { SlotRenderer } from "@modules/auth/signin/src/presentation/components/SlotRenderer";
+import { CanvasRenderer } from "./builder/CanvasRenderer";
 
 import { useTheme } from "next-themes";
 
@@ -370,6 +371,18 @@ export function LoginPreviewShell() {
       {layoutContent}
     </>
   );
+
+  // ── Builder Mode: render canvas components instead of fixed layouts ──
+  const canvasMode = rawParsed.canvasMode as string | undefined;
+  if (canvasMode === 'builder' && Array.isArray(rawParsed.components)) {
+    return wrapWithA11y(
+      <CanvasRenderer
+        components={rawParsed.components as any}
+        gridRows={(rawParsed.canvasGridRows as number) || 8}
+        canvasBackground={rawParsed.canvasBackground as any}
+      />
+    );
+  }
 
   switch (layout) {
     case "split-left":

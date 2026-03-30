@@ -4,7 +4,7 @@
  */
 "use client";
 
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, Layout, LayoutGrid } from "lucide-react";
 import { cn } from "@/core/common/utils";
 import { ALL_LAYOUTS } from "../viewmodels/useStudioViewModel";
 import type { LoginLayout } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
@@ -20,6 +20,9 @@ interface LayoutPanelProps {
   activeAuthPage?: AuthPageId;
   pageOverride?: AuthPageOverride;
   onUpdatePageField?: (field: keyof AuthPageOverride, value: string) => void;
+  // Builder mode toggle
+  canvasMode?: 'layout' | 'builder';
+  onCanvasModeChange?: (mode: 'layout' | 'builder') => void;
 }
 
 // Mini visual previews for each layout
@@ -260,9 +263,47 @@ const LAYOUT_THUMBNAILS: Record<LoginLayout, React.ReactNode> = {
   ),
 };
 
-export function LayoutPanel({ t, selectedLayout, onSelectLayout, activeAuthPage, pageOverride, onUpdatePageField }: LayoutPanelProps) {
+export function LayoutPanel({ t, selectedLayout, onSelectLayout, activeAuthPage, pageOverride, onUpdatePageField, canvasMode, onCanvasModeChange }: LayoutPanelProps) {
   return (
     <div className="space-y-4">
+      {/* Mode Toggle: Presets / Builder */}
+      {onCanvasModeChange && (
+        <div className="rounded-lg border border-border bg-muted/20 p-1 flex gap-1">
+          <button
+            onClick={() => onCanvasModeChange('layout')}
+            className={cn(
+              "flex-1 flex items-center justify-center gap-1.5 rounded-md px-3 py-2 text-xs font-medium transition-all",
+              canvasMode === 'layout' || !canvasMode
+                ? "bg-background text-foreground shadow-sm border border-border/50"
+                : "text-muted-foreground hover:text-foreground hover:bg-background/50"
+            )}
+          >
+            <Layout className="h-3.5 w-3.5" />
+            {t('studio.builder.mode.presets') || 'Presets'}
+          </button>
+          <button
+            onClick={() => onCanvasModeChange('builder')}
+            className={cn(
+              "flex-1 flex items-center justify-center gap-1.5 rounded-md px-3 py-2 text-xs font-medium transition-all",
+              canvasMode === 'builder'
+                ? "bg-background text-foreground shadow-sm border border-border/50"
+                : "text-muted-foreground hover:text-foreground hover:bg-background/50"
+            )}
+          >
+            <LayoutGrid className="h-3.5 w-3.5" />
+            {t('studio.builder.mode.builder') || 'Builder'}
+          </button>
+        </div>
+      )}
+
+      {/* Builder mode hint */}
+      {canvasMode === 'builder' && (
+        <div className="rounded-lg border border-violet-500/20 bg-violet-500/5 px-3 py-2">
+          <p className="text-xs text-violet-600 dark:text-violet-400">
+            {t('studio.builder.activeHint') || 'Builder mode active — use the Builder tab to arrange components'}
+          </p>
+        </div>
+      )}
       {/* Page context indicator */}
       {activeAuthPage && activeAuthPage !== "login" && (
         <div className="flex items-center gap-2 rounded-lg border border-blue-500/20 bg-blue-500/5 px-3 py-2">

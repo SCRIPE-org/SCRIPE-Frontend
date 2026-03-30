@@ -26,6 +26,7 @@ import type {
   ContentBlock,
   SlotConfig,
 } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
+import { DEFAULT_CANVAS_COMPONENTS, DEFAULT_CANVAS_GRID_ROWS, DEFAULT_CANVAS_BACKGROUND } from "../../domain/entities/CanvasComponent";
 import {
   type StudioDraftProps as StudioDraft,
   DEFAULT_DRAFT,
@@ -319,6 +320,11 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
       safeMode: (brandingData as any).isSafeMode ?? false,
       // Multi-Page Branding
       pageOverrides: source.pages || {},
+      // Page Builder (M10)
+      canvasMode: source.canvasMode || DEFAULT_DRAFT.canvasMode,
+      canvasComponents: source.components || DEFAULT_CANVAS_COMPONENTS,
+      canvasGridRows: source.canvasGridRows || DEFAULT_CANVAS_GRID_ROWS,
+      canvasBackground: source.canvasBackground || DEFAULT_CANVAS_BACKGROUND,
       // Accessibility
       // Focus & Keyboard
       a11yFocusRingEnabled: source.a11yFocusRingEnabled ?? tokens["a11y.focusRing.enabled"] !== "false",
@@ -473,6 +479,10 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
   const buildDraftJson = useCallback((): string => {
     return JSON.stringify({
       _schemaVersion: 1,
+      canvasMode: draft.canvasMode,
+      canvasGridRows: draft.canvasGridRows,
+      canvasBackground: draft.canvasBackground,
+      components: draft.canvasMode === 'builder' ? draft.canvasComponents : undefined,
       layout: draft.layout,
       headline: draft.headline,
       subtitle: draft.subtitle,
@@ -858,10 +868,14 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
         // ── Custom CSS ──
         customCss: parsed.customCss || "",
 
-        // ── Keep current slots, safe mode & page overrides ──
+        // ── Keep current slots, safe mode, page overrides & builder state ──
         slotConfig: draft.slotConfig,
         safeMode: draft.safeMode,
         pageOverrides: draft.pageOverrides,
+        canvasMode: draft.canvasMode,
+        canvasComponents: draft.canvasComponents,
+        canvasGridRows: draft.canvasGridRows,
+        canvasBackground: draft.canvasBackground,
       };
       setDraft(tempDraft);
       setIsPreviewingTheme(true);

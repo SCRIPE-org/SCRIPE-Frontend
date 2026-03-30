@@ -6224,6 +6224,7 @@ export const en = {
     // Tabs
     tab: {
       layout: "Layout",
+      builder: "Builder",
       branding: "Branding",
       appearance: "Appearance",
       typography: "Typography",
@@ -6783,6 +6784,84 @@ export const en = {
       exportImportDesc: "Save your current configuration as JSON or load a previously saved one",
       export: "Export Config",
       import: "Import Config",
+    },
+
+    // ── Page Builder (M10) ──
+    builder: {
+      title: "Page Builder",
+      mode: {
+        presets: "Presets",
+        builder: "Builder",
+      },
+      activeHint: "Builder mode active — use the Builder tab to arrange components",
+      // Palette
+      palette: {
+        title: "Components",
+        dragHint: "Drag to add or click +",
+        quickAdd: "Quick add",
+      },
+      // Component names
+      comp: {
+        logo: "Logo",
+        logoDesc: "Brand logo with configurable size",
+        loginForm: "Login Form",
+        loginFormDesc: "Username & password form (required)",
+        heading: "Heading",
+        headingDesc: "Large text heading",
+        subtitle: "Subtitle",
+        subtitleDesc: "Secondary text below heading",
+        socialLogin: "Social Login",
+        socialLoginDesc: "OAuth provider buttons",
+        featureList: "Feature List",
+        featureListDesc: "Bullet points with icons",
+        testimonial: "Testimonial",
+        testimonialDesc: "Quote card with author",
+        image: "Image",
+        imageDesc: "Custom image block",
+        ctaButton: "CTA Button",
+        ctaButtonDesc: "Call-to-action button",
+        divider: "Divider",
+        dividerDesc: "Visual separator line",
+        footer: "Footer",
+        footerDesc: "Footer links row",
+        copyright: "Copyright",
+        copyrightDesc: "Copyright text & year",
+        customHtml: "Custom HTML",
+        customHtmlDesc: "Raw HTML block (Enterprise)",
+        videoBg: "Video Background",
+        videoBgDesc: "Background video (Enterprise)",
+      },
+      // Properties panel
+      props: {
+        title: "Component Properties",
+        gridPlacement: "Grid Placement",
+        gridColumn: "Column Span",
+        gridRow: "Row Span",
+        alignment: "Horizontal Alignment",
+        verticalAlignment: "Vertical Alignment",
+        zIndex: "Layer Order",
+        componentSettings: "Settings",
+        noSettings: "No configurable settings",
+      },
+      // Canvas
+      canvas: {
+        rows: "Grid Rows",
+        snap: "Snap to Grid",
+        background: "Canvas Background",
+        empty: "Drop components here",
+        emptyHint: "Drag from the palette or click +",
+      },
+      // Actions
+      undo: "Undo",
+      redo: "Redo",
+      reset: "Reset Canvas",
+      remove: "Remove Component",
+      duplicate: "Duplicate",
+      visibility: "Toggle Visibility",
+      fromTemplate: "Start from Template",
+      saveTemplate: "Save as Template",
+      requiredComponent: "This component is required and cannot be removed",
+      enterpriseOnly: "Enterprise edition required",
     },
   },
 };
