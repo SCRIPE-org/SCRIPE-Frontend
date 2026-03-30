@@ -1,4 +1,4 @@
-﻿import { title } from "process";
+import { title } from "process";
 
 export const ar = {
   // Authentication
@@ -1273,7 +1273,7 @@ export const ar = {
     compact: "المدمجة",
     floating: "العائمة",
     floatingDesign: "تصميم عائم",
-    version: "جميع الحقوق محفوظة © 2026 NEXORA - v1.1.0",
+    version: "v1.1.0",
   },
 
   // Logo & Icons
@@ -4073,6 +4073,7 @@ export const ar = {
       hoursAgo: "منذ {{count}} ساعة",
       daysAgo: "منذ {{count}} يوم",
     },
+    all_rights_reserved: "جميع الحقوق محفوظة.",
   },
 
   // Table

@@ -32,7 +32,7 @@ interface RetroLayoutProps {
  * Retro Layout  Classic Desktop / Windows-inspired.
  *
  * Structure:
- * - Navigation panel styled as a "window" with title bar + [€][â–¡][Ã—]
+ * - Navigation panel styled as a "window" with title bar + [€][–¡][Ã—]
  * - Main content as another "window" with title bar
  * - Bottom taskbar with module icons
  * - Classic inset/outset borders, System-like UI
@@ -260,7 +260,7 @@ export function RetroLayout({ children }: RetroLayoutProps) {
             setSidebarMinimized(false);
           }}
         >
-          âŠž {t("common.start") || "Start"}
+          Šž {t("common.start") || "Start"}
         </button>
         <div className="h-6 w-px" style={{ backgroundColor: "#808080" }} />
         {/* Active windows */}

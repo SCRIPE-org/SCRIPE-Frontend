@@ -226,23 +226,16 @@ export const getNavigationItems = (
 };
 
 /**
- * Checks if a navigation item or its children match the current pathname
+ * Checks if a navigation item or its children match the current pathname.
+ *
+ * Uses EXACT match for leaf items — no URL prefix matching.
+ * Parent items are active if any child in the menu tree matches.
  */
 export const isNavigationItemActive = (item: NavigationItem, pathname: string): boolean => {
-  // Check exact match first
+  // Exact match for leaf items
   if (item.href && pathname === item.href) return true;
 
-  // Check if pathname starts with this item's href (for dynamic routes)
-  // Ensure it's a proper path segment match (next char must be '/' or end of string)
-  if (item.href && item.href !== "/" && pathname.startsWith(item.href)) {
-    // Ensure the next character after the href is either '/' or end of string
-    // This prevents partial matches like /system/entryGate matching /system/entryGateVisitor
-    const nextChar = pathname[item.href.length];
-    if (nextChar === undefined || nextChar === "/") {
-      return true;
-    }
-  }
-
+  // Recurse through menu tree children (NOT URL prefix)
   if (item.children) {
     return item.children.some((child) => isNavigationItemActive(child, pathname));
   }

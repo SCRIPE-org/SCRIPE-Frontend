@@ -154,7 +154,13 @@ export function NavigationLayout({
         settings.highContrast === true && "high-contrast",
         settings.reducedMotion === true && "reduce-motion"
       )}
-      style={{ fontSize: "var(--font-size-base)" }}
+      style={{
+        fontSize: "var(--font-size-base)",
+        // CSS custom properties for sidebar widths — single source of truth
+        "--main-sidebar-w": "6rem",
+        "--panel-sidebar-w": "16rem",
+        "--total-sidebar-w": "22rem",
+      } as React.CSSProperties}
     >
       {/* Main Sidebar - Primary Navigation */}
       <NavigationMainSidebar
@@ -177,7 +183,7 @@ export function NavigationLayout({
         activeAncestry={nav.activeAncestry}
       />
 
-      {/* Navigation Header */}
+      {/* Navigation Header — with breadcrumbs */}
       <NavigationHeader
         onMenuClick={() => onSidebarOpenChange(true)}
         onPanelToggle={nav.handlePanelToggle}
@@ -185,21 +191,28 @@ export function NavigationLayout({
         hasPanel={nav.hasChildren}
         selectedMainItem={nav.currentMainItem}
         isMobile={nav.isMobile}
+        activeAncestry={nav.activeAncestry}
       />
 
-      {/* Main Content Area */}
+      {/* Main Content Area — flex column for sticky footer */}
       <div
         className={cn(
-          "min-h-screen",
+          "flex min-h-screen flex-col",
           settings.stickyHeader === true ? "pt-16" : "pt-4",
           getAnimationClass(),
-          // Dynamic margins based on sidebar states and direction
+          // Dynamic margins using CSS variables
           direction === "rtl"
-            ? cn("lg:mr-24", nav.panelOpen && "lg:mr-[352px]")
-            : cn("lg:ml-24", nav.panelOpen && "lg:ml-[352px]")
+            ? cn(
+              "lg:mr-[var(--main-sidebar-w)]",
+              nav.panelOpen && "lg:mr-[var(--total-sidebar-w)]"
+            )
+            : cn(
+              "lg:ml-[var(--main-sidebar-w)]",
+              nav.panelOpen && "lg:ml-[var(--total-sidebar-w)]"
+            )
         )}
       >
-        <main className={cn("min-h-screen bg-background px-6 py-4")}>
+        <main className="flex-1 bg-background">
           <div className={cn(getSpacingClass())}>
             <div
               className={cn(
@@ -220,10 +233,12 @@ export function NavigationLayout({
             </div>
           </div>
         </main>
+
+        {/* Sticky Footer — pushed to bottom by flex-1 on main */}
         {settings.showFooter === true && <Footer />}
       </div>
 
-      {/* Mobile Overlay */}
+      {/* Mobile Overlay — closes BOTH sidebar AND resets panel state */}
       {(sidebarOpen || (nav.panelOpen && nav.isMobile)) && (
         <div
           className={cn(

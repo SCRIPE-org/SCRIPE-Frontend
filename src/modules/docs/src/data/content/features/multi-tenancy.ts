@@ -51,7 +51,7 @@ const sections: DocSection[] = [
     [Required] [MaxLength(50)]
     public string Code { get; set; } = null!;
 
-    public Guid? ParentTenantId { get; set; }     // Self-ref FK â†’ tree
+    public Guid? ParentTenantId { get; set; }     // Self-ref FK †’ tree
 
     public int HierarchyLevel { get; set; }        // 0 = root, 1 = child, 2 = grandchild...
 

@@ -223,19 +223,19 @@ export function getHoverEffectClasses(
       switch (intensity) {
         case "small":
           shimmerOpacity = "after:opacity-20";
-          shimmerSpeed = "after:duration-[1000ms]";
+          shimmerSpeed = "after:duration-1000";
           break;
         case "medium":
           shimmerOpacity = "after:opacity-40";
-          shimmerSpeed = "after:duration-[700ms]";
+          shimmerSpeed = "after:duration-700";
           break;
         case "strong":
           shimmerOpacity = "after:opacity-60";
-          shimmerSpeed = "after:duration-[500ms]";
+          shimmerSpeed = "after:duration-500";
           break;
         default:
           shimmerOpacity = "after:opacity-40";
-          shimmerSpeed = "after:duration-[700ms]";
+          shimmerSpeed = "after:duration-700";
       }
       return cn(
         baseTransition,

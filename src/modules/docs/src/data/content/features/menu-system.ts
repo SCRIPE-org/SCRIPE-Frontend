@@ -51,10 +51,10 @@ const sections: DocSection[] = [
     
     public int Order { get; set; }             // Sort position within parent
     
-    public Guid? ParentMenuItemId { get; set; } // Self-referencing FK â†’ tree
+    public Guid? ParentMenuItemId { get; set; } // Self-referencing FK †’ tree
     
     [MaxLength(100)]
-    public string? Resource { get; set; }      // Permission resource e.g. "admins" â†’ checks "admins.view"
+    public string? Resource { get; set; }      // Permission resource e.g. "admins" †’ checks "admins.view"
     
     [MaxLength(2000)]
     public string? TenantScopeJson { get; set; } // null = all tenants, ["id1","id2"] = specific

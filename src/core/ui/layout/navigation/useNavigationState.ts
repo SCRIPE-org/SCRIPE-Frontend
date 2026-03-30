@@ -5,26 +5,27 @@
  * useNavigationState — SINGLE SOURCE OF TRUTH FOR NAVIGATION STATE
  * ============================================================================
  *
- * This hook centralises ALL navigation state that was previously scattered
+ * Centralises ALL navigation state that was previously scattered
  * across navigation-layout.tsx, navigation-main-sidebar.tsx, and
  * navigation-panel-sidebar.tsx.
  *
- * Key improvements over the old system:
- * 1. Recursive findActiveAncestry — works for unlimited nesting depth
- * 2. No manualSelectionRef race condition
- * 3. Unified active/expanded/panel computation
- * 4. Panel expanded items derived from ancestry (auto-expand on reload)
+ * Key design decisions:
+ * 1. Uses EXACT match for active detection (no URL prefix)
+ * 2. Ancestry is derived from the menu tree structure
+ * 3. Panel expanded items auto-derived from ancestry
+ * 4. Single source for mobile/desktop breakpoint
  * ============================================================================
  */
 
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import type { NavigationItem } from "@core/config/navigation";
+import { findActiveAncestry, computeExpandedItems } from "./nav-utils";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
 export interface NavigationState {
-  /** Full ancestry path from root to active leaf, e.g. ["System", "Security", "Roles"] */
+  /** Full ancestry path from root to active leaf, e.g. ["System Settings", "Theme Gallery"] */
   activeAncestry: string[];
   /** Top-level ancestor name (first element of ancestry) — highlights in main sidebar */
   activeMainItem: string;
@@ -51,67 +52,6 @@ export interface NavigationState {
   isMobile: boolean;
 }
 
-// ─── Helpers ────────────────────────────────────────────────────────────────
-
-/**
- * Check if a pathname matches an item's href.
- * Returns true for exact match or proper segment-prefix match.
- * Prevents partial matches like `/system/entry` matching `/system/entryGate`.
- */
-function hrefMatchesPath(href: string | undefined, pathname: string): boolean {
-  if (!href || href === "/") return pathname === href;
-  if (pathname === href) return true;
-  if (pathname.startsWith(href)) {
-    const nextChar = pathname[href.length];
-    return nextChar === undefined || nextChar === "/";
-  }
-  return false;
-}
-
-/**
- * Recursively find the ancestry path (list of item names from root to leaf)
- * for the given pathname.
- *
- * Returns [] if no match found.
- *
- * Example: for pathname "/settings/system/roles",
- * returns ["System", "Roles"] (the name chain).
- *
- * Works for UNLIMITED depth — no hardcoded level limits.
- */
-function findActiveAncestry(items: NavigationItem[], pathname: string): string[] {
-  for (const item of items) {
-    // Check if this item directly matches
-    if (item.href && hrefMatchesPath(item.href, pathname)) {
-      return [item.name];
-    }
-
-    // Check children recursively
-    if (item.children && item.children.length > 0) {
-      const childAncestry = findActiveAncestry(item.children, pathname);
-      if (childAncestry.length > 0) {
-        return [item.name, ...childAncestry];
-      }
-    }
-  }
-
-  return [];
-}
-
-/**
- * Given the full ancestry (e.g. ["System", "Security", "Roles"]) and
- * the panel item's children, compute which items should be expanded.
- *
- * Returns all ancestry names except the leaf (leaves are links, not groups).
- */
-function computeExpandedItems(ancestry: string[]): string[] {
-  // All items in the ancestry except the leaf should be expanded
-  // (the leaf is the current page, parents are expandable groups)
-  if (ancestry.length <= 1) return [];
-  // Skip the first (it's the main sidebar item) — the rest are panel items
-  return ancestry.slice(1, -1);
-}
-
 // ─── Hook ───────────────────────────────────────────────────────────────────
 
 export function useNavigationState(navigation: NavigationItem[]): NavigationState {
@@ -130,7 +70,7 @@ export function useNavigationState(navigation: NavigationItem[]): NavigationStat
   // Track if we're navigating via click (to avoid double-processing)
   const isClickNavigating = useRef(false);
 
-  // ── Compute ancestry from pathname (reactive) ──
+  // ── Compute ancestry from pathname (reactive, exact match) ──
   const activeAncestry = useMemo(
     () => findActiveAncestry(navigation, pathname),
     [navigation, pathname]
@@ -238,10 +178,6 @@ export function useNavigationState(navigation: NavigationItem[]): NavigationStat
         setSelectedMainItem(null);
         setPanelOpen(false);
         router.push(item.href);
-        // Close mobile sidebar after navigation
-        if (isMobile) {
-          // This will be handled by the parent via onSidebarOpenChange
-        }
       }
     },
     [selectedMainItem, activeMainItem, navigation, isMobile, router]

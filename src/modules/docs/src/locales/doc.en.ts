@@ -641,7 +641,7 @@ export const docEn = {
       title: "Email System",
       description: "Pluggable email delivery pipeline with queue strategies, background processing, and HTML sanitization.",
       architectureTitle: "Email Pipeline Architecture",
-      architectureIntro: "The Email System follows a pipeline architecture: Controller â†’ EmailService â†’ Queue â†’ Sender â†’ SMTP. The queue strategy is pluggable  InMemoryQueue for development and a background queue (e.g., Hangfire) for production.",
+      architectureIntro: "The Email System follows a pipeline architecture: Controller †’ EmailService †’ Queue †’ Sender †’ SMTP. The queue strategy is pluggable  InMemoryQueue for development and a background queue (e.g., Hangfire) for production.",
       endpointsTitle: "Email Controller Endpoints",
       queueTitle: "Queue Implementations",
       queueIntro: "The queue strategy determines how emails are processed. In development, emails are sent immediately via InMemoryQueue. In production, they are enqueued to a background provider (e.g., Hangfire) for reliable processing.",

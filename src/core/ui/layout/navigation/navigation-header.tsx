@@ -1,11 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import {
-  Search,
-  Menu,
-  Home,
-} from "lucide-react";
+import { Search, Menu, Home, ChevronRight, ChevronLeft } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useAppStore } from "@core/store/useAppStore";
 import { useSettings } from "@core/providers/settings-provider";
@@ -13,14 +9,35 @@ import { useLayoutStyles } from "../shared/use-layout-styles";
 import { cn } from "@core/common/utils";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useBrandedAppName } from "@core/hooks/use-branded-app-name";
+import {
+  PanelMenuIcon,
+  PanelMenuIconRTL,
+  PanelCollapseIcon,
+  PanelCollapseIconRTL,
+} from "./nav-icons";
 
 // Lazy-load secondary header components (dropdowns/popovers — not LCP-critical)
-const UserProfileDropdown = dynamic(() => import("@core/ui/user-profile-dropdown").then(m => ({ default: m.UserProfileDropdown })), { ssr: false });
-const NotificationBell = dynamic(() => import("@core/ui/notification").then(m => ({ default: m.NotificationBell })), { ssr: false });
-const ThemeSwitcher = dynamic(() => import("../common/theme-switcher").then(m => ({ default: m.ThemeSwitcher })), { ssr: false });
-const LanguageSwitcher = dynamic(() => import("../common/language-switcher").then(m => ({ default: m.LanguageSwitcher })), { ssr: false });
+const UserProfileDropdown = dynamic(
+  () =>
+    import("@core/ui/user-profile-dropdown").then((m) => ({
+      default: m.UserProfileDropdown,
+    })),
+  { ssr: false }
+);
+const NotificationBell = dynamic(
+  () => import("@core/ui/notification").then((m) => ({ default: m.NotificationBell })),
+  { ssr: false }
+);
+const ThemeSwitcher = dynamic(
+  () => import("../common/theme-switcher").then((m) => ({ default: m.ThemeSwitcher })),
+  { ssr: false }
+);
+const LanguageSwitcher = dynamic(
+  () => import("../common/language-switcher").then((m) => ({ default: m.LanguageSwitcher })),
+  { ssr: false }
+);
 
 interface NavigationHeaderProps {
   onMenuClick: () => void;
@@ -29,6 +46,7 @@ interface NavigationHeaderProps {
   hasPanel: boolean;
   selectedMainItem: string;
   isMobile: boolean;
+  activeAncestry?: string[];
 }
 
 export function NavigationHeader({
@@ -38,6 +56,7 @@ export function NavigationHeader({
   hasPanel,
   selectedMainItem,
   isMobile,
+  activeAncestry = [],
 }: NavigationHeaderProps) {
   const { language, direction, t } = useI18n();
   const appName = useBrandedAppName();
@@ -46,6 +65,24 @@ export function NavigationHeader({
   const { getAnimationClass } = useLayoutStyles();
   const animationClass = getAnimationClass();
   const router = useRouter();
+  const pathname = usePathname();
+
+  const isRTL = direction === "rtl";
+
+  // Dynamic breadcrumbs from ancestry
+  const showBreadcrumbs = activeAncestry.length > 0;
+  const BreadcrumbChevron = isRTL ? ChevronLeft : ChevronRight;
+
+  // Hide home button when already on dashboard
+  const isOnDashboard = pathname === "/" || pathname === "/dashboard";
+
+  // Panel toggle icons — use extracted components
+  const renderPanelToggleIcon = () => {
+    if (isRTL) {
+      return panelOpen ? <PanelCollapseIconRTL /> : <PanelMenuIconRTL />;
+    }
+    return panelOpen ? <PanelCollapseIcon /> : <PanelMenuIcon />;
+  };
 
   return (
     <header
@@ -66,20 +103,20 @@ export function NavigationHeader({
         className={cn(
           "flex h-full items-center justify-between px-4 lg:px-6",
           animationClass,
-          // Dynamic margins based on sidebar states
-          direction === "rtl"
+          // Dynamic margins using CSS variables for consistency
+          isRTL
             ? cn(
-              isMobile ? "mr-0" : "mr-24", // Account for main sidebar on desktop (w-24 = 96px)
-              !isMobile && panelOpen && hasPanel && "mr-[352px]" // Total width when both sidebars open (96px + 256px)
-            )
+                isMobile ? "mr-0" : "mr-[var(--main-sidebar-w,6rem)]",
+                !isMobile && panelOpen && hasPanel && "mr-[var(--total-sidebar-w,22rem)]"
+              )
             : cn(
-              isMobile ? "ml-0" : "ml-24", // Account for main sidebar on desktop (w-24 = 96px)
-              !isMobile && panelOpen && hasPanel && "ml-[352px]" // Total width when both sidebars open (96px + 256px)
-            )
+                isMobile ? "ml-0" : "ml-[var(--main-sidebar-w,6rem)]",
+                !isMobile && panelOpen && hasPanel && "ml-[var(--total-sidebar-w,22rem)]"
+              )
         )}
       >
-        {/* Left Section - Mobile Menu + Panel Toggle + Title */}
-        <div className="flex flex-shrink-0 items-center gap-4">
+        {/* Left Section - Mobile Menu + Panel Toggle + Breadcrumbs */}
+        <div className="flex flex-shrink-0 items-center gap-3">
           {/* Mobile Menu Button */}
           <Button
             variant="ghost"
@@ -104,55 +141,44 @@ export function NavigationHeader({
                   : t("layout.show_panel") || "Show Panel"
               }
             >
-              {direction === "rtl" ? (
-                panelOpen ? (
-                  <svg className="h-8 w-8" viewBox="0 0 24 24" fill="none">
-                    <path
-                      d="M9 18L15 12L9 6"
-                      stroke="hsl(var(--primary))"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                ) : (
-                  <svg
-                    className="h-8 w-8"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    style={{ transform: "scaleX(-1)" }}
-                  >
-                    <rect x="3" y="6" width="18" height="2" rx="1" fill="hsl(var(--primary))" />
-                    <rect x="3" y="11" width="12" height="2" rx="1" fill="hsl(var(--primary))" />
-                    <rect x="3" y="16" width="15" height="2" rx="1" fill="hsl(var(--primary))" />
-                  </svg>
-                )
-              ) : panelOpen ? (
-                <svg className="h-8 w-8" viewBox="0 0 24 24" fill="none">
-                  <path
-                    d="M15 18L9 12L15 6"
-                    stroke="hsl(var(--primary))"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              ) : (
-                <svg className="h-8 w-8" viewBox="0 0 24 24" fill="none">
-                  <rect x="3" y="6" width="18" height="2" rx="1" fill="hsl(var(--primary))" />
-                  <rect x="3" y="11" width="12" height="2" rx="1" fill="hsl(var(--primary))" />
-                  <rect x="3" y="16" width="15" height="2" rx="1" fill="hsl(var(--primary))" />
-                </svg>
-              )}
+              {renderPanelToggleIcon()}
             </div>
           )}
 
-          {/* App Title */}
-          <div className="flex items-center">
-            <h1 className="bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-lg font-semibold text-transparent">
-              {appName}
-            </h1>
-          </div>
+          {/* Breadcrumbs — shows current navigation path (desktop only) */}
+          {showBreadcrumbs && !isMobile && (
+            <nav aria-label="breadcrumb" className="flex items-center gap-1 text-sm">
+              {activeAncestry.map((name, index) => {
+                const isLast = index === activeAncestry.length - 1;
+                const displayLabel = t(name) || name;
+
+                return (
+                  <span key={name} className="flex items-center gap-1">
+                    {index > 0 && (
+                      <BreadcrumbChevron className="h-3 w-3 flex-shrink-0 text-muted-foreground/60" />
+                    )}
+                    <span
+                      className={cn(
+                        "max-w-[140px] truncate",
+                        isLast ? "font-medium text-foreground" : "text-muted-foreground"
+                      )}
+                    >
+                      {displayLabel}
+                    </span>
+                  </span>
+                );
+              })}
+            </nav>
+          )}
+
+          {/* App Title — only show on mobile where breadcrumbs aren't visible */}
+          {isMobile && (
+            <div className="flex items-center">
+              <h1 className="bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-lg font-semibold text-transparent">
+                {appName}
+              </h1>
+            </div>
+          )}
         </div>
 
         {/* Center Section - Search */}
@@ -196,16 +222,17 @@ export function NavigationHeader({
             <Search className="h-5 w-5" />
           </Button>
 
-          {/* Home Button */}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => router.push("/")}
-            className="hover:bg-accent hover:text-accent-foreground"
-          // title={t("nav.home") || "Home"}
-          >
-            <Home className="h-5 w-5" />
-          </Button>
+          {/* Home Button — hide when already on dashboard */}
+          {!isOnDashboard && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => router.push("/")}
+              className="hover:bg-accent hover:text-accent-foreground"
+            >
+              <Home className="h-5 w-5" />
+            </Button>
+          )}
 
           <ThemeSwitcher
             buttonClassName="hover:bg-accent hover:text-accent-foreground"

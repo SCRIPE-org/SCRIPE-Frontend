@@ -42,7 +42,7 @@ const sections: DocSection[] = [
       {
             type: "api-table",
             endpoints: [
-                  { method: "POST", path: "/emails/send", descriptionKey: "Send manual email â†’ queued", auth: "JWT", permission: "emails.create" },
+                  { method: "POST", path: "/emails/send", descriptionKey: "Send manual email †’ queued", auth: "JWT", permission: "emails.create" },
                   { method: "POST", path: "/emails/send-bulk", descriptionKey: "Send to multiple recipients", auth: "JWT", permission: "emails.create" },
                   { method: "GET", path: "/emails/search-recipients", descriptionKey: "Autocomplete for admin/user selection", auth: "JWT", permission: "emails.view" },
                   { method: "GET", path: "/emails/sent", descriptionKey: "Paginated sent history (filter: status, date range, search)", auth: "JWT", permission: "emails.view" },

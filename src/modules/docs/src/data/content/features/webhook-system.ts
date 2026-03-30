@@ -12,7 +12,7 @@ const sections: DocSection[] = [
             nodes: [
                   { id: "event", label: "Domain Event", type: "default" },
                   { id: "whs", label: "WebhookService", type: "primary" },
-                  { id: "db", label: "Match event â†’ active subscriptions", type: "info" },
+                  { id: "db", label: "Match event †’ active subscriptions", type: "info" },
                   { id: "sign", label: "HMAC-SHA256 Sign Payload", type: "success" },
                   { id: "send", label: "HTTP POST to subscriber URL", type: "warning" },
                   { id: "log", label: "Log delivery attempt", type: "success" },
@@ -101,7 +101,7 @@ bool isValid = computedSignature == request.Headers["X-Webhook-Signature"];`,
             nodes: [
                   { id: "rotate", label: "POST /webhooks/{id}/rotate-secret", type: "primary" },
                   { id: "new", label: "New Secret generated", type: "success" },
-                  { id: "old", label: "Old Secret â†’ PreviousSecret", type: "warning" },
+                  { id: "old", label: "Old Secret †’ PreviousSecret", type: "warning" },
                   { id: "grace", label: "PreviousSecretExpiresAt = Now + 24h", type: "info" },
                   { id: "dual", label: "Dual-sign payloads (24h)", type: "default" },
                   { id: "expire", label: "PreviousSecret = null", type: "danger" },

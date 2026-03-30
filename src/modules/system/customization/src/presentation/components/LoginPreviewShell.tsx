@@ -1,8 +1,8 @@
 ﻿/**
- * LoginPreviewShell â€” Isolated login page preview for Customizer Studio
+ * LoginPreviewShell €” Isolated login page preview for Customizer Studio
  *
  * KEY ARCHITECTURE: This is a completely separate page from /login.
- * It has ZERO auth logic â€” no useLoginViewModel, no checkAndRedirect,
+ * It has ZERO auth logic €” no useLoginViewModel, no checkAndRedirect,
  * no token checks, no SSO, no 2FA flow.
  *
  * It renders the same visual UI as LoginView (all 22 layouts) but with
@@ -158,7 +158,7 @@ export function LoginPreviewShell() {
   // Determine if branding panel should be transparent (unified bg mode)
   const isUnifiedBg = config?.tokens?.["split.bg.mode"] === "unified";
 
-  // â”€â”€ Mock Form (cannot submit) â”€â”€
+  // ”€”€ Mock Form (cannot submit) ”€”€
   const [showPassword, setShowPassword] = useState(false);
 
   const formContent = (
@@ -255,7 +255,7 @@ export function LoginPreviewShell() {
     </div>
   );
 
-  // â”€â”€ Top Actions (visual only) â”€â”€
+  // ”€”€ Top Actions (visual only) ”€”€
   const topActions = (
     <div className="absolute left-8 right-8 top-8 flex items-center justify-end gap-5 z-20">
       <div className="flex gap-1">
@@ -265,7 +265,7 @@ export function LoginPreviewShell() {
     </div>
   );
 
-  // â”€â”€ Footer (copyright â€” shown in ALL layouts) â”€â”€
+  // ”€”€ Footer (copyright €” shown in ALL layouts) ”€”€
   const footer = (
     <div className="login-footer text-center mt-8">
       <p className="text-[11px] font-medium text-[var(--login-text-muted,hsl(var(--muted-foreground))/50)]">
@@ -276,7 +276,7 @@ export function LoginPreviewShell() {
 
   const footerSlot = <SlotRenderer slotId="login.footer" slotConfig={slotConfig} className="mt-6" />;
 
-  // â”€â”€ Common styles â”€â”€
+  // ”€”€ Common styles ”€”€
   // NOTE: We use a SINGLE layered `background` (CSS multiple backgrounds) so that:
   //   - `--login-bg-image` (image) renders ON TOP
   //   - `--login-bg` (solid or gradient) renders UNDERNEATH
@@ -309,9 +309,9 @@ export function LoginPreviewShell() {
       background: `var(--login-bg-image, none) var(--login-bg-image-position, center) / var(--login-bg-image-fit, cover) no-repeat, var(--login-bg, hsl(var(--background)))`,
     };
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // •••••••••••••••••••••••••••••••••••••••••••••••••••
   // 22 LAYOUT VARIANTS (same as LoginView)
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // •••••••••••••••••••••••••••••••••••••••••••••••••••
   // Reusable overlay div — sits on top of background, under content.
   // Uses CSS vars set by the token system; opacity=0 when overlay is disabled.
   const overlayDiv = (
@@ -849,7 +849,7 @@ export function LoginPreviewShell() {
   }
 }
 
-// â”€â”€ Shared sub-components â”€â”€
+// ”€”€ Shared sub-components ”€”€
 
 function MobileLogo({ logoSrc, logoAlt, companyName }: { logoSrc: string; logoAlt: string; companyName: string }) {
   const { t } = useI18n();

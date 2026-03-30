@@ -14,9 +14,9 @@ const sections: DocSection[] = [
                   { id: "session-create", label: "POST /api/downloads/session (Returns sessionId)", type: "default" },
                   { id: "session-get", label: "GET /api/downloads/session/{sessionId} (No Auth)", type: "warning" },
                   { id: "ds", label: "DownloadService", type: "primary" },
-                  { id: "cache", label: "Cache: ETag check â†’ 304", type: "info" },
-                  { id: "range", label: "Range: partial â†’ 206", type: "info" },
-                  { id: "stream", label: "FileStream: 64KB buffer â†’ 200", type: "success" },
+                  { id: "cache", label: "Cache: ETag check †’ 304", type: "info" },
+                  { id: "range", label: "Range: partial †’ 206", type: "info" },
+                  { id: "stream", label: "FileStream: 64KB buffer †’ 200", type: "success" },
             ],
             connections: [
                   { from: "auth", to: "ds" },
@@ -55,7 +55,7 @@ private (long? Start, long? End) ParseRangeHeader(long fileSize)
     long? start = string.IsNullOrEmpty(parts[0]) ? null : long.Parse(parts[0]);
     long? end = string.IsNullOrEmpty(parts[1]) ? null : long.Parse(parts[1]);
 
-    // Handle suffix range (last N bytes): "bytes=-500" â†’ last 500 bytes
+    // Handle suffix range (last N bytes): "bytes=-500" †’ last 500 bytes
     if (!start.HasValue && end.HasValue)
     {
         start = fileSize - end.Value;

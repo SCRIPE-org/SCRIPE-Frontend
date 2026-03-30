@@ -1,8 +1,9 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChevronRight, ChevronDown, ChevronLeft } from "lucide-react";
+import { ChevronRight, ChevronDown, ChevronLeft, X } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSettings } from "@core/providers/settings-provider";
 import { useDynamicNavigation } from "@core/ui/navigation/dynamic-navigation";
@@ -12,6 +13,7 @@ import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { ScrollArea } from "@core/ui/scroll-area";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@core/ui/collapsible";
+import { isExactMatch, hasActiveChild } from "./nav-utils";
 import {
   getPanelItemClasses,
   getPanelParentClasses,
@@ -48,6 +50,8 @@ export function NavigationPanelSidebar({
   const { colorTheme, cardStyle, animationLevel, borderRadius, navigationStyle, iconStyle } =
     useSettings();
 
+  const scrollRef = useRef<HTMLDivElement>(null);
+
   const styleConfig: NavigationStyleConfig = {
     colorTheme,
     animationLevel,
@@ -60,6 +64,21 @@ export function NavigationPanelSidebar({
 
   const selectedNavItem = navigation.find((item) => item.name === currentMainItem);
 
+  // ── Scroll to active item on mount and pathname changes ──
+  useEffect(() => {
+    if (!open || !scrollRef.current) return;
+
+    // Small delay to allow DOM to render
+    const timer = setTimeout(() => {
+      const activeEl = scrollRef.current?.querySelector("[data-active='true']");
+      if (activeEl) {
+        activeEl.scrollIntoView({ block: "nearest", behavior: "smooth" });
+      }
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [pathname, open]);
+
   if (!selectedNavItem || !hasChildren || !open) {
     return null;
   }
@@ -68,30 +87,10 @@ export function NavigationPanelSidebar({
   const isRTL = direction === "rtl";
   const CollapsedChevron = isRTL ? ChevronLeft : ChevronRight;
 
-  const isItemActive = (item: NavigationItem): boolean => {
-    if (!item.href) return false;
-    if (pathname === item.href) return true;
-    if (item.href !== "/" && pathname.startsWith(item.href)) {
-      const nextChar = pathname[item.href.length];
-      return nextChar === undefined || nextChar === "/";
-    }
-    return false;
-  };
-
-  const hasActiveDescendant = (item: NavigationItem): boolean => {
-    if (item.children) {
-      return item.children.some((child) => {
-        if (isItemActive(child)) return true;
-        return hasActiveDescendant(child);
-      });
-    }
-    return false;
-  };
-
   // ── Render item — single JSX order: [icon] [text] [badge] [chevron] ──
   // RTL mirroring is handled entirely by flex-row-reverse on the container.
   const renderNavigationItem = (item: NavigationItem, level: number = 0) => {
-    const isActive = isItemActive(item);
+    const isActive = isExactMatch(item.href, pathname);
     const hasSubChildren = item.children && item.children.length > 0;
     const isExpanded = expandedItems.includes(item.name);
     const displayName = t(item.name) || item.name;
@@ -103,7 +102,7 @@ export function NavigationPanelSidebar({
 
     // ── Parent group (collapsible) ──
     if (hasSubChildren) {
-      const isParentOfActive = hasActiveDescendant(item);
+      const isParentOfActive = hasActiveChild(item, pathname);
       const parentBaseClasses = "w-full gap-2 h-10 px-3";
       const parentColorClasses = isParentOfActive
         ? getPanelParentClasses(styleConfig)
@@ -141,16 +140,16 @@ export function NavigationPanelSidebar({
 
               {/* Badge */}
               {item.badge && (
-                <Badge variant="secondary" className="ml-1 h-5 text-[10px]">
+                <Badge variant="secondary" className="ms-1 h-5 text-[10px]">
                   {item.badge}
                 </Badge>
               )}
 
               {/* Chevron */}
               {isExpanded ? (
-                <ChevronDown className="ml-1 h-3.5 w-3.5 flex-shrink-0 opacity-60" />
+                <ChevronDown className="ms-1 h-3.5 w-3.5 flex-shrink-0 opacity-60" />
               ) : (
-                <CollapsedChevron className="ml-1 h-3.5 w-3.5 flex-shrink-0 opacity-60" />
+                <CollapsedChevron className="ms-1 h-3.5 w-3.5 flex-shrink-0 opacity-60" />
               )}
             </Button>
           </CollapsibleTrigger>
@@ -195,7 +194,11 @@ export function NavigationPanelSidebar({
         style={indentStyle}
         disabled={item.disabled}
       >
-        <Link href={item.href || "#"} className={cn("flex w-full items-center !gap-0")}>
+        <Link
+          href={item.href || "#"}
+          className={cn("flex w-full items-center !gap-0")}
+          data-active={isActive ? "true" : undefined}
+        >
           {/* Icon + Text grouped tightly */}
           <span className={cn("flex min-w-0 flex-1 items-center gap-1.5")}>
             {item.icon ? (
@@ -213,7 +216,7 @@ export function NavigationPanelSidebar({
 
           {/* Badge */}
           {item.badge && (
-            <Badge variant={isActive ? "secondary" : "outline"} className="ml-1 h-5 text-[10px]">
+            <Badge variant={isActive ? "secondary" : "outline"} className="ms-1 h-5 text-[10px]">
               {item.badge}
             </Badge>
           )}
@@ -246,8 +249,8 @@ export function NavigationPanelSidebar({
                 <selectedNavItem.icon className="h-4 w-4" />
               </div>
             )}
-            <div className={cn(isRTL && "text-right")}>
-              <h3 className="text-sm font-semibold">
+            <div className={cn("flex-1 min-w-0", isRTL && "text-right")}>
+              <h3 className="text-sm font-semibold truncate">
                 {t(selectedNavItem.name) || selectedNavItem.name}
               </h3>
               {selectedNavItem.children && (
@@ -256,13 +259,29 @@ export function NavigationPanelSidebar({
                 </p>
               )}
             </div>
+
+            {/* Close button */}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onOpenChange}
+              className="h-7 w-7 flex-shrink-0 opacity-60 hover:opacity-100 hover:bg-accent"
+            >
+              <X className="h-3.5 w-3.5" />
+            </Button>
           </div>
         </div>
 
         {/* Navigation Items */}
-        <ScrollArea className="flex-1 px-2 py-3">
+        <ScrollArea className="flex-1 px-2 py-3" ref={scrollRef}>
           <div className="space-y-0.5">
-            {selectedNavItem.children?.map((item) => renderNavigationItem(item))}
+            {selectedNavItem.children?.length === 0 ? (
+              <p className="px-3 py-6 text-center text-xs text-muted-foreground">
+                {t("layout.no_items") || "No items available"}
+              </p>
+            ) : (
+              selectedNavItem.children?.map((item) => renderNavigationItem(item))
+            )}
           </div>
         </ScrollArea>
       </div>

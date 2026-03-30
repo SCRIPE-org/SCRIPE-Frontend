@@ -145,13 +145,8 @@ const variantStyles: Record<
 function shouldExpandParent(item: NavigationItem, pathname: string): boolean {
   if (!item.children) return false;
   return item.children.some((child) => {
-    if (child.href) {
-      if (pathname === child.href) return true;
-      if (child.href !== "/" && pathname.startsWith(child.href)) {
-        const nextChar = pathname[child.href.length];
-        if (nextChar === undefined || nextChar === "/") return true;
-      }
-    }
+    // Exact match only — no prefix matching
+    if (child.href && pathname === child.href) return true;
     if (child.children) return shouldExpandParent(child, pathname);
     return false;
   });

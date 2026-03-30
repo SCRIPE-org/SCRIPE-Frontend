@@ -183,7 +183,7 @@ const sections: DocSection[] = [
             nodes: [
                   { id: "admin", label: "Admin (has 40 permissions)", type: "primary" },
                   { id: "source", label: "Source Role (has 60 permissions)", type: "info" },
-                  { id: "intersect", label: "Intersection: 40 âˆ© 60 = 35", type: "warning" },
+                  { id: "intersect", label: "Intersection: 40 ˆ© 60 = 35", type: "warning" },
                   { id: "clone", label: "Cloned Role (gets 35 permissions)", type: "success" },
             ],
             connections: [

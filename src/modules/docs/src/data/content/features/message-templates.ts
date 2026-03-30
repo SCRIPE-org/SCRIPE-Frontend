@@ -41,7 +41,7 @@ Hello {{ admin.name }},
 
 <!-- Conditional content -->
 {{ if admin.is_protected }}
-âš ï¸ You are the super admin for {{ tenant.name }}.
+š ï¸ You are the super admin for {{ tenant.name }}.
 {{ end }}
 
 <!-- Loops -->

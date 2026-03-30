@@ -1,20 +1,21 @@
 "use client";
 
 import type React from "react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChevronRight, ChevronDown, ChevronLeft } from "lucide-react";
+import { ChevronRight, ChevronDown, ChevronLeft, X } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useDynamicNavigation } from "@core/ui/navigation/dynamic-navigation";
 import { cn } from "@core/common/utils";
 import { Button } from "@core/ui/button";
 import { ScrollArea } from "@core/ui/scroll-area";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@core/ui/tooltip";
+import { TooltipProvider, Tooltip, TooltipContent, TooltipTrigger } from "@core/ui/tooltip";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@core/ui/collapsible";
 import { Logo } from "@core/ui/logo";
 import { useSettings } from "@core/providers/settings-provider";
 import type { NavigationItem } from "@core/config/navigation";
+import { isExactMatch, hasActiveChild } from "./nav-utils";
 import {
   getMainItemClasses,
   getBorderRadiusClass,
@@ -50,12 +51,27 @@ export function NavigationMainSidebar({
 
   // ── Mobile collapsible tree state ──
   const [mobileExpandedItems, setMobileExpandedItems] = useState<string[]>([]);
+  const mobileScrollRef = useRef<HTMLDivElement>(null);
 
   const toggleMobileExpanded = (name: string) => {
     setMobileExpandedItems((prev) =>
       prev.includes(name) ? prev.filter((n) => n !== name) : [...prev, name]
     );
   };
+
+  // ── Auto-scroll to active item when mobile sidebar opens ──
+  useEffect(() => {
+    if (!open || !isMobile || !mobileScrollRef.current) return;
+
+    const timer = setTimeout(() => {
+      const activeEl = mobileScrollRef.current?.querySelector("[data-active='true']");
+      if (activeEl) {
+        activeEl.scrollIntoView({ block: "nearest", behavior: "smooth" });
+      }
+    }, 150);
+
+    return () => clearTimeout(timer);
+  }, [open, isMobile]);
 
   const styleConfig: NavigationStyleConfig = {
     colorTheme,
@@ -74,29 +90,10 @@ export function NavigationMainSidebar({
   const handleItemClick = (item: NavigationItem) => {
     onItemClick(item);
     // Close mobile sidebar when navigating to a leaf page
-    const hasChildren = !!(item.children && item.children.length > 0);
-    if (!hasChildren && item.href && isMobile) {
+    const itemHasChildren = !!(item.children && item.children.length > 0);
+    if (!itemHasChildren && item.href && isMobile) {
       onOpenChange(false);
     }
-  };
-
-  // ── Helper: check if item or descendant is active ──
-  const isItemActive = (item: NavigationItem): boolean => {
-    if (!item.href) return false;
-    if (pathname === item.href) return true;
-    if (item.href !== "/" && pathname.startsWith(item.href)) {
-      const nextChar = pathname[item.href.length];
-      return nextChar === undefined || nextChar === "/";
-    }
-    return false;
-  };
-
-  const hasActiveDescendant = (item: NavigationItem): boolean => {
-    if (isItemActive(item)) return true;
-    if (item.children) {
-      return item.children.some((child) => hasActiveDescendant(child));
-    }
-    return false;
   };
 
   // ── Render a single navigation item (desktop icon button) ──
@@ -122,70 +119,68 @@ export function NavigationMainSidebar({
     }
 
     return (
-      <TooltipProvider key={item.name}>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className={cn(
-                getMainItemClasses(isCurrentlyFocused, styleConfig),
-                getBorderRadiusClass(borderRadius),
-                getAnimationClass(animationLevel, "main"),
-                item.disabled && "cursor-not-allowed opacity-50",
-                itemOpacity
-              )}
-              onClick={() => handleItemClick(item)}
-              disabled={item.disabled}
-            >
-              {item.icon ? (
-                <item.icon className={getIconClasses(iconStyle)} />
-              ) : (
-                <div className="h-3 w-3 rounded-full bg-white" />
-              )}
-
-              {/* Active indicator bar — only for non-sidebar navigation styles */}
-              {itemIsHighlighted && navigationStyle !== "sidebar" && (
-                <div
-                  className={cn(
-                    "absolute h-8 w-1 rounded-full",
-                    direction === "rtl" ? "left-0" : "right-0",
-                    getIndicatorColor(colorTheme)
-                  )}
-                />
-              )}
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent
-            side={direction === "rtl" ? "left" : "right"}
-            className="border-border bg-popover"
+      <Tooltip key={item.name}>
+        <TooltipTrigger asChild>
+          <Button
+            variant="ghost"
+            size="icon"
+            className={cn(
+              getMainItemClasses(isCurrentlyFocused, styleConfig),
+              getBorderRadiusClass(borderRadius),
+              getAnimationClass(animationLevel, "main"),
+              item.disabled && "cursor-not-allowed opacity-50",
+              itemOpacity
+            )}
+            onClick={() => handleItemClick(item)}
+            disabled={item.disabled}
           >
-            <div className="flex flex-col gap-1">
-              <span className="font-medium">{displayName}</span>
-              {hasChildren && (
-                <span className="text-xs text-muted-foreground">
-                  {t("layout.click_to_expand") || "Click to expand"}
-                </span>
-              )}
-              {!hasChildren && hasHref && (
-                <span className="text-xs text-muted-foreground">
-                  {t("layout.click_to_navigate") || "Click to navigate"}
-                </span>
-              )}
-            </div>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+            {item.icon ? (
+              <item.icon className={getIconClasses(iconStyle)} />
+            ) : (
+              <div className="h-3 w-3 rounded-full bg-white" />
+            )}
+
+            {/* Active indicator bar — only for non-sidebar navigation styles */}
+            {itemIsHighlighted && navigationStyle !== "sidebar" && (
+              <div
+                className={cn(
+                  "absolute h-8 w-1 rounded-full",
+                  direction === "rtl" ? "left-0" : "right-0",
+                  getIndicatorColor(colorTheme)
+                )}
+              />
+            )}
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent
+          side={direction === "rtl" ? "left" : "right"}
+          className="border-border bg-popover"
+        >
+          <div className="flex flex-col gap-1">
+            <span className="font-medium">{displayName}</span>
+            {hasChildren && (
+              <span className="text-xs text-muted-foreground">
+                {t("layout.click_to_expand") || "Click to expand"}
+              </span>
+            )}
+            {!hasChildren && hasHref && (
+              <span className="text-xs text-muted-foreground">
+                {t("layout.click_to_navigate") || "Click to navigate"}
+              </span>
+            )}
+          </div>
+        </TooltipContent>
+      </Tooltip>
     );
   };
 
   // ── Mobile: recursive nav item renderer ──
   const renderMobileNavItem = (item: NavigationItem, level: number = 0) => {
-    const hasChildren = !!(item.children && item.children.length > 0);
+    const itemHasChildren = !!(item.children && item.children.length > 0);
     const displayName = t(item.name) || item.name;
     const isExpanded = mobileExpandedItems.includes(item.name);
-    const active = isItemActive(item);
-    const hasActivChild = hasActiveDescendant(item);
+    const active = isExactMatch(item.href, pathname);
+    const hasActivChild = itemHasChildren ? hasActiveChild(item, pathname) : false;
     const indent = level * 12;
 
     const indentStyle = isRTL
@@ -193,7 +188,7 @@ export function NavigationMainSidebar({
       : { paddingLeft: `${12 + indent}px` };
 
     // ── Parent item with children: collapsible ──
-    if (hasChildren) {
+    if (itemHasChildren) {
       return (
         <Collapsible
           key={item.name}
@@ -271,6 +266,7 @@ export function NavigationMainSidebar({
           href={item.href || "#"}
           onClick={() => onOpenChange(false)}
           className={cn("flex w-full items-center gap-3", isRTL && "flex-row-reverse")}
+          data-active={active ? "true" : undefined}
         >
           {item.icon ? (
             <item.icon className="h-4 w-4 flex-shrink-0" />
@@ -302,12 +298,14 @@ export function NavigationMainSidebar({
           <Logo size="sm" />
         </div>
 
-        {/* Navigation Items */}
-        <ScrollArea className="flex-1 py-4">
-          <div className="flex flex-col items-center space-y-2 px-2">
-            {navigation.map(renderNavigationItem)}
-          </div>
-        </ScrollArea>
+        {/* Navigation Items — single TooltipProvider for all */}
+        <TooltipProvider delayDuration={300}>
+          <ScrollArea className="flex-1 py-4">
+            <div className="flex flex-col items-center space-y-2 px-2">
+              {navigation.map(renderNavigationItem)}
+            </div>
+          </ScrollArea>
+        </TooltipProvider>
       </aside>
 
       {/* Mobile Sidebar — Full tree with collapsible children */}
@@ -327,12 +325,12 @@ export function NavigationMainSidebar({
             onClick={() => onOpenChange(false)}
             className="hover:bg-accent hover:text-accent-foreground"
           >
-            ×
+            <X className="h-5 w-5" />
           </Button>
         </div>
 
         {/* Mobile Navigation — Recursive collapsible tree */}
-        <ScrollArea className="flex-1 py-3">
+        <ScrollArea className="flex-1 py-3" ref={mobileScrollRef}>
           <div className="space-y-0.5 px-2">
             {navigation.map((item) => renderMobileNavItem(item))}
           </div>
