@@ -1,4 +1,5 @@
 "use client";
+import { useI18n } from "@core/providers/i18n-provider";
 
 import { useCustomizationViewModel } from "../viewmodels/useCustomizationViewModel";
 import { Button } from "@core/ui/button";
@@ -26,7 +27,6 @@ import type { TenantSettings } from "../../domain/entities/TenantSettings";
 
 interface CustomizationSectionProps {
   settings: TenantSettings;
-  t: (key: string) => string;
 }
 
 /**
@@ -34,7 +34,8 @@ interface CustomizationSectionProps {
  * Draft/Publish controls removed — that flow is for Phase 6 (Customizer Studio).
  * Basic branding saves directly via the main settings form.
  */
-export function CustomizationSection({ settings, t }: CustomizationSectionProps) {
+export function CustomizationSection({ settings }: CustomizationSectionProps) {
+  const { t } = useI18n();
   const vm = useCustomizationViewModel();
   const c = (key: string) => t(`tenantSettings.customization.${key}`);
 

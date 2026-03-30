@@ -3,10 +3,13 @@
  * All labels localized via t()
  */
 "use client";
+// UI-EXCEPTION: compact studio layout — native <button> used for pixel-precise
+// compact controls (toggle switches, gradient pickers, layout thumbnails, etc.)
+// where @core/ui/button's padding/sizing would break the layout.
 
 import { Code, Shield, Languages, Accessibility } from "lucide-react";
 import { Switch } from "@core/ui/switch";
-import type { StudioDraft } from "../viewmodels/useStudioViewModel";
+import type { StudioDraftProps as StudioDraft } from "../../domain/entities/StudioDraft";
 import { useI18n } from "@core/providers/i18n-provider";
 
 interface AdvancedPanelProps {

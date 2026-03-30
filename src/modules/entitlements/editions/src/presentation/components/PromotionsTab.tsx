@@ -93,7 +93,7 @@ export function PromotionsTab({ editionId, allowMonthly = true, allowYearly = tr
                                     onToggle={() => vm.toggleActive(promo.id, promo.isActive)}
                                     isToggling={vm.isToggling}
                                     isDeleting={vm.isDeleting}
-                                    t={t}
+                                   
                               />
                         ))}
                   </div>
@@ -334,7 +334,7 @@ export function PromotionsTab({ editionId, allowMonthly = true, allowYearly = tr
 // ── Promotion Card ──
 
 function PromotionCard({
-      promo, onEdit, onDelete, onToggle, isToggling, isDeleting, t,
+      promo, onEdit, onDelete, onToggle, isToggling, isDeleting,
 }: {
       promo: EditionPromotion;
       onEdit: () => void;
@@ -342,8 +342,8 @@ function PromotionCard({
       onToggle: () => void;
       isToggling: boolean;
       isDeleting: boolean;
-      t: (key: string) => string;
 }) {
+      const { t } = useI18n();
       return (
             <Card className={`transition-all ${!promo.isActive ? "opacity-60" : ""}`}>
                   <CardContent className="py-4">

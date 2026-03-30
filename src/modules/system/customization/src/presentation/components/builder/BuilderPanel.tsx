@@ -17,7 +17,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogD
 import { Badge } from "@core/ui/badge";
 import { Undo2, Redo2, RotateCcw, Rows3, Grid3X3, LayoutTemplate, ChevronDown, Save, AlertTriangle, Trash2 } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
-import { STORAGE_KEYS } from "@core/config/storage-keys";
 import { useBuilderStore } from "../../viewmodels/useBuilderStore";
 import { BuilderPalette } from "./BuilderPalette";
 import { BuilderCanvas } from "./BuilderCanvas";
@@ -26,16 +25,7 @@ import type { CanvasComponent, CanvasComponentType, CanvasBackground } from "../
 import type { SavedTemplate } from "../../../domain/entities/SavedTemplate";
 import { layoutToTemplate, getAllLayoutTemplates } from "../../../domain/entities/LayoutTemplates";
 
-function loadSavedTemplates(): SavedTemplate[] {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEYS.BUILDER_TEMPLATES);
-    return raw ? JSON.parse(raw) : [];
-  } catch { return []; }
-}
-
-function saveSavedTemplates(templates: SavedTemplate[]) {
-  localStorage.setItem(STORAGE_KEYS.BUILDER_TEMPLATES, JSON.stringify(templates));
-}
+import { TemplateStorageService } from "../../../data/services/TemplateStorageService";
 
 // ── Grid Overlap Detection ──────────────────────────────
 function parseGridRange(span: string): [number, number] {
@@ -83,7 +73,7 @@ export function BuilderPanel({ draft, updateDraft }: BuilderPanelProps) {
   const [showSaved, setShowSaved] = useState(false);
 
   // Load saved templates on mount
-  useEffect(() => { setSavedTemplates(loadSavedTemplates()); }, []);
+  useEffect(() => { setSavedTemplates(TemplateStorageService.load()); }, []);
 
   // Overlap detection
   const overlapWarnings = useMemo(() => detectOverlaps(store.components), [store.components]);
@@ -314,7 +304,7 @@ export function BuilderPanel({ draft, updateDraft }: BuilderPanelProps) {
                   onClick={() => {
                     const updated = savedTemplates.filter(t => t.id !== tmpl.id);
                     setSavedTemplates(updated);
-                    saveSavedTemplates(updated);
+                    TemplateStorageService.save(updated);
                   }}
                   title="Delete template"
                 >
@@ -365,7 +355,7 @@ export function BuilderPanel({ draft, updateDraft }: BuilderPanelProps) {
                   };
                   const updated = [...savedTemplates, newTemplate];
                   setSavedTemplates(updated);
-                  saveSavedTemplates(updated);
+                  TemplateStorageService.save(updated);
                   setSaveDialogOpen(false);
                 }}
               >

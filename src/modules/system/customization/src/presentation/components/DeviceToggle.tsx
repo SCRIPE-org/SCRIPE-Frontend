@@ -1,14 +1,17 @@
-/**
+﻿/**
  * DeviceToggle — Desktop/Tablet/Mobile toggle for studio preview
  *
  * Small utility component — extracted for reuse in the publish bar.
  */
 "use client";
+// UI-EXCEPTION: compact studio layout — native <button> used for pixel-precise
+// compact controls (toggle switches, gradient pickers, layout thumbnails, etc.)
+// where @core/ui/button's padding/sizing would break the layout.
 
 import { Monitor, Tablet, Smartphone } from "lucide-react";
 import { Button } from "@core/ui/button";
 import { cn } from "@core/common/utils";
-import type { DeviceSize } from "../viewmodels/useStudioViewModel";
+import type { DeviceSize } from "../../domain/entities/StudioDraft";
 
 interface DeviceToggleProps {
   deviceSize: DeviceSize;

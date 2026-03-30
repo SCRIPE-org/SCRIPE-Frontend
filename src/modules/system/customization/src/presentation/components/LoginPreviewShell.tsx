@@ -1,4 +1,4 @@
-/**
+﻿/**
  * LoginPreviewShell â€” Isolated login page preview for Customizer Studio
  *
  * KEY ARCHITECTURE: This is a completely separate page from /login.
@@ -16,6 +16,9 @@
  * - No access to secure token service
  */
 "use client";
+// UI-EXCEPTION: compact studio layout — native <button> used for pixel-precise
+// compact controls (toggle switches, gradient pickers, layout thumbnails, etc.)
+// where @core/ui/button's padding/sizing would break the layout.
 
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useI18n } from "@core/providers/i18n-provider";

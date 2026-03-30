@@ -5,6 +5,7 @@
  * Pure UI - receives all data and handlers from parent view via props.
  */
 "use client";
+import { useI18n } from "@core/providers/i18n-provider";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
 import { Input } from "@core/ui/input";
@@ -15,10 +16,10 @@ import type { TenantSettings } from "../../domain/entities/TenantSettings";
 interface QuotasSectionProps {
   settings: TenantSettings;
   updateField: <K extends keyof TenantSettings>(field: K, value: TenantSettings[K]) => void;
-  t: (key: string) => string;
 }
 
-export function QuotasSection({ settings, updateField, t }: QuotasSectionProps) {
+export function QuotasSection({ settings, updateField }: QuotasSectionProps) {
+  const { t } = useI18n();
   return (
     <Card>
       <CardHeader>

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * AccessibilityPanel v2 — Full accessibility settings + WCAG audit
  *
  * Two sections:
@@ -8,6 +8,9 @@
  * @module customization/presentation/components
  */
 "use client";
+// UI-EXCEPTION: compact studio layout — native <button> used for pixel-precise
+// compact controls (toggle switches, gradient pickers, layout thumbnails, etc.)
+// where @core/ui/button's padding/sizing would break the layout.
 
 import { useI18n } from "@core/providers/i18n-provider";
 

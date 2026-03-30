@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Theme Detail Modal
  *
  * Rich modal for viewing theme details including:
@@ -15,6 +15,9 @@
  * @module customization/presentation
  */
 "use client";
+// UI-EXCEPTION: compact studio layout — native <button> used for pixel-precise
+// compact controls (theme cards, filter toggles, etc.) where @core/ui/button's
+// padding/sizing would break the layout.
 
 import { useState, useMemo, useCallback } from "react";
 import { useI18n } from "@core/providers/i18n-provider";

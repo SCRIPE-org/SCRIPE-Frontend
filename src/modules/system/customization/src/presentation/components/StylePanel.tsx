@@ -1,9 +1,12 @@
-/**
+﻿/**
  * StylePanel — Appearance + Typography + Spacing
  * Complete light/dark isolation with section-independent backgrounds.
  * Uses ImageUploadField for bg images, Select for fonts, Slider for sizes.
  */
 "use client";
+// UI-EXCEPTION: compact studio layout — native <button> used for pixel-precise
+// compact controls (toggle switches, gradient pickers, layout thumbnails, etc.)
+// where @core/ui/button's padding/sizing would break the layout.
 
 import { useI18n } from "@core/providers/i18n-provider";
 
@@ -18,12 +21,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@core/ui/select";
-import type { StudioDraft, StudioPanel } from "../viewmodels/useStudioViewModel";
+import type { StudioDraftProps as StudioDraft, StudioPanel } from "../../domain/entities/StudioDraft";
 import {
   COLOR_PRESETS,
   FONT_OPTIONS_EN,
   FONT_OPTIONS_AR,
-} from "../viewmodels/useStudioViewModel";
+} from "../../domain/entities/StudioDraft";
 
 interface StylePanelProps {
   activeSection: StudioPanel;

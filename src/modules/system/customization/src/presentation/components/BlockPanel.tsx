@@ -4,6 +4,9 @@
  * maxItems enforcement, block duplication. Labels localized via t()
  */
 "use client";
+// UI-EXCEPTION: compact studio layout — native <button> used for pixel-precise
+// compact controls (toggle switches, gradient pickers, layout thumbnails, etc.)
+// where @core/ui/button's padding/sizing would break the layout.
 
 import { useState, useCallback } from "react";
 import {
@@ -15,7 +18,7 @@ import {
 } from "lucide-react";
 import { Input } from "@core/ui/input";
 import { Button } from "@core/ui/button";
-import type { StudioDraft } from "../viewmodels/useStudioViewModel";
+import type { StudioDraftProps as StudioDraft } from "../../domain/entities/StudioDraft";
 import type { LoginSlotId, LoginLayout, ContentBlock, BlockType } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
 import { InlineEditor } from "./BlockEditors";
 import { useI18n } from "@core/providers/i18n-provider";

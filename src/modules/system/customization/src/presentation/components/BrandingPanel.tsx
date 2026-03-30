@@ -11,7 +11,7 @@ import { Building2, Heading, FileText, Copyright, Info } from "lucide-react";
 import { ImageUploadField } from "@core/ui/image-upload-field";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
-import type { StudioDraft } from "../viewmodels/useStudioViewModel";
+import type { StudioDraftProps as StudioDraft } from "../../domain/entities/StudioDraft";
 import { useI18n } from "@core/providers/i18n-provider";
 
 interface BrandingPanelProps {

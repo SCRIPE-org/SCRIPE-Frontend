@@ -43,9 +43,8 @@ import {
   COLOR_PRESETS,
 } from "../../domain/entities/StudioDraft";
 
-// Re-export domain types for backward compatibility (components should migrate to direct domain imports)
-export type { StudioDraft, DeviceSize, StudioPanel, AuthPageId, AuthPageOverride, AuthPageOverrides };
-export { DEFAULT_DRAFT, DEVICE_DIMENSIONS, DEFAULT_PAGE_OVERRIDES, ALL_LAYOUTS, FONT_OPTIONS_EN, FONT_OPTIONS_AR, COLOR_PRESETS };
+
+// NOTE: Domain types are imported directly from ../../domain/entities/StudioDraft by all components.
 
 // ── Hook ───────────────────────────────────────────────
 export interface StudioViewModelOptions {

@@ -335,7 +335,7 @@ export function EditionDetailView({ editionId }: EditionDetailViewProps) {
                                                                                                             value={value}
                                                                                                             onChange={(v) => vm.setLocalValue(feature.name, v)}
                                                                                                             featureName={feature.name}
-                                                                                                            t={t}
+                                                                                                           
                                                                                                       />
                                                                                                 </div>
                                                                                           </div>
@@ -529,14 +529,13 @@ function FeatureControl({
       value,
       onChange,
       featureName,
-      t,
 }: {
       valueType: string;
       value: string;
       onChange: (value: string) => void;
       featureName?: string;
-      t: (key: string) => string;
 }) {
+      const { t } = useI18n();
       const enumOptions = featureName ? getEnumFeatureOptions(t)[featureName] : undefined;
       if (enumOptions) {
             return (

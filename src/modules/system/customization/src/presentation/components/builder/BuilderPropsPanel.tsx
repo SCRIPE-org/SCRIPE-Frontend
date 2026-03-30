@@ -1,10 +1,13 @@
-/**
+﻿/**
  * BuilderPropsPanel — Properties editor for the selected canvas component
  *
  * Shows grid placement controls and component-specific props.
  * Renders dynamically based on the selected component's type.
  */
 "use client";
+// UI-EXCEPTION: compact studio layout — native <button> used for pixel-precise
+// compact controls (toggle switches, gradient pickers, layout thumbnails, etc.)
+// where @core/ui/button's padding/sizing would break the layout.
 
 import { cn } from "@/core/common/utils";
 import { Input } from "@core/ui/input";

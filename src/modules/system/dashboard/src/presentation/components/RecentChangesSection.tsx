@@ -43,7 +43,7 @@ const eventColorMap: Record<string, string> = {
 
 function formatTimeAgo(
   timestamp: string,
-  t: (key: string, params?: Record<string, string | number>) => string
+  t: (key: string, params?: Record<string, string | number>) => string,
 ): string {
   const diff = Date.now() - new Date(timestamp).getTime();
   const minutes = Math.floor(diff / 60000);

@@ -1,5 +1,7 @@
 "use client";
 
+import { useI18n } from "@core/providers/i18n-provider";
+
 import { useTenantSettingsViewModel } from "../viewmodels/useTenantSettingsViewModel";
 import { QuotasSection } from "../components/QuotasSection";
 import { SecuritySection } from "../components/SecuritySection";
@@ -30,7 +32,7 @@ export function TenantSettingsView() {
   if (vm.isLoading) {
     return (
       <div className="space-y-6">
-        <PageHeader t={vm.t} mode={vm.mode} />
+        <PageHeader mode={vm.mode} />
         <div className="space-y-6">
           <Skeleton className="h-[200px] w-full" />
           <Skeleton className="h-[300px] w-full" />
@@ -44,7 +46,7 @@ export function TenantSettingsView() {
   if (vm.isError) {
     return (
       <div className="space-y-6">
-        <PageHeader t={vm.t} mode={vm.mode} />
+        <PageHeader mode={vm.mode} />
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>{vm.t("common.error")}</AlertTitle>
@@ -66,17 +68,17 @@ export function TenantSettingsView() {
         </div>
       )}
 
-      <PageHeader t={vm.t} mode={vm.mode} />
+      <PageHeader mode={vm.mode} />
 
       {/* Show Quotas & Security only for tenant contexts, not system defaults */}
       {vm.mode !== "system" && (
         <>
-          <QuotasSection settings={vm.settings} updateField={vm.updateField} t={vm.t} />
-          <SecuritySection settings={vm.settings} updateField={vm.updateField} t={vm.t} />
+          <QuotasSection settings={vm.settings} updateField={vm.updateField} />
+          <SecuritySection settings={vm.settings} updateField={vm.updateField} />
         </>
       )}
-      <BrandingSection settings={vm.settings} updateField={vm.updateField} t={vm.t} />
-      <CustomizationSection settings={vm.settings} t={vm.t} />
+      <BrandingSection settings={vm.settings} updateField={vm.updateField} />
+      <CustomizationSection settings={vm.settings} />
       <SaveActions vm={vm} />
     </div>
   );
@@ -84,7 +86,8 @@ export function TenantSettingsView() {
 
 // Small helper components to keep main view clean
 
-function PageHeader({ t, mode }: { t: (key: string) => string; mode: 'my' | 'system' | 'tenant' }) {
+function PageHeader({ mode }: { mode: 'my' | 'system' | 'tenant' }) {
+  const { t } = useI18n();
   const title = mode === "system"
     ? (t("tenantSettings.systemTitle") || "System Settings")
     : (t("tenantSettings.title") || "Tenant Settings");

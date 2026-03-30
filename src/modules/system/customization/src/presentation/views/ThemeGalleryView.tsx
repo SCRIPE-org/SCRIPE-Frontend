@@ -15,6 +15,9 @@
  * @module customization/presentation
  */
 "use client";
+// UI-EXCEPTION: compact gallery layout — native <button> used for category filter
+// pills and theme card overlay controls where @core/ui/button's sizing would break
+// the compact card grid layout. Action buttons (Apply, Preview) use <Button>.
 
 import { useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";

@@ -3,13 +3,16 @@
  * All labels localized via t()
  */
 "use client";
+// UI-EXCEPTION: compact studio layout — native <button> used for pixel-precise
+// compact controls (toggle switches, gradient pickers, layout thumbnails, etc.)
+// where @core/ui/button's padding/sizing would break the layout.
 
 import { Layout, Palette, Type, Settings2, Layers, Blocks, Paintbrush, ScanEye, Store, LayoutGrid } from "lucide-react";
 import { cn } from "@/core/common/utils";
 import { LayoutPanel } from "./LayoutPanel";
 import { BrandingPanel } from "./BrandingPanel";
 import { BlockPanel } from "./BlockPanel";
-import type { StudioDraft, StudioPanel, AuthPageId, AuthPageOverride } from "../viewmodels/useStudioViewModel";
+import type { StudioDraftProps as StudioDraft, StudioPanel, AuthPageId, AuthPageOverride } from "../../domain/entities/StudioDraft";
 import type { LoginSlotId, ContentBlock } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
 import { StylePanel } from "./StylePanel";
 import { AdvancedPanel } from "./AdvancedPanel";

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Subscriptions View
  *
  * Tenant-scoped view showing subscription history with full lifecycle actions:
@@ -318,11 +318,11 @@ export function SubscriptionsView({ tenantId }: SubscriptionsViewProps) {
 
                   customFooterContent: (
                         <>
-                              <AssignDialog vm={vm} editionsVm={editionsVm} t={t} />
-                              <ChangeDialog vm={vm} editionsVm={editionsVm} t={t} />
-                              <SuspendDialog vm={vm} t={t} />
-                              <CancelDialog vm={vm} t={t} />
-                              <ConvertDialog vm={vm} editionsVm={editionsVm} t={t} />
+                              <AssignDialog vm={vm} editionsVm={editionsVm} />
+                              <ChangeDialog vm={vm} editionsVm={editionsVm} />
+                              <SuspendDialog vm={vm} />
+                              <CancelDialog vm={vm} />
+                              <ConvertDialog vm={vm} editionsVm={editionsVm} />
                         </>
                   ),
             }),
@@ -339,12 +339,11 @@ export function SubscriptionsView({ tenantId }: SubscriptionsViewProps) {
 function AssignDialog({
       vm,
       editionsVm,
-      t,
 }: {
       vm: ReturnType<typeof useSubscriptionsCrudAdapter>;
       editionsVm: ReturnType<typeof useEditionsViewModel>;
-      t: (key: string, params?: Record<string, any>) => string;
 }) {
+      const { t } = useI18n();
       return (
             <Dialog open={vm.showAssignDialog} onOpenChange={vm.setShowAssignDialog}>
                   <DialogContent>
@@ -544,12 +543,11 @@ function AssignDialog({
 function ChangeDialog({
       vm,
       editionsVm,
-      t,
 }: {
       vm: ReturnType<typeof useSubscriptionsCrudAdapter>;
       editionsVm: ReturnType<typeof useEditionsViewModel>;
-      t: (key: string, params?: Record<string, any>) => string;
 }) {
+      const { t } = useI18n();
       return (
             <Dialog open={vm.showChangeDialog} onOpenChange={vm.setShowChangeDialog}>
                   <DialogContent>
@@ -718,11 +716,10 @@ function ChangeDialog({
 
 function SuspendDialog({
       vm,
-      t,
 }: {
       vm: ReturnType<typeof useSubscriptionsCrudAdapter>;
-      t: (key: string, params?: Record<string, any>) => string;
 }) {
+      const { t } = useI18n();
       return (
             <Dialog open={vm.showSuspendDialog} onOpenChange={vm.setShowSuspendDialog}>
                   <DialogContent>
@@ -829,11 +826,10 @@ function SuspendDialog({
 
 function CancelDialog({
       vm,
-      t,
 }: {
       vm: ReturnType<typeof useSubscriptionsCrudAdapter>;
-      t: (key: string, params?: Record<string, any>) => string;
 }) {
+      const { t } = useI18n();
       return (
             <Dialog open={vm.showCancelDialog} onOpenChange={vm.setShowCancelDialog}>
                   <DialogContent>
@@ -941,12 +937,11 @@ function CancelDialog({
 function ConvertDialog({
       vm,
       editionsVm,
-      t,
 }: {
       vm: ReturnType<typeof useSubscriptionsCrudAdapter>;
       editionsVm: ReturnType<typeof useEditionsViewModel>;
-      t: (key: string, params?: Record<string, any>) => string;
 }) {
+      const { t } = useI18n();
       return (
             <Dialog open={vm.showConvertDialog} onOpenChange={vm.setShowConvertDialog}>
                   <DialogContent>

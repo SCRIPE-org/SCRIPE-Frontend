@@ -151,7 +151,6 @@ export function TenantDomainsTab({ tenantId, tenantName }: TenantDomainsTabProps
               key={d.id}
               domain={d}
               isRtl={isRtl}
-              t={t}
               cnameTarget={vm.cnameTarget}
               verifyPrefix={vm.verifyPrefix}
               onVerify={vm.verifyDomain}
@@ -184,7 +183,6 @@ export function TenantDomainsTab({ tenantId, tenantName }: TenantDomainsTabProps
               key={d.id}
               domain={d}
               isRtl={isRtl}
-              t={t}
               cnameTarget={vm.cnameTarget}
               verifyPrefix={vm.verifyPrefix}
               onVerify={vm.verifyDomain}
@@ -204,7 +202,6 @@ export function TenantDomainsTab({ tenantId, tenantName }: TenantDomainsTabProps
 interface DomainCardProps {
   domain: TenantDomainJson;
   isRtl: boolean;
-  t: (key: string, args?: Record<string, unknown>) => string;
   cnameTarget: string;
   verifyPrefix: string;
   onVerify: (id: string) => void;
@@ -213,7 +210,8 @@ interface DomainCardProps {
   onCopy: (text: string) => void;
 }
 
-function DomainCard({ domain, isRtl, t, cnameTarget, verifyPrefix, onVerify, onSetPrimary, onRemove, onCopy }: DomainCardProps) {
+function DomainCard({ domain, isRtl, cnameTarget, verifyPrefix, onVerify, onSetPrimary, onRemove, onCopy }: DomainCardProps) {
+  const { t } = useI18n();
   return (
     <div
       className={cn(

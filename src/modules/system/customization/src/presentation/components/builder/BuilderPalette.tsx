@@ -1,4 +1,4 @@
-/**
+﻿/**
  * BuilderPalette — Draggable component list for the page builder
  *
  * Shows all 14 available component types. Drag from here to canvas.
@@ -6,6 +6,9 @@
  * Enterprise-only components show a lock badge.
  */
 "use client";
+// UI-EXCEPTION: compact studio layout — native <button> used for pixel-precise
+// compact controls (toggle switches, gradient pickers, layout thumbnails, etc.)
+// where @core/ui/button's padding/sizing would break the layout.
 
 import { useDraggable } from "@dnd-kit/core";
 import { cn } from "@/core/common/utils";

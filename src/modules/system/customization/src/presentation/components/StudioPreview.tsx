@@ -5,8 +5,8 @@
 "use client";
 
 import { Loader2 } from "lucide-react";
-import type { DeviceSize } from "../viewmodels/useStudioViewModel";
-import { DEVICE_DIMENSIONS } from "../viewmodels/useStudioViewModel";
+import type { DeviceSize } from "../../domain/entities/StudioDraft";
+import { DEVICE_DIMENSIONS } from "../../domain/entities/StudioDraft";
 
 interface StudioPreviewProps {
   iframeRef: React.RefObject<HTMLIFrameElement | null>;
