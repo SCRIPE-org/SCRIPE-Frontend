@@ -29,15 +29,10 @@ import { Result } from "@core/common/types/result";
 import { AUTH_STORAGE_KEYS_TO_CLEAR } from "@core/config/storage-keys";
 
 /**
- * Custom error thrown when login requires 2FA verification.
- * The UI catches this to transition to the 2FA input step.
+ * Import from domain layer + re-export for backward compatibility.
  */
-export class TwoFactorRequiredError extends Error {
-  constructor() {
-    super("Two-factor authentication required");
-    this.name = "TwoFactorRequiredError";
-  }
-}
+import { TwoFactorRequiredError } from "../../domain/errors/AuthErrors";
+export { TwoFactorRequiredError };
 
 /**
  * Clear all authentication related data from local storage

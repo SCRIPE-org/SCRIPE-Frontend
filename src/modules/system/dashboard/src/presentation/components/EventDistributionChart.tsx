@@ -24,6 +24,7 @@ interface Props {
   isLoading: boolean;
   error?: Error | null;
   onRetry?: () => void;
+  chartPalette?: string[];
 }
 
 const COLORS = [
@@ -42,15 +43,19 @@ export const EventDistributionChart = memo(function EventDistributionChart({
   isLoading,
   error,
   onRetry,
+  chartPalette,
 }: Props) {
   const { t } = useI18n();
+
+  // Use theme palette if provided, otherwise default COLORS
+  const colors = chartPalette && chartPalette.length >= 5 ? chartPalette : COLORS;
 
   const chartConfig = useMemo<ChartConfig>(() => {
     const config: ChartConfig = {};
     data.forEach((item, index) => {
       config[item.eventType] = {
         label: item.eventType,
-        color: COLORS[index % COLORS.length],
+        color: colors[index % colors.length],
       };
     });
     return config;
@@ -61,7 +66,7 @@ export const EventDistributionChart = memo(function EventDistributionChart({
       data.map((item, index) => ({
         name: item.eventType,
         value: item.count,
-        fill: COLORS[index % COLORS.length],
+        fill: colors[index % colors.length],
       })),
     [data]
   );
@@ -115,7 +120,7 @@ export const EventDistributionChart = memo(function EventDistributionChart({
                     <div className="flex items-center gap-2">
                       <div
                         className="h-2.5 w-2.5 shrink-0 rounded-full"
-                        style={{ backgroundColor: COLORS[index % COLORS.length] }}
+                        style={{ backgroundColor: colors[index % colors.length] }}
                       />
                       <span className="truncate text-muted-foreground">{item.eventType}</span>
                     </div>

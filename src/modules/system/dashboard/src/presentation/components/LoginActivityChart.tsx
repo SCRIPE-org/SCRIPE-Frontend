@@ -25,6 +25,7 @@ interface Props {
   isLoading: boolean;
   error?: Error | null;
   onRetry?: () => void;
+  chartPalette?: string[];
 }
 
 export const LoginActivityChart = memo(function LoginActivityChart({
@@ -32,21 +33,26 @@ export const LoginActivityChart = memo(function LoginActivityChart({
   isLoading,
   error,
   onRetry,
+  chartPalette,
 }: Props) {
   const { t } = useI18n();
+
+  // Use palette colors if provided, otherwise fall back to CSS vars
+  const successColor = chartPalette?.[0] || "hsl(var(--chart-2))";
+  const failedColor = chartPalette?.[4] || "hsl(var(--chart-5))";
 
   const chartConfig = useMemo<ChartConfig>(
     () => ({
       successCount: {
         label: t("dashboard.loginActivity.successful"),
-        color: "hsl(var(--chart-2))",
+        color: successColor,
       },
       failedCount: {
         label: t("dashboard.loginActivity.failed"),
-        color: "hsl(var(--chart-5))",
+        color: failedColor,
       },
     }),
-    [t]
+    [t, successColor, failedColor]
   );
 
   const chartData = useMemo(

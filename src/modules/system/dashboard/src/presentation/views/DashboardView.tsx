@@ -134,6 +134,7 @@ export function DashboardView() {
                 isLoading={vm.loginActivity.isLoading}
                 error={vm.loginActivity.error}
                 onRetry={() => vm.loginActivity.refetch()}
+                chartPalette={config.charts.colorPalette}
               />
             </div>
           )}
@@ -144,6 +145,7 @@ export function DashboardView() {
                 isLoading={vm.eventDistribution.isLoading}
                 error={vm.eventDistribution.error}
                 onRetry={() => vm.eventDistribution.refetch()}
+                chartPalette={config.charts.colorPalette}
               />
             </div>
           )}
