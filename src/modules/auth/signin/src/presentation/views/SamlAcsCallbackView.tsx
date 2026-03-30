@@ -14,8 +14,7 @@ import { ShieldAlert, ArrowLeft, UserX } from "lucide-react";
 import Link from "next/link";
 import { appLogger } from "@/core/common/logger";
 import { secureTokenService } from "@core/common/secure-token-service";
-import { getModuleApiService } from "@core/services/api-factory";
-import { API_ENDPOINTS } from "@core/config/api-endpoints";
+
 
 type CallbackState = "processing" | "success" | "error" | "no_linked_account";
 
@@ -76,17 +75,13 @@ export function SamlAcsCallbackView() {
 
                               const linkAccount = async () => {
                                     try {
-                                          const api = getModuleApiService("IDENTITY");
-                                          await api.post(
-                                                API_ENDPOINTS.PROFILE.LINK_EXTERNAL_LOGIN,
-                                                {
-                                                      identityProviderId: providerId,
-                                                      providerName: providerName,
-                                                      providerKey: subject,
-                                                      email: email,
-                                                      displayName: name,
-                                                }
-                                          );
+                                          await authRepository.linkExternalLogin({
+                                                identityProviderId: providerId,
+                                                providerName: providerName,
+                                                providerKey: subject,
+                                                email: email,
+                                                displayName: name ?? undefined,
+                                          });
                                           operationSuccess(t("sso.accountLinkedSuccess"));
                                           router.replace("/profile/security");
                                     } catch (linkErr) {

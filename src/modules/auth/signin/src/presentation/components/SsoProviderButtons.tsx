@@ -11,7 +11,7 @@
 
 import { Loader2 } from "lucide-react";
 import { Button } from "@core/ui/button";
-import type { SsoProvider } from "../../../../hooks/useSsoProviders";
+import type { SsoProvider } from "../viewmodels/useSsoProviders";
 import { resolveFileUrl } from "@core/common/utils";
 
 interface SsoProviderButtonsProps {

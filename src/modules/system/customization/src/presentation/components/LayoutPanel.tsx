@@ -7,7 +7,7 @@
 import { CheckCircle } from "lucide-react";
 import { cn } from "@/core/common/utils";
 import { ALL_LAYOUTS } from "../viewmodels/useStudioViewModel";
-import type { LoginLayout } from "@modules/auth/signin/src/types/login-branding-types";
+import type { LoginLayout } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
 import type { AuthPageId, AuthPageOverride } from "../../domain/entities/StudioDraft";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";

@@ -23,7 +23,7 @@ export class NavigationService implements INavigationService {
    */
   async fetchMenuItems(): Promise<NavigationData> {
     try {
-      const response = await this.apiService.get<any>(API_ENDPOINTS.GET_MENU_ITEMS);
+      const response = await this.apiService.get<any>(API_ENDPOINTS.MENUS.MY);
 
       appLogger.debug("Navigation API Response:", response);
 

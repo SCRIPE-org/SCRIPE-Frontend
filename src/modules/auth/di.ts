@@ -12,7 +12,7 @@ import { getBaseApiService } from "@core/services/api-factory";
 import { AuthService } from "./core/data/services/AuthService";
 import { AuthRepository } from "./core/data/repositories/AuthRepository";
 import type { IAuthRepository } from "./core/domain/interfaces/IAuthRepository";
-import type { IAuthService } from "./core/data/services/AuthService";
+import type { IAuthService } from "./core/domain/interfaces/IAuthService";
 import { useAppStore } from "@core/store/useAppStore";
 import { authBroadcast } from "@core/common/broadcast-auth";
 

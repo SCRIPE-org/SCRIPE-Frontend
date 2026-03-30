@@ -3,7 +3,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { container } from "../../../di";
 import { useI18n } from "@core/providers/i18n-provider";
-import { useSsoProviders } from "@modules/auth/hooks/useSsoProviders";
+import { useSsoProviders } from "@modules/auth/signin/src/presentation/viewmodels/useSsoProviders";
 import { useToast } from "@core/hooks/use-toast";
 
 export const externalLoginKeys = {

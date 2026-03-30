@@ -1,10 +1,10 @@
 "use client";
 
-import type { TenantBranding } from "@modules/auth/hooks/useTenantResolution";
+import type { TenantBranding } from "@modules/auth/signin/src/presentation/viewmodels/useTenantResolution";
 import { BRAND } from "@core/config/branding";
 import { resolveFileUrl } from "@core/common/utils";
 import { SlotRenderer } from "./SlotRenderer";
-import type { SlotConfig } from "../../types/login-branding-types";
+import type { SlotConfig } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
 
 interface LoginBrandingProps {
       t: (key: string) => string;

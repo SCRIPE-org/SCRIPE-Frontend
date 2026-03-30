@@ -21,6 +21,25 @@ import type {
   DowngradeImpactReport,
 } from "../../data/models/TenantSubscription";
 
+/** Tenant domain record from the API */
+export interface TenantDomainJson {
+  id: string;
+  domain: string;
+  type: "auto" | "custom";
+  isPrimary: boolean;
+  isVerified: boolean;
+  verificationToken: string | null;
+  verifiedAt: string | null;
+  createdAt: string;
+}
+
+/** Response shape for the domains endpoint */
+export interface TenantDomainsResponse {
+  domains: TenantDomainJson[];
+  cnameTarget: string;
+  verificationPrefix: string;
+}
+
 export interface ServiceTenantListParams {
   page?: number;
   pageSize?: number;
@@ -185,4 +204,21 @@ export interface ITenantService {
 
   /** Preview resolved price for an edition + currency + type combo */
   previewPrice(editionId: string, currency: string, type: string): Promise<number>;
+
+  // ── Domain Management ─────────────────────────────────────
+
+  /** Get all domains for a tenant */
+  getDomains(tenantId: string): Promise<TenantDomainsResponse>;
+
+  /** Add a custom domain to a tenant */
+  addDomain(tenantId: string, domain: string): Promise<void>;
+
+  /** Verify DNS for a custom domain */
+  verifyDomain(tenantId: string, domainId: string): Promise<void>;
+
+  /** Set a domain as primary */
+  setDomainPrimary(tenantId: string, domainId: string): Promise<void>;
+
+  /** Remove a custom domain */
+  removeDomain(tenantId: string, domainId: string): Promise<void>;
 }

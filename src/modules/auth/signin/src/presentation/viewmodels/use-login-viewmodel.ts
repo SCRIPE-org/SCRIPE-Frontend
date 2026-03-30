@@ -2,12 +2,12 @@
 
 import { useState, useCallback, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useAuthLogin } from "../../../../hooks/useAuthLogin";
+import { useAuthLogin } from "@modules/auth/core/src/presentation/viewmodels/useAuthLogin";
 import { useAppStore } from "@core/store/useAppStore";
 import { useI18n } from "@core/providers/i18n-provider";
 import { validateForm, VALIDATION_SETS, isFormValid } from "@core/common/validation";
 import { secureTokenService } from "@core/common/secure-token-service";
-import { TwoFactorRequiredError } from "../../../../core/data/repositories/AuthRepository";
+import { TwoFactorRequiredError } from "@modules/auth/core/data/repositories/AuthRepository";
 import { useServices } from "@core/providers/service-provider";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useNavigation } from "@core/providers/navigation-provider";

@@ -24,24 +24,14 @@ import {
 import type { IApiService } from "@core/interfaces/api.interface";
 import { API_ENDPOINTS } from "@core/config/api-endpoints";
 import { ALLOWED_OIDC_PARAMS } from "@core/config/oidc-keys";
-
-export interface IAuthService {
-  login(request: LoginRequestModel): Promise<LoginResponseModel>;
-  verify2FA(request: Verify2FARequestModel): Promise<Verify2FAResponseModel>;
-  logout(): Promise<void>;
-  refreshToken(): Promise<LoginResponseModel>;
-  getMe<T>(): Promise<T>;
-  impersonate(adminId: string): Promise<LoginResponseModel>;
-  stopImpersonation(): Promise<LoginResponseModel>;
-  buildOidcConsentForm(searchParams: URLSearchParams, accessToken: string): { action: string; params: Record<string, string> };
-}
+import type { IAuthService } from "../../domain/interfaces/IAuthService";
 
 export class AuthService implements IAuthService {
   constructor(private readonly api: IApiService) { }
 
   async login(request: LoginRequestModel): Promise<LoginResponseModel> {
     const json = await this.api.postPublic<LoginResponseJson>(
-      API_ENDPOINTS.LOGIN,
+      API_ENDPOINTS.AUTH.LOGIN,
       request.toJson()
     );
     return LoginResponseModel.fromJson(json);
@@ -60,7 +50,7 @@ export class AuthService implements IAuthService {
    * Backend CookieAuthMiddleware reads the refresh token from the cookie.
    */
   async logout(): Promise<void> {
-    await this.api.post(API_ENDPOINTS.LOGOUT, {});
+    await this.api.post(API_ENDPOINTS.AUTH.LOGOUT, {});
   }
 
   /**
@@ -69,14 +59,14 @@ export class AuthService implements IAuthService {
    */
   async refreshToken(): Promise<LoginResponseModel> {
     const json = await this.api.postPublic<LoginResponseJson>(
-      API_ENDPOINTS.REFRESH,
+      API_ENDPOINTS.AUTH.REFRESH,
       {}
     );
     return LoginResponseModel.fromJson(json);
   }
 
   async getMe<T>(): Promise<T> {
-    return this.api.get<T>(API_ENDPOINTS.GET_ADMIN_ME);
+    return this.api.get<T>(API_ENDPOINTS.AUTH.ME);
   }
 
   /**
@@ -122,5 +112,18 @@ export class AuthService implements IAuthService {
     params["access_token"] = accessToken;
 
     return { action, params };
+  }
+
+  /**
+   * Link an external SSO account to the currently authenticated admin profile.
+   */
+  async linkExternalLogin(data: {
+    identityProviderId: string;
+    providerName: string;
+    providerKey: string;
+    email: string;
+    displayName?: string;
+  }): Promise<void> {
+    await this.api.post(API_ENDPOINTS.PROFILE.LINK_EXTERNAL_LOGIN, data);
   }
 }

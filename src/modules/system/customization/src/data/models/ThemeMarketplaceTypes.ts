@@ -8,8 +8,9 @@
  * @module customization/data
  */
 
-/** Pricing model for themes */
-export type ThemePricingType = "Free" | "EditionGated" | "StandaloneOnly";
+/** Import from domain entity — single source of truth */
+import type { ThemePricingType } from "../../domain/entities/ThemeCard";
+export type { ThemePricingType };
 
 /** Gallery card — lightweight for grid rendering */
 export interface ThemeCardDto {

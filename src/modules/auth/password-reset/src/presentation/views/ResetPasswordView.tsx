@@ -14,12 +14,12 @@ import { Button } from "@core/ui/button";
 import { Label } from "@core/ui/label";
 import { PasswordInput } from "@core/ui/password-input";
 import { ArrowLeft, Lock, Loader2, CheckCircle, AlertTriangle } from "lucide-react";
-import { useLoginBrandingTokens } from "../signin/src/hooks/useLoginBrandingTokens";
+import { useLoginBrandingTokens } from "@modules/auth/signin/src/presentation/viewmodels/useLoginBrandingTokens";
 import { resolveFileUrl } from "@core/common/utils";
 import { BRAND } from "@core/config/branding";
 import { LanguageSwitcher } from "@core/ui/layout/common/language-switcher";
 import { ThemeSwitcher } from "@core/ui/layout/common/theme-switcher";
-import { useTenantResolution } from "../hooks/useTenantResolution";
+import { useTenantResolution } from "@modules/auth/signin/src/presentation/viewmodels/useTenantResolution";
 
 export function ResetPasswordView() {
   const { t, direction } = useI18n();

@@ -10,7 +10,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { BRAND } from "@core/config/branding";
 import { resolveFileUrl } from "@core/common/utils";
 import { AlertTriangle, XCircle, SearchX } from "lucide-react";
-import type { TenantBranding } from "@modules/auth/hooks/useTenantResolution";
+import type { TenantBranding } from "@modules/auth/signin/src/presentation/viewmodels/useTenantResolution";
 
 // ─── Suspended / Canceled View ────────────────────────────
 

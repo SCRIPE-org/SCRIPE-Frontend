@@ -1,5 +1,5 @@
 /**
- * Password Reset Module — Public Exports
+ * Password Reset Submodule — Public Exports
  */
-export { ForgotPasswordView } from "./ForgotPasswordView";
-export { ResetPasswordView } from "./ResetPasswordView";
+export { ForgotPasswordView } from "./src/presentation/views/ForgotPasswordView";
+export { ResetPasswordView } from "./src/presentation/views/ResetPasswordView";

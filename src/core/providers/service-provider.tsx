@@ -9,7 +9,7 @@ import { getCoreContainer } from "@core/di";
 import { getAuthContainer } from "@modules/auth/di";
 import type { IApiService } from "@core/interfaces/api.interface";
 import type { IAuthRepository } from "@modules/auth/core/domain/interfaces/IAuthRepository";
-import type { IAuthService } from "@modules/auth/core/data/services/AuthService";
+import type { IAuthService } from "@modules/auth/core/domain/interfaces/IAuthService";
 
 /**
  * Services Interface

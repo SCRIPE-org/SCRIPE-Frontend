@@ -8,7 +8,8 @@
  * @module customization/domain
  */
 
-import type { ThemePricingType } from "../../data/models/ThemeMarketplaceTypes";
+/** Pricing strategy for marketplace themes */
+export type ThemePricingType = "Free" | "EditionGated" | "StandaloneOnly";
 
 export interface ThemeCardData {
   id: string;

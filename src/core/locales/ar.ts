@@ -88,30 +88,6 @@ export const ar = {
       skipToContent: "تخطي إلى المحتوى الرئيسي",
       topActionsLabel: "إجراءات الصفحة",
     },
-    // التسجيل
-    register: "إنشاء حساب",
-    registerDesc: "أدخل التفاصيل أدناه لإنشاء حسابك.",
-    fullName: "الاسم الكامل",
-    fullNamePlaceholder: "أدخل اسمك الكامل",
-    passwordPlaceholder: "أنشئ كلمة مرور",
-    createAccount: "إنشاء حساب",
-    // التحقق من البريد الإلكتروني
-    verifyEmail: "تأكيد بريدك الإلكتروني",
-    verifyEmailDesc: "لقد أرسلنا رمز تحقق إلى بريدك الإلكتروني. أدخله أدناه لتأكيد حسابك.",
-    verificationCode: "رمز التحقق",
-    verificationCodePlaceholder: "أدخل الرمز المكون من 6 أرقام",
-    verify: "تأكيد البريد الإلكتروني",
-    resendCode: "إعادة إرسال الرمز",
-    emailVerified: "تم تأكيد بريدك الإلكتروني!",
-    continueToLogin: "متابعة إلى تسجيل الدخول",
-    // المصادقة الثنائية
-    mfa: "المصادقة الثنائية",
-    mfaDesc: "أدخل رمز التحقق من تطبيق المصادقة للمتابعة.",
-    mfaTotp: "تطبيق المصادقة",
-    mfaSms: "رمز SMS",
-    mfaTotpLabel: "الرمز المكون من 6 أرقام من تطبيقك",
-    mfaSmsLabel: "الرمز المرسل إلى هاتفك",
-    verifyCode: "تأكيد ومتابعة",
   },
 
   // SSO / تسجيلات الدخول الخارجية (الملف الشخصي)

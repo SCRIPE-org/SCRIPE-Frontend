@@ -26,7 +26,7 @@ import { BookOpen, Eye, EyeOff, Lock, User } from "lucide-react";
 import { LanguageSwitcher } from "@core/ui/layout/common/language-switcher";
 import { ThemeSwitcher } from "@core/ui/layout/common/theme-switcher";
 import { BRAND } from "@core/config/branding";
-import { useLoginBrandingTokens } from "@modules/auth/signin/src/hooks/useLoginBrandingTokens";
+import { useLoginBrandingTokens } from "@modules/auth/signin/src/presentation/viewmodels/useLoginBrandingTokens";
 import { LoginBranding } from "@modules/auth/signin/src/presentation/components/LoginBranding";
 import { SlotRenderer } from "@modules/auth/signin/src/presentation/components/SlotRenderer";
 

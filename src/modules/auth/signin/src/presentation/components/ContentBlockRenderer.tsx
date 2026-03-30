@@ -34,7 +34,7 @@ import {
   type BaseBlockProps,
   isValidCtaUrl,
   isValidVideoUrl,
-} from "../../types/login-branding-types";
+} from "@modules/auth/core/domain/entities/LoginBrandingTypes";
 
 // ─── Error Boundary ───────────────────────────────────
 class BlockErrorBoundary extends Component<

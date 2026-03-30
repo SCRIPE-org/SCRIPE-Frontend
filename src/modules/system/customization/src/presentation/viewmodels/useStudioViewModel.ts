@@ -25,7 +25,7 @@ import type {
   LoginSlotId,
   ContentBlock,
   SlotConfig,
-} from "@modules/auth/signin/src/types/login-branding-types";
+} from "@modules/auth/core/domain/entities/LoginBrandingTypes";
 import {
   type StudioDraftProps as StudioDraft,
   DEFAULT_DRAFT,

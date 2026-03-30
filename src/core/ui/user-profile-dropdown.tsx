@@ -13,7 +13,7 @@ import {
 } from "@core/ui/dropdown-menu";
 import { ChevronDown, Settings, User, LogOut } from "lucide-react";
 import { useAppStore } from "@core/store/useAppStore";
-import { useAuthLogout } from "@modules/auth/hooks/useAuthLogout";
+import { useAuthLogout } from "@modules/auth/core/src/presentation/viewmodels/useAuthLogout";
 import { useI18n } from "@core/providers/i18n-provider";
 import { cn } from "@core/common/utils";
 import { useSettings } from "@core/providers/settings-provider";

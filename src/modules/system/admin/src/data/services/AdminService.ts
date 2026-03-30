@@ -22,7 +22,6 @@ import type {
   IAdminService,
   ServiceAdminListParams,
   AdminListResult,
-  ImpersonateResult,
 } from "../../domain/interfaces/IAdminService";
 
 export class AdminService implements IAdminService {
@@ -174,9 +173,7 @@ export class AdminService implements IAdminService {
     return this.api.post<number>(API_ENDPOINTS.ADMINS.BULK.DELETE_ALL, filter);
   }
 
-  async impersonate(id: string): Promise<ImpersonateResult> {
-    return this.api.post<ImpersonateResult>(API_ENDPOINTS.ADMINS.IMPERSONATE(id), {});
-  }
+
 
   async transfer(
     id: string,

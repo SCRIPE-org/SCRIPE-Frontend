@@ -10,7 +10,7 @@
  * - ViewModel uses Repository, works with Entities
  */
 import type { IAdminRepository, AdminListParams } from "../../domain/interfaces/IAdminRepository";
-import type { IAdminService, ImpersonateResult } from "../../domain/interfaces/IAdminService";
+import type { IAdminService } from "../../domain/interfaces/IAdminService";
 import { Admin, type AdminRoleData } from "../../domain/entities/Admin";
 import { AdminMapper } from "../mappers/AdminMapper";
 import type {
@@ -155,9 +155,7 @@ export class AdminRepository implements IAdminRepository {
     return this.service.bulkDeleteAll(filter);
   }
 
-  async impersonate(id: string): Promise<ImpersonateResult> {
-    return this.service.impersonate(id);
-  }
+
 
   async transfer(id: string, request: TransferAdminRequest): Promise<void> {
     return this.service.transfer(id, {

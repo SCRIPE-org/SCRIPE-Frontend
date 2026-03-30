@@ -13,12 +13,12 @@ import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { ArrowLeft, Mail, CheckCircle, ShieldAlert } from "lucide-react";
-import { useLoginBrandingTokens } from "../signin/src/hooks/useLoginBrandingTokens";
+import { useLoginBrandingTokens } from "@modules/auth/signin/src/presentation/viewmodels/useLoginBrandingTokens";
 import { resolveFileUrl } from "@core/common/utils";
 import { BRAND } from "@core/config/branding";
 import { LanguageSwitcher } from "@core/ui/layout/common/language-switcher";
 import { ThemeSwitcher } from "@core/ui/layout/common/theme-switcher";
-import { useTenantResolution } from "../hooks/useTenantResolution";
+import { useTenantResolution } from "@modules/auth/signin/src/presentation/viewmodels/useTenantResolution";
 
 export function ForgotPasswordView() {
   const { t, direction } = useI18n();

@@ -10,7 +10,7 @@ import { LayoutPanel } from "./LayoutPanel";
 import { BrandingPanel } from "./BrandingPanel";
 import { BlockPanel } from "./BlockPanel";
 import type { StudioDraft, StudioPanel, AuthPageId, AuthPageOverride } from "../viewmodels/useStudioViewModel";
-import type { LoginSlotId, ContentBlock } from "@modules/auth/signin/src/types/login-branding-types";
+import type { LoginSlotId, ContentBlock } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
 import { StylePanel } from "./StylePanel";
 import { AdvancedPanel } from "./AdvancedPanel";
 import { AccessibilityPanel } from "./AccessibilityPanel";

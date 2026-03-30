@@ -3,8 +3,8 @@ import { Input } from "@core/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { Switch } from "@core/ui/switch";
 import { Plus, X, Eye, EyeOff } from "lucide-react";
-import type { ContentBlock } from "@modules/auth/signin/src/types/login-branding-types";
-import { isValidCtaUrl, isValidVideoUrl } from "@modules/auth/signin/src/types/login-branding-types";
+import type { ContentBlock } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
+import { isValidCtaUrl, isValidVideoUrl } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
 
 type T = (k: string) => string;
 type CB = ContentBlock;

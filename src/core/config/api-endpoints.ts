@@ -37,11 +37,7 @@ export const API_ENDPOINTS = {
     },
   },
 
-  // Legacy auth endpoints (for backward compatibility)
-  LOGIN: `${V1}/auth/admin/login`,
-  LOGOUT: `${V1}/auth/admin/logout`,
-  REFRESH: `${V1}/auth/admin/refresh`,
-  GET_ADMIN_ME: `${V1}/auth/admin/me`,
+
 
   // ===== ADMINS =====
   ADMINS: {
@@ -66,7 +62,7 @@ export const API_ENDPOINTS = {
       DEACTIVATE_ALL: `${V1}/Admins/bulk/deactivate-all`,
       DELETE_ALL: `${V1}/Admins/bulk/delete-all`,
     },
-    IMPERSONATE: (id: string) => `${V1}/Admins/${id}/impersonate`,
+
     TRANSFER: (id: string) => `${V1}/Admins/${id}/transfer`,
     TRANSFER_PROTECTION: `${V1}/Admins/transfer-protection`,
     SYNC_ROLES: (id: string) => `${V1}/Admins/${id}/roles/sync`,
@@ -88,9 +84,7 @@ export const API_ENDPOINTS = {
     UNLINK_EXTERNAL_LOGIN: (id: string) => `${V1}/auth/admin/external-logins/${id}`,
   },
 
-  // Legacy profile endpoints
-  UPDATE_ADMIN_PROFILE: `${V1}/auth/admin/me`,
-  CHANGE_ADMIN_PASSWORD: `${V1}/auth/admin/me/password`,
+
 
   ROLES: {
     LIST: `${V1}/Roles`,
@@ -215,8 +209,7 @@ export const API_ENDPOINTS = {
     BULK_RESTORE: `${V1}/recycle-bin/bulk-restore`,
   },
 
-  // Legacy menu endpoints
-  GET_MENU_ITEMS: `${V1}/Menus/my`,
+
 
   // ===== MESSAGING =====
   MESSAGE_TEMPLATES: {

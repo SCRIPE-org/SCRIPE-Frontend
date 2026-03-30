@@ -23,7 +23,7 @@ import { AuthMapper } from "../mappers/AuthMapper";
 import { appLogger } from "@core/common/logger";
 import { LoginRequestModel } from "../models/AuthModel";
 import { Verify2FARequestModel } from "../models/TwoFactorModels";
-import type { IAuthService } from "../services/AuthService";
+import type { IAuthService } from "../../domain/interfaces/IAuthService";
 import type { IAuthRepository } from "../../domain/interfaces/IAuthRepository";
 import { Result } from "@core/common/types/result";
 import { AUTH_STORAGE_KEYS_TO_CLEAR } from "@core/config/storage-keys";
@@ -218,5 +218,19 @@ export class AuthRepository implements IAuthRepository {
    */
   buildOidcConsentForm(searchParams: URLSearchParams, accessToken: string): { action: string; params: Record<string, string> } {
     return this.service.buildOidcConsentForm(searchParams, accessToken);
+  }
+
+  /**
+   * Link an external SSO account to the currently authenticated admin profile.
+   * Used by SSO/SAML callback views when auto-linking during a linking session.
+   */
+  async linkExternalLogin(data: {
+    identityProviderId: string;
+    providerName: string;
+    providerKey: string;
+    email: string;
+    displayName?: string;
+  }): Promise<void> {
+    await this.service.linkExternalLogin(data);
   }
 }

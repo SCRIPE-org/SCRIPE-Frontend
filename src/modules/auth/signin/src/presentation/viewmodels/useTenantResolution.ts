@@ -8,7 +8,11 @@
  * Falls back gracefully: if the domain doesn't resolve (e.g. localhost),
  * returns null branding → UI shows default NEXORA branding.
  *
- * @module auth/hooks
+ * // ARCH-EXCEPTION: pre-auth hook — calls getModuleApiService directly
+ * // because no auth token exists yet (runs before login).
+ * // Cannot go through DI container or repository pattern.
+ *
+ * @module auth/signin/presentation
  */
 "use client";
 

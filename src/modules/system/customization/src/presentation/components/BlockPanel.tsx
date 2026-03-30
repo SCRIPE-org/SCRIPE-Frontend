@@ -16,7 +16,7 @@ import {
 import { Input } from "@core/ui/input";
 import { Button } from "@core/ui/button";
 import type { StudioDraft } from "../viewmodels/useStudioViewModel";
-import type { LoginSlotId, LoginLayout, ContentBlock, BlockType } from "@modules/auth/signin/src/types/login-branding-types";
+import type { LoginSlotId, LoginLayout, ContentBlock, BlockType } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
 import { InlineEditor } from "./BlockEditors";
 
 interface BlockPanelProps {

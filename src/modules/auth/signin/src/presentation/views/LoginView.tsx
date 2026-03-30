@@ -30,10 +30,10 @@ import { CredentialsForm } from "../components/CredentialsForm";
 import { TwoFactorForm } from "../components/TwoFactorForm";
 import { SsoProviderButtons } from "../components/SsoProviderButtons";
 import { SlotRenderer } from "../components/SlotRenderer";
-import { useSsoProviders } from "../../../../hooks/useSsoProviders";
-import { useTenantResolution } from "../../../../hooks/useTenantResolution";
+import { useSsoProviders } from "../viewmodels/useSsoProviders";
+import { useTenantResolution } from "../viewmodels/useTenantResolution";
 import { TenantSuspendedView, TenantNotFoundView } from "./TenantStatusView";
-import { useLoginBrandingTokens } from "../../hooks/useLoginBrandingTokens";
+import { useLoginBrandingTokens } from "../viewmodels/useLoginBrandingTokens";
 
 export function LoginView() {
   const vm = useLoginViewModel();

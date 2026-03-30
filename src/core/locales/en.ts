@@ -86,30 +86,6 @@ export const en = {
       skipToContent: "Skip to main content",
       topActionsLabel: "Page actions",
     },
-    // Registration
-    register: "Create Account",
-    registerDesc: "Fill in the details below to create your account.",
-    fullName: "Full Name",
-    fullNamePlaceholder: "Enter your full name",
-    passwordPlaceholder: "Create a password",
-    createAccount: "Create Account",
-    // Verify Email
-    verifyEmail: "Verify Your Email",
-    verifyEmailDesc: "We've sent a verification code to your email. Enter it below to verify your account.",
-    verificationCode: "Verification Code",
-    verificationCodePlaceholder: "Enter 6-digit code",
-    verify: "Verify Email",
-    resendCode: "Resend Code",
-    emailVerified: "Your email has been verified!",
-    continueToLogin: "Continue to Login",
-    // MFA
-    mfa: "Two-Factor Authentication",
-    mfaDesc: "Enter the verification code from your authenticator app to continue.",
-    mfaTotp: "Authenticator App",
-    mfaSms: "SMS Code",
-    mfaTotpLabel: "6-Digit Code from your app",
-    mfaSmsLabel: "Code sent to your phone",
-    verifyCode: "Verify & Continue",
   },
 
   // SSO / External Logins (Profile Section)

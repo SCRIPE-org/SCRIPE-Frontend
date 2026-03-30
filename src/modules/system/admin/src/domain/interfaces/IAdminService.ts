@@ -42,14 +42,7 @@ export interface AdminListResult {
 }
 
 /**
- * Impersonation result
- */
-export interface ImpersonateResult {
-  token: string;
-  expiresAt: string;
-}
 
-/**
  * Admin Service Interface
  */
 export interface IAdminService {
@@ -165,10 +158,7 @@ export interface IAdminService {
    */
   bulkDeleteAll(filter: BulkAdminsFilterJson): Promise<number>;
 
-  /**
-   * Impersonate an admin (returns new token)
-   */
-  impersonate(id: string): Promise<ImpersonateResult>;
+
 
   /**
    * Transfer admin to another tenant

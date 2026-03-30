@@ -21,10 +21,8 @@ import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { Button } from "@core/ui/button";
 import { AlertTriangle, ArrowLeft, ShieldAlert, UserX } from "lucide-react";
 import Link from "next/link";
-import { completeSsoCallback } from "../../../../hooks/useSsoProviders";
+import { completeSsoCallback } from "../viewmodels/useSsoProviders";
 import { appLogger } from "@/core/common/logger";
-import { getModuleApiService } from "@core/services/api-factory";
-import { API_ENDPOINTS } from "@core/config/api-endpoints";
 import { secureTokenService } from "@core/common/secure-token-service";
 
 type CallbackState = "processing" | "success" | "error" | "no_linked_account";
@@ -118,17 +116,13 @@ export function SsoCallbackView() {
                               if (isAuthenticated || isLinkingSession) {
                                     sessionStorage.removeItem("sso_linking");
                                     try {
-                                          const api = getModuleApiService("IDENTITY");
-                                          await api.post(
-                                                API_ENDPOINTS.PROFILE.LINK_EXTERNAL_LOGIN,
-                                                {
-                                                      identityProviderId: details.identityProviderId,
-                                                      providerName: details.providerName || details.provider,
-                                                      providerKey: details.providerKey || details.subject,
-                                                      email: details.email,
-                                                      displayName: details.name,
-                                                }
-                                          );
+                                          await authRepository.linkExternalLogin({
+                                                identityProviderId: details.identityProviderId,
+                                                providerName: details.providerName || details.provider,
+                                                providerKey: details.providerKey || details.subject,
+                                                email: details.email,
+                                                displayName: details.name,
+                                          });
                                           operationSuccess(t("sso.accountLinkedSuccess"));
                                           router.replace("/profile/security");
                                           return;

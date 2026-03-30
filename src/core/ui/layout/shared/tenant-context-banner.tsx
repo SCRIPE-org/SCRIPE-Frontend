@@ -3,7 +3,7 @@
 import { useRef, useEffect } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useTenantContext } from "@core/providers/tenant-context-provider";
-import { useImpersonation } from "@modules/auth/hooks/useImpersonation";
+import { useImpersonation } from "@modules/auth/core/src/presentation/viewmodels/useImpersonation";
 import { UserCheck, Building2, X } from "lucide-react";
 import { Button } from "@core/ui/button";
 import { useRouter } from "next/navigation";

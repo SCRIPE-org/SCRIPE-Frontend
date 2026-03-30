@@ -11,7 +11,4 @@ export { authContainer, getAuthContainer } from "./di";
 // Submodules
 export { LoginView } from "./signin";
 export { ForgotPasswordView, ResetPasswordView } from "./password-reset";
-export { RegisterView } from "./registration";
-export { VerifyEmailView } from "./verify-email";
-export { MfaView } from "./mfa";
-// export { RouteGuard } from './core/presentation/components/RouteGuard'; // RouteGuard moved to Core
+

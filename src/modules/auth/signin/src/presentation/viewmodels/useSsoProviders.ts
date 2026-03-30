@@ -11,7 +11,11 @@
  *  3. IdP redirects back to /sso/callback?code=...&state=...
  *  4. Callback page calls completeSsoLogin() → exchanges code for account info
  *
- * @module auth/hooks
+ * // ARCH-EXCEPTION: pre-auth hook — calls getModuleApiService directly
+ * // because no auth token exists yet (runs before login).
+ * // Cannot go through DI container or repository pattern.
+ *
+ * @module auth/signin/presentation
  */
 "use client";
 

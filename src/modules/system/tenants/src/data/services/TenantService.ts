@@ -314,5 +314,27 @@ export class TenantService implements ITenantService {
       API_ENDPOINTS.ENTITLEMENTS.PRICING.PREVIEW(editionId, currency, type)
     );
   }
+
+  // ── Domain Management ─────────────────────────────────────
+
+  async getDomains(tenantId: string): Promise<import("../../domain/interfaces/ITenantService").TenantDomainsResponse> {
+    return this.api.get(API_ENDPOINTS.TENANTS.DOMAINS(tenantId));
+  }
+
+  async addDomain(tenantId: string, domain: string): Promise<void> {
+    await this.api.post(API_ENDPOINTS.TENANTS.DOMAINS(tenantId), { domain });
+  }
+
+  async verifyDomain(tenantId: string, domainId: string): Promise<void> {
+    await this.api.post(API_ENDPOINTS.TENANTS.DOMAIN_VERIFY(tenantId, domainId), {});
+  }
+
+  async setDomainPrimary(tenantId: string, domainId: string): Promise<void> {
+    await this.api.put(API_ENDPOINTS.TENANTS.DOMAIN_PRIMARY(tenantId, domainId), {});
+  }
+
+  async removeDomain(tenantId: string, domainId: string): Promise<void> {
+    await this.api.delete(API_ENDPOINTS.TENANTS.DOMAIN_BY_ID(tenantId, domainId));
+  }
 }
 

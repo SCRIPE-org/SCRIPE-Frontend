@@ -12,6 +12,10 @@ import type {
 import type { PagedResult } from "@modules/system/core/domain/types";
 import type { Permission } from "@modules/system/permissions/src/domain/entities/Permission";
 import type { EditionThinModel, SubscriptionModel, PagedEditionResult, DowngradeImpactReport } from "../../data/models/TenantSubscription";
+import type { TenantDomainJson } from "./ITenantService";
+
+/** Domain-level alias for tenant domain data */
+export type TenantDomainData = TenantDomainJson;
 
 /**
  * Tenant list query parameters
@@ -203,4 +207,21 @@ export interface ITenantRepository {
 
   /** Preview resolved price for an edition + currency + type combo */
   previewPrice(editionId: string, currency: string, type: string): Promise<number>;
+
+  // ── Domain Management ─────────────────────────────────────
+
+  /** Get all domains for a tenant */
+  getDomains(tenantId: string): Promise<{ domains: TenantDomainData[]; cnameTarget: string; verificationPrefix: string }>;
+
+  /** Add a custom domain to a tenant */
+  addDomain(tenantId: string, domain: string): Promise<void>;
+
+  /** Verify DNS for a custom domain */
+  verifyDomain(tenantId: string, domainId: string): Promise<void>;
+
+  /** Set a domain as primary */
+  setDomainPrimary(tenantId: string, domainId: string): Promise<void>;
+
+  /** Remove a custom domain */
+  removeDomain(tenantId: string, domainId: string): Promise<void>;
 }

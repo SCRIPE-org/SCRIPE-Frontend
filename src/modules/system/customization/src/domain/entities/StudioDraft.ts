@@ -6,7 +6,7 @@
  *
  * @module customization/domain
  */
-import type { LoginLayout, SlotConfig } from "@modules/auth/signin/src/types/login-branding-types";
+import type { LoginLayout, SlotConfig } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
 
 // ── Auth Page Identifiers ─────────────────────────────
 export type AuthPageId = "login" | "forgot-password" | "reset-password" | "register" | "verify-email" | "mfa";

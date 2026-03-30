@@ -10,7 +10,7 @@
 "use client";
 
 import { ContentBlockRenderer } from "./ContentBlockRenderer";
-import type { ContentBlock, LoginSlotId, SlotConfig } from "../../types/login-branding-types";
+import type { ContentBlock, LoginSlotId, SlotConfig } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
 
 // v1 slot constraints (§11)
 const SLOT_MAX_ITEMS: Record<LoginSlotId, number> = {

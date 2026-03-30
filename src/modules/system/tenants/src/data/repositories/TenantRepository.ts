@@ -214,4 +214,26 @@ export class TenantRepository implements ITenantRepository {
   async previewPrice(editionId: string, currency: string, type: string): Promise<number> {
     return this.service.previewPrice(editionId, currency, type);
   }
+
+  // ── Domain Management ─────────────────────────────────────
+
+  async getDomains(tenantId: string) {
+    return this.service.getDomains(tenantId);
+  }
+
+  async addDomain(tenantId: string, domain: string): Promise<void> {
+    await this.service.addDomain(tenantId, domain);
+  }
+
+  async verifyDomain(tenantId: string, domainId: string): Promise<void> {
+    await this.service.verifyDomain(tenantId, domainId);
+  }
+
+  async setDomainPrimary(tenantId: string, domainId: string): Promise<void> {
+    await this.service.setDomainPrimary(tenantId, domainId);
+  }
+
+  async removeDomain(tenantId: string, domainId: string): Promise<void> {
+    await this.service.removeDomain(tenantId, domainId);
+  }
 }

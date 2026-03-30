@@ -22,7 +22,7 @@ import {
   type LoginBrandingConfig,
   type SlotConfig,
   type LoginLayout,
-} from "../types/login-branding-types";
+} from "@modules/auth/core/domain/entities/LoginBrandingTypes";
 
 // ─── Accessibility config parsed from tokens ───
 export interface AccessibilityConfig {

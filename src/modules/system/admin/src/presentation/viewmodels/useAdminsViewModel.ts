@@ -24,7 +24,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { secureTokenService } from "@core/common/secure-token-service";
 import { useCurrentTenantId } from "@core/providers/tenant-context-provider";
-import { useImpersonation } from "@modules/auth/hooks/useImpersonation";
+import { useImpersonation } from "@modules/auth/core/src/presentation/viewmodels/useImpersonation";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 
 /**

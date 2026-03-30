@@ -145,10 +145,8 @@ export interface IAdminRepository {
    */
   bulkDeleteAll(filter: BulkAdminsFilterRequest): Promise<number>;
 
-  /**
-   * Impersonate an admin (returns new token)
-   */
-  impersonate(id: string): Promise<{ token: string; expiresAt: string }>;
+
+
 
   /**
    * Transfer admin to another tenant

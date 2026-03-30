@@ -10,7 +10,7 @@
  */
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
@@ -29,22 +29,10 @@ import {
 } from "lucide-react";
 import { Skeleton } from "@core/ui/skeleton";
 import { cn } from "@core/common/utils";
-import { getModuleApiService } from "@core/services/api-factory";
-import { API_ENDPOINTS } from "@core/config/api-endpoints";
-import { toast } from "sonner";
+import { useTenantDomainsViewModel } from "../../viewmodels/useTenantDomainsViewModel";
+import type { TenantDomainJson } from "../../../domain/interfaces/ITenantService";
 
 // ─── Types ────────────────────────────────────────────────
-
-interface TenantDomain {
-  id: string;
-  domain: string;
-  type: "auto" | "custom";
-  isPrimary: boolean;
-  isVerified: boolean;
-  verificationToken: string | null;
-  verifiedAt: string | null;
-  createdAt: string;
-}
 
 interface TenantDomainsTabProps {
   tenantId: string;
@@ -56,94 +44,31 @@ interface TenantDomainsTabProps {
 export function TenantDomainsTab({ tenantId, tenantName }: TenantDomainsTabProps) {
   const { t, direction } = useI18n();
   const isRtl = direction === "rtl";
-  const [domains, setDomains] = useState<TenantDomain[]>([]);
-  const [cnameTarget, setCnameTarget] = useState("");
-  const [verifyPrefix, setVerifyPrefix] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [newDomain, setNewDomain] = useState("");
-  const [isAdding, setIsAdding] = useState(false);
   const [showAddForm, setShowAddForm] = useState(false);
 
-  const api = getModuleApiService("IDENTITY");
-
-  // ─── Fetch Domains ──────────────────────────────────────
-
-  const fetchDomains = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      const response = await api.get<{ domains: TenantDomain[]; cnameTarget: string; verificationPrefix: string }>(API_ENDPOINTS.TENANTS.DOMAINS(tenantId));
-      setDomains(response?.domains || []);
-      if (response?.cnameTarget) setCnameTarget(response.cnameTarget);
-      if (response?.verificationPrefix) setVerifyPrefix(response.verificationPrefix);
-      setError(null);
-    } catch {
-      setError(t("tenant.domainsLoadFailed"));
-    } finally {
-      setIsLoading(false);
-    }
-  }, [tenantId]);
-
-  useEffect(() => {
-    fetchDomains();
-  }, [fetchDomains]);
-
-  // ─── Actions ────────────────────────────────────────────
+  const vm = useTenantDomainsViewModel({ tenantId, tenantName });
 
   const handleAddDomain = async () => {
     if (!newDomain.trim()) return;
-    setIsAdding(true);
     try {
-      await api.post(API_ENDPOINTS.TENANTS.DOMAINS(tenantId), { domain: newDomain.trim() });
-      toast.success(t("tenant.domainsAddedSuccess"));
+      await vm.addDomain(newDomain);
       setNewDomain("");
       setShowAddForm(false);
-      await fetchDomains();
-    } catch (err: any) {
-      toast.error(err?.response?.data?.message || err?.response?.data?.error || t("tenant.domainsAddFailed"));
-    } finally {
-      setIsAdding(false);
-    }
-  };
-
-  const handleVerify = async (domainId: string) => {
-    try {
-      await api.post(API_ENDPOINTS.TENANTS.DOMAIN_VERIFY(tenantId, domainId), {});
-      toast.success(t("tenant.domainsVerifiedSuccess"));
-      await fetchDomains();
     } catch {
-      toast.error(t("tenant.domainsVerifyFailed"));
-    }
-  };
-
-  const handleSetPrimary = async (domainId: string) => {
-    try {
-      await api.put(API_ENDPOINTS.TENANTS.DOMAIN_PRIMARY(tenantId, domainId), {});
-      toast.success(t("tenant.domainsPrimaryUpdated"));
-      await fetchDomains();
-    } catch {
-      toast.error(t("tenant.domainsPrimaryFailed"));
-    }
-  };
-
-  const handleRemove = async (domainId: string) => {
-    try {
-      await api.delete(API_ENDPOINTS.TENANTS.DOMAIN_BY_ID(tenantId, domainId));
-      toast.success(t("tenant.domainsRemoved"));
-      await fetchDomains();
-    } catch (err: any) {
-      toast.error(err?.response?.data?.message || err?.response?.data?.error || t("tenant.domainsRemoveFailed"));
+      // Toast already handled by viewmodel
     }
   };
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
-    toast.success(t("tenant.domainsCopied"));
+    // toast handled inline — simple utility, not worth routing through VM
+    import("sonner").then(({ toast }) => toast.success(t("tenant.domainsCopied")));
   };
 
   // ─── Loading / Error ────────────────────────────────────
 
-  if (isLoading) {
+  if (vm.isLoading) {
     return (
       <div className="space-y-4">
         {Array.from({ length: 2 }).map((_, i) => (
@@ -153,20 +78,17 @@ export function TenantDomainsTab({ tenantId, tenantName }: TenantDomainsTabProps
     );
   }
 
-  if (error) {
+  if (vm.error) {
     return (
       <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-6 text-center">
         <AlertCircle className="mx-auto h-8 w-8 text-destructive mb-2" />
-        <p className="text-sm text-destructive">{error}</p>
-        <Button variant="outline" size="sm" className="mt-3" onClick={fetchDomains}>
+        <p className="text-sm text-destructive">{vm.error}</p>
+        <Button variant="outline" size="sm" className="mt-3" onClick={vm.refresh}>
           {t("tenant.domainsRetry")}
         </Button>
       </div>
     );
   }
-
-  const autoDomains = domains.filter((d) => d.type === "auto");
-  const customDomains = domains.filter((d) => d.type === "custom");
 
   // ─── Render ─────────────────────────────────────────────
 
@@ -208,8 +130,8 @@ export function TenantDomainsTab({ tenantId, tenantName }: TenantDomainsTabProps
               onKeyDown={(e) => e.key === "Enter" && handleAddDomain()}
               className="flex-1"
             />
-            <Button onClick={handleAddDomain} disabled={isAdding || !newDomain.trim()} size="sm">
-              {isAdding ? <RefreshCw className="h-4 w-4 animate-spin" /> : t("tenant.domainsAdd")}
+            <Button onClick={handleAddDomain} disabled={vm.isAdding || !newDomain.trim()} size="sm">
+              {vm.isAdding ? <RefreshCw className="h-4 w-4 animate-spin" /> : t("tenant.domainsAdd")}
             </Button>
           </div>
           <p className="text-xs text-muted-foreground">
@@ -219,22 +141,22 @@ export function TenantDomainsTab({ tenantId, tenantName }: TenantDomainsTabProps
       )}
 
       {/* Auto-Generated Domains */}
-      {autoDomains.length > 0 && (
+      {vm.autoDomains.length > 0 && (
         <div className="space-y-3">
           <p className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
             {t("tenant.domainsAutoGenerated")}
           </p>
-          {autoDomains.map((d) => (
+          {vm.autoDomains.map((d) => (
             <DomainCard
               key={d.id}
               domain={d}
               isRtl={isRtl}
               t={t}
-              cnameTarget={cnameTarget}
-              verifyPrefix={verifyPrefix}
-              onVerify={handleVerify}
-              onSetPrimary={handleSetPrimary}
-              onRemove={handleRemove}
+              cnameTarget={vm.cnameTarget}
+              verifyPrefix={vm.verifyPrefix}
+              onVerify={vm.verifyDomain}
+              onSetPrimary={vm.setDomainPrimary}
+              onRemove={vm.removeDomain}
               onCopy={copyToClipboard}
             />
           ))}
@@ -244,9 +166,9 @@ export function TenantDomainsTab({ tenantId, tenantName }: TenantDomainsTabProps
       {/* Custom Domains */}
       <div className="space-y-3">
         <p className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
-          {t("tenant.domainsCustom")} {customDomains.length > 0 && `(${customDomains.length})`}
+          {t("tenant.domainsCustom")} {vm.customDomains.length > 0 && `(${vm.customDomains.length})`}
         </p>
-        {customDomains.length === 0 ? (
+        {vm.customDomains.length === 0 ? (
           <div className="rounded-xl border border-dashed border-muted-foreground/20 p-8 text-center">
             <Globe className="mx-auto h-8 w-8 text-muted-foreground/30 mb-2" />
             <p className="text-sm text-muted-foreground">
@@ -257,17 +179,17 @@ export function TenantDomainsTab({ tenantId, tenantName }: TenantDomainsTabProps
             </p>
           </div>
         ) : (
-          customDomains.map((d) => (
+          vm.customDomains.map((d) => (
             <DomainCard
               key={d.id}
               domain={d}
               isRtl={isRtl}
               t={t}
-              cnameTarget={cnameTarget}
-              verifyPrefix={verifyPrefix}
-              onVerify={handleVerify}
-              onSetPrimary={handleSetPrimary}
-              onRemove={handleRemove}
+              cnameTarget={vm.cnameTarget}
+              verifyPrefix={vm.verifyPrefix}
+              onVerify={vm.verifyDomain}
+              onSetPrimary={vm.setDomainPrimary}
+              onRemove={vm.removeDomain}
               onCopy={copyToClipboard}
             />
           ))
@@ -280,7 +202,7 @@ export function TenantDomainsTab({ tenantId, tenantName }: TenantDomainsTabProps
 // ─── Domain Card ──────────────────────────────────────────
 
 interface DomainCardProps {
-  domain: TenantDomain;
+  domain: TenantDomainJson;
   isRtl: boolean;
   t: (key: string, args?: Record<string, unknown>) => string;
   cnameTarget: string;
