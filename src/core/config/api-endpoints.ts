@@ -167,6 +167,16 @@ export const API_ENDPOINTS = {
     REORDER: `${V1}/Themes/reorder`,
   },
 
+  // ===== THEME BUNDLES =====
+  BUNDLES: {
+    LIST: `${V1}/ThemeBundles`,
+    FEATURED: `${V1}/ThemeBundles/featured`,
+    BY_SLUG: (slug: string) => `${V1}/ThemeBundles/${slug}`,
+    APPLY: (slug: string) => `${V1}/ThemeBundles/${slug}/apply`,
+    FAVORITE: (slug: string) => `${V1}/ThemeBundles/${slug}/favorite`,
+    SAVE: `${V1}/ThemeBundles/save-current`,
+  },
+
   // ===== MENUS =====
   MENUS: {
     MY: `${V1}/Menus/my`,

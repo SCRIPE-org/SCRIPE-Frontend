@@ -6197,6 +6197,72 @@ export const en = {
       browseThemes: "Browse Themes",
     },
 
+    // Theme Bundle Marketplace (M12)
+    bundles: {
+      title: "Bundles",
+      // Bundle type labels
+      typeAll: "All Bundles",
+      typeLogin: "Login Only",
+      typeAuthSuite: "Auth Suite",
+      typeDashboard: "Dashboard",
+      typeFull: "Full Bundle",
+      // Layer labels
+      layers: {
+        login: "Login Theme",
+        authPages: "Auth Page Overrides",
+        dashboard: "Dashboard Theme",
+        loginBuilder: "Login Builder Canvas",
+        dashboardBuilder: "Dashboard Builder Canvas",
+      },
+      // Layer descriptions
+      layerDesc: {
+        login: "Login page colors, typography, and spacing",
+        authPages: "Register, forgot password, verify email, and MFA pages",
+        dashboard: "Dashboard layout, colors, and widgets",
+        loginBuilder: "Drag-and-drop login page builder canvas",
+        dashboardBuilder: "Drag-and-drop dashboard builder canvas",
+      },
+      // Bundle includes section
+      includes: "What's Included",
+      // Card labels
+      card: {
+        layers: "{{count}} layers",
+      },
+      // Actions
+      applyBundle: "Apply Bundle",
+      applySuccess: "Bundle applied successfully!",
+      applyFailed: "Failed to apply bundle",
+      saveCurrent: "Save Current",
+      saveSuccess: "Bundle saved successfully!",
+      saveFailed: "Failed to save bundle",
+      // Apply mode
+      applyMode: {
+        title: "How would you like to apply?",
+        replace: "Replace",
+        replaceDesc: "Replace all current settings with the bundle values",
+        merge: "Merge",
+        mergeDesc: "Keep your current settings and overlay bundle values on top",
+      },
+      // Save dialog
+      saveDialog: {
+        title: "Save Current Config as Bundle",
+        subtitle: "Package your current customization settings into a reusable bundle.",
+        name: "Bundle Name",
+        namePlaceholder: "e.g. Corporate Blue Suite",
+        description: "Description",
+        descPlaceholder: "Describe what this bundle includes and when to use it...",
+        selectLayers: "Select Layers to Include",
+        detectedType: "Detected bundle type",
+        tags: "Tags",
+        tagsPlaceholder: "corporate, blue, modern",
+        tagsHint: "Comma-separated tags for search and filtering",
+        save: "Save Bundle",
+      },
+      // Empty state
+      empty: "No bundles found",
+      emptyHint: "Try adjusting your filters or save your current config as a bundle.",
+    },
+
     // Theme Detail Modal (M7)
     themeDetail: {
       // Preview controls

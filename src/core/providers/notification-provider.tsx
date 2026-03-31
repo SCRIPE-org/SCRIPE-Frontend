@@ -179,7 +179,7 @@ export function NotificationSignalRProvider({
 
                   appLogger.debug("[NotifHub] ✅ Connected to", hubUrl);
             } catch (err) {
-                  console.error("[NotifHub] ❌ Connection FAILED:", err);
+                  appLogger.error("[NotifHub] ❌ Connection FAILED:", err);
                   setConnectionState("disconnected");
                   setConnection(null);
                   connectionRef.current = null;

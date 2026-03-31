@@ -151,9 +151,6 @@ export const SYSTEM_PERMISSIONS = {
 
   // Permissions
   PERMISSIONS_VIEW: "permissions.view",
-  PERMISSIONS_CREATE: "permissions.create",
-  PERMISSIONS_UPDATE: "permissions.update",
-  PERMISSIONS_DELETE: "permissions.delete",
 
   // Tenants
   TENANTS_VIEW: "tenants.view",
@@ -174,7 +171,6 @@ export const SYSTEM_PERMISSIONS = {
   MENUS_CREATE: "menus.create",
   MENUS_UPDATE: "menus.update",
   MENUS_DELETE: "menus.delete",
-  MENUS_REORDER: "menus.reorder",
   MENUS_MANAGE_LINKS: "menus.manage_links",
   MENUS_CUSTOMIZE: "menus.customize",
   MENUS_CUSTOMIZE_TENANT: "menus.customize_tenant",
@@ -223,6 +219,7 @@ export const SYSTEM_PERMISSIONS = {
   FEATURES_UPDATE: "features.update",
   FEATURES_DELETE: "features.delete",
   FEATURES_OVERRIDE: "features.override",
+  FEATURES_RESOLVE: "features.resolve",
 
   // Subscriptions
   SUBSCRIPTIONS_VIEW: "subscriptions.view",

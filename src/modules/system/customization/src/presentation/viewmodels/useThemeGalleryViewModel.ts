@@ -27,7 +27,7 @@ type GalleryCategory = typeof GALLERY_CATEGORIES[number];
 
 type GallerySortKey = "popular" | "newest" | "trending" | "nameAsc" | "nameDesc";
 
-type GalleryTab = "browse" | "featured" | "favorites";
+type GalleryTab = "browse" | "featured" | "favorites" | "bundles";
 
 export interface GalleryFilters {
   search: string;
@@ -198,6 +198,13 @@ export function useThemeGalleryViewModel() {
           items: favoritesQuery.data?.items || [],
           totalCount: favoritesQuery.data?.totalCount || 0,
           isLoading: favoritesQuery.isLoading,
+        };
+      case "bundles":
+      default:
+        return {
+          items: [] as ThemeCard[],
+          totalCount: 0,
+          isLoading: false,
         };
     }
   }, [activeTab, browseQuery, featuredQuery, favoritesQuery]);

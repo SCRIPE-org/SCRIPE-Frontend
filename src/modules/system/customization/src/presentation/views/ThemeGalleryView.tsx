@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Theme Gallery View — Full-Page Theme Browsing Experience
  *
  * Rich gallery for tenant admins to browse, preview, and apply themes.
@@ -33,6 +33,7 @@ import {
 } from "lucide-react";
 import { useThemeGalleryViewModel } from "../viewmodels/useThemeGalleryViewModel";
 import { ThemeDetailModal } from "../components/ThemeDetailModal";
+import { BundleGalleryTab } from "../components/BundleGalleryTab";
 import type { ThemeCard } from "../../domain/entities/ThemeCard";
 
 const G = "studio.gallery";
@@ -91,7 +92,7 @@ export function ThemeGalleryView() {
       {/* ── Tab Bar ── */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-1 p-1 rounded-lg bg-muted/50 border border-border/50">
-          {(["browse", "featured", "favorites"] as const).map((tab) => (
+          {(["browse", "featured", "favorites", "bundles"] as const).map((tab) => (
             <button
               key={tab}
               onClick={() => vm.setActiveTab(tab)}
@@ -105,6 +106,7 @@ export function ThemeGalleryView() {
               {tab === "browse" && t(`${G}.browseAll`)}
               {tab === "featured" && t(`studio.marketplace.featured`)}
               {tab === "favorites" && t(`studio.marketplace.favorites`)}
+              {tab === "bundles" && t(`studio.bundles.title`)}
             </button>
           ))}
         </div>
@@ -132,6 +134,11 @@ export function ThemeGalleryView() {
           </div>
         </div>
       </div>
+
+      {/* ── Bundles Tab ── */}
+      {vm.activeTab === "bundles" && (
+        <BundleGalleryTab />
+      )}
 
       {/* ── Category Chips + Filters ── */}
       {vm.activeTab === "browse" && (
