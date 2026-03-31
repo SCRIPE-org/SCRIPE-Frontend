@@ -1,10 +1,12 @@
 /**
- * DashboardThemeConfig — Domain entity for dashboard theming (M9)
+ * DashboardThemeConfig — Domain entity for dashboard theming (M9 + M11)
  *
  * This is the typed schema for `TenantSettings.DashboardThemeJson`.
  * It extends the existing prefs (`theme`, `sidebarCollapsed`, `language`)
- * with visual tokens for the dashboard UI.
+ * with visual tokens for the dashboard UI and builder canvas layout.
  */
+
+import { type DashboardBuilderCanvas, DEFAULT_BUILDER_CANVAS } from "./DashboardWidget";
 
 // ── Greeting ──
 export interface DashboardGreeting {
@@ -66,6 +68,9 @@ export interface DashboardThemeConfig {
   charts: DashboardChartConfig;
   sections: DashboardSections;
   layout: DashboardLayout;
+
+  // M11: Builder canvas
+  builderCanvas: DashboardBuilderCanvas;
 }
 
 // ═══════════════════════════════════════════════
@@ -144,6 +149,7 @@ export const DEFAULT_DASHBOARD_THEME: DashboardThemeConfig = {
     density: "default",
     columnsPerRow: 5,
   },
+  builderCanvas: { ...DEFAULT_BUILDER_CANVAS },
 };
 
 // ═══════════════════════════════════════════════
@@ -186,6 +192,11 @@ export function parseDashboardThemeJson(
       layout: {
         density: raw.layout?.density ?? DEFAULT_DASHBOARD_THEME.layout.density,
         columnsPerRow: raw.layout?.columnsPerRow ?? DEFAULT_DASHBOARD_THEME.layout.columnsPerRow,
+      },
+      builderCanvas: {
+        enabled: raw.builderCanvas?.enabled ?? DEFAULT_BUILDER_CANVAS.enabled,
+        widgets: raw.builderCanvas?.widgets ?? DEFAULT_BUILDER_CANVAS.widgets,
+        gridRows: raw.builderCanvas?.gridRows ?? DEFAULT_BUILDER_CANVAS.gridRows,
       },
     };
   } catch {

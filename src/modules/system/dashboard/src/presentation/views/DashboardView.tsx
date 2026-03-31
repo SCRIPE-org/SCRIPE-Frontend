@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 /**
  * Dashboard View — M9: Dashboard Theming
@@ -203,6 +203,7 @@ export function DashboardView() {
         onDiscard={theme.discardDraft}
         onReset={theme.resetToDefault}
         isSaving={theme.isSaving}
+        onBuilderCanvasChange={(canvas) => theme.updateDraft("builderCanvas", canvas)}
       />
     </div>
   );

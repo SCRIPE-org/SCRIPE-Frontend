@@ -1,19 +1,17 @@
-﻿/**
- * DashboardStudioPanel — Slide-over settings panel for dashboard theming (M9)
+/**
+ * DashboardStudioPanel — Slide-over settings panel for dashboard theming (M9 + M11)
  *
  * Controls:
- *   - Greeting: enable, text, subtitle
- *   - KPI Cards: border radius, border, shadow, accent colors
- *   - Charts: palette picker, style, grid
- *   - Sections: visibility toggles
- *   - Layout: density, columns per row
+ *   - Tab 1 "Visual"  — Greeting, KPI Cards, Charts, Sections, Layout
+ *   - Tab 2 "Builder" — Drag-and-drop dashboard layout builder
  *
  * All changes are reflected instantly via draft state in useDashboardTheme.
  */
 "use client";
 import { useI18n } from "@core/providers/i18n-provider";
+import { cn } from "@core/common/utils";
 
-import React from "react";
+import React, { useState } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetFooter } from "@core/ui/sheet";
 import { Button } from "@core/ui/button";
 import { Label } from "@core/ui/label";
@@ -22,7 +20,8 @@ import { Switch } from "@core/ui/switch";
 import { Separator } from "@core/ui/separator";
 import { ScrollArea } from "@core/ui/scroll-area";
 import { Badge } from "@core/ui/badge";
-import { Save, RotateCcw, Loader2, Palette, Layout, BarChart3, Eye, MessageSquare } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
+import { Save, RotateCcw, Loader2, Palette, Layout, BarChart3, Eye, MessageSquare, Blocks } from "lucide-react";
 import {
   DASHBOARD_PALETTES,
   type DashboardThemeConfig,
@@ -30,6 +29,8 @@ import {
   type ShadowLevel,
   type LayoutDensity,
 } from "../../domain/entities/DashboardThemeConfig";
+import type { DashboardBuilderCanvas } from "../../domain/entities/DashboardWidget";
+import { DashboardBuilderPanel } from "./dashboard-builder/DashboardBuilderPanel";
 
 interface Props {
   open: boolean;
@@ -40,6 +41,7 @@ interface Props {
   onDiscard: () => void;
   onReset: () => void;
   isSaving: boolean;
+  onBuilderCanvasChange?: (canvas: DashboardBuilderCanvas) => void;
 }
 
 // ── Reusable option buttons ──
@@ -74,7 +76,6 @@ function OptionPicker<T extends string>({
 
 // ── Section wrapper ──
 function StudioSection({ icon: Icon, title, children }: { icon: React.ElementType; title: string; children: React.ReactNode }) {
-  const { t } = useI18n();
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-2 text-sm font-semibold">
@@ -94,11 +95,16 @@ export function DashboardStudioPanel({
   onSave,
   onDiscard,
   onReset,
-  isSaving, }: Props) {
+  isSaving,
+  onBuilderCanvasChange, }: Props) {
   const { t } = useI18n();
+  const [activeTab, setActiveTab] = useState<string>("visual");
   return (
     <Sheet open={open} onOpenChange={(v) => !v && onClose()}>
-      <SheetContent side="right" className="w-[400px] sm:w-[420px] p-0 flex flex-col">
+      <SheetContent side="right" className={cn(
+          "p-0 flex flex-col transition-all",
+          activeTab === "builder" ? "w-[700px] sm:w-[780px]" : "w-[400px] sm:w-[420px]"
+        )}>
         <SheetHeader className="px-6 pt-6 pb-2">
           <SheetTitle className="flex items-center gap-2">
             <Palette className="h-5 w-5 text-primary" />
@@ -109,8 +115,22 @@ export function DashboardStudioPanel({
           </SheetDescription>
         </SheetHeader>
 
-        <ScrollArea className="flex-1 px-6">
-          <div className="space-y-6 pb-6">
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-1 flex-col overflow-hidden">
+            <TabsList className="mx-6 mt-2 grid w-auto grid-cols-2">
+              <TabsTrigger value="visual" className="gap-1.5 text-xs">
+                <Palette className="h-3.5 w-3.5" />
+                {t("dashboard.studio.tabVisual") || "Visual"}
+              </TabsTrigger>
+              <TabsTrigger value="builder" className="gap-1.5 text-xs">
+                <Blocks className="h-3.5 w-3.5" />
+                {t("dashboard.studio.tabBuilder") || "Builder"}
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="visual" className="flex-1 mt-0 overflow-hidden">
+              <ScrollArea className="h-full px-6">
+                <div className="space-y-6 pb-6 pt-3">
 
             {/* ── Greeting ── */}
             <StudioSection icon={MessageSquare} title={t("dashboard.studio.greeting") || "Greeting"}>
@@ -328,8 +348,20 @@ export function DashboardStudioPanel({
                 />
               </div>
             </StudioSection>
+            </div>
+          </ScrollArea>
+        </TabsContent>
+
+        <TabsContent value="builder" className="flex-1 mt-0 overflow-hidden">
+          <div className="h-full">
+            <DashboardBuilderPanel
+              initialCanvas={draft.builderCanvas}
+              onCanvasChange={onBuilderCanvasChange}
+            />
           </div>
-        </ScrollArea>
+        </TabsContent>
+      </Tabs>
+    </div>
 
         <SheetFooter className="border-t px-6 py-4 gap-2">
           <Button variant="ghost" size="sm" onClick={onReset} className="mr-auto gap-1.5">
