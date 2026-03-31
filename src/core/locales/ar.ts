@@ -6176,6 +6176,7 @@ export const ar = {
     },
 
     tab: {
+      builder: "المصمم",
       layout: "التخطيط",
       branding: "العلامة التجارية",
       appearance: "المظهر",

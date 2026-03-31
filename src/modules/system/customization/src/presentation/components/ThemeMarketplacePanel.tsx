@@ -1,4 +1,4 @@
-﻿/**
+/**
  * ThemeMarketplacePanel — Studio sidebar panel for browsing and applying themes
  *
  * Features:
@@ -107,7 +107,7 @@ export function ThemeMarketplacePanel({ onApplySuccess, onPreviewTheme, onExitPr
             {/* // UI-EXCEPTION: compact studio layout — native input for tight sidebar spacing */}
             <input
               type="text"
-              placeholder={t("themes.search") || "Search themes..."}
+              placeholder={t("studio.marketplace.search") || "Search themes..."}
               value={mp.filters.search}
               onChange={(e) => mp.setFilters({ search: e.target.value })}
               className="w-full h-8 pl-8 pr-3 text-xs rounded-md border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"

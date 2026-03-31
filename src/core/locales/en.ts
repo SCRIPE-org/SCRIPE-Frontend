@@ -34,7 +34,7 @@ export const en = {
       featureMultiTenant: "Multi-Tenant",
       featureRealtime: "Real-Time Analytics",
       featureRBAC: "Advanced RBAC",
-      trust: "Enterprise-grade security €¢ Multi-tenant isolation €¢ 99.9% Uptime",
+      trust: "Enterprise-grade security - Multi-tenant isolation - 99.9% Uptime",
       copyright: "All rights reserved.",
       docs: "Documentation",
       safeModeActive: "Safe mode is active. Default branding is being displayed.",
@@ -47,7 +47,7 @@ export const en = {
       callbackProcessingDesc: "Verifying your identity with the provider...",
       callbackError: "Sign-In Failed",
       callbackErrorGeneric: "An unexpected error occurred during SSO login. Please try again.",
-      missingParams: "Invalid callback €” missing authorization code or state parameter.",
+      missingParams: "Invalid callback - missing authorization code or state parameter.",
       unsupportedAccountType: "This account type is not supported for admin login.",
       noLinkedAccount: "Account Not Linked",
       noLinkedAccountDesc: "No admin account is linked to this external identity. Please sign in with your credentials first, then link your external account in Profile †’ Security settings.",
@@ -282,7 +282,7 @@ export const en = {
     tabFeatures: "Features",
     tabOverrides: "Overrides",
     tabSubscriptionHistory: "Subscriptions",
-    // ”€”€ Domain Management ”€”€
+    // ”-€ Domain Management ”-€
     domainsTitle: "Domains",
     domainsDescription: "Manage domains for {name}",
     domainsAddCustom: "Add Custom Domain",
@@ -404,7 +404,7 @@ export const en = {
     unlimitedHelp: "-1 for unlimited",
     maximumLimit: "Maximum limit",
     logoPreview: "Logo Preview",
-    // ”€”€ Subscription Lifecycle ”€”€
+    // ”-€ Subscription Lifecycle ”-€
     noSubscription: "No active subscription",
     assignPlan: "Assign Plan",
     subscriptionPlan: "Subscription Plan",
@@ -468,7 +468,7 @@ export const en = {
     // Banners
     expiringWarning: "Subscription expires soon. Consider renewing.",
     suspendedBanner: "This subscription is suspended. The tenant cannot access the system.",
-    pastDueBanner: "Payment past due €” subscription at risk. Renew to avoid suspension.",
+    pastDueBanner: "Payment past due - subscription at risk. Renew to avoid suspension.",
     canceledBanner: "Subscription has been canceled.",
     expiredBanner: "Subscription has expired.",
     reassignPlan: "Reassign Plan",
@@ -525,7 +525,7 @@ export const en = {
     overflow: "over",
     overflowInfo: "Excess resources will need to be removed or the system will auto-adjust.",
     confirmDowngrade: "Confirm Downgrade",
-    // ”€”€ Localized Type / Status / Renew Labels ”€”€
+    // ”-€ Localized Type / Status / Renew Labels ”-€
     typeLabel: {
       lifetime: "Lifetime",
       monthly: "Monthly",
@@ -551,7 +551,7 @@ export const en = {
     promoCodeValidating: "Validating...",
     promoCodeValid: "Promo code applied!",
     promoCodeInvalid: "Invalid or expired promo code",
-    // ”€”€ Promo Code Validation Error Codes (from backend) ”€”€
+    // ”-€ Promo Code Validation Error Codes (from backend) ”-€
     invalidPromoCode: "Invalid Promo Code",
     promoCodeError: {
       PROMO_INVALID: "The promo code you entered is incorrect. Please check and try again.",
@@ -562,7 +562,7 @@ export const en = {
     },
     discount: "Discount",
     suspendReasonMinLength: "Reason must be at least 3 characters",
-    // ”€”€ Refund ”€”€
+    // ”-€ Refund ”-€
     refundOption: "Refund Option",
     noRefund: "No Refund",
     noRefundDesc: "No money will be returned to the tenant.",
@@ -719,14 +719,14 @@ export const en = {
       slotRegistry: "Slot Registry",
       notConfigured: "Not configured yet. Will use platform defaults.",
       noDraftTitle: "No Draft Pending",
-      noDraftDesc: "Basic branding changes (logo, colors, headline) save instantly. This draft system is for advanced login customization (layouts, design tokens, content blocks) €” created from the Customizer Studio.",
+      noDraftDesc: "Basic branding changes (logo, colors, headline) save instantly. This draft system is for advanced login customization (layouts, design tokens, content blocks) - created from the Customizer Studio.",
       prefsInfo: "These preferences are set as tenant defaults. Users can override them individually (e.g. toggle theme in the header). Clearing browser storage restores these defaults.",
       // Customizer Studio
       studioTitle: "Login Customizer Studio",
       unsavedDraft: "Unsaved draft",
       published: "Published",
       publish: "Publish",
-      versionConflict: "Version conflict €” another admin published changes. Please refresh and try again.",
+      versionConflict: "Version conflict - another admin published changes. Please refresh and try again.",
       // Studio panels
       loginLayout: "Login Page Layout",
       layoutDescription: "Choose how your login page is structured. Changes preview instantly.",
@@ -894,7 +894,7 @@ export const en = {
     noGroups: "No groups",
   },
 
-  // Menu Management (Admin €” Navigation Menu Items)
+  // Menu Management (Admin - Navigation Menu Items)
   menus: {
     dragToReorder: "Drag to reorder",
     dropToRoot: "Drop here to make it a root item",
@@ -2830,16 +2830,16 @@ export const en = {
         "Apply a complete color palette in one click. Sets primary, secondary, and background colors together.",
     },
     lightBgCategories: {
-      bright: "Bright €” Near White",
-      tinted: "Tinted €” Subtle Color",
-      warm: "Warm €” Warm Tones",
-      mid: "Mid Light €” Noticeable Tint",
+      bright: "Bright - Near White",
+      tinted: "Tinted - Subtle Color",
+      warm: "Warm - Warm Tones",
+      mid: "Mid Light - Noticeable Tint",
     },
     darkBgCategories: {
-      mid: "Mid Dark €” Lighter Darks",
-      dark: "Dark €” Colored Darks",
-      deep: "Deep €” Very Dark",
-      abyss: "Abyss €” Near Black",
+      mid: "Mid Dark - Lighter Darks",
+      dark: "Dark - Colored Darks",
+      deep: "Deep - Very Dark",
+      abyss: "Abyss - Near Black",
     },
     lightGradient: {
       none: "None",
@@ -4767,8 +4767,8 @@ export const en = {
     },
     avatar: {
       clickOrDrag: "Click or drag to upload a new photo",
-      formats: "JPG, PNG, or WebP €¢ Max 5MB",
-      recommended: "Recommended: 256Ã—256px or larger",
+      formats: "JPG, PNG, or WebP - Max 5MB",
+      recommended: "Recommended: 256x256px or larger",
       upload: "Upload",
       remove: "Remove",
     },
@@ -4927,7 +4927,7 @@ export const en = {
       bodyDescription: "Template body content with placeholders",
 
       settings: "Settings",
-      // Design (flat keys €” legacy)
+      // Design (flat keys - legacy)
       primaryColor: "Primary Color",
       secondaryColor: "Secondary Color",
       backgroundColor: "Background Color",
@@ -5395,7 +5395,7 @@ export const en = {
     allowedGrantTypes: "Grant Types",
     grantTypesRaw: "Raw grant types (space-separated)",
     requirePkce: "Require PKCE",
-    requirePkceHelp: "Proof Key for Code Exchange €” recommended for all clients",
+    requirePkceHelp: "Proof Key for Code Exchange - recommended for all clients",
     requireConsent: "Require Consent Screen",
     requireConsentHelp: "Show consent screen before redirecting back to the application",
     descriptionLabel: "Description",
@@ -5404,7 +5404,7 @@ export const en = {
     activeToggleHelp: "Inactive applications cannot authenticate",
     activeHelp: "Disabled apps cannot authenticate",
     selectClientType: "Select type...",
-    publicHelp: "SPA or mobile apps that cannot securely store secrets €” PKCE required",
+    publicHelp: "SPA or mobile apps that cannot securely store secrets - PKCE required",
     addRedirectUri: "Add URI",
     addPostLogoutUri: "Add URI",
     preview: "Preview",
@@ -5438,7 +5438,7 @@ export const en = {
     clientSecretHidden: "The secret is never displayed for security. Regenerate to get a new one.",
     regenerate: "Regenerate",
     newSecretGenerated: "New Secret Generated",
-    secretCopyWarning: "Copy this secret now €” it will not be shown again!",
+    secretCopyWarning: "Copy this secret now - it will not be shown again!",
     // Metadata
     metadata: "Information",
     tenantScoped: "Tenant",
@@ -5450,7 +5450,7 @@ export const en = {
     deleted: "Application Deleted",
     deletedDesc: "OAuth application deleted.",
     secretRegenerated: "Secret Regenerated",
-    secretRegeneratedDesc: "Copy the new secret now €” it won't be shown again.",
+    secretRegeneratedDesc: "Copy the new secret now - it won't be shown again.",
     // Actions
     regenerateSecret: "Regenerate Secret",
     // Secret dialog
@@ -5476,7 +5476,7 @@ export const en = {
     features: {
       featureKey: "Feature Key",
       title: "Features",
-      description: "Manage the platform feature catalog €” define capabilities that editions can configure.",
+      description: "Manage the platform feature catalog - define capabilities that editions can configure.",
       name: "Feature Name",
       featureName: "Feature Key",
       displayName: "Display Name",
@@ -5523,7 +5523,7 @@ export const en = {
     editions: {
       title: "Editions",
       displayName: "Display Name",
-      description: "Manage subscription plans €” bundle features into editions like Basic, Pro, Enterprise.",
+      description: "Manage subscription plans - bundle features into editions like Basic, Pro, Enterprise.",
       name: "Edition Name",
       namePlaceholder: "e.g. Basic, Professional, Enterprise",
       displayNameEn: "Display Name (English)",
@@ -5740,7 +5740,7 @@ export const en = {
       reasonPlaceholder: "e.g., Payment overdue, Terms violation...",
       useFallback: "Downgrade to fallback edition",
       fallback: "Fallback to lower edition",
-      // ”€”€ Overview Page ”€”€
+      // ”-€ Overview Page ”-€
       overviewTitle: "Subscriptions Overview",
       overviewDesc: "All active subscriptions across all tenants",
       activeCount: "Active Subscriptions",
@@ -5754,7 +5754,7 @@ export const en = {
       mrrContribution: "MRR (USD)",
       startDate: "Start Date",
       totalMrr: "Total MRR",
-      // ”€”€ Export ”€”€
+      // ”-€ Export ”-€
       export: {
         title: "Export Subscriptions",
         description: "Generate comprehensive subscription analytics reports.",
@@ -5827,7 +5827,7 @@ export const en = {
       costRemovedDesc: "The cost adjustment has been removed.",
       totalCost: "Total Cost"
     },
-    // ”€”€ Pooled Quotas & Admin Pool Mode ”€”€
+    // ”-€ Pooled Quotas & Admin Pool Mode ”-€
     pooledQuotas: {
       adminPoolMode: "Admin Pool Mode",
       adminPoolModeDesc: "How admin quotas are distributed across the tenant tree",
@@ -5845,7 +5845,7 @@ export const en = {
       poolFull: "Pool quota is full",
       poolRemaining: "{{remaining}} of {{total}} remaining",
     },
-    // ”€”€ Trial Notifications ”€”€
+    // ”-€ Trial Notifications ”-€
     trialNotifications: {
       welcome: "Welcome",
       welcomeDesc: "Sent when a trial starts",
@@ -5864,7 +5864,7 @@ export const en = {
       stage: "Stage",
       sentAt: "Sent At",
     },
-    // ”€”€ Pricing ”€”€
+    // ”-€ Pricing ”-€
     pricing: {
       title: "Pricing",
       description: "Multi-currency pricing configuration",
@@ -5903,7 +5903,7 @@ export const en = {
       oneTime: "One-time",
       billingCurrency: "Billing Currency",
     },
-    // ”€”€ Promotions ”€”€
+    // ”-€ Promotions ”-€
     promotions: {
       title: "Promotions",
       create: "Create Promotion",
@@ -5974,7 +5974,7 @@ export const en = {
     sessionExpired: "Your session has expired. Please log in again.",
   },
 
-  // ”€”€ Customizer Studio ”€”€
+  // ”-€ Customizer Studio ”-€
   studio: {
     title: "Login Customizer Studio",
     loading: "Loading studio...",
@@ -5990,7 +5990,7 @@ export const en = {
     discardConfirmTitle: "Discard changes?",
     discardConfirmDesc: "All unsaved changes will be lost and the design will revert to the last published version. This action cannot be undone.",
     discardConfirmAction: "Discard changes",
-    versionConflict: "Version conflict €” please reload and try again",
+    versionConflict: "Version conflict - please reload and try again",
 
     saveDraft: "Save Draft",
     saved: "Saved",
@@ -6019,7 +6019,7 @@ export const en = {
     refresh: "Refresh from server",
 
     // System / Drilldown banners
-    systemDefaultsBanner: "Editing System Defaults €” applied to all tenants without custom branding",
+    systemDefaultsBanner: "Editing System Defaults - applied to all tenants without custom branding",
     customizingTenant: "Customizing:",
 
     // Theme Marketplace
@@ -6041,7 +6041,7 @@ export const en = {
       buy: "Buy",
       purchased: "Purchased",
       locked: "Locked",
-      previewAny: "Tap to preview €” apply requires access",
+      previewAny: "Tap to preview - apply requires access",
       byAuthor: "by",
       usageCount: "Used by {{count}} tenants",
     },
@@ -6367,7 +6367,7 @@ export const en = {
       subtitlePlaceholder: "Page subtitle...",
     },
 
-    // ”€”€ Accessibility Checker ”€”€
+    // ”-€ Accessibility Checker ”-€
     a11y: {
       summary: { description: "Real-time WCAG AA validation of your current design tokens" },
       category: {
@@ -6401,7 +6401,7 @@ export const en = {
         overlayWarn: "Overlay may not provide enough contrast for text over image",
         reducedMotion: "Animations respect prefers-reduced-motion media query",
       },
-      // ”€”€ Profiles ”€”€
+      // ”-€ Profiles ”-€
       profiles: {
         title: "Quick Profiles",
         motor: "Motor Impaired",
@@ -6412,7 +6412,7 @@ export const en = {
         screenReader: "Screen Reader",
         resetAll: "Reset All",
       },
-      // ”€”€ Settings ”€”€
+      // ”-€ Settings ”-€
       settings: {
         // Focus & Keyboard
         focusKeyboard: "Focus & Keyboard",
@@ -6439,7 +6439,7 @@ export const en = {
         errorAnnounce: "Error Announcements",
         errorAnnounceDesc: "Announce validation errors via aria-live for assistive tech",
         pageTitle: "Page Title",
-        pageTitlePlaceholder: "e.g. Sign In €” Your Company",
+        pageTitlePlaceholder: "e.g. Sign In - Your Company",
         pageTitleDesc: "Descriptive <title> for screen readers and browser tabs",
         // Contrast & Colors
         contrastColors: "Contrast & Colors",
@@ -6465,7 +6465,7 @@ export const en = {
         letterSpacing: "Letter Spacing",
         wordSpacing: "Word Spacing",
         dyslexicFont: "Dyslexia-Friendly Font",
-        dyslexicFontDesc: "Switch all text to OpenDyslexic €” a font designed for dyslexic readers",
+        dyslexicFontDesc: "Switch all text to OpenDyslexic - a font designed for dyslexic readers",
         textAlign: "Text Alignment Override",
         textAlignDesc: "Force all text to align left, center or right",
         alignInherit: "Default",
@@ -6478,8 +6478,8 @@ export const en = {
         cursorSize: "Cursor Size",
         cursorSizeDesc: "Enlarge the mouse cursor for better visibility",
         cursorDefault: "Default",
-        cursorLarge: "Large (2Ã—)",
-        cursorXLarge: "Extra Large (3Ã—)",
+        cursorLarge: "Large (2x)",
+        cursorXLarge: "Extra Large (3x)",
         readingGuide: "Reading Guide",
         readingGuideDesc: "A horizontal line that follows your cursor to help track text",
         readingMask: "Reading Mask",
@@ -6507,11 +6507,11 @@ export const en = {
         touchTargets: "Touch & Target Size",
         touchTargetsDesc: "Larger tap areas and forced-color support",
         largeTargets: "Large Click Targets",
-        largeTargetsDesc: "Force all buttons and inputs to be at least 44Ã—44px (WCAG 2.5.5)",
+        largeTargetsDesc: "Force all buttons and inputs to be at least 44x44px (WCAG 2.5.5)",
         forcedColors: "Forced Colors Support",
         forcedColorsDesc: "Respect Windows High Contrast and forced-colors media query",
       },
-      // ”€”€ Audit ”€”€
+      // ”-€ Audit ”-€
       audit: {
         title: "WCAG Audit",
         subtitle: "Real-time checks against your current design tokens",
@@ -6584,7 +6584,7 @@ export const en = {
     // Branding
     branding: {
       logo: "Logo",
-      logoDesc: "Upload or enter a URL for your logo (PNG, SVG, WebP €” max 2 MB)",
+      logoDesc: "Upload or enter a URL for your logo (PNG, SVG, WebP - max 2 MB)",
       companyName: "Company Name",
       companyNamePlaceholder: "Enter company name",
       headline: "Headline",
@@ -6592,7 +6592,7 @@ export const en = {
       subtitle: "Subtitle",
       subtitlePlaceholder: "Enter subtitle text",
       favicon: "Favicon",
-      faviconDesc: "Upload or enter a URL for your favicon (ICO, PNG, SVG €” max 512 KB)",
+      faviconDesc: "Upload or enter a URL for your favicon (ICO, PNG, SVG - max 512 KB)",
       copyright: "Copyright Text",
       copyrightPlaceholder: "© 2026 Your Company",
       noPanelNote: "Headline and subtitle are only available for split layouts that have a separate branding panel. Switch to a split layout to customize these.",
@@ -6605,8 +6605,8 @@ export const en = {
       split: "Light / Dark",
       unifiedDesc: "Same palette for light and dark themes",
       splitDesc: "Separate palettes for each theme",
-      lightPalette: "˜€ï¸ Light Palette",
-      darkPalette: "ðŸŒ™ Dark Palette",
+      lightPalette: "Light Palette",
+      darkPalette: "Dark Palette",
       presets: "Color Presets",
       custom: "Custom Colors",
       primary: "Primary",
@@ -6661,8 +6661,8 @@ export const en = {
       blur: "Blur Amount",
       themeTarget: "Theme-Specific Backgrounds",
       themeTargetDesc: "You have split theme mode enabled. Configure separate backgrounds for light and dark themes below.",
-      lightBg: "˜€ï¸ Light Background",
-      darkBg: "ðŸŒ™ Dark Background",
+      lightBg: "Light Background",
+      darkBg: "Dark Background",
       panelBg: "Panel Backgrounds",
       panelSame: "Same",
       panelIndependent: "Independent",
@@ -6718,10 +6718,10 @@ export const en = {
       full: "Full",
       slotFull: "Slot is full",
       duplicate: "Duplicate block",
-      noSidebarWarning: "Current layout has no sidebar €” sidebar slots are hidden.",
+      noSidebarWarning: "Current layout has no sidebar - sidebar slots are hidden.",
     },
     block: {
-      // ”€”€ Block Type Names ”€”€
+      // ”-€ Block Type Names ”-€
       text: "Text",
       image: "Image",
       featureList: "Feature List",
@@ -6743,7 +6743,7 @@ export const en = {
       progressSteps: "Progress Steps",
       avatarStack: "Avatar Stack",
       gradientText: "Gradient Text",
-      // ”€”€ Common Controls ”€”€
+      // ”-€ Common Controls ”-€
       visibility: "Visibility",
       animationType: "Animation",
       animNone: "None",
@@ -6755,7 +6755,7 @@ export const en = {
       animBounce: "Bounce",
       blockPadding: "Padding",
       blockMargin: "Margin",
-      // ”€”€ Text Controls ”€”€
+      // ”-€ Text Controls ”-€
       textPlaceholder: "Enter your text content here...",
       alignment: "Alignment",
       fontSize: "Font Size",
@@ -6763,7 +6763,7 @@ export const en = {
       textColor: "Color",
       textTransform: "Transform",
       highlight: "Highlight",
-      // ”€”€ Image Controls ”€”€
+      // ”-€ Image Controls ”-€
       imageUrl: "Image URL",
       imageAlt: "Alt Text",
       borderRadius: "Border Radius",
@@ -6774,7 +6774,7 @@ export const en = {
       aspectRatio: "Aspect Ratio",
       linkUrl: "Link URL",
       caption: "Caption",
-      // ”€”€ Feature List Controls ”€”€
+      // ”-€ Feature List Controls ”-€
       featureTitle: "Feature title",
       featureDesc: "Feature description",
       addFeature: "Add Feature",
@@ -6784,7 +6784,7 @@ export const en = {
       iconColor: "Icon Color",
       compact: "Compact",
       numbered: "Numbered",
-      // ”€”€ Testimonial Controls ”€”€
+      // ”-€ Testimonial Controls ”-€
       quote: "Quote",
       author: "Author",
       role: "Role / Title",
@@ -6793,7 +6793,7 @@ export const en = {
       ratingStars: "Rating",
       companyName: "Company",
       borderColor: "Border Color",
-      // ”€”€ CTA Button Controls ”€”€
+      // ”-€ CTA Button Controls ”-€
       ctaLabel: "Button Label",
       ctaUrl: "Button URL",
       ctaUrlInvalid: "URL must start with https:// or / and cannot use javascript: protocol",
@@ -6806,7 +6806,7 @@ export const en = {
       btnColor: "Color",
       icon: "Icon",
       secondaryText: "Secondary Text",
-      // ”€”€ Divider Controls ”€”€
+      // ”-€ Divider Controls ”-€
       dividerStyle: "Divider Style",
       styleLine: "Line",
       styleSpace: "Space",
@@ -6817,61 +6817,61 @@ export const en = {
       divColor: "Color",
       divLabel: "Label",
       divLabelPlaceholder: "e.g., OR",
-      // ”€”€ Heading ”€”€
+      // ”-€ Heading ”-€
       headingText: "Heading Text",
       level: "Level",
       underline: "Underline",
-      // ”€”€ Badge ”€”€
+      // ”-€ Badge ”-€
       badgeLabel: "Label",
       variant: "Variant",
       pill: "Pill Shape",
-      // ”€”€ Spacer ”€”€
+      // ”-€ Spacer ”-€
       height: "Height",
       responsiveHalve: "Halve on Mobile",
-      // ”€”€ Alert ”€”€
+      // ”-€ Alert ”-€
       alertTitle: "Title",
       alertMessage: "Message",
       showIcon: "Show Icon",
-      // ”€”€ Stats Row ”€”€
+      // ”-€ Stats Row ”-€
       statLabel: "Label",
       addStat: "Add Stat",
       layout: "Layout",
-      // ”€”€ Social Links ”€”€
+      // ”-€ Social Links ”-€
       addSocial: "Add Link",
-      // ”€”€ Logo Cloud ”€”€
+      // ”-€ Logo Cloud ”-€
       addLogo: "Add Logo",
       grayscale: "Grayscale",
-      // ”€”€ Rating ”€”€
+      // ”-€ Rating ”-€
       ratingValue: "Value",
       ratingLabel: "Label",
       ratingColor: "Color",
-      // ”€”€ Icon Row ”€”€
+      // ”-€ Icon Row ”-€
       addIcon: "Add Icon",
       showLabels: "Show Labels",
-      // ”€”€ Video ”€”€
+      // ”-€ Video ”-€
       videoUrl: "Video URL",
       videoUrlInvalid: "Only YouTube and Vimeo URLs are allowed",
       thumbnailUrl: "Thumbnail",
       playBtn: "Play Button",
       overlayText: "Overlay Text",
-      // ”€”€ Countdown ”€”€
+      // ”-€ Countdown ”-€
       targetDate: "Target Date",
       countdownLabel: "Label",
       expiredText: "Expired Text",
-      // ”€”€ Accordion ”€”€
+      // ”-€ Accordion ”-€
       accordionTitle: "Title",
       accordionContent: "Content",
       addItem: "Add Item",
       iconPosition: "Icon Position",
       allowMultiple: "Allow Multiple",
-      // ”€”€ Progress Steps ”€”€
+      // ”-€ Progress Steps ”-€
       addStep: "Add Step",
       activeStep: "Active Step",
-      // ”€”€ Avatar Stack ”€”€
+      // ”-€ Avatar Stack ”-€
       addAvatar: "Add Avatar",
       totalCount: "Total Count",
       stackLabel: "Label",
-      // ”€”€ Gradient Text ”€”€
+      // ”-€ Gradient Text ”-€
       gradientTextContent: "Text",
       fromColor: "From Color",
       toColor: "To Color",
@@ -6898,14 +6898,14 @@ export const en = {
       import: "Import Config",
     },
 
-    // ”€”€ Page Builder (M10) ”€”€
+    // ”-€ Page Builder (M10) ”-€
     builder: {
       title: "Page Builder",
       mode: {
         presets: "Presets",
         builder: "Builder",
       },
-      activeHint: "Builder mode active €” use the Builder tab to arrange components",
+      activeHint: "Builder mode active - use the Builder tab to arrange components",
       // Palette
       palette: {
         title: "Components",
