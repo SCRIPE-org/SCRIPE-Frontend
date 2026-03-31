@@ -1,13 +1,14 @@
-﻿/**
- * StudioSidebar — 9-tab sidebar for the Ultimate Customizer Studio
+/**
+ * StudioSidebar -- 11-tab sidebar for the Ultimate Customizer Studio
  * All labels localized via t()
  */
 "use client";
-// UI-EXCEPTION: compact studio layout — native <button> used for pixel-precise
+// UI-EXCEPTION: compact studio layout -- native <button> used for pixel-precise
 // compact controls (toggle switches, gradient pickers, layout thumbnails, etc.)
 // where @core/ui/button's padding/sizing would break the layout.
 
-import { Layout, Palette, Type, Settings2, Layers, Blocks, Paintbrush, ScanEye, Store, LayoutGrid } from "lucide-react";
+import { useState, useMemo } from "react";
+import { Layout, Palette, Type, Settings2, Layers, Blocks, Paintbrush, ScanEye, Store, LayoutGrid, LayoutDashboard } from "lucide-react";
 import { cn } from "@/core/common/utils";
 import { LayoutPanel } from "./LayoutPanel";
 import { BrandingPanel } from "./BrandingPanel";
@@ -19,6 +20,8 @@ import { AdvancedPanel } from "./AdvancedPanel";
 import { AccessibilityPanel } from "./AccessibilityPanel";
 import { ThemeMarketplacePanel } from "./ThemeMarketplacePanel";
 import { BuilderPanel } from "./builder/BuilderPanel";
+import { DashboardPanel, DEFAULT_DASHBOARD_SETTINGS } from "./DashboardPanel";
+import type { DashboardThemeSettings } from "./DashboardPanel";
 import { useI18n } from "@core/providers/i18n-provider";
 
 
@@ -40,19 +43,25 @@ interface StudioSidebarProps {
   activeAuthPage: AuthPageId;
   getPageOverride: (pageId: AuthPageId) => AuthPageOverride;
   setPageOverride: (pageId: AuthPageId, field: keyof AuthPageOverride, value: string) => void;
+  /** When true, builder canvas is rendered externally (full-width) */
+  isBuilderMode?: boolean;
 }
 
-const TABS: { id: StudioPanel; icon: typeof Layout; labelKey: string }[] = [
-  { id: "layout", icon: Layout, labelKey: "studio.tab.layout" },
-  { id: "builder", icon: LayoutGrid, labelKey: "studio.tab.builder" },
-  { id: "branding", icon: Paintbrush, labelKey: "studio.tab.branding" },
-  { id: "appearance", icon: Palette, labelKey: "studio.tab.appearance" },
-  { id: "typography", icon: Type, labelKey: "studio.tab.typography" },
-  { id: "spacing", icon: Settings2, labelKey: "studio.tab.spacing" },
-  { id: "blocks", icon: Blocks, labelKey: "studio.tab.blocks" },
-  { id: "advanced", icon: Layers, labelKey: "studio.tab.advanced" },
-  { id: "accessibility", icon: ScanEye, labelKey: "studio.tab.accessibility" },
-  { id: "themes", icon: Store, labelKey: "studio.tab.themes" },
+const TABS: { id: StudioPanel; icon: typeof Layout; labelKey: string; section?: string }[] = [
+  // Login customization
+  { id: "layout", icon: Layout, labelKey: "studio.tab.layout", section: "login" },
+  { id: "builder", icon: LayoutGrid, labelKey: "studio.tab.builder", section: "login" },
+  { id: "branding", icon: Paintbrush, labelKey: "studio.tab.branding", section: "login" },
+  { id: "appearance", icon: Palette, labelKey: "studio.tab.appearance", section: "login" },
+  { id: "typography", icon: Type, labelKey: "studio.tab.typography", section: "login" },
+  { id: "spacing", icon: Settings2, labelKey: "studio.tab.spacing", section: "login" },
+  { id: "blocks", icon: Blocks, labelKey: "studio.tab.blocks", section: "login" },
+  // Dashboard customization
+  { id: "dashboard", icon: LayoutDashboard, labelKey: "studio.tab.dashboard", section: "dashboard" },
+  // System
+  { id: "advanced", icon: Layers, labelKey: "studio.tab.advanced", section: "system" },
+  { id: "accessibility", icon: ScanEye, labelKey: "studio.tab.accessibility", section: "system" },
+  { id: "themes", icon: Store, labelKey: "studio.tab.themes", section: "system" },
 ];
 
 export function StudioSidebar(props: StudioSidebarProps) {
@@ -64,33 +73,62 @@ export function StudioSidebar(props: StudioSidebarProps) {
 
   const currentPageOverride = getPageOverride(activeAuthPage);
 
+  // Dashboard settings local state (will be wired to draft when backend supports it)
+  const [dashboardSettings, setDashboardSettings] = useState<DashboardThemeSettings>(DEFAULT_DASHBOARD_SETTINGS);
+  const handleDashboardUpdate = (updates: Partial<DashboardThemeSettings>) => {
+    setDashboardSettings(prev => ({ ...prev, ...updates }));
+  };
+
+  // Group tabs by section for visual separation
+  const tabSections = useMemo(() => {
+    const sections: { section: string; tabs: typeof TABS }[] = [];
+    let currentSection = "";
+    for (const tab of TABS) {
+      const section = tab.section || "other";
+      if (section !== currentSection) {
+        currentSection = section;
+        sections.push({ section, tabs: [] });
+      }
+      sections[sections.length - 1].tabs.push(tab);
+    }
+    return sections;
+  }, []);
+
   return (
     <div className="flex h-full border-e border-border bg-background">
       {/* Tab Strip */}
-      <div className="flex w-14 flex-col items-center gap-1 border-e border-border bg-muted/30 py-3">
-        {TABS.map((tab) => {
-          const Icon = tab.icon;
-          const isActive = activePanel === tab.id;
-          return (
-            <button
-              key={tab.id}
-              onClick={() => setActivePanel(tab.id)}
-              className={cn(
-                "group relative flex h-10 w-10 items-center justify-center rounded-lg transition-all",
-                isActive
-                  ? "bg-primary text-primary-foreground shadow-sm"
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
-              )}
-              title={t(tab.labelKey)}
-            >
-              <Icon className="h-4 w-4" />
-              {/* Active indicator */}
-              {isActive && (
-                <div className="absolute -end-[5px] top-1/2 -translate-y-1/2 h-5 w-[3px] rounded-full bg-primary" />
-              )}
-            </button>
-          );
-        })}
+      <div className="flex w-14 flex-col items-center gap-0.5 border-e border-border bg-muted/30 py-3 overflow-y-auto scrollbar-thin">
+        {tabSections.map((section, si) => (
+          <div key={section.section} className="flex flex-col items-center gap-1 w-full">
+            {/* Section divider (not for first section) */}
+            {si > 0 && (
+              <div className="w-6 h-px bg-border/60 my-1" />
+            )}
+            {section.tabs.map((tab) => {
+              const Icon = tab.icon;
+              const isActive = activePanel === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActivePanel(tab.id)}
+                  className={cn(
+                    "group relative flex h-10 w-10 items-center justify-center rounded-lg transition-all",
+                    isActive
+                      ? "bg-primary text-primary-foreground shadow-sm"
+                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                  )}
+                  title={t(tab.labelKey)}
+                >
+                  <Icon className="h-4 w-4" />
+                  {/* Active indicator */}
+                  {isActive && (
+                    <div className="absolute -end-[5px] top-1/2 -translate-y-1/2 h-5 w-[3px] rounded-full bg-primary" />
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        ))}
       </div>
 
       {/* Panel Content */}
@@ -152,7 +190,13 @@ export function StudioSidebar(props: StudioSidebarProps) {
             />
           )}
           {activePanel === "builder" && (
-            <BuilderPanel draft={draft} updateDraft={updateDraft} />
+            <BuilderPanel draft={draft} updateDraft={updateDraft} sidebarOnly={!!props.isBuilderMode} />
+          )}
+          {activePanel === "dashboard" && (
+            <DashboardPanel
+              settings={dashboardSettings}
+              onUpdate={handleDashboardUpdate}
+            />
           )}
 
         </div>

@@ -89,9 +89,9 @@ export function ThemeMarketplacePanel({ onApplySuccess, onPreviewTheme, onExitPr
                 : "text-muted-foreground hover:text-foreground"
             )}
           >
-            {tab === "browse" && "Browse"}
-            {tab === "featured" && "Featured"}
-            {tab === "favorites" && "Favorites"}
+            {tab === "browse" && (t("studio.marketplace.tabBrowse") || "Browse")}
+            {tab === "featured" && (t("studio.marketplace.tabFeatured") || "Featured")}
+            {tab === "favorites" && (t("studio.marketplace.tabFavorites") || "Favorites")}
             {mp.activeTab === tab && (
               <div className="absolute bottom-0 inset-x-2 h-0.5 bg-primary rounded-full" />
             )}
@@ -277,14 +277,14 @@ export function ThemeMarketplacePanel({ onApplySuccess, onPreviewTheme, onExitPr
                 disabled={mp.page <= 1}
                 className="h-6 w-6 flex items-center justify-center rounded border border-border text-muted-foreground disabled:opacity-30 hover:bg-muted"
               >
-                <ChevronRight className="h-3 w-3" />
+                <ChevronLeft className="h-3 w-3" />
               </button>
               <button
                 onClick={() => mp.setPage(mp.page + 1)}
                 disabled={mp.page >= totalPages}
                 className="h-6 w-6 flex items-center justify-center rounded border border-border text-muted-foreground disabled:opacity-30 hover:bg-muted"
               >
-                <ChevronLeft className="h-3 w-3" />
+                <ChevronRight className="h-3 w-3" />
               </button>
             </div>
           </div>

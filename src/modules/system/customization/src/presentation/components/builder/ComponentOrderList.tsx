@@ -1,0 +1,180 @@
+/**
+ * ComponentOrderList — Sortable layer list for z-order management
+ *
+ * Displays all canvas components in a vertical list with drag handles
+ * for reordering. Shows icons, names, visibility toggles, and selection.
+ * Drag within this list reorders components' z-index.
+ */
+"use client";
+
+import {
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { cn } from "@/core/common/utils";
+import {
+  Image, LogIn, Type, AlignLeft, Share2, ListChecks, Quote,
+  ImageIcon, MousePointerClick, Minus, PanelBottom, Copyright,
+  Code, Video, GripVertical, Eye, EyeOff,
+} from "lucide-react";
+import { useI18n } from "@core/providers/i18n-provider";
+import type { CanvasComponent } from "../../../domain/entities/CanvasComponent";
+import { COMPONENT_CATALOG } from "../../../domain/entities/CanvasComponent";
+
+const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
+  Image, LogIn, Type, AlignLeft, Share2, ListChecks, Quote,
+  ImageIcon, MousePointerClick, Minus, PanelBottom, Copyright,
+  Code, Video,
+};
+
+interface ComponentOrderListProps {
+  components: CanvasComponent[];
+  selectedComponentId: string | null;
+  onSelectComponent: (id: string | null) => void;
+  onToggleVisibility: (id: string) => void;
+}
+
+function SortableLayerItem({
+  component,
+  index,
+  isSelected,
+  onSelect,
+  onToggleVisibility,
+}: {
+  component: CanvasComponent;
+  index: number;
+  isSelected: boolean;
+  onSelect: () => void;
+  onToggleVisibility: () => void;
+}) {
+  const { t } = useI18n();
+  const catalog = COMPONENT_CATALOG.find(c => c.type === component.type);
+  const Icon = ICON_MAP[catalog?.icon || "Image"] || Image;
+
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: `layer-${component.id}`,
+    data: { source: "layer-list", componentId: component.id, index },
+  });
+
+  const style: React.CSSProperties = {
+    transform: CSS.Transform.toString(transform),
+    transition: transition || undefined,
+    zIndex: isDragging ? 50 : undefined,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      onClick={onSelect}
+      className={cn(
+        "flex items-center gap-2 rounded-md px-2 py-1.5 cursor-pointer transition-all group",
+        isDragging && "opacity-50 shadow-lg bg-primary/10 ring-1 ring-primary/30",
+        isSelected
+          ? "bg-primary/10 border border-primary/30"
+          : "hover:bg-muted/60 border border-transparent",
+        !component.visible && "opacity-50",
+      )}
+    >
+      {/* Drag handle */}
+      <div
+        {...attributes}
+        {...listeners}
+        className="cursor-grab active:cursor-grabbing p-0.5 text-muted-foreground/40 hover:text-muted-foreground"
+      >
+        <GripVertical className="h-3 w-3" />
+      </div>
+
+      {/* Index number */}
+      <span className="text-[9px] font-mono text-muted-foreground/50 w-3 text-center shrink-0">
+        {index + 1}
+      </span>
+
+      {/* Icon */}
+      <div className={cn(
+        "flex h-5 w-5 shrink-0 items-center justify-center rounded",
+        isSelected ? "bg-primary/20 text-primary" : "bg-muted/60 text-muted-foreground",
+      )}>
+        <Icon className="h-3 w-3" />
+      </div>
+
+      {/* Label */}
+      <span className="text-[10px] font-medium text-foreground truncate flex-1">
+        {t(catalog?.labelKey || "") || component.type}
+      </span>
+
+      {/* Visibility toggle */}
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onToggleVisibility();
+        }}
+        className={cn(
+          "p-0.5 rounded transition-colors opacity-0 group-hover:opacity-100",
+          component.visible
+            ? "text-muted-foreground/40 hover:text-foreground"
+            : "text-muted-foreground/60 hover:text-foreground opacity-100",
+        )}
+        title={component.visible ? "Hide" : "Show"}
+      >
+        {component.visible ? <Eye className="h-3 w-3" /> : <EyeOff className="h-3 w-3" />}
+      </button>
+    </div>
+  );
+}
+
+export function ComponentOrderList({
+  components,
+  selectedComponentId,
+  onSelectComponent,
+  onToggleVisibility,
+}: ComponentOrderListProps) {
+  const { t } = useI18n();
+
+  // Sort by z-index for display (highest first = top of visual stack)
+  const sortedComponents = [...components].sort((a, b) => b.zIndex - a.zIndex);
+
+  return (
+    <div className="space-y-1.5">
+      <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
+        {t("studio.builder.layers") || "Layers"}
+      </p>
+      <p className="text-[10px] text-muted-foreground/70 mb-1">
+        {t("studio.builder.layersHint") || "Drag to reorder layer stack"}
+      </p>
+
+      <SortableContext
+        items={sortedComponents.map(c => `layer-${c.id}`)}
+        strategy={verticalListSortingStrategy}
+      >
+        <div className="space-y-0.5 rounded-lg border border-border/60 bg-muted/10 p-1.5">
+          {sortedComponents.length === 0 ? (
+            <p className="text-[10px] text-muted-foreground/50 text-center py-3 italic">
+              {t("studio.builder.noLayers") || "No components yet"}
+            </p>
+          ) : (
+            sortedComponents.map((comp, index) => (
+              <SortableLayerItem
+                key={comp.id}
+                component={comp}
+                index={index}
+                isSelected={selectedComponentId === comp.id}
+                onSelect={() => onSelectComponent(comp.id)}
+                onToggleVisibility={() => onToggleVisibility(comp.id)}
+              />
+            ))
+          )}
+        </div>
+      </SortableContext>
+    </div>
+  );
+}

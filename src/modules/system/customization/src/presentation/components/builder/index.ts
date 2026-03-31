@@ -5,3 +5,5 @@ export { BuilderPropsPanel } from "./BuilderPropsPanel";
 export { CanvasRenderer } from "./CanvasRenderer";
 export { ComponentRenderer } from "./ComponentRenderer";
 export { GridOverlay } from "./GridOverlay";
+export { DraggableCanvasItem, DragOverlayItem } from "./DraggableCanvasItem";
+export { ComponentOrderList } from "./ComponentOrderList";
