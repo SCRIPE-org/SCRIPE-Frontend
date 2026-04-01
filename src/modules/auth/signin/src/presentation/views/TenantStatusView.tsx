@@ -49,23 +49,23 @@ export function TenantSuspendedView({ branding }: TenantSuspendedViewProps) {
                         {/* Title */}
                         <h1 className="mb-3 text-2xl font-bold text-foreground">
                               {isCanceled
-                                    ? (t("tenant.status.canceledTitle") || "Organization Canceled")
-                                    : (t("tenant.status.suspendedTitle") || "Organization Suspended")
+                                    ? (t("tenantStatus.canceledTitle") || "Organization Canceled")
+                                    : (t("tenantStatus.suspendedTitle") || "Organization Suspended")
                               }
                         </h1>
 
                         {/* Description */}
                         <p className="mb-4 text-muted-foreground">
                               {isCanceled
-                                    ? (t("tenant.status.canceledDescription") || `The organization "${companyName}" has been canceled. Contact support to reactivate your subscription.`)
-                                    : (t("tenant.status.suspendedDescription") || `The organization "${companyName}" has been temporarily suspended. Please contact your administrator.`)
+                                    ? (t("tenantStatus.canceledDescription") || `The organization "${companyName}" has been canceled. Contact support to reactivate your subscription.`)
+                                    : (t("tenantStatus.suspendedDescription") || `The organization "${companyName}" has been temporarily suspended. Please contact your administrator.`)
                               }
                         </p>
 
                         {/* Reason (if provided) */}
                         {branding.statusReason && (
                               <div className="mb-6 rounded-lg border border-border bg-muted/50 px-4 py-3 text-sm text-muted-foreground">
-                                    <span className="font-medium">{t("tenant.status.reason") || "Reason"}: </span>
+                                    <span className="font-medium">{t("tenantStatus.reason") || "Reason"}: </span>
                                     {branding.statusReason}
                               </div>
                         )}
@@ -75,7 +75,7 @@ export function TenantSuspendedView({ branding }: TenantSuspendedViewProps) {
                               href={`mailto:support@${BRAND.domain || "nexora.com"}`}
                               className="inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-2.5 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
                         >
-                              {t("tenant.status.contactSupport") || "Contact Support"}
+                              {t("tenantStatus.contactSupport") || "Contact Support"}
                         </a>
                   </div>
             </div>
@@ -107,12 +107,12 @@ export function TenantNotFoundView() {
 
                         {/* Title */}
                         <h1 className="mb-3 text-2xl font-bold text-foreground">
-                              {t("tenant.status.notFoundTitle") || "Organization Not Found"}
+                              {t("tenantStatus.notFoundTitle") || "Organization Not Found"}
                         </h1>
 
                         {/* Description */}
                         <p className="mb-8 text-muted-foreground">
-                              {t("tenant.status.notFoundDescription") || "This organization doesn\u2019t exist on our platform. Please check the URL and try again."}
+                              {t("tenantStatus.notFoundDescription") || "This organization doesn\u2019t exist on our platform. Please check the URL and try again."}
                         </p>
 
                         {/* Go to Platform */}
@@ -120,7 +120,7 @@ export function TenantNotFoundView() {
                               href="/"
                               className="inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-2.5 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
                         >
-                              {t("tenant.status.visitPlatform") || `Visit ${BRAND.name}`}
+                              {t("tenantStatus.visitPlatform") || `Visit ${BRAND.name}`}
                         </a>
                   </div>
             </div>

@@ -149,26 +149,30 @@ export function DraggableCanvasItem({
 
     const handleMove = (me: MouseEvent) => {
       if (!resizeRef.current) return;
-      const dx = me.clientX - resizeRef.current.startX;
+      const rawDx = me.clientX - resizeRef.current.startX;
       const dy = me.clientY - resizeRef.current.startY;
       const h = resizeRef.current.handle;
+
+      // Convert physical dx to logical dx.
+      // In RTL, insetInlineStart measures from the right edge,
+      // so a positive physical dx (rightward) is NEGATIVE in logical coords.
+      // The handle names use logical CSS classes (-start/-end which flip in RTL),
+      // so handle 'left' is always the inline-start side.
+      const dx = isRTL ? -rawDx : rawDx;
 
       let newW = resizeRef.current.origW;
       let newH = resizeRef.current.origH;
       let newX = resizeRef.current.origX;
       let newY = resizeRef.current.origY;
 
-      // RTL: swap left/right resize logic so handles match visual direction
-      const isRightHandle = isRTL ? h.includes('left') : h.includes('right');
-      const isLeftHandle = isRTL ? h.includes('right') : h.includes('left');
-
-      if (isRightHandle) newW += dx;
-      if (isLeftHandle) { newW -= dx; newX += (isRTL ? -dx : dx); }
-      if (h.includes('bottom')) newH += dy;
-      if (h.includes('top')) { newH -= dy; newY += dy; }
+      // Standard resize math (uses logical dx, so no handle swapping needed)
+      if (h.includes('right')) { newW += dx; }
+      if (h.includes('left'))  { newW -= dx; newX += dx; }
+      if (h.includes('bottom')) { newH += dy; }
+      if (h.includes('top'))    { newH -= dy; newY += dy; }
 
       store.resizeComponent(component.id, Math.max(40, newW), Math.max(20, newH));
-      if (isLeftHandle || h.includes('top')) {
+      if (h.includes('left') || h.includes('top')) {
         store.moveComponentAbsolute(component.id, newX, newY);
       }
     };
@@ -195,8 +199,9 @@ export function DraggableCanvasItem({
   } : {};
 
   const gridStyle: React.CSSProperties = !isAbsolute ? {
-    gridColumn: component.gridColumn,
-    gridRow: component.gridRow,
+    // During drag, remove grid placement so dnd-kit's transform can move the item freely
+    gridColumn: isSortableDragging ? undefined : component.gridColumn,
+    gridRow: isSortableDragging ? undefined : component.gridRow,
     zIndex: isSortableDragging ? 999 : component.zIndex + 10,
     alignSelf: component.verticalAlignment === "start" ? "start" : component.verticalAlignment === "end" ? "end" : "center",
     justifySelf: component.alignment,

@@ -43,7 +43,7 @@ export function LoginView() {
   const hasCheckedAuth = useRef(false);
 
   // Pre-auth domain resolution for white-label branding
-  const { tenantId, branding, isResolved, isLoading: isTenantLoading } = useTenantResolution();
+  const { tenantId, branding, isResolved, isLoading: isTenantLoading, isApiError } = useTenantResolution();
 
   // ── One-time sync: apply resolved preferences only on initial load ──
   // After this initial sync, user's manual language/theme switches take precedence.
@@ -170,8 +170,10 @@ export function LoginView() {
     return <TenantSuspendedView branding={branding} />;
   }
 
-  // Non-existent tenant domain (skip in preview mode)
-  if (!isPreviewMode && !isTenantLoading && !isResolved && typeof window !== "undefined") {
+  // Non-existent tenant domain (skip in preview mode and when API itself failed)
+  // When the API is unreachable (CORS, mixed-content, network error), fall through
+  // to the normal platform login instead of showing "Tenant Not Found".
+  if (!isPreviewMode && !isTenantLoading && !isResolved && !isApiError && typeof window !== "undefined") {
     const hostname = window.location.hostname;
     const devCode = new URLSearchParams(window.location.search).get("_tenant");
     const isTenantExpectedCheck = devCode !== null || (!hostname.startsWith("localhost") && !hostname.startsWith("127."));

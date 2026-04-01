@@ -54,6 +54,12 @@ export interface TenantResolutionResult {
       isResolved: boolean;
       /** Whether the resolution request is in-flight */
       isLoading: boolean;
+      /**
+       * True when the API call failed due to a network/CORS/mixed-content error.
+       * LoginView uses this to distinguish "API unreachable" (show platform login)
+       * from "API says no tenant" (show Tenant Not Found).
+       */
+      isApiError: boolean;
 }
 
 // ─── Domains to skip ──────────────────────────────────────
@@ -83,6 +89,7 @@ export function useTenantResolution(): TenantResolutionResult {
       const [tenantId, setTenantId] = useState<string | null>(null);
       const [branding, setBranding] = useState<TenantBranding | null>(null);
       const [isLoading, setIsLoading] = useState(true);
+      const [isApiError, setIsApiError] = useState(false);
 
       useEffect(() => {
             let cancelled = false;
@@ -130,10 +137,12 @@ export function useTenantResolution(): TenantResolutionResult {
                               }
                         }
                   } catch {
-                        // Domain doesn't resolve → use default branding (not an error)
+                        // API call failed (network error, CORS, mixed content, etc.)
+                        // This is NOT the same as "tenant not found" — the API may simply be unreachable.
                         if (!cancelled) {
                               setTenantId(null);
                               setBranding(null);
+                              setIsApiError(true);
                         }
                   } finally {
                         if (!cancelled) setIsLoading(false);
@@ -151,5 +160,7 @@ export function useTenantResolution(): TenantResolutionResult {
             branding,
             isResolved: branding !== null,
             isLoading,
+            isApiError,
       };
 }
+
