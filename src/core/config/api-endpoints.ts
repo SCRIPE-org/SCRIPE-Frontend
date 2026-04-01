@@ -404,6 +404,7 @@ export const API_ENDPOINTS = {
   // ===== GENERIC UPLOADS =====
   UPLOADS: {
     IMAGE: `${V1}/uploads/image`,
+    VIDEO: `${V1}/uploads/video`,
   },
 };
 

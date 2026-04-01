@@ -5132,6 +5132,17 @@ export const ar = {
     remove: "إزالة",
   },
 
+  // ===== رفع الفيديو =====
+  videoUpload: {
+    dragDrop: "أسقط فيديو هنا أو انقر للاستعراض",
+    uploadFailed: "فشل الرفع. يرجى المحاولة مرة أخرى.",
+    invalidType: "نوع ملف غير صالح. المسموح: MP4, WebM, OGG, MOV",
+    tooLarge: "الملف يتجاوز حد {{max}} ميجابايت",
+    invalidUrl: "يرجى إدخال رابط صالح يبدأ بـ http:// أو https://",
+    urlPlaceholder: "https://example.com/video.mp4",
+    urlHelp: "الصق رابط فيديو مباشر بصيغة .mp4/.webm/.ogg. روابط يوتيوب وجوجل درايف ليست روابط فيديو مباشرة.",
+  },
+
   // ===== موفرو الهوية (SSO) =====
   identityProviders: {
     title: "موفرو الهوية",
@@ -6762,9 +6773,13 @@ export const ar = {
         copyright: "حقوق النشر",
         copyrightDesc: "نص حقوق النشر والسنة",
         customHtml: "HTML مخصص",
-        customHtmlDesc: "كتلة HTML خام (مؤسسي)",
+        customHtmlDesc: "كتلة HTML خام",
         videoBg: "خلفية فيديو",
-        videoBgDesc: "فيديو خلفية (مؤسسي)",
+        videoBgDesc: "طبقة فيديو خلفية",
+        forgotForm: "نموذج نسيت كلمة المرور",
+        forgotFormDesc: "حقل البريد الإلكتروني لإعادة تعيين كلمة المرور",
+        resetForm: "نموذج إعادة التعيين",
+        resetFormDesc: "إدخال كلمة مرور جديدة مع التأكيد",
       },
       props: {
         title: "خصائص المكون",
@@ -6777,6 +6792,38 @@ export const ar = {
         zIndex: "ترتيب الطبقة",
         componentSettings: "الإعدادات",
         noSettings: "لا توجد إعدادات قابلة للتعديل",
+        // الشعار
+        logoImage: "صورة الشعار",
+        logoImageDesc: "ارفع أو الصق رابط. اتركه فارغاً لاستخدام شعار التطبيق الافتراضي.",
+        shape: "الشكل",
+        // الصورة
+        imageSource: "الصورة",
+        imageSourceDesc: "ارفع صورة أو الصق رابط مباشر.",
+        // الفاصل
+        color: "اللون",
+        // حقوق النشر
+        year: "السنة",
+        // تسجيل اجتماعي
+        providers: "المزودون",
+        // زر الإجراء
+        size: "الحجم",
+        // خلفية الفيديو
+        videoUrl: "رابط الفيديو",
+        videoUrlHint: "رابط مباشر بصيغة .mp4 أو .webm أو .ogg",
+        posterImage: "صورة الغلاف",
+        posterImageDesc: "تظهر أثناء تحميل الفيديو أو على الجوال.",
+        autoplay: "تشغيل تلقائي",
+        muted: "صامت",
+        loop: "تكرار",
+        // نموذج نسيت كلمة المرور
+        showBackToLogin: 'إظهار رابط "العودة لتسجيل الدخول"',
+        // نموذج إعادة التعيين
+        showPasswordStrength: "إظهار مؤشر قوة كلمة المرور",
+        // التذييل
+        linkLabel: "التسمية",
+        linkUrl: "الرابط",
+        noLinks: "يتم عرض الروابط الافتراضية. أضف روابط مخصصة أعلاه.",
+        addLink: "إضافة رابط",
       },
       canvas: {
         rows: "صفوف الشبكة",

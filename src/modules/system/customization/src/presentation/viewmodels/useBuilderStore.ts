@@ -97,8 +97,8 @@ interface BuilderState {
   /** Reorder z-index: 'forward' or 'back' */
   reorderZ: (id: string, direction: 'forward' | 'back') => void;
 
-  /** Reorder components array by moving from one index to another */
-  reorderComponents: (fromIndex: number, toIndex: number) => void;
+  /** Reorder components by swapping two components identified by ID */
+  reorderComponents: (fromId: string, toId: string) => void;
 
   /** Duplicate a component */
   duplicateComponent: (id: string) => void;
@@ -383,12 +383,15 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
   },
 
   // ── Reorder Components (grid drag / layer panel drag) ──
-  // In grid mode, we swap the gridColumn/gridRow between the two components
-  // so they visually swap positions on the CSS Grid canvas.
-  reorderComponents: (fromIndex, toIndex) => {
+  // Accepts component IDs (not array indices) to be immune to sort-order mismatches.
+  // In grid mode, swaps gridColumn/gridRow so components visually trade positions.
+  reorderComponents: (fromId, toId) => {
     const state = get();
-    if (fromIndex === toIndex) return;
-    if (fromIndex < 0 || toIndex < 0 || fromIndex >= state.components.length || toIndex >= state.components.length) return;
+    if (fromId === toId) return;
+
+    const fromIndex = state.components.findIndex(c => c.id === fromId);
+    const toIndex = state.components.findIndex(c => c.id === toId);
+    if (fromIndex === -1 || toIndex === -1) return;
 
     const history = pushHistory(state);
     const newComponents = [...state.components.map(c => ({ ...c, props: { ...c.props } }))];

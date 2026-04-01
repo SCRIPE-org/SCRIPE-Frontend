@@ -59,11 +59,8 @@ export function useBuilderDnd() {
       // 2. Dragged within canvas (reorder) — grid mode only
       if (activeData?.source === "canvas" && active.id !== over.id) {
         if (store.positionMode === 'grid') {
-          const oldIndex = store.components.findIndex((c) => c.id === active.id);
-          const newIndex = store.components.findIndex((c) => c.id === over.id);
-          if (oldIndex !== -1 && newIndex !== -1) {
-            store.reorderComponents(oldIndex, newIndex);
-          }
+          // Pass IDs directly — store handles index lookup internally
+          store.reorderComponents(String(active.id), String(over.id));
         }
         // In absolute mode, drag is handled by DraggableCanvasItem's mouseDown
         return;
@@ -76,11 +73,7 @@ export function useBuilderDnd() {
         if (overData?.source === "layer-list" && overData?.componentId) {
           const overCompId = overData.componentId as string;
           if (activeCompId !== overCompId) {
-            const fromIndex = store.components.findIndex(c => c.id === activeCompId);
-            const toIndex = store.components.findIndex(c => c.id === overCompId);
-            if (fromIndex !== -1 && toIndex !== -1) {
-              store.reorderComponents(fromIndex, toIndex);
-            }
+            store.reorderComponents(activeCompId, overCompId);
           }
         }
       }

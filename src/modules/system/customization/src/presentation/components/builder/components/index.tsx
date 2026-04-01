@@ -10,6 +10,8 @@
  */
 "use client";
 
+import { resolveFileUrl } from "@/core/common/utils";
+
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
@@ -17,14 +19,15 @@ import { Eye, EyeOff, Lock, User, Quote as QuoteIcon, Star, Check } from "lucide
 import { useState } from "react";
 
 // ── Logo ────────────────────────────────────────────────
-export function BuilderLogo({ maxWidth = 200 }: { maxWidth?: number; [k: string]: unknown }) {
+export function BuilderLogo({ maxWidth = 200, src, shape = 'auto' }: { maxWidth?: number; src?: string; shape?: string; [k: string]: unknown }) {
+  const borderRadius = shape === 'circle' ? '50%' : shape === 'square' ? '0' : shape === 'rounded' ? '8px' : undefined;
   return (
     <div className="flex items-center justify-center w-full">
       <img
-        src="/app-logo.png"
+        src={resolveFileUrl(src) || '/app-logo.png'}
         alt="Logo"
         className="object-contain"
-        style={{ maxWidth: `${maxWidth}px`, maxHeight: '80px' }}
+        style={{ maxWidth: `${maxWidth}px`, maxHeight: '80px', borderRadius }}
         onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
       />
     </div>
@@ -310,7 +313,7 @@ export function BuilderImage({
   }
   return (
     <img
-      src={src}
+      src={resolveFileUrl(src)}
       alt={alt}
       className="w-full h-auto"
       style={{
@@ -415,7 +418,7 @@ export function BuilderCustomHtml({ content = '' }: { content?: string; [k: stri
   if (!content) {
     return (
       <div className="w-full p-4 border border-dashed border-amber-500/30 rounded-lg bg-amber-500/5">
-        <p className="text-xs text-amber-600">Custom HTML Block (Enterprise)</p>
+        <p className="text-xs text-amber-600">Custom HTML Block</p>
         <p className="text-[10px] text-muted-foreground mt-1">Add your custom HTML content in the settings panel.</p>
       </div>
     );
@@ -436,19 +439,134 @@ export function BuilderVideoBg({
   if (!src) {
     return (
       <div className="w-full h-full min-h-[200px] bg-gradient-to-br from-violet-500/10 to-blue-500/10 rounded-lg flex items-center justify-center border border-dashed border-violet-500/30">
-        <p className="text-xs text-violet-500">Video Background (Enterprise)</p>
+        <p className="text-xs text-violet-500">Video Background — Set a URL to preview</p>
       </div>
     );
   }
   return (
     <video
-      src={src}
-      poster={poster}
+      src={resolveFileUrl(src)}
+      poster={resolveFileUrl(poster) || undefined}
       autoPlay={autoplay}
       muted={muted}
       loop
       playsInline
       className="w-full h-full object-cover rounded-lg"
     />
+  );
+}
+
+// ── Forgot Password Form ────────────────────────────────
+export function BuilderForgotForm({
+  showBackToLogin = true,
+}: { showBackToLogin?: boolean; [k: string]: unknown }) {
+  return (
+    <div className="w-full" style={{ maxWidth: 'var(--login-form-width, 380px)' }}>
+      <form onSubmit={(e) => e.preventDefault()} className="flex flex-col" style={{ gap: 'var(--login-element-gap, 16px)' }}>
+        <div className="text-center mb-2">
+          <h3 className="text-lg font-semibold text-[var(--login-text,hsl(var(--foreground)))]">Forgot Password</h3>
+          <p className="text-sm text-[var(--login-text-muted,hsl(var(--muted-foreground)))] mt-1">
+            Enter your email to receive a reset link
+          </p>
+        </div>
+        <div className="space-y-2">
+          <Label className="text-sm font-medium text-[var(--login-text,hsl(var(--foreground)))]">Email Address</Label>
+          <Input
+            type="email"
+            placeholder="you@example.com"
+            className="h-10 ps-3 text-sm"
+            style={{
+              borderRadius: 'var(--login-field-radius, 6px)',
+              background: 'var(--login-input-bg, hsl(var(--background)))',
+              borderColor: 'var(--login-input-border, hsl(var(--border)))',
+              color: 'var(--login-text, hsl(var(--foreground)))',
+            }}
+          />
+        </div>
+        <Button
+          type="submit"
+          className="w-full h-10 font-medium"
+          style={{
+            borderRadius: 'var(--login-button-radius, var(--login-field-radius, 6px))',
+            background: 'var(--login-button-bg, hsl(var(--primary)))',
+            color: 'var(--login-button-text, hsl(var(--primary-foreground)))',
+          }}
+        >
+          Send Reset Link
+        </Button>
+        {showBackToLogin && (
+          <p className="text-center text-sm text-[var(--login-link,hsl(var(--primary)))]">
+            ← Back to Login
+          </p>
+        )}
+      </form>
+    </div>
+  );
+}
+
+// ── Reset Password Form ─────────────────────────────────
+export function BuilderResetForm({
+  showPasswordStrength = true,
+}: { showPasswordStrength?: boolean; [k: string]: unknown }) {
+  return (
+    <div className="w-full" style={{ maxWidth: 'var(--login-form-width, 380px)' }}>
+      <form onSubmit={(e) => e.preventDefault()} className="flex flex-col" style={{ gap: 'var(--login-element-gap, 16px)' }}>
+        <div className="text-center mb-2">
+          <h3 className="text-lg font-semibold text-[var(--login-text,hsl(var(--foreground)))]">Reset Password</h3>
+          <p className="text-sm text-[var(--login-text-muted,hsl(var(--muted-foreground)))] mt-1">
+            Create a new secure password
+          </p>
+        </div>
+        <div className="space-y-2">
+          <Label className="text-sm font-medium text-[var(--login-text,hsl(var(--foreground)))]">New Password</Label>
+          <Input
+            type="password"
+            placeholder="••••••••"
+            className="h-10 ps-3 text-sm"
+            style={{
+              borderRadius: 'var(--login-field-radius, 6px)',
+              background: 'var(--login-input-bg, hsl(var(--background)))',
+              borderColor: 'var(--login-input-border, hsl(var(--border)))',
+              color: 'var(--login-text, hsl(var(--foreground)))',
+            }}
+          />
+        </div>
+        {showPasswordStrength && (
+          <div className="space-y-1">
+            <div className="flex gap-1">
+              {[1, 2, 3, 4].map(i => (
+                <div key={i} className="h-1 flex-1 rounded-full bg-muted" />
+              ))}
+            </div>
+            <p className="text-[10px] text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">Password strength indicator</p>
+          </div>
+        )}
+        <div className="space-y-2">
+          <Label className="text-sm font-medium text-[var(--login-text,hsl(var(--foreground)))]">Confirm Password</Label>
+          <Input
+            type="password"
+            placeholder="••••••••"
+            className="h-10 ps-3 text-sm"
+            style={{
+              borderRadius: 'var(--login-field-radius, 6px)',
+              background: 'var(--login-input-bg, hsl(var(--background)))',
+              borderColor: 'var(--login-input-border, hsl(var(--border)))',
+              color: 'var(--login-text, hsl(var(--foreground)))',
+            }}
+          />
+        </div>
+        <Button
+          type="submit"
+          className="w-full h-10 font-medium"
+          style={{
+            borderRadius: 'var(--login-button-radius, var(--login-field-radius, 6px))',
+            background: 'var(--login-button-bg, hsl(var(--primary)))',
+            color: 'var(--login-button-text, hsl(var(--primary-foreground)))',
+          }}
+        >
+          Reset Password
+        </Button>
+      </form>
+    </div>
   );
 }

@@ -10,6 +10,8 @@ import type { CanvasComponentType } from "../../../domain/entities/CanvasCompone
 import {
   BuilderLogo,
   BuilderLoginForm,
+  BuilderForgotForm,
+  BuilderResetForm,
   BuilderHeading,
   BuilderSubtitle,
   BuilderSocialLogin,
@@ -35,6 +37,10 @@ export function ComponentRenderer({ type, props }: ComponentRendererProps) {
       return <BuilderLogo {...props} />;
     case 'loginForm':
       return <BuilderLoginForm {...props} />;
+    case 'forgotForm':
+      return <BuilderForgotForm {...props} />;
+    case 'resetForm':
+      return <BuilderResetForm {...props} />;
     case 'heading':
       return <BuilderHeading {...props} />;
     case 'subtitle':

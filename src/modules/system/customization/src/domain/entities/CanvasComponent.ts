@@ -12,6 +12,8 @@
 export type CanvasComponentType =
   | 'logo'
   | 'loginForm'
+  | 'forgotForm'
+  | 'resetForm'
   | 'heading'
   | 'subtitle'
   | 'socialLogin'
@@ -311,7 +313,7 @@ export const COMPONENT_CATALOG: ComponentCatalogEntry[] = [
     minHeight: 50,
     singleton: false,
     required: false,
-    requiredEdition: 'enterprise',
+    requiredEdition: null,
   },
   {
     type: 'videoBg',
@@ -327,7 +329,39 @@ export const COMPONENT_CATALOG: ComponentCatalogEntry[] = [
     minHeight: 150,
     singleton: true,
     required: false,
-    requiredEdition: 'enterprise',
+    requiredEdition: null,
+  },
+  {
+    type: 'forgotForm',
+    labelKey: 'studio.builder.comp.forgotForm',
+    icon: 'KeyRound',
+    descriptionKey: 'studio.builder.comp.forgotFormDesc',
+    defaultProps: { showBackToLogin: true },
+    defaultGridColumn: '4 / 10',
+    defaultGridRow: 'auto',
+    defaultWidth: 380,
+    defaultHeight: 300,
+    minWidth: 280,
+    minHeight: 200,
+    singleton: true,
+    required: false,
+    requiredEdition: null,
+  },
+  {
+    type: 'resetForm',
+    labelKey: 'studio.builder.comp.resetForm',
+    icon: 'RotateCcw',
+    descriptionKey: 'studio.builder.comp.resetFormDesc',
+    defaultProps: { showPasswordStrength: true },
+    defaultGridColumn: '4 / 10',
+    defaultGridRow: 'auto',
+    defaultWidth: 380,
+    defaultHeight: 340,
+    minWidth: 280,
+    minHeight: 220,
+    singleton: true,
+    required: false,
+    requiredEdition: null,
   },
 ];
 

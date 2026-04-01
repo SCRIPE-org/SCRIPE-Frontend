@@ -75,9 +75,11 @@ interface BuilderPanelProps {
   updateDraft: (field: any, value: any) => void;
   /** When true, only render sidebar content (palette/props/layers) — canvas is rendered externally */
   sidebarOnly?: boolean;
+  /** Currently active auth page tab */
+  activeAuthPage?: string;
 }
 
-export function BuilderPanel({ draft, updateDraft, sidebarOnly = false }: BuilderPanelProps) {
+export function BuilderPanel({ draft, updateDraft, sidebarOnly = false, activeAuthPage }: BuilderPanelProps) {
   const { t } = useI18n();
   const store = useBuilderStore();
   const initializedRef = useRef(false);
@@ -483,6 +485,7 @@ export function BuilderPanel({ draft, updateDraft, sidebarOnly = false }: Builde
       <BuilderPalette
         components={store.components}
         onQuickAdd={handleQuickAdd}
+        activeAuthPage={activeAuthPage}
       />
     </div>
   );

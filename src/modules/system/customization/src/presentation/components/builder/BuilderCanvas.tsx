@@ -16,6 +16,7 @@
  */
 "use client";
 
+import { useMemo } from "react";
 import { useDroppable } from "@dnd-kit/core";
 import { SortableContext, rectSortingStrategy } from "@dnd-kit/sortable";
 import { cn } from "@/core/common/utils";
@@ -25,6 +26,28 @@ import type { CanvasComponent, PositionMode } from "../../../domain/entities/Can
 import { CANVAS_GRID_COLUMNS, CANVAS_WIDTH, CANVAS_HEIGHT, SNAP_GRID_SIZE } from "../../../domain/entities/CanvasComponent";
 import { GridOverlay } from "./GridOverlay";
 import { DraggableCanvasItem } from "./DraggableCanvasItem";
+
+/** Parse "N / M" grid string → starting position number */
+function parseGridStart(span: string): number {
+  const match = span.match(/(\d+)/);
+  return match ? parseInt(match[1], 10) : 1;
+}
+
+/**
+ * Sort components by grid position (row first, then column) for grid mode.
+ * This ensures SortableContext items match the visual DOM order,
+ * which is critical for dnd-kit's rectSortingStrategy to work correctly.
+ */
+function sortByGridPosition(components: CanvasComponent[]): CanvasComponent[] {
+  return [...components].sort((a, b) => {
+    const rowA = parseGridStart(a.gridRow);
+    const rowB = parseGridStart(b.gridRow);
+    if (rowA !== rowB) return rowA - rowB;
+    const colA = parseGridStart(a.gridColumn);
+    const colB = parseGridStart(b.gridColumn);
+    return colA - colB;
+  });
+}
 
 interface BuilderCanvasProps {
   components: CanvasComponent[];
@@ -244,35 +267,45 @@ export function BuilderCanvas({
               </div>
             ) : (
               /* ── Grid mode ── */
-              <SortableContext
-                items={components.map(c => c.id)}
-                strategy={rectSortingStrategy}
-              >
-                <div
-                  className="relative z-20 w-full h-full p-2"
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: `repeat(${CANVAS_GRID_COLUMNS}, 1fr)`,
-                    gridTemplateRows: `repeat(${canvasGridRows}, minmax(${fullWidth ? "1fr" : "60px"}, 1fr))`,
-                    gap: "6px",
-                    minHeight: fullWidth ? "100%" : `${canvasGridRows * 60}px`,
-                    paddingTop: snapToGrid ? "20px" : "8px",
-                  }}
-                >
-                  {components
-                    .sort((a, b) => a.zIndex - b.zIndex)
-                    .map((comp) => (
-                      <DraggableCanvasItem
-                        key={comp.id}
-                        component={comp}
-                        isSelected={selectedComponentId === comp.id}
-                        isOverlapping={overlappingIds.has(comp.id)}
-                        positionMode="grid"
-                        onSelect={() => onSelectComponent(comp.id)}
-                      />
-                    ))}
-                </div>
-              </SortableContext>
+              (() => {
+                // Sort by grid position (row start, then column start) so
+                // the SortableContext items array matches the visual layout.
+                const parseStart = (s: string) => parseInt(s.split('/')[0]?.trim(), 10) || 1;
+                const gridSorted = [...components].sort((a, b) => {
+                  const rowDiff = parseStart(a.gridRow) - parseStart(b.gridRow);
+                  if (rowDiff !== 0) return rowDiff;
+                  return parseStart(a.gridColumn) - parseStart(b.gridColumn);
+                });
+                return (
+                  <SortableContext
+                    items={gridSorted.map(c => c.id)}
+                    strategy={rectSortingStrategy}
+                  >
+                    <div
+                      className="relative z-20 w-full h-full p-2"
+                      style={{
+                        display: "grid",
+                        gridTemplateColumns: `repeat(${CANVAS_GRID_COLUMNS}, 1fr)`,
+                        gridTemplateRows: `repeat(${canvasGridRows}, minmax(${fullWidth ? "1fr" : "60px"}, 1fr))`,
+                        gap: "6px",
+                        minHeight: fullWidth ? "100%" : `${canvasGridRows * 60}px`,
+                        paddingTop: snapToGrid ? "20px" : "8px",
+                      }}
+                    >
+                      {gridSorted.map((comp) => (
+                        <DraggableCanvasItem
+                          key={comp.id}
+                          component={comp}
+                          isSelected={selectedComponentId === comp.id}
+                          isOverlapping={overlappingIds.has(comp.id)}
+                          positionMode="grid"
+                          onSelect={() => onSelectComponent(comp.id)}
+                        />
+                      ))}
+                    </div>
+                  </SortableContext>
+                );
+              })()
             )}
 
             {/* Empty state */}

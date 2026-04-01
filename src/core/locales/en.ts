@@ -5285,7 +5285,17 @@ export const en = {
     remove: "Remove",
   },
 
-  // ===== IDENTITY PROVIDERS (SSO) =====
+  // ===== VIDEO UPLOAD COMPONENT =====
+  videoUpload: {
+    dragDrop: "Drop a video here or click to browse",
+    uploadFailed: "Upload failed. Please try again.",
+    invalidType: "Invalid file type. Allowed: MP4, WebM, OGG, MOV",
+    tooLarge: "File exceeds {{max}} MB limit",
+    invalidUrl: "Please enter a valid URL starting with http:// or https://",
+    urlPlaceholder: "https://example.com/video.mp4",
+    urlHelp: "Paste a direct .mp4/.webm/.ogg URL. YouTube and Google Drive links are not direct video URLs.",
+  },
+
   identityProviders: {
     title: "Identity Providers",
     description: "Configure external SSO identity providers (OIDC, OAuth2, SAML)",
@@ -6964,9 +6974,13 @@ export const en = {
         copyright: "Copyright",
         copyrightDesc: "Copyright text & year",
         customHtml: "Custom HTML",
-        customHtmlDesc: "Raw HTML block (Enterprise)",
+        customHtmlDesc: "Raw HTML block",
         videoBg: "Video Background",
-        videoBgDesc: "Background video (Enterprise)",
+        videoBgDesc: "Background video layer",
+        forgotForm: "Forgot Password Form",
+        forgotFormDesc: "Email input for password reset",
+        resetForm: "Reset Password Form",
+        resetFormDesc: "New password entry with confirmation",
       },
       // Properties panel
       props: {
@@ -6980,6 +6994,38 @@ export const en = {
         zIndex: "Layer Order",
         componentSettings: "Settings",
         noSettings: "No configurable settings",
+        // Logo
+        logoImage: "Logo Image",
+        logoImageDesc: "Upload or paste a URL. Leave empty to use the default app logo.",
+        shape: "Shape",
+        // Image
+        imageSource: "Image",
+        imageSourceDesc: "Upload an image or paste a direct URL.",
+        // Divider
+        color: "Color",
+        // Copyright
+        year: "Year",
+        // Social Login
+        providers: "Providers",
+        // CTA Button
+        size: "Size",
+        // Video Background
+        videoUrl: "Video URL",
+        videoUrlHint: "Direct .mp4, .webm, or .ogg URL",
+        posterImage: "Poster Image",
+        posterImageDesc: "Shown while video loads or on mobile.",
+        autoplay: "Autoplay",
+        muted: "Muted",
+        loop: "Loop",
+        // Forgot Form
+        showBackToLogin: 'Show "Back to Login" link',
+        // Reset Form
+        showPasswordStrength: "Show password strength indicator",
+        // Footer
+        linkLabel: "Label",
+        linkUrl: "URL",
+        noLinks: "Default links shown. Add custom links above.",
+        addLink: "Add Link",
       },
       // Canvas
       canvas: {

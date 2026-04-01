@@ -18,16 +18,17 @@ import {
   Image, LogIn, Type, AlignLeft, Share2, ListChecks, Quote,
   ImageIcon, MousePointerClick, Minus, PanelBottom, Copyright,
   Code, Video, GripVertical, Lock, Check, ChevronDown,
-  Layout, FileText, Film, Layers,
+  Layout, FileText, Film, Layers, KeyRound, RotateCcw,
 } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
+import { usePermissions } from "@core/providers/permission-provider";
 import { COMPONENT_CATALOG, hasSingletonComponent } from "../../../domain/entities/CanvasComponent";
 import type { CanvasComponent, CanvasComponentType } from "../../../domain/entities/CanvasComponent";
 
 const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   Image, LogIn, Type, AlignLeft, Share2, ListChecks, Quote,
   ImageIcon, MousePointerClick, Minus, PanelBottom, Copyright,
-  Code, Video,
+  Code, Video, KeyRound, RotateCcw,
 };
 
 // ── Component Groups ──────────────────────────────────────
@@ -43,7 +44,8 @@ const COMPONENT_GROUPS: ComponentGroup[] = [
     id: "core",
     labelKey: "studio.builder.group.core",
     icon: Layout,
-    types: ["logo", "loginForm", "socialLogin"],
+    // loginForm, forgotForm, resetForm are mutually exclusive based on page
+    types: ["logo", "loginForm", "forgotForm", "resetForm", "socialLogin"],
   },
   {
     id: "content",
@@ -65,9 +67,29 @@ const COMPONENT_GROUPS: ComponentGroup[] = [
   },
 ];
 
+/** Filter palette components based on which auth page tab is active */
+function getFilteredGroups(activeAuthPage?: string): ComponentGroup[] {
+  // Map auth page → which form component is relevant
+  const formForPage: Record<string, CanvasComponentType> = {
+    login: 'loginForm',
+    forgotPassword: 'forgotForm',
+    resetPassword: 'resetForm',
+  };
+  const activeForm = formForPage[activeAuthPage || 'login'] || 'loginForm';
+  const excludedForms = (['loginForm', 'forgotForm', 'resetForm'] as CanvasComponentType[])
+    .filter(f => f !== activeForm);
+
+  return COMPONENT_GROUPS.map(group => ({
+    ...group,
+    types: group.types.filter(t => !excludedForms.includes(t)),
+  }));
+}
+
 interface BuilderPaletteProps {
   components: CanvasComponent[];
   onQuickAdd: (type: CanvasComponentType) => void;
+  /** Currently active auth page — used to highlight the contextual form component */
+  activeAuthPage?: string;
 }
 
 function DraggablePaletteItem({
@@ -90,14 +112,18 @@ function DraggablePaletteItem({
   onQuickAdd: (type: CanvasComponentType) => void;
 }) {
   const { t } = useI18n();
+  const { isSuperAdmin } = usePermissions();
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: `palette-${type}`,
     data: { type, source: "palette" },
-    disabled: (singleton && isUsed) || requiredEdition === "enterprise",
+    // Super Admins bypass all edition gating. For non-super-admins, 
+    // requiredEdition is checked (currently all null, but future-proofed
+    // for when backend dynamically sets edition requirements).
+    disabled: (singleton && isUsed) || (!isSuperAdmin && requiredEdition != null),
   });
 
   const Icon = ICON_MAP[icon] || Image;
-  const isDisabled = (singleton && isUsed) || requiredEdition === "enterprise";
+  const isDisabled = (singleton && isUsed) || (!isSuperAdmin && requiredEdition != null);
 
   return (
     <div
@@ -121,7 +147,7 @@ function DraggablePaletteItem({
         <p className="text-[11px] font-medium text-foreground truncate">{t(labelKey)}</p>
       </div>
       {/* Badges */}
-      {requiredEdition === "enterprise" && (
+      {!isSuperAdmin && requiredEdition != null && (
         <Lock className="h-3 w-3 text-amber-500 shrink-0" />
       )}
       {singleton && isUsed && (
@@ -143,7 +169,7 @@ function DraggablePaletteItem({
   );
 }
 
-export function BuilderPalette({ components, onQuickAdd }: BuilderPaletteProps) {
+export function BuilderPalette({ components, onQuickAdd, activeAuthPage }: BuilderPaletteProps) {
   const { t } = useI18n();
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({
     core: true,
@@ -166,7 +192,7 @@ export function BuilderPalette({ components, onQuickAdd }: BuilderPaletteProps) 
       </p>
 
       <div className="space-y-1.5">
-        {COMPONENT_GROUPS.map(group => {
+        {getFilteredGroups(activeAuthPage).map(group => {
           const GroupIcon = group.icon;
           const isExpanded = expandedGroups[group.id] ?? true;
           const groupCatalogItems = COMPONENT_CATALOG.filter(c =>

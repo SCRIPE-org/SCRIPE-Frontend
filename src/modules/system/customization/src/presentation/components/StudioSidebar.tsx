@@ -189,7 +189,7 @@ export function StudioSidebar(props: StudioSidebarProps) {
             />
           )}
           {activePanel === "builder" && (
-            <BuilderPanel draft={draft} updateDraft={updateDraft} sidebarOnly={!!props.isBuilderMode} />
+            <BuilderPanel draft={draft} updateDraft={updateDraft} sidebarOnly={!!props.isBuilderMode} activeAuthPage={activeAuthPage} />
           )}
           {activePanel === "dashboard" && (
             <DashboardPanel

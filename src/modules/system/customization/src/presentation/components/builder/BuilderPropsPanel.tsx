@@ -13,7 +13,9 @@ import { cn } from "@/core/common/utils";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Button } from "@core/ui/button";
-import { Trash2, Eye, EyeOff, Copy, ArrowUp, ArrowDown, Lock, Unlock } from "lucide-react";
+import { Trash2, Eye, EyeOff, Copy, ArrowUp, ArrowDown, Lock, Unlock, Plus } from "lucide-react";
+import { ImageUploadField } from "@core/ui/image-upload-field";
+import { VideoUploadField } from "@core/ui/video-upload-field";
 import type { CanvasComponent, CanvasComponentType, GridAlignment, PositionMode } from "../../../domain/entities/CanvasComponent";
 import { COMPONENT_CATALOG } from "../../../domain/entities/CanvasComponent";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -294,6 +296,13 @@ function ComponentSpecificProps({ type,
     case 'logo':
       return (
         <div className="space-y-2">
+          <ImageUploadField
+            value={(props.src as string) || ''}
+            onChange={(url) => onUpdateProps({ src: url })}
+            label={t('studio.builder.props.logoImage') || 'Logo Image'}
+            description={t('studio.builder.props.logoImageDesc') || 'Upload or paste a URL. Leave empty to use the default app logo.'}
+            maxSizeBytes={2 * 1024 * 1024}
+          />
           <div>
             <Label className="text-[10px] text-muted-foreground">Max Width (px)</Label>
             <Input
@@ -304,6 +313,19 @@ function ComponentSpecificProps({ type,
               onChange={(e) => onUpdateProps({ maxWidth: parseInt(e.target.value, 10) || 200 })}
               className="h-8 text-xs"
             />
+          </div>
+          <div>
+            <Label className="text-[10px] text-muted-foreground">{t('studio.builder.props.shape') || 'Shape'}</Label>
+            <select
+              value={(props.shape as string) || 'auto'}
+              onChange={(e) => onUpdateProps({ shape: e.target.value })}
+              className="w-full h-8 rounded-md border border-border bg-background px-2 text-xs"
+            >
+              <option value="auto">Auto</option>
+              <option value="circle">Circle</option>
+              <option value="square">Square</option>
+              <option value="rounded">Rounded</option>
+            </select>
           </div>
         </div>
       );
@@ -404,21 +426,30 @@ function ComponentSpecificProps({ type,
               <option value="ghost">Ghost</option>
             </select>
           </div>
+          <div>
+            <Label className="text-[10px] text-muted-foreground">{t('studio.builder.props.size') || 'Size'}</Label>
+            <select
+              value={(props.size as string) || 'md'}
+              onChange={(e) => onUpdateProps({ size: e.target.value })}
+              className="w-full h-8 rounded-md border border-border bg-background px-2 text-xs"
+            >
+              <option value="sm">Small</option>
+              <option value="md">Medium</option>
+              <option value="lg">Large</option>
+            </select>
+          </div>
         </div>
       );
 
     case 'image':
       return (
         <div className="space-y-2">
-          <div>
-            <Label className="text-[10px] text-muted-foreground">Image URL</Label>
-            <Input
-              value={(props.src as string) || ''}
-              onChange={(e) => onUpdateProps({ src: e.target.value })}
-              placeholder="https://..."
-              className="h-8 text-xs"
-            />
-          </div>
+          <ImageUploadField
+            value={(props.src as string) || ''}
+            onChange={(url) => onUpdateProps({ src: url })}
+            label={t('studio.builder.props.imageSource') || 'Image'}
+            description={t('studio.builder.props.imageSourceDesc') || 'Upload an image or paste a direct URL.'}
+          />
           <div>
             <Label className="text-[10px] text-muted-foreground">Alt Text</Label>
             <Input
@@ -487,17 +518,36 @@ function ComponentSpecificProps({ type,
 
     case 'divider':
       return (
-        <div>
-          <Label className="text-[10px] text-muted-foreground">Style</Label>
-          <select
-            value={(props.style as string) || 'line'}
-            onChange={(e) => onUpdateProps({ style: e.target.value })}
-            className="w-full h-8 rounded-md border border-border bg-background px-2 text-xs"
-          >
-            <option value="line">Line</option>
-            <option value="space">Space</option>
-            <option value="dots">Dots</option>
-          </select>
+        <div className="space-y-2">
+          <div>
+            <Label className="text-[10px] text-muted-foreground">Style</Label>
+            <select
+              value={(props.style as string) || 'line'}
+              onChange={(e) => onUpdateProps({ style: e.target.value })}
+              className="w-full h-8 rounded-md border border-border bg-background px-2 text-xs"
+            >
+              <option value="line">Line</option>
+              <option value="space">Space</option>
+              <option value="dots">Dots</option>
+            </select>
+          </div>
+          <div>
+            <Label className="text-[10px] text-muted-foreground">{t('studio.builder.props.color') || 'Color'}</Label>
+            <div className="flex items-center gap-2">
+              <input
+                type="color"
+                value={(props.color as string) || '#cccccc'}
+                onChange={(e) => onUpdateProps({ color: e.target.value })}
+                className="h-8 w-10 rounded border border-border cursor-pointer"
+              />
+              <Input
+                value={(props.color as string) || 'inherit'}
+                onChange={(e) => onUpdateProps({ color: e.target.value })}
+                placeholder="inherit"
+                className="h-8 text-xs flex-1"
+              />
+            </div>
+          </div>
         </div>
       );
 
@@ -512,6 +562,20 @@ function ComponentSpecificProps({ type,
               placeholder="© 2026 Company Name"
               className="h-8 text-xs"
             />
+          </div>
+          <div>
+            <Label className="text-[10px] text-muted-foreground">{t('studio.builder.props.year') || 'Year'}</Label>
+            <select
+              value={(props.year as string) || 'auto'}
+              onChange={(e) => onUpdateProps({ year: e.target.value })}
+              className="w-full h-8 rounded-md border border-border bg-background px-2 text-xs"
+            >
+              <option value="auto">Auto (current year)</option>
+              <option value="2024">2024</option>
+              <option value="2025">2025</option>
+              <option value="2026">2026</option>
+              <option value="2027">2027</option>
+            </select>
           </div>
           <label className="flex items-center gap-2 cursor-pointer">
             <input
@@ -528,6 +592,30 @@ function ComponentSpecificProps({ type,
     case 'socialLogin':
       return (
         <div className="space-y-2">
+          <div>
+            <Label className="text-[10px] text-muted-foreground">{t('studio.builder.props.providers') || 'Providers'}</Label>
+            <div className="space-y-1.5 mt-1">
+              {['google', 'microsoft', 'github', 'apple'].map(provider => {
+                const providers = (Array.isArray(props.providers) ? props.providers : []) as string[];
+                return (
+                  <label key={provider} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={providers.includes(provider)}
+                      onChange={(e) => {
+                        const updated = e.target.checked
+                          ? [...providers, provider]
+                          : providers.filter(p => p !== provider);
+                        onUpdateProps({ providers: updated });
+                      }}
+                      className="h-3.5 w-3.5 rounded border-border"
+                    />
+                    <span className="text-xs text-foreground capitalize">{provider}</span>
+                  </label>
+                );
+              })}
+            </div>
+          </div>
           <div>
             <Label className="text-[10px] text-muted-foreground">Layout</Label>
             <select
@@ -703,27 +791,22 @@ function ComponentSpecificProps({ type,
     case 'videoBg':
       return (
         <div className="space-y-2">
-          <div>
-            <Label className="text-[10px] text-muted-foreground">{t('studio.builder.props.videoUrl') || 'Video URL'}</Label>
-            <Input
-              value={(props.src as string) || ''}
-              onChange={(e) => onUpdateProps({ src: e.target.value })}
-              placeholder="https://example.com/video.mp4"
-              className="h-8 text-xs"
-            />
-          </div>
-          <div>
-            <Label className="text-[10px] text-muted-foreground">{t('studio.builder.props.posterUrl') || 'Poster Image URL'}</Label>
-            <Input
-              value={(props.poster as string) || ''}
-              onChange={(e) => onUpdateProps({ poster: e.target.value })}
-              placeholder="https://example.com/poster.jpg"
-              className="h-8 text-xs"
-            />
-          </div>
+          <VideoUploadField
+            value={(props.src as string) || ''}
+            onChange={(url) => onUpdateProps({ src: url })}
+            label={t('studio.builder.props.videoUrl') || 'Video URL'}
+            description={t('studio.builder.props.videoUrlHint') || 'Direct .mp4, .webm, or .ogg URL'}
+          />
+          <ImageUploadField
+            value={(props.poster as string) || ''}
+            onChange={(url) => onUpdateProps({ poster: url })}
+            label={t('studio.builder.props.posterImage') || 'Poster Image'}
+            description={t('studio.builder.props.posterImageDesc') || 'Shown while video loads or on mobile.'}
+          />
           {[
             { key: 'autoplay', label: t('studio.builder.props.autoplay') || 'Autoplay' },
             { key: 'muted', label: t('studio.builder.props.muted') || 'Muted' },
+            { key: 'loop', label: t('studio.builder.props.loop') || 'Loop' },
           ].map(({ key, label }) => (
             <label key={key} className="flex items-center gap-2 cursor-pointer">
               <input
@@ -735,6 +818,36 @@ function ComponentSpecificProps({ type,
               <span className="text-xs text-foreground">{label}</span>
             </label>
           ))}
+        </div>
+      );
+
+    case 'forgotForm':
+      return (
+        <div className="space-y-2">
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={Boolean(props.showBackToLogin ?? true)}
+              onChange={(e) => onUpdateProps({ showBackToLogin: e.target.checked })}
+              className="h-3.5 w-3.5 rounded border-border"
+            />
+            <span className="text-xs text-foreground">{t('studio.builder.props.showBackToLogin') || 'Show "Back to Login" link'}</span>
+          </label>
+        </div>
+      );
+
+    case 'resetForm':
+      return (
+        <div className="space-y-2">
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={Boolean(props.showPasswordStrength ?? true)}
+              onChange={(e) => onUpdateProps({ showPasswordStrength: e.target.checked })}
+              className="h-3.5 w-3.5 rounded border-border"
+            />
+            <span className="text-xs text-foreground">{t('studio.builder.props.showPasswordStrength') || 'Show password strength indicator'}</span>
+          </label>
         </div>
       );
 
