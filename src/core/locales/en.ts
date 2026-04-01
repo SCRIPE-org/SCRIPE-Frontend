@@ -6342,6 +6342,7 @@ export const en = {
       typography: "Typography",
       spacing: "Spacing & Shape",
       blocks: "Content Blocks",
+      dashboard: "Dashboard",
       advanced: "Advanced",
       accessibility: "Accessibility",
       themes: "Themes",
@@ -6355,9 +6356,6 @@ export const en = {
       login: "Login",
       forgotPassword: "Forgot Password",
       resetPassword: "Reset Password",
-      register: "Register",
-      verifyEmail: "Verify Email",
-      mfa: "MFA",
     },
     pageContent: "Page Content",
     fields: {
@@ -6523,6 +6521,16 @@ export const en = {
     appearance: {
       lightTheme: "Light Theme",
       darkTheme: "Dark Theme",
+    },
+
+    // Dashboard
+    dashboard: {
+      info: "These settings become the default dashboard experience for all admins in this tenant. Individual admins can override.",
+      layoutTemplate: "Layout Template",
+      colorTheme: "Color Theme",
+      themeMode: "Default Theme Mode",
+      language: "Default Language",
+      sidebar: "Sidebar Default State",
     },
 
     // Device
@@ -6906,6 +6914,10 @@ export const en = {
         builder: "Builder",
       },
       activeHint: "Builder mode active - use the Builder tab to arrange components",
+      // Layers
+      layers: "Layers",
+      layersHint: "Drag to reorder layer stack",
+      noLayers: "No components yet",
       // Palette
       palette: {
         title: "Components",
@@ -6946,6 +6958,7 @@ export const en = {
       // Properties panel
       props: {
         title: "Component Properties",
+        position: "Position",
         gridPlacement: "Grid Placement",
         gridColumn: "Column Span",
         gridRow: "Row Span",
@@ -6978,6 +6991,40 @@ export const en = {
       validationWarnings: "Layout Warnings",
       requiredComponent: "This component is required and cannot be removed",
       enterpriseOnly: "Enterprise edition required",
+      modeActive: "Builder Mode",
+      modeHint: "Drag components to arrange your login page layout",
+      // Position Mode
+      positionMode: "Position Mode",
+      freeForm: "Free-form",
+      freeFormDesc: "Absolute positioning with pixel-perfect control",
+      grid: "Grid",
+      gridDesc: "Snap components to a structured grid layout",
+      // Free-form Canvas
+      zoom: "Zoom",
+      lock: "Lock Position",
+      unlock: "Unlock Position",
+      bringForward: "Bring Forward",
+      sendBack: "Send Back",
+      snapToGrid: "Snap to Grid",
+      showGrid: "Show Grid",
+      alignmentGuides: "Alignment Guides",
+      overlapWarning: "Components overlap",
+      // Template Actions
+      exportTemplate: "Export Template",
+      importTemplate: "Import Template",
+      loadTemplate: "Load Template",
+      deleteTemplate: "Delete Template",
+      templateSaved: "Template saved successfully",
+      templateLoaded: "Template loaded",
+      templateDeleted: "Template deleted",
+      noTemplates: "No saved templates",
+      // Component Groups
+      group: {
+        core: "Core",
+        content: "Content",
+        media: "Media",
+        structure: "Structure",
+      },
     },
   },
 };

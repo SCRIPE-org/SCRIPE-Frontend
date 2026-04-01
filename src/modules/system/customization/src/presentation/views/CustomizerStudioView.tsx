@@ -16,7 +16,7 @@
  */
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { DndContext, DragOverlay, closestCenter } from "@dnd-kit/core";
 import { useStudioViewModel } from "../viewmodels/useStudioViewModel";
@@ -52,9 +52,86 @@ export function CustomizerStudioView() {
   // Determine if we are in builder mode
   const isBuilderMode = vm.activePanel === "builder";
 
-  // Send draft to iframe whenever draft changes (only when NOT in builder mode)
+  // ── SYNC 1: Initialize builder store from draft on load ──
+  // When draft loads from backend, seed the builder store so it has the right components
+  const hasInitializedBuilder = useRef(false);
   useEffect(() => {
-    if (isBuilderMode) return; // Builder renders its own canvas, no iframe needed
+    if (hasInitializedBuilder.current) return;
+    if (!vm.draft || !vm.draft.canvasComponents) return;
+    // Deep copy to ensure new references (avoid same-ref equality issues)
+    const componentsCopy = vm.draft.canvasComponents.map(c => ({ ...c, props: { ...c.props } }));
+    builderStore.initialize(
+      componentsCopy,
+      vm.draft.canvasGridRows,
+      vm.draft.canvasBackground ? { ...vm.draft.canvasBackground } : { type: 'inherit' as const, value: '' },
+    );
+    builderStore.setPositionMode(vm.draft.canvasPositionMode || 'absolute');
+    hasInitializedBuilder.current = true;
+  }, [vm.draft]);
+
+  // ── SYNC 2: Builder → Draft (push canvas state whenever builder changes) ──
+  // This fires when: entering builder mode, editing components, or changing grid/background.
+  // It pushes ALL builder state to draft so it gets saved/published AND sent to preview.
+  useEffect(() => {
+    if (!isBuilderMode) return;
+    // Always push current builder state to draft when in builder mode
+    vm.batchUpdateDraft({
+      canvasMode: 'builder',
+      canvasComponents: builderStore.components,
+      canvasGridRows: builderStore.canvasGridRows,
+      canvasBackground: builderStore.canvasBackground,
+      canvasPositionMode: builderStore.positionMode,
+    });
+  }, [isBuilderMode, builderStore.components, builderStore.canvasGridRows, builderStore.canvasBackground, builderStore.positionMode]);
+
+  // ── SYNC 3: Per-page canvas — save/restore on auth page switch ──
+  // When user switches auth page tabs (login ↔ forgot ↔ reset) while in builder mode,
+  // save the current builder state to the PREVIOUS page's override, then load
+  // the new page's canvas from its override (or fallback to global draft canvas).
+  const lastAuthPage = useRef(vm.activeAuthPage);
+  useEffect(() => {
+    if (!isBuilderMode) { lastAuthPage.current = vm.activeAuthPage; return; }
+    if (lastAuthPage.current === vm.activeAuthPage) return;
+    
+    // 1. Save current builder state to the OLD page's override
+    const oldPage = lastAuthPage.current;
+    if (oldPage && oldPage !== 'login') {
+      const existingOverride = vm.draft.pageOverrides[oldPage] || { layout: 'centered', headline: '', subtitle: '' };
+      const updatedOverride = {
+        ...existingOverride,
+        canvasMode: 'builder' as const,
+        canvasComponents: builderStore.components.map(c => ({ ...c, props: { ...c.props } })),
+        canvasGridRows: builderStore.canvasGridRows,
+        canvasBackground: { ...builderStore.canvasBackground },
+        canvasPositionMode: builderStore.positionMode,
+      };
+      vm.batchUpdateDraft({
+        pageOverrides: { ...vm.draft.pageOverrides, [oldPage]: updatedOverride },
+      });
+    }
+    
+    // 2. Load new page's canvas from its override (or fallback to global)
+    const newPage = vm.activeAuthPage;
+    const newOverride = newPage !== 'login' ? vm.draft.pageOverrides[newPage] : undefined;
+    if (newOverride?.canvasComponents && newOverride.canvasComponents.length > 0) {
+      // This page has its own builder canvas
+      const pageCopy = newOverride.canvasComponents.map(c => ({ ...c, props: { ...c.props } }));
+      builderStore.initialize(pageCopy, newOverride.canvasGridRows || 8, newOverride.canvasBackground || { type: 'inherit' as const, value: '' });
+      builderStore.setPositionMode(newOverride.canvasPositionMode || 'absolute');
+    } else {
+      // Fallback: use the main login page's canvas
+      const globalCopy = vm.draft.canvasComponents.map(c => ({ ...c, props: { ...c.props } }));
+      builderStore.initialize(globalCopy, vm.draft.canvasGridRows, vm.draft.canvasBackground || { type: 'inherit' as const, value: '' });
+      builderStore.setPositionMode(vm.draft.canvasPositionMode || 'absolute');
+    }
+    
+    lastAuthPage.current = vm.activeAuthPage;
+  }, [vm.activeAuthPage, isBuilderMode]);
+
+  // ── Send draft to iframe whenever draft changes ──
+  // This MUST fire even in builder mode so the preview receives canvas data.
+  // When user switches from builder to layout, the preview needs the latest canvas JSON.
+  useEffect(() => {
     const draftJson = vm.buildDraftJson();
     const slotJson = vm.buildSlotConfigJson();
     bridge.sendDraft({
@@ -62,7 +139,7 @@ export function CustomizerStudioView() {
       slotConfigJson: slotJson,
       activeAuthPage: vm.activeAuthPage,
     });
-  }, [vm.draft, vm.activeAuthPage, bridge.sendDraft, vm.buildDraftJson, vm.buildSlotConfigJson, isBuilderMode]);
+  }, [vm.draft, vm.activeAuthPage, bridge.sendDraft, vm.buildDraftJson, vm.buildSlotConfigJson]);
 
   // Loading state -- waiting for branding query to resolve
   if (vm.isLoading) {
@@ -108,7 +185,13 @@ export function CustomizerStudioView() {
             selectedComponentId={builderStore.selectedComponentId}
             canvasGridRows={builderStore.canvasGridRows}
             snapToGrid={builderStore.snapToGrid}
+            positionMode={builderStore.positionMode}
+            zoom={builderStore.zoom}
+            overlappingIds={builderDnd.overlappingIds}
             onSelectComponent={builderStore.selectComponent}
+            onSetPositionMode={builderStore.setPositionMode}
+            onSetZoom={builderStore.setZoom}
+            onSetSnapToGrid={builderStore.setSnapToGrid}
             fullWidth
           />
         </div>
@@ -120,6 +203,7 @@ export function CustomizerStudioView() {
           deviceSize={vm.deviceSize}
           setDeviceSize={vm.setDeviceSize}
           onIframeLoad={bridge.handleIframeLoad}
+          activeAuthPage={vm.activeAuthPage}
         />
       )}
     </div>
@@ -143,7 +227,7 @@ export function CustomizerStudioView() {
         </div>
       )}
 
-      {/* Auth Page Tabs -- switch between Login / Forgot / Reset / Register / Verify / MFA */}
+      {/* Auth Page Tabs -- switch between Login / Forgot Password / Reset Password */}
       <AuthPageTabs
         activePageId={vm.activeAuthPage}
         onPageChange={vm.setActiveAuthPage}
@@ -180,7 +264,7 @@ export function CustomizerStudioView() {
           </span>
           <div className="flex-1" />
           <span className="text-[10px] text-muted-foreground/60 font-mono">
-            {builderStore.components.length} components | {builderStore.canvasGridRows} rows
+            {builderStore.positionMode === 'absolute' ? '⟐ Free-form' : '⊞ Grid'} | {builderStore.components.length} components | {builderStore.zoom}%
           </span>
         </div>
       )}

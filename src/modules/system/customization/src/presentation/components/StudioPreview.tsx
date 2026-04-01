@@ -1,11 +1,11 @@
 /**
  * StudioPreview — Sandboxed iframe preview with device frames
- * Uses the REAL login page with ?_preview=true for postMessage draft updates
+ * Uses the REAL login page with ?page= for multi-page preview
  */
 "use client";
 
 import { Loader2 } from "lucide-react";
-import type { DeviceSize } from "../../domain/entities/StudioDraft";
+import type { DeviceSize, AuthPageId } from "../../domain/entities/StudioDraft";
 import { DEVICE_DIMENSIONS } from "../../domain/entities/StudioDraft";
 
 interface StudioPreviewProps {
@@ -14,10 +14,24 @@ interface StudioPreviewProps {
   deviceSize: DeviceSize;
   setDeviceSize: (size: DeviceSize) => void;
   onIframeLoad?: () => void;
+  /** Current auth page tab — drives which form variant is shown */
+  activeAuthPage?: AuthPageId;
 }
 
-export function StudioPreview({ iframeRef, isPreviewReady, deviceSize, onIframeLoad }: StudioPreviewProps) {
+const PAGE_LABELS: Record<string, string> = {
+  login: "login",
+  "forgot-password": "forgot password",
+  "reset-password": "reset password",
+};
+
+export function StudioPreview({ iframeRef, isPreviewReady, deviceSize, onIframeLoad, activeAuthPage = "login" }: StudioPreviewProps) {
   const dimensions = DEVICE_DIMENSIONS[deviceSize];
+
+  // NOTE: Auth page switching is handled entirely via postMessage (activeAuthPage
+  // in the draft payload). We do NOT reload the iframe on tab switch — that caused
+  // race conditions where the postMessage draft would arrive with stale data.
+  // The initial src uses ?page=login; all subsequent page switches are via postMessage.
+  const iframeSrc = `/studio-preview?page=login`;
 
   return (
     <div className="relative flex flex-1 items-center justify-center bg-muted/20 overflow-hidden p-6">
@@ -51,7 +65,7 @@ export function StudioPreview({ iframeRef, isPreviewReady, deviceSize, onIframeL
             </div>
             <div className="flex-1 mx-8">
               <div className="h-5 w-full max-w-sm mx-auto rounded-md bg-muted/60 flex items-center justify-center">
-                <span className="text-[9px] text-muted-foreground/60 font-mono">login preview</span>
+                <span className="text-[9px] text-muted-foreground/60 font-mono">{PAGE_LABELS[activeAuthPage] || "login"} preview</span>
               </div>
             </div>
           </div>
@@ -64,10 +78,10 @@ export function StudioPreview({ iframeRef, isPreviewReady, deviceSize, onIframeL
           </div>
         )}
 
-        {/* iframe — loads REAL login page with preview mode */}
+        {/* iframe — loads preview page with ?page= for multi-page support */}
         <iframe
           ref={iframeRef}
-          src="/studio-preview"
+          src={iframeSrc}
           className="h-full w-full border-0"
           title="Login Page Preview"
           onLoad={onIframeLoad}

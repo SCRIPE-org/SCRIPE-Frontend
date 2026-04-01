@@ -239,7 +239,13 @@ export function BuilderPanel({ draft, updateDraft, sidebarOnly = false }: Builde
           selectedComponentId={store.selectedComponentId}
           canvasGridRows={store.canvasGridRows}
           snapToGrid={store.snapToGrid}
+          positionMode={store.positionMode}
+          zoom={store.zoom}
+          overlappingIds={new Set(overlapWarnings.map((_, i) => `overlap_${i}`))} // Quick mock, not actually used here since sidebarOnly=false is rare now
           onSelectComponent={store.selectComponent}
+          onSetPositionMode={store.setPositionMode}
+          onSetZoom={store.setZoom}
+          onSetSnapToGrid={store.setSnapToGrid}
         />
       )}
 
@@ -250,6 +256,30 @@ export function BuilderPanel({ draft, updateDraft, sidebarOnly = false }: Builde
         onSelectComponent={store.selectComponent}
         onToggleVisibility={store.toggleVisibility}
       />
+
+      {/* Selected Component Props — shown right after layers for discoverability */}
+      {selectedComponent && (
+        <BuilderPropsPanel
+          component={selectedComponent}
+          positionMode={store.positionMode}
+          onUpdate={(id, updates) => store.updateComponent(id, updates)}
+          onUpdateProps={(id, props) => {
+            const comp = store.components.find(c => c.id === id);
+            if (comp) {
+              store.updateComponent(id, {
+                props: { ...comp.props, ...props },
+              });
+            }
+          }}
+          onRemove={store.removeComponent}
+          onDuplicate={store.duplicateComponent}
+          onToggleVisibility={store.toggleVisibility}
+          onReorderZ={store.reorderZ}
+          onLock={store.lockComponent}
+          onUnlock={store.unlockComponent}
+          onResize={store.resizeComponent}
+        />
+      )}
 
       {/* Start from Template */}
       <div className="space-y-2">
@@ -454,26 +484,6 @@ export function BuilderPanel({ draft, updateDraft, sidebarOnly = false }: Builde
         components={store.components}
         onQuickAdd={handleQuickAdd}
       />
-
-      {/* Selected Component Props */}
-      {selectedComponent && (
-        <BuilderPropsPanel
-          component={selectedComponent}
-          onUpdate={(id, updates) => store.updateComponent(id, updates)}
-          onUpdateProps={(id, props) => {
-            const comp = store.components.find(c => c.id === id);
-            if (comp) {
-              store.updateComponent(id, {
-                props: { ...comp.props, ...props },
-              });
-            }
-          }}
-          onRemove={store.removeComponent}
-          onDuplicate={store.duplicateComponent}
-          onToggleVisibility={store.toggleVisibility}
-          onReorderZ={store.reorderZ}
-        />
-      )}
     </div>
   );
 

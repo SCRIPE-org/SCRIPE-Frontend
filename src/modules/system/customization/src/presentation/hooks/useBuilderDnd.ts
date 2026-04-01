@@ -5,10 +5,12 @@
  * the sidebar (palette + layers) AND the full-width canvas.
  * Without this, palette→canvas drag doesn't work because they'd
  * be in different React trees.
+ *
+ * Supports both absolute (free-form) and grid positioning modes.
  */
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import {
   DragEndEvent,
   DragStartEvent,
@@ -54,44 +56,30 @@ export function useBuilderDnd() {
         return;
       }
 
-      // 2. Dragged within canvas (reorder)
+      // 2. Dragged within canvas (reorder) — grid mode only
       if (activeData?.source === "canvas" && active.id !== over.id) {
-        const oldIndex = store.components.findIndex((c) => c.id === active.id);
-        const newIndex = store.components.findIndex((c) => c.id === over.id);
-        if (oldIndex !== -1 && newIndex !== -1) {
-          const activeComp = store.components[oldIndex];
-          const overComp = store.components[newIndex];
-          store.moveComponent(
-            activeComp.id,
-            overComp.gridColumn,
-            overComp.gridRow,
-          );
-          store.moveComponent(
-            overComp.id,
-            activeComp.gridColumn,
-            activeComp.gridRow,
-          );
+        if (store.positionMode === 'grid') {
+          const oldIndex = store.components.findIndex((c) => c.id === active.id);
+          const newIndex = store.components.findIndex((c) => c.id === over.id);
+          if (oldIndex !== -1 && newIndex !== -1) {
+            store.reorderComponents(oldIndex, newIndex);
+          }
         }
+        // In absolute mode, drag is handled by DraggableCanvasItem's mouseDown
         return;
       }
 
-      // 3. Dragged in layer list (z-reorder)
+      // 3. Dragged in layer list (z-reorder via array reorder)
       if (activeData?.source === "layer-list") {
         const activeCompId = activeData.componentId as string;
         const overData = over.data.current;
         if (overData?.source === "layer-list" && overData?.componentId) {
           const overCompId = overData.componentId as string;
           if (activeCompId !== overCompId) {
-            const activeComp = store.components.find(
-              (c) => c.id === activeCompId,
-            );
-            const overComp = store.components.find(
-              (c) => c.id === overCompId,
-            );
-            if (activeComp && overComp) {
-              const activeZ = activeComp.zIndex;
-              store.updateComponent(activeCompId, { zIndex: overComp.zIndex });
-              store.updateComponent(overCompId, { zIndex: activeZ });
+            const fromIndex = store.components.findIndex(c => c.id === activeCompId);
+            const toIndex = store.components.findIndex(c => c.id === overCompId);
+            if (fromIndex !== -1 && toIndex !== -1) {
+              store.reorderComponents(fromIndex, toIndex);
             }
           }
         }
@@ -110,6 +98,18 @@ export function useBuilderDnd() {
     ? activeId.replace("palette-", "")
     : null;
 
+  // Compute overlapping component IDs (for free-form mode)
+  const overlappingIds = useMemo(() => {
+    if (store.positionMode !== 'absolute') return new Set<string>();
+    const pairs = store.getOverlaps();
+    const ids = new Set<string>();
+    for (const [a, b] of pairs) {
+      ids.add(a);
+      ids.add(b);
+    }
+    return ids;
+  }, [store]);
+
   return {
     sensors,
     activeId,
@@ -117,6 +117,7 @@ export function useBuilderDnd() {
     activePaletteType,
     handleDragStart,
     handleDragEnd,
+    overlappingIds,
     store,
   };
 }

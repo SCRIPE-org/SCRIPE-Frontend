@@ -7,7 +7,7 @@
 // compact controls (toggle switches, gradient pickers, layout thumbnails, etc.)
 // where @core/ui/button's padding/sizing would break the layout.
 
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import { Layout, Palette, Type, Settings2, Layers, Blocks, Paintbrush, ScanEye, Store, LayoutGrid, LayoutDashboard } from "lucide-react";
 import { cn } from "@/core/common/utils";
 import { LayoutPanel } from "./LayoutPanel";
@@ -20,8 +20,8 @@ import { AdvancedPanel } from "./AdvancedPanel";
 import { AccessibilityPanel } from "./AccessibilityPanel";
 import { ThemeMarketplacePanel } from "./ThemeMarketplacePanel";
 import { BuilderPanel } from "./builder/BuilderPanel";
-import { DashboardPanel, DEFAULT_DASHBOARD_SETTINGS } from "./DashboardPanel";
-import type { DashboardThemeSettings } from "./DashboardPanel";
+import { DashboardPanel } from "./DashboardPanel";
+import type { DashboardThemeSettings } from "../../domain/entities/StudioDraft";
 import { useI18n } from "@core/providers/i18n-provider";
 
 
@@ -73,10 +73,9 @@ export function StudioSidebar(props: StudioSidebarProps) {
 
   const currentPageOverride = getPageOverride(activeAuthPage);
 
-  // Dashboard settings local state (will be wired to draft when backend supports it)
-  const [dashboardSettings, setDashboardSettings] = useState<DashboardThemeSettings>(DEFAULT_DASHBOARD_SETTINGS);
+  // Dashboard settings wired to draft persistence
   const handleDashboardUpdate = (updates: Partial<DashboardThemeSettings>) => {
-    setDashboardSettings(prev => ({ ...prev, ...updates }));
+    updateDraft('dashboardSettings', { ...draft.dashboardSettings, ...updates });
   };
 
   // Group tabs by section for visual separation
@@ -194,7 +193,7 @@ export function StudioSidebar(props: StudioSidebarProps) {
           )}
           {activePanel === "dashboard" && (
             <DashboardPanel
-              settings={dashboardSettings}
+              settings={draft.dashboardSettings}
               onUpdate={handleDashboardUpdate}
             />
           )}

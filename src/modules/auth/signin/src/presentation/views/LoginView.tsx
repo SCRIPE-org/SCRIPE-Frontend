@@ -1,4 +1,4 @@
-﻿/**
+/**
  * LoginView — 5-Layout Customizable Login Page
  *
  * Renders tenant-branded login using the Login Rendering Engine (Phase 5).
@@ -34,6 +34,7 @@ import { useSsoProviders } from "../viewmodels/useSsoProviders";
 import { useTenantResolution } from "../viewmodels/useTenantResolution";
 import { TenantSuspendedView, TenantNotFoundView } from "./TenantStatusView";
 import { useLoginBrandingTokens } from "../viewmodels/useLoginBrandingTokens";
+import { ProductionCanvasRenderer } from "../components/ProductionCanvasRenderer";
 
 export function LoginView() {
   const vm = useLoginViewModel();
@@ -285,8 +286,36 @@ export function LoginView() {
   // ── Slot: footer ──
   const footerSlot = <SlotRenderer slotId="login.footer" slotConfig={slotConfig} className="mt-6" />;
 
+  // ── Builder Mode: render canvas-based layout from studio ──────────
+  // When the published branding JSON contains canvasMode='builder', the entire
+  // login page is rendered via a CSS grid defined by the builder canvas.
+  // The ProductionCanvasRenderer maps loginForm → real CredentialsForm.
+  const rawBrandingJson = previewOverrides?.loginBrandingJson ?? branding?.loginBrandingJson;
+  const parsedBranding = (() => {
+    if (!rawBrandingJson) return null;
+    try { return JSON.parse(rawBrandingJson) as Record<string, unknown>; } catch { return null; }
+  })();
+
+  if (parsedBranding?.canvasMode === 'builder' && Array.isArray(parsedBranding.components)) {
+    return (
+      <ProductionCanvasRenderer
+        components={parsedBranding.components as any}
+        gridRows={(parsedBranding.canvasGridRows as number) || 8}
+        canvasBackground={parsedBranding.canvasBackground as any}
+        positionMode={(parsedBranding.canvasPositionMode as 'grid' | 'absolute') || 'grid'}
+        formContent={formContent}
+        logoUrl={logoSrc}
+        companyName={companyName}
+        direction={direction}
+        headline={branding?.loginHeadline || t("auth.branding.headline")}
+        subtitle={branding?.loginSubtitle || t("auth.branding.subtitle")}
+        copyrightText={(parsedBranding.copyrightText as string) || ""}
+      />
+    );
+  }
+
   // ═══════════════════════════════════════════════════
-  // 12 LAYOUT VARIANTS
+  // 12 LAYOUT VARIANTS (fixed-template mode)
   // ═══════════════════════════════════════════════════
 
   // Common wrapper style — single layered background for gradient support

@@ -7,19 +7,33 @@
  * @module customization/domain
  */
 import type { LoginLayout, SlotConfig } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
-import type { CanvasComponent, CanvasMode, CanvasBackground } from "./CanvasComponent";
-import { DEFAULT_CANVAS_COMPONENTS, DEFAULT_CANVAS_GRID_ROWS, DEFAULT_CANVAS_BACKGROUND } from "./CanvasComponent";
+import type { CanvasComponent, CanvasMode, CanvasBackground, PositionMode } from "./CanvasComponent";
+import { DEFAULT_CANVAS_COMPONENTS, DEFAULT_CANVAS_GRID_ROWS, DEFAULT_CANVAS_BACKGROUND, DEFAULT_POSITION_MODE } from "./CanvasComponent";
+
+// Dashboard settings type (must match DashboardPanel's export)
+export interface DashboardThemeSettings {
+  theme: "light" | "dark" | "system";
+  language: "en" | "ar";
+  sidebarCollapsed: boolean;
+  colorTheme: string;
+  layoutTemplate: string;
+}
+
+export const DEFAULT_DASHBOARD_SETTINGS: DashboardThemeSettings = {
+  theme: "system",
+  language: "en",
+  sidebarCollapsed: false,
+  colorTheme: "default",
+  layoutTemplate: "default",
+};
 
 // ── Auth Page Identifiers ─────────────────────────────
-export type AuthPageId = "login" | "forgot-password" | "reset-password" | "register" | "verify-email" | "mfa";
+export type AuthPageId = "login" | "forgot-password" | "reset-password";
 
 export const AUTH_PAGES: { id: AuthPageId; labelKey: string; icon: string }[] = [
   { id: "login",           labelKey: "studio.page.login",         icon: "LogIn" },
   { id: "forgot-password", labelKey: "studio.page.forgotPassword", icon: "KeyRound" },
   { id: "reset-password",  labelKey: "studio.page.resetPassword",  icon: "RotateCcw" },
-  { id: "register",        labelKey: "studio.page.register",       icon: "UserPlus" },
-  { id: "verify-email",    labelKey: "studio.page.verifyEmail",    icon: "MailCheck" },
-  { id: "mfa",             labelKey: "studio.page.mfa",            icon: "ShieldCheck" },
 ];
 
 // ── Per-Page Override — each page can customize layout + content ──
@@ -27,6 +41,12 @@ export interface AuthPageOverride {
   layout: LoginLayout;
   headline: string;
   subtitle: string;
+  // Builder canvas per page (optional — falls back to login page's canvas)
+  canvasMode?: CanvasMode;
+  canvasComponents?: CanvasComponent[];
+  canvasGridRows?: number;
+  canvasBackground?: CanvasBackground;
+  canvasPositionMode?: PositionMode;
 }
 
 export type AuthPageOverrides = Partial<Record<AuthPageId, AuthPageOverride>>;
@@ -36,9 +56,6 @@ export const DEFAULT_PAGE_OVERRIDES: Record<AuthPageId, AuthPageOverride> = {
   "login":           { layout: "split-right", headline: "", subtitle: "" },
   "forgot-password": { layout: "centered",    headline: "", subtitle: "" },
   "reset-password":  { layout: "centered",    headline: "", subtitle: "" },
-  "register":        { layout: "split-left",  headline: "", subtitle: "" },
-  "verify-email":    { layout: "minimal",     headline: "", subtitle: "" },
-  "mfa":             { layout: "minimal",     headline: "", subtitle: "" },
 };
 
 // ── Draft Shape ───────────────────────────────────────
@@ -215,6 +232,11 @@ export interface StudioDraftProps {
   canvasGridRows: number;
   /** Canvas background — defaults to inheriting from studio tokens */
   canvasBackground: CanvasBackground;
+  /** Position mode: 'grid' = CSS Grid, 'absolute' = free-form x/y */
+  canvasPositionMode: PositionMode;
+
+  // ── Dashboard Theme Settings ────────────────────────
+  dashboardSettings: DashboardThemeSettings;
 }
 
 // ── Default Draft ─────────────────────────────────────
@@ -359,6 +381,9 @@ export const DEFAULT_DRAFT: StudioDraftProps = {
   canvasComponents: DEFAULT_CANVAS_COMPONENTS,
   canvasGridRows: DEFAULT_CANVAS_GRID_ROWS,
   canvasBackground: DEFAULT_CANVAS_BACKGROUND,
+  canvasPositionMode: DEFAULT_POSITION_MODE,
+  // Dashboard
+  dashboardSettings: DEFAULT_DASHBOARD_SETTINGS,
 };
 
 // ── Device Sizes ──────────────────────────────────────

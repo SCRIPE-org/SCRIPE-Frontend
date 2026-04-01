@@ -10,14 +10,19 @@
 "use client";
 
 import { create } from "zustand";
-import type { CanvasComponent, CanvasComponentType, CanvasBackground } from "../../domain/entities/CanvasComponent";
+import type { CanvasComponent, CanvasComponentType, CanvasBackground, PositionMode } from "../../domain/entities/CanvasComponent";
 import {
   DEFAULT_CANVAS_COMPONENTS,
   DEFAULT_CANVAS_GRID_ROWS,
   DEFAULT_CANVAS_BACKGROUND,
+  DEFAULT_POSITION_MODE,
   COMPONENT_CATALOG,
+  CANVAS_WIDTH,
   generateComponentId,
   findNextAvailableRow,
+  findNextAvailableY,
+  snapToGridValue,
+  checkOverlap,
   hasSingletonComponent,
 } from "../../domain/entities/CanvasComponent";
 
@@ -38,6 +43,8 @@ interface BuilderState {
   canvasGridRows: number;
   canvasBackground: CanvasBackground;
   snapToGrid: boolean;
+  positionMode: PositionMode;
+  zoom: number;
 
   // History
   _past: CanvasSnapshot[];
@@ -46,6 +53,10 @@ interface BuilderState {
   // Computed
   canUndo: boolean;
   canRedo: boolean;
+
+  // Track if a drag/resize is in progress
+  _isDragging: boolean;
+  _preInteractionSnapshot: CanvasSnapshot | null;
 
   // ── Actions ──
   /** Initialize builder from draft data */
@@ -63,11 +74,31 @@ interface BuilderState {
   /** Move a component to a new grid position */
   moveComponent: (id: string, gridColumn: string, gridRow: string) => void;
 
+  /** Move a component to absolute x/y position — LIVE during drag, no history push */
+  moveComponentAbsolute: (id: string, x: number, y: number) => void;
+
+  /** Resize a component — LIVE during drag, no history push */
+  resizeComponent: (id: string, width: number, height: number) => void;
+
+  /** Start a drag/resize interaction — saves snapshot for undo */
+  beginInteraction: () => void;
+
+  /** End a drag/resize interaction — commits the snapshot to undo history */
+  commitInteraction: () => void;
+
+  /** Lock a component from drag and resize */
+  lockComponent: (id: string) => void;
+  /** Unlock a component */
+  unlockComponent: (id: string) => void;
+
   /** Select a component (or null to deselect) */
   selectComponent: (id: string | null) => void;
 
   /** Reorder z-index: 'forward' or 'back' */
   reorderZ: (id: string, direction: 'forward' | 'back') => void;
+
+  /** Reorder components array by moving from one index to another */
+  reorderComponents: (fromIndex: number, toIndex: number) => void;
 
   /** Duplicate a component */
   duplicateComponent: (id: string) => void;
@@ -83,6 +114,15 @@ interface BuilderState {
 
   /** Toggle snap to grid */
   setSnapToGrid: (snap: boolean) => void;
+
+  /** Set position mode */
+  setPositionMode: (mode: PositionMode) => void;
+
+  /** Set zoom level */
+  setZoom: (zoom: number) => void;
+
+  /** Get list of overlapping component ID pairs */
+  getOverlaps: () => [string, string][];
 
   /** Undo last action */
   undo: () => void;
@@ -123,11 +163,15 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
   canvasGridRows: DEFAULT_CANVAS_GRID_ROWS,
   canvasBackground: DEFAULT_CANVAS_BACKGROUND,
   snapToGrid: true,
+  positionMode: DEFAULT_POSITION_MODE,
+  zoom: 100,
 
   _past: [],
   _future: [],
   canUndo: false,
   canRedo: false,
+  _isDragging: false,
+  _preInteractionSnapshot: null,
 
   // ── Initialize from draft ──
   initialize: (components, gridRows, background) => {
@@ -155,6 +199,10 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
     }
 
     const nextRow = findNextAvailableRow(state.components);
+    const nextY = findNextAvailableY(state.components);
+    // Center horizontally on canvas
+    const centerX = Math.max(0, Math.round((CANVAS_WIDTH - catalog.defaultWidth) / 2));
+
     const newComponent: CanvasComponent = {
       id: generateComponentId(),
       type,
@@ -162,8 +210,13 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
       gridRow: `${nextRow} / ${nextRow + 1}`,
       alignment: 'center',
       verticalAlignment: 'center',
+      x: centerX,
+      y: nextY,
+      width: catalog.defaultWidth,
+      height: catalog.defaultHeight,
+      locked: false,
       props: { ...catalog.defaultProps },
-      zIndex: 1,
+      zIndex: state.components.length + 1,
       visible: true,
     };
 
@@ -211,7 +264,7 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
     });
   },
 
-  // ── Move Component ──
+  // ── Move Component (grid mode) ──
   moveComponent: (id, gridColumn, gridRow) => {
     const state = get();
     const history = pushHistory(state);
@@ -219,6 +272,91 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
       ...history,
       components: state.components.map(c =>
         c.id === id ? { ...c, gridColumn, gridRow } : c
+      ),
+    });
+  },
+
+  // ── Move Component (absolute mode) — LIVE, no history push ──
+  moveComponentAbsolute: (id, x, y) => {
+    const state = get();
+    const comp = state.components.find(c => c.id === id);
+    if (!comp || comp.locked) return;
+
+    const finalX = state.snapToGrid ? snapToGridValue(x) : x;
+    const finalY = state.snapToGrid ? snapToGridValue(y) : y;
+
+    // Direct update — no history push during continuous drag
+    set({
+      components: state.components.map(c =>
+        c.id === id ? { ...c, x: Math.max(0, finalX), y: Math.max(0, finalY) } : c
+      ),
+    });
+  },
+
+  // ── Resize Component — LIVE, no history push ──
+  resizeComponent: (id, width, height) => {
+    const state = get();
+    const comp = state.components.find(c => c.id === id);
+    if (!comp || comp.locked) return;
+
+    const catalog = COMPONENT_CATALOG.find(c => c.type === comp.type);
+    const minW = catalog?.minWidth || 40;
+    const minH = catalog?.minHeight || 20;
+
+    // Direct update — no history push during continuous resize
+    set({
+      components: state.components.map(c =>
+        c.id === id ? {
+          ...c,
+          width: Math.max(minW, state.snapToGrid ? snapToGridValue(width) : width),
+          height: Math.max(minH, state.snapToGrid ? snapToGridValue(height) : height),
+        } : c
+      ),
+    });
+  },
+
+  // ── Begin interaction (saves snapshot for undo) ──
+  beginInteraction: () => {
+    const state = get();
+    set({
+      _isDragging: true,
+      _preInteractionSnapshot: takeSnapshot(state),
+    });
+  },
+
+  // ── Commit interaction (pushes saved snapshot to history) ──
+  commitInteraction: () => {
+    const state = get();
+    if (state._preInteractionSnapshot) {
+      const newPast = [...state._past, state._preInteractionSnapshot].slice(-MAX_HISTORY);
+      set({
+        _isDragging: false,
+        _preInteractionSnapshot: null,
+        _past: newPast,
+        _future: [],
+        canUndo: true,
+        canRedo: false,
+      });
+    } else {
+      set({ _isDragging: false });
+    }
+  },
+
+  // ── Lock/Unlock ──
+  lockComponent: (id) => {
+    const state = get();
+    set({
+      components: state.components.map(c =>
+        c.id === id ? { ...c, locked: true } : c
+      ),
+    });
+  },
+
+  unlockComponent: (id) => {
+    const state = get();
+    set({
+      components: state.components.map(c =>
+        c.id === id ? { ...c, locked: false } : c
       ),
     });
   },
@@ -244,6 +382,41 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
     });
   },
 
+  // ── Reorder Components (grid drag / layer panel drag) ──
+  // In grid mode, we swap the gridColumn/gridRow between the two components
+  // so they visually swap positions on the CSS Grid canvas.
+  reorderComponents: (fromIndex, toIndex) => {
+    const state = get();
+    if (fromIndex === toIndex) return;
+    if (fromIndex < 0 || toIndex < 0 || fromIndex >= state.components.length || toIndex >= state.components.length) return;
+
+    const history = pushHistory(state);
+    const newComponents = [...state.components.map(c => ({ ...c, props: { ...c.props } }))];
+
+    // If in grid mode, swap grid positions so components visually swap
+    if (state.positionMode === 'grid') {
+      const fromComp = newComponents[fromIndex];
+      const toComp = newComponents[toIndex];
+      const tempGridCol = fromComp.gridColumn;
+      const tempGridRow = fromComp.gridRow;
+      fromComp.gridColumn = toComp.gridColumn;
+      fromComp.gridRow = toComp.gridRow;
+      toComp.gridColumn = tempGridCol;
+      toComp.gridRow = tempGridRow;
+    }
+
+    // Reorder array
+    const [moved] = newComponents.splice(fromIndex, 1);
+    newComponents.splice(toIndex, 0, moved);
+
+    // Re-assign zIndex based on new order
+    const reIndexed = newComponents.map((c, i) => ({ ...c, zIndex: i + 1 }));
+    set({
+      ...history,
+      components: reIndexed,
+    });
+  },
+
   // ── Duplicate Component ──
   duplicateComponent: (id) => {
     const state = get();
@@ -259,7 +432,11 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
       ...comp,
       id: generateComponentId(),
       gridRow: `${nextRow} / ${nextRow + 1}`,
+      x: comp.x + 24, // Offset so duplicate is visually distinct
+      y: comp.y + 24,
+      locked: false,
       props: { ...comp.props },
+      zIndex: state.components.length + 1,
     };
 
     const history = pushHistory(state);
@@ -300,6 +477,28 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
 
   setSnapToGrid: (snap) => {
     set({ snapToGrid: snap });
+  },
+
+  setPositionMode: (mode) => {
+    set({ positionMode: mode });
+  },
+
+  setZoom: (zoom) => {
+    set({ zoom: Math.max(50, Math.min(200, zoom)) });
+  },
+
+  getOverlaps: () => {
+    const state = get();
+    const visible = state.components.filter(c => c.visible);
+    const pairs: [string, string][] = [];
+    for (let i = 0; i < visible.length; i++) {
+      for (let j = i + 1; j < visible.length; j++) {
+        if (checkOverlap(visible[i], visible[j])) {
+          pairs.push([visible[i].id, visible[j].id]);
+        }
+      }
+    }
+    return pairs;
   },
 
   // ── Undo ──
@@ -349,6 +548,8 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
       components: DEFAULT_CANVAS_COMPONENTS,
       canvasGridRows: DEFAULT_CANVAS_GRID_ROWS,
       canvasBackground: DEFAULT_CANVAS_BACKGROUND,
+      positionMode: DEFAULT_POSITION_MODE,
+      zoom: 100,
       selectedComponentId: null,
     });
   },

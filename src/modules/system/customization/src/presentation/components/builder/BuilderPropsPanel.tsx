@@ -1,4 +1,4 @@
-﻿/**
+/**
  * BuilderPropsPanel — Properties editor for the selected canvas component
  *
  * Shows grid placement controls and component-specific props.
@@ -13,19 +13,23 @@ import { cn } from "@/core/common/utils";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Button } from "@core/ui/button";
-import { Trash2, Eye, EyeOff, Copy, ArrowUp, ArrowDown } from "lucide-react";
-import type { CanvasComponent, CanvasComponentType, GridAlignment } from "../../../domain/entities/CanvasComponent";
+import { Trash2, Eye, EyeOff, Copy, ArrowUp, ArrowDown, Lock, Unlock } from "lucide-react";
+import type { CanvasComponent, CanvasComponentType, GridAlignment, PositionMode } from "../../../domain/entities/CanvasComponent";
 import { COMPONENT_CATALOG } from "../../../domain/entities/CanvasComponent";
 import { useI18n } from "@core/providers/i18n-provider";
 
 interface BuilderPropsPanelProps {
   component: CanvasComponent;
+  positionMode: PositionMode;
   onUpdate: (id: string, updates: Partial<CanvasComponent>) => void;
   onUpdateProps: (id: string, props: Record<string, unknown>) => void;
   onRemove: (id: string) => boolean;
   onDuplicate: (id: string) => void;
   onToggleVisibility: (id: string) => void;
   onReorderZ: (id: string, direction: 'forward' | 'back') => void;
+  onLock: (id: string) => void;
+  onUnlock: (id: string) => void;
+  onResize: (id: string, width: number, height: number) => void;
 }
 
 const ALIGNMENT_OPTIONS: { value: GridAlignment; label: string }[] = [
@@ -41,12 +45,13 @@ function parseGridSpan(span: string): [number, number] {
   return [1, 2];
 }
 
-export function BuilderPropsPanel({ component, onUpdate, onUpdateProps, onRemove, onDuplicate, onToggleVisibility, onReorderZ,
+export function BuilderPropsPanel({ component, positionMode, onUpdate, onUpdateProps, onRemove, onDuplicate, onToggleVisibility, onReorderZ, onLock, onUnlock, onResize,
 }: BuilderPropsPanelProps) {
   const { t } = useI18n();
   const catalog = COMPONENT_CATALOG.find(c => c.type === component.type);
   const [colStart, colEnd] = parseGridSpan(component.gridColumn);
   const [rowStart, rowEnd] = parseGridSpan(component.gridRow);
+  const isAbsolute = positionMode === 'absolute';
 
   return (
     <div className="space-y-4 border-t border-border pt-4 mt-4">
@@ -82,11 +87,84 @@ export function BuilderPropsPanel({ component, onUpdate, onUpdateProps, onRemove
         </div>
       </div>
 
-      {/* Grid Placement */}
+      {/* Position Section */}
       <div className="space-y-3">
-        <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
-          {t('studio.builder.props.gridPlacement') || 'Grid Placement'}
-        </p>
+        {isAbsolute ? (
+          /* ── Free-form position controls ── */
+          <>
+            <div className="flex items-center justify-between">
+              <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
+                {t('studio.builder.props.position') || 'Position'}
+              </p>
+              <button
+                onClick={() => component.locked ? onUnlock(component.id) : onLock(component.id)}
+                className={cn(
+                  "h-6 w-6 flex items-center justify-center rounded-md transition-colors",
+                  component.locked
+                    ? "bg-destructive/10 text-destructive"
+                    : "hover:bg-muted text-muted-foreground"
+                )}
+                title={component.locked ? 'Unlock' : 'Lock'}
+              >
+                {component.locked ? <Lock className="h-3 w-3" /> : <Unlock className="h-3 w-3" />}
+              </button>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <Label className="text-[10px] text-muted-foreground">X</Label>
+                <Input
+                  type="number"
+                  min={0}
+                  value={component.x}
+                  onChange={(e) => onUpdate(component.id, { x: parseInt(e.target.value, 10) || 0 })}
+                  className="h-8 text-xs font-mono"
+                  disabled={component.locked}
+                />
+              </div>
+              <div>
+                <Label className="text-[10px] text-muted-foreground">Y</Label>
+                <Input
+                  type="number"
+                  min={0}
+                  value={component.y}
+                  onChange={(e) => onUpdate(component.id, { y: parseInt(e.target.value, 10) || 0 })}
+                  className="h-8 text-xs font-mono"
+                  disabled={component.locked}
+                />
+              </div>
+              <div>
+                <Label className="text-[10px] text-muted-foreground">W</Label>
+                <Input
+                  type="number"
+                  min={catalog?.minWidth || 40}
+                  value={component.width || ''}
+                  onChange={(e) => onResize(component.id, parseInt(e.target.value, 10) || 200, component.height || 0)}
+                  className="h-8 text-xs font-mono"
+                  disabled={component.locked}
+                  placeholder="auto"
+                />
+              </div>
+              <div>
+                <Label className="text-[10px] text-muted-foreground">H</Label>
+                <Input
+                  type="number"
+                  min={catalog?.minHeight || 20}
+                  value={component.height || ''}
+                  onChange={(e) => onResize(component.id, component.width || 200, parseInt(e.target.value, 10) || 0)}
+                  className="h-8 text-xs font-mono"
+                  disabled={component.locked}
+                  placeholder="auto"
+                />
+              </div>
+            </div>
+          </>
+        ) : (
+          /* ── Grid placement controls ── */
+          <>
+            <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
+              {t('studio.builder.props.gridPlacement') || 'Grid Placement'}
+            </p>
 
         <div className="grid grid-cols-2 gap-2">
           <div>
@@ -162,6 +240,8 @@ export function BuilderPropsPanel({ component, onUpdate, onUpdateProps, onRemove
             </select>
           </div>
         </div>
+          </>
+        )}
 
         {/* Z-Order */}
         <div className="flex items-center gap-2">

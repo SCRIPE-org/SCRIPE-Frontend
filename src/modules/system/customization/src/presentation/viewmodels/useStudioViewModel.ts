@@ -220,6 +220,7 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
       canvasComponents: source.components || DEFAULT_CANVAS_COMPONENTS,
       canvasGridRows: source.canvasGridRows || DEFAULT_CANVAS_GRID_ROWS,
       canvasBackground: source.canvasBackground || DEFAULT_CANVAS_BACKGROUND,
+      canvasPositionMode: source.canvasPositionMode || DEFAULT_DRAFT.canvasPositionMode,
       // Accessibility
       // Focus & Keyboard
       a11yFocusRingEnabled: source.a11yFocusRingEnabled ?? tokens["a11y.focusRing.enabled"] !== "false",
@@ -261,6 +262,8 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
       // Touch & Target Size
       a11yLargeTargets: source.a11yLargeTargets ?? tokens["a11y.largeTargets"] === "true",
       a11yForcedColorsSupport: source.a11yForcedColorsSupport ?? tokens["a11y.forcedColors"] !== "false",
+      // Dashboard
+      dashboardSettings: source.dashboardSettings || DEFAULT_DRAFT.dashboardSettings,
     };
   }, []);
 
@@ -375,6 +378,7 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
     return JSON.stringify({
       _schemaVersion: 1,
       canvasMode: draft.canvasMode,
+      canvasPositionMode: draft.canvasPositionMode,
       canvasGridRows: draft.canvasGridRows,
       canvasBackground: draft.canvasBackground,
       components: draft.canvasMode === 'builder' ? draft.canvasComponents : undefined,
@@ -771,6 +775,7 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
         canvasComponents: draft.canvasComponents,
         canvasGridRows: draft.canvasGridRows,
         canvasBackground: draft.canvasBackground,
+        dashboardSettings: draft.dashboardSettings,
       };
       setDraft(tempDraft);
       setIsPreviewingTheme(true);

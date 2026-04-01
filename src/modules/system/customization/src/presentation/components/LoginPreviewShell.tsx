@@ -1,4 +1,4 @@
-﻿/**
+/**
  * LoginPreviewShell -- Isolated login page preview for Customizer Studio
  *
  * KEY ARCHITECTURE: This is a completely separate page from /login.
@@ -21,11 +21,12 @@
 // where @core/ui/button's padding/sizing would break the layout.
 
 import { useEffect, useState, useCallback, useRef } from "react";
+import { useSearchParams } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
-import { BookOpen, Eye, EyeOff, Lock, User } from "lucide-react";
+import { BookOpen, Eye, EyeOff, Lock, User, Mail, ArrowLeft, KeyRound } from "lucide-react";
 import { LanguageSwitcher } from "@core/ui/layout/common/language-switcher";
 import { ThemeSwitcher } from "@core/ui/layout/common/theme-switcher";
 import { BRAND } from "@core/config/branding";
@@ -40,6 +41,10 @@ export function LoginPreviewShell() {
   const { t } = useI18n();
   const { language, direction } = useI18n();
   const { setTheme } = useTheme();
+  const searchParams = useSearchParams();
+
+  // Determine active page from URL query param or postMessage
+  const urlPage = searchParams?.get("page") || "login";
 
   // Listen for theme commands from studio parent
   useEffect(() => {
@@ -135,12 +140,16 @@ export function LoginPreviewShell() {
   const companyName = (rawParsed.companyName as string) || BRAND.name;
   const copyrightText = (rawParsed.copyrightText as string) || "";
 
-  // Resolve page-specific overrides (M8) — per-page headline/subtitle
-  const activePageId = draftOverrides?.activeAuthPage || "login";
+  // Resolve page-specific overrides (M8) — per-page layout/headline/subtitle
+  const activePageId = draftOverrides?.activeAuthPage || urlPage || "login";
   const pagesObj = (rawParsed.pages as Record<string, Record<string, string>>) || {};
   const pageOverride = pagesObj[activePageId] || {};
   const headline = pageOverride.headline || (rawParsed.headline as string) || t("auth.branding.headline");
   const subtitle = pageOverride.subtitle || (rawParsed.subtitle as string) || t("auth.branding.subtitle");
+
+  // Per-page layout override: each auth page can have its own layout
+  // Falls back to the global layout from useLoginBrandingTokens
+  const effectiveLayout = (pageOverride.layout as string) || layout;
 
   // Build "branding" object for LoginBranding component
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -160,8 +169,91 @@ export function LoginPreviewShell() {
 
   // ”--€ Mock Form (cannot submit) ”--€
   const [showPassword, setShowPassword] = useState(false);
+  // Form selection is driven by postMessage (draftOverrides.activeAuthPage)
+  // which is updated by the studio bridge on tab switch. The URL param is only
+  // used as a fallback for the initial load before the first postMessage arrives.
+  const currentPage = draftOverrides?.activeAuthPage || urlPage || "login";
 
-  const formContent = (
+  // Shared input styles
+  const inputStyle: React.CSSProperties = {
+    height: "var(--login-input-height, 44px)",
+    borderRadius: "var(--login-radius-button, 8px)",
+    borderColor: "var(--login-border, hsl(var(--border)))",
+  };
+  const buttonStyle: React.CSSProperties = {
+    height: "var(--login-input-height, 44px)",
+    backgroundColor: "var(--login-primary, hsl(var(--primary)))",
+    borderRadius: "var(--login-radius-button, 8px)",
+  };
+
+  // Forgot Password Form
+  const forgotPasswordForm = (
+    <div className="login-form-wrapper w-full" data-hook="form-wrapper" style={{ maxWidth: "var(--login-form-width, 380px)" }}>
+      <SlotRenderer slotId="login.form.above" slotConfig={slotConfig} className="mb-4" />
+      <form onSubmit={(e) => e.preventDefault()} className="login-form flex flex-col" style={{ gap: "var(--login-element-gap, 16px)" }}>
+        <div className="text-center mb-2">
+          <p className="login-subtitle text-sm text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">
+            {t("auth.forgotPasswordDesc") || "Enter your email and we'll send you a reset link."}
+          </p>
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="preview-email" className="login-label text-sm font-medium text-[var(--login-text,hsl(var(--foreground)))]">
+            {t("auth.email") || "Email"}
+          </Label>
+          <div className="relative">
+            <Mail className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--login-text-muted,hsl(var(--muted-foreground)))]" />
+            <Input id="preview-email" placeholder={t("auth.emailPlaceholder") || "name@example.com"} className="login-input ps-9" readOnly style={inputStyle} />
+          </div>
+        </div>
+        <Button type="submit" className="login-button w-full text-sm font-semibold" style={buttonStyle}>
+          {t("auth.sendResetLink") || "Send Reset Link"}
+        </Button>
+        <button type="button" className="flex items-center justify-center gap-1.5 text-sm text-[var(--login-primary,hsl(var(--primary)))] hover:underline">
+          <ArrowLeft className="h-3.5 w-3.5" />
+          {t("auth.backToLogin") || "Back to Login"}
+        </button>
+      </form>
+      <SlotRenderer slotId="login.form.below" slotConfig={slotConfig} className="mt-6" />
+    </div>
+  );
+
+  // Reset Password Form
+  const resetPasswordForm = (
+    <div className="login-form-wrapper w-full" data-hook="form-wrapper" style={{ maxWidth: "var(--login-form-width, 380px)" }}>
+      <SlotRenderer slotId="login.form.above" slotConfig={slotConfig} className="mb-4" />
+      <form onSubmit={(e) => e.preventDefault()} className="login-form flex flex-col" style={{ gap: "var(--login-element-gap, 16px)" }}>
+        <div className="text-center mb-2">
+          <p className="login-subtitle text-sm text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">
+            {t("auth.resetPasswordDesc") || "Enter your new password below."}
+          </p>
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="preview-new-pw" className="login-label text-sm font-medium text-[var(--login-text,hsl(var(--foreground)))]">
+            {t("auth.newPassword") || "New Password"}
+          </Label>
+          <div className="relative">
+            <KeyRound className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--login-text-muted,hsl(var(--muted-foreground)))]" />
+            <Input id="preview-new-pw" type="password" placeholder="********" className="login-input ps-9" readOnly style={inputStyle} />
+          </div>
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="preview-confirm-pw" className="login-label text-sm font-medium text-[var(--login-text,hsl(var(--foreground)))]">
+            {t("auth.confirmPassword") || "Confirm Password"}
+          </Label>
+          <div className="relative">
+            <Lock className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--login-text-muted,hsl(var(--muted-foreground)))]" />
+            <Input id="preview-confirm-pw" type="password" placeholder="********" className="login-input ps-9" readOnly style={inputStyle} />
+          </div>
+        </div>
+        <Button type="submit" className="login-button w-full text-sm font-semibold" style={buttonStyle}>
+          {t("auth.resetPassword") || "Reset Password"}
+        </Button>
+      </form>
+      <SlotRenderer slotId="login.form.below" slotConfig={slotConfig} className="mt-6" />
+    </div>
+  );
+
+  const loginFormContent = (
     <div className="login-form-wrapper w-full" data-hook="form-wrapper" style={{ maxWidth: "var(--login-form-width, 380px)" }}>
       {/* Slot: form.above */}
       <SlotRenderer slotId="login.form.above" slotConfig={slotConfig} className="mb-4" />
@@ -254,6 +346,15 @@ export function LoginPreviewShell() {
       <SlotRenderer slotId="login.form.below" slotConfig={slotConfig} className="mt-6" />
     </div>
   );
+
+  // ── Select form based on active page ──
+  // Key wrapper forces React to unmount/remount the form when switching pages.
+  // Without this, React reconciles the children since all 3 forms share the same
+  // outer div structure, causing visual staleness despite state being correct.
+  const rawForm = currentPage === "forgot-password" ? forgotPasswordForm
+    : currentPage === "reset-password" ? resetPasswordForm
+    : loginFormContent;
+  const formContent = <div key={currentPage}>{rawForm}</div>;
 
   // ”--€ Top Actions (visual only) ”--€
   const topActions = (
@@ -377,18 +478,32 @@ export function LoginPreviewShell() {
   );
 
   // ── Builder Mode: render canvas components instead of fixed layouts ──
-  const canvasMode = rawParsed.canvasMode as string | undefined;
-  if (canvasMode === 'builder' && Array.isArray(rawParsed.components)) {
+  // Per-page override canvas takes priority over global canvas
+  const pageCanvasMode = (pageOverride as any).canvasMode as string | undefined;
+  const pageCanvasComponents = (pageOverride as any).canvasComponents as any[] | undefined;
+  const globalCanvasMode = rawParsed.canvasMode as string | undefined;
+
+  // Use per-page canvas if it has its own builder data, otherwise fallback to global
+  const effectiveCanvasMode = pageCanvasMode || globalCanvasMode;
+  const effectiveCanvasComponents = (pageCanvasComponents && pageCanvasComponents.length > 0)
+    ? pageCanvasComponents
+    : rawParsed.components as any[] | undefined;
+  const effectiveCanvasGridRows = ((pageOverride as any).canvasGridRows as number) || (rawParsed.canvasGridRows as number) || 8;
+  const effectiveCanvasBackground = (pageOverride as any).canvasBackground || rawParsed.canvasBackground;
+  const effectiveCanvasPositionMode = ((pageOverride as any).canvasPositionMode as 'grid' | 'absolute') || (rawParsed.canvasPositionMode as 'grid' | 'absolute') || 'grid';
+
+  if (effectiveCanvasMode === 'builder' && Array.isArray(effectiveCanvasComponents)) {
     return wrapWithA11y(
       <CanvasRenderer
-        components={rawParsed.components as any}
-        gridRows={(rawParsed.canvasGridRows as number) || 8}
-        canvasBackground={rawParsed.canvasBackground as any}
+        components={effectiveCanvasComponents as any}
+        gridRows={effectiveCanvasGridRows}
+        canvasBackground={effectiveCanvasBackground as any}
+        positionMode={effectiveCanvasPositionMode}
       />
     );
   }
 
-  switch (layout) {
+  switch (effectiveLayout) {
     case "split-left":
       return wrapWithA11y(
         <div className={`login-page flex min-h-screen w-full ${bgStyle} selection:bg-primary/20`} dir={direction} style={splitWrapperStyle}>
