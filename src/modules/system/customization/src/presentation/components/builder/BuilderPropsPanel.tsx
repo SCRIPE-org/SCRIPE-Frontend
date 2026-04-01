@@ -543,6 +543,201 @@ function ComponentSpecificProps({ type,
         </div>
       );
 
+    case 'featureList': {
+      const featureItems = (Array.isArray(props.items) ? props.items : []) as Array<{ title: string; desc?: string }>;
+      return (
+        <div className="space-y-2">
+          <div>
+            <Label className="text-[10px] text-muted-foreground">{t('studio.builder.props.variant') || 'Variant'}</Label>
+            <select
+              value={(props.variant as string) || 'list'}
+              onChange={(e) => onUpdateProps({ variant: e.target.value })}
+              className="w-full h-8 rounded-md border border-border bg-background px-2 text-xs"
+            >
+              <option value="list">{t('studio.builder.props.variantList') || 'List'}</option>
+              <option value="grid">{t('studio.builder.props.variantGrid') || 'Grid'}</option>
+            </select>
+          </div>
+          <div>
+            <Label className="text-[10px] text-muted-foreground">{t('studio.builder.props.maxItems') || 'Max Items'}</Label>
+            <Input
+              type="number"
+              min={1}
+              max={12}
+              value={(props.maxItems as number) || 6}
+              onChange={(e) => onUpdateProps({ maxItems: parseInt(e.target.value, 10) || 6 })}
+              className="h-8 text-xs"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between">
+              <Label className="text-[10px] text-muted-foreground">{t('studio.builder.props.items') || 'Items'}</Label>
+              <button
+                onClick={() => {
+                  const newItems = [...featureItems, { title: `Feature ${featureItems.length + 1}`, desc: '' }];
+                  onUpdateProps({ items: newItems });
+                }}
+                className="text-[10px] text-primary hover:text-primary/80 transition-colors"
+              >
+                + {t('studio.builder.props.addItem') || 'Add'}
+              </button>
+            </div>
+            {featureItems.map((item, idx) => (
+              <div key={idx} className="flex items-start gap-1 rounded border border-border/50 p-1.5 bg-muted/20">
+                <div className="flex-1 space-y-1">
+                  <Input
+                    value={item.title || ''}
+                    onChange={(e) => {
+                      const updated = [...featureItems];
+                      updated[idx] = { ...updated[idx], title: e.target.value };
+                      onUpdateProps({ items: updated });
+                    }}
+                    placeholder={t('studio.builder.props.featureTitle') || 'Title'}
+                    className="h-6 text-[10px]"
+                  />
+                  <Input
+                    value={item.desc || ''}
+                    onChange={(e) => {
+                      const updated = [...featureItems];
+                      updated[idx] = { ...updated[idx], desc: e.target.value };
+                      onUpdateProps({ items: updated });
+                    }}
+                    placeholder={t('studio.builder.props.featureDesc') || 'Description'}
+                    className="h-6 text-[10px]"
+                  />
+                </div>
+                <button
+                  onClick={() => {
+                    const updated = featureItems.filter((_, i) => i !== idx);
+                    onUpdateProps({ items: updated });
+                  }}
+                  className="p-0.5 text-muted-foreground hover:text-destructive transition-colors shrink-0 mt-0.5"
+                >
+                  <Trash2 className="h-3 w-3" />
+                </button>
+              </div>
+            ))}
+            {featureItems.length === 0 && (
+              <p className="text-[10px] text-muted-foreground italic">{t('studio.builder.props.noItems') || 'Default items shown. Add custom items above.'}</p>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    case 'footer': {
+      const footerLinks = (Array.isArray(props.links) ? props.links : []) as Array<{ label: string; url: string }>;
+      return (
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <Label className="text-[10px] text-muted-foreground">{t('studio.builder.props.links') || 'Links'}</Label>
+            <button
+              onClick={() => {
+                const newLinks = [...footerLinks, { label: `Link ${footerLinks.length + 1}`, url: '#' }];
+                onUpdateProps({ links: newLinks });
+              }}
+              className="text-[10px] text-primary hover:text-primary/80 transition-colors"
+            >
+              + {t('studio.builder.props.addLink') || 'Add'}
+            </button>
+          </div>
+          {footerLinks.map((link, idx) => (
+            <div key={idx} className="flex items-center gap-1 rounded border border-border/50 p-1.5 bg-muted/20">
+              <div className="flex-1 space-y-1">
+                <Input
+                  value={link.label || ''}
+                  onChange={(e) => {
+                    const updated = [...footerLinks];
+                    updated[idx] = { ...updated[idx], label: e.target.value };
+                    onUpdateProps({ links: updated });
+                  }}
+                  placeholder={t('studio.builder.props.linkLabel') || 'Label'}
+                  className="h-6 text-[10px]"
+                />
+                <Input
+                  value={link.url || ''}
+                  onChange={(e) => {
+                    const updated = [...footerLinks];
+                    updated[idx] = { ...updated[idx], url: e.target.value };
+                    onUpdateProps({ links: updated });
+                  }}
+                  placeholder={t('studio.builder.props.linkUrl') || 'URL'}
+                  className="h-6 text-[10px]"
+                />
+              </div>
+              <button
+                onClick={() => {
+                  const updated = footerLinks.filter((_, i) => i !== idx);
+                  onUpdateProps({ links: updated });
+                }}
+                className="p-0.5 text-muted-foreground hover:text-destructive transition-colors shrink-0"
+              >
+                <Trash2 className="h-3 w-3" />
+              </button>
+            </div>
+          ))}
+          {footerLinks.length === 0 && (
+            <p className="text-[10px] text-muted-foreground italic">{t('studio.builder.props.noLinks') || 'Default links shown. Add custom links above.'}</p>
+          )}
+        </div>
+      );
+    }
+
+    case 'customHtml':
+      return (
+        <div className="space-y-2">
+          <div>
+            <Label className="text-[10px] text-muted-foreground">{t('studio.builder.props.htmlContent') || 'HTML Content'}</Label>
+            <textarea
+              value={(props.content as string) || ''}
+              onChange={(e) => onUpdateProps({ content: e.target.value })}
+              placeholder={'<div class="my-block">...</div>'}
+              className="w-full h-24 rounded-md border border-border bg-background px-2 py-1.5 text-xs font-mono resize-y"
+              spellCheck={false}
+            />
+            <p className="text-[9px] text-amber-500 mt-1">{t('studio.builder.props.htmlWarning') || '⚠ Content is sanitized before rendering.'}</p>
+          </div>
+        </div>
+      );
+
+    case 'videoBg':
+      return (
+        <div className="space-y-2">
+          <div>
+            <Label className="text-[10px] text-muted-foreground">{t('studio.builder.props.videoUrl') || 'Video URL'}</Label>
+            <Input
+              value={(props.src as string) || ''}
+              onChange={(e) => onUpdateProps({ src: e.target.value })}
+              placeholder="https://example.com/video.mp4"
+              className="h-8 text-xs"
+            />
+          </div>
+          <div>
+            <Label className="text-[10px] text-muted-foreground">{t('studio.builder.props.posterUrl') || 'Poster Image URL'}</Label>
+            <Input
+              value={(props.poster as string) || ''}
+              onChange={(e) => onUpdateProps({ poster: e.target.value })}
+              placeholder="https://example.com/poster.jpg"
+              className="h-8 text-xs"
+            />
+          </div>
+          {[
+            { key: 'autoplay', label: t('studio.builder.props.autoplay') || 'Autoplay' },
+            { key: 'muted', label: t('studio.builder.props.muted') || 'Muted' },
+          ].map(({ key, label }) => (
+            <label key={key} className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={Boolean(props[key] ?? true)}
+                onChange={(e) => onUpdateProps({ [key]: e.target.checked })}
+                className="h-3.5 w-3.5 rounded border-border"
+              />
+              <span className="text-xs text-foreground">{label}</span>
+            </label>
+          ))}
+        </div>
+      );
+
     default:
       return (
         <p className="text-[10px] text-muted-foreground italic">
