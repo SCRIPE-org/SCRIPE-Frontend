@@ -294,19 +294,19 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
   // ── Per-page override helpers ──
   const getPageOverride = useCallback((pageId: AuthPageId): AuthPageOverride => {
     const override = draft.pageOverrides[pageId];
-    if (override) return override;
+    if (override) return { ...DEFAULT_PAGE_OVERRIDES[pageId], ...override };
     // For login, derive from global draft fields (backward compat)
     if (pageId === "login") {
-      return { layout: draft.layout, headline: draft.headline, subtitle: draft.subtitle };
+      return { layout: draft.layout, headline: draft.headline, subtitle: draft.subtitle, inheritBackground: false };
     }
     return DEFAULT_PAGE_OVERRIDES[pageId];
   }, [draft]);
 
-  const setPageOverride = useCallback((pageId: AuthPageId, field: keyof AuthPageOverride, value: string) => {
+  const setPageOverride = useCallback((pageId: AuthPageId, field: keyof AuthPageOverride, value: AuthPageOverride[keyof AuthPageOverride]) => {
     setDraft(prev => {
       const currentOverride = prev.pageOverrides[pageId] || (
         pageId === "login"
-          ? { layout: prev.layout, headline: prev.headline, subtitle: prev.subtitle }
+          ? { layout: prev.layout, headline: prev.headline, subtitle: prev.subtitle, inheritBackground: false }
           : DEFAULT_PAGE_OVERRIDES[pageId]
       );
       const newOverride = { ...currentOverride, [field]: value };
@@ -381,7 +381,7 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
       canvasPositionMode: draft.canvasPositionMode,
       canvasGridRows: draft.canvasGridRows,
       canvasBackground: draft.canvasBackground,
-      components: draft.canvasMode === 'builder' ? draft.canvasComponents : undefined,
+      components: draft.canvasComponents,
       layout: draft.layout,
       headline: draft.headline,
       subtitle: draft.subtitle,

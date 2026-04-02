@@ -1,4 +1,4 @@
-﻿/**
+/**
  * LayoutPanel — 22 login layout selector with visual thumbnails
  * Now page-aware: each auth page can have its own layout, headline, subtitle.
  */
@@ -22,7 +22,7 @@ interface LayoutPanelProps {
   // Multi-page branding
   activeAuthPage?: AuthPageId;
   pageOverride?: AuthPageOverride;
-  onUpdatePageField?: (field: keyof AuthPageOverride, value: string) => void;
+  onUpdatePageField?: (field: keyof AuthPageOverride, value: AuthPageOverride[keyof AuthPageOverride]) => void;
   // Builder mode toggle
   canvasMode?: 'layout' | 'builder';
   onCanvasModeChange?: (mode: 'layout' | 'builder') => void;
@@ -340,6 +340,230 @@ export function LayoutPanel({ selectedLayout, onSelectLayout, activeAuthPage, pa
               onChange={(e) => onUpdatePageField("subtitle", e.target.value)}
               placeholder={t("studio.fields.subtitlePlaceholder") || "Page subtitle..."}
               className="h-8 text-xs"
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Per-page background controls (non-login pages only) */}
+      {pageOverride && onUpdatePageField && activeAuthPage && activeAuthPage !== "login" && (
+        <div className="space-y-3 rounded-lg border border-border bg-muted/20 p-3">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+            {t("studio.pageBg") || "Page Background"}
+          </p>
+
+          {/* Inherit toggle */}
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={pageOverride.inheritBackground !== false}
+              onChange={(e) => onUpdatePageField("inheritBackground", e.target.checked)}
+              className="h-3.5 w-3.5 rounded border-border accent-primary"
+            />
+            <span className="text-xs text-foreground">
+              {t("studio.fields.inheritBg") || "Inherit background from Login page"}
+            </span>
+          </label>
+
+          {/* Per-page background settings (when not inheriting) */}
+          {pageOverride.inheritBackground === false && (
+            <div className="space-y-2 pt-1 border-t border-border/50">
+              {/* Background type */}
+              <div className="space-y-1">
+                <Label className="text-[10px] text-muted-foreground">{t("studio.fields.bgType") || "Type"}</Label>
+                <div className="flex gap-1">
+                  {(["solid", "gradient", "image"] as const).map((type) => (
+                    <button
+                      key={type}
+                      onClick={() => onUpdatePageField("bgType", type)}
+                      className={cn(
+                        "flex-1 h-7 rounded-md text-[10px] font-medium transition-colors border",
+                        (pageOverride.bgType || "solid") === type
+                          ? "bg-primary/10 border-primary/30 text-primary"
+                          : "border-border bg-background text-muted-foreground hover:bg-muted"
+                      )}
+                    >
+                      {t(`studio.bg.${type}`) || type.charAt(0).toUpperCase() + type.slice(1)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Solid color */}
+              {(!pageOverride.bgType || pageOverride.bgType === "solid") && (
+                <div className="space-y-1">
+                  <Label className="text-[10px] text-muted-foreground">{t("studio.fields.bgColor") || "Color"}</Label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="color"
+                      value={pageOverride.bgColor || "#ffffff"}
+                      onChange={(e) => onUpdatePageField("bgColor", e.target.value)}
+                      className="h-8 w-10 rounded border border-border cursor-pointer"
+                    />
+                    <Input
+                      value={pageOverride.bgColor || ""}
+                      onChange={(e) => onUpdatePageField("bgColor", e.target.value)}
+                      placeholder="#ffffff"
+                      className="h-8 text-xs flex-1"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Gradient */}
+              {pageOverride.bgType === "gradient" && (
+                <div className="space-y-2">
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="space-y-1">
+                      <Label className="text-[10px] text-muted-foreground">{t("studio.fields.gradientFrom") || "From"}</Label>
+                      <div className="flex items-center gap-1">
+                        <input
+                          type="color"
+                          value={pageOverride.bgGradientFrom || "#3b82f6"}
+                          onChange={(e) => onUpdatePageField("bgGradientFrom", e.target.value)}
+                          className="h-7 w-7 rounded border border-border cursor-pointer"
+                        />
+                        <Input
+                          value={pageOverride.bgGradientFrom || ""}
+                          onChange={(e) => onUpdatePageField("bgGradientFrom", e.target.value)}
+                          className="h-7 text-[10px] flex-1"
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-[10px] text-muted-foreground">{t("studio.fields.gradientTo") || "To"}</Label>
+                      <div className="flex items-center gap-1">
+                        <input
+                          type="color"
+                          value={pageOverride.bgGradientTo || "#8b5cf6"}
+                          onChange={(e) => onUpdatePageField("bgGradientTo", e.target.value)}
+                          className="h-7 w-7 rounded border border-border cursor-pointer"
+                        />
+                        <Input
+                          value={pageOverride.bgGradientTo || ""}
+                          onChange={(e) => onUpdatePageField("bgGradientTo", e.target.value)}
+                          className="h-7 text-[10px] flex-1"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-[10px] text-muted-foreground">{t("studio.fields.gradientDir") || "Direction"}</Label>
+                    <select
+                      value={pageOverride.bgGradientDirection || "135deg"}
+                      onChange={(e) => onUpdatePageField("bgGradientDirection", e.target.value)}
+                      className="w-full h-7 rounded-md border border-border bg-background px-2 text-[10px]"
+                    >
+                      <option value="0deg">↑ Top</option>
+                      <option value="45deg">↗ Top Right</option>
+                      <option value="90deg">→ Right</option>
+                      <option value="135deg">↘ Bottom Right</option>
+                      <option value="180deg">↓ Bottom</option>
+                      <option value="225deg">↙ Bottom Left</option>
+                      <option value="270deg">← Left</option>
+                      <option value="315deg">↖ Top Left</option>
+                    </select>
+                  </div>
+                  {/* Preview */}
+                  <div
+                    className="h-8 rounded-md border border-border"
+                    style={{
+                      background: `linear-gradient(${pageOverride.bgGradientDirection || "135deg"}, ${pageOverride.bgGradientFrom || "#3b82f6"}, ${pageOverride.bgGradientTo || "#8b5cf6"})`,
+                    }}
+                  />
+                </div>
+              )}
+
+              {/* Image */}
+              {pageOverride.bgType === "image" && (
+                <div className="space-y-2">
+                  <div className="space-y-1">
+                    <Label className="text-[10px] text-muted-foreground">{t("studio.fields.bgImageUrl") || "Image URL"}</Label>
+                    <Input
+                      value={pageOverride.bgImageUrl || ""}
+                      onChange={(e) => onUpdatePageField("bgImageUrl", e.target.value)}
+                      placeholder="https://..."
+                      className="h-8 text-xs"
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="space-y-1">
+                      <Label className="text-[10px] text-muted-foreground">{t("studio.fields.bgFit") || "Fit"}</Label>
+                      <select
+                        value={pageOverride.bgImageFit || "cover"}
+                        onChange={(e) => onUpdatePageField("bgImageFit", e.target.value)}
+                        className="w-full h-7 rounded-md border border-border bg-background px-2 text-[10px]"
+                      >
+                        <option value="cover">Cover</option>
+                        <option value="contain">Contain</option>
+                        <option value="fill">Fill</option>
+                        <option value="none">None</option>
+                      </select>
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-[10px] text-muted-foreground">{t("studio.fields.bgPosition") || "Position"}</Label>
+                      <select
+                        value={pageOverride.bgImagePosition || "center"}
+                        onChange={(e) => onUpdatePageField("bgImagePosition", e.target.value)}
+                        className="w-full h-7 rounded-md border border-border bg-background px-2 text-[10px]"
+                      >
+                        <option value="center">Center</option>
+                        <option value="top">Top</option>
+                        <option value="bottom">Bottom</option>
+                        <option value="left">Left</option>
+                        <option value="right">Right</option>
+                      </select>
+                    </div>
+                  </div>
+                  {/* Overlay */}
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={pageOverride.bgOverlayEnabled || false}
+                      onChange={(e) => onUpdatePageField("bgOverlayEnabled", e.target.checked)}
+                      className="h-3.5 w-3.5 rounded border-border accent-primary"
+                    />
+                    <span className="text-[10px] text-foreground">{t("studio.fields.bgOverlay") || "Enable overlay"}</span>
+                  </label>
+                  {pageOverride.bgOverlayEnabled && (
+                    <div className="grid grid-cols-2 gap-2">
+                      <div className="space-y-1">
+                        <Label className="text-[10px] text-muted-foreground">Color</Label>
+                        <input
+                          type="color"
+                          value={pageOverride.bgOverlayColor || "#000000"}
+                          onChange={(e) => onUpdatePageField("bgOverlayColor", e.target.value)}
+                          className="h-7 w-full rounded border border-border cursor-pointer"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-[10px] text-muted-foreground">Opacity</Label>
+                        <input
+                          type="range"
+                          min={0}
+                          max={100}
+                          value={(pageOverride.bgOverlayOpacity ?? 30)}
+                          onChange={(e) => onUpdatePageField("bgOverlayOpacity", parseInt(e.target.value, 10))}
+                          className="w-full h-2 accent-primary"
+                        />
+                        <span className="text-[9px] text-muted-foreground">{pageOverride.bgOverlayOpacity ?? 30}%</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Per-page custom CSS */}
+          <div className="space-y-1 pt-2 border-t border-border/50">
+            <Label className="text-[10px] text-muted-foreground">{t("studio.fields.pageCss") || "Custom CSS (this page only)"}</Label>
+            <textarea
+              value={pageOverride.customCss || ""}
+              onChange={(e) => onUpdatePageField("customCss", e.target.value)}
+              placeholder=".login-card { backdrop-filter: blur(20px); }"
+              className="w-full rounded-md border border-border bg-[#1e1e1e] text-[#cccccc] px-3 py-2 text-xs font-mono resize-none focus:outline-none focus:ring-1 focus:ring-primary/50 h-16"
+              spellCheck={false}
             />
           </div>
         </div>

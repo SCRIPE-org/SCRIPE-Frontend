@@ -26,7 +26,7 @@ export function ForgotPasswordView() {
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   // Resolve tenant branding
-  const { branding } = useTenantResolution();
+  const { branding } = useTenantResolution("forgot-password");
 
   // Parse branding + inject CSS tokens
   const { layout: rawLayout, slotConfig, a11y } = useLoginBrandingTokens({

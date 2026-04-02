@@ -151,6 +151,54 @@ export function LoginPreviewShell() {
   // Falls back to the global layout from useLoginBrandingTokens
   const effectiveLayout = (pageOverride.layout as string) || layout;
 
+  // Per-page background CSS override (M9) — when inheritBackground is false,
+  // the page has its own background instead of the global login background.
+  const perPageBgCss = (() => {
+    // Login page always uses global bg; skip if no override
+    if (activePageId === "login") return "";
+    const po = pageOverride as Record<string, unknown>;
+    // Default: inherit from login page
+    if (po.inheritBackground !== false) return "";
+    
+    const rules: string[] = [];
+    const bgType = (po.bgType as string) || "solid";
+    
+    if (bgType === "solid" && po.bgColor) {
+      rules.push(`--login-bg: ${po.bgColor};`);
+      rules.push(`background: ${po.bgColor} !important;`);
+    } else if (bgType === "gradient") {
+      const dir = (po.bgGradientDirection as string) || "135deg";
+      const from = (po.bgGradientFrom as string) || "#3b82f6";
+      const to = (po.bgGradientTo as string) || "#8b5cf6";
+      const grad = `linear-gradient(${dir}, ${from}, ${to})`;
+      rules.push(`--login-bg: ${from};`);
+      rules.push(`background: ${grad} !important;`);
+    } else if (bgType === "image" && po.bgImageUrl) {
+      const fit = (po.bgImageFit as string) || "cover";
+      const pos = (po.bgImagePosition as string) || "center";
+      rules.push(`background-image: url(${po.bgImageUrl}) !important;`);
+      rules.push(`background-size: ${fit === "fill" ? "100% 100%" : fit} !important;`);
+      rules.push(`background-position: ${pos} !important;`);
+      rules.push(`background-repeat: no-repeat !important;`);
+      // Overlay
+      if (po.bgOverlayEnabled) {
+        const overlayColor = (po.bgOverlayColor as string) || "#000000";
+        const overlayOpacity = (po.bgOverlayOpacity as number) ?? 30;
+        const hex = overlayColor.replace("#", "");
+        const r = parseInt(hex.substring(0, 2), 16);
+        const g = parseInt(hex.substring(2, 4), 16);
+        const b = parseInt(hex.substring(4, 6), 16);
+        rules.push(`--login-overlay: rgba(${r},${g},${b},${overlayOpacity / 100});`);
+      }
+    }
+    
+    if (rules.length === 0) return "";
+    return `.login-page { ${rules.join(" ")} }`;
+  })();
+  
+  // Per-page custom CSS
+  const perPageCustomCss = (pageOverride as Record<string, unknown>).customCss as string || "";
+
   // Build "branding" object for LoginBranding component
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const brandingForPanel = {
@@ -473,24 +521,34 @@ export function LoginPreviewShell() {
   const wrapWithA11y = (layoutContent: React.ReactNode) => (
     <>
       {a11yFixedElements}
+      {/* Per-page background CSS override (M9) */}
+      {perPageBgCss && <style dangerouslySetInnerHTML={{ __html: perPageBgCss }} />}
+      {perPageCustomCss && <style dangerouslySetInnerHTML={{ __html: perPageCustomCss }} />}
       {layoutContent}
     </>
   );
 
   // ── Builder Mode: render canvas components instead of fixed layouts ──
-  // Per-page override canvas takes priority over global canvas
+  // ISOLATED: Each page checks its OWN canvas data. Non-login pages NEVER
+  // fall back to login's builder — they fall through to the layout renderer.
   const pageCanvasMode = (pageOverride as any).canvasMode as string | undefined;
   const pageCanvasComponents = (pageOverride as any).canvasComponents as any[] | undefined;
   const globalCanvasMode = rawParsed.canvasMode as string | undefined;
 
-  // Use per-page canvas if it has its own builder data, otherwise fallback to global
-  const effectiveCanvasMode = pageCanvasMode || globalCanvasMode;
-  const effectiveCanvasComponents = (pageCanvasComponents && pageCanvasComponents.length > 0)
-    ? pageCanvasComponents
-    : rawParsed.components as any[] | undefined;
-  const effectiveCanvasGridRows = ((pageOverride as any).canvasGridRows as number) || (rawParsed.canvasGridRows as number) || 8;
-  const effectiveCanvasBackground = (pageOverride as any).canvasBackground || rawParsed.canvasBackground;
-  const effectiveCanvasPositionMode = ((pageOverride as any).canvasPositionMode as 'grid' | 'absolute') || (rawParsed.canvasPositionMode as 'grid' | 'absolute') || 'grid';
+  // Only use global canvas for LOGIN page; non-login pages must have their OWN builder data
+  const effectiveCanvasMode = activePageId === 'login'
+    ? (pageCanvasMode || globalCanvasMode)
+    : pageCanvasMode; // Non-login: ONLY their own override, no fallback
+  const effectiveCanvasComponents = activePageId === 'login'
+    ? ((pageCanvasComponents && pageCanvasComponents.length > 0)
+      ? pageCanvasComponents
+      : rawParsed.components as any[] | undefined)
+    : ((pageCanvasComponents && pageCanvasComponents.length > 0)
+      ? pageCanvasComponents
+      : undefined); // Non-login: no fallback to login's components
+  const effectiveCanvasGridRows = ((pageOverride as any).canvasGridRows as number) || (activePageId === 'login' ? (rawParsed.canvasGridRows as number) : undefined) || 8;
+  const effectiveCanvasBackground = (pageOverride as any).canvasBackground || (activePageId === 'login' ? rawParsed.canvasBackground : undefined);
+  const effectiveCanvasPositionMode = ((pageOverride as any).canvasPositionMode as 'grid' | 'absolute') || (activePageId === 'login' ? (rawParsed.canvasPositionMode as 'grid' | 'absolute') : undefined) || 'grid';
 
   if (effectiveCanvasMode === 'builder' && Array.isArray(effectiveCanvasComponents)) {
     return wrapWithA11y(

@@ -180,10 +180,10 @@ export function ThemeMarketplacePanel({ onApplySuccess, onPreviewTheme, onExitPr
             </div>
             <div className="flex flex-wrap gap-1.5">
               {([
-                { key: "isFree", label: "Free Only", icon: Sparkles },
-                { key: "hasDarkMode", label: "Dark Mode", icon: Moon },
-                { key: "hasAccessibility", label: "Accessible", icon: ShieldCheck },
-              ] as const).map(({ key, label, icon: Icon }) => (
+                { key: "isFree", labelKey: "studio.marketplace.filterFree", fallback: "Free Only", icon: Sparkles },
+                { key: "hasDarkMode", labelKey: "studio.marketplace.filterDark", fallback: "Dark Mode", icon: Moon },
+                { key: "hasAccessibility", labelKey: "studio.marketplace.filterAccessible", fallback: "Accessible", icon: ShieldCheck },
+              ] as const).map(({ key, labelKey, fallback, icon: Icon }) => (
                 <button
                   key={key}
                   onClick={() => mp.setFilters({
@@ -197,7 +197,7 @@ export function ThemeMarketplacePanel({ onApplySuccess, onPreviewTheme, onExitPr
                   )}
                 >
                   <Icon className="h-3 w-3" />
-                  {label}
+                  {t(labelKey) || fallback}
                 </button>
               ))}
               {(mp.filters.category || mp.filters.isFree || mp.filters.hasDarkMode || mp.filters.hasAccessibility) && (
@@ -205,7 +205,7 @@ export function ThemeMarketplacePanel({ onApplySuccess, onPreviewTheme, onExitPr
                   onClick={mp.resetFilters}
                   className="flex items-center gap-1 px-2 py-1 text-[10px] rounded-full text-destructive hover:underline"
                 >
-                  <X className="h-3 w-3" /> Clear
+                  <X className="h-3 w-3" /> {t("studio.marketplace.clear") || "Clear"}
                 </button>
               )}
             </div>
@@ -225,15 +225,15 @@ export function ThemeMarketplacePanel({ onApplySuccess, onPreviewTheme, onExitPr
             <Paintbrush className="h-8 w-8 text-muted-foreground/50" />
             <p className="text-xs text-muted-foreground">
               {mp.activeTab === "favorites"
-                ? "No favorite themes yet"
-                : "No themes match your filters"}
+                ? (t("studio.marketplace.emptyFavorites") || "No favorite themes yet")
+                : (t("studio.marketplace.emptyResults") || "No themes match your filters")}
             </p>
             {mp.activeTab !== "browse" && (
               <button
                 onClick={() => mp.setActiveTab("browse")}
                 className="text-xs text-primary hover:underline"
               >
-                Browse all themes
+                {t("studio.marketplace.browseAll") || "Browse all themes"}
               </button>
             )}
           </div>
@@ -269,7 +269,7 @@ export function ThemeMarketplacePanel({ onApplySuccess, onPreviewTheme, onExitPr
         {totalPages > 1 && (
           <div className="flex items-center justify-between py-2">
             <span className="text-[10px] text-muted-foreground">
-              {mp.totalCount} themes • Page {mp.page}/{totalPages}
+              {mp.totalCount} {t("studio.marketplace.themes") || "themes"} • {t("studio.marketplace.page") || "Page"} {mp.page}/{totalPages}
             </span>
             <div className="flex gap-1">
               <button
@@ -314,6 +314,7 @@ function ThemeCard({
   theme, viewMode, isPreviewing, isTogglingFavorite, isApplying, confirmApply,
   onToggleFavorite, onPreview, onApplyClick, onApplyConfirm, onApplyCancel,
 }: ThemeCardProps) {
+  const { t } = useI18n();
   const badge = getThemeBadge(theme);
 
   if (viewMode === "list") {
@@ -333,12 +334,12 @@ function ThemeCard({
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5">
             <span className="text-xs font-medium text-foreground truncate">{theme.name}</span>
-            {theme.isNew && <span className="flex items-center gap-0.5 text-[9px] text-amber-500"><Sparkles className="h-2.5 w-2.5" />New</span>}
+            {theme.isNew && <span className="flex items-center gap-0.5 text-[9px] text-amber-500"><Sparkles className="h-2.5 w-2.5" />{t("studio.marketplace.new") || "New"}</span>}
             {theme.isApplied && <Check className="h-3 w-3 text-primary shrink-0" />}
           </div>
           <div className="flex items-center gap-2 mt-0.5">
             <span className={cn("text-[9px] px-1.5 py-0.5 rounded-full font-medium", badge.color)}>{badge.label}</span>
-            <span className="text-[9px] text-muted-foreground">{theme.usageCount} uses</span>
+            <span className="text-[9px] text-muted-foreground">{theme.usageCount} {t("studio.marketplace.uses") || "uses"}</span>
           </div>
         </div>
         {/* Actions */}
@@ -366,7 +367,7 @@ function ThemeCard({
               onClick={(e) => { e.stopPropagation(); onApplyClick(); }}
               className="h-6 px-2 text-[10px] rounded bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
             >
-              Apply
+              {t("studio.marketplace.apply") || "Apply"}
             </button>
           ) : theme.isBuyable ? (
             <button
@@ -374,7 +375,7 @@ function ThemeCard({
               className="h-6 px-2 text-[10px] rounded border border-violet-300 text-violet-600 opacity-80 cursor-not-allowed flex items-center gap-0.5"
             >
               <ShoppingCart className="h-2.5 w-2.5" />
-              {theme.price ? `$${theme.price.toFixed(0)}` : "Buy"}
+              {theme.price ? `$${theme.price.toFixed(0)}` : (t("studio.marketplace.buy") || "Buy")}
             </button>
           ) : (
             <Lock className="h-3 w-3 text-muted-foreground" />
@@ -413,14 +414,14 @@ function ThemeCard({
           )}
           {isPreviewing && (
             <span className="flex items-center gap-0.5 px-1.5 py-0.5 text-[9px] font-bold rounded-full bg-violet-500 text-white">
-              <Eye className="h-2.5 w-2.5" /> Preview
+              <Eye className="h-2.5 w-2.5" /> {t("studio.marketplace.preview") || "Preview"}
             </span>
           )}
         </div>
         {/* Applied badge */}
         {theme.isApplied && (
           <div className="absolute top-1.5 right-1.5 flex items-center gap-0.5 px-1.5 py-0.5 text-[9px] font-bold rounded-full bg-primary text-primary-foreground">
-            <Check className="h-2.5 w-2.5" /> Active
+            <Check className="h-2.5 w-2.5" /> {t("studio.marketplace.active") || "Active"}
           </div>
         )}
         {/* Favorite */}
@@ -459,21 +460,21 @@ function ThemeCard({
         {/* Apply / Confirm */}
         {confirmApply ? (
           <div className="flex flex-col gap-1 mt-1">
-            <p className="text-[9px] text-muted-foreground">Apply to draft?</p>
+            <p className="text-[9px] text-muted-foreground">{t("studio.marketplace.applyToDraft") || "Apply to draft?"}</p>
             <div className="flex gap-1">
               <button
                 onClick={(e) => { e.stopPropagation(); onApplyConfirm(false); }}
                 disabled={isApplying}
                 className="flex-1 h-6 text-[9px] rounded bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
               >
-                {isApplying ? <Loader2 className="h-3 w-3 animate-spin mx-auto" /> : "Replace"}
+                {isApplying ? <Loader2 className="h-3 w-3 animate-spin mx-auto" /> : (t("studio.marketplace.replace") || "Replace")}
               </button>
               <button
                 onClick={(e) => { e.stopPropagation(); onApplyConfirm(true); }}
                 disabled={isApplying}
                 className="flex-1 h-6 text-[9px] rounded border border-primary text-primary hover:bg-primary/10 disabled:opacity-50"
               >
-                Merge
+                {t("studio.marketplace.merge") || "Merge"}
               </button>
               <button
                 onClick={(e) => { e.stopPropagation(); onApplyCancel(); }}
@@ -495,7 +496,7 @@ function ThemeCard({
                   : "border-border text-muted-foreground hover:text-foreground hover:bg-muted"
               )}
             >
-              <Eye className="h-3 w-3" /> {isPreviewing ? "Exit" : "Preview"}
+              <Eye className="h-3 w-3" /> {isPreviewing ? (t("studio.marketplace.exit") || "Exit") : (t("studio.marketplace.preview") || "Preview")}
             </button>
             {/* Apply — only if available */}
             {theme.isAvailable ? (
@@ -503,7 +504,7 @@ function ThemeCard({
                 onClick={(e) => { e.stopPropagation(); onApplyClick(); }}
                 className="flex-1 h-6 text-[9px] rounded bg-primary text-primary-foreground hover:bg-primary/90 flex items-center justify-center gap-1 transition-colors"
               >
-                <Paintbrush className="h-3 w-3" /> Apply
+                <Paintbrush className="h-3 w-3" /> {t("studio.marketplace.apply") || "Apply"}
               </button>
             ) : theme.isBuyable ? (
               <button
@@ -512,11 +513,11 @@ function ThemeCard({
                 title="Contact your system administrator to purchase this theme"
               >
                 <ShoppingCart className="h-3 w-3" />
-                {theme.price ? `$${theme.price.toFixed(0)}` : "Buy"}
+                {theme.price ? `$${theme.price.toFixed(0)}` : (t("studio.marketplace.buy") || "Buy")}
               </button>
             ) : (
               <div className="flex-1 h-6 text-[9px] rounded border border-amber-300/50 bg-amber-500/5 text-amber-600 flex items-center justify-center gap-1">
-                <Lock className="h-3 w-3" /> Upgrade
+                <Lock className="h-3 w-3" /> {t("studio.marketplace.upgrade") || "Upgrade"}
               </div>
             )}
           </div>

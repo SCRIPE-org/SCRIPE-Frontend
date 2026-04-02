@@ -16,7 +16,7 @@
  */
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import { DndContext, DragOverlay, closestCenter } from "@dnd-kit/core";
 import { useStudioViewModel } from "../viewmodels/useStudioViewModel";
@@ -27,15 +27,19 @@ import { StudioSidebar } from "../components/StudioSidebar";
 import { StudioPreview } from "../components/StudioPreview";
 import { AuthPageTabs } from "../components/AuthPageTabs";
 import { BuilderCanvas } from "../components/builder/BuilderCanvas";
+import { getDefaultComponentsForPage } from "../../domain/entities/CanvasComponent";
 import { DragOverlayItem } from "../components/builder/DraggableCanvasItem";
 import { useBuilderStore } from "../viewmodels/useBuilderStore";
 import { Loader2, Building2, LayoutGrid } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
+import { SaveAsThemeModal } from "../components/SaveAsThemeModal";
 
 export function CustomizerStudioView() {
   const { t } = useI18n();
   const searchParams = useSearchParams();
+  const [showSaveAsTheme, setShowSaveAsTheme] = useState(false);
+  const handleSaveAsTheme = useCallback(() => setShowSaveAsTheme(true), []);
 
   // Drilldown: read target tenant from URL params
   const targetTenantId = searchParams?.get("tenantId") || undefined;
@@ -69,60 +73,113 @@ export function CustomizerStudioView() {
     hasInitializedBuilder.current = true;
   }, [vm.draft]);
 
-  // ── SYNC 2: Builder → Draft (push canvas state whenever builder changes) ──
-  // This fires when: entering builder mode, editing components, or changing grid/background.
-  // It pushes ALL builder state to draft so it gets saved/published AND sent to preview.
+  // ── SYNC 2: Builder → Draft (push canvas state PER PAGE) ──
+  // Login page's canvas → global draft fields.
+  // Non-login page's canvas → pageOverrides[activeAuthPage].
+  // This ensures each page's builder canvas is fully isolated.
   useEffect(() => {
     if (!isBuilderMode) return;
-    // Always push current builder state to draft when in builder mode
-    vm.batchUpdateDraft({
-      canvasMode: 'builder',
-      canvasComponents: builderStore.components,
-      canvasGridRows: builderStore.canvasGridRows,
-      canvasBackground: builderStore.canvasBackground,
-      canvasPositionMode: builderStore.positionMode,
-    });
-  }, [isBuilderMode, builderStore.components, builderStore.canvasGridRows, builderStore.canvasBackground, builderStore.positionMode]);
 
-  // ── SYNC 3: Per-page canvas — save/restore on auth page switch ──
-  // When user switches auth page tabs (login ↔ forgot ↔ reset) while in builder mode,
-  // save the current builder state to the PREVIOUS page's override, then load
-  // the new page's canvas from its override (or fallback to global draft canvas).
+    if (vm.activeAuthPage === 'login') {
+      // Login page: push to global draft fields
+      vm.batchUpdateDraft({
+        canvasComponents: builderStore.components,
+        canvasGridRows: builderStore.canvasGridRows,
+        canvasBackground: builderStore.canvasBackground,
+        canvasPositionMode: builderStore.positionMode,
+      });
+    } else {
+      // Non-login page: push to pageOverrides (isolated per page)
+      const existing = vm.draft.pageOverrides[vm.activeAuthPage] || {
+        layout: 'centered', headline: '', subtitle: '', inheritBackground: true,
+      };
+      vm.batchUpdateDraft({
+        pageOverrides: {
+          ...vm.draft.pageOverrides,
+          [vm.activeAuthPage]: {
+            ...existing,
+            canvasComponents: builderStore.components.map(c => ({ ...c, props: { ...c.props } })),
+            canvasGridRows: builderStore.canvasGridRows,
+            canvasBackground: { ...builderStore.canvasBackground },
+            canvasPositionMode: builderStore.positionMode,
+          },
+        },
+      });
+    }
+  }, [isBuilderMode, builderStore.components, builderStore.canvasGridRows, builderStore.canvasBackground, builderStore.positionMode, vm.activeAuthPage]);
+
+  // ── SYNC 3: Per-page canvas — FULLY ISOLATED save/restore on auth page switch ──
+  // Each auth page has its OWN canvas state. Login → global draft, others → pageOverrides.
+  // When switching pages while in builder mode:
+  //   1. Save current builder state to the OLD page's storage
+  //   2. Load the NEW page's canvas (or that page's default if no prior data)
+  // CRITICAL: Non-login pages NEVER fall back to login's canvas.
   const lastAuthPage = useRef(vm.activeAuthPage);
   useEffect(() => {
     if (!isBuilderMode) { lastAuthPage.current = vm.activeAuthPage; return; }
     if (lastAuthPage.current === vm.activeAuthPage) return;
     
-    // 1. Save current builder state to the OLD page's override
+    // 1. Save current builder state to the OLD page's storage
     const oldPage = lastAuthPage.current;
-    if (oldPage && oldPage !== 'login') {
-      const existingOverride = vm.draft.pageOverrides[oldPage] || { layout: 'centered', headline: '', subtitle: '' };
-      const updatedOverride = {
-        ...existingOverride,
-        canvasMode: 'builder' as const,
+    if (oldPage === 'login') {
+      // Login page: save to global draft fields
+      vm.batchUpdateDraft({
         canvasComponents: builderStore.components.map(c => ({ ...c, props: { ...c.props } })),
         canvasGridRows: builderStore.canvasGridRows,
         canvasBackground: { ...builderStore.canvasBackground },
         canvasPositionMode: builderStore.positionMode,
+      });
+    } else if (oldPage) {
+      // Non-login page: save to pageOverrides[oldPage]
+      const existingOverride = vm.draft.pageOverrides[oldPage] || {
+        layout: 'centered', headline: '', subtitle: '', inheritBackground: true,
       };
       vm.batchUpdateDraft({
-        pageOverrides: { ...vm.draft.pageOverrides, [oldPage]: updatedOverride },
+        pageOverrides: {
+          ...vm.draft.pageOverrides,
+          [oldPage]: {
+            ...existingOverride,
+            canvasComponents: builderStore.components.map(c => ({ ...c, props: { ...c.props } })),
+            canvasGridRows: builderStore.canvasGridRows,
+            canvasBackground: { ...builderStore.canvasBackground },
+            canvasPositionMode: builderStore.positionMode,
+          },
+        },
       });
     }
     
-    // 2. Load new page's canvas from its override (or fallback to global)
+    // 2. Load NEW page's canvas from its own storage
     const newPage = vm.activeAuthPage;
-    const newOverride = newPage !== 'login' ? vm.draft.pageOverrides[newPage] : undefined;
-    if (newOverride?.canvasComponents && newOverride.canvasComponents.length > 0) {
-      // This page has its own builder canvas
-      const pageCopy = newOverride.canvasComponents.map(c => ({ ...c, props: { ...c.props } }));
-      builderStore.initialize(pageCopy, newOverride.canvasGridRows || 8, newOverride.canvasBackground || { type: 'inherit' as const, value: '' });
-      builderStore.setPositionMode(newOverride.canvasPositionMode || 'absolute');
-    } else {
-      // Fallback: use the main login page's canvas
+    if (newPage === 'login') {
+      // Login page: load from global draft fields
       const globalCopy = vm.draft.canvasComponents.map(c => ({ ...c, props: { ...c.props } }));
-      builderStore.initialize(globalCopy, vm.draft.canvasGridRows, vm.draft.canvasBackground || { type: 'inherit' as const, value: '' });
+      builderStore.initialize(
+        globalCopy,
+        vm.draft.canvasGridRows,
+        vm.draft.canvasBackground || { type: 'inherit' as const, value: '' },
+      );
       builderStore.setPositionMode(vm.draft.canvasPositionMode || 'absolute');
+    } else {
+      // Non-login page: load from pageOverrides (NEVER fallback to login's canvas)
+      const pageOverride = vm.draft.pageOverrides[newPage];
+      if (pageOverride?.canvasComponents && pageOverride.canvasComponents.length > 0) {
+        const pageCopy = pageOverride.canvasComponents.map(c => ({ ...c, props: { ...c.props } }));
+        builderStore.initialize(
+          pageCopy,
+          pageOverride.canvasGridRows || 8,
+          pageOverride.canvasBackground || { type: 'inherit' as const, value: '' },
+        );
+        builderStore.setPositionMode(pageOverride.canvasPositionMode || 'absolute');
+      } else {
+        // No prior data: use THIS page's own default components
+        const pageDefaults = getDefaultComponentsForPage(newPage as any);
+        builderStore.initialize(
+          pageDefaults,
+          8,
+          { type: 'inherit' as const, value: '' },
+        );
+        builderStore.setPositionMode('absolute');
+      }
     }
     
     lastAuthPage.current = vm.activeAuthPage;
@@ -250,6 +307,7 @@ export function CustomizerStudioView() {
         onReset={vm.resetBranding}
         onExitPreview={vm.exitThemePreview}
         onRefresh={vm.refreshDraft}
+        onSaveAsTheme={handleSaveAsTheme}
       />
 
       {/* Builder Mode Indicator */}
@@ -308,6 +366,13 @@ export function CustomizerStudioView() {
         onConfirm={vm.confirmDiscard}
         onCancel={vm.cancelDiscard}
         isLoading={vm.isDiscarding}
+      />
+
+      {/* Save as Theme Modal */}
+      <SaveAsThemeModal
+        isOpen={showSaveAsTheme}
+        onClose={() => setShowSaveAsTheme(false)}
+        getDraftJson={vm.buildDraftJson}
       />
     </div>
   );

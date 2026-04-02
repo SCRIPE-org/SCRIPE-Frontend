@@ -14,6 +14,7 @@ import type { ThemeBundleData } from "../../domain/entities/ThemeBundle";
 function makeLoginTheme(config: {
   layout: string;
   primaryColor: string;
+  secondaryColor?: string;
   surfaceColor: string;
   bgColor: string;
   textColor: string;
@@ -37,37 +38,59 @@ function makeLoginTheme(config: {
   buttonRadius: string;
   cardPadding: string;
 }): string {
+  // Parse numeric values from string tokens
+  const pxInt = (v: string) => parseInt(v.replace("px", "").replace("rem", "")) || 0;
+  const remToPx = (v: string) => {
+    if (v.endsWith("rem")) return Math.round(parseFloat(v) * 16);
+    return pxInt(v);
+  };
+
+  // Resolve gradient values for bg tokens
+  const bgIsGradient = config.bgType === "gradient";
+  const bgGradientMatch = bgIsGradient ? config.bgValue.match(/linear-gradient\(([^,]+),\s*([^,]+(?:,\s*[^)]+)?)\)/) : null;
+
   return JSON.stringify({
     layout: config.layout,
+    headline: config.headline,
+    subtitle: config.subtitle,
+    bgType: config.bgType === "gradient" ? "gradient" : "solid",
+    bgGradientDirection: bgGradientMatch ? bgGradientMatch[1].trim() : "135deg",
+    bgGradientFrom: bgIsGradient
+      ? (config.bgValue.match(/#[0-9a-fA-F]{6}/g)?.[0] || config.bgColor)
+      : config.bgColor,
+    bgGradientTo: bgIsGradient
+      ? (config.bgValue.match(/#[0-9a-fA-F]{6}/g)?.[1] || config.bgColor)
+      : config.bgColor,
     tokens: {
-      "--login-bg": config.bgColor,
-      "--login-surface": config.surfaceColor,
-      "--login-primary": config.primaryColor,
-      "--login-primary-fg": "#ffffff",
-      "--login-accent": config.accentColor,
-      "--login-text": config.textColor,
-      "--login-text-muted": config.mutedColor,
-      "--login-border": config.borderColor,
-      "--login-input-bg": config.inputBg,
-      "--login-input-border": config.inputBorder,
-      "--login-heading-font": config.headingFont,
-      "--login-body-font": config.bodyFont,
-      "--login-heading-weight": String(config.headingWeight),
-      "--login-heading-size": config.headingSize,
-      "--login-body-size": config.bodySize,
-      "--login-border-radius": config.borderRadius,
-      "--login-input-radius": config.inputRadius,
-      "--login-button-radius": config.buttonRadius,
-      "--login-card-padding": config.cardPadding,
-    },
-    content: {
-      headline: config.headline,
-      subtitle: config.subtitle,
-    },
-    background: {
-      type: config.bgType,
-      value: config.bgValue,
-      overlay: config.bgOverlay || "",
+      "color.primary": config.primaryColor,
+      "color.secondary": config.secondaryColor || config.accentColor,
+      "color.background": config.bgColor,
+      "color.surface": config.surfaceColor,
+      "color.text": config.textColor,
+      "color.textMuted": config.mutedColor,
+      "color.border": config.borderColor,
+      "color.error": "#ef4444",
+      "color.success": "#22c55e",
+      "font.body": config.bodyFont.replace(/'/g, ""),
+      "font.heading": config.headingFont.replace(/'/g, ""),
+      "font.size.headline": config.headingSize,
+      "font.size.subtitle": config.bodySize,
+      "font.weight.heading": `${config.headingWeight}`,
+      "font.weight.body": "400",
+      "font.lineHeight": "1.5",
+      "font.letterSpacing": "0px",
+      "radius.card": config.borderRadius,
+      "radius.button": config.buttonRadius,
+      "shadow.card": `0 25px 50px rgba(0,0,0,0.1)`,
+      "spacing.formWidth": "400px",
+      "spacing.cardPadding": config.cardPadding.includes("rem")
+        ? `${remToPx(config.cardPadding)}px`
+        : config.cardPadding,
+      "spacing.elementGap": "16px",
+      "spacing.inputHeight": "44px",
+      "bg.image": "",
+      "bg.image.fit": "cover",
+      "bg.image.position": "center",
     },
   });
 }

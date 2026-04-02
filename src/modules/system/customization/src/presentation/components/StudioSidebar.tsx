@@ -42,7 +42,7 @@ interface StudioSidebarProps {
   // Multi-page branding
   activeAuthPage: AuthPageId;
   getPageOverride: (pageId: AuthPageId) => AuthPageOverride;
-  setPageOverride: (pageId: AuthPageId, field: keyof AuthPageOverride, value: string) => void;
+  setPageOverride: (pageId: AuthPageId, field: keyof AuthPageOverride, value: AuthPageOverride[keyof AuthPageOverride]) => void;
   /** When true, builder canvas is rendered externally (full-width) */
   isBuilderMode?: boolean;
 }
@@ -147,8 +147,14 @@ export function StudioSidebar(props: StudioSidebarProps) {
               activeAuthPage={activeAuthPage}
               pageOverride={currentPageOverride}
               onUpdatePageField={(field, value) => setPageOverride(activeAuthPage, field, value)}
-              canvasMode={draft.canvasMode}
-              onCanvasModeChange={(mode) => updateDraft('canvasMode', mode)}
+              canvasMode={activeAuthPage === 'login' ? draft.canvasMode : (currentPageOverride as any).canvasMode || 'layout'}
+              onCanvasModeChange={(mode) => {
+                if (activeAuthPage === 'login') {
+                  updateDraft('canvasMode', mode);
+                } else {
+                  setPageOverride(activeAuthPage, 'canvasMode' as any, mode);
+                }
+              }}
             />
           )}
           {activePanel === "branding" && (

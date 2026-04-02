@@ -5919,7 +5919,7 @@ export const ar = {
       featured: "مميزة",
       search: "ابحث عن سمات...",
       noResults: "لم يتم العثور على سمات",
-      apply: "تطبيق السمة",
+      apply: "تطبيق",
       applied: "مُطبّق",
       preview: "معاينة",
       favorite: "مفضلة",
@@ -5933,6 +5933,31 @@ export const ar = {
       previewAny: "انقر للمعاينة — يتطلب التطبيق الوصول",
       byAuthor: "بواسطة",
       usageCount: "مستخدم بواسطة {{count}} مستأجرين",
+      // التبويبات
+      tabBrowse: "تصفح",
+      tabFeatured: "مميزة",
+      tabFavorites: "المفضلة",
+      // الفلاتر
+      filterFree: "مجاني فقط",
+      filterDark: "الوضع الداكن",
+      filterAccessible: "ذوي الاحتياجات",
+      clear: "مسح",
+      // حالات فارغة
+      emptyFavorites: "لا توجد سمات مفضلة بعد",
+      emptyResults: "لا توجد سمات تطابق الفلاتر",
+      browseAll: "تصفح جميع السمات",
+      // الترقيم
+      themes: "سمات",
+      page: "صفحة",
+      // الشارات
+      new: "جديد",
+      active: "نشط",
+      uses: "استخدام",
+      // الإجراءات
+      exit: "خروج",
+      applyToDraft: "تطبيق على المسودة؟",
+      replace: "استبدال",
+      merge: "دمج",
     },
 
     // إدارة السمات (صفحة المشرف)
@@ -6226,11 +6251,46 @@ export const ar = {
       mfa: "المصادقة الثنائية",
     },
     pageContent: "محتوى الصفحة",
+    pageBg: "خلفية الصفحة",
+    bg: {
+      solid: "لون واحد",
+      gradient: "تدرج",
+      image: "صورة",
+    },
     fields: {
       headline: "العنوان الرئيسي",
       headlinePlaceholder: "عنوان الصفحة...",
       subtitle: "العنوان الفرعي",
       subtitlePlaceholder: "العنوان الفرعي للصفحة...",
+      inheritBg: "وراثة الخلفية من صفحة تسجيل الدخول",
+      bgType: "النوع",
+      bgColor: "اللون",
+      gradientFrom: "من",
+      gradientTo: "إلى",
+      gradientDir: "الاتجاه",
+      bgImageUrl: "رابط الصورة",
+      bgFit: "الملاءمة",
+      bgPosition: "الموضع",
+      bgOverlay: "تمكين الطبقة العلوية",
+      pageCss: "CSS مخصص (لهذه الصفحة فقط)",
+    },
+
+    // حفظ كقالب
+    saveTheme: {
+      title: "حفظ كقالب",
+      name: "اسم القالب",
+      namePlaceholder: "مثال: أزرق مؤسسي",
+      slug: "المعرّف",
+      description: "الوصف",
+      descPlaceholder: "وصف قصير لهذا القالب...",
+      category: "الفئة",
+      author: "اسم المؤلف",
+      authorPlaceholder: "اسمك",
+      preview: "معاينة القالب",
+      previewDesc: "يحفظ الرموز والتخطيط والتنسيق الحالي",
+      save: "حفظ القالب",
+      success: "تم حفظ القالب!",
+      successDesc: "قالبك المخصص متاح الآن في معرض القوالب.",
     },
 
     // ── فاحص إمكانية الوصول ──

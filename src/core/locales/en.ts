@@ -6053,7 +6053,7 @@ export const en = {
       featured: "Featured",
       search: "Search themes...",
       noResults: "No themes found",
-      apply: "Apply Theme",
+      apply: "Apply",
       applied: "Applied",
       preview: "Preview",
       favorite: "Favorite",
@@ -6067,6 +6067,31 @@ export const en = {
       previewAny: "Tap to preview - apply requires access",
       byAuthor: "by",
       usageCount: "Used by {{count}} tenants",
+      // Tabs
+      tabBrowse: "Browse",
+      tabFeatured: "Featured",
+      tabFavorites: "Favorites",
+      // Filters
+      filterFree: "Free Only",
+      filterDark: "Dark Mode",
+      filterAccessible: "Accessible",
+      clear: "Clear",
+      // Empty states
+      emptyFavorites: "No favorite themes yet",
+      emptyResults: "No themes match your filters",
+      browseAll: "Browse all themes",
+      // Pagination
+      themes: "themes",
+      page: "Page",
+      // Badge labels
+      new: "New",
+      active: "Active",
+      uses: "uses",
+      // Actions
+      exit: "Exit",
+      applyToDraft: "Apply to draft?",
+      replace: "Replace",
+      merge: "Merge",
     },
 
     // Theme Management (Admin Page)
@@ -6381,11 +6406,46 @@ export const en = {
       resetPassword: "Reset Password",
     },
     pageContent: "Page Content",
+    pageBg: "Page Background",
+    bg: {
+      solid: "Solid",
+      gradient: "Gradient",
+      image: "Image",
+    },
     fields: {
       headline: "Headline",
       headlinePlaceholder: "Page headline...",
       subtitle: "Subtitle",
       subtitlePlaceholder: "Page subtitle...",
+      inheritBg: "Inherit background from Login page",
+      bgType: "Type",
+      bgColor: "Color",
+      gradientFrom: "From",
+      gradientTo: "To",
+      gradientDir: "Direction",
+      bgImageUrl: "Image URL",
+      bgFit: "Fit",
+      bgPosition: "Position",
+      bgOverlay: "Enable overlay",
+      pageCss: "Custom CSS (this page only)",
+    },
+
+    // Save as Theme
+    saveTheme: {
+      title: "Save as Theme",
+      name: "Theme Name",
+      namePlaceholder: "e.g. Corporate Blue",
+      slug: "Slug",
+      description: "Description",
+      descPlaceholder: "Short description of this theme...",
+      category: "Category",
+      author: "Author Name",
+      authorPlaceholder: "Your name",
+      preview: "Theme Preview",
+      previewDesc: "Saves current tokens, layout, and styling",
+      save: "Save Theme",
+      success: "Theme saved!",
+      successDesc: "Your custom theme is now available in the marketplace.",
     },
 
     // ”-€ Accessibility Checker ”-€
@@ -6565,7 +6625,7 @@ export const en = {
 
     // Layouts
     layout: {
-      description: "Choose a layout template for your login page",
+      description: "Choose a layout template for this page",
       splitRight: "Split Right",
       splitRightDesc: "Brand panel left, form right",
       splitLeft: "Split Left",

@@ -1408,35 +1408,8 @@ function ComponentSpecificProps({ type,
         </div>
       );
 
-    case 'forgotForm':
-      return (
-        <div className="space-y-2">
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={Boolean(props.showBackToLogin ?? true)}
-              onChange={(e) => onUpdateProps({ showBackToLogin: e.target.checked })}
-              className="h-3.5 w-3.5 rounded border-border"
-            />
-            <span className="text-xs text-foreground">{t('studio.builder.props.showBackToLogin') || 'Show "Back to Login" link'}</span>
-          </label>
-        </div>
-      );
-
-    case 'resetForm':
-      return (
-        <div className="space-y-2">
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={Boolean(props.showPasswordStrength ?? true)}
-              onChange={(e) => onUpdateProps({ showPasswordStrength: e.target.checked })}
-              className="h-3.5 w-3.5 rounded border-border"
-            />
-            <span className="text-xs text-foreground">{t('studio.builder.props.showPasswordStrength') || 'Show password strength indicator'}</span>
-          </label>
-        </div>
-      );
+    // forgotForm and resetForm are handled above (lines ~437-552)
+    // with full form style/radius/button controls
 
     default:
       return (

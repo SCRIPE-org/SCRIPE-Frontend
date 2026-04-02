@@ -85,7 +85,12 @@ function getDevTenantCode(): string | null {
 
 // ─── Hook ─────────────────────────────────────────────────
 
-export function useTenantResolution(): TenantResolutionResult {
+/**
+ * @param page - Optional page identifier (e.g. "forgot-password", "reset-password").
+ *               When provided, the server deep-merges per-page background/style overrides
+ *               into the returned LoginBrandingJson so CSS tokens are page-aware.
+ */
+export function useTenantResolution(page?: string): TenantResolutionResult {
       const [tenantId, setTenantId] = useState<string | null>(null);
       const [branding, setBranding] = useState<TenantBranding | null>(null);
       const [isLoading, setIsLoading] = useState(true);
@@ -110,9 +115,11 @@ export function useTenantResolution(): TenantResolutionResult {
                   try {
                         const api = getModuleApiService("IDENTITY");
                         // Dev: use ?code=CODE, Prod: use ?domain=hostname
-                        const queryParams = devCode
+                        const queryParams: Record<string, string> = devCode
                               ? { code: devCode }
                               : { domain: hostname };
+                        // Pass page identifier for server-side per-page branding merge
+                        if (page) queryParams.page = page;
                         const url = buildUrl(API_ENDPOINTS.TENANTS.RESOLVE, queryParams);
                         const data = await api.get<TenantBranding>(url);
 
@@ -153,7 +160,8 @@ export function useTenantResolution(): TenantResolutionResult {
             return () => {
                   cancelled = true;
             };
-      }, []);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      }, [page]);
 
       return {
             tenantId,

@@ -35,7 +35,7 @@ export function ResetPasswordView() {
   const [error, setError] = useState<string | null>(null);
 
   // Resolve tenant branding
-  const { branding } = useTenantResolution();
+  const { branding } = useTenantResolution("reset-password");
 
   // Parse branding + inject CSS tokens
   const { layout: rawLayout } = useLoginBrandingTokens({

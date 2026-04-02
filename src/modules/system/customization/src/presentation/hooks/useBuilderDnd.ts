@@ -38,7 +38,7 @@ export function useBuilderDnd() {
   const handleDragEnd = useCallback(
     (event: DragEndEvent) => {
       setActiveId(null);
-      const { active, over } = event;
+      const { active, over, delta } = event;
       if (!over) return;
 
       const activeData = active.data.current;
@@ -51,7 +51,38 @@ export function useBuilderDnd() {
           overId.startsWith("comp_") ||
           overId.startsWith("default-")
         ) {
-          store.addComponent(activeData.type as CanvasComponentType);
+          const newComp = store.addComponent(activeData.type as CanvasComponentType);
+
+          // In grid mode, if dropped ON a specific component, insert at that position
+          if (newComp && store.positionMode === 'grid' && overId.startsWith("comp_")) {
+            const targetComp = store.components.find(c => c.id === overId);
+            if (targetComp) {
+              // Assign the new component's grid position to match where it was dropped
+              store.updateComponent(newComp.id, {
+                gridRow: targetComp.gridRow,
+                gridColumn: targetComp.gridColumn,
+              });
+              // Push the target and subsequent components down by one row
+              const targetRowStart = parseInt(targetComp.gridRow.split('/')[0]?.trim(), 10) || 1;
+              store.components.forEach(c => {
+                if (c.id === newComp.id) return;
+                const rowStart = parseInt(c.gridRow.split('/')[0]?.trim(), 10) || 1;
+                if (rowStart >= targetRowStart) {
+                  store.updateComponent(c.id, {
+                    gridRow: `${rowStart + 1} / ${rowStart + 2}`,
+                  });
+                }
+              });
+            }
+          }
+
+          // In absolute mode, offset the new component position by the drop delta
+          if (newComp && store.positionMode === 'absolute' && delta) {
+            const scale = store.zoom / 100;
+            const adjustedX = Math.max(0, Math.round(newComp.x + (delta.x / scale)));
+            const adjustedY = Math.max(0, Math.round(newComp.y + (delta.y / scale)));
+            store.moveComponentAbsolute(newComp.id, adjustedX, adjustedY);
+          }
         }
         return;
       }
@@ -59,7 +90,22 @@ export function useBuilderDnd() {
       // 2. Dragged within canvas (reorder) — grid mode only
       if (activeData?.source === "canvas" && active.id !== over.id) {
         if (store.positionMode === 'grid') {
-          // Pass IDs directly — store handles index lookup internally
+          // Swap grid positions between the two components
+          const srcComp = store.components.find(c => c.id === String(active.id));
+          const dstComp = store.components.find(c => c.id === String(over.id));
+          if (srcComp && dstComp) {
+            const srcRow = srcComp.gridRow;
+            const srcCol = srcComp.gridColumn;
+            store.updateComponent(String(active.id), {
+              gridRow: dstComp.gridRow,
+              gridColumn: dstComp.gridColumn,
+            });
+            store.updateComponent(String(over.id), {
+              gridRow: srcRow,
+              gridColumn: srcCol,
+            });
+          }
+          // Also reorder in the array for layer list consistency
           store.reorderComponents(String(active.id), String(over.id));
         }
         // In absolute mode, drag is handled by DraggableCanvasItem's mouseDown

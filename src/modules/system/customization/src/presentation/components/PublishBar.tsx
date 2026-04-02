@@ -1,4 +1,4 @@
-﻿/**
+/**
  * PublishBar — Top bar with back button, draft status, device toggle,
  * reset dropdown, publish/discard actions.
  * All labels localized via t()
@@ -13,7 +13,7 @@ import Link from "next/link";
 import {
   ArrowLeft, Monitor, Tablet, Smartphone, Upload, RotateCcw,
   Loader2, Circle, Save, Check, ChevronDown, RefreshCw,
-  Globe, Factory, Eye,
+  Globe, Factory, Eye, Palette,
 } from "lucide-react";
 import { cn } from "@/core/common/utils";
 import type { DeviceSize } from "../../domain/entities/StudioDraft";
@@ -35,6 +35,7 @@ interface PublishBarProps {
   onReset?: (type: "Published" | "GlobalDefault" | "FactoryDefault") => void;
   onExitPreview?: () => void;
   onRefresh?: () => void;
+  onSaveAsTheme?: () => void;
 }
 
 const DEVICES: { id: DeviceSize; icon: typeof Monitor; labelKey: string }[] = [
@@ -45,7 +46,7 @@ const DEVICES: { id: DeviceSize; icon: typeof Monitor; labelKey: string }[] = [
 
 export function PublishBar({ isDirty, isPublishing, isDiscarding, isSavingDraft,
   isResetting, isPreviewingTheme, lastSavedAt, deviceSize, setDeviceSize,
-  onPublish, onDiscard, onSaveDraft, onReset, onExitPreview, onRefresh,
+  onPublish, onDiscard, onSaveDraft, onReset, onExitPreview, onRefresh, onSaveAsTheme,
 }: PublishBarProps) {
   const { t } = useI18n();
   const [showResetMenu, setShowResetMenu] = useState(false);
@@ -149,6 +150,18 @@ export function PublishBar({ isDirty, isPublishing, isDiscarding, isSavingDraft,
             title={t("studio.refresh") || "Refresh from server"}
           >
             <RefreshCw className="h-3.5 w-3.5" />
+          </button>
+        )}
+
+        {/* Save as Theme */}
+        {onSaveAsTheme && (
+          <button
+            onClick={onSaveAsTheme}
+            className="flex h-8 items-center gap-1.5 rounded-lg border border-border px-2.5 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+            title={t("studio.saveTheme.title") || "Save as Theme"}
+          >
+            <Palette className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">{t("studio.saveTheme.title") || "Save as Theme"}</span>
           </button>
         )}
 

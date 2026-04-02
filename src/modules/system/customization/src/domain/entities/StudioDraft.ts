@@ -36,11 +36,27 @@ export const AUTH_PAGES: { id: AuthPageId; labelKey: string; icon: string }[] = 
   { id: "reset-password",  labelKey: "studio.page.resetPassword",  icon: "RotateCcw" },
 ];
 
-// ── Per-Page Override — each page can customize layout + content ──
+// ── Per-Page Override — each page can customize layout + content + background ──
 export interface AuthPageOverride {
   layout: LoginLayout;
   headline: string;
   subtitle: string;
+  // Per-page background — when inheritBackground is false, this page uses its own bg
+  inheritBackground: boolean;
+  bgType?: "solid" | "gradient" | "image";
+  bgColor?: string;
+  bgGradientDirection?: string;
+  bgGradientFrom?: string;
+  bgGradientTo?: string;
+  bgImageUrl?: string;
+  bgImageFit?: "cover" | "contain" | "fill" | "none" | "scale-down";
+  bgImagePosition?: string;
+  bgOverlayEnabled?: boolean;
+  bgOverlayColor?: string;
+  bgOverlayOpacity?: number;
+  bgBlur?: number;
+  // Per-page custom CSS
+  customCss?: string;
   // Builder canvas per page (optional — falls back to login page's canvas)
   canvasMode?: CanvasMode;
   canvasComponents?: CanvasComponent[];
@@ -51,11 +67,11 @@ export interface AuthPageOverride {
 
 export type AuthPageOverrides = Partial<Record<AuthPageId, AuthPageOverride>>;
 
-// Default per-page values (login inherits from global draft)
+// Default per-page values (login inherits from global draft; other pages inherit bg from login)
 export const DEFAULT_PAGE_OVERRIDES: Record<AuthPageId, AuthPageOverride> = {
-  "login":           { layout: "split-right", headline: "", subtitle: "" },
-  "forgot-password": { layout: "centered",    headline: "", subtitle: "" },
-  "reset-password":  { layout: "centered",    headline: "", subtitle: "" },
+  "login":           { layout: "split-right", headline: "", subtitle: "", inheritBackground: false },
+  "forgot-password": { layout: "centered",    headline: "", subtitle: "", inheritBackground: true },
+  "reset-password":  { layout: "centered",    headline: "", subtitle: "", inheritBackground: true },
 };
 
 // ── Draft Shape ───────────────────────────────────────
