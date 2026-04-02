@@ -113,16 +113,23 @@ export function BuilderPanel({ draft, updateDraft, sidebarOnly = false, activeAu
     }
   }, [draft, store]);
 
-  // ── Switch active page when auth tab changes ──
+  // ── Track which auth page is active (for palette filtering) ──
+  // Note: The actual component save/load is handled by CustomizerStudioView's effect.
+  // We just need to keep the store's activePage in sync for palette filtering.
   useEffect(() => {
     if (!initializedRef.current || !activeAuthPage) return;
+    // StudioDraft uses kebab-case IDs, CanvasComponent store uses camelCase
     const pageMap: Record<string, 'login' | 'forgotPassword' | 'resetPassword'> = {
-      login: 'login',
-      forgotPassword: 'forgotPassword',
-      resetPassword: 'resetPassword',
+      'login': 'login',
+      'forgot-password': 'forgotPassword',
+      'reset-password': 'resetPassword',
+      'forgotPassword': 'forgotPassword',
+      'resetPassword': 'resetPassword',
     };
     const page = pageMap[activeAuthPage];
     if (page && page !== store.activePage) {
+      // Only update the label — don't trigger setActivePage's save/load cycle
+      // because CustomizerStudioView already handles initialize() with correct data
       store.setActivePage(page);
     }
   }, [activeAuthPage, store]);

@@ -70,10 +70,13 @@ const COMPONENT_GROUPS: ComponentGroup[] = [
 /** Filter palette components based on which auth page tab is active */
 function getFilteredGroups(activeAuthPage?: string): ComponentGroup[] {
   // Map auth page → which form component is relevant
+  // Support both kebab-case (StudioDraft) and camelCase (CanvasComponent) IDs
   const formForPage: Record<string, CanvasComponentType> = {
-    login: 'loginForm',
-    forgotPassword: 'forgotForm',
-    resetPassword: 'resetForm',
+    'login': 'loginForm',
+    'forgotPassword': 'forgotForm',
+    'forgot-password': 'forgotForm',
+    'resetPassword': 'resetForm',
+    'reset-password': 'resetForm',
   };
   const activeForm = formForPage[activeAuthPage || 'login'] || 'loginForm';
   const excludedForms = (['loginForm', 'forgotForm', 'resetForm'] as CanvasComponentType[])
