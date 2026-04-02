@@ -54,6 +54,12 @@ export const STORAGE_KEYS = {
 
   // Builder (login page DnD builder saved templates)
   BUILDER_TEMPLATES: "nexora_builder_templates",
+
+  // M11: Deferred flush — persists pending admin settings across logout/login.
+  // When beforeunload fires and JWT is expired, the pending payload is written here.
+  // On the next successful login, the hook reads + flushes this key before fetching fresh settings.
+  // ⚠️ Intentionally NOT in AUTH_STORAGE_KEYS_TO_CLEAR — must survive logout.
+  PENDING_SETTINGS_FLUSH: "nexora_pending_settings_flush",
 } as const;
 
 /**
@@ -65,13 +71,23 @@ export type StorageKey = (typeof STORAGE_KEYS)[keyof typeof STORAGE_KEYS];
  * List of all auth-related keys to clear on logout
  */
 export const AUTH_STORAGE_KEYS_TO_CLEAR: readonly StorageKey[] = [
+  // Auth data
   STORAGE_KEYS.NAVIGATION_CACHE,
   STORAGE_KEYS.NAVIGATION_CACHE_EXPIRY,
   STORAGE_KEYS.USER_DATA,
   STORAGE_KEYS.PERMISSIONS,
   STORAGE_KEYS.ROLES,
   STORAGE_KEYS.nexora_refresh_token,
-  STORAGE_KEYS.tenant_context
+  STORAGE_KEYS.tenant_context,
+  // M11: Dashboard settings (prevent cross-admin leaking on shared browser)
+  STORAGE_KEYS.DASHBOARD_SETTINGS,
+  STORAGE_KEYS.PREF_DASHBOARD_SETTINGS,
+  STORAGE_KEYS.PREF_THEME,
+  STORAGE_KEYS.PREF_LANG,
+  STORAGE_KEYS.PREF_SIDEBAR_COLLAPSED,
+  // ⚠️ PENDING_SETTINGS_FLUSH is intentionally EXCLUDED from this list!
+  // It must survive logout so it can be flushed on the next login.
+  // It is cleared ONLY after successful flush in loadAdminSettings().
 ] as const;
 
 /**

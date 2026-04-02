@@ -46,6 +46,7 @@ import "./features/login-customizer";
 import "./features/theme-marketplace";
 import "./features/multi-page-branding";
 import "./features/login-page-builder";
+import "./features/dashboard-builder";
 
 // Modules (Entitlements)
 import "./modules/entitlements-overview";
@@ -122,6 +123,7 @@ import "./commercial/message-templates";
 import "./commercial/login-customizer";
 import "./commercial/theme-marketplace";
 import "./commercial/page-builder";
+import "./commercial/dashboard-builder";
 
 // Security & Compliance
 import "./commercial/security-overview";

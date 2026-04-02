@@ -142,6 +142,13 @@ export const API_ENDPOINTS = {
     RESET_BRANDING: `${V1}/Tenants/my/settings/reset`,
     SYSTEM_SETTINGS: `${V1}/Tenants/system/settings`,
     ADMIN_PREFERENCES: `${V1}/Tenants/admins/my/settings`,
+    // ── M11: Dashboard Builder ──
+    DASHBOARD_SETTINGS: `${V1}/Tenants/my/dashboard-settings`,
+    DASHBOARD_SETTINGS_PUBLISH: `${V1}/Tenants/my/dashboard-settings/publish`,
+    DASHBOARD_SETTINGS_DISCARD: `${V1}/Tenants/my/dashboard-settings/draft`,
+    DASHBOARD_PRESETS: `${V1}/Tenants/my/dashboard-presets`,
+    APPLY_PRESET: `${V1}/Tenants/my/dashboard-presets/apply`,
+    SAVE_PRESET: `${V1}/Tenants/my/dashboard-presets/save`,
     SAFE_MODE: (id: string) => `${V1}/Tenants/${id}/safe-mode`,
     PERMISSIONS: (id: string) => `${V1}/Tenants/${id}/permissions`,
     // ── Domain Management ──

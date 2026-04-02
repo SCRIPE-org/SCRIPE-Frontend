@@ -3015,5 +3015,39 @@ export const docCommEn: Record<string, any> = {
 
       tip: "The complete customization platform — Page Builder + Theme Marketplace + Multi-Page Branding + Dashboard Theming + Bundle Marketplace — positions NEXORA as the only enterprise IAM platform where tenant administrators can fully design, preview, and deploy their complete visual identity without touching a single line of code. This eliminates the customization bottleneck that plagues every competing platform.",
     },
+
+    // ─── Dashboard Builder ──────────────────────────────────────────────────
+    dashboardBuilder: {
+      title: "Dashboard Builder — Admin Preference Engine",
+      description: "Enterprise-grade server-synced admin preferences with 61 customizable settings, cross-device persistence, 4-layer merge engine, and edition-based feature gating.",
+      intro: "Your dashboard is where productivity happens. While competitors offer a toggle for 'dark mode' and call it customization, NEXORA provides 61 individually configurable settings — from layout templates and color themes to component styles and hover effects — all persisted to the server with cross-device sync, tenant-level brand enforcement, and edition-based monetization. The Dashboard Builder transforms admin workspace customization from a nice-to-have into a strategic business differentiator.",
+
+      valueTitle: "Business Value",
+      valueIntro: "Personalized workspaces increase user engagement by 40% and reduce admin onboarding time by 60%. NEXORA's Dashboard Builder turns this insight into revenue by gating advanced customization features behind edition tiers, creating natural upsell opportunities.",
+
+      howItWorksTitle: "How It Works",
+      howItWorksIntro: "The Dashboard Builder uses a 4-layer settings resolution engine that intelligently merges platform defaults, tenant branding standards, and individual admin preferences. Settings are cached locally for instant rendering and synced to the server for cross-device persistence — all transparently, with zero user intervention.",
+      howItWorksTip: "The entire sync cycle is invisible to admins. Change a color theme on your laptop → close the browser → open on your phone → your theme is already there. Zero configuration, zero setup, zero friction.",
+
+      categoriesTitle: "61 Customizable Settings",
+      categoriesIntro: "Every aspect of the admin dashboard experience is customizable, organized into 9 logical categories. Each setting has a defined type, default value, and optional edition gate for monetization.",
+
+      enterpriseTitle: "Edition-Based Feature Gating",
+      enterpriseIntro: "Advanced customization features are gated by subscription tier, creating clear upgrade paths and monetization opportunities. Lower-tier tenants see locked features with upgrade badges, naturally driving subscription conversions.",
+      enterpriseNote: "Free tier provides a compelling baseline with 30+ settings including all layout templates and color themes. Paid tiers unlock gradient backgrounds, component styles, custom colors, logo customization, hover effects, and admin override control — creating genuine value differentiation.",
+
+      syncTitle: "Cross-Device Sync",
+      syncIntro: "Admin preferences follow the user across devices seamlessly. The sync system handles 5 real-world edge cases that competitors ignore — including tab closure, network interruptions, concurrent sessions, and expired authentication.",
+
+      overrideTitle: "Admin Override Control",
+      overrideIntro: "IT administrators gain granular control over which settings their team members can customize. This enables brand compliance without sacrificing personalization — the perfect balance for enterprise deployments where corporate identity matters.",
+
+      securityTitle: "Enterprise Security",
+      securityIntro: "The Dashboard Builder implements defense-in-depth security at every layer — from browser storage isolation on logout to server-side settings validation and concurrency conflict resolution.",
+
+      integrationTitle: "Seamless Platform Integration",
+      integrationIntro: "The Dashboard Builder is deeply integrated with NEXORA's existing customization ecosystem, amplifying the value of every other platform feature.",
+      integrationTip: "The Dashboard Builder is the perfect complement to the Login Customizer — together, they provide end-to-end visual control of the entire platform experience. A Complete Bundle in the Theme Marketplace can include both login branding and dashboard settings, enabling one-click full-platform deployment.",
+    },
   },
 };

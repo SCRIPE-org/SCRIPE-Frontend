@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSettings } from "@core/providers/settings-provider";
+import { useAdminSettingsSync } from "@core/providers/useAdminSettingsSync";
 import { TenantBrandingProvider } from "@core/providers/tenant-branding-provider";
 import { TenantContextBanner } from "@core/ui/layout/shared/tenant-context-banner";
 
@@ -67,6 +68,10 @@ interface DashboardLayoutProps {
 
 export function DashboardLayout({ children }: DashboardLayoutProps) {
   const settings = useSettings();
+  // M11: Server-first admin preferences lifecycle — syncs settings to/from AdminSettingsJson
+  // Returns isSettingsReady=true immediately if localStorage has cache (optimistic render),
+  // shows shimmer ONLY on first-ever device login (when localStorage is completely empty).
+  const { isSettingsReady } = useAdminSettingsSync();
   const [sidebarOpen, setSidebarOpen] = useState(settings.collapsibleSidebar ? false : true);
   const { direction } = useI18n();
   const { layoutTemplate, collapsibleSidebar } = settings;
@@ -100,6 +105,18 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [collapsibleSidebar]);
+
+  // M11: FOUC Prevention — shimmer only on first-ever device login (AFTER all hooks)
+  if (!isSettingsReady) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-background">
+        <div className="animate-pulse flex flex-col items-center gap-3">
+          <div className="h-10 w-10 rounded-full bg-muted animate-spin" />
+          <div className="h-4 w-32 bg-muted rounded" />
+        </div>
+      </div>
+    );
+  }
 
   // ── Compute layout content (rendered below the tenant banner) ──
   const renderLayout = () => {

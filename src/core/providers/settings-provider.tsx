@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { appLogger } from "@core/common/logger";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
 
@@ -762,47 +762,89 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   const [settings, setSettings] = useState<Settings>(defaultSettings);
   const [isHydrated, setIsHydrated] = useState(false);
 
-  // Load settings with 3-layer merge (per analysis Section 9):
+  // Load settings with 4-layer merge (M11 Dashboard Builder):
   //   Layer 1: Platform defaults (defaultSettings — hardcoded above)
   //   Layer 3: Tenant defaults (PREF_DASHBOARD_SETTINGS — synced from DashboardThemeJson by TenantBrandingProvider)
-  //   Layer 4: Admin overrides (DASHBOARD_SETTINGS — per-browser localStorage)
-  useEffect(() => {
+  //   Layer 4: Admin overrides (DASHBOARD_SETTINGS — server-synced via useAdminSettingsSync → localStorage cache)
+  const mergeAndApplySettings = () => {
     try {
       // Layer 3: Tenant defaults (from DashboardThemeJson via TenantBrandingProvider)
       let tenantDefaults: Partial<Settings> = {};
+      let allowAdminOverride = true; // default true for backward compat
+      let allowedPaths: string[] | null = null;
+
       const tenantSettingsRaw = localStorage.getItem(STORAGE_KEYS.PREF_DASHBOARD_SETTINGS);
       if (tenantSettingsRaw) {
         try {
           const parsed = JSON.parse(tenantSettingsRaw);
           // Extract only valid Settings keys (ignore basic prefs like theme/language/sidebarCollapsed)
-          const { theme, language, sidebarCollapsed, _schemaVersion, ...dashboardSettings } = parsed;
+          const { theme, language, sidebarCollapsed, _schemaVersion,
+                  _allowAdminOverride, _allowedAdminPaths, ...dashboardSettings } = parsed;
           tenantDefaults = dashboardSettings;
+          if (_allowAdminOverride !== undefined) allowAdminOverride = _allowAdminOverride;
+          if (_allowedAdminPaths) allowedPaths = _allowedAdminPaths;
         } catch { /* invalid tenant JSON — skip */ }
       }
 
-      // Layer 4: Admin overrides (per-browser)
+      // Layer 4: Admin overrides (server-synced, with path-level access control)
       let adminOverrides: Partial<Settings> = {};
-      const adminSettingsRaw = localStorage.getItem(STORAGE_KEYS.DASHBOARD_SETTINGS);
-      if (adminSettingsRaw) {
-        try {
-          adminOverrides = JSON.parse(adminSettingsRaw);
-        } catch { /* invalid admin JSON — skip */ }
+      if (allowAdminOverride) {
+        const adminSettingsRaw = localStorage.getItem(STORAGE_KEYS.DASHBOARD_SETTINGS);
+        if (adminSettingsRaw) {
+          try {
+            const fullOverrides = JSON.parse(adminSettingsRaw);
+            if (allowedPaths && allowedPaths.length > 0) {
+              // FILTERED: only whitelisted paths can override
+              for (const path of allowedPaths) {
+                if (path in fullOverrides) {
+                  (adminOverrides as Record<string, unknown>)[path] = fullOverrides[path];
+                }
+              }
+            } else {
+              // No path filter = all overrides allowed
+              adminOverrides = fullOverrides;
+            }
+          } catch { /* invalid admin JSON — skip */ }
+        }
       }
 
-      // Merge: Layer 1 → Layer 3 → Layer 4
+      // Final merge: Layer 1 → Layer 3 → Layer 4
       setSettings({ ...defaultSettings, ...tenantDefaults, ...adminOverrides });
     } catch (error) {
       appLogger.error("Failed to load settings:", error);
     } finally {
       setIsHydrated(true);
     }
+  };
+
+  // Initial merge on mount
+  useEffect(() => {
+    mergeAndApplySettings();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Save settings to localStorage when autoSave is enabled
+  // M11: Listen for admin-settings-loaded event to re-merge (server reconciliation)
+  useEffect(() => {
+    const handler = () => mergeAndApplySettings();
+    window.addEventListener('admin-settings-loaded', handler);
+    return () => window.removeEventListener('admin-settings-loaded', handler);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // M11: Track which field was last changed (for sync hook's 409 field-level merge)
+  const lastChangedFieldRef = useRef<string | null>(null);
+
+  // Save settings to localStorage + dispatch change event for useAdminSettingsSync
   useEffect(() => {
     if (isHydrated && settings.autoSave) {
       try {
         localStorage.setItem(STORAGE_KEYS.DASHBOARD_SETTINGS, JSON.stringify(settings));
+        // M11: Include which specific field changed — used by useAdminSettingsSync for 409 field-level merge
+        window.dispatchEvent(new CustomEvent('settings-changed', {
+          detail: { changedField: lastChangedFieldRef.current }
+        }));
+        // Reset after dispatch
+        lastChangedFieldRef.current = null;
       } catch (error) {
         appLogger.error("Failed to save settings:", error);
       }
@@ -991,8 +1033,9 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     }
   }, [settings, isHydrated]);
 
-  // Generic update function to reduce code duplication
+  // Generic update function — M11: also tracks which field changed for 409 merge
   const updateSetting = <K extends keyof Settings>(key: K, value: Settings[K]) => {
+    lastChangedFieldRef.current = key;
     setSettings((prev) => ({ ...prev, [key]: value }));
   };
 

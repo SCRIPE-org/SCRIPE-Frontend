@@ -1251,6 +1251,41 @@ export const docEn = {
       archIntro: "The Login Page Builder follows NEXORA's standard modular clean architecture. The builder/ directory contains: BuilderCanvas.tsx (main canvas), ComponentPalette.tsx (sidebar palette), PropertiesPanel.tsx (property editor), GridOverlay.tsx (grid visualization), and BuilderToolbar.tsx (mode switcher, undo/redo, zoom controls). State management uses the useBuilderState hook integrated into useStudioViewModel.",
       archTip: "The builder components are intentionally defined as stable, memoized React components to prevent re-renders during drag operations. Each canvas component is wrapped in React.memo with custom equality checks on position and properties.",
     },
+
+    // Dashboard Builder
+    dashboardBuilder: {
+      title: "Dashboard Builder",
+      description: "Server-synced admin preferences with 4-layer merge engine, 61 customizable settings, FOUC prevention, 409 conflict resolution, and edition-based feature gating.",
+      intro: "The Dashboard Builder is NEXORA's enterprise-grade admin preference system that syncs 61 customizable dashboard settings between the browser and server. It uses a 4-layer merge engine (Platform → Tenant → Admin → Runtime) to resolve settings with tenant-level override control, cross-device persistence via AdminSettingsJson, and 5 edge case protections including FOUC prevention, tab-close keepalive, and field-level 409 conflict resolution.",
+
+      overviewTitle: "System Overview",
+      overviewIntro: "The Dashboard Builder provides a complete admin preference lifecycle — from immediate cache-first rendering to background server reconciliation. Every admin gets 61 customizable settings covering layout, colors, typography, component styles, and accessibility, all persisted to the server and synced across devices.",
+      overviewTip: "Settings are rendered instantly from localStorage cache on page load. The server fetch happens silently in the background — users never see a loading spinner unless it is their first-ever login on a new device.",
+
+      mergeEngineTitle: "4-Layer Merge Engine",
+      mergeEngineIntro: "Settings follow a strict 4-layer precedence chain. Each layer can override the previous, with optional path-level access control at the tenant layer. This architecture enables white-label deployments where tenant administrators enforce brand standards while still allowing individual admins to personalize their workspace within allowed boundaries.",
+      mergeEngineNote: "Layer 2 (Edition Constraints) is handled server-side via the FeatureCheckBehavior pipeline. The frontend never renders controls for features the edition does not support.",
+
+      syncHookTitle: "Server Sync Hook",
+      syncHookIntro: "The useAdminSettingsSync hook manages the complete lifecycle of admin settings: initial load from cache, deferred flush of pending changes from previous sessions, background server fetch, silent reconciliation, debounced save on changes, and tab-close protection. The hook is wired in DashboardLayout — the root client component for all authenticated pages.",
+
+      edgeCasesTitle: "Edge Case Protections",
+      edgeCasesIntro: "The sync system handles 5 critical edge cases that are common in real-world enterprise deployments where admins work across multiple devices, close tabs without saving, and occasionally have network interruptions.",
+      edgeCasesWarning: "The PENDING_SETTINGS_FLUSH key intentionally survives logout — it is NOT included in AUTH_STORAGE_KEYS_TO_CLEAR. This ensures settings are flushed on the next login even if the JWT expired during the previous session.",
+
+      settingsRefTitle: "Settings Reference (61 Settings)",
+      settingsRefIntro: "All 61 settings are organized into 9 sections. Each setting has a defined type, default value, DOM data-attribute for CSS theming, and an optional edition gate that controls which subscription tier can access it.",
+
+      overrideControlTitle: "Admin Override Control",
+      overrideControlIntro: "Tenant administrators can control which settings individual admins are allowed to customize. When AllowAdminThemeOverride is true, the AllowedAdminSettingsJson field contains a JSON whitelist of setting paths that admins can modify. Settings not in the whitelist are rendered as read-only with a lock indicator.",
+
+      securityTitle: "Security Model",
+      securityIntro: "The Dashboard Builder implements defense-in-depth security to prevent cross-admin data leakage, payload overflow, and unauthorized settings modification.",
+
+      archTitle: "Architecture & File Map",
+      archIntro: "The Dashboard Builder is implemented across 7 files in the core layer, following NEXORA's provider-based architecture pattern. The sync hook and providers handle all state management, while the layout component serves as the entry point.",
+      archTip: "To add a new setting, add the property to the Settings interface and defaultSettings in settings-provider.tsx, then add the setter in the context. The merge engine, sync hook, and persistence all work automatically with the new field.",
+    },
   },
 
 

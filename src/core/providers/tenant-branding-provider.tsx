@@ -37,6 +37,9 @@ export interface TenantBrandingData {
       termsOfServiceUrl: string | null;
       privacyPolicyUrl: string | null;
       isSafeMode: boolean;
+      // M11: Admin override control — determines which settings admins can customize
+      allowAdminThemeOverride: boolean;
+      allowedAdminSettingsJson: string | null;
 }
 
 export interface TenantBrandingContextValue {
@@ -182,8 +185,17 @@ export function TenantBrandingProvider({ children }: TenantBrandingProviderProps
                   if (prefs.sidebarCollapsed !== undefined)
                         localStorage.setItem(STORAGE_KEYS.PREF_SIDEBAR_COLLAPSED, String(prefs.sidebarCollapsed));
 
-                  // 2. Write the FULL DashboardThemeJson as tenant defaults for settings-provider (Layer 3)
-                  localStorage.setItem(STORAGE_KEYS.PREF_DASHBOARD_SETTINGS, branding.dashboardThemeJson);
+                  // 2. Write the FULL DashboardThemeJson + override control as tenant defaults for settings-provider (Layer 3)
+                  // M11: Enrich with AllowAdminThemeOverride + AllowedAdminSettingsJson so SettingsProvider
+                  // can enforce path-level access control during the 4-layer merge.
+                  const enrichedDefaults = {
+                        ...prefs,
+                        _allowAdminOverride: branding.allowAdminThemeOverride ?? true,
+                        _allowedAdminPaths: branding.allowedAdminSettingsJson
+                              ? JSON.parse(branding.allowedAdminSettingsJson)
+                              : null,
+                  };
+                  localStorage.setItem(STORAGE_KEYS.PREF_DASHBOARD_SETTINGS, JSON.stringify(enrichedDefaults));
 
                   // 3. Apply basic prefs as defaults ONLY when no manual override exists
                   const currentTheme = localStorage.getItem("theme");

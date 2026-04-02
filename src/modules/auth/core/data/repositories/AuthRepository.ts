@@ -43,13 +43,17 @@ function clearAllLocalStorage(): void {
     AUTH_STORAGE_KEYS_TO_CLEAR.forEach((key) => {
       localStorage.removeItem(key);
     });
+    // M11: Clear next-themes raw key (not in STORAGE_KEYS — library hardcodes "theme")
+    localStorage.removeItem("theme");
+    // M11: Clear legacy key from old implementation
+    localStorage.removeItem("nexora_admin_prefs_version");
     // Clear SecureTokenService tokens (in-memory + legacy localStorage keys)
     secureTokenService.clearTokens();
     // TARGETED sessionStorage cleanup — NEVER call sessionStorage.clear()!
     // That would wipe tenant_context (drill-down state) which must survive auth events.
     sessionStorage.removeItem(STORAGE_KEYS.admin_backup_token);
     sessionStorage.removeItem(STORAGE_KEYS.lastAuthRefresh);
-    appLogger.auth("Auth data and cache cleared (drill-down state preserved)");
+    appLogger.auth("Auth data, settings, and cache cleared (drill-down state preserved)");
   }
 }
 

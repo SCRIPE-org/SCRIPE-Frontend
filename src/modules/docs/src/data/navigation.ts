@@ -75,6 +75,7 @@ export const navigationData: DocCategoryData[] = [
       { id: "feat-theme-marketplace", titleKey: "features.themeMarketplace.title", slug: "features/theme-marketplace", order: 16 },
       { id: "feat-multi-page-branding", titleKey: "features.multiPageBranding.title", slug: "features/multi-page-branding", order: 17 },
       { id: "feat-login-page-builder", titleKey: "features.loginPageBuilder.title", slug: "features/login-page-builder", order: 18 },
+      { id: "feat-dashboard-builder", titleKey: "features.dashboardBuilder.title", slug: "features/dashboard-builder", order: 19 },
     ],
   },
 
@@ -234,6 +235,7 @@ export const navigationData: DocCategoryData[] = [
       { id: "comm-ent-login-customizer", titleKey: "commercial.loginCustomizer.title", slug: "commercial/login-customizer", order: 7 },
       { id: "comm-ent-theme-marketplace", titleKey: "commercial.themeMarketplace.title", slug: "commercial/theme-marketplace", order: 8 },
       { id: "comm-ent-page-builder", titleKey: "commercial.pageBuilder.title", slug: "commercial/page-builder", order: 9 },
+      { id: "comm-ent-dashboard-builder", titleKey: "commercial.dashboardBuilder.title", slug: "commercial/dashboard-builder", order: 10 },
     ],
   },
 
