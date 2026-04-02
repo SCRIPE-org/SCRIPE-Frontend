@@ -142,6 +142,9 @@ interface BuilderState {
 
   /** Reset to default canvas */
   reset: () => void;
+
+  /** Load a template — replaces ONLY the current active page's components (safe for per-page isolation) */
+  loadTemplate: (components: CanvasComponent[], gridRows: number, background: CanvasBackground) => void;
 }
 
 // ── Helper: Create a snapshot of current canvas state ─────
@@ -638,6 +641,22 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
       positionMode: DEFAULT_POSITION_MODE,
       zoom: 100,
       selectedComponentId: null,
+    });
+  },
+
+  // ── Load Template (per-page safe) ──
+  // Replaces the CURRENT active page's components only — does NOT reset activePage
+  // or wipe other pages' data. Safe to call from any page.
+  loadTemplate: (components, gridRows, background) => {
+    const state = get();
+    const history = pushHistory(state);
+    set({
+      ...history,
+      components,
+      canvasGridRows: gridRows || DEFAULT_CANVAS_GRID_ROWS,
+      canvasBackground: background || DEFAULT_CANVAS_BACKGROUND,
+      selectedComponentId: null,
+      zoom: 100,
     });
   },
 }));

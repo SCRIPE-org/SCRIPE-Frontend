@@ -292,7 +292,7 @@ export function BuilderPanel({ draft, updateDraft, sidebarOnly = false, activeAu
                 className="rounded-md border border-border bg-background px-2 py-1.5 text-[10px] font-medium text-foreground hover:bg-primary/5 hover:border-primary/30 transition-colors text-left truncate"
                 onClick={() => {
                   const tmpl = layoutToTemplate(layout);
-                  store.initialize(
+                  store.loadTemplate(
                     tmpl.components,
                     tmpl.gridRows,
                     tmpl.background,
@@ -350,7 +350,7 @@ export function BuilderPanel({ draft, updateDraft, sidebarOnly = false, activeAu
               <button
                 className="flex-1 rounded-md border border-border bg-background px-2 py-1.5 text-[10px] font-medium text-foreground hover:bg-primary/5 hover:border-primary/30 transition-colors text-left truncate"
                 onClick={() => {
-                  store.initialize(
+                  store.loadTemplate(
                     tmpl.components,
                     tmpl.gridRows,
                     tmpl.background,
