@@ -97,6 +97,6 @@ registerPage({
       category: "commercial-enterprise",
       order: 7,
       sections,
-      relatedSlugs: ["commercial/multi-tenancy", "commercial/authentication-security"],
-      lastUpdated: "2026-03-24",
+      relatedSlugs: ["commercial/multi-tenancy", "commercial/authentication-security", "commercial/theme-marketplace", "commercial/page-builder"],
+      lastUpdated: "2026-04-02",
 });

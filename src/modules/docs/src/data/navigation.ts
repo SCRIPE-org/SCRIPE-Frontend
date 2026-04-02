@@ -72,6 +72,9 @@ export const navigationData: DocCategoryData[] = [
       { id: "feat-templates", titleKey: "features.messageTemplates.title", slug: "features/message-templates", order: 13 },
       { id: "feat-sso", titleKey: "features.ssoOauth.title", slug: "features/sso-oauth", order: 14 },
       { id: "feat-login-customizer", titleKey: "features.loginCustomizer.title", slug: "features/login-customizer", order: 15 },
+      { id: "feat-theme-marketplace", titleKey: "features.themeMarketplace.title", slug: "features/theme-marketplace", order: 16 },
+      { id: "feat-multi-page-branding", titleKey: "features.multiPageBranding.title", slug: "features/multi-page-branding", order: 17 },
+      { id: "feat-login-page-builder", titleKey: "features.loginPageBuilder.title", slug: "features/login-page-builder", order: 18 },
     ],
   },
 
@@ -229,6 +232,8 @@ export const navigationData: DocCategoryData[] = [
       { id: "comm-ent-localization", titleKey: "commercial.localizationI18n.title", slug: "commercial/localization-i18n", order: 5 },
       { id: "comm-ent-templates", titleKey: "commercial.messageTemplates.title", slug: "commercial/message-templates", order: 6 },
       { id: "comm-ent-login-customizer", titleKey: "commercial.loginCustomizer.title", slug: "commercial/login-customizer", order: 7 },
+      { id: "comm-ent-theme-marketplace", titleKey: "commercial.themeMarketplace.title", slug: "commercial/theme-marketplace", order: 8 },
+      { id: "comm-ent-page-builder", titleKey: "commercial.pageBuilder.title", slug: "commercial/page-builder", order: 9 },
     ],
   },
 

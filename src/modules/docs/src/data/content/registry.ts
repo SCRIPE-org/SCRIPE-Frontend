@@ -43,6 +43,9 @@ import "./features/download-export";
 import "./features/message-templates";
 import "./features/sso-oauth";
 import "./features/login-customizer";
+import "./features/theme-marketplace";
+import "./features/multi-page-branding";
+import "./features/login-page-builder";
 
 // Modules (Entitlements)
 import "./modules/entitlements-overview";
@@ -117,6 +120,8 @@ import "./commercial/real-time-capabilities";
 import "./commercial/localization-i18n";
 import "./commercial/message-templates";
 import "./commercial/login-customizer";
+import "./commercial/theme-marketplace";
+import "./commercial/page-builder";
 
 // Security & Compliance
 import "./commercial/security-overview";

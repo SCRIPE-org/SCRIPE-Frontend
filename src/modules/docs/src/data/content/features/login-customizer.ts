@@ -250,6 +250,6 @@ registerPage({
       category: "features",
       order: 15,
       sections,
-      relatedSlugs: ["features/multi-tenancy", "features/authentication"],
-      lastUpdated: "2026-03-24",
+      relatedSlugs: ["features/multi-tenancy", "features/authentication", "features/theme-marketplace", "features/multi-page-branding", "features/login-page-builder"],
+      lastUpdated: "2026-04-02",
 });
