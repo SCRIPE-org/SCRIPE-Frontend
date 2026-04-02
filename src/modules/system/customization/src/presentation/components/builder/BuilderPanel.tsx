@@ -82,7 +82,6 @@ interface BuilderPanelProps {
 export function BuilderPanel({ draft, updateDraft, sidebarOnly = false, activeAuthPage }: BuilderPanelProps) {
   const { t } = useI18n();
   const store = useBuilderStore();
-  const initializedRef = useRef(false);
   const [showTemplates, setShowTemplates] = useState(false);
   const [saveDialogOpen, setSaveDialogOpen] = useState(false);
   const [templateName, setTemplateName] = useState("");
@@ -100,48 +99,10 @@ export function BuilderPanel({ draft, updateDraft, sidebarOnly = false, activeAu
     [store.components]
   );
 
-  // ── Initialize builder store from draft on first render ──
-  useEffect(() => {
-    if (!initializedRef.current && draft) {
-      store.initialize(
-        draft.canvasComponents,
-        draft.canvasGridRows,
-        draft.canvasBackground,
-        (draft as any).canvasComponentsByPage,
-      );
-      initializedRef.current = true;
-    }
-  }, [draft, store]);
-
-  // ── Track which auth page is active (for palette filtering) ──
-  // Note: The actual component save/load is handled by CustomizerStudioView's effect.
-  // We just need to keep the store's activePage in sync for palette filtering.
-  useEffect(() => {
-    if (!initializedRef.current || !activeAuthPage) return;
-    // StudioDraft uses kebab-case IDs, CanvasComponent store uses camelCase
-    const pageMap: Record<string, 'login' | 'forgotPassword' | 'resetPassword'> = {
-      'login': 'login',
-      'forgot-password': 'forgotPassword',
-      'reset-password': 'resetPassword',
-      'forgotPassword': 'forgotPassword',
-      'resetPassword': 'resetPassword',
-    };
-    const page = pageMap[activeAuthPage];
-    if (page && page !== store.activePage) {
-      // Only update the label — don't trigger setActivePage's save/load cycle
-      // because CustomizerStudioView already handles initialize() with correct data
-      store.setActivePage(page);
-    }
-  }, [activeAuthPage, store]);
-
-  // ── Sync builder store changes back to draft ──
-  useEffect(() => {
-    if (!initializedRef.current) return;
-    updateDraft("canvasComponents", store.components);
-    updateDraft("canvasGridRows", store.canvasGridRows);
-    updateDraft("canvasBackground", store.canvasBackground);
-    updateDraft("canvasComponentsByPage", store.pageComponents);
-  }, [store.components, store.canvasGridRows, store.canvasBackground, store.pageComponents, updateDraft]);
+  // ── Note: Builder initialization, page switching, and draft syncing are ALL ──
+  // ── handled by CustomizerStudioView's SYNC effects. BuilderPanel is DISPLAY-ONLY. ──
+  // ── DO NOT add store.initialize(), store.setActivePage(), or updateDraft() here ──
+  // ── as they will conflict with the view's sync logic and cause cross-page leakage. ──
 
   // ── Keyboard Shortcuts ──
   useEffect(() => {
