@@ -304,7 +304,10 @@ export const COMPONENT_CATALOG: ComponentCatalogEntry[] = [
     labelKey: 'studio.builder.comp.customHtml',
     icon: 'Code',
     descriptionKey: 'studio.builder.comp.customHtmlDesc',
-    defaultProps: { content: '' },
+    defaultProps: {
+      content: '<div class="welcome-banner">\n  <h1>Welcome to Our Platform</h1>\n  <p>Build something <strong>amazing</strong> today.</p>\n  <a href="#">Learn More →</a>\n</div>',
+      css: '.welcome-banner {\n  text-align: center;\n  padding: 2rem;\n  border-radius: 1rem;\n  background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(168,85,247,0.1));\n  border: 1px solid rgba(99,102,241,0.2);\n}\n.welcome-banner h1 {\n  color: #818cf8;\n  margin-bottom: 0.5rem;\n}\n.welcome-banner p {\n  color: #94a3b8;\n}\n.welcome-banner a {\n  color: #a78bfa;\n  font-weight: 600;\n}',
+    },
     defaultGridColumn: '1 / 13',
     defaultGridRow: 'auto',
     defaultWidth: 500,
@@ -426,6 +429,133 @@ export const CANVAS_GRID_COLUMNS = 12;
 export const SNAP_GRID_SIZE = 8; // 8px snap grid for free-form mode
 export const CANVAS_WIDTH = 800; // Default canvas width in absolute mode
 export const CANVAS_HEIGHT = 900; // Default canvas height in absolute mode
+
+// ── Auth Page IDs ────────────────────────────────────────
+export type AuthPageId = 'login' | 'forgotPassword' | 'resetPassword';
+
+// ── Default Components per Auth Page ─────────────────────
+export const DEFAULT_FORGOT_COMPONENTS: CanvasComponent[] = [
+  {
+    id: 'default-forgot-logo',
+    type: 'logo',
+    gridColumn: '5 / 9',
+    gridRow: '2 / 3',
+    alignment: 'center',
+    verticalAlignment: 'center',
+    x: 300, y: 40, width: 200, height: 80, locked: false,
+    props: { maxWidth: 180 },
+    zIndex: 1,
+    visible: true,
+  },
+  {
+    id: 'default-forgot-heading',
+    type: 'heading',
+    gridColumn: '4 / 10',
+    gridRow: '3 / 4',
+    alignment: 'center',
+    verticalAlignment: 'end',
+    x: 200, y: 140, width: 400, height: 0, locked: false,
+    props: { text: 'Forgot Password', fontSize: 28, fontWeight: 700, color: 'inherit' },
+    zIndex: 2,
+    visible: true,
+  },
+  {
+    id: 'default-forgot-subtitle',
+    type: 'subtitle',
+    gridColumn: '4 / 10',
+    gridRow: '4 / 5',
+    alignment: 'center',
+    verticalAlignment: 'start',
+    x: 200, y: 180, width: 400, height: 0, locked: false,
+    props: { text: 'Enter your email address and we\'ll send you a reset link.', fontSize: 14, color: 'inherit' },
+    zIndex: 3,
+    visible: true,
+  },
+  {
+    id: 'default-forgotForm',
+    type: 'forgotForm',
+    gridColumn: '4 / 10',
+    gridRow: '5 / 7',
+    alignment: 'center',
+    verticalAlignment: 'start',
+    x: 210, y: 230, width: 380, height: 300, locked: false,
+    props: { showBackToLogin: true },
+    zIndex: 4,
+    visible: true,
+  },
+  {
+    id: 'default-forgot-copyright',
+    type: 'copyright',
+    gridColumn: '4 / 10',
+    gridRow: '8 / 9',
+    alignment: 'center',
+    verticalAlignment: 'end',
+    x: 250, y: 660, width: 300, height: 32, locked: false,
+    props: { text: '', year: 'auto', poweredBy: false },
+    zIndex: 5,
+    visible: true,
+  },
+];
+
+export const DEFAULT_RESET_COMPONENTS: CanvasComponent[] = [
+  {
+    id: 'default-reset-logo',
+    type: 'logo',
+    gridColumn: '5 / 9',
+    gridRow: '2 / 3',
+    alignment: 'center',
+    verticalAlignment: 'center',
+    x: 300, y: 40, width: 200, height: 80, locked: false,
+    props: { maxWidth: 180 },
+    zIndex: 1,
+    visible: true,
+  },
+  {
+    id: 'default-reset-heading',
+    type: 'heading',
+    gridColumn: '4 / 10',
+    gridRow: '3 / 4',
+    alignment: 'center',
+    verticalAlignment: 'end',
+    x: 200, y: 140, width: 400, height: 0, locked: false,
+    props: { text: 'Reset Password', fontSize: 28, fontWeight: 700, color: 'inherit' },
+    zIndex: 2,
+    visible: true,
+  },
+  {
+    id: 'default-resetForm',
+    type: 'resetForm',
+    gridColumn: '4 / 10',
+    gridRow: '4 / 7',
+    alignment: 'center',
+    verticalAlignment: 'start',
+    x: 210, y: 200, width: 380, height: 340, locked: false,
+    props: { showPasswordStrength: true },
+    zIndex: 3,
+    visible: true,
+  },
+  {
+    id: 'default-reset-copyright',
+    type: 'copyright',
+    gridColumn: '4 / 10',
+    gridRow: '8 / 9',
+    alignment: 'center',
+    verticalAlignment: 'end',
+    x: 250, y: 660, width: 300, height: 32, locked: false,
+    props: { text: '', year: 'auto', poweredBy: false },
+    zIndex: 4,
+    visible: true,
+  },
+];
+
+/** Get default components for a given auth page */
+export function getDefaultComponentsForPage(page: AuthPageId): CanvasComponent[] {
+  switch (page) {
+    case 'forgotPassword': return DEFAULT_FORGOT_COMPONENTS.map(c => ({ ...c, props: { ...c.props } }));
+    case 'resetPassword': return DEFAULT_RESET_COMPONENTS.map(c => ({ ...c, props: { ...c.props } }));
+    default: return DEFAULT_CANVAS_COMPONENTS.map(c => ({ ...c, props: { ...c.props } }));
+  }
+}
 
 // ── Helpers ──────────────────────────────────────────────
 

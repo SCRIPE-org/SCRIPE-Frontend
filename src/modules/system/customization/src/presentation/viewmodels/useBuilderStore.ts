@@ -10,7 +10,7 @@
 "use client";
 
 import { create } from "zustand";
-import type { CanvasComponent, CanvasComponentType, CanvasBackground, PositionMode } from "../../domain/entities/CanvasComponent";
+import type { CanvasComponent, CanvasComponentType, CanvasBackground, PositionMode, AuthPageId } from "../../domain/entities/CanvasComponent";
 import {
   DEFAULT_CANVAS_COMPONENTS,
   DEFAULT_CANVAS_GRID_ROWS,
@@ -24,6 +24,7 @@ import {
   snapToGridValue,
   checkOverlap,
   hasSingletonComponent,
+  getDefaultComponentsForPage,
 } from "../../domain/entities/CanvasComponent";
 
 // ── History Snapshot ──────────────────────────────────────
@@ -46,6 +47,12 @@ interface BuilderState {
   positionMode: PositionMode;
   zoom: number;
 
+  // Per-page component storage
+  activePage: AuthPageId;
+  pageComponents: Record<AuthPageId, CanvasComponent[]>;
+  pageGridRows: Record<AuthPageId, number>;
+  pageBackgrounds: Record<AuthPageId, CanvasBackground>;
+
   // History
   _past: CanvasSnapshot[];
   _future: CanvasSnapshot[];
@@ -60,7 +67,10 @@ interface BuilderState {
 
   // ── Actions ──
   /** Initialize builder from draft data */
-  initialize: (components: CanvasComponent[], gridRows: number, background: CanvasBackground) => void;
+  initialize: (components: CanvasComponent[], gridRows: number, background: CanvasBackground, pageComps?: Record<string, CanvasComponent[]>) => void;
+
+  /** Switch active auth page — saves current, loads target */
+  setActivePage: (page: AuthPageId) => void;
 
   /** Add a new component to the canvas */
   addComponent: (type: CanvasComponentType) => CanvasComponent | null;
@@ -166,6 +176,23 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
   positionMode: DEFAULT_POSITION_MODE,
   zoom: 100,
 
+  activePage: 'login' as AuthPageId,
+  pageComponents: {
+    login: [],
+    forgotPassword: [],
+    resetPassword: [],
+  },
+  pageGridRows: {
+    login: DEFAULT_CANVAS_GRID_ROWS,
+    forgotPassword: DEFAULT_CANVAS_GRID_ROWS,
+    resetPassword: DEFAULT_CANVAS_GRID_ROWS,
+  },
+  pageBackgrounds: {
+    login: DEFAULT_CANVAS_BACKGROUND,
+    forgotPassword: DEFAULT_CANVAS_BACKGROUND,
+    resetPassword: DEFAULT_CANVAS_BACKGROUND,
+  },
+
   _past: [],
   _future: [],
   canUndo: false,
@@ -174,11 +201,68 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
   _preInteractionSnapshot: null,
 
   // ── Initialize from draft ──
-  initialize: (components, gridRows, background) => {
+  initialize: (components, gridRows, background, pageComps) => {
+    const loginComps = components.length > 0 ? components : DEFAULT_CANVAS_COMPONENTS;
     set({
-      components: components.length > 0 ? components : DEFAULT_CANVAS_COMPONENTS,
+      components: loginComps,
       canvasGridRows: gridRows || DEFAULT_CANVAS_GRID_ROWS,
       canvasBackground: background || DEFAULT_CANVAS_BACKGROUND,
+      selectedComponentId: null,
+      activePage: 'login',
+      pageComponents: {
+        login: loginComps,
+        forgotPassword: pageComps?.forgotPassword || getDefaultComponentsForPage('forgotPassword'),
+        resetPassword: pageComps?.resetPassword || getDefaultComponentsForPage('resetPassword'),
+      },
+      pageGridRows: {
+        login: gridRows || DEFAULT_CANVAS_GRID_ROWS,
+        forgotPassword: DEFAULT_CANVAS_GRID_ROWS,
+        resetPassword: DEFAULT_CANVAS_GRID_ROWS,
+      },
+      pageBackgrounds: {
+        login: background || DEFAULT_CANVAS_BACKGROUND,
+        forgotPassword: DEFAULT_CANVAS_BACKGROUND,
+        resetPassword: DEFAULT_CANVAS_BACKGROUND,
+      },
+      _past: [],
+      _future: [],
+      canUndo: false,
+      canRedo: false,
+    });
+  },
+
+  // ── Set Active Page ──
+  setActivePage: (page) => {
+    const state = get();
+    if (state.activePage === page) return;
+
+    // Save current page's state
+    const updatedPageComponents = {
+      ...state.pageComponents,
+      [state.activePage]: state.components.map(c => ({ ...c, props: { ...c.props } })),
+    };
+    const updatedPageGridRows = {
+      ...state.pageGridRows,
+      [state.activePage]: state.canvasGridRows,
+    };
+    const updatedPageBackgrounds = {
+      ...state.pageBackgrounds,
+      [state.activePage]: { ...state.canvasBackground },
+    };
+
+    // Load target page's state
+    const targetComponents = updatedPageComponents[page].length > 0
+      ? updatedPageComponents[page]
+      : getDefaultComponentsForPage(page);
+
+    set({
+      activePage: page,
+      components: targetComponents,
+      canvasGridRows: updatedPageGridRows[page] || DEFAULT_CANVAS_GRID_ROWS,
+      canvasBackground: updatedPageBackgrounds[page] || DEFAULT_CANVAS_BACKGROUND,
+      pageComponents: updatedPageComponents,
+      pageGridRows: updatedPageGridRows,
+      pageBackgrounds: updatedPageBackgrounds,
       selectedComponentId: null,
       _past: [],
       _future: [],

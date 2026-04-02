@@ -38,6 +38,7 @@ interface DraggableCanvasItemProps {
   isSelected: boolean;
   isOverlapping?: boolean;
   positionMode: PositionMode;
+  zoom: number;
   onSelect: () => void;
 }
 
@@ -58,6 +59,7 @@ export function DraggableCanvasItem({
   isSelected,
   isOverlapping = false,
   positionMode,
+  zoom = 100,
   onSelect,
 }: DraggableCanvasItemProps) {
   const { t, direction } = useI18n();
@@ -198,15 +200,23 @@ export function DraggableCanvasItem({
     zIndex: isDraggingLocal ? 999 : component.zIndex + 10,
   } : {};
 
+  // Scale-compensated transform: dnd-kit calculates pixel deltas at screen level,
+  // but the canvas container applies CSS scale(zoom/100). Without compensation,
+  // the dragged item appears to fly away at any zoom != 100%.
+  const scale = zoom / 100;
+  const scaledTransform = transform
+    ? { ...transform, x: transform.x / scale, y: transform.y / scale }
+    : null;
+
   const gridStyle: React.CSSProperties = !isAbsolute ? {
-    // During drag, remove grid placement so dnd-kit's transform can move the item freely
-    gridColumn: isSortableDragging ? undefined : component.gridColumn,
-    gridRow: isSortableDragging ? undefined : component.gridRow,
+    gridColumn: component.gridColumn,
+    gridRow: component.gridRow,
     zIndex: isSortableDragging ? 999 : component.zIndex + 10,
     alignSelf: component.verticalAlignment === "start" ? "start" : component.verticalAlignment === "end" ? "end" : "center",
     justifySelf: component.alignment,
-    transform: CSS.Transform.toString(transform),
+    transform: CSS.Transform.toString(scaledTransform),
     transition: transition || undefined,
+    opacity: isSortableDragging ? 0.4 : 1,
   } : {};
 
   const isDragging = isAbsolute ? isDraggingLocal : isSortableDragging;

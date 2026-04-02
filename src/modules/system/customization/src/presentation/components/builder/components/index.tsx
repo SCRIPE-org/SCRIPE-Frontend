@@ -414,18 +414,46 @@ export function BuilderCopyright({
 }
 
 // ── Custom HTML (sanitized) ─────────────────────────────
-export function BuilderCustomHtml({ content = '' }: { content?: string; [k: string]: unknown }) {
-  if (!content) {
+const CUSTOM_HTML_RESET = `
+.nexora-custom-html h1 { font-size: 2em; font-weight: bold; margin: 0.67em 0; }
+.nexora-custom-html h2 { font-size: 1.5em; font-weight: bold; margin: 0.83em 0; }
+.nexora-custom-html h3 { font-size: 1.17em; font-weight: bold; margin: 1em 0; }
+.nexora-custom-html h4 { font-size: 1em; font-weight: bold; margin: 1.33em 0; }
+.nexora-custom-html h5 { font-size: 0.83em; font-weight: bold; margin: 1.67em 0; }
+.nexora-custom-html h6 { font-size: 0.67em; font-weight: bold; margin: 2.33em 0; }
+.nexora-custom-html p { margin: 1em 0; }
+.nexora-custom-html ul { list-style: disc; padding-left: 2em; margin: 1em 0; }
+.nexora-custom-html ol { list-style: decimal; padding-left: 2em; margin: 1em 0; }
+.nexora-custom-html li { display: list-item; }
+.nexora-custom-html a { color: #3b82f6; text-decoration: underline; }
+.nexora-custom-html a:hover { color: #2563eb; }
+.nexora-custom-html strong, .nexora-custom-html b { font-weight: bold; }
+.nexora-custom-html em, .nexora-custom-html i { font-style: italic; }
+.nexora-custom-html blockquote { border-left: 4px solid #d1d5db; padding-left: 1em; margin: 1em 0; color: #6b7280; }
+.nexora-custom-html pre { background: #1e1e1e; color: #d4d4d4; padding: 1em; border-radius: 0.5em; overflow-x: auto; font-family: monospace; }
+.nexora-custom-html code { background: rgba(0,0,0,0.1); padding: 0.2em 0.4em; border-radius: 0.25em; font-family: monospace; font-size: 0.9em; }
+.nexora-custom-html img { max-width: 100%; height: auto; border-radius: 0.25em; }
+.nexora-custom-html table { border-collapse: collapse; width: 100%; }
+.nexora-custom-html th, .nexora-custom-html td { border: 1px solid #d1d5db; padding: 0.5em 0.75em; text-align: left; }
+.nexora-custom-html th { background: rgba(0,0,0,0.05); font-weight: bold; }
+.nexora-custom-html hr { border: none; border-top: 1px solid #d1d5db; margin: 1.5em 0; }
+`;
+
+export function BuilderCustomHtml({ content = '', css = '' }: { content?: string; css?: string; [k: string]: unknown }) {
+  if (!content && !css) {
     return (
       <div className="w-full p-4 border border-dashed border-amber-500/30 rounded-lg bg-amber-500/5">
         <p className="text-xs text-amber-600">Custom HTML Block</p>
-        <p className="text-[10px] text-muted-foreground mt-1">Add your custom HTML content in the settings panel.</p>
+        <p className="text-[10px] text-muted-foreground mt-1">Edit HTML &amp; CSS in the properties panel using the code editor.</p>
       </div>
     );
   }
   // NOTE: In production, sanitize via DOMPurify
   return (
-    <div className="w-full" dangerouslySetInnerHTML={{ __html: content }} />
+    <div className="nexora-custom-html w-full">
+      <style dangerouslySetInnerHTML={{ __html: CUSTOM_HTML_RESET + (css || '') }} />
+      <div dangerouslySetInnerHTML={{ __html: content }} />
+    </div>
   );
 }
 

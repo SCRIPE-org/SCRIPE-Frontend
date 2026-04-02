@@ -107,10 +107,25 @@ export function BuilderPanel({ draft, updateDraft, sidebarOnly = false, activeAu
         draft.canvasComponents,
         draft.canvasGridRows,
         draft.canvasBackground,
+        (draft as any).canvasComponentsByPage,
       );
       initializedRef.current = true;
     }
   }, [draft, store]);
+
+  // ── Switch active page when auth tab changes ──
+  useEffect(() => {
+    if (!initializedRef.current || !activeAuthPage) return;
+    const pageMap: Record<string, 'login' | 'forgotPassword' | 'resetPassword'> = {
+      login: 'login',
+      forgotPassword: 'forgotPassword',
+      resetPassword: 'resetPassword',
+    };
+    const page = pageMap[activeAuthPage];
+    if (page && page !== store.activePage) {
+      store.setActivePage(page);
+    }
+  }, [activeAuthPage, store]);
 
   // ── Sync builder store changes back to draft ──
   useEffect(() => {
@@ -118,7 +133,8 @@ export function BuilderPanel({ draft, updateDraft, sidebarOnly = false, activeAu
     updateDraft("canvasComponents", store.components);
     updateDraft("canvasGridRows", store.canvasGridRows);
     updateDraft("canvasBackground", store.canvasBackground);
-  }, [store.components, store.canvasGridRows, store.canvasBackground, updateDraft]);
+    updateDraft("canvasComponentsByPage", store.pageComponents);
+  }, [store.components, store.canvasGridRows, store.canvasBackground, store.pageComponents, updateDraft]);
 
   // ── Keyboard Shortcuts ──
   useEffect(() => {

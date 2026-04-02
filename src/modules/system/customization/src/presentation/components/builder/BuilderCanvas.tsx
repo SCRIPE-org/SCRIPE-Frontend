@@ -261,6 +261,7 @@ export function BuilderCanvas({
                       isSelected={selectedComponentId === comp.id}
                       isOverlapping={overlappingIds.has(comp.id)}
                       positionMode="absolute"
+                      zoom={zoom}
                       onSelect={() => onSelectComponent(comp.id)}
                     />
                   ))}
@@ -299,6 +300,7 @@ export function BuilderCanvas({
                           isSelected={selectedComponentId === comp.id}
                           isOverlapping={overlappingIds.has(comp.id)}
                           positionMode="grid"
+                          zoom={zoom}
                           onSelect={() => onSelectComponent(comp.id)}
                         />
                       ))}
