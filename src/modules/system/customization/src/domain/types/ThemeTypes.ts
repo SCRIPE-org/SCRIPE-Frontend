@@ -29,6 +29,8 @@ export const THEME_CATEGORIES = [
   { value: "finance", label: "Finance & Banking", icon: "Landmark" },
   { value: "government", label: "Government", icon: "Shield" },
   { value: "creative", label: "Creative & Agency", icon: "Palette" },
+  { value: "elegant", label: "Elegant & Lifestyle", icon: "Sparkles" },
+  { value: "nature", label: "Nature & Wellness", icon: "Leaf" },
   { value: "luxury", label: "Luxury & Fashion", icon: "Crown" },
   { value: "startup", label: "Startup", icon: "Rocket" },
   { value: "minimal", label: "Minimal", icon: "Minus" },

@@ -767,15 +767,31 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
         // ── Custom CSS ──
         customCss: parsed.customCss || "",
 
-        // ── Keep current slots, safe mode, page overrides & builder state ──
+        // ── Keep current slots, safe mode & builder state ──
         slotConfig: draft.slotConfig,
         safeMode: draft.safeMode,
-        pageOverrides: draft.pageOverrides,
         canvasMode: draft.canvasMode,
         canvasComponents: draft.canvasComponents,
         canvasGridRows: draft.canvasGridRows,
         canvasBackground: draft.canvasBackground,
         dashboardSettings: draft.dashboardSettings,
+
+        // ── Import per-page overrides from theme (if present) ──
+        pageOverrides: (() => {
+          const themePages = parsed.pages as Record<string, any> | undefined;
+          if (!themePages) return draft.pageOverrides;
+          const merged = { ...draft.pageOverrides };
+          for (const [pageId, pageData] of Object.entries(themePages)) {
+            const typedPageId = pageId as keyof typeof merged;
+            merged[typedPageId] = {
+              ...(merged[typedPageId] || { inheritBackground: true }),
+              layout: pageData.layout || merged[typedPageId]?.layout || 'centered',
+              headline: pageData.headline || merged[typedPageId]?.headline || '',
+              subtitle: pageData.subtitle || merged[typedPageId]?.subtitle || '',
+            };
+          }
+          return merged;
+        })(),
       };
       setDraft(tempDraft);
       setIsPreviewingTheme(true);
