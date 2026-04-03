@@ -11,7 +11,7 @@
 // UI-EXCEPTION: compact studio layout — native elements for tight sidebar
 // where @core/ui components would break the compact design.
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { cn } from "@/core/common/utils";
 import { Label } from "@core/ui/label";
 import { Input } from "@core/ui/input";
@@ -69,22 +69,22 @@ const NAV_STYLES = ["default", "pills", "underline", "bordered"] as const;
 const ICON_STYLES = ["default", "outline", "filled", "duotone"] as const;
 const CARD_STYLES = ["default", "bordered", "elevated", "flat", "glass"] as const;
 
-// Component style option counts (for display)
-const COMPONENT_STYLES: { key: keyof DashboardThemeSettings; label: string; count: number }[] = [
-  { key: "buttonStyle", label: "Button", count: 9 },
-  { key: "inputStyle", label: "Input", count: 4 },
-  { key: "tableStyle", label: "Table", count: 12 },
-  { key: "badgeStyle", label: "Badge", count: 10 },
-  { key: "avatarStyle", label: "Avatar", count: 4 },
-  { key: "formStyle", label: "Form", count: 12 },
-  { key: "loadingStyle", label: "Loading", count: 12 },
-  { key: "tooltipStyle", label: "Tooltip", count: 8 },
-  { key: "modalStyle", label: "Modal", count: 8 },
-  { key: "treeStyle", label: "Tree", count: 12 },
-  { key: "datePickerStyle", label: "Date Picker", count: 7 },
-  { key: "calendarStyle", label: "Calendar", count: 6 },
-  { key: "selectStyle", label: "Select", count: 27 },
-  { key: "switchStyle", label: "Switch", count: 15 },
+// Component style locale key mapping (value after "studio.dashboard.component.")
+const COMPONENT_STYLE_KEYS: { key: keyof DashboardThemeSettings; localeKey: string; count: number }[] = [
+  { key: "buttonStyle", localeKey: "button", count: 9 },
+  { key: "inputStyle", localeKey: "input", count: 4 },
+  { key: "tableStyle", localeKey: "table", count: 12 },
+  { key: "badgeStyle", localeKey: "badge", count: 10 },
+  { key: "avatarStyle", localeKey: "avatar", count: 4 },
+  { key: "formStyle", localeKey: "form", count: 12 },
+  { key: "loadingStyle", localeKey: "loading", count: 12 },
+  { key: "tooltipStyle", localeKey: "tooltip", count: 8 },
+  { key: "modalStyle", localeKey: "modal", count: 8 },
+  { key: "treeStyle", localeKey: "tree", count: 12 },
+  { key: "datePickerStyle", localeKey: "datePicker", count: 7 },
+  { key: "calendarStyle", localeKey: "calendar", count: 6 },
+  { key: "selectStyle", localeKey: "select", count: 27 },
+  { key: "switchStyle", localeKey: "switch", count: 15 },
 ];
 
 const TOAST_STYLES = ["default", "minimal", "bordered", "glass", "gradient", "neon", "neumorphism", "retro", "luxury", "cyberpunk"] as const;
@@ -149,11 +149,12 @@ function ColorSwatch({ value, color, selected, onSelect }: {
   );
 }
 
-function OptionGrid<T extends string>({ options, selected, onSelect, cols = 3 }: {
+function OptionGrid<T extends string>({ options, selected, onSelect, cols = 3, labelFn }: {
   options: readonly T[]; selected: T; onSelect: (v: T) => void; cols?: number;
+  labelFn?: (v: T) => string;
 }) {
   return (
-    <div className={cn("grid gap-1", cols === 2 ? "grid-cols-2" : cols === 4 ? "grid-cols-4" : "grid-cols-3")}>
+    <div className={cn("grid gap-1", cols === 2 ? "grid-cols-2" : cols === 4 ? "grid-cols-4" : cols === 5 ? "grid-cols-5" : "grid-cols-3")}>
       {options.map(opt => (
         <button
           key={opt}
@@ -165,7 +166,7 @@ function OptionGrid<T extends string>({ options, selected, onSelect, cols = 3 }:
               : "border-border/50 text-muted-foreground hover:border-primary/30 hover:bg-accent/20"
           )}
         >
-          {opt}
+          {labelFn ? labelFn(opt) : opt}
         </button>
       ))}
     </div>
@@ -240,21 +241,67 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
     onUpdate({ [key]: value } as Partial<DashboardThemeSettings>);
   };
 
+  // ── Localized label functions for OptionGrid ──
+  const shadowLabel = useCallback((v: string) => t(`studio.dashboard.shadow.${v}`) || v, [t]);
+  const bgModeLabel = useCallback((v: string) => t(`studio.dashboard.bgMode.${v}`) || v, [t]);
+  const fontSizeLabel = useCallback((v: string) => t(`studio.dashboard.fontSizes.${v}`) || v, [t]);
+  const radiusLabel = useCallback((v: string) => t(`studio.dashboard.radii.${v}`) || v, [t]);
+  const spacingLabel = useCallback((v: string) => t(`studio.dashboard.spacing.${v}`) || v, [t]);
+  const cardLabel = useCallback((v: string) => t(`studio.dashboard.card.${v}`) || v, [t]);
+  const animationLabel = useCallback((v: string) => t(`studio.dashboard.animation.${v}`) || v, [t]);
+  const hoverLabel = useCallback((v: string) => t(`studio.dashboard.hover.${v}`) || v, [t]);
+  const intensityLabel = useCallback((v: string) => t(`studio.dashboard.intensity.${v}`) || v, [t]);
+  const logoTypeLabel = useCallback((v: string) => t(`studio.dashboard.logoTypes.${v}`) || v, [t]);
+  const logoAnimLabel = useCallback((v: string) => t(`studio.dashboard.logoAnimations.${v}`) || v, [t]);
+  const logoSizeLabel = useCallback((v: string) => t(`studio.dashboard.logoSizes.${v}`) || v, [t]);
+  const navStyleLabel = useCallback((v: string) => t(`studio.dashboard.navStyles.${v}`) || v, [t]);
+  const iconStyleLabel = useCallback((v: string) => t(`studio.dashboard.iconStyles.${v}`) || v, [t]);
+  const toastStyleLabel = useCallback((v: string) => t(`studio.dashboard.toastStyles.${v}`) || v, [t]);
+  const sidebarStyleLabel = useCallback((v: string) => t(`studio.dashboard.styles.${v}`) || v, [t]);
+  const headerStyleLabel = useCallback((v: string) => {
+    const map: Record<string, string> = {
+      default: t("studio.dashboard.styles.default") || "Default",
+      minimal: t("studio.dashboard.styles.minimal") || "Minimal",
+      floating: t("studio.dashboard.styles.floating") || "Floating",
+      bordered: t("studio.dashboard.styles.bordered") || "Bordered",
+    };
+    return map[v] || v;
+  }, [t]);
+  const sidebarPosLabel = useCallback((v: string) => {
+    return v === "left"
+      ? t("studio.dashboard.sidebarPositionLeft") || "Left"
+      : t("studio.dashboard.sidebarPositionRight") || "Right";
+  }, [t]);
+
+  // Localized component style items (memoized so the list rebuilds on language change)
+  const componentStyles = useMemo(() =>
+    COMPONENT_STYLE_KEYS.map(cs => ({
+      ...cs,
+      label: t(`studio.dashboard.component.${cs.localeKey}`) || cs.localeKey,
+    })),
+    [t]
+  );
+
+  // Localized "N styles" text
+  const nStylesLabel = useCallback((count: number) => {
+    const tpl = t("studio.dashboard.nStyles");
+    return tpl ? tpl.replace("{{count}}", String(count)) : `${count} styles`;
+  }, [t]);
+
   return (
     <div className="space-y-0">
       {/* Info banner */}
       <div className="flex items-start gap-2 rounded-lg border border-blue-500/20 bg-blue-500/5 p-3 mb-3">
         <Info className="h-3.5 w-3.5 text-blue-500 mt-0.5 shrink-0" />
         <p className="text-[10px] text-blue-600 dark:text-blue-400 leading-relaxed">
-          {t("studio.dashboard.info") ||
-            "Configure the dashboard experience for all admins in this tenant. Individual admins can override settings if allowed."}
+          {t("studio.dashboard.info")}
         </p>
       </div>
 
       {/* ── Section 1: Layout & Structure (6 settings) ── */}
       <Section
         icon={Layout}
-        title={t("studio.dashboard.section.layout") || "Layout & Structure"}
+        title={t("studio.dashboard.section.layout")}
         count={6}
         isOpen={openSections.has(0)}
         onToggle={() => toggleSection(0)}
@@ -262,7 +309,7 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
         {/* Layout Template Grid */}
         <div className="space-y-1.5">
           <Label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
-            {t("studio.dashboard.layoutTemplate") || "Layout Template"}
+            {t("studio.dashboard.layoutTemplate")}
           </Label>
           <div className="grid grid-cols-3 gap-1 max-h-[180px] overflow-y-auto scrollbar-thin pr-1">
             {LAYOUT_TEMPLATES.map(tmpl => (
@@ -285,24 +332,34 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
         {/* Sidebar Position */}
         <div className="space-y-1">
           <Label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
-            Sidebar Position
+            {t("studio.dashboard.sidebarPosition")}
           </Label>
-          <OptionGrid options={["left", "right"] as const} selected={settings.sidebarPosition} onSelect={v => set("sidebarPosition", v)} cols={2} />
+          <OptionGrid options={["left", "right"] as const} selected={settings.sidebarPosition} onSelect={v => set("sidebarPosition", v)} cols={2} labelFn={sidebarPosLabel} />
         </div>
 
         {/* Sidebar & Header Style */}
-        <OptionGrid options={["default", "modern", "minimal", "bordered"] as const} selected={settings.sidebarStyle as any} onSelect={v => set("sidebarStyle", v)} cols={2} />
-        <OptionGrid options={["default", "minimal", "floating", "bordered"] as const} selected={settings.headerStyle as any} onSelect={v => set("headerStyle", v)} cols={2} />
+        <div className="space-y-1">
+          <Label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
+            {t("studio.dashboard.sidebarStyle")}
+          </Label>
+          <OptionGrid options={["default", "modern", "minimal", "bordered"] as const} selected={settings.sidebarStyle as any} onSelect={v => set("sidebarStyle", v)} cols={2} labelFn={sidebarStyleLabel} />
+        </div>
+        <div className="space-y-1">
+          <Label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
+            {t("studio.dashboard.headerStyle")}
+          </Label>
+          <OptionGrid options={["default", "minimal", "floating", "bordered"] as const} selected={settings.headerStyle as any} onSelect={v => set("headerStyle", v)} cols={2} labelFn={headerStyleLabel} />
+        </div>
 
         {/* Toggles */}
-        <ToggleRow label="Collapsible Sidebar" checked={settings.collapsibleSidebar} onChange={v => set("collapsibleSidebar", v)} />
-        <ToggleRow label="Show Breadcrumbs" checked={settings.showBreadcrumbs} onChange={v => set("showBreadcrumbs", v)} />
+        <ToggleRow label={t("studio.dashboard.collapsibleSidebar")} checked={settings.collapsibleSidebar} onChange={v => set("collapsibleSidebar", v)} />
+        <ToggleRow label={t("studio.dashboard.showBreadcrumbs")} checked={settings.showBreadcrumbs} onChange={v => set("showBreadcrumbs", v)} />
       </Section>
 
       {/* ── Section 2: Colors & Theme (16 settings) ── */}
       <Section
         icon={Palette}
-        title={t("studio.dashboard.section.colors") || "Colors & Theme"}
+        title={t("studio.dashboard.section.colors")}
         count={16}
         isOpen={openSections.has(1)}
         onToggle={() => toggleSection(1)}
@@ -310,7 +367,7 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
         {/* Primary Color Theme */}
         <div className="space-y-1.5">
           <Label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
-            Primary Color
+            {t("studio.dashboard.colorTheme")}
           </Label>
           <div className="flex flex-wrap gap-1.5">
             {COLOR_THEMES.map(c => (
@@ -322,7 +379,7 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
         {/* Secondary Color Theme */}
         <div className="space-y-1.5">
           <Label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
-            Secondary Color
+            {t("studio.dashboard.secondaryColor")}
           </Label>
           <div className="flex flex-wrap gap-1.5">
             {COLOR_THEMES.map(c => (
@@ -333,20 +390,20 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
 
         {/* Shadow Intensity */}
         <div className="space-y-1">
-          <Label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Shadow</Label>
-          <OptionGrid options={SHADOW_OPTIONS} selected={settings.shadowIntensity as any} onSelect={v => set("shadowIntensity", v)} cols={4} />
+          <Label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">{t("studio.dashboard.shadowIntensity")}</Label>
+          <OptionGrid options={SHADOW_OPTIONS} selected={settings.shadowIntensity as any} onSelect={v => set("shadowIntensity", v)} cols={4} labelFn={shadowLabel} />
         </div>
 
         {/* Background Mode */}
         <div className="space-y-1">
-          <Label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Background Mode</Label>
-          <OptionGrid options={BG_MODES} selected={settings.backgroundMode} onSelect={v => set("backgroundMode", v)} cols={3} />
+          <Label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">{t("studio.dashboard.backgroundMode")}</Label>
+          <OptionGrid options={BG_MODES} selected={settings.backgroundMode} onSelect={v => set("backgroundMode", v)} cols={3} labelFn={bgModeLabel} />
         </div>
 
         {/* Gradient controls (shown when gradient mode) */}
         {settings.backgroundMode === "gradient" && (
           <div className="space-y-2 rounded-lg border border-border/30 bg-muted/20 p-2">
-            <Label className="text-[9px] font-medium text-muted-foreground uppercase">Gradient Direction</Label>
+            <Label className="text-[9px] font-medium text-muted-foreground uppercase">{t("studio.dashboard.gradientDirection")}</Label>
             <div className="grid grid-cols-4 gap-1">
               {GRADIENT_DIRS.map(dir => (
                 <button
@@ -363,18 +420,18 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
                 </button>
               ))}
             </div>
-            <HexInput label="Start" value={settings.gradientStartColor} onChange={v => set("gradientStartColor", v)} />
-            <HexInput label="End" value={settings.gradientEndColor} onChange={v => set("gradientEndColor", v)} />
+            <HexInput label={t("studio.dashboard.gradientStart")} value={settings.gradientStartColor} onChange={v => set("gradientStartColor", v)} />
+            <HexInput label={t("studio.dashboard.gradientEnd")} value={settings.gradientEndColor} onChange={v => set("gradientEndColor", v)} />
           </div>
         )}
 
         {/* Custom color controls (shown when custom mode) */}
         {settings.backgroundMode === "custom" && (
           <div className="space-y-2 rounded-lg border border-border/30 bg-muted/20 p-2">
-            <HexInput label="Primary" value={settings.customPrimaryColor} onChange={v => set("customPrimaryColor", v)} />
-            <HexInput label="Secondary" value={settings.customSecondaryColor} onChange={v => set("customSecondaryColor", v)} />
-            <HexInput label="Light BG" value={settings.customLightBgColor} onChange={v => set("customLightBgColor", v)} />
-            <HexInput label="Dark BG" value={settings.customDarkBgColor} onChange={v => set("customDarkBgColor", v)} />
+            <HexInput label={t("studio.dashboard.customPrimary")} value={settings.customPrimaryColor} onChange={v => set("customPrimaryColor", v)} />
+            <HexInput label={t("studio.dashboard.customSecondary")} value={settings.customSecondaryColor} onChange={v => set("customSecondaryColor", v)} />
+            <HexInput label={t("studio.dashboard.customLightBg")} value={settings.customLightBgColor} onChange={v => set("customLightBgColor", v)} />
+            <HexInput label={t("studio.dashboard.customDarkBg")} value={settings.customDarkBgColor} onChange={v => set("customDarkBgColor", v)} />
           </div>
         )}
       </Section>
@@ -382,39 +439,39 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
       {/* ── Section 3: Typography & Spacing (4 settings) ── */}
       <Section
         icon={Type}
-        title={t("studio.dashboard.section.typography") || "Typography & Spacing"}
+        title={t("studio.dashboard.section.typography")}
         count={4}
         isOpen={openSections.has(2)}
         onToggle={() => toggleSection(2)}
       >
         <div className="space-y-1">
-          <Label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Font Size</Label>
-          <OptionGrid options={FONT_SIZES} selected={settings.fontSize as any} onSelect={v => set("fontSize", v)} cols={3} />
+          <Label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">{t("studio.dashboard.fontSize")}</Label>
+          <OptionGrid options={FONT_SIZES} selected={settings.fontSize as any} onSelect={v => set("fontSize", v)} cols={3} labelFn={fontSizeLabel} />
         </div>
         <div className="space-y-1">
-          <Label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Border Radius</Label>
-          <OptionGrid options={BORDER_RADII} selected={settings.borderRadius as any} onSelect={v => set("borderRadius", v)} cols={3} />
+          <Label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">{t("studio.dashboard.borderRadius")}</Label>
+          <OptionGrid options={BORDER_RADII} selected={settings.borderRadius as any} onSelect={v => set("borderRadius", v)} cols={3} labelFn={radiusLabel} />
         </div>
         <div className="space-y-1">
-          <Label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Spacing</Label>
-          <OptionGrid options={SPACING_SIZES} selected={settings.spacingSize as any} onSelect={v => set("spacingSize", v)} cols={2} />
+          <Label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">{t("studio.dashboard.spacingSize")}</Label>
+          <OptionGrid options={SPACING_SIZES} selected={settings.spacingSize as any} onSelect={v => set("spacingSize", v)} cols={2} labelFn={spacingLabel} />
         </div>
-        <ToggleRow label="Compact Mode" checked={settings.compactMode} onChange={v => set("compactMode", v)} />
+        <ToggleRow label={t("studio.dashboard.compactMode")} checked={settings.compactMode} onChange={v => set("compactMode", v)} />
       </Section>
 
       {/* ── Section 4: Component Styles (14 settings) ── */}
       <Section
         icon={Layers}
-        title={t("studio.dashboard.section.components") || "Component Styles"}
+        title={t("studio.dashboard.section.components")}
         count={14}
         isOpen={openSections.has(3)}
         onToggle={() => toggleSection(3)}
       >
-        {COMPONENT_STYLES.map(cs => (
+        {componentStyles.map(cs => (
           <div key={cs.key} className="space-y-1">
             <div className="flex items-center justify-between">
               <Label className="text-[10px] font-medium text-foreground">{cs.label}</Label>
-              <span className="text-[8px] text-muted-foreground/50">{cs.count} styles</span>
+              <span className="text-[8px] text-muted-foreground/50">{nStylesLabel(cs.count)}</span>
             </div>
             <Input
               value={settings[cs.key] as string}
@@ -429,13 +486,13 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
       {/* ── Section 5: Checkbox & Radio (2 settings) ── */}
       <Section
         icon={Square}
-        title={t("studio.dashboard.section.checkboxRadio") || "Checkbox & Radio"}
+        title={t("studio.dashboard.section.checkboxRadio")}
         count={2}
         isOpen={openSections.has(4)}
         onToggle={() => toggleSection(4)}
       >
         <div className="space-y-1">
-          <Label className="text-[10px] font-medium text-foreground">Checkbox Style</Label>
+          <Label className="text-[10px] font-medium text-foreground">{t("studio.dashboard.checkboxStyle")}</Label>
           <Input
             value={settings.checkboxStyle}
             onChange={e => set("checkboxStyle", e.target.value)}
@@ -444,7 +501,7 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
           />
         </div>
         <div className="space-y-1">
-          <Label className="text-[10px] font-medium text-foreground">Radio Style</Label>
+          <Label className="text-[10px] font-medium text-foreground">{t("studio.dashboard.radioStyle")}</Label>
           <Input
             value={settings.radioStyle}
             onChange={e => set("radioStyle", e.target.value)}
@@ -457,104 +514,104 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
       {/* ── Section 6: Card, Animation & Hover (5 settings) ── */}
       <Section
         icon={Paintbrush}
-        title={t("studio.dashboard.section.animation") || "Card, Animation & Hover"}
+        title={t("studio.dashboard.section.animation")}
         count={5}
         isOpen={openSections.has(5)}
         onToggle={() => toggleSection(5)}
       >
         <div className="space-y-1">
-          <Label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Card Style</Label>
-          <OptionGrid options={CARD_STYLES} selected={settings.cardStyle as any} onSelect={v => set("cardStyle", v)} cols={3} />
+          <Label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">{t("studio.dashboard.cardStyle")}</Label>
+          <OptionGrid options={CARD_STYLES} selected={settings.cardStyle as any} onSelect={v => set("cardStyle", v)} cols={3} labelFn={cardLabel} />
         </div>
         <div className="space-y-1">
-          <Label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Animation</Label>
-          <OptionGrid options={ANIMATION_LEVELS} selected={settings.animationLevel as any} onSelect={v => set("animationLevel", v)} cols={2} />
+          <Label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">{t("studio.dashboard.animationLevel")}</Label>
+          <OptionGrid options={ANIMATION_LEVELS} selected={settings.animationLevel as any} onSelect={v => set("animationLevel", v)} cols={2} labelFn={animationLabel} />
         </div>
         <div className="space-y-1">
-          <Label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Hover Effect</Label>
-          <OptionGrid options={HOVER_EFFECTS} selected={settings.hoverEffectType as any} onSelect={v => set("hoverEffectType", v)} cols={4} />
+          <Label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">{t("studio.dashboard.hoverEffect")}</Label>
+          <OptionGrid options={HOVER_EFFECTS} selected={settings.hoverEffectType as any} onSelect={v => set("hoverEffectType", v)} cols={4} labelFn={hoverLabel} />
         </div>
         <div className="space-y-1">
-          <Label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Hover Intensity</Label>
-          <OptionGrid options={HOVER_INTENSITIES} selected={settings.hoverEffectIntensity as any} onSelect={v => set("hoverEffectIntensity", v)} cols={2} />
+          <Label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">{t("studio.dashboard.hoverIntensity")}</Label>
+          <OptionGrid options={HOVER_INTENSITIES} selected={settings.hoverEffectIntensity as any} onSelect={v => set("hoverEffectIntensity", v)} cols={2} labelFn={intensityLabel} />
         </div>
-        <ToggleRow label="Reduced Motion" checked={settings.reducedMotion} onChange={v => set("reducedMotion", v)} />
+        <ToggleRow label={t("studio.dashboard.reducedMotion")} checked={settings.reducedMotion} onChange={v => set("reducedMotion", v)} />
       </Section>
 
       {/* ── Section 7: Logo & Branding (5 settings) ── */}
       <Section
         icon={Sparkles}
-        title={t("studio.dashboard.section.logo") || "Logo & Branding"}
+        title={t("studio.dashboard.section.logo")}
         count={5}
         isOpen={openSections.has(6)}
         onToggle={() => toggleSection(6)}
       >
         <div className="space-y-1">
-          <Label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Logo Type</Label>
-          <OptionGrid options={LOGO_TYPES} selected={settings.logoType as any} onSelect={v => set("logoType", v)} cols={2} />
+          <Label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">{t("studio.dashboard.logoType")}</Label>
+          <OptionGrid options={LOGO_TYPES} selected={settings.logoType as any} onSelect={v => set("logoType", v)} cols={2} labelFn={logoTypeLabel} />
         </div>
         <div className="space-y-1">
-          <Label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Logo Animation</Label>
-          <OptionGrid options={LOGO_ANIMATIONS} selected={settings.logoAnimation as any} onSelect={v => set("logoAnimation", v)} cols={2} />
+          <Label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">{t("studio.dashboard.logoAnimation")}</Label>
+          <OptionGrid options={LOGO_ANIMATIONS} selected={settings.logoAnimation as any} onSelect={v => set("logoAnimation", v)} cols={2} labelFn={logoAnimLabel} />
         </div>
         <div className="space-y-1">
-          <Label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Logo Size</Label>
-          <OptionGrid options={LOGO_SIZES} selected={settings.logoSize as any} onSelect={v => set("logoSize", v)} cols={5} />
+          <Label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">{t("studio.dashboard.logoSize")}</Label>
+          <OptionGrid options={LOGO_SIZES} selected={settings.logoSize as any} onSelect={v => set("logoSize", v)} cols={5} labelFn={logoSizeLabel} />
         </div>
         <div className="space-y-1">
-          <Label className="text-[10px] font-medium text-foreground">Logo Text</Label>
+          <Label className="text-[10px] font-medium text-foreground">{t("studio.dashboard.logoText")}</Label>
           <Input
             value={settings.logoText}
             onChange={e => set("logoText", e.target.value)}
             className="h-7 text-[10px]"
-            placeholder="NEXORA"
+            placeholder={t("studio.dashboard.logoTextPlaceholder") || "NEXORA"}
             maxLength={50}
           />
         </div>
-        <ToggleRow label="Show Logo" checked={settings.showLogo} onChange={v => set("showLogo", v)} />
+        <ToggleRow label={t("studio.dashboard.showLogo")} checked={settings.showLogo} onChange={v => set("showLogo", v)} />
       </Section>
 
       {/* ── Section 8: Navigation & UX (9 settings) ── */}
       <Section
         icon={Navigation}
-        title={t("studio.dashboard.section.navigation") || "Navigation & UX"}
+        title={t("studio.dashboard.section.navigation")}
         count={9}
         isOpen={openSections.has(7)}
         onToggle={() => toggleSection(7)}
       >
         <div className="space-y-1">
-          <Label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Navigation Style</Label>
-          <OptionGrid options={NAV_STYLES} selected={settings.navigationStyle as any} onSelect={v => set("navigationStyle", v)} cols={2} />
+          <Label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">{t("studio.dashboard.navigationStyle")}</Label>
+          <OptionGrid options={NAV_STYLES} selected={settings.navigationStyle as any} onSelect={v => set("navigationStyle", v)} cols={2} labelFn={navStyleLabel} />
         </div>
         <div className="space-y-1">
-          <Label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Icon Style</Label>
-          <OptionGrid options={ICON_STYLES} selected={settings.iconStyle as any} onSelect={v => set("iconStyle", v)} cols={2} />
+          <Label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">{t("studio.dashboard.iconStyle")}</Label>
+          <OptionGrid options={ICON_STYLES} selected={settings.iconStyle as any} onSelect={v => set("iconStyle", v)} cols={2} labelFn={iconStyleLabel} />
         </div>
-        <ToggleRow label="Show User Avatar" checked={settings.showUserAvatar} onChange={v => set("showUserAvatar", v)} />
-        <ToggleRow label="Show Notifications" checked={settings.showNotifications} onChange={v => set("showNotifications", v)} />
-        <ToggleRow label="Sticky Header" checked={settings.stickyHeader} onChange={v => set("stickyHeader", v)} />
-        <ToggleRow label="Show Footer" checked={settings.showFooter} onChange={v => set("showFooter", v)} />
-        <ToggleRow label="Auto Save" checked={settings.autoSave} onChange={v => set("autoSave", v)} />
-        <ToggleRow label="High Contrast" checked={settings.highContrast} onChange={v => set("highContrast", v)} />
-        <ToggleRow label="Show Detail Panel" checked={settings.showDetailPanel} onChange={v => set("showDetailPanel", v)} />
+        <ToggleRow label={t("studio.dashboard.showUserAvatar")} checked={settings.showUserAvatar} onChange={v => set("showUserAvatar", v)} />
+        <ToggleRow label={t("studio.dashboard.showNotifications")} checked={settings.showNotifications} onChange={v => set("showNotifications", v)} />
+        <ToggleRow label={t("studio.dashboard.stickyHeader")} checked={settings.stickyHeader} onChange={v => set("stickyHeader", v)} />
+        <ToggleRow label={t("studio.dashboard.showFooter")} checked={settings.showFooter} onChange={v => set("showFooter", v)} />
+        <ToggleRow label={t("studio.dashboard.autoSave")} checked={settings.autoSave} onChange={v => set("autoSave", v)} />
+        <ToggleRow label={t("studio.dashboard.highContrast")} checked={settings.highContrast} onChange={v => set("highContrast", v)} />
+        <ToggleRow label={t("studio.dashboard.showDetailPanel")} checked={settings.showDetailPanel} onChange={v => set("showDetailPanel", v)} />
       </Section>
 
       {/* ── Section 9: Toast Configuration (3 settings) ── */}
       <Section
         icon={BellIcon}
-        title={t("studio.dashboard.section.toast") || "Toast Configuration"}
+        title={t("studio.dashboard.section.toast")}
         count={3}
         isOpen={openSections.has(8)}
         onToggle={() => toggleSection(8)}
       >
         <div className="space-y-1">
-          <Label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Toast Style</Label>
-          <OptionGrid options={TOAST_STYLES} selected={settings.toastStyle as any} onSelect={v => set("toastStyle", v)} cols={2} />
+          <Label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">{t("studio.dashboard.toastStyle")}</Label>
+          <OptionGrid options={TOAST_STYLES} selected={settings.toastStyle as any} onSelect={v => set("toastStyle", v)} cols={2} labelFn={toastStyleLabel} />
         </div>
-        <ToggleRow label="Show Toast Icons" checked={settings.showToastIcons} onChange={v => set("showToastIcons", v)} />
+        <ToggleRow label={t("studio.dashboard.showToastIcons")} checked={settings.showToastIcons} onChange={v => set("showToastIcons", v)} />
         <div className="space-y-1">
           <div className="flex items-center justify-between">
-            <Label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Duration</Label>
+            <Label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">{t("studio.dashboard.toastDuration")}</Label>
             <span className="text-[9px] text-muted-foreground tabular-nums">{settings.toastDuration}ms</span>
           </div>
           <Slider
@@ -571,7 +628,7 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
       {/* ── Section 10: Admin Override Control ── */}
       <Section
         icon={Eye}
-        title={t("studio.dashboard.section.overrides") || "Admin Override Control"}
+        title={t("studio.dashboard.section.overrides")}
         count={2}
         isOpen={openSections.has(9)}
         onToggle={() => toggleSection(9)}
@@ -579,24 +636,23 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
         <div className="flex items-start gap-2 rounded-lg border border-amber-500/20 bg-amber-500/5 p-2.5">
           <Lock className="h-3.5 w-3.5 text-amber-500 mt-0.5 shrink-0" />
           <p className="text-[10px] text-amber-600 dark:text-amber-400 leading-relaxed">
-            {t("studio.dashboard.overrideInfo") ||
-              "Configure which settings individual admins can override. These controls are applied server-side and cannot be bypassed."}
+            {t("studio.dashboard.overrideInfo")}
           </p>
         </div>
         <div className="space-y-1 pt-1">
           <Label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
-            Allow Admin Override
+            {t("studio.dashboard.allowOverride")}
           </Label>
           <p className="text-[9px] text-muted-foreground leading-relaxed">
-            When enabled, individual admins can customize their own dashboard appearance within the paths you define.
+            {t("studio.dashboard.allowOverrideDesc")}
           </p>
         </div>
         <div className="space-y-1">
           <Label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
-            Override Path Control
+            {t("studio.dashboard.overridePaths")}
           </Label>
           <p className="text-[9px] text-muted-foreground leading-relaxed">
-            Fine-grained control over which specific settings admins can override. Requires Enterprise edition.
+            {t("studio.dashboard.overridePathsDesc")}
           </p>
         </div>
       </Section>
