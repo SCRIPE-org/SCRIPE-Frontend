@@ -1,223 +1,126 @@
 "use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
-import { Label } from "@core/ui/label";
-import { Switch } from "@core/ui/switch";
-import { Separator } from "@core/ui/separator";
 import { useSettings } from "@core/providers/settings-provider";
 import { useI18n } from "@core/providers/i18n-provider";
-import { cn } from "@core/common/utils";
+import { SettingToggle, SettingSection } from "@core/settings/components/shared";
+
+/**
+ * Behavior settings tab — boolean toggle settings for UX preferences.
+ *
+ * REFACTORED: Uses SettingToggle shared primitive (was 224 lines of repeating
+ * Switch + Label + Separator patterns, now ~85 lines via data-driven rendering).
+ */
+
+interface BehaviorSetting {
+  key: string;
+  labelKey: string;
+  descKey: string;
+  getValue: () => boolean;
+  setValue: (v: boolean) => void;
+}
 
 export function BehaviorTab() {
   const { t, direction } = useI18n();
   const settings = useSettings();
 
+  const behaviorSettings: BehaviorSetting[] = [
+    {
+      key: "breadcrumbs",
+      labelKey: "settings.behavior.breadcrumbs.label",
+      descKey: "settings.behavior.breadcrumbs.description",
+      getValue: () => settings.showBreadcrumbs,
+      setValue: settings.setShowBreadcrumbs,
+    },
+    {
+      key: "userAvatar",
+      labelKey: "settings.behavior.userAvatar.label",
+      descKey: "settings.behavior.userAvatar.description",
+      getValue: () => settings.showUserAvatar,
+      setValue: settings.setShowUserAvatar,
+    },
+    {
+      key: "notifications",
+      labelKey: "settings.behavior.notifications.label",
+      descKey: "settings.behavior.notifications.description",
+      getValue: () => settings.showNotifications,
+      setValue: settings.setShowNotifications,
+    },
+    {
+      key: "logo",
+      labelKey: "settings.behavior.logo.label",
+      descKey: "settings.behavior.logo.description",
+      getValue: () => settings.showLogo,
+      setValue: settings.setShowLogo,
+    },
+    {
+      key: "compact",
+      labelKey: "settings.behavior.compact.label",
+      descKey: "settings.behavior.compact.description",
+      getValue: () => settings.compactMode,
+      setValue: settings.setCompactMode,
+    },
+    {
+      key: "contrast",
+      labelKey: "settings.behavior.contrast.label",
+      descKey: "settings.behavior.contrast.description",
+      getValue: () => settings.highContrast,
+      setValue: settings.setHighContrast,
+    },
+    {
+      key: "motion",
+      labelKey: "settings.behavior.motion.label",
+      descKey: "settings.behavior.motion.description",
+      getValue: () => settings.reducedMotion,
+      setValue: settings.setReducedMotion,
+    },
+    {
+      key: "sticky",
+      labelKey: "settings.behavior.sticky.label",
+      descKey: "settings.behavior.sticky.description",
+      getValue: () => settings.stickyHeader,
+      setValue: settings.setStickyHeader,
+    },
+    {
+      key: "sidebar",
+      labelKey: "settings.behavior.sidebar.label",
+      descKey: "settings.behavior.sidebar.description",
+      getValue: () => settings.collapsibleSidebar,
+      setValue: settings.setCollapsibleSidebar,
+    },
+    {
+      key: "footer",
+      labelKey: "settings.behavior.footer.label",
+      descKey: "settings.behavior.footer.description",
+      getValue: () => settings.showFooter,
+      setValue: settings.setShowFooter,
+    },
+    {
+      key: "autoSave",
+      labelKey: "settings.behavior.autoSave.label",
+      descKey: "settings.behavior.autoSave.description",
+      getValue: () => settings.autoSave,
+      setValue: settings.setAutoSave,
+    },
+  ];
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t("settings.behavior.title")}</CardTitle>
-        <CardDescription>{t("settings.behavior.description")}</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-6">
-          <div
-            className={cn(
-              "flex items-center justify-between",
-              direction === "rtl" ? "flex-row-reverse" : ""
-            )}
-          >
-            <div className="space-y-0.5">
-              <Label>{t("settings.behavior.breadcrumbs.label")}</Label>
-              <p className="text-sm text-muted-foreground">
-                {t("settings.behavior.breadcrumbs.description")}
-              </p>
-            </div>
-            <Switch
-              checked={settings.showBreadcrumbs}
-              onCheckedChange={settings.setShowBreadcrumbs}
-            />
-          </div>
-
-          <Separator />
-
-          <div
-            className={cn(
-              "flex items-center justify-between",
-              direction === "rtl" ? "flex-row-reverse" : ""
-            )}
-          >
-            <div className="space-y-0.5">
-              <Label>{t("settings.behavior.userAvatar.label")}</Label>
-              <p className="text-sm text-muted-foreground">
-                {t("settings.behavior.userAvatar.description")}
-              </p>
-            </div>
-            <Switch
-              checked={settings.showUserAvatar}
-              onCheckedChange={settings.setShowUserAvatar}
-            />
-          </div>
-
-          <Separator />
-
-          <div
-            className={cn(
-              "flex items-center justify-between",
-              direction === "rtl" ? "flex-row-reverse" : ""
-            )}
-          >
-            <div className="space-y-0.5">
-              <Label>{t("settings.behavior.notifications.label")}</Label>
-              <p className="text-sm text-muted-foreground">
-                {t("settings.behavior.notifications.description")}
-              </p>
-            </div>
-            <Switch
-              checked={settings.showNotifications}
-              onCheckedChange={settings.setShowNotifications}
-            />
-          </div>
-
-          <Separator />
-
-          <div
-            className={cn(
-              "flex items-center justify-between",
-              direction === "rtl" ? "flex-row-reverse" : ""
-            )}
-          >
-            <div className="space-y-0.5">
-              <Label>{t("settings.behavior.logo.label")}</Label>
-              <p className="text-sm text-muted-foreground">
-                {t("settings.behavior.logo.description")}
-              </p>
-            </div>
-            <Switch checked={settings.showLogo} onCheckedChange={settings.setShowLogo} />
-          </div>
-
-          <Separator />
-
-          <div
-            className={cn(
-              "flex items-center justify-between",
-              direction === "rtl" ? "flex-row-reverse" : ""
-            )}
-          >
-            <div className="space-y-0.5">
-              <Label>{t("settings.behavior.compact.label")}</Label>
-              <p className="text-sm text-muted-foreground">
-                {t("settings.behavior.compact.description")}
-              </p>
-            </div>
-            <Switch checked={settings.compactMode} onCheckedChange={settings.setCompactMode} />
-          </div>
-
-          <Separator />
-
-          <div
-            className={cn(
-              "flex items-center justify-between",
-              direction === "rtl" ? "flex-row-reverse" : ""
-            )}
-          >
-            <div className="space-y-0.5">
-              <Label>{t("settings.behavior.contrast.label")}</Label>
-              <p className="text-sm text-muted-foreground">
-                {t("settings.behavior.contrast.description")}
-              </p>
-            </div>
-            <Switch checked={settings.highContrast} onCheckedChange={settings.setHighContrast} />
-          </div>
-
-          <Separator />
-
-          <div
-            className={cn(
-              "flex items-center justify-between",
-              direction === "rtl" ? "flex-row-reverse" : ""
-            )}
-          >
-            <div className="space-y-0.5">
-              <Label>{t("settings.behavior.motion.label")}</Label>
-              <p className="text-sm text-muted-foreground">
-                {t("settings.behavior.motion.description")}
-              </p>
-            </div>
-            <Switch checked={settings.reducedMotion} onCheckedChange={settings.setReducedMotion} />
-          </div>
-
-          <Separator />
-
-          <div
-            className={cn(
-              "flex items-center justify-between",
-              direction === "rtl" ? "flex-row-reverse" : ""
-            )}
-          >
-            <div className="space-y-0.5">
-              <Label>{t("settings.behavior.sticky.label")}</Label>
-              <p className="text-sm text-muted-foreground">
-                {t("settings.behavior.sticky.description")}
-              </p>
-            </div>
-            <Switch checked={settings.stickyHeader} onCheckedChange={settings.setStickyHeader} />
-          </div>
-
-          <Separator />
-
-          <div
-            className={cn(
-              "flex items-center justify-between",
-              direction === "rtl" ? "flex-row-reverse" : ""
-            )}
-          >
-            <div className="space-y-0.5">
-              <Label>{t("settings.behavior.sidebar.label")}</Label>
-              <p className="text-sm text-muted-foreground">
-                {t("settings.behavior.sidebar.description")}
-              </p>
-            </div>
-            <Switch
-              checked={settings.collapsibleSidebar}
-              onCheckedChange={settings.setCollapsibleSidebar}
-            />
-          </div>
-
-          <Separator />
-
-          <div
-            className={cn(
-              "flex items-center justify-between",
-              direction === "rtl" ? "flex-row-reverse" : ""
-            )}
-          >
-            <div className="space-y-0.5">
-              <Label>{t("settings.behavior.footer.label")}</Label>
-              <p className="text-sm text-muted-foreground">
-                {t("settings.behavior.footer.description")}
-              </p>
-            </div>
-            <Switch checked={settings.showFooter} onCheckedChange={settings.setShowFooter} />
-          </div>
-
-          <Separator />
-
-          <div
-            className={cn(
-              "flex items-center justify-between",
-              direction === "rtl" ? "flex-row-reverse" : ""
-            )}
-          >
-            <div className="space-y-0.5">
-              <Label>{t("settings.behavior.autoSave.label")}</Label>
-              <p className="text-sm text-muted-foreground">
-                {t("settings.behavior.autoSave.description")}
-              </p>
-            </div>
-            <Switch checked={settings.autoSave} onCheckedChange={settings.setAutoSave} />
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+    <SettingSection
+      title={t("settings.behavior.title")}
+      description={t("settings.behavior.description")}
+    >
+      <div className="space-y-6">
+        {behaviorSettings.map((setting, index) => (
+          <SettingToggle
+            key={setting.key}
+            label={t(setting.labelKey)}
+            description={t(setting.descKey)}
+            checked={setting.getValue()}
+            onCheckedChange={setting.setValue}
+            direction={direction}
+            showSeparator={index < behaviorSettings.length - 1}
+          />
+        ))}
+      </div>
+    </SettingSection>
   );
 }

@@ -4,9 +4,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
 import { useSettings } from "@core/providers/settings-provider";
 import { useI18n } from "@core/providers/i18n-provider";
-import { cn } from "@core/common/utils";
-import { Palette, Sun, Moon, Sparkles, Pipette, Layers, Wand2, Check } from "lucide-react";
+import { Palette, Sun, Moon, Sparkles, Pipette, Layers, Wand2 } from "lucide-react";
 import type { BackgroundMode } from "@core/providers/settings-provider";
+import { ModePicker, type ModeOption } from "@core/settings/components/shared";
 
 import { ColorsSubtab } from "./appearance-tab/colors-subtab";
 import { LightBackgroundsSubtab } from "./appearance-tab/light-backgrounds-subtab";
@@ -16,30 +16,37 @@ import { CustomColorsSubtab } from "./appearance-tab/custom-colors-subtab";
 import { PalettesSubtab } from "./appearance-tab/palettes-subtab";
 import { EffectsSubtab } from "./appearance-tab/effects-subtab";
 
-const BG_MODES: { value: BackgroundMode; icon: string; labelKey: string; descKey: string }[] = [
+const BG_MODES: ModeOption<BackgroundMode>[] = [
   {
     value: "preset",
     icon: "🎨",
-    labelKey: "settings.bgMode.preset",
-    descKey: "settings.bgMode.presetDesc",
+    label: "settings.bgMode.preset",
+    description: "settings.bgMode.presetDesc",
   },
   {
     value: "gradient",
     icon: "🌈",
-    labelKey: "settings.bgMode.gradient",
-    descKey: "settings.bgMode.gradientDesc",
+    label: "settings.bgMode.gradient",
+    description: "settings.bgMode.gradientDesc",
   },
   {
     value: "custom",
     icon: "🎯",
-    labelKey: "settings.bgMode.custom",
-    descKey: "settings.bgMode.customDesc",
+    label: "settings.bgMode.custom",
+    description: "settings.bgMode.customDesc",
   },
 ];
 
 export function AppearanceTab() {
   const { t } = useI18n();
   const settings = useSettings();
+
+  // Translate the mode options
+  const translatedModes: ModeOption<BackgroundMode>[] = BG_MODES.map((m) => ({
+    ...m,
+    label: t(m.label),
+    description: t(m.description),
+  }));
 
   const tabs = [
     { key: "colors", label: t("settings.appearanceTabs.colors"), icon: Palette },
@@ -53,40 +60,14 @@ export function AppearanceTab() {
 
   return (
     <div className="space-y-6">
-      {/* Background Mode Selector */}
-      <Card>
-        <CardHeader>
-          <CardTitle>{t("settings.bgMode.title")}</CardTitle>
-          <CardDescription>{t("settings.bgMode.description")}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-            {BG_MODES.map((mode) => (
-              <button
-                key={mode.value}
-                className={cn(
-                  "relative flex flex-col items-center gap-2 rounded-xl border-2 p-4 transition-all hover:scale-[1.02]",
-                  settings.backgroundMode === mode.value
-                    ? "border-primary bg-primary/5 shadow-lg ring-2 ring-primary/20"
-                    : "border-muted hover:border-muted-foreground/30"
-                )}
-                onClick={() => settings.setBackgroundMode(mode.value)}
-              >
-                <span className="text-2xl">{mode.icon}</span>
-                <span className="text-sm font-semibold">{t(mode.labelKey)}</span>
-                <span className="text-center text-[11px] leading-tight text-muted-foreground">
-                  {t(mode.descKey)}
-                </span>
-                {settings.backgroundMode === mode.value && (
-                  <div className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
-                    <Check className="h-3 w-3 text-primary-foreground" />
-                  </div>
-                )}
-              </button>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+      {/* Background Mode Selector — uses shared ModePicker */}
+      <ModePicker<BackgroundMode>
+        title={t("settings.bgMode.title")}
+        description={t("settings.bgMode.description")}
+        modes={translatedModes}
+        selected={settings.backgroundMode}
+        onSelect={settings.setBackgroundMode}
+      />
 
       {/* Sub-Tabs */}
       <Card>
