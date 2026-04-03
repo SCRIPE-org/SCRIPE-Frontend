@@ -15,6 +15,7 @@ import { Label } from "@core/ui/label";
 import { Switch } from "@core/ui/switch";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { Separator } from "@core/ui/separator";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import type { MenuTreeNode, MenuItemOverrideInfo } from "../../domain/entities/MenuItem";
 import type { OverrideFormData, FlatMenuItem } from "../viewmodels/useMenuCustomizeViewModel";
 import {
@@ -27,7 +28,6 @@ import {
   ArrowRight,
   Loader2,
 } from "lucide-react";
-import { cn } from "@core/common/utils";
 
 /* -------------------------------------------------------------------------- */
 /*  Props                                                                      */
@@ -62,7 +62,7 @@ export function CustomizePanel({
   const [nameEn, setNameEn] = useState("");
   const [nameAr, setNameAr] = useState("");
   const [orderOverride, setOrderOverride] = useState<string>("");
-  const [parentId, setParentId] = useState<string>("");
+  const [parentId, setParentId] = useState<string>("__none__");
   const [isHidden, setIsHidden] = useState(false);
 
   // Reset form when selection or override data changes
@@ -71,7 +71,7 @@ export function CustomizePanel({
       setNameEn(formData.nameEn);
       setNameAr(formData.nameAr);
       setOrderOverride(formData.orderOverride != null ? String(formData.orderOverride) : "");
-      setParentId(formData.parentMenuItemIdOverride ?? "");
+      setParentId(formData.parentMenuItemIdOverride ?? "__none__");
       setIsHidden(formData.isHidden);
     }
   }, [formData]);
@@ -83,7 +83,7 @@ export function CustomizePanel({
       nameEn !== formData.nameEn ||
       nameAr !== formData.nameAr ||
       (orderOverride !== "" ? Number(orderOverride) : null) !== formData.orderOverride ||
-      (parentId || null) !== formData.parentMenuItemIdOverride ||
+      (parentId !== "__none__" ? parentId : null) !== formData.parentMenuItemIdOverride ||
       isHidden !== formData.isHidden
     );
   }, [nameEn, nameAr, orderOverride, parentId, isHidden, formData]);
@@ -93,7 +93,7 @@ export function CustomizePanel({
       nameEn,
       nameAr,
       orderOverride: orderOverride !== "" ? Number(orderOverride) : null,
-      parentMenuItemIdOverride: parentId || null,
+      parentMenuItemIdOverride: parentId !== "__none__" ? parentId : null,
       isHidden,
     });
   };
@@ -103,7 +103,7 @@ export function CustomizePanel({
       setNameEn(formData.nameEn);
       setNameAr(formData.nameAr);
       setOrderOverride(formData.orderOverride != null ? String(formData.orderOverride) : "");
-      setParentId(formData.parentMenuItemIdOverride ?? "");
+      setParentId(formData.parentMenuItemIdOverride ?? "__none__");
       setIsHidden(formData.isHidden);
     }
   };
@@ -224,23 +224,22 @@ export function CustomizePanel({
           <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
             {t("menus.overrideParent")}
           </h4>
-          <select
-            value={parentId}
-            onChange={(e) => setParentId(e.target.value)}
-            className={cn(
-              "h-8 w-full rounded-md border border-input bg-background px-3 text-sm",
-              "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-            )}
-          >
-            <option value="">{t("menus.keepCurrentParent")}</option>
-            <option value="__root__">{t("menus.rootLevel")}</option>
-            {parentOptions.map((item) => (
-              <option key={item.id} value={item.id}>
-                {"  ".repeat(item.depth)}
-                {language === "ar" ? item.nameAr : item.nameEn}
-              </option>
-            ))}
-          </select>
+          <Select value={parentId} onValueChange={setParentId}>
+            <SelectTrigger className="h-8 w-full text-sm">
+              <SelectValue placeholder={t("menus.keepCurrentParent")} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="__none__">{t("menus.keepCurrentParent")}</SelectItem>
+              <SelectItem value="__root__">{t("menus.rootLevel")}</SelectItem>
+              {parentOptions.map((item) => (
+                <SelectItem key={item.id} value={item.id}>
+                  <span style={{ paddingInlineStart: `${item.depth * 12}px` }}>
+                    {language === "ar" ? item.nameAr : item.nameEn}
+                  </span>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <Separator />

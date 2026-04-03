@@ -1,4 +1,4 @@
-﻿/**
+/**
  * BrandingPanel — Logo (ImageUploadField), company name, headline, subtitle, favicon, copyright
  * LAYOUT-AWARE: Shows only relevant fields for the current layout.
  * - Split layouts: headline, subtitle (rendered in LoginBranding panel)
@@ -11,6 +11,7 @@ import { Building2, Heading, FileText, Copyright, Info } from "lucide-react";
 import { ImageUploadField } from "@core/ui/image-upload-field";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
+import { Textarea } from "@core/ui/textarea";
 import type { StudioDraftProps as StudioDraft } from "../../domain/entities/StudioDraft";
 import { useI18n } from "@core/providers/i18n-provider";
 
@@ -79,12 +80,12 @@ export function BrandingPanel({ draft, updateDraft }: BrandingPanelProps) {
               <FileText className="h-3 w-3" />
               {t("studio.branding.subtitle")}
             </Label>
-            <textarea
+            <Textarea
               value={draft.subtitle}
               onChange={(e) => updateDraft("subtitle", e.target.value)}
               placeholder={t("studio.branding.subtitlePlaceholder")}
               rows={2}
-              className="w-full rounded-md border border-input bg-background px-2.5 py-1.5 text-xs text-foreground placeholder:text-muted-foreground/50 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/20 resize-none"
+              className="text-xs resize-none"
             />
           </div>
         </>

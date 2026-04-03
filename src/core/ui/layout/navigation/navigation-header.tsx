@@ -171,8 +171,8 @@ export function NavigationHeader({
             </nav>
           )}
 
-          {/* App Title — only show on mobile where breadcrumbs aren't visible */}
-          {isMobile && (
+          {/* App Title — show on mobile always, or desktop when no breadcrumbs */}
+          {(isMobile || !showBreadcrumbs) && (
             <div className="flex items-center">
               <h1 className="bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-lg font-semibold text-transparent">
                 {appName}

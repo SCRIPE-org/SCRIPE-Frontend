@@ -6465,6 +6465,7 @@ export const ar = {
         navigation: "التنقل وتجربة المستخدم",
         toast: "إعدادات الإشعارات",
         overrides: "التحكم في تجاوز المسؤول",
+        presets: "أنماط سريعة",
       },
       layoutTemplate: "قالب التخطيط",
       sidebarPosition: "موضع الشريط الجانبي",
@@ -6539,6 +6540,27 @@ export const ar = {
       overridePaths: "التحكم في مسار التجاوز",
       overridePathsDesc: "تحكم دقيق في الإعدادات التي يمكن للمسؤولين تجاوزها. يتطلب إصدار المؤسسة.",
       styles: { default: "افتراضي", modern: "حديث", minimal: "بسيط", bordered: "محاط", floating: "عائم" },
+      // ── أنماط سريعة ──
+      preset: {
+        professional: "احترافي",
+        neonCyber: "نيون سايبر",
+        minimal: "بسيط",
+        enterprise: "مؤسسي",
+        creative: "إبداعي",
+        darkExecutive: "تنفيذي داكن",
+        glass: "زجاج مورفيزم",
+        warmSunset: "غروب دافئ",
+      },
+      presetDesc: {
+        professional: "إعدادات نظيفة ومتوازنة لأي نشاط تجاري",
+        neonCyber: "لوحة ألوان نيون نابضة مع بطاقات زجاجية وحركات جريئة",
+        minimal: "تصميم فائق النظافة مع بطاقات مسطحة وتفاعلات خفيفة",
+        enterprise: "تخطيط رسمي ومنظم مع مكونات محاطة",
+        creative: "ألوان مرحة وشبكة بنتو وحركات تكبير",
+        darkExecutive: "درجات بنفسجية غنية مع تأثيرات توهج عند التمرير",
+        glass: "بطاقات زجاجية مطفأة فوق خلفية متدرجة داكنة",
+        warmSunset: "درجات العنبر والورد مع تأثيرات رفع لطيفة",
+      },
     },
 
     device: {

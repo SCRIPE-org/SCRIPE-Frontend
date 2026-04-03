@@ -12,7 +12,10 @@
 import { cn } from "@/core/common/utils";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
+import { Textarea } from "@core/ui/textarea";
 import { Button } from "@core/ui/button";
+import { Switch } from "@core/ui/switch";
+import { Checkbox } from "@core/ui/checkbox";
 import { Trash2, Eye, EyeOff, Copy, ArrowUp, ArrowDown, Lock, Unlock, Plus } from "lucide-react";
 import { ImageUploadField } from "@core/ui/image-upload-field";
 import { VideoUploadField } from "@core/ui/video-upload-field";
@@ -364,15 +367,13 @@ function ComponentSpecificProps({ type,
             { key: 'showForgot', label: 'Show Forgot Password' },
             { key: 'showRegister', label: 'Show Register Link' },
           ].map(({ key, label }) => (
-            <label key={key} className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={Boolean(props[key])}
-                onChange={(e) => onUpdateProps({ [key]: e.target.checked })}
-                className="h-3.5 w-3.5 rounded border-border"
-              />
+            <div key={key} className="flex items-center justify-between">
               <span className="text-xs text-foreground">{label}</span>
-            </label>
+              <Switch
+                checked={Boolean(props[key])}
+                onCheckedChange={(checked) => onUpdateProps({ [key]: checked })}
+              />
+            </div>
           ))}
           <div className="pt-2 border-t border-border/50">
             <Label className="text-[10px] text-muted-foreground font-semibold">Form Style</Label>
@@ -441,15 +442,13 @@ function ComponentSpecificProps({ type,
             { key: 'showBackToLogin', label: 'Show Back to Login' },
             { key: 'showIcon', label: 'Show Key Icon' },
           ].map(({ key, label }) => (
-            <label key={key} className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={Boolean(props[key] ?? true)}
-                onChange={(e) => onUpdateProps({ [key]: e.target.checked })}
-                className="h-3.5 w-3.5 rounded border-border"
-              />
+            <div key={key} className="flex items-center justify-between">
               <span className="text-xs text-foreground">{label}</span>
-            </label>
+              <Switch
+                checked={Boolean(props[key] ?? true)}
+                onCheckedChange={(checked) => onUpdateProps({ [key]: checked })}
+              />
+            </div>
           ))}
           <div>
             <Label className="text-[10px] text-muted-foreground">Description Text</Label>
@@ -504,15 +503,13 @@ function ComponentSpecificProps({ type,
             { key: 'showPasswordStrength', label: 'Show Password Strength' },
             { key: 'showConfirmPassword', label: 'Show Confirm Password' },
           ].map(({ key, label }) => (
-            <label key={key} className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={Boolean(props[key] ?? true)}
-                onChange={(e) => onUpdateProps({ [key]: e.target.checked })}
-                className="h-3.5 w-3.5 rounded border-border"
-              />
+            <div key={key} className="flex items-center justify-between">
               <span className="text-xs text-foreground">{label}</span>
-            </label>
+              <Switch
+                checked={Boolean(props[key] ?? true)}
+                onCheckedChange={(checked) => onUpdateProps({ [key]: checked })}
+              />
+            </div>
           ))}
           <div>
             <Label className="text-[10px] text-muted-foreground">Button Label</Label>
@@ -730,15 +727,13 @@ function ComponentSpecificProps({ type,
               </select>
             </div>
           </div>
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={Boolean(props.fullWidth)}
-              onChange={(e) => onUpdateProps({ fullWidth: e.target.checked })}
-              className="h-3.5 w-3.5 rounded border-border"
-            />
+          <div className="flex items-center justify-between">
             <span className="text-xs text-foreground">Full Width</span>
-          </label>
+            <Switch
+              checked={Boolean(props.fullWidth)}
+              onCheckedChange={(checked) => onUpdateProps({ fullWidth: checked })}
+            />
+          </div>
           <div className="grid grid-cols-2 gap-2">
             <div>
               <Label className="text-[10px] text-muted-foreground">Border Radius (px)</Label>
@@ -896,11 +891,11 @@ function ComponentSpecificProps({ type,
         <div className="space-y-2">
           <div>
             <Label className="text-[10px] text-muted-foreground">Quote</Label>
-            <textarea
+            <Textarea
               value={(props.quote as string) || ''}
               onChange={(e) => onUpdateProps({ quote: e.target.value })}
               placeholder="This product changed our lives..."
-              className="w-full h-20 rounded-md border border-border bg-background px-2 py-1.5 text-xs resize-none"
+              className="h-20 text-xs resize-none"
             />
           </div>
           <div className="grid grid-cols-2 gap-2">
@@ -1109,15 +1104,13 @@ function ComponentSpecificProps({ type,
               />
             </div>
           </div>
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={Boolean(props.poweredBy)}
-              onChange={(e) => onUpdateProps({ poweredBy: e.target.checked })}
-              className="h-3.5 w-3.5 rounded border-border"
-            />
+          <div className="flex items-center justify-between">
             <span className="text-xs text-foreground">Show &quot;Powered by&quot;</span>
-          </label>
+            <Switch
+              checked={Boolean(props.poweredBy)}
+              onCheckedChange={(checked) => onUpdateProps({ poweredBy: checked })}
+            />
+          </div>
           <div>
             <Label className="text-[10px] text-muted-foreground">{t('studio.builder.props.color') || 'Color'}</Label>
             <div className="flex items-center gap-2">
@@ -1166,20 +1159,19 @@ function ComponentSpecificProps({ type,
               {['google', 'microsoft', 'github', 'apple'].map(provider => {
                 const providers = (Array.isArray(props.providers) ? props.providers : []) as string[];
                 return (
-                  <label key={provider} className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
+                  <div key={provider} className="flex items-center gap-2">
+                    <Checkbox
+                      id={`provider-${provider}`}
                       checked={providers.includes(provider)}
-                      onChange={(e) => {
-                        const updated = e.target.checked
+                      onCheckedChange={(checked) => {
+                        const updated = checked
                           ? [...providers, provider]
                           : providers.filter(p => p !== provider);
                         onUpdateProps({ providers: updated });
                       }}
-                      className="h-3.5 w-3.5 rounded border-border"
                     />
-                    <span className="text-xs text-foreground capitalize">{provider}</span>
-                  </label>
+                    <label htmlFor={`provider-${provider}`} className="text-xs text-foreground capitalize cursor-pointer">{provider}</label>
+                  </div>
                 );
               })}
             </div>
@@ -1395,15 +1387,13 @@ function ComponentSpecificProps({ type,
             { key: 'muted', label: t('studio.builder.props.muted') || 'Muted' },
             { key: 'loop', label: t('studio.builder.props.loop') || 'Loop' },
           ].map(({ key, label }) => (
-            <label key={key} className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={Boolean(props[key] ?? true)}
-                onChange={(e) => onUpdateProps({ [key]: e.target.checked })}
-                className="h-3.5 w-3.5 rounded border-border"
-              />
+            <div key={key} className="flex items-center justify-between">
               <span className="text-xs text-foreground">{label}</span>
-            </label>
+              <Switch
+                checked={Boolean(props[key] ?? true)}
+                onCheckedChange={(checked) => onUpdateProps({ [key]: checked })}
+              />
+            </div>
           ))}
         </div>
       );

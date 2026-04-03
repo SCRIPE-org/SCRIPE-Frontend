@@ -14,6 +14,8 @@ import type { LoginLayout } from "@modules/auth/core/domain/entities/LoginBrandi
 import type { AuthPageId, AuthPageOverride } from "../../domain/entities/StudioDraft";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
+import { Textarea } from "@core/ui/textarea";
+import { Switch } from "@core/ui/switch";
 import { useI18n } from "@core/providers/i18n-provider";
 
 interface LayoutPanelProps {
@@ -353,17 +355,15 @@ export function LayoutPanel({ selectedLayout, onSelectLayout, activeAuthPage, pa
           </p>
 
           {/* Inherit toggle */}
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={pageOverride.inheritBackground !== false}
-              onChange={(e) => onUpdatePageField("inheritBackground", e.target.checked)}
-              className="h-3.5 w-3.5 rounded border-border accent-primary"
-            />
+          <div className="flex items-center justify-between cursor-pointer">
             <span className="text-xs text-foreground">
               {t("studio.fields.inheritBg") || "Inherit background from Login page"}
             </span>
-          </label>
+            <Switch
+              checked={pageOverride.inheritBackground !== false}
+              onCheckedChange={(checked) => onUpdatePageField("inheritBackground", checked)}
+            />
+          </div>
 
           {/* Per-page background settings (when not inheriting) */}
           {pageOverride.inheritBackground === false && (
@@ -516,15 +516,13 @@ export function LayoutPanel({ selectedLayout, onSelectLayout, activeAuthPage, pa
                     </div>
                   </div>
                   {/* Overlay */}
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={pageOverride.bgOverlayEnabled || false}
-                      onChange={(e) => onUpdatePageField("bgOverlayEnabled", e.target.checked)}
-                      className="h-3.5 w-3.5 rounded border-border accent-primary"
-                    />
+                  <div className="flex items-center justify-between cursor-pointer">
                     <span className="text-[10px] text-foreground">{t("studio.fields.bgOverlay") || "Enable overlay"}</span>
-                  </label>
+                    <Switch
+                      checked={pageOverride.bgOverlayEnabled || false}
+                      onCheckedChange={(checked) => onUpdatePageField("bgOverlayEnabled", checked)}
+                    />
+                  </div>
                   {pageOverride.bgOverlayEnabled && (
                     <div className="grid grid-cols-2 gap-2">
                       <div className="space-y-1">
@@ -558,11 +556,11 @@ export function LayoutPanel({ selectedLayout, onSelectLayout, activeAuthPage, pa
           {/* Per-page custom CSS */}
           <div className="space-y-1 pt-2 border-t border-border/50">
             <Label className="text-[10px] text-muted-foreground">{t("studio.fields.pageCss") || "Custom CSS (this page only)"}</Label>
-            <textarea
+            <Textarea
               value={pageOverride.customCss || ""}
               onChange={(e) => onUpdatePageField("customCss", e.target.value)}
               placeholder=".login-card { backdrop-filter: blur(20px); }"
-              className="w-full rounded-md border border-border bg-[#1e1e1e] text-[#cccccc] px-3 py-2 text-xs font-mono resize-none focus:outline-none focus:ring-1 focus:ring-primary/50 h-16"
+              className="bg-[#1e1e1e] text-[#cccccc] font-mono text-xs resize-none h-16"
               spellCheck={false}
             />
           </div>

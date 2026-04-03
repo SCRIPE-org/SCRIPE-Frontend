@@ -6621,6 +6621,7 @@ export const en = {
         navigation: "Navigation & UX",
         toast: "Toast Configuration",
         overrides: "Admin Override Control",
+        presets: "Quick Presets",
       },
       // ── Layout & Structure ──
       layoutTemplate: "Layout Template",
@@ -6808,6 +6809,27 @@ export const en = {
         minimal: "Minimal",
         bordered: "Bordered",
         floating: "Floating",
+      },
+      // ── Quick Presets ──
+      preset: {
+        professional: "Professional",
+        neonCyber: "Neon Cyber",
+        minimal: "Minimal",
+        enterprise: "Enterprise",
+        creative: "Creative",
+        darkExecutive: "Dark Executive",
+        glass: "Glassmorphism",
+        warmSunset: "Warm Sunset",
+      },
+      presetDesc: {
+        professional: "Clean, balanced defaults for any business",
+        neonCyber: "Vibrant neon palette with glass cards and bold animations",
+        minimal: "Ultra-clean with flat cards and subtle interactions",
+        enterprise: "Formal, structured layout with bordered components",
+        creative: "Playful colors, bento grid, and scale animations",
+        darkExecutive: "Rich violet tones with glowing hover effects",
+        glass: "Frosted glass cards over dark gradient backdrop",
+        warmSunset: "Amber and rose tones with gentle lift effects",
       },
     },
 

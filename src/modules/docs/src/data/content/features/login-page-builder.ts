@@ -393,7 +393,7 @@ const sections: DocSection[] = [
 │   │   ├── BuilderModeCanvas.tsx      # Section-based renderer
 │   │   ├── GridOverlay.tsx            # Grid visualization
 │   │   └── BuilderToolbar.tsx         # Mode switcher, undo/redo, zoom
-│   ├── DashboardPanel.tsx             # Dashboard theming controls
+│   ├── DashboardBuilderTab.tsx         # Dashboard theming controls (61 settings)
 │   ├── BundleGalleryTab.tsx           # Bundle marketplace
 │   └── ThemeMarketplacePanel.tsx      # Theme quick-apply
 ├── hooks/

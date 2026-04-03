@@ -1,8 +1,9 @@
-﻿"use client";
+"use client";
 // UI-EXCEPTION: compact studio layout — native <button> used for pixel-precise
 // compact controls (toggle switches, gradient pickers, layout thumbnails, etc.)
 // where @core/ui/button's padding/sizing would break the layout.
 import { Input } from "@core/ui/input";
+import { Textarea } from "@core/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { Switch } from "@core/ui/switch";
 import { Plus, X, Eye, EyeOff } from "lucide-react";
@@ -59,7 +60,7 @@ export function TextEditor({ block, onChange }: P) {
   const upd = (patch: Record<string, unknown>) => onChange({ type: "text", props: { ...p, ...patch } });
   return (
     <div className="space-y-1.5">
-      <textarea value={p.content} onChange={e => upd({ content: e.target.value.slice(0, 500) })} rows={3} className="w-full rounded-md border border-input bg-background px-2 py-1.5 text-xs resize-y focus:border-primary focus:outline-none" placeholder={t("studio.block.textPlaceholder")} />
+      <Textarea value={p.content} onChange={e => upd({ content: e.target.value.slice(0, 500) })} rows={3} className="text-xs resize-y" placeholder={t("studio.block.textPlaceholder")} />
       <p className={`text-[10px] ${p.content.length > 500 ? "text-destructive" : "text-muted-foreground"}`}>{p.content.length}/500</p>
       <div className="grid grid-cols-3 gap-1">
         <Field k="studio.block.alignment"><Sel value={p.alignment || "left"} onValueChange={v => upd({ alignment: v })} items={[{ v: "left", l: "←" }, { v: "center", l: "↔" }, { v: "right", l: "→" }]} /></Field>
@@ -143,7 +144,7 @@ export function TestimonialEditor({ block, onChange }: P) {
   const upd = (patch: Record<string, unknown>) => onChange({ type: "testimonial", props: { ...p, ...patch } });
   return (
     <div className="space-y-1.5">
-      <Field k="studio.block.quote"><textarea value={p.quote} onChange={e => upd({ quote: e.target.value })} rows={2} className="w-full rounded-md border border-input bg-background px-2 py-1.5 text-xs resize-y focus:border-primary focus:outline-none" /></Field>
+      <Field k="studio.block.quote"><Textarea value={p.quote} onChange={e => upd({ quote: e.target.value })} rows={2} className="text-xs resize-y" /></Field>
       <div className="grid grid-cols-2 gap-1">
         <Field k="studio.block.author"><Input value={p.author} onChange={e => upd({ author: e.target.value })} className="h-7 text-xs" /></Field>
         <Field k="studio.block.role"><Input value={p.role || ""} onChange={e => upd({ role: e.target.value })} className="h-7 text-xs" /></Field>
@@ -275,7 +276,7 @@ export function AlertEditor({ block, onChange }: P) {
   return (
     <div className="space-y-1.5">
       <Field k="studio.block.alertTitle"><Input value={p.title || ""} onChange={e => upd({ title: e.target.value })} className="h-7 text-xs" /></Field>
-      <Field k="studio.block.alertMessage"><textarea value={p.message} onChange={e => upd({ message: e.target.value.slice(0, 300) })} rows={2} className="w-full rounded-md border border-input bg-background px-2 py-1.5 text-xs resize-y focus:border-primary focus:outline-none" /></Field>
+      <Field k="studio.block.alertMessage"><Textarea value={p.message} onChange={e => upd({ message: e.target.value.slice(0, 300) })} rows={2} className="text-xs resize-y" /></Field>
       <Field k="studio.block.variant"><Sel value={p.variant} onValueChange={v => upd({ variant: v })} items={[{ v: "info", l: "ℹ️ Info" }, { v: "warning", l: "⚠️ Warning" }, { v: "success", l: "✅ Success" }, { v: "error", l: "❌ Error" }]} /></Field>
       <div className="flex items-center gap-3">
         <div className="flex items-center gap-1"><Switch checked={p.showIcon !== false} onCheckedChange={v => upd({ showIcon: v })} /><span className="text-[10px] text-muted-foreground">{t("studio.block.showIcon")}</span></div>
@@ -453,7 +454,7 @@ export function AccordionEditor({ block, onChange }: P) {
             <Input value={item.title} onChange={e => { const u = [...items]; u[i] = { ...u[i], title: e.target.value }; upd({ items: u }); }} className="h-7 flex-1 text-xs" placeholder={t("studio.block.accordionTitle")} />
             <button onClick={() => upd({ items: items.filter((_, j) => j !== i) })} className="p-0.5 text-destructive/60 hover:text-destructive"><X className="h-3 w-3" /></button>
           </div>
-          <textarea value={item.content} onChange={e => { const u = [...items]; u[i] = { ...u[i], content: e.target.value }; upd({ items: u }); }} rows={2} className="w-full rounded-md border border-input bg-background px-2 py-1 text-xs resize-y focus:border-primary focus:outline-none" placeholder={t("studio.block.accordionContent")} />
+          <Textarea value={item.content} onChange={e => { const u = [...items]; u[i] = { ...u[i], content: e.target.value }; upd({ items: u }); }} rows={2} className="text-xs resize-y" placeholder={t("studio.block.accordionContent")} />
         </div>
       ))}
       {items.length < 5 && <button onClick={() => upd({ items: [...items, { title: "", content: "" }] })} className="flex items-center gap-1 text-[10px] text-primary hover:underline"><Plus className="h-3 w-3" />{t("studio.block.addItem")}</button>}

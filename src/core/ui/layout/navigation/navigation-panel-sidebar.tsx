@@ -236,7 +236,7 @@ export function NavigationPanelSidebar({
     >
       <div className="flex h-full flex-col">
         {/* Header */}
-        <div className="border-b border-border/50 p-4">
+        <div className="border-b border-border/50 p-3">
           <div className={cn("flex items-center gap-3")}>
             {selectedNavItem.icon && (
               <div
@@ -261,14 +261,14 @@ export function NavigationPanelSidebar({
             </div>
 
             {/* Close button */}
-            <Button
+            {/* <Button
               variant="ghost"
               size="icon"
               onClick={onOpenChange}
               className="h-7 w-7 flex-shrink-0 opacity-60 hover:opacity-100 hover:bg-accent"
             >
               <X className="h-3.5 w-3.5" />
-            </Button>
+            </Button> */}
           </div>
         </div>
 

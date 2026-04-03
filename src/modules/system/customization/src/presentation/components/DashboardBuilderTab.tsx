@@ -16,12 +16,15 @@ import { cn } from "@/core/common/utils";
 import { Label } from "@core/ui/label";
 import { Input } from "@core/ui/input";
 import { Slider } from "@core/ui/slider";
+import { Switch } from "@core/ui/switch";
+import { CollapsibleSection } from "@core/ui/collapsible-section";
 import {
   Layout, Palette, Type, Layers, Square, Sparkles,
-  Navigation, Bell as BellIcon, Info, ChevronDown, ChevronRight,
-  Check, Lock, Paintbrush, Eye,
+  Navigation, Bell as BellIcon, Info,
+  Check, Lock, Paintbrush, Eye, Wand2,
 } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
+import { BRAND } from "@core/config/branding";
 import type { DashboardThemeSettings } from "../../domain/entities/StudioDraft";
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -90,41 +93,175 @@ const COMPONENT_STYLE_KEYS: { key: keyof DashboardThemeSettings; localeKey: stri
 const TOAST_STYLES = ["default", "minimal", "bordered", "glass", "gradient", "neon", "neumorphism", "retro", "luxury", "cyberpunk"] as const;
 
 // ═══════════════════════════════════════════════════════════════════════════════
-//  SECTION COMPONENT — Collapsible accordion for each settings group
+//  DASHBOARD PRESETS — Curated one-click presets that populate all settings
 // ═══════════════════════════════════════════════════════════════════════════════
 
-interface SectionProps {
-  icon: typeof Layout;
-  title: string;
-  count: number;
-  isOpen: boolean;
-  onToggle: () => void;
-  isLocked?: boolean;
-  children: React.ReactNode;
+interface DashboardPreset {
+  id: string;
+  localeKey: string;
+  accent: string;       // Gradient or color for the preview card
+  accentEnd?: string;
+  icon: string;         // Emoji for quick visual cue
+  settings: Partial<DashboardThemeSettings>;
 }
 
-function Section({ icon: Icon, title, count, isOpen, onToggle, isLocked, children }: SectionProps) {
-  const Arrow = isOpen ? ChevronDown : ChevronRight;
-  return (
-    <div className="border-b border-border/50 last:border-0">
-      <button
-        onClick={onToggle}
-        className={cn(
-          "flex w-full items-center gap-2 px-1 py-2.5 text-left transition-colors",
-          "hover:bg-accent/30",
-          isLocked && "opacity-50"
-        )}
-      >
-        <Icon className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-        <span className="flex-1 text-[11px] font-semibold text-foreground">{title}</span>
-        <span className="text-[9px] text-muted-foreground/60 tabular-nums">{count}</span>
-        {isLocked && <Lock className="h-3 w-3 text-amber-500" />}
-        <Arrow className="h-3 w-3 text-muted-foreground shrink-0" />
-      </button>
-      {isOpen && <div className="space-y-3 pb-3 px-0.5">{children}</div>}
-    </div>
-  );
-}
+const DASHBOARD_PRESETS: DashboardPreset[] = [
+  {
+    id: "professional",
+    localeKey: "professional",
+    accent: "#3b82f6",
+    accentEnd: "#6366f1",
+    icon: "💼",
+    settings: {
+      layoutTemplate: "modern", sidebarPosition: "left", sidebarStyle: "default",
+      headerStyle: "default", collapsibleSidebar: true, showBreadcrumbs: true,
+      colorTheme: "blue", secondaryColorTheme: "indigo", shadowIntensity: "subtle",
+      backgroundMode: "preset", fontSize: "default", borderRadius: "default",
+      spacingSize: "default", compactMode: false, cardStyle: "default",
+      animationLevel: "default", hoverEffectType: "default", hoverEffectIntensity: "default",
+      reducedMotion: false, logoType: "sparkles", logoAnimation: "none", logoSize: "md",
+      navigationStyle: "default", iconStyle: "default", showUserAvatar: true,
+      showNotifications: true, stickyHeader: true, showFooter: true,
+      toastStyle: "default", showToastIcons: true, toastDuration: 5000,
+    },
+  },
+  {
+    id: "neonCyber",
+    localeKey: "neonCyber",
+    accent: "#06b6d4",
+    accentEnd: "#d946ef",
+    icon: "⚡",
+    settings: {
+      layoutTemplate: "neon", sidebarPosition: "left", sidebarStyle: "modern",
+      headerStyle: "floating", collapsibleSidebar: true, showBreadcrumbs: false,
+      colorTheme: "cyan", secondaryColorTheme: "fuchsia", shadowIntensity: "strong",
+      backgroundMode: "gradient", gradientDirection: "to-br",
+      gradientStartColor: "#0f172a", gradientEndColor: "#1e1b4b",
+      fontSize: "default", borderRadius: "large", spacingSize: "comfortable",
+      compactMode: false, cardStyle: "glass", animationLevel: "full",
+      hoverEffectType: "neon", hoverEffectIntensity: "strong", reducedMotion: false,
+      logoType: "sparkles", logoAnimation: "pulse", logoSize: "lg",
+      navigationStyle: "pills", iconStyle: "duotone",
+      toastStyle: "cyberpunk", showToastIcons: true, toastDuration: 4000,
+    },
+  },
+  {
+    id: "minimal",
+    localeKey: "minimal",
+    accent: "#64748b",
+    accentEnd: "#94a3b8",
+    icon: "✨",
+    settings: {
+      layoutTemplate: "minimal", sidebarPosition: "left", sidebarStyle: "minimal",
+      headerStyle: "minimal", collapsibleSidebar: true, showBreadcrumbs: false,
+      colorTheme: "slate", secondaryColorTheme: "zinc", shadowIntensity: "none",
+      backgroundMode: "preset", fontSize: "default", borderRadius: "small",
+      spacingSize: "comfortable", compactMode: false, cardStyle: "flat",
+      animationLevel: "minimal", hoverEffectType: "default", hoverEffectIntensity: "subtle",
+      reducedMotion: false, logoType: "sparkles", logoAnimation: "none", logoSize: "sm",
+      navigationStyle: "underline", iconStyle: "outline",
+      toastStyle: "minimal", showToastIcons: false, toastDuration: 3000,
+    },
+  },
+  {
+    id: "enterprise",
+    localeKey: "enterprise",
+    accent: "#1e293b",
+    accentEnd: "#334155",
+    icon: "🏢",
+    settings: {
+      layoutTemplate: "executive", sidebarPosition: "left", sidebarStyle: "bordered",
+      headerStyle: "bordered", collapsibleSidebar: false, showBreadcrumbs: true,
+      colorTheme: "slate", secondaryColorTheme: "blue", shadowIntensity: "moderate",
+      backgroundMode: "preset", fontSize: "medium", borderRadius: "small",
+      spacingSize: "default", compactMode: false, cardStyle: "bordered",
+      animationLevel: "minimal", hoverEffectType: "lift", hoverEffectIntensity: "subtle",
+      reducedMotion: false, logoType: "shield", logoAnimation: "none", logoSize: "md",
+      navigationStyle: "bordered", iconStyle: "default",
+      toastStyle: "bordered", showToastIcons: true, toastDuration: 5000,
+    },
+  },
+  {
+    id: "creative",
+    localeKey: "creative",
+    accent: "#f97316",
+    accentEnd: "#ec4899",
+    icon: "🎨",
+    settings: {
+      layoutTemplate: "bento", sidebarPosition: "left", sidebarStyle: "modern",
+      headerStyle: "floating", collapsibleSidebar: true, showBreadcrumbs: true,
+      colorTheme: "orange", secondaryColorTheme: "pink", shadowIntensity: "moderate",
+      backgroundMode: "preset", fontSize: "default", borderRadius: "large",
+      spacingSize: "comfortable", compactMode: false, cardStyle: "elevated",
+      animationLevel: "full", hoverEffectType: "scale", hoverEffectIntensity: "moderate",
+      reducedMotion: false, logoType: "sparkles", logoAnimation: "fancy", logoSize: "lg",
+      navigationStyle: "pills", iconStyle: "filled",
+      toastStyle: "gradient", showToastIcons: true, toastDuration: 4000,
+    },
+  },
+  {
+    id: "darkExecutive",
+    localeKey: "darkExecutive",
+    accent: "#8b5cf6",
+    accentEnd: "#1e1b4b",
+    icon: "🌙",
+    settings: {
+      layoutTemplate: "executive", sidebarPosition: "left", sidebarStyle: "default",
+      headerStyle: "default", collapsibleSidebar: true, showBreadcrumbs: true,
+      colorTheme: "violet", secondaryColorTheme: "purple", shadowIntensity: "moderate",
+      backgroundMode: "custom", customPrimaryColor: "#7c3aed",
+      customSecondaryColor: "#4c1d95", customLightBgColor: "#faf5ff",
+      customDarkBgColor: "#0f0720",
+      fontSize: "default", borderRadius: "default", spacingSize: "default",
+      compactMode: false, cardStyle: "elevated", animationLevel: "default",
+      hoverEffectType: "glow", hoverEffectIntensity: "moderate", reducedMotion: false,
+      logoType: "sparkles", logoAnimation: "pulse", logoSize: "md",
+      navigationStyle: "default", iconStyle: "default",
+      toastStyle: "luxury", showToastIcons: true, toastDuration: 5000,
+    },
+  },
+  {
+    id: "glass",
+    localeKey: "glass",
+    accent: "#06b6d4",
+    accentEnd: "#22d3ee",
+    icon: "💎",
+    settings: {
+      layoutTemplate: "glassmorphism", sidebarPosition: "left", sidebarStyle: "modern",
+      headerStyle: "floating", collapsibleSidebar: true, showBreadcrumbs: false,
+      colorTheme: "cyan", secondaryColorTheme: "teal", shadowIntensity: "subtle",
+      backgroundMode: "gradient", gradientDirection: "to-br",
+      gradientStartColor: "#0f172a", gradientEndColor: "#164e63",
+      fontSize: "default", borderRadius: "large", spacingSize: "comfortable",
+      compactMode: false, cardStyle: "glass", animationLevel: "default",
+      hoverEffectType: "blur", hoverEffectIntensity: "moderate", reducedMotion: false,
+      logoType: "sparkles", logoAnimation: "none", logoSize: "md",
+      navigationStyle: "pills", iconStyle: "outline",
+      toastStyle: "glass", showToastIcons: true, toastDuration: 4000,
+    },
+  },
+  {
+    id: "warmSunset",
+    localeKey: "warmSunset",
+    accent: "#f59e0b",
+    accentEnd: "#f43f5e",
+    icon: "🌅",
+    settings: {
+      layoutTemplate: "modern", sidebarPosition: "left", sidebarStyle: "default",
+      headerStyle: "default", collapsibleSidebar: true, showBreadcrumbs: true,
+      colorTheme: "amber", secondaryColorTheme: "rose", shadowIntensity: "subtle",
+      backgroundMode: "preset", fontSize: "default", borderRadius: "default",
+      spacingSize: "default", compactMode: false, cardStyle: "default",
+      animationLevel: "default", hoverEffectType: "lift", hoverEffectIntensity: "default",
+      reducedMotion: false, logoType: "sparkles", logoAnimation: "none", logoSize: "md",
+      navigationStyle: "default", iconStyle: "default",
+      toastStyle: "default", showToastIcons: true, toastDuration: 5000,
+    },
+  },
+];
+
+// Section alias for backward-compat — delegates to core CollapsibleSection
+const Section = CollapsibleSection;
 
 // ═══════════════════════════════════════════════════════════════════════════════
 //  MINI COMPONENTS — Compact controls for sidebar layout
@@ -179,18 +316,7 @@ function ToggleRow({ label, checked, onChange }: {
   return (
     <div className="flex items-center justify-between py-1">
       <span className="text-[11px] text-foreground">{label}</span>
-      <button
-        onClick={() => onChange(!checked)}
-        className={cn(
-          "relative h-5 w-9 rounded-full transition-colors",
-          checked ? "bg-primary" : "bg-muted"
-        )}
-      >
-        <div className={cn(
-          "absolute top-0.5 h-4 w-4 rounded-full bg-white shadow-sm transition-transform",
-          checked ? "translate-x-4" : "translate-x-0.5"
-        )} />
-      </button>
+      <Switch checked={checked} onCheckedChange={onChange} />
     </div>
   );
 }
@@ -288,6 +414,11 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
     return tpl ? tpl.replace("{{count}}", String(count)) : `${count} styles`;
   }, [t]);
 
+  // Apply a preset — merges preset settings into the current dashboard settings
+  const applyPreset = useCallback((preset: DashboardPreset) => {
+    onUpdate(preset.settings);
+  }, [onUpdate]);
+
   return (
     <div className="space-y-0">
       {/* Info banner */}
@@ -297,6 +428,48 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
           {t("studio.dashboard.info")}
         </p>
       </div>
+
+      {/* ── Quick Presets ── */}
+      <Section
+        icon={Wand2}
+        title={t("studio.dashboard.section.presets")}
+        count={DASHBOARD_PRESETS.length}
+        isOpen={openSections.has(10)}
+        onToggle={() => toggleSection(10)}
+      >
+        <div className="grid grid-cols-2 gap-1.5">
+          {DASHBOARD_PRESETS.map(preset => (
+            <button
+              key={preset.id}
+              onClick={() => applyPreset(preset)}
+              className={cn(
+                "group relative flex flex-col items-start gap-1 rounded-lg border p-2.5 text-left transition-all",
+                "border-border/50 hover:border-primary/40 hover:shadow-sm"
+              )}
+            >
+              {/* Accent bar */}
+              <div
+                className="absolute inset-x-0 top-0 h-1 rounded-t-lg transition-opacity group-hover:opacity-100"
+                style={{
+                  background: preset.accentEnd
+                    ? `linear-gradient(to right, ${preset.accent}, ${preset.accentEnd})`
+                    : preset.accent,
+                  opacity: 0.7,
+                }}
+              />
+              <div className="flex items-center gap-1.5 pt-0.5">
+                <span className="text-sm">{preset.icon}</span>
+                <span className="text-[10px] font-semibold text-foreground">
+                  {t(`studio.dashboard.preset.${preset.localeKey}`)}
+                </span>
+              </div>
+              <span className="text-[9px] text-muted-foreground/70 leading-tight">
+                {t(`studio.dashboard.presetDesc.${preset.localeKey}`)}
+              </span>
+            </button>
+          ))}
+        </div>
+      </Section>
 
       {/* ── Section 1: Layout & Structure (6 settings) ── */}
       <Section
@@ -564,7 +737,7 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
             value={settings.logoText}
             onChange={e => set("logoText", e.target.value)}
             className="h-7 text-[10px]"
-            placeholder={t("studio.dashboard.logoTextPlaceholder") || "NEXORA"}
+            placeholder={t("studio.dashboard.logoTextPlaceholder") || BRAND.name}
             maxLength={50}
           />
         </div>

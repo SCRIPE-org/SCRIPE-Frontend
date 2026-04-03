@@ -1,4 +1,4 @@
-﻿/**
+/**
  * AdvancedPanel — Custom CSS, safe mode (core Switch), accessibility, RTL.
  * All labels localized via t()
  */
@@ -9,6 +9,7 @@
 
 import { Code, Shield, Languages, Accessibility } from "lucide-react";
 import { Switch } from "@core/ui/switch";
+import { Textarea } from "@core/ui/textarea";
 import type { StudioDraftProps as StudioDraft } from "../../domain/entities/StudioDraft";
 import { useI18n } from "@core/providers/i18n-provider";
 
@@ -32,7 +33,7 @@ export function AdvancedPanel({ draft, updateDraft }: AdvancedPanelProps) {
         <p className="text-[10px] text-muted-foreground">
           {t("studio.advanced.customCssDesc")}
         </p>
-        <textarea
+        <Textarea
           value={draft.customCss}
           onChange={(e) => updateDraft("customCss", e.target.value)}
           placeholder={`/* ═══ Custom CSS Examples ═══ */
@@ -83,7 +84,7 @@ export function AdvancedPanel({ draft, updateDraft }: AdvancedPanelProps) {
   background: rgba(255,255,255,0.05) !important;
 }`}
           rows={10}
-          className="w-full rounded-md border border-input bg-muted/30 px-3 py-2 font-mono text-xs text-foreground placeholder:text-muted-foreground/40 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/20 resize-y"
+          className="bg-muted/30 font-mono text-xs resize-y"
           spellCheck={false}
         />
 
