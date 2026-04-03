@@ -40,7 +40,8 @@ const PUBLIC_PAGES = [
   "/oauth/callback",
   "/oauth/test",
   "/authorize",
-  "/studio-preview"
+  "/studio-preview",
+  "/dashboard-preview"
 ];
 
 // Route prefixes that are always public (no auth checks at all)

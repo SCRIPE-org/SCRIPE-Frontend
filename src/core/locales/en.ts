@@ -6609,6 +6609,7 @@ export const en = {
     // Dashboard Builder
     dashboard: {
       info: "Configure the dashboard experience for all admins in this tenant. Individual admins can override settings if allowed.",
+      preview: "Live Preview",
       // ── Section headers ──
       section: {
         layout: "Layout & Structure",

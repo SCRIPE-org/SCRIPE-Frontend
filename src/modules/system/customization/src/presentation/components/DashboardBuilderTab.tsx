@@ -26,6 +26,7 @@ import {
 import { useI18n } from "@core/providers/i18n-provider";
 import { BRAND } from "@core/config/branding";
 import type { DashboardThemeSettings } from "../../domain/entities/StudioDraft";
+import { DashboardMiniPreview } from "./DashboardMiniPreview";
 
 // ═══════════════════════════════════════════════════════════════════════════════
 //  OPTION DATA — All option arrays for the picker controls
@@ -428,6 +429,7 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
           {t("studio.dashboard.info")}
         </p>
       </div>
+
 
       {/* ── Quick Presets ── */}
       <Section

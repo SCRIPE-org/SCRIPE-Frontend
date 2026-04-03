@@ -27,6 +27,7 @@ import { StudioSidebar } from "../components/StudioSidebar";
 import { StudioPreview } from "../components/StudioPreview";
 import { AuthPageTabs } from "../components/AuthPageTabs";
 import { BuilderCanvas } from "../components/builder/BuilderCanvas";
+import { DashboardLayoutPreview } from "../components/DashboardLayoutPreview";
 import { getDefaultComponentsForPage, type CanvasComponent } from "../../domain/entities/CanvasComponent";
 import { DragOverlayItem } from "../components/builder/DraggableCanvasItem";
 import { useBuilderStore } from "../viewmodels/useBuilderStore";
@@ -55,6 +56,7 @@ export function CustomizerStudioView() {
 
   // Determine if we are in builder mode
   const isBuilderMode = vm.activePanel === "builder";
+  const isDashboardMode = vm.activePanel === "dashboard";
 
   // ── SYNC 1: Initialize builder store from draft on first load ──
   // Seeds the builder store with login page data from the server.
@@ -213,7 +215,7 @@ export function CustomizerStudioView() {
         isBuilderMode={isBuilderMode}
       />
 
-      {/* Right: Preview OR Builder Canvas */}
+      {/* Right: Preview OR Builder Canvas OR Dashboard Preview */}
       {isBuilderMode ? (
         /* Full-width Builder Canvas */
         <div className="relative flex-1 overflow-auto bg-gradient-to-br from-muted/30 via-background to-muted/20 p-6">
@@ -231,6 +233,11 @@ export function CustomizerStudioView() {
             onSetSnapToGrid={builderStore.setSnapToGrid}
             fullWidth
           />
+        </div>
+      ) : isDashboardMode ? (
+        /* Full Dashboard Layout Preview */
+        <div className="relative flex-1 overflow-hidden bg-gradient-to-br from-muted/30 via-background to-muted/20">
+          <DashboardLayoutPreview settings={vm.draft.dashboardSettings} />
         </div>
       ) : (
         /* Standard iframe Preview */
@@ -265,10 +272,12 @@ export function CustomizerStudioView() {
       )}
 
       {/* Auth Page Tabs -- switch between Login / Forgot Password / Reset Password */}
-      <AuthPageTabs
-        activePageId={vm.activeAuthPage}
-        onPageChange={vm.setActiveAuthPage}
-      />
+      {!isDashboardMode && (
+        <AuthPageTabs
+          activePageId={vm.activeAuthPage}
+          onPageChange={vm.setActiveAuthPage}
+        />
+      )}
 
       {/* Top Bar */}
       <PublishBar

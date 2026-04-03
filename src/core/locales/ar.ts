@@ -6477,6 +6477,7 @@ export const ar = {
       showBreadcrumbs: "إظهار مسار التنقل",
       colorTheme: "اللون الأساسي",
       secondaryColor: "اللون الثانوي",
+      preview:"معاينة",
       shadowIntensity: "شدة الظل",
       shadow: { none: "بدون", subtle: "خفيف", moderate: "متوسط", strong: "قوي" },
       backgroundMode: "وضع الخلفية",
