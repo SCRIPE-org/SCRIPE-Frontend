@@ -20,7 +20,7 @@ import { AdvancedPanel } from "./AdvancedPanel";
 import { AccessibilityPanel } from "./AccessibilityPanel";
 import { ThemeMarketplacePanel } from "./ThemeMarketplacePanel";
 import { BuilderPanel } from "./builder/BuilderPanel";
-import { DashboardPanel } from "./DashboardPanel";
+import { DashboardBuilderTab } from "./DashboardBuilderTab";
 import type { DashboardThemeSettings } from "../../domain/entities/StudioDraft";
 import { useI18n } from "@core/providers/i18n-provider";
 
@@ -198,7 +198,7 @@ export function StudioSidebar(props: StudioSidebarProps) {
             <BuilderPanel draft={draft} updateDraft={updateDraft} sidebarOnly={!!props.isBuilderMode} activeAuthPage={activeAuthPage} />
           )}
           {activePanel === "dashboard" && (
-            <DashboardPanel
+            <DashboardBuilderTab
               settings={draft.dashboardSettings}
               onUpdate={handleDashboardUpdate}
             />

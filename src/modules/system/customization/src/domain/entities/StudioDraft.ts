@@ -10,22 +10,175 @@ import type { LoginLayout, SlotConfig } from "@modules/auth/core/domain/entities
 import type { CanvasComponent, CanvasMode, CanvasBackground, PositionMode } from "./CanvasComponent";
 import { DEFAULT_CANVAS_COMPONENTS, DEFAULT_CANVAS_GRID_ROWS, DEFAULT_CANVAS_BACKGROUND, DEFAULT_POSITION_MODE } from "./CanvasComponent";
 
-// Dashboard settings type (must match DashboardPanel's export)
+// Dashboard settings type — full 61 settings matching SettingsProvider schema
 export interface DashboardThemeSettings {
-  theme: "light" | "dark" | "system";
-  language: "en" | "ar";
-  sidebarCollapsed: boolean;
-  colorTheme: string;
+  // ── Section 1: Layout & Structure ──
   layoutTemplate: string;
+  sidebarPosition: "left" | "right";
+  sidebarStyle: string;
+  headerStyle: string;
+  collapsibleSidebar: boolean;
+  showBreadcrumbs: boolean;
+
+  // ── Section 2: Colors & Theme ──
+  colorTheme: string;
+  secondaryColorTheme: string;
+  lightBackgroundTheme: string;
+  darkBackgroundTheme: string;
+  shadowIntensity: string;
+  backgroundMode: "preset" | "gradient" | "custom";
+  gradientDirection: string;
+  lightGradientTheme: string;
+  darkGradientTheme: string;
+  gradientStartColor: string;
+  gradientEndColor: string;
+  customPrimaryColor: string;
+  customSecondaryColor: string;
+  customLightBgColor: string;
+  customDarkBgColor: string;
+  activePalette: string;
+
+  // ── Section 3: Typography & Spacing ──
+  fontSize: string;
+  borderRadius: string;
+  spacingSize: string;
+  compactMode: boolean;
+
+  // ── Section 4: Component Styles ──
+  buttonStyle: string;
+  inputStyle: string;
+  tableStyle: string;
+  badgeStyle: string;
+  avatarStyle: string;
+  formStyle: string;
+  loadingStyle: string;
+  tooltipStyle: string;
+  modalStyle: string;
+  treeStyle: string;
+  datePickerStyle: string;
+  calendarStyle: string;
+  selectStyle: string;
+  switchStyle: string;
+
+  // ── Section 5: Checkbox & Radio ──
+  checkboxStyle: string;
+  radioStyle: string;
+
+  // ── Section 6: Card, Animation & Hover ──
+  cardStyle: string;
+  animationLevel: string;
+  hoverEffectType: string;
+  hoverEffectIntensity: string;
+  reducedMotion: boolean;
+
+  // ── Section 7: Logo & Branding ──
+  logoType: string;
+  logoAnimation: string;
+  logoSize: string;
+  logoText: string;
+  showLogo: boolean;
+
+  // ── Section 8: Navigation & UX ──
+  navigationStyle: string;
+  showUserAvatar: boolean;
+  showNotifications: boolean;
+  stickyHeader: boolean;
+  showFooter: boolean;
+  iconStyle: string;
+  autoSave: boolean;
+  highContrast: boolean;
+  showDetailPanel: boolean;
+
+  // ── Section 9: Toast ──
+  toastStyle: string;
+  showToastIcons: boolean;
+  toastDuration: number;
 }
 
 export const DEFAULT_DASHBOARD_SETTINGS: DashboardThemeSettings = {
-  theme: "system",
-  language: "en",
-  sidebarCollapsed: false,
-  colorTheme: "default",
-  layoutTemplate: "default",
+  // Layout & Structure
+  layoutTemplate: "modern",
+  sidebarPosition: "left",
+  sidebarStyle: "default",
+  headerStyle: "default",
+  collapsibleSidebar: true,
+  showBreadcrumbs: true,
+
+  // Colors & Theme
+  colorTheme: "purple",
+  secondaryColorTheme: "purple",
+  lightBackgroundTheme: "default",
+  darkBackgroundTheme: "default",
+  shadowIntensity: "subtle",
+  backgroundMode: "preset",
+  gradientDirection: "to-br",
+  lightGradientTheme: "none",
+  darkGradientTheme: "none",
+  gradientStartColor: "#3b82f6",
+  gradientEndColor: "#8b5cf6",
+  customPrimaryColor: "#3b82f6",
+  customSecondaryColor: "#64748b",
+  customLightBgColor: "#ffffff",
+  customDarkBgColor: "#0f172a",
+  activePalette: "",
+
+  // Typography & Spacing
+  fontSize: "default",
+  borderRadius: "default",
+  spacingSize: "default",
+  compactMode: false,
+
+  // Component Styles
+  buttonStyle: "default",
+  inputStyle: "default",
+  tableStyle: "default",
+  badgeStyle: "default",
+  avatarStyle: "default",
+  formStyle: "default",
+  loadingStyle: "default",
+  tooltipStyle: "default",
+  modalStyle: "default",
+  treeStyle: "default",
+  datePickerStyle: "default",
+  calendarStyle: "default",
+  selectStyle: "default",
+  switchStyle: "default",
+
+  // Checkbox & Radio
+  checkboxStyle: "default",
+  radioStyle: "default",
+
+  // Card, Animation & Hover
+  cardStyle: "default",
+  animationLevel: "default",
+  hoverEffectType: "default",
+  hoverEffectIntensity: "default",
+  reducedMotion: false,
+
+  // Logo & Branding
+  logoType: "sparkles",
+  logoAnimation: "none",
+  logoSize: "md",
+  logoText: "",
+  showLogo: true,
+
+  // Navigation & UX
+  navigationStyle: "default",
+  showUserAvatar: true,
+  showNotifications: true,
+  stickyHeader: true,
+  showFooter: true,
+  iconStyle: "default",
+  autoSave: true,
+  highContrast: false,
+  showDetailPanel: true,
+
+  // Toast
+  toastStyle: "default",
+  showToastIcons: true,
+  toastDuration: 5000,
 };
+
 
 // ── Auth Page Identifiers ─────────────────────────────
 export type AuthPageId = "login" | "forgot-password" | "reset-password";
