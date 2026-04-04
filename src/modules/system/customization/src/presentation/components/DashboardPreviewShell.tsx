@@ -16,9 +16,8 @@
 "use client";
 
 import { useEffect, useState, useCallback, useMemo } from "react";
-import { useI18n } from "@core/providers/i18n-provider";
-import { SettingsContext, defaultSettings, type Settings } from "@core/providers/settings-provider";
-import type { SettingsContextType } from "@core/providers/settings-provider";
+import { SettingsContext, defaultSettings, createCompatSetters, type Settings, type SettingsContextType } from "@core/providers/settings-provider";
+
 import {
   Users, DollarSign, Activity, Eye, TrendingUp,
   ArrowUpRight, MoreHorizontal,
@@ -112,35 +111,18 @@ export function DashboardPreviewShell() {
   );
 
   // Build a context value with no-op setters (preview is read-only from the layout's perspective)
-  const noop = useCallback(() => {}, []);
+  // Uses createCompatSetters to auto-generate all 61 setXxx methods — no manual listing needed.
+  const noopUpdate = useCallback(<K extends keyof Settings>(_key: K, _value: Settings[K]) => {}, []);
+  const compatSetters = useMemo(() => createCompatSetters(noopUpdate), [noopUpdate]);
   const previewContextValue = useMemo<SettingsContextType>(() => ({
     ...mergedSettings,
-    setColorTheme: noop, setLightBackgroundTheme: noop, setDarkBackgroundTheme: noop,
-    setShadowIntensity: noop, setSecondaryColorTheme: noop, setGradientDirection: noop,
-    setLightGradientTheme: noop, setDarkGradientTheme: noop, setCustomPrimaryColor: noop,
-    setCustomSecondaryColor: noop, setCustomLightBgColor: noop, setCustomDarkBgColor: noop,
-    setActivePalette: noop, setBackgroundMode: noop, setGradientStartColor: noop,
-    setGradientEndColor: noop, setLayoutTemplate: noop, setCardStyle: noop,
-    setAnimationLevel: noop, setFontSize: noop, setShowDetailPanel: noop,
-    setBorderRadius: noop, setSidebarPosition: noop, setHeaderStyle: noop,
-    setSidebarStyle: noop, setButtonStyle: noop, setNavigationStyle: noop,
-    setSpacingSize: noop, setIconStyle: noop, setInputStyle: noop,
-    setTableStyle: noop, setBadgeStyle: noop, setAvatarStyle: noop,
-    setLogoType: noop, setLogoAnimation: noop, setLogoSize: noop, setLogoText: noop,
-    setShowBreadcrumbs: noop, setShowUserAvatar: noop, setShowNotifications: noop,
-    setCompactMode: noop, setHighContrast: noop, setReducedMotion: noop,
-    setStickyHeader: noop, setCollapsibleSidebar: noop, setShowFooter: noop,
-    setAutoSave: noop, setShowLogo: noop, setFormStyle: noop, setLoadingStyle: noop,
-    setTooltipStyle: noop, setModalStyle: noop, setTreeStyle: noop,
-    setDatePickerStyle: noop, setCalendarStyle: noop, setSelectStyle: noop,
-    setSwitchStyle: noop, setCheckboxStyle: noop, setRadioStyle: noop,
-    setToastStyle: noop, setShowToastIcons: noop, setToastDuration: noop,
-    setHoverEffectType: noop, setHoverEffectIntensity: noop,
-    resetSettings: noop,
+    updateSetting: noopUpdate,
+    ...compatSetters,
+    resetSettings: () => {},
     exportSettings: () => "{}",
     importSettings: () => false,
     overrideControl: { allowAdminOverride: true, allowedPaths: null, isSettingLocked: () => false },
-  } as SettingsContextType), [mergedSettings, noop]);
+  }), [mergedSettings, noopUpdate, compatSetters]);
 
   // Apply data-attributes to the iframe's <html> from in-memory settings
   // This is necessary for CSS selectors ([data-theme="blue"]) to work in the preview
