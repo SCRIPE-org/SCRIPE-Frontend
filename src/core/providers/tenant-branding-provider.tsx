@@ -40,6 +40,8 @@ export interface TenantBrandingData {
       // M11: Admin override control — determines which settings admins can customize
       allowAdminThemeOverride: boolean;
       allowedAdminSettingsJson: string | null;
+      // Gap #10: Version for stale-cache detection
+      settingsVersion: number;
 }
 
 export interface TenantBrandingContextValue {
@@ -199,6 +201,8 @@ export function TenantBrandingProvider({ children }: TenantBrandingProviderProps
                         _allowedAdminPaths: branding.allowedAdminSettingsJson
                               ? JSON.parse(branding.allowedAdminSettingsJson)
                               : null,
+                        // Gap #10: Include version so SettingsProvider can detect stale admin caches
+                        _settingsVersion: branding.settingsVersion ?? 0,
                   };
                   localStorage.setItem(STORAGE_KEYS.PREF_DASHBOARD_SETTINGS, JSON.stringify(enrichedDefaults));
 

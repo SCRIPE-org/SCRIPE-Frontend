@@ -15,10 +15,10 @@
  */
 "use client";
 
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
-import { useSettings } from "@core/providers/settings-provider";
-import { STORAGE_KEYS } from "@core/config/storage-keys";
+import { SettingsContext, defaultSettings, type Settings } from "@core/providers/settings-provider";
+import type { SettingsContextType } from "@core/providers/settings-provider";
 import {
   Users, DollarSign, Activity, Eye, TrendingUp,
   ArrowUpRight, MoreHorizontal,
@@ -99,32 +99,91 @@ const VALID_SETTINGS_KEYS = new Set([
 ]);
 
 export function DashboardPreviewShell() {
-  const settings = useSettings();
+  // Gap #1/#11/#12 fix: Preview settings are maintained ENTIRELY in-memory.
+  // No localStorage writes, no events, no auto-save triggers.
+  // The parent window's SettingsProvider is completely unaffected.
+  const [previewOverrides, setPreviewOverrides] = useState<Partial<Settings>>({});
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
-  // ── Save original localStorage values and restore on unmount ──
-  const originalDashboardSettings = useRef<string | null>(null);
-  const hasInitialized = useRef(false);
+  // Merge defaults with whatever the studio has sent via postMessage
+  const mergedSettings = useMemo<Settings>(
+    () => ({ ...defaultSettings, ...previewOverrides }),
+    [previewOverrides]
+  );
 
+  // Build a context value with no-op setters (preview is read-only from the layout's perspective)
+  const noop = useCallback(() => {}, []);
+  const previewContextValue = useMemo<SettingsContextType>(() => ({
+    ...mergedSettings,
+    setColorTheme: noop, setLightBackgroundTheme: noop, setDarkBackgroundTheme: noop,
+    setShadowIntensity: noop, setSecondaryColorTheme: noop, setGradientDirection: noop,
+    setLightGradientTheme: noop, setDarkGradientTheme: noop, setCustomPrimaryColor: noop,
+    setCustomSecondaryColor: noop, setCustomLightBgColor: noop, setCustomDarkBgColor: noop,
+    setActivePalette: noop, setBackgroundMode: noop, setGradientStartColor: noop,
+    setGradientEndColor: noop, setLayoutTemplate: noop, setCardStyle: noop,
+    setAnimationLevel: noop, setFontSize: noop, setShowDetailPanel: noop,
+    setBorderRadius: noop, setSidebarPosition: noop, setHeaderStyle: noop,
+    setSidebarStyle: noop, setButtonStyle: noop, setNavigationStyle: noop,
+    setSpacingSize: noop, setIconStyle: noop, setInputStyle: noop,
+    setTableStyle: noop, setBadgeStyle: noop, setAvatarStyle: noop,
+    setLogoType: noop, setLogoAnimation: noop, setLogoSize: noop, setLogoText: noop,
+    setShowBreadcrumbs: noop, setShowUserAvatar: noop, setShowNotifications: noop,
+    setCompactMode: noop, setHighContrast: noop, setReducedMotion: noop,
+    setStickyHeader: noop, setCollapsibleSidebar: noop, setShowFooter: noop,
+    setAutoSave: noop, setShowLogo: noop, setFormStyle: noop, setLoadingStyle: noop,
+    setTooltipStyle: noop, setModalStyle: noop, setTreeStyle: noop,
+    setDatePickerStyle: noop, setCalendarStyle: noop, setSelectStyle: noop,
+    setSwitchStyle: noop, setCheckboxStyle: noop, setRadioStyle: noop,
+    setToastStyle: noop, setShowToastIcons: noop, setToastDuration: noop,
+    setHoverEffectType: noop, setHoverEffectIntensity: noop,
+    resetSettings: noop,
+    exportSettings: () => "{}",
+    importSettings: () => false,
+    overrideControl: { allowAdminOverride: true, allowedPaths: null, isSettingLocked: () => false },
+  } as SettingsContextType), [mergedSettings, noop]);
+
+  // Apply data-attributes to the iframe's <html> from in-memory settings
+  // This is necessary for CSS selectors ([data-theme="blue"]) to work in the preview
   useEffect(() => {
-    // Save the original DASHBOARD_SETTINGS value before any preview writes
-    if (!hasInitialized.current) {
-      originalDashboardSettings.current = localStorage.getItem(STORAGE_KEYS.DASHBOARD_SETTINGS);
-      hasInitialized.current = true;
-    }
+    if (typeof document === "undefined") return;
+    const root = document.documentElement;
+    requestAnimationFrame(() => {
+      root.setAttribute("data-theme", mergedSettings.colorTheme);
+      root.setAttribute("data-light-bg-theme", mergedSettings.lightBackgroundTheme);
+      root.setAttribute("data-dark-bg-theme", mergedSettings.darkBackgroundTheme);
+      root.setAttribute("data-shadow", mergedSettings.shadowIntensity);
+      root.setAttribute("data-layout", mergedSettings.layoutTemplate);
+      root.setAttribute("data-card-style", mergedSettings.cardStyle);
+      root.setAttribute("data-animation", mergedSettings.animationLevel);
+      root.setAttribute("data-font-size", mergedSettings.fontSize);
+      root.setAttribute("data-radius", mergedSettings.borderRadius);
+      root.setAttribute("data-sidebar-position", mergedSettings.sidebarPosition);
+      root.setAttribute("data-header-style", mergedSettings.headerStyle);
+      root.setAttribute("data-sidebar-style", mergedSettings.sidebarStyle);
+      root.setAttribute("data-button-style", mergedSettings.buttonStyle);
+      root.setAttribute("data-navigation-style", mergedSettings.navigationStyle);
+      root.setAttribute("data-spacing", mergedSettings.spacingSize);
+      root.setAttribute("data-icon-style", mergedSettings.iconStyle);
+      root.setAttribute("data-input-style", mergedSettings.inputStyle);
+      root.setAttribute("data-table-style", mergedSettings.tableStyle);
+      root.setAttribute("data-badge-style", mergedSettings.badgeStyle);
+      root.setAttribute("data-avatar-style", mergedSettings.avatarStyle);
+      root.setAttribute("data-secondary-theme", mergedSettings.secondaryColorTheme);
+      root.setAttribute("data-gradient-dir", mergedSettings.gradientDirection);
+      root.setAttribute("data-light-gradient", mergedSettings.lightGradientTheme);
+      root.setAttribute("data-dark-gradient", mergedSettings.darkGradientTheme);
+      root.setAttribute("data-compact-mode", mergedSettings.compactMode.toString());
+      root.setAttribute("data-form-style", mergedSettings.formStyle);
+      root.setAttribute("data-loading-style", mergedSettings.loadingStyle);
+      root.setAttribute("data-tooltip-style", mergedSettings.tooltipStyle);
+      root.setAttribute("data-modal-style", mergedSettings.modalStyle);
+      root.setAttribute("data-tree-style", mergedSettings.treeStyle);
+      root.setAttribute("data-hover-effect-type", mergedSettings.hoverEffectType);
+      root.setAttribute("data-hover-effect-intensity", mergedSettings.hoverEffectIntensity);
+    });
+  }, [mergedSettings]);
 
-    return () => {
-      // ── CLEANUP: Restore original value when preview closes ──
-      // This prevents preview changes from leaking into the live dashboard.
-      if (originalDashboardSettings.current !== null) {
-        localStorage.setItem(STORAGE_KEYS.DASHBOARD_SETTINGS, originalDashboardSettings.current);
-      } else {
-        localStorage.removeItem(STORAGE_KEYS.DASHBOARD_SETTINGS);
-      }
-    };
-  }, []);
-
-  // ── Listen for postMessage from studio parent ──
+  // Listen for postMessage from studio parent — update in-memory state only
   useEffect(() => {
     // Signal to studio that preview is ready
     window.parent?.postMessage({ type: "DASHBOARD_PREVIEW_READY" }, window.location.origin);
@@ -142,23 +201,8 @@ export function DashboardPreviewShell() {
         );
         if (Object.keys(newSettings).length === 0) return;
 
-        try {
-          // ── ISOLATED PREVIEW WRITES ──
-          // We write to DASHBOARD_SETTINGS so this iframe's SettingsProvider picks
-          // it up during re-merge. This is safe because:
-          // 1. window.dispatchEvent does NOT cross iframe boundaries
-          // 2. The parent window's SettingsProvider won't re-merge from this event
-          // 3. On cleanup (unmount), we restore the original value (see above)
-          const existing = localStorage.getItem(STORAGE_KEYS.DASHBOARD_SETTINGS);
-          const current = existing ? JSON.parse(existing) : {};
-          const merged = { ...current, ...newSettings };
-          localStorage.setItem(STORAGE_KEYS.DASHBOARD_SETTINGS, JSON.stringify(merged));
-
-          // Trigger re-merge ONLY in this iframe's SettingsProvider
-          window.dispatchEvent(new Event("admin-settings-loaded"));
-        } catch (err) {
-          console.error("[DashboardPreviewShell] Failed to apply settings:", err);
-        }
+        // Update in-memory state only — NO localStorage, NO events
+        setPreviewOverrides((prev) => ({ ...prev, ...newSettings }));
       }
     };
 
@@ -166,8 +210,8 @@ export function DashboardPreviewShell() {
     return () => window.removeEventListener("message", handler);
   }, []);
 
-  // ── Render the correct layout based on settings.layoutTemplate ──
-  const layoutTemplate = settings.layoutTemplate;
+  // Render the correct layout, wrapped in an isolated SettingsContext
+  const layoutTemplate = mergedSettings.layoutTemplate;
   const content = <MockDashboardContent />;
 
   const withSidebar = (Layout: React.ComponentType<{ children: React.ReactNode; sidebarOpen: boolean; onSidebarOpenChange: (open: boolean) => void }>) => (
@@ -237,7 +281,13 @@ export function DashboardPreviewShell() {
     }
   };
 
-  return renderLayout();
+  // Wrap in isolated SettingsContext — layout components inside read from THIS
+  // provider, not the global one from AppProvider. Zero localStorage interaction.
+  return (
+    <SettingsContext.Provider value={previewContextValue}>
+      {renderLayout()}
+    </SettingsContext.Provider>
+  );
 }
 
 

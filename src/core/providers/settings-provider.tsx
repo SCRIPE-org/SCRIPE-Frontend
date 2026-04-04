@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { createContext, useContext, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { appLogger } from "@core/common/logger";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
 import { useAppStore } from "@core/store/useAppStore";
@@ -504,7 +504,7 @@ export interface Settings {
 /**
  * Settings context interface
  */
-interface SettingsContextType extends Settings {
+export interface SettingsContextType extends Settings {
   // Setters for all settings
   setColorTheme: (theme: ColorTheme) => void;
   setLightBackgroundTheme: (theme: LightBackgroundTheme) => void;
@@ -748,7 +748,12 @@ function createFallbackSettings(): Partial<SettingsContextType> {
   };
 }
 
-const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
+// Exported so SettingsOverrideProvider (used by DashboardPreviewShell) can create
+// an isolated context scope without touching localStorage.
+export const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
+
+// Exported so preview shells and tests can reference the canonical defaults.
+export { defaultSettings };
 
 /**
  * Settings Provider Component
@@ -765,8 +770,16 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   //   Layer 1: Platform defaults (defaultSettings — hardcoded above)
   //   Layer 3: Tenant defaults (PREF_DASHBOARD_SETTINGS — synced from DashboardThemeJson by TenantBrandingProvider)
   //   Layer 4: Admin overrides (DASHBOARD_SETTINGS — server-synced via useAdminSettingsSync → localStorage cache)
-  // M11: Override control state — stored outside merge so context can expose it
-  const overrideControlRef = useRef({ allowAdminOverride: true, allowedPaths: null as string[] | null });
+  // M11: Override control state — uses useState (not ref) so context re-computes when it changes (Gap #8 fix)
+  const [overrideControl, setOverrideControl] = useState<{ allowAdminOverride: boolean; allowedPaths: string[] | null }>({
+    allowAdminOverride: true,
+    allowedPaths: null,
+  });
+
+  // Gap #2/#7 fix: Track whether we're inside a merge operation. When true, the auto-save
+  // effect is suppressed to prevent merge-triggered state changes from writing back to
+  // localStorage and syncing preview/reconciliation data to the server.
+  const isMergingRef = useRef(false);
 
   const mergeAndApplySettings = () => {
     try {
@@ -774,6 +787,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       let tenantDefaults: Partial<Settings> = {};
       let allowAdminOverride = true; // default true for backward compat
       let allowedPaths: string[] | null = null;
+      let tenantVersion = 0; // Gap #10: tenant settings version for stale-cache detection
 
       const tenantSettingsRaw = localStorage.getItem(STORAGE_KEYS.PREF_DASHBOARD_SETTINGS);
       if (tenantSettingsRaw) {
@@ -781,12 +795,13 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
           const parsed = JSON.parse(tenantSettingsRaw);
           // Extract only valid Settings keys (ignore basic prefs like theme/language/sidebarCollapsed)
           const { theme, language, sidebarCollapsed, _schemaVersion,
-                  _allowAdminOverride, _allowedAdminPaths, ...dashboardSettings } = parsed;
+                  _allowAdminOverride, _allowedAdminPaths, _settingsVersion, ...dashboardSettings } = parsed;
           tenantDefaults = dashboardSettings;
+          tenantVersion = _settingsVersion ?? 0;
           if (_allowAdminOverride !== undefined) allowAdminOverride = _allowAdminOverride;
           if (_allowedAdminPaths) allowedPaths = _allowedAdminPaths;
-          // Persist to ref so context consumers can read it
-          overrideControlRef.current = { allowAdminOverride, allowedPaths };
+          // Persist to state so useMemo re-computes when override control changes (Gap #8)
+          setOverrideControl({ allowAdminOverride, allowedPaths });
         } catch { /* invalid tenant JSON — skip */ }
       }
 
@@ -797,7 +812,14 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
         if (adminSettingsRaw) {
           try {
             const fullOverrides = JSON.parse(adminSettingsRaw);
-            if (allowedPaths && allowedPaths.length > 0) {
+            // Gap #10: Version comparison — if tenant settings were republished
+            // (version bumped), the admin cache is stale and should be discarded.
+            const adminBasedOnVersion = fullOverrides._basedOnVersion ?? 0;
+            if (tenantVersion > adminBasedOnVersion) {
+              // Tenant settings are newer — clear stale admin cache
+              appLogger.info(`[SettingsProvider] Tenant version ${tenantVersion} > admin cache version ${adminBasedOnVersion}, discarding stale admin overrides`);
+              localStorage.removeItem(STORAGE_KEYS.DASHBOARD_SETTINGS);
+            } else if (allowedPaths && allowedPaths.length > 0) {
               // FILTERED: only whitelisted paths can override
               for (const path of allowedPaths) {
                 if (path in fullOverrides) {
@@ -813,11 +835,15 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       }
 
       // Final merge: Layer 1 → Layer 3 → Layer 4
+      // Wrap in isMerging flag so auto-save effect ignores this state change
+      isMergingRef.current = true;
       setSettings({ ...defaultSettings, ...tenantDefaults, ...adminOverrides });
     } catch (error) {
       appLogger.error("Failed to load settings:", error);
     } finally {
       setIsHydrated(true);
+      // Clear merging flag on next microtask (after React batches the state update)
+      queueMicrotask(() => { isMergingRef.current = false; });
     }
   };
 
@@ -843,9 +869,12 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
 
   // Fix #5: Reset settings to platform defaults when user logs out
   // This prevents stale tenant colors/layout from persisting after logout
+  // Uses isMerging flag so the auto-save effect won't re-create the deleted localStorage key
   useEffect(() => {
     if (!isAuthenticated && isHydrated) {
+      isMergingRef.current = true;
       setSettings(defaultSettings);
+      queueMicrotask(() => { isMergingRef.current = false; });
     }
   }, [isAuthenticated, isHydrated]);
 
@@ -853,10 +882,20 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   const lastChangedFieldRef = useRef<string | null>(null);
 
   // Save settings to localStorage + dispatch change event for useAdminSettingsSync
+  // Gap #2 fix: Suppressed during merges (isMergingRef) to prevent preview/reconciliation data from leaking
+  // Gap #7 fix: Suppressed when not authenticated to prevent re-creating deleted localStorage keys after logout
   useEffect(() => {
-    if (isHydrated && settings.autoSave) {
+    if (isHydrated && isAuthenticated && settings.autoSave && !isMergingRef.current) {
       try {
-        localStorage.setItem(STORAGE_KEYS.DASHBOARD_SETTINGS, JSON.stringify(settings));
+        // Gap #10: Stamp the admin cache with the tenant version it was based on
+        // so future merges can detect stale caches after tenant republish.
+        let basedOnVersion = 0;
+        try {
+          const prefRaw = localStorage.getItem(STORAGE_KEYS.PREF_DASHBOARD_SETTINGS);
+          if (prefRaw) basedOnVersion = JSON.parse(prefRaw)?._settingsVersion ?? 0;
+        } catch { /* ignore */ }
+        const toSave = { ...settings, _basedOnVersion: basedOnVersion };
+        localStorage.setItem(STORAGE_KEYS.DASHBOARD_SETTINGS, JSON.stringify(toSave));
         // M11: Include which specific field changed — used by useAdminSettingsSync for 409 field-level merge
         window.dispatchEvent(new CustomEvent('settings-changed', {
           detail: { changedField: lastChangedFieldRef.current }
@@ -867,7 +906,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
         appLogger.error("Failed to save settings:", error);
       }
     }
-  }, [settings, isHydrated, settings.autoSave]);
+  }, [settings, isHydrated, isAuthenticated, settings.autoSave]);
 
   // Apply settings to document root
   useEffect(() => {
@@ -1051,29 +1090,55 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     }
   }, [settings, isHydrated]);
 
-  // Generic update function — M11: also tracks which field changed for 409 merge
-  const updateSetting = <K extends keyof Settings>(key: K, value: Settings[K]) => {
+  // Generic update function — stable via useCallback (Gap #14)
+  // M11: also tracks which field changed for 409 merge
+  const updateSetting = useCallback(<K extends keyof Settings>(key: K, value: Settings[K]) => {
     lastChangedFieldRef.current = key;
     setSettings((prev) => ({ ...prev, [key]: value }));
-  };
+  }, []);
 
-  const resetSettings = () => {
-    setSettings(defaultSettings);
-  };
+  // Gap #9 fix: resetSettings respects tenant locks — resets only unlocked fields
+  const resetSettings = useCallback(() => {
+    setSettings((prev) => {
+      const reset = { ...defaultSettings };
+      const { allowAdminOverride, allowedPaths } = overrideControl;
+      if (!allowAdminOverride) return prev; // all locked, can't reset
+      if (allowedPaths && allowedPaths.length > 0) {
+        // Only reset fields in the whitelist; keep locked fields from prev
+        const result = { ...prev };
+        for (const path of allowedPaths) {
+          if (path in reset) {
+            (result as Record<string, unknown>)[path] = (reset as Record<string, unknown>)[path];
+          }
+        }
+        return result;
+      }
+      return reset;
+    });
+  }, [overrideControl]);
 
-  const exportSettings = () => {
+  const exportSettings = useCallback(() => {
     return JSON.stringify(settings, null, 2);
-  };
+  }, [settings]);
 
-  const importSettings = (settingsString: string): boolean => {
+  // Gap #9 fix: importSettings filters out locked fields
+  const importSettings = useCallback((settingsString: string): boolean => {
     try {
       const parsed = JSON.parse(settingsString);
-      setSettings({ ...defaultSettings, ...parsed });
+      const { allowAdminOverride, allowedPaths } = overrideControl;
+      if (!allowAdminOverride) return false; // all locked
+      let filtered = parsed;
+      if (allowedPaths && allowedPaths.length > 0) {
+        filtered = Object.fromEntries(
+          Object.entries(parsed).filter(([k]) => allowedPaths.includes(k))
+        );
+      }
+      setSettings((prev) => ({ ...prev, ...defaultSettings, ...filtered }));
       return true;
     } catch {
       return false;
     }
-  };
+  }, [overrideControl]);
 
   // Memoize context value to prevent unnecessary re-renders of all consumers
   const contextValue = useMemo<SettingsContextType>(() => ({
@@ -1146,19 +1211,17 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     exportSettings,
     importSettings,
     overrideControl: {
-      allowAdminOverride: overrideControlRef.current.allowAdminOverride,
-      allowedPaths: overrideControlRef.current.allowedPaths,
+      allowAdminOverride: overrideControl.allowAdminOverride,
+      allowedPaths: overrideControl.allowedPaths,
       isSettingLocked: (key: string) => {
-        const { allowAdminOverride, allowedPaths } = overrideControlRef.current;
-        if (!allowAdminOverride) return true; // all settings locked
-        if (allowedPaths && allowedPaths.length > 0) {
-          return !allowedPaths.includes(key); // locked if NOT in whitelist
+        if (!overrideControl.allowAdminOverride) return true;
+        if (overrideControl.allowedPaths && overrideControl.allowedPaths.length > 0) {
+          return !overrideControl.allowedPaths.includes(key);
         }
-        return false; // no restrictions
+        return false;
       },
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }), [settings]);
+  }), [settings, overrideControl, resetSettings, exportSettings, importSettings, updateSetting]);
 
   // Don't render until hydrated to prevent hydration mismatches
   if (!isHydrated) {

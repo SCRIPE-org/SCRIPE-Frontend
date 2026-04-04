@@ -112,7 +112,10 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
     const slotRaw = brandingData.slotConfigJson || (brandingData as any).slotConfigJson;
 
     // Dashboard settings come from the separate dashboardThemeJson field, NOT from loginBrandingJson
-    const dashboardThemeRaw = (brandingData as any).dashboardThemeJson;
+    // Gap #5: Prefer draft dashboard theme (if exists and useDraft) over published version
+    const draftDashboardRaw = useDraft && (brandingData as any).draftDashboardThemeJson;
+    const liveDashboardRaw = (brandingData as any).dashboardThemeJson;
+    const dashboardThemeRaw = draftDashboardRaw || liveDashboardRaw;
     const dashboardTheme = dashboardThemeRaw ? JSON.parse(dashboardThemeRaw) : null;
 
     return {
@@ -565,13 +568,13 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
     autoSaveTimerRef.current = setTimeout(async () => {
       try {
         const draftJson = buildDraftJson();
-        const dashboardThemeJson = JSON.stringify(draft.dashboardSettings);
+        const draftDashboardThemeJson = JSON.stringify(draft.dashboardSettings);
         if (targetTenantId) {
           // Drilldown: save draft to specific tenant via repository
-          await repository.updateTenantSettingsById(targetTenantId, { draftBrandingJson: draftJson, dashboardThemeJson });
+          await repository.updateTenantSettingsById(targetTenantId, { draftBrandingJson: draftJson, draftDashboardThemeJson });
         } else {
           // My tenant via repository
-          await repository.updateMySettings({ draftBrandingJson: draftJson, dashboardThemeJson });
+          await repository.updateMySettings({ draftBrandingJson: draftJson, draftDashboardThemeJson });
         }
         setLastSavedAt(new Date());
       } catch {
@@ -588,17 +591,19 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
   const publishMutation = useMutation({
     mutationFn: async () => {
       const draftJson = buildDraftJson();
-      const dashboardThemeJson = JSON.stringify(draft.dashboardSettings);
+      const draftDashboardThemeJson = JSON.stringify(draft.dashboardSettings);
       if (targetTenantId) {
         // Drilldown: save draft then publish to specific tenant via repository
+        // For drilldown, we write directly to live fields since there's no publish endpoint per-tenant
         await repository.updateTenantSettingsById(targetTenantId, {
           draftBrandingJson: draftJson,
           loginBrandingJson: draftJson, // Publish = copy draft to live
-          dashboardThemeJson,           // Dashboard settings to separate field
+          dashboardThemeJson: draftDashboardThemeJson, // Also write to live
+          draftDashboardThemeJson: null, // Clear draft
         });
       } else {
-        // My tenant via repository — save draft + dashboard settings, then publish login branding
-        await repository.updateMySettings({ draftBrandingJson: draftJson, dashboardThemeJson });
+        // My tenant via repository — save draft dashboard, then publish (backend promotes draft→live)
+        await repository.updateMySettings({ draftBrandingJson: draftJson, draftDashboardThemeJson });
         const currentVersion = (branding as any)?.settingsVersion ?? 0;
         await repository.publishBranding(currentVersion);
       }
@@ -624,11 +629,11 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
   const saveDraftMutation = useMutation({
     mutationFn: async () => {
       const draftJson = buildDraftJson();
-      const dashboardThemeJson = JSON.stringify(draft.dashboardSettings);
+      const draftDashboardThemeJson = JSON.stringify(draft.dashboardSettings);
       if (targetTenantId) {
-        await repository.updateTenantSettingsById(targetTenantId, { draftBrandingJson: draftJson, dashboardThemeJson });
+        await repository.updateTenantSettingsById(targetTenantId, { draftBrandingJson: draftJson, draftDashboardThemeJson });
       } else {
-        await repository.updateMySettings({ draftBrandingJson: draftJson, dashboardThemeJson });
+        await repository.updateMySettings({ draftBrandingJson: draftJson, draftDashboardThemeJson });
       }
     },
     onSuccess: () => {
