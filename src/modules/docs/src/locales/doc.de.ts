@@ -854,6 +854,41 @@ export const docDe: PartialDocTranslations = {
                   archIntro: "Der Login Customizer folgt der standardmäßigen modularen Clean Architecture von NEXORA mit Domain-, Daten- und Präsentationsschichten, einschließlich AccessibilityPanel für WCAG-Einstellungen und -Profile.",
                   archTip: "Die Komponenten BgControls und PresetDots sind absichtlich auf Modulebene definiert (nicht inline), um zu verhindern, dass React Eingabefelder während des Re-Renderings entfernt/neu montiert.",
             },
+
+            // Dashboard Builder
+            dashboardBuilder: {
+                  title: "Dashboard-Builder",
+                  description: "Server-synchronisierte Admin-Einstellungen mit 4-Schichten-Merge-Engine, 61 konfigurierbaren Einstellungen, FOUC-Prävention, 409-Konfliktlösung und editionsbasierter Feature-Kontrolle.",
+                  intro: "Der Dashboard-Builder ist NEXORAs Enterprise-Klasse Admin-Präferenzsystem, das 61 konfigurierbare Dashboard-Einstellungen zwischen Browser und Server synchronisiert. Es verwendet eine 4-Schichten-Merge-Engine (Plattform → Mandant → Admin → Laufzeit) zur Auflösung von Einstellungen mit mandantenbasierter Override-Kontrolle, geräteübergreifender Persistenz über AdminSettingsJson und 5 Edge-Case-Schutzmaßnahmen.",
+
+                  overviewTitle: "Systemübersicht",
+                  overviewIntro: "Der Dashboard-Builder bietet einen vollständigen Lebenszyklus für Admin-Einstellungen — von sofortigem Cache-First-Rendering bis hin zur Hintergrund-Serverabstimmung.",
+                  overviewTip: "Einstellungen werden sofort aus dem localStorage-Cache beim Seitenaufruf gerendert. Der Server-Abruf erfolgt im Hintergrund.",
+
+                  mergeEngineTitle: "4-Schichten-Merge-Engine",
+                  mergeEngineIntro: "Einstellungen folgen einer strengen 4-Schichten-Prioritätskette. Jede Schicht kann die vorherige überschreiben, mit optionaler pfadbasierter Zugriffskontrolle auf Mandantenebene.",
+                  mergeEngineNote: "Schicht 2 (Editions-Einschränkungen) wird serverseitig über die FeatureCheckBehavior-Pipeline behandelt.",
+
+                  syncHookTitle: "Server-Sync-Hook",
+                  syncHookIntro: "Der useAdminSettingsSync-Hook verwaltet den kompletten Lebenszyklus der Admin-Einstellungen: Erstladen aus dem Cache, verzögertes Flushing, Hintergrund-Server-Abruf und stille Abstimmung.",
+
+                  edgeCasesTitle: "Edge-Case-Schutzmaßnahmen",
+                  edgeCasesIntro: "Das Sync-System behandelt 5 kritische Edge Cases, die in Enterprise-Umgebungen häufig auftreten.",
+                  edgeCasesWarning: "Der PENDING_SETTINGS_FLUSH-Schlüssel überlebt absichtlich das Logout, um Einstellungen beim nächsten Login zu flushen.",
+
+                  settingsRefTitle: "Einstellungsreferenz (61 Einstellungen)",
+                  settingsRefIntro: "Alle 61 Einstellungen sind in 9 Abschnitte organisiert. Jede Einstellung hat einen definierten Typ, Standardwert, DOM-Datenattribut und optionale Editions-Kontrolle.",
+
+                  overrideControlTitle: "Admin-Override-Kontrolle",
+                  overrideControlIntro: "Mandantenadministratoren können steuern, welche Einstellungen einzelne Admins anpassen dürfen.",
+
+                  securityTitle: "Sicherheitsmodell",
+                  securityIntro: "Der Dashboard-Builder implementiert Defense-in-Depth-Sicherheit, um Datenlecks zwischen Admins und Payload-Überläufe zu verhindern.",
+
+                  archTitle: "Architektur & Dateiübersicht",
+                  archIntro: "Der Dashboard-Builder ist über 7 Dateien in der Core-Schicht implementiert und folgt NEXORAs Provider-basiertem Architekturmuster.",
+                  archTip: "Um eine neue Einstellung hinzuzufügen, erweitern Sie die Settings-Schnittstelle und defaultSettings in settings-provider.tsx.",
+            },
       },
 
       // 🛡️ SECURITY

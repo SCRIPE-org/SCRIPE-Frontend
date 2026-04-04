@@ -855,6 +855,41 @@ export const docFr: PartialDocTranslations = {
                   archIntro: "Le Personnalisateur de Login suit l'architecture modulaire propre standard de NEXORA avec les couches domaine, données et présentation. La couche présentation contient le composant StylePanel (UI de configuration), LoginPreviewShell (gestion de l'iframe), le AccessibilityPanel (paramètres et profils WCAG) et le hook useLoginBrandingTokens (pipeline token-vers-CSS). Les composants sont extraits au niveau du module pour prévenir les problèmes de perte de focus lors des re-rendus React.",
                   archTip: "Les composants BgControls et PresetDots sont intentionnellement définis au niveau du module (pas en ligne) pour empêcher React de démonter/remonter les champs de saisie lors des re-rendus, ce qui causerait une perte de focus à chaque frappe.",
             },
+
+            // Dashboard Builder
+            dashboardBuilder: {
+                  title: "Constructeur de Tableau de Bord",
+                  description: "Préférences admin synchronisées avec le serveur via un moteur de fusion 4 couches, 61 paramètres configurables, prévention FOUC, résolution de conflits 409 et contrôle de fonctionnalités basé sur les éditions.",
+                  intro: "Le Constructeur de Tableau de Bord est le système de préférences d'administration de niveau entreprise de NEXORA. Il synchronise 61 paramètres de tableau de bord configurables entre le navigateur et le serveur, utilisant un moteur de fusion à 4 couches (Plateforme → Locataire → Admin → Exécution) pour la résolution des paramètres avec contrôle de remplacement basé sur le locataire, persistance inter-appareils via AdminSettingsJson et 5 protections contre les cas limites.",
+
+                  overviewTitle: "Vue d'Ensemble du Système",
+                  overviewIntro: "Le Constructeur de Tableau de Bord fournit un cycle de vie complet pour les préférences d'administration — du rendu immédiat depuis le cache à la réconciliation en arrière-plan avec le serveur.",
+                  overviewTip: "Les paramètres sont rendus immédiatement depuis le cache localStorage au chargement de la page. La récupération depuis le serveur s'effectue en arrière-plan.",
+
+                  mergeEngineTitle: "Moteur de Fusion à 4 Couches",
+                  mergeEngineIntro: "Les paramètres suivent une chaîne de priorité stricte à 4 couches. Chaque couche peut remplacer la précédente, avec un contrôle d'accès optionnel basé sur les chemins au niveau du locataire.",
+                  mergeEngineNote: "La Couche 2 (Restrictions d'Édition) est gérée côté serveur via le pipeline FeatureCheckBehavior.",
+
+                  syncHookTitle: "Hook de Synchronisation Serveur",
+                  syncHookIntro: "Le hook useAdminSettingsSync gère le cycle de vie complet des préférences d'administration : chargement initial depuis le cache, flush différé, récupération serveur en arrière-plan et réconciliation silencieuse.",
+
+                  edgeCasesTitle: "Protections contre les Cas Limites",
+                  edgeCasesIntro: "Le système de synchronisation gère 5 cas limites critiques couramment rencontrés dans les environnements d'entreprise.",
+                  edgeCasesWarning: "La clé PENDING_SETTINGS_FLUSH survit intentionnellement à la déconnexion pour effectuer le flush des paramètres lors de la prochaine connexion.",
+
+                  settingsRefTitle: "Référence des Paramètres (61 Paramètres)",
+                  settingsRefIntro: "Les 61 paramètres sont organisés en 9 sections. Chaque paramètre a un type défini, une valeur par défaut, un attribut de données DOM et un contrôle d'édition optionnel.",
+
+                  overrideControlTitle: "Contrôle de Remplacement Admin",
+                  overrideControlIntro: "Les administrateurs de locataires peuvent contrôler quels paramètres les administrateurs individuels peuvent personnaliser.",
+
+                  securityTitle: "Modèle de Sécurité",
+                  securityIntro: "Le Constructeur de Tableau de Bord implémente une sécurité de défense en profondeur pour prévenir les fuites de données entre administrateurs et les dépassements de charge utile.",
+
+                  archTitle: "Architecture et Cartographie des Fichiers",
+                  archIntro: "Le Constructeur de Tableau de Bord est implémenté en 7 fichiers dans la couche Core, suivant le modèle d'architecture basé sur les fournisseurs de NEXORA.",
+                  archTip: "Pour ajouter un nouveau paramètre, étendez l'interface Settings et defaultSettings dans settings-provider.tsx.",
+            },
       },
 
       // 🛡️ SECURITY

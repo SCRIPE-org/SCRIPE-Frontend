@@ -227,5 +227,5 @@ registerPage({
       order: 19,
       sections,
       relatedSlugs: ["features/login-customizer", "features/theme-marketplace", "features/login-page-builder"],
-      lastUpdated: "2026-04-02",
+      lastUpdated: "2026-04-05",
 });

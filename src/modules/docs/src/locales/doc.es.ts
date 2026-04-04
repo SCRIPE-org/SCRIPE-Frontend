@@ -855,6 +855,41 @@ export const docEs: PartialDocTranslations = {
                   archIntro: "El Personalizador de Login sigue la arquitectura modular limpia estándar de NEXORA con capas de dominio, datos y presentación. La capa de presentación contiene el componente StylePanel (UI de configuración), LoginPreviewShell (gestión de iframe), el AccessibilityPanel (configuraciones y perfiles WCAG) y el hook useLoginBrandingTokens (pipeline token-a-CSS). Los componentes se extraen a nivel de módulo para prevenir problemas de pérdida de enfoque en re-renderizados React.",
                   archTip: "Los componentes BgControls y PresetDots están definidos intencionalmente a nivel de módulo (no en línea) para evitar que React desmonte/remonte campos de entrada durante los re-renderizados, lo que causaría pérdida de enfoque en cada pulsación de tecla.",
             },
+
+            // Dashboard Builder
+            dashboardBuilder: {
+                  title: "Constructor de Dashboard",
+                  description: "Preferencias de administrador sincronizadas con el servidor con motor de fusión de 4 capas, 61 ajustes configurables, prevención de FOUC, resolución de conflictos 409 y control de características basado en ediciones.",
+                  intro: "El Constructor de Dashboard es el sistema de preferencias de administrador de nivel empresarial de NEXORA que sincroniza 61 ajustes de dashboard configurables entre el navegador y el servidor. Utiliza un motor de fusión de 4 capas (Plataforma → Inquilino → Admin → Tiempo de ejecución) para la resolución de ajustes con control de anulación basado en inquilino, persistencia entre dispositivos a través de AdminSettingsJson y 5 protecciones contra casos extremos.",
+
+                  overviewTitle: "Visión General del Sistema",
+                  overviewIntro: "El Constructor de Dashboard proporciona un ciclo de vida completo para las preferencias del administrador — desde el renderizado inmediato cache-first hasta la reconciliación en segundo plano con el servidor.",
+                  overviewTip: "Los ajustes se renderizan inmediatamente desde la caché de localStorage al cargar la página. La obtención del servidor ocurre en segundo plano.",
+
+                  mergeEngineTitle: "Motor de Fusión de 4 Capas",
+                  mergeEngineIntro: "Los ajustes siguen una cadena de prioridad estricta de 4 capas. Cada capa puede anular la anterior, con control de acceso opcional basado en rutas a nivel de inquilino.",
+                  mergeEngineNote: "La Capa 2 (Restricciones de Edición) se maneja del lado del servidor a través del pipeline FeatureCheckBehavior.",
+
+                  syncHookTitle: "Hook de Sincronización con el Servidor",
+                  syncHookIntro: "El hook useAdminSettingsSync gestiona el ciclo de vida completo de las preferencias del administrador: carga inicial desde caché, flush diferido, obtención del servidor en segundo plano y reconciliación silenciosa.",
+
+                  edgeCasesTitle: "Protecciones contra Casos Extremos",
+                  edgeCasesIntro: "El sistema de sincronización maneja 5 casos extremos críticos que ocurren comúnmente en entornos empresariales.",
+                  edgeCasesWarning: "La clave PENDING_SETTINGS_FLUSH sobrevive intencionalmente al cierre de sesión para realizar el flush de ajustes en el próximo inicio de sesión.",
+
+                  settingsRefTitle: "Referencia de Ajustes (61 Ajustes)",
+                  settingsRefIntro: "Los 61 ajustes están organizados en 9 secciones. Cada ajuste tiene un tipo definido, valor predeterminado, atributo de datos DOM y control de edición opcional.",
+
+                  overrideControlTitle: "Control de Anulación de Admin",
+                  overrideControlIntro: "Los administradores de inquilinos pueden controlar qué ajustes pueden personalizar los administradores individuales.",
+
+                  securityTitle: "Modelo de Seguridad",
+                  securityIntro: "El Constructor de Dashboard implementa seguridad de defensa en profundidad para prevenir filtraciones de datos entre administradores y desbordamientos de payload.",
+
+                  archTitle: "Arquitectura y Mapa de Archivos",
+                  archIntro: "El Constructor de Dashboard está implementado en 7 archivos en la capa Core, siguiendo el patrón de arquitectura basado en proveedores de NEXORA.",
+                  archTip: "Para agregar un nuevo ajuste, extienda la interfaz Settings y defaultSettings en settings-provider.tsx.",
+            },
       },
 
       // 🛡️ SECURITY

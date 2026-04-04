@@ -854,6 +854,41 @@ export const docZh: PartialDocTranslations = {
                   archIntro: "登录定制器遵循 NEXORA 标准的模块化清洁架构，包含领域层、数据层和展示层。展示层包含 StylePanel 组件（配置 UI）、LoginPreviewShell（iframe 管理）、AccessibilityPanel（WCAG 设置和配置文件）以及 useLoginBrandingTokens hook（令牌到 CSS 管道）。组件被提取到模块级别以防止 React 重新渲染导致的焦点丢失问题。",
                   archTip: "BgControls 和 PresetDots 组件被故意定义在模块级别（而非内联），以防止 React 在重新渲染期间卸载/重新挂载输入字段，否则会在每次按键时导致焦点丢失。",
             },
+
+            // Dashboard Builder
+            dashboardBuilder: {
+                  title: "仪表盘构建器",
+                  description: "通过4层合并引擎实现服务器同步的管理员偏好设置，支持61项可配置参数、FOUC防护、409冲突解决及基于版本的功能控制。",
+                  intro: "仪表盘构建器是 NEXORA 的企业级管理员偏好设置系统，在浏览器和服务器之间同步61项可配置的仪表盘参数。该系统采用4层合并引擎（平台 → 租户 → 管理员 → 运行时）进行配置解析，支持租户级覆盖控制、通过 AdminSettingsJson 实现跨设备持久化，以及5项边界情况防护。",
+
+                  overviewTitle: "系统概览",
+                  overviewIntro: "仪表盘构建器提供完整的偏好设置生命周期——从缓存即时渲染到后台服务器对账。",
+                  overviewTip: "页面加载时立即从 localStorage 缓存渲染设置。服务器请求在后台进行。",
+
+                  mergeEngineTitle: "4层合并引擎",
+                  mergeEngineIntro: "设置遵循严格的4层优先级链。每一层可以覆盖前一层，并可选地在租户级别进行基于路径的访问控制。",
+                  mergeEngineNote: "第2层（版本限制）由服务端通过 FeatureCheckBehavior 管道处理。",
+
+                  syncHookTitle: "服务器同步 Hook",
+                  syncHookIntro: "useAdminSettingsSync hook 管理管理员偏好设置的完整生命周期：从缓存初始加载、延迟刷写、后台服务器拉取到静默对账。",
+
+                  edgeCasesTitle: "边界情况防护",
+                  edgeCasesIntro: "同步系统处理企业环境中常见的5种关键边界情况。",
+                  edgeCasesWarning: "PENDING_SETTINGS_FLUSH 键在退出登录后刻意保留，以便在下次登录时执行刷写。",
+
+                  settingsRefTitle: "设置参考 (61项参数)",
+                  settingsRefIntro: "全部61项设置被组织为9个分区。每项设置都有明确的类型、默认值、DOM data 属性和可选的版本控制。",
+
+                  overrideControlTitle: "管理员覆盖控制",
+                  overrideControlIntro: "租户管理员可以控制哪些设置允许个人管理员自定义。",
+
+                  securityTitle: "安全模型",
+                  securityIntro: "仪表盘构建器实现纵深防御安全机制，防止管理员之间的数据泄露和有效载荷溢出。",
+
+                  archTitle: "架构与文件映射",
+                  archIntro: "仪表盘构建器在 Core 层中以7个文件实现，遵循 NEXORA 基于 Provider 的架构模式。",
+                  archTip: "添加新设置时，请扩展 settings-provider.tsx 中的 Settings 接口和 defaultSettings。",
+            },
       },
 
       // 🛡️ SECURITY
