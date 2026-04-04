@@ -15,7 +15,7 @@
  */
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSettings } from "@core/providers/settings-provider";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
@@ -79,9 +79,50 @@ const CRMLayout = dynamic(() => import("@core/ui/layout/crm/crm-layout").then(m 
 const TerminalLayout = dynamic(() => import("@core/ui/layout/terminal/terminal-layout").then(m => ({ default: m.TerminalLayout })), { ssr: false });
 
 
+// ── Valid settings keys whitelist (security hardening) ──
+const VALID_SETTINGS_KEYS = new Set([
+  "layoutTemplate", "colorTheme", "secondaryColorTheme", "lightBackgroundTheme",
+  "darkBackgroundTheme", "shadowIntensity", "backgroundMode", "gradientDirection",
+  "lightGradientTheme", "darkGradientTheme", "customPrimaryColor", "customSecondaryColor",
+  "customLightBgColor", "customDarkBgColor", "gradientStartColor", "gradientEndColor",
+  "activePalette", "cardStyle", "animationLevel", "fontSize", "borderRadius",
+  "sidebarPosition", "headerStyle", "sidebarStyle", "buttonStyle", "navigationStyle",
+  "spacingSize", "iconStyle", "inputStyle", "tableStyle", "badgeStyle", "avatarStyle",
+  "formStyle", "loadingStyle", "tooltipStyle", "modalStyle", "treeStyle",
+  "datePickerStyle", "calendarStyle", "selectStyle", "switchStyle", "checkboxStyle",
+  "radioStyle", "toastStyle", "hoverEffectType", "hoverEffectIntensity",
+  "logoType", "logoAnimation", "logoSize", "logoText",
+  "showBreadcrumbs", "showUserAvatar", "showNotifications", "compactMode",
+  "highContrast", "reducedMotion", "stickyHeader", "collapsibleSidebar",
+  "showFooter", "autoSave", "showLogo", "showDetailPanel", "showToastIcons",
+  "toastDuration",
+]);
+
 export function DashboardPreviewShell() {
   const settings = useSettings();
   const [sidebarOpen, setSidebarOpen] = useState(true);
+
+  // ── Save original localStorage values and restore on unmount ──
+  const originalDashboardSettings = useRef<string | null>(null);
+  const hasInitialized = useRef(false);
+
+  useEffect(() => {
+    // Save the original DASHBOARD_SETTINGS value before any preview writes
+    if (!hasInitialized.current) {
+      originalDashboardSettings.current = localStorage.getItem(STORAGE_KEYS.DASHBOARD_SETTINGS);
+      hasInitialized.current = true;
+    }
+
+    return () => {
+      // ── CLEANUP: Restore original value when preview closes ──
+      // This prevents preview changes from leaking into the live dashboard.
+      if (originalDashboardSettings.current !== null) {
+        localStorage.setItem(STORAGE_KEYS.DASHBOARD_SETTINGS, originalDashboardSettings.current);
+      } else {
+        localStorage.removeItem(STORAGE_KEYS.DASHBOARD_SETTINGS);
+      }
+    };
+  }, []);
 
   // ── Listen for postMessage from studio parent ──
   useEffect(() => {
@@ -92,17 +133,28 @@ export function DashboardPreviewShell() {
       if (e.origin !== window.location.origin) return;
 
       if (e.data?.type === "DASHBOARD_SETTINGS_UPDATE") {
-        const newSettings = e.data.settings;
-        if (!newSettings) return;
+        const rawSettings = e.data.settings;
+        if (!rawSettings || typeof rawSettings !== "object") return;
+
+        // Filter to valid keys only (reject unknown/injected keys)
+        const newSettings = Object.fromEntries(
+          Object.entries(rawSettings).filter(([k]) => VALID_SETTINGS_KEYS.has(k))
+        );
+        if (Object.keys(newSettings).length === 0) return;
 
         try {
-          // Merge into localStorage so SettingsProvider picks it up
+          // ── ISOLATED PREVIEW WRITES ──
+          // We write to DASHBOARD_SETTINGS so this iframe's SettingsProvider picks
+          // it up during re-merge. This is safe because:
+          // 1. window.dispatchEvent does NOT cross iframe boundaries
+          // 2. The parent window's SettingsProvider won't re-merge from this event
+          // 3. On cleanup (unmount), we restore the original value (see above)
           const existing = localStorage.getItem(STORAGE_KEYS.DASHBOARD_SETTINGS);
           const current = existing ? JSON.parse(existing) : {};
           const merged = { ...current, ...newSettings };
           localStorage.setItem(STORAGE_KEYS.DASHBOARD_SETTINGS, JSON.stringify(merged));
 
-          // Trigger re-merge in SettingsProvider
+          // Trigger re-merge ONLY in this iframe's SettingsProvider
           window.dispatchEvent(new Event("admin-settings-loaded"));
         } catch (err) {
           console.error("[DashboardPreviewShell] Failed to apply settings:", err);

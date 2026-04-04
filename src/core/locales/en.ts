@@ -6803,6 +6803,18 @@ export const en = {
       allowOverrideDesc: "When enabled, individual admins can customize their own dashboard appearance within the paths you define.",
       overridePaths: "Override Path Control",
       overridePathsDesc: "Fine-grained control over which settings admins can override. Requires Enterprise edition.",
+      // ── Lock & Override indicators (M11 Phase E) ──
+      locked: {
+        badge: "Locked",
+        allDisabled: "Managed by your organization",
+        pathRestricted: "This setting is managed by your organization",
+      },
+      override: {
+        badge: "Overridden",
+        resetHint: "You've overridden the tenant default. Click to reset.",
+        usingDefault: "Using tenant default",
+        usingOverride: "Your personal override",
+      },
       // ── Sidebar style options ──
       styles: {
         default: "Default",

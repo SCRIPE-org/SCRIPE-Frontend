@@ -4,6 +4,7 @@ import type React from "react";
 import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { appLogger } from "@core/common/logger";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
+import { useAppStore } from "@core/store/useAppStore";
 
 // Define all possible setting types
 export type ColorTheme =
@@ -574,6 +575,16 @@ interface SettingsContextType extends Settings {
   resetSettings: () => void;
   exportSettings: () => string;
   importSettings: (settings: string) => boolean;
+
+  // M11: Admin override control — exposes tenant-level override restrictions
+  overrideControl: {
+    /** Whether the tenant allows admins to override any settings at all */
+    allowAdminOverride: boolean;
+    /** If non-null, only these setting keys can be overridden by admins */
+    allowedPaths: string[] | null;
+    /** Check if a specific setting key is locked (admin cannot override) */
+    isSettingLocked: (key: string) => boolean;
+  };
 }
 
 /**
@@ -665,8 +676,8 @@ function createFallbackSettings(): Partial<SettingsContextType> {
     shadowIntensity: "moderate" as ShadowIntensity,
     setShadowIntensity: () => { },
 
-    // Layout template
-    layoutTemplate: "modern" as LayoutTemplate,
+    // Layout template — MUST match defaultSettings.layoutTemplate ("navigation")
+    layoutTemplate: "navigation" as LayoutTemplate,
     setLayoutTemplate: () => { },
 
     // Font size
@@ -679,8 +690,8 @@ function createFallbackSettings(): Partial<SettingsContextType> {
     borderRadius: "default" as BorderRadius,
     setBorderRadius: () => { },
 
-    // Sidebar position
-    sidebarPosition: "right" as SidebarPosition,
+    // Sidebar position — MUST match defaultSettings.sidebarPosition ("left")
+    sidebarPosition: "left" as SidebarPosition,
     setSidebarPosition: () => { },
 
     // Component styles
@@ -747,6 +758,13 @@ function createFallbackSettings(): Partial<SettingsContextType> {
     setHoverEffectType: () => { },
     hoverEffectIntensity: "medium" as HoverEffectIntensity,
     setHoverEffectIntensity: () => { },
+
+    // Override control (default: no restrictions)
+    overrideControl: {
+      allowAdminOverride: true,
+      allowedPaths: null,
+      isSettingLocked: () => false,
+    },
   };
 }
 
@@ -761,11 +779,15 @@ const SettingsContext = createContext<SettingsContextType | undefined>(undefined
 export function SettingsProvider({ children }: { children: React.ReactNode }) {
   const [settings, setSettings] = useState<Settings>(defaultSettings);
   const [isHydrated, setIsHydrated] = useState(false);
+  const isAuthenticated = useAppStore((s) => s.isAuthenticated);
 
   // Load settings with 4-layer merge (M11 Dashboard Builder):
   //   Layer 1: Platform defaults (defaultSettings — hardcoded above)
   //   Layer 3: Tenant defaults (PREF_DASHBOARD_SETTINGS — synced from DashboardThemeJson by TenantBrandingProvider)
   //   Layer 4: Admin overrides (DASHBOARD_SETTINGS — server-synced via useAdminSettingsSync → localStorage cache)
+  // M11: Override control state — stored outside merge so context can expose it
+  const overrideControlRef = useRef({ allowAdminOverride: true, allowedPaths: null as string[] | null });
+
   const mergeAndApplySettings = () => {
     try {
       // Layer 3: Tenant defaults (from DashboardThemeJson via TenantBrandingProvider)
@@ -783,6 +805,8 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
           tenantDefaults = dashboardSettings;
           if (_allowAdminOverride !== undefined) allowAdminOverride = _allowAdminOverride;
           if (_allowedAdminPaths) allowedPaths = _allowedAdminPaths;
+          // Persist to ref so context consumers can read it
+          overrideControlRef.current = { allowAdminOverride, allowedPaths };
         } catch { /* invalid tenant JSON — skip */ }
       }
 
@@ -827,9 +851,23 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const handler = () => mergeAndApplySettings();
     window.addEventListener('admin-settings-loaded', handler);
-    return () => window.removeEventListener('admin-settings-loaded', handler);
+    // Also re-merge when TenantBrandingProvider finishes fetching branding
+    // This eliminates FOUC by re-merging after tenant defaults are written to localStorage
+    window.addEventListener('tenant-branding-loaded', handler);
+    return () => {
+      window.removeEventListener('admin-settings-loaded', handler);
+      window.removeEventListener('tenant-branding-loaded', handler);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Fix #5: Reset settings to platform defaults when user logs out
+  // This prevents stale tenant colors/layout from persisting after logout
+  useEffect(() => {
+    if (!isAuthenticated && isHydrated) {
+      setSettings(defaultSettings);
+    }
+  }, [isAuthenticated, isHydrated]);
 
   // M11: Track which field was last changed (for sync hook's 409 field-level merge)
   const lastChangedFieldRef = useRef<string | null>(null);
@@ -1127,6 +1165,18 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     resetSettings,
     exportSettings,
     importSettings,
+    overrideControl: {
+      allowAdminOverride: overrideControlRef.current.allowAdminOverride,
+      allowedPaths: overrideControlRef.current.allowedPaths,
+      isSettingLocked: (key: string) => {
+        const { allowAdminOverride, allowedPaths } = overrideControlRef.current;
+        if (!allowAdminOverride) return true; // all settings locked
+        if (allowedPaths && allowedPaths.length > 0) {
+          return !allowedPaths.includes(key); // locked if NOT in whitelist
+        }
+        return false; // no restrictions
+      },
+    },
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }), [settings]);
 

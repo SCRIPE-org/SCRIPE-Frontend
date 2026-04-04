@@ -23,33 +23,13 @@ interface Props {
   settings: DashboardThemeSettings;
 }
 
-/** Map DashboardThemeSettings keys → Settings provider keys */
+/** Map DashboardThemeSettings → Settings provider keys (pass all through) */
 function mapToSettingsKeys(ds: DashboardThemeSettings): Record<string, unknown> {
+  // Pass all settings through — SettingsProvider handles defaults for any missing keys.
+  // Only override layoutTemplate to ensure a valid default.
   return {
+    ...ds,
     layoutTemplate: ds.layoutTemplate || "modern",
-    colorTheme: ds.colorTheme || "blue",
-    sidebarPosition: ds.sidebarPosition || "left",
-    sidebarStyle: ds.sidebarStyle || "default",
-    headerStyle: ds.headerStyle || "default",
-    cardStyle: ds.cardStyle || "default",
-    borderRadius: ds.borderRadius || "default",
-    shadowIntensity: ds.shadowIntensity || "moderate",
-    showBreadcrumbs: ds.showBreadcrumbs !== false,
-    showUserAvatar: ds.showUserAvatar !== false,
-    showNotifications: ds.showNotifications ?? false,
-    showFooter: ds.showFooter ?? true,
-    collapsibleSidebar: ds.collapsibleSidebar ?? true,
-    stickyHeader: ds.stickyHeader ?? true,
-    compactMode: ds.compactMode ?? false,
-    animationLevel: ds.animationLevel || "moderate",
-    spacingSize: ds.spacingSize || "default",
-    fontSize: ds.fontSize || "medium",
-    backgroundMode: ds.backgroundMode || "preset",
-    customPrimaryColor: ds.customPrimaryColor || "",
-    customDarkBgColor: ds.customDarkBgColor || "",
-    gradientStartColor: ds.gradientStartColor || "",
-    gradientEndColor: ds.gradientEndColor || "",
-    gradientDirection: ds.gradientDirection || "to-br",
   };
 }
 

@@ -9,9 +9,10 @@ import { Button } from "@core/ui/button";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSettings } from "@core/providers/settings-provider";
 import { useToast } from "@core/hooks/use-toast";
-import { Download, Upload, Save, RotateCcw } from "lucide-react";
+import { Download, Upload, Save, RotateCcw, Lock, ShieldAlert } from "lucide-react";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
+import { Alert, AlertDescription, AlertTitle } from "@core/ui/alert";
 const CheckboxRadioTab = dynamic(
   () => import("./settings/checkbox-radio-tab").then((mod) => ({ default: mod.CheckboxRadioTab })),
   {
@@ -171,6 +172,30 @@ export function SettingsView() {
             </Button>
           </div>
         </div>
+
+        {/* M11 Phase E: Override Control Banner */}
+        {!settings.overrideControl.allowAdminOverride && (
+          <Alert variant="destructive" className="border-destructive/30 bg-destructive/5">
+            <Lock className="h-4 w-4" />
+            <AlertTitle>{t("customizer.dashboard.locked.allDisabled")}</AlertTitle>
+            <AlertDescription className="text-sm opacity-80">
+              {t("customizer.dashboard.overrideInfo")}
+            </AlertDescription>
+          </Alert>
+        )}
+        {settings.overrideControl.allowAdminOverride &&
+          settings.overrideControl.allowedPaths &&
+          settings.overrideControl.allowedPaths.length > 0 && (
+            <Alert className="border-amber-300/40 bg-amber-50/50 dark:border-amber-600/30 dark:bg-amber-950/20">
+              <ShieldAlert className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+              <AlertTitle className="text-amber-700 dark:text-amber-300">
+                {t("customizer.dashboard.overridePaths")}
+              </AlertTitle>
+              <AlertDescription className="text-sm text-amber-600/80 dark:text-amber-400/80">
+                {t("customizer.dashboard.overridePathsDesc")}
+              </AlertDescription>
+            </Alert>
+          )}
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-5">
           <div className="lg:col-span-3">

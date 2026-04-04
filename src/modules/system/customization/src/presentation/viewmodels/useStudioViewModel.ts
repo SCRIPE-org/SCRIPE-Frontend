@@ -111,6 +111,10 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
     const tokens = source.tokens || {};
     const slotRaw = brandingData.slotConfigJson || (brandingData as any).slotConfigJson;
 
+    // Dashboard settings come from the separate dashboardThemeJson field, NOT from loginBrandingJson
+    const dashboardThemeRaw = (brandingData as any).dashboardThemeJson;
+    const dashboardTheme = dashboardThemeRaw ? JSON.parse(dashboardThemeRaw) : null;
+
     return {
       layout: source.layout || "split-right",
       headline: source.headline || "",
@@ -262,8 +266,8 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
       // Touch & Target Size
       a11yLargeTargets: source.a11yLargeTargets ?? tokens["a11y.largeTargets"] === "true",
       a11yForcedColorsSupport: source.a11yForcedColorsSupport ?? tokens["a11y.forcedColors"] !== "false",
-      // Dashboard
-      dashboardSettings: source.dashboardSettings || DEFAULT_DRAFT.dashboardSettings,
+      // Dashboard — loaded from separate dashboardThemeJson field (not inside login branding)
+      dashboardSettings: dashboardTheme || source.dashboardSettings || DEFAULT_DRAFT.dashboardSettings,
     };
   }, []);
 
@@ -561,12 +565,13 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
     autoSaveTimerRef.current = setTimeout(async () => {
       try {
         const draftJson = buildDraftJson();
+        const dashboardThemeJson = JSON.stringify(draft.dashboardSettings);
         if (targetTenantId) {
           // Drilldown: save draft to specific tenant via repository
-          await repository.updateTenantSettingsById(targetTenantId, { draftBrandingJson: draftJson });
+          await repository.updateTenantSettingsById(targetTenantId, { draftBrandingJson: draftJson, dashboardThemeJson });
         } else {
           // My tenant via repository
-          await repository.updateMySettings({ draftBrandingJson: draftJson });
+          await repository.updateMySettings({ draftBrandingJson: draftJson, dashboardThemeJson });
         }
         setLastSavedAt(new Date());
       } catch {
@@ -583,15 +588,17 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
   const publishMutation = useMutation({
     mutationFn: async () => {
       const draftJson = buildDraftJson();
+      const dashboardThemeJson = JSON.stringify(draft.dashboardSettings);
       if (targetTenantId) {
         // Drilldown: save draft then publish to specific tenant via repository
         await repository.updateTenantSettingsById(targetTenantId, {
           draftBrandingJson: draftJson,
           loginBrandingJson: draftJson, // Publish = copy draft to live
+          dashboardThemeJson,           // Dashboard settings to separate field
         });
       } else {
-        // My tenant via repository
-        await repository.updateMySettings({ draftBrandingJson: draftJson });
+        // My tenant via repository — save draft + dashboard settings, then publish login branding
+        await repository.updateMySettings({ draftBrandingJson: draftJson, dashboardThemeJson });
         const currentVersion = (branding as any)?.settingsVersion ?? 0;
         await repository.publishBranding(currentVersion);
       }
@@ -617,10 +624,11 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
   const saveDraftMutation = useMutation({
     mutationFn: async () => {
       const draftJson = buildDraftJson();
+      const dashboardThemeJson = JSON.stringify(draft.dashboardSettings);
       if (targetTenantId) {
-        await repository.updateTenantSettingsById(targetTenantId, { draftBrandingJson: draftJson });
+        await repository.updateTenantSettingsById(targetTenantId, { draftBrandingJson: draftJson, dashboardThemeJson });
       } else {
-        await repository.updateMySettings({ draftBrandingJson: draftJson });
+        await repository.updateMySettings({ draftBrandingJson: draftJson, dashboardThemeJson });
       }
     },
     onSuccess: () => {

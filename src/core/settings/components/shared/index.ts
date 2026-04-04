@@ -19,6 +19,10 @@ export {
   EditionGatedControl,
 } from "./setting-primitives";
 
+// ── Lock & Override Indicators (M11 Phase E) ──
+export { LockedSettingBadge, useSettingLock } from "./LockedSettingBadge";
+export { TenantDefaultIndicator } from "./TenantDefaultIndicator";
+
 // ── Types ──
 export type {
   SettingToggleProps,

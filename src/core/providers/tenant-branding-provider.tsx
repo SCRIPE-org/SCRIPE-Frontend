@@ -114,7 +114,12 @@ export function TenantBrandingProvider({ children }: TenantBrandingProviderProps
                               setBranding(null);
                         }
                   } finally {
-                        if (!cancelled) setIsLoading(false);
+                        if (!cancelled) {
+                              setIsLoading(false);
+                              // Signal SettingsProvider that branding fetch is done
+                              // (even if dashboardThemeJson is null — SettingsProvider should finalize)
+                              window.dispatchEvent(new Event('tenant-branding-loaded'));
+                        }
                   }
             }
 
@@ -215,6 +220,10 @@ export function TenantBrandingProvider({ children }: TenantBrandingProviderProps
                               setSidebarOpen(!prefs.sidebarCollapsed);
                         }
                   } catch { /* ignore */ }
+
+                  // 4. Signal SettingsProvider to re-merge with the now-populated tenant defaults
+                  // This eliminates FOUC — SettingsProvider listens for this event and re-applies the 4-layer merge
+                  window.dispatchEvent(new Event('tenant-branding-loaded'));
             } catch { /* invalid JSON — skip */ }
       }, [branding?.dashboardThemeJson, setTheme, setLanguage, setSidebarOpen]);
 
