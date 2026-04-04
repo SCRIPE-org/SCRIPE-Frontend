@@ -62,35 +62,62 @@ const GRADIENT_DIRS = ["to-t", "to-tr", "to-r", "to-br", "to-b", "to-bl", "to-l"
 const FONT_SIZES = ["xs", "small", "medium", "default", "large", "xl"] as const;
 const BORDER_RADII = ["none", "small", "default", "large", "full"] as const;
 const SPACING_SIZES = ["compact", "default", "comfortable", "spacious"] as const;
-const ANIMATION_LEVELS = ["none", "minimal", "default", "full"] as const;
-const HOVER_EFFECTS = ["default", "lift", "glow", "scale", "slide", "blur", "neon"] as const;
-const HOVER_INTENSITIES = ["subtle", "default", "moderate", "strong"] as const;
 const LOGO_TYPES = ["sparkles", "shield", "image", "custom"] as const;
 const LOGO_ANIMATIONS = ["none", "spin", "pulse", "fancy"] as const;
 const LOGO_SIZES = ["xs", "sm", "md", "lg", "xl"] as const;
-const NAV_STYLES = ["default", "pills", "underline", "bordered"] as const;
-const ICON_STYLES = ["default", "outline", "filled", "duotone"] as const;
-const CARD_STYLES = ["default", "bordered", "elevated", "flat", "glass"] as const;
 
-// Component style locale key mapping (value after "studio.dashboard.component.")
-const COMPONENT_STYLE_KEYS: { key: keyof DashboardThemeSettings; localeKey: string; count: number }[] = [
-  { key: "buttonStyle", localeKey: "button", count: 9 },
-  { key: "inputStyle", localeKey: "input", count: 4 },
-  { key: "tableStyle", localeKey: "table", count: 12 },
-  { key: "badgeStyle", localeKey: "badge", count: 10 },
-  { key: "avatarStyle", localeKey: "avatar", count: 4 },
-  { key: "formStyle", localeKey: "form", count: 12 },
-  { key: "loadingStyle", localeKey: "loading", count: 12 },
-  { key: "tooltipStyle", localeKey: "tooltip", count: 8 },
-  { key: "modalStyle", localeKey: "modal", count: 8 },
-  { key: "treeStyle", localeKey: "tree", count: 12 },
-  { key: "datePickerStyle", localeKey: "datePicker", count: 7 },
-  { key: "calendarStyle", localeKey: "calendar", count: 6 },
-  { key: "selectStyle", localeKey: "select", count: 27 },
-  { key: "switchStyle", localeKey: "switch", count: 15 },
+// ── Fixed: match SettingsProvider types exactly ──
+const ANIMATION_LEVELS = ["none", "minimal", "moderate", "high"] as const;
+const HOVER_EFFECTS = ["none", "elevate", "scale", "glow", "shimmer", "rotate", "slide"] as const;
+const HOVER_INTENSITIES = ["none", "small", "medium", "strong"] as const;
+const NAV_STYLES = ["default", "pills", "underline", "sidebar"] as const;
+const ICON_STYLES = ["outline", "filled", "duotone", "minimal"] as const;
+const CARD_STYLES = ["default", "glass", "solid", "bordered", "elevated"] as const;
+const SIDEBAR_STYLES = ["default", "compact", "floating", "minimal"] as const;
+const HEADER_STYLES = ["default", "compact", "elevated", "transparent"] as const;
+const TOAST_STYLES = ["classic", "neon", "glassmorphism", "neumorphism", "aurora", "cosmic", "minimal", "modern", "gradient", "outlined"] as const;
+
+// ── Missing: Background & Gradient presets (from SettingsProvider) ──
+const LIGHT_BG_THEMES = ["default", "warm", "cool", "neutral", "soft", "cream", "mint", "lavender", "rose", "sky", "sand", "pearl", "ice", "linen", "cloud", "snow"] as const;
+const DARK_BG_THEMES = ["default", "darker", "pitch", "slate", "warm-dark", "forest", "ocean", "purple-dark", "crimson", "midnight", "charcoal", "obsidian", "navy", "graphite", "onyx", "volcanic"] as const;
+const LIGHT_GRADIENT_THEMES = ["none", "sunrise", "ocean-breeze", "lavender-mist", "meadow", "peach-glow", "sky-wash", "cotton-candy", "lemonade", "seafoam", "blush", "arctic", "golden-hour"] as const;
+const DARK_GRADIENT_THEMES = ["none", "midnight-blue", "aurora", "deep-space", "ember", "twilight", "neon-noir", "volcanic-ash", "northern-lights", "abyss", "cyber-punk", "dark-forest", "nebula"] as const;
+
+// ── Component style option arrays (from SettingsProvider types) ──
+const BUTTON_STYLES = ["default", "small-round", "medium-round", "large-round", "extra-round", "super-round", "rounded", "sharp", "modern"] as const;
+const INPUT_STYLES = ["default", "rounded", "underlined", "filled"] as const;
+const TABLE_STYLES = ["default", "striped", "bordered", "minimal", "glass", "neon", "gradient", "neumorphism", "cyberpunk", "luxury", "matrix", "diamond"] as const;
+const BADGE_STYLES = ["default", "modern", "glass", "neon", "gradient", "outlined", "filled", "minimal", "pill", "square"] as const;
+const AVATAR_STYLES = ["default", "rounded", "square", "hexagon"] as const;
+const FORM_STYLES = ["default", "compact", "spacious", "inline", "modern", "glass", "minimal", "card", "neon", "elegant", "organic", "retro"] as const;
+const LOADING_STYLES = ["spinner", "dots", "bars", "pulse", "wave", "orbit", "ripple", "gradient", "matrix", "helix", "quantum", "morphing"] as const;
+const TOOLTIP_STYLES = ["default", "rounded", "sharp", "bubble", "glass", "neon", "minimal", "elegant"] as const;
+const MODAL_STYLES = ["default", "centered", "fullscreen", "drawer", "glass", "floating", "card", "overlay"] as const;
+const TREE_STYLES = ["lines", "cards", "minimal", "bubble", "modern", "glass", "elegant", "professional", "gradient", "neon", "organic", "corporate"] as const;
+const DATE_PICKER_STYLES = ["default", "modern", "glass", "outlined", "filled", "minimal", "elegant"] as const;
+const CALENDAR_STYLES = ["default", "modern", "glass", "elegant", "minimal", "dark"] as const;
+const SELECT_STYLES = ["default", "modern", "glass", "outlined", "filled", "minimal", "elegant", "professional", "neon", "gradient", "neumorphism", "cyberpunk", "luxury", "aurora", "matrix", "diamond", "holographic", "cosmic", "liquid", "crystal", "plasma", "quantum", "nebula", "prism", "stellar", "vortex", "phoenix"] as const;
+const SWITCH_STYLES = ["default", "modern", "ios", "android", "toggle", "slider", "neon", "neumorphism", "liquid", "cyberpunk", "glassmorphism", "aurora", "matrix", "cosmic", "retro"] as const;
+const CHECKBOX_STYLES = ["default", "modern", "glass", "neon", "gradient", "neumorphism", "cyberpunk", "luxury", "aurora", "cosmic", "minimal", "elegant", "organic", "retro", "matrix", "diamond", "liquid", "crystal", "plasma", "quantum", "holographic", "stellar", "vortex", "phoenix"] as const;
+const RADIO_STYLES = ["default", "modern", "glass", "neon", "gradient", "neumorphism", "cyberpunk", "luxury", "aurora", "cosmic", "minimal", "elegant", "organic", "retro", "matrix", "diamond", "liquid", "crystal", "plasma", "quantum", "holographic", "stellar", "vortex", "phoenix"] as const;
+
+// Component style definitions — each with its options array for OptionGrid rendering
+const COMPONENT_STYLES: { key: keyof DashboardThemeSettings; localeKey: string; options: readonly string[] }[] = [
+  { key: "buttonStyle", localeKey: "button", options: BUTTON_STYLES },
+  { key: "inputStyle", localeKey: "input", options: INPUT_STYLES },
+  { key: "tableStyle", localeKey: "table", options: TABLE_STYLES },
+  { key: "badgeStyle", localeKey: "badge", options: BADGE_STYLES },
+  { key: "avatarStyle", localeKey: "avatar", options: AVATAR_STYLES },
+  { key: "formStyle", localeKey: "form", options: FORM_STYLES },
+  { key: "loadingStyle", localeKey: "loading", options: LOADING_STYLES },
+  { key: "tooltipStyle", localeKey: "tooltip", options: TOOLTIP_STYLES },
+  { key: "modalStyle", localeKey: "modal", options: MODAL_STYLES },
+  { key: "treeStyle", localeKey: "tree", options: TREE_STYLES },
+  { key: "datePickerStyle", localeKey: "datePicker", options: DATE_PICKER_STYLES },
+  { key: "calendarStyle", localeKey: "calendar", options: CALENDAR_STYLES },
+  { key: "selectStyle", localeKey: "select", options: SELECT_STYLES },
+  { key: "switchStyle", localeKey: "switch", options: SWITCH_STYLES },
 ];
-
-const TOAST_STYLES = ["default", "minimal", "bordered", "glass", "gradient", "neon", "neumorphism", "retro", "luxury", "cyberpunk"] as const;
 
 // ═══════════════════════════════════════════════════════════════════════════════
 //  DASHBOARD PRESETS — Curated one-click presets that populate all settings
@@ -118,11 +145,11 @@ const DASHBOARD_PRESETS: DashboardPreset[] = [
       colorTheme: "blue", secondaryColorTheme: "indigo", shadowIntensity: "subtle",
       backgroundMode: "preset", fontSize: "default", borderRadius: "default",
       spacingSize: "default", compactMode: false, cardStyle: "default",
-      animationLevel: "default", hoverEffectType: "default", hoverEffectIntensity: "default",
+      animationLevel: "moderate", hoverEffectType: "elevate", hoverEffectIntensity: "small",
       reducedMotion: false, logoType: "sparkles", logoAnimation: "none", logoSize: "md",
-      navigationStyle: "default", iconStyle: "default", showUserAvatar: true,
+      navigationStyle: "default", iconStyle: "outline", showUserAvatar: true,
       showNotifications: true, stickyHeader: true, showFooter: true,
-      toastStyle: "default", showToastIcons: true, toastDuration: 5000,
+      toastStyle: "classic", showToastIcons: true, toastDuration: 5000,
     },
   },
   {
@@ -132,17 +159,17 @@ const DASHBOARD_PRESETS: DashboardPreset[] = [
     accentEnd: "#d946ef",
     icon: "⚡",
     settings: {
-      layoutTemplate: "neon", sidebarPosition: "left", sidebarStyle: "modern",
-      headerStyle: "floating", collapsibleSidebar: true, showBreadcrumbs: false,
+      layoutTemplate: "neon", sidebarPosition: "left", sidebarStyle: "compact",
+      headerStyle: "elevated", collapsibleSidebar: true, showBreadcrumbs: false,
       colorTheme: "cyan", secondaryColorTheme: "fuchsia", shadowIntensity: "strong",
       backgroundMode: "gradient", gradientDirection: "to-br",
       gradientStartColor: "#0f172a", gradientEndColor: "#1e1b4b",
       fontSize: "default", borderRadius: "large", spacingSize: "comfortable",
-      compactMode: false, cardStyle: "glass", animationLevel: "full",
-      hoverEffectType: "neon", hoverEffectIntensity: "strong", reducedMotion: false,
+      compactMode: false, cardStyle: "glass", animationLevel: "high",
+      hoverEffectType: "glow", hoverEffectIntensity: "strong", reducedMotion: false,
       logoType: "sparkles", logoAnimation: "pulse", logoSize: "lg",
       navigationStyle: "pills", iconStyle: "duotone",
-      toastStyle: "cyberpunk", showToastIcons: true, toastDuration: 4000,
+      toastStyle: "neon", showToastIcons: true, toastDuration: 4000,
     },
   },
   {
@@ -153,11 +180,11 @@ const DASHBOARD_PRESETS: DashboardPreset[] = [
     icon: "✨",
     settings: {
       layoutTemplate: "minimal", sidebarPosition: "left", sidebarStyle: "minimal",
-      headerStyle: "minimal", collapsibleSidebar: true, showBreadcrumbs: false,
+      headerStyle: "compact", collapsibleSidebar: true, showBreadcrumbs: false,
       colorTheme: "slate", secondaryColorTheme: "zinc", shadowIntensity: "none",
       backgroundMode: "preset", fontSize: "default", borderRadius: "small",
-      spacingSize: "comfortable", compactMode: false, cardStyle: "flat",
-      animationLevel: "minimal", hoverEffectType: "default", hoverEffectIntensity: "subtle",
+      spacingSize: "comfortable", compactMode: false, cardStyle: "solid",
+      animationLevel: "minimal", hoverEffectType: "elevate", hoverEffectIntensity: "small",
       reducedMotion: false, logoType: "sparkles", logoAnimation: "none", logoSize: "sm",
       navigationStyle: "underline", iconStyle: "outline",
       toastStyle: "minimal", showToastIcons: false, toastDuration: 3000,
@@ -170,15 +197,15 @@ const DASHBOARD_PRESETS: DashboardPreset[] = [
     accentEnd: "#334155",
     icon: "🏢",
     settings: {
-      layoutTemplate: "executive", sidebarPosition: "left", sidebarStyle: "bordered",
-      headerStyle: "bordered", collapsibleSidebar: false, showBreadcrumbs: true,
+      layoutTemplate: "executive", sidebarPosition: "left", sidebarStyle: "compact",
+      headerStyle: "elevated", collapsibleSidebar: false, showBreadcrumbs: true,
       colorTheme: "slate", secondaryColorTheme: "blue", shadowIntensity: "moderate",
       backgroundMode: "preset", fontSize: "medium", borderRadius: "small",
       spacingSize: "default", compactMode: false, cardStyle: "bordered",
-      animationLevel: "minimal", hoverEffectType: "lift", hoverEffectIntensity: "subtle",
+      animationLevel: "minimal", hoverEffectType: "elevate", hoverEffectIntensity: "small",
       reducedMotion: false, logoType: "shield", logoAnimation: "none", logoSize: "md",
-      navigationStyle: "bordered", iconStyle: "default",
-      toastStyle: "bordered", showToastIcons: true, toastDuration: 5000,
+      navigationStyle: "underline", iconStyle: "outline",
+      toastStyle: "outlined", showToastIcons: true, toastDuration: 5000,
     },
   },
   {
@@ -188,12 +215,12 @@ const DASHBOARD_PRESETS: DashboardPreset[] = [
     accentEnd: "#ec4899",
     icon: "🎨",
     settings: {
-      layoutTemplate: "bento", sidebarPosition: "left", sidebarStyle: "modern",
-      headerStyle: "floating", collapsibleSidebar: true, showBreadcrumbs: true,
+      layoutTemplate: "bento", sidebarPosition: "left", sidebarStyle: "compact",
+      headerStyle: "elevated", collapsibleSidebar: true, showBreadcrumbs: true,
       colorTheme: "orange", secondaryColorTheme: "pink", shadowIntensity: "moderate",
       backgroundMode: "preset", fontSize: "default", borderRadius: "large",
       spacingSize: "comfortable", compactMode: false, cardStyle: "elevated",
-      animationLevel: "full", hoverEffectType: "scale", hoverEffectIntensity: "moderate",
+      animationLevel: "high", hoverEffectType: "scale", hoverEffectIntensity: "medium",
       reducedMotion: false, logoType: "sparkles", logoAnimation: "fancy", logoSize: "lg",
       navigationStyle: "pills", iconStyle: "filled",
       toastStyle: "gradient", showToastIcons: true, toastDuration: 4000,
@@ -213,11 +240,11 @@ const DASHBOARD_PRESETS: DashboardPreset[] = [
       customSecondaryColor: "#4c1d95", customLightBgColor: "#faf5ff",
       customDarkBgColor: "#0f0720",
       fontSize: "default", borderRadius: "default", spacingSize: "default",
-      compactMode: false, cardStyle: "elevated", animationLevel: "default",
-      hoverEffectType: "glow", hoverEffectIntensity: "moderate", reducedMotion: false,
+      compactMode: false, cardStyle: "elevated", animationLevel: "moderate",
+      hoverEffectType: "glow", hoverEffectIntensity: "medium", reducedMotion: false,
       logoType: "sparkles", logoAnimation: "pulse", logoSize: "md",
-      navigationStyle: "default", iconStyle: "default",
-      toastStyle: "luxury", showToastIcons: true, toastDuration: 5000,
+      navigationStyle: "default", iconStyle: "outline",
+      toastStyle: "cosmic", showToastIcons: true, toastDuration: 5000,
     },
   },
   {
@@ -227,17 +254,17 @@ const DASHBOARD_PRESETS: DashboardPreset[] = [
     accentEnd: "#22d3ee",
     icon: "💎",
     settings: {
-      layoutTemplate: "glassmorphism", sidebarPosition: "left", sidebarStyle: "modern",
-      headerStyle: "floating", collapsibleSidebar: true, showBreadcrumbs: false,
+      layoutTemplate: "glassmorphism", sidebarPosition: "left", sidebarStyle: "compact",
+      headerStyle: "elevated", collapsibleSidebar: true, showBreadcrumbs: false,
       colorTheme: "cyan", secondaryColorTheme: "teal", shadowIntensity: "subtle",
       backgroundMode: "gradient", gradientDirection: "to-br",
       gradientStartColor: "#0f172a", gradientEndColor: "#164e63",
       fontSize: "default", borderRadius: "large", spacingSize: "comfortable",
-      compactMode: false, cardStyle: "glass", animationLevel: "default",
-      hoverEffectType: "blur", hoverEffectIntensity: "moderate", reducedMotion: false,
+      compactMode: false, cardStyle: "glass", animationLevel: "moderate",
+      hoverEffectType: "shimmer", hoverEffectIntensity: "medium", reducedMotion: false,
       logoType: "sparkles", logoAnimation: "none", logoSize: "md",
       navigationStyle: "pills", iconStyle: "outline",
-      toastStyle: "glass", showToastIcons: true, toastDuration: 4000,
+      toastStyle: "glassmorphism", showToastIcons: true, toastDuration: 4000,
     },
   },
   {
@@ -252,10 +279,10 @@ const DASHBOARD_PRESETS: DashboardPreset[] = [
       colorTheme: "amber", secondaryColorTheme: "rose", shadowIntensity: "subtle",
       backgroundMode: "preset", fontSize: "default", borderRadius: "default",
       spacingSize: "default", compactMode: false, cardStyle: "default",
-      animationLevel: "default", hoverEffectType: "lift", hoverEffectIntensity: "default",
+      animationLevel: "moderate", hoverEffectType: "elevate", hoverEffectIntensity: "small",
       reducedMotion: false, logoType: "sparkles", logoAnimation: "none", logoSize: "md",
-      navigationStyle: "default", iconStyle: "default",
-      toastStyle: "default", showToastIcons: true, toastDuration: 5000,
+      navigationStyle: "default", iconStyle: "outline",
+      toastStyle: "classic", showToastIcons: true, toastDuration: 5000,
     },
   },
 ];
@@ -384,24 +411,21 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
   const iconStyleLabel = useCallback((v: string) => t(`studio.dashboard.iconStyles.${v}`) || v, [t]);
   const toastStyleLabel = useCallback((v: string) => t(`studio.dashboard.toastStyles.${v}`) || v, [t]);
   const sidebarStyleLabel = useCallback((v: string) => t(`studio.dashboard.styles.${v}`) || v, [t]);
-  const headerStyleLabel = useCallback((v: string) => {
-    const map: Record<string, string> = {
-      default: t("studio.dashboard.styles.default") || "Default",
-      minimal: t("studio.dashboard.styles.minimal") || "Minimal",
-      floating: t("studio.dashboard.styles.floating") || "Floating",
-      bordered: t("studio.dashboard.styles.bordered") || "Bordered",
-    };
-    return map[v] || v;
-  }, [t]);
+  const headerStyleLabel = useCallback((v: string) => t(`studio.dashboard.styles.${v}`) || v, [t]);
   const sidebarPosLabel = useCallback((v: string) => {
     return v === "left"
       ? t("studio.dashboard.sidebarPositionLeft") || "Left"
       : t("studio.dashboard.sidebarPositionRight") || "Right";
   }, [t]);
+  // Labels for new background/gradient settings
+  const bgThemeLabel = useCallback((v: string) => t(`studio.dashboard.bgTheme.${v}`) || v, [t]);
+  const gradientThemeLabel = useCallback((v: string) => t(`studio.dashboard.gradientTheme.${v}`) || v, [t]);
+  // Generic component style label
+  const componentStyleLabel = useCallback((v: string) => t(`studio.dashboard.styles.${v}`) || v, [t]);
 
   // Localized component style items (memoized so the list rebuilds on language change)
   const componentStyles = useMemo(() =>
-    COMPONENT_STYLE_KEYS.map(cs => ({
+    COMPONENT_STYLES.map(cs => ({
       ...cs,
       label: t(`studio.dashboard.component.${cs.localeKey}`) || cs.localeKey,
     })),
@@ -516,13 +540,13 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
           <Label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
             {t("studio.dashboard.sidebarStyle")}
           </Label>
-          <OptionGrid options={["default", "modern", "minimal", "bordered"] as const} selected={settings.sidebarStyle as any} onSelect={v => set("sidebarStyle", v)} cols={2} labelFn={sidebarStyleLabel} />
+          <OptionGrid options={SIDEBAR_STYLES} selected={settings.sidebarStyle as any} onSelect={v => set("sidebarStyle", v)} cols={2} labelFn={sidebarStyleLabel} />
         </div>
         <div className="space-y-1">
           <Label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
             {t("studio.dashboard.headerStyle")}
           </Label>
-          <OptionGrid options={["default", "minimal", "floating", "bordered"] as const} selected={settings.headerStyle as any} onSelect={v => set("headerStyle", v)} cols={2} labelFn={headerStyleLabel} />
+          <OptionGrid options={HEADER_STYLES} selected={settings.headerStyle as any} onSelect={v => set("headerStyle", v)} cols={2} labelFn={headerStyleLabel} />
         </div>
 
         {/* Toggles */}
@@ -530,11 +554,11 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
         <ToggleRow label={t("studio.dashboard.showBreadcrumbs")} checked={settings.showBreadcrumbs} onChange={v => set("showBreadcrumbs", v)} />
       </Section>
 
-      {/* ── Section 2: Colors & Theme (16 settings) ── */}
+      {/* ── Section 2: Colors & Theme (21 settings) ── */}
       <Section
         icon={Palette}
         title={t("studio.dashboard.section.colors")}
-        count={16}
+        count={21}
         isOpen={openSections.has(1)}
         onToggle={() => toggleSection(1)}
       >
@@ -596,6 +620,63 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
             </div>
             <HexInput label={t("studio.dashboard.gradientStart")} value={settings.gradientStartColor} onChange={v => set("gradientStartColor", v)} />
             <HexInput label={t("studio.dashboard.gradientEnd")} value={settings.gradientEndColor} onChange={v => set("gradientEndColor", v)} />
+
+            {/* Light Gradient Theme */}
+            <div className="space-y-1 pt-1">
+              <Label className="text-[9px] font-medium text-muted-foreground uppercase">{t("studio.dashboard.lightGradientTheme") || "Light Gradient"}</Label>
+              <div className="grid grid-cols-3 gap-1 max-h-[120px] overflow-y-auto scrollbar-thin pr-1">
+                {LIGHT_GRADIENT_THEMES.map(gt => (
+                  <button key={gt} onClick={() => set("lightGradientTheme", gt)} className={cn(
+                    "rounded-md border px-1.5 py-1 text-[9px] font-medium transition-all truncate",
+                    settings.lightGradientTheme === gt ? "border-primary bg-primary/10 text-primary" : "border-border/50 text-muted-foreground hover:border-primary/30"
+                  )}>{gradientThemeLabel(gt)}</button>
+                ))}
+              </div>
+            </div>
+
+            {/* Dark Gradient Theme */}
+            <div className="space-y-1">
+              <Label className="text-[9px] font-medium text-muted-foreground uppercase">{t("studio.dashboard.darkGradientTheme") || "Dark Gradient"}</Label>
+              <div className="grid grid-cols-3 gap-1 max-h-[120px] overflow-y-auto scrollbar-thin pr-1">
+                {DARK_GRADIENT_THEMES.map(gt => (
+                  <button key={gt} onClick={() => set("darkGradientTheme", gt)} className={cn(
+                    "rounded-md border px-1.5 py-1 text-[9px] font-medium transition-all truncate",
+                    settings.darkGradientTheme === gt ? "border-primary bg-primary/10 text-primary" : "border-border/50 text-muted-foreground hover:border-primary/30"
+                  )}>{gradientThemeLabel(gt)}</button>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Preset background themes (shown when preset mode) */}
+        {settings.backgroundMode === "preset" && (
+          <div className="space-y-2 rounded-lg border border-border/30 bg-muted/20 p-2">
+            {/* Light Background Theme */}
+            <div className="space-y-1">
+              <Label className="text-[9px] font-medium text-muted-foreground uppercase">{t("studio.dashboard.lightBgTheme") || "Light Background"}</Label>
+              <div className="grid grid-cols-3 gap-1 max-h-[120px] overflow-y-auto scrollbar-thin pr-1">
+                {LIGHT_BG_THEMES.map(bg => (
+                  <button key={bg} onClick={() => set("lightBackgroundTheme", bg)} className={cn(
+                    "rounded-md border px-1.5 py-1 text-[9px] font-medium transition-all truncate",
+                    settings.lightBackgroundTheme === bg ? "border-primary bg-primary/10 text-primary" : "border-border/50 text-muted-foreground hover:border-primary/30"
+                  )}>{bgThemeLabel(bg)}</button>
+                ))}
+              </div>
+            </div>
+
+            {/* Dark Background Theme */}
+            <div className="space-y-1">
+              <Label className="text-[9px] font-medium text-muted-foreground uppercase">{t("studio.dashboard.darkBgTheme") || "Dark Background"}</Label>
+              <div className="grid grid-cols-3 gap-1 max-h-[120px] overflow-y-auto scrollbar-thin pr-1">
+                {DARK_BG_THEMES.map(bg => (
+                  <button key={bg} onClick={() => set("darkBackgroundTheme", bg)} className={cn(
+                    "rounded-md border px-1.5 py-1 text-[9px] font-medium transition-all truncate",
+                    settings.darkBackgroundTheme === bg ? "border-primary bg-primary/10 text-primary" : "border-border/50 text-muted-foreground hover:border-primary/30"
+                  )}>{bgThemeLabel(bg)}</button>
+                ))}
+              </div>
+            </div>
           </div>
         )}
 
@@ -608,6 +689,19 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
             <HexInput label={t("studio.dashboard.customDarkBg")} value={settings.customDarkBgColor} onChange={v => set("customDarkBgColor", v)} />
           </div>
         )}
+
+        {/* Active Palette (open-ended palette ID) */}
+        <div className="space-y-1">
+          <Label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
+            {t("studio.dashboard.activePalette") || "Active Palette"}
+          </Label>
+          <Input
+            value={settings.activePalette}
+            onChange={e => set("activePalette", e.target.value)}
+            className="h-7 text-[10px]"
+            placeholder={t("studio.dashboard.activePalettePlaceholder") || "e.g. ocean-breeze"}
+          />
+        </div>
       </Section>
 
       {/* ── Section 3: Typography & Spacing (4 settings) ── */}
@@ -645,14 +739,24 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
           <div key={cs.key} className="space-y-1">
             <div className="flex items-center justify-between">
               <Label className="text-[10px] font-medium text-foreground">{cs.label}</Label>
-              <span className="text-[8px] text-muted-foreground/50">{nStylesLabel(cs.count)}</span>
+              <span className="text-[8px] text-muted-foreground/50">{nStylesLabel(cs.options.length)}</span>
             </div>
-            <Input
-              value={settings[cs.key] as string}
-              onChange={e => set(cs.key, e.target.value)}
-              className="h-7 text-[10px]"
-              placeholder="default"
-            />
+            <div className="grid grid-cols-3 gap-1 max-h-[100px] overflow-y-auto scrollbar-thin pr-1">
+              {cs.options.map(opt => (
+                <button
+                  key={opt}
+                  onClick={() => set(cs.key, opt)}
+                  className={cn(
+                    "rounded-md border px-1.5 py-1 text-[9px] font-medium transition-all truncate",
+                    settings[cs.key] === opt
+                      ? "border-primary bg-primary/10 text-primary"
+                      : "border-border/50 text-muted-foreground hover:border-primary/30 hover:bg-accent/20"
+                  )}
+                >
+                  {componentStyleLabel(opt)}
+                </button>
+              ))}
+            </div>
           </div>
         ))}
       </Section>
@@ -667,21 +771,25 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
       >
         <div className="space-y-1">
           <Label className="text-[10px] font-medium text-foreground">{t("studio.dashboard.checkboxStyle")}</Label>
-          <Input
-            value={settings.checkboxStyle}
-            onChange={e => set("checkboxStyle", e.target.value)}
-            className="h-7 text-[10px]"
-            placeholder="default"
-          />
+          <div className="grid grid-cols-3 gap-1 max-h-[120px] overflow-y-auto scrollbar-thin pr-1">
+            {CHECKBOX_STYLES.map(opt => (
+              <button key={opt} onClick={() => set("checkboxStyle", opt)} className={cn(
+                "rounded-md border px-1.5 py-1 text-[9px] font-medium transition-all truncate",
+                settings.checkboxStyle === opt ? "border-primary bg-primary/10 text-primary" : "border-border/50 text-muted-foreground hover:border-primary/30 hover:bg-accent/20"
+              )}>{componentStyleLabel(opt)}</button>
+            ))}
+          </div>
         </div>
         <div className="space-y-1">
           <Label className="text-[10px] font-medium text-foreground">{t("studio.dashboard.radioStyle")}</Label>
-          <Input
-            value={settings.radioStyle}
-            onChange={e => set("radioStyle", e.target.value)}
-            className="h-7 text-[10px]"
-            placeholder="default"
-          />
+          <div className="grid grid-cols-3 gap-1 max-h-[120px] overflow-y-auto scrollbar-thin pr-1">
+            {RADIO_STYLES.map(opt => (
+              <button key={opt} onClick={() => set("radioStyle", opt)} className={cn(
+                "rounded-md border px-1.5 py-1 text-[9px] font-medium transition-all truncate",
+                settings.radioStyle === opt ? "border-primary bg-primary/10 text-primary" : "border-border/50 text-muted-foreground hover:border-primary/30 hover:bg-accent/20"
+              )}>{componentStyleLabel(opt)}</button>
+            ))}
+          </div>
         </div>
       </Section>
 

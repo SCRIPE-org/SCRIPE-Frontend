@@ -12,9 +12,11 @@ interface LogoProps {
   showText?: boolean;
   size?: "xs" | "sm" | "md" | "lg" | "xl";
   animation?: "none" | "spin" | "pulse" | "bounce" | "fancy";
+  /** When true, renders a plain container instead of a Link. Use when Logo is already inside a Link. */
+  disableLink?: boolean;
 }
 
-export function Logo({ className, showText = true, size = "md", animation = "none" }: LogoProps) {
+export function Logo({ className, showText = true, size = "md", animation = "none", disableLink = false }: LogoProps) {
   const settings = useSettings();
   const { logoUrl: tenantLogoUrl } = useTenantBranding();
 
@@ -83,20 +85,29 @@ export function Logo({ className, showText = true, size = "md", animation = "non
     }
   };
 
-  return (
-    <Link
-      href="/"
-      className={cn(
-        "flex cursor-pointer items-center gap-2 transition-opacity duration-200 hover:opacity-80",
-        className
-      )}
-    >
+  const content = (
+    <>
       {renderIcon()}
       {showText && settings.logoType === "custom" && (
         <span className={cn("font-semibold", textSizeClasses[settings.logoSize])}>
           {settings.logoText}
         </span>
       )}
+    </>
+  );
+
+  const sharedClass = cn(
+    "flex cursor-pointer items-center gap-2 transition-opacity duration-200 hover:opacity-80",
+    className
+  );
+
+  if (disableLink) {
+    return <div className={sharedClass}>{content}</div>;
+  }
+
+  return (
+    <Link href="/" className={sharedClass}>
+      {content}
     </Link>
   );
 }

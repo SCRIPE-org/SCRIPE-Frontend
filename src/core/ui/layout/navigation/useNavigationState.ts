@@ -125,13 +125,16 @@ export function useNavigationState(navigation: NavigationItem[]): NavigationStat
   }, [pathname, activeMainItem, isMobile]);
 
   // ── Handle window resize ──
+  const hasChildrenRef = useRef(hasChildren);
+  hasChildrenRef.current = hasChildren;
+
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth < 1024;
       setIsMobile(mobile);
       if (mobile) {
         setPanelOpen(false);
-      } else if (hasChildren) {
+      } else if (hasChildrenRef.current) {
         setPanelOpen(true);
       }
     };
@@ -140,7 +143,7 @@ export function useNavigationState(navigation: NavigationItem[]): NavigationStat
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
      
-  }, [hasChildren]);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Actions ──
 

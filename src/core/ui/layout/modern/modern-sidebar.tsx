@@ -87,7 +87,7 @@ export function ModernSidebar({
           <div className="py-4">
             <Link href="/" className="block">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary shadow-sm transition-shadow hover:shadow-md">
-                <Logo size="sm" className="text-primary-foreground" />
+                <Logo size="lg" className="text-primary-foreground" disableLink />
               </div>
             </Link>
           </div>
@@ -100,20 +100,26 @@ export function ModernSidebar({
 
               if (!Icon) return null;
 
+              const iconNode = <Icon className="h-5 w-5" />;
+              const classes = cn(
+                "flex h-10 w-10 items-center justify-center rounded-xl transition-all duration-200",
+                isActive
+                  ? "bg-primary text-primary-foreground shadow-md"
+                  : "text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-foreground"
+              );
+
               return (
                 <Tooltip key={item.name}>
                   <TooltipTrigger asChild>
-                    <Link
-                      href={item.href || "#"}
-                      className={cn(
-                        "flex h-10 w-10 items-center justify-center rounded-xl transition-all duration-200",
-                        isActive
-                          ? "bg-primary text-primary-foreground shadow-md"
-                          : "text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-foreground"
-                      )}
-                    >
-                      <Icon className="h-5 w-5" />
-                    </Link>
+                    {item.href ? (
+                      <Link href={item.href} className={classes}>
+                        {iconNode}
+                      </Link>
+                    ) : (
+                      <button type="button" className={classes}>
+                        {iconNode}
+                      </button>
+                    )}
                   </TooltipTrigger>
                   {!expanded && (
                     <TooltipContent

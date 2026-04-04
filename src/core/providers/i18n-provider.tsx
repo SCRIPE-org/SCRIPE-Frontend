@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, useEffect, useCallback, useMemo } from "react";
 import { useSettings } from "@core/providers/settings-provider";
 import { ar } from "@core/locales/ar";
 import { en } from "@core/locales/en";
@@ -30,7 +30,8 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
   const { setSidebarPosition } = useSettings();
   const direction: Direction = language === "ar" ? "rtl" : "ltr";
 
-  const t = (key: string, params?: Record<string, any>): string => {
+  // ── Stable translation function — only changes when language changes ──
+  const t = useCallback((key: string, params?: Record<string, any>): string => {
     const keys = key.split(".");
     let value: any = translations[language];
 
@@ -53,9 +54,9 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
     }
 
     return key;
-  };
+  }, [language]);
 
-  const handleSetLanguage = (lang: Language) => {
+  const handleSetLanguage = useCallback((lang: Language) => {
     setLanguage(lang);
     localStorage.setItem(STORAGE_KEYS.LANGUAGE, lang);
     document.documentElement.setAttribute("dir", lang === "ar" ? "rtl" : "ltr");
@@ -69,7 +70,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
       document.body.classList.add("font-english");
       document.body.classList.remove("font-arabic");
     }
-  };
+  }, []);
 
   useEffect(() => {
     setIsHydrated(true);
@@ -86,17 +87,18 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
         handleSetLanguage("en");
       }
     }
-  }, []);
+  }, [handleSetLanguage]);
+
+  // ── Stable context value — prevents all consumers from re-rendering on every parent render ──
+  const contextValue = useMemo<I18nContextType>(() => ({
+    language,
+    direction,
+    setLanguage: handleSetLanguage,
+    t,
+  }), [language, direction, handleSetLanguage, t]);
 
   return (
-    <I18nContext.Provider
-      value={{
-        language,
-        direction,
-        setLanguage: handleSetLanguage,
-        t,
-      }}
-    >
+    <I18nContext.Provider value={contextValue}>
       {children}
     </I18nContext.Provider>
   );
