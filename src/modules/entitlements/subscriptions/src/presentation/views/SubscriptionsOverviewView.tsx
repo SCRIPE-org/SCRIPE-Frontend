@@ -44,6 +44,7 @@ import {
       CalendarClock,
       Tag,
 } from "lucide-react";
+import { useModuleLocales } from "@core/hooks/use-module-locales";
 
 const STATUS_COLORS: Record<string, string> = {
       Active: "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400",
@@ -62,6 +63,7 @@ const TYPE_COLORS: Record<string, string> = {
 };
 
 export function SubscriptionsOverviewView() {
+  useModuleLocales(() => import("../../../../locales"), "entitlements-shared");
       const router = useRouter();
       const vm = useSubscriptionsOverviewViewModel();
       const [exportOpen, setExportOpen] = useState(false);

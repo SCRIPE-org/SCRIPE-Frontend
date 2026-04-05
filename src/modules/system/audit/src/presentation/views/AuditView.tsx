@@ -17,6 +17,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { FileText, Radio, Download } from "lucide-react";
+import { useModuleLocales } from "@core/hooks/use-module-locales";
 
 // Lazy-load table and dialog components
 const AuditLogTable = dynamic(() => import("../components/AuditLogTable").then(m => ({ default: m.AuditLogTable })), { ssr: false });
@@ -31,6 +32,8 @@ const connectionColors = {
 } as const;
 
 export function AuditView() {
+  useModuleLocales(() => import("../../../locales"), "audit");
+
   const vm = useAuditViewModel();
   const realtime = useAuditRealtime();
   const { t } = useI18n();

@@ -14,8 +14,10 @@ import type { Edition } from "../../domain/entities/Edition";
 import { Badge } from "@core/ui/badge";
 import { Pencil, Trash2, Eye, Settings2 } from "lucide-react";
 import { format } from "date-fns";
+import { useModuleLocales } from "@core/hooks/use-module-locales";
 
 export function EditionsView() {
+  useModuleLocales(() => import("../../../../locales"), "entitlements-shared");
       const { t, language } = useI18n();
       const vm = useEditionsViewModel();
 

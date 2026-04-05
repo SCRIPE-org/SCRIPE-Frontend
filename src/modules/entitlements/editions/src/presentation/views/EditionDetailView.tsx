@@ -44,12 +44,14 @@ import type { Feature } from "@modules/entitlements/features/src/domain/entities
 import { VersionsTab } from "../components/VersionsTab";
 import { PricingTab } from "../components/PricingTab";
 import { PromotionsTab } from "../components/PromotionsTab";
+import { useModuleLocales } from "@core/hooks/use-module-locales";
 
 interface EditionDetailViewProps {
       editionId: string;
 }
 
 export function EditionDetailView({ editionId }: EditionDetailViewProps) {
+  useModuleLocales(() => import("../../../../locales"), "entitlements-shared");
       const { t, language, direction } = useI18n();
       const vm = useEditionDetailViewModel(editionId);
 

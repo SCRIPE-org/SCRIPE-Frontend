@@ -18,6 +18,7 @@ import { useCallback, useEffect, useRef, useState, useMemo } from "react";
 import { cn } from "@/core/common/utils";
 import { Code, Eye, X, Maximize2, FileCode2, Copy, Check, Zap } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
+import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { createPortal } from "react-dom";
 
 // CodeMirror imports
@@ -430,6 +431,7 @@ export function CodeEditorField({
   renderPreview,
   className,
 }: CodeEditorFieldProps) {
+  useModuleLocales(() => import("@modules/system/customization-studio/locales"), "customization-studio");
   const { t } = useI18n();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState(tabs[0]?.id || "");

@@ -16,6 +16,7 @@ import { Eye, Pencil, Trash2, Users, Shield, ShieldCheck, ShieldAlert, UserCheck
 import { useRouter } from "next/navigation";
 import { CascadeDeleteDialog } from "../components/CascadeDeleteDialog";
 import { CascadeStatusDialog } from "../components/CascadeStatusDialog";
+import { useModuleLocales } from "@core/hooks/use-module-locales";
 
 interface UserGroupListItem {
       id: string;
@@ -33,6 +34,8 @@ interface UserGroupListItem {
 }
 
 export function UserGroupsView() {
+  useModuleLocales(() => import("../../../locales"), "user-groups");
+
       const { t, language } = useI18n();
       const router = useRouter();
       const {

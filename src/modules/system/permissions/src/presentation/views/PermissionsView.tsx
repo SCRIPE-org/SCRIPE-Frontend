@@ -17,8 +17,11 @@ import {
   PermissionCategoryAccordion,
   PermissionTableSkeleton,
 } from "../components";
+import { useModuleLocales } from "@core/hooks/use-module-locales";
 
 export function PermissionsView() {
+  useModuleLocales(() => import("../../../locales"), "permissions");
+
   const { t } = useI18n();
   const { groupedPermissions, categories, totalCount, isLoading, refetch, filter } =
     usePermissionsViewModel();

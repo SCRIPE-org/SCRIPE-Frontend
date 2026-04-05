@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Theme Management View
  *
  * Admin page for managing marketplace themes.
@@ -22,6 +22,7 @@ import type {
 import type { ThemeCard } from "../../domain/entities/ThemeCard";
 import { useThemeManagementViewModel } from "../viewmodels/useThemeManagementViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
+import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { Badge } from "@core/ui/badge";
 import {
   Eye,
@@ -133,6 +134,7 @@ function FeatureBadges({
 }
 
 export function ThemeManagementView() {
+  useModuleLocales(() => import("../../../../customization-studio/locales"), "customization-studio");
   const { t } = useI18n();
   const router = useRouter();
   const {

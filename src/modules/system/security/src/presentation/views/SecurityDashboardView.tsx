@@ -14,6 +14,7 @@ import { ThreatSummaryCards } from "../components/ThreatSummaryCards";
 import { API_ENDPOINTS } from "@core/config/api-endpoints";
 import { Button } from "@core/ui/button";
 import { Shield, FileDown } from "lucide-react";
+import { useModuleLocales } from "@core/hooks/use-module-locales";
 
 // Lazy-load heavy sections (below-the-fold)
 const FailedLoginsHeatmap = dynamic(() => import("../components/FailedLoginsHeatmap").then(m => ({ default: m.FailedLoginsHeatmap })), { ssr: false });
@@ -22,6 +23,8 @@ const SecurityTimeline = dynamic(() => import("../components/SecurityTimeline").
 const ReportExportDialog = dynamic(() => import("@core/ui/report-export-dialog").then(m => ({ default: m.ReportExportDialog })), { ssr: false });
 
 export function SecurityDashboardView() {
+  useModuleLocales(() => import("../../../locales"), "security");
+
   const vm = useSecurityDashboardViewModel();
   const { t } = useI18n();
   const [exportOpen, setExportOpen] = useState(false);

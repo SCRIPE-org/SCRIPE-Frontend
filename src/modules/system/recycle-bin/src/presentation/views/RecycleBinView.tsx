@@ -22,8 +22,11 @@ import type { DeletedItem } from "../../domain/entities/DeletedItem";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { cn } from "@core/common/utils";
 import { CascadeRestoreDialog } from "../components/CascadeRestoreDialog";
+import { useModuleLocales } from "@core/hooks/use-module-locales";
 
 export function RecycleBinView() {
+  useModuleLocales(() => import("../../../locales"), "recycle-bin");
+
   const vm = useRecycleBinViewModel();
   const { t, direction } = useI18n();
 

@@ -19,8 +19,11 @@ import {
       DialogTitle,
       DialogDescription,
 } from "@core/ui/dialog";
+import { useModuleLocales } from "@core/hooks/use-module-locales";
 
 export function OAuthAppsView() {
+  useModuleLocales(() => import("../../../locales"), "oauth-apps");
+
       const { t } = useI18n();
       const {
             vm,

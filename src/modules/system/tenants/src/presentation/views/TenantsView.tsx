@@ -46,6 +46,7 @@ import {
 import type { TenantTreeNode, Tenant } from "../../domain/entities/Tenant";
 import type { EditionThinModel } from "../../domain/types/SubscriptionTypes";
 import { appLogger } from "@core/common/logger";
+import { useModuleLocales } from "@core/hooks/use-module-locales";
 
 // ============================================
 // Helpers
@@ -82,6 +83,8 @@ function filterTree(
 // ============================================
 
 export function TenantsView() {
+  useModuleLocales(() => import("../../../locales"), "tenants");
+
   const router = useRouter();
   const queryClient = useQueryClient();
   const { t, language, direction } = useI18n();

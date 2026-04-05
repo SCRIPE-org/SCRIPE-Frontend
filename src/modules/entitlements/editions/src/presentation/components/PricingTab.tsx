@@ -29,6 +29,7 @@ import {
 } from "lucide-react";
 import { getCurrencyInfo, formatPrice, SUPPORTED_CURRENCIES } from "../../domain/entities/EditionPricing";
 import { parseLocalizedNumber } from "@core/utils/number-parser";
+import { useModuleLocales } from "@core/hooks/use-module-locales";
 
 interface PricingTabProps {
       editionId: string;
@@ -38,6 +39,7 @@ interface PricingTabProps {
 }
 
 export const PricingTab = memo(function PricingTab({ editionId, allowMonthly = true, allowYearly = true, allowLifetime = true }: PricingTabProps) {
+      useModuleLocales(() => import("../../../../locales"), "entitlements-shared");
       const { t } = useI18n();
       const vm = useEditionPricingViewModel(editionId);
       const [showAddDialog, setShowAddDialog] = useState(false);

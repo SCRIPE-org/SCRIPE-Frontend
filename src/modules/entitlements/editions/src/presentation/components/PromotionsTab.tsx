@@ -31,6 +31,7 @@ import {
 } from "lucide-react";
 import type { EditionPromotion } from "../../domain/entities/EditionPromotion";
 import { parseLocalizedNumber } from "@core/utils/number-parser";
+import { useModuleLocales } from "@core/hooks/use-module-locales";
 
 interface PromotionsTabProps {
       editionId: string;
@@ -40,6 +41,7 @@ interface PromotionsTabProps {
 }
 
 export function PromotionsTab({ editionId, allowMonthly = true, allowYearly = true, allowLifetime = true }: PromotionsTabProps) {
+  useModuleLocales(() => import("../../../../locales"), "entitlements-shared");
       const { t, direction } = useI18n();
       const vm = usePromotionsViewModel(editionId);
 

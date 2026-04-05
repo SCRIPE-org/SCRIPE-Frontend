@@ -37,6 +37,7 @@ import { ManageRolesDialog } from "../components/ManageRolesDialog";
 import { AdminTransferDialog } from "../components/AdminTransferDialog";
 import { AssignToGroupDialog } from "@modules/system/user-groups/src/presentation/components/AssignToGroupDialog";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@core/ui/tooltip";
+import { useModuleLocales } from "@core/hooks/use-module-locales";
 
 interface AdminsViewProps {
   /** Optional tenant ID to show admins for a specific tenant */
@@ -44,6 +45,10 @@ interface AdminsViewProps {
 }
 
 export function AdminsView({ tenantId }: AdminsViewProps = {}) {
+  useModuleLocales(
+    () => import("../../../locales"),
+    "admin"
+  );
   const { t, language } = useI18n();
   const { isSuperAdmin } = usePermissions();
   const currentUser = useAppStore((state) => state.user);

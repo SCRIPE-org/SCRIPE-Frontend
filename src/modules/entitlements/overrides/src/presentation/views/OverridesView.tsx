@@ -30,6 +30,7 @@ import { Loader2, Trash2, Pencil, Shield, Layers, DollarSign } from "lucide-reac
 import { Textarea } from "@core/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
 import { format } from "date-fns";
+import { useModuleLocales } from "@core/hooks/use-module-locales";
 
 /* ============================================
  * CONSTANTS
@@ -50,6 +51,7 @@ interface OverridesViewProps {
 }
 
 export function OverridesView({ tenantId }: OverridesViewProps) {
+  useModuleLocales(() => import("../../../../locales"), "entitlements-shared");
       const { t } = useI18n();
       const vm = useOverridesViewModel(tenantId);
 

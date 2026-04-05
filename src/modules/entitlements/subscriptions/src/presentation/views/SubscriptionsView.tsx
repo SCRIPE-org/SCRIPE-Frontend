@@ -33,6 +33,7 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 import type { SubscriptionListItem } from "../../domain/entities/Subscription";
+import { useModuleLocales } from "@core/hooks/use-module-locales";
 
 /* ============================================
  * BADGE VARIANT MAPS
@@ -84,6 +85,7 @@ interface SubscriptionsViewProps {
 }
 
 export function SubscriptionsView({ tenantId }: SubscriptionsViewProps) {
+  useModuleLocales(() => import("../../../../locales"), "entitlements-shared");
       const { t, language } = useI18n();
       const vm = useSubscriptionsCrudAdapter(tenantId);
       const editionsVm = useEditionsViewModel();

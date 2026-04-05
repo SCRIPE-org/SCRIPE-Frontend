@@ -236,12 +236,12 @@ export function CreateTenantDialog({
       // ── Promotion Picker (select dropdown — data from View) ──
       {
         name: "promotionId",
-        label: t("entitlements.promotions.title") || "Promotion",
+        label: t("tenant.entitlementLabels.promotionsTitle") || "Promotion",
         type: "select",
         loading: isLoadingPromotions,
         isVisible: (formData: Record<string, any>) => !!formData.editionId && !!formData.subscriptionType,
         options: [
-          { value: "__none__", label: t("entitlements.promotions.noPromotion") || "No promotion" },
+          { value: "__none__", label: t("tenant.entitlementLabels.promotionsNoPromotion") || "No promotion" },
           ...availablePromotions.map((p) => ({
             value: p.id,
             label: `${p.name} — ${p.type === "Percentage" ? `${p.discountValue}% off` : `$${p.discountValue} off`}${p.requiresCode ? " (Code)" : ""}`,

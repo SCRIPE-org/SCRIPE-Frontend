@@ -27,6 +27,7 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
 import { Skeleton } from "@core/ui/skeleton";
 import { CheckCircle, XCircle, ArrowUpDown } from "lucide-react";
+import { useModuleLocales } from "@core/hooks/use-module-locales";
 
 const VALUE_TYPE_COLORS: Record<string, "default" | "secondary" | "outline"> = {
       Boolean: "default",
@@ -35,6 +36,7 @@ const VALUE_TYPE_COLORS: Record<string, "default" | "secondary" | "outline"> = {
 };
 
 export function FeaturesView() {
+  useModuleLocales(() => import("../../../../locales"), "entitlements-shared");
       const { t, language } = useI18n();
       const vm = useFeaturesViewModel();
 

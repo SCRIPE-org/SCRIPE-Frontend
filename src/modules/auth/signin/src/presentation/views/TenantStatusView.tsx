@@ -7,6 +7,7 @@
 "use client";
 
 import { useI18n } from "@core/providers/i18n-provider";
+import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { BRAND } from "@core/config/branding";
 import { resolveFileUrl } from "@core/common/utils";
 import { AlertTriangle, XCircle, SearchX } from "lucide-react";
@@ -19,6 +20,7 @@ interface TenantSuspendedViewProps {
 }
 
 export function TenantSuspendedView({ branding }: TenantSuspendedViewProps) {
+      useModuleLocales(() => import("../../../locales"), "signin");
       const { t, direction } = useI18n();
       const isCanceled = branding.status === "canceled";
       const companyName = branding.companyName ?? branding.name ?? BRAND.name;
@@ -85,6 +87,7 @@ export function TenantSuspendedView({ branding }: TenantSuspendedViewProps) {
 // ─── Not Found View ───────────────────────────────────────
 
 export function TenantNotFoundView() {
+      useModuleLocales(() => import("../../../locales"), "signin");
       const { t, direction } = useI18n();
 
       return (

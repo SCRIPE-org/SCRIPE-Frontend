@@ -23,6 +23,7 @@ import {
       GitBranch, Calendar, Percent
 } from "lucide-react";
 import { useVersionsViewModel } from "../viewmodels/useVersionsViewModel";
+import { useModuleLocales } from "@core/hooks/use-module-locales";
 
 interface VersionsTabProps {
       editionId: string;
@@ -46,6 +47,7 @@ const STATUS_ICONS: Record<string, React.ReactNode> = {
 };
 
 export function VersionsTab({ editionId }: VersionsTabProps) {
+  useModuleLocales(() => import("../../../../locales"), "entitlements-shared");
       const { t } = useI18n();
       const vm = useVersionsViewModel(editionId);
 

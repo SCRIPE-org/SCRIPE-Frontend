@@ -21,8 +21,11 @@ import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { usePermissions } from "@core/providers/permission-provider";
 import type { Role } from "../../domain/entities/Role";
 import { AssignToGroupDialog } from "@modules/system/user-groups/src/presentation/components/AssignToGroupDialog";
+import { useModuleLocales } from "@core/hooks/use-module-locales";
 
 export function RolesView() {
+  useModuleLocales(() => import("../../../locales"), "roles");
+
   const { t, language } = useI18n();
   const router = useRouter();
   const { isSuperAdmin } = usePermissions();

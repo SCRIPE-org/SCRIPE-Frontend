@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
 import { TooltipProvider } from "@core/ui/tooltip";
 import { Button } from "@core/ui/button";
 import { useI18n } from "@core/providers/i18n-provider";
+import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useSettings } from "@core/providers/settings-provider";
 import { useToast } from "@core/hooks/use-toast";
 import { Download, Upload, Save, RotateCcw, Lock, ShieldAlert } from "lucide-react";
@@ -62,6 +63,7 @@ const ProfessionalChartsTab = dynamic(
 );
 
 export function SettingsView() {
+  useModuleLocales(() => import("@modules/system/customization-settings/locales"), "customization-settings");
   const { t } = useI18n();
   const settings = useSettings();
   const { toast } = useToast();

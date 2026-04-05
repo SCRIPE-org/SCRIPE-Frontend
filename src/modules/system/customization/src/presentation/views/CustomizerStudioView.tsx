@@ -33,10 +33,12 @@ import { DragOverlayItem } from "../components/builder/DraggableCanvasItem";
 import { useBuilderStore } from "../viewmodels/useBuilderStore";
 import { Loader2, Building2, LayoutGrid } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
+import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
 import { SaveAsThemeModal } from "../components/SaveAsThemeModal";
 
 export function CustomizerStudioView() {
+  useModuleLocales(() => import("../../../../customization-studio/locales"), "customization-studio");
   const { t } = useI18n();
   const searchParams = useSearchParams();
   const [showSaveAsTheme, setShowSaveAsTheme] = useState(false);

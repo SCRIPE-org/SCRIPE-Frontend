@@ -14,6 +14,7 @@ import { TenantMetricsCards } from "../components/TenantMetricsCards";
 import { API_ENDPOINTS } from "@core/config/api-endpoints";
 import { Button } from "@core/ui/button";
 import { BarChart3, FileDown } from "lucide-react";
+import { useModuleLocales } from "@core/hooks/use-module-locales";
 
 // Lazy-load chart components (below-the-fold)
 const AdminDistributionPie = dynamic(() => import("../components/AdminDistributionPie").then(m => ({ default: m.AdminDistributionPie })), { ssr: false });
@@ -21,6 +22,8 @@ const LoginComparisonChart = dynamic(() => import("../components/LoginComparison
 const ReportExportDialog = dynamic(() => import("@core/ui/report-export-dialog").then(m => ({ default: m.ReportExportDialog })), { ssr: false });
 
 export function TenantAnalyticsView() {
+  useModuleLocales(() => import("../../../locales"), "analytics");
+
   const vm = useTenantAnalyticsViewModel();
   const { t } = useI18n();
   const [exportOpen, setExportOpen] = useState(false);

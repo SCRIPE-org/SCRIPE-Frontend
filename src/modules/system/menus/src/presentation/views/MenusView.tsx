@@ -30,8 +30,11 @@ import {
 } from "lucide-react";
 import { cn } from "@core/common/utils";
 import Link from "next/link";
+import { useModuleLocales } from "@core/hooks/use-module-locales";
 
 export function MenusView() {
+  useModuleLocales(() => import("../../../locales"), "menus");
+
   const { t } = useI18n();
   const vm = useMenusViewModel();
   const scrollContainerRef = useRef<HTMLDivElement>(null);

@@ -11,6 +11,7 @@ import { Button } from "@core/ui/button";
 import { Skeleton } from "@core/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@core/ui/alert";
 import { AlertCircle, Save, Loader2, Building2 } from "lucide-react";
+import { useModuleLocales } from "@core/hooks/use-module-locales";
 
 /**
  * TenantSettingsView - Pure UI component for Settings page
@@ -26,6 +27,8 @@ import { AlertCircle, Save, Loader2, Building2 } from "lucide-react";
  * - "tenant" → System admin drilldown into a tenant
  */
 export function TenantSettingsView() {
+  useModuleLocales(() => import("../../../locales"), "tenant-settings");
+
   const vm = useTenantSettingsViewModel();
 
   // Loading state

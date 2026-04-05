@@ -345,8 +345,8 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                                       <div className="space-y-1">
                                                             <p className="text-xs font-medium text-muted-foreground">
                                                                   {(subscription.adjustmentAmount ?? 0) < 0
-                                                                        ? (t("entitlements.overrides.discount") || "Override Discount")
-                                                                        : (t("entitlements.overrides.totalCost") || "Override Costs")}
+                                                                        ? (t("tenant.entitlementLabels.overridesDiscount") || "Override Discount")
+                                                                        : (t("tenant.entitlementLabels.overridesTotalCost") || "Override Costs")}
                                                             </p>
                                                             <p className={`text-sm font-bold ${
                                                                   (subscription.adjustmentAmount ?? 0) < 0

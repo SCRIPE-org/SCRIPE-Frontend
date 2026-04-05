@@ -28,6 +28,7 @@ import { Button } from "@core/ui/button";
 import { Radio, FileDown, Settings2 } from "lucide-react";
 import { CurrencyDisplayToggle } from "@core/ui/currency-display-toggle";
 import { useAppStore } from "@core/store/useAppStore";
+import { useModuleLocales } from "@core/hooks/use-module-locales";
 
 // Lazy-load heavy chart/section components (not above-the-fold)
 const LoginActivityChart = dynamic(() => import("../components/LoginActivityChart").then(m => ({ default: m.LoginActivityChart })), { ssr: false });
@@ -45,6 +46,8 @@ const connectionColors = {
 } as const;
 
 export function DashboardView() {
+  useModuleLocales(() => import("../../../locales"), "dashboard");
+
   const hasSecurityPerm = usePermission(SYSTEM_PERMISSIONS.SECURITY_VIEW);
   const vm = useDashboardViewModel(hasSecurityPerm);
   const { connectionState } = useDashboardRealtime();

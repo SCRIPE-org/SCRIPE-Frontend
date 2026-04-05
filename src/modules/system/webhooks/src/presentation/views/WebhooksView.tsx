@@ -26,8 +26,11 @@ import {
 import { format } from "date-fns";
 import { useRouter } from "next/navigation";
 import { WebhookForm } from "../components/WebhookForm";
+import { useModuleLocales } from "@core/hooks/use-module-locales";
 
 export function WebhooksView() {
+  useModuleLocales(() => import("../../../locales"), "webhooks");
+
       const { t } = useI18n();
       const router = useRouter();
       const { vm, getConfigBase, handleToggle } = useWebhooksViewModel();
