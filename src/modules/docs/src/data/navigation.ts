@@ -144,6 +144,10 @@ export const navigationData: DocCategoryData[] = [
       { id: "infra-gateway", titleKey: "infrastructure.gatewayDeployment.title", slug: "infrastructure/gateway-deployment", order: 4 },
       { id: "infra-migrations", titleKey: "infrastructure.databaseMigrations.title", slug: "infrastructure/database-migrations", order: 5 },
       { id: "infra-nexora-cli", titleKey: "infrastructure.nexoraCli.title", slug: "infrastructure/nexora-cli", order: 6 },
+      { id: "infra-health", titleKey: "infrastructure.healthChecks.title", slug: "infrastructure/health-checks", order: 7 },
+      { id: "infra-observability", titleKey: "infrastructure.observability.title", slug: "infrastructure/observability", order: 8 },
+      { id: "infra-audit-trail", titleKey: "infrastructure.auditTrail.title", slug: "infrastructure/audit-trail", order: 9 },
+      { id: "infra-load-testing", titleKey: "infrastructure.loadTesting.title", slug: "infrastructure/load-testing", order: 10 },
     ],
   },
 

@@ -277,7 +277,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="text-center">
-          <LoadingSpinner />
+          <LoadingSpinner showText={false} />
           <p className="text-muted-foreground">{t("common.loading")}</p>
         </div>
       </div>

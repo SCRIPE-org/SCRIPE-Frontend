@@ -684,7 +684,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
   };
 
   if (viewModel.loading && viewModel.items.length === 0) {
-    return <LoadingSpinner />;
+    return <LoadingSpinner showText={false} />;
   }
 
   if (viewModel.error && viewModel.items.length === 0) {

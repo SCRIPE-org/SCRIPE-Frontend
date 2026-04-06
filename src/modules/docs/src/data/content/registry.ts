@@ -90,6 +90,10 @@ import "./infrastructure/resilience";
 import "./infrastructure/gateway-deployment";
 import "./infrastructure/database-migrations";
 import "./infrastructure/nexora-cli";
+import "./infrastructure/health-checks";
+import "./infrastructure/observability";
+import "./infrastructure/audit-trail";
+import "./infrastructure/load-testing";
 
 // Tutorials
 import "./tutorials/add-module";

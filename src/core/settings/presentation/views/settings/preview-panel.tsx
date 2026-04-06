@@ -115,7 +115,7 @@ export function PreviewPanel() {
             <Label className="text-sm font-semibold">{t("settings.preview.loading.label")}</Label>
             <div className="flex justify-center py-4">
               <div className="scale-50">
-                <LoadingSpinner />
+                <LoadingSpinner showText={false} />
               </div>
             </div>
           </div>

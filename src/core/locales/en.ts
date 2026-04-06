@@ -1629,4 +1629,38 @@ export const en = {
       },
     },
   },
+  overview: {
+    quickActions: "Quick Actions",
+    recentActivity: "Recent Activity",
+    greeting: {
+      evening: "Good Evening",
+      morning: "Good Morning",
+      noon: "Good Noon",
+      night: "Good Night",
+    },
+    actions: {
+      dashboard: "Dashboard",
+      dashboardDesc: "Dashboard",
+      audit: "Audit",
+      auditDesc: "Audit",
+      security: "Security",
+      securityDesc: "Security",
+      analytics: "Analytics",
+      analyticsDesc: "Analytics",
+      admins: "Admins",
+      adminsDesc: "Admins",
+      tenants: "Tenants",
+      tenantsDesc: "Tenants",
+      roles: "Roles",
+      rolesDesc: "Roles",
+      settings: "Settings",
+      settingsDesc: "Settings",
+    },
+    stats: {
+      totalAdmins: "Total Admins",
+      activeTenants: "Active Tenants",
+      activeUsers: "Total Roles",
+      loginsToday: "Logins Today",
+    }
+  }
 };

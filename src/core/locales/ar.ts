@@ -1629,4 +1629,38 @@ export const ar = {
     loginSuccess: "تم تسجيل الدخول بنجاح",
     loginError: "خطأ في تسجيل الدخول",
   },
+  overview: {
+    quickActions: "الإجراءات السريعة",
+    recentActivity: "الأنشطة الأخيرة",
+    greeting: {
+      evening: "مساء الخير",
+      morning: "صباح الخير",
+      noon: "ظهر الخير",
+      night: "ليل الخير",
+    },
+    actions: {
+      dashboard: "لوحة التحكم",
+      dashboardDesc: "لوحة التحكم",
+      audit: "السجلات",
+      auditDesc: "السجلات",
+      security: "الأمان",
+      securityDesc: "الأمان",
+      analytics: "التحليلات",
+      analyticsDesc: "التحليلات",
+      admins: "المسؤولين",
+      adminsDesc: "المسؤولين",
+      tenants: "المستأجرين",
+      tenantsDesc: "المستأجرين",
+      roles: "الأدوار",
+      rolesDesc: "الأدوار",
+      settings: "الإعدادات",
+      settingsDesc: "الإعدادات",
+    },
+    stats: {
+      totalAdmins: "إجمالي المسؤولين",
+      activeTenants: "إجمالي المستأجرين",
+      activeUsers: "إجمالي الأدوار",
+      loginsToday: "تسجيلات الدخول اليوم",
+    }
+  }
 };
