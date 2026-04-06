@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useDocsViewModel } from "../viewmodels/useDocsViewModel";
 import { useSidebarViewModel } from "../viewmodels/useSidebarViewModel";
 import { useSearchViewModel } from "../viewmodels/useSearchViewModel";
@@ -28,11 +29,16 @@ interface TechnicalDocsViewProps {
 
 // ─── View ─────────────────────────────────────────────────────────
 export function TechnicalDocsView({ slug }: TechnicalDocsViewProps) {
-      const { t, direction } = useDocsI18n();
+      const { t, direction, loadSection } = useDocsI18n();
       const vm = useDocsViewModel(slug, "technical");
       const sidebar = useSidebarViewModel();
       const search = useSearchViewModel(vm.search);
       const toc = useTocViewModel(vm.headingIds);
+
+      // Lazy-load the section locale for the current page
+      useEffect(() => {
+            loadSection(slug);
+      }, [slug, loadSection]);
 
       if (vm.isNotFound) {
             return (

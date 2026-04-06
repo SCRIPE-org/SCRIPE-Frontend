@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useDocsViewModel } from "../viewmodels/useDocsViewModel";
 import { useSidebarViewModel } from "../viewmodels/useSidebarViewModel";
 import { useSearchViewModel } from "../viewmodels/useSearchViewModel";
@@ -25,11 +26,16 @@ interface CommercialDocsViewProps {
 
 // ─── View ─────────────────────────────────────────────────────────
 export function CommercialDocsView({ slug }: CommercialDocsViewProps) {
-      const { direction } = useDocsI18n();
+      const { direction, loadSection } = useDocsI18n();
       const vm = useDocsViewModel(slug, "commercial");
       const sidebar = useSidebarViewModel();
       const search = useSearchViewModel(vm.search);
       const toc = useTocViewModel(vm.headingIds);
+
+      // Lazy-load the section locale for the current commercial page
+      useEffect(() => {
+            loadSection(slug);
+      }, [slug, loadSection]);
 
       // ── 404 ──────────────────────────────────────────────────────────
       if (vm.isNotFound) {

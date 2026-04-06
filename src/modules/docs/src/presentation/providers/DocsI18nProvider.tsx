@@ -2,34 +2,25 @@
 
 /**
  * DocsI18nProvider — Isolated i18n context for the documentation portal.
- * Completely separate from the main app's I18nProvider.
- * Supports 7 languages: en, ar, fr, ru, zh, es, de.
  *
- * Accepts a `scope` prop to load either technical or commercial translations.
- * - "technical"  → uses doc.en.ts (+ doc.{lang}.ts)
- * - "commercial" → merges doc.comm.en.ts on top (+ doc.comm.{lang}.ts)
+ * Architecture:
+ * - Common chrome (nav, search, UI) is eagerly loaded (~30KB)
+ * - Page sections are lazy-loaded via dynamic import() based on URL slug
+ * - Adding a new section? Just add ONE entry to SLUG_MAP. Zero new imports.
+ *
+ * Supports 7 languages: en, ar, fr, ru, zh, es, de
  */
 
 import type React from "react";
-import { createContext, useContext, useState, useEffect, useCallback, useMemo } from "react";
-
-// ─── Tech Translations ────────────────────────────────────────
-import { docEn, type PartialDocTranslations } from "../../locales/doc.en";
-import { docAr } from "../../locales/doc.ar";
-import { docFr } from "../../locales/doc.fr";
-import { docRu } from "../../locales/doc.ru";
-import { docZh } from "../../locales/doc.zh";
-import { docEs } from "../../locales/doc.es";
-import { docDe } from "../../locales/doc.de";
-
-// ─── Commercial Translations ─────────────────────────────────
-import { docCommEn } from "../../locales/doc.comm.en";
-import { docCommAr } from "../../locales/doc.comm.ar";
-import { docCommFr } from "../../locales/doc.comm.fr";
-import { docCommRu } from "../../locales/doc.comm.ru";
-import { docCommZh } from "../../locales/doc.comm.zh";
-import { docCommEs } from "../../locales/doc.comm.es";
-import { docCommDe } from "../../locales/doc.comm.de";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+  useRef,
+} from "react";
 
 // ─── Types ─────────────────────────────────────────────────────
 export type DocLanguage = "en" | "ar" | "fr" | "ru" | "zh" | "es" | "de";
@@ -53,28 +44,92 @@ export const DOC_LANGUAGES: DocLanguageInfo[] = [
   { code: "de", label: "German", nativeLabel: "Deutsch", direction: "ltr" },
 ];
 
-// ─── Translations Maps ─────────────────────────────────────────
-const techTranslations: Record<DocLanguage, PartialDocTranslations> = {
-  en: docEn,
-  ar: docAr,
-  fr: docFr,
-  ru: docRu,
-  zh: docZh,
-  es: docEs,
-  de: docDe,
+// ─── Slug → Section Resolution ─────────────────────────────────
+// Maps the first URL slug segment to the section file name.
+// To add a new section: just add ONE entry here. That's it.
+const TECH_SLUG_MAP: Record<string, string> = {
+  "get-started": "get-started",
+  overview: "get-started",
+  prerequisites: "get-started",
+  "quick-start": "get-started",
+  "project-structure": "get-started",
+  architecture: "architecture",
+  features: "features",
+  modules: "modules",
+  security: "security",
+  frontend: "frontend",
+  infrastructure: "infrastructure",
+  tutorials: "tutorials",
+  "api-reference": "api-reference",
+  api: "api-reference",
 };
 
-const commTranslations: Record<DocLanguage, PartialDocTranslations> = {
-  en: docCommEn,
-  ar: docCommAr,
-  fr: docCommFr,
-  ru: docCommRu,
-  zh: docCommZh,
-  es: docCommEs,
-  de: docCommDe,
+const COMM_SLUG_MAP: Record<string, string> = {
+  "why-nexora": "why-nexora",
+  platform: "platform",
+  enterprise: "enterprise",
+  security: "security",
+  technical: "technical",
+  developer: "developer",
+  integration: "integration",
+  pricing: "pricing",
+  modules: "modules",
+  entitlements: "entitlements",
+  customization: "customization",
 };
 
-// ─── Storage Key ───────────────────────────────────────────────
+// ─── Dynamic Import Factory ────────────────────────────────────
+// Single function replaces 140+ hardcoded import() lines.
+// Turbopack/Webpack resolves the template literal glob at build time.
+function loadPageLocale(
+  scope: DocScope,
+  section: string,
+  lang: DocLanguage,
+): Promise<Record<string, any>> {
+  if (scope === "commercial") {
+    return import(`../../locales/comm-pages/${section}.${lang}`);
+  }
+  return import(`../../locales/pages/${section}.${lang}`);
+}
+
+// ─── Common Chrome (eagerly loaded, ~30KB) ─────────────────────
+// Only these 7 imports exist. Everything else is lazy.
+async function loadCommonLocales(): Promise<
+  Record<DocLanguage, Record<string, any>>
+> {
+  const [en, ar, fr, ru, zh, es, de] = await Promise.all([
+    import("../../locales/pages/common.en").then((m) => m.en),
+    import("../../locales/pages/common.ar").then((m) => m.ar),
+    import("../../locales/pages/common.fr").then((m) => m.fr),
+    import("../../locales/pages/common.ru").then((m) => m.ru),
+    import("../../locales/pages/common.zh").then((m) => m.zh),
+    import("../../locales/pages/common.es").then((m) => m.es),
+    import("../../locales/pages/common.de").then((m) => m.de),
+  ]);
+  return { en, ar, fr, ru, zh, es, de };
+}
+
+// ─── Helpers ───────────────────────────────────────────────────
+function deepMerge(
+  target: Record<string, any>,
+  source: Record<string, any>,
+): Record<string, any> {
+  const result = { ...target };
+  for (const key of Object.keys(source)) {
+    if (
+      result[key] &&
+      typeof result[key] === "object" &&
+      typeof source[key] === "object" &&
+      !Array.isArray(result[key])
+    ) {
+      result[key] = deepMerge(result[key], source[key]);
+    } else {
+      result[key] = source[key];
+    }
+  }
+  return result;
+}
+
 const DOCS_LANG_KEY = "docs-language";
 
 // ─── Context ───────────────────────────────────────────────────
@@ -85,9 +140,12 @@ interface DocsI18nContextType {
   t: (key: string, params?: Record<string, any>) => string;
   languages: DocLanguageInfo[];
   currentLanguageInfo: DocLanguageInfo;
+  loadSection: (slug: string) => void;
 }
 
-const DocsI18nContext = createContext<DocsI18nContextType | undefined>(undefined);
+const DocsI18nContext = createContext<DocsI18nContextType | undefined>(
+  undefined,
+);
 
 // ─── Provider ──────────────────────────────────────────────────
 export function DocsI18nProvider({
@@ -99,35 +157,83 @@ export function DocsI18nProvider({
 }) {
   const [language, setLanguageState] = useState<DocLanguage>("en");
   const [isHydrated, setIsHydrated] = useState(false);
+  const [, forceUpdate] = useState(0);
+
+  // Translation registry: lang → merged translations object
+  const registryRef = useRef<Record<DocLanguage, Record<string, any>>>({
+    en: {},
+    ar: {},
+    fr: {},
+    ru: {},
+    zh: {},
+    es: {},
+    de: {},
+  });
+
+  const loadedSectionsRef = useRef<Set<string>>(new Set());
+
+  // Load common chrome on mount
+  useEffect(() => {
+    loadCommonLocales().then((common) => {
+      for (const lang of DOC_LANGUAGES) {
+        registryRef.current[lang.code] = deepMerge(
+          registryRef.current[lang.code],
+          common[lang.code] || {},
+        );
+      }
+      forceUpdate((n) => n + 1);
+    });
+  }, []);
 
   const currentLanguageInfo = useMemo(
     () => DOC_LANGUAGES.find((l) => l.code === language) ?? DOC_LANGUAGES[0],
-    [language]
+    [language],
   );
 
   const direction = currentLanguageInfo.direction;
 
-  // Translate function with dot-notation, interpolation, and English fallback.
-  // For commercial scope, checks: commLang → commEn → techLang → techEn
-  // For technical scope, checks: techLang → techEn
+  // ── Load a section for ALL languages in parallel ──────────────
+  const loadSection = useCallback(
+    async (slug: string) => {
+      const firstSegment = slug.split("/")[0];
+      const slugMap =
+        scope === "commercial" ? COMM_SLUG_MAP : TECH_SLUG_MAP;
+      const sectionName = slugMap[firstSegment] || firstSegment;
+
+      const loadKey = `${scope}:${sectionName}`;
+      if (loadedSectionsRef.current.has(loadKey)) return;
+      loadedSectionsRef.current.add(loadKey);
+
+      await Promise.all(
+        DOC_LANGUAGES.map(async (langInfo) => {
+          try {
+            const mod = await loadPageLocale(scope, sectionName, langInfo.code);
+            const data =
+              mod[langInfo.code] || mod.default || Object.values(mod)[0] || {};
+            registryRef.current[langInfo.code] = deepMerge(
+              registryRef.current[langInfo.code],
+              data,
+            );
+          } catch {
+            // Section not available for this language — skip silently
+          }
+        }),
+      );
+
+      forceUpdate((n) => n + 1);
+    },
+    [scope],
+  );
+
+  // ── Translation function ─────────────────────────────────────
   const t = useCallback(
     (key: string, params?: Record<string, any>): string => {
       const keys = key.split(".");
 
-      // Build the lookup chain based on scope
-      const sources: PartialDocTranslations[] = [];
-
-      if (scope === "commercial") {
-        // Commercial: check commercial locale first, then commercial English, then tech locale, then tech English
-        if (language !== "en") sources.push(commTranslations[language]);
-        sources.push(commTranslations.en);
-        if (language !== "en") sources.push(techTranslations[language]);
-        sources.push(techTranslations.en);
-      } else {
-        // Technical: check tech locale, then tech English
-        if (language !== "en") sources.push(techTranslations[language]);
-        sources.push(techTranslations.en);
-      }
+      // Lookup chain: current language → English fallback
+      const sources: Record<string, any>[] = [];
+      if (language !== "en") sources.push(registryRef.current[language]);
+      sources.push(registryRef.current.en);
 
       for (const source of sources) {
         let value: any = source;
@@ -144,9 +250,9 @@ export function DocsI18nProvider({
 
         if (found && typeof value === "string") {
           if (params) {
-            return value.replace(/\{\{(\w+)\}\}/g, (match, paramKey) => {
-              return params[paramKey] !== undefined ? String(params[paramKey]) : match;
-            });
+            return value.replace(/\{\{(\w+)\}\}/g, (match, paramKey) =>
+              params[paramKey] !== undefined ? String(params[paramKey]) : match,
+            );
           }
           return value;
         }
@@ -154,7 +260,7 @@ export function DocsI18nProvider({
 
       return key;
     },
-    [language, scope]
+    [language],
   );
 
   const setLanguage = useCallback((lang: DocLanguage) => {
@@ -162,7 +268,7 @@ export function DocsI18nProvider({
     try {
       localStorage.setItem(DOCS_LANG_KEY, lang);
     } catch {
-      // localStorage not available
+      /* noop */
     }
   }, []);
 
@@ -170,11 +276,11 @@ export function DocsI18nProvider({
   useEffect(() => {
     try {
       const saved = localStorage.getItem(DOCS_LANG_KEY) as DocLanguage | null;
-      if (saved && techTranslations[saved]) {
+      if (saved && DOC_LANGUAGES.some((l) => l.code === saved)) {
         setLanguageState(saved);
       }
     } catch {
-      // localStorage not available
+      /* noop */
     }
     setIsHydrated(true);
   }, []);
@@ -187,30 +293,32 @@ export function DocsI18nProvider({
       t,
       languages: DOC_LANGUAGES,
       currentLanguageInfo,
+      loadSection,
     }),
-    [language, direction, setLanguage, t, currentLanguageInfo]
+    [language, direction, setLanguage, t, currentLanguageInfo, loadSection],
   );
 
-  // Prevent flash during hydration
-  if (!isHydrated) {
-    return null;
-  }
+  if (!isHydrated) return null;
 
-  return <DocsI18nContext.Provider value={contextValue}>{children}</DocsI18nContext.Provider>;
+  return (
+    <DocsI18nContext.Provider value={contextValue}>
+      {children}
+    </DocsI18nContext.Provider>
+  );
 }
 
 // ─── Hook ──────────────────────────────────────────────────────
 export function useDocsI18n(): DocsI18nContextType {
   const context = useContext(DocsI18nContext);
   if (context === undefined) {
-    // SSR fallback
     return {
       language: "en",
       direction: "ltr",
-      setLanguage: () => { },
+      setLanguage: () => {},
       t: (key: string) => key,
       languages: DOC_LANGUAGES,
       currentLanguageInfo: DOC_LANGUAGES[0],
+      loadSection: () => {},
     };
   }
   return context;
