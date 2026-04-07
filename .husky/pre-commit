@@ -1,1 +1,1 @@
-pnpm build
+npx nexora check --quick
