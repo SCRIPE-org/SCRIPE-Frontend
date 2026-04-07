@@ -672,6 +672,34 @@ export const ar = {
       archTitle: "Module Architecture",
       archIntro: "The Login Page Builder follows NEXORA's standard modular clean architecture. The builder/ directory contains: BuilderCanvas.tsx (main canvas), ComponentPalette.tsx (sidebar palette), PropertiesPanel.tsx (property editor), GridOverlay.tsx (grid visualization), and BuilderToolbar.tsx (mode switcher, undo/redo, zoom controls). State management uses the useBuilderState hook integrated into useStudioViewModel.",
       archTip: "The builder components are intentionally defined as stable, memoized React components to prevent re-renders during drag operations. Each canvas component is wrapped in React.memo with custom equality checks on position and properties."
+    },
+    dashboardHub: {
+      title: "مركز لوحة التحكم (Hub-and-Spoke)",
+      description: "لوحة تحكم مبوبة مع وحدات فرعية منفصلة المجالات (التدقيق، الأمان، التحليلات)، بنية نظيفة من 6 طبقات لكل وحدة، واجهات متوافقة مع مبدأ فصل الواجهات، تحميل كسول، وإخفاء التبويبات حسب الصلاحيات.",
+      intro: "مركز لوحة التحكم هو مركز العمليات الرئيسي في NEXORA — واجهة مبوبة تجمع أربع طرق عرض متخصصة (نظرة عامة، التدقيق، الأمان، التحليلات) في مركز موحد. تتبع كل وحدة مجال بنية نظيفة صارمة من 6 طبقات (النماذج ← الكيانات ← الواجهات ← الخدمات ← المستودعات ← المحولات) مع تسجيل مستقل في حاوية الحقن. يتم تحميل طرق العرض الفرعية كسولاً عبر React.lazy وحمايتها بالصلاحيات.",
+      archTitle: "بنية Hub-and-Spoke",
+      archIntro: "يستخدم مركز لوحة التحكم نمط Hub-and-Spoke حيث يعمل DashboardView كمركز رئيسي يعرض شريط التبويبات، وكل تبويب يحمّل طريقة عرض مستقلة متخصصة بالمجال (spoke) بشكل كسول. تبويب النظرة العامة مضمّن للعرض الفوري. تبويبات التدقيق والأمان والتحليلات تُحمّل عند الطلب.",
+      archTip: "يتم تحميل طرق العرض الفرعية كسولاً فقط عند تفعيل التبويب لأول مرة. هذا يقلل حجم حزمة لوحة التحكم الأولية بنسبة ~60%.",
+      domainTitle: "فصل المجالات (مبدأ فصل الواجهات)",
+      domainIntro: "سابقاً، كانت جميع بيانات لوحة التحكم تمر عبر DashboardRepository واحد (واجهة شاملة) بأكثر من 8 طرق تشمل التدقيق والأمان والتحليلات. البنية المُعاد هيكلتها تستخرج كل مجال في وحدة مستقلة بواجهة مستودع خاصة بها.",
+      domainNote: "يتم الاحتفاظ بأسماء الأنواع المستعارة المتوافقة مع الإصدارات السابقة في DashboardEntities.ts للمكونات القديمة. هذه الأسماء معلّمة بـ @deprecated لتوجيه التنظيف المستقبلي.",
+      layersTitle: "بنية نظيفة من 6 طبقات",
+      layersIntro: "كل وحدة مستخرجة (التدقيق، الأمان، التحليلات) تنفذ مجموعة البنية النظيفة الكاملة للواجهة الأمامية في NEXORA. تضمن الطبقات الست فصل المسؤوليات بشكل صارم: النماذج تحتوي على أشكال استجابة API، الكيانات هي كائنات مجال غنية، الواجهات تحدد العقود، الخدمات تدير استدعاءات HTTP، والمستودعات تنسق الخدمات والمحولات.",
+      diTitle: "ربط حاوية الحقن",
+      diIntro: "جميع الوحدات الثلاث الجديدة مسجلة في SystemContainer. كل ربط يتبع النمط: الخدمة (تأخذ IApiService) ← المستودع (يأخذ الخدمة) ← إعلان واجهة SystemContainer ← تصدير getter كسول.",
+      diTip: "getters الكسولة تضمن أن الخدمات والمستودعات لا تُنشأ إلا عند الوصول إليها لأول مرة.",
+      viewmodelTitle: "فصل نماذج العرض",
+      viewmodelIntro: "كل خطاف ViewModel يستورد الآن مستودعه المخصص من حاوية الحقن بدلاً من مشاركة مستودع لوحة تحكم واحد. هذا يلغي الاقتران بين المجالات.",
+      hubTitle: "تنفيذ المركز المبوب",
+      hubIntro: "مكون DashboardView يعمل كمركز، يعرض TabsList بأربعة عناصر TabsTrigger (نظرة عامة، التدقيق، الأمان، التحليلات). تبويبات التدقيق والأمان تُعرض شرطياً حسب صلاحيات المشرف الحالي.",
+      hubNote: "إخفاء التبويبات حسب الصلاحيات في الواجهة الأمامية لأغراض تجربة المستخدم فقط. نقاط نهاية الخلفية تفرض الحدود الأمنية الفعلية.",
+      cachingTitle: "التخزين المؤقت المدرك للمستأجر",
+      cachingIntro: "جميع مفاتيح TanStack Query عبر المركز تتضمن tenantId كمفتاح تقسيم. هذا يضمن أن تبديل المستأجرين يبطل ويعيد جلب جميع بيانات لوحة التحكم تلقائياً.",
+      compatTitle: "التوافق مع الإصدارات السابقة",
+      compatIntro: "لمنع أخطاء البناء أثناء الترحيل، يحتفظ DashboardEntities.ts بأسماء أنواع مستعارة مُهملة تُعيد تصدير الأنواع من الوحدات المتخصصة الجديدة.",
+      compatWarning: "يجب إزالة الأسماء المستعارة المُهملة في جولة تنظيف مستقبلية بعد ترحيل جميع المكونات المستهلكة.",
+      sourceTitle: "مرجع ملفات المصدر",
+      sourceIntro: "يمتد مركز لوحة التحكم المُعاد هيكلته عبر 4 وحدات (dashboard، audit، security، analytics)، كل منها بمجموعة 6 طبقات كاملة."
     }
   }
 };

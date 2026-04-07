@@ -76,6 +76,7 @@ export const navigationData: DocCategoryData[] = [
       { id: "feat-multi-page-branding", titleKey: "features.multiPageBranding.title", slug: "features/multi-page-branding", order: 17 },
       { id: "feat-login-page-builder", titleKey: "features.loginPageBuilder.title", slug: "features/login-page-builder", order: 18 },
       { id: "feat-dashboard-builder", titleKey: "features.dashboardBuilder.title", slug: "features/dashboard-builder", order: 19 },
+      { id: "feat-dashboard-hub", titleKey: "features.dashboardHub.title", slug: "features/dashboard-hub", order: 20 },
     ],
   },
 

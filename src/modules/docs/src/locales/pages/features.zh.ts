@@ -672,6 +672,34 @@ export const zh = {
       archTitle: "Module Architecture",
       archIntro: "The Login Page Builder follows NEXORA's standard modular clean architecture. The builder/ directory contains: BuilderCanvas.tsx (main canvas), ComponentPalette.tsx (sidebar palette), PropertiesPanel.tsx (property editor), GridOverlay.tsx (grid visualization), and BuilderToolbar.tsx (mode switcher, undo/redo, zoom controls). State management uses the useBuilderState hook integrated into useStudioViewModel.",
       archTip: "The builder components are intentionally defined as stable, memoized React components to prevent re-renders during drag operations. Each canvas component is wrapped in React.memo with custom equality checks on position and properties."
+    },
+    dashboardHub: {
+      title: "仪表板中心 (Hub-and-Spoke)",
+      description: "模块化选项卡仪表板,包含领域分离的子模块(审计、安全、分析),每个模块6层清洁架构,符合ISP的接口,懒加载以及基于权限的选项卡可见性控制。",
+      intro: "仪表板中心是NEXORA的核心运营指挥中心——一个选项卡界面,将四个特定领域视图(概览、审计、安全、分析)聚合到一个统一的中心。每个领域模块遵循严格的6层清洁架构(模型 → 实体 → 接口 → 服务 → 仓库 → 映射器),并具有专用的DI注册。子视图通过React.lazy懒加载,并通过权限控制确保用户只看到被授权访问的选项卡。",
+      archTitle: "Hub-and-Spoke架构",
+      archIntro: "仪表板中心使用Hub-and-Spoke模式,其中主DashboardView作为中心Hub渲染选项卡栏,每个选项卡懒加载一个独立的特定领域视图(Spoke)。概览选项卡内联以实现即时渲染。审计、安全和分析选项卡通过React.lazy按需加载,配合Suspense后备方案。",
+      archTip: "子视图仅在其选项卡首次激活时才进行懒加载。与急切加载所有四个视图相比,这将初始仪表板包减少约60%。",
+      domainTitle: "领域分离 (接口分离原则)",
+      domainIntro: "此前,所有仪表板数据通过单个DashboardRepository(上帝接口)流动,该接口有8个以上方法,涵盖审计、安全和分析关注点。重构后的架构将每个领域提取到独立模块中,拥有自己的仓库接口,消除了单体耦合,遵循接口分离原则(ISP)。",
+      domainNote: "在DashboardEntities.ts中保留了向后兼容的类型别名,供尚未迁移到新领域特定导入的遗留组件使用。这些别名标记为@deprecated以指导未来清理。",
+      layersTitle: "6层清洁架构",
+      layersIntro: "每个提取的模块(审计、安全、分析)都实现了NEXORA前端完整的清洁架构堆栈。6层确保严格的职责分离:模型保存原始API响应形状,实体是具有计算属性的丰富领域对象,接口定义契约,服务通过IApiService处理HTTP调用,仓库编排服务和映射器以返回领域实体,映射器执行DTO到实体的转换并进行null合并。",
+      diTitle: "DI容器连接",
+      diIntro: "所有三个新模块都注册在SystemContainer(modules/system/di.ts)中。每个模块遵循以下模式:服务(接收IApiService)→ 仓库(接收服务)→ SystemContainer接口声明 → 懒getter导出。ViewModel专门通过DI容器消费仓库——从不直接实例化服务。",
+      diTip: "systemContainer访问器中的懒getter确保服务和仓库仅在首次访问时实例化,防止从未打开的选项卡产生不必要的网络开销。",
+      viewmodelTitle: "ViewModel解耦",
+      viewmodelIntro: "每个ViewModel钩子现在从DI容器导入其专用仓库,而不是共享单个仪表板仓库。这消除了跨领域耦合:useAuditViewModel仅消费auditRepository,useSecurityDashboardViewModel仅消费securityRepository,useTenantAnalyticsViewModel仅消费analyticsRepository。",
+      hubTitle: "选项卡Hub实现",
+      hubIntro: "DashboardView组件作为Hub,渲染包含4个TabsTrigger元素的TabsList(概览、审计、安全、分析)。审计和安全选项卡基于当前管理员的权限使用usePermission钩子进行条件渲染。",
+      hubNote: "选项卡可见性在前端通过权限控制仅用于UX目的(隐藏用户无法访问的选项卡)。后端端点强制执行实际的安全边界——前端检查是补充性的,而非权威性的。",
+      cachingTitle: "租户感知缓存",
+      cachingIntro: "Hub中所有TanStack Query键都包含当前tenantId作为分区键。这确保当超级管理员使用'进入租户世界'钻取功能切换租户时,所有仪表板数据会自动失效并重新获取新租户上下文的数据。",
+      compatTitle: "向后兼容性",
+      compatIntro: "为防止迁移期间的构建错误,DashboardEntities.ts保留了已弃用的类型别名,这些别名从新的领域特定模块重新导出类型。仍从仪表板模块实体文件导入的组件将继续工作,但会收到TypeScript弃用警告,引导开发人员使用规范的导入路径。",
+      compatWarning: "一旦所有消费组件迁移到从各自的领域模块(audit/security/analytics)导入后,应在未来的清理中移除已弃用的别名。",
+      sourceTitle: "源文件参考",
+      sourceIntro: "重构后的仪表板中心横跨4个模块(dashboard、audit、security、analytics),每个模块都有自己完整的6层堆栈。"
     }
   }
 };

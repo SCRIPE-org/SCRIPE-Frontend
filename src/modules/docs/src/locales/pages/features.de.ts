@@ -672,6 +672,34 @@ export const de = {
       archTitle: "Module Architecture",
       archIntro: "The Login Page Builder follows NEXORA's standard modular clean architecture. The builder/ directory contains: BuilderCanvas.tsx (main canvas), ComponentPalette.tsx (sidebar palette), PropertiesPanel.tsx (property editor), GridOverlay.tsx (grid visualization), and BuilderToolbar.tsx (mode switcher, undo/redo, zoom controls). State management uses the useBuilderState hook integrated into useStudioViewModel.",
       archTip: "The builder components are intentionally defined as stable, memoized React components to prevent re-renders during drag operations. Each canvas component is wrapped in React.memo with custom equality checks on position and properties."
+    },
+    dashboardHub: {
+      title: "Dashboard Hub (Hub-and-Spoke)",
+      description: "Modulares Tab-Dashboard mit domänensegmentierten Sub-Modulen (Audit, Sicherheit, Analytics), 6-Schichten Clean Architecture pro Modul, ISP-konforme Interfaces, Lazy Loading und berechtigungsgesteuerter Tab-Sichtbarkeit.",
+      intro: "Der Dashboard Hub ist NEXORAs zentrale Operationszentrale — eine Tab-Oberfläche, die vier domänenspezifische Ansichten (Übersicht, Audit, Sicherheit, Analytics) in einem einheitlichen Hub zusammenfasst. Jedes Domänenmodul folgt einer strikten 6-Schichten Clean Architecture (Models → Entities → Interfaces → Services → Repositories → Mappers) mit eigenem DI-Eintrag. Sub-Views werden via React.lazy lazy-loaded und berechtigungsgesteuert.",
+      archTitle: "Hub-and-Spoke Architektur",
+      archIntro: "Der Dashboard Hub verwendet ein Hub-and-Spoke-Muster, bei dem die DashboardView als zentraler Hub den Tab-Streifen rendert und jeder Tab eine unabhängige, domänenspezifische View (Spoke) lazy-loaded. Der Übersicht-Tab ist inline für sofortiges Rendering. Audit-, Sicherheits- und Analytics-Tabs werden bei Bedarf via React.lazy mit Suspense-Fallbacks geladen.",
+      archTip: "Sub-Views werden erst beim ersten Aktivieren ihres Tabs lazy-loaded. Dies reduziert das initiale Dashboard-Bundle um ~60%.",
+      domainTitle: "Domänensegregation (Interface Segregation Principle)",
+      domainIntro: "Zuvor flossen alle Dashboard-Daten durch ein einzelnes DashboardRepository (God Interface) mit 8+ Methoden für Audit, Sicherheit und Analytics. Die refaktorisierte Architektur extrahiert jede Domäne in ein unabhängiges Modul mit eigenem Repository-Interface.",
+      domainNote: "Abwärtskompatible Typ-Aliase werden in DashboardEntities.ts für Legacy-Komponenten beibehalten. Diese Aliase sind mit @deprecated markiert.",
+      layersTitle: "6-Schichten Clean Architecture",
+      layersIntro: "Jedes extrahierte Modul (Audit, Sicherheit, Analytics) implementiert den vollständigen NEXORA Frontend Clean Architecture Stack. Die 6 Schichten gewährleisten strikte Trennung der Zuständigkeiten.",
+      diTitle: "DI-Container Verdrahtung",
+      diIntro: "Alle drei neuen Module sind im SystemContainer (modules/system/di.ts) registriert. Jedes Modul folgt dem Muster: Service → Repository → SystemContainer Interface → Lazy Getter Export.",
+      diTip: "Lazy Getter stellen sicher, dass Services und Repositories erst bei erstem Zugriff instanziiert werden.",
+      viewmodelTitle: "ViewModel-Entkopplung",
+      viewmodelIntro: "Jeder ViewModel-Hook importiert nun sein dediziertes Repository aus dem DI-Container statt ein gemeinsames Dashboard-Repository zu teilen.",
+      hubTitle: "Tab-Hub Implementierung",
+      hubIntro: "Die DashboardView-Komponente dient als Hub und rendert eine TabsList mit 4 TabsTrigger-Elementen. Audit- und Sicherheits-Tabs werden bedingt basierend auf den Berechtigungen des aktuellen Admins gerendert.",
+      hubNote: "Tab-Sichtbarkeit ist im Frontend berechtigungsgesteuert für UX-Zwecke. Backend-Endpunkte erzwingen die tatsächliche Sicherheitsgrenze.",
+      cachingTitle: "Mandantenspezifisches Caching",
+      cachingIntro: "Alle TanStack Query Keys im Hub enthalten die aktuelle tenantId als Partitionsschlüssel. Dies stellt sicher, dass beim Mandantenwechsel alle Dashboard-Daten automatisch invalidiert und neu abgerufen werden.",
+      compatTitle: "Abwärtskompatibilität",
+      compatIntro: "Um Build-Fehler während der Migration zu vermeiden, behält DashboardEntities.ts veraltete Typ-Aliase bei.",
+      compatWarning: "Veraltete Aliase sollten in einem zukünftigen Cleanup entfernt werden.",
+      sourceTitle: "Quelldatei-Referenz",
+      sourceIntro: "Der refaktorisierte Dashboard Hub erstreckt sich über 4 Module (Dashboard, Audit, Security, Analytics), jeweils mit eigenem vollständigen 6-Schichten-Stack."
     }
   }
 };

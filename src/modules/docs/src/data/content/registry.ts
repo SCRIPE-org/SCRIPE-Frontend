@@ -47,6 +47,7 @@ import "./features/theme-marketplace";
 import "./features/multi-page-branding";
 import "./features/login-page-builder";
 import "./features/dashboard-builder";
+import "./features/dashboard-hub";
 
 // Modules (Entitlements)
 import "./modules/entitlements-overview";

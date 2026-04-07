@@ -672,6 +672,34 @@ export const es = {
       archTitle: "Module Architecture",
       archIntro: "The Login Page Builder follows NEXORA's standard modular clean architecture. The builder/ directory contains: BuilderCanvas.tsx (main canvas), ComponentPalette.tsx (sidebar palette), PropertiesPanel.tsx (property editor), GridOverlay.tsx (grid visualization), and BuilderToolbar.tsx (mode switcher, undo/redo, zoom controls). State management uses the useBuilderState hook integrated into useStudioViewModel.",
       archTip: "The builder components are intentionally defined as stable, memoized React components to prevent re-renders during drag operations. Each canvas component is wrapped in React.memo with custom equality checks on position and properties."
+    },
+    dashboardHub: {
+      title: "Centro del Panel (Hub-and-Spoke)",
+      description: "Panel modular con pestañas y sub-módulos segregados por dominio (Auditoría, Seguridad, Analítica), arquitectura limpia de 6 capas por módulo, interfaces compatibles con ISP, carga diferida y visibilidad de pestañas protegida por permisos.",
+      intro: "El Centro del Panel es el centro de comando operativo principal de NEXORA — una interfaz con pestañas que agrega cuatro vistas específicas de dominio (Vista General, Auditoría, Seguridad, Analítica) en un hub unificado. Cada módulo de dominio sigue una estricta arquitectura limpia de 6 capas (Modelos → Entidades → Interfaces → Servicios → Repositorios → Mapeadores) con registro DI dedicado. Las sub-vistas se cargan de forma diferida mediante React.lazy y están protegidas por permisos para garantizar que los usuarios solo vean las pestañas a las que están autorizados.",
+      archTitle: "Arquitectura Hub-and-Spoke",
+      archIntro: "El Centro del Panel utiliza un patrón Hub-and-Spoke donde la vista principal DashboardView sirve como hub central renderizando una barra de pestañas, y cada pestaña carga de forma diferida una vista independiente específica del dominio (spoke). La pestaña de Vista General está integrada para renderizado instantáneo. Las pestañas de Auditoría, Seguridad y Analítica se cargan bajo demanda mediante React.lazy con fallbacks de Suspense.",
+      archTip: "Las sub-vistas se cargan de forma diferida solo cuando su pestaña se activa por primera vez. Esto reduce el bundle inicial del panel en ~60% comparado con la carga eager de las cuatro vistas.",
+      domainTitle: "Segregación de Dominios (Principio de Segregación de Interfaces)",
+      domainIntro: "Anteriormente, todos los datos del panel fluían a través de un único DashboardRepository (Interfaz Dios) con más de 8 métodos que abarcaban auditoría, seguridad y analítica. La arquitectura refactorizada extrae cada dominio en un módulo independiente con su propia interfaz de repositorio, eliminando el acoplamiento monolítico y adhiriéndose al Principio de Segregación de Interfaces (ISP).",
+      domainNote: "Se mantienen alias de tipo retrocompatibles en DashboardEntities.ts para componentes heredados que aún no han migrado a las nuevas importaciones específicas del dominio. Estos alias están marcados como @deprecated para guiar la limpieza futura.",
+      layersTitle: "Arquitectura Limpia de 6 Capas",
+      layersIntro: "Cada módulo extraído (Auditoría, Seguridad, Analítica) implementa la pila completa de arquitectura limpia del frontend de NEXORA. Las 6 capas aseguran una estricta separación de responsabilidades: los Modelos contienen las formas de respuesta raw de la API, las Entidades son objetos de dominio enriquecidos con propiedades computadas, las Interfaces definen contratos, los Servicios manejan llamadas HTTP vía IApiService, los Repositorios orquestan servicios y mapeadores para retornar entidades de dominio, y los Mapeadores realizan la conversión DTO-a-entidad con coalescencia de nulos.",
+      diTitle: "Cableado del Contenedor DI",
+      diIntro: "Los tres nuevos módulos están registrados en el SystemContainer (modules/system/di.ts). Cada módulo sigue el patrón: Servicio (recibe IApiService) → Repositorio (recibe Servicio) → Declaración de interfaz SystemContainer → Exportación de getter lazy. Los ViewModels consumen repositorios exclusivamente a través del contenedor DI.",
+      diTip: "Los getters lazy en el accessor de systemContainer aseguran que los servicios y repositorios solo se instancian cuando se acceden por primera vez, previniendo sobrecarga de red innecesaria para pestañas que nunca se abren.",
+      viewmodelTitle: "Desacoplamiento de ViewModels",
+      viewmodelIntro: "Cada hook de ViewModel ahora importa su repositorio dedicado del contenedor DI en lugar de compartir un único repositorio del panel. Esto elimina el acoplamiento entre dominios: useAuditViewModel consume solo auditRepository, useSecurityDashboardViewModel consume solo securityRepository, y useTenantAnalyticsViewModel consume solo analyticsRepository.",
+      hubTitle: "Implementación del Hub con Pestañas",
+      hubIntro: "El componente DashboardView sirve como hub, renderizando un TabsList con 4 elementos TabsTrigger (Vista General, Auditoría, Seguridad, Analítica). Las pestañas de Auditoría y Seguridad se renderizan condicionalmente basándose en los permisos del administrador actual usando el hook usePermission.",
+      hubNote: "La visibilidad de pestañas está protegida por permisos en el frontend solo con fines de UX (ocultar pestañas que el usuario no puede acceder). Los endpoints del backend imponen la frontera de seguridad real — las verificaciones del frontend son complementarias, no autoritativas.",
+      cachingTitle: "Cacheo Consciente del Inquilino",
+      cachingIntro: "Todas las claves de TanStack Query a lo largo del hub incluyen el tenantId actual como clave de partición. Esto asegura que al cambiar de inquilino se invaliden y re-obtengan automáticamente todos los datos del panel para el nuevo contexto de inquilino.",
+      compatTitle: "Compatibilidad con Versiones Anteriores",
+      compatIntro: "Para prevenir errores de compilación durante la migración, DashboardEntities.ts mantiene alias de tipo deprecados que re-exportan tipos de los nuevos módulos específicos del dominio. Los componentes que aún importan del archivo de entidades del módulo dashboard continuarán funcionando, pero recibirán advertencias de deprecación de TypeScript.",
+      compatWarning: "Los alias deprecados deben eliminarse en una futura pasada de limpieza una vez que todos los componentes consumidores hayan migrado a importar de su respectivo módulo de dominio (audit/security/analytics).",
+      sourceTitle: "Referencia de Archivos Fuente",
+      sourceIntro: "El Centro del Panel refactorizado abarca 4 módulos (dashboard, audit, security, analytics), cada uno con su propia pila completa de 6 capas."
     }
   }
 };

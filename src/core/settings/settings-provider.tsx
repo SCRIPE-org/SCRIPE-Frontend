@@ -135,7 +135,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   const updateSetting = useCallback(<K extends keyof Settings>(key: K, value: Settings[K]) => {
     lastChangedFieldRef.current = key;
     setSettings((prev) => ({ ...prev, [key]: value }));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+   
   }, []);
 
   // ── Utilities (Gap #9: respect locks) ───────────────────

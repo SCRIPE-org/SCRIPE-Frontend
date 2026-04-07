@@ -200,7 +200,7 @@ export function LoginPreviewShell() {
   const perPageCustomCss = (pageOverride as Record<string, unknown>).customCss as string || "";
 
   // Build "branding" object for LoginBranding component
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const brandingForPanel = {
     logoUrl,
     companyName,

@@ -92,7 +92,7 @@ export class OAuthAppMapper {
       }
 
       static toCreateJson(request: CreateOAuthAppRequest) {
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+             
             const { redirectUris, postLogoutRedirectUris, ...rest } = request;
             return {
                   ...rest,
@@ -104,7 +104,7 @@ export class OAuthAppMapper {
       }
 
       static toUpdateJson(request: UpdateOAuthAppRequest) {
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+             
             const { redirectUris, postLogoutRedirectUris, ...rest } = request;
             return {
                   ...rest,

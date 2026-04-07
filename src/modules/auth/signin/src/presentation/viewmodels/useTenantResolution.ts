@@ -160,7 +160,7 @@ export function useTenantResolution(page?: string): TenantResolutionResult {
             return () => {
                   cancelled = true;
             };
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+       
       }, [page]);
 
       return {

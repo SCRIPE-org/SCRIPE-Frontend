@@ -143,7 +143,7 @@ export function useNavigationState(navigation: NavigationItem[]): NavigationStat
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
      
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);  
 
   // ── Actions ──
 

@@ -672,6 +672,34 @@ export const fr = {
       archTitle: "Module Architecture",
       archIntro: "The Login Page Builder follows NEXORA's standard modular clean architecture. The builder/ directory contains: BuilderCanvas.tsx (main canvas), ComponentPalette.tsx (sidebar palette), PropertiesPanel.tsx (property editor), GridOverlay.tsx (grid visualization), and BuilderToolbar.tsx (mode switcher, undo/redo, zoom controls). State management uses the useBuilderState hook integrated into useStudioViewModel.",
       archTip: "The builder components are intentionally defined as stable, memoized React components to prevent re-renders during drag operations. Each canvas component is wrapped in React.memo with custom equality checks on position and properties."
+    },
+    dashboardHub: {
+      title: "Hub du Tableau de Bord (Hub-and-Spoke)",
+      description: "Tableau de bord modulaire à onglets avec sous-modules séparés par domaine (Audit, Sécurité, Analytique), architecture propre en 6 couches par module, interfaces conformes au ISP, chargement différé et visibilité des onglets contrôlée par les permissions.",
+      intro: "Le Hub du Tableau de Bord est le centre de commande opérationnel principal de NEXORA — une interface à onglets qui agrège quatre vues spécifiques au domaine (Vue d'ensemble, Audit, Sécurité, Analytique) dans un hub unifié. Chaque module de domaine suit une architecture propre stricte en 6 couches (Modèles → Entités → Interfaces → Services → Dépôts → Mappeurs) avec un enregistrement DI dédié. Les sous-vues sont chargées de manière différée via React.lazy et protégées par les permissions.",
+      archTitle: "Architecture Hub-and-Spoke",
+      archIntro: "Le Hub du Tableau de Bord utilise un modèle Hub-and-Spoke où la DashboardView principale sert de hub central affichant une barre d'onglets, et chaque onglet charge de manière différée une vue indépendante spécifique au domaine (spoke). L'onglet Vue d'ensemble est intégré pour un rendu instantané. Les onglets Audit, Sécurité et Analytique sont chargés à la demande via React.lazy avec des fallbacks Suspense.",
+      archTip: "Les sous-vues ne sont chargées de manière différée que lors de la première activation de leur onglet. Cela réduit le bundle initial du tableau de bord d'environ 60% par rapport au chargement eager des quatre vues.",
+      domainTitle: "Ségrégation des Domaines (Principe de Ségrégation des Interfaces)",
+      domainIntro: "Auparavant, toutes les données du tableau de bord transitaient par un seul DashboardRepository (Interface Dieu) avec plus de 8 méthodes couvrant l'audit, la sécurité et l'analytique. L'architecture refactorisée extrait chaque domaine dans un module indépendant avec sa propre interface de dépôt, éliminant le couplage monolithique et respectant le Principe de Ségrégation des Interfaces (ISP).",
+      domainNote: "Des alias de type rétrocompatibles sont maintenus dans DashboardEntities.ts pour les composants hérités. Ces alias sont marqués @deprecated pour guider le nettoyage futur.",
+      layersTitle: "Architecture Propre en 6 Couches",
+      layersIntro: "Chaque module extrait (Audit, Sécurité, Analytique) implémente la pile complète d'architecture propre du frontend NEXORA. Les 6 couches assurent une séparation stricte des responsabilités : les Modèles contiennent les formes de réponse API brutes, les Entités sont des objets de domaine riches avec des propriétés calculées, les Interfaces définissent les contrats, les Services gèrent les appels HTTP via IApiService, les Dépôts orchestrent les services et les mappeurs pour retourner des entités de domaine, et les Mappeurs effectuent la conversion DTO-vers-entité avec coalescence de null.",
+      diTitle: "Câblage du Conteneur DI",
+      diIntro: "Les trois nouveaux modules sont enregistrés dans le SystemContainer (modules/system/di.ts). Chaque module suit le modèle : Service (reçoit IApiService) → Dépôt (reçoit Service) → Déclaration d'interface SystemContainer → Export de getter lazy. Les ViewModels consomment les dépôts exclusivement à travers le conteneur DI.",
+      diTip: "Les getters lazy dans l'accesseur systemContainer assurent que les services et dépôts ne sont instanciés que lors du premier accès, évitant une surcharge réseau inutile pour les onglets jamais ouverts.",
+      viewmodelTitle: "Découplage des ViewModels",
+      viewmodelIntro: "Chaque hook ViewModel importe maintenant son dépôt dédié du conteneur DI au lieu de partager un unique dépôt de tableau de bord. Cela élimine le couplage inter-domaines : useAuditViewModel consomme uniquement auditRepository, useSecurityDashboardViewModel consomme uniquement securityRepository, et useTenantAnalyticsViewModel consomme uniquement analyticsRepository.",
+      hubTitle: "Implémentation du Hub à Onglets",
+      hubIntro: "Le composant DashboardView sert de hub, affichant une TabsList avec 4 éléments TabsTrigger (Vue d'ensemble, Audit, Sécurité, Analytique). Les onglets Audit et Sécurité sont affichés conditionnellement en fonction des permissions de l'administrateur actuel via le hook usePermission.",
+      hubNote: "La visibilité des onglets est contrôlée par les permissions côté frontend uniquement à des fins UX. Les endpoints backend imposent la frontière de sécurité réelle — les vérifications frontend sont complémentaires, non autoritatives.",
+      cachingTitle: "Mise en Cache Consciente du Locataire",
+      cachingIntro: "Toutes les clés TanStack Query à travers le hub incluent le tenantId actuel comme clé de partition. Cela garantit que lors du changement de locataire, toutes les données du tableau de bord sont automatiquement invalidées et re-récupérées pour le nouveau contexte de locataire.",
+      compatTitle: "Compatibilité Ascendante",
+      compatIntro: "Pour éviter les erreurs de build pendant la migration, DashboardEntities.ts conserve des alias de type dépréciés qui ré-exportent les types des nouveaux modules spécifiques au domaine.",
+      compatWarning: "Les alias dépréciés doivent être supprimés lors d'une future passe de nettoyage une fois que tous les composants consommateurs auront migré vers l'import depuis leur module de domaine respectif (audit/security/analytics).",
+      sourceTitle: "Référence des Fichiers Source",
+      sourceIntro: "Le Hub du Tableau de Bord refactorisé s'étend sur 4 modules (dashboard, audit, security, analytics), chacun avec sa propre pile complète de 6 couches."
     }
   }
 };
