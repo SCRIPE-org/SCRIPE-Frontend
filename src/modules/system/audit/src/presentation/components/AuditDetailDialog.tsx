@@ -17,7 +17,7 @@ import { Badge } from "@core/ui/badge";
 import { Skeleton } from "@core/ui/skeleton";
 import { Separator } from "@core/ui/separator";
 import { ScrollArea } from "@core/ui/scroll-area";
-import type { AuditLogDetail } from "@modules/system/dashboard/src/domain/entities/DashboardEntities";
+import type { AuditLogDetail } from "../../domain/entities/AuditEntities";
 import {
   Clock,
   User,

@@ -1,0 +1,33 @@
+/**
+ * Analytics Repository
+ *
+ * Wraps AnalyticsService and maps DTOs to domain entities.
+ * This is what ViewModels consume.
+ */
+import type { IAnalyticsRepository } from "../../domain/interfaces/IAnalyticsRepository";
+import type { IAnalyticsService } from "../../domain/interfaces/IAnalyticsService";
+import type {
+  AnalyticsSummary,
+  DistributionData,
+  ComparisonDataPoint,
+} from "../../domain/entities/AnalyticsEntities";
+import { AnalyticsMapper } from "../mappers/AnalyticsMapper";
+
+export class AnalyticsRepository implements IAnalyticsRepository {
+  constructor(private readonly service: IAnalyticsService) {}
+
+  async getSummary(): Promise<AnalyticsSummary> {
+    const dto = await this.service.getSummary();
+    return AnalyticsMapper.toSummary(dto as any);
+  }
+
+  async getEventDistribution(days?: number): Promise<DistributionData[]> {
+    const dtos = await this.service.getEventDistribution(days);
+    return (dtos as any[]).map(AnalyticsMapper.toDistributionData);
+  }
+
+  async getLoginActivity(days?: number): Promise<ComparisonDataPoint[]> {
+    const dtos = await this.service.getLoginActivity(days);
+    return (dtos as any[]).map(AnalyticsMapper.toComparisonDataPoint);
+  }
+}

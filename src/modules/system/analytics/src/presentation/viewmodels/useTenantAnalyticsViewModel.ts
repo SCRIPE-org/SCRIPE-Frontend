@@ -3,29 +3,32 @@
 /**
  * Tenant Analytics ViewModel (Orchestrator)
  *
- * Composes tenant analytics data from dashboard repository.
- * Provides KPI metrics, admin distribution, login comparison, and tenant hierarchy.
+ * Composes tenant analytics data from the dedicated analytics repository.
+ * NO LONGER borrows from dashboardRepository — uses its own analyticsRepository.
  * All query keys include tenantId for tenant-aware caching.
  */
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useMemo } from "react";
 import { getSystemContainer } from "@modules/system/di";
-import { dashboardKeys } from "@modules/system/dashboard/src/presentation/viewmodels/useDashboardViewModel";
 import { useCurrentTenantId } from "@core/providers/tenant-context-provider";
 
 // ─── Query keys ──────────────────────────────────────────────────────
 export const analyticsKeys = {
   all: (tenantId: string | null) => ["analytics", tenantId ?? "system"] as const,
-  metrics: (tenantId: string | null) =>
-    [...analyticsKeys.all(tenantId), "metrics"] as const,
+  summary: (tenantId: string | null) =>
+    [...analyticsKeys.all(tenantId), "summary"] as const,
+  distribution: (days: number, tenantId: string | null) =>
+    [...analyticsKeys.all(tenantId), "distribution", days] as const,
+  comparison: (days: number, tenantId: string | null) =>
+    [...analyticsKeys.all(tenantId), "comparison", days] as const,
 };
 
 // ─── KPI Metrics ─────────────────────────────────────────────────────
 export function useTenantMetricsViewModel(tenantId: string | null) {
-  const repo = getSystemContainer().dashboardRepository;
+  const repo = getSystemContainer().analyticsRepository;
 
   const summaryQuery = useQuery({
-    queryKey: dashboardKeys.summary(tenantId),
+    queryKey: analyticsKeys.summary(tenantId),
     queryFn: () => repo.getSummary(),
     staleTime: 60 * 1000,
     refetchOnWindowFocus: false,
@@ -53,10 +56,10 @@ export function useTenantMetricsViewModel(tenantId: string | null) {
 
 // ─── Admin Distribution ──────────────────────────────────────────────
 export function useAdminDistributionViewModel(tenantId: string | null) {
-  const repo = getSystemContainer().dashboardRepository;
+  const repo = getSystemContainer().analyticsRepository;
 
   return useQuery({
-    queryKey: dashboardKeys.eventDistribution(30, tenantId),
+    queryKey: analyticsKeys.distribution(30, tenantId),
     queryFn: () => repo.getEventDistribution(30),
     staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,
@@ -66,10 +69,10 @@ export function useAdminDistributionViewModel(tenantId: string | null) {
 
 // ─── Login Comparison ────────────────────────────────────────────────
 export function useTenantComparisonViewModel(days: number = 30, tenantId: string | null = null) {
-  const repo = getSystemContainer().dashboardRepository;
+  const repo = getSystemContainer().analyticsRepository;
 
   return useQuery({
-    queryKey: dashboardKeys.loginActivity(days, tenantId),
+    queryKey: analyticsKeys.comparison(days, tenantId),
     queryFn: () => repo.getLoginActivity(days),
     staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,
@@ -104,4 +107,3 @@ export function useTenantAnalyticsViewModel() {
     refetchAll,
   };
 }
-

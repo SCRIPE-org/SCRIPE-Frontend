@@ -13,10 +13,10 @@ import { Badge } from "@core/ui/badge";
 import { SectionState } from "@core/ui/section-state";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@core/ui/table";
 import { Shield } from "lucide-react";
-import type { BlockedIPSummary } from "@modules/system/dashboard/src/domain/entities/DashboardEntities";
+import type { BlockedIP } from "../../domain/entities/SecurityEntities";
 
 interface Props {
-  data: BlockedIPSummary[];
+  data: BlockedIP[];
   isLoading: boolean;
   error?: Error | null;
   onRetry?: () => void;

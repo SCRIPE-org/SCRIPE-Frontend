@@ -1,0 +1,50 @@
+/**
+ * Audit Repository
+ *
+ * Wraps AuditService and maps DTOs to domain entities.
+ * This is what ViewModels consume.
+ */
+import type { IAuditRepository } from "../../domain/interfaces/IAuditRepository";
+import type { IAuditService } from "../../domain/interfaces/IAuditService";
+import type {
+  AuditLogPage,
+  AuditLogDetail,
+  AuditFilterParams,
+  AuditAnalyticsSummary,
+  TopAuditUser,
+  ComplianceReport,
+} from "../../domain/entities/AuditEntities";
+import { AuditMapper } from "../mappers/AuditMapper";
+
+export class AuditRepository implements IAuditRepository {
+  constructor(private readonly service: IAuditService) {}
+
+  async getLogs(params?: AuditFilterParams): Promise<AuditLogPage> {
+    const dto = await this.service.getLogs(params);
+    return AuditMapper.toLogPage(dto as any);
+  }
+
+  async getLogDetail(id: string): Promise<AuditLogDetail> {
+    const dto = await this.service.getLogDetail(id);
+    return AuditMapper.toLogDetail(dto as any);
+  }
+
+  async getAnalytics(): Promise<AuditAnalyticsSummary> {
+    const dto = await this.service.getAnalytics();
+    return AuditMapper.toAnalyticsSummary(dto as any);
+  }
+
+  async getTopUsers(): Promise<TopAuditUser[]> {
+    const dtos = await this.service.getTopUsers();
+    return (dtos as any[]).map(AuditMapper.toTopUser);
+  }
+
+  async getComplianceReport(framework: string): Promise<ComplianceReport> {
+    const dto = await this.service.getComplianceReport(framework);
+    return AuditMapper.toComplianceReport(dto as any);
+  }
+
+  async exportLogs(format: string, params?: AuditFilterParams): Promise<Blob> {
+    return this.service.exportLogs(format, params);
+  }
+}

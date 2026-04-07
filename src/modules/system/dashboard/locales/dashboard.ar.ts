@@ -2,6 +2,12 @@ export const ar = {
   dashboard: {
     title: "لوحة التحكم",
     subtitle: "نظرة عامة على النظام والتحليلات",
+    tabs: {
+      overview: "نظرة عامة",
+      audit: "التدقيق",
+      security: "الأمان",
+      analytics: "التحليلات",
+    },
     welcome: "مرحباً بعودتك!",
     totalUsers: "إجمالي المستخدمين",
     revenue: "الإيرادات",

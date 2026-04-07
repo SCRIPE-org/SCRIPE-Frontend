@@ -2,6 +2,12 @@ export const en = {
   dashboard: {
     title: "Dashboard",
     subtitle: "System overview and analytics",
+    tabs: {
+      overview: "Overview",
+      audit: "Audit",
+      security: "Security",
+      analytics: "Analytics",
+    },
     kpi: {
       totalAdmins: "Total Admins",
       totalUsers: "Total Users",

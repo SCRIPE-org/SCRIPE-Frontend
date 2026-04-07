@@ -4,22 +4,26 @@
  * Audit ViewModel (Orchestrator)
  *
  * Manages audit log list, filtering, pagination, and detail retrieval.
- * Reuses dashboard repository for API calls.
+ * Uses dedicated auditRepository — NOT the dashboard repository.
  */
 import { useQuery } from "@tanstack/react-query";
 import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import { getSystemContainer } from "@modules/system/di";
-import type { AuditLogFilterParams } from "@modules/system/dashboard/src/domain/interfaces/IDashboardRepository";
+import type { AuditFilterParams } from "../../domain/entities/AuditEntities";
 import { useCurrentTenantId } from "@core/providers/tenant-context-provider";
 
 // ─── Query keys ──────────────────────────────────────────────────────
 // Include tenantId so TanStack Query caches per-tenant
 export const auditKeys = {
   all: (tenantId: string | null) => ["audit", tenantId ?? "system"] as const,
-  logs: (params: AuditLogFilterParams, tenantId: string | null) =>
+  logs: (params: AuditFilterParams, tenantId: string | null) =>
     [...auditKeys.all(tenantId), "logs", params] as const,
   detail: (id: string, tenantId: string | null) =>
     [...auditKeys.all(tenantId), "detail", id] as const,
+  analytics: (tenantId: string | null) =>
+    [...auditKeys.all(tenantId), "analytics"] as const,
+  topUsers: (tenantId: string | null) =>
+    [...auditKeys.all(tenantId), "top-users"] as const,
 };
 
 // ─── Filter ViewModel ────────────────────────────────────────────────
@@ -82,7 +86,7 @@ export function useAuditFilterViewModel() {
     setFilters((prev) => ({ ...prev, page }));
   }, []);
 
-  const apiParams = useMemo<AuditLogFilterParams>(
+  const apiParams = useMemo<AuditFilterParams>(
     () => ({
       page: filters.page,
       pageSize: filters.pageSize,
@@ -127,11 +131,11 @@ export function useAuditFilterViewModel() {
 
 // ─── Detail ViewModel ────────────────────────────────────────────────
 export function useAuditDetailViewModel(id: string | null, tenantId: string | null) {
-  const repo = getSystemContainer().dashboardRepository;
+  const repo = getSystemContainer().auditRepository;
 
   return useQuery({
     queryKey: auditKeys.detail(id ?? "", tenantId),
-    queryFn: () => repo.getAuditLogDetail(id!),
+    queryFn: () => repo.getLogDetail(id!),
     enabled: !!id,
     retry: 1,
     staleTime: 5 * 60 * 1000,
@@ -142,11 +146,11 @@ export function useAuditDetailViewModel(id: string | null, tenantId: string | nu
 export function useAuditViewModel() {
   const tenantId = useCurrentTenantId();
   const filterVM = useAuditFilterViewModel();
-  const repo = getSystemContainer().dashboardRepository;
+  const repo = getSystemContainer().auditRepository;
 
   const logsQuery = useQuery({
     queryKey: auditKeys.logs(filterVM.apiParams, tenantId),
-    queryFn: () => repo.getAuditLogs(filterVM.apiParams),
+    queryFn: () => repo.getLogs(filterVM.apiParams),
     refetchOnWindowFocus: false,
     retry: 2,
     staleTime: 15 * 1000,

@@ -12,7 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core
 import { SectionState } from "@core/ui/section-state";
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend } from "recharts";
 import { PieChart as PieChartIcon } from "lucide-react";
-import type { EventTypeCount } from "@modules/system/dashboard/src/domain/entities/DashboardEntities";
+import type { DistributionData } from "../../domain/entities/AnalyticsEntities";
 import { ChartTooltip } from "@core/ui/chart";
 
 const COLORS = [
@@ -27,7 +27,7 @@ const COLORS = [
 ];
 
 interface Props {
-  data: EventTypeCount[];
+  data: DistributionData[];
   isLoading: boolean;
   error?: Error | null;
   onRetry?: () => void;

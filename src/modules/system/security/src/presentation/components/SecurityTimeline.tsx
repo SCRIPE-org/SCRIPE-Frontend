@@ -12,10 +12,10 @@ import { Badge } from "@core/ui/badge";
 import { Skeleton } from "@core/ui/skeleton";
 import { SectionState } from "@core/ui/section-state";
 import { Shield, LogIn, LogOut, Lock, Unlock, UserX, Key, AlertTriangle } from "lucide-react";
-import type { RecentChange } from "@modules/system/dashboard/src/domain/entities/DashboardEntities";
+import type { SecurityChange } from "../../domain/entities/SecurityEntities";
 
 interface Props {
-  data: RecentChange[];
+  data: SecurityChange[];
   isLoading: boolean;
   error?: Error | null;
   onRetry?: () => void;

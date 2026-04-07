@@ -1,8 +1,8 @@
 /**
  * Dashboard Domain Entities
  *
- * TypeScript types for dashboard data structures.
- * These are the domain-layer representations used by ViewModels and Views.
+ * TypeScript types for dashboard-specific data structures.
+ * Slimmed down: audit and security entities moved to their own modules.
  */
 
 /** KPI summary counts */
@@ -46,14 +46,24 @@ export interface RecentChange {
   tenantId: string | null;
 }
 
-/** Security event aggregation */
+/** Event type distribution for pie charts */
+export interface EventTypeCount {
+  eventType: string;
+  count: number;
+}
+
+// ─── Backward-compatible aliases for dashboard sub-components ────────
+// These types lived here originally but now belong to their own modules.
+// Kept as aliases so existing dashboard components compile without import changes.
+
+/** @deprecated Use SecurityEvent from security module instead */
 export interface SecurityEventSummary {
   eventType: string;
   count: number;
   latestOccurrence: string | null;
 }
 
-/** Blocked IP with failure count */
+/** @deprecated Use BlockedIP from security module instead */
 export interface BlockedIPSummary {
   ipAddress: string;
   failedCount: number;
@@ -61,45 +71,3 @@ export interface BlockedIPSummary {
   lastUsername: string | null;
 }
 
-/** Event type distribution for pie charts */
-export interface EventTypeCount {
-  eventType: string;
-  count: number;
-}
-
-/** Full audit log detail with old/new values */
-export interface AuditLogDetail {
-  id: string;
-  eventType: string;
-  httpMethod: string | null;
-  endpoint: string | null;
-  entityType: string | null;
-  entityId: string | null;
-  oldValues: string | null;
-  newValues: string | null;
-  changedProperties: string | null;
-  username: string | null;
-  userId: string | null;
-  isAdmin: boolean;
-  ipAddress: string | null;
-  userAgent: string | null;
-  correlationId: string | null;
-  statusCode: number | null;
-  durationMs: number | null;
-  isSuccess: boolean;
-  errorMessage: string | null;
-  timestamp: string;
-  metadata: string | null;
-  tenantId: string | null;
-}
-
-/** Paginated audit log response */
-export interface AuditLogPage {
-  items: RecentChange[];
-  totalCount: number;
-  pageNumber: number;
-  pageSize: number;
-  totalPages: number;
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-}

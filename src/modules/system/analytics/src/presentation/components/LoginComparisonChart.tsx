@@ -19,10 +19,10 @@ import {
 } from "@core/ui/chart";
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { TrendingUp } from "lucide-react";
-import type { LoginActivityPoint } from "@modules/system/dashboard/src/domain/entities/DashboardEntities";
+import type { ComparisonDataPoint } from "../../domain/entities/AnalyticsEntities";
 
 interface Props {
-  data: LoginActivityPoint[];
+  data: ComparisonDataPoint[];
   isLoading: boolean;
   error?: Error | null;
   onRetry?: () => void;

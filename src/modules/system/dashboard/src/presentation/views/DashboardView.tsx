@@ -1,16 +1,16 @@
 "use client";
 
 /**
- * Dashboard View — M9: Dashboard Theming
+ * Dashboard View — Hub with Tab Navigation
  *
- * Pure UI composition with:
- *  - Permission-gated sections
- *  - Real-time updates via SignalR
- *  - Themed via DashboardThemeConfig (greeting, KPI, charts, layout)
- *  - Dashboard Studio panel for customization
+ * The central dashboarding hub with tabs:
+ *  - Overview: KPIs, charts, recent changes (inline)
+ *  - Audit: Embedded AuditView
+ *  - Security: Embedded SecurityDashboardView
+ *  - Analytics: Embedded TenantAnalyticsView
  *
- * Route-level guard: PAGE_PERMISSIONS["/dashboard"] = [DASHBOARD_VIEW]
- * Section-level guard: Security sections require SECURITY_VIEW
+ * Each tab lazy-loads its content.
+ * Individual route pages (/audit, /security, /analytics) still work standalone.
  */
 import { useState } from "react";
 import dynamic from "next/dynamic";
@@ -25,7 +25,8 @@ import { DashboardStudioPanel } from "../components/DashboardStudioPanel";
 import { API_ENDPOINTS } from "@core/config/api-endpoints";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
-import { Radio, FileDown, Settings2 } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
+import { Radio, FileDown, Settings2, Shield, BarChart3, ScrollText, LayoutDashboard } from "lucide-react";
 import { CurrencyDisplayToggle } from "@core/ui/currency-display-toggle";
 import { useAppStore } from "@core/store/useAppStore";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
@@ -34,9 +35,12 @@ import { useModuleLocales } from "@core/hooks/use-module-locales";
 const LoginActivityChart = dynamic(() => import("../components/LoginActivityChart").then(m => ({ default: m.LoginActivityChart })), { ssr: false });
 const EventDistributionChart = dynamic(() => import("../components/EventDistributionChart").then(m => ({ default: m.EventDistributionChart })), { ssr: false });
 const RecentChangesSection = dynamic(() => import("../components/RecentChangesSection").then(m => ({ default: m.RecentChangesSection })), { ssr: false });
-const SecurityEventsSection = dynamic(() => import("../components/SecurityEventsSection").then(m => ({ default: m.SecurityEventsSection })), { ssr: false });
-const BlockedIPsSection = dynamic(() => import("../components/BlockedIPsSection").then(m => ({ default: m.BlockedIPsSection })), { ssr: false });
 const ReportExportDialog = dynamic(() => import("@core/ui/report-export-dialog").then(m => ({ default: m.ReportExportDialog })), { ssr: false });
+
+// Lazy-load embedded sub-views
+const AuditView = dynamic(() => import("@modules/system/audit").then(m => ({ default: m.AuditView })), { ssr: false });
+const SecurityDashboardView = dynamic(() => import("@modules/system/security").then(m => ({ default: m.SecurityDashboardView })), { ssr: false });
+const TenantAnalyticsView = dynamic(() => import("@modules/system/analytics").then(m => ({ default: m.TenantAnalyticsView })), { ssr: false });
 
 const connectionColors = {
   connected: "bg-emerald-500",
@@ -49,10 +53,12 @@ export function DashboardView() {
   useModuleLocales(() => import("../../../locales"), "dashboard");
 
   const hasSecurityPerm = usePermission(SYSTEM_PERMISSIONS.SECURITY_VIEW);
-  const vm = useDashboardViewModel(hasSecurityPerm);
+  const hasAuditPerm = usePermission(SYSTEM_PERMISSIONS.AUDIT_VIEW);
+  const vm = useDashboardViewModel();
   const { connectionState } = useDashboardRealtime();
   const { t, direction } = useI18n();
   const [exportOpen, setExportOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("overview");
 
   // ── Dashboard Theming (M9) ──
   const theme = useDashboardTheme();
@@ -116,48 +122,73 @@ export function DashboardView() {
         </div>
       </div>
 
-      {/* KPI Cards Row — themed */}
-      <KPICardsSection
-        data={vm.summary.data}
-        isLoading={vm.summary.isLoading}
-        error={vm.summary.error}
-        onRetry={() => vm.summary.refetch()}
-        cardClasses={cardClasses}
-        gridClasses={layoutClasses.kpiGrid}
-        chartPalette={config.charts.colorPalette}
-      />
+      {/* ── Tab Navigation ── */}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="grid w-full grid-cols-4 lg:w-auto lg:inline-grid">
+          <TabsTrigger value="overview" className="gap-1.5">
+            <LayoutDashboard className="h-4 w-4" />
+            {t("dashboard.tabs.overview") || "Overview"}
+          </TabsTrigger>
+          {hasAuditPerm && (
+            <TabsTrigger value="audit" className="gap-1.5">
+              <ScrollText className="h-4 w-4" />
+              {t("dashboard.tabs.audit") || "Audit"}
+            </TabsTrigger>
+          )}
+          {hasSecurityPerm && (
+            <TabsTrigger value="security" className="gap-1.5">
+              <Shield className="h-4 w-4" />
+              {t("dashboard.tabs.security") || "Security"}
+            </TabsTrigger>
+          )}
+          <TabsTrigger value="analytics" className="gap-1.5">
+            <BarChart3 className="h-4 w-4" />
+            {t("dashboard.tabs.analytics") || "Analytics"}
+          </TabsTrigger>
+        </TabsList>
 
-      {/* Charts Row: Login Activity + Event Distribution */}
-      {(config.sections.loginActivity || config.sections.eventDistribution) && (
-        <div className={`grid grid-cols-1 lg:grid-cols-3 ${layoutClasses.sectionGap}`}>
-          {config.sections.loginActivity && (
-            <div className="lg:col-span-2">
-              <LoginActivityChart
-                data={vm.loginActivity.data ?? []}
-                isLoading={vm.loginActivity.isLoading}
-                error={vm.loginActivity.error}
-                onRetry={() => vm.loginActivity.refetch()}
-                chartPalette={config.charts.colorPalette}
-              />
+        {/* ── Overview Tab ── */}
+        <TabsContent value="overview" className="space-y-6 mt-6">
+          {/* KPI Cards Row — themed */}
+          <KPICardsSection
+            data={vm.summary.data}
+            isLoading={vm.summary.isLoading}
+            error={vm.summary.error}
+            onRetry={() => vm.summary.refetch()}
+            cardClasses={cardClasses}
+            gridClasses={layoutClasses.kpiGrid}
+            chartPalette={config.charts.colorPalette}
+          />
+
+          {/* Charts Row: Login Activity + Event Distribution */}
+          {(config.sections.loginActivity || config.sections.eventDistribution) && (
+            <div className={`grid grid-cols-1 lg:grid-cols-3 ${layoutClasses.sectionGap}`}>
+              {config.sections.loginActivity && (
+                <div className="lg:col-span-2">
+                  <LoginActivityChart
+                    data={vm.loginActivity.data ?? []}
+                    isLoading={vm.loginActivity.isLoading}
+                    error={vm.loginActivity.error}
+                    onRetry={() => vm.loginActivity.refetch()}
+                    chartPalette={config.charts.colorPalette}
+                  />
+                </div>
+              )}
+              {config.sections.eventDistribution && (
+                <div>
+                  <EventDistributionChart
+                    data={vm.eventDistribution.data ?? []}
+                    isLoading={vm.eventDistribution.isLoading}
+                    error={vm.eventDistribution.error}
+                    onRetry={() => vm.eventDistribution.refetch()}
+                    chartPalette={config.charts.colorPalette}
+                  />
+                </div>
+              )}
             </div>
           )}
-          {config.sections.eventDistribution && (
-            <div>
-              <EventDistributionChart
-                data={vm.eventDistribution.data ?? []}
-                isLoading={vm.eventDistribution.isLoading}
-                error={vm.eventDistribution.error}
-                onRetry={() => vm.eventDistribution.refetch()}
-                chartPalette={config.charts.colorPalette}
-              />
-            </div>
-          )}
-        </div>
-      )}
 
-      {/* Bottom Row: Recent Changes + Security (permission-gated) */}
-      {(config.sections.recentChanges || (vm.hasSecurityPermission && config.sections.securityEvents)) && (
-        <div className={`grid grid-cols-1 ${vm.hasSecurityPermission && config.sections.securityEvents ? "lg:grid-cols-2" : ""} ${layoutClasses.sectionGap}`}>
+          {/* Recent Changes */}
           {config.sections.recentChanges && (
             <RecentChangesSection
               data={vm.recentChanges.data ?? []}
@@ -166,26 +197,27 @@ export function DashboardView() {
               onRetry={() => vm.recentChanges.refetch()}
             />
           )}
-          {vm.hasSecurityPermission && config.sections.securityEvents && (
-            <SecurityEventsSection
-              data={vm.securityEvents.data ?? []}
-              isLoading={vm.securityEvents.isLoading}
-              error={vm.securityEvents.error}
-              onRetry={() => vm.securityEvents.refetch()}
-            />
-          )}
-        </div>
-      )}
+        </TabsContent>
 
-      {/* Blocked IPs — security.view required + section toggle */}
-      {vm.hasSecurityPermission && config.sections.blockedIPs && (
-        <BlockedIPsSection
-          data={vm.topBlockedIPs.data ?? []}
-          isLoading={vm.topBlockedIPs.isLoading}
-          error={vm.topBlockedIPs.error}
-          onRetry={() => vm.topBlockedIPs.refetch()}
-        />
-      )}
+        {/* ── Audit Tab ── */}
+        {hasAuditPerm && (
+          <TabsContent value="audit" className="mt-6">
+            <AuditView />
+          </TabsContent>
+        )}
+
+        {/* ── Security Tab ── */}
+        {hasSecurityPerm && (
+          <TabsContent value="security" className="mt-6">
+            <SecurityDashboardView />
+          </TabsContent>
+        )}
+
+        {/* ── Analytics Tab ── */}
+        <TabsContent value="analytics" className="mt-6">
+          <TenantAnalyticsView />
+        </TabsContent>
+      </Tabs>
 
       {/* Export Dialog */}
       <ReportExportDialog

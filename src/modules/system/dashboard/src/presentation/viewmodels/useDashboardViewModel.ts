@@ -3,8 +3,8 @@
 /**
  * Dashboard ViewModel (Orchestrator)
  *
- * Composes all section ViewModels for the dashboard page.
- * Follows SOLID pattern: each concern has its own hook.
+ * Composes all section ViewModels for the dashboard OVERVIEW tab.
+ * Security and audit data now live in their own modules.
  *
  * All query keys include tenantId so TanStack Query caches
  * system-level and tenant-scoped data separately.
@@ -26,10 +26,6 @@ export const dashboardKeys = {
     [...dashboardKeys.all(tenantId), "recent-changes", limit] as const,
   eventDistribution: (days: number, tenantId: string | null) =>
     [...dashboardKeys.all(tenantId), "event-distribution", days] as const,
-  securityEvents: (days: number, tenantId: string | null) =>
-    [...dashboardKeys.all(tenantId), "security-events", days] as const,
-  topBlockedIPs: (days: number, limit: number, tenantId: string | null) =>
-    [...dashboardKeys.all(tenantId), "blocked-ips", days, limit] as const,
 };
 
 // ─── Section Hooks ───────────────────────────────────────────────────
@@ -88,50 +84,19 @@ export function useEventDistribution(days: number = 30, tenantId: string | null 
   });
 }
 
-/** Security Events Hook */
-export function useSecurityEvents(days: number = 7, enabled = true, tenantId: string | null = null) {
-  const repo = getSystemContainer().dashboardRepository;
-
-  return useQuery({
-    queryKey: dashboardKeys.securityEvents(days, tenantId),
-    queryFn: () => repo.getSecurityEvents(days),
-    enabled,
-    staleTime: 60 * 1000,
-    refetchInterval: 60 * 1000,
-    refetchOnWindowFocus: false,
-    retry: 2,
-  });
-}
-
-/** Top Blocked IPs Hook */
-export function useTopBlockedIPs(days: number = 30, limit: number = 10, enabled = true, tenantId: string | null = null) {
-  const repo = getSystemContainer().dashboardRepository;
-
-  return useQuery({
-    queryKey: dashboardKeys.topBlockedIPs(days, limit, tenantId),
-    queryFn: () => repo.getTopBlockedIPs(days, limit),
-    enabled,
-    staleTime: 5 * 60 * 1000,
-    refetchOnWindowFocus: false,
-    retry: 2,
-  });
-}
-
 // ─── Orchestrator ────────────────────────────────────────────────────
 
 /**
- * Dashboard Page ViewModel (Orchestrator)
+ * Dashboard Overview ViewModel (Orchestrator)
  *
- * @param hasSecurityPermission — set to false to disable security API calls
+ * Only overview data. Security/audit/analytics are separate modules now.
  */
-export function useDashboardViewModel(hasSecurityPermission = true) {
+export function useDashboardViewModel() {
   const tenantId = useCurrentTenantId();
   const summary = useDashboardSummary(tenantId);
   const loginActivity = useLoginActivity(30, tenantId);
   const recentChanges = useRecentChanges(10, tenantId);
   const eventDistribution = useEventDistribution(30, tenantId);
-  const securityEvents = useSecurityEvents(7, hasSecurityPermission, tenantId);
-  const topBlockedIPs = useTopBlockedIPs(30, 10, hasSecurityPermission, tenantId);
 
   const isLoading = useMemo(
     () => summary.isLoading || loginActivity.isLoading || recentChanges.isLoading,
@@ -143,16 +108,12 @@ export function useDashboardViewModel(hasSecurityPermission = true) {
       summary.isError ||
       loginActivity.isError ||
       recentChanges.isError ||
-      eventDistribution.isError ||
-      securityEvents.isError ||
-      topBlockedIPs.isError,
+      eventDistribution.isError,
     [
       summary.isError,
       loginActivity.isError,
       recentChanges.isError,
       eventDistribution.isError,
-      securityEvents.isError,
-      topBlockedIPs.isError,
     ]
   );
 
@@ -161,16 +122,12 @@ export function useDashboardViewModel(hasSecurityPermission = true) {
     loginActivity.refetch();
     recentChanges.refetch();
     eventDistribution.refetch();
-    securityEvents.refetch();
-    topBlockedIPs.refetch();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     summary.refetch,
     loginActivity.refetch,
     recentChanges.refetch,
     eventDistribution.refetch,
-    securityEvents.refetch,
-    topBlockedIPs.refetch,
   ]);
 
   return {
@@ -178,12 +135,8 @@ export function useDashboardViewModel(hasSecurityPermission = true) {
     loginActivity,
     recentChanges,
     eventDistribution,
-    securityEvents,
-    topBlockedIPs,
     isLoading,
     hasError,
-    hasSecurityPermission,
     refetchAll,
   };
 }
-

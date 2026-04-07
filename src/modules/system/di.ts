@@ -32,6 +32,9 @@ import { UserGroupService } from "./user-groups/src/data/services/UserGroupServi
 import { IdentityProviderService } from "./identity-providers/src/data/services/IdentityProviderService";
 import { OAuthAppService } from "./oauth-apps/src/data/services/OAuthAppService";
 import { MenuService } from "./menus/src/data/services/MenuService";
+import { AuditService } from "./audit/src/data/services/AuditService";
+import { SecurityService } from "./security/src/data/services/SecurityService";
+import { AnalyticsService } from "./analytics/src/data/services/AnalyticsService";
 
 // Repositories
 import { AdminRepository } from "./admin/src/data/repositories/AdminRepository";
@@ -49,6 +52,9 @@ import { WebhookRepository } from "./webhooks/src/data/repositories/WebhookRepos
 import { UserGroupRepository } from "./user-groups/src/data/repositories/UserGroupRepository";
 import { IdentityProviderRepository } from "./identity-providers/src/data/repositories/IdentityProviderRepository";
 import { OAuthAppRepository } from "./oauth-apps/src/data/repositories/OAuthAppRepository";
+import { AuditRepository } from "./audit/src/data/repositories/AuditRepository";
+import { SecurityRepository } from "./security/src/data/repositories/SecurityRepository";
+import { AnalyticsRepository } from "./analytics/src/data/repositories/AnalyticsRepository";
 
 // Interfaces - Repositories
 import type { IAdminRepository } from "./admin/src/domain/interfaces/IAdminRepository";
@@ -71,6 +77,9 @@ import type { ICustomizationRepository } from "./customization/src/domain/interf
 import type { ICustomizationService } from "./customization/src/domain/interfaces/ICustomizationService";
 import type { IThemeMarketplaceRepository } from "./customization/src/domain/interfaces/IThemeMarketplaceRepository";
 import type { IThemeBundleRepository } from "./customization/src/domain/interfaces/IThemeBundleRepository";
+import type { IAuditRepository } from "./audit/src/domain/interfaces/IAuditRepository";
+import type { ISecurityRepository } from "./security/src/domain/interfaces/ISecurityRepository";
+import type { IAnalyticsRepository } from "./analytics/src/domain/interfaces/IAnalyticsRepository";
 
 // Interfaces - Services (from domain/interfaces, NOT data/services)
 import type { IAdminService } from "./admin/src/domain/interfaces/IAdminService";
@@ -111,6 +120,10 @@ export interface SystemContainer {
   oauthAppRepository: IOAuthAppRepository;
   themeMarketplaceRepository: IThemeMarketplaceRepository;
   themeBundleRepository: IThemeBundleRepository;
+  // Dashboard Hub Submodules (refactored)
+  auditRepository: IAuditRepository;
+  securityRepository: ISecurityRepository;
+  analyticsRepository: IAnalyticsRepository;
 }
 
 let _container: SystemContainer | null = null;
@@ -139,6 +152,9 @@ export function getSystemContainer(): SystemContainer {
     const oauthAppService = new OAuthAppService(apiService);
     const themeMarketplaceService = new ThemeMarketplaceService(apiService);
     const themeBundleService = new ThemeBundleService(apiService);
+    const auditService = new AuditService(apiService);
+    const securityService = new SecurityService(apiService);
+    const analyticsService = new AnalyticsService(apiService);
 
     // Create Repositories (use Services)
     _container = {
@@ -173,6 +189,10 @@ export function getSystemContainer(): SystemContainer {
       oauthAppRepository: new OAuthAppRepository(oauthAppService),
       themeMarketplaceRepository: new ThemeMarketplaceRepository(themeMarketplaceService),
       themeBundleRepository: new ThemeBundleRepository(themeBundleService),
+      // Dashboard Hub Submodules (refactored)
+      auditRepository: new AuditRepository(auditService),
+      securityRepository: new SecurityRepository(securityService),
+      analyticsRepository: new AnalyticsRepository(analyticsService),
     };
   }
 
@@ -260,5 +280,15 @@ export const systemContainer = {
   },
   get themeBundleRepository() {
     return getSystemContainer().themeBundleRepository;
+  },
+  // Dashboard Hub Submodules (refactored)
+  get auditRepository() {
+    return getSystemContainer().auditRepository;
+  },
+  get securityRepository() {
+    return getSystemContainer().securityRepository;
+  },
+  get analyticsRepository() {
+    return getSystemContainer().analyticsRepository;
   },
 };

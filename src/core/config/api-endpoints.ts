@@ -214,6 +214,9 @@ export const API_ENDPOINTS = {
     LOGS: `${V1}/Audit/logs`,
     LOG_DETAIL: (id: string) => `${V1}/Audit/logs/${id}`,
     EXPORT: `${V1}/Audit/export`,
+    ANALYTICS: `${V1}/Audit/analytics`,
+    TOP_USERS: `${V1}/Audit/analytics/top-users`,
+    COMPLIANCE_REPORT: `${V1}/Audit/compliance-report`,
   },
 
   // ===== RECYCLE BIN =====

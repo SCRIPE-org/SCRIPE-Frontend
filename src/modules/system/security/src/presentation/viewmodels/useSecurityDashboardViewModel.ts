@@ -3,22 +3,34 @@
 /**
  * Security Dashboard ViewModel (Orchestrator)
  *
- * Composes security-related data from the dashboard repository.
- * Reuses existing dashboard endpoints for security events, blocked IPs, and login activity.
+ * Composes security-related data from the dedicated security repository.
+ * NO LONGER borrows from dashboardRepository — uses its own securityRepository.
  * All query keys include tenantId for tenant-aware caching.
  */
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useMemo } from "react";
 import { getSystemContainer } from "@modules/system/di";
-import { dashboardKeys } from "@modules/system/dashboard/src/presentation/viewmodels/useDashboardViewModel";
 import { useCurrentTenantId } from "@core/providers/tenant-context-provider";
+
+// ─── Query key factory ───────────────────────────────────────────────
+export const securityKeys = {
+  all: (tenantId: string | null) => ["security", tenantId ?? "system"] as const,
+  securityEvents: (days: number, tenantId: string | null) =>
+    [...securityKeys.all(tenantId), "security-events", days] as const,
+  loginActivity: (days: number, tenantId: string | null) =>
+    [...securityKeys.all(tenantId), "login-activity", days] as const,
+  topBlockedIPs: (days: number, limit: number, tenantId: string | null) =>
+    [...securityKeys.all(tenantId), "blocked-ips", days, limit] as const,
+  recentChanges: (limit: number, tenantId: string | null) =>
+    [...securityKeys.all(tenantId), "recent-changes", limit] as const,
+};
 
 // ─── Threat Summary ViewModel ────────────────────────────────────────
 export function useThreatSummaryViewModel(tenantId: string | null) {
-  const repo = getSystemContainer().dashboardRepository;
+  const repo = getSystemContainer().securityRepository;
 
   const securityEvents = useQuery({
-    queryKey: dashboardKeys.securityEvents(7, tenantId),
+    queryKey: securityKeys.securityEvents(7, tenantId),
     queryFn: () => repo.getSecurityEvents(7),
     staleTime: 60 * 1000,
     refetchOnWindowFocus: false,
@@ -43,10 +55,10 @@ export function useThreatSummaryViewModel(tenantId: string | null) {
 
 // ─── Failed Logins Heatmap ViewModel ─────────────────────────────────
 export function useFailedLoginsViewModel(days: number = 30, tenantId: string | null = null) {
-  const repo = getSystemContainer().dashboardRepository;
+  const repo = getSystemContainer().securityRepository;
 
   const query = useQuery({
-    queryKey: dashboardKeys.loginActivity(days, tenantId),
+    queryKey: securityKeys.loginActivity(days, tenantId),
     queryFn: () => repo.getLoginActivity(days),
     staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,
@@ -72,10 +84,10 @@ export function useFailedLoginsViewModel(days: number = 30, tenantId: string | n
 
 // ─── Blocked IPs ViewModel ───────────────────────────────────────────
 export function useBlockedIPsViewModel(days: number = 30, limit: number = 20, tenantId: string | null = null) {
-  const repo = getSystemContainer().dashboardRepository;
+  const repo = getSystemContainer().securityRepository;
 
   return useQuery({
-    queryKey: dashboardKeys.topBlockedIPs(days, limit, tenantId),
+    queryKey: securityKeys.topBlockedIPs(days, limit, tenantId),
     queryFn: () => repo.getTopBlockedIPs(days, limit),
     staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,
@@ -85,10 +97,10 @@ export function useBlockedIPsViewModel(days: number = 30, limit: number = 20, te
 
 // ─── Security Timeline ViewModel ─────────────────────────────────────
 export function useSecurityTimelineViewModel(limit: number = 20, tenantId: string | null = null) {
-  const repo = getSystemContainer().dashboardRepository;
+  const repo = getSystemContainer().securityRepository;
 
   return useQuery({
-    queryKey: dashboardKeys.recentChanges(limit, tenantId),
+    queryKey: securityKeys.recentChanges(limit, tenantId),
     queryFn: () => repo.getRecentChanges(limit),
     staleTime: 30 * 1000,
     refetchOnWindowFocus: false,
@@ -126,4 +138,3 @@ export function useSecurityDashboardViewModel() {
     refetchAll,
   };
 }
-

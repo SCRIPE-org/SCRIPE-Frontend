@@ -2,21 +2,14 @@
  * Dashboard Repository
  *
  * Concrete implementation of IDashboardRepository.
- * Delegates to DashboardService — errors propagate as exceptions.
+ * Slimmed down: only dashboard overview concerns.
  */
-import type {
-  IDashboardRepository,
-  AuditLogFilterParams,
-} from "../../domain/interfaces/IDashboardRepository";
+import type { IDashboardRepository } from "../../domain/interfaces/IDashboardRepository";
 import type {
   DashboardSummary,
   LoginActivityPoint,
   RecentChange,
-  SecurityEventSummary,
-  BlockedIPSummary,
   EventTypeCount,
-  AuditLogDetail,
-  AuditLogPage,
 } from "../../domain/entities/DashboardEntities";
 import type { DashboardService } from "../services/DashboardService";
 
@@ -37,21 +30,5 @@ export class DashboardRepository implements IDashboardRepository {
 
   getEventDistribution(days?: number): Promise<EventTypeCount[]> {
     return this.service.getEventDistribution(days);
-  }
-
-  getSecurityEvents(days?: number): Promise<SecurityEventSummary[]> {
-    return this.service.getSecurityEvents(days);
-  }
-
-  getTopBlockedIPs(days?: number, limit?: number): Promise<BlockedIPSummary[]> {
-    return this.service.getTopBlockedIPs(days, limit);
-  }
-
-  getAuditLogs(params?: AuditLogFilterParams): Promise<AuditLogPage> {
-    return this.service.getAuditLogs(params);
-  }
-
-  getAuditLogDetail(id: string): Promise<AuditLogDetail> {
-    return this.service.getAuditLogDetail(id);
   }
 }

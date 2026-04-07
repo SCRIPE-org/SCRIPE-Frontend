@@ -13,7 +13,7 @@ import { Button } from "@core/ui/button";
 import { Skeleton } from "@core/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@core/ui/table";
 import { ChevronLeft, ChevronRight, FileText, CheckCircle2, XCircle, Eye } from "lucide-react";
-import type { AuditLogPage } from "@modules/system/dashboard/src/domain/entities/DashboardEntities";
+import type { AuditLogPage } from "../../domain/entities/AuditEntities";
 
 interface Props {
   data: AuditLogPage | undefined;
