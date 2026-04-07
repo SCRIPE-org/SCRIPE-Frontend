@@ -7,6 +7,7 @@
  * - Common chrome (nav, search, UI) is eagerly loaded (~30KB)
  * - Page sections are lazy-loaded via dynamic import() based on URL slug
  * - Adding a new section? Just add ONE entry to SLUG_MAP. Zero new imports.
+ * - Translation state is MODULE-SCOPED (persists across React remounts)
  *
  * Supports 7 languages: en, ar, fr, ru, zh, es, de
  */
@@ -19,7 +20,6 @@ import {
   useEffect,
   useCallback,
   useMemo,
-  useRef,
 } from "react";
 
 // ─── Types ─────────────────────────────────────────────────────
@@ -79,8 +79,6 @@ const COMM_SLUG_MAP: Record<string, string> = {
 };
 
 // ─── Dynamic Import Factory ────────────────────────────────────
-// Single function replaces 140+ hardcoded import() lines.
-// Turbopack/Webpack resolves the template literal glob at build time.
 function loadPageLocale(
   scope: DocScope,
   section: string,
@@ -92,8 +90,7 @@ function loadPageLocale(
   return import(`../../locales/pages/${section}.${lang}`);
 }
 
-// ─── Common Chrome (eagerly loaded, ~30KB) ─────────────────────
-// Only these 7 imports exist. Everything else is lazy.
+// ─── Common Chrome Loader ──────────────────────────────────────
 async function loadCommonLocales(): Promise<
   Record<DocLanguage, Record<string, any>>
 > {
@@ -132,6 +129,23 @@ function deepMerge(
 
 const DOCS_LANG_KEY = "docs-language";
 
+// ─── MODULE-SCOPED STATE ───────────────────────────────────────
+// Translation state lives OUTSIDE React so it persists across component
+// remounts (e.g., Next.js route changes). This prevents the "load then
+// disappear" bug where translations were lost when the provider remounted.
+const globalRegistry: Record<DocLanguage, Record<string, any>> = {
+  en: {},
+  ar: {},
+  fr: {},
+  ru: {},
+  zh: {},
+  es: {},
+  de: {},
+};
+const globalLoadedSections = new Set<string>();
+let globalCommonLoaded = false;
+let globalCommonLoading: Promise<void> | null = null;
+
 // ─── Context ───────────────────────────────────────────────────
 interface DocsI18nContextType {
   language: DocLanguage;
@@ -159,28 +173,25 @@ export function DocsI18nProvider({
   const [isHydrated, setIsHydrated] = useState(false);
   const [, forceUpdate] = useState(0);
 
-  // Translation registry: lang → merged translations object
-  const registryRef = useRef<Record<DocLanguage, Record<string, any>>>({
-    en: {},
-    ar: {},
-    fr: {},
-    ru: {},
-    zh: {},
-    es: {},
-    de: {},
-  });
-
-  const loadedSectionsRef = useRef<Set<string>>(new Set());
-
-  // Load common chrome on mount
+  // Load common chrome once (globally cached)
   useEffect(() => {
-    loadCommonLocales().then((common) => {
-      for (const lang of DOC_LANGUAGES) {
-        registryRef.current[lang.code] = deepMerge(
-          registryRef.current[lang.code],
-          common[lang.code] || {},
-        );
-      }
+    if (globalCommonLoaded) return;
+
+    // Prevent double-loading if effect fires twice (StrictMode)
+    if (!globalCommonLoading) {
+      globalCommonLoading = loadCommonLocales().then((common) => {
+        for (const lang of DOC_LANGUAGES) {
+          globalRegistry[lang.code] = deepMerge(
+            globalRegistry[lang.code],
+            common[lang.code] || {},
+          );
+        }
+        globalCommonLoaded = true;
+        globalCommonLoading = null;
+      });
+    }
+
+    globalCommonLoading?.then(() => {
       forceUpdate((n) => n + 1);
     });
   }, []);
@@ -201,8 +212,17 @@ export function DocsI18nProvider({
       const sectionName = slugMap[firstSegment] || firstSegment;
 
       const loadKey = `${scope}:${sectionName}`;
-      if (loadedSectionsRef.current.has(loadKey)) return;
-      loadedSectionsRef.current.add(loadKey);
+      if (globalLoadedSections.has(loadKey)) {
+        // Already loaded — just trigger a re-render to pick up cached data
+        forceUpdate((n) => n + 1);
+        return;
+      }
+      globalLoadedSections.add(loadKey);
+
+      // Wait for common chrome to finish loading first
+      if (globalCommonLoading) {
+        await globalCommonLoading;
+      }
 
       await Promise.all(
         DOC_LANGUAGES.map(async (langInfo) => {
@@ -210,8 +230,8 @@ export function DocsI18nProvider({
             const mod = await loadPageLocale(scope, sectionName, langInfo.code);
             const data =
               mod[langInfo.code] || mod.default || Object.values(mod)[0] || {};
-            registryRef.current[langInfo.code] = deepMerge(
-              registryRef.current[langInfo.code],
+            globalRegistry[langInfo.code] = deepMerge(
+              globalRegistry[langInfo.code],
               data,
             );
           } catch {
@@ -232,8 +252,8 @@ export function DocsI18nProvider({
 
       // Lookup chain: current language → English fallback
       const sources: Record<string, any>[] = [];
-      if (language !== "en") sources.push(registryRef.current[language]);
-      sources.push(registryRef.current.en);
+      if (language !== "en") sources.push(globalRegistry[language]);
+      sources.push(globalRegistry.en);
 
       for (const source of sources) {
         let value: any = source;

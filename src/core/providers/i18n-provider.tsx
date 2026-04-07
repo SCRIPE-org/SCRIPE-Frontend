@@ -13,6 +13,7 @@ import {
 import { useSettings } from "@core/providers/settings-provider";
 import { ar as coreAr } from "@core/locales/ar";
 import { en as coreEn } from "@core/locales/en";
+import { allModulesEn, allModulesAr } from "@core/locales/module-registry";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
 
 // ─── TYPES ──────────────────────────────────────────────────
@@ -32,21 +33,22 @@ interface I18nContextType {
 
 const I18nContext = createContext<I18nContextType | undefined>(undefined);
 
-// ─── I18N PROVIDER (v6.1 — SSR-Safe, Strict O(1) Merge) ────
+// ─── I18N PROVIDER (v7.0 — Zero-Flash Eager Loading) ────
 //
 // Architecture:
-// 1. `registryRef` is a `useRef` — per-React-tree instance.
-//    In SSR, each request gets its own React tree → no cross-request leaks.
-// 2. Registration uses strict O(1) `Object.assign` with ZERO depth exceptions.
-//    Every module locale file uses unique top-level namespaces.
-// 3. Both EN + AR dictionaries are loaded in a single chunk per module,
+// 1. ALL module translations are eagerly loaded via module-registry.ts.
+//    They're merged into the initial registry so translations are available
+//    on the VERY FIRST render — zero flash, zero useEffect race conditions.
+// 2. `useModuleLocales()` hook is still safe to call — it becomes a harmless
+//    no-op since translations are already in the registry.
+// 3. Both EN + AR dictionaries are available synchronously at import time,
 //    enabling instant language switching with zero network requests.
 //
 export function I18nProvider({ children }: { children: React.ReactNode }) {
-  // ─── SSR-SAFE REGISTRY (per-tree instance via useRef) ─────
+  // ─── EAGER REGISTRY — All translations available on first render ────
   const registryRef = useRef<Record<Language, TranslationDict>>({
-    en: { ...coreEn },
-    ar: { ...coreAr },
+    en: { ...coreEn, ...allModulesEn },
+    ar: { ...coreAr, ...allModulesAr },
   });
   const loadedModulesRef = useRef<Set<string>>(new Set());
 
