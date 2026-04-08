@@ -267,7 +267,7 @@ function CodeEditorModal({
   const editorRef = useCodeMirrorEditor({
     language: activeTab?.language || "html",
     value: activeTab?.value || "",
-    onChange: activeTab?.onChange || (() => {}),
+    onChange: activeTab?.onChange || (() => { }),
     minHeight: "100%",
   });
 
@@ -431,7 +431,7 @@ export function CodeEditorField({
   renderPreview,
   className,
 }: CodeEditorFieldProps) {
-  useModuleLocales(() => import("@modules/system/customization-studio/locales"), "customization-studio");
+  useModuleLocales(() => import("@/modules/identity/customization-studio/locales"), "customization-studio");
   const { t } = useI18n();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState(tabs[0]?.id || "");
@@ -441,7 +441,7 @@ export function CodeEditorField({
   const editorRef = useCodeMirrorEditor({
     language: activeTabData?.language || "html",
     value: activeTabData?.value || "",
-    onChange: activeTabData?.onChange || (() => {}),
+    onChange: activeTabData?.onChange || (() => { }),
     placeholderText:
       activeTabData?.language === "html"
         ? '<div class="my-block">\n  <h2>Hello</h2>\n  <p>World</p>\n</div>'

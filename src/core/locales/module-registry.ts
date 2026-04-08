@@ -29,24 +29,24 @@ import { en as subscriptionsEn, ar as subscriptionsAr } from "@modules/entitleme
 import { en as profileEn, ar as profileAr } from "@modules/profile/locales";
 
 // ─── System ────────────────────────────────────────────
-import { en as adminEn, ar as adminAr } from "@modules/system/admin/locales";
-import { en as analyticsEn, ar as analyticsAr } from "@modules/system/analytics/locales";
-import { en as auditEn, ar as auditAr } from "@modules/system/audit/locales";
-import { en as custSettingsEn, ar as custSettingsAr } from "@modules/system/customization-settings/locales";
-import { en as custStudioEn, ar as custStudioAr } from "@modules/system/customization-studio/locales";
-import { en as dashboardEn, ar as dashboardAr } from "@modules/system/dashboard/locales";
-import { en as idpEn, ar as idpAr } from "@modules/system/identity-providers/locales";
-import { en as menusEn, ar as menusAr } from "@modules/system/menus/locales";
-import { en as messagingEn, ar as messagingAr } from "@modules/system/messaging/locales";
-import { en as oauthEn, ar as oauthAr } from "@modules/system/oauth-apps/locales";
-import { en as permissionsEn, ar as permissionsAr } from "@modules/system/permissions/locales";
-import { en as recycleBinEn, ar as recycleBinAr } from "@modules/system/recycle-bin/locales";
-import { en as rolesEn, ar as rolesAr } from "@modules/system/roles/locales";
-import { en as securityEn, ar as securityAr } from "@modules/system/security/locales";
-import { en as tenantSettingsEn, ar as tenantSettingsAr } from "@modules/system/tenant-settings/locales";
-import { en as tenantsEn, ar as tenantsAr } from "@modules/system/tenants/locales";
-import { en as userGroupsEn, ar as userGroupsAr } from "@modules/system/user-groups/locales";
-import { en as webhooksEn, ar as webhooksAr } from "@modules/system/webhooks/locales";
+import { en as adminEn, ar as adminAr } from "@/modules/identity/admin/locales";
+import { en as analyticsEn, ar as analyticsAr } from "@/modules/identity/analytics/locales";
+import { en as auditEn, ar as auditAr } from "@/modules/identity/audit/locales";
+import { en as custSettingsEn, ar as custSettingsAr } from "@/modules/identity/customization-settings/locales";
+import { en as custStudioEn, ar as custStudioAr } from "@/modules/identity/customization-studio/locales";
+import { en as dashboardEn, ar as dashboardAr } from "@/modules/identity/dashboard/locales";
+import { en as idpEn, ar as idpAr } from "@/modules/identity/identity-providers/locales";
+import { en as menusEn, ar as menusAr } from "@/modules/identity/menus/locales";
+import { en as messagingEn, ar as messagingAr } from "@/modules/identity/messaging/locales";
+import { en as oauthEn, ar as oauthAr } from "@/modules/identity/oauth-apps/locales";
+import { en as permissionsEn, ar as permissionsAr } from "@/modules/identity/permissions/locales";
+import { en as recycleBinEn, ar as recycleBinAr } from "@/modules/identity/recycle-bin/locales";
+import { en as rolesEn, ar as rolesAr } from "@/modules/identity/roles/locales";
+import { en as securityEn, ar as securityAr } from "@/modules/identity/security/locales";
+import { en as tenantSettingsEn, ar as tenantSettingsAr } from "@/modules/identity/tenant-settings/locales";
+import { en as tenantsEn, ar as tenantsAr } from "@/modules/identity/tenants/locales";
+import { en as userGroupsEn, ar as userGroupsAr } from "@/modules/identity/user-groups/locales";
+import { en as webhooksEn, ar as webhooksAr } from "@/modules/identity/webhooks/locales";
 
 // ─── Merged Dictionaries ───────────────────────────────
 // Object.assign is O(1) per module — no deep merge needed.

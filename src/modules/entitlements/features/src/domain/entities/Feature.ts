@@ -1,7 +1,7 @@
 /**
  * Feature Entity
  */
-import type { BaseEntity } from "@modules/system/core/domain/types";
+import type { BaseEntity } from "@/modules/identity/core/domain/types";
 
 export type FeatureValueType = "Boolean" | "Numeric" | "String";
 

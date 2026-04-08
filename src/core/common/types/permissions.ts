@@ -298,6 +298,49 @@ export const SYSTEM_PERMISSIONS = {
   SECURITY_GEOIP_VIEW: "security.geoip.view",
   SECURITY_SIEM_VIEW: "security.siem.view",
   SECURITY_ANOMALY_VIEW: "security.anomaly.view",
+
+  // ═══ Phase 4: Ecosystem & Scale ═══
+  // Plugins
+  PLUGINS_VIEW: "plugins.view",
+  PLUGINS_INSTALL: "plugins.install",
+  PLUGINS_CONFIGURE: "plugins.configure",
+  PLUGINS_UNINSTALL: "plugins.uninstall",
+
+  // Integrations
+  INTEGRATIONS_VIEW: "integrations.view",
+  INTEGRATIONS_CREATE: "integrations.create",
+  INTEGRATIONS_UPDATE: "integrations.update",
+  INTEGRATIONS_DELETE: "integrations.delete",
+
+  // Templates
+  TEMPLATES_VIEW: "templates.view",
+  TEMPLATES_CREATE: "templates.create",
+  TEMPLATES_UPDATE: "templates.update",
+  TEMPLATES_DELETE: "templates.delete",
+
+  // Workflows
+  WORKFLOWS_VIEW: "workflows.view",
+  WORKFLOWS_CREATE: "workflows.create",
+  WORKFLOWS_UPDATE: "workflows.update",
+  WORKFLOWS_DELETE: "workflows.delete",
+  WORKFLOWS_APPROVE: "workflows.approve",
+
+  // Reports
+  REPORTS_VIEW: "reports.view",
+  REPORTS_CREATE: "reports.create",
+  REPORTS_UPDATE: "reports.update",
+  REPORTS_DELETE: "reports.delete",
+  REPORTS_EXPORT: "reports.export",
+
+  // Bulk Operations
+  BULK_OPS_VIEW: "bulk_operations.view",
+  BULK_OPS_IMPORT: "bulk_operations.import",
+  BULK_OPS_EXPORT: "bulk_operations.export",
+  BULK_OPS_CANCEL: "bulk_operations.cancel",
+
+  // GraphQL
+  GRAPHQL_QUERY: "graphql.query",
+  GRAPHQL_MUTATION: "graphql.mutation",
 } as const;
 
 /**
@@ -372,4 +415,13 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/security/geoip": [SYSTEM_PERMISSIONS.SECURITY_GEOIP_VIEW],
   "/security/siem": [SYSTEM_PERMISSIONS.SECURITY_SIEM_VIEW],
   "/security/anomaly": [SYSTEM_PERMISSIONS.SECURITY_ANOMALY_VIEW],
+
+  // Phase 4: Ecosystem & Scale
+  "/plugins": [SYSTEM_PERMISSIONS.PLUGINS_VIEW],
+  "/marketplace": [SYSTEM_PERMISSIONS.PLUGINS_VIEW],
+  "/integrations": [SYSTEM_PERMISSIONS.INTEGRATIONS_VIEW],
+  "/templates": [SYSTEM_PERMISSIONS.TEMPLATES_VIEW],
+  "/workflows": [SYSTEM_PERMISSIONS.WORKFLOWS_VIEW],
+  "/reports": [SYSTEM_PERMISSIONS.REPORTS_VIEW],
+  "/bulk-operations": [SYSTEM_PERMISSIONS.BULK_OPS_VIEW],
 };

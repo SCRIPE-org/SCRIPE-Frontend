@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import dynamic from "next/dynamic";
 
 const RecycleBinView = dynamic(
-  () => import("@modules/system/recycle-bin").then((m) => ({ default: m.RecycleBinView }))
+  () => import("@/modules/identity/recycle-bin").then((m) => ({ default: m.RecycleBinView }))
 );
 
 export const metadata: Metadata = {

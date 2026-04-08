@@ -8,7 +8,7 @@
  */
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useCallback } from "react";
-import { getSystemContainer } from "@modules/system/di";
+import { getSystemContainer } from "@/modules/identity/di";
 import { useAppStore } from "@core/store/useAppStore";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useCurrentTenantId } from "@core/providers/tenant-context-provider";

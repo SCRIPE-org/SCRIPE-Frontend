@@ -8,7 +8,7 @@ import type { EditionPriceListResponse, SetEditionPricesRequest } from "../../do
 import { EditionMapper } from "../mappers/EditionMapper";
 import type { CreateEditionRequest, UpdateEditionRequest } from "../../domain/entities/EditionRequests";
 import type { EditionService } from "../services/EditionService";
-import type { PagedResult, PaginationParams } from "@modules/system/core/domain/types";
+import type { PagedResult, PaginationParams } from "@/modules/identity/core/domain/types";
 
 export class EditionRepository implements IEditionRepository {
       constructor(private readonly service: EditionService) { }
