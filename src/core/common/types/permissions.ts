@@ -280,6 +280,24 @@ export const SYSTEM_PERMISSIONS = {
   DASHBOARD_BUILDER_PRESETS: "settings.dashboard_builder.presets",
   DASHBOARD_BUILDER_SAVE_PRESETS: "settings.dashboard_builder.save_presets",
   DASHBOARD_BUILDER_EXPORT: "settings.dashboard_builder.export",
+
+  // ═══ Phase 3: Compliance & Data Governance ═══
+  COMPLIANCE_RETENTION_VIEW: "compliance.retention.view",
+  COMPLIANCE_RETENTION_MANAGE: "compliance.retention.manage",
+  COMPLIANCE_DSR_VIEW: "compliance.dsr.view",
+  COMPLIANCE_DSR_MANAGE: "compliance.dsr.manage",
+  COMPLIANCE_CONSENT_VIEW: "compliance.consent.view",
+  COMPLIANCE_DPA_VIEW: "compliance.dpa.view",
+  COMPLIANCE_DPA_MANAGE: "compliance.dpa.manage",
+  COMPLIANCE_EVIDENCE_EXPORT: "compliance.evidence.export",
+
+  // ═══ Phase 3: Security Hardening ═══
+  SECURITY_IP_POLICIES_VIEW: "security.ip_policies.view",
+  SECURITY_IP_POLICIES_MANAGE: "security.ip_policies.manage",
+  SECURITY_EVENTS_VIEW: "security.events.view",
+  SECURITY_GEOIP_VIEW: "security.geoip.view",
+  SECURITY_SIEM_VIEW: "security.siem.view",
+  SECURITY_ANOMALY_VIEW: "security.anomaly.view",
 } as const;
 
 /**
@@ -339,4 +357,19 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   // Theme Management
   "/settings/themes": [SYSTEM_PERMISSIONS.THEMES_VIEW],
   "/settings/themes/gallery": [SYSTEM_PERMISSIONS.THEMES_VIEW],
+
+  // Phase 3: Compliance & Data Governance
+  "/compliance": [SYSTEM_PERMISSIONS.COMPLIANCE_RETENTION_VIEW],
+  "/compliance/retention": [SYSTEM_PERMISSIONS.COMPLIANCE_RETENTION_VIEW],
+  "/compliance/dsr": [SYSTEM_PERMISSIONS.COMPLIANCE_DSR_VIEW],
+  "/compliance/consent": [SYSTEM_PERMISSIONS.COMPLIANCE_CONSENT_VIEW],
+  "/compliance/dpa": [SYSTEM_PERMISSIONS.COMPLIANCE_DPA_VIEW],
+  "/compliance/evidence": [SYSTEM_PERMISSIONS.COMPLIANCE_EVIDENCE_EXPORT],
+
+  // Phase 3: Security Hardening
+  "/security/ip-policies": [SYSTEM_PERMISSIONS.SECURITY_IP_POLICIES_VIEW],
+  "/security/events": [SYSTEM_PERMISSIONS.SECURITY_EVENTS_VIEW],
+  "/security/geoip": [SYSTEM_PERMISSIONS.SECURITY_GEOIP_VIEW],
+  "/security/siem": [SYSTEM_PERMISSIONS.SECURITY_SIEM_VIEW],
+  "/security/anomaly": [SYSTEM_PERMISSIONS.SECURITY_ANOMALY_VIEW],
 };
