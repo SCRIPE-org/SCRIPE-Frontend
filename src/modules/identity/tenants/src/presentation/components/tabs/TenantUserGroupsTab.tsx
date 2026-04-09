@@ -20,10 +20,10 @@ import { Badge } from "@core/ui/badge";
 import { useI18n } from "@core/providers/i18n-provider";
 
 // User Groups imports
-import type { UserGroupListItem } from "@/modules/identity/user-groups/src/presentation/viewmodels/useUserGroupsViewModel";
+import type { UserGroupListItem } from "@modules/identity/user-groups/src/presentation/viewmodels/useUserGroupsViewModel";
 import { useTenantUserGroupsViewModel } from "../../viewmodels/useTenantUserGroupsViewModel";
-import { CascadeDeleteDialog } from "@/modules/identity/user-groups/src/presentation/components/CascadeDeleteDialog";
-import { CascadeStatusDialog } from "@/modules/identity/user-groups/src/presentation/components/CascadeStatusDialog";
+import { CascadeDeleteDialog } from "@modules/identity/user-groups/src/presentation/components/CascadeDeleteDialog";
+import { CascadeStatusDialog } from "@modules/identity/user-groups/src/presentation/components/CascadeStatusDialog";
 
 // ViewModel - all logic lives here
 

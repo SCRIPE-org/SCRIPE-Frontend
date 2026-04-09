@@ -11,7 +11,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
 import { Loader2, Users } from "lucide-react";
 import GenericSelect, { type GenericSelectOption } from "@core/crud/components/generic-select";
-import { systemContainer } from "@/modules/identity/di";
+import { systemContainer } from "@modules/identity/di";
 import type { Role } from "../../domain/entities/Role";
 
 interface RoleDeleteDialogProps {

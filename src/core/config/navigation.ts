@@ -49,6 +49,21 @@ import {
   Fingerprint,
   KeyRound,
   Paintbrush,
+  // ── Phase 3-5 icons (Compliance, Ecosystem, Developer) ──
+  Boxes,
+  Clock,
+  ClipboardCheck,
+  Code,
+  Database,
+  FileStack,
+  GitBranch,
+  LayoutTemplate,
+  Link,
+  Plug,
+  Receipt,
+  Scale,
+  ShieldAlert,
+  Workflow,
   type LucideIcon,
 } from "lucide-react";
 
@@ -66,6 +81,7 @@ export interface NavigationItem {
  * Used to convert backend icon names to React components
  */
 export const iconMap: Record<string, LucideIcon> = {
+  // ── Core / Navigation ──
   MapPin: MapPin,
   ShieldCheck: ShieldCheck,
   ArrowRightLeft: ArrowRightLeft,
@@ -109,6 +125,24 @@ export const iconMap: Record<string, LucideIcon> = {
   KeyRound: KeyRound,
   Paintbrush: Paintbrush,
   Palette: Palette,
+  UserCheck: UserCheck,
+  // ── Phase 3: Compliance & Governance ──
+  Scale: Scale,
+  Clock: Clock,
+  ClipboardCheck: ClipboardCheck,
+  FileStack: FileStack,
+  ShieldAlert: ShieldAlert,
+  // ── Phase 4: Ecosystem ──
+  Boxes: Boxes,
+  Plug: Plug,
+  Link: Link,
+  LayoutTemplate: LayoutTemplate,
+  GitBranch: GitBranch,
+  Database: Database,
+  Workflow: Workflow,
+  // ── Phase 5: Developer ──
+  Code: Code,
+  Receipt: Receipt,
 };
 
 /**

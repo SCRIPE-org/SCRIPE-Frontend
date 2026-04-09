@@ -6,7 +6,7 @@ import type { EditionVersion } from "../entities/EditionVersion";
 import type { EditionPriceItem, EditionPriceListResponse, SetEditionPricesRequest } from "../entities/EditionPricing";
 import type { CreateEditionRequest, UpdateEditionRequest } from "../entities/EditionRequests";
 import type { EditionPromotionData, CreatePromotionRequest, UpdatePromotionRequest, PromoCodeValidationResult } from "../entities/EditionPromotion";
-import type { PagedResult, PaginationParams } from "@/modules/identity/core/domain/types";
+import type { PagedResult, PaginationParams } from "@modules/identity/core/domain/types";
 
 export interface IEditionRepository {
       getAll(params: PaginationParams & { includeRetired?: boolean }): Promise<PagedResult<Edition>>;

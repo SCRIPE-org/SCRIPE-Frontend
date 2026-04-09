@@ -3,7 +3,7 @@ import dynamic from "next/dynamic";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
 
 const AdminsView = dynamic(
-  () => import("@/modules/identity/admin").then((m) => ({ default: m.AdminsView }))
+  () => import("@modules/identity/admin").then((m) => ({ default: m.AdminsView }))
 );
 
 export const metadata: Metadata = {

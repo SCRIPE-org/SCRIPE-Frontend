@@ -4,7 +4,7 @@
  * Defines the contract for role data operations.
  */
 import type { Role, RoleData } from "../entities/Role";
-import type { Permission } from "@/modules/identity/permissions/src/domain/entities/Permission";
+import type { Permission } from "@modules/identity/permissions/src/domain/entities/Permission";
 import type {
   CreateRoleRequest,
   UpdateRoleRequest,
@@ -12,7 +12,7 @@ import type {
   DeleteRoleRequest,
   CloneRoleRequest,
 } from "../entities/RoleRequests";
-import type { PagedResult } from "@/modules/identity/core/domain/types";
+import type { PagedResult } from "@modules/identity/core/domain/types";
 
 /**
  * Role list query parameters

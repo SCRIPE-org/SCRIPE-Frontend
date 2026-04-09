@@ -10,7 +10,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { Card, CardContent } from "@core/ui/card";
 import { SectionState } from "@core/ui/section-state";
 import { Users, Building2, Shield, LogIn } from "lucide-react";
-import type { DashboardSummary } from "@/modules/identity/dashboard/src/domain/entities/DashboardEntities";
+import type { DashboardSummary } from "@modules/monitoring/dashboard/src/domain/entities/DashboardEntities";
 
 interface Props {
   data?: DashboardSummary;

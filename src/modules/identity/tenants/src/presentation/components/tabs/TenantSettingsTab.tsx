@@ -26,7 +26,7 @@ import {
   Timer,
   KeyRound,
 } from "lucide-react";
-import { useTenantSettingsViewModel } from "@/modules/identity/tenants/src/presentation/viewmodels/useTenantSettingsViewModel";
+import { useTenantSettingsViewModel } from "@modules/identity/tenants/src/presentation/viewmodels/useTenantSettingsViewModel";
 import { TenantSettingsEditDialog } from "../TenantSettingsEditDialog";
 import { Skeleton } from "@core/ui/skeleton";
 import { cn } from "@core/common/utils";

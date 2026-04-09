@@ -13,7 +13,7 @@ import type {
   UpdateRoleJson,
   AssignPermissionsJson,
 } from "../types/RoleModelTypes";
-import type { PermissionModel } from "@/modules/identity/permissions/src/domain/types/PermissionModelTypes";
+import type { PermissionModel } from "@modules/identity/permissions/src/domain/types/PermissionModelTypes";
 import type { MyTenantRoleListParams } from "./IRoleRepository";
 
 export interface ServiceRoleListParams {

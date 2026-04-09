@@ -48,7 +48,7 @@ import {
       ArrowUpCircle,
       Loader2,
 } from "lucide-react";
-import { systemContainer } from "@/modules/identity/di";
+import { systemContainer } from "@modules/identity/di";
 import type { TenantTreeNode, Tenant } from "../../domain/entities/Tenant";
 
 // ============================================

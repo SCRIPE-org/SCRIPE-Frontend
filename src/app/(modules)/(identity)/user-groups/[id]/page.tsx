@@ -5,7 +5,7 @@ import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
 const UserGroupDetailView = dynamic(
       () =>
             import(
-                  "@/modules/identity/user-groups/src/presentation/views/UserGroupDetailView"
+                  "@modules/identity/user-groups/src/presentation/views/UserGroupDetailView"
             ).then((m) => ({ default: m.UserGroupDetailView }))
 );
 

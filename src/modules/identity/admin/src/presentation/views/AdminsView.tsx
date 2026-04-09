@@ -35,7 +35,7 @@ import { format } from "date-fns";
 import { ResetPasswordDialog } from "../components/AdminRoleDialogs";
 import { ManageRolesDialog } from "../components/ManageRolesDialog";
 import { AdminTransferDialog } from "../components/AdminTransferDialog";
-import { AssignToGroupDialog } from "@/modules/identity/user-groups/src/presentation/components/AssignToGroupDialog";
+import { AssignToGroupDialog } from "@modules/identity/user-groups/src/presentation/components/AssignToGroupDialog";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@core/ui/tooltip";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 

@@ -7,7 +7,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { systemContainer } from "@/modules/identity/di";
+import { systemContainer } from "@modules/identity/di";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useCrudViewModel } from "@core/crud/hooks/useCrudViewModel";
 import type { CrudConfig } from "@core/crud/components/generic-crud-view";

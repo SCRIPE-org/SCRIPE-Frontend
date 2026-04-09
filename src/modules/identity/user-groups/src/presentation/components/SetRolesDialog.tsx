@@ -14,7 +14,7 @@ import { GenericModal } from "@core/crud/components/generic-modal";
 import { GenericSelect, type GenericSelectOption } from "@core/crud/components/generic-select";
 import { Loader2, Shield } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { systemContainer } from "@/modules/identity/di";
+import { systemContainer } from "@modules/identity/di";
 import { useI18n } from "@core/providers/i18n-provider";
 
 interface SetRolesDialogProps {

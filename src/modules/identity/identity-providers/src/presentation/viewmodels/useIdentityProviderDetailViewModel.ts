@@ -8,7 +8,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { systemContainer } from "@/modules/identity/di";
+import { systemContainer } from "@modules/identity/di";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";

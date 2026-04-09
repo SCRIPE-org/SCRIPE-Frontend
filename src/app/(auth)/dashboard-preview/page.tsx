@@ -7,7 +7,7 @@
  *
  * Pattern mirrors: /studio-preview → LoginPreviewShell (login page preview)
  */
-import { DashboardPreviewShell } from "@/modules/identity/customization/src/presentation/components/DashboardPreviewShell";
+import { DashboardPreviewShell } from "@modules/customization/branding/src/presentation/components/DashboardPreviewShell";
 
 export default function DashboardPreviewPage() {
   return <DashboardPreviewShell />;

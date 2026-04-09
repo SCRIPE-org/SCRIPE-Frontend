@@ -15,9 +15,9 @@ import { useState, useEffect, useMemo, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@core/hooks/use-toast";
 import { useI18n } from "@core/providers/i18n-provider";
-import { systemContainer } from "@/modules/identity/di";
+import { systemContainer } from "@modules/identity/di";
 import type { Role } from "../../domain/entities/Role";
-import type { Permission } from "@/modules/identity/permissions/src/domain/entities/Permission";
+import type { Permission } from "@modules/identity/permissions/src/domain/entities/Permission";
 import type { PermissionAssignmentJson } from "../../domain/types/PermissionTypes";
 import { PermissionScopes } from "../../domain/types/PermissionTypes";
 

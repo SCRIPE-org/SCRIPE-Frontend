@@ -27,11 +27,11 @@ import type { TenantStats } from "../../domain/interfaces/ITenantRepository";
 import {
   PermissionModel,
   type PermissionJson,
-} from "@/modules/identity/permissions/src/data/models/PermissionModel";
+} from "@modules/identity/permissions/src/data/models/PermissionModel";
 import type {
   TenantSettingsModel,
   UpdateTenantSettingsRequest,
-} from "@/modules/identity/tenant-settings/src/data/models/TenantSettingsModel";
+} from "@modules/customization/tenant-settings/src/data/models/TenantSettingsModel";
 import type {
   EditionThinModel,
   SubscriptionModel,

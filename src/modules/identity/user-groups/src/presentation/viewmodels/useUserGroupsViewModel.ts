@@ -7,7 +7,7 @@
 "use client";
 
 import { useCrudViewModel } from "@core/crud/hooks/useCrudViewModel";
-import { systemContainer } from "@/modules/identity/di";
+import { systemContainer } from "@modules/identity/di";
 import type { UserGroupProps } from "../../domain/entities/UserGroup";
 import type { CreateUserGroupRequest, UpdateUserGroupRequest } from "../../domain/entities/UserGroupRequests";
 import { useMutation, useQueryClient } from "@tanstack/react-query";

@@ -149,6 +149,18 @@ export const SYSTEM_PERMISSIONS = {
   USER_GROUPS_UPDATE: "user_groups.update",
   USER_GROUPS_DELETE: "user_groups.delete",
 
+  // Users (Client Users)
+  USERS_VIEW: "users.view",
+  USERS_UPDATE: "users.update",
+  USERS_DELETE: "users.delete",
+  USERS_UNLOCK: "users.unlock",
+
+  // Billing & Invoices
+  BILLING_VIEW: "billing.view",
+  BILLING_UPDATE: "billing.update",
+  INVOICES_VIEW: "invoices.view",
+  INVOICES_UPDATE: "invoices.update",
+
   // Permissions
   PERMISSIONS_VIEW: "permissions.view",
 
@@ -341,6 +353,10 @@ export const SYSTEM_PERMISSIONS = {
   // GraphQL
   GRAPHQL_QUERY: "graphql.query",
   GRAPHQL_MUTATION: "graphql.mutation",
+
+  // Developer Portal
+  DEVELOPER_VIEW: "developer.view",
+  DEVELOPER_MANAGE: "developer.manage",
 } as const;
 
 /**
@@ -353,13 +369,15 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/settings": [],
   "/profile": [],
 
-  // System module pages
+  // Identity & Access
   "/admins": [SYSTEM_PERMISSIONS.ADMINS_VIEW],
   "/roles": [SYSTEM_PERMISSIONS.ROLES_VIEW],
   "/settings/permissions": [SYSTEM_PERMISSIONS.PERMISSIONS_VIEW],
   "/tenants": [SYSTEM_PERMISSIONS.TENANTS_VIEW],
-  "/settings/menus": [SYSTEM_PERMISSIONS.MENUS_VIEW],
-  "/settings/menus/customize": [SYSTEM_PERMISSIONS.MENUS_CUSTOMIZE],
+  "/users": [SYSTEM_PERMISSIONS.USERS_VIEW],
+  "/user-groups": [SYSTEM_PERMISSIONS.USER_GROUPS_VIEW],
+  "/settings/identity-providers": [SYSTEM_PERMISSIONS.IDENTITY_PROVIDERS_VIEW],
+  "/settings/oauth-apps": [SYSTEM_PERMISSIONS.OAUTH_APPS_VIEW],
 
   // Monitoring & Analytics pages
   "/dashboard": [SYSTEM_PERMISSIONS.DASHBOARD_VIEW],
@@ -367,39 +385,28 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/security": [SYSTEM_PERMISSIONS.SECURITY_VIEW],
   "/analytics": [SYSTEM_PERMISSIONS.ANALYTICS_VIEW],
 
-  // Tenant settings
-  "/settings/tenant": [SYSTEM_PERMISSIONS.TENANT_SETTINGS_VIEW],
-
-  // Customizer Studio (uses tenant_settings permission)
+  // Customization
+  "/customization/branding": [SYSTEM_PERMISSIONS.TENANT_SETTINGS_VIEW],
   "/customizer": [SYSTEM_PERMISSIONS.TENANT_SETTINGS_VIEW],
-
-  // Recycle Bin
-  "/recycle-bin": [SYSTEM_PERMISSIONS.RECYCLE_BIN_VIEW],
+  "/customization/themes": [SYSTEM_PERMISSIONS.THEMES_VIEW],
+  "/customization/gallery": [SYSTEM_PERMISSIONS.THEMES_VIEW],
+  "/customization/menus": [SYSTEM_PERMISSIONS.MENUS_VIEW],
+  "/customization/menus/customize": [SYSTEM_PERMISSIONS.MENUS_CUSTOMIZE],
 
   // Entitlements
   "/entitlements/editions": [SYSTEM_PERMISSIONS.EDITIONS_VIEW],
   "/entitlements/features": [SYSTEM_PERMISSIONS.FEATURES_VIEW],
   "/entitlements/subscriptions": [SYSTEM_PERMISSIONS.SUBSCRIPTIONS_VIEW],
   "/entitlements/overrides": [SYSTEM_PERMISSIONS.FEATURES_OVERRIDE],
+  "/entitlements/billing": [SYSTEM_PERMISSIONS.BILLING_VIEW],
+  "/entitlements/invoices": [SYSTEM_PERMISSIONS.INVOICES_VIEW],
 
-  // User Groups
-  "/user-groups": [SYSTEM_PERMISSIONS.USER_GROUPS_VIEW],
 
-  // Messaging
+  // Messaging & Webhooks
   "/messaging/email-composer": [SYSTEM_PERMISSIONS.EMAILS_VIEW],
   "/messaging/notifications": [SYSTEM_PERMISSIONS.NOTIFICATIONS_VIEW],
   "/messaging/templates": [SYSTEM_PERMISSIONS.MESSAGE_TEMPLATES_VIEW],
-
-  // Webhooks
-  "/settings/webhooks": [SYSTEM_PERMISSIONS.WEBHOOKS_VIEW],
-
-  // Identity Providers & OAuth
-  "/settings/identity-providers": [SYSTEM_PERMISSIONS.IDENTITY_PROVIDERS_VIEW],
-  "/settings/oauth-apps": [SYSTEM_PERMISSIONS.OAUTH_APPS_VIEW],
-
-  // Theme Management
-  "/settings/themes": [SYSTEM_PERMISSIONS.THEMES_VIEW],
-  "/settings/themes/gallery": [SYSTEM_PERMISSIONS.THEMES_VIEW],
+  "/messaging/webhooks": [SYSTEM_PERMISSIONS.WEBHOOKS_VIEW],
 
   // Phase 3: Compliance & Data Governance
   "/compliance": [SYSTEM_PERMISSIONS.COMPLIANCE_RETENTION_VIEW],
@@ -416,7 +423,7 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/security/siem": [SYSTEM_PERMISSIONS.SECURITY_SIEM_VIEW],
   "/security/anomaly": [SYSTEM_PERMISSIONS.SECURITY_ANOMALY_VIEW],
 
-  // Phase 4: Ecosystem & Scale
+  // Ecosystem & Tools
   "/plugins": [SYSTEM_PERMISSIONS.PLUGINS_VIEW],
   "/marketplace": [SYSTEM_PERMISSIONS.PLUGINS_VIEW],
   "/integrations": [SYSTEM_PERMISSIONS.INTEGRATIONS_VIEW],
@@ -424,4 +431,7 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/workflows": [SYSTEM_PERMISSIONS.WORKFLOWS_VIEW],
   "/reports": [SYSTEM_PERMISSIONS.REPORTS_VIEW],
   "/bulk-operations": [SYSTEM_PERMISSIONS.BULK_OPS_VIEW],
+  "/developer": [SYSTEM_PERMISSIONS.DEVELOPER_VIEW],
+  "/graphql": [SYSTEM_PERMISSIONS.GRAPHQL_QUERY],
+  "/recycle-bin": [SYSTEM_PERMISSIONS.RECYCLE_BIN_VIEW],
 };

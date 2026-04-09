@@ -16,11 +16,11 @@ import { useI18n } from "@core/providers/i18n-provider";
 import type { FieldConfig, FieldOption } from "@core/ui/forms/generic-form";
 
 // Role module imports (cross-module boundary via public API)
-import { Role } from "@/modules/identity/roles/src/domain/entities/Role";
-import { useRolesViewModel } from "@/modules/identity/roles/src/presentation/viewmodels/useRolesViewModel";
+import { Role } from "@modules/identity/roles/src/domain/entities/Role";
+import { useRolesViewModel } from "@modules/identity/roles/src/presentation/viewmodels/useRolesViewModel";
 
 // DI Container
-import { systemContainer } from "@/modules/identity/di";
+import { systemContainer } from "@modules/identity/di";
 
 interface UseTenantRolesViewModelParams {
   tenantId: string;

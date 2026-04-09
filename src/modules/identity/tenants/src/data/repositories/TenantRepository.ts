@@ -17,11 +17,11 @@ import type {
   UpdateTenantRequest,
   DeleteTenantRequest,
 } from "../../domain/entities/TenantRequests";
-import type { PagedResult } from "@/modules/identity/core/domain/types";
+import type { PagedResult } from "@modules/identity/core/domain/types";
 import type { ITenantService } from "../../domain/interfaces/ITenantService";
 import { TenantMapper } from "../mappers/TenantMapper";
-import type { Permission } from "@/modules/identity/permissions/src/domain/entities/Permission";
-import { PermissionMapper } from "@/modules/identity/permissions/src/data/mappers/PermissionMapper";
+import type { Permission } from "@modules/identity/permissions/src/domain/entities/Permission";
+import { PermissionMapper } from "@modules/identity/permissions/src/data/mappers/PermissionMapper";
 import { appLogger } from "@core/common/logger";
 import type { EditionThinModel, SubscriptionModel, PagedEditionResult, DowngradeImpactReport } from "../models/TenantSubscription";
 

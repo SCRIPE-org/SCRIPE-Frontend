@@ -8,7 +8,7 @@
  */
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useCallback } from "react";
-import { getSystemContainer } from "@/modules/identity/di";
+import { monitoringContainer } from "@modules/monitoring/di";
 import { useAppStore } from "@core/store/useAppStore";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useCurrentTenantId } from "@core/providers/tenant-context-provider";
@@ -24,7 +24,7 @@ const overviewKeys = {
 // ─── Sub-Hooks ───────────────────────────────────────────────────────
 
 function useOverviewSummary(enabled: boolean, tenantId: string | null) {
-  const repo = getSystemContainer().dashboardRepository;
+  const repo = monitoringContainer.dashboardRepository;
   return useQuery({
     queryKey: overviewKeys.summary(tenantId),
     queryFn: () => repo.getSummary(),
@@ -36,7 +36,7 @@ function useOverviewSummary(enabled: boolean, tenantId: string | null) {
 }
 
 function useOverviewRecentActivity(limit = 5, enabled = true, tenantId: string | null) {
-  const repo = getSystemContainer().dashboardRepository;
+  const repo = monitoringContainer.dashboardRepository;
   return useQuery({
     queryKey: overviewKeys.recentActivity(tenantId),
     queryFn: () => repo.getRecentChanges(limit),

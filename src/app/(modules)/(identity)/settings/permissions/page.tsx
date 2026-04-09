@@ -3,7 +3,7 @@ import dynamic from "next/dynamic";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
 
 const PermissionsView = dynamic(
-  () => import("@/modules/identity/permissions").then((m) => ({ default: m.PermissionsView }))
+  () => import("@modules/identity/permissions").then((m) => ({ default: m.PermissionsView }))
 );
 
 export const metadata: Metadata = {

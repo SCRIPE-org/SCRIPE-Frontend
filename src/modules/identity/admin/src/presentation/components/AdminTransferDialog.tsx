@@ -14,9 +14,9 @@ import { Label } from "@core/ui/label";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { Admin } from "../../domain/entities/Admin";
 import { GenericSelect } from "@core/crud/components/generic-select";
-import { systemContainer } from "@/modules/identity/di";
+import { systemContainer } from "@modules/identity/di";
 import { appLogger } from "@/core/common/logger";
-import { SYSTEM_TENANT_ID } from "@/modules/identity/tenants/src/domain/entities/Tenant";
+import { SYSTEM_TENANT_ID } from "@modules/identity/tenants/src/domain/entities/Tenant";
 
 // Special value to represent "System" tenant (null ID = Super Admin)
 const SYSTEM_TENANT_VALUE = SYSTEM_TENANT_ID;

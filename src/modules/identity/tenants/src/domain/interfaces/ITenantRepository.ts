@@ -9,8 +9,8 @@ import type {
   UpdateTenantRequest,
   DeleteTenantRequest,
 } from "../entities/TenantRequests";
-import type { PagedResult } from "@/modules/identity/core/domain/types";
-import type { Permission } from "@/modules/identity/permissions/src/domain/entities/Permission";
+import type { PagedResult } from "@modules/identity/core/domain/types";
+import type { Permission } from "@modules/identity/permissions/src/domain/entities/Permission";
 import type { EditionThinModel, SubscriptionModel, PagedEditionResult, DowngradeImpactReport } from "../types/SubscriptionTypes";
 import type { TenantDomainJson } from "./ITenantService";
 

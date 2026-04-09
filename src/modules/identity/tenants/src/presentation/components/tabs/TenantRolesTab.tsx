@@ -14,7 +14,7 @@ import { useState, useCallback } from "react";
 import { Shield, Trash2, Pencil, Eye, Users, RefreshCw } from "lucide-react";
 import { format } from "date-fns";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { systemContainer } from "@/modules/identity/di";
+import { systemContainer } from "@modules/identity/di";
 
 // Generic CRUD imports
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
@@ -26,9 +26,9 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 
 // Role imports
-import { Role } from "@/modules/identity/roles/src/domain/entities/Role";
-import { RolePermissionsDialog } from "@/modules/identity/roles/src/presentation/components/RolePermissionsDialog";
-import { AssignToGroupDialog } from "@/modules/identity/user-groups/src/presentation/components/AssignToGroupDialog";
+import { Role } from "@modules/identity/roles/src/domain/entities/Role";
+import { RolePermissionsDialog } from "@modules/identity/roles/src/presentation/components/RolePermissionsDialog";
+import { AssignToGroupDialog } from "@modules/identity/user-groups/src/presentation/components/AssignToGroupDialog";
 import { useTenantRolesViewModel } from "../../viewmodels/useTenantRolesViewModel";
 
 // ViewModel - all logic lives here

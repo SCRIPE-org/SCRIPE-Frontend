@@ -431,7 +431,7 @@ export function CodeEditorField({
   renderPreview,
   className,
 }: CodeEditorFieldProps) {
-  useModuleLocales(() => import("@/modules/identity/customization-studio/locales"), "customization-studio");
+  useModuleLocales(() => import("@modules/customization/studio/locales"), "customization-studio");
   const { t } = useI18n();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState(tabs[0]?.id || "");

@@ -14,7 +14,7 @@
 import { useState, useMemo, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
-import { systemContainer } from "@/modules/identity/di";
+import { systemContainer } from "@modules/identity/di";
 import { Checkbox } from "@core/ui/checkbox";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
@@ -25,7 +25,7 @@ import { ScrollArea } from "@core/ui/scroll-area";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@core/ui/collapsible";
 import { ChevronDown, ChevronRight, Search, Shield, Check } from "lucide-react";
 import { cn } from "@core/common/utils";
-import type { Permission } from "@/modules/identity/permissions";
+import type { Permission } from "@modules/identity/permissions";
 
 interface PermissionsPickerProps {
   /** Selected permission IDs */

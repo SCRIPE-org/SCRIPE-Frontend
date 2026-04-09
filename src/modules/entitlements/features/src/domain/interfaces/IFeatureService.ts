@@ -1,7 +1,7 @@
 /**
  * Feature Service Interface (API contract)
  */
-import type { PagedResult, PaginationParams } from "@/modules/identity/core/domain/types";
+import type { PagedResult, PaginationParams } from "@modules/identity/core/domain/types";
 
 export interface FeatureModel {
       id: string;

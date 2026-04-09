@@ -8,7 +8,7 @@
 import { useMemo, useCallback } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { systemContainer } from "@/modules/identity/di";
+import { systemContainer } from "@modules/identity/di";
 import type { Tenant, TenantTreeNode } from "../../domain/entities/Tenant";
 import type {
   CreateTenantRequest,

@@ -31,7 +31,7 @@ import {
 import { cn } from "@core/common/utils";
 import type { Role } from "../../domain/entities/Role";
 import { useRolePermissionsDialog } from "../viewmodels/useRolePermissionsDialog";
-import type { Permission } from "@/modules/identity/permissions/src/domain/entities/Permission";
+import type { Permission } from "@modules/identity/permissions/src/domain/entities/Permission";
 import { PermissionConfigDialog } from "./PermissionConfigDialog";
 import { BulkScopeSelect } from "./BulkScopeSelect";
 import type { PermissionAssignmentJson } from "../../domain/types/PermissionTypes";

@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
 import { SectionState } from "@core/ui/section-state";
 import { Activity } from "lucide-react";
-import type { RecentChange } from "@/modules/identity/dashboard/src/domain/entities/DashboardEntities";
+import type { RecentChange } from "@modules/monitoring/dashboard/src/domain/entities/DashboardEntities";
 
 interface Props {
   data: RecentChange[];

@@ -17,8 +17,8 @@ import type { FieldConfig } from "@core/ui/forms/generic-form";
 import { useRouter } from "next/navigation";
 
 // User Groups module imports
-import type { UserGroupListItem } from "@/modules/identity/user-groups/src/presentation/viewmodels/useUserGroupsViewModel";
-import { useUserGroupsViewModel } from "@/modules/identity/user-groups/src/presentation/viewmodels/useUserGroupsViewModel";
+import type { UserGroupListItem } from "@modules/identity/user-groups/src/presentation/viewmodels/useUserGroupsViewModel";
+import { useUserGroupsViewModel } from "@modules/identity/user-groups/src/presentation/viewmodels/useUserGroupsViewModel";
 
 interface UseTenantUserGroupsViewModelParams {
       tenantId: string;

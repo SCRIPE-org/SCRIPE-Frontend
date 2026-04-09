@@ -20,7 +20,7 @@ import { Button } from "@core/ui/button";
 import { Skeleton } from "@core/ui/skeleton";
 import { Building2, Plus, Inbox } from "lucide-react";
 
-import { systemContainer } from "@/modules/identity/di";
+import { systemContainer } from "@modules/identity/di";
 import { TenantNodeCard } from "../TenantNodeCard";
 import { TenantDeleteDialog } from "../TenantDeleteDialog";
 import {

@@ -11,7 +11,7 @@ import { Badge } from "@core/ui/badge";
 import { Checkbox } from "@core/ui/checkbox";
 import { Button } from "@core/ui/button";
 import { useI18n } from "@core/providers/i18n-provider";
-import type { Permission } from "@/modules/identity/permissions/src/domain/entities/Permission";
+import type { Permission } from "@modules/identity/permissions/src/domain/entities/Permission";
 import { PermissionConfigDialog } from "./PermissionConfigDialog";
 import type { PermissionAssignmentJson } from "../../domain/types/PermissionTypes";
 

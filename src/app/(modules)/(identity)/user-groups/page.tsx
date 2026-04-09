@@ -4,7 +4,7 @@ import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
 
 const UserGroupsView = dynamic(
       () =>
-            import("@/modules/identity/user-groups/src/presentation/views/UserGroupsView").then(
+            import("@modules/identity/user-groups/src/presentation/views/UserGroupsView").then(
                   (m) => ({ default: m.UserGroupsView })
             )
 );

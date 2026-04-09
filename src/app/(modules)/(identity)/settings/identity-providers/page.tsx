@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { IdentityProvidersView } from "@/modules/identity/identity-providers";
+import { IdentityProvidersView } from "@modules/identity/identity-providers";
 
 export const metadata: Metadata = {
       title: "Identity Providers | NEXORA",

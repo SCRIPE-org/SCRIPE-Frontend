@@ -17,7 +17,7 @@ import { GenericModal } from "@core/crud/components/generic-modal";
 import { GenericSelect } from "@core/crud/components/generic-select";
 import { Loader2, Lock, Plus, X, Trash2 } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
-import { systemContainer } from "@/modules/identity/di";
+import { systemContainer } from "@modules/identity/di";
 
 interface Restriction {
       permissionCode: string;

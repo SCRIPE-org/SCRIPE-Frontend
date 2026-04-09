@@ -1,4 +1,4 @@
-import type { PagedResult } from "@/modules/identity/core/domain/types";
+import type { PagedResult } from "@modules/identity/core/domain/types";
 import type { UserGroup } from "../entities/UserGroup";
 import type {
       CreateUserGroupRequest,

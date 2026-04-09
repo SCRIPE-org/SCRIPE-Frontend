@@ -21,7 +21,7 @@ import type {
   TransferAdminRequest,
   TransferProtectionRequest,
 } from "../../domain/entities/AdminRequests";
-import type { PagedResult } from "@/modules/identity/core/domain/types";
+import type { PagedResult } from "@modules/identity/core/domain/types";
 
 export class AdminRepository implements IAdminRepository {
   constructor(private readonly service: IAdminService) { }

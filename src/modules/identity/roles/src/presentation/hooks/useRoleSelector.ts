@@ -5,8 +5,8 @@
  * Supports tenant-scoped roles with filtering and search.
  */
 import { useQuery } from "@tanstack/react-query";
-import { systemContainer } from "@/modules/identity/di";
-import type { Role } from "@/modules/identity/roles/src/domain/entities/Role";
+import { systemContainer } from "@modules/identity/di";
+import type { Role } from "@modules/identity/roles/src/domain/entities/Role";
 
 interface UseRoleSelectorOptions {
   /** Optional tenant ID to filter roles by */

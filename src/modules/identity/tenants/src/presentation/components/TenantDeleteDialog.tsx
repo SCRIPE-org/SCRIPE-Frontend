@@ -14,7 +14,7 @@ import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
 import { Checkbox } from "@core/ui/checkbox";
 import { Loader2, ShieldAlert } from "lucide-react";
-import { systemContainer } from "@/modules/identity/di";
+import { systemContainer } from "@modules/identity/di";
 import type { Tenant } from "../../domain/entities/Tenant";
 
 interface TenantDeleteDialogProps {

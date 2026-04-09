@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { OAuthAppsView } from "@/modules/identity/oauth-apps";
+import { OAuthAppsView } from "@modules/identity/oauth-apps";
 
 export const metadata: Metadata = {
       title: "OAuth Applications | NEXORA",

@@ -4,7 +4,7 @@
  * Uses centralized API_ENDPOINTS for all endpoint paths.
  */
 import type { IApiService } from "@core/interfaces/api.interface";
-import type { PagedResult, PaginationParams } from "@/modules/identity/core/domain/types";
+import type { PagedResult, PaginationParams } from "@modules/identity/core/domain/types";
 import { API_ENDPOINTS } from "@core/config/api-endpoints";
 import type { EditionPromotionData, CreatePromotionRequest, UpdatePromotionRequest, PromoCodeValidationResult } from "../../domain/entities/EditionPromotion";
 

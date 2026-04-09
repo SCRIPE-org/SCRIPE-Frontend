@@ -3,7 +3,7 @@
  *
  * Represents an administrator in the system.
  */
-import type { BaseEntity } from "@/modules/identity/core/domain/types";
+import type { BaseEntity } from "@modules/identity/core/domain/types";
 
 /**
  * Admin role assignment data

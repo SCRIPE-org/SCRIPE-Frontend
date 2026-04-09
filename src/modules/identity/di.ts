@@ -1,12 +1,13 @@
 /**
- * System Module DI Container
+ * Identity Module DI Container
  *
- * Provides dependency injection for all system submodules.
+ * Provides dependency injection for pure identity & access submodules:
+ * Admin, Roles, Permissions, Tenants, Users, User Groups, Identity Providers, OAuth Apps
  *
- * Clean Architecture Pattern:
- * - Services wrap IApiService (API calls only)
- * - Repositories use Services and map Models → Entities
- * - ViewModels use Repositories
+ * Previously contained 23 submodules — now slimmed to 9 after domain extraction.
+ * Monitoring, Customization, Messaging, Compliance, and Recycle Bin have their own containers.
+ *
+ * Backend API: Identity
  */
 import { getModuleApiService } from "@core/services/api-factory";
 
@@ -15,123 +16,60 @@ import { AdminService } from "./admin/src/data/services/AdminService";
 import { PermissionService } from "./permissions/src/data/services/PermissionService";
 import { RoleService } from "./roles/src/data/services/RoleService";
 import { TenantService } from "./tenants/src/data/services/TenantService";
-import { TenantSettingsService } from "./tenant-settings/src/data/services/TenantSettingsService";
-import { CustomizationService } from "./customization/src/data/services/CustomizationService";
-import { CustomizationRepository } from "./customization/src/data/repositories/CustomizationRepository";
-import { ThemeMarketplaceService } from "./customization/src/data/services/ThemeMarketplaceService";
-import { ThemeMarketplaceRepository } from "./customization/src/data/repositories/ThemeMarketplaceRepository";
-import { ThemeBundleService } from "./customization/src/data/services/ThemeBundleService";
-import { ThemeBundleRepository } from "./customization/src/data/repositories/ThemeBundleRepository";
-import { DashboardService } from "./dashboard/src/data/services/DashboardService";
-import { RecycleBinService } from "./recycle-bin/src/data/services/RecycleBinService";
-import { MessageTemplateService } from "./messaging/message-templates/src/data/services/MessageTemplateService";
-import { EmailService } from "./messaging/email-composer/src/data/services/EmailService";
-import { NotificationSenderService } from "./messaging/notification-sender/src/data/services/NotificationSenderService";
-import { WebhookService } from "./webhooks/src/data/services/WebhookService";
 import { UserGroupService } from "./user-groups/src/data/services/UserGroupService";
 import { IdentityProviderService } from "./identity-providers/src/data/services/IdentityProviderService";
 import { OAuthAppService } from "./oauth-apps/src/data/services/OAuthAppService";
-import { MenuService } from "./menus/src/data/services/MenuService";
-import { AuditService } from "./audit/src/data/services/AuditService";
-import { SecurityService } from "./security/src/data/services/SecurityService";
-import { AnalyticsService } from "./analytics/src/data/services/AnalyticsService";
+import { UsersService } from "./users/src/data/services/UsersService";
 
 // Repositories
 import { AdminRepository } from "./admin/src/data/repositories/AdminRepository";
 import { RoleRepository } from "./roles/src/data/repositories/RoleRepository";
 import { PermissionRepository } from "./permissions/src/data/repositories/PermissionRepository";
 import { TenantRepository } from "./tenants/src/data/repositories/TenantRepository";
-import { MenuRepository } from "./menus/src/data/repositories/MenuRepository";
-import { TenantSettingsRepository } from "./tenant-settings/src/data/repositories/TenantSettingsRepository";
-import { DashboardRepository } from "./dashboard/src/data/repositories/DashboardRepository";
-import { RecycleBinRepository } from "./recycle-bin/src/data/repositories/RecycleBinRepository";
-import { MessageTemplateRepository } from "./messaging/message-templates/src/data/repositories/MessageTemplateRepository";
-import { EmailRepository } from "./messaging/email-composer/src/data/repositories/EmailRepository";
-import { NotificationSenderRepository } from "./messaging/notification-sender/src/data/repositories/NotificationSenderRepository";
-import { WebhookRepository } from "./webhooks/src/data/repositories/WebhookRepository";
 import { UserGroupRepository } from "./user-groups/src/data/repositories/UserGroupRepository";
 import { IdentityProviderRepository } from "./identity-providers/src/data/repositories/IdentityProviderRepository";
 import { OAuthAppRepository } from "./oauth-apps/src/data/repositories/OAuthAppRepository";
-import { AuditRepository } from "./audit/src/data/repositories/AuditRepository";
-import { SecurityRepository } from "./security/src/data/repositories/SecurityRepository";
-import { AnalyticsRepository } from "./analytics/src/data/repositories/AnalyticsRepository";
+import { UsersRepository } from "./users/src/data/repositories/UsersRepository";
 
 // Interfaces - Repositories
 import type { IAdminRepository } from "./admin/src/domain/interfaces/IAdminRepository";
 import type { IRoleRepository } from "./roles/src/domain/interfaces/IRoleRepository";
 import type { IPermissionRepository } from "./permissions/src/domain/interfaces/IPermissionRepository";
 import type { ITenantRepository } from "./tenants/src/domain/interfaces/ITenantRepository";
-import type { IMenuRepository } from "./menus/src/domain/interfaces/IMenuRepository";
-import type { ITenantSettingsRepository } from "./tenant-settings/src/domain/interfaces/ITenantSettingsRepository";
-import type { IDashboardRepository } from "./dashboard/src/domain/interfaces/IDashboardRepository";
-import type { IRecycleBinRepository } from "./recycle-bin/src/domain/interfaces/IRecycleBinRepository";
-import type { IRecycleBinService } from "./recycle-bin/src/domain/interfaces/IRecycleBinService";
-import type { IMessageTemplateRepository } from "./messaging/message-templates/src/domain/interfaces/IMessageTemplateRepository";
-import type { IEmailRepository } from "./messaging/email-composer/src/domain/interfaces/IEmailRepository";
-import type { INotificationSenderRepository } from "./messaging/notification-sender/src/domain/interfaces/INotificationSenderRepository";
-import type { IWebhookRepository } from "./webhooks/src/domain/interfaces/IWebhookRepository";
 import type { IUserGroupRepository } from "./user-groups/src/domain/interfaces/IUserGroupRepository";
 import type { IIdentityProviderRepository } from "./identity-providers/src/domain/interfaces/IIdentityProviderRepository";
 import type { IOAuthAppRepository } from "./oauth-apps/src/domain/interfaces/IOAuthAppRepository";
-import type { ICustomizationRepository } from "./customization/src/domain/interfaces/ICustomizationRepository";
-import type { ICustomizationService } from "./customization/src/domain/interfaces/ICustomizationService";
-import type { IThemeMarketplaceRepository } from "./customization/src/domain/interfaces/IThemeMarketplaceRepository";
-import type { IThemeBundleRepository } from "./customization/src/domain/interfaces/IThemeBundleRepository";
-import type { IAuditRepository } from "./audit/src/domain/interfaces/IAuditRepository";
-import type { ISecurityRepository } from "./security/src/domain/interfaces/ISecurityRepository";
-import type { IAnalyticsRepository } from "./analytics/src/domain/interfaces/IAnalyticsRepository";
+import type { IUsersRepository } from "./users/src/domain/interfaces/IUsersRepository";
 
 // Interfaces - Services (from domain/interfaces, NOT data/services)
 import type { IAdminService } from "./admin/src/domain/interfaces/IAdminService";
 import type { IPermissionService } from "./permissions/src/domain/interfaces/IPermissionService";
 import type { IRoleService } from "./roles/src/domain/interfaces/IRoleService";
 import type { ITenantService } from "./tenants/src/domain/interfaces/ITenantService";
-import type { ITenantSettingsService } from "./tenant-settings/src/domain/interfaces/ITenantSettingsService";
 
-export interface SystemContainer {
-  // Services
+export interface IdentityContainer {
+  // Services (directly exposed for cross-module use)
   adminService: IAdminService;
   permissionService: IPermissionService;
   roleService: IRoleService;
   tenantService: ITenantService;
-  tenantSettingsService: ITenantSettingsService;
-  customizationService: ICustomizationService;
   // Repositories
   adminRepository: IAdminRepository;
   roleRepository: IRoleRepository;
   permissionRepository: IPermissionRepository;
   tenantRepository: ITenantRepository;
-  menuRepository: IMenuRepository;
-  tenantSettingsRepository: ITenantSettingsRepository;
-  customizationRepository: ICustomizationRepository;
-  dashboardRepository: IDashboardRepository;
-  recycleBinService: IRecycleBinService;
-  recycleBinRepository: IRecycleBinRepository;
-  // Messaging
-  messageTemplateRepository: IMessageTemplateRepository;
-  emailRepository: IEmailRepository;
-  notificationSenderRepository: INotificationSenderRepository;
-  // Webhooks
-  webhookRepository: IWebhookRepository;
-  // User Groups
   userGroupRepository: IUserGroupRepository;
-  // Unified Identity System
   identityProviderRepository: IIdentityProviderRepository;
   oauthAppRepository: IOAuthAppRepository;
-  themeMarketplaceRepository: IThemeMarketplaceRepository;
-  themeBundleRepository: IThemeBundleRepository;
-  // Dashboard Hub Submodules (refactored)
-  auditRepository: IAuditRepository;
-  securityRepository: ISecurityRepository;
-  analyticsRepository: IAnalyticsRepository;
+  usersRepository: IUsersRepository;
 }
 
-let _container: SystemContainer | null = null;
+let _container: IdentityContainer | null = null;
 
 /**
- * Get the system container (lazy initialization)
+ * Get the identity container (lazy initialization)
  */
-export function getSystemContainer(): SystemContainer {
+export function getIdentityContainer(): IdentityContainer {
   if (!_container) {
     const apiService = getModuleApiService("IDENTITY");
 
@@ -140,21 +78,6 @@ export function getSystemContainer(): SystemContainer {
     const permissionService = new PermissionService(apiService);
     const roleService = new RoleService(apiService);
     const tenantService = new TenantService(apiService);
-    const tenantSettingsService = new TenantSettingsService(apiService);
-    const customizationService = new CustomizationService(apiService);
-    const recycleBinService = new RecycleBinService(apiService);
-    const messageTemplateService = new MessageTemplateService(apiService);
-    const emailService = new EmailService(apiService);
-    const notificationSenderService = new NotificationSenderService(apiService);
-    const webhookService = new WebhookService(apiService);
-    const userGroupService = new UserGroupService(apiService);
-    const identityProviderService = new IdentityProviderService(apiService);
-    const oauthAppService = new OAuthAppService(apiService);
-    const themeMarketplaceService = new ThemeMarketplaceService(apiService);
-    const themeBundleService = new ThemeBundleService(apiService);
-    const auditService = new AuditService(apiService);
-    const securityService = new SecurityService(apiService);
-    const analyticsService = new AnalyticsService(apiService);
 
     // Create Repositories (use Services)
     _container = {
@@ -163,36 +86,15 @@ export function getSystemContainer(): SystemContainer {
       permissionService,
       roleService,
       tenantService,
-      tenantSettingsService,
-      customizationService,
       // Repositories
       adminRepository: new AdminRepository(adminService),
       roleRepository: new RoleRepository(roleService),
       permissionRepository: new PermissionRepository(permissionService),
       tenantRepository: new TenantRepository(tenantService),
-      menuRepository: new MenuRepository(new MenuService(apiService)),
-      tenantSettingsRepository: new TenantSettingsRepository(tenantSettingsService),
-      customizationRepository: new CustomizationRepository(customizationService),
-      dashboardRepository: new DashboardRepository(new DashboardService(apiService)),
-      recycleBinService,
-      recycleBinRepository: new RecycleBinRepository(recycleBinService),
-      // Messaging
-      messageTemplateRepository: new MessageTemplateRepository(messageTemplateService),
-      emailRepository: new EmailRepository(emailService),
-      notificationSenderRepository: new NotificationSenderRepository(notificationSenderService),
-      // Webhooks
-      webhookRepository: new WebhookRepository(webhookService),
-      // User Groups
-      userGroupRepository: new UserGroupRepository(userGroupService),
-      // Unified Identity System
-      identityProviderRepository: new IdentityProviderRepository(identityProviderService),
-      oauthAppRepository: new OAuthAppRepository(oauthAppService),
-      themeMarketplaceRepository: new ThemeMarketplaceRepository(themeMarketplaceService),
-      themeBundleRepository: new ThemeBundleRepository(themeBundleService),
-      // Dashboard Hub Submodules (refactored)
-      auditRepository: new AuditRepository(auditService),
-      securityRepository: new SecurityRepository(securityService),
-      analyticsRepository: new AnalyticsRepository(analyticsService),
+      userGroupRepository: new UserGroupRepository(new UserGroupService(apiService)),
+      identityProviderRepository: new IdentityProviderRepository(new IdentityProviderService(apiService)),
+      oauthAppRepository: new OAuthAppRepository(new OAuthAppService(apiService)),
+      usersRepository: new UsersRepository(new UsersService(apiService)),
     };
   }
 
@@ -200,95 +102,54 @@ export function getSystemContainer(): SystemContainer {
 }
 
 /**
- * System container accessor (for use in components)
+ * Identity container accessor (for use in components)
+ *
+ * MIGRATION NOTE: This was previously exported as `systemContainer`.
+ * For backward compatibility during migration, both names are exported.
  */
-export const systemContainer = {
+export const identityContainer = {
   // Services
+  get adminService() {
+    return getIdentityContainer().adminService;
+  },
   get permissionService() {
-    return getSystemContainer().permissionService;
+    return getIdentityContainer().permissionService;
   },
   get roleService() {
-    return getSystemContainer().roleService;
+    return getIdentityContainer().roleService;
   },
   get tenantService() {
-    return getSystemContainer().tenantService;
-  },
-  get tenantSettingsService() {
-    return getSystemContainer().tenantSettingsService;
-  },
-  get customizationService() {
-    return getSystemContainer().customizationService;
-  },
-  get customizationRepository() {
-    return getSystemContainer().customizationRepository;
+    return getIdentityContainer().tenantService;
   },
   // Repositories
   get adminRepository() {
-    return getSystemContainer().adminRepository;
+    return getIdentityContainer().adminRepository;
   },
   get roleRepository() {
-    return getSystemContainer().roleRepository;
+    return getIdentityContainer().roleRepository;
   },
   get permissionRepository() {
-    return getSystemContainer().permissionRepository;
+    return getIdentityContainer().permissionRepository;
   },
   get tenantRepository() {
-    return getSystemContainer().tenantRepository;
+    return getIdentityContainer().tenantRepository;
   },
-  get menuRepository() {
-    return getSystemContainer().menuRepository;
-  },
-  get tenantSettingsRepository() {
-    return getSystemContainer().tenantSettingsRepository;
-  },
-  get dashboardRepository() {
-    return getSystemContainer().dashboardRepository;
-  },
-  get recycleBinService() {
-    return getSystemContainer().recycleBinService;
-  },
-  get recycleBinRepository() {
-    return getSystemContainer().recycleBinRepository;
-  },
-  // Messaging
-  get messageTemplateRepository() {
-    return getSystemContainer().messageTemplateRepository;
-  },
-  get emailRepository() {
-    return getSystemContainer().emailRepository;
-  },
-  get notificationSenderRepository() {
-    return getSystemContainer().notificationSenderRepository;
-  },
-  // Webhooks
-  get webhookRepository() {
-    return getSystemContainer().webhookRepository;
-  },
-  // User Groups
   get userGroupRepository() {
-    return getSystemContainer().userGroupRepository;
+    return getIdentityContainer().userGroupRepository;
   },
-  // Unified Identity System
   get identityProviderRepository() {
-    return getSystemContainer().identityProviderRepository;
+    return getIdentityContainer().identityProviderRepository;
   },
   get oauthAppRepository() {
-    return getSystemContainer().oauthAppRepository;
+    return getIdentityContainer().oauthAppRepository;
   },
-  get themeMarketplaceRepository() {
-    return getSystemContainer().themeMarketplaceRepository;
-  },
-  get themeBundleRepository() {
-    return getSystemContainer().themeBundleRepository;
-  },
-  // Dashboard Hub Submodules (refactored)
-  get auditRepository() {
-    return getSystemContainer().auditRepository;
-  },
-  get securityRepository() {
-    return getSystemContainer().securityRepository;
-  },
-  get analyticsRepository() {
-    return getSystemContainer().analyticsRepository;
+  get usersRepository() {
+    return getIdentityContainer().usersRepository;
   },
 };
+
+/**
+ * @deprecated Use `identityContainer` instead.
+ * Backward-compatible alias — will be removed after full migration.
+ */
+export const systemContainer = identityContainer;

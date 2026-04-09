@@ -8,7 +8,7 @@ import type {
   TransferAdminRequest,
   TransferProtectionRequest,
 } from "../entities/AdminRequests";
-import type { PagedResult } from "@/modules/identity/core/domain/types";
+import type { PagedResult } from "@modules/identity/core/domain/types";
 
 /**
  * Admin list query parameters

@@ -4,7 +4,7 @@ import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
 
 const TenantDetailPage = dynamic(
   () =>
-    import("@/modules/identity/tenants/src/presentation/views/TenantDetailPage").then((m) => ({
+    import("@modules/identity/tenants/src/presentation/views/TenantDetailPage").then((m) => ({
       default: m.TenantDetailPage,
     }))
 );

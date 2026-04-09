@@ -15,7 +15,7 @@ import type {
       SetGroupRolesRequest,
       SetGroupRestrictionsRequest,
 } from "../../domain/entities/UserGroupRequests";
-import type { PagedResult } from "@/modules/identity/core/domain/types";
+import type { PagedResult } from "@modules/identity/core/domain/types";
 import { UserGroupService } from "../services/UserGroupService";
 import { UserGroupMapper } from "../mappers/UserGroupMapper";
 

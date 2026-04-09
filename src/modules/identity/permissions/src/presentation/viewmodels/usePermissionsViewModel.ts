@@ -10,7 +10,7 @@
 
 import { useState, useMemo, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { systemContainer } from "@/modules/identity/di";
+import { systemContainer } from "@modules/identity/di";
 import { useDebounce } from "@core/hooks/use-validation";
 import { useAppStore } from "@core/store/useAppStore";
 import { useTenantContext } from "@core/providers/tenant-context-provider";

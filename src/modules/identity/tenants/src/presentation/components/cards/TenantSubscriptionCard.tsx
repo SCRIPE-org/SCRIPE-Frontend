@@ -11,8 +11,8 @@ import {
       ArrowUpCircle, Calendar, Clock, AlertTriangle, Shield, RotateCcw,
       ArrowDownCircle, DollarSign, Globe, FileDown,
 } from "lucide-react";
-import { useTenantSubscriptionViewModel } from "@/modules/identity/tenants/src/presentation/viewmodels/useTenantSubscriptionViewModel";
-import { systemContainer } from "@/modules/identity/di";
+import { useTenantSubscriptionViewModel } from "@modules/identity/tenants/src/presentation/viewmodels/useTenantSubscriptionViewModel";
+import { systemContainer } from "@modules/identity/di";
 import { SUPPORTED_CURRENCIES } from "@core/constants/currencies";
 import { useConvertedAmount } from "@core/hooks/useConvertedAmount";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@core/ui/dialog";

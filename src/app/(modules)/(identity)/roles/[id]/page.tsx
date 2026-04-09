@@ -3,7 +3,7 @@ import dynamic from "next/dynamic";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
 
 const RoleDetailView = dynamic(
-  () => import("@/modules/identity/roles/src/presentation/views/RoleDetailView")
+  () => import("@modules/identity/roles/src/presentation/views/RoleDetailView")
 );
 
 export const metadata: Metadata = {

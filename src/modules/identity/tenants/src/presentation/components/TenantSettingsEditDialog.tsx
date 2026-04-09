@@ -18,7 +18,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import type {
   TenantSettingsModel,
   UpdateTenantSettingsRequest,
-} from "@/modules/identity/tenant-settings/src/domain/types/SettingsTypes";
+} from "@modules/customization/tenant-settings/src/domain/types/SettingsTypes";
 import { Loader2 } from "lucide-react";
 import { ImageUploadField } from "@core/ui/image-upload-field";
 

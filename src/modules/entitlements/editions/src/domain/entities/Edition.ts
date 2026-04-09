@@ -1,7 +1,7 @@
 /**
  * Edition Entity
  */
-import type { BaseEntity } from "@/modules/identity/core/domain/types";
+import type { BaseEntity } from "@modules/identity/core/domain/types";
 
 export interface EditionFeatureDto {
       featureId: string;

@@ -29,7 +29,7 @@ import { Skeleton } from "@core/ui/skeleton";
 import { Building2, Inbox } from "lucide-react";
 
 // Module imports
-import { systemContainer } from "@/modules/identity/di";
+import { systemContainer } from "@modules/identity/di";
 import { TenantNodeCard } from "../components/TenantNodeCard";
 import { TenantListHeader } from "../components/TenantListHeader";
 import { TenantDeleteDialog } from "../components/TenantDeleteDialog";

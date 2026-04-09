@@ -8,7 +8,7 @@
 
 import { useCallback, useMemo } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { systemContainer } from "@/modules/identity/di";
+import { systemContainer } from "@modules/identity/di";
 import { useCrudViewModel } from "@core/crud/hooks/useCrudViewModel";
 import type { Role } from "../../domain/entities/Role";
 import type {

@@ -14,7 +14,7 @@ import { useRouter } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTenantContext } from "@core/providers/tenant-context-provider";
 import { useI18n } from "@core/providers/i18n-provider";
-import { systemContainer } from "@/modules/identity/di";
+import { systemContainer } from "@modules/identity/di";
 import { PageBreadcrumbs } from "@core/ui/page-breadcrumbs";
 import { Skeleton } from "@core/ui/skeleton";
 import { AlertTriangle } from "lucide-react";

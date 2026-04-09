@@ -7,7 +7,7 @@
 "use client";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { systemContainer } from "@/modules/identity/di";
+import { systemContainer } from "@modules/identity/di";
 import { userGroupKeys } from "./useUserGroupsViewModel";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 

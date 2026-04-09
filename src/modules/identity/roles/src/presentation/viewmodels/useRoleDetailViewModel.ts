@@ -16,8 +16,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { appLogger } from "@core/common/logger";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
-import { systemContainer } from "@/modules/identity/di";
-import type { Permission } from "@/modules/identity/permissions/src/domain/entities/Permission";
+import { systemContainer } from "@modules/identity/di";
+import type { Permission } from "@modules/identity/permissions/src/domain/entities/Permission";
 import type { Role } from "../../domain/entities/Role";
 import type { PermissionAssignmentJson } from "../../domain/types/PermissionTypes";
 

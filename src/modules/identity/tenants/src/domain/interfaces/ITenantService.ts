@@ -9,11 +9,11 @@
 import type {
   TenantSettingsModel,
   UpdateTenantSettingsRequest,
-} from "@/modules/identity/tenant-settings/src/domain/types/SettingsTypes";
+} from "@modules/customization/tenant-settings/src/domain/types/SettingsTypes";
 import type { TenantModel, TenantTreeNodeModel } from "../types/TenantModelTypes";
 import type { CreateTenantJson, UpdateTenantJson } from "../types/TenantModelTypes";
 import type { TenantStats } from "./ITenantRepository";
-import type { PermissionModel } from "@/modules/identity/permissions/src/domain/types/PermissionModelTypes";
+import type { PermissionModel } from "@modules/identity/permissions/src/domain/types/PermissionModelTypes";
 import type {
   EditionThinModel,
   SubscriptionModel,

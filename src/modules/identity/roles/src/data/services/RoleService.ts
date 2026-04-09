@@ -16,7 +16,7 @@ import {
   type UpdateRoleJson,
   type AssignPermissionsJson,
 } from "../models/RoleModel";
-import { PermissionModel } from "@/modules/identity/permissions/src/data/models/PermissionModel";
+import { PermissionModel } from "@modules/identity/permissions/src/data/models/PermissionModel";
 import type {
   IRoleService,
   RoleListResult,

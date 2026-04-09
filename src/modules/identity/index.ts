@@ -1,8 +1,8 @@
 /**
- * System Module
+ * Identity Module
  *
- * Parent module for all system administration features.
- * Contains submodules: admin, roles, permissions, tenants, menus
+ * Core IAM module for identity & access management.
+ * Contains submodules: admin, roles, permissions, tenants, user-groups
  */
 
 // Re-export submodules
@@ -10,7 +10,6 @@ export * from "./admin";
 export * from "./roles";
 export * from "./permissions";
 export * from "./tenants";
-export * from "./menus";
 
 // Re-export DI container
-export { systemContainer } from "./di";
+export { identityContainer, systemContainer } from "./di";

@@ -7,7 +7,7 @@
 "use client";
 
 import { useState, useCallback, useMemo } from "react";
-import { systemContainer } from "@/modules/identity/di";
+import { systemContainer } from "@modules/identity/di";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useServices } from "@core/providers/service-provider";
 import { useAppStore } from "@core/store/useAppStore";

@@ -41,7 +41,7 @@ import {
   Clock,
   Play,
 } from "lucide-react";
-import { systemContainer } from "@/modules/identity/di";
+import { systemContainer } from "@modules/identity/di";
 import type { Tenant } from "../../domain/entities/Tenant";
 import { TenantDeleteDialog } from "./TenantDeleteDialog";
 import { cn } from "@core/common/utils";

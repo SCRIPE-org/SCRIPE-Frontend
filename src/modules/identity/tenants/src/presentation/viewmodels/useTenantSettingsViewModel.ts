@@ -11,11 +11,11 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@core/hooks/use-toast";
 import { useI18n } from "@core/providers/i18n-provider";
-import { systemContainer } from "@/modules/identity/di";
+import { systemContainer } from "@modules/identity/di";
 import type {
   TenantSettingsModel,
   UpdateTenantSettingsRequest,
-} from "@/modules/identity/tenant-settings/src/domain/types/SettingsTypes";
+} from "@modules/customization/tenant-settings/src/domain/types/SettingsTypes";
 import { useState } from "react";
 
 export interface UseTenantSettingsViewModelResult {

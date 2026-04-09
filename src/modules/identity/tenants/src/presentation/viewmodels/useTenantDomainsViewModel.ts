@@ -9,7 +9,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { systemContainer } from "@/modules/identity/di";
+import { systemContainer } from "@modules/identity/di";
 import { useI18n } from "@core/providers/i18n-provider";
 import { toast } from "sonner";
 import type { TenantDomainJson } from "../../domain/interfaces/ITenantService";
