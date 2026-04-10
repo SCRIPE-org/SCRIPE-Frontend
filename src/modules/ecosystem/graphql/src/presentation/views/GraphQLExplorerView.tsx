@@ -78,35 +78,38 @@ export function GraphQLExplorerView() {
                 </div>
               ) : vm.schemaTypes.length === 0 ? (
                 <div className="text-xs text-amber-500 space-y-2">
-                  <p>Schema loaded from fallback (offline mode).</p>
-                  <Button variant="ghost" size="sm" className="gap-1 text-xs" onClick={() => window.location.reload()}>
-                    <RefreshCw className="h-3 w-3" /> Retry
+                  <p>{t("graphql.schemaFailed") || "Schema not loaded. Click Introspect to load."}</p>
+                  <Button variant="ghost" size="sm" className="gap-1 text-xs" onClick={handleLoadIntrospection}>
+                    <RefreshCw className="h-3 w-3" /> {t("graphql.retry") || "Retry"}
                   </Button>
                 </div>
-              ) : null}
-              {vm.schemaTypes.map((type: any) => (
-                <div key={type.name}>
-                  <button
-                    onClick={() => setActiveSchemaType(activeSchemaType === type.name ? null : type.name)}
-                    className={`w-full flex items-center gap-2 rounded-md px-2 py-1.5 text-sm text-start hover:bg-accent transition-colors ${
-                      activeSchemaType === type.name ? "bg-accent font-medium" : ""
-                    }`}
-                  >
-                    <GitBranch className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-                    <span className={type.kind === "OBJECT" && (type.name === "Query" || type.name === "Mutation") ? "text-pink-500 font-semibold" : "text-blue-500"}>
-                      {type.name}
-                    </span>
-                    <Badge variant="outline" className="ml-auto text-[10px] px-1">{type.kind}</Badge>
-                  </button>
-                  {activeSchemaType === type.name && type.fields && (
-                    <div className="ml-6 space-y-0.5 py-1 border-l border-border pl-3">
-                      {type.fields.map((field: any) => (
-                        <div key={field.name} className="text-xs text-muted-foreground py-0.5 font-mono hover:text-foreground cursor-pointer">{field.name}</div>
-                      ))}
+              ) : (
+                <>
+                  {vm.schemaTypes.map((type: any) => (
+                    <div key={type.name}>
+                      <button
+                        onClick={() => setActiveSchemaType(activeSchemaType === type.name ? null : type.name)}
+                        className={`w-full flex items-center gap-2 rounded-md px-2 py-1.5 text-sm text-start hover:bg-accent transition-colors ${
+                          activeSchemaType === type.name ? "bg-accent font-medium" : ""
+                        }`}
+                      >
+                        <GitBranch className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                        <span className={type.kind === "OBJECT" && (type.name === "NexoraQuery" || type.name === "NexoraMutation") ? "text-pink-500 font-semibold" : "text-blue-500"}>
+                          {type.name}
+                        </span>
+                        <Badge variant="outline" className="ml-auto text-[10px] px-1">{type.kind}</Badge>
+                      </button>
+                      {activeSchemaType === type.name && type.fields && (
+                        <div className="ml-6 space-y-0.5 py-1 border-l border-border pl-3">
+                          {type.fields.map((field: any) => (
+                            <div key={field.name} className="text-xs text-muted-foreground py-0.5 font-mono hover:text-foreground cursor-pointer">{field.name}</div>
+                          ))}
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
-              ))}
+                  ))}
+                </>
+              )}
             </CardContent>
           </Card>
         </div>
