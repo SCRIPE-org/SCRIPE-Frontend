@@ -16,4 +16,20 @@ export class TemplatesRepository implements ITemplatesRepository {
     const result = await this.service.getById(id);
     return TemplatesMapper.toEntity(result as Parameters<typeof TemplatesMapper.toEntity>[0]);
   }
+
+  async create(data: Record<string, unknown>): Promise<unknown> {
+    return this.service.create(data);
+  }
+
+  async update(id: string, data: Record<string, unknown>): Promise<unknown> {
+    return this.service.update(id, data);
+  }
+
+  async delete(id: string): Promise<void> {
+    await this.service.delete(id);
+  }
+
+  async apply(id: string): Promise<void> {
+    await this.service.apply(id);
+  }
 }

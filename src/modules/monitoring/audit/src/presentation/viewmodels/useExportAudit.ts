@@ -4,14 +4,12 @@
  * useExportAudit Hook
  *
  * Handles audit log export with blob download for CSV, Excel, and PDF formats.
- * Uses fetch directly (instead of IApiService.get) because the response is a
- * binary file, not JSON.
+ * Uses the AuditRepository (via DI) instead of direct fetch calls.
  *
  * SOLID: Single responsibility — export logic only.
  */
 import { useState, useCallback } from "react";
-import { getCoreContainer } from "@core/di";
-import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
+import { monitoringContainer } from "@modules/monitoring/di";
 import type { AuditFilterState } from "./useAuditViewModel";
 
 export type ExportFormat = "csv" | "excel" | "pdf";
@@ -36,12 +34,9 @@ export function useExportAudit(): UseExportAuditResult {
     setError(null);
 
     try {
-      const token = getCoreContainer().apiService.getAuthToken();
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "";
+      const { auditRepository } = monitoringContainer;
 
-      // Build query params from filters
-      const url = buildUrl(API_ENDPOINTS.AUDIT.EXPORT, {
-        format,
+      const blob = await auditRepository.exportLogs(format, {
         eventType: filters.eventType || undefined,
         username: filters.username || undefined,
         entityType: filters.entityType || undefined,
@@ -52,28 +47,10 @@ export function useExportAudit(): UseExportAuditResult {
         isSuccess: filters.isSuccess,
       });
 
-      const response = await fetch(`${apiUrl}${url}`, {
-        method: "GET",
-        headers: {
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-      });
-
-      if (!response.ok) {
-        const errorBody = await response.text();
-        throw new Error(errorBody || `Export failed (${response.status})`);
-      }
-
-      // Extract filename from Content-Disposition header, or build a default
-      const disposition = response.headers.get("content-disposition");
-      let filename = `audit-export.${format === "excel" ? "xlsx" : format}`;
-      if (disposition) {
-        const match = disposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
-        if (match?.[1]) filename = match[1].replace(/['"]*/g, "");
-      }
+      // Build filename
+      const filename = `audit-export.${format === "excel" ? "xlsx" : format}`;
 
       // Download blob
-      const blob = await response.blob();
       const blobUrl = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = blobUrl;

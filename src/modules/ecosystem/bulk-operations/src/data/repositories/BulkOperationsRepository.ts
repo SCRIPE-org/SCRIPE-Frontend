@@ -11,4 +11,16 @@ export class BulkOperationsRepository implements IBulkOperationsRepository {
     const items = (result.items || []).map((item: unknown) => BulkOperationsMapper.toEntity(item as Parameters<typeof BulkOperationsMapper.toEntity>[0]));
     return { items, totalCount: result.totalCount ?? items.length };
   }
+
+  async importData(file: File): Promise<unknown> {
+    return this.service.importData(file);
+  }
+
+  async exportData(params: Record<string, unknown>): Promise<Blob> {
+    return this.service.exportData(params);
+  }
+
+  async cancel(operationId: string): Promise<void> {
+    await this.service.cancel(operationId);
+  }
 }

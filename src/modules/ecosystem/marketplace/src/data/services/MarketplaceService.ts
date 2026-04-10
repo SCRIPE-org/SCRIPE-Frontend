@@ -9,4 +9,8 @@ export class MarketplaceService implements IMarketplaceService {
     const url = buildUrl(API_ENDPOINTS.MARKETPLACE.CATALOG, params as Record<string, string>);
     return this.api.get(url);
   }
+
+  async install(pluginId: string): Promise<void> {
+    await this.api.post(`${API_ENDPOINTS.MARKETPLACE.CATALOG}/${pluginId}/install`, {});
+  }
 }

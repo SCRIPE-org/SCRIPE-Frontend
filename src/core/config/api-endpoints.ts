@@ -434,9 +434,9 @@ export const API_ENDPOINTS = {
 
   // ===== BILLING & PAYMENTS =====
   BILLING: {
-    CONFIG: `${V1}/billing/config`,
-    UPDATE_MODE: `${V1}/billing/config/mode`,
-    CONNECT_ONBOARD: `${V1}/billing/connect/onboard`,
+    CONFIG: (tenantId: string) => `${V1}/billing/config?tenantId=${tenantId}`,
+    UPDATE_MODE: (tenantId: string) => `${V1}/billing/config/mode?tenantId=${tenantId}`,
+    CONNECT_ONBOARD: (tenantId: string) => `${V1}/billing/connect/onboard?tenantId=${tenantId}`,
     REVENUE: `${V1}/billing/revenue`,
     FEATURES: `${V1}/billing/features`,
     PUBLIC_PLANS: (tenantId: string) => `${V1}/billing/plans/${tenantId}`,
@@ -500,7 +500,7 @@ export const API_ENDPOINTS = {
       STATS: `${V1}/security/events/stats`,
     },
     GEOIP: {
-      RESOLVE: `${V1}/security/geoip/resolve`,
+      RESOLVE: (ip: string) => `${V1}/security/geoip/${ip}`,
     },
     SIEM: {
       STATUS: `${V1}/security/siem/status`,
@@ -533,15 +533,18 @@ export const API_ENDPOINTS = {
   // ===== INTEGRATIONS (Phase 4) =====
   INTEGRATIONS: {
     CONNECTORS: `${V1}/integrations/connectors`,
-    TEST: `${V1}/integrations/test`,
-    VALIDATE: `${V1}/integrations/validate`,
-    SEND: `${V1}/integrations/send`,
+    TEST: (type: string) => `${V1}/integrations/connectors/${type}/test`,
+    VALIDATE: (type: string) => `${V1}/integrations/connectors/${type}/validate`,
+    SEND: (type: string) => `${V1}/integrations/connectors/${type}/send`,
   },
 
   // ===== WORKFLOWS (Phase 4) =====
   WORKFLOWS: {
-    START: `${V1}/workflows/start`,
+    DEFINITIONS: `${V1}/workflows`,
+    DEFINITION_BY_ID: (id: string) => `${V1}/workflows/${id}`,
+    START: (definitionId: string) => `${V1}/workflows/${definitionId}/start`,
     INSTANCES: `${V1}/workflows/instances`,
+    INSTANCES_BY_DEF: (definitionId: string) => `${V1}/workflows/${definitionId}/instances`,
     GET_INSTANCE: (id: string) => `${V1}/workflows/instances/${id}`,
     ADVANCE: (id: string) => `${V1}/workflows/instances/${id}/advance`,
     APPROVE: (id: string) => `${V1}/workflows/instances/${id}/approve`,
@@ -571,7 +574,7 @@ export const API_ENDPOINTS = {
     OVERVIEW: `${V1}/developer/overview`,
     WEBHOOK_TEST: `${V1}/developer/webhooks/test`,
     WEBHOOK_EVENTS: `${V1}/developer/webhooks/events`,
-    SDK_EXAMPLES: `${V1}/developer/sdk`,
+    SDK_EXAMPLES: `${V1}/developer/sdk/examples`,
     HEALTH: `${V1}/developer/health`,
   },
 
@@ -582,6 +585,11 @@ export const API_ENDPOINTS = {
     CREATE: `${V1}/Templates`,
     UPDATE: (id: string) => `${V1}/Templates/${id}`,
     DELETE: (id: string) => `${V1}/Templates/${id}`,
+  },
+
+  // ===== GRAPHQL (HotChocolate Gateway) =====
+  GRAPHQL: {
+    ENDPOINT: `/graphql`,
   },
 };
 

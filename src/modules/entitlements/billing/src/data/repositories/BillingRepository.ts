@@ -1,14 +1,26 @@
 import type { IBillingRepository } from "../../domain/interfaces/IBillingRepository";
 import type { IBillingService } from "../../domain/interfaces/IBillingService";
-import { BillingMapper } from "../mappers/BillingMapper";
-import { BillingEntity } from "../../domain/entities/BillingEntity";
 
 export class BillingRepository implements IBillingRepository {
   constructor(private readonly service: IBillingService) {}
 
-  async getAll(params?: Record<string, unknown>): Promise<{ items: BillingEntity[]; totalCount: number }> {
-    const result = await this.service.getAll(params) as { items?: unknown[]; totalCount?: number; [key: string]: unknown };
-    const items = (result.items || []).map((item: unknown) => BillingMapper.toEntity(item as Parameters<typeof BillingMapper.toEntity>[0]));
-    return { items, totalCount: result.totalCount ?? items.length };
+  async getConfig(tenantId: string): Promise<unknown> {
+    return this.service.getConfig(tenantId);
+  }
+
+  async getRevenue(from?: string, to?: string): Promise<unknown> {
+    return this.service.getRevenue(from, to);
+  }
+
+  async getFeatures(moduleName?: string): Promise<unknown> {
+    return this.service.getFeatures(moduleName);
+  }
+
+  async updateMode(tenantId: string, paymentMode: string): Promise<unknown> {
+    return this.service.updateMode(tenantId, paymentMode);
+  }
+
+  async startOnboarding(tenantId: string, data: Record<string, string>): Promise<unknown> {
+    return this.service.startOnboarding(tenantId, data);
   }
 }

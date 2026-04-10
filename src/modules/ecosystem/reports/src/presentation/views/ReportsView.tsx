@@ -1,102 +1,110 @@
 "use client";
 
-import { useReportsViewModel } from "../viewmodels/useReportsViewModel";
-import { Input } from "@core/ui/input";
+import { useI18n } from "@core/providers/i18n-provider";
+import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
+import { Button } from "@core/ui/button";
 import { Skeleton } from "@core/ui/skeleton";
-import { PieChart } from "lucide-react";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@core/ui/table";
+import { BarChart3, Play, Download, RefreshCw, Loader2, Plus, FileBarChart } from "lucide-react";
+import { useReportsViewModel } from "../viewmodels/useReportsViewModel";
 
 export function ReportsView() {
+  useModuleLocales(() => import("../../../locales"), "reports");
+  const { t } = useI18n();
   const vm = useReportsViewModel();
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-            <PieChart className="h-5 w-5 text-primary" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-orange-500/10">
+            <BarChart3 className="h-5 w-5 text-orange-500" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">Reports</h1>
-            <p className="text-sm text-muted-foreground">Generate, validate, and export data reports</p>
+            <h1 className="text-2xl font-bold tracking-tight">{t("reports.title")}</h1>
+            <p className="text-sm text-muted-foreground">{t("reports.description")}</p>
           </div>
         </div>
-        <Badge variant="secondary">{vm.totalCount} total</Badge>
+        <Button size="sm" className="gap-2" onClick={() => vm.setCreateDialogOpen(true)}>
+          <Plus className="h-4 w-4" />{t("reports.create")}
+        </Button>
       </div>
 
-      {/* Search */}
-      <div className="flex items-center gap-4">
-        <Input
-          placeholder="Search..."
-          value={vm.search}
-          onChange={(e) => vm.handleSearch(e.target.value)}
-          className="max-w-sm"
-        />
-      </div>
-
-      {/* Content */}
       {vm.isLoading ? (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <Skeleton key={i} className="h-32 w-full rounded-xl" />
-          ))}
-        </div>
+        <Skeleton className="h-64 w-full rounded-xl" />
       ) : vm.error ? (
-        <Card>
-          <CardContent className="flex items-center justify-center py-12">
-            <p className="text-destructive">Failed to load data. Please try again.</p>
+        <Card className="border-destructive/30 bg-destructive/5">
+          <CardContent className="flex flex-col items-center justify-center py-12">
+            <p className="text-sm text-destructive mb-3">{t("common.errorLoading")}</p>
+            <Button variant="outline" size="sm" onClick={() => vm.refetch()} className="gap-2">
+              <RefreshCw className="h-3.5 w-3.5" />{t("common.retry")}
+            </Button>
           </CardContent>
         </Card>
       ) : vm.items.length === 0 ? (
-        <Card>
+        <Card className="border-dashed">
           <CardContent className="flex flex-col items-center justify-center py-16">
-            <PieChart className="h-12 w-12 text-muted-foreground/50 mb-4" />
-            <p className="text-lg font-medium text-muted-foreground">No reports found</p>
-            <p className="text-sm text-muted-foreground/70 mt-1">Get started by creating your first item.</p>
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-muted/50 mb-4">
+              <FileBarChart className="h-7 w-7 text-muted-foreground/50" />
+            </div>
+            <h3 className="font-semibold text-lg mb-1">{t("reports.empty")}</h3>
+            <p className="text-sm text-muted-foreground">{t("reports.emptyDesc")}</p>
           </CardContent>
         </Card>
       ) : (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {vm.items.map((item, index) => (
-            <Card key={item.id || index} className="hover:shadow-md transition-shadow cursor-pointer">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-base font-medium truncate">
-                  {item.name || item.id || "Untitled"}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <Badge variant="outline" className="text-xs">{item.status || "N/A"}</Badge>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
-
-      {/* Pagination */}
-      {vm.totalCount > vm.pageSize && (
-        <div className="flex items-center justify-center gap-2">
-          <button
-            className="px-3 py-1 text-sm border rounded-md disabled:opacity-50"
-            disabled={vm.page <= 1}
-            onClick={() => vm.setPage(vm.page - 1)}
-          >
-            Previous
-          </button>
-          <span className="text-sm text-muted-foreground">
-            Page {vm.page} of {Math.ceil(vm.totalCount / vm.pageSize)}
-          </span>
-          <button
-            className="px-3 py-1 text-sm border rounded-md disabled:opacity-50"
-            disabled={vm.page >= Math.ceil(vm.totalCount / vm.pageSize)}
-            onClick={() => vm.setPage(vm.page + 1)}
-          >
-            Next
-          </button>
-        </div>
+        <Card>
+          <CardContent className="p-0">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>#</TableHead>
+                  <TableHead>{t("reports.name") || "Name"}</TableHead>
+                  <TableHead>{t("reports.source") || "Data Source"}</TableHead>
+                  <TableHead>{t("reports.lastRun") || "Last Run"}</TableHead>
+                  <TableHead>{t("reports.status") || "Status"}</TableHead>
+                  <TableHead className="text-right">{t("common.actions") || "Actions"}</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {vm.items.map((rpt: any, idx: number) => (
+                  <TableRow key={rpt.id}>
+                    <TableCell className="text-muted-foreground">{idx + 1}</TableCell>
+                    <TableCell className="font-medium">{rpt.name}</TableCell>
+                    <TableCell><Badge variant="outline">{rpt.dataSource ?? rpt.source ?? "—"}</Badge></TableCell>
+                    <TableCell className="text-sm text-muted-foreground">{rpt.lastRunAt ?? rpt.lastRun ?? "—"}</TableCell>
+                    <TableCell>
+                      <Badge variant={rpt.status === "Completed" ? "success" : "secondary"}>
+                        {rpt.status ?? "Ready"}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex items-center justify-end gap-1">
+                        <Button
+                          variant="ghost" size="sm" className="gap-1"
+                          disabled={vm.isRunning}
+                          onClick={() => vm.handleRun(rpt.id)}
+                        >
+                          {vm.isRunning ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Play className="h-3.5 w-3.5" />}
+                          {t("reports.run") || "Run"}
+                        </Button>
+                        <Button
+                          variant="ghost" size="sm" className="gap-1"
+                          disabled={vm.isExporting}
+                          onClick={() => vm.handleExport(rpt.id)}
+                        >
+                          {vm.isExporting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Download className="h-3.5 w-3.5" />}
+                          {t("reports.export") || "Export"}
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
       )}
     </div>
   );

@@ -16,4 +16,12 @@ export class ReportsRepository implements IReportsRepository {
     const result = await this.service.getById(id);
     return ReportsMapper.toEntity(result as Parameters<typeof ReportsMapper.toEntity>[0]);
   }
+
+  async execute(data: Record<string, unknown>): Promise<unknown> {
+    return this.service.execute(data);
+  }
+
+  async exportReport(data: Record<string, unknown>): Promise<Blob> {
+    return this.service.export(data);
+  }
 }

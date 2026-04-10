@@ -1,5 +1,5 @@
-import { DeveloperView } from "@modules/ecosystem/developer/src/presentation/views/DeveloperView";
+import { GraphQLExplorerView } from "@modules/ecosystem/graphql/src/presentation/views/GraphQLExplorerView";
 
 export default function GraphQLPage() {
-  return <DeveloperView />;
+  return <GraphQLExplorerView />;
 }

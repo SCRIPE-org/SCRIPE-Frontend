@@ -16,4 +16,16 @@ export class InvoicesRepository implements IInvoicesRepository {
     const result = await this.service.getById(id);
     return InvoicesMapper.toEntity(result as Parameters<typeof InvoicesMapper.toEntity>[0]);
   }
+
+  async pay(id: string): Promise<void> {
+    await this.service.pay(id);
+  }
+
+  async void(id: string): Promise<void> {
+    await this.service.void(id);
+  }
+
+  async downloadPdf(id: string): Promise<Blob> {
+    return this.service.downloadPdf(id);
+  }
 }

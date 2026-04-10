@@ -13,4 +13,16 @@ export class InvoicesService implements IInvoicesService {
   async getById(id: string): Promise<unknown> {
     return this.api.get(API_ENDPOINTS.INVOICES.BY_ID(id));
   }
+
+  async pay(id: string): Promise<void> {
+    await this.api.post(API_ENDPOINTS.INVOICES.PAY(id), {});
+  }
+
+  async void(id: string): Promise<void> {
+    await this.api.post(API_ENDPOINTS.INVOICES.VOID(id), {});
+  }
+
+  async downloadPdf(id: string): Promise<Blob> {
+    return this.api.get(`${API_ENDPOINTS.INVOICES.BY_ID(id)}/pdf`) as Promise<Blob>;
+  }
 }

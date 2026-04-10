@@ -11,4 +11,8 @@ export class MarketplaceRepository implements IMarketplaceRepository {
     const items = (result.items || []).map((item: unknown) => MarketplaceMapper.toEntity(item as Parameters<typeof MarketplaceMapper.toEntity>[0]));
     return { items, totalCount: result.totalCount ?? items.length };
   }
+
+  async install(pluginId: string): Promise<void> {
+    await this.service.install(pluginId);
+  }
 }

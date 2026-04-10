@@ -1140,6 +1140,7 @@ export const ar = {
     groups: "المجموعات",
     selected: "محدد",
     errorLoading: "حدث خطأ أثناء تحميل البيانات",
+    comingSoon: "قريبًا",
     confirm: "تأكيد",
     close: "إغلاق",
     status: "الحالة",

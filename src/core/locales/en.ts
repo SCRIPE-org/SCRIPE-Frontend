@@ -487,6 +487,7 @@ export const en = {
     stop: "Stop",
     clearAll: "Clear All",
     errorLoading: "Error Loading",
+    comingSoon: "Coming Soon",
   },
   toast: {
     title: "Toast Notifications",

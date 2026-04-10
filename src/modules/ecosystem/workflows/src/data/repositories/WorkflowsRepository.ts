@@ -16,4 +16,12 @@ export class WorkflowsRepository implements IWorkflowsRepository {
     const result = await this.service.getById(id);
     return WorkflowsMapper.toEntity(result as Parameters<typeof WorkflowsMapper.toEntity>[0]);
   }
+
+  async create(data: Record<string, unknown>): Promise<unknown> {
+    return this.service.create(data);
+  }
+
+  async start(definitionId: string, data?: Record<string, unknown>): Promise<unknown> {
+    return this.service.start(definitionId, data ?? {});
+  }
 }

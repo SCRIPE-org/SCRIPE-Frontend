@@ -1,13 +1,18 @@
 "use client";
 
-import { useMarketplaceViewModel } from "../viewmodels/useMarketplaceViewModel";
-import { Input } from "@core/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
+import { useI18n } from "@core/providers/i18n-provider";
+import { useModuleLocales } from "@core/hooks/use-module-locales";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
+import { Button } from "@core/ui/button";
+import { Input } from "@core/ui/input";
 import { Skeleton } from "@core/ui/skeleton";
-import { Store } from "lucide-react";
+import { Store, Search, Star, Download, ShoppingCart, TrendingUp, Award, Sparkles, RefreshCw, Loader2 } from "lucide-react";
+import { useMarketplaceViewModel } from "../viewmodels/useMarketplaceViewModel";
 
 export function MarketplaceView() {
+  useModuleLocales(() => import("../../../locales"), "marketplace");
+  const { t } = useI18n();
   const vm = useMarketplaceViewModel();
 
   return (
@@ -15,87 +20,118 @@ export function MarketplaceView() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-            <Store className="h-5 w-5 text-primary" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-violet-500/10">
+            <Store className="h-5 w-5 text-violet-500" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">Marketplace</h1>
-            <p className="text-sm text-muted-foreground">Browse and discover plugins and extensions</p>
+            <h1 className="text-2xl font-bold tracking-tight">{t("marketplace.title")}</h1>
+            <p className="text-sm text-muted-foreground">{t("marketplace.description")}</p>
           </div>
         </div>
-        <Badge variant="secondary">{vm.totalCount} total</Badge>
       </div>
+
+      {/* Featured Banner */}
+      <Card className="bg-gradient-to-r from-violet-600/10 via-purple-600/10 to-pink-600/10 border-violet-500/20">
+        <CardContent className="flex items-center gap-6 py-6">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-violet-500/20">
+            <TrendingUp className="h-7 w-7 text-violet-500" />
+          </div>
+          <div className="flex-1">
+            <h3 className="font-semibold text-lg">{t("marketplace.featured")}</h3>
+            <p className="text-sm text-muted-foreground">{t("marketplace.featuredDesc")}</p>
+          </div>
+          <div className="flex gap-2">
+            <Badge className="bg-amber-500/10 text-amber-600 border-amber-500/20 gap-1"><Award className="h-3 w-3" />Staff Pick</Badge>
+            <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20 gap-1"><TrendingUp className="h-3 w-3" />Trending</Badge>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Search */}
-      <div className="flex items-center gap-4">
-        <Input
-          placeholder="Search..."
-          value={vm.search}
-          onChange={(e) => vm.handleSearch(e.target.value)}
-          className="max-w-sm"
-        />
+      <div className="flex gap-4">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input placeholder={t("marketplace.searchPlaceholder")} value={vm.search} onChange={(e) => vm.handleSearch(e.target.value)} className="pl-9" />
+        </div>
       </div>
 
-      {/* Content */}
+      {/* Loading State */}
       {vm.isLoading ? (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 6 }).map((_, i) => (
-            <Skeleton key={i} className="h-32 w-full rounded-xl" />
+            <Skeleton key={i} className="h-48 w-full rounded-xl" />
           ))}
         </div>
       ) : vm.error ? (
-        <Card>
-          <CardContent className="flex items-center justify-center py-12">
-            <p className="text-destructive">Failed to load data. Please try again.</p>
+        /* Error State */
+        <Card className="border-destructive/30 bg-destructive/5">
+          <CardContent className="flex flex-col items-center justify-center py-12">
+            <p className="text-sm text-destructive mb-3">{t("common.errorLoading")}</p>
+            <Button variant="outline" size="sm" onClick={() => vm.refetch()} className="gap-2">
+              <RefreshCw className="h-3.5 w-3.5" />{t("common.retry")}
+            </Button>
           </CardContent>
         </Card>
       ) : vm.items.length === 0 ? (
-        <Card>
+        /* Empty State */
+        <Card className="border-dashed">
           <CardContent className="flex flex-col items-center justify-center py-16">
-            <Store className="h-12 w-12 text-muted-foreground/50 mb-4" />
-            <p className="text-lg font-medium text-muted-foreground">No marketplace found</p>
-            <p className="text-sm text-muted-foreground/70 mt-1">Get started by creating your first item.</p>
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-muted/50 mb-4">
+              <Store className="h-7 w-7 text-muted-foreground/50" />
+            </div>
+            <h3 className="font-semibold text-lg mb-1">{t("marketplace.empty")}</h3>
+            <p className="text-sm text-muted-foreground">{t("marketplace.emptyDesc")}</p>
           </CardContent>
         </Card>
       ) : (
+        /* Catalog Grid — from server data */
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {vm.items.map((item, index) => (
-            <Card key={item.id || index} className="hover:shadow-md transition-shadow cursor-pointer">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-base font-medium truncate">
-                  {item.name || item.id || "Untitled"}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <Badge variant="outline" className="text-xs">{item.category || "N/A"}</Badge>
+          {vm.items.map((plugin: any) => (
+            <Card key={plugin.id} className="group hover:border-violet-500/30 transition-colors">
+              <CardHeader className="pb-3">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-violet-500/20 to-pink-500/20 text-lg font-bold text-violet-500">
+                      {(plugin.name ?? "M").charAt(0)}
+                    </div>
+                    <div>
+                      <CardTitle className="text-base flex items-center gap-1.5">
+                        {plugin.name}
+                        {plugin.verified && <Badge variant="secondary" className="text-[10px] gap-0.5 px-1"><Sparkles className="h-2.5 w-2.5" />Verified</Badge>}
+                      </CardTitle>
+                      <CardDescription className="text-xs">{plugin.author} · v{plugin.version}</CardDescription>
+                    </div>
+                  </div>
+                  {(plugin.price ?? 0) > 0 && <Badge variant="outline" className="font-mono">${plugin.price}</Badge>}
+                  {(plugin.price ?? 0) === 0 && <Badge variant="success" className="text-xs">Free</Badge>}
                 </div>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <p className="text-sm text-muted-foreground line-clamp-2">{plugin.description}</p>
+                <div className="flex items-center justify-between text-xs text-muted-foreground">
+                  <div className="flex items-center gap-3">
+                    <span className="flex items-center gap-1"><Star className="h-3 w-3 fill-amber-400 text-amber-400" />{plugin.rating}</span>
+                    <span className="flex items-center gap-1"><Download className="h-3 w-3" />{(plugin.downloads ?? 0).toLocaleString()}</span>
+                  </div>
+                  <Badge variant="outline" className="text-[10px]">{plugin.category}</Badge>
+                </div>
+                <Button
+                  className="w-full gap-2 group-hover:bg-violet-600 group-hover:text-white transition-colors"
+                  variant="outline"
+                  size="sm"
+                  disabled={vm.isInstalling && vm.installingId === plugin.id}
+                  onClick={() => vm.handleInstall(plugin.id)}
+                >
+                  {vm.isInstalling && vm.installingId === plugin.id ? (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  ) : (
+                    <ShoppingCart className="h-3.5 w-3.5" />
+                  )}
+                  {(plugin.price ?? 0) > 0 ? t("marketplace.purchase") : t("marketplace.install")}
+                </Button>
               </CardContent>
             </Card>
           ))}
-        </div>
-      )}
-
-      {/* Pagination */}
-      {vm.totalCount > vm.pageSize && (
-        <div className="flex items-center justify-center gap-2">
-          <button
-            className="px-3 py-1 text-sm border rounded-md disabled:opacity-50"
-            disabled={vm.page <= 1}
-            onClick={() => vm.setPage(vm.page - 1)}
-          >
-            Previous
-          </button>
-          <span className="text-sm text-muted-foreground">
-            Page {vm.page} of {Math.ceil(vm.totalCount / vm.pageSize)}
-          </span>
-          <button
-            className="px-3 py-1 text-sm border rounded-md disabled:opacity-50"
-            disabled={vm.page >= Math.ceil(vm.totalCount / vm.pageSize)}
-            onClick={() => vm.setPage(vm.page + 1)}
-          >
-            Next
-          </button>
         </div>
       )}
     </div>

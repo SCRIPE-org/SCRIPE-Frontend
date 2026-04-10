@@ -24,6 +24,7 @@ import { BulkOperationsService } from "./bulk-operations/src/data/services/BulkO
 import { TemplatesService } from "./templates/src/data/services/TemplatesService";
 import { DeveloperService } from "./developer/src/data/services/DeveloperService";
 import { RecycleBinService } from "./recycle-bin/src/data/services/RecycleBinService";
+import { GraphQLService } from "./graphql/src/data/services/GraphQLService";
 
 // Repositories
 import { PluginsRepository } from "./plugins/src/data/repositories/PluginsRepository";
@@ -35,6 +36,7 @@ import { BulkOperationsRepository } from "./bulk-operations/src/data/repositorie
 import { TemplatesRepository } from "./templates/src/data/repositories/TemplatesRepository";
 import { DeveloperRepository } from "./developer/src/data/repositories/DeveloperRepository";
 import { RecycleBinRepository } from "./recycle-bin/src/data/repositories/RecycleBinRepository";
+import { GraphQLRepository } from "./graphql/src/data/repositories/GraphQLRepository";
 
 // Interfaces
 import type { IPluginsRepository } from "./plugins/src/domain/interfaces/IPluginsRepository";
@@ -47,6 +49,7 @@ import type { ITemplatesRepository } from "./templates/src/domain/interfaces/ITe
 import type { IDeveloperRepository } from "./developer/src/domain/interfaces/IDeveloperRepository";
 import type { IRecycleBinRepository } from "./recycle-bin/src/domain/interfaces/IRecycleBinRepository";
 import type { IRecycleBinService } from "./recycle-bin/src/domain/interfaces/IRecycleBinService";
+import type { IGraphQLRepository } from "./graphql/src/domain/interfaces/IGraphQLRepository";
 
 export interface EcosystemContainer {
   pluginsRepository: IPluginsRepository;
@@ -59,6 +62,7 @@ export interface EcosystemContainer {
   developerRepository: IDeveloperRepository;
   recycleBinService: IRecycleBinService;
   recycleBinRepository: IRecycleBinRepository;
+  graphqlRepository: IGraphQLRepository;
 }
 
 let _container: EcosystemContainer | null = null;
@@ -85,6 +89,7 @@ export function getEcosystemContainer(): EcosystemContainer {
       developerRepository: new DeveloperRepository(new DeveloperService(apiService)),
       recycleBinService,
       recycleBinRepository: new RecycleBinRepository(recycleBinService),
+      graphqlRepository: new GraphQLRepository(new GraphQLService(apiService)),
     };
   }
 
@@ -124,5 +129,8 @@ export const ecosystemContainer = {
   },
   get recycleBinRepository() {
     return getEcosystemContainer().recycleBinRepository;
+  },
+  get graphqlRepository() {
+    return getEcosystemContainer().graphqlRepository;
   },
 };

@@ -1,0 +1,25 @@
+export const ar = {
+  developer: {
+    title: "بوابة المطورين",
+    description: "توثيق API واختبار webhook وأمثلة SDK وصحة النظام",
+    apiVersion: "إصدار API",
+    modules: "الوحدات",
+    authMethod: "طريقة المصادقة",
+    platformHealth: "صحة المنصة",
+    webhookTester: "اختبار Webhook",
+    webhookTesterDesc: "اختبار تسليم webhook بإرسال أحداث إلى نقطة النهاية الخاصة بك",
+    sendTest: "إرسال اختبار",
+    sdkExamples: "أمثلة SDK",
+    tabs: { overview: "نظرة عامة", webhooks: "اختبار Webhook", sdk: "أمثلة SDK", health: "صحة النظام" },
+    overview: { title: "نظرة عامة على API", endpoints: "نقاط نهاية API", version: "إصدار API", baseUrl: "عنوان URL الأساسي", authentication: "المصادقة", rateLimit: "حد المعدل" },
+    webhooks: { title: "اختبار Webhook", description: "اختبار نقاط نهاية webhook مع حمولات تجريبية", urlLabel: "عنوان URL Webhook", eventLabel: "نوع الحدث", send: "إرسال اختبار", response: "الاستجابة", success: "تم تسليم Webhook بنجاح", error: "فشل تسليم Webhook" },
+    sdk: { title: "أمثلة SDK", description: "أمثلة كود للتكامل مع API NEXORA", languages: { javascript: "JavaScript", python: "Python", csharp: "C#", curl: "cURL" } },
+    health: { title: "صحة النظام", api: "خادم API", database: "قاعدة البيانات", redis: "ذاكرة Redis", healthy: "سليم", unhealthy: "غير سليم", lastCheck: "آخر فحص" },
+    empty: { title: "لا توجد موارد مطورين بعد", description: "ستظهر هنا أدوات المطورين وتوثيق API." },
+    comingSoon: {
+      title: "بوابة المطورين قريبًا",
+      description: "الوصول إلى توثيق API شامل واختبار webhook واستكشاف أمثلة SDK ومراقبة صحة النظام.",
+      features: { docs: "توثيق API تفاعلي مع التجربة", webhooks: "اختبار وتصحيح webhook المباشر", sdks: "أمثلة SDK بلغات متعددة", health: "مراقبة صحة النظام في الوقت الفعلي" },
+    },
+  },
+};

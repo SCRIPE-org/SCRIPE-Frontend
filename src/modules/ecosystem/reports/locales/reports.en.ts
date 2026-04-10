@@ -1,0 +1,26 @@
+export const en = {
+  reports: {
+    title: "Reports",
+    empty: "No reports generated",
+    emptyDesc: "Select a data source and build your first report.",
+    description: "Build custom reports from available data sources",
+    create: "Create Report",
+    savedReports: "Saved Reports",
+    name: "Report Name",
+    dataSource: "Data Source",
+    lastRun: "Last Run",
+    format: "Format",
+    rows: "Rows",
+    run: "Run",
+    export: "Export",
+    dataSources: "Data Sources",
+    columns: { source: "Source", fields: "Available Fields", type: "Type" },
+    builder: { title: "Report Builder", selectSource: "Select Data Source", selectFields: "Select Fields", validate: "Validate", execute: "Execute", export: "Export", results: "Results" },
+    exportFormats: { csv: "Export CSV", excel: "Export Excel", pdf: "Export PDF" },
+    comingSoon: {
+      title: "Reports Coming Soon",
+      description: "Build powerful custom reports with visual charts, export capabilities, and scheduled delivery.",
+      features: { builder: "Drag-and-drop report builder", charts: "Interactive charts and visualizations", export: "Export to CSV, Excel, and PDF", scheduling: "Scheduled report delivery via email" },
+    },
+  },
+};

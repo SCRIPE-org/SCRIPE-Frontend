@@ -13,4 +13,20 @@ export class TemplatesService implements ITemplatesService {
   async getById(id: string): Promise<unknown> {
     return this.api.get(API_ENDPOINTS.TEMPLATES.BY_ID(id));
   }
+
+  async create(data: Record<string, unknown>): Promise<unknown> {
+    return this.api.post(API_ENDPOINTS.TEMPLATES.CREATE, data);
+  }
+
+  async update(id: string, data: Record<string, unknown>): Promise<unknown> {
+    return this.api.put(API_ENDPOINTS.TEMPLATES.UPDATE(id), data);
+  }
+
+  async delete(id: string): Promise<void> {
+    await this.api.delete(API_ENDPOINTS.TEMPLATES.DELETE(id));
+  }
+
+  async apply(id: string): Promise<void> {
+    await this.api.post(`${API_ENDPOINTS.TEMPLATES.BY_ID(id)}/apply`, {});
+  }
 }

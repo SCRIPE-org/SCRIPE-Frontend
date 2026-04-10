@@ -11,6 +11,18 @@ export class ReportsService implements IReportsService {
   }
 
   async getById(id: string): Promise<unknown> {
+    return this.api.get(`${API_ENDPOINTS.REPORTS.DATA_SOURCES}/${id}`);
+  }
+
+  async execute(data: Record<string, unknown>): Promise<unknown> {
+    return this.api.post(API_ENDPOINTS.REPORTS.EXECUTE, data);
+  }
+
+  async export(data: Record<string, unknown>): Promise<Blob> {
+    return this.api.post(API_ENDPOINTS.REPORTS.EXPORT, data) as Promise<Blob>;
+  }
+
+  async getDataSources(): Promise<unknown> {
     return this.api.get(API_ENDPOINTS.REPORTS.DATA_SOURCES);
   }
 }

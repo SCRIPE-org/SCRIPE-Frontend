@@ -16,4 +16,12 @@ export class IntegrationsRepository implements IIntegrationsRepository {
     const result = await this.service.getById(id);
     return IntegrationsMapper.toEntity(result as Parameters<typeof IntegrationsMapper.toEntity>[0]);
   }
+
+  async toggle(type: string, enabled: boolean): Promise<void> {
+    await this.service.toggle(type, enabled);
+  }
+
+  async testConnection(type: string): Promise<{ success: boolean; message: string }> {
+    return this.service.testConnection(type);
+  }
 }

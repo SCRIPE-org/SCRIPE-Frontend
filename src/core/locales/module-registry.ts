@@ -32,6 +32,7 @@ import { en as permissionsEn, ar as permissionsAr } from "@modules/identity/perm
 import { en as rolesEn, ar as rolesAr } from "@modules/identity/roles/locales";
 import { en as tenantsEn, ar as tenantsAr } from "@modules/identity/tenants/locales";
 import { en as userGroupsEn, ar as userGroupsAr } from "@modules/identity/user-groups/locales";
+import { en as usersEn, ar as usersAr } from "@modules/identity/users/locales";
 
 // ─── Customization ─────────────────────────────────────
 import { en as custSettingsEn, ar as custSettingsAr } from "@modules/customization/settings/locales";
@@ -45,6 +46,8 @@ import { en as editionsEn, ar as editionsAr } from "@modules/entitlements/editio
 import { en as featuresEn, ar as featuresAr } from "@modules/entitlements/features/locales";
 import { en as overridesEn, ar as overridesAr } from "@modules/entitlements/overrides/locales";
 import { en as subscriptionsEn, ar as subscriptionsAr } from "@modules/entitlements/subscriptions/locales";
+import { en as billingEn, ar as billingAr } from "@modules/entitlements/billing/locales";
+import { en as invoicesEn, ar as invoicesAr } from "@modules/entitlements/invoices/locales";
 
 // ─── Messaging ─────────────────────────────────────────
 import { en as messagingEn, ar as messagingAr } from "@modules/messaging/locales";
@@ -52,6 +55,19 @@ import { en as webhooksEn, ar as webhooksAr } from "@modules/messaging/webhooks/
 
 // ─── Ecosystem ─────────────────────────────────────────
 import { en as recycleBinEn, ar as recycleBinAr } from "@modules/ecosystem/recycle-bin/locales";
+import { en as pluginsEn, ar as pluginsAr } from "@modules/ecosystem/plugins/locales";
+import { en as marketplaceEn, ar as marketplaceAr } from "@modules/ecosystem/marketplace/locales";
+import { en as integrationsEn, ar as integrationsAr } from "@modules/ecosystem/integrations/locales";
+import { en as workflowsEn, ar as workflowsAr } from "@modules/ecosystem/workflows/locales";
+import { en as reportsEn, ar as reportsAr } from "@modules/ecosystem/reports/locales";
+import { en as bulkOpsEn, ar as bulkOpsAr } from "@modules/ecosystem/bulk-operations/locales";
+import { en as templatesEn, ar as templatesAr } from "@modules/ecosystem/templates/locales";
+import { en as developerEn, ar as developerAr } from "@modules/ecosystem/developer/locales";
+import { en as graphqlEn, ar as graphqlAr } from "@modules/ecosystem/graphql/locales";
+
+// ─── Compliance ────────────────────────────────────────
+import { en as complianceEn, ar as complianceAr } from "@modules/compliance/compliance/locales";
+import { en as secPoliciesEn, ar as secPoliciesAr } from "@modules/compliance/security-policies/locales";
 
 // ─── Profile ───────────────────────────────────────────
 import { en as profileEn, ar as profileAr } from "@modules/profile/locales";
@@ -66,15 +82,17 @@ export const allModulesEn: Record<string, any> = Object.assign(
   // Monitoring
   analyticsEn, auditEn, dashboardEn, securityEn,
   // Identity
-  adminEn, idpEn, oauthEn, permissionsEn, rolesEn, tenantsEn, userGroupsEn,
+  adminEn, idpEn, oauthEn, permissionsEn, rolesEn, tenantsEn, userGroupsEn, usersEn,
   // Customization
   custSettingsEn, custStudioEn, menusEn, tenantSettingsEn,
   // Entitlements
-  entitlementsEn, editionsEn, featuresEn, overridesEn, subscriptionsEn,
+  entitlementsEn, editionsEn, featuresEn, overridesEn, subscriptionsEn, billingEn, invoicesEn,
   // Messaging
   messagingEn, webhooksEn,
   // Ecosystem
-  recycleBinEn,
+  recycleBinEn, pluginsEn, marketplaceEn, integrationsEn, workflowsEn, reportsEn, bulkOpsEn, templatesEn, developerEn, graphqlEn,
+  // Compliance
+  complianceEn, secPoliciesEn,
   // Profile
   profileEn,
 );
@@ -85,15 +103,17 @@ export const allModulesAr: Record<string, any> = Object.assign(
   // Monitoring
   analyticsAr, auditAr, dashboardAr, securityAr,
   // Identity
-  adminAr, idpAr, oauthAr, permissionsAr, rolesAr, tenantsAr, userGroupsAr,
+  adminAr, idpAr, oauthAr, permissionsAr, rolesAr, tenantsAr, userGroupsAr, usersAr,
   // Customization
   custSettingsAr, custStudioAr, menusAr, tenantSettingsAr,
   // Entitlements
-  entitlementsAr, editionsAr, featuresAr, overridesAr, subscriptionsAr,
+  entitlementsAr, editionsAr, featuresAr, overridesAr, subscriptionsAr, billingAr, invoicesAr,
   // Messaging
   messagingAr, webhooksAr,
   // Ecosystem
-  recycleBinAr,
+  recycleBinAr, pluginsAr, marketplaceAr, integrationsAr, workflowsAr, reportsAr, bulkOpsAr, templatesAr, developerAr, graphqlAr,
+  // Compliance
+  complianceAr, secPoliciesAr,
   // Profile
   profileAr,
 );

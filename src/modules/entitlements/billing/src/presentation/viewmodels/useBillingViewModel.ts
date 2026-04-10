@@ -1,37 +1,44 @@
 "use client";
 
-import { useState, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { entitlementsContainer } from "@modules/entitlements/di";
+import { useAppStore } from "@/core/store/useAppStore";
 
 export function useBillingViewModel() {
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(20);
-  const [search, setSearch] = useState("");
-
   const { billingRepository } = entitlementsContainer;
+  const tenantId = useAppStore((s) => s.user?.tenantId ?? "");
 
-  const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ["billing", page, pageSize, search],
-    queryFn: () => billingRepository.getAll({ page, pageSize, search: search || undefined }),
+  const configQuery = useQuery({
+    queryKey: ["billing", "config", tenantId],
+    queryFn: () => billingRepository.getConfig(tenantId),
+    enabled: !!tenantId,
   });
 
-  const handleSearch = useCallback((value: string) => {
-    setSearch(value);
-    setPage(1);
-  }, []);
+  const revenueQuery = useQuery({
+    queryKey: ["billing", "revenue"],
+    queryFn: () => billingRepository.getRevenue(),
+  });
+
+  const featuresQuery = useQuery({
+    queryKey: ["billing", "features"],
+    queryFn: () => billingRepository.getFeatures(),
+  });
+
+  const config = (configQuery.data ?? {}) as Record<string, unknown>;
+  const revenue = (revenueQuery.data ?? {}) as Record<string, unknown>;
+  const features = (featuresQuery.data ?? []) as unknown[];
 
   return {
-    items: data?.items ?? [],
-    totalCount: data?.totalCount ?? 0,
-    isLoading,
-    error,
-    page,
-    pageSize,
-    search,
-    setPage,
-    setPageSize,
-    handleSearch,
-    refetch,
+    config,
+    revenue,
+    features,
+    isLoading: configQuery.isLoading || revenueQuery.isLoading,
+    error: configQuery.error || revenueQuery.error,
+    refetch: () => {
+      configQuery.refetch();
+      revenueQuery.refetch();
+      featuresQuery.refetch();
+    },
+    tenantId,
   };
 }

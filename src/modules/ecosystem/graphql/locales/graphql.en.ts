@@ -1,0 +1,23 @@
+export const en = {
+  graphql: {
+    title: "GraphQL Explorer",
+    description: "Interactive GraphQL IDE — explore the schema, write queries, and test mutations",
+    queryEditor: "Query Editor",
+    variables: "Variables",
+    response: "Response",
+    execute: "Execute",
+    executing: "Executing...",
+    schemaBrowser: "Schema Browser",
+    queries: "Queries",
+    mutations: "Mutations",
+    types: "Types",
+    history: "History",
+    clearHistory: "Clear History",
+    noHistory: "No query history yet",
+    placeholder: "# Write your GraphQL query here\nquery {\n  plugins {\n    id\n    name\n    status\n  }\n}",
+    variablesPlaceholder: "{}",
+    noResponse: "Execute a query to see the response",
+    endpoint: "Endpoint",
+    docs: "Documentation",
+  },
+};

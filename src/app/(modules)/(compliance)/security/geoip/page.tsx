@@ -1,5 +1,5 @@
 import { SecurityPoliciesView } from "@modules/compliance/security-policies/src/presentation/views/SecurityPoliciesView";
 
 export default function SecurityGeoipPage() {
-  return <SecurityPoliciesView />;
+  return <SecurityPoliciesView defaultTab="geoip" />;
 }
