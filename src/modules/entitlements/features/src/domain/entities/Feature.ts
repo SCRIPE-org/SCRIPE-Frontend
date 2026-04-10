@@ -40,4 +40,8 @@ export class Feature {
             if (lang === "ar") return this.displayNameAr || this.displayNameEn || this.name;
             return this.displayNameEn || this.name;
       }
+
+      copyWith(updates: Partial<FeatureData>): Feature {
+            return new Feature({ ...this.data, ...updates });
+      }
 }

@@ -4,7 +4,8 @@
 import { Edition } from "../../domain/entities/Edition";
 import { EditionVersion } from "../../domain/entities/EditionVersion";
 import type { EditionData } from "../../domain/entities/Edition";
-import type { EditionModel, EditionVersionModel } from "../services/EditionService";
+import type { EditionModel } from "../models/EditionModels";
+import type { EditionVersionModel } from "../models/EditionModels";
 import type { CreateEditionRequest, UpdateEditionRequest } from "../../domain/entities/EditionRequests";
 
 export class EditionMapper {

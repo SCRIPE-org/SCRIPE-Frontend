@@ -191,7 +191,7 @@ export function useSubscriptionsOverviewViewModel() {
                         return daysLeft > 0 && daysLeft <= 30;
                   })
                   .map(s => ({
-                        ...s,
+                        ...s.data,
                         daysLeft: Math.ceil((new Date(s.endDate!).getTime() - now.getTime()) / (1000 * 60 * 60 * 24)),
                   }))
                   .sort((a, b) => a.daysLeft - b.daysLeft);

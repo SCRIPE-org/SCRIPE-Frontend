@@ -1,34 +1,14 @@
 /**
  * Feature Override Service — API calls only
+ *
+ * Implements IOverrideService. Uses centralized API_ENDPOINTS.
  */
 import type { IApiService } from "@core/interfaces/api.interface";
+import type { IOverrideService } from "../../domain/interfaces/IOverrideService";
+import type { FeatureOverrideModel, ResolvedFeatureModel } from "../models/OverrideModels";
 import { API_ENDPOINTS } from "@core/config/api-endpoints";
 
-export interface FeatureOverrideModel {
-      id: string;
-      tenantId: string;
-      featureId: string;
-      featureName: string;
-      value: string;
-      valueType: string;
-      reason?: string;
-      createdAt: string;
-      modifiedAt?: string;
-      costAmountUsd?: number;
-      costReason?: string;
-}
-
-export interface ResolvedFeatureModel {
-      featureId: string;
-      key: string;
-      nameEn: string;
-      nameAr: string;
-      valueType: string;
-      effectiveValue: string;
-      source: "Default" | "Edition" | "Override";
-}
-
-export class OverrideService {
+export class OverrideService implements IOverrideService {
       constructor(private readonly api: IApiService) { }
 
       async getOverrides(tenantId: string): Promise<FeatureOverrideModel[]> {

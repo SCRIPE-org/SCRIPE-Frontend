@@ -4,7 +4,8 @@
  * Uses centralized API_ENDPOINTS for all endpoint paths.
  */
 import type { IApiService } from "@core/interfaces/api.interface";
-import type { IFeatureService, FeatureModel, TenantEffectiveFeatureModel } from "../../domain/interfaces/IFeatureService";
+import type { IFeatureService } from "../../domain/interfaces/IFeatureService";
+import type { FeatureModel, TenantEffectiveFeatureModel } from "../models/FeatureModels";
 import type { PagedResult, PaginationParams } from "@modules/identity/core/domain/types";
 import { API_ENDPOINTS } from "@core/config/api-endpoints";
 

@@ -1,0 +1,45 @@
+/**
+ * Billing Service Interface (API contract)
+ *
+ * Defines the contract for billing/invoice API operations.
+ * Implemented by BillingService in the data layer.
+ */
+import type {
+      InvoiceResponseModel,
+      InvoiceListResponseModel,
+      PaymentTransactionModel,
+      CheckoutSessionResponseModel,
+      BillingPortalResponseModel,
+      PagedResultModel,
+} from "../../data/models/BillingModels";
+
+export interface IBillingService {
+      // ── Invoice Queries ──
+      getInvoices(params: {
+            tenantId?: string;
+            page: number;
+            pageSize: number;
+            status?: string;
+      }): Promise<PagedResultModel<InvoiceListResponseModel>>;
+      getInvoiceById(id: string): Promise<InvoiceResponseModel>;
+      getTransactions(params: {
+            tenantId?: string;
+            page: number;
+            pageSize: number;
+      }): Promise<PagedResultModel<PaymentTransactionModel>>;
+
+      // ── Billing Actions ──
+      createCheckoutSession(
+            tenantId: string,
+            data: {
+                  editionId: string;
+                  subscriptionType: string;
+                  currency?: string;
+                  promoCode?: string;
+                  successUrl: string;
+                  cancelUrl: string;
+            }
+      ): Promise<CheckoutSessionResponseModel>;
+      createBillingPortal(tenantId: string, returnUrl: string): Promise<BillingPortalResponseModel>;
+      cancelStripeSubscription(tenantId: string, immediately: boolean): Promise<void>;
+}

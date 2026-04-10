@@ -4,7 +4,8 @@
  * All API calls go through the Service layer.
  * Repository orchestrates Service + Mapper and returns domain entities.
  */
-import type { IBillingRepository, PagedResult } from "../../domain/interfaces/IBillingRepository";
+import type { IBillingRepository } from "../../domain/interfaces/IBillingRepository";
+import type { PagedResult } from "@modules/identity/core/domain/types";
 import type {
   Invoice,
   InvoiceListItem,
@@ -12,11 +13,11 @@ import type {
   CheckoutSession,
   BillingPortal,
 } from "../../domain/entities/Invoice";
-import { BillingService } from "../services/BillingService";
+import type { IBillingService } from "../../domain/interfaces/IBillingService";
 import { BillingMapper } from "../mappers/BillingMapper";
 
 export class BillingRepository implements IBillingRepository {
-  constructor(private readonly service: BillingService) {}
+  constructor(private readonly service: IBillingService) {}
 
   // ── Queries ──
 
@@ -27,9 +28,17 @@ export class BillingRepository implements IBillingRepository {
     status?: string;
   }): Promise<PagedResult<InvoiceListItem>> {
     const result = await this.service.getInvoices(params);
+    const items = (result.items ?? []).map(BillingMapper.toInvoiceListItem);
+    const totalCount = result.totalCount ?? 0;
+    const totalPages = Math.ceil(totalCount / params.pageSize) || 1;
     return {
-      items: (result.items ?? []).map(BillingMapper.toInvoiceListItem),
-      totalCount: result.totalCount ?? 0,
+      items,
+      totalCount,
+      page: params.page,
+      pageSize: params.pageSize,
+      totalPages,
+      hasNextPage: params.page < totalPages,
+      hasPreviousPage: params.page > 1,
     };
   }
 
@@ -44,9 +53,17 @@ export class BillingRepository implements IBillingRepository {
     pageSize: number;
   }): Promise<PagedResult<PaymentTransaction>> {
     const result = await this.service.getTransactions(params);
+    const items = (result.items ?? []).map(BillingMapper.toTransaction);
+    const totalCount = result.totalCount ?? 0;
+    const totalPages = Math.ceil(totalCount / params.pageSize) || 1;
     return {
-      items: (result.items ?? []).map(BillingMapper.toTransaction),
-      totalCount: result.totalCount ?? 0,
+      items,
+      totalCount,
+      page: params.page,
+      pageSize: params.pageSize,
+      totalPages,
+      hasNextPage: params.page < totalPages,
+      hasPreviousPage: params.page > 1,
     };
   }
 

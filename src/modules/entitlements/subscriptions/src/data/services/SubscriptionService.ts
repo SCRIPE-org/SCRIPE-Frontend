@@ -2,107 +2,15 @@
  * Subscription Service — API calls only
  */
 import type { IApiService } from "@core/interfaces/api.interface";
+import type { ISubscriptionService } from "../../domain/interfaces/ISubscriptionService";
+import type {
+      SubscriptionModel,
+      SubscriptionListModel,
+      GlobalSubscriptionModel,
+} from "../models/SubscriptionModels";
 import { API_ENDPOINTS } from "@core/config/api-endpoints";
 
-export interface SubscriptionModel {
-      id: string;
-      tenantId: string;
-      editionId: string;
-      editionName: string;
-      type: string;
-      status: string;
-      startDate: string;
-      endDate?: string;
-      trialEndsAt?: string;
-      gracePeriodEndsAt?: string;
-      expiryBehavior: string;
-      fallbackEditionName?: string;
-      isDowngraded: boolean;
-      downgradedFromEditionName?: string;
-      downgradedFromType?: string;
-      downgradedAt?: string;
-      createdAt: string;
-      modifiedAt?: string;
-      // ── Pricing ──
-      currency?: string;
-      baseAmount?: number;
-      adjustmentAmount?: number;
-      totalAmount?: number;
-      totalAmountUsd?: number;
-      exchangeRateToUsd?: number;
-      // ── Promotion ──
-      appliedPromoCode?: string;
-      promotionDiscount?: number;
-      // ── Refund ──
-      refundType?: string;
-      refundAmount?: number;
-      refundedAt?: string;
-      refundReason?: string;
-}
-
-export interface SubscriptionListModel {
-      id: string;
-      tenantId: string;
-      editionId: string;
-      editionName: string;
-      type: string;
-      status: string;
-      startDate: string;
-      endDate?: string;
-      expiryBehavior: string;
-      fallbackEditionName?: string;
-      isDowngraded: boolean;
-      downgradedFromEditionName?: string;
-      downgradedFromType?: string;
-      downgradedAt?: string;
-      createdAt: string;
-      // ── Pricing ──
-      currency?: string;
-      baseAmount?: number;        // FE4: added to match backend DTO
-      adjustmentAmount?: number;  // FE4: added to match backend DTO
-      totalAmount?: number;
-      totalAmountUsd?: number;
-      exchangeRateToUsd?: number; // FE4/C4: added to match backend DTO
-      // ── Promotion ──
-      appliedPromoCode?: string;
-      promotionDiscount?: number;
-      // ── Refund ──
-      refundType?: string;
-      refundAmount?: number;
-      refundedAt?: string;
-      refundReason?: string;
-}
-
-export interface GlobalSubscriptionModel {
-      id: string;
-      tenantId: string;
-      tenantName: string;
-      editionId: string;
-      editionName: string;
-      type: string;
-      status: string;
-      startDate: string;
-      endDate?: string;
-      expiryBehavior: string;
-      isDowngraded: boolean;
-      createdAt: string;
-      currency: string;
-      totalAmount: number;
-      totalAmountUsd: number;
-      baseAmount: number;
-      adjustmentAmount: number;
-      exchangeRateToUsd: number;
-      // ── Promotion ──
-      appliedPromotionName?: string;
-      promotionDiscount?: number;
-      // ── Refund ──
-      refundType?: string;
-      refundAmount?: number;
-      refundedAt?: string;
-      refundReason?: string;
-}
-
-export class SubscriptionService {
+export class SubscriptionService implements ISubscriptionService {
       constructor(private readonly api: IApiService) { }
 
       // ── Queries ──

@@ -1,9 +1,13 @@
 /**
  * Billing Mapper — DTO → Entity conversion
  */
-import type {
+import {
   Invoice,
   InvoiceListItem,
+} from "../../domain/entities/Invoice";
+import type {
+  InvoiceData,
+  InvoiceListItemData,
   InvoiceLineItem,
   PaymentTransaction,
   CheckoutSession,
@@ -20,7 +24,7 @@ import type {
 
 export class BillingMapper {
   static toInvoice(dto: InvoiceResponseModel): Invoice {
-    return {
+    const data: InvoiceData = {
       id: dto.id,
       tenantId: dto.tenantId,
       subscriptionId: dto.subscriptionId,
@@ -41,10 +45,11 @@ export class BillingMapper {
       lineItems: (dto.lineItems ?? []).map(BillingMapper.toLineItem),
       transactions: (dto.transactions ?? []).map(BillingMapper.toTransaction),
     };
+    return new Invoice(data);
   }
 
   static toInvoiceListItem(dto: InvoiceListResponseModel): InvoiceListItem {
-    return {
+    const data: InvoiceListItemData = {
       id: dto.id,
       tenantId: dto.tenantId,
       invoiceNumber: dto.invoiceNumber ?? "",
@@ -56,6 +61,7 @@ export class BillingMapper {
       billingCycle: dto.billingCycle ?? "",
       createdAt: dto.createdAt,
     };
+    return new InvoiceListItem(data);
   }
 
   static toLineItem(dto: InvoiceLineItemModel): InvoiceLineItem {

@@ -6,11 +6,11 @@
  */
 import type { IOverrideRepository } from "../../domain/interfaces/IOverrideRepository";
 import type { FeatureOverride, ResolvedFeature } from "../../domain/entities/Override";
-import { OverrideService } from "../services/OverrideService";
+import type { IOverrideService } from "../../domain/interfaces/IOverrideService";
 import { OverrideMapper } from "../mappers/OverrideMapper";
 
 export class OverrideRepository implements IOverrideRepository {
-      constructor(private readonly service: OverrideService) { }
+      constructor(private readonly service: IOverrideService) { }
 
       async getOverrides(tenantId: string): Promise<FeatureOverride[]> {
             const models = await this.service.getOverrides(tenantId);

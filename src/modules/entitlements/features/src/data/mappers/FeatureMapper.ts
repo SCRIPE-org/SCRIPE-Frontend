@@ -3,7 +3,7 @@
  */
 import { Feature } from "../../domain/entities/Feature";
 import type { FeatureData, FeatureValueType } from "../../domain/entities/Feature";
-import type { FeatureModel } from "../../domain/interfaces/IFeatureService";
+import type { FeatureModel } from "../models/FeatureModels";
 import type { CreateFeatureRequest, UpdateFeatureRequest } from "../../domain/entities/FeatureRequests";
 
 export class FeatureMapper {

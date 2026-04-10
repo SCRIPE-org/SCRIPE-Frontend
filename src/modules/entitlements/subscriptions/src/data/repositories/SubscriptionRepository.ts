@@ -7,11 +7,11 @@
 import type { ISubscriptionRepository } from "../../domain/interfaces/ISubscriptionRepository";
 import type { Subscription, SubscriptionListItem, GlobalSubscriptionItem } from "../../domain/entities/Subscription";
 import type { ExportParams, ExportFileResult } from "../../domain/entities/SubscriptionExport";
-import { SubscriptionService } from "../services/SubscriptionService";
+import type { ISubscriptionService } from "../../domain/interfaces/ISubscriptionService";
 import { SubscriptionMapper } from "../mappers/SubscriptionMapper";
 
 export class SubscriptionRepository implements ISubscriptionRepository {
-      constructor(private readonly service: SubscriptionService) { }
+      constructor(private readonly service: ISubscriptionService) { }
 
       // ── Queries ──
 

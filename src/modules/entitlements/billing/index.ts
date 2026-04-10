@@ -1,14 +1,15 @@
 /**
  * Billing Submodule — Public API
  */
-export { BillingService } from "./src/data/services/BillingService";
-export { BillingRepository } from "./src/data/repositories/BillingRepository";
 export { InvoiceListView } from "./src/presentation/views/InvoiceListView";
+export { Invoice, InvoiceListItem } from "./src/domain/entities/Invoice";
 export type {
-  Invoice,
-  InvoiceListItem,
+  InvoiceData,
+  InvoiceListItemData,
   PaymentTransaction,
   CheckoutSession,
   BillingPortal,
+  InvoiceLineItem,
 } from "./src/domain/entities/Invoice";
 export type { IBillingRepository } from "./src/domain/interfaces/IBillingRepository";
+export type { IBillingService } from "./src/domain/interfaces/IBillingService";

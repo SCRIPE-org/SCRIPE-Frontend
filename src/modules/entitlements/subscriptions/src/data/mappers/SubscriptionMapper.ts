@@ -1,16 +1,17 @@
 /**
  * Subscription Mapper — Model ↔ Entity conversion
  */
-import type { Subscription, SubscriptionListItem, GlobalSubscriptionItem } from "../../domain/entities/Subscription";
+import { Subscription, SubscriptionListItem, GlobalSubscriptionItem } from "../../domain/entities/Subscription";
+import type { SubscriptionData, SubscriptionListItemData, GlobalSubscriptionItemData } from "../../domain/entities/Subscription";
 import type {
       SubscriptionModel,
       SubscriptionListModel,
       GlobalSubscriptionModel,
-} from "../services/SubscriptionService";
+} from "../models/SubscriptionModels";
 
 export class SubscriptionMapper {
       static toEntity(model: SubscriptionModel): Subscription {
-            return {
+            const data: SubscriptionData = {
                   id: model.id,
                   tenantId: model.tenantId,
                   editionId: model.editionId,
@@ -45,10 +46,11 @@ export class SubscriptionMapper {
                   refundedAt: model.refundedAt,
                   refundReason: model.refundReason,
             };
+            return new Subscription(data);
       }
 
       static toListItem(model: SubscriptionListModel): SubscriptionListItem {
-            return {
+            const data: SubscriptionListItemData = {
                   id: model.id,
                   tenantId: model.tenantId,
                   editionId: model.editionId,
@@ -66,6 +68,8 @@ export class SubscriptionMapper {
                   createdAt: model.createdAt,
                   // Pricing
                   currency: model.currency,
+                  baseAmount: model.baseAmount,
+                  adjustmentAmount: model.adjustmentAmount,
                   totalAmount: model.totalAmount,
                   totalAmountUsd: model.totalAmountUsd,
                   // Promotion
@@ -77,10 +81,11 @@ export class SubscriptionMapper {
                   refundedAt: model.refundedAt,
                   refundReason: model.refundReason,
             };
+            return new SubscriptionListItem(data);
       }
 
       static toGlobalItem(model: GlobalSubscriptionModel): GlobalSubscriptionItem {
-            return {
+            const data: GlobalSubscriptionItemData = {
                   id: model.id,
                   tenantId: model.tenantId,
                   tenantName: model.tenantName,
@@ -108,5 +113,6 @@ export class SubscriptionMapper {
                   refundedAt: model.refundedAt,
                   refundReason: model.refundReason,
             };
+            return new GlobalSubscriptionItem(data);
       }
 }

@@ -1,38 +1,11 @@
 /**
  * Feature Service Interface (API contract)
+ *
+ * Defines the contract for feature API operations.
+ * Implemented by FeatureService in the data layer.
  */
 import type { PagedResult, PaginationParams } from "@modules/identity/core/domain/types";
-
-export interface FeatureModel {
-      id: string;
-      name: string;
-      displayNameEn?: string;
-      displayNameAr?: string;
-      category?: string;
-      sortOrder: number;
-      isVisibleInUI: boolean;
-      valueType: string;
-      defaultValue: string;
-      module: string;
-      description?: string;
-      isSystem: boolean;
-      createdAt: string;
-      modifiedAt?: string;
-}
-
-export interface TenantEffectiveFeatureModel {
-      featureId: string;
-      name: string;
-      displayNameEn?: string;
-      displayNameAr?: string;
-      valueType: string;
-      editionValue: string;
-      overrideValue?: string | null;
-      effectiveValue: string;
-      category?: string;
-      module?: string;
-      hasOverride: boolean;
-}
+import type { FeatureModel, TenantEffectiveFeatureModel } from "../../data/models/FeatureModels";
 
 export interface IFeatureService {
       getAll(params: PaginationParams): Promise<PagedResult<FeatureModel>>;

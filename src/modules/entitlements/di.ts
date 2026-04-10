@@ -4,32 +4,39 @@
  * Provides dependency injection for all entitlements submodules.
  *
  * Clean Architecture Pattern:
- * - Services wrap IApiService (API calls only)
- * - Repositories use Services and map Models → Entities
- * - ViewModels use Repositories (never Services directly)
+ * - Services implement IService interfaces (API calls only)
+ * - Repositories use IService interfaces and map Models → Entities
+ * - ViewModels use IRepository interfaces (never Services directly)
  */
 import { getModuleApiService } from "@core/services/api-factory";
 
-// Services
+// ── Service Implementations ──
 import { FeatureService } from "./features/src/data/services/FeatureService";
 import { EditionService } from "./editions/src/data/services/EditionService";
 import { OverrideService } from "./overrides/src/data/services/OverrideService";
 import { SubscriptionService } from "./subscriptions/src/data/services/SubscriptionService";
 import { BillingService } from "./billing/src/data/services/BillingService";
 
-// Repositories
+// ── Repository Implementations ──
 import { FeatureRepository } from "./features/src/data/repositories/FeatureRepository";
 import { EditionRepository } from "./editions/src/data/repositories/EditionRepository";
 import { OverrideRepository } from "./overrides/src/data/repositories/OverrideRepository";
 import { SubscriptionRepository } from "./subscriptions/src/data/repositories/SubscriptionRepository";
 import { BillingRepository } from "./billing/src/data/repositories/BillingRepository";
 
-// Interfaces
+// ── Repository Interfaces (exposed to consumers) ──
 import type { IFeatureRepository } from "./features/src/domain/interfaces/IFeatureRepository";
 import type { IEditionRepository } from "./editions/src/domain/interfaces/IEditionRepository";
 import type { IOverrideRepository } from "./overrides/src/domain/interfaces/IOverrideRepository";
 import type { ISubscriptionRepository } from "./subscriptions/src/domain/interfaces/ISubscriptionRepository";
 import type { IBillingRepository } from "./billing/src/domain/interfaces/IBillingRepository";
+
+// ── Service Interfaces (used internally for DI wiring) ──
+import type { IFeatureService } from "./features/src/domain/interfaces/IFeatureService";
+import type { IEditionService } from "./editions/src/domain/interfaces/IEditionService";
+import type { IOverrideService } from "./overrides/src/domain/interfaces/IOverrideService";
+import type { ISubscriptionService } from "./subscriptions/src/domain/interfaces/ISubscriptionService";
+import type { IBillingService } from "./billing/src/domain/interfaces/IBillingService";
 
 export interface EntitlementsContainer {
       featureRepository: IFeatureRepository;
@@ -48,14 +55,14 @@ export function getEntitlementsContainer(): EntitlementsContainer {
       if (!_container) {
             const apiService = getModuleApiService("ENTITLEMENTS");
 
-            // Create Services
-            const featureService = new FeatureService(apiService);
-            const editionService = new EditionService(apiService);
-            const overrideService = new OverrideService(apiService);
-            const subscriptionService = new SubscriptionService(apiService);
-            const billingService = new BillingService(apiService);
+            // ── Create Services (typed as interfaces) ──
+            const featureService: IFeatureService = new FeatureService(apiService);
+            const editionService: IEditionService = new EditionService(apiService);
+            const overrideService: IOverrideService = new OverrideService(apiService);
+            const subscriptionService: ISubscriptionService = new SubscriptionService(apiService);
+            const billingService: IBillingService = new BillingService(apiService);
 
-            // Create Repositories (Service → Repository mapping)
+            // ── Create Repositories (IService → IRepository mapping) ──
             _container = {
                   featureRepository: new FeatureRepository(featureService),
                   editionRepository: new EditionRepository(editionService),

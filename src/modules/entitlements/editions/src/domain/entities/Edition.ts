@@ -67,4 +67,8 @@ export class Edition {
       getDisplayName(lang: string): string {
             return lang === "ar" ? this.displayNameAr : this.displayNameEn;
       }
+
+      copyWith(updates: Partial<EditionData>): Edition {
+            return new Edition({ ...this.data, ...updates });
+      }
 }

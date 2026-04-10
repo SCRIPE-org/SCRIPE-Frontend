@@ -3,15 +3,16 @@
  *
  * Maps OverrideService DTOs to domain entities.
  */
-import type { FeatureOverride, ResolvedFeature } from "../../domain/entities/Override";
+import { FeatureOverride, ResolvedFeature } from "../../domain/entities/Override";
+import type { FeatureOverrideData, ResolvedFeatureData } from "../../domain/entities/Override";
 import type {
       FeatureOverrideModel,
       ResolvedFeatureModel,
-} from "../services/OverrideService";
+} from "../models/OverrideModels";
 
 export class OverrideMapper {
       static toOverrideEntity(model: FeatureOverrideModel): FeatureOverride {
-            return {
+            const data: FeatureOverrideData = {
                   id: model.id,
                   tenantId: model.tenantId,
                   featureId: model.featureId,
@@ -24,10 +25,11 @@ export class OverrideMapper {
                   costAmountUsd: model.costAmountUsd,
                   costReason: model.costReason,
             };
+            return new FeatureOverride(data);
       }
 
       static toResolvedEntity(model: ResolvedFeatureModel): ResolvedFeature {
-            return {
+            const data: ResolvedFeatureData = {
                   featureId: model.featureId,
                   key: model.key,
                   nameEn: model.nameEn,
@@ -36,5 +38,6 @@ export class OverrideMapper {
                   effectiveValue: model.effectiveValue,
                   source: model.source,
             };
+            return new ResolvedFeature(data);
       }
 }

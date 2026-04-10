@@ -3,6 +3,7 @@
  */
 import type { IApiService } from "@core/interfaces/api.interface";
 import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
+import type { IBillingService } from "../../domain/interfaces/IBillingService";
 import type {
   InvoiceResponseModel,
   InvoiceListResponseModel,
@@ -12,7 +13,7 @@ import type {
   PagedResultModel,
 } from "../models/BillingModels";
 
-export class BillingService {
+export class BillingService implements IBillingService {
   constructor(private readonly api: IApiService) {}
 
   // ── Invoice Queries ──

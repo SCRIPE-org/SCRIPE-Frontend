@@ -7,11 +7,11 @@ import type { EditionVersion } from "../../domain/entities/EditionVersion";
 import type { EditionPriceListResponse, SetEditionPricesRequest } from "../../domain/entities/EditionPricing";
 import { EditionMapper } from "../mappers/EditionMapper";
 import type { CreateEditionRequest, UpdateEditionRequest } from "../../domain/entities/EditionRequests";
-import type { EditionService } from "../services/EditionService";
+import type { IEditionService } from "../../domain/interfaces/IEditionService";
 import type { PagedResult, PaginationParams } from "@modules/identity/core/domain/types";
 
 export class EditionRepository implements IEditionRepository {
-      constructor(private readonly service: EditionService) { }
+      constructor(private readonly service: IEditionService) { }
 
       async getAll(params: PaginationParams & { includeRetired?: boolean }): Promise<PagedResult<Edition>> {
             const result = await this.service.getAll(params);

@@ -1,9 +1,5 @@
+import type { PagedResult } from "@modules/identity/core/domain/types";
 import type { Invoice, InvoiceListItem, PaymentTransaction, CheckoutSession, BillingPortal } from "../entities/Invoice";
-
-export interface PagedResult<T> {
-  items: T[];
-  totalCount: number;
-}
 
 export interface IBillingRepository {
   // Queries

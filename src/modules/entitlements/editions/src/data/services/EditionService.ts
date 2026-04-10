@@ -4,40 +4,13 @@
  * Uses centralized API_ENDPOINTS for all endpoint paths.
  */
 import type { IApiService } from "@core/interfaces/api.interface";
+import type { IEditionService } from "../../domain/interfaces/IEditionService";
+import type { EditionModel, EditionVersionModel } from "../models/EditionModels";
 import type { PagedResult, PaginationParams } from "@modules/identity/core/domain/types";
 import { API_ENDPOINTS } from "@core/config/api-endpoints";
 import type { EditionPromotionData, CreatePromotionRequest, UpdatePromotionRequest, PromoCodeValidationResult } from "../../domain/entities/EditionPromotion";
 
-export interface EditionModel {
-      id: string;
-      name: string;
-      displayNameEn: string;
-      displayNameAr: string;
-      description?: string;
-      isSystem: boolean;
-      isRetired: boolean;
-      tierLevel: number;
-      createdByTenantId?: string;
-      featureCount?: number;
-      features?: { featureId: string; featureName: string; value: string; valueType: string }[];
-      fallbackEditionId?: string;
-      fallbackEditionName?: string;
-      overflowPolicy?: string;
-      baseMonthlyPriceUsd?: number;
-      // ── Billing Controls ──
-      allowMonthly: boolean;
-      allowYearly: boolean;
-      allowLifetime: boolean;
-      allowTrial: boolean;
-      trialDurationDays: number;
-      trialIsFree: boolean;
-      trialDiscountPercent: number;
-      gracePeriodDays: number;
-      createdAt: string;
-      modifiedAt?: string;
-}
-
-export class EditionService {
+export class EditionService implements IEditionService {
       constructor(private readonly api: IApiService) { }
 
       async getAll(params: PaginationParams & { includeRetired?: boolean }): Promise<PagedResult<EditionModel>> {
@@ -124,17 +97,4 @@ export class EditionService {
       async validatePromoCode(editionId: string, promoCode: string): Promise<PromoCodeValidationResult> {
             return this.api.post<PromoCodeValidationResult>(API_ENDPOINTS.ENTITLEMENTS.EDITIONS.VALIDATE_PROMO_CODE(editionId), { promoCode });
       }
-}
-
-export interface EditionVersionModel {
-      id: string;
-      versionNumber: number;
-      changeNotes?: string;
-      rolloutStrategy: string;
-      status: string;
-      scheduledAt?: string;
-      completedAt?: string;
-      canaryPercentage?: number;
-      pricingSnapshotJson?: string;
-      createdAt: string;
 }
