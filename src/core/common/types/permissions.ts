@@ -287,6 +287,12 @@ export const SYSTEM_PERMISSIONS = {
   DASHBOARD_BUILDER_SAVE_PRESETS: "settings.dashboard_builder.save_presets",
   DASHBOARD_BUILDER_EXPORT: "settings.dashboard_builder.export",
 
+  // Billing
+  INVOICES_VIEW: "invoices.view",
+  INVOICES_EXPORT: "invoices.export",
+  TRANSACTIONS_VIEW: "transactions.view",
+  BILLING_MANAGE: "billing.manage",
+
 } as const;
 
 /**
@@ -328,6 +334,8 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/entitlements/features": [SYSTEM_PERMISSIONS.FEATURES_VIEW],
   "/entitlements/subscriptions": [SYSTEM_PERMISSIONS.SUBSCRIPTIONS_VIEW],
   "/entitlements/overrides": [SYSTEM_PERMISSIONS.FEATURES_OVERRIDE],
+  "/entitlements/invoices": [SYSTEM_PERMISSIONS.INVOICES_VIEW],
+  "/entitlements/transactions": [SYSTEM_PERMISSIONS.TRANSACTIONS_VIEW],
 
   // Messaging & Webhooks
   "/messaging/email-composer": [SYSTEM_PERMISSIONS.EMAILS_VIEW],
