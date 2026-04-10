@@ -52,25 +52,25 @@ export function BillingView() {
             <Card className="border-green-500/20 bg-green-50/50 dark:bg-green-950/20">
               <CardContent className="pt-4">
                 <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1"><DollarSign className="h-4 w-4" />{t("billing.mrr")}</div>
-                <p className="text-2xl font-bold">${(vm.revenue as Record<string, unknown>)?.totalRevenue as number ?? 0}</p>
+                <p className="text-2xl font-bold">${vm.totalRevenue}</p>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="pt-4">
                 <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1"><Zap className="h-4 w-4" />{t("billing.activeSubs")}</div>
-                <p className="text-2xl font-bold">{(vm.config as Record<string, unknown>)?.activeSubscriptions as number ?? 0}</p>
+                <p className="text-2xl font-bold">{vm.activeSubscriptions}</p>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="pt-4">
                 <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1"><TrendingUp className="h-4 w-4" />{t("billing.growth")}</div>
-                <p className="text-2xl font-bold text-green-500">{(vm.revenue as Record<string, unknown>)?.growthRate as string ?? "—"}</p>
+                <p className="text-2xl font-bold text-green-500">{vm.growthRate}</p>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="pt-4">
                 <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1"><Calendar className="h-4 w-4" />{t("billing.nextBilling")}</div>
-                <p className="text-2xl font-bold">{(vm.config as Record<string, unknown>)?.nextBillingDate as string ?? "—"}</p>
+                <p className="text-2xl font-bold">{vm.nextBillingDate}</p>
               </CardContent>
             </Card>
           </div>
@@ -80,34 +80,34 @@ export function BillingView() {
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="text-base flex items-center gap-2"><Settings className="h-4 w-4" />{t("billing.configuration")}</CardTitle>
               <Badge variant="outline" className="gap-1.5">
-                {(vm.config as Record<string, unknown>)?.paymentMode as string ?? "Not set"}
+                {vm.paymentMode}
               </Badge>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div className="space-y-2">
                   <div className="flex justify-between text-muted-foreground">
-                    <span>Tenant ID</span>
+                    <span>{t("billing.tenantId")}</span>
                     <span className="font-mono">{vm.tenantId || "—"}</span>
                   </div>
                   <div className="flex justify-between text-muted-foreground">
-                    <span>Payment Mode</span>
-                    <Badge variant="secondary">{(vm.config as Record<string, unknown>)?.paymentMode as string ?? "—"}</Badge>
+                    <span>{t("billing.paymentMode")}</span>
+                    <Badge variant="secondary">{vm.paymentMode}</Badge>
                   </div>
                   <div className="flex justify-between text-muted-foreground">
-                    <span>Currency</span>
-                    <span>{(vm.config as Record<string, unknown>)?.currency as string ?? "USD"}</span>
+                    <span>{t("billing.currency")}</span>
+                    <span>{vm.currency}</span>
                   </div>
                 </div>
                 <div className="space-y-2">
                   <div className="flex justify-between text-muted-foreground">
-                    <span>Billing Cycle</span>
-                    <span>{(vm.config as Record<string, unknown>)?.billingCycle as string ?? "Monthly"}</span>
+                    <span>{t("billing.billingCycle")}</span>
+                    <span>{vm.billingCycle}</span>
                   </div>
                   <div className="flex justify-between text-muted-foreground">
-                    <span>Auto-Renew</span>
-                    <Badge variant={(vm.config as Record<string, unknown>)?.autoRenew ? "success" : "secondary"}>
-                      {(vm.config as Record<string, unknown>)?.autoRenew ? "Enabled" : "Disabled"}
+                    <span>{t("billing.autoRenew")}</span>
+                    <Badge variant={vm.autoRenew ? "success" : "secondary"}>
+                      {vm.autoRenew ? t("billing.enabled") : t("billing.disabled")}
                     </Badge>
                   </div>
                 </div>
@@ -123,20 +123,17 @@ export function BillingView() {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-3 gap-3">
-                  {vm.features.map((f: unknown, i: number) => {
-                    const feature = f as Record<string, unknown>;
-                    return (
-                      <div key={i} className="flex items-center gap-3 p-3 rounded-lg border bg-card hover:bg-accent/50 transition-colors">
-                        <div className="flex h-8 w-8 items-center justify-center rounded bg-primary/10">
-                          <Zap className="h-4 w-4 text-primary" />
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium">{feature.name as string ?? `Feature ${i + 1}`}</p>
-                          <p className="text-xs text-muted-foreground">{feature.value as string ?? "—"}</p>
-                        </div>
+                  {vm.features.map((feature, i) => (
+                    <div key={i} className="flex items-center gap-3 p-3 rounded-lg border bg-card hover:bg-accent/50 transition-colors">
+                      <div className="flex h-8 w-8 items-center justify-center rounded bg-primary/10">
+                        <Zap className="h-4 w-4 text-primary" />
                       </div>
-                    );
-                  })}
+                      <div>
+                        <p className="text-sm font-medium">{feature.name}</p>
+                        <p className="text-xs text-muted-foreground">{feature.value}</p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </CardContent>
             </Card>
