@@ -155,12 +155,6 @@ export const SYSTEM_PERMISSIONS = {
   USERS_DELETE: "users.delete",
   USERS_UNLOCK: "users.unlock",
 
-  // Billing & Invoices
-  BILLING_VIEW: "billing.view",
-  BILLING_UPDATE: "billing.update",
-  INVOICES_VIEW: "invoices.view",
-  INVOICES_UPDATE: "invoices.update",
-
   // Permissions
   PERMISSIONS_VIEW: "permissions.view",
 
@@ -293,70 +287,6 @@ export const SYSTEM_PERMISSIONS = {
   DASHBOARD_BUILDER_SAVE_PRESETS: "settings.dashboard_builder.save_presets",
   DASHBOARD_BUILDER_EXPORT: "settings.dashboard_builder.export",
 
-  // ═══ Phase 3: Compliance & Data Governance ═══
-  COMPLIANCE_RETENTION_VIEW: "compliance.retention.view",
-  COMPLIANCE_RETENTION_MANAGE: "compliance.retention.manage",
-  COMPLIANCE_DSR_VIEW: "compliance.dsr.view",
-  COMPLIANCE_DSR_MANAGE: "compliance.dsr.manage",
-  COMPLIANCE_CONSENT_VIEW: "compliance.consent.view",
-  COMPLIANCE_DPA_VIEW: "compliance.dpa.view",
-  COMPLIANCE_DPA_MANAGE: "compliance.dpa.manage",
-  COMPLIANCE_EVIDENCE_EXPORT: "compliance.evidence.export",
-
-  // ═══ Phase 3: Security Hardening ═══
-  SECURITY_IP_POLICIES_VIEW: "security.ip_policies.view",
-  SECURITY_IP_POLICIES_MANAGE: "security.ip_policies.manage",
-  SECURITY_EVENTS_VIEW: "security.events.view",
-  SECURITY_GEOIP_VIEW: "security.geoip.view",
-  SECURITY_SIEM_VIEW: "security.siem.view",
-  SECURITY_ANOMALY_VIEW: "security.anomaly.view",
-
-  // ═══ Phase 4: Ecosystem & Scale ═══
-  // Plugins
-  PLUGINS_VIEW: "plugins.view",
-  PLUGINS_INSTALL: "plugins.install",
-  PLUGINS_CONFIGURE: "plugins.configure",
-  PLUGINS_UNINSTALL: "plugins.uninstall",
-
-  // Integrations
-  INTEGRATIONS_VIEW: "integrations.view",
-  INTEGRATIONS_CREATE: "integrations.create",
-  INTEGRATIONS_UPDATE: "integrations.update",
-  INTEGRATIONS_DELETE: "integrations.delete",
-
-  // Templates
-  TEMPLATES_VIEW: "templates.view",
-  TEMPLATES_CREATE: "templates.create",
-  TEMPLATES_UPDATE: "templates.update",
-  TEMPLATES_DELETE: "templates.delete",
-
-  // Workflows
-  WORKFLOWS_VIEW: "workflows.view",
-  WORKFLOWS_CREATE: "workflows.create",
-  WORKFLOWS_UPDATE: "workflows.update",
-  WORKFLOWS_DELETE: "workflows.delete",
-  WORKFLOWS_APPROVE: "workflows.approve",
-
-  // Reports
-  REPORTS_VIEW: "reports.view",
-  REPORTS_CREATE: "reports.create",
-  REPORTS_UPDATE: "reports.update",
-  REPORTS_DELETE: "reports.delete",
-  REPORTS_EXPORT: "reports.export",
-
-  // Bulk Operations
-  BULK_OPS_VIEW: "bulk_operations.view",
-  BULK_OPS_IMPORT: "bulk_operations.import",
-  BULK_OPS_EXPORT: "bulk_operations.export",
-  BULK_OPS_CANCEL: "bulk_operations.cancel",
-
-  // GraphQL
-  GRAPHQL_QUERY: "graphql.query",
-  GRAPHQL_MUTATION: "graphql.mutation",
-
-  // Developer Portal
-  DEVELOPER_VIEW: "developer.view",
-  DEVELOPER_MANAGE: "developer.manage",
 } as const;
 
 /**
@@ -398,9 +328,6 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/entitlements/features": [SYSTEM_PERMISSIONS.FEATURES_VIEW],
   "/entitlements/subscriptions": [SYSTEM_PERMISSIONS.SUBSCRIPTIONS_VIEW],
   "/entitlements/overrides": [SYSTEM_PERMISSIONS.FEATURES_OVERRIDE],
-  "/entitlements/billing": [SYSTEM_PERMISSIONS.BILLING_VIEW],
-  "/entitlements/invoices": [SYSTEM_PERMISSIONS.INVOICES_VIEW],
-
 
   // Messaging & Webhooks
   "/messaging/email-composer": [SYSTEM_PERMISSIONS.EMAILS_VIEW],
@@ -408,30 +335,6 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/messaging/templates": [SYSTEM_PERMISSIONS.MESSAGE_TEMPLATES_VIEW],
   "/messaging/webhooks": [SYSTEM_PERMISSIONS.WEBHOOKS_VIEW],
 
-  // Phase 3: Compliance & Data Governance
-  "/compliance": [SYSTEM_PERMISSIONS.COMPLIANCE_RETENTION_VIEW],
-  "/compliance/retention": [SYSTEM_PERMISSIONS.COMPLIANCE_RETENTION_VIEW],
-  "/compliance/dsr": [SYSTEM_PERMISSIONS.COMPLIANCE_DSR_VIEW],
-  "/compliance/consent": [SYSTEM_PERMISSIONS.COMPLIANCE_CONSENT_VIEW],
-  "/compliance/dpa": [SYSTEM_PERMISSIONS.COMPLIANCE_DPA_VIEW],
-  "/compliance/evidence": [SYSTEM_PERMISSIONS.COMPLIANCE_EVIDENCE_EXPORT],
-
-  // Phase 3: Security Hardening
-  "/security/ip-policies": [SYSTEM_PERMISSIONS.SECURITY_IP_POLICIES_VIEW],
-  "/security/events": [SYSTEM_PERMISSIONS.SECURITY_EVENTS_VIEW],
-  "/security/geoip": [SYSTEM_PERMISSIONS.SECURITY_GEOIP_VIEW],
-  "/security/siem": [SYSTEM_PERMISSIONS.SECURITY_SIEM_VIEW],
-  "/security/anomaly": [SYSTEM_PERMISSIONS.SECURITY_ANOMALY_VIEW],
-
-  // Ecosystem & Tools
-  "/plugins": [SYSTEM_PERMISSIONS.PLUGINS_VIEW],
-  "/marketplace": [SYSTEM_PERMISSIONS.PLUGINS_VIEW],
-  "/integrations": [SYSTEM_PERMISSIONS.INTEGRATIONS_VIEW],
-  "/templates": [SYSTEM_PERMISSIONS.TEMPLATES_VIEW],
-  "/workflows": [SYSTEM_PERMISSIONS.WORKFLOWS_VIEW],
-  "/reports": [SYSTEM_PERMISSIONS.REPORTS_VIEW],
-  "/bulk-operations": [SYSTEM_PERMISSIONS.BULK_OPS_VIEW],
-  "/developer": [SYSTEM_PERMISSIONS.DEVELOPER_VIEW],
-  "/graphql": [SYSTEM_PERMISSIONS.GRAPHQL_QUERY],
+  // Ecosystem
   "/recycle-bin": [SYSTEM_PERMISSIONS.RECYCLE_BIN_VIEW],
 };
