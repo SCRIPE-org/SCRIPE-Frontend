@@ -362,6 +362,16 @@ export const API_ENDPOINTS = {
       REFRESH: `${V1}/currency/rates/refresh`,
       LAST_UPDATED: `${V1}/currency/rates/last-updated`,
     },
+    BILLING: {
+      INVOICES: {
+        LIST: `${V1}/invoices`,
+        BY_ID: (id: string) => `${V1}/invoices/${id}`,
+        TRANSACTIONS: `${V1}/invoices/transactions`,
+      },
+      CHECKOUT: (tenantId: string) => `${V1}/billing/tenants/${tenantId}/checkout`,
+      PORTAL: (tenantId: string) => `${V1}/billing/tenants/${tenantId}/portal`,
+      CANCEL_STRIPE: (tenantId: string) => `${V1}/billing/tenants/${tenantId}/cancel-stripe`,
+    },
   },
 
   // ===== USER GROUPS =====

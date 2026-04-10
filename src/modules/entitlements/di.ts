@@ -15,24 +15,28 @@ import { FeatureService } from "./features/src/data/services/FeatureService";
 import { EditionService } from "./editions/src/data/services/EditionService";
 import { OverrideService } from "./overrides/src/data/services/OverrideService";
 import { SubscriptionService } from "./subscriptions/src/data/services/SubscriptionService";
+import { BillingService } from "./billing/src/data/services/BillingService";
 
 // Repositories
 import { FeatureRepository } from "./features/src/data/repositories/FeatureRepository";
 import { EditionRepository } from "./editions/src/data/repositories/EditionRepository";
 import { OverrideRepository } from "./overrides/src/data/repositories/OverrideRepository";
 import { SubscriptionRepository } from "./subscriptions/src/data/repositories/SubscriptionRepository";
+import { BillingRepository } from "./billing/src/data/repositories/BillingRepository";
 
 // Interfaces
 import type { IFeatureRepository } from "./features/src/domain/interfaces/IFeatureRepository";
 import type { IEditionRepository } from "./editions/src/domain/interfaces/IEditionRepository";
 import type { IOverrideRepository } from "./overrides/src/domain/interfaces/IOverrideRepository";
 import type { ISubscriptionRepository } from "./subscriptions/src/domain/interfaces/ISubscriptionRepository";
+import type { IBillingRepository } from "./billing/src/domain/interfaces/IBillingRepository";
 
 export interface EntitlementsContainer {
       featureRepository: IFeatureRepository;
       editionRepository: IEditionRepository;
       overrideRepository: IOverrideRepository;
       subscriptionRepository: ISubscriptionRepository;
+      billingRepository: IBillingRepository;
 }
 
 let _container: EntitlementsContainer | null = null;
@@ -49,6 +53,7 @@ export function getEntitlementsContainer(): EntitlementsContainer {
             const editionService = new EditionService(apiService);
             const overrideService = new OverrideService(apiService);
             const subscriptionService = new SubscriptionService(apiService);
+            const billingService = new BillingService(apiService);
 
             // Create Repositories (Service → Repository mapping)
             _container = {
@@ -56,6 +61,7 @@ export function getEntitlementsContainer(): EntitlementsContainer {
                   editionRepository: new EditionRepository(editionService),
                   overrideRepository: new OverrideRepository(overrideService),
                   subscriptionRepository: new SubscriptionRepository(subscriptionService),
+                  billingRepository: new BillingRepository(billingService),
             };
       }
 
@@ -77,5 +83,8 @@ export const entitlementsContainer = {
       },
       get subscriptionRepository() {
             return getEntitlementsContainer().subscriptionRepository;
+      },
+      get billingRepository() {
+            return getEntitlementsContainer().billingRepository;
       },
 };
