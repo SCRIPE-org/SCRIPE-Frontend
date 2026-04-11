@@ -1,4 +1,4 @@
-/**
+﻿/**
  * SubscriptionsExportDialog
  *
  * Uses GenericModal (which sets modal={false} to fix select focus issues).
@@ -86,7 +86,7 @@ export function SubscriptionsExportDialog({
 
       // ── Translated options (rebuilt each render for language switch) ──
 
-      const te = (key: string) => t(`entitlements.subscriptions.export.${key}`);
+      const te = (key: string) => t(`entSubscriptions.export.${key}`);
 
       const FORMAT_OPTIONS: { value: ExportFormat; icon: React.ReactNode; label: string; description: string; color: string; borderActive: string }[] = [
             {

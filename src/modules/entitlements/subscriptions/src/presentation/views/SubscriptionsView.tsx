@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Subscriptions View
  *
  * Tenant-scoped view showing subscription history with full lifecycle actions:
@@ -62,6 +62,7 @@ const TYPE_VARIANTS: Record<string, "default" | "secondary" | "outline"> = {
 
 function useSubscriptionsCrudAdapter(tenantId: string) {
       const vm = useSubscriptionsViewModel(tenantId);
+      const totalCount = vm.items?.length ?? 0;
 
       return {
             ...vm,
@@ -75,6 +76,11 @@ function useSubscriptionsCrudAdapter(tenantId: string) {
             handleSearchChange: () => { },
             isCreateModalOpen: false,
             setIsCreateModalOpen: () => { },
+            // Explicit pagination so GenericCrudView footer renders correct counts
+            totalCount,
+            page: 1,
+            pageSize: totalCount || 1,
+            totalPages: 1,
       };
 }
 
@@ -94,8 +100,8 @@ export function SubscriptionsView({ tenantId }: SubscriptionsViewProps) {
 
       const config: CrudConfig<SubscriptionListItem> = useMemo(
             () => ({
-                  titleKey: "entitlements.subscriptions.title",
-                  subtitleKey: "entitlements.subscriptions.description",
+                  titleKey: "entSubscriptions.title",
+                  subtitleKey: "entSubscriptions.description",
                   hideAddButton: true,
 
                   columns: [
@@ -108,7 +114,7 @@ export function SubscriptionsView({ tenantId }: SubscriptionsViewProps) {
                                           <span>{value}</span>
                                           {item.isDowngraded && (
                                                 <Badge variant="destructive" className="text-[10px] px-1.5 py-0">
-                                                      {t("entitlements.subscriptions.downgraded") || "Downgraded"}
+                                                      {t("entSubscriptions.downgraded") || "Downgraded"}
                                                 </Badge>
                                           )}
                                     </div>
@@ -119,7 +125,7 @@ export function SubscriptionsView({ tenantId }: SubscriptionsViewProps) {
                               label: t("tenant.subscriptionType"),
                               render: (value: string) => (
                                     <Badge variant={TYPE_VARIANTS[value] ?? "outline"}>
-                                          {t(`entitlements.subscriptions.${value.toLowerCase()}`) || value}
+                                          {t(`entSubscriptions.${value.toLowerCase()}`) || value}
                                     </Badge>
                               ),
                         },
@@ -128,7 +134,7 @@ export function SubscriptionsView({ tenantId }: SubscriptionsViewProps) {
                               label: t("common.status"),
                               render: (value: string) => (
                                     <Badge variant={STATUS_VARIANTS[value] ?? "outline"}>
-                                          {t(`entitlements.subscriptions.${value.toLowerCase()}`) || value}
+                                          {t(`entSubscriptions.${value.toLowerCase()}`) || value}
                                     </Badge>
                               ),
                         },
@@ -168,14 +174,14 @@ export function SubscriptionsView({ tenantId }: SubscriptionsViewProps) {
                         },
                         {
                               key: "endDate",
-                              label: t("entitlements.subscriptions.endDate") || "End Date",
+                              label: t("entSubscriptions.endDate") || "End Date",
                               render: (value?: string) =>
                                     value ? format(new Date(value), "MMM d, yyyy") : "∞",
                               hideOnMobile: true,
                         },
                         {
                               key: "expiryBehavior",
-                              label: t("entitlements.subscriptions.expiryBehavior") || "On Expiry",
+                              label: t("entSubscriptions.expiryBehavior") || "On Expiry",
                               render: (value: string) => (
                                     <Badge variant="outline" className="text-xs">
                                           {value === "Fallback" ? "↓ Fallback" : "⏸ Suspend"}
@@ -206,7 +212,7 @@ export function SubscriptionsView({ tenantId }: SubscriptionsViewProps) {
                         },
                         {
                               key: "refundType",
-                              label: t("entitlements.subscriptions.refundType") || "Refund",
+                              label: t("entSubscriptions.refundType") || "Refund",
                               render: (_value: unknown, item: SubscriptionListItem) => {
                                     if (!item.refundType || item.refundType === "None") {
                                           return <span className="text-muted-foreground">—</span>;
@@ -217,8 +223,8 @@ export function SubscriptionsView({ tenantId }: SubscriptionsViewProps) {
                                                 <Badge variant={variant} className="text-[10px] px-1.5 py-0">
                                                       <DollarSign className="h-3 w-3 me-0.5" />
                                                       {item.refundType === "Full"
-                                                            ? (t("entitlements.subscriptions.fullRefund") || "Full Refund")
-                                                            : (t("entitlements.subscriptions.proRataRefund") || "Pro-Rata")}
+                                                            ? (t("entSubscriptions.fullRefund") || "Full Refund")
+                                                            : (t("entSubscriptions.proRataRefund") || "Pro-Rata")}
                                                 </Badge>
                                                 {item.refundAmount != null && item.refundAmount > 0 && item.currency && (
                                                       <span className="text-[10px] text-muted-foreground tabular-nums">
@@ -241,7 +247,7 @@ export function SubscriptionsView({ tenantId }: SubscriptionsViewProps) {
 
                   getActions: (): CrudAction<SubscriptionListItem>[] => [
                         {
-                              label: t("entitlements.subscriptions.revoke"),
+                              label: t("entSubscriptions.revoke"),
                               icon: <XCircle className="h-4 w-4" />,
                               variant: "ghost",
                               className: "text-destructive",
@@ -249,9 +255,9 @@ export function SubscriptionsView({ tenantId }: SubscriptionsViewProps) {
                               show: (item: SubscriptionListItem) =>
                                     item.status === "Active" || item.status === "Trialing",
                               loading: vm.isRevoking,
-                              confirmTitle: t("entitlements.subscriptions.revoke"),
+                              confirmTitle: t("entSubscriptions.revoke"),
                               confirmDescription:
-                                    t("entitlements.subscriptions.revokeDesc") ||
+                                    t("entSubscriptions.revokeDesc") ||
                                     "Are you sure you want to revoke this subscription?",
                               confirmVariant: "destructive",
                         },
@@ -263,21 +269,21 @@ export function SubscriptionsView({ tenantId }: SubscriptionsViewProps) {
                         if (vm.hasActiveSubscription) {
                               // Change plan
                               actions.push({
-                                    label: t("entitlements.subscriptions.change"),
+                                    label: t("entSubscriptions.change"),
                                     icon: <ArrowRightLeft className="h-4 w-4" />,
                                     variant: "outline",
                                     onClick: async () => vm.setShowChangeDialog(true),
                               });
                               // Suspend
                               actions.push({
-                                    label: t("entitlements.subscriptions.suspend") || "Suspend",
+                                    label: t("entSubscriptions.suspend") || "Suspend",
                                     icon: <PauseCircle className="h-4 w-4" />,
                                     variant: "outline",
                                     onClick: async () => vm.setShowSuspendDialog(true),
                               });
                               // Cancel
                               actions.push({
-                                    label: t("entitlements.subscriptions.cancel") || "Cancel",
+                                    label: t("entSubscriptions.cancel") || "Cancel",
                                     icon: <Ban className="h-4 w-4" />,
                                     variant: "outline",
                                     onClick: async () => vm.setShowCancelDialog(true),
@@ -285,7 +291,7 @@ export function SubscriptionsView({ tenantId }: SubscriptionsViewProps) {
                               // Convert Trial (only if trialing)
                               if (vm.isTrialing) {
                                     actions.push({
-                                          label: t("entitlements.subscriptions.convertTrial") || "Convert Trial",
+                                          label: t("entSubscriptions.convertTrial") || "Convert Trial",
                                           icon: <Shield className="h-4 w-4" />,
                                           variant: "default",
                                           onClick: async () => vm.setShowConvertDialog(true),
@@ -294,7 +300,7 @@ export function SubscriptionsView({ tenantId }: SubscriptionsViewProps) {
                         } else if (vm.hasSuspendedSubscription) {
                               // Resume
                               actions.push({
-                                    label: t("entitlements.subscriptions.resume") || "Resume",
+                                    label: t("entSubscriptions.resume") || "Resume",
                                     icon: <PlayCircle className="h-4 w-4" />,
                                     variant: "default",
                                     onClick: async () => vm.resumeSubscription(),
@@ -302,7 +308,7 @@ export function SubscriptionsView({ tenantId }: SubscriptionsViewProps) {
                         } else {
                               // No active subscription — assign
                               actions.push({
-                                    label: t("entitlements.subscriptions.assign"),
+                                    label: t("entSubscriptions.assign"),
                                     icon: <Plus className="h-4 w-4" />,
                                     variant: "default",
                                     onClick: async () => vm.setShowAssignDialog(true),
@@ -311,7 +317,7 @@ export function SubscriptionsView({ tenantId }: SubscriptionsViewProps) {
 
                         // Resync (always available)
                         actions.push({
-                              label: t("entitlements.subscriptions.resync") || "Resync Permissions",
+                              label: t("entSubscriptions.resync") || "Resync Permissions",
                               icon: <RotateCcw className="h-4 w-4" />,
                               variant: "outline",
                               onClick: async () => vm.resyncPermissions(),
@@ -388,8 +394,8 @@ function AssignDialog({
             <Dialog open={vm.showAssignDialog} onOpenChange={vm.setShowAssignDialog}>
                   <DialogContent>
                         <DialogHeader>
-                              <DialogTitle>{t("entitlements.subscriptions.assign")}</DialogTitle>
-                              <DialogDescription>{t("entitlements.subscriptions.assignDesc")}</DialogDescription>
+                              <DialogTitle>{t("entSubscriptions.assign")}</DialogTitle>
+                              <DialogDescription>{t("entSubscriptions.assignDesc")}</DialogDescription>
                         </DialogHeader>
 
                         <div className="space-y-4 py-4">
@@ -420,16 +426,16 @@ function AssignDialog({
                                                       <SelectTrigger><SelectValue /></SelectTrigger>
                                                       <SelectContent>
                                                             {(!selectedEd || selectedEd.data.allowLifetime) && (
-                                                                  <SelectItem value="Lifetime">{t("entitlements.subscriptions.lifetime")}</SelectItem>
+                                                                  <SelectItem value="Lifetime">{t("entSubscriptions.lifetime")}</SelectItem>
                                                             )}
                                                             {(!selectedEd || selectedEd.data.allowTrial) && (
-                                                                  <SelectItem value="Trial">{t("entitlements.subscriptions.trial")}</SelectItem>
+                                                                  <SelectItem value="Trial">{t("entSubscriptions.trial")}</SelectItem>
                                                             )}
                                                             {(!selectedEd || selectedEd.data.allowMonthly) && (
-                                                                  <SelectItem value="Monthly">{t("entitlements.subscriptions.monthly")}</SelectItem>
+                                                                  <SelectItem value="Monthly">{t("entSubscriptions.monthly")}</SelectItem>
                                                             )}
                                                             {(!selectedEd || selectedEd.data.allowYearly) && (
-                                                                  <SelectItem value="Yearly">{t("entitlements.subscriptions.yearly")}</SelectItem>
+                                                                  <SelectItem value="Yearly">{t("entSubscriptions.yearly")}</SelectItem>
                                                             )}
                                                       </SelectContent>
                                                 </Select>
@@ -440,11 +446,11 @@ function AssignDialog({
                               {/* End Date */}
                               {vm.subscriptionType !== "Lifetime" && (
                                     <div className="space-y-2">
-                                          <Label>{t("entitlements.subscriptions.endDate") || "End Date"}</Label>
+                                          <Label>{t("entSubscriptions.endDate") || "End Date"}</Label>
                                           <DatePicker
                                                 value={vm.endDate}
                                                 onChange={(v) => vm.setEndDate(v)}
-                                                placeholder={t("entitlements.subscriptions.endDate") || "End Date"}
+                                                placeholder={t("entSubscriptions.endDate") || "End Date"}
                                           />
                                     </div>
                               )}
@@ -452,15 +458,15 @@ function AssignDialog({
                               {/* Expiry Behavior */}
                               {vm.subscriptionType !== "Lifetime" && (
                                     <div className="space-y-2">
-                                          <Label>{t("entitlements.subscriptions.expiryBehavior") || "On Expiry"}</Label>
+                                          <Label>{t("entSubscriptions.expiryBehavior") || "On Expiry"}</Label>
                                           <Select value={vm.expiryBehavior} onValueChange={vm.setExpiryBehavior}>
                                                 <SelectTrigger><SelectValue /></SelectTrigger>
                                                 <SelectContent>
                                                       <SelectItem value="Fallback">
-                                                            ↓ {t("entitlements.subscriptions.fallback") || "Fallback to lower edition"}
+                                                            ↓ {t("entSubscriptions.fallback") || "Fallback to lower edition"}
                                                       </SelectItem>
                                                       <SelectItem value="Suspend">
-                                                            ⏸ {t("entitlements.subscriptions.suspendOnExpiry") || "Suspend tenant"}
+                                                            ⏸ {t("entSubscriptions.suspendOnExpiry") || "Suspend tenant"}
                                                       </SelectItem>
                                                 </SelectContent>
                                           </Select>
@@ -568,7 +574,7 @@ function AssignDialog({
                               </Button>
                               <Button onClick={vm.submitAssign} disabled={!vm.selectedEditionId || vm.isAssigning}>
                                     {vm.isAssigning && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
-                                    {t("entitlements.subscriptions.assign")}
+                                    {t("entSubscriptions.assign")}
                               </Button>
                         </DialogFooter>
                   </DialogContent>
@@ -592,8 +598,8 @@ function ChangeDialog({
             <Dialog open={vm.showChangeDialog} onOpenChange={vm.setShowChangeDialog}>
                   <DialogContent>
                         <DialogHeader>
-                              <DialogTitle>{t("entitlements.subscriptions.change")}</DialogTitle>
-                              <DialogDescription>{t("entitlements.subscriptions.changeDesc")}</DialogDescription>
+                              <DialogTitle>{t("entSubscriptions.change")}</DialogTitle>
+                              <DialogDescription>{t("entSubscriptions.changeDesc")}</DialogDescription>
                         </DialogHeader>
 
                         <div className="space-y-4 py-4">
@@ -624,16 +630,16 @@ function ChangeDialog({
                                                       <SelectTrigger><SelectValue /></SelectTrigger>
                                                       <SelectContent>
                                                             {(!selectedEd || selectedEd.data.allowLifetime) && (
-                                                                  <SelectItem value="Lifetime">{t("entitlements.subscriptions.lifetime")}</SelectItem>
+                                                                  <SelectItem value="Lifetime">{t("entSubscriptions.lifetime")}</SelectItem>
                                                             )}
                                                             {(!selectedEd || selectedEd.data.allowTrial) && (
-                                                                  <SelectItem value="Trial">{t("entitlements.subscriptions.trial")}</SelectItem>
+                                                                  <SelectItem value="Trial">{t("entSubscriptions.trial")}</SelectItem>
                                                             )}
                                                             {(!selectedEd || selectedEd.data.allowMonthly) && (
-                                                                  <SelectItem value="Monthly">{t("entitlements.subscriptions.monthly")}</SelectItem>
+                                                                  <SelectItem value="Monthly">{t("entSubscriptions.monthly")}</SelectItem>
                                                             )}
                                                             {(!selectedEd || selectedEd.data.allowYearly) && (
-                                                                  <SelectItem value="Yearly">{t("entitlements.subscriptions.yearly")}</SelectItem>
+                                                                  <SelectItem value="Yearly">{t("entSubscriptions.yearly")}</SelectItem>
                                                             )}
                                                       </SelectContent>
                                                 </Select>
@@ -742,7 +748,7 @@ function ChangeDialog({
                               </Button>
                               <Button onClick={vm.submitChange} disabled={!vm.selectedEditionId || vm.isChanging}>
                                     {vm.isChanging && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
-                                    {t("entitlements.subscriptions.change")}
+                                    {t("entSubscriptions.change")}
                               </Button>
                         </DialogFooter>
                   </DialogContent>
@@ -764,19 +770,19 @@ function SuspendDialog({
             <Dialog open={vm.showSuspendDialog} onOpenChange={vm.setShowSuspendDialog}>
                   <DialogContent>
                         <DialogHeader>
-                              <DialogTitle>{t("entitlements.subscriptions.suspend") || "Suspend Subscription"}</DialogTitle>
+                              <DialogTitle>{t("entSubscriptions.suspend") || "Suspend Subscription"}</DialogTitle>
                               <DialogDescription>
-                                    {t("entitlements.subscriptions.suspendDesc") || "Temporarily suspend this tenant's subscription."}
+                                    {t("entSubscriptions.suspendDesc") || "Temporarily suspend this tenant's subscription."}
                               </DialogDescription>
                         </DialogHeader>
 
                         <div className="space-y-4 py-4">
                               <div className="space-y-2">
-                                    <Label>{t("entitlements.subscriptions.reason") || "Reason"}</Label>
+                                    <Label>{t("entSubscriptions.reason") || "Reason"}</Label>
                                     <Textarea
                                           value={vm.suspendReason}
                                           onChange={(e) => vm.setSuspendReason(e.target.value)}
-                                          placeholder={t("entitlements.subscriptions.reasonPlaceholder") || "e.g., Payment overdue, Terms violation..."}
+                                          placeholder={t("entSubscriptions.reasonPlaceholder") || "e.g., Payment overdue, Terms violation..."}
                                           rows={3}
                                     />
                               </div>
@@ -788,7 +794,7 @@ function SuspendDialog({
                                           onCheckedChange={(v) => vm.setUseFallback(!!v)}
                                     />
                                     <Label htmlFor="use-fallback-suspend" className="text-sm font-normal">
-                                          {t("entitlements.subscriptions.useFallback") || "Downgrade to fallback edition instead of full suspend"}
+                                          {t("entSubscriptions.useFallback") || "Downgrade to fallback edition instead of full suspend"}
                                     </Label>
                               </div>
 
@@ -796,25 +802,25 @@ function SuspendDialog({
                               <div className="space-y-2">
                                     <Label className="flex items-center gap-1.5">
                                           <DollarSign className="h-3.5 w-3.5 text-primary" />
-                                          {t("entitlements.subscriptions.refundType") || "Refund"}
+                                          {t("entSubscriptions.refundType") || "Refund"}
                                     </Label>
                                     <RadioGroup value={vm.refundType} onValueChange={vm.setRefundType}>
                                           <div className="flex items-center space-x-2">
                                                 <RadioGroupItem value="None" id="suspend-refund-none" />
                                                 <Label htmlFor="suspend-refund-none" className="text-sm font-normal">
-                                                      {t("entitlements.subscriptions.noRefund") || "No Refund"}
+                                                      {t("entSubscriptions.noRefund") || "No Refund"}
                                                 </Label>
                                           </div>
                                           <div className="flex items-center space-x-2">
                                                 <RadioGroupItem value="Full" id="suspend-refund-full" />
                                                 <Label htmlFor="suspend-refund-full" className="text-sm font-normal">
-                                                      {t("entitlements.subscriptions.fullRefund") || "Full Refund"}
+                                                      {t("entSubscriptions.fullRefund") || "Full Refund"}
                                                 </Label>
                                           </div>
                                           <div className="flex items-center space-x-2">
                                                 <RadioGroupItem value="ProRata" id="suspend-refund-prorata" />
                                                 <Label htmlFor="suspend-refund-prorata" className="text-sm font-normal">
-                                                      {t("entitlements.subscriptions.proRataRefund") || "Pro-rata Refund (remaining time)"}
+                                                      {t("entSubscriptions.proRataRefund") || "Pro-rata Refund (remaining time)"}
                                                 </Label>
                                           </div>
                                     </RadioGroup>
@@ -824,7 +830,7 @@ function SuspendDialog({
                               {vm.refundType === "ProRata" && (
                                     <div className="space-y-2">
                                           <Label className="text-sm">
-                                                {t("entitlements.subscriptions.customRefundAmount") || "Custom Amount (optional — leave empty for auto-calculate)"}
+                                                {t("entSubscriptions.customRefundAmount") || "Custom Amount (optional — leave empty for auto-calculate)"}
                                           </Label>
                                           <Input
                                                 type="number"
@@ -832,11 +838,11 @@ function SuspendDialog({
                                                 step="0.01"
                                                 value={vm.customRefundAmount}
                                                 onChange={(e) => vm.setCustomRefundAmount(e.target.value)}
-                                                placeholder={t("entitlements.subscriptions.customAmountPlaceholder") || "e.g., 50.00"}
+                                                placeholder={t("entSubscriptions.customAmountPlaceholder") || "e.g., 50.00"}
                                                 className="font-mono"
                                           />
                                           <p className="text-xs text-muted-foreground">
-                                                {t("entitlements.subscriptions.customAmountHint") || "If empty, the system auto-calculates based on remaining subscription time."}
+                                                {t("entSubscriptions.customAmountHint") || "If empty, the system auto-calculates based on remaining subscription time."}
                                           </p>
                                     </div>
                               )}
@@ -852,7 +858,7 @@ function SuspendDialog({
                                     disabled={!vm.suspendReason.trim() || vm.isSuspending}
                               >
                                     {vm.isSuspending && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
-                                    {t("entitlements.subscriptions.suspend") || "Suspend"}
+                                    {t("entSubscriptions.suspend") || "Suspend"}
                               </Button>
                         </DialogFooter>
                   </DialogContent>
@@ -874,19 +880,19 @@ function CancelDialog({
             <Dialog open={vm.showCancelDialog} onOpenChange={vm.setShowCancelDialog}>
                   <DialogContent>
                         <DialogHeader>
-                              <DialogTitle>{t("entitlements.subscriptions.cancel") || "Cancel Subscription"}</DialogTitle>
+                              <DialogTitle>{t("entSubscriptions.cancel") || "Cancel Subscription"}</DialogTitle>
                               <DialogDescription>
-                                    {t("entitlements.subscriptions.cancelDesc") || "Permanently cancel this subscription."}
+                                    {t("entSubscriptions.cancelDesc") || "Permanently cancel this subscription."}
                               </DialogDescription>
                         </DialogHeader>
 
                         <div className="space-y-4 py-4">
                               <div className="space-y-2">
-                                    <Label>{t("entitlements.subscriptions.reason") || "Reason (optional)"}</Label>
+                                    <Label>{t("entSubscriptions.reason") || "Reason (optional)"}</Label>
                                     <Textarea
                                           value={vm.cancelReason}
                                           onChange={(e) => vm.setCancelReason(e.target.value)}
-                                          placeholder={t("entitlements.subscriptions.cancelReasonPlaceholder") || "Why are you canceling?"}
+                                          placeholder={t("entSubscriptions.cancelReasonPlaceholder") || "Why are you canceling?"}
                                           rows={3}
                                     />
                               </div>
@@ -898,7 +904,7 @@ function CancelDialog({
                                           onCheckedChange={(v) => vm.setUseFallback(!!v)}
                                     />
                                     <Label htmlFor="use-fallback-cancel" className="text-sm font-normal">
-                                          {t("entitlements.subscriptions.useFallback") || "Downgrade to fallback edition instead of full cancel"}
+                                          {t("entSubscriptions.useFallback") || "Downgrade to fallback edition instead of full cancel"}
                                     </Label>
                               </div>
 
@@ -906,25 +912,25 @@ function CancelDialog({
                               <div className="space-y-2">
                                     <Label className="flex items-center gap-1.5">
                                           <DollarSign className="h-3.5 w-3.5 text-primary" />
-                                          {t("entitlements.subscriptions.refundType") || "Refund"}
+                                          {t("entSubscriptions.refundType") || "Refund"}
                                     </Label>
                                     <RadioGroup value={vm.refundType} onValueChange={vm.setRefundType}>
                                           <div className="flex items-center space-x-2">
                                                 <RadioGroupItem value="None" id="cancel-refund-none" />
                                                 <Label htmlFor="cancel-refund-none" className="text-sm font-normal">
-                                                      {t("entitlements.subscriptions.noRefund") || "No Refund"}
+                                                      {t("entSubscriptions.noRefund") || "No Refund"}
                                                 </Label>
                                           </div>
                                           <div className="flex items-center space-x-2">
                                                 <RadioGroupItem value="Full" id="cancel-refund-full" />
                                                 <Label htmlFor="cancel-refund-full" className="text-sm font-normal">
-                                                      {t("entitlements.subscriptions.fullRefund") || "Full Refund"}
+                                                      {t("entSubscriptions.fullRefund") || "Full Refund"}
                                                 </Label>
                                           </div>
                                           <div className="flex items-center space-x-2">
                                                 <RadioGroupItem value="ProRata" id="cancel-refund-prorata" />
                                                 <Label htmlFor="cancel-refund-prorata" className="text-sm font-normal">
-                                                      {t("entitlements.subscriptions.proRataRefund") || "Pro-rata Refund (remaining time)"}
+                                                      {t("entSubscriptions.proRataRefund") || "Pro-rata Refund (remaining time)"}
                                                 </Label>
                                           </div>
                                     </RadioGroup>
@@ -934,7 +940,7 @@ function CancelDialog({
                               {vm.refundType === "ProRata" && (
                                     <div className="space-y-2">
                                           <Label className="text-sm">
-                                                {t("entitlements.subscriptions.customRefundAmount") || "Custom Amount (optional — leave empty for auto-calculate)"}
+                                                {t("entSubscriptions.customRefundAmount") || "Custom Amount (optional — leave empty for auto-calculate)"}
                                           </Label>
                                           <Input
                                                 type="number"
@@ -942,11 +948,11 @@ function CancelDialog({
                                                 step="0.01"
                                                 value={vm.customRefundAmount}
                                                 onChange={(e) => vm.setCustomRefundAmount(e.target.value)}
-                                                placeholder={t("entitlements.subscriptions.customAmountPlaceholder") || "e.g., 50.00"}
+                                                placeholder={t("entSubscriptions.customAmountPlaceholder") || "e.g., 50.00"}
                                                 className="font-mono"
                                           />
                                           <p className="text-xs text-muted-foreground">
-                                                {t("entitlements.subscriptions.customAmountHint") || "If empty, the system auto-calculates based on remaining subscription time."}
+                                                {t("entSubscriptions.customAmountHint") || "If empty, the system auto-calculates based on remaining subscription time."}
                                           </p>
                                     </div>
                               )}
@@ -962,7 +968,7 @@ function CancelDialog({
                                     disabled={vm.isCanceling}
                               >
                                     {vm.isCanceling && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
-                                    {t("entitlements.subscriptions.cancel") || "Cancel Subscription"}
+                                    {t("entSubscriptions.cancel") || "Cancel Subscription"}
                               </Button>
                         </DialogFooter>
                   </DialogContent>
@@ -986,9 +992,9 @@ function ConvertDialog({
             <Dialog open={vm.showConvertDialog} onOpenChange={vm.setShowConvertDialog}>
                   <DialogContent>
                         <DialogHeader>
-                              <DialogTitle>{t("entitlements.subscriptions.convertTrial") || "Convert Trial"}</DialogTitle>
+                              <DialogTitle>{t("entSubscriptions.convertTrial") || "Convert Trial"}</DialogTitle>
                               <DialogDescription>
-                                    {t("entitlements.subscriptions.convertDesc") || "Convert this trial into a paid subscription."}
+                                    {t("entSubscriptions.convertDesc") || "Convert this trial into a paid subscription."}
                               </DialogDescription>
                         </DialogHeader>
 
@@ -1008,13 +1014,13 @@ function ConvertDialog({
                                                       <SelectTrigger><SelectValue /></SelectTrigger>
                                                       <SelectContent>
                                                             {(!selectedEd || selectedEd.data.allowMonthly) && (
-                                                                  <SelectItem value="Monthly">{t("entitlements.subscriptions.monthly")}</SelectItem>
+                                                                  <SelectItem value="Monthly">{t("entSubscriptions.monthly")}</SelectItem>
                                                             )}
                                                             {(!selectedEd || selectedEd.data.allowYearly) && (
-                                                                  <SelectItem value="Yearly">{t("entitlements.subscriptions.yearly")}</SelectItem>
+                                                                  <SelectItem value="Yearly">{t("entSubscriptions.yearly")}</SelectItem>
                                                             )}
                                                             {(!selectedEd || selectedEd.data.allowLifetime) && (
-                                                                  <SelectItem value="Lifetime">{t("entitlements.subscriptions.lifetime")}</SelectItem>
+                                                                  <SelectItem value="Lifetime">{t("entSubscriptions.lifetime")}</SelectItem>
                                                             )}
                                                       </SelectContent>
                                                 </Select>
@@ -1029,7 +1035,7 @@ function ConvertDialog({
                               </Button>
                               <Button onClick={vm.submitConvert} disabled={vm.isConverting}>
                                     {vm.isConverting && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
-                                    {t("entitlements.subscriptions.convertTrial") || "Convert"}
+                                    {t("entSubscriptions.convertTrial") || "Convert"}
                               </Button>
                         </DialogFooter>
                   </DialogContent>

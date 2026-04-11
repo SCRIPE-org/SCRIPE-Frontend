@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Tenant Entitlements Tab — Redesigned
  *
  * Premium layout with subscription overview card (relocated from header)
@@ -9,6 +9,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { useQuery } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -24,6 +25,7 @@ import {
       ChevronRight,
 } from "lucide-react";
 import { Badge } from "@core/ui/badge";
+import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
 import { cn } from "@core/common/utils";
@@ -35,6 +37,7 @@ interface TenantEntitlementsTabProps {
 
 export function TenantEntitlementsTab({ tenantId }: TenantEntitlementsTabProps) {
       const { t, direction } = useI18n();
+      const router = useRouter();
       const isRtl = direction === "rtl";
       const [activeSubTab, setActiveSubTab] = useState("subscriptions");
 
@@ -81,7 +84,20 @@ export function TenantEntitlementsTab({ tenantId }: TenantEntitlementsTabProps) 
                         </TabsList>
 
                         <TabsContent value="subscriptions" className="mt-4">
-                              <TenantSubscriptionCard tenantId={tenantId} />
+                              <div className="space-y-3">
+                                    <div className="flex justify-end">
+                                          <Button
+                                                variant="outline"
+                                                size="sm"
+                                                className="gap-1.5"
+                                                onClick={() => router.push(`/entitlements/subscriptions/${tenantId}`)}
+                                          >
+                                                <Settings2 className="h-3.5 w-3.5" />
+                                                {t("entSubscriptions.manage") || "Manage Subscriptions"}
+                                          </Button>
+                                    </div>
+                                    <TenantSubscriptionCard tenantId={tenantId} />
+                              </div>
                         </TabsContent>
 
                         <TabsContent value="features" className="mt-4">

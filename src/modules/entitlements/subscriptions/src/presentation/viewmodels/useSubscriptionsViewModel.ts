@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Subscriptions ViewModel
  *
  * Manages tenant edition subscriptions — full lifecycle:
@@ -186,64 +186,64 @@ export function useSubscriptionsViewModel(tenantId: string) {
       const assignMutation = makeMutation(
             (params: { editionId: string; type: string; endDate?: string; expiryBehavior?: string; promoCode?: string; currency?: string; promotionId?: string }) =>
                   subscriptionRepository.assign(tenantId, params),
-            "entitlements.subscriptions.assigned",
-            "entitlements.subscriptions.assignedDesc",
+            "entSubscriptions.assigned",
+            "entSubscriptions.assignedDesc",
             () => setShowAssignDialog(false)
       );
 
       const changeMutation = makeMutation(
             (params: { editionId: string; type: string; promoCode?: string; currency?: string; promotionId?: string }) =>
                   subscriptionRepository.change(tenantId, params),
-            "entitlements.subscriptions.changed",
-            "entitlements.subscriptions.changedDesc",
+            "entSubscriptions.changed",
+            "entSubscriptions.changedDesc",
             () => setShowChangeDialog(false)
       );
 
       const renewMutation = makeMutation(
             (type: string) => subscriptionRepository.renew(tenantId, type),
-            "entitlements.subscriptions.renewed",
-            "entitlements.subscriptions.renewedDesc"
+            "entSubscriptions.renewed",
+            "entSubscriptions.renewedDesc"
       );
 
       const convertMutation = makeMutation(
             (type: string) => subscriptionRepository.convertTrial(tenantId, type),
-            "entitlements.subscriptions.converted",
-            "entitlements.subscriptions.convertedDesc",
+            "entSubscriptions.converted",
+            "entSubscriptions.convertedDesc",
             () => setShowConvertDialog(false)
       );
 
       const suspendMutation = makeMutation(
             (params: { reason: string; useFallback: boolean; refundType: string; customRefundAmount?: number }) =>
                   subscriptionRepository.suspend(tenantId, params.reason, params.useFallback, params.refundType, params.customRefundAmount),
-            "entitlements.subscriptions.suspended",
-            "entitlements.subscriptions.suspendedDesc",
+            "entSubscriptions.suspended",
+            "entSubscriptions.suspendedDesc",
             () => setShowSuspendDialog(false)
       );
 
       const resumeMutation = makeMutation(
             (type?: string) => subscriptionRepository.resume(tenantId, type),
-            "entitlements.subscriptions.resumed",
-            "entitlements.subscriptions.resumedDesc"
+            "entSubscriptions.resumed",
+            "entSubscriptions.resumedDesc"
       );
 
       const cancelMutation = makeMutation(
             (params: { reason?: string; useFallback: boolean; refundType: string; customRefundAmount?: number }) =>
                   subscriptionRepository.cancel(tenantId, params.reason, params.useFallback, params.refundType, params.customRefundAmount),
-            "entitlements.subscriptions.canceled",
-            "entitlements.subscriptions.canceledDesc",
+            "entSubscriptions.canceled",
+            "entSubscriptions.canceledDesc",
             () => setShowCancelDialog(false)
       );
 
       const resyncMutation = makeMutation(
             () => subscriptionRepository.resync(tenantId),
-            "entitlements.subscriptions.resynced",
-            "entitlements.subscriptions.resyncedDesc"
+            "entSubscriptions.resynced",
+            "entSubscriptions.resyncedDesc"
       );
 
       const revokeMutation = makeMutation(
             (id: string) => subscriptionRepository.revoke(id),
-            "entitlements.subscriptions.revoked",
-            "entitlements.subscriptions.revokedDesc"
+            "entSubscriptions.revoked",
+            "entSubscriptions.revokedDesc"
       );
 
       // ─── Submit helpers ─────────────────────────────────

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Subscriptions Overview View — Global Dashboard
  *
  * Comprehensive subscription dashboard with:
@@ -99,17 +99,17 @@ export function SubscriptionsOverviewView() {
                   <div className="flex items-start justify-between">
                         <div>
                               <h1 className="text-2xl font-bold tracking-tight">
-                                    {vm.t("entitlements.subscriptions.overviewTitle") || "Subscriptions Overview"}
+                                    {vm.t("entSubscriptions.overviewTitle") || "Subscriptions Overview"}
                               </h1>
                               <p className="text-muted-foreground">
-                                    {vm.t("entitlements.subscriptions.overviewDesc") || "All active subscriptions across all tenants"}
+                                    {vm.t("entSubscriptions.overviewDesc") || "All active subscriptions across all tenants"}
                               </p>
                         </div>
                         <div className="flex items-center gap-2">
                               <CurrencyDisplayToggle />
                               <Button variant="outline" size="sm" onClick={() => setExportOpen(true)} className="gap-1.5">
                                     <FileDown className="h-3.5 w-3.5" />
-                                    {vm.t("entitlements.subscriptions.export.button") || "Export"}
+                                    {vm.t("entSubscriptions.export.button") || "Export"}
                               </Button>
                               <Button variant="outline" size="sm" onClick={() => vm.refetch()} className="gap-1.5">
                                     <RefreshCw className="h-3.5 w-3.5" />
@@ -208,7 +208,7 @@ export function SubscriptionsOverviewView() {
                               onClick={() => vm.setStatusFilter("Active")}>
                               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                                     <CardTitle className="text-sm font-medium text-muted-foreground">
-                                          {vm.t("entitlements.subscriptions.activeCount") || "Active"}
+                                          {vm.t("entSubscriptions.activeCount") || "Active"}
                                     </CardTitle>
                                     <CreditCard className="h-4 w-4 text-emerald-500" />
                               </CardHeader>
@@ -225,7 +225,7 @@ export function SubscriptionsOverviewView() {
                               onClick={() => vm.setStatusFilter("Trialing")}>
                               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                                     <CardTitle className="text-sm font-medium text-muted-foreground">
-                                          {vm.t("entitlements.subscriptions.trialCount") || "Trialing"}
+                                          {vm.t("entSubscriptions.trialCount") || "Trialing"}
                                     </CardTitle>
                                     <Clock className="h-4 w-4 text-blue-500" />
                               </CardHeader>
@@ -436,7 +436,7 @@ export function SubscriptionsOverviewView() {
                               <CardHeader className="pb-3">
                                     <CardTitle className="text-sm font-medium flex items-center gap-2">
                                           <CalendarClock className="h-4 w-4 text-amber-500" />
-                                          {vm.t("entitlements.subscriptions.upcomingRenewals") || "Upcoming Renewals"}
+                                          {vm.t("entSubscriptions.upcomingRenewals") || "Upcoming Renewals"}
                                           <Badge variant="secondary" className="ml-auto text-[10px] bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-400">
                                                 {vm.upcomingRenewals.length}
                                           </Badge>
@@ -550,14 +550,14 @@ export function SubscriptionsOverviewView() {
                                           <TableRow className="hover:bg-transparent">
                                                 <TableHead className="w-[50px]">#</TableHead>
                                                 <TableHead>{vm.t("common.tenant") || "Tenant"}</TableHead>
-                                                <TableHead>{vm.t("entitlements.subscriptions.edition") || "Edition"}</TableHead>
+                                                <TableHead>{vm.t("entSubscriptions.edition") || "Edition"}</TableHead>
                                                 <TableHead>{vm.t("common.status") || "Status"}</TableHead>
-                                                <TableHead>{vm.t("entitlements.subscriptions.type") || "Type"}</TableHead>
-                                                <TableHead>{vm.t("entitlements.subscriptions.amount") || "Amount"}</TableHead>
+                                                <TableHead>{vm.t("entSubscriptions.type") || "Type"}</TableHead>
+                                                <TableHead>{vm.t("entSubscriptions.amount") || "Amount"}</TableHead>
                                                 <TableHead>{vm.t("tenant.promoCode") || "Promo"}</TableHead>
-                                                <TableHead>{vm.t("entitlements.subscriptions.mrrContribution") || "MRR (USD)"}</TableHead>
-                                                <TableHead>{vm.t("entitlements.subscriptions.startDate") || "Start Date"}</TableHead>
-                                                <TableHead>{vm.t("entitlements.subscriptions.endDate") || "End Date"}</TableHead>
+                                                <TableHead>{vm.t("entSubscriptions.mrrContribution") || "MRR (USD)"}</TableHead>
+                                                <TableHead>{vm.t("entSubscriptions.startDate") || "Start Date"}</TableHead>
+                                                <TableHead>{vm.t("entSubscriptions.endDate") || "End Date"}</TableHead>
                                                 <TableHead className="w-[60px]"></TableHead>
                                           </TableRow>
                                     </TableHeader>
@@ -645,9 +645,10 @@ export function SubscriptionsOverviewView() {
                                                                               variant="ghost"
                                                                               size="icon"
                                                                               className="h-7 w-7"
+                                                                              title={vm.t("entSubscriptions.manage") || "Manage Subscriptions"}
                                                                               onClick={(e) => {
                                                                                     e.stopPropagation();
-                                                                                    router.push(`/tenants/${sub.tenantId}`);
+                                                                                    router.push(`/entitlements/subscriptions/${sub.tenantId}`);
                                                                               }}
                                                                         >
                                                                               <ArrowRight className="h-3.5 w-3.5" />
@@ -675,7 +676,7 @@ export function SubscriptionsOverviewView() {
                                     </span>
                               )}
                               <span>
-                                    {vm.t("entitlements.subscriptions.totalMrr") || "Total MRR"}: {vm.formatDisplay(vm.kpis.totalMrr, "USD")}
+                                    {vm.t("entSubscriptions.totalMrr") || "Total MRR"}: {vm.formatDisplay(vm.kpis.totalMrr, "USD")}
                               </span>
                         </div>
                   </div>

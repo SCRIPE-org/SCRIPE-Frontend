@@ -333,6 +333,7 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/entitlements/editions": [SYSTEM_PERMISSIONS.EDITIONS_VIEW],
   "/entitlements/features": [SYSTEM_PERMISSIONS.FEATURES_VIEW],
   "/entitlements/subscriptions": [SYSTEM_PERMISSIONS.SUBSCRIPTIONS_VIEW],
+  "/entitlements/subscriptions/[tenantId]": [SYSTEM_PERMISSIONS.SUBSCRIPTIONS_VIEW],
   "/entitlements/overrides": [SYSTEM_PERMISSIONS.FEATURES_OVERRIDE],
   "/entitlements/invoices": [SYSTEM_PERMISSIONS.INVOICES_VIEW],
   "/entitlements/transactions": [SYSTEM_PERMISSIONS.TRANSACTIONS_VIEW],
