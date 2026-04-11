@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Subscriptions View
  *
  * Tenant-scoped view showing subscription history with full lifecycle actions:
@@ -6,7 +6,7 @@
  */
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useCallback } from "react";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
 import type { CrudConfig, CrudAction, CustomAction } from "@core/crud/components/generic-crud-view";
 import { useSubscriptionsViewModel } from "../viewmodels/useSubscriptionsViewModel";
@@ -30,6 +30,7 @@ import { RadioGroup, RadioGroupItem } from "@core/ui/radio-group";
 import {
       Loader2, Plus, RefreshCw, XCircle, PauseCircle, PlayCircle,
       Ban, ArrowRightLeft, RotateCcw, Shield, Tag, DollarSign,
+      CreditCard, ExternalLink, Copy, XSquare,
 } from "lucide-react";
 import { format } from "date-fns";
 import type { SubscriptionListItem } from "../../domain/entities/Subscription";
@@ -45,6 +46,7 @@ const STATUS_VARIANTS: Record<string, "default" | "secondary" | "outline" | "des
       Canceled: "destructive",
       Expired: "outline",
       Suspended: "destructive",
+      PendingPayment: "secondary",
 };
 
 const TYPE_VARIANTS: Record<string, "default" | "secondary" | "outline"> = {
@@ -315,6 +317,40 @@ export function SubscriptionsView({ tenantId }: SubscriptionsViewProps) {
                               onClick: async () => vm.resyncPermissions(),
                         });
 
+                        // ── Billing actions (only when there's an active subscription) ──
+                        if (vm.hasActiveSubscription) {
+                              // Send Payment Link
+                              actions.push({
+                                    label: t("billing.actions.createCheckout") || "Send Payment Link",
+                                    icon: <CreditCard className="h-4 w-4" />,
+                                    variant: "outline",
+                                    onClick: async () => vm.sendPaymentLink(),
+                                    loading: vm.isSendingPaymentLink,
+                              });
+
+                              // Open Billing Portal (only if tenant has Stripe customer)
+                              if (vm.activeSubscription?.hasStripeCustomer) {
+                                    actions.push({
+                                          label: t("billing.actions.openPortal") || "Open Billing Portal",
+                                          icon: <ExternalLink className="h-4 w-4" />,
+                                          variant: "outline",
+                                          onClick: async () => vm.openBillingPortal(),
+                                          loading: vm.isOpeningPortal,
+                                    });
+                              }
+
+                              // Cancel Stripe Subscription (only if tenant has Stripe subscription)
+                              if (vm.activeSubscription?.hasStripeSubscription) {
+                                    actions.push({
+                                          label: t("billing.actions.cancelStripe") || "Cancel Stripe",
+                                          icon: <XSquare className="h-4 w-4" />,
+                                          variant: "outline",
+                                          className: "text-destructive",
+                                          onClick: async () => vm.setShowCancelStripeDialog(true),
+                                    });
+                              }
+                        }
+
                         return actions;
                   })(),
 
@@ -325,6 +361,8 @@ export function SubscriptionsView({ tenantId }: SubscriptionsViewProps) {
                               <SuspendDialog vm={vm} />
                               <CancelDialog vm={vm} />
                               <ConvertDialog vm={vm} editionsVm={editionsVm} />
+                              <CheckoutDialog vm={vm} />
+                              <CancelStripeDialog vm={vm} />
                         </>
                   ),
             }),
@@ -992,6 +1030,126 @@ function ConvertDialog({
                               <Button onClick={vm.submitConvert} disabled={vm.isConverting}>
                                     {vm.isConverting && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
                                     {t("entitlements.subscriptions.convertTrial") || "Convert"}
+                              </Button>
+                        </DialogFooter>
+                  </DialogContent>
+            </Dialog>
+      );
+}
+
+/* ============================================
+ * CHECKOUT DIALOG (Payment Link)
+ * ============================================ */
+
+function CheckoutDialog({
+      vm,
+}: {
+      vm: ReturnType<typeof useSubscriptionsCrudAdapter>;
+}) {
+      const { t } = useI18n();
+
+      const handleCopyLink = useCallback(() => {
+            if (vm.checkoutUrl) {
+                  navigator.clipboard.writeText(vm.checkoutUrl);
+            }
+      }, [vm.checkoutUrl]);
+
+      return (
+            <Dialog open={vm.showCheckoutDialog} onOpenChange={vm.setShowCheckoutDialog}>
+                  <DialogContent className="max-w-md">
+                        <DialogHeader>
+                              <DialogTitle className="flex items-center gap-2">
+                                    <CreditCard className="h-5 w-5 text-primary" />
+                                    {t("billing.dialogs.checkoutTitle") || "Payment Link Generated"}
+                              </DialogTitle>
+                              <DialogDescription>
+                                    {t("billing.dialogs.checkoutDescription") || "Share this payment link with the tenant."}
+                              </DialogDescription>
+                        </DialogHeader>
+
+                        <div className="space-y-4 py-2">
+                              <div className="flex items-center gap-2 rounded-lg bg-muted/50 border p-3">
+                                    <Input
+                                          readOnly
+                                          value={vm.checkoutUrl}
+                                          className="flex-1 text-xs bg-transparent border-0 h-auto p-0 focus-visible:ring-0"
+                                    />
+                              </div>
+                        </div>
+
+                        <DialogFooter className="gap-2 sm:gap-0">
+                              <Button variant="outline" onClick={handleCopyLink} className="gap-2">
+                                    <Copy className="h-4 w-4" />
+                                    {t("billing.actions.copyLink") || "Copy Link"}
+                              </Button>
+                              <Button
+                                    onClick={() => window.open(vm.checkoutUrl, "_blank")}
+                                    className="gap-2"
+                              >
+                                    <ExternalLink className="h-4 w-4" />
+                                    {t("billing.actions.openLink") || "Open Link"}
+                              </Button>
+                        </DialogFooter>
+                  </DialogContent>
+            </Dialog>
+      );
+}
+
+/* ============================================
+ * CANCEL STRIPE DIALOG
+ * ============================================ */
+
+function CancelStripeDialog({
+      vm,
+}: {
+      vm: ReturnType<typeof useSubscriptionsCrudAdapter>;
+}) {
+      const { t } = useI18n();
+
+      return (
+            <Dialog open={vm.showCancelStripeDialog} onOpenChange={vm.setShowCancelStripeDialog}>
+                  <DialogContent className="max-w-md">
+                        <DialogHeader>
+                              <DialogTitle className="flex items-center gap-2 text-destructive">
+                                    <XSquare className="h-5 w-5" />
+                                    {t("billing.dialogs.cancelTitle") || "Cancel Stripe Subscription"}
+                              </DialogTitle>
+                              <DialogDescription>
+                                    {t("billing.dialogs.cancelDescription") || "Choose how you want to cancel."}
+                              </DialogDescription>
+                        </DialogHeader>
+
+                        <div className="space-y-4 py-2">
+                              <RadioGroup
+                                    value={vm.cancelImmediately ? "immediately" : "period-end"}
+                                    onValueChange={(val) => vm.setCancelImmediately(val === "immediately")}
+                              >
+                                    <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                                          <RadioGroupItem value="period-end" id="cancel-period-end" />
+                                          <Label htmlFor="cancel-period-end" className="cursor-pointer">
+                                                {t("billing.actions.cancelAtPeriodEnd") || "Cancel at Period End"}
+                                          </Label>
+                                    </div>
+                                    <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                                          <RadioGroupItem value="immediately" id="cancel-immediately" />
+                                          <Label htmlFor="cancel-immediately" className="cursor-pointer text-destructive">
+                                                {t("billing.actions.cancelImmediately") || "Cancel Immediately"}
+                                          </Label>
+                                    </div>
+                              </RadioGroup>
+                        </div>
+
+                        <DialogFooter>
+                              <Button variant="outline" onClick={() => vm.setShowCancelStripeDialog(false)}>
+                                    {t("common.cancel")}
+                              </Button>
+                              <Button
+                                    variant="destructive"
+                                    onClick={vm.submitCancelStripe}
+                                    disabled={vm.isCancelingStripe}
+                              >
+                                    {vm.isCancelingStripe && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
+                                    {t("billing.actions.cancelStripe") || "Cancel Stripe"}
                               </Button>
                         </DialogFooter>
                   </DialogContent>

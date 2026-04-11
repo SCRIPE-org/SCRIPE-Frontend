@@ -45,6 +45,9 @@ export class SubscriptionMapper {
                   refundAmount: model.refundAmount,
                   refundedAt: model.refundedAt,
                   refundReason: model.refundReason,
+                  // Stripe
+                  stripeCustomerId: model.stripeCustomerId,
+                  stripeSubscriptionId: model.stripeSubscriptionId,
             };
             return new Subscription(data);
       }
@@ -80,6 +83,9 @@ export class SubscriptionMapper {
                   refundAmount: model.refundAmount,
                   refundedAt: model.refundedAt,
                   refundReason: model.refundReason,
+                  // Stripe
+                  stripeCustomerId: model.stripeCustomerId,
+                  stripeSubscriptionId: model.stripeSubscriptionId,
             };
             return new SubscriptionListItem(data);
       }

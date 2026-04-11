@@ -37,6 +37,9 @@ export interface SubscriptionModel {
       refundAmount?: number;
       refundedAt?: string;
       refundReason?: string;
+      // ── Stripe ──
+      stripeCustomerId?: string;
+      stripeSubscriptionId?: string;
 }
 
 export interface SubscriptionListModel {
@@ -70,6 +73,9 @@ export interface SubscriptionListModel {
       refundAmount?: number;
       refundedAt?: string;
       refundReason?: string;
+      // ── Stripe ──
+      stripeCustomerId?: string;
+      stripeSubscriptionId?: string;
 }
 
 export interface GlobalSubscriptionModel {

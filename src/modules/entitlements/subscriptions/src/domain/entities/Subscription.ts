@@ -40,6 +40,9 @@ export interface SubscriptionData {
       refundAmount?: number;
       refundedAt?: string;
       refundReason?: string;
+      // ── Stripe ──
+      stripeCustomerId?: string;
+      stripeSubscriptionId?: string;
 }
 
 export class Subscription {
@@ -86,6 +89,11 @@ export class Subscription {
       get isExpired(): boolean { return this.data.status === "Expired"; }
       get hasPromotion(): boolean { return !!this.data.appliedPromoCode; }
       get hasRefund(): boolean { return !!this.data.refundType && this.data.refundType !== "None"; }
+      // ── Stripe ──
+      get stripeCustomerId(): string | undefined { return this.data.stripeCustomerId; }
+      get stripeSubscriptionId(): string | undefined { return this.data.stripeSubscriptionId; }
+      get hasStripeCustomer(): boolean { return !!this.data.stripeCustomerId; }
+      get hasStripeSubscription(): boolean { return !!this.data.stripeSubscriptionId; }
 
       copyWith(updates: Partial<SubscriptionData>): Subscription {
             return new Subscription({ ...this.data, ...updates });
@@ -124,6 +132,9 @@ export interface SubscriptionListItemData {
       refundAmount?: number;
       refundedAt?: string;
       refundReason?: string;
+      // ── Stripe ──
+      stripeCustomerId?: string;
+      stripeSubscriptionId?: string;
 }
 
 export class SubscriptionListItem {
@@ -155,6 +166,11 @@ export class SubscriptionListItem {
       get refundAmount(): number | undefined { return this.data.refundAmount; }
       get refundedAt(): string | undefined { return this.data.refundedAt; }
       get refundReason(): string | undefined { return this.data.refundReason; }
+      // ── Stripe ──
+      get stripeCustomerId(): string | undefined { return this.data.stripeCustomerId; }
+      get stripeSubscriptionId(): string | undefined { return this.data.stripeSubscriptionId; }
+      get hasStripeCustomer(): boolean { return !!this.data.stripeCustomerId; }
+      get hasStripeSubscription(): boolean { return !!this.data.stripeSubscriptionId; }
 
       get isActive(): boolean { return this.data.status === "Active"; }
 

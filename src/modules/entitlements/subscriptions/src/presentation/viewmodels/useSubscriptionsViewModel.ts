@@ -3,6 +3,7 @@
  *
  * Manages tenant edition subscriptions — full lifecycle:
  * assign, change, renew, convert-trial, suspend, resume, cancel, revoke, resync.
+ * Also exposes billing actions: checkout, portal, cancel-stripe.
  * Pure .ts — no JSX. Returns typed interface for View.
  */
 "use client";
@@ -16,7 +17,7 @@ import { parseLocalizedNumber } from "@core/utils/number-parser";
 import type { EditionPromotionData } from "@modules/entitlements/editions/src/domain/entities/EditionPromotion";
 
 export function useSubscriptionsViewModel(tenantId: string) {
-      const { subscriptionRepository, editionRepository } = entitlementsContainer;
+      const { subscriptionRepository, editionRepository, billingRepository } = entitlementsContainer;
       const queryClient = useQueryClient();
       const { success, error: showError } = useEnhancedToast();
       const { t } = useI18n();
@@ -27,6 +28,11 @@ export function useSubscriptionsViewModel(tenantId: string) {
       const [showSuspendDialog, setShowSuspendDialog] = useState(false);
       const [showCancelDialog, setShowCancelDialog] = useState(false);
       const [showConvertDialog, setShowConvertDialog] = useState(false);
+      // ── Billing dialog state ──
+      const [showCheckoutDialog, setShowCheckoutDialog] = useState(false);
+      const [showCancelStripeDialog, setShowCancelStripeDialog] = useState(false);
+      const [checkoutUrl, setCheckoutUrl] = useState("");
+      const [cancelImmediately, setCancelImmediately] = useState(false);
 
       // ─── Form state ─────────────────────────────────────
       const [selectedEditionId, setSelectedEditionId] = useState("");
@@ -277,6 +283,63 @@ export function useSubscriptionsViewModel(tenantId: string) {
             convertMutation.mutate(convertType);
       }, [convertMutation, convertType]);
 
+      // ─── Billing mutations ──────────────────────────────
+      const checkoutMutation = useMutation({
+            mutationFn: async () => {
+                  if (!activeSubscription) throw new Error("No active subscription");
+                  const result = await billingRepository.createCheckoutSession(tenantId, {
+                        editionId: activeSubscription.editionId,
+                        subscriptionType: activeSubscription.type,
+                        currency: activeSubscription.currency,
+                        successUrl: `${window.location.origin}/entitlements/subscriptions?checkout=success`,
+                        cancelUrl: `${window.location.origin}/entitlements/subscriptions?checkout=canceled`,
+                  });
+                  return result;
+            },
+            onSuccess: (result) => {
+                  setCheckoutUrl(result.url);
+                  setShowCheckoutDialog(true);
+                  invalidate();
+                  success({ title: t("billing.checkoutSuccess"), description: "" });
+            },
+            onError: (err: Error) =>
+                  showError({ title: t("common.error"), description: err.message }),
+      });
+
+      const portalMutation = useMutation({
+            mutationFn: async () => {
+                  const result = await billingRepository.createBillingPortal(
+                        tenantId,
+                        window.location.href
+                  );
+                  return result;
+            },
+            onSuccess: (result) => {
+                  window.open(result.url, "_blank");
+                  success({ title: t("billing.portalSuccess"), description: t("billing.dialogs.portalOpened") });
+            },
+            onError: (err: Error) =>
+                  showError({ title: t("common.error"), description: err.message }),
+      });
+
+      const cancelStripeMutation = useMutation({
+            mutationFn: async (immediately: boolean) => {
+                  await billingRepository.cancelStripeSubscription(tenantId, immediately);
+            },
+            onSuccess: () => {
+                  invalidate();
+                  setShowCancelStripeDialog(false);
+                  setCancelImmediately(false);
+                  success({ title: t("billing.cancelSuccess"), description: "" });
+            },
+            onError: (err: Error) =>
+                  showError({ title: t("common.error"), description: err.message }),
+      });
+
+      const submitCancelStripe = useCallback(() => {
+            cancelStripeMutation.mutate(cancelImmediately);
+      }, [cancelStripeMutation, cancelImmediately]);
+
       // ─── Public interface ───────────────────────────────
       return {
             // Data
@@ -360,5 +423,19 @@ export function useSubscriptionsViewModel(tenantId: string) {
             // Refund options (for suspend/cancel)
             refundType, setRefundType,
             customRefundAmount, setCustomRefundAmount,
+
+            // Billing actions
+            sendPaymentLink: () => checkoutMutation.mutate(),
+            isSendingPaymentLink: checkoutMutation.isPending,
+            openBillingPortal: () => portalMutation.mutate(),
+            isOpeningPortal: portalMutation.isPending,
+            submitCancelStripe,
+            isCancelingStripe: cancelStripeMutation.isPending,
+
+            // Billing dialog state
+            showCheckoutDialog, setShowCheckoutDialog,
+            showCancelStripeDialog, setShowCancelStripeDialog,
+            checkoutUrl,
+            cancelImmediately, setCancelImmediately,
       };
 }
