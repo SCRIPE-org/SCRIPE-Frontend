@@ -75,3 +75,44 @@ export interface PagedResultModel<T> {
   items: T[];
   totalCount: number;
 }
+
+// ── Dashboard Models ──
+
+export interface BillingDashboardResponseModel {
+  mrr: number;
+  arr: number;
+  totalRevenue: number;
+  activeSubscriptions: number;
+  trialSubscriptions: number;
+  cancelledLast30Days: number;
+  churnRate: number;
+  revenueTrend: MonthlyRevenuePointModel[];
+  editionBreakdown: EditionBreakdownItemModel[];
+  currency: string;
+}
+
+export interface MonthlyRevenuePointModel {
+  month: string;
+  revenue: number;
+  newSubscriptions: number;
+}
+
+export interface EditionBreakdownItemModel {
+  editionId: string;
+  editionName: string;
+  activeCount: number;
+  revenue: number;
+}
+
+// ── Payment Link Models ──
+
+export interface PaymentLinkResponseModel {
+  url: string;
+  linkId: string;
+}
+
+export interface CreatePaymentLinkRequestModel {
+  editionId: string;
+  subscriptionType: string;
+  currency?: string;
+}

@@ -132,3 +132,58 @@ export interface CheckoutSession {
 export interface BillingPortal {
   url: string;
 }
+
+// ── Billing Dashboard (Server-Computed KPIs) ──
+
+export interface BillingDashboardData {
+  mrr: number;
+  arr: number;
+  totalRevenue: number;
+  activeSubscriptions: number;
+  trialSubscriptions: number;
+  cancelledLast30Days: number;
+  churnRate: number;
+  revenueTrend: MonthlyRevenuePoint[];
+  editionBreakdown: EditionBreakdownItem[];
+  currency: string;
+}
+
+export class BillingDashboard {
+  constructor(public readonly data: BillingDashboardData) {}
+
+  get mrr(): number { return this.data.mrr; }
+  get arr(): number { return this.data.arr; }
+  get totalRevenue(): number { return this.data.totalRevenue; }
+  get activeSubscriptions(): number { return this.data.activeSubscriptions; }
+  get trialSubscriptions(): number { return this.data.trialSubscriptions; }
+  get cancelledLast30Days(): number { return this.data.cancelledLast30Days; }
+  get churnRate(): number { return this.data.churnRate; }
+  get revenueTrend(): MonthlyRevenuePoint[] { return this.data.revenueTrend; }
+  get editionBreakdown(): EditionBreakdownItem[] { return this.data.editionBreakdown; }
+  get currency(): string { return this.data.currency; }
+
+  // ── Computed Properties ──
+  get totalSubscriptions(): number { return this.activeSubscriptions + this.trialSubscriptions; }
+  get hasRevenue(): boolean { return this.totalRevenue > 0; }
+  get isHealthy(): boolean { return this.churnRate < 5; }
+}
+
+export interface MonthlyRevenuePoint {
+  month: string;
+  revenue: number;
+  newSubscriptions: number;
+}
+
+export interface EditionBreakdownItem {
+  editionId: string;
+  editionName: string;
+  activeCount: number;
+  revenue: number;
+}
+
+// ── Payment Link ──
+
+export interface PaymentLink {
+  url: string;
+  linkId: string;
+}

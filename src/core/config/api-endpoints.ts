@@ -367,10 +367,13 @@ export const API_ENDPOINTS = {
         LIST: `${V1}/invoices`,
         BY_ID: (id: string) => `${V1}/invoices/${id}`,
         TRANSACTIONS: `${V1}/invoices/transactions`,
+        PDF: (id: string) => `${V1}/invoices/${id}/pdf`,
       },
       CHECKOUT: (tenantId: string) => `${V1}/billing/tenants/${tenantId}/checkout`,
       PORTAL: (tenantId: string) => `${V1}/billing/tenants/${tenantId}/portal`,
       CANCEL_STRIPE: (tenantId: string) => `${V1}/billing/tenants/${tenantId}/cancel-stripe`,
+      PAYMENT_LINK: (tenantId: string) => `${V1}/billing/tenants/${tenantId}/payment-link`,
+      DASHBOARD: `${V1}/billing/dashboard`,
     },
   },
 

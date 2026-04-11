@@ -292,6 +292,7 @@ export const SYSTEM_PERMISSIONS = {
   INVOICES_EXPORT: "invoices.export",
   TRANSACTIONS_VIEW: "transactions.view",
   BILLING_MANAGE: "billing.manage",
+  BILLING_DASHBOARD_VIEW: "billing.manage",
 
 } as const;
 
@@ -336,6 +337,7 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/entitlements/subscriptions/[tenantId]": [SYSTEM_PERMISSIONS.SUBSCRIPTIONS_VIEW],
   "/entitlements/overrides": [SYSTEM_PERMISSIONS.FEATURES_OVERRIDE],
   "/entitlements/invoices": [SYSTEM_PERMISSIONS.INVOICES_VIEW],
+  "/entitlements/billing-dashboard": [SYSTEM_PERMISSIONS.BILLING_DASHBOARD_VIEW],
   "/entitlements/transactions": [SYSTEM_PERMISSIONS.TRANSACTIONS_VIEW],
 
   // Messaging & Webhooks

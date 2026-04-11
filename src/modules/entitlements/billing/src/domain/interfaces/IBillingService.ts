@@ -10,6 +10,9 @@ import type {
       PaymentTransactionModel,
       CheckoutSessionResponseModel,
       BillingPortalResponseModel,
+      BillingDashboardResponseModel,
+      PaymentLinkResponseModel,
+      CreatePaymentLinkRequestModel,
       PagedResultModel,
 } from "../../data/models/BillingModels";
 
@@ -42,4 +45,15 @@ export interface IBillingService {
       ): Promise<CheckoutSessionResponseModel>;
       createBillingPortal(tenantId: string, returnUrl: string): Promise<BillingPortalResponseModel>;
       cancelStripeSubscription(tenantId: string, immediately: boolean): Promise<void>;
+
+      // ── Dashboard & Revenue ──
+      getDashboard(params?: { currency?: string }): Promise<BillingDashboardResponseModel>;
+      createPaymentLink(
+            tenantId: string,
+            data: CreatePaymentLinkRequestModel
+      ): Promise<PaymentLinkResponseModel>;
+
+      // ── PDF ──
+      downloadInvoicePdf(invoiceId: string): Promise<Blob>;
 }
+

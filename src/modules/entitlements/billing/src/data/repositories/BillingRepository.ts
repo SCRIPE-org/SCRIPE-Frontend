@@ -12,7 +12,9 @@ import type {
   PaymentTransaction,
   CheckoutSession,
   BillingPortal,
+  PaymentLink,
 } from "../../domain/entities/Invoice";
+import { BillingDashboard } from "../../domain/entities/Invoice";
 import type { IBillingService } from "../../domain/interfaces/IBillingService";
 import { BillingMapper } from "../mappers/BillingMapper";
 
@@ -92,4 +94,26 @@ export class BillingRepository implements IBillingRepository {
   async cancelStripeSubscription(tenantId: string, immediately: boolean): Promise<void> {
     await this.service.cancelStripeSubscription(tenantId, immediately);
   }
+
+  // ── Dashboard & Revenue ──
+
+  async getDashboard(params?: { currency?: string }): Promise<BillingDashboard> {
+    const result = await this.service.getDashboard(params);
+    return BillingMapper.toDashboard(result);
+  }
+
+  async createPaymentLink(
+    tenantId: string,
+    data: { editionId: string; subscriptionType: string; currency?: string }
+  ): Promise<PaymentLink> {
+    const result = await this.service.createPaymentLink(tenantId, data);
+    return BillingMapper.toPaymentLink(result);
+  }
+
+  // ── PDF Download ──
+
+  async downloadInvoicePdf(invoiceId: string): Promise<Blob> {
+    return this.service.downloadInvoicePdf(invoiceId);
+  }
 }
+

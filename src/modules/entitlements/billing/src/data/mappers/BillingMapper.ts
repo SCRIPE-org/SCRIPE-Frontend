@@ -4,6 +4,7 @@
 import {
   Invoice,
   InvoiceListItem,
+  BillingDashboard,
 } from "../../domain/entities/Invoice";
 import type {
   InvoiceData,
@@ -12,6 +13,10 @@ import type {
   PaymentTransaction,
   CheckoutSession,
   BillingPortal,
+  BillingDashboardData,
+  MonthlyRevenuePoint,
+  EditionBreakdownItem,
+  PaymentLink,
 } from "../../domain/entities/Invoice";
 import type {
   InvoiceResponseModel,
@@ -20,6 +25,8 @@ import type {
   PaymentTransactionModel,
   CheckoutSessionResponseModel,
   BillingPortalResponseModel,
+  BillingDashboardResponseModel,
+  PaymentLinkResponseModel,
 } from "../models/BillingModels";
 
 export class BillingMapper {
@@ -104,4 +111,41 @@ export class BillingMapper {
       url: dto.url ?? "",
     };
   }
+
+  // ── Dashboard (Server-Computed KPIs) ──
+
+  static toDashboard(dto: BillingDashboardResponseModel): BillingDashboard {
+    const data: BillingDashboardData = {
+      mrr: dto.mrr ?? 0,
+      arr: dto.arr ?? 0,
+      totalRevenue: dto.totalRevenue ?? 0,
+      activeSubscriptions: dto.activeSubscriptions ?? 0,
+      trialSubscriptions: dto.trialSubscriptions ?? 0,
+      cancelledLast30Days: dto.cancelledLast30Days ?? 0,
+      churnRate: dto.churnRate ?? 0,
+      revenueTrend: (dto.revenueTrend ?? []).map((p) => ({
+        month: p.month ?? "",
+        revenue: p.revenue ?? 0,
+        newSubscriptions: p.newSubscriptions ?? 0,
+      })),
+      editionBreakdown: (dto.editionBreakdown ?? []).map((e) => ({
+        editionId: e.editionId ?? "",
+        editionName: e.editionName ?? "Unknown",
+        activeCount: e.activeCount ?? 0,
+        revenue: e.revenue ?? 0,
+      })),
+      currency: dto.currency ?? "USD",
+    };
+    return new BillingDashboard(data);
+  }
+
+  // ── Payment Link ──
+
+  static toPaymentLink(dto: PaymentLinkResponseModel): PaymentLink {
+    return {
+      url: dto.url ?? "",
+      linkId: dto.linkId ?? "",
+    };
+  }
 }
+

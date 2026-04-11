@@ -10,6 +10,9 @@ import type {
   PaymentTransactionModel,
   CheckoutSessionResponseModel,
   BillingPortalResponseModel,
+  BillingDashboardResponseModel,
+  PaymentLinkResponseModel,
+  CreatePaymentLinkRequestModel,
   PagedResultModel,
 } from "../models/BillingModels";
 
@@ -90,4 +93,33 @@ export class BillingService implements IBillingService {
       { immediately }
     );
   }
+
+  // ── Dashboard & Revenue ──
+
+  async getDashboard(params?: { currency?: string }): Promise<BillingDashboardResponseModel> {
+    const url = buildUrl(API_ENDPOINTS.ENTITLEMENTS.BILLING.DASHBOARD, {
+      currency: params?.currency,
+    });
+    return this.api.get<BillingDashboardResponseModel>(url);
+  }
+
+  async createPaymentLink(
+    tenantId: string,
+    data: CreatePaymentLinkRequestModel
+  ): Promise<PaymentLinkResponseModel> {
+    return this.api.post<PaymentLinkResponseModel>(
+      API_ENDPOINTS.ENTITLEMENTS.BILLING.PAYMENT_LINK(tenantId),
+      data
+    );
+  }
+
+  // ── PDF Download ──
+
+  async downloadInvoicePdf(invoiceId: string): Promise<Blob> {
+    return this.api.get<Blob>(
+      API_ENDPOINTS.ENTITLEMENTS.BILLING.INVOICES.PDF(invoiceId),
+      { responseType: "blob" } as never
+    );
+  }
 }
+

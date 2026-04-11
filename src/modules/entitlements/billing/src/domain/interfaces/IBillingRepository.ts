@@ -1,5 +1,6 @@
 import type { PagedResult } from "@modules/identity/core/domain/types";
-import type { Invoice, InvoiceListItem, PaymentTransaction, CheckoutSession, BillingPortal } from "../entities/Invoice";
+import type { Invoice, InvoiceListItem, PaymentTransaction, CheckoutSession, BillingPortal, PaymentLink } from "../entities/Invoice";
+import type { BillingDashboard } from "../entities/Invoice";
 
 export interface IBillingRepository {
   // Queries
@@ -18,4 +19,16 @@ export interface IBillingRepository {
   }): Promise<CheckoutSession>;
   createBillingPortal(tenantId: string, returnUrl: string): Promise<BillingPortal>;
   cancelStripeSubscription(tenantId: string, immediately: boolean): Promise<void>;
+
+  // Dashboard & Revenue
+  getDashboard(params?: { currency?: string }): Promise<BillingDashboard>;
+  createPaymentLink(tenantId: string, data: {
+    editionId: string;
+    subscriptionType: string;
+    currency?: string;
+  }): Promise<PaymentLink>;
+
+  // PDF
+  downloadInvoicePdf(invoiceId: string): Promise<Blob>;
 }
+
