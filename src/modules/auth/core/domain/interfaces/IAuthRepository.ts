@@ -2,9 +2,17 @@ import { LoginRequest, LoginResponse } from "../entities/Auth";
 import { User } from "../entities/User";
 import { Result } from "@core/common/types/result";
 
+/** Result of a successful login, carrying subscription metadata alongside the User */
+export interface LoginResult {
+  user: User;
+  subscriptionStatus: string | null;
+  gracePhase: string | null;
+  editionName: string | null;
+}
+
 export interface IAuthRepository {
-  login(credentials: LoginRequest): Promise<User>;
-  verify2FA(username: string, password: string, code: string): Promise<User>;
+  login(credentials: LoginRequest): Promise<LoginResult>;
+  verify2FA(username: string, password: string, code: string): Promise<LoginResult>;
   logout(): Promise<void>;
   getMe(): Promise<User>;
   hasToken(): boolean;

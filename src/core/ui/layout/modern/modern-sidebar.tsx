@@ -96,7 +96,7 @@ export function ModernSidebar({
           <div className="scrollbar-none flex flex-1 flex-col items-center gap-1 overflow-y-auto py-2">
             {navigation.map((item) => {
               const Icon = item.icon;
-              const isActive = isNavigationItemActive(item, pathname);
+              const isActive = isNavigationItemActive(item, pathname, navigation);
 
               if (!Icon) return null;
 

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Subscriptions View
  *
  * Tenant-scoped view showing subscription history with full lifecycle actions:
@@ -47,6 +47,7 @@ const STATUS_VARIANTS: Record<string, "default" | "secondary" | "outline" | "des
       Expired: "outline",
       Suspended: "destructive",
       PendingPayment: "secondary",
+      PastDue: "destructive",
 };
 
 const TYPE_VARIANTS: Record<string, "default" | "secondary" | "outline"> = {
@@ -54,6 +55,26 @@ const TYPE_VARIANTS: Record<string, "default" | "secondary" | "outline"> = {
       Monthly: "secondary",
       Yearly: "secondary",
       Trial: "outline",
+};
+
+/** Maps PascalCase API values → camelCase locale keys */
+const STATUS_KEY_MAP: Record<string, string> = {
+      Active: "active",
+      Trialing: "trialing",
+      Canceled: "canceled",
+      Expired: "expired",
+      Suspended: "suspended",
+      PendingPayment: "pendingPayment",
+      PastDue: "pastDue",
+};
+
+const TYPE_KEY_MAP: Record<string, string> = {
+      Lifetime: "lifetime",
+      Monthly: "monthly",
+      Yearly: "yearly",
+      Trial: "trial",
+      Base: "base",
+      AddOn: "addOn",
 };
 
 /* ============================================
@@ -125,7 +146,7 @@ export function SubscriptionsView({ tenantId }: SubscriptionsViewProps) {
                               label: t("tenant.subscriptionType"),
                               render: (value: string) => (
                                     <Badge variant={TYPE_VARIANTS[value] ?? "outline"}>
-                                          {t(`entSubscriptions.${value.toLowerCase()}`) || value}
+                                          {t(`entSubscriptions.${TYPE_KEY_MAP[value] ?? value}`) || value}
                                     </Badge>
                               ),
                         },
@@ -134,7 +155,7 @@ export function SubscriptionsView({ tenantId }: SubscriptionsViewProps) {
                               label: t("common.status"),
                               render: (value: string) => (
                                     <Badge variant={STATUS_VARIANTS[value] ?? "outline"}>
-                                          {t(`entSubscriptions.${value.toLowerCase()}`) || value}
+                                          {t(`entSubscriptions.${STATUS_KEY_MAP[value] ?? value}`) || value}
                                     </Badge>
                               ),
                         },
@@ -297,6 +318,22 @@ export function SubscriptionsView({ tenantId }: SubscriptionsViewProps) {
                                           onClick: async () => vm.setShowConvertDialog(true),
                                     });
                               }
+                        } else if (vm.hasPendingPaymentSubscription) {
+                              // GAP-J: PendingPayment — show payment link + revoke
+                              actions.push({
+                                    label: t("billing.actions.createCheckout") || "Send Payment Link",
+                                    icon: <CreditCard className="h-4 w-4" />,
+                                    variant: "default",
+                                    onClick: async () => vm.sendPaymentLink(),
+                                    loading: vm.isSendingPaymentLink,
+                              });
+                              actions.push({
+                                    label: t("entSubscriptions.revoke") || "Revoke",
+                                    icon: <Ban className="h-4 w-4" />,
+                                    variant: "outline",
+                                    className: "text-destructive",
+                                    onClick: async () => vm.setShowCancelDialog(true),
+                              });
                         } else if (vm.hasSuspendedSubscription) {
                               // Resume
                               actions.push({
@@ -323,9 +360,9 @@ export function SubscriptionsView({ tenantId }: SubscriptionsViewProps) {
                               onClick: async () => vm.resyncPermissions(),
                         });
 
-                        // ── Billing actions (only when there's an active subscription) ──
-                        if (vm.hasActiveSubscription) {
-                              // Send Payment Link
+                        // ── GAP-I: Billing actions (only for PAID active subscriptions) ──
+                        if (vm.hasActiveSubscription && !vm.isFreeEdition) {
+                              // Send Payment Link (for renewals/upgrades)
                               actions.push({
                                     label: t("billing.actions.createCheckout") || "Send Payment Link",
                                     icon: <CreditCard className="h-4 w-4" />,

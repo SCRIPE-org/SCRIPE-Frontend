@@ -82,7 +82,7 @@ export function VaultLayout({ children }: VaultLayoutProps) {
               name: t(child.name) || child.name,
               href: child.href!,
               icon: child.icon,
-              active: isNavigationItemActive(child, pathname),
+              active: isNavigationItemActive(child, pathname, navigation),
             }))
           : group.href
             ? [
@@ -90,7 +90,7 @@ export function VaultLayout({ children }: VaultLayoutProps) {
                 name: t(group.name) || group.name,
                 href: group.href,
                 icon: group.icon,
-                active: isNavigationItemActive(group, pathname),
+                active: isNavigationItemActive(group, pathname, navigation),
               },
             ]
             : [],
@@ -116,12 +116,12 @@ export function VaultLayout({ children }: VaultLayoutProps) {
       { label: t("nav.home") || "Home", href: "/" },
     ];
     for (const group of navigation) {
-      if (group.href && isNavigationItemActive(group, pathname)) {
+      if (group.href && isNavigationItemActive(group, pathname, navigation)) {
         segs.push({ label: t(group.name) || group.name });
         break;
       }
       if (group.children) {
-        const active = group.children.find((c) => c.href && isNavigationItemActive(c, pathname));
+        const active = group.children.find((c) => c.href && isNavigationItemActive(c, pathname, navigation));
         if (active) {
           segs.push({ label: t(group.name) || group.name });
           segs.push({ label: t(active.name) || active.name });

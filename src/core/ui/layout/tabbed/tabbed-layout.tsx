@@ -56,8 +56,8 @@ export function TabbedLayout({ children, sidebarOpen, onSidebarOpenChange }: Tab
   const activeTabIndex = useMemo(() => {
     const idx = tabs.findIndex(
       (tab) =>
-        isNavigationItemActive(tab, pathname) ||
-        tab.children?.some((child) => isNavigationItemActive(child, pathname))
+        isNavigationItemActive(tab, pathname, navigation) ||
+        tab.children?.some((child) => isNavigationItemActive(child, pathname, navigation))
     );
     return idx >= 0 ? idx : 0;
   }, [tabs, pathname]);

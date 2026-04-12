@@ -26,6 +26,12 @@ interface AppState {
   setAuth: (user: User, permissions: PermissionCode[], roles: AdminRole[]) => void;
   logout: () => void;
 
+  // Subscription State (populated from login response)
+  subscriptionStatus: string | null;
+  gracePhase: string | null;
+  editionName: string | null;
+  setSubscriptionInfo: (status: string | null, gracePhase: string | null, editionName: string | null) => void;
+
   // Tenant context (for tenant-aware logout redirect)
   tenantCode: string | null;
   setTenantCode: (code: string | null) => void;
@@ -78,8 +84,18 @@ export const useAppStore = create<AppState>()(
           roles: [],
           restrictedFields: {},
           tenantCode: null,
+          subscriptionStatus: null,
+          gracePhase: null,
+          editionName: null,
         });
       },
+
+      // Subscription State
+      subscriptionStatus: null,
+      gracePhase: null,
+      editionName: null,
+      setSubscriptionInfo: (status, gracePhase, editionName) =>
+        set({ subscriptionStatus: status, gracePhase, editionName }),
 
       // Tenant context
       tenantCode: null,
@@ -101,6 +117,9 @@ export const useAppStore = create<AppState>()(
         roles: state.roles,
         restrictedFields: state.restrictedFields,
         tenantCode: state.tenantCode,
+        subscriptionStatus: state.subscriptionStatus,
+        gracePhase: state.gracePhase,
+        editionName: state.editionName,
       }),
       onRehydrateStorage: () => (state) => {
         // With in-memory tokens, the access token is ALWAYS null after page reload.

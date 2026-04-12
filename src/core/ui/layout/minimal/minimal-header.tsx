@@ -67,7 +67,7 @@ export function MinimalHeader({ }: MinimalHeaderProps) {
                 }
 
                 // Simple link (no children)
-                const isActive = item.href ? isNavigationItemActive(item, pathname) : false;
+                const isActive = item.href ? isNavigationItemActive(item, pathname, navigation) : false;
                 return (
                   <Link
                     key={item.name}

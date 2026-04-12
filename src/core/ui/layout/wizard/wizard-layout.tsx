@@ -58,7 +58,7 @@ export function WizardLayout({ children }: WizardLayoutProps) {
     let foundActive = false;
     for (const item of navigation) {
       const href = item.href || item.children?.[0]?.href || "#";
-      const isActive = isNavigationItemActive(item, pathname);
+      const isActive = isNavigationItemActive(item, pathname, navigation);
       if (isActive) foundActive = true;
       items.push({
         name: item.name,

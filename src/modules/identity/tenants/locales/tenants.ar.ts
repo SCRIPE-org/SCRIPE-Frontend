@@ -299,6 +299,8 @@ export const ar = {
     pastDueBanner: "الدفع متأخر — الاشتراك في خطر. جدّد لتجنب التعليق.",
     canceledBanner: "تم إلغاء الاشتراك.",
     expiredBanner: "انتهى الاشتراك.",
+    pendingPayment: "بانتظار الدفع",
+    pendingPaymentBanner: "هذا المستأجر لديه دفعة معلقة. أنشئ رابط دفع من صفحة الاشتراكات.",
     reassignPlan: "إعادة تعيين الخطة",
     fallbackInfo: "عند الانتهاء",
     fallbackOnAction: "عند الإلغاء/التعليق",

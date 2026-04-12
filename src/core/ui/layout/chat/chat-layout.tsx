@@ -65,7 +65,7 @@ export function ChatLayout({ children }: ChatLayoutProps) {
               {category.category}
             </div>
             {category.items.map((item) => {
-              const isActive = item.href && isNavigationItemActive(item, pathname);
+              const isActive = item.href && isNavigationItemActive(item, pathname, navigation);
               const ChannelIcon = item.icon || Hash;
               return (
                 <button

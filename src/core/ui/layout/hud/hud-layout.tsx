@@ -92,7 +92,7 @@ export function HUDLayout({ children }: HUDLayoutProps) {
   };
 
   const renderFlyoutItem = (item: NavigationItem, level: number = 0) => {
-    const isActive = isNavigationItemActive(item, pathname);
+    const isActive = isNavigationItemActive(item, pathname, navigation);
     const Icon = item.icon;
     const hasChildren = item.children && item.children.length > 0;
 
@@ -217,8 +217,8 @@ export function HUDLayout({ children }: HUDLayoutProps) {
           {dockItems.map((item) => {
             const Icon = item.icon;
             const isActive =
-              isNavigationItemActive(item, pathname) ||
-              item.children?.some((c) => isNavigationItemActive(c, pathname));
+              isNavigationItemActive(item, pathname, navigation) ||
+              item.children?.some((c) => isNavigationItemActive(c, pathname, navigation));
             const hasFlyout = activeFlyout === item.name;
 
             return (

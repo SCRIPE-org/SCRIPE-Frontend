@@ -264,15 +264,45 @@ export const getNavigationItems = (
  *
  * Uses EXACT match for leaf items — no URL prefix matching.
  * Parent items are active if any child in the menu tree matches.
+ *
+ * When `allItems` is provided (the full navigation tree), the function
+ * also falls back to URL prefix matching when NO exact match exists
+ * in the entire tree. This handles detail/child pages like /tenants/{id}
+ * without false positives between siblings.
+ *
+ * @param item      The navigation item to check
+ * @param pathname  The current URL pathname
+ * @param allItems  Optional: full navigation tree (enables prefix fallback)
  */
-export const isNavigationItemActive = (item: NavigationItem, pathname: string): boolean => {
+export const isNavigationItemActive = (
+  item: NavigationItem,
+  pathname: string,
+  allItems?: NavigationItem[]
+): boolean => {
   // Exact match for leaf items
   if (item.href && pathname === item.href) return true;
 
-  // Recurse through menu tree children (NOT URL prefix)
+  // Recurse through menu tree children (exact match)
   if (item.children) {
-    return item.children.some((child) => isNavigationItemActive(child, pathname));
+    if (item.children.some((child) => isNavigationItemActive(child, pathname))) {
+      return true;
+    }
   }
+
+  // ── Prefix fallback for detail/child pages ──
+  // Only when full tree context is provided AND no exact match anywhere
+  if (allItems) {
+    const { isMatchWithFallback, hasActiveChildWithFallback } = require("@core/ui/layout/navigation/nav-utils");
+    if (item.href && isMatchWithFallback(item.href, pathname, allItems)) return true;
+    if (item.children) {
+      return item.children.some(
+        (child: NavigationItem) =>
+          (child.href && isMatchWithFallback(child.href, pathname, allItems)) ||
+          hasActiveChildWithFallback(child, pathname, allItems)
+      );
+    }
+  }
+
   return false;
 };
 

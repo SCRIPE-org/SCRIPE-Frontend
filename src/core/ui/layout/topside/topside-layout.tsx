@@ -61,7 +61,7 @@ export function TopSideLayout({ children }: TopSideLayoutProps) {
     for (const group of groups) {
       if (group.children) {
         for (const child of group.children) {
-          if (child.href && isNavigationItemActive(child, pathname)) {
+          if (child.href && isNavigationItemActive(child, pathname, navigation)) {
             return group;
           }
         }
@@ -98,7 +98,7 @@ export function TopSideLayout({ children }: TopSideLayoutProps) {
           <nav className="hidden flex-1 items-center justify-center gap-1 lg:flex">
             {directItems.map((item) => {
               const Icon = item.icon;
-              const isActive = isNavigationItemActive(item, pathname);
+              const isActive = isNavigationItemActive(item, pathname, navigation);
               return (
                 <button
                   key={item.name}
@@ -173,7 +173,7 @@ export function TopSideLayout({ children }: TopSideLayoutProps) {
             <ScrollArea className="flex-1 py-1">
               {sidebarItems.map((item) => {
                 const Icon = item.icon;
-                const isActive = item.href && isNavigationItemActive(item, pathname);
+                const isActive = item.href && isNavigationItemActive(item, pathname, navigation);
                 return (
                   <button
                     key={item.name}

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import type React from "react";
 import { useState, useMemo } from "react";
@@ -94,7 +94,7 @@ export function FeedLayout({ children }: FeedLayoutProps) {
           <ScrollArea className="flex-1 py-3">
             {navItems.map((item) => {
               const Icon = item.icon;
-              const isActive = isNavigationItemActive(item, pathname);
+              const isActive = isNavigationItemActive(item, pathname, navigation);
               return (
                 <button
                   key={item.name}

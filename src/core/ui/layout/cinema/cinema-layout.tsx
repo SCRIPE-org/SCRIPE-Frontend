@@ -94,7 +94,7 @@ export function CinemaLayout({ children }: CinemaLayoutProps) {
         items.push({
           label: t(item.name) || item.name,
           href: item.href,
-          active: isNavigationItemActive(item, pathname),
+          active: isNavigationItemActive(item, pathname, navigation),
           icon: item.icon,
           badge: item.badge,
         });
@@ -105,7 +105,7 @@ export function CinemaLayout({ children }: CinemaLayoutProps) {
             items.push({
               label: t(child.name) || child.name,
               href: child.href,
-              active: isNavigationItemActive(child, pathname),
+              active: isNavigationItemActive(child, pathname, navigation),
               icon: child.icon,
               badge: child.badge,
             });
@@ -124,7 +124,7 @@ export function CinemaLayout({ children }: CinemaLayoutProps) {
   // Get current page title
   const currentTitle = useMemo(() => {
     for (const item of flatItems) {
-      if (item.href && isNavigationItemActive(item, pathname)) {
+      if (item.href && isNavigationItemActive(item, pathname, navigation)) {
         return t(item.name) || item.name;
       }
     }

@@ -9,6 +9,7 @@ import { cn } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@core/ui/collapsible";
 import { isNavigationItemActive, type NavigationItem } from "@core/config/navigation";
+import { isMatchWithFallback } from "@core/ui/layout/navigation/nav-utils";
 import { useDynamicNavigation } from "@core/ui/navigation/dynamic-navigation";
 
 // ---------------------------------------------------------------------------
@@ -142,12 +143,14 @@ const variantStyles: Record<
 // Auto-expand helpers
 // ---------------------------------------------------------------------------
 
-function shouldExpandParent(item: NavigationItem, pathname: string): boolean {
+function shouldExpandParent(item: NavigationItem, pathname: string, allItems: NavigationItem[]): boolean {
   if (!item.children) return false;
   return item.children.some((child) => {
-    // Exact match only — no prefix matching
+    // Exact match first
     if (child.href && pathname === child.href) return true;
-    if (child.children) return shouldExpandParent(child, pathname);
+    // Prefix fallback for detail/child pages
+    if (child.href && isMatchWithFallback(child.href, pathname, allItems)) return true;
+    if (child.children) return shouldExpandParent(child, pathname, allItems);
     return false;
   });
 }
@@ -155,7 +158,7 @@ function shouldExpandParent(item: NavigationItem, pathname: string): boolean {
 function collectAutoExpanded(items: NavigationItem[], pathname: string): string[] {
   const result: string[] = [];
   const check = (item: NavigationItem) => {
-    if (shouldExpandParent(item, pathname)) {
+    if (shouldExpandParent(item, pathname, items)) {
       result.push(item.name);
     }
     item.children?.forEach(check);
@@ -215,7 +218,7 @@ export function NavRenderer({
   const style = variantStyles[variant];
 
   const renderItem = (item: NavigationItem, level: number): ReactNode => {
-    const isActive = isNavigationItemActive(item, pathname);
+    const isActive = isNavigationItemActive(item, pathname, items);
     const isExpanded = expandedItems.includes(item.name);
     const hasChildren = item.children && item.children.length > 0;
     const Icon = item.icon;

@@ -1663,5 +1663,21 @@ export const en = {
       activeUsers: "Total Roles",
       loginsToday: "Logins Today",
     }
-  }
+  },
+  subscription: {
+    grace: {
+      warningTitle: "Payment Overdue",
+      warningDesc: "Your {edition} subscription payment is overdue. Please update your payment method to avoid service interruption.",
+      reducedTitle: "Service Reduced",
+      reducedDesc: "Your {edition} subscription is past due. Some features have been restricted. Please complete payment to restore full access.",
+      fallbackTitle: "Limited Access",
+      fallbackDesc: "Your {edition} subscription is critically overdue. Only essential features are available. Complete payment immediately to restore access.",
+    },
+    paymentWall: {
+      title: "Payment Required",
+      description: "Your subscription to {edition} is pending payment. Please contact your system administrator to complete the payment and activate your account.",
+      contactAdmin: "Contact your system administrator to generate a payment link.",
+      yourPlan: "your plan",
+    },
+  },
 };

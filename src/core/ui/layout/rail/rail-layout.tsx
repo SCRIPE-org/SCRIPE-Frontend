@@ -118,8 +118,8 @@ export function RailLayout({ children }: RailLayoutProps) {
               const Icon = item.icon;
               const hasChildren = item.children && item.children.length > 0;
               const isActive = item.href
-                ? isNavigationItemActive(item, pathname)
-                : item.children?.some((c) => c.href && isNavigationItemActive(c, pathname));
+                ? isNavigationItemActive(item, pathname, navigation)
+                : item.children?.some((c) => c.href && isNavigationItemActive(c, pathname, navigation));
               const isPopoverOpen = activePopover === item.name;
 
               return (
@@ -178,7 +178,7 @@ export function RailLayout({ children }: RailLayoutProps) {
             </div>
             {activePopoverItem.children.map((child) => {
               const ChildIcon = child.icon;
-              const isChildActive = child.href ? isNavigationItemActive(child, pathname) : false;
+              const isChildActive = child.href ? isNavigationItemActive(child, pathname, navigation) : false;
               return (
                 <button
                   key={child.name}

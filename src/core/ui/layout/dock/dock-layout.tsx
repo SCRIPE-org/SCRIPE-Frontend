@@ -183,7 +183,7 @@ export function DockLayout({ children }: DockLayoutProps) {
             >
               {dockItems.map((item, index) => {
                 const Icon = item.icon;
-                const isActive = isNavigationItemActive(item, pathname);
+                const isActive = isNavigationItemActive(item, pathname, navigation);
                 const isHovered = hoveredIndex === index;
                 const isNeighbor = hoveredIndex !== null && Math.abs(hoveredIndex - index) === 1;
 

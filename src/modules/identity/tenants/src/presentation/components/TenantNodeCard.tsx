@@ -47,6 +47,7 @@ import {
       Play,
       ArrowUpCircle,
       Loader2,
+      CreditCard,
 } from "lucide-react";
 import { systemContainer } from "@modules/identity/di";
 import type { TenantTreeNode, Tenant } from "../../domain/entities/Tenant";
@@ -332,6 +333,17 @@ export function TenantNodeCard({
                                           </Badge>
                                     )}
 
+                                    {/* Pending Payment badge */}
+                                    {node.subscriptionStatus === "PendingPayment" && (
+                                          <Badge
+                                                variant="outline"
+                                                className="gap-1 text-xs border-amber-500/50 bg-amber-500/10 text-amber-600 dark:text-amber-400"
+                                          >
+                                                <CreditCard className="h-3 w-3" />
+                                                {t("tenant.pendingPayment") || "Pending Payment"}
+                                          </Badge>
+                                    )}
+
                                     {/* Days remaining chip */}
                                     {status === "active" && daysLeft !== null && daysLeft > 0 && (
                                           <Badge
@@ -413,6 +425,16 @@ export function TenantNodeCard({
                                                 <div className="text-sm">
                                                       <p className="font-medium text-red-500">
                                                             {t("tenant.expiredBanner")}
+                                                      </p>
+                                                </div>
+                                          </div>
+                                    )}
+                                    {node.subscriptionStatus === "PendingPayment" && (
+                                          <div className="mt-3 flex items-start gap-2 rounded-lg border border-amber-500/30 bg-amber-500/5 p-3">
+                                                <CreditCard className="h-4 w-4 shrink-0 text-amber-500 mt-0.5" />
+                                                <div className="text-sm">
+                                                      <p className="font-medium text-amber-600 dark:text-amber-400">
+                                                            {t("tenant.pendingPaymentBanner") || "This tenant has a pending payment. Generate a payment link from the subscriptions page."}
                                                       </p>
                                                 </div>
                                           </div>

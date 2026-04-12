@@ -163,7 +163,7 @@ export function BottomBarLayout({ children }: BottomBarLayoutProps) {
       >
         {barItems.map((item) => {
           const Icon = item.icon;
-          const isActive = isNavigationItemActive(item, pathname);
+          const isActive = isNavigationItemActive(item, pathname, navigation);
           return (
             <button
               key={item.name}

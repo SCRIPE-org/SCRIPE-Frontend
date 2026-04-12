@@ -63,7 +63,7 @@ export function SpotlightLayout({ children }: SpotlightLayoutProps) {
         pills.push({
           label: t(item.name) || item.name,
           href: item.href,
-          active: isNavigationItemActive(item, pathname),
+          active: isNavigationItemActive(item, pathname, navigation),
           icon: item.icon,
           badge: item.badge,
         });
@@ -74,7 +74,7 @@ export function SpotlightLayout({ children }: SpotlightLayoutProps) {
             pills.push({
               label: t(child.name) || child.name,
               href: child.href,
-              active: isNavigationItemActive(child, pathname),
+              active: isNavigationItemActive(child, pathname, navigation),
               icon: child.icon,
               badge: child.badge,
             });

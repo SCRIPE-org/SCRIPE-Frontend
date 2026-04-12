@@ -120,7 +120,7 @@ export function ShelfLayout({ children }: ShelfLayoutProps) {
             <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-6">
               {flatItems.map((item) => {
                 const Icon = item.icon;
-                const isActive = isNavigationItemActive(item, pathname);
+                const isActive = isNavigationItemActive(item, pathname, navigation);
                 return (
                   <button
                     key={item.name}
@@ -149,7 +149,7 @@ export function ShelfLayout({ children }: ShelfLayoutProps) {
           <div className="flex h-[calc(100%-16px)] items-center justify-around px-2">
             {flatItems.slice(0, 5).map((item) => {
               const Icon = item.icon;
-              const isActive = isNavigationItemActive(item, pathname);
+              const isActive = isNavigationItemActive(item, pathname, navigation);
               return (
                 <button
                   key={item.name}

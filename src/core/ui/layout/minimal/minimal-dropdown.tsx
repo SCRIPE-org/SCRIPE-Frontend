@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { cn } from "@core/common/utils";
 import type { NavigationItem } from "@core/config/navigation";
 import { isNavigationItemActive } from "@core/config/navigation";
+import { useDynamicNavigation } from "@core/ui/navigation/dynamic-navigation";
 
 interface MinimalDropdownProps {
   item: NavigationItem;
@@ -24,7 +25,8 @@ export function MinimalDropdown({ item, onNavigate }: MinimalDropdownProps) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
-  const isActive = isNavigationItemActive(item, pathname);
+  const navigation = useDynamicNavigation();
+  const isActive = isNavigationItemActive(item, pathname, navigation);
 
   // Close on outside click
   useEffect(() => {

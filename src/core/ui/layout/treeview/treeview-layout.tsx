@@ -44,6 +44,7 @@ function TreeNode({
   direction,
   expandedNodes,
   toggleNode,
+  allItems,
 }: {
   item: NavigationItem;
   level: number;
@@ -53,9 +54,10 @@ function TreeNode({
   direction: string;
   expandedNodes: Set<string>;
   toggleNode: (name: string) => void;
+  allItems: NavigationItem[];
 }) {
   const hasChildren = item.children && item.children.length > 0;
-  const isActive = isNavigationItemActive(item, pathname);
+  const isActive = isNavigationItemActive(item, pathname, allItems);
   const isExpanded = expandedNodes.has(item.name);
   const Icon = item.icon;
   const isRTL = direction === "rtl";
@@ -128,6 +130,7 @@ function TreeNode({
               direction={direction}
               expandedNodes={expandedNodes}
               toggleNode={toggleNode}
+              allItems={allItems}
             />
           ))}
         </div>
@@ -165,7 +168,7 @@ export function TreeViewLayout({ children }: TreeViewLayoutProps) {
       for (const item of items) {
         if (item.children) {
           for (const child of item.children) {
-            if (child.href && isNavigationItemActive(child, pathname)) {
+            if (child.href && isNavigationItemActive(child, pathname, navigation)) {
               expanded.add(item.name);
             }
           }
@@ -240,6 +243,7 @@ export function TreeViewLayout({ children }: TreeViewLayoutProps) {
               direction={direction}
               expandedNodes={expandedNodes}
               toggleNode={toggleNode}
+              allItems={navigation}
             />
           ))}
         </div>

@@ -281,6 +281,8 @@ export const en = {
     pastDueBanner: "Payment past due - subscription at risk. Renew to avoid suspension.",
     canceledBanner: "Subscription has been canceled.",
     expiredBanner: "Subscription has expired.",
+    pendingPayment: "Pending Payment",
+    pendingPaymentBanner: "This tenant has a pending payment. Generate a payment link from the subscriptions page.",
     reassignPlan: "Reassign Plan",
     fallbackInfo: "On expiry",
     fallbackOnAction: "On cancel/suspend",

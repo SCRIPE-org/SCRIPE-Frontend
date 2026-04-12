@@ -105,7 +105,7 @@ export function TerminalLayout({ children }: TerminalLayoutProps) {
           </div>
           <ScrollArea className="flex-1 py-1">
             {commands.map((item) => {
-              const isActive = item.href && isNavigationItemActive(item, pathname);
+              const isActive = item.href && isNavigationItemActive(item, pathname, navigation);
               return (
                 <button
                   key={item.name}
@@ -174,7 +174,7 @@ export function TerminalLayout({ children }: TerminalLayoutProps) {
               </div>
               <ScrollArea className="flex-1 px-2 py-1">
                 {commands.map((item) => {
-                  const isActive = item.href && isNavigationItemActive(item, pathname);
+                  const isActive = item.href && isNavigationItemActive(item, pathname, navigation);
                   return (
                     <button
                       key={item.name}

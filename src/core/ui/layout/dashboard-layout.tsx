@@ -8,6 +8,8 @@ import { useSettings } from "@core/providers/settings-provider";
 import { useAdminSettingsSync } from "@core/providers/useAdminSettingsSync";
 import { TenantBrandingProvider } from "@core/providers/tenant-branding-provider";
 import { TenantContextBanner } from "@core/ui/layout/shared/tenant-context-banner";
+import { GracePeriodBanner } from "@core/components/GracePeriodBanner";
+import { PaymentWallDialog } from "@core/components/PaymentWallDialog";
 
 // Default layout — statically imported (always needed, no lazy-load delay)
 import { NavigationLayout } from "@core/ui/layout/navigation/navigation-layout";
@@ -330,6 +332,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   return (
     <TenantBrandingProvider>
       <TenantContextBanner />
+      <GracePeriodBanner />
+      <PaymentWallDialog />
       {renderLayout()}
     </TenantBrandingProvider>
   );

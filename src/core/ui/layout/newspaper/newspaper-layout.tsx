@@ -65,10 +65,10 @@ export function NewspaperLayout({ children }: NewspaperLayoutProps) {
   // Active tab
   const activeTab = useMemo(() => {
     for (const item of navigation) {
-      if (item.href && isNavigationItemActive(item, pathname)) return item;
+      if (item.href && isNavigationItemActive(item, pathname, navigation)) return item;
       if (item.children) {
         for (const child of item.children) {
-          if (child.href && isNavigationItemActive(child, pathname)) return item;
+          if (child.href && isNavigationItemActive(child, pathname, navigation)) return item;
         }
       }
     }
@@ -209,7 +209,7 @@ export function NewspaperLayout({ children }: NewspaperLayoutProps) {
                       )}
                     >
                       {tab.children!.map((child) => {
-                        const childActive = child.href && isNavigationItemActive(child, pathname);
+                        const childActive = child.href && isNavigationItemActive(child, pathname, navigation);
                         const ChildIcon = child.icon;
                         return (
                           <button

@@ -13,7 +13,7 @@ import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { ScrollArea } from "@core/ui/scroll-area";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@core/ui/collapsible";
-import { isExactMatch, hasActiveChild } from "./nav-utils";
+import { isMatchWithFallback, hasActiveChildWithFallback } from "./nav-utils";
 import {
   getPanelItemClasses,
   getPanelParentClasses,
@@ -90,7 +90,7 @@ export function NavigationPanelSidebar({
   // ── Render item — single JSX order: [icon] [text] [badge] [chevron] ──
   // RTL mirroring is handled entirely by flex-row-reverse on the container.
   const renderNavigationItem = (item: NavigationItem, level: number = 0) => {
-    const isActive = isExactMatch(item.href, pathname);
+    const isActive = isMatchWithFallback(item.href, pathname, navigation);
     const hasSubChildren = item.children && item.children.length > 0;
     const isExpanded = expandedItems.includes(item.name);
     const displayName = t(item.name) || item.name;
@@ -102,7 +102,7 @@ export function NavigationPanelSidebar({
 
     // ── Parent group (collapsible) ──
     if (hasSubChildren) {
-      const isParentOfActive = hasActiveChild(item, pathname);
+      const isParentOfActive = hasActiveChildWithFallback(item, pathname, navigation);
       const parentBaseClasses = "w-full gap-2 h-10 px-3";
       const parentColorClasses = isParentOfActive
         ? getPanelParentClasses(styleConfig)

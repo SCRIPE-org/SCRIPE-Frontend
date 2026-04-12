@@ -128,7 +128,7 @@ export function KanbanLayout({ children }: KanbanLayoutProps) {
               <div className="max-h-48 space-y-1 overflow-y-auto p-2">
                 {col.items.map((item) => {
                   const Icon = item.icon;
-                  const isActive = item.href && isNavigationItemActive(item, pathname);
+                  const isActive = item.href && isNavigationItemActive(item, pathname, navigation);
                   return (
                     <button
                       key={item.name}

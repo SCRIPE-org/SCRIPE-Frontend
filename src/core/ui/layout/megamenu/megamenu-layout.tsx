@@ -94,7 +94,7 @@ export function MegaMenuLayout({ children }: MegaMenuLayoutProps) {
           <nav className="hidden flex-1 items-center justify-center gap-1 lg:flex">
             {topItems.map((item) => {
               const hasChildren = item.children && item.children.length > 0;
-              const isActive = isNavigationItemActive(item, pathname);
+              const isActive = isNavigationItemActive(item, pathname, navigation);
               const isOpen = openMenu === item.name;
               const Icon = item.icon;
 
@@ -170,7 +170,7 @@ export function MegaMenuLayout({ children }: MegaMenuLayoutProps) {
                   >
                     {item.children!.map((child) => {
                       const ChildIcon = child.icon;
-                      const childIsActive = isNavigationItemActive(child, pathname);
+                      const childIsActive = isNavigationItemActive(child, pathname, navigation);
                       return (
                         <button
                           key={child.name}

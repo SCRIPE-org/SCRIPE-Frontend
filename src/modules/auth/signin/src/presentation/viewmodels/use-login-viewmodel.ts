@@ -158,14 +158,20 @@ export function useLoginViewModel() {
     setIsVerifying2FA(true);
 
     try {
-      const user = await authRepository.verify2FA(
+      const result = await authRepository.verify2FA(
         formData.username,
         formData.password,
         twoFactorCode
       );
+      const { user } = result;
 
       // Same flow as successful login
       setAuth(user, user.permissions || [], []);
+      useAppStore.getState().setSubscriptionInfo(
+        result.subscriptionStatus,
+        result.gracePhase,
+        result.editionName
+      );
 
       operationSuccess(t("auth.welcomeBack"));
 

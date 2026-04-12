@@ -61,7 +61,7 @@ export function RibbonLayout({ children }: RibbonLayoutProps) {
     for (const tab of ribbonTabs) {
       if (tab.children) {
         for (const child of tab.children) {
-          if (child.href && isNavigationItemActive(child, pathname)) {
+          if (child.href && isNavigationItemActive(child, pathname, navigation)) {
             return tab.name;
           }
         }
@@ -123,7 +123,7 @@ export function RibbonLayout({ children }: RibbonLayoutProps) {
           {/* Direct nav items first */}
           {directItems.map((item) => {
             const Icon = item.icon;
-            const isActive = isNavigationItemActive(item, pathname);
+            const isActive = isNavigationItemActive(item, pathname, navigation);
             return (
               <button
                 key={item.name}
@@ -173,7 +173,7 @@ export function RibbonLayout({ children }: RibbonLayoutProps) {
           <div className="hidden items-center gap-1 bg-muted/30 px-4 py-2 lg:flex">
             {currentTabItems.map((item) => {
               const Icon = item.icon;
-              const isActive = item.href && isNavigationItemActive(item, pathname);
+              const isActive = item.href && isNavigationItemActive(item, pathname, navigation);
               return (
                 <button
                   key={item.name}

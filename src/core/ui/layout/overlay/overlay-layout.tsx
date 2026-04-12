@@ -153,7 +153,7 @@ export function OverlayLayout({ children }: OverlayLayoutProps) {
                   <div className="flex flex-col gap-1">
                     {section.items.map((item) => {
                       const Icon = item.icon;
-                      const isActive = isNavigationItemActive(item, pathname);
+                      const isActive = isNavigationItemActive(item, pathname, navigation);
                       return (
                         <button
                           key={item.name}

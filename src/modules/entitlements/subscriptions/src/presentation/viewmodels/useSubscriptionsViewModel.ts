@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Subscriptions ViewModel
  *
  * Manages tenant edition subscriptions — full lifecycle:
@@ -64,8 +64,14 @@ export function useSubscriptionsViewModel(tenantId: string) {
             (s) => s.status === "Active" || s.status === "Trialing"
       );
       const suspendedSubscription = items.find((s) => s.status === "Suspended");
+      const pendingPaymentSubscription = items.find((s) => s.status === "PendingPayment");
       const isTrialing = activeSubscription?.status === "Trialing";
       const isDowngraded = activeSubscription?.isDowngraded ?? false;
+
+      // GAP-I: Detect if this is a free edition (totalAmount = 0 or no amount)
+      const isFreeEdition = activeSubscription
+            ? (activeSubscription.totalAmount ?? 0) === 0
+            : false;
 
       // ─── Invalidation helper ────────────────────────────
       const invalidate = useCallback(
@@ -348,9 +354,12 @@ export function useSubscriptionsViewModel(tenantId: string) {
             error: subscriptionsQuery.error,
             hasActiveSubscription: !!activeSubscription,
             hasSuspendedSubscription: !!suspendedSubscription,
+            hasPendingPaymentSubscription: !!pendingPaymentSubscription,
+            isFreeEdition,
             isTrialing,
             isDowngraded,
             activeSubscription,
+            pendingPaymentSubscription,
 
             // Assign dialog
             showAssignDialog, setShowAssignDialog,

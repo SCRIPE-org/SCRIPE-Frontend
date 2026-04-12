@@ -62,10 +62,10 @@ export function InboxLayout({ children }: InboxLayoutProps) {
   // Active folder = the one containing the active page
   const activeFolder = useMemo(() => {
     for (const folder of folders) {
-      if (folder.href && isNavigationItemActive(folder, pathname)) return folder;
+      if (folder.href && isNavigationItemActive(folder, pathname, navigation)) return folder;
       if (folder.children) {
         for (const child of folder.children) {
-          if (child.href && isNavigationItemActive(child, pathname)) return folder;
+          if (child.href && isNavigationItemActive(child, pathname, navigation)) return folder;
         }
       }
     }
@@ -174,7 +174,7 @@ export function InboxLayout({ children }: InboxLayoutProps) {
           <ScrollArea className="flex-1">
             {folderItems.map((item) => {
               const Icon = item.icon;
-              const isActive = item.href && isNavigationItemActive(item, pathname);
+              const isActive = item.href && isNavigationItemActive(item, pathname, navigation);
               return (
                 <button
                   key={item.name}
@@ -226,7 +226,7 @@ export function InboxLayout({ children }: InboxLayoutProps) {
                         ?.filter((c) => c.href)
                         .map((child) => {
                           const ChildIcon = child.icon;
-                          const isActive = child.href && isNavigationItemActive(child, pathname);
+                          const isActive = child.href && isNavigationItemActive(child, pathname, navigation);
                           return (
                             <button
                               key={child.name}

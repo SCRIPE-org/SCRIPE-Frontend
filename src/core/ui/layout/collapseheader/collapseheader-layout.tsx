@@ -112,7 +112,7 @@ export function CollapseHeaderLayout({ children }: CollapseHeaderLayoutProps) {
         <nav className="hidden items-center gap-1 lg:flex">
           {navItems.map((item) => {
             const Icon = item.icon;
-            const isActive = isNavigationItemActive(item, pathname);
+            const isActive = isNavigationItemActive(item, pathname, navigation);
             return (
               <button
                 key={item.name}

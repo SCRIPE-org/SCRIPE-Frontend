@@ -20,6 +20,7 @@ export const en = {
     trialing: "Trialing",
     expired: "Expired",
     suspended: "Suspended",
+    pastDue: "Past Due",
     pendingPayment: "Pending Payment",
     base: "Base",
     trial: "Trial",

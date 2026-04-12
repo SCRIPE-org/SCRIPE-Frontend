@@ -22,6 +22,9 @@ export interface Verify2FARequestJson {
 export interface Verify2FAResponseJson {
   accessToken: string;
   expiresAt: string;
+  subscriptionStatus?: string | null;
+  gracePhase?: string | null;
+  editionName?: string | null;
 }
 
 // ===== Model Classes =====
@@ -51,10 +54,19 @@ export class Verify2FARequestModel {
 export class Verify2FAResponseModel {
   constructor(
     public readonly accessToken: string,
-    public readonly expiresAt: string
+    public readonly expiresAt: string,
+    public readonly subscriptionStatus: string | null = null,
+    public readonly gracePhase: string | null = null,
+    public readonly editionName: string | null = null
   ) { }
 
   static fromJson(json: Verify2FAResponseJson): Verify2FAResponseModel {
-    return new Verify2FAResponseModel(json.accessToken, json.expiresAt);
+    return new Verify2FAResponseModel(
+      json.accessToken,
+      json.expiresAt,
+      json.subscriptionStatus ?? null,
+      json.gracePhase ?? null,
+      json.editionName ?? null
+    );
   }
 }

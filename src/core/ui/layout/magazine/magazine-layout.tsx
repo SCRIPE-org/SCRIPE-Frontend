@@ -85,7 +85,7 @@ export function MagazineLayout({ children }: MagazineLayoutProps) {
             <nav className="flex flex-col items-center gap-0.5 px-1.5 py-1">
               {railItems.map((item) => {
                 const Icon = item.icon;
-                const isActive = isNavigationItemActive(item, pathname);
+                const isActive = isNavigationItemActive(item, pathname, navigation);
                 return (
                   <Tooltip key={item.name}>
                     <TooltipTrigger asChild>

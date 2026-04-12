@@ -42,6 +42,7 @@ export interface TenantTreeNodeProps {
   parentId?: string;
   editionName?: string;
   editionEndDate?: string;
+  subscriptionStatus?: string;
   children: TenantTreeNodeProps[];
 }
 

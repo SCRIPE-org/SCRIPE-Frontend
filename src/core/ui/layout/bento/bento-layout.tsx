@@ -111,7 +111,7 @@ export function BentoLayout({ children }: BentoLayoutProps) {
         <div className="mx-auto grid max-w-5xl auto-rows-[80px] grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
           {bentoItems.map((item) => {
             const Icon = item.icon;
-            const isActive = isNavigationItemActive(item, pathname);
+            const isActive = isNavigationItemActive(item, pathname, navigation);
             return (
               <button
                 key={item.name}

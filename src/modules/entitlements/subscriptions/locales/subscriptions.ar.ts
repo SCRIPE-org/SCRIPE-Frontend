@@ -20,6 +20,7 @@ export const ar = {
     trialing: "تجريبي",
     expired: "منتهي",
     suspended: "موقوف",
+    pastDue: "متأخر الدفع",
     pendingPayment: "في انتظار الدفع",
     base: "أساسي",
     trial: "تجريبي",

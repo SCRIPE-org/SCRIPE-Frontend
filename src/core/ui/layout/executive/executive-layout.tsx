@@ -65,10 +65,10 @@ export function ExecutiveLayout({ children }: ExecutiveLayoutProps) {
   // Track active group
   const activeGroup = useMemo(() => {
     for (const group of navigation) {
-      if (group.href && isNavigationItemActive(group, pathname)) return group;
+      if (group.href && isNavigationItemActive(group, pathname, navigation)) return group;
       if (group.children) {
         for (const child of group.children) {
-          if (child.href && isNavigationItemActive(child, pathname)) return group;
+          if (child.href && isNavigationItemActive(child, pathname, navigation)) return group;
         }
       }
     }
@@ -84,7 +84,7 @@ export function ExecutiveLayout({ children }: ExecutiveLayoutProps) {
       segments.push({ label: t(activeGroup.name) || activeGroup.name });
       if (activeGroup.children) {
         const activeChild = activeGroup.children.find(
-          (c) => c.href && isNavigationItemActive(c, pathname)
+          (c) => c.href && isNavigationItemActive(c, pathname, navigation)
         );
         if (activeChild) {
           segments.push({ label: t(activeChild.name) || activeChild.name });
@@ -235,7 +235,7 @@ export function ExecutiveLayout({ children }: ExecutiveLayoutProps) {
                       )}
                     >
                       {tab.children!.map((child) => {
-                        const childActive = child.href && isNavigationItemActive(child, pathname);
+                        const childActive = child.href && isNavigationItemActive(child, pathname, navigation);
                         const ChildIcon = child.icon;
                         return (
                           <button

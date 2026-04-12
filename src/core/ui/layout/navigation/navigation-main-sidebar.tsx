@@ -15,7 +15,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@core/ui/co
 import { Logo } from "@core/ui/logo";
 import { useSettings } from "@core/providers/settings-provider";
 import type { NavigationItem } from "@core/config/navigation";
-import { isExactMatch, hasActiveChild } from "./nav-utils";
+import { isMatchWithFallback, hasActiveChildWithFallback } from "./nav-utils";
 import {
   getMainItemClasses,
   getBorderRadiusClass,
@@ -179,8 +179,8 @@ export function NavigationMainSidebar({
     const itemHasChildren = !!(item.children && item.children.length > 0);
     const displayName = t(item.name) || item.name;
     const isExpanded = mobileExpandedItems.includes(item.name);
-    const active = isExactMatch(item.href, pathname);
-    const hasActivChild = itemHasChildren ? hasActiveChild(item, pathname) : false;
+    const active = isMatchWithFallback(item.href, pathname, navigation);
+    const hasActivChild = itemHasChildren ? hasActiveChildWithFallback(item, pathname, navigation) : false;
     const indent = level * 12;
 
     const indentStyle = isRTL

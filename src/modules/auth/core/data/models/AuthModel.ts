@@ -29,6 +29,9 @@ export interface LoginResponseJson {
   success?: boolean;
   accessToken: string;
   requires2FA?: boolean;
+  subscriptionStatus?: string | null;
+  gracePhase?: string | null;
+  editionName?: string | null;
 }
 
 // ===== Model Classes =====
@@ -65,14 +68,20 @@ export class LoginResponseModel {
   constructor(
     public readonly accessToken: string,
     public readonly success: boolean = true,
-    public readonly requires2FA: boolean = false
+    public readonly requires2FA: boolean = false,
+    public readonly subscriptionStatus: string | null = null,
+    public readonly gracePhase: string | null = null,
+    public readonly editionName: string | null = null
   ) { }
 
   static fromJson(json: LoginResponseJson): LoginResponseModel {
     return new LoginResponseModel(
       json.accessToken,
       json.success ?? true,
-      json.requires2FA ?? false
+      json.requires2FA ?? false,
+      json.subscriptionStatus ?? null,
+      json.gracePhase ?? null,
+      json.editionName ?? null
     );
   }
 
@@ -81,6 +90,9 @@ export class LoginResponseModel {
       success: this.success,
       accessToken: this.accessToken,
       requires2FA: this.requires2FA,
+      subscriptionStatus: this.subscriptionStatus,
+      gracePhase: this.gracePhase,
+      editionName: this.editionName,
     };
   }
 

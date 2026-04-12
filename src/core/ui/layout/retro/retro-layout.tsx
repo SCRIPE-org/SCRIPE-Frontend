@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import type React from "react";
 import { useState, useMemo, useEffect } from "react";
@@ -32,7 +32,7 @@ interface RetroLayoutProps {
  * Retro Layout  Classic Desktop / Windows-inspired.
  *
  * Structure:
- * - Navigation panel styled as a "window" with title bar + [€][–¡][Ã—]
+ * - Navigation panel styled as a "window" with title bar + [�][��][×]
  * - Main content as another "window" with title bar
  * - Bottom taskbar with module icons
  * - Classic inset/outset borders, System-like UI
@@ -55,7 +55,7 @@ export function RetroLayout({ children }: RetroLayoutProps) {
   // Get current page title
   const currentPageTitle = useMemo(() => {
     for (const item of flatItems) {
-      if (item.href && isNavigationItemActive(item, pathname)) {
+      if (item.href && isNavigationItemActive(item, pathname, navigation)) {
         return t(item.name) || item.name;
       }
     }
@@ -143,7 +143,7 @@ export function RetroLayout({ children }: RetroLayoutProps) {
                 style={{ background: "var(--retro-title-active)" }}
               >
                 <span className="flex items-center gap-1 text-xs font-bold text-white">
-                  ðŸ“ {t("common.navigation") || "Navigation"}
+                  📁 {t("common.navigation") || "Navigation"}
                 </span>
                 <div className="flex items-center gap-0.5">
                   <button
@@ -197,7 +197,7 @@ export function RetroLayout({ children }: RetroLayoutProps) {
             style={{ background: "var(--retro-title-active)" }}
           >
             <span className="flex items-center gap-1 text-xs font-bold text-white">
-              ðŸ“„ {currentPageTitle}
+              📄 {currentPageTitle}
             </span>
             <div className="flex items-center gap-1">
               <LanguageSwitcher />
@@ -260,7 +260,7 @@ export function RetroLayout({ children }: RetroLayoutProps) {
             setSidebarMinimized(false);
           }}
         >
-          Šž {t("common.start") || "Start"}
+          �� {t("common.start") || "Start"}
         </button>
         <div className="h-6 w-px" style={{ backgroundColor: "#808080" }} />
         {/* Active windows */}
@@ -274,14 +274,14 @@ export function RetroLayout({ children }: RetroLayoutProps) {
               }}
               onClick={() => setSidebarMinimized(!sidebarMinimized)}
             >
-              ðŸ“ {t("common.navigation") || "Nav"}
+              📁 {t("common.navigation") || "Nav"}
             </button>
           )}
           <button
             className="flex h-6 max-w-[120px] items-center gap-1 truncate px-2 text-xs"
             style={{ boxShadow: "var(--retro-inset)", backgroundColor: "var(--retro-bg)" }}
           >
-            ðŸ“„ {currentPageTitle}
+            📄 {currentPageTitle}
           </button>
         </div>
         {/* System tray */}

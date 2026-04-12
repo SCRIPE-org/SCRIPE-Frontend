@@ -24,7 +24,7 @@ import { appLogger } from "@core/common/logger";
 import { LoginRequestModel } from "../models/AuthModel";
 import { Verify2FARequestModel } from "../models/TwoFactorModels";
 import type { IAuthService } from "../../domain/interfaces/IAuthService";
-import type { IAuthRepository } from "../../domain/interfaces/IAuthRepository";
+import type { IAuthRepository, LoginResult } from "../../domain/interfaces/IAuthRepository";
 import { Result } from "@core/common/types/result";
 import { AUTH_STORAGE_KEYS_TO_CLEAR } from "@core/config/storage-keys";
 
@@ -65,7 +65,7 @@ function clearAllLocalStorage(): void {
 export class AuthRepository implements IAuthRepository {
   constructor(private readonly service: IAuthService) { }
 
-  async login(credentials: LoginRequest): Promise<User> {
+  async login(credentials: LoginRequest): Promise<LoginResult> {
     const requestModel = new LoginRequestModel(
       credentials.username,
       credentials.password,
@@ -84,7 +84,13 @@ export class AuthRepository implements IAuthRepository {
 
     if (responseModel.accessToken) {
       secureTokenService.setAccessToken(responseModel.accessToken);
-      return this.getMe();
+      const user = await this.getMe();
+      return {
+        user,
+        subscriptionStatus: responseModel.subscriptionStatus,
+        gracePhase: responseModel.gracePhase,
+        editionName: responseModel.editionName,
+      };
     }
     throw new Error("Login failed: No access token received.");
   }
@@ -93,7 +99,7 @@ export class AuthRepository implements IAuthRepository {
    * Verify 2FA code during login.
    * Called after login() throws TwoFactorRequiredError.
    */
-  async verify2FA(username: string, password: string, code: string): Promise<User> {
+  async verify2FA(username: string, password: string, code: string): Promise<LoginResult> {
     const requestModel = new Verify2FARequestModel(username, password, code);
     const responseModel = await this.service.verify2FA(requestModel);
 
@@ -101,7 +107,13 @@ export class AuthRepository implements IAuthRepository {
 
     if (responseModel.accessToken) {
       secureTokenService.setAccessToken(responseModel.accessToken);
-      return this.getMe();
+      const user = await this.getMe();
+      return {
+        user,
+        subscriptionStatus: responseModel.subscriptionStatus,
+        gracePhase: responseModel.gracePhase,
+        editionName: responseModel.editionName,
+      };
     }
     throw new Error("2FA verification failed: No access token received.");
   }

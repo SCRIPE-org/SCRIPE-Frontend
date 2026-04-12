@@ -18,6 +18,7 @@ import { TwoFactorRequiredError } from "../../../domain/errors/AuthErrors";
 export function useAuthLogin() {
   const { authRepository } = useServices();
   const setAuth = useAppStore((state) => state.setAuth);
+  const setSubscriptionInfo = useAppStore((state) => state.setSubscriptionInfo);
   const { operationError, operationSuccess } = useEnhancedToast();
   const { refreshNavigation } = useNavigation();
   const queryClient = useQueryClient();
@@ -28,7 +29,9 @@ export function useAuthLogin() {
       const request = new LoginRequest({ username, password, tenantId });
       return authRepository.login(request);
     },
-    onSuccess: async (user, variables) => {
+    onSuccess: async (result, variables) => {
+      const { user, subscriptionStatus, gracePhase, editionName } = result;
+
       // 1. Set user in store with permissions and roles
       setAuth(
         user,
@@ -36,22 +39,25 @@ export function useAuthLogin() {
         []
       );
 
-      // 2. Persist tenant code for tenant-aware logout redirect
+      // 2. Store subscription status for payment wall / grace banner
+      setSubscriptionInfo(subscriptionStatus, gracePhase, editionName);
+
+      // 3. Persist tenant code for tenant-aware logout redirect
       if (variables.tenantCode) {
         useAppStore.getState().setTenantCode(variables.tenantCode);
       }
 
-      // 3. Show success toast
+      // 4. Show success toast
       operationSuccess("Login successful!");
 
-      // 4. Fetch navigation data immediately after login (force refresh)
+      // 5. Fetch navigation data immediately after login (force refresh)
       try {
         await refreshNavigation(false, true);
       } catch (error) {
         appLogger.error("Failed to fetch navigation after login:", error);
       }
 
-      // 5. Invalidate any cached queries to ensure fresh data on protected pages
+      // 6. Invalidate any cached queries to ensure fresh data on protected pages
       queryClient.invalidateQueries();
     },
     onError: (error: Error) => {
