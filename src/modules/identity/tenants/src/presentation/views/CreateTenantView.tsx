@@ -15,6 +15,7 @@
 "use client";
 
 import React from "react";
+import { useSearchParams } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { cn } from "@core/common/utils";
@@ -79,9 +80,11 @@ const STEP_ICONS = {
 export function CreateTenantView() {
   useModuleLocales(() => import("../../../locales"), "tenants");
 
+  const searchParams = useSearchParams();
+  const parentId = searchParams.get("parentId") || undefined;
   const { t, direction } = useI18n();
   const isRtl = direction === "rtl";
-  const vm = useCreateTenantViewModel();
+  const vm = useCreateTenantViewModel({ defaultParentId: parentId });
 
   // ── Success state ──
   if (vm.result) {

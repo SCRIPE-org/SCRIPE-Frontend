@@ -7,7 +7,8 @@
  * - Recursive nested children hierarchy
  * - On-demand stats fetching when expanded
  * - Full RTL/LTR support
- * - Create/Edit/Delete dialogs with edition selection
+ * - Create navigates to dedicated stepper page
+ * - Edit/Delete dialogs remain inline
  *
  * Clean Architecture: View → ViewModel → Repository
  *
@@ -18,21 +19,13 @@
 import React from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Skeleton } from "@core/ui/skeleton";
-import { Inbox, CheckCircle2, Copy, ExternalLink, Mail, Building2 } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@core/ui/dialog";
-import { Button } from "@core/ui/button";
+import { Inbox } from "lucide-react";
 
 // Module imports
 import { TenantNodeCard } from "../components/TenantNodeCard";
 import { TenantListHeader } from "../components/TenantListHeader";
 import { TenantDeleteDialog } from "../components/TenantDeleteDialog";
-import { CreateTenantDialog, EditTenantDialog } from "../components/TenantDialogs";
+import { EditTenantDialog } from "../components/TenantDialogs";
 import { useTenantsViewModel } from "../viewmodels/useTenantsViewModel";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 
@@ -112,23 +105,6 @@ export function TenantsView() {
         </div>
       )}
 
-      {/* Create Dialog */}
-      <CreateTenantDialog
-        open={vm.createDialogOpen}
-        onOpenChange={vm.setCreateDialogOpen}
-        parentTenant={vm.parentForCreate}
-        form={vm.createForm}
-        setForm={vm.setCreateForm}
-        onSubmit={vm.handleCreateSubmit}
-        isLoading={vm.isCreating}
-        onSearchEditions={vm.handleSearchEditions}
-        cachedEditions={vm.cachedEditions}
-        availablePromotions={vm.availablePromotions}
-        isLoadingPromotions={vm.isLoadingPromotions}
-        onEditionChange={vm.setPromoEditionId}
-        onSubscriptionTypeChange={vm.setPromoSubType}
-      />
-
       {/* Edit Dialog */}
       <EditTenantDialog
         open={vm.editDialogOpen}
@@ -148,72 +124,6 @@ export function TenantsView() {
         onConfirm={vm.handleDeleteConfirm}
         isDeleting={vm.isDeleting}
       />
-
-      {/* Creation Success Result Dialog */}
-      <Dialog open={vm.resultDialogOpen} onOpenChange={vm.closeResultDialog}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader className="text-center pb-2">
-            <div className="mx-auto mb-3 rounded-full bg-green-500/10 p-3">
-              <CheckCircle2 className="h-7 w-7 text-green-500" />
-            </div>
-            <DialogTitle>{t("tenant.created")}</DialogTitle>
-            <DialogDescription>
-              {t("tenant.setupEmailSent") || "An account setup email has been sent to the admin."}
-            </DialogDescription>
-          </DialogHeader>
-          {vm.createResult && (
-            <div className="space-y-4 pt-2">
-              <div className="rounded-lg bg-muted/30 border border-border/50 p-4 space-y-2.5">
-                <div className="flex items-center gap-2 text-sm">
-                  <Mail className="h-4 w-4 text-muted-foreground shrink-0" />
-                  <span className="text-muted-foreground">{t("tenant.adminEmail") || "Email"}:</span>
-                  <span className="font-medium text-foreground">{vm.createResult.adminEmail}</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm">
-                  <Building2 className="h-4 w-4 text-muted-foreground shrink-0" />
-                  <span className="text-muted-foreground">{t("tenant.adminUsername") || "Username"}:</span>
-                  <span className="font-medium text-foreground">{vm.createResult.adminUsername}</span>
-                </div>
-              </div>
-
-              <div className="rounded-lg bg-primary/5 border border-primary/20 p-3">
-                <p className="text-xs text-muted-foreground mb-2">
-                  {t("tenant.setupUrlLabel") || "Account Setup Link (valid 24 hours):"}
-                </p>
-                <div className="flex items-center gap-2">
-                  <code className="flex-1 text-xs truncate bg-muted/50 rounded px-2 py-1.5 border border-border/50">
-                    {vm.createResult.accountSetupUrl}
-                  </code>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="shrink-0 h-8 w-8"
-                    onClick={() => {
-                      navigator.clipboard.writeText(vm.createResult!.accountSetupUrl);
-                    }}
-                  >
-                    <Copy className="h-3.5 w-3.5" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="shrink-0 h-8 w-8"
-                    asChild
-                  >
-                    <a href={vm.createResult.accountSetupUrl} target="_blank" rel="noopener noreferrer">
-                      <ExternalLink className="h-3.5 w-3.5" />
-                    </a>
-                  </Button>
-                </div>
-              </div>
-
-              <Button className="w-full" onClick={vm.closeResultDialog}>
-                {t("common.done") || "Done"}
-              </Button>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

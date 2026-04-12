@@ -18,7 +18,7 @@ import { Plus, Inbox } from "lucide-react";
 
 import { TenantNodeCard } from "../TenantNodeCard";
 import { TenantDeleteDialog } from "../TenantDeleteDialog";
-import { CreateTenantDialog, EditTenantDialog } from "../TenantDialogs";
+import { EditTenantDialog } from "../TenantDialogs";
 import { useSubTenantsViewModel } from "../../viewmodels/useSubTenantsViewModel";
 
 interface SubTenantsTabProps {
@@ -99,22 +99,6 @@ export function SubTenantsTab({
         </div>
       )}
 
-      {/* Dialogs */}
-      <CreateTenantDialog
-        open={vm.createDialogOpen}
-        onOpenChange={vm.setCreateDialogOpen}
-        parentTenant={vm.parentForCreate}
-        form={vm.createForm}
-        setForm={vm.setCreateForm}
-        onSubmit={vm.handleCreateSubmit}
-        isLoading={vm.isCreating}
-        onSearchEditions={vm.handleSearchEditions}
-        cachedEditions={vm.cachedEditions}
-        availablePromotions={vm.availablePromotions}
-        isLoadingPromotions={vm.isLoadingPromotions}
-        onEditionChange={vm.setPromoEditionId}
-        onSubscriptionTypeChange={vm.setPromoSubType}
-      />
 
       <EditTenantDialog
         open={vm.editDialogOpen}

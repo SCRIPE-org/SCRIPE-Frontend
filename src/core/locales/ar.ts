@@ -1092,6 +1092,7 @@ export const ar = {
     english: "الإنجليزية",
   },
   common: {
+    step: "الخطوة",
     from: "من",
     continue: "تواصل",
     total: "المجموع",
