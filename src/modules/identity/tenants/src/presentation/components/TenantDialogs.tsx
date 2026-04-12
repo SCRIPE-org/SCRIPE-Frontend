@@ -36,6 +36,10 @@ export interface CreateFormState {
   name: string;
   code: string;
   description: string;
+  // Step 2: Admin
+  adminEmail: string;
+  adminUsername: string;
+  // Step 3: Edition & Billing
   editionId: string;
   subscriptionType: string;
   currency: string;
@@ -53,6 +57,8 @@ export const initialCreateForm: CreateFormState = {
   name: "",
   code: "",
   description: "",
+  adminEmail: "",
+  adminUsername: "",
   editionId: "",
   subscriptionType: "Lifetime",
   currency: "USD",
@@ -155,6 +161,21 @@ export function CreateTenantDialog({
         type: "textarea",
         placeholder: t("tenant.descriptionPlaceholder"),
       },
+      // ── Step 2: Admin Info ──
+      {
+        name: "adminEmail",
+        label: t("tenant.adminEmail") || "Admin Email",
+        type: "text",
+        required: true,
+        placeholder: t("tenant.adminEmailPlaceholder") || "admin@company.com",
+      },
+      {
+        name: "adminUsername",
+        label: t("tenant.adminUsername") || "Admin Username (optional)",
+        type: "text",
+        placeholder: t("tenant.adminUsernamePlaceholder") || "Auto-generated if empty",
+      },
+      // ── Step 3: Edition & Billing ──
       {
         name: "editionId",
         label: t("tenant.editionLabel") || "Subscription Plan",
@@ -174,6 +195,8 @@ export function CreateTenantDialog({
               name: formData.name || "",
               code: formData.code || "",
               description: formData.description || "",
+              adminEmail: formData.adminEmail || "",
+              adminUsername: formData.adminUsername || "",
               editionId: value,
               subscriptionType: "",
               currency: formData.currency || "USD",
@@ -212,6 +235,8 @@ export function CreateTenantDialog({
               name: formData.name || "",
               code: formData.code || "",
               description: formData.description || "",
+              adminEmail: formData.adminEmail || "",
+              adminUsername: formData.adminUsername || "",
               editionId: formData.editionId || "",
               subscriptionType: value,
               currency: formData.currency || "USD",
@@ -256,6 +281,8 @@ export function CreateTenantDialog({
               name: formData.name || "",
               code: formData.code || "",
               description: formData.description || "",
+              adminEmail: formData.adminEmail || "",
+              adminUsername: formData.adminUsername || "",
               editionId: formData.editionId || "",
               subscriptionType: formData.subscriptionType || "",
               currency: formData.currency || "USD",
@@ -288,6 +315,8 @@ export function CreateTenantDialog({
       name: data.name,
       code: data.code,
       description: data.description || "",
+      adminEmail: data.adminEmail || "",
+      adminUsername: data.adminUsername || "",
       editionId: data.editionId,
       subscriptionType: data.subscriptionType || "Lifetime",
       currency: data.currency || "USD",

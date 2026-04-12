@@ -37,6 +37,12 @@ export const API_ENDPOINTS = {
     },
   },
 
+  // ===== ACCOUNT SETUP (Public — no auth required) =====
+  ACCOUNT_SETUP: {
+    VALIDATE_TOKEN: (token: string) => `${V1}/account-setup/validate?token=${encodeURIComponent(token)}`,
+    ACTIVATE: `${V1}/account-setup/activate`,
+  },
+
 
 
   // ===== ADMINS =====

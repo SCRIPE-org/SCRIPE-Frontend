@@ -6,6 +6,7 @@
 import type { Tenant, TenantData, TenantTreeNode } from "../entities/Tenant";
 import type {
   CreateTenantRequest,
+  CreateTenantResult,
   UpdateTenantRequest,
   DeleteTenantRequest,
 } from "../entities/TenantRequests";
@@ -83,7 +84,7 @@ export interface ITenantRepository {
   /**
    * Create a new tenant
    */
-  create(request: CreateTenantRequest): Promise<string>;
+  create(request: CreateTenantRequest): Promise<CreateTenantResult>;
 
   /**
    * Update an existing tenant

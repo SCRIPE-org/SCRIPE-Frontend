@@ -103,6 +103,8 @@ export class BillingMapper {
     return {
       sessionId: dto.sessionId ?? "",
       url: dto.url ?? "",
+      qrCodeBase64: dto.qrCodeBase64,
+      emailSent: dto.emailSent ?? false,
     };
   }
 

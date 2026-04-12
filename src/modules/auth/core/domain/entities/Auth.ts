@@ -20,6 +20,9 @@ export interface LoginRequestData {
 export interface LoginResponseData {
   success: boolean;
   accessToken: string;
+  subscriptionStatus?: string | null;
+  gracePhase?: string | null;
+  editionName?: string | null;
 }
 
 /**
@@ -69,10 +72,16 @@ export class LoginRequest {
 export class LoginResponse {
   public readonly success: boolean;
   public readonly accessToken: string;
+  public readonly subscriptionStatus: string | null;
+  public readonly gracePhase: string | null;
+  public readonly editionName: string | null;
 
   constructor(data: LoginResponseData) {
     this.success = data.success;
     this.accessToken = data.accessToken;
+    this.subscriptionStatus = data.subscriptionStatus ?? null;
+    this.gracePhase = data.gracePhase ?? null;
+    this.editionName = data.editionName ?? null;
   }
 
   /**

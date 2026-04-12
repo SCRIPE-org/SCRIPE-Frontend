@@ -41,6 +41,9 @@ export interface IBillingService {
                   promoCode?: string;
                   successUrl: string;
                   cancelUrl: string;
+                  generateQrCode?: boolean;
+                  sendToEmail?: string;
+                  tenantName?: string;
             }
       ): Promise<CheckoutSessionResponseModel>;
       createBillingPortal(tenantId: string, returnUrl: string): Promise<BillingPortalResponseModel>;

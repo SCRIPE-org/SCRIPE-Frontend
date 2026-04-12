@@ -127,6 +127,8 @@ export interface PaymentTransaction {
 export interface CheckoutSession {
   sessionId: string;
   url: string;
+  qrCodeBase64?: string;
+  emailSent?: boolean;
 }
 
 export interface BillingPortal {

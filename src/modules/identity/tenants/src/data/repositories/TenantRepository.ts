@@ -14,6 +14,7 @@ import type {
 import { Tenant, type TenantTreeNode } from "../../domain/entities/Tenant";
 import type {
   CreateTenantRequest,
+  CreateTenantResult,
   UpdateTenantRequest,
   DeleteTenantRequest,
 } from "../../domain/entities/TenantRequests";
@@ -79,10 +80,17 @@ export class TenantRepository implements ITenantRepository {
     return this.service.getStats(id);
   }
 
-  async create(request: CreateTenantRequest): Promise<string> {
+  async create(request: CreateTenantRequest): Promise<CreateTenantResult> {
     const model = TenantMapper.toCreateModel(request);
     const response = await this.service.create(model.toJson());
-    return response.id;
+    return {
+      tenantId: response.tenantId,
+      adminId: response.adminId,
+      adminUsername: response.adminUsername,
+      adminEmail: response.adminEmail,
+      accountSetupUrl: response.accountSetupUrl,
+      subscriptionId: response.subscriptionId,
+    };
   }
 
   async update(id: string, request: UpdateTenantRequest): Promise<void> {

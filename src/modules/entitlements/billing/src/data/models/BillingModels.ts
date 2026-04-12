@@ -65,6 +65,8 @@ export interface PaymentTransactionModel {
 export interface CheckoutSessionResponseModel {
   sessionId: string;
   url: string;
+  qrCodeBase64?: string;
+  emailSent?: boolean;
 }
 
 export interface BillingPortalResponseModel {

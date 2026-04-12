@@ -11,4 +11,5 @@ export { authContainer, getAuthContainer } from "./di";
 // Submodules
 export { LoginView } from "./signin";
 export { ForgotPasswordView, ResetPasswordView } from "./password-reset";
+export { SetupAccountView } from "./account-setup";
 

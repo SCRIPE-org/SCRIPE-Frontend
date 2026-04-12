@@ -66,6 +66,9 @@ export class BillingService implements IBillingService {
       promoCode?: string;
       successUrl: string;
       cancelUrl: string;
+      generateQrCode?: boolean;
+      sendToEmail?: string;
+      tenantName?: string;
     }
   ): Promise<CheckoutSessionResponseModel> {
     return this.api.post<CheckoutSessionResponseModel>(

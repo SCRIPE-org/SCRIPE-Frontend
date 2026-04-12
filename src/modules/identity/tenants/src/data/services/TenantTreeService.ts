@@ -47,13 +47,10 @@ export function createTenantTreeService(
     },
 
     create: async (data: CreateTenantRequest) => {
-      const id = await repository.create(data);
-      if (data.editionId) {
-        await repository.assignEdition(id, data.editionId, data.subscriptionType, data.subscriptionEndDate);
-      }
+      const result = await repository.create(data);
       // Return a placeholder node (will be refetched anyway)
       return {
-        id,
+        id: result.tenantId,
         name: data.name,
         code: data.code,
         parentId: data.parentId,
@@ -151,15 +148,12 @@ export function createChildrenTreeService(
     },
 
     create: async (data: CreateTenantRequest) => {
-      const id = await repository.create({
+      const result = await repository.create({
         ...data,
         parentId: data.parentId || parentId, // Ensure parent is set
       });
-      if (data.editionId) {
-        await repository.assignEdition(id, data.editionId, data.subscriptionType, data.subscriptionEndDate);
-      }
       return {
-        id,
+        id: result.tenantId,
         name: data.name,
         code: data.code,
         parentId: data.parentId || parentId,
@@ -215,12 +209,9 @@ export function createMyChildrenTreeService(
     },
 
     create: async (data: CreateTenantRequest) => {
-      const id = await repository.create(data);
-      if (data.editionId) {
-        await repository.assignEdition(id, data.editionId, data.subscriptionType, data.subscriptionEndDate);
-      }
+      const result = await repository.create(data);
       return {
-        id,
+        id: result.tenantId,
         name: data.name,
         code: data.code,
         parentId: data.parentId,

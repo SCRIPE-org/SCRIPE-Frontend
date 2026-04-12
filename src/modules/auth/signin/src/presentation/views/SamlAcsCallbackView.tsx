@@ -36,6 +36,7 @@ export function SamlAcsCallbackView() {
       const { t, direction } = useI18n();
       const { authRepository } = useServices();
       const setAuth = useAppStore((state) => state.setAuth);
+      const setSubscriptionInfo = useAppStore((state) => state.setSubscriptionInfo);
       const { refreshNavigation } = useNavigation();
       const queryClient = useQueryClient();
       const { operationSuccess } = useEnhancedToast();
@@ -134,6 +135,16 @@ export function SamlAcsCallbackView() {
                               // Fetch admin profile to complete login
                               const user = await authRepository.getMe();
                               setAuth(user, user.permissions || [], []);
+
+                              // Propagate subscription info from SAML callback query params
+                              const subStatus = searchParams.get("subscription_status");
+                              const subGracePhase = searchParams.get("grace_phase");
+                              const subEditionName = searchParams.get("edition_name");
+                              setSubscriptionInfo(
+                                    subStatus ?? null,
+                                    subGracePhase ?? null,
+                                    subEditionName ?? null
+                              );
 
                               operationSuccess(t("auth.welcomeBack"));
 

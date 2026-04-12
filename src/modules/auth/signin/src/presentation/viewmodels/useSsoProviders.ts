@@ -52,6 +52,9 @@ export interface SsoCallbackResult {
       expiresAt?: string;
       providerName: string;
       email: string;
+      subscriptionStatus?: string | null;
+      gracePhase?: string | null;
+      editionName?: string | null;
 }
 
 /** Error when no linked account exists */

@@ -6,8 +6,10 @@
  */
 
 /**
- * Create tenant request
- * Backend auto-creates {CODE}_SUPER_ADMIN and {CODE}_DEFAULT roles
+ * Create tenant request — 3-step stepper
+ * Step 1: Tenant info (name, code, parent)
+ * Step 2: Admin setup (email, username)
+ * Step 3: Edition & billing
  */
 export interface CreateTenantRequest {
   name: string;
@@ -15,12 +17,28 @@ export interface CreateTenantRequest {
   parentId?: string;
   description?: string;
   address?: string;
-  /** Edition ID to assign upon creation */
+  // Step 2: Admin
+  adminEmail: string;
+  adminUsername?: string;
+  // Step 3: Edition & Billing
   editionId?: string;
-  /** Subscription type: Lifetime, Monthly, Yearly, Trial */
   subscriptionType?: string;
-  /** End date for Trial subscriptions */
-  subscriptionEndDate?: string;
+  currency?: string;
+  skipPayment?: boolean;
+  promotionId?: string;
+  promoCode?: string;
+}
+
+/**
+ * Result returned by the backend after tenant creation
+ */
+export interface CreateTenantResult {
+  tenantId: string;
+  adminId: string;
+  adminUsername: string;
+  adminEmail: string;
+  accountSetupUrl: string;
+  subscriptionId?: string;
 }
 
 /**

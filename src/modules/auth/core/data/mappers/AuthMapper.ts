@@ -63,6 +63,9 @@ export class AuthMapper {
     return new LoginResponse({
       success: model.isSuccessful,
       accessToken: model.accessToken,
+      subscriptionStatus: model.subscriptionStatus,
+      gracePhase: model.gracePhase,
+      editionName: model.editionName,
     });
   }
 

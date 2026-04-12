@@ -15,6 +15,7 @@ import {
   type TenantTreeNodeJson,
   type TenantListResponseJson,
   type CreateTenantJson,
+  type CreateTenantResultJson,
   type UpdateTenantJson,
 } from "../models/TenantModel";
 import type {
@@ -109,8 +110,8 @@ export class TenantService implements ITenantService {
     return TenantModel.fromJson(json);
   }
 
-  async create(json: CreateTenantJson): Promise<{ id: string }> {
-    return this.api.post<{ id: string }>(API_ENDPOINTS.TENANTS.CREATE, json);
+  async create(json: CreateTenantJson): Promise<CreateTenantResultJson> {
+    return this.api.post<CreateTenantResultJson>(API_ENDPOINTS.TENANTS.CREATE, json);
   }
 
   async update(id: string, json: UpdateTenantJson): Promise<void> {

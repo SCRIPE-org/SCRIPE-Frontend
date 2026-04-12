@@ -396,5 +396,12 @@ export const ar = {
       overridesDiscount: "خصم التجاوز",
       overridesTotalCost: "القيمة الاجمالية للميزات الزائدة",
     },
+    // ── إعداد حساب المسؤول ──
+    adminEmail: "بريد المسؤول الإلكتروني",
+    adminEmailPlaceholder: "admin@company.com",
+    adminUsername: "اسم مستخدم المسؤول",
+    adminUsernamePlaceholder: "سيتم إنشاؤه تلقائياً إذا تُرك فارغاً",
+    setupEmailSent: "تم إرسال بريد إعداد الحساب إلى المسؤول. سيقوم بتعيين كلمة المرور الخاصة به.",
+    setupUrlLabel: "رابط إعداد الحساب (صالح لـ 24 ساعة):",
   },
 };

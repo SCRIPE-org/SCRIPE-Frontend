@@ -50,6 +50,7 @@ export interface TenantTreeNodeJson {
   parentId?: string;
   editionName?: string;
   editionEndDate?: string;
+  subscriptionStatus?: string;
   children: TenantTreeNodeJson[];
 }
 
@@ -69,7 +70,26 @@ export interface CreateTenantJson {
   parentTenantId?: string;
   description?: string;
   address?: string;
+  // Step 2: Admin
+  adminEmail: string;
+  adminUsername?: string;
+  // Step 3: Edition & Billing
   editionId?: string;
+  subscriptionType?: string;
+  currency?: string;
+  promotionId?: string;
+  promoCode?: string;
+  skipPayment?: boolean;
+}
+
+/** Backend returns this enriched result after tenant creation */
+export interface CreateTenantResultJson {
+  tenantId: string;
+  adminId: string;
+  adminUsername: string;
+  adminEmail: string;
+  accountSetupUrl: string;
+  subscriptionId?: string;
 }
 
 export interface UpdateTenantJson {
@@ -166,7 +186,8 @@ export class TenantTreeNodeModel {
     public readonly editionEndDate?: string,
     public readonly isSuspended?: boolean,
     public readonly suspensionType?: string,
-    public readonly suspensionReason?: string
+    public readonly suspensionReason?: string,
+    public readonly subscriptionStatus?: string
   ) { }
 
   static fromJson(json: TenantTreeNodeJson): TenantTreeNodeModel {
@@ -183,7 +204,8 @@ export class TenantTreeNodeModel {
       json.editionEndDate,
       json.isSuspended,
       json.suspensionType,
-      json.suspensionReason
+      json.suspensionReason,
+      json.subscriptionStatus
     );
   }
 
@@ -201,6 +223,7 @@ export class TenantTreeNodeModel {
       parentId: this.parentId,
       editionName: this.editionName,
       editionEndDate: this.editionEndDate,
+      subscriptionStatus: this.subscriptionStatus,
       children: this.children.map((c) => c.toJson()),
     };
   }
@@ -210,10 +233,17 @@ export class CreateTenantModel {
   constructor(
     public readonly name: string,
     public readonly code: string,
+    public readonly adminEmail: string,
     public readonly parentId?: string,
     public readonly description?: string,
     public readonly address?: string,
-    public readonly editionId?: string
+    public readonly adminUsername?: string,
+    public readonly editionId?: string,
+    public readonly subscriptionType?: string,
+    public readonly currency?: string,
+    public readonly promotionId?: string,
+    public readonly promoCode?: string,
+    public readonly skipPayment?: boolean
   ) { }
 
   toJson(): CreateTenantJson {
@@ -223,7 +253,14 @@ export class CreateTenantModel {
       parentTenantId: this.parentId,
       description: this.description,
       address: this.address,
+      adminEmail: this.adminEmail,
+      adminUsername: this.adminUsername,
       editionId: this.editionId,
+      subscriptionType: this.subscriptionType,
+      currency: this.currency,
+      promotionId: this.promotionId,
+      promoCode: this.promoCode,
+      skipPayment: this.skipPayment,
     };
   }
 }

@@ -7,5 +7,6 @@ export type {
   TenantModel,
   TenantTreeNodeModel,
   CreateTenantJson,
+  CreateTenantResultJson,
   UpdateTenantJson,
 } from "../../data/models/TenantModel";

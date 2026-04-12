@@ -73,7 +73,7 @@ export function PaymentWallDialog() {
         <DialogFooter className="sm:justify-center gap-2 mt-2">
           <Button variant="outline" onClick={handleLogout} className="gap-2">
             <LogOut className="h-4 w-4" />
-            {t("common.logout") || "Log Out"}
+            {t("nav.logout") || "Log Out"}
           </Button>
         </DialogFooter>
       </DialogContent>

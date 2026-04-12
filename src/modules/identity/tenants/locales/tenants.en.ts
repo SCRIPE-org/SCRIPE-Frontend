@@ -396,5 +396,12 @@ export const en = {
       overridesDiscount: "Override Discount",
       overridesTotalCost: "Override Costs",
     },
+    // ── Account Setup Stepper ──
+    adminEmail: "Admin Email",
+    adminEmailPlaceholder: "admin@company.com",
+    adminUsername: "Admin Username",
+    adminUsernamePlaceholder: "Auto-generated if empty",
+    setupEmailSent: "An account setup email has been sent to the admin. They will set their own password.",
+    setupUrlLabel: "Account Setup Link (valid 24 hours):",
   },
 };

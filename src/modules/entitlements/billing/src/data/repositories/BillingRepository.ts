@@ -80,6 +80,9 @@ export class BillingRepository implements IBillingRepository {
       promoCode?: string;
       successUrl: string;
       cancelUrl: string;
+      generateQrCode?: boolean;
+      sendToEmail?: string;
+      tenantName?: string;
     }
   ): Promise<CheckoutSession> {
     const result = await this.service.createCheckoutSession(tenantId, data);

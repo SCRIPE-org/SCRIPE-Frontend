@@ -11,7 +11,7 @@ import type {
   UpdateTenantSettingsRequest,
 } from "@modules/customization/tenant-settings/src/domain/types/SettingsTypes";
 import type { TenantModel, TenantTreeNodeModel } from "../types/TenantModelTypes";
-import type { CreateTenantJson, UpdateTenantJson } from "../types/TenantModelTypes";
+import type { CreateTenantJson, CreateTenantResultJson, UpdateTenantJson } from "../types/TenantModelTypes";
 import type { TenantStats } from "./ITenantRepository";
 import type { PermissionModel } from "@modules/identity/permissions/src/domain/types/PermissionModelTypes";
 import type {
@@ -86,7 +86,7 @@ export interface ITenantService {
   getMyTenantAndChildren(search?: string): Promise<TenantTreeNodeModel[]>;
   getById(id: string): Promise<TenantModel>;
   getStats(id: string): Promise<TenantStats>;
-  create(json: CreateTenantJson): Promise<{ id: string }>;
+  create(json: CreateTenantJson): Promise<CreateTenantResultJson>;
   update(id: string, json: UpdateTenantJson): Promise<void>;
   delete(id: string): Promise<void>;
   getDescendantCount(id: string): Promise<number>;

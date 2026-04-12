@@ -66,6 +66,7 @@ export class TenantMapper {
       parentId: model.parentId,
       editionName: model.editionName,
       editionEndDate: model.editionEndDate,
+      subscriptionStatus: model.subscriptionStatus,
       children: model.children.map((c) => TenantMapper.toTreeNode(c)),
     };
     return props as TenantTreeNode;
@@ -92,10 +93,17 @@ export class TenantMapper {
     return new CreateTenantModel(
       request.name,
       request.code,
+      request.adminEmail,
       request.parentId,
       request.description,
       request.address,
-      request.editionId
+      request.adminUsername,
+      request.editionId,
+      request.subscriptionType,
+      request.currency,
+      request.promotionId,
+      request.promoCode,
+      request.skipPayment
     );
   }
 

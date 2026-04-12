@@ -292,11 +292,13 @@ export function useSubscriptionsViewModel(tenantId: string) {
       // ─── Billing mutations ──────────────────────────────
       const checkoutMutation = useMutation({
             mutationFn: async () => {
-                  if (!activeSubscription) throw new Error("No active subscription");
+                  // Allow checkout for both active and pending-payment subscriptions
+                  const targetSubscription = activeSubscription ?? pendingPaymentSubscription;
+                  if (!targetSubscription) throw new Error("No active subscription");
                   const result = await billingRepository.createCheckoutSession(tenantId, {
-                        editionId: activeSubscription.editionId,
-                        subscriptionType: activeSubscription.type,
-                        currency: activeSubscription.currency,
+                        editionId: targetSubscription.editionId,
+                        subscriptionType: targetSubscription.type,
+                        currency: targetSubscription.currency,
                         successUrl: `${window.location.origin}/entitlements/subscriptions?checkout=success`,
                         cancelUrl: `${window.location.origin}/entitlements/subscriptions?checkout=canceled`,
                   });

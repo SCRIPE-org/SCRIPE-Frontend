@@ -16,6 +16,9 @@ export interface IBillingRepository {
     promoCode?: string;
     successUrl: string;
     cancelUrl: string;
+    generateQrCode?: boolean;
+    sendToEmail?: string;
+    tenantName?: string;
   }): Promise<CheckoutSession>;
   createBillingPortal(tenantId: string, returnUrl: string): Promise<BillingPortal>;
   cancelStripeSubscription(tenantId: string, immediately: boolean): Promise<void>;

@@ -40,6 +40,7 @@ export function SsoCallbackView() {
       const { t, direction } = useI18n();
       const { authRepository } = useServices();
       const setAuth = useAppStore((state) => state.setAuth);
+      const setSubscriptionInfo = useAppStore((state) => state.setSubscriptionInfo);
       const { refreshNavigation } = useNavigation();
       const queryClient = useQueryClient();
       const { operationSuccess } = useEnhancedToast();
@@ -71,11 +72,18 @@ export function SsoCallbackView() {
                         // SSO callback returned linked account — complete login
                         // The callback returns accessToken, we need to save it and fetch User via auth repository
                         if (result.type === "admin" && result.accessToken) {
-                              secureTokenService.setAccessToken(result.accessToken);
+                        secureTokenService.setAccessToken(result.accessToken);
 
                               // Fetch admin profile to complete login
                               const user = await authRepository.getMe();
                               setAuth(user, user.permissions || [], []);
+
+                              // Propagate subscription info from SSO callback response
+                              setSubscriptionInfo(
+                                    result.subscriptionStatus ?? null,
+                                    result.gracePhase ?? null,
+                                    result.editionName ?? null
+                              );
 
                               operationSuccess(t("auth.welcomeBack"));
 

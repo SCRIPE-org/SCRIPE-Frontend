@@ -19,6 +19,7 @@ export type {
 } from "./src/domain/entities/Tenant";
 export type {
   CreateTenantRequest,
+  CreateTenantResult,
   UpdateTenantRequest,
 } from "./src/domain/entities/TenantRequests";
 

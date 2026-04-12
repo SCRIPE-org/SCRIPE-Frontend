@@ -73,6 +73,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
   const logout = useAppStore((state) => state.logout);
   const hasHydrated = useAppStore((state) => state._hasHydrated);
   const setAuth = useAppStore((state) => state.setAuth);
+  const setSubscriptionInfo = useAppStore((state) => state.setSubscriptionInfo);
   const { authRepository } = useServices();
   const authLoading = !hasHydrated;
   const { hasPageAccess, isLoading: navLoading } = useNavigation();
@@ -185,6 +186,15 @@ export function RouteGuard({ children }: RouteGuardProps) {
           const result = await authRepository.refreshToken();
           if (result.kind === "ok") {
             appLogger.debug("[RouteGuard] Silent refresh succeeded, restoring session");
+
+            // Update subscription info from the fresh token response
+            const refreshData = result.value;
+            setSubscriptionInfo(
+              refreshData.subscriptionStatus ?? null,
+              refreshData.gracePhase ?? null,
+              refreshData.editionName ?? null
+            );
+
             const user = await authRepository.getMe();
             if (user) {
               setAuth(user, user.permissions || [], []);

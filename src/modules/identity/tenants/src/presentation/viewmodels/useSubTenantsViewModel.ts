@@ -1,8 +1,8 @@
 /**
- * Tenants ViewModel
+ * Sub-Tenants ViewModel
  *
- * Single source of truth for the tenants management view.
- * Encapsulates all data fetching, mutations, dialog state, and CRUD operations.
+ * Dedicated viewmodel for the SubTenantsTab component.
+ * Scoped to a parent tenant — fetches children, manages CRUD dialogs.
  *
  * Architecture: View → ViewModel → Repository (via DI)
  *
@@ -12,19 +12,13 @@
 
 import { useState, useMemo, useCallback } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useAppStore } from "@core/store/useAppStore";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { usePermissions } from "@core/hooks/use-permissions";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { systemContainer } from "@modules/identity/di";
 import { appLogger } from "@core/common/logger";
 import type { TenantTreeNode, Tenant } from "../../domain/entities/Tenant";
-import type {
-  CreateTenantRequest,
-  CreateTenantResult,
-  UpdateTenantRequest,
-} from "../../domain/entities/TenantRequests";
 import type { EditionThinModel } from "../../domain/types/SubscriptionTypes";
 import {
   type CreateFormState,
@@ -34,55 +28,25 @@ import {
   initialEditForm,
 } from "../components/TenantDialogs";
 
-// ─────────────────────────────────────────
-// Tree filtering helper
-// ─────────────────────────────────────────
-
-function filterTree(nodes: TenantTreeNode[], query: string): TenantTreeNode[] {
-  if (!query.trim()) return nodes;
-  const lowerQuery = query.toLowerCase();
-
-  return nodes.reduce<TenantTreeNode[]>((acc, node) => {
-    const matchesSelf =
-      node.name.toLowerCase().includes(lowerQuery) ||
-      node.code.toLowerCase().includes(lowerQuery);
-
-    const filteredChildren = filterTree(node.children || [], query);
-
-    if (matchesSelf || filteredChildren.length > 0) {
-      acc.push({
-        ...node,
-        children: matchesSelf ? node.children : filteredChildren,
-      });
-    }
-
-    return acc;
-  }, []);
+interface UseSubTenantsViewModelParams {
+  parentId: string;
+  parentName: string;
+  parentCode: string;
 }
 
-// ─────────────────────────────────────────
-// ViewModel
-// ─────────────────────────────────────────
-
-export function useTenantsViewModel() {
+export function useSubTenantsViewModel({
+  parentId,
+  parentName,
+  parentCode,
+}: UseSubTenantsViewModelParams) {
   const queryClient = useQueryClient();
   const { t } = useI18n();
   const { hasPermission } = usePermissions();
   const { success: toastSuccess, error: toastError } = useEnhancedToast();
-  const user = useAppStore((state) => state.user);
   const { tenantRepository } = systemContainer;
 
   // ── Permissions ──
   const canCreate = hasPermission(SYSTEM_PERMISSIONS.TENANTS_CREATE);
-
-  // ── System admin check ──
-  const isSystemAdmin = useMemo(() => {
-    const adminType = user?.adminTypeName?.toLowerCase() || "";
-    return adminType.includes("super") || adminType.includes("system");
-  }, [user]);
-
-  // ── Search ──
-  const [search, setSearch] = useState("");
 
   // ── Dialog state ──
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
@@ -104,24 +68,14 @@ export function useTenantsViewModel() {
   const [promoEditionId, setPromoEditionId] = useState("");
   const [promoSubType, setPromoSubType] = useState("");
 
-  // ── Result dialog state ──
-  const [resultDialogOpen, setResultDialogOpen] = useState(false);
-  const [createResult, setCreateResult] = useState<CreateTenantResult | null>(null);
-
   // ── Data queries ──
-  const {
-    data: treeData,
-    isLoading,
-  } = useQuery({
-    queryKey: ["tenants", "tree"],
-    queryFn: () =>
-      isSystemAdmin
-        ? tenantRepository.getTree()
-        : tenantRepository.getMyChildren().then((res) => res.items),
+  const { data: children, isLoading } = useQuery({
+    queryKey: ["tenants", "children", parentId],
+    queryFn: () => tenantRepository.getChildren(parentId),
+    enabled: !!parentId,
   });
 
-  const tree = useMemo(() => treeData ?? [], [treeData]);
-  const filteredTree = useMemo(() => filterTree(tree, search), [tree, search]);
+  const childNodes = useMemo(() => children ?? [], [children]);
 
   // ── Promotion query ──
   const { data: promotionsRaw = [], isLoading: isLoadingPromotions } = useQuery({
@@ -177,12 +131,14 @@ export function useTenantsViewModel() {
   const handleOpenCreate = useCallback(
     (parent?: TenantTreeNode) => {
       setCreateForm(initialCreateForm);
-      setParentForCreate(parent ?? null);
+      setParentForCreate(
+        parent ?? ({ id: parentId, name: parentName, code: parentCode } as TenantTreeNode)
+      );
       setPromoEditionId("");
       setPromoSubType("");
       setCreateDialogOpen(true);
     },
-    []
+    [parentId, parentName, parentCode]
   );
 
   const handleCreateSubmit = useCallback(
@@ -213,11 +169,11 @@ export function useTenantsViewModel() {
         }
 
         // Unified API call
-        const result = await tenantRepository.create({
+        await tenantRepository.create({
           name: data.name,
           code: data.code,
           description: data.description || undefined,
-          parentId: parentForCreate?.id,
+          parentId: parentForCreate?.id || parentId,
           adminEmail: data.adminEmail,
           adminUsername: data.adminUsername || undefined,
           editionId: data.editionId || undefined,
@@ -228,11 +184,11 @@ export function useTenantsViewModel() {
         });
 
         queryClient.invalidateQueries({ queryKey: ["tenants"] });
+        toastSuccess({
+          title: t("tenant.created"),
+          description: t("tenant.createdDescription"),
+        });
         setCreateDialogOpen(false);
-
-        // Show success dialog with setup URL
-        setCreateResult(result);
-        setResultDialogOpen(true);
       } catch (err) {
         appLogger.error("Failed to create tenant:", err);
         toastError({
@@ -243,7 +199,7 @@ export function useTenantsViewModel() {
         setIsCreating(false);
       }
     },
-    [createForm, parentForCreate, tenantRepository, queryClient, t, toastSuccess, toastError]
+    [createForm, parentForCreate, parentId, tenantRepository, queryClient, t, toastSuccess, toastError]
   );
 
   const handleOpenEdit = useCallback((node: TenantTreeNode) => {
@@ -310,21 +266,11 @@ export function useTenantsViewModel() {
     [tenantToDelete, tenantRepository, queryClient, t, toastSuccess, toastError]
   );
 
-  const closeResultDialog = useCallback(() => {
-    setResultDialogOpen(false);
-    setCreateResult(null);
-  }, []);
-
   return {
     // Data
-    tree,
-    filteredTree,
+    childNodes,
     isLoading,
     canCreate,
-
-    // Search
-    search,
-    setSearch,
 
     // Create dialog
     createDialogOpen,
@@ -341,10 +287,8 @@ export function useTenantsViewModel() {
     cachedEditions,
     availablePromotions,
     isLoadingPromotions,
-    promoEditionId,
-    setPromoEditionId: setPromoEditionId,
-    promoSubType,
-    setPromoSubType: setPromoSubType,
+    setPromoEditionId,
+    setPromoSubType,
 
     // Edit dialog
     editDialogOpen,
@@ -363,10 +307,5 @@ export function useTenantsViewModel() {
     handleOpenDelete,
     handleDeleteConfirm,
     isDeleting,
-
-    // Result dialog
-    resultDialogOpen,
-    createResult,
-    closeResultDialog,
   };
 }
