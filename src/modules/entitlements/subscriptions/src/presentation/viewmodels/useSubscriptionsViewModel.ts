@@ -10,6 +10,7 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { entitlementsContainer } from "@modules/entitlements/di";
+import { identityContainer } from "@modules/identity/di";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useState, useCallback, useEffect, useMemo } from "react";
@@ -32,6 +33,8 @@ export function useSubscriptionsViewModel(tenantId: string) {
       const [showCheckoutDialog, setShowCheckoutDialog] = useState(false);
       const [showCancelStripeDialog, setShowCancelStripeDialog] = useState(false);
       const [checkoutUrl, setCheckoutUrl] = useState("");
+      const [checkoutQrCode, setCheckoutQrCode] = useState<string | null>(null);
+      const [checkoutEmailSent, setCheckoutEmailSent] = useState(false);
       const [cancelImmediately, setCancelImmediately] = useState(false);
 
       // ─── Form state ─────────────────────────────────────
@@ -48,6 +51,7 @@ export function useSubscriptionsViewModel(tenantId: string) {
       const [selectedPromotionId, setSelectedPromotionId] = useState<string | null>(null);
       const [refundType, setRefundType] = useState("None");
       const [customRefundAmount, setCustomRefundAmount] = useState<string>("");
+      const [skipPayment, setSkipPayment] = useState(false);
 
       // ─── Query keys ─────────────────────────────────────
       const queryKey = ["entitlements", "subscriptions", tenantId];
@@ -58,6 +62,15 @@ export function useSubscriptionsViewModel(tenantId: string) {
             queryFn: () => subscriptionRepository.getByTenant(tenantId),
             enabled: !!tenantId,
       });
+
+      // ─── Fetch tenant detail (for admin email) ─────────
+      const { tenantRepository } = identityContainer;
+      const tenantQuery = useQuery({
+            queryKey: ["tenant", tenantId],
+            queryFn: () => tenantRepository.getById(tenantId),
+            enabled: !!tenantId,
+      });
+      const tenantAdminEmail = tenantQuery.data?.adminEmail;
 
       const items = subscriptionsQuery.data ?? [];
       const activeSubscription = items.find(
@@ -101,6 +114,7 @@ export function useSubscriptionsViewModel(tenantId: string) {
             setSelectedPromotionId(null);
             setRefundType("None");
             setCustomRefundAmount("");
+            setSkipPayment(false);
       }, []);
 
       // ─── Auto-calculate endDate on type change ────────
@@ -190,7 +204,7 @@ export function useSubscriptionsViewModel(tenantId: string) {
       // ─── Mutations ──────────────────────────────────────
 
       const assignMutation = makeMutation(
-            (params: { editionId: string; type: string; endDate?: string; expiryBehavior?: string; promoCode?: string; currency?: string; promotionId?: string }) =>
+            (params: { editionId: string; type: string; endDate?: string; expiryBehavior?: string; promoCode?: string; currency?: string; promotionId?: string; skipPayment?: boolean }) =>
                   subscriptionRepository.assign(tenantId, params),
             "entSubscriptions.assigned",
             "entSubscriptions.assignedDesc",
@@ -262,8 +276,9 @@ export function useSubscriptionsViewModel(tenantId: string) {
                   promoCode: requiresPromoCode ? (promoCode || undefined) : undefined,
                   currency: currency || undefined,
                   promotionId: selectedPromotionId || undefined,
+                  skipPayment: skipPayment || undefined,
             });
-      }, [assignMutation, selectedEditionId, subscriptionType, endDate, expiryBehavior, promoCode, currency, selectedPromotionId, requiresPromoCode]);
+      }, [assignMutation, selectedEditionId, subscriptionType, endDate, expiryBehavior, promoCode, currency, selectedPromotionId, requiresPromoCode, skipPayment]);
 
       const submitChange = useCallback(() => {
             changeMutation.mutate({
@@ -291,7 +306,7 @@ export function useSubscriptionsViewModel(tenantId: string) {
 
       // ─── Billing mutations ──────────────────────────────
       const checkoutMutation = useMutation({
-            mutationFn: async () => {
+            mutationFn: async (options?: { sendToEmail?: string }) => {
                   // Allow checkout for both active and pending-payment subscriptions
                   const targetSubscription = activeSubscription ?? pendingPaymentSubscription;
                   if (!targetSubscription) throw new Error("No active subscription");
@@ -301,11 +316,15 @@ export function useSubscriptionsViewModel(tenantId: string) {
                         currency: targetSubscription.currency,
                         successUrl: `${window.location.origin}/entitlements/subscriptions?checkout=success`,
                         cancelUrl: `${window.location.origin}/entitlements/subscriptions?checkout=canceled`,
+                        generateQrCode: true,
+                        sendToEmail: options?.sendToEmail,
                   });
                   return result;
             },
             onSuccess: (result) => {
                   setCheckoutUrl(result.url);
+                  setCheckoutQrCode(result.qrCodeBase64 ?? null);
+                  setCheckoutEmailSent(result.emailSent ?? false);
                   setShowCheckoutDialog(true);
                   invalidate();
                   success({ title: t("billing.checkoutSuccess"), description: "" });
@@ -423,6 +442,7 @@ export function useSubscriptionsViewModel(tenantId: string) {
             useFallback, setUseFallback,
             promoCode, setPromoCode,
             currency, setCurrency,
+            skipPayment, setSkipPayment,
 
             // Smart promotion picker
             availablePromotions,
@@ -435,8 +455,17 @@ export function useSubscriptionsViewModel(tenantId: string) {
             refundType, setRefundType,
             customRefundAmount, setCustomRefundAmount,
 
-            // Billing actions
-            sendPaymentLink: () => checkoutMutation.mutate(),
+            // Billing actions — dual mode: generate only vs generate & send
+            generatePaymentLink: () => checkoutMutation.mutate(undefined),
+            sendPaymentLink: (email?: string) => {
+                  const targetEmail = email || tenantAdminEmail;
+                  if (!targetEmail) {
+                        showError({ title: t("common.error"), description: t("billing.errors.noAdminEmail") || "No admin email found for this tenant." });
+                        return;
+                  }
+                  checkoutMutation.mutate({ sendToEmail: targetEmail });
+            },
+            tenantAdminEmail,
             isSendingPaymentLink: checkoutMutation.isPending,
             openBillingPortal: () => portalMutation.mutate(),
             isOpeningPortal: portalMutation.isPending,
@@ -447,6 +476,8 @@ export function useSubscriptionsViewModel(tenantId: string) {
             showCheckoutDialog, setShowCheckoutDialog,
             showCancelStripeDialog, setShowCancelStripeDialog,
             checkoutUrl,
+            checkoutQrCode,
+            checkoutEmailSent,
             cancelImmediately, setCancelImmediately,
       };
 }

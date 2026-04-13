@@ -26,6 +26,7 @@ export interface TenantProps {
   editionEndDate?: string;
   primaryDomain?: string;
   domainCount?: number;
+  adminEmail?: string;
   children?: TenantProps[];
 }
 
@@ -120,6 +121,10 @@ export class Tenant {
 
   get domainCount(): number {
     return this.props.domainCount ?? 0;
+  }
+
+  get adminEmail(): string | undefined {
+    return this.props.adminEmail;
   }
 
   // ===== Business Logic =====

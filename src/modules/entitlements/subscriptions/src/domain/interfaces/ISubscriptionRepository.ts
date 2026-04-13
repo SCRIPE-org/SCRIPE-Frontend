@@ -17,7 +17,7 @@ export interface ISubscriptionRepository {
       downloadReceipt(tenantId: string): Promise<ExportFileResult>;
 
       // Lifecycle
-      assign(tenantId: string, data: { editionId: string; type: string; endDate?: string; expiryBehavior?: string; promoCode?: string; currency?: string; promotionId?: string }): Promise<string>;
+      assign(tenantId: string, data: { editionId: string; type: string; endDate?: string; expiryBehavior?: string; promoCode?: string; currency?: string; promotionId?: string; skipPayment?: boolean }): Promise<string>;
       change(tenantId: string, data: { editionId: string; type: string; promoCode?: string; currency?: string; promotionId?: string }): Promise<void>;
       renew(tenantId: string, type: string): Promise<void>;
       convertTrial(tenantId: string, type: string): Promise<void>;

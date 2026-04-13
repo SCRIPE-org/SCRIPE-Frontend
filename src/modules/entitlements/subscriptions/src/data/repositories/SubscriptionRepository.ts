@@ -44,7 +44,7 @@ export class SubscriptionRepository implements ISubscriptionRepository {
 
       async assign(
             tenantId: string,
-            data: { editionId: string; type: string; endDate?: string; expiryBehavior?: string; promoCode?: string; currency?: string; promotionId?: string }
+            data: { editionId: string; type: string; endDate?: string; expiryBehavior?: string; promoCode?: string; currency?: string; promotionId?: string; skipPayment?: boolean }
       ): Promise<string> {
             const result = await this.service.assign(tenantId, data);
             return result.id;

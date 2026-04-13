@@ -181,27 +181,27 @@ export const USE_DYNAMIC_NAVIGATION = true;
 
 // STATIC NAVIGATION - Used when USE_DYNAMIC_NAVIGATION is false
 export const navigation: NavigationItem[] = [
-  {
-    name: "nav.demo",
-    icon: Users,
-    children: [
-      {
-        name: "nav.products",
-        href: "/demo/products",
-        icon: ShieldCheck,
-      },
-      {
-        name: "nav.tree",
-        href: "/demo/tree",
-        icon: Users,
-      },
-      {
-        name: "nav.richTextEditor",
-        href: "/demo/rich-text-editor",
-        icon: Type,
-      },
-    ],
-  },
+  // {
+  //   name: "nav.demo",
+  //   icon: Users,
+  //   children: [
+  //     {
+  //       name: "nav.products",
+  //       href: "/demo/products",
+  //       icon: ShieldCheck,
+  //     },
+  //     {
+  //       name: "nav.tree",
+  //       href: "/demo/tree",
+  //       icon: Users,
+  //     },
+  //     {
+  //       name: "nav.richTextEditor",
+  //       href: "/demo/rich-text-editor",
+  //       icon: Type,
+  //     },
+  //   ],
+  // },
 ];
 
 // 🔄 Fallback navigation - used when backend is unavailable (same as static navigation)

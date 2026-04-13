@@ -1,6 +1,8 @@
 export const ar = {
   users: {
     title: "المستخدمون",
+    empty: "لا يوجد مستخدمين",
+    emptyDesc: "لا يوجد مستخدمين حالياً",
     description: "إدارة مستخدمي المستأجرين والتحكم بوصولهم",
     addUser: "إضافة مستخدم",
     totalUsers: "إجمالي المستخدمين",

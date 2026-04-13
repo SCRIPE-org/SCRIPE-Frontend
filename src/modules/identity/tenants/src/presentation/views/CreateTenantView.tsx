@@ -52,7 +52,6 @@ import {
   ExternalLink,
   ArrowRight,
   AlertTriangle,
-  Sparkles,
   Shield,
   Search,
 } from "lucide-react";
@@ -162,7 +161,7 @@ export function CreateTenantView() {
                 </>
               ) : (
                 <>
-                  <Sparkles className="h-4 w-4" />
+                  <Check className="h-4 w-4" />
                   {t("tenant.createTenant") || "Create Tenant"}
                 </>
               )}
@@ -275,6 +274,11 @@ function StepIndicator({
 // ─────────────────────────────────────────
 
 function Step1Organization({ vm, t }: { vm: ReturnType<typeof useCreateTenantViewModel>; t: (key: string) => string }) {
+  const touched = vm.stepTouched[1];
+  const errors = vm.stepErrors[1];
+  const nameError = touched && errors.includes("name");
+  const codeError = touched && errors.includes("code");
+
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3 mb-2">
@@ -299,9 +303,12 @@ function Step1Organization({ vm, t }: { vm: ReturnType<typeof useCreateTenantVie
             value={vm.form.name}
             onChange={(e) => vm.updateField("name", e.target.value)}
             placeholder={t("tenant.namePlaceholder") || "e.g. Acme Corporation"}
-            className="h-11"
+            className={cn("h-11", nameError && "border-destructive")}
             autoFocus
           />
+          {nameError && (
+            <p className="text-xs text-destructive">{t("validation.invalidName") || "Tenant name is required."}</p>
+          )}
         </div>
 
         <div className="space-y-2">
@@ -313,12 +320,16 @@ function Step1Organization({ vm, t }: { vm: ReturnType<typeof useCreateTenantVie
             value={vm.form.code}
             onChange={(e) => vm.updateField("code", e.target.value.toUpperCase())}
             placeholder={t("tenant.codePlaceholder") || "Auto-generated from name"}
-            className="h-11 font-mono uppercase"
+            className={cn("h-11 font-mono uppercase", codeError && "border-destructive")}
             maxLength={50}
           />
-          <p className="text-xs text-muted-foreground">
-            {t("tenant.codeHint") || "Unique identifier. Auto-generated from name."}
-          </p>
+          {codeError ? (
+            <p className="text-xs text-destructive">{t("validation.invalidCode") || "Tenant code is required."}</p>
+          ) : (
+            <p className="text-xs text-muted-foreground">
+              {t("tenant.codeHint") || "Unique identifier. Auto-generated from name."}
+            </p>
+          )}
         </div>
       </div>
 
@@ -344,8 +355,11 @@ function Step1Organization({ vm, t }: { vm: ReturnType<typeof useCreateTenantVie
 // ─────────────────────────────────────────
 
 function Step2Administrator({ vm, t }: { vm: ReturnType<typeof useCreateTenantViewModel>; t: (key: string) => string }) {
-  const emailError =
-    vm.form.adminEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(vm.form.adminEmail);
+  const touched = vm.stepTouched[2];
+  const errors = vm.stepErrors[2];
+  const emailEmpty = touched && errors.includes("adminEmail");
+  const emailFormatError = errors.includes("adminEmailFormat");
+  const emailError = emailEmpty || emailFormatError;
 
   return (
     <div className="space-y-6">
@@ -378,19 +392,25 @@ function Step2Administrator({ vm, t }: { vm: ReturnType<typeof useCreateTenantVi
           <Label htmlFor="admin-email" className="text-sm font-medium">
             {t("tenant.adminEmail") || "Admin Email"} <span className="text-destructive">*</span>
           </Label>
-          <div className="relative">
-            <Mail className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <div className="relative" dir="ltr">
+            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               id="admin-email"
               type="email"
               value={vm.form.adminEmail}
               onChange={(e) => vm.updateField("adminEmail", e.target.value)}
               placeholder="admin@company.com"
-              className={cn("h-11 ps-10", emailError && "border-destructive")}
+              className={cn("h-11 pl-10 text-left", emailError && "border-destructive")}
+              dir="ltr"
               autoFocus
             />
           </div>
-          {emailError && (
+          {emailEmpty && (
+            <p className="text-xs text-destructive">
+              {t("validation.invalidAdminEmail") || "Admin email is required."}
+            </p>
+          )}
+          {emailFormatError && (
             <p className="text-xs text-destructive">
               {t("validation.invalidEmail") || "Please enter a valid email address."}
             </p>
@@ -406,7 +426,8 @@ function Step2Administrator({ vm, t }: { vm: ReturnType<typeof useCreateTenantVi
             value={vm.form.adminUsername}
             onChange={(e) => vm.updateField("adminUsername", e.target.value)}
             placeholder={t("tenant.autoGenerated") || "Auto-generated from code"}
-            className="h-11 font-mono"
+            className="h-11 font-mono text-left"
+            dir="ltr"
           />
           <p className="text-xs text-muted-foreground">
             {t("tenant.usernameHint") || "Leave blank to auto-generate from tenant code."}
@@ -520,10 +541,10 @@ function Step3Plan({ vm, t }: { vm: ReturnType<typeof useCreateTenantViewModel>;
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Monthly">{t("billing.monthly") || "Monthly"}</SelectItem>
-                <SelectItem value="Yearly">{t("billing.yearly") || "Yearly"}</SelectItem>
-                <SelectItem value="Lifetime">{t("billing.lifetime") || "Lifetime"}</SelectItem>
-                <SelectItem value="Trial">{t("billing.trial") || "Trial"}</SelectItem>
+                <SelectItem value="Monthly">{t("tenant.subscriptionTypes.monthly") || "Monthly"}</SelectItem>
+                <SelectItem value="Yearly">{t("tenant.subscriptionTypes.yearly") || "Yearly"}</SelectItem>
+                <SelectItem value="Lifetime">{t("tenant.subscriptionTypes.lifetime") || "Lifetime"}</SelectItem>
+                <SelectItem value="Trial">{t("tenant.subscriptionTypes.trial") || "Trial"}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -540,8 +561,19 @@ function Step3Plan({ vm, t }: { vm: ReturnType<typeof useCreateTenantViewModel>;
               <SelectContent>
                 <SelectItem value="USD">USD ($)</SelectItem>
                 <SelectItem value="EUR">EUR (€)</SelectItem>
-                <SelectItem value="GBP">GBP (£)</SelectItem>
                 <SelectItem value="EGP">EGP (E£)</SelectItem>
+                <SelectItem value="SAR">SAR (﷼)</SelectItem>
+                <SelectItem value="AED">AED (د.إ)</SelectItem>
+                <SelectItem value="GBP">GBP (£)</SelectItem>
+                <SelectItem value="JPY">JPY (¥)</SelectItem>
+                <SelectItem value="CNY">CNY (¥)</SelectItem>
+                <SelectItem value="TRY">TRY (₺)</SelectItem>
+                <SelectItem value="INR">INR (₹)</SelectItem>
+                <SelectItem value="BRL">BRL (R$)</SelectItem>
+                <SelectItem value="KWD">KWD (د.ك)</SelectItem>
+                <SelectItem value="QAR">QAR (ر.ق)</SelectItem>
+                <SelectItem value="BHD">BHD (د.ب)</SelectItem>
+                <SelectItem value="OMR">OMR (ر.ع)</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -718,10 +750,6 @@ function SuccessScreen({
           {t("tenant.viewTenantDetails") || "View Tenant Details"}
           <ArrowRight className="h-4 w-4" />
         </Button>
-
-        <p className="text-xs text-center text-muted-foreground">
-          {t("tenant.autoRedirect") || "You will be automatically redirected in a few seconds..."}
-        </p>
       </div>
     </div>
   );

@@ -325,6 +325,7 @@ export const en = {
   },
   common: {
     step: "Step",
+    clear: "Clear",
     none: "None",
     continue: "Continue",
     time: "Time",
@@ -362,6 +363,7 @@ export const en = {
     done: "Done",
     saveChanges: "Save Changes",
     saving: "Saving...",
+    creating: "Creating...",
     selectDate: "Select Date",
     search: "Search...",
     filter: "Filter",

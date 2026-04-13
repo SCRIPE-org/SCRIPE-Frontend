@@ -73,6 +73,9 @@ export const en = {
     resynced: "Permissions Resynced",
     resyncedDesc: "Permissions have been synchronized from the edition.",
     manage: "Manage Subscriptions",
+    skipPayment: "Skip Payment",
+    skipPaymentDesc: "Activates the subscription without payment processing. Use for demos or manual billing.",
+    skipPaymentWarning: "This subscription will not auto-renew. No Stripe customer is created. Use manual invoicing for future billing.",
     export: {
       title: "Export Subscriptions",
       description: "Generate comprehensive subscription analytics reports.",

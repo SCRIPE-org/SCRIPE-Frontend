@@ -37,7 +37,7 @@ export class SubscriptionService implements ISubscriptionService {
 
       async assign(
             tenantId: string,
-            data: { editionId: string; type: string; endDate?: string; expiryBehavior?: string; currency?: string; promoCode?: string; promotionId?: string }
+            data: { editionId: string; type: string; endDate?: string; expiryBehavior?: string; currency?: string; promoCode?: string; promotionId?: string; skipPayment?: boolean }
       ): Promise<{ id: string }> {
             return this.api.post<{ id: string }>(
                   API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.ASSIGN(tenantId),

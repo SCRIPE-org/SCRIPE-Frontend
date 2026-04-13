@@ -21,6 +21,8 @@ import {
 import {
       Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@core/ui/select";
+import { GenericSelect } from "@core/crud/components/generic-select";
+import type { GenericSelectOption } from "@core/crud/components/generic-select";
 import { Input } from "@core/ui/input";
 import { DatePicker } from "@core/ui/date-picker";
 import { Label } from "@core/ui/label";
@@ -30,7 +32,7 @@ import { RadioGroup, RadioGroupItem } from "@core/ui/radio-group";
 import {
       Loader2, Plus, RefreshCw, XCircle, PauseCircle, PlayCircle,
       Ban, ArrowRightLeft, RotateCcw, Shield, Tag, DollarSign,
-      CreditCard, ExternalLink, Copy, XSquare,
+      CreditCard, ExternalLink, Copy, XSquare, CheckCircle2,
 } from "lucide-react";
 import { format } from "date-fns";
 import type { SubscriptionListItem } from "../../domain/entities/Subscription";
@@ -114,7 +116,7 @@ interface SubscriptionsViewProps {
 }
 
 export function SubscriptionsView({ tenantId }: SubscriptionsViewProps) {
-  useModuleLocales(() => import("../../../../locales"), "entitlements-shared");
+      useModuleLocales(() => import("../../../../locales"), "entitlements-shared");
       const { t, language } = useI18n();
       const vm = useSubscriptionsCrudAdapter(tenantId);
       const editionsVm = useEditionsViewModel();
@@ -124,7 +126,7 @@ export function SubscriptionsView({ tenantId }: SubscriptionsViewProps) {
                   titleKey: "entSubscriptions.title",
                   subtitleKey: "entSubscriptions.description",
                   hideAddButton: true,
-
+                  hideActionsColumn: true,
                   columns: [
                         {
                               key: "editionName",
@@ -321,9 +323,16 @@ export function SubscriptionsView({ tenantId }: SubscriptionsViewProps) {
                         } else if (vm.hasPendingPaymentSubscription) {
                               // GAP-J: PendingPayment — show payment link + revoke
                               actions.push({
-                                    label: t("billing.actions.createCheckout") || "Send Payment Link",
+                                    label: t("billing.actions.generateLink") || "Generate Link",
                                     icon: <CreditCard className="h-4 w-4" />,
                                     variant: "default",
+                                    onClick: async () => vm.generatePaymentLink(),
+                                    loading: vm.isSendingPaymentLink,
+                              });
+                              actions.push({
+                                    label: t("billing.actions.generateAndSend") || "Generate & Send",
+                                    icon: <CreditCard className="h-4 w-4" />,
+                                    variant: "outline",
                                     onClick: async () => vm.sendPaymentLink(),
                                     loading: vm.isSendingPaymentLink,
                               });
@@ -362,9 +371,17 @@ export function SubscriptionsView({ tenantId }: SubscriptionsViewProps) {
 
                         // ── GAP-I: Billing actions (only for PAID active subscriptions) ──
                         if (vm.hasActiveSubscription && !vm.isFreeEdition) {
-                              // Send Payment Link (for renewals/upgrades)
+                              // Generate Link (for renewals/upgrades)
                               actions.push({
-                                    label: t("billing.actions.createCheckout") || "Send Payment Link",
+                                    label: t("billing.actions.generateLink") || "Generate Link",
+                                    icon: <CreditCard className="h-4 w-4" />,
+                                    variant: "outline",
+                                    onClick: async () => vm.generatePaymentLink(),
+                                    loading: vm.isSendingPaymentLink,
+                              });
+                              // Generate & Send (generate + email to tenant admin)
+                              actions.push({
+                                    label: t("billing.actions.generateAndSend") || "Generate & Send",
                                     icon: <CreditCard className="h-4 w-4" />,
                                     variant: "outline",
                                     onClick: async () => vm.sendPaymentLink(),
@@ -436,21 +453,19 @@ function AssignDialog({
                         </DialogHeader>
 
                         <div className="space-y-4 py-4">
-                              {/* Edition */}
+                              {/* Edition — searchable GenericSelect */}
                               <div className="space-y-2">
                                     <Label>{t("entitlements.editions.editionName")}</Label>
-                                    <Select value={vm.selectedEditionId} onValueChange={vm.setSelectedEditionId}>
-                                          <SelectTrigger>
-                                                <SelectValue placeholder={t("entitlements.editions.editionName")} />
-                                          </SelectTrigger>
-                                          <SelectContent>
-                                                {(editionsVm.items ?? []).map((ed) => (
-                                                      <SelectItem key={ed.id} value={ed.id}>
-                                                            {ed.displayNameEn || ed.name}
-                                                      </SelectItem>
-                                                ))}
-                                          </SelectContent>
-                                    </Select>
+                                    <GenericSelect
+                                          type="searchable"
+                                          options={(editionsVm.items ?? []).map((ed) => ({
+                                                value: ed.id,
+                                                label: ed.displayNameEn || ed.name,
+                                          }))}
+                                          value={vm.selectedEditionId}
+                                          onValueChange={(v: any) => vm.setSelectedEditionId(v as string)}
+                                          placeholder={t("entitlements.editions.editionName")}
+                                    />
                               </div>
 
                               {/* Type — filtered by selected edition billing controls */}
@@ -591,6 +606,31 @@ function AssignDialog({
                                     </div>
                               )}
 
+                              {/* Skip Payment (Admin Override — Scenario C, Path 2) */}
+                              <div className="space-y-2">
+                                    <div className="flex items-center gap-2">
+                                          <Checkbox
+                                                id="assign-skip-payment"
+                                                checked={vm.skipPayment}
+                                                onCheckedChange={(checked) => vm.setSkipPayment(!!checked)}
+                                          />
+                                          <Label htmlFor="assign-skip-payment" className="text-sm font-medium cursor-pointer">
+                                                {t("entSubscriptions.skipPayment") || "Skip Payment"}
+                                          </Label>
+                                    </div>
+                                    <p className="text-xs text-muted-foreground ms-6">
+                                          {t("entSubscriptions.skipPaymentDesc") || "Activates the subscription without payment processing. Use for demos or manual billing."}
+                                    </p>
+                                    {vm.skipPayment && (
+                                          <div className="flex items-start gap-2 rounded-md bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 p-2 ms-6">
+                                                <Shield className="h-4 w-4 text-amber-600 mt-0.5 shrink-0" />
+                                                <span className="text-xs text-amber-700 dark:text-amber-400">
+                                                      {t("entSubscriptions.skipPaymentWarning") || "This subscription will not auto-renew. No Stripe customer is created. Use manual invoicing for future billing."}
+                                                </span>
+                                          </div>
+                                    )}
+                              </div>
+
                               {/* Currency */}
                               <div className="space-y-2">
                                     <Label>{t("entitlements.promotions.currency") || "Currency"}</Label>
@@ -640,21 +680,19 @@ function ChangeDialog({
                         </DialogHeader>
 
                         <div className="space-y-4 py-4">
-                              {/* Edition */}
+                              {/* Edition — searchable GenericSelect */}
                               <div className="space-y-2">
                                     <Label>{t("entitlements.editions.editionName")}</Label>
-                                    <Select value={vm.selectedEditionId} onValueChange={vm.setSelectedEditionId}>
-                                          <SelectTrigger>
-                                                <SelectValue placeholder={t("entitlements.editions.editionName")} />
-                                          </SelectTrigger>
-                                          <SelectContent>
-                                                {(editionsVm.items ?? []).map((ed) => (
-                                                      <SelectItem key={ed.id} value={ed.id}>
-                                                            {ed.displayNameEn || ed.name}
-                                                      </SelectItem>
-                                                ))}
-                                          </SelectContent>
-                                    </Select>
+                                    <GenericSelect
+                                          type="searchable"
+                                          options={(editionsVm.items ?? []).map((ed) => ({
+                                                value: ed.id,
+                                                label: ed.displayNameEn || ed.name,
+                                          }))}
+                                          value={vm.selectedEditionId}
+                                          onValueChange={(v: any) => vm.setSelectedEditionId(v as string)}
+                                          placeholder={t("entitlements.editions.editionName")}
+                                    />
                               </div>
 
                               {/* Type — filtered by selected edition billing controls */}
@@ -1111,6 +1149,33 @@ function CheckoutDialog({
                         </DialogHeader>
 
                         <div className="space-y-4 py-2">
+                              {/* Email sent indicator */}
+                              {vm.checkoutEmailSent && (
+                                    <div className="flex items-center gap-2 rounded-lg bg-green-500/10 border border-green-500/30 px-3 py-2">
+                                          <CheckCircle2 className="h-4 w-4 text-green-500 shrink-0" />
+                                          <span className="text-sm text-green-700 dark:text-green-400">
+                                                {t("billing.dialogs.emailSent") || "Payment link has been emailed to the tenant admin."}
+                                          </span>
+                                    </div>
+                              )}
+
+                              {/* QR Code */}
+                              {vm.checkoutQrCode && (
+                                    <div className="flex flex-col items-center gap-2">
+                                          <p className="text-xs text-muted-foreground">
+                                                {t("billing.dialogs.scanQrCode") || "Scan to open payment page"}
+                                          </p>
+                                          <div className="rounded-xl border bg-white p-3 shadow-sm">
+                                                <img
+                                                      src={vm.checkoutQrCode}
+                                                      alt="Payment QR Code"
+                                                      className="h-48 w-48"
+                                                />
+                                          </div>
+                                    </div>
+                              )}
+
+                              {/* Payment URL */}
                               <div className="flex items-center gap-2 rounded-lg bg-muted/50 border p-3">
                                     <Input
                                           readOnly

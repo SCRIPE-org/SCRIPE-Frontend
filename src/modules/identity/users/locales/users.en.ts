@@ -1,6 +1,8 @@
 export const en = {
   users: {
     title: "Users",
+    empty: "No users yet",
+    emptyDesc: "No users currently",
     description: "Manage tenant client users and their access",
     addUser: "Add User",
     totalUsers: "Total Users",

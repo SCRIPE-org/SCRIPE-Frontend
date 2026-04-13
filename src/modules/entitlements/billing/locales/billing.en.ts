@@ -35,6 +35,8 @@ export const en = {
     },
     actions: {
       createCheckout: "Send Payment Link",
+      generateLink: "Generate Link",
+      generateAndSend: "Generate & Send",
       openPortal: "Open Billing Portal",
       cancelStripe: "Cancel Stripe Subscription",
       cancelStripeConfirm: "Are you sure you want to cancel this Stripe subscription?",
@@ -48,6 +50,8 @@ export const en = {
     dialogs: {
       checkoutTitle: "Payment Link Generated",
       checkoutDescription: "Share this payment link with the tenant to complete their subscription.",
+      emailSent: "Payment link has been emailed to the tenant admin.",
+      scanQrCode: "Scan to open payment page",
       cancelTitle: "Cancel Stripe Subscription",
       cancelDescription: "Choose how you want to cancel this Stripe subscription.",
       portalOpened: "The billing portal has been opened in a new tab.",
@@ -62,6 +66,7 @@ export const en = {
       noStripeSubscription: "No active Stripe subscription for this tenant.",
       noPending: "No pending subscription. Assign an edition first.",
       priceNotFound: "No pricing configured for this edition/currency/billing cycle.",
+      noAdminEmail: "No admin email found for this tenant. Cannot send payment link.",
     },
     dashboard: {
       title: "Revenue Dashboard",

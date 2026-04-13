@@ -44,6 +44,9 @@ export class TenantMapper {
       modifiedAt: model.modifiedAt,
       editionName: model.editionName,
       editionEndDate: model.editionEndDate,
+      primaryDomain: model.primaryDomain,
+      domainCount: model.domainCount,
+      adminEmail: model.adminEmail,
       children: model.children?.map((c) => TenantMapper.toEntity(c).toProps()),
     };
     return new Tenant(props);

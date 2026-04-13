@@ -35,6 +35,7 @@ export interface TenantJson {
   editionEndDate?: string;
   primaryDomain?: string;
   domainCount?: number;
+  adminEmail?: string;
 }
 
 export interface TenantTreeNodeJson {
@@ -120,7 +121,8 @@ export class TenantModel {
     public readonly editionName?: string,
     public readonly editionEndDate?: string,
     public readonly primaryDomain?: string,
-    public readonly domainCount?: number
+    public readonly domainCount?: number,
+    public readonly adminEmail?: string
   ) { }
 
   static fromJson(json: TenantJson): TenantModel {
@@ -144,7 +146,8 @@ export class TenantModel {
       json.editionName,
       json.editionEndDate,
       json.primaryDomain,
-      json.domainCount
+      json.domainCount,
+      json.adminEmail
     );
   }
 
@@ -168,6 +171,7 @@ export class TenantModel {
       editionEndDate: this.editionEndDate,
       primaryDomain: this.primaryDomain,
       domainCount: this.domainCount,
+      adminEmail: this.adminEmail,
     };
   }
 }

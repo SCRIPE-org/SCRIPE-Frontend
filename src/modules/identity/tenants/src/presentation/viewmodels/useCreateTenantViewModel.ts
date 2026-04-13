@@ -173,6 +173,8 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
   );
 
   // ── Step validation ──
+  const [stepTouched, setStepTouched] = useState<Record<StepId, boolean>>({ 1: false, 2: false, 3: false });
+
   const stepErrors = useMemo(() => {
     const errors: Record<StepId, string[]> = { 1: [], 2: [], 3: [] };
     // Step 1
@@ -196,6 +198,8 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
 
   // ── Navigation ──
   const goNext = useCallback(() => {
+    // Mark current step as touched so validation errors display
+    setStepTouched((prev) => ({ ...prev, [currentStep]: true }));
     if (currentStep < 3 && canProceed) {
       setCurrentStep((s) => (s + 1) as StepId);
     }
@@ -270,11 +274,6 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
         title: t("tenant.created") || "Tenant Created",
         description: t("tenant.createdDescription") || "The tenant has been created successfully.",
       });
-
-      // Auto-navigate to tenant detail page after a brief delay
-      setTimeout(() => {
-        router.push(`/tenants/${createResult.tenantId}`);
-      }, 2000);
     } catch (err) {
       appLogger.error("Failed to create tenant:", err);
       toastError({
@@ -302,6 +301,7 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
     canProceed,
     isStepValid,
     stepErrors,
+    stepTouched,
 
     // Form
     form,

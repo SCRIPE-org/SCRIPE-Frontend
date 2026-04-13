@@ -1092,6 +1092,7 @@ export const ar = {
     english: "الإنجليزية",
   },
   common: {
+    clear: "مسح",
     step: "الخطوة",
     from: "من",
     continue: "تواصل",
@@ -1174,6 +1175,7 @@ export const ar = {
     done: "تم",
     saveChanges: "حفظ التغييرات",
     saving: "جاري الحفظ...",
+    creating: "جاري الإنشاء...",
     cancel: "إلغاء",
     modified: "معدّل",
     delete: "حذف",

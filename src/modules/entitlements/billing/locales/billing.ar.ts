@@ -35,6 +35,8 @@ export const ar = {
     },
     actions: {
       createCheckout: "إرسال رابط الدفع",
+      generateLink: "إنشاء رابط",
+      generateAndSend: "إنشاء وإرسال",
       openPortal: "فتح بوابة الفوترة",
       cancelStripe: "إلغاء اشتراك Stripe",
       cancelStripeConfirm: "هل أنت متأكد من إلغاء اشتراك Stripe هذا؟",
@@ -48,6 +50,8 @@ export const ar = {
     dialogs: {
       checkoutTitle: "تم إنشاء رابط الدفع",
       checkoutDescription: "شارك رابط الدفع هذا مع المستأجر لإتمام اشتراكه.",
+      emailSent: "تم إرسال رابط الدفع بالبريد الإلكتروني إلى مدير المستأجر.",
+      scanQrCode: "امسح لفتح صفحة الدفع",
       cancelTitle: "إلغاء اشتراك Stripe",
       cancelDescription: "اختر طريقة إلغاء اشتراك Stripe هذا.",
       portalOpened: "تم فتح بوابة الفوترة في علامة تبويب جديدة.",
@@ -62,6 +66,7 @@ export const ar = {
       noStripeSubscription: "لا يوجد اشتراك Stripe نشط لهذا المستأجر.",
       noPending: "لا يوجد اشتراك معلق. عيّن إصداراً أولاً.",
       priceNotFound: "لم يتم تحديد تسعير لهذا الإصدار/العملة/دورة الفوترة.",
+      noAdminEmail: "لم يتم العثور على بريد إلكتروني للمدير لهذا المستأجر. لا يمكن إرسال رابط الدفع.",
     },
     dashboard: {
       title: "لوحة الإيرادات",

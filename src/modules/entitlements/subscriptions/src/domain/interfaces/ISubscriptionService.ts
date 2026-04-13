@@ -17,7 +17,7 @@ export interface ISubscriptionService {
       getById(id: string): Promise<SubscriptionModel>;
 
       // ── Lifecycle Actions ──
-      assign(tenantId: string, data: { editionId: string; type: string; endDate?: string; expiryBehavior?: string; currency?: string; promoCode?: string; promotionId?: string }): Promise<{ id: string }>;
+      assign(tenantId: string, data: { editionId: string; type: string; endDate?: string; expiryBehavior?: string; currency?: string; promoCode?: string; promotionId?: string; skipPayment?: boolean }): Promise<{ id: string }>;
       change(tenantId: string, data: { editionId: string; type: string; expiryBehavior?: string; currency?: string; promoCode?: string; promotionId?: string }): Promise<void>;
       renew(tenantId: string, type: string): Promise<void>;
       convertTrial(tenantId: string, type: string): Promise<void>;
