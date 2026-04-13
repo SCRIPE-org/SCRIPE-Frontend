@@ -32,6 +32,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@core/ui/select";
+import { GenericSelect } from "@core/crud/components/generic-select";
 import {
   Tooltip,
   TooltipContent,
@@ -53,7 +54,6 @@ import {
   ArrowRight,
   AlertTriangle,
   Shield,
-  Search,
 } from "lucide-react";
 
 import {
@@ -443,23 +443,22 @@ function Step2Administrator({ vm, t }: { vm: ReturnType<typeof useCreateTenantVi
 // ─────────────────────────────────────────
 
 function Step3Plan({ vm, t }: { vm: ReturnType<typeof useCreateTenantViewModel>; t: (key: string) => string }) {
-  const [editionSearch, setEditionSearch] = React.useState("");
-  const [editionResults, setEditionResults] = React.useState<{ value: string; label: string }[]>([]);
-  const [isSearching, setIsSearching] = React.useState(false);
+  const isFreeEdition = vm.selectedEdition && (vm.selectedEdition as any).isFree;
 
-  const handleEditionSearch = React.useCallback(
+  // Server-side search handler for GenericSelect
+  const handleServerSearch = React.useCallback(
     async (query: string) => {
-      setEditionSearch(query);
-      if (query.length < 1) return;
-      setIsSearching(true);
       const results = await vm.handleSearchEditions(query);
-      setEditionResults(results);
-      setIsSearching(false);
+      return results.map((r) => ({ value: r.value, label: r.label }));
     },
     [vm.handleSearchEditions]
   );
 
-  const isFreeEdition = vm.selectedEdition && (vm.selectedEdition as any).isFree;
+  // Build initial options from cached editions
+  const editionOptions = React.useMemo(
+    () => vm.cachedEditions.map((ed) => ({ value: ed.id, label: ed.name })),
+    [vm.cachedEditions]
+  );
 
   return (
     <div className="space-y-6">
@@ -475,57 +474,20 @@ function Step3Plan({ vm, t }: { vm: ReturnType<typeof useCreateTenantViewModel>;
         </div>
       </div>
 
-      {/* Edition Search */}
+      {/* Edition — searchable GenericSelect with server search */}
       <div className="space-y-2">
         <Label className="text-sm font-medium">{t("tenant.edition") || "Edition"}</Label>
-        <div className="relative">
-          <Search className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            value={editionSearch}
-            onChange={(e) => handleEditionSearch(e.target.value)}
-            placeholder={t("tenant.searchEditions") || "Search editions..."}
-            className="h-11 ps-10"
-          />
-          {isSearching && (
-            <Loader2 className="absolute end-3 top-1/2 -translate-y-1/2 h-4 w-4 animate-spin text-muted-foreground" />
-          )}
-        </div>
-        {/* Edition results dropdown */}
-        {editionResults.length > 0 && editionSearch && (
-          <div className="rounded-lg border border-border/60 bg-popover shadow-md overflow-hidden">
-            {editionResults.map((ed) => (
-              <button
-                key={ed.value}
-                onClick={() => {
-                  vm.updateField("editionId", ed.value);
-                  setEditionSearch("");
-                  setEditionResults([]);
-                }}
-                className={cn(
-                  "w-full text-start px-4 py-2.5 text-sm hover:bg-accent transition-colors",
-                  vm.form.editionId === ed.value && "bg-accent/50 font-medium"
-                )}
-              >
-                {ed.label}
-              </button>
-            ))}
-          </div>
-        )}
-        {/* Selected edition badge */}
-        {vm.selectedEdition && (
-          <div className="flex items-center gap-2">
-            <Badge variant="outline" className="text-xs gap-1">
-              <Check className="h-3 w-3" />
-              {vm.selectedEdition.name}
-            </Badge>
-            <button
-              onClick={() => vm.updateField("editionId", "")}
-              className="text-xs text-muted-foreground hover:text-destructive transition-colors"
-            >
-              {t("common.clear") || "Clear"}
-            </button>
-          </div>
-        )}
+        <GenericSelect
+          type="searchable"
+          searchType="server"
+          options={editionOptions}
+          value={vm.form.editionId}
+          onValueChange={(v: string | string[]) => vm.updateField("editionId", v as string)}
+          onServerSearch={handleServerSearch}
+          placeholder={t("tenant.searchEditions") || "Search editions..."}
+          searchPlaceholder={t("tenant.searchEditions") || "Search editions..."}
+          noResultsText={t("common.noResults") || "No editions found"}
+        />
       </div>
 
       {/* Subscription Type & Currency */}
