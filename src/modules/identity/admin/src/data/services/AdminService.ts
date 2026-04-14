@@ -185,4 +185,8 @@ export class AdminService implements IAdminService {
   async transferProtection(targetAdminId: string): Promise<void> {
     await this.api.post(API_ENDPOINTS.ADMINS.TRANSFER_PROTECTION, { targetAdminId });
   }
+
+  async resendSetupEmail(adminId: string): Promise<void> {
+    await this.api.post("/api/v1/account-setup/resend", { adminId });
+  }
 }

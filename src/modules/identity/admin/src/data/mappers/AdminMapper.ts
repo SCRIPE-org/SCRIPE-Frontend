@@ -44,6 +44,8 @@ export class AdminMapper {
       canModify: model.canModify,
       groupNamesEn: model.groupNamesEn,
       groupNamesAr: model.groupNamesAr,
+      isAccountActivated: model.isAccountActivated,
+      isProtected: model.isProtected,
     };
     return new Admin(data);
   }

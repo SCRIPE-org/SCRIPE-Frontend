@@ -119,9 +119,8 @@ export class BillingService implements IBillingService {
   // ── PDF Download ──
 
   async downloadInvoicePdf(invoiceId: string): Promise<Blob> {
-    return this.api.get<Blob>(
-      API_ENDPOINTS.ENTITLEMENTS.BILLING.INVOICES.PDF(invoiceId),
-      { responseType: "blob" } as never
+    return this.api.getBlob(
+      API_ENDPOINTS.ENTITLEMENTS.BILLING.INVOICES.PDF(invoiceId)
     );
   }
 

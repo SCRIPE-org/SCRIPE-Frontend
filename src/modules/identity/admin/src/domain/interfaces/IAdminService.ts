@@ -169,4 +169,9 @@ export interface IAdminService {
    * Transfer IsProtected flag from the current protected admin to another
    */
   transferProtection(targetAdminId: string): Promise<void>;
+
+  /**
+   * Resend the account setup email to an unactivated admin
+   */
+  resendSetupEmail(adminId: string): Promise<void>;
 }

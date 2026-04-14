@@ -30,6 +30,7 @@ import {
   ShieldAlert,
   Crown,
   Users,
+  Mail,
 } from "lucide-react";
 import { format } from "date-fns";
 import { ResetPasswordDialog } from "../components/AdminRoleDialogs";
@@ -75,6 +76,8 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
     handleBulkActivate,
     handleBulkDeactivate,
     handleBulkDelete,
+    handleResendSetupEmail,
+    isResendingSetupEmail,
   } = useAdminsViewModel({ useMyTenant: !isSuperAdmin, tenantId });
 
   const configBase = getConfigBase();
@@ -331,6 +334,21 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
             icon: <Users className="h-4 w-4" />,
             requiredPermission: SYSTEM_PERMISSIONS.USER_GROUPS_VIEW,
             show: (item: Admin) => !item.hasGuardianProtection || !!tenantId,
+          },
+          {
+            label: tFn("admin.resendSetupEmail") || "Resend Setup Email",
+            onClick: (item: Admin) => handleResendSetupEmail(item.id),
+            variant: "ghost" as const,
+            icon: <Mail className="h-4 w-4" />,
+            requiredPermission: SYSTEM_PERMISSIONS.ADMINS_UPDATE,
+            // Only show for protected admins who haven't activated their account yet
+            show: (item: Admin) => item.needsAccountSetup,
+            confirmTitle: tFn("admin.resendSetupEmail") || "Resend Setup Email",
+            confirmDescription:
+              tFn("admin.resendSetupEmailDesc") ||
+              "Are you sure you want to resend the account setup email to this admin?",
+            confirmVariant: "default" as const,
+            confirmButtonText: tFn("common.send") || "Send",
           },
           {
             label: tFn("common.delete") || "Delete",

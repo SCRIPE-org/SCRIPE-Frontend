@@ -12,10 +12,11 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@core/ui/dropdown-menu";
-import { MoreHorizontal, Download, Mail, Loader2 } from "lucide-react";
-import { useToast } from "@core/hooks/use-toast";
+import { MoreHorizontal, Download, Mail, Loader2, FileText, CheckCircle } from "lucide-react";
+import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import type { InvoiceListItem } from "../../domain/entities/Invoice";
 import { entitlementsContainer } from "@modules/entitlements/di";
 import { format } from "date-fns";
@@ -35,12 +36,21 @@ export function InvoiceListView() {
 
   const { t } = useI18n();
   const vm = useInvoiceViewModel();
-  const { toast } = useToast();
+  const { toast, success, error: toastError } = useEnhancedToast();
   const [loadingAction, setLoadingAction] = useState<Record<string, boolean>>({});
 
   const handleDownloadPdf = useCallback(async (item: InvoiceListItem) => {
     const key = `pdf-${item.id}`;
     setLoadingAction((prev) => ({ ...prev, [key]: true }));
+
+    // Show processing toast immediately for user feedback
+    const processingToast = toast({
+      title: t("billing.actions.downloadingPdf") || "Downloading PDF...",
+      description: item.invoiceNumber,
+      variant: "info",
+      duration: 30000, // long duration, will be dismissed manually
+    });
+
     try {
       const { billingRepository } = entitlementsContainer;
       const blob = await billingRepository.downloadInvoicePdf(item.id);
@@ -52,41 +62,56 @@ export function InvoiceListView() {
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-      toast({
+
+      // Dismiss processing toast and show success
+      processingToast.dismiss();
+      success({
         title: t("billing.actions.downloadSuccess") || "PDF Downloaded",
-        description: item.invoiceNumber,
+        description: `${item.invoiceNumber} — ${t("billing.actions.downloadSuccessDesc") || "Invoice saved to your downloads."}`,
       });
     } catch {
-      toast({
+      processingToast.dismiss();
+      toastError({
         title: t("billing.actions.downloadError") || "Download Failed",
-        description: t("billing.actions.downloadErrorDesc") || "Failed to download invoice PDF.",
-        variant: "destructive",
+        description: t("billing.actions.downloadErrorDesc") || "Failed to download invoice PDF. Please try again.",
       });
     } finally {
       setLoadingAction((prev) => ({ ...prev, [key]: false }));
     }
-  }, [t, toast]);
+  }, [t, toast, success, toastError]);
 
   const handleSendEmail = useCallback(async (item: InvoiceListItem) => {
     const key = `email-${item.id}`;
     setLoadingAction((prev) => ({ ...prev, [key]: true }));
+
+    // Show processing toast immediately for user feedback
+    const processingToast = toast({
+      title: t("billing.actions.sendingEmail") || "Sending Invoice Email...",
+      description: item.invoiceNumber,
+      variant: "info",
+      duration: 30000,
+    });
+
     try {
       const { billingRepository } = entitlementsContainer;
       await billingRepository.sendInvoiceEmail(item.id);
-      toast({
-        title: t("billing.actions.emailSent") || "Email Sent",
-        description: t("billing.actions.emailSentDesc") || `Invoice ${item.invoiceNumber} sent to the tenant admin.`,
+
+      // Dismiss processing toast and show success
+      processingToast.dismiss();
+      success({
+        title: t("billing.actions.emailSent") || "✓ Invoice Email Sent",
+        description: t("billing.actions.emailSentDesc") || `Invoice ${item.invoiceNumber} has been sent to the tenant admin successfully.`,
       });
     } catch {
-      toast({
+      processingToast.dismiss();
+      toastError({
         title: t("billing.actions.emailError") || "Email Failed",
-        description: t("billing.actions.emailErrorDesc") || "Failed to send invoice email.",
-        variant: "destructive",
+        description: t("billing.actions.emailErrorDesc") || "Failed to send invoice email. Please check your SMTP settings and try again.",
       });
     } finally {
       setLoadingAction((prev) => ({ ...prev, [key]: false }));
     }
-  }, [t, toast]);
+  }, [t, toast, success, toastError]);
 
   const config: CrudConfig<InvoiceListItem> = useMemo(
     () => ({
@@ -163,39 +188,55 @@ export function InvoiceListView() {
 
       getItemDisplayName: (item: InvoiceListItem) => item.invoiceNumber,
       hideActionsColumn: false,
-      customActionsRenderer: (item: InvoiceListItem) => {
+      renderActions: (item: InvoiceListItem) => {
         const pdfLoading = loadingAction[`pdf-${item.id}`];
         const emailLoading = loadingAction[`email-${item.id}`];
+        const anyLoading = pdfLoading || emailLoading;
 
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
-                <MoreHorizontal className="h-4 w-4" />
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 relative"
+              >
+                {anyLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                ) : (
+                  <MoreHorizontal className="h-4 w-4" />
+                )}
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="end" className="min-w-[200px]">
               <DropdownMenuItem
                 onClick={() => handleDownloadPdf(item)}
                 disabled={pdfLoading}
+                className="gap-2"
               >
                 {pdfLoading ? (
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
-                  <Download className="h-4 w-4 mr-2" />
+                  <Download className="h-4 w-4" />
                 )}
-                {t("billing.actions.downloadPdf") || "Download PDF"}
+                {pdfLoading
+                  ? (t("billing.actions.downloading") || "Downloading...")
+                  : (t("billing.actions.downloadPdf") || "Download PDF")}
               </DropdownMenuItem>
+              <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={() => handleSendEmail(item)}
                 disabled={emailLoading}
+                className="gap-2"
               >
                 {emailLoading ? (
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
-                  <Mail className="h-4 w-4 mr-2" />
+                  <Mail className="h-4 w-4" />
                 )}
-                {t("billing.actions.sendEmail") || "Send Email"}
+                {emailLoading
+                  ? (t("billing.actions.sending") || "Sending...")
+                  : (t("billing.actions.sendEmail") || "Send to Tenant Email")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

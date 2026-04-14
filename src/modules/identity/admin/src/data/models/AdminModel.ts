@@ -53,6 +53,10 @@ export interface AdminJson {
   /** Group names from user groups */
   groupNamesEn?: string[];
   groupNamesAr?: string[];
+  /** Whether this admin has activated their account */
+  isAccountActivated?: boolean;
+  /** Whether this admin is a protected super admin */
+  isProtected?: boolean;
 }
 
 /**
@@ -159,7 +163,9 @@ export class AdminModel {
     public readonly canModify?: boolean,
     public readonly permissions?: string[],
     public readonly groupNamesEn?: string[],
-    public readonly groupNamesAr?: string[]
+    public readonly groupNamesAr?: string[],
+    public readonly isAccountActivated?: boolean,
+    public readonly isProtected?: boolean
   ) { }
 
   /**
@@ -186,7 +192,9 @@ export class AdminModel {
       json.canModify,
       json.permissions,
       json.groupNamesEn,
-      json.groupNamesAr
+      json.groupNamesAr,
+      json.isAccountActivated,
+      json.isProtected
     );
   }
 
@@ -215,6 +223,8 @@ export class AdminModel {
       permissions: this.permissions,
       groupNamesEn: this.groupNamesEn,
       groupNamesAr: this.groupNamesAr,
+      isAccountActivated: this.isAccountActivated,
+      isProtected: this.isProtected,
     };
   }
 

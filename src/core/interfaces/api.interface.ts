@@ -12,6 +12,14 @@ export interface IApiService {
   get<T>(endpoint: string, params?: Record<string, unknown>, signal?: AbortSignal): Promise<T>;
 
   /**
+   * GET request that returns binary data as Blob (authenticated)
+   * Use for file downloads (PDF, images, etc.)
+   * @param endpoint - API endpoint
+   * @param signal - AbortSignal for cancellation
+   */
+  getBlob(endpoint: string, signal?: AbortSignal): Promise<Blob>;
+
+  /**
    * GET request (public - no auth token)
    * Use this for endpoints that don't require authentication
    * @param endpoint - API endpoint

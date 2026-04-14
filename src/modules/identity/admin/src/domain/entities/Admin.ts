@@ -46,6 +46,10 @@ export interface AdminData extends BaseEntity {
   /** Group names from user groups (from list API) */
   groupNamesEn?: string[];
   groupNamesAr?: string[];
+  /** Whether this admin has completed account activation */
+  isAccountActivated?: boolean;
+  /** Whether this admin is a protected super admin */
+  isProtected?: boolean;
 }
 
 /**
@@ -236,5 +240,20 @@ export class Admin {
       return this.data.groupNamesAr;
     }
     return this.data.groupNamesEn ?? [];
+  }
+
+  /** Whether this admin has completed account activation */
+  get isAccountActivated(): boolean {
+    return this.data.isAccountActivated ?? true;
+  }
+
+  /** Whether this admin is a protected super admin */
+  get isProtected(): boolean {
+    return this.data.isProtected ?? false;
+  }
+
+  /** Whether this admin needs account setup (protected + not activated) */
+  get needsAccountSetup(): boolean {
+    return this.isProtected && !this.isAccountActivated;
   }
 }

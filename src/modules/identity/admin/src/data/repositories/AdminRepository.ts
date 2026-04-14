@@ -167,4 +167,8 @@ export class AdminRepository implements IAdminRepository {
   async transferProtection(request: TransferProtectionRequest): Promise<void> {
     return this.service.transferProtection(request.targetAdminId);
   }
+
+  async resendSetupEmail(adminId: string): Promise<void> {
+    return this.service.resendSetupEmail(adminId);
+  }
 }

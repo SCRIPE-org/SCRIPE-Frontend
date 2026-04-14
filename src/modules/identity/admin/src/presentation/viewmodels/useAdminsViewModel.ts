@@ -268,6 +268,24 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
     },
   });
 
+  // Resend Setup Email mutation
+  const resendSetupEmailMutation = useMutation({
+    mutationFn: ({ adminId }: { adminId: string }) =>
+      adminRepository.resendSetupEmail(adminId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admins"] });
+      success({
+        title: t("admin.setupEmailResent") || "Setup Email Resent",
+        description:
+          t("admin.setupEmailResentDesc") ||
+          "Account setup email has been resent successfully.",
+      });
+    },
+    onError: (err: Error) => {
+      toastError({ title: t("common.error") || "Error", description: err.message });
+    },
+  });
+
   // Bulk Activate
   const bulkActivateMutation = useMutation({
     mutationFn: (ids: string[]) => adminRepository.bulkActivate(ids),
@@ -553,6 +571,9 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
     handleBulkDeactivate: (ids: string[]) => bulkDeactivateMutation.mutate(ids),
     handleBulkDelete: (ids: string[]) => bulkDeleteMutation.mutate(ids),
 
+    handleResendSetupEmail: (adminId: string) =>
+      resendSetupEmailMutation.mutate({ adminId }),
+
     isTogglingActive: toggleActiveMutation.isPending,
     isAssigningRole: assignRoleMutation.isPending,
     isRemovingRole: removeRoleMutation.isPending,
@@ -560,6 +581,7 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
     isImpersonating: isImpersonationLoading,
     isTransferring: transferMutation.isPending,
     isTransferringProtection: transferProtectionMutation.isPending,
+    isResendingSetupEmail: resendSetupEmailMutation.isPending,
     t,
   };
 }
