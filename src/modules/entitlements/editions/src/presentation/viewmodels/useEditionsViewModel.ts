@@ -4,6 +4,7 @@
 "use client";
 
 import { useCrudViewModel } from "@core/crud/hooks/useCrudViewModel";
+import { useQuery } from "@tanstack/react-query";
 import { entitlementsContainer } from "@modules/entitlements/di";
 import type { Edition } from "../../domain/entities/Edition";
 import type { CreateEditionRequest, UpdateEditionRequest } from "../../domain/entities/EditionRequests";
@@ -16,6 +17,15 @@ export function useEditionsViewModel() {
       const { editionRepository } = entitlementsContainer;
       const router = useRouter();
       const { t } = useI18n();
+
+      // M-10: Fetch ALL editions for dropdown selects (fallback, assign, etc.)
+      // This ensures the dropdown is not limited to the current paginated page.
+      const { data: allEditionsData } = useQuery({
+            queryKey: ["entitlements", "editions", "all-for-select"],
+            queryFn: () => editionRepository.getAll({ page: 1, pageSize: 500 }),
+            staleTime: 5 * 60 * 1000, // 5 minutes
+      });
+      const allEditionsForSelect = allEditionsData?.items ?? [];
 
       const vm = useCrudViewModel<Edition, CreateEditionRequest, UpdateEditionRequest>(
             ["entitlements", "editions"],
@@ -64,6 +74,7 @@ export function useEditionsViewModel() {
 
       return {
             ...vm,
+            allEditionsForSelect,
             navigateToFeatures: (editionId: string) => {
                   router.push(`/entitlements/editions/${editionId}`);
             },

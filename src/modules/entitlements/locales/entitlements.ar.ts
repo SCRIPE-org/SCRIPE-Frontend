@@ -40,6 +40,8 @@ export const ar = {
       fallbackEdition: "الإصدار الاحتياطي",
       fallbackPlaceholder: "اختر خطة احتياطية (اختياري)",
       descriptionPlaceholder: "وصف مختصر لهذا الإصدار...",
+      tierLevel: "مستوى الطبقة",
+      tierLevelDesc: "مستوى الأولوية (0-100) يُستخدم لترتيب الإصدارات ومسارات الترقية والتخفيض.",
       overflowPolicy: "سياسة تجاوز التخفيض",
       overflowPolicyDesc: "ماذا يحدث عند تجاوز موارد المستأجر للحدود بعد التخفيض إلى هذا الإصدار.",
       overflowPolicies: {

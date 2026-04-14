@@ -113,13 +113,22 @@ export function EditionsView() {
                               placeholder: t("entitlements.editions.descriptionPlaceholder") || "Brief description of this edition...",
                         },
                         {
+                              name: "tierLevel",
+                              label: t("entitlements.editions.tierLevel") || "Tier Level",
+                              type: "number" as const,
+                              min: 0,
+                              max: 100,
+                              defaultValue: 0,
+                              placeholder: "0",
+                        },
+                        {
                               name: "fallbackEditionId",
                               label: t("entitlements.editions.fallbackEdition") || "Fallback Edition",
                               type: "select" as const,
                               placeholder: t("entitlements.editions.fallbackPlaceholder") || "Select fallback plan (optional)",
                               options: [
                                     { value: "", label: t("common.none") || "None" },
-                                    ...(vm.items || []).map((e: Edition) => ({ value: e.id, label: e.getDisplayName(language) })),
+                                    ...(vm.allEditionsForSelect || []).map((e: Edition) => ({ value: e.id, label: e.getDisplayName(language) })),
                               ],
                         },
                         // ── Billing Controls ──
@@ -212,13 +221,21 @@ export function EditionsView() {
                               placeholder: t("entitlements.editions.descriptionPlaceholder") || "Brief description of this edition...",
                         },
                         {
+                              name: "tierLevel",
+                              label: t("entitlements.editions.tierLevel") || "Tier Level",
+                              type: "number" as const,
+                              min: 0,
+                              max: 100,
+                              placeholder: "0",
+                        },
+                        {
                               name: "fallbackEditionId",
                               label: t("entitlements.editions.fallbackEdition") || "Fallback Edition",
                               type: "select" as const,
                               placeholder: t("entitlements.editions.fallbackPlaceholder") || "Select fallback plan (optional)",
                               options: [
                                     { value: "", label: t("common.none") || "None" },
-                                    ...(vm.items || []).filter((e: Edition) => e.id !== editingItem?.id).map((e: Edition) => ({ value: e.id, label: e.getDisplayName(language) })),
+                                    ...(vm.allEditionsForSelect || []).filter((e: Edition) => e.id !== editingItem?.id).map((e: Edition) => ({ value: e.id, label: e.getDisplayName(language) })),
                               ],
                         },
                         // ── Billing Controls ──
@@ -282,6 +299,7 @@ export function EditionsView() {
                         displayNameEn: edition.displayNameEn,
                         displayNameAr: edition.displayNameAr,
                         description: edition.description || "",
+                        tierLevel: edition.tierLevel,
                         fallbackEditionId: edition.fallbackEditionId || "",
                         // ── Billing Controls ──
                         allowMonthly: edition.allowMonthly,

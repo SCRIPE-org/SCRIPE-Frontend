@@ -67,6 +67,8 @@ export const en = {
       checkoutDescription: "Share this payment link with the tenant to complete their subscription.",
       emailSent: "Payment link has been emailed to the tenant admin.",
       scanQrCode: "Scan to open payment page",
+      sessionExpired: "Session expired — generate a new link",
+      expiresIn: "Expires in",
       cancelTitle: "Cancel Stripe Subscription",
       cancelDescription: "Choose how you want to cancel this Stripe subscription.",
       portalOpened: "The billing portal has been opened in a new tab.",

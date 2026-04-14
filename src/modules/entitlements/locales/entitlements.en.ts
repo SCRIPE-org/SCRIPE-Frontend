@@ -39,6 +39,8 @@ export const en = {
       fallbackEdition: "Fallback Edition",
       fallbackPlaceholder: "Select fallback plan (optional)",
       descriptionPlaceholder: "Brief description of this edition...",
+      tierLevel: "Tier Level",
+      tierLevelDesc: "Priority level (0-100) used for edition ordering and upgrade/downgrade paths.",
       overflowPolicy: "Downgrade Overflow Policy",
       overflowPolicyDesc: "What happens when a tenant's resources exceed limits after downgrading to this edition.",
       overflowPolicies: {

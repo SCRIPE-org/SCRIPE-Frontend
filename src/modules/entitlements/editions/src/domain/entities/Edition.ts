@@ -37,7 +37,7 @@ export interface EditionData extends BaseEntity {
 }
 
 export class Edition {
-      constructor(public readonly data: EditionData) { }
+      constructor(private readonly data: EditionData) { }
 
       get id(): string { return this.data.id; }
       get name(): string { return this.data.name; }

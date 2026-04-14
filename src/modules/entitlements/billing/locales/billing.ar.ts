@@ -67,6 +67,8 @@ export const ar = {
       checkoutDescription: "شارك رابط الدفع هذا مع المستأجر لإتمام اشتراكه.",
       emailSent: "تم إرسال رابط الدفع بالبريد الإلكتروني إلى مدير المستأجر.",
       scanQrCode: "امسح لفتح صفحة الدفع",
+      sessionExpired: "انتهت صلاحية الجلسة — أنشئ رابطاً جديداً",
+      expiresIn: "تنتهي خلال",
       cancelTitle: "إلغاء اشتراك Stripe",
       cancelDescription: "اختر طريقة إلغاء اشتراك Stripe هذا.",
       portalOpened: "تم فتح بوابة الفوترة في علامة تبويب جديدة.",
