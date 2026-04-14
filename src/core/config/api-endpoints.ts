@@ -41,6 +41,7 @@ export const API_ENDPOINTS = {
   ACCOUNT_SETUP: {
     VALIDATE_TOKEN: (token: string) => `${V1}/account-setup/validate?token=${encodeURIComponent(token)}`,
     ACTIVATE: `${V1}/account-setup/activate`,
+    RESEND_SETUP_EMAIL: `${V1}/account-setup/resend`,
   },
 
 

@@ -503,17 +503,25 @@ export const GenericSelect = React.forwardRef<HTMLDivElement, GenericSelectProps
         debounceRef.current = setTimeout(async () => {
           setIsSearching(true);
           try {
+            let finalResults: GenericSelectOption[] = [];
             // Use ref to get latest callback without re-triggering effect
             if (onServerSearchRef?.current) {
-              const results = await onServerSearchRef.current(searchQuery);
-              setServerOptions(results);
+              finalResults = await onServerSearchRef.current(searchQuery);
             } else if (searchEndpoint) {
               const response = await fetch(
                 `${searchEndpoint}?q=${encodeURIComponent(searchQuery)}`
               );
-              const results = await response.json();
-              setServerOptions(results);
+              finalResults = await response.json();
             }
+
+            // Deduplicate results by value
+            const seen = new Set<string>();
+            const unique = finalResults.filter((r) => {
+              if (seen.has(r.value)) return false;
+              seen.add(r.value);
+              return true;
+            });
+            setServerOptions(unique);
           } catch (error) {
             appLogger.error("Server search error:", error);
             setServerOptions([]);
@@ -541,19 +549,25 @@ export const GenericSelect = React.forwardRef<HTMLDivElement, GenericSelectProps
 
     React.useEffect(() => {
       if (searchType === "server") {
-        // Only set from props if options has items (static options provided)
-        // Don't overwrite serverOptions with empty array when using onServerSearch
-        if (options.length > 0) {
-          setServerOptions(options);
-        }
         // Load initial data only once when component mounts (if onServerSearch is available)
         if (onServerSearchRef.current && !hasLoadedInitialServerOptions.current) {
           hasLoadedInitialServerOptions.current = true;
+          // If static options were provided, show them while loading
+          if (options.length > 0) {
+            setServerOptions(options);
+          }
           setIsSearching(true);
           onServerSearchRef
             .current("")
             .then((results: GenericSelectOption[]) => {
-              setServerOptions(results);
+              // Deduplicate results by value
+              const seen = new Set<string>();
+              const unique = results.filter((r) => {
+                if (seen.has(r.value)) return false;
+                seen.add(r.value);
+                return true;
+              });
+              setServerOptions(unique);
               setIsSearching(false);
             })
             .catch((error: any) => {
@@ -561,7 +575,18 @@ export const GenericSelect = React.forwardRef<HTMLDivElement, GenericSelectProps
               setServerOptions([]);
               setIsSearching(false);
             });
+        } else if (!hasLoadedInitialServerOptions.current && options.length > 0) {
+          // No onServerSearch callback — use static options (deduplicated)
+          const seen = new Set<string>();
+          const unique = options.filter((o: GenericSelectOption) => {
+            if (seen.has(o.value)) return false;
+            seen.add(o.value);
+            return true;
+          });
+          setServerOptions(unique);
         }
+        // After initial load, do NOT overwrite serverOptions from prop changes.
+        // The onServerSearch callback is the source of truth for server-search mode.
       }
     }, [options, searchType]); // Removed onServerSearch from deps - using ref instead
 
@@ -706,22 +731,26 @@ export const GenericSelect = React.forwardRef<HTMLDivElement, GenericSelectProps
         setAnimateOpen(false);
         requestAnimationFrame(() => setAnimateOpen(true));
 
-        // Load initial data when dropdown opens for server search
-        if (searchType === "server" && onServerSearch) {
-          // Load initial data when dropdown opens if we don't have data or if we want to refresh
-          if (serverOptions.length === 0 || searchQuery === "") {
-            setIsSearching(true);
-            onServerSearch(searchQuery || "")
-              .then((results: GenericSelectOption[]) => {
-                setServerOptions(results);
-                setIsSearching(false);
-              })
-              .catch((error: any) => {
-                appLogger.error("Failed to load server options:", error);
-                setServerOptions([]);
-                setIsSearching(false);
+        // Load initial data when dropdown opens for server search (only if empty)
+        if (searchType === "server" && onServerSearch && serverOptions.length === 0) {
+          setIsSearching(true);
+          onServerSearch("")
+            .then((results: GenericSelectOption[]) => {
+              // Deduplicate results by value
+              const seen = new Set<string>();
+              const unique = results.filter((r) => {
+                if (seen.has(r.value)) return false;
+                seen.add(r.value);
+                return true;
               });
-          }
+              setServerOptions(unique);
+              setIsSearching(false);
+            })
+            .catch((error: any) => {
+              appLogger.error("Failed to load server options:", error);
+              setServerOptions([]);
+              setIsSearching(false);
+            });
         }
       }
 

@@ -187,6 +187,6 @@ export class AdminService implements IAdminService {
   }
 
   async resendSetupEmail(adminId: string): Promise<void> {
-    await this.api.post("/api/v1/account-setup/resend", { adminId });
+    await this.api.post(API_ENDPOINTS.ACCOUNT_SETUP.RESEND_SETUP_EMAIL, { adminId });
   }
 }

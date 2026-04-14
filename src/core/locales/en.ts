@@ -330,6 +330,7 @@ export const en = {
     continue: "Continue",
     time: "Time",
     tenant: "Tenant",
+    send: "Send",
     name: "Name",
     created: "Created",
     preview: "Preview",

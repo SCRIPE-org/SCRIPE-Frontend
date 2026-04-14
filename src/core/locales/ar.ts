@@ -1093,6 +1093,7 @@ export const ar = {
   },
   common: {
     clear: "مسح",
+    send: "ارسال",
     step: "الخطوة",
     from: "من",
     continue: "تواصل",

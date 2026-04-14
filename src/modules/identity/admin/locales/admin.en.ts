@@ -12,6 +12,8 @@ export const en = {
     transferDesc: "Transfer User to another organization",
     targetTenant: "Target Tenant",
     targetTenantPlaceholder: "Enter Target Tenant",
+    resendSetupEmail: "Resend Setup Email",
+    resendSetupEmailDesc: "Resend setup email to",
     transferConfirm: "Transfer User",
     selectTenant: "Selet Tenant",
     newPassword: "Reset Password",

@@ -14,6 +14,8 @@ export const ar = {
     transferDesc: "نقل المستخدم إلى منظمة أخرى",
     targetTenant: "المنظمة المستهدفة",
     targetTenantPlaceholder: "أدخل المنظمة المستهدفة",
+    resendSetupEmail: "إعادة إرسال بريد الإعداد",
+    resendSetupEmailDesc: "إعادة إرسال بريد الإعداد إلى",
     transferConfirm: "تأكيد نقل المستخدم",
     selectTenant: "اختر مستأجر",
     newPassword: "إعادة تعيين كلمة المرور",
