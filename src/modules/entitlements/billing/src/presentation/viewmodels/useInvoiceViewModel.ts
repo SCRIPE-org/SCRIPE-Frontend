@@ -1,16 +1,27 @@
 "use client";
 
+import { useCallback, useState } from "react";
 import { useCrudViewModel } from "@core/crud/hooks/useCrudViewModel";
+import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import { useI18n } from "@core/providers/i18n-provider";
 import { entitlementsContainer } from "@modules/entitlements/di";
+import { DownloadInterceptedError } from "@core/errors/download-intercepted";
 import type { InvoiceListItem } from "../../domain/entities/Invoice";
 
 /**
  * Invoice ViewModel — uses useCrudViewModel for pagination, search, and state.
  * Invoices are read-only (no create/update/delete from the frontend).
+ *
+ * All invoice actions (download PDF, send email) are exposed as callbacks
+ * from this hook, following the View → ViewModel → Repository data flow.
  */
 export function useInvoiceViewModel() {
   const { billingRepository } = entitlementsContainer;
+  const { t } = useI18n();
+  const { toast, success, error: toastError } = useEnhancedToast();
+  const [loadingAction, setLoadingAction] = useState<Record<string, boolean>>({});
 
+  // ── CRUD Read-Only ──
   const vm = useCrudViewModel<InvoiceListItem, never, never>(
     ["entitlements", "invoices"],
     {
@@ -33,5 +44,90 @@ export function useInvoiceViewModel() {
     }
   );
 
-  return vm;
+  // ── Download PDF ──
+  const handleDownloadPdf = useCallback(async (item: InvoiceListItem) => {
+    const key = `pdf-${item.id}`;
+    setLoadingAction((prev) => ({ ...prev, [key]: true }));
+
+    const processingToast = toast({
+      title: t("billing.actions.downloadingPdf") || "Downloading PDF...",
+      description: item.invoiceNumber,
+      variant: "info",
+      duration: 30000,
+    });
+
+    try {
+      const blob = await billingRepository.downloadInvoicePdf(item.id);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `invoice-${item.invoiceNumber}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      processingToast.dismiss();
+      success({
+        title: t("billing.actions.downloadSuccess") || "PDF Downloaded",
+        description: `${item.invoiceNumber} — ${t("billing.actions.downloadSuccessDesc") || "Invoice saved to your downloads."}`,
+      });
+    } catch (err: unknown) {
+      processingToast.dismiss();
+
+      // DownloadInterceptedError is thrown globally by ApiService.getBlob()
+      // when IDM/FDM/any download manager intercepts the download.
+      if (err instanceof DownloadInterceptedError) {
+        success({
+          title: t("billing.actions.downloadSuccess") || "PDF Downloaded",
+          description: `${item.invoiceNumber} — ${t("billing.actions.downloadSuccessDesc") || "Captured by your download manager."}`,
+        });
+      } else {
+        toastError({
+          title: t("billing.actions.downloadError") || "Download Failed",
+          description: t("billing.actions.downloadErrorDesc") || "Failed to download invoice PDF. Please try again.",
+        });
+      }
+    } finally {
+      setLoadingAction((prev) => ({ ...prev, [key]: false }));
+    }
+  }, [t, toast, success, toastError, billingRepository]);
+
+  // ── Send Email ──
+  const handleSendEmail = useCallback(async (item: InvoiceListItem) => {
+    const key = `email-${item.id}`;
+    setLoadingAction((prev) => ({ ...prev, [key]: true }));
+
+    const processingToast = toast({
+      title: t("billing.actions.sendingEmail") || "Sending Invoice Email...",
+      description: item.invoiceNumber,
+      variant: "info",
+      duration: 30000,
+    });
+
+    try {
+      await billingRepository.sendInvoiceEmail(item.id);
+
+      processingToast.dismiss();
+      success({
+        title: t("billing.actions.emailSent") || "✓ Invoice Email Sent",
+        description: t("billing.actions.emailSentDesc") || `Invoice ${item.invoiceNumber} has been sent to the tenant admin successfully.`,
+      });
+    } catch {
+      processingToast.dismiss();
+      toastError({
+        title: t("billing.actions.emailError") || "Email Failed",
+        description: t("billing.actions.emailErrorDesc") || "Failed to send invoice email. Please check your SMTP settings and try again.",
+      });
+    } finally {
+      setLoadingAction((prev) => ({ ...prev, [key]: false }));
+    }
+  }, [t, toast, success, toastError, billingRepository]);
+
+  return {
+    ...vm,
+    loadingAction,
+    handleDownloadPdf,
+    handleSendEmail,
+  };
 }

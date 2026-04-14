@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useCallback, useState } from "react";
+import { useMemo } from "react";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
 import type { CrudConfig } from "@core/crud/components/generic-crud-view";
 import { useInvoiceViewModel } from "../viewmodels/useInvoiceViewModel";
@@ -15,10 +15,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@core/ui/dropdown-menu";
-import { MoreHorizontal, Download, Mail, Loader2, FileText, CheckCircle } from "lucide-react";
-import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import { MoreHorizontal, Download, Mail, Loader2 } from "lucide-react";
 import type { InvoiceListItem } from "../../domain/entities/Invoice";
-import { entitlementsContainer } from "@modules/entitlements/di";
 import { format } from "date-fns";
 
 const STATUS_VARIANTS: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
@@ -30,88 +28,19 @@ const STATUS_VARIANTS: Record<string, "default" | "secondary" | "destructive" | 
   Refunded: "outline",
 };
 
+/**
+ * InvoiceListView — Pure presentation component.
+ *
+ * All business logic (download, email, loading states, toasts) lives in
+ * the ViewModel (useInvoiceViewModel), following the strict architecture:
+ *   View → ViewModel → Repository → Service → IApiService → HTTP
+ */
 export function InvoiceListView() {
   // Load billing-scoped locale (billing/locales/) — not the shared entitlements locale
   useModuleLocales(() => import("../../../../locales"), "billing");
 
   const { t } = useI18n();
   const vm = useInvoiceViewModel();
-  const { toast, success, error: toastError } = useEnhancedToast();
-  const [loadingAction, setLoadingAction] = useState<Record<string, boolean>>({});
-
-  const handleDownloadPdf = useCallback(async (item: InvoiceListItem) => {
-    const key = `pdf-${item.id}`;
-    setLoadingAction((prev) => ({ ...prev, [key]: true }));
-
-    // Show processing toast immediately for user feedback
-    const processingToast = toast({
-      title: t("billing.actions.downloadingPdf") || "Downloading PDF...",
-      description: item.invoiceNumber,
-      variant: "info",
-      duration: 30000, // long duration, will be dismissed manually
-    });
-
-    try {
-      const { billingRepository } = entitlementsContainer;
-      const blob = await billingRepository.downloadInvoicePdf(item.id);
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `invoice-${item.invoiceNumber}.pdf`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-
-      // Dismiss processing toast and show success
-      processingToast.dismiss();
-      success({
-        title: t("billing.actions.downloadSuccess") || "PDF Downloaded",
-        description: `${item.invoiceNumber} — ${t("billing.actions.downloadSuccessDesc") || "Invoice saved to your downloads."}`,
-      });
-    } catch {
-      processingToast.dismiss();
-      toastError({
-        title: t("billing.actions.downloadError") || "Download Failed",
-        description: t("billing.actions.downloadErrorDesc") || "Failed to download invoice PDF. Please try again.",
-      });
-    } finally {
-      setLoadingAction((prev) => ({ ...prev, [key]: false }));
-    }
-  }, [t, toast, success, toastError]);
-
-  const handleSendEmail = useCallback(async (item: InvoiceListItem) => {
-    const key = `email-${item.id}`;
-    setLoadingAction((prev) => ({ ...prev, [key]: true }));
-
-    // Show processing toast immediately for user feedback
-    const processingToast = toast({
-      title: t("billing.actions.sendingEmail") || "Sending Invoice Email...",
-      description: item.invoiceNumber,
-      variant: "info",
-      duration: 30000,
-    });
-
-    try {
-      const { billingRepository } = entitlementsContainer;
-      await billingRepository.sendInvoiceEmail(item.id);
-
-      // Dismiss processing toast and show success
-      processingToast.dismiss();
-      success({
-        title: t("billing.actions.emailSent") || "✓ Invoice Email Sent",
-        description: t("billing.actions.emailSentDesc") || `Invoice ${item.invoiceNumber} has been sent to the tenant admin successfully.`,
-      });
-    } catch {
-      processingToast.dismiss();
-      toastError({
-        title: t("billing.actions.emailError") || "Email Failed",
-        description: t("billing.actions.emailErrorDesc") || "Failed to send invoice email. Please check your SMTP settings and try again.",
-      });
-    } finally {
-      setLoadingAction((prev) => ({ ...prev, [key]: false }));
-    }
-  }, [t, toast, success, toastError]);
 
   const config: CrudConfig<InvoiceListItem> = useMemo(
     () => ({
@@ -189,8 +118,8 @@ export function InvoiceListView() {
       getItemDisplayName: (item: InvoiceListItem) => item.invoiceNumber,
       hideActionsColumn: false,
       renderActions: (item: InvoiceListItem) => {
-        const pdfLoading = loadingAction[`pdf-${item.id}`];
-        const emailLoading = loadingAction[`email-${item.id}`];
+        const pdfLoading = vm.loadingAction[`pdf-${item.id}`];
+        const emailLoading = vm.loadingAction[`email-${item.id}`];
         const anyLoading = pdfLoading || emailLoading;
 
         return (
@@ -210,7 +139,7 @@ export function InvoiceListView() {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="min-w-[200px]">
               <DropdownMenuItem
-                onClick={() => handleDownloadPdf(item)}
+                onClick={() => vm.handleDownloadPdf(item)}
                 disabled={pdfLoading}
                 className="gap-2"
               >
@@ -225,7 +154,7 @@ export function InvoiceListView() {
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
-                onClick={() => handleSendEmail(item)}
+                onClick={() => vm.handleSendEmail(item)}
                 disabled={emailLoading}
                 className="gap-2"
               >
@@ -243,7 +172,7 @@ export function InvoiceListView() {
         );
       },
     }),
-    [t, loadingAction, handleDownloadPdf, handleSendEmail]
+    [t, vm]
   );
 
   return <GenericCrudView viewModel={vm} config={config} />;

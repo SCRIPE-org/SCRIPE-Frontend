@@ -11,6 +11,7 @@ import { appLogger } from "@core/common/logger";
 import { secureTokenService } from "@core/common/secure-token-service";
 import { authBroadcast } from "@core/common/broadcast-auth";
 import { STORAGE_KEYS } from "../config/storage-keys";
+import { DownloadInterceptedError, isExternalAbort } from "../errors/download-intercepted";
 
 /**
  * Generate a UUID v4 string.
@@ -253,6 +254,12 @@ export class ApiService implements IApiService {
           }
         }
 
+        // Global check: if IDM or another download manager intercepted the download,
+        // we throw DownloadInterceptedError BEFORE the error gets mangled.
+        if (isExternalAbort(error)) {
+          return Promise.reject(new DownloadInterceptedError());
+        }
+
         // Handle 403 TENANT_CONTEXT_FORBIDDEN - user lacks drill_down permission
         if (error.response?.status === 403) {
           const data = error.response.data as { error?: string; message?: string };
@@ -295,6 +302,11 @@ export class ApiService implements IApiService {
         return response;
       },
       (error: AxiosError) => {
+        // Global check: IDM interception
+        if (isExternalAbort(error)) {
+          return Promise.reject(new DownloadInterceptedError());
+        }
+
         const message = this.extractErrorMessage(error);
         appLogger.error(`API Error: ${message}`);
         const errObj = new Error(message) as any;
@@ -450,10 +462,20 @@ export class ApiService implements IApiService {
   }
 
   async getBlob(endpoint: string, signal?: AbortSignal): Promise<Blob> {
-    const config: AxiosRequestConfig = { responseType: "blob" };
-    if (signal) config.signal = signal;
-    const response = await this.axiosInstance.get(endpoint, config);
-    return response.data as Blob;
+    try {
+      const config: AxiosRequestConfig = { responseType: "blob" };
+      if (signal) config.signal = signal;
+      const response = await this.axiosInstance.get(endpoint, config);
+      return response.data as Blob;
+    } catch (error) {
+      // Global detection: if the download was intercepted by an external
+      // download manager (IDM, FDM, etc.), throw a typed error so callers
+      // can treat it as success instead of failure.
+      if (isExternalAbort(error)) {
+        throw new DownloadInterceptedError();
+      }
+      throw error;
+    }
   }
 
   async post<T>(endpoint: string, data?: unknown, signal?: AbortSignal): Promise<T> {
