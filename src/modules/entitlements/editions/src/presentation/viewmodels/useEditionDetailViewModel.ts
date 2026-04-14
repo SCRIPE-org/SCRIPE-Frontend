@@ -4,6 +4,7 @@ import { useState, useCallback, useMemo, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { entitlementsContainer } from "@modules/entitlements/di";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import { useI18n } from "@core/providers/i18n-provider";
 import { useAppStore } from "@core/store/useAppStore";
 import type { Edition } from "../../domain/entities/Edition";
 import { Feature } from "@modules/entitlements/features/src/domain/entities/Feature";
@@ -59,6 +60,7 @@ export interface EditionDetailViewModelResult {
 
 export function useEditionDetailViewModel(editionId: string): EditionDetailViewModelResult {
       const { success, error: toastError } = useEnhancedToast();
+      const { t } = useI18n();
       const queryClient = useQueryClient();
       const { editionRepository, featureRepository } = entitlementsContainer;
 
@@ -216,15 +218,15 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
             },
             onSuccess: () => {
                   success({
-                        title: "Version Created",
-                        description: "Feature and pricing changes captured in a new draft version. Publish it to apply.",
+                        title: t("entitlements.editions.versions.created") || "Version Created",
+                        description: t("entitlements.editions.versions.createdDesc") || "Feature and pricing changes captured in a new draft version.",
                   });
                   queryClient.invalidateQueries({ queryKey: ["entitlements", "editions", editionId, "versions"] });
             },
             onError: (err) => {
                   toastError({
-                        title: "Version Creation Failed",
-                        description: err instanceof Error ? err.message : "Failed to create version",
+                        title: t("common.error"),
+                        description: err instanceof Error ? err.message : t("common.error"),
                   });
             },
       });
@@ -252,16 +254,16 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
             },
             onSuccess: () => {
                   success({
-                        title: "Changes Applied",
-                        description: "Features updated and all affected tenants synced.",
+                        title: t("entitlements.editions.changesApplied") || "Changes Applied",
+                        description: t("entitlements.editions.changesAppliedDesc") || "Features updated and all affected tenants synced.",
                   });
                   queryClient.invalidateQueries({ queryKey: ["entitlements", "editions", editionId] });
                   queryClient.invalidateQueries({ queryKey: ["entitlements", "editions", editionId, "versions"] });
             },
             onError: (err) => {
                   toastError({
-                        title: "Apply Failed",
-                        description: err instanceof Error ? err.message : "Failed to apply changes",
+                        title: t("common.error"),
+                        description: err instanceof Error ? err.message : t("common.error"),
                   });
             },
       });

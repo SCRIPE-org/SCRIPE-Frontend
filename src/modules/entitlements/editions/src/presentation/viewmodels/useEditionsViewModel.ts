@@ -9,11 +9,13 @@ import type { Edition } from "../../domain/entities/Edition";
 import type { CreateEditionRequest, UpdateEditionRequest } from "../../domain/entities/EditionRequests";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useRouter } from "next/navigation";
+import { useI18n } from "@core/providers/i18n-provider";
 
 export function useEditionsViewModel() {
       const { success } = useEnhancedToast();
       const { editionRepository } = entitlementsContainer;
       const router = useRouter();
+      const { t } = useI18n();
 
       const vm = useCrudViewModel<Edition, CreateEditionRequest, UpdateEditionRequest>(
             ["entitlements", "editions"],
@@ -37,24 +39,24 @@ export function useEditionsViewModel() {
                   create: async (data) => {
                         const id = await editionRepository.create(data);
                         success({
-                              title: "Edition Created",
-                              description: "The edition has been created successfully.",
+                              title: t("entitlements.editions.created"),
+                              description: t("entitlements.editions.createdDesc"),
                         });
                         return { id } as Edition;
                   },
                   update: async (id, data) => {
                         await editionRepository.update(id, data);
                         success({
-                              title: "Edition Updated",
-                              description: "The edition has been updated successfully.",
+                              title: t("entitlements.editions.updated"),
+                              description: t("entitlements.editions.updatedDesc"),
                         });
                         return {} as Edition;
                   },
                   delete: async (id) => {
                         await editionRepository.delete(id);
                         success({
-                              title: "Edition Deleted",
-                              description: "The edition has been deleted successfully.",
+                              title: t("entitlements.editions.deleted"),
+                              description: t("entitlements.editions.deletedDesc"),
                         });
                   },
             }
@@ -67,3 +69,4 @@ export function useEditionsViewModel() {
             },
       };
 }
+

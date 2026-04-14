@@ -12,6 +12,7 @@ import { useState, useMemo, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { entitlementsContainer } from "@modules/entitlements/di";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import { useI18n } from "@core/providers/i18n-provider";
 import type { EditionPriceItem } from "../../domain/entities/EditionPricing";
 import { SUPPORTED_CURRENCIES } from "../../domain/entities/EditionPricing";
 
@@ -77,6 +78,7 @@ export function useEditionPricingViewModel(editionId: string): EditionPricingVie
       const { editionRepository } = entitlementsContainer;
       const queryClient = useQueryClient();
       const { success, error: showError } = useEnhancedToast();
+      const { t } = useI18n();
 
       // ── Fetch existing prices ──
       const { data: priceData, isLoading: pricesLoading, error: pricesError } = useQuery({
@@ -369,13 +371,13 @@ export function useEditionPricingViewModel(editionId: string): EditionPricingVie
                   queryClient.invalidateQueries({ queryKey: ["entitlements", "editions"] });
                   discard();
                   success({
-                        title: "Pricing Saved",
-                        description: "Edition pricing has been updated successfully.",
+                        title: t("entitlements.pricing.saveSuccess") || "Pricing Saved",
+                        description: t("entitlements.editions.updatedDesc") || "Edition pricing has been updated.",
                   });
             },
             onError: (err: Error) => {
                   showError({
-                        title: "Failed to Save Pricing",
+                        title: t("common.error"),
                         description: err.message,
                   });
             },
@@ -415,13 +417,13 @@ export function useEditionPricingViewModel(editionId: string): EditionPricingVie
                   queryClient.invalidateQueries({ queryKey: ["entitlements", "editions", editionId, "prices"] });
                   discard();
                   success({
-                        title: "Pricing Version Created",
-                        description: "Pricing changes saved as a new version. Existing subscribers keep their current pricing.",
+                        title: t("entitlements.editions.versions.created") || "Version Created",
+                        description: t("entitlements.editions.versions.createdDesc") || "Pricing changes saved as a new version.",
                   });
             },
             onError: (err: Error) => {
                   showError({
-                        title: "Version Creation Failed",
+                        title: t("common.error"),
                         description: err.message,
                   });
             },

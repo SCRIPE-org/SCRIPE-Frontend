@@ -1,0 +1,66 @@
+/**
+ * Convert Trial Dialog
+ *
+ * Allows admins to convert a trial subscription into a paid plan.
+ * Shows billing cycle options filtered by the trial edition's billing controls.
+ */
+"use client";
+
+import { useI18n } from "@core/providers/i18n-provider";
+import { Button } from "@core/ui/button";
+import {
+  Dialog, DialogContent, DialogDescription, DialogFooter,
+  DialogHeader, DialogTitle,
+} from "@core/ui/dialog";
+import { Label } from "@core/ui/label";
+import { Loader2 } from "lucide-react";
+import type { SubscriptionEditionDialogProps } from "../types";
+import type { SubscriptionListItem } from "../../domain/entities/Subscription";
+import { SubscriptionTypeSelect } from "./SubscriptionTypeSelect";
+
+export function ConvertDialog({ vm, editionsVm }: SubscriptionEditionDialogProps) {
+  const { t } = useI18n();
+
+  // Get the current trial subscription's edition billing controls
+  const activeSubEditionId = vm.items?.find(
+    (s: SubscriptionListItem) => s.status === "Active" || s.status === "Trialing"
+  )?.editionId;
+  const selectedEd = activeSubEditionId
+    ? (editionsVm.items ?? []).find((ed) => ed.id === activeSubEditionId) ?? null
+    : null;
+
+  return (
+    <Dialog open={vm.showConvertDialog} onOpenChange={vm.setShowConvertDialog}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{t("entSubscriptions.convertTrial") || "Convert Trial"}</DialogTitle>
+          <DialogDescription>
+            {t("entSubscriptions.convertDesc") || "Convert this trial into a paid subscription."}
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="space-y-4 py-4">
+          <div className="space-y-2">
+            <Label>{t("tenant.subscriptionType")}</Label>
+            <SubscriptionTypeSelect
+              value={vm.convertType}
+              onValueChange={vm.setConvertType}
+              edition={selectedEd}
+              showTrial={false}
+            />
+          </div>
+        </div>
+
+        <DialogFooter>
+          <Button variant="outline" onClick={() => vm.setShowConvertDialog(false)}>
+            {t("common.cancel")}
+          </Button>
+          <Button onClick={vm.submitConvert} disabled={vm.isConverting}>
+            {vm.isConverting && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
+            {t("entSubscriptions.convertTrial") || "Convert"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}

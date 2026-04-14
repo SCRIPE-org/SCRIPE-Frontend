@@ -70,7 +70,7 @@ export function useVersionsViewModel(editionId: string): VersionsViewModelResult
                   setShowCreateForm(false);
                   setChangeNotes("");
             },
-            onError: (err) => toastError({ title: "Error", description: err instanceof Error ? err.message : "Failed to create version" }),
+            onError: (err) => toastError({ title: t("common.error"), description: err instanceof Error ? err.message : t("common.error") }),
       });
 
       // ── Publish version mutation ──
@@ -101,7 +101,7 @@ export function useVersionsViewModel(editionId: string): VersionsViewModelResult
                   setScheduledAt("");
                   setCanaryPercentage(10);
             },
-            onError: (err) => toastError({ title: "Error", description: err instanceof Error ? err.message : "Failed to publish version" }),
+            onError: (err) => toastError({ title: t("common.error"), description: err instanceof Error ? err.message : t("common.error") }),
       });
 
       // ── Cancel version mutation ──
@@ -111,7 +111,7 @@ export function useVersionsViewModel(editionId: string): VersionsViewModelResult
                   success({ title: t("entitlements.editions.versions.canceled") || "Version Canceled" });
                   queryClient.invalidateQueries({ queryKey: ["entitlements", "editions", editionId, "versions"] });
             },
-            onError: (err) => toastError({ title: "Error", description: err instanceof Error ? err.message : "Failed to cancel version" }),
+            onError: (err) => toastError({ title: t("common.error"), description: err instanceof Error ? err.message : t("common.error") }),
       });
 
       const canPublish = (() => {
