@@ -374,6 +374,7 @@ export const API_ENDPOINTS = {
         BY_ID: (id: string) => `${V1}/invoices/${id}`,
         TRANSACTIONS: `${V1}/invoices/transactions`,
         PDF: (id: string) => `${V1}/invoices/${id}/pdf`,
+        SEND_EMAIL: (id: string) => `${V1}/invoices/${id}/send-email`,
       },
       CHECKOUT: (tenantId: string) => `${V1}/billing/tenants/${tenantId}/checkout`,
       PORTAL: (tenantId: string) => `${V1}/billing/tenants/${tenantId}/portal`,

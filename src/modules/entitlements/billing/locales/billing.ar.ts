@@ -7,6 +7,7 @@ export const ar = {
     columns: {
       invoiceNumber: "رقم الفاتورة",
       tenant: "المستأجر",
+      tenantName: "اسم المستأجر",
       total: "الإجمالي",
       status: "الحالة",
       dueDate: "تاريخ الاستحقاق",
@@ -46,6 +47,15 @@ export const ar = {
       copyLink: "نسخ الرابط",
       openLink: "فتح الرابط",
       linkCopied: "تم نسخ رابط الدفع إلى الحافظة.",
+      downloadPdf: "تحميل PDF",
+      sendEmail: "إرسال بريد إلكتروني",
+      downloadSuccess: "تم تحميل PDF",
+      downloadError: "فشل التحميل",
+      downloadErrorDesc: "فشل في تحميل فاتورة PDF.",
+      emailSent: "تم الإرسال",
+      emailSentDesc: "تم إرسال الفاتورة بالبريد الإلكتروني إلى مدير المستأجر.",
+      emailError: "فشل الإرسال",
+      emailErrorDesc: "فشل في إرسال الفاتورة بالبريد الإلكتروني.",
     },
     dialogs: {
       checkoutTitle: "تم إنشاء رابط الدفع",

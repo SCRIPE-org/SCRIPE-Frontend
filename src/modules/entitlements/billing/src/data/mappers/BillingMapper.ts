@@ -34,6 +34,7 @@ export class BillingMapper {
     const data: InvoiceData = {
       id: dto.id,
       tenantId: dto.tenantId,
+      tenantName: dto.tenantName ?? "Unknown",
       subscriptionId: dto.subscriptionId,
       invoiceNumber: dto.invoiceNumber ?? "",
       currency: dto.currency ?? "USD",
@@ -59,6 +60,7 @@ export class BillingMapper {
     const data: InvoiceListItemData = {
       id: dto.id,
       tenantId: dto.tenantId,
+      tenantName: dto.tenantName ?? "Unknown",
       invoiceNumber: dto.invoiceNumber ?? "",
       currency: dto.currency ?? "USD",
       total: dto.total ?? 0,

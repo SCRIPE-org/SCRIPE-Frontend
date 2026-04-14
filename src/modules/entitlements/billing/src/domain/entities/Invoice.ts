@@ -7,6 +7,7 @@
 export interface InvoiceData {
   id: string;
   tenantId: string;
+  tenantName: string;
   subscriptionId?: string;
   invoiceNumber: string;
   currency: string;
@@ -31,6 +32,7 @@ export class Invoice {
 
   get id(): string { return this.data.id; }
   get tenantId(): string { return this.data.tenantId; }
+  get tenantName(): string { return this.data.tenantName; }
   get subscriptionId(): string | undefined { return this.data.subscriptionId; }
   get invoiceNumber(): string { return this.data.invoiceNumber; }
   get currency(): string { return this.data.currency; }
@@ -67,6 +69,7 @@ export class Invoice {
 export interface InvoiceListItemData {
   id: string;
   tenantId: string;
+  tenantName: string;
   invoiceNumber: string;
   currency: string;
   total: number;
@@ -82,6 +85,7 @@ export class InvoiceListItem {
 
   get id(): string { return this.data.id; }
   get tenantId(): string { return this.data.tenantId; }
+  get tenantName(): string { return this.data.tenantName; }
   get invoiceNumber(): string { return this.data.invoiceNumber; }
   get currency(): string { return this.data.currency; }
   get total(): number { return this.data.total; }

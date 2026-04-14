@@ -58,5 +58,8 @@ export interface IBillingService {
 
       // ── PDF ──
       downloadInvoicePdf(invoiceId: string): Promise<Blob>;
+
+      // ── Email ──
+      sendInvoiceEmail(invoiceId: string): Promise<void>;
 }
 

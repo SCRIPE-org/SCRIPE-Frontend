@@ -7,6 +7,7 @@ export const en = {
     columns: {
       invoiceNumber: "Invoice #",
       tenant: "Tenant",
+      tenantName: "Tenant Name",
       total: "Total",
       status: "Status",
       dueDate: "Due Date",
@@ -46,6 +47,15 @@ export const en = {
       copyLink: "Copy Link",
       openLink: "Open Link",
       linkCopied: "Payment link copied to clipboard.",
+      downloadPdf: "Download PDF",
+      sendEmail: "Send Email",
+      downloadSuccess: "PDF Downloaded",
+      downloadError: "Download Failed",
+      downloadErrorDesc: "Failed to download invoice PDF.",
+      emailSent: "Email Sent",
+      emailSentDesc: "Invoice email sent to the tenant admin.",
+      emailError: "Email Failed",
+      emailErrorDesc: "Failed to send invoice email.",
     },
     dialogs: {
       checkoutTitle: "Payment Link Generated",

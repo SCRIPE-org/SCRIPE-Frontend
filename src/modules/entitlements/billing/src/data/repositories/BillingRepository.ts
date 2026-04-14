@@ -118,5 +118,11 @@ export class BillingRepository implements IBillingRepository {
   async downloadInvoicePdf(invoiceId: string): Promise<Blob> {
     return this.service.downloadInvoicePdf(invoiceId);
   }
+
+  // ── Email ──
+
+  async sendInvoiceEmail(invoiceId: string): Promise<void> {
+    await this.service.sendInvoiceEmail(invoiceId);
+  }
 }
 

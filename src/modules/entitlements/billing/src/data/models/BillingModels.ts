@@ -6,6 +6,7 @@
 export interface InvoiceResponseModel {
   id: string;
   tenantId: string;
+  tenantName: string;
   subscriptionId?: string;
   invoiceNumber: string;
   currency: string;
@@ -28,6 +29,7 @@ export interface InvoiceResponseModel {
 export interface InvoiceListResponseModel {
   id: string;
   tenantId: string;
+  tenantName: string;
   invoiceNumber: string;
   currency: string;
   total: number;

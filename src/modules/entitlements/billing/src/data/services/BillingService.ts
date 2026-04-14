@@ -124,5 +124,14 @@ export class BillingService implements IBillingService {
       { responseType: "blob" } as never
     );
   }
+
+  // ── Email ──
+
+  async sendInvoiceEmail(invoiceId: string): Promise<void> {
+    await this.api.post(
+      API_ENDPOINTS.ENTITLEMENTS.BILLING.INVOICES.SEND_EMAIL(invoiceId),
+      {}
+    );
+  }
 }
 
