@@ -238,9 +238,7 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
       // ── Direct Apply (save features immediately + sync tenants) ──
       const directApplyMutation = useMutation({
             mutationFn: async () => {
-                  const changes = getChangedFeatures();
-                  if (Object.keys(changes).length === 0) return;
-                  // Also update overflow policy if changed
+                  // Update overflow policy first (independent of feature changes)
                   if (localOverflowPolicy !== (edition?.overflowPolicy ?? "Block")) {
                         await editionRepository.update(editionId, {
                               name: edition!.name,
@@ -250,6 +248,8 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
                               overflowPolicy: localOverflowPolicy,
                         });
                   }
+                  const changes = getChangedFeatures();
+                  if (Object.keys(changes).length === 0) return;
                   await editionRepository.directApplyFeatures(editionId, changes);
             },
             onSuccess: () => {
