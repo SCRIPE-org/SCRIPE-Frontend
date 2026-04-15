@@ -122,7 +122,7 @@ export const PAGE_REGISTRY: PageDefinition[] = [
     category: "settings",
   },
   {
-    href: "/settings/tenant",
+    href: "/customization/branding",
     labelEn: "Tenant Settings",
     labelAr: "إعدادات المستأجر",
     icon: "Settings",

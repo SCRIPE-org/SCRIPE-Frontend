@@ -176,7 +176,7 @@ Security-focused view with:
 
 ---
 
-### Tenant Settings (`/settings/tenant`)
+### Tenant Settings (`/customization/branding`)
 
 | Feature         | Implementation                           |
 | --------------- | ---------------------------------------- |
