@@ -18,7 +18,7 @@ interface CurrencySelectProps {
 export function CurrencySelect({ value, onValueChange }: CurrencySelectProps) {
   const { t } = useI18n();
 
-  const options = BILLING_CURRENCIES.map((c) => ({ value: c, label: c }));
+  const options = BILLING_CURRENCIES.map((c) => ({ value: c.code, label: c.label }));
 
   return (
     <div className="space-y-2">

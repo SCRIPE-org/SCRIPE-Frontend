@@ -118,5 +118,10 @@ export const en = {
       generate: "Generate Link",
       generated: "Payment link generated successfully.",
     },
+    testMode: {
+      label: "Stripe Test Mode",
+      description:
+        "Payments are simulated. No real charges will be made. Switch to live keys for production.",
+    },
   },
 };

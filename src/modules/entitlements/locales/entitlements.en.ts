@@ -363,5 +363,28 @@ export const en = {
       customDays: "Enter days...",
       noPromotion: "No Promotion",
     },
+    // ── Subscription Status Labels (E-06) ──
+    subscription: {
+      status: {
+        Active: "Active",
+        Trialing: "Trial",
+        Canceled: "Canceled",
+        Expired: "Expired",
+        Suspended: "Suspended",
+        PendingPayment: "Pending Payment",
+        PastDue: "Past Due",
+      },
+      paymentWall: {
+        title: "Payment Required",
+        description: "Your subscription to {edition} is pending payment. Please contact your system administrator to complete the payment and activate your account.",
+        yourPlan: "your plan",
+        contactAdmin: "Contact your system administrator to generate a payment link.",
+      },
+    },
+    gracePeriod: {
+      daysRemaining: "Your grace period ends in {days} day(s). Please resolve your payment to avoid service interruption.",
+      active: "Your subscription is in a grace period. Please resolve payment.",
+      resolve: "Resolve",
+    },
   },
 };

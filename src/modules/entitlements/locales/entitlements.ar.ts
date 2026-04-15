@@ -363,5 +363,28 @@ export const ar = {
       custom: "مخصص...",
       customDays: "أدخل عدد الأيام...",
     },
+    // ── تسميات حالة الاشتراك (E-06) ──
+    subscription: {
+      status: {
+        Active: "نشط",
+        Trialing: "تجريبي",
+        Canceled: "ملغى",
+        Expired: "منتهي",
+        Suspended: "معلّق",
+        PendingPayment: "بانتظار الدفع",
+        PastDue: "متأخر السداد",
+      },
+      paymentWall: {
+        title: "مطلوب الدفع",
+        description: "اشتراكك في {edition} بانتظار الدفع. يرجى التواصل مع مسؤول النظام لإتمام عملية الدفع وتفعيل حسابك.",
+        yourPlan: "خطتك",
+        contactAdmin: "تواصل مع مسؤول النظام لإنشاء رابط الدفع.",
+      },
+    },
+    gracePeriod: {
+      daysRemaining: "تنتهي فترة السماح خلال {days} يوم/أيام. يرجى تسوية الدفع لتجنب انقطاع الخدمة.",
+      active: "اشتراكك في فترة سماح. يرجى تسوية الدفع.",
+      resolve: "حل المشكلة",
+    },
   },
 };

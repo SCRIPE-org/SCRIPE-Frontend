@@ -9,10 +9,20 @@ export interface CreateFeatureRequest {
       defaultValue: string;
       module: string;
       description?: string;
+      displayNameEn?: string;
+      displayNameAr?: string;
+      category?: string;
+      sortOrder?: number;
+      isVisibleInUI?: boolean;
 }
 
 export interface UpdateFeatureRequest {
       name?: string;
       defaultValue?: string;
       description?: string;
+      displayNameEn?: string;
+      displayNameAr?: string;
+      category?: string;
+      sortOrder?: number;
+      isVisibleInUI?: boolean;
 }

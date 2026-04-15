@@ -34,6 +34,11 @@ export class FeatureMapper {
                   defaultValue: request.defaultValue,
                   module: request.module,
                   description: request.description,
+                  displayNameEn: request.displayNameEn,
+                  displayNameAr: request.displayNameAr,
+                  category: request.category,
+                  sortOrder: request.sortOrder ?? 0,
+                  isVisibleInUI: request.isVisibleInUI ?? true,
             };
       }
 
@@ -42,6 +47,11 @@ export class FeatureMapper {
                   name: request.name,
                   defaultValue: request.defaultValue,
                   description: request.description,
+                  displayNameEn: request.displayNameEn,
+                  displayNameAr: request.displayNameAr,
+                  category: request.category,
+                  sortOrder: request.sortOrder,
+                  isVisibleInUI: request.isVisibleInUI,
             };
       }
 }
