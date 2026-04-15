@@ -3,7 +3,7 @@
  *
  * Composes all menu-tree components with native HTML5 DnD.
  * Handles CRUD operations and base reordering only.
- * Override customization is on a separate page: /settings/menus/customize
+ * Override customization is on a separate page: /customization/menus/customize
  */
 "use client";
 
@@ -122,7 +122,7 @@ export function MenusView() {
           {/* Customize Menu — link to dedicated page */}
           {vm.canCustomize && (
             <Button variant="outline" size="sm" asChild>
-              <Link href="/settings/menus/customize">
+              <Link href="/customization/menus/customize">
                 <Palette className="h-4 w-4 ltr:mr-1.5 rtl:ml-1.5" />
                 {t("menus.customizeMenu")}
               </Link>

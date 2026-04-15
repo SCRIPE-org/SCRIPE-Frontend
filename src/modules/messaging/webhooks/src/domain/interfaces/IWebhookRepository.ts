@@ -5,6 +5,8 @@ import type {
       WebhookDeliveryStats,
       WebhookEventType,
       WebhookTestResult,
+      WebhookAnalytics,
+      WebhookHealthSummary,
 } from "../entities/Webhook";
 import type {
       CreateWebhookRequest,
@@ -40,6 +42,7 @@ export interface IWebhookRepository {
             page: number;
             pageSize: number;
             isSuccess?: boolean;
+            status?: string;
       }): Promise<{ items: WebhookDeliveryLog[]; totalCount: number }>;
 
       // ─── Event Catalog ─────────────────────────────────────────
@@ -47,4 +50,20 @@ export interface IWebhookRepository {
 
       // ─── Stats ─────────────────────────────────────────────────
       getDeliveryStats(subscriptionId: string): Promise<WebhookDeliveryStats>;
+
+      // ─── Analytics & Health (Phase 7) ──────────────────────────
+      getAnalytics(subscriptionId: string, days?: number): Promise<WebhookAnalytics>;
+      getHealthSummary(): Promise<WebhookHealthSummary>;
+
+      // ─── Dead Letter Queue (Phase 7) ───────────────────────────
+      getDeadLetters(params: {
+            subscriptionId: string;
+            page: number;
+            pageSize: number;
+      }): Promise<{ items: WebhookDeliveryLog[]; totalCount: number }>;
+      replayDeadLetter(logId: string): Promise<void>;
+      replayAllDeadLetters(subscriptionId: string): Promise<void>;
+
+      // ─── Bulk Operations (Phase 7) ─────────────────────────────
+      bulkToggle(isActive: boolean): Promise<void>;
 }

@@ -1,7 +1,7 @@
 /**
  * Webhook Detail View
  *
- * Detail page with tabs: Overview, Delivery Log, Statistics.
+ * Detail page with tabs: Overview, Delivery Log, Analytics, Dead Letters.
  * Pure UI — all logic in useWebhookDetailViewModel.
  */
 "use client";
@@ -10,6 +10,8 @@ import { useWebhookDetailViewModel } from "../viewmodels/useWebhookDetailViewMod
 import { useI18n } from "@core/providers/i18n-provider";
 import { WebhookStatusBadge } from "../components/WebhookStatusBadge";
 import { WebhookSecretPanel } from "../components/WebhookSecretPanel";
+import { WebhookAnalyticsChart } from "../components/WebhookAnalyticsChart";
+import { DeadLetterQueue } from "../components/DeadLetterQueue";
 
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
@@ -28,6 +30,8 @@ import {
       AlertTriangle,
       Copy,
       Check,
+      BarChart3,
+      Skull,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useCallback } from "react";
@@ -100,7 +104,7 @@ export function WebhookDetailView({ webhookId }: WebhookDetailViewProps) {
                         <p className="text-muted-foreground">
                               {vm.error?.message || t("webhooks.notFoundDesc") || "The requested webhook could not be found."}
                         </p>
-                        <Button variant="outline" onClick={() => router.push("/settings/webhooks")}>
+                        <Button variant="outline" onClick={() => router.push("/messaging/webhooks")}>
                               <ArrowLeft className="h-4 w-4 mr-2" />
                               {t("common.back") || "Back"}
                         </Button>
@@ -109,9 +113,7 @@ export function WebhookDetailView({ webhookId }: WebhookDetailViewProps) {
       }
 
       const webhook = vm.webhook;
-      const isAutoDisabled =
-            !webhook.isActive &&
-            webhook.consecutiveFailures >= webhook.maxConsecutiveFailures;
+      const isAutoDisabled = webhook.isAutoDisabled;
 
       return (
             <div className="space-y-6">
@@ -122,7 +124,7 @@ export function WebhookDetailView({ webhookId }: WebhookDetailViewProps) {
                                     variant="ghost"
                                     size="icon"
                                     className="mt-1 shrink-0"
-                                    onClick={() => router.push("/settings/webhooks")}
+                                    onClick={() => router.push("/messaging/webhooks")}
                               >
                                     <ArrowLeft className="h-4 w-4" />
                               </Button>
@@ -134,8 +136,7 @@ export function WebhookDetailView({ webhookId }: WebhookDetailViewProps) {
                                           </h1>
                                           <WebhookStatusBadge
                                                 isActive={webhook.isActive}
-                                                consecutiveFailures={webhook.consecutiveFailures}
-                                                maxConsecutiveFailures={webhook.maxConsecutiveFailures}
+                                                isAutoDisabled={isAutoDisabled}
                                           />
                                     </div>
 
@@ -232,11 +233,8 @@ export function WebhookDetailView({ webhookId }: WebhookDetailViewProps) {
                                           {t("webhooks.autoDisabledTitle") || "Webhook Auto-Disabled"}
                                     </p>
                                     <p className="text-amber-700 dark:text-amber-400">
-                                          {(t("webhooks.autoDisabledDesc") ||
-                                                "This webhook was automatically disabled after {count} consecutive failures. Click 'Activate' to re-enable.").replace(
-                                                      "{count}",
-                                                      String(webhook.consecutiveFailures)
-                                                )}
+                                          {t("webhooks.autoDisabledGeneric") ||
+                                                "This webhook was automatically disabled due to consecutive delivery failures. Click 'Activate' to re-enable."}
                                     </p>
                               </div>
                         </div>
@@ -256,6 +254,19 @@ export function WebhookDetailView({ webhookId }: WebhookDetailViewProps) {
                                     {vm.deliveryTotalCount > 0 && (
                                           <Badge variant="secondary" className="ml-1.5 text-xs h-5 min-w-[20px] px-1.5">
                                                 {vm.deliveryTotalCount}
+                                          </Badge>
+                                    )}
+                              </TabsTrigger>
+                              <TabsTrigger value="analytics" className="gap-1.5">
+                                    <BarChart3 className="h-3.5 w-3.5" />
+                                    {t("webhooks.analytics.tab") || "Analytics"}
+                              </TabsTrigger>
+                              <TabsTrigger value="dead-letters" className="gap-1.5">
+                                    <Skull className="h-3.5 w-3.5" />
+                                    {t("webhooks.deadLetters.tab") || "Dead Letters"}
+                                    {vm.deadLetterTotalCount > 0 && (
+                                          <Badge variant="destructive" className="ml-1 text-xs h-5 min-w-[20px] px-1.5">
+                                                {vm.deadLetterTotalCount}
                                           </Badge>
                                     )}
                               </TabsTrigger>
@@ -365,6 +376,30 @@ export function WebhookDetailView({ webhookId }: WebhookDetailViewProps) {
                                     filter={vm.deliveryFilter}
                                     onFilterChange={vm.setDeliveryFilter}
                                     isLoading={vm.isLoadingDeliveries}
+                              />
+                        </TabsContent>
+
+                        {/* ─── Analytics Tab (Phase 7) ────────────────────────── */}
+                        <TabsContent value="analytics" className="mt-6">
+                              <WebhookAnalyticsChart
+                                    analytics={vm.analytics}
+                                    isLoading={vm.isLoadingAnalytics}
+                              />
+                        </TabsContent>
+
+                        {/* ─── Dead Letters Tab (Phase 7) ─────────────────────── */}
+                        <TabsContent value="dead-letters" className="mt-6">
+                              <DeadLetterQueue
+                                    logs={vm.deadLetters}
+                                    page={vm.dlqPage}
+                                    pageSize={vm.dlqPageSize}
+                                    totalCount={vm.deadLetterTotalCount}
+                                    onPageChange={vm.setDlqPage}
+                                    onReplay={vm.replayDeadLetter}
+                                    onReplayAll={vm.replayAllDeadLetters}
+                                    isReplaying={vm.isReplaying}
+                                    isReplayingAll={vm.isReplayingAll}
+                                    isLoading={vm.isLoadingDeadLetters}
                               />
                         </TabsContent>
                   </Tabs>

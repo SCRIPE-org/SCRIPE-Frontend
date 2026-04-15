@@ -26,6 +26,7 @@ import {
 import { format } from "date-fns";
 import { useRouter } from "next/navigation";
 import { WebhookForm } from "../components/WebhookForm";
+import { WebhookHealthDashboard } from "../components/WebhookHealthDashboard";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 
 export function WebhooksView() {
@@ -33,7 +34,7 @@ export function WebhooksView() {
 
       const { t } = useI18n();
       const router = useRouter();
-      const { vm, getConfigBase, handleToggle } = useWebhooksViewModel();
+      const { vm, getConfigBase, handleToggle, healthSummary, isLoadingHealth } = useWebhooksViewModel();
       const configBase = getConfigBase();
 
       const [createDialogOpen, setCreateDialogOpen] = useState(false);
@@ -59,18 +60,18 @@ export function WebhooksView() {
                         },
                         {
                               key: "scope",
-                              label: t("webhooks.scope") || "Scope",
+                              label: t("webhooks.scope.label") || "Scope",
                               render: (_val: unknown, item: WebhookSubscriptionListItem) => {
-                                    const scopeConfig: Record<string, { label: string; variant: "default" | "secondary" | "outline"; className: string }> = {
-                                          system: { label: "System", variant: "default", className: "bg-blue-600 hover:bg-blue-700 text-white" },
-                                          hierarchy: { label: "Hierarchy", variant: "default", className: "bg-purple-600 hover:bg-purple-700 text-white" },
-                                          tenant: { label: "Tenant", variant: "secondary", className: "" },
+                                    const scopeConfig: Record<string, { labelKey: string; fallback: string; variant: "default" | "secondary" | "outline"; className: string }> = {
+                                          system: { labelKey: "webhooks.scope.system", fallback: "System", variant: "default", className: "bg-blue-600 hover:bg-blue-700 text-white" },
+                                          hierarchy: { labelKey: "webhooks.scope.hierarchy", fallback: "Hierarchy", variant: "default", className: "bg-purple-600 hover:bg-purple-700 text-white" },
+                                          tenant: { labelKey: "webhooks.scope.tenant", fallback: "Tenant", variant: "secondary", className: "" },
                                     };
                                     const cfg = scopeConfig[item.scope] ?? scopeConfig.tenant;
                                     return (
                                           <div className="flex flex-col gap-0.5">
                                                 <Badge variant={cfg.variant} className={`text-xs ${cfg.className}`}>
-                                                      {cfg.label}
+                                                      {t(cfg.labelKey) || cfg.fallback}
                                                 </Badge>
                                                 {item.tenantName && (
                                                       <span className="text-[10px] text-muted-foreground truncate max-w-[120px]" title={item.tenantName}>
@@ -93,14 +94,20 @@ export function WebhooksView() {
                         {
                               key: "events",
                               label: t("webhooks.events") || "Events",
-                              render: (_val: unknown, item: WebhookSubscriptionListItem) => (
-                                    <div className="flex items-center gap-1.5">
-                                          <Zap className="h-3.5 w-3.5 text-amber-500" />
-                                          <Badge variant="outline" className="text-xs font-medium">
-                                                {item.events.length} {item.events.length === 1 ? "event" : "events"}
-                                          </Badge>
-                                    </div>
-                              ),
+                              render: (_val: unknown, item: WebhookSubscriptionListItem) => {
+                                    const count = item.events.length;
+                                    const label = count === 1
+                                          ? (t("webhooks.eventCount", { count }) || `${count} event`)
+                                          : (t("webhooks.eventCountPlural", { count }) || `${count} events`);
+                                    return (
+                                          <div className="flex items-center gap-1.5">
+                                                <Zap className="h-3.5 w-3.5 text-amber-500" />
+                                                <Badge variant="outline" className="text-xs font-medium">
+                                                      {label}
+                                                </Badge>
+                                          </div>
+                                    );
+                              },
                         },
                         {
                               key: "isActive",
@@ -108,8 +115,7 @@ export function WebhooksView() {
                               render: (_val: unknown, item: WebhookSubscriptionListItem) => (
                                     <WebhookStatusBadge
                                           isActive={item.isActive}
-                                          consecutiveFailures={item.consecutiveFailures}
-                                          maxConsecutiveFailures={item.maxConsecutiveFailures}
+                                          isAutoDisabled={item.isAutoDisabled}
                                     />
                               ),
                         },
@@ -171,7 +177,7 @@ export function WebhooksView() {
                         {
                               label: tFn("common.view") || "View Details",
                               onClick: (item: WebhookSubscriptionListItem) =>
-                                    router.push(`/settings/webhooks/${item.id}`),
+                                    router.push(`/messaging/webhooks/${item.id}`),
                               variant: "ghost" as const,
                               icon: <Eye className="h-4 w-4" />,
                         },
@@ -201,7 +207,14 @@ export function WebhooksView() {
       );
 
       return (
-            <>
+            <div className="space-y-5">
+                  {/* System Health Summary */}
+                  <WebhookHealthDashboard
+                        summary={healthSummary}
+                        isLoading={isLoadingHealth}
+                  />
+
+                  {/* CRUD Table */}
                   <GenericCrudView viewModel={vm} config={config} />
 
                   <WebhookForm
@@ -213,6 +226,6 @@ export function WebhooksView() {
                               vm.refreshItems();
                         }}
                   />
-            </>
+            </div>
       );
 }

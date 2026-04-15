@@ -13,9 +13,12 @@ import {
       WebhookEventType,
       WebhookTestResult,
       WebhookDeliveryStats,
+      WebhookAnalytics,
+      WebhookHealthSummary,
       type WebhookSubscriptionData,
       type WebhookSubscriptionListItemData,
       type WebhookDeliveryLogData,
+      type DeliveryStatus,
 } from "../../domain/entities/Webhook";
 import {
       WebhookSubscriptionModel,
@@ -28,6 +31,8 @@ import {
       type WebhookEventTypeJson,
       type WebhookTestResultJson,
       type WebhookDeliveryStatsJson,
+      type WebhookAnalyticsJson,
+      type WebhookHealthSummaryJson,
 } from "../models/WebhookModel";
 import type {
       CreateWebhookRequest,
@@ -93,9 +98,8 @@ export class WebhookMapper {
                   lastDeliveryStatus: model.lastDeliveryStatus,
                   successRate: model.successRate,
                   totalDeliveries: model.totalDeliveries,
-                  consecutiveFailures: model.consecutiveFailures ?? 0,
-                  maxConsecutiveFailures: model.maxConsecutiveFailures ?? 0,
-                  createdAt: model.createdAt ?? "",
+                  successfulDeliveries: model.successfulDeliveries,
+                  failedDeliveries: model.failedDeliveries,
             };
             return new WebhookSubscriptionListItem(data);
       }
@@ -114,7 +118,7 @@ export class WebhookMapper {
       static toDeliveryLogEntity(json: WebhookDeliveryLogJson): WebhookDeliveryLog {
             const data: WebhookDeliveryLogData = {
                   id: json.id,
-                  subscriptionId: json.subscriptionId ?? "",
+                  eventDeliveryId: json.eventDeliveryId ?? "",
                   eventType: json.eventType,
                   payloadJson: json.payloadJson,
                   requestUrl: json.requestUrl,
@@ -122,6 +126,9 @@ export class WebhookMapper {
                   httpStatusCode: json.httpStatusCode,
                   responseBody: json.responseBody,
                   errorMessage: json.errorMessage,
+                  status: (json.status as DeliveryStatus) ?? "Pending",
+                  nextRetryAt: json.nextRetryAt ?? null,
+                  maxAttempts: json.maxAttempts ?? 1,
                   attemptNumber: json.attemptNumber,
                   latencyMs: json.latencyMs,
                   isSuccess: json.isSuccess,
@@ -161,6 +168,41 @@ export class WebhookMapper {
                   json.successRate,
                   json.averageLatencyMs
             );
+      }
+
+      /**
+       * Convert analytics JSON → WebhookAnalytics Entity
+       */
+      static toAnalyticsEntity(json: WebhookAnalyticsJson): WebhookAnalytics {
+            return new WebhookAnalytics({
+                  successRate: json.successRate ?? 0,
+                  avgLatencyMs: json.avgLatencyMs ?? 0,
+                  p95LatencyMs: json.p95LatencyMs ?? 0,
+                  totalEvents: json.totalEvents ?? 0,
+                  deliveredEvents: json.deliveredEvents ?? 0,
+                  failedEvents: json.failedEvents ?? 0,
+                  deadLetteredCount: json.deadLetteredCount ?? 0,
+                  retryingCount: json.retryingCount ?? 0,
+                  dailyStats: json.dailyStats ?? [],
+            });
+      }
+
+      /**
+       * Convert health summary JSON → WebhookHealthSummary Entity
+       */
+      static toHealthSummaryEntity(json: WebhookHealthSummaryJson): WebhookHealthSummary {
+            return new WebhookHealthSummary({
+                  activeEndpoints: json.activeEndpoints ?? 0,
+                  disabledEndpoints: json.disabledEndpoints ?? 0,
+                  autoDisabledEndpoints: json.autoDisabledEndpoints ?? 0,
+                  systemSuccessRate: json.systemSuccessRate ?? 0,
+                  last24hTotal: json.last24hTotal ?? 0,
+                  last24hDelivered: json.last24hDelivered ?? 0,
+                  last24hFailed: json.last24hFailed ?? 0,
+                  totalDeadLettered: json.totalDeadLettered ?? 0,
+                  totalRetrying: json.totalRetrying ?? 0,
+                  avgLatencyMs: json.avgLatencyMs ?? 0,
+            });
       }
 
       /**

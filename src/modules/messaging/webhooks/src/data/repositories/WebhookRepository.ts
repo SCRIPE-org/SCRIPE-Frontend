@@ -20,6 +20,8 @@ import type {
       WebhookDeliveryStats,
       WebhookEventType,
       WebhookTestResult,
+      WebhookAnalytics,
+      WebhookHealthSummary,
 } from "../../domain/entities/Webhook";
 import type {
       CreateWebhookRequest,
@@ -29,6 +31,8 @@ import { WebhookMapper } from "../mappers/WebhookMapper";
 
 export class WebhookRepository implements IWebhookRepository {
       constructor(private readonly service: IWebhookService) { }
+
+      // ─── Subscriptions ─────────────────────────────────────────
 
       async getAll(params: {
             page: number;
@@ -77,11 +81,14 @@ export class WebhookRepository implements IWebhookRepository {
             return WebhookMapper.toTestResultEntity(json);
       }
 
+      // ─── Delivery Logs ─────────────────────────────────────────
+
       async getDeliveryLogs(params: {
             subscriptionId: string;
             page: number;
             pageSize: number;
             isSuccess?: boolean;
+            status?: string;
       }): Promise<{ items: WebhookDeliveryLog[]; totalCount: number }> {
             const result = await this.service.getDeliveryLogs(params);
             return {
@@ -90,13 +97,57 @@ export class WebhookRepository implements IWebhookRepository {
             };
       }
 
+      // ─── Event Catalog ─────────────────────────────────────────
+
       async getAvailableEvents(): Promise<WebhookEventType[]> {
             const jsonList = await this.service.getAvailableEvents();
             return jsonList.map((json) => WebhookMapper.toEventTypeEntity(json));
       }
 
+      // ─── Stats ─────────────────────────────────────────────────
+
       async getDeliveryStats(subscriptionId: string): Promise<WebhookDeliveryStats> {
             const json = await this.service.getDeliveryStats(subscriptionId);
             return WebhookMapper.toDeliveryStatsEntity(json);
+      }
+
+      // ─── Analytics & Health (Phase 7) ──────────────────────────
+
+      async getAnalytics(subscriptionId: string, days: number = 30): Promise<WebhookAnalytics> {
+            const json = await this.service.getAnalytics(subscriptionId, days);
+            return WebhookMapper.toAnalyticsEntity(json);
+      }
+
+      async getHealthSummary(): Promise<WebhookHealthSummary> {
+            const json = await this.service.getHealthSummary();
+            return WebhookMapper.toHealthSummaryEntity(json);
+      }
+
+      // ─── Dead Letter Queue (Phase 7) ───────────────────────────
+
+      async getDeadLetters(params: {
+            subscriptionId: string;
+            page: number;
+            pageSize: number;
+      }): Promise<{ items: WebhookDeliveryLog[]; totalCount: number }> {
+            const result = await this.service.getDeadLetters(params);
+            return {
+                  items: result.items.map((json) => WebhookMapper.toDeliveryLogEntity(json)),
+                  totalCount: result.totalCount,
+            };
+      }
+
+      async replayDeadLetter(logId: string): Promise<void> {
+            await this.service.replayDeadLetter(logId);
+      }
+
+      async replayAllDeadLetters(subscriptionId: string): Promise<void> {
+            await this.service.replayAllDeadLetters(subscriptionId);
+      }
+
+      // ─── Bulk Operations (Phase 7) ─────────────────────────────
+
+      async bulkToggle(isActive: boolean): Promise<void> {
+            await this.service.bulkToggle(isActive);
       }
 }

@@ -12,7 +12,7 @@ import { messagingContainer } from "@modules/messaging/di";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useCrudViewModel } from "@core/crud/hooks/useCrudViewModel";
 import type { CrudConfig, CrudAction } from "@core/crud/components/generic-crud-view";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import type { WebhookSubscriptionListItem } from "../../domain/entities/Webhook";
 
@@ -23,6 +23,7 @@ export const webhookKeys = {
       detail: (id: string) => [...webhookKeys.all, "detail", id] as const,
       deliveries: (id: string) => [...webhookKeys.all, "deliveries", id] as const,
       events: ["webhooks", "events"] as const,
+      health: ["webhooks", "health"] as const,
 };
 
 export function useWebhooksViewModel() {
@@ -101,6 +102,17 @@ export function useWebhooksViewModel() {
             },
       });
 
+      // ============ Health Summary Query ============
+      const {
+            data: healthSummary,
+            isLoading: isLoadingHealth,
+      } = useQuery({
+            queryKey: webhookKeys.health,
+            queryFn: () => webhookRepository.getHealthSummary(),
+            staleTime: 60_000,
+            refetchInterval: 60_000,
+      });
+
       // ============ Config Base ============
       const getConfigBase = useCallback(
             (): Partial<CrudConfig<WebhookSubscriptionListItem>> => ({
@@ -177,6 +189,8 @@ export function useWebhooksViewModel() {
             getConfigBase,
             handleToggle: (id: string) => toggleMutation.mutate(id),
             isToggling: toggleMutation.isPending,
+            healthSummary: healthSummary ?? null,
+            isLoadingHealth,
             t,
       };
 }

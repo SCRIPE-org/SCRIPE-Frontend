@@ -8,14 +8,13 @@
  * @module webhooks/domain
  */
 import type {
-      WebhookSubscriptionModel,
-      WebhookListItemModel,
       WebhookSubscriptionJson,
       WebhookListResponseJson,
-      WebhookDeliveryLogJson,
       WebhookDeliveryLogListResponseJson,
       WebhookEventTypeJson,
       WebhookTestResultJson,
+      WebhookAnalyticsJson,
+      WebhookHealthSummaryJson,
       CreateWebhookJson,
       UpdateWebhookJson,
 } from "../types/WebhookTypes";
@@ -38,9 +37,20 @@ export interface ServiceDeliveryLogParams {
       page: number;
       pageSize: number;
       isSuccess?: boolean;
+      status?: string;
+}
+
+/**
+ * Dead letter list query parameters
+ */
+export interface ServiceDeadLetterParams {
+      subscriptionId: string;
+      page: number;
+      pageSize: number;
 }
 
 export interface IWebhookService {
+      // ─── CRUD ─────────────────────────────────────────
       getAll(params: ServiceWebhookListParams): Promise<WebhookListResponseJson>;
       getById(id: string): Promise<WebhookSubscriptionJson>;
       create(data: CreateWebhookJson): Promise<WebhookSubscriptionJson>;
@@ -49,6 +59,8 @@ export interface IWebhookService {
       toggle(id: string): Promise<void>;
       rotateSecret(id: string): Promise<WebhookSubscriptionJson>;
       test(id: string): Promise<WebhookTestResultJson>;
+
+      // ─── Delivery Logs ────────────────────────────────
       getDeliveryLogs(params: ServiceDeliveryLogParams): Promise<WebhookDeliveryLogListResponseJson>;
       getAvailableEvents(): Promise<WebhookEventTypeJson[]>;
       getDeliveryStats(subscriptionId: string): Promise<{
@@ -58,4 +70,16 @@ export interface IWebhookService {
             successRate: number;
             averageLatencyMs: number;
       }>;
+
+      // ─── Analytics & Health ───────────────────────────
+      getAnalytics(subscriptionId: string, days?: number): Promise<WebhookAnalyticsJson>;
+      getHealthSummary(): Promise<WebhookHealthSummaryJson>;
+
+      // ─── Dead Letter Queue ────────────────────────────
+      getDeadLetters(params: ServiceDeadLetterParams): Promise<WebhookDeliveryLogListResponseJson>;
+      replayDeadLetter(logId: string): Promise<void>;
+      replayAllDeadLetters(subscriptionId: string): Promise<void>;
+
+      // ─── Bulk Operations ──────────────────────────────
+      bulkToggle(isActive: boolean): Promise<void>;
 }

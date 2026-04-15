@@ -7,6 +7,10 @@
  * @module webhooks/domain
  */
 
+// ─── Delivery Status Type ──────────────────────────────────────
+
+export type DeliveryStatus = 'Pending' | 'Delivered' | 'Retrying' | 'DeadLettered';
+
 // ─── Subscription Data ─────────────────────────────────────────
 
 export interface WebhookSubscriptionData {
@@ -159,9 +163,8 @@ export interface WebhookSubscriptionListItemData {
       lastDeliveryStatus: string | null;
       successRate: number;
       totalDeliveries: number;
-      consecutiveFailures: number;
-      maxConsecutiveFailures: number;
-      createdAt: string;
+      successfulDeliveries: number;
+      failedDeliveries: number;
 }
 
 /**
@@ -206,14 +209,11 @@ export class WebhookSubscriptionListItem {
       get totalDeliveries(): number {
             return this.data.totalDeliveries;
       }
-      get consecutiveFailures(): number {
-            return this.data.consecutiveFailures;
+      get successfulDeliveries(): number {
+            return this.data.successfulDeliveries;
       }
-      get maxConsecutiveFailures(): number {
-            return this.data.maxConsecutiveFailures;
-      }
-      get createdAt(): string {
-            return this.data.createdAt;
+      get failedDeliveries(): number {
+            return this.data.failedDeliveries;
       }
 
       // ===== Domain Logic =====
@@ -223,7 +223,7 @@ export class WebhookSubscriptionListItem {
       }
 
       get isAutoDisabled(): boolean {
-            return this.consecutiveFailures >= this.maxConsecutiveFailures;
+            return !this.isActive && this.lastDeliveryStatus === 'Auto-disabled';
       }
 
       /** Human-readable scope label */
@@ -241,7 +241,7 @@ export class WebhookSubscriptionListItem {
 
 export interface WebhookDeliveryLogData {
       id: string;
-      subscriptionId: string;
+      eventDeliveryId: string;
       eventType: string;
       payloadJson: string;
       requestUrl: string;
@@ -249,6 +249,9 @@ export interface WebhookDeliveryLogData {
       httpStatusCode: number;
       responseBody: string | null;
       errorMessage: string | null;
+      status: DeliveryStatus;
+      nextRetryAt: string | null;
+      maxAttempts: number;
       attemptNumber: number;
       latencyMs: number;
       isSuccess: boolean;
@@ -256,7 +259,7 @@ export interface WebhookDeliveryLogData {
 }
 
 /**
- * Webhook Delivery Log Entity
+ * Webhook Delivery Log Entity — enhanced with persistent retry fields
  */
 export class WebhookDeliveryLog {
       constructor(private readonly data: WebhookDeliveryLogData) { }
@@ -264,8 +267,8 @@ export class WebhookDeliveryLog {
       get id(): string {
             return this.data.id;
       }
-      get subscriptionId(): string {
-            return this.data.subscriptionId;
+      get eventDeliveryId(): string {
+            return this.data.eventDeliveryId;
       }
       get eventType(): string {
             return this.data.eventType;
@@ -288,6 +291,15 @@ export class WebhookDeliveryLog {
       get errorMessage(): string | null {
             return this.data.errorMessage;
       }
+      get status(): DeliveryStatus {
+            return this.data.status;
+      }
+      get nextRetryAt(): string | null {
+            return this.data.nextRetryAt;
+      }
+      get maxAttempts(): number {
+            return this.data.maxAttempts;
+      }
       get attemptNumber(): number {
             return this.data.attemptNumber;
       }
@@ -299,6 +311,33 @@ export class WebhookDeliveryLog {
       }
       get createdAt(): string {
             return this.data.createdAt;
+      }
+
+      // ===== Domain Logic =====
+
+      /** Whether this delivery is waiting for retry */
+      get isPendingRetry(): boolean {
+            return this.status === 'Retrying' && this.nextRetryAt !== null;
+      }
+
+      /** Whether this delivery has been permanently failed */
+      get isDeadLettered(): boolean {
+            return this.status === 'DeadLettered';
+      }
+
+      /** Whether this can be replayed (only dead-lettered items) */
+      get canReplay(): boolean {
+            return this.status === 'DeadLettered';
+      }
+
+      /** Status color for UI badges */
+      get statusColor(): 'success' | 'warning' | 'error' | 'default' {
+            switch (this.status) {
+                  case 'Delivered': return 'success';
+                  case 'Retrying': return 'warning';
+                  case 'DeadLettered': return 'error';
+                  default: return 'default';
+            }
       }
 }
 
@@ -315,6 +354,88 @@ export class WebhookDeliveryStats {
             public readonly successRate: number,
             public readonly averageLatencyMs: number
       ) { }
+}
+
+// ─── Analytics ─────────────────────────────────────────────────
+
+export interface DailyDeliveryStats {
+      date: string;
+      total: number;
+      delivered: number;
+      failed: number;
+      avgLatencyMs: number;
+}
+
+export interface WebhookAnalyticsData {
+      successRate: number;
+      avgLatencyMs: number;
+      p95LatencyMs: number;
+      totalEvents: number;
+      deliveredEvents: number;
+      failedEvents: number;
+      deadLetteredCount: number;
+      retryingCount: number;
+      dailyStats: DailyDeliveryStats[];
+}
+
+/**
+ * Webhook Analytics Entity — delivery performance metrics for a subscription
+ */
+export class WebhookAnalytics {
+      constructor(private readonly data: WebhookAnalyticsData) { }
+
+      get successRate(): number { return this.data.successRate; }
+      get avgLatencyMs(): number { return this.data.avgLatencyMs; }
+      get p95LatencyMs(): number { return this.data.p95LatencyMs; }
+      get totalEvents(): number { return this.data.totalEvents; }
+      get deliveredEvents(): number { return this.data.deliveredEvents; }
+      get failedEvents(): number { return this.data.failedEvents; }
+      get deadLetteredCount(): number { return this.data.deadLetteredCount; }
+      get retryingCount(): number { return this.data.retryingCount; }
+      get dailyStats(): DailyDeliveryStats[] { return this.data.dailyStats; }
+}
+
+// ─── Health Summary ────────────────────────────────────────────
+
+export interface WebhookHealthSummaryData {
+      activeEndpoints: number;
+      disabledEndpoints: number;
+      autoDisabledEndpoints: number;
+      systemSuccessRate: number;
+      last24hTotal: number;
+      last24hDelivered: number;
+      last24hFailed: number;
+      totalDeadLettered: number;
+      totalRetrying: number;
+      avgLatencyMs: number;
+}
+
+/**
+ * Webhook Health Summary Entity — system-wide webhook dashboard data
+ */
+export class WebhookHealthSummary {
+      constructor(private readonly data: WebhookHealthSummaryData) { }
+
+      get activeEndpoints(): number { return this.data.activeEndpoints; }
+      get disabledEndpoints(): number { return this.data.disabledEndpoints; }
+      get autoDisabledEndpoints(): number { return this.data.autoDisabledEndpoints; }
+      get systemSuccessRate(): number { return this.data.systemSuccessRate; }
+      get last24hTotal(): number { return this.data.last24hTotal; }
+      get last24hDelivered(): number { return this.data.last24hDelivered; }
+      get last24hFailed(): number { return this.data.last24hFailed; }
+      get totalDeadLettered(): number { return this.data.totalDeadLettered; }
+      get totalRetrying(): number { return this.data.totalRetrying; }
+      get avgLatencyMs(): number { return this.data.avgLatencyMs; }
+
+      /** Total endpoints (active + disabled) */
+      get totalEndpoints(): number {
+            return this.activeEndpoints + this.disabledEndpoints;
+      }
+
+      /** Whether there are entries needing attention */
+      get hasAlerts(): boolean {
+            return this.totalDeadLettered > 0 || this.autoDisabledEndpoints > 0;
+      }
 }
 
 // ─── Event Catalog ─────────────────────────────────────────────

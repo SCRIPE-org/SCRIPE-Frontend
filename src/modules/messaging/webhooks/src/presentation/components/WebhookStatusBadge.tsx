@@ -2,6 +2,7 @@
  * WebhookStatusBadge
  *
  * Displays Active / Inactive / Auto-disabled status with appropriate colors.
+ * Now uses the `isAutoDisabled` domain logic from the entity instead of raw fields.
  */
 "use client";
 
@@ -11,19 +12,14 @@ import { AlertTriangle, CheckCircle2, XCircle } from "lucide-react";
 
 interface WebhookStatusBadgeProps {
       isActive: boolean;
-      consecutiveFailures: number;
-      maxConsecutiveFailures: number;
+      isAutoDisabled?: boolean;
 }
 
 export function WebhookStatusBadge({
       isActive,
-      consecutiveFailures,
-      maxConsecutiveFailures,
+      isAutoDisabled = false,
 }: WebhookStatusBadgeProps) {
       const { t } = useI18n();
-
-      const isAutoDisabled =
-            !isActive && consecutiveFailures >= maxConsecutiveFailures;
 
       if (isAutoDisabled) {
             return (

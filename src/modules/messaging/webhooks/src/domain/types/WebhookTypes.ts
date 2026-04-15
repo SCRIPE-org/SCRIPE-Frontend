@@ -15,6 +15,8 @@ export type {
   WebhookDeliveryLogListResponseJson,
   WebhookEventTypeJson,
   WebhookTestResultJson,
+  WebhookAnalyticsJson,
+  WebhookHealthSummaryJson,
   CreateWebhookJson,
   UpdateWebhookJson,
 } from "../../data/models/WebhookModel";

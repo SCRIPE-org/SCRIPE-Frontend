@@ -106,7 +106,7 @@ export const PAGE_REGISTRY: PageDefinition[] = [
 
   // ── Settings ───────────────────────────────────────────────────
   {
-    href: "/settings/menus",
+    href: "/customization/menus",
     labelEn: "Menu Settings",
     labelAr: "إعدادات القائمة",
     icon: "Menu",
@@ -130,7 +130,7 @@ export const PAGE_REGISTRY: PageDefinition[] = [
     category: "settings",
   },
   {
-    href: "/settings/webhooks",
+    href: "/messaging/webhooks",
     labelEn: "Webhooks",
     labelAr: "الويب هوك",
     icon: "Webhook",

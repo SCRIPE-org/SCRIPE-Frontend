@@ -48,7 +48,7 @@ export function MenuCustomizeView() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           <Button variant="ghost" size="icon" asChild>
-            <Link href="/settings/menus">
+            <Link href="/customization/menus">
               <ArrowLeft className="h-4 w-4" />
             </Link>
           </Button>
@@ -145,7 +145,7 @@ export function MenuCustomizeView() {
               {t("menus.noCustomizePermission") ?? "You do not have permission to customize menus."}
             </p>
             <Button variant="outline" asChild>
-              <Link href="/settings/menus">
+              <Link href="/customization/menus">
                 <ArrowLeft className="mr-1.5 h-4 w-4" />
                 {t("menus.backToManagement")}
               </Link>
@@ -174,7 +174,7 @@ export function MenuCustomizeView() {
               {t("menus.noItemsToCustomize")}
             </p>
             <Button variant="outline" asChild>
-              <Link href="/settings/menus">
+              <Link href="/customization/menus">
                 <ArrowLeft className="mr-1.5 h-4 w-4" />
                 {t("menus.backToManagement")}
               </Link>

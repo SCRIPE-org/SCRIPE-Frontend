@@ -48,9 +48,8 @@ export interface WebhookListItemJson {
       lastDeliveryStatus: string | null;
       successRate: number;
       totalDeliveries: number;
-      consecutiveFailures?: number;
-      maxConsecutiveFailures?: number;
-      createdAt?: string;
+      successfulDeliveries: number;
+      failedDeliveries: number;
 }
 
 export interface WebhookListResponseJson {
@@ -60,7 +59,7 @@ export interface WebhookListResponseJson {
 
 export interface WebhookDeliveryLogJson {
       id: string;
-      subscriptionId?: string;
+      eventDeliveryId: string;
       eventType: string;
       payloadJson: string;
       requestUrl: string;
@@ -68,6 +67,9 @@ export interface WebhookDeliveryLogJson {
       httpStatusCode: number;
       responseBody: string | null;
       errorMessage: string | null;
+      status: string;
+      nextRetryAt: string | null;
+      maxAttempts: number;
       attemptNumber: number;
       latencyMs: number;
       isSuccess: boolean;
@@ -99,6 +101,41 @@ export interface WebhookTestResultJson {
       latencyMs: number;
       responsePreview: string | null;
       errorMessage: string | null;
+}
+
+// ===== Analytics & Health JSON Shapes =====
+
+export interface DailyDeliveryStatsJson {
+      date: string;
+      total: number;
+      delivered: number;
+      failed: number;
+      avgLatencyMs: number;
+}
+
+export interface WebhookAnalyticsJson {
+      successRate: number;
+      avgLatencyMs: number;
+      p95LatencyMs: number;
+      totalEvents: number;
+      deliveredEvents: number;
+      failedEvents: number;
+      deadLetteredCount: number;
+      retryingCount: number;
+      dailyStats: DailyDeliveryStatsJson[];
+}
+
+export interface WebhookHealthSummaryJson {
+      activeEndpoints: number;
+      disabledEndpoints: number;
+      autoDisabledEndpoints: number;
+      systemSuccessRate: number;
+      last24hTotal: number;
+      last24hDelivered: number;
+      last24hFailed: number;
+      totalDeadLettered: number;
+      totalRetrying: number;
+      avgLatencyMs: number;
 }
 
 export interface CreateWebhookJson {
@@ -227,9 +264,8 @@ export class WebhookListItemModel {
             public readonly lastDeliveryStatus: string | null,
             public readonly successRate: number,
             public readonly totalDeliveries: number,
-            public readonly consecutiveFailures?: number,
-            public readonly maxConsecutiveFailures?: number,
-            public readonly createdAt?: string
+            public readonly successfulDeliveries: number,
+            public readonly failedDeliveries: number
       ) { }
 
       static fromJson(json: WebhookListItemJson): WebhookListItemModel {
@@ -246,9 +282,8 @@ export class WebhookListItemModel {
                   json.lastDeliveryStatus,
                   json.successRate,
                   json.totalDeliveries,
-                  json.consecutiveFailures,
-                  json.maxConsecutiveFailures,
-                  json.createdAt
+                  json.successfulDeliveries,
+                  json.failedDeliveries
             );
       }
 }

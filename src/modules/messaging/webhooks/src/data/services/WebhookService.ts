@@ -8,19 +8,28 @@
  */
 import type { IApiService } from "@core/interfaces/api.interface";
 import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
-import type { IWebhookService, ServiceWebhookListParams, ServiceDeliveryLogParams } from "../../domain/interfaces/IWebhookService";
+import type {
+      IWebhookService,
+      ServiceWebhookListParams,
+      ServiceDeliveryLogParams,
+      ServiceDeadLetterParams,
+} from "../../domain/interfaces/IWebhookService";
 import type {
       WebhookSubscriptionJson,
       WebhookListResponseJson,
       WebhookDeliveryLogListResponseJson,
       WebhookEventTypeJson,
       WebhookTestResultJson,
+      WebhookAnalyticsJson,
+      WebhookHealthSummaryJson,
       CreateWebhookJson,
       UpdateWebhookJson,
 } from "../models/WebhookModel";
 
 export class WebhookService implements IWebhookService {
       constructor(private readonly api: IApiService) { }
+
+      // ─── CRUD ─────────────────────────────────────────
 
       async getAll(params: ServiceWebhookListParams): Promise<WebhookListResponseJson> {
             const url = buildUrl(API_ENDPOINTS.WEBHOOKS.LIST, params as unknown as Record<string, string | number | boolean | null | undefined>);
@@ -55,6 +64,8 @@ export class WebhookService implements IWebhookService {
             return this.api.post(API_ENDPOINTS.WEBHOOKS.TEST(id), {});
       }
 
+      // ─── Delivery Logs ────────────────────────────────
+
       async getDeliveryLogs(params: ServiceDeliveryLogParams): Promise<WebhookDeliveryLogListResponseJson> {
             const { subscriptionId, ...rest } = params;
             const url = buildUrl(
@@ -88,5 +99,44 @@ export class WebhookService implements IWebhookService {
                   successRate: detail.successRate,
                   averageLatencyMs: 0, // Not available from detail endpoint
             };
+      }
+
+      // ─── Analytics & Health ───────────────────────────
+
+      async getAnalytics(subscriptionId: string, days: number = 30): Promise<WebhookAnalyticsJson> {
+            const url = buildUrl(
+                  API_ENDPOINTS.WEBHOOKS.ANALYTICS(subscriptionId),
+                  { days }
+            );
+            return this.api.get(url);
+      }
+
+      async getHealthSummary(): Promise<WebhookHealthSummaryJson> {
+            return this.api.get(API_ENDPOINTS.WEBHOOKS.HEALTH);
+      }
+
+      // ─── Dead Letter Queue ────────────────────────────
+
+      async getDeadLetters(params: ServiceDeadLetterParams): Promise<WebhookDeliveryLogListResponseJson> {
+            const { subscriptionId, ...rest } = params;
+            const url = buildUrl(
+                  API_ENDPOINTS.WEBHOOKS.DEAD_LETTERS(subscriptionId),
+                  rest
+            );
+            return this.api.get(url);
+      }
+
+      async replayDeadLetter(logId: string): Promise<void> {
+            await this.api.post(API_ENDPOINTS.WEBHOOKS.REPLAY_DEAD_LETTER(logId), {});
+      }
+
+      async replayAllDeadLetters(subscriptionId: string): Promise<void> {
+            await this.api.post(API_ENDPOINTS.WEBHOOKS.REPLAY_ALL_DEAD_LETTERS(subscriptionId), {});
+      }
+
+      // ─── Bulk Operations ──────────────────────────────
+
+      async bulkToggle(isActive: boolean): Promise<void> {
+            await this.api.post(API_ENDPOINTS.WEBHOOKS.BULK_TOGGLE, { isActive });
       }
 }

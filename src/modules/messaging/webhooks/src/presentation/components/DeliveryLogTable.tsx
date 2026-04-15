@@ -33,6 +33,7 @@ import {
       ChevronRight,
 } from "lucide-react";
 import { format } from "date-fns";
+import { DeliveryStatusBadge } from "./DeliveryStatusBadge";
 
 interface DeliveryLogTableProps {
       logs: WebhookDeliveryLog[];
@@ -174,7 +175,9 @@ export function DeliveryLogTable({
                                                                         </div>
                                                                   </TableCell>
                                                                   <TableCell>
-                                                                        {log.isSuccess ? (
+                                                                        {log.status ? (
+                                                                              <DeliveryStatusBadge status={log.status} />
+                                                                        ) : log.isSuccess ? (
                                                                               <Badge
                                                                                     variant="outline"
                                                                                     className="bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/30 dark:text-emerald-400 dark:border-emerald-800 gap-1 text-xs"
@@ -207,7 +210,9 @@ export function DeliveryLogTable({
                                                                         </Badge>
                                                                   </TableCell>
                                                                   <TableCell className="text-muted-foreground">
-                                                                        {log.attemptNumber}
+                                                                        <span className="text-sm">
+                                                                              {log.attemptNumber}{log.maxAttempts ? `/${log.maxAttempts}` : ""}
+                                                                        </span>
                                                                   </TableCell>
                                                                   <TableCell>
                                                                         <span
@@ -234,6 +239,24 @@ export function DeliveryLogTable({
                                                                   <TableRow className="bg-muted/10 hover:bg-muted/10">
                                                                         <TableCell colSpan={7} className="p-0">
                                                                               <div className="p-6 space-y-3 border-t">
+                                                                                    {/* Delivery metadata */}
+                                                                                    <div className="flex items-center gap-4 text-xs text-muted-foreground flex-wrap">
+                                                                                          {log.eventDeliveryId && (
+                                                                                                <div className="flex items-center gap-1">
+                                                                                                      <span className="font-medium">Delivery ID:</span>
+                                                                                                      <code className="bg-muted px-1.5 py-0.5 rounded font-mono text-[10px]">
+                                                                                                            {log.eventDeliveryId}
+                                                                                                      </code>
+                                                                                                </div>
+                                                                                          )}
+                                                                                          {log.nextRetryAt && (
+                                                                                                <div className="flex items-center gap-1">
+                                                                                                      <Clock className="h-3 w-3" />
+                                                                                                      <span>Next retry: {format(new Date(log.nextRetryAt), "MMM d, HH:mm:ss")}</span>
+                                                                                                </div>
+                                                                                          )}
+                                                                                    </div>
+
                                                                                     {/* Error message */}
                                                                                     {log.errorMessage && (
                                                                                           <div>

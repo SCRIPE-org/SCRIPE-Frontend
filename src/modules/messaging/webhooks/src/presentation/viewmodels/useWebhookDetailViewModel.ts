@@ -2,8 +2,8 @@
  * Webhook Detail ViewModel
  *
  * Orchestrates the webhook detail page with tabs:
- * Overview, Delivery Logs, Statistics.
- * Handles secret management, test pings, and toggle.
+ * Overview, Delivery Log, Analytics, Dead Letters.
+ * Handles secret management, test pings, toggle, and DLQ replay.
  */
 "use client";
 
@@ -19,6 +19,7 @@ import type {
       WebhookDeliveryLog,
       WebhookDeliveryStats,
       WebhookTestResult,
+      WebhookAnalytics,
 } from "../../domain/entities/Webhook";
 import type { UpdateWebhookRequest } from "../../domain/entities/WebhookRequests";
 
@@ -48,6 +49,10 @@ export function useWebhookDetailViewModel(webhookId: string) {
             "all" | "success" | "failed"
       >("all");
       const deliveryPageSize = 10;
+
+      // ─── Dead letter pagination ────────────────────────────────
+      const [dlqPage, setDlqPage] = useState(1);
+      const dlqPageSize = 10;
 
       // ============ Queries ============
 
@@ -83,6 +88,31 @@ export function useWebhookDetailViewModel(webhookId: string) {
                                     : deliveryFilter === "success",
                   }),
             enabled: !!webhookId,
+      });
+
+      // Analytics (lazy, fetched when analytics tab is active)
+      const {
+            data: analytics,
+            isLoading: isLoadingAnalytics,
+      } = useQuery({
+            queryKey: [...webhookKeys.detail(webhookId), "analytics"],
+            queryFn: () => webhookRepository.getAnalytics(webhookId, 30),
+            enabled: !!webhookId && activeTab === "analytics",
+      });
+
+      // Dead letters (lazy, fetched when DLQ tab is active)
+      const {
+            data: deadLettersData,
+            isLoading: isLoadingDeadLetters,
+      } = useQuery({
+            queryKey: [...webhookKeys.detail(webhookId), "dead-letters", dlqPage],
+            queryFn: () =>
+                  webhookRepository.getDeadLetters({
+                        subscriptionId: webhookId,
+                        page: dlqPage,
+                        pageSize: dlqPageSize,
+                  }),
+            enabled: !!webhookId && activeTab === "dead-letters",
       });
 
       // ============ Mutations ============
@@ -194,7 +224,57 @@ export function useWebhookDetailViewModel(webhookId: string) {
                         title: t("webhooks.deleted") || "Webhook Deleted",
                         description: t("webhooks.deletedDesc") || "Webhook removed.",
                   });
-                  router.push("/settings/webhooks");
+                  router.push("/messaging/webhooks");
+            },
+            onError: (err: Error) => {
+                  toastError({
+                        title: t("common.error") || "Error",
+                        description: err.message,
+                  });
+            },
+      });
+
+      // ─── DLQ Replay mutations ──────────────────────────────────
+
+      const replayMutation = useMutation({
+            mutationFn: (logId: string) => webhookRepository.replayDeadLetter(logId),
+            onSuccess: () => {
+                  queryClient.invalidateQueries({
+                        queryKey: [...webhookKeys.detail(webhookId), "dead-letters"],
+                  });
+                  queryClient.invalidateQueries({
+                        queryKey: webhookKeys.deliveries(webhookId),
+                  });
+                  success({
+                        title: t("webhooks.deadLetters.replayed") || "Replayed",
+                        description:
+                              t("webhooks.deadLetters.replayedDesc") ||
+                              "Delivery has been re-queued for retry.",
+                  });
+            },
+            onError: (err: Error) => {
+                  toastError({
+                        title: t("common.error") || "Error",
+                        description: err.message,
+                  });
+            },
+      });
+
+      const replayAllMutation = useMutation({
+            mutationFn: () => webhookRepository.replayAllDeadLetters(webhookId),
+            onSuccess: () => {
+                  queryClient.invalidateQueries({
+                        queryKey: [...webhookKeys.detail(webhookId), "dead-letters"],
+                  });
+                  queryClient.invalidateQueries({
+                        queryKey: webhookKeys.deliveries(webhookId),
+                  });
+                  success({
+                        title: t("webhooks.deadLetters.allReplayed") || "All Replayed",
+                        description:
+                              t("webhooks.deadLetters.allReplayedDesc") ||
+                              "All dead letters have been re-queued for retry.",
+                  });
             },
             onError: (err: Error) => {
                   toastError({
@@ -235,6 +315,22 @@ export function useWebhookDetailViewModel(webhookId: string) {
             deliveryFilter,
             setDeliveryFilter,
             isLoadingDeliveries,
+
+            // Analytics (Phase 7)
+            analytics: analytics ?? null,
+            isLoadingAnalytics,
+
+            // Dead Letter Queue (Phase 7)
+            deadLetters: deadLettersData?.items ?? [],
+            deadLetterTotalCount: deadLettersData?.totalCount ?? 0,
+            dlqPage,
+            setDlqPage,
+            dlqPageSize,
+            isLoadingDeadLetters,
+            replayDeadLetter: (logId: string) => replayMutation.mutate(logId),
+            isReplaying: replayMutation.isPending,
+            replayAllDeadLetters: () => replayAllMutation.mutate(),
+            isReplayingAll: replayAllMutation.isPending,
 
             // Actions
             toggle: () => toggleMutation.mutate(),
