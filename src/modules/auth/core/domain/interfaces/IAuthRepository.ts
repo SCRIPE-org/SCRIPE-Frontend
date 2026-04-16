@@ -5,6 +5,7 @@ import { Result } from "@core/common/types/result";
 /** Result of a successful login, carrying subscription metadata alongside the User */
 export interface LoginResult {
   user: User;
+  mustChangePassword: boolean;
   subscriptionStatus: string | null;
   gracePhase: string | null;
   editionName: string | null;

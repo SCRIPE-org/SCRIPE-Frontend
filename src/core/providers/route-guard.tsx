@@ -42,7 +42,8 @@ const PUBLIC_PAGES = [
   "/authorize",
   "/studio-preview",
   "/dashboard-preview",
-  "/setup-account"
+  "/setup-account",
+  "/change-password"
 ];
 
 // Route prefixes that are always public (no auth checks at all)
@@ -75,6 +76,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
   const hasHydrated = useAppStore((state) => state._hasHydrated);
   const setAuth = useAppStore((state) => state.setAuth);
   const setSubscriptionInfo = useAppStore((state) => state.setSubscriptionInfo);
+  const mustChangePassword = useAppStore((state) => state.mustChangePassword);
   const { authRepository } = useServices();
   const authLoading = !hasHydrated;
   const { hasPageAccess, isLoading: navLoading } = useNavigation();
@@ -144,6 +146,16 @@ export function RouteGuard({ children }: RouteGuardProps) {
 
       // ─── Case 1: Has in-memory token AND authenticated → normal RBAC flow ───
       if (hasToken && isAuthenticated) {
+        // ─── Must Change Password enforcement ───
+        // If the admin must change their password, redirect to /change-password
+        // and block access to all other protected pages.
+        if (mustChangePassword && pathname !== "/change-password") {
+          appLogger.debug("[RouteGuard] Must change password, redirecting to /change-password");
+          hasRedirected.current = true;
+          router.replace("/change-password");
+          return;
+        }
+
         if (!canAccessPage(pathname)) {
           appLogger.debug("[RouteGuard] Access denied by permissions");
           hasRedirected.current = true;
@@ -276,6 +288,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
     logout,
     authRepository,
     setAuth,
+    mustChangePassword,
   ]);
 
   // For SSR/prerendering, render children without checks

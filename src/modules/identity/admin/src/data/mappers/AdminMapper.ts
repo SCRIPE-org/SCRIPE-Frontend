@@ -45,6 +45,7 @@ export class AdminMapper {
       groupNamesEn: model.groupNamesEn,
       groupNamesAr: model.groupNamesAr,
       isAccountActivated: model.isAccountActivated,
+      mustChangePassword: model.mustChangePassword,
       isProtected: model.isProtected,
     };
     return new Admin(data);
@@ -108,7 +109,9 @@ export class AdminMapper {
       request.notes,
       request.tenantId,
       request.roleIds,
-      request.userGroupIds
+      request.userGroupIds,
+      request.sendSetupEmail,
+      request.mustChangePassword
     );
   }
 

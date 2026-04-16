@@ -80,6 +80,15 @@ export const en = {
     resetPasswordDescription: "Reset Password Description",
     isActive: "Is Active",
     inActive: "In Active",
+    sendSetupEmail: "Send setup email",
+    sendSetupEmailDescription: "When enabled, an email invitation will be sent to set up the account. When disabled, you can set the password manually.",
+    mustChangePassword: "Require password change on first login",
+    mustChangePasswordDescription: "The admin will be forced to change their password after their first login.",
+    forceChangePassword: {
+      description: "Your administrator requires you to change your password before continuing.",
+    },
+    passwordReset: "Password Reset",
+    passwordResetDesc: "Password has been reset successfully.",
   },
   guardian: {
     protected: "Protected",

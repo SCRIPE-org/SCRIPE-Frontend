@@ -441,11 +441,25 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
           required: true,
         },
         {
+          name: "sendSetupEmail",
+          label: t("admin.sendSetupEmail") || "Send setup email to the admin",
+          type: "switch" as const,
+          description: t("admin.sendSetupEmailDescription") || "When enabled, an email invitation will be sent to set up the account. When disabled, you can set the password manually.",
+        },
+        {
           name: "password",
           label: t("admin.password") || "Password",
           type: "password" as const,
           placeholder: t("admin.passwordPlaceholder") || "Enter password",
           required: true,
+          isVisible: (values: Record<string, unknown>) => values.sendSetupEmail === false,
+        },
+        {
+          name: "mustChangePassword",
+          label: t("admin.mustChangePassword") || "Require password change on first login",
+          type: "switch" as const,
+          description: t("admin.mustChangePasswordDescription") || "The admin will be forced to change their password after their first login.",
+          isVisible: (values: Record<string, unknown>) => values.sendSetupEmail === false,
         },
         {
           name: "firstName",
@@ -527,6 +541,8 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
         phoneNumber: "",
         email: "",
         notes: "",
+        sendSetupEmail: true,
+        mustChangePassword: false,
         // tenantId is added at create time from options
       },
       editInitialValues: (admin: Admin) => ({

@@ -29,6 +29,7 @@ export interface LoginResponseJson {
   success?: boolean;
   accessToken: string;
   requires2FA?: boolean;
+  mustChangePassword?: boolean;
   subscriptionStatus?: string | null;
   gracePhase?: string | null;
   editionName?: string | null;
@@ -69,6 +70,7 @@ export class LoginResponseModel {
     public readonly accessToken: string,
     public readonly success: boolean = true,
     public readonly requires2FA: boolean = false,
+    public readonly mustChangePassword: boolean = false,
     public readonly subscriptionStatus: string | null = null,
     public readonly gracePhase: string | null = null,
     public readonly editionName: string | null = null
@@ -79,6 +81,7 @@ export class LoginResponseModel {
       json.accessToken,
       json.success ?? true,
       json.requires2FA ?? false,
+      json.mustChangePassword ?? false,
       json.subscriptionStatus ?? null,
       json.gracePhase ?? null,
       json.editionName ?? null
@@ -90,6 +93,7 @@ export class LoginResponseModel {
       success: this.success,
       accessToken: this.accessToken,
       requires2FA: this.requires2FA,
+      mustChangePassword: this.mustChangePassword,
       subscriptionStatus: this.subscriptionStatus,
       gracePhase: this.gracePhase,
       editionName: this.editionName,

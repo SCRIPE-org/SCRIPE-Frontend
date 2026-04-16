@@ -55,6 +55,8 @@ export interface AdminJson {
   groupNamesAr?: string[];
   /** Whether this admin has activated their account */
   isAccountActivated?: boolean;
+  /** Whether this admin must change password on next login */
+  mustChangePassword?: boolean;
   /** Whether this admin is a protected super admin */
   isProtected?: boolean;
 }
@@ -77,7 +79,7 @@ export interface AdminListResponseJson {
  */
 export interface CreateAdminJson {
   username: string;
-  password: string;
+  password?: string;
   firstName?: string;
   lastName?: string;
   phoneNumber?: string;
@@ -86,7 +88,8 @@ export interface CreateAdminJson {
   tenantId?: string;
   roleIds?: string[];
   userGroupIds?: string[];
-  forcePasswordChange?: boolean;
+  sendSetupEmail?: boolean;
+  mustChangePassword?: boolean;
 }
 
 /**
@@ -165,6 +168,7 @@ export class AdminModel {
     public readonly groupNamesEn?: string[],
     public readonly groupNamesAr?: string[],
     public readonly isAccountActivated?: boolean,
+    public readonly mustChangePassword?: boolean,
     public readonly isProtected?: boolean
   ) { }
 
@@ -194,6 +198,7 @@ export class AdminModel {
       json.groupNamesEn,
       json.groupNamesAr,
       json.isAccountActivated,
+      json.mustChangePassword,
       json.isProtected
     );
   }
@@ -224,6 +229,7 @@ export class AdminModel {
       groupNamesEn: this.groupNamesEn,
       groupNamesAr: this.groupNamesAr,
       isAccountActivated: this.isAccountActivated,
+      mustChangePassword: this.mustChangePassword,
       isProtected: this.isProtected,
     };
   }
@@ -246,7 +252,7 @@ export class AdminModel {
 export class CreateAdminModel {
   constructor(
     public readonly username: string,
-    public readonly password: string,
+    public readonly password?: string,
     public readonly firstName?: string,
     public readonly lastName?: string,
     public readonly phoneNumber?: string,
@@ -254,7 +260,9 @@ export class CreateAdminModel {
     public readonly notes?: string,
     public readonly tenantId?: string,
     public readonly roleIds?: string[],
-    public readonly userGroupIds?: string[]
+    public readonly userGroupIds?: string[],
+    public readonly sendSetupEmail?: boolean,
+    public readonly mustChangePassword?: boolean
   ) { }
 
   toJson(): CreateAdminJson {
@@ -269,6 +277,8 @@ export class CreateAdminModel {
       tenantId: this.tenantId,
       roleIds: this.roleIds,
       userGroupIds: this.userGroupIds,
+      sendSetupEmail: this.sendSetupEmail,
+      mustChangePassword: this.mustChangePassword,
     };
   }
 }

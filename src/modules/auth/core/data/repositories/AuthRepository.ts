@@ -87,6 +87,7 @@ export class AuthRepository implements IAuthRepository {
       const user = await this.getMe();
       return {
         user,
+        mustChangePassword: responseModel.mustChangePassword ?? false,
         subscriptionStatus: responseModel.subscriptionStatus,
         gracePhase: responseModel.gracePhase,
         editionName: responseModel.editionName,
@@ -110,6 +111,7 @@ export class AuthRepository implements IAuthRepository {
       const user = await this.getMe();
       return {
         user,
+        mustChangePassword: false, // 2FA flow doesn't carry this flag separately
         subscriptionStatus: responseModel.subscriptionStatus,
         gracePhase: responseModel.gracePhase,
         editionName: responseModel.editionName,

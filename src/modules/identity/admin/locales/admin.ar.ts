@@ -52,6 +52,15 @@ export const ar = {
     resetPasswordDescription: "إعادة تعيين كلمة المرور لـ",
     isActive: "نشط",
     inActive: "غير نشط",
+    sendSetupEmail: "إرسال بريد الإعداد",
+    sendSetupEmailDescription: "عند التفعيل، سيتم إرسال دعوة بالبريد الإلكتروني لإعداد الحساب. عند التعطيل، يمكنك تعيين كلمة المرور يدوياً.",
+    mustChangePassword: "طلب تغيير كلمة المرور عند أول تسجيل دخول",
+    mustChangePasswordDescription: "سيُجبر المشرف على تغيير كلمة المرور بعد أول تسجيل دخول.",
+    forceChangePassword: {
+      description: "يتطلب منك مشرف النظام تغيير كلمة المرور قبل المتابعة.",
+    },
+    passwordReset: "إعادة تعيين كلمة المرور",
+    passwordResetDesc: "تم إعادة تعيين كلمة المرور بنجاح.",
     role: {
       currentScope: "النطاق الحالي",
       selectRoles: "اختر الأدوار",

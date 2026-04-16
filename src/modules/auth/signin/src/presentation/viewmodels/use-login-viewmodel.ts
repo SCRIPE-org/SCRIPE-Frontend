@@ -172,6 +172,7 @@ export function useLoginViewModel() {
         result.gracePhase,
         result.editionName
       );
+      useAppStore.getState().setMustChangePassword(result.mustChangePassword ?? false);
 
       operationSuccess(t("auth.welcomeBack"));
 

@@ -63,6 +63,7 @@ export class AuthMapper {
     return new LoginResponse({
       success: model.isSuccessful,
       accessToken: model.accessToken,
+      mustChangePassword: model.mustChangePassword,
       subscriptionStatus: model.subscriptionStatus,
       gracePhase: model.gracePhase,
       editionName: model.editionName,

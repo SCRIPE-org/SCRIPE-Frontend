@@ -48,6 +48,8 @@ export interface AdminData extends BaseEntity {
   groupNamesAr?: string[];
   /** Whether this admin has completed account activation */
   isAccountActivated?: boolean;
+  /** Whether this admin must change password on next login */
+  mustChangePassword?: boolean;
   /** Whether this admin is a protected super admin */
   isProtected?: boolean;
 }
@@ -245,6 +247,11 @@ export class Admin {
   /** Whether this admin has completed account activation */
   get isAccountActivated(): boolean {
     return this.data.isAccountActivated ?? true;
+  }
+
+  /** Whether this admin must change password on next login */
+  get mustChangePassword(): boolean {
+    return this.data.mustChangePassword ?? false;
   }
 
   /** Whether this admin is a protected super admin */

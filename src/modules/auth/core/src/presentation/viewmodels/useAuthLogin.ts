@@ -30,7 +30,7 @@ export function useAuthLogin() {
       return authRepository.login(request);
     },
     onSuccess: async (result, variables) => {
-      const { user, subscriptionStatus, gracePhase, editionName } = result;
+      const { user, subscriptionStatus, gracePhase, editionName, mustChangePassword } = result;
 
       // 1. Set user in store with permissions and roles
       setAuth(
@@ -41,6 +41,9 @@ export function useAuthLogin() {
 
       // 2. Store subscription status for payment wall / grace banner
       setSubscriptionInfo(subscriptionStatus, gracePhase, editionName);
+
+      // 2b. Store must-change-password flag for route guard enforcement
+      useAppStore.getState().setMustChangePassword(mustChangePassword ?? false);
 
       // 3. Persist tenant code for tenant-aware logout redirect
       if (variables.tenantCode) {

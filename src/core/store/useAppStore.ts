@@ -32,6 +32,10 @@ interface AppState {
   editionName: string | null;
   setSubscriptionInfo: (status: string | null, gracePhase: string | null, editionName: string | null) => void;
 
+  // Must Change Password (force password change on first login)
+  mustChangePassword: boolean;
+  setMustChangePassword: (must: boolean) => void;
+
   // Tenant context (for tenant-aware logout redirect)
   tenantCode: string | null;
   setTenantCode: (code: string | null) => void;
@@ -87,6 +91,7 @@ export const useAppStore = create<AppState>()(
           subscriptionStatus: null,
           gracePhase: null,
           editionName: null,
+          mustChangePassword: false,
         });
       },
 
@@ -96,6 +101,10 @@ export const useAppStore = create<AppState>()(
       editionName: null,
       setSubscriptionInfo: (status, gracePhase, editionName) =>
         set({ subscriptionStatus: status, gracePhase, editionName }),
+
+      // Must Change Password
+      mustChangePassword: false,
+      setMustChangePassword: (must) => set({ mustChangePassword: must }),
 
       // Tenant context
       tenantCode: null,
@@ -120,6 +129,7 @@ export const useAppStore = create<AppState>()(
         subscriptionStatus: state.subscriptionStatus,
         gracePhase: state.gracePhase,
         editionName: state.editionName,
+        mustChangePassword: state.mustChangePassword,
       }),
       onRehydrateStorage: () => (state) => {
         // With in-memory tokens, the access token is ALWAYS null after page reload.

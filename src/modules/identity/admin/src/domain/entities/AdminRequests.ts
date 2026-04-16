@@ -6,11 +6,13 @@
 
 /**
  * Create admin request
- * roleIds is required - every admin must be assigned to at least one role at creation
+ * Supports two modes:
+ * 1. Email invitation (sendSetupEmail=true, default): password not needed, email required
+ * 2. Manual password (sendSetupEmail=false): password required, optional mustChangePassword
  */
 export interface CreateAdminRequest {
   username: string;
-  password: string;
+  password?: string;
   firstName?: string;
   lastName?: string;
   phoneNumber?: string;
@@ -19,6 +21,10 @@ export interface CreateAdminRequest {
   roleIds?: string[]; // Optional - at least one role OR group required
   userGroupIds?: string[]; // Optional - at least one role OR group required
   tenantId?: string;
+  /** When true (default), sends email invitation. When false, uses provided password. */
+  sendSetupEmail?: boolean;
+  /** Only valid when sendSetupEmail=false. Forces password change on first login. */
+  mustChangePassword?: boolean;
 }
 
 /**

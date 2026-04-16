@@ -150,6 +150,8 @@ export interface FieldConfig {
   // Permissions
   requiredPermission?: PermissionCode;
   requiredPermissions?: PermissionCode[];
+  // Helper/description text (shown below the field)
+  description?: string;
 }
 
 /**
@@ -641,22 +643,27 @@ export function GenericForm({
                     className={cn(direction === "rtl" ? "text-right" : "text-left")}
                   />
                 ) : field.type === "switch" ? (
-                  <div className={cn("flex items-center justify-between")}>
-                    <Label
-                      htmlFor={field.name}
-                      className={cn(
-                        "font-medium",
-                        direction === "rtl" ? "text-right" : "text-left"
-                      )}
-                    >
-                      {field.label}
-                    </Label>
-                    <Switch
-                      id={field.name}
-                      checked={formData[field.name] || false}
-                      onCheckedChange={(checked) => handleChange(field.name, checked)}
-                      disabled={field.disabled || readOnly}
-                    />
+                  <div>
+                    <div className={cn("flex items-center justify-between")}>
+                      <Label
+                        htmlFor={field.name}
+                        className={cn(
+                          "font-medium",
+                          direction === "rtl" ? "text-right" : "text-left"
+                        )}
+                      >
+                        {field.label}
+                      </Label>
+                      <Switch
+                        id={field.name}
+                        checked={formData[field.name] || false}
+                        onCheckedChange={(checked) => handleChange(field.name, checked)}
+                        disabled={field.disabled || readOnly}
+                      />
+                    </div>
+                    {field.description && (
+                      <p className="mt-1 text-xs text-muted-foreground">{field.description}</p>
+                    )}
                   </div>
                 ) : field.type === "checkbox" ? (
                   <div
