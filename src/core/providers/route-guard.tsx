@@ -208,6 +208,9 @@ export function RouteGuard({ children }: RouteGuardProps) {
               refreshData.editionName ?? null
             );
 
+            // Update must-change-password from fresh response (may have been cleared server-side)
+            useAppStore.getState().setMustChangePassword(refreshData.mustChangePassword ?? false);
+
             const user = await authRepository.getMe();
             if (user) {
               setAuth(user, user.permissions || [], []);
