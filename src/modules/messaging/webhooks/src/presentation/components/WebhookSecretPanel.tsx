@@ -73,19 +73,9 @@ export function WebhookSecretPanel({
       // Determine if the secret is masked (from GET) vs full (from Create/Rotate)
       const isMasked = secret.startsWith("****");
 
-      // Build display value:
-      // - If masked (from backend GET): show dots + last chars when hidden, raw when visible
-      // - If full (from Create/Rotate): show dots when hidden, full when visible
-      const displayValue = (() => {
-            if (isMasked) {
-                  // Backend already masked: "****abcdefgh"
-                  if (isVisible) return secret; // Show the masked fingerprint
-                  return "•".repeat(32); // Fully hidden
-            }
-            // Full secret available (just created or rotated)
-            if (isVisible) return secret;
-            return "•".repeat(40) + secret.slice(-4);
-      })();
+      // Display: dots when hidden, full secret when revealed
+      const maskedDisplay = "•".repeat(40) + secret.slice(-4);
+      const displayValue = isVisible ? secret : maskedDisplay;
 
       const handleCopy = useCallback(() => {
             // Only copy the actual secret value — never copy dots
