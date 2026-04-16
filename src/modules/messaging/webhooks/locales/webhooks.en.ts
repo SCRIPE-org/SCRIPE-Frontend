@@ -21,8 +21,8 @@ export const en = {
     statusLabel: "Status",
     lastDelivery: "Last Delivery",
     untitled: "Untitled Webhook",
-    eventCount: "{count} event",
-    eventCountPlural: "{count} events",
+    eventCount: "{{count}} event",
+    eventCountPlural: "{{count}} events",
 
     // ─── Scope ───────────────────────────────────────────────
     scope: {
@@ -89,6 +89,8 @@ export const en = {
     secretRotatedDesc: "Secret rotated. Old secret valid for 24 hours.",
     previousSecretActive: "Previous secret is still valid until",
     gracePeriod: "Grace Period",
+    secretMaskedNote:
+      "For security, the full secret is only shown when first created or after rotation. Use 'Rotate Secret' to generate and reveal a new secret.",
 
     // ─── Test ────────────────────────────────────────────────
     testSuccess: "Test Delivered Successfully",
@@ -117,7 +119,7 @@ export const en = {
     // ─── Auto-Disabled ───────────────────────────────────────
     autoDisabledTitle: "Webhook Auto-Disabled",
     autoDisabledDesc:
-      "This webhook was automatically disabled after {count} consecutive failures. Click 'Activate' to re-enable.",
+      "This webhook was automatically disabled after {{count}} consecutive failures. Click 'Activate' to re-enable.",
     autoDisabledGeneric:
       "This webhook was automatically disabled due to consecutive delivery failures. Click 'Activate' to re-enable.",
 
@@ -191,7 +193,7 @@ export const en = {
       replaying: "Replaying...",
       replayAllTitle: "Replay All Dead Letters",
       replayAllDesc:
-        "This will retry all {count} failed deliveries. Are you sure?",
+        "This will retry all {{count}} failed deliveries. Are you sure?",
       confirmReplayAll: "Replay All",
       replaySuccess: "Delivery replayed successfully",
       replayAllSuccess: "All dead letters have been queued for replay",
