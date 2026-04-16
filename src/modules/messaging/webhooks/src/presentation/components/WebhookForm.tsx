@@ -339,11 +339,11 @@ export function WebhookForm({
                                                                                                             className="mt-0.5"
                                                                                                       />
                                                                                                       <div className="min-w-0 flex-1">
-                                                                                                            <p className="text-sm font-mono leading-tight">
-                                                                                                                  {event.key}
+                                                                                                            <p className="text-sm leading-tight font-medium">
+                                                                                                                  {(t(`webhooks.eventNames.${event.key}`) || event.description || event.key) as string}
                                                                                                             </p>
-                                                                                                            <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
-                                                                                                                  {event.description}
+                                                                                                            <p className="text-[10px] font-mono text-muted-foreground mt-0.5 leading-relaxed">
+                                                                                                                  {event.key}
                                                                                                             </p>
                                                                                                       </div>
                                                                                                 </label>

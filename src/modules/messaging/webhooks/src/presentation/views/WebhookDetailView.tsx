@@ -290,13 +290,21 @@ export function WebhookDetailView({ webhookId }: WebhookDetailViewProps) {
                                           <CardContent>
                                                 <div className="flex flex-wrap gap-2">
                                                       {webhook.events.map((event) => (
-                                                            <Badge
+                                                            <div
                                                                   key={event}
-                                                                  variant="outline"
-                                                                  className="text-xs font-mono px-2.5 py-1"
+                                                                  className="flex flex-col items-start gap-0.5"
                                                             >
-                                                                  {event}
-                                                            </Badge>
+                                                                  <Badge
+                                                                        variant="outline"
+                                                                        className="text-xs px-2.5 py-1 gap-1.5"
+                                                                  >
+                                                                        <Zap className="h-2.5 w-2.5 text-amber-500" />
+                                                                        {(t(`webhooks.eventNames.${event}`) || event) as string}
+                                                                  </Badge>
+                                                                  <span className="text-[10px] font-mono text-muted-foreground px-1">
+                                                                        {event}
+                                                                  </span>
+                                                            </div>
                                                       ))}
                                                 </div>
                                           </CardContent>

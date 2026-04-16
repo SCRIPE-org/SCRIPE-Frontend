@@ -184,10 +184,13 @@ export function DeadLetterQueue({
                                                                         <TableCell>
                                                                               <div className="flex items-center gap-1.5">
                                                                                     <Zap className="h-3 w-3 text-amber-500 shrink-0" />
-                                                                                    <span className="text-sm font-mono">
-                                                                                          {log.eventType}
+                                                                                    <span className="text-sm font-medium">
+                                                                                          {(t(`webhooks.eventNames.${log.eventType}`) || log.eventType) as string}
                                                                                     </span>
                                                                               </div>
+                                                                              <span className="text-xs font-mono text-muted-foreground">
+                                                                                    {log.eventType}
+                                                                              </span>
                                                                         </TableCell>
                                                                         <TableCell>
                                                                               <Badge
