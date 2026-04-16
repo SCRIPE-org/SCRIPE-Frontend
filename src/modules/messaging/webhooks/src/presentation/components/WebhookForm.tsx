@@ -42,6 +42,7 @@ import {
       ShieldCheck,
       Network,
       CheckCircle2,
+      Search,
 } from "lucide-react";
 
 interface WebhookFormProps {
@@ -238,11 +239,27 @@ export function WebhookForm({
                                     </div>
                               </div>
 
+                              {/* Event search filter */}
+                              <div className="relative">
+                                    <Search className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+                                    <Input
+                                          placeholder={t("webhooks.form.searchEvents") || "Search events..."}
+                                          value={vm.eventSearchTerm}
+                                          onChange={(e) => vm.setEventSearchTerm(e.target.value)}
+                                          className="ps-9 h-9 text-sm rounded-lg"
+                                    />
+                              </div>
+
                               {vm.isLoadingEvents ? (
                                     <div className="space-y-2.5">
                                           {Array.from({ length: 3 }).map((_, i) => (
                                                 <Skeleton key={i} className="h-14 rounded-xl" />
                                           ))}
+                                    </div>
+                              ) : Object.keys(vm.eventsByCategory).length === 0 && vm.eventSearchTerm.trim() ? (
+                                    <div className="text-center py-8 text-muted-foreground text-sm">
+                                          <Search className="h-8 w-8 mx-auto mb-2 opacity-40" />
+                                          <p>{t("webhooks.form.noEventsFound") || "No events match your search"}</p>
                                     </div>
                               ) : (
                                     <div className="rounded-xl border overflow-hidden">

@@ -174,6 +174,7 @@ export const en = {
       noData: "No analytics data available yet",
       noDataDesc:
         "Analytics will populate once webhook deliveries start occurring.",
+      last30days: "Daily delivery breakdown — last 30 days",
     },
 
     // ─── Dead Letters ────────────────────────────────────────
@@ -194,6 +195,10 @@ export const en = {
       confirmReplayAll: "Replay All",
       replaySuccess: "Delivery replayed successfully",
       replayAllSuccess: "All dead letters have been queued for replay",
+      replayed: "Replayed",
+      replayedDesc: "Delivery has been re-queued for retry.",
+      allReplayed: "All Replayed",
+      allReplayedDesc: "All dead letters have been re-queued for retry.",
     },
 
     // ─── Form Sections ───────────────────────────────────────
@@ -205,6 +210,8 @@ export const en = {
         "Choose which events you want to be notified about",
       optionsSection: "Options",
       optionsSectionDesc: "Additional delivery and retry settings",
+      searchEvents: "Search events...",
+      noEventsFound: "No events match your search",
     },
   },
 };

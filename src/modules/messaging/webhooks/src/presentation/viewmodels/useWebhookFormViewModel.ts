@@ -63,8 +63,11 @@ export function useWebhookFormViewModel({
             staleTime: 10 * 60 * 1000, // 10 min cache
       });
 
+      // ─── Event search filter ──────────────────────────────────
+      const [eventSearchTerm, setEventSearchTerm] = useState("");
+
       // ─── Group events by category ────────────────────────────
-      const eventsByCategory = (availableEvents ?? []).reduce(
+      const allEventsByCategory = (availableEvents ?? []).reduce(
             (acc, evt) => {
                   if (!acc[evt.category]) acc[evt.category] = [];
                   acc[evt.category].push(evt);
@@ -72,6 +75,23 @@ export function useWebhookFormViewModel({
             },
             {} as Record<string, WebhookEventType[]>
       );
+
+      // Filter events by search term (matches key or description)
+      const eventsByCategory = eventSearchTerm.trim()
+            ? Object.entries(allEventsByCategory).reduce(
+                  (acc, [category, events]) => {
+                        const term = eventSearchTerm.trim().toLowerCase();
+                        const filtered = events.filter(
+                              (e) =>
+                                    e.key.toLowerCase().includes(term) ||
+                                    (e.description?.toLowerCase().includes(term) ?? false)
+                        );
+                        if (filtered.length > 0) acc[category] = filtered;
+                        return acc;
+                  },
+                  {} as Record<string, WebhookEventType[]>
+            )
+            : allEventsByCategory;
 
       // ─── Create mutation ─────────────────────────────────────
       const createMutation = useMutation({
@@ -180,6 +200,8 @@ export function useWebhookFormViewModel({
             availableEvents: availableEvents ?? [],
             eventsByCategory,
             isLoadingEvents,
+            eventSearchTerm,
+            setEventSearchTerm,
 
             // Actions
             handleSubmit,
