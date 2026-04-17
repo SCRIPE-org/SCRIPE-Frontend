@@ -153,6 +153,7 @@ export interface ITenantRepository {
   getEditionPromotions(editionId: string): Promise<Array<{
     id: string; name: string; type: string; discountValue: number;
     discountCurrency?: string; applicableCycle?: string; requiresCode: boolean;
+    promoCode?: string;
     isActive: boolean; validFrom?: string; validUntil?: string;
     maxRedemptions?: number; currentRedemptions: number; firstTimeOnly: boolean;
   }>>;

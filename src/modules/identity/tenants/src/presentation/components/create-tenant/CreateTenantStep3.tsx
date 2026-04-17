@@ -148,8 +148,6 @@ export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
           {vm.availablePromotions.length > 0 && (
             <div className="flex flex-wrap gap-1.5 mt-2">
               {vm.availablePromotions.map((promo) => {
-                // @ts-ignore - added code property
-                const promoCodeStr = promo.code;
                 const isSelected = vm.form.promotionId === promo.id;
                 
                 return (
@@ -159,13 +157,19 @@ export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
                     className="text-xs cursor-pointer hover:bg-primary/20 transition-colors"
                     onClick={() => {
                       if (isSelected) {
-                        // Deselect
-                        vm.updateField("promotionId", "");
-                        if (promoCodeStr) vm.updateField("promoCode", "");
+                        // Deselect — clear both fields atomically
+                        vm.setForm((prev) => ({
+                          ...prev,
+                          promotionId: "",
+                          promoCode: promo.code ? "" : prev.promoCode,
+                        }));
                       } else {
-                        // Select
-                        vm.updateField("promotionId", promo.id);
-                        if (promoCodeStr) vm.updateField("promoCode", promoCodeStr);
+                        // Select — set both fields atomically
+                        vm.setForm((prev) => ({
+                          ...prev,
+                          promotionId: promo.id,
+                          promoCode: promo.code || prev.promoCode,
+                        }));
                       }
                     }}
                   >

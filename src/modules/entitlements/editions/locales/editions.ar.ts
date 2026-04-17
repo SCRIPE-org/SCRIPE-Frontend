@@ -114,6 +114,7 @@ export const ar = {
         created: "تم إنشاء العرض",
         updated: "تم تحديث العرض",
         deleted: "تم حذف العرض",
+        autoApplied: "تطبيق تلقائي",
       },
       versions: {
         title: "سجل الإصدارات",

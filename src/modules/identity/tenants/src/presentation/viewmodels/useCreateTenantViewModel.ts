@@ -129,7 +129,7 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
   });
 
   const availablePromotions = useMemo(() => {
-    return (promotionsRaw as any[])
+    return promotionsRaw
       .filter((p) => {
         if (!p.isActive) return false;
         if (p.validUntil && new Date(p.validUntil) < new Date()) return false;
@@ -141,12 +141,12 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
         return true;
       })
       .map((p) => ({
-        id: p.id as string,
-        name: p.name as string,
-        type: p.type as string,
-        discountValue: p.discountValue as number,
-        requiresCode: p.requiresCode as boolean,
-        code: (p.promoCode as string) || "",
+        id: p.id,
+        name: p.name,
+        type: p.type,
+        discountValue: p.discountValue,
+        requiresCode: p.requiresCode,
+        code: p.promoCode || "",
       }));
   }, [promotionsRaw, form.subscriptionType]);
 
@@ -174,7 +174,6 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
         // Clear promotionId if manual promo code is typed (to untoggle badge if different code)
         if (field === "promoCode" && prev.promotionId) {
           const selectedPromo = availablePromotions.find((p) => p.id === prev.promotionId);
-          // @ts-ignore
           if (selectedPromo && selectedPromo.code !== value) {
             next.promotionId = "";
           }

@@ -113,6 +113,7 @@ export const en = {
         updated: "Promotion Updated",
         deleted: "Promotion Deleted",
         noPromotion: "No Promotion",
+        autoApplied: "Auto-Applied",
       },
       versions: {
         title: "Version History",
