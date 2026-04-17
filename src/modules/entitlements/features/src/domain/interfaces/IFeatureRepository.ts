@@ -1,5 +1,8 @@
 /**
  * Feature Repository Interface
+ *
+ * Returns domain entities — never raw DTOs.
+ * Implemented by FeatureRepository in the data layer.
  */
 import type { Feature } from "../entities/Feature";
 import type { TenantEffectiveFeature } from "../entities/TenantEffectiveFeature";
@@ -12,6 +15,6 @@ export interface IFeatureRepository {
       create(request: CreateFeatureRequest): Promise<string>;
       update(id: string, request: UpdateFeatureRequest): Promise<void>;
       delete(id: string): Promise<void>;
-      getTenantResolvedFeatures(tenantId: string): Promise<any[]>;
+      getTenantResolvedFeatures(tenantId: string): Promise<TenantEffectiveFeature[]>;
       getEffective(tenantId?: string): Promise<TenantEffectiveFeature[]>;
 }

@@ -1,9 +1,14 @@
 /**
  * Feature Mapper — Model ↔ Entity conversion
+ *
+ * All model→entity transformations go through this mapper.
+ * Repositories MUST use mapper methods — never construct entities directly.
  */
 import { Feature } from "../../domain/entities/Feature";
 import type { FeatureData, FeatureValueType } from "../../domain/entities/Feature";
-import type { FeatureModel } from "../models/FeatureModels";
+import { TenantEffectiveFeature } from "../../domain/entities/TenantEffectiveFeature";
+import type { TenantEffectiveFeatureData } from "../../domain/entities/TenantEffectiveFeature";
+import type { FeatureModel, TenantEffectiveFeatureModel } from "../models/FeatureModels";
 import type { CreateFeatureRequest, UpdateFeatureRequest } from "../../domain/entities/FeatureRequests";
 
 export class FeatureMapper {
@@ -25,6 +30,23 @@ export class FeatureMapper {
                   modifiedAt: model.modifiedAt,
             };
             return new Feature(data);
+      }
+
+      static toEffectiveEntity(model: TenantEffectiveFeatureModel): TenantEffectiveFeature {
+            const data: TenantEffectiveFeatureData = {
+                  featureId: model.featureId,
+                  name: model.name,
+                  displayNameEn: model.displayNameEn,
+                  displayNameAr: model.displayNameAr,
+                  valueType: model.valueType ?? "",
+                  editionValue: model.editionValue ?? "",
+                  overrideValue: model.overrideValue ?? null,
+                  effectiveValue: model.effectiveValue ?? "",
+                  category: model.category,
+                  module: model.module,
+                  hasOverride: model.hasOverride ?? false,
+            };
+            return new TenantEffectiveFeature(data);
       }
 
       static toCreateJson(request: CreateFeatureRequest): Record<string, unknown> {

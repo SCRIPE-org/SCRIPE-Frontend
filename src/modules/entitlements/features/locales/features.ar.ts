@@ -1,5 +1,6 @@
 export const ar = {
-  entFeatures: {
+  entitlements: {
+    features: {
       featureKey: "مفتاح الميزة",
       title: "الميزات",
       featureName: "مفتاح الميزة",
@@ -46,4 +47,5 @@ export const ar = {
       effectiveValue: "القيمة الفعلية",
       featureCount: "ميزات",
     },
+  },
 };

@@ -2,6 +2,7 @@
  * Feature Service — API calls only
  *
  * Uses centralized API_ENDPOINTS for all endpoint paths.
+ * Returns raw DTOs (models) — never domain entities.
  */
 import type { IApiService } from "@core/interfaces/api.interface";
 import type { IFeatureService } from "../../domain/interfaces/IFeatureService";
@@ -36,8 +37,10 @@ export class FeatureService implements IFeatureService {
             await this.api.delete(API_ENDPOINTS.ENTITLEMENTS.FEATURES.DELETE(id));
       }
 
-      async getTenantResolvedFeatures(tenantId: string): Promise<any[]> {
-            return this.api.get<any[]>(API_ENDPOINTS.ENTITLEMENTS.TENANT_FEATURES.RESOLVED(tenantId));
+      async getTenantResolvedFeatures(tenantId: string): Promise<TenantEffectiveFeatureModel[]> {
+            return this.api.get<TenantEffectiveFeatureModel[]>(
+                  API_ENDPOINTS.ENTITLEMENTS.TENANT_FEATURES.RESOLVED(tenantId)
+            );
       }
 
       async getEffective(tenantId?: string): Promise<TenantEffectiveFeatureModel[]> {

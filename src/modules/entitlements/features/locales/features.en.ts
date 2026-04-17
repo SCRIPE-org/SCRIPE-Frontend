@@ -1,8 +1,9 @@
 export const en = {
-  entFeatures: {
+  entitlements: {
+    features: {
       featureKey: "Feature Key",
       title: "Features",
-      description: "Manage the platform feature catalog - define capabilities that editions can configure.",
+      description: "Manage the platform feature catalog — define capabilities that editions can configure.",
       name: "Feature Name",
       featureName: "Feature Key",
       displayName: "Display Name",
@@ -46,4 +47,5 @@ export const en = {
       effectiveValue: "Effective",
       featureCount: "features",
     },
+  },
 };

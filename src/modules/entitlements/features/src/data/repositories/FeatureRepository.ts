@@ -1,10 +1,13 @@
 /**
  * Feature Repository — uses Service + Mapper
+ *
+ * All model→entity conversion goes through FeatureMapper.
+ * Never constructs domain entities directly from models.
  */
 import type { IFeatureRepository } from "../../domain/interfaces/IFeatureRepository";
 import type { IFeatureService } from "../../domain/interfaces/IFeatureService";
-import { Feature } from "../../domain/entities/Feature";
-import { TenantEffectiveFeature } from "../../domain/entities/TenantEffectiveFeature";
+import type { Feature } from "../../domain/entities/Feature";
+import type { TenantEffectiveFeature } from "../../domain/entities/TenantEffectiveFeature";
 import { FeatureMapper } from "../mappers/FeatureMapper";
 import type { CreateFeatureRequest, UpdateFeatureRequest } from "../../domain/entities/FeatureRequests";
 import type { PagedResult, PaginationParams } from "@modules/identity/core/domain/types";
@@ -45,12 +48,13 @@ export class FeatureRepository implements IFeatureRepository {
             await this.service.delete(id);
       }
 
-      async getTenantResolvedFeatures(tenantId: string): Promise<any[]> {
-            return this.service.getTenantResolvedFeatures(tenantId);
+      async getTenantResolvedFeatures(tenantId: string): Promise<TenantEffectiveFeature[]> {
+            const models = await this.service.getTenantResolvedFeatures(tenantId);
+            return models.map((m) => FeatureMapper.toEffectiveEntity(m));
       }
 
       async getEffective(tenantId?: string): Promise<TenantEffectiveFeature[]> {
             const models = await this.service.getEffective(tenantId);
-            return models.map((m) => new TenantEffectiveFeature(m));
+            return models.map((m) => FeatureMapper.toEffectiveEntity(m));
       }
 }
