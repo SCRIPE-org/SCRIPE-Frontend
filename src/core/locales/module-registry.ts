@@ -44,6 +44,8 @@ import { en as featuresEn, ar as featuresAr } from "@modules/entitlements/featur
 import { en as overridesEn, ar as overridesAr } from "@modules/entitlements/overrides/locales";
 import { en as subscriptionsEn, ar as subscriptionsAr } from "@modules/entitlements/subscriptions/locales";
 import { en as billingEn, ar as billingAr } from "@modules/entitlements/billing/locales";
+import { en as tenantPlansEn, ar as tenantPlansAr } from "@modules/entitlements/tenant-plans/locales";
+import { en as userSubscriptionsEn, ar as userSubscriptionsAr } from "@modules/entitlements/user-subscriptions/locales";
 
 // ─── Messaging ─────────────────────────────────────────
 import { en as messagingEn, ar as messagingAr } from "@modules/messaging/locales";
@@ -66,7 +68,7 @@ export const allModulesEn: Record<string, any> = Object.assign(
   // Customization
   custSettingsEn, custStudioEn, menusEn, tenantSettingsEn,
   // Entitlements
-  entitlementsEn, editionsEn, featuresEn, overridesEn, subscriptionsEn, billingEn,
+  entitlementsEn, editionsEn, featuresEn, overridesEn, subscriptionsEn, billingEn, tenantPlansEn, userSubscriptionsEn,
   // Messaging
   messagingEn, webhooksEn,
   // Ecosystem
@@ -85,7 +87,7 @@ export const allModulesAr: Record<string, any> = Object.assign(
   // Customization
   custSettingsAr, custStudioAr, menusAr, tenantSettingsAr,
   // Entitlements
-  entitlementsAr, editionsAr, featuresAr, overridesAr, subscriptionsAr, billingAr,
+  entitlementsAr, editionsAr, featuresAr, overridesAr, subscriptionsAr, billingAr, tenantPlansAr, userSubscriptionsAr,
   // Messaging
   messagingAr, webhooksAr,
   // Ecosystem

@@ -18,6 +18,7 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useNavigation } from "@core/providers/navigation-provider";
 import { useQueryClient } from "@tanstack/react-query";
 import { container } from "@modules/profile/di";
+import { useServices } from "@core/providers/service-provider";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Button } from "@core/ui/button";
@@ -28,11 +29,14 @@ export function ForceChangePasswordView() {
   const { t, direction } = useI18n();
   const router = useRouter();
   const setMustChangePassword = useAppStore((state) => state.setMustChangePassword);
+  const setAuth = useAppStore((state) => state.setAuth);
+  const setSubscriptionInfo = useAppStore((state) => state.setSubscriptionInfo);
   const logout = useAppStore((state) => state.logout);
   const { operationSuccess, operationError } = useEnhancedToast();
   const { refreshNavigation } = useNavigation();
   const queryClient = useQueryClient();
   const { profileRepository } = container;
+  const { authRepository } = useServices();
 
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -71,26 +75,48 @@ export function ForceChangePasswordView() {
     setSubmitError(null);
 
     try {
+      // Step 1: Change the password on the backend.
+      // This clears MustChangePassword=false in the DB, but the current JWT still has mcp=true.
       await profileRepository.changePassword({
         currentPassword,
         newPassword,
       });
 
-      // Clear the mustChangePassword flag in the store
+      // Step 2: Refresh the token to get a NEW JWT without the mcp=true claim.
+      // This is critical — using the old token would still be blocked by the MCP middleware.
+      const refreshResult = await authRepository.refreshToken();
+      if (refreshResult.kind === "ok") {
+        const refreshData = refreshResult.value;
+        // Update subscription info from fresh token
+        setSubscriptionInfo(
+          refreshData.subscriptionStatus ?? null,
+          refreshData.gracePhase ?? null,
+          refreshData.editionName ?? null
+        );
+
+        // Step 3: Fetch current user state with the new token
+        try {
+          const user = await authRepository.getMe();
+          if (user) {
+            setAuth(user, user.permissions || [], []);
+          }
+        } catch { /* non-critical — store still updated */ }
+      }
+
+      // Step 4: NOW clear MCP in the store — after the new token is in memory.
+      // NavigationProvider will now fire /Menus/my with the clean token (no mcp claim).
       setMustChangePassword(false);
 
       operationSuccess(t("profile.security.passwordChanged"));
 
-      // Now fetch navigation & invalidate queries (skipped during login)
+      // Step 5: Fetch navigation & invalidate all stale queries with the clean token.
       try {
         await refreshNavigation(false, true);
       } catch { /* non-critical */ }
       queryClient.invalidateQueries();
 
-      // Redirect to home after a brief delay
-      setTimeout(() => {
-        router.replace("/");
-      }, 300);
+      // Step 6: Redirect to home
+      router.replace("/");
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Password change failed";
       setSubmitError(msg);
@@ -98,7 +124,7 @@ export function ForceChangePasswordView() {
     } finally {
       setIsSubmitting(false);
     }
-  }, [isValid, currentPassword, newPassword, profileRepository, setMustChangePassword, operationSuccess, operationError, router, t, refreshNavigation, queryClient]);
+  }, [isValid, currentPassword, newPassword, profileRepository, authRepository, setMustChangePassword, setAuth, setSubscriptionInfo, operationSuccess, operationError, router, t, refreshNavigation, queryClient]);
 
   const handleLogout = useCallback(() => {
     logout();

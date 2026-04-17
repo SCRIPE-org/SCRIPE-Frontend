@@ -16,6 +16,8 @@ import { EditionService } from "./editions/src/data/services/EditionService";
 import { OverrideService } from "./overrides/src/data/services/OverrideService";
 import { SubscriptionService } from "./subscriptions/src/data/services/SubscriptionService";
 import { BillingService } from "./billing/src/data/services/BillingService";
+import { TenantPlanService } from "./tenant-plans/src/data/services/TenantPlanService";
+import { UserSubscriptionService } from "./user-subscriptions/src/data/services/UserSubscriptionService";
 
 // ── Repository Implementations ──
 import { FeatureRepository } from "./features/src/data/repositories/FeatureRepository";
@@ -23,6 +25,8 @@ import { EditionRepository } from "./editions/src/data/repositories/EditionRepos
 import { OverrideRepository } from "./overrides/src/data/repositories/OverrideRepository";
 import { SubscriptionRepository } from "./subscriptions/src/data/repositories/SubscriptionRepository";
 import { BillingRepository } from "./billing/src/data/repositories/BillingRepository";
+import { TenantPlanRepository } from "./tenant-plans/src/data/repositories/TenantPlanRepository";
+import { UserSubscriptionRepository } from "./user-subscriptions/src/data/repositories/UserSubscriptionRepository";
 
 // ── Repository Interfaces (exposed to consumers) ──
 import type { IFeatureRepository } from "./features/src/domain/interfaces/IFeatureRepository";
@@ -30,6 +34,8 @@ import type { IEditionRepository } from "./editions/src/domain/interfaces/IEditi
 import type { IOverrideRepository } from "./overrides/src/domain/interfaces/IOverrideRepository";
 import type { ISubscriptionRepository } from "./subscriptions/src/domain/interfaces/ISubscriptionRepository";
 import type { IBillingRepository } from "./billing/src/domain/interfaces/IBillingRepository";
+import type { ITenantPlanRepository } from "./tenant-plans/src/domain/interfaces/ITenantPlanRepository";
+import type { IUserSubscriptionRepository } from "./user-subscriptions/src/domain/interfaces/IUserSubscriptionRepository";
 
 // ── Service Interfaces (used internally for DI wiring) ──
 import type { IFeatureService } from "./features/src/domain/interfaces/IFeatureService";
@@ -44,6 +50,8 @@ export interface EntitlementsContainer {
       overrideRepository: IOverrideRepository;
       subscriptionRepository: ISubscriptionRepository;
       billingRepository: IBillingRepository;
+      tenantPlanRepository: ITenantPlanRepository;
+      userSubscriptionRepository: IUserSubscriptionRepository;
 }
 
 let _container: EntitlementsContainer | null = null;
@@ -69,6 +77,8 @@ export function getEntitlementsContainer(): EntitlementsContainer {
                   overrideRepository: new OverrideRepository(overrideService),
                   subscriptionRepository: new SubscriptionRepository(subscriptionService),
                   billingRepository: new BillingRepository(billingService),
+                  tenantPlanRepository: new TenantPlanRepository(new TenantPlanService(apiService)),
+                  userSubscriptionRepository: new UserSubscriptionRepository(new UserSubscriptionService(apiService)),
             };
       }
 
@@ -93,5 +103,11 @@ export const entitlementsContainer = {
       },
       get billingRepository() {
             return getEntitlementsContainer().billingRepository;
+      },
+      get tenantPlanRepository() {
+            return getEntitlementsContainer().tenantPlanRepository;
+      },
+      get userSubscriptionRepository() {
+            return getEntitlementsContainer().userSubscriptionRepository;
       },
 };

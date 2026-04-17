@@ -1,122 +1,173 @@
+/**
+ * Users View
+ *
+ * Main view component for user management using GenericCrudView.
+ * No "Add User" button — users self-register.
+ * Supports: Edit, Delete, Toggle Active, Unlock, Bulk Operations.
+ */
 "use client";
 
-import { useI18n } from "@core/providers/i18n-provider";
-import { useModuleLocales } from "@core/hooks/use-module-locales";
-import { Card, CardContent } from "@core/ui/card";
-import { Badge } from "@core/ui/badge";
-import { Button } from "@core/ui/button";
-import { Input } from "@core/ui/input";
-import { Skeleton } from "@core/ui/skeleton";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@core/ui/table";
-import { Users as UsersIcon, Search, Plus, Eye, Lock, Unlock, UserCheck, UserX, Shield, Activity, RefreshCw } from "lucide-react";
+import { useMemo } from "react";
+import { GenericCrudView } from "@core/crud/components/generic-crud-view";
+import type { CrudConfig, CrudAction, BulkAction } from "@core/crud/components/generic-crud-view";
+import type { UsersEntity } from "../../domain/entities/UsersEntity";
 import { useUsersViewModel } from "../viewmodels/useUsersViewModel";
+import { useI18n } from "@core/providers/i18n-provider";
+import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
+import { Badge } from "@core/ui/badge";
+import {
+  Unlock,
+  UserCheck,
+  UserX,
+} from "lucide-react";
+import { useModuleLocales } from "@core/hooks/use-module-locales";
 
 export function UsersView() {
   useModuleLocales(() => import("../../../locales"), "users");
   const { t } = useI18n();
-  const vm = useUsersViewModel();
 
-  const activeCount = vm.items.filter((u: any) => u.status === "Active").length;
-  const mfaCount = vm.items.filter((u: any) => u.mfa || u.mfaEnabled).length;
+  const {
+    vm,
+    getConfigBase,
+    handleToggleActive,
+    handleUnlock,
+    handleBulkActivate,
+    handleBulkDeactivate,
+    handleBulkDelete,
+    isTogglingActive,
+  } = useUsersViewModel();
 
-  return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-violet-500/10">
-            <UsersIcon className="h-5 w-5 text-violet-500" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">{t("users.title")}</h1>
-            <p className="text-sm text-muted-foreground">{t("users.description")}</p>
-          </div>
-        </div>
-        <Button size="sm" className="gap-2"><Plus className="h-4 w-4" />{t("users.addUser")}</Button>
-      </div>
+  const configBase = getConfigBase();
 
-      {/* Stats — computed from server data */}
-      <div className="grid grid-cols-4 gap-4">
-        <Card><CardContent className="pt-4"><div className="flex items-center gap-2 text-sm text-muted-foreground mb-1"><UsersIcon className="h-4 w-4" />{t("users.totalUsers")}</div><p className="text-2xl font-bold">{vm.isLoading ? "—" : vm.totalCount}</p></CardContent></Card>
-        <Card><CardContent className="pt-4"><div className="flex items-center gap-2 text-sm text-muted-foreground mb-1"><UserCheck className="h-4 w-4" />{t("users.activeUsers")}</div><p className="text-2xl font-bold text-green-500">{vm.isLoading ? "—" : activeCount}</p></CardContent></Card>
-        <Card><CardContent className="pt-4"><div className="flex items-center gap-2 text-sm text-muted-foreground mb-1"><Shield className="h-4 w-4" />{t("users.mfaEnabled")}</div><p className="text-2xl font-bold text-blue-500">{vm.isLoading ? "—" : mfaCount}</p></CardContent></Card>
-        <Card><CardContent className="pt-4"><div className="flex items-center gap-2 text-sm text-muted-foreground mb-1"><Activity className="h-4 w-4" />{t("users.activeToday")}</div><p className="text-2xl font-bold text-emerald-500">{vm.isLoading ? "—" : "—"}</p></CardContent></Card>
-      </div>
+  // ============ Bulk Actions ============
+  const bulkActions: BulkAction[] = useMemo(() => [
+    {
+      label: t("users.bulk.activate") || "Activate Selected",
+      icon: <UserCheck className="h-4 w-4" />,
+      onClick: async (selectedIds: string[]) => {
+        await handleBulkActivate(selectedIds);
+      },
+      requiredPermission: SYSTEM_PERMISSIONS.USERS_UPDATE,
+    },
+    {
+      label: t("users.bulk.deactivate") || "Deactivate Selected",
+      icon: <UserX className="h-4 w-4" />,
+      onClick: async (selectedIds: string[]) => {
+        await handleBulkDeactivate(selectedIds);
+      },
+      requiredPermission: SYSTEM_PERMISSIONS.USERS_UPDATE,
+    },
+    {
+      label: t("users.bulk.delete") || "Delete Selected",
+      icon: <UserX className="h-4 w-4" />,
+      variant: "destructive" as const,
+      onClick: async (selectedIds: string[]) => {
+        await handleBulkDelete(selectedIds);
+      },
+      requiresConfirmation: true,
+      confirmTitle: t("users.deleteTitle") || "Delete Users",
+      confirmDescription: t("users.deleteConfirm") || "Are you sure you want to delete the selected users?",
+      requiredPermission: SYSTEM_PERMISSIONS.USERS_DELETE,
+    },
+  ], [t, handleBulkActivate, handleBulkDeactivate, handleBulkDelete]);
 
-      {/* Search */}
-      <div className="relative max-w-md">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <Input placeholder={t("users.searchPlaceholder")} value={vm.search} onChange={(e) => vm.handleSearch(e.target.value)} className="pl-9" />
-      </div>
-
-      {vm.isLoading ? (
-        <Skeleton className="h-64 w-full rounded-xl" />
-      ) : vm.error ? (
-        <Card className="border-destructive/30 bg-destructive/5">
-          <CardContent className="flex flex-col items-center justify-center py-12">
-            <p className="text-sm text-destructive mb-3">{t("common.errorLoading")}</p>
-            <Button variant="outline" size="sm" onClick={() => vm.refetch()} className="gap-2">
-              <RefreshCw className="h-3.5 w-3.5" />{t("common.retry")}
-            </Button>
-          </CardContent>
-        </Card>
-      ) : vm.items.length === 0 ? (
-        <Card className="border-dashed">
-          <CardContent className="flex flex-col items-center justify-center py-16">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-muted/50 mb-4">
-              <UsersIcon className="h-7 w-7 text-muted-foreground/50" />
-            </div>
-            <h3 className="font-semibold text-lg mb-1">{t("users.empty")}</h3>
-            <p className="text-sm text-muted-foreground">{t("users.emptyDesc")}</p>
-          </CardContent>
-        </Card>
-      ) : (
-        <Card>
-          <CardContent className="p-0">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>ID</TableHead>
-                  <TableHead>{t("users.name")}</TableHead>
-                  <TableHead>{t("users.email")}</TableHead>
-                  <TableHead>{t("users.tenant")}</TableHead>
-                  <TableHead>{t("users.role")}</TableHead>
-                  <TableHead>{t("users.status")}</TableHead>
-                  <TableHead>{t("users.mfa")}</TableHead>
-                  <TableHead>{t("users.lastLogin")}</TableHead>
-                  <TableHead></TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {vm.items.map((user: any) => (
-                  <TableRow key={user.id}>
-                    <TableCell className="font-mono text-xs">{user.id}</TableCell>
-                    <TableCell className="font-medium">{user.name ?? `${user.firstName ?? ""} ${user.lastName ?? ""}`.trim()}</TableCell>
-                    <TableCell className="text-sm text-muted-foreground">{user.email}</TableCell>
-                    <TableCell><Badge variant="outline">{user.tenant ?? user.tenantName}</Badge></TableCell>
-                    <TableCell><Badge variant="secondary">{user.role ?? user.roleName}</Badge></TableCell>
-                    <TableCell>
-                      <Badge variant={user.status === "Active" ? "success" : user.status === "Locked" ? "destructive" : "secondary"} className="gap-1">
-                        {user.status === "Active" && <UserCheck className="h-3 w-3" />}
-                        {user.status === "Locked" && <Lock className="h-3 w-3" />}
-                        {user.status === "Inactive" && <UserX className="h-3 w-3" />}
-                        {user.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>{(user.mfa || user.mfaEnabled) ? <Badge variant="success" className="text-[10px]">MFA</Badge> : <Badge variant="outline" className="text-[10px]">OFF</Badge>}</TableCell>
-                    <TableCell className="text-sm text-muted-foreground">{user.lastLogin ?? user.lastLoginAt ?? "—"}</TableCell>
-                    <TableCell>
-                      <div className="flex gap-1">
-                        <Button variant="ghost" size="sm"><Eye className="h-3.5 w-3.5" /></Button>
-                        {user.status === "Locked" && <Button variant="ghost" size="sm" className="text-green-500"><Unlock className="h-3.5 w-3.5" /></Button>}
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
-      )}
-    </div>
+  // ============ Config ============
+  const config: CrudConfig<UsersEntity> = useMemo(
+    () => ({
+      titleKey: "users.title",
+      subtitleKey: "users.description",
+      resource: "users",
+      columns: [
+        {
+          key: "username",
+          label: t("users.columns.username") || "Username",
+          sortable: true,
+          render: (_val: unknown, user: UsersEntity) => (
+            <span className="font-medium">{user.username}</span>
+          ),
+        },
+        {
+          key: "name",
+          label: t("users.columns.name") || "Name",
+          render: (_val: unknown, user: UsersEntity) => (
+            <span>{user.displayName}</span>
+          ),
+        },
+        {
+          key: "email",
+          label: t("users.columns.email") || "Email",
+          render: (_val: unknown, user: UsersEntity) =>
+            user.email ? (
+              <a href={`mailto:${user.email}`} className="text-primary hover:underline text-sm">
+                {user.email}
+              </a>
+            ) : (
+              <span className="text-muted-foreground">—</span>
+            ),
+        },
+        {
+          key: "isActive",
+          label: t("users.columns.status") || "Status",
+          render: (_val: unknown, user: UsersEntity) => (
+            <Badge variant={user.isActive ? "success" : "secondary"}>
+              {user.isActive
+                ? t("users.status.active") || "Active"
+                : t("users.status.inactive") || "Inactive"}
+            </Badge>
+          ),
+        },
+        {
+          key: "createdAt",
+          label: t("users.columns.createdAt") || "Joined",
+          render: (_val: unknown, user: UsersEntity) => (
+            <span className="text-sm text-muted-foreground">
+              {user.createdAt
+                ? new Date(user.createdAt).toLocaleDateString()
+                : "—"}
+            </span>
+          ),
+        },
+      ],
+      // Custom row actions (beyond GenericCrudView's built-in edit/delete)
+      getActions: (_vm, _t, handleDelete) => {
+        const rowActions: CrudAction<UsersEntity>[] = [
+          // Activate (shown when inactive)
+          {
+            label: t("users.actions.activate") || "Activate",
+            icon: <UserCheck className="h-4 w-4" />,
+            onClick: (user: UsersEntity) => handleToggleActive(user.id, true),
+            show: (user: UsersEntity) => !user.isActive,
+            loading: isTogglingActive,
+            requiredPermission: SYSTEM_PERMISSIONS.USERS_UPDATE,
+          },
+          // Deactivate (shown when active)
+          {
+            label: t("users.actions.deactivate") || "Deactivate",
+            icon: <UserX className="h-4 w-4" />,
+            onClick: (user: UsersEntity) => handleToggleActive(user.id, false),
+            show: (user: UsersEntity) => user.isActive,
+            confirmTitle: t("users.actions.deactivate") || "Deactivate User",
+            confirmDescription: t("users.deactivatedDesc") || "This user will lose access.",
+            loading: isTogglingActive,
+            requiredPermission: SYSTEM_PERMISSIONS.USERS_UPDATE,
+          },
+          // Unlock
+          {
+            label: t("users.actions.unlock") || "Unlock Account",
+            icon: <Unlock className="h-4 w-4" />,
+            onClick: (user: UsersEntity) => handleUnlock(user.id),
+            requiredPermission: SYSTEM_PERMISSIONS.USERS_UNLOCK,
+          },
+        ];
+        return rowActions;
+      },
+      bulkActions,
+      ...configBase,
+      // No create endpoint — users self-register
+      hideAddButton: true,
+    }),
+    [t, configBase, bulkActions, handleToggleActive, handleUnlock, isTogglingActive]
   );
+
+  return <GenericCrudView<UsersEntity> config={config} viewModel={vm} />;
 }

@@ -1094,6 +1094,7 @@ export const ar = {
   common: {
     clear: "مسح",
     send: "ارسال",
+    logout: "تسجيل الخروج",
     step: "الخطوة",
     from: "من",
     continue: "تواصل",

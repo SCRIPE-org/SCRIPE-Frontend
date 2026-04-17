@@ -327,6 +327,7 @@ export const en = {
     step: "Step",
     clear: "Clear",
     none: "None",
+    logout: "Logout",
     continue: "Continue",
     time: "Time",
     tenant: "Tenant",

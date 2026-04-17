@@ -61,6 +61,7 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
   const [isLoading, setIsLoading] = useState(false);
   const [hasTriggeredRefresh, setHasTriggeredRefresh] = useState(false);
   const isAuthenticated = useAppStore((state) => state.isAuthenticated);
+  const mustChangePassword = useAppStore((state) => state.mustChangePassword);
   const user = useAppStore((state) => state.user);
   const { navigationService } = useServices();
   const pathname = usePathname();
@@ -203,12 +204,16 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
   // automatically trigger a refresh instead of leaving the user stuck.
   useEffect(() => {
     if (isDocsRoute) return; // Skip navigation fetch on docs routes
+    // Skip navigation fetch when user must change password first.
+    // The MCP middleware blocks /Menus/my with 403, which would cause an infinite loop.
+    if (mustChangePassword) return;
     if (isAuthenticated && !navigationData && !isLoading && !hasTriggeredRefresh) {
       appLogger.debug("Navigation data missing for authenticated user, auto-refreshing...");
       refreshNavigation(false, true); // forceRefresh = true
     }
   }, [
     isAuthenticated,
+    mustChangePassword,
     navigationData,
     isLoading,
     hasTriggeredRefresh,
@@ -221,7 +226,7 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
   // ========================================
   // Periodically check if cache is about to expire and refresh proactively
   useEffect(() => {
-    if (!isAuthenticated || isDocsRoute) return;
+    if (!isAuthenticated || isDocsRoute || mustChangePassword) return;
 
     const checkAndRefresh = () => {
       try {

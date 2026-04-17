@@ -6,6 +6,7 @@
  */
 import type { IApiService } from "@core/interfaces/api.interface";
 import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
+import { useAppStore } from "@core/store/useAppStore";
 import type {
   IProfileRepository,
   UpdateProfileRequest,
@@ -59,9 +60,12 @@ export class ProfileRepository implements IProfileRepository {
   // ── Password ─────────────────────────────────────────
 
   async changePassword(data: ChangePasswordRequest): Promise<void> {
-    // This uses the admin's own ID from JWT on the backend
-    // We pass the data to the self-service endpoint
-    await this.api.put(API_ENDPOINTS.PROFILE.UPDATE_ME + "/password", {
+    // Get the current admin's ID from the store — the backend endpoint requires it.
+    // POST /v1/Admins/{id}/change-password is the correct route.
+    const adminId = useAppStore.getState().user?.id;
+    if (!adminId) throw new Error("User not authenticated");
+
+    await this.api.post(API_ENDPOINTS.ADMINS.CHANGE_PASSWORD(adminId), {
       currentPassword: data.currentPassword,
       newPassword: data.newPassword,
       twoFactorCode: data.twoFactorCode,

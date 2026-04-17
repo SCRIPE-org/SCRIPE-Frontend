@@ -76,7 +76,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
   const hasHydrated = useAppStore((state) => state._hasHydrated);
   const setAuth = useAppStore((state) => state.setAuth);
   const setSubscriptionInfo = useAppStore((state) => state.setSubscriptionInfo);
-  const mustChangePassword = useAppStore((state) => state.mustChangePassword);
+  // NOTE: mustChangePassword is NOT a dep of the main effect — read via getState() to avoid loops
   const { authRepository } = useServices();
   const authLoading = !hasHydrated;
   const { hasPageAccess, isLoading: navLoading } = useNavigation();
@@ -121,7 +121,9 @@ export function RouteGuard({ children }: RouteGuardProps) {
       if (isAuthPage && hasToken && isAuthenticated) {
         appLogger.debug("[RouteGuard] Authenticated user on auth page, redirecting to dashboard");
         hasRedirected.current = true;
-        router.replace("/");
+        // Check MCP — if must change password, redirect to /change-password instead of home
+        const mcp = useAppStore.getState().mustChangePassword;
+        router.replace(mcp ? "/change-password" : "/");
         return;
       }
 
@@ -147,9 +149,9 @@ export function RouteGuard({ children }: RouteGuardProps) {
       // ─── Case 1: Has in-memory token AND authenticated → normal RBAC flow ───
       if (hasToken && isAuthenticated) {
         // ─── Must Change Password enforcement ───
-        // If the admin must change their password, redirect to /change-password
-        // and block access to all other protected pages.
-        if (mustChangePassword && pathname !== "/change-password") {
+        // Read from store directly (not as a dep) to avoid re-trigger loops.
+        const mcp = useAppStore.getState().mustChangePassword;
+        if (mcp && pathname !== "/change-password") {
           appLogger.debug("[RouteGuard] Must change password, redirecting to /change-password");
           hasRedirected.current = true;
           router.replace("/change-password");
@@ -208,7 +210,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
               refreshData.editionName ?? null
             );
 
-            // Update must-change-password from fresh response (may have been cleared server-side)
+            // Sync MCP from the fresh token (may have been cleared server-side)
             useAppStore.getState().setMustChangePassword(refreshData.mustChangePassword ?? false);
 
             const user = await authRepository.getMe();
@@ -291,7 +293,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
     logout,
     authRepository,
     setAuth,
-    mustChangePassword,
+    // NOTE: mustChangePassword is intentionally NOT here — read via getState() to prevent loops
   ]);
 
   // For SSR/prerendering, render children without checks

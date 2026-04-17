@@ -294,6 +294,18 @@ export const SYSTEM_PERMISSIONS = {
   BILLING_MANAGE: "billing.manage",
   BILLING_DASHBOARD_VIEW: "billing.manage",
 
+  // Tenant Plans (Tier 2)
+  TENANT_PLANS_VIEW: "tenant_plans.view",
+  TENANT_PLANS_CREATE: "tenant_plans.create",
+  TENANT_PLANS_UPDATE: "tenant_plans.update",
+  TENANT_PLANS_DELETE: "tenant_plans.delete",
+
+  // User Subscriptions (Tier 2)
+  USER_SUBSCRIPTIONS_VIEW: "user_subscriptions.view",
+  USER_SUBSCRIPTIONS_CREATE: "user_subscriptions.create",
+  USER_SUBSCRIPTIONS_UPDATE: "user_subscriptions.update",
+  USER_SUBSCRIPTIONS_DELETE: "user_subscriptions.delete",
+
 } as const;
 
 /**
@@ -338,6 +350,8 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/entitlements/overrides": [SYSTEM_PERMISSIONS.FEATURES_OVERRIDE],
   "/entitlements/invoices": [SYSTEM_PERMISSIONS.INVOICES_VIEW],
   "/entitlements/billing-dashboard": [SYSTEM_PERMISSIONS.BILLING_DASHBOARD_VIEW],
+  "/entitlements/tenant-plans": [SYSTEM_PERMISSIONS.TENANT_PLANS_VIEW],
+  "/entitlements/user-subscriptions": [SYSTEM_PERMISSIONS.USER_SUBSCRIPTIONS_VIEW],
   "/entitlements/transactions": [SYSTEM_PERMISSIONS.TRANSACTIONS_VIEW],
 
   // Messaging & Webhooks

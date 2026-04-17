@@ -392,6 +392,23 @@ export const API_ENDPOINTS = {
       PAYMENT_LINK: (tenantId: string) => `${V1}/billing/tenants/${tenantId}/payment-link`,
       DASHBOARD: `${V1}/billing/dashboard`,
     },
+    // ===== TENANT PLANS (Tier 2 — User-Level Subscriptions) =====
+    TENANT_PLANS: {
+      LIST: `${V1}/tenant-plans`,
+      BY_ID: (id: string) => `${V1}/tenant-plans/${id}`,
+      CREATE: `${V1}/tenant-plans`,
+      UPDATE: (id: string) => `${V1}/tenant-plans/${id}`,
+      DELETE: (id: string) => `${V1}/tenant-plans/${id}`,
+    },
+    // ===== USER SUBSCRIPTIONS (Tier 2)  =====
+    USER_SUBSCRIPTIONS: {
+      LIST: `${V1}/user-subscriptions`,
+      BY_ID: (id: string) => `${V1}/user-subscriptions/${id}`,
+      CREATE: `${V1}/user-subscriptions`,
+      CANCEL: (id: string) => `${V1}/user-subscriptions/${id}/cancel`,
+      RENEW: (id: string) => `${V1}/user-subscriptions/${id}/renew`,
+      ME: `${V1}/user-subscriptions/me`,
+    },
   },
 
   // ===== USER GROUPS =====
