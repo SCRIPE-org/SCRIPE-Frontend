@@ -21,21 +21,7 @@ export function TenantPlansView() {
   const { t } = useI18n();
   const vm = useTenantPlansViewModel();
 
-  // ── No tenant context → show message ──
-  if (!vm.hasTenantContext) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-center space-y-2">
-          <p className="text-muted-foreground text-lg">
-            {t("entitlements.tenantPlans.noTenantContext") || "Tenant Plans are only available for tenant-scoped administrators."}
-          </p>
-          <p className="text-sm text-muted-foreground/60">
-            {t("entitlements.tenantPlans.noTenantContextHint") || "Please impersonate a tenant admin to manage plans."}
-          </p>
-        </div>
-      </div>
-    );
-  }
+  // Tenant context is resolved server-side from JWT — no client-side guard needed.
 
   const config: CrudConfig<TenantPlan> = useMemo(
     () => ({

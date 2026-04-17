@@ -1,5 +1,6 @@
 /**
  * TenantPlans ViewModel
+ * TenantId is resolved server-side from JWT context.
  */
 "use client";
 
@@ -9,19 +10,17 @@ import type { TenantPlan } from "../../domain/entities/TenantPlan";
 import type { CreateTenantPlanRequest, UpdateTenantPlanRequest } from "../../domain/entities/TenantPlanRequests";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
-import { useAppStore } from "@core/store/useAppStore";
 
 export function useTenantPlansViewModel() {
   const { success } = useEnhancedToast();
   const { tenantPlanRepository } = entitlementsContainer;
   const { t } = useI18n();
-  const tenantId = useAppStore((s) => s.user?.tenantId) ?? "";
 
   const vm = useCrudViewModel<TenantPlan, CreateTenantPlanRequest, UpdateTenantPlanRequest>(
-    ["entitlements", "tenant-plans", tenantId],
+    ["entitlements", "tenant-plans"],
     {
       getAll: async (params) => {
-        const res = await tenantPlanRepository.getAll(tenantId, {
+        const res = await tenantPlanRepository.getAll({
           page: params.page,
           pageSize: params.pageSize,
           search: params.search,
@@ -37,7 +36,7 @@ export function useTenantPlansViewModel() {
         };
       },
       create: async (data) => {
-        const id = await tenantPlanRepository.create(tenantId, data);
+        const id = await tenantPlanRepository.create(data);
         success({
           title: t("entitlements.tenantPlans.created"),
           description: t("entitlements.tenantPlans.createdDesc"),
@@ -45,7 +44,7 @@ export function useTenantPlansViewModel() {
         return { id } as unknown as TenantPlan;
       },
       update: async (id, data) => {
-        await tenantPlanRepository.update(id, tenantId, data);
+        await tenantPlanRepository.update(id, data);
         success({
           title: t("entitlements.tenantPlans.updated"),
           description: t("entitlements.tenantPlans.updatedDesc"),
@@ -53,7 +52,7 @@ export function useTenantPlansViewModel() {
         return {} as TenantPlan;
       },
       delete: async (id) => {
-        await tenantPlanRepository.delete(id, tenantId);
+        await tenantPlanRepository.delete(id);
         success({
           title: t("entitlements.tenantPlans.deleted"),
           description: t("entitlements.tenantPlans.deletedDesc"),
@@ -64,7 +63,5 @@ export function useTenantPlansViewModel() {
 
   return {
     ...vm,
-    tenantId,
-    hasTenantContext: !!tenantId,
   };
 }

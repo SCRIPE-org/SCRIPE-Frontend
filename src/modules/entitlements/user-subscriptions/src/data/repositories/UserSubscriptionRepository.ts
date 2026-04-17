@@ -1,5 +1,6 @@
 /**
  * UserSubscription Repository — uses Service + Mapper
+ * TenantId is resolved server-side from JWT context.
  */
 import type { IUserSubscriptionRepository } from "../../domain/interfaces/IUserSubscriptionRepository";
 import type { UserSubscription } from "../../domain/entities/UserSubscription";
@@ -12,12 +13,11 @@ export class UserSubscriptionRepository implements IUserSubscriptionRepository {
   constructor(private readonly service: IUserSubscriptionService) {}
 
   async getAll(
-    tenantId: string,
     params: PaginationParams & { planId?: string; status?: string }
   ): Promise<PagedResult<UserSubscription>> {
-    const result = await this.service.getAll(tenantId, params);
+    const result = await this.service.getAll(params);
     return {
-      items: result.items.map((m) => UserSubscriptionMapper.toEntityFromList(m, tenantId)),
+      items: result.items.map((m) => UserSubscriptionMapper.toEntityFromList(m)),
       totalCount: result.totalCount,
       page: result.page,
       pageSize: result.pageSize,
@@ -27,27 +27,27 @@ export class UserSubscriptionRepository implements IUserSubscriptionRepository {
     };
   }
 
-  async getById(id: string, tenantId: string): Promise<UserSubscription> {
-    const model = await this.service.getById(id, tenantId);
+  async getById(id: string): Promise<UserSubscription> {
+    const model = await this.service.getById(id);
     return UserSubscriptionMapper.toEntity(model);
   }
 
-  async getMySubscription(tenantId: string): Promise<UserSubscription | null> {
-    const model = await this.service.getMySubscription(tenantId);
+  async getMySubscription(): Promise<UserSubscription | null> {
+    const model = await this.service.getMySubscription();
     return model ? UserSubscriptionMapper.toEntity(model) : null;
   }
 
-  async create(tenantId: string, request: CreateUserSubscriptionRequest): Promise<string> {
+  async create(request: CreateUserSubscriptionRequest): Promise<string> {
     const json = UserSubscriptionMapper.toCreateJson(request);
-    const response = await this.service.create(tenantId, json);
+    const response = await this.service.create(json);
     return response.id;
   }
 
-  async cancel(id: string, tenantId: string): Promise<void> {
-    await this.service.cancel(id, tenantId);
+  async cancel(id: string): Promise<void> {
+    await this.service.cancel(id);
   }
 
-  async renew(id: string, tenantId: string): Promise<void> {
-    await this.service.renew(id, tenantId);
+  async renew(id: string): Promise<void> {
+    await this.service.renew(id);
   }
 }

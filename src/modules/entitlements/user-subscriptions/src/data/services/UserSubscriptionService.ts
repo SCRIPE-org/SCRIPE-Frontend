@@ -1,5 +1,6 @@
 /**
  * UserSubscription Service — API calls only
+ * TenantId is resolved server-side from JWT context.
  */
 import type { IApiService } from "@core/interfaces/api.interface";
 import type { IUserSubscriptionService } from "../../domain/interfaces/IUserSubscriptionService";
@@ -11,11 +12,9 @@ export class UserSubscriptionService implements IUserSubscriptionService {
   constructor(private readonly api: IApiService) {}
 
   async getAll(
-    tenantId: string,
     params: PaginationParams & { planId?: string; status?: string }
   ): Promise<PagedResult<UserSubscriptionListModel>> {
     const url = buildUrl(API_ENDPOINTS.ENTITLEMENTS.USER_SUBSCRIPTIONS.LIST, {
-      tenantId,
       page: params.page,
       pageSize: params.pageSize,
       search: params.search || undefined,
@@ -25,33 +24,28 @@ export class UserSubscriptionService implements IUserSubscriptionService {
     return this.api.get<PagedResult<UserSubscriptionListModel>>(url);
   }
 
-  async getById(id: string, tenantId: string): Promise<UserSubscriptionModel> {
-    const url = buildUrl(API_ENDPOINTS.ENTITLEMENTS.USER_SUBSCRIPTIONS.BY_ID(id), { tenantId });
-    return this.api.get<UserSubscriptionModel>(url);
+  async getById(id: string): Promise<UserSubscriptionModel> {
+    return this.api.get<UserSubscriptionModel>(API_ENDPOINTS.ENTITLEMENTS.USER_SUBSCRIPTIONS.BY_ID(id));
   }
 
-  async getMySubscription(tenantId: string): Promise<UserSubscriptionModel | null> {
+  async getMySubscription(): Promise<UserSubscriptionModel | null> {
     try {
-      const url = buildUrl(API_ENDPOINTS.ENTITLEMENTS.USER_SUBSCRIPTIONS.ME, { tenantId });
-      return await this.api.get<UserSubscriptionModel>(url);
+      return await this.api.get<UserSubscriptionModel>(API_ENDPOINTS.ENTITLEMENTS.USER_SUBSCRIPTIONS.ME);
     } catch {
       // 204 No Content → null
       return null;
     }
   }
 
-  async create(tenantId: string, data: Record<string, unknown>): Promise<{ id: string }> {
-    const url = buildUrl(API_ENDPOINTS.ENTITLEMENTS.USER_SUBSCRIPTIONS.CREATE, { tenantId });
-    return this.api.post<{ id: string }>(url, data);
+  async create(data: Record<string, unknown>): Promise<{ id: string }> {
+    return this.api.post<{ id: string }>(API_ENDPOINTS.ENTITLEMENTS.USER_SUBSCRIPTIONS.CREATE, data);
   }
 
-  async cancel(id: string, tenantId: string): Promise<void> {
-    const url = buildUrl(API_ENDPOINTS.ENTITLEMENTS.USER_SUBSCRIPTIONS.CANCEL(id), { tenantId });
-    await this.api.post(url, {});
+  async cancel(id: string): Promise<void> {
+    await this.api.post(API_ENDPOINTS.ENTITLEMENTS.USER_SUBSCRIPTIONS.CANCEL(id), {});
   }
 
-  async renew(id: string, tenantId: string): Promise<void> {
-    const url = buildUrl(API_ENDPOINTS.ENTITLEMENTS.USER_SUBSCRIPTIONS.RENEW(id), { tenantId });
-    await this.api.post(url, {});
+  async renew(id: string): Promise<void> {
+    await this.api.post(API_ENDPOINTS.ENTITLEMENTS.USER_SUBSCRIPTIONS.RENEW(id), {});
   }
 }

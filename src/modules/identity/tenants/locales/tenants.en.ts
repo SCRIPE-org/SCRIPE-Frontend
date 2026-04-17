@@ -268,6 +268,7 @@ export const en = {
     cancelWarning: "This action cannot be undone. All features and permissions will be removed.",
     cancelReason: "Reason (optional)",
     cancelReasonPlaceholder: "Why are you canceling this subscription?",
+    subscriptionAssigned: "Plan assigned successfully",
     subscriptionUpdated: "Subscription plan changed successfully",
     subscriptionRenewed: "Subscription renewed successfully",
     trialConverted: "Trial converted to paid plan",
@@ -341,6 +342,7 @@ export const en = {
     },
     statusLabel: {
       active: "Active",
+      pendingPayment: "Pending Payment",
       trialing: "Trialing",
       suspended: "Suspended",
       canceled: "Canceled",

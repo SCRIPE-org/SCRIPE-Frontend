@@ -36,6 +36,7 @@ interface TenantSubscriptionCardProps {
 const STATUS_CONFIG: Record<string, { variant: "success" | "secondary" | "destructive" | "outline"; icon: typeof Clock }> = {
       active: { variant: "success", icon: Play },
       trialing: { variant: "outline", icon: Clock },
+      pendingpayment: { variant: "outline", icon: CreditCard },
       suspended: { variant: "destructive", icon: Pause },
       canceled: { variant: "secondary", icon: XCircle },
       expired: { variant: "destructive", icon: AlertTriangle },
@@ -56,6 +57,7 @@ function getTypeLabel(type: string, t: (key: string) => string): string {
 function getStatusLabel(status: string, t: (key: string) => string): string {
       const map: Record<string, string> = {
             Active: t("tenant.statusLabel.active") || "Active",
+            PendingPayment: t("tenant.statusLabel.pendingPayment") || "Pending Payment",
             Trialing: t("tenant.statusLabel.trialing") || "Trialing",
             Suspended: t("tenant.statusLabel.suspended") || "Suspended",
             Canceled: t("tenant.statusLabel.canceled") || "Canceled",
@@ -563,9 +565,20 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                     </div>
                               )}
 
+                              {/* ── M-3: PendingPayment Warning Banner ── */}
+                              {vm.isPendingPayment && (
+                                    <div className="flex items-center justify-between gap-2 rounded-lg border border-amber-500/30 bg-amber-500/5 p-3 text-sm text-amber-700 dark:text-amber-400">
+                                          <div className="flex items-center gap-2">
+                                                <CreditCard className="h-4 w-4 shrink-0" />
+                                                <span>{t("tenant.pendingPaymentBanner") || "Subscription is awaiting payment confirmation. Generate a payment link or cancel to release."}</span>
+                                          </div>
+                                    </div>
+                              )}
+
                               {/* ── Actions Row ── */}
                               <div className="flex flex-wrap gap-2 border-t pt-3">
-                                    {/* Change Plan */}
+                                    {/* Change Plan — hidden for PendingPayment, Canceled, Expired */}
+                                    {!vm.isPendingPayment && !vm.isCanceled && !vm.isExpired && (
                                     <Button variant="outline" size="sm" onClick={() => {
                                           setSelectedEditionId(subscription.editionId || "");
                                           setSelectedType((subscription.type as SubscriptionType) || "Monthly");
@@ -574,6 +587,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                           <Pencil className="mr-1.5 h-3.5 w-3.5" />
                                           {t("tenant.changePlan") || "Change Plan"}
                                     </Button>
+                                    )}
 
                                     {/* Renew — hidden for Lifetime */}
                                     {vm.canRenew && (
@@ -634,10 +648,12 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                           </Button>
                                     )}
 
-                                    {/* Resync Permissions */}
+                                    {/* Resync Permissions — hidden for PendingPayment */}
+                                    {!vm.isPendingPayment && (
                                     <Button variant="ghost" size="sm" onClick={() => vm.resyncPermissions()} disabled={vm.isResyncing} title={t("tenant.resyncPermissions") || "Re-sync permissions from edition"}>
                                           {vm.isResyncing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RotateCcw className="h-3.5 w-3.5" />}
                                     </Button>
+                                    )}
 
                                     {/* Change Currency */}
                                     {vm.isActive && (
@@ -858,7 +874,12 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                           variant={impactReport?.hasOverflow ? "destructive" : "default"}
                                           onClick={() => {
                                                 if (selectedEditionId) {
-                                                      vm.changeEdition(selectedEditionId, selectedType, subscription?.currency, promoCode.trim() || undefined, selectedPromotionId || undefined);
+                                                      // C-4 FIX: Use assignEdition for no-subscription state, changeEdition for existing
+                                                      if (vm.hasNoSubscription || vm.canReassign) {
+                                                            vm.assignEdition(selectedEditionId, selectedType, subscription?.currency, promoCode.trim() || undefined, selectedPromotionId || undefined);
+                                                      } else {
+                                                            vm.changeEdition(selectedEditionId, selectedType, subscription?.currency, promoCode.trim() || undefined, selectedPromotionId || undefined);
+                                                      }
                                                       setChangePlanOpen(false);
                                                       setImpactReport(null);
                                                       setPreviewAmount(null);
@@ -866,13 +887,15 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                                       setSelectedPromotionId("");
                                                 }
                                           }}
-                                          disabled={!selectedEditionId || vm.isChanging}
+                                          disabled={!selectedEditionId || vm.isChanging || vm.isAssigning}
                                     >
-                                          {vm.isChanging
+                                          {(vm.isChanging || vm.isAssigning)
                                                 ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />{t("common.saving") || "Saving..."}</>
                                                 : impactReport?.hasOverflow
                                                       ? (t("tenant.confirmDowngrade") || "Confirm Downgrade")
-                                                      : (t("common.save") || "Save")
+                                                      : (vm.hasNoSubscription || vm.canReassign)
+                                                            ? (t("tenant.assignPlan") || "Assign Plan")
+                                                            : (t("common.save") || "Save")
                                           }
                                     </Button>
                               </DialogFooter>

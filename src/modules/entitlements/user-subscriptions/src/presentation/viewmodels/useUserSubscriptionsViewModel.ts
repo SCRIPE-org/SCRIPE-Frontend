@@ -1,5 +1,6 @@
 /**
  * UserSubscriptions ViewModel
+ * TenantId is resolved server-side from JWT context.
  */
 "use client";
 
@@ -10,21 +11,19 @@ import type { UserSubscription } from "../../domain/entities/UserSubscription";
 import type { CreateUserSubscriptionRequest } from "../../domain/entities/UserSubscriptionRequests";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
-import { useAppStore } from "@core/store/useAppStore";
 
 export function useUserSubscriptionsViewModel() {
   const { success, error } = useEnhancedToast();
   const { userSubscriptionRepository } = entitlementsContainer;
   const { t } = useI18n();
-  const tenantId = useAppStore((s) => s.user?.tenantId) ?? "";
   const queryClient = useQueryClient();
-  const queryKey = ["entitlements", "user-subscriptions", tenantId];
+  const queryKey = ["entitlements", "user-subscriptions"];
 
   const vm = useCrudViewModel<UserSubscription, CreateUserSubscriptionRequest, never>(
     queryKey,
     {
       getAll: async (params) => {
-        const res = await userSubscriptionRepository.getAll(tenantId, {
+        const res = await userSubscriptionRepository.getAll({
           page: params.page,
           pageSize: params.pageSize,
           search: params.search,
@@ -40,7 +39,7 @@ export function useUserSubscriptionsViewModel() {
         };
       },
       create: async (data) => {
-        const id = await userSubscriptionRepository.create(tenantId, data);
+        const id = await userSubscriptionRepository.create(data);
         success({
           title: t("entitlements.userSubscriptions.assigned"),
           description: t("entitlements.userSubscriptions.assignedDesc"),
@@ -53,7 +52,7 @@ export function useUserSubscriptionsViewModel() {
   // ── Cancel Mutation ──
   const cancelMutation = useMutation({
     mutationFn: async (id: string) => {
-      await userSubscriptionRepository.cancel(id, tenantId);
+      await userSubscriptionRepository.cancel(id);
     },
     onSuccess: () => {
       success({
@@ -73,7 +72,7 @@ export function useUserSubscriptionsViewModel() {
   // ── Renew Mutation ──
   const renewMutation = useMutation({
     mutationFn: async (id: string) => {
-      await userSubscriptionRepository.renew(id, tenantId);
+      await userSubscriptionRepository.renew(id);
     },
     onSuccess: () => {
       success({
@@ -92,8 +91,6 @@ export function useUserSubscriptionsViewModel() {
 
   return {
     ...vm,
-    tenantId,
-    hasTenantContext: !!tenantId,
     cancelSubscription: (id: string) => cancelMutation.mutate(id),
     renewSubscription: (id: string) => renewMutation.mutate(id),
     isCancelling: cancelMutation.isPending,

@@ -1,14 +1,15 @@
 /**
  * UserSubscription Service Interface
+ * TenantId is resolved server-side from JWT context.
  */
 import type { UserSubscriptionModel, UserSubscriptionListModel } from "../../data/models/UserSubscriptionModels";
 import type { PagedResult, PaginationParams } from "@modules/identity/core/domain/types";
 
 export interface IUserSubscriptionService {
-  getAll(tenantId: string, params: PaginationParams & { planId?: string; status?: string }): Promise<PagedResult<UserSubscriptionListModel>>;
-  getById(id: string, tenantId: string): Promise<UserSubscriptionModel>;
-  getMySubscription(tenantId: string): Promise<UserSubscriptionModel | null>;
-  create(tenantId: string, data: Record<string, unknown>): Promise<{ id: string }>;
-  cancel(id: string, tenantId: string): Promise<void>;
-  renew(id: string, tenantId: string): Promise<void>;
+  getAll(params: PaginationParams & { planId?: string; status?: string }): Promise<PagedResult<UserSubscriptionListModel>>;
+  getById(id: string): Promise<UserSubscriptionModel>;
+  getMySubscription(): Promise<UserSubscriptionModel | null>;
+  create(data: Record<string, unknown>): Promise<{ id: string }>;
+  cancel(id: string): Promise<void>;
+  renew(id: string): Promise<void>;
 }

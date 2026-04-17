@@ -288,6 +288,7 @@ export const ar = {
     cancelWarning: "لا يمكن التراجع عن هذا الإجراء. سيتم إزالة جميع الميزات والصلاحيات.",
     cancelReason: "السبب (اختياري)",
     cancelReasonPlaceholder: "لماذا تقوم بإلغاء هذا الاشتراك؟",
+    subscriptionAssigned: "تم تعيين الخطة بنجاح",
     subscriptionUpdated: "تم تغيير خطة الاشتراك بنجاح",
     subscriptionRenewed: "تم تجديد الاشتراك بنجاح",
     trialConverted: "تم تحويل التجربة إلى خطة مدفوعة",
@@ -353,6 +354,7 @@ export const ar = {
     },
     statusLabel: {
       active: "نشط",
+      pendingPayment: "بانتظار الدفع",
       trialing: "فترة تجريبية",
       suspended: "معلّق",
       canceled: "ملغى",

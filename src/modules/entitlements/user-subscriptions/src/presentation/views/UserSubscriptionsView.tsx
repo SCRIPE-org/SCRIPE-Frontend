@@ -21,21 +21,7 @@ export function UserSubscriptionsView() {
   const { t } = useI18n();
   const vm = useUserSubscriptionsViewModel();
 
-  // ── No tenant context → show message ──
-  if (!vm.hasTenantContext) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-center space-y-2">
-          <p className="text-muted-foreground text-lg">
-            {t("entitlements.userSubscriptions.noTenantContext") || "User Subscriptions are only available for tenant-scoped administrators."}
-          </p>
-          <p className="text-sm text-muted-foreground/60">
-            {t("entitlements.userSubscriptions.noTenantContextHint") || "Please impersonate a tenant admin to manage subscriptions."}
-          </p>
-        </div>
-      </div>
-    );
-  }
+  // Tenant context is resolved server-side from JWT — no client-side guard needed.
 
   const statusMap: Record<string, string> = {
     Active: t("entitlements.userSubscriptions.statusActive") || "Active",

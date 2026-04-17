@@ -25,6 +25,7 @@ export interface UseTenantSubscriptionViewModelResult {
       isExpired: boolean;
       isCanceled: boolean;
       isPastDue: boolean;
+      isPendingPayment: boolean;
       isActive: boolean;
       isDowngraded: boolean;
       downgradedFromEditionName: string | null;
@@ -40,8 +41,12 @@ export interface UseTenantSubscriptionViewModelResult {
       fallbackEditionName: string | null;
       expiryBehavior: ExpiryBehavior | null;
       hasFallback: boolean;
+      hasNoSubscription: boolean;
 
       // Mutations
+      assignEdition: (editionId: string, type: SubscriptionType, currency?: string, promoCode?: string, promotionId?: string) => void;
+      isAssigning: boolean;
+
       changeEdition: (editionId: string, type: SubscriptionType, currency?: string, promoCode?: string, promotionId?: string) => void;
       isChanging: boolean;
 
@@ -95,10 +100,10 @@ export function useTenantSubscriptionViewModel(tenantId: string): UseTenantSubsc
             enabled: !!tenantId,
       });
 
-      // Current active subscription (first active/trialing, or most recent)
+      // H-1 FIX: Current subscription (first active/trialing/pendingpayment, or most recent)
       const subscription = subscriptionHistory
             ? subscriptionHistory.find(
-                  (s) => s.status.toLowerCase() === "active" || s.status.toLowerCase() === "trialing"
+                  (s) => ["active", "trialing", "pendingpayment"].includes(s.status.toLowerCase())
             ) ?? subscriptionHistory[0]
             : undefined;
 
@@ -115,7 +120,9 @@ export function useTenantSubscriptionViewModel(tenantId: string): UseTenantSubsc
       const isExpired = status === "expired";
       const isCanceled = status === "canceled";
       const isPastDue = status === "pastdue";
-      const isActive = status === "active" || isTrialing;
+      const isPendingPayment = status === "pendingpayment";
+      const isActive = (status === "active" || isTrialing) && !isPendingPayment;
+      const hasNoSubscription = !subscription;
 
       const daysRemaining = (() => {
             if (!subscription?.endDate) return null;
@@ -131,11 +138,12 @@ export function useTenantSubscriptionViewModel(tenantId: string): UseTenantSubsc
       const downgradedFromType = subscription?.downgradedFromType ?? null;
       const downgradedAt = subscription?.downgradedAt ?? null;
 
-      const canRenew = (isActive || isPastDue) && !isTrialing && subscription?.type !== "Lifetime" && !isDowngraded;
-      const canConvertTrial = isTrialing;
-      const canSuspend = (isActive && !isTrialing) || isPastDue; // FE5: exclude Trialing (backend rejects)
-      const canResume = isSuspended || isDowngraded;
-      const canCancel = isActive || isSuspended || isPastDue;
+      // H-5 FIX: Gate all action flags behind !isPendingPayment
+      const canRenew = !isPendingPayment && (isActive || isPastDue) && !isTrialing && subscription?.type !== "Lifetime" && !isDowngraded;
+      const canConvertTrial = !isPendingPayment && isTrialing;
+      const canSuspend = !isPendingPayment && ((isActive && !isTrialing) || isPastDue);
+      const canResume = !isPendingPayment && (isSuspended || isDowngraded);
+      const canCancel = isPendingPayment || isActive || isSuspended || isPastDue; // Allow canceling PendingPayment
       const canReassign = isCanceled || isExpired; // Show Assign button for terminated subscriptions
 
       // ── Computed: fallback plan info ──
@@ -163,6 +171,15 @@ export function useTenantSubscriptionViewModel(tenantId: string): UseTenantSubsc
       };
 
       // ── Mutations ──
+
+      // C-4 FIX: Separate assign mutation (POST) for new subscriptions
+      const assignMutation = useMutation({
+            mutationFn: async ({ editionId, type, currency, promoCode, promotionId }: { editionId: string; type: string; currency?: string; promoCode?: string; promotionId?: string }) => {
+                  await systemContainer.tenantRepository.assignEdition(tenantId, editionId, type, undefined, currency, promoCode, promotionId);
+            },
+            onSuccess: () => { successToast(t("tenant.subscriptionAssigned") || "Plan assigned successfully"); invalidateAll(); },
+            onError: errorToast,
+      });
 
       const changeMutation = useMutation({
             mutationFn: async ({ editionId, type, currency, promoCode, promotionId }: { editionId: string; type: string; currency?: string; promoCode?: string; promotionId?: string }) => {
@@ -258,11 +275,14 @@ export function useTenantSubscriptionViewModel(tenantId: string): UseTenantSubsc
             availableEditions: availableEditionsData?.items ?? [],
             isEditionsLoading,
 
-            isTrialing, isSuspended, isExpired, isCanceled, isPastDue, isActive,
+            isTrialing, isSuspended, isExpired, isCanceled, isPastDue, isPendingPayment, isActive,
             isDowngraded, downgradedFromEditionName, downgradedFromType, downgradedAt,
             daysRemaining,
             canRenew, canConvertTrial, canSuspend, canResume, canCancel, canReassign,
-            fallbackEditionName, expiryBehavior, hasFallback,
+            fallbackEditionName, expiryBehavior, hasFallback, hasNoSubscription,
+
+            assignEdition: (editionId: string, type: SubscriptionType, currency?: string, promoCode?: string, promotionId?: string) => assignMutation.mutate({ editionId, type, currency, promoCode, promotionId }),
+            isAssigning: assignMutation.isPending,
 
             changeEdition: (editionId: string, type: SubscriptionType, currency?: string, promoCode?: string, promotionId?: string) => changeMutation.mutate({ editionId, type, currency, promoCode, promotionId }),
             isChanging: changeMutation.isPending,

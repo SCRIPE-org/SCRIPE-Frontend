@@ -230,7 +230,7 @@ export class TenantService implements ITenantService {
     );
   }
 
-  async changeEdition(tenantId: string, editionId: string, type: string = "Lifetime", currency?: string, promoCode?: string, promotionId?: string): Promise<void> {
+  async changeEdition(tenantId: string, editionId: string, type: string, currency?: string, promoCode?: string, promotionId?: string): Promise<void> {
     await this.api.put(
       API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.CHANGE(tenantId),
       { editionId, type, currency, promoCode, promotionId }
