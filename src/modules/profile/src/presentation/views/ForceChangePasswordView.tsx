@@ -15,6 +15,8 @@ import { useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useAppStore } from "@core/store/useAppStore";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import { useNavigation } from "@core/providers/navigation-provider";
+import { useQueryClient } from "@tanstack/react-query";
 import { container } from "@modules/profile/di";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
@@ -28,6 +30,8 @@ export function ForceChangePasswordView() {
   const setMustChangePassword = useAppStore((state) => state.setMustChangePassword);
   const logout = useAppStore((state) => state.logout);
   const { operationSuccess, operationError } = useEnhancedToast();
+  const { refreshNavigation } = useNavigation();
+  const queryClient = useQueryClient();
   const { profileRepository } = container;
 
   const [currentPassword, setCurrentPassword] = useState("");
@@ -77,10 +81,16 @@ export function ForceChangePasswordView() {
 
       operationSuccess(t("profile.security.passwordChanged"));
 
+      // Now fetch navigation & invalidate queries (skipped during login)
+      try {
+        await refreshNavigation(false, true);
+      } catch { /* non-critical */ }
+      queryClient.invalidateQueries();
+
       // Redirect to home after a brief delay
       setTimeout(() => {
         router.replace("/");
-      }, 500);
+      }, 300);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Password change failed";
       setSubmitError(msg);
@@ -88,7 +98,7 @@ export function ForceChangePasswordView() {
     } finally {
       setIsSubmitting(false);
     }
-  }, [isValid, currentPassword, newPassword, profileRepository, setMustChangePassword, operationSuccess, operationError, router, t]);
+  }, [isValid, currentPassword, newPassword, profileRepository, setMustChangePassword, operationSuccess, operationError, router, t, refreshNavigation, queryClient]);
 
   const handleLogout = useCallback(() => {
     logout();

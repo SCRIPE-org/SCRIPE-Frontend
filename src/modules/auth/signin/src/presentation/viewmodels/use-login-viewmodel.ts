@@ -91,7 +91,12 @@ export function useLoginViewModel() {
     if (isAuthenticated && hasToken) {
       hasTriggeredRedirect.current = true;
       setIsRedirecting(true);
-      handleRedirect(redirectPath);
+
+      // If must change password, go directly to /change-password
+      const mustChange = useAppStore.getState().mustChangePassword;
+      const targetPath = mustChange ? "/change-password" : redirectPath;
+
+      handleRedirect(targetPath);
       return true;
     }
 
@@ -129,9 +134,14 @@ export function useLoginViewModel() {
       if (!hasTriggeredRedirect.current) {
         hasTriggeredRedirect.current = true;
 
+        // If must change password, go directly to /change-password
+        // This prevents the home page from rendering or firing API requests
+        const mustChange = useAppStore.getState().mustChangePassword;
+        const targetPath = mustChange ? "/change-password" : redirectPath;
+
         // Small delay to ensure state is updated
         setTimeout(() => {
-          handleRedirect(redirectPath);
+          handleRedirect(targetPath);
         }, 100);
       }
     } catch (err: unknown) {
@@ -176,18 +186,26 @@ export function useLoginViewModel() {
 
       operationSuccess(t("auth.welcomeBack"));
 
-      try {
-        await refreshNavigation(false, true);
-      } catch (navError) {
-        appLogger.error("Failed to fetch navigation after 2FA:", navError);
-      }
+      // Skip navigation & data fetch if user must change password first
+      const mustChange = result.mustChangePassword ?? false;
+      if (!mustChange) {
+        try {
+          await refreshNavigation(false, true);
+        } catch (navError) {
+          appLogger.error("Failed to fetch navigation after 2FA:", navError);
+        }
 
-      queryClient.invalidateQueries();
+        queryClient.invalidateQueries();
+      }
 
       setIsRedirecting(true);
       hasTriggeredRedirect.current = true;
+
+      // If must change password, go directly to /change-password
+      const targetPath = mustChange ? "/change-password" : redirectPath;
+
       setTimeout(() => {
-        router.replace(redirectPath);
+        router.replace(targetPath);
       }, 100);
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : t("auth.twoFactor.invalidCode");

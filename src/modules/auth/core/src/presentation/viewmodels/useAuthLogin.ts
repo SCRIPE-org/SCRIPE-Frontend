@@ -53,15 +53,19 @@ export function useAuthLogin() {
       // 4. Show success toast
       operationSuccess("Login successful!");
 
-      // 5. Fetch navigation data immediately after login (force refresh)
-      try {
-        await refreshNavigation(false, true);
-      } catch (error) {
-        appLogger.error("Failed to fetch navigation after login:", error);
-      }
+      // 5. Skip navigation & data fetch if user must change password first
+      // They'll be redirected to /change-password immediately — no need to load menus
+      if (!mustChangePassword) {
+        // Fetch navigation data immediately after login (force refresh)
+        try {
+          await refreshNavigation(false, true);
+        } catch (error) {
+          appLogger.error("Failed to fetch navigation after login:", error);
+        }
 
-      // 6. Invalidate any cached queries to ensure fresh data on protected pages
-      queryClient.invalidateQueries();
+        // Invalidate any cached queries to ensure fresh data on protected pages
+        queryClient.invalidateQueries();
+      }
     },
     onError: (error: Error) => {
       // Don't show toast for 2FA required — it's not an error, it's a flow step

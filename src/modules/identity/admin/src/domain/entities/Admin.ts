@@ -259,8 +259,8 @@ export class Admin {
     return this.data.isProtected ?? false;
   }
 
-  /** Whether this admin needs account setup (protected + not activated) */
+  /** Whether this admin needs account setup (created via email invitation, not yet activated) */
   get needsAccountSetup(): boolean {
-    return this.isProtected && !this.isAccountActivated;
+    return !this.isAccountActivated;
   }
 }
