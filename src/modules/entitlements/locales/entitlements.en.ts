@@ -95,6 +95,8 @@ export const en = {
       promoCodePlaceholder: "Enter promo code (optional)",
       durationDays: "Duration (Days)",
       firstTimeOnly: "First-Time Only",
+      autoApplied: "Auto-Applied",
+      autoAppliedDesc: "This promotion is automatically applied when a new subscription is created.",
       validFrom: "Valid From",
       validUntil: "Valid Until",
       maxRedemptions: "Max Redemptions",

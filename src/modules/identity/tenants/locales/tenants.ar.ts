@@ -5,6 +5,7 @@ export const ar = {
     grandTotal: "المجموع الكلي",
     noRefundDesc: "لا يوجد استرداد",
     fullRefundIssued: "تم إصدار استرداد كامل",
+    promotion: "العرض الترويجي",
     previousPlan: "الخطة السابقة",
     refundReason: "سبب الاسترداد",
     fullRefundDesc: "استرداد كامل",

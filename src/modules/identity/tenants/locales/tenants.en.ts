@@ -4,6 +4,7 @@ export const en = {
     partialRefundApplied: "Partial refund applied",
     lockoutDuration: "Lockout Duration",
     minutes: "Minutes",
+    promotion: "Promotion",
     grandTotal: "Grand Total",
     fullRefundIssued: "Full refund issued",
     previousPlan: "Previous Plan",

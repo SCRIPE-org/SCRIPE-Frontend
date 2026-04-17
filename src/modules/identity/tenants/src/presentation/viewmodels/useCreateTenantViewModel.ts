@@ -121,33 +121,6 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
   // Track previous editionId to detect changes
   const prevEditionIdRef = useRef(form.editionId);
 
-  // ── Auto-generate code from name ──
-  const updateField = useCallback(
-    <K extends keyof StepperFormState>(field: K, value: StepperFormState[K]) => {
-      setForm((prev) => {
-        const next = { ...prev, [field]: value };
-        // Auto-generate code from name (only if user hasn't manually edited code)
-        if (field === "name" && (!prev.code || prev.code === generateCode(prev.name))) {
-          next.code = generateCode(value as string);
-        }
-        // Auto-generate username from code
-        if (field === "code" && (!prev.adminUsername || prev.adminUsername === `${prev.code}_admin`)) {
-          next.adminUsername = `${(value as string).toLowerCase()}_admin`;
-        }
-        // When edition changes, reset subscriptionType to the first enabled type
-        if (field === "editionId" && value !== prevEditionIdRef.current) {
-          prevEditionIdRef.current = value as string;
-          // We'll defer the subscriptionType reset to after cachedEditions update
-          next.subscriptionType = "";
-          next.promotionId = "";
-          next.promoCode = "";
-        }
-        return next;
-      });
-    },
-    []
-  );
-
   // ── Promotion query ──
   const { data: promotionsRaw = [], isLoading: isLoadingPromotions } = useQuery({
     queryKey: ["entitlements", "editions", form.editionId, "promotions"],
@@ -173,8 +146,44 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
         type: p.type as string,
         discountValue: p.discountValue as number,
         requiresCode: p.requiresCode as boolean,
+        code: (p.promoCode as string) || "",
       }));
   }, [promotionsRaw, form.subscriptionType]);
+
+  // ── Update Field Logic ──
+  const updateField = useCallback(
+    <K extends keyof StepperFormState>(field: K, value: StepperFormState[K]) => {
+      setForm((prev) => {
+        const next = { ...prev, [field]: value };
+        // Auto-generate code from name (only if user hasn't manually edited code)
+        if (field === "name" && (!prev.code || prev.code === generateCode(prev.name))) {
+          next.code = generateCode(value as string);
+        }
+        // Auto-generate username from code
+        if (field === "code" && (!prev.adminUsername || prev.adminUsername === `${prev.code}_admin`)) {
+          next.adminUsername = `${(value as string).toLowerCase()}_admin`;
+        }
+        // When edition changes, reset subscriptionType to the first enabled type
+        if (field === "editionId" && value !== prevEditionIdRef.current) {
+          prevEditionIdRef.current = value as string;
+          // We'll defer the subscriptionType reset to after cachedEditions update
+          next.subscriptionType = "";
+          next.promotionId = "";
+          next.promoCode = "";
+        }
+        // Clear promotionId if manual promo code is typed (to untoggle badge if different code)
+        if (field === "promoCode" && prev.promotionId) {
+          const selectedPromo = availablePromotions.find((p) => p.id === prev.promotionId);
+          // @ts-ignore
+          if (selectedPromo && selectedPromo.code !== value) {
+            next.promotionId = "";
+          }
+        }
+        return next;
+      });
+    },
+    [availablePromotions]
+  );
 
   // ── Selected edition info ──
   const selectedEdition = useMemo(

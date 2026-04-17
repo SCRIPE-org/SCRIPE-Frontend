@@ -87,6 +87,8 @@ export const ar = {
       percentOff: "% خصم",
       amountOff: "مبلغ الخصم",
       currency: "العملة",
+      autoApplied: "تطبيق تلقائي",
+      autoAppliedDesc: "يتم تطبيق هذا العرض تلقائياً عند إنشاء اشتراك جديد.",
       applicableCycle: "دورة الفوترة المطبقة",
       monthly: "شهري",
       yearly: "سنوي",

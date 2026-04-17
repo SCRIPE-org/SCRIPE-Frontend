@@ -388,12 +388,18 @@ function PromotionCard({
                                                 <span className="font-medium text-foreground">{promo.discountLabel}</span>
                                           </span>
 
-                                          {promo.promoCode && (
+                                          {promo.promoCode ? (
                                                 <span className="flex items-center gap-1">
                                                       <Hash className="h-3 w-3" />
-                                                      <code className="bg-muted px-1.5 py-0.5 rounded text-[10px] font-mono">
+                                                      <code className="bg-muted px-1.5 py-0.5 rounded text-[10px] font-mono border border-border">
                                                             {promo.promoCode}
                                                       </code>
+                                                </span>
+                                          ) : (
+                                                <span className="flex items-center gap-1">
+                                                      <Badge variant="outline" className="text-[10px] text-muted-foreground border-dashed">
+                                                            {t("entitlements.promotions.autoApplied") || "Available Option"}
+                                                      </Badge>
                                                 </span>
                                           )}
 

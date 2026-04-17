@@ -147,16 +147,32 @@ export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
           />
           {vm.availablePromotions.length > 0 && (
             <div className="flex flex-wrap gap-1.5 mt-2">
-              {vm.availablePromotions.map((promo) => (
-                <Badge
-                  key={promo.id}
-                  variant="secondary"
-                  className="text-xs cursor-pointer hover:bg-primary/20 transition-colors"
-                  onClick={() => vm.updateField("promotionId", promo.id)}
-                >
-                  {promo.name} ({promo.type === "Percentage" ? `${promo.discountValue}%` : `$${promo.discountValue}`})
-                </Badge>
-              ))}
+              {vm.availablePromotions.map((promo) => {
+                // @ts-ignore - added code property
+                const promoCodeStr = promo.code;
+                const isSelected = vm.form.promotionId === promo.id;
+                
+                return (
+                  <Badge
+                    key={promo.id}
+                    variant={isSelected ? "default" : "secondary"}
+                    className="text-xs cursor-pointer hover:bg-primary/20 transition-colors"
+                    onClick={() => {
+                      if (isSelected) {
+                        // Deselect
+                        vm.updateField("promotionId", "");
+                        if (promoCodeStr) vm.updateField("promoCode", "");
+                      } else {
+                        // Select
+                        vm.updateField("promotionId", promo.id);
+                        if (promoCodeStr) vm.updateField("promoCode", promoCodeStr);
+                      }
+                    }}
+                  >
+                    {promo.name} ({promo.type === "Percentage" ? `${promo.discountValue}%` : `$${promo.discountValue}`})
+                  </Badge>
+                );
+              })}
             </div>
           )}
         </div>
@@ -213,6 +229,20 @@ function CreateTenantSummary({ vm, t }: { vm: CreateTenantVM; t: (key: string) =
       <SummaryRow label={t("tenant.edition") || "Edition"} value={vm.selectedEdition?.name || "-"} />
       <SummaryRow label={t("tenant.subscriptionType") || "Billing"} value={subscriptionLabel} />
       <SummaryRow label={t("tenant.currency") || "Currency"} value={currencyLabel} />
+      {vm.form.promotionId && (
+        <SummaryRow 
+          label={t("tenant.promotion") || "Promotion"} 
+          value={vm.availablePromotions.find(p => p.id === vm.form.promotionId)?.name || vm.form.promoCode || "Applied"} 
+          highlight 
+        />
+      )}
+      {!vm.form.promotionId && vm.form.promoCode && (
+        <SummaryRow 
+          label={t("tenant.promotion") || "Promotion"} 
+          value={vm.form.promoCode} 
+          highlight 
+        />
+      )}
       {vm.form.skipPayment && (
         <SummaryRow
           label={t("tenant.payment") || "Payment"}
