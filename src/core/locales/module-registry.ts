@@ -57,8 +57,11 @@ import { en as recycleBinEn, ar as recycleBinAr } from "@modules/ecosystem/recyc
 // ─── Profile ───────────────────────────────────────────
 import { en as profileEn, ar as profileAr } from "@modules/profile/locales";
 
+// ─── Deep Merge (shared utility) ───────────────────────
+import { deepMerge } from "@core/utils/deep-merge";
+
 // ─── Merged Dictionaries ───────────────────────────────
-export const allModulesEn: Record<string, any> = Object.assign(
+export const allModulesEn: Record<string, any> = deepMerge(
   {},
   signinEn,
   // Monitoring
@@ -67,7 +70,7 @@ export const allModulesEn: Record<string, any> = Object.assign(
   adminEn, idpEn, oauthEn, permissionsEn, rolesEn, tenantsEn, userGroupsEn, usersEn,
   // Customization
   custSettingsEn, custStudioEn, menusEn, tenantSettingsEn,
-  // Entitlements
+  // Entitlements (all share "entitlements" top-level key — deepMerge required)
   entitlementsEn, editionsEn, featuresEn, overridesEn, subscriptionsEn, billingEn, tenantPlansEn, userSubscriptionsEn,
   // Messaging
   messagingEn, webhooksEn,
@@ -77,7 +80,7 @@ export const allModulesEn: Record<string, any> = Object.assign(
   profileEn,
 );
 
-export const allModulesAr: Record<string, any> = Object.assign(
+export const allModulesAr: Record<string, any> = deepMerge(
   {},
   signinAr,
   // Monitoring
@@ -86,7 +89,7 @@ export const allModulesAr: Record<string, any> = Object.assign(
   adminAr, idpAr, oauthAr, permissionsAr, rolesAr, tenantsAr, userGroupsAr, usersAr,
   // Customization
   custSettingsAr, custStudioAr, menusAr, tenantSettingsAr,
-  // Entitlements
+  // Entitlements (all share "entitlements" top-level key — deepMerge required)
   entitlementsAr, editionsAr, featuresAr, overridesAr, subscriptionsAr, billingAr, tenantPlansAr, userSubscriptionsAr,
   // Messaging
   messagingAr, webhooksAr,

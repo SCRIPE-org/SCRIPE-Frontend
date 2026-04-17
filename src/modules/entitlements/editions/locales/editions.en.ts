@@ -208,6 +208,9 @@ export const en = {
       lifetime: "Lifetime",
       oneTime: "One-time",
       billingCurrency: "Billing Currency",
+      applyNowTitle: "Apply Pricing Immediately?",
+      applyNowDesc: "Are you sure you want to apply these pricing changes to the live edition?",
+      applyWarning: "Warning: Existing subscriptions will keep their grandfathered pricing. New subscriptions and renewals will use these new rates.",
     },
   },
 };

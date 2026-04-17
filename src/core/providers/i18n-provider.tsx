@@ -14,18 +14,19 @@ import { useSettings } from "@core/providers/settings-provider";
 import { ar as coreAr } from "@core/locales/ar";
 import { en as coreEn } from "@core/locales/en";
 import { allModulesEn, allModulesAr } from "@core/locales/module-registry";
+import { deepMerge } from "@core/utils/deep-merge";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
 
 // ─── TYPES ──────────────────────────────────────────────────
 export type Language = "ar" | "en";
 type Direction = "rtl" | "ltr";
-type TranslationDict = Record<string, any>;
+type TranslationDict = Record<string, unknown>;
 
 interface I18nContextType {
   language: Language;
   direction: Direction;
   setLanguage: (lang: Language) => void;
-  t: (key: string, params?: Record<string, any>) => string;
+  t: (key: string, params?: Record<string, string | number>) => string;
   registerBothLanguages: (en: TranslationDict, ar: TranslationDict) => void;
   markModuleLoaded: (moduleKey: string) => void;
   isModuleLoaded: (moduleKey: string) => boolean;
@@ -33,22 +34,23 @@ interface I18nContextType {
 
 const I18nContext = createContext<I18nContextType | undefined>(undefined);
 
-// ─── I18N PROVIDER (v7.0 — Zero-Flash Eager Loading) ────
+// ─── I18N PROVIDER (v8.0 — Zero-Flash + Deep Merge) ─────
 //
 // Architecture:
-// 1. ALL module translations are eagerly loaded via module-registry.ts.
-//    They're merged into the initial registry so translations are available
-//    on the VERY FIRST render — zero flash, zero useEffect race conditions.
-// 2. `useModuleLocales()` hook is still safe to call — it becomes a harmless
-//    no-op since translations are already in the registry.
-// 3. Both EN + AR dictionaries are available synchronously at import time,
-//    enabling instant language switching with zero network requests.
+// 1. ALL module translations are eagerly loaded via module-registry.ts
+//    using deepMerge — available on the VERY FIRST render, zero flash.
+// 2. `useModuleLocales()` hook is still safe to call — it becomes a
+//    harmless no-op since translations are already in the registry.
+// 3. Both EN + AR dictionaries are synchronous — instant language switching.
+// 4. Deep merge (from @core/utils/deep-merge) ensures modules sharing
+//    the same top-level namespace (e.g. "entitlements") never clobber
+//    each other's keys — both at build-time and lazy-load runtime.
 //
 export function I18nProvider({ children }: { children: React.ReactNode }) {
   // ─── EAGER REGISTRY — All translations available on first render ────
   const registryRef = useRef<Record<Language, TranslationDict>>({
-    en: { ...coreEn, ...allModulesEn },
-    ar: { ...coreAr, ...allModulesAr },
+    en: deepMerge({}, coreEn, allModulesEn),
+    ar: deepMerge({}, coreAr, allModulesAr),
   });
   const loadedModulesRef = useRef<Set<string>>(new Set());
 
@@ -58,27 +60,13 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
 
   const direction: Direction = language === "ar" ? "rtl" : "ltr";
 
-  // ─── STRICT O(1) REGISTRATION (both languages at once) ────
-  // Enforces ZERO-EXCEPTION non-overlapping top-level namespaces.
-  // No recursive merge. No 2-level merge. Pure Object.assign.
+  // ─── REGISTRATION (both languages at once) ────────────────
+  // Uses shared deepMerge utility to safely merge lazy-loaded module
+  // locales without clobbering sibling keys under shared namespaces.
   const registerBothLanguages = useCallback(
     (enTranslations: TranslationDict, arTranslations: TranslationDict) => {
-      if (process.env.NODE_ENV === "development") {
-        // DEV ONLY: Detect namespace collisions
-        for (const key of Object.keys(enTranslations)) {
-          if (key in registryRef.current.en) {
-            // Only warn if this is a module-registered key (not core)
-            // Core keys are already in the registry at init time
-            console.warn(
-              `[I18n] Namespace collision: "${key}" is already registered. ` +
-              `Module locales MUST use unique top-level keys.`
-            );
-          }
-        }
-      }
-      // O(1) shallow merge — strict, no depth exceptions
-      Object.assign(registryRef.current.en, enTranslations);
-      Object.assign(registryRef.current.ar, arTranslations);
+      deepMerge(registryRef.current.en, enTranslations);
+      deepMerge(registryRef.current.ar, arTranslations);
       forceUpdate((n) => n + 1);
     },
     []
@@ -188,7 +176,7 @@ export function useI18n() {
       language: "ar" as const,
       direction: "rtl" as const,
       setLanguage: () => {},
-      t: (key: string, _params?: Record<string, any>) => key,
+      t: (key: string, _params?: Record<string, string | number>) => key,
       registerBothLanguages: () => {},
       markModuleLoaded: () => {},
       isModuleLoaded: () => false,

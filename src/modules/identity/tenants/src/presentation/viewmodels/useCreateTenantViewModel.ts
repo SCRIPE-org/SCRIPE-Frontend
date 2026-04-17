@@ -11,7 +11,7 @@
  */
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -98,6 +98,29 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
   // ── Edition & promotion state ──
   const [cachedEditions, setCachedEditions] = useState<EditionThinModel[]>([]);
 
+  // ── Compute enabled subscription types for selected edition ──
+  const enabledSubscriptionTypes = useMemo(() => {
+    const edition = cachedEditions.find((e) => e.id === form.editionId);
+    if (!edition) {
+      // No edition selected → show all types
+      return [
+        { value: "Lifetime", enabled: true },
+        { value: "Monthly", enabled: true },
+        { value: "Yearly", enabled: true },
+        { value: "Trial", enabled: true },
+      ];
+    }
+    const types: { value: string; enabled: boolean }[] = [];
+    if (edition.allowLifetime !== false) types.push({ value: "Lifetime", enabled: true });
+    if (edition.allowMonthly !== false) types.push({ value: "Monthly", enabled: true });
+    if (edition.allowYearly !== false) types.push({ value: "Yearly", enabled: true });
+    if (edition.allowTrial !== false) types.push({ value: "Trial", enabled: true });
+    return types;
+  }, [cachedEditions, form.editionId]);
+
+  // Track previous editionId to detect changes
+  const prevEditionIdRef = useRef(form.editionId);
+
   // ── Auto-generate code from name ──
   const updateField = useCallback(
     <K extends keyof StepperFormState>(field: K, value: StepperFormState[K]) => {
@@ -110,6 +133,14 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
         // Auto-generate username from code
         if (field === "code" && (!prev.adminUsername || prev.adminUsername === `${prev.code}_admin`)) {
           next.adminUsername = `${(value as string).toLowerCase()}_admin`;
+        }
+        // When edition changes, reset subscriptionType to the first enabled type
+        if (field === "editionId" && value !== prevEditionIdRef.current) {
+          prevEditionIdRef.current = value as string;
+          // We'll defer the subscriptionType reset to after cachedEditions update
+          next.subscriptionType = "";
+          next.promotionId = "";
+          next.promoCode = "";
         }
         return next;
       });
@@ -150,6 +181,17 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
     () => cachedEditions.find((e) => e.id === form.editionId),
     [cachedEditions, form.editionId]
   );
+
+  // ── Auto-select first enabled subscription type when edition changes and type is empty ──
+  // This runs when cachedEditions update after edition search completes
+  useMemo(() => {
+    if (form.editionId && !form.subscriptionType && enabledSubscriptionTypes.length > 0) {
+      const firstEnabled = enabledSubscriptionTypes[0]?.value;
+      if (firstEnabled) {
+        setForm((prev) => ({ ...prev, subscriptionType: firstEnabled }));
+      }
+    }
+  }, [form.editionId, form.subscriptionType, enabledSubscriptionTypes]);
 
   // ── Edition search ──
   const handleSearchEditions = useCallback(
@@ -314,6 +356,7 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
     handleSearchEditions,
     availablePromotions,
     isLoadingPromotions,
+    enabledSubscriptionTypes,
 
     // Submit
     isSubmitting,
@@ -336,3 +379,7 @@ function generateCode(name: string): string {
     .replace(/^_|_$/g, "")
     .substring(0, 50);
 }
+
+/** Exported type alias for components to reference the ViewModel shape */
+export type CreateTenantVM = ReturnType<typeof useCreateTenantViewModel>;
+

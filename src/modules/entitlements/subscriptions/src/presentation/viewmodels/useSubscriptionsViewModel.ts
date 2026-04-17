@@ -314,6 +314,7 @@ export function useSubscriptionsViewModel(tenantId: string) {
                         editionId: targetSubscription.editionId,
                         subscriptionType: targetSubscription.type,
                         currency: targetSubscription.currency,
+                        promoCode: targetSubscription.appliedPromoCode,
                         successUrl: `${window.location.origin}/entitlements/subscriptions?checkout=success`,
                         cancelUrl: `${window.location.origin}/entitlements/subscriptions?checkout=canceled`,
                         generateQrCode: true,
