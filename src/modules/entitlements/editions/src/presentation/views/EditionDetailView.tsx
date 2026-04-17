@@ -51,7 +51,7 @@ interface EditionDetailViewProps {
 }
 
 export function EditionDetailView({ editionId }: EditionDetailViewProps) {
-  useModuleLocales(() => import("../../../../locales"), "entitlements-shared");
+  useModuleLocales(() => import("../../../locales"), "editions");
       const { t, language, direction } = useI18n();
       const vm = useEditionDetailViewModel(editionId);
 

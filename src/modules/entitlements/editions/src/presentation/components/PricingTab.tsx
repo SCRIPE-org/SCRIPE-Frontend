@@ -39,7 +39,7 @@ interface PricingTabProps {
 }
 
 export const PricingTab = memo(function PricingTab({ editionId, allowMonthly = true, allowYearly = true, allowLifetime = true }: PricingTabProps) {
-      useModuleLocales(() => import("../../../../locales"), "entitlements-shared");
+      useModuleLocales(() => import("../../../locales"), "editions");
       const { t } = useI18n();
       const vm = useEditionPricingViewModel(editionId);
       const [showAddDialog, setShowAddDialog] = useState(false);

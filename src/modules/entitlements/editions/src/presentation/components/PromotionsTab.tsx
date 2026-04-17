@@ -41,7 +41,7 @@ interface PromotionsTabProps {
 }
 
 export function PromotionsTab({ editionId, allowMonthly = true, allowYearly = true, allowLifetime = true }: PromotionsTabProps) {
-  useModuleLocales(() => import("../../../../locales"), "entitlements-shared");
+  useModuleLocales(() => import("../../../locales"), "editions");
       const { t, direction } = useI18n();
       const vm = usePromotionsViewModel(editionId);
 

@@ -47,7 +47,7 @@ const STATUS_ICONS: Record<string, React.ReactNode> = {
 };
 
 export function VersionsTab({ editionId }: VersionsTabProps) {
-  useModuleLocales(() => import("../../../../locales"), "entitlements-shared");
+  useModuleLocales(() => import("../../../locales"), "editions");
       const { t } = useI18n();
       const vm = useVersionsViewModel(editionId);
 

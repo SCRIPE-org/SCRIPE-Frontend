@@ -17,7 +17,7 @@ import { format } from "date-fns";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 
 export function EditionsView() {
-  useModuleLocales(() => import("../../../../locales"), "entitlements-shared");
+  useModuleLocales(() => import("../../../locales"), "editions");
       const { t, language } = useI18n();
       const vm = useEditionsViewModel();
 
