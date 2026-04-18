@@ -54,6 +54,11 @@ export class UserSubscriptionRepository implements IUserSubscriptionRepository {
     await this.service.renew(id);
   }
 
+  async changePlan(id: string, data: { newTenantPlanId: string; billingCycle: string; reason?: string }): Promise<string> {
+    const response = await this.service.changePlan(id, data);
+    return response.id;
+  }
+
   /**
    * Search users by name or email for the Create form user combobox.
    * Delegates to Service (which makes the actual HTTP call).

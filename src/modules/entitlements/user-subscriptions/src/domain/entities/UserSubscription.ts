@@ -3,6 +3,15 @@
  */
 import type { BaseEntity } from "@modules/identity/core/domain/types";
 
+/** Resolved feature from the user's active subscription plan. */
+export interface UserSubscriptionFeatureData {
+  featureKey: string;
+  value: string;
+  valueType: string;
+  displayNameEn?: string;
+  displayNameAr?: string;
+}
+
 export interface UserSubscriptionData extends BaseEntity {
   userId: string;
   tenantId: string;
@@ -26,6 +35,8 @@ export interface UserSubscriptionData extends BaseEntity {
   externalRef?: string;
   notes?: string;
   updatedAt?: string;
+  /** Resolved features from the subscription's plan (populated in /me response). */
+  features?: UserSubscriptionFeatureData[];
 }
 
 export class UserSubscription {
@@ -52,6 +63,8 @@ export class UserSubscription {
   get notes(): string | undefined { return this.data.notes; }
   get createdAt(): string { return this.data.createdAt; }
   get updatedAt(): string | undefined { return this.data.updatedAt; }
+  /** Resolved features from this subscription's plan. */
+  get features(): UserSubscriptionFeatureData[] { return this.data.features ?? []; }
 
   // ── Computed Properties ──
   /** Matches backend UserSubscriptionStatus.Trial (serialized as "Trial", not "Trialing"). */

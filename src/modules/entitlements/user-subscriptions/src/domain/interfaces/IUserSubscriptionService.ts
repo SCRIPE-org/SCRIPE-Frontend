@@ -24,6 +24,7 @@ export interface IUserSubscriptionService {
   create(data: CreateUserSubscriptionRequest): Promise<{ id: string }>;
   cancel(id: string): Promise<void>;
   renew(id: string): Promise<void>;
+  changePlan(id: string, data: { newTenantPlanId: string; billingCycle: string; reason?: string }): Promise<{ id: string }>;
   /** Search users by name or email for the Create form user combobox. */
   searchUsers(query: string): Promise<UserSearchDto[]>;
 }

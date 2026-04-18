@@ -20,6 +20,7 @@ export interface IUserSubscriptionRepository {
   create(request: CreateUserSubscriptionRequest): Promise<string>;
   cancel(id: string): Promise<void>;
   renew(id: string): Promise<void>;
+  changePlan(id: string, data: { newTenantPlanId: string; billingCycle: string; reason?: string }): Promise<string>;
   /** Search users by name or email for the Create form user combobox (GAP-3). */
   searchUsers(query: string): Promise<UserSearchResult[]>;
 }

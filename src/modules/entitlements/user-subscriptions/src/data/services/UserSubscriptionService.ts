@@ -52,6 +52,10 @@ export class UserSubscriptionService implements IUserSubscriptionService {
     await this.api.post(API_ENDPOINTS.ENTITLEMENTS.USER_SUBSCRIPTIONS.RENEW(id), {});
   }
 
+  async changePlan(id: string, data: { newTenantPlanId: string; billingCycle: string; reason?: string }): Promise<{ id: string }> {
+    return this.api.post<{ id: string }>(API_ENDPOINTS.ENTITLEMENTS.USER_SUBSCRIPTIONS.CHANGE_PLAN(id), data);
+  }
+
   /**
    * Search users by name or email for the Create form user combobox.
    * Queries the existing USERS.LIST endpoint — returns the encrypted user ID

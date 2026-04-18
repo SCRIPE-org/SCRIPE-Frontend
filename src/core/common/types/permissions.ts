@@ -300,6 +300,12 @@ export const SYSTEM_PERMISSIONS = {
   TENANT_PLANS_UPDATE: "tenant_plans.update",
   TENANT_PLANS_DELETE: "tenant_plans.delete",
 
+  // Tenant Feature Definitions (Tier 2)
+  TENANT_FEATURE_DEFINITIONS_VIEW: "tenant_feature_definitions.view",
+  TENANT_FEATURE_DEFINITIONS_CREATE: "tenant_feature_definitions.create",
+  TENANT_FEATURE_DEFINITIONS_UPDATE: "tenant_feature_definitions.update",
+  TENANT_FEATURE_DEFINITIONS_DELETE: "tenant_feature_definitions.delete",
+
   // User Subscriptions (Tier 2)
   USER_SUBSCRIPTIONS_VIEW: "user_subscriptions.view",
   USER_SUBSCRIPTIONS_CREATE: "user_subscriptions.create",
@@ -351,7 +357,9 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/entitlements/invoices": [SYSTEM_PERMISSIONS.INVOICES_VIEW],
   "/entitlements/billing-dashboard": [SYSTEM_PERMISSIONS.BILLING_DASHBOARD_VIEW],
   "/entitlements/tenant-plans": [SYSTEM_PERMISSIONS.TENANT_PLANS_VIEW],
+  "/entitlements/tenant-feature-definitions": [SYSTEM_PERMISSIONS.TENANT_FEATURE_DEFINITIONS_VIEW],
   "/entitlements/user-subscriptions": [SYSTEM_PERMISSIONS.USER_SUBSCRIPTIONS_VIEW],
+  "/my-subscription": [], // User self-service — any authenticated user
   "/entitlements/transactions": [SYSTEM_PERMISSIONS.TRANSACTIONS_VIEW],
 
   // Messaging & Webhooks

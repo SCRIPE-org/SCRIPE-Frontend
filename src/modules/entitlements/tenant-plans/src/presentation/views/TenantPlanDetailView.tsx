@@ -9,7 +9,7 @@
  */
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useTenantPlanDetailViewModel } from "../viewmodels/useTenantPlanDetailViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Badge } from "@core/ui/badge";
@@ -177,8 +177,60 @@ export function TenantPlanDetailView({ planId }: TenantPlanDetailViewProps) {
 
       {/* ─────── TAB CONTENT ─────── */}
       {activeTab === "general" && <GeneralTab plan={plan} t={t} />}
-      {activeTab === "features" && <FeaturesTab plan={plan} t={t} language={language} />}
-      {activeTab === "pricing" && <PricingTab plan={plan} t={t} />}
+      {activeTab === "features" && (
+        <FeaturesTab
+          plan={plan}
+          featureCatalog={vm.featureCatalog}
+          onSaveFeatures={(features) => {
+            vm.updatePlan({
+              name: plan.name,
+              isActive: plan.isActive,
+              isPublic: plan.isPublic,
+              maxUsers: plan.maxUsers,
+              allowMonthly: plan.allowMonthly,
+              allowYearly: plan.allowYearly,
+              allowLifetime: plan.allowLifetime,
+              allowTrial: plan.allowTrial,
+              isSelfServiceEnabled: plan.isSelfServiceEnabled,
+              isContactSalesOnly: plan.isContactSalesOnly,
+              trialDays: plan.trialDays,
+              gracePeriodDays: plan.gracePeriodDays,
+              tierLevel: plan.tierLevel,
+              sortOrder: plan.sortOrder,
+              features,
+            });
+          }}
+          isSaving={vm.isUpdating}
+          t={t}
+          language={language}
+        />
+      )}
+      {activeTab === "pricing" && (
+        <PricingTab
+          plan={plan}
+          onSavePrices={(prices) => {
+            vm.updatePlan({
+              name: plan.name,
+              isActive: plan.isActive,
+              isPublic: plan.isPublic,
+              maxUsers: plan.maxUsers,
+              allowMonthly: plan.allowMonthly,
+              allowYearly: plan.allowYearly,
+              allowLifetime: plan.allowLifetime,
+              allowTrial: plan.allowTrial,
+              isSelfServiceEnabled: plan.isSelfServiceEnabled,
+              isContactSalesOnly: plan.isContactSalesOnly,
+              trialDays: plan.trialDays,
+              gracePeriodDays: plan.gracePeriodDays,
+              tierLevel: plan.tierLevel,
+              sortOrder: plan.sortOrder,
+              prices,
+            });
+          }}
+          isSaving={vm.isUpdating}
+          t={t}
+        />
+      )}
       {activeTab === "versions" && <VersionsTab plan={plan} t={t} />}
       {activeTab === "promotions" && <PromotionsTab planId={planId} t={t} />}
     </div>

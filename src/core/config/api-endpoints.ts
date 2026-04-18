@@ -428,6 +428,7 @@ export const API_ENDPOINTS = {
       CANCEL: (id: string) => `${V1}/user-subscriptions/${id}/cancel`,
       RENEW: (id: string) => `${V1}/user-subscriptions/${id}/renew`,
       ME: `${V1}/user-subscriptions/me`,
+      CHANGE_PLAN: (id: string) => `${V1}/user-subscriptions/${id}/change-plan`,
     },
   },
 
