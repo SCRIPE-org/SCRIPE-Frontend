@@ -78,7 +78,7 @@ export function getEntitlementsContainer(): EntitlementsContainer {
                   subscriptionRepository: new SubscriptionRepository(subscriptionService),
                   billingRepository: new BillingRepository(billingService),
                   tenantPlanRepository: new TenantPlanRepository(new TenantPlanService(apiService)),
-                  userSubscriptionRepository: new UserSubscriptionRepository(new UserSubscriptionService(apiService)),
+                  userSubscriptionRepository: new UserSubscriptionRepository(new UserSubscriptionService(apiService), apiService),
             };
       }
 

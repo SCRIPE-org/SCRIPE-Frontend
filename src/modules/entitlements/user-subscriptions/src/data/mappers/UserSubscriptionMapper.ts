@@ -34,22 +34,21 @@ export class UserSubscriptionMapper {
     return new UserSubscription(data);
   }
 
-  static toEntityFromList(model: UserSubscriptionListModel, tenantId: string = ""): UserSubscription {
+  static toEntityFromList(model: UserSubscriptionListModel): UserSubscription {
+    const status = model.status ?? "Active";
     const data: UserSubscriptionData = {
       id: model.id,
       userId: model.userId ?? "",
-      tenantId,
+      tenantId: "",  // Not available in list DTO — omitted intentionally
       tenantPlanId: model.tenantPlanId ?? "",
       planName: model.planName ?? "",
-      currency: "",
-      price: 0,
-      billingCycle: "",
-      status: model.status ?? "Active",
+      // currency, price, billingCycle intentionally omitted — not in list DTO
+      status,
       startedAt: model.startedAt,
       expiresAt: model.expiresAt,
       trialEndsAt: model.trialEndsAt,
-      isAutoRenew: false,
-      isActive: model.status === "Active" || model.status === "Trialing",
+      isAutoRenew: false,  // Not in list DTO — detail-only field
+      isActive: status === "Active" || status === "Trial" || status === "Free",
       isExpiringSoon: model.isExpiringSoon ?? false,
       daysRemaining: model.daysRemaining,
       createdAt: model.createdAt,

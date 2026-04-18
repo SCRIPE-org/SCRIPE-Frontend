@@ -1,20 +1,24 @@
 /**
  * UserSubscriptions ViewModel
  * TenantId is resolved server-side from JWT context.
+ *
+ * GAP-3 fix: adds availableUsers (server-search) and availablePlans (static list)
+ * to drive the Create form's searchable selectors instead of raw text inputs.
  */
 "use client";
 
 import { useCrudViewModel } from "@core/crud/hooks/useCrudViewModel";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { entitlementsContainer } from "@modules/entitlements/di";
 import type { UserSubscription } from "../../domain/entities/UserSubscription";
 import type { CreateUserSubscriptionRequest } from "../../domain/entities/UserSubscriptionRequests";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
+import type { FieldOption } from "@core/ui/forms/generic-form";
 
 export function useUserSubscriptionsViewModel() {
   const { success, error } = useEnhancedToast();
-  const { userSubscriptionRepository } = entitlementsContainer;
+  const { userSubscriptionRepository, tenantPlanRepository } = entitlementsContainer;
   const { t } = useI18n();
   const queryClient = useQueryClient();
   const queryKey = ["entitlements", "user-subscriptions"];
@@ -49,7 +53,38 @@ export function useUserSubscriptionsViewModel() {
     }
   );
 
-  // ── Cancel Mutation ──
+  // ── Available Plans (static list for the Create form plan selector) ──────────
+  // Plans are a relatively small set (rarely > 20 per tenant) — fetch all upfront.
+  const { data: plansData } = useQuery({
+    queryKey: ["entitlements", "tenant-plans", "options"],
+    queryFn: () => tenantPlanRepository.getAll({ page: 1, pageSize: 100 }),
+    staleTime: 5 * 60 * 1000, // 5-minute cache — plans don't change often
+  });
+
+  const availablePlans: FieldOption[] = (plansData?.items ?? [])
+    .filter((p) => p.isActive)
+    .map((p) => ({
+      value: p.id,
+      label: `${p.name} (${p.billingCycle}${p.price > 0 ? ` · ${p.currency} ${p.price}` : " · Free"})`,
+    }));
+
+  // ── Server-Search for Users (debounced combobox in Create form) ──────────────
+  // Queries the Users endpoint with a search term; returns FieldOption[] for the
+  // generic-form "server-select" field type.
+  const searchUsers = async (query: string): Promise<FieldOption[]> => {
+    if (!query || query.trim().length < 2) return [];
+    try {
+      const res = await userSubscriptionRepository.searchUsers(query);
+      return (res ?? []).map((u) => ({
+        value: u.id,               // encrypted user ID — sent as-is to backend
+        label: `${u.name} (${u.email})`,
+      }));
+    } catch {
+      return [];
+    }
+  };
+
+  // ── Cancel Mutation ──────────────────────────────────────────────────────────
   const cancelMutation = useMutation({
     mutationFn: async (id: string) => {
       await userSubscriptionRepository.cancel(id);
@@ -69,7 +104,7 @@ export function useUserSubscriptionsViewModel() {
     },
   });
 
-  // ── Renew Mutation ──
+  // ── Renew Mutation ───────────────────────────────────────────────────────────
   const renewMutation = useMutation({
     mutationFn: async (id: string) => {
       await userSubscriptionRepository.renew(id);
@@ -91,6 +126,8 @@ export function useUserSubscriptionsViewModel() {
 
   return {
     ...vm,
+    availablePlans,
+    searchUsers,
     cancelSubscription: (id: string) => cancelMutation.mutate(id),
     renewSubscription: (id: string) => renewMutation.mutate(id),
     isCancelling: cancelMutation.isPending,

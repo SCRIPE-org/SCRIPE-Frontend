@@ -6,6 +6,13 @@ import type { UserSubscription } from "../entities/UserSubscription";
 import type { CreateUserSubscriptionRequest } from "../entities/UserSubscriptionRequests";
 import type { PagedResult, PaginationParams } from "@modules/identity/core/domain/types";
 
+/** Lightweight user result for the searchable user combobox in the Create form. */
+export interface UserSearchResult {
+  id: string;
+  name: string;
+  email: string;
+}
+
 export interface IUserSubscriptionRepository {
   getAll(params: PaginationParams & { planId?: string; status?: string }): Promise<PagedResult<UserSubscription>>;
   getById(id: string): Promise<UserSubscription>;
@@ -13,4 +20,6 @@ export interface IUserSubscriptionRepository {
   create(request: CreateUserSubscriptionRequest): Promise<string>;
   cancel(id: string): Promise<void>;
   renew(id: string): Promise<void>;
+  /** Search users by name or email for the Create form user combobox (GAP-3). */
+  searchUsers(query: string): Promise<UserSearchResult[]>;
 }

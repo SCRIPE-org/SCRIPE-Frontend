@@ -382,6 +382,7 @@ export const en = {
     edit_location_under: "Edit location under",
     root: "Root",
     loading: "Loading...",
+    searching: "Searching...",
     noData: "No data available",
     error: "An error occurred",
     success: "Success",

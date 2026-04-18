@@ -23,15 +23,17 @@ export function UserSubscriptionsView() {
 
   // Tenant context is resolved server-side from JWT — no client-side guard needed.
 
-  const statusMap: Record<string, string> = {
-    Active: t("entitlements.userSubscriptions.statusActive") || "Active",
-    Trialing: t("entitlements.userSubscriptions.statusTrialing") || "Trial",
-    Cancelled: t("entitlements.userSubscriptions.statusCancelled") || "Cancelled",
-    Expired: t("entitlements.userSubscriptions.statusExpired") || "Expired",
-  };
-
   const config: CrudConfig<UserSubscription> = useMemo(
-    () => ({
+    () => {
+      const statusMap: Record<string, string> = {
+        Free: t("entitlements.userSubscriptions.statusFree") || "Free",
+        Trial: t("entitlements.userSubscriptions.statusTrialing") || "Trial",
+        Active: t("entitlements.userSubscriptions.statusActive") || "Active",
+        PastDue: t("entitlements.userSubscriptions.statusPastDue") || "Past Due",
+        Cancelled: t("entitlements.userSubscriptions.statusCancelled") || "Cancelled",
+        Expired: t("entitlements.userSubscriptions.statusExpired") || "Expired",
+      };
+      return {
       titleKey: "entitlements.userSubscriptions.title",
       subtitleKey: "entitlements.userSubscriptions.description",
       resource: "user_subscriptions",
@@ -100,17 +102,25 @@ export function UserSubscriptionsView() {
       createFields: [
         {
           name: "userId",
-          label: t("entitlements.userSubscriptions.userId") || "User ID",
-          type: "text" as const,
+          label: t("entitlements.userSubscriptions.user") || "User",
+          type: "server-select" as const,
           required: true,
-          placeholder: t("entitlements.userSubscriptions.userIdPlaceholder") || "Enter the user's ID",
+          placeholder: t("entitlements.userSubscriptions.userSearchPlaceholder") || "Search by name or email…",
+          searchPlaceholder: t("entitlements.userSubscriptions.userSearchPlaceholder") || "Search by name or email…",
+          searchType: "server" as const,
+          onServerSearch: vm.searchUsers,
+          debounceMs: 300,
+          noResultsText: t("common.noResults") || "No users found",
+          searchingText: t("common.searching") || "Searching…",
+          description: t("entitlements.userSubscriptions.userSearchHint") || "Type at least 2 characters to search",
         },
         {
           name: "tenantPlanId",
-          label: t("entitlements.userSubscriptions.planId") || "Plan ID",
-          type: "text" as const,
+          label: t("entitlements.userSubscriptions.plan") || "Plan",
+          type: "select" as const,
           required: true,
-          placeholder: t("entitlements.userSubscriptions.planIdPlaceholder") || "Enter the plan ID to assign",
+          placeholder: t("entitlements.userSubscriptions.planPlaceholder") || "Select a plan…",
+          options: vm.availablePlans,
         },
         {
           name: "isAutoRenew",
@@ -122,7 +132,7 @@ export function UserSubscriptionsView() {
           name: "notes",
           label: t("entitlements.userSubscriptions.notes") || "Notes",
           type: "textarea" as const,
-          placeholder: t("entitlements.userSubscriptions.notesPlaceholder") || "Optional admin notes...",
+          placeholder: t("entitlements.userSubscriptions.notesPlaceholder") || "Optional admin notes…",
         },
       ],
       getItemDisplayName: (sub: UserSubscription) => `${sub.planName} (${sub.userId})`,
@@ -139,7 +149,7 @@ export function UserSubscriptionsView() {
           variant: "ghost" as const,
           className: "text-red-600 hover:text-red-700",
           icon: <XCircle className="h-4 w-4" />,
-          show: (item: UserSubscription) => item.isActive && !item.isCancelled,
+          show: (item: UserSubscription) => (item.isActive || item.isPastDue) && !item.isCancelled && !item.isExpired,
         },
         {
           label: tFn("entitlements.userSubscriptions.renew") || "Renew",
@@ -147,11 +157,13 @@ export function UserSubscriptionsView() {
           variant: "ghost" as const,
           className: "text-emerald-600 hover:text-emerald-700",
           icon: <RefreshCw className="h-4 w-4" />,
-          show: (item: UserSubscription) => item.isCancelled || item.isExpired,
+          show: (item: UserSubscription) => item.isCancelled,
         },
       ],
-    }),
-    [t, vm, statusMap]
+      };
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [t]
   );
 
   return <GenericCrudView viewModel={vm} config={config} />;

@@ -8,9 +8,12 @@ export interface UserSubscriptionData extends BaseEntity {
   tenantId: string;
   tenantPlanId: string;
   planName: string;
-  currency: string;
-  price: number;
-  billingCycle: string;
+  /** May be absent in list responses (only available in detail). */
+  currency?: string;
+  /** May be absent in list responses (only available in detail). */
+  price?: number;
+  /** May be absent in list responses (only available in detail). */
+  billingCycle?: string;
   status: string;
   startedAt: string;
   expiresAt?: string;
@@ -33,9 +36,9 @@ export class UserSubscription {
   get tenantId(): string { return this.data.tenantId; }
   get tenantPlanId(): string { return this.data.tenantPlanId; }
   get planName(): string { return this.data.planName; }
-  get currency(): string { return this.data.currency; }
-  get price(): number { return this.data.price; }
-  get billingCycle(): string { return this.data.billingCycle; }
+  get currency(): string { return this.data.currency ?? "USD"; }
+  get price(): number { return this.data.price ?? 0; }
+  get billingCycle(): string { return this.data.billingCycle ?? ""; }
   get status(): string { return this.data.status; }
   get startedAt(): string { return this.data.startedAt; }
   get expiresAt(): string | undefined { return this.data.expiresAt; }
@@ -51,15 +54,20 @@ export class UserSubscription {
   get updatedAt(): string | undefined { return this.data.updatedAt; }
 
   // ── Computed Properties ──
-  get isTrialing(): boolean { return this.data.status === "Trialing"; }
+  /** Matches backend UserSubscriptionStatus.Trial (serialized as "Trial", not "Trialing"). */
+  get isTrialing(): boolean { return this.data.status === "Trial"; }
   get isExpired(): boolean { return this.data.status === "Expired"; }
   get isCancelled(): boolean { return this.data.status === "Cancelled"; }
+  get isFree(): boolean { return this.data.status === "Free"; }
+  get isPastDue(): boolean { return this.data.status === "PastDue"; }
   get hasTrial(): boolean { return !!this.data.trialEndsAt; }
 
   get statusColor(): "success" | "warning" | "destructive" | "secondary" | "default" {
     switch (this.data.status) {
       case "Active": return "success";
-      case "Trialing": return "default";
+      case "Free": return "success";
+      case "Trial": return "default";
+      case "PastDue": return "warning";
       case "Cancelled": return "destructive";
       case "Expired": return "secondary";
       default: return "warning";
@@ -69,9 +77,9 @@ export class UserSubscription {
   get formattedPrice(): string {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
-      currency: this.data.currency || "USD",
+      currency: this.currency,
       minimumFractionDigits: 2,
-    }).format(this.data.price);
+    }).format(this.price);
   }
 
   copyWith(updates: Partial<UserSubscriptionData>): UserSubscription {

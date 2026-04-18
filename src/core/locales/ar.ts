@@ -1189,6 +1189,7 @@ export const ar = {
     edit_location_under: "تعديل الموقع تحت",
     root: "الجذر",
     loading: "جاري التحميل...",
+    searching: "جاري البحث...",
     noData: "لا توجد بيانات متاحة",
     error: "حدث خطأ",
     success: "تم بنجاح",
