@@ -1,10 +1,21 @@
 /**
- * TenantPlan Repository — uses Service + Mapper
+ * TenantPlan Repository — uses Service + Mapper (Elevated Tier 2)
+ *
+ * Repository calls Service (typed DTOs), maps results to Entities.
+ * NEVER imports IApiService or API_ENDPOINTS directly.
+ *
  * TenantId is resolved server-side from JWT context.
  */
 import type { ITenantPlanRepository } from "../../domain/interfaces/ITenantPlanRepository";
-import type { TenantPlan } from "../../domain/entities/TenantPlan";
-import type { CreateTenantPlanRequest, UpdateTenantPlanRequest } from "../../domain/entities/TenantPlanRequests";
+import type { TenantPlan, TenantFeatureDefinition, TenantPlanPromotion } from "../../domain/entities/TenantPlan";
+import type {
+  CreateTenantPlanRequest,
+  UpdateTenantPlanRequest,
+  CreateFeatureDefinitionRequest,
+  UpdateFeatureDefinitionRequest,
+  CreatePromotionRequest,
+  UpdatePromotionRequest,
+} from "../../domain/entities/TenantPlanRequests";
 import { TenantPlanMapper } from "../mappers/TenantPlanMapper";
 import type { ITenantPlanService } from "../../domain/interfaces/ITenantPlanService";
 import type { PagedResult, PaginationParams } from "@modules/identity/core/domain/types";
@@ -12,6 +23,7 @@ import type { PagedResult, PaginationParams } from "@modules/identity/core/domai
 export class TenantPlanRepository implements ITenantPlanRepository {
   constructor(private readonly service: ITenantPlanService) {}
 
+  // ── Plans ──
   async getAll(params: PaginationParams): Promise<PagedResult<TenantPlan>> {
     const result = await this.service.getAll(params);
     return {
@@ -31,17 +43,86 @@ export class TenantPlanRepository implements ITenantPlanRepository {
   }
 
   async create(request: CreateTenantPlanRequest): Promise<string> {
-    const json = TenantPlanMapper.toCreateJson(request);
-    const response = await this.service.create(json);
+    const response = await this.service.create(request);
     return response.id;
   }
 
   async update(id: string, request: UpdateTenantPlanRequest): Promise<void> {
-    const json = TenantPlanMapper.toUpdateJson(request);
-    await this.service.update(id, json);
+    await this.service.update(id, request);
   }
 
   async delete(id: string): Promise<void> {
     await this.service.delete(id);
+  }
+
+  async publish(id: string): Promise<void> {
+    await this.service.publish(id);
+  }
+
+  async archive(id: string): Promise<void> {
+    await this.service.archive(id);
+  }
+
+  // ── Feature Definitions ──
+  async getFeatureDefinitions(params: PaginationParams & { category?: string }): Promise<PagedResult<TenantFeatureDefinition>> {
+    const result = await this.service.getFeatureDefinitions(params);
+    return {
+      items: result.items.map((m) => TenantPlanMapper.toFeatureDefinitionEntity(m)),
+      totalCount: result.totalCount,
+      page: result.page,
+      pageSize: result.pageSize,
+      totalPages: result.totalPages,
+      hasNextPage: result.hasNextPage,
+      hasPreviousPage: result.hasPreviousPage,
+    };
+  }
+
+  async getActiveFeatureDefinitions(): Promise<TenantFeatureDefinition[]> {
+    const models = await this.service.getActiveFeatureDefinitions();
+    return models.map((m) => TenantPlanMapper.toFeatureDefinitionEntity(m));
+  }
+
+  async createFeatureDefinition(request: CreateFeatureDefinitionRequest): Promise<string> {
+    const response = await this.service.createFeatureDefinition(request);
+    return response.id;
+  }
+
+  async updateFeatureDefinition(id: string, request: UpdateFeatureDefinitionRequest): Promise<void> {
+    await this.service.updateFeatureDefinition(id, request);
+  }
+
+  async deleteFeatureDefinition(id: string): Promise<void> {
+    await this.service.deleteFeatureDefinition(id);
+  }
+
+  // ── Promotions ──
+  async getPromotions(params: PaginationParams & { planId?: string }): Promise<PagedResult<TenantPlanPromotion>> {
+    const result = await this.service.getPromotions(params);
+    return {
+      items: result.items.map((m) => TenantPlanMapper.toPromotionEntity(m)),
+      totalCount: result.totalCount,
+      page: result.page,
+      pageSize: result.pageSize,
+      totalPages: result.totalPages,
+      hasNextPage: result.hasNextPage,
+      hasPreviousPage: result.hasPreviousPage,
+    };
+  }
+
+  async createPromotion(request: CreatePromotionRequest): Promise<string> {
+    const response = await this.service.createPromotion(request);
+    return response.id;
+  }
+
+  async updatePromotion(id: string, request: UpdatePromotionRequest): Promise<void> {
+    await this.service.updatePromotion(id, request);
+  }
+
+  async deletePromotion(id: string): Promise<void> {
+    await this.service.deletePromotion(id);
+  }
+
+  async validatePromoCode(code: string, planId?: string): Promise<{ isValid: boolean; message?: string }> {
+    return this.service.validatePromoCode(code, planId);
   }
 }

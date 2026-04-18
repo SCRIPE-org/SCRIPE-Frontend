@@ -49,7 +49,7 @@ export class FeatureMapper {
             return new TenantEffectiveFeature(data);
       }
 
-      static toCreateJson(request: CreateFeatureRequest): Record<string, unknown> {
+      static toCreateJson(request: CreateFeatureRequest): CreateFeatureRequest {
             return {
                   name: request.name,
                   valueType: request.valueType,
@@ -64,7 +64,7 @@ export class FeatureMapper {
             };
       }
 
-      static toUpdateJson(request: UpdateFeatureRequest): Record<string, unknown> {
+      static toUpdateJson(request: UpdateFeatureRequest): UpdateFeatureRequest {
             return {
                   name: request.name,
                   defaultValue: request.defaultValue,

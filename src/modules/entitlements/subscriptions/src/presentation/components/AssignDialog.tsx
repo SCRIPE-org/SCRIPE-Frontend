@@ -46,7 +46,7 @@ export function AssignDialog({ vm, editionsVm }: SubscriptionEditionDialogProps)
                 label: ed.displayNameEn || ed.name,
               }))}
               value={vm.selectedEditionId}
-              onValueChange={(v: any) => vm.setSelectedEditionId(v as string)}
+              onValueChange={(v: string) => vm.setSelectedEditionId(v)}
               placeholder={t("entitlements.editions.editionName")}
             />
           </div>

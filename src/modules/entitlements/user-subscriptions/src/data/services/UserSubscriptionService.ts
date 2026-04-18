@@ -1,10 +1,13 @@
 /**
  * UserSubscription Service — API calls only
+ *
+ * Implements IUserSubscriptionService with typed request DTOs.
  * TenantId is resolved server-side from JWT context.
  */
 import type { IApiService } from "@core/interfaces/api.interface";
-import type { IUserSubscriptionService } from "../../domain/interfaces/IUserSubscriptionService";
+import type { IUserSubscriptionService, UserSearchDto } from "../../domain/interfaces/IUserSubscriptionService";
 import type { UserSubscriptionModel, UserSubscriptionListModel } from "../models/UserSubscriptionModels";
+import type { CreateUserSubscriptionRequest } from "../../domain/entities/UserSubscriptionRequests";
 import type { PagedResult, PaginationParams } from "@modules/identity/core/domain/types";
 import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
 
@@ -37,7 +40,7 @@ export class UserSubscriptionService implements IUserSubscriptionService {
     }
   }
 
-  async create(data: Record<string, unknown>): Promise<{ id: string }> {
+  async create(data: CreateUserSubscriptionRequest): Promise<{ id: string }> {
     return this.api.post<{ id: string }>(API_ENDPOINTS.ENTITLEMENTS.USER_SUBSCRIPTIONS.CREATE, data);
   }
 
@@ -47,5 +50,26 @@ export class UserSubscriptionService implements IUserSubscriptionService {
 
   async renew(id: string): Promise<void> {
     await this.api.post(API_ENDPOINTS.ENTITLEMENTS.USER_SUBSCRIPTIONS.RENEW(id), {});
+  }
+
+  /**
+   * Search users by name or email for the Create form user combobox.
+   * Queries the existing USERS.LIST endpoint — returns the encrypted user ID
+   * plus display name and email.
+   */
+  async searchUsers(query: string): Promise<UserSearchDto[]> {
+    const url = buildUrl(API_ENDPOINTS.USERS.LIST, {
+      search: query,
+      page: 1,
+      pageSize: 20,
+    });
+    const result = await this.api.get<{
+      items: { id: string; name: string; email: string }[];
+    }>(url);
+    return (result.items ?? []).map((u) => ({
+      id: u.id,
+      name: u.name ?? "",
+      email: u.email ?? "",
+    }));
   }
 }

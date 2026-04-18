@@ -7,12 +7,13 @@
 import type { PagedResult, PaginationParams } from "@modules/identity/core/domain/types";
 import type { EditionModel, EditionVersionModel } from "../../data/models/EditionModels";
 import type { EditionPromotionData, CreatePromotionRequest, UpdatePromotionRequest, PromoCodeValidationResult } from "../entities/EditionPromotion";
+import type { CreateEditionRequest, UpdateEditionRequest } from "../entities/EditionRequests";
 
 export interface IEditionService {
       getAll(params: PaginationParams & { includeRetired?: boolean }): Promise<PagedResult<EditionModel>>;
       getById(id: string): Promise<EditionModel>;
-      create(data: Record<string, unknown>): Promise<{ id: string }>;
-      update(id: string, data: Record<string, unknown>): Promise<void>;
+      create(data: CreateEditionRequest): Promise<{ id: string }>;
+      update(id: string, data: UpdateEditionRequest): Promise<void>;
       delete(id: string): Promise<void>;
       setFeatureValue(editionId: string, featureId: string, value: string): Promise<void>;
 

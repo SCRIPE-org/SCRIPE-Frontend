@@ -7,12 +7,13 @@
  */
 import type { PagedResult, PaginationParams } from "@modules/identity/core/domain/types";
 import type { FeatureModel, TenantEffectiveFeatureModel } from "../../data/models/FeatureModels";
+import type { CreateFeatureRequest, UpdateFeatureRequest } from "../entities/FeatureRequests";
 
 export interface IFeatureService {
       getAll(params: PaginationParams): Promise<PagedResult<FeatureModel>>;
       getById(id: string): Promise<FeatureModel>;
-      create(data: Record<string, unknown>): Promise<{ id: string }>;
-      update(id: string, data: Record<string, unknown>): Promise<void>;
+      create(data: CreateFeatureRequest): Promise<{ id: string }>;
+      update(id: string, data: UpdateFeatureRequest): Promise<void>;
       delete(id: string): Promise<void>;
       getTenantResolvedFeatures(tenantId: string): Promise<TenantEffectiveFeatureModel[]>;
       getEffective(tenantId?: string): Promise<TenantEffectiveFeatureModel[]>;

@@ -45,13 +45,13 @@ export class EditionMapper {
             return new EditionVersion(model);
       }
 
-      static toCreateJson(request: CreateEditionRequest): Record<string, unknown> {
+      static toCreateJson(request: CreateEditionRequest): CreateEditionRequest {
             return {
                   name: request.name,
                   displayNameEn: request.displayNameEn,
                   displayNameAr: request.displayNameAr,
                   description: request.description,
-                  fallbackEditionId: request.fallbackEditionId || null,
+                  fallbackEditionId: request.fallbackEditionId || undefined,
                   tierLevel: request.tierLevel ?? 0,
                   // ── Billing Controls ──
                   allowMonthly: request.allowMonthly ?? true,
@@ -65,13 +65,13 @@ export class EditionMapper {
             };
       }
 
-      static toUpdateJson(request: UpdateEditionRequest): Record<string, unknown> {
-            const json: Record<string, unknown> = {
+      static toUpdateJson(request: UpdateEditionRequest): UpdateEditionRequest {
+            const json: UpdateEditionRequest = {
                   name: request.name,
                   displayNameEn: request.displayNameEn,
                   displayNameAr: request.displayNameAr,
                   description: request.description,
-                  fallbackEditionId: request.fallbackEditionId || null,
+                  fallbackEditionId: request.fallbackEditionId || undefined,
                   overflowPolicy: request.overflowPolicy || 'Block',
                   tierLevel: request.tierLevel,
             };

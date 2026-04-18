@@ -65,7 +65,7 @@ export function useUserSubscriptionsViewModel() {
     .filter((p) => p.isActive)
     .map((p) => ({
       value: p.id,
-      label: `${p.name} (${p.billingCycle}${p.price > 0 ? ` · ${p.currency} ${p.price}` : " · Free"})`,
+      label: `${p.name} (${p.supportedCycles.join(", ") || "No cycles"} · ${p.formattedStartingPrice})`,
     }));
 
   // ── Server-Search for Users (debounced combobox in Create form) ──────────────

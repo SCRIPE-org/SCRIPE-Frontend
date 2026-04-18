@@ -43,6 +43,8 @@ import type { IEditionService } from "./editions/src/domain/interfaces/IEditionS
 import type { IOverrideService } from "./overrides/src/domain/interfaces/IOverrideService";
 import type { ISubscriptionService } from "./subscriptions/src/domain/interfaces/ISubscriptionService";
 import type { IBillingService } from "./billing/src/domain/interfaces/IBillingService";
+import type { ITenantPlanService } from "./tenant-plans/src/domain/interfaces/ITenantPlanService";
+import type { IUserSubscriptionService } from "./user-subscriptions/src/domain/interfaces/IUserSubscriptionService";
 
 export interface EntitlementsContainer {
       featureRepository: IFeatureRepository;
@@ -69,6 +71,8 @@ export function getEntitlementsContainer(): EntitlementsContainer {
             const overrideService: IOverrideService = new OverrideService(apiService);
             const subscriptionService: ISubscriptionService = new SubscriptionService(apiService);
             const billingService: IBillingService = new BillingService(apiService);
+            const tenantPlanService: ITenantPlanService = new TenantPlanService(apiService);
+            const userSubscriptionService: IUserSubscriptionService = new UserSubscriptionService(apiService);
 
             // ── Create Repositories (IService → IRepository mapping) ──
             _container = {
@@ -77,8 +81,8 @@ export function getEntitlementsContainer(): EntitlementsContainer {
                   overrideRepository: new OverrideRepository(overrideService),
                   subscriptionRepository: new SubscriptionRepository(subscriptionService),
                   billingRepository: new BillingRepository(billingService),
-                  tenantPlanRepository: new TenantPlanRepository(new TenantPlanService(apiService)),
-                  userSubscriptionRepository: new UserSubscriptionRepository(new UserSubscriptionService(apiService), apiService),
+                  tenantPlanRepository: new TenantPlanRepository(tenantPlanService),
+                  userSubscriptionRepository: new UserSubscriptionRepository(userSubscriptionService),
             };
       }
 

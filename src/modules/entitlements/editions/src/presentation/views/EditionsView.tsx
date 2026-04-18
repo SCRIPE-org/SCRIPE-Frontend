@@ -313,7 +313,7 @@ export function EditionsView() {
                   }),
                   getItemDisplayName: (edition: Edition) => edition.getDisplayName(language),
                   deleteService: (id: string) => vm.deleteItem(id),
-                  getActions: (vmInstance: any, tFn: any, handleDeleteFn: any): CrudAction<Edition>[] => [
+                  getActions: (vmInstance: ReturnType<typeof useEditionsViewModel>, tFn: (key: string) => string, handleDeleteFn: ((item: Edition) => void) | undefined): CrudAction<Edition>[] => [
                         {
                               label: tFn("common.view") || "View",
                               onClick: (item: Edition) => vmInstance.openViewModal(item),

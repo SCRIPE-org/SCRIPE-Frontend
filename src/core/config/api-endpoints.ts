@@ -399,6 +399,26 @@ export const API_ENDPOINTS = {
       CREATE: `${V1}/tenant-plans`,
       UPDATE: (id: string) => `${V1}/tenant-plans/${id}`,
       DELETE: (id: string) => `${V1}/tenant-plans/${id}`,
+      PUBLISH: (id: string) => `${V1}/tenant-plans/${id}/publish`,
+      ARCHIVE: (id: string) => `${V1}/tenant-plans/${id}/archive`,
+    },
+    // ===== TENANT FEATURE DEFINITIONS (Tier 2 Feature Catalog) =====
+    TENANT_FEATURE_DEFINITIONS: {
+      LIST: `${V1}/tenant-feature-definitions`,
+      ACTIVE: `${V1}/tenant-feature-definitions/active`,
+      BY_ID: (id: string) => `${V1}/tenant-feature-definitions/${id}`,
+      CREATE: `${V1}/tenant-feature-definitions`,
+      UPDATE: (id: string) => `${V1}/tenant-feature-definitions/${id}`,
+      DELETE: (id: string) => `${V1}/tenant-feature-definitions/${id}`,
+    },
+    // ===== TENANT PLAN PROMOTIONS (Tier 2 Promo Codes) =====
+    TENANT_PLAN_PROMOTIONS: {
+      LIST: `${V1}/tenant-plan-promotions`,
+      BY_ID: (id: string) => `${V1}/tenant-plan-promotions/${id}`,
+      CREATE: `${V1}/tenant-plan-promotions`,
+      UPDATE: (id: string) => `${V1}/tenant-plan-promotions/${id}`,
+      DELETE: (id: string) => `${V1}/tenant-plan-promotions/${id}`,
+      VALIDATE: `${V1}/tenant-plan-promotions/validate`,
     },
     // ===== USER SUBSCRIPTIONS (Tier 2)  =====
     USER_SUBSCRIPTIONS: {

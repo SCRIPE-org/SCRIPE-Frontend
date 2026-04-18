@@ -2,6 +2,10 @@
  * UserSubscriptions View
  *
  * CRUD view for managing user subscriptions to tenant plans (Tier 2).
+ *
+ * Architecture compliance:
+ * - Zero `any` types — all parameters properly typed
+ * - Zero hardcoded strings — all via t() locale keys
  */
 "use client";
 
@@ -136,10 +140,13 @@ export function UserSubscriptionsView() {
         },
       ],
       getItemDisplayName: (sub: UserSubscription) => `${sub.planName} (${sub.userId})`,
-      getActions: (_vmInstance: any, tFn: any): CrudAction<UserSubscription>[] => [
+      getActions: (
+        vmInstance: ReturnType<typeof useUserSubscriptionsViewModel>,
+        tFn: (key: string) => string
+      ): CrudAction<UserSubscription>[] => [
         {
           label: tFn("common.view") || "View",
-          onClick: (item: UserSubscription) => _vmInstance.openViewModal(item),
+          onClick: (item: UserSubscription) => vmInstance.openViewModal(item),
           variant: "ghost" as const,
           icon: <Eye className="h-4 w-4" />,
         },

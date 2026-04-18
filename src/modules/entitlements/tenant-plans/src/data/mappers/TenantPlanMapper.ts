@@ -1,10 +1,19 @@
 /**
  * TenantPlan Mapper — Model ↔ Entity conversion
+ *
+ * Elevated Tier 2 Architecture: maps pricing matrix, feature catalog,
+ * version snapshots, and lifecycle status.
  */
-import { TenantPlan } from "../../domain/entities/TenantPlan";
-import type { TenantPlanData } from "../../domain/entities/TenantPlan";
-import type { TenantPlanModel, TenantPlanListModel } from "../models/TenantPlanModels";
-import type { CreateTenantPlanRequest, UpdateTenantPlanRequest } from "../../domain/entities/TenantPlanRequests";
+import { TenantPlan, TenantFeatureDefinition, TenantPlanPromotion } from "../../domain/entities/TenantPlan";
+import type { TenantPlanData, TenantFeatureDefinitionData, TenantPlanPromotionData } from "../../domain/entities/TenantPlan";
+import type {
+  TenantPlanModel,
+  TenantPlanListModel,
+  TenantFeatureDefinitionModel,
+  TenantFeatureDefinitionListModel,
+  TenantPlanPromotionModel,
+  TenantPlanPromotionListModel,
+} from "../models/TenantPlanModels";
 
 export class TenantPlanMapper {
   static toEntity(model: TenantPlanModel): TenantPlan {
@@ -12,17 +21,34 @@ export class TenantPlanMapper {
       id: model.id,
       tenantId: model.tenantId,
       name: model.name ?? "",
+      displayNameEn: model.displayNameEn,
+      displayNameAr: model.displayNameAr,
       description: model.description,
-      price: model.price ?? 0,
-      currency: model.currency ?? "USD",
-      billingCycle: model.billingCycle ?? "Monthly",
+      tagline: model.tagline,
+      status: model.status ?? "Draft",
       isActive: model.isActive ?? true,
       isPublic: model.isPublic ?? true,
-      trialDays: model.trialDays ?? 0,
+      badgeText: model.badgeText,
+      color: model.color,
+      iconName: model.iconName,
+      maxSubscribers: model.maxSubscribers,
       maxUsers: model.maxUsers ?? -1,
+      allowMonthly: model.allowMonthly ?? true,
+      allowYearly: model.allowYearly ?? false,
+      allowLifetime: model.allowLifetime ?? false,
+      allowTrial: model.allowTrial ?? false,
+      isSelfServiceEnabled: model.isSelfServiceEnabled ?? false,
+      isContactSalesOnly: model.isContactSalesOnly ?? false,
+      trialDays: model.trialDays ?? 0,
+      gracePeriodDays: model.gracePeriodDays ?? 0,
+      fallbackPlanId: model.fallbackPlanId,
+      tierLevel: model.tierLevel ?? 0,
       sortOrder: model.sortOrder ?? 0,
+      currentVersion: model.currentVersion ?? 0,
       activeSubscriberCount: model.activeSubscriberCount ?? 0,
       features: model.features ?? [],
+      prices: model.prices ?? [],
+      versions: model.versions ?? [],
       createdAt: model.createdAt,
       updatedAt: model.updatedAt,
     };
@@ -34,49 +60,76 @@ export class TenantPlanMapper {
       id: model.id,
       tenantId,
       name: model.name ?? "",
+      displayNameEn: model.displayNameEn,
+      displayNameAr: model.displayNameAr,
       description: model.description,
-      price: model.price ?? 0,
-      currency: model.currency ?? "USD",
-      billingCycle: model.billingCycle ?? "Monthly",
+      status: model.status ?? "Draft",
       isActive: model.isActive ?? true,
       isPublic: model.isPublic ?? true,
-      trialDays: model.trialDays ?? 0,
+      badgeText: model.badgeText,
+      color: model.color,
       maxUsers: model.maxUsers ?? -1,
+      allowMonthly: model.allowMonthly ?? true,
+      allowYearly: model.allowYearly ?? false,
+      allowLifetime: model.allowLifetime ?? false,
+      allowTrial: model.allowTrial ?? false,
+      isSelfServiceEnabled: false,
+      isContactSalesOnly: false,
+      trialDays: model.trialDays ?? 0,
+      gracePeriodDays: 0,
+      tierLevel: model.tierLevel ?? 0,
       sortOrder: model.sortOrder ?? 0,
+      currentVersion: model.currentVersion ?? 0,
       activeSubscriberCount: model.activeSubscriberCount ?? 0,
       createdAt: model.createdAt,
     };
     return new TenantPlan(data);
   }
 
-  static toCreateJson(request: CreateTenantPlanRequest): Record<string, unknown> {
-    return {
-      name: request.name,
-      description: request.description || null,
-      price: request.price,
-      currency: request.currency ?? "USD",
-      billingCycle: request.billingCycle ?? "Monthly",
-      isPublic: request.isPublic ?? true,
-      trialDays: request.trialDays ?? 0,
-      maxUsers: request.maxUsers ?? -1,
-      sortOrder: request.sortOrder ?? 0,
-      features: request.features ?? [],
+  // ── Feature Definition Mappers ──
+  static toFeatureDefinitionEntity(model: TenantFeatureDefinitionModel | TenantFeatureDefinitionListModel): TenantFeatureDefinition {
+    const data: TenantFeatureDefinitionData = {
+      id: model.id,
+      tenantId: "tenantId" in model ? model.tenantId : undefined,
+      key: model.key ?? "",
+      displayNameEn: model.displayNameEn,
+      displayNameAr: model.displayNameAr,
+      valueType: model.valueType ?? "Boolean",
+      defaultValue: model.defaultValue,
+      category: model.category,
+      description: "description" in model ? model.description : undefined,
+      sortOrder: model.sortOrder ?? 0,
+      isActive: model.isActive ?? true,
+      planUsageCount: model.planUsageCount ?? 0,
+      createdAt: model.createdAt,
+      updatedAt: "updatedAt" in model ? model.updatedAt : undefined,
     };
+    return new TenantFeatureDefinition(data);
   }
 
-  static toUpdateJson(request: UpdateTenantPlanRequest): Record<string, unknown> {
-    return {
-      name: request.name,
-      description: request.description || null,
-      price: request.price,
-      currency: request.currency,
-      billingCycle: request.billingCycle,
-      isActive: request.isActive,
-      isPublic: request.isPublic,
-      trialDays: request.trialDays,
-      maxUsers: request.maxUsers,
-      sortOrder: request.sortOrder,
-      features: request.features ?? [],
+  // ── Promotion Mappers ──
+  static toPromotionEntity(model: TenantPlanPromotionModel | TenantPlanPromotionListModel): TenantPlanPromotion {
+    const data: TenantPlanPromotionData = {
+      id: model.id,
+      tenantPlanId: "tenantPlanId" in model ? model.tenantPlanId : undefined,
+      tenantPlanName: model.tenantPlanName,
+      code: model.code ?? "",
+      description: "description" in model ? model.description : undefined,
+      discountType: model.discountType ?? "Percentage",
+      discountValue: model.discountValue ?? 0,
+      maxRedemptions: model.maxRedemptions,
+      currentRedemptions: model.currentRedemptions ?? 0,
+      startsAt: model.startsAt ?? "",
+      expiresAt: model.expiresAt,
+      isActive: model.isActive ?? true,
+      minimumAmount: "minimumAmount" in model ? model.minimumAmount : undefined,
+      applicableCycles: "applicableCycles" in model ? model.applicableCycles : undefined,
+      isAutoApplied: model.isAutoApplied ?? false,
+      isStackable: "isStackable" in model ? model.isStackable : false,
+      isValid: model.isValid ?? true,
+      createdAt: model.createdAt,
+      updatedAt: "updatedAt" in model ? model.updatedAt : undefined,
     };
+    return new TenantPlanPromotion(data);
   }
 }

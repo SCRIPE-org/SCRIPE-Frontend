@@ -4,7 +4,6 @@
 import { UserSubscription } from "../../domain/entities/UserSubscription";
 import type { UserSubscriptionData } from "../../domain/entities/UserSubscription";
 import type { UserSubscriptionModel, UserSubscriptionListModel } from "../models/UserSubscriptionModels";
-import type { CreateUserSubscriptionRequest } from "../../domain/entities/UserSubscriptionRequests";
 
 export class UserSubscriptionMapper {
   static toEntity(model: UserSubscriptionModel): UserSubscription {
@@ -55,13 +54,5 @@ export class UserSubscriptionMapper {
     };
     return new UserSubscription(data);
   }
-
-  static toCreateJson(request: CreateUserSubscriptionRequest): Record<string, unknown> {
-    return {
-      userId: request.userId,
-      tenantPlanId: request.tenantPlanId,
-      isAutoRenew: request.isAutoRenew ?? true,
-      notes: request.notes || null,
-    };
-  }
 }
+

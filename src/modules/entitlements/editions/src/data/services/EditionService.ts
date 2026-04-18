@@ -9,6 +9,7 @@ import type { EditionModel, EditionVersionModel } from "../models/EditionModels"
 import type { PagedResult, PaginationParams } from "@modules/identity/core/domain/types";
 import { API_ENDPOINTS } from "@core/config/api-endpoints";
 import type { EditionPromotionData, CreatePromotionRequest, UpdatePromotionRequest, PromoCodeValidationResult } from "../../domain/entities/EditionPromotion";
+import type { CreateEditionRequest, UpdateEditionRequest } from "../../domain/entities/EditionRequests";
 
 export class EditionService implements IEditionService {
       constructor(private readonly api: IApiService) { }
@@ -26,11 +27,11 @@ export class EditionService implements IEditionService {
             return this.api.get<EditionModel>(API_ENDPOINTS.ENTITLEMENTS.EDITIONS.BY_ID(id));
       }
 
-      async create(data: Record<string, unknown>): Promise<{ id: string }> {
+      async create(data: CreateEditionRequest): Promise<{ id: string }> {
             return this.api.post<{ id: string }>(API_ENDPOINTS.ENTITLEMENTS.EDITIONS.CREATE, data);
       }
 
-      async update(id: string, data: Record<string, unknown>): Promise<void> {
+      async update(id: string, data: UpdateEditionRequest): Promise<void> {
             await this.api.put(API_ENDPOINTS.ENTITLEMENTS.EDITIONS.UPDATE(id), data);
       }
 

@@ -9,6 +9,7 @@ import type { IFeatureService } from "../../domain/interfaces/IFeatureService";
 import type { FeatureModel, TenantEffectiveFeatureModel } from "../models/FeatureModels";
 import type { PagedResult, PaginationParams } from "@modules/identity/core/domain/types";
 import { API_ENDPOINTS } from "@core/config/api-endpoints";
+import type { CreateFeatureRequest, UpdateFeatureRequest } from "../../domain/entities/FeatureRequests";
 
 export class FeatureService implements IFeatureService {
       constructor(private readonly api: IApiService) { }
@@ -25,11 +26,11 @@ export class FeatureService implements IFeatureService {
             return this.api.get<FeatureModel>(API_ENDPOINTS.ENTITLEMENTS.FEATURES.BY_ID(id));
       }
 
-      async create(data: Record<string, unknown>): Promise<{ id: string }> {
+      async create(data: CreateFeatureRequest): Promise<{ id: string }> {
             return this.api.post<{ id: string }>(API_ENDPOINTS.ENTITLEMENTS.FEATURES.CREATE, data);
       }
 
-      async update(id: string, data: Record<string, unknown>): Promise<void> {
+      async update(id: string, data: UpdateFeatureRequest): Promise<void> {
             await this.api.put(API_ENDPOINTS.ENTITLEMENTS.FEATURES.UPDATE(id), data);
       }
 

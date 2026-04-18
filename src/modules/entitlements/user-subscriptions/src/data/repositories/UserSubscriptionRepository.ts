@@ -1,5 +1,9 @@
 /**
  * UserSubscription Repository — uses Service + Mapper
+ *
+ * Repository calls Service (typed DTOs), maps results to Entities.
+ * NEVER imports IApiService or API_ENDPOINTS directly.
+ *
  * TenantId is resolved server-side from JWT context.
  */
 import type { IUserSubscriptionRepository, UserSearchResult } from "../../domain/interfaces/IUserSubscriptionRepository";
@@ -8,14 +12,9 @@ import type { CreateUserSubscriptionRequest } from "../../domain/entities/UserSu
 import { UserSubscriptionMapper } from "../mappers/UserSubscriptionMapper";
 import type { IUserSubscriptionService } from "../../domain/interfaces/IUserSubscriptionService";
 import type { PagedResult, PaginationParams } from "@modules/identity/core/domain/types";
-import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
-import type { IApiService } from "@core/interfaces/api.interface";
 
 export class UserSubscriptionRepository implements IUserSubscriptionRepository {
-  constructor(
-    private readonly service: IUserSubscriptionService,
-    private readonly api: IApiService
-  ) {}
+  constructor(private readonly service: IUserSubscriptionService) {}
 
   async getAll(
     params: PaginationParams & { planId?: string; status?: string }
@@ -43,8 +42,7 @@ export class UserSubscriptionRepository implements IUserSubscriptionRepository {
   }
 
   async create(request: CreateUserSubscriptionRequest): Promise<string> {
-    const json = UserSubscriptionMapper.toCreateJson(request);
-    const response = await this.service.create(json);
+    const response = await this.service.create(request);
     return response.id;
   }
 
@@ -57,23 +55,15 @@ export class UserSubscriptionRepository implements IUserSubscriptionRepository {
   }
 
   /**
-   * Search users by name or email for the Create form user combobox (GAP-3).
-   * Queries the existing USERS.LIST endpoint with a search param — returns the
-   * encrypted user ID (as-is from backend) plus display name and email.
+   * Search users by name or email for the Create form user combobox.
+   * Delegates to Service (which makes the actual HTTP call).
    */
   async searchUsers(query: string): Promise<UserSearchResult[]> {
-    const url = buildUrl(API_ENDPOINTS.USERS.LIST, {
-      search: query,
-      page: 1,
-      pageSize: 20, // Limit combobox results to 20 — enough for any search
-    });
-    const result = await this.api.get<{
-      items: { id: string; name: string; email: string }[];
-    }>(url);
-    return (result.items ?? []).map((u) => ({
+    const dtos = await this.service.searchUsers(query);
+    return dtos.map((u) => ({
       id: u.id,
-      name: u.name ?? "",
-      email: u.email ?? "",
+      name: u.name,
+      email: u.email,
     }));
   }
 }
