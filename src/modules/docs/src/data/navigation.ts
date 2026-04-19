@@ -77,6 +77,7 @@ export const navigationData: DocCategoryData[] = [
       { id: "feat-login-page-builder", titleKey: "features.loginPageBuilder.title", slug: "features/login-page-builder", order: 18 },
       { id: "feat-dashboard-builder", titleKey: "features.dashboardBuilder.title", slug: "features/dashboard-builder", order: 19 },
       { id: "feat-dashboard-hub", titleKey: "features.dashboardHub.title", slug: "features/dashboard-hub", order: 20 },
+      { id: "feat-tenant-context-gate", titleKey: "features.tenantContextGate.title", slug: "features/tenant-context-gate", order: 21 },
     ],
   },
 
@@ -182,6 +183,11 @@ export const navigationData: DocCategoryData[] = [
           { id: "mod-ent-subscriptions", titleKey: "modules.subscriptions.title", slug: "modules/subscriptions", order: 3 },
           { id: "mod-ent-features", titleKey: "modules.features.title", slug: "modules/features", order: 4 },
           { id: "mod-ent-overrides", titleKey: "modules.overrides.title", slug: "modules/overrides", order: 5 },
+          { id: "mod-ent-billing", titleKey: "modules.billingEngine.title", slug: "modules/billing-engine", order: 6 },
+          { id: "mod-ent-invoices", titleKey: "modules.invoices.title", slug: "modules/invoices", order: 7 },
+          { id: "mod-ent-dunning", titleKey: "modules.dunning.title", slug: "modules/dunning", order: 8 },
+          { id: "mod-ent-tenant-plans", titleKey: "modules.tenantPlans.title", slug: "modules/tenant-plans", order: 9 },
+          { id: "mod-ent-user-subs", titleKey: "modules.userSubscriptions.title", slug: "modules/user-subscriptions", order: 10 },
         ],
       },
       // Future modules:
@@ -349,6 +355,9 @@ export const navigationData: DocCategoryData[] = [
           { id: "comm-mod-ent-subscriptions", titleKey: "commercial.entSubscriptions.title", slug: "commercial/entitlements-subscriptions", order: 3 },
           { id: "comm-mod-ent-features", titleKey: "commercial.entFeatures.title", slug: "commercial/entitlements-features", order: 4 },
           { id: "comm-mod-ent-overrides", titleKey: "commercial.entOverrides.title", slug: "commercial/entitlements-overrides", order: 5 },
+          { id: "comm-mod-billing", titleKey: "Billing & Payments", slug: "commercial/billing-payments", order: 6 },
+          { id: "comm-mod-tenant-plans", titleKey: "Tenant Plans", slug: "commercial/entitlements-tenant-plans", order: 7 },
+          { id: "comm-mod-user-subs", titleKey: "User Subscriptions", slug: "commercial/entitlements-user-subscriptions", order: 8 },
         ],
       },
       // Future commercial modules:

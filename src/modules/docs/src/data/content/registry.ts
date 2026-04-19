@@ -48,6 +48,7 @@ import "./features/multi-page-branding";
 import "./features/login-page-builder";
 import "./features/dashboard-builder";
 import "./features/dashboard-hub";
+import "./features/tenant-context-gate";
 
 // Modules (Entitlements)
 import "./modules/entitlements-overview";
@@ -55,6 +56,13 @@ import "./modules/editions";
 import "./modules/subscriptions";
 import "./modules/features";
 import "./modules/overrides";
+
+// Modules (Billing & Tier 2 — Phases 0–9)
+import "./modules/billing-engine";
+import "./modules/invoices";
+import "./modules/dunning";
+import "./modules/tenant-plans";
+import "./modules/user-subscriptions";
 
 // Security
 import "./security/overview";
@@ -175,3 +183,8 @@ import "./commercial/entitlements-editions";
 import "./commercial/entitlements-subscriptions";
 import "./commercial/entitlements-features";
 import "./commercial/entitlements-overrides";
+
+// Modules (Commercial Billing & Tier 2 — Phases 0–9)
+import "./commercial/billing-payments";
+import "./commercial/entitlements-tenant-plans";
+import "./commercial/entitlements-user-subscriptions";

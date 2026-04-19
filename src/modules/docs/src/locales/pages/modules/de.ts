@@ -225,7 +225,7 @@ export const de = {
         set: "Eine Funktions-Überschreibung für einen Mandanten festlegen oder aktualisieren",
         remove: "Eine Funktions-Überschreibung entfernen (deaktivieren)",
         resolved: "Alle aufgelösten Funktionswerte für einen Mandanten abrufen (zeigt Quelle: Override/Edition/Default)",
-      },
-    },
-  },
+      }
+    }
+  }
 };

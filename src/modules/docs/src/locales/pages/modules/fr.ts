@@ -220,12 +220,22 @@ export const fr = {
       bestPracticesTitle: "Bonnes Pratiques",
       bestPracticesIntro: "Suivez ces directives pour garder votre système de surcharges maintenable et auditable.",
       bestPracticesWarning: "Les surcharges doivent être utilisées avec parcimonie. Si de nombreux locataires ont besoin de la même surcharge, envisagez plutôt de créer une nouvelle édition. L'abus de surcharges rend le système plus difficile à gérer et crée une dette technique de maintenance.",
+      historyTitle: "Historique des Surcharges",
+      historyIntro: "Le système conserve un historique complet des modifications de surcharges, permettant d'identifier qui a effectué une modification et pourquoi.",
+      bulkTitle: "Gestion en Masse",
+      bulkIntro: "Les administrateurs peuvent appliquer des surcharges à plusieurs locataires simultanément pour des mises à jour rapides à l'échelle de la plateforme.",
+      importTitle: "Import/Export de Surcharges",
+      importIntro: "Prise en charge de l'importation de surcharges via des fichiers CSV pour les configurations complexes nécessitant une préparation hors ligne.",
+      validationTitle: "Validation des Surcharges",
+      validationIntro: "Les nouvelles surcharges sont validées par rapport aux limites de l'édition actuelle pour prévenir toute configuration invalide.",
+      errorTitle: "Gestion des Erreurs",
+      errorIntro: "Les erreurs de résolution des surcharges sont journalisées avec des détails sur la fonctionnalité en conflit et le contexte du locataire pour un dépannage rapide.",
       ep: {
-        list: "Lister toutes les surcharges pour un locataire spécifique",
-        set: "Définir ou mettre à jour une surcharge de fonctionnalité pour un locataire",
-        remove: "Supprimer (désactiver) une surcharge de fonctionnalité",
-        resolved: "Obtenir toutes les valeurs de fonctionnalités résolues pour un locataire (indique la source : Surcharge/Édition/Défaut)",
-      },
-    },
-  },
+        list: "Lister toutes les dérogations pour un locataire spécifique",
+        set: "Définir ou mettre à jour une dérogation de fonctionnalité pour un locataire",
+        remove: "Supprimer (désactiver) une dérogation de fonctionnalité",
+        resolved: "Obtenir toutes les valeurs de fonctionnalités résolues pour un locataire (affiche la source : Dérogation/Édition/Défaut)",
+      }
+    }
+  }
 };

@@ -225,7 +225,7 @@ export const es = {
         set: "Establecer o actualizar una sobreescritura de función para un inquilino",
         remove: "Eliminar (desactivar) una sobreescritura de función",
         resolved: "Obtener todos los valores de funciones resueltas para un inquilino (muestra la fuente: Sobreescritura/Edición/Predeterminado)",
-      },
-    },
-  },
+      }
+    }
+  }
 };
