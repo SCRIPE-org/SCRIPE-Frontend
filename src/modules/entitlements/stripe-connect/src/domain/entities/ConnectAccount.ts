@@ -134,12 +134,17 @@ export class Commission {
 
   get id(): string { return this.data.id; }
   get tenantId(): string { return this.data.tenantId; }
+  get userSubscriptionId(): string { return this.data.userSubscriptionId; }
+  get stripePaymentIntentId(): string { return this.data.stripePaymentIntentId; }
   get grossAmount(): number { return this.data.grossAmount; }
   get commissionAmount(): number { return this.data.commissionAmount; }
   get commissionRate(): number { return this.data.commissionRate; }
   get netAmount(): number { return this.data.netAmount; }
   get currency(): string { return this.data.currency; }
   get status(): string { return this.data.status; }
+  get collectedAt(): string | undefined { return this.data.collectedAt; }
+  get refundedAt(): string | undefined { return this.data.refundedAt; }
+  get refundedAmount(): number | undefined { return this.data.refundedAmount; }
   get createdAt(): string { return this.data.createdAt; }
 
   get isCollected(): boolean { return this.data.status === "Collected"; }

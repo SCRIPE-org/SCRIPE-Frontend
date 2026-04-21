@@ -12,6 +12,8 @@
  * - Zero `any` types
  * - Zero hardcoded strings — all via t() locale keys
  * - No direct IApiService imports — all through viewmodel → repository
+ * - Tenant search delegated to vm.handleTenantSearch
+ *   (routes: connectRepository.searchEligibleTenants → GET /api/v1/stripe-connect/accounts/eligible-tenants)
  */
 "use client";
 
@@ -46,7 +48,6 @@ export function ConnectOnboardingView() {
   const vm = useConnectViewModel();
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [targetTenantId, setTargetTenantId] = useState("");
-
 
   return (
     <div className="p-6 space-y-6">

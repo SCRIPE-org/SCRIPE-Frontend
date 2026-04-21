@@ -1,5 +1,5 @@
-import { TenantStripeConnectView } from "@modules/entitlements/stripe-connect/src/presentation/views/TenantStripeConnectView";
+import { PayoutsView } from "@modules/entitlements/stripe-connect/src/presentation/views/PayoutsView";
 
 export default function PayoutsPage() {
-  return <TenantStripeConnectView />;
+  return <PayoutsView />;
 }
