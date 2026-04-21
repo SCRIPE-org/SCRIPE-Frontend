@@ -179,7 +179,7 @@ export function ConnectOnboardingView() {
           <DialogHeader>
             <DialogTitle>{t("entitlements.stripeConnect.enterTenantId")}</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4 py-4 min-h-[150px]">
+          <div className="space-y-4 py-4">
             <GenericSelect
               options={[]}
               type="searchable"
