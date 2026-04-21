@@ -18,6 +18,7 @@ import { SubscriptionService } from "./subscriptions/src/data/services/Subscript
 import { BillingService } from "./billing/src/data/services/BillingService";
 import { TenantPlanService } from "./tenant-plans/src/data/services/TenantPlanService";
 import { UserSubscriptionService } from "./user-subscriptions/src/data/services/UserSubscriptionService";
+import { ConnectService } from "./stripe-connect/src/data/services/ConnectService";
 
 // ── Repository Implementations ──
 import { FeatureRepository } from "./features/src/data/repositories/FeatureRepository";
@@ -27,6 +28,7 @@ import { SubscriptionRepository } from "./subscriptions/src/data/repositories/Su
 import { BillingRepository } from "./billing/src/data/repositories/BillingRepository";
 import { TenantPlanRepository } from "./tenant-plans/src/data/repositories/TenantPlanRepository";
 import { UserSubscriptionRepository } from "./user-subscriptions/src/data/repositories/UserSubscriptionRepository";
+import { ConnectRepository } from "./stripe-connect/src/data/repositories/ConnectRepository";
 
 // ── Repository Interfaces (exposed to consumers) ──
 import type { IFeatureRepository } from "./features/src/domain/interfaces/IFeatureRepository";
@@ -36,6 +38,7 @@ import type { ISubscriptionRepository } from "./subscriptions/src/domain/interfa
 import type { IBillingRepository } from "./billing/src/domain/interfaces/IBillingRepository";
 import type { ITenantPlanRepository } from "./tenant-plans/src/domain/interfaces/ITenantPlanRepository";
 import type { IUserSubscriptionRepository } from "./user-subscriptions/src/domain/interfaces/IUserSubscriptionRepository";
+import type { IConnectRepository } from "./stripe-connect/src/domain/interfaces/IConnectRepository";
 
 // ── Service Interfaces (used internally for DI wiring) ──
 import type { IFeatureService } from "./features/src/domain/interfaces/IFeatureService";
@@ -45,6 +48,7 @@ import type { ISubscriptionService } from "./subscriptions/src/domain/interfaces
 import type { IBillingService } from "./billing/src/domain/interfaces/IBillingService";
 import type { ITenantPlanService } from "./tenant-plans/src/domain/interfaces/ITenantPlanService";
 import type { IUserSubscriptionService } from "./user-subscriptions/src/domain/interfaces/IUserSubscriptionService";
+import type { IConnectService } from "./stripe-connect/src/domain/interfaces/IConnectService";
 
 export interface EntitlementsContainer {
       featureRepository: IFeatureRepository;
@@ -54,6 +58,7 @@ export interface EntitlementsContainer {
       billingRepository: IBillingRepository;
       tenantPlanRepository: ITenantPlanRepository;
       userSubscriptionRepository: IUserSubscriptionRepository;
+      connectRepository: IConnectRepository;
 }
 
 let _container: EntitlementsContainer | null = null;
@@ -73,6 +78,7 @@ export function getEntitlementsContainer(): EntitlementsContainer {
             const billingService: IBillingService = new BillingService(apiService);
             const tenantPlanService: ITenantPlanService = new TenantPlanService(apiService);
             const userSubscriptionService: IUserSubscriptionService = new UserSubscriptionService(apiService);
+            const connectService: IConnectService = new ConnectService(apiService);
 
             // ── Create Repositories (IService → IRepository mapping) ──
             _container = {
@@ -83,6 +89,7 @@ export function getEntitlementsContainer(): EntitlementsContainer {
                   billingRepository: new BillingRepository(billingService),
                   tenantPlanRepository: new TenantPlanRepository(tenantPlanService),
                   userSubscriptionRepository: new UserSubscriptionRepository(userSubscriptionService),
+                  connectRepository: new ConnectRepository(connectService),
             };
       }
 
@@ -113,5 +120,8 @@ export const entitlementsContainer = {
       },
       get userSubscriptionRepository() {
             return getEntitlementsContainer().userSubscriptionRepository;
+      },
+      get connectRepository() {
+            return getEntitlementsContainer().connectRepository;
       },
 };

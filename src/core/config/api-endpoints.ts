@@ -430,6 +430,24 @@ export const API_ENDPOINTS = {
       ME: `${V1}/user-subscriptions/me`,
       CHANGE_PLAN: (id: string) => `${V1}/user-subscriptions/${id}/change-plan`,
     },
+    // ===== STRIPE CONNECT (Phase 10) =====
+    STRIPE_CONNECT: {
+      ACCOUNTS: {
+        LIST: `${V1}/stripe-connect/accounts`,
+        BY_ID: (tenantId: string) => `${V1}/stripe-connect/accounts/${tenantId}`,
+        CREATE: `${V1}/stripe-connect/accounts`,
+        REFRESH_LINK: (tenantId: string) => `${V1}/stripe-connect/accounts/${tenantId}/refresh-link`,
+        DASHBOARD_LINK: (tenantId: string) => `${V1}/stripe-connect/accounts/${tenantId}/dashboard-link`,
+        COMMISSION_RATE: (tenantId: string) => `${V1}/stripe-connect/accounts/${tenantId}/commission-rate`,
+      },
+      COMMISSIONS: {
+        LIST: `${V1}/commissions`,
+        BY_TENANT: (tenantId: string) => `${V1}/commissions/tenants/${tenantId}`,
+        DASHBOARD: `${V1}/commissions/dashboard`,
+        TRENDS: `${V1}/commissions/trends`,
+        TOP_TENANTS: `${V1}/commissions/top-tenants`,
+      },
+    },
   },
 
   // ===== USER GROUPS =====

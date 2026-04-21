@@ -312,6 +312,16 @@ export const SYSTEM_PERMISSIONS = {
   USER_SUBSCRIPTIONS_UPDATE: "user_subscriptions.update",
   USER_SUBSCRIPTIONS_DELETE: "user_subscriptions.delete",
 
+  // Stripe Connect
+  STRIPE_CONNECT_VIEW: "stripe_connect.view",
+  STRIPE_CONNECT_CREATE: "stripe_connect.create",
+  STRIPE_CONNECT_UPDATE: "stripe_connect.update",
+  STRIPE_CONNECT_DELETE: "stripe_connect.delete",
+
+  // Commissions
+  COMMISSIONS_VIEW: "commissions.view",
+  COMMISSIONS_EXPORT: "commissions.export",
+
 } as const;
 
 /**
@@ -370,4 +380,8 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
 
   // Ecosystem
   "/recycle-bin": [SYSTEM_PERMISSIONS.RECYCLE_BIN_VIEW],
+
+  // Stripe Connect
+  "/entitlements/stripe-connect": [SYSTEM_PERMISSIONS.STRIPE_CONNECT_VIEW],
+  "/entitlements/commissions": [SYSTEM_PERMISSIONS.COMMISSIONS_VIEW],
 };
