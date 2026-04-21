@@ -447,6 +447,12 @@ export const API_ENDPOINTS = {
         TRENDS: `${V1}/commissions/trends`,
         TOP_TENANTS: `${V1}/commissions/top-tenants`,
       },
+      TENANT_STRIPE_CONNECT: {
+        STATUS: `${V1}/tenant-stripe-connect/status`,
+        ONBOARD: `${V1}/tenant-stripe-connect/onboard`,
+        REFRESH_LINK: `${V1}/tenant-stripe-connect/refresh-link`,
+        DASHBOARD_LINK: `${V1}/tenant-stripe-connect/dashboard`,
+      },
     },
   },
 

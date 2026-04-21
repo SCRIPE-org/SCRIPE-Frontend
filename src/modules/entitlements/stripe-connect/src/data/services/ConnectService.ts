@@ -68,6 +68,35 @@ export class ConnectService implements IConnectService {
     );
   }
 
+  // ── Tenant-Facing Lifecycle ──
+
+  async getTenantStatus(): Promise<ConnectAccountResponseModel> {
+    return this.api.get<ConnectAccountResponseModel>(
+      API_ENDPOINTS.ENTITLEMENTS.STRIPE_CONNECT.TENANT_STRIPE_CONNECT.STATUS
+    );
+  }
+
+  async tenantOnboard(): Promise<ConnectAccountResultModel> {
+    return this.api.post<ConnectAccountResultModel>(
+      API_ENDPOINTS.ENTITLEMENTS.STRIPE_CONNECT.TENANT_STRIPE_CONNECT.ONBOARD,
+      {}
+    );
+  }
+
+  async tenantRefreshLink(): Promise<{ onboardingUrl: string }> {
+    return this.api.post<{ onboardingUrl: string }>(
+      API_ENDPOINTS.ENTITLEMENTS.STRIPE_CONNECT.TENANT_STRIPE_CONNECT.REFRESH_LINK,
+      {}
+    );
+  }
+
+  async tenantDashboard(): Promise<{ dashboardUrl: string }> {
+    return this.api.post<{ dashboardUrl: string }>(
+      API_ENDPOINTS.ENTITLEMENTS.STRIPE_CONNECT.TENANT_STRIPE_CONNECT.DASHBOARD_LINK,
+      {}
+    );
+  }
+
   // ── Commissions ──
 
   async getCommissions(params: {

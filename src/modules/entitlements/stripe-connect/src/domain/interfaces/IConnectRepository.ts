@@ -32,6 +32,12 @@ export interface IConnectRepository {
   getDashboardLink(tenantId: string): Promise<string>;
   updateCommissionRate(tenantId: string, rate: number | null): Promise<void>;
 
+  // ── Tenant-Facing Lifecycle ──
+  getTenantStatus(): Promise<ConnectAccount>;
+  tenantOnboard(): Promise<{ accountId: string; onboardingUrl: string; status: string }>;
+  tenantRefreshLink(): Promise<string>;
+  tenantDashboard(): Promise<string>;
+
   // ── Commissions ──
   getCommissions(params: {
     page: number;

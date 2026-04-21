@@ -59,6 +59,32 @@ export class ConnectRepository implements IConnectRepository {
     await this.service.updateCommissionRate(tenantId, rate);
   }
 
+  // ── Tenant-Facing Lifecycle ──
+
+  async getTenantStatus(): Promise<ConnectAccount> {
+    const dto = await this.service.getTenantStatus();
+    return ConnectMapper.toAccountEntity(dto);
+  }
+
+  async tenantOnboard(): Promise<{ accountId: string; onboardingUrl: string; status: string }> {
+    const result = await this.service.tenantOnboard();
+    return {
+      accountId: result.accountId,
+      onboardingUrl: result.onboardingUrl,
+      status: result.status,
+    };
+  }
+
+  async tenantRefreshLink(): Promise<string> {
+    const result = await this.service.tenantRefreshLink();
+    return result.onboardingUrl;
+  }
+
+  async tenantDashboard(): Promise<string> {
+    const result = await this.service.tenantDashboard();
+    return result.dashboardUrl;
+  }
+
   // ── Commissions ──
 
   async getCommissions(params: {
