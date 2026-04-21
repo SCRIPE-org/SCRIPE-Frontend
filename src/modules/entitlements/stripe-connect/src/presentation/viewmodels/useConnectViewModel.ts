@@ -208,5 +208,22 @@ export function useConnectViewModel() {
     updateRate: (tenantId: string, rate: number | null) =>
       updateRateMutation.mutate({ tenantId, rate }),
     isUpdatingRate: updateRateMutation.isPending,
+
+    /**
+     * Server-side tenant search for the onboarding picker.
+     * Returns GenericSelect-compatible { value, label } options.
+     * Filters System/root tenant server-side (never client-side).
+     */
+    handleTenantSearch: async (query: string) => {
+      try {
+        const tenants = await connectRepository.searchEligibleTenants(query || undefined);
+        return tenants.map((t) => ({
+          value: t.id,
+          label: `${t.name} (${t.code})`,
+        }));
+      } catch {
+        return [];
+      }
+    },
   };
 }

@@ -434,6 +434,7 @@ export const API_ENDPOINTS = {
     STRIPE_CONNECT: {
       ACCOUNTS: {
         LIST: `${V1}/stripe-connect/accounts`,
+        ELIGIBLE_TENANTS: `${V1}/stripe-connect/accounts/eligible-tenants`,
         BY_ID: (tenantId: string) => `${V1}/stripe-connect/accounts/${tenantId}`,
         CREATE: `${V1}/stripe-connect/accounts`,
         REFRESH_LINK: (tenantId: string) => `${V1}/stripe-connect/accounts/${tenantId}/refresh-link`,

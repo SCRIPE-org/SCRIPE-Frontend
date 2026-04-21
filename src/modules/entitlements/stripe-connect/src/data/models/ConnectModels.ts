@@ -88,3 +88,10 @@ export interface TopTenantResponseModel {
   totalCommission: number;
   transactionCount: number;
 }
+
+/** Lightweight DTO for the eligible-tenants picker — matches backend EligibleTenantItem. */
+export interface EligibleTenantItemModel {
+  id: string;
+  name: string;
+  code: string;
+}

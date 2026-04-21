@@ -9,6 +9,7 @@ import type {
   CommissionDashboardResponseModel,
   CommissionTrendPointModel,
   TopTenantResponseModel,
+  EligibleTenantItemModel,
   PagedResultModel,
 } from "../../data/models/ConnectModels";
 
@@ -25,6 +26,9 @@ export interface IConnectService {
   refreshOnboardingLink(tenantId: string): Promise<{ onboardingUrl: string }>;
   getDashboardLink(tenantId: string): Promise<{ dashboardUrl: string }>;
   updateCommissionRate(tenantId: string, rate: number | null): Promise<void>;
+
+  /** Search tenants eligible for Stripe Connect onboarding (excludes System/root tenant). */
+  searchEligibleTenants(search?: string): Promise<EligibleTenantItemModel[]>;
 
   // ── Tenant-Facing Lifecycle ──
   getTenantStatus(): Promise<ConnectAccountResponseModel>;

@@ -59,4 +59,18 @@ export interface IConnectRepository {
   getDashboard(): Promise<CommissionDashboard>;
   getTrends(days: number, tenantId?: string): Promise<CommissionTrendPoint[]>;
   getTopTenants(top: number, fromDate?: string): Promise<TopTenantData[]>;
+
+  /**
+   * Search tenants eligible for Stripe Connect onboarding.
+   * Returns lightweight picker items — not full domain entities.
+   * Excludes the System/root tenant (filtered server-side).
+   */
+  searchEligibleTenants(search?: string): Promise<EligibleTenant[]>;
+}
+
+/** Lightweight value-object for the tenant picker — not a full entity. */
+export interface EligibleTenant {
+  id: string;
+  name: string;
+  code: string;
 }

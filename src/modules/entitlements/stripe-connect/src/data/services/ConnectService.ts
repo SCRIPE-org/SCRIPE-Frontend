@@ -12,6 +12,7 @@ import type {
   CommissionDashboardResponseModel,
   CommissionTrendPointModel,
   TopTenantResponseModel,
+  EligibleTenantItemModel,
   PagedResultModel,
 } from "../models/ConnectModels";
 
@@ -46,6 +47,14 @@ export class ConnectService implements IConnectService {
       API_ENDPOINTS.ENTITLEMENTS.STRIPE_CONNECT.ACCOUNTS.CREATE,
       { tenantId }
     );
+  }
+
+  async searchEligibleTenants(search?: string): Promise<EligibleTenantItemModel[]> {
+    const url = buildUrl(
+      API_ENDPOINTS.ENTITLEMENTS.STRIPE_CONNECT.ACCOUNTS.ELIGIBLE_TENANTS,
+      search ? { search } : {}
+    );
+    return this.api.get<EligibleTenantItemModel[]>(url);
   }
 
   async refreshOnboardingLink(tenantId: string): Promise<{ onboardingUrl: string }> {

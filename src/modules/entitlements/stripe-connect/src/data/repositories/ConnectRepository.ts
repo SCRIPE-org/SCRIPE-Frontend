@@ -1,7 +1,7 @@
 /**
  * Stripe Connect Repository — wraps service + mapper → returns domain entities.
  */
-import type { IConnectRepository, PagedResult } from "../../domain/interfaces/IConnectRepository";
+import type { IConnectRepository, PagedResult, EligibleTenant } from "../../domain/interfaces/IConnectRepository";
 import type { IConnectService } from "../../domain/interfaces/IConnectService";
 import { ConnectMapper } from "../mappers/ConnectMapper";
 import type {
@@ -129,5 +129,15 @@ export class ConnectRepository implements IConnectRepository {
 
   async getTopTenants(top: number, fromDate?: string): Promise<TopTenantData[]> {
     return this.service.getTopTenants(top, fromDate);
+  }
+
+  async searchEligibleTenants(search?: string): Promise<EligibleTenant[]> {
+    // DTO shape == value-object shape: {id, name, code} — no mapper needed.
+    const items = await this.service.searchEligibleTenants(search);
+    return items.map((item) => ({
+      id: item.id ?? "",
+      name: item.name ?? "",
+      code: item.code ?? "",
+    }));
   }
 }
