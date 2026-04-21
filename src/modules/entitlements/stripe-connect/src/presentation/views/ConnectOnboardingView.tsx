@@ -30,11 +30,22 @@ import {
   SheetTitle,
 } from "@core/ui/sheet";
 import { CreditCard, X } from "lucide-react";
+import { useState } from "react";
+import { Input } from "@core/ui/input";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@core/ui/dialog";
 
 export function ConnectOnboardingView() {
   useModuleLocales(() => import("../../../locales"), "stripe-connect");
   const { t } = useI18n();
   const vm = useConnectViewModel();
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [tenantIdInput, setTenantIdInput] = useState("");
 
   return (
     <div className="p-6 space-y-6">
@@ -71,10 +82,8 @@ export function ConnectOnboardingView() {
         onOpenDashboard={vm.openDashboard}
         onOpenRateDialog={vm.openRateDialog}
         onCreateAccount={() => {
-          // TODO: Replace prompt with a proper TenantSelect dialog once built.
-          // For now, platform admins enter tenantId manually.
-          const tenantId = window.prompt(t("entitlements.stripeConnect.enterTenantId"));
-          if (tenantId?.trim()) vm.createAccount(tenantId.trim());
+          setTenantIdInput("");
+          setIsCreateDialogOpen(true);
         }}
         isRefreshing={vm.isRefreshing}
         isOpeningDashboard={vm.isOpeningDashboard}
@@ -162,6 +171,38 @@ export function ConnectOnboardingView() {
         isSaving={vm.isUpdatingRate}
         t={t}
       />
+
+      {/* Create Account Dialog */}
+      <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t("entitlements.stripeConnect.enterTenantId")}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <Input
+              value={tenantIdInput}
+              onChange={(e) => setTenantIdInput(e.target.value)}
+              placeholder="00000000-0000-0000-0000-000000000000"
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
+              {t("common.cancel") || "Cancel"}
+            </Button>
+            <Button
+              onClick={() => {
+                if (tenantIdInput.trim()) {
+                  vm.createAccount(tenantIdInput.trim());
+                  setIsCreateDialogOpen(false);
+                }
+              }}
+              disabled={!tenantIdInput.trim()}
+            >
+              {t("common.create") || "Create"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
