@@ -220,46 +220,73 @@ export const en = {
     // NOTE: Nested objects — NOT dot-string keys.
     // t('webhooks.eventNames.admin.created') resolves admin → created correctly.
     eventNames: {
+      // ─── Admin Lifecycle ──────────────────────────────────
       admin: {
         created: "Admin Created",
         updated: "Admin Updated",
         deleted: "Admin Deleted",
         blocked: "Admin Blocked",
         unblocked: "Admin Unblocked",
+        invited: "Admin Invited",
       },
+      // ─── Role Lifecycle ───────────────────────────────────
       role: {
         created: "Role Created",
         updated: "Role Updated",
         deleted: "Role Deleted",
       },
+      // ─── Tenant Lifecycle ─────────────────────────────────
       tenant: {
         created: "Tenant Created",
         updated: "Tenant Updated",
+        deleted: "Tenant Deleted",
         suspended: "Tenant Suspended",
+        reactivated: "Tenant Reactivated",
+        permissions_updated: "Tenant Permissions Updated",
       },
+      // ─── User Lifecycle ───────────────────────────────────
       user: {
         created: "User Registered",
         updated: "User Updated",
         deleted: "User Deleted",
+        blocked: "User Blocked",
+        unblocked: "User Unblocked",
+        invited: "User Invited",
       },
-      notification: {
-        sent: "Notification Sent",
-      },
-      email: {
-        sent: "Email Delivered",
-        failed: "Email Failed",
-      },
+      // ─── Security Events ──────────────────────────────────
       security: {
         login_failed: "Login Failed",
         account_locked: "Account Locked",
         "2fa_enabled": "2FA Enabled",
+        password_changed: "Password Changed",
+        password_reset_requested: "Password Reset Requested",
       },
-      audit: {
-        action: "Audit Action",
+      // ─── OAuth Application Lifecycle ──────────────────────
+      oauth_app: {
+        created: "OAuth App Created",
+        updated: "OAuth App Updated",
+        deleted: "OAuth App Deleted",
+        secret_regenerated: "OAuth App Secret Regenerated",
       },
-      webhook: {
-        test: "Test Ping",
+      // ─── User Group Lifecycle ─────────────────────────────
+      user_group: {
+        created: "User Group Created",
+        updated: "User Group Updated",
+        deleted: "User Group Deleted",
       },
+      // ─── Tenant Domain Lifecycle ──────────────────────────
+      tenant_domain: {
+        added: "Domain Added",
+        removed: "Domain Removed",
+        verified: "Domain Verified",
+      },
+      // ─── Identity Provider Lifecycle ──────────────────────
+      identity_provider: {
+        created: "Identity Provider Created",
+        updated: "Identity Provider Updated",
+        deleted: "Identity Provider Deleted",
+      },
+      // ─── Subscription Lifecycle ───────────────────────────
       subscription: {
         created: "Subscription Created",
         activated: "Subscription Activated",
@@ -269,19 +296,97 @@ export const en = {
         upgraded: "Plan Upgraded",
         downgraded: "Plan Downgraded",
         trial_ending: "Trial Ending Soon",
+        trial_converted: "Trial Converted to Paid",
+        revoked: "Subscription Revoked",
+        currency_changed: "Currency Changed",
       },
+      // ─── Invoice Lifecycle ────────────────────────────────
       invoice: {
         created: "Invoice Generated",
         paid: "Invoice Paid",
         overdue: "Invoice Overdue",
         voided: "Invoice Voided",
       },
+      // ─── Payment & Refund ─────────────────────────────────
       payment: {
         succeeded: "Payment Succeeded",
         failed: "Payment Failed",
       },
       refund: {
         created: "Refund Initiated",
+      },
+      // ─── Stripe Connect ───────────────────────────────────
+      stripe_account: {
+        connected: "Stripe Account Connected",
+        disconnected: "Stripe Account Disconnected",
+      },
+      commission: {
+        recorded: "Commission Recorded",
+      },
+      payout: {
+        created: "Payout Created",
+        paid: "Payout Paid",
+        failed: "Payout Failed",
+      },
+      // ─── User Subscriptions (Tier 2) ──────────────────────
+      user_subscription: {
+        created: "User Subscription Created",
+        renewed: "User Subscription Renewed",
+        cancelled: "User Subscription Cancelled",
+        expired: "User Subscription Expired",
+        plan_changed: "User Plan Changed",
+      },
+      // ─── Editions & Features ──────────────────────────────
+      edition: {
+        created: "Edition Created",
+        updated: "Edition Updated",
+        deleted: "Edition Deleted",
+        feature_changed: "Edition Feature Changed",
+        feature_removed: "Edition Feature Removed",
+        pricing_changed: "Edition Pricing Changed",
+      },
+      edition_version: {
+        created: "Edition Version Created",
+        published: "Edition Version Published",
+      },
+      feature: {
+        created: "Feature Created",
+        updated: "Feature Updated",
+        deleted: "Feature Deleted",
+      },
+      // ─── Promotions ───────────────────────────────────────
+      promotion: {
+        created: "Promotion Created",
+        updated: "Promotion Updated",
+        deleted: "Promotion Deleted",
+        applied: "Promotion Applied",
+      },
+      // ─── Tenant Features ──────────────────────────────────
+      tenant_feature: {
+        overridden: "Feature Override Set",
+        override_removed: "Feature Override Removed",
+      },
+      // ─── Tenant Plans (Tier 2) ────────────────────────────
+      tenant_plan: {
+        created: "Tenant Plan Created",
+        updated: "Tenant Plan Updated",
+        deleted: "Tenant Plan Deleted",
+        published: "Tenant Plan Published",
+        archived: "Tenant Plan Archived",
+      },
+      // ─── Core Infrastructure ──────────────────────────────
+      notification: {
+        sent: "Notification Sent",
+      },
+      email: {
+        sent: "Email Delivered",
+        failed: "Email Failed",
+      },
+      audit: {
+        action: "Audit Action",
+      },
+      webhook: {
+        test: "Test Ping",
       },
     },
   },
