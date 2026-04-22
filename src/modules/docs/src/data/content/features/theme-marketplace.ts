@@ -20,11 +20,11 @@ const sections: DocSection[] = [
             title: "Theme Marketplace Pipeline",
             direction: "horizontal",
             nodes: [
-                  { id: "seeder", label: "LoginThemeSeeder\n(40 themes)", type: "default" },
-                  { id: "db", label: "LoginTheme Table\n(ThemeDataJson)", type: "info" },
-                  { id: "api", label: "Themes API\n(list/detail/apply)", type: "warning" },
-                  { id: "gallery", label: "ThemeGalleryView\n(browse + filter)", type: "success" },
-                  { id: "draft", label: "DraftBrandingJson\n(copy-on-apply)", type: "danger" },
+                  { id: "seeder", label: "LoginThemeSeeder (40 themes)", type: "default" },
+                  { id: "db", label: "LoginTheme Table (ThemeDataJson)", type: "info" },
+                  { id: "api", label: "Themes API (list/detail/apply)", type: "warning" },
+                  { id: "gallery", label: "ThemeGalleryView (browse + filter)", type: "success" },
+                  { id: "draft", label: "DraftBrandingJson (copy-on-apply)", type: "danger" },
             ],
             connections: [
                   { from: "seeder", to: "db" },
@@ -306,10 +306,10 @@ const sections: DocSection[] = [
             direction: "vertical",
             nodes: [
                   { id: "browse", label: "Browse Gallery", type: "default" },
-                  { id: "preview", label: "previewTheme()\n(non-destructive)", type: "info" },
+                  { id: "preview", label: "previewTheme() (non-destructive)", type: "info" },
                   { id: "confirm", label: "Confirm Apply", type: "warning" },
-                  { id: "snapshot", label: "Copy ThemeDataJson\nto DraftBrandingJson", type: "success" },
-                  { id: "publish", label: "Publish Draft\n(version++)", type: "danger" },
+                  { id: "snapshot", label: "Copy ThemeDataJson to DraftBrandingJson", type: "success" },
+                  { id: "publish", label: "Publish Draft (version++)", type: "danger" },
             ],
             connections: [
                   { from: "browse", to: "preview" },

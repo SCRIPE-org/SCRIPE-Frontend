@@ -49,9 +49,9 @@ const sections: DocSection[] = [
             title: "Settings Resolution Chain",
             direction: "vertical",
             nodes: [
-                  { id: "global", label: "Global Settings\n(50+ tokens)", type: "default" },
-                  { id: "override", label: "Per-Page Overrides\n(pages.forgotPassword.*)", type: "info" },
-                  { id: "merged", label: "Merged Result\n(global + override)", type: "success" },
+                  { id: "global", label: "Global Settings (50+ tokens)", type: "default" },
+                  { id: "override", label: "Per-Page Overrides (pages.forgotPassword.*)", type: "info" },
+                  { id: "merged", label: "Merged Result (global + override)", type: "success" },
             ],
             connections: [
                   { from: "global", to: "merged", label: "Base" },
@@ -121,10 +121,10 @@ const sections: DocSection[] = [
             title: "Theme Import with Per-Page Merge",
             direction: "vertical",
             nodes: [
-                  { id: "apply", label: "Apply Theme\n(from marketplace)", type: "default" },
-                  { id: "global2", label: "Merge 50+ global\ntokens to draft", type: "info" },
-                  { id: "pages", label: "Check theme.pages\nfor overrides", type: "warning" },
-                  { id: "merge", label: "Merge each page's\noverrides to draft", type: "success" },
+                  { id: "apply", label: "Apply Theme (from marketplace)", type: "default" },
+                  { id: "global2", label: "Merge 50+ global tokens to draft", type: "info" },
+                  { id: "pages", label: "Check theme.pages for overrides", type: "warning" },
+                  { id: "merge", label: "Merge each page's overrides to draft", type: "success" },
             ],
             connections: [
                   { from: "apply", to: "global2" },

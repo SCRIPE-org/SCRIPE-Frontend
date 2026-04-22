@@ -142,11 +142,11 @@ const sections: DocSection[] = [
             title: "Drag & Drop Component Lifecycle",
             direction: "vertical",
             nodes: [
-                  { id: "palette2", label: "Component Palette\n(14 types)", type: "default" },
-                  { id: "drag", label: "Drag Start\n(@dnd-kit/core)", type: "info" },
-                  { id: "canvas", label: "Canvas Drop Zone\n(collision detection)", type: "warning" },
-                  { id: "create", label: "Create Component\n(defaults + auto-ID)", type: "success" },
-                  { id: "select", label: "Select Component\n(Properties Panel)", type: "danger" },
+                  { id: "palette2", label: "Component Palette (14 types)", type: "default" },
+                  { id: "drag", label: "Drag Start (@dnd-kit/core)", type: "info" },
+                  { id: "canvas", label: "Canvas Drop Zone (collision detection)", type: "warning" },
+                  { id: "create", label: "Create Component (defaults + auto-ID)", type: "success" },
+                  { id: "select", label: "Select Component (Properties Panel)", type: "danger" },
             ],
             connections: [
                   { from: "palette2", to: "drag" },
