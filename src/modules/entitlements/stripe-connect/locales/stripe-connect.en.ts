@@ -5,6 +5,7 @@ export const en = {
       description: "Manage Stripe Express accounts and onboarding for platform tenants.",
       account: "Connect Account",
       accounts: "Connect Accounts",
+      accountsDesc: "Manage connected Stripe Express accounts for all tenants.",
       noAccounts: "No Connect accounts found.",
       createAccount: "Create Account",
       createAccountDesc: "Create a Stripe Express account for this tenant and start onboarding.",
@@ -12,6 +13,8 @@ export const en = {
       createdDesc: "Stripe Express account created. Opening onboarding link...",
       createFailed: "Failed to create account",
       refreshLink: "Refresh Onboarding Link",
+      completeOnboarding: "Complete Onboarding",
+      completeOnboardingDesc: "Complete onboarding for this tenant.",
       refreshLinkDesc: "Generate a new onboarding link for this tenant.",
       refreshed: "Link Refreshed",
       refreshedDesc: "A new onboarding link has been generated.",
@@ -29,6 +32,8 @@ export const en = {
       accountType: "Account Type",
       chargesEnabled: "Charges Enabled",
       payoutsEnabled: "Payouts Enabled",
+      capabilities: "Capabilities",
+      openDashboard: "Open Dashboard",
       disabledReason: "Disabled Reason",
       currency: "Currency",
       country: "Country",
@@ -54,6 +59,7 @@ export const en = {
       },
 
       // Status badges
+      statusLabel: "Status",
       status: {
         Pending: "Pending",
         Complete: "Complete",

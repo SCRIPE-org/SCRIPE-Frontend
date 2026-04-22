@@ -20,6 +20,7 @@ export class ConnectMapper {
     return new ConnectAccount({
       id: dto.id ?? "",
       tenantId: dto.tenantId ?? "",
+      tenantName: dto.tenantName ?? dto.tenantId ?? "",
       stripeAccountId: dto.stripeAccountId ?? "",
       accountType: dto.accountType ?? "Express",
       onboardingStatus: dto.onboardingStatus ?? "NotStarted",
@@ -43,6 +44,7 @@ export class ConnectMapper {
     return new ConnectAccountListItem({
       id: dto.id ?? "",
       tenantId: dto.tenantId ?? "",
+      tenantName: dto.tenantName ?? dto.tenantId ?? "",
       stripeAccountId: dto.stripeAccountId ?? "",
       onboardingStatus: dto.onboardingStatus ?? "NotStarted",
       chargesEnabled: dto.chargesEnabled ?? false,

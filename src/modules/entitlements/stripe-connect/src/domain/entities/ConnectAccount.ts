@@ -7,6 +7,7 @@
 export interface ConnectAccountData {
   id: string;
   tenantId: string;
+  tenantName: string;
   stripeAccountId: string;
   accountType: string;
   onboardingStatus: string;
@@ -30,6 +31,7 @@ export class ConnectAccount {
 
   get id(): string { return this.data.id; }
   get tenantId(): string { return this.data.tenantId; }
+  get tenantName(): string { return this.data.tenantName; }
   get stripeAccountId(): string { return this.data.stripeAccountId; }
   get accountType(): string { return this.data.accountType; }
   get onboardingStatus(): string { return this.data.onboardingStatus; }
@@ -76,6 +78,7 @@ export class ConnectAccount {
 export interface ConnectAccountListData {
   id: string;
   tenantId: string;
+  tenantName: string;
   stripeAccountId: string;
   onboardingStatus: string;
   chargesEnabled: boolean;
@@ -91,6 +94,7 @@ export class ConnectAccountListItem {
 
   get id(): string { return this.data.id; }
   get tenantId(): string { return this.data.tenantId; }
+  get tenantName(): string { return this.data.tenantName; }
   get stripeAccountId(): string { return this.data.stripeAccountId; }
   get onboardingStatus(): string { return this.data.onboardingStatus; }
   get chargesEnabled(): boolean { return this.data.chargesEnabled; }

@@ -13,6 +13,7 @@ export interface PagedResultModel<T> {
 export interface ConnectAccountResponseModel {
   id: string;
   tenantId: string;
+  tenantName: string;
   stripeAccountId: string;
   accountType: string;
   onboardingStatus: string;
@@ -34,6 +35,7 @@ export interface ConnectAccountResponseModel {
 export interface ConnectAccountListResponseModel {
   id: string;
   tenantId: string;
+  tenantName: string;
   stripeAccountId: string;
   onboardingStatus: string;
   chargesEnabled: boolean;
