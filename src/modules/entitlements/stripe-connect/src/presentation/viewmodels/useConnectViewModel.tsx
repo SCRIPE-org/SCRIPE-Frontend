@@ -151,7 +151,7 @@ export function useConnectViewModel() {
     const config: CrudConfig<ConnectAccountListItem> = {
       titleKey: "entitlements.stripeConnect.accounts",
       subtitleKey: "entitlements.stripeConnect.accountsDesc",
-      resource: "stripeConnect",
+      resource: "stripe_connect",
       columns: [
         {
           key: "tenantName",
