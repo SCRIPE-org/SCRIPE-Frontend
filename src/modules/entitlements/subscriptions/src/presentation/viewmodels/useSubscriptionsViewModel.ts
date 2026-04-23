@@ -39,7 +39,7 @@ export function useSubscriptionsViewModel(tenantId: string) {
 
       // ─── Form state ─────────────────────────────────────
       const [selectedEditionId, setSelectedEditionId] = useState("");
-      const [subscriptionType, setSubscriptionType] = useState("Lifetime");
+      const [subscriptionType, setSubscriptionType] = useState("Monthly");
       const [endDate, setEndDate] = useState("");
       const [expiryBehavior, setExpiryBehavior] = useState("Fallback");
       const [suspendReason, setSuspendReason] = useState("");
@@ -102,7 +102,7 @@ export function useSubscriptionsViewModel(tenantId: string) {
       // ─── Reset form ─────────────────────────────────────
       const resetForm = useCallback(() => {
             setSelectedEditionId("");
-            setSubscriptionType("Lifetime");
+            setSubscriptionType("Monthly");
             setEndDate("");
             setExpiryBehavior("Fallback");
             setSuspendReason("");
