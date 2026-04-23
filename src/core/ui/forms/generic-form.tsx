@@ -226,6 +226,7 @@ export function GenericForm({
     initializeFormData(fields, initialValues)
   );
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   // Re-initialize form data when fields change (for dynamic forms)
   // IMPORTANT: Only populate values for NEW fields that don't exist in the current
@@ -248,6 +249,15 @@ export function GenericForm({
   }, [fields, initializeFormData, initialValues]);
 
   const handleChange = (name: string, value: any) => {
+    // Clear error when user changes the field
+    if (errors[name]) {
+      setErrors((prev) => {
+        const next = { ...prev };
+        delete next[name];
+        return next;
+      });
+    }
+
     setFormData((prev) => {
       const newData = { ...prev, [name]: value };
 
@@ -267,6 +277,42 @@ export function GenericForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validate required fields for custom components (select, searchable-select, etc.)
+    // Native HTML inputs handle required validation via browser, but custom components need manual checks
+    const customTypes = new Set([
+      "select", "searchable-select", "server-select", "multi-select", "tree",
+      "switch", "checkbox", "radio", "slider", "range", "date", "datetime",
+      "datetime-local", "time", "month", "week", "image", "richtext",
+    ]);
+
+    const newErrors: Record<string, string> = {};
+    fields.forEach((field) => {
+      // Skip fields that aren't visible
+      if (field.isVisible && !field.isVisible(formData)) return;
+      // Skip fields that don't require validation
+      if (!field.required) return;
+      // Only validate custom component types (native inputs are validated by browser)
+      if (!customTypes.has(field.type)) return;
+
+      const val = formData[field.name];
+      const isEmpty =
+        val === undefined ||
+        val === null ||
+        val === "" ||
+        (Array.isArray(val) && val.length === 0);
+
+      if (isEmpty) {
+        newErrors[field.name] = t("validation.required") || "This field is required";
+      }
+    });
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    setErrors({});
     setLoading(true);
     try {
       // Convert date fields back to ISO format for API
@@ -826,6 +872,9 @@ export function GenericForm({
                     disabled={field.disabled || readOnly}
                     dir={direction}
                   />
+                )}
+                {errors[field.name] && (
+                  <p className="text-sm text-destructive mt-1">{errors[field.name]}</p>
                 )}
               </div>
             )
