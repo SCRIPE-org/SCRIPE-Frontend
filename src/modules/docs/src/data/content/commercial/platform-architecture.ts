@@ -16,7 +16,7 @@ const sections: DocSection[] = [
 │  Next.js 16 App Router · React · TanStack Query · Zustand  │
 ├─────────────────────────────────────────────────────────────┤
 │                     API Gateway Layer                        │
-│  18 REST Controllers · 119+ Endpoints · Swagger/OpenAPI    │
+│  18 REST Controllers · 380+ Endpoints · Swagger/OpenAPI    │
 ├─────────────────────────────────────────────────────────────┤
 │                     Application Layer                        │
 │  MediatR Commands/Queries · FluentValidation · AutoMapper  │

@@ -34,11 +34,13 @@ export interface TenantPlanPriceModel {
 export interface TenantPlanVersionModel {
   id: string;
   versionNumber: number;
-  snapshotJson: string;
   changeNotes?: string;
+  featureValuesJson: string;
+  pricingSnapshotJson?: string;
   status: string;
-  publishedAt: string;
+  publishedAt?: string;
   publishedBy?: string;
+  createdAt: string;
 }
 
 /** Full detail response — GET by ID */

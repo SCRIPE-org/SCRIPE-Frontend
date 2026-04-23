@@ -42,7 +42,7 @@ export function useTenantPlanDetailViewModel(planId: string) {
 
   // ── Lifecycle Mutations ──
   const publishMutation = useMutation({
-    mutationFn: () => tenantPlanRepository.publish(planId),
+    mutationFn: (changeNotes?: string) => tenantPlanRepository.publish(planId, changeNotes),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey });
       queryClient.invalidateQueries({ queryKey: ["entitlements", "tenant-plans"] });

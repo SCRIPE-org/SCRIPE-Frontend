@@ -87,7 +87,7 @@ export const fr = {
       resultContent: "NEXORA élimine l'enfer des try-catch grce à un modèle de Résultat (Result pattern) unifié. Chaque réponse de l'API est strictement typée et mathématiquement prévisible, garantissant que les consommateurs reçoivent des codes d'état HTTP standards enveloppant une structure de réponse JSON identique, quel que soit le module accédé.",
       resultTitle: "Modèle de Résultat Prévisible",
       statusCodesTitle: "Codes d'État Sémantiques",
-      swaggerContent: "Explorez la documentation Swagger/OpenAPI 3.0 en direct pour interagir instantanément avec plus de 119 points de terminaison préconfigurés. Nous générons des spécifications OpenAPI strictes, permettant une génération de SDK fluide pour les plateformes frontend et mobiles.",
+      swaggerContent: "Explorez la documentation Swagger/OpenAPI 3.0 en direct pour interagir instantanément avec plus de 380 points de terminaison préconfigurés. Nous générons des spécifications OpenAPI strictes, permettant une génération de SDK fluide pour les plateformes frontend et mobiles.",
       swaggerTitle: "Interface Swagger Interactive",
       title: "Conception & Architecture de l'API"
     },

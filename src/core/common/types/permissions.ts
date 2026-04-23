@@ -312,6 +312,12 @@ export const SYSTEM_PERMISSIONS = {
   USER_SUBSCRIPTIONS_UPDATE: "user_subscriptions.update",
   USER_SUBSCRIPTIONS_DELETE: "user_subscriptions.delete",
 
+  // Tenant Plan Promotions (Tier 2)
+  TENANT_PLAN_PROMOTIONS_VIEW: "tenant_plan_promotions.view",
+  TENANT_PLAN_PROMOTIONS_CREATE: "tenant_plan_promotions.create",
+  TENANT_PLAN_PROMOTIONS_UPDATE: "tenant_plan_promotions.update",
+  TENANT_PLAN_PROMOTIONS_DELETE: "tenant_plan_promotions.delete",
+
   // Stripe Connect
   STRIPE_CONNECT_VIEW: "stripe_connect.view",
   STRIPE_CONNECT_CREATE: "stripe_connect.create",
@@ -368,6 +374,7 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/entitlements/billing-dashboard": [SYSTEM_PERMISSIONS.BILLING_DASHBOARD_VIEW],
   "/entitlements/payouts": [SYSTEM_PERMISSIONS.BILLING_MANAGE],
   "/entitlements/tenant-plans": [SYSTEM_PERMISSIONS.TENANT_PLANS_VIEW],
+  "/entitlements/tenant-plans/[id]": [SYSTEM_PERMISSIONS.TENANT_PLANS_VIEW],
   "/entitlements/tenant-feature-definitions": [SYSTEM_PERMISSIONS.TENANT_FEATURE_DEFINITIONS_VIEW],
   "/entitlements/user-subscriptions": [SYSTEM_PERMISSIONS.USER_SUBSCRIPTIONS_VIEW],
   "/my-subscription": [], // User self-service — any authenticated user

@@ -1,4 +1,4 @@
-import { TenantFeatureDefinitionsView } from "@modules/entitlements/tenant-plans/src/presentation/views/TenantFeatureDefinitionsView";
+import { TenantFeatureDefinitionsView } from "@modules/entitlements/tenant-plans";
 
 export default function TenantFeatureDefinitionsPage() {
   return <TenantFeatureDefinitionsView />;

@@ -13,7 +13,7 @@ export interface ITenantPlanRepository {
   create(request: CreateTenantPlanRequest): Promise<string>;
   update(id: string, request: UpdateTenantPlanRequest): Promise<void>;
   delete(id: string): Promise<void>;
-  publish(id: string): Promise<void>;
+  publish(id: string, changeNotes?: string): Promise<void>;
   archive(id: string): Promise<void>;
 
   // Feature Definitions

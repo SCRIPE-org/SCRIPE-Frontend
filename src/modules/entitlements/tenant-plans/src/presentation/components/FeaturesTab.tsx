@@ -30,6 +30,7 @@ import type { UpsertTenantPlanFeatureRequest } from "../../domain/entities/Tenan
 import { FeatureCatalogPicker } from "./features-tab/FeatureCatalogPicker";
 import { FeatureControl } from "./features-tab/FeatureControl";
 import { FeatureRow } from "./features-tab/FeatureRow";
+import Link from "next/link";
 
 interface FeaturesTabProps {
   plan: TenantPlan;
@@ -216,6 +217,11 @@ export function FeaturesTab({
                 : (t("common.collapseAll") || "Collapse All")}
             </Button>
           )}
+          <Button variant="ghost" size="sm" asChild>
+            <Link href="/entitlements/tenant-feature-definitions">
+              {t("entitlements.featureDefinitions.manageCatalog") || "Manage Catalog"}
+            </Link>
+          </Button>
           <Button variant="outline" size="sm" onClick={() => setShowPicker(true)} disabled={availableFeatures.length === 0}>
             <Plus className="h-4 w-4 me-1" />
             {t("entitlements.featureDefinitions.addFeature") || "Add Feature"}

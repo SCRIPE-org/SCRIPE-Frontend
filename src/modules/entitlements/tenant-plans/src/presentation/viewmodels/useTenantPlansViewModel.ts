@@ -11,12 +11,14 @@ import type { CreateTenantPlanRequest, UpdateTenantPlanRequest } from "../../dom
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 
 export function useTenantPlansViewModel() {
   const { success, error: showError } = useEnhancedToast();
   const { tenantPlanRepository } = entitlementsContainer;
   const { t } = useI18n();
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   const vm = useCrudViewModel<TenantPlan, CreateTenantPlanRequest, UpdateTenantPlanRequest>(
     ["entitlements", "tenant-plans"],
@@ -108,5 +110,8 @@ export function useTenantPlansViewModel() {
     archivePlan: archiveMutation.mutate,
     isPublishing: publishMutation.isPending,
     isArchiving: archiveMutation.isPending,
+    navigateToDetail: (planId: string) => {
+      router.push(`/entitlements/tenant-plans/${planId}`);
+    },
   };
 }

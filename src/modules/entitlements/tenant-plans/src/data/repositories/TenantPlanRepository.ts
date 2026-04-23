@@ -55,8 +55,8 @@ export class TenantPlanRepository implements ITenantPlanRepository {
     await this.service.delete(id);
   }
 
-  async publish(id: string): Promise<void> {
-    await this.service.publish(id);
+  async publish(id: string, changeNotes?: string): Promise<void> {
+    await this.service.publish(id, changeNotes);
   }
 
   async archive(id: string): Promise<void> {

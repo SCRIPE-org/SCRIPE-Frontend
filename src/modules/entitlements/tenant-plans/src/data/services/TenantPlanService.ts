@@ -52,8 +52,8 @@ export class TenantPlanService implements ITenantPlanService {
     await this.api.delete(API_ENDPOINTS.ENTITLEMENTS.TENANT_PLANS.DELETE(id));
   }
 
-  async publish(id: string): Promise<void> {
-    await this.api.post(API_ENDPOINTS.ENTITLEMENTS.TENANT_PLANS.PUBLISH(id), {});
+  async publish(id: string, changeNotes?: string): Promise<void> {
+    await this.api.post(API_ENDPOINTS.ENTITLEMENTS.TENANT_PLANS.PUBLISH(id), { changeNotes: changeNotes ?? null });
   }
 
   async archive(id: string): Promise<void> {
@@ -113,10 +113,9 @@ export class TenantPlanService implements ITenantPlanService {
   }
 
   async validatePromoCode(code: string, planId?: string): Promise<{ isValid: boolean; message?: string }> {
-    const url = buildUrl(API_ENDPOINTS.ENTITLEMENTS.TENANT_PLAN_PROMOTIONS.VALIDATE, {
-      code,
-      planId: planId || undefined,
-    });
-    return this.api.get<{ isValid: boolean; message?: string }>(url);
+    return this.api.post<{ isValid: boolean; message?: string }>(
+      API_ENDPOINTS.ENTITLEMENTS.TENANT_PLAN_PROMOTIONS.VALIDATE,
+      { code, tenantPlanId: planId ?? null }
+    );
   }
 }

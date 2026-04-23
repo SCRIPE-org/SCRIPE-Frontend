@@ -15,7 +15,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import {
-  ArrowLeft, Loader2, Rocket, Archive, Zap, DollarSign,
+  ArrowLeft, Loader2, Archive, Zap, DollarSign,
   GitBranch, Tag, Settings, Users, Calendar,
 } from "lucide-react";
 import Link from "next/link";
@@ -100,20 +100,9 @@ export function TenantPlanDetailView({ planId }: TenantPlanDetailViewProps) {
           </div>
         </div>
 
-        {/* Lifecycle Actions */}
+        {/* Lifecycle Actions — Publish is in VersionsTab; Archive stays here */}
         <div className="flex items-center gap-2 shrink-0">
-          {plan.isDraft && (
-            <Button
-              size="sm"
-              onClick={() => vm.publishPlan()}
-              disabled={isBusy}
-              className="bg-green-600 hover:bg-green-700 text-white"
-            >
-              {vm.isPublishing ? <Loader2 className="h-4 w-4 animate-spin me-1" /> : <Rocket className="h-4 w-4 me-1" />}
-              {t("entitlements.tenantPlans.publish") || "Publish"}
-            </Button>
-          )}
-          {plan.isPublished && (
+          {(plan.isDraft || plan.isPublished) && (
             <Button
               size="sm"
               variant="outline"
@@ -231,7 +220,14 @@ export function TenantPlanDetailView({ planId }: TenantPlanDetailViewProps) {
           t={t}
         />
       )}
-      {activeTab === "versions" && <VersionsTab plan={plan} t={t} />}
+      {activeTab === "versions" && (
+        <VersionsTab
+          plan={plan}
+          t={t}
+          onPublish={(changeNotes) => vm.publishPlan(changeNotes)}
+          isPublishing={vm.isPublishing}
+        />
+      )}
       {activeTab === "promotions" && <PromotionsTab planId={planId} t={t} />}
     </div>
   );

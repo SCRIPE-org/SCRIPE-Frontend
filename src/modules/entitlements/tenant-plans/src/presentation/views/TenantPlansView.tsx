@@ -17,7 +17,7 @@ import { useTenantPlansViewModel } from "../viewmodels/useTenantPlansViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { TenantPlan } from "../../domain/entities/TenantPlan";
 import { Badge } from "@core/ui/badge";
-import { Pencil, Trash2, Eye, Rocket, Archive } from "lucide-react";
+import { Pencil, Trash2, Eye, Rocket, Archive, Settings2 } from "lucide-react";
 import { format } from "date-fns";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 
@@ -330,6 +330,12 @@ export function TenantPlansView() {
           onClick: (item: TenantPlan) => vmInstance.openViewModal(item),
           variant: "ghost" as const,
           icon: <Eye className="h-4 w-4" />,
+        },
+        {
+          label: tFn("entitlements.tenantPlans.managePlan") || "Manage Plan",
+          onClick: (item: TenantPlan) => vmInstance.navigateToDetail(item.id),
+          variant: "ghost" as const,
+          icon: <Settings2 className="h-4 w-4" />,
         },
         {
           label: tFn("common.edit") || "Edit",

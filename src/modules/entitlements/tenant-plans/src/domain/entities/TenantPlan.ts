@@ -32,11 +32,13 @@ export interface TenantPlanPriceData {
 export interface TenantPlanVersionData {
   id: string;
   versionNumber: number;
-  snapshotJson: string;
   changeNotes?: string;
+  featureValuesJson: string;
+  pricingSnapshotJson?: string;
   status: string;
-  publishedAt: string;
+  publishedAt?: string;
   publishedBy?: string;
+  createdAt: string;
 }
 
 // ── Main entity data ──
