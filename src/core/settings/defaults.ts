@@ -25,7 +25,7 @@ export const defaultSettings: Settings = {
   gradientEndColor: "#8b5cf6",
   layoutTemplate: "navigation",
   cardStyle: "default",
-  animationLevel: "minimal",
+  animationLevel: "moderate",
   fontSize: "default",
   showDetailPanel: true,
   borderRadius: "default",

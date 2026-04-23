@@ -49,11 +49,11 @@ export function ConnectOnboardingView() {
               <OnboardingStatusCard
                 account={vm.customViewItem}
                 t={t}
-                onOpenOnboarding={(tenantId) => vm.createAccount(tenantId)}
-                onRefreshLink={(tenantId) => {}} // Handle inside vm if needed, but row action covers this
-                onOpenDashboard={(tenantId) => {}} 
-                isRefreshing={false}
-                isOpeningDashboard={false}
+                onOpenOnboarding={(tenantId) => vm.refreshLink(tenantId)}
+                onRefreshLink={(tenantId) => vm.refreshLink(tenantId)}
+                onOpenDashboard={(tenantId) => vm.openDashboard(tenantId)}
+                isRefreshing={vm.isRefreshingLink}
+                isOpeningDashboard={vm.isOpeningDashboard}
               />
 
               <div className="rounded-md border p-4 space-y-2 text-sm">

@@ -94,11 +94,22 @@ export function useConnectViewModel() {
         title: t("entitlements.stripeConnect.refreshed"),
         description: t("entitlements.stripeConnect.refreshedDesc"),
       });
+      vm.refresh();
       if (url) {
         window.open(url, "_blank", "noopener,noreferrer");
       }
     },
-    onError: () => {
+    onError: (err: any) => {
+      // 409 Conflict = backend self-heal found account is already fully onboarded
+      if (err?.response?.status === 409) {
+        success({
+          title: t("entitlements.stripeConnect.onboardingComplete") || "Onboarding Complete",
+          description: t("entitlements.stripeConnect.alreadyOnboarded") || "Account is already fully onboarded.",
+        });
+        vm.refresh();
+        closeCustomViewModal();
+        return;
+      }
       error({
         title: t("common.error"),
         description: t("entitlements.stripeConnect.refreshFailed"),
@@ -248,6 +259,10 @@ export function useConnectViewModel() {
     // Custom logic overrides
     createAccount: (tenantId: string) => createMutation.mutate(tenantId),
     isCreating: createMutation.isPending,
+    refreshLink: (tenantId: string) => refreshLinkMutation.mutate(tenantId),
+    isRefreshingLink: refreshLinkMutation.isPending,
+    openDashboard: (tenantId: string) => dashboardLinkMutation.mutate(tenantId),
+    isOpeningDashboard: dashboardLinkMutation.isPending,
     
     // Custom Modals
     customCreateModalOpen,
