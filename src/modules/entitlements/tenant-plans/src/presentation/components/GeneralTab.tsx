@@ -25,7 +25,7 @@ export function GeneralTab({ plan, t }: GeneralTabProps) {
         <CardHeader className="pb-3">
           <CardTitle className="text-base flex items-center gap-2">
             <Settings className="h-4 w-4 text-muted-foreground" />
-            {t("common.general") || "General Information"}
+            {t("entitlements.tenantPlans.tabGeneral") || "General Information"}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
@@ -48,7 +48,7 @@ export function GeneralTab({ plan, t }: GeneralTabProps) {
         <CardHeader className="pb-3">
           <CardTitle className="text-base flex items-center gap-2">
             <Shield className="h-4 w-4 text-muted-foreground" />
-            {t("common.settings") || "Settings"}
+            {t("entitlements.tenantPlans.tabSettings") || "Settings"}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">

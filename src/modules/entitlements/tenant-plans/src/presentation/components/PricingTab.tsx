@@ -1,168 +1,548 @@
 /**
- * PricingTab — Editable multi-currency pricing matrix for TenantPlan.
+ * PricingTab — Hybrid Pricing Model (mirrors Edition PricingTab)
  *
- * Supports:
- * - Add/edit/remove price rows
- * - Currency + Billing Cycle + Amount + Original Amount
- * - Promotional flag
- * - Change tracking with save
- * - Stripe-ready: price entries become Stripe Price objects in Phase 10
+ * 3-Section Layout:
+ * 1. Base Pricing (USD) — Anchor currency with yearly discount calculator
+ * 2. Currency Overrides — Optional, with auto-suggest from exchange rates
+ * 3. Live Preview — Shows what tenants would actually pay
  *
- * Extracted sub-components: PriceRow, AddPriceForm
+ * All state is lifted in the ViewModel (persists across tab switches).
  */
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useState, memo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
-import { DollarSign, Plus, Save, Loader2 } from "lucide-react";
-import type { TenantPlan, TenantPlanPriceData } from "../../domain/entities/TenantPlan";
-import type { UpsertTenantPlanPriceRequest } from "../../domain/entities/TenantPlanRequests";
-import { formatAmount, type TFn } from "./shared-helpers";
-import { PriceRow } from "./pricing-tab/PriceRow";
-import { AddPriceForm } from "./pricing-tab/AddPriceForm";
+import { Input } from "@core/ui/input";
+import { Skeleton } from "@core/ui/skeleton";
+import {
+  Dialog, DialogContent, DialogDescription, DialogFooter,
+  DialogHeader, DialogTitle,
+} from "@core/ui/dialog";
+import {
+  DollarSign, Plus, Trash2, Save, Loader2, Undo2,
+  Info, TrendingDown, Globe, Zap, Eye, Percent,
+  ArrowRight,
+} from "lucide-react";
+import { SUPPORTED_CURRENCIES, getCurrencyInfo, formatPrice } from "@core/constants/currencies";
+import type { PreviewRow } from "../viewmodels/useTenantPlanDetailViewModel";
+import type { TenantPlan } from "../../domain/entities/TenantPlan";
+import type { TFn } from "./shared-helpers";
 
 interface PricingTabProps {
   plan: TenantPlan;
-  onSavePrices: (prices: UpsertTenantPlanPriceRequest[]) => void;
+  // ── USD Base ──
+  usdMonthly: number;
+  usdYearly: number;
+  usdLifetime: number;
+  setUsdMonthly: (v: number) => void;
+  setUsdYearly: (v: number) => void;
+  setUsdLifetime: (v: number) => void;
+  suggestedYearly: number;
+  yearlyDiscountPercent: number;
+  setYearlyDiscountPercent: (v: number) => void;
+  applyDiscountToYearly: () => void;
+  // ── Currency Overrides ──
+  overrides: Array<{ currency: string; monthlyAmount: number; yearlyAmount: number; lifetimeAmount: number }>;
+  addOverride: (code: string) => void;
+  removeOverride: (code: string) => void;
+  updateOverride: (currency: string, field: "monthly" | "yearly" | "lifetime", amount: number) => void;
+  availableCurrencies: Array<{ code: string; symbol: string; flag: string; name: string }>;
+  // ── Preview ──
+  preview: PreviewRow[];
+  yearlySavingsPercent: (currency: string) => number;
+  // ── State ──
+  hasChanges: boolean;
+  onSave: () => void;
+  onDiscard: () => void;
   isSaving: boolean;
+  ratesLoading: boolean;
   t: TFn;
 }
 
-export function PricingTab({ plan, onSavePrices, isSaving, t }: PricingTabProps) {
-  // ── Local editable price list ──
-  const [localPrices, setLocalPrices] = useState<UpsertTenantPlanPriceRequest[]>(
-    () => (plan.prices || []).map((p) => ({
-      currency: p.currency || "USD",
-      billingCycle: p.billingCycle,
-      amount: p.amount,
-      originalAmount: p.originalAmount,
-      isPromotional: p.isPromotional,
-    })),
-  );
+export const PricingTab = memo(function PricingTab(props: PricingTabProps) {
+  const {
+    plan, usdMonthly, usdYearly, usdLifetime,
+    setUsdMonthly, setUsdYearly, setUsdLifetime,
+    suggestedYearly, yearlyDiscountPercent, setYearlyDiscountPercent,
+    applyDiscountToYearly, overrides, addOverride, removeOverride,
+    updateOverride, availableCurrencies, preview, yearlySavingsPercent,
+    hasChanges, onSave, onDiscard, isSaving, ratesLoading, t,
+  } = props;
 
-  const [showAddForm, setShowAddForm] = useState(false);
+  const [showAddDialog, setShowAddDialog] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
 
-  // ── Change tracking ──
-  const hasChanges = useMemo(() => {
-    const original = (plan.prices || []).map((p) => `${p.currency}:${p.billingCycle}:${p.amount}`).sort();
-    const current = localPrices.map((p) => `${p.currency}:${p.billingCycle}:${p.amount}`).sort();
-    return JSON.stringify(original) !== JSON.stringify(current);
-  }, [localPrices, plan.prices]);
-
-  // ── Handlers ──
-  const updatePrice = useCallback((index: number, updates: Partial<UpsertTenantPlanPriceRequest>) => {
-    setLocalPrices((prev) => {
-      const next = [...prev];
-      next[index] = { ...next[index], ...updates };
-      return next;
-    });
-  }, []);
-
-  const removePrice = useCallback((index: number) => {
-    setLocalPrices((prev) => prev.filter((_, i) => i !== index));
-  }, []);
-
-  const addPrice = useCallback((price: UpsertTenantPlanPriceRequest) => {
-    setLocalPrices((prev) => [...prev, price]);
-    setShowAddForm(false);
-  }, []);
-
-  const handleSave = useCallback(() => {
-    onSavePrices(localPrices);
-  }, [localPrices, onSavePrices]);
-
-  // ── Group by currency ──
-  const byCurrency = useMemo(() => {
-    const groups: Record<string, Array<{ price: UpsertTenantPlanPriceRequest; index: number }>> = {};
-    localPrices.forEach((price, index) => {
-      const cur = price.currency || "USD";
-      if (!groups[cur]) groups[cur] = [];
-      groups[cur].push({ price, index });
-    });
-    return groups;
-  }, [localPrices]);
+  const usdSavings = yearlySavingsPercent("USD");
 
   return (
-    <div className="space-y-4">
-      {/* ─────── TOOLBAR ─────── */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <DollarSign className="h-5 w-5 text-emerald-500" />
-          <h2 className="text-lg font-semibold">
-            {t("entitlements.tenantPlans.tabPricing") || "Pricing"}
-          </h2>
-          <Badge variant="secondary" className="text-xs">
-            {localPrices.length} {localPrices.length === 1 ? t("entitlements.tenantPlans.priceCount") : t("entitlements.tenantPlans.priceCountPlural")}
-          </Badge>
-          {hasChanges && (
-            <Badge variant="outline" className="text-xs text-amber-600 border-amber-500/30 bg-amber-500/5">
-              {t("common.unsavedChanges") || "Unsaved Changes"}
-            </Badge>
-          )}
+    <>
+      <div className="space-y-5">
+        {/* ─────── TOOLBAR ─────── */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="rounded-lg p-1.5 bg-emerald-500/10">
+              <DollarSign className="h-4 w-4 text-emerald-500" />
+            </div>
+            <h2 className="text-lg font-semibold">
+              {t("entitlements.tenantPlans.tabPricing") || "Pricing"}
+            </h2>
+            {overrides.length > 0 && (
+              <Badge variant="secondary" className="text-xs">
+                {overrides.length + 1} {t("entitlements.tenantPlans.currencyCountPlural") || "currencies"}
+              </Badge>
+            )}
+            {hasChanges && (
+              <Badge variant="outline" className="text-xs text-amber-600 border-amber-500/30 bg-amber-500/5">
+                {t("common.unsavedChanges") || "Unsaved Changes"}
+              </Badge>
+            )}
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowPreview(!showPreview)}
+              className="gap-1.5"
+            >
+              <Eye className="h-3.5 w-3.5" />
+              {t("entitlements.tenantPlans.livePreview") || "Live Preview"}
+            </Button>
+            {hasChanges && (
+              <Button variant="ghost" size="sm" onClick={onDiscard} className="gap-1.5">
+                <Undo2 className="h-3.5 w-3.5" />
+                {t("common.discard") || "Discard"}
+              </Button>
+            )}
+            <Button size="sm" onClick={onSave} disabled={!hasChanges || isSaving}>
+              {isSaving ? <Loader2 className="h-4 w-4 animate-spin me-1" /> : <Save className="h-4 w-4 me-1" />}
+              {t("common.save") || "Save"}
+            </Button>
+          </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={() => setShowAddForm(true)}>
-            <Plus className="h-4 w-4 me-1" />
-            {t("entitlements.tenantPlans.addPrice") || "Add Price"}
-          </Button>
-          <Button size="sm" onClick={handleSave} disabled={!hasChanges || isSaving}>
-            {isSaving ? <Loader2 className="h-4 w-4 animate-spin me-1" /> : <Save className="h-4 w-4 me-1" />}
-            {t("common.save") || "Save"}
-          </Button>
-        </div>
-      </div>
-
-      {/* ─────── ADD PRICE FORM ─────── */}
-      {showAddForm && (
-        <AddPriceForm
-          plan={plan}
-          onAdd={addPrice}
-          onCancel={() => setShowAddForm(false)}
-          t={t}
-        />
-      )}
-
-      {/* ─────── PRICE GROUPS ─────── */}
-      {localPrices.length === 0 ? (
+        {/* ═══════════════════════════════════════════════════════════════ */}
+        {/* SECTION 1: USD BASE PRICING                                   */}
+        {/* ═══════════════════════════════════════════════════════════════ */}
         <Card>
-          <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-            <DollarSign className="h-10 w-10 text-muted-foreground/40 mb-3" />
-            <p className="text-sm text-muted-foreground">{t("entitlements.tenantPlans.noPricing")}</p>
-            <p className="text-xs text-muted-foreground mt-1">{t("entitlements.tenantPlans.noPricingHint")}</p>
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-lg">🇺🇸</span>
+                <CardTitle className="text-sm font-semibold">
+                  {t("entitlements.tenantPlans.basePricing") || "Base Pricing (USD)"}
+                </CardTitle>
+                <Badge variant="secondary" className="text-[10px]">
+                  {t("entitlements.tenantPlans.anchorCurrency") || "Anchor"}
+                </Badge>
+              </div>
+              {usdSavings > 0 && (
+                <Badge variant="outline" className="text-[10px] text-emerald-600 dark:text-emerald-400 border-emerald-500/30 bg-emerald-500/5">
+                  <TrendingDown className="h-2.5 w-2.5 me-0.5" />
+                  {t("entitlements.tenantPlans.yearlySave") || "Save"} {usdSavings}%
+                </Badge>
+              )}
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {/* Info Banner */}
+            <div className="flex items-start gap-2 rounded-lg bg-blue-500/5 border border-blue-500/10 p-2.5">
+              <Info className="h-3.5 w-3.5 text-blue-500 mt-0.5 shrink-0" />
+              <p className="text-[11px] text-blue-600 dark:text-blue-400 leading-relaxed">
+                {t("entitlements.tenantPlans.basePricingInfo") ||
+                  "USD is the anchor currency. All other currencies auto-calculate from exchange rates unless explicitly overridden."}
+              </p>
+            </div>
+
+            {/* Price Inputs */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Monthly */}
+              {plan.allowMonthly && (
+                <div className="space-y-1.5">
+                  <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                    {t("entitlements.tenantPlans.monthly") || "Monthly"}
+                  </label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground font-medium">$</span>
+                    <Input
+                      type="number"
+                      value={usdMonthly || ""}
+                      onChange={(e) => setUsdMonthly(parseFloat(e.target.value) || 0)}
+                      className="h-10 pl-7 text-right tabular-nums font-semibold"
+                      min={0}
+                      step="0.01"
+                      placeholder="0.00"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Yearly */}
+              {plan.allowYearly && (
+                <div className="space-y-1.5">
+                  <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                    {t("entitlements.tenantPlans.yearly") || "Yearly"}
+                  </label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground font-medium">$</span>
+                    <Input
+                      type="number"
+                      value={usdYearly || ""}
+                      onChange={(e) => setUsdYearly(parseFloat(e.target.value) || 0)}
+                      className="h-10 pl-7 text-right tabular-nums font-semibold"
+                      min={0}
+                      step="0.01"
+                      placeholder="0.00"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Lifetime */}
+              {plan.allowLifetime && (
+                <div className="space-y-1.5">
+                  <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                    {t("entitlements.tenantPlans.lifetime") || "Lifetime"}
+                  </label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground font-medium">$</span>
+                    <Input
+                      type="number"
+                      value={usdLifetime || ""}
+                      onChange={(e) => setUsdLifetime(parseFloat(e.target.value) || 0)}
+                      className="h-10 pl-7 text-right tabular-nums font-semibold"
+                      min={0}
+                      step="0.01"
+                      placeholder="0.00"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Yearly Discount Calculator */}
+            {plan.allowMonthly && plan.allowYearly && usdMonthly > 0 && (
+              <div className="flex items-center gap-3 p-3 rounded-lg bg-emerald-500/5 border border-emerald-500/10">
+                <Percent className="h-4 w-4 text-emerald-600 shrink-0" />
+                <div className="flex items-center gap-2 flex-1 min-w-0">
+                  <span className="text-xs text-emerald-700 dark:text-emerald-400 whitespace-nowrap">
+                    {t("entitlements.tenantPlans.yearlyDiscount") || "Yearly Discount:"}
+                  </span>
+                  <Input
+                    type="number"
+                    value={yearlyDiscountPercent}
+                    onChange={(e) => setYearlyDiscountPercent(parseInt(e.target.value) || 0)}
+                    className="h-7 w-16 text-center text-xs"
+                    min={0}
+                    max={90}
+                  />
+                  <span className="text-xs text-emerald-700 dark:text-emerald-400">%</span>
+                  <ArrowRight className="h-3 w-3 text-emerald-600" />
+                  <span className="text-xs font-semibold text-emerald-700 dark:text-emerald-400 tabular-nums">
+                    ${suggestedYearly.toFixed(2)}/yr
+                  </span>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={applyDiscountToYearly}
+                  className="h-7 text-xs border-emerald-500/30 text-emerald-700 hover:bg-emerald-500/10 shrink-0"
+                >
+                  <Zap className="h-3 w-3 me-1" />
+                  {t("entitlements.tenantPlans.applyDiscount") || "Apply"}
+                </Button>
+              </div>
+            )}
           </CardContent>
         </Card>
-      ) : (
-        Object.entries(byCurrency).map(([currency, items]) => (
-          <Card key={currency}>
+
+        {/* ═══════════════════════════════════════════════════════════════ */}
+        {/* SECTION 2: CURRENCY OVERRIDES                                  */}
+        {/* ═══════════════════════════════════════════════════════════════ */}
+        <Card>
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Globe className="h-4 w-4 text-primary" />
+                <CardTitle className="text-sm font-semibold">
+                  {t("entitlements.tenantPlans.currencyOverrides") || "Currency Overrides"}
+                </CardTitle>
+                {overrides.length > 0 && (
+                  <Badge variant="secondary" className="text-xs">
+                    {overrides.length}
+                  </Badge>
+                )}
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowAddDialog(true)}
+                disabled={availableCurrencies.length === 0}
+                className="gap-1.5"
+              >
+                <Plus className="h-3.5 w-3.5" />
+                {t("entitlements.tenantPlans.addCurrency") || "Add Currency"}
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {overrides.length === 0 ? (
+              <div className="flex items-start gap-2 rounded-lg bg-muted/30 border border-dashed p-4">
+                <Info className="h-3.5 w-3.5 text-muted-foreground mt-0.5 shrink-0" />
+                <div>
+                  <p className="text-xs text-muted-foreground">
+                    {t("entitlements.tenantPlans.noOverrides") ||
+                      "No currency overrides set. Prices in other currencies are auto-calculated from USD exchange rates."}
+                  </p>
+                  {ratesLoading && (
+                    <p className="text-[10px] text-muted-foreground mt-1 flex items-center gap-1">
+                      <Loader2 className="h-3 w-3 animate-spin" />
+                      {t("entitlements.tenantPlans.loadingRates") || "Loading exchange rates..."}
+                    </p>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {overrides.map((row) => {
+                  const info = getCurrencyInfo(row.currency);
+                  const savings = yearlySavingsPercent(row.currency);
+
+                  return (
+                    <div key={row.currency} className="rounded-lg border p-3 space-y-2 group hover:border-primary/20 transition-colors">
+                      {/* Currency Header */}
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="text-lg leading-none">{info?.flag || "💱"}</span>
+                          <span className="text-sm font-semibold">{row.currency}</span>
+                          <span className="text-xs text-muted-foreground">{info?.name || row.currency}</span>
+                          {savings > 0 && (
+                            <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 bg-emerald-500/5">
+                              <TrendingDown className="h-2.5 w-2.5 me-0.5" />
+                              {t("entitlements.tenantPlans.yearlySave") || "Save"} {savings}%
+                            </Badge>
+                          )}
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-7 w-7 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+                          onClick={() => removeOverride(row.currency)}
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </Button>
+                      </div>
+
+                      {/* Price Inputs */}
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        {plan.allowMonthly && (
+                          <div className="space-y-1">
+                            <label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
+                              {t("entitlements.tenantPlans.monthly") || "Monthly"}
+                            </label>
+                            <div className="relative">
+                              <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-muted-foreground font-medium">
+                                {info?.symbol || row.currency}
+                              </span>
+                              <Input
+                                type="number"
+                                value={row.monthlyAmount || ""}
+                                onChange={(e) => updateOverride(row.currency, "monthly", parseFloat(e.target.value) || 0)}
+                                className="h-8 pl-8 text-right tabular-nums text-sm"
+                                min={0}
+                                step="0.01"
+                                placeholder="0.00"
+                              />
+                            </div>
+                          </div>
+                        )}
+                        {plan.allowYearly && (
+                          <div className="space-y-1">
+                            <label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
+                              {t("entitlements.tenantPlans.yearly") || "Yearly"}
+                            </label>
+                            <div className="relative">
+                              <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-muted-foreground font-medium">
+                                {info?.symbol || row.currency}
+                              </span>
+                              <Input
+                                type="number"
+                                value={row.yearlyAmount || ""}
+                                onChange={(e) => updateOverride(row.currency, "yearly", parseFloat(e.target.value) || 0)}
+                                className="h-8 pl-8 text-right tabular-nums text-sm"
+                                min={0}
+                                step="0.01"
+                                placeholder="0.00"
+                              />
+                            </div>
+                          </div>
+                        )}
+                        {plan.allowLifetime && (
+                          <div className="space-y-1">
+                            <label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
+                              {t("entitlements.tenantPlans.lifetime") || "Lifetime"}
+                            </label>
+                            <div className="relative">
+                              <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-muted-foreground font-medium">
+                                {info?.symbol || row.currency}
+                              </span>
+                              <Input
+                                type="number"
+                                value={row.lifetimeAmount || ""}
+                                onChange={(e) => updateOverride(row.currency, "lifetime", parseFloat(e.target.value) || 0)}
+                                className="h-8 pl-8 text-right tabular-nums text-sm"
+                                min={0}
+                                step="0.01"
+                                placeholder="0.00"
+                              />
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* ═══════════════════════════════════════════════════════════════ */}
+        {/* SECTION 3: LIVE PREVIEW                                        */}
+        {/* ═══════════════════════════════════════════════════════════════ */}
+        {showPreview && (
+          <Card className="border-primary/20">
             <CardHeader className="pb-3">
               <div className="flex items-center gap-2">
-                <DollarSign className="h-4 w-4 text-emerald-500" />
-                <CardTitle className="text-base">{currency}</CardTitle>
-                <Badge variant="secondary" className="text-xs">
-                  {items.length} {items.length === 1 ? t("entitlements.tenantPlans.priceCount") : t("entitlements.tenantPlans.priceCountPlural")}
+                <Eye className="h-4 w-4 text-primary" />
+                <CardTitle className="text-sm font-semibold">
+                  {t("entitlements.tenantPlans.livePreview") || "Live Preview"}
+                </CardTitle>
+                <Badge variant="outline" className="text-[10px]">
+                  {preview.length} {t("entitlements.tenantPlans.currencyCountPlural") || "currencies"}
                 </Badge>
               </div>
             </CardHeader>
             <CardContent>
-              <div className="divide-y">
-                {items.map(({ price, index }) => (
-                  <PriceRow
-                    key={`${currency}-${price.billingCycle}-${index}`}
-                    price={price}
-                    currency={currency}
-                    onUpdate={(updates) => updatePrice(index, updates)}
-                    onRemove={() => removePrice(index)}
-                    t={t}
-                  />
-                ))}
+              <div className="flex items-start gap-2 rounded-lg bg-violet-500/5 border border-violet-500/10 p-2.5 mb-4">
+                <Info className="h-3.5 w-3.5 text-violet-500 mt-0.5 shrink-0" />
+                <p className="text-[11px] text-violet-600 dark:text-violet-400 leading-relaxed">
+                  {t("entitlements.tenantPlans.previewInfo") ||
+                    "This preview shows what your users would pay in each currency. 'Auto' prices are converted from USD via live exchange rates."}
+                </p>
+              </div>
+
+              {/* Preview Table */}
+              <div className="rounded-lg border overflow-hidden">
+                {/* Header */}
+                <div className="grid grid-cols-[160px_1fr_1fr_1fr_80px] gap-3 px-4 py-2.5 bg-muted/30 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  <span>{t("entitlements.tenantPlans.currency") || "Currency"}</span>
+                  {plan.allowMonthly && <span>{t("entitlements.tenantPlans.monthly") || "Monthly"}</span>}
+                  {plan.allowYearly && <span>{t("entitlements.tenantPlans.yearly") || "Yearly"}</span>}
+                  {plan.allowLifetime && <span>{t("entitlements.tenantPlans.lifetime") || "Lifetime"}</span>}
+                  <span>{t("entitlements.tenantPlans.source") || "Source"}</span>
+                </div>
+
+                {/* Rows */}
+                <div className="divide-y">
+                  {preview.map((row) => {
+                    const info = getCurrencyInfo(row.currency);
+                    return (
+                      <div
+                        key={row.currency}
+                        className={`grid grid-cols-[160px_1fr_1fr_1fr_80px] gap-3 px-4 py-2.5 items-center text-sm ${
+                          row.source === "auto" ? "bg-muted/10" : ""
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="text-base leading-none">{info?.flag || "💱"}</span>
+                          <span className="font-medium">{row.currency}</span>
+                          {row.rate && (
+                            <span className="text-[10px] text-muted-foreground">×{row.rate.toFixed(2)}</span>
+                          )}
+                        </div>
+                        {plan.allowMonthly && (
+                          <span className="tabular-nums font-medium">
+                            {formatPrice(row.monthlyAmount, row.currency)}
+                          </span>
+                        )}
+                        {plan.allowYearly && (
+                          <span className="tabular-nums font-medium">
+                            {formatPrice(row.yearlyAmount, row.currency)}
+                          </span>
+                        )}
+                        {plan.allowLifetime && (
+                          <span className="tabular-nums font-medium">
+                            {row.lifetimeAmount > 0 ? formatPrice(row.lifetimeAmount, row.currency) : "—"
+                            }
+                          </span>
+                        )}
+                        <Badge
+                          variant={row.source === "explicit" ? "default" : "secondary"}
+                          className="text-[10px] w-fit"
+                        >
+                          {row.source === "explicit"
+                            ? (t("entitlements.tenantPlans.sourceExplicit") || "Explicit")
+                            : (t("entitlements.tenantPlans.sourceAuto") || "Auto")}
+                        </Badge>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             </CardContent>
           </Card>
-        ))
-      )}
-    </div>
+        )}
+      </div>
+
+      {/* ═══════ ADD CURRENCY DIALOG ═══════ */}
+      <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Plus className="h-5 w-5 text-primary" />
+              {t("entitlements.tenantPlans.addCurrency") || "Add Currency Override"}
+            </DialogTitle>
+            <DialogDescription>
+              {t("entitlements.tenantPlans.addCurrencyOverrideDesc") ||
+                "Select a currency to add explicit pricing. Amounts will be pre-filled from current exchange rates."}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="py-3 space-y-2 max-h-[300px] overflow-y-auto">
+            {availableCurrencies.map((curr) => (
+              <button
+                key={curr.code}
+                type="button"
+                onClick={() => {
+                  addOverride(curr.code);
+                  setShowAddDialog(false);
+                }}
+                className="w-full flex items-center gap-3 rounded-lg border-2 border-transparent p-3 text-start transition-all hover:bg-accent/50 hover:border-muted-foreground/20"
+              >
+                <span className="text-lg">{curr.flag}</span>
+                <div className="flex-1">
+                  <span className="text-sm font-semibold">{curr.code}</span>
+                  <span className="text-xs text-muted-foreground ms-2">{curr.name}</span>
+                </div>
+                <span className="text-xs text-muted-foreground">{curr.symbol}</span>
+              </button>
+            ))}
+            {availableCurrencies.length === 0 && (
+              <p className="text-center text-sm text-muted-foreground py-4">
+                {t("entitlements.tenantPlans.allCurrenciesAdded") || "All supported currencies have been added."}
+              </p>
+            )}
+          </div>
+
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setShowAddDialog(false)}>
+              {t("common.cancel") || "Cancel"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   );
-}
+});

@@ -4,12 +4,14 @@
  * Thin orchestrator that renders the header, quick stats, tab navigation,
  * and delegates tab content to dedicated component files.
  *
+ * Tab state (features, prices) lives in the VIEWMODEL so it persists
+ * across tab switches — matching the Edition detail page pattern.
+ *
  * Tab components: GeneralTab, FeaturesTab, PricingTab, VersionsTab, PromotionsTab
- * Shared helpers: StatCard, InfoRow, FlagRow, formatAmount
  */
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import { useTenantPlanDetailViewModel } from "../viewmodels/useTenantPlanDetailViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Badge } from "@core/ui/badge";
@@ -67,9 +69,9 @@ export function TenantPlanDetailView({ planId }: TenantPlanDetailViewProps) {
   const isBusy = vm.isPublishing || vm.isArchiving;
 
   const tabs = [
-    { id: "general" as const, label: t("common.general") || "General", icon: <Settings className="h-3.5 w-3.5" /> },
-    { id: "features" as const, label: t("entitlements.tenantPlans.tabFeatures") || "Features", icon: <Zap className="h-3.5 w-3.5" />, count: plan.featureCount },
-    { id: "pricing" as const, label: t("entitlements.tenantPlans.tabPricing") || "Pricing", icon: <DollarSign className="h-3.5 w-3.5" />, count: plan.priceCount },
+    { id: "general" as const, label: t("entitlements.tenantPlans.tabGeneral") || "General", icon: <Settings className="h-3.5 w-3.5" /> },
+    { id: "features" as const, label: t("entitlements.tenantPlans.tabFeatures") || "Features", icon: <Zap className="h-3.5 w-3.5" />, count: vm.localFeatures.size },
+    { id: "pricing" as const, label: t("entitlements.tenantPlans.tabPricing") || "Pricing", icon: <DollarSign className="h-3.5 w-3.5" />, count: vm.overrides.length + (vm.usdMonthly > 0 || vm.usdYearly > 0 ? 1 : 0) },
     { id: "versions" as const, label: t("entitlements.tenantPlans.tabVersions") || "Versions", icon: <GitBranch className="h-3.5 w-3.5" />, count: plan.versions.length },
     { id: "promotions" as const, label: t("entitlements.tenantPlans.tabPromotions") || "Promotions", icon: <Tag className="h-3.5 w-3.5" /> },
   ];
@@ -100,7 +102,7 @@ export function TenantPlanDetailView({ planId }: TenantPlanDetailViewProps) {
           </div>
         </div>
 
-        {/* Lifecycle Actions — Publish is in VersionsTab; Archive stays here */}
+        {/* Lifecycle Actions */}
         <div className="flex items-center gap-2 shrink-0">
           {(plan.isDraft || plan.isPublished) && (
             <Button
@@ -170,25 +172,12 @@ export function TenantPlanDetailView({ planId }: TenantPlanDetailViewProps) {
         <FeaturesTab
           plan={plan}
           featureCatalog={vm.featureCatalog}
-          onSaveFeatures={(features) => {
-            vm.updatePlan({
-              name: plan.name,
-              isActive: plan.isActive,
-              isPublic: plan.isPublic,
-              maxUsers: plan.maxUsers,
-              allowMonthly: plan.allowMonthly,
-              allowYearly: plan.allowYearly,
-              allowLifetime: plan.allowLifetime,
-              allowTrial: plan.allowTrial,
-              isSelfServiceEnabled: plan.isSelfServiceEnabled,
-              isContactSalesOnly: plan.isContactSalesOnly,
-              trialDays: plan.trialDays,
-              gracePeriodDays: plan.gracePeriodDays,
-              tierLevel: plan.tierLevel,
-              sortOrder: plan.sortOrder,
-              features,
-            });
-          }}
+          localFeatures={vm.localFeatures}
+          setFeatureValue={vm.setFeatureValue}
+          addFeature={vm.addFeature}
+          removeFeature={vm.removeFeature}
+          hasChanges={vm.featuresHasChanges}
+          onSave={vm.saveFeatures}
           isSaving={vm.isUpdating}
           t={t}
           language={language}
@@ -197,26 +186,28 @@ export function TenantPlanDetailView({ planId }: TenantPlanDetailViewProps) {
       {activeTab === "pricing" && (
         <PricingTab
           plan={plan}
-          onSavePrices={(prices) => {
-            vm.updatePlan({
-              name: plan.name,
-              isActive: plan.isActive,
-              isPublic: plan.isPublic,
-              maxUsers: plan.maxUsers,
-              allowMonthly: plan.allowMonthly,
-              allowYearly: plan.allowYearly,
-              allowLifetime: plan.allowLifetime,
-              allowTrial: plan.allowTrial,
-              isSelfServiceEnabled: plan.isSelfServiceEnabled,
-              isContactSalesOnly: plan.isContactSalesOnly,
-              trialDays: plan.trialDays,
-              gracePeriodDays: plan.gracePeriodDays,
-              tierLevel: plan.tierLevel,
-              sortOrder: plan.sortOrder,
-              prices,
-            });
-          }}
+          usdMonthly={vm.usdMonthly}
+          usdYearly={vm.usdYearly}
+          usdLifetime={vm.usdLifetime}
+          setUsdMonthly={vm.setUsdMonthly}
+          setUsdYearly={vm.setUsdYearly}
+          setUsdLifetime={vm.setUsdLifetime}
+          suggestedYearly={vm.suggestedYearly}
+          yearlyDiscountPercent={vm.yearlyDiscountPercent}
+          setYearlyDiscountPercent={vm.setYearlyDiscountPercent}
+          applyDiscountToYearly={vm.applyDiscountToYearly}
+          overrides={vm.overrides}
+          addOverride={vm.addOverride}
+          removeOverride={vm.removeOverride}
+          updateOverride={vm.updateOverride}
+          availableCurrencies={vm.availableCurrencies}
+          preview={vm.preview}
+          yearlySavingsPercent={vm.yearlySavingsPercent}
+          hasChanges={vm.pricesHasChanges}
+          onSave={vm.savePrices}
+          onDiscard={vm.discardPricing}
           isSaving={vm.isUpdating}
+          ratesLoading={vm.ratesLoading}
           t={t}
         />
       )}

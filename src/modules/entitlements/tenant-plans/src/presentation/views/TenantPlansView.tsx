@@ -10,14 +10,16 @@
  */
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
 import type { CrudConfig, CrudAction } from "@core/crud/components/generic-crud-view";
 import { useTenantPlansViewModel } from "../viewmodels/useTenantPlansViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { TenantPlan } from "../../domain/entities/TenantPlan";
 import { Badge } from "@core/ui/badge";
-import { Pencil, Trash2, Eye, Rocket, Archive, Settings2 } from "lucide-react";
+import { Button } from "@core/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@core/ui/dialog";
+import { Pencil, Trash2, Eye, Rocket, Archive, Settings2, Loader2 } from "lucide-react";
 import { format } from "date-fns";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 
@@ -25,6 +27,17 @@ export function TenantPlansView() {
   useModuleLocales(() => import("../../../locales"), "tenant-plans");
   const { t } = useI18n();
   const vm = useTenantPlansViewModel();
+  const [confirmAction, setConfirmAction] = useState<{ type: "publish" | "archive"; plan: TenantPlan } | null>(null);
+
+  const handleConfirmAction = () => {
+    if (!confirmAction) return;
+    if (confirmAction.type === "publish") {
+      vm.publishPlan(confirmAction.plan.id);
+    } else {
+      vm.archivePlan(confirmAction.plan.id);
+    }
+    setConfirmAction(null);
+  };
 
   const config: CrudConfig<TenantPlan> = useMemo(
     () => ({
@@ -346,7 +359,7 @@ export function TenantPlansView() {
         },
         {
           label: tFn("entitlements.tenantPlans.publish") || "Publish",
-          onClick: (item: TenantPlan) => vm.publishPlan(item.id),
+          onClick: (item: TenantPlan) => setConfirmAction({ type: "publish", plan: item }),
           variant: "ghost" as const,
           className: "text-green-600 hover:text-green-700",
           icon: <Rocket className="h-4 w-4" />,
@@ -354,7 +367,7 @@ export function TenantPlansView() {
         },
         {
           label: tFn("entitlements.tenantPlans.archive") || "Archive",
-          onClick: (item: TenantPlan) => vm.archivePlan(item.id),
+          onClick: (item: TenantPlan) => setConfirmAction({ type: "archive", plan: item }),
           variant: "ghost" as const,
           className: "text-amber-600 hover:text-amber-700",
           icon: <Archive className="h-4 w-4" />,
@@ -374,5 +387,45 @@ export function TenantPlansView() {
     [t]
   );
 
-  return <GenericCrudView viewModel={vm} config={config} />;
+  return (
+    <>
+      <GenericCrudView viewModel={vm} config={config} />
+
+      {/* Publish / Archive Confirmation Dialog */}
+      <Dialog open={!!confirmAction} onOpenChange={(open) => !open && setConfirmAction(null)}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              {confirmAction?.type === "publish" ? (
+                <><Rocket className="h-4 w-4 text-green-600" /> {t("entitlements.tenantPlans.publish") || "Publish"}</>
+              ) : (
+                <><Archive className="h-4 w-4 text-amber-600" /> {t("entitlements.tenantPlans.archive") || "Archive"}</>
+              )}
+            </DialogTitle>
+            <DialogDescription>
+              {confirmAction?.type === "publish"
+                ? t("entitlements.tenantPlans.publishDesc") || "Make this plan live for subscriptions."
+                : t("entitlements.tenantPlans.archiveDesc") || "Archive this plan. Existing subscriptions are maintained."}
+              <span className="block mt-1 font-medium text-foreground">
+                {confirmAction?.plan.name}
+              </span>
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setConfirmAction(null)}>Cancel</Button>
+            <Button
+              onClick={handleConfirmAction}
+              disabled={vm.isPublishing || vm.isArchiving}
+              className={confirmAction?.type === "publish" ? "bg-green-600 hover:bg-green-700 text-white" : "bg-amber-600 hover:bg-amber-700 text-white"}
+            >
+              {(vm.isPublishing || vm.isArchiving) ? <Loader2 className="h-4 w-4 animate-spin me-1" /> : null}
+              {confirmAction?.type === "publish"
+                ? t("entitlements.tenantPlans.publish") || "Publish"
+                : t("entitlements.tenantPlans.archive") || "Archive"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
 }

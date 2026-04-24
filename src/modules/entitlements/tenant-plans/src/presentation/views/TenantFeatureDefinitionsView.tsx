@@ -3,27 +3,41 @@
  *
  * Thin orchestrator using GenericCrudView + CrudConfig.
  * Mirrors the platform-level FeaturesView for Tier 2.
+ *
+ * Create navigates to /entitlements/tenant-feature-definitions/create
+ * Edit navigates to /entitlements/tenant-feature-definitions/[id]/edit
  */
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { useTenantFeatureDefinitionsViewModel } from "../viewmodels/useTenantFeatureDefinitionsViewModel";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
 import type { CrudConfig, CrudAction } from "@core/crud/components/generic-crud-view";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useI18n } from "@core/providers/i18n-provider";
-import { FeatureDefinitionPageHeader } from "../components/feature-definitions/FeatureDefinitionPageHeader";
 import type { TenantFeatureDefinition } from "../../domain/entities/TenantPlan";
-import type {
-  CreateFeatureDefinitionRequest,
-  UpdateFeatureDefinitionRequest,
-} from "../../domain/entities/TenantPlanRequests";
 import { Pencil, Trash2 } from "lucide-react";
+import { Badge } from "@core/ui/badge";
 
 export function TenantFeatureDefinitionsView() {
   useModuleLocales(() => import("../../../locales"), "tenant-plans");
-  const { t, language } = useI18n();
+  const { t } = useI18n();
   const { vm, columns } = useTenantFeatureDefinitionsViewModel();
+  const router = useRouter();
+
+  // Navigate to the dedicated create page
+  const handleCreateClick = useCallback(() => {
+    router.push("/entitlements/tenant-feature-definitions/create");
+  }, [router]);
+
+  // Navigate to the dedicated edit page
+  const handleEditClick = useCallback(
+    (item: TenantFeatureDefinition) => {
+      router.push(`/entitlements/tenant-feature-definitions/${item.id}/edit`);
+    },
+    [router]
+  );
 
   const config: CrudConfig<TenantFeatureDefinition> = useMemo(
     () => ({
@@ -31,78 +45,13 @@ export function TenantFeatureDefinitionsView() {
       subtitleKey: "entitlements.featureDefinitions.description",
       resource: "tenant_feature_definitions",
       columns,
-      createFields: [
-        {
-          name: "key",
-          label: t("entitlements.featureDefinitions.key") || "Key",
-          type: "text" as const,
-          required: true,
-          placeholder: "e.g. max_projects",
-        },
-        {
-          name: "displayNameEn",
-          label: t("entitlements.featureDefinitions.displayNameEn") || "Name (EN)",
-          type: "text" as const,
-          required: true,
-        },
-        {
-          name: "displayNameAr",
-          label: t("entitlements.featureDefinitions.displayNameAr") || "Name (AR)",
-          type: "text" as const,
-          required: true,
-        },
-        {
-          name: "valueType",
-          label: t("entitlements.featureDefinitions.valueType") || "Value Type",
-          type: "select" as const,
-          required: true,
-          options: [
-            { label: t("entitlements.featureDefinitions.typeBoolean") || "Boolean", value: "Boolean" },
-            { label: t("entitlements.featureDefinitions.typeNumeric") || "Numeric", value: "Numeric" },
-            { label: t("entitlements.featureDefinitions.typeString") || "String", value: "String" },
-          ],
-        },
-        {
-          name: "defaultValue",
-          label: t("entitlements.featureDefinitions.defaultValue") || "Default Value",
-          type: "text" as const,
-          placeholder: "e.g. true, 10, basic",
-        },
-        {
-          name: "category",
-          label: t("entitlements.featureDefinitions.category") || "Category",
-          type: "text" as const,
-          placeholder: "e.g. Limits, Access",
-        },
-        {
-          name: "description",
-          label: t("common.description") || "Description",
-          type: "textarea" as const,
-        },
-        {
-          name: "sortOrder",
-          label: t("entitlements.featureDefinitions.sortOrder") || "Sort Order",
-          type: "number" as const,
-          defaultValue: 0,
-        },
-        {
-          name: "isActive",
-          label: t("common.active") || "Active",
-          type: "switch" as const,
-          defaultValue: true,
-        },
-      ],
-      editInitialValues: (item: TenantFeatureDefinition) => ({
-        key: item.key,
-        displayNameEn: item.displayNameEn,
-        displayNameAr: item.displayNameAr,
-        valueType: item.valueType,
-        defaultValue: item.defaultValue,
-        category: item.category,
-        description: item.description ?? "",
-        sortOrder: item.sortOrder,
-        isActive: item.isActive,
-      }),
+      customHeaderContent: (
+        <Badge variant="outline" className="text-xs w-fit">
+          {t("entitlements.featureDefinitions.tier2Badge") || "Tier 2"}
+        </Badge>
+      ),
+      // Redirect "Add" button to the full-page create form
+      onCreateClick: handleCreateClick,
       getItemDisplayName: (item: TenantFeatureDefinition) => item.displayNameEn || item.key,
       deleteService: async (id: string) => {
         await vm.deleteItem(id);
@@ -110,7 +59,7 @@ export function TenantFeatureDefinitionsView() {
       getActions: (_vmInstance, tFn, handleDelete): CrudAction<TenantFeatureDefinition>[] => [
         {
           label: tFn("common.edit") || "Edit",
-          onClick: (item: TenantFeatureDefinition) => vm.openEditModal(item),
+          onClick: (item: TenantFeatureDefinition) => handleEditClick(item),
           variant: "ghost" as const,
           icon: <Pencil className="h-4 w-4" />,
         },
@@ -124,13 +73,8 @@ export function TenantFeatureDefinitionsView() {
         },
       ],
     }),
-    [columns, t, vm]
+    [columns, t, vm, handleCreateClick, handleEditClick]
   );
 
-  return (
-    <div className="space-y-6">
-      <FeatureDefinitionPageHeader t={t} />
-      <GenericCrudView viewModel={vm} config={config} />
-    </div>
-  );
+  return <GenericCrudView viewModel={vm} config={config} />;
 }

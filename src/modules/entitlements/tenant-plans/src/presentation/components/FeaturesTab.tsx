@@ -1,41 +1,41 @@
 /**
  * FeaturesTab — Interactive Feature Assignment Editor for TenantPlan Detail
  *
- * Mirrors Edition's FeaturesTab with:
+ * NOW USES LIFTED STATE from the viewmodel (passed via props).
+ * This ensures state persists when the user switches tabs.
+ *
+ * Features:
  * - Pull features from TenantFeatureDefinition catalog
- * - Boolean: Toggle Switch
- * - Numeric: Number Input
- * - String: Text Input
+ * - Boolean: Toggle Switch / Numeric: Number Input / String: Text Input
  * - Grouped by category with collapse/expand
  * - Change tracking with modified indicators
  * - Add/remove features from the catalog
- *
- * Stripe-ready: Feature assignments are the data layer that Stripe Connect
- * (Phase 10) will use to gate product access.
  */
 "use client";
 
 import { useState, useMemo, useCallback } from "react";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
-import { Input } from "@core/ui/input";
-import { Switch } from "@core/ui/switch";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import {
-  Zap, ChevronDown, ChevronRight, ChevronsUpDown, Plus, Trash2,
+  Zap, ChevronDown, ChevronRight, ChevronsUpDown, Plus,
   Save, Loader2, CheckCircle2,
 } from "lucide-react";
-import type { TenantPlan, TenantPlanFeatureData, TenantFeatureDefinition } from "../../domain/entities/TenantPlan";
-import type { UpsertTenantPlanFeatureRequest } from "../../domain/entities/TenantPlanRequests";
+import type { TenantPlan, TenantFeatureDefinition } from "../../domain/entities/TenantPlan";
 import { FeatureCatalogPicker } from "./features-tab/FeatureCatalogPicker";
-import { FeatureControl } from "./features-tab/FeatureControl";
 import { FeatureRow } from "./features-tab/FeatureRow";
 import Link from "next/link";
 
 interface FeaturesTabProps {
   plan: TenantPlan;
   featureCatalog: TenantFeatureDefinition[];
-  onSaveFeatures: (features: UpsertTenantPlanFeatureRequest[]) => void;
+  /** Lifted state from viewmodel */
+  localFeatures: Map<string, { value: string; overrideLabel?: string }>;
+  setFeatureValue: (defId: string, value: string) => void;
+  addFeature: (def: TenantFeatureDefinition) => void;
+  removeFeature: (defId: string) => void;
+  hasChanges: boolean;
+  onSave: () => void;
   isSaving: boolean;
   t: (key: string) => string;
   language: string;
@@ -44,25 +44,16 @@ interface FeaturesTabProps {
 export function FeaturesTab({
   plan,
   featureCatalog,
-  onSaveFeatures,
+  localFeatures,
+  setFeatureValue,
+  addFeature,
+  removeFeature,
+  hasChanges,
+  onSave,
   isSaving,
   t,
   language,
 }: FeaturesTabProps) {
-  // ── Local state for editable feature list ──
-  const [localFeatures, setLocalFeatures] = useState<Map<string, { value: string; overrideLabel?: string }>>(
-    () => {
-      const map = new Map<string, { value: string; overrideLabel?: string }>();
-      for (const f of plan.features || []) {
-        map.set(f.featureDefinitionId, {
-          value: f.value,
-          overrideLabel: f.overrideLabel,
-        });
-      }
-      return map;
-    },
-  );
-
   const [collapsedCategories, setCollapsedCategories] = useState<Record<string, boolean>>({});
   const [showPicker, setShowPicker] = useState(false);
 
@@ -100,57 +91,11 @@ export function FeaturesTab({
     return groups;
   }, [assignedFeatures]);
 
-  // ── Change tracking ──
-  const hasChanges = useMemo(() => {
-    const originalMap = new Map<string, string>();
-    for (const f of plan.features || []) {
-      originalMap.set(f.featureDefinitionId, f.value);
-    }
-    if (localFeatures.size !== originalMap.size) return true;
-    for (const [id, data] of localFeatures) {
-      if (!originalMap.has(id) || originalMap.get(id) !== data.value) return true;
-    }
-    return false;
-  }, [localFeatures, plan.features]);
-
   // ── Handlers ──
-  const setValue = useCallback((defId: string, value: string) => {
-    setLocalFeatures((prev) => {
-      const next = new Map(prev);
-      const existing = next.get(defId);
-      next.set(defId, { value, overrideLabel: existing?.overrideLabel });
-      return next;
-    });
-  }, []);
-
-  const addFeature = useCallback((def: TenantFeatureDefinition) => {
-    setLocalFeatures((prev) => {
-      const next = new Map(prev);
-      next.set(def.id, { value: def.defaultValue || (def.isBoolean ? "false" : "0") });
-      return next;
-    });
+  const handleAddFeature = useCallback((def: TenantFeatureDefinition) => {
+    addFeature(def);
     setShowPicker(false);
-  }, []);
-
-  const removeFeature = useCallback((defId: string) => {
-    setLocalFeatures((prev) => {
-      const next = new Map(prev);
-      next.delete(defId);
-      return next;
-    });
-  }, []);
-
-  const handleSave = useCallback(() => {
-    const features: UpsertTenantPlanFeatureRequest[] = [];
-    for (const [defId, data] of localFeatures) {
-      features.push({
-        featureDefinitionId: defId,
-        value: data.value,
-        overrideLabel: data.overrideLabel,
-      });
-    }
-    onSaveFeatures(features);
-  }, [localFeatures, onSaveFeatures]);
+  }, [addFeature]);
 
   const toggleCategory = useCallback((cat: string) => {
     setCollapsedCategories((prev) => ({ ...prev, [cat]: !prev[cat] }));
@@ -226,7 +171,7 @@ export function FeaturesTab({
             <Plus className="h-4 w-4 me-1" />
             {t("entitlements.featureDefinitions.addFeature") || "Add Feature"}
           </Button>
-          <Button size="sm" onClick={handleSave} disabled={!hasChanges || isSaving}>
+          <Button size="sm" onClick={onSave} disabled={!hasChanges || isSaving}>
             {isSaving ? (
               <Loader2 className="h-4 w-4 animate-spin me-1" />
             ) : (
@@ -241,7 +186,7 @@ export function FeaturesTab({
       {showPicker && (
         <FeatureCatalogPicker
           availableFeatures={availableFeatures}
-          onSelect={addFeature}
+          onSelect={handleAddFeature}
           onClose={() => setShowPicker(false)}
           t={t}
           language={language}
@@ -304,7 +249,7 @@ export function FeaturesTab({
                           value={item.value}
                           isModified={isModified}
                           isNew={!originalFeature}
-                          onValueChange={(v) => setValue(item.definition.id, v)}
+                          onValueChange={(v) => setFeatureValue(item.definition.id, v)}
                           onRemove={() => removeFeature(item.definition.id)}
                           language={language}
                           t={t}
