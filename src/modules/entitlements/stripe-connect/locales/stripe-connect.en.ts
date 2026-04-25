@@ -14,6 +14,7 @@ export const en = {
       createFailed: "Failed to create account",
       refreshLink: "Refresh Onboarding Link",
       completeOnboarding: "Complete Onboarding",
+      openStripeDashboard: "Open Stripe Dashboard",
       completeOnboardingDesc: "Complete onboarding for this tenant.",
       refreshLinkDesc: "Generate a new onboarding link for this tenant.",
       refreshed: "Link Refreshed",
@@ -179,6 +180,37 @@ export const en = {
       // Error state
       errorTitle: "Unable to Load Account",
       errorDesc: "We couldn't load your payment account information. You may not have permission to access this page, or there was a network issue.",
+
+      // Sync
+      syncBtn: "Sync Data",
+      syncSuccess: "Account Synced",
+      syncSuccessDesc: "Your account data has been refreshed from Stripe.",
+      syncFailed: "Sync failed. Please try again later.",
+
+      // Transactions
+      txn: {
+        title: "Recent Transactions",
+        desc: "Payments received, platform fees, and refunds",
+        grossRevenue: "Gross Revenue",
+        platformFees: "Platform Fees",
+        netRevenue: "Net Revenue",
+        refunded: "Total Refunded",
+        deducted: "deducted by platform",
+        yourEarnings: "your earnings",
+        refunds: "refunds",
+        empty: "No transactions found.",
+        showing: "Showing",
+        of: "of",
+        col: {
+          date: "Date",
+          type: "Type",
+          gross: "Gross",
+          fee: "Fee",
+          net: "Net",
+          status: "Status",
+          refund: "Refund",
+        },
+      },
     },
   },
 };

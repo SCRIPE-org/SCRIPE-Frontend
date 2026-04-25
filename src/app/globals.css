@@ -1265,7 +1265,7 @@ html {
 }
 
 /* ========================================
-   ANIMATION LEVELS
+   ANIMATION LEVELS — Base Transition Speed
    ======================================== */
 :root[data-animation="none"] * {
   transition: none !important;
@@ -1282,6 +1282,459 @@ html {
 
 :root[data-animation="high"] * {
   transition-duration: 0.5s !important;
+}
+
+/* ========================================
+   NEXORA ENTRANCE ANIMATION KEYFRAMES
+   Used by moderate + high animation levels
+   ======================================== */
+@keyframes nxFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes nxFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes nxScaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes nxSlideInFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes nxSlideInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes nxExpandIn {
+  from {
+    opacity: 0;
+    transform: scale(0.97) translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* ========================================
+   MODERATE — Page Content Entrance
+   Targets the main content wrapper in all layouts
+   ======================================== */
+:root[data-animation="moderate"] main {
+  animation: nxFadeIn 0.35s ease-out both;
+}
+
+/* ========================================
+   MODERATE — Card Entrance with Stagger
+   All .card elements fade up with cascading delay
+   ======================================== */
+:root[data-animation="moderate"] .card {
+  animation: nxFadeUp 0.4s ease-out both;
+}
+
+:root[data-animation="moderate"] .card:nth-child(1) { animation-delay: 0ms; }
+:root[data-animation="moderate"] .card:nth-child(2) { animation-delay: 60ms; }
+:root[data-animation="moderate"] .card:nth-child(3) { animation-delay: 120ms; }
+:root[data-animation="moderate"] .card:nth-child(4) { animation-delay: 180ms; }
+:root[data-animation="moderate"] .card:nth-child(5) { animation-delay: 240ms; }
+:root[data-animation="moderate"] .card:nth-child(6) { animation-delay: 300ms; }
+:root[data-animation="moderate"] .card:nth-child(7) { animation-delay: 360ms; }
+:root[data-animation="moderate"] .card:nth-child(8) { animation-delay: 400ms; }
+:root[data-animation="moderate"] .card:nth-child(n+9) { animation-delay: 420ms; }
+
+/* ========================================
+   MODERATE — Table Row Stagger
+   tbody rows fade up with micro-delay
+   ======================================== */
+:root[data-animation="moderate"] tbody tr {
+  animation: nxFadeUp 0.3s ease-out both;
+}
+
+:root[data-animation="moderate"] tbody tr:nth-child(1) { animation-delay: 0ms; }
+:root[data-animation="moderate"] tbody tr:nth-child(2) { animation-delay: 30ms; }
+:root[data-animation="moderate"] tbody tr:nth-child(3) { animation-delay: 60ms; }
+:root[data-animation="moderate"] tbody tr:nth-child(4) { animation-delay: 90ms; }
+:root[data-animation="moderate"] tbody tr:nth-child(5) { animation-delay: 120ms; }
+:root[data-animation="moderate"] tbody tr:nth-child(6) { animation-delay: 150ms; }
+:root[data-animation="moderate"] tbody tr:nth-child(7) { animation-delay: 180ms; }
+:root[data-animation="moderate"] tbody tr:nth-child(8) { animation-delay: 210ms; }
+:root[data-animation="moderate"] tbody tr:nth-child(9) { animation-delay: 240ms; }
+:root[data-animation="moderate"] tbody tr:nth-child(10) { animation-delay: 270ms; }
+:root[data-animation="moderate"] tbody tr:nth-child(n+11) { animation-delay: 300ms; }
+
+/* ========================================
+   MODERATE — Grid Children Stagger
+   KPI cards, stat grids, feature grids
+   ======================================== */
+:root[data-animation="moderate"] .grid > .card,
+:root[data-animation="moderate"] .grid > div > .card {
+  animation: nxScaleIn 0.35s ease-out both;
+}
+
+:root[data-animation="moderate"] .grid > :nth-child(1),
+:root[data-animation="moderate"] .grid > div:nth-child(1) > .card { animation-delay: 0ms; }
+:root[data-animation="moderate"] .grid > :nth-child(2),
+:root[data-animation="moderate"] .grid > div:nth-child(2) > .card { animation-delay: 70ms; }
+:root[data-animation="moderate"] .grid > :nth-child(3),
+:root[data-animation="moderate"] .grid > div:nth-child(3) > .card { animation-delay: 140ms; }
+:root[data-animation="moderate"] .grid > :nth-child(4),
+:root[data-animation="moderate"] .grid > div:nth-child(4) > .card { animation-delay: 210ms; }
+:root[data-animation="moderate"] .grid > :nth-child(5),
+:root[data-animation="moderate"] .grid > div:nth-child(5) > .card { animation-delay: 260ms; }
+:root[data-animation="moderate"] .grid > :nth-child(6),
+:root[data-animation="moderate"] .grid > div:nth-child(6) > .card { animation-delay: 300ms; }
+:root[data-animation="moderate"] .grid > :nth-child(n+7),
+:root[data-animation="moderate"] .grid > div:nth-child(n+7) > .card { animation-delay: 340ms; }
+
+/* ========================================
+   MODERATE — Dropdown Menu Entrance
+   Radix dropdown menus expand in
+   (Dialog/Sheet already have built-in animations)
+   ======================================== */
+:root[data-animation="moderate"] [data-radix-menu-content] {
+  animation: nxExpandIn 0.2s ease-out both;
+}
+
+:root[data-animation="moderate"] [role="menu"] {
+  animation: nxExpandIn 0.2s ease-out both;
+}
+
+/* ========================================
+   MODERATE — Tab Content Entrance
+   Tab panels fade in when switching tabs
+   ======================================== */
+:root[data-animation="moderate"] [role="tabpanel"] {
+  animation: nxFadeUp 0.3s ease-out both;
+}
+
+/* ========================================
+   MODERATE — Page Title / Header Entrance
+   h1 elements slide in subtly
+   ======================================== */
+:root[data-animation="moderate"] h1 {
+  animation: nxFadeUp 0.35s ease-out both;
+}
+
+/* Subtitle text following headings */
+:root[data-animation="moderate"] h1 + p {
+  animation: nxFadeUp 0.35s ease-out both;
+  animation-delay: 60ms;
+}
+
+/* ========================================
+   MODERATE — Form / Input Sections
+   Form elements fade up as groups
+   ======================================== */
+:root[data-animation="moderate"] form > div,
+:root[data-animation="moderate"] form > fieldset {
+  animation: nxFadeUp 0.3s ease-out both;
+}
+
+:root[data-animation="moderate"] form > div:nth-child(1),
+:root[data-animation="moderate"] form > fieldset:nth-child(1) { animation-delay: 0ms; }
+:root[data-animation="moderate"] form > div:nth-child(2),
+:root[data-animation="moderate"] form > fieldset:nth-child(2) { animation-delay: 50ms; }
+:root[data-animation="moderate"] form > div:nth-child(3),
+:root[data-animation="moderate"] form > fieldset:nth-child(3) { animation-delay: 100ms; }
+:root[data-animation="moderate"] form > div:nth-child(4),
+:root[data-animation="moderate"] form > fieldset:nth-child(4) { animation-delay: 150ms; }
+:root[data-animation="moderate"] form > div:nth-child(n+5),
+:root[data-animation="moderate"] form > fieldset:nth-child(n+5) { animation-delay: 180ms; }
+
+/* ========================================
+   MODERATE — Badge / Tag Entrance
+   Badges pop in with scale
+   ======================================== */
+:root[data-animation="moderate"] .badge,
+:root[data-animation="moderate"] [data-slot="badge"] {
+  animation: nxScaleIn 0.25s ease-out both;
+}
+
+/* ========================================
+   MODERATE — Dropdown / Popover Entrance
+   Radix popovers and dropdowns expand in
+   ======================================== */
+:root[data-animation="moderate"] [data-radix-popper-content-wrapper] > div {
+  animation: nxExpandIn 0.2s ease-out both;
+}
+
+/* ========================================
+   MODERATE — Sidebar Navigation Items
+   Nav items slide in from the side
+   ======================================== */
+:root[data-animation="moderate"] nav a,
+:root[data-animation="moderate"] nav button {
+  animation: nxFadeIn 0.25s ease-out both;
+}
+
+/* ========================================
+   MODERATE — Stacked Section Stagger
+   space-y containers get child stagger
+   ======================================== */
+:root[data-animation="moderate"] .space-y-6 > *,
+:root[data-animation="moderate"] .space-y-4 > *,
+:root[data-animation="moderate"] .space-y-8 > * {
+  animation: nxFadeUp 0.3s ease-out both;
+}
+
+:root[data-animation="moderate"] .space-y-6 > :nth-child(1),
+:root[data-animation="moderate"] .space-y-4 > :nth-child(1),
+:root[data-animation="moderate"] .space-y-8 > :nth-child(1) { animation-delay: 0ms; }
+:root[data-animation="moderate"] .space-y-6 > :nth-child(2),
+:root[data-animation="moderate"] .space-y-4 > :nth-child(2),
+:root[data-animation="moderate"] .space-y-8 > :nth-child(2) { animation-delay: 70ms; }
+:root[data-animation="moderate"] .space-y-6 > :nth-child(3),
+:root[data-animation="moderate"] .space-y-4 > :nth-child(3),
+:root[data-animation="moderate"] .space-y-8 > :nth-child(3) { animation-delay: 140ms; }
+:root[data-animation="moderate"] .space-y-6 > :nth-child(4),
+:root[data-animation="moderate"] .space-y-4 > :nth-child(4),
+:root[data-animation="moderate"] .space-y-8 > :nth-child(4) { animation-delay: 200ms; }
+:root[data-animation="moderate"] .space-y-6 > :nth-child(n+5),
+:root[data-animation="moderate"] .space-y-4 > :nth-child(n+5),
+:root[data-animation="moderate"] .space-y-8 > :nth-child(n+5) { animation-delay: 250ms; }
+
+/* ========================================
+   MODERATE — Flex Gap Containers
+   flex with gap children stagger in
+   ======================================== */
+:root[data-animation="moderate"] .flex.gap-2 > *,
+:root[data-animation="moderate"] .flex.gap-3 > *,
+:root[data-animation="moderate"] .flex.gap-4 > * {
+  animation: nxFadeIn 0.25s ease-out both;
+}
+
+/* ========================================
+   MODERATE — Progress Bar Fill
+   Progress indicators animate their width
+   ======================================== */
+:root[data-animation="moderate"] [role="progressbar"] > div {
+  transition: width 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+}
+
+/* ========================================
+   MODERATE — Breadcrumb Entrance
+   Breadcrumb items fade in sequentially
+   ======================================== */
+:root[data-animation="moderate"] [aria-label="breadcrumb"] li {
+  animation: nxFadeIn 0.25s ease-out both;
+}
+
+:root[data-animation="moderate"] [aria-label="breadcrumb"] li:nth-child(1) { animation-delay: 0ms; }
+:root[data-animation="moderate"] [aria-label="breadcrumb"] li:nth-child(2) { animation-delay: 40ms; }
+:root[data-animation="moderate"] [aria-label="breadcrumb"] li:nth-child(3) { animation-delay: 80ms; }
+:root[data-animation="moderate"] [aria-label="breadcrumb"] li:nth-child(4) { animation-delay: 120ms; }
+:root[data-animation="moderate"] [aria-label="breadcrumb"] li:nth-child(n+5) { animation-delay: 150ms; }
+
+/* ========================================
+   MODERATE — Avatar Pop-in
+   User avatars scale in delightfully
+   ======================================== */
+:root[data-animation="moderate"] [data-slot="avatar"],
+:root[data-animation="moderate"] .avatar {
+  animation: nxScaleIn 0.3s ease-out both;
+}
+
+/* ========================================
+   MODERATE — Switch / Toggle Entrance
+   Toggle switches scale in
+   ======================================== */
+:root[data-animation="moderate"] [role="switch"] {
+  animation: nxScaleIn 0.2s ease-out both;
+}
+
+/* ========================================
+   MODERATE — Tooltip Entrance
+   Tooltips pop in with scale
+   ======================================== */
+:root[data-animation="moderate"] [role="tooltip"] {
+  animation: nxScaleIn 0.15s ease-out both;
+}
+
+/* ========================================
+   MODERATE — List Item Stagger
+   Unordered/ordered list items fade up
+   ======================================== */
+:root[data-animation="moderate"] ul > li,
+:root[data-animation="moderate"] ol > li {
+  animation: nxFadeUp 0.25s ease-out both;
+}
+
+:root[data-animation="moderate"] ul > li:nth-child(1),
+:root[data-animation="moderate"] ol > li:nth-child(1) { animation-delay: 0ms; }
+:root[data-animation="moderate"] ul > li:nth-child(2),
+:root[data-animation="moderate"] ol > li:nth-child(2) { animation-delay: 25ms; }
+:root[data-animation="moderate"] ul > li:nth-child(3),
+:root[data-animation="moderate"] ol > li:nth-child(3) { animation-delay: 50ms; }
+:root[data-animation="moderate"] ul > li:nth-child(4),
+:root[data-animation="moderate"] ol > li:nth-child(4) { animation-delay: 75ms; }
+:root[data-animation="moderate"] ul > li:nth-child(5),
+:root[data-animation="moderate"] ol > li:nth-child(5) { animation-delay: 100ms; }
+:root[data-animation="moderate"] ul > li:nth-child(n+6),
+:root[data-animation="moderate"] ol > li:nth-child(n+6) { animation-delay: 120ms; }
+
+/* ========================================
+   MODERATE — Heading Hierarchy
+   h2-h4 also get entrance (h1 above)
+   ======================================== */
+:root[data-animation="moderate"] h2 {
+  animation: nxFadeUp 0.3s ease-out both;
+  animation-delay: 40ms;
+}
+
+:root[data-animation="moderate"] h3 {
+  animation: nxFadeUp 0.3s ease-out both;
+  animation-delay: 30ms;
+}
+
+:root[data-animation="moderate"] h4 {
+  animation: nxFadeUp 0.25s ease-out both;
+  animation-delay: 20ms;
+}
+
+/* ========================================
+   MODERATE — Empty State Entrance
+   Centered empty states scale in softly
+   ======================================== */
+:root[data-animation="moderate"] .flex.flex-col.items-center.justify-center {
+  animation: nxScaleIn 0.35s ease-out both;
+}
+
+/* ========================================
+   MODERATE — Alert / Toast Entrance
+   ======================================== */
+:root[data-animation="moderate"] [role="alert"] {
+  animation: nxSlideInFromRight 0.35s ease-out both;
+}
+
+/* ========================================
+   MODERATE — Skeleton → Content Reveal
+   When content replaces loading skeletons
+   ======================================== */
+:root[data-animation="moderate"] [data-loading="false"] {
+  animation: nxFadeIn 0.3s ease-out both;
+}
+
+/* ========================================
+   HIGH — Enhanced Entrance Animations
+   More dramatic versions for high level
+   ======================================== */
+:root[data-animation="high"] main {
+  animation: nxFadeUp 0.5s ease-out both;
+}
+
+:root[data-animation="high"] .card {
+  animation: nxFadeUp 0.5s ease-out both;
+}
+
+:root[data-animation="high"] .card:nth-child(1) { animation-delay: 0ms; }
+:root[data-animation="high"] .card:nth-child(2) { animation-delay: 80ms; }
+:root[data-animation="high"] .card:nth-child(3) { animation-delay: 160ms; }
+:root[data-animation="high"] .card:nth-child(4) { animation-delay: 240ms; }
+:root[data-animation="high"] .card:nth-child(5) { animation-delay: 320ms; }
+:root[data-animation="high"] .card:nth-child(6) { animation-delay: 400ms; }
+:root[data-animation="high"] .card:nth-child(n+7) { animation-delay: 450ms; }
+
+:root[data-animation="high"] tbody tr {
+  animation: nxFadeUp 0.4s ease-out both;
+}
+
+:root[data-animation="high"] tbody tr:nth-child(1) { animation-delay: 0ms; }
+:root[data-animation="high"] tbody tr:nth-child(2) { animation-delay: 50ms; }
+:root[data-animation="high"] tbody tr:nth-child(3) { animation-delay: 100ms; }
+:root[data-animation="high"] tbody tr:nth-child(4) { animation-delay: 150ms; }
+:root[data-animation="high"] tbody tr:nth-child(5) { animation-delay: 200ms; }
+:root[data-animation="high"] tbody tr:nth-child(6) { animation-delay: 250ms; }
+:root[data-animation="high"] tbody tr:nth-child(7) { animation-delay: 300ms; }
+:root[data-animation="high"] tbody tr:nth-child(8) { animation-delay: 350ms; }
+:root[data-animation="high"] tbody tr:nth-child(9) { animation-delay: 400ms; }
+:root[data-animation="high"] tbody tr:nth-child(10) { animation-delay: 450ms; }
+:root[data-animation="high"] tbody tr:nth-child(n+11) { animation-delay: 500ms; }
+
+:root[data-animation="high"] [role="menu"] {
+  animation: nxExpandIn 0.35s ease-out both;
+}
+
+:root[data-animation="high"] [role="tabpanel"] {
+  animation: nxFadeUp 0.45s ease-out both;
+}
+
+:root[data-animation="high"] h1 {
+  animation: nxFadeUp 0.45s ease-out both;
+}
+
+:root[data-animation="high"] h1 + p {
+  animation: nxFadeUp 0.45s ease-out both;
+  animation-delay: 80ms;
+}
+
+:root[data-animation="high"] .grid > .card,
+:root[data-animation="high"] .grid > div > .card {
+  animation: nxScaleIn 0.45s ease-out both;
+}
+
+:root[data-animation="high"] .grid > :nth-child(1) { animation-delay: 0ms; }
+:root[data-animation="high"] .grid > :nth-child(2) { animation-delay: 100ms; }
+:root[data-animation="high"] .grid > :nth-child(3) { animation-delay: 200ms; }
+:root[data-animation="high"] .grid > :nth-child(4) { animation-delay: 300ms; }
+:root[data-animation="high"] .grid > :nth-child(5) { animation-delay: 380ms; }
+:root[data-animation="high"] .grid > :nth-child(n+6) { animation-delay: 440ms; }
+
+:root[data-animation="high"] [role="alert"] {
+  animation: nxSlideInFromRight 0.45s ease-out both;
+}
+
+:root[data-animation="high"] nav a,
+:root[data-animation="high"] nav button {
+  animation: nxFadeIn 0.35s ease-out both;
+}
+
+/* ========================================
+   ACCESSIBILITY — Reduced Motion Override
+   Respects OS-level reduced motion preference
+   ======================================== */
+@media (prefers-reduced-motion: reduce) {
+  :root[data-animation="moderate"] *,
+  :root[data-animation="high"] * {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 /* ========================================

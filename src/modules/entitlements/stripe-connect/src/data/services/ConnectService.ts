@@ -14,6 +14,7 @@ import type {
   TopTenantResponseModel,
   EligibleTenantItemModel,
   PagedResultModel,
+  TenantTransactionsResponseModel,
 } from "../models/ConnectModels";
 
 export class ConnectService implements IConnectService {
@@ -168,5 +169,33 @@ export class ConnectService implements IConnectService {
       fromDate,
     });
     return this.api.get<TopTenantResponseModel[]>(url);
+  }
+
+  // ── Tenant Self-Service ──
+
+  async getMyTransactions(params: {
+    page: number;
+    pageSize: number;
+    status?: string;
+    type?: string;
+    fromDate?: string;
+    toDate?: string;
+  }): Promise<TenantTransactionsResponseModel> {
+    const url = buildUrl(API_ENDPOINTS.ENTITLEMENTS.STRIPE_CONNECT.TENANT_STRIPE_CONNECT.TRANSACTIONS, {
+      page: params.page,
+      pageSize: params.pageSize,
+      status: params.status,
+      type: params.type,
+      fromDate: params.fromDate,
+      toDate: params.toDate,
+    });
+    return this.api.get<TenantTransactionsResponseModel>(url);
+  }
+
+  async syncMyAccount(): Promise<ConnectAccountResponseModel> {
+    return this.api.post<ConnectAccountResponseModel>(
+      API_ENDPOINTS.ENTITLEMENTS.STRIPE_CONNECT.TENANT_STRIPE_CONNECT.SYNC,
+      {}
+    );
   }
 }

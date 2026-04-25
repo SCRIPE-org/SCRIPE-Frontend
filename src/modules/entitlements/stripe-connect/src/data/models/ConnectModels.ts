@@ -97,3 +97,35 @@ export interface EligibleTenantItemModel {
   name: string;
   code: string;
 }
+
+// ── Tenant Self-Service Transaction Models ──
+
+export interface TenantTransactionsResponseModel {
+  summary: TenantFinancialSummaryModel;
+  transactions: PagedResultModel<TenantTransactionItemModel>;
+}
+
+export interface TenantFinancialSummaryModel {
+  totalGrossRevenue: number;
+  totalPlatformFees: number;
+  totalNetRevenue: number;
+  totalRefunded: number;
+  totalTransactions: number;
+  refundCount: number;
+  currency: string;
+}
+
+export interface TenantTransactionItemModel {
+  id: string;
+  type: string;       // "Payment" | "Refund" | "PartialRefund"
+  status: string;     // "Pending" | "Collected" | "Refunded" | "PartiallyRefunded"
+  grossAmount: number;
+  platformFee: number;
+  netAmount: number;
+  currency: string;
+  commissionRate: number;
+  stripePaymentIntentId?: string;
+  refundedAmount?: number;
+  refundedAt?: string;
+  transactionDate: string;
+}

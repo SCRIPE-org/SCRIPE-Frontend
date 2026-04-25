@@ -30,6 +30,7 @@ export const ar = {
       accountType: "نوع الحساب",
       chargesEnabled: "العمليات مفعّلة",
       payoutsEnabled: "المدفوعات مفعّلة",
+      openStripeDashboard: "فتح لوحة تحكم Stripe",
       capabilities: "الإمكانيات",
       openDashboard: "فتح لوحة التحكم",
       completeOnboarding: "إكمال الإعداد",
@@ -167,6 +168,37 @@ export const ar = {
       // حالة الخطأ
       errorTitle: "تعذّر تحميل الحساب",
       errorDesc: "لم نتمكن من تحميل معلومات حساب الدفع الخاص بك. قد لا تملك صلاحية الوصول إلى هذه الصفحة، أو حدث خطأ في الشبكة.",
+
+      // المزامنة
+      syncBtn: "مزامنة البيانات",
+      syncSuccess: "تمت مزامنة الحساب",
+      syncSuccessDesc: "تم تحديث بيانات حسابك من Stripe.",
+      syncFailed: "فشلت المزامنة. يرجى المحاولة لاحقاً.",
+
+      // المعاملات
+      txn: {
+        title: "المعاملات الأخيرة",
+        desc: "المدفوعات المستلمة ورسوم المنصة والمبالغ المستردة",
+        grossRevenue: "إجمالي الإيرادات",
+        platformFees: "رسوم المنصة",
+        netRevenue: "صافي الإيرادات",
+        refunded: "إجمالي المسترد",
+        deducted: "يخصمها المنصة",
+        yourEarnings: "أرباحك",
+        refunds: "استردادات",
+        empty: "لا توجد معاملات.",
+        showing: "عرض",
+        of: "من",
+        col: {
+          date: "التاريخ",
+          type: "النوع",
+          gross: "الإجمالي",
+          fee: "الرسوم",
+          net: "الصافي",
+          status: "الحالة",
+          refund: "الاسترداد",
+        },
+      },
     },
   },
 };

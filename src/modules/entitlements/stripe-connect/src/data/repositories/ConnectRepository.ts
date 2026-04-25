@@ -140,4 +140,22 @@ export class ConnectRepository implements IConnectRepository {
       code: item.code ?? "",
     }));
   }
+
+  // ── Tenant Self-Service ──
+
+  async getMyTransactions(params: {
+    page: number;
+    pageSize: number;
+    status?: string;
+    type?: string;
+    fromDate?: string;
+    toDate?: string;
+  }) {
+    return this.service.getMyTransactions(params);
+  }
+
+  async syncMyAccount(): Promise<ConnectAccount> {
+    const dto = await this.service.syncMyAccount();
+    return ConnectMapper.toAccountEntity(dto);
+  }
 }

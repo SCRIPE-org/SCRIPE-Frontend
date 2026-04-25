@@ -11,6 +11,7 @@ import type {
   TopTenantResponseModel,
   EligibleTenantItemModel,
   PagedResultModel,
+  TenantTransactionsResponseModel,
 } from "../../data/models/ConnectModels";
 
 export interface IConnectService {
@@ -57,4 +58,15 @@ export interface IConnectService {
   getDashboard(): Promise<CommissionDashboardResponseModel>;
   getTrends(days: number, tenantId?: string): Promise<CommissionTrendPointModel[]>;
   getTopTenants(top: number, fromDate?: string): Promise<TopTenantResponseModel[]>;
+
+  // ── Tenant Self-Service ──
+  getMyTransactions(params: {
+    page: number;
+    pageSize: number;
+    status?: string;
+    type?: string;
+    fromDate?: string;
+    toDate?: string;
+  }): Promise<TenantTransactionsResponseModel>;
+  syncMyAccount(): Promise<ConnectAccountResponseModel>;
 }

@@ -66,6 +66,17 @@ export interface IConnectRepository {
    * Excludes the System/root tenant (filtered server-side).
    */
   searchEligibleTenants(search?: string): Promise<EligibleTenant[]>;
+
+  // ── Tenant Self-Service ──
+  getMyTransactions(params: {
+    page: number;
+    pageSize: number;
+    status?: string;
+    type?: string;
+    fromDate?: string;
+    toDate?: string;
+  }): Promise<import("../../data/models/ConnectModels").TenantTransactionsResponseModel>;
+  syncMyAccount(): Promise<ConnectAccount>;
 }
 
 /** Lightweight value-object for the tenant picker — not a full entity. */

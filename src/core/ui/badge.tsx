@@ -4,7 +4,7 @@ import { useSettings } from "@core/providers/settings-provider";
 import { cn } from "@core/common/utils";
 
 const badgeVariants = cva(
-  "inline-flex items-center font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 px-2.5 py-0.5 text-xs",
+  "badge inline-flex items-center font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 px-2.5 py-0.5 text-xs",
   {
     variants: {
       variant: {

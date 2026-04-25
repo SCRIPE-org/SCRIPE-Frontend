@@ -37,7 +37,14 @@ import {
   Calendar,
   Zap,
   Info,
+  Download,
+  Filter,
+  ArrowUpRight,
+  ArrowDownLeft,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
+import type { TenantTransactionsResponseModel } from "../../data/models/ConnectModels";
 
 // ── Status Configuration ─────────────────────────────────────────────────────
 
@@ -153,6 +160,17 @@ export function TenantStripeConnectView() {
           account={vm.account}
           isOpeningDashboard={vm.isOpeningDashboard}
           onOpenDashboard={vm.openDashboard}
+          isSyncing={vm.isSyncing}
+          onSync={vm.syncFromStripe}
+          transactions={vm.transactions}
+          isLoadingTransactions={vm.isLoadingTransactions}
+          txnPage={vm.txnPage}
+          txnPageSize={vm.txnPageSize}
+          txnStatus={vm.txnStatus}
+          txnType={vm.txnType}
+          setTxnPage={vm.setTxnPage}
+          setTxnStatus={vm.setTxnStatus}
+          setTxnType={vm.setTxnType}
         />
       ) : (
         <InProgressState
@@ -406,6 +424,17 @@ function CompletedState({
   account,
   isOpeningDashboard,
   onOpenDashboard,
+  isSyncing,
+  onSync,
+  transactions,
+  isLoadingTransactions,
+  txnPage,
+  txnPageSize,
+  txnStatus,
+  txnType,
+  setTxnPage,
+  setTxnStatus,
+  setTxnType,
 }: {
   t: (key: string, params?: Record<string, string | number>) => string;
   language: string;
@@ -424,6 +453,17 @@ function CompletedState({
   };
   isOpeningDashboard: boolean;
   onOpenDashboard: () => void;
+  isSyncing: boolean;
+  onSync: () => void;
+  transactions: TenantTransactionsResponseModel | null;
+  isLoadingTransactions: boolean;
+  txnPage: number;
+  txnPageSize: number;
+  txnStatus?: string;
+  txnType?: string;
+  setTxnPage: (p: number) => void;
+  setTxnStatus: (s: string | undefined) => void;
+  setTxnType: (t: string | undefined) => void;
 }) {
   const formatCurrency = (amount: number) => {
     const currency = account.defaultCurrency?.toUpperCase() || "USD";
@@ -462,18 +502,30 @@ function CompletedState({
                 </p>
               </div>
             </div>
-            <Button
-              onClick={onOpenDashboard}
-              disabled={isOpeningDashboard}
-              className="gap-2 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white shadow-lg shadow-violet-500/20"
-            >
-              {isOpeningDashboard ? (
-                <RefreshCw className="h-4 w-4 animate-spin" />
-              ) : (
-                <LayoutDashboard className="h-4 w-4" />
-              )}
-              {t("entitlements.stripeConnect.openStripeDashboard") || "Open Stripe Dashboard"}
-            </Button>
+            <div className="flex items-center gap-2 flex-wrap">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={onSync}
+                disabled={isSyncing}
+                className="gap-2"
+              >
+                <RefreshCw className={`h-3.5 w-3.5 ${isSyncing ? "animate-spin" : ""}`} />
+                {t("entitlements.tenantConnect.syncBtn") || "Sync"}
+              </Button>
+              <Button
+                onClick={onOpenDashboard}
+                disabled={isOpeningDashboard}
+                className="gap-2 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white shadow-lg shadow-violet-500/20"
+              >
+                {isOpeningDashboard ? (
+                  <RefreshCw className="h-4 w-4 animate-spin" />
+                ) : (
+                  <LayoutDashboard className="h-4 w-4" />
+                )}
+                {t("entitlements.stripeConnect.openStripeDashboard") || "Open Stripe Dashboard"}
+              </Button>
+            </div>
           </div>
         </div>
       </Card>
@@ -555,6 +607,22 @@ function CompletedState({
           </div>
         </CardContent>
       </Card>
+
+      {/* Transaction History */}
+      <TransactionsSection
+        t={t}
+        language={language}
+        currency={account.defaultCurrency}
+        transactions={transactions}
+        isLoading={isLoadingTransactions}
+        page={txnPage}
+        pageSize={txnPageSize}
+        status={txnStatus}
+        type={txnType}
+        setPage={setTxnPage}
+        setStatus={setTxnStatus}
+        setType={setTxnType}
+      />
     </div>
   );
 }
@@ -630,6 +698,273 @@ function CapabilityBadge({
           {enabled ? t("common.active") || "Active" : t("common.pending") || "Pending"}
         </span>
       </div>
+    </div>
+  );
+}
+
+// ── Transactions Section ─────────────────────────────────────────────────────
+
+const TXN_STATUS_OPTIONS = [
+  { value: undefined, label: "All" },
+  { value: "Pending", label: "Pending" },
+  { value: "Collected", label: "Collected" },
+  { value: "Refunded", label: "Refunded" },
+  { value: "PartiallyRefunded", label: "Partial Refund" },
+] as const;
+
+const TXN_TYPE_OPTIONS = [
+  { value: undefined, label: "All" },
+  { value: "Payment", label: "Payment" },
+  { value: "Refund", label: "Refund" },
+  { value: "PartialRefund", label: "Partial Refund" },
+] as const;
+
+const TXN_STATUS_STYLES: Record<string, string> = {
+  Pending: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
+  Collected: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400",
+  Refunded: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
+  PartiallyRefunded: "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400",
+};
+
+function TransactionsSection({
+  t,
+  language,
+  currency: accountCurrency,
+  transactions,
+  isLoading,
+  page,
+  pageSize,
+  status,
+  type,
+  setPage,
+  setStatus,
+  setType,
+}: {
+  t: (key: string, params?: Record<string, string | number>) => string;
+  language: string;
+  currency?: string;
+  transactions: TenantTransactionsResponseModel | null;
+  isLoading: boolean;
+  page: number;
+  pageSize: number;
+  status?: string;
+  type?: string;
+  setPage: (p: number) => void;
+  setStatus: (s: string | undefined) => void;
+  setType: (t: string | undefined) => void;
+}) {
+  const formatCurrency = (amount: number, cur?: string) => {
+    const c = (cur || accountCurrency || "USD").toUpperCase();
+    return new Intl.NumberFormat(language === "ar" ? "ar-EG" : "en-US", {
+      style: "currency",
+      currency: c,
+      minimumFractionDigits: 2,
+    }).format(amount);
+  };
+
+  const formatDate = (dateStr: string) => {
+    return new Intl.DateTimeFormat(language === "ar" ? "ar-EG" : "en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(new Date(dateStr));
+  };
+
+  const summary = transactions?.summary;
+  const txnItems = transactions?.transactions?.items ?? [];
+  const totalCount = transactions?.transactions?.totalCount ?? 0;
+  const totalPages = Math.ceil(totalCount / pageSize) || 1;
+
+  return (
+    <div className="space-y-4">
+      {/* Financial Summary KPIs */}
+      {summary && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <KpiCard
+            icon={<ArrowUpRight className="h-4 w-4 text-emerald-500" />}
+            label={t("entitlements.tenantConnect.txn.grossRevenue") || "Gross Revenue"}
+            value={formatCurrency(summary.totalGrossRevenue, summary.currency)}
+            sublabel={`${summary.totalTransactions} ${t("entitlements.tenantConnect.transactions") || "transactions"}`}
+          />
+          <KpiCard
+            icon={<Zap className="h-4 w-4 text-violet-500" />}
+            label={t("entitlements.tenantConnect.txn.platformFees") || "Platform Fees"}
+            value={formatCurrency(summary.totalPlatformFees, summary.currency)}
+            sublabel={t("entitlements.tenantConnect.txn.deducted") || "deducted by platform"}
+          />
+          <KpiCard
+            icon={<Banknote className="h-4 w-4 text-blue-500" />}
+            label={t("entitlements.tenantConnect.txn.netRevenue") || "Net Revenue"}
+            value={formatCurrency(summary.totalNetRevenue, summary.currency)}
+            sublabel={t("entitlements.tenantConnect.txn.yourEarnings") || "your earnings"}
+          />
+          <KpiCard
+            icon={<ArrowDownLeft className="h-4 w-4 text-red-500" />}
+            label={t("entitlements.tenantConnect.txn.refunded") || "Refunded"}
+            value={formatCurrency(summary.totalRefunded, summary.currency)}
+            sublabel={`${summary.refundCount} ${t("entitlements.tenantConnect.txn.refunds") || "refunds"}`}
+          />
+        </div>
+      )}
+
+      {/* Transactions Table */}
+      <Card>
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between flex-wrap gap-3">
+            <div>
+              <CardTitle className="text-base">
+                {t("entitlements.tenantConnect.txn.title") || "Recent Transactions"}
+              </CardTitle>
+              <CardDescription className="text-xs mt-0.5">
+                {t("entitlements.tenantConnect.txn.desc") || "Payments received, platform fees, and refunds"}
+              </CardDescription>
+            </div>
+            <div className="flex items-center gap-2 flex-wrap">
+              {/* Status filter */}
+              <select
+                value={status ?? ""}
+                onChange={(e) => { setStatus(e.target.value || undefined); setPage(1); }}
+                className="text-xs h-8 px-2 rounded-md border bg-background focus:ring-1 focus:ring-violet-500/40 focus:outline-none"
+                aria-label="Filter by status"
+              >
+                {TXN_STATUS_OPTIONS.map((opt) => (
+                  <option key={opt.label} value={opt.value ?? ""}>{opt.label}</option>
+                ))}
+              </select>
+              {/* Type filter */}
+              <select
+                value={type ?? ""}
+                onChange={(e) => { setType(e.target.value || undefined); setPage(1); }}
+                className="text-xs h-8 px-2 rounded-md border bg-background focus:ring-1 focus:ring-violet-500/40 focus:outline-none"
+                aria-label="Filter by type"
+              >
+                {TXN_TYPE_OPTIONS.map((opt) => (
+                  <option key={opt.label} value={opt.value ?? ""}>{opt.label}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {isLoading ? (
+            <div className="space-y-3">
+              {[...Array(5)].map((_, i) => (
+                <Skeleton key={i} className="h-12 w-full rounded-lg" />
+              ))}
+            </div>
+          ) : txnItems.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-12 text-center">
+              <div className="rounded-xl bg-muted/50 p-4 mb-3">
+                <CreditCard className="h-8 w-8 text-muted-foreground" />
+              </div>
+              <p className="text-sm text-muted-foreground">
+                {t("entitlements.tenantConnect.txn.empty") || "No transactions found."}
+              </p>
+            </div>
+          ) : (
+            <>
+              {/* Table */}
+              <div className="overflow-x-auto -mx-2">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b text-left text-muted-foreground text-xs">
+                      <th className="py-2.5 px-3 font-medium">{t("entitlements.tenantConnect.txn.col.date") || "Date"}</th>
+                      <th className="py-2.5 px-3 font-medium">{t("entitlements.tenantConnect.txn.col.type") || "Type"}</th>
+                      <th className="py-2.5 px-3 font-medium text-right">{t("entitlements.tenantConnect.txn.col.gross") || "Gross"}</th>
+                      <th className="py-2.5 px-3 font-medium text-right">{t("entitlements.tenantConnect.txn.col.fee") || "Fee"}</th>
+                      <th className="py-2.5 px-3 font-medium text-right">{t("entitlements.tenantConnect.txn.col.net") || "Net"}</th>
+                      <th className="py-2.5 px-3 font-medium">{t("entitlements.tenantConnect.txn.col.status") || "Status"}</th>
+                      <th className="py-2.5 px-3 font-medium text-right">{t("entitlements.tenantConnect.txn.col.refund") || "Refund"}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {txnItems.map((txn) => (
+                      <tr key={txn.id} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
+                        <td className="py-3 px-3 text-xs tabular-nums whitespace-nowrap">
+                          {formatDate(txn.transactionDate)}
+                        </td>
+                        <td className="py-3 px-3">
+                          <div className="flex items-center gap-1.5">
+                            {txn.type === "Payment" ? (
+                              <ArrowUpRight className="h-3.5 w-3.5 text-emerald-500" />
+                            ) : (
+                              <ArrowDownLeft className="h-3.5 w-3.5 text-red-500" />
+                            )}
+                            <span className="text-xs font-medium">{txn.type}</span>
+                          </div>
+                        </td>
+                        <td className="py-3 px-3 text-right tabular-nums font-medium text-xs">
+                          {formatCurrency(txn.grossAmount, txn.currency)}
+                        </td>
+                        <td className="py-3 px-3 text-right tabular-nums text-xs text-muted-foreground">
+                          −{formatCurrency(txn.platformFee, txn.currency)}
+                        </td>
+                        <td className="py-3 px-3 text-right tabular-nums font-semibold text-xs">
+                          {formatCurrency(txn.netAmount, txn.currency)}
+                        </td>
+                        <td className="py-3 px-3">
+                          <Badge
+                            variant="outline"
+                            className={`text-[10px] px-2 py-0.5 border ${TXN_STATUS_STYLES[txn.status] || "bg-muted text-foreground"}`}
+                          >
+                            {txn.status}
+                          </Badge>
+                        </td>
+                        <td className="py-3 px-3 text-right tabular-nums text-xs">
+                          {txn.refundedAmount != null && txn.refundedAmount > 0 ? (
+                            <span className="text-red-600 dark:text-red-400 font-medium">
+                              −{formatCurrency(txn.refundedAmount, txn.currency)}
+                            </span>
+                          ) : (
+                            <span className="text-muted-foreground">—</span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="flex items-center justify-between pt-4 mt-2 border-t">
+                  <p className="text-xs text-muted-foreground">
+                    {t("entitlements.tenantConnect.txn.showing") || "Showing"}{" "}
+                    <span className="font-medium">{(page - 1) * pageSize + 1}–{Math.min(page * pageSize, totalCount)}</span>{" "}
+                    {t("entitlements.tenantConnect.txn.of") || "of"}{" "}
+                    <span className="font-medium">{totalCount}</span>
+                  </p>
+                  <div className="flex items-center gap-1">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setPage(page - 1)}
+                      disabled={page <= 1}
+                      className="h-7 w-7 p-0"
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                    </Button>
+                    <span className="text-xs tabular-nums px-2 font-medium">
+                      {page} / {totalPages}
+                    </span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setPage(page + 1)}
+                      disabled={page >= totalPages}
+                      className="h-7 w-7 p-0"
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }

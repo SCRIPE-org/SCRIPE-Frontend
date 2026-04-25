@@ -7,7 +7,7 @@ const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElemen
     const settings = useSettings();
 
     const getCardClasses = () => {
-      const baseClasses = "rounded-xl text-card-foreground";
+      const baseClasses = "card rounded-xl text-card-foreground";
       const hasHoverEffect =
         settings.hoverEffectType !== "none" && settings.hoverEffectIntensity !== "none";
       const hoverClasses = getHoverEffectClasses(

@@ -5,10 +5,12 @@
  * - Onboard (create account + get URL)
  * - Refresh onboarding link
  * - Open Stripe Express dashboard
+ * - View transaction history with financial summary
+ * - Manual sync from Stripe API
  */
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { entitlementsContainer } from "@modules/entitlements/di";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
@@ -16,12 +18,21 @@ import { useI18n } from "@core/providers/i18n-provider";
 import type { ConnectAccount } from "../../domain/entities/ConnectAccount";
 
 const QUERY_KEY = ["entitlements", "tenant-stripe-connect", "status"];
+const TXN_QUERY_KEY = ["entitlements", "tenant-stripe-connect", "transactions"];
 
 export function useTenantConnectViewModel() {
   const { connectRepository } = entitlementsContainer;
   const { success, error } = useEnhancedToast();
   const { t } = useI18n();
   const queryClient = useQueryClient();
+
+  // ── Transaction filter state ──
+  const [txnPage, setTxnPage] = useState(1);
+  const [txnPageSize] = useState(10);
+  const [txnStatus, setTxnStatus] = useState<string | undefined>(undefined);
+  const [txnType, setTxnType] = useState<string | undefined>(undefined);
+  const [txnFromDate, setTxnFromDate] = useState<string | undefined>(undefined);
+  const [txnToDate, setTxnToDate] = useState<string | undefined>(undefined);
 
   // ── Status query ────────────────────────────────────────────────────────
   const statusQuery = useQuery({
@@ -42,6 +53,22 @@ export function useTenantConnectViewModel() {
   });
 
   const account: ConnectAccount | null = statusQuery.data || null;
+
+  // ── Transactions query (auto-loads when fully onboarded) ──
+  const transactionsQuery = useQuery({
+    queryKey: [...TXN_QUERY_KEY, txnPage, txnPageSize, txnStatus, txnType, txnFromDate, txnToDate],
+    queryFn: () =>
+      connectRepository.getMyTransactions({
+        page: txnPage,
+        pageSize: txnPageSize,
+        status: txnStatus,
+        type: txnType,
+        fromDate: txnFromDate,
+        toDate: txnToDate,
+      }),
+    enabled: !!account?.isFullyOnboarded,
+    staleTime: 30_000,
+  });
 
   // ── Onboard mutation ────────────────────────────────────────────────────
   const onboardMutation = useMutation({
@@ -92,6 +119,25 @@ export function useTenantConnectViewModel() {
     },
   });
 
+  // ── Sync mutation ───────────────────────────────────────────────────────
+  const syncMutation = useMutation({
+    mutationFn: () => connectRepository.syncMyAccount(),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: TXN_QUERY_KEY });
+      success({
+        title: t("entitlements.tenantConnect.syncSuccess"),
+        description: t("entitlements.tenantConnect.syncSuccessDesc"),
+      });
+    },
+    onError: () => {
+      error({
+        title: t("common.error"),
+        description: t("entitlements.tenantConnect.syncFailed"),
+      });
+    },
+  });
+
   return {
     account,
     isLoading: statusQuery.isLoading,
@@ -106,5 +152,24 @@ export function useTenantConnectViewModel() {
 
     openDashboard: () => dashboardLinkMutation.mutate(),
     isOpeningDashboard: dashboardLinkMutation.isPending,
+
+    // Sync
+    syncFromStripe: () => syncMutation.mutate(),
+    isSyncing: syncMutation.isPending,
+
+    // Transactions
+    transactions: transactionsQuery.data ?? null,
+    isLoadingTransactions: transactionsQuery.isLoading,
+    txnPage,
+    txnPageSize,
+    txnStatus,
+    txnType,
+    txnFromDate,
+    txnToDate,
+    setTxnPage,
+    setTxnStatus,
+    setTxnType,
+    setTxnFromDate,
+    setTxnToDate,
   };
 }

@@ -453,6 +453,8 @@ export const API_ENDPOINTS = {
         ONBOARD: `${V1}/tenant-stripe-connect/onboard`,
         REFRESH_LINK: `${V1}/tenant-stripe-connect/refresh-link`,
         DASHBOARD_LINK: `${V1}/tenant-stripe-connect/dashboard`,
+        TRANSACTIONS: `${V1}/tenant-stripe-connect/transactions`,
+        SYNC: `${V1}/tenant-stripe-connect/sync`,
       },
     },
   },
