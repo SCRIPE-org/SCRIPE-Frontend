@@ -10,12 +10,14 @@ export class UserSubscriptionMapper {
     const data: UserSubscriptionData = {
       id: model.id,
       userId: model.userId ?? "",
+      userName: model.userName,
+      userEmail: model.userEmail,
       tenantId: model.tenantId ?? "",
       tenantPlanId: model.tenantPlanId ?? "",
       planName: model.planName ?? "",
-      currency: model.currency ?? "USD",
-      price: model.price ?? 0,
-      billingCycle: model.billingCycle ?? "Monthly",
+      currency: model.currency,
+      price: model.price,
+      billingCycle: model.billingCycle,
       status: model.status ?? "Active",
       startedAt: model.startedAt,
       expiresAt: model.expiresAt,
@@ -29,6 +31,14 @@ export class UserSubscriptionMapper {
       notes: model.notes,
       createdAt: model.createdAt,
       updatedAt: model.updatedAt,
+      tenantPlanVersionNumber: model.tenantPlanVersionNumber,
+      promotionId: model.promotionId,
+      promotionCode: model.promotionCode,
+      discountAmount: model.discountAmount ?? 0,
+      originalPrice: model.originalPrice,
+      paymentMethod: model.paymentMethod,
+      isSelfService: model.isSelfService ?? false,
+      gracePeriodEndsAt: model.gracePeriodEndsAt,
     };
     return new UserSubscription(data);
   }
@@ -38,6 +48,8 @@ export class UserSubscriptionMapper {
     const data: UserSubscriptionData = {
       id: model.id,
       userId: model.userId ?? "",
+      userName: model.userName,
+      userEmail: model.userEmail,
       tenantId: "",  // Not available in list DTO — omitted intentionally
       tenantPlanId: model.tenantPlanId ?? "",
       planName: model.planName ?? "",
@@ -50,9 +62,10 @@ export class UserSubscriptionMapper {
       isActive: status === "Active" || status === "Trial" || status === "Free",
       isExpiringSoon: model.isExpiringSoon ?? false,
       daysRemaining: model.daysRemaining,
+      promotionCode: model.promotionCode,
+      isSelfService: model.isSelfService ?? false,
       createdAt: model.createdAt,
     };
     return new UserSubscription(data);
   }
 }
-

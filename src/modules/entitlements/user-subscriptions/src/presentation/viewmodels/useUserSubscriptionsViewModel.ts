@@ -124,10 +124,20 @@ export function useUserSubscriptionsViewModel() {
     },
   });
 
+  // ── GetById (full detail fetch for custom view modal) ──
+  const getById = async (id: string): Promise<UserSubscription | null> => {
+    try {
+      return await userSubscriptionRepository.getById(id);
+    } catch {
+      return null;
+    }
+  };
+
   return {
     ...vm,
     availablePlans,
     searchUsers,
+    getById,
     cancelSubscription: (id: string) => cancelMutation.mutate(id),
     renewSubscription: (id: string) => renewMutation.mutate(id),
     isCancelling: cancelMutation.isPending,

@@ -7,12 +7,14 @@
 export interface UserSubscriptionModel {
   id: string;
   userId: string;
+  userName?: string;
+  userEmail?: string;
   tenantId: string;
   tenantPlanId: string;
   planName: string;
-  currency: string;
-  price: number;
-  billingCycle: string;
+  currency?: string;
+  price?: number;
+  billingCycle?: string;
   status: string;
   startedAt: string;
   expiresAt?: string;
@@ -24,6 +26,14 @@ export interface UserSubscriptionModel {
   daysRemaining?: number;
   externalRef?: string;
   notes?: string;
+  tenantPlanVersionNumber?: number;
+  promotionId?: string;
+  promotionCode?: string;
+  discountAmount: number;
+  originalPrice?: number;
+  paymentMethod?: string;
+  isSelfService: boolean;
+  gracePeriodEndsAt?: string;
   createdAt: string;
   updatedAt?: string;
 }
@@ -32,6 +42,8 @@ export interface UserSubscriptionModel {
 export interface UserSubscriptionListModel {
   id: string;
   userId: string;
+  userName?: string;
+  userEmail?: string;
   tenantPlanId: string;
   planName: string;
   status: string;
@@ -40,5 +52,7 @@ export interface UserSubscriptionListModel {
   trialEndsAt?: string;
   isExpiringSoon: boolean;
   daysRemaining?: number;
+  promotionCode?: string;
+  isSelfService: boolean;
   createdAt: string;
 }

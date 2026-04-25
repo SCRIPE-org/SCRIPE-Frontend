@@ -6,26 +6,43 @@
  * Architecture compliance:
  * - Zero `any` types — all parameters properly typed
  * - Zero hardcoded strings — all via t() locale keys
+ * - Custom rich detail modal replaces default GenericForm read-only view
  */
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState, useCallback } from "react";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
 import type { CrudConfig, CrudAction } from "@core/crud/components/generic-crud-view";
 import { useUserSubscriptionsViewModel } from "../viewmodels/useUserSubscriptionsViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { UserSubscription } from "../../domain/entities/UserSubscription";
 import { Badge } from "@core/ui/badge";
-import { Eye, XCircle, RefreshCw } from "lucide-react";
+import { Eye, XCircle, RefreshCw, User, Mail } from "lucide-react";
 import { format } from "date-fns";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
+import { SubscriptionDetailModal } from "../components/SubscriptionDetailModal";
 
 export function UserSubscriptionsView() {
   useModuleLocales(() => import("../../../locales"), "user-subscriptions");
   const { t } = useI18n();
   const vm = useUserSubscriptionsViewModel();
 
-  // Tenant context is resolved server-side from JWT — no client-side guard needed.
+  // ── Custom Detail Modal State ──
+  // Overrides the built-in GenericCrudView view modal with a rich, sectioned layout.
+  const [detailItem, setDetailItem] = useState<UserSubscription | null>(null);
+  const [detailOpen, setDetailOpen] = useState(false);
+
+  const getByIdRef = vm.getById;
+  const openDetail = useCallback((item: UserSubscription) => {
+    // Fetch the full detail record (GetById) for comprehensive data
+    getByIdRef(item.id).then((fullItem) => {
+      setDetailItem(fullItem ?? item);
+      setDetailOpen(true);
+    }).catch(() => {
+      setDetailItem(item);
+      setDetailOpen(true);
+    });
+  }, [getByIdRef]);
 
   const config: CrudConfig<UserSubscription> = useMemo(
     () => {
@@ -36,6 +53,7 @@ export function UserSubscriptionsView() {
         PastDue: t("entitlements.userSubscriptions.statusPastDue") || "Past Due",
         Cancelled: t("entitlements.userSubscriptions.statusCancelled") || "Cancelled",
         Expired: t("entitlements.userSubscriptions.statusExpired") || "Expired",
+        PendingPayment: t("entitlements.userSubscriptions.statusPendingPayment") || "Pending Payment",
       };
       return {
       titleKey: "entitlements.userSubscriptions.title",
@@ -43,19 +61,35 @@ export function UserSubscriptionsView() {
       resource: "user_subscriptions",
       columns: [
         {
-          key: "userId",
+          key: "userName",
           label: t("entitlements.userSubscriptions.user") || "User",
           sortable: true,
-          render: (value: string) => (
-            <span className="font-mono text-xs truncate max-w-[120px] inline-block" title={value}>
-              {value}
-            </span>
+          render: (_val: unknown, sub: UserSubscription) => (
+            <div className="flex flex-col gap-0.5 min-w-[120px]">
+              <div className="flex items-center gap-1.5">
+                <User className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                <span className="font-medium text-sm truncate max-w-[180px]">
+                  {sub.userName || t("entitlements.userSubscriptions.detailUnknownUser")}
+                </span>
+              </div>
+              {sub.userEmail && (
+                <div className="flex items-center gap-1.5">
+                  <Mail className="h-3 w-3 text-muted-foreground shrink-0" />
+                  <span className="text-xs text-muted-foreground truncate max-w-[180px]">
+                    {sub.userEmail}
+                  </span>
+                </div>
+              )}
+            </div>
           ),
         },
         {
           key: "planName",
           label: t("entitlements.userSubscriptions.plan") || "Plan",
           sortable: true,
+          render: (value: string) => (
+            <span className="font-medium">{value}</span>
+          ),
         },
         {
           key: "status",
@@ -76,19 +110,13 @@ export function UserSubscriptionsView() {
           key: "expiresAt",
           label: t("entitlements.userSubscriptions.expiresAt") || "Expires",
           render: (value: string | undefined) =>
-            value ? format(new Date(value), "MMM d, yyyy") : "—",
-        },
-        {
-          key: "trialEndsAt",
-          label: t("entitlements.userSubscriptions.trialEnds") || "Trial Ends",
-          render: (value: string | undefined) =>
-            value ? format(new Date(value), "MMM d, yyyy") : "—",
+            value ? format(new Date(value), "MMM d, yyyy") : "∞",
         },
         {
           key: "daysRemaining",
           label: t("entitlements.userSubscriptions.daysRemaining") || "Days Left",
           render: (_val: unknown, sub: UserSubscription) => {
-            if (sub.daysRemaining == null) return <span className="text-muted-foreground">—</span>;
+            if (sub.daysRemaining == null) return <span className="text-muted-foreground">∞</span>;
             return (
               <Badge variant={sub.isExpiringSoon ? "warning" : "outline"}>
                 {sub.daysRemaining}d
@@ -127,10 +155,27 @@ export function UserSubscriptionsView() {
           options: vm.availablePlans,
         },
         {
+          name: "billingCycle",
+          label: t("entitlements.userSubscriptions.billingCycle") || "Billing Cycle",
+          type: "select" as const,
+          placeholder: t("entitlements.userSubscriptions.billingCyclePlaceholder") || "Select a billing cycle…",
+          options: [
+            { value: "Monthly", label: t("entitlements.userSubscriptions.billingCycleMonthly") || "Monthly" },
+            { value: "Yearly", label: t("entitlements.userSubscriptions.billingCycleYearly") || "Yearly" },
+            { value: "Lifetime", label: t("entitlements.userSubscriptions.billingCycleLifetime") || "Lifetime" },
+          ],
+        },
+        {
           name: "isAutoRenew",
           label: t("entitlements.userSubscriptions.autoRenew") || "Auto Renew",
           type: "switch" as const,
           defaultValue: true,
+        },
+        {
+          name: "promotionCode",
+          label: t("entitlements.userSubscriptions.promotionCode") || "Promotion Code",
+          type: "text" as const,
+          placeholder: t("entitlements.userSubscriptions.promotionCodePlaceholder") || "Enter a promotion code…",
         },
         {
           name: "notes",
@@ -139,14 +184,17 @@ export function UserSubscriptionsView() {
           placeholder: t("entitlements.userSubscriptions.notesPlaceholder") || "Optional admin notes…",
         },
       ],
-      getItemDisplayName: (sub: UserSubscription) => `${sub.planName} (${sub.userId})`,
+      getItemDisplayName: (sub: UserSubscription) =>
+        sub.userName
+          ? `${sub.planName} — ${sub.userName}`
+          : `${sub.planName} (${sub.userId})`,
       getActions: (
-        vmInstance: ReturnType<typeof useUserSubscriptionsViewModel>,
+        _vmInstance: ReturnType<typeof useUserSubscriptionsViewModel>,
         tFn: (key: string) => string
       ): CrudAction<UserSubscription>[] => [
         {
           label: tFn("common.view") || "View",
-          onClick: (item: UserSubscription) => vmInstance.openViewModal(item),
+          onClick: (item: UserSubscription) => openDetail(item),
           variant: "ghost" as const,
           icon: <Eye className="h-4 w-4" />,
         },
@@ -170,8 +218,17 @@ export function UserSubscriptionsView() {
       };
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [t]
+    [t, openDetail]
   );
 
-  return <GenericCrudView viewModel={vm} config={config} />;
+  return (
+    <>
+      <GenericCrudView viewModel={vm} config={config} />
+      <SubscriptionDetailModal
+        open={detailOpen}
+        onOpenChange={setDetailOpen}
+        subscription={detailItem}
+      />
+    </>
+  );
 }
