@@ -494,12 +494,9 @@ export const PricingTab = memo(function PricingTab({ editionId, allowMonthly = t
                                                             size="sm"
                                                             onClick={() => setShowApplyDialog(true)}
                                                             disabled={isBusy}
+                                                            loading={vm.isSaving}
                                                       >
-                                                            {vm.isSaving ? (
-                                                                  <Loader2 className="h-4 w-4 animate-spin me-1" />
-                                                            ) : (
-                                                                  <Bolt className="h-4 w-4 me-1" />
-                                                            )}
+                                                            {!vm.isSaving && <Bolt className="h-4 w-4 me-1" />}
                                                             {t("entitlements.editions.directApply") || "Apply Now"}
                                                       </Button>
 
@@ -508,13 +505,10 @@ export const PricingTab = memo(function PricingTab({ editionId, allowMonthly = t
                                                             size="sm"
                                                             onClick={() => setShowVersionDialog(true)}
                                                             disabled={isBusy}
+                                                            loading={vm.isCreatingVersion}
                                                             className="gradient-primary"
                                                       >
-                                                            {vm.isCreatingVersion ? (
-                                                                  <Loader2 className="h-4 w-4 animate-spin me-1" />
-                                                            ) : (
-                                                                  <GitBranch className="h-4 w-4 me-1" />
-                                                            )}
+                                                            {!vm.isCreatingVersion && <GitBranch className="h-4 w-4 me-1" />}
                                                             {t("entitlements.editions.saveAsVersion") || "Save as Version"}
                                                       </Button>
                                                 </div>
@@ -608,10 +602,10 @@ export const PricingTab = memo(function PricingTab({ editionId, allowMonthly = t
                                                 setVersionNotes("");
                                           }}
                                           disabled={isBusy}
+                                          loading={vm.isCreatingVersion}
                                           className="gradient-primary"
                                     >
-                                          {vm.isCreatingVersion && <Loader2 className="h-4 w-4 animate-spin me-1" />}
-                                          <GitBranch className="h-4 w-4 me-1" />
+                                          {!vm.isCreatingVersion && <GitBranch className="h-4 w-4 me-1" />}
                                           {t("entitlements.editions.createAndPublish") || "Create Version"}
                                     </Button>
                               </DialogFooter>
@@ -645,9 +639,9 @@ export const PricingTab = memo(function PricingTab({ editionId, allowMonthly = t
                                                 setShowApplyDialog(false);
                                           }}
                                           disabled={isBusy}
+                                          loading={vm.isSaving}
                                     >
-                                          {vm.isSaving && <Loader2 className="h-4 w-4 animate-spin me-1" />}
-                                          <Bolt className="h-4 w-4 me-1" />
+                                          {!vm.isSaving && <Bolt className="h-4 w-4 me-1" />}
                                           {t("entitlements.editions.applyNow") || "Apply Now"}
                                     </Button>
                               </DialogFooter>

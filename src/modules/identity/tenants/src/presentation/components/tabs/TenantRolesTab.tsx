@@ -191,9 +191,9 @@ export function TenantRolesTab({ tenantId, tenantName }: TenantRolesTabProps) {
           variant="outline"
           size="sm"
           onClick={() => resyncMutation.mutate()}
-          disabled={resyncMutation.isPending}
+          loading={resyncMutation.isPending}
         >
-          <RefreshCw className={`h-4 w-4 me-2 ${resyncMutation.isPending ? "animate-spin" : ""}`} />
+          {!resyncMutation.isPending && <RefreshCw className="h-4 w-4 me-2" />}
           {t("tenant.resyncPermissions") || "Resync Permissions"}
         </Button>
       </div>

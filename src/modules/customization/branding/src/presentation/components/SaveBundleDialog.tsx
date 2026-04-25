@@ -198,12 +198,8 @@ export function SaveBundleDialog({ isOpen, onClose, onSave, isSaving }: SaveBund
           <Button variant="outline" onClick={onClose}>
             {t("common.cancel")}
           </Button>
-          <Button onClick={handleSave} disabled={!canSave || isSaving}>
-            {isSaving ? (
-              <Loader2 className="h-4 w-4 animate-spin mr-1.5" />
-            ) : (
-              <Save className="h-4 w-4 mr-1.5" />
-            )}
+          <Button onClick={handleSave} disabled={!canSave} loading={isSaving}>
+            {!isSaving && <Save className="h-4 w-4 mr-1.5" />}
             {t(`${B}.saveDialog.save`)}
           </Button>
         </DialogFooter>

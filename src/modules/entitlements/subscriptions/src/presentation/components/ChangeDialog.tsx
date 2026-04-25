@@ -81,8 +81,7 @@ export function ChangeDialog({ vm, editionsVm }: SubscriptionEditionDialogProps)
           <Button variant="outline" onClick={() => vm.setShowChangeDialog(false)}>
             {t("common.cancel")}
           </Button>
-          <Button onClick={vm.submitChange} disabled={!vm.selectedEditionId || vm.isChanging}>
-            {vm.isChanging && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
+          <Button onClick={vm.submitChange} disabled={!vm.selectedEditionId} loading={vm.isChanging}>
             {t("entSubscriptions.change")}
           </Button>
         </DialogFooter>

@@ -250,9 +250,9 @@ export function AssignToGroupDialog({
                               </Button>
                               <Button
                                     onClick={handleSave}
-                                    disabled={isSearching || isPending || selectedGroupIds.length === 0}
+                                    loading={isPending}
+                                    disabled={isSearching || selectedGroupIds.length === 0}
                               >
-                                    {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                                     {t("userGroups.assignAction") || "Assign"}
                                     {selectedGroupIds.length > 0 && ` (${selectedGroupIds.length})`}
                               </Button>

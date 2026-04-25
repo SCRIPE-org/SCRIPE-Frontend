@@ -45,8 +45,8 @@ export function RoleDetailHeader({ role, isLoading, isSaving, onSave }: RoleDeta
             </>
           )}
         </div>
-        <Button onClick={onSave} disabled={isSaving}>
-          <Save className="mr-2 h-4 w-4" />
+        <Button onClick={onSave} loading={isSaving}>
+          {!isSaving && <Save className="mr-2 h-4 w-4" />}
           {isSaving ? t("common.saving") : t("common.saveChanges")}
         </Button>
       </div>

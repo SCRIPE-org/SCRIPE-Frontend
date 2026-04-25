@@ -148,7 +148,7 @@ export function CommissionRateConfig({
           <Button type="button" variant="ghost" onClick={onClose} disabled={isSaving}>
             {t("common.cancel") || "Cancel"}
           </Button>
-          <Button type="button" onClick={handleSave} disabled={isSaving}>
+          <Button type="button" onClick={handleSave} loading={isSaving}>
             {isSaving ? (t("common.saving") || "Saving...") : (t("common.save") || "Save")}
           </Button>
         </DialogFooter>

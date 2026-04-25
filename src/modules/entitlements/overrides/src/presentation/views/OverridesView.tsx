@@ -306,7 +306,7 @@ function CurrentOverridesCard({ vm, t }: { vm: VM; t: TFn }) {
                                                                               size="sm"
                                                                               className="text-destructive"
                                                                               onClick={() => vm.removeOverride(o.featureId)}
-                                                                              disabled={vm.isRemoving}
+                                                                              loading={vm.isRemoving}
                                                                         >
                                                                               <Trash2 className="h-4 w-4" />
                                                                         </Button>
@@ -387,8 +387,7 @@ function SetOverrideDialog({ vm, t }: { vm: VM; t: TFn }) {
                               <Button variant="outline" onClick={() => vm.closeSetOverride()}>
                                     {t("common.cancel")}
                               </Button>
-                              <Button onClick={vm.submitOverride} disabled={vm.isSaving}>
-                                    {vm.isSaving && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
+                              <Button onClick={vm.submitOverride} loading={vm.isSaving}>
                                     {t("common.save")}
                               </Button>
                         </DialogFooter>
@@ -439,10 +438,11 @@ function CostDialog({ vm, t }: { vm: VM; t: TFn }) {
                               </Button>
                               <Button
                                     onClick={() => vm.submitCost()}
-                                    disabled={!vm.costAmount || vm.isSavingCost}
+                                    disabled={!vm.costAmount}
+                                    loading={vm.isSavingCost}
                               >
                                     {vm.isSavingCost
-                                          ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />{t("common.saving") || "Saving..."}</>
+                                          ? (t("common.saving") || "Saving...")
                                           : (t("common.save") || "Save")
                                     }
                               </Button>

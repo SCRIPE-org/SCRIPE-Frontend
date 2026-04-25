@@ -136,8 +136,7 @@ export function AssignDialog({ vm, editionsVm }: SubscriptionEditionDialogProps)
           <Button variant="outline" onClick={() => vm.setShowAssignDialog(false)}>
             {t("common.cancel")}
           </Button>
-          <Button onClick={vm.submitAssign} disabled={!vm.selectedEditionId || vm.isAssigning}>
-            {vm.isAssigning && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
+          <Button onClick={vm.submitAssign} disabled={!vm.selectedEditionId} loading={vm.isAssigning}>
             {t("entSubscriptions.assign")}
           </Button>
         </DialogFooter>

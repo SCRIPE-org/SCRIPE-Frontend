@@ -120,8 +120,7 @@ export function AssignRoleDialog({
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading}>
             {vm.t("common.cancel") || "Cancel"}
           </Button>
-          <Button onClick={handleSave} disabled={vm.assignRoleIds.length === 0 || isLoading}>
-            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          <Button onClick={handleSave} loading={isLoading} disabled={vm.assignRoleIds.length === 0}>
             {vm.t("admin.role.assign") || "Assign Roles"}
           </Button>
         </div>
@@ -218,13 +217,10 @@ export function ViewRolesDialog({
                   size="icon"
                   className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
                   onClick={() => handleRemove(role)}
-                  disabled={isRemoving}
+                  loading={removingId === role.roleId}
+                  disabled={isRemoving && removingId !== role.roleId}
                 >
-                  {removingId === role.roleId ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <Trash2 className="h-4 w-4" />
-                  )}
+                  {removingId !== role.roleId && <Trash2 className="h-4 w-4" />}
                 </Button>
               </div>
             ))}
@@ -326,8 +322,7 @@ export function ResetPasswordDialog({
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading}>
             {t("common.cancel") || "Cancel"}
           </Button>
-          <Button onClick={handleSubmit} disabled={!isValid || isLoading} variant="destructive">
-            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          <Button onClick={handleSubmit} loading={isLoading} disabled={!isValid} variant="destructive">
             {t("admin.resetPassword") || "Reset Password"}
           </Button>
         </div>

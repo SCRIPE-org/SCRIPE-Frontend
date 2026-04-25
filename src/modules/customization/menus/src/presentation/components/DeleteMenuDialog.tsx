@@ -52,7 +52,7 @@ export function DeleteMenuDialog({
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             {t("common.cancel")}
           </Button>
-          <Button variant="destructive" onClick={onConfirm} disabled={isPending}>
+          <Button variant="destructive" onClick={onConfirm} loading={isPending}>
             {isPending ? t("common.deleting") : t("common.delete")}
           </Button>
         </DialogFooter>

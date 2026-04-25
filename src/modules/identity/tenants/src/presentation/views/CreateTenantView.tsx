@@ -88,20 +88,14 @@ export function CreateTenantView() {
           ) : (
             <Button
               onClick={vm.handleSubmit}
-              disabled={vm.isSubmitting || !vm.canProceed}
+              disabled={!vm.canProceed}
+              loading={vm.isSubmitting}
               className="gap-2 min-w-[160px]"
             >
-              {vm.isSubmitting ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  {t("common.creating") || "Creating..."}
-                </>
-              ) : (
-                <>
-                  <Check className="h-4 w-4" />
-                  {t("tenant.createTenant") || "Create Tenant"}
-                </>
-              )}
+              {!vm.isSubmitting && <Check className="h-4 w-4" />}
+              {vm.isSubmitting
+                ? (t("common.creating") || "Creating...")
+                : (t("tenant.createTenant") || "Create Tenant")}
             </Button>
           )}
         </div>

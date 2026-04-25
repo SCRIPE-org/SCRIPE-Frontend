@@ -49,14 +49,10 @@ export function TestPingButton({
                               variant="outline"
                               size="sm"
                               onClick={onTest}
-                              disabled={isTesting}
+                              loading={isTesting}
                               className="gap-1.5"
                         >
-                              {isTesting ? (
-                                    <Loader2 className="h-4 w-4 animate-spin" />
-                              ) : (
-                                    <Zap className="h-4 w-4 text-amber-500" />
-                              )}
+                              {!isTesting && <Zap className="h-4 w-4 text-amber-500" />}
                               {isTesting
                                     ? t("webhooks.testing") || "Testing..."
                                     : t("webhooks.testPing") || "Test Ping"}

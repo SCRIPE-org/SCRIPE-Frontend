@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
+import { Loader2 } from "lucide-react";
 import { useSettings } from "@core/providers/settings-provider";
 import { cn } from "@core/common/utils";
 
@@ -33,10 +34,12 @@ const buttonVariants = cva(
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof buttonVariants> {
   asChild?: boolean;
+  /** When true, shows an animated spinner inside the button and disables interaction */
+  loading?: boolean;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, ...props }, ref) => {
+  ({ className, variant, size, asChild = false, loading = false, disabled, children, ...props }, ref) => {
     const settings = useSettings();
     const Comp = asChild ? Slot : "button";
 
@@ -96,15 +99,45 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       return cn(radiusClasses, animationClasses);
     };
 
+    // For asChild mode, we can't inject spinner children — just pass through
+    if (asChild) {
+      return (
+        <Comp
+          className={cn(buttonVariants({ variant, size }), getButtonClasses(), className)}
+          ref={ref}
+          disabled={disabled || loading}
+          {...props}
+        >
+          {children}
+        </Comp>
+      );
+    }
+
     return (
-      <Comp
-        className={cn(buttonVariants({ variant, size }), getButtonClasses(), className)}
+      <button
+        className={cn(
+          buttonVariants({ variant, size }),
+          getButtonClasses(),
+          loading && "relative",
+          className,
+        )}
         ref={ref}
+        disabled={disabled || loading}
         {...props}
-      />
+      >
+        {loading && (
+          <Loader2 className={cn(
+            "h-4 w-4 animate-spin shrink-0",
+            // Only add margin if there are visible children
+            children ? "ltr:mr-2 rtl:ml-2" : "",
+          )} />
+        )}
+        {children}
+      </button>
     );
   }
 );
 Button.displayName = "Button";
 
 export { Button, buttonVariants };
+

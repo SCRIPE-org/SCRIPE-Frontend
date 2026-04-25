@@ -906,7 +906,7 @@ export function GenericForm({
             </Button>
             <Button
               type="submit"
-              disabled={loading}
+              loading={loading}
               className={cn(
                 getInputHeight(),
                 "gradient-primary",
@@ -914,7 +914,7 @@ export function GenericForm({
               )}
               size={getButtonSize()}
             >
-              {loading ? t("common.loading") : t("common.save")}
+              {t("common.save")}
             </Button>
           </div>
         )}

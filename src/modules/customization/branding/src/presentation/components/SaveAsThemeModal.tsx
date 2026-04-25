@@ -274,18 +274,11 @@ export function SaveAsThemeModal({
           <Button variant="outline" onClick={onClose} disabled={isSaving}>
             {t("common.cancel") || "Cancel"}
           </Button>
-          <Button onClick={handleSave} disabled={!isValid || isSaving}>
-            {isSaving ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                {t("common.saving") || "Saving..."}
-              </>
-            ) : (
-              <>
-                <Palette className="mr-2 h-4 w-4" />
-                {t("studio.saveTheme.save") || "Save Theme"}
-              </>
-            )}
+          <Button onClick={handleSave} disabled={!isValid} loading={isSaving}>
+            {!isSaving && <Palette className="mr-2 h-4 w-4" />}
+            {isSaving
+              ? (t("common.saving") || "Saving...")
+              : (t("studio.saveTheme.save") || "Save Theme")}
           </Button>
         </DialogFooter>
       </DialogContent>

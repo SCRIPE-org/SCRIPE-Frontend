@@ -650,8 +650,8 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
 
                                     {/* Resync Permissions — hidden for PendingPayment */}
                                     {!vm.isPendingPayment && (
-                                    <Button variant="ghost" size="sm" onClick={() => vm.resyncPermissions()} disabled={vm.isResyncing} title={t("tenant.resyncPermissions") || "Re-sync permissions from edition"}>
-                                          {vm.isResyncing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RotateCcw className="h-3.5 w-3.5" />}
+                                    <Button variant="ghost" size="sm" onClick={() => vm.resyncPermissions()} loading={vm.isResyncing} title={t("tenant.resyncPermissions") || "Re-sync permissions from edition"}>
+                                          {!vm.isResyncing && <RotateCcw className="h-3.5 w-3.5" />}
                                     </Button>
                                     )}
 
@@ -671,12 +671,9 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                           variant="outline"
                                           size="sm"
                                           onClick={() => vm.downloadReceipt()}
-                                          disabled={vm.isDownloadingReceipt}
+                                          loading={vm.isDownloadingReceipt}
                                     >
-                                          {vm.isDownloadingReceipt
-                                                ? <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
-                                                : <FileDown className="mr-1.5 h-3.5 w-3.5" />
-                                          }
+                                          {!vm.isDownloadingReceipt && <FileDown className="mr-1.5 h-3.5 w-3.5" />}
                                           {t("tenant.downloadReceipt") || "Receipt"}
                                     </Button>
                               </div>
@@ -887,16 +884,17 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                                       setSelectedPromotionId("");
                                                 }
                                           }}
-                                          disabled={!selectedEditionId || vm.isChanging || vm.isAssigning}
+                                          disabled={!selectedEditionId}
+                                          loading={vm.isChanging || vm.isAssigning}
                                     >
-                                          {(vm.isChanging || vm.isAssigning)
-                                                ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />{t("common.saving") || "Saving..."}</>
-                                                : impactReport?.hasOverflow
+                                          {!(vm.isChanging || vm.isAssigning) && (
+                                                impactReport?.hasOverflow
                                                       ? (t("tenant.confirmDowngrade") || "Confirm Downgrade")
                                                       : (vm.hasNoSubscription || vm.canReassign)
                                                             ? (t("tenant.assignPlan") || "Assign Plan")
                                                             : (t("common.save") || "Save")
-                                          }
+                                          )}
+                                          {(vm.isChanging || vm.isAssigning) && (t("common.saving") || "Saving...")}
                                     </Button>
                               </DialogFooter>
                         </DialogContent>
@@ -935,8 +933,8 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                     <Button variant="outline" onClick={() => setRenewOpen(false)} disabled={vm.isRenewing}>
                                           {t("common.cancel") || "Cancel"}
                                     </Button>
-                                    <Button onClick={() => { vm.renewSubscription(selectedType); setRenewOpen(false); }} disabled={vm.isRenewing}>
-                                          {vm.isRenewing ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />{t("common.saving") || "Saving..."}</> : (t("tenant.renew") || "Renew")}
+                                    <Button onClick={() => { vm.renewSubscription(selectedType); setRenewOpen(false); }} loading={vm.isRenewing}>
+                                          {vm.isRenewing ? (t("common.saving") || "Saving...") : (t("tenant.renew") || "Renew")}
                                     </Button>
                               </DialogFooter>
                         </DialogContent>
@@ -973,8 +971,8 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                     <Button variant="outline" onClick={() => setConvertOpen(false)} disabled={vm.isConverting}>
                                           {t("common.cancel") || "Cancel"}
                                     </Button>
-                                    <Button onClick={() => { vm.convertTrial(selectedType); setConvertOpen(false); }} disabled={vm.isConverting}>
-                                          {vm.isConverting ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />{t("common.saving") || "Converting..."}</> : (t("tenant.convertToPaid") || "Convert to Paid")}
+                                    <Button onClick={() => { vm.convertTrial(selectedType); setConvertOpen(false); }} loading={vm.isConverting}>
+                                          {vm.isConverting ? (t("common.saving") || "Converting...") : (t("tenant.convertToPaid") || "Convert to Paid")}
                                     </Button>
                               </DialogFooter>
                         </DialogContent>
@@ -1129,8 +1127,8 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                                 vm.suspendSubscription(suspendReason.trim(), vm.hasFallback ? useFallbackOnSuspend : undefined, suspendRefundType === "Custom" ? "ProRata" : suspendRefundType, suspendRefundType === "Custom" && suspendCustomAmount ? parseLocalizedNumber(suspendCustomAmount) : undefined);
                                                 closeSuspendDialog();
                                           }
-                                    }} disabled={suspendReason.trim().length < 3 || vm.isSuspending}>
-                                          {vm.isSuspending ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /></> : <Pause className="mr-2 h-4 w-4" />}
+                                    }} disabled={suspendReason.trim().length < 3} loading={vm.isSuspending}>
+                                          {!vm.isSuspending && <Pause className="mr-2 h-4 w-4" />}
                                           {useFallbackOnSuspend && vm.hasFallback
                                                 ? (t("tenant.downgrade") || "Downgrade")
                                                 : (t("tenant.suspend") || "Suspend")
@@ -1284,8 +1282,8 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                     <Button variant="destructive" onClick={() => {
                                           vm.cancelSubscription(cancelReason.trim() || undefined, vm.hasFallback ? useFallbackOnCancel : undefined, cancelRefundType === "Custom" ? "ProRata" : cancelRefundType, cancelRefundType === "Custom" && cancelCustomAmount ? parseLocalizedNumber(cancelCustomAmount) : undefined);
                                           closeCancelDialog();
-                                    }} disabled={vm.isCanceling}>
-                                          {vm.isCanceling ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /></> : <XCircle className="mr-2 h-4 w-4" />}
+                                    }} loading={vm.isCanceling}>
+                                          {!vm.isCanceling && <XCircle className="mr-2 h-4 w-4" />}
                                           {useFallbackOnCancel && vm.hasFallback
                                                 ? (t("tenant.downgrade") || "Downgrade")
                                                 : (t("tenant.confirmCancel") || "Cancel Subscription")
@@ -1380,8 +1378,8 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                                 vm.resumeSubscription();
                                           }
                                           setResumeOpen(false);
-                                    }} disabled={vm.isResuming}>
-                                          {vm.isResuming ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : isRestore ? <RotateCcw className="mr-2 h-4 w-4" /> : <Play className="mr-2 h-4 w-4" />}
+                                    }} loading={vm.isResuming}>
+                                          {!vm.isResuming && (isRestore ? <RotateCcw className="mr-2 h-4 w-4" /> : <Play className="mr-2 h-4 w-4" />)}
                                           {isRestore
                                                 ? (t("tenant.confirmRestore") || "Restore Plan")
                                                 : (t("tenant.confirmResume") || "Resume Subscription")
@@ -1441,10 +1439,11 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                                                 vm.changeCurrency(selectedCurrency);
                                                 setChangeCurrencyOpen(false);
                                           }
-                                    }} disabled={!selectedCurrency || selectedCurrency === subscription?.currency || vm.isChangingCurrency}>
+                                    }} disabled={!selectedCurrency || selectedCurrency === subscription?.currency} loading={vm.isChangingCurrency}>
+                                          {!vm.isChangingCurrency && <Globe className="mr-2 h-4 w-4" />}
                                           {vm.isChangingCurrency
-                                                ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />{t("common.saving") || "Saving..."}</>
-                                                : <><Globe className="mr-2 h-4 w-4" />{t("tenant.changeCurrency") || "Change Currency"}</>
+                                                ? (t("common.saving") || "Saving...")
+                                                : (t("tenant.changeCurrency") || "Change Currency")
                                           }
                                     </Button>
                               </DialogFooter>

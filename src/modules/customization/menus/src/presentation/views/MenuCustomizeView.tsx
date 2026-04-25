@@ -99,14 +99,10 @@ export function MenuCustomizeView() {
               variant="outline"
               size="sm"
               onClick={vm.resetAllOverrides}
-              disabled={vm.isResettingAll}
+              loading={vm.isResettingAll}
               className="text-destructive hover:text-destructive"
             >
-              {vm.isResettingAll ? (
-                <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />
-              ) : (
-                <RotateCcw className="mr-1.5 h-4 w-4" />
-              )}
+              {!vm.isResettingAll && <RotateCcw className="mr-1.5 h-4 w-4" />}
               {t("menus.resetAll") || "Reset All"}
             </Button>
           )}

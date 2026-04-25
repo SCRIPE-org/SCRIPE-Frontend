@@ -389,8 +389,8 @@ export function ComposeSection(vm: ComposeSectionProps) {
                                                 {t("messaging.email.preview") || "Preview"}
                                           </Button>
                                     )}
-                                    <Button onClick={vm.handleSend} disabled={vm.isSending} className="gap-2">
-                                          {vm.isSending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                                    <Button onClick={vm.handleSend} loading={vm.isSending} className="gap-2">
+                                          {!vm.isSending && <Send className="h-4 w-4" />}
                                           {t("messaging.email.send")}
                                     </Button>
                               </div>

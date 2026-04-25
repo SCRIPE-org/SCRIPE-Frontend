@@ -371,12 +371,8 @@ export function DashboardStudioPanel({
           <Button variant="outline" size="sm" onClick={onDiscard}>
             {t("common.cancel") || "Cancel"}
           </Button>
-          <Button size="sm" onClick={onSave} disabled={isSaving} className="gap-1.5">
-            {isSaving ? (
-              <Loader2 className="h-3.5 w-3.5 animate-spin" />
-            ) : (
-              <Save className="h-3.5 w-3.5" />
-            )}
+          <Button size="sm" onClick={onSave} loading={isSaving} className="gap-1.5">
+            {!isSaving && <Save className="h-3.5 w-3.5" />}
             {t("dashboard.studio.save") || "Save Theme"}
           </Button>
         </SheetFooter>

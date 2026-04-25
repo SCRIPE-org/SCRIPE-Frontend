@@ -114,18 +114,9 @@ function SaveActions({ vm }: { vm: ReturnType<typeof useTenantSettingsViewModel>
           {vm.t("common.cancel")}
         </Button>
       )}
-      <Button onClick={vm.saveSettings} disabled={!vm.hasChanges || vm.isSaving}>
-        {vm.isSaving ? (
-          <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            {vm.t("tenantSettings.saving")}
-          </>
-        ) : (
-          <>
-            <Save className="mr-2 h-4 w-4" />
-            {vm.t("tenantSettings.saveSettings")}
-          </>
-        )}
+      <Button onClick={vm.saveSettings} disabled={!vm.hasChanges} loading={vm.isSaving}>
+        {!vm.isSaving && <Save className="mr-2 h-4 w-4" />}
+        {vm.isSaving ? vm.t("tenantSettings.saving") : vm.t("tenantSettings.saveSettings")}
       </Button>
     </div>
   );

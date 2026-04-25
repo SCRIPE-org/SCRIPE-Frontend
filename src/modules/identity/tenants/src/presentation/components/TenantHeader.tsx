@@ -412,13 +412,9 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
                   variant="outline"
                   size="sm"
                   onClick={() => setStatusConfirmOpen(true)}
-                  disabled={isUpdating}
+                  loading={isUpdating}
                 >
-                  {isUpdating ? (
-                    <Loader2 className="h-4 w-4 animate-spin me-1.5" />
-                  ) : (
-                    <Power className="h-4 w-4 me-1.5" />
-                  )}
+                  {!isUpdating && <Power className="h-4 w-4 me-1.5" />}
                   {tenant.isActive ? t("common.deactivate") : t("common.activate")}
                 </Button>
               )}
@@ -521,8 +517,7 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
             <Button variant="outline" onClick={() => setEditOpen(false)}>
               {t("common.cancel")}
             </Button>
-            <Button onClick={handleEditSubmit} disabled={isUpdating}>
-              {isUpdating && <Loader2 className="me-2 h-4 w-4 animate-spin" />}
+            <Button onClick={handleEditSubmit} loading={isUpdating}>
               {t("common.save")}
             </Button>
           </DialogFooter>
@@ -564,9 +559,8 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
                 handleToggleStatus();
                 setStatusConfirmOpen(false);
               }}
-              disabled={isUpdating}
+              loading={isUpdating}
             >
-              {isUpdating && <Loader2 className="me-2 h-4 w-4 animate-spin" />}
               {tenant.isActive ? t("common.deactivate") : t("common.activate")}
             </Button>
           </DialogFooter>

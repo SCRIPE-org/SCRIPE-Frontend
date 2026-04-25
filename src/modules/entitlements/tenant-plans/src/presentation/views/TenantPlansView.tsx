@@ -415,10 +415,9 @@ export function TenantPlansView() {
             <Button variant="ghost" onClick={() => setConfirmAction(null)}>Cancel</Button>
             <Button
               onClick={handleConfirmAction}
-              disabled={vm.isPublishing || vm.isArchiving}
+              loading={vm.isPublishing || vm.isArchiving}
               className={confirmAction?.type === "publish" ? "bg-green-600 hover:bg-green-700 text-white" : "bg-amber-600 hover:bg-amber-700 text-white"}
             >
-              {(vm.isPublishing || vm.isArchiving) ? <Loader2 className="h-4 w-4 animate-spin me-1" /> : null}
               {confirmAction?.type === "publish"
                 ? t("entitlements.tenantPlans.publish") || "Publish"
                 : t("entitlements.tenantPlans.archive") || "Archive"}

@@ -239,16 +239,10 @@ export function ResetPasswordView() {
                 <Button
                   type="submit"
                   className="login-button w-full"
-                  disabled={isSubmitting || !isValid}
+                  disabled={!isValid}
+                  loading={isSubmitting}
                 >
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      {t("common.loading") || "Resetting..."}
-                    </>
-                  ) : (
-                    t("auth.resetPasswordAction") || "Reset Password"
-                  )}
+                  {t("auth.resetPasswordAction") || "Reset Password"}
                 </Button>
               </form>
             </div>

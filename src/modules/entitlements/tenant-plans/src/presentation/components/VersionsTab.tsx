@@ -153,14 +153,10 @@ export function VersionsTab({ plan, t, onPublish, isPublishing }: VersionsTabPro
               <Button
                 size="sm"
                 onClick={() => setIsPublishOpen(true)}
-                disabled={isPublishing}
+                loading={isPublishing}
                 className="bg-green-600 hover:bg-green-700 text-white"
               >
-                {isPublishing ? (
-                  <Loader2 className="h-4 w-4 animate-spin me-1" />
-                ) : (
-                  <Rocket className="h-4 w-4 me-1" />
-                )}
+                {!isPublishing && <Rocket className="h-4 w-4 me-1" />}
                 {t("entitlements.tenantPlans.publish") || "Publish New Version"}
               </Button>
             )}
@@ -248,10 +244,10 @@ export function VersionsTab({ plan, t, onPublish, isPublishing }: VersionsTabPro
             <Button variant="ghost" onClick={() => setIsPublishOpen(false)}>Cancel</Button>
             <Button
               onClick={handlePublish}
-              disabled={isPublishing}
+              loading={isPublishing}
               className="bg-green-600 hover:bg-green-700 text-white min-w-[120px]"
             >
-              {isPublishing ? <Loader2 className="h-4 w-4 animate-spin" /> : "Publish"}
+              Publish
             </Button>
           </DialogFooter>
         </DialogContent>

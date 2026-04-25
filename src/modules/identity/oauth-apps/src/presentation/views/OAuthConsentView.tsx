@@ -104,18 +104,18 @@ export function OAuthConsentView() {
                               <Button
                                     className="w-full h-12 text-base font-medium shadow-sm transition-all hover:bg-primary/90"
                                     onClick={vm.handleApprove}
-                                    disabled={vm.isApproving || vm.isDenying}
+                                    loading={vm.isApproving}
+                                    disabled={vm.isDenying}
                               >
-                                    {vm.isApproving ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : null}
                                     {t("oauth.allowAccess")}
                               </Button>
                               <Button
                                     variant="outline"
                                     className="w-full h-12 text-base font-medium"
                                     onClick={vm.handleDeny}
-                                    disabled={vm.isApproving || vm.isDenying}
+                                    loading={vm.isDenying}
+                                    disabled={vm.isApproving}
                               >
-                                    {vm.isDenying ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : null}
                                     {t("oauth.cancelAndReturn")}
                               </Button>
                         </CardFooter>

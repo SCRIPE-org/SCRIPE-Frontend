@@ -222,8 +222,8 @@ export function NotificationSenderView() {
                                           <p className="text-xs text-muted-foreground">
                                                 {t("messaging.notifications.ctrlEnterHint") || "Ctrl+Enter to send"}
                                           </p>
-                                          <Button onClick={vm.handleSend} disabled={vm.isSending} className="gap-2">
-                                                {vm.isSending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                                          <Button onClick={vm.handleSend} loading={vm.isSending} className="gap-2">
+                                                {!vm.isSending && <Send className="h-4 w-4" />}
                                                 {t("messaging.notifications.send")}
                                           </Button>
                                     </div>

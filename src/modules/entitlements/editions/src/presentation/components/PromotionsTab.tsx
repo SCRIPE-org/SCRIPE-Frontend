@@ -318,10 +318,10 @@ export function PromotionsTab({ editionId, allowMonthly = true, allowYearly = tr
                                     </Button>
                                     <Button
                                           onClick={() => vm.submit()}
-                                          disabled={vm.isSubmitting || !vm.form.name}
+                                          disabled={!vm.form.name}
+                                          loading={vm.isSubmitting}
                                           className="gradient-primary"
                                     >
-                                          {vm.isSubmitting && <Loader2 className="h-4 w-4 animate-spin me-1" />}
                                           {vm.isEditing
                                                 ? (t("common.save") || "Save")
                                                 : (t("common.create") || "Create")}

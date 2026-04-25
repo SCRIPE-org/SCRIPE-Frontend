@@ -185,18 +185,9 @@ export function AuditExportDialog({ open, onClose, filters }: AuditExportDialogP
           <Button variant="outline" onClick={onClose} disabled={isExporting}>
             {t("common.cancel")}
           </Button>
-          <Button onClick={handleExport} disabled={isExporting}>
-            {isExporting ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                {t("audit.export.generating")}
-              </>
-            ) : (
-              <>
-                <FileDown className="mr-2 h-4 w-4" />
-                {t("audit.export.download")}
-              </>
-            )}
+          <Button onClick={handleExport} loading={isExporting}>
+            {!isExporting && <FileDown className="mr-2 h-4 w-4" />}
+            {isExporting ? t("audit.export.generating") : t("audit.export.download")}
           </Button>
         </DialogFooter>
       </DialogContent>

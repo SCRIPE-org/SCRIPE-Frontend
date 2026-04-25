@@ -129,14 +129,11 @@ export function AvatarUpload({
         <Button
           size="sm"
           onClick={handleUpload}
-          disabled={isUploading || !selectedFile}
+          loading={isUploading}
+          disabled={!selectedFile}
           className="min-w-[120px]"
         >
-          {isUploading ? (
-            <Loader2 className="me-2 h-4 w-4 animate-spin" />
-          ) : (
-            <Upload className="me-2 h-4 w-4" />
-          )}
+          {!isUploading && <Upload className="me-2 h-4 w-4" />}
           {t("profile.avatar.upload")}
         </Button>
 
@@ -145,14 +142,10 @@ export function AvatarUpload({
             size="sm"
             variant="outline"
             onClick={() => onRemove()}
-            disabled={isRemoving}
+            loading={isRemoving}
             className="text-destructive hover:text-destructive"
           >
-            {isRemoving ? (
-              <Loader2 className="me-2 h-4 w-4 animate-spin" />
-            ) : (
-              <Trash2 className="me-2 h-4 w-4" />
-            )}
+            {!isRemoving && <Trash2 className="me-2 h-4 w-4" />}
             {t("profile.avatar.remove")}
           </Button>
         )}

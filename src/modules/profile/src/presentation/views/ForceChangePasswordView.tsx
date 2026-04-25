@@ -223,8 +223,7 @@ export function ForceChangePasswordView() {
 
             {submitError && <p className="text-sm text-destructive">{submitError}</p>}
 
-            <Button type="submit" disabled={!isValid || isSubmitting} className="w-full">
-              {isSubmitting && <Loader2 className="me-2 h-4 w-4 animate-spin" />}
+            <Button type="submit" loading={isSubmitting} disabled={!isValid} className="w-full">
               {t("profile.security.updatePassword")}
             </Button>
           </form>

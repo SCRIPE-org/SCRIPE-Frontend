@@ -81,21 +81,13 @@ export function ChangeActionBar({
                   {t("common.discard")}
                 </Button>
 
-                <Button variant="outline" size="sm" onClick={() => setShowDirectApplyDialog(true)} disabled={isBusy}>
-                  {isDirectApplying ? (
-                    <Loader2 className="h-4 w-4 animate-spin me-1" />
-                  ) : (
-                    <Bolt className="h-4 w-4 me-1" />
-                  )}
+                <Button variant="outline" size="sm" onClick={() => setShowDirectApplyDialog(true)} disabled={isBusy} loading={isDirectApplying}>
+                  {!isDirectApplying && <Bolt className="h-4 w-4 me-1" />}
                   {t("entitlements.editions.directApply")}
                 </Button>
 
-                <Button size="sm" onClick={() => setShowVersionDialog(true)} disabled={isBusy} className="gradient-primary">
-                  {isCreatingVersion ? (
-                    <Loader2 className="h-4 w-4 animate-spin me-1" />
-                  ) : (
-                    <GitBranch className="h-4 w-4 me-1" />
-                  )}
+                <Button size="sm" onClick={() => setShowVersionDialog(true)} disabled={isBusy} loading={isCreatingVersion} className="gradient-primary">
+                  {!isCreatingVersion && <GitBranch className="h-4 w-4 me-1" />}
                   {t("entitlements.editions.saveAsVersion")}
                 </Button>
               </div>
@@ -137,9 +129,8 @@ export function ChangeActionBar({
             <Button variant="ghost" onClick={() => setShowVersionDialog(false)}>
               {t("common.cancel")}
             </Button>
-            <Button onClick={handleCreateVersion} disabled={isBusy} className="gradient-primary">
-              {isCreatingVersion && <Loader2 className="h-4 w-4 animate-spin me-1" />}
-              <GitBranch className="h-4 w-4 me-1" />
+            <Button onClick={handleCreateVersion} disabled={isBusy} loading={isCreatingVersion} className="gradient-primary">
+              {!isCreatingVersion && <GitBranch className="h-4 w-4 me-1" />}
               {t("entitlements.editions.createAndPublish")}
             </Button>
           </DialogFooter>
@@ -166,9 +157,8 @@ export function ChangeActionBar({
             <Button variant="ghost" onClick={() => setShowDirectApplyDialog(false)}>
               {t("common.cancel")}
             </Button>
-            <Button variant="destructive" onClick={handleDirectApply} disabled={isBusy}>
-              {isDirectApplying && <Loader2 className="h-4 w-4 animate-spin me-1" />}
-              <Bolt className="h-4 w-4 me-1" />
+            <Button variant="destructive" onClick={handleDirectApply} disabled={isBusy} loading={isDirectApplying}>
+              {!isDirectApplying && <Bolt className="h-4 w-4 me-1" />}
               {t("entitlements.editions.applyNow")}
             </Button>
           </DialogFooter>

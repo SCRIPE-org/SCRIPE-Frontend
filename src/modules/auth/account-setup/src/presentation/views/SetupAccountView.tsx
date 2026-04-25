@@ -319,20 +319,12 @@ export function SetupAccountView() {
           <Button
             className="w-full"
             size="lg"
-            disabled={!isPasswordValid || pageState === "activating"}
+            disabled={!isPasswordValid}
+            loading={pageState === "activating"}
             onClick={handleActivate}
           >
-            {pageState === "activating" ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin me-2" />
-                Activating...
-              </>
-            ) : (
-              <>
-                <Shield className="h-4 w-4 me-2" />
-                Activate Account
-              </>
-            )}
+            {pageState !== "activating" && <Shield className="h-4 w-4 me-2" />}
+            {pageState === "activating" ? "Activating..." : "Activate Account"}
           </Button>
 
           {/* Expiry note */}

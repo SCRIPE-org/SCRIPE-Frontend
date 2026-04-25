@@ -65,6 +65,8 @@ import {
   Scale,
   ShieldAlert,
   Workflow,
+  Wallet,
+  Landmark,
   type LucideIcon,
 } from "lucide-react";
 
@@ -145,6 +147,9 @@ export const iconMap: Record<string, LucideIcon> = {
   // ── Phase 5: Developer ──
   Code: Code,
   Receipt: Receipt,
+  // ── Self-service / Billing ──
+  Wallet: Wallet,
+  Landmark: Landmark,
 };
 
 /**

@@ -106,9 +106,9 @@ export function BackupCodesDialog({
               </Button>
               <Button
                 onClick={handleRegenerate}
-                disabled={twoFactorCode.length < 6 || isRegenerating}
+                loading={isRegenerating}
+                disabled={twoFactorCode.length < 6}
               >
-                {isRegenerating && <Loader2 className="me-2 h-4 w-4 animate-spin" />}
                 {t("profile.security.backupCodes.regenerate")}
               </Button>
             </div>

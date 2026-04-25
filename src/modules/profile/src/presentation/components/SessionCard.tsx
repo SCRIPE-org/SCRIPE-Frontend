@@ -90,17 +90,11 @@ export function SessionCard({ session, onRevoke, isRevoking }: SessionCardProps)
             variant="ghost"
             size="sm"
             onClick={() => onRevoke(session.tokenId)}
-            disabled={isRevoking}
+            loading={isRevoking}
             className="text-destructive hover:bg-destructive/10 hover:text-destructive"
           >
-            {isRevoking ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <>
-                <X className="me-1 h-4 w-4" />
-                {t("profile.sessions.revoke")}
-              </>
-            )}
+            {!isRevoking && <X className="me-1 h-4 w-4" />}
+            {t("profile.sessions.revoke")}
           </Button>
         )}
       </div>

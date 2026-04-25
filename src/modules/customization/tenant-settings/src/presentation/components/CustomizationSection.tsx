@@ -253,17 +253,19 @@ export function CustomizationSection({ settings }: CustomizationSectionProps) {
               {/* Save Button with Success Animation */}
               <Button
                 onClick={vm.saveAdminPrefs}
-                disabled={vm.isSavingAdminPrefs || (!vm.isPrefsChanged && !vm.isSaveSuccess)}
+                disabled={(!vm.isPrefsChanged && !vm.isSaveSuccess)}
+                loading={vm.isSavingAdminPrefs}
                 size="sm"
                 className={vm.isSaveSuccess ? "bg-green-600 hover:bg-green-600 pointer-events-none transition-colors duration-300" : "transition-colors duration-300"}
               >
-                {vm.isSavingAdminPrefs ? (
-                  <><Loader2 className="mr-2 h-4 w-4 animate-spin" />{c("savingPreferences")}</>
-                ) : vm.isSaveSuccess ? (
-                  <><CheckCircle2 className="mr-2 h-4 w-4" />{c("prefsSaved")}</>
-                ) : (
-                  <><Settings className="mr-2 h-4 w-4" />{c("savePreferences")}</>
+                {!vm.isSavingAdminPrefs && (
+                  vm.isSaveSuccess ? (
+                    <><CheckCircle2 className="mr-2 h-4 w-4" />{c("prefsSaved")}</>
+                  ) : (
+                    <><Settings className="mr-2 h-4 w-4" />{c("savePreferences")}</>
+                  )
                 )}
+                {vm.isSavingAdminPrefs && c("savingPreferences")}
               </Button>
             </>
         </CardContent>

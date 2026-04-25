@@ -129,12 +129,9 @@ export function InvoiceListView() {
                 variant="ghost"
                 size="icon"
                 className="h-8 w-8 relative"
+                loading={anyLoading}
               >
-                {anyLoading ? (
-                  <Loader2 className="h-4 w-4 animate-spin text-primary" />
-                ) : (
-                  <MoreHorizontal className="h-4 w-4" />
-                )}
+                {!anyLoading && <MoreHorizontal className="h-4 w-4" />}
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="min-w-[200px]">

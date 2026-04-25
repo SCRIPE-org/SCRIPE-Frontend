@@ -70,9 +70,9 @@ export function SuspendDialog({ vm }: SubscriptionDialogProps) {
           <Button
             variant="destructive"
             onClick={vm.submitSuspend}
-            disabled={!vm.suspendReason.trim() || vm.isSuspending}
+            loading={vm.isSuspending}
+            disabled={!vm.suspendReason.trim()}
           >
-            {vm.isSuspending && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
             {t("entSubscriptions.suspend") || "Suspend"}
           </Button>
         </DialogFooter>

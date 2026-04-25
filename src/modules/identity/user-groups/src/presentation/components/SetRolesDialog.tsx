@@ -125,9 +125,9 @@ export function SetRolesDialog({
                               </Button>
                               <Button
                                     onClick={handleSave}
-                                    disabled={isLoading || isSubmitting}
+                                    loading={isSubmitting}
+                                    disabled={isLoading}
                               >
-                                    {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                                     {t("common.save") || "Save Roles"}
                               </Button>
                         </div>

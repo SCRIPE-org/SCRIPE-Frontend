@@ -256,13 +256,11 @@ export function TemplateFormView({ templateId: _templateId }: { templateId?: str
                                           <Button
                                                 className="w-full gradient-primary"
                                                 onClick={vm.handleSubmit}
-                                                disabled={vm.isSaving || !vm.form.body}
+                                                disabled={!vm.form.body}
+                                                loading={vm.isSaving}
                                           >
-                                                {vm.isSaving ? (
-                                                      <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> {vm.t("common.saving") || "Saving..."}</>
-                                                ) : (
-                                                      <><Save className="mr-2 h-4 w-4" /> {vm.t("common.save") || "Save"}</>
-                                                )}
+                                                {!vm.isSaving && <Save className="mr-2 h-4 w-4" />}
+                                                {vm.isSaving ? (vm.t("common.saving") || "Saving...") : (vm.t("common.save") || "Save")}
                                           </Button>
                                           <Button
                                                 variant="outline"

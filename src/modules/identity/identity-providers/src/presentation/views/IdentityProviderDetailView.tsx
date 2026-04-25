@@ -123,13 +123,9 @@ export function IdentityProviderDetailView({ providerId }: Props) {
                                           variant="outline"
                                           size="sm"
                                           onClick={vm.testConnection}
-                                          disabled={vm.isTesting}
+                                          loading={vm.isTesting}
                                     >
-                                          {vm.isTesting ? (
-                                                <Loader2 className="h-4 w-4 me-1.5 animate-spin" />
-                                          ) : (
-                                                <Zap className="h-4 w-4 me-1.5" />
-                                          )}
+                                          {!vm.isTesting && <Zap className="h-4 w-4 me-1.5" />}
                                           {t("identityProviders.testConnection") || "Test Connection"}
                                     </Button>
                               )}
@@ -137,14 +133,11 @@ export function IdentityProviderDetailView({ providerId }: Props) {
                               {/* Save */}
                               <Button
                                     onClick={vm.save}
-                                    disabled={vm.isSaving || (!vm.isCreateMode && !vm.isDirty)}
+                                    disabled={!vm.isCreateMode && !vm.isDirty}
+                                    loading={vm.isSaving}
                                     size="sm"
                               >
-                                    {vm.isSaving ? (
-                                          <Loader2 className="h-4 w-4 me-1.5 animate-spin" />
-                                    ) : (
-                                          <Save className="h-4 w-4 me-1.5" />
-                                    )}
+                                    {!vm.isSaving && <Save className="h-4 w-4 me-1.5" />}
                                     {vm.isCreateMode
                                           ? (t("identityProviders.createButton") || "Create Provider")
                                           : (t("common.save") || "Save Changes")}
@@ -229,12 +222,8 @@ export function IdentityProviderDetailView({ providerId }: Props) {
                                           </p>
                                           <AlertDialog>
                                                 <AlertDialogTrigger asChild>
-                                                      <Button variant="destructive" size="sm" disabled={vm.isDeleting}>
-                                                            {vm.isDeleting ? (
-                                                                  <Loader2 className="h-4 w-4 me-1.5 animate-spin" />
-                                                            ) : (
-                                                                  <Trash2 className="h-4 w-4 me-1.5" />
-                                                            )}
+                                                      <Button variant="destructive" size="sm" loading={vm.isDeleting}>
+                                                            {!vm.isDeleting && <Trash2 className="h-4 w-4 me-1.5" />}
                                                             {t("identityProviders.deleteButton") || "Delete Provider"}
                                                       </Button>
                                                 </AlertDialogTrigger>

@@ -55,8 +55,7 @@ export function ConvertDialog({ vm, editionsVm }: SubscriptionEditionDialogProps
           <Button variant="outline" onClick={() => vm.setShowConvertDialog(false)}>
             {t("common.cancel")}
           </Button>
-          <Button onClick={vm.submitConvert} disabled={vm.isConverting}>
-            {vm.isConverting && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
+          <Button onClick={vm.submitConvert} loading={vm.isConverting}>
             {t("entSubscriptions.convertTrial") || "Convert"}
           </Button>
         </DialogFooter>

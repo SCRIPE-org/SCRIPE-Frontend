@@ -236,9 +236,8 @@ export function SetRestrictionsDialog({
                               </Button>
                               <Button
                                     onClick={handleSave}
-                                    disabled={isSubmitting}
+                                    loading={isSubmitting}
                               >
-                                    {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                                     {t("common.save") || "Save Restrictions"}
                               </Button>
                         </div>

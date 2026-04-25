@@ -115,8 +115,8 @@ export const PricingTab = memo(function PricingTab(props: PricingTabProps) {
                 {t("common.discard") || "Discard"}
               </Button>
             )}
-            <Button size="sm" onClick={onSave} disabled={!hasChanges || isSaving}>
-              {isSaving ? <Loader2 className="h-4 w-4 animate-spin me-1" /> : <Save className="h-4 w-4 me-1" />}
+            <Button size="sm" onClick={onSave} disabled={!hasChanges} loading={isSaving}>
+              {!isSaving && <Save className="h-4 w-4 me-1" />}
               {t("common.save") || "Save"}
             </Button>
           </div>

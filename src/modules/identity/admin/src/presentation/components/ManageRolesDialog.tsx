@@ -222,8 +222,7 @@ export function ManageRolesDialog({ open, onOpenChange, admin, tenantId }: Manag
           >
             {t("common.cancel") || "Cancel"}
           </Button>
-          <Button onClick={handleSave} disabled={isLoading || syncMutation.isPending}>
-            {syncMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          <Button onClick={handleSave} loading={syncMutation.isPending} disabled={isLoading}>
             {t("admin.role.saveRoles") || "Save Roles"}
           </Button>
         </div>

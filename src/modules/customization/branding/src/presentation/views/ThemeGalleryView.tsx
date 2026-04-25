@@ -547,9 +547,9 @@ function GalleryThemeCard({
                 size="sm"
                 className="flex-1 h-7 text-xs"
                 onClick={(e: React.MouseEvent) => { e.stopPropagation(); onApplyConfirm(false); }}
-                disabled={isApplying}
+                loading={isApplying}
               >
-                {isApplying ? <Loader2 className="h-3 w-3 animate-spin" /> : t(`${G}.card.replace`)}
+                {t(`${G}.card.replace`)}
               </Button>
               <Button
                 variant="outline"

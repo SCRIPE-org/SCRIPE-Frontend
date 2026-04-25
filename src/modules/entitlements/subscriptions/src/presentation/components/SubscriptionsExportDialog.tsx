@@ -1,4 +1,4 @@
-﻿/**
+/**
  * SubscriptionsExportDialog
  *
  * Uses GenericModal (which sets modal={false} to fix select focus issues).
@@ -349,18 +349,9 @@ export function SubscriptionsExportDialog({
                               <Button variant="outline" onClick={onClose} disabled={isExporting}>
                                     {t("common.cancel")}
                               </Button>
-                              <Button onClick={handleExport} disabled={isExporting}>
-                                    {isExporting ? (
-                                          <>
-                                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                                {te("generating")}
-                                          </>
-                                    ) : (
-                                          <>
-                                                <FileDown className="mr-2 h-4 w-4" />
-                                                {te("download")}
-                                          </>
-                                    )}
+                              <Button onClick={handleExport} loading={isExporting}>
+                                    {!isExporting && <FileDown className="mr-2 h-4 w-4" />}
+                                    {isExporting ? te("generating") : te("download")}
                               </Button>
                         </div>
                   </div>

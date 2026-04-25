@@ -70,9 +70,8 @@ export function CancelDialog({ vm }: SubscriptionDialogProps) {
           <Button
             variant="destructive"
             onClick={vm.submitCancel}
-            disabled={vm.isCanceling}
+            loading={vm.isCanceling}
           >
-            {vm.isCanceling && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
             {t("entSubscriptions.cancel") || "Cancel Subscription"}
           </Button>
         </DialogFooter>

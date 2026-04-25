@@ -119,8 +119,8 @@ export function VersionsTab({ editionId }: VersionsTabProps) {
 
                                                             {/* Cancel button (Pending/Rolling only) */}
                                                             {(v.status === "Pending" || v.status === "Rolling") && (
-                                                                  <Button size="sm" variant="destructive" className="h-8 text-xs gap-1" onClick={() => vm.cancelMutation.mutate(v.id)} disabled={vm.cancelMutation.isPending}>
-                                                                        {vm.cancelMutation.isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : <XCircle className="h-3 w-3" />}
+                                                                  <Button size="sm" variant="destructive" className="h-8 text-xs gap-1" onClick={() => vm.cancelMutation.mutate(v.id)} loading={vm.cancelMutation.isPending}>
+                                                                        {!vm.cancelMutation.isPending && <XCircle className="h-3 w-3" />}
                                                                         {t("common.cancel") || "Cancel"}
                                                                   </Button>
                                                             )}
@@ -202,9 +202,10 @@ export function VersionsTab({ editionId }: VersionsTabProps) {
                                                                         size="sm"
                                                                         className="h-8 text-xs gap-1 opacity-90 hover:opacity-100 bg-emerald-600 hover:bg-emerald-700 text-white"
                                                                         onClick={() => vm.publishMutation.mutate(v.id)}
-                                                                        disabled={vm.publishMutation.isPending || !vm.canPublish}
+                                                                        disabled={!vm.canPublish}
+                                                                        loading={vm.publishMutation.isPending}
                                                                   >
-                                                                        {vm.publishMutation.isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : <Rocket className="h-3 w-3" />}
+                                                                        {!vm.publishMutation.isPending && <Rocket className="h-3 w-3" />}
                                                                         {t("entitlements.editions.versions.publishNow") || "Publish Version"}
                                                                   </Button>
                                                                   <Button size="sm" variant="ghost" className="h-8 text-xs" onClick={() => {

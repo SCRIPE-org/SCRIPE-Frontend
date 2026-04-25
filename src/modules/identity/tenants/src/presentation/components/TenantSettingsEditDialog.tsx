@@ -279,8 +279,7 @@ export function TenantSettingsEditDialog({
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isSaving}>
             {t("common.cancel")}
           </Button>
-          <Button onClick={handleSave} disabled={isSaving}>
-            {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          <Button onClick={handleSave} loading={isSaving}>
             {t("common.save")}
           </Button>
         </DialogFooter>

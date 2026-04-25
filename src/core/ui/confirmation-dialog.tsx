@@ -126,17 +126,11 @@ export function ConfirmationDialog({
             <Button
               variant={config.confirmVariant}
               onClick={handleConfirm}
-              disabled={isLoading || disableConfirm}
+              loading={isLoading}
+              disabled={disableConfirm}
               className="min-w-[80px]"
             >
-              {isLoading ? (
-                <div className="flex items-center gap-2">
-                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                  Loading...
-                </div>
-              ) : (
-                confirmText
-              )}
+              {confirmText}
             </Button>
           </AlertDialogAction>
         </AlertDialogFooter>

@@ -249,12 +249,8 @@ export function FeatureDefinitionFormView({ featureId }: FeatureDefinitionFormVi
           <Link href="/entitlements/tenant-feature-definitions">
             <Button variant="outline">{t("common.cancel") || "Cancel"}</Button>
           </Link>
-          <Button onClick={handleSubmit} disabled={!isValid || isSaving}>
-            {isSaving ? (
-              <Loader2 className="h-4 w-4 animate-spin me-2" />
-            ) : (
-              <Save className="h-4 w-4 me-2" />
-            )}
+          <Button onClick={handleSubmit} disabled={!isValid} loading={isSaving}>
+            {!isSaving && <Save className="h-4 w-4 me-2" />}
             {isEditMode ? (t("common.save") || "Save") : (t("common.create") || "Create")}
           </Button>
         </div>
@@ -493,12 +489,8 @@ export function FeatureDefinitionFormView({ featureId }: FeatureDefinitionFormVi
         <Link href="/entitlements/tenant-feature-definitions">
           <Button variant="outline" size="lg">{t("common.cancel") || "Cancel"}</Button>
         </Link>
-        <Button size="lg" onClick={handleSubmit} disabled={!isValid || isSaving}>
-          {isSaving ? (
-            <Loader2 className="h-4 w-4 animate-spin me-2" />
-          ) : (
-            <Save className="h-4 w-4 me-2" />
-          )}
+        <Button size="lg" onClick={handleSubmit} disabled={!isValid} loading={isSaving}>
+          {!isSaving && <Save className="h-4 w-4 me-2" />}
           {isEditMode ? (t("common.saveChanges") || "Save Changes") : (t("common.create") || "Create Feature")}
         </Button>
       </div>

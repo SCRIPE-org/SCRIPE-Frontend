@@ -141,14 +141,11 @@ export function OAuthAppDetailView({ appId }: Props) {
                         <div className="flex items-center gap-2 ms-12 sm:ms-0">
                               <Button
                                     onClick={vm.save}
-                                    disabled={vm.isSaving || (!vm.isCreateMode && !vm.isDirty)}
+                                    disabled={!vm.isCreateMode && !vm.isDirty}
+                                    loading={vm.isSaving}
                                     size="sm"
                               >
-                                    {vm.isSaving ? (
-                                          <Loader2 className="h-4 w-4 me-1.5 animate-spin" />
-                                    ) : (
-                                          <Save className="h-4 w-4 me-1.5" />
-                                    )}
+                                    {!vm.isSaving && <Save className="h-4 w-4 me-1.5" />}
                                     {vm.isCreateMode
                                           ? (t("oauthApps.createButton") || "Create Application")
                                           : (t("common.save") || "Save Changes")}
@@ -252,14 +249,10 @@ export function OAuthAppDetailView({ appId }: Props) {
                                                                         <Button
                                                                               variant="outline"
                                                                               size="sm"
-                                                                              disabled={vm.isRegenerating}
+                                                                              loading={vm.isRegenerating}
                                                                               className="gap-1.5"
                                                                         >
-                                                                              {vm.isRegenerating ? (
-                                                                                    <Loader2 className="h-4 w-4 animate-spin" />
-                                                                              ) : (
-                                                                                    <RefreshCw className="h-4 w-4" />
-                                                                              )}
+                                                                              {!vm.isRegenerating && <RefreshCw className="h-4 w-4" />}
                                                                               {t("oauthApps.regenerateSecret") || "Regenerate Secret"}
                                                                         </Button>
                                                                   </AlertDialogTrigger>
@@ -335,12 +328,8 @@ export function OAuthAppDetailView({ appId }: Props) {
                                           </p>
                                           <AlertDialog>
                                                 <AlertDialogTrigger asChild>
-                                                      <Button variant="destructive" size="sm" disabled={vm.isDeleting}>
-                                                            {vm.isDeleting ? (
-                                                                  <Loader2 className="h-4 w-4 me-1.5 animate-spin" />
-                                                            ) : (
-                                                                  <Trash2 className="h-4 w-4 me-1.5" />
-                                                            )}
+                                                      <Button variant="destructive" size="sm" loading={vm.isDeleting}>
+                                                            {!vm.isDeleting && <Trash2 className="h-4 w-4 me-1.5" />}
                                                             {t("oauthApps.deleteButton") || "Delete Application"}
                                                       </Button>
                                                 </AlertDialogTrigger>

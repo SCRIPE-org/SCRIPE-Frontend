@@ -97,9 +97,9 @@ function PromoRow({
           size="icon"
           className="h-8 w-8 text-destructive hover:text-destructive"
           onClick={() => onDelete(promo.id)}
-          disabled={isDeleting}
+          loading={isDeleting}
         >
-          {isDeleting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
+          {!isDeleting && <Trash2 className="h-3.5 w-3.5" />}
         </Button>
       </div>
     </div>
@@ -255,8 +255,8 @@ function PromotionForm({
       </div>
 
       <DialogFooter>
-        <Button type="submit" disabled={isLoading} className="min-w-[100px]">
-          {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : (initial ? "Update" : "Create")}
+        <Button type="submit" loading={isLoading} className="min-w-[100px]">
+          {initial ? "Update" : "Create"}
         </Button>
       </DialogFooter>
     </form>

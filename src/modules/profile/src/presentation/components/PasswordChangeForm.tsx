@@ -168,8 +168,7 @@ export function PasswordChangeForm({
         </div>
       )}
 
-      <Button type="submit" disabled={!isValid || isSubmitting} className="w-full sm:w-auto">
-        {isSubmitting && <Loader2 className="me-2 h-4 w-4 animate-spin" />}
+      <Button type="submit" loading={isSubmitting} disabled={!isValid} className="w-full sm:w-auto">
         {t("profile.security.updatePassword")}
       </Button>
     </form>

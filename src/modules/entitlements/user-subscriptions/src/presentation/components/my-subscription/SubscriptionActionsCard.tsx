@@ -63,13 +63,9 @@ export function SubscriptionActionsCard({
             <Button
               variant="destructive"
               onClick={() => setShowCancelDialog(true)}
-              disabled={isCancelling}
+              loading={isCancelling}
             >
-              {isCancelling ? (
-                <Loader2 className="h-4 w-4 me-2 animate-spin" />
-              ) : (
-                <XCircle className="h-4 w-4 me-2" />
-              )}
+              {!isCancelling && <XCircle className="h-4 w-4 me-2" />}
               {t("entitlements.mySubscription.cancel") || "Cancel Subscription"}
             </Button>
           )}
@@ -99,8 +95,7 @@ export function SubscriptionActionsCard({
             <Button variant="outline" onClick={() => setShowCancelDialog(false)}>
               {t("common.goBack") || "Go Back"}
             </Button>
-            <Button variant="destructive" onClick={handleConfirmCancel} disabled={isCancelling}>
-              {isCancelling && <Loader2 className="h-4 w-4 me-2 animate-spin" />}
+            <Button variant="destructive" onClick={handleConfirmCancel} loading={isCancelling}>
               {t("entitlements.mySubscription.confirmCancel") || "Yes, Cancel"}
             </Button>
           </DialogFooter>

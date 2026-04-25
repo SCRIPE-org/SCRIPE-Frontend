@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Theme Detail Modal
  *
  * Rich modal for viewing theme details including:
@@ -600,13 +600,9 @@ export function ThemeDetailModal({
                     onApply?.(theme.slug, false);
                     setConfirmApply(false);
                   }}
-                  disabled={isApplying}
+                  loading={isApplying}
                 >
-                  {isApplying ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    t("studio.gallery.card.replace")
-                  )}
+                  {t("studio.gallery.card.replace")}
                 </Button>
                 <Button
                   variant="outline"

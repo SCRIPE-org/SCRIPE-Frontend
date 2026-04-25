@@ -471,12 +471,10 @@ export function WebhookForm({
                               </Button>
                               <Button
                                     onClick={vm.handleSubmit}
-                                    disabled={!vm.isValid || vm.isSubmitting}
+                                    disabled={!vm.isValid}
+                                    loading={vm.isSubmitting}
                                     className="min-w-[140px]"
                               >
-                                    {vm.isSubmitting ? (
-                                          <Loader2 className="h-4 w-4 me-1.5 animate-spin" />
-                                    ) : null}
                                     {mode === "create"
                                           ? t("webhooks.create") || "Create Webhook"
                                           : t("common.save") || "Save Changes"}

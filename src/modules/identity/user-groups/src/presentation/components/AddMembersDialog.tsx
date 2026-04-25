@@ -120,9 +120,9 @@ export function AddMembersDialog({
                               </Button>
                               <Button
                                     onClick={handleSave}
-                                    disabled={isLoading || isSubmitting || selectedIds.length === 0}
+                                    loading={isSubmitting}
+                                    disabled={isLoading || selectedIds.length === 0}
                               >
-                                    {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                                     {t("userGroups.membersTab.addSelected") || "Add Selected"}
                               </Button>
                         </div>

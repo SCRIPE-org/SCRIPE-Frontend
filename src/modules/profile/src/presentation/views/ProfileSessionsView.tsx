@@ -53,9 +53,8 @@ export function ProfileSessionsView() {
               variant="destructive"
               size="sm"
               onClick={() => vm.revokeAllSessions()}
-              disabled={vm.isRevokingAll}
+              loading={vm.isRevokingAll}
             >
-              {vm.isRevokingAll && <Loader2 className="me-2 h-4 w-4 animate-spin" />}
               {t("profile.sessions.revokeAll")}
             </Button>
           )}

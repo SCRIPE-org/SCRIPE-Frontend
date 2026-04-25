@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useI18n } from "@core/providers/i18n-provider";
 
 import { Button } from "@core/ui/button";
@@ -117,15 +117,12 @@ export function CredentialsForm({
                   <div className="pt-2">
                         <Button
                               type="submit"
-                              disabled={isLoading || !isFormValid}
+                              loading={isLoading}
+                              disabled={!isFormValid}
                               className="flex w-full justify-center items-center bg-primary text-[15px] font-medium text-primary-foreground shadow-sm transition-all hover:bg-primary/90 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none"
                               style={{ height: "var(--login-input-height, 48px)", borderRadius: "var(--login-radius-button, 12px)" }}
                         >
-                              {isLoading ? (
-                                    <><LoadingSpinner size="sm" showText={false} className="ltr:mr-2 rtl:ml-2" /> {t("common.loading")}</>
-                              ) : (
-                                    t("auth.loginButton")
-                              )}
+                              {t("auth.loginButton")}
                         </Button>
                   </div>
             </form>

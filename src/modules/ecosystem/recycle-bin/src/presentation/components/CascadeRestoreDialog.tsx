@@ -82,9 +82,8 @@ export function CascadeRestoreDialog({
                               <Button
                                     variant="default"
                                     onClick={handleConfirm}
-                                    disabled={isPending}
+                                    loading={isPending}
                               >
-                                    {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                                     {t("recycleBin.restore") || "Restore"}
                               </Button>
                         </div>

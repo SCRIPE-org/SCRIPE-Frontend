@@ -60,9 +60,8 @@ export function CancelStripeDialog({ vm }: SubscriptionDialogProps) {
           <Button
             variant="destructive"
             onClick={vm.submitCancelStripe}
-            disabled={vm.isCancelingStripe}
+            loading={vm.isCancelingStripe}
           >
-            {vm.isCancelingStripe && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
             {t("billing.actions.cancelStripe") || "Cancel Stripe"}
           </Button>
         </DialogFooter>

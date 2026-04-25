@@ -270,15 +270,12 @@ export function CustomizePanel({
         <div className="flex items-center gap-2 pt-1">
           <Button
             onClick={handleSave}
-            disabled={isSaving || !hasChanges}
+            disabled={!hasChanges}
+            loading={isSaving}
             className="flex-1"
             size="sm"
           >
-            {isSaving ? (
-              <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />
-            ) : (
-              <Save className="mr-1.5 h-4 w-4" />
-            )}
+            {!isSaving && <Save className="mr-1.5 h-4 w-4" />}
             {t("common.save")}
           </Button>
           <Button variant="outline" onClick={handleReset} disabled={!hasChanges} size="sm">

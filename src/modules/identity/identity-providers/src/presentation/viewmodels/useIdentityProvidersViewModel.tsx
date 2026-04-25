@@ -25,7 +25,6 @@ import {
       Shield,
       Users,
       Fingerprint,
-      Loader2,
 } from "lucide-react";
 import { format } from "date-fns";
 
@@ -411,11 +410,9 @@ export function useIdentityProvidersViewModel() {
                                           e.stopPropagation();
                                           handleTestConnection(item.id);
                                     }}
-                                    disabled={testMutation.isPending && testMutation.variables === item.id}
+                                    loading={testMutation.isPending && testMutation.variables === item.id}
                               >
-                                    {testMutation.isPending && testMutation.variables === item.id ? (
-                                          <Loader2 className="h-3 w-3 animate-spin" />
-                                    ) : (
+                                    {!(testMutation.isPending && testMutation.variables === item.id) && (
                                           <Zap className="h-3 w-3" />
                                     )}
                                     {t("identityProviders.test") || "Test"}

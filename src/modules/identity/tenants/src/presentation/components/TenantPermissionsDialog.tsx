@@ -144,15 +144,9 @@ export function TenantPermissionsDialog(props: TenantPermissionsDialogProps) {
               <Button variant="outline" onClick={() => onOpenChange(false)}>
                 {t("common.cancel") || "Cancel"}
               </Button>
-              <Button onClick={vm.save} disabled={vm.isSaving} className="min-w-[100px]">
-                {vm.isSaving ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <>
-                    <ShieldCheck className="me-2 h-4 w-4" />
-                    {t("common.save") || "Save"}
-                  </>
-                )}
+              <Button onClick={vm.save} loading={vm.isSaving} className="min-w-[100px]">
+                {!vm.isSaving && <ShieldCheck className="me-2 h-4 w-4" />}
+                {t("common.save") || "Save"}
               </Button>
             </div>
           </div>
