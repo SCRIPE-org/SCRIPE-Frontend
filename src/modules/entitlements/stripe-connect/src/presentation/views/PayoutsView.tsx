@@ -27,10 +27,7 @@ export function PayoutsView() {
       <PayoutsHeader account={vm.account} />
 
       {vm.isNotOnboarded && (
-        <PayoutsEmptyState
-          isOnboarding={vm.isOnboarding}
-          onOnboard={vm.onboard}
-        />
+        <PayoutsEmptyState />
       )}
 
       {vm.account && (

@@ -127,5 +127,58 @@ export const en = {
       fromDate: "From",
       toDate: "To",
     },
+
+    tenantConnect: {
+      // Page
+      pageTitle: "Payment Account",
+      pageDesc: "Set up and manage your Stripe Connect Express account to receive automated payouts from your sales.",
+      verified: "Verified",
+
+      // Hero (Not Onboarded)
+      heroTitle: "Start Receiving Payments",
+      heroDesc: "Connect your bank account through Stripe to securely receive automated payouts from your sales. Setup takes just a few minutes.",
+      getStartedBtn: "Get Started",
+
+      // Steps
+      step1Title: "Create Account",
+      step1Desc: "We'll create a secure Stripe Express account for you.",
+      step2Title: "Verify Identity",
+      step2Desc: "Stripe will verify your identity for compliance.",
+      step3Title: "Add Bank Account",
+      step3Desc: "Link your bank account to receive payouts.",
+      step4Title: "Start Earning",
+      step4Desc: "You're all set — payments flow automatically.",
+
+      // Security
+      securityNote: "Your information is securely processed by Stripe. NEXORA never sees or stores your bank account details.",
+
+      // In-Progress
+      setupInProgress: "Account Setup In Progress",
+      setupInProgressDesc: "Complete the remaining steps to start accepting payments.",
+      setupProgress: "Setup Progress",
+      restrictedDesc: "Stripe requires additional information to verify your identity. Please complete the verification to continue.",
+
+      // Completed
+      accountReady: "Your Account is Ready",
+      accountReadyDesc: "Payments and payouts are fully enabled.",
+      totalPayouts: "Total Payouts",
+      transactions: "transactions",
+      commissionRate: "Platform Fee",
+      perTransaction: "per transaction",
+      payoutSchedule: "Payout Schedule",
+      instant: "Instant",
+      days: "days",
+      afterPayment: "after payment",
+      lastPayout: "Last Payout",
+      noPayout: "No payouts yet",
+      accountDetails: "Account Details",
+      currency: "Currency",
+      country: "Country",
+      verifiedAt: "Verified At",
+
+      // Error state
+      errorTitle: "Unable to Load Account",
+      errorDesc: "We couldn't load your payment account information. You may not have permission to access this page, or there was a network issue.",
+    },
   },
 };

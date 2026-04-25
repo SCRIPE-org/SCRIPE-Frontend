@@ -115,5 +115,58 @@ export const ar = {
       fromDate: "من",
       toDate: "إلى",
     },
+
+    tenantConnect: {
+      // الصفحة
+      pageTitle: "حساب الدفع",
+      pageDesc: "قم بإعداد وإدارة حساب Stripe Connect Express الخاص بك لتلقي المدفوعات التلقائية من مبيعاتك.",
+      verified: "موثّق",
+
+      // البطل (غير مُعدّ)
+      heroTitle: "ابدأ في تلقي المدفوعات",
+      heroDesc: "اربط حسابك البنكي عبر Stripe لتلقي مدفوعات تلقائية وآمنة من مبيعاتك. الإعداد يستغرق دقائق فقط.",
+      getStartedBtn: "ابدأ الآن",
+
+      // الخطوات
+      step1Title: "إنشاء الحساب",
+      step1Desc: "سننشئ لك حساب Stripe Express آمنًا.",
+      step2Title: "التحقق من الهوية",
+      step2Desc: "سيتحقق Stripe من هويتك للامتثال.",
+      step3Title: "إضافة حساب بنكي",
+      step3Desc: "اربط حسابك البنكي لتلقي المدفوعات.",
+      step4Title: "ابدأ الربح",
+      step4Desc: "أنت جاهز — المدفوعات تتدفق تلقائيًا.",
+
+      // الأمان
+      securityNote: "تتم معالجة معلوماتك بأمان عبر Stripe. لا تطّلع NEXORA أبدًا على تفاصيل حسابك البنكي ولا تخزّنها.",
+
+      // قيد التقدم
+      setupInProgress: "إعداد الحساب قيد التقدم",
+      setupInProgressDesc: "أكمل الخطوات المتبقية لبدء قبول المدفوعات.",
+      setupProgress: "تقدم الإعداد",
+      restrictedDesc: "يتطلب Stripe معلومات إضافية للتحقق من هويتك. يرجى إكمال التحقق للمتابعة.",
+
+      // مكتمل
+      accountReady: "حسابك جاهز",
+      accountReadyDesc: "المدفوعات والعمليات مفعّلة بالكامل.",
+      totalPayouts: "إجمالي المدفوعات",
+      transactions: "معاملة",
+      commissionRate: "رسوم المنصة",
+      perTransaction: "لكل معاملة",
+      payoutSchedule: "جدول الدفع",
+      instant: "فوري",
+      days: "أيام",
+      afterPayment: "بعد الدفع",
+      lastPayout: "آخر دفعة",
+      noPayout: "لا توجد مدفوعات بعد",
+      accountDetails: "تفاصيل الحساب",
+      currency: "العملة",
+      country: "الدولة",
+      verifiedAt: "تاريخ التوثيق",
+
+      // حالة الخطأ
+      errorTitle: "تعذّر تحميل الحساب",
+      errorDesc: "لم نتمكن من تحميل معلومات حساب الدفع الخاص بك. قد لا تملك صلاحية الوصول إلى هذه الصفحة، أو حدث خطأ في الشبكة.",
+    },
   },
 };

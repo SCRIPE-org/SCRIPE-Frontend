@@ -1094,6 +1094,7 @@ export const ar = {
   common: {
     clear: "مسح",
     send: "ارسال",
+    updatedAt:"تم التحديث في",
     logout: "تسجيل الخروج",
     step: "الخطوة",
     from: "من",
@@ -1262,6 +1263,8 @@ export const ar = {
     trademark: "العلامة التجارية",
     patent: "براءة اختراع",
     intellectual_property: "الملكية الفكرية",
+    pending: "قيد الانتظار",
+    complete: "مكتمل",
   },
   table: {
     select: "تحديد",

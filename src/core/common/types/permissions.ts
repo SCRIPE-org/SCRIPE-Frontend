@@ -328,6 +328,10 @@ export const SYSTEM_PERMISSIONS = {
   COMMISSIONS_VIEW: "commissions.view",
   COMMISSIONS_EXPORT: "commissions.export",
 
+  // Tenant Stripe Connect (self-service)
+  TENANT_STRIPE_CONNECT_VIEW: "tenant_stripe_connect.view",
+  TENANT_STRIPE_CONNECT_MANAGE: "tenant_stripe_connect.manage",
+
 } as const;
 
 /**
@@ -378,6 +382,7 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/entitlements/tenant-feature-definitions": [SYSTEM_PERMISSIONS.TENANT_FEATURE_DEFINITIONS_VIEW],
   "/entitlements/user-subscriptions": [SYSTEM_PERMISSIONS.USER_SUBSCRIPTIONS_VIEW],
   "/my-subscription": [], // User self-service — any authenticated user
+  "/my-stripe-account": [SYSTEM_PERMISSIONS.TENANT_STRIPE_CONNECT_VIEW],
   "/entitlements/transactions": [SYSTEM_PERMISSIONS.TRANSACTIONS_VIEW],
 
   // Messaging & Webhooks

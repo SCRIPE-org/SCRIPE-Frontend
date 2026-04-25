@@ -327,6 +327,7 @@ export const en = {
     step: "Step",
     clear: "Clear",
     none: "None",
+    updatedAt: "Updated at",
     logout: "Logout",
     continue: "Continue",
     time: "Time",
@@ -494,6 +495,8 @@ export const en = {
     clearAll: "Clear All",
     errorLoading: "Error Loading",
     comingSoon: "Coming Soon",
+    pending: "Pending",
+    complete: "Complete",
   },
   toast: {
     title: "Toast Notifications",
