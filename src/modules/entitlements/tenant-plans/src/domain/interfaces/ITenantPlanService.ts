@@ -9,6 +9,7 @@
 import type {
   TenantPlanModel,
   TenantPlanListModel,
+  TenantFeatureDefinitionModel,
   TenantFeatureDefinitionListModel,
   TenantPlanPromotionListModel,
 } from "../../data/models/TenantPlanModels";
@@ -34,6 +35,7 @@ export interface ITenantPlanService {
 
   // Feature Definitions
   getFeatureDefinitions(params: PaginationParams & { category?: string }): Promise<PagedResult<TenantFeatureDefinitionListModel>>;
+  getFeatureDefinitionById(id: string): Promise<TenantFeatureDefinitionModel>;
   getActiveFeatureDefinitions(): Promise<TenantFeatureDefinitionListModel[]>;
   createFeatureDefinition(data: CreateFeatureDefinitionRequest): Promise<{ id: string }>;
   updateFeatureDefinition(id: string, data: UpdateFeatureDefinitionRequest): Promise<void>;

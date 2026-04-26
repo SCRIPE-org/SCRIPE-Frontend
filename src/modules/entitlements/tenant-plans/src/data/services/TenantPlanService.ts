@@ -9,6 +9,7 @@ import type { ITenantPlanService } from "../../domain/interfaces/ITenantPlanServ
 import type {
   TenantPlanModel,
   TenantPlanListModel,
+  TenantFeatureDefinitionModel,
   TenantFeatureDefinitionListModel,
   TenantPlanPromotionListModel,
 } from "../models/TenantPlanModels";
@@ -74,6 +75,12 @@ export class TenantPlanService implements ITenantPlanService {
   async getActiveFeatureDefinitions(): Promise<TenantFeatureDefinitionListModel[]> {
     return this.api.get<TenantFeatureDefinitionListModel[]>(
       API_ENDPOINTS.ENTITLEMENTS.TENANT_FEATURE_DEFINITIONS.ACTIVE
+    );
+  }
+
+  async getFeatureDefinitionById(id: string): Promise<TenantFeatureDefinitionModel> {
+    return this.api.get<TenantFeatureDefinitionModel>(
+      API_ENDPOINTS.ENTITLEMENTS.TENANT_FEATURE_DEFINITIONS.BY_ID(id)
     );
   }
 

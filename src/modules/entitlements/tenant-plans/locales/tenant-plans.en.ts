@@ -161,6 +161,8 @@ export const en = {
       tier2Badge: "Tier 2",
       description: "Define reusable features that can be assigned to your plans. Boolean, numeric, or string capabilities.",
       create: "Create Feature",
+      view: "View Feature",
+      viewDesc: "View feature definition details.",
       edit: "Edit Feature",
       deleteTitle: "Delete Feature",
       deleteDesc: "This feature will be permanently removed. Features referenced by plans cannot be deleted.",

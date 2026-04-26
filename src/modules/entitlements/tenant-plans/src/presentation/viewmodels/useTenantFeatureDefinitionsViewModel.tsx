@@ -68,10 +68,9 @@ export function useTenantFeatureDefinitionsViewModel() {
 
     return [
       {
-        key: "_index",
+        key: "sortOrder",
         label: t("common.serial") || (language === "ar" ? "م" : "No."),
-        render: (_v: unknown, _item: TenantFeatureDefinition, index: number) =>
-          String(index + 1),
+        sortable: true,
       },
       {
         key: "key",

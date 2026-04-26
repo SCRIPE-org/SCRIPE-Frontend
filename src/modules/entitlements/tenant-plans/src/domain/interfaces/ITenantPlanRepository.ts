@@ -18,6 +18,7 @@ export interface ITenantPlanRepository {
 
   // Feature Definitions
   getFeatureDefinitions(params: PaginationParams & { category?: string }): Promise<PagedResult<TenantFeatureDefinition>>;
+  getFeatureDefinitionById(id: string): Promise<TenantFeatureDefinition>;
   getActiveFeatureDefinitions(): Promise<TenantFeatureDefinition[]>;
   createFeatureDefinition(request: CreateFeatureDefinitionRequest): Promise<string>;
   updateFeatureDefinition(id: string, request: UpdateFeatureDefinitionRequest): Promise<void>;

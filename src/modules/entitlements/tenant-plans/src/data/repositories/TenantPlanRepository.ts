@@ -82,6 +82,11 @@ export class TenantPlanRepository implements ITenantPlanRepository {
     return models.map((m) => TenantPlanMapper.toFeatureDefinitionEntity(m));
   }
 
+  async getFeatureDefinitionById(id: string): Promise<TenantFeatureDefinition> {
+    const model = await this.service.getFeatureDefinitionById(id);
+    return TenantPlanMapper.toFeatureDefinitionEntity(model);
+  }
+
   async createFeatureDefinition(request: CreateFeatureDefinitionRequest): Promise<string> {
     const response = await this.service.createFeatureDefinition(request);
     return response.id;

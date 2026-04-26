@@ -1,5 +1,8 @@
 /**
  * ViewModel for FeatureDefinitionFormView
+ *
+ * Uses proper getFeatureDefinitionById for edit/view mode —
+ * NEVER fetches the full list to find a single item.
  */
 "use client";
 
@@ -22,16 +25,10 @@ export function useFeatureDefinitionFormViewModel(featureId?: string) {
   const queryClient = useQueryClient();
   const isEditMode = !!featureId;
 
-  // ── Load existing feature for edit mode ──
+  // ── Load existing feature via GET by ID ──
   const { data: existingFeature, isLoading: isLoadingFeature } = useQuery({
     queryKey: ["entitlements", "tenant-feature-definitions", featureId],
-    queryFn: async () => {
-      if (!featureId) return null;
-      // Note: Ideally the repository should have a getFeatureDefinitionById method.
-      // We fall back to fetching the list and filtering if it doesn't.
-      const result = await tenantPlanRepository.getFeatureDefinitions({ page: 1, pageSize: 500 });
-      return result.items.find((f) => f.id.toLowerCase() === featureId.toLowerCase()) ?? null;
-    },
+    queryFn: () => tenantPlanRepository.getFeatureDefinitionById(featureId!),
     enabled: isEditMode,
   });
 
@@ -58,19 +55,19 @@ export function useFeatureDefinitionFormViewModel(featureId?: string) {
     isActive: true,
   });
 
-  // Hydrate form when editing
+  // Hydrate form when the entity arrives from the API
   useEffect(() => {
     if (isEditMode && existingFeature) {
       setForm({
-        key: existingFeature.key,
-        displayNameEn: existingFeature.displayNameEn || "",
-        displayNameAr: existingFeature.displayNameAr || "",
-        valueType: existingFeature.valueType,
-        defaultValue: existingFeature.defaultValue || "",
-        category: existingFeature.category || "",
-        description: existingFeature.description || "",
-        sortOrder: existingFeature.sortOrder,
-        isActive: existingFeature.isActive,
+        key: existingFeature.key ?? "",
+        displayNameEn: existingFeature.displayNameEn ?? "",
+        displayNameAr: existingFeature.displayNameAr ?? "",
+        valueType: existingFeature.valueType ?? "",
+        defaultValue: existingFeature.defaultValue ?? "",
+        category: existingFeature.category ?? "",
+        description: existingFeature.description ?? "",
+        sortOrder: existingFeature.sortOrder ?? 0,
+        isActive: existingFeature.isActive ?? true,
       });
     }
   }, [isEditMode, existingFeature]);
