@@ -7,7 +7,7 @@
  */
 "use client";
 
-import { useMemo, useState, useCallback } from "react";
+import { useMemo } from "react";
 import { useCrudViewModel } from "@core/crud/hooks/useCrudViewModel";
 import { entitlementsContainer } from "@modules/entitlements/di";
 import type { TenantFeatureDefinition } from "../../domain/entities/TenantPlan";
@@ -18,14 +18,12 @@ import type {
 import { useI18n } from "@core/providers/i18n-provider";
 import type { CrudColumn } from "@core/crud/components/generic-crud-view";
 import { Badge } from "@core/ui/badge";
-import { Switch } from "@core/ui/switch";
 
 export function useTenantFeatureDefinitionsViewModel() {
   const { tenantPlanRepository } = entitlementsContainer;
   const { t, language } = useI18n();
-  const [togglingIds, setTogglingIds] = useState<Set<string>>(new Set());
 
-  // ── CRUD ViewModel (defined first so columns can reference refreshItems) ──
+  // ── CRUD ViewModel ──
   const vm = useCrudViewModel<
     TenantFeatureDefinition,
     CreateFeatureDefinitionRequest,
@@ -60,34 +58,6 @@ export function useTenantFeatureDefinitionsViewModel() {
     },
   });
 
-  // ── Toggle active state handler ──
-  const handleToggleActive = useCallback(
-    async (item: TenantFeatureDefinition, checked: boolean) => {
-      setTogglingIds((prev) => new Set(prev).add(item.id));
-      try {
-        await tenantPlanRepository.updateFeatureDefinition(item.id, {
-          key: item.key,
-          displayNameEn: item.displayNameEn,
-          displayNameAr: item.displayNameAr,
-          valueType: item.valueType,
-          defaultValue: item.defaultValue,
-          category: item.category,
-          description: item.description,
-          sortOrder: item.sortOrder,
-          isActive: checked,
-        });
-        vm.refreshItems();
-      } finally {
-        setTogglingIds((prev) => {
-          const next = new Set(prev);
-          next.delete(item.id);
-          return next;
-        });
-      }
-    },
-    [tenantPlanRepository, vm]
-  );
-
   // ── Column definitions ──
   const columns: CrudColumn<TenantFeatureDefinition>[] = useMemo(() => {
     const valueTypeVariant: Record<string, "default" | "secondary" | "outline"> = {
@@ -99,7 +69,7 @@ export function useTenantFeatureDefinitionsViewModel() {
     return [
       {
         key: "_index",
-        label: t("common.no") || "#",
+        label: t("common.serial") || (language === "ar" ? "م" : "No."),
         render: (_v: unknown, _item: TenantFeatureDefinition, index: number) =>
           String(index + 1),
       },
@@ -142,21 +112,14 @@ export function useTenantFeatureDefinitionsViewModel() {
       {
         key: "isActive",
         label: t("common.active") || "Active",
-        render: (_v: unknown, item: TenantFeatureDefinition) => {
-          const isToggling = togglingIds.has(item.id);
-          return (
-            <Switch
-              checked={item.isActive}
-              disabled={isToggling}
-              onCheckedChange={(checked: boolean) =>
-                handleToggleActive(item, checked)
-              }
-            />
-          );
-        },
+        render: (_v: unknown, item: TenantFeatureDefinition) => (
+          <Badge variant={item.isActive ? "default" : "secondary"}>
+            {item.isActive ? (t("common.active") || "Active") : (t("common.inactive") || "Inactive")}
+          </Badge>
+        ),
       },
     ];
-  }, [t, language, togglingIds, handleToggleActive]);
+  }, [t, language]);
 
   return {
     vm,

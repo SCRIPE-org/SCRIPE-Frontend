@@ -17,7 +17,7 @@ import type { CrudConfig, CrudAction } from "@core/crud/components/generic-crud-
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { TenantFeatureDefinition } from "../../domain/entities/TenantPlan";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2, Eye } from "lucide-react";
 import { Badge } from "@core/ui/badge";
 
 export function TenantFeatureDefinitionsView() {
@@ -32,12 +32,13 @@ export function TenantFeatureDefinitionsView() {
   }, [router]);
 
   // Navigate to the dedicated edit page
-  const handleEditClick = useCallback(
-    (item: TenantFeatureDefinition) => {
-      router.push(`/entitlements/tenant-feature-definitions/${item.id}/edit`);
-    },
-    [router]
-  );
+  const handleEditClick = useCallback((item: TenantFeatureDefinition) => {
+    router.push(`/entitlements/tenant-feature-definitions/${item.id}/edit`);
+  }, [router]);
+
+  const handleViewClick = useCallback((item: TenantFeatureDefinition) => {
+    router.push(`/entitlements/tenant-feature-definitions/${item.id}`);
+  }, [router]);
 
   const config: CrudConfig<TenantFeatureDefinition> = useMemo(
     () => ({
@@ -58,6 +59,12 @@ export function TenantFeatureDefinitionsView() {
       },
       getActions: (_vmInstance, tFn, handleDelete): CrudAction<TenantFeatureDefinition>[] => [
         {
+          label: tFn("common.view") || "View",
+          onClick: (item: TenantFeatureDefinition) => handleViewClick(item),
+          variant: "ghost" as const,
+          icon: <Eye className="h-4 w-4" />,
+        },
+        {
           label: tFn("common.edit") || "Edit",
           onClick: (item: TenantFeatureDefinition) => handleEditClick(item),
           variant: "ghost" as const,
@@ -73,7 +80,7 @@ export function TenantFeatureDefinitionsView() {
         },
       ],
     }),
-    [columns, t, vm, handleCreateClick, handleEditClick]
+    [columns, t, vm, handleCreateClick, handleEditClick, handleViewClick]
   );
 
   return <GenericCrudView viewModel={vm} config={config} />;

@@ -10,18 +10,9 @@
  */
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { useI18n } from "@core/providers/i18n-provider";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
-import { entitlementsContainer } from "@modules/entitlements/di";
-import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import type {
-  CreateFeatureDefinitionRequest,
-  UpdateFeatureDefinitionRequest,
-} from "../../domain/entities/TenantPlanRequests";
+import { useFeatureDefinitionFormViewModel } from "../viewmodels/useFeatureDefinitionFormViewModel";
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
 import { Input } from "@core/ui/input";
@@ -39,146 +30,23 @@ import {
 interface FeatureDefinitionFormViewProps {
   /** If provided, we're in edit mode; otherwise create mode. */
   featureId?: string;
+  /** If true, the form is read-only. */
+  isViewMode?: boolean;
 }
 
-export function FeatureDefinitionFormView({ featureId }: FeatureDefinitionFormViewProps) {
+export function FeatureDefinitionFormView({ featureId, isViewMode }: FeatureDefinitionFormViewProps) {
   useModuleLocales(() => import("../../../locales"), "tenant-plans");
-  const { t } = useI18n();
-  const router = useRouter();
-  const { success, error: showError } = useEnhancedToast();
-  const { tenantPlanRepository } = entitlementsContainer;
-  const queryClient = useQueryClient();
-  const isEditMode = !!featureId;
-
-  // ── Load existing feature for edit mode ──
-  const { data: existingFeature, isLoading: isLoadingFeature } = useQuery({
-    queryKey: ["entitlements", "tenant-feature-definitions", featureId],
-    queryFn: async () => {
-      if (!featureId) return null;
-      const result = await tenantPlanRepository.getFeatureDefinitions({ page: 1, pageSize: 500 });
-      return result.items.find((f) => f.id === featureId) ?? null;
-    },
-    enabled: isEditMode,
-  });
-
-  // ── Form state ──
-  const [form, setForm] = useState<{
-    key: string;
-    displayNameEn: string;
-    displayNameAr: string;
-    valueType: string;
-    defaultValue: string;
-    category: string;
-    description: string;
-    sortOrder: number;
-    isActive: boolean;
-  }>({
-    key: "",
-    displayNameEn: "",
-    displayNameAr: "",
-    valueType: "",
-    defaultValue: "",
-    category: "",
-    description: "",
-    sortOrder: 0,
-    isActive: true,
-  });
-
-  // Hydrate form when editing
-  const [hydrated, setHydrated] = useState(false);
-  if (isEditMode && existingFeature && !hydrated) {
-    setForm({
-      key: existingFeature.key,
-      displayNameEn: existingFeature.displayNameEn || "",
-      displayNameAr: existingFeature.displayNameAr || "",
-      valueType: existingFeature.valueType,
-      defaultValue: existingFeature.defaultValue || "",
-      category: existingFeature.category || "",
-      description: existingFeature.description || "",
-      sortOrder: existingFeature.sortOrder,
-      isActive: existingFeature.isActive,
-    });
-    setHydrated(true);
-  }
-
-  const updateField = useCallback(<K extends keyof typeof form>(key: K, value: typeof form[K]) => {
-    setForm((prev) => ({ ...prev, [key]: value }));
-  }, []);
-
-  // ── Validation ──
-  const errors = useMemo(() => {
-    const e: Partial<Record<string, string>> = {};
-    if (!form.key.trim()) e.key = t("validation.required") || "Required";
-    if (!form.valueType) e.valueType = t("validation.required") || "Required";
-    return e;
-  }, [form.key, form.valueType, t]);
-
-  const isValid = Object.keys(errors).length === 0;
-
-  // ── Create mutation ──
-  const createMutation = useMutation({
-    mutationFn: async (data: CreateFeatureDefinitionRequest) => {
-      return tenantPlanRepository.createFeatureDefinition(data);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["entitlements", "tenant-feature-definitions"] });
-      success({
-        title: t("entitlements.featureDefinitions.created") || "Feature Created",
-        description: t("entitlements.featureDefinitions.createdDesc") || "Feature definition created successfully.",
-      });
-      router.push("/entitlements/tenant-feature-definitions");
-    },
-    onError: () => {
-      showError({
-        title: t("common.error") || "Error",
-        description: t("entitlements.featureDefinitions.createFailed") || "Failed to create feature.",
-      });
-    },
-  });
-
-  // ── Update mutation ──
-  const updateMutation = useMutation({
-    mutationFn: async (data: UpdateFeatureDefinitionRequest) => {
-      return tenantPlanRepository.updateFeatureDefinition(featureId!, data);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["entitlements", "tenant-feature-definitions"] });
-      success({
-        title: t("entitlements.featureDefinitions.updated") || "Feature Updated",
-        description: t("entitlements.featureDefinitions.updatedDesc") || "Feature definition updated.",
-      });
-      router.push("/entitlements/tenant-feature-definitions");
-    },
-    onError: () => {
-      showError({
-        title: t("common.error") || "Error",
-        description: t("entitlements.featureDefinitions.updateFailed") || "Failed to update feature.",
-      });
-    },
-  });
-
-  const isSaving = createMutation.isPending || updateMutation.isPending;
-
-  const handleSubmit = useCallback(() => {
-    if (!isValid || isSaving) return;
-    const payload = {
-      key: form.key.trim(),
-      displayNameEn: form.displayNameEn.trim() || undefined,
-      displayNameAr: form.displayNameAr.trim() || undefined,
-      valueType: form.valueType,
-      defaultValue: form.defaultValue.trim() || undefined,
-      category: form.category.trim() || undefined,
-      description: form.description.trim() || undefined,
-      sortOrder: form.sortOrder,
-      isActive: form.isActive,
-    };
-
-    if (isEditMode) {
-      updateMutation.mutate(payload as UpdateFeatureDefinitionRequest);
-    } else {
-      createMutation.mutate(payload);
-    }
-  }, [form, isValid, isSaving, isEditMode, createMutation, updateMutation]);
+  const {
+    form,
+    errors,
+    isValid,
+    isEditMode,
+    isLoadingFeature,
+    isSaving,
+    updateField,
+    handleSubmit,
+    t,
+  } = useFeatureDefinitionFormViewModel(featureId);
 
   // ── Loading state for edit ──
   if (isEditMode && isLoadingFeature) {
@@ -229,30 +97,38 @@ export function FeatureDefinitionFormView({ featureId }: FeatureDefinitionFormVi
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-2xl font-bold tracking-tight">
-                {isEditMode
-                  ? (t("entitlements.featureDefinitions.edit") || "Edit Feature")
-                  : (t("entitlements.featureDefinitions.create") || "Create Feature")}
+                {isViewMode
+                  ? (t("entitlements.featureDefinitions.view") || "View Feature")
+                  : isEditMode
+                    ? (t("entitlements.featureDefinitions.edit") || "Edit Feature")
+                    : (t("entitlements.featureDefinitions.create") || "Create Feature")}
               </h1>
               <Badge variant="outline" className="text-xs">
                 {t("entitlements.featureDefinitions.tier2Badge") || "Tier 2"}
               </Badge>
             </div>
             <p className="text-sm text-muted-foreground mt-0.5">
-              {isEditMode
-                ? (t("entitlements.featureDefinitions.editDesc") || "Update the feature definition details below.")
-                : (t("entitlements.featureDefinitions.createDesc") || "Define a reusable feature for your tenant plans.")}
+              {isViewMode
+                ? (t("entitlements.featureDefinitions.viewDesc") || "View feature definition details.")
+                : isEditMode
+                  ? (t("entitlements.featureDefinitions.editDesc") || "Update the feature definition details below.")
+                  : (t("entitlements.featureDefinitions.createDesc") || "Define a reusable feature for your tenant plans.")}
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
           <Link href="/entitlements/tenant-feature-definitions">
-            <Button variant="outline">{t("common.cancel") || "Cancel"}</Button>
+            <Button variant="outline">
+              {isViewMode ? (t("common.back") || "Back") : (t("common.cancel") || "Cancel")}
+            </Button>
           </Link>
-          <Button onClick={handleSubmit} disabled={!isValid} loading={isSaving}>
-            {!isSaving && <Save className="h-4 w-4 me-2" />}
-            {isEditMode ? (t("common.save") || "Save") : (t("common.create") || "Create")}
-          </Button>
+          {!isViewMode && (
+            <Button onClick={handleSubmit} disabled={!isValid} loading={isSaving}>
+              {!isSaving && <Save className="h-4 w-4 me-2" />}
+              {isEditMode ? (t("common.save") || "Save") : (t("common.create") || "Create")}
+            </Button>
+          )}
         </div>
       </div>
 
@@ -281,7 +157,7 @@ export function FeatureDefinitionFormView({ featureId }: FeatureDefinitionFormVi
               value={form.key}
               onChange={(e) => updateField("key", e.target.value)}
               placeholder={t("entitlements.featureDefinitions.keyPlaceholder") || "e.g. max_projects"}
-              disabled={isEditMode}
+              disabled={isEditMode || isViewMode}
               className={errors.key ? "border-red-500" : ""}
             />
             <p className="text-xs text-muted-foreground">
@@ -305,6 +181,7 @@ export function FeatureDefinitionFormView({ featureId }: FeatureDefinitionFormVi
                 value={form.displayNameEn}
                 onChange={(e) => updateField("displayNameEn", e.target.value)}
                 placeholder={t("entitlements.featureDefinitions.displayNameEnPlaceholder") || "e.g. Maximum Projects"}
+                disabled={isViewMode}
               />
             </div>
             <div className="space-y-2">
@@ -316,6 +193,7 @@ export function FeatureDefinitionFormView({ featureId }: FeatureDefinitionFormVi
                 value={form.displayNameAr}
                 onChange={(e) => updateField("displayNameAr", e.target.value)}
                 placeholder={t("entitlements.featureDefinitions.displayNameArPlaceholder") || "الحد الأقصى للمشاريع"}
+                disabled={isViewMode}
                 dir="rtl"
               />
             </div>
@@ -338,7 +216,7 @@ export function FeatureDefinitionFormView({ featureId }: FeatureDefinitionFormVi
         </CardHeader>
         <CardContent className="space-y-5">
           {/* Value Type — Card Selector */}
-          <div className="space-y-3">
+          <div className="relative space-y-3">
             <Label className="flex items-center gap-1.5">
               {t("entitlements.featureDefinitions.valueType") || "Value Type"}
               <span className="text-red-500">*</span>
@@ -348,8 +226,9 @@ export function FeatureDefinitionFormView({ featureId }: FeatureDefinitionFormVi
                 <button
                   key={option.value}
                   type="button"
+                  disabled={isViewMode}
                   onClick={() => updateField("valueType", option.value)}
-                  className={`relative flex flex-col items-start gap-2 rounded-lg border-2 p-4 text-start transition-all hover:bg-accent/50 ${
+                  className={`relative flex flex-col items-start gap-2 rounded-lg border-2 p-4 text-start transition-all ${!isViewMode ? "hover:bg-accent/50" : ""} ${
                     form.valueType === option.value
                       ? "border-primary bg-primary/5 shadow-sm"
                       : "border-muted hover:border-muted-foreground/30"
@@ -379,6 +258,7 @@ export function FeatureDefinitionFormView({ featureId }: FeatureDefinitionFormVi
                 <AlertCircle className="h-3 w-3" /> {errors.valueType}
               </p>
             )}
+            {isViewMode && <div className="absolute inset-0 z-10 cursor-not-allowed"></div>}
           </div>
 
           {/* Default Value */}
@@ -391,6 +271,7 @@ export function FeatureDefinitionFormView({ featureId }: FeatureDefinitionFormVi
               value={form.defaultValue}
               onChange={(e) => updateField("defaultValue", e.target.value)}
               placeholder={selectedTypeConfig?.hint || "e.g. true, 10, basic"}
+              disabled={isViewMode}
             />
             {selectedTypeConfig && (
               <p className="text-xs text-muted-foreground">
@@ -427,6 +308,7 @@ export function FeatureDefinitionFormView({ featureId }: FeatureDefinitionFormVi
                 value={form.category}
                 onChange={(e) => updateField("category", e.target.value)}
                 placeholder={t("entitlements.featureDefinitions.categoryPlaceholder") || "e.g. Limits, Access"}
+                disabled={isViewMode}
               />
             </div>
 
@@ -442,6 +324,7 @@ export function FeatureDefinitionFormView({ featureId }: FeatureDefinitionFormVi
                 value={form.sortOrder}
                 onChange={(e) => updateField("sortOrder", Number(e.target.value))}
                 min={0}
+                disabled={isViewMode}
               />
             </div>
           </div>
@@ -457,6 +340,7 @@ export function FeatureDefinitionFormView({ featureId }: FeatureDefinitionFormVi
               value={form.description}
               onChange={(e) => updateField("description", e.target.value)}
               placeholder={t("entitlements.featureDefinitions.descriptionPlaceholder") || "What this feature controls..."}
+              disabled={isViewMode}
               rows={3}
             />
           </div>
@@ -478,8 +362,10 @@ export function FeatureDefinitionFormView({ featureId }: FeatureDefinitionFormVi
             </div>
           </div>
           <Switch
+            id="fd-active"
             checked={form.isActive}
             onCheckedChange={(checked) => updateField("isActive", checked)}
+            disabled={isViewMode}
           />
         </CardContent>
       </Card>
@@ -487,12 +373,16 @@ export function FeatureDefinitionFormView({ featureId }: FeatureDefinitionFormVi
       {/* ─────── FOOTER ACTIONS ─────── */}
       <div className="flex items-center justify-end gap-3 pt-2">
         <Link href="/entitlements/tenant-feature-definitions">
-          <Button variant="outline" size="lg">{t("common.cancel") || "Cancel"}</Button>
+          <Button variant="outline" size="lg">
+            {isViewMode ? (t("common.back") || "Back") : (t("common.cancel") || "Cancel")}
+          </Button>
         </Link>
-        <Button size="lg" onClick={handleSubmit} disabled={!isValid} loading={isSaving}>
-          {!isSaving && <Save className="h-4 w-4 me-2" />}
-          {isEditMode ? (t("common.saveChanges") || "Save Changes") : (t("common.create") || "Create Feature")}
-        </Button>
+        {!isViewMode && (
+          <Button size="lg" onClick={handleSubmit} disabled={!isValid} loading={isSaving}>
+            {!isSaving && <Save className="h-4 w-4 me-2" />}
+            {isEditMode ? (t("common.saveChanges") || "Save Changes") : (t("common.create") || "Create Feature")}
+          </Button>
+        )}
       </div>
     </div>
   );
