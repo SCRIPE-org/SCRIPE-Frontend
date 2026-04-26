@@ -58,6 +58,7 @@ export function HeroActions({ sub, vm, t }: HeroActionsProps) {
           className="gap-2 cursor-pointer"
           onClick={() => vm.generatePaymentLink()}
           disabled={vm.isSendingPaymentLink}
+          loading={vm.isSendingPaymentLink}
         >
           <CreditCard className="h-4 w-4" />
           {t("billing.actions.generateLink") || "Generate Link"}
@@ -68,6 +69,7 @@ export function HeroActions({ sub, vm, t }: HeroActionsProps) {
           className="gap-2 cursor-pointer"
           onClick={() => vm.sendPaymentLink()}
           disabled={vm.isSendingPaymentLink}
+          loading={vm.isSendingPaymentLink}
         >
           <Zap className="h-4 w-4" />
           {t("billing.actions.generateAndSend") || "Send Link"}
