@@ -457,6 +457,14 @@ export const API_ENDPOINTS = {
         SYNC: `${V1}/tenant-stripe-connect/sync`,
       },
     },
+    // ===== PLATFORM STRIPE DASHBOARD (System Admin) =====
+    PLATFORM_STRIPE: {
+      DASHBOARD: `${V1}/platform-stripe/dashboard`,
+    },
+    // ===== SELF-SERVICE: My Tenant Subscription =====
+    MY_SUBSCRIPTION: {
+      GET: `${V1}/subscriptions/my-tenant`,
+    },
   },
 
   // ===== USER GROUPS =====

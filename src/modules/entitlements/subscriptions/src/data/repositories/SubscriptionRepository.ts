@@ -30,6 +30,11 @@ export class SubscriptionRepository implements ISubscriptionRepository {
             return SubscriptionMapper.toEntity(model);
       }
 
+      async getMyTenantSubscription(): Promise<Subscription | null> {
+            const model = await this.service.getMyTenantSubscription();
+            return model ? SubscriptionMapper.toEntity(model) : null;
+      }
+
       // ── Export ──
 
       async exportSubscriptions(params: ExportParams): Promise<ExportFileResult> {

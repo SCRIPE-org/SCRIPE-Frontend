@@ -33,6 +33,17 @@ export class SubscriptionService implements ISubscriptionService {
             );
       }
 
+      async getMyTenantSubscription(): Promise<SubscriptionModel | null> {
+            try {
+                  return await this.api.get<SubscriptionModel>(
+                        API_ENDPOINTS.ENTITLEMENTS.MY_SUBSCRIPTION.GET
+                  );
+            } catch {
+                  // 204 No Content → null
+                  return null;
+            }
+      }
+
       // ── Lifecycle Actions ──
 
       async assign(

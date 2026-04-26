@@ -38,7 +38,7 @@ export class SubscriptionMapper {
                   totalAmountUsd: model.totalAmountUsd,
                   exchangeRateToUsd: model.exchangeRateToUsd,
                   // Promotion
-                  appliedPromoCode: model.appliedPromoCode,
+                  appliedPromoCode: model.appliedPromotionName,
                   promotionDiscount: model.promotionDiscount,
                   // Refund
                   refundType: model.refundType,
@@ -76,7 +76,7 @@ export class SubscriptionMapper {
                   totalAmount: model.totalAmount,
                   totalAmountUsd: model.totalAmountUsd,
                   // Promotion
-                  appliedPromoCode: model.appliedPromoCode,
+                  appliedPromoCode: model.appliedPromotionName,
                   promotionDiscount: model.promotionDiscount,
                   // Refund
                   refundType: model.refundType,

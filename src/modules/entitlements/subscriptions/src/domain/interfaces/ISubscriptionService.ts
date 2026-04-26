@@ -15,6 +15,7 @@ export interface ISubscriptionService {
       getAll(): Promise<GlobalSubscriptionModel[]>;
       getByTenant(tenantId: string): Promise<SubscriptionListModel[]>;
       getById(id: string): Promise<SubscriptionModel>;
+      getMyTenantSubscription(): Promise<SubscriptionModel | null>;
 
       // ── Lifecycle Actions ──
       assign(tenantId: string, data: { editionId: string; type: string; endDate?: string; expiryBehavior?: string; currency?: string; promoCode?: string; promotionId?: string; skipPayment?: boolean }): Promise<{ id: string }>;

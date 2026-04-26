@@ -332,6 +332,9 @@ export const SYSTEM_PERMISSIONS = {
   TENANT_STRIPE_CONNECT_VIEW: "tenant_stripe_connect.view",
   TENANT_STRIPE_CONNECT_MANAGE: "tenant_stripe_connect.manage",
 
+  // Platform Stripe Dashboard (system admins)
+  PLATFORM_STRIPE_VIEW: "platform_stripe.view",
+
 } as const;
 
 /**
@@ -397,4 +400,7 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   // Stripe Connect
   "/entitlements/stripe-connect": [SYSTEM_PERMISSIONS.STRIPE_CONNECT_VIEW],
   "/entitlements/commissions": [SYSTEM_PERMISSIONS.COMMISSIONS_VIEW],
+
+  // Platform Stripe Dashboard
+  "/entitlements/platform-stripe": [SYSTEM_PERMISSIONS.PLATFORM_STRIPE_VIEW],
 };

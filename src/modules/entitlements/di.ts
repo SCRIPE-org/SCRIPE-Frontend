@@ -19,6 +19,7 @@ import { BillingService } from "./billing/src/data/services/BillingService";
 import { TenantPlanService } from "./tenant-plans/src/data/services/TenantPlanService";
 import { UserSubscriptionService } from "./user-subscriptions/src/data/services/UserSubscriptionService";
 import { ConnectService } from "./stripe-connect/src/data/services/ConnectService";
+import { PlatformStripeService } from "./platform-stripe/src/data/services/PlatformStripeService";
 
 // ── Repository Implementations ──
 import { FeatureRepository } from "./features/src/data/repositories/FeatureRepository";
@@ -59,6 +60,7 @@ export interface EntitlementsContainer {
       tenantPlanRepository: ITenantPlanRepository;
       userSubscriptionRepository: IUserSubscriptionRepository;
       connectRepository: IConnectRepository;
+      platformStripeService: PlatformStripeService;
 }
 
 let _container: EntitlementsContainer | null = null;
@@ -90,6 +92,7 @@ export function getEntitlementsContainer(): EntitlementsContainer {
                   tenantPlanRepository: new TenantPlanRepository(tenantPlanService),
                   userSubscriptionRepository: new UserSubscriptionRepository(userSubscriptionService),
                   connectRepository: new ConnectRepository(connectService),
+                  platformStripeService: new PlatformStripeService(apiService),
             };
       }
 
@@ -123,5 +126,8 @@ export const entitlementsContainer = {
       },
       get connectRepository() {
             return getEntitlementsContainer().connectRepository;
+      },
+      get platformStripeService() {
+            return getEntitlementsContainer().platformStripeService;
       },
 };

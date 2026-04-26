@@ -30,7 +30,7 @@ export interface SubscriptionModel {
       totalAmountUsd?: number;
       exchangeRateToUsd?: number;
       // ── Promotion ──
-      appliedPromoCode?: string;
+      appliedPromotionName?: string;
       promotionDiscount?: number;
       // ── Refund ──
       refundType?: string;
@@ -66,7 +66,7 @@ export interface SubscriptionListModel {
       totalAmountUsd?: number;
       exchangeRateToUsd?: number;
       // ── Promotion ──
-      appliedPromoCode?: string;
+      appliedPromotionName?: string;
       promotionDiscount?: number;
       // ── Refund ──
       refundType?: string;
