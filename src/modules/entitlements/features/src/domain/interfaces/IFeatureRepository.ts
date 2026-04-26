@@ -11,6 +11,7 @@ import type { PagedResult, PaginationParams } from "@modules/identity/core/domai
 
 export interface IFeatureRepository {
       getAll(params: PaginationParams): Promise<PagedResult<Feature>>;
+      getAllFeatures(): Promise<Feature[]>;
       getById(id: string): Promise<Feature>;
       create(request: CreateFeatureRequest): Promise<string>;
       update(id: string, request: UpdateFeatureRequest): Promise<void>;

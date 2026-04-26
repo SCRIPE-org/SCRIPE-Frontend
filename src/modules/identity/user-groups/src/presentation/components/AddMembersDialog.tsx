@@ -38,12 +38,12 @@ export function AddMembersDialog({
             queryFn: () => tenantId
                   ? systemContainer.adminRepository.getByTenantId(tenantId, {
                         page: 1,
-                        pageSize: 200,
+                        pageSize: 100,
                         isActive: true,
                   })
                   : systemContainer.adminRepository.getAll({
                         page: 1,
-                        pageSize: 200,
+                        pageSize: 100,
                         isActive: true,
                   }),
             enabled: open,

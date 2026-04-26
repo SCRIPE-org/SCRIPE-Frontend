@@ -57,4 +57,25 @@ export class FeatureRepository implements IFeatureRepository {
             const models = await this.service.getEffective(tenantId);
             return models.map((m) => FeatureMapper.toEffectiveEntity(m));
       }
+
+      /**
+       * Fetch ALL features from the catalog by auto-paginating.
+       * Replaces the dangerous pageSize:1000 pattern that was silently
+       * truncated by the backend's Math.Min(pageSize, 100) guard.
+       */
+      async getAllFeatures(): Promise<Feature[]> {
+            const allItems: Feature[] = [];
+            let page = 1;
+            const pageSize = 100;
+            let hasMore = true;
+
+            while (hasMore) {
+                  const result = await this.getAll({ page, pageSize });
+                  allItems.push(...result.items);
+                  hasMore = result.hasNextPage;
+                  page++;
+            }
+
+            return allItems;
+      }
 }

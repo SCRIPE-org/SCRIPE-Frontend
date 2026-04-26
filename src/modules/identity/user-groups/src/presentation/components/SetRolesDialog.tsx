@@ -38,13 +38,13 @@ export function SetRolesDialog({
             queryFn: () => tenantId
                   ? systemContainer.roleRepository.getAll({
                         page: 1,
-                        pageSize: 200,
+                        pageSize: 100,
                         tenantId,
                         strict: true,
                   })
                   : systemContainer.roleRepository.getMyTenantRoles({
                         page: 1,
-                        pageSize: 200,
+                        pageSize: 100,
                   }),
             enabled: open,
       });

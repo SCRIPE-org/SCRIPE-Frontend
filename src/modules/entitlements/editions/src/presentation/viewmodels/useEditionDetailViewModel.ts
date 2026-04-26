@@ -79,14 +79,14 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
             enabled: !!editionId,
       });
 
-      // System admin: fetch ALL features from catalog
+      // System admin: fetch ALL features from catalog (auto-paginates)
       const {
-            data: catalogResult,
+            data: allCatalogFeatures,
             isLoading: isCatalogLoading,
             error: catalogError,
       } = useQuery({
             queryKey: ["entitlements", "features", "all"],
-            queryFn: () => featureRepository.getAll({ page: 1, pageSize: 1000 }),
+            queryFn: () => featureRepository.getAllFeatures(),
             enabled: isSystemAdmin,
       });
 
@@ -128,7 +128,7 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
       }, [isSystemAdmin, effectiveFeatures]);
 
       // ── Resolved features list ──
-      const resolvedFeatures = isSystemAdmin ? catalogResult?.items : mappedFeatures;
+      const resolvedFeatures = isSystemAdmin ? allCatalogFeatures : mappedFeatures;
       const isFeaturesLoading = isSystemAdmin ? isCatalogLoading : isEffectiveLoading;
       const featuresError = isSystemAdmin ? catalogError : effectiveError;
 

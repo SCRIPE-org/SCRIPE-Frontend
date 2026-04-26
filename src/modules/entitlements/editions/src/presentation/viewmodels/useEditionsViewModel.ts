@@ -22,7 +22,7 @@ export function useEditionsViewModel() {
       // This ensures the dropdown is not limited to the current paginated page.
       const { data: allEditionsData } = useQuery({
             queryKey: ["entitlements", "editions", "all-for-select"],
-            queryFn: () => editionRepository.getAll({ page: 1, pageSize: 500 }),
+            queryFn: () => editionRepository.getAll({ page: 1, pageSize: 100 }),
             staleTime: 5 * 60 * 1000, // 5 minutes
       });
       const allEditionsForSelect = allEditionsData?.items ?? [];
