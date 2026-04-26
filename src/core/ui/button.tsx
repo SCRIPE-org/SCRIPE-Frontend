@@ -1,8 +1,8 @@
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
-import { Loader2 } from "lucide-react";
 import { useSettings } from "@core/providers/settings-provider";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { cn } from "@core/common/utils";
 
 const buttonVariants = cva(
@@ -126,11 +126,14 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {...props}
       >
         {loading && (
-          <Loader2 className={cn(
-            "h-4 w-4 animate-spin shrink-0",
-            // Only add margin if there are visible children
-            children ? "ltr:mr-2 rtl:ml-2" : "",
-          )} />
+          <LoadingSpinner
+            size="inline"
+            showText={false}
+            className={cn(
+              "shrink-0",
+              children ? "ltr:mr-2 rtl:ml-2" : "",
+            )}
+          />
         )}
         {children}
       </button>

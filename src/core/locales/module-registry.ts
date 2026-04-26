@@ -47,6 +47,7 @@ import { en as billingEn, ar as billingAr } from "@modules/entitlements/billing/
 import { en as tenantPlansEn, ar as tenantPlansAr } from "@modules/entitlements/tenant-plans/locales";
 import { en as userSubscriptionsEn, ar as userSubscriptionsAr } from "@modules/entitlements/user-subscriptions/locales";
 import { en as stripeConnectEn, ar as stripeConnectAr } from "@modules/entitlements/stripe-connect/locales";
+import { en as platformStripeEn, ar as platformStripeAr } from "@modules/entitlements/platform-stripe/locales";
 
 // ─── Messaging ─────────────────────────────────────────
 import { en as messagingEn, ar as messagingAr } from "@modules/messaging/locales";
@@ -72,7 +73,7 @@ export const allModulesEn: Record<string, any> = deepMerge(
   // Customization
   custSettingsEn, custStudioEn, menusEn, tenantSettingsEn,
   // Entitlements (all share "entitlements" top-level key — deepMerge required)
-  entitlementsEn, editionsEn, featuresEn, overridesEn, subscriptionsEn, billingEn, tenantPlansEn, userSubscriptionsEn, stripeConnectEn,
+  entitlementsEn, editionsEn, featuresEn, overridesEn, subscriptionsEn, billingEn, tenantPlansEn, userSubscriptionsEn, stripeConnectEn, platformStripeEn,
   // Messaging
   messagingEn, webhooksEn,
   // Ecosystem
@@ -91,7 +92,7 @@ export const allModulesAr: Record<string, any> = deepMerge(
   // Customization
   custSettingsAr, custStudioAr, menusAr, tenantSettingsAr,
   // Entitlements (all share "entitlements" top-level key — deepMerge required)
-  entitlementsAr, editionsAr, featuresAr, overridesAr, subscriptionsAr, billingAr, tenantPlansAr, userSubscriptionsAr, stripeConnectAr,
+  entitlementsAr, editionsAr, featuresAr, overridesAr, subscriptionsAr, billingAr, tenantPlansAr, userSubscriptionsAr, stripeConnectAr, platformStripeAr,
   // Messaging
   messagingAr, webhooksAr,
   // Ecosystem

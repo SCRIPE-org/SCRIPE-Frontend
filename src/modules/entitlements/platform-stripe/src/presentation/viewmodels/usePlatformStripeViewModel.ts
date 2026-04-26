@@ -1,24 +1,26 @@
 /**
  * usePlatformStripeViewModel — fetches the complete Platform Stripe Dashboard data.
- * Uses the entitlementsContainer DI to access PlatformStripeService.
+ *
+ * Uses IPlatformStripeRepository via DI container (never accesses services directly).
+ * Returns PlatformStripeDashboard domain entity (never raw DTOs).
  */
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import type { PlatformStripeDashboardModel } from "../../data/models/PlatformStripeModels";
+import type { PlatformStripeDashboard } from "../../domain/entities/PlatformStripeDashboard";
 import { entitlementsContainer } from "@modules/entitlements/di";
 
 export function usePlatformStripeViewModel() {
-  const { platformStripeService } = entitlementsContainer;
+  const { platformStripeRepository } = entitlementsContainer;
 
   const {
     data: dashboard,
     isLoading,
     error,
     refetch,
-  } = useQuery<PlatformStripeDashboardModel>({
+  } = useQuery<PlatformStripeDashboard>({
     queryKey: ["platform-stripe", "dashboard"],
-    queryFn: () => platformStripeService.getDashboard(),
+    queryFn: () => platformStripeRepository.getDashboard(),
     staleTime: 30 * 1000, // 30 seconds — live data
     retry: 2,
   });

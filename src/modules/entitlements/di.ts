@@ -20,6 +20,7 @@ import { TenantPlanService } from "./tenant-plans/src/data/services/TenantPlanSe
 import { UserSubscriptionService } from "./user-subscriptions/src/data/services/UserSubscriptionService";
 import { ConnectService } from "./stripe-connect/src/data/services/ConnectService";
 import { PlatformStripeService } from "./platform-stripe/src/data/services/PlatformStripeService";
+import { PlatformStripeRepository } from "./platform-stripe/src/data/repositories/PlatformStripeRepository";
 
 // ── Repository Implementations ──
 import { FeatureRepository } from "./features/src/data/repositories/FeatureRepository";
@@ -40,6 +41,7 @@ import type { IBillingRepository } from "./billing/src/domain/interfaces/IBillin
 import type { ITenantPlanRepository } from "./tenant-plans/src/domain/interfaces/ITenantPlanRepository";
 import type { IUserSubscriptionRepository } from "./user-subscriptions/src/domain/interfaces/IUserSubscriptionRepository";
 import type { IConnectRepository } from "./stripe-connect/src/domain/interfaces/IConnectRepository";
+import type { IPlatformStripeRepository } from "./platform-stripe/src/domain/interfaces/IPlatformStripeRepository";
 
 // ── Service Interfaces (used internally for DI wiring) ──
 import type { IFeatureService } from "./features/src/domain/interfaces/IFeatureService";
@@ -50,6 +52,7 @@ import type { IBillingService } from "./billing/src/domain/interfaces/IBillingSe
 import type { ITenantPlanService } from "./tenant-plans/src/domain/interfaces/ITenantPlanService";
 import type { IUserSubscriptionService } from "./user-subscriptions/src/domain/interfaces/IUserSubscriptionService";
 import type { IConnectService } from "./stripe-connect/src/domain/interfaces/IConnectService";
+import type { IPlatformStripeService } from "./platform-stripe/src/domain/interfaces/IPlatformStripeService";
 
 export interface EntitlementsContainer {
       featureRepository: IFeatureRepository;
@@ -60,7 +63,7 @@ export interface EntitlementsContainer {
       tenantPlanRepository: ITenantPlanRepository;
       userSubscriptionRepository: IUserSubscriptionRepository;
       connectRepository: IConnectRepository;
-      platformStripeService: PlatformStripeService;
+      platformStripeRepository: IPlatformStripeRepository;
 }
 
 let _container: EntitlementsContainer | null = null;
@@ -81,6 +84,7 @@ export function getEntitlementsContainer(): EntitlementsContainer {
             const tenantPlanService: ITenantPlanService = new TenantPlanService(apiService);
             const userSubscriptionService: IUserSubscriptionService = new UserSubscriptionService(apiService);
             const connectService: IConnectService = new ConnectService(apiService);
+            const platformStripeService: IPlatformStripeService = new PlatformStripeService(apiService);
 
             // ── Create Repositories (IService → IRepository mapping) ──
             _container = {
@@ -92,7 +96,7 @@ export function getEntitlementsContainer(): EntitlementsContainer {
                   tenantPlanRepository: new TenantPlanRepository(tenantPlanService),
                   userSubscriptionRepository: new UserSubscriptionRepository(userSubscriptionService),
                   connectRepository: new ConnectRepository(connectService),
-                  platformStripeService: new PlatformStripeService(apiService),
+                  platformStripeRepository: new PlatformStripeRepository(platformStripeService),
             };
       }
 
@@ -127,7 +131,7 @@ export const entitlementsContainer = {
       get connectRepository() {
             return getEntitlementsContainer().connectRepository;
       },
-      get platformStripeService() {
-            return getEntitlementsContainer().platformStripeService;
+      get platformStripeRepository() {
+            return getEntitlementsContainer().platformStripeRepository;
       },
 };
