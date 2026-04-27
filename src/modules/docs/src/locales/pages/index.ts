@@ -82,6 +82,14 @@ export { zh as apiReferenceZh } from "./api-reference/zh";
 export { es as apiReferenceEs } from "./api-reference/es";
 export { de as apiReferenceDe } from "./api-reference/de";
 
+export { en as revenueAnalyticsEn } from "./revenue-analytics/en";
+export { ar as revenueAnalyticsAr } from "./revenue-analytics/ar";
+export { fr as revenueAnalyticsFr } from "./revenue-analytics/fr";
+export { ru as revenueAnalyticsRu } from "./revenue-analytics/ru";
+export { zh as revenueAnalyticsZh } from "./revenue-analytics/zh";
+export { es as revenueAnalyticsEs } from "./revenue-analytics/es";
+export { de as revenueAnalyticsDe } from "./revenue-analytics/de";
+
 // Lazy loader map for dynamic imports
 export const pageLoaders: Record<string, () => Promise<any>> = {
   'common': () => import('./common/en'),
@@ -94,4 +102,5 @@ export const pageLoaders: Record<string, () => Promise<any>> = {
   'infrastructure': () => import('./infrastructure/en'),
   'tutorials': () => import('./tutorials/en'),
   'api-reference': () => import('./api-reference/en'),
+  'revenue-analytics': () => import('./revenue-analytics/en'),
 };

@@ -32,6 +32,7 @@ import { zh as pageDunning } from "../pages/dunning/zh";
 import { zh as pageTenantPlans } from "../pages/tenant-plans/zh";
 import { zh as pageUserSubscriptions } from "../pages/user-subscriptions/zh";
 import { zh as pageTenantContextGate } from "../pages/tenant-context-gate/zh";
+import { zh as pageRevenueAnalytics } from "../pages/revenue-analytics/zh";
 
 import { mergeAll } from "./utils";
 
@@ -41,5 +42,5 @@ export const allDocsZh: Record<string, any> = mergeAll(
   commWhyNexora, commPlatform, commEnterprise, commSecurity,
   commTechnical, commDeveloper, commIntegration, commPricing,
   commModules, commEntitlements, commCustomization,
-  pageBillingEngine, pageInvoices, pageDunning, pageTenantPlans, pageUserSubscriptions, pageTenantContextGate,
+  pageBillingEngine, pageInvoices, pageDunning, pageTenantPlans, pageUserSubscriptions, pageTenantContextGate, pageRevenueAnalytics,
 );

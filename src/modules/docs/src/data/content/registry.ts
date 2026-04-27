@@ -64,6 +64,9 @@ import "./modules/dunning";
 import "./modules/tenant-plans";
 import "./modules/user-subscriptions";
 
+// Modules (Revenue Analytics — Phase 11)
+import "./modules/revenue-analytics";
+
 // Security
 import "./security/overview";
 import "./security/authentication-deep";

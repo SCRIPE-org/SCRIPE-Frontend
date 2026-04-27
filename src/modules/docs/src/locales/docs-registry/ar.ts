@@ -32,6 +32,7 @@ import { ar as pageDunning } from "../pages/dunning/ar";
 import { ar as pageTenantPlans } from "../pages/tenant-plans/ar";
 import { ar as pageUserSubscriptions } from "../pages/user-subscriptions/ar";
 import { ar as pageTenantContextGate } from "../pages/tenant-context-gate/ar";
+import { ar as pageRevenueAnalytics } from "../pages/revenue-analytics/ar";
 
 import { mergeAll } from "./utils";
 
@@ -41,5 +42,5 @@ export const allDocsAr: Record<string, any> = mergeAll(
   commWhyNexora, commPlatform, commEnterprise, commSecurity,
   commTechnical, commDeveloper, commIntegration, commPricing,
   commModules, commEntitlements, commCustomization,
-  pageBillingEngine, pageInvoices, pageDunning, pageTenantPlans, pageUserSubscriptions, pageTenantContextGate,
+  pageBillingEngine, pageInvoices, pageDunning, pageTenantPlans, pageUserSubscriptions, pageTenantContextGate, pageRevenueAnalytics,
 );

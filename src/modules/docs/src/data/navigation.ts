@@ -188,6 +188,7 @@ export const navigationData: DocCategoryData[] = [
           { id: "mod-ent-dunning", titleKey: "modules.dunning.title", slug: "modules/dunning", order: 8 },
           { id: "mod-ent-tenant-plans", titleKey: "modules.tenantPlans.title", slug: "modules/tenant-plans", order: 9 },
           { id: "mod-ent-user-subs", titleKey: "modules.userSubscriptions.title", slug: "modules/user-subscriptions", order: 10 },
+          { id: "mod-ent-revenue-analytics", titleKey: "modules.revenueAnalytics.title", slug: "modules/revenue-analytics", order: 11 },
         ],
       },
       // Future modules:

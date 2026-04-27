@@ -32,6 +32,7 @@ import { de as pageDunning } from "../pages/dunning/de";
 import { de as pageTenantPlans } from "../pages/tenant-plans/de";
 import { de as pageUserSubscriptions } from "../pages/user-subscriptions/de";
 import { de as pageTenantContextGate } from "../pages/tenant-context-gate/de";
+import { de as pageRevenueAnalytics } from "../pages/revenue-analytics/de";
 
 import { mergeAll } from "./utils";
 
@@ -41,5 +42,5 @@ export const allDocsDe: Record<string, any> = mergeAll(
   commWhyNexora, commPlatform, commEnterprise, commSecurity,
   commTechnical, commDeveloper, commIntegration, commPricing,
   commModules, commEntitlements, commCustomization,
-  pageBillingEngine, pageInvoices, pageDunning, pageTenantPlans, pageUserSubscriptions, pageTenantContextGate,
+  pageBillingEngine, pageInvoices, pageDunning, pageTenantPlans, pageUserSubscriptions, pageTenantContextGate, pageRevenueAnalytics,
 );
