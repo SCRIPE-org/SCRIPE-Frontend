@@ -335,6 +335,11 @@ export const SYSTEM_PERMISSIONS = {
   // Platform Stripe Dashboard (system admins)
   PLATFORM_STRIPE_VIEW: "platform_stripe.view",
 
+  // Revenue Analytics
+  ANALYTICS_REVENUE_VIEW: "analytics.view",
+  ANALYTICS_HEALTH_VIEW: "analytics.view_health",
+  ANALYTICS_REPORTS_MANAGE: "analytics.manage_reports",
+
 } as const;
 
 /**
@@ -403,4 +408,7 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
 
   // Platform Stripe Dashboard
   "/entitlements/platform-stripe": [SYSTEM_PERMISSIONS.PLATFORM_STRIPE_VIEW],
+
+  // Revenue Analytics
+  "/entitlements/analytics": [SYSTEM_PERMISSIONS.ANALYTICS_REVENUE_VIEW],
 };

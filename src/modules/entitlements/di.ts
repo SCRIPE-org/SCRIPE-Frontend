@@ -21,6 +21,7 @@ import { UserSubscriptionService } from "./user-subscriptions/src/data/services/
 import { ConnectService } from "./stripe-connect/src/data/services/ConnectService";
 import { PlatformStripeService } from "./platform-stripe/src/data/services/PlatformStripeService";
 import { PlatformStripeRepository } from "./platform-stripe/src/data/repositories/PlatformStripeRepository";
+import { AnalyticsService } from "./analytics/src/data/services/AnalyticsService";
 
 // ── Repository Implementations ──
 import { FeatureRepository } from "./features/src/data/repositories/FeatureRepository";
@@ -31,6 +32,7 @@ import { BillingRepository } from "./billing/src/data/repositories/BillingReposi
 import { TenantPlanRepository } from "./tenant-plans/src/data/repositories/TenantPlanRepository";
 import { UserSubscriptionRepository } from "./user-subscriptions/src/data/repositories/UserSubscriptionRepository";
 import { ConnectRepository } from "./stripe-connect/src/data/repositories/ConnectRepository";
+import { AnalyticsRepository } from "./analytics/src/data/repositories/AnalyticsRepository";
 
 // ── Repository Interfaces (exposed to consumers) ──
 import type { IFeatureRepository } from "./features/src/domain/interfaces/IFeatureRepository";
@@ -42,6 +44,7 @@ import type { ITenantPlanRepository } from "./tenant-plans/src/domain/interfaces
 import type { IUserSubscriptionRepository } from "./user-subscriptions/src/domain/interfaces/IUserSubscriptionRepository";
 import type { IConnectRepository } from "./stripe-connect/src/domain/interfaces/IConnectRepository";
 import type { IPlatformStripeRepository } from "./platform-stripe/src/domain/interfaces/IPlatformStripeRepository";
+import type { IAnalyticsRepository } from "./analytics/src/domain/interfaces/IAnalyticsRepository";
 
 // ── Service Interfaces (used internally for DI wiring) ──
 import type { IFeatureService } from "./features/src/domain/interfaces/IFeatureService";
@@ -53,6 +56,7 @@ import type { ITenantPlanService } from "./tenant-plans/src/domain/interfaces/IT
 import type { IUserSubscriptionService } from "./user-subscriptions/src/domain/interfaces/IUserSubscriptionService";
 import type { IConnectService } from "./stripe-connect/src/domain/interfaces/IConnectService";
 import type { IPlatformStripeService } from "./platform-stripe/src/domain/interfaces/IPlatformStripeService";
+import type { IAnalyticsService } from "./analytics/src/domain/interfaces/IAnalyticsService";
 
 export interface EntitlementsContainer {
       featureRepository: IFeatureRepository;
@@ -64,6 +68,7 @@ export interface EntitlementsContainer {
       userSubscriptionRepository: IUserSubscriptionRepository;
       connectRepository: IConnectRepository;
       platformStripeRepository: IPlatformStripeRepository;
+      analyticsRepository: IAnalyticsRepository;
 }
 
 let _container: EntitlementsContainer | null = null;
@@ -85,6 +90,7 @@ export function getEntitlementsContainer(): EntitlementsContainer {
             const userSubscriptionService: IUserSubscriptionService = new UserSubscriptionService(apiService);
             const connectService: IConnectService = new ConnectService(apiService);
             const platformStripeService: IPlatformStripeService = new PlatformStripeService(apiService);
+            const analyticsService: IAnalyticsService = new AnalyticsService(apiService);
 
             // ── Create Repositories (IService → IRepository mapping) ──
             _container = {
@@ -97,6 +103,7 @@ export function getEntitlementsContainer(): EntitlementsContainer {
                   userSubscriptionRepository: new UserSubscriptionRepository(userSubscriptionService),
                   connectRepository: new ConnectRepository(connectService),
                   platformStripeRepository: new PlatformStripeRepository(platformStripeService),
+                  analyticsRepository: new AnalyticsRepository(analyticsService),
             };
       }
 
@@ -133,5 +140,8 @@ export const entitlementsContainer = {
       },
       get platformStripeRepository() {
             return getEntitlementsContainer().platformStripeRepository;
+      },
+      get analyticsRepository() {
+            return getEntitlementsContainer().analyticsRepository;
       },
 };
