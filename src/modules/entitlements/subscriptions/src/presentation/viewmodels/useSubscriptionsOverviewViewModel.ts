@@ -112,6 +112,24 @@ export function useSubscriptionsOverviewViewModel() {
             // Total promo discounts (Active only)
             const totalPromoDiscount = active.reduce((sum, s) => sum + (s.promotionDiscount ?? 0), 0);
 
+            // ARPU = MRR / active paying count (excludes $0 subs and trials)
+            const payingActive = active.filter(s => s.totalAmountUsd > 0);
+            const arpu = payingActive.length > 0
+                  ? Math.round((totalMrr / payingActive.length) * 100) / 100
+                  : 0;
+
+            // Churn Rate = canceled in last 30 days / (active + recently canceled) × 100
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+            const recentlyCanceled = canceled.filter(s => {
+                  if (!s.endDate) return false;
+                  return new Date(s.endDate) >= thirtyDaysAgo;
+            });
+            const churnBase = active.length + recentlyCanceled.length;
+            const churnRate = churnBase > 0
+                  ? Math.round((recentlyCanceled.length / churnBase) * 10000) / 100
+                  : 0;
+
             return {
                   totalMrr: Math.round(totalMrr * 100) / 100,
                   activeCount: active.length,
@@ -124,7 +142,10 @@ export function useSubscriptionsOverviewViewModel() {
                   totalRefunded: Math.round(totalRefunded * 100) / 100,
                   netRevenue: Math.round((totalRevenue - totalRefunded) * 100) / 100,
                   totalPromoDiscount: Math.round(totalPromoDiscount * 100) / 100,
+                  arpu,
+                  churnRate,
             };
+
       }, [subscriptions]);
 
       // ── Status Distribution (for chart) ──

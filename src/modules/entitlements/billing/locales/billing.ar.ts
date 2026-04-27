@@ -61,6 +61,11 @@ export const ar = {
       emailSentDesc: "تم إرسال الفاتورة بالبريد الإلكتروني إلى مدير المستأجر.",
       emailError: "فشل الإرسال",
       emailErrorDesc: "فشل في إرسال الفاتورة بالبريد الإلكتروني.",
+      exportAllPdf: "تصدير جميع الفواتير PDF",
+      bulkDownloading: "جارِ تحميل جميع الفواتير...",
+      bulkDownloadSuccess: "تم تحميل جميع الفواتير",
+      bulkDownloadPartial: "تحميل جزئي",
+      invoicesDownloaded: "فواتير تم حفظها في التنزيلات.",
     },
     dialogs: {
       checkoutTitle: "تم إنشاء رابط الدفع",

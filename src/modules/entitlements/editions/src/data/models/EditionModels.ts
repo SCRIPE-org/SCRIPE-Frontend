@@ -28,6 +28,7 @@ export interface EditionModel {
       trialIsFree: boolean;
       trialDiscountPercent: number;
       gracePeriodDays: number;
+      maxActiveSubscriptions?: number;
       createdAt: string;
       modifiedAt?: string;
 }

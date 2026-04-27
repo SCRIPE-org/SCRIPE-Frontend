@@ -35,6 +35,7 @@ export class EditionMapper {
                   trialIsFree: model.trialIsFree,
                   trialDiscountPercent: model.trialDiscountPercent,
                   gracePeriodDays: model.gracePeriodDays,
+                  maxActiveSubscriptions: model.maxActiveSubscriptions ?? -1,
                   createdAt: model.createdAt,
                   modifiedAt: model.modifiedAt,
             };
@@ -62,6 +63,7 @@ export class EditionMapper {
                   trialIsFree: request.trialIsFree ?? true,
                   trialDiscountPercent: request.trialDiscountPercent ?? 100,
                   gracePeriodDays: request.gracePeriodDays ?? 0,
+                  maxActiveSubscriptions: request.maxActiveSubscriptions ?? -1,
             };
       }
 
@@ -84,6 +86,7 @@ export class EditionMapper {
             if (request.trialIsFree !== undefined) json.trialIsFree = request.trialIsFree;
             if (request.trialDiscountPercent !== undefined) json.trialDiscountPercent = request.trialDiscountPercent;
             if (request.gracePeriodDays !== undefined) json.gracePeriodDays = request.gracePeriodDays;
+            if (request.maxActiveSubscriptions !== undefined) json.maxActiveSubscriptions = request.maxActiveSubscriptions;
             return json;
       }
 }

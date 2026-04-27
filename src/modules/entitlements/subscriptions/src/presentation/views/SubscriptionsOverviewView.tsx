@@ -1,8 +1,8 @@
-﻿/**
+/**
  * Subscriptions Overview View — Global Dashboard
  *
  * Comprehensive subscription dashboard with:
- * - 8 KPI cards (financial + counts)
+ * - 12 KPI cards (financial + counts + business health)
  * - Distribution charts (status, type, revenue by edition)
  * - Upcoming renewals timeline
  * - Filterable data table
@@ -43,6 +43,8 @@ import {
       BarChart3,
       CalendarClock,
       Tag,
+      Percent,
+      UserCheck,
 } from "lucide-react";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 
@@ -273,7 +275,99 @@ export function SubscriptionsOverviewView() {
                   </div>
 
                   {/* ══════════════════════════════════════════════════ */}
-                  {/* ROW 3: Charts                                     */}
+                  {/* ROW 3: Business Health KPI Cards                  */}
+                  {/* ══════════════════════════════════════════════════ */}
+                  <div className="grid gap-4 md:grid-cols-4">
+                        {/* ARPU */}
+                        <Card className="relative overflow-hidden border-cyan-200/50 dark:border-cyan-800/30">
+                              <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-cyan-500/10 to-transparent rounded-bl-full" />
+                              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                    <CardTitle className="text-sm font-medium text-muted-foreground">
+                                          {vm.t("dashboard.kpi.arpu") || "ARPU"}
+                                    </CardTitle>
+                                    <UserCheck className="h-4 w-4 text-cyan-600" />
+                              </CardHeader>
+                              <CardContent>
+                                    <div className="text-2xl font-bold tabular-nums text-cyan-700 dark:text-cyan-400">
+                                          {vm.formatDisplay(vm.kpis.arpu, "USD")}
+                                    </div>
+                                    <p className="text-xs text-muted-foreground mt-1">
+                                          {vm.t("dashboard.kpi.arpuDesc") || "Avg revenue per paying user"}
+                                    </p>
+                              </CardContent>
+                        </Card>
+
+                        {/* Churn Rate */}
+                        <Card className={`relative overflow-hidden transition-all ${
+                              vm.kpis.churnRate > 10
+                                    ? "border-red-300/70 dark:border-red-700/50"
+                                    : vm.kpis.churnRate > 5
+                                          ? "border-amber-200/50 dark:border-amber-800/30"
+                                          : "border-teal-200/50 dark:border-teal-800/30"
+                        }`}>
+                              <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-amber-500/10 to-transparent rounded-bl-full" />
+                              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                    <CardTitle className="text-sm font-medium text-muted-foreground">
+                                          {vm.t("dashboard.kpi.churnRate") || "Churn Rate"}
+                                    </CardTitle>
+                                    <Percent className={`h-4 w-4 ${
+                                          vm.kpis.churnRate > 10 ? "text-red-500" : vm.kpis.churnRate > 5 ? "text-amber-500" : "text-teal-500"
+                                    }`} />
+                              </CardHeader>
+                              <CardContent>
+                                    <div className={`text-2xl font-bold tabular-nums ${
+                                          vm.kpis.churnRate > 10
+                                                ? "text-red-600 dark:text-red-400"
+                                                : vm.kpis.churnRate > 5
+                                                      ? "text-amber-600 dark:text-amber-400"
+                                                      : "text-teal-700 dark:text-teal-400"
+                                    }`}>
+                                          {vm.kpis.churnRate}%
+                                    </div>
+                                    <p className="text-xs text-muted-foreground mt-1">
+                                          {vm.t("dashboard.kpi.churnRateDesc") || "30-day rolling churn"}
+                                    </p>
+                              </CardContent>
+                        </Card>
+
+                        {/* Upcoming Renewals */}
+                        <Card className="group cursor-pointer transition-all hover:shadow-md hover:border-indigo-300 dark:hover:border-indigo-700">
+                              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                    <CardTitle className="text-sm font-medium text-muted-foreground">
+                                          {vm.t("dashboard.kpi.renewals") || "Upcoming Renewals"}
+                                    </CardTitle>
+                                    <CalendarClock className="h-4 w-4 text-indigo-500" />
+                              </CardHeader>
+                              <CardContent>
+                                    <div className="text-2xl font-bold tabular-nums">{vm.kpis.renewalCount}</div>
+                                    <p className="text-xs text-muted-foreground mt-1">
+                                          {vm.t("dashboard.kpi.renewalsDesc") || "Within 30 days"}
+                                    </p>
+                              </CardContent>
+                        </Card>
+
+                        {/* Promo Discount */}
+                        <Card className="relative overflow-hidden border-pink-200/50 dark:border-pink-800/30">
+                              <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-pink-500/10 to-transparent rounded-bl-full" />
+                              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                    <CardTitle className="text-sm font-medium text-muted-foreground">
+                                          {vm.t("dashboard.kpi.promoDiscount") || "Active Discounts"}
+                                    </CardTitle>
+                                    <Tag className="h-4 w-4 text-pink-500" />
+                              </CardHeader>
+                              <CardContent>
+                                    <div className="text-2xl font-bold tabular-nums text-pink-700 dark:text-pink-400">
+                                          {vm.formatDisplay(vm.kpis.totalPromoDiscount, "USD")}
+                                    </div>
+                                    <p className="text-xs text-muted-foreground mt-1">
+                                          {vm.t("dashboard.kpi.promoDiscountDesc") || "Total promotional savings"}
+                                    </p>
+                              </CardContent>
+                        </Card>
+                  </div>
+
+                  {/* ══════════════════════════════════════════════════ */}
+                  {/* ROW 4: Charts                                     */}
                   {/* ══════════════════════════════════════════════════ */}
                   <div className="grid gap-4 md:grid-cols-3">
                         {/* Status Distribution — Doughnut */}

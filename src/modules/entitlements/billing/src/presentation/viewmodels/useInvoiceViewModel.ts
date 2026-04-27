@@ -124,10 +124,64 @@ export function useInvoiceViewModel() {
     }
   }, [t, toast, success, toastError, billingRepository]);
 
+  // ── Bulk Download All PDFs ──
+  const handleBulkDownloadPdf = useCallback(async () => {
+    const items = vm.items as InvoiceListItem[];
+    if (!items || items.length === 0) return;
+
+    const bulkKey = "bulk-pdf";
+    setLoadingAction((prev) => ({ ...prev, [bulkKey]: true }));
+
+    toast({
+      title: t("billing.actions.bulkDownloading") || "Downloading All Invoices...",
+      description: `${items.length} invoices`,
+      variant: "info",
+      duration: 3000,
+    });
+
+    let downloaded = 0;
+    let failed = 0;
+
+    for (const item of items) {
+      try {
+        const blob = await billingRepository.downloadInvoicePdf(item.id);
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `invoice-${item.invoiceNumber}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        downloaded++;
+      } catch {
+        failed++;
+      }
+
+      // Small delay to avoid overwhelming the browser download queue
+      await new Promise((r) => setTimeout(r, 300));
+    }
+
+    if (failed === 0) {
+      success({
+        title: t("billing.actions.bulkDownloadSuccess") || "All Invoices Downloaded",
+        description: `${downloaded} ${t("billing.actions.invoicesDownloaded") || "invoices saved to downloads."}`,
+      });
+    } else {
+      toastError({
+        title: t("billing.actions.bulkDownloadPartial") || "Partial Download",
+        description: `${downloaded} ${t("common.success") || "success"}, ${failed} ${t("common.failed") || "failed"}`,
+      });
+    }
+
+    setLoadingAction((prev) => ({ ...prev, [bulkKey]: false }));
+  }, [vm.items, t, toast, success, toastError, billingRepository]);
+
   return {
     ...vm,
     loadingAction,
     handleDownloadPdf,
     handleSendEmail,
+    handleBulkDownloadPdf,
   };
 }

@@ -34,6 +34,7 @@ export interface EditionData extends BaseEntity {
       trialIsFree: boolean;
       trialDiscountPercent: number;
       gracePeriodDays: number;
+      maxActiveSubscriptions: number;
 }
 
 export class Edition {
@@ -63,6 +64,7 @@ export class Edition {
       get trialIsFree(): boolean { return this.data.trialIsFree; }
       get trialDiscountPercent(): number { return this.data.trialDiscountPercent; }
       get gracePeriodDays(): number { return this.data.gracePeriodDays; }
+      get maxActiveSubscriptions(): number { return this.data.maxActiveSubscriptions ?? -1; }
 
       getDisplayName(lang: string): string {
             return lang === "ar" ? this.displayNameAr : this.displayNameEn;

@@ -61,6 +61,11 @@ export const en = {
       emailSentDesc: "Invoice email sent to the tenant admin.",
       emailError: "Email Failed",
       emailErrorDesc: "Failed to send invoice email.",
+      exportAllPdf: "Export All PDFs",
+      bulkDownloading: "Downloading All Invoices...",
+      bulkDownloadSuccess: "All Invoices Downloaded",
+      bulkDownloadPartial: "Partial Download",
+      invoicesDownloaded: "invoices saved to downloads.",
     },
     dialogs: {
       checkoutTitle: "Payment Link Generated",

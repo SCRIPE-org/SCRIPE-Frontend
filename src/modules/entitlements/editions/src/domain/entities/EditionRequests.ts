@@ -17,6 +17,7 @@ export interface CreateEditionRequest {
       trialIsFree?: boolean;
       trialDiscountPercent?: number;
       gracePeriodDays?: number;
+      maxActiveSubscriptions?: number;
 }
 
 export interface UpdateEditionRequest {
@@ -36,6 +37,7 @@ export interface UpdateEditionRequest {
       trialIsFree?: boolean;
       trialDiscountPercent?: number;
       gracePeriodDays?: number;
+      maxActiveSubscriptions?: number;
 }
 
 export interface SetEditionFeatureRequest {

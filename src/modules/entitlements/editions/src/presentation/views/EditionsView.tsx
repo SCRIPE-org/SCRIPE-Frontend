@@ -6,13 +6,14 @@
 "use client";
 
 import { useMemo } from "react";
+import { useRouter } from "next/navigation";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
 import type { CrudConfig, CrudAction } from "@core/crud/components/generic-crud-view";
 import { useEditionsViewModel } from "../viewmodels/useEditionsViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { Edition } from "../../domain/entities/Edition";
 import { Badge } from "@core/ui/badge";
-import { Pencil, Trash2, Eye, Settings2 } from "lucide-react";
+import { Pencil, Trash2, Eye, Settings2, Columns } from "lucide-react";
 import { format } from "date-fns";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 
@@ -20,12 +21,23 @@ export function EditionsView() {
   useModuleLocales(() => import("../../../locales"), "editions");
       const { t, language } = useI18n();
       const vm = useEditionsViewModel();
+      const router = useRouter();
 
       const config: CrudConfig<Edition> = useMemo(
             () => ({
                   titleKey: "entitlements.editions.title",
                   subtitleKey: "entitlements.editions.description",
                   resource: "editions",
+                  customActions: [
+                        {
+                              label: t("entitlements.editions.comparison") || "Compare Editions",
+                              onClick: async () => {
+                                    router.push("/entitlements/editions/compare");
+                              },
+                              variant: "outline" as const,
+                              icon: <Columns className="h-4 w-4" />,
+                        },
+                  ],
                   columns: [
                         {
                               key: "name",

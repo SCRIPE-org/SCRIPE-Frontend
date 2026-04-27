@@ -15,8 +15,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@core/ui/dropdown-menu";
-import { MoreHorizontal, Download, Mail, Loader2 } from "lucide-react";
+import { MoreHorizontal, Download, Mail, Loader2, FileDown } from "lucide-react";
 import type { InvoiceListItem } from "../../domain/entities/Invoice";
+import { CurrencyDisplayToggle } from "@core/ui/currency-display-toggle";
 import { format } from "date-fns";
 
 const STATUS_VARIANTS: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
@@ -49,6 +50,21 @@ export function InvoiceListView() {
       resource: "invoices",
       hideAddButton: true,
       searchable: false,
+      customActions: [
+        {
+          label: t("billing.actions.exportAllPdf") || "Export All PDFs",
+          onClick: vm.handleBulkDownloadPdf,
+          variant: "outline" as const,
+          icon: <FileDown className="h-4 w-4" />,
+          loading: vm.loadingAction["bulk-pdf"] ?? false,
+          disabled: !vm.items || vm.items.length === 0,
+        },
+      ],
+      customHeaderContent: (
+        <div className="flex justify-end -mt-2 mb-2">
+          <CurrencyDisplayToggle />
+        </div>
+      ),
       columns: [
         {
           key: "invoiceNumber",
