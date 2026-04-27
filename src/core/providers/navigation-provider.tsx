@@ -1,10 +1,10 @@
 "use client";
 
-import type React from "react";
-import { createContext, useContext, useState, useEffect, useCallback, useMemo } from "react";
+import { createContext, useContext, useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { useAppStore } from "@core/store/useAppStore";
 import { useServices } from "@core/providers/service-provider";
+import { useTenantContext } from "@core/providers/tenant-context-provider";
 import { NavigationData, MenuItemActions } from "@core/domain/entities";
 import { NavigationMapper } from "@core/domain/mappers/NavigationMapper";
 import { appLogger } from "@core/common/logger";
@@ -220,6 +220,38 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
     refreshNavigation,
     isDocsRoute,
   ]);
+
+  // ========================================
+  // TENANT CONTEXT CHANGE → NAVIGATION REFETCH
+  // ========================================
+  // When the admin enters or exits a tenant's world, the backend returns
+  // different menu items (RequiresPlatformContext / RequiresTenantContext).
+  // We must clear the stale in-memory navigation and refetch immediately.
+  const { currentTenant } = useTenantContext();
+  const tenantIdRef = useRef(currentTenant?.id ?? null);
+
+  useEffect(() => {
+    const newTenantId = currentTenant?.id ?? null;
+    const prevTenantId = tenantIdRef.current;
+
+    // Only act when the value actually changes (not on initial mount)
+    if (newTenantId !== prevTenantId) {
+      tenantIdRef.current = newTenantId;
+      appLogger.debug(
+        `Tenant context changed: ${prevTenantId ?? "platform"} → ${newTenantId ?? "platform"}, refreshing navigation...`
+      );
+
+      // Clear stale in-memory state so the auto-refresh effect can trigger
+      setNavigationData(null);
+      clearCache();
+      setHasTriggeredRefresh(false);
+
+      // If not doing a full page reload (exitTenantWorld), force refetch now
+      if (isAuthenticated && !isDocsRoute && !mustChangePassword) {
+        refreshNavigation(false, true);
+      }
+    }
+  }, [currentTenant, isAuthenticated, isDocsRoute, mustChangePassword, refreshNavigation, clearCache]);
 
   // ========================================
   // PERIODIC REFRESH CHECK (every 5 minutes)

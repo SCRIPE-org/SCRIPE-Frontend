@@ -21,6 +21,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useServices } from "@core/providers/service-provider";
 import { usePermissions } from "@core/providers/permission-provider";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
+import { STORAGE_KEYS } from "@core/config/storage-keys";
 import { appLogger } from "../common/logger";
 
 /**
@@ -120,8 +121,14 @@ export function TenantContextProvider({ children }: TenantContextProviderProps) 
       // Sync with API Service
       apiService.setTenantContext(tenant.id);
 
-      // CRITICAL: Invalidate ALL cached queries so they refetch with the new X-Tenant-Context header.
-      // Without this, TanStack Query serves stale data from the previous tenant scope.
+      // CRITICAL: Clear the navigation localStorage cache so that after the
+      // full-page redirect below, NavigationProvider mounts fresh and fetches
+      // from the backend with the new X-Tenant-Context header.
+      // Without this, the sidebar keeps showing platform-only items.
+      localStorage.removeItem(STORAGE_KEYS.NAVIGATION_CACHE);
+      localStorage.removeItem(STORAGE_KEYS.NAVIGATION_CACHE_EXPIRY);
+
+      // Invalidate ALL TanStack Query cache so data refetches with new context.
       queryClient.invalidateQueries();
 
       setBreadcrumbs((prev) => {
@@ -147,7 +154,12 @@ export function TenantContextProvider({ children }: TenantContextProviderProps) 
     apiService.setTenantContext(null);
     setBreadcrumbs([]);
 
-    // CRITICAL: Invalidate ALL cached queries so they refetch without X-Tenant-Context.
+    // CRITICAL: Clear the navigation cache so NavigationProvider
+    // auto-refreshes and fetches the platform-level menu (no tenant context).
+    localStorage.removeItem(STORAGE_KEYS.NAVIGATION_CACHE);
+    localStorage.removeItem(STORAGE_KEYS.NAVIGATION_CACHE_EXPIRY);
+
+    // Invalidate ALL TanStack Query cache so data refetches without context.
     queryClient.invalidateQueries();
   }, [apiService, queryClient]);
 
