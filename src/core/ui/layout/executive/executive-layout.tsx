@@ -57,10 +57,12 @@ export function ExecutiveLayout({ children }: ExecutiveLayoutProps) {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  // Close dropdown on route change
-  useEffect(() => {
-    setOpenDropdown(null);
-  }, [pathname]);
+  // Close dropdown on route change (ref-based, no setState in effect)
+  const prevPathnameRef = useRef(pathname);
+  if (prevPathnameRef.current !== pathname) {
+    prevPathnameRef.current = pathname;
+    if (openDropdown) setOpenDropdown(null);
+  }
 
   // Track active group
   const activeGroup = useMemo(() => {
@@ -92,7 +94,7 @@ export function ExecutiveLayout({ children }: ExecutiveLayoutProps) {
       }
     }
     return segments;
-  }, [activeGroup, pathname, t]);
+  }, [activeGroup, pathname, t, navigation]);
 
   // Count total badges for a group
   const getGroupBadgeCount = (item: NavigationItem): string | number | undefined => {

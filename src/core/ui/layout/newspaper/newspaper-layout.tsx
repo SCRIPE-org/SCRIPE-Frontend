@@ -57,10 +57,12 @@ export function NewspaperLayout({ children }: NewspaperLayoutProps) {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  // Close on route change
-  useEffect(() => {
-    setOpenDropdown(null);
-  }, [pathname]);
+  // Close on route change (ref-based, no setState in effect)
+  const prevPathnameRef = useRef(pathname);
+  if (prevPathnameRef.current !== pathname) {
+    prevPathnameRef.current = pathname;
+    if (openDropdown) setOpenDropdown(null);
+  }
 
   // Active tab
   const activeTab = useMemo(() => {

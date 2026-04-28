@@ -1,7 +1,6 @@
 "use client";
 
-import type React from "react";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSettings } from "@core/providers/settings-provider";
@@ -78,11 +77,14 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   const { direction } = useI18n();
   const { layoutTemplate, collapsibleSidebar } = settings;
 
-  useEffect(() => {
-    if (!collapsibleSidebar) {
+  // Sync sidebar when collapsibleSidebar setting changes
+  const prevCollapsible = React.useRef(collapsibleSidebar);
+  if (prevCollapsible.current !== collapsibleSidebar) {
+    prevCollapsible.current = collapsibleSidebar;
+    if (!collapsibleSidebar && !sidebarOpen) {
       setSidebarOpen(true);
     }
-  }, [collapsibleSidebar]);
+  }
 
   // Close sidebar when clicking outside on mobile if collapsible
   useEffect(() => {

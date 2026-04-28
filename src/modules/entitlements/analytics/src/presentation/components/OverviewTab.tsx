@@ -1,10 +1,10 @@
 "use client";
 /**
- * OverviewTab — KPI cards with key revenue metrics.
+ * OverviewTab — Premium KPI cards with key revenue metrics and visual indicators.
  */
 import { useI18n } from "@core/providers/i18n-provider";
 import { Card, CardContent } from "@core/ui/card";
-import { TrendingUp, TrendingDown, Minus, DollarSign, Users, RefreshCw, Percent } from "lucide-react";
+import { TrendingUp, TrendingDown, Minus, DollarSign, Users, RefreshCw, Percent, Activity, BarChart3 } from "lucide-react";
 import type { AnalyticsOverview } from "../../domain/entities/AnalyticsEntities";
 
 interface OverviewTabProps {
@@ -12,11 +12,13 @@ interface OverviewTabProps {
 }
 
 function formatCurrency(value: number, currency = "USD"): string {
+  if (Math.abs(value) >= 1_000_000) {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency", currency, notation: "compact", maximumFractionDigits: 1,
+    }).format(value);
+  }
   return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency,
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
+    style: "currency", currency, minimumFractionDigits: 0, maximumFractionDigits: 0,
   }).format(value);
 }
 
@@ -29,11 +31,13 @@ interface KpiCardProps {
   value: string;
   change?: number;
   icon: React.ElementType;
-  color: string;
+  gradient: string;
+  iconBg: string;
   subtitle?: string;
+  large?: boolean;
 }
 
-function KpiCard({ title, value, change, icon: Icon, color, subtitle }: KpiCardProps) {
+function KpiCard({ title, value, change, icon: Icon, gradient, iconBg, subtitle, large }: KpiCardProps) {
   const TrendIcon = change !== undefined
     ? change > 0 ? TrendingUp : change < 0 ? TrendingDown : Minus
     : null;
@@ -42,22 +46,29 @@ function KpiCard({ title, value, change, icon: Icon, color, subtitle }: KpiCardP
     : "";
 
   return (
-    <Card className="relative overflow-hidden group hover:shadow-lg transition-shadow duration-300 border-0 bg-gradient-to-br from-card to-card/80">
-      <div className={`absolute inset-0 bg-gradient-to-br ${color} opacity-5 group-hover:opacity-10 transition-opacity`} />
-      <CardContent className="p-5">
+    <Card className={`relative overflow-hidden group hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 border border-border/30 bg-card/80 backdrop-blur-sm ${large ? "sm:col-span-2" : ""}`}>
+      {/* Gradient accent top border */}
+      <div className={`absolute top-0 inset-x-0 h-0.5 bg-gradient-to-r ${gradient}`} />
+      {/* Hover glow */}
+      <div className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-0 group-hover:opacity-[0.03] transition-opacity duration-300`} />
+      <CardContent className={`relative ${large ? "p-6" : "p-5"}`}>
         <div className="flex items-start justify-between">
-          <div className="space-y-2">
-            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{title}</p>
-            <p className="text-2xl font-bold tracking-tight">{value}</p>
-            {change !== undefined && TrendIcon && (
-              <div className={`flex items-center gap-1 text-xs font-medium ${trendColor}`}>
-                <TrendIcon className="h-3 w-3" />
-                {formatPercent(change)}
-              </div>
-            )}
-            {subtitle && <p className="text-xs text-muted-foreground">{subtitle}</p>}
+          <div className="space-y-2 flex-1">
+            <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">{title}</p>
+            <p className={`${large ? "text-3xl" : "text-2xl"} font-bold tracking-tight`}>{value}</p>
+            <div className="flex items-center gap-2">
+              {change !== undefined && TrendIcon && (
+                <div className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full ${
+                  change > 0 ? "bg-emerald-500/10 text-emerald-600" : change < 0 ? "bg-red-500/10 text-red-600" : "bg-muted text-muted-foreground"
+                }`}>
+                  <TrendIcon className="h-3 w-3" />
+                  {formatPercent(change)}
+                </div>
+              )}
+              {subtitle && <p className="text-xs text-muted-foreground">{subtitle}</p>}
+            </div>
           </div>
-          <div className={`p-2.5 rounded-xl bg-gradient-to-br ${color} text-white shadow-lg`}>
+          <div className={`flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br ${iconBg} text-white shadow-lg shrink-0`}>
             <Icon className="h-5 w-5" />
           </div>
         </div>
@@ -75,50 +86,60 @@ export function OverviewTab({ overview }: OverviewTabProps) {
       value: formatCurrency(overview.totalMrr, overview.currency),
       change: overview.mrrChangePercent,
       icon: DollarSign,
-      color: "from-emerald-500 to-teal-600",
+      gradient: "from-emerald-500 to-teal-600",
+      iconBg: "from-emerald-500 to-teal-600",
+      large: true,
     },
     {
       title: t("entitlements.analytics.kpi.arr"),
       value: formatCurrency(overview.totalArr, overview.currency),
       icon: TrendingUp,
-      color: "from-blue-500 to-indigo-600",
+      gradient: "from-blue-500 to-indigo-600",
+      iconBg: "from-blue-500 to-indigo-600",
+      large: true,
     },
     {
       title: t("entitlements.analytics.kpi.activeSubscriptions"),
       value: overview.activeSubscriptions.toLocaleString(),
-      subtitle: t("entitlements.analytics.kpi.newCount", { count: overview.newSubscriptions }),
+      subtitle: overview.newSubscriptions > 0 ? t("entitlements.analytics.kpi.newCount", { count: String(overview.newSubscriptions) }) : undefined,
       icon: Users,
-      color: "from-violet-500 to-purple-600",
+      gradient: "from-violet-500 to-purple-600",
+      iconBg: "from-violet-500 to-purple-600",
     },
     {
       title: t("entitlements.analytics.kpi.arpu"),
       value: formatCurrency(overview.arpu, overview.currency),
-      icon: DollarSign,
-      color: "from-amber-500 to-orange-600",
+      icon: BarChart3,
+      gradient: "from-amber-500 to-orange-600",
+      iconBg: "from-amber-500 to-orange-600",
     },
     {
       title: t("entitlements.analytics.kpi.nrr"),
       value: `${overview.netRevenueRetention.toFixed(1)}%`,
       icon: RefreshCw,
-      color: overview.netRevenueRetention >= 100 ? "from-emerald-500 to-green-600" : "from-red-500 to-rose-600",
+      gradient: overview.netRevenueRetention >= 100 ? "from-emerald-500 to-green-600" : "from-red-500 to-rose-600",
+      iconBg: overview.netRevenueRetention >= 100 ? "from-emerald-500 to-green-600" : "from-red-500 to-rose-600",
     },
     {
       title: t("entitlements.analytics.kpi.trialConversion"),
       value: `${overview.trialConversionRate.toFixed(1)}%`,
       icon: Percent,
-      color: "from-cyan-500 to-sky-600",
+      gradient: "from-cyan-500 to-sky-600",
+      iconBg: "from-cyan-500 to-sky-600",
     },
     {
       title: t("entitlements.analytics.kpi.churn"),
       value: overview.churnedSubscriptions.toLocaleString(),
       icon: TrendingDown,
-      color: "from-red-500 to-rose-600",
+      gradient: "from-red-500 to-rose-600",
+      iconBg: "from-red-500 to-rose-600",
     },
     {
       title: t("entitlements.analytics.kpi.revenue"),
       value: formatCurrency(overview.totalRevenue, overview.currency),
-      icon: DollarSign,
-      color: "from-fuchsia-500 to-pink-600",
+      icon: Activity,
+      gradient: "from-fuchsia-500 to-pink-600",
+      iconBg: "from-fuchsia-500 to-pink-600",
     },
   ];
 

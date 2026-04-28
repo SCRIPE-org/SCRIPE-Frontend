@@ -6,7 +6,7 @@
  */
 "use client";
 
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useRef, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { systemContainer } from "@modules/identity/di";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -102,36 +102,36 @@ export function useIdentityProviderDetailViewModel(providerId?: string) {
             enabled: !!providerId,
       });
 
-      // Populate form when provider data arrives
-      useEffect(() => {
-            if (provider) {
-                  setForm({
-                        name: provider.name,
-                        slug: provider.slug,
-                        protocol: provider.protocol,
-                        displayOrder: provider.displayOrder,
-                        isActive: provider.isActive,
-                        authority: provider.authority ?? "",
-                        clientId: provider.clientId ?? "",
-                        clientSecret: "", // never pre-fill secret
-                        scopes: provider.scopes ?? "openid profile email",
-                        redirectUri: provider.redirectUri ?? "",
-                        iconUrl: provider.iconUrl ?? "",
-                        buttonColor: provider.buttonColor ?? "#4285F4",
-                        buttonLabel: provider.buttonLabel ?? "",
-                        enabledForAdmins: provider.enabledForAdmins,
-                        enabledForUsers: provider.enabledForUsers,
-                        claimMappingJson: provider.claimMappingJson ?? "{}",
-                        authorizationEndpoint: provider.authorizationEndpoint ?? "",
-                        tokenEndpoint: provider.tokenEndpoint ?? "",
-                        userInformationEndpoint: provider.userInformationEndpoint ?? "",
-                        samlIdpEntityId: provider.samlIdpEntityId ?? "",
-                        samlSsoUrl: provider.samlSsoUrl ?? "",
-                        samlCertificate: provider.samlCertificate ?? "",
-                  });
-                  setIsDirty(false);
-            }
-      }, [provider]);
+      // Populate form when provider data arrives (render-time ref-based)
+      const prevProviderRef = useRef(provider);
+      if (provider && provider !== prevProviderRef.current) {
+            prevProviderRef.current = provider;
+            setForm({
+                  name: provider.name,
+                  slug: provider.slug,
+                  protocol: provider.protocol,
+                  displayOrder: provider.displayOrder,
+                  isActive: provider.isActive,
+                  authority: provider.authority ?? "",
+                  clientId: provider.clientId ?? "",
+                  clientSecret: "", // never pre-fill secret
+                  scopes: provider.scopes ?? "openid profile email",
+                  redirectUri: provider.redirectUri ?? "",
+                  iconUrl: provider.iconUrl ?? "",
+                  buttonColor: provider.buttonColor ?? "#4285F4",
+                  buttonLabel: provider.buttonLabel ?? "",
+                  enabledForAdmins: provider.enabledForAdmins,
+                  enabledForUsers: provider.enabledForUsers,
+                  claimMappingJson: provider.claimMappingJson ?? "{}",
+                  authorizationEndpoint: provider.authorizationEndpoint ?? "",
+                  tokenEndpoint: provider.tokenEndpoint ?? "",
+                  userInformationEndpoint: provider.userInformationEndpoint ?? "",
+                  samlIdpEntityId: provider.samlIdpEntityId ?? "",
+                  samlSsoUrl: provider.samlSsoUrl ?? "",
+                  samlCertificate: provider.samlCertificate ?? "",
+            });
+            setIsDirty(false);
+      }
 
       // ─── Field updater ────────────────────────────
       const updateField = useCallback(

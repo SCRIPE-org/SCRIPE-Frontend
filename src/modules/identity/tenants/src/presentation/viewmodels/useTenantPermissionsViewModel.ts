@@ -103,8 +103,10 @@ export function useTenantPermissionsDialog({
   // Track if we've initialized for this tenant to prevent infinite loops
   const initializedTenantRef = useRef<string | null>(null);
 
-  // Reset when dialog opens with a different tenant
-  useEffect(() => {
+  // Reset when dialog opens with a different tenant (render-time ref-based)
+  const prevOpenTenantRef = useRef({ open, tenantId });
+  if (open !== prevOpenTenantRef.current.open || tenantId !== prevOpenTenantRef.current.tenantId) {
+    prevOpenTenantRef.current = { open, tenantId };
     if (open && tenantId !== initializedTenantRef.current) {
       setSearch("");
       setSelectedCodes(new Set());
@@ -114,7 +116,7 @@ export function useTenantPermissionsDialog({
     if (!open) {
       initializedTenantRef.current = null; // Reset when dialog closes
     }
-  }, [open, tenantId]);
+  }
 
   // Fetch PARENT's available permissions
   const { data: parentPermissions = [], isLoading: loadingParent } = useQuery({
@@ -196,45 +198,38 @@ export function useTenantPermissionsDialog({
     return combined;
   }, [parentPermissions, tenantPermissions]);
 
-  // Initialize selection from tenant's permissions (only once per tenant)
-  useEffect(() => {
-    if (
-      open &&
-      tenantId &&
-      allPermissions.length > 0 &&
-      !loadingTenant &&
-      initializedTenantRef.current !== tenantId
-    ) {
-      // Get valid codes from ALL known permissions (parent + current)
-      const validCodes = new Set(allPermissions.map((p) => p.code));
+  // Initialize selection from tenant's permissions (only once per tenant, render-time ref-based)
+  const isReadyToInit = open && tenantId && allPermissions.length > 0 && !loadingTenant && initializedTenantRef.current !== tenantId;
+  const prevInitCheckRef = useRef(false);
+  if (isReadyToInit && !prevInitCheckRef.current) {
+    prevInitCheckRef.current = true;
+    
+    // Get valid codes from ALL known permissions (parent + current)
+    const validCodes = new Set(allPermissions.map((p) => p.code));
 
-      // Get tenant's current permission codes
-      const tenantCodes = tenantPermissions.map((p) => p.code);
+    // Get tenant's current permission codes
+    const tenantCodes = tenantPermissions.map((p) => p.code);
 
-      // Filter to only valid codes (should be all of them now)
-      const selectedFromTenant = tenantCodes.filter((code) => validCodes.has(code));
+    // Filter to only valid codes (should be all of them now)
+    const selectedFromTenant = tenantCodes.filter((code) => validCodes.has(code));
 
-      appLogger.debug("========== PERMISSION MATCHING ==========");
-      appLogger.debug("All permissions pool:", allPermissions.length);
-      appLogger.debug("Tenant permissions:", tenantPermissions.length);
-      appLogger.debug("Matched:", selectedFromTenant);
-      appLogger.debug("==========================================");
+    setSelectedCodes(new Set(selectedFromTenant));
 
-      setSelectedCodes(new Set(selectedFromTenant));
+    // Auto-expand groups with selected permissions
+    const groupsWithSelection = new Set<string>();
+    allPermissions.forEach((p) => {
+      if (selectedFromTenant.includes(p.code)) {
+        groupsWithSelection.add(p.resource);
+      }
+    });
+    setExpandedGroups(Array.from(groupsWithSelection));
 
-      // Auto-expand groups with selected permissions
-      const groupsWithSelection = new Set<string>();
-      allPermissions.forEach((p) => {
-        if (selectedFromTenant.includes(p.code)) {
-          groupsWithSelection.add(p.resource);
-        }
-      });
-      setExpandedGroups(Array.from(groupsWithSelection));
-
-      // Mark as initialized for this tenant
-      initializedTenantRef.current = tenantId;
-    }
-  }, [open, tenantId, allPermissions, tenantPermissions, loadingTenant]);
+    // Mark as initialized for this tenant
+    initializedTenantRef.current = tenantId;
+  }
+  if (!isReadyToInit) {
+    prevInitCheckRef.current = false;
+  }
 
   // Save mutation
   const saveMutation = useMutation({

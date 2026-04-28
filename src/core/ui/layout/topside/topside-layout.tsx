@@ -68,7 +68,7 @@ export function TopSideLayout({ children }: TopSideLayoutProps) {
       }
     }
     return groups[0] || null;
-  }, [groups, pathname]);
+  }, [groups, pathname, navigation]);
 
   const sidebarItems = useMemo(() => {
     return activeGroup?.children?.filter((c) => c.href) || [];

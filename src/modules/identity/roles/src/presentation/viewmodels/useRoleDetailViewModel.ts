@@ -10,7 +10,7 @@
  */
 "use client";
 
-import { useState, useCallback, useMemo, useEffect } from "react";
+import { useState, useCallback, useMemo, useRef } from "react";
 import { useParams } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { appLogger } from "@core/common/logger";
@@ -99,9 +99,11 @@ export function useRoleDetailViewModel() {
     queryFn: () => roleRepository.getMyTenantAvailablePermissions(),
   });
 
-  // === INITIALIZE ASSIGNMENTS WHEN DATA LOADS ===
-  useEffect(() => {
-    if (rolePermissions && rolePermissions.length > 0) {
+  // === INITIALIZE ASSIGNMENTS WHEN DATA LOADS (render-time ref-based) ===
+  const prevRolePermsRef = useRef(rolePermissions);
+  if (rolePermissions && rolePermissions !== prevRolePermsRef.current) {
+    prevRolePermsRef.current = rolePermissions;
+    if (rolePermissions.length > 0) {
       appLogger.debug("rolePermissions raw:", rolePermissions);
 
       const newAssignments = new Map<string, PermissionAssignmentJson>();
@@ -122,7 +124,7 @@ export function useRoleDetailViewModel() {
       appLogger.debug("Initialized assignments map size:", newAssignments.size);
       setAssignments(newAssignments);
     }
-  }, [rolePermissions]);
+  }
 
   // === MUTATION ===
   const saveMutation = useMutation({

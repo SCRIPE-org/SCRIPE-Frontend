@@ -203,12 +203,13 @@ function GenericTableInner<T extends Record<string, any>>({
 
   // Sync from parent only when the parent's value changes to something
   // different from what we last emitted (i.e. an external/programmatic reset).
-  useEffect(() => {
-    if (searchValue !== undefined && searchValue !== lastEmittedRef.current) {
-      setSearchTerm(searchValue);
-      lastEmittedRef.current = searchValue;
-    }
-  }, [searchValue]);
+  // Render-time detection — no setState in effect.
+  const prevSearchValueRef = useRef(searchValue);
+  if (searchValue !== undefined && searchValue !== prevSearchValueRef.current && searchValue !== lastEmittedRef.current) {
+    setSearchTerm(searchValue);
+    lastEmittedRef.current = searchValue;
+  }
+  prevSearchValueRef.current = searchValue;
 
   // Debounce: notify parent after user stops typing for 500ms
   useEffect(() => {

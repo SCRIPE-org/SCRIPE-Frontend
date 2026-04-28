@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, type ReactNode } from "react";
+import { useState, useCallback, useRef, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronDown } from "lucide-react";
@@ -197,17 +197,19 @@ export function NavRenderer({
 
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
 
-  // Auto-expand on mount or pathname change
-  useEffect(() => {
-    if (disableAutoExpand) return;
+  // Auto-expand on mount or pathname change (ref-based, no setState in effect)
+  const prevPathRef = useRef(pathname);
+  if (!disableAutoExpand && (prevPathRef.current !== pathname || expandedItems.length === 0)) {
+    prevPathRef.current = pathname;
     const autoExpanded = collectAutoExpanded(items, pathname);
     if (autoExpanded.length > 0) {
-      setExpandedItems((prev) => {
-        const merged = new Set([...prev, ...autoExpanded]);
-        return Array.from(merged);
-      });
+      const merged = new Set([...expandedItems, ...autoExpanded]);
+      const mergedArr = Array.from(merged);
+      if (mergedArr.length !== expandedItems.length || !mergedArr.every((v, i) => expandedItems[i] === v)) {
+        setExpandedItems(mergedArr);
+      }
     }
-  }, [pathname, items, disableAutoExpand]);
+  }
 
   const toggleExpanded = useCallback((name: string) => {
     setExpandedItems((prev) =>

@@ -6,7 +6,7 @@
  */
 "use client";
 
-import { useState, useCallback, useMemo, useEffect } from "react";
+import { useState, useCallback, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { entitlementsContainer } from "@modules/entitlements/di";
@@ -55,22 +55,22 @@ export function useFeatureDefinitionFormViewModel(featureId?: string) {
     isActive: true,
   });
 
-  // Hydrate form when the entity arrives from the API
-  useEffect(() => {
-    if (isEditMode && existingFeature) {
-      setForm({
-        key: existingFeature.key ?? "",
-        displayNameEn: existingFeature.displayNameEn ?? "",
-        displayNameAr: existingFeature.displayNameAr ?? "",
-        valueType: existingFeature.valueType ?? "",
-        defaultValue: existingFeature.defaultValue ?? "",
-        category: existingFeature.category ?? "",
-        description: existingFeature.description ?? "",
-        sortOrder: existingFeature.sortOrder ?? 0,
-        isActive: existingFeature.isActive ?? true,
-      });
-    }
-  }, [isEditMode, existingFeature]);
+  // Hydrate form when the entity arrives from the API (render-time ref-based)
+  const prevFeatureRef = useRef(existingFeature);
+  if (isEditMode && existingFeature && existingFeature !== prevFeatureRef.current) {
+    prevFeatureRef.current = existingFeature;
+    setForm({
+      key: existingFeature.key ?? "",
+      displayNameEn: existingFeature.displayNameEn ?? "",
+      displayNameAr: existingFeature.displayNameAr ?? "",
+      valueType: existingFeature.valueType ?? "",
+      defaultValue: existingFeature.defaultValue ?? "",
+      category: existingFeature.category ?? "",
+      description: existingFeature.description ?? "",
+      sortOrder: existingFeature.sortOrder ?? 0,
+      isActive: existingFeature.isActive ?? true,
+    });
+  }
 
   const updateField = useCallback(<K extends keyof typeof form>(key: K, value: typeof form[K]) => {
     setForm((prev) => ({ ...prev, [key]: value }));

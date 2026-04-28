@@ -8,7 +8,7 @@
  */
 "use client";
 
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useRef } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { SUPPORTED_CURRENCIES } from "@core/constants/currencies";
 import { GenericModal } from "@core/crud/components/generic-modal";
@@ -114,13 +114,13 @@ export function CreateTenantDialog({
   const [selectedEditionId, setSelectedEditionId] = useState(form.editionId);
   const [selectedPromotionId, setSelectedPromotionId] = useState("");
 
-  // Reset local state when dialog opens
-  useEffect(() => {
-    if (open) {
-      setSelectedEditionId(form.editionId);
-      setSelectedPromotionId("");
-    }
-  }, [open]);
+  // Reset local state when dialog opens (render-time)
+  const prevOpenRef = useRef(open);
+  if (open && !prevOpenRef.current) {
+    setSelectedEditionId(form.editionId);
+    setSelectedPromotionId("");
+  }
+  prevOpenRef.current = open;
 
   // Determine if selected promotion requires a code
   const selectedPromo = useMemo(() => {

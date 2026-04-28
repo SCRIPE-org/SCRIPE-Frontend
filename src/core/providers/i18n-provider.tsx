@@ -54,7 +54,14 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
   });
   const loadedModulesRef = useRef<Set<string>>(new Set());
 
-  const [language, setLanguage] = useState<Language>("ar");
+  const [language, setLanguage] = useState<Language>(() => {
+    if (typeof window === "undefined") return "ar";
+    const saved = localStorage.getItem(STORAGE_KEYS.LANGUAGE) as Language;
+    if (saved === "en" || saved === "ar") return saved;
+    const tenantPref = localStorage.getItem(STORAGE_KEYS.PREF_LANG) as Language;
+    if (tenantPref === "en" || tenantPref === "ar") return tenantPref;
+    return "en";
+  });
   const [, forceUpdate] = useState(0);
   const { setSidebarPosition } = useSettings();
 
@@ -129,22 +136,19 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  // ─── HYDRATION: Read saved language ───────────────────────
+  // ─── HYDRATION: Apply saved language's DOM side-effects on mount ──
   useEffect(() => {
-    const savedLanguage = localStorage.getItem(STORAGE_KEYS.LANGUAGE) as Language;
-    if (savedLanguage && (savedLanguage === "en" || savedLanguage === "ar")) {
-      handleSetLanguage(savedLanguage);
+    document.documentElement.setAttribute("dir", language === "ar" ? "rtl" : "ltr");
+    document.documentElement.setAttribute("lang", language);
+    if (language === "ar") {
+      document.body.classList.add("font-arabic");
+      document.body.classList.remove("font-english");
     } else {
-      // Fallback: check tenant admin pref (set by admin in customization settings)
-      const tenantPrefLang = localStorage.getItem(STORAGE_KEYS.PREF_LANG) as Language;
-      if (tenantPrefLang && (tenantPrefLang === "en" || tenantPrefLang === "ar")) {
-        handleSetLanguage(tenantPrefLang);
-      } else {
-        // Platform default
-        handleSetLanguage("en");
-      }
+      document.body.classList.add("font-english");
+      document.body.classList.remove("font-arabic");
     }
-  }, [handleSetLanguage]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // ─── STABLE CONTEXT VALUE ─────────────────────────────────
   const contextValue = useMemo<I18nContextType>(

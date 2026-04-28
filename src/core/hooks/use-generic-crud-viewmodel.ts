@@ -146,16 +146,19 @@ export function useGenericCrudViewModel<
     staleTime: config.staleTime ?? 30 * 1000, // 30 seconds default
   });
 
-  // Update pagination from query response
-  useEffect(() => {
-    if (queryData?.pagination) {
+  // Update pagination from query response (render-time, no setState in effect)
+  const prevPaginationRef = useRef<{ itemsCount: number; pagesCount: number } | null>(null);
+  if (queryData?.pagination) {
+    const qp = queryData.pagination;
+    if (!prevPaginationRef.current || prevPaginationRef.current.itemsCount !== qp.itemsCount || prevPaginationRef.current.pagesCount !== qp.pagesCount) {
+      prevPaginationRef.current = { itemsCount: qp.itemsCount, pagesCount: qp.pagesCount };
       setPagination((prev) => ({
-        ...queryData.pagination,
+        ...qp,
         page: prev.page,
         pageSize: prev.pageSize,
       }));
     }
-  }, [queryData?.pagination]);
+  }
 
   // ==========================================
   // TanStack Mutations

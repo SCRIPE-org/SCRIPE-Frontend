@@ -124,10 +124,10 @@ export function FeaturesTab({
               "No features defined yet. Create features in the Feature Catalog first."}
           </p>
           <Button variant="outline" size="sm" className="mt-3" asChild>
-            <a href="/entitlements/tenant-feature-definitions">
+            <Link href="/entitlements/tenant-feature-definitions">
               <Plus className="h-4 w-4 me-1" />
               {t("entitlements.featureDefinitions.goToCatalog") || "Go to Feature Catalog"}
-            </a>
+            </Link>
           </Button>
         </CardContent>
       </Card>

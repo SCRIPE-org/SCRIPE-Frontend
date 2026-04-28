@@ -53,10 +53,10 @@ export function DocsHeader({ onSearchOpen, onMobileMenuOpen }: DocsHeaderProps) 
       </button>
 
       {/* Logo */}
-      <a href="/docs" className="docs-header-logo">
+      <Link href="/docs" className="docs-header-logo">
         <img src="/app-logo.png" alt={BRAND.namePascal} className="docs-header-logo-img" />
         <span>{BRAND.nameUpper}</span>
-      </a>
+      </Link>
 
       {/* Search Trigger */}
       <button className="docs-search-trigger" onClick={onSearchOpen}>

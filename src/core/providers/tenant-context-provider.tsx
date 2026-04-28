@@ -79,8 +79,18 @@ export function TenantContextProvider({ children }: TenantContextProviderProps) 
   const { apiService } = useServices();
   const queryClient = useQueryClient();
 
-  // Context state
-  const [currentTenant, setCurrentTenant] = useState<TenantInfo | null>(null);
+  // Context state — hydrate from sessionStorage on first render
+  const [currentTenant, setCurrentTenant] = useState<TenantInfo | null>(() => {
+    if (typeof window === "undefined") return null;
+    try {
+      const saved = sessionStorage.getItem("tenant_context");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed?.id && parsed?.name) return parsed;
+      }
+    } catch { /* ignore */ }
+    return null;
+  });
   const [breadcrumbs, setBreadcrumbs] = useState<TenantBreadcrumb[]>([]);
 
   // Can enter tenant world if has drill_down permission
@@ -92,22 +102,13 @@ export function TenantContextProvider({ children }: TenantContextProviderProps) 
 
   const isInTenantWorld = currentTenant !== null;
 
-  // Load from session storage on mount
+  // Sync tenant context with API service on mount
   useEffect(() => {
-    const saved = sessionStorage.getItem("tenant_context");
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        if (parsed?.id && parsed?.name) {
-          setCurrentTenant(parsed);
-          // Sync with API Service
-          apiService.setTenantContext(parsed.id);
-        }
-      } catch (e) {
-        sessionStorage.removeItem("tenant_context");
-      }
+    if (currentTenant?.id) {
+      apiService.setTenantContext(currentTenant.id);
     }
-  }, [apiService]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const enterTenantWorld = useCallback(
     (tenant: TenantInfo) => {

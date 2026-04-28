@@ -7,7 +7,7 @@
  */
 "use client";
 
-import { useEffect, useState } from "react";
+import { useRef, useState } from "react";
 import { Button } from "@core/ui/button";
 import { Label } from "@core/ui/label";
 import { Switch } from "@core/ui/switch";
@@ -42,10 +42,12 @@ export function AssignRoleDialog({
   // Use the new ViewModel to handle all logic
   const vm = useAdminRolesViewModel(admin, onAssign, async () => {}, tenantId);
 
-  // Reset form when opening
-  useEffect(() => {
-    if (open) vm.resetAssignForm();
-  }, [open]); // eslint-disable-line react-hooks/exhaustive-deps
+  // Reset form when opening (render-time, no setState in effect)
+  const prevAssignOpenRef = useRef(open);
+  if (open && !prevAssignOpenRef.current) {
+    vm.resetAssignForm();
+  }
+  prevAssignOpenRef.current = open;
 
   const handleSave = async () => {
     await vm.handleAssignSubmit();
@@ -262,12 +264,13 @@ export function ResetPasswordDialog({
   const [password, setPassword] = useState("");
   const [useDefault, setUseDefault] = useState(true);
 
-  useEffect(() => {
-    if (open) {
-      setPassword("");
-      setUseDefault(true);
-    }
-  }, [open]);
+  // Reset form when opening (render-time, no setState in effect)
+  const prevResetOpenRef = useRef(open);
+  if (open && !prevResetOpenRef.current) {
+    setPassword("");
+    setUseDefault(true);
+  }
+  prevResetOpenRef.current = open;
 
   const handleSubmit = async () => {
     const newPassword = useDefault ? defaultPassword : password;

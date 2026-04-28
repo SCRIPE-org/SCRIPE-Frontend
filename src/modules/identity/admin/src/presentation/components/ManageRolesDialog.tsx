@@ -7,7 +7,7 @@
  */
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useRef, useState, useMemo } from "react";
 import { Button } from "@core/ui/button";
 import { Label } from "@core/ui/label";
 import { Switch } from "@core/ui/switch";
@@ -84,35 +84,32 @@ export function ManageRolesDialog({ open, onOpenChange, admin, tenantId }: Manag
     [rolesData, language, scopeTenantId]
   );
 
-  // Logic: Map Current Roles to Available Options using ROLE CODE
-  // This fixes the validation/duplication bug caused by randomized ID encryption
-  useEffect(() => {
+  // Logic: Map Current Roles to Available Options using ROLE CODE (render-time)
+  // Track previous data refs to detect when fresh data arrives
+  const prevManageDataRef = useRef<{ open: boolean; rolesLen: number; currentLen: number }>({
+    open: false, rolesLen: 0, currentLen: 0
+  });
+  const rolesLen = rolesData?.items?.length ?? 0;
+  const currentLen = currentRoles?.length ?? -1;
+  const dataChanged = open !== prevManageDataRef.current.open
+    || rolesLen !== prevManageDataRef.current.rolesLen
+    || currentLen !== prevManageDataRef.current.currentLen;
+  if (dataChanged) {
+    prevManageDataRef.current = { open, rolesLen, currentLen };
     if (open && currentRoles && rolesData?.items) {
-      // 1. Filter current roles to only those in current scope
       const scopedCurrentRoles = currentRoles.filter((r) => (r.tenantId || "") === scopeTenantId);
-
-      // 2. Find matching Available Role ID by comparing CODES
       const matchedIds: string[] = [];
       scopedCurrentRoles.forEach((cr) => {
         const match = rolesData.items.find((ar) => ar.code === cr.roleCode);
-        if (match) {
-          matchedIds.push(match.id);
-        }
+        if (match) matchedIds.push(match.id);
       });
-
       setSelectedRoleIds(matchedIds);
       setInheritToChildren(scopedCurrentRoles.some((r) => r.inheritToChildren));
-    } else if (open) {
-      // Reset if no data yet (or empty)
-      // But wait for data to load to avoid clearing briefly?
-      // No, React Query handles loading state.
-      // Also reset for a fresh open
-      if (!currentRoles && !rolesData) {
-        setSelectedRoleIds([]);
-        setInheritToChildren(false);
-      }
+    } else if (open && !currentRoles && !rolesData) {
+      setSelectedRoleIds([]);
+      setInheritToChildren(false);
     }
-  }, [open, currentRoles, rolesData, scopeTenantId]);
+  }
 
   // Sync roles mutation
   const syncMutation = useMutation({

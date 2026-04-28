@@ -68,7 +68,7 @@ export function RibbonLayout({ children }: RibbonLayoutProps) {
       }
     }
     return ribbonTabs[0]?.name || null;
-  }, [ribbonTabs, pathname]);
+  }, [ribbonTabs, pathname, navigation]);
 
   const activeTabItems = useMemo(() => {
     const tab = ribbonTabs.find((t) => t.name === activeTab);

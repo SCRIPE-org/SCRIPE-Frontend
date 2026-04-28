@@ -51,14 +51,21 @@ export function VaultLayout({ children }: VaultLayoutProps) {
   const [menuSearch, setMenuSearch] = useState("");
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  // Focus search when mega menu opens
+  // Focus search when mega menu opens + clear on close
+  // Track mega menu open/close transitions (render-time, no setState in effect)
+  const prevMegaMenuOpen = useRef(megaMenuOpen);
+  if (!megaMenuOpen && prevMegaMenuOpen.current) {
+    setMenuSearch("");
+  }
+  const justOpened = megaMenuOpen && !prevMegaMenuOpen.current;
+  prevMegaMenuOpen.current = megaMenuOpen;
+
+  // Focus search input when mega menu opens (DOM side effect)
   useEffect(() => {
-    if (megaMenuOpen) {
+    if (justOpened) {
       setTimeout(() => searchInputRef.current?.focus(), 100);
-    } else {
-      setMenuSearch("");
     }
-  }, [megaMenuOpen]);
+  }, [justOpened]);
 
   // Close on Escape
   useEffect(() => {

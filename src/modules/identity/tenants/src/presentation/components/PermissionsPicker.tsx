@@ -279,7 +279,7 @@ export function PermissionsPicker({
                   <div className="flex items-center gap-2 rounded-md px-2 py-1.5 transition-colors hover:bg-muted/50">
                     <Checkbox
                       checked={isSelected}
-                      // @ts-ignore - indeterminate is valid
+                      // @ts-expect-error - indeterminate is valid but not typed
                       indeterminate={isPartial}
                       onCheckedChange={(checked) => toggleCategory_(category, !!checked)}
                       className="shrink-0"

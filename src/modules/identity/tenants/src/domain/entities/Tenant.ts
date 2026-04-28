@@ -156,7 +156,7 @@ export class Tenant {
 /**
  * Tenant tree node for hierarchical display
  */
-export interface TenantTreeNode extends TenantTreeNodeProps { }
+export type TenantTreeNode = TenantTreeNodeProps;
 
 // Keep backward compatibility alias
 export type TenantData = TenantProps;

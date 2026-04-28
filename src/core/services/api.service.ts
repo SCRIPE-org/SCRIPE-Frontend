@@ -478,6 +478,20 @@ export class ApiService implements IApiService {
     }
   }
 
+  async postBlob(endpoint: string, data?: unknown, signal?: AbortSignal): Promise<Blob> {
+    try {
+      const config: AxiosRequestConfig = { responseType: "blob" };
+      if (signal) config.signal = signal;
+      const response = await this.axiosInstance.post(endpoint, data, config);
+      return response.data as Blob;
+    } catch (error) {
+      if (isExternalAbort(error)) {
+        throw new DownloadInterceptedError();
+      }
+      throw error;
+    }
+  }
+
   async post<T>(endpoint: string, data?: unknown, signal?: AbortSignal): Promise<T> {
     const response = await this.axiosInstance.post(endpoint, data, this.buildConfig(signal));
     return this.unwrap<T>(response.data);

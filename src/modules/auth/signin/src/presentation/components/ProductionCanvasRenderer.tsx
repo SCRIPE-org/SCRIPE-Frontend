@@ -319,7 +319,7 @@ function ProductionComponent({
     case "testimonial":
       return (
         <blockquote className="space-y-2 text-[var(--login-text,hsl(var(--foreground)))]">
-          <p className="text-sm italic opacity-80">"{(props.quote as string) || ""}"</p>
+          <p className="text-sm italic opacity-80">&ldquo;{(props.quote as string) || ""}&rdquo;</p>
           {(props.author as string) && (
             <footer className="text-xs font-medium">
               — {props.author as string}

@@ -6,7 +6,7 @@
  */
 "use client";
 
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useRef, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { systemContainer } from "@modules/identity/di";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -98,30 +98,30 @@ export function useOAuthAppDetailViewModel(appId?: string) {
             enabled: !!appId,
       });
 
-      // Populate form when app data arrives
-      useEffect(() => {
-            if (app) {
-                  setForm({
-                        displayName: app.displayName,
-                        description: app.description ?? "",
-                        clientType: app.clientType,
-                        isActive: app.isActive,
-                        redirectUris: app.redirectUris.length > 0 ? app.redirectUris : [""],
-                        postLogoutRedirectUris: app.postLogoutRedirectUris,
-                        allowedScopes: app.allowedScopes,
-                        allowedGrantTypes: app.allowedGrantTypes,
-                        requirePkce: app.requirePkce,
-                        requireConsent: app.requireConsent,
-                        accessTokenLifetimeMinutes: app.accessTokenLifetimeMinutes,
-                        refreshTokenLifetimeDays: app.refreshTokenLifetimeDays,
-                        logoUri: app.logoUri ?? "",
-                        samlAcsUrl: app.samlAcsUrl ?? "",
-                        samlSpEntityId: app.samlSpEntityId ?? "",
-                        samlSpCertificate: app.samlSpCertificate ?? "",
-                  });
-                  setIsDirty(false);
-            }
-      }, [app]);
+      // Populate form when app data arrives (render-time ref-based)
+      const prevAppRef = useRef(app);
+      if (app && app !== prevAppRef.current) {
+            prevAppRef.current = app;
+            setForm({
+                  displayName: app.displayName,
+                  description: app.description ?? "",
+                  clientType: app.clientType,
+                  isActive: app.isActive,
+                  redirectUris: app.redirectUris.length > 0 ? app.redirectUris : [""],
+                  postLogoutRedirectUris: app.postLogoutRedirectUris,
+                  allowedScopes: app.allowedScopes,
+                  allowedGrantTypes: app.allowedGrantTypes,
+                  requirePkce: app.requirePkce,
+                  requireConsent: app.requireConsent,
+                  accessTokenLifetimeMinutes: app.accessTokenLifetimeMinutes,
+                  refreshTokenLifetimeDays: app.refreshTokenLifetimeDays,
+                  logoUri: app.logoUri ?? "",
+                  samlAcsUrl: app.samlAcsUrl ?? "",
+                  samlSpEntityId: app.samlSpEntityId ?? "",
+                  samlSpCertificate: app.samlSpCertificate ?? "",
+            });
+            setIsDirty(false);
+      }
 
       // ─── Field updater ────────────────────────────
       const updateField = useCallback(

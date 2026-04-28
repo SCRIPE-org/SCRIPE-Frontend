@@ -83,11 +83,18 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 
   const displayItems = query.trim() ? filteredItems : flatItems;
 
-  // Reset state when opened
+  // Reset state when opened (render-time, no setState in effect)
+  const prevOpenRef = useRef(open);
+  if (open && !prevOpenRef.current) {
+    // Transitioning from closed to open — reset
+    setQuery("");
+    setSelectedIndex(0);
+  }
+  prevOpenRef.current = open;
+
+  // Focus input when opened
   useEffect(() => {
     if (open) {
-      setQuery("");
-      setSelectedIndex(0);
       setTimeout(() => inputRef.current?.focus(), 50);
     }
   }, [open]);

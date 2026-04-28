@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -72,56 +72,56 @@ export function useTemplateFormViewModel() {
             enabled: mode === "edit" && !!templateId,
       });
 
-      // Populate form when template loads
-      useEffect(() => {
-            if (template) {
-                  // Parse placeholderSchema — may be a JSON string or an array
-                  let parsedSchema: PlaceholderField[] = [];
-                  if (template.placeholderSchema) {
-                        try {
-                              if (typeof template.placeholderSchema === "string") {
-                                    parsedSchema = JSON.parse(template.placeholderSchema);
-                              } else if (Array.isArray(template.placeholderSchema)) {
-                                    parsedSchema = template.placeholderSchema as unknown as PlaceholderField[];
-                              }
-                        } catch {
-                              parsedSchema = [];
+      // Populate form when template loads (render-time ref-based)
+      const prevTemplateRef = useRef(template);
+      if (template && template !== prevTemplateRef.current) {
+            prevTemplateRef.current = template;
+            // Parse placeholderSchema — may be a JSON string or an array
+            let parsedSchema: PlaceholderField[] = [];
+            if (template.placeholderSchema) {
+                  try {
+                        if (typeof template.placeholderSchema === "string") {
+                              parsedSchema = JSON.parse(template.placeholderSchema);
+                        } else if (Array.isArray(template.placeholderSchema)) {
+                              parsedSchema = template.placeholderSchema as unknown as PlaceholderField[];
                         }
+                  } catch {
+                        parsedSchema = [];
                   }
-                  // Ensure every field has a unique id (API data may omit it)
-                  parsedSchema = parsedSchema.map((f, i) => ({
-                        ...f,
-                        id: f.id || `ph-${i}-${Math.random().toString(36).slice(2, 10)}`,
-                  }));
-
-                  // Parse designVariables — may be a JSON string or an object
-                  let parsedDesign: DesignVariables = { ...DEFAULT_DESIGN };
-                  if (template.designVariables) {
-                        try {
-                              if (typeof template.designVariables === "string") {
-                                    parsedDesign = { ...DEFAULT_DESIGN, ...JSON.parse(template.designVariables) };
-                              } else if (typeof template.designVariables === "object") {
-                                    parsedDesign = { ...DEFAULT_DESIGN, ...(template.designVariables as unknown as DesignVariables) };
-                              }
-                        } catch {
-                              parsedDesign = { ...DEFAULT_DESIGN };
-                        }
-                  }
-
-                  setForm({
-                        key: template.key,
-                        channel: template.channel,
-                        language: template.language,
-                        subject: template.subject || "",
-                        body: template.body || "",
-                        description: template.description || "",
-                        isActive: template.isActive,
-                        category: (template.category as TemplateCategory) || "",
-                        placeholderSchema: parsedSchema,
-                        designVariables: parsedDesign,
-                  });
             }
-      }, [template]);
+            // Ensure every field has a unique id (API data may omit it)
+            parsedSchema = parsedSchema.map((f, i) => ({
+                  ...f,
+                  id: f.id || `ph-${i}-${Math.random().toString(36).slice(2, 10)}`,
+            }));
+
+            // Parse designVariables — may be a JSON string or an object
+            let parsedDesign: DesignVariables = { ...DEFAULT_DESIGN };
+            if (template.designVariables) {
+                  try {
+                        if (typeof template.designVariables === "string") {
+                              parsedDesign = { ...DEFAULT_DESIGN, ...JSON.parse(template.designVariables) };
+                        } else if (typeof template.designVariables === "object") {
+                              parsedDesign = { ...DEFAULT_DESIGN, ...(template.designVariables as unknown as DesignVariables) };
+                        }
+                  } catch {
+                        parsedDesign = { ...DEFAULT_DESIGN };
+                  }
+            }
+
+            setForm({
+                  key: template.key,
+                  channel: template.channel,
+                  language: template.language,
+                  subject: template.subject || "",
+                  body: template.body || "",
+                  description: template.description || "",
+                  isActive: template.isActive,
+                  category: (template.category as TemplateCategory) || "",
+                  placeholderSchema: parsedSchema,
+                  designVariables: parsedDesign,
+            });
+      }
 
       // ─── Field updaters ──────────────────────────────────────
       const updateField = useCallback(<K extends keyof TemplateFormValues>(

@@ -19,11 +19,11 @@ const getTranslations = (language: "ar" | "en") => {
 const t = (key: string, language: "ar" | "en"): string => {
   const translations = getTranslations(language);
   const keys = key.split(".");
-  let value: any = translations;
+  let value: Record<string, unknown> | string = translations;
 
   for (const k of keys) {
     if (value && typeof value === "object" && k in value) {
-      value = value[k];
+      value = value[k] as Record<string, unknown> | string;
     } else {
       return key; // Return the key if path not found
     }
@@ -34,13 +34,19 @@ const t = (key: string, language: "ar" | "en"): string => {
 
 export default function GlobalError({
   error,
-  reset,
+  reset: _reset,
 }: {
   error: Error & { digest?: string };
   reset: () => void;
 }) {
   const router = useRouter();
-  const [language, setLanguage] = useState<"ar" | "en">("ar");
+  const [language] = useState<"ar" | "en">(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem(STORAGE_KEYS.LANGUAGE);
+      if (saved === "en" || saved === "ar") return saved;
+    }
+    return "ar";
+  });
 
   useEffect(() => {
     // Use centralized error handling
@@ -48,15 +54,7 @@ export default function GlobalError({
     appLogger.error("Global error:", { error, appError });
   }, [error]);
 
-  useEffect(() => {
-    // Detect language from localStorage
-    if (typeof window !== "undefined") {
-      const savedLanguage = localStorage.getItem(STORAGE_KEYS.LANGUAGE);
-      if (savedLanguage === "en" || savedLanguage === "ar") {
-        setLanguage(savedLanguage);
-      }
-    }
-  }, []);
+
 
   const handleRetry = () => {
     window.location.reload();

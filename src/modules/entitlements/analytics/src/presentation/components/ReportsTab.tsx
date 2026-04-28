@@ -1,9 +1,9 @@
 "use client";
 /**
- * ReportsTab — Manage scheduled report preferences and generate on-demand reports.
+ * ReportsTab — Premium scheduled report preferences + on-demand report generation.
  * Uses domain entity types only (no data-layer imports).
  */
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
 import { Button } from "@core/ui/button";
@@ -43,6 +43,19 @@ export function ReportsTab({
   const [includeForecasting, setIncludeForecasting] = useState(preference?.includeForecasting ?? true);
   const [currency, setCurrency] = useState(preference?.currency ?? "USD");
 
+  // Sync state when preference loads/changes
+  useEffect(() => {
+    if (preference) {
+      setCadence(preference.cadence);
+      setEmail(preference.email);
+      setIncludeTenantBreakdown(preference.includeTenantBreakdown);
+      setIncludeCohortAnalysis(preference.includeCohortAnalysis);
+      setIncludeHealthScores(preference.includeHealthScores);
+      setIncludeForecasting(preference.includeForecasting);
+      setCurrency(preference.currency);
+    }
+  }, [preference]);
+
   const handleSave = async () => {
     await onSave({
       cadence,
@@ -66,10 +79,13 @@ export function ReportsTab({
   return (
     <div className="grid gap-6 md:grid-cols-2">
       {/* Left: Scheduled Report Settings */}
-      <Card className="border-border/50">
+      <Card className="border border-border/30 shadow-sm overflow-hidden">
+        <div className="h-0.5 bg-gradient-to-r from-emerald-500 to-teal-600" />
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-lg">
-            <Settings2 className="h-5 w-5 text-emerald-500" />
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-500/20 to-teal-600/20">
+              <Settings2 className="h-4 w-4 text-emerald-600" />
+            </div>
             {t("entitlements.analytics.reports.scheduleTitle")}
           </CardTitle>
           <CardDescription>
@@ -79,8 +95,8 @@ export function ReportsTab({
         <CardContent className="space-y-5">
           {/* Cadence */}
           <div className="space-y-2">
-            <Label className="flex items-center gap-2">
-              <Clock className="h-4 w-4 text-muted-foreground" />
+            <Label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              <Clock className="h-3.5 w-3.5" />
               {t("entitlements.analytics.reports.cadence")}
             </Label>
             <Select value={cadence} onValueChange={setCadence}>
@@ -98,8 +114,8 @@ export function ReportsTab({
 
           {/* Email */}
           <div className="space-y-2">
-            <Label className="flex items-center gap-2">
-              <Mail className="h-4 w-4 text-muted-foreground" />
+            <Label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              <Mail className="h-3.5 w-3.5" />
               {t("entitlements.analytics.reports.email")}
             </Label>
             <Input
@@ -112,7 +128,9 @@ export function ReportsTab({
 
           {/* Currency */}
           <div className="space-y-2">
-            <Label>{t("entitlements.analytics.reports.currency")}</Label>
+            <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              {t("entitlements.analytics.reports.currency")}
+            </Label>
             <Select value={currency} onValueChange={setCurrency}>
               <SelectTrigger>
                 <SelectValue />
@@ -126,38 +144,23 @@ export function ReportsTab({
             </Select>
           </div>
 
-          {/* Toggles */}
+          {/* Section Toggles */}
           <div className="space-y-3 pt-2">
-            <Label className="text-sm font-medium text-muted-foreground">
+            <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               {t("entitlements.analytics.reports.includedSections")}
             </Label>
-
-            <div className="flex items-center justify-between">
-              <Label htmlFor="tenant-breakdown" className="text-sm">
-                {t("entitlements.analytics.reports.tenantBreakdown")}
-              </Label>
-              <Switch id="tenant-breakdown" checked={includeTenantBreakdown} onCheckedChange={setIncludeTenantBreakdown} />
-            </div>
-
-            <div className="flex items-center justify-between">
-              <Label htmlFor="cohort-analysis" className="text-sm">
-                {t("entitlements.analytics.reports.cohortAnalysis")}
-              </Label>
-              <Switch id="cohort-analysis" checked={includeCohortAnalysis} onCheckedChange={setIncludeCohortAnalysis} />
-            </div>
-
-            <div className="flex items-center justify-between">
-              <Label htmlFor="health-scores" className="text-sm">
-                {t("entitlements.analytics.reports.healthScores")}
-              </Label>
-              <Switch id="health-scores" checked={includeHealthScores} onCheckedChange={setIncludeHealthScores} />
-            </div>
-
-            <div className="flex items-center justify-between">
-              <Label htmlFor="forecasting" className="text-sm">
-                {t("entitlements.analytics.reports.forecasting")}
-              </Label>
-              <Switch id="forecasting" checked={includeForecasting} onCheckedChange={setIncludeForecasting} />
+            <div className="space-y-3 bg-muted/20 rounded-lg p-3 border border-border/20">
+              {[
+                { id: "tenant-breakdown", label: t("entitlements.analytics.reports.tenantBreakdown"), checked: includeTenantBreakdown, onChange: setIncludeTenantBreakdown },
+                { id: "cohort-analysis", label: t("entitlements.analytics.reports.cohortAnalysis"), checked: includeCohortAnalysis, onChange: setIncludeCohortAnalysis },
+                { id: "health-scores", label: t("entitlements.analytics.reports.healthScores"), checked: includeHealthScores, onChange: setIncludeHealthScores },
+                { id: "forecasting", label: t("entitlements.analytics.reports.forecasting"), checked: includeForecasting, onChange: setIncludeForecasting },
+              ].map(({ id, label, checked, onChange }) => (
+                <div key={id} className="flex items-center justify-between">
+                  <Label htmlFor={id} className="text-sm cursor-pointer">{label}</Label>
+                  <Switch id={id} checked={checked} onCheckedChange={onChange} />
+                </div>
+              ))}
             </div>
           </div>
 
@@ -165,7 +168,7 @@ export function ReportsTab({
           <Button
             onClick={handleSave}
             loading={isSaving}
-            className="w-full gap-2 mt-4"
+            className="w-full gap-2 mt-4 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white shadow-lg shadow-emerald-500/20"
           >
             <Save className="h-4 w-4" />
             {t("entitlements.analytics.reports.savePreferences")}
@@ -174,10 +177,13 @@ export function ReportsTab({
       </Card>
 
       {/* Right: On-Demand Report Generation */}
-      <Card className="border-border/50">
+      <Card className="border border-border/30 shadow-sm overflow-hidden">
+        <div className="h-0.5 bg-gradient-to-r from-blue-500 to-indigo-600" />
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-lg">
-            <FileText className="h-5 w-5 text-blue-500" />
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500/20 to-indigo-600/20">
+              <FileText className="h-4 w-4 text-blue-600" />
+            </div>
             {t("entitlements.analytics.reports.generateTitle")}
           </CardTitle>
           <CardDescription>
@@ -185,9 +191,12 @@ export function ReportsTab({
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          <div className="flex flex-col items-center gap-4 py-8">
-            <div className="rounded-full bg-blue-500/10 p-6">
-              <Download className="h-12 w-12 text-blue-500" />
+          <div className="flex flex-col items-center gap-5 py-8">
+            <div className="relative">
+              <div className="absolute inset-0 bg-blue-500/20 rounded-full blur-xl animate-pulse" />
+              <div className="relative rounded-full bg-gradient-to-br from-blue-500/10 to-indigo-500/10 p-6 border border-blue-500/20">
+                <Download className="h-12 w-12 text-blue-500" />
+              </div>
             </div>
             <p className="text-center text-sm text-muted-foreground max-w-xs">
               {t("entitlements.analytics.reports.generateInfo")}
@@ -196,7 +205,7 @@ export function ReportsTab({
               onClick={onGenerateReport}
               loading={isGenerating}
               variant="outline"
-              className="gap-2"
+              className="gap-2 border-blue-500/30 hover:bg-blue-500/5 hover:border-blue-500/50"
               size="lg"
             >
               <Calendar className="h-4 w-4" />
@@ -206,10 +215,10 @@ export function ReportsTab({
 
           {/* Last sent info */}
           {preference?.lastSentAt && (
-            <div className="border-t pt-4 text-center">
+            <div className="border-t border-border/20 pt-4 text-center">
               <p className="text-xs text-muted-foreground">
                 {t("entitlements.analytics.reports.lastSent")}:{" "}
-                <span className="font-medium">
+                <span className="font-semibold">
                   {new Date(preference.lastSentAt).toLocaleDateString(undefined, {
                     year: "numeric",
                     month: "short",

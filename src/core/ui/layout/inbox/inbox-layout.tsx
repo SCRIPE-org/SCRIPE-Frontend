@@ -70,7 +70,7 @@ export function InboxLayout({ children }: InboxLayoutProps) {
       }
     }
     return folders[0] || null;
-  }, [folders, pathname]);
+  }, [folders, pathname, navigation]);
 
   // Items in the active folder
   const folderItems = useMemo(() => {

@@ -7,7 +7,7 @@
  */
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useRef, useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@core/ui/button";
 import { Label } from "@core/ui/label";
@@ -69,18 +69,18 @@ export function SetRestrictionsDialog({
             })).sort((a, b) => a.label.localeCompare(b.label));
       }, [availablePermissions, t]);
 
-      // Pre-fill from current
-      useEffect(() => {
-            if (open) {
-                  setRestrictions(currentRestrictions.map((r) => ({
-                        permissionCode: r.permissionCode,
-                        restrictedFields: [...r.restrictedFields],
-                  })));
-                  setNewPermissionCode("");
-                  setNewField("");
-                  setActiveRestrictionIndex(null);
-            }
-      }, [open, currentRestrictions]);
+      // Pre-fill from current (render-time)
+      const prevOpenRef = useRef(open);
+      if (open && !prevOpenRef.current) {
+            setRestrictions(currentRestrictions.map((r) => ({
+                  permissionCode: r.permissionCode,
+                  restrictedFields: [...r.restrictedFields],
+            })));
+            setNewPermissionCode("");
+            setNewField("");
+            setActiveRestrictionIndex(null);
+      }
+      prevOpenRef.current = open;
 
       const addRestriction = () => {
             const code = newPermissionCode.trim();

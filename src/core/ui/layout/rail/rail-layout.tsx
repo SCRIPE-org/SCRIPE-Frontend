@@ -62,10 +62,12 @@ export function RailLayout({ children }: RailLayoutProps) {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  // Close popover on route change
-  useEffect(() => {
-    setActivePopover(null);
-  }, [pathname]);
+  // Close popover on route change (ref-based, no setState in effect)
+  const prevPathnameRef = useRef(pathname);
+  if (prevPathnameRef.current !== pathname) {
+    prevPathnameRef.current = pathname;
+    if (activePopover) setActivePopover(null);
+  }
 
   const handleRailClick = useCallback(
     (item: NavigationItem) => {

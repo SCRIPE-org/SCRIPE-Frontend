@@ -18,7 +18,6 @@ import { useDynamicNavigation } from "@core/ui/navigation/dynamic-navigation";
 import {
   isNavigationItemActive,
   getFlatNavigationItems,
-  type NavigationItem,
 } from "@core/config/navigation";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { cn } from "@core/common/utils";
@@ -75,10 +74,12 @@ export function CinemaLayout({ children }: CinemaLayoutProps) {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  // Close on route change
-  useEffect(() => {
-    setMoreOpen(false);
-  }, [pathname]);
+  // Close on route change (ref-based, no setState in effect)
+  const prevPathnameRef = useRef(pathname);
+  if (prevPathnameRef.current !== pathname) {
+    prevPathnameRef.current = pathname;
+    if (moreOpen) setMoreOpen(false);
+  }
 
   // Flatten navigation for horizontal nav — ALL items, no cap
   const navItems = useMemo(() => {
@@ -129,7 +130,7 @@ export function CinemaLayout({ children }: CinemaLayoutProps) {
       }
     }
     return t("common.welcome") || "Welcome";
-  }, [flatItems, pathname, t]);
+  }, [flatItems, pathname, t, navigation]);
 
   return (
     <div className={cn("flex min-h-screen flex-col", styles.getAnimationClass())} dir={direction}>

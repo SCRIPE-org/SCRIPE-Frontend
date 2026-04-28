@@ -17,24 +17,42 @@ import type {
   UpdateReportPreferenceRequestModel,
 } from "../models/AnalyticsModels";
 
+/** Convert months count to from/to ISO date strings */
+function monthsToDateRange(months?: number): { from?: string; to?: string } {
+  if (!months) return {};
+  const to = new Date();
+  const from = new Date();
+  from.setMonth(from.getMonth() - months);
+  return {
+    from: from.toISOString().split("T")[0],
+    to: to.toISOString().split("T")[0],
+  };
+}
+
 export class AnalyticsService implements IAnalyticsService {
   constructor(private readonly api: IApiService) {}
 
   async getOverview(months?: number): Promise<AnalyticsOverviewModel> {
+    const range = monthsToDateRange(months);
     return this.api.get<AnalyticsOverviewModel>(
-      buildUrl(API_ENDPOINTS.ENTITLEMENTS.ANALYTICS.OVERVIEW, { months })
+      buildUrl(API_ENDPOINTS.ENTITLEMENTS.ANALYTICS.OVERVIEW, range)
     );
   }
 
   async getMrrMovement(months?: number): Promise<MrrMovementResponseModel> {
+    const range = monthsToDateRange(months);
     return this.api.get<MrrMovementResponseModel>(
-      buildUrl(API_ENDPOINTS.ENTITLEMENTS.ANALYTICS.MRR_MOVEMENT, { months })
+      buildUrl(API_ENDPOINTS.ENTITLEMENTS.ANALYTICS.MRR_MOVEMENT, range)
     );
   }
 
   async getCohortAnalysis(months?: number): Promise<CohortAnalysisResponseModel> {
+    const range = monthsToDateRange(months);
     return this.api.get<CohortAnalysisResponseModel>(
-      buildUrl(API_ENDPOINTS.ENTITLEMENTS.ANALYTICS.COHORT, { months })
+      buildUrl(API_ENDPOINTS.ENTITLEMENTS.ANALYTICS.COHORT, {
+        cohortStart: range.from,
+        cohortEnd: range.to,
+      })
     );
   }
 
@@ -46,7 +64,9 @@ export class AnalyticsService implements IAnalyticsService {
 
   async getForecast(months?: number): Promise<RevenueForecastResponseModel> {
     return this.api.get<RevenueForecastResponseModel>(
-      buildUrl(API_ENDPOINTS.ENTITLEMENTS.ANALYTICS.FORECAST, { months })
+      buildUrl(API_ENDPOINTS.ENTITLEMENTS.ANALYTICS.FORECAST, {
+        forecastMonths: months ?? 6,
+      })
     );
   }
 
@@ -94,10 +114,9 @@ export class AnalyticsService implements IAnalyticsService {
     includeHealth: boolean;
     includeForecast: boolean;
   }): Promise<Blob> {
-    return this.api.post<Blob>(
+    return this.api.postBlob(
       API_ENDPOINTS.ENTITLEMENTS.ANALYTICS.EXPORT,
-      data,
-      { responseType: "blob" } as never
+      data
     );
   }
 
@@ -107,10 +126,9 @@ export class AnalyticsService implements IAnalyticsService {
     tenantId?: string;
     currency: string;
   }): Promise<Blob> {
-    return this.api.post<Blob>(
+    return this.api.postBlob(
       API_ENDPOINTS.ENTITLEMENTS.ANALYTICS.GENERATE_REPORT,
-      data,
-      { responseType: "blob" } as never
+      data
     );
   }
 }

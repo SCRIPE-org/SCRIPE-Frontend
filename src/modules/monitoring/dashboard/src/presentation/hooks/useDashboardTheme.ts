@@ -9,7 +9,7 @@
  */
 "use client";
 
-import { useState, useCallback, useMemo, useEffect } from "react";
+import { useState, useMemo, useCallback, useRef } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -78,12 +78,14 @@ export function useDashboardTheme() {
   const [draft, setDraft] = useState<DashboardThemeConfig>(persistedConfig);
   const [isStudioOpen, setIsStudioOpen] = useState(false);
 
-  // Re-sync when persisted changes (e.g., another admin published)
-  useEffect(() => {
+  // Re-sync when persisted changes (e.g., another admin published, render-time ref-based)
+  const prevPersistedRef = useRef(persistedConfig);
+  if (persistedConfig !== prevPersistedRef.current) {
+    prevPersistedRef.current = persistedConfig;
     if (!isStudioOpen) {
       setDraft(persistedConfig);
     }
-  }, [persistedConfig, isStudioOpen]);
+  }
 
   // ── Active config: studio draft while open, else persisted ──
   const config = isStudioOpen ? draft : persistedConfig;

@@ -274,17 +274,19 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
     };
   }, []);
 
-  // ── Initialize draft from live settings ──
-  useEffect(() => {
-    if (!branding) return;
-
-    try {
-      const newDraft = buildDraftFromBranding(branding, true);
-      setDraft(newDraft);
-      // NOTE: Do NOT setIsDirty here. The draft is already persisted server-side.
-      // Auto-save should only fire when the USER actually makes changes.
-    } catch { /* invalid JSON — use defaults */ }
-  }, [branding, buildDraftFromBranding]);
+  // ── Initialize draft from live settings (render-time ref-based) ──
+  const prevBrandingRef = useRef(branding);
+  if (branding !== prevBrandingRef.current) {
+    prevBrandingRef.current = branding;
+    if (branding) {
+      try {
+        const newDraft = buildDraftFromBranding(branding, true);
+        setDraft(newDraft);
+        // NOTE: Do NOT setIsDirty here. The draft is already persisted server-side.
+        // Auto-save should only fire when the USER actually makes changes.
+      } catch { /* invalid JSON — use defaults */ }
+    }
+  }
 
   // ── Update any draft field ──
   const updateDraft = useCallback(<K extends keyof StudioDraft>(field: K, value: StudioDraft[K]) => {

@@ -20,6 +20,15 @@ export interface IApiService {
   getBlob(endpoint: string, signal?: AbortSignal): Promise<Blob>;
 
   /**
+   * POST request that returns binary data as Blob (authenticated)
+   * Use for file exports/report generation (PDF, XLSX, CSV)
+   * @param endpoint - API endpoint
+   * @param data - Request body
+   * @param signal - AbortSignal for cancellation
+   */
+  postBlob(endpoint: string, data?: unknown, signal?: AbortSignal): Promise<Blob>;
+
+  /**
    * GET request (public - no auth token)
    * Use this for endpoints that don't require authentication
    * @param endpoint - API endpoint

@@ -93,8 +93,9 @@ export function useCustomizationViewModel() {
 
   // ─── Read current DashboardThemeJson from branding (already fetched globally) ──
   // We read from nexora_pref_* keys which are synced by TenantBrandingProvider
-  useEffect(() => {
-    if (prefsInitialized || typeof window === "undefined") return;
+  const hasInitializedPrefs = useRef(false);
+  if (!hasInitializedPrefs.current && typeof window !== "undefined") {
+    hasInitializedPrefs.current = true;
     const theme = localStorage.getItem(STORAGE_KEYS.PREF_THEME);
     const lang = localStorage.getItem(STORAGE_KEYS.PREF_LANG);
     const sidebar = localStorage.getItem(STORAGE_KEYS.PREF_SIDEBAR_COLLAPSED);
@@ -107,7 +108,7 @@ export function useCustomizationViewModel() {
       });
     }
     setPrefsInitialized(true);
-  }, [prefsInitialized]);
+  }
 
   // Update single preference field
   const updatePrefsField = <K extends keyof PrefsForm>(field: K, value: PrefsForm[K]) => {

@@ -122,12 +122,13 @@ export function GenericChart({
     };
   }, [isFilterOpen]);
 
-  // Initialize visible datasets
-  useEffect(() => {
-    if (data.datasets) {
-      setVisibleDatasets(new Array(data.datasets.length).fill(true));
-    }
-  }, [data.datasets]);
+  // Initialize visible datasets (render-time, no setState in effect)
+  const prevDatasetCountRef = useRef(data.datasets?.length ?? 0);
+  const datasetCount = data.datasets?.length ?? 0;
+  if (datasetCount !== prevDatasetCountRef.current) {
+    prevDatasetCountRef.current = datasetCount;
+    setVisibleDatasets(new Array(datasetCount).fill(true));
+  }
 
   // Filter datasets based on visibility
   const filteredData = {

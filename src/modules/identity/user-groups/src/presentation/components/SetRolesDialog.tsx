@@ -7,7 +7,7 @@
  */
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useRef, useState, useMemo } from "react";
 import { Button } from "@core/ui/button";
 import { Label } from "@core/ui/label";
 import { GenericModal } from "@core/crud/components/generic-modal";
@@ -59,8 +59,12 @@ export function SetRolesDialog({
             [rolesData, language]
       );
 
-      // Pre-select current roles by matching code
-      useEffect(() => {
+      // Pre-select current roles by matching code (render-time)
+      const prevRolesDataRef = useRef<{ open: boolean; rolesLen: number }>({ open: false, rolesLen: 0 });
+      const rolesLen = rolesData?.items?.length ?? 0;
+      const dataChanged = open !== prevRolesDataRef.current.open || rolesLen !== prevRolesDataRef.current.rolesLen;
+      if (dataChanged) {
+            prevRolesDataRef.current = { open, rolesLen };
             if (open && currentRoles && rolesData?.items) {
                   const currentCodes = new Set(currentRoles.map((r) => r.code));
                   const matchedIds = rolesData.items
@@ -70,7 +74,7 @@ export function SetRolesDialog({
             } else if (open && !rolesData) {
                   setSelectedRoleIds([]);
             }
-      }, [open, currentRoles, rolesData]);
+      }
 
       const handleSave = () => {
             onSubmit(selectedRoleIds);

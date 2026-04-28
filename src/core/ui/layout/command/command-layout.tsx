@@ -1,8 +1,9 @@
-﻿"use client";
+"use client";
 
 import type React from "react";
 import { useState, useMemo } from "react";
 import { usePathname } from "next/navigation";
+import Link from "next/link";
 import { Command as CommandIcon, ChevronRight, Home } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSettings } from "@core/providers/settings-provider";
@@ -75,18 +76,18 @@ export function CommandLayout({ children }: CommandLayoutProps) {
 
           {/* Breadcrumbs */}
           <nav className="flex min-w-0 items-center gap-1 text-xs text-muted-foreground">
-            <a href="/" className="shrink-0 transition-colors hover:text-foreground">
+            <Link href="/" className="shrink-0 transition-colors hover:text-foreground">
               <Home className="h-3 w-3" />
-            </a>
+            </Link>
             {breadcrumbs.map((crumb, i) => (
               <span key={crumb.href} className="flex min-w-0 items-center gap-1">
                 <ChevronRight className="h-3 w-3 shrink-0 text-muted-foreground/50" />
                 {i === breadcrumbs.length - 1 ? (
                   <span className="truncate font-medium text-foreground">{crumb.label}</span>
                 ) : (
-                  <a href={crumb.href} className="truncate transition-colors hover:text-foreground">
+                  <Link href={crumb.href} className="truncate transition-colors hover:text-foreground">
                     {crumb.label}
-                  </a>
+                  </Link>
                 )}
               </span>
             ))}

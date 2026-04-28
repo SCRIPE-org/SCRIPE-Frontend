@@ -6,7 +6,7 @@
  * Two-column layout with firstName, lastName, phoneNumber (editable)
  * and username (read-only).
  */
-import { useState, useEffect } from "react";
+import { useState, useRef } from "react";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Button } from "@core/ui/button";
@@ -36,12 +36,18 @@ export function ProfileInfoForm({
   const [lastName, setLastName] = useState(profile.lastName);
   const [phoneNumber, setPhoneNumber] = useState(profile.phoneNumber);
 
-  // Reset form when profile data changes (e.g., after successful update)
-  useEffect(() => {
+  // Reset form when profile data changes (render-time ref-based)
+  const prevProfileRef = useRef({ firstName: profile.firstName, lastName: profile.lastName, phoneNumber: profile.phoneNumber });
+  if (
+    profile.firstName !== prevProfileRef.current.firstName ||
+    profile.lastName  !== prevProfileRef.current.lastName  ||
+    profile.phoneNumber !== prevProfileRef.current.phoneNumber
+  ) {
+    prevProfileRef.current = { firstName: profile.firstName, lastName: profile.lastName, phoneNumber: profile.phoneNumber };
     setFirstName(profile.firstName);
     setLastName(profile.lastName);
     setPhoneNumber(profile.phoneNumber);
-  }, [profile.firstName, profile.lastName, profile.phoneNumber]);
+  }
 
   const isDirty =
     firstName !== profile.firstName ||

@@ -5,7 +5,7 @@
  */
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useRef } from "react";
 import { messagingContainer } from "@modules/messaging/di";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -44,17 +44,17 @@ export function useWebhookFormViewModel({
       const [maxRetries, setMaxRetries] = useState(3);
       const [maxConsecutiveFailures, setMaxConsecutiveFailures] = useState(10);
 
-      // Populate form when editing
-      useEffect(() => {
-            if (mode === "edit" && webhook) {
-                  setUrl(webhook.url);
-                  setDescription(webhook.description || "");
-                  setSelectedEvents(webhook.events || []);
-                  setIncludeChildren(webhook.includeChildren);
-                  setMaxRetries(webhook.maxRetries);
-                  setMaxConsecutiveFailures(webhook.maxConsecutiveFailures);
-            }
-      }, [mode, webhook]);
+      // Populate form when editing (render-time ref-based)
+      const prevWebhookRef = useRef(webhook);
+      if (mode === "edit" && webhook && webhook !== prevWebhookRef.current) {
+            prevWebhookRef.current = webhook;
+            setUrl(webhook.url);
+            setDescription(webhook.description || "");
+            setSelectedEvents(webhook.events || []);
+            setIncludeChildren(webhook.includeChildren);
+            setMaxRetries(webhook.maxRetries);
+            setMaxConsecutiveFailures(webhook.maxConsecutiveFailures);
+      }
 
       // ─── Fetch available events ──────────────────────────────
       const { data: availableEvents, isLoading: isLoadingEvents } = useQuery({

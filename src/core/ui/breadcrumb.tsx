@@ -69,13 +69,6 @@ const BreadcrumbPage = React.forwardRef<HTMLSpanElement, React.ComponentPropsWit
 BreadcrumbPage.displayName = "BreadcrumbPage";
 
 const BreadcrumbSeparator = ({ children, className, ...props }: React.ComponentProps<"li">) => {
-  // Only use i18n if children is not provided (default separator)
-  const SeparatorIcon = children
-    ? null
-    : React.memo(() => {
-        // This will be wrapped in a component that uses useI18n
-        return null;
-      });
   // If children provided, use it; otherwise, we need direction-aware icon
   if (children) {
     return (

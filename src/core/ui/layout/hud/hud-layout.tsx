@@ -3,6 +3,7 @@
 import type React from "react";
 import { useState, useMemo, useRef, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import Link from "next/link";
 import { ChevronRight, Home, Command as CommandIcon, ChevronUp } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSettings } from "@core/providers/settings-provider";
@@ -136,18 +137,18 @@ export function HUDLayout({ children }: HUDLayoutProps) {
             <Logo size="xs" className="text-primary-foreground" />
           </div>
           <nav className="flex min-w-0 items-center gap-1 text-xs text-muted-foreground">
-            <a href="/" className="shrink-0 transition-colors hover:text-foreground">
+            <Link href="/" className="shrink-0 transition-colors hover:text-foreground">
               <Home className="h-3 w-3" />
-            </a>
+            </Link>
             {breadcrumbs.map((crumb, i) => (
               <span key={crumb.href} className="flex min-w-0 items-center gap-1">
                 <ChevronRight className="h-3 w-3 shrink-0 text-muted-foreground/50" />
                 {i === breadcrumbs.length - 1 ? (
                   <span className="truncate font-medium text-foreground">{crumb.label}</span>
                 ) : (
-                  <a href={crumb.href} className="truncate transition-colors hover:text-foreground">
+                  <Link href={crumb.href} className="truncate transition-colors hover:text-foreground">
                     {crumb.label}
-                  </a>
+                  </Link>
                 )}
               </span>
             ))}

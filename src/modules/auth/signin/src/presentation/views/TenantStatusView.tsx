@@ -11,6 +11,7 @@ import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { BRAND } from "@core/config/branding";
 import { resolveFileUrl } from "@core/common/utils";
 import { AlertTriangle, XCircle, SearchX } from "lucide-react";
+import Link from "next/link";
 import type { TenantBranding } from "@modules/auth/signin/src/presentation/viewmodels/useTenantResolution";
 
 // ─── Suspended / Canceled View ────────────────────────────
@@ -119,12 +120,12 @@ export function TenantNotFoundView() {
                         </p>
 
                         {/* Go to Platform */}
-                        <a
+                        <Link
                               href="/"
                               className="inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-2.5 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
                         >
                               {t("tenantStatus.visitPlatform") || `Visit ${BRAND.name}`}
-                        </a>
+                        </Link>
                   </div>
             </div>
       );

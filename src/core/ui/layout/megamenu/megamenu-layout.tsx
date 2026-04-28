@@ -59,11 +59,13 @@ export function MegaMenuLayout({ children }: MegaMenuLayoutProps) {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  // Close on route change
-  useEffect(() => {
-    setOpenMenu(null);
-    setMobileOpen(false);
-  }, [pathname]);
+  // Close on route change (ref-based, no setState in effect)
+  const prevPathnameRef = useRef(pathname);
+  if (prevPathnameRef.current !== pathname) {
+    prevPathnameRef.current = pathname;
+    if (openMenu) setOpenMenu(null);
+    if (mobileOpen) setMobileOpen(false);
+  }
 
   // Separate top-level items: groups (with children) and direct links
   const topItems = useMemo(() => navigation, [navigation]);

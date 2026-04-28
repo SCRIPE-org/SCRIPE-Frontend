@@ -3,7 +3,7 @@ import { Checkbox } from "@core/ui/checkbox";
 import { Label } from "@core/ui/label";
 import { Button } from "@core/ui/button";
 import { useI18n } from "@core/providers/i18n-provider";
-import { useState, useEffect } from "react";
+import { useState, useRef } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@core/ui/alert";
 import { Info, RotateCcw, Loader2 } from "lucide-react";
 
@@ -25,12 +25,12 @@ export function CascadeRestoreDialog({
       const { t } = useI18n();
       const [cascadeAdmins, setCascadeAdmins] = useState(false);
 
-      // Reset cascadeAdmins when dialog opens
-      useEffect(() => {
-            if (open) {
-                  setCascadeAdmins(false);
-            }
-      }, [open]);
+      // Reset cascadeAdmins when dialog opens (render-time)
+      const prevOpenRef = useRef(open);
+      if (open && !prevOpenRef.current) {
+            setCascadeAdmins(false);
+      }
+      prevOpenRef.current = open;
 
       const handleConfirm = () => {
             onConfirm(cascadeAdmins);

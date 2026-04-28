@@ -6,19 +6,16 @@ import { usePathname, useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSettings } from "@core/providers/settings-provider";
 import { useLayoutStyles } from "@core/ui/layout/shared/use-layout-styles";
-import { Logo } from "@core/ui/logo";
-import { Button } from "@core/ui/button";
 import { ScrollArea } from "@core/ui/scroll-area";
 import { LanguageSwitcher, ThemeSwitcher } from "@core/ui/layout/common";
 import { UserProfileDropdown } from "@core/ui/user-profile-dropdown";
 import { NavRenderer } from "@core/ui/layout/shared/nav-renderer";
 import { LogoutButton } from "@core/ui/layout/shared/logout-button";
-import { Footer } from "@core/ui/layout/shared/footer";
 import { useDynamicNavigation } from "@core/ui/navigation/dynamic-navigation";
 import {
   isNavigationItemActive,
   getFlatNavigationItems,
-  type NavigationItem,
+  NavigationItem,
 } from "@core/config/navigation";
 import { Minus, Square, X as XIcon, Menu } from "lucide-react";
 import { cn } from "@core/common/utils";
@@ -60,7 +57,7 @@ export function RetroLayout({ children }: RetroLayoutProps) {
       }
     }
     return t("common.dashboard") || "Dashboard";
-  }, [flatItems, pathname, t]);
+  }, [flatItems, pathname, t, navigation]);
 
   // Taskbar items
   const taskbarItems = useMemo(() => {

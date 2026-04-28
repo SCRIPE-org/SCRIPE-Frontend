@@ -23,23 +23,14 @@ export function useAuthorization(): AuthorizationState {
   const { navigationService } = useServices();
   const pathname = usePathname();
   const router = useRouter();
-  const [authState, setAuthState] = useState<AuthorizationState>({
-    isAuthorized: false,
-    isLoading: true,
-    routes: [],
-  });
+  const [asyncAuthState, setAsyncAuthState] = useState<{
+    isAuthorized: boolean;
+    routes: string[];
+    checkedPath: string | null;
+  }>({ isAuthorized: false, routes: [], checkedPath: null });
 
   useEffect(() => {
-    if (authLoading) {
-      return;
-    }
-
-    if (!isAuthenticated) {
-      setAuthState({
-        isAuthorized: false,
-        isLoading: false,
-        routes: [],
-      });
+    if (authLoading || !isAuthenticated) {
       return;
     }
 
@@ -56,10 +47,10 @@ export function useAuthorization(): AuthorizationState {
 
         const isAuthorized = navigationService.hasPageAccess(pathname);
 
-        setAuthState({
+        setAsyncAuthState({
           isAuthorized,
-          isLoading: false,
           routes: navigationData.routes,
+          checkedPath: pathname,
         });
 
         // Redirect to not authorized page if user doesn't have access
@@ -68,10 +59,10 @@ export function useAuthorization(): AuthorizationState {
         }
       } catch (error) {
         appLogger.error("Authorization check failed:", error);
-        setAuthState({
+        setAsyncAuthState({
           isAuthorized: false,
-          isLoading: false,
           routes: [],
+          checkedPath: pathname,
         });
       }
     };
@@ -79,7 +70,23 @@ export function useAuthorization(): AuthorizationState {
     checkAuthorization();
   }, [isAuthenticated, authLoading, pathname, navigationService, router]);
 
-  return authState;
+  // Compute final state synchronously (no setState in effect for early exits)
+  if (authLoading) {
+    return { isAuthorized: false, isLoading: true, routes: [] };
+  }
+  if (!isAuthenticated) {
+    return { isAuthorized: false, isLoading: false, routes: [] };
+  }
+  // Async check not yet completed for current path
+  if (asyncAuthState.checkedPath !== pathname) {
+    return { isAuthorized: false, isLoading: true, routes: [] };
+  }
+
+  return {
+    isAuthorized: asyncAuthState.isAuthorized,
+    isLoading: false,
+    routes: asyncAuthState.routes,
+  };
 }
 
 /**

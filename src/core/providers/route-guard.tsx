@@ -85,7 +85,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
   const pathname = usePathname();
   const [isChecking, setIsChecking] = useState(true);
   const { t } = useI18n();
-  const [isMounted, setIsMounted] = useState(false);
+  const [isMounted] = useState(() => typeof window !== "undefined");
 
   // Track if we've already redirected to prevent loops
   const hasRedirected = useRef(false);
@@ -93,17 +93,11 @@ export function RouteGuard({ children }: RouteGuardProps) {
   // Track if we're currently refreshing to prevent duplicate calls
   const isRefreshing = useRef(false);
 
-  // Reset redirect tracking when pathname changes
-  useEffect(() => {
-    if (pathname !== lastPathname.current) {
-      hasRedirected.current = false;
-      lastPathname.current = pathname;
-    }
-  }, [pathname]);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
+  // Reset redirect tracking when pathname changes (render-time)
+  if (pathname !== lastPathname.current) {
+    hasRedirected.current = false;
+    lastPathname.current = pathname;
+  }
 
   useEffect(() => {
     const checkAccess = async () => {

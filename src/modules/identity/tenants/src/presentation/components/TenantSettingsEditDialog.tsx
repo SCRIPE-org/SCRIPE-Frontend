@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useRef, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -43,13 +43,13 @@ export function TenantSettingsEditDialog({
   const [activeTab, setActiveTab] = useState(initialSection || "security");
   const [formData, setFormData] = useState<TenantSettingsModel>({ ...settings });
 
-  // Update local state when settings change or dialog opens
-  useEffect(() => {
-    if (open) {
-      setFormData({ ...settings });
-      if (initialSection) setActiveTab(initialSection);
-    }
-  }, [open, settings, initialSection]);
+  // Update local state when dialog opens (render-time)
+  const prevOpenRef = useRef(open);
+  if (open && !prevOpenRef.current) {
+    setFormData({ ...settings });
+    if (initialSection) setActiveTab(initialSection);
+  }
+  prevOpenRef.current = open;
 
   const handleChange = (field: keyof TenantSettingsModel, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));

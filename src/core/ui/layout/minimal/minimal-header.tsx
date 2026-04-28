@@ -18,19 +18,7 @@ import { NavRenderer } from "@core/ui/layout/shared/nav-renderer";
 import { NotificationBell } from "@core/ui/notification";
 import { useBrandedAppName } from "@core/hooks/use-branded-app-name";
 
-interface MinimalHeaderProps { }
-
-/**
- * Minimal Header  Full horizontal navigation bar.
- *
- * Features:
- * - Logo on left
- * - Horizontal nav items with dropdown menus for those with children
- * - Simple text links for items without children
- * - Search, lang, theme, profile on right
- * - Mobile: hamburger → full-screen overlay menu
- */
-export function MinimalHeader({ }: MinimalHeaderProps) {
+export function MinimalHeader() {
   const { t } = useI18n();
   const appName = useBrandedAppName();
   const settings = useSettings();

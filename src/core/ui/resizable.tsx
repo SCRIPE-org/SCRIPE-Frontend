@@ -1,7 +1,7 @@
 "use client";
 
 import { GripVertical } from "lucide-react";
-// @ts-ignore
+// @ts-expect-error -- react-resizable-panels lacks type declarations
 import { PanelGroup, Panel, PanelResizeHandle } from "react-resizable-panels";
 
 import { cn } from "@core/common/utils";
