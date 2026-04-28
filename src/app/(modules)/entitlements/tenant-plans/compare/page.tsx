@@ -3,7 +3,7 @@ import { PermissionGate } from "@core/components/permission-gate";
 
 export default function TenantPlanComparePage() {
   return (
-    <PermissionGate permission="entitlements.tenant_plans.view">
+    <PermissionGate permission="tenant_plans.view">
       <div className="container mx-auto py-6 max-w-7xl">
         <TenantPlanComparisonView />
       </div>

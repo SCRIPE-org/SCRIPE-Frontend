@@ -83,10 +83,11 @@ export function useTenantPlanComparisonViewModel() {
 
     plans.forEach((plan: TenantPlan) => {
       plan.features.forEach((f: TenantPlanFeatureData) => {
-        // featureKey is usually "Category.FeatureName"
-        const parts = f.featureKey.split(".");
+        // featureKey is usually "Category.FeatureName" — guard against undefined/null
+        const rawKey = f.featureKey ?? f.featureDefinitionId ?? "unknown";
+        const parts = rawKey.split(".");
         const category = parts.length > 1 ? parts[0] : "General";
-        const key = f.featureKey;
+        const key = rawKey;
 
         if (!featureMap.has(key)) {
           featureMap.set(key, {
