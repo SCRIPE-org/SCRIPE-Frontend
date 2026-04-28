@@ -206,6 +206,14 @@ export function EditionsView() {
                               defaultValue: 0,
                               placeholder: "0",
                         },
+                        {
+                              name: "maxActiveSubscriptions",
+                              label: t("entitlements.editions.maxActiveSubscriptions") || "Max Active Subscriptions",
+                              type: "number" as const,
+                              min: -1,
+                              defaultValue: -1,
+                              placeholder: "-1 for unlimited",
+                        },
                   ],
                   editFields: (editingItem: Edition) => [
                         {
@@ -305,6 +313,13 @@ export function EditionsView() {
                               max: 365,
                               placeholder: "0",
                         },
+                        {
+                              name: "maxActiveSubscriptions",
+                              label: t("entitlements.editions.maxActiveSubscriptions") || "Max Active Subscriptions",
+                              type: "number" as const,
+                              min: -1,
+                              placeholder: "-1 for unlimited",
+                        },
                   ],
                   editInitialValues: (edition: Edition) => ({
                         name: edition.name,
@@ -322,6 +337,7 @@ export function EditionsView() {
                         trialIsFree: edition.trialIsFree,
                         trialDiscountPercent: edition.trialDiscountPercent,
                         gracePeriodDays: edition.gracePeriodDays,
+                        maxActiveSubscriptions: edition.maxActiveSubscriptions,
                   }),
                   getItemDisplayName: (edition: Edition) => edition.getDisplayName(language),
                   deleteService: (id: string) => vm.deleteItem(id),
@@ -337,7 +353,6 @@ export function EditionsView() {
                               onClick: (item: Edition) => vmInstance.openEditModal(item),
                               variant: "ghost" as const,
                               icon: <Pencil className="h-4 w-4" />,
-                              show: (item: Edition) => !item.isSystem,
                         },
                         {
                               label: tFn("entitlements.editions.manageFeatures") || "Manage Features",
