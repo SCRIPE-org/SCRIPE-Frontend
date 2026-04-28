@@ -7,14 +7,15 @@
  */
 "use client";
 
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 import { messagingContainer } from "@modules/messaging/di";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useCrudViewModel } from "@core/crud/hooks/useCrudViewModel";
-import type { CrudConfig, CrudAction } from "@core/crud/components/generic-crud-view";
+import type { CrudConfig } from "@core/crud/components/generic-crud-view";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import type { WebhookSubscriptionListItem } from "../../domain/entities/Webhook";
+import type { CreateWebhookRequest, UpdateWebhookRequest } from "../../domain/entities/WebhookRequests";
 
 export const webhookKeys = {
       all: ["webhooks"] as const,
@@ -33,7 +34,7 @@ export function useWebhooksViewModel() {
       const { success, error: toastError } = useEnhancedToast();
 
       // ============ Core CRUD ViewModel ============
-      const vm = useCrudViewModel<WebhookSubscriptionListItem, any, any>(
+      const vm = useCrudViewModel<WebhookSubscriptionListItem, CreateWebhookRequest, UpdateWebhookRequest>(
             [...webhookKeys.all],
             {
                   getAll: async (params) => {
@@ -52,7 +53,7 @@ export function useWebhooksViewModel() {
                               },
                         };
                   },
-                  create: async (data: any) => {
+                  create: async (data: CreateWebhookRequest) => {
                         const result = await webhookRepository.create(data);
                         success({
                               title: t("webhooks.created") || "Webhook Created",
@@ -62,7 +63,7 @@ export function useWebhooksViewModel() {
                         });
                         return result as unknown as WebhookSubscriptionListItem;
                   },
-                  update: async (id: string, data: any) => {
+                  update: async (id: string, data: UpdateWebhookRequest) => {
                         await webhookRepository.update(id, data);
                         success({
                               title: t("webhooks.updated") || "Webhook Updated",

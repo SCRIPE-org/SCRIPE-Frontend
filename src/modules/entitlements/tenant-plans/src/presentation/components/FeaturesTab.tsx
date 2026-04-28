@@ -19,7 +19,7 @@ import { Button } from "@core/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import {
   Zap, ChevronDown, ChevronRight, ChevronsUpDown, Plus,
-  Save, Loader2, CheckCircle2,
+  Save, CheckCircle2,
 } from "lucide-react";
 import type { TenantPlan, TenantFeatureDefinition } from "../../domain/entities/TenantPlan";
 import { FeatureCatalogPicker } from "./features-tab/FeatureCatalogPicker";

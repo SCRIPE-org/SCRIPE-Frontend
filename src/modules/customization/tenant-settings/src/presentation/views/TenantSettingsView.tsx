@@ -10,7 +10,7 @@ import { CustomizationSection } from "../components/CustomizationSection";
 import { Button } from "@core/ui/button";
 import { Skeleton } from "@core/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@core/ui/alert";
-import { AlertCircle, Save, Loader2, Building2 } from "lucide-react";
+import { AlertCircle, Save, Building2 } from "lucide-react";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 
 /**

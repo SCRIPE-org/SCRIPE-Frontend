@@ -19,7 +19,7 @@ import type { TenantPlan } from "../../domain/entities/TenantPlan";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@core/ui/dialog";
-import { Pencil, Trash2, Eye, Rocket, Archive, Settings2, Loader2 } from "lucide-react";
+import { Pencil, Trash2, Eye, Rocket, Archive, Settings2 } from "lucide-react";
 import { format } from "date-fns";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 
@@ -383,7 +383,7 @@ export function TenantPlansView() {
         },
       ],
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
     [t]
   );
 

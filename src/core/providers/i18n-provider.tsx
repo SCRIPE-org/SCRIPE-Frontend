@@ -147,7 +147,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
       document.body.classList.add("font-english");
       document.body.classList.remove("font-arabic");
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, []);
 
   // ─── STABLE CONTEXT VALUE ─────────────────────────────────

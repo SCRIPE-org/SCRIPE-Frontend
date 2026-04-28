@@ -6,7 +6,7 @@
  */
 "use client";
 
-import { useState, useRef, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { systemContainer } from "@modules/identity/di";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -98,10 +98,10 @@ export function useOAuthAppDetailViewModel(appId?: string) {
             enabled: !!appId,
       });
 
-      // Populate form when app data arrives (render-time ref-based)
-      const prevAppRef = useRef(app);
-      if (app && app !== prevAppRef.current) {
-            prevAppRef.current = app;
+      // Populate form when app data arrives (render-time state-sync)
+      const [prevApp, setPrevApp] = useState(app);
+      if (app && app !== prevApp) {
+            setPrevApp(app);
             setForm({
                   displayName: app.displayName,
                   description: app.description ?? "",

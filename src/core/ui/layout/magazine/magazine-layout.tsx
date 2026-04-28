@@ -7,7 +7,6 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { useSettings } from "@core/providers/settings-provider";
 import { useLayoutStyles } from "@core/ui/layout/shared/use-layout-styles";
 import { Logo } from "@core/ui/logo";
-import { Button } from "@core/ui/button";
 import { ScrollArea } from "@core/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@core/ui/tooltip";
 import { LanguageSwitcher, ThemeSwitcher } from "@core/ui/layout/common";

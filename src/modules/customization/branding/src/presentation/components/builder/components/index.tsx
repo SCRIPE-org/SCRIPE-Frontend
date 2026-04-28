@@ -15,7 +15,7 @@ import { resolveFileUrl } from "@/core/common/utils";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
-import { Eye, EyeOff, Lock, User, Quote as QuoteIcon, Star, Check } from "lucide-react";
+import { Eye, EyeOff, Lock, User, Quote as QuoteIcon, Check } from "lucide-react";
 import { useState } from "react";
 
 // ── Logo ────────────────────────────────────────────────

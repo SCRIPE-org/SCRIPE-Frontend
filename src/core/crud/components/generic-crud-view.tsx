@@ -17,7 +17,6 @@
 "use client";
 
 import { Button } from "@core/ui/button";
-import { Card, CardContent } from "@core/ui/card";
 import { GenericTable } from "./generic-table";
 import { GenericModal } from "./generic-modal";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@core/ui/dialog";
@@ -28,7 +27,7 @@ import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
 import { useEnhancedDelete } from "@core/hooks/use-enhanced-delete";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useSettings } from "@core/providers/settings-provider";
-import { cn, getHoverEffectClasses } from "@core/common/utils";
+import { cn } from "@core/common/utils";
 import type { PaginationInfo } from "@core/common/pagination";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useCallback, useMemo, memo } from "react";

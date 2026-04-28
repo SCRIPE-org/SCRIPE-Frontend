@@ -63,12 +63,10 @@ export function TabbedLayout({ children, sidebarOpen, onSidebarOpenChange }: Tab
 
   const [selectedTabOverride, setSelectedTabOverride] = useState<number | null>(null);
   // Reset override when route changes (activeTabIndex changes)
-  const prevActiveTabIndex = React.useRef(activeTabIndex);
-  if (prevActiveTabIndex.current !== activeTabIndex) {
-    prevActiveTabIndex.current = activeTabIndex;
-    if (selectedTabOverride !== null) {
-      setSelectedTabOverride(null);
-    }
+  const [prevActiveTabIndex, setPrevActiveTabIndex] = useState(activeTabIndex);
+  if (activeTabIndex !== prevActiveTabIndex) {
+    setPrevActiveTabIndex(activeTabIndex);
+    setSelectedTabOverride(null);
   }
   const selectedTab = selectedTabOverride ?? activeTabIndex;
 

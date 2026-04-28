@@ -112,7 +112,7 @@ export const EmailHtmlBlock = Node.create<EmailHtmlBlockOptions>({
             return {
                   insertEmailHtmlBlock:
                         (attrs: { html: string; label?: string; blockType?: string }) =>
-                              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
                               ({ commands }: any) => {
                                     return commands.insertContent({
                                           type: this.name,

@@ -10,7 +10,6 @@ import { useState, useCallback, useMemo } from "react";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
 import type { CrudConfig, CrudAction } from "@core/crud/components/generic-crud-view";
 import { Admin } from "../../domain/entities/Admin";
-import type { AssignRoleRequest } from "../../domain/entities/AdminRequests";
 import { useAdminsViewModel } from "../viewmodels/useAdminsViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
 import { usePermissions } from "@core/providers/permission-provider";

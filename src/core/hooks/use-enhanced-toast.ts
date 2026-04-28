@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { useToast } from "@core/hooks/use-toast";
 import { useSettings } from "@core/providers/settings-provider";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { ToastActionElement, ToastProps } from "@core/ui/enhanced-toast";

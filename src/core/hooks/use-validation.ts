@@ -9,19 +9,19 @@ import { useState, useCallback, useMemo, useEffect } from "react";
 import { validateForm, ValidationRule, isFormValid, getFormErrors } from "@core/common/validation";
 
 export interface UseValidationOptions {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   initialValues?: Record<string, any>;
   validationRules?: Record<string, ValidationRule[]>;
   validateOnChange?: boolean;
   validateOnBlur?: boolean;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 export interface UseValidationReturn<T extends Record<string, any>> {
   values: T;
   errors: Record<string, string>;
   isValid: boolean;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   setValue: (field: keyof T, value: any) => void;
   setValues: (values: Partial<T>) => void;
   setError: (field: keyof T, error: string) => void;
@@ -37,7 +37,7 @@ export interface UseValidationReturn<T extends Record<string, any>> {
 /**
  * Hook for form validation
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 export function useValidation<T extends Record<string, any>>(
   options: UseValidationOptions = {}
 ): UseValidationReturn<T> {

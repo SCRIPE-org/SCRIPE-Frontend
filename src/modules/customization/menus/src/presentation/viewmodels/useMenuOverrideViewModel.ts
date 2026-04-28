@@ -15,7 +15,7 @@
  */
 "use client";
 
-import { useState, useCallback, useRef, useMemo } from "react";
+import { useState, useCallback, useRef, useMemo, useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigation } from "@core/providers/navigation-provider";
 import { customizationContainer } from "@modules/customization/di";
@@ -117,7 +117,9 @@ export function useMenuOverrideViewModel(): UseMenuOverrideViewModelResult {
 
   // Keep a ref to the current dialog node to avoid stale closures
   const dialogNodeRef = useRef<MenuTreeNode | null>(null);
-  dialogNodeRef.current = overrideDialog.node;
+  useEffect(() => {
+    dialogNodeRef.current = overrideDialog.node;
+  }, [overrideDialog.node]);
 
   // ── Flat menu items for parent picker ──────────────────────────────
   const [menuTree, setMenuTree] = useState<MenuTreeNode[]>([]);

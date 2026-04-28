@@ -6,7 +6,7 @@
  */
 "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
 import { usePermissions } from "@core/providers/permission-provider";
@@ -38,12 +38,14 @@ export function TenantDeleteDialog({
 
   const canCascadeDelete = hasPermission(SYSTEM_PERMISSIONS.TENANTS_CASCADE_DELETE);
 
-  // Reset cascade checkbox when dialog opens (render-time)
-  const prevOpenRef = useRef(open);
-  if (open && !prevOpenRef.current) {
-    setCascadeChildren(false);
+  // Reset cascade checkbox when dialog opens
+  const [prevOpen, setPrevOpen] = useState(open);
+  if (open !== prevOpen) {
+    setPrevOpen(open);
+    if (open) {
+      setCascadeChildren(false);
+    }
   }
-  prevOpenRef.current = open;
 
   // Fetch descendant count when dialog opens
   const { data: descendantCount = 0, isLoading } = useQuery({

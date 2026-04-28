@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useDocsI18n } from "../../providers/DocsI18nProvider";
 import type { DocCategory, DocNavItem } from "../../../domain/entities/DocCategory";
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 
 // ─── Icons ──────────────────────────────────────────────────────
 const icons: Record<string, React.ReactNode> = {
@@ -324,7 +324,9 @@ export function DocsSidebar({ categories, activeSlug }: DocsSidebarProps) {
   });
 
   // Auto-expand the category and sub-group containing the active slug
-  useEffect(() => {
+  const [prevActiveSlug, setPrevActiveSlug] = useState(activeSlug);
+  if (activeSlug !== prevActiveSlug) {
+    setPrevActiveSlug(activeSlug);
     setExpanded((prev) => {
       const next = { ...prev };
       for (const cat of categories) {
@@ -348,7 +350,7 @@ export function DocsSidebar({ categories, activeSlug }: DocsSidebarProps) {
       }
       return next;
     });
-  }, [activeSlug, categories]);
+  }
 
   const toggleCategory = useCallback((catId: string) => {
     setExpanded((prev) => ({ ...prev, [catId]: !prev[catId] }));

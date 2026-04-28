@@ -138,7 +138,7 @@ export function FeedLayout({ children }: FeedLayoutProps) {
                       {t("common.trendingItem") || "Trending Item"} #{i}
                     </p>
                     <p className="text-[10px] text-muted-foreground">
-                      {t("common.posts") || "Posts"}: {Math.floor(Math.random() * 1000)}
+                      {t("common.posts") || "Posts"}: {[428, 853, 127][i - 1] || 100}
                     </p>
                   </div>
                 </div>

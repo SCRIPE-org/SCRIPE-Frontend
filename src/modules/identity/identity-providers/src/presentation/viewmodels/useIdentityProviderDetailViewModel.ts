@@ -6,7 +6,7 @@
  */
 "use client";
 
-import { useState, useRef, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { systemContainer } from "@modules/identity/di";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -102,10 +102,10 @@ export function useIdentityProviderDetailViewModel(providerId?: string) {
             enabled: !!providerId,
       });
 
-      // Populate form when provider data arrives (render-time ref-based)
-      const prevProviderRef = useRef(provider);
-      if (provider && provider !== prevProviderRef.current) {
-            prevProviderRef.current = provider;
+      // Populate form when provider data arrives (render-time state-sync)
+      const [prevProvider, setPrevProvider] = useState(provider);
+      if (provider && provider !== prevProvider) {
+            setPrevProvider(provider);
             setForm({
                   name: provider.name,
                   slug: provider.slug,

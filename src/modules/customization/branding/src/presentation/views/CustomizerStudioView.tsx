@@ -28,7 +28,7 @@ import { StudioPreview } from "../components/StudioPreview";
 import { AuthPageTabs } from "../components/AuthPageTabs";
 import { BuilderCanvas } from "../components/builder/BuilderCanvas";
 import { DashboardLayoutPreview } from "../components/DashboardLayoutPreview";
-import { getDefaultComponentsForPage, type CanvasComponent } from "../../domain/entities/CanvasComponent";
+import { type CanvasComponent } from "../../domain/entities/CanvasComponent";
 import { DragOverlayItem } from "../components/builder/DraggableCanvasItem";
 import { useBuilderStore } from "../viewmodels/useBuilderStore";
 import { Loader2, Building2, LayoutGrid } from "lucide-react";

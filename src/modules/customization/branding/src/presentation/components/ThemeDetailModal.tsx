@@ -19,7 +19,7 @@
 // compact controls (theme cards, filter toggles, etc.) where @core/ui/button's
 // padding/sizing would break the layout.
 
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { cn } from "@/core/common/utils";
 import {
@@ -34,9 +34,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
 import {
   Heart, Star, Eye, Paintbrush, X, Moon, Sun,
   ShieldCheck, Blocks, Monitor, Tablet, Smartphone,
-  Sparkles, Lock, Crown, Check, Code, Globe,
-  Users, Palette, Type, Ruler, Image as ImageIcon,
-  ShoppingCart, ExternalLink, Loader2, Calendar,
+  Sparkles, Lock, Code, Globe,
+  Users, Palette, Type, Ruler,
+  ShoppingCart, ExternalLink, Calendar,
 } from "lucide-react";
 import type { ThemeCard } from "../../domain/entities/ThemeCard";
 

@@ -11,7 +11,6 @@ import { useDynamicNavigation } from "@core/ui/navigation/dynamic-navigation";
 import { isNavigationItemActive, type NavigationItem } from "@core/config/navigation";
 import { Logo } from "@core/ui/logo";
 import { Button } from "@core/ui/button";
-import { ScrollArea } from "@core/ui/scroll-area";
 import { LanguageSwitcher, ThemeSwitcher } from "@core/ui/layout/common";
 import { UserProfileDropdown } from "@core/ui/user-profile-dropdown";
 import { Footer } from "@core/ui/layout/shared/footer";

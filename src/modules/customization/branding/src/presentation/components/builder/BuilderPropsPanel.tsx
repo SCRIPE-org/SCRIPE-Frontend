@@ -16,7 +16,7 @@ import { Textarea } from "@core/ui/textarea";
 import { Button } from "@core/ui/button";
 import { Switch } from "@core/ui/switch";
 import { Checkbox } from "@core/ui/checkbox";
-import { Trash2, Eye, EyeOff, Copy, ArrowUp, ArrowDown, Lock, Unlock, Plus } from "lucide-react";
+import { Trash2, Eye, EyeOff, Copy, ArrowUp, ArrowDown, Lock, Unlock } from "lucide-react";
 import { ImageUploadField } from "@core/ui/image-upload-field";
 import { VideoUploadField } from "@core/ui/video-upload-field";
 import { CodeEditorField } from "@core/ui/code-editor-field";

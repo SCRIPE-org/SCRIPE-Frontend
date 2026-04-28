@@ -2,6 +2,7 @@
 
 import { useI18n } from "@core/providers/i18n-provider";
 import { useExternalLoginsViewModel } from "../viewmodels/useExternalLoginsViewModel";
+import Image from "next/image";
 import { Button } from "@core/ui/button";
 import { Loader2, Link2, Unlink } from "lucide-react";
 import {
@@ -57,7 +58,7 @@ export function ExternalLoginsSection() {
                                                             style={{ backgroundColor: providerInfo?.buttonColor || "hsl(var(--primary))" }}
                                                       >
                                                             {providerInfo?.iconUrl ? (
-                                                                  <img src={providerInfo.iconUrl} alt={login.providerName} className="h-5 w-5 invert" />
+                                                                  <Image src={providerInfo.iconUrl} alt={login.providerName} width={20} height={20} className="h-5 w-5 invert" />
                                                             ) : (
                                                                   <Link2 className="h-5 w-5 text-white" />
                                                             )}
@@ -101,7 +102,7 @@ export function ExternalLoginsSection() {
                                                       className="cursor-pointer font-medium p-3"
                                                 >
                                                       {provider.iconUrl ? (
-                                                            <img src={provider.iconUrl} alt={provider.name} className="mr-3 h-5 w-5" />
+                                                            <Image src={provider.iconUrl} alt={provider.name} width={20} height={20} className="mr-3 h-5 w-5" />
                                                       ) : (
                                                             <span
                                                                   className="mr-3 inline-block h-3 w-3 rounded-full"

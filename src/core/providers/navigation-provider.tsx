@@ -194,7 +194,7 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
       setIsLoading(false);
       setHasTriggeredRefresh(false); // Allow refresh on next login
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, [isAuthenticated]);
 
   // ========================================

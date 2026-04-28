@@ -16,7 +16,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@core/ui/dialog";
-import { Loader2, Undo2, Bolt, GitBranch, Zap } from "lucide-react";
+import { Undo2, Bolt, GitBranch, Zap } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 
 interface ChangeActionBarProps {

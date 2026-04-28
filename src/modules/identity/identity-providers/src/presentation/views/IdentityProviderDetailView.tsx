@@ -20,7 +20,6 @@ import {
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
-import { Separator } from "@core/ui/separator";
 import {
       ArrowLeft,
       Save,

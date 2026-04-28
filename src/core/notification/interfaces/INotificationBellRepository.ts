@@ -4,7 +4,7 @@
  * Contract for notification bell data access.
  * Following Dependency Inversion: ViewModel depends on this interface, not the implementation.
  */
-import type { NotificationItem, NotificationListResponse, UnreadCountResponse } from "../entities/NotificationItem";
+import type { NotificationListResponse, UnreadCountResponse } from "../entities/NotificationItem";
 
 export interface INotificationBellRepository {
       getNotifications(params?: { page?: number; pageSize?: number; isRead?: boolean }): Promise<NotificationListResponse>;

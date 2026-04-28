@@ -11,6 +11,38 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { cn } from "@core/common/utils";
 import type { CheckboxStyle, RadioStyle } from "@core/providers/settings-provider";
 
+function CheckboxPreview({ design, t }: { design: CheckboxStyle; t: (key: string) => string }) {
+  return (
+    <div className="flex items-center space-x-2 rounded border bg-card/50 p-2">
+      <Checkbox design={design} id={`checkbox-${design}`} />
+      <Label htmlFor={`checkbox-${design}`} className="text-sm">
+        {t("settings.inputs.preview")}
+      </Label>
+    </div>
+  );
+}
+
+function RadioPreview({ design, t }: { design: RadioStyle; t: (key: string) => string }) {
+  return (
+    <div className="rounded border bg-card/50 p-2">
+      <RadioGroup value="sample" className="space-y-1">
+        <div className="flex items-center space-x-2">
+          <RadioGroupItem design={design} value="sample" id={`radio-${design}-1`} />
+          <Label htmlFor={`radio-${design}-1`} className="text-sm">
+            {t("settings.inputs.preview")} 1
+          </Label>
+        </div>
+        <div className="flex items-center space-x-2">
+          <RadioGroupItem design={design} value="sample2" id={`radio-${design}-2`} />
+          <Label htmlFor={`radio-${design}-2`} className="text-sm">
+            {t("settings.inputs.preview")} 2
+          </Label>
+        </div>
+      </RadioGroup>
+    </div>
+  );
+}
+
 export function CheckboxRadioTab() {
   const { t } = useI18n();
   const settings = useSettings();
@@ -346,33 +378,7 @@ export function CheckboxRadioTab() {
     {} as Record<string, typeof radioStyles>
   );
 
-  const CheckboxPreview = ({ design }: { design: CheckboxStyle }) => (
-    <div className="flex items-center space-x-2 rounded border bg-card/50 p-2">
-      <Checkbox design={design} id={`checkbox-${design}`} />
-      <Label htmlFor={`checkbox-${design}`} className="text-sm">
-        {t("settings.inputs.preview")}
-      </Label>
-    </div>
-  );
 
-  const RadioPreview = ({ design }: { design: RadioStyle }) => (
-    <div className="rounded border bg-card/50 p-2">
-      <RadioGroup value="sample" className="space-y-1">
-        <div className="flex items-center space-x-2">
-          <RadioGroupItem design={design} value="sample" id={`radio-${design}-1`} />
-          <Label htmlFor={`radio-${design}-1`} className="text-sm">
-            {t("settings.inputs.preview")} 1
-          </Label>
-        </div>
-        <div className="flex items-center space-x-2">
-          <RadioGroupItem design={design} value="sample2" id={`radio-${design}-2`} />
-          <Label htmlFor={`radio-${design}-2`} className="text-sm">
-            {t("settings.inputs.preview")} 2
-          </Label>
-        </div>
-      </RadioGroup>
-    </div>
-  );
 
   return (
     <div className="space-y-6">
@@ -408,7 +414,7 @@ export function CheckboxRadioTab() {
           <div className="space-y-2">
             <Label className="text-sm font-medium">{t("settings.inputs.preview")}</Label>
             <div className="rounded-lg border bg-muted/20 p-4">
-              <CheckboxPreview design={settings.checkboxStyle} />
+              <CheckboxPreview design={settings.checkboxStyle} t={t} />
             </div>
           </div>
 
@@ -440,7 +446,7 @@ export function CheckboxRadioTab() {
                           )}
                         </div>
                         <p className="text-xs text-muted-foreground">{style.description}</p>
-                        <CheckboxPreview design={style.value} />
+                        <CheckboxPreview design={style.value} t={t} />
                       </div>
                     </div>
                   ))}
@@ -485,7 +491,7 @@ export function CheckboxRadioTab() {
           <div className="space-y-2">
             <Label className="text-sm font-medium">{t("settings.inputs.preview")}</Label>
             <div className="rounded-lg border bg-muted/20 p-4">
-              <RadioPreview design={settings.radioStyle} />
+              <RadioPreview design={settings.radioStyle} t={t} />
             </div>
           </div>
 
@@ -517,7 +523,7 @@ export function CheckboxRadioTab() {
                           )}
                         </div>
                         <p className="text-xs text-muted-foreground">{style.description}</p>
-                        <RadioPreview design={style.value} />
+                        <RadioPreview design={style.value} t={t} />
                       </div>
                     </div>
                   ))}

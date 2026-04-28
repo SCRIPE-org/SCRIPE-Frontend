@@ -24,7 +24,7 @@ import {
 } from "@core/ui/dialog";
 import {
   LogIn, Shield, LayoutDashboard, Blocks, Grid3X3,
-  FileKey2, Save, Loader2, Package,
+  FileKey2, Save, Package,
 } from "lucide-react";
 import { Badge } from "@core/ui/badge";
 import { useI18n } from "@core/providers/i18n-provider";

@@ -10,7 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@core/ui/avatar";
 import { Button } from "@core/ui/button";
 import { useI18n } from "@core/providers/i18n-provider";
 import { cn } from "@core/common/utils";
-import { Upload, Trash2, Camera, Loader2 } from "lucide-react";
+import { Upload, Trash2, Camera } from "lucide-react";
 
 interface AvatarUploadProps {
   currentImageUrl: string | null;
@@ -51,8 +51,12 @@ export function AvatarUpload({
         setLocalError(null);
         const validated = onFileSelect(file);
         setSelectedFile(validated);
-      } catch (err: any) {
-        setLocalError(err.message);
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          setLocalError(err.message);
+        } else {
+          setLocalError("An unknown error occurred");
+        }
       }
     },
     [onFileSelect]

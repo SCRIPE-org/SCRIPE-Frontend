@@ -92,14 +92,13 @@ export function PageBreadcrumbs({
     }
   };
 
-  const BackArrowIcon = getBackArrowIcon(direction);
   const displayHomeLabel = homeLabel || t("nav.home") || "Home";
 
   return (
     <div className="flex items-center gap-4">
       {showBackButton && (
         <Button variant="ghost" size="icon" onClick={handleBack} className="hover:bg-muted">
-          <BackArrowIcon className="h-5 w-5" />
+          {direction === "rtl" ? <ArrowRight className="h-5 w-5" /> : <ArrowLeft className="h-5 w-5" />}
         </Button>
       )}
       <Breadcrumb>

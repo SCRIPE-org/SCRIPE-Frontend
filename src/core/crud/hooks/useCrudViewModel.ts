@@ -1,7 +1,6 @@
 import { useState, useCallback, useRef } from "react";
 import { useGenericQuery } from "./useGenericQuery";
 import { useGenericMutations } from "./useGenericMutations";
-import { PaginationInfo } from "@core/common/pagination";
 import { BaseEntity, PaginatedResult } from "../types";
 
 export interface CrudViewModelOptions {

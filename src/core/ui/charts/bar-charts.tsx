@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { GenericChart, ChartUtils, GENERIC_COLORS } from "./generic-chart";
+import { GenericChart, GENERIC_COLORS } from "./generic-chart";
 import { ResponsiveTabs } from "@core/ui/responsive-tabs";
 import { useI18n } from "@core/providers/i18n-provider";
 import {
@@ -13,7 +13,6 @@ import {
   Target,
   Sparkles,
   Zap,
-  PieChart,
   BarChart,
   ArrowUpDown,
 } from "lucide-react";

@@ -6,7 +6,6 @@ import { usePathname, useRouter } from "next/navigation";
 import {
   ChevronRight,
   ChevronLeft,
-  ChevronDown,
   Folder,
   FileText,
   Search,

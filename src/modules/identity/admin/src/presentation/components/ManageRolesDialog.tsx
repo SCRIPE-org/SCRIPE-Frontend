@@ -7,7 +7,7 @@
  */
 "use client";
 
-import { useRef, useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { Button } from "@core/ui/button";
 import { Label } from "@core/ui/label";
 import { Switch } from "@core/ui/switch";
@@ -84,18 +84,21 @@ export function ManageRolesDialog({ open, onOpenChange, admin, tenantId }: Manag
     [rolesData, language, scopeTenantId]
   );
 
-  // Logic: Map Current Roles to Available Options using ROLE CODE (render-time)
-  // Track previous data refs to detect when fresh data arrives
-  const prevManageDataRef = useRef<{ open: boolean; rolesLen: number; currentLen: number }>({
-    open: false, rolesLen: 0, currentLen: 0
-  });
+  // Logic: Map Current Roles to Available Options using ROLE CODE
   const rolesLen = rolesData?.items?.length ?? 0;
   const currentLen = currentRoles?.length ?? -1;
-  const dataChanged = open !== prevManageDataRef.current.open
-    || rolesLen !== prevManageDataRef.current.rolesLen
-    || currentLen !== prevManageDataRef.current.currentLen;
-  if (dataChanged) {
-    prevManageDataRef.current = { open, rolesLen, currentLen };
+
+  const [prevOpen, setPrevOpen] = useState(open);
+  const [prevCurrentRoles, setPrevCurrentRoles] = useState(currentRoles);
+  const [prevRolesData, setPrevRolesData] = useState(rolesData);
+  const [prevScopeTenantId, setPrevScopeTenantId] = useState(scopeTenantId);
+  
+  if (open !== prevOpen || currentRoles !== prevCurrentRoles || rolesData !== prevRolesData || scopeTenantId !== prevScopeTenantId) {
+    setPrevOpen(open);
+    setPrevCurrentRoles(currentRoles);
+    setPrevRolesData(rolesData);
+    setPrevScopeTenantId(scopeTenantId);
+    
     if (open && currentRoles && rolesData?.items) {
       const scopedCurrentRoles = currentRoles.filter((r) => (r.tenantId || "") === scopeTenantId);
       const matchedIds: string[] = [];

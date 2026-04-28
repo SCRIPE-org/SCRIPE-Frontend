@@ -35,7 +35,6 @@ import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tansta
 import type { PaginationInfo } from "@core/common/pagination";
 import { useCrudViewModel } from "@core/hooks/use-crud-view-model";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
-import { appLogger } from "@core/common/logger";
 
 /* =========================
  * Types
@@ -146,18 +145,22 @@ export function useGenericCrudViewModel<
     staleTime: config.staleTime ?? 30 * 1000, // 30 seconds default
   });
 
-  // Update pagination from query response (render-time, no setState in effect)
-  const prevPaginationRef = useRef<{ itemsCount: number; pagesCount: number } | null>(null);
-  if (queryData?.pagination) {
+  // Update pagination from query response (render-time)
+  const [prevPaginationData, setPrevPaginationData] = useState(queryData?.pagination);
+  if (queryData?.pagination && queryData.pagination !== prevPaginationData) {
+    setPrevPaginationData(queryData.pagination);
     const qp = queryData.pagination;
-    if (!prevPaginationRef.current || prevPaginationRef.current.itemsCount !== qp.itemsCount || prevPaginationRef.current.pagesCount !== qp.pagesCount) {
-      prevPaginationRef.current = { itemsCount: qp.itemsCount, pagesCount: qp.pagesCount };
-      setPagination((prev) => ({
+    setPagination((prev) => {
+      // Only update if something actually changed
+      if (prev.itemsCount === qp.itemsCount && prev.pagesCount === qp.pagesCount) {
+        return prev;
+      }
+      return {
         ...qp,
         page: prev.page,
         pageSize: prev.pageSize,
-      }));
-    }
+      };
+    });
   }
 
   // ==========================================
@@ -301,12 +304,13 @@ export function useGenericCrudViewModel<
   // Dropdown options
   // ==========================================
   const dropdownOptionsMapped = useMemo(() => {
-    if (!config.dropdownService || !dropdownData?.data) return [];
+    const dropdownService = config.dropdownService;
+    if (!dropdownService || !dropdownData?.data) return [];
     return dropdownData.data.map((item) => ({
-      label: config.dropdownService!.getLabel(item),
-      value: config.dropdownService!.getValue(item),
+      label: dropdownService.getLabel(item),
+      value: dropdownService.getValue(item),
     }));
-  }, [dropdownData?.data, config.dropdownService]);
+  }, [dropdownData, config.dropdownService]);
 
   // ==========================================
   // View modal state

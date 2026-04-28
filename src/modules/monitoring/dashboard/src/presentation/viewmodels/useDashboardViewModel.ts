@@ -122,12 +122,12 @@ export function useDashboardViewModel() {
     loginActivity.refetch();
     recentChanges.refetch();
     eventDistribution.refetch();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, [
-    summary.refetch,
-    loginActivity.refetch,
-    recentChanges.refetch,
-    eventDistribution.refetch,
+    summary,
+    loginActivity,
+    recentChanges,
+    eventDistribution,
   ]);
 
   return {

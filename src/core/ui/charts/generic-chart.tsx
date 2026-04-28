@@ -5,7 +5,7 @@ import { Chart, registerables, ChartOptions, ChartData } from "chart.js";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
 import { Button } from "@core/ui/button";
 import { Checkbox } from "@core/ui/checkbox";
-import { Download, Maximize2, RotateCcw, Filter, Settings } from "lucide-react";
+import { Download, Maximize2, RotateCcw, Filter } from "lucide-react";
 import { cn } from "@core/common/utils";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@core/ui/collapsible";
 

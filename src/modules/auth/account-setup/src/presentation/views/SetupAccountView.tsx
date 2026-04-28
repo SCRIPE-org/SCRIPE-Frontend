@@ -39,13 +39,13 @@ export function SetupAccountView() {
   const router = useRouter();
   const token = searchParams.get("token") || "";
 
-  const [pageState, setPageState] = useState<PageState>("loading");
+  const [pageState, setPageState] = useState<PageState>(!token ? "invalid" : "loading");
   const [tokenData, setTokenData] = useState<ValidateTokenResponse | null>(null);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState<string>(!token ? "No setup token provided. Please use the link from your email." : "");
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
   // Password strength validation
@@ -62,11 +62,7 @@ export function SetupAccountView() {
 
   // Validate token on mount
   useEffect(() => {
-    if (!token) {
-      setPageState("invalid");
-      setErrorMessage("No setup token provided. Please use the link from your email.");
-      return;
-    }
+    if (!token) return;
 
     const validate = async () => {
       try {

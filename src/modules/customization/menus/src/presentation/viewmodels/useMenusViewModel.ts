@@ -252,10 +252,10 @@ export function useMenusViewModel() {
   }, []);
 
   /** Find a node by ID in the tree */
-  const findNode = useCallback((nodeId: string, nodes: MenuTreeNode[]): MenuTreeNode | null => {
+  const findNode = useCallback(function findNodeRecursive(nodeId: string, nodes: MenuTreeNode[]): MenuTreeNode | null {
     for (const node of nodes) {
       if (node.id === nodeId) return node;
-      const found = findNode(nodeId, node.children);
+      const found = findNodeRecursive(nodeId, node.children);
       if (found) return found;
     }
     return null;
@@ -263,16 +263,16 @@ export function useMenusViewModel() {
 
   /** Find siblings of a node and its parent ID */
   const findSiblingsAndParent = useCallback(
-    (
+    function findSiblingsRecursive(
       nodeId: string,
       nodes: MenuTreeNode[],
       parentId?: string
-    ): { siblings: MenuTreeNode[]; parentId?: string } | null => {
+    ): { siblings: MenuTreeNode[]; parentId?: string } | null {
       const idx = nodes.findIndex((n) => n.id === nodeId);
       if (idx >= 0) return { siblings: nodes, parentId };
       for (const node of nodes) {
         if (node.children.length > 0) {
-          const result = findSiblingsAndParent(nodeId, node.children, node.id);
+          const result = findSiblingsRecursive(nodeId, node.children, node.id);
           if (result) return result;
         }
       }

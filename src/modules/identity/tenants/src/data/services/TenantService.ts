@@ -34,7 +34,6 @@ import type {
   UpdateTenantSettingsRequest,
 } from "@modules/customization/tenant-settings/src/data/models/TenantSettingsModel";
 import type {
-  EditionThinModel,
   SubscriptionModel,
   PagedEditionResult,
   DowngradeImpactReport,

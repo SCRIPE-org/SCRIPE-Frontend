@@ -141,7 +141,7 @@ export function useSubscriptionsViewModel(tenantId: string) {
       }, [subscriptionType]);
 
       // ─── Mutation helper ─────────────────────────────────
-      const makeMutation = <T,>(
+      const useActionMutation = <T,>(
             mutationFn: (params: T) => Promise<unknown>,
             successKey: string,
             descKey: string,
@@ -203,7 +203,7 @@ export function useSubscriptionsViewModel(tenantId: string) {
 
       // ─── Mutations ──────────────────────────────────────
 
-      const assignMutation = makeMutation(
+      const assignMutation = useActionMutation(
             (params: { editionId: string; type: string; endDate?: string; expiryBehavior?: string; promoCode?: string; currency?: string; promotionId?: string; skipPayment?: boolean }) =>
                   subscriptionRepository.assign(tenantId, params),
             "entSubscriptions.assigned",
@@ -211,7 +211,7 @@ export function useSubscriptionsViewModel(tenantId: string) {
             () => setShowAssignDialog(false)
       );
 
-      const changeMutation = makeMutation(
+      const changeMutation = useActionMutation(
             (params: { editionId: string; type: string; promoCode?: string; currency?: string; promotionId?: string }) =>
                   subscriptionRepository.change(tenantId, params),
             "entSubscriptions.changed",
@@ -219,20 +219,20 @@ export function useSubscriptionsViewModel(tenantId: string) {
             () => setShowChangeDialog(false)
       );
 
-      const renewMutation = makeMutation(
+      const renewMutation = useActionMutation(
             (type: string) => subscriptionRepository.renew(tenantId, type),
             "entSubscriptions.renewed",
             "entSubscriptions.renewedDesc"
       );
 
-      const convertMutation = makeMutation(
+      const convertMutation = useActionMutation(
             (type: string) => subscriptionRepository.convertTrial(tenantId, type),
             "entSubscriptions.converted",
             "entSubscriptions.convertedDesc",
             () => setShowConvertDialog(false)
       );
 
-      const suspendMutation = makeMutation(
+      const suspendMutation = useActionMutation(
             (params: { reason: string; useFallback: boolean; refundType: string; customRefundAmount?: number }) =>
                   subscriptionRepository.suspend(tenantId, params.reason, params.useFallback, params.refundType, params.customRefundAmount),
             "entSubscriptions.suspended",
@@ -240,13 +240,13 @@ export function useSubscriptionsViewModel(tenantId: string) {
             () => setShowSuspendDialog(false)
       );
 
-      const resumeMutation = makeMutation(
+      const resumeMutation = useActionMutation(
             (type?: string) => subscriptionRepository.resume(tenantId, type),
             "entSubscriptions.resumed",
             "entSubscriptions.resumedDesc"
       );
 
-      const cancelMutation = makeMutation(
+      const cancelMutation = useActionMutation(
             (params: { reason?: string; useFallback: boolean; refundType: string; customRefundAmount?: number }) =>
                   subscriptionRepository.cancel(tenantId, params.reason, params.useFallback, params.refundType, params.customRefundAmount),
             "entSubscriptions.canceled",
@@ -254,13 +254,13 @@ export function useSubscriptionsViewModel(tenantId: string) {
             () => setShowCancelDialog(false)
       );
 
-      const resyncMutation = makeMutation(
+      const resyncMutation = useActionMutation(
             () => subscriptionRepository.resync(tenantId),
             "entSubscriptions.resynced",
             "entSubscriptions.resyncedDesc"
       );
 
-      const revokeMutation = makeMutation(
+      const revokeMutation = useActionMutation(
             (id: string) => subscriptionRepository.revoke(id),
             "entSubscriptions.revoked",
             "entSubscriptions.revokedDesc"

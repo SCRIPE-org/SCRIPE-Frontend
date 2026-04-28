@@ -9,13 +9,12 @@
  */
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Users, Shield, Building2, Key, Loader2 } from "lucide-react";
 import { cn } from "@core/common/utils";
 import { systemContainer } from "@modules/identity/di";
-import type { TenantStats as TenantStatsType } from "../../domain/interfaces/ITenantRepository";
 
 interface TenantStatsProps {
   tenantId: string;

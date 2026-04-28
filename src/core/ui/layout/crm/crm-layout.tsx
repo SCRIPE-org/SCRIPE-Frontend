@@ -1,17 +1,15 @@
 "use client";
 
 import type React from "react";
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { Menu, X, Search, Plus, Users, BarChart3 } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSettings } from "@core/providers/settings-provider";
 import { useLayoutStyles } from "@core/ui/layout/shared/use-layout-styles";
 import { useDynamicNavigation } from "@core/ui/navigation/dynamic-navigation";
-import { isNavigationItemActive, type NavigationItem } from "@core/config/navigation";
 import { Logo } from "@core/ui/logo";
 import { Button } from "@core/ui/button";
-import { ScrollArea } from "@core/ui/scroll-area";
 import { LanguageSwitcher, ThemeSwitcher } from "@core/ui/layout/common";
 import { UserProfileDropdown } from "@core/ui/user-profile-dropdown";
 import { Footer } from "@core/ui/layout/shared/footer";

@@ -23,7 +23,7 @@ import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Button } from "@core/ui/button";
 import { cn } from "@core/common/utils";
-import { Loader2, Eye, EyeOff, ShieldAlert, LogOut } from "lucide-react";
+import { Eye, EyeOff, ShieldAlert, LogOut } from "lucide-react";
 
 export function ForceChangePasswordView() {
   const { t, direction } = useI18n();

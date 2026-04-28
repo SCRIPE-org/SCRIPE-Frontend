@@ -6,7 +6,6 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
-import { TrendingUp } from "lucide-react";
 import type { RevenueForecastResponse } from "../../domain/entities/AnalyticsEntities";
 
 interface ForecastTabProps {

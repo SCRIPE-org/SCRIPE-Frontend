@@ -8,7 +8,7 @@ import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Button } from "@core/ui/button";
 import { useI18n } from "@core/providers/i18n-provider";
-import { Loader2, Copy, Download, CheckCircle2, AlertTriangle } from "lucide-react";
+import { Copy, Download, CheckCircle2, AlertTriangle } from "lucide-react";
 
 interface BackupCodesDialogProps {
   isOpen: boolean;

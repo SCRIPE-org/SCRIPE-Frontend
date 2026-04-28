@@ -12,8 +12,6 @@ import {
   MenuItemsResponse,
   type MenuItemData,
   type NavigationDataData,
-  type MenuItemsResponseData,
-  type MenuItemActions,
 } from "@core/domain/entities/Navigation";
 
 export class NavigationMapper {

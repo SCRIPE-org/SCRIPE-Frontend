@@ -15,7 +15,6 @@ import {
 } from "@core/ui/dialog";
 import { Label } from "@core/ui/label";
 import { Textarea } from "@core/ui/textarea";
-import { Loader2 } from "lucide-react";
 import type { SubscriptionDialogProps } from "../types";
 import { RefundOptions } from "./RefundOptions";
 

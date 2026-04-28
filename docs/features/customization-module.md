@@ -36,16 +36,16 @@ customization/
 
 ## Studio Panels
 
-| Tab | Controls | Description |
-|-----|----------|-------------|
-| **Layout** | 22 layout templates | Visual grid picker with device-specific previews |
-| **Branding** | Logo, favicon, headline, subtitle, company name, copyright | Core brand identity |
-| **Appearance** | Light/dark colors (9 each), theme mode (unified/split), backgrounds, overlays | Full color system |
-| **Typography** | Font family (EN/AR), heading font, sizes, weights, line height, letter spacing | Type system |
-| **Spacing** | Border radius, form width, card padding, element gap, input height, button size | Layout metrics |
-| **Blocks** | Slot content editor (6 block types) | Content in platform-defined zones |
-| **Advanced** | Custom CSS, safe mode toggle | Power-user tools |
-| **Accessibility** | 32 controls across 8 categories, 6 profiles, WCAG audit | See below |
+| Tab               | Controls                                                                        | Description                                      |
+| ----------------- | ------------------------------------------------------------------------------- | ------------------------------------------------ |
+| **Layout**        | 22 layout templates                                                             | Visual grid picker with device-specific previews |
+| **Branding**      | Logo, favicon, headline, subtitle, company name, copyright                      | Core brand identity                              |
+| **Appearance**    | Light/dark colors (9 each), theme mode (unified/split), backgrounds, overlays   | Full color system                                |
+| **Typography**    | Font family (EN/AR), heading font, sizes, weights, line height, letter spacing  | Type system                                      |
+| **Spacing**       | Border radius, form width, card padding, element gap, input height, button size | Layout metrics                                   |
+| **Blocks**        | Slot content editor (6 block types)                                             | Content in platform-defined zones                |
+| **Advanced**      | Custom CSS, safe mode toggle                                                    | Power-user tools                                 |
+| **Accessibility** | 32 controls across 8 categories, 6 profiles, WCAG audit                         | See below                                        |
 
 ---
 
@@ -61,27 +61,27 @@ All layouts support light/dark themes, RTL/LTR, background images/gradients/over
 
 ### 8 Settings Categories
 
-| Category | Controls |
-|----------|----------|
-| **Focus & Keyboard** | Focus ring (on/off, color, width, style), skip link, highlight focus |
-| **Screen Reader** | ARIA landmarks, form labels, error announcements, page title |
-| **Contrast & Colors** | High contrast, contrast presets (5), saturation, highlight links |
-| **Typography** | Min font size, content scaling, line/letter/word spacing, dyslexic font, text align |
-| **Cursor & Reading Aids** | Big cursor, reading guide, reading mask |
-| **Motion & Animation** | Reduced motion, animation duration, autoplay disabled, pause all |
-| **Content & Media** | Hide decorative images, enhanced tooltips |
-| **Touch & Targets** | Large targets (≥44×44px), forced colors (Windows High Contrast) |
+| Category                  | Controls                                                                            |
+| ------------------------- | ----------------------------------------------------------------------------------- |
+| **Focus & Keyboard**      | Focus ring (on/off, color, width, style), skip link, highlight focus                |
+| **Screen Reader**         | ARIA landmarks, form labels, error announcements, page title                        |
+| **Contrast & Colors**     | High contrast, contrast presets (5), saturation, highlight links                    |
+| **Typography**            | Min font size, content scaling, line/letter/word spacing, dyslexic font, text align |
+| **Cursor & Reading Aids** | Big cursor, reading guide, reading mask                                             |
+| **Motion & Animation**    | Reduced motion, animation duration, autoplay disabled, pause all                    |
+| **Content & Media**       | Hide decorative images, enhanced tooltips                                           |
+| **Touch & Targets**       | Large targets (≥44×44px), forced colors (Windows High Contrast)                     |
 
 ### 6 One-Click Profiles
 
-| Profile | Activates |
-|---------|-----------|
-| ♿ Motor Impaired | Large targets, big cursor, thick focus ring, skip link |
-| 👁 Vision Impaired | High contrast, big font, 150% scaling, highlight links |
-| 🧠 Cognitive/ADHD | Reading guide, no animations, large text, line height |
+| Profile              | Activates                                                               |
+| -------------------- | ----------------------------------------------------------------------- |
+| ♿ Motor Impaired    | Large targets, big cursor, thick focus ring, skip link                  |
+| 👁 Vision Impaired   | High contrast, big font, 150% scaling, highlight links                  |
+| 🧠 Cognitive/ADHD    | Reading guide, no animations, large text, line height                   |
 | 📖 Dyslexia Friendly | OpenDyslexic font, line height 2×, letter spacing 2px, word spacing 4px |
-| ⚡ Seizure Safe | No animations, desaturate, no autoplay, pause all |
-| 🔊 Screen Reader | ARIA landmarks, form labels, error announce, skip link, page title |
+| ⚡ Seizure Safe      | No animations, desaturate, no autoplay, pause all                       |
+| 🔊 Screen Reader     | ARIA landmarks, form labels, error announce, skip link, page title      |
 
 ### WCAG Audit
 
@@ -123,11 +123,11 @@ Optimistic concurrency via `expectedVersion` prevents stale overwrites (409 on c
 
 ## Key Source Files
 
-| File | Purpose |
-|------|---------|
-| `StudioDraft.ts` | 130+ field entity with 32 a11y fields + defaults |
-| `useStudioViewModel.ts` | Draft ↔ JSON serialization, publish, API calls |
-| `AccessibilityPanel.tsx` | 8 sections, 32 controls, 6 profiles, WCAG audit UI |
-| `useAccessibilityChecker.ts` | Real-time WCAG AA validation with auto-fix patches |
-| `useLoginBrandingTokens.ts` | CSS injection engine (23 a11y rules + branding tokens) |
-| `LoginPreviewShell.tsx` | Sandboxed preview (reading guide, mask, a11y badge) |
+| File                         | Purpose                                                |
+| ---------------------------- | ------------------------------------------------------ |
+| `StudioDraft.ts`             | 130+ field entity with 32 a11y fields + defaults       |
+| `useStudioViewModel.ts`      | Draft ↔ JSON serialization, publish, API calls         |
+| `AccessibilityPanel.tsx`     | 8 sections, 32 controls, 6 profiles, WCAG audit UI     |
+| `useAccessibilityChecker.ts` | Real-time WCAG AA validation with auto-fix patches     |
+| `useLoginBrandingTokens.ts`  | CSS injection engine (23 a11y rules + branding tokens) |
+| `LoginPreviewShell.tsx`      | Sandboxed preview (reading guide, mask, a11y badge)    |

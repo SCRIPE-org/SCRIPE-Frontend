@@ -13,7 +13,7 @@
  */
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";

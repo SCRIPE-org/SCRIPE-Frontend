@@ -26,7 +26,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
-import { BookOpen, Eye, EyeOff, Lock, User, Mail, ArrowLeft, KeyRound } from "lucide-react";
+import { Eye, EyeOff, Lock, User, Mail, ArrowLeft, KeyRound } from "lucide-react";
 import { LanguageSwitcher } from "@core/ui/layout/common/language-switcher";
 import { ThemeSwitcher } from "@core/ui/layout/common/theme-switcher";
 import { BRAND } from "@core/config/branding";

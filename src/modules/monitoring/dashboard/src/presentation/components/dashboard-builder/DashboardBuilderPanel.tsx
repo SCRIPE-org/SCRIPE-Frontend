@@ -54,7 +54,7 @@ function PaletteItem({ type, labelKey, icon, descriptionKey, requiredEdition }: 
   requiredEdition: string | null;
 }) {
   const { t } = useI18n();
-  const Icon = resolveIcon(icon);
+  const resolvedIconComponent = resolveIcon(icon);
   const store = useDashboardBuilderStore();
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({ id: `palette-${type}`, data: { type, source: 'palette' } });
   const isEnterprise = requiredEdition === 'enterprise';
@@ -72,7 +72,7 @@ function PaletteItem({ type, labelKey, icon, descriptionKey, requiredEdition }: 
       )}
     >
       <div className="rounded-md bg-primary/10 p-1.5">
-        <Icon className="h-3.5 w-3.5 text-primary" />
+        {React.createElement(resolvedIconComponent, { className: "h-3.5 w-3.5 text-primary" })}
       </div>
       <div className="flex-1 min-w-0">
         <p className="truncate text-xs font-medium">{t(labelKey) || type}</p>
@@ -310,7 +310,7 @@ export function DashboardBuilderPanel({ initialCanvas, onCanvasChange }: Dashboa
     if (initialCanvas) {
       store.initialize(initialCanvas);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, []);
 
   // Keyboard shortcuts
@@ -327,13 +327,13 @@ export function DashboardBuilderPanel({ initialCanvas, onCanvasChange }: Dashboa
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, []);
 
   // Notify parent on changes
   useEffect(() => {
     onCanvasChange?.(store.toCanvas());
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, [store.widgets, store.gridRows, store.enabled]);
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
@@ -351,8 +351,8 @@ export function DashboardBuilderPanel({ initialCanvas, onCanvasChange }: Dashboa
     if (source === 'palette' && type) {
       store.addWidget(type);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+
+  }, [store]);
 
   return (
     <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>

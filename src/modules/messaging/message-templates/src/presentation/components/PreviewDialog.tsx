@@ -52,7 +52,7 @@ export function PreviewDialog({ open, onOpenChange, result, isLoading }: Preview
                               ALLOW_DATA_ATTR: false,
                         })
                         : "",
-            [result?.body]
+            [result]
       );
 
       const currentDevice = DEVICES.find((d) => d.id === device)!;

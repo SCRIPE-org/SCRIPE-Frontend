@@ -8,7 +8,6 @@
 
 import { useState, useMemo } from "react";
 import { Badge } from "@core/ui/badge";
-import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import {
   Dialog,

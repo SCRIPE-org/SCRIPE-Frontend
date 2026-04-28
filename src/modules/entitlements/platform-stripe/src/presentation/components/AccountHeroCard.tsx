@@ -6,7 +6,6 @@
 import type { PlatformAccount } from "../../domain/entities/PlatformStripeDashboard";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Card, CardContent } from "@core/ui/card";
-import { Badge } from "@core/ui/badge";
 import {
   Building2,
   Mail,

@@ -14,7 +14,7 @@
  */
 "use client";
 
-import { useCallback, useEffect, useRef, useState, useMemo } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "@/core/common/utils";
 import { Code, Eye, X, Maximize2, FileCode2, Copy, Check, Zap } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -23,7 +23,7 @@ import { createPortal } from "react-dom";
 
 // CodeMirror imports
 import { EditorView, keymap, placeholder as cmPlaceholder, lineNumbers, highlightActiveLine, highlightActiveLineGutter, drawSelection, dropCursor } from "@codemirror/view";
-import { EditorState, Compartment } from "@codemirror/state";
+import { EditorState } from "@codemirror/state";
 import { html } from "@codemirror/lang-html";
 import { css } from "@codemirror/lang-css";
 import { oneDark } from "@codemirror/theme-one-dark";
@@ -49,7 +49,9 @@ function useCodeMirrorEditor({
   const containerRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<EditorView | null>(null);
   const onChangeRef = useRef(onChange);
-  onChangeRef.current = onChange;
+  useEffect(() => {
+    onChangeRef.current = onChange;
+  }, [onChange]);
   const isExternalUpdate = useRef(false);
 
   // Create editor on mount
@@ -134,7 +136,7 @@ function useCodeMirrorEditor({
       viewRef.current = null;
     };
     // Only recreate on language change, not on value changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, [language, minHeight]);
 
   // Update value from outside

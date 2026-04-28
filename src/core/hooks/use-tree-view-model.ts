@@ -123,11 +123,12 @@ export function useTreeViewModel<T extends TreeNode, TCreate = any, TUpdate = an
     config.initialSelectedValues || []
   );
 
-  // Update selected values when config changes (render-time, no setState in effect)
-  const prevInitialSelectedRef = useRef(config.initialSelectedValues);
-  if (config.initialSelectedValues && config.initialSelectedValues !== prevInitialSelectedRef.current) {
-    prevInitialSelectedRef.current = config.initialSelectedValues;
-    setSelectedValues(config.initialSelectedValues);
+  const [prevInitialSelected, setPrevInitialSelected] = useState(config.initialSelectedValues);
+  if (config.initialSelectedValues !== prevInitialSelected) {
+    setPrevInitialSelected(config.initialSelectedValues);
+    if (config.initialSelectedValues) {
+      setSelectedValues(config.initialSelectedValues);
+    }
   }
 
   // Modal state
@@ -183,18 +184,23 @@ export function useTreeViewModel<T extends TreeNode, TCreate = any, TUpdate = an
     return queryData?.data ?? [];
   }, [config.staticData, queryData?.data]);
 
-  // Update pagination from query response (render-time, no setState in effect)
-  const prevTreePaginationRef = useRef<{ itemsCount: number; pagesCount: number } | null>(null);
-  if (queryData?.pagination) {
-    const qp = queryData.pagination;
-    if (!prevTreePaginationRef.current || prevTreePaginationRef.current.itemsCount !== qp.itemsCount || prevTreePaginationRef.current.pagesCount !== qp.pagesCount) {
-      prevTreePaginationRef.current = { itemsCount: qp.itemsCount, pagesCount: qp.pagesCount };
-      setPagination((prev) => ({
-        ...qp,
-        pageSize: prev.pageSize,
-        pagesCount: qp.pagesCount || 1,
-        page: qp.page || 1,
-      }));
+  // Update pagination from query response
+  const [prevPagination, setPrevPagination] = useState(queryData?.pagination);
+  if (queryData?.pagination !== prevPagination) {
+    setPrevPagination(queryData?.pagination);
+    if (queryData?.pagination) {
+      const qp = queryData.pagination;
+      setPagination((prev) => {
+        if (prev.itemsCount === qp.itemsCount && prev.pagesCount === qp.pagesCount) {
+          return prev;
+        }
+        return {
+          ...qp,
+          pageSize: prev.pageSize,
+          pagesCount: qp.pagesCount || 1,
+          page: qp.page || 1,
+        };
+      });
     }
   }
 

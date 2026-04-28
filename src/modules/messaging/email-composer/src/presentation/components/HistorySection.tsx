@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
@@ -28,7 +28,6 @@ import {
       ChevronRight,
       Trash2,
       RefreshCcw,
-      Eye,
       ChevronDown,
       ChevronUp,
       FileText,
@@ -37,7 +36,6 @@ import {
       CheckCircle2,
       Clock,
       Search,
-      Filter,
 } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@core/common/utils";

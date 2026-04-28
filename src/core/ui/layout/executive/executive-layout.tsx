@@ -57,11 +57,10 @@ export function ExecutiveLayout({ children }: ExecutiveLayoutProps) {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  // Close dropdown on route change (ref-based, no setState in effect)
-  const prevPathnameRef = useRef(pathname);
-  if (prevPathnameRef.current !== pathname) {
-    prevPathnameRef.current = pathname;
-    if (openDropdown) setOpenDropdown(null);
+  const [prevPathname, setPrevPathname] = useState(pathname);
+  if (pathname !== prevPathname) {
+    setPrevPathname(pathname);
+    setOpenDropdown(null);
   }
 
   // Track active group

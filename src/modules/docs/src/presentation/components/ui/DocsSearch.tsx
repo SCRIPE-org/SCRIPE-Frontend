@@ -27,17 +27,26 @@ export function DocsSearch({
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Focus input when modal opens
-  useEffect(() => {
+  const [prevIsOpen, setPrevIsOpen] = useState(isOpen);
+  if (isOpen !== prevIsOpen) {
+    setPrevIsOpen(isOpen);
     if (isOpen) {
       setQuery("");
       setResults([]);
       setSelectedIdx(0);
+    }
+  }
+
+  useEffect(() => {
+    if (isOpen) {
       setTimeout(() => inputRef.current?.focus(), 50);
     }
   }, [isOpen]);
 
   // Search on query change
-  useEffect(() => {
+  const [prevQuery, setPrevQuery] = useState(query);
+  if (query !== prevQuery) {
+    setPrevQuery(query);
     if (query.trim()) {
       const r = onSearch(query);
       setResults(r);
@@ -45,7 +54,7 @@ export function DocsSearch({
     } else {
       setResults([]);
     }
-  }, [query, onSearch]);
+  }
 
   // Navigate to result
   const navigateToResult = useCallback(

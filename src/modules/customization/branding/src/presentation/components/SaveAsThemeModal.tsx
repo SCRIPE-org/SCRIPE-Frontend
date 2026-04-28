@@ -28,7 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@core/ui/select";
-import { Loader2, Palette, Sparkles } from "lucide-react";
+import { Palette, Sparkles } from "lucide-react";
 import { customizationContainer } from "@modules/customization/di";
 import { useToast } from "@core/ui/use-toast";
 

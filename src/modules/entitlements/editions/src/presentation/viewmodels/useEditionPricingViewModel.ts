@@ -206,7 +206,7 @@ export function useEditionPricingViewModel(editionId: string): EditionPricingVie
                         return next;
                   });
             },
-            [exchangeRates, usdMonthly, usdYearly]
+            [exchangeRates, usdMonthly, usdYearly, usdLifetime]
       );
 
       // ── Remove override ──

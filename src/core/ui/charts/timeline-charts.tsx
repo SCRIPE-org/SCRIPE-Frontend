@@ -155,11 +155,11 @@ const TimelineChart = ({ data, colors, title, description }: any) => {
                               <div className="h-1.5 w-full rounded-full bg-slate-600">
                                 <div
                                   className="h-1.5 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 transition-all duration-1000"
-                                  style={{ width: `${Math.random() * 40 + 30}%` }}
+                                  style={{ width: `${((index * 13) % 40) + 30}%` }}
                                 ></div>
                               </div>
                               <div className="mt-1 text-xs text-slate-400">
-                                Progress: {Math.round(Math.random() * 40 + 30)}%
+                                Progress: {Math.round(((index * 13) % 40) + 30)}%
                               </div>
                             </div>
                           ))}

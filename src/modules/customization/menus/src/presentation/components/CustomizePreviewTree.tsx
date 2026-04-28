@@ -13,7 +13,6 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { Badge } from "@core/ui/badge";
 import type { MenuTreeNode } from "../../domain/entities/MenuItem";
 import type { EffectiveTreeNode } from "../../domain/utils/computeEffectiveTree";
-import { MenuOverrideScope } from "../../domain/entities/MenuItemRequests";
 import type {
   CustomizeDropPosition,
   CustomizeDropTarget,

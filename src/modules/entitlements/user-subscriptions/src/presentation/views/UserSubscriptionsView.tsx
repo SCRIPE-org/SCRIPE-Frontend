@@ -217,7 +217,7 @@ export function UserSubscriptionsView() {
       ],
       };
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
     [t, openDetail]
   );
 

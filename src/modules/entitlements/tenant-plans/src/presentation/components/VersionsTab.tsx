@@ -23,7 +23,7 @@ import {
   DialogFooter,
   DialogDescription,
 } from "@core/ui/dialog";
-import { GitBranch, Clock, User, Rocket, Loader2, ChevronDown, ChevronUp, Code2 } from "lucide-react";
+import { GitBranch, Clock, User, Rocket, ChevronDown, ChevronUp, Code2 } from "lucide-react";
 import { format } from "date-fns";
 import type { TenantPlan, TenantPlanVersionData } from "../../domain/entities/TenantPlan";
 import type { TFn } from "./shared-helpers";

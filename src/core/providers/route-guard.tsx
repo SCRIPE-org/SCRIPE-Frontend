@@ -93,11 +93,10 @@ export function RouteGuard({ children }: RouteGuardProps) {
   // Track if we're currently refreshing to prevent duplicate calls
   const isRefreshing = useRef(false);
 
-  // Reset redirect tracking when pathname changes (render-time)
-  if (pathname !== lastPathname.current) {
+  // Reset redirect tracking when pathname changes
+  useEffect(() => {
     hasRedirected.current = false;
-    lastPathname.current = pathname;
-  }
+  }, [pathname]);
 
   useEffect(() => {
     const checkAccess = async () => {

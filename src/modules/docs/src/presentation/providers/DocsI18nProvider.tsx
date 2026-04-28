@@ -149,15 +149,18 @@ export function DocsI18nProvider({
 
   // Hydrate from localStorage
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem(DOCS_LANG_KEY) as DocLanguage | null;
-      if (saved && DOC_LANGUAGES.some((l) => l.code === saved)) {
-        setLanguageState(saved);
+    const hydrate = () => {
+      try {
+        const saved = localStorage.getItem(DOCS_LANG_KEY) as DocLanguage | null;
+        if (saved && DOC_LANGUAGES.some((l) => l.code === saved)) {
+          setLanguageState(saved);
+        }
+      } catch {
+        /* noop */
       }
-    } catch {
-      /* noop */
-    }
-    setIsHydrated(true);
+      setIsHydrated(true);
+    };
+    hydrate();
   }, []);
 
   const contextValue = useMemo(

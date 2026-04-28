@@ -11,7 +11,7 @@
 
 import { useState, useCallback } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
-import { useCurrencyPreference, type CurrencyDisplayMode } from "@core/store/useCurrencyPreference";
+import { useCurrencyPreference } from "@core/store/useCurrencyPreference";
 import { useConvertedAmount } from "@core/hooks/useConvertedAmount";
 import { getCoreContainer } from "@core/di";
 import { API_ENDPOINTS } from "@core/config/api-endpoints";

@@ -21,7 +21,6 @@ import {
   Code,
   Undo,
   Redo,
-  Type,
   Palette,
   Minus,
   Heading1,
@@ -189,6 +188,59 @@ interface RichTextEditorProps {
   minHeight?: number;
 }
 
+const TOOLBAR_GROUPS = [
+  {
+    group: "headings",
+    buttons: [
+      { icon: Heading1, command: "formatBlock", value: "h1", title: "Heading 1" },
+      { icon: Heading2, command: "formatBlock", value: "h2", title: "Heading 2" },
+      { icon: Heading3, command: "formatBlock", value: "h3", title: "Heading 3" },
+    ],
+  },
+  {
+    group: "format",
+    buttons: [
+      { icon: Bold, command: "bold", title: "Bold (Ctrl+B)" },
+      { icon: Italic, command: "italic", title: "Italic (Ctrl+I)" },
+      { icon: Underline, command: "underline", title: "Underline (Ctrl+U)" },
+      { icon: Strikethrough, command: "strikeThrough", title: "Strikethrough" },
+    ],
+  },
+  {
+    group: "align",
+    buttons: [
+      { icon: AlignLeft, command: "justifyLeft", title: "Align Left" },
+      { icon: AlignCenter, command: "justifyCenter", title: "Align Center" },
+      { icon: AlignRight, command: "justifyRight", title: "Align Right" },
+      { icon: AlignJustify, command: "justifyFull", title: "Justify" },
+    ],
+  },
+  {
+    group: "lists",
+    buttons: [
+      { icon: List, command: "insertUnorderedList", title: "Bullet List" },
+      { icon: ListOrdered, command: "insertOrderedList", title: "Numbered List" },
+      { icon: Quote, command: "formatBlock", value: "blockquote", title: "Quote" },
+    ],
+  },
+  {
+    group: "insert",
+    buttons: [
+      { icon: Link, action: "insertLink", title: "Insert Link" },
+      { icon: Image, action: "insertImage", title: "Insert Image" },
+      { icon: Code, command: "formatBlock", value: "pre", title: "Code Block" },
+      { icon: Minus, command: "insertHorizontalRule", title: "Horizontal Rule" },
+    ],
+  },
+  {
+    group: "history",
+    buttons: [
+      { icon: Undo, command: "undo", title: "Undo (Ctrl+Z)" },
+      { icon: Redo, command: "redo", title: "Redo (Ctrl+Y)" },
+    ],
+  },
+];
+
 export function RichTextEditor({
   value = "",
   onChange,
@@ -199,6 +251,16 @@ export function RichTextEditor({
 }: RichTextEditorProps) {
   const editorRef = useRef<HTMLDivElement>(null);
   const [isActive, setIsActive] = useState(false);
+
+  const getCharCount = (html: string) => {
+    if (typeof document === "undefined") {
+      return html.replace(/<[^>]*>?/gm, '').length;
+    }
+    const tmp = document.createElement("DIV");
+    tmp.innerHTML = html;
+    return tmp.textContent?.length || 0;
+  };
+  const charCount = getCharCount(value);
 
   useEffect(() => {
     if (editorRef.current && value !== editorRef.current.innerHTML) {
@@ -213,8 +275,10 @@ export function RichTextEditor({
   };
 
   const handleContentChange = () => {
-    if (editorRef.current && onChange) {
-      onChange(sanitizeHTML(editorRef.current.innerHTML));
+    if (editorRef.current) {
+      if (onChange) {
+        onChange(sanitizeHTML(editorRef.current.innerHTML));
+      }
     }
   };
 
@@ -244,58 +308,6 @@ export function RichTextEditor({
     executeCommand("foreColor", color);
   };
 
-  const toolbarButtons = [
-    {
-      group: "headings",
-      buttons: [
-        { icon: Heading1, command: "formatBlock", value: "h1", title: "Heading 1" },
-        { icon: Heading2, command: "formatBlock", value: "h2", title: "Heading 2" },
-        { icon: Heading3, command: "formatBlock", value: "h3", title: "Heading 3" },
-      ],
-    },
-    {
-      group: "format",
-      buttons: [
-        { icon: Bold, command: "bold", title: "Bold (Ctrl+B)" },
-        { icon: Italic, command: "italic", title: "Italic (Ctrl+I)" },
-        { icon: Underline, command: "underline", title: "Underline (Ctrl+U)" },
-        { icon: Strikethrough, command: "strikeThrough", title: "Strikethrough" },
-      ],
-    },
-    {
-      group: "align",
-      buttons: [
-        { icon: AlignLeft, command: "justifyLeft", title: "Align Left" },
-        { icon: AlignCenter, command: "justifyCenter", title: "Align Center" },
-        { icon: AlignRight, command: "justifyRight", title: "Align Right" },
-        { icon: AlignJustify, command: "justifyFull", title: "Justify" },
-      ],
-    },
-    {
-      group: "lists",
-      buttons: [
-        { icon: List, command: "insertUnorderedList", title: "Bullet List" },
-        { icon: ListOrdered, command: "insertOrderedList", title: "Numbered List" },
-        { icon: Quote, command: "formatBlock", value: "blockquote", title: "Quote" },
-      ],
-    },
-    {
-      group: "insert",
-      buttons: [
-        { icon: Link, action: insertLink, title: "Insert Link" },
-        { icon: Image, action: insertImage, title: "Insert Image" },
-        { icon: Code, command: "formatBlock", value: "pre", title: "Code Block" },
-        { icon: Minus, command: "insertHorizontalRule", title: "Horizontal Rule" },
-      ],
-    },
-    {
-      group: "history",
-      buttons: [
-        { icon: Undo, command: "undo", title: "Undo (Ctrl+Z)" },
-        { icon: Redo, command: "redo", title: "Redo (Ctrl+Y)" },
-      ],
-    },
-  ] as const;
 
   return (
     <div className={cn("rounded-md border bg-background", className)}>
@@ -335,7 +347,7 @@ export function RichTextEditor({
         <Separator orientation="vertical" className="h-6" />
 
         {/* Toolbar Buttons */}
-        {toolbarButtons.map((group, groupIndex) => (
+        {TOOLBAR_GROUPS.map((group, groupIndex) => (
           <React.Fragment key={group.group}>
             <div className="flex gap-1">
               {group.buttons.map((button, buttonIndex) => (
@@ -346,8 +358,9 @@ export function RichTextEditor({
                   className="h-8 w-8 p-0"
                   onClick={() => {
                     if ("action" in button) {
-                      button.action();
-                    } else {
+                      if (button.action === "insertLink") insertLink();
+                      if (button.action === "insertImage") insertImage();
+                    } else if ("command" in button) {
                       executeCommand(button.command, "value" in button ? button.value : undefined);
                     }
                   }}
@@ -358,7 +371,7 @@ export function RichTextEditor({
                 </Button>
               ))}
             </div>
-            {groupIndex < toolbarButtons.length - 1 && (
+            {groupIndex < TOOLBAR_GROUPS.length - 1 && (
               <Separator orientation="vertical" className="h-6" />
             )}
           </React.Fragment>
@@ -425,7 +438,7 @@ export function RichTextEditor({
       {/* Status Bar */}
       <div className="border-t bg-muted/30 px-4 py-2 text-xs text-muted-foreground">
         <div className="flex items-center justify-between">
-          <span>{editorRef.current?.textContent?.length || 0} characters</span>
+          <span>{charCount} characters</span>
           <span className="flex items-center gap-2">
             {isActive && <span className="text-green-600">● Active</span>}
             <span>Rich Text Editor</span>

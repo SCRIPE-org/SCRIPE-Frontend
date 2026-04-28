@@ -5,7 +5,7 @@
  */
 "use client";
 
-import { useState, useRef, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
 import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
@@ -34,12 +34,14 @@ export function RoleDeleteDialog({
   const { t, language } = useI18n();
   const [fallbackRoleId, setFallbackRoleId] = useState<string>("");
 
-  // Reset fallback selection when dialog opens (render-time)
-  const prevOpenRef = useRef(open);
-  if (open && !prevOpenRef.current) {
-    setFallbackRoleId("");
+  // Reset fallback selection when dialog opens
+  const [prevOpen, setPrevOpen] = useState(open);
+  if (open !== prevOpen) {
+    setPrevOpen(open);
+    if (open) {
+      setFallbackRoleId("");
+    }
   }
-  prevOpenRef.current = open;
 
   // Fetch admin count for this role
   const { data: adminCount = 0, isLoading: isLoadingCount } = useQuery({
@@ -72,7 +74,7 @@ export function RoleDeleteDialog({
       value: r.id,
       label: language === "ar" ? r.nameAr : r.nameEn,
     }));
-  }, [availableRoles]);
+  }, [availableRoles, language]);
 
   const hasAdmins = adminCount > 0;
   const isLoading = isLoadingCount || (hasAdmins && isLoadingRoles);

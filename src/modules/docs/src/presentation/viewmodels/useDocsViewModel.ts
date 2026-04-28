@@ -31,20 +31,22 @@ export function useDocsViewModel(slug: string, mode: "technical" | "commercial" 
   }, [allCategories, mode]);
 
   // ─── Category info for breadcrumb ───────────────────────────
-  const categoryInfo = useMemo(() => {
-    for (const cat of categories) {
-      if (cat.findBySlug(slug)) {
-        return { id: cat.id, titleKey: cat.titleKey };
-      }
+  let categoryInfo = { id: "", titleKey: "" };
+  for (const cat of categories) {
+    if (cat.findBySlug(slug)) {
+      categoryInfo = { id: cat.id, titleKey: cat.titleKey };
+      break;
     }
+  }
+  if (!categoryInfo.id) {
     // Fallback: check all categories (cross-mode)
     for (const cat of allCategories) {
       if (cat.findBySlug(slug)) {
-        return { id: cat.id, titleKey: cat.titleKey };
+        categoryInfo = { id: cat.id, titleKey: cat.titleKey };
+        break;
       }
     }
-    return { id: "", titleKey: "" };
-  }, [categories, allCategories, slug]);
+  }
 
   // ─── Headings for TOC ──────────────────────────────────────
   const headings: HeadingSection[] = useMemo(() => {

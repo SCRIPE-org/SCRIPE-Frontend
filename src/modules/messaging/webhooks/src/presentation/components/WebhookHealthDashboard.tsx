@@ -13,11 +13,8 @@ import { Skeleton } from "@core/ui/skeleton";
 import type { WebhookHealthSummary } from "../../domain/entities/Webhook";
 import {
       Radio,
-      CheckCircle2,
-      XCircle,
       AlertTriangle,
       TrendingUp,
-      Clock,
       Skull,
       RefreshCw,
       Activity,

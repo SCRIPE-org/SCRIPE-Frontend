@@ -126,8 +126,8 @@ export function useSecurityDashboardViewModel() {
     failedLogins.refetch();
     blockedIPs.refetch();
     timeline.refetch();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [threats.refetch, failedLogins.refetch, blockedIPs.refetch, timeline.refetch]);
+
+  }, [threats, failedLogins, blockedIPs, timeline]);
 
   return {
     threats,

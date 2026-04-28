@@ -19,7 +19,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { Button } from "@core/ui/button";
-import { AlertTriangle, ArrowLeft, ShieldAlert, UserX } from "lucide-react";
+import { ArrowLeft, ShieldAlert, UserX } from "lucide-react";
 import Link from "next/link";
 import { completeSsoCallback } from "../viewmodels/useSsoProviders";
 import { appLogger } from "@/core/common/logger";
@@ -53,8 +53,9 @@ export function SsoCallbackView() {
             if (hasProcessed.current) return;
             hasProcessed.current = true;
 
-            const code = searchParams.get("code");
-            const stateParam = searchParams.get("state");
+            setTimeout(() => {
+                  const code = searchParams.get("code");
+                  const stateParam = searchParams.get("state");
 
             if (!code || !stateParam) {
                   setState("error");
@@ -160,6 +161,7 @@ export function SsoCallbackView() {
             }
 
             handleCallback();
+            }, 0);
       }, [searchParams]);
 
       return (

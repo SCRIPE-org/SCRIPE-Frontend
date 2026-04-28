@@ -14,7 +14,7 @@ import { LanguageSwitcher, ThemeSwitcher } from "../common";
 import { CommandPalette } from "../shared/command-palette";
 import { Footer } from "../shared/footer";
 import { useDynamicNavigation } from "@core/ui/navigation/dynamic-navigation";
-import { getFlatNavigationItems, type NavigationItem } from "@core/config/navigation";
+import { getFlatNavigationItems } from "@core/config/navigation";
 import { NotificationBell } from "@core/ui/notification";
 
 interface CommandLayoutProps {

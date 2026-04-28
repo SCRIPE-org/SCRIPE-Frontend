@@ -10,7 +10,7 @@ import { DEFAULT_VARIABLES } from "@core/ui/rich-text-editor/VariablePicker";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
-import { ArrowLeft, Save, Loader2, Settings, Palette, Braces, Eye } from "lucide-react";
+import { ArrowLeft, Save, Settings, Palette, Braces, Eye } from "lucide-react";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import dynamic from "next/dynamic";
 

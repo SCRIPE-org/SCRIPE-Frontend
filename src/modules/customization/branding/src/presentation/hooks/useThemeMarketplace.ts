@@ -227,12 +227,12 @@ export function useThemeMarketplace(): UseThemeMarketplaceReturn {
   // ── Auto-load on filter/page/tab change ──
   useEffect(() => {
     loadThemes();
-  }, [page, filters, activeTab]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [loadThemes]);
 
   // ── Load featured on mount ──
   useEffect(() => {
     loadFeatured();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [loadFeatured]);
 
   return {
     themes,

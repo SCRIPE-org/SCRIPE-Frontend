@@ -4,7 +4,6 @@ import { useState, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
 import { useSettings } from "@core/providers/settings-provider";
 import { useI18n } from "@core/providers/i18n-provider";
-import { cn } from "@core/common/utils";
 import { Pipette } from "lucide-react";
 
 function ColorPickerField({

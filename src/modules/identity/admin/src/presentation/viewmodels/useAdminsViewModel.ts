@@ -6,23 +6,22 @@
  */
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
+import { useCallback } from "react";
 import { systemContainer } from "@modules/identity/di";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useServices } from "@core/providers/service-provider";
 import { useAppStore } from "@core/store/useAppStore";
 import { useCrudViewModel } from "@core/crud/hooks/useCrudViewModel";
-import type { Admin, AdminData } from "../../domain/entities/Admin";
+import type { Admin } from "../../domain/entities/Admin";
 import type {
   CreateAdminRequest,
   UpdateAdminRequest,
   AssignRoleRequest,
 } from "../../domain/entities/AdminRequests";
 import type { CrudConfig } from "@core/crud/components/generic-crud-view";
-import type { FieldConfig, FieldOption } from "@core/ui/forms/generic-form";
+import type { FieldOption } from "@core/ui/forms/generic-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
-import { secureTokenService } from "@core/common/secure-token-service";
 import { useCurrentTenantId } from "@core/providers/tenant-context-provider";
 import { useImpersonation } from "@modules/auth/core/src/presentation/viewmodels/useImpersonation";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
@@ -374,7 +373,7 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
         return [];
       }
     },
-    [roleRepository, propTenantId, contextTenantId, language]
+    [roleRepository, propTenantId, contextTenantId, language, useMyTenant]
   );
 
   // ============ Group Search for Create Form ============
@@ -565,7 +564,7 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
         canDelete: SYSTEM_PERMISSIONS.ADMINS_DELETE,
       },
     }),
-    [t, adminRepository]
+    [t, adminRepository, handleRoleSearch, handleGroupSearch]
   );
 
   return {

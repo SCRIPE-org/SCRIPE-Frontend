@@ -11,7 +11,7 @@
 
 import { useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
+import { Tabs, TabsContent } from "@core/ui/tabs";
 import { Users, Shield, Building2, Settings, Crown, UsersRound, Globe } from "lucide-react";
 import { cn } from "@core/common/utils";
 

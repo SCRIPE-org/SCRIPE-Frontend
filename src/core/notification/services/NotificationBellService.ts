@@ -6,7 +6,7 @@
  */
 import type { IApiService } from "@core/interfaces/api.interface";
 import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
-import type { NotificationItem, NotificationListResponse, UnreadCountResponse } from "../entities/NotificationItem";
+import type { NotificationListResponse, UnreadCountResponse } from "../entities/NotificationItem";
 
 export interface INotificationBellService {
       getNotifications(params?: { page?: number; pageSize?: number; isRead?: boolean }): Promise<NotificationListResponse>;

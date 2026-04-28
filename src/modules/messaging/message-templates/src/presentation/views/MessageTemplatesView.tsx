@@ -4,7 +4,6 @@ import { useMemo, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
 import type { CrudConfig, CrudAction } from "@core/crud/components/generic-crud-view";
-import { useI18n } from "@core/providers/i18n-provider";
 import { useMessageTemplatesViewModel } from "../viewmodels/useMessageTemplatesViewModel";
 import { PreviewDialog } from "../components/PreviewDialog";
 import type { MessageTemplate, TemplateCategory, ExportedTemplate } from "../../domain/entities/MessageTemplate";

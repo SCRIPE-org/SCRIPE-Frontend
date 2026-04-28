@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback } from "react";
 import {
   Dialog,
   DialogContent,
@@ -52,19 +52,21 @@ export function AdminTransferDialog({
   const isSystemTenantSelected = targetTenantId === SYSTEM_TENANT_VALUE;
   const hasTenantSelected = targetTenantId !== "";
 
-  // Reset state when dialog opens (render-time)
-  const prevOpenRef = useRef(open);
-  if (open && !prevOpenRef.current) {
-    setTargetTenantId("");
-    setTargetRoleId("");
+  // Reset state when dialog opens
+  const [prevOpen, setPrevOpen] = useState(open);
+  if (open !== prevOpen) {
+    setPrevOpen(open);
+    if (open) {
+      setTargetTenantId("");
+      setTargetRoleId("");
+    }
   }
-  prevOpenRef.current = open;
 
-  // Reset role when tenant changes (render-time)
-  const prevTenantRef = useRef(targetTenantId);
-  if (targetTenantId !== prevTenantRef.current) {
-    prevTenantRef.current = targetTenantId;
-    if (targetRoleId) setTargetRoleId("");
+  // Reset role when tenant changes
+  const [prevTargetTenantId, setPrevTargetTenantId] = useState(targetTenantId);
+  if (targetTenantId !== prevTargetTenantId) {
+    setPrevTargetTenantId(targetTenantId);
+    setTargetRoleId("");
   }
 
   const handleTransfer = async () => {

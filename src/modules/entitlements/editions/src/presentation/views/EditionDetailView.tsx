@@ -13,7 +13,6 @@
 import { useMemo, useState } from "react";
 import { useEditionDetailViewModel } from "../viewmodels/useEditionDetailViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
-import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import {
   ArrowLeft, Loader2, Zap, GitBranch, DollarSign, Tag,

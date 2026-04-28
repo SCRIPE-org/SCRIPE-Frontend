@@ -29,6 +29,8 @@ export function useNotificationSenderViewModel() {
             staleTime: 30_000,
       });
 
+      const [fieldErrors, setFieldErrors] = useState<Record<string, boolean>>({});
+
       const addTarget = useCallback(
             (target: NotificationTarget) => {
                   setSelectedTargets((prev) => {
@@ -56,7 +58,7 @@ export function useNotificationSenderViewModel() {
       const [confirmSendOpen, setConfirmSendOpen] = useState(false);
 
       // ─── Validation state ─────────────────────────────────────
-      const [fieldErrors, setFieldErrors] = useState<Record<string, boolean>>({});
+      // Moved up to fix initialization order
 
       // ─── Helper: Map frontend target type to backend enum ──────
       const toBackendTarget = (target: NotificationTarget): { target: NotificationTargetType; userId: string | null; tenantId: string | null } => {

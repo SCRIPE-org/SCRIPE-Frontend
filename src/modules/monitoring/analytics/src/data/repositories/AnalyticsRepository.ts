@@ -18,16 +18,16 @@ export class AnalyticsRepository implements IAnalyticsRepository {
 
   async getSummary(): Promise<AnalyticsSummary> {
     const dto = await this.service.getSummary();
-    return AnalyticsMapper.toSummary(dto as any);
+    return AnalyticsMapper.toSummary(dto);
   }
 
   async getEventDistribution(days?: number): Promise<DistributionData[]> {
     const dtos = await this.service.getEventDistribution(days);
-    return (dtos as any[]).map(AnalyticsMapper.toDistributionData);
+    return dtos.map(AnalyticsMapper.toDistributionData);
   }
 
   async getLoginActivity(days?: number): Promise<ComparisonDataPoint[]> {
     const dtos = await this.service.getLoginActivity(days);
-    return (dtos as any[]).map(AnalyticsMapper.toComparisonDataPoint);
+    return dtos.map(AnalyticsMapper.toComparisonDataPoint);
   }
 }

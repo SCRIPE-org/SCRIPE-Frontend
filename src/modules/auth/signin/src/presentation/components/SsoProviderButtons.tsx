@@ -10,7 +10,6 @@
 "use client";
 import { useI18n } from "@core/providers/i18n-provider";
 
-import { Loader2 } from "lucide-react";
 import { Button } from "@core/ui/button";
 import type { SsoProvider } from "../viewmodels/useSsoProviders";
 import { resolveFileUrl } from "@core/common/utils";

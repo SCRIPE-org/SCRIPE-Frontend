@@ -14,7 +14,6 @@ import {
   History,
   Settings,
   User,
-  Loader2,
   ChevronLeft,
   ChevronRight,
   CheckCircle2,

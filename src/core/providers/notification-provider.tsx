@@ -194,20 +194,22 @@ export function NotificationSignalRProvider({
 
             if (isAuthenticated && secureTokenService.hasToken()) {
                   appLogger.debug("[NotifHub] isAuthenticated=true, calling connect()");
-                  connect();
+                  setTimeout(() => connect(), 0);
             } else {
                   appLogger.debug("[NotifHub] isAuthenticated=false, tearing down");
                   connectionRef.current?.stop();
                   connectionRef.current = null;
-                  setConnection(null);
-                  setConnectionState("disconnected");
+                  setTimeout(() => {
+                    setConnection(null);
+                    setConnectionState("disconnected");
+                  }, 0);
             }
 
             return () => {
                   connectionRef.current?.stop();
                   connectionRef.current = null;
             };
-            // eslint-disable-next-line react-hooks/exhaustive-deps
+
       }, [isAuthenticated, isDocsRoute]);
 
       const contextValue = useMemo(

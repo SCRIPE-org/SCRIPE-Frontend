@@ -82,20 +82,21 @@ modules/system/messaging/
 
 ### Features
 
-| Feature | Implementation |
-|---------|----------------|
-| Compose | Rich text editor with subject, body, cc/bcc, signature |
-| Template picker | Select from database templates, auto-fill placeholders |
-| Attachments | Upload files via `IFileService` (max 10 MB each) |
-| Image embedding | Upload inline images via `IFileService` (max 5 MB) |
-| Recipient search | Autocomplete search for admins/users |
-| Schedule | Date/time picker for delayed delivery |
-| Preview | Preview rendered email before sending |
-| History | Paginated sent email log with status tracking |
+| Feature          | Implementation                                         |
+| ---------------- | ------------------------------------------------------ |
+| Compose          | Rich text editor with subject, body, cc/bcc, signature |
+| Template picker  | Select from database templates, auto-fill placeholders |
+| Attachments      | Upload files via `IFileService` (max 10 MB each)       |
+| Image embedding  | Upload inline images via `IFileService` (max 5 MB)     |
+| Recipient search | Autocomplete search for admins/users                   |
+| Schedule         | Date/time picker for delayed delivery                  |
+| Preview          | Preview rendered email before sending                  |
+| History          | Paginated sent email log with status tracking          |
 
 ### ViewModels
 
 **`useEmailComposerViewModel`** — Orchestrator handling:
+
 - Compose state (subject, body, recipients, attachments)
 - Template selection and placeholder rendering
 - Image/attachment uploads (via API → `IFileService`)
@@ -105,14 +106,14 @@ modules/system/messaging/
 
 ### Components
 
-| Component | Purpose |
-|-----------|---------|
-| `ComposeSection` | Main compose form (recipients, subject, body editor) |
-| `TemplatePicker` | Modal to browse/select database templates |
-| `AttachmentUploader` | Drag-and-drop file attachment with progress |
-| `SchedulePicker` | Date/time picker for scheduled delivery |
-| `EmailPreviewDialog` | Rendered HTML preview before sending |
-| `HistorySection` | Paginated table of sent emails with status |
+| Component            | Purpose                                              |
+| -------------------- | ---------------------------------------------------- |
+| `ComposeSection`     | Main compose form (recipients, subject, body editor) |
+| `TemplatePicker`     | Modal to browse/select database templates            |
+| `AttachmentUploader` | Drag-and-drop file attachment with progress          |
+| `SchedulePicker`     | Date/time picker for scheduled delivery              |
+| `EmailPreviewDialog` | Rendered HTML preview before sending                 |
+| `HistorySection`     | Paginated table of sent emails with status           |
 
 ### Data Flow
 
@@ -135,23 +136,25 @@ EmailComposerView → useEmailComposerViewModel
 
 ### Features
 
-| Feature | Implementation |
-|---------|----------------|
-| List | `GenericCrudView` with channel/language/category filters |
-| Create/Edit | Full-page form with rich text editor |
-| Live Preview | Real-time template preview via `ITemplateRenderer.RenderRaw()` |
-| Placeholder Schema | Visual schema builder for defining placeholder types |
-| Design Variables | Panel for configuring colors, fonts, logo, footer |
-| Versioning | Auto-increment version on update |
+| Feature            | Implementation                                                 |
+| ------------------ | -------------------------------------------------------------- |
+| List               | `GenericCrudView` with channel/language/category filters       |
+| Create/Edit        | Full-page form with rich text editor                           |
+| Live Preview       | Real-time template preview via `ITemplateRenderer.RenderRaw()` |
+| Placeholder Schema | Visual schema builder for defining placeholder types           |
+| Design Variables   | Panel for configuring colors, fonts, logo, footer              |
+| Versioning         | Auto-increment version on update                               |
 
 ### ViewModels
 
 **`useMessageTemplatesViewModel`** — List page orchestrator:
+
 - Paginated template list with filters
 - CRUD mutations (create, update, soft delete)
 - Column definitions
 
 **`useTemplateFormViewModel`** — Form page orchestrator:
+
 - Form state (react-hook-form + zod validation)
 - Live preview rendering via preview API
 - Placeholder schema management
@@ -159,12 +162,12 @@ EmailComposerView → useEmailComposerViewModel
 
 ### Components
 
-| Component | Purpose |
-|-----------|---------|
-| `PreviewDialog` | Full-width preview of rendered template |
-| `TemplateLivePreview` | Side-by-side editor + live preview |
+| Component                  | Purpose                                    |
+| -------------------------- | ------------------------------------------ |
+| `PreviewDialog`            | Full-width preview of rendered template    |
+| `TemplateLivePreview`      | Side-by-side editor + live preview         |
 | `PlaceholderSchemaBuilder` | Visual builder for placeholder definitions |
-| `DesignVariablesPanel` | Color, font, logo, footer settings |
+| `DesignVariablesPanel`     | Color, font, logo, footer settings         |
 
 ### Data Flow
 
@@ -192,17 +195,18 @@ TemplateFormView → useTemplateFormViewModel
 
 ### Features
 
-| Feature | Implementation |
-|---------|----------------|
-| Send | Compose and send in-app notifications |
-| Target search | Autocomplete for admins + roles |
-| Type selection | Info, Success, Warning, Error |
-| Category | General, Security, System, Activity |
-| Action URL | Optional deep-link for notification click |
+| Feature        | Implementation                            |
+| -------------- | ----------------------------------------- |
+| Send           | Compose and send in-app notifications     |
+| Target search  | Autocomplete for admins + roles           |
+| Type selection | Info, Success, Warning, Error             |
+| Category       | General, Security, System, Activity       |
+| Action URL     | Optional deep-link for notification click |
 
 ### ViewModels
 
 **`useNotificationSenderViewModel`** — Orchestrator:
+
 - Compose state (title, body, type, category, target)
 - Target search (admins + roles)
 - Send mutation
@@ -234,21 +238,21 @@ src/app/(modules)/messaging/
 
 ## Backend API Summary
 
-| Area | Endpoint | Method | Description |
-|------|----------|--------|-------------|
-| **Email** | `/api/v1/emails/send` | POST | Send single email |
-| **Email** | `/api/v1/emails/send-bulk` | POST | Send bulk emails |
-| **Email** | `/api/v1/emails/sent` | GET | Sent email history |
-| **Email** | `/api/v1/emails/search-recipients` | GET | Recipient autocomplete |
-| **Email** | `/api/v1/emails/statistics` | GET | Email statistics |
-| **Email** | `/api/v1/emails/{id}/resend` | POST | Resend email |
-| **Upload** | `/api/v1/images/upload-image` | POST | Upload email image |
-| **Upload** | `/api/v1/images/upload-attachment` | POST | Upload attachment |
-| **Templates** | `/api/v1/message-templates` | GET/POST | List/Create templates |
-| **Templates** | `/api/v1/message-templates/{id}` | GET/PUT/DELETE | Get/Update/Delete |
-| **Templates** | `/api/v1/message-templates/preview` | POST | Preview with sample data |
-| **Notifications** | `/api/v1/notifications/send` | POST | Send notification |
-| **Notifications** | `/api/v1/notifications/search-targets` | GET | Search targets |
+| Area              | Endpoint                               | Method         | Description              |
+| ----------------- | -------------------------------------- | -------------- | ------------------------ |
+| **Email**         | `/api/v1/emails/send`                  | POST           | Send single email        |
+| **Email**         | `/api/v1/emails/send-bulk`             | POST           | Send bulk emails         |
+| **Email**         | `/api/v1/emails/sent`                  | GET            | Sent email history       |
+| **Email**         | `/api/v1/emails/search-recipients`     | GET            | Recipient autocomplete   |
+| **Email**         | `/api/v1/emails/statistics`            | GET            | Email statistics         |
+| **Email**         | `/api/v1/emails/{id}/resend`           | POST           | Resend email             |
+| **Upload**        | `/api/v1/images/upload-image`          | POST           | Upload email image       |
+| **Upload**        | `/api/v1/images/upload-attachment`     | POST           | Upload attachment        |
+| **Templates**     | `/api/v1/message-templates`            | GET/POST       | List/Create templates    |
+| **Templates**     | `/api/v1/message-templates/{id}`       | GET/PUT/DELETE | Get/Update/Delete        |
+| **Templates**     | `/api/v1/message-templates/preview`    | POST           | Preview with sample data |
+| **Notifications** | `/api/v1/notifications/send`           | POST           | Send notification        |
+| **Notifications** | `/api/v1/notifications/search-targets` | GET            | Search targets           |
 
 ---
 

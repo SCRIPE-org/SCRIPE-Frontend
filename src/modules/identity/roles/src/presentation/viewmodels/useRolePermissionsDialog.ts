@@ -11,7 +11,7 @@
  */
 "use client";
 
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useMemo, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@core/hooks/use-toast";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -91,17 +91,23 @@ export function useRolePermissionsDialog({
   const initializedRoleRef = useRef<string | null>(null);
 
   // Reset when dialog opens with a different role
-  useEffect(() => {
-    if (open && role?.id !== initializedRoleRef.current) {
+  const [prevOpen, setPrevOpen] = useState(open);
+  const [prevRoleId, setPrevRoleId] = useState(role?.id);
+  const [initializedRoleId, setInitializedRoleId] = useState<string | null>(null);
+  
+  if (open !== prevOpen || role?.id !== prevRoleId) {
+    setPrevOpen(open);
+    setPrevRoleId(role?.id);
+    if (open && role?.id !== initializedRoleId) {
       setSearch("");
       setAssignments(new Map());
       setExpandedGroups([]);
-      initializedRoleRef.current = null; // Mark as not initialized
+      setInitializedRoleId(null); // Mark as not initialized
     }
     if (!open) {
-      initializedRoleRef.current = null; // Reset when dialog closes
+      setInitializedRoleId(null); // Reset when dialog closes
     }
-  }, [open, role?.id]);
+  }
 
   // ── Fetch tenant's available permissions via Repository (clean architecture) ──
   const { data: tenantPermissions = [], isLoading: loadingTenant } = useQuery({
@@ -121,46 +127,44 @@ export function useRolePermissionsDialog({
   });
 
   // Initialize selection from role's permissions (only once per role)
-  useEffect(() => {
-    if (
-      open &&
-      role?.id &&
-      tenantPermissions.length > 0 &&
-      !loadingRole &&
-      initializedRoleRef.current !== role.id
-    ) {
-      const validCodes = new Map<string, string>(); // code -> id
-      tenantPermissions.forEach((p) => validCodes.set(p.code, p.id));
+  const isReadyToInitRole = open && !!role?.id && tenantPermissions.length > 0 && !loadingRole && initializedRoleId !== role?.id;
+  const [prevIsReadyToInitRole, setPrevIsReadyToInitRole] = useState(isReadyToInitRole);
+  
+  if (isReadyToInitRole && isReadyToInitRole !== prevIsReadyToInitRole) {
+    setPrevIsReadyToInitRole(isReadyToInitRole);
+    const validCodes = new Map<string, string>(); // code -> id
+    tenantPermissions.forEach((p) => validCodes.set(p.code, p.id));
 
-      const newAssignments = new Map<string, PermissionAssignmentJson>();
-      const groupsWithSelection = new Set<string>();
+    const newAssignments = new Map<string, PermissionAssignmentJson>();
+    const groupsWithSelection = new Set<string>();
 
-      rolePermissions.forEach((rp: any) => {
-        if (validCodes.has(rp.permissionCode)) {
-          newAssignments.set(rp.permissionCode, {
-            permissionId: rp.permissionId,
-            scopeOverride: rp.scope,
-            restrictedFields: (() => {
-              if (!rp.restrictedFields || rp.restrictedFields === "null" || rp.restrictedFields === "") return [];
-              try { return JSON.parse(rp.restrictedFields); } catch { return []; }
-            })(),
-          });
+    rolePermissions.forEach((rp: any) => {
+      if (validCodes.has(rp.permissionCode)) {
+        newAssignments.set(rp.permissionCode, {
+          permissionId: rp.permissionId,
+          scopeOverride: rp.scope,
+          restrictedFields: (() => {
+            if (!rp.restrictedFields || rp.restrictedFields === "null" || rp.restrictedFields === "") return [];
+            try { return JSON.parse(rp.restrictedFields); } catch { return []; }
+          })(),
+        });
 
-          // Find generic resource group
-          const permissionDef = tenantPermissions.find((p) => p.code === rp.permissionCode);
-          if (permissionDef?.resource) {
-            groupsWithSelection.add(permissionDef.resource);
-          }
+        // Find generic resource group
+        const permissionDef = tenantPermissions.find((p) => p.code === rp.permissionCode);
+        if (permissionDef?.resource) {
+          groupsWithSelection.add(permissionDef.resource);
         }
-      });
+      }
+    });
 
-      setAssignments(newAssignments);
-      setExpandedGroups(Array.from(groupsWithSelection));
+    setAssignments(newAssignments);
+    setExpandedGroups(Array.from(groupsWithSelection));
 
-      // Mark as initialized for this role
-      initializedRoleRef.current = role.id;
-    }
-  }, [open, role?.id, tenantPermissions, rolePermissions, loadingRole]);
+    // Mark as initialized for this role
+    if (role?.id) setInitializedRoleId(role.id);
+  } else if (!isReadyToInitRole && prevIsReadyToInitRole) {
+    setPrevIsReadyToInitRole(isReadyToInitRole);
+  }
 
   // Save mutation
   const saveMutation = useMutation({

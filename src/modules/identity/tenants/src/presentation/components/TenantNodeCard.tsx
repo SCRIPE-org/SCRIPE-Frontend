@@ -15,7 +15,7 @@
 
 import React, { useState, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useTenantContext } from "@core/providers/tenant-context-provider";
 import { usePermissions } from "@core/hooks/use-permissions";
@@ -44,13 +44,11 @@ import {
       Shield,
       Key,
       Clock,
-      Play,
       ArrowUpCircle,
-      Loader2,
       CreditCard,
 } from "lucide-react";
 import { systemContainer } from "@modules/identity/di";
-import type { TenantTreeNode, Tenant } from "../../domain/entities/Tenant";
+import type { TenantTreeNode } from "../../domain/entities/Tenant";
 
 // ============================================
 // Types

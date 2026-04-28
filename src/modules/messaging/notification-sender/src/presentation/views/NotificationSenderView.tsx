@@ -32,7 +32,7 @@ export function NotificationSenderView() {
             }
             window.addEventListener("keydown", handleKeyDown);
             return () => window.removeEventListener("keydown", handleKeyDown);
-      }, [vm.handleSend]);
+      }, [vm, vm.handleSend]);
 
       // Close target dropdown on outside click
       const dropdownRef = useRef<HTMLDivElement>(null);

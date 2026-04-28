@@ -37,21 +37,21 @@ graph TD
     MOD_A --x|❌ FORBIDDEN| MOD_B
 ```
 
-| Rule | Allowed | Forbidden |
-|------|---------|-----------|
-| **1** | Core has NO dependencies on Modules | Core importing from any module |
-| **2** | Modules depend on Core | — |
+| Rule  | Allowed                             | Forbidden                        |
+| ----- | ----------------------------------- | -------------------------------- |
+| **1** | Core has NO dependencies on Modules | Core importing from any module   |
+| **2** | Modules depend on Core              | —                                |
 | **3** | Modules DO NOT depend on each other | Module A importing from Module B |
 
 ### Why?
 
-| Benefit | Explanation |
-|---------|-------------|
-| **Scalability** | Delete a module folder → the rest of the app works perfectly |
-| **Team Independence** | Two teams can work on two modules without merge conflicts |
-| **Testability** | Each module can be tested in isolation with mocked Core |
-| **Extractability** | Any module can become a standalone microservice |
-| **Compile-time safety** | TypeScript path mapping enforces boundaries |
+| Benefit                 | Explanation                                                  |
+| ----------------------- | ------------------------------------------------------------ |
+| **Scalability**         | Delete a module folder → the rest of the app works perfectly |
+| **Team Independence**   | Two teams can work on two modules without merge conflicts    |
+| **Testability**         | Each module can be tested in isolation with mocked Core      |
+| **Extractability**      | Any module can become a standalone microservice              |
+| **Compile-time safety** | TypeScript path mapping enforces boundaries                  |
 
 ---
 
@@ -61,15 +61,15 @@ graph TD
 
 Contains things that **never change** when business rules change:
 
-| Directory | Purpose | Examples |
-|-----------|---------|---------|
-| `core/ui/` | Shared UI components | Button, Input, Dialog, DataTable |
-| `core/network/` | API client | Axios service, interceptors |
-| `core/crud/` | Generic CRUD engine | useCrudViewModel, GenericForm |
-| `core/store/` | Global Zustand stores | useAuthStore, useUIStore |
-| `core/providers/` | React Context providers | LanguageProvider, ThemeProvider |
-| `core/locales/` | Translation dictionaries | en.ts, ar.ts |
-| `core/common/` | Utilities | Result pattern, formatters |
+| Directory         | Purpose                  | Examples                         |
+| ----------------- | ------------------------ | -------------------------------- |
+| `core/ui/`        | Shared UI components     | Button, Input, Dialog, DataTable |
+| `core/network/`   | API client               | Axios service, interceptors      |
+| `core/crud/`      | Generic CRUD engine      | useCrudViewModel, GenericForm    |
+| `core/store/`     | Global Zustand stores    | useAuthStore, useUIStore         |
+| `core/providers/` | React Context providers  | LanguageProvider, ThemeProvider  |
+| `core/locales/`   | Translation dictionaries | en.ts, ar.ts                     |
+| `core/common/`    | Utilities                | Result pattern, formatters       |
 
 ### `src/modules/{name}/` — The Business
 
@@ -99,12 +99,12 @@ modules/admin/
 
 When modules need to interact:
 
-| Pattern | When | Example |
-|---------|------|---------|
-| **URL Navigation** | Link to another module's page | `<Link href="/admin/123">View Admin</Link>` |
-| **Shared IDs** | Reference another module's entity | Store `tenantId: string` (not the Tenant object) |
-| **Domain Events** | React to another module's action | Event bus (future, for microservice mode) |
-| **Core Services** | Shared functionality | Both modules use `@core/network/apiService` |
+| Pattern            | When                              | Example                                          |
+| ------------------ | --------------------------------- | ------------------------------------------------ |
+| **URL Navigation** | Link to another module's page     | `<Link href="/admin/123">View Admin</Link>`      |
+| **Shared IDs**     | Reference another module's entity | Store `tenantId: string` (not the Tenant object) |
+| **Domain Events**  | React to another module's action  | Event bus (future, for microservice mode)        |
+| **Core Services**  | Shared functionality              | Both modules use `@core/network/apiService`      |
 
 ### ❌ NEVER Do This
 

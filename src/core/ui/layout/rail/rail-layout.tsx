@@ -14,7 +14,7 @@ import { UserProfileDropdown } from "@core/ui/user-profile-dropdown";
 import { Footer } from "@core/ui/layout/shared/footer";
 import { useDynamicNavigation } from "@core/ui/navigation/dynamic-navigation";
 import { isNavigationItemActive, type NavigationItem } from "@core/config/navigation";
-import { Home, ChevronRight } from "lucide-react";
+import { Home } from "lucide-react";
 import { cn } from "@core/common/utils";
 import { NotificationBell } from "@core/ui/notification";
 
@@ -63,10 +63,10 @@ export function RailLayout({ children }: RailLayoutProps) {
   }, []);
 
   // Close popover on route change (ref-based, no setState in effect)
-  const prevPathnameRef = useRef(pathname);
-  if (prevPathnameRef.current !== pathname) {
-    prevPathnameRef.current = pathname;
-    if (activePopover) setActivePopover(null);
+  const [prevPathname, setPrevPathname] = useState(pathname);
+  if (pathname !== prevPathname) {
+    setPrevPathname(pathname);
+    setActivePopover(null);
   }
 
   const handleRailClick = useCallback(

@@ -4,7 +4,6 @@ import {
   NotificationConfig,
   NotificationQueue,
   NotificationType,
-  NotificationPosition,
   type NotificationData,
 } from "@core/domain/entities/Notification";
 import { NotificationMapper } from "@core/domain/mappers/NotificationMapper";

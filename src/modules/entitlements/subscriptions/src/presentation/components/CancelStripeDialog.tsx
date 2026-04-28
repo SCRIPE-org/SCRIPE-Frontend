@@ -14,7 +14,7 @@ import {
 } from "@core/ui/dialog";
 import { Label } from "@core/ui/label";
 import { RadioGroup, RadioGroupItem } from "@core/ui/radio-group";
-import { Loader2, XSquare } from "lucide-react";
+import { XSquare } from "lucide-react";
 import type { SubscriptionDialogProps } from "../types";
 
 export function CancelStripeDialog({ vm }: SubscriptionDialogProps) {

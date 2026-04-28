@@ -2,7 +2,7 @@
 
 import { Button } from "@core/ui/button";
 import { GenericModal } from "@core/crud/components/generic-modal";
-import { Loader2, AlertTriangle } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Checkbox } from "@core/ui/checkbox";
 import { useState } from "react";

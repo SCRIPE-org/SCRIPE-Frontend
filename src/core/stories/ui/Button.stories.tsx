@@ -1,5 +1,5 @@
-// eslint-disable-next-line storybook/no-renderer-packages
-import type { Meta, StoryObj } from "@storybook/react";
+
+import type { Meta, StoryObj } from "@storybook/nextjs";
 import { Button } from "../../../core/ui/button";
 import { Mail, ArrowRight, Loader2, Trash } from "lucide-react";
 

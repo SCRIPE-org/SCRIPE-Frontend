@@ -1,7 +1,7 @@
 import { type IApiService } from "../interfaces/api.interface";
 import { API_ENDPOINTS } from "@core/config/api-endpoints";
 import { appLogger } from "@core/common/logger";
-import { NavigationData, MenuItemsResponse, MenuItem } from "@core/domain/entities/Navigation";
+import { NavigationData } from "@core/domain/entities/Navigation";
 import { NavigationMapper } from "@core/domain/mappers/NavigationMapper";
 
 export interface INavigationService {

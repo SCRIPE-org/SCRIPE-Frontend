@@ -12,7 +12,6 @@
  */
 "use client";
 
-import { BRAND } from "@core/config/branding";
 import { resolveFileUrl } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
 import { BookOpen } from "lucide-react";

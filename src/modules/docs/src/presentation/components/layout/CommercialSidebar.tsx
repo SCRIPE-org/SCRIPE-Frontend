@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useDocsI18n } from "../../providers/DocsI18nProvider";
 import type { DocCategory, DocNavItem } from "../../../domain/entities/DocCategory";
-import { useState, useCallback, useEffect, useMemo } from "react";
+import { useState, useCallback, useMemo } from "react";
 
 // ─── Category color palette ──────────────────────────────────────
 const categoryColors: Record<string, string> = {
@@ -134,7 +134,9 @@ export function CommercialSidebar({ categories, activeSlug }: CommercialSidebarP
       });
 
       // Auto-expand category and sub-groups on navigation
-      useEffect(() => {
+      const [prevActiveSlug, setPrevActiveSlug] = useState(activeSlug);
+      if (activeSlug !== prevActiveSlug) {
+            setPrevActiveSlug(activeSlug);
             setExpanded((prev) => {
                   const next = { ...prev };
                   for (const cat of categories) {
@@ -158,7 +160,7 @@ export function CommercialSidebar({ categories, activeSlug }: CommercialSidebarP
                   }
                   return next;
             });
-      }, [activeSlug, categories]);
+      }
 
       const toggleCategory = useCallback((catId: string) => {
             setExpanded((prev) => ({ ...prev, [catId]: !prev[catId] }));

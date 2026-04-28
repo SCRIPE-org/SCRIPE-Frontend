@@ -32,7 +32,6 @@ import {
   Pencil,
   Power,
   Trash2,
-  Loader2,
   LogIn,
   Pause,
   Ban,

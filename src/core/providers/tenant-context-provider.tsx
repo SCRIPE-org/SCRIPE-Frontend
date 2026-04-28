@@ -107,7 +107,7 @@ export function TenantContextProvider({ children }: TenantContextProviderProps) 
     if (currentTenant?.id) {
       apiService.setTenantContext(currentTenant.id);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, []);
 
   const enterTenantWorld = useCallback(

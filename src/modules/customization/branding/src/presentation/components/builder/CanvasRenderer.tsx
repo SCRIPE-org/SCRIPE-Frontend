@@ -12,7 +12,7 @@
 "use client";
 
 import type { CanvasComponent, CanvasBackground, PositionMode } from "../../../domain/entities/CanvasComponent";
-import { CANVAS_GRID_COLUMNS, CANVAS_WIDTH, CANVAS_HEIGHT } from "../../../domain/entities/CanvasComponent";
+import { CANVAS_GRID_COLUMNS, CANVAS_WIDTH } from "../../../domain/entities/CanvasComponent";
 import { ComponentRenderer } from "./ComponentRenderer";
 
 interface CanvasRendererProps {

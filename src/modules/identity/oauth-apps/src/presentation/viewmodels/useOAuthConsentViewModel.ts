@@ -9,7 +9,6 @@ import { useServices } from "@core/providers/service-provider";
 import { secureTokenService } from "@core/common/secure-token-service";
 import { appLogger } from "@core/common/logger";
 import { useMutation } from "@tanstack/react-query";
-import { User } from "@modules/auth/core/domain/entities/User";
 
 interface OAuthConsentViewModelResult {
       // State
@@ -121,7 +120,7 @@ export function useOAuthConsentViewModel(): OAuthConsentViewModelResult {
                   logout();
                   router.replace(`/login?redirect=${redirectPath}`);
             }
-            // eslint-disable-next-line react-hooks/exhaustive-deps
+
       }, [hasHydrated, isAuthenticated]);
 
       const handleApprove = () => {

@@ -1,8 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { createPortal } from "react-dom";
-import { Check, ChevronDown, Search, X, Loader2 } from "lucide-react";
+import { X } from "lucide-react";
 import { cn } from "@core/common/utils";
 import {
   calculateDropdownPosition,
@@ -12,9 +11,6 @@ import {
 
 // Re-export for use in other components
 export { calculateDropdownPosition, scrollIntoViewIfNeeded, type DropdownPosition };
-import { useSettings } from "@core/providers/settings-provider";
-import { useI18n } from "@core/providers/i18n-provider";
-import type { SelectStyle } from "@core/providers/settings-provider";
 
 // Enhanced generic styling system with more attractive designs
 export function getGenericSelectStyles(

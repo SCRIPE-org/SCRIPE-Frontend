@@ -17,7 +17,7 @@ import type { OAuthAppListItem } from "../../domain/entities/OAuthApp";
 import { useRouter } from "next/navigation";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
-import { AppWindow, Loader2, KeyRound, Pencil, Trash2, Check, Copy, Lock, Unlock } from "lucide-react";
+import { AppWindow, Loader2, KeyRound, Pencil, Trash2, Check, Copy } from "lucide-react";
 import { format } from "date-fns";
 import type { CrudAction } from "@core/crud/components/generic-crud-view";
 

@@ -70,7 +70,7 @@ export function WebhookDetailView({ webhookId }: WebhookDetailViewProps) {
                   setCopiedUrl(true);
                   setTimeout(() => setCopiedUrl(false), 2000);
             }
-      }, [vm.webhook?.url]);
+      }, [vm.webhook]);
 
       // ─── Loading state ────────────────────────────────────────
       if (vm.isLoading) {

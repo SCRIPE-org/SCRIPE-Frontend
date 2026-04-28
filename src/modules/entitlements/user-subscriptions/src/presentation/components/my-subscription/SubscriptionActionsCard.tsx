@@ -17,7 +17,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@core/ui/dialog";
-import { AlertTriangle, CreditCard, Loader2, XCircle } from "lucide-react";
+import { AlertTriangle, CreditCard, XCircle } from "lucide-react";
 import type { UserSubscription } from "../../../domain/entities/UserSubscription";
 
 interface SubscriptionActionsCardProps {

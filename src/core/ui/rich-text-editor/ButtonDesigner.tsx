@@ -7,7 +7,6 @@ import { Label } from "@core/ui/label";
 import { Slider } from "@core/ui/slider";
 import { Switch } from "@core/ui/switch";
 import { Popover, PopoverContent, PopoverTrigger } from "@core/ui/popover";
-import { cn } from "@core/common/utils";
 import { MousePointerClick } from "lucide-react";
 import { ColorPickerField } from "./ColorPickerField";
 

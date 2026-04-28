@@ -16,7 +16,6 @@
  */
 "use client";
 
-import { useMemo } from "react";
 import { useDroppable } from "@dnd-kit/core";
 import { SortableContext, rectSortingStrategy } from "@dnd-kit/sortable";
 import { cn } from "@/core/common/utils";

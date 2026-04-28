@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useMemo, useRef } from "react";
+import { useState, useCallback, useMemo, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -100,28 +100,31 @@ export function useEmailComposerViewModel() {
 
       // ─── Refs for latest state (avoids stale closures in useMutation) ──
       const subjectRef = useRef(subject);
-      subjectRef.current = subject;
       const bodyRef = useRef(body);
-      bodyRef.current = body;
       const variableValuesRef = useRef(variableValues);
-      variableValuesRef.current = variableValues;
       const ccRecipientsRef = useRef(ccRecipients);
-      ccRecipientsRef.current = ccRecipients;
       const bccRecipientsRef = useRef(bccRecipients);
-      bccRecipientsRef.current = bccRecipients;
       const scheduleRef = useRef(schedule);
-      scheduleRef.current = schedule;
       const attachmentsRef = useRef(attachments);
-      attachmentsRef.current = attachments;
 
       // ─── Template Variables / Schema ──────────────────────────
       const [templateVariables, setTemplateVariables] = useState<VariableDefinition[]>([]);
       const [selectedTemplateKey, setSelectedTemplateKey] = useState<string | null>(null);
       const selectedTemplateKeyRef = useRef(selectedTemplateKey);
-      selectedTemplateKeyRef.current = selectedTemplateKey;
       const [selectedTemplateLanguage, setSelectedTemplateLanguage] = useState<string | null>(null);
       const selectedTemplateLanguageRef = useRef(selectedTemplateLanguage);
-      selectedTemplateLanguageRef.current = selectedTemplateLanguage;
+
+      useEffect(() => {
+            subjectRef.current = subject;
+            bodyRef.current = body;
+            variableValuesRef.current = variableValues;
+            ccRecipientsRef.current = ccRecipients;
+            bccRecipientsRef.current = bccRecipients;
+            scheduleRef.current = schedule;
+            attachmentsRef.current = attachments;
+            selectedTemplateKeyRef.current = selectedTemplateKey;
+            selectedTemplateLanguageRef.current = selectedTemplateLanguage;
+      }, [subject, body, variableValues, ccRecipients, bccRecipients, schedule, attachments, selectedTemplateKey, selectedTemplateLanguage]);
 
       // Merge default + template variables
       const allVariables = useMemo(() => {

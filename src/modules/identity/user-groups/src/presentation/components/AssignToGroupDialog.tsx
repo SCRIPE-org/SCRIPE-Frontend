@@ -17,7 +17,7 @@ import { Button } from "@core/ui/button";
 import { Label } from "@core/ui/label";
 import { GenericModal } from "@core/crud/components/generic-modal";
 import { GenericSelect, type GenericSelectOption } from "@core/crud/components/generic-select";
-import { Loader2, Users } from "lucide-react";
+import { Users } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { systemContainer } from "@modules/identity/di";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -116,7 +116,7 @@ export function AssignToGroupDialog({
                   setSearchOptions([]);
                   setSelectedGroupIds([]);
             }
-            // eslint-disable-next-line react-hooks/exhaustive-deps
+
       }, [open, tenantId, useMyTenant, currentUserTenantId]);
 
       // Admin → addMembers on each selected group

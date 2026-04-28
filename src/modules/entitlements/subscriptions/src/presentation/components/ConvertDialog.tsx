@@ -13,7 +13,6 @@ import {
   DialogHeader, DialogTitle,
 } from "@core/ui/dialog";
 import { Label } from "@core/ui/label";
-import { Loader2 } from "lucide-react";
 import type { SubscriptionEditionDialogProps } from "../types";
 import type { SubscriptionListItem } from "../../domain/entities/Subscription";
 import { SubscriptionTypeSelect } from "./SubscriptionTypeSelect";

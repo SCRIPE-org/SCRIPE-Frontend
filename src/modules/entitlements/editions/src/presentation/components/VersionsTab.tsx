@@ -19,7 +19,7 @@ import {
       SelectValue,
 } from "@core/ui/select";
 import {
-      Loader2, Plus, Rocket, XCircle, Clock, CheckCircle2, AlertCircle,
+      Loader2, Rocket, XCircle, Clock, CheckCircle2, AlertCircle,
       GitBranch, Calendar, Percent
 } from "lucide-react";
 import { useVersionsViewModel } from "../viewmodels/useVersionsViewModel";

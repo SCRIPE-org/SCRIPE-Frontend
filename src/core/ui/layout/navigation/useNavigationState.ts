@@ -92,41 +92,46 @@ export function useNavigationState(navigation: NavigationItem[]): NavigationStat
   const shouldShowPanel = hasChildren && panelOpen && !isMobile;
 
   // ── Sync panel & expanded state with pathname changes ──
-  useEffect(() => {
+  const [prevPathname, setPrevPathname] = useState(pathname);
+  if (pathname !== prevPathname) {
+    setPrevPathname(pathname);
+
+    // eslint-disable-next-line react-hooks/refs
     if (isClickNavigating.current) {
+      // eslint-disable-next-line react-hooks/refs
       isClickNavigating.current = false;
-      return;
-    }
-
-    // Determine if the active main item (from URL) has children
-    const activeNavItem = navigation.find((item) => item.name === activeMainItem);
-    const activeHasChildren = !!(activeNavItem?.children && activeNavItem.children.length > 0);
-
-    // Clear user selection when URL changes (user navigated via link/browser)
-    setSelectedMainItem(null);
-
-    // Auto-open panel if active item has children (desktop only)
-    if (activeHasChildren && !isMobile) {
-      setPanelOpen(true);
     } else {
-      setPanelOpen(false);
-    }
+      // Determine if the active main item (from URL) has children
+      const activeNavItem = navigation.find((item) => item.name === activeMainItem);
+      const activeHasChildren = !!(activeNavItem?.children && activeNavItem.children.length > 0);
 
-    // Auto-expand ancestry chain in panel
-    const expanded = computeExpandedItems(activeAncestry);
-    if (expanded.length > 0) {
-      setExpandedItems((prev) => {
-        // Merge: keep manually expanded items + add ancestry items
-        const merged = new Set([...prev, ...expanded]);
-        return [...merged];
-      });
+      // Clear user selection when URL changes (user navigated via link/browser)
+      setSelectedMainItem(null);
+
+      // Auto-open panel if active item has children (desktop only)
+      if (activeHasChildren && !isMobile) {
+        setPanelOpen(true);
+      } else {
+        setPanelOpen(false);
+      }
+
+      // Auto-expand ancestry chain in panel
+      const expanded = computeExpandedItems(activeAncestry);
+      if (expanded.length > 0) {
+        setExpandedItems((prev) => {
+          // Merge: keep manually expanded items + add ancestry items
+          const merged = new Set([...prev, ...expanded]);
+          return [...merged];
+        });
+      }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname, activeMainItem, isMobile]);
+  }
 
   // ── Handle window resize ──
   const hasChildrenRef = useRef(hasChildren);
-  hasChildrenRef.current = hasChildren;
+  useEffect(() => {
+    hasChildrenRef.current = hasChildren;
+  }, [hasChildren]);
 
   useEffect(() => {
     const handleResize = () => {

@@ -59,7 +59,7 @@ export const EventDistributionChart = memo(function EventDistributionChart({
       };
     });
     return config;
-  }, [data]);
+  }, [data, colors]);
 
   const chartData = useMemo(
     () =>
@@ -68,7 +68,7 @@ export const EventDistributionChart = memo(function EventDistributionChart({
         value: item.count,
         fill: colors[index % colors.length],
       })),
-    [data]
+    [data, colors]
   );
 
   const totalEvents = useMemo(() => data.reduce((sum, item) => sum + item.count, 0), [data]);

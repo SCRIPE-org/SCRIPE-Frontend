@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { cn } from "@core/common/utils";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
@@ -155,7 +155,12 @@ export function TreeView<T>({
   const [isAllExpanded, setIsAllExpanded] = useState<boolean>(defaultExpanded);
 
   // Initialize expand state whenever data changes
-  useEffect(() => {
+  const [prevData, setPrevData] = useState(data);
+  const [prevDefaultExpanded, setPrevDefaultExpanded] = useState(defaultExpanded);
+
+  if (data !== prevData || defaultExpanded !== prevDefaultExpanded) {
+    setPrevData(data);
+    setPrevDefaultExpanded(defaultExpanded);
     const next: Record<string, boolean> = {};
     const walk = (nodes: T[]) => {
       nodes.forEach((n) => {
@@ -178,7 +183,7 @@ export function TreeView<T>({
     // Update isAllExpanded based on current state
     const allExpanded = Object.values(next).every(Boolean);
     setIsAllExpanded(allExpanded);
-  }, [data, defaultExpanded, getChildren, getId]);
+  }
 
   const handleToggleNode = (id: string) => {
     setExpanded((prev) => {
@@ -277,15 +282,20 @@ export function TreeView<T>({
     }
   }, [settings.shadowIntensity]);
 
+  const searchInputRef = search?.inputRef;
+  const searchValue = search?.value;
+  const searchOnChange = search?.onChange;
+  const searchPlaceholder = search?.placeholder;
+
   const Toolbar = (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div className="relative w-full sm:max-w-sm">
-        {search && (
+        {search && searchOnChange && (
           <Input
-            ref={search.inputRef}
-            value={search.value}
-            onChange={(e) => search.onChange(e.target.value)}
-            placeholder={search.placeholder ?? "Search"}
+            ref={searchInputRef as any}
+            value={searchValue}
+            onChange={(e) => searchOnChange(e.target.value)}
+            placeholder={searchPlaceholder ?? "Search"}
             className="w-full"
             autoComplete="off"
           />

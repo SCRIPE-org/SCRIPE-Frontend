@@ -15,7 +15,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
-import { Skeleton } from "@core/ui/skeleton";
 import {
   Dialog, DialogContent, DialogDescription, DialogFooter,
   DialogHeader, DialogTitle,
@@ -25,7 +24,7 @@ import {
   Info, TrendingDown, Globe, Zap, Eye, Percent,
   ArrowRight,
 } from "lucide-react";
-import { SUPPORTED_CURRENCIES, getCurrencyInfo, formatPrice } from "@core/constants/currencies";
+import { getCurrencyInfo, formatPrice } from "@core/constants/currencies";
 import type { PreviewRow } from "../viewmodels/useTenantPlanDetailViewModel";
 import type { TenantPlan } from "../../domain/entities/TenantPlan";
 import type { TFn } from "./shared-helpers";

@@ -8,7 +8,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { useSettings } from "@core/providers/settings-provider";
 import { useLayoutStyles } from "@core/ui/layout/shared/use-layout-styles";
 import { useDynamicNavigation } from "@core/ui/navigation/dynamic-navigation";
-import { isNavigationItemActive, type NavigationItem } from "@core/config/navigation";
+import { isNavigationItemActive } from "@core/config/navigation";
 import { Logo } from "@core/ui/logo";
 import { Button } from "@core/ui/button";
 import { LanguageSwitcher, ThemeSwitcher } from "@core/ui/layout/common";
@@ -60,11 +60,11 @@ export function MegaMenuLayout({ children }: MegaMenuLayoutProps) {
   }, []);
 
   // Close on route change (ref-based, no setState in effect)
-  const prevPathnameRef = useRef(pathname);
-  if (prevPathnameRef.current !== pathname) {
-    prevPathnameRef.current = pathname;
-    if (openMenu) setOpenMenu(null);
-    if (mobileOpen) setMobileOpen(false);
+  const [prevPathname, setPrevPathname] = useState(pathname);
+  if (pathname !== prevPathname) {
+    setPrevPathname(pathname);
+    setOpenMenu(null);
+    setMobileOpen(false);
   }
 
   // Separate top-level items: groups (with children) and direct links

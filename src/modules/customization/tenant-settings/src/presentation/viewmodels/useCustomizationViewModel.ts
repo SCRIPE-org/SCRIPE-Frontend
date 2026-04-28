@@ -1,13 +1,12 @@
 "use client";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useTheme } from "next-themes";
 import { useAppStore } from "@core/store/useAppStore";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
-import { useTenantBranding } from "@core/providers/tenant-branding-provider";
 import { customizationContainer } from "@modules/customization/di";
 import type {
   AuditLogPagedResultJson as AuditLogPagedResult,
@@ -93,9 +92,9 @@ export function useCustomizationViewModel() {
 
   // ─── Read current DashboardThemeJson from branding (already fetched globally) ──
   // We read from nexora_pref_* keys which are synced by TenantBrandingProvider
-  const hasInitializedPrefs = useRef(false);
-  if (!hasInitializedPrefs.current && typeof window !== "undefined") {
-    hasInitializedPrefs.current = true;
+  const [hasInitializedPrefs, setHasInitializedPrefs] = useState(false);
+  if (!hasInitializedPrefs && typeof window !== "undefined") {
+    setHasInitializedPrefs(true);
     const theme = localStorage.getItem(STORAGE_KEYS.PREF_THEME);
     const lang = localStorage.getItem(STORAGE_KEYS.PREF_LANG);
     const sidebar = localStorage.getItem(STORAGE_KEYS.PREF_SIDEBAR_COLLAPSED);

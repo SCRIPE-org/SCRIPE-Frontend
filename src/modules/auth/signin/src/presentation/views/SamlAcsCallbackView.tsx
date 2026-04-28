@@ -49,135 +49,137 @@ export function SamlAcsCallbackView() {
             if (hasProcessed.current) return;
             hasProcessed.current = true;
 
-            const errorParam = searchParams.get("error");
-            const accessToken = searchParams.get("access_token");
-            const type = searchParams.get("type"); // 'admin' or 'user'
+            setTimeout(() => {
+                  const errorParam = searchParams.get("error");
+                  const accessToken = searchParams.get("access_token");
+                  const type = searchParams.get("type"); // 'admin' or 'user'
 
-            // Handle errors explicitly returned by the backend
-            if (errorParam) {
-                  const errMessage = decodeURIComponent(errorParam);
+                  // Handle errors explicitly returned by the backend
+                  if (errorParam) {
+                        const errMessage = decodeURIComponent(errorParam);
 
-                  // Check if it's a linking issue
-                  if (errMessage.includes("no_linked_account") || errMessage.includes("automatically linked")) {
+                        // Check if it's a linking issue
+                        if (errMessage.includes("no_linked_account") || errMessage.includes("automatically linked")) {
 
-                        // Extract linking details from query string if provided
-                        const providerId = searchParams.get("providerId");
-                        const email = searchParams.get("email");
-                        const name = searchParams.get("name");
-                        const providerName = searchParams.get("providerName");
-                        const subject = searchParams.get("subject");
+                              // Extract linking details from query string if provided
+                              const providerId = searchParams.get("providerId");
+                              const email = searchParams.get("email");
+                              const name = searchParams.get("name");
+                              const providerName = searchParams.get("providerName");
+                              const subject = searchParams.get("subject");
 
-                        const isAuthenticated = useAppStore.getState().isAuthenticated;
-                        const isLinkingSession = sessionStorage.getItem("sso_linking") === "true";
+                              const isAuthenticated = useAppStore.getState().isAuthenticated;
+                              const isLinkingSession = sessionStorage.getItem("sso_linking") === "true";
 
-                        // Auto-link flow
-                        if ((isAuthenticated || isLinkingSession) && providerId && providerName && email && subject) {
-                              sessionStorage.removeItem("sso_linking");
+                              // Auto-link flow
+                              if ((isAuthenticated || isLinkingSession) && providerId && providerName && email && subject) {
+                                    sessionStorage.removeItem("sso_linking");
 
-                              const linkAccount = async () => {
-                                    try {
-                                          await authRepository.linkExternalLogin({
-                                                identityProviderId: providerId,
-                                                providerName: providerName,
-                                                providerKey: subject,
-                                                email: email,
-                                                displayName: name ?? undefined,
-                                          });
-                                          operationSuccess(t("sso.accountLinkedSuccess"));
-                                          router.replace("/profile/security");
-                                    } catch (linkErr) {
-                                          appLogger.error("SAML auto-link failed:", linkErr);
-                                          setState("error");
-                                          setErrorInfo({
-                                                title: t("auth.sso.callbackError"),
-                                                message: linkErr instanceof Error ? linkErr.message : "Failed to link account",
-                                          });
-                                    }
-                              };
+                                    const linkAccount = async () => {
+                                          try {
+                                                await authRepository.linkExternalLogin({
+                                                      identityProviderId: providerId,
+                                                      providerName: providerName,
+                                                      providerKey: subject,
+                                                      email: email,
+                                                      displayName: name ?? undefined,
+                                                });
+                                                operationSuccess(t("sso.accountLinkedSuccess"));
+                                                router.replace("/profile/security");
+                                          } catch (linkErr) {
+                                                appLogger.error("SAML auto-link failed:", linkErr);
+                                                setState("error");
+                                                setErrorInfo({
+                                                      title: t("auth.sso.callbackError"),
+                                                      message: linkErr instanceof Error ? linkErr.message : "Failed to link account",
+                                                });
+                                          }
+                                    };
 
-                              linkAccount();
+                                    linkAccount();
+                                    return;
+                              }
+
+                              // Display nice no-linked-account UI
+                              setState("no_linked_account");
+                              setErrorInfo({
+                                    title: t("auth.sso.noLinkedAccount"),
+                                    message: t("auth.sso.noLinkedAccountDesc"),
+                              });
                               return;
                         }
 
-                        // Display nice no-linked-account UI
-                        setState("no_linked_account");
+                        // Generic explicit error from backend
+                        setState("error");
                         setErrorInfo({
-                              title: t("auth.sso.noLinkedAccount"),
-                              message: t("auth.sso.noLinkedAccountDesc"),
+                              title: t("auth.sso.callbackError"),
+                              message: errMessage,
                         });
                         return;
                   }
 
-                  // Generic explicit error from backend
-                  setState("error");
-                  setErrorInfo({
-                        title: t("auth.sso.callbackError"),
-                        message: errMessage,
-                  });
-                  return;
-            }
-
-            // Standard Login Flow
-            if (!accessToken) {
-                  setState("error");
-                  setErrorInfo({
-                        title: t("auth.sso.callbackError"),
-                        message: t("auth.sso.missingParams"),
-                  });
-                  return;
-            }
-
-            async function fetchProfile() {
-                  try {
-                        if (type === "admin") {
-                              secureTokenService.setAccessToken(accessToken!);
-
-                              // Fetch admin profile to complete login
-                              const user = await authRepository.getMe();
-                              setAuth(user, user.permissions || [], []);
-
-                              // Propagate subscription info from SAML callback query params
-                              const subStatus = searchParams.get("subscription_status");
-                              const subGracePhase = searchParams.get("grace_phase");
-                              const subEditionName = searchParams.get("edition_name");
-                              setSubscriptionInfo(
-                                    subStatus ?? null,
-                                    subGracePhase ?? null,
-                                    subEditionName ?? null
-                              );
-
-                              operationSuccess(t("auth.welcomeBack"));
-
-                              try {
-                                    await refreshNavigation(false, true);
-                              } catch (navError) {
-                                    appLogger.error("Failed to fetch navigation after SSO:", navError);
-                              }
-
-                              queryClient.invalidateQueries();
-
-                              setState("success");
-                              setTimeout(() => {
-                                    router.replace("/");
-                              }, 300);
-                        } else {
-                              setState("error");
-                              setErrorInfo({
-                                    title: t("auth.sso.callbackError"),
-                                    message: t("auth.sso.unsupportedAccountType"),
-                              });
-                        }
-                  } catch (err: unknown) {
+                  // Standard Login Flow
+                  if (!accessToken) {
                         setState("error");
                         setErrorInfo({
                               title: t("auth.sso.callbackError"),
-                              message: err instanceof Error ? err.message : t("auth.sso.callbackErrorGeneric"),
+                              message: t("auth.sso.missingParams"),
                         });
+                        return;
                   }
-            }
 
-            fetchProfile();
-      }, [searchParams]);
+                  async function fetchProfile() {
+                        try {
+                              if (type === "admin") {
+                                    secureTokenService.setAccessToken(accessToken!);
+
+                                    // Fetch admin profile to complete login
+                                    const user = await authRepository.getMe();
+                                    setAuth(user, user.permissions || [], []);
+
+                                    // Propagate subscription info from SAML callback query params
+                                    const subStatus = searchParams.get("subscription_status");
+                                    const subGracePhase = searchParams.get("grace_phase");
+                                    const subEditionName = searchParams.get("edition_name");
+                                    setSubscriptionInfo(
+                                          subStatus ?? null,
+                                          subGracePhase ?? null,
+                                          subEditionName ?? null
+                                    );
+
+                                    operationSuccess(t("auth.welcomeBack"));
+
+                                    try {
+                                          await refreshNavigation(false, true);
+                                    } catch (navError) {
+                                          appLogger.error("Failed to fetch navigation after SSO:", navError);
+                                    }
+
+                                    queryClient.invalidateQueries();
+
+                                    setState("success");
+                                    setTimeout(() => {
+                                          router.replace("/");
+                                    }, 300);
+                              } else {
+                                    setState("error");
+                                    setErrorInfo({
+                                          title: t("auth.sso.callbackError"),
+                                          message: t("auth.sso.unsupportedAccountType"),
+                                    });
+                              }
+                        } catch (err: unknown) {
+                              setState("error");
+                              setErrorInfo({
+                                    title: t("auth.sso.callbackError"),
+                                    message: err instanceof Error ? err.message : t("auth.sso.callbackErrorGeneric"),
+                              });
+                        }
+                  }
+
+                  fetchProfile();
+            }, 0);
+      }, [searchParams, t, router, setAuth, setSubscriptionInfo, refreshNavigation, queryClient, operationSuccess, authRepository]);
 
       return (
             <div

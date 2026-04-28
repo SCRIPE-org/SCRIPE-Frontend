@@ -77,7 +77,7 @@ export function useAuditRealtime(): UseAuditRealtimeResult {
         });
       }
     },
-    [queryClient, info]
+    [queryClient, info, tenantId]
   );
 
   // Register/unregister SignalR event handler + join global group

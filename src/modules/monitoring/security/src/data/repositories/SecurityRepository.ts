@@ -19,21 +19,21 @@ export class SecurityRepository implements ISecurityRepository {
 
   async getSecurityEvents(days?: number): Promise<SecurityEvent[]> {
     const dtos = await this.service.getSecurityEvents(days);
-    return (dtos as any[]).map(SecurityMapper.toSecurityEvent);
+    return (dtos as unknown[]).map((dto) => SecurityMapper.toSecurityEvent(dto as never));
   }
 
   async getTopBlockedIPs(days?: number, limit?: number): Promise<BlockedIP[]> {
     const dtos = await this.service.getTopBlockedIPs(days, limit);
-    return (dtos as any[]).map(SecurityMapper.toBlockedIP);
+    return (dtos as unknown[]).map((dto) => SecurityMapper.toBlockedIP(dto as never));
   }
 
   async getLoginActivity(days?: number): Promise<LoginActivityPoint[]> {
     const dtos = await this.service.getLoginActivity(days);
-    return (dtos as any[]).map(SecurityMapper.toLoginActivityPoint);
+    return (dtos as unknown[]).map((dto) => SecurityMapper.toLoginActivityPoint(dto as never));
   }
 
   async getRecentChanges(limit?: number): Promise<SecurityChange[]> {
     const dtos = await this.service.getRecentChanges(limit);
-    return (dtos as any[]).map(SecurityMapper.toSecurityChange);
+    return (dtos as unknown[]).map((dto) => SecurityMapper.toSecurityChange(dto as never));
   }
 }

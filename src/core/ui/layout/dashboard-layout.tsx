@@ -78,9 +78,9 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   const { layoutTemplate, collapsibleSidebar } = settings;
 
   // Sync sidebar when collapsibleSidebar setting changes
-  const prevCollapsible = React.useRef(collapsibleSidebar);
-  if (prevCollapsible.current !== collapsibleSidebar) {
-    prevCollapsible.current = collapsibleSidebar;
+  const [prevCollapsibleSidebar, setPrevCollapsibleSidebar] = useState(collapsibleSidebar);
+  if (collapsibleSidebar !== prevCollapsibleSidebar) {
+    setPrevCollapsibleSidebar(collapsibleSidebar);
     if (!collapsibleSidebar && !sidebarOpen) {
       setSidebarOpen(true);
     }

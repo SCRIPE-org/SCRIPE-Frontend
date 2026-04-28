@@ -14,7 +14,7 @@ import { Label } from "@core/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
 import { Popover, PopoverContent, PopoverTrigger } from "@core/ui/popover";
 
-import { Mail, Send, Loader2, RotateCcw, Search, X, Eye, Paperclip, CalendarClock, Braces } from "lucide-react";
+import { Mail, Send, Loader2, RotateCcw, Search, X, Eye, Braces } from "lucide-react";
 import { cn } from "@core/common/utils";
 import type { EmailRecipient } from "../../domain/entities/Email";
 import type { IEmailRepository } from "../../domain/interfaces/IEmailRepository";

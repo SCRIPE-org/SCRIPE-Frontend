@@ -12,7 +12,6 @@ import {
   CardTitle,
 } from "@core/ui/card";
 import { Button } from "@core/ui/button";
-import { Alert, AlertDescription } from "@core/ui/alert";
 import { appLogger } from "@core/common/logger";
 
 export default function NotAuthorizedView() {

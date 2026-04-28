@@ -3,7 +3,7 @@
  *
  * Defines the contract for role data operations.
  */
-import type { Role, RoleData } from "../entities/Role";
+import type { Role } from "../entities/Role";
 import type { Permission } from "@modules/identity/permissions/src/domain/entities/Permission";
 import type {
   CreateRoleRequest,

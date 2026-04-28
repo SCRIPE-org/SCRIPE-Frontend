@@ -7,7 +7,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { useSessionsViewModel } from "../viewmodels/useSessionsViewModel";
 import { SessionCard } from "../components/SessionCard";
 import { Button } from "@core/ui/button";
-import { Loader2, AlertTriangle, Info } from "lucide-react";
+import { Loader2, Info } from "lucide-react";
 
 export function ProfileSessionsView() {
   const { t } = useI18n();

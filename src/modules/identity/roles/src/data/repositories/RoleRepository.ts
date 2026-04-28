@@ -24,7 +24,6 @@ import type { IRoleService } from "../../domain/interfaces/IRoleService";
 import { RoleMapper } from "../mappers/RoleMapper";
 import { Permission } from "@modules/identity/permissions/src/domain/entities/Permission";
 import { PermissionMapper } from "@modules/identity/permissions/src/data/mappers/PermissionMapper";
-import { PermissionModel } from "@modules/identity/permissions/src/data/models/PermissionModel";
 
 export class RoleRepository implements IRoleRepository {
   constructor(private readonly service: IRoleService) { }

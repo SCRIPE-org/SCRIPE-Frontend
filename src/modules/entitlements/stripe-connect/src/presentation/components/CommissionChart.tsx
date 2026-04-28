@@ -43,7 +43,7 @@ const fmt = (n: number) =>
   }).format(n);
 
 // Recharts Formatter has a complex overload intersection — cast once at the boundary.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 type RechartsFormatter = (value: any, name: any) => [string | number, string];
 
 

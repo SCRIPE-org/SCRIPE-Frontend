@@ -14,33 +14,25 @@
  */
 "use client";
 
-import { useState, useCallback, useEffect, useRef, useMemo } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 import { type TenantBrandingData } from "@core/providers/tenant-branding-provider";
 import { customizationContainer } from "@modules/customization/di";
 import type {
-  LoginLayout,
   LoginSlotId,
   ContentBlock,
-  SlotConfig,
 } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
 import { DEFAULT_CANVAS_COMPONENTS, DEFAULT_CANVAS_GRID_ROWS, DEFAULT_CANVAS_BACKGROUND } from "../../domain/entities/CanvasComponent";
 import {
   type StudioDraftProps as StudioDraft,
   DEFAULT_DRAFT,
-  DEVICE_DIMENSIONS,
   type DeviceSize,
   type StudioPanel,
   type AuthPageId,
   type AuthPageOverride,
-  type AuthPageOverrides,
   DEFAULT_PAGE_OVERRIDES,
-  ALL_LAYOUTS,
-  FONT_OPTIONS_EN,
-  FONT_OPTIONS_AR,
-  COLOR_PRESETS,
 } from "../../domain/entities/StudioDraft";
 
 
@@ -274,10 +266,10 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
     };
   }, []);
 
-  // ── Initialize draft from live settings (render-time ref-based) ──
-  const prevBrandingRef = useRef(branding);
-  if (branding !== prevBrandingRef.current) {
-    prevBrandingRef.current = branding;
+  // ─── Initialize draft from live settings (render-time state-based) ───
+  const [prevBranding, setPrevBranding] = useState(branding);
+  if (branding !== prevBranding) {
+    setPrevBranding(branding);
     if (branding) {
       try {
         const newDraft = buildDraftFromBranding(branding, true);

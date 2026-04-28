@@ -18,7 +18,7 @@ import { useState } from "react";
 import {
   CheckCircle2, AlertTriangle, XCircle, Info, Eye, Target, Layers, Zap,
   Focus, MonitorSpeaker, ScanEye, Paintbrush, Type, MousePointer2,
-  ImageOff, Hand, BookOpen, Accessibility,
+  ImageOff, Hand,
   ChevronDown, ChevronRight, Wand2,
 } from "lucide-react";
 import { cn } from "@/core/common/utils";

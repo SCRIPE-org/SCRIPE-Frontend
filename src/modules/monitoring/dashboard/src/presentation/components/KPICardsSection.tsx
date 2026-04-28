@@ -13,7 +13,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { Skeleton } from "@core/ui/skeleton";
 import { Users, ShieldCheck, Building2, KeyRound, LogIn, ShieldAlert, DollarSign, CreditCard, Clock } from "lucide-react";
 import { useConvertedAmount } from "@core/hooks/useConvertedAmount";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@core/ui/tooltip";
 
 interface Props {
   data?: DashboardSummary;

@@ -12,7 +12,6 @@ import { useConnectViewModel } from "../viewmodels/useConnectViewModel";
 import { CommissionRateConfig } from "../components/CommissionRateConfig";
 import { OnboardingStatusCard } from "../components/OnboardingStatusCard";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
-import { CreditCard } from "lucide-react";
 import { useState } from "react";
 import { GenericSelect } from "@core/crud/components/generic-select";
 import {

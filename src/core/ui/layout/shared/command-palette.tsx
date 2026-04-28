@@ -61,14 +61,22 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
     return items.filter((item) => item.href);
   }, [dynamicItems]);
 
-  // Recent items
-  const recentItems = useMemo(() => {
-    if (typeof window === "undefined") return [];
-    const recent = getRecent();
-    return recent
-      .map((href) => flatItems.find((item) => item.href === href))
-      .filter(Boolean) as NavigationItem[];
-  }, [flatItems, open]); // eslint-disable-line react-hooks/exhaustive-deps
+  // Recent items — re-read localStorage each time the palette opens
+  const [recentItems, setRecentItems] = useState<NavigationItem[]>([]);
+  const [prevOpenSync, setPrevOpenSync] = useState(open);
+  const [prevFlatItems, setPrevFlatItems] = useState(flatItems);
+
+  if (open !== prevOpenSync || flatItems !== prevFlatItems) {
+    setPrevOpenSync(open);
+    setPrevFlatItems(flatItems);
+    if (open) {
+      const recent = getRecent();
+      const items = recent
+        .map((href) => flatItems.find((item) => item.href === href))
+        .filter(Boolean) as NavigationItem[];
+      setRecentItems(items);
+    }
+  }
 
   // Fuzzy search
   const filteredItems = useMemo(() => {
@@ -84,13 +92,15 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
   const displayItems = query.trim() ? filteredItems : flatItems;
 
   // Reset state when opened (render-time, no setState in effect)
-  const prevOpenRef = useRef(open);
-  if (open && !prevOpenRef.current) {
-    // Transitioning from closed to open — reset
-    setQuery("");
-    setSelectedIndex(0);
+  const [prevOpen, setPrevOpen] = useState(open);
+  if (open !== prevOpen) {
+    setPrevOpen(open);
+    if (open) {
+      // Transitioning from closed to open — reset
+      setQuery("");
+      setSelectedIndex(0);
+    }
   }
-  prevOpenRef.current = open;
 
   // Focus input when opened
   useEffect(() => {

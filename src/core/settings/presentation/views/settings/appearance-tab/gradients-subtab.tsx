@@ -1,9 +1,7 @@
 "use client";
 
-import { useState, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
 import {
-  Check,
   ArrowUp,
   ArrowUpRight,
   ArrowRight,

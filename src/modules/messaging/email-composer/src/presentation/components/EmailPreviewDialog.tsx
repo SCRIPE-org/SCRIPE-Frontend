@@ -12,7 +12,7 @@ import {
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { cn } from "@core/common/utils";
-import { Monitor, Tablet, Smartphone, Braces, PanelRightOpen, PanelRightClose, Paperclip, FileText, FileImage, FileArchive, File as FileIcon } from "lucide-react";
+import { Monitor, Tablet, Smartphone, PanelRightOpen, PanelRightClose, Paperclip, FileText, FileImage, FileArchive, File as FileIcon } from "lucide-react";
 import { DEFAULT_VARIABLES } from "@core/ui/rich-text-editor/VariablePicker";
 import type { VariableDefinition } from "@core/ui/rich-text-editor/VariablePicker";
 import { VariableValuesPanel } from "@core/ui/rich-text-editor/VariableValuesPanel";

@@ -75,7 +75,7 @@ export function ExportIntervalSelect({ value, onChange, className }: ExportInter
   useEffect(() => {
     const dates = calculatePresetDates("monthly");
     onChange(dates);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, []);
 
   const handlePresetClick = useCallback(

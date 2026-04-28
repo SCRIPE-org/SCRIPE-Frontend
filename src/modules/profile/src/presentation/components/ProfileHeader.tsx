@@ -8,7 +8,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@core/ui/avatar";
 import { Badge } from "@core/ui/badge";
 import type { AdminProfile } from "../../../src/domain/entities/AdminProfile";
-import { cn } from "@core/common/utils";
 
 interface ProfileHeaderProps {
   profile: AdminProfile | undefined;

@@ -6,7 +6,7 @@ import { Input } from "@/core/ui/input";
 import { Button } from "@/core/ui/button";
 import { cn } from "@/core/common/utils";
 import { useI18n } from "@/core/providers/i18n-provider"; // Correct import path for i18n
-import { Progress } from "@/core/ui/progress"; // Assuming we have a Progress component, if not removed
+// Assuming we have a Progress component, if not removed
 
 interface PasswordInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   showStrengthIndicator?: boolean;

@@ -15,7 +15,7 @@
  */
 "use client";
 
-import { useState, useCallback, useMemo, useEffect, useRef } from "react";
+import { useState, useCallback, useMemo, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { entitlementsContainer } from "@modules/entitlements/di";
 import type { TenantPlan, TenantFeatureDefinition } from "../../domain/entities/TenantPlan";
@@ -165,11 +165,11 @@ export function useTenantPlanDetailViewModel(planId: string) {
     [usedCurrencyCodes],
   );
 
-  // ── Initialize features from server data (once per plan load) ──
-  useEffect(() => {
-    if (!plan) return;
-
-    if (!featuresInitRef.current) {
+  // ─── Initialize features from server data (once per plan load) ───
+  const [prevPlanId, setPrevPlanId] = useState(plan?.id);
+  if (plan?.id !== prevPlanId) {
+    setPrevPlanId(plan?.id);
+    if (plan) {
       const map = new Map<string, { value: string; overrideLabel?: string }>();
       for (const f of plan.features || []) {
         map.set(f.featureDefinitionId, {
@@ -178,9 +178,8 @@ export function useTenantPlanDetailViewModel(planId: string) {
         });
       }
       setLocalFeatures(map);
-      featuresInitRef.current = true;
     }
-  }, [plan]);
+  }
 
   // ── Features Handlers ──
   const setFeatureValue = useCallback((defId: string, value: string) => {
@@ -423,6 +422,27 @@ export function useTenantPlanDetailViewModel(planId: string) {
     return flatPrices;
   }, [usdMonthly, usdYearly, usdLifetime, overrides]);
 
+  // ── Update Plan ──
+  const updateMutation = useMutation({
+    mutationFn: (data: UpdateTenantPlanRequest) =>
+      tenantPlanRepository.update(planId, data),
+    onSuccess: () => {
+      featuresInitRef.current = false;
+      discardPricing();
+      queryClient.invalidateQueries({ queryKey });
+      success({
+        title: t("entitlements.tenantPlans.updated") || "Plan Updated",
+        description: t("entitlements.tenantPlans.updatedDesc") || "Plan details updated.",
+      });
+    },
+    onError: () => {
+      showError({
+        title: t("common.error") || "Error",
+        description: t("common.updateFailed") || "Failed to update.",
+      });
+    },
+  });
+
   // ── Save Features ──
   const saveFeatures = useCallback(() => {
     const features: UpsertTenantPlanFeatureRequest[] = [];
@@ -434,13 +454,13 @@ export function useTenantPlanDetailViewModel(planId: string) {
       });
     }
     updateMutation.mutate(buildUpdatePayload({ features }));
-  }, [localFeatures, buildUpdatePayload]);
+  }, [localFeatures, buildUpdatePayload, updateMutation]);
 
   // ── Save Prices ──
   const savePrices = useCallback(() => {
     const prices = buildFlatPrices();
     updateMutation.mutate(buildUpdatePayload({ prices }));
-  }, [buildFlatPrices, buildUpdatePayload]);
+  }, [buildFlatPrices, buildUpdatePayload, updateMutation]);
 
   // ── Lifecycle Mutations ──
   const publishMutation = useMutation({
@@ -483,26 +503,6 @@ export function useTenantPlanDetailViewModel(planId: string) {
     },
   });
 
-  // ── Update Plan ──
-  const updateMutation = useMutation({
-    mutationFn: (data: UpdateTenantPlanRequest) =>
-      tenantPlanRepository.update(planId, data),
-    onSuccess: () => {
-      featuresInitRef.current = false;
-      discardPricing();
-      queryClient.invalidateQueries({ queryKey });
-      success({
-        title: t("entitlements.tenantPlans.updated") || "Plan Updated",
-        description: t("entitlements.tenantPlans.updatedDesc") || "Plan details updated.",
-      });
-    },
-    onError: () => {
-      showError({
-        title: t("common.error") || "Error",
-        description: t("common.updateFailed") || "Failed to update.",
-      });
-    },
-  });
 
   return {
     plan,

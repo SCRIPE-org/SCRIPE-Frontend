@@ -6,7 +6,7 @@
  */
 "use client";
 
-import { Component, type ReactNode, useState, useEffect, useMemo } from "react";
+import { Component, type ReactNode, useState, useEffect } from "react";
 import { Button } from "@core/ui/button";
 import {
   type ContentBlock,
@@ -508,9 +508,17 @@ function VideoBlockView({ block }: { block: VideoBlock }) {
 
 function CountdownBlockView({ block }: { block: CountdownBlock }) {
   const p = block.props;
-  const [now, setNow] = useState(Date.now());
-  useEffect(() => { const t = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(t); }, []);
+  const [now, setNow] = useState<number | null>(null);
+  useEffect(() => {
+    const id = setTimeout(() => setNow(Date.now()), 0);
+    const t = setInterval(() => setNow(Date.now()), 1000); 
+    return () => {
+      clearTimeout(id);
+      clearInterval(t);
+    };
+  }, []);
   const target = new Date(p.targetDate || "").getTime();
+  if (now === null) return <div className="text-center"><div className="animate-pulse h-16 bg-gray-200/20 rounded-lg"></div></div>;
   const diff = Math.max(0, target - now);
   if (diff <= 0 && p.expiredText) return <p className="text-sm text-center text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">{p.expiredText}</p>;
   const d = Math.floor(diff / 86400000), h = Math.floor((diff % 86400000) / 3600000), m = Math.floor((diff % 3600000) / 60000), s = Math.floor((diff % 60000) / 1000);

@@ -5,7 +5,7 @@ import { Button } from "@core/ui/button";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSettings } from "@core/providers/settings-provider";
 import { cn } from "@core/common/utils";
-import { LanguageSwitcher, ThemeSwitcher, HeaderSearch } from "@core/ui/layout/common";
+import { LanguageSwitcher, ThemeSwitcher } from "@core/ui/layout/common";
 import { useRouter } from "next/navigation";
 import { UserProfileDropdown } from "@core/ui/user-profile-dropdown";
 import { PageBreadcrumbs } from "@core/ui/page-breadcrumbs";

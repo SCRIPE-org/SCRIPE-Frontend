@@ -15,7 +15,6 @@ import type { CreateTenantJson, CreateTenantResultJson, UpdateTenantJson } from 
 import type { TenantStats } from "./ITenantRepository";
 import type { PermissionModel } from "@modules/identity/permissions/src/domain/types/PermissionModelTypes";
 import type {
-  EditionThinModel,
   SubscriptionModel,
   PagedEditionResult,
   DowngradeImpactReport,

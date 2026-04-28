@@ -13,7 +13,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { Label } from "@core/ui/label";
 import { PasswordInput } from "@core/ui/password-input";
-import { ArrowLeft, Lock, Loader2, CheckCircle, AlertTriangle } from "lucide-react";
+import { ArrowLeft, Lock, CheckCircle, AlertTriangle } from "lucide-react";
 import { useLoginBrandingTokens } from "@modules/auth/signin/src/presentation/viewmodels/useLoginBrandingTokens";
 import { resolveFileUrl } from "@core/common/utils";
 import { BRAND } from "@core/config/branding";

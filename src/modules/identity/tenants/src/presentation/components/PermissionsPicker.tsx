@@ -17,7 +17,6 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { systemContainer } from "@modules/identity/di";
 import { Checkbox } from "@core/ui/checkbox";
 import { Input } from "@core/ui/input";
-import { Label } from "@core/ui/label";
 import { Badge } from "@core/ui/badge";
 import { Skeleton } from "@core/ui/skeleton";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
@@ -81,7 +80,7 @@ export function PermissionsPicker({
       },
       {} as Record<string, Permission[]>
     );
-  }, [permissions, search]);
+  }, [permissions, search, language]);
 
   // Get sorted categories
   const categories = useMemo(() => {

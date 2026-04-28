@@ -9,7 +9,7 @@
  */
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { cn } from "@/core/common/utils";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
@@ -90,7 +90,9 @@ export function BuilderPanel({ draft, updateDraft, sidebarOnly = false, activeAu
 
   // Load saved templates on mount
   useEffect(() => {
-    setSavedTemplates(TemplateStorageService.load());
+    setTimeout(() => {
+      setSavedTemplates(TemplateStorageService.load());
+    }, 0);
   }, []);
 
   // Overlap detection

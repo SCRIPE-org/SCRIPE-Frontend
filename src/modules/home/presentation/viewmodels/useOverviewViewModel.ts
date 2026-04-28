@@ -83,8 +83,8 @@ export function useOverviewViewModel(hasDashboardPermission = true) {
   const refetchAll = useCallback(() => {
     summary.refetch();
     recentActivity.refetch();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [summary.refetch, recentActivity.refetch]);
+
+  }, [summary, recentActivity]);
 
   return {
     greeting,

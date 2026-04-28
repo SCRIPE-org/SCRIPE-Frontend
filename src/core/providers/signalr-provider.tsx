@@ -132,20 +132,22 @@ export function SignalRProvider({ hubPath = HUB_PATHS.AUDIT, children }: SignalR
   useEffect(() => {
     if (isDocsRoute) return; // Skip SignalR on docs routes
     if (isAuthenticated) {
-      connect();
+      setTimeout(() => connect(), 0);
     } else {
       // User logged out — tear down connection
       connectionRef.current?.stop();
       connectionRef.current = null;
-      setConnection(null);
-      setConnectionState("disconnected");
+      setTimeout(() => {
+        setConnection(null);
+        setConnectionState("disconnected");
+      }, 0);
     }
 
     return () => {
       connectionRef.current?.stop();
       connectionRef.current = null;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, [isAuthenticated, isDocsRoute]);
 
   // Memoize context value to prevent unnecessary child re-renders

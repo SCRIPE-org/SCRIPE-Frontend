@@ -21,27 +21,27 @@ export class AuditRepository implements IAuditRepository {
 
   async getLogs(params?: AuditFilterParams): Promise<AuditLogPage> {
     const dto = await this.service.getLogs(params);
-    return AuditMapper.toLogPage(dto as any);
+    return AuditMapper.toLogPage(dto);
   }
 
   async getLogDetail(id: string): Promise<AuditLogDetail> {
     const dto = await this.service.getLogDetail(id);
-    return AuditMapper.toLogDetail(dto as any);
+    return AuditMapper.toLogDetail(dto);
   }
 
   async getAnalytics(): Promise<AuditAnalyticsSummary> {
     const dto = await this.service.getAnalytics();
-    return AuditMapper.toAnalyticsSummary(dto as any);
+    return AuditMapper.toAnalyticsSummary(dto);
   }
 
   async getTopUsers(): Promise<TopAuditUser[]> {
     const dtos = await this.service.getTopUsers();
-    return (dtos as any[]).map(AuditMapper.toTopUser);
+    return dtos.map(AuditMapper.toTopUser);
   }
 
   async getComplianceReport(framework: string): Promise<ComplianceReport> {
     const dto = await this.service.getComplianceReport(framework);
-    return AuditMapper.toComplianceReport(dto as any);
+    return AuditMapper.toComplianceReport(dto);
   }
 
   async exportLogs(format: string, params?: AuditFilterParams): Promise<Blob> {

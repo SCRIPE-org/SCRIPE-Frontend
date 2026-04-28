@@ -19,9 +19,9 @@
 import { useState, useEffect } from "react";
 import {
   Search, Heart, Grid3X3, List, Filter, Sparkles, Download,
-  Lock, Star, ChevronLeft, ChevronRight, Loader2, Check,
+  Lock, ChevronLeft, ChevronRight, Loader2, Check,
   Eye, Paintbrush, X, ShieldCheck, Moon, Blocks, Crown,
-  ShoppingCart, RotateCcw,
+  ShoppingCart,
 } from "lucide-react";
 import { cn } from "@/core/common/utils";
 import { THEME_CATEGORIES, THEME_SORT_OPTIONS } from "../../domain/types/ThemeTypes";

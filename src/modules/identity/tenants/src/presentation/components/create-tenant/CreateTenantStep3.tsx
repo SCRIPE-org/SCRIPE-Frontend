@@ -47,7 +47,7 @@ export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
       const results = await vm.handleSearchEditions(query);
       return results.map((r) => ({ value: r.value, label: r.label }));
     },
-    [vm.handleSearchEditions]
+    [vm]
   );
 
   // Edition options from cached editions

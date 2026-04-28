@@ -37,8 +37,6 @@ import {
   Calendar,
   Zap,
   Info,
-  Download,
-  Filter,
   ArrowUpRight,
   ArrowDownLeft,
   ChevronLeft,

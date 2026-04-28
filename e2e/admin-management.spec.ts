@@ -7,7 +7,9 @@ async function loginAsAdmin(page: Page) {
   await page.goto("/login");
   await page.waitForSelector('[data-testid="login-form"], form', { timeout: 10_000 });
 
-  const usernameInput = page.locator('input[name="username"], input[placeholder*="username" i]').first();
+  const usernameInput = page
+    .locator('input[name="username"], input[placeholder*="username" i]')
+    .first();
   const passwordInput = page.locator('input[name="password"], input[type="password"]').first();
 
   await usernameInput.fill("system_superadmin");
@@ -40,9 +42,11 @@ test.describe("Admin Management", () => {
     await page.waitForLoadState("networkidle");
 
     // Click the create/add button
-    const createButton = page.locator(
-      'button:has-text("Add"), button:has-text("Create"), button:has-text("إضافة"), [data-testid="create-button"]'
-    ).first();
+    const createButton = page
+      .locator(
+        'button:has-text("Add"), button:has-text("Create"), button:has-text("إضافة"), [data-testid="create-button"]'
+      )
+      .first();
 
     if (await createButton.isVisible()) {
       await createButton.click();

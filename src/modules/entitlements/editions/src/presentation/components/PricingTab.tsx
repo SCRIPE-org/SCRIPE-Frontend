@@ -27,7 +27,7 @@ import {
       TrendingDown, Coins, AlertCircle, Info, ChevronDown,
       Globe, Zap,
 } from "lucide-react";
-import { getCurrencyInfo, formatPrice, SUPPORTED_CURRENCIES } from "../../domain/entities/EditionPricing";
+import { getCurrencyInfo, formatPrice } from "../../domain/entities/EditionPricing";
 import { parseLocalizedNumber } from "@core/utils/number-parser";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 

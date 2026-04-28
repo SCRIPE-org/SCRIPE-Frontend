@@ -9,9 +9,9 @@
 // import { ExampleRepository } from './src/data/repositories/ExampleRepository';
 // import type { IExampleRepository } from './src/domain/interfaces/IExampleRepository';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type -- Template scaffold
 export interface TemplateContainer {
   // exampleRepository: IExampleRepository;
+  _init?: boolean;
 }
 
 export const createTemplateContainer = (): TemplateContainer => ({

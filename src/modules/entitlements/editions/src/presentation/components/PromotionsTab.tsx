@@ -13,7 +13,7 @@ import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { DatePicker } from "@core/ui/date-picker";
-import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
+import { Card, CardContent } from "@core/ui/card";
 import { Switch } from "@core/ui/switch";
 import { Label } from "@core/ui/label";
 import {

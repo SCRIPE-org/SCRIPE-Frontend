@@ -15,11 +15,7 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useRouter } from "next/navigation";
 import { webhookKeys } from "./useWebhooksViewModel";
 import type {
-      WebhookSubscription,
-      WebhookDeliveryLog,
-      WebhookDeliveryStats,
       WebhookTestResult,
-      WebhookAnalytics,
 } from "../../domain/entities/Webhook";
 import type { UpdateWebhookRequest } from "../../domain/entities/WebhookRequests";
 

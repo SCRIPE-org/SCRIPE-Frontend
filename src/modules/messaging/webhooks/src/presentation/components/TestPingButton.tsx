@@ -19,7 +19,6 @@ import {
       CheckCircle2,
       XCircle,
       Clock,
-      Loader2,
 } from "lucide-react";
 
 interface TestPingButtonProps {

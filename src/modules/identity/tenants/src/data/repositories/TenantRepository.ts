@@ -24,7 +24,7 @@ import { TenantMapper } from "../mappers/TenantMapper";
 import type { Permission } from "@modules/identity/permissions/src/domain/entities/Permission";
 import { PermissionMapper } from "@modules/identity/permissions/src/data/mappers/PermissionMapper";
 import { appLogger } from "@core/common/logger";
-import type { EditionThinModel, SubscriptionModel, PagedEditionResult, DowngradeImpactReport } from "../models/TenantSubscription";
+import type { SubscriptionModel, PagedEditionResult, DowngradeImpactReport } from "../models/TenantSubscription";
 
 export class TenantRepository implements ITenantRepository {
   constructor(private readonly service: ITenantService) { }

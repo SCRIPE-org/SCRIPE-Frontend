@@ -48,6 +48,8 @@ export function OAuthConsentView() {
             );
       }
 
+      const { formAction, formParams, accessToken, formRef } = vm;
+
       return (
             <div className="flex min-h-screen items-center justify-center bg-background/95 p-6" dir={direction}>
                   <Card className="w-full max-w-md shadow-xl ring-1 ring-border/50">
@@ -122,18 +124,18 @@ export function OAuthConsentView() {
                   </Card>
 
                   {/* Declarative Hidden Form (Controlled by ViewModel) */}
-                  {vm.formAction && vm.accessToken && (
+                  {formAction && accessToken && (
                         <form
-                              ref={vm.formRef}
+                              ref={formRef}
                               method="POST"
-                              action={vm.formAction}
+                              action={formAction}
                               className="hidden"
                               style={{ display: "none" }}
                         >
-                              {Object.entries(vm.formParams).map(([key, value]) => (
+                              {Object.entries(formParams).map(([key, value]) => (
                                     <input key={key} type="hidden" name={key} value={value} />
                               ))}
-                              <input type="hidden" name="access_token" value={vm.accessToken} />
+                              <input type="hidden" name="access_token" value={accessToken} />
                         </form>
                   )}
             </div>

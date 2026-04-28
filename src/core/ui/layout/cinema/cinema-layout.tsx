@@ -75,10 +75,10 @@ export function CinemaLayout({ children }: CinemaLayoutProps) {
   }, []);
 
   // Close on route change (ref-based, no setState in effect)
-  const prevPathnameRef = useRef(pathname);
-  if (prevPathnameRef.current !== pathname) {
-    prevPathnameRef.current = pathname;
-    if (moreOpen) setMoreOpen(false);
+  const [prevPathname, setPrevPathname] = useState(pathname);
+  if (pathname !== prevPathname) {
+    setPrevPathname(pathname);
+    setMoreOpen(false);
   }
 
   // Flatten navigation for horizontal nav — ALL items, no cap

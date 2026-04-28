@@ -7,7 +7,7 @@
  */
 "use client";
 
-import { useCallback, useEffect, useState, useRef } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import {
@@ -25,20 +25,19 @@ const SESSION_EXPIRY_MS = 24 * 60 * 60 * 1000;
 
 function useCountdown(isActive: boolean) {
   const [remaining, setRemaining] = useState(SESSION_EXPIRY_MS);
-  const createdAtRef = useRef<number>(Date.now());
 
-  // Reset timer when dialog opens
-  useEffect(() => {
-    if (isActive) {
-      createdAtRef.current = Date.now();
-      setRemaining(SESSION_EXPIRY_MS);
-    }
-  }, [isActive]);
+  const [prevIsActive, setPrevIsActive] = useState(isActive);
+  if (isActive !== prevIsActive) {
+    setPrevIsActive(isActive);
+    setRemaining(SESSION_EXPIRY_MS);
+  }
 
   useEffect(() => {
     if (!isActive) return;
+    const start = Date.now();
+    
     const tick = setInterval(() => {
-      const elapsed = Date.now() - createdAtRef.current;
+      const elapsed = Date.now() - start;
       const left = Math.max(0, SESSION_EXPIRY_MS - elapsed);
       setRemaining(left);
       if (left <= 0) clearInterval(tick);

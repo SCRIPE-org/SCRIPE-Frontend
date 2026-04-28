@@ -34,7 +34,9 @@ export function useModuleLocales(
   const isLoaded = isModuleLoaded(moduleKey);
   // Stable ref to prevent re-creation of loader closure from triggering re-loads.
   const loaderRef = useRef(loader);
-  loaderRef.current = loader;
+  useEffect(() => {
+    loaderRef.current = loader;
+  }, [loader]);
 
   useEffect(() => {
     // Primary guard: isModuleLoaded is the source-of-truth (persists across remounts).
@@ -58,8 +60,8 @@ export function useModuleLocales(
     return () => {
       cancelled = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoaded, moduleKey]);
+
+  }, [isLoaded, moduleKey, registerBothLanguages, markModuleLoaded]);
 
   return { isLoaded };
 }

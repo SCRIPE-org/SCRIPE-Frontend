@@ -133,7 +133,7 @@ export function RichTextEditor({
             if (editor && value !== getEmailSafeHTML(editor)) {
                   editor.commands.setContent(value, { emitUpdate: false });
             }
-            // eslint-disable-next-line react-hooks/exhaustive-deps
+
       }, [value]);
 
       const toggleSource = useCallback(() => {

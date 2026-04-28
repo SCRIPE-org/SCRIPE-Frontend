@@ -3,7 +3,7 @@
  *
  * Defines the contract for tenant data operations.
  */
-import type { Tenant, TenantData, TenantTreeNode } from "../entities/Tenant";
+import type { Tenant, TenantTreeNode } from "../entities/Tenant";
 import type {
   CreateTenantRequest,
   CreateTenantResult,
@@ -12,7 +12,7 @@ import type {
 } from "../entities/TenantRequests";
 import type { PagedResult } from "@modules/identity/core/domain/types";
 import type { Permission } from "@modules/identity/permissions/src/domain/entities/Permission";
-import type { EditionThinModel, SubscriptionModel, PagedEditionResult, DowngradeImpactReport } from "../types/SubscriptionTypes";
+import type { SubscriptionModel, PagedEditionResult, DowngradeImpactReport } from "../types/SubscriptionTypes";
 import type { TenantDomainJson } from "./ITenantService";
 
 /** Domain-level alias for tenant domain data */

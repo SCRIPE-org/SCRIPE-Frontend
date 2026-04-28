@@ -10,7 +10,7 @@
  */
 "use client";
 
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -101,20 +101,26 @@ export function useTenantPermissionsDialog({
   const [expandedGroups, setExpandedGroups] = useState<string[]>([]);
 
   // Track if we've initialized for this tenant to prevent infinite loops
-  const initializedTenantRef = useRef<string | null>(null);
+  const [initializedTenantId, setInitializedTenantId] = useState<string | null>(null);
 
-  // Reset when dialog opens with a different tenant (render-time ref-based)
-  const prevOpenTenantRef = useRef({ open, tenantId });
-  if (open !== prevOpenTenantRef.current.open || tenantId !== prevOpenTenantRef.current.tenantId) {
-    prevOpenTenantRef.current = { open, tenantId };
-    if (open && tenantId !== initializedTenantRef.current) {
+  // Reset when dialog opens with a different tenant
+  const [prevOpen, setPrevOpen] = useState(open);
+  const [prevTenantId, setPrevTenantId] = useState(tenantId);
+  const [prevInitializedTenantId, setPrevInitializedTenantId] = useState(initializedTenantId);
+  
+  if (open !== prevOpen || tenantId !== prevTenantId || initializedTenantId !== prevInitializedTenantId) {
+    setPrevOpen(open);
+    setPrevTenantId(tenantId);
+    setPrevInitializedTenantId(initializedTenantId);
+    
+    if (open && tenantId && tenantId !== initializedTenantId) {
       setSearch("");
       setSelectedCodes(new Set());
       setExpandedGroups([]);
-      initializedTenantRef.current = null; // Mark as not initialized
+      setInitializedTenantId(null);
     }
     if (!open) {
-      initializedTenantRef.current = null; // Reset when dialog closes
+      setInitializedTenantId(null);
     }
   }
 
@@ -198,12 +204,12 @@ export function useTenantPermissionsDialog({
     return combined;
   }, [parentPermissions, tenantPermissions]);
 
-  // Initialize selection from tenant's permissions (only once per tenant, render-time ref-based)
-  const isReadyToInit = open && tenantId && allPermissions.length > 0 && !loadingTenant && initializedTenantRef.current !== tenantId;
-  const prevInitCheckRef = useRef(false);
-  if (isReadyToInit && !prevInitCheckRef.current) {
-    prevInitCheckRef.current = true;
-    
+  // Initialize selection from tenant's permissions
+  const isReadyToInit = open && !!tenantId && allPermissions.length > 0 && !loadingTenant && initializedTenantId !== tenantId;
+  const [prevIsReadyToInit, setPrevIsReadyToInit] = useState(isReadyToInit);
+  
+  if (isReadyToInit && isReadyToInit !== prevIsReadyToInit) {
+    setPrevIsReadyToInit(isReadyToInit);
     // Get valid codes from ALL known permissions (parent + current)
     const validCodes = new Set(allPermissions.map((p) => p.code));
 
@@ -225,10 +231,9 @@ export function useTenantPermissionsDialog({
     setExpandedGroups(Array.from(groupsWithSelection));
 
     // Mark as initialized for this tenant
-    initializedTenantRef.current = tenantId;
-  }
-  if (!isReadyToInit) {
-    prevInitCheckRef.current = false;
+    setInitializedTenantId(tenantId);
+  } else if (!isReadyToInit && prevIsReadyToInit) {
+    setPrevIsReadyToInit(isReadyToInit);
   }
 
   // Save mutation

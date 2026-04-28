@@ -7,10 +7,9 @@
 "use client";
 
 import { useState, useCallback, useMemo } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { systemContainer } from "@modules/identity/di";
 import { useI18n } from "@core/providers/i18n-provider";
-import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import type { Admin, AdminRoleData } from "../../domain/entities/Admin";
 import type { AssignRoleRequest } from "../../domain/entities/AdminRequests";
 import type { GenericSelectOption } from "@core/crud/components/generic-select";
@@ -72,11 +71,11 @@ export function useAdminRolesViewModel(
 
   // Transform tenants tree
   // Transform tenants tree
-  const transformTenants = useCallback((nodes: any[]): GenericSelectOption[] => {
+  const transformTenants = useCallback(function transform(nodes: any[]): GenericSelectOption[] {
     return nodes.map((node) => ({
       value: node.id,
       label: node.name,
-      children: node.children?.length > 0 ? transformTenants(node.children) : undefined,
+      children: node.children?.length > 0 ? transform(node.children) : undefined,
     }));
   }, []);
 

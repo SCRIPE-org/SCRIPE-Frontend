@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -19,7 +19,6 @@ import type {
   TenantSettingsModel,
   UpdateTenantSettingsRequest,
 } from "@modules/customization/tenant-settings/src/domain/types/SettingsTypes";
-import { Loader2 } from "lucide-react";
 import { ImageUploadField } from "@core/ui/image-upload-field";
 
 interface TenantSettingsEditDialogProps {
@@ -43,13 +42,23 @@ export function TenantSettingsEditDialog({
   const [activeTab, setActiveTab] = useState(initialSection || "security");
   const [formData, setFormData] = useState<TenantSettingsModel>({ ...settings });
 
-  // Update local state when dialog opens (render-time)
-  const prevOpenRef = useRef(open);
-  if (open && !prevOpenRef.current) {
-    setFormData({ ...settings });
-    if (initialSection) setActiveTab(initialSection);
+  // Update local state when dialog opens
+  const [prevOpen, setPrevOpen] = useState(open);
+  const [prevSettings, setPrevSettings] = useState(settings);
+  const [prevInitialSection, setPrevInitialSection] = useState(initialSection);
+  
+  if (open !== prevOpen || settings !== prevSettings || initialSection !== prevInitialSection) {
+    setPrevOpen(open);
+    setPrevSettings(settings);
+    setPrevInitialSection(initialSection);
+    
+    if (open) {
+      setFormData({ ...settings });
+      if (initialSection) {
+        setActiveTab(initialSection);
+      }
+    }
   }
-  prevOpenRef.current = open;
 
   const handleChange = (field: keyof TenantSettingsModel, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));

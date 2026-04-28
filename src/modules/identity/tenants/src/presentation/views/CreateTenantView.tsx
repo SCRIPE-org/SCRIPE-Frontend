@@ -19,7 +19,7 @@ import { useSearchParams } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { Button } from "@core/ui/button";
-import { Check, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
+import { Check, ChevronLeft, ChevronRight } from "lucide-react";
 
 import { useCreateTenantViewModel } from "../viewmodels/useCreateTenantViewModel";
 import {

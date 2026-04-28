@@ -3,8 +3,9 @@
  * ReportsTab — Premium scheduled report preferences + on-demand report generation.
  * Uses domain entity types only (no data-layer imports).
  */
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
+import { useToast } from "@core/ui/use-toast";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
 import { Button } from "@core/ui/button";
 import { Label } from "@core/ui/label";
@@ -34,6 +35,7 @@ export function ReportsTab({
   isGenerating,
 }: ReportsTabProps) {
   const { t } = useI18n();
+  const { toast } = useToast();
 
   const [cadence, setCadence] = useState(preference?.cadence ?? "None");
   const [email, setEmail] = useState(preference?.email ?? "");
@@ -44,7 +46,9 @@ export function ReportsTab({
   const [currency, setCurrency] = useState(preference?.currency ?? "USD");
 
   // Sync state when preference loads/changes
-  useEffect(() => {
+  const [prevPref, setPrevPref] = useState(preference);
+  if (preference !== prevPref) {
+    setPrevPref(preference);
     if (preference) {
       setCadence(preference.cadence);
       setEmail(preference.email);
@@ -54,18 +58,46 @@ export function ReportsTab({
       setIncludeForecasting(preference.includeForecasting);
       setCurrency(preference.currency);
     }
-  }, [preference]);
+  }
 
   const handleSave = async () => {
-    await onSave({
-      cadence,
-      email,
-      includeTenantBreakdown,
-      includeCohortAnalysis,
-      includeHealthScores,
-      includeForecasting,
-      currency,
-    });
+    try {
+      await onSave({
+        cadence,
+        email,
+        includeTenantBreakdown,
+        includeCohortAnalysis,
+        includeHealthScores,
+        includeForecasting,
+        currency,
+      });
+      toast({
+        title: t("entitlements.analytics.reports.saveSuccess") || "Preferences Saved",
+        description: t("entitlements.analytics.reports.saveSuccessDesc") || "Your report preferences have been updated.",
+      });
+    } catch {
+      toast({
+        title: t("entitlements.analytics.reports.saveError") || "Save Failed",
+        description: t("entitlements.analytics.reports.saveErrorDesc") || "Could not save preferences. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleGenerateReport = async () => {
+    try {
+      await onGenerateReport();
+      toast({
+        title: t("entitlements.analytics.reports.generateSuccess") || "Report Generated",
+        description: t("entitlements.analytics.reports.generateSuccessDesc") || "Your PDF report has been downloaded.",
+      });
+    } catch {
+      toast({
+        title: t("entitlements.analytics.reports.generateError") || "Report Failed",
+        description: t("entitlements.analytics.reports.generateErrorDesc") || "Could not generate the report. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   if (isLoading) {
@@ -202,7 +234,7 @@ export function ReportsTab({
               {t("entitlements.analytics.reports.generateInfo")}
             </p>
             <Button
-              onClick={onGenerateReport}
+              onClick={handleGenerateReport}
               loading={isGenerating}
               variant="outline"
               className="gap-2 border-blue-500/30 hover:bg-blue-500/5 hover:border-blue-500/50"

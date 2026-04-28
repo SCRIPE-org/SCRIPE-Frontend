@@ -8,7 +8,7 @@ import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Button } from "@core/ui/button";
 import { useI18n } from "@core/providers/i18n-provider";
-import { Loader2, Eye, EyeOff, CheckCircle2 } from "lucide-react";
+import { Eye, EyeOff, CheckCircle2 } from "lucide-react";
 import { cn } from "@core/common/utils";
 import type { ChangePasswordRequest } from "../../../src/domain/interfaces/IProfileRepository";
 

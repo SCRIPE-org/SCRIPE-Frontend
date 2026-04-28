@@ -14,8 +14,6 @@ import type {
   CheckoutSession,
   BillingPortal,
   BillingDashboardData,
-  MonthlyRevenuePoint,
-  EditionBreakdownItem,
   PaymentLink,
 } from "../../domain/entities/Invoice";
 import type {

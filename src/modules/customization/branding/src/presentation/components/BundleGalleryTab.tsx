@@ -12,7 +12,7 @@ import { cn } from "@/core/common/utils";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import {
-  Search, Package, Loader2, ChevronLeft, ChevronRight,
+  Search, Loader2, ChevronLeft, ChevronRight,
   Save, Inbox,
 } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";

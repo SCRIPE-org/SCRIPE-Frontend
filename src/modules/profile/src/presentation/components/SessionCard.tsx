@@ -6,7 +6,7 @@
 import { Button } from "@core/ui/button";
 import { useI18n } from "@core/providers/i18n-provider";
 import { cn } from "@core/common/utils";
-import { Monitor, Smartphone, Globe, X, Loader2 } from "lucide-react";
+import { Monitor, Smartphone, Globe, X } from "lucide-react";
 import type { ActiveSession } from "../../../src/domain/entities/ActiveSession";
 
 interface SessionCardProps {
@@ -15,30 +15,11 @@ interface SessionCardProps {
   isRevoking?: boolean;
 }
 
-function getDeviceIcon(info: string) {
-  const lower = info.toLowerCase();
-  if (lower.includes("mobile") || lower.includes("iphone") || lower.includes("android")) {
-    return Smartphone;
-  }
-  return Monitor;
-}
-
-function formatRelativeTime(date: Date): string {
-  const now = new Date();
-  const diff = now.getTime() - date.getTime();
-  const minutes = Math.floor(diff / 60000);
-  const hours = Math.floor(minutes / 60);
-  const days = Math.floor(hours / 24);
-
-  if (minutes < 1) return "Just now";
-  if (minutes < 60) return `${minutes}m ago`;
-  if (hours < 24) return `${hours}h ago`;
-  return `${days}d ago`;
-}
 
 export function SessionCard({ session, onRevoke, isRevoking }: SessionCardProps) {
   const { t } = useI18n();
-  const DeviceIcon = getDeviceIcon(session.deviceInfo);
+  const lowerInfo = session.deviceInfo.toLowerCase();
+  const isMobile = lowerInfo.includes("mobile") || lowerInfo.includes("iphone") || lowerInfo.includes("android");
 
   return (
     <div
@@ -59,7 +40,7 @@ export function SessionCard({ session, onRevoke, isRevoking }: SessionCardProps)
                 : "bg-muted text-muted-foreground"
             )}
           >
-            <DeviceIcon className="h-5 w-5" />
+            {isMobile ? <Smartphone className="h-5 w-5" /> : <Monitor className="h-5 w-5" />}
           </div>
           <div className="space-y-1">
             <div className="flex items-center gap-2">

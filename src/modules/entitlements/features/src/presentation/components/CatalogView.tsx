@@ -21,7 +21,7 @@ const VALUE_TYPE_COLORS: Record<string, "default" | "secondary" | "outline"> = {
 
 interface CatalogViewProps {
       /** The CRUD view model returned by useCrudViewModel<Feature> */
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
       vm: Record<string, any>;
       t: (key: string) => string;
       language: string;

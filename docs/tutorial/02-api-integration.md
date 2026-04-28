@@ -11,7 +11,7 @@ graph TB
     VM[ViewModel<br/>useProductViewModel] --> REPO[Repository<br/>ProductRepository]
     REPO --> API[ApiService<br/>Singleton Axios client]
     API --> INT[Interceptors]
-    
+
     subgraph INT[Request/Response Interceptors]
         JWT[JWT Injection<br/>Bearer token from store]
         CSRF[CSRF Header<br/>X-CSRF-Token from cookie]
@@ -20,7 +20,7 @@ graph TB
         UNWRAP[Response Unwrapper<br/>Returns response.data]
         SANITIZE[Input Sanitizer<br/>HTML entity encoding]
     end
-    
+
     INT --> BACKEND[Backend API<br/>https://api.nexora.com]
 ```
 
@@ -28,15 +28,15 @@ graph TB
 
 ### Built-in Features
 
-| Feature | What It Does | Automatic? |
-|---------|-------------|-----------|
-| **Base URL** | Uses `NEXT_PUBLIC_API_URL` from `.env` | ✅ |
-| **JWT Injection** | Adds `Authorization: Bearer <token>` from auth store | ✅ |
-| **CSRF Token** | Adds `X-CSRF-Token` header from cookie | ✅ |
-| **Token Refresh** | Intercepts 401, refreshes token, retries original request | ✅ |
-| **5xx Retry** | Retries server errors with exponential backoff (1s, 2s, 4s) | ✅ |
-| **Response Unwrap** | Returns `response.data` directly | ✅ |
-| **Input Sanitization** | Strips `<script>` tags and dangerous HTML | ✅ |
+| Feature                | What It Does                                                | Automatic? |
+| ---------------------- | ----------------------------------------------------------- | ---------- |
+| **Base URL**           | Uses `NEXT_PUBLIC_API_URL` from `.env`                      | ✅         |
+| **JWT Injection**      | Adds `Authorization: Bearer <token>` from auth store        | ✅         |
+| **CSRF Token**         | Adds `X-CSRF-Token` header from cookie                      | ✅         |
+| **Token Refresh**      | Intercepts 401, refreshes token, retries original request   | ✅         |
+| **5xx Retry**          | Retries server errors with exponential backoff (1s, 2s, 4s) | ✅         |
+| **Response Unwrap**    | Returns `response.data` directly                            | ✅         |
+| **Input Sanitization** | Strips `<script>` tags and dangerous HTML                   | ✅         |
 
 ---
 
@@ -174,13 +174,13 @@ export function ProductListView() {
 
 The `ApiService` automatically normalizes errors:
 
-| Backend Response | Frontend Behavior |
-|-----------------|-------------------|
-| `400 { error: { message: "Invalid Name" } }` | Toast: "Invalid Name" |
-| `401 Unauthorized` | Auto-refresh → retry. If refresh fails → redirect to login |
-| `403 Forbidden` | Toast: "Permission denied" |
-| `409 Conflict` | Toast: error message from backend |
-| `500 Internal Server Error` | Retry 3 times → then show "Server error" toast |
+| Backend Response                             | Frontend Behavior                                          |
+| -------------------------------------------- | ---------------------------------------------------------- |
+| `400 { error: { message: "Invalid Name" } }` | Toast: "Invalid Name"                                      |
+| `401 Unauthorized`                           | Auto-refresh → retry. If refresh fails → redirect to login |
+| `403 Forbidden`                              | Toast: "Permission denied"                                 |
+| `409 Conflict`                               | Toast: error message from backend                          |
+| `500 Internal Server Error`                  | Retry 3 times → then show "Server error" toast             |
 
 You **don't need** `try/catch` blocks for basic CRUD — `useCrudViewModel` handles all error feedback automatically via toast notifications.
 

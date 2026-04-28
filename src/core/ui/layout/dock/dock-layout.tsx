@@ -9,13 +9,12 @@ import { useLayoutStyles } from "@core/ui/layout/shared/use-layout-styles";
 import { Logo } from "@core/ui/logo";
 import { Button } from "@core/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@core/ui/tooltip";
-import { Badge } from "@core/ui/badge";
 import { LanguageSwitcher, ThemeSwitcher } from "@core/ui/layout/common";
 import { UserProfileDropdown } from "@core/ui/user-profile-dropdown";
 import { Footer } from "@core/ui/layout/shared/footer";
 import { useDynamicNavigation } from "@core/ui/navigation/dynamic-navigation";
 import { isNavigationItemActive, type NavigationItem } from "@core/config/navigation";
-import { Search, Home, ChevronLeft, ChevronRight } from "lucide-react";
+import { Home, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@core/common/utils";
 import { NotificationBell } from "@core/ui/notification";
 

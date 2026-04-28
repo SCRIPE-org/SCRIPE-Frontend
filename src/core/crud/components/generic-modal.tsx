@@ -1,13 +1,8 @@
 "use client";
 
 import React, { memo } from "react";
-import {
-  PAGE_BLUR_Z_INDEX,
-  PAGE_BLUR_PX,
-  PAGE_BLUR_BRIGHTNESS,
-  MODAL_Z_INDEX,
-  OVERLAY_Z_INDEX,
-} from "@core/ui/modal-tokens";
+
+
 import {
   Dialog,
   DialogContent,

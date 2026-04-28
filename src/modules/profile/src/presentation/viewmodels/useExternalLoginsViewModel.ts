@@ -36,7 +36,7 @@ export function useExternalLoginsViewModel() {
                         variant: "default",
                   });
             },
-            onError: (err: any) => {
+            onError: (err: Error) => {
                   toast({
                         title: t("common.error"),
                         description: err.message || t("sso.unlinkError"),

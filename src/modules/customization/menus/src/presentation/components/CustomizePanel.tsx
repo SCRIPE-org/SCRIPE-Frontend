@@ -7,7 +7,7 @@
  */
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
@@ -26,7 +26,6 @@ import {
   EyeOff,
   Eye,
   ArrowRight,
-  Loader2,
 } from "lucide-react";
 
 /* -------------------------------------------------------------------------- */
@@ -66,7 +65,9 @@ export function CustomizePanel({
   const [isHidden, setIsHidden] = useState(false);
 
   // Reset form when selection or override data changes
-  useEffect(() => {
+  const [prevFormData, setPrevFormData] = useState(formData);
+  if (formData !== prevFormData) {
+    setPrevFormData(formData);
     if (formData) {
       setNameEn(formData.nameEn);
       setNameAr(formData.nameAr);
@@ -74,7 +75,7 @@ export function CustomizePanel({
       setParentId(formData.parentMenuItemIdOverride ?? "__none__");
       setIsHidden(formData.isHidden);
     }
-  }, [formData]);
+  }
 
   // Check if form has changes compared to current override
   const hasChanges = useMemo(() => {

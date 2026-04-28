@@ -35,14 +35,14 @@ export function WidgetStatsCard({ props }: { props: Record<string, unknown> }) {
   const trend = (props.trend as string) || "";
   const dir = (props.trendDirection as string) || "neutral";
   const iconName = (props.icon as string) || "BarChart3";
-  const Icon = resolveIcon(iconName);
+  const resolvedIconComponent = resolveIcon(iconName);
 
   return (
     <div className="flex h-full flex-col justify-between rounded-xl border border-border bg-card p-4 shadow-sm">
       <div className="flex items-center justify-between">
         <span className="text-xs font-medium text-muted-foreground">{title}</span>
         <div className="rounded-lg bg-primary/10 p-2">
-          <Icon className="h-4 w-4 text-primary" />
+          {React.createElement(resolvedIconComponent, { className: "h-4 w-4 text-primary" })}
         </div>
       </div>
       <div className="mt-2">

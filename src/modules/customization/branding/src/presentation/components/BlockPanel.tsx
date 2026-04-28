@@ -12,12 +12,10 @@ import { useState, useCallback } from "react";
 import {
   Plus, Trash2, ChevronUp, ChevronDown, ChevronRight, Copy,
   GripVertical, Type, Image as ImageIcon, List, MessageSquareQuote,
-  MousePointer, Minus, X, AlertTriangle, Heading, Award, ArrowUpDown,
+  MousePointer, Minus, AlertTriangle, Heading, Award, ArrowUpDown,
   Bell, BarChart3, Share2, Grid2X2, Star, Zap, PlayCircle, Timer,
   ChevronDown as Accordion, Footprints, Users, Sparkles,
 } from "lucide-react";
-import { Input } from "@core/ui/input";
-import { Button } from "@core/ui/button";
 import type { StudioDraftProps as StudioDraft } from "../../domain/entities/StudioDraft";
 import type { LoginSlotId, LoginLayout, ContentBlock, BlockType } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
 import { InlineEditor } from "./BlockEditors";

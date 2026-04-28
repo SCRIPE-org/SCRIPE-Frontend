@@ -8,7 +8,7 @@
  */
 "use client";
 
-import { useMemo, useState, useRef } from "react";
+import { useMemo, useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { SUPPORTED_CURRENCIES } from "@core/constants/currencies";
 import { GenericModal } from "@core/crud/components/generic-modal";
@@ -114,13 +114,17 @@ export function CreateTenantDialog({
   const [selectedEditionId, setSelectedEditionId] = useState(form.editionId);
   const [selectedPromotionId, setSelectedPromotionId] = useState("");
 
-  // Reset local state when dialog opens (render-time)
-  const prevOpenRef = useRef(open);
-  if (open && !prevOpenRef.current) {
-    setSelectedEditionId(form.editionId);
-    setSelectedPromotionId("");
+  // Reset local state when dialog opens
+  const [prevOpen, setPrevOpen] = useState(open);
+  const [prevFormEditionId, setPrevFormEditionId] = useState(form.editionId);
+  if (open !== prevOpen || form.editionId !== prevFormEditionId) {
+    setPrevOpen(open);
+    setPrevFormEditionId(form.editionId);
+    if (open) {
+      setSelectedEditionId(form.editionId);
+      setSelectedPromotionId("");
+    }
   }
-  prevOpenRef.current = open;
 
   // Determine if selected promotion requires a code
   const selectedPromo = useMemo(() => {
@@ -306,7 +310,7 @@ export function CreateTenantDialog({
         }),
       },
     ],
-    [t, onSearchEditions, selectedEditionId, cachedEditions, availablePromotions, requiresPromoCode, isLoadingPromotions, onEditionChange, onSubscriptionTypeChange]
+    [t, onSearchEditions, selectedEditionId, cachedEditions, availablePromotions, requiresPromoCode, isLoadingPromotions, onEditionChange, onSubscriptionTypeChange, setForm]
   );
 
   const handleSubmit = async (data: Record<string, any>) => {

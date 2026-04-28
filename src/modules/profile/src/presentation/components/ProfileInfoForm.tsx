@@ -6,13 +6,12 @@
  * Two-column layout with firstName, lastName, phoneNumber (editable)
  * and username (read-only).
  */
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Button } from "@core/ui/button";
 import { useI18n } from "@core/providers/i18n-provider";
-import { cn } from "@core/common/utils";
-import { Loader2, Lock, CheckCircle2 } from "lucide-react";
+import { Lock, CheckCircle2 } from "lucide-react";
 import type { AdminProfile } from "../../../src/domain/entities/AdminProfile";
 import type { UpdateProfileRequest } from "../../../src/domain/interfaces/IProfileRepository";
 
@@ -36,14 +35,14 @@ export function ProfileInfoForm({
   const [lastName, setLastName] = useState(profile.lastName);
   const [phoneNumber, setPhoneNumber] = useState(profile.phoneNumber);
 
-  // Reset form when profile data changes (render-time ref-based)
-  const prevProfileRef = useRef({ firstName: profile.firstName, lastName: profile.lastName, phoneNumber: profile.phoneNumber });
+  // Reset form when profile data changes (render-time state sync)
+  const [prevProfile, setPrevProfile] = useState({ firstName: profile.firstName, lastName: profile.lastName, phoneNumber: profile.phoneNumber });
   if (
-    profile.firstName !== prevProfileRef.current.firstName ||
-    profile.lastName  !== prevProfileRef.current.lastName  ||
-    profile.phoneNumber !== prevProfileRef.current.phoneNumber
+    profile.firstName !== prevProfile.firstName ||
+    profile.lastName  !== prevProfile.lastName  ||
+    profile.phoneNumber !== prevProfile.phoneNumber
   ) {
-    prevProfileRef.current = { firstName: profile.firstName, lastName: profile.lastName, phoneNumber: profile.phoneNumber };
+    setPrevProfile({ firstName: profile.firstName, lastName: profile.lastName, phoneNumber: profile.phoneNumber });
     setFirstName(profile.firstName);
     setLastName(profile.lastName);
     setPhoneNumber(profile.phoneNumber);

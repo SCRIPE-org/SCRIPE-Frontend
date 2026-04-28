@@ -3,7 +3,6 @@
 import React, { useCallback, useRef, useState } from "react";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
-import { Card, CardContent } from "@core/ui/card";
 import { cn } from "@core/common/utils";
 import {
       Paperclip,

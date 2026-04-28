@@ -5,7 +5,6 @@ import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Eye, EyeOff } from "lucide-react";
-import { LoadingSpinner } from "@core/ui/loading-spinner";
 import Link from "next/link";
 import type { LoginFormData } from "../viewmodels/use-login-viewmodel";
 

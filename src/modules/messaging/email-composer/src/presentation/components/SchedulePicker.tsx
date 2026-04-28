@@ -1,11 +1,8 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
-import { Button } from "@core/ui/button";
+import React, { useMemo } from "react";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
-import { Switch } from "@core/ui/switch";
-import { Badge } from "@core/ui/badge";
 import { Card, CardContent } from "@core/ui/card";
 import {
       Select,

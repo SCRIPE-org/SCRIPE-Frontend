@@ -15,7 +15,6 @@ import { useDynamicNavigation } from "@core/ui/navigation/dynamic-navigation";
 import {
   isNavigationItemActive,
   getFlatNavigationItems,
-  type NavigationItem,
 } from "@core/config/navigation";
 import { Home, ChevronRight, Search, Grid3X3, X } from "lucide-react";
 import { cn } from "@core/common/utils";
@@ -53,12 +52,17 @@ export function VaultLayout({ children }: VaultLayoutProps) {
 
   // Focus search when mega menu opens + clear on close
   // Track mega menu open/close transitions (render-time, no setState in effect)
-  const prevMegaMenuOpen = useRef(megaMenuOpen);
-  if (!megaMenuOpen && prevMegaMenuOpen.current) {
-    setMenuSearch("");
+  const [prevMegaMenuOpen, setPrevMegaMenuOpen] = useState(megaMenuOpen);
+  const [justOpened, setJustOpened] = useState(false);
+  if (megaMenuOpen !== prevMegaMenuOpen) {
+    if (!megaMenuOpen && prevMegaMenuOpen) {
+      setMenuSearch("");
+    }
+    setJustOpened(megaMenuOpen && !prevMegaMenuOpen);
+    setPrevMegaMenuOpen(megaMenuOpen);
+  } else if (justOpened) {
+    setJustOpened(false);
   }
-  const justOpened = megaMenuOpen && !prevMegaMenuOpen.current;
-  prevMegaMenuOpen.current = megaMenuOpen;
 
   // Focus search input when mega menu opens (DOM side effect)
   useEffect(() => {

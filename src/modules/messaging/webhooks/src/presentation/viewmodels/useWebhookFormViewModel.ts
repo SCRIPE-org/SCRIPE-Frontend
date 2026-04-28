@@ -5,7 +5,7 @@
  */
 "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { messagingContainer } from "@modules/messaging/di";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -44,10 +44,10 @@ export function useWebhookFormViewModel({
       const [maxRetries, setMaxRetries] = useState(3);
       const [maxConsecutiveFailures, setMaxConsecutiveFailures] = useState(10);
 
-      // Populate form when editing (render-time ref-based)
-      const prevWebhookRef = useRef(webhook);
-      if (mode === "edit" && webhook && webhook !== prevWebhookRef.current) {
-            prevWebhookRef.current = webhook;
+      // Populate form when editing (render-time state-sync)
+      const [prevWebhook, setPrevWebhook] = useState(webhook);
+      if (mode === "edit" && webhook && webhook !== prevWebhook) {
+            setPrevWebhook(webhook);
             setUrl(webhook.url);
             setDescription(webhook.description || "");
             setSelectedEvents(webhook.events || []);

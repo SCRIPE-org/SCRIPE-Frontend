@@ -264,11 +264,13 @@ export function DatePicker({
   }, [showCalendar]);
 
   // Close calendar if disabled
-  useEffect(() => {
+  const [prevDisabled, setPrevDisabled] = useState(disabled);
+  if (disabled !== prevDisabled) {
+    setPrevDisabled(disabled);
     if (disabled && showCalendar) {
       setShowCalendar(false);
     }
-  }, [disabled, showCalendar]);
+  }
 
   // Handle click outside, scroll, and keyboard
   useEffect(() => {
@@ -692,14 +694,14 @@ export function DatePicker({
             aria-label={t("common.calendarDialog") || "Calendar"}
             className={cn(
               "pointer-events-auto fixed z-[2147483647] bg-background rounded-lg border shadow-lg",
-              shouldShowAboveRef.current ? "rounded-b-none border-b-0" : "rounded-t-none border-t-0"
+              calendarPosition.placement === "top-start" ? "rounded-b-none border-b-0" : "rounded-t-none border-t-0"
             )}
             style={{
               top: `${calendarPosition.top}px`,
               left: `${calendarPosition.left}px`,
               width: `${calendarPosition.width}px`,
               pointerEvents: "auto",
-              transform: `translateZ(0) translateY(${animateOpen ? 0 : shouldShowAboveRef.current ? 6 : -6
+              transform: `translateZ(0) translateY(${animateOpen ? 0 : calendarPosition.placement === "top-start" ? 6 : -6
                 }px)`,
               willChange: "transform, opacity",
               opacity: animateOpen ? 1 : 0,

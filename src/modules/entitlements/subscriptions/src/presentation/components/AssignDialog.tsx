@@ -16,7 +16,7 @@ import {
 } from "@core/ui/dialog";
 import { GenericSelect } from "@core/crud/components/generic-select";
 import { Label } from "@core/ui/label";
-import { Loader2, Shield } from "lucide-react";
+import { Shield } from "lucide-react";
 import type { SubscriptionEditionDialogProps } from "../types";
 import { SubscriptionTypeSelect } from "./SubscriptionTypeSelect";
 import { PromotionPicker } from "./PromotionPicker";

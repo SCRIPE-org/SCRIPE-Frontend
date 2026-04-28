@@ -4,7 +4,6 @@ import { User } from "@modules/auth/core/domain/entities/User";
 import { PermissionCode, AdminRole } from "@core/common/types/permissions";
 import { secureTokenService } from "@core/common/secure-token-service";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
-import { appLogger } from "../common/logger";
 
 interface AppState {
   // Sidebar State

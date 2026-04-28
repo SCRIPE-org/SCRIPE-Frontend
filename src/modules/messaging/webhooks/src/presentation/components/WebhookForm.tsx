@@ -38,7 +38,6 @@ import {
       Zap,
       AlertCircle,
       Settings2,
-      Loader2,
       ShieldCheck,
       Network,
       CheckCircle2,

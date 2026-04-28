@@ -9,6 +9,7 @@
  * 3. Show backup codes with download option
  */
 import { useState, useCallback } from "react";
+import Image from "next/image";
 import { useI18n } from "@core/providers/i18n-provider";
 import {
   Dialog,
@@ -127,8 +128,7 @@ export function TwoFactorSetupDialog({
             <div className="flex flex-col items-center gap-4 py-4">
               {/* QR Code Image */}
               <div className="rounded-xl bg-white p-4">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={setupData.qrCodeDataUri} alt="2FA QR Code" className="h-48 w-48" />
+                <Image src={setupData.qrCodeDataUri} alt="2FA QR Code" width={192} height={192} className="h-48 w-48" unoptimized />
               </div>
 
               {/* Manual Entry Key */}

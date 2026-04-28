@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useMemo, useEffect } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { entitlementsContainer } from "@modules/entitlements/di";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
@@ -146,14 +146,15 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
       // ── Local pending feature values (keyed by featureName) ──
       const [pendingValues, setPendingValues] = useState<Record<string, string>>({});
 
+      // ── Overflow Policy (local state — not auto-saved) ──
+      const [localOverflowPolicy, setLocalOverflowPolicy] = useState("Block");
+
       // Sync pending values when edition data changes
       const [lastEditionId, setLastEditionId] = useState<string | undefined>();
-      useEffect(() => {
-            if (edition && edition.id !== lastEditionId) {
-                  setPendingValues(serverValueMap);
-                  setLastEditionId(edition.id);
-            }
-      }, [edition, serverValueMap, lastEditionId]);
+      if (edition && edition.id !== lastEditionId) {
+            setPendingValues(serverValueMap);
+            setLastEditionId(edition.id);
+      }
 
       // Get effective value: pending → server → disabled default
       const getEffectiveValue = useCallback((feature: Feature): string => {
@@ -283,14 +284,16 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
       }, []);
 
       // Auto-collapse all modules on first load
-      useEffect(() => {
+      const [prevResolvedFeatures, setPrevResolvedFeatures] = useState(resolvedFeatures);
+      if (resolvedFeatures !== prevResolvedFeatures) {
+            setPrevResolvedFeatures(resolvedFeatures);
             if (resolvedFeatures) {
                   const modules = new Set(resolvedFeatures.map((f: Feature) => f.module));
                   const collapsed: Record<string, boolean> = {};
                   modules.forEach((m: string) => { collapsed[m] = true; });
                   setCollapsedModules(collapsed);
             }
-      }, [resolvedFeatures]);
+      }
 
       const expandAll = useCallback(() => {
             setCollapsedModules(prev => {
@@ -308,15 +311,14 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
             });
       }, []);
 
-      // ── Overflow Policy (local state — not auto-saved) ──
-      const [localOverflowPolicy, setLocalOverflowPolicy] = useState("Block");
-
       // Sync overflow policy from server
-      useEffect(() => {
+      const [prevEdition, setPrevEdition] = useState(edition);
+      if (edition !== prevEdition) {
+            setPrevEdition(edition);
             if (edition) {
                   setLocalOverflowPolicy(edition.overflowPolicy ?? "Block");
             }
-      }, [edition]);
+      }
 
       const overflowPolicyChanged = useMemo(() => {
             if (!edition) return false;

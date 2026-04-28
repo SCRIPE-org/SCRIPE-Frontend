@@ -21,7 +21,7 @@ import { Separator } from "@core/ui/separator";
 import { ScrollArea } from "@core/ui/scroll-area";
 import { Badge } from "@core/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
-import { Save, RotateCcw, Loader2, Palette, Layout, BarChart3, Eye, MessageSquare, Blocks } from "lucide-react";
+import { Save, RotateCcw, Palette, Layout, BarChart3, Eye, MessageSquare, Blocks } from "lucide-react";
 import {
   DASHBOARD_PALETTES,
   type DashboardThemeConfig,

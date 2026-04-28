@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { X, Plus, Info } from "lucide-react";
 import {
   Dialog,
@@ -41,14 +41,18 @@ export function PermissionConfigDialog({
   const [restrictedFields, setRestrictedFields] = useState<string[]>([]);
   const [newField, setNewField] = useState("");
 
-  // Initialize state from current assignment (render-time)
-  const prevOpenRef = useRef(open);
-  if (open && !prevOpenRef.current) {
-    setScope(currentAssignment?.scopeOverride || PermissionScopes.Default);
-    setRestrictedFields(currentAssignment?.restrictedFields || []);
-    setNewField("");
+  // Initialize state from current assignment
+  const [prevOpen, setPrevOpen] = useState(open);
+  const [prevCurrentAssignment, setPrevCurrentAssignment] = useState(currentAssignment);
+  if (open !== prevOpen || currentAssignment !== prevCurrentAssignment) {
+    setPrevOpen(open);
+    setPrevCurrentAssignment(currentAssignment);
+    if (open) {
+      setScope(currentAssignment?.scopeOverride || PermissionScopes.Default);
+      setRestrictedFields(currentAssignment?.restrictedFields || []);
+      setNewField("");
+    }
   }
-  prevOpenRef.current = open;
 
   const handleAddField = () => {
     const trimmed = newField.trim();

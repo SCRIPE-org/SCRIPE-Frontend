@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChevronRight, ChevronDown, ChevronLeft, X } from "lucide-react";
+import { ChevronRight, ChevronDown, ChevronLeft } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSettings } from "@core/providers/settings-provider";
 import { useDynamicNavigation } from "@core/ui/navigation/dynamic-navigation";

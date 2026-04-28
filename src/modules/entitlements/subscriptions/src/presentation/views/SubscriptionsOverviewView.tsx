@@ -37,7 +37,6 @@ import {
       ArrowRight,
       TrendingUp,
       FileDown,
-      AlertTriangle,
       XCircle,
       Pause,
       BarChart3,

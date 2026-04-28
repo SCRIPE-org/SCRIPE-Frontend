@@ -1,7 +1,6 @@
 "use client";
 
 import { Check } from "lucide-react";
-import { Badge } from "@core/ui/badge";
 import { cn } from "@core/common/utils";
 
 // ────────────────────────────────────────────

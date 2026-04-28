@@ -71,7 +71,7 @@ export interface Column<T> {
   /** Custom width for the column */
   width?: string;
   /** Custom render function for the column content */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   render?: (value: any, row: T) => React.ReactNode;
 }
 
@@ -165,7 +165,7 @@ interface GenericTableProps<T> {
  * @param props.stickyActions - Enable sticky actions column (default: true)
  * @returns JSX element representing the table
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 function GenericTableInner<T extends Record<string, any>>({
   data,
   columns,
@@ -196,26 +196,19 @@ function GenericTableInner<T extends Record<string, any>>({
   const [showLeftShadow, setShowLeftShadow] = useState(false);
   const [showRightShadow, setShowRightShadow] = useState(false);
 
-  // Track the last value we sent upstream via onSearch, so we can distinguish
-  // external resets (parent changed searchValue programmatically) from our own
-  // debounced echo coming back.
-  const lastEmittedRef = useRef(searchValue ?? "");
-
   // Sync from parent only when the parent's value changes to something
   // different from what we last emitted (i.e. an external/programmatic reset).
   // Render-time detection — no setState in effect.
-  const prevSearchValueRef = useRef(searchValue);
-  if (searchValue !== undefined && searchValue !== prevSearchValueRef.current && searchValue !== lastEmittedRef.current) {
+  const [prevSearchValue, setPrevSearchValue] = useState(searchValue);
+  if (searchValue !== undefined && searchValue !== prevSearchValue) {
+    setPrevSearchValue(searchValue);
     setSearchTerm(searchValue);
-    lastEmittedRef.current = searchValue;
   }
-  prevSearchValueRef.current = searchValue;
 
   // Debounce: notify parent after user stops typing for 500ms
   useEffect(() => {
     if (!onSearch) return;
     const handler = setTimeout(() => {
-      lastEmittedRef.current = searchTerm;
       onSearch(searchTerm);
     }, 500);
     return () => clearTimeout(handler);

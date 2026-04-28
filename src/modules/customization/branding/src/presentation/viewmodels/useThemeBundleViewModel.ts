@@ -12,7 +12,7 @@ import { useState, useCallback, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { customizationContainer } from "@modules/customization/di";
-import type { ThemeBundle, BundleType } from "../../domain/entities/ThemeBundle";
+import type { ThemeBundle } from "../../domain/entities/ThemeBundle";
 import { BUNDLE_TYPE_CONFIG } from "../../domain/entities/ThemeBundle";
 import type { SaveBundlePayload } from "../../domain/interfaces/IThemeBundleService";
 import { useI18n } from "@core/providers/i18n-provider";

@@ -38,21 +38,21 @@ export function AnalyticsView() {
   const vm = useAnalyticsViewModel();
 
   return (
-    <div className="space-y-6 max-w-[1400px] mx-auto">
-      {/* ── Premium Page Header ── */}
-      <div className="relative overflow-hidden rounded-xl border border-border/40 bg-gradient-to-br from-card via-card to-emerald-500/[0.03] p-6 shadow-sm">
+    <div className="space-y-5">
+      {/* ── Page Header ── */}
+      <div className="relative overflow-hidden rounded-xl border border-border/40 bg-gradient-to-br from-card via-card to-emerald-500/[0.03] p-5 shadow-sm">
         <div className="absolute -top-24 -right-24 h-48 w-48 rounded-full bg-emerald-500/[0.07] blur-3xl" />
         <div className="absolute -bottom-16 -left-16 h-32 w-32 rounded-full bg-blue-500/[0.05] blur-2xl" />
-        <div className="relative flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div className="flex items-start gap-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-lg shadow-emerald-500/20">
-              <BarChart3 className="h-6 w-6" />
+        <div className="relative flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-lg shadow-emerald-500/20">
+              <BarChart3 className="h-5 w-5" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold tracking-tight">
+              <h1 className="text-xl font-bold tracking-tight">
                 {t("entitlements.analytics.title")}
               </h1>
-              <p className="text-sm text-muted-foreground mt-0.5">
+              <p className="text-xs text-muted-foreground mt-0.5">
                 {t("entitlements.analytics.description")}
               </p>
             </div>
@@ -67,29 +67,29 @@ export function AnalyticsView() {
         onValueChange={(v) => vm.handleTabChange(v as AnalyticsTab)}
         className="w-full"
       >
-        <TabsList className="w-full justify-start overflow-x-auto flex-nowrap bg-muted/40 backdrop-blur-sm p-1.5 rounded-xl border border-border/30 shadow-sm">
+        <TabsList className="h-auto w-full flex flex-wrap gap-1 bg-muted/40 backdrop-blur-sm p-1.5 rounded-xl border border-border/30 shadow-sm">
           {TABS.map((tab) => {
             const Icon = tab.icon;
             return (
               <TabsTrigger
                 key={tab.id}
                 value={tab.id}
-                className="gap-2 text-xs sm:text-sm whitespace-nowrap rounded-lg transition-all duration-200 data-[state=active]:bg-background data-[state=active]:shadow-md data-[state=active]:border-border/50 data-[state=active]:text-foreground font-medium"
+                className="gap-1.5 text-xs px-3 py-2 whitespace-nowrap rounded-lg transition-all duration-200 data-[state=active]:bg-background data-[state=active]:shadow-md data-[state=active]:border-border/50 data-[state=active]:text-foreground font-medium"
               >
-                <Icon className="h-4 w-4" />
-                <span className="hidden sm:inline">{t(tab.labelKey)}</span>
+                <Icon className="h-3.5 w-3.5" />
+                {t(tab.labelKey)}
               </TabsTrigger>
             );
           })}
         </TabsList>
 
-        <TabsContent value="overview" className="mt-6 animate-in fade-in-0 slide-in-from-bottom-2 duration-300">
+        <TabsContent value="overview" className="mt-4">
           {vm.overviewLoading ? <TabSkeleton /> : vm.overview ? (
             <OverviewTab overview={vm.overview} />
           ) : <EmptyState t={t} />}
         </TabsContent>
 
-        <TabsContent value="revenue" className="mt-6 animate-in fade-in-0 slide-in-from-bottom-2 duration-300">
+        <TabsContent value="revenue" className="mt-4">
           {vm.mrrLoading ? <TabSkeleton /> : vm.mrrMovement ? (
             <RevenueTab
               mrrData={vm.mrrMovement}
@@ -99,19 +99,19 @@ export function AnalyticsView() {
           ) : <EmptyState t={t} />}
         </TabsContent>
 
-        <TabsContent value="retention" className="mt-6 animate-in fade-in-0 slide-in-from-bottom-2 duration-300">
+        <TabsContent value="retention" className="mt-4">
           {vm.cohortLoading ? <TabSkeleton /> : vm.cohort ? (
             <RetentionTab cohortData={vm.cohort} />
           ) : <EmptyState t={t} />}
         </TabsContent>
 
-        <TabsContent value="ltv" className="mt-6 animate-in fade-in-0 slide-in-from-bottom-2 duration-300">
+        <TabsContent value="ltv" className="mt-4">
           {vm.ltvLoading ? <TabSkeleton /> : vm.ltv ? (
             <LtvTab ltvData={vm.ltv} />
           ) : <EmptyState t={t} />}
         </TabsContent>
 
-        <TabsContent value="forecast" className="mt-6 animate-in fade-in-0 slide-in-from-bottom-2 duration-300">
+        <TabsContent value="forecast" className="mt-4">
           {vm.forecastLoading ? <TabSkeleton /> : vm.forecast ? (
             <ForecastTab
               forecastData={vm.forecast}
@@ -121,7 +121,7 @@ export function AnalyticsView() {
           ) : <EmptyState t={t} />}
         </TabsContent>
 
-        <TabsContent value="health" className="mt-6 animate-in fade-in-0 slide-in-from-bottom-2 duration-300">
+        <TabsContent value="health" className="mt-4">
           {vm.healthLoading ? <TabSkeleton /> : vm.health ? (
             <HealthTab
               healthData={vm.health}
@@ -132,7 +132,7 @@ export function AnalyticsView() {
           ) : <EmptyState t={t} />}
         </TabsContent>
 
-        <TabsContent value="reports" className="mt-6 animate-in fade-in-0 slide-in-from-bottom-2 duration-300">
+        <TabsContent value="reports" className="mt-4">
           <ReportsTab
             preference={vm.reportPreferences ?? null}
             onSave={vm.updatePreferences}
@@ -147,34 +147,34 @@ export function AnalyticsView() {
   );
 }
 
-/** Premium skeleton loading state */
+/** Skeleton loading state */
 function TabSkeleton() {
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="space-y-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="h-28 rounded-xl bg-muted/40 animate-pulse border border-border/20" />
+          <div key={i} className="h-24 rounded-xl bg-muted/40 animate-pulse border border-border/20" />
         ))}
       </div>
-      <div className="h-64 rounded-xl bg-muted/40 animate-pulse border border-border/20" />
+      <div className="h-48 rounded-xl bg-muted/40 animate-pulse border border-border/20" />
     </div>
   );
 }
 
-/** Premium empty state with helpful messaging */
+/** Empty state with helpful messaging */
 function EmptyState({ t }: { t: (key: string) => string }) {
   return (
-    <div className="flex flex-col items-center justify-center py-16 text-center">
-      <div className="rounded-full bg-muted/50 p-6 mb-4">
-        <BarChart3 className="h-10 w-10 text-muted-foreground/50" />
+    <div className="flex flex-col items-center justify-center py-12 text-center">
+      <div className="rounded-full bg-muted/50 p-5 mb-3">
+        <BarChart3 className="h-8 w-8 text-muted-foreground/50" />
       </div>
-      <h3 className="text-lg font-semibold text-muted-foreground mb-1">
+      <h3 className="text-base font-semibold text-muted-foreground mb-1">
         {t("entitlements.analytics.empty.title")}
       </h3>
       <p className="text-sm text-muted-foreground/70 max-w-md">
         {t("entitlements.analytics.empty.description")}
       </p>
-      <p className="text-xs text-muted-foreground/50 mt-3 bg-muted/30 px-4 py-2 rounded-lg">
+      <p className="text-xs text-muted-foreground/50 mt-2 bg-muted/30 px-3 py-1.5 rounded-lg">
         {t("entitlements.analytics.empty.hint")}
       </p>
     </div>

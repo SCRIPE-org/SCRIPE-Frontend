@@ -19,7 +19,6 @@ import { PageBreadcrumbs } from "@core/ui/page-breadcrumbs";
 import { Skeleton } from "@core/ui/skeleton";
 import { AlertTriangle } from "lucide-react";
 import { Button } from "@core/ui/button";
-import { cn } from "@core/common/utils";
 import { CurrencyDisplayToggle } from "@core/ui/currency-display-toggle";
 
 // Lazy-load heavy sub-sections

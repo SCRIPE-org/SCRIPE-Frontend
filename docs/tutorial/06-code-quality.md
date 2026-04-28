@@ -39,13 +39,13 @@ Prettier eliminates all formatting debates — semicolons, quotes, indentation a
 }
 ```
 
-| Setting | Value | Why |
-|---------|-------|-----|
-| `semi: false` | No semicolons | Cleaner code, TypeScript handles ASI |
-| `singleQuote: false` | Double quotes | JSON standard consistency |
-| `tabWidth: 2` | 2 spaces | Industry standard for frontend |
-| `trailingComma: "all"` | Trailing commas | Cleaner git diffs |
-| `tailwindcss plugin` | Auto-sort classes | Consistent Tailwind class ordering |
+| Setting                | Value             | Why                                  |
+| ---------------------- | ----------------- | ------------------------------------ |
+| `semi: false`          | No semicolons     | Cleaner code, TypeScript handles ASI |
+| `singleQuote: false`   | Double quotes     | JSON standard consistency            |
+| `tabWidth: 2`          | 2 spaces          | Industry standard for frontend       |
+| `trailingComma: "all"` | Trailing commas   | Cleaner git diffs                    |
+| `tailwindcss plugin`   | Auto-sort classes | Consistent Tailwind class ordering   |
 
 ### Manual Commands
 
@@ -117,26 +117,21 @@ npx lint-staged
 ```json
 {
   "lint-staged": {
-    "*.{ts,tsx}": [
-      "eslint --fix",
-      "prettier --write"
-    ],
-    "*.{json,md,css}": [
-      "prettier --write"
-    ]
+    "*.{ts,tsx}": ["eslint --fix", "prettier --write"],
+    "*.{json,md,css}": ["prettier --write"]
   }
 }
 ```
 
 ### What Happens on Each Commit
 
-| Step | Tool | Action |
-|------|------|--------|
-| 1 | lint-staged | Identifies only **changed** files |
-| 2 | ESLint `--fix` | Auto-fixes lint issues where possible |
-| 3 | Prettier `--write` | Formats code to standard |
-| 4 | TypeScript | Type-checks affected files |
-| 5 | ✅ or 🚫 | Commit succeeds or is blocked |
+| Step | Tool               | Action                                |
+| ---- | ------------------ | ------------------------------------- |
+| 1    | lint-staged        | Identifies only **changed** files     |
+| 2    | ESLint `--fix`     | Auto-fixes lint issues where possible |
+| 3    | Prettier `--write` | Formats code to standard              |
+| 4    | TypeScript         | Type-checks affected files            |
+| 5    | ✅ or 🚫           | Commit succeeds or is blocked         |
 
 ---
 
@@ -144,13 +139,13 @@ npx lint-staged
 
 ### "Commit Failed" — Common Fixes
 
-| Error | Cause | Fix |
-|-------|-------|-----|
-| `Unexpected any` | Using `any` type | Replace with proper type or `unknown` |
-| `unused variable` | Declared but not used | Remove it or prefix with `_` |
-| `Hook called conditionally` | Calling hook inside `if` | Move hook before conditionals |
-| `Missing dependency` | useEffect missing dep | Add to dependency array |
-| `Import restricted` | Cross-module import | Move shared code to `@core/` |
+| Error                       | Cause                    | Fix                                   |
+| --------------------------- | ------------------------ | ------------------------------------- |
+| `Unexpected any`            | Using `any` type         | Replace with proper type or `unknown` |
+| `unused variable`           | Declared but not used    | Remove it or prefix with `_`          |
+| `Hook called conditionally` | Calling hook inside `if` | Move hook before conditionals         |
+| `Missing dependency`        | useEffect missing dep    | Add to dependency array               |
+| `Import restricted`         | Cross-module import      | Move shared code to `@core/`          |
 
 ### Emergency Bypass (Not Recommended)
 

@@ -128,7 +128,7 @@ export function PlaceholderSchemaBuilder({
                   defaultValue: "",
             }));
             onChange([...fields, ...newFields]);
-            // eslint-disable-next-line react-hooks/exhaustive-deps
+
       }, [missingKeys.join(",")]);
 
       const addField = () => {

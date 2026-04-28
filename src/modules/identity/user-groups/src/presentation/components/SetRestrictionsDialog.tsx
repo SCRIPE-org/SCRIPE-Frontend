@@ -7,7 +7,7 @@
  */
 "use client";
 
-import { useRef, useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@core/ui/button";
 import { Label } from "@core/ui/label";
@@ -15,7 +15,7 @@ import { Input } from "@core/ui/input";
 import { Badge } from "@core/ui/badge";
 import { GenericModal } from "@core/crud/components/generic-modal";
 import { GenericSelect } from "@core/crud/components/generic-select";
-import { Loader2, Lock, Plus, X, Trash2 } from "lucide-react";
+import { Lock, Plus, X, Trash2 } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { systemContainer } from "@modules/identity/di";
 
@@ -69,18 +69,22 @@ export function SetRestrictionsDialog({
             })).sort((a, b) => a.label.localeCompare(b.label));
       }, [availablePermissions, t]);
 
-      // Pre-fill from current (render-time)
-      const prevOpenRef = useRef(open);
-      if (open && !prevOpenRef.current) {
-            setRestrictions(currentRestrictions.map((r) => ({
-                  permissionCode: r.permissionCode,
-                  restrictedFields: [...r.restrictedFields],
-            })));
-            setNewPermissionCode("");
-            setNewField("");
-            setActiveRestrictionIndex(null);
+      // Pre-fill from current
+      const [prevOpen, setPrevOpen] = useState(open);
+      const [prevCurrentRestrictions, setPrevCurrentRestrictions] = useState(currentRestrictions);
+      if (open !== prevOpen || currentRestrictions !== prevCurrentRestrictions) {
+            setPrevOpen(open);
+            setPrevCurrentRestrictions(currentRestrictions);
+            if (open) {
+                  setRestrictions(currentRestrictions.map((r) => ({
+                        permissionCode: r.permissionCode,
+                        restrictedFields: [...r.restrictedFields],
+                  })));
+                  setNewPermissionCode("");
+                  setNewField("");
+                  setActiveRestrictionIndex(null);
+            }
       }
-      prevOpenRef.current = open;
 
       const addRestriction = () => {
             const code = newPermissionCode.trim();

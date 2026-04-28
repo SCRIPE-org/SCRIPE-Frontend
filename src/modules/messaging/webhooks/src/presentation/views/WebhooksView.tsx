@@ -16,10 +16,8 @@ import { Badge } from "@core/ui/badge";
 import { WebhookStatusBadge } from "../components/WebhookStatusBadge";
 import {
       Eye,
-      Pencil,
       Trash2,
       ToggleLeft,
-      Plus,
       Globe,
       Zap,
 } from "lucide-react";
@@ -173,7 +171,7 @@ export function WebhooksView() {
                   deleteService: configBase.deleteService,
                   permissions: configBase.permissions,
                   onCreateClick: () => setCreateDialogOpen(true),
-                  getActions: (_vmInstance: any, tFn: any, handleDeleteFn: any): CrudAction<WebhookSubscriptionListItem>[] => [
+                  getActions: (_vmInstance: unknown, tFn: (key: string) => string, handleDeleteFn?: (item: WebhookSubscriptionListItem) => void): CrudAction<WebhookSubscriptionListItem>[] => [
                         {
                               label: tFn("common.view") || "View Details",
                               onClick: (item: WebhookSubscriptionListItem) =>

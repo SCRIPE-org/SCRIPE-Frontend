@@ -290,7 +290,7 @@ export function useTenantRolesViewModel({
       description: language === "ar" ? item.descriptionAr : item.descriptionEn,
       priority: item.priority,
     }),
-    []
+    [language]
   );
 
   // ─────────────────────────────────────────────────────────────────

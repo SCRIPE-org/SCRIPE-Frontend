@@ -13,19 +13,19 @@ graph TB
         CACHE[Automatic Cache<br/>5 min staleTime]
         INVAL[Query Invalidation<br/>On mutations]
     end
-    
+
     subgraph "Client State (Zustand)"
         AUTH[useAuthStore<br/>JWT, user, permissions]
         UI[useUIStore<br/>Sidebar, theme]
         PERSIST[localStorage<br/>Persistence middleware]
     end
-    
+
     subgraph "Local State (useState)"
         FORM[Form inputs]
         MODAL[Modal open/close]
         FILTER[Local filters]
     end
-    
+
     TQ --> CACHE
     CACHE --> INVAL
     AUTH --> PERSIST
@@ -42,24 +42,24 @@ Reference: `src/core/crud/hooks/`
 
 ### Why NOT Redux/Context for API Data?
 
-| Feature | TanStack Query | Redux / Context |
-|---------|---------------|----------------|
-| Loading states | ✅ Automatic (`isLoading`) | ❌ Manual |
-| Error handling | ✅ Automatic (`isError`, `error`) | ❌ Manual |
-| Request dedup | ✅ Same query key = 1 request | ❌ Multiple fetches |
-| Background refetch | ✅ Stale data auto-refreshed | ❌ Manual |
-| Caching | ✅ Built-in with TTL | ❌ Manual |
-| Optimistic updates | ✅ Built-in | ❌ Complex |
-| Pagination | ✅ `keepPreviousData` | ❌ Complex |
+| Feature            | TanStack Query                    | Redux / Context     |
+| ------------------ | --------------------------------- | ------------------- |
+| Loading states     | ✅ Automatic (`isLoading`)        | ❌ Manual           |
+| Error handling     | ✅ Automatic (`isError`, `error`) | ❌ Manual           |
+| Request dedup      | ✅ Same query key = 1 request     | ❌ Multiple fetches |
+| Background refetch | ✅ Stale data auto-refreshed      | ❌ Manual           |
+| Caching            | ✅ Built-in with TTL              | ❌ Manual           |
+| Optimistic updates | ✅ Built-in                       | ❌ Complex          |
+| Pagination         | ✅ `keepPreviousData`             | ❌ Complex          |
 
 ### Query Pattern
 
 ```typescript
 // In ViewModel
 const { data, isLoading, error } = useQuery({
-  queryKey: ["admins", { page, search }],  // Cache key
+  queryKey: ["admins", { page, search }], // Cache key
   queryFn: () => container.adminRepo.getAll({ page, search }),
-  staleTime: 5 * 60 * 1000,  // 5 minutes
+  staleTime: 5 * 60 * 1000, // 5 minutes
 });
 ```
 
@@ -100,10 +100,10 @@ Reference: `src/core/store/`
 
 ### Approved Stores
 
-| Store | Purpose | Persisted? |
-|-------|---------|-----------|
-| `useAuthStore` | JWT token, user info, permissions | ✅ localStorage |
-| `useUIStore` | Sidebar state, theme preference | ✅ localStorage |
+| Store              | Purpose                           | Persisted?      |
+| ------------------ | --------------------------------- | --------------- |
+| `useAuthStore`     | JWT token, user info, permissions | ✅ localStorage |
+| `useUIStore`       | Sidebar state, theme preference   | ✅ localStorage |
 | `useSettingsStore` | User preferences, display options | ✅ localStorage |
 
 ### Store Pattern
@@ -157,10 +157,10 @@ This ensures no sensitive content is rendered until the persisted state is avail
 
 ## Decision Quick Reference
 
-| Question | Use |
-|----------|-----|
-| Data from API? | **TanStack Query** |
-| Global UI state shared across components? | **Zustand** |
-| Only used in this component? | **useState** |
-| Needs localStorage persistence? | **Zustand with persist** |
-| Language/direction? | **LanguageProvider** (Context) |
+| Question                                  | Use                            |
+| ----------------------------------------- | ------------------------------ |
+| Data from API?                            | **TanStack Query**             |
+| Global UI state shared across components? | **Zustand**                    |
+| Only used in this component?              | **useState**                   |
+| Needs localStorage persistence?           | **Zustand with persist**       |
+| Language/direction?                       | **LanguageProvider** (Context) |
