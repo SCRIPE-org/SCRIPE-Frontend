@@ -99,9 +99,10 @@ export function useConnectViewModel() {
         window.open(url, "_blank", "noopener,noreferrer");
       }
     },
-    onError: (err: any) => {
+    onError: (err: unknown) => {
       // 409 Conflict = backend self-heal found account is already fully onboarded
-      if (err?.response?.status === 409) {
+      const axiosErr = err as { response?: { status?: number } };
+      if (axiosErr?.response?.status === 409) {
         success({
           title: t("entitlements.stripeConnect.onboardingComplete") || "Onboarding Complete",
           description: t("entitlements.stripeConnect.alreadyOnboarded") || "Account is already fully onboarded.",
@@ -172,7 +173,7 @@ export function useConnectViewModel() {
         {
           key: "onboardingStatus",
           label: t("entitlements.stripeConnect.statusLabel") || "Status",
-          render: (val: any) => {
+          render: (val: string) => {
             const map: Record<string, { label: string; className: string }> = {
               Complete:   { label: val, className: "bg-green-500/20 text-green-400 border border-green-500/30" },
               Pending:    { label: val, className: "bg-yellow-500/20 text-yellow-400 border border-yellow-500/30" },
@@ -192,20 +193,20 @@ export function useConnectViewModel() {
         {
           key: "flags",
           label: t("entitlements.stripeConnect.capabilities") || "Capabilities",
-          render: (val: any, row: any) => `${row.chargesEnabled ? '💳' : '❌'} / ${row.payoutsEnabled ? '🏦' : '❌'}`
+          render: (_val: unknown, row: ConnectAccountListItem) => `${row.chargesEnabled ? '💳' : '❌'} / ${row.payoutsEnabled ? '🏦' : '❌'}`
         },
         {
           key: "rate",
           label: t("entitlements.stripeConnect.effectiveRate") || "Rate",
-          render: (val: any, row: any) => `${(row.effectiveCommissionRate * 100).toFixed(1)}%`
+          render: (_val: unknown, row: ConnectAccountListItem) => `${(row.effectiveCommissionRate * 100).toFixed(1)}%`
         },
         {
           key: "createdAt",
           label: t("common.createdAt") || "Created At",
-          render: (val: any) => new Date(val).toLocaleDateString()
+          render: (val: string) => new Date(val).toLocaleDateString()
         }
       ],
-      getActions: (vmInstance: any, tFn: any): CrudAction<ConnectAccountListItem>[] => [
+      getActions: (_vmInstance: unknown, tFn: (key: string) => string): CrudAction<ConnectAccountListItem>[] => [
         {
           label: tFn("common.view") || "View",
           onClick: (item: ConnectAccountListItem) => openCustomViewModal(item),

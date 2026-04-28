@@ -40,9 +40,10 @@ export function useTenantConnectViewModel() {
     queryFn: async () => {
       try {
         return await connectRepository.getTenantStatus();
-      } catch (err: any) {
+      } catch (err: unknown) {
         // If 404, it means the tenant hasn't onboarded yet, which is a normal state.
-        if (err?.response?.status === 404) {
+        const axiosErr = err as { response?: { status?: number } };
+        if (axiosErr?.response?.status === 404) {
           return null;
         }
         throw err;

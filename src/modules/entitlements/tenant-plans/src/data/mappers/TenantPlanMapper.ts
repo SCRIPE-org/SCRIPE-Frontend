@@ -46,7 +46,15 @@ export class TenantPlanMapper {
       sortOrder: model.sortOrder ?? 0,
       currentVersion: model.currentVersion ?? 0,
       activeSubscriberCount: model.activeSubscriberCount ?? 0,
-      features: (model.features ?? []).map((f: any) => ({
+      features: (model.features ?? []).map((f: {
+        featureDefinitionId?: string; id?: string;
+        featureKey?: string; key?: string;
+        featureDisplayNameEn?: string; displayNameEn?: string;
+        featureDisplayNameAr?: string; displayNameAr?: string;
+        featureValueType?: string; valueType?: string;
+        value?: string;
+        overrideLabel?: string; category?: string;
+      }) => ({
         featureDefinitionId: f.featureDefinitionId ?? f.id ?? "",
         featureKey: f.featureKey ?? f.key ?? "",
         featureDisplayNameEn: f.featureDisplayNameEn ?? f.displayNameEn,

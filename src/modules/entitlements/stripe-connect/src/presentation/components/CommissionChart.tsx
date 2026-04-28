@@ -42,9 +42,7 @@ const fmt = (n: number) =>
     maximumFractionDigits: 0,
   }).format(n);
 
-// Recharts Formatter has a complex overload intersection — cast once at the boundary.
-
-type RechartsFormatter = (value: any, name: any) => [string | number, string];
+// Recharts Formatter has a complex overload intersection.
 
 
 export function CommissionChart({
@@ -116,14 +114,12 @@ export function CommissionChart({
                 width={70}
               />
               <Tooltip
-                formatter={
-                  ((value: number, name: string) => [
-                    name === "amount" ? fmt(value) : value,
-                    name === "amount"
-                      ? t("entitlements.commissions.trendAmount")
-                      : t("entitlements.commissions.trendCount"),
-                  ]) as RechartsFormatter
-                }
+                formatter={(value: number | string | readonly (number | string)[] | undefined, name: string | number | undefined) => [
+                  name === "amount" ? fmt(Number(value) || 0) : (Number(value) || 0),
+                  name === "amount"
+                    ? t("entitlements.commissions.trendAmount")
+                    : t("entitlements.commissions.trendCount"),
+                ]}
                 labelStyle={{ fontWeight: 600, marginBottom: 4 }}
                 contentStyle={{
                   borderRadius: 8,
