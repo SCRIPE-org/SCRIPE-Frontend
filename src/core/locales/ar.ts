@@ -1092,6 +1092,7 @@ export const ar = {
     english: "الإنجليزية",
   },
   common: {
+    free:"مجانا",
     clear: "مسح",
     send: "ارسال",
     serial:"م",

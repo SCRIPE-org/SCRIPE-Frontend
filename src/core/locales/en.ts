@@ -324,6 +324,7 @@ export const en = {
     },
   },
   common: {
+    free:"Free",
     step: "Step",
     serial: "No.",
     clear: "Clear",
