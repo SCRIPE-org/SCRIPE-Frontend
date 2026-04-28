@@ -60,6 +60,29 @@ export const ar = {
       statusPublished: "منشور",
       statusArchived: "مؤرشف",
 
+      // ── المقارنة ──
+      feature: "الميزة",
+      features: "الميزات",
+      comparison: {
+        heroTitle: "مقارنة الخطط",
+        heroSubtitle: "معاينة صفحة التسعير المعروضة للمستخدمين النهائيين",
+        compareAll: "مقارنة جميع الميزات",
+        allPreviousPlus: "جميع ميزات {prev}، بالإضافة إلى:",
+        customPricing: "مخصص",
+        adminPreview: "معاينة المدير فقط",
+        matrixTitle: "مقارنة الميزات",
+        showAllFeatures: "عرض جميع الميزات",
+        hideFeatures: "إخفاء تفاصيل الميزات",
+        categoryBilling: "الفوترة",
+        categoryModules: "الوحدات",
+        categoryQuotas: "الحصص",
+        categorySecurity: "الأمان",
+        categoryUsers: "المستخدمون",
+        categoryPerformance: "الأداء",
+        categoryConfiguration: "الإعدادات",
+        categoryGeneral: "عام",
+      },
+
       // ── علامات التبويب ──
       tabGeneral: "عام",
       tabSettings: "الإعدادات",

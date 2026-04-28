@@ -4,44 +4,58 @@
  */
 
 export interface EditionModel {
-      id: string;
-      name: string;
-      displayNameEn: string;
-      displayNameAr: string;
-      description?: string;
-      isSystem: boolean;
-      isRetired: boolean;
-      tierLevel: number;
-      createdByTenantId?: string;
-      featureCount?: number;
-      features?: { featureId: string; featureName: string; value: string; valueType: string }[];
-      fallbackEditionId?: string;
-      fallbackEditionName?: string;
-      overflowPolicy?: string;
-      baseMonthlyPriceUsd?: number;
-      // ── Billing Controls ──
-      allowMonthly: boolean;
-      allowYearly: boolean;
-      allowLifetime: boolean;
-      allowTrial: boolean;
-      trialDurationDays: number;
-      trialIsFree: boolean;
-      trialDiscountPercent: number;
-      gracePeriodDays: number;
-      maxActiveSubscriptions?: number;
-      createdAt: string;
-      modifiedAt?: string;
+  id: string;
+  name: string;
+  displayNameEn: string;
+  displayNameAr: string;
+  description?: string;
+  tagline?: string;
+  recommendationLabels?: string;
+  isSystem: boolean;
+  isRetired: boolean;
+  tierLevel: number;
+  createdByTenantId?: string;
+  featureCount?: number;
+  features?: {
+    featureId: string;
+    featureName: string;
+    value: string;
+    valueType: string;
+    category?: string;
+    sortOrder?: number;
+    displayNameEn?: string;
+    displayNameAr?: string;
+  }[];
+  fallbackEditionId?: string;
+  fallbackEditionName?: string;
+  overflowPolicy?: string;
+  baseMonthlyPriceUsd?: number;
+  // ── Billing Controls ──
+  allowMonthly: boolean;
+  allowYearly: boolean;
+  allowLifetime: boolean;
+  allowTrial: boolean;
+  trialDurationDays: number;
+  trialIsFree: boolean;
+  trialDiscountPercent: number;
+  gracePeriodDays: number;
+  maxActiveSubscriptions?: number;
+  // ── Self-Service Controls ──
+  isSelfServiceEnabled?: boolean;
+  isContactSalesOnly?: boolean;
+  createdAt: string;
+  modifiedAt?: string;
 }
 
 export interface EditionVersionModel {
-      id: string;
-      versionNumber: number;
-      changeNotes?: string;
-      rolloutStrategy: string;
-      status: string;
-      scheduledAt?: string;
-      completedAt?: string;
-      canaryPercentage?: number;
-      pricingSnapshotJson?: string;
-      createdAt: string;
+  id: string;
+  versionNumber: number;
+  changeNotes?: string;
+  rolloutStrategy: string;
+  status: string;
+  scheduledAt?: string;
+  completedAt?: string;
+  canaryPercentage?: number;
+  pricingSnapshotJson?: string;
+  createdAt: string;
 }

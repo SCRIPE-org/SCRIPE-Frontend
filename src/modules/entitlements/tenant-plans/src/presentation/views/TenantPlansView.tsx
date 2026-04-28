@@ -19,11 +19,13 @@ import type { TenantPlan } from "../../domain/entities/TenantPlan";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@core/ui/dialog";
-import { Pencil, Trash2, Eye, Rocket, Archive, Settings2 } from "lucide-react";
+import { Pencil, Trash2, Eye, Rocket, Archive, Settings2, Columns } from "lucide-react";
 import { format } from "date-fns";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
+import { useRouter } from "next/navigation";
 
 export function TenantPlansView() {
+  const router = useRouter();
   useModuleLocales(() => import("../../../locales"), "tenant-plans");
   const { t } = useI18n();
   const vm = useTenantPlansViewModel();
@@ -44,6 +46,16 @@ export function TenantPlansView() {
       titleKey: "entitlements.tenantPlans.title",
       subtitleKey: "entitlements.tenantPlans.description",
       resource: "tenant_plans",
+      customActions: [
+        {
+          label: t("entitlements.tenantPlans.comparison.heroTitle") || "Compare Plans",
+          onClick: async () => {
+            router.push("/entitlements/tenant-plans/compare");
+          },
+          variant: "outline" as const,
+          icon: <Columns className="h-4 w-4" />,
+        },
+      ],
       columns: [
         {
           key: "name",

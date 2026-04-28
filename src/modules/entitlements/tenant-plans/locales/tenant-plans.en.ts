@@ -60,6 +60,29 @@ export const en = {
       statusPublished: "Published",
       statusArchived: "Archived",
 
+      // ── Comparison ──
+      feature: "Feature",
+      features: "Features",
+      comparison: {
+        heroTitle: "Compare Plans",
+        heroSubtitle: "Preview of the pricing page shown to your end users",
+        compareAll: "Compare all features",
+        allPreviousPlus: "All {prev} features, plus:",
+        customPricing: "Custom",
+        adminPreview: "Admin Preview Only",
+        matrixTitle: "Feature Comparison",
+        showAllFeatures: "Show all features",
+        hideFeatures: "Hide detailed features",
+        categoryBilling: "Billing",
+        categoryModules: "Modules",
+        categoryQuotas: "Quotas",
+        categorySecurity: "Security",
+        categoryUsers: "Users",
+        categoryPerformance: "Performance",
+        categoryConfiguration: "Configuration",
+        categoryGeneral: "General",
+      },
+
       // ── Tabs ──
       tabGeneral: "General",
       tabSettings: "Settings",

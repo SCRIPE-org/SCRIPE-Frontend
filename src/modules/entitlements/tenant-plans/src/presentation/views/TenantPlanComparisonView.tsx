@@ -1,9 +1,9 @@
 /**
- * EditionComparisonView — Premium dual-view edition comparison.
+ * TenantPlanComparisonView — Premium dual-view comparison for end-users.
  *
  * Section 1: Glassmorphic Pricing Cards Hero
  * Section 2: Core Billing Comparison (always visible)
- * Section 3: Full Feature Comparison Matrix (expandable via floating CTA)
+ * Section 3: Full Feature Comparison Matrix (expandable)
  *
  * Architecture: View → ViewModel → Repository → Service → HTTP
  */
@@ -23,17 +23,17 @@ import {
 import { Card, CardContent } from "@core/ui/card";
 import { Button } from "@core/ui/button";
 import { Eye, Sparkles, ChevronDown, ChevronUp, LayoutList, Loader2 } from "lucide-react";
-import type { Edition } from "../../domain/entities/Edition";
-import { useEditionComparisonViewModel } from "../viewmodels/useEditionComparisonViewModel";
-import type { FeatureRow } from "../viewmodels/useEditionComparisonViewModel";
+import type { TenantPlan } from "../../domain/entities/TenantPlan";
+import { useTenantPlanComparisonViewModel } from "../viewmodels/useTenantPlanComparisonViewModel";
+import type { FeatureRow } from "../viewmodels/useTenantPlanComparisonViewModel";
+import { TenantPlanPricingCard } from "../components/TenantPlanPricingCard";
 import {
   BooleanIndicator,
   ComparisonColumnHeader,
   CategorySectionHeader,
-  EditionPricingCard,
-} from "../components/comparison";
+} from "@modules/entitlements/editions/src/presentation/components/comparison";
 
-// ─── Feature Value Cell (for the matrix) ───────────────────────────────────
+// ─── Feature Value Cell ────────────────────────────────────────────────────
 function MatrixCell({
   value,
   valueType,
@@ -101,14 +101,14 @@ function LoadingState() {
 }
 
 // ─── Main View ─────────────────────────────────────────────────────────────
-export function EditionComparisonView() {
-  useModuleLocales(() => import("../../../locales"), "editions");
+export function TenantPlanComparisonView() {
+  useModuleLocales(() => import("../../../locales"), "tenant-plans");
   const { t, language } = useI18n();
   const matrixRef = useRef<HTMLDivElement>(null);
   const [showAllFeatures, setShowAllFeatures] = useState(false);
 
-  const { editions, categorizedFeatures, progressiveHighlights, totalFeatureCount, isLoading, isEmpty } =
-    useEditionComparisonViewModel();
+  const { plans, categorizedFeatures, progressiveHighlights, totalFeatureCount, isLoading, isEmpty } =
+    useTenantPlanComparisonViewModel();
 
   if (isLoading) return <LoadingState />;
 
@@ -118,18 +118,18 @@ export function EditionComparisonView() {
         <CardContent className="py-16 text-center">
           <Sparkles className="mx-auto h-10 w-10 text-muted-foreground/30 mb-3" />
           <p className="text-muted-foreground">
-            {t("entitlements.editions.noEditions") || "No active editions to compare."}
+            {t("entitlements.tenantPlans.noPlans") || "No active plans to compare."}
           </p>
         </CardContent>
       </Card>
     );
   }
 
-  const colCount = editions.length;
+  const colCount = plans.length;
   const colSpan = colCount + 1;
 
-  // Only highlight an edition if it explicitly has recommendation labels — NO fallback
-  const recommendedEditionId = editions.find((e: Edition) => e.recommendationLabels.length > 0)?.id ?? "";
+  // Only highlight a plan if it explicitly has a badge — NO fallback
+  const recommendedPlanId = plans.find((p: TenantPlan) => !!p.badgeText)?.id ?? "";
 
   return (
     <div className="space-y-8">
@@ -137,21 +137,20 @@ export function EditionComparisonView() {
           SECTION 1 — PRICING CARDS HERO
       ══════════════════════════════════════════════════ */}
       <section className="space-y-6">
-        {/* Header */}
         <div className="space-y-1.5">
           <div className="flex items-center gap-2.5">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
               <Sparkles className="h-4.5 w-4.5 text-primary" />
             </div>
             <h2 className="text-xl font-bold">
-              {t("entitlements.editions.comparison.heroTitle") || "Compare Editions"}
+              {t("entitlements.tenantPlans.comparison.heroTitle") || "Compare Plans"}
             </h2>
           </div>
           <div className="flex items-center gap-1.5 ml-10.5">
             <Eye className="h-3.5 w-3.5 text-muted-foreground/60" />
             <p className="text-sm text-muted-foreground">
-              {t("entitlements.editions.comparison.heroSubtitle") ||
-                "Preview of the public pricing page shown to prospective tenants"}
+              {t("entitlements.tenantPlans.comparison.heroSubtitle") ||
+                "Preview of the pricing page shown to your end users"}
             </p>
           </div>
         </div>
@@ -168,63 +167,66 @@ export function EditionComparisonView() {
               : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
           }`}
         >
-          {editions.map((ed: Edition, idx: number) => (
-            <EditionPricingCard
-              key={ed.id}
-              edition={ed}
-              language={language}
-              previousEditionName={
-                idx > 0 ? (editions[idx - 1].getDisplayName(language) || editions[idx - 1].name) : undefined
-              }
-              highlights={progressiveHighlights[idx] ?? []}
-              isRecommended={ed.id === recommendedEditionId}
-              allHighlightsLabel={
-                t("entitlements.editions.comparison.allPreviousPlus") || "All {prev} features, plus:"
-              }
-              priceLabel={t("entitlements.pricing.perMonth") || "/month"}
-              freeLabel={t("common.free") || "Free"}
-              customLabel={t("entitlements.editions.comparison.customPricing") || "Custom"}
-              previewLabel={t("entitlements.editions.comparison.adminPreview") || "Admin Preview Only"}
-            />
-          ))}
+          {plans.map((plan: TenantPlan, idx: number) => {
+            const prevName = idx > 0
+              ? ((language === "ar" ? plans[idx - 1].displayNameAr : plans[idx - 1].displayNameEn) || plans[idx - 1].name)
+              : undefined;
+
+            return (
+              <TenantPlanPricingCard
+                key={plan.id}
+                plan={plan}
+                language={language}
+                previousPlanName={prevName}
+                highlights={progressiveHighlights[idx] ?? []}
+                isRecommended={plan.id === recommendedPlanId}
+                allHighlightsLabel={
+                  t("entitlements.tenantPlans.comparison.allPreviousPlus") || "All {prev} features, plus:"
+                }
+                priceLabel={t("entitlements.pricing.perMonth") || "/month"}
+                freeLabel={t("common.free") || "Free"}
+                customLabel={t("entitlements.tenantPlans.comparison.customPricing") || "Custom"}
+                previewLabel={t("entitlements.tenantPlans.comparison.adminPreview") || "Admin Preview Only"}
+              />
+            );
+          })}
         </div>
       </section>
 
       {/* ══════════════════════════════════════════════════
-          SECTION 2 — BILLING COMPARISON (always visible)
+          SECTION 2 — COMPARISON TABLE
       ══════════════════════════════════════════════════ */}
       <section className="space-y-4">
         <div className="flex items-center gap-2.5">
           <h2 className="text-lg font-bold">
-            {t("entitlements.editions.comparison.matrixTitle") || "Feature Comparison"}
+            {t("entitlements.tenantPlans.comparison.matrixTitle") || "Feature Comparison"}
           </h2>
         </div>
 
         <div className="rounded-xl border border-border/60 overflow-hidden shadow-sm">
           <div className="overflow-x-auto">
             <Table>
-              {/* Sticky header */}
               <TableHeader>
                 <TableRow className="border-b bg-muted/40">
                   <TableHead className="w-64 sticky left-0 bg-muted/40 z-10 font-semibold">
-                    {t("entitlements.editions.feature") || "Feature"}
+                    {t("entitlements.tenantPlans.feature") || "Feature"}
                   </TableHead>
-                  {editions.map((ed: Edition) => (
+                  {plans.map((plan: TenantPlan) => (
                     <ComparisonColumnHeader
-                      key={ed.id}
-                      displayName={ed.getDisplayName(language) || ed.name}
-                      tierLevel={ed.tierLevel}
-                      badges={ed.recommendationLabels}
-                      isRecommended={ed.id === recommendedEditionId}
+                      key={plan.id}
+                      displayName={(language === "ar" ? plan.displayNameAr : plan.displayNameEn) || plan.name}
+                      tierLevel={plan.tierLevel}
+                      badges={plan.badgeText ? [plan.badgeText] : []}
+                      isRecommended={plan.id === recommendedPlanId}
                     />
                   ))}
                 </TableRow>
               </TableHeader>
 
               <TableBody>
-                {/* ── Billing Category ── */}
+                {/* ── Billing Category (always visible) ── */}
                 <CategorySectionHeader
-                  label={t("entitlements.editions.comparison.categoryBilling") || "Billing"}
+                  label={t("entitlements.tenantPlans.comparison.categoryBilling") || "Billing"}
                   colSpan={colSpan}
                 />
                 {/* Price */}
@@ -232,23 +234,23 @@ export function EditionComparisonView() {
                   <TableCell className="sticky left-0 bg-background font-medium text-sm py-3.5">
                     {t("entitlements.pricing.price") || "Price"}
                   </TableCell>
-                  {editions.map((ed: Edition) => {
-                    const isHL = ed.id === recommendedEditionId;
+                  {plans.map((plan: TenantPlan) => {
+                    const isHL = plan.id === recommendedPlanId;
                     return (
                       <TableCell
-                        key={ed.id}
+                        key={plan.id}
                         className={`text-center py-3.5 font-bold ${isHL ? "bg-primary/5" : ""}`}
                       >
-                        {ed.isContactSalesOnly ? (
+                        {plan.isContactSalesOnly ? (
                           <span className="text-sm text-muted-foreground">
-                            {t("entitlements.editions.comparison.customPricing") || "Custom"}
+                            {t("entitlements.tenantPlans.comparison.customPricing") || "Custom"}
                           </span>
-                        ) : !ed.baseMonthlyPriceUsd || ed.baseMonthlyPriceUsd === 0 ? (
+                        ) : !plan.hasPrices ? (
                           <span className="text-emerald-400 font-bold">
                             {t("common.free") || "Free"}
                           </span>
                         ) : (
-                          <span>${ed.baseMonthlyPriceUsd.toFixed(0)}<span className="text-xs font-normal text-muted-foreground">/mo</span></span>
+                          <span>{plan.formattedStartingPrice}<span className="text-xs font-normal text-muted-foreground">/mo</span></span>
                         )}
                       </TableCell>
                     );
@@ -257,18 +259,14 @@ export function EditionComparisonView() {
                 {/* Trial */}
                 <TableRow className="hover:bg-muted/30 transition-colors">
                   <TableCell className="sticky left-0 bg-background font-medium text-sm py-3.5">
-                    {t("entitlements.editions.allowTrial") || "Free Trial"}
+                    {t("entitlements.tenantPlans.allowTrial") || "Free Trial"}
                   </TableCell>
-                  {editions.map((ed: Edition) => (
-                    <TableCell key={ed.id} className={`text-center py-3.5 ${ed.id === recommendedEditionId ? "bg-primary/5" : ""}`}>
+                  {plans.map((plan: TenantPlan) => (
+                    <TableCell key={plan.id} className={`text-center py-3.5 ${plan.id === recommendedPlanId ? "bg-primary/5" : ""}`}>
                       <div className="flex justify-center">
-                        {ed.allowTrial ? (
+                        {plan.hasTrial ? (
                           <span className="text-sm font-medium">
-                            {ed.trialIsFree
-                              ? `${ed.trialDurationDays || 14}d Free`
-                              : ed.trialDiscountPercent
-                              ? `${ed.trialDiscountPercent}% off`
-                              : `${ed.trialDurationDays || 14}d`}
+                            {plan.trialDays}d Free
                           </span>
                         ) : (
                           <BooleanIndicator value={false} />
@@ -277,35 +275,54 @@ export function EditionComparisonView() {
                     </TableCell>
                   ))}
                 </TableRow>
-                {/* Billing cycles */}
+                {/* Billing Cycles */}
                 <TableRow className="hover:bg-muted/30 transition-colors">
                   <TableCell className="sticky left-0 bg-background font-medium text-sm py-3.5">
-                    {t("entitlements.editions.allowMonthly") || "Monthly Billing"}
+                    {t("entitlements.tenantPlans.allowMonthly") || "Monthly Billing"}
                   </TableCell>
-                  {editions.map((ed: Edition) => (
-                    <TableCell key={ed.id} className={`text-center py-3.5 ${ed.id === recommendedEditionId ? "bg-primary/5" : ""}`}>
-                      <div className="flex justify-center"><BooleanIndicator value={ed.allowMonthly} /></div>
+                  {plans.map((plan: TenantPlan) => (
+                    <TableCell key={plan.id} className={`text-center py-3.5 ${plan.id === recommendedPlanId ? "bg-primary/5" : ""}`}>
+                      <div className="flex justify-center"><BooleanIndicator value={plan.allowMonthly} /></div>
                     </TableCell>
                   ))}
                 </TableRow>
                 <TableRow className="hover:bg-muted/30 transition-colors">
                   <TableCell className="sticky left-0 bg-background font-medium text-sm py-3.5">
-                    {t("entitlements.editions.allowYearly") || "Annual Billing"}
+                    {t("entitlements.tenantPlans.allowYearly") || "Annual Billing"}
                   </TableCell>
-                  {editions.map((ed: Edition) => (
-                    <TableCell key={ed.id} className={`text-center py-3.5 ${ed.id === recommendedEditionId ? "bg-primary/5" : ""}`}>
-                      <div className="flex justify-center"><BooleanIndicator value={ed.allowYearly} /></div>
+                  {plans.map((plan: TenantPlan) => (
+                    <TableCell key={plan.id} className={`text-center py-3.5 ${plan.id === recommendedPlanId ? "bg-primary/5" : ""}`}>
+                      <div className="flex justify-center"><BooleanIndicator value={plan.allowYearly} /></div>
                     </TableCell>
                   ))}
                 </TableRow>
                 <TableRow className="hover:bg-muted/30 transition-colors">
                   <TableCell className="sticky left-0 bg-background font-medium text-sm py-3.5">
-                    {t("entitlements.editions.allowLifetime") || "Lifetime"}
+                    {t("entitlements.tenantPlans.allowLifetime") || "Lifetime"}
                   </TableCell>
-                  {editions.map((ed: Edition) => (
-                    <TableCell key={ed.id} className={`text-center py-3.5 ${ed.id === recommendedEditionId ? "bg-primary/5" : ""}`}>
-                      <div className="flex justify-center"><BooleanIndicator value={ed.allowLifetime} /></div>
+                  {plans.map((plan: TenantPlan) => (
+                    <TableCell key={plan.id} className={`text-center py-3.5 ${plan.id === recommendedPlanId ? "bg-primary/5" : ""}`}>
+                      <div className="flex justify-center"><BooleanIndicator value={plan.allowLifetime} /></div>
                     </TableCell>
+                  ))}
+                </TableRow>
+
+                {/* ── Users Category (always visible) ── */}
+                <CategorySectionHeader
+                  label={t("entitlements.tenantPlans.comparison.categoryUsers") || "Users"}
+                  colSpan={colSpan}
+                />
+                <TableRow className="hover:bg-muted/30 transition-colors">
+                  <TableCell className="sticky left-0 bg-background font-medium text-sm py-3.5">
+                    {t("entitlements.tenantPlans.maxUsers") || "Max Users"}
+                  </TableCell>
+                  {plans.map((plan: TenantPlan) => (
+                    <MatrixCell
+                      key={plan.id}
+                      value={plan.maxUsers.toString()}
+                      valueType="Numeric"
+                      isHighlighted={plan.id === recommendedPlanId}
+                    />
                   ))}
                 </TableRow>
 
@@ -315,8 +332,8 @@ export function EditionComparisonView() {
                     key={category}
                     category={category}
                     rows={rows}
-                    editions={editions}
-                    recommendedEditionId={recommendedEditionId}
+                    plans={plans}
+                    recommendedPlanId={recommendedPlanId}
                     colSpan={colSpan}
                     language={language}
                     t={t}
@@ -335,7 +352,6 @@ export function EditionComparisonView() {
                 onClick={() => {
                   setShowAllFeatures((prev) => !prev);
                   if (!showAllFeatures) {
-                    // Scroll down after expanding
                     setTimeout(() => {
                       matrixRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
                     }, 100);
@@ -345,8 +361,8 @@ export function EditionComparisonView() {
               >
                 <LayoutList className="h-4 w-4" />
                 {showAllFeatures
-                  ? (t("entitlements.editions.comparison.hideFeatures") || "Hide detailed features")
-                  : (t("entitlements.editions.comparison.showAllFeatures") || `Show all ${totalFeatureCount} features`)}
+                  ? (t("entitlements.tenantPlans.comparison.hideFeatures") || "Hide detailed features")
+                  : (t("entitlements.tenantPlans.comparison.showAllFeatures") || `Show all ${totalFeatureCount} features`)}
                 {showAllFeatures ? (
                   <ChevronUp className="h-4 w-4" />
                 ) : (
@@ -357,7 +373,6 @@ export function EditionComparisonView() {
           )}
         </div>
 
-        {/* Scroll anchor for the expanded features */}
         <div ref={matrixRef} />
       </section>
 
@@ -370,16 +385,16 @@ export function EditionComparisonView() {
 function FeatureCategoryBlock({
   category,
   rows,
-  editions,
-  recommendedEditionId,
+  plans,
+  recommendedPlanId,
   colSpan,
   language,
   t,
 }: {
   category: string;
   rows: FeatureRow[];
-  editions: Edition[];
-  recommendedEditionId: string;
+  plans: TenantPlan[];
+  recommendedPlanId: string;
   colSpan: number;
   language: string;
   t: (key: string) => string;
@@ -387,28 +402,28 @@ function FeatureCategoryBlock({
   return (
     <>
       <CategorySectionHeader
-        label={t(`entitlements.editions.comparison.category${category}`) || category}
+        label={t(`entitlements.tenantPlans.comparison.category${category}`) || category}
         colSpan={colSpan}
       />
       {rows.map((row: FeatureRow) => {
         const featureLabel =
           language === "ar" && row.displayNameAr
             ? row.displayNameAr
-            : row.displayNameEn || row.featureName;
+            : row.displayNameEn || row.featureKey;
         return (
           <TableRow
-            key={row.featureName}
+            key={row.featureKey}
             className="hover:bg-muted/30 transition-colors group"
           >
             <TableCell className="sticky left-0 bg-background group-hover:bg-muted/30 transition-colors font-medium text-sm py-3.5">
               {featureLabel}
             </TableCell>
-            {editions.map((ed: Edition) => (
+            {plans.map((plan: TenantPlan) => (
               <MatrixCell
-                key={ed.id}
-                value={row.values[ed.id]}
+                key={plan.id}
+                value={row.values[plan.id]}
                 valueType={row.valueType}
-                isHighlighted={ed.id === recommendedEditionId}
+                isHighlighted={plan.id === recommendedPlanId}
               />
             ))}
           </TableRow>

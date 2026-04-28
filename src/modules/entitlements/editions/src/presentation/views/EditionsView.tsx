@@ -30,7 +30,7 @@ export function EditionsView() {
                   resource: "editions",
                   customActions: [
                         {
-                              label: t("entitlements.editions.comparison") || "Compare Editions",
+                              label: t("entitlements.editions.comparison.heroTitle") || "Compare Editions",
                               onClick: async () => {
                                     router.push("/entitlements/editions/compare");
                               },
@@ -123,6 +123,18 @@ export function EditionsView() {
                               label: t("common.description") || "Description",
                               type: "textarea" as const,
                               placeholder: t("entitlements.editions.descriptionPlaceholder") || "Brief description of this edition...",
+                        },
+                        {
+                              name: "tagline",
+                              label: t("entitlements.editions.tagline") || "Tagline",
+                              type: "text" as const,
+                              placeholder: "e.g. Best for growing teams",
+                        },
+                        {
+                              name: "recommendationLabels",
+                              label: t("entitlements.editions.recommendationLabels") || "Recommendation Labels",
+                              type: "text" as const,
+                              placeholder: t("entitlements.editions.recommendationPlaceholder") || 'e.g. ["Best Value","Most Popular"]',
                         },
                         {
                               name: "tierLevel",
@@ -239,6 +251,18 @@ export function EditionsView() {
                               label: t("common.description") || "Description",
                               type: "textarea" as const,
                               placeholder: t("entitlements.editions.descriptionPlaceholder") || "Brief description of this edition...",
+                        },
+                        {
+                              name: "tagline",
+                              label: t("entitlements.editions.tagline") || "Tagline",
+                              type: "text" as const,
+                              placeholder: "e.g. Best for growing teams",
+                        },
+                        {
+                              name: "recommendationLabels",
+                              label: t("entitlements.editions.recommendationLabels") || "Recommendation Labels",
+                              type: "text" as const,
+                              placeholder: 'e.g. ["Best Value","Most Popular"]',
                         },
                         {
                               name: "tierLevel",
