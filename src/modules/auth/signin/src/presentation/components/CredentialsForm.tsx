@@ -48,14 +48,14 @@ export function CredentialsForm({
 
                   {/* Username Input */}
                   <div className="space-y-2.5">
-                        <Label htmlFor="username" className="text-sm font-medium text-foreground">
+                        <Label htmlFor="identifier" className="text-sm font-medium text-foreground">
                               {t("auth.username")}
                         </Label>
                         <Input
-                              id="username"
+                              id="identifier"
                               type="text"
-                              value={formData.username}
-                              onChange={(e) => updateField("username", e.target.value)}
+                              value={formData.identifier}
+                              onChange={(e) => updateField("identifier", e.target.value)}
                               required
                               aria-invalid={!!error || undefined}
                               aria-describedby={error ? "login-error" : undefined}
@@ -63,7 +63,7 @@ export function CredentialsForm({
                               style={{ height: "var(--login-input-height, 48px)", borderRadius: "var(--login-radius-button, 12px)" }}
                               placeholder={t("auth.usernamePlaceholder")}
                               disabled={isLoading}
-                              autoComplete="username"
+                              autoComplete="username email"
                         />
                   </div>
 

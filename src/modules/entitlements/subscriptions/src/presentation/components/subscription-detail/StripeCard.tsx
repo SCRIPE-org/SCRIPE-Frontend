@@ -23,10 +23,10 @@ interface StripeCardProps {
 }
 
 export function StripeCard({ sub, vm, t }: StripeCardProps) {
-  const hasStripe = !!sub.stripeCustomerId;
+  const hasGatewayCustomer = !!sub.gatewayCustomerId;
 
-  // Free edition — no Stripe card needed
-  if (!hasStripe && (sub.totalAmount ?? 0) === 0) {
+  // Free edition — no gateway card needed
+  if (!hasGatewayCustomer && (sub.totalAmount ?? 0) === 0) {
     return (
       <Card className="border-border/50 border-dashed">
         <CardHeader className="pb-3">
@@ -57,7 +57,7 @@ export function StripeCard({ sub, vm, t }: StripeCardProps) {
           <div className="h-8 w-8 rounded-lg bg-violet-500/10 flex items-center justify-center">
             <CreditCard className="h-4 w-4 text-violet-500" />
           </div>
-          <CardTitle className="text-sm font-semibold">Stripe</CardTitle>
+          <CardTitle className="text-sm font-semibold">{sub.paymentGateway || "Payment Gateway"}</CardTitle>
         </div>
       </CardHeader>
       <CardContent className="space-y-0">
@@ -65,15 +65,15 @@ export function StripeCard({ sub, vm, t }: StripeCardProps) {
           icon={<CreditCard className="h-3.5 w-3.5" />}
           label="Customer"
           value={
-            sub.stripeCustomerId ? (
+            sub.gatewayCustomerId ? (
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger>
                     <code className="text-xs bg-muted px-1.5 py-0.5 rounded font-mono">
-                      {sub.stripeCustomerId.slice(0, 14)}...
+                      {sub.gatewayCustomerId.slice(0, 14)}...
                     </code>
                   </TooltipTrigger>
-                  <TooltipContent>{sub.stripeCustomerId}</TooltipContent>
+                  <TooltipContent>{sub.gatewayCustomerId}</TooltipContent>
                 </Tooltip>
               </TooltipProvider>
             ) : (
@@ -86,15 +86,15 @@ export function StripeCard({ sub, vm, t }: StripeCardProps) {
           icon={<Receipt className="h-3.5 w-3.5" />}
           label="Subscription"
           value={
-            sub.stripeSubscriptionId ? (
+            sub.gatewaySubscriptionId ? (
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger>
                     <code className="text-xs bg-muted px-1.5 py-0.5 rounded font-mono">
-                      {sub.stripeSubscriptionId.slice(0, 14)}...
+                      {sub.gatewaySubscriptionId.slice(0, 14)}...
                     </code>
                   </TooltipTrigger>
-                  <TooltipContent>{sub.stripeSubscriptionId}</TooltipContent>
+                  <TooltipContent>{sub.gatewaySubscriptionId}</TooltipContent>
                 </Tooltip>
               </TooltipProvider>
             ) : (
@@ -103,21 +103,23 @@ export function StripeCard({ sub, vm, t }: StripeCardProps) {
           }
         />
 
-        {sub.stripeCustomerId && (
+        {sub.gatewayCustomerId && (
           <>
             <Separator />
             <div className="pt-3 space-y-2">
-              <Button
-                variant="outline"
-                size="sm"
-                className="w-full gap-2 cursor-pointer"
-                onClick={() => vm.openBillingPortal()}
-                disabled={vm.isOpeningPortal}
-              >
-                <ExternalLink className="h-3.5 w-3.5" />
-                {t("billing.actions.openPortal") || "Open Billing Portal"}
-              </Button>
-              {sub.stripeSubscriptionId && (
+              {sub.paymentGateway === "Stripe" && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full gap-2 cursor-pointer"
+                  onClick={() => vm.openBillingPortal()}
+                  disabled={vm.isOpeningPortal}
+                >
+                  <ExternalLink className="h-3.5 w-3.5" />
+                  {t("billing.actions.openPortal") || "Open Billing Portal"}
+                </Button>
+              )}
+              {sub.gatewaySubscriptionId && (
                 <Button
                   variant="outline"
                   size="sm"
@@ -125,7 +127,7 @@ export function StripeCard({ sub, vm, t }: StripeCardProps) {
                   onClick={() => vm.setShowCancelStripeDialog(true)}
                 >
                   <XSquare className="h-3.5 w-3.5" />
-                  {t("billing.actions.cancelStripe") || "Cancel Stripe Subscription"}
+                  {t("billing.actions.cancelGateway") || `Cancel ${sub.paymentGateway || 'Gateway'} Subscription`}
                 </Button>
               )}
             </div>

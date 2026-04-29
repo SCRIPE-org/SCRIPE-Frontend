@@ -46,8 +46,9 @@ export function HeroActions({ sub, vm, t }: HeroActionsProps) {
   const isSuspended = sub.status === "Suspended";
   const isTrialing = sub.status === "Trialing";
   const isFree = (sub.totalAmount ?? 0) === 0;
-  const hasStripe = !!sub.stripeCustomerId;
-  const hasStripeSub = !!sub.stripeSubscriptionId;
+  const hasGatewayCustomer = !!sub.gatewayCustomerId;
+  const hasGatewaySub = !!sub.gatewaySubscriptionId;
+  const isStripe = sub.paymentGateway === "Stripe";
 
   // ── PendingPayment: Payment link actions ──
   if (isPending) {
@@ -162,7 +163,7 @@ export function HeroActions({ sub, vm, t }: HeroActionsProps) {
               {t("entSubscriptions.resync")}
             </DropdownMenuItem>
 
-            {hasStripe && !isFree && (
+            {hasGatewayCustomer && !isFree && isStripe && (
               <>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem className="cursor-pointer" onClick={() => vm.openBillingPortal()} disabled={vm.isOpeningPortal}>
@@ -171,13 +172,13 @@ export function HeroActions({ sub, vm, t }: HeroActionsProps) {
                 </DropdownMenuItem>
               </>
             )}
-            {hasStripeSub && (
+            {hasGatewaySub && (
               <DropdownMenuItem
                 className="text-destructive cursor-pointer"
                 onClick={() => vm.setShowCancelStripeDialog(true)}
               >
                 <XSquare className="h-4 w-4 me-2" />
-                {t("billing.actions.cancelStripe") || "Cancel Stripe"}
+                {t("billing.actions.cancelGateway") || `Cancel via ${sub.paymentGateway || 'Gateway'}`}
               </DropdownMenuItem>
             )}
 

@@ -19,10 +19,39 @@
 // ===== JSON Shapes (API contracts) =====
 
 export interface LoginRequestJson {
-  username: string;
+  identifier: string;
   password: string;
   tenantId?: string;
   deviceInfo?: string;
+}
+
+export interface UserProfileJson {
+  id: string;
+  username: string;
+  firstName?: string | null;
+  lastName?: string | null;
+  phoneNumber?: string | null;
+  email?: string | null;
+  profileImageUrl?: string | null;
+  isActive: boolean;
+  lastLoginAt?: string | null;
+  createdAt: string;
+  modifiedAt?: string | null;
+  notes?: string | null;
+  roles: { roleId: string; roleNameEn: string; roleNameAr: string; roleCode: string; tenantId?: string | null; tenantName?: string | null; inheritToChildren?: boolean; expiresAt?: string | null }[];
+  permissions: string[];
+  tenantId?: string | null;
+  tenantName?: string | null;
+  isSuperAdmin: boolean;
+  isProtected: boolean;
+  isAccountActivated: boolean;
+  mustChangePassword: boolean;
+  isTwoFactorEnabled?: boolean;
+  backupCodesRemaining?: number | null;
+  isPasswordExpired?: boolean;
+  daysUntilPasswordExpiry?: number | null;
+  passwordLastChanged?: string | null;
+  restrictedFields?: Record<string, string[]> | null;
 }
 
 export interface LoginResponseJson {
@@ -33,6 +62,7 @@ export interface LoginResponseJson {
   subscriptionStatus?: string | null;
   gracePhase?: string | null;
   editionName?: string | null;
+  userProfile?: UserProfileJson | null;
 }
 
 // ===== Model Classes =====
@@ -42,19 +72,19 @@ export interface LoginResponseJson {
  */
 export class LoginRequestModel {
   constructor(
-    public readonly username: string,
+    public readonly identifier: string,
     public readonly password: string,
     public readonly tenantId?: string,
     public readonly deviceInfo?: string
   ) { }
 
   static fromJson(json: LoginRequestJson): LoginRequestModel {
-    return new LoginRequestModel(json.username, json.password, json.tenantId, json.deviceInfo);
+    return new LoginRequestModel(json.identifier, json.password, json.tenantId, json.deviceInfo);
   }
 
   toJson(): LoginRequestJson {
     return {
-      username: this.username,
+      identifier: this.identifier,
       password: this.password,
       tenantId: this.tenantId,
       deviceInfo: this.deviceInfo,
@@ -73,7 +103,8 @@ export class LoginResponseModel {
     public readonly mustChangePassword: boolean = false,
     public readonly subscriptionStatus: string | null = null,
     public readonly gracePhase: string | null = null,
-    public readonly editionName: string | null = null
+    public readonly editionName: string | null = null,
+    public readonly userProfile: UserProfileJson | null = null
   ) { }
 
   static fromJson(json: LoginResponseJson): LoginResponseModel {
@@ -84,7 +115,8 @@ export class LoginResponseModel {
       json.mustChangePassword ?? false,
       json.subscriptionStatus ?? null,
       json.gracePhase ?? null,
-      json.editionName ?? null
+      json.editionName ?? null,
+      json.userProfile ?? null
     );
   }
 
@@ -97,6 +129,7 @@ export class LoginResponseModel {
       subscriptionStatus: this.subscriptionStatus,
       gracePhase: this.gracePhase,
       editionName: this.editionName,
+      userProfile: this.userProfile,
     };
   }
 

@@ -67,7 +67,7 @@ export class AuthRepository implements IAuthRepository {
 
   async login(credentials: LoginRequest): Promise<LoginResult> {
     const requestModel = new LoginRequestModel(
-      credentials.username,
+      credentials.identifier,
       credentials.password,
       credentials.tenantId,
       credentials.deviceInfo
@@ -84,7 +84,14 @@ export class AuthRepository implements IAuthRepository {
 
     if (responseModel.accessToken) {
       secureTokenService.setAccessToken(responseModel.accessToken);
-      const user = await this.getMe();
+      
+      let user: User;
+      if (responseModel.userProfile) {
+        user = AuthMapper.userFromJson(responseModel.userProfile);
+      } else {
+        user = await this.getMe();
+      }
+
       return {
         user,
         mustChangePassword: responseModel.mustChangePassword ?? false,
@@ -100,15 +107,22 @@ export class AuthRepository implements IAuthRepository {
    * Verify 2FA code during login.
    * Called after login() throws TwoFactorRequiredError.
    */
-  async verify2FA(username: string, password: string, code: string): Promise<LoginResult> {
-    const requestModel = new Verify2FARequestModel(username, password, code);
+  async verify2FA(identifier: string, password: string, code: string, tenantId?: string): Promise<LoginResult> {
+    const requestModel = new Verify2FARequestModel(identifier, password, code, tenantId);
     const responseModel = await this.service.verify2FA(requestModel);
 
     appLogger.auth("2FA verification successful");
 
     if (responseModel.accessToken) {
       secureTokenService.setAccessToken(responseModel.accessToken);
-      const user = await this.getMe();
+      
+      let user: User;
+      if (responseModel.userProfile) {
+        user = AuthMapper.userFromJson(responseModel.userProfile);
+      } else {
+        user = await this.getMe();
+      }
+
       return {
         user,
         mustChangePassword: false, // 2FA flow doesn't carry this flag separately

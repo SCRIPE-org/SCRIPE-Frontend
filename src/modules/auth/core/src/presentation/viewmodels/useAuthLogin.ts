@@ -24,9 +24,9 @@ export function useAuthLogin() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ username, password, tenantId, tenantCode }: { username: string; password: string; tenantId?: string; tenantCode?: string }) => {
+    mutationFn: async ({ identifier, password, tenantId, tenantCode }: { identifier: string; password: string; tenantId?: string; tenantCode?: string }) => {
       // Construct domain entity — repository handles mapping to API model
-      const request = new LoginRequest({ username, password, tenantId });
+      const request = new LoginRequest({ identifier, password, tenantId });
       return authRepository.login(request);
     },
     onSuccess: async (result, variables) => {

@@ -342,33 +342,33 @@ export function MySubscriptionView() {
       </div>
 
       {/* ══════════════════════════════════════════
-          STRIPE SECTION (if connected)
+          PAYMENT GATEWAY SECTION (if connected)
          ══════════════════════════════════════════ */}
-      {(sub.stripeSubscriptionId || sub.stripeCustomerId) && (
+      {(sub.gatewaySubscriptionId || sub.gatewayCustomerId) && (
         <Card className="shadow-md border-0 bg-gradient-to-br from-[#635bff]/5 to-[#635bff]/10">
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
               <Sparkles className="h-4 w-4 text-[#635bff]" />
               <CardTitle className="text-base">
-                {t("entitlements.mySubscription.stripeIntegration") || "Payment Integration"}
+                {t("entitlements.mySubscription.gatewayIntegration") || "Payment Integration"}
               </CardTitle>
             </div>
             <CardDescription>
-              {t("entitlements.mySubscription.stripeDesc") ||
-                "Your subscription is managed through Stripe."}
+              {t("entitlements.mySubscription.gatewayDesc") ||
+                `Your subscription is managed through ${sub.paymentGateway || 'your payment provider'}.`}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
-            {sub.stripeSubscriptionId && (
+            {sub.gatewaySubscriptionId && (
               <DetailRow
-                label={t("entitlements.mySubscription.stripeSubId") || "Stripe Subscription"}
-                value={sub.stripeSubscriptionId}
+                label={t("entitlements.mySubscription.gatewaySubId") || "Gateway Subscription"}
+                value={sub.gatewaySubscriptionId}
               />
             )}
-            {sub.stripeCustomerId && (
+            {sub.gatewayCustomerId && (
               <DetailRow
-                label={t("entitlements.mySubscription.stripeCustomerId") || "Stripe Customer"}
-                value={sub.stripeCustomerId}
+                label={t("entitlements.mySubscription.gatewayCustomerId") || "Gateway Customer"}
+                value={sub.gatewayCustomerId}
               />
             )}
           </CardContent>

@@ -15,7 +15,7 @@
 
 import { LoginRequest, LoginResponse } from "../../domain/entities/Auth";
 import { User } from "../../domain/entities/User";
-import { LoginResponseModel } from "../models/AuthModel";
+import { LoginResponseModel, UserProfileJson } from "../models/AuthModel";
 
 export class AuthMapper {
   // ===== Login Request =====
@@ -25,7 +25,7 @@ export class AuthMapper {
    */
   static loginRequestFromJson(json: any): LoginRequest {
     return new LoginRequest({
-      username: json.username || "",
+      identifier: json.identifier || "",
       password: json.password || "",
       tenantId: json.tenantId,
       deviceInfo: json.deviceInfo,
@@ -37,7 +37,7 @@ export class AuthMapper {
    */
   static loginRequestToJson(request: LoginRequest): any {
     return {
-      username: request.username,
+      identifier: request.identifier,
       password: request.password,
       tenantId: request.tenantId,
       deviceInfo: request.deviceInfo,
@@ -67,6 +67,7 @@ export class AuthMapper {
       subscriptionStatus: model.subscriptionStatus,
       gracePhase: model.gracePhase,
       editionName: model.editionName,
+      userProfile: model.userProfile ? AuthMapper.userFromJson(model.userProfile) : null,
     });
   }
 
@@ -83,23 +84,30 @@ export class AuthMapper {
   // ===== User Mapping (for getMe response) =====
 
   /**
-   * Convert JSON/API response to User domain model
-   * Maps the AdminResponse from backend including permissions
+   * Convert JSON/API response to User domain model.
+   * Maps the AdminResponse from backend including permissions.
+   *
+   * Defensive: handles both object (normal) and string (double-serialized
+   * fallback) inputs so the app never crashes on a middleware regression.
    */
-  static userFromJson(json: any): User {
+  static userFromJson(json: UserProfileJson | string): User {
+    // Defensive guard: if middleware double-serializes, parse the string
+    const data: UserProfileJson =
+      typeof json === "string" ? JSON.parse(json) : json;
+
     return new User({
-      id: json.id || "",
-      username: json.username || "",
-      firstName: json.firstName || "",
-      lastName: json.lastName || "",
-      phoneNumber: json.phoneNumber || "",
-      adminTypeName: json.adminTypeName || "",
-      profileImageUrl: json.profileImageUrl ?? null,
-      role: json.roles?.[0]?.roleCode || json.roles?.[0]?.roleName || undefined,
-      permissions: json.permissions || [],
-      isProtected: json.isProtected ?? false,
-      tenantId: json.tenantId ?? null,
-      restrictedFields: json.restrictedFields ?? undefined,
+      id: data.id || "",
+      username: data.username || "",
+      firstName: data.firstName || "",
+      lastName: data.lastName || "",
+      phoneNumber: data.phoneNumber || "",
+      adminTypeName: "",
+      profileImageUrl: data.profileImageUrl ?? null,
+      role: data.roles?.[0]?.roleCode || data.roles?.[0]?.roleNameEn || undefined,
+      permissions: data.permissions || [],
+      isProtected: data.isProtected ?? false,
+      tenantId: data.tenantId ?? null,
+      restrictedFields: data.restrictedFields ?? undefined,
     });
   }
 }

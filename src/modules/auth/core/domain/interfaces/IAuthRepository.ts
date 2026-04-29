@@ -13,7 +13,7 @@ export interface LoginResult {
 
 export interface IAuthRepository {
   login(credentials: LoginRequest): Promise<LoginResult>;
-  verify2FA(username: string, password: string, code: string): Promise<LoginResult>;
+  verify2FA(identifier: string, password: string, code: string, tenantId?: string): Promise<LoginResult>;
   logout(): Promise<void>;
   getMe(): Promise<User>;
   hasToken(): boolean;

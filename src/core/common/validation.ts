@@ -342,6 +342,32 @@ export function username(
 }
 
 /**
+ * Email or Username validation — accepts either format.
+ * Used for login forms where the identifier can be a username or email.
+ */
+export function emailOrUsername(
+  message: string = "Please enter a valid username or email address"
+): ValidationRule {
+  return (value: any): ValidationResult => {
+    if (value === null || value === undefined || value === "") {
+      return { isValid: true }; // Let required() handle empty
+    }
+    const str = String(value).trim();
+    // Accept if it matches either username pattern OR email pattern
+    const isValidUsername = VALIDATION_PATTERNS.USERNAME.test(str);
+    const isValidEmail = VALIDATION_PATTERNS.EMAIL.test(str);
+    if (!isValidUsername && !isValidEmail) {
+      return {
+        isValid: false,
+        message,
+        errorCode: VALIDATION_ERROR_CODES.INVALID_FORMAT,
+      };
+    }
+    return { isValid: true };
+  };
+}
+
+/**
  * URL validation
  */
 export function url(message: string = "Please enter a valid URL"): ValidationRule {
@@ -1485,7 +1511,7 @@ export function objectOf(
 export const VALIDATION_SETS = {
   // Login form validation
   LOGIN_FORM: {
-    username: [required(), username()],
+    identifier: [required(), emailOrUsername()],
     password: [required()],
   },
 

@@ -14,9 +14,10 @@
 // ===== JSON Shapes =====
 
 export interface Verify2FARequestJson {
-  username: string;
+  identifier: string;
   password: string;
   code: string;
+  tenantId?: string;
 }
 
 export interface Verify2FAResponseJson {
@@ -25,6 +26,7 @@ export interface Verify2FAResponseJson {
   subscriptionStatus?: string | null;
   gracePhase?: string | null;
   editionName?: string | null;
+  userProfile?: any;
 }
 
 // ===== Model Classes =====
@@ -34,16 +36,18 @@ export interface Verify2FAResponseJson {
  */
 export class Verify2FARequestModel {
   constructor(
-    public readonly username: string,
+    public readonly identifier: string,
     public readonly password: string,
-    public readonly code: string
+    public readonly code: string,
+    public readonly tenantId?: string
   ) { }
 
   toJson(): Verify2FARequestJson {
     return {
-      username: this.username,
+      identifier: this.identifier,
       password: this.password,
       code: this.code,
+      tenantId: this.tenantId,
     };
   }
 }
@@ -57,7 +61,8 @@ export class Verify2FAResponseModel {
     public readonly expiresAt: string,
     public readonly subscriptionStatus: string | null = null,
     public readonly gracePhase: string | null = null,
-    public readonly editionName: string | null = null
+    public readonly editionName: string | null = null,
+    public readonly userProfile: any = null
   ) { }
 
   static fromJson(json: Verify2FAResponseJson): Verify2FAResponseModel {
@@ -66,7 +71,8 @@ export class Verify2FAResponseModel {
       json.expiresAt,
       json.subscriptionStatus ?? null,
       json.gracePhase ?? null,
-      json.editionName ?? null
+      json.editionName ?? null,
+      json.userProfile ?? null
     );
   }
 }

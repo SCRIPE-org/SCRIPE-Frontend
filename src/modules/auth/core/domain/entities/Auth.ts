@@ -11,7 +11,7 @@
 import { validateForm, VALIDATION_SETS } from "@core/common/validation";
 
 export interface LoginRequestData {
-  username: string;
+  identifier: string;
   password: string;
   tenantId?: string;
   deviceInfo?: string;
@@ -24,6 +24,7 @@ export interface LoginResponseData {
   subscriptionStatus?: string | null;
   gracePhase?: string | null;
   editionName?: string | null;
+  userProfile?: any;
 }
 
 /**
@@ -45,13 +46,13 @@ function getDeviceInfo(): string {
 }
 
 export class LoginRequest {
-  public readonly username: string;
+  public readonly identifier: string;
   public readonly password: string;
   public readonly tenantId?: string;
   public readonly deviceInfo: string;
 
   constructor(data: LoginRequestData) {
-    this.username = data.username;
+    this.identifier = data.identifier;
     this.password = data.password;
     this.tenantId = data.tenantId;
     // Auto-populate device info if not provided
@@ -63,7 +64,7 @@ export class LoginRequest {
    */
   get isValid(): boolean {
     const validationResults = validateForm(
-      { username: this.username, password: this.password },
+      { identifier: this.identifier, password: this.password },
       VALIDATION_SETS.LOGIN_FORM
     );
     return Object.values(validationResults).every((result) => result.isValid);
@@ -77,6 +78,7 @@ export class LoginResponse {
   public readonly subscriptionStatus: string | null;
   public readonly gracePhase: string | null;
   public readonly editionName: string | null;
+  public readonly userProfile: any;
 
   constructor(data: LoginResponseData) {
     this.success = data.success;
@@ -85,6 +87,7 @@ export class LoginResponse {
     this.subscriptionStatus = data.subscriptionStatus ?? null;
     this.gracePhase = data.gracePhase ?? null;
     this.editionName = data.editionName ?? null;
+    this.userProfile = data.userProfile ?? null;
   }
 
   /**

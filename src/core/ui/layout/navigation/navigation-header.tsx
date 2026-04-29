@@ -74,7 +74,7 @@ export function NavigationHeader({
   const BreadcrumbChevron = isRTL ? ChevronLeft : ChevronRight;
 
   // Hide home button when already on dashboard
-  const isOnDashboard = pathname === "/" || pathname === "/dashboard";
+  const isOnDashboard = pathname === "/";
 
   // Panel toggle icons — use extracted components
   const renderPanelToggleIcon = () => {

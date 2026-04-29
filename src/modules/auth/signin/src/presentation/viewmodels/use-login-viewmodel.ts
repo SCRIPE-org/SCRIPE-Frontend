@@ -15,7 +15,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { appLogger } from "@/core/common/logger";
 
 export interface LoginFormData {
-  username: string;
+  identifier: string;
   password: string;
 }
 
@@ -23,7 +23,7 @@ export type LoginStep = "credentials" | "two-factor";
 
 export function useLoginViewModel() {
   const [formData, setFormData] = useState<LoginFormData>({
-    username: "",
+    identifier: "",
     password: "",
   });
   const [showPassword, setShowPassword] = useState(false);
@@ -123,7 +123,7 @@ export function useLoginViewModel() {
         : undefined;
 
       await loginMutation.mutateAsync({
-        username: formData.username,
+        identifier: formData.identifier,
         password: formData.password,
         tenantId,
         tenantCode: devTenantCode,
@@ -169,9 +169,10 @@ export function useLoginViewModel() {
 
     try {
       const result = await authRepository.verify2FA(
-        formData.username,
+        formData.identifier,
         formData.password,
-        twoFactorCode
+        twoFactorCode,
+        tenantId
       );
       const { user } = result;
 
@@ -243,7 +244,7 @@ export function useLoginViewModel() {
 
   // Reset form
   const resetForm = useCallback(() => {
-    setFormData({ username: "", password: "" });
+    setFormData({ identifier: "", password: "" });
     setShowPassword(false);
     setError("");
     setIsRedirecting(false);

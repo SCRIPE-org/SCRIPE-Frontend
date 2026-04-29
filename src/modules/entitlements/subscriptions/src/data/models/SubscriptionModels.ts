@@ -37,9 +37,10 @@ export interface SubscriptionModel {
       refundAmount?: number;
       refundedAt?: string;
       refundReason?: string;
-      // ── Stripe ──
-      stripeCustomerId?: string;
-      stripeSubscriptionId?: string;
+      // ── Payment Gateway ──
+      paymentGateway?: string;
+      gatewayCustomerId?: string;
+      gatewaySubscriptionId?: string;
 }
 
 export interface SubscriptionListModel {
@@ -73,9 +74,10 @@ export interface SubscriptionListModel {
       refundAmount?: number;
       refundedAt?: string;
       refundReason?: string;
-      // ── Stripe ──
-      stripeCustomerId?: string;
-      stripeSubscriptionId?: string;
+      // ── Payment Gateway ──
+      paymentGateway?: string;
+      gatewayCustomerId?: string;
+      gatewaySubscriptionId?: string;
 }
 
 export interface GlobalSubscriptionModel {
