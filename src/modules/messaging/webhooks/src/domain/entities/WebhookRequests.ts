@@ -11,7 +11,7 @@ export interface CreateWebhookRequest {
       url: string;
       description?: string;
       events: string[];
-      includeChildren?: boolean;
+      scope?: string;
       maxRetries?: number;
       maxConsecutiveFailures?: number;
 }
@@ -20,7 +20,7 @@ export interface UpdateWebhookRequest {
       url?: string;
       description?: string;
       events?: string[];
-      includeChildren?: boolean;
+      scope?: string;
       maxRetries?: number;
       maxConsecutiveFailures?: number;
 }

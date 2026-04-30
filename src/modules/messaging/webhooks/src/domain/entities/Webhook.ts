@@ -18,7 +18,6 @@ export interface WebhookSubscriptionData {
       scope: string;
       tenantId: string | null;
       tenantName: string | null;
-      includeChildren: boolean;
       url: string;
       description: string | null;
       events: string[];
@@ -56,9 +55,6 @@ export class WebhookSubscription {
       }
       get tenantName(): string | null {
             return this.data.tenantName;
-      }
-      get includeChildren(): boolean {
-            return this.data.includeChildren;
       }
       get url(): string {
             return this.data.url;
@@ -140,9 +136,10 @@ export class WebhookSubscription {
       /** Human-readable scope label */
       get scopeLabel(): string {
             switch (this.scope) {
-                  case 'system': return 'System';
-                  case 'hierarchy': return 'Hierarchy';
-                  case 'tenant': return 'Tenant';
+                  case 'platform_only': return 'Platform Only';
+                  case 'all_tenants': return 'All Tenants';
+                  case 'tenant_only': return 'Tenant Only';
+                  case 'tenant_with_children': return 'Tenant + Children';
                   default: return this.scope;
             }
       }
@@ -154,7 +151,6 @@ export interface WebhookSubscriptionListItemData {
       id: string;
       scope: string;
       tenantName: string | null;
-      includeChildren: boolean;
       url: string;
       description: string | null;
       events: string[];
@@ -181,9 +177,6 @@ export class WebhookSubscriptionListItem {
       }
       get tenantName(): string | null {
             return this.data.tenantName;
-      }
-      get includeChildren(): boolean {
-            return this.data.includeChildren;
       }
       get url(): string {
             return this.data.url;
@@ -229,9 +222,10 @@ export class WebhookSubscriptionListItem {
       /** Human-readable scope label */
       get scopeLabel(): string {
             switch (this.scope) {
-                  case 'system': return 'System';
-                  case 'hierarchy': return 'Hierarchy';
-                  case 'tenant': return 'Tenant';
+                  case 'platform_only': return 'Platform Only';
+                  case 'all_tenants': return 'All Tenants';
+                  case 'tenant_only': return 'Tenant Only';
+                  case 'tenant_with_children': return 'Tenant + Children';
                   default: return this.scope;
             }
       }

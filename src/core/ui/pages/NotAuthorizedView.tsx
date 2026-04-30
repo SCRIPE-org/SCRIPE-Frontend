@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Shield, ArrowLeft, Home, AlertTriangle, Lock, HelpCircle, ArrowRight } from "lucide-react";
+import { Shield, ArrowLeft, Home, AlertTriangle, Lock, HelpCircle, ArrowRight, LogOut } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import {
   Card,
@@ -13,16 +13,18 @@ import {
 } from "@core/ui/card";
 import { Button } from "@core/ui/button";
 import { appLogger } from "@core/common/logger";
+import { useAppStore } from "@/core/store/useAppStore";
 
 export default function NotAuthorizedView() {
   const router = useRouter();
   const { t, language } = useI18n();
+  const logout = useAppStore((state) => state.logout);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-background via-background/95 to-muted/20 p-4">
       <div className="w-full max-w-2xl space-y-6">
         {/* Main Error Card */}
-        <Card className="relative overflow-hidden text-center">
+        <Card className="relative overflow-hidden text-center animate-in fade-in zoom-in-95 duration-500 backdrop-blur-md bg-background/80 border-white/5">
           {/* Background Pattern */}
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-destructive/5 via-transparent to-destructive/10" />
           <div className="pointer-events-none absolute right-0 top-0 h-32 w-32 rounded-full bg-destructive/5 blur-3xl" />
@@ -65,16 +67,15 @@ export default function NotAuthorizedView() {
             </div>
 
             {/* Action Buttons */}
-            <div className="relative z-20 grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="relative z-20 grid grid-cols-1 gap-4 sm:grid-cols-3">
               <Button
                 onClick={() => {
                   appLogger.ui("Back button clicked");
                   router.back();
-                  router.back();
                 }}
                 variant="default"
                 size="lg"
-                className="group relative z-30 w-full cursor-pointer"
+                className="group relative z-30 w-full cursor-pointer hover:shadow-[0_0_15px_rgba(var(--destructive),0.5)] transition-all duration-300"
                 type="button"
               >
                 {language == "en" ? (
@@ -98,6 +99,20 @@ export default function NotAuthorizedView() {
                 <Home className="mx-2 h-4 w-4 transition-transform group-hover:scale-110" />
                 {t("notAuthorized.goHome")}
               </Button>
+
+              <Button
+                onClick={() => {
+                  appLogger.ui("Sign out button clicked");
+                  logout();
+                }}
+                variant="secondary"
+                size="lg"
+                className="group relative z-30 w-full cursor-pointer"
+                type="button"
+              >
+                <LogOut className="mr-2 h-4 w-4 transition-transform group-hover:scale-110" />
+                {t("nav.logout")}
+              </Button>
             </div>
           </CardContent>
 
@@ -116,7 +131,7 @@ export default function NotAuthorizedView() {
         </Card>
 
         {/* Additional Help Card */}
-        <Card className="bg-muted/30">
+        <Card className="bg-muted/30 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150 fill-mode-both">
           <CardContent className="pt-6">
             <div
               className={`flex items-start ${

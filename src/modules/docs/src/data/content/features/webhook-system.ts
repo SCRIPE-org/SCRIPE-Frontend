@@ -1,4 +1,4 @@
-﻿import { registerPage } from "../../repositories/DocsRepository";
+import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
@@ -53,6 +53,7 @@ const sections: DocSection[] = [
     public string EventsJson { get; set; } = "[]";       // Subscribed events
 
     public bool IncludeChildren { get; set; } = false;   // Tenant hierarchy events
+    public bool PlatformEventsOnly { get; set; } = false; // System-scoped events only
 
     public int MaxRetries { get; set; } = 5;
     public int MaxConsecutiveFailures { get; set; } = 10; // Auto-disable threshold
@@ -61,7 +62,7 @@ const sections: DocSection[] = [
     public Guid TenantId { get; set; }
     public virtual Tenant Tenant { get; set; } = null!;
 }`,
-            highlightLines: [10, 11, 16, 19, 20],
+            highlightLines: [10, 11, 16, 17, 20, 21],
       },
 
       // € HMAC Signing €
@@ -120,10 +121,11 @@ bool isValid = computedSignature == request.Headers["X-Webhook-Signature"];`,
       { type: "paragraph", contentKey: "features.webhookSystem.includeChildrenIntro" },
       {
             type: "table",
-            headers: ["IncludeChildren", "Events Received", "Use Case"],
+            headers: ["IncludeChildren", "PlatformEventsOnly", "Events Received", "Use Case"],
             rows: [
-                  ["false (default)", "Only events from own tenant", "Single-site integration"],
-                  ["true", "Events from own tenant + all descendants", "Parent company monitoring all branches"],
+                  ["false (default)", "false", "Only events from own tenant", "Single-site integration"],
+                  ["true", "false", "Events from own tenant + all descendants", "Parent company monitoring all branches"],
+                  ["false/true", "true", "Only system-wide platform events (TenantId=null)", "System administrators listening to global configuration changes"],
             ],
       },
 
@@ -177,6 +179,7 @@ bool isValid = computedSignature == request.Headers["X-Webhook-Signature"];`,
 {
     public Guid SubscriptionId { get; set; }
     public string EventType { get; set; } = null!;
+    public Guid? EventTenantId { get; set; }     // The tenant context of the event
     public int? StatusCode { get; set; }         // null = connection failed
     public string? ResponseBody { get; set; }    // First 1000 chars
     public string? ErrorMessage { get; set; }
@@ -212,7 +215,7 @@ bool isValid = computedSignature == request.Headers["X-Webhook-Signature"];`,
             endpoints: [
                   { method: "GET", path: "/api/v1/webhooks", descriptionKey: "List subscriptions (tenant-scoped)", auth: "webhooks.view" },
                   { method: "GET", path: "/api/v1/webhooks/{id}", descriptionKey: "Get subscription detail", auth: "webhooks.view" },
-                  { method: "POST", path: "/api/v1/webhooks", descriptionKey: "Create subscription (with IncludeChildren, MaxRetries, MaxConsecutiveFailures)", auth: "webhooks.create" },
+                  { method: "POST", path: "/api/v1/webhooks", descriptionKey: "Create subscription (with IncludeChildren, PlatformEventsOnly, MaxRetries)", auth: "webhooks.create" },
                   { method: "PUT", path: "/api/v1/webhooks/{id}", descriptionKey: "Update subscription URL, events, settings", auth: "webhooks.edit" },
                   { method: "DELETE", path: "/api/v1/webhooks/{id}", descriptionKey: "Delete subscription", auth: "webhooks.delete" },
             ],

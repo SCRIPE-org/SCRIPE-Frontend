@@ -13,6 +13,7 @@ import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Badge } from "@core/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { Checkbox } from "@core/ui/checkbox";
 import { Skeleton } from "@core/ui/skeleton";
 import { Textarea } from "@core/ui/textarea";
@@ -42,6 +43,7 @@ import {
       Network,
       CheckCircle2,
       Search,
+      Server,
 } from "lucide-react";
 
 interface WebhookFormProps {
@@ -160,32 +162,52 @@ export function WebhookForm({
                                     />
                               </div>
 
-                              {/* Include Children Toggle */}
-                              <div className="flex items-start gap-3.5 p-3.5 rounded-xl border bg-muted/30 transition-colors hover:bg-muted/50">
-                                    <Checkbox
-                                          id="include-children"
-                                          checked={vm.includeChildren}
-                                          onCheckedChange={(checked) =>
-                                                vm.setIncludeChildren(checked === true)
-                                          }
-                                          className="mt-0.5"
-                                    />
-                                    <div className="space-y-1">
-                                          <Label
-                                                htmlFor="include-children"
-                                                className="text-sm font-medium leading-none cursor-pointer"
-                                          >
-                                                <div className="flex items-center gap-2">
-                                                      <Network className="h-3.5 w-3.5 text-muted-foreground" />
-                                                      {t("webhooks.includeChildren") ||
-                                                            "Include Child Tenants"}
-                                                </div>
-                                          </Label>
-                                          <p className="text-xs text-muted-foreground leading-relaxed">
-                                                {t("webhooks.includeChildrenDesc") ||
-                                                      "Receive events from this tenant and all descendant tenants"}
-                                          </p>
-                                    </div>
+                              {/* Scope Selection */}
+                              <div className="space-y-2">
+                                    <Label htmlFor="webhook-scope" className="text-sm font-medium">
+                                          {t("webhooks.scope") || "Subscription Scope"}
+                                    </Label>
+                                    <Select
+                                          value={vm.scope}
+                                          onValueChange={vm.setScope}
+                                    >
+                                          <SelectTrigger id="webhook-scope" className="w-full h-auto py-2">
+                                                <SelectValue placeholder="Select scope" />
+                                          </SelectTrigger>
+                                          <SelectContent>
+                                                {vm.isPlatformScope ? (
+                                                      <>
+                                                            <SelectItem value="platform_only" className="py-2">
+                                                                  <div className="flex flex-col gap-0.5">
+                                                                        <span className="font-medium">{t("webhooks.scopePlatformOnly") || "Platform Events Only"}</span>
+                                                                        <span className="text-xs text-muted-foreground">{t("webhooks.scopePlatformOnlyDesc") || "System-wide events ignoring tenant actions"}</span>
+                                                                  </div>
+                                                            </SelectItem>
+                                                            <SelectItem value="all_tenants" className="py-2">
+                                                                  <div className="flex flex-col gap-0.5">
+                                                                        <span className="font-medium">{t("webhooks.scopeAllTenants") || "All Tenants (Global)"}</span>
+                                                                        <span className="text-xs text-muted-foreground">{t("webhooks.scopeAllTenantsDesc") || "All events across the entire platform"}</span>
+                                                                  </div>
+                                                            </SelectItem>
+                                                      </>
+                                                ) : (
+                                                      <>
+                                                            <SelectItem value="tenant_only" className="py-2">
+                                                                  <div className="flex flex-col gap-0.5">
+                                                                        <span className="font-medium">{t("webhooks.scopeTenantOnly") || "This Tenant Only"}</span>
+                                                                        <span className="text-xs text-muted-foreground">{t("webhooks.scopeTenantOnlyDesc") || "Events strictly from this tenant"}</span>
+                                                                  </div>
+                                                            </SelectItem>
+                                                            <SelectItem value="tenant_with_children" className="py-2">
+                                                                  <div className="flex flex-col gap-0.5">
+                                                                        <span className="font-medium">{t("webhooks.scopeTenantWithChildren") || "Tenant and Children"}</span>
+                                                                        <span className="text-xs text-muted-foreground">{t("webhooks.scopeTenantWithChildrenDesc") || "Events from this tenant and its descendants"}</span>
+                                                                  </div>
+                                                            </SelectItem>
+                                                      </>
+                                                )}
+                                          </SelectContent>
+                                    </Select>
                               </div>
                         </section>
 

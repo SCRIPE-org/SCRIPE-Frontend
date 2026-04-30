@@ -6,10 +6,14 @@ export const ar = {
     // ─── أعمدة القائمة ───────────────────────────────────────
     url: "رابط نقطة النهاية",
     urlPlaceholder: "https://your-server.com/webhook",
-    includeChildren: "يشمل الفروع",
-    includeChildrenPlaceholder: "يشمل الفروع",
-    includeChildrenDesc:
-      "استقبال الأحداث من هذا المستأجر وجميع المستأجرين الفرعيين (نطاق التسلسل الهرمي)",
+    scopePlatformOnly: "أحداث المنصة فقط",
+    scopePlatformOnlyDesc: "التشغيل فقط على الأحداث على مستوى النظام، مع تجاهل الإجراءات الخاصة بالمستأجرين",
+    scopeAllTenants: "جميع المستأجرين (عالمي)",
+    scopeAllTenantsDesc: "جميع الأحداث عبر المنصة بأكملها",
+    scopeTenantOnly: "هذا المستأجر فقط",
+    scopeTenantOnlyDesc: "الأحداث الصادرة من هذا المستأجر فقط",
+    scopeTenantWithChildren: "المستأجر والفروع",
+    scopeTenantWithChildrenDesc: "الأحداث من هذا المستأجر وجميع المستأجرين التابعين له",
     description_field: "الوصف",
     descriptionPlaceholder: "مثال: إشعارات الطلبات الإنتاجية",
     events: "الأحداث",
@@ -27,9 +31,10 @@ export const ar = {
     // ─── النطاق ──────────────────────────────────────────────
     scope: {
       label: "النطاق",
-      system: "النظام",
-      hierarchy: "التسلسل الهرمي",
-      tenant: "المستأجر",
+      platformOnly: "المنصة فقط",
+      allTenants: "جميع المستأجرين",
+      tenantOnly: "المستأجر فقط",
+      tenantWithChildren: "المستأجر والفروع",
     },
 
     // ─── التحقق من الرابط ────────────────────────────────────

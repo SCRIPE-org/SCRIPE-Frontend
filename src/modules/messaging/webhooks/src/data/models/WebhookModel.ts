@@ -14,7 +14,6 @@ export interface WebhookSubscriptionJson {
       scope: string;
       tenantId: string | null;
       tenantName: string | null;
-      includeChildren: boolean;
       url: string;
       description: string | null;
       events: string[];
@@ -39,7 +38,6 @@ export interface WebhookListItemJson {
       id: string;
       scope: string;
       tenantName: string | null;
-      includeChildren: boolean;
       url: string;
       description: string | null;
       events: string[];
@@ -142,7 +140,7 @@ export interface CreateWebhookJson {
       url: string;
       description?: string;
       events: string[];
-      includeChildren?: boolean;
+      scope?: string;
       maxRetries?: number;
       maxConsecutiveFailures?: number;
 }
@@ -151,7 +149,7 @@ export interface UpdateWebhookJson {
       url?: string;
       description?: string;
       events?: string[];
-      includeChildren?: boolean;
+      scope?: string;
       maxRetries?: number;
       maxConsecutiveFailures?: number;
 }
@@ -169,7 +167,6 @@ export class WebhookSubscriptionModel {
             public readonly scope: string,
             public readonly tenantId: string | null,
             public readonly tenantName: string | null,
-            public readonly includeChildren: boolean,
             public readonly url: string,
             public readonly description: string | null,
             public readonly events: string[],
@@ -196,7 +193,6 @@ export class WebhookSubscriptionModel {
                   json.scope,
                   json.tenantId,
                   json.tenantName,
-                  json.includeChildren,
                   json.url,
                   json.description,
                   json.events,
@@ -224,7 +220,6 @@ export class WebhookSubscriptionModel {
                   scope: this.scope,
                   tenantId: this.tenantId,
                   tenantName: this.tenantName,
-                  includeChildren: this.includeChildren,
                   url: this.url,
                   description: this.description,
                   events: this.events,
@@ -255,7 +250,6 @@ export class WebhookListItemModel {
             public readonly id: string,
             public readonly scope: string,
             public readonly tenantName: string | null,
-            public readonly includeChildren: boolean,
             public readonly url: string,
             public readonly description: string | null,
             public readonly events: string[],
@@ -272,9 +266,8 @@ export class WebhookListItemModel {
             return new WebhookListItemModel(
                   json.id,
                   json.scope,
-                  json.tenantName,
-                  json.includeChildren,
-                  json.url,
+                  json.tenantName ?? null,
+                  json.url ?? "",
                   json.description,
                   json.events,
                   json.isActive,
@@ -296,7 +289,7 @@ export class CreateWebhookModel {
             public readonly url: string,
             public readonly events: string[],
             public readonly description?: string,
-            public readonly includeChildren?: boolean,
+            public readonly scope?: string,
             public readonly maxRetries?: number,
             public readonly maxConsecutiveFailures?: number
       ) { }
@@ -306,7 +299,7 @@ export class CreateWebhookModel {
                   url: this.url,
                   description: this.description,
                   events: this.events,
-                  includeChildren: this.includeChildren,
+                  scope: this.scope,
                   maxRetries: this.maxRetries,
                   maxConsecutiveFailures: this.maxConsecutiveFailures,
             };
@@ -321,7 +314,7 @@ export class UpdateWebhookModel {
             public readonly url?: string,
             public readonly description?: string,
             public readonly events?: string[],
-            public readonly includeChildren?: boolean,
+            public readonly scope?: string,
             public readonly maxRetries?: number,
             public readonly maxConsecutiveFailures?: number
       ) { }
@@ -331,7 +324,7 @@ export class UpdateWebhookModel {
                   url: this.url,
                   description: this.description,
                   events: this.events,
-                  includeChildren: this.includeChildren,
+                  scope: this.scope,
                   maxRetries: this.maxRetries,
                   maxConsecutiveFailures: this.maxConsecutiveFailures,
             };

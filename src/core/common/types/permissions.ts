@@ -293,6 +293,7 @@ export const SYSTEM_PERMISSIONS = {
   TRANSACTIONS_VIEW: "transactions.view",
   BILLING_MANAGE: "billing.manage",
   BILLING_DASHBOARD_VIEW: "billing.manage",
+  PAYMENT_GATEWAYS_MANAGE: "payment_gateways.manage",
 
   // Tenant Plans (Tier 2)
   TENANT_PLANS_VIEW: "tenant_plans.view",
@@ -340,6 +341,12 @@ export const SYSTEM_PERMISSIONS = {
   ANALYTICS_HEALTH_VIEW: "analytics.view_health",
   ANALYTICS_REPORTS_MANAGE: "analytics.manage_reports",
 
+  // Tenant Payment Gateways (Tier 2 self-service)
+  TENANT_PAYMENT_GATEWAYS_VIEW: "tenant_payment_gateways.view",
+  TENANT_PAYMENT_GATEWAYS_CONFIGURE: "tenant_payment_gateways.configure",
+  TENANT_PAYMENT_GATEWAYS_VERIFY: "tenant_payment_gateways.verify",
+  TENANT_PAYMENT_GATEWAYS_REMOVE: "tenant_payment_gateways.remove",
+
 } as const;
 
 /**
@@ -351,16 +358,27 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/login": [], // Public
   "/settings": [],
   "/profile": [],
+  "/profile/security": [],
+  "/profile/activity": [],
+  "/profile/sessions": [],
 
   // Identity & Access
   "/admins": [SYSTEM_PERMISSIONS.ADMINS_VIEW],
   "/roles": [SYSTEM_PERMISSIONS.ROLES_VIEW],
+  "/roles/[id]": [SYSTEM_PERMISSIONS.ROLES_VIEW],
   "/settings/permissions": [SYSTEM_PERMISSIONS.PERMISSIONS_VIEW],
   "/tenants": [SYSTEM_PERMISSIONS.TENANTS_VIEW],
+  "/tenants/create": [SYSTEM_PERMISSIONS.TENANTS_CREATE],
+  "/tenants/[id]": [SYSTEM_PERMISSIONS.TENANTS_VIEW],
   "/users": [SYSTEM_PERMISSIONS.USERS_VIEW],
   "/user-groups": [SYSTEM_PERMISSIONS.USER_GROUPS_VIEW],
+  "/user-groups/[id]": [SYSTEM_PERMISSIONS.USER_GROUPS_VIEW],
   "/settings/identity-providers": [SYSTEM_PERMISSIONS.IDENTITY_PROVIDERS_VIEW],
+  "/settings/identity-providers/create": [SYSTEM_PERMISSIONS.IDENTITY_PROVIDERS_CREATE],
+  "/settings/identity-providers/[id]": [SYSTEM_PERMISSIONS.IDENTITY_PROVIDERS_VIEW],
   "/settings/oauth-apps": [SYSTEM_PERMISSIONS.OAUTH_APPS_VIEW],
+  "/settings/oauth-apps/create": [SYSTEM_PERMISSIONS.OAUTH_APPS_CREATE],
+  "/settings/oauth-apps/[id]": [SYSTEM_PERMISSIONS.OAUTH_APPS_VIEW],
 
   // Monitoring & Analytics pages
   "/dashboard": [SYSTEM_PERMISSIONS.DASHBOARD_VIEW],
@@ -378,17 +396,24 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
 
   // Entitlements
   "/entitlements/editions": [SYSTEM_PERMISSIONS.EDITIONS_VIEW],
+  "/entitlements/editions/compare": [SYSTEM_PERMISSIONS.EDITIONS_VIEW],
+  "/entitlements/editions/[id]": [SYSTEM_PERMISSIONS.EDITIONS_VIEW],
   "/entitlements/features": [SYSTEM_PERMISSIONS.FEATURES_VIEW],
   "/entitlements/subscriptions": [SYSTEM_PERMISSIONS.SUBSCRIPTIONS_VIEW],
   "/entitlements/subscriptions/[tenantId]": [SYSTEM_PERMISSIONS.SUBSCRIPTIONS_VIEW],
   "/entitlements/overrides": [SYSTEM_PERMISSIONS.FEATURES_OVERRIDE],
+  "/entitlements/overrides/[tenantId]": [SYSTEM_PERMISSIONS.FEATURES_OVERRIDE],
   "/entitlements/invoices": [SYSTEM_PERMISSIONS.INVOICES_VIEW],
   "/entitlements/billing-dashboard": [SYSTEM_PERMISSIONS.BILLING_DASHBOARD_VIEW],
+  "/payment-gateways": [SYSTEM_PERMISSIONS.PAYMENT_GATEWAYS_MANAGE],
   "/entitlements/payouts": [SYSTEM_PERMISSIONS.BILLING_MANAGE],
   "/entitlements/tenant-plans": [SYSTEM_PERMISSIONS.TENANT_PLANS_VIEW],
   "/entitlements/tenant-plans/compare": [SYSTEM_PERMISSIONS.TENANT_PLANS_VIEW],
   "/entitlements/tenant-plans/[id]": [SYSTEM_PERMISSIONS.TENANT_PLANS_VIEW],
   "/entitlements/tenant-feature-definitions": [SYSTEM_PERMISSIONS.TENANT_FEATURE_DEFINITIONS_VIEW],
+  "/entitlements/tenant-feature-definitions/create": [SYSTEM_PERMISSIONS.TENANT_FEATURE_DEFINITIONS_CREATE],
+  "/entitlements/tenant-feature-definitions/[id]": [SYSTEM_PERMISSIONS.TENANT_FEATURE_DEFINITIONS_VIEW],
+  "/entitlements/tenant-feature-definitions/[id]/edit": [SYSTEM_PERMISSIONS.TENANT_FEATURE_DEFINITIONS_UPDATE],
   "/entitlements/user-subscriptions": [SYSTEM_PERMISSIONS.USER_SUBSCRIPTIONS_VIEW],
   "/my-subscription": [], // User self-service — any authenticated user
   "/my-stripe-account": [SYSTEM_PERMISSIONS.TENANT_STRIPE_CONNECT_VIEW],
@@ -398,7 +423,10 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/messaging/email-composer": [SYSTEM_PERMISSIONS.EMAILS_VIEW],
   "/messaging/notifications": [SYSTEM_PERMISSIONS.NOTIFICATIONS_VIEW],
   "/messaging/templates": [SYSTEM_PERMISSIONS.MESSAGE_TEMPLATES_VIEW],
+  "/messaging/templates/new": [SYSTEM_PERMISSIONS.MESSAGE_TEMPLATES_CREATE],
+  "/messaging/templates/[id]/edit": [SYSTEM_PERMISSIONS.MESSAGE_TEMPLATES_UPDATE],
   "/messaging/webhooks": [SYSTEM_PERMISSIONS.WEBHOOKS_VIEW],
+  "/messaging/webhooks/[id]": [SYSTEM_PERMISSIONS.WEBHOOKS_VIEW],
 
   // Ecosystem
   "/recycle-bin": [SYSTEM_PERMISSIONS.RECYCLE_BIN_VIEW],
@@ -412,4 +440,8 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
 
   // Revenue Analytics
   "/entitlements/analytics": [SYSTEM_PERMISSIONS.ANALYTICS_REVENUE_VIEW],
+
+  // Tenant Payment Gateways (Self-Service)
+  "/my-payment-methods": [SYSTEM_PERMISSIONS.TENANT_PAYMENT_GATEWAYS_VIEW],
 };
+

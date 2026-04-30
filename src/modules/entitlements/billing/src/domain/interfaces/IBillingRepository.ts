@@ -1,6 +1,7 @@
 import type { PagedResult } from "@modules/identity/core/domain/types";
 import type { Invoice, InvoiceListItem, PaymentTransaction, CheckoutSession, BillingPortal, PaymentLink } from "../entities/Invoice";
 import type { BillingDashboard } from "../entities/Invoice";
+import type { GatewayStatusModel, GatewayListResponseModel } from "./IBillingService";
 
 export interface IBillingRepository {
   // Queries
@@ -19,9 +20,10 @@ export interface IBillingRepository {
     generateQrCode?: boolean;
     sendToEmail?: string;
     tenantName?: string;
+    gatewayOverride?: string;
   }): Promise<CheckoutSession>;
   createBillingPortal(tenantId: string, returnUrl: string): Promise<BillingPortal>;
-  cancelStripeSubscription(tenantId: string, immediately: boolean): Promise<void>;
+  cancelGatewaySubscription(tenantId: string, immediately: boolean): Promise<void>;
 
   // Dashboard & Revenue
   getDashboard(params?: { currency?: string }): Promise<BillingDashboard>;
@@ -36,5 +38,7 @@ export interface IBillingRepository {
 
   // Email
   sendInvoiceEmail(invoiceId: string): Promise<void>;
-}
 
+  // Payment Gateway Management
+  getGateways(): Promise<GatewayListResponseModel>;
+}

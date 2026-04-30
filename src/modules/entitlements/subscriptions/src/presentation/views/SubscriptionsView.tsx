@@ -38,7 +38,7 @@ import { SuspendDialog } from "../components/SuspendDialog";
 import { CancelDialog } from "../components/CancelDialog";
 import { ConvertDialog } from "../components/ConvertDialog";
 import { CheckoutDialog } from "../components/CheckoutDialog";
-import { CancelStripeDialog } from "../components/CancelStripeDialog";
+import { CancelGatewayDialog } from "../components/CancelGatewayDialog";
 
 interface SubscriptionsViewProps {
   tenantId: string;
@@ -130,7 +130,7 @@ export function SubscriptionsView({ tenantId }: SubscriptionsViewProps) {
       <CancelDialog vm={vm} />
       <ConvertDialog vm={vm} editionsVm={editionsVm} />
       <CheckoutDialog vm={vm} />
-      <CancelStripeDialog vm={vm} />
+      <CancelGatewayDialog vm={vm} />
     </div>
   );
 }

@@ -6,10 +6,14 @@ export const en = {
     // ─── List Columns ────────────────────────────────────────
     url: "Endpoint URL",
     urlPlaceholder: "https://your-server.com/webhook",
-    includeChildren: "Include Children",
-    includeChildrenPlaceholder: "Include Children",
-    includeChildrenDesc:
-      "Receive events from this tenant and all descendant tenants (hierarchy scope)",
+    scopePlatformOnly: "Platform Events Only",
+    scopePlatformOnlyDesc: "System-wide events ignoring tenant actions",
+    scopeAllTenants: "All Tenants (Global)",
+    scopeAllTenantsDesc: "All events across the entire platform",
+    scopeTenantOnly: "This Tenant Only",
+    scopeTenantOnlyDesc: "Events strictly from this tenant",
+    scopeTenantWithChildren: "Tenant and Children",
+    scopeTenantWithChildrenDesc: "Events from this tenant and its descendants",
     description_field: "Description",
     descriptionPlaceholder: "e.g. Production order notifications",
     events: "Events",
@@ -27,9 +31,10 @@ export const en = {
     // ─── Scope ───────────────────────────────────────────────
     scope: {
       label: "Scope",
-      system: "System",
-      hierarchy: "Hierarchy",
-      tenant: "Tenant",
+      platformOnly: "Platform Only",
+      allTenants: "All Tenants",
+      tenantOnly: "Tenant Only",
+      tenantWithChildren: "Tenant + Children",
     },
 
     // ─── URL Validation ──────────────────────────────────────

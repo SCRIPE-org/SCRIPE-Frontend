@@ -21,6 +21,8 @@ import { UserSubscriptionService } from "./user-subscriptions/src/data/services/
 import { ConnectService } from "./stripe-connect/src/data/services/ConnectService";
 import { PlatformStripeService } from "./platform-stripe/src/data/services/PlatformStripeService";
 import { PlatformStripeRepository } from "./platform-stripe/src/data/repositories/PlatformStripeRepository";
+import { TenantGatewayService } from "./tenant-gateways/src/data/services/TenantGatewayService";
+import { TenantGatewayRepository } from "./tenant-gateways/src/data/repositories/TenantGatewayRepository";
 import { AnalyticsService } from "./analytics/src/data/services/AnalyticsService";
 
 // ── Repository Implementations ──
@@ -34,6 +36,8 @@ import { UserSubscriptionRepository } from "./user-subscriptions/src/data/reposi
 import { ConnectRepository } from "./stripe-connect/src/data/repositories/ConnectRepository";
 import { AnalyticsRepository } from "./analytics/src/data/repositories/AnalyticsRepository";
 
+// Tenant Gateways — no separate repository import needed (already imported above)
+
 // ── Repository Interfaces (exposed to consumers) ──
 import type { IFeatureRepository } from "./features/src/domain/interfaces/IFeatureRepository";
 import type { IEditionRepository } from "./editions/src/domain/interfaces/IEditionRepository";
@@ -45,6 +49,7 @@ import type { IUserSubscriptionRepository } from "./user-subscriptions/src/domai
 import type { IConnectRepository } from "./stripe-connect/src/domain/interfaces/IConnectRepository";
 import type { IPlatformStripeRepository } from "./platform-stripe/src/domain/interfaces/IPlatformStripeRepository";
 import type { IAnalyticsRepository } from "./analytics/src/domain/interfaces/IAnalyticsRepository";
+import type { ITenantGatewayRepository } from "./tenant-gateways/src/domain/interfaces/ITenantGatewayRepository";
 
 // ── Service Interfaces (used internally for DI wiring) ──
 import type { IFeatureService } from "./features/src/domain/interfaces/IFeatureService";
@@ -57,6 +62,7 @@ import type { IUserSubscriptionService } from "./user-subscriptions/src/domain/i
 import type { IConnectService } from "./stripe-connect/src/domain/interfaces/IConnectService";
 import type { IPlatformStripeService } from "./platform-stripe/src/domain/interfaces/IPlatformStripeService";
 import type { IAnalyticsService } from "./analytics/src/domain/interfaces/IAnalyticsService";
+import type { ITenantGatewayService } from "./tenant-gateways/src/domain/interfaces/ITenantGatewayService";
 
 export interface EntitlementsContainer {
       featureRepository: IFeatureRepository;
@@ -69,6 +75,7 @@ export interface EntitlementsContainer {
       connectRepository: IConnectRepository;
       platformStripeRepository: IPlatformStripeRepository;
       analyticsRepository: IAnalyticsRepository;
+      tenantGatewayRepository: ITenantGatewayRepository;
 }
 
 let _container: EntitlementsContainer | null = null;
@@ -91,6 +98,7 @@ export function getEntitlementsContainer(): EntitlementsContainer {
             const connectService: IConnectService = new ConnectService(apiService);
             const platformStripeService: IPlatformStripeService = new PlatformStripeService(apiService);
             const analyticsService: IAnalyticsService = new AnalyticsService(apiService);
+            const tenantGatewayService: ITenantGatewayService = new TenantGatewayService(apiService);
 
             // ── Create Repositories (IService → IRepository mapping) ──
             _container = {
@@ -104,6 +112,7 @@ export function getEntitlementsContainer(): EntitlementsContainer {
                   connectRepository: new ConnectRepository(connectService),
                   platformStripeRepository: new PlatformStripeRepository(platformStripeService),
                   analyticsRepository: new AnalyticsRepository(analyticsService),
+                  tenantGatewayRepository: new TenantGatewayRepository(tenantGatewayService),
             };
       }
 
@@ -143,5 +152,8 @@ export const entitlementsContainer = {
       },
       get analyticsRepository() {
             return getEntitlementsContainer().analyticsRepository;
+      },
+      get tenantGatewayRepository() {
+            return getEntitlementsContainer().tenantGatewayRepository;
       },
 };

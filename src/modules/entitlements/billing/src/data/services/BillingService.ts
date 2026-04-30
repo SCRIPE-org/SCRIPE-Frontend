@@ -3,7 +3,7 @@
  */
 import type { IApiService } from "@core/interfaces/api.interface";
 import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
-import type { IBillingService } from "../../domain/interfaces/IBillingService";
+import type { IBillingService, GatewayListResponseModel } from "../../domain/interfaces/IBillingService";
 import type {
   InvoiceResponseModel,
   InvoiceListResponseModel,
@@ -69,6 +69,7 @@ export class BillingService implements IBillingService {
       generateQrCode?: boolean;
       sendToEmail?: string;
       tenantName?: string;
+      gatewayOverride?: string;
     }
   ): Promise<CheckoutSessionResponseModel> {
     return this.api.post<CheckoutSessionResponseModel>(
@@ -87,12 +88,12 @@ export class BillingService implements IBillingService {
     );
   }
 
-  async cancelStripeSubscription(
+  async cancelGatewaySubscription(
     tenantId: string,
     immediately: boolean
   ): Promise<void> {
     await this.api.post(
-      API_ENDPOINTS.ENTITLEMENTS.BILLING.CANCEL_STRIPE(tenantId),
+      API_ENDPOINTS.ENTITLEMENTS.BILLING.CANCEL_GATEWAY(tenantId),
       { immediately }
     );
   }
@@ -132,5 +133,12 @@ export class BillingService implements IBillingService {
       {}
     );
   }
-}
 
+  // ── Payment Gateway Management ──
+
+  async getGateways(): Promise<GatewayListResponseModel> {
+    return this.api.get<GatewayListResponseModel>(
+      API_ENDPOINTS.ENTITLEMENTS.BILLING.GATEWAYS
+    );
+  }
+}

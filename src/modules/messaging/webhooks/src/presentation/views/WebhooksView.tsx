@@ -61,13 +61,14 @@ export function WebhooksView() {
                               label: t("webhooks.scope.label") || "Scope",
                               render: (_val: unknown, item: WebhookSubscriptionListItem) => {
                                     const scopeConfig: Record<string, { labelKey: string; fallback: string; variant: "default" | "secondary" | "outline"; className: string }> = {
-                                          system: { labelKey: "webhooks.scope.system", fallback: "System", variant: "default", className: "bg-blue-600 hover:bg-blue-700 text-white" },
-                                          hierarchy: { labelKey: "webhooks.scope.hierarchy", fallback: "Hierarchy", variant: "default", className: "bg-purple-600 hover:bg-purple-700 text-white" },
-                                          tenant: { labelKey: "webhooks.scope.tenant", fallback: "Tenant", variant: "secondary", className: "" },
+                                          platform_only: { labelKey: "webhooks.scope.platformOnly", fallback: "Platform Only", variant: "default", className: "bg-blue-600 hover:bg-blue-700 text-white" },
+                                          all_tenants: { labelKey: "webhooks.scope.allTenants", fallback: "All Tenants", variant: "default", className: "bg-purple-600 hover:bg-purple-700 text-white" },
+                                          tenant_with_children: { labelKey: "webhooks.scope.tenantWithChildren", fallback: "Tenant + Children", variant: "secondary", className: "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300" },
+                                          tenant_only: { labelKey: "webhooks.scope.tenantOnly", fallback: "Tenant Only", variant: "secondary", className: "" },
                                     };
-                                    const cfg = scopeConfig[item.scope] ?? scopeConfig.tenant;
+                                    const cfg = scopeConfig[item.scope] ?? scopeConfig.tenant_only;
                                     return (
-                                          <div className="flex flex-col gap-0.5">
+                                          <div className="flex flex-col gap-0.5 items-start">
                                                 <Badge variant={cfg.variant} className={`text-xs ${cfg.className}`}>
                                                       {t(cfg.labelKey) || cfg.fallback}
                                                 </Badge>

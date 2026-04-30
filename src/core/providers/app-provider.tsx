@@ -13,6 +13,7 @@ import { TenantContextProvider } from "@core/providers/tenant-context-provider";
 import { AuthRefreshProvider } from "@core/providers/auth-refresh-provider";
 import { EnhancedToaster } from "@core/ui/enhanced-toaster";
 import { ErrorBoundary } from "@core/ui/error-boundary";
+import { TooltipProvider } from "@core/ui/tooltip";
 
 // Lazy-load SignalR providers (~100KB @microsoft/signalr) — not needed for initial render
 const SignalRProvider = dynamic(() => import("@core/providers/signalr-provider").then(m => ({ default: m.SignalRProvider })), { ssr: false });
@@ -41,6 +42,7 @@ const queryClient = new QueryClient({
  * Provider order is important:
  * 1. QueryClientProvider - Server State (Must be outer layer)
  * 2. ThemeProvider - Must be outermost for theme context
+ * 2a. TooltipProvider - Global tooltip context (inside ThemeProvider for correct styling)
  * 3. ServiceProvider - Provides API services
  * 4. SettingsProvider - User preferences and settings
  * 5. I18nProvider - Internationalization (depends on settings)
@@ -62,6 +64,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         attribute="class"
         disableTransitionOnChange={false}
       >
+        <TooltipProvider>
         <ServiceProvider>
           <SettingsProvider>
             <I18nProvider>
@@ -84,6 +87,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
             </I18nProvider>
           </SettingsProvider>
         </ServiceProvider>
+        </TooltipProvider>
       </ThemeProvider>
     </QueryClientProvider>
   );

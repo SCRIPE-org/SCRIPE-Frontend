@@ -388,9 +388,14 @@ export const API_ENDPOINTS = {
       },
       CHECKOUT: (tenantId: string) => `${V1}/billing/tenants/${tenantId}/checkout`,
       PORTAL: (tenantId: string) => `${V1}/billing/tenants/${tenantId}/portal`,
-      CANCEL_STRIPE: (tenantId: string) => `${V1}/billing/tenants/${tenantId}/cancel-stripe`,
+      CANCEL_GATEWAY: (tenantId: string) => `${V1}/billing/tenants/${tenantId}/cancel-gateway`,
+      /** @deprecated Use CANCEL_GATEWAY instead */
+      CANCEL_STRIPE: (tenantId: string) => `${V1}/billing/tenants/${tenantId}/cancel-gateway`,
       PAYMENT_LINK: (tenantId: string) => `${V1}/billing/tenants/${tenantId}/payment-link`,
       DASHBOARD: `${V1}/billing/dashboard`,
+      // ── Payment Gateway Management ──
+      GATEWAYS: `${V1}/payment-gateways`,
+      GATEWAY_STATUS: (gateway: string) => `${V1}/payment-gateways/${gateway}`,
     },
     // ===== TENANT PLANS (Tier 2 — User-Level Subscriptions) =====
     TENANT_PLANS: {
@@ -477,6 +482,13 @@ export const API_ENDPOINTS = {
     // ===== SELF-SERVICE: My Tenant Subscription =====
     MY_SUBSCRIPTION: {
       GET: `${V1}/subscriptions/my-tenant`,
+    },
+    // ===== TENANT PAYMENT GATEWAYS (Tier 2 — self-service gateway config) =====
+    TENANT_GATEWAYS: {
+      LIST: `${V1}/tenant-gateways`,
+      CONFIGURE: `${V1}/tenant-gateways`,
+      VERIFY: (gatewayType: string) => `${V1}/tenant-gateways/${gatewayType}/verify`,
+      REMOVE: (gatewayType: string) => `${V1}/tenant-gateways/${gatewayType}`,
     },
   },
 

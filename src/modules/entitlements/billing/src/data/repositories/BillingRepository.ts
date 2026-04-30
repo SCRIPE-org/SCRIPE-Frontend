@@ -15,7 +15,7 @@ import type {
   PaymentLink,
 } from "../../domain/entities/Invoice";
 import { BillingDashboard } from "../../domain/entities/Invoice";
-import type { IBillingService } from "../../domain/interfaces/IBillingService";
+import type { IBillingService, GatewayListResponseModel } from "../../domain/interfaces/IBillingService";
 import { BillingMapper } from "../mappers/BillingMapper";
 
 export class BillingRepository implements IBillingRepository {
@@ -83,6 +83,7 @@ export class BillingRepository implements IBillingRepository {
       generateQrCode?: boolean;
       sendToEmail?: string;
       tenantName?: string;
+      gatewayOverride?: string;
     }
   ): Promise<CheckoutSession> {
     const result = await this.service.createCheckoutSession(tenantId, data);
@@ -94,8 +95,8 @@ export class BillingRepository implements IBillingRepository {
     return BillingMapper.toBillingPortal(result);
   }
 
-  async cancelStripeSubscription(tenantId: string, immediately: boolean): Promise<void> {
-    await this.service.cancelStripeSubscription(tenantId, immediately);
+  async cancelGatewaySubscription(tenantId: string, immediately: boolean): Promise<void> {
+    await this.service.cancelGatewaySubscription(tenantId, immediately);
   }
 
   // ── Dashboard & Revenue ──
@@ -124,5 +125,10 @@ export class BillingRepository implements IBillingRepository {
   async sendInvoiceEmail(invoiceId: string): Promise<void> {
     await this.service.sendInvoiceEmail(invoiceId);
   }
-}
 
+  // ── Payment Gateway Management ──
+
+  async getGateways(): Promise<GatewayListResponseModel> {
+    return this.service.getGateways();
+  }
+}

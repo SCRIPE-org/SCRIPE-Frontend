@@ -1,8 +1,8 @@
 /**
- * Cancel Stripe Subscription Dialog
+ * Cancel Gateway Subscription Dialog
  *
- * Allows admins to cancel a Stripe subscription with options
- * for immediate or end-of-period cancellation.
+ * Allows admins to cancel a gateway subscription (Stripe, PayPal, Paymob)
+ * with options for immediate or end-of-period cancellation.
  */
 "use client";
 
@@ -17,16 +17,16 @@ import { RadioGroup, RadioGroupItem } from "@core/ui/radio-group";
 import { XSquare } from "lucide-react";
 import type { SubscriptionDialogProps } from "../types";
 
-export function CancelStripeDialog({ vm }: SubscriptionDialogProps) {
+export function CancelGatewayDialog({ vm }: SubscriptionDialogProps) {
   const { t } = useI18n();
 
   return (
-    <Dialog open={vm.showCancelStripeDialog} onOpenChange={vm.setShowCancelStripeDialog}>
+    <Dialog open={vm.showCancelGatewayDialog} onOpenChange={vm.setShowCancelGatewayDialog}>
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-destructive">
             <XSquare className="h-5 w-5" />
-            {t("billing.dialogs.cancelTitle") || "Cancel Stripe Subscription"}
+            {t("billing.dialogs.cancelTitle") || "Cancel Subscription"}
           </DialogTitle>
           <DialogDescription>
             {t("billing.dialogs.cancelDescription") || "Choose how you want to cancel."}
@@ -54,15 +54,15 @@ export function CancelStripeDialog({ vm }: SubscriptionDialogProps) {
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => vm.setShowCancelStripeDialog(false)}>
+          <Button variant="outline" onClick={() => vm.setShowCancelGatewayDialog(false)}>
             {t("common.cancel")}
           </Button>
           <Button
             variant="destructive"
-            onClick={vm.submitCancelStripe}
-            loading={vm.isCancelingStripe}
+            onClick={vm.submitCancelGateway}
+            loading={vm.isCancelingGateway}
           >
-            {t("billing.actions.cancelStripe") || "Cancel Stripe"}
+            {t("billing.actions.cancelGateway") || "Cancel Subscription"}
           </Button>
         </DialogFooter>
       </DialogContent>

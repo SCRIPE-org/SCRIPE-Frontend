@@ -175,7 +175,7 @@ export function HeroActions({ sub, vm, t }: HeroActionsProps) {
             {hasGatewaySub && (
               <DropdownMenuItem
                 className="text-destructive cursor-pointer"
-                onClick={() => vm.setShowCancelStripeDialog(true)}
+                onClick={() => vm.setShowCancelGatewayDialog(true)}
               >
                 <XSquare className="h-4 w-4 me-2" />
                 {t("billing.actions.cancelGateway") || `Cancel via ${sub.paymentGateway || 'Gateway'}`}

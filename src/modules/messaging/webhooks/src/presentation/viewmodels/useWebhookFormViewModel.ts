@@ -10,6 +10,7 @@ import { messagingContainer } from "@modules/messaging/di";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import { useAppStore } from "@core/store/useAppStore";
 import { webhookKeys } from "./useWebhooksViewModel";
 import type {
       WebhookSubscription,
@@ -35,12 +36,14 @@ export function useWebhookFormViewModel({
       const { t } = useI18n();
       const queryClient = useQueryClient();
       const { success, error: toastError } = useEnhancedToast();
+      const { user } = useAppStore();
+      const isPlatformScope = user?.tenantId === null;
 
       // ─── Form state ──────────────────────────────────────────
       const [url, setUrl] = useState("");
       const [description, setDescription] = useState("");
       const [selectedEvents, setSelectedEvents] = useState<string[]>([]);
-      const [includeChildren, setIncludeChildren] = useState(false);
+      const [scope, setScope] = useState<string>(isPlatformScope ? "platform_only" : "tenant_only");
       const [maxRetries, setMaxRetries] = useState(3);
       const [maxConsecutiveFailures, setMaxConsecutiveFailures] = useState(10);
 
@@ -51,7 +54,7 @@ export function useWebhookFormViewModel({
             setUrl(webhook.url);
             setDescription(webhook.description || "");
             setSelectedEvents(webhook.events || []);
-            setIncludeChildren(webhook.includeChildren);
+            setScope(webhook.scope || (isPlatformScope ? "platform_only" : "tenant_only"));
             setMaxRetries(webhook.maxRetries);
             setMaxConsecutiveFailures(webhook.maxConsecutiveFailures);
       }
@@ -149,7 +152,7 @@ export function useWebhookFormViewModel({
                         url,
                         description: description || undefined,
                         events: selectedEvents,
-                        includeChildren,
+                        scope,
                         maxRetries,
                         maxConsecutiveFailures,
                   });
@@ -158,7 +161,7 @@ export function useWebhookFormViewModel({
                         url: url || undefined,
                         description: description || undefined,
                         events: selectedEvents.length > 0 ? selectedEvents : undefined,
-                        includeChildren,
+                        scope,
                         maxRetries,
                         maxConsecutiveFailures,
                   });
@@ -193,8 +196,9 @@ export function useWebhookFormViewModel({
             setMaxRetries,
             maxConsecutiveFailures,
             setMaxConsecutiveFailures,
-            includeChildren,
-            setIncludeChildren,
+            scope,
+            setScope,
+            isPlatformScope,
 
             // Event catalog
             availableEvents: availableEvents ?? [],

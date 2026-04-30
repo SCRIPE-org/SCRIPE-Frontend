@@ -44,10 +44,11 @@ export interface IBillingService {
                   generateQrCode?: boolean;
                   sendToEmail?: string;
                   tenantName?: string;
+                  gatewayOverride?: string;
             }
       ): Promise<CheckoutSessionResponseModel>;
       createBillingPortal(tenantId: string, returnUrl: string): Promise<BillingPortalResponseModel>;
-      cancelStripeSubscription(tenantId: string, immediately: boolean): Promise<void>;
+      cancelGatewaySubscription(tenantId: string, immediately: boolean): Promise<void>;
 
       // ── Dashboard & Revenue ──
       getDashboard(params?: { currency?: string }): Promise<BillingDashboardResponseModel>;
@@ -61,5 +62,22 @@ export interface IBillingService {
 
       // ── Email ──
       sendInvoiceEmail(invoiceId: string): Promise<void>;
+
+      // ── Payment Gateway Management ──
+      getGateways(): Promise<GatewayListResponseModel>;
 }
 
+// ── Gateway Models ──
+export interface GatewayStatusModel {
+      gateway: string;
+      enabled: boolean;
+      isDefault: boolean;
+      supportsRecurring: boolean;
+      supportsBillingPortal: boolean;
+      supportedFeatures: string[];
+}
+
+export interface GatewayListResponseModel {
+      defaultGateway: string;
+      gateways: GatewayStatusModel[];
+}

@@ -124,7 +124,7 @@ export function StripeCard({ sub, vm, t }: StripeCardProps) {
                   variant="outline"
                   size="sm"
                   className="w-full gap-2 text-destructive border-destructive/30 hover:bg-destructive/10 cursor-pointer"
-                  onClick={() => vm.setShowCancelStripeDialog(true)}
+                  onClick={() => vm.setShowCancelGatewayDialog(true)}
                 >
                   <XSquare className="h-3.5 w-3.5" />
                   {t("billing.actions.cancelGateway") || `Cancel ${sub.paymentGateway || 'Gateway'} Subscription`}

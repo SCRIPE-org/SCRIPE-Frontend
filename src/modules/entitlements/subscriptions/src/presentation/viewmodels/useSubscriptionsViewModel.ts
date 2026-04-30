@@ -31,7 +31,7 @@ export function useSubscriptionsViewModel(tenantId: string) {
       const [showConvertDialog, setShowConvertDialog] = useState(false);
       // ── Billing dialog state ──
       const [showCheckoutDialog, setShowCheckoutDialog] = useState(false);
-      const [showCancelStripeDialog, setShowCancelStripeDialog] = useState(false);
+      const [showCancelGatewayDialog, setShowCancelGatewayDialog] = useState(false);
       const [checkoutUrl, setCheckoutUrl] = useState("");
       const [checkoutQrCode, setCheckoutQrCode] = useState<string | null>(null);
       const [checkoutEmailSent, setCheckoutEmailSent] = useState(false);
@@ -350,13 +350,13 @@ export function useSubscriptionsViewModel(tenantId: string) {
                   showError({ title: t("common.error"), description: err.message }),
       });
 
-      const cancelStripeMutation = useMutation({
+      const cancelGatewayMutation = useMutation({
             mutationFn: async (immediately: boolean) => {
-                  await billingRepository.cancelStripeSubscription(tenantId, immediately);
+                  await billingRepository.cancelGatewaySubscription(tenantId, immediately);
             },
             onSuccess: () => {
                   invalidate();
-                  setShowCancelStripeDialog(false);
+                  setShowCancelGatewayDialog(false);
                   setCancelImmediately(false);
                   success({ title: t("billing.cancelSuccess"), description: "" });
             },
@@ -364,9 +364,9 @@ export function useSubscriptionsViewModel(tenantId: string) {
                   showError({ title: t("common.error"), description: err.message }),
       });
 
-      const submitCancelStripe = useCallback(() => {
-            cancelStripeMutation.mutate(cancelImmediately);
-      }, [cancelStripeMutation, cancelImmediately]);
+      const submitCancelGateway = useCallback(() => {
+            cancelGatewayMutation.mutate(cancelImmediately);
+      }, [cancelGatewayMutation, cancelImmediately]);
 
       // ─── Public interface ───────────────────────────────
       return {
@@ -470,12 +470,12 @@ export function useSubscriptionsViewModel(tenantId: string) {
             isSendingPaymentLink: checkoutMutation.isPending,
             openBillingPortal: () => portalMutation.mutate(),
             isOpeningPortal: portalMutation.isPending,
-            submitCancelStripe,
-            isCancelingStripe: cancelStripeMutation.isPending,
+            submitCancelGateway,
+            isCancelingGateway: cancelGatewayMutation.isPending,
 
             // Billing dialog state
             showCheckoutDialog, setShowCheckoutDialog,
-            showCancelStripeDialog, setShowCancelStripeDialog,
+            showCancelGatewayDialog, setShowCancelGatewayDialog,
             checkoutUrl,
             checkoutQrCode,
             checkoutEmailSent,

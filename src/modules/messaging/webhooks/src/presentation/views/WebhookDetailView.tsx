@@ -356,6 +356,14 @@ export function WebhookDetailView({ webhookId }: WebhookDetailViewProps) {
                                                                   {webhook.lastDeliveryStatus || "—"}
                                                             </p>
                                                       </div>
+                                                      <div>
+                                                            <p className="text-xs text-muted-foreground mb-1">
+                                                                  {t("webhooks.scope.label") || "Scope"}
+                                                            </p>
+                                                            <Badge variant="outline" className="text-xs">
+                                                                  {webhook.scopeLabel || webhook.scope}
+                                                            </Badge>
+                                                      </div>
                                                 </div>
                                           </CardContent>
                                     </Card>

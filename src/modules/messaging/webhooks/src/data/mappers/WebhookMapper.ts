@@ -49,7 +49,6 @@ export class WebhookMapper {
                   scope: model.scope,
                   tenantId: model.tenantId,
                   tenantName: model.tenantName,
-                  includeChildren: model.includeChildren,
                   url: model.url,
                   description: model.description,
                   events: model.events,
@@ -89,7 +88,6 @@ export class WebhookMapper {
                   id: model.id,
                   scope: model.scope,
                   tenantName: model.tenantName,
-                  includeChildren: model.includeChildren,
                   url: model.url,
                   description: model.description,
                   events: model.events,
@@ -213,7 +211,7 @@ export class WebhookMapper {
                   request.url,
                   request.events,
                   request.description,
-                  request.includeChildren,
+                  request.scope,
                   request.maxRetries,
                   request.maxConsecutiveFailures
             );
@@ -227,7 +225,7 @@ export class WebhookMapper {
                   request.url,
                   request.description,
                   request.events,
-                  request.includeChildren,
+                  request.scope,
                   request.maxRetries,
                   request.maxConsecutiveFailures
             );
