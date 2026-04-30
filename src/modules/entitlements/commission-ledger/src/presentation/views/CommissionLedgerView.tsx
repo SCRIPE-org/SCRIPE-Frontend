@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
 import { Button } from "@core/ui/button";
 import { RefreshCw, XCircle } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
+import type { CommissionInvoice } from "../../domain/entities/CommissionInvoice";
 
 export function CommissionLedgerView() {
   const { t } = useI18n();
@@ -16,7 +17,7 @@ export function CommissionLedgerView() {
     if (col.key === "actions") {
       return {
         ...col,
-        render: (value: any, invoice: any) => {
+        render: (value: unknown, invoice: CommissionInvoice) => {
           if (invoice.status === "Paid" || invoice.status === "Waived") return null;
 
           return (
@@ -70,7 +71,7 @@ export function CommissionLedgerView() {
               items: vm.ledgerTable.items,
               loading: vm.ledgerTable.isLoading,
             }}
-            columns={vm.ledgerTable.columns as any}
+            columns={vm.ledgerTable.columns}
             pagination={{
               page: vm.ledgerTable.pagination.page,
               pageSize: vm.ledgerTable.pagination.pageSize,
@@ -79,8 +80,11 @@ export function CommissionLedgerView() {
               onPageChange: vm.ledgerTable.pagination.onPageChange,
             }}
             config={{
+              titleKey: "",
+              subtitleKey: "",
+              columns: vm.ledgerTable.columns,
               hideAddButton: true,
-            } as any}
+            }}
           />
         </TabsContent>
         <TabsContent value="invoices" className="mt-4">
@@ -89,7 +93,7 @@ export function CommissionLedgerView() {
               items: vm.invoiceTable.items,
               loading: vm.invoiceTable.isLoading,
             }}
-            columns={invoiceColumnsWithActions as any}
+            columns={invoiceColumnsWithActions}
             pagination={{
               page: vm.invoiceTable.pagination.page,
               pageSize: vm.invoiceTable.pagination.pageSize,
@@ -98,8 +102,11 @@ export function CommissionLedgerView() {
               onPageChange: vm.invoiceTable.pagination.onPageChange,
             }}
             config={{
+              titleKey: "",
+              subtitleKey: "",
+              columns: invoiceColumnsWithActions,
               hideAddButton: true,
-            } as any}
+            }}
           />
         </TabsContent>
       </Tabs>

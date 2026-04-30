@@ -97,7 +97,7 @@ export function usePaymentGatewaysViewModel() {
     onSuccess: (res) => {
       success({ title: t("billing.gateways.testSuccess"), description: res.message });
     },
-    onError: (err: any) => {
+    onError: (err: Error & { response?: { data?: { error?: string } } }) => {
       const errorMessage = err.response?.data?.error || err.message;
       showError({ title: t("billing.gateways.testFailed"), description: errorMessage });
     },
@@ -106,7 +106,7 @@ export function usePaymentGatewaysViewModel() {
   const toggleStatusMutation = useMutation({
     mutationFn: ({ gateway, enabled }: { gateway: string; enabled: boolean }) => 
       billingRepository.toggleGatewayStatus(gateway, enabled),
-    onSuccess: (res: any) => {
+    onSuccess: (res: { actionRequired?: string; message: string }) => {
       if (res.actionRequired === "config_change") {
         showError({ 
           title: t("billing.gateways.configRequired") || "Configuration Required", 
@@ -117,7 +117,7 @@ export function usePaymentGatewaysViewModel() {
         refetch();
       }
     },
-    onError: (err: any) => {
+    onError: (err: Error & { response?: { data?: { error?: string } } }) => {
       const errorMessage = err.response?.data?.error || err.message;
       showError({ title: t("billing.gateways.toggleFailed"), description: errorMessage });
     },

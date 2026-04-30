@@ -2,16 +2,17 @@ import { IApiService } from "@core/interfaces/api.interface";
 import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
 import { CommissionLedgerEntryModel, CommissionInvoiceModel, PagedResultModel } from "../models/CommissionModels";
 import type { ICommissionLedgerService } from "../../domain/interfaces/ICommissionLedgerService";
+import type { CommissionListParams } from "../../domain/interfaces/ICommissionLedgerRepository";
 
 export class CommissionLedgerService implements ICommissionLedgerService {
   constructor(private readonly api: IApiService) {}
 
-  async getLedgers(params: any): Promise<PagedResultModel<CommissionLedgerEntryModel>> {
+  async getLedgers(params: CommissionListParams): Promise<PagedResultModel<CommissionLedgerEntryModel>> {
     const url = buildUrl(API_ENDPOINTS.ENTITLEMENTS.STRIPE_CONNECT.COMMISSION_LEDGER.LIST, params);
     return this.api.get<PagedResultModel<CommissionLedgerEntryModel>>(url);
   }
 
-  async getInvoices(params: any): Promise<PagedResultModel<CommissionInvoiceModel>> {
+  async getInvoices(params: CommissionListParams): Promise<PagedResultModel<CommissionInvoiceModel>> {
     const url = buildUrl(API_ENDPOINTS.ENTITLEMENTS.STRIPE_CONNECT.COMMISSION_INVOICES.LIST, params);
     return this.api.get<PagedResultModel<CommissionInvoiceModel>>(url);
   }

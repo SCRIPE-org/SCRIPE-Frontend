@@ -163,7 +163,7 @@ export function TenantPlanComparisonView() {
               type="single"
               value={selectedCycle}
               onValueChange={(val) => {
-                if (val) setSelectedCycle(val as any);
+                if (val === "Monthly" || val === "Yearly" || val === "Lifetime") setSelectedCycle(val);
               }}
               className="bg-muted/50 p-1 rounded-full border border-border/40"
             >

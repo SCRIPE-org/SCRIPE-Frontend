@@ -5,8 +5,12 @@ import { Button } from "@core/ui/button";
 import { CreditCard, Wallet } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 
+export interface GatewayOption {
+  gateway: string;
+}
+
 interface GatewaySelectionStepProps {
-  gateways: any[];
+  gateways: GatewayOption[];
   onSelect: (gatewayType: string) => void;
 }
 

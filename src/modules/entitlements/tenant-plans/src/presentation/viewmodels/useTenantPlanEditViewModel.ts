@@ -94,7 +94,7 @@ export function useTenantPlanEditViewModel(planId: string) {
       });
       router.push(`/entitlements/tenant-plans/${planId}`);
     },
-    onError: (err: any) => {
+    onError: (err: Error) => {
       showError({
         title: t("common.error") || "Error",
         description: err?.message || "Failed to update plan.",

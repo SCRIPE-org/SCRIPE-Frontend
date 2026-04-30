@@ -36,7 +36,7 @@ export function useCommissionLedgerViewModel() {
       toast({ title: t("common.success") || "Success", description: t("entitlements.commissionLedger.waived") || "Invoice waived successfully" });
       queryClient.invalidateQueries({ queryKey: ["commission-invoices"] });
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast({ title: t("common.error") || "Error", description: error.message, variant: "destructive" });
     },
   });
@@ -47,7 +47,7 @@ export function useCommissionLedgerViewModel() {
       toast({ title: t("common.success") || "Success", description: t("entitlements.commissionLedger.retryScheduled") || "Charge retry scheduled" });
       queryClient.invalidateQueries({ queryKey: ["commission-invoices"] });
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast({ title: t("common.error") || "Error", description: error.message, variant: "destructive" });
     },
   });

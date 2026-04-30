@@ -4,6 +4,7 @@ import { useCommissionLedgerViewModel } from "../viewmodels/useCommissionLedgerV
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
+import type { CommissionInvoice } from "../../domain/entities/CommissionInvoice";
 
 export function CommissionInvoicesView() {
   const { t } = useI18n();
@@ -14,7 +15,7 @@ export function CommissionInvoicesView() {
     if (col.key === "actions") {
       return {
         ...col,
-        render: (value: any, invoice: any) => {
+        render: (value: unknown, invoice: CommissionInvoice) => {
           if (invoice.status === "Paid" || invoice.status === "Waived") return null;
 
           return (
@@ -51,7 +52,7 @@ export function CommissionInvoicesView() {
           items: vm.invoiceTable.items,
           loading: vm.invoiceTable.isLoading,
         }}
-        columns={invoiceColumnsWithActions as any}
+        columns={invoiceColumnsWithActions}
         pagination={{
           page: vm.invoiceTable.pagination.page,
           pageSize: vm.invoiceTable.pagination.pageSize,
@@ -60,8 +61,11 @@ export function CommissionInvoicesView() {
           onPageChange: vm.invoiceTable.pagination.onPageChange,
         }}
         config={{
+          titleKey: "",
+          subtitleKey: "",
+          columns: invoiceColumnsWithActions,
           hideAddButton: true,
-        } as any}
+        }}
       />
     </div>
   );

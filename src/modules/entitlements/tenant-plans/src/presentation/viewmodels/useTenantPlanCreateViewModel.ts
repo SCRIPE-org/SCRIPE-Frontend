@@ -72,7 +72,7 @@ export function useTenantPlanCreateViewModel() {
       });
       router.push(`/entitlements/tenant-plans/${newPlanId}`);
     },
-    onError: (err: any) => {
+    onError: (err: Error) => {
       showError({
         title: t("common.error") || "Error",
         description: err?.message || "Failed to create plan.",
