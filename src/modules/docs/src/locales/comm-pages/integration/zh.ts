@@ -87,7 +87,7 @@ export const zh = {
       resultContent: "NEXORA 通过统一的 Result 模式消除了 try-catch 嵌套地狱。每个 API 响应都有严格的类型约束并在数学上可预测，确保无论访问哪个模块，消费者都能收到包装了相同 JSON 响应结构的标准 HTTP 状态码。",
       resultTitle: "可预测的 Result 模式",
       statusCodesTitle: "语义化状态码",
-      swaggerContent: "探索实时 Swagger/OpenAPI 3.0 文档，即刻与 380 个以上的预配置端点进行交互。我们生成严格的 OpenAPI 规范，从而为前端和移动平台实现无缝的 SDK 生成。",
+      swaggerContent: "探索实时 Swagger/OpenAPI 3.0 文档，即刻与 400 个以上的预配置端点进行交互。我们生成严格的 OpenAPI 规范，从而为前端和移动平台实现无缝的 SDK 生成。",
       swaggerTitle: "交互式 Swagger UI",
       title: "API 设计与架构"
     },

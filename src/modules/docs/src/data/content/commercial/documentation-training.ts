@@ -12,7 +12,7 @@ const sections: DocSection[] = [
             headers: ["Documentation Type", "Coverage", "Format"],
             rows: [
                   ["Technical docs", "100+ pages, full architecture guide", "Interactive web portal"],
-                  ["API reference", "All 380+ endpoints documented", "Swagger/OpenAPI + web portal"],
+                  ["API reference", "All 400+ endpoints documented", "Swagger/OpenAPI + web portal"],
                   ["Commercial docs", "40+ pages, platform overview", "Interactive web portal"],
                   ["Inline code docs", "JSDoc + XML comments on all public APIs", "IDE tooltips"],
                   ["Architecture diagrams", "Module dependencies, data flow, deployment", "Mermaid + ASCII"],

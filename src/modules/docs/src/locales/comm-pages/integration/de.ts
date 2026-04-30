@@ -87,7 +87,7 @@ export const de = {
       resultContent: "NEXORA eliminiert die try-catch-Hölle durch ein einheitliches Result-Pattern. Jede API-Antwort ist streng typisiert und mathematisch vorhersehbar, sodass Verbraucher standardisierte HTTP-Statuscodes erhalten, die eine identische JSON-Antwortstruktur umschließen, unabhängig davon, auf welches Modul zugegriffen wird.",
       resultTitle: "Vorhersehbares Result-Pattern",
       statusCodesTitle: "Semantische Statuscodes",
-      swaggerContent: "Erkunden Sie die Live-Swagger/OpenAPI 3.0-Dokumentation, um sofort mit über 380 vorkonfigurierten Endpunkten zu interagieren. Wir generieren strenge OpenAPI-Spezifikationen, die eine nahtlose SDK-Generierung für Frontend- und Mobile-Plattformen ermöglichen.",
+      swaggerContent: "Erkunden Sie die Live-Swagger/OpenAPI 3.0-Dokumentation, um sofort mit über 400 vorkonfigurierten Endpunkten zu interagieren. Wir generieren strenge OpenAPI-Spezifikationen, die eine nahtlose SDK-Generierung für Frontend- und Mobile-Plattformen ermöglichen.",
       swaggerTitle: "Interaktive Swagger-UI",
       title: "API-Design & Architektur"
     },
