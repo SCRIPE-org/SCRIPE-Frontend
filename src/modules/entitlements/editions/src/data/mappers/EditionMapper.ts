@@ -24,6 +24,7 @@ export class EditionMapper {
       createdByTenantId: model.createdByTenantId,
       featureCount: model.featureCount,
       features: model.features,
+      prices: model.prices ?? [],
       fallbackEditionId: model.fallbackEditionId,
       fallbackEditionName: model.fallbackEditionName,
       overflowPolicy: model.overflowPolicy,

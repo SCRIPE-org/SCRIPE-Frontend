@@ -15,9 +15,10 @@ import { useEditionDetailViewModel } from "../viewmodels/useEditionDetailViewMod
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import {
-  ArrowLeft, Loader2, Zap, GitBranch, DollarSign, Tag,
+  ArrowLeft, Loader2, Zap, GitBranch, DollarSign, Tag, Settings2,
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 
 // ── Extracted Tab Components ──
@@ -35,6 +36,7 @@ export function EditionDetailView({ editionId }: EditionDetailViewProps) {
   useModuleLocales(() => import("../../../locales"), "editions");
   const { t, language } = useI18n();
   const vm = useEditionDetailViewModel(editionId);
+  const router = useRouter();
 
   const [activeTab, setActiveTab] = useState<"features" | "pricing" | "versions" | "promotions">("features");
 
@@ -101,6 +103,16 @@ export function EditionDetailView({ editionId }: EditionDetailViewProps) {
             {edition.description || t("entitlements.editions.manageFeaturesDescription")}
           </p>
         </div>
+        {/* Edit Settings button — routes to wizard */}
+        <Button
+          variant="outline"
+          size="sm"
+          className="gap-1.5 shrink-0"
+          onClick={() => router.push(`/entitlements/editions/${editionId}/edit`)}
+        >
+          <Settings2 className="h-4 w-4" />
+          Edit Settings
+        </Button>
       </div>
 
       {/* ─────── TAB NAVIGATION ─────── */}

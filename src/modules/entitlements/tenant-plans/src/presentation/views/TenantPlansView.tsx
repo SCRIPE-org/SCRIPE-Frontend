@@ -48,6 +48,13 @@ export function TenantPlansView() {
       resource: "tenant_plans",
       customActions: [
         {
+          label: t("entitlements.tenantPlans.createPlan") || "Create Plan",
+          onClick: async () => {
+            router.push("/entitlements/tenant-plans/create");
+          },
+          variant: "default" as const,
+        },
+        {
           label: t("entitlements.tenantPlans.comparison.heroTitle") || "Compare Plans",
           onClick: async () => {
             router.push("/entitlements/tenant-plans/compare");
@@ -152,201 +159,6 @@ export function TenantPlansView() {
             value ? format(new Date(value), "MMM d, yyyy") : "-",
         },
       ],
-      createFields: [
-        {
-          name: "name",
-          label: t("entitlements.tenantPlans.planName") || "Plan Name",
-          type: "text" as const,
-          required: true,
-          placeholder: t("entitlements.tenantPlans.namePlaceholder") || "e.g. Gold, Premium, Enterprise",
-        },
-        {
-          name: "displayNameEn",
-          label: t("entitlements.tenantPlans.displayNameEn") || "Display Name (EN)",
-          type: "text" as const,
-          placeholder: t("entitlements.tenantPlans.displayNameEnPlaceholder") || "Customer-facing name in English",
-        },
-        {
-          name: "displayNameAr",
-          label: t("entitlements.tenantPlans.displayNameAr") || "Display Name (AR)",
-          type: "text" as const,
-          placeholder: t("entitlements.tenantPlans.displayNameArPlaceholder") || "اسم العرض بالعربية",
-        },
-        {
-          name: "description",
-          label: t("common.description") || "Description",
-          type: "textarea" as const,
-          placeholder: t("entitlements.tenantPlans.descriptionPlaceholder") || "Brief description of this plan...",
-        },
-        {
-          name: "tagline",
-          label: t("entitlements.tenantPlans.tagline") || "Tagline",
-          type: "text" as const,
-          placeholder: t("entitlements.tenantPlans.taglinePlaceholder") || "Short marketing tagline",
-        },
-        {
-          name: "isPublic",
-          label: t("entitlements.tenantPlans.isPublic") || "Publicly Visible",
-          type: "switch" as const,
-          defaultValue: true,
-        },
-        {
-          name: "allowMonthly",
-          label: t("entitlements.tenantPlans.allowMonthly") || "Allow Monthly Billing",
-          type: "switch" as const,
-          defaultValue: true,
-        },
-        {
-          name: "allowYearly",
-          label: t("entitlements.tenantPlans.allowYearly") || "Allow Yearly Billing",
-          type: "switch" as const,
-          defaultValue: false,
-        },
-        {
-          name: "allowLifetime",
-          label: t("entitlements.tenantPlans.allowLifetime") || "Allow Lifetime Purchase",
-          type: "switch" as const,
-          defaultValue: false,
-        },
-        {
-          name: "allowTrial",
-          label: t("entitlements.tenantPlans.allowTrial") || "Allow Trial",
-          type: "switch" as const,
-          defaultValue: false,
-        },
-        {
-          name: "trialDays",
-          label: t("entitlements.tenantPlans.trialDays") || "Trial Days",
-          type: "number" as const,
-          min: 0,
-          max: 365,
-          defaultValue: 0,
-          placeholder: "0",
-        },
-        {
-          name: "maxUsers",
-          label: t("entitlements.tenantPlans.maxUsers") || "Max Users (-1 = Unlimited)",
-          type: "number" as const,
-          min: -1,
-          defaultValue: -1,
-          placeholder: "-1",
-        },
-        {
-          name: "tierLevel",
-          label: t("entitlements.tenantPlans.tier") || "Tier Level",
-          type: "number" as const,
-          min: 0,
-          defaultValue: 0,
-        },
-        {
-          name: "sortOrder",
-          label: t("entitlements.tenantPlans.sortOrder") || "Sort Order",
-          type: "number" as const,
-          min: 0,
-          defaultValue: 0,
-          placeholder: "0",
-        },
-      ],
-      editFields: () => [
-        {
-          name: "name",
-          label: t("entitlements.tenantPlans.planName") || "Plan Name",
-          type: "text" as const,
-          required: true,
-        },
-        {
-          name: "displayNameEn",
-          label: t("entitlements.tenantPlans.displayNameEn") || "Display Name (EN)",
-          type: "text" as const,
-        },
-        {
-          name: "displayNameAr",
-          label: t("entitlements.tenantPlans.displayNameAr") || "Display Name (AR)",
-          type: "text" as const,
-        },
-        {
-          name: "description",
-          label: t("common.description") || "Description",
-          type: "textarea" as const,
-        },
-        {
-          name: "tagline",
-          label: t("entitlements.tenantPlans.tagline") || "Tagline",
-          type: "text" as const,
-        },
-        {
-          name: "isActive",
-          label: t("common.active") || "Active",
-          type: "switch" as const,
-        },
-        {
-          name: "isPublic",
-          label: t("entitlements.tenantPlans.isPublic") || "Publicly Visible",
-          type: "switch" as const,
-        },
-        {
-          name: "allowMonthly",
-          label: t("entitlements.tenantPlans.allowMonthly") || "Allow Monthly",
-          type: "switch" as const,
-        },
-        {
-          name: "allowYearly",
-          label: t("entitlements.tenantPlans.allowYearly") || "Allow Yearly",
-          type: "switch" as const,
-        },
-        {
-          name: "allowLifetime",
-          label: t("entitlements.tenantPlans.allowLifetime") || "Allow Lifetime",
-          type: "switch" as const,
-        },
-        {
-          name: "allowTrial",
-          label: t("entitlements.tenantPlans.allowTrial") || "Allow Trial",
-          type: "switch" as const,
-        },
-        {
-          name: "trialDays",
-          label: t("entitlements.tenantPlans.trialDays") || "Trial Days",
-          type: "number" as const,
-          min: 0,
-          max: 365,
-        },
-        {
-          name: "maxUsers",
-          label: t("entitlements.tenantPlans.maxUsers") || "Max Users (-1 = Unlimited)",
-          type: "number" as const,
-          min: -1,
-        },
-        {
-          name: "tierLevel",
-          label: t("entitlements.tenantPlans.tier") || "Tier Level",
-          type: "number" as const,
-          min: 0,
-        },
-        {
-          name: "sortOrder",
-          label: t("entitlements.tenantPlans.sortOrder") || "Sort Order",
-          type: "number" as const,
-          min: 0,
-        },
-      ],
-      editInitialValues: (plan: TenantPlan) => ({
-        name: plan.name,
-        displayNameEn: plan.displayNameEn || "",
-        displayNameAr: plan.displayNameAr || "",
-        description: plan.description || "",
-        tagline: plan.tagline || "",
-        isActive: plan.isActive,
-        isPublic: plan.isPublic,
-        allowMonthly: plan.allowMonthly,
-        allowYearly: plan.allowYearly,
-        allowLifetime: plan.allowLifetime,
-        allowTrial: plan.allowTrial,
-        trialDays: plan.trialDays,
-        maxUsers: plan.maxUsers,
-        tierLevel: plan.tierLevel,
-        sortOrder: plan.sortOrder,
-      }),
       getItemDisplayName: (plan: TenantPlan) => plan.name,
       deleteService: (id: string) => vm.deleteItem(id),
       getActions: (vmInstance: ReturnType<typeof useTenantPlansViewModel>, tFn: (key: string) => string, handleDeleteFn: ((item: TenantPlan) => void) | undefined): CrudAction<TenantPlan>[] => [
@@ -364,7 +176,9 @@ export function TenantPlansView() {
         },
         {
           label: tFn("common.edit") || "Edit",
-          onClick: (item: TenantPlan) => vmInstance.openEditModal(item),
+          onClick: (item: TenantPlan) => {
+            router.push(`/entitlements/tenant-plans/${item.id}/edit`);
+          },
           variant: "ghost" as const,
           icon: <Pencil className="h-4 w-4" />,
           show: (item: TenantPlan) => !item.isArchived,

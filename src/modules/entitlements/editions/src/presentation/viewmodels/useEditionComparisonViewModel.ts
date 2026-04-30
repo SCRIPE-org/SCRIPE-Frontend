@@ -1,23 +1,26 @@
 /**
  * useEditionComparisonViewModel — Data logic for the dual-view comparison page.
  *
- * KEY DESIGN: The list endpoint (GetEditions) returns EditionListResponse which
- * does NOT include the features array — only featureCount. To build the feature
- * comparison matrix, we must fetch each edition individually via getById().
+ * KEY DESIGN: The list endpoint returns basic metadata (prices via BaseMonthlyPriceUsd).
+ * The detail endpoint now also returns the full Prices array (fixed in backend).
+ * We fetch details for features AND prices.
  *
  * Flow:
- * 1. Fetch paginated list → get IDs + billing metadata
- * 2. Fetch each edition detail in parallel → get features[]
- * 3. Build categorized feature matrix from the detail responses
+ * 1. Fetch list → get IDs + billing metadata + allowMonthly/Yearly/Lifetime flags
+ * 2. Fetch each edition detail in parallel → get features[] + prices[]
+ * 3. User selects a billing cycle → prices update for all cards simultaneously
+ * 4. Build progressive feature highlights with VALUES (e.g. "Up to 25 admins")
  *
  * Architecture: View → ViewModel → Repository → Service → HTTP
  */
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useQuery, useQueries } from "@tanstack/react-query";
 import { entitlementsContainer } from "@modules/entitlements/di";
 import type { Edition, EditionFeatureDto } from "../../domain/entities/Edition";
+
+export type BillingCycle = "Monthly" | "Yearly" | "Lifetime";
 
 export interface FeatureRow {
   featureName: string;
@@ -32,19 +35,64 @@ export interface FeatureRow {
 export interface PricingHighlight {
   label: string;
   isUnlimited?: boolean;
+  value?: string; // human-readable value e.g. "25", "Unlimited"
+}
+
+/** Format a feature value into a human-readable label */
+function formatFeatureValue(value: string, valueType: string): string {
+  if (value === "-1" || value === "unlimited") return "Unlimited";
+  if (value === "false" || value === "0") return "";
+  if (value === "true") return "";
+  if (valueType === "Numeric") return value;
+  return value;
+}
+
+/** Build a human-readable highlight label with value for numeric features */
+function buildHighlightLabel(feature: EditionFeatureDto): PricingHighlight {
+  const displayName = feature.displayNameEn || feature.featureName;
+  const isUnlimited = feature.value === "-1" || feature.value === "unlimited";
+
+  if (isUnlimited) {
+    return { label: displayName, isUnlimited: true, value: "Unlimited" };
+  }
+
+  if (feature.valueType === "Numeric" && feature.value !== "0" && feature.value !== "false") {
+    return { label: displayName, value: feature.value };
+  }
+
+  return { label: displayName };
+}
+
+/** Determine which billing cycles ALL editions together support */
+function resolveAvailableCycles(editions: Edition[]): BillingCycle[] {
+  const cycles = new Set<BillingCycle>();
+  editions.forEach((ed) => {
+    if (ed.allowMonthly) cycles.add("Monthly");
+    if (ed.allowYearly) cycles.add("Yearly");
+    if (ed.allowLifetime) cycles.add("Lifetime");
+  });
+  // Order: Monthly, Yearly, Lifetime
+  const ordered: BillingCycle[] = [];
+  if (cycles.has("Monthly")) ordered.push("Monthly");
+  if (cycles.has("Yearly")) ordered.push("Yearly");
+  if (cycles.has("Lifetime")) ordered.push("Lifetime");
+  return ordered;
 }
 
 export function useEditionComparisonViewModel() {
   const { editionRepository } = entitlementsContainer;
 
-  // Step 1: Fetch the list to get edition IDs and basic metadata
+  // ── Billing cycle toggle state (default: Yearly — industry standard) ──
+  const [selectedCycle, setSelectedCycle] = useState<BillingCycle>("Yearly");
+
+  // Step 1: Fetch list for IDs and billing metadata
   const { data: listData, isLoading: isListLoading } = useQuery({
     queryKey: ["entitlements", "editions", "comparison-list"],
     queryFn: () => editionRepository.getAll({ page: 1, pageSize: 50 }),
     staleTime: 5 * 60 * 1000,
   });
 
-  // Filter and sort editions from the list
+  // Filter and sort by tierLevel
   const editionSummaries = useMemo(() => {
     if (!listData?.items) return [];
     return listData.items
@@ -52,7 +100,7 @@ export function useEditionComparisonViewModel() {
       .sort((a: Edition, b: Edition) => a.tierLevel - b.tierLevel);
   }, [listData]);
 
-  // Step 2: Fetch each edition's full detail (with features) in parallel
+  // Step 2: Fetch each edition's full detail (with features + prices) in parallel
   const detailQueries = useQueries({
     queries: editionSummaries.map((ed: Edition) => ({
       queryKey: ["entitlements", "editions", "detail", ed.id],
@@ -65,7 +113,7 @@ export function useEditionComparisonViewModel() {
   const isDetailLoading = detailQueries.some((q) => q.isLoading);
   const isLoading = isListLoading || isDetailLoading;
 
-  // The full edition objects with features populated
+  // Editions with full features + prices, sorted by tierLevel
   const editions = useMemo(() => {
     if (isDetailLoading) return [];
     return detailQueries
@@ -74,10 +122,10 @@ export function useEditionComparisonViewModel() {
       .sort((a: Edition, b: Edition) => a.tierLevel - b.tierLevel);
   }, [detailQueries, isDetailLoading]);
 
-  /**
-   * Collect all unique features across editions, grouped by category.
-   * Category "General" is used as fallback for uncategorized features.
-   */
+  // ── Determine which billing cycles are available across all editions ──
+  const availableCycles = useMemo(() => resolveAvailableCycles(editions), [editions]);
+
+  // ── Build categorized feature matrix ──
   const categorizedFeatures = useMemo(() => {
     const featureMap = new Map<string, FeatureRow>();
 
@@ -103,7 +151,7 @@ export function useEditionComparisonViewModel() {
       });
     });
 
-    // Group by category, sort within each category
+    // Group by category
     const grouped = new Map<string, FeatureRow[]>();
     featureMap.forEach((row) => {
       const cat = row.category;
@@ -111,11 +159,13 @@ export function useEditionComparisonViewModel() {
       grouped.get(cat)!.push(row);
     });
 
-    // Sort rows within each category by sortOrder
+    // Sort within categories
     grouped.forEach((rows) => rows.sort((a, b) => a.sortOrder - b.sortOrder));
 
-    // Sort categories (Billing first, then alpha)
-    const CATEGORY_ORDER = ["Billing", "Modules", "Quotas", "Security", "Users", "Performance", "Configuration", "General"];
+    const CATEGORY_ORDER = [
+      "Billing", "Modules", "Quotas", "Security",
+      "Users", "Performance", "Configuration", "General",
+    ];
     return new Map(
       [...grouped.entries()].sort(([a], [b]) => {
         const ai = CATEGORY_ORDER.indexOf(a);
@@ -129,9 +179,9 @@ export function useEditionComparisonViewModel() {
   }, [editions]);
 
   /**
-   * For each edition, compute "progressive" feature highlights:
-   * - Tier 0 (lowest): show top positive features
-   * - Higher tiers: show features that are BETTER than the previous tier
+   * Progressive feature highlights per edition WITH human-readable values.
+   * - Tier 0: Show top enabled features (with their values)
+   * - Higher tiers: Show features that are BETTER than the previous tier, with delta values
    */
   const progressiveHighlights = useMemo(() => {
     return editions.map((ed: Edition, idx: number) => {
@@ -139,40 +189,40 @@ export function useEditionComparisonViewModel() {
       const highlights: PricingHighlight[] = [];
 
       if (!prev) {
-        // Lowest tier: show first ~8 enabled features
+        // Lowest tier: show top enabled features with values
         ed.features
-          .filter((f) => f.value !== "false" && f.value !== "0" && f.value.trim() !== "")
+          .filter((f) => {
+            if (f.value === "false" || f.value === "0" || f.value.trim() === "") return false;
+            return true;
+          })
           .slice(0, 8)
-          .forEach((f) => {
-            const label = f.displayNameEn || f.featureName;
-            const isUnlimited = f.value === "-1" || f.value === "unlimited";
-            highlights.push({ label, isUnlimited });
-          });
+          .forEach((f) => highlights.push(buildHighlightLabel(f)));
       } else {
-        // Higher tiers: features that are better than previous tier
+        // Higher tiers: show features with BETTER values than previous tier
         ed.features.forEach((f) => {
           const prevFeature = prev.features.find((pf) => pf.featureName === f.featureName);
           const prevVal = prevFeature?.value ?? "false";
 
-          // Skip if same value
-          if (f.value === prevVal) return;
+          if (f.value === prevVal) return; // unchanged
+          if (f.value === "false" || f.value === "0") return; // not enabled
 
-          // Skip if this tier is disabled while prev was enabled
-          if (f.value === "false" || f.value === "0") return;
+          // For numeric, only show if current > previous
+          if (f.valueType === "Numeric") {
+            const curr = parseFloat(f.value);
+            const prev_ = parseFloat(prevVal);
+            // -1 = unlimited (always better)
+            if (curr !== -1 && !isNaN(curr) && !isNaN(prev_) && curr <= prev_) return;
+          }
 
-          const label = f.displayNameEn || f.featureName;
-          const isUnlimited = f.value === "-1" || f.value === "unlimited";
-          highlights.push({ label, isUnlimited });
+          highlights.push(buildHighlightLabel(f));
         });
 
-        // If no diffs found, show top enabled features
+        // Fallback: if no diffs, show top features of this tier
         if (highlights.length === 0) {
           ed.features
-            .filter((f) => f.value !== "false" && f.value !== "0")
+            .filter((f) => f.value !== "false" && f.value !== "0" && f.value.trim() !== "")
             .slice(0, 5)
-            .forEach((f) => {
-              highlights.push({ label: f.displayNameEn || f.featureName });
-            });
+            .forEach((f) => highlights.push(buildHighlightLabel(f)));
         }
       }
 
@@ -180,7 +230,29 @@ export function useEditionComparisonViewModel() {
     });
   }, [editions]);
 
-  // Total feature count for the "show all" toggle
+  /**
+   * For the selected billing cycle, compute the price each edition shows.
+   * Returns { price: number | undefined, isFree: boolean, isContactSales: boolean }
+   */
+  const cyclePrices = useMemo(() => {
+    return editions.map((ed: Edition) => {
+      if (ed.isFreeEdition) {
+        return { price: 0, isFree: true, isContactSales: false };
+      }
+      if (ed.isContactSalesOnly) {
+        return { price: undefined, isFree: false, isContactSales: true };
+      }
+
+      const price = ed.getPriceForCycle(selectedCycle);
+      return { price, isFree: price === undefined, isContactSales: false };
+    });
+  }, [editions, selectedCycle]);
+
+  /** Savings % for each edition when comparing Monthly → Yearly (shown on Yearly toggle) */
+  const savingsPercents = useMemo(() => {
+    return editions.map((ed: Edition) => ed.getSavingsPercent());
+  }, [editions]);
+
   const totalFeatureCount = useMemo(() => {
     const nameSet = new Set<string>();
     editions.forEach((ed: Edition) => {
@@ -196,5 +268,11 @@ export function useEditionComparisonViewModel() {
     totalFeatureCount,
     isLoading,
     isEmpty: !isLoading && editions.length === 0,
+    // Billing cycle toggle
+    selectedCycle,
+    setSelectedCycle,
+    availableCycles,
+    cyclePrices,
+    savingsPercents,
   };
 }

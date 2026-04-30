@@ -1,8 +1,8 @@
 export const en = {
   entitlements: {
     stripeConnect: {
-      title: "Stripe Connect",
-      description: "Manage Stripe Express accounts and onboarding for platform tenants.",
+      title: "Marketplace Accounts",
+      description: "Manage connected gateway accounts and onboarding for platform tenants.",
       account: "Connect Account",
       accounts: "Connect Accounts",
       accountsDesc: "Manage connected Stripe Express accounts for all tenants.",

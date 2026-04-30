@@ -16,6 +16,14 @@ export interface EditionFeatureDto {
   displayNameAr?: string;
 }
 
+/** Pricing data for a specific currency + billing cycle combination. */
+export interface EditionPriceData {
+  editionId: string;
+  currency: string;   // "USD" | "EUR" | "SAR" etc.
+  billingCycle: string; // "Monthly" | "Yearly" | "Lifetime"
+  amount: number;
+}
+
 export interface EditionData extends BaseEntity {
   name: string;
   displayNameEn: string;
@@ -34,10 +42,13 @@ export interface EditionData extends BaseEntity {
   createdByTenantId?: string;
   featureCount?: number;
   features?: EditionFeatureDto[];
+  /** Full prices array (multi-currency × billing cycle). Populated by detail endpoint. */
+  prices?: EditionPriceData[];
+  /** Convenience: USD monthly price. undefined = free (no pricing record). */
+  baseMonthlyPriceUsd?: number;
   fallbackEditionId?: string;
   fallbackEditionName?: string;
   overflowPolicy?: string;
-  baseMonthlyPriceUsd?: number;
   // ── Billing Controls ──
   allowMonthly: boolean;
   allowYearly: boolean;
@@ -88,6 +99,7 @@ export class Edition {
   get fallbackEditionName(): string | undefined { return this.data.fallbackEditionName; }
   get overflowPolicy(): string { return this.data.overflowPolicy ?? "Block"; }
   get baseMonthlyPriceUsd(): number | undefined { return this.data.baseMonthlyPriceUsd; }
+  get prices(): EditionPriceData[] { return this.data.prices ?? []; }
   // ── Billing Controls ──
   get allowMonthly(): boolean { return this.data.allowMonthly; }
   get allowYearly(): boolean { return this.data.allowYearly; }
@@ -101,6 +113,48 @@ export class Edition {
   // ── Self-Service Controls ──
   get isSelfServiceEnabled(): boolean { return this.data.isSelfServiceEnabled ?? true; }
   get isContactSalesOnly(): boolean { return this.data.isContactSalesOnly ?? false; }
+
+  /**
+   * Returns true if this edition has no pricing records at all (genuinely free).
+   * Free editions have no price entries (absence = free per backend design).
+   */
+  get isFreeEdition(): boolean {
+    return this.prices.length === 0 && !this.baseMonthlyPriceUsd;
+  }
+
+  /**
+   * Get price for a given currency and billing cycle.
+   * Returns undefined if no price record exists (= free for that combination).
+   */
+  getPriceForCycle(billingCycle: "Monthly" | "Yearly" | "Lifetime", currency = "USD"): number | undefined {
+    const match = this.prices.find(
+      (p) => p.billingCycle === billingCycle && p.currency === currency
+    );
+    return match?.amount;
+  }
+
+  /**
+   * Calculate savings percentage when switching from Monthly to Yearly.
+   * Returns 0 if prices not available or no savings.
+   */
+  getSavingsPercent(currency = "USD"): number {
+    const monthly = this.getPriceForCycle("Monthly", currency);
+    const yearly = this.getPriceForCycle("Yearly", currency);
+    if (!monthly || !yearly || monthly === 0) return 0;
+    const monthlyAnnualized = monthly * 12;
+    return Math.round(((monthlyAnnualized - yearly) / monthlyAnnualized) * 100);
+  }
+
+  /**
+   * Get the billing cycles this edition supports.
+   */
+  get supportedCycles(): ("Monthly" | "Yearly" | "Lifetime")[] {
+    const cycles: ("Monthly" | "Yearly" | "Lifetime")[] = [];
+    if (this.allowMonthly) cycles.push("Monthly");
+    if (this.allowYearly) cycles.push("Yearly");
+    if (this.allowLifetime) cycles.push("Lifetime");
+    return cycles;
+  }
 
   getDisplayName(lang: string): string {
     return lang === "ar" ? this.displayNameAr : this.displayNameEn;

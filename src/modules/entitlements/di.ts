@@ -24,6 +24,7 @@ import { PlatformStripeRepository } from "./platform-stripe/src/data/repositorie
 import { TenantGatewayService } from "./tenant-gateways/src/data/services/TenantGatewayService";
 import { TenantGatewayRepository } from "./tenant-gateways/src/data/repositories/TenantGatewayRepository";
 import { AnalyticsService } from "./analytics/src/data/services/AnalyticsService";
+import { CommissionLedgerService } from "./commission-ledger/src/data/services/CommissionLedgerService";
 
 // ── Repository Implementations ──
 import { FeatureRepository } from "./features/src/data/repositories/FeatureRepository";
@@ -35,6 +36,7 @@ import { TenantPlanRepository } from "./tenant-plans/src/data/repositories/Tenan
 import { UserSubscriptionRepository } from "./user-subscriptions/src/data/repositories/UserSubscriptionRepository";
 import { ConnectRepository } from "./stripe-connect/src/data/repositories/ConnectRepository";
 import { AnalyticsRepository } from "./analytics/src/data/repositories/AnalyticsRepository";
+import { CommissionLedgerRepository } from "./commission-ledger/src/data/repositories/CommissionLedgerRepository";
 
 // Tenant Gateways — no separate repository import needed (already imported above)
 
@@ -50,6 +52,7 @@ import type { IConnectRepository } from "./stripe-connect/src/domain/interfaces/
 import type { IPlatformStripeRepository } from "./platform-stripe/src/domain/interfaces/IPlatformStripeRepository";
 import type { IAnalyticsRepository } from "./analytics/src/domain/interfaces/IAnalyticsRepository";
 import type { ITenantGatewayRepository } from "./tenant-gateways/src/domain/interfaces/ITenantGatewayRepository";
+import type { ICommissionLedgerRepository } from "./commission-ledger/src/domain/interfaces/ICommissionLedgerRepository";
 
 // ── Service Interfaces (used internally for DI wiring) ──
 import type { IFeatureService } from "./features/src/domain/interfaces/IFeatureService";
@@ -63,6 +66,7 @@ import type { IConnectService } from "./stripe-connect/src/domain/interfaces/ICo
 import type { IPlatformStripeService } from "./platform-stripe/src/domain/interfaces/IPlatformStripeService";
 import type { IAnalyticsService } from "./analytics/src/domain/interfaces/IAnalyticsService";
 import type { ITenantGatewayService } from "./tenant-gateways/src/domain/interfaces/ITenantGatewayService";
+import type { ICommissionLedgerService } from "./commission-ledger/src/domain/interfaces/ICommissionLedgerService";
 
 export interface EntitlementsContainer {
       featureRepository: IFeatureRepository;
@@ -76,6 +80,7 @@ export interface EntitlementsContainer {
       platformStripeRepository: IPlatformStripeRepository;
       analyticsRepository: IAnalyticsRepository;
       tenantGatewayRepository: ITenantGatewayRepository;
+      commissionLedgerRepository: ICommissionLedgerRepository;
 }
 
 let _container: EntitlementsContainer | null = null;
@@ -99,6 +104,7 @@ export function getEntitlementsContainer(): EntitlementsContainer {
             const platformStripeService: IPlatformStripeService = new PlatformStripeService(apiService);
             const analyticsService: IAnalyticsService = new AnalyticsService(apiService);
             const tenantGatewayService: ITenantGatewayService = new TenantGatewayService(apiService);
+            const commissionLedgerService: ICommissionLedgerService = new CommissionLedgerService(apiService);
 
             // ── Create Repositories (IService → IRepository mapping) ──
             _container = {
@@ -113,6 +119,7 @@ export function getEntitlementsContainer(): EntitlementsContainer {
                   platformStripeRepository: new PlatformStripeRepository(platformStripeService),
                   analyticsRepository: new AnalyticsRepository(analyticsService),
                   tenantGatewayRepository: new TenantGatewayRepository(tenantGatewayService),
+                  commissionLedgerRepository: new CommissionLedgerRepository(commissionLedgerService),
             };
       }
 
@@ -155,5 +162,8 @@ export const entitlementsContainer = {
       },
       get tenantGatewayRepository() {
             return getEntitlementsContainer().tenantGatewayRepository;
+      },
+      get commissionLedgerRepository() {
+            return getEntitlementsContainer().commissionLedgerRepository;
       },
 };

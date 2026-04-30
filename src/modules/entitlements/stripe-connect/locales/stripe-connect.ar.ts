@@ -1,8 +1,8 @@
 export const ar = {
   entitlements: {
     stripeConnect: {
-      title: "Stripe Connect",
-      description: "إدارة حسابات Stripe Express وعملية الإعداد لمستأجري المنصة.",
+      title: "حسابات المتجر",
+      description: "إدارة الحسابات المتصلة وعملية الإعداد لمستأجري المنصة.",
       account: "حساب Connect",
       accounts: "حسابات Connect",
       accountsDesc: "إدارة حسابات Stripe Express المتصلة لجميع المستأجرين.",

@@ -104,6 +104,16 @@ export function TenantPlanDetailView({ planId }: TenantPlanDetailViewProps) {
 
         {/* Lifecycle Actions */}
         <div className="flex items-center gap-2 shrink-0">
+          <Link href={`/entitlements/tenant-plans/${planId}/edit`}>
+            <Button
+              size="sm"
+              variant="outline"
+              className="text-primary border-primary/20 hover:bg-primary/10"
+            >
+              <Settings className="h-4 w-4 me-1" />
+              {t("entitlements.tenantPlans.editSettings") || "Edit Settings"}
+            </Button>
+          </Link>
           {(plan.isDraft || plan.isPublished) && (
             <Button
               size="sm"

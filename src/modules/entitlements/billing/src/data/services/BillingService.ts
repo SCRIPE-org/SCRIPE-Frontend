@@ -138,7 +138,21 @@ export class BillingService implements IBillingService {
 
   async getGateways(): Promise<GatewayListResponseModel> {
     return this.api.get<GatewayListResponseModel>(
-      API_ENDPOINTS.ENTITLEMENTS.BILLING.GATEWAYS
+      API_ENDPOINTS.ENTITLEMENTS.BILLING.GATEWAYS.BASE
+    );
+  }
+
+  async testGatewayConnection(gateway: string): Promise<{ success: boolean; message: string }> {
+    return this.api.post(
+      API_ENDPOINTS.ENTITLEMENTS.BILLING.GATEWAYS.TEST_CONNECTION(gateway),
+      {}
+    );
+  }
+
+  async toggleGatewayStatus(gateway: string, enabled: boolean): Promise<{ success: boolean; message: string; enabled: boolean }> {
+    return this.api.post(
+      API_ENDPOINTS.ENTITLEMENTS.BILLING.GATEWAYS.TOGGLE(gateway),
+      { enabled }
     );
   }
 }

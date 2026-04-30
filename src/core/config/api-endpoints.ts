@@ -394,8 +394,12 @@ export const API_ENDPOINTS = {
       PAYMENT_LINK: (tenantId: string) => `${V1}/billing/tenants/${tenantId}/payment-link`,
       DASHBOARD: `${V1}/billing/dashboard`,
       // ── Payment Gateway Management ──
-      GATEWAYS: `${V1}/payment-gateways`,
-      GATEWAY_STATUS: (gateway: string) => `${V1}/payment-gateways/${gateway}`,
+      GATEWAYS: {
+        BASE: `${V1}/payment-gateways`,
+        STATUS: (gateway: string) => `${V1}/payment-gateways/${gateway}`,
+        TEST_CONNECTION: (gateway: string) => `${V1}/payment-gateways/${gateway}/test-connection`,
+        TOGGLE: (gateway: string) => `${V1}/payment-gateways/${gateway}/toggle`,
+      },
     },
     // ===== TENANT PLANS (Tier 2 — User-Level Subscriptions) =====
     TENANT_PLANS: {

@@ -161,6 +161,11 @@ export const en = {
       configNote: "Gateway configuration is managed in server settings (appsettings.json). Contact your system administrator to enable or change gateways.",
       selectForCheckout: "Select Gateway",
       autoDefault: "Auto (use default)",
+      testConnection: "Test Connection",
+      testSuccess: "Connection Successful",
+      testFailed: "Connection Failed",
+      toggleSuccess: "Status Updated",
+      toggleFailed: "Update Failed",
     },
   },
 };

@@ -32,6 +32,8 @@ export function useSubscriptionsViewModel(tenantId: string) {
       // ── Billing dialog state ──
       const [showCheckoutDialog, setShowCheckoutDialog] = useState(false);
       const [showCancelGatewayDialog, setShowCancelGatewayDialog] = useState(false);
+      const [showGatewayDialog, setShowGatewayDialog] = useState(false);
+      const [gatewayAction, setGatewayAction] = useState<"generate" | "send" | null>(null);
       const [checkoutUrl, setCheckoutUrl] = useState("");
       const [checkoutQrCode, setCheckoutQrCode] = useState<string | null>(null);
       const [checkoutEmailSent, setCheckoutEmailSent] = useState(false);
@@ -306,7 +308,7 @@ export function useSubscriptionsViewModel(tenantId: string) {
 
       // ─── Billing mutations ──────────────────────────────
       const checkoutMutation = useMutation({
-            mutationFn: async (options?: { sendToEmail?: string }) => {
+            mutationFn: async (options?: { sendToEmail?: string; gatewayOverride?: string }) => {
                   // Allow checkout for both active and pending-payment subscriptions
                   const targetSubscription = activeSubscription ?? pendingPaymentSubscription;
                   if (!targetSubscription) throw new Error("No active subscription");
@@ -319,6 +321,7 @@ export function useSubscriptionsViewModel(tenantId: string) {
                         cancelUrl: `${window.location.origin}/entitlements/subscriptions?checkout=canceled`,
                         generateQrCode: true,
                         sendToEmail: options?.sendToEmail,
+                        gatewayOverride: options?.gatewayOverride,
                   });
                   return result;
             },
@@ -457,8 +460,25 @@ export function useSubscriptionsViewModel(tenantId: string) {
             customRefundAmount, setCustomRefundAmount,
 
             // Billing actions — dual mode: generate only vs generate & send
-            generatePaymentLink: () => checkoutMutation.mutate(undefined),
-            sendPaymentLink: (email?: string) => {
+            openGatewaySelection: (action: "generate" | "send") => {
+                  setGatewayAction(action);
+                  setShowGatewayDialog(true);
+            },
+            handleGatewaySelected: (gateway: string) => {
+                  setShowGatewayDialog(false);
+                  if (gatewayAction === "generate") {
+                        checkoutMutation.mutate({ gatewayOverride: gateway });
+                  } else if (gatewayAction === "send") {
+                        const targetEmail = tenantAdminEmail;
+                        if (!targetEmail) {
+                              showError({ title: t("common.error"), description: t("billing.errors.noAdminEmail") || "No admin email found for this tenant." });
+                              return;
+                        }
+                        checkoutMutation.mutate({ sendToEmail: targetEmail, gatewayOverride: gateway });
+                  }
+            },
+            generatePaymentLink: () => checkoutMutation.mutate(undefined), // Fallback if no gateway selection
+            sendPaymentLink: (email?: string) => { // Fallback if no gateway selection
                   const targetEmail = email || tenantAdminEmail;
                   if (!targetEmail) {
                         showError({ title: t("common.error"), description: t("billing.errors.noAdminEmail") || "No admin email found for this tenant." });
@@ -476,6 +496,7 @@ export function useSubscriptionsViewModel(tenantId: string) {
             // Billing dialog state
             showCheckoutDialog, setShowCheckoutDialog,
             showCancelGatewayDialog, setShowCancelGatewayDialog,
+            showGatewayDialog, setShowGatewayDialog,
             checkoutUrl,
             checkoutQrCode,
             checkoutEmailSent,

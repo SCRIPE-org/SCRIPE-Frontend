@@ -13,9 +13,11 @@ import { Skeleton } from "@core/ui/skeleton";
 import {
   CreditCard, Crown, CheckCircle2, XCircle, Globe,
   Smartphone, Shield, RefreshCw, Link2, Info,
-  Zap, Wallet,
+  Zap, Wallet, Activity, Power
 } from "lucide-react";
 import { usePaymentGatewaysViewModel, type GatewayInfo } from "../viewmodels/usePaymentGatewaysViewModel";
+import { Button } from "@core/ui/button";
+import { Switch } from "@core/ui/switch";
 
 // ── Gateway Icon Map ──
 function GatewayIcon({ gateway, size = 24 }: { gateway: string; size?: number }) {
@@ -55,8 +57,23 @@ const FEATURE_ICONS: Record<string, React.ReactNode> = {
   checkout: <CreditCard className="h-3.5 w-3.5" />,
 };
 
-// ── Gateway Card Component ──
-function GatewayCard({ gw, isDefault, t }: { gw: GatewayInfo; isDefault: boolean; t: (key: string) => string }) {
+function GatewayCard({ 
+  gw, 
+  isDefault, 
+  t,
+  onTestConnection,
+  onToggleStatus,
+  isTesting,
+  isToggling
+}: { 
+  gw: GatewayInfo; 
+  isDefault: boolean; 
+  t: (key: string) => string;
+  onTestConnection: (gateway: string) => void;
+  onToggleStatus: (gateway: string, enabled: boolean) => void;
+  isTesting: boolean;
+  isToggling: boolean;
+}) {
   return (
     <Card
       className={`relative overflow-hidden transition-all duration-300 ${
@@ -166,6 +183,31 @@ function GatewayCard({ gw, isDefault, t }: { gw: GatewayInfo; isDefault: boolean
             {t("billing.gateways.supportsBillingPortal")}
           </div>
         </div>
+
+        {/* Actions Row */}
+        <div className="flex items-center justify-between pt-4 mt-2 border-t border-border/50">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => onTestConnection(gw.gateway)}
+            disabled={isTesting}
+            className="text-xs h-8"
+          >
+            <Activity className="h-3.5 w-3.5 me-1.5" />
+            {t("billing.gateways.testConnection")}
+          </Button>
+          
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-medium text-muted-foreground">
+              {t("common.status")}
+            </span>
+            <Switch
+              checked={gw.enabled}
+              onCheckedChange={(checked) => onToggleStatus(gw.gateway, checked)}
+              disabled={isDefault || isToggling}
+            />
+          </div>
+        </div>
       </CardContent>
     </Card>
   );
@@ -246,6 +288,10 @@ export function PaymentGatewaySettingsView() {
               gw={gw}
               isDefault={gw.gateway === vm.defaultGateway}
               t={t}
+              onTestConnection={vm.testConnection}
+              onToggleStatus={vm.toggleStatus}
+              isTesting={vm.isTestingConnection}
+              isToggling={vm.isTogglingStatus}
             />
           ))
         )}

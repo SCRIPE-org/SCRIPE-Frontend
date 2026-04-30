@@ -10,15 +10,15 @@ const TenantStripeConnectView = dynamic(
 );
 
 export const metadata: Metadata = {
-  title: "My Stripe Account | NEXORA",
+  title: "My Payment Account | NEXORA",
   description:
-    "Manage your Stripe Connect Express account — set up payouts, view status, and access your dashboard.",
+    "Manage your payment gateway account — set up payouts, view status, and access your dashboard.",
 };
 
 export default function MyStripeAccountPage() {
   return (
     <main>
-      <ModuleErrorBoundary moduleName="Stripe Connect">
+      <ModuleErrorBoundary moduleName="Payment Account">
         <TenantStripeConnectView />
       </ModuleErrorBoundary>
     </main>

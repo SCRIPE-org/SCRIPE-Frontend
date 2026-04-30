@@ -14,7 +14,7 @@
  */
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useQuery, useQueries } from "@tanstack/react-query";
 import { entitlementsContainer } from "@modules/entitlements/di";
 import type { TenantPlan, TenantPlanFeatureData } from "../../domain/entities/TenantPlan";
@@ -36,9 +36,10 @@ export interface PricingHighlight {
 
 export function useTenantPlanComparisonViewModel() {
   const { tenantPlanRepository } = entitlementsContainer;
+  const [selectedCycle, setSelectedCycle] = useState<"Monthly" | "Yearly" | "Lifetime">("Monthly");
 
   // Step 1: Fetch the list to get plan IDs
-  const { data: listData, isLoading: isListLoading } = useQuery({
+  const { data: listData, isLoading: isListLoading, error } = useQuery({
     queryKey: ["entitlements", "tenant-plans", "comparison-list"],
     queryFn: () => tenantPlanRepository.getAll({ page: 1, pageSize: 50 }),
     staleTime: 5 * 60 * 1000,
@@ -195,6 +196,28 @@ export function useTenantPlanComparisonViewModel() {
     return keySet.size;
   }, [plans]);
 
+  // Compute available cycles across all public plans
+  const availableCycles = useMemo(() => {
+    const cycles = new Set<"Monthly" | "Yearly" | "Lifetime">();
+    plans.forEach((plan) => {
+      if (plan.allowMonthly) cycles.add("Monthly");
+      if (plan.allowYearly) cycles.add("Yearly");
+      if (plan.allowLifetime) cycles.add("Lifetime");
+    });
+    
+    // Ensure "Monthly" is default if available and nothing is explicitly selected
+    const sortedCycles = Array.from(cycles);
+    if (!cycles.has(selectedCycle) && sortedCycles.length > 0) {
+      if (cycles.has("Monthly")) {
+        setSelectedCycle("Monthly");
+      } else {
+        setSelectedCycle(sortedCycles[0]);
+      }
+    }
+    
+    return sortedCycles;
+  }, [plans, selectedCycle]);
+
   return {
     plans,
     categorizedFeatures,
@@ -202,5 +225,9 @@ export function useTenantPlanComparisonViewModel() {
     totalFeatureCount,
     isLoading,
     isEmpty: !isLoading && plans.length === 0,
+    selectedCycle,
+    setSelectedCycle,
+    availableCycles,
+    error,
   };
 }

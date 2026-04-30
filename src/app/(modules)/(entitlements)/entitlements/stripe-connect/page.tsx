@@ -10,14 +10,14 @@ const ConnectOnboardingView = dynamic(
 );
 
 export const metadata: Metadata = {
-  title: "Stripe Connect | NEXORA",
-  description: "Manage Stripe Express accounts and onboarding for platform tenants",
+  title: "Marketplace Accounts | NEXORA",
+  description: "Manage connected gateway accounts and onboarding for platform tenants",
 };
 
 export default function StripeConnectPage() {
   return (
     <main>
-      <ModuleErrorBoundary moduleName="Stripe Connect">
+      <ModuleErrorBoundary moduleName="Marketplace Accounts">
         <ConnectOnboardingView />
       </ModuleErrorBoundary>
     </main>

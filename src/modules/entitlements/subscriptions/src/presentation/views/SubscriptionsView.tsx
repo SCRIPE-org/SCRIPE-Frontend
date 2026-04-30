@@ -39,6 +39,7 @@ import { CancelDialog } from "../components/CancelDialog";
 import { ConvertDialog } from "../components/ConvertDialog";
 import { CheckoutDialog } from "../components/CheckoutDialog";
 import { CancelGatewayDialog } from "../components/CancelGatewayDialog";
+import { GatewaySelectionDialog } from "../components/GatewaySelectionDialog";
 
 interface SubscriptionsViewProps {
   tenantId: string;
@@ -131,6 +132,11 @@ export function SubscriptionsView({ tenantId }: SubscriptionsViewProps) {
       <ConvertDialog vm={vm} editionsVm={editionsVm} />
       <CheckoutDialog vm={vm} />
       <CancelGatewayDialog vm={vm} />
+      <GatewaySelectionDialog
+        open={vm.showGatewayDialog}
+        onOpenChange={vm.setShowGatewayDialog}
+        onSelect={vm.handleGatewaySelected}
+      />
     </div>
   );
 }

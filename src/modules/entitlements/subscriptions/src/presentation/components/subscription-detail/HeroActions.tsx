@@ -57,7 +57,7 @@ export function HeroActions({ sub, vm, t }: HeroActionsProps) {
         <Button
           size="sm"
           className="gap-2 cursor-pointer"
-          onClick={() => vm.generatePaymentLink()}
+          onClick={() => vm.openGatewaySelection("generate")}
           disabled={vm.isSendingPaymentLink}
           loading={vm.isSendingPaymentLink}
         >
@@ -68,7 +68,7 @@ export function HeroActions({ sub, vm, t }: HeroActionsProps) {
           size="sm"
           variant="outline"
           className="gap-2 cursor-pointer"
-          onClick={() => vm.sendPaymentLink()}
+          onClick={() => vm.openGatewaySelection("send")}
           disabled={vm.isSendingPaymentLink}
           loading={vm.isSendingPaymentLink}
         >

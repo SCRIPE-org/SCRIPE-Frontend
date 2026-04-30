@@ -3,6 +3,14 @@
  * These live in the data layer and are NEVER used in presentation.
  */
 
+/** Single price point for a specific currency + billing cycle. */
+export interface EditionPriceModel {
+  editionId: string;
+  currency: string; // "USD" | "EUR" | "SAR" etc.
+  billingCycle: string; // "Monthly" | "Yearly" | "Lifetime"
+  amount: number;
+}
+
 export interface EditionModel {
   id: string;
   name: string;
@@ -26,10 +34,13 @@ export interface EditionModel {
     displayNameEn?: string;
     displayNameAr?: string;
   }[];
+  /** Full prices array (multi-currency × billing cycle). Available in detail response. */
+  prices?: EditionPriceModel[];
+  /** Convenience: USD monthly price. null = free or contact-sales. */
+  baseMonthlyPriceUsd?: number;
   fallbackEditionId?: string;
   fallbackEditionName?: string;
   overflowPolicy?: string;
-  baseMonthlyPriceUsd?: number;
   // ── Billing Controls ──
   allowMonthly: boolean;
   allowYearly: boolean;

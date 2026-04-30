@@ -1,172 +1,228 @@
-/**
- * EditionPricingCard — Single Vercel-style pricing card for the hero section.
- *
- * Displays:
- * - Recommendation badges (deterministic colors)
- * - Edition name + tagline
- * - Price (free / amount / custom)
- * - Progressive feature highlights ("All [prev] features, plus:")
- * - Admin-preview-only label (no subscribe action)
- */
 "use client";
+/**
+ * EditionPricingCard — Industry-standard pricing card for the comparison page.
+ *
+ * Follows patterns from Vercel, Linear, Notion:
+ * - Price updates based on selected billing cycle (passed from parent toggle)
+ * - Shows savings badge ("Save 17%") on yearly
+ * - Shows trial badge with duration
+ * - Progressive feature highlights with human-readable values
+ * - "Most Popular" / "Best Value" badges from recommendationLabels
+ * - Contact Sales CTA for enterprise-only editions
+ */
 
-import { Check, Infinity as InfinityIcon } from "lucide-react";
-import { RecommendationBadge } from "./RecommendationBadge";
 import type { Edition } from "../../../domain/entities/Edition";
-
-interface PricingCardHighlight {
-  label: string;
-  isUnlimited?: boolean;
-}
+import type { BillingCycle, PricingHighlight } from "../../viewmodels/useEditionComparisonViewModel";
+import { Check, Infinity, Star, PhoneCall, Zap } from "lucide-react";
+import { useI18n } from "@core/providers/i18n-provider";
 
 interface EditionPricingCardProps {
   edition: Edition;
+  selectedCycle: BillingCycle;
+  priceInfo: { price: number | undefined; isFree: boolean; isContactSales: boolean };
+  savingsPercent: number;
+  highlights: PricingHighlight[];
+  isRecommended?: boolean;
   language: string;
-  previousEditionName?: string;
-  highlights: PricingCardHighlight[];
-  isRecommended: boolean;
-  allHighlightsLabel: string;  // "All {prev} features, plus:"
-  priceLabel: string;          // "/month"
-  freeLabel: string;
-  customLabel: string;
-  previewLabel: string;        // "Admin Preview"
 }
 
-function formatPrice(price: number | undefined): { amount: string; suffix: string } {
-  if (!price || price === 0) return { amount: "Free", suffix: "" };
-  return {
-    amount: `$${price.toFixed(0)}`,
-    suffix: "/mo",
-  };
+/** Format a price amount to locale string */
+function formatAmount(amount: number, currency = "USD"): string {
+  try {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency,
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(amount);
+  } catch {
+    return `$${amount}`;
+  }
+}
+
+/** Human-readable billing cycle label */
+function cycleLabel(cycle: BillingCycle): string {
+  switch (cycle) {
+    case "Monthly": return "/ month";
+    case "Yearly": return "/ year";
+    case "Lifetime": return "one-time";
+  }
+}
+
+/** Small cycle description shown below price */
+function cycleSub(cycle: BillingCycle): string {
+  switch (cycle) {
+    case "Monthly": return "Billed monthly";
+    case "Yearly": return "Billed annually";
+    case "Lifetime": return "Pay once, use forever";
+  }
 }
 
 export function EditionPricingCard({
   edition,
-  language,
-  previousEditionName,
+  selectedCycle,
+  priceInfo,
+  savingsPercent,
   highlights,
   isRecommended,
-  allHighlightsLabel,
-  priceLabel,
-  freeLabel,
-  customLabel,
-  previewLabel,
+  language,
 }: EditionPricingCardProps) {
-  const displayName = edition.getDisplayName(language) || edition.name;
-  const badges = edition.recommendationLabels;
-  const { amount, suffix } = edition.isContactSalesOnly
-    ? { amount: customLabel, suffix: "" }
-    : formatPrice(edition.baseMonthlyPriceUsd);
+  const { t } = useI18n();
+  const displayName = edition.getDisplayName(language);
+  const labels = edition.recommendationLabels;
+  const primaryLabel = labels[0] ?? (isRecommended ? "Most Popular" : null);
 
   return (
     <div
-      className={`relative flex flex-col rounded-xl border transition-all duration-300 overflow-hidden
-        ${
-          isRecommended
-            ? "border-primary/50 shadow-[0_0_0_1px_rgba(var(--primary),0.3),0_8px_40px_rgba(var(--primary),0.15)] bg-card"
-            : "border-border/60 bg-card/80 hover:border-border hover:shadow-lg"
+      className={`
+        relative flex flex-col h-full
+        border bg-card
+        transition-all duration-200
+        ${isRecommended
+          ? "border-primary ring-1 ring-primary shadow-lg shadow-primary/10 scale-[1.02]"
+          : "border-border hover:border-primary/40 hover:shadow-md"
         }
       `}
     >
-      {/* Top accent line for recommended */}
-      {isRecommended && (
-        <div className="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-primary/0 via-primary to-primary/0" />
+      {/* ─── Recommendation Badge ─── */}
+      {primaryLabel && (
+        <div className="absolute -top-3.5 left-0 right-0 flex justify-center">
+          <span className="inline-flex items-center gap-1 bg-primary text-primary-foreground text-xs font-semibold px-3 py-1 uppercase tracking-wider">
+            <Star className="h-3 w-3" />
+            {primaryLabel}
+          </span>
+        </div>
       )}
 
-      <div className="flex flex-col gap-4 p-6">
-        {/* Badges */}
-        {badges.length > 0 && (
-          <div className="flex flex-wrap gap-1.5">
-            {badges.map((badge) => (
-              <RecommendationBadge key={badge} label={badge} size="sm" />
-            ))}
+      <div className="flex flex-col flex-1 p-6 pt-8">
+        {/* ─── Header ─── */}
+        <div className="mb-4">
+          <h3 className="text-lg font-bold tracking-tight text-foreground uppercase">
+            {displayName}
+          </h3>
+          {edition.tagline && (
+            <p className="text-sm text-muted-foreground mt-1">{edition.tagline}</p>
+          )}
+        </div>
+
+        {/* ─── Price Block ─── */}
+        <div className="mb-6">
+          {priceInfo.isContactSales ? (
+            <div className="flex flex-col gap-1">
+              <span className="text-3xl font-black tracking-tight text-foreground">Custom</span>
+              <span className="text-xs text-muted-foreground">Contact us for pricing</span>
+            </div>
+          ) : priceInfo.isFree || priceInfo.price === 0 ? (
+            <div className="flex flex-col gap-1">
+              <div className="flex items-baseline gap-1">
+                <span className="text-3xl font-black tracking-tight text-foreground">$0</span>
+                <span className="text-sm text-muted-foreground font-medium">/ month</span>
+              </div>
+              <span className="text-xs text-muted-foreground">Free forever</span>
+            </div>
+          ) : priceInfo.price !== undefined ? (
+            <div className="flex flex-col gap-1">
+              <div className="flex items-baseline gap-1.5">
+                <span className="text-3xl font-black tracking-tight text-foreground">
+                  {formatAmount(priceInfo.price)}
+                </span>
+                <span className="text-sm text-muted-foreground font-medium">
+                  {cycleLabel(selectedCycle)}
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-muted-foreground">{cycleSub(selectedCycle)}</span>
+                {selectedCycle === "Yearly" && savingsPercent > 0 && (
+                  <span className="text-xs font-semibold text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-950/30 px-1.5 py-0.5">
+                    Save {savingsPercent}%
+                  </span>
+                )}
+              </div>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-1">
+              <span className="text-2xl font-black tracking-tight text-muted-foreground">—</span>
+              <span className="text-xs text-muted-foreground">
+                {selectedCycle} billing not available
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* ─── Trial Badge ─── */}
+        {edition.allowTrial && edition.trialDurationDays > 0 && (
+          <div className="mb-5 flex items-center gap-2 border border-dashed border-primary/50 bg-primary/5 px-3 py-2">
+            <Zap className="h-3.5 w-3.5 text-primary shrink-0" />
+            <span className="text-xs font-medium text-primary">
+              {edition.trialIsFree
+                ? `${edition.trialDurationDays}-day free trial`
+                : `${edition.trialDurationDays}-day trial at ${edition.trialDiscountPercent}% off`}
+            </span>
           </div>
         )}
 
-        {/* Name + tagline */}
-        <div>
-          <h3 className="text-base font-bold text-foreground">{displayName}</h3>
-          {edition.description && (
-            <p className="mt-1 text-sm text-muted-foreground leading-relaxed line-clamp-2">
-              {edition.description}
-            </p>
+        {/* ─── CTA ─── */}
+        <div className="mb-6">
+          {priceInfo.isContactSales ? (
+            <button
+              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 border border-primary text-primary font-semibold text-sm hover:bg-primary hover:text-primary-foreground transition-colors"
+            >
+              <PhoneCall className="h-4 w-4" />
+              Contact Sales
+            </button>
+          ) : priceInfo.isFree || priceInfo.price === 0 ? (
+            <button className="w-full flex items-center justify-center gap-2 px-4 py-2.5 border border-border text-foreground font-semibold text-sm hover:bg-accent transition-colors">
+              Get Started Free
+            </button>
+          ) : (
+            <button
+              className={`w-full flex items-center justify-center gap-2 px-4 py-2.5 font-semibold text-sm transition-colors ${
+                isRecommended
+                  ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                  : "border border-border text-foreground hover:bg-accent"
+              }`}
+            >
+              {edition.allowTrial && edition.trialDurationDays > 0
+                ? `Start ${edition.trialDurationDays}-Day Trial`
+                : "Get Started"}
+            </button>
           )}
         </div>
 
-        {/* Price */}
-        <div className="flex items-end gap-1">
-          <span className={`font-bold tracking-tight ${amount === freeLabel || amount === customLabel ? "text-2xl" : "text-3xl"}`}>
-            {amount}
-          </span>
-          {suffix && (
-            <span className="mb-1 text-sm text-muted-foreground">{suffix}</span>
-          )}
-        </div>
+        {/* ─── Divider ─── */}
+        <div className="border-t border-border mb-5" />
 
-        {/* Billing badges */}
-        <div className="flex flex-wrap gap-1">
-          {edition.allowMonthly && (
-            <span className="rounded-md bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">Monthly</span>
-          )}
-          {edition.allowYearly && (
-            <span className="rounded-md bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">Yearly</span>
-          )}
-          {edition.allowLifetime && (
-            <span className="rounded-md bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">Lifetime</span>
-          )}
-          {edition.allowTrial && (
-            <span className="rounded-md bg-emerald-500/10 px-1.5 py-0.5 text-[10px] font-medium text-emerald-400 border border-emerald-500/20">
-              {edition.trialIsFree ? "Free Trial" : `${edition.trialDiscountPercent}% Trial`}
-            </span>
-          )}
-        </div>
-      </div>
-
-      {/* Divider */}
-      <div className="mx-6 border-t border-border/40" />
-
-      {/* Feature highlights */}
-      <div className="flex flex-col gap-2.5 p-6 flex-1">
-        {previousEditionName && highlights.length > 0 && (
-          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-            {allHighlightsLabel.replace("{prev}", previousEditionName)}
-          </p>
-        )}
-        {!previousEditionName && highlights.length > 0 && (
-          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-            Includes:
-          </p>
-        )}
-        <ul className="space-y-2">
-          {highlights.slice(0, 7).map((h, i) => (
-            <li key={i} className="flex items-start gap-2.5">
-              <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-primary/15">
-                <Check className="h-2.5 w-2.5 text-primary" />
-              </span>
-              <span className="text-sm text-foreground/80">
-                {h.isUnlimited ? (
-                  <span className="flex items-center gap-1">
-                    {h.label}
-                    <InfinityIcon className="h-3 w-3 text-primary" />
-                  </span>
+        {/* ─── Feature Highlights ─── */}
+        <div className="flex flex-col gap-2.5 flex-1">
+          {highlights.slice(0, 10).map((h, i) => (
+            <div key={i} className="flex items-start gap-2.5">
+              {h.isUnlimited ? (
+                <Infinity className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
+              ) : (
+                <Check className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
+              )}
+              <span className="text-sm text-foreground leading-snug">
+                {h.value && h.value !== "Unlimited" ? (
+                  <>
+                    <span className="font-semibold">{h.value}</span>{" "}
+                    <span className="text-muted-foreground">{h.label}</span>
+                  </>
+                ) : h.isUnlimited ? (
+                  <>
+                    <span className="font-semibold">Unlimited</span>{" "}
+                    <span className="text-muted-foreground">{h.label}</span>
+                  </>
                 ) : (
-                  h.label
+                  <span className="text-muted-foreground">{h.label}</span>
                 )}
               </span>
-            </li>
+            </div>
           ))}
-          {highlights.length > 7 && (
-            <li className="text-xs text-muted-foreground pl-6.5">
-              +{highlights.length - 7} more features
-            </li>
+          {highlights.length > 10 && (
+            <p className="text-xs text-muted-foreground mt-1">
+              + {highlights.length - 10} more features
+            </p>
           )}
-        </ul>
-      </div>
-
-      {/* Admin preview footer */}
-      <div className="mx-6 mb-6 mt-auto">
-        <div className="flex items-center justify-center rounded-lg border border-dashed border-muted-foreground/30 py-2 px-4">
-          <span className="text-xs text-muted-foreground/60 font-medium">{previewLabel}</span>
         </div>
       </div>
     </div>

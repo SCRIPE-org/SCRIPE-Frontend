@@ -22,6 +22,7 @@ import {
 } from "@core/ui/table";
 import { Card, CardContent } from "@core/ui/card";
 import { Button } from "@core/ui/button";
+import { ToggleGroup, ToggleGroupItem } from "@core/ui/toggle-group";
 import { Eye, Sparkles, ChevronDown, ChevronUp, LayoutList, Loader2 } from "lucide-react";
 import type { TenantPlan } from "../../domain/entities/TenantPlan";
 import { useTenantPlanComparisonViewModel } from "../viewmodels/useTenantPlanComparisonViewModel";
@@ -107,7 +108,7 @@ export function TenantPlanComparisonView() {
   const matrixRef = useRef<HTMLDivElement>(null);
   const [showAllFeatures, setShowAllFeatures] = useState(false);
 
-  const { plans, categorizedFeatures, progressiveHighlights, totalFeatureCount, isLoading, isEmpty } =
+  const { plans, categorizedFeatures, progressiveHighlights, totalFeatureCount, isLoading, isEmpty, selectedCycle, setSelectedCycle, availableCycles } =
     useTenantPlanComparisonViewModel();
 
   if (isLoading) return <LoadingState />;
@@ -155,6 +156,37 @@ export function TenantPlanComparisonView() {
           </div>
         </div>
 
+        {/* ── Cycle Toggle ── */}
+        {availableCycles.length > 1 && (
+          <div className="flex justify-center mt-6 mb-8">
+            <ToggleGroup
+              type="single"
+              value={selectedCycle}
+              onValueChange={(val) => {
+                if (val) setSelectedCycle(val as any);
+              }}
+              className="bg-muted/50 p-1 rounded-full border border-border/40"
+            >
+              {availableCycles.includes("Monthly") && (
+                <ToggleGroupItem value="Monthly" className="rounded-full px-6 data-[state=on]:bg-background data-[state=on]:shadow-sm">
+                  {t("entitlements.tenantPlans.allowMonthly") || "Monthly"}
+                </ToggleGroupItem>
+              )}
+              {availableCycles.includes("Yearly") && (
+                <ToggleGroupItem value="Yearly" className="rounded-full px-6 data-[state=on]:bg-background data-[state=on]:shadow-sm">
+                  {t("entitlements.tenantPlans.allowYearly") || "Yearly"}
+                  <span className="ml-2 text-[10px] uppercase font-bold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full">Save ~20%</span>
+                </ToggleGroupItem>
+              )}
+              {availableCycles.includes("Lifetime") && (
+                <ToggleGroupItem value="Lifetime" className="rounded-full px-6 data-[state=on]:bg-background data-[state=on]:shadow-sm">
+                  {t("entitlements.tenantPlans.allowLifetime") || "Lifetime"}
+                </ToggleGroupItem>
+              )}
+            </ToggleGroup>
+          </div>
+        )}
+
         {/* Pricing Cards Grid */}
         <div
           className={`grid gap-5 ${
@@ -180,6 +212,7 @@ export function TenantPlanComparisonView() {
                 previousPlanName={prevName}
                 highlights={progressiveHighlights[idx] ?? []}
                 isRecommended={plan.id === recommendedPlanId}
+                selectedCycle={selectedCycle}
                 allHighlightsLabel={
                   t("entitlements.tenantPlans.comparison.allPreviousPlus") || "All {prev} features, plus:"
                 }
@@ -236,21 +269,44 @@ export function TenantPlanComparisonView() {
                   </TableCell>
                   {plans.map((plan: TenantPlan) => {
                     const isHL = plan.id === recommendedPlanId;
+                    
+                    let priceAmount: string;
+                    let priceSuffix = "";
+                    if (plan.isContactSalesOnly) {
+                      priceAmount = t("entitlements.tenantPlans.comparison.customPricing") || "Custom";
+                    } else if (!plan.hasPrices) {
+                      priceAmount = t("common.free") || "Free";
+                    } else {
+                      const cyclePrices = plan.prices.filter(p => p.billingCycle === selectedCycle);
+                      if (cyclePrices.length > 0) {
+                        const cheapest = cyclePrices.reduce((min, p) => p.amount < min.amount ? p : min, cyclePrices[0]);
+                        priceAmount = new Intl.NumberFormat("en-US", {
+                          style: "currency",
+                          currency: cheapest.currency || "USD",
+                          minimumFractionDigits: 0,
+                        }).format(cheapest.amount);
+                        
+                        if (selectedCycle === "Monthly") priceSuffix = "/mo";
+                        else if (selectedCycle === "Yearly") priceSuffix = "/yr";
+                        else if (selectedCycle === "Lifetime") priceSuffix = " one-time";
+                      } else {
+                        priceAmount = "—";
+                      }
+                    }
+
                     return (
                       <TableCell
                         key={plan.id}
                         className={`text-center py-3.5 font-bold ${isHL ? "bg-primary/5" : ""}`}
                       >
-                        {plan.isContactSalesOnly ? (
-                          <span className="text-sm text-muted-foreground">
-                            {t("entitlements.tenantPlans.comparison.customPricing") || "Custom"}
-                          </span>
+                        {priceAmount === "—" ? (
+                          <span className="text-muted-foreground/40">—</span>
+                        ) : plan.isContactSalesOnly ? (
+                          <span className="text-sm text-muted-foreground">{priceAmount}</span>
                         ) : !plan.hasPrices ? (
-                          <span className="text-emerald-400 font-bold">
-                            {t("common.free") || "Free"}
-                          </span>
+                          <span className="text-emerald-400 font-bold">{priceAmount}</span>
                         ) : (
-                          <span>{plan.formattedStartingPrice}<span className="text-xs font-normal text-muted-foreground">/mo</span></span>
+                          <span>{priceAmount}<span className="text-xs font-normal text-muted-foreground">{priceSuffix}</span></span>
                         )}
                       </TableCell>
                     );

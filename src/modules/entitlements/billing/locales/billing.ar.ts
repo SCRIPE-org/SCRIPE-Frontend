@@ -161,6 +161,11 @@ export const ar = {
       configNote: "يتم إدارة تكوين البوابات في إعدادات الخادم (appsettings.json). تواصل مع مسؤول النظام لتفعيل أو تغيير البوابات.",
       selectForCheckout: "اختر بوابة الدفع",
       autoDefault: "تلقائي (استخدام الافتراضي)",
+      testConnection: "اختبار الاتصال",
+      testSuccess: "الاتصال ناجح",
+      testFailed: "فشل الاتصال",
+      toggleSuccess: "تم تحديث الحالة",
+      toggleFailed: "فشل التحديث",
     },
   },
 };

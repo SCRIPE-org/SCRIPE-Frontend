@@ -28,6 +28,7 @@ interface TenantPlanPricingCardProps {
   previousPlanName?: string;
   highlights: PricingCardHighlight[];
   isRecommended: boolean;
+  selectedCycle: "Monthly" | "Yearly" | "Lifetime";
   allHighlightsLabel: string;
   priceLabel: string;
   freeLabel: string;
@@ -41,6 +42,7 @@ export function TenantPlanPricingCard({
   previousPlanName,
   highlights,
   isRecommended,
+  selectedCycle,
   allHighlightsLabel,
   priceLabel,
   freeLabel,
@@ -51,16 +53,30 @@ export function TenantPlanPricingCard({
     (language === "ar" ? plan.displayNameAr : plan.displayNameEn) || plan.name;
   const badges = plan.badgeText ? [plan.badgeText] : [];
 
-  // Price display
   let priceAmount: string;
   let priceSuffix = "";
+  
   if (plan.isContactSalesOnly) {
     priceAmount = customLabel;
   } else if (!plan.hasPrices) {
     priceAmount = freeLabel;
   } else {
-    priceAmount = `$${plan.startingPrice.toFixed(0)}`;
-    priceSuffix = "/mo";
+    const cyclePrices = plan.prices.filter(p => p.billingCycle === selectedCycle);
+    if (cyclePrices.length > 0) {
+      const cheapest = cyclePrices.reduce((min, p) => p.amount < min.amount ? p : min, cyclePrices[0]);
+      priceAmount = new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: cheapest.currency || "USD",
+        minimumFractionDigits: 0,
+      }).format(cheapest.amount);
+      
+      if (selectedCycle === "Monthly") priceSuffix = "/mo";
+      else if (selectedCycle === "Yearly") priceSuffix = "/yr";
+      else if (selectedCycle === "Lifetime") priceSuffix = " one-time";
+    } else {
+      // Fallback if the selected cycle is not supported by this specific plan
+      priceAmount = "—";
+    }
   }
 
   return (

@@ -65,6 +65,8 @@ export interface IBillingService {
 
       // ── Payment Gateway Management ──
       getGateways(): Promise<GatewayListResponseModel>;
+      testGatewayConnection(gateway: string): Promise<{ success: boolean; message: string }>;
+      toggleGatewayStatus(gateway: string, enabled: boolean): Promise<{ success: boolean; message: string; enabled: boolean }>;
 }
 
 // ── Gateway Models ──

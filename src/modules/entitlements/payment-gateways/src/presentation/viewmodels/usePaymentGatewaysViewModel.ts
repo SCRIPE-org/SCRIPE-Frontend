@@ -6,11 +6,17 @@
  */
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { entitlementsContainer } from "@modules/entitlements/di";
-import type { GatewayStatusModel } from "@modules/entitlements/billing/src/domain/interfaces/IBillingService";
-
-export interface GatewayInfo extends GatewayStatusModel {
+import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import { useI18n } from "@core/providers/i18n-provider";
+export interface GatewayInfo {
+  gateway: string;
+  enabled: boolean;
+  isDefault: boolean;
+  supportsRecurring: boolean;
+  supportsBillingPortal: boolean;
+  supportedFeatures: string[];
   displayName: string;
   description: string;
   color: string;
@@ -18,7 +24,7 @@ export interface GatewayInfo extends GatewayStatusModel {
   features: string[];
 }
 
-const GATEWAY_META: Record<string, Omit<GatewayInfo, keyof GatewayStatusModel>> = {
+const GATEWAY_META: Record<string, Pick<GatewayInfo, "displayName" | "description" | "color" | "icon" | "features">> = {
   Stripe: {
     displayName: "Stripe",
     description: "stripeDesc",
@@ -51,6 +57,9 @@ const GATEWAY_META: Record<string, Omit<GatewayInfo, keyof GatewayStatusModel>> 
 
 export function usePaymentGatewaysViewModel() {
   const { billingRepository } = entitlementsContainer;
+  const queryClient = useQueryClient();
+  const { success, error: showError } = useEnhancedToast();
+  const { t } = useI18n();
 
   const {
     data,
@@ -83,6 +92,28 @@ export function usePaymentGatewaysViewModel() {
   const defaultGateway = data?.defaultGateway ?? "Stripe";
   const enabledCount = gateways.filter((g) => g.enabled).length;
 
+  const testConnectionMutation = useMutation({
+    mutationFn: (gateway: string) => billingRepository.testGatewayConnection(gateway),
+    onSuccess: (res) => {
+      success({ title: t("billing.gateways.testSuccess"), description: res.message });
+    },
+    onError: (err: Error) => {
+      showError({ title: t("billing.gateways.testFailed"), description: err.message });
+    },
+  });
+
+  const toggleStatusMutation = useMutation({
+    mutationFn: ({ gateway, enabled }: { gateway: string; enabled: boolean }) => 
+      billingRepository.toggleGatewayStatus(gateway, enabled),
+    onSuccess: (res) => {
+      success({ title: t("billing.gateways.toggleSuccess"), description: res.message });
+      refetch();
+    },
+    onError: (err: Error) => {
+      showError({ title: t("billing.gateways.toggleFailed"), description: err.message });
+    },
+  });
+
   return {
     gateways,
     defaultGateway,
@@ -91,5 +122,9 @@ export function usePaymentGatewaysViewModel() {
     isLoading,
     error: error?.message,
     refetch,
+    testConnection: (gateway: string) => testConnectionMutation.mutate(gateway),
+    isTestingConnection: testConnectionMutation.isPending,
+    toggleStatus: (gateway: string, enabled: boolean) => toggleStatusMutation.mutate({ gateway, enabled }),
+    isTogglingStatus: toggleStatusMutation.isPending,
   };
 }

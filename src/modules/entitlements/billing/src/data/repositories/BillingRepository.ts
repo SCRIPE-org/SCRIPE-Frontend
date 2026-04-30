@@ -131,4 +131,12 @@ export class BillingRepository implements IBillingRepository {
   async getGateways(): Promise<GatewayListResponseModel> {
     return this.service.getGateways();
   }
+
+  async testGatewayConnection(gateway: string): Promise<{ success: boolean; message: string }> {
+    return this.service.testGatewayConnection(gateway);
+  }
+
+  async toggleGatewayStatus(gateway: string, enabled: boolean): Promise<{ success: boolean; message: string; enabled: boolean }> {
+    return this.service.toggleGatewayStatus(gateway, enabled);
+  }
 }

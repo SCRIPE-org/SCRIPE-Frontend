@@ -379,11 +379,13 @@ function ConfigureDialog({
   const [fields, setFields] = useState<Record<string, string>>({});
   const [isTestMode, setIsTestMode] = useState(false);
   const [showSecrets, setShowSecrets] = useState<Record<string, boolean>>({});
+  const [step, setStep] = useState<number>(1); // 1: Instructions, 2: Credentials, 3: Verify & Save
 
   const resetForm = () => {
     setFields({});
     setIsTestMode(false);
     setShowSecrets({});
+    setStep(1);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -423,101 +425,159 @@ function ConfigureDialog({
               : t("entitlements.tenantGateways.configureTitle", { gateway: gatewayDef.label })}
           </DialogTitle>
           <DialogDescription>
-            {t("entitlements.tenantGateways.configureDesc")}
+            {step === 1 && t("entitlements.tenantGateways.wizard.step1Desc")}
+            {step === 2 && t("entitlements.tenantGateways.wizard.step2Desc")}
+            {step === 3 && t("entitlements.tenantGateways.wizard.step3Desc")}
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4 py-2">
-          {/* Display Label */}
-          <div className="space-y-2">
-            <Label htmlFor="displayLabel">
-              {t("entitlements.tenantGateways.displayLabel")}
-            </Label>
-            <Input
-              id="displayLabel"
-              placeholder={gatewayDef.label}
-              value={fields.displayLabel ?? ""}
-              onChange={(e) => setFields((f) => ({ ...f, displayLabel: e.target.value }))}
-            />
+        {/* Wizard Progress */}
+        {!formState.isEditing && (
+          <div className="flex items-center justify-between mb-4 px-2">
+            {[1, 2, 3].map((s) => (
+              <div key={s} className="flex flex-col items-center gap-1">
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${step === s ? "bg-primary text-primary-foreground" : step > s ? "bg-primary/20 text-primary" : "bg-muted text-muted-foreground"}`}>
+                  {step > s ? <CheckCircle2 className="w-4 h-4" /> : s}
+                </div>
+              </div>
+            ))}
           </div>
+        )}
 
-          {/* Gateway-specific fields */}
-          {gatewayDef.fields.map((field) => (
-            <div key={field.key} className="space-y-2">
-              <Label htmlFor={field.key} className="flex items-center gap-1">
-                {field.label}
-                {!("optional" in field && field.optional) && (
-                  <span className="text-destructive">*</span>
-                )}
-              </Label>
-              <div className="relative">
+        <form onSubmit={handleSubmit} className="space-y-4 py-2">
+          {step === 1 && !formState.isEditing && (
+            <div className="space-y-4 text-sm text-muted-foreground bg-muted/30 p-4 rounded-lg">
+              <p>{t("entitlements.tenantGateways.wizard.intro", { gateway: gatewayDef.label })}</p>
+              <ol className="list-decimal pl-5 space-y-2">
+                <li>{t("entitlements.tenantGateways.wizard.step1", { gateway: gatewayDef.label })}</li>
+                <li>{t("entitlements.tenantGateways.wizard.step2")}</li>
+                <li>{t("entitlements.tenantGateways.wizard.step3")}</li>
+                <li>{t("entitlements.tenantGateways.wizard.step4")}</li>
+              </ol>
+            </div>
+          )}
+
+          {(step === 2 || formState.isEditing) && (
+            <>
+              {/* Display Label */}
+              <div className="space-y-2">
+                <Label htmlFor="displayLabel">
+                  {t("entitlements.tenantGateways.displayLabel")}
+                </Label>
                 <Input
-                  id={field.key}
-                  type={
-                    "secret" in field && field.secret && !showSecrets[field.key]
-                      ? "password"
-                      : "text"
-                  }
-                  placeholder={field.placeholder}
-                  value={fields[field.key] ?? ""}
-                  onChange={(e) =>
-                    setFields((f) => ({ ...f, [field.key]: e.target.value }))
-                  }
-                  required={!("optional" in field && field.optional)}
-                  className="pr-10"
+                  id="displayLabel"
+                  placeholder={gatewayDef.label}
+                  value={fields.displayLabel ?? ""}
+                  onChange={(e) => setFields((f) => ({ ...f, displayLabel: e.target.value }))}
                 />
-                {"secret" in field && field.secret && (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
-                    onClick={() =>
-                      setShowSecrets((s) => ({ ...s, [field.key]: !s[field.key] }))
-                    }
-                  >
-                    {showSecrets[field.key] ? (
-                      <EyeOff className="h-4 w-4 text-muted-foreground" />
-                    ) : (
-                      <Eye className="h-4 w-4 text-muted-foreground" />
+              </div>
+
+              {/* Gateway-specific fields */}
+              {gatewayDef.fields.map((field) => (
+                <div key={field.key} className="space-y-2">
+                  <Label htmlFor={field.key} className="flex items-center gap-1">
+                    {field.label}
+                    {!("optional" in field && field.optional) && (
+                      <span className="text-destructive">*</span>
                     )}
-                  </Button>
-                )}
+                  </Label>
+                  <div className="relative">
+                    <Input
+                      id={field.key}
+                      type={
+                        "secret" in field && field.secret && !showSecrets[field.key]
+                          ? "password"
+                          : "text"
+                      }
+                      placeholder={field.placeholder}
+                      value={fields[field.key] ?? ""}
+                      onChange={(e) =>
+                        setFields((f) => ({ ...f, [field.key]: e.target.value }))
+                      }
+                      required={!("optional" in field && field.optional)}
+                      className="pr-10"
+                    />
+                    {"secret" in field && field.secret && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
+                        onClick={() =>
+                          setShowSecrets((s) => ({ ...s, [field.key]: !s[field.key] }))
+                        }
+                      >
+                        {showSecrets[field.key] ? (
+                          <EyeOff className="h-4 w-4 text-muted-foreground" />
+                        ) : (
+                          <Eye className="h-4 w-4 text-muted-foreground" />
+                        )}
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              ))}
+
+              {/* Test Mode Toggle */}
+              <div className="flex items-center justify-between rounded-lg border p-3">
+                <div className="space-y-0.5">
+                  <Label className="text-sm font-medium">
+                    {t("entitlements.tenantGateways.testMode")}
+                  </Label>
+                  <p className="text-xs text-muted-foreground">
+                    {t("entitlements.tenantGateways.testModeDesc")}
+                  </p>
+                </div>
+                <Switch checked={isTestMode} onCheckedChange={setIsTestMode} />
+              </div>
+            </>
+          )}
+
+          {step === 3 && !formState.isEditing && (
+            <div className="flex flex-col items-center justify-center py-6 text-center space-y-4">
+              <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+                <ShieldCheck className="h-6 w-6 text-primary" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-lg">{t("entitlements.tenantGateways.wizard.readyTitle")}</h3>
+                <p className="text-sm text-muted-foreground mt-1 max-w-[280px]">
+                  {t("entitlements.tenantGateways.wizard.readyDesc", { gateway: gatewayDef.label })}
+                </p>
               </div>
             </div>
-          ))}
-
-          {/* Test Mode Toggle */}
-          <div className="flex items-center justify-between rounded-lg border p-3">
-            <div className="space-y-0.5">
-              <Label className="text-sm font-medium">
-                {t("entitlements.tenantGateways.testMode")}
-              </Label>
-              <p className="text-xs text-muted-foreground">
-                {t("entitlements.tenantGateways.testModeDesc")}
-              </p>
-            </div>
-            <Switch checked={isTestMode} onCheckedChange={setIsTestMode} />
-          </div>
+          )}
 
           {/* Error Display */}
           {error && (
-            <div className="flex items-start gap-2 rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+            <div className="flex items-start gap-2 rounded-md bg-destructive/10 p-3 text-sm text-destructive mt-4">
               <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
               <p>{error.message}</p>
             </div>
           )}
 
-          <DialogFooter>
+          <DialogFooter className="mt-6">
             <Button type="button" variant="outline" onClick={() => { onClose(); resetForm(); }}>
               {t("common.cancel")}
             </Button>
-            <Button type="submit" disabled={isSubmitting} className="gap-2">
-              {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
-              {formState.isEditing
-                ? t("entitlements.tenantGateways.update")
-                : t("entitlements.tenantGateways.saveAndConnect")}
-            </Button>
+            
+            {!formState.isEditing && step > 1 && (
+              <Button type="button" variant="outline" onClick={() => setStep(step - 1)}>
+                {t("common.back")}
+              </Button>
+            )}
+
+            {!formState.isEditing && step < 3 ? (
+              <Button type="button" onClick={() => setStep(step + 1)}>
+                {t("common.next")}
+              </Button>
+            ) : (
+              <Button type="submit" disabled={isSubmitting} className="gap-2">
+                {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
+                {formState.isEditing
+                  ? t("entitlements.tenantGateways.update")
+                  : t("entitlements.tenantGateways.saveAndConnect")}
+              </Button>
+            )}
           </DialogFooter>
         </form>
 
