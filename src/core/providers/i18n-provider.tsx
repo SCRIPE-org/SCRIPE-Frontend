@@ -91,6 +91,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
   // ─── TRANSLATION FUNCTION ─────────────────────────────────
   const t = useCallback(
     (key: string, params?: Record<string, any>): string => {
+      if (!key || typeof key !== "string") return key || "";
       const keys = key.split(".");
       let value: any = registryRef.current[language];
 

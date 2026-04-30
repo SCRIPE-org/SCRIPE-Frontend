@@ -141,6 +141,7 @@ export const ar = {
       enabled: "مُفعَّلة",
       disabled: "مُعطَّلة",
       default: "افتراضي",
+      defaultGatewayCannotBeDisabled: "لا يمكن تعطيل البوابة الافتراضية.",
       features: "المميزات",
       recurring: "اشتراكات متكررة",
       billingPortal: "بوابة الفوترة",

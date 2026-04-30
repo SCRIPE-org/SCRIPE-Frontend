@@ -33,7 +33,7 @@ export function useCommissionLedgerViewModel() {
   const waiveMutation = useMutation({
     mutationFn: ({ id, notes }: { id: string; notes: string }) => commissionLedgerRepository.waiveInvoice(id, notes),
     onSuccess: () => {
-      toast({ title: t("common.success") || "Success", description: t("commission.waived") || "Invoice waived successfully" });
+      toast({ title: t("common.success") || "Success", description: t("entitlements.commissionLedger.waived") || "Invoice waived successfully" });
       queryClient.invalidateQueries({ queryKey: ["commission-invoices"] });
     },
     onError: (error: any) => {
@@ -44,7 +44,7 @@ export function useCommissionLedgerViewModel() {
   const retryMutation = useMutation({
     mutationFn: (id: string) => commissionLedgerRepository.retryCharge(id),
     onSuccess: () => {
-      toast({ title: t("common.success") || "Success", description: t("commission.retryScheduled") || "Charge retry scheduled" });
+      toast({ title: t("common.success") || "Success", description: t("entitlements.commissionLedger.retryScheduled") || "Charge retry scheduled" });
       queryClient.invalidateQueries({ queryKey: ["commission-invoices"] });
     },
     onError: (error: any) => {
@@ -55,29 +55,29 @@ export function useCommissionLedgerViewModel() {
   const ledgerColumns: CrudColumn<CommissionLedgerEntry>[] = [
     {
       key: "tenantId",
-      label: t("commission.tenantId") || "Tenant ID",
+      label: t("entitlements.commissionLedger.tenantId") || "Tenant ID",
     },
     {
       key: "gateway",
-      label: t("commission.gateway") || "Gateway",
+      label: t("entitlements.commissionLedger.gateway") || "Gateway",
     },
     {
       key: "grossAmount",
-      label: t("commission.grossAmount") || "Gross Amount",
+      label: t("entitlements.commissionLedger.grossAmount") || "Gross Amount",
       render: (value, item) => `${value} ${item.currency}`,
     },
     {
       key: "commissionAmount",
-      label: t("commission.commission") || "Commission",
+      label: t("entitlements.commissionLedger.commission") || "Commission",
       render: (value, item) => `${value} ${item.currency}`,
     },
     {
       key: "status",
-      label: t("commission.status") || "Status",
+      label: t("entitlements.commissionLedger.status") || "Status",
     },
     {
       key: "createdAt",
-      label: t("commission.date") || "Date",
+      label: t("entitlements.commissionLedger.date") || "Date",
       render: (value) => new Date(value).toLocaleString(),
     },
   ];
@@ -85,25 +85,25 @@ export function useCommissionLedgerViewModel() {
   const invoiceColumns: CrudColumn<CommissionInvoice>[] = [
     {
       key: "invoiceNumber",
-      label: t("commission.invoiceNumber") || "Invoice #",
+      label: t("entitlements.commissionLedger.invoiceNumber") || "Invoice #",
     },
     {
       key: "periodStart",
-      label: t("commission.period") || "Period",
+      label: t("entitlements.commissionLedger.period") || "Period",
       render: (value, item) => `${new Date(value).toLocaleDateString()} - ${new Date(item.periodEnd).toLocaleDateString()}`,
     },
     {
       key: "totalCommission",
-      label: t("commission.total") || "Total",
+      label: t("entitlements.commissionLedger.total") || "Total",
       render: (value, item) => `${value} ${item.currency}`,
     },
     {
       key: "status",
-      label: t("commission.status") || "Status",
+      label: t("entitlements.commissionLedger.status") || "Status",
     },
     {
       key: "actions",
-      label: t("commission.actions") || "Actions",
+      label: t("entitlements.commissionLedger.actions") || "Actions",
       render: (value, item) => item.id, // Handled by view actions normally
     },
   ];

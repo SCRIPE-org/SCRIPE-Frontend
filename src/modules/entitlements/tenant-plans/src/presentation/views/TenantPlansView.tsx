@@ -48,13 +48,6 @@ export function TenantPlansView() {
       resource: "tenant_plans",
       customActions: [
         {
-          label: t("entitlements.tenantPlans.createPlan") || "Create Plan",
-          onClick: async () => {
-            router.push("/entitlements/tenant-plans/create");
-          },
-          variant: "default" as const,
-        },
-        {
           label: t("entitlements.tenantPlans.comparison.heroTitle") || "Compare Plans",
           onClick: async () => {
             router.push("/entitlements/tenant-plans/compare");
@@ -63,6 +56,7 @@ export function TenantPlansView() {
           icon: <Columns className="h-4 w-4" />,
         },
       ],
+      onCreateClick: () => router.push("/entitlements/tenant-plans/create"),
       columns: [
         {
           key: "name",
@@ -164,7 +158,9 @@ export function TenantPlansView() {
       getActions: (vmInstance: ReturnType<typeof useTenantPlansViewModel>, tFn: (key: string) => string, handleDeleteFn: ((item: TenantPlan) => void) | undefined): CrudAction<TenantPlan>[] => [
         {
           label: tFn("common.view") || "View",
-          onClick: (item: TenantPlan) => vmInstance.openViewModal(item),
+          onClick: (item: TenantPlan) => {
+            router.push(`/entitlements/tenant-plans/${item.id}`);
+          },
           variant: "ghost" as const,
           icon: <Eye className="h-4 w-4" />,
         },

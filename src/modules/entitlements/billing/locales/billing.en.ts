@@ -141,6 +141,7 @@ export const en = {
       enabled: "Enabled",
       disabled: "Disabled",
       default: "Default",
+      defaultGatewayCannotBeDisabled: "The default gateway cannot be disabled.",
       features: "Features",
       recurring: "Recurring",
       billingPortal: "Billing Portal",

@@ -19,6 +19,7 @@ export const en = {
       allowYearly: "Allow Yearly Billing",
       allowLifetime: "Allow Lifetime Purchase",
       allowTrial: "Allow Trial",
+      allowTrialDesc: "If enabled, a trial period can be offered for this plan.",
 
       // ── Display ──
       displayNameEn: "Display Name (EN)",
@@ -40,11 +41,20 @@ export const en = {
       sortOrder: "Sort Order",
       subscribers: "Subscribers",
       gracePeriodDays: "Grace Period Days",
+      gracePeriodDesc: "Number of days after subscription expiration before suspension.",
 
       // ── Settings ──
       selfServiceEnabled: "Self-Service Enabled",
       contactSalesOnly: "Contact Sales Only",
-
+      color: "Brand Color",
+      badgeText: "Badge Text",
+      badgeTextPlaceholder: "e.g. Most Popular",
+      isContactSalesOnly: "Contact Sales Only",
+      isContactSalesOnlyDesc: "If enabled, users cannot subscribe directly. They must contact sales.",
+      isSelfServiceEnabled: "Self-Service Enabled",
+      isSelfServiceEnabledDesc: "If enabled, users can subscribe and manage this plan directly.",
+      quotasAndAccess: "Quotas & Access",
+      trialAndGrace: "Trial & Grace Period",
       // ── Lifecycle ──
       publish: "Publish",
       publishDesc: "Make this plan live for subscriptions.",
@@ -176,6 +186,10 @@ export const en = {
       billingConfig: "Billing Configuration",
       trialConfig: "Trial Configuration",
       settingsConfig: "Settings",
+      missingRequired: "Missing Required Fields",
+      basicDetails: "Basic Details",
+      billingAndAccess: "Billing & Access",
+      supportedCycles: "Supported Cycles",
     },
 
     // ── Feature Definitions CRUD ──

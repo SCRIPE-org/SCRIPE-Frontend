@@ -10,6 +10,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
 import { Skeleton } from "@core/ui/skeleton";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@core/ui/tooltip";
 import {
   CreditCard, Crown, CheckCircle2, XCircle, Globe,
   Smartphone, Shield, RefreshCw, Link2, Info,
@@ -201,11 +202,28 @@ function GatewayCard({
             <span className="text-xs font-medium text-muted-foreground">
               {t("common.status")}
             </span>
-            <Switch
-              checked={gw.enabled}
-              onCheckedChange={(checked) => onToggleStatus(gw.gateway, checked)}
-              disabled={isDefault || isToggling}
-            />
+            {isDefault ? (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div>
+                    <Switch
+                      checked={gw.enabled}
+                      onCheckedChange={(checked) => onToggleStatus(gw.gateway, checked)}
+                      disabled={true}
+                    />
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{t("billing.gateways.defaultGatewayCannotBeDisabled") || "Default gateways cannot be disabled."}</p>
+                </TooltipContent>
+              </Tooltip>
+            ) : (
+              <Switch
+                checked={gw.enabled}
+                onCheckedChange={(checked) => onToggleStatus(gw.gateway, checked)}
+                disabled={isToggling}
+              />
+            )}
           </div>
         </div>
       </CardContent>

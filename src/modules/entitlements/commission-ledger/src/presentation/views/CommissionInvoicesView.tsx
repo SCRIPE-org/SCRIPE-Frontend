@@ -26,7 +26,7 @@ export function CommissionInvoicesView() {
                 // For now, it redirects to the tenant gateways to configure a payment method if not set.
               }}
             >
-              {t("commission.payNow") || "Pay Now"}
+              {t("entitlements.commissionLedger.payNow") || "Pay Now"}
             </Button>
           );
         },
@@ -39,10 +39,10 @@ export function CommissionInvoicesView() {
     <div className="space-y-6">
       <div className="flex flex-col gap-1">
         <h1 className="text-2xl font-bold tracking-tight">
-          {t("commission.invoices") || "Commission Invoices"}
+          {t("entitlements.commissionLedger.invoices") || "Commission Invoices"}
         </h1>
         <p className="text-sm text-muted-foreground">
-          {t("commission.invoicesSubtitle") || "View your commission invoices charged by the platform."}
+          {t("entitlements.commissionLedger.invoicesSubtitle") || "View your commission invoices charged by the platform."}
         </p>
       </div>
 

@@ -19,6 +19,7 @@ export const ar = {
       allowYearly: "السماح بالفوترة السنوية",
       allowLifetime: "السماح بالشراء مدى الحياة",
       allowTrial: "السماح بالتجربة",
+      allowTrialDesc: "إذا تم التفعيل، يمكن تقديم فترة تجريبية لهذه الخطة.",
 
       // ── العرض ──
       displayNameEn: "اسم العرض (EN)",
@@ -40,11 +41,20 @@ export const ar = {
       sortOrder: "ترتيب العرض",
       subscribers: "المشتركون",
       gracePeriodDays: "أيام فترة السماح",
+      gracePeriodDesc: "عدد الأيام بعد انتهاء الاشتراك قبل إيقاف الخدمة.",
 
       // ── الإعدادات ──
       selfServiceEnabled: "الخدمة الذاتية مفعلة",
       contactSalesOnly: "الاتصال بالمبيعات فقط",
-
+      color: "لون العلامة",
+      badgeText: "نص الشارة",
+      badgeTextPlaceholder: "مثال: الأكثر شعبية",
+      isContactSalesOnly: "الاتصال بالمبيعات فقط",
+      isContactSalesOnlyDesc: "إذا تم التفعيل، لا يمكن للمستخدمين الاشتراك مباشرة. يجب عليهم الاتصال بالمبيعات.",
+      isSelfServiceEnabled: "الخدمة الذاتية مفعلة",
+      isSelfServiceEnabledDesc: "إذا تم التفعيل، يمكن للمستخدمين الاشتراك وإدارة هذه الخطة مباشرة.",
+      quotasAndAccess: "الحصص والوصول",
+      trialAndGrace: "التجربة وفترة السماح",
       // ── دورة الحياة ──
       publish: "نشر",
       publishDesc: "جعل هذه الخطة متاحة للاشتراكات.",
@@ -176,6 +186,10 @@ export const ar = {
       billingConfig: "تكوين الفوترة",
       trialConfig: "تكوين التجربة",
       settingsConfig: "الإعدادات",
+      missingRequired: "حقول مطلوبة مفقودة",
+      basicDetails: "التفاصيل الأساسية",
+      billingAndAccess: "الفوترة والوصول",
+      supportedCycles: "الدورات المدعومة",
     },
 
     // ── كتالوج الميزات ──

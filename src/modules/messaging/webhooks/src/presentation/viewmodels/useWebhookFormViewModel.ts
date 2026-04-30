@@ -247,3 +247,5 @@ export function useWebhookFormViewModel({
             mode,
       };
 }
+
+export type WebhookFormViewModel = ReturnType<typeof useWebhookFormViewModel>;
